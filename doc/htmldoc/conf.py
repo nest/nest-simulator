@@ -203,6 +203,7 @@ html_theme_options = {
     'globaltoc_collapse': True,
     # If True, show hidden TOC entries
     'globaltoc_includehidden': True,
+    "version_dropdown": False,
     }
 
 html_static_path = [str(doc_build_dir / 'static')]
@@ -210,6 +211,14 @@ html_additional_pages = {'index': 'index.html'}
 html_sidebars = {
     "**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]
 }
+
+html_css_files = [
+        'css/custom.css',
+        'css/pygments.css'
+        ]
+html_js_files = [
+        'js/custom.js'
+        ]
 
 # -- Options for HTMLHelp output ------------------------------------------
 
@@ -258,10 +267,6 @@ def toc_customizer(app, docname, source):
 
 def setup(app):
     app.connect("source-read", toc_customizer)
-    app.add_css_file('css/custom.css')
-    app.add_css_file('css/pygments.css')
-    app.add_js_file("js/custom.js")
-
     # for events see
     # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
     app.connect('config-inited', config_inited_handler)

@@ -152,13 +152,28 @@ class NestModule(types.ModuleType):
         "float", "The minimum delay in the network", default=0.1
     )
     ms_per_tic = KernelAttribute(
-        "float", "The number of milliseconds per tic", default=0.001
+        "float",
+        (
+            "The number of milliseconds per tic. Calculated by "
+            + "ms_per_tic = 1 / tics_per_ms"
+        ),
+        readonly=True,
     )
     tics_per_ms = KernelAttribute(
-        "float", "The number of tics per millisecond", default=1000.0
+        "float",
+        (
+            "The number of tics per millisecond. Change of tics_per_ms "
+            + "requires simultaneous specification of resolution"
+        ),
+        default=1000.0
     )
     tics_per_step = KernelAttribute(
-        "int", "The number of tics per simulation time step", default=100
+        "int",
+        (
+            "The number of tics per simulation time step. Calculated by "
+            + "tics_per_step = resolution * tics_per_ms"
+        ),
+        readonly=True
     )
     T_max = KernelAttribute(
         "float", "The largest representable time value", readonly=True
@@ -312,7 +327,7 @@ class NestModule(types.ModuleType):
             + " manager will make changes in the structure of the network ("
             + " creation and deletion of plastic synapses)"
         ),
-        default=10000.0,
+        default=10000,
     )
     growth_curves = KernelAttribute(
         "list[str]",
@@ -490,6 +505,7 @@ def _lazy_module_property(module_name, optional=False, optional_hint=""):
       users install missing optional modules
     :type optional_hint: str
     """
+
     def lazy_loader(self):
         cls = type(self)
         delattr(cls, module_name)

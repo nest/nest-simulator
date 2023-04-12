@@ -71,7 +71,7 @@ dt:target {
 }
 section#kernel-attributes-nest-nestmodule dl.field-list.simple dt.field-odd{
   position:absolute;
-  padding-left: 0rem;
+  padding-left: 0.1rem;
 }
 
 section#kernel-attributes-nest-nestmodule dl.field-list.simple dd.field-odd{

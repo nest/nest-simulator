@@ -73,8 +73,8 @@ This interface is known as PyNEST. You can browse the various functions to use i
       GetStatus
       SetStatus
 
-:doc:`Functions related connections  <nest.lib.hl_api_connections>`
--------------------------------------------------------------------
+:doc:`Functions related to connections <nest.lib.hl_api_connections>`
+---------------------------------------------------------------------
 
 
 .. automodule::   nest.lib.hl_api_connections

@@ -191,7 +191,7 @@ nest::ArchivingNode::set_spiketime( Time const& t_sp, double offset )
     // - its access counter indicates it has been read out by all connected
     //   STDP synapses, and
     // - there is another, later spike, that is strictly more than
-    //   (max_delay_ + eps) away from the new spike (at t_sp_ms)
+    //   (min_global_delay + max_local_delay + eps) away from the new spike (at t_sp_ms)
     while ( history_.size() > 1 )
     {
       const double next_t_sp = history_[ 1 ].t_;

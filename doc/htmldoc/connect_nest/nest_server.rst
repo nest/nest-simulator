@@ -428,7 +428,7 @@ After this, NumPy can be used from within scripts in the regular way:
 .. code-block:: Python
 
     from nest_client import NESTClient
-    nsc = NESTClient()
+    nest = NESTClient()
     response = nsc.exec_script("a = numpy.arange(10)", 'a')
     print(response['data'][::2])                    # [0, 2, 4, 6, 8]
 

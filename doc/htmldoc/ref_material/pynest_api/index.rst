@@ -155,49 +155,6 @@ This interface is known as PyNEST. You can browse the various functions to use i
       source_pos
       target_pos
 
-:doc:`Functions related to help and info  <nest.lib.hl_api_helper>`
--------------------------------------------------------------------
-
-.. automodule::   nest.lib.hl_api_helper
-
-
-   .. autosummary::
-
-      broadcast
-      deprecated
-      get_parameters
-      get_parameters_hierarchical_addressing
-      get_unistring_type
-      get_wrapped_text
-      is_coercible_to_sli_array
-      is_iterable
-      is_literal
-      is_sequence_of_connections
-      is_sequence_of_node_ids
-      is_string
-      load_help
-      model_deprecation_warning
-      restructure_data
-      show_deprecation_warning
-      show_help_with_pager
-
-
-   .. autosummary::
-
-      SuppressedDeprecationWarning
-
-.. automodule:: nest.lib.hl_api_info
-
-   .. autosummary::
-
-      authors
-      help
-      helpdesk
-      message
-      get_verbosity
-      set_verbosity
-      sysinfo
-
 :doc:`Functions related to math and logic  <nest.math.hl_api_math>`
 -------------------------------------------------------------------
 
@@ -299,8 +256,8 @@ This interface is known as PyNEST. You can browse the various functions to use i
 
       plot_network
 
-:doc:`Functions related kernel attributes  <kernel_attributes>`
----------------------------------------------------------------
+:doc:`Functions related to kernel attributes  <kernel_attributes>`
+------------------------------------------------------------------
 
 .. autoclass:: nest.NestModule
 
@@ -361,6 +318,49 @@ This interface is known as PyNEST. You can browse the various functions to use i
         wfr_max_iterations
         wfr_tol
 
+
+:doc:`Functions related to help and info  <nest.lib.hl_api_helper>`
+-------------------------------------------------------------------
+
+.. automodule::   nest.lib.hl_api_helper
+
+
+   .. autosummary::
+
+      broadcast
+      deprecated
+      get_parameters
+      get_parameters_hierarchical_addressing
+      get_unistring_type
+      get_wrapped_text
+      is_coercible_to_sli_array
+      is_iterable
+      is_literal
+      is_sequence_of_connections
+      is_sequence_of_node_ids
+      is_string
+      load_help
+      model_deprecation_warning
+      restructure_data
+      show_deprecation_warning
+      show_help_with_pager
+
+
+   .. autosummary::
+
+      SuppressedDeprecationWarning
+
+.. automodule:: nest.lib.hl_api_info
+
+   .. autosummary::
+
+      authors
+      help
+      helpdesk
+      message
+      get_verbosity
+      set_verbosity
+      sysinfo
 
 
 .. toctree::

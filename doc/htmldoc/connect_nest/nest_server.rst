@@ -153,7 +153,7 @@ The NEST Client
 ---------------
 
 The easiest way to interact with the NEST Server is the `NEST Client`
-provided in <https://github.com/nest/nest-client/>`_. It can be used
+provided in `<https://github.com/nest/nest-client/>`_. It can be used
 either by directly starting a Python session in a clone of that
 repository, or by installing it by running ``python3 setup.py
 install`` therein. NEST itself does not have to be installed in order

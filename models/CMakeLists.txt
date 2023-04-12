@@ -144,7 +144,6 @@ set(models_sources
 add_library(models STATIC ${models_sources})
 set_target_properties(models
     PROPERTIES
-    VERSION ${NEST_VERSION}
     POSITION_INDEPENDENT_CODE ON
 )
 

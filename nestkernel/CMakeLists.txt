@@ -139,7 +139,6 @@ set_source_files_properties( dynamicloader.cpp PROPERTIES COMPILE_OPTIONS "-O0" 
 add_library( nestkernel STATIC ${nestkernel_sources} )
 set_target_properties( nestkernel
     PROPERTIES
-    VERSION ${NEST_VERSION}
     POSITION_INDEPENDENT_CODE ON
     )
 

@@ -39,7 +39,6 @@ add_library( nestutil STATIC ${nestutil_sources} )
 
 set_target_properties( nestutil
     PROPERTIES
-    VERSION ${NEST_VERSION}
     POSITION_INDEPENDENT_CODE ON
     )
 

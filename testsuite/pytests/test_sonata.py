@@ -23,9 +23,11 @@ import nest
 import pytest
 from pathlib import Path
 
-# Skip all tests in this module if no HDF5
-have_hdf5 = nest.ll_api.sli_func("statusdict/have_hdf5 ::")
-pytestmark = pytest.mark.skipif(not have_hdf5, reason="Requires NEST built with HDF5 support")
+# Skip all tests in this module if no HDF5 or OpenMP threads
+HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
+HAVE_HDF5 = nest.ll_api.sli_func("statusdict/have_hdf5 ::")
+pytestmark = pytest.mark.skipif(not (HAVE_HDF5 and HAVE_OPENMP),
+                                reason="Requires NEST built with HDF5 and OpenMP support")
 
 # We consider two possible cases:
 # - When running via `make installcheck`, this file is in $INSTALLDIR/share/nest/testsuite/pytests,

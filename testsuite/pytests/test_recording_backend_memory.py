@@ -22,7 +22,10 @@
 import unittest
 import nest
 
+HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
 
+
+@unittest.skipIf(not HAVE_OPENMP, 'NEST was compiled without multi-threading')
 class TestRecordingBackendMemory(unittest.TestCase):
 
     def testEventsDict(self):

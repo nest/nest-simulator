@@ -222,6 +222,8 @@
 
 
 % eighth test: check static synapses on four threads
+skip_if_not_threaded
+
 {
   << >> begin
     ResetKernel

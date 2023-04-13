@@ -45,13 +45,12 @@ you a better idea of what NEST Server is good for, here are some of
 its main use cases.
 
 One scenario in which NEST Server comes in handy, is if you want to
-work on your laptop, but run your NEST simulations on a
-machine with higher performance or more memory, for instance, a big
-workstation or computer cluster at your lab. For this, you would
-deploy NEST Server on the remote machine, and use the provided
-:ref:`NEST Server Client <nest_server_client>` locally or write your
-own client using one of the recipes provided in the :ref:`section on
-advanced applications <nest_server_advanced>`.
+work on your laptop, but run your NEST simulations on a machine with
+higher performance or more memory, for instance, a big workstation or
+computer cluster at your lab. For this, you would deploy NEST Server
+on the remote machine, and use the :ref:`NEST Client <nest_client>`
+locally or write your own client using one of the recipes provided in
+the :ref:`section on advanced applications <nest_server_advanced>`.
 
 `NEST Desktop <https://nest-desktop.readthedocs.io/>`_, the web-based
 graphical user interface for NEST, uses NEST Server as its simulation
@@ -148,21 +147,21 @@ completely the same as one coming from the serial version of the NEST
 Server. The only difference may be that information pertaining to
 process-local data structures is being replaced by generic values.
 
-.. _nest_server_client:
+.. _nest_client:
 
-The NEST Server Client
-----------------------
+The NEST Client
+---------------
 
-The easiest way to interact with the NEST Server is the `NEST Server
-Client` provided in ``examples/NESTServerClient`` in the source
-distribution of NEST. It can be used either by directly starting
-a Python session in that directory or installing it by running ``python3
-setup.py install`` therein. NEST itself does not have to be installed
-in order to use the NEST Server Client.
+The easiest way to interact with the NEST Server is the `NEST Client`
+provided in `<https://github.com/nest/nest-client/>`_. It can be used
+either by directly starting a Python session in a clone of that
+repository, or by installing it by running ``python3 setup.py
+install`` therein. NEST itself does not have to be installed in order
+to use the NEST Client.
 
-Using a dynamic function mapping mechanism, the NEST Server Client
-supports the same functions as PyNEST does. However, instead of
-directly executing calls in NEST, it forwards them together with their
+Using a dynamic function mapping mechanism, the NEST Client supports
+the same functions as PyNEST does. However, instead of directly
+executing calls in NEST, it forwards them together with their
 arguments to the NEST Server, which in turn executes them. To you as a
 user, everything looks much like a typical simulation code for NEST
 Simulator.
@@ -172,16 +171,15 @@ Basic usage
 
 To give you an idea of the usage, the following table shows a
 comparison of a typical simulation once for PyNEST and once using the
-NEST Server Client.
+NEST Client.
 
 .. list-table::
 
     * - **PyNEST directly**
-      - **via NEST Server Client**
+      - **via NEST Client**
     * - .. code-block:: Python
 
             import nest
-
 
             # Reset the kernel
             nest.ResetKernel()
@@ -205,8 +203,8 @@ NEST Server Client.
 
       - .. code-block:: Python
 
-            from NESTServerClient import NESTServerClient
-            nsc = NESTServerClient()
+            from nest_client import NESTClient
+            nsc = NESTClient()
 
             # Reset the kernel
             nsc.ResetKernel()
@@ -231,7 +229,7 @@ NEST Server Client.
 Run scripts
 ~~~~~~~~~~~
 
-The NEST Server Client is able to send complete simulation scripts to
+The NEST Client is able to send complete simulation scripts to
 the NEST Server using the functions ``exec_script`` and ``from_file``.
 The following listing shows a Python snippet using the NEST Server
 Client to execute a simple script on the Server using the
@@ -239,8 +237,8 @@ Client to execute a simple script on the Server using the
 
 .. code-block:: Python
 
-    from NESTServerClient import NESTServerClient
-    nsc = NESTServerClient()
+    from nest_client import NESTClient
+    nsc = NESTClient()
 
     script = "print('Hello world!')"
     response = nsc.exec_script(script)
@@ -254,12 +252,12 @@ Client to execute a simple script on the Server using the
 In a more realistic scenario, you probably already have your
 simulation script stored in a file. Such scripts can be sent to the
 NEST Server for execution using the ``from_file`` function provided by
-the NEST Server Client.
+the NEST Client.
 
 .. code-block:: Python
 
-    from NESTServerClient import NESTServerClient
-    nsc = NESTServerClient()
+    from nest_client import NESTClient
+    nsc = NESTClient()
 
     response = nsc.from_file('simulation_script.py', return_vars='n_events')
     n_events = response['data']
@@ -274,24 +272,24 @@ the NEST Server Client.
     on :ref:`security and modules <nest_server_security>` below.
 
 
-NEST Server Client API
-~~~~~~~~~~~~~~~~~~~~~~
+NEST Client API
+~~~~~~~~~~~~~~~
 
-.. py:class:: NESTServerClient
+.. py:class:: NESTClient
 
     The client object to interact with the NEST Server
 
-.. py:method:: NESTServerClient.<call>(*args, **kwargs)
+.. py:method:: NESTClient.<call>(*args, **kwargs)
 
     Execute a PyNEST function `<call>` on the NEST Server; the
     arguments `args` and `kwargs` will be forwarded to the function
 
-.. py:method:: NESTServerClient.exec_script(source, return_vars=None)
+.. py:method:: NESTClient.exec_script(source, return_vars=None)
 
     Execute a Python script on the NEST Server; the script has to be
     given as a string in the `source` argument
 
-.. py:method:: NESTServerClient.from_file(filename, return_vars=None)
+.. py:method:: NESTClient.from_file(filename, return_vars=None)
 
     Execute a Python script on the NEST Server; the argument
     `filename` is the name of the file in which the script is stored
@@ -429,8 +427,8 @@ After this, NumPy can be used from within scripts in the regular way:
 
 .. code-block:: Python
 
-    from NESTServerClient import NESTServerClient
-    nsc = NESTServerClient()
+    from nest_client import NESTClient
+    nest = NESTClient()
     response = nsc.exec_script("a = numpy.arange(10)", 'a')
     print(response['data'][::2])                    # [0, 2, 4, 6, 8]
 

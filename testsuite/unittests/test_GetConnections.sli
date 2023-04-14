@@ -20,6 +20,10 @@
  *
  */
 
+% SLI2PY: Check for overlap with conn tests in Python, port what is missing
+% SLI2PY: Note, see if net can be built once and then multiple tests applied
+% SLI2PYComplexity: Low
+
 /** @BeginDocumentation
    Name: testsuite::test_GetConnections - sli script to test if GetConnections works as expected
 

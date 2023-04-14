@@ -20,6 +20,9 @@
  *
  */
 
+% SLI2PY: Generalize to all models, but do we need to simulate? Why not just read out values from neuron?
+% SLI2PYComplexity: Medium
+
 /* model_node_init.sli
  
    Makeshift test to see if setting model params and then creating a neuron

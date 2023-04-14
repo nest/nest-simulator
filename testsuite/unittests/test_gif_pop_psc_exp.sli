@@ -38,6 +38,8 @@ SeeAlso: gif_pop_psc_exp
 
 */
 
+% SLI2PYComplexity: Low
+
 (unittest) run
 /unittest using
 

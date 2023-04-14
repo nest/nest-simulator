@@ -20,6 +20,8 @@
  *
  */
 
+% SLI2PY: Check for overlap with PyNEST connection tests
+% SLI2PYComplexity: Low
 
 /* BeginDocumentation
    Name: testsuite::test_connect_with_threads

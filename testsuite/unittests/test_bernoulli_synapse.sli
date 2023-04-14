@@ -20,6 +20,9 @@
  *
  */
 
+% SLI2PY: Check against Python tests for duplicates
+% SLI2PYComplexity: Low
+
 /** @BeginDocumentation
     Name: testsuite::test_bernoulli_synapse - test of bernoulli_synapse connection
 

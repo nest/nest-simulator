@@ -20,6 +20,8 @@
  *
  */
 
+% SLI2PYComplexity: Low
+
  /** @BeginDocumentation
    Name: testsuite::test_connect_after_simulate - Create another connection after a call to Simulate and check whether it is created correctly
 

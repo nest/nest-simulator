@@ -20,6 +20,8 @@
  *
  */
 
+% SLI2PYComplexity: Medium
+
 (unittest) run
 /unittest using
 

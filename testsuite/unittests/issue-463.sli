@@ -21,6 +21,10 @@
  */
 
 
+% SLI2PY : Move to regressiontests
+
+% SLI2PYComplexity : Simple
+
  /** @BeginDocumentation
 Name: testsuite::issue-463 Simple failing test for connection with parameter arrays and connection rule fixed_indegree, with more than one virtual process
 

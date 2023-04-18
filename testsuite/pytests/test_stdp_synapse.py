@@ -81,20 +81,22 @@ class TestSTDPSynapse:
     def do_nest_simulation_and_compare_to_reproduced_weight(self, fname_snip):
         pre_spikes, post_spikes, t_weight_by_nest, weight_by_nest = self.do_the_nest_simulation()
 
-        t_weight_reproduced_independently, weight_reproduced_independently, Kpre_log, Kpost_log = self.reproduce_weight_drift(
-            pre_spikes, post_spikes, self.init_weight, fname_snip=fname_snip)
+        t_weight_reproduced_independently, weight_reproduced_independently, Kpre_log, Kpost_log = \
+            self.reproduce_weight_drift(pre_spikes, post_spikes, self.init_weight, fname_snip=fname_snip)
 
         # ``weight_by_nest`` contains only weight values at pre spike times, ``weight_reproduced_independently``
         # contains the weight at pre *and* post times: check that weights are equal only for pre spike times
         assert len(weight_by_nest) > 0
 
-        difference_matrix = (t_weight_by_nest[t_weight_by_nest < self.simulation_duration].reshape(1, -1) - t_weight_reproduced_independently.reshape(-1, 1))
+        difference_matrix = (t_weight_by_nest[t_weight_by_nest < self.simulation_duration].reshape(1, -1)
+                             - t_weight_reproduced_independently.reshape(-1, 1))
         pre_spike_reproduced_indices = np.abs(difference_matrix).argmin(axis=0)
         time_differences = np.diagonal(difference_matrix[pre_spike_reproduced_indices])
         # make sure all spike times are equal
         np.testing.assert_allclose(time_differences, 0, atol=1e-07)
         # make sure the weights after the pre_spikes times are equal
-        np.testing.assert_allclose(weight_by_nest[t_weight_by_nest < self.simulation_duration], weight_reproduced_independently[pre_spike_reproduced_indices])
+        np.testing.assert_allclose(weight_by_nest[t_weight_by_nest < self.simulation_duration],
+                                   weight_reproduced_independently[pre_spike_reproduced_indices])
 
         if DEBUG_PLOTS:
             self.plot_weight_evolution(pre_spikes, post_spikes,
@@ -121,32 +123,24 @@ class TestSTDPSynapse:
             'max_delay': max(self.max_delay, self.dendritic_delay)
         })
 
-        presynaptic_neuron, postsynaptic_neuron = nest.Create(
-            self.nest_neuron_model,
-            2,
-            params=self.neuron_parameters)
+        presynaptic_neuron, postsynaptic_neuron = nest.Create(self.nest_neuron_model, 2, params=self.neuron_parameters)
 
-        generators = nest.Create(
-            "poisson_generator",
-            2,
-            params=({"rate": self.presynaptic_firing_rate,
-                     "stop": (self.simulation_duration - self.hardcoded_trains_length)},
-                    {"rate": self.postsynaptic_firing_rate,
-                     "stop": (self.simulation_duration - self.hardcoded_trains_length)}))
+        generators = nest.Create("poisson_generator", 2, params=(
+            {"rate": self.presynaptic_firing_rate,
+             "stop": (self.simulation_duration - self.hardcoded_trains_length)},
+            {"rate": self.postsynaptic_firing_rate,
+             "stop": (self.simulation_duration - self.hardcoded_trains_length)}
+        ))
         presynaptic_generator = generators[0]
         postsynaptic_generator = generators[1]
 
         wr = nest.Create('weight_recorder')
         nest.CopyModel(self.synapse_model, self.synapse_model + "_rec", {"weight_recorder": wr})
 
-        spike_senders = nest.Create(
-            "spike_generator",
-            2,
-            params=({"spike_times": self.hardcoded_pre_times +
-                     self.simulation_duration - self.hardcoded_trains_length},
-                    {"spike_times": self.hardcoded_post_times +
-                     self.simulation_duration - self.hardcoded_trains_length})
-        )
+        spike_senders = nest.Create("spike_generator", 2, params=(
+            {"spike_times": self.hardcoded_pre_times + self.simulation_duration - self.hardcoded_trains_length},
+            {"spike_times": self.hardcoded_post_times + self.simulation_duration - self.hardcoded_trains_length}
+        ))
         pre_spike_generator = spike_senders[0]
         post_spike_generator = spike_senders[1]
 
@@ -314,8 +308,8 @@ class TestSTDPSynapse:
 
         return np.array(t_log), np.array(w_log), Kplus_log, Kminus_log
 
-    def plot_weight_evolution(self, pre_spikes, post_spikes, t_log, w_log, Kpre_log=None, Kpost_log=None, pre_indices=slice(-1),
-                              fname_snip="", title_snip=""):
+    def plot_weight_evolution(self, pre_spikes, post_spikes, t_log, w_log, Kpre_log=None, Kpost_log=None,
+                              pre_indices=slice(-1), fname_snip="", title_snip=""):
         fig, ax = plt.subplots(nrows=3)
 
         n_spikes = len(pre_spikes)

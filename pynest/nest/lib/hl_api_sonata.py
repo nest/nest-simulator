@@ -97,12 +97,10 @@ class SonataNetwork():
     def __init__(self, config, sim_config=None):
 
         if not have_hdf5:
-            msg = ("SonataNetwork unavailable because NEST was compiled "
-                   "without HDF5 support")
+            msg = "SonataNetwork unavailable because NEST was compiled without HDF5 support"
             raise kernel.NESTError(msg)
         if not have_h5py:
-            msg = ("SonataNetwork unavailable because h5py is not installed "
-                   "or could not be imported")
+            msg = "SonataNetwork unavailable because h5py is not installed or could not be imported"
             raise kernel.NESTError(msg)
 
         self._node_collections = {}

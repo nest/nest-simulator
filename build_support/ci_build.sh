@@ -139,6 +139,7 @@ xOPENMP=0
 xPYTHON=0
 xREADLINE=0
 xSIONLIB=0
+xHDF5=0
 
 CXX_FLAGS="-pedantic -Wextra -Wno-unknown-pragmas -D_GLIBCXX_ASSERTIONS"
 
@@ -168,6 +169,7 @@ if [ "$xNEST_BUILD_TYPE" = "FULL" ]; then
     xPYTHON=1
     xREADLINE=1
     xSIONLIB=1
+    xHDF5=1
     CXX_FLAGS="-pedantic -Wextra -D_GLIBCXX_ASSERTIONS"
 fi
 
@@ -182,6 +184,7 @@ if [ "$xNEST_BUILD_TYPE" = "FULL_MACOS" ]; then
     xPYTHON=1
     xREADLINE=1
     xSIONLIB=0
+    xHDF5=1
     # Do not use -pedantic because it triggers warnings from pynestkernel
     # that are difficult to filter automatically when parsing the log. 
     # See also https://github.com/cython/cython/pull/4687.
@@ -271,6 +274,11 @@ if [ "$xLIBNEUROSIM" = "1" ] ; then
 else
     CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=OFF"
 fi
+if [ "$xHDF5" = "1" ] ; then
+    CONFIGURE_HDF5="-Dwith-hdf5=ON"
+else
+    CONFIGURE_HDF5="-Dwith-hdf5=OFF"
+fi
 NEST_RESULT=result
 if [ "$(uname -s)" = 'Linux' ]; then
     NEST_RESULT=$(readlink -f $NEST_RESULT)
@@ -296,6 +304,7 @@ echo "MSGBLD0236: $(pwd)\$ cmake \
     $CONFIGURE_READLINE \
     $CONFIGURE_SIONLIB \
     $CONFIGURE_LIBNEUROSIM \
+    $CONFIGURE_HDF5 \
     .."
 
 cmake \
@@ -313,6 +322,7 @@ cmake \
     $CONFIGURE_READLINE \
     $CONFIGURE_SIONLIB \
     $CONFIGURE_LIBNEUROSIM \
+    $CONFIGURE_HDF5 \
     ..
     
 echo "MSGBLD0240: CMake configure completed."

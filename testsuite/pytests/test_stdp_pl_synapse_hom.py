@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_stdp_synapse.py
+# test_stdp_pl_synapse_hom.py
 #
 # This file is part of NEST.
 #

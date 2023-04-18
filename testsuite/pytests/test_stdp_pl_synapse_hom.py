@@ -85,7 +85,7 @@ class TestSTDPPlSynapse:
         # contains the weight at pre *and* post times: check that weights are equal only for pre spike times
         assert len(weight_by_nest) > 0
 
-        difference_matrix = (t_weight_by_nest[t_weight_by_nest < self.simulation_duration].reshape(1, 1)
+        difference_matrix = (t_weight_by_nest[t_weight_by_nest < self.simulation_duration].reshape(1, -1)
                              - t_weight_reproduced_independently.reshape(-1, 1))
         pre_spike_reproduced_indices = np.abs(difference_matrix).argmin(axis=0)
         time_differences = np.diagonal(difference_matrix[pre_spike_reproduced_indices])

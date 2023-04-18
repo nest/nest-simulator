@@ -4,8 +4,26 @@ NEST SONATA guide
 =====================
 
 NEST supports building and simulating networks of point neurons described by the SONATA format [1]_. 
-This guide provides the details about how a SONATA network must be specified to be supported natively by NEST. 
+This guide provides the details about how a SONATA network must be specified to be supported natively by NEST.
 
+.. _sec:sonata_configure:
+
+Configure NEST for SONATA
+--------------------------
+
+To use SONATA with NEST, both `HDF5 <https://hdfgroup.org/>`_ and `h5py <https://www.h5py.org/>`_ must be installed on
+the system and NEST must be configured properly.
+
+In the installation of NEST, you need to add the following configuration option to
+your CMake.
+
+.. code-block:: sh
+
+    cmake -Dwith-hdf5=[ON </path/to/hdf5>]
+    make
+    make install
+
+For further details, see :doc:`../installation/cmake_options`.
 
 .. _sec:sonata_overview:
 

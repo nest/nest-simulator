@@ -92,6 +92,10 @@ NEST properties
 ~~~~~~~~~~~~~~~
 
 +-----------------------------------------------+----------------------------------------------------------------+
+| ``-Dminimal-model-set=[OFF|ON]``              | Only include a minimal set of models, consisting of            |
+|                                               | iaf_psc_alpha, static_synapse, spike_generator, dc_generator,  |
+|                                               | spike_recorder, multimeter, and weight_recorder [default=OFF]  |
++-----------------------------------------------+----------------------------------------------------------------+
 | ``-Dtics_per_ms=[number]``                    | Specify elementary unit of time [default=1000 tics per ms].    |
 +-----------------------------------------------+----------------------------------------------------------------+
 | ``-Dtics_per_step=[number]``                  | Specify resolution [default=100 tics per step].                |

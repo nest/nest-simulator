@@ -171,6 +171,9 @@
 /* Do Random123 generators work? */
 #cmakedefine HAVE_RANDOM123 1
 
+/* Only use minimal model set? */
+#cmakedefine MINIMAL_MODEL_SET 1
+
 /* Bit counts for Target members */
 #define TARGET_BITS_SPLIT @TARGET_BITS_SPLIT@
 #define TARGET_BITS_SPLIT_STANDARD 0

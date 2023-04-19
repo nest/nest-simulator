@@ -64,6 +64,7 @@ set( with-ltdl ON CACHE STRING "Build with ltdl library [default=ON]. To set a s
 set( with-gsl ON CACHE STRING "Build with the GSL library [default=ON]. To set a specific library, give the install path." )
 
 # NEST properties
+option( minimal-model-set "Only include a minimal set of models, consisting of iaf_psc_alpha, static_synapse, spike_generator, dc_generator, spike_recorder, multimeter, and weight_recorder [default=OFF]" OFF )
 set( tics_per_ms "1000.0" CACHE STRING "Specify elementary unit of time [default=1000 tics per ms]." )
 set( tics_per_step "100" CACHE STRING "Specify resolution [default=100 tics per step]." )
 set( external-modules OFF CACHE STRING "External NEST modules to be linked in, separated by ';', [default=OFF]." )
@@ -153,6 +154,7 @@ nest_process_target_bits_split()
 nest_process_version_suffix()
 nest_process_userdoc()
 nest_process_devdoc()
+nest_process_minimal_model_set()
 
 # These two function calls must come last, as to prevent unwanted interactions of the newly set flags
 # with detection/compilation operations carried out in earlier functions. The optimize/debug flags set

@@ -35,6 +35,17 @@
 // Generated includes
 #include "config.h"
 
+// Minimal model set
+#include "dc_generator.h"
+#include "iaf_psc_alpha.h"
+#include "multimeter.h"
+#include "spike_generator.h"
+#include "spike_recorder.h"
+#include "static_synapse.h"
+#include "weight_recorder.h"
+
+#ifndef MINIMAL_MODEL_SET
+
 // Neuron models
 #include "aeif_cond_alpha.h"
 #include "aeif_cond_alpha_multisynapse.h"
@@ -69,7 +80,6 @@
 #include "iaf_cond_beta.h"
 #include "iaf_cond_exp.h"
 #include "iaf_cond_exp_sfa_rr.h"
-#include "iaf_psc_alpha.h"
 #include "iaf_psc_alpha_multisynapse.h"
 #include "iaf_psc_alpha_ps.h"
 #include "iaf_psc_delta.h"
@@ -96,7 +106,6 @@
 
 // Stimulation devices
 #include "ac_generator.h"
-#include "dc_generator.h"
 #include "gamma_sup_generator.h"
 #include "inhomogeneous_poisson_generator.h"
 #include "mip_generator.h"
@@ -107,7 +116,6 @@
 #include "pulsepacket_generator.h"
 #include "sinusoidal_gamma_generator.h"
 #include "sinusoidal_poisson_generator.h"
-#include "spike_generator.h"
 #include "step_current_generator.h"
 #include "step_rate_generator.h"
 
@@ -115,12 +123,9 @@
 #include "correlation_detector.h"
 #include "correlomatrix_detector.h"
 #include "correlospinmatrix_detector.h"
-#include "multimeter.h"
 #include "spike_dilutor.h"
-#include "spike_recorder.h"
 #include "spin_detector.h"
 #include "volume_transmitter.h"
-#include "weight_recorder.h"
 
 // Synapse models
 #include "bernoulli_synapse.h"
@@ -136,7 +141,6 @@
 #include "quantal_stp_synapse_impl.h"
 #include "rate_connection_delayed.h"
 #include "rate_connection_instantaneous.h"
-#include "static_synapse.h"
 #include "static_synapse_hom_w.h"
 #include "stdp_dopamine_synapse.h"
 #include "stdp_nn_pre_centered_synapse.h"
@@ -164,6 +168,7 @@
 #include "music_rate_out_proxy.h"
 #endif
 
+#endif // MINIMAL_MODEL_SET
 
 namespace nest
 {
@@ -189,6 +194,17 @@ ModelsModule::name() const
 void
 ModelsModule::init( SLIInterpreter* )
 {
+  // Minimal model set
+  kernel().model_manager.register_node_model< dc_generator >( "dc_generator" );
+  kernel().model_manager.register_node_model< iaf_psc_alpha >( "iaf_psc_alpha" );
+  kernel().model_manager.register_node_model< multimeter >( "multimeter" );
+  kernel().model_manager.register_node_model< spike_generator >( "spike_generator" );
+  kernel().model_manager.register_node_model< spike_recorder >( "spike_recorder" );
+  kernel().model_manager.register_node_model< weight_recorder >( "weight_recorder" );
+  register_connection_model< static_synapse >( "static_synapse" );
+
+#ifndef MINIMAL_MODEL_SET
+  
   // rate models with input noise
   kernel().model_manager.register_node_model< gauss_rate_ipn >( "gauss_rate_ipn" );
   kernel().model_manager.register_node_model< lin_rate_ipn >( "lin_rate_ipn" );
@@ -213,7 +229,6 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< cm_default >( "cm_default" );
 
   kernel().model_manager.register_node_model< iaf_chs_2007 >( "iaf_chs_2007" );
-  kernel().model_manager.register_node_model< iaf_psc_alpha >( "iaf_psc_alpha" );
   kernel().model_manager.register_node_model< iaf_psc_alpha_multisynapse >( "iaf_psc_alpha_multisynapse" );
   kernel().model_manager.register_node_model< iaf_psc_alpha_ps >( "iaf_psc_alpha_ps" );
   kernel().model_manager.register_node_model< iaf_psc_delta >( "iaf_psc_delta" );
@@ -236,8 +251,6 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< spike_train_injector >( "spike_train_injector" );
 
   kernel().model_manager.register_node_model< ac_generator >( "ac_generator" );
-  kernel().model_manager.register_node_model< dc_generator >( "dc_generator" );
-  kernel().model_manager.register_node_model< spike_generator >( "spike_generator" );
   kernel().model_manager.register_node_model< inhomogeneous_poisson_generator >( "inhomogeneous_poisson_generator" );
   kernel().model_manager.register_node_model< poisson_generator >( "poisson_generator" );
   kernel().model_manager.register_node_model< poisson_generator_ps >( "poisson_generator_ps" );
@@ -256,10 +269,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< spike_dilutor >(
     "spike_dilutor", /*deprecation_info*/ "a future version of NEST" );
 
-  kernel().model_manager.register_node_model< spike_recorder >( "spike_recorder" );
-  kernel().model_manager.register_node_model< weight_recorder >( "weight_recorder" );
   kernel().model_manager.register_node_model< spin_detector >( "spin_detector" );
-  kernel().model_manager.register_node_model< multimeter >( "multimeter" );
   kernel().model_manager.register_node_model< voltmeter >( "voltmeter" );
   kernel().model_manager.register_node_model< correlation_detector >( "correlation_detector" );
   kernel().model_manager.register_node_model< correlomatrix_detector >( "correlomatrix_detector" );
@@ -315,7 +325,6 @@ ModelsModule::init( SLIInterpreter* )
   register_connection_model< ht_synapse >( "ht_synapse" );
   register_connection_model< jonke_synapse >( "jonke_synapse" );
   register_connection_model< quantal_stp_synapse >( "quantal_stp_synapse" );
-  register_connection_model< static_synapse >( "static_synapse" );
   register_connection_model< static_synapse_hom_w >( "static_synapse_hom_w" );
   register_connection_model< stdp_synapse >( "stdp_synapse" );
   register_connection_model< stdp_synapse_hom >( "stdp_synapse_hom" );
@@ -337,6 +346,8 @@ ModelsModule::init( SLIInterpreter* )
   register_connection_model< RateConnectionInstantaneous >( "rate_connection_instantaneous" );
   register_connection_model< RateConnectionDelayed >( "rate_connection_delayed" );
   register_connection_model< DiffusionConnection >( "diffusion_connection" );
+
+#endif // MINIMAL_MODEL_SET  
 }
 
 } // namespace nest

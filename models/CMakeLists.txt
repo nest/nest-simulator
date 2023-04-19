@@ -17,7 +17,19 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-set(models_sources
+if ( minimal-model-set )
+  set( models_sources
+    dc_generator.h dc_generator.cpp
+    iaf_psc_alpha.h iaf_psc_alpha.cpp
+    multimeter.h multimeter.cpp
+    spike_recorder.h spike_recorder.cpp
+    spike_generator.h spike_generator.cpp
+    static_synapse.h
+    weight_recorder.h weight_recorder.cpp
+    modelsmodule.h modelsmodule.cpp
+  )
+else()
+  set( models_sources
     ac_generator.h ac_generator.cpp
     aeif_cond_alpha.h aeif_cond_alpha.cpp
     aeif_cond_alpha_multisynapse.h aeif_cond_alpha_multisynapse.cpp
@@ -139,7 +151,8 @@ set(models_sources
     vogels_sprekeler_synapse.h
     weight_recorder.h weight_recorder.cpp
     spike_dilutor.h spike_dilutor.cpp
-)
+  )
+endif()
 
 add_library(models STATIC ${models_sources})
 set_target_properties(models

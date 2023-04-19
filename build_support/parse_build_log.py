@@ -355,6 +355,10 @@ def makebuild_summary(log_filename, msg_make_section_start,
          ' ‘H5::DataSet& H5::DataSet::operator=(const H5::DataSet&)’ is deprecated [-Wdeprecated-copy]'),
         (f'{build_dir}/nestkernel/sonata_connector.cpp:281:52: warning: implicitly-declared'
          ' ‘H5::DataSet& H5::DataSet::operator=(const H5::DataSet&)’ is deprecated [-Wdeprecated-copy]'),
+        (f'{build_dir}/nestkernel/connection_manager.cpp:745:65: warning: unused parameter ‘graph_specs’'
+         ' [-Wunused-parameter]'),
+        (f'{build_dir}/nestkernel/connection_manager.cpp:745:89: warning: unused parameter ‘chunk_size’'
+         ' [-Wunused-parameter]'),
     ]
 
     with open(log_filename) as fh:

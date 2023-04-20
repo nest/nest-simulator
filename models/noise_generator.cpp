@@ -343,7 +343,7 @@ nest::noise_generator::event_hook( DSCurrentEvent& e )
   const size_t prt = e.get_port();
 
   // we handle only one port here, get reference to vector elem
-  assert( 0 <= prt and static_cast< size_t >( prt ) < B_.amps_.size() );
+  assert( prt < B_.amps_.size() );
 
   e.set_current( B_.amps_[ prt ] );
   e.get_receiver().handle( e );

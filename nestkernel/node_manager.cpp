@@ -421,8 +421,8 @@ NodeManager::get_num_thread_local_devices( size_t t ) const
 Node*
 NodeManager::get_node_or_proxy( size_t node_id, size_t t )
 {
-  assert( 0 <= t and ( t == -1 or t < kernel().vp_manager.get_num_threads() ) );
-  assert( 0 < node_id and node_id <= size() );
+  assert( t < kernel().vp_manager.get_num_threads() );
+  assert( node_id <= size() );
 
   Node* node = local_nodes_[ t ].get_node_by_node_id( node_id );
   if ( not node )

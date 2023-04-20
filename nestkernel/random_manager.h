@@ -163,7 +163,6 @@ nest::RandomManager::get_rank_synced_rng() const
 inline RngPtr
 nest::RandomManager::get_vp_synced_rng( size_t tid ) const
 {
-  assert( tid >= 0 );
   assert( tid < static_cast< size_t >( vp_specific_rngs_.size() ) );
   return vp_synced_rngs_[ tid ];
 }
@@ -171,7 +170,6 @@ nest::RandomManager::get_vp_synced_rng( size_t tid ) const
 inline RngPtr
 nest::RandomManager::get_vp_specific_rng( size_t tid ) const
 {
-  assert( tid >= 0 );
   assert( tid < static_cast< size_t >( vp_specific_rngs_.size() ) );
   return vp_specific_rngs_[ tid ];
 }

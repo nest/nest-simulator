@@ -303,7 +303,7 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
 
   // If this assertion breaks, the sender does not honor the
   // receiver port during connection or sending.
-  assert( 0 <= curr_i and curr_i <= P_.N_channels_ - 1 );
+  assert( curr_i <= P_.N_channels_ - 1 );
 
   // accept spikes only if detector was active when spike was emitted
   Time const stamp = e.get_stamp();

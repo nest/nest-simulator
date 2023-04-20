@@ -175,7 +175,6 @@ SpikeData::operator=( const SpikeData& rhs )
 inline void
 SpikeData::set( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag, const double )
 {
-  assert( 0 <= tid );
   assert( tid <= MAX_TID );
   assert( syn_id <= MAX_SYN_ID );
   assert( lcid <= MAX_LCID );

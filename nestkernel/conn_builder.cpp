@@ -897,7 +897,7 @@ nest::AllToAllBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, 
   const size_t target_thread = target->get_thread();
 
   // check whether the target is on our thread
-  if ( tid != target_thread )
+  if ( static_cast< size_t>( tid ) != target_thread )
   {
     if ( skip )
     {
@@ -1204,7 +1204,7 @@ nest::FixedInDegreeBuilder::inner_connect_( const int tid,
   const size_t target_thread = target->get_thread();
 
   // check whether the target is on our thread
-  if ( tid != target_thread )
+  if ( static_cast< size_t>( tid ) != target_thread )
   {
     // skip array parameters handled in other virtual processes
     if ( skip )
@@ -1629,7 +1629,7 @@ nest::BernoulliBuilder::inner_connect_( const int tid, RngPtr rng, Node* target,
   const size_t target_thread = target->get_thread();
 
   // check whether the target is on our thread
-  if ( tid != target_thread )
+  if ( static_cast< size_t>( tid ) != target_thread )
   {
     return;
   }

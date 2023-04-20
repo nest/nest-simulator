@@ -38,7 +38,7 @@ namespace nest
  */
 struct SourceTablePosition
 {
-  long tid;    //!< thread index
+  size_t tid;    //!< thread index
   long syn_id; //!< synapse-type index
   long lcid;   //!< local connection index
 

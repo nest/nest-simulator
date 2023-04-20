@@ -537,7 +537,7 @@ SPManager::delete_synapse( const size_t snode_id,
   const std::string se_post_name )
 {
   // get thread id
-  const int tid = kernel().vp_manager.get_thread_id();
+  const size_t tid = kernel().vp_manager.get_thread_id();
   if ( kernel().node_manager.is_local_node_id( snode_id ) )
   {
     Node* const source = kernel().node_manager.get_node_or_proxy( snode_id );

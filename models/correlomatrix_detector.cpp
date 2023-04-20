@@ -294,7 +294,7 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
 
   // If this assertion breaks, the sender does not honor the
   // receiver port during connection or sending.
-  assert( 0 <= sender and sender <= P_.N_channels_ - 1 );
+  assert( sender <= P_.N_channels_ - 1 );
 
   // accept spikes only if detector was active when spike was emitted
   Time const stamp = e.get_stamp();
@@ -340,7 +340,7 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
       for ( SpikelistType::const_iterator spike_j = otherSpikes.begin(); spike_j != otherSpikes.end(); ++spike_j )
       {
         size_t bin;
-        long other = spike_j->receptor_channel_;
+        size_t other = static_cast< size_t >( spike_j->receptor_channel_ );
         long sender_ind, other_ind;
 
         if ( spike_i < spike_j->timestep_ )

@@ -310,7 +310,7 @@ private:
 inline size_t
 correlation_detector::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
-  if ( receptor_type < 0 or receptor_type > 1 )
+  if ( receptor_type > 1 )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }

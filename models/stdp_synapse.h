@@ -109,6 +109,7 @@ EndUserDocs */
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
 
+
 template < typename targetidentifierT >
 class stdp_synapse : public Connection< targetidentifierT >
 {

@@ -46,25 +46,15 @@ namespace nest
 class RecordingDeviceNG : public NESTObjectInterface, public Device
 {
 public:
-  enum Type
-  {
-    MULTIMETER,
-    SPIKE_RECORDER,
-    SPIN_DETECTOR,
-    WEIGHT_RECORDER
-  };
-
 
   RecordingDeviceNG();
   RecordingDeviceNG( const RecordingDevice& );
 
   using Device::pre_run_hook;
-  
+
   void pre_run_hook( const std::vector< Name >&, const std::vector< Name >& );
 
   bool is_active( Time const& T ) const override;
-
-  virtual Type get_type() const = 0;
 
   const std::string& get_label() const;
 
@@ -73,7 +63,7 @@ public:
 
 protected:
   void write( const Event&, const std::vector< double >&, const std::vector< long >& );
-  void set_initialized_() override;
+  void set_initialized_();
 
 private:
   struct Parameters_

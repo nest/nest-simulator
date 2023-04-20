@@ -184,11 +184,11 @@ public:
     DELAYED_RATE_CONNECTION_GENERATOR,
   };
 
-  virtual Type
-  get_type() const
-  {
-    throw KernelException( "WORNG TYPE" );
-  };
+  // virtual Type
+  // get_type() const
+  // {
+  //   throw KernelException( "WORNG TYPE" );
+  // };
   const std::string& get_label() const;
   virtual void set_data_from_stimulation_backend( std::vector< double >& ) {};
   void update( Time const&, const long, const long ) override {};

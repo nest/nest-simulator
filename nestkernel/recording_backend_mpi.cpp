@@ -71,9 +71,9 @@ nest::RecordingBackendMPI::finalize()
 }
 
 void
-nest::RecordingBackendMPI::enroll( const RecordingDevice& device, const DictionaryDatum& )
+nest::RecordingBackendMPI::enroll( const NESTObjectInterface& device, const DictionaryDatum& )
 {
-  if ( device.get_type() == RecordingDevice::SPIKE_RECORDER )
+  if ( device.get_type().equals( nest_enum_types::RecrodingDeviceType::SPIKE_RECORDER ) )
   {
     thread tid = device.get_thread();
     index node_id = device.get_node_id();
@@ -84,7 +84,7 @@ nest::RecordingBackendMPI::enroll( const RecordingDevice& device, const Dictiona
       devices_[ tid ].erase( device_it );
     }
 
-    std::tuple< int, MPI_Comm*, const RecordingDevice* > tuple = std::make_tuple( -1, nullptr, &device );
+    std::tuple< int, MPI_Comm*, const NESTObjectInterface* > tuple = std::make_tuple( -1, nullptr, &device );
     devices_[ tid ].insert( std::make_pair( node_id, tuple ) );
     enrolled_ = true;
   }
@@ -93,9 +93,6 @@ nest::RecordingBackendMPI::enroll( const RecordingDevice& device, const Dictiona
     throw BadProperty( "Only spike detectors can record to recording backend 'mpi'." );
   }
 }
-
-
-
 
 
 void
@@ -361,9 +358,9 @@ nest::RecordingBackendMPI::set_status( const DictionaryDatum& )
 }
 
 void
-nest::RecordingBackendMPI::get_port( const RecordingDevice* device, std::string* port_name )
+nest::RecordingBackendMPI::get_port( const NESTObjectInterface* device, std::string* port_name )
 {
-  get_port( device->get_node_id(), device->get_label(), port_name );
+  get_port( device->get_node_id(), "device->get_label()", port_name );
 }
 
 void

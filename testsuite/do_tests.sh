@@ -121,10 +121,8 @@ fi
 . "$(dirname $0)/junit_xml.sh"
 . "$(dirname $0)/run_test.sh"
 
-if test -d "${REPORTDIR}"; then
-    rm -rf "${REPORTDIR}"
-fi
-mkdir "${REPORTDIR}"
+# create the report dir if it does not already exist
+mkdir -p "${REPORTDIR}"
 
 TEST_BASEDIR="${PREFIX}/share/nest/testsuite"
 TEST_LOGFILE="${REPORTDIR}/installcheck.log"

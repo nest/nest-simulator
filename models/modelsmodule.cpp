@@ -204,7 +204,7 @@ ModelsModule::init( SLIInterpreter* )
   register_connection_model< static_synapse >( "static_synapse" );
 
 #ifndef MINIMAL_MODEL_SET
-  
+
   // rate models with input noise
   kernel().model_manager.register_node_model< gauss_rate_ipn >( "gauss_rate_ipn" );
   kernel().model_manager.register_node_model< lin_rate_ipn >( "lin_rate_ipn" );
@@ -347,7 +347,7 @@ ModelsModule::init( SLIInterpreter* )
   register_connection_model< RateConnectionDelayed >( "rate_connection_delayed" );
   register_connection_model< DiffusionConnection >( "diffusion_connection" );
 
-#endif // MINIMAL_MODEL_SET  
+#endif // MINIMAL_MODEL_SET
 }
 
 } // namespace nest

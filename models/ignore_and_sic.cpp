@@ -62,8 +62,9 @@ RecordablesMap< ignore_and_sic >::create()
  * ---------------------------------------------------------------- */
 
 ignore_and_sic::Parameters_::Parameters_()
-  : phase_( 1.0 )
-  , rate_( 10. )
+  : sic_( 1.0 )
+  // : phase_( 1.0 )
+  // , rate_( 10. )
 {
 }
 
@@ -78,24 +79,31 @@ ignore_and_sic::State_::State_()
 void
 ignore_and_sic::Parameters_::get( DictionaryDatum& d ) const
 {
-  def< double >( d, names::phase, phase_ );
-  def< double >( d, names::rate, rate_ );
+  // def< double >( d, names::phase, phase_ );
+  // def< double >( d, names::rate, rate_ );
+  def< double >( d, names::SIC, sic_ );
 }
 
 void
 ignore_and_sic::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValueParam< double >( d, names::phase, phase_, node );
-  updateValueParam< double >( d, names::rate, rate_, node );
+  // updateValueParam< double >( d, names::phase, phase_, node );
+  // updateValueParam< double >( d, names::rate, rate_, node );
+  //
+  // if ( phase_ <= 0.0 or phase_> 1.0 )
+  // {
+  //   throw BadProperty( "Phase must be between 0 and 1." );
+  // }
+  //
+  // if ( rate_ <= 0.0 )
+  // {
+  //   throw BadProperty( "Firing rate must be > 0." );
+  // }
+  updateValueParam< double >( d, names::SIC, sic_, node );
 
-  if ( phase_ <= 0.0 or phase_> 1.0 )
+  if ( sic_ < 0.0 )
   {
-    throw BadProperty( "Phase must be between 0 and 1." );
-  }
-
-  if ( rate_ <= 0.0 )
-  {
-    throw BadProperty( "Firing rate must be > 0." );
+    throw BadProperty( "SIC value must be >= 0" );
   }
 }
 
@@ -133,7 +141,7 @@ ignore_and_sic::ignore_and_sic()
   , B_( *this )
 {
   recordablesMap_.create();
-  ignore_and_sic::calc_initial_variables_();
+  // ignore_and_sic::calc_initial_variables_();
 }
 
 ignore_and_sic::ignore_and_sic( const ignore_and_sic& n )
@@ -142,7 +150,7 @@ ignore_and_sic::ignore_and_sic( const ignore_and_sic& n )
   , S_( n.S_ )
   , B_( n.B_, *this )
 {
-  ignore_and_sic::calc_initial_variables_();
+  // ignore_and_sic::calc_initial_variables_();
 }
 
 /* ----------------------------------------------------------------
@@ -182,21 +190,21 @@ ignore_and_sic::update( Time const& origin, const long from, const long to )
   {
     // get read access to the correct input-buffer slot
     const index input_buffer_slot = kernel().event_delivery_manager.get_modulo( lag );
-    auto& input = B_.input_buffer_.get_values_all_channels( input_buffer_slot );
+    // auto& input = B_.input_buffer_.get_values_all_channels( input_buffer_slot );
 
     // threshold crossing
-    if ( V_.phase_steps_ == 0 )
-    {
-      V_.phase_steps_ = V_.firing_period_steps_ - 1;
-
-      set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
-      SpikeEvent se;
-      kernel().event_delivery_manager.send( *this, se, lag );
-    }
-    else
-    {
-      --V_.phase_steps_;
-    }
+    // if ( V_.phase_steps_ == 0 )
+    // {
+    //   V_.phase_steps_ = V_.firing_period_steps_ - 1;
+    //
+    //   set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+    //   SpikeEvent se;
+    //   kernel().event_delivery_manager.send( *this, se, lag );
+    // }
+    // else
+    // {
+    //   --V_.phase_steps_;
+    // }
 
     // reset all values in the currently processed input-buffer slot
     B_.input_buffer_.reset_values_all_channels( input_buffer_slot );
@@ -204,7 +212,7 @@ ignore_and_sic::update( Time const& origin, const long from, const long to )
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );
 
-    B_.sic_values[ lag ] = P_.rate_;
+    B_.sic_values[ lag ] = P_.sic_;
   }
 
   // Send SIC event

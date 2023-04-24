@@ -145,10 +145,13 @@ private:
   struct Parameters_
   {
     /** Phase. */
-    double phase_;
+    // double phase_;
 
     /** Firing rate in spikes/s. */
-    double rate_;
+    // double rate_;
+
+    /** SIC value in pA. */
+    double sic_;
 
     Parameters_(); //!< Sets default parameter values
 
@@ -216,11 +219,11 @@ private:
   /**
    * Internal variables of the model.
    */
-  struct Variables_
-  {
-    int phase_steps_;
-    int firing_period_steps_;
-  };
+  // struct Variables_
+  // {
+  //   int phase_steps_;
+  //   int firing_period_steps_;
+  // };
 
   // ----------------------------------------------------------------
 
@@ -233,19 +236,19 @@ private:
    */
   Parameters_ P_;
   State_ S_;
-  Variables_ V_;
+  // Variables_ V_;
   Buffers_ B_;
   /** @} */
 
   //! Mapping of recordables names to access functions
   static RecordablesMap< ignore_and_sic > recordablesMap_;
 
-  inline void
-  calc_initial_variables_()
-  {
-    V_.firing_period_steps_ = Time( Time::ms( 1. / P_.rate_ * 1000. ) ).get_steps();
-    V_.phase_steps_ = Time( Time::ms( P_.phase_ / P_.rate_ * 1000. ) ).get_steps();
-  }
+  // inline void
+  // calc_initial_variables_()
+  // {
+  //   V_.firing_period_steps_ = Time( Time::ms( 1. / P_.rate_ * 1000. ) ).get_steps();
+  //   V_.phase_steps_ = Time( Time::ms( P_.phase_ / P_.rate_ * 1000. ) ).get_steps();
+  // }
 
 };
 
@@ -304,7 +307,7 @@ ignore_and_sic::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   S_ = stmp;
 
-  ignore_and_sic::calc_initial_variables_();
+  // ignore_and_sic::calc_initial_variables_();
 
 }
 

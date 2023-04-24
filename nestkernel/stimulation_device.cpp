@@ -47,7 +47,7 @@ bool
 nest::StimulationDevice::is_active( const Time& T ) const
 {
   long step = T.get_steps();
-  if ( !get_type().equals( nest_enum_types::StimulationDeviceType::SPIKE_GENERATOR ) )
+  if ( get_type() != StimulationDevice::Type::SPIKE_GENERATOR )
   {
     step = step + 2;
   }

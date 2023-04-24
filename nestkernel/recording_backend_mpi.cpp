@@ -73,7 +73,8 @@ nest::RecordingBackendMPI::finalize()
 void
 nest::RecordingBackendMPI::enroll( const NESTObjectInterface& device, const DictionaryDatum& )
 {
-  if ( device.get_type().equals( nest_enum_types::RecrodingDeviceType::SPIKE_RECORDER ) )
+  
+  if ( sr )
   {
     thread tid = device.get_thread();
     index node_id = device.get_node_id();
@@ -84,7 +85,7 @@ nest::RecordingBackendMPI::enroll( const NESTObjectInterface& device, const Dict
       devices_[ tid ].erase( device_it );
     }
 
-    std::tuple< int, MPI_Comm*, const NESTObjectInterface* > tuple = std::make_tuple( -1, nullptr, &device );
+    std::tuple< int, MPI_Comm*, const NESTObjectInterface* > tuple = std::make_tuple( -1, nullptr, sr );
     devices_[ tid ].insert( std::make_pair( node_id, tuple ) );
     enrolled_ = true;
   }

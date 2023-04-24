@@ -146,7 +146,7 @@ public:
   bool is_active( Time const& T ) const override;
 
 
-  // virtual Type get_type() const = 0;
+  virtual Type get_type() const = 0;
 
   const std::string& get_label() const;
 

@@ -64,11 +64,6 @@ public:
    */
   virtual Name get_element_type() const = 0;
 
-  virtual nest_enum_types::DeviceType
-  get_type() const
-  {
-    return nest_enum_types::DeviceType();
-  }
   /**
    * Return global Network ID.
    * Returns the global network ID of the Node.

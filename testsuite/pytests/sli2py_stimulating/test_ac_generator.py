@@ -21,7 +21,7 @@
 
 """
 This testscript checks tests that the ac_generator provides the correct
-current by comparing with a neuron driven by a step-current input 
+current by comparing with a neuron driven by a step-current input
 corresponding to the current expected from the ac_generator.
 """
 

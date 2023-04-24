@@ -117,6 +117,17 @@ def test_iaf():
         [ 77          , -67.2958     ], #        spikes again (at this resolution reported with time
         [ 78          , -66.9247     ], #        stamp 7.1 ms on the grid)
         [ 79          , -66.5572     ], #  <--
+                                        #     |
+                                        #     |
+                                        #     - The simulation was run for 8.0 ms.However, in the step
+                                        #       7.9 ms -> 8.0 ms the voltmeter necessarily receives the
+                                        #       voltages that occurred at time 7.9 ms (delay h).This
+                                        #       results in different end times of the recorded voltage
+                                        #       traces at different resolutions.In the current
+                                        #       simulation kernel there is no general cure for this
+                                        #       problem.One workaround is to end the simulation script
+                                        #       with "h Simulate", thereby making the script resolution
+                                        #       dependent.
     ])
 
     tested = np.isin(vm.events["times"], expected[:, 0])

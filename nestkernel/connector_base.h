@@ -392,28 +392,32 @@ public:
     typename ConnectionT::CommonPropertiesType const& cp =
       static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties();
 
-    index lcid_offset = 0;
+    index current_lcid = lcid;
 
     while ( true )
     {
-      ConnectionT& conn = C_[ lcid + lcid_offset ];
+      ConnectionT& conn = C_[ current_lcid ];
       const bool is_disabled = conn.is_disabled();
       const bool source_has_more_targets = conn.source_has_more_targets();
 
-      e.set_port( lcid + lcid_offset );
+      e.set_port( current_lcid );
       if ( not is_disabled )
       {
+        // non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
+        // only if needed, as this is computationally costly
+        e.set_sender_node_id_info( tid, syn_id_, current_lcid );
+
         conn.send( e, tid, cp );
-        send_weight_event( tid, lcid + lcid_offset, e, cp );
+        send_weight_event( tid, current_lcid, e, cp );
       }
       if ( not source_has_more_targets )
       {
         break;
       }
-      ++lcid_offset;
+      ++current_lcid;
     }
 
-    return 1 + lcid_offset; // event was delivered to at least one target
+    return 1 + current_lcid - lcid; // event was delivered to at least one target
   }
 
   void correct_synapse_stdp_ax_delay( const SpikeData& spike_data,

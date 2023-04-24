@@ -247,6 +247,7 @@ const Name I_syn_ex( "I_syn_ex" );
 const Name I_syn_in( "I_syn_in" );
 const Name Inact_h( "Inact_h" );
 const Name Inact_p( "Inact_p" );
+const Name ignore_and_sic( "ignore_and_sic" );
 const Name indegree( "indegree" );
 const Name index_map( "index_map" );
 const Name individual_spike_trains( "individual_spike_trains" );

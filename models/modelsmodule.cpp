@@ -81,6 +81,7 @@
 #include "iaf_psc_exp_multisynapse.h"
 #include "iaf_psc_exp_ps.h"
 #include "iaf_psc_exp_ps_lossless.h"
+#include "ignore_and_sic.h"
 #include "izhikevich.h"
 #include "lin_rate.h"
 #include "mat2_psc_exp.h"
@@ -268,6 +269,8 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< correlomatrix_detector >( "correlomatrix_detector" );
   kernel().model_manager.register_node_model< correlospinmatrix_detector >( "correlospinmatrix_detector" );
   kernel().model_manager.register_node_model< volume_transmitter >( "volume_transmitter" );
+
+  kernel().model_manager.register_node_model< ignore_and_sic >( "ignore_and_sic" );
 
 #ifdef HAVE_GSL
   kernel().model_manager.register_node_model< iaf_chxk_2008 >( "iaf_chxk_2008" );

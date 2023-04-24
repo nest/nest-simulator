@@ -270,6 +270,7 @@ extern const Name I_syn_ex;
 extern const Name I_syn_in;
 extern const Name Inact_h;
 extern const Name Inact_p;
+extern const Name ignore_and_sic;
 extern const Name indegree;
 extern const Name index_map;
 extern const Name individual_spike_trains;

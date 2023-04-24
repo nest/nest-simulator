@@ -69,6 +69,6 @@ def use_set_status(model_data):
     return _get_network_state(model_instance)
 
 
-def test_network_equality(use_set_defaults, use_set_status):
+def test_set_status_vs_set_defaults(use_set_defaults, use_set_status):
     assert (use_set_defaults[0] == use_set_status[0]).all()
     assert use_set_defaults[1] == use_set_status[1]

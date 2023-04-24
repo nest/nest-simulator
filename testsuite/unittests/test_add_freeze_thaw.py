@@ -14,13 +14,14 @@ import numpy as np
 import pytest
 import nest
 
-# SLI2PY: Needs guard against single-threaded
+pytestmark = pytest.mark.skipif_missing_threads()
 
 NUM_THREADS = 4
 BLOCKSIZE = 11   # number of neurons per Create, not multiple of NUM_THREADS
 SIMTIME = 10
 I_E = -50
 VM_REF = nest.GetDefaults('iaf_psc_alpha', 'V_m')
+
 
 @pytest.fixture(scope="module")
 def prepare_kernel():

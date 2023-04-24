@@ -31,7 +31,6 @@
 
 import pytest
 import nest
-from types import SimpleNamespace  # to access dict with dot!
 
 
 def _get_network_state(nc):
@@ -48,15 +47,15 @@ def _get_network_state(nc):
 
 @pytest.fixture()
 def model_data():
-    return SimpleNamespace(**{"model": "mip_generator",  "params":  {"rate": 100.0, "p_copy": 0.5}})
+    return {"model": "mip_generator",  "params":  {"rate": 100.0, "p_copy": 0.5}}
 
 
 @pytest.fixture()
 def use_set_defaults(model_data):
     nest.ResetKernel()
     nest.set(overwrite_files=True)
-    nest.SetDefaults(model_data.model, model_data.params)
-    model_instance = nest.Create(model_data.model)
+    nest.SetDefaults(model_data["model"], model_data["params"])
+    model_instance = nest.Create(model_data["model"])
     return _get_network_state(model_instance)
 
 
@@ -64,8 +63,8 @@ def use_set_defaults(model_data):
 def use_set_status(model_data):
     nest.ResetKernel()
     nest.set(overwrite_files=True)
-    model_instance = nest.Create(model_data.model)
-    model_instance.set(**model_data.params)
+    model_instance = nest.Create(model_data["model"])
+    model_instance.set(**model_data["params"])
     return _get_network_state(model_instance)
 
 

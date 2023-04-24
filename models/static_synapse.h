@@ -188,7 +188,8 @@ template < typename targetidentifierT >
 void
 static_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
-  ConnectionBase::set_status( d, cm );
+  // TODO JV (pt): This should be uncommented again, but should not handle delays
+  // ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
 }
 

@@ -233,6 +233,11 @@ Node::handle( SpikeEvent& )
 {
   throw UnexpectedEvent( "The target node does not handle spike input." );
 }
+void
+Node::handle( CorrectionSpikeEvent& )
+{
+  throw UnexpectedEvent( "The target node does not handle spike input." );
+}
 
 port
 Node::handles_test_event( SpikeEvent&, rport )

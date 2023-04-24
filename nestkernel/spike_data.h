@@ -42,8 +42,7 @@ enum enum_status_spike_data_id
 };
 
 /**
- * Used to communicate spikes. These are the elements of the MPI
- * buffers.
+ * Used to communicate spikes. These are the elements of the MPI buffers.
  *
  * @see TargetData
  */

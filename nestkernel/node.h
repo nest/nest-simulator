@@ -467,6 +467,7 @@ public:
    * @ingroup event_interface
    */
   virtual void handle( SpikeEvent& e );
+  virtual void handle( CorrectionSpikeEvent& );
 
   /**
    * Handle incoming weight recording events.

@@ -169,6 +169,7 @@ public:
   port send_test_event( Node&, rport, synindex, bool ) override;
 
   void handle( SpikeEvent& ) override;
+  void handle( CorrectionSpikeEvent& ) override;
   void handle( CurrentEvent& ) override;
   void handle( DataLoggingRequest& ) override;
 

@@ -30,7 +30,7 @@ class TestBernoulliSynapse:
     """
 
     @pytest.mark.parametrize("seed", range(123, 133))  # test 10 different rng seeds
-    def test_bernoulli_synapse_statistics(seed: int):
+    def test_bernoulli_synapse_statistics(self, seed: int):
         r"""Measure average number of spikes transmitted by a Bernoulli synapse (static synapse with
         stochastic transmission).
 
@@ -64,8 +64,8 @@ class TestBernoulliSynapse:
 
         # connect presynaptic parrot neuron to postsynaptic parrot neuron via bernoulli_synapse with transmission
         # probability p
-        nest.Connect(pre, post, {"synapse_model": "bernoulli_synapse",
-                                 "p_transmit": p})
+        nest.Connect(pre, post, syn_spec={"synapse_model": "bernoulli_synapse",
+                                          "p_transmit": p})
 
         # connect parrot neuron to spike_recorder
         nest.Connect(post, sr)
@@ -82,7 +82,7 @@ class TestBernoulliSynapse:
         # check if error between number of spikes transmitted and mean is within the defined margin
         assert abs(mean - N_spikes_transmitted) <= margin
 
-    def test_p_transmit_values():
+    def test_p_transmit_values(self):
         r"""Test if p_transmit values are forced to lie within the range [0, 1]"""
 
         nest.ResetKernel()
@@ -90,9 +90,9 @@ class TestBernoulliSynapse:
         post = nest.Create("parrot_neuron")
 
         with pytest.raises(nest.kernel.NESTError):
-            nest.Connect(pre, post, {"synapse_model": "bernoulli_synapse",
-                                     "p_transmit": -0.1})
+            nest.Connect(pre, post, syn_spec={"synapse_model": "bernoulli_synapse",
+                                              "p_transmit": -0.1})
 
         with pytest.raises(nest.kernel.NESTError):
-            nest.Connect(pre, post, {"synapse_model": "bernoulli_synapse",
-                                     "p_transmit": 1.1})
+            nest.Connect(pre, post, syn_spec={"synapse_model": "bernoulli_synapse",
+                                              "p_transmit": 1.1})

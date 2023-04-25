@@ -2,7 +2,7 @@
 # detailed syntax defined in
 # https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions
 #
-name: "Test suite"
+name: "NEST CI"
 
 on: [push, pull_request]
 
@@ -624,6 +624,9 @@ jobs:
     needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, flake8]
     env:
       CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
+      NEST_VPATH: "build"
+      NEST_RESULT: "result"
+
     strategy:
       fail-fast: false
       matrix:

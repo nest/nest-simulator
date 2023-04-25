@@ -37,7 +37,7 @@ import pytest
 import nest
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def simulation():
     """
     Fixture for simulating the mat2_psc_exp neuron model.

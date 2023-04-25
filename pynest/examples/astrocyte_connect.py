@@ -28,7 +28,7 @@ This script tests the neuron-astrocyte connection functions.
 See Also
 ~~~~~~~~
 
-:doc:`astrocyte_network`
+:doc:`astrocyte_brunel`
 
 """
 

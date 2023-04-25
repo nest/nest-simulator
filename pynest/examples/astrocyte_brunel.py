@@ -49,6 +49,11 @@ References
 
 .. [2] Golomb, D. (2007). Neuronal synchrony measures. Scholarpedia, 2(1), 1347.
 
+See Also
+~~~~~~~~
+
+:doc:`astrocyte_connect`
+
 """
 
 ###############################################################################

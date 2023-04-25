@@ -28,7 +28,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapse
+/* BeginUserDocs: synapse, astrocyte
 
 Short description
 +++++++++++++++++
@@ -42,7 +42,7 @@ Description
 to the neuron to model a continuous current input, with amplitudes determined by
 the astrocyte. The source node of ``sic_connection`` should be ``astrocyte``,
 and the target node should be ``aeif_cond_alpha_astro``. ``sic_connection`` is
-adapted from ``gap_junction`` but unidirectional. 
+adapted from ``gap_junction`` but unidirectional.
 
 Connections of this type can be created with the ``pairwise_bernoulli_astro``
 rule, as a part of a neuron-astrocyte network.

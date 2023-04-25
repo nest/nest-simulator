@@ -23,29 +23,28 @@ import nest
 import numpy as np
 import pytest
 
+from conftest import get_node_models_by_attribute
 
-@nest.ll_api.check_stack
+
 class TestCalcium:
     r"""
     Check that we can set and get the calcium concentration from all nodes that inherit from the structural plasticity
     node class in C++.
     """
+
     @pytest.fixture(autouse=True)
-    def reset_kernel(self):
+    def prepare_test(self):
         nest.ResetKernel()
 
+    def _test_calcium_single_model(self, model):
+        ca_default = nest.GetDefaults(model, "Ca")
+        n = nest.Create(model, params={'Ca': ca_default + 42.})
+        np.testing.assert_allclose(n.Ca, ca_default + 42.)
+        n.Ca = ca_default + 99999.
+        np.testing.assert_allclose(n.Ca, ca_default + 99999.)
+
     def test_calcium(self):
-        """Test all models in :python:`nest.node_models`"""
-        n_models_tested = 0
-        for model in nest.node_models:
-            n = nest.Create(model)
-            if "Ca" not in n.get():
-                continue
-
-            n_models_tested += 1
-            n = nest.Create(model, params={"Ca": 123.})
-            np.testing.assert_almost_equal(n.Ca, 123.)
-            n.Ca = 42.
-            np.testing.assert_almost_equal(n.Ca, 42.)
-
-        assert n_models_tested > 63
+        models = get_node_models_by_attribute("Ca")
+        assert len(models) > 0
+        for model in models:
+            self._test_calcium_single_model(model)

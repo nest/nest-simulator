@@ -213,7 +213,6 @@ nest::correlospinmatrix_detector::State_::set( const DictionaryDatum&, const Par
 void
 nest::correlospinmatrix_detector::State_::reset( const Parameters_& p )
 {
-
   last_i_ = 0;
   tentative_down_ = false;
   t_last_in_spike_ = Time::neg_inf();
@@ -340,7 +339,7 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
       {
         // count this event negatively, assuming it comes as single event
         // transition 1->0
-        // assume it will stay alone, so meaning a down tansition
+        // assume it will stay alone, so meaning a down transition
 
         if ( S_.tentative_down_ ) // really was a down transition, because we
                                   // now have another event

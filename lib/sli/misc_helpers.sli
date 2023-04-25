@@ -590,7 +590,7 @@ Name: oldgetline - "old", ignorant version of getline
 Synopsis: istream getline -> istream string
 
 Description: 
-  Reads a string from the supplied stream. If an error occured
+  Reads a string from the supplied stream. If an error occurred
   during the read process, an empty string is returned.
 
   This function is for compatibility. Eventually, all

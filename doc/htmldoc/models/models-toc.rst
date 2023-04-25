@@ -1,3 +1,5 @@
+:orphan:
+
 .. _models_contents:
 
 Models contents

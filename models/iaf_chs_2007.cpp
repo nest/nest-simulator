@@ -196,7 +196,7 @@ nest::iaf_chs_2007::pre_run_hook()
 
   const double h = Time::get_resolution().get_ms();
 
-  // numbering of state vaiables: i_0 = 0, i_syn_ = 1, V_syn_ = 2, V_spike _= 3,
+  // numbering of state variables: i_0 = 0, i_syn_ = 1, V_syn_ = 2, V_spike _= 3,
   // V_m_ = 4
 
   // these P are independent
@@ -217,9 +217,6 @@ nest::iaf_chs_2007::pre_run_hook()
 void
 nest::iaf_chs_2007::update( const Time& origin, const long from, const long to )
 {
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   // evolve from timestep 'from' to timestep 'to' with steps of h each
   for ( long lag = from; lag < to; ++lag )
   {

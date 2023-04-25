@@ -297,7 +297,7 @@ class PongNetDopa(PongNet):
                          self.motor_neurons, {'rule': 'one_to_one'},
                          {"weight": self.mean_weight})
         else:
-            # Because the poisson_generators cause adtitional spikes in the
+            # Because the poisson_generators cause additional spikes in the
             # motor neurons, it is necessary to compensate for their absence by
             # slightly increasing the mean of the weights between input and
             # motor neurons

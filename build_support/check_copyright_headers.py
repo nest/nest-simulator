@@ -35,7 +35,7 @@ distinct output channels: messages meant for immediate display are
 printed to stderr using the helper function eprint(). Messages meant
 for the summary at the end of static_code_analysis.sh are printed to
 stdout instead so they can be more easily captured and only printed if
-errors occured.
+errors occurred.
 
 """
 

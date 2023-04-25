@@ -53,7 +53,7 @@ template <>
 void
 RecordablesMap< iaf_psc_exp_ps_lossless >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &iaf_psc_exp_ps_lossless::get_V_m_ );
   insert_( names::I_syn, &iaf_psc_exp_ps_lossless::get_I_syn_ );
   insert_( names::I_syn_ex, &iaf_psc_exp_ps_lossless::get_I_syn_ex_ );
@@ -315,10 +315,6 @@ nest::iaf_psc_exp_ps_lossless::pre_run_hook()
 void
 nest::iaf_psc_exp_ps_lossless::update( const Time& origin, const long from, const long to )
 {
-  assert( to >= 0 );
-  assert( static_cast< delay >( from ) < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   // at start of slice, tell input queue to prepare for delivery
   if ( from == 0 )
   {

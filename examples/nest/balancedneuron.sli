@@ -24,7 +24,7 @@
 
 ResetKernel
 
- 1000.   ms /t_relax Set % how long to wait for the state to stabiluze before reording the spikes
+ 1000.   ms /t_relax Set % how long to wait for the state to stabilize before reordering the spikes
  100000. ms /t_sim Set % how long we simulate to compute the rate (1000 sec)
  16000     /n_ex  Set % size of the excitatory population
  4000      /n_in  Set % size of the inhibitory population

@@ -29,8 +29,8 @@ r"""PyNEST - Python interface for the NEST Simulator
 
 * ``nest.synapse_models`` shows all available synapse models.
 
-* ``nest.help("model_name") displays help for the given model, e.g.,
-  ``nest.help("iaf_psc_exp")``
+* To get details on the model equations and parameters,
+  please check out our model documentation at https://nest-simulator.readthedocs.io/en/stable/models/index.html.
 
 * To get help on functions in the ``nest`` package, use Python's
   ``help()`` function or IPython's ``?``, e.g.
@@ -159,13 +159,28 @@ class NestModule(types.ModuleType):
         "float", "The minimum delay in the network", default=0.1
     )
     ms_per_tic = KernelAttribute(
-        "float", "The number of milliseconds per tic", default=0.001
+        "float",
+        (
+            "The number of milliseconds per tic. Calculated by "
+            + "ms_per_tic = 1 / tics_per_ms"
+        ),
+        readonly=True,
     )
     tics_per_ms = KernelAttribute(
-        "float", "The number of tics per millisecond", default=1000.0
+        "float",
+        (
+            "The number of tics per millisecond. Change of tics_per_ms "
+            + "requires simultaneous specification of resolution"
+        ),
+        default=1000.0
     )
     tics_per_step = KernelAttribute(
-        "int", "The number of tics per simulation time step", default=100
+        "int",
+        (
+            "The number of tics per simulation time step. Calculated by "
+            + "tics_per_step = resolution * tics_per_ms"
+        ),
+        readonly=True
     )
     T_max = KernelAttribute(
         "float", "The largest representable time value", readonly=True
@@ -319,7 +334,7 @@ class NestModule(types.ModuleType):
             + " manager will make changes in the structure of the network ("
             + " creation and deletion of plastic synapses)"
         ),
-        default=10000.0,
+        default=10000,
     )
     growth_curves = KernelAttribute(
         "list[str]",
@@ -433,6 +448,13 @@ class NestModule(types.ModuleType):
         k for k, v in vars().items() if isinstance(v, KernelAttribute) and v._readonly
     )
 
+    userdict = {}
+    """
+    The variable userdict allows users to store custom data with the NEST kernel.
+
+    Example: nest.userdict["nodes"] = [1,2,3,4]
+    """
+
 
 def _setattr_error(self, attr, val):
     """
@@ -490,6 +512,7 @@ def _lazy_module_property(module_name, optional=False, optional_hint=""):
       users install missing optional modules
     :type optional_hint: str
     """
+
     def lazy_loader(self):
         'Wrap lazy loaded property.'
         cls = type(self)

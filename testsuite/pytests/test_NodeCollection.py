@@ -269,23 +269,42 @@ class TestNodeCollection(unittest.TestCase):
         n_neurons_a = 10
         n_neurons_b = 15
         n_neurons_c = 7
+        n_neurons_d = 5
         n_a_b = n_neurons_a + n_neurons_b
         n_a_b_c = n_a_b + n_neurons_c
         nodes_a = nest.Create('iaf_psc_alpha', n_neurons_a)
         nodes_b = nest.Create('iaf_psc_alpha', n_neurons_b)
+        nodes_ba = nest.Create('iaf_psc_alpha', n_neurons_b)
+        nodes_bb = nest.Create('iaf_psc_alpha', n_neurons_b)
         nodes_c = nest.Create('iaf_psc_exp', n_neurons_c)
+        nodes_d = nest.Create('iaf_cond_alpha', n_neurons_d)
 
         node_b_a = nodes_b + nodes_a
         node_b_a_list = node_b_a.tolist()
-        test_b_a_list = (list(range(1, n_neurons_a + 1)) +
-                         list(range(n_neurons_a + 1, n_a_b + 1)))
+        test_b_a_list = nodes_b.tolist() + nodes_a.tolist()
+        test_b_a_list.sort()
         self.assertEqual(node_b_a_list, test_b_a_list)
 
         node_a_c = nodes_a + nodes_c
         node_a_c_list = node_a_c.tolist()
-        test_a_c_list = (list(range(1, n_neurons_a + 1)) +
-                         list(range(n_a_b + 1, n_a_b_c + 1)))
+        test_a_c_list = nodes_a.tolist() + nodes_c.tolist()
+        test_a_c_list.sort()
         self.assertEqual(node_a_c_list, test_a_c_list)
+
+        # Add two composite NodeCollections
+        node_a_c = nodes_a + nodes_c
+        node_b_d = nodes_b + nodes_d
+        node_abcd = node_b_d + node_a_c
+        test_abcd_list = nodes_a.tolist() + nodes_b.tolist() + nodes_c.tolist() + nodes_d.tolist()
+        test_abcd_list.sort()
+        self.assertEqual(node_abcd.tolist(), test_abcd_list)
+
+        node_a_ba = nodes_a + nodes_ba
+        node_b_bb = nodes_b + nodes_bb
+        node_aba_bbb = node_a_ba + node_b_bb
+        test_aba_bbb_list = nodes_a.tolist() + nodes_ba.tolist() + nodes_b.tolist() + nodes_bb.tolist()
+        test_aba_bbb_list.sort()
+        self.assertEqual(node_aba_bbb.tolist(), test_aba_bbb_list)
 
         nest.ResetKernel()
 

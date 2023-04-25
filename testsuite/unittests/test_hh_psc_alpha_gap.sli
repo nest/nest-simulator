@@ -85,6 +85,9 @@ neuron1 neuron2
 Connect
 vm neuron2     1.0 h Connect
 
+% The following call to GetConnections makes Simulate crash
+% or generate results containing NaNs, see #2614.
+<< >> GetConnections ; 
 
 20 Simulate
 

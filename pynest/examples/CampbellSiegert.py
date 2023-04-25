@@ -44,7 +44,7 @@ References
 Authors
 ~~~~~~~
 
-S. Schrader, Siegert implentation by T. Tetzlaff
+S. Schrader, Siegert implementation by T. Tetzlaff
 """
 
 ###############################################################################
@@ -94,7 +94,7 @@ mu = 0.0
 sigma2 = 0.0
 J = []
 
-assert(len(weights) == len(rates))
+assert len(weights) == len(rates)
 
 ###############################################################################
 # In the following we analytically compute the firing rate of the neuron

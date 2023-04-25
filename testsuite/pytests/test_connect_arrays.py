@@ -124,6 +124,7 @@ class TestConnectArrays(unittest.TestCase):
         np.testing.assert_array_almost_equal(conns.weight, weights)
         np.testing.assert_array_almost_equal(conns.delay, delays)
 
+    @unittest.skipIf(not HAVE_OPENMP, 'NEST was compiled without multi-threading')
     def test_connect_arrays_threaded(self):
         """Connecting NumPy arrays, threaded"""
         nest.local_num_threads = 2

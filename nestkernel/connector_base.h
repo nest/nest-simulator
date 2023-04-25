@@ -372,12 +372,13 @@ public:
   void
   send_to_all( const thread tid, const std::vector< ConnectorModel* >& cm, Event& e ) override
   {
+    auto const& cp = static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties();
+
     for ( size_t lcid = 0; lcid < C_.size(); ++lcid )
     {
       e.set_port( lcid );
       assert( not C_[ lcid ].is_disabled() );
-      C_[ lcid ].send(
-        e, tid, static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties() );
+      C_[ lcid ].send( e, tid, cp );
     }
   }
 

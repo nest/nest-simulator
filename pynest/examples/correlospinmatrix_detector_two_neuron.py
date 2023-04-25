@@ -25,7 +25,7 @@ Correlospinmatrix detector example
 
 This scripts simulates two connected binary neurons, similar
 as in [1]_. It measures and plots the auto- and cross covariance functions
-of the individual neurons and between them, repsectively.
+of the individual neurons and between them, respectively.
 
 References
 ~~~~~~~~~~

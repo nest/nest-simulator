@@ -74,7 +74,7 @@ This will create an environment in the folder ``conda/``. If you would like to a
 
    conda activate conda/
 
-Note that the trailing slash is required for conda not to confuse the path with a named envionment (for example when
+Note that the trailing slash is required for conda not to confuse the path with a named environment (for example when
 using ``--name``).
 
 

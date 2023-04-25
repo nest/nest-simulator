@@ -54,7 +54,7 @@ and spikes are collected only from local sources.
 
    ``spike_dilutor`` is deprecated because it does not work with multiple threads.
    To create connections that transmit spikes with a given probability, use :doc:`bernoulli_synapse <bernoulli_synapse>`
-instead.
+   instead.
 
 .. admonition:: Does not work with threads
 
@@ -137,7 +137,7 @@ private:
     Parameters_& operator=( const Parameters_& ) = default;
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   struct Buffers_
@@ -163,7 +163,6 @@ private:
 inline port
 spike_dilutor::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
 {
-
   device_.enforce_single_syn_type( syn_id );
 
   SpikeEvent e;

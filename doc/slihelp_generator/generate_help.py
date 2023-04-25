@@ -36,9 +36,9 @@ import sys
 import textwrap
 
 from writers import coll_data
-from helpers import check_ifdef, create_helpdirs, cut_it
-from helpers import delete_helpdir
-from helpers import help_generation_required
+from helpers_sli import check_ifdef, create_helpdirs, cut_it
+from helpers_sli import delete_helpdir
+from helpers_sli import help_generation_required
 
 if len(sys.argv) != 3:
     print("Usage: python3 generate_help.py <source_dir> <build_dir>")

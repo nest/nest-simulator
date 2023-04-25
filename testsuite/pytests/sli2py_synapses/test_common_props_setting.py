@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_common_props_setting
+# test_common_props_setting.py
 #
 # This file is part of NEST.
 #

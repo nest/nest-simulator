@@ -41,6 +41,7 @@ def test_simulation_completes():
                      'tau_m': 20.0,
                      't_ref': 5.0}
 
+    nest.ResetKernel()
     nest.resolution = 0.01
 
     population_plain = nest.Create('iaf_psc_delta', params=neuron_params)

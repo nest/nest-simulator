@@ -98,21 +98,21 @@ Run NEST Server
 All NEST Server operations are managed using the ``nest-server``
 command that can either be run directly:
 
-.. code-block::
+.. code-block:: text
 
    nest-server start
 
 or supplied to the execution command line for running the Docker
 container:
 
-.. code-block::
+.. code-block:: text
 
   docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -p 52425:52425 nestsim/nest:latest nest-server start
 
 The generic invocation command line for the ``nest-server`` command
 looks as follows:
 
-.. code-block::
+.. code-block:: text
 
   nest-server <command> [-d] [-h <host>] [-o] [-p <port>]
 
@@ -139,7 +139,7 @@ each rank in a multi-process NEST simulation. To prevent this from
 happening, we provide a special version of the NEST Server command for
 use with MPI. It can be run as follows:
 
-.. code-block::
+.. code-block:: text
 
     mpirun -np N nest-server-mpi [--host HOST] [--port PORT]
 

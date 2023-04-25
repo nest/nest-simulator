@@ -30,9 +30,11 @@ when another connection is created.
 import nest
 import pytest
 
+
 @pytest.fixture(autouse=True)
 def reset_kernel():
     nest.ResetKernel()
+
 
 @pytest.mark.parametrize("sort_connections", [True, False])
 def test_connections_before_after_simulate(sort_connections):
@@ -46,7 +48,9 @@ def test_connections_before_after_simulate(sort_connections):
                           })
 
     neurons = nest.Create("iaf_psc_alpha", 10)
-    nest.Connect(neurons, neurons, conn_spec={"rule": "fixed_indegree", "indegree": 2})
+    nest.Connect(neurons, neurons,
+                 conn_spec={"rule": "fixed_indegree", "indegree": 2}
+                 )
 
     connections_before = nest.GetConnections()
 
@@ -55,6 +59,7 @@ def test_connections_before_after_simulate(sort_connections):
     connections_after = nest.GetConnections()
 
     assert connections_before == connections_after
+
 
 @pytest.mark.parametrize("sort_connections", [True, False])
 def test_connect_after_simulate(sort_connections):
@@ -105,7 +110,6 @@ def test_connect_after_simulate(sort_connections):
         nest.GetConnections(target=parrot)[0].get("port") == 1
     else:
         nest.GetConnections(target=parrot)[0].get("port") == 101
-    # One spike from before, additionally 1 more spike, 
+    # One spike from before, additionally 1 more spike,
     # now 2 connections to parrot -> 3 events in total
     assert nest.GetStatus(recorder)[0]["n_events"] == 3
-

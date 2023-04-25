@@ -453,7 +453,7 @@ different amplitudes at different times.
 Example 5
 ^^^^^^^^^
 
-.. code-block::
+.. code-block:: text
 
    SLI ] /iaf_psc_alpha Create /n Set
    SLI ] /poisson_generator Create /pg Set
@@ -477,7 +477,7 @@ set ``memory``, which is also the default for all devices. Data
 stored in memory can be retrieved after the simulation using
 ``GetStatus``. To get a list of all available recording backends, run
 
-.. code-block::
+.. code-block:: text
 
     SLI ] GetKernelStatus /recording_backends get ==
 
@@ -496,7 +496,7 @@ this case.
 Example 6
 ^^^^^^^^^
 
-.. code-block::
+.. code-block:: text
 
     SLI ] /iaf_psc_alpha Create /n Set
     SLI ] /voltmeter Create /vm Set

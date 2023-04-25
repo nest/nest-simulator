@@ -61,6 +61,8 @@ SeeAlso: correlation_detector
 clear
 ResetKernel
 
+
+
 % Second test: error if uncommensurable delta_tau
 (Test 2) ==
 {

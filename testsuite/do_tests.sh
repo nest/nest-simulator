@@ -50,11 +50,10 @@ usage ()
     fi
 
     cat <<EOF
-Usage: $0 --prefix=<path> --report-dir=<path> [options]
+Usage: $0 --prefix=<path> [options]
 
 Required arguments:
     --prefix=<path>        The base installation path of NEST
-    --report-dir=<path>    The directory to store the output to
 
 Options:
     --with-python=<exe>    The Python executable to use
@@ -66,7 +65,6 @@ EOF
 }
 
 PREFIX=""
-REPORTDIR=""
 PYTHON=""
 MUSIC=""
 while test $# -gt 0 ; do
@@ -76,9 +74,6 @@ while test $# -gt 0 ; do
             ;;
         --prefix=*)
             PREFIX="$( echo "$1" | sed 's/^--prefix=//' )"
-            ;;
-        --report-dir=*)
-            REPORTDIR="$( echo "$1" | sed 's/^--report-dir=//' )"
             ;;
         --with-python=*)
             PYTHON="$( echo "$1" | sed 's/^--with-python=//' )"
@@ -95,10 +90,6 @@ done
 
 if test ! "${PREFIX:-}"; then
     usage 2 "--prefix";
-fi
-
-if test ! "${REPORTDIR:-}"; then
-    usage 2 "--report-dir";
 fi
 
 if test "${PYTHON}"; then
@@ -121,10 +112,11 @@ fi
 . "$(dirname $0)/junit_xml.sh"
 . "$(dirname $0)/run_test.sh"
 
-# create the report dir if it does not already exist
-mkdir -p "${REPORTDIR}"
-
 TEST_BASEDIR="${PREFIX}/share/nest/testsuite"
+
+# create the report dir
+REPORTDIR="$(mktemp -d -p $TEST_BASEDIR test_report_XXX)"
+
 TEST_LOGFILE="${REPORTDIR}/installcheck.log"
 TEST_OUTFILE="${REPORTDIR}/output.log"
 TEST_RETFILE="${REPORTDIR}/output.ret"

@@ -49,7 +49,7 @@ def safety_reset():
     kernel states between different test modules (test files).
 
     .. note::
-        To reset the kernel between tests inside a module, call 
+        To reset the kernel between tests inside a module, call
         `nest.ResetKernel()` within the module itself.
     """
     nest.ResetKernel()

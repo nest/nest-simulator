@@ -161,8 +161,8 @@ process-local data structures is being replaced by generic values.
 The NEST Server Client
 ----------------------
 
-The easiest way to interact with the NEST Server is the ``NEST Server
-Client`` provided in ``examples/NESTServerClient`` in the source
+The easiest way to interact with the NEST Server is the example
+client provided in ``examples/NESTServerClient`` in the source
 distribution of NEST. It can be used either by directly starting
 a Python session in that directory or installing it by running ``python3
 setup.py install`` therein. NEST itself does not have to be installed

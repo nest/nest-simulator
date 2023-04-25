@@ -22,7 +22,7 @@
 """
 Test of delay
 
-Description: This script creates a number of synapses and tests, whether min_delay and max_delay 
+This script creates a number of synapses and tests, whether min_delay and max_delay 
 are set as expected. It will report for each test separately, whether it was passed or failed
 
 """

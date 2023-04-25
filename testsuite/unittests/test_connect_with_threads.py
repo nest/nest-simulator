@@ -20,19 +20,10 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Name: testsuite::test_connect_with_threads
-
-Synopsis: (test_connect_with_threads) run -> NEST exits if test fails
-
-Description:
 This test goes through all the connection rules and test connectivity for
 a range of threads with the given rule. For each rule, we check that
 connectivity works when total number of threads ranges from 1 to 25. We should
 have more threads than targets after a while.
-
-Author: Stine B. Vennemo
-FirstVersion: June 2018
-SeeAlso:
 
 """
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# conftest.py
+# test_connect_with_threads.py
 #
 # This file is part of NEST.
 #

@@ -33,6 +33,7 @@ def test_simulation_completes():
     Create identical source and target population and connect with fixed indegree and generated weights.
     Check whether the sorted output weights of each neuron match the original input.
     """
+    nest.ResetKernel()
     nest.local_num_threads = 4
     nest.set_verbosity('M_ERROR')
 

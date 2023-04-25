@@ -25,7 +25,7 @@ Fixtures available to the entire testsuite directory.
 `skipif_missing_*` usage:
 
     import pytest
-    
+
     @pytest.mark.skipif_missing_gsl()
     def test_gsl():
         pass

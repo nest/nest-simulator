@@ -28,7 +28,6 @@
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "numerics.h"
-// #include "propagator_stability.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"

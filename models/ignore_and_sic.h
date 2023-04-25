@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ignore_and_sic_H
-#define ignore_and_sic_H
+#ifndef IGNORE_AND_SIC_H
+#define IGNORE_AND_SIC_H
 
 // Includes from nestkernel:
 #include "archiving_node.h"
@@ -45,16 +45,17 @@ Description
 +++++++++++
 
 ``ignore_and_sic`` is a surrogate model for astrocytes. It sends pre-defined
-constant SIC current. It can be used for benchmarking of neuron-astrocyte
-networks.
+constant slow inward current (SIC). It can be used for the benchmarking of
+neuron-astrocyte networks.
 
 Parameters
 ++++++++++
 
 The following parameters can be set in the status dictionary.
 
-================= ======= ======================================================
-================= ======= ======================================================
+=== ======= ======================================================
+SIC pA      Value of constant slow inward current
+=== ======= ======================================================
 
 References
 ++++++++++
@@ -79,21 +80,6 @@ Receives
 SpikeEvent, DataLoggingRequest
 
 EndUserDocs */
-
-/**
- * The present implementation uses individual variables for the
- * components of the state vector and the non-zero matrix elements of
- * the propagator. Because the propagator is a lower triangular matrix,
- * no full matrix multiplication needs to be carried out and the
- * computation can be done "in place", i.e. no temporary state vector
- * object is required.
- *
- * The template support of recent C++ compilers enables a more succinct
- * formulation without loss of runtime performance already at minimal
- * optimization levels. A future version of ignore_and_sic will probably
- * address the problem of efficient usage of appropriate vector and
- * matrix objects.
- */
 
 class ignore_and_sic : public ArchivingNode
 {
@@ -313,4 +299,4 @@ ignore_and_sic::set_status( const DictionaryDatum& d )
 
 } // namespace
 
-#endif /* #ifndef ignore_and_sic_H */
+#endif /* #ifndef IGNORE_AND_SIC_H */

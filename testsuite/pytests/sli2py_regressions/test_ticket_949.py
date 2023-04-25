@@ -22,17 +22,18 @@
 
 """TThis test ensures that Connect throws and error if one tries to create a connection with a delay
 less than the resolution."""
-import unittest
 
 import nest
+import pytest
 
 
-class TestTicket949(unittest.TestCase):
-    def test_delay_less_than_resolution_throws(self):
-        nest.ResetKernel()
-        nest.set_verbosity("M_ERROR")
-        nest.resolution = 0.25
+def test_delay_less_than_resolution_throws():
+    nest.ResetKernel()
+    nest.set_verbosity("M_ERROR")
+    nest.resolution = 0.25
 
-        population = nest.Create("iaf_psc_alpha")
-        with self.assertRaises(nest.kernel.NESTError, msg='Delay must be greater than or equal to resolution'):
-            nest.Connect(population, population, syn_spec={"delay": 0.1})
+    population = nest.Create("iaf_psc_alpha")
+    with pytest.raises(
+            nest.kernel.NESTError, match="Delay must be greater than or equal to resolution"
+    ):
+        nest.Connect(population, population, syn_spec={"delay": 0.1})

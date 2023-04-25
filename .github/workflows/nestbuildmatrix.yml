@@ -747,6 +747,27 @@ jobs:
           CHANGED_FILES: ${{ env.CHANGED_FILES }}
           #get changed files: https://github.com/marketplace/actions/get-changed-files
 
+      - name: "Initialize Matplotlibrc"
+        run: |
+          # initialize matplotlib backend
+          mkdir -p $HOME/.matplotlib
+          echo "backend : svg" > $HOME/.matplotlib/matplotlibrc
+
+      - name: "Run NEST testsuite"
+        run: |
+          pwd
+          cd "$NEST_VPATH"
+          echo "-- testsuite/ --"
+          echo "-- do_tests executable --"
+          chmod -v u+x ${NEST_RESULT}/share/nest/testsuite/do_tests.sh
+          echo
+          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+          echo "+               R U N   N E S T   T E S T S U I T E                           +"
+          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+          echo "MSGBLD0290: Running make installcheck."
+          make VERBOSE=1 installcheck
+          echo "MSGBLD0300: Make installcheck completed."
+
       - name: "Upload install and test results"
         uses: actions/upload-artifact@v3
         if: ${{ always() }}

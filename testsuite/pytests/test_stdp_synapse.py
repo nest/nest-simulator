@@ -216,10 +216,10 @@ class TestSTDPSynapse:
         Kpre = 0.
         weight = initial_weight
 
-        t_log = list()
-        w_log = list()
-        Kpre_log = list()
-        pre_spike_times = list()
+        t_log = []
+        w_log = []
+        Kpre_log = []
+        pre_spike_times = []
 
         post_spikes_delayed = post_spikes + self.dendritic_delay
 

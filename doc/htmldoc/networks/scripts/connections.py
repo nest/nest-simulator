@@ -584,7 +584,7 @@ cdict_dist_out = {'rule': 'fixed_outdegree',
                   'mask': {'circular': {'radius': 1.0}},
                   'outdegree': nest.spatial_distributions.gaussian(nest.spatial.distance, std=0.5),
                   'allow_multapses': True, 'allow_multapses': True}
-#{ end #}
+# { end #}
 
 
 # ----------------------------

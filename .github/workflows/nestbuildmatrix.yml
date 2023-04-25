@@ -21,7 +21,6 @@ jobs:
       - name: "Install Linux system dependencies"
         run: |
           python -m pip install --force-reinstall clang-format==${{ env.CLANG_REQUIRE_VERSION }}
-          clang-format --version
 
       - name: "Run clang-format..."
         run: |
@@ -65,19 +64,6 @@ jobs:
       - name: "Run rstcheck..."
         run: |
           rstcheck -r doc/
-
-  vale-action:
-    runs-on: "ubuntu-20.04"
-    steps:
-      - name: "Checkout repository content"
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: "Vale documentation linting"
-        uses: errata-ai/vale-action@v1.5.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   vale:
     runs-on: "ubuntu-20.04"
@@ -139,10 +125,6 @@ jobs:
         with:
           python-version: 3.9
 
-      - name: "Install dependencies"
-        run: |
-          pip install pydocstyle
-
       - name: "Check for unused nest::names..."
         run: |
           python build_support/check_unused_names.py
@@ -166,10 +148,9 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-        
+
       - name: "Install dependencies"
         run: |
-          #sudo apt install python3-docutils
           wget --progress=dot:mega 'https://github.com/lycheeverse/lychee/releases/download/v0.8.2/lychee-v0.8.2-x86_64-unknown-linux-gnu.tar.gz'
           echo '12c27c9b6d551aea9178080d27de75ed26125b130722153399259432f723e606  lychee-v0.8.2-x86_64-unknown-linux-gnu.tar.gz' | sha256sum -c
           tar -xzf 'lychee-v0.8.2-x86_64-unknown-linux-gnu.tar.gz'
@@ -223,72 +204,71 @@ jobs:
         run: |
           mypy pynest/
 
-  pytest-linux:
-    runs-on: "ubuntu-20.04"
-    needs: [build_linux]
-    env:
-      NEST_VPATH: "build"
-      NEST_RESULT: "result"
+  # pytest-linux:
+  #   runs-on: "ubuntu-20.04"
+  #   needs: [build_linux]
+  #   env:
+  #     NEST_VPATH: "build"
+  #     NEST_RESULT: "result"
 
-    strategy:
-      fail-fast: true
-      matrix:
-        os: ["ubuntu-20.04"]
-        cpp_compiler: ["gcc"]
+  #   strategy:
+  #     fail-fast: true
+  #     matrix:
+  #       os: ["ubuntu-20.04"]
+  #       cpp_compiler: ["gcc"]
 
-        # available use flags (all default to "OFF"):
-        use:
-          - "boost, optimize, warning"  # formerly "minimal"
-        #  - "openmp, python, gsl, ltdl, boost, optimize, warning"  # formerly "openmp_only"
-        #  - "mpi, python, gsl, ltdl, boost, optimize, warning"  # formerly "mpi_only"
-        #  - "openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning"  # formerly "full"
+  #       # available use flags (all default to "OFF"):
+  #       use:
+  #         - "boost, optimize, warning"  # formerly "minimal"
+  #       #  - "openmp, python, gsl, ltdl, boost, optimize, warning"  # formerly "openmp_only"
+  #       #  - "mpi, python, gsl, ltdl, boost, optimize, warning"  # formerly "mpi_only"
+  #       #  - "openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning"  # formerly "full"
 
-    steps:
-      - name: "Download binary artifacts"
-        uses: actions/download-artifact@v3
-        #if: '${{ matrix.NEST_BUILD_TYPE }} == "FULL"'
-        with:
-          name: "build-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.use }}"
+  #   steps:
+  #     - name: "Download binary artifacts"
+  #       uses: actions/download-artifact@v3
+  #       with:
+  #         name: "build-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.use }}"
 
-      - name: "Set up Python 3.x"
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.9
+  #     - name: "Set up Python 3.x"
+  #       uses: actions/setup-python@v4
+  #       with:
+  #         python-version: 3.9
 
-      - name: "Install dependencies"
-        run: |
-          pip install pytest pytest-cov pytest-doctestplus
+  #     - name: "Install dependencies"
+  #       run: |
+  #         pip install pytest pytest-cov pytest-doctestplus
 
-      - name: "Run pytest..."
-        run: |
-          pwd
-          ls -lisa
-          cd "$NEST_VPATH"
-          pwd
-          ls -lisa
-          pytest testsuite/pytests/
+  #     - name: "Run pytest..."
+  #       run: |
+  #         pwd
+  #         ls -lisa
+  #         cd "$NEST_VPATH"
+  #         pwd
+  #         ls -lisa
+  #         pytest testsuite/pytests/
 
-  pytest-mac:
-    runs-on: "macos-latest"
-    needs: [build_macos]
-    steps:
-      - name: "Checkout repository content"
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+  # pytest-mac:
+  #   runs-on: "macos-latest"
+  #   needs: [build_macos]
+  #   steps:
+  #     - name: "Checkout repository content"
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
 
-      - name: "Set up Python 3.x"
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.9
+  #     - name: "Set up Python 3.x"
+  #       uses: actions/setup-python@v4
+  #       with:
+  #         python-version: 3.9
 
-      - name: "Install dependencies"
-        run: |
-          pip install pytest pytest-cov pytest-doctestplus
+  #     - name: "Install dependencies"
+  #       run: |
+  #         pip install pytest pytest-cov pytest-doctestplus
 
-      - name: "Run pytest..."
-        run: |
-          pytest pynest/
+  #     - name: "Run pytest..."
+  #       run: |
+  #         pytest pynest/
 
   pylint:
     runs-on: "ubuntu-20.04"
@@ -368,7 +348,7 @@ jobs:
   sphinx-conda:
     # as close as possible to the suggested user docs build in the documentation
     runs-on: "ubuntu-20.04"
-    if: ${{ always() }}
+    if: false
     needs: [pydocstyle, rstcheck, vale]
     steps:
       - name: "Checkout repository content"
@@ -404,85 +384,6 @@ jobs:
             build/sphinx-output.log
             build/userdoc/html/
 
-  static_checks:
-    if: false
-    env:
-      xNEST_BUILD_TYPE: "STATIC_CODE_ANALYSIS"
-    runs-on: "ubuntu-20.04"
-    steps:
-      - name: "Checkout repository content"
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: "Set up Python 3.x"
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.9
-
-      - name: "Restore apt cache"
-        uses: actions/cache@v3
-        env:
-          cache-name: "apt-cache"
-        with:
-          path: |
-            !/var/cache/apt/archives/lock
-            !/var/cache/apt/archives/partial
-            /var/cache/apt
-          key: ${{ runner.os }}-system-${{ env.cache-name }}-${{ hashFiles('**/environment.yml') }}
-          restore-keys: |
-            ${{ runner.os }}-system-${{ env.cache-name }}-
-            ${{ runner.os }}-system-
-
-      - name: "Install Linux system dependencies"
-        run: |
-          sudo apt-get update
-          # https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
-          sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq libpcre3 libpcre3-dev libboost-all-dev
-          sudo apt-get install openmpi-bin libopenmpi-dev libgsl0-dev tcl8.6 tcl8.6-dev tk8.6-dev
-          sudo apt-get install libboost-filesystem-dev libboost-regex-dev libboost-wave-dev libboost-python-dev libboost-program-options-dev libboost-test-dev
-          sudo apt-get install vera++
-          sudo ldconfig
-          g++ --version
-
-      - name: "Restore pip cache"
-        env:
-          cache-name: "pip-cache"
-        uses: actions/cache@v3
-        with:
-          path: |
-            /opt/hostedtoolcache/Python/**/site-packages/*
-            $HOME/.cache/pip
-          key: ${{ runner.os }}-python-${{ env.cache-name }}-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-python-${{ env.cache-name }}-
-            ${{ runner.os }}-python-
-
-      - name: "Install Python dependencies"
-        run: |
-          python -m pip install --upgrade pip setuptools
-          # --force-reinstall required to ensure executable is linked from bin dir in PATH
-          python -m pip install --force-reinstall clang-format==13.0
-          python -c "import setuptools; print('package location:', setuptools.__file__)"
-          python -m pip install --force-reinstall --upgrade scipy 'junitparser>=2' numpy pytest pytest-timeout pytest-xdist mpi4py cython matplotlib terminaltables pandoc pandas 'pycodestyle>=2.9'
-          test \! -e "=2"   # assert junitparser is correctly quoted and '>' is not interpreted as shell redirect
-          python -c "import pytest; print('package location:', pytest.__file__)"
-          pip list
-
-      - name: "Find changed files"
-        run: |
-          echo "CHANGED_FILES<<EOF" >> $GITHUB_ENV
-          echo "$(git diff --name-only ${{ github.event.pull_request.base.sha }}..${{ github.event.after }})" >> $GITHUB_ENV
-          echo 'EOF' >> $GITHUB_ENV
-          echo "GITHUB_ENV = $GITHUB_ENV"
-          cat $GITHUB_ENV
-
-      - name: "Static Code Analysis"
-        run: build_support/ci_build.sh
-        env:
-          xNEST_BUILD_TYPE: 'STATIC_CODE_ANALYSIS'
-          CHANGED_FILES: ${{ env.CHANGED_FILES }}
-
   build_linux:
     if: ${{ always() && !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
@@ -501,14 +402,10 @@ jobs:
         # available use flags (all default to "OFF"):
         # openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning, userdoc, music
         use:
-          - "boost, optimize, warning"  # formerly "minimal"
-        #  - "openmp, python, gsl, ltdl, boost, optimize, warning"  # formerly "openmp_only"
-        #  - "mpi, python, gsl, ltdl, boost, optimize, warning"  # formerly "mpi_only"
-        #  - "openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning"  # formerly "full"
-        #include:
-        #- os: ubuntu-22.04
-        #  cpp_compiler: gcc
-        #  use: "openmp, python, gsl, ltdl, boost, optimize, warning"
+          - "boost, optimize, warning"
+          - "openmp, python, gsl, ltdl, boost, optimize, warning"
+          - "mpi, python, gsl, ltdl, boost, optimize, warning"
+          - "openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning"
 
     steps:
       - name: "Checkout repository content"
@@ -609,7 +506,6 @@ jobs:
           CMAKE_C_COMPILER_LAUNCHER: ccache
           CMAKE_CXX_COMPILER_LAUNCHER: ccache
         run: |
-          # BEGIN formerly ./build_support/ci_build.sh 2>&1 | tee ci_build.sh.log
           echo "------ Ccache statistics -----"
           ccache -p
           ccache -s
@@ -685,7 +581,6 @@ jobs:
 
       - name: "Upload binary artifacts"
         uses: actions/upload-artifact@v3
-        #if: '${{ matrix.NEST_BUILD_TYPE }} == "FULL"'
         with:
           name: "build-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.use }}"
           path: |
@@ -722,31 +617,15 @@ jobs:
         ##  use: "openmp, python, gsl, ltdl, boost, optimize, warning"
 
     steps:
-      - name: "Debug job transition"
-        run: |
-          pwd
-          ls -lsia
-
       - name: "Checkout repository content"
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: "Debug job transition"
-        run: |
-          pwd
-          ls -lsia
-
       - name: "Download binary artifacts"
         uses: actions/download-artifact@v3
-        #if: '${{ matrix.NEST_BUILD_TYPE }} == "FULL"'
         with:
           name: "build-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.use }}"
-
-      - name: "Debug job transition"
-        run: |
-          pwd
-          ls -lsia
 
       - name: "Set up Python 3.x"
         uses: actions/setup-python@v4
@@ -806,11 +685,8 @@ jobs:
       - name: "Run NEST testsuite"
         run: |
           pwd
-          ls -lsia
           cd "$NEST_VPATH"
-          ls -lisa "${NEST_VPATH}"
           echo "-- testsuite/ --"
-          ls -lisa "${NEST_RESULT}/share/nest/testsuite/"
           echo "-- do_tests executable --"
           chmod -v u+x ${NEST_RESULT}/share/nest/testsuite/do_tests.sh
           echo
@@ -821,169 +697,18 @@ jobs:
           make VERBOSE=1 installcheck
           echo "MSGBLD0300: Make installcheck completed."
 
-          # END formerly ./build_support/ci_build.sh 2>&1 | tee ci_build.sh.log
-          #
-          #python build_support/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
-
       - name: "Upload install and test results"
         uses: actions/upload-artifact@v3
         if: always()
         with:
           name: "build-logs-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.use }}"
           path: |
-            ci_build.sh.log
             install_manifest.txt
             **.log
             build/reports/**
-
-  build_linux_oldscript:
-    #if: ${{ always() && !contains(github.event.head_commit.message, 'ci skip') }}
-    if: false
-    runs-on: ${{ matrix.os }}
-    needs: [static_checks]   # clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, flake8]
-    env:
-      CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
-      NEST_VPATH: "build"
-      NEST_RESULT: "result"
-
-    strategy:
-      fail-fast: false
-      matrix:
-        os: ["ubuntu-20.04"]
-        cpp_compiler: ["gcc", "clang"]
-        NEST_BUILD_TYPE: ["MINIMAL", "MPI_ONLY", "OPENMP_ONLY", "FULL"]
-        exclude:
-          - NEST_BUILD_TYPE: "MINIMAL"
-            cpp_compiler: "clang"
-            os: "ubuntu-20.04"
-          - NEST_BUILD_TYPE: "MPI_ONLY"
-            cpp_compiler: "clang"
-            os: "ubuntu-20.04"
-          - NEST_BUILD_TYPE: "OPENMP_ONLY"
-            cpp_compiler: "clang"
-            os: "ubuntu-20.04"
-          - NEST_BUILD_TYPE: "FULL"
-            cpp_compiler: "clang"
-            os: "ubuntu-20.04"
-    steps:
-      - name: "Checkout repository content"
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: "Find changed files"
-        run: |
-          echo "CHANGED_FILES<<EOF" >>$GITHUB_ENV
-          echo "$(git diff --name-only ${{ github.event.before }}..${{ github.event.after }})" >>$GITHUB_ENV
-          echo 'EOF' >>$GITHUB_ENV
-
-      - name: "Set up Python 3.x"
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.9
-
-      - name: "Restore apt cache"
-        uses: actions/cache@v3
-        env:
-          cache-name: "apt-cache"
-        with:
-          path: |
-            !/var/cache/apt/archives/lock
-            !/var/cache/apt/archives/partial
-            /var/cache/apt
-          key: ${{ runner.os }}-system-${{ env.cache-name }}-${{ hashFiles('**/environment.yml') }}
-          restore-keys: |
-            ${{ runner.os }}-system-${{ env.cache-name }}-
-            ${{ runner.os }}-system-
-
-      - name: "Install Linux system dependencies"
-        run: |
-          sudo apt-get update
-          # https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md
-          sudo apt-get install ccache
-          sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq libpcre3 libpcre3-dev libboost-all-dev
-          sudo apt-get install openmpi-bin libopenmpi-dev libgsl0-dev tcl8.6 tcl8.6-dev tk8.6-dev
-          sudo apt-get install libboost-filesystem-dev libboost-regex-dev libboost-wave-dev libboost-python-dev libboost-program-options-dev libboost-test-dev
-          sudo ldconfig
-          g++ --version
-
-      - name: "Restore ccache"
-        # Using CCache to re-use compiled objects from prior runs that have the same
-        # source (hashed), compiler (mtime+size) and compile flags.
-        env:
-          cache-name: "ccache"
-        uses: actions/cache@v3
-        with:
-          path: |
-            $HOME/.ccache
-            .ccache
-            /home/runner/.ccache
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ matrix.NEST_BUILD_TYPE }}
-          restore-keys: |
-            ${{ runner.os }}-${{ env.cache-name }}-${{ matrix.NEST_BUILD_TYPE }}
-            ${{ runner.os }}-${{ env.cache-name }}
-            ${{ runner.os }}
-
-      - name: "Restore pip cache"
-        env:
-          cache-name: "pip-cache"
-        uses: actions/cache@v3
-        with:
-          path: |
-            /opt/hostedtoolcache/Python/**/site-packages/*
-            $HOME/.cache/pip
-          key: ${{ runner.os }}-python-${{ env.cache-name }}-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-python-${{ env.cache-name }}-
-            ${{ runner.os }}-python-
-
-      - name: "Install Python dependencies"
-        run: |
-          python -m pip install --upgrade pip setuptools
-          python -c "import setuptools; print('package location:', setuptools.__file__)"
-          python -m pip install --force-reinstall --upgrade scipy 'junitparser>=2' numpy pytest pytest-timeout pytest-xdist mpi4py cython matplotlib terminaltables pandoc pandas
-          test \! -e "=2"   # assert junitparser is correctly quoted and '>' is not interpreted as shell redirect
-          python -c "import pytest; print('package location:', pytest.__file__)"
-          pip list
-
-      - name: "Build NEST"
-        run: |
-          ccache -p
-          ccache -s
-          ccache -z
-          ./build_support/ci_build.sh 2>&1 | tee ci_build.sh.log
-          python build_support/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
-          ccache -s
-        env:
-          xNEST_BUILD_TYPE: ${{ matrix.NEST_BUILD_TYPE }}
-          CMAKE_C_COMPILER_LAUNCHER: ccache
-          CMAKE_CXX_COMPILER_LAUNCHER: ccache
-          CHANGED_FILES: ${{ env.CHANGED_FILES }}
-          #get changed files: https://github.com/marketplace/actions/get-changed-files
-
-      - name: "Upload install and test results"
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: "${{ matrix.NEST_BUILD_TYPE }}-build-logs-${{ matrix.os }}-${{ matrix.cpp_compiler }}"
-          path: |
-            ci_build.sh.log
-            install_manifest.txt
-            **.log
-            build/reports/**
-
-      - name: "Upload binary artifacts"
-        uses: actions/upload-artifact@v3
-        if: '${{ matrix.NEST_BUILD_TYPE }} == "FULL"'
-        with:
-          name: "${{ matrix.NEST_BUILD_TYPE }}-build-${{ matrix.os }}-${{ matrix.cpp_compiler }}"
-          path: |
-            build/**
-            result/**
 
   build_macos:
-    #if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
-    if: false
+    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
     needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, flake8]
     env:
@@ -1039,8 +764,78 @@ jobs:
 
       - name: "Build NEST"
         run: |
-          ./build_support/ci_build.sh 2>&1 | tee ci_build.sh.log
-          python build_support/parse_build_log.py ci_build.sh.log ${{ github.workspace }}
+          echo "------ Ccache statistics -----"
+          ccache -p
+          ccache -s
+          ccache -z
+
+          echo
+          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+          echo "+               C O N F I G U R E   N E S T   B U I L D                       +"
+          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+          echo "------ Prepare build environment ------"
+          mkdir -p "$NEST_VPATH/reports" "$NEST_RESULT"
+
+          echo "MSGBLD0232: Setting configuration variables."
+          if [ "$xNEST_BUILD_COMPILER" = "CLANG" ]; then
+              export CC=clang-11
+              export CXX=clang++-11
+          fi
+          export CXX_FLAGS="-pedantic -Wextra -Wno-unknown-pragmas -D_GLIBCXX_ASSERTIONS"
+
+          #export CXX_FLAGS="-pedantic -Wextra -D_GLIBCXX_ASSERTIONS"  # if "OPENMP_ONLY"
+
+          # Do not use -pedantic because it triggers warnings from pynestkernel
+          # that are difficult to filter automatically when parsing the log.
+          # See also https://github.com/cython/cython/pull/4687.
+          #export CXX_FLAGS="-Wextra -Wno-unknown-pragmas -D_GLIBCXX_ASSERTIONS"  # if "FULL_MACOS"
+
+          echo "----- Current environment -----"
+          env
+
+          echo "MSGBLD0235: Running CMake."
+          cd "$NEST_VPATH"
+          cmake \
+              -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
+              -DCMAKE_CXX_FLAGS="$CXX_FLAGS" \
+              -Dwith-optimize=${{ contains(matrix.use, 'optimize') && 'ON' || 'OFF' }} \
+              -Dwith-warning=${{ contains(matrix.use, 'warning') && 'ON' || 'OFF' }} \
+              -Dwith-boost=${{ contains(matrix.use, 'boost') && 'ON' || 'OFF' }} \
+              -Dwith-openmp=${{ contains(matrix.use, 'openmp') && 'ON' || 'OFF' }} \
+              -Dwith-mpi=${{ contains(matrix.use, 'mpi') && 'ON' || 'OFF' }} \
+              -Dwith-python=${{ contains(matrix.use, 'python') && 'ON' || 'OFF' }} \
+              -Dwith-python=${{ contains(matrix.use, 'music') && '$HOME/.cache/music.install' || 'OFF' }} \
+              -Dwith-gsl=${{ contains(matrix.use, 'gsl') && 'ON' || 'OFF' }} \
+              -Dwith-ltdl=${{ contains(matrix.use, 'ltdl') && 'ON' || 'OFF' }} \
+              -Dwith-readline=${{ contains(matrix.use, 'readline') && 'ON' || 'OFF' }} \
+              -Dwith-sionlib=${{ contains(matrix.use, 'sionlib') && '$HOME/.cache/sionlib.install' || 'OFF' }} \
+              -Dwith-libneurosim=${{ contains(matrix.use, 'libneurosim') && '$HOME/.cache/libneurosim.install' || 'OFF' }} \
+              ..
+
+          echo "MSGBLD0240: CMake configure completed."
+
+      - name: "Build NEST"
+        run: |
+          cd "$NEST_VPATH"
+          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+          echo "+               B U I L D   N E S T                                           +"
+          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+          echo "MSGBLD0250: Running Make."
+          make VERBOSE=1
+          echo "MSGBLD0260: Make completed."
+          echo
+          echo "------ Ccache Statistics -----"
+          ccache -s
+
+      - name: "Install NEST"
+        run: |
+          cd "$NEST_VPATH"
+          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+          echo "+               I N S T A L L   N E S T                                       +"
+          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+          echo "MSGBLD0270: Running make install."
+          make install
+          echo "MSGBLD0280: Make install completed."
         env:
           xNEST_BUILD_TYPE: ${{ matrix.NEST_BUILD_TYPE }}
           CHANGED_FILES: ${{ env.CHANGED_FILES }}
@@ -1052,26 +847,14 @@ jobs:
         with:
           name: "${{ matrix.NEST_BUILD_TYPE }}-build-logs-${{ matrix.os }}-${{ matrix.cpp_compiler }}"
           path: |
-            ci_build.sh.log
             install_manifest.txt
             **.log
             build/reports/**
 
       - name: "Upload binary artifacts"
         uses: actions/upload-artifact@v3
-        #if: '${{ matrix.NEST_BUILD_TYPE }} == "FULL"'
         with:
           name: "${{ matrix.NEST_BUILD_TYPE }}-build-${{ matrix.os }}-${{ matrix.cpp_compiler }}"
           path: |
             build/**
             result/**
-
-  build_conda:
-    if: false
-    needs: [installcheck_linux, pytest-mac]
-    uses: conda-forge/nest-simulator-feedstock/.github/workflows/nest_trigger.yml@f9a89c898b4481931fe6b587c05547b42e758e46
-    with:
-      # see https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
-      commit_name: ${{ github.ref }}
-      commit_hash: ${{ github.sha }}
-

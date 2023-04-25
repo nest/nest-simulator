@@ -28,13 +28,12 @@ below) are also declared in the corresponding implementation files and
 second if they are actually used somewhere in the code. It uses the
 variable NEST_SOURCES to determine the source directory to check.
 
-This script is supposed to be run from static_code_analysis.sh either
-during the run of the CI or invocation of check_code_style.sh.
+This script is supposed to be run from CI.
 
 In order to ease error reporting in this context, this script uses two
 distinct output channels: messages meant for immediate display are
 printed to stderr using the helper function eprint(). Messages meant
-for the summary at the end of static_code_analysis.sh are printed to
+for the summary at the end of the static code analysis are printed to
 stdout instead so they can be more easily captured and only printed if
 errors occurred.
 

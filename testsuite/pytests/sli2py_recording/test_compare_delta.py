@@ -24,6 +24,7 @@ Test that spike timings of plain and canon iaf_psc populations match empirical d
 """
 import nest
 import numpy as np
+import pytest
 
 
 def test_simulation_completes():
@@ -57,8 +58,6 @@ def test_simulation_completes():
     nest.Simulate(200.0)
 
     spike_recs = spike_recorder.get('events', ['senders', 'times'])
-    # fetch first two entries for comparison from transposed recording timeline
-    spike_log = np.vstack((spike_recs['senders'], spike_recs['times'])).T[:2]
 
-    assert (np.all(spike_log == [[2, 4.1], [1, 4.1]])
-            or np.all(spike_log == [[1, 4.1], [2, 4.1]]))
+    assert np.all(np.in1d(np.array([1, 2]), spike_recs['senders'].T[:2]))
+    assert np.all(spike_recs['times'].T[:2] == pytest.approx(4.1))

@@ -41,11 +41,13 @@ def base_setup():
     nest.SetDefaults('static_synapse', {'delay': 2.0})
     nest.Connect(pytest.n1, pytest.n2)
 
+
 def test_standard_connect():
     """
     Test base setup.
     """
     assert nest.min_delay == 2.0 and nest.max_delay == 2.0
+
 
 def test_candidate_not_reported():
     """
@@ -53,6 +55,7 @@ def test_candidate_not_reported():
     """
     nest.SetDefaults('static_synapse', {'delay': 10.0})
     assert nest.min_delay == 2.0 and nest.max_delay == 2.0
+
 
 def test_min_delay():
     """
@@ -62,12 +65,14 @@ def test_min_delay():
     nest.Connect(pytest.n2, pytest.n1)
     assert nest.min_delay == 1.0 and nest.max_delay == 2.0
 
+
 def test_connect():
     """
     Test that max_delay is changed when connecting and providing the delay in the synapse specification dictionary.
     """
     nest.Connect(pytest.n2, pytest.n1, syn_spec={'weight': 1.0, 'delay': 6.0})
     assert nest.min_delay == 2.0 and nest.max_delay == 6.0
+
 
 def test_setstatus_min_delay():
     """

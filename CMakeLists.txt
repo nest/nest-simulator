@@ -189,7 +189,7 @@ nest_check_random123()
 
 include( NestVersionInfo )
 get_version_info()
-printInfo("-- NEST version: ${NEST_VERSION_STRING}")
+printInfo("Done configuring NEST version: ${NEST_VERSION}")
 
 ################################################################################
 ##################         Enable Testing Targets             ##################

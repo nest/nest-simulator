@@ -41,7 +41,7 @@ sys.path.append(str(pathlib.Path(__file__).parent / "utilities"))
 # Ignore it during test collection
 collect_ignore = ["utilities"]
 
-import testsimulation
+import testutil, testsimulation
 
 _have_mpi = nest.ll_api.sli_func("statusdict/have_mpi ::")
 _have_gsl = nest.ll_api.sli_func("statusdict/have_gsl ::")
@@ -98,7 +98,8 @@ def simulation_class(request):
 
 @pytest.fixture
 def simulation(request):
-    sim_cls = request.getfixturevalue("simulation_class")
+    marker = request.node.get_closest_marker("simulation")
+    sim_cls = marker.args[0] if marker else testsimulation.Simulation
     sim = sim_cls(
         *(request.getfixturevalue(field.name) for field in dataclasses.fields(sim_cls))
     )
@@ -106,3 +107,7 @@ def simulation(request):
     nest.resolution = sim.resolution
     nest.local_num_threads = sim.local_num_threads
     return sim
+
+
+# Inject the root simulation fixtures into this module to be always available.
+testutil.create_dataclass_fixtures(testsimulation.Simulation, __name__)

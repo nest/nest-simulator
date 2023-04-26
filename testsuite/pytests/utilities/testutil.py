@@ -39,7 +39,7 @@ def get_comparable_timesamples(actual, expected):
     return actual[simulated_points], pytest.approx(expected[expected_points])
 
 
-def create_dataclass_fixtures(cls):
+def create_dataclass_fixtures(cls, module_name=None):
     for field, type_ in getattr(cls, "__annotations__", {}).items():
         if isinstance(field, dataclasses.Field):
             name = field.name
@@ -56,7 +56,6 @@ def create_dataclass_fixtures(cls):
             # We may be receiving a mixture of literal default values, field defaults,
             # and field default factories.
             if isinstance(attr, dataclasses.Field):
-                name = attr.name
                 if attr.default_factory is not dataclasses.MISSING:
                     default = attr.default_factory
                 else:
@@ -70,7 +69,12 @@ def create_dataclass_fixtures(cls):
                     return d
 
         setattr(
-            sys.modules[cls.__module__],
+            sys.modules[module_name or cls.__module__],
             name,
             parameter_fixture(name, default),
         )
+
+
+def use_simulation(cls):
+    # If `mark` receives one argument that is a class, it decorates that arg.
+    return pytest.mark.simulation(cls, "")

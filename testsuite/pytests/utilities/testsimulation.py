@@ -27,6 +27,3 @@ class Simulation:
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
         testutil.create_dataclass_fixtures(cls)
-
-
-testutil.create_dataclass_fixtures(Simulation)

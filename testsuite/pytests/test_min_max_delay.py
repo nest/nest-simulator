@@ -21,19 +21,32 @@
 
 
 """
-Tests whether max_delay is updated correctly.
+Tests whether max_delay and min_delay is updated correctly.
 """
+
 
 import nest
 import pytest
 
 
-def test_max_delay():
+@pytest.fixture(scope="module")
+def network():
     nest.ResetKernel()
 
-    delay = 314.1  # multiple of dt
+    max_delay = 314.1  # multiple of dt
+    min_delay = 2.5
     neuron1 = nest.Create("iaf_psc_alpha")
     neuron2 = nest.Create("iaf_psc_alpha")
-    nest.Connect(neuron1, neuron2, syn_spec={"delay": delay})
+    neuron3 = nest.Create("iaf_psc_alpha")
+    nest.Connect(neuron1, neuron2, syn_spec={"delay": min_delay})
+    nest.Connect(neuron2, neuron3, syn_spec={"delay": max_delay})
+    nest.Connect(neuron3, neuron1, syn_spec={"delay": max_delay - min_delay})
+    return {"min_delay": min_delay, "max_delay": max_delay}
 
-    assert nest.GetKernelStatus("max_delay") == delay
+
+def test_min_delay(network):
+    assert nest.GetKernelStatus("min_delay") == network["min_delay"]
+
+
+def test_max_delay(network):
+    assert nest.GetKernelStatus("max_delay") == network["max_delay"]

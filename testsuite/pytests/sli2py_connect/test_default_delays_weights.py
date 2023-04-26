@@ -40,6 +40,7 @@ def prepare_test():
     return defaults, neurons
 
 
+
 def test_default_delay_and_weight(prepare_test):
     defaults, neurons = prepare_test
     nest.Connect(neurons[0], neurons[1], "one_to_one", syn_spec={"synapse_model": "static_synapse"})
@@ -69,7 +70,8 @@ def test_non_default_weight_default_delay(prepare_test):
 
 def test_non_default_weight_and_delay(prepare_test):
     defaults, neurons = prepare_test
-    nest.Connect(neurons[0], neurons[1], "one_to_one", syn_spec={"synapse_model": "static_synapse", "weight": w, "delay": d})
+    nest.Connect(neurons[0], neurons[1], "one_to_one", syn_spec={"synapse_model": "static_synapse",
+                                                                 "weight": w, "delay": d})
     conn = nest.GetConnections(source=neurons[0])[0].get()
 
     assert w == conn["weight"]

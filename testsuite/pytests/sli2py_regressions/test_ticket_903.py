@@ -25,15 +25,21 @@
 import nest
 import numpy as np
 import pytest
+import scipy.stats
 
 
 def test_correct_rounding_distributions():
     nest.ResetKernel()
-    nest.resolution = 0.1
+    nest.resolution = 1.0
 
     population = nest.Create('iaf_psc_alpha')
-    indegree = 10000
+    indegree = 100
+    significance = 0.01
 
-    nest.Connect(population, population, syn_spec={'delay': nest.random.uniform(0.11, 0.19)},
+    nest.Connect(population, population, syn_spec={'delay': nest.random.uniform(1.1, 1.9)},
                  conn_spec={'rule': 'fixed_indegree', 'indegree': indegree})
-    assert np.mean(nest.GetConnections().delay) == pytest.approx(0.15, rel=1e-2)
+
+    delays = nest.GetConnections().delay
+
+    assert set(delays) == {1, 2}
+    assert scipy.stats.binom_test(sum(np.array(delays) == 2.0), indegree) > significance

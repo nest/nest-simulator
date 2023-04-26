@@ -30,7 +30,7 @@ class IAFPSCAlphaDCSimulation(testsimulation.Simulation):
 
 
 @pytest.mark.parametrize("weight", [1.0])
-@pytest.mark.parametrize("simulation_class", [IAFPSCAlphaDCSimulation])
+@testutil.use_simulation(IAFPSCAlphaDCSimulation)
 class TestIAFPSCAlphaDC:
     @pytest.mark.parametrize("delay", [0.1])
     def test_dc(self, simulation):

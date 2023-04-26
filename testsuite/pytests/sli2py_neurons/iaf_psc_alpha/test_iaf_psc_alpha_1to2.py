@@ -1,64 +1,66 @@
+import dataclasses
+
 import numpy as np
 import pytest
 import nest
+import testsimulation, testutil
 
 
-@pytest.fixture
-def setup_simulation(
-    simulation, resolution, weight, delay, syn_spec, n1_params, n2_params
-):
-    def setup_simulation_fixture():
-        _syn_spec = {}
-        if weight is not None:
-            _syn_spec["weight"] = weight
-        if delay is not None:
-            _syn_spec["delay"] = delay
-        _syn_spec.update(syn_spec)
-        _n1_params = {"I_e": 1450.0}
-        _n1_params.update(n1_params)
-        _n2_params = {}
-        _n2_params.update(n2_params)
+@dataclasses.dataclass
+class IAFPSCAlpha1to2Simulation(testsimulation.Simulation):
+    weight: float = 100.0
+    delay: float = None
+    min_delay: float = None
 
-        n1, n2 = simulation.neurons = nest.Create("iaf_psc_alpha", 2)
-        n1.set(_n1_params)
-        n2.set(_n2_params)
-        vm = simulation.voltmeter = nest.Create("voltmeter")
-        vm.interval = resolution
-        if delay is None:
-            nest.Connect(vm, n2)
-        else:
-            nest.Connect(vm, n2, syn_spec={"delay": delay})
-        nest.Connect(n1, n2, syn_spec=_syn_spec)
+    def __post_init__(self):
+        self.syn_spec = {"weight": self.weight}
+        if self.delay is not None:
+            self.syn_spec["delay"] = self.delay
 
-    return setup_simulation_fixture
+    def setup(self):
+        n1, n2 = self.neurons = nest.Create("iaf_psc_alpha", 2)
+        n1.I_e = 1450.0
+        vm = self.voltmeter = nest.Create("voltmeter")
+        vm.interval = self.resolution
+        vm_spec = {}
+        if self.delay is not None:
+            vm_spec["delay"] = self.delay
+        nest.Connect(vm, n2, syn_spec=vm_spec)
+        nest.Connect(n1, n2, syn_spec=self.syn_spec)
 
 
 @pytest.mark.parametrize("resolution", [0.1, 0.2, 0.5, 1.0])
+@testutil.use_simulation(IAFPSCAlpha1to2Simulation)
 class TestIAFPSCAlpha1to2WithMultiRes:
-    def test_1to2(self, simulate):
-        _, results = simulate()
-        self._utils.get_comparable_timesamples(results, expect_default)
+    @pytest.mark.parametrize("delay", [1.0])
+    def test_1to2(self, simulation):
+        simulation.setup()
 
-    # Set the `delay` parameter to `None` so that it isn't set by the `iaf_1to2` fixture
-    @pytest.mark.parametrize("delay", [None])
-    def test_default_delay(self, simulate, delay):
-        # Instead, set the default delay here.
+        results = simulation.simulate()
+
+        actual, expected = testutil.get_comparable_timesamples(results, expect_default)
+        assert actual == expected
+
+    def test_default_delay(self, simulation):
         nest.SetDefaults("static_synapse", {"delay": 1.0})
-        _, results = simulate()
-        self._utils.get_comparable_timesamples(results, expect_default)
+        simulation.setup()
 
-    @pytest.fixture(autouse=True)
-    def use_utils(self, testutils):
-        self._utils = testutils
+        results = simulation.simulate()
+
+        actual, expected = testutil.get_comparable_timesamples(results, expect_default)
+        assert actual == expected
 
 
+@testutil.use_simulation(IAFPSCAlpha1to2Simulation)
 @pytest.mark.parametrize("delay,resolution", [(2.0, 0.1)])
 @pytest.mark.parametrize("min_delay", [0.1, 0.5, 2.0])
-def test_mindelay_invariance(simulate, min_delay, delay, testutils):
-    assert min_delay <= delay
-    nest.set(min_delay=min_delay, max_delay=delay)
-    _, results = simulate()
-    testutils.get_comparable_timesamples(results, expect_inv)
+def test_mindelay_invariance(simulation):
+    assert simulation.min_delay <= simulation.delay
+    nest.set(min_delay=simulation.min_delay, max_delay=simulation.delay)
+    simulation.setup()
+    results = simulation.simulate()
+    actual, expected = testutil.get_comparable_timesamples(results, expect_inv)
+    assert actual == expected
 
 
 expect_default = np.array(

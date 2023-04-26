@@ -20,6 +20,9 @@
  *
  */
 
+% SLI2PY: see also all corresponding test_free_mask_*
+% SLI2PYComplexity: Low
+
 
 % Doughnut mask, outer radius 0.25, inner radius 0.1
 %

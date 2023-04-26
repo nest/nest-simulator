@@ -26,9 +26,9 @@ Test that correct delays and weights are set if synaptic defaults are given or o
 import nest
 import pytest
 
-
 default_delay = nest.GetDefaults("static_synapse", "delay")
 default_weight = nest.GetDefaults("static_synapse", "weight")
+
 
 @pytest.mark.parametrize('wd_spec, w_expect, d_expect',
                          [[{}, default_weight, default_delay],

@@ -1,21 +1,23 @@
-#  ticket-754.py
+# -*- coding: utf-8 -*-
 #
-#  This file is part of NEST.
+# ticket_754.py
 #
-#  Copyright (C) 2004 The NEST Initiative
+# This file is part of NEST.
 #
-#  NEST is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 of the License, or
-#  (at your option) any later version.
+# Copyright (C) 2004 The NEST Initiative
 #
-#  NEST is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
+# NEST is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #
-#  You should have received a copy of the GNU General Public License
-#  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+# NEST is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 Test that rng_seed and rng_type is handled correctly also in connection with changing VP numbers.
@@ -42,7 +44,7 @@ def test_confirm_base_seed():
 
     assert nest.rng_seed == DEFAULT_SEED and nest.rng_type == DEFAULT_RNG_TYPE
 
-    
+
 def test_reset_kernel_resets_seed():
     """
     Ensure that ResetKernel returns to default seed.
@@ -62,7 +64,7 @@ class TestSeedingAndProcSetting:
     """
 
     NUM_PROCS = 2
-    
+
     def test_default_seed_after_proc_change(self, proc_param_name):
         """
         Test that just setting process number retains default seed and type.
@@ -109,7 +111,7 @@ class TestRngTypeAndProcSetting:
     """
 
     NUM_PROCS = 2
-    
+
     def test_set_procs_then_rng_type(self, proc_param_name):
         """
         Test that changing number of processes and then changing rng type and gives correct rng type.

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_max_delay.py
+# test_min_max_delay.py
 #
 # This file is part of NEST.
 #

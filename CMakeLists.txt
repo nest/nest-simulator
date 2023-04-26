@@ -183,17 +183,10 @@ nest_check_have_std_nan()
 nest_check_have_std_isnan()
 nest_check_random123()
 
-################################################################################
-##################           Create version string            ##################
-################################################################################
-
 include( NestVersionInfo )
 get_version_info()
 printInfo("Done configuring NEST version: ${NEST_VERSION}")
 
-################################################################################
-##################         Enable Testing Targets             ##################
-################################################################################
 enable_testing()
 set( TEST_OPTS "" )
 

@@ -1,0 +1,76 @@
+import dataclasses
+import numpy as np
+import pytest
+import sys
+
+
+def parameter_fixture(name, default_factory=lambda: None):
+    return pytest.fixture(autouse=True, name=name)(
+        lambda request: getattr(request, "param", default_factory())
+    )
+
+
+def isin_approx(A, B, tol=1e-06):
+    A = np.asarray(A)
+    B = np.asarray(B)
+
+    Bs = np.sort(B)  # skip if already sorted
+    idx = np.searchsorted(Bs, A)
+
+    linvalid_mask = idx == len(B)
+    idx[linvalid_mask] = len(B) - 1
+    lval = Bs[idx] - A
+    lval[linvalid_mask] *= -1
+
+    rinvalid_mask = idx == 0
+    idx1 = idx - 1
+    idx1[rinvalid_mask] = 0
+    rval = A - Bs[idx1]
+    rval[rinvalid_mask] *= -1
+    return np.minimum(lval, rval) <= tol
+
+
+def get_comparable_timesamples(actual, expected):
+    simulated_points = isin_approx(actual[:, 0], expected[:, 0])
+    expected_points = isin_approx(expected[:, 0], actual[:, 0])
+    assert (
+        len(actual[simulated_points]) > 0
+    ), "The recorded data did not contain any relevant timesamples"
+    return actual[simulated_points], pytest.approx(expected[expected_points])
+
+
+def create_dataclass_fixtures(cls):
+    for field, type_ in getattr(cls, "__annotations__", {}).items():
+        if isinstance(field, dataclasses.Field):
+            name = field.name
+            if field.default_factory is not dataclasses.MISSING:
+                default = field.default_factory
+            else:
+
+                def default(d=field.default):
+                    return d
+
+        else:
+            name = field
+            attr = getattr(cls, field)
+            # We may be receiving a mixture of literal default values, field defaults,
+            # and field default factories.
+            if isinstance(attr, dataclasses.Field):
+                name = attr.name
+                if attr.default_factory is not dataclasses.MISSING:
+                    default = attr.default_factory
+                else:
+
+                    def default(d=attr.default):
+                        return d
+
+            else:
+
+                def default(d=attr):
+                    return d
+
+        setattr(
+            sys.modules[cls.__module__],
+            name,
+            parameter_fixture(name, default),
+        )

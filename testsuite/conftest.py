@@ -30,10 +30,16 @@ Fixtures available to the entire testsuite directory.
     def test_gsl():
         pass
 """
+import dataclasses
+import pathlib
 
 import pytest
 import nest
-import numpy as np
+import sys
+
+sys.path.append(str(pathlib.Path(__file__).parent / "utilities"))
+
+import testutil, testsimulation
 
 _have_mpi = nest.ll_api.sli_func("statusdict/have_mpi ::")
 _have_gsl = nest.ll_api.sli_func("statusdict/have_gsl ::")
@@ -68,34 +74,27 @@ def skipif_missing_threads(request):
         pytest.skip("skipped because missing multithreading support.")
 
 
-@pytest.fixture()
-def testutils():
-    class NestTestUtils:
-        @staticmethod
-        def np_isin_approx(A, B, tol=1e-06):
-            A = np.asarray(A)
-            B = np.asarray(B)
+@pytest.fixture(autouse=True)
+def simulation_class(request):
+    return getattr(request, "param", testsimulation.Simulation)
 
-            Bs = np.sort(B)  # skip if already sorted
-            idx = np.searchsorted(Bs, A)
 
-            linvalid_mask = idx == len(B)
-            idx[linvalid_mask] = len(B) - 1
-            lval = Bs[idx] - A
-            lval[linvalid_mask] *= -1
+@pytest.fixture
+def simulation(request):
+    sim_cls = request.getfixturevalue("simulation_class")
+    sim = sim_cls(
+        *(request.getfixturevalue(field.name) for field in dataclasses.fields(sim_cls))
+    )
+    nest.ResetKernel()
+    nest.resolution = sim.resolution
+    nest.local_num_threads = sim.local_num_threads
+    return sim
 
-            rinvalid_mask = idx == 0
-            idx1 = idx - 1
-            idx1[rinvalid_mask] = 0
-            rval = A - Bs[idx1]
-            rval[rinvalid_mask] *= -1
-            return np.minimum(lval, rval) <= tol
 
-        def assert_expected_table(self, actual, expected):
-            # Compare the time points that were simulated given the resolution.
-            simulated_points = self.np_isin_approx(actual[:, 0], expected[:, 0])
-            expected_points = self.np_isin_approx(expected[:, 0], actual[:, 0])
-            assert len(actual[simulated_points]) > 0, "The recorded data did not contain any relevant timesamples"
-            assert actual[simulated_points] == pytest.approx(expected[expected_points])
-
-    return NestTestUtils()
+for field in dataclasses.fields(testsimulation.Simulation):
+    globals()[field.name] = testutil.parameter_fixture(
+        field.name,
+        field.default_factory
+        if field.default_factory is not dataclasses.MISSING
+        else lambda d=field.default: d,
+    )

@@ -32,11 +32,11 @@ def prepare():
     nest.ResetKernel()
 
 
-def test_synapse_settings_unchanged_after_usage_in_connection():
+def test_synapse_defaults_unchanged_after_usage_in_connection():
     synapse_defaults = nest.GetDefaults("static_synapse")
 
-    synapse = nest.Create("iaf_psc_exp_multisynapse", params={"tau_syn": [0.1, 0.2]})
-    nest.Connect(synapse, synapse,
+    population = nest.Create("iaf_psc_exp_multisynapse", params={"tau_syn": [0.1, 0.2]})
+    nest.Connect(population, population,
                  syn_spec={'synapse_model': 'static_synapse', 'delay': 2.3, 'weight': 1234., 'receptor_type': 2},
                  conn_spec={'rule': 'one_to_one'})
 
@@ -47,12 +47,12 @@ def test_synapse_settings_unchanged_after_usage_in_connection():
         assert synapse_defaults[param] == updated_synapse_defaults[param]
 
 
-def test_synapse_settings_unchanged_after_usage_in_connection_with_error():
+def test_synapse_defaults_unchanged_after_usage_in_connection_with_error():
     synapse_defaults = nest.GetDefaults("static_synapse")
 
-    synapse = nest.Create("iaf_psc_exp_multisynapse", params={"tau_syn": [0.1, 0.2]})
+    population = nest.Create("iaf_psc_exp_multisynapse", params={"tau_syn": [0.1, 0.2]})
     try:
-        nest.Connect(synapse, synapse,
+        nest.Connect(population, population,
                      syn_spec={'synapse_model': 'static_synapse', 'delay': 2.3, 'weight': 1234., 'receptor_type': 5},
                      conn_spec={'rule': 'one_to_one'})
     except nest.NESTErrors.IncompatibleReceptorType:
@@ -64,11 +64,11 @@ def test_synapse_settings_unchanged_after_usage_in_connection_with_error():
         assert synapse_defaults[param] == updated_synapse_defaults[param]
 
 
-def test_synapse_settings_unchanged_after_usage_in_connection_with_additional_parameters():
+def test_synapse_defaults_unchanged_after_usage_in_connection_with_additional_parameters():
     synapse_defaults = nest.GetDefaults("stdp_synapse")
 
-    synapse = nest.Create("iaf_psc_exp_multisynapse", params={"tau_syn": [0.1, 0.2]})
-    nest.Connect(synapse, synapse,
+    population = nest.Create("iaf_psc_exp_multisynapse", params={"tau_syn": [0.1, 0.2]})
+    nest.Connect(population, population,
                  syn_spec={'synapse_model': 'stdp_synapse', 'delay': 2.3, 'weight': 1234., 'receptor_type': 2,
                            'alpha': 7., 'lambda': 0.05, 'mu_minus': 2., 'mu_plus': 3., 'tau_plus': 50., 'Wmax': 99.},
                  conn_spec={'rule': 'one_to_one'})

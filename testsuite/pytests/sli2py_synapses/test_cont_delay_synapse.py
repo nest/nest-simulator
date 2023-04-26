@@ -52,21 +52,12 @@ def run_simulation(resolution, delay, explicit=False):
     return actual_spike_times
 
 
-def test_delay_compatible_with_resolution(prepare_kernel):
-    expected_spike_times = [3.0, 6.5]
-    actual_spike_times = run_simulation(1.0, 1.0)
-    np.testing.assert_array_equal(actual_spike_times, expected_spike_times)
-
-
-def test_delay_not_compatible_with_resolution(prepare_kernel):
-    expected_spike_times = [3.7, 7.2]
-    actual_spike_times = run_simulation(1.0, 1.7)
-    np.testing.assert_array_equal(actual_spike_times, expected_spike_times)
-
-
-def test_delay_not_compatible_with_resolution_explicit(prepare_kernel):
-    expected_spike_times = [3.7, 7.2]
-    actual_spike_times = run_simulation(1.0, 1.7, explicit=True)
+@pytest.mark.parametrize("expected_spike_times, resolution, delay, explicit",
+                         [[[3.0, 6.5], 1.0, 1.0, False],
+                          [[3.7, 7.2], 1.0, 1.7, False],
+                          [[3.7, 7.2], 1.0, 1.7, True]])
+def test_delay_compatible_with_resolution(prepare_kernel, expected_spike_times, resolution, delay, explicit):
+    actual_spike_times = run_simulation(resolution, delay, explicit)
     np.testing.assert_array_equal(actual_spike_times, expected_spike_times)
 
 

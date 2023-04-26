@@ -32,11 +32,27 @@ Fixtures available to the entire testsuite directory.
 """
 
 import pytest
+
 import nest
 
 _have_mpi = nest.ll_api.sli_func("statusdict/have_mpi ::")
 _have_gsl = nest.ll_api.sli_func("statusdict/have_gsl ::")
 _have_threads = nest.ll_api.sli_func("statusdict/threading ::") != "no"
+
+
+@pytest.fixture(scope="module", autouse=True)
+def safety_reset():
+    """
+    Reset the NEST kernel for each module.
+
+    This fixture only applies on the module level. It prevents leakage of
+    kernel states between different test modules (test files).
+
+    .. note::
+        To reset the kernel between tests inside a module, call
+        `nest.ResetKernel()` within the module itself.
+    """
+    nest.ResetKernel()
 
 
 @pytest.fixture(autouse=True)

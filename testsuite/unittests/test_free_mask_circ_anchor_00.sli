@@ -20,6 +20,12 @@
  *
  */
 
+% SLI2PY: Check against PyNEST spatial tests
+% SLI2PY: Generate reference data instead of writing out explicitly
+% SLI2PY: approximate comparisons
+% SLI2PY: consider combining with all test_free_mask_* files via parametrization
+% SLI2PY: see also all corresponding test_free_mask_*
+% SLI2PYComplexity: Low
 
 % Circular mask, radius 0.25
 %

@@ -20,6 +20,9 @@
  *
  */
 
+% SLI2PY: See other gif tests
+% SLI2PYComplexity: Low
+
  /** @BeginDocumentation
 Name: testsuite::test_gif_psc_exp - sli script for test of gif_psc_exp with
       external DC current and spike generators

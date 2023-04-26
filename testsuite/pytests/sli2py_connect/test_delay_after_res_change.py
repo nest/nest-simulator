@@ -38,39 +38,41 @@ def reset_kernel():
 
     nest.ResetKernel()
 
+
 def test_change_to_high_resolution():
     """
-    Test that min delay, max delay and default delay are not changed 
+    Test that min delay, max delay and default delay are not changed
     when increasing the resolution.
     """
-    
+
     nest.SetKernelStatus({'resolution': 0.1,
-                          'min_delay': 2.1, 
+                          'min_delay': 2.1,
                           'max_delay': 12.3})
     nest.SetKernelStatus({'resolution': 0.001})
 
     nest.SetDefaults('static_synapse', {'delay': 3.5})
-    
+
     assert nest.min_delay == 2.1 and nest.max_delay == 12.3
     assert nest.GetDefaults('static_synapse')['delay'] == 3.5
+
 
 def test_change_to_low_resolution():
     """
     Test that min delay, max delay and default delay are rounded accordingly
     when decreasing the resolution.
+    Note: min delay is always rounded down, max delay is always rounded up.
     """
 
     nest.SetKernelStatus({'resolution': 0.1,
-                          'min_delay': 2.1, 
+                          'min_delay': 2.1,
                           'max_delay': 12.3})
-
     nest.resolution = 1.0
-    print(nest.min_delay)
 
     nest.SetDefaults('static_synapse', {'delay': 3.5})
 
-    assert nest.min_delay == 3.0 and nest.max_delay == 13.0
+    assert nest.min_delay == 2.0 and nest.max_delay == 13.0
     assert nest.GetDefaults('static_synapse')['delay'] == 4.0
+
 
 def test_change_tics_per_ms():
     """
@@ -79,8 +81,8 @@ def test_change_tics_per_ms():
     """
 
     nest.SetKernelStatus({'tics_per_ms': 10000,
-                          'resolution': 0.001, 
-                          'min_delay': 2.1, 
+                          'resolution': 0.001,
+                          'min_delay': 2.1,
                           'max_delay': 12.3})
 
     nest.SetDefaults('static_synapse', {'delay': 3.5})

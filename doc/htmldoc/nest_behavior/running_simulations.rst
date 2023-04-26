@@ -103,6 +103,12 @@ extrema too wide without need leads to decreased performance due to more
 update calls and communication cycles (small *dmin*), or increased
 memory consumption of NEST (large *dmax*).
 
+Delays after changes in resolution
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+When the resolution is changed *dmin*, *dmax*, as well as the time-based model defaults are adjusted to match the new resolution. In case the new resolution is lower than the precision of these delays, *dmin* is rounded down, *dmax* is rounded up and the time-based model defaults are rounded mathematically. When the new resolution value is larger than a time-based model default, this value is set to the new resolution.
+
+Note that delays cannot be smaller than the resolution. Further, the resolution cannot be changed once model defaults have been changed or connections have been created.
+
 Spike generation and precision
 ------------------------------
 

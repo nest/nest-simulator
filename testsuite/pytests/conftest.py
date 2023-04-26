@@ -31,8 +31,6 @@ Fixtures available to the entire testsuite directory.
         pass
 """
 import dataclasses
-import pathlib
-
 import pytest
 import nest
 import sys
@@ -43,7 +41,7 @@ sys.path.append(str(pathlib.Path(__file__).parent / "utilities"))
 # Ignore it during test collection
 collect_ignore = ["utilities"]
 
-import testutil, testsimulation
+import testsimulation
 
 _have_mpi = nest.ll_api.sli_func("statusdict/have_mpi ::")
 _have_gsl = nest.ll_api.sli_func("statusdict/have_gsl ::")

@@ -32,8 +32,14 @@ Fixtures available to the entire testsuite directory.
 """
 
 import pytest
-
 import nest
+import sys
+import pathlib
+
+# Make all modules in the `utilities` folder available to import in any test
+sys.path.append(str(pathlib.Path(__file__).parent / "utilities"))
+# Ignore it during test collection
+collect_ignore = ["utilities"]
 
 _have_mpi = nest.ll_api.sli_func("statusdict/have_mpi ::")
 _have_gsl = nest.ll_api.sli_func("statusdict/have_gsl ::")

@@ -38,10 +38,6 @@ def prepare():
     nest.ResetKernel()
 
 
-def _slice(dict, keys):
-    return {a: dict[a] for a in keys if a in dict}
-
-
 def test_changing_params():
     new_params = {"delta_tau": 2.0, "tau_max": 20.0}
 
@@ -51,8 +47,8 @@ def test_changing_params():
     nest.SetDefaults("correlation_detector", new_params)
     modified_model_instance = nest.Create("correlation_detector")
 
-    original = _slice(original_model_instance.get(), new_params.keys())
-    modified = _slice(modified_model_instance.get(), new_params.keys())
+    original = original_model_instance.get(new_params.keys())
+    modified = modified_model_instance.get(new_params.keys())
 
     assert modified == original
 

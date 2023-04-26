@@ -86,7 +86,36 @@ def test_multimeter_freeze():
         nest.Create('multimeter', params={'frozen': True})
 
 
-def test_simulate_with_freeze_thaw():
+@pytest.mark.parametrize(
+    ('num_neurons',),
+    [
+        (1,),
+        (2,),
+    ]
+)
+def test_simulate_with_freeze_thaw(num_neurons):
     """
     """
-    pass
+
+    nest.ResetKernel()
+
+    nc = nest.Create('iaf_psc_alpha', num_neurons, params={'I_e': 50.})
+    mm = nest.Create('multimeter', params={'interval': 0.5,
+                                           'record_from': ['V_m'],
+                                           'time_in_steps': True})
+
+    nest.Connect(mm, nc)
+
+    print(nc)
+    print(nc[0])
+    # Simulate with freeze/thaw
+    nc[0].frozen = True
+    nest.Simulate(5.)
+    nc[0].frozen = False
+    nest.Simulate(5.)
+    nc[0].frozen = True
+    nest.Simulate(5.)
+    nc[0].frozen = False
+    nest.Simulate(5.)
+
+    mm

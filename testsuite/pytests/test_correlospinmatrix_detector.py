@@ -26,12 +26,11 @@ import numpy as np
 
 
 def test_correlospinmatrix_detector():
-    """Expected output
-
-    The output send to std::cout is a superposition of the output of
-    the voltmeter and the spike recorder. Both, voltmeter and spike
-    detector are connected to the same neuron.
+    """Checks that the correlospinmatrix_detector computes
+    the expected raw correlation matrix.
     """
+
+    nest.ResetKernel()
 
     # 3-tensor of correlation functions
     expected_corr = np.array(
@@ -57,8 +56,8 @@ def test_correlospinmatrix_detector():
 
     csd.set(N_channels=3,  tau_max=10.,  delta_tau=1.)
 
-    sg1.set(spike_times=[10., 10., 16.])
-    sg2.set(spike_times=[15., 15., 20.])
+    sg1.set(spike_times=[10., 10., 16.])  # binary pulse starting at 10. ending at 16.
+    sg2.set(spike_times=[15., 15., 20.])  # binary pulse starting at 15. ending at 20.
 
     # one final event needed so that last down transition will be detected
     sg3.set(spike_times=[25.])

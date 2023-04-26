@@ -18,7 +18,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: "Install Linux system dependencies"
+      - name: "Instal dependencies"
         run: |
           python -m pip install --force-reinstall clang-format==${{ env.CLANG_REQUIRE_VERSION }}
 
@@ -196,7 +196,7 @@ jobs:
         with:
           python-version: 3.9
 
-      - name: "Install Linux system dependencies"
+      - name: "Install dependencies"
         run: |
           pip install mypy matplotlib numpy scipy data-science-types
 
@@ -283,7 +283,7 @@ jobs:
         with:
           python-version: 3.9
 
-      - name: "Install Linux system dependencies"
+      - name: "Install dependencies"
         run: |
           pip install pylint
 
@@ -385,7 +385,7 @@ jobs:
             build/userdoc/html/
 
   build_linux:
-    if: ${{ always() && !contains(github.event.head_commit.message, 'ci skip') }}
+    if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
     needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, flake8]
     env:
@@ -395,9 +395,9 @@ jobs:
 
     strategy:
       fail-fast: false
-      matrix: # &buildmatrix   # when enabled raises WorkflowError: Anchors are not currently supported. Remove the anchor 'buildmatrix'
+      matrix:
         os: ["ubuntu-20.04"]
-        cpp_compiler: ["gcc"]   #, "clang"]
+        cpp_compiler: ["gcc"]
 
         # available use flags (all default to "OFF"):
         # openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning, userdoc, music
@@ -610,14 +610,6 @@ jobs:
             **.log
             build/reports/**
 
-      # - name: "Upload binary artifacts"
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: "build-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.use }}"
-      #     path: |
-      #       build/**
-      #       result/**
-
   build_macos:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
@@ -777,11 +769,3 @@ jobs:
             install_manifest.txt
             **.log
             build/reports/**
-
-      # - name: "Upload binary artifacts"
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: "${{ matrix.NEST_BUILD_TYPE }}-build-${{ matrix.os }}-${{ matrix.cpp_compiler }}"
-      #     path: |
-      #       build/**
-      #       result/**

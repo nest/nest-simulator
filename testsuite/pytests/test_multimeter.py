@@ -22,9 +22,17 @@
 import pytest
 import nest
 
+"""
+TODO:
+test_multimeter_support.sli
+test_multimeter_freeze_thaw.sli
+test_multimeter_offset.sli
+test_multimeter_stepping.sli
+"""
+
 
 @pytest.fixture
-def _set_resolution():
+def set_resolution():
     """
     Set resolution to power of two to avoid rounding issues.
     """
@@ -38,7 +46,7 @@ models = (model for model in nest.node_models if nest.GetDefaults(model).get('re
 
 
 @pytest.mark.parametrize('model', models)
-def test_recordables_are_recorded(_set_resolution, model):
+def test_recordables_are_recorded(set_resolution, model):
     """
     Test that recordables are recorded.
 
@@ -76,3 +84,9 @@ def test_multimeter_freeze():
     nest.Create('multimeter', params={'frozen': False})
     with pytest.raises(Exception):
         nest.Create('multimeter', params={'frozen': True})
+
+
+def test_simulate_with_freeze_thaw():
+    """
+    """
+    pass

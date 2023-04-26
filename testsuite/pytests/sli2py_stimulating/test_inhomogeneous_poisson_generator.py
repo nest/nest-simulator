@@ -20,9 +20,9 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-test_inhomogeneous_poisson_generator checks the inhomogeneous_poisson_generator device and its
-consistency with the nest simulation kernel.
+This test checks the inhomogeneous_poisson_generator device and its consistency with the nest simulation kernel.
 """
+
 import nest
 import pytest
 

@@ -20,6 +20,8 @@
  *
  */
 
+%SLI2PYComplexity: Medium
+
  /** @BeginDocumentation
     Name: testsuite::test_hh_cond_beta_gap_traub - sli script for overall test of hh_cond_beta_gap_traub model 
     with gap_junction connection

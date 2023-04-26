@@ -38,8 +38,7 @@ def test_dcgen_vs_I_e(model):
     nest.ResetKernel()
 
     # Models requiring special parameters
-    if model == "gif_psc_exp" or model == "gif_cond_exp" or model == "gif_psc_exp_multisynapse" \
-            or model == "gif_cond_exp_multisynapse":
+    if model in ["gif_psc_exp", "gif_cond_exp", "gif_psc_exp_multisynapse", "gif_cond_exp_multisynapse"]:
         nest.SetDefaults(model, params={"lambda_0": 0.})
 
     if model == "pp_psc_delta":

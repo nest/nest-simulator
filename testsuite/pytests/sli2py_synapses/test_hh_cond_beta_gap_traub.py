@@ -43,7 +43,7 @@ import nest
 import pytest
 
 
-@pytest.fixture()
+@pytest.fixture(autouse=True)
 def prepare():
     nest.ResetKernel()
     nest.set(local_num_threads=1, resolution=0.1,

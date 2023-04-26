@@ -36,14 +36,33 @@ import pathlib
 import pytest
 import nest
 import sys
+import pathlib
 
+# Make all modules in the `utilities` folder available to import in any test
 sys.path.append(str(pathlib.Path(__file__).parent / "utilities"))
+# Ignore it during test collection
+collect_ignore = ["utilities"]
 
 import testutil, testsimulation
 
 _have_mpi = nest.ll_api.sli_func("statusdict/have_mpi ::")
 _have_gsl = nest.ll_api.sli_func("statusdict/have_gsl ::")
 _have_threads = nest.ll_api.sli_func("statusdict/threading ::") != "no"
+
+
+@pytest.fixture(scope="module", autouse=True)
+def safety_reset():
+    """
+    Reset the NEST kernel for each module.
+
+    This fixture only applies on the module level. It prevents leakage of
+    kernel states between different test modules (test files).
+
+    .. note::
+        To reset the kernel between tests inside a module, call
+        `nest.ResetKernel()` within the module itself.
+    """
+    nest.ResetKernel()
 
 
 @pytest.fixture(autouse=True)
@@ -89,12 +108,3 @@ def simulation(request):
     nest.resolution = sim.resolution
     nest.local_num_threads = sim.local_num_threads
     return sim
-
-
-for field in dataclasses.fields(testsimulation.Simulation):
-    globals()[field.name] = testutil.parameter_fixture(
-        field.name,
-        field.default_factory
-        if field.default_factory is not dataclasses.MISSING
-        else lambda d=field.default: d,
-    )

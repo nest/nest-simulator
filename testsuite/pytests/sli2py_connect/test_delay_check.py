@@ -22,7 +22,7 @@
 """
 Test of delay
 
-This script creates a number of synapses and tests, whether min_delay and max_delay 
+This script creates a number of synapses and tests, whether min_delay and max_delay
 are set as expected. It will report for each test separately, whether it was passed or failed
 
 """
@@ -34,7 +34,7 @@ import nest
 @pytest.fixture(autouse=True)
 def base_setup():
     """
-    Reset kernel and create two neurons, connected by a static synapse with delay 2.0ms. 
+    Reset kernel and create two neurons, connected by a static synapse with delay 2.0ms.
     """
     nest.ResetKernel()
     pytest.n1, pytest.n2 = nest.Create('iaf_psc_alpha', 2)

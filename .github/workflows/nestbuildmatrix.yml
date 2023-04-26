@@ -705,7 +705,6 @@ jobs:
               -Dwith-openmp=${{ contains(matrix.use, 'openmp') && 'ON' || 'OFF' }} \
               -Dwith-mpi=${{ contains(matrix.use, 'mpi') && 'ON' || 'OFF' }} \
               -Dwith-python=${{ contains(matrix.use, 'python') && 'ON' || 'OFF' }} \
-              -Dwith-python=${{ contains(matrix.use, 'music') && '$HOME/.cache/music.install' || 'OFF' }} \
               -Dwith-gsl=${{ contains(matrix.use, 'gsl') && 'ON' || 'OFF' }} \
               -Dwith-ltdl=${{ contains(matrix.use, 'ltdl') && 'ON' || 'OFF' }} \
               -Dwith-readline=${{ contains(matrix.use, 'readline') && 'ON' || 'OFF' }} \

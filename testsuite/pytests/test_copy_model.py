@@ -86,7 +86,7 @@ class TestCopyModel:
 
     def test_set_param_on_copy_synapse(self):
         """
-        Test that parameter is correctly set when neuron model is copied.
+        Test that parameter is correctly set when synapse model is copied.
         """
 
         test_params = {'weight': 10.0, 'delay': 2.0, 'alpha': 99.0}

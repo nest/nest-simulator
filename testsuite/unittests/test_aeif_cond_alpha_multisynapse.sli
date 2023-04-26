@@ -40,6 +40,9 @@
    Author: Daniel Peppicelli, revised Hans Ekkehard Plesser
  */
 
+% SLI2PY: Model
+% SLI2PYComplexity: Medium
+
 (unittest) run
 /unittest using
 

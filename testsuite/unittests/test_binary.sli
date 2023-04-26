@@ -33,6 +33,9 @@
     Author:  March 2013, Helias    
 */
 
+% SLI2PYComplexity: Medium
+% SLI2PYPerson: Rate modelers
+
 (unittest) run
 /unittest using
 

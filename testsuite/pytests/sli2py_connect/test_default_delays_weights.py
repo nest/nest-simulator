@@ -20,58 +20,26 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Test that correct delays and weights are set if synaptic defaults
-are given or overridden. This in particular also tests that NaN-detection works
-on an architecture
+Test that correct delays and weights are set if synaptic defaults are given or overridden.
 """
+
 import nest
 import pytest
 
-d = 15.5
-w = 23.4
 
+default_delay = nest.GetDefaults("static_synapse", "delay")
+default_weight = nest.GetDefaults("static_synapse", "weight")
 
-@pytest.fixture
-def prepare_test():
+@pytest.mark.parametrize('wd_spec, w_expect, d_expect',
+                         [[{}, default_weight, default_delay],
+                          [{'delay': 15.5}, default_weight, 15.5],
+                          [{'weight': 23.4}, 23.4, default_delay],
+                          [{'weight': 17.3, 'delay': 10.1}, 17.3, 10.1]])
+def test_default_delay_and_weight(wd_spec, w_expect, d_expect):
     nest.ResetKernel()
-    nest.SetDefaults("static_synapse", {"delay": 1.5, "weight": 2.3})
-    defaults = nest.GetDefaults("static_synapse")
-    neurons = nest.Create("iaf_psc_alpha", 2)
-    return defaults, neurons
+    neuron = nest.Create("iaf_psc_alpha")
+    nest.Connect(neuron, neuron, syn_spec={"synapse_model": "static_synapse", **wd_spec})
+    conn = nest.GetConnections()[0].get()
 
-
-def test_default_delay_and_weight(prepare_test):
-    defaults, neurons = prepare_test
-    nest.Connect(neurons[0], neurons[1], "one_to_one", syn_spec={"synapse_model": "static_synapse"})
-    conn = nest.GetConnections(source=neurons[0])[0].get()
-
-    assert defaults["weight"] == conn["weight"]
-    assert defaults["delay"] == conn["delay"]
-
-
-def test_default_weight_non_default_delay(prepare_test):
-    defaults, neurons = prepare_test
-    nest.Connect(neurons[0], neurons[1], "one_to_one", syn_spec={"synapse_model": "static_synapse", "delay": d})
-    conn = nest.GetConnections(source=neurons[0])[0].get()
-
-    assert defaults["weight"] == conn["weight"]
-    assert d == conn["delay"]
-
-
-def test_non_default_weight_default_delay(prepare_test):
-    defaults, neurons = prepare_test
-    nest.Connect(neurons[0], neurons[1], "one_to_one", syn_spec={"synapse_model": "static_synapse", "weight": w})
-    conn = nest.GetConnections(source=neurons[0])[0].get()
-
-    assert w == conn["weight"]
-    assert defaults["delay"] == conn["delay"]
-
-
-def test_non_default_weight_and_delay(prepare_test):
-    defaults, neurons = prepare_test
-    nest.Connect(neurons[0], neurons[1], "one_to_one", syn_spec={"synapse_model": "static_synapse",
-                                                                 "weight": w, "delay": d})
-    conn = nest.GetConnections(source=neurons[0])[0].get()
-
-    assert w == conn["weight"]
-    assert d == conn["delay"]
+    assert conn["weight"] == pytest.approx(w_expect)
+    assert conn["delay"] == pytest.approx(d_expect)

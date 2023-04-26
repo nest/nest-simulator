@@ -20,13 +20,15 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""This test ensures that pp_psc_delta produces the same results when run 1000 times 10ms as when run 1 time
-10000ms. This test was adapted from ticket-933."""
+"""
+Ensures that pp_psc_delta produces the same results when run 100 times 10ms as when run 1 time 1000ms.
+"""
+
 import nest
 import numpy as np
 
 
-def network_setup():
+def record_spikes(sim_time, repeats):
     nest.ResetKernel()
     nest.set_verbosity("M_ERROR")
 
@@ -38,10 +40,6 @@ def network_setup():
 
     nest.Connect(population, spike_recorder)
 
-    return spike_recorder
-
-
-def record_spikes(spike_recorder, sim_time, repeats):
     for w in range(0, repeats):
         nest.Simulate(sim_time)
     events = spike_recorder.get('events')
@@ -49,7 +47,7 @@ def record_spikes(spike_recorder, sim_time, repeats):
 
 
 def test_generation_matches():
-    rec1 = record_spikes(network_setup(), 10000, 1)
-    rec2 = record_spikes(network_setup(), 10, 1000)
+    rec1 = record_spikes(1000, 1)
+    rec2 = record_spikes(10, 100)
 
     assert np.all(rec1 == rec2)

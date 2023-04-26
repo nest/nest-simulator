@@ -54,9 +54,9 @@ nest::DelayChecker::calibrate( const TimeConverter& tc )
   // Calibrate will be called after a change in resolution, when there are no
   // network elements present.
 
-  if (min_delay_ == Time::pos_inf() or max_delay_ == Time::neg_inf())
+  if ( min_delay_ == Time::pos_inf() or max_delay_ == Time::neg_inf() )
   {
-    min_delay_ = tc.from_old_tics( min_delay_.get_tics() ); 
+    min_delay_ = tc.from_old_tics( min_delay_.get_tics() );
     max_delay_ = tc.from_old_tics( max_delay_.get_tics() );
   }
   else
@@ -68,7 +68,7 @@ nest::DelayChecker::calibrate( const TimeConverter& tc )
   }
 }
 
-void 
+void
 nest::DelayChecker::set_min_max_delay_( const double min_d, const double max_d )
 {
   // For the minimum delay, we always round down. The easiest way to do this,
@@ -101,10 +101,8 @@ nest::DelayChecker::set_min_max_delay_( const double min_d, const double max_d )
     min_delay_ = new_min_delay;
     max_delay_ = new_max_delay;
 
-    std::string msg =
-          String::compose( "Minimum and maximum delays were changed to %1 ms and %2 ms.",
-            min_delay_.get_ms(),
-            max_delay_.get_ms() );
+    std::string msg = String::compose(
+      "Minimum and maximum delays were changed to %1 ms and %2 ms.", min_delay_.get_ms(), max_delay_.get_ms() );
     LOG( M_INFO, "DelayChecker::set_min_max_delay_", msg );
   }
 }
@@ -121,7 +119,7 @@ nest::DelayChecker::set_status( const DictionaryDatum& d )
 {
   double min_d_tmp = 0.0;
   bool min_delay_updated = updateValue< double >( d, names::min_delay, min_d_tmp );
-  
+
   double max_d_tmp = 0.0;
   bool max_delay_updated = updateValue< double >( d, names::max_delay, max_d_tmp );
 
@@ -138,8 +136,7 @@ nest::DelayChecker::set_status( const DictionaryDatum& d )
     }
     else
     {
-      std::cout<<"in set status. min_d = "<<min_d_tmp<<" , max_d = "<< max_d_tmp<<std::endl;
-      DelayChecker::set_min_max_delay_(min_d_tmp, max_d_tmp);
+      DelayChecker::set_min_max_delay_( min_d_tmp, max_d_tmp );
       user_set_delay_extrema_ = true;
     }
   }

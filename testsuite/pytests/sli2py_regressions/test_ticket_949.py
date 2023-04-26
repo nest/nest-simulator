@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""TThis test ensures that Connect throws and error if one tries to create a connection with a delay
+"""This test ensures that Connect throws an error if one tries to create a connection with a delay
 less than the resolution."""
 
 import nest

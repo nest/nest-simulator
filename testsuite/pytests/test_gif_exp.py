@@ -29,7 +29,7 @@ import pytest
                                    "gif_cond_exp",
                                    "gif_psc_exp_multisynapse",
                                    "gif_cond_exp_multisynapse"])
-class TestGifExpMultisynapse:
+class TestGifModels:
     r"""
     Test of gif_cond_exp_multisynapse and gif_psc_exp with external DC current and spike generators
 

@@ -56,6 +56,9 @@
     SeeAlso: iaf_psc_alpha, testsuite::test_iaf_i0, testsuite::test_iaf_i0_refractory, testsuite::test_iaf_dc
 */
 
+% SLI2PY: rename to reflect that it tests iaf_psc_alpha
+% SLI2PYComplexity: Low
+
 
 (unittest) run
 /unittest using

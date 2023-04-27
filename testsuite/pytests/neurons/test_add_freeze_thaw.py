@@ -43,7 +43,10 @@ VM_REF = nest.GetDefaults('iaf_psc_alpha', 'V_m')
 
 
 @pytest.fixture(scope="module")
-def prepare_kernel():
+def prepare_kernel(have_threads):
+    if not have_threads:
+        return
+
     nest.ResetKernel()
     nest.local_num_threads = 4
 

@@ -41,9 +41,20 @@ sys.path.append(str(pathlib.Path(__file__).parent / "utilities"))
 # Ignore it during test collection
 collect_ignore = ["utilities"]
 
-_have_mpi = nest.ll_api.sli_func("statusdict/have_mpi ::")
-_have_gsl = nest.ll_api.sli_func("statusdict/have_gsl ::")
-_have_threads = nest.ll_api.sli_func("statusdict/threading ::") != "no"
+
+@pytest.fixture(scope="session")
+def have_threads():
+    return nest.ll_api.sli_func("statusdict/threading ::") != "no"
+
+
+@pytest.fixture(scope="session")
+def have_mpi():
+    return nest.ll_api.sli_func("statusdict/have_mpi ::")
+
+
+@pytest.fixture(scope="session")
+def have_gsl():
+    return nest.ll_api.sli_func("statusdict/have_gsl ::")
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -62,28 +73,28 @@ def safety_reset():
 
 
 @pytest.fixture(autouse=True)
-def skipif_missing_gsl(request):
+def skipif_missing_gsl(request, have_gsl):
     """
     Globally applied fixture that skips tests marked to be skipped when GSL is missing.
     """
-    if not _have_gsl and request.node.get_closest_marker("skipif_missing_gsl"):
+    if not have_gsl and request.node.get_closest_marker("skipif_missing_gsl"):
         pytest.skip("skipped because missing GSL support.")
 
 
 @pytest.fixture(autouse=True)
-def skipif_missing_mpi(request):
+def skipif_missing_mpi(request, have_mpi):
     """
     Globally applied fixture that skips tests marked to be skipped when MPI is missing.
     """
-    if not _have_mpi and request.node.get_closest_marker("skipif_missing_mpi"):
+    if not have_mpi and request.node.get_closest_marker("skipif_missing_mpi"):
         pytest.skip("skipped because missing MPI support.")
 
 
 @pytest.fixture(autouse=True)
-def skipif_missing_threads(request):
+def skipif_missing_threads(request, have_threads):
     """
     Globally applied fixture that skips tests marked to be skipped when multithreading
     support is missing.
     """
-    if not _have_threads and request.node.get_closest_marker("skipif_missing_threads"):
+    if not have_threads and request.node.get_closest_marker("skipif_missing_threads"):
         pytest.skip("skipped because missing multithreading support.")

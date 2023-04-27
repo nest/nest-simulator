@@ -73,6 +73,7 @@ if ( BUILD_SPHINX_DOCS )
   set( _SPHINX_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/_build/html" )
   add_custom_target( sphinxdocs
     WORKING_DIRECTORY ${_SPHINX_SOURCE_DIR}
+    COMMAND ${Python_EXECUTABLE} clean_source_dirs.py
     COMMAND ${SPHINX_EXECUTABLE} -b html . ${_SPHINX_BUILD_DIR}
     COMMAND ${Python_EXECUTABLE} resolve_includes.py ${SPHINX_BUILD_DIR}/models
   )

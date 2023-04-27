@@ -73,11 +73,9 @@ def test_freeze_thaw_simulation_against_only_thawed_simulation():
     simulations should give the same membrane potentials.
     """
 
-    # Simulate with freeze/thaw
     mm = simulate_freeze_thaw(num_neurons=1)
     Vm_with_freeze = mm.events['V_m']
 
-    # Simulate without freezing
     nrn, mm = build_net(num_neurons=1)
     nest.Simulate(10.)
     Vm_thawed_only = mm.events['V_m']
@@ -95,12 +93,9 @@ def test_freeze_thaw_neuron_against_only_thawed_neuron():
     from the thawed neuron.
     """
 
-    # Simulate with freeze/thaw
     mm = simulate_freeze_thaw(num_neurons=2)
-
     Vm_with_freeze = mm.events['V_m'][mm.events['senders'] == 1]
     Vm_thawed_only = mm.events['V_m'][mm.events['senders'] == 2]
 
-    # Check frozen data equal to first points in non-frozen
     n_freezed = Vm_with_freeze.size
     nptest.assert_array_equal(Vm_with_freeze, Vm_thawed_only[:n_freezed])

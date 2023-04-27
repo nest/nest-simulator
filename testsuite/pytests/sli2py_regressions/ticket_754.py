@@ -70,7 +70,7 @@ class TestSeedingAndProcSetting:
         Test that just setting process number retains default seed and type.
         """
 
-        nest.SetKernelStatus({proc_param_name: self.NUM_PROCS})
+        nest.set(**{proc_param_name: self.NUM_PROCS})
         assert nest.rng_seed == DEFAULT_SEED and nest.rng_type == DEFAULT_RNG_TYPE
 
     def test_set_procs_then_seed(self, proc_param_name):
@@ -79,7 +79,7 @@ class TestSeedingAndProcSetting:
         """
 
         test_seed = 123
-        nest.SetKernelStatus({proc_param_name: self.NUM_PROCS})
+        nest.set(**{proc_param_name: self.NUM_PROCS})
         nest.rng_seed = test_seed
         assert nest.rng_seed == test_seed
 
@@ -90,7 +90,7 @@ class TestSeedingAndProcSetting:
 
         test_seed = 123
         nest.rng_seed = test_seed
-        nest.SetKernelStatus({proc_param_name: self.NUM_PROCS})
+        nest.set(**{proc_param_name: self.NUM_PROCS})
         assert nest.rng_seed == test_seed
 
     def test_seed_and_set_procs_simultaneously(self, proc_param_name):
@@ -99,7 +99,7 @@ class TestSeedingAndProcSetting:
         """
 
         test_seed = 123
-        nest.SetKernelStatus({'rng_seed': test_seed, proc_param_name: self.NUM_PROCS})
+        nest.set(**{'rng_seed': test_seed, proc_param_name: self.NUM_PROCS})
         assert nest.rng_seed == test_seed
 
 
@@ -118,7 +118,7 @@ class TestRngTypeAndProcSetting:
         """
 
         test_rng_type = 'mt19937'
-        nest.SetKernelStatus({proc_param_name: self.NUM_PROCS})
+        nest.set(**{proc_param_name: self.NUM_PROCS})
         nest.rng_type = test_rng_type
         assert nest.rng_type == test_rng_type
 
@@ -129,7 +129,7 @@ class TestRngTypeAndProcSetting:
 
         test_rng_type = 'mt19937'
         nest.rng_type = test_rng_type
-        nest.SetKernelStatus({proc_param_name: self.NUM_PROCS})
+        nest.set(**{proc_param_name: self.NUM_PROCS})
         assert nest.rng_type == test_rng_type
 
     def test_rng_type_and_set_procs_simultaneously(self, proc_param_name):
@@ -138,5 +138,5 @@ class TestRngTypeAndProcSetting:
         """
 
         test_rng_type = 'mt19937'
-        nest.SetKernelStatus({'rng_type': test_rng_type, proc_param_name: self.NUM_PROCS})
+        nest.set(**{'rng_type': test_rng_type, proc_param_name: self.NUM_PROCS})
         assert nest.rng_type == test_rng_type

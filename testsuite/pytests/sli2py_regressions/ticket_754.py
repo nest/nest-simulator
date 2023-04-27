@@ -64,7 +64,7 @@ class TestSeedingAndProcSetting:
     """
 
     NUM_PROCS = 2
-TEST_SEED = 123
+    TEST_SEED = 123
 
     def test_default_seed_after_proc_change(self, proc_param_name):
         """
@@ -109,32 +109,30 @@ class TestRngTypeAndProcSetting:
     """
 
     NUM_PROCS = 2
+    TEST_RNG_TYPE = 'mt19937'
 
     def test_set_procs_then_rng_type(self, proc_param_name):
         """
         Test that changing number of processes and then changing rng type and gives correct rng type.
         """
 
-        test_rng_type = 'mt19937'
         nest.set(**{proc_param_name: self.NUM_PROCS})
-        nest.rng_type = test_rng_type
-        assert nest.rng_type == test_rng_type
+        nest.rng_type = TEST_RNG_TYPE
+        assert nest.rng_type == TEST_RNG_TYPE
 
-    def test_rng_type_then_set_procs(self, proc_param_name):
+    def test_set_rng_type_then_procs(self, proc_param_name):
         """
         Test that setting rng type and then setting number of procs gives correct rng type.
         """
 
-        test_rng_type = 'mt19937'
-        nest.rng_type = test_rng_type
+        nest.rng_type = TEST_RNG_TYPE
         nest.set(**{proc_param_name: self.NUM_PROCS})
-        assert nest.rng_type == test_rng_type
+        assert nest.rng_type == TEST_RNG_TYPE
 
-    def test_rng_type_and_set_procs_simultaneously(self, proc_param_name):
+    def test_set_rng_type_and_procs_simultaneously(self, proc_param_name):
         """
         Test that changing number of processes and rng type in one call gives correct rng type.
         """
 
-        test_rng_type = 'mt19937'
-        nest.set(**{'rng_type': test_rng_type, proc_param_name: self.NUM_PROCS})
-        assert nest.rng_type == test_rng_type
+        nest.set(**{'rng_type': TEST_RNG_TYPE, proc_param_name: self.NUM_PROCS})
+        assert nest.rng_type == TEST_RNG_TYPE

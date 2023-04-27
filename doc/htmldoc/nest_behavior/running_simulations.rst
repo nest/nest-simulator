@@ -105,7 +105,7 @@ memory consumption of NEST (large *dmax*).
 
 Delays after changes in resolution
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-When the resolution is changed *dmin*, *dmax*, as well as the time-based model defaults (e.g. neuronal refractory times, synaptic delays) are adjusted to match the new resolution. In case the precision of these delays cannot be matched with the new resolution (e.g. *dmin=1.6*, *dmax=5.3* and *new_resolution=1.0*), *dmin* is rounded down (*dmin=1.0*), *dmax* is rounded up (*dmax=6.0*) and the time-based model defaults are rounded mathematically. When the new resolution value is larger than a time-based model default, this value is set to the new resolution.
+If you change the resolution, then *dmin*, *dmax*, as well as the time-based model defaults (e.g., neuronal refractory times, synaptic delays) are adjusted to match the new resolution. In case the precision of these delays cannot be matched with the new resolution (e.g., *dmin=1.6*, *dmax=5.3* and *new_resolution=1.0*), *dmin* is rounded down (*dmin=1.0*), *dmax* is rounded up (*dmax=6.0*), and the time-based model defaults are rounded mathematically. When the new resolution value is larger than a time-based model default, this value is set to the new resolution.
 
 .. note::
 

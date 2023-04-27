@@ -104,7 +104,8 @@ def simulation(request):
         *(request.getfixturevalue(field.name) for field in dataclasses.fields(sim_cls))
     )
     nest.ResetKernel()
-    nest.resolution = sim.resolution
+    if getattr(sim, "set_resolution", True):
+        nest.resolution = sim.resolution
     nest.local_num_threads = sim.local_num_threads
     return sim
 

@@ -272,6 +272,7 @@ endforeach ()
 
 # libraries required to link extension modules
 set( MODULE_LINK_LIBS
+  "-lnest"
   "-lsli"
   "${OpenMP_CXX_FLAGS}"
   "${LTDL_LIBRARIES}"

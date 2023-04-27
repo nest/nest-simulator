@@ -298,7 +298,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: "Run black..."
-        uses: psf/black@stable
+        uses: psf/black@23.3.0
 
   flake8:
     runs-on: "ubuntu-20.04"

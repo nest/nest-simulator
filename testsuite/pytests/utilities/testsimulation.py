@@ -24,6 +24,10 @@ class Simulation:
                 (self.voltmeter.events["times"], self.voltmeter.events["V_m"])
             )
 
+    def run(self):
+        self.setup()
+        return self.simulate()
+
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
         testutil.create_dataclass_fixtures(cls)

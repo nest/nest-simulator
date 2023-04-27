@@ -98,8 +98,10 @@ vm neuron2     1.0 h Connect
                                
  vm [/events [/times /V_m]] get cva   % array of recorded data
   5 ToUnitTestPrecision                      % to precision of reference
-  Transpose                                  % all recorded tuples
-  {First test_times exch MemberQ } Select    % those with reference
+  Transpose  
+                               % all recorded tuples
+  {First test_times exch MemberQ } Select
+   pstack     % those with reference
  eq                                          % compare
 }
 

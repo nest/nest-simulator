@@ -1,8 +1,8 @@
-# The Neural Simulation Tool - NEST 
+# The Neural Simulation Tool - NEST
 
 [![Build Status](https://travis-ci.org/nest/nest-simulator.svg?branch=master)](https://travis-ci.org/nest/nest-simulator)
 [![License](http://img.shields.io/:license-GPLv2+-green.svg)](http://www.gnu.org/licenses/gpl-2.0.html)
-[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.4018724.svg)](http://dx.doi.org/10.5281/zenodo.4018724)
+[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.7704396.svg)](http://dx.doi.org/10.5281/zenodo.7704396)
 
 NEST is a simulator for spiking neural network models that focuses on the
 dynamics, size and structure of neural systems rather than on the exact

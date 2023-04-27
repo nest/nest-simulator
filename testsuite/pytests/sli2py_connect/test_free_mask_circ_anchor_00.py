@@ -70,6 +70,13 @@ class TestFreeMaskCircAnchor00(SpatialTestRefs):
         target_layer = nest.Create(population_type, positions=positions)
 
         nest.Connect(src_layer, target_layer, conns)
+
+        # how to reconstruct DumpLayers/Connections mapping with Displacement without saving to file?
+        # conns = nest.GetConnections()
+        # conn_mapping = np.array([[node.source, node.target, node.weight, node.delay,
+        #                           nest.Displacement(src_layer[node.source], target_layer[node.target])] for node in
+        #                          conns])
+
         return src_layer, target_layer
 
     @pytest.fixture(scope="module")

@@ -11,6 +11,7 @@ from scipy.special import lambertw
 @dataclasses.dataclass
 class IAFPSCAlphaSimulation(testsimulation.Simulation):
     amplitude: float = 1000.0
+    min_delay: float = 0.0
 
     def setup(self):
         self.neuron = nest.Create("iaf_psc_alpha")
@@ -112,6 +113,32 @@ class TestIAFPSCAlpha:
 
         actual, expected = testutil.get_comparable_timesamples(
             results, expected_i0_refr
+        )
+        assert actual == expected
+
+    @pytest.mark.parametrize("min_delay", [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 1.0, 2.0])
+    @pytest.mark.parametrize("delay, duration", [(2.0, 10.5)])
+    def test_iaf_psc_alpha_mindelay_create(self, simulation, min_delay):
+        dc = simulation.dc_generator = nest.Create("dc_generator")
+        dc.amplitude = 1000
+
+        simulation.setup()
+
+        # Connect 2 throwaway neurons with `min_delay` to force `min_delay`
+        nest.Connect(
+            *nest.Create("iaf_psc_alpha", 2),
+            syn_spec={"delay": min_delay, "weight": 1.0}
+        )
+        nest.Connect(
+            dc,
+            simulation.neuron,
+            syn_spec={"weight": 1.0, "delay": simulation.delay},
+        )
+
+        results = simulation.simulate()
+
+        actual, expected = testutil.get_comparable_timesamples(
+            results, expected_mindelay
         )
         assert actual == expected
 
@@ -480,5 +507,20 @@ expected_i0_refr = np.array(
         [6.7, -60.9326],  #
         [6.8, -60.4457],  #
         [6.9, -59.9636],  #
+    ]
+)
+
+expected_mindelay = np.array(
+    [
+        [1.000000e00, -7.000000e01],
+        [2.000000e00, -7.000000e01],
+        [3.000000e00, -6.655725e01],
+        [4.000000e00, -6.307837e01],
+        [5.000000e00, -5.993054e01],
+        [6.000000e00, -5.708227e01],
+        [7.000000e00, -7.000000e01],
+        [8.000000e00, -7.000000e01],
+        [9.000000e00, -6.960199e01],
+        [1.000000e01, -6.583337e01],
     ]
 )

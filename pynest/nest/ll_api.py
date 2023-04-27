@@ -94,7 +94,7 @@ def catching_sli_run(cmd):
         SLI errors are bubbled to the Python API as NESTErrors.
     """
 
-    engine.run('{%s} runprotected' % cmd.decode('utf-8'))
+    engine.run('{%s} runprotected' % cmd)
     if not sli_pop():
         errorname = sli_pop()
         message = sli_pop()

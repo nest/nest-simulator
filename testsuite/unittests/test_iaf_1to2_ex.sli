@@ -20,6 +20,8 @@
  *
  */
 
+% SLI2PY: _ex --- external current?
+% SLI2PYComplexity: Low
 
 /** @BeginDocumentation
 Name: testsuite::test_iaf_1to2_ex - sli script for test of min_delay

@@ -102,6 +102,19 @@ class TestIAFPSCAlpha:
         assert actual == expected
         assert simulation.spikes == pytest.approx(expected_i0_t)
 
+    @pytest.mark.parametrize("resolution", [0.1, 0.2, 0.5, 1.0])
+    def test_iaf_psc_alpha_i0_refractory(self, simulation):
+        simulation.setup()
+
+        simulation.neuron.I_e = 1450
+
+        results = simulation.simulate()
+
+        actual, expected = testutil.get_comparable_timesamples(
+            results, expected_i0_refr
+        )
+        assert actual == expected
+
 
 expected_default = np.array(
     [
@@ -390,5 +403,82 @@ expected_i0 = np.array(
 expected_i0_t = np.array(
     [
         [1, 4.8],  # %       <-- the neuron emits a spike with time
+    ]
+)
+
+expected_i0_refr = np.array(
+    [
+        [0.1, -69.4229],  #  %              because the current has not yet had the
+        [0.2, -68.8515],  #  %              chance to influence the membrane
+        [0.3, -68.2858],  #  %              potential (initial conditions).
+        [0.4, -67.7258],  #
+        [0.5, -67.1713],  #
+        [0.6, -66.6223],  #
+        [0.7, -66.0788],  #
+        [0.8, -65.5407],  #
+        [0.9, -65.008],  #
+        [1.0, -64.4806],  #
+        [1.1, -63.9584],  #
+        [1.2, -63.4414],  #
+        [1.3, -62.9295],  #
+        [1.4, -62.4228],  #
+        [1.5, -61.9211],  #
+        [1.6, -61.4243],  #
+        [1.7, -60.9326],  #
+        [1.8, -60.4457],  #
+        [1.9, -59.9636],  #
+        [2.0, -59.4864],  #
+        [2.1, -59.0139],  #
+        [2.2, -58.5461],  #
+        [2.3, -58.0829],  #
+        [2.4, -57.6244],  #
+        [2.5, -57.1704],  #
+        [2.6, -56.721],  #
+        [2.7, -56.276],  #
+        [2.8, -55.8355],  #
+        [2.9, -55.3993],  #
+        [3.0, -70],  #  %       <- The membrane potential crossed threshold in the
+        [3.1, -70],  #  %  |       reset (no super-threshold values can be observed).
+        [3.2, -70],  #  %  |
+        [3.3, -70],  #  %   ------ The spike is reported at 3.0 ms
+        [3.4, -70],  #
+        [3.5, -70],  #
+        [3.6, -70],  #
+        [3.7, -70],  #
+        [3.8, -70],  #
+        [3.9, -70],  #
+        [4.0, -70],  #
+        [4.1, -70],  #
+        [4.2, -70],  #
+        [4.3, -70],  #
+        [4.4, -70],  #
+        [4.5, -70],  #
+        [4.6, -70],  #
+        [4.7, -70],  #
+        [4.8, -70],  #
+        [4.9, -70],  #
+        [5.0, -70],  #  %   <- The last point in time at which the membrane potential
+        [
+            5.1,
+            -69.4229,
+        ],  #  % <-   is clamped. The fact that the neuron is not refractory
+        [5.2, -68.8515],  #  %   |  anymore is reflected in the state variable r==0.
+        [5.3, -68.2858],  #  %   |  The neuron was refractory for 2.0 ms.
+        [5.4, -67.7258],  #  %   |
+        [5.5, -67.1713],  #  %    -- The membrane potential starts to increase
+        [5.6, -66.6223],  #  %       immediately afterwards (step 5ms -> 5ms + h),
+        [5.7, -66.0788],  #  %       and the neuron can generate spikes again
+        [5.8, -65.5407],  #  %       (with time stamp 5ms + h).
+        [5.9, -65.008],  #  %       The membrane trace is independent of the resolution.
+        [6.0, -64.4806],  #
+        [6.1, -63.9584],  #
+        [6.2, -63.4414],  #
+        [6.3, -62.9295],  #
+        [6.4, -62.4228],  #
+        [6.5, -61.9211],  #
+        [6.6, -61.4243],  #
+        [6.7, -60.9326],  #
+        [6.8, -60.4457],  #
+        [6.9, -59.9636],  #
     ]
 )

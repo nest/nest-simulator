@@ -24,7 +24,6 @@ Ensures that NEST throws an exception if one tries to create illegal gap-junctio
 Furthermore it is checked that the delay cannot be set for gap-junction connections.
 """
 
-from email import message
 import nest
 import pytest
 

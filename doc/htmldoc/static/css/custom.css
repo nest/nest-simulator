@@ -76,7 +76,14 @@ section#kernel-attributes dl.py.class dd dl.py.attribute dd dl.field-list.simple
   display: none;
 }
 
+.sphx-glr-download-link-note {
 
+ display: none;
+}
+
+.sphx-glr-download-jupyter {
+  display: none;
+}
 /**************************************************************************************
  Settings for overriding material design theme 
  Setting nest colors to override sphinx material "orange" and other default colors
@@ -118,6 +125,9 @@ div[role="main"] .md-source {
     display: none;
 }
 
+.md-typeset blockquote {
+	border-left: none;
+}
 
 [data-md-color-primary="orange"] .md-header, [data-md-color-primary="orange"] .md-hero {
   background-color: var(--nest-orange);

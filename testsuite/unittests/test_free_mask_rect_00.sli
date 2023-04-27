@@ -20,6 +20,8 @@
  *
  */
 
+% SLI2PY: see also all corresponding test_free_mask_*
+% SLI2PYComplexity: Low
 
 %  Setup:
 %  - 5x5 -> 5x5, extent 1.25x1.25 ->

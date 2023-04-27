@@ -99,7 +99,7 @@ class RateInstantaneousAndDelayedTestCase(unittest.TestCase):
         # adjust length of rate_1 to be able to subtract
         rate_1 = rate_1[:len(rate_2)]
 
-        assert(np.sum(np.abs(rate_2 - rate_1)) < 1e-12)
+        assert np.sum(np.abs(rate_2 - rate_1)) < 1e-12
 
 
 def suite():

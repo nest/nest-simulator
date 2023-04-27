@@ -25,9 +25,9 @@ def reference_params():
 
 @pytest.fixture()
 def neuron(reference_params):
-    neuron = nest.Create("hh_cond_exp_traub")
-    neuron.set(**reference_params)
-    return neuron
+    n = nest.Create("hh_cond_exp_traub")
+    n.set(**reference_params)
+    return n
 
 
 def recording_devices(neuron):

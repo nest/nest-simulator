@@ -14,7 +14,6 @@ class IAFPSCAlphaSimulation(testsimulation.Simulation):
 
     def setup(self):
         self.neuron = nest.Create("iaf_psc_alpha")
-        print("SETUP RAN", self.neuron)
         vm = self.voltmeter = nest.Create("voltmeter")
         vm.interval = self.resolution
         sr = nest.Create("spike_recorder")

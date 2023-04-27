@@ -20,15 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
-import nest
 
-"""
-TODO:
-test_multimeter_support.sli
-test_multimeter_freeze_thaw.sli
-test_multimeter_offset.sli
-test_multimeter_stepping.sli
-"""
+import nest
 
 
 @pytest.fixture
@@ -42,7 +35,7 @@ def set_resolution():
 
 
 # Obtain all models with non-empty recordables list
-models = (model for model in nest.node_models if nest.GetDefaults(model).get('recordables'))
+models = [model for model in nest.node_models if nest.GetDefaults(model).get('recordables')]
 
 
 @pytest.mark.parametrize('model', models)
@@ -76,6 +69,37 @@ def test_recordables_are_recorded(set_resolution, model):
         assert len(result[r]) == num_data_expected
 
 
+@pytest.mark.parametrize('model', models)
+def test_correct_amount_data_collected(model):
+    """
+    Test that the correct of amount of data is collected for each recordable.
+
+    For all models providing a 'recordables' entry in their status dict, this
+    test checks whether the correct amount of data is collected for each
+    recordable quantity.
+
+    .. note::
+       This test does not check the content of the data collected.
+    """
+
+    nest.ResetKernel()
+
+    nrn = nest.Create(model)
+
+    # if the model is compartmental, we need to add at least a root compartment
+    if 'compartments' in nest.GetDefaults(model):
+        nrn.compartments = {"parent_idx": -1, }
+
+    recordables = nrn.recordables
+    mm = nest.Create('multimeter', {'record_from': recordables})
+
+    nest.Connect(mm, nrn)
+    nest.Simulate(10.)
+
+    for recordable in recordables:
+        assert len(mm.events[recordable]) == 9
+
+
 def test_multimeter_freeze():
     """
     Ensure that frozen parameter can be set to False but not True on multimeter.
@@ -84,38 +108,3 @@ def test_multimeter_freeze():
     nest.Create('multimeter', params={'frozen': False})
     with pytest.raises(Exception):
         nest.Create('multimeter', params={'frozen': True})
-
-
-@pytest.mark.parametrize(
-    ('num_neurons',),
-    [
-        (1,),
-        (2,),
-    ]
-)
-def test_simulate_with_freeze_thaw(num_neurons):
-    """
-    """
-
-    nest.ResetKernel()
-
-    nc = nest.Create('iaf_psc_alpha', num_neurons, params={'I_e': 50.})
-    mm = nest.Create('multimeter', params={'interval': 0.5,
-                                           'record_from': ['V_m'],
-                                           'time_in_steps': True})
-
-    nest.Connect(mm, nc)
-
-    print(nc)
-    print(nc[0])
-    # Simulate with freeze/thaw
-    nc[0].frozen = True
-    nest.Simulate(5.)
-    nc[0].frozen = False
-    nest.Simulate(5.)
-    nc[0].frozen = True
-    nest.Simulate(5.)
-    nc[0].frozen = False
-    nest.Simulate(5.)
-
-    mm

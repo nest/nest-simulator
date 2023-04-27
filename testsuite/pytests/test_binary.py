@@ -37,9 +37,9 @@ class TestBinary:
         h = .1    # resolution [ms]
 
         nest.ResetKernel()
-        nest.SetKernelStatus({"resolution": h})
+        nest.resolution = h
 
-        print("Testing model \"" + neuron_model + "\"")
+        print(f'Testing model "{neuron_model}"')
 
         # check, if double spikes are correctly interpreted as up transition and single spikes are interpreted as
         # down transition

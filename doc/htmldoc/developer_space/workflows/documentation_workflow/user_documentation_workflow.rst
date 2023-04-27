@@ -116,8 +116,12 @@ commands.
 
 .. tip::
 
-   You can also build the user documentation during the CMake build using
-   the flag ``-Dwith-userdoc=ON``
+   You can also build the user documentation in the build directory with CMake:
+
+   .. code-block:: bash
+
+       cmake -Dwith-userdoc=ON </path/to/NEST/src>
+       make docs
 
 Editing and creating pages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

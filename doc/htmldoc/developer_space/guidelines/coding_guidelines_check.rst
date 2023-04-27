@@ -64,9 +64,27 @@ the committed files and check for severe errors. We require cppcheck version
    cppcheck --enable=all <committed file>
 
 
-.. note::
+Python
+------
 
-  For Python, we enforce `PEP8 <https://www.python.org/dev/peps/pep-0008/>`_ formatting.
+We enforce `PEP8 <https://www.python.org/dev/peps/pep-0008/>`_ formatting, using `Black
+<https://github.com/psf/black>`_. You can automatically have your code reformatted before
+you commit using pre-commit hooks:
+
+.. code-block:: bash
+
+   pip install pre-commit
+   pre-commit install
+
+Now, whenever you commit, Black will check your code. If something was reformatted it
+will show up in your unstaged changes. Stage them and recommit to succesfully commit
+your code. Alternatively, you can run black manually:
+
+.. code-block:: bash
+
+   pip install black
+   black .
+
 
 Local static analysis
 ---------------------

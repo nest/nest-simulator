@@ -94,7 +94,7 @@ commands.
 
 .. code-block:: bash
 
-  git clone git@github.com:nest/nest-simulatr
+  git clone git@github.com:nest/nest-simulator
 
 2. Navigate to the ``doc/htmldoc`` folder:
 

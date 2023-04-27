@@ -191,6 +191,20 @@ def test_kernel_precision():
     assert math.frexp(nest.ms_per_tic) == (0.5, -13)
 
 
+@dataclasses.dataclass
+class DCAccuracySimulation(testsimulation.Simulation):
+    # Don't autoset the resolution in the fixture, we do it in setup.
+    set_resolution = False
+    model: str = "iaf_psc_alpha"
+    params: dict = dataclasses.field(default_factory=dict)
+
+    def setup(self):
+        nest.ResetKernel()
+        nest.set(tics_per_ms=2**14, resolution=self.resolution)
+        self.neuron = nest.Create(self.model, params=self.params)
+
+
+@testutil.use_simulation(DCAccuracySimulation)
 @pytest.mark.parametrize(
     "model",
     [
@@ -200,31 +214,54 @@ def test_kernel_precision():
         "iaf_psc_exp_ps_lossless",
     ],
 )
-@pytest.mark.parametrize("resolution", [2 ** i for i in range(0, -14, -1)])
-@pytest.mark.parametrize("duration, tolerance", [(5, 1e-13), (500, 1e-9)])
+@pytest.mark.parametrize("resolution", [2**i for i in range(0, -14, -1)])
 class TestIAFPSDCAccuracy:
-    def test_iaf_pc_ps_dc_accuracy(self, model, duration, tolerance, resolution):
-        I_e = 1000.0
-        tau_m = 10.0
-        C_m = 250.0
-        nest.ResetKernel()
-        nest.set(tics_per_ms=2 ** 14, resolution=resolution)
-        neuron = nest.Create(
-            model,
-            params={
+    @pytest.mark.parametrize(
+        "params",
+        [
+            {
                 "E_L": 0.0,  # resting potential in mV
                 "V_m": 0.0,  # initial membrane potential in mV
                 "V_th": 2000.0,  # spike threshold in mV
                 "I_e": 1000.0,  # DC current in pA
                 "tau_m": 10.0,  # membrane time constant in ms
                 "C_m": 250.0,  # membrane capacity in pF
-            },
-        )
-        nest.Simulate(duration)
+            }
+        ],
+    )
+    @pytest.mark.parametrize("duration, tolerance", [(5, 1e-13), (500.0, 1e-9)])
+    def test_iaf_ps_dc_accuracy(self, simulation, duration, tolerance, params):
+        simulation.run()
         # Analytical solution
-        V = I_e * tau_m / C_m * (1.0 - math.exp(-duration / tau_m))
+        V = (
+            params["I_e"]
+            * params["tau_m"]
+            / params["C_m"]
+            * (1.0 - math.exp(-duration / params["tau_m"]))
+        )
         # Check that membrane potential is within tolerance of analytical solution.
-        assert neuron.V_m - V < tolerance
+        assert math.fabs(simulation.neuron.V_m - V) < tolerance
+
+    @pytest.mark.parametrize(
+        "params",
+        [
+            {
+                "E_L": 0.0,  # resting potential in mV
+                "V_m": 0.0,  # initial membrane potential in mV
+                "V_th": 15.0,  # spike threshold in mV
+                "I_e": 1000.0,  # DC current in pA
+                "tau_m": 10.0,  # membrane time constant in ms
+                "C_m": 250.0,  # membrane capacity in pF
+            }
+        ],
+    )
+    @pytest.mark.parametrize("duration, tolerance", [(5, 1e-13)])
+    def test_iaf_ps_dc_t_accuracy(self, simulation, params, tolerance):
+        simulation.run()
+        t = -params["tau_m"] * math.log(
+            1.0 - (params["C_m"] * params["V_th"]) / (params["tau_m"] * params["I_e"])
+        )
+        assert math.fabs(simulation.neuron.t_spike - t) < tolerance
 
 
 expected_default = np.array(

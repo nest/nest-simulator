@@ -104,8 +104,8 @@ M_ERROR setverbosity
 % Check if kernel accepts high precision
 %
 << 
-  /tics_per_ms min_exponent neg dexp 
-  /resolution 0 dexp                   % 1 ms default 
+  /tics_per_ms min_exponent neg dexp
+  /resolution 0 dexp                   % 1 ms default
 >> SetKernelStatus
 
 

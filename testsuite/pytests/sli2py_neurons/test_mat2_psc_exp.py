@@ -102,7 +102,7 @@ def test_simulated_potentials(simulation):
     """
 
     expected_potentials = pd.DataFrame(
-        np.array([
+        [
             [1, -70, -51],   # <--- dc_gen is switched on
             [2, -70, -51],   # <--- The DC current arrives at neuron,
             [3, -67.6238, -51],  # <- but has not affected the potential yet
@@ -124,7 +124,7 @@ def test_simulated_potentials(simulation):
             [19, -35.4124, -14.8527],
             [20, -33.7212, -15.1935],
             [21, -32.0634, -15.531]
-        ]),
+        ],
         columns=['times', 'V_m', 'V_th']
     )
 
@@ -135,7 +135,6 @@ def test_simulated_potentials(simulation):
 
     pdtest.assert_frame_equal(actual_potentials.iloc[:21],
                               expected_potentials,
-                              check_dtype=False,
                               rtol=1e-05,
                               atol=1e-08
                               )

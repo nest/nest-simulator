@@ -80,7 +80,6 @@ set( with-intel-compiler-flags OFF CACHE STRING "User defined flags for the Inte
 set( with-libraries OFF CACHE STRING "Link additional libraries [default=OFF]. Give full path. Separate multiple libraries by ';'." )
 set( with-includes OFF CACHE STRING "Add additional include paths [default=OFF]. Give full path without '-I'. Separate multiple include paths by ';'." )
 set( with-defines OFF CACHE STRING "Additional defines, e.g. '-DXYZ=1' [default=OFF]. Separate multiple defines by ';'." )
-set( with-version-suffix "" CACHE STRING "Set a user defined version suffix [default='']." )
 
 # documentation build configuration
 set( with-userdoc OFF CACHE STRING "Build user documentation [default=OFF]")
@@ -150,7 +149,6 @@ nest_process_with_sionlib()
 nest_process_with_mpi4py()
 nest_process_with_boost()
 nest_process_target_bits_split()
-nest_process_version_suffix()
 nest_process_userdoc()
 nest_process_devdoc()
 
@@ -183,17 +181,10 @@ nest_check_have_std_nan()
 nest_check_have_std_isnan()
 nest_check_random123()
 
-################################################################################
-##################           Create version string            ##################
-################################################################################
-
 include( NestVersionInfo )
 get_version_info()
-printInfo("-- NEST version: ${NEST_VERSION_STRING}")
+printInfo("Done configuring NEST version: ${NEST_VERSION}")
 
-################################################################################
-##################         Enable Testing Targets             ##################
-################################################################################
 enable_testing()
 set( TEST_OPTS "" )
 

@@ -62,7 +62,8 @@ def recording_devices(neuron):
 
     vm = nest.Create("voltmeter", {"time_in_steps": True, "interval": nest.resolution})
 
-    mm = nest.Create("multimeter", {"time_in_steps": True, "interval": nest.resolution, "record_from": ["g_ex", "g_in"]})
+    mm = nest.Create("multimeter", {"time_in_steps": True, "interval": nest.resolution,
+                                    "record_from": ["g_ex", "g_in"]})
 
     nest.Connect(sg, neuron)
     nest.Connect(dc, neuron)

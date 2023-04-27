@@ -10,20 +10,13 @@ from scipy.special import lambertw
 
 @dataclasses.dataclass
 class IAFPSCAlphaSimulation(testsimulation.Simulation):
-    amplitude: float = 1000.0
-    min_delay: float = 0.0
-
     def setup(self):
         self.neuron = nest.Create("iaf_psc_alpha")
         vm = self.voltmeter = nest.Create("voltmeter")
         vm.interval = self.resolution
         sr = self.spike_recorder = nest.Create("spike_recorder")
-        nest.Connect(
-            vm, self.neuron, syn_spec={"weight": 1.0, "delay": self.resolution}
-        )
-        nest.Connect(
-            self.neuron, sr, syn_spec={"weight": 1.0, "delay": self.resolution}
-        )
+        nest.Connect(vm, self.neuron, syn_spec={"weight": 1.0, "delay": self.delay})
+        nest.Connect(self.neuron, sr, syn_spec={"weight": 1.0, "delay": self.delay})
 
     @property
     def spikes(self):
@@ -32,6 +25,24 @@ class IAFPSCAlphaSimulation(testsimulation.Simulation):
                 self.spike_recorder.events["senders"],
                 self.spike_recorder.events["times"],
             )
+        )
+
+
+@dataclasses.dataclass
+class MinDelaySimulation(IAFPSCAlphaSimulation):
+    amplitude: float = 1000.0
+    min_delay: float = 0.0
+
+    def setup(self):
+        dc = self.dc_generator = nest.Create("dc_generator")
+        dc.amplitude = self.amplitude
+
+        super().setup()
+
+        nest.Connect(
+            dc,
+            self.neuron,
+            syn_spec={"weight": 1.0, "delay": self.delay},
         )
 
 
@@ -116,12 +127,12 @@ class TestIAFPSCAlpha:
         )
         assert actual == expected
 
-    @pytest.mark.parametrize("min_delay", [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 1.0, 2.0])
-    @pytest.mark.parametrize("delay, duration", [(2.0, 10.5)])
-    def test_iaf_psc_alpha_mindelay_create(self, simulation, min_delay):
-        dc = simulation.dc_generator = nest.Create("dc_generator")
-        dc.amplitude = 1000
 
+@pytest.mark.parametrize("min_delay", [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 1.0, 2.0])
+@pytest.mark.parametrize("delay, duration", [(2.0, 10.5)])
+@testutil.use_simulation(MinDelaySimulation)
+class TestMinDelayUsingIAFPSCAlpha:
+    def test_iaf_psc_alpha_mindelay_create(self, simulation, min_delay):
         simulation.setup()
 
         # Connect 2 throwaway neurons with `min_delay` to force `min_delay`
@@ -129,12 +140,38 @@ class TestIAFPSCAlpha:
             *nest.Create("iaf_psc_alpha", 2),
             syn_spec={"delay": min_delay, "weight": 1.0}
         )
-        nest.Connect(
-            dc,
-            simulation.neuron,
-            syn_spec={"weight": 1.0, "delay": simulation.delay},
-        )
 
+        results = simulation.simulate()
+
+        actual, expected = testutil.get_comparable_timesamples(
+            results, expected_mindelay
+        )
+        assert actual == expected
+
+    def test_iaf_psc_alpha_mindelay_set(self, simulation, min_delay, delay):
+        nest.set(min_delay=min_delay, max_delay=delay)
+        nest.SetDefaults("static_synapse", {"delay": delay})
+
+        simulation.setup()
+
+        results = simulation.simulate()
+
+        actual, expected = testutil.get_comparable_timesamples(
+            results, expected_mindelay
+        )
+        assert actual == expected
+
+    def test_iaf_psc_alpha_mindelay_simblocks(self, simulation, min_delay, delay):
+        nest.set(min_delay=min_delay, max_delay=delay)
+        nest.SetDefaults("static_synapse", {"delay": delay})
+
+        simulation.setup()
+
+        for _ in range(22):
+            nest.Simulate(0.5)
+        # duration=0 so that `simulation.simulate` is noop but
+        # still extracts results for us.
+        simulation.duration = 0
         results = simulation.simulate()
 
         actual, expected = testutil.get_comparable_timesamples(

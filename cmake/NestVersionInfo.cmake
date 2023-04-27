@@ -24,7 +24,7 @@
 #   NEST_VERSION_GIT, a boolean indicating if source is managed by git
 #   NEST_VERSION_GIT_HASH, the current git revision hash (unset for tarballs)
 #   NEST_VERSION_GIT_BRANCH, the current git branch (unset for tarballs)
-#   NEST_VERSION_GIT_REMOTE, the tracked remote branch (unset for tarballs)
+#   NEST_VERSION_GIT_REMOTE, the upstream remote (if any) of the tracked branch (unset for tarballs)
 #
 
 macro(get_version_info)

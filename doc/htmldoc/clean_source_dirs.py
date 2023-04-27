@@ -18,8 +18,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-
 import os
+import shutil
 import pathlib
 from glob import glob
 
@@ -29,4 +29,10 @@ for dir_ in ("auto_examples", "models"):
             file_.endswith(f)
             for f in (".gitignore", "models-main.rst", "models-toc.rst")
         ):
-            os.unlink(file_)
+            try:
+                try:
+                    os.unlink(file_)
+                except OSError:
+                    shutil.rmtree(file_)
+            except Exception:
+                print(f"Couldn't remove '{file_}'")

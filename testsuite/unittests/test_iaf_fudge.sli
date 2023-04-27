@@ -20,6 +20,8 @@
  *
  */
 
+% SLI2PYComplexity: Low
+
 /** @BeginDocumentation
 Name: testsuite::test_iaf_fudge - sli script to test normalization of PSP for iaf_psc_alpha model
 

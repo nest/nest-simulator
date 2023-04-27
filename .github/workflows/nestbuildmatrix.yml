@@ -87,7 +87,6 @@ jobs:
 
       - name: "Run vale..."
         run: |
-          echo "Starting vale..."
           ./vale -v
           ./vale doc
 
@@ -506,36 +505,14 @@ jobs:
           CMAKE_C_COMPILER_LAUNCHER: ccache
           CMAKE_CXX_COMPILER_LAUNCHER: ccache
         run: |
-          echo "------ Ccache statistics -----"
-          ccache -p
-          ccache -s
-          ccache -z
-
-          echo
-          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-          echo "+               C O N F I G U R E   N E S T   B U I L D                       +"
-          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-          echo "------ Prepare build environment ------"
           mkdir -p "$NEST_VPATH/reports" "$NEST_RESULT"
 
-          echo "MSGBLD0232: Setting configuration variables."
           if [ "$xNEST_BUILD_COMPILER" = "CLANG" ]; then
               export CC=clang-11
               export CXX=clang++-11
           fi
           export CXX_FLAGS="-pedantic -Wextra -Wno-unknown-pragmas -D_GLIBCXX_ASSERTIONS"
 
-          #export CXX_FLAGS="-pedantic -Wextra -D_GLIBCXX_ASSERTIONS"  # if "OPENMP_ONLY"
-
-          # Do not use -pedantic because it triggers warnings from pynestkernel
-          # that are difficult to filter automatically when parsing the log.
-          # See also https://github.com/cython/cython/pull/4687.
-          #export CXX_FLAGS="-Wextra -Wno-unknown-pragmas -D_GLIBCXX_ASSERTIONS"  # if "FULL_MACOS"
-
-          echo "----- Current environment -----"
-          env
-
-          echo "MSGBLD0235: Running CMake."
           cd "$NEST_VPATH"
           cmake \
               -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
@@ -553,30 +530,15 @@ jobs:
               -Dwith-libneurosim=${{ contains(matrix.use, 'libneurosim') && '$HOME/.cache/libneurosim.install' || 'OFF' }} \
               ..
 
-          echo "MSGBLD0240: CMake configure completed."
-
       - name: "Build NEST"
         run: |
           cd "$NEST_VPATH"
-          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-          echo "+               B U I L D   N E S T                                           +"
-          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-          echo "MSGBLD0250: Running Make."
           make VERBOSE=1
-          echo "MSGBLD0260: Make completed."
-          echo
-          echo "------ Ccache Statistics -----"
-          ccache -s
 
       - name: "Install NEST"
         run: |
           cd "$NEST_VPATH"
-          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-          echo "+               I N S T A L L   N E S T                                       +"
-          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-          echo "MSGBLD0270: Running make install."
           make install
-          echo "MSGBLD0280: Make install completed."
 
       - name: "Initialize Matplotlibrc"
         run: |
@@ -588,16 +550,8 @@ jobs:
         run: |
           pwd
           cd "$NEST_VPATH"
-          echo "-- testsuite/ --"
-          echo "-- do_tests executable --"
           chmod -v u+x ${NEST_RESULT}/share/nest/testsuite/do_tests.sh
-          echo
-          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-          echo "+               R U N   N E S T   T E S T S U I T E                           +"
-          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-          echo "MSGBLD0290: Running make installcheck."
           make VERBOSE=1 installcheck
-          echo "MSGBLD0300: Make installcheck completed."
 
       - name: "Upload install and test results"
         uses: actions/upload-artifact@v3
@@ -669,31 +623,14 @@ jobs:
 
       - name: "Build NEST"
         run: |
-          echo
-          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-          echo "+               C O N F I G U R E   N E S T   B U I L D                       +"
-          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-          echo "------ Prepare build environment ------"
           mkdir -p "$NEST_VPATH/reports" "$NEST_RESULT"
 
-          echo "MSGBLD0232: Setting configuration variables."
           if [ "$xNEST_BUILD_COMPILER" = "CLANG" ]; then
               export CC=clang-11
               export CXX=clang++-11
           fi
           export CXX_FLAGS="-pedantic -Wextra -Wno-unknown-pragmas -D_GLIBCXX_ASSERTIONS"
 
-          #export CXX_FLAGS="-pedantic -Wextra -D_GLIBCXX_ASSERTIONS"  # if "OPENMP_ONLY"
-
-          # Do not use -pedantic because it triggers warnings from pynestkernel
-          # that are difficult to filter automatically when parsing the log.
-          # See also https://github.com/cython/cython/pull/4687.
-          #export CXX_FLAGS="-Wextra -Wno-unknown-pragmas -D_GLIBCXX_ASSERTIONS"  # if "FULL_MACOS"
-
-          echo "----- Current environment -----"
-          env
-
-          echo "MSGBLD0235: Running CMake."
           cd "$NEST_VPATH"
           cmake \
               -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
@@ -711,31 +648,18 @@ jobs:
               -Dwith-libneurosim=${{ contains(matrix.use, 'libneurosim') && '$HOME/.cache/libneurosim.install' || 'OFF' }} \
               ..
 
-          echo "MSGBLD0240: CMake configure completed."
-
       - name: "Build NEST"
         run: |
           cd "$NEST_VPATH"
-          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-          echo "+               B U I L D   N E S T                                           +"
-          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-          echo "MSGBLD0250: Running Make."
           make VERBOSE=1
-          echo "MSGBLD0260: Make completed."
 
       - name: "Install NEST"
         run: |
           cd "$NEST_VPATH"
-          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-          echo "+               I N S T A L L   N E S T                                       +"
-          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-          echo "MSGBLD0270: Running make install."
           make install
-          echo "MSGBLD0280: Make install completed."
         env:
           xNEST_BUILD_TYPE: ${{ matrix.NEST_BUILD_TYPE }}
           CHANGED_FILES: ${{ env.CHANGED_FILES }}
-          #get changed files: https://github.com/marketplace/actions/get-changed-files
 
       - name: "Initialize Matplotlibrc"
         run: |
@@ -747,16 +671,8 @@ jobs:
         run: |
           pwd
           cd "$NEST_VPATH"
-          echo "-- testsuite/ --"
-          echo "-- do_tests executable --"
           chmod -v u+x ${NEST_RESULT}/share/nest/testsuite/do_tests.sh
-          echo
-          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-          echo "+               R U N   N E S T   T E S T S U I T E                           +"
-          echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-          echo "MSGBLD0290: Running make installcheck."
           make VERBOSE=1 installcheck
-          echo "MSGBLD0300: Make installcheck completed."
 
       - name: "Upload install and test results"
         uses: actions/upload-artifact@v3

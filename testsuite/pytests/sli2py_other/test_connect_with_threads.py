@@ -73,7 +73,7 @@ def test_fixed_indegree(num_threads):
 
 
 @pytest.mark.parametrize('num_threads', range(1, 26))
-def test_fixed_indegree(num_threads):
+def test_fixed_outdegree(num_threads):
     conn_dict = {"rule": "fixed_outdegree", "outdegree": 5}
     create_network(num_threads, conn_dict)
 

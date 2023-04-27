@@ -21,14 +21,86 @@
 
 import numpy as np
 import numpy.testing as nptest
-import pandas as pd
-import pandas.testing as pdtest
 import pytest
 
 import nest
 
 
-def build_net():
+def build_net(num_neurons):
     """
+    Create and connect network components.
     """
-    pass
+
+    nest.ResetKernel()
+
+    nrns = nest.Create('iaf_psc_alpha', num_neurons, params={'I_e': 50.})
+    mm = nest.Create('multimeter', params={'interval': 0.5,
+                                           'record_from': ['V_m'],
+                                           'time_in_steps': True})
+
+    nest.Connect(mm, nrns)
+
+    return nrns, mm
+
+
+def simulate_freeze_thaw(num_neurons):
+    """
+    Build network and simulate with freeze and thaw cycles. 
+
+    Only the first neuron in a NodeCollection will be freezed/thawed.
+    """
+
+    nrns, mm = build_net(num_neurons)
+
+    nrns[0].frozen = True
+    nest.Simulate(5.)
+    nrns[0].frozen = False
+    nest.Simulate(5.)
+    nrns[0].frozen = True
+    nest.Simulate(5.)
+    nrns[0].frozen = False
+    nest.Simulate(5.)
+
+    return mm
+
+
+def test_freeze_thaw_simulation_against_only_thawed_simulation():
+    """
+    Verify identical results from freeze/thaw and non-freeze simulation.
+
+    This test first simulates with freeze/thaw cycles. Then a simulation
+    for equivalent time, i.e., thawed time only, is performed. Both
+    simulations should give the same membrane potentials.
+    """
+
+    # Simulate with freeze/thaw
+    mm = simulate_freeze_thaw(num_neurons=1)
+    Vm_with_freeze = mm.events['V_m']
+
+    # Simulate without freezing
+    nrn, mm = build_net(num_neurons=1)
+    nest.Simulate(10.)
+    Vm_thawed_only = mm.events['V_m']
+
+    nptest.assert_array_equal(Vm_with_freeze, Vm_thawed_only)
+
+
+def test_freeze_thaw_neuron_against_only_thawed_neuron():
+    """
+    Verify identical results from freeze/thaw and only thawed neuron.
+
+    This test simultaneously records from both a neuron with freeze/thaw
+    cycles and a thawed neuron in simulation. The data points collected
+    from the freeze/thaw neuron should be identical to the first data points
+    from the thawed neuron.
+    """
+
+    # Simulate with freeze/thaw
+    mm = simulate_freeze_thaw(num_neurons=2)
+
+    Vm_with_freeze = mm.events['V_m'][mm.events['senders'] == 1]
+    Vm_thawed_only = mm.events['V_m'][mm.events['senders'] == 2]
+
+    # Check frozen data equal to first points in non-frozen
+    n_freezed = Vm_with_freeze.size
+    nptest.assert_array_equal(Vm_with_freeze, Vm_thawed_only[:n_freezed])

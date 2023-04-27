@@ -30,7 +30,7 @@ import nest
 
 @pytest.mark.skipif_missing_threads
 def test_add_freeze_thaw():
-    """    
+    """
     The following simulation steps and checks are performed in order:
 
       1. Create nodes driven by internal current, simulate, check V_m changes.

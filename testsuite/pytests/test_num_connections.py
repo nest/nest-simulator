@@ -45,7 +45,7 @@ def test_num_connections():
     expected_num_connections_per_vp = expected_num_static_connections_per_vp + expected_num_stdp_connections_per_vp
 
     nest.ResetKernel()
-    nest.SetKernelStatus({"total_num_virtual_procs": N_VP})
+    nest.total_num_virtual_procs = N_VP
     neurons = nest.Create("iaf_psc_alpha", N)
     nest.Connect(neurons, neurons,
                  conn_spec={"rule": "fixed_indegree", "indegree": K_static},
@@ -57,6 +57,6 @@ def test_num_connections():
     actual_num_static_connections_per_vp = nest.GetDefaults("static_synapse", ["num_connections"])[0]
     actual_num_stdp_connections_per_vp = nest.GetDefaults("stdp_synapse", ["num_connections"])[0]
 
-    assert(actual_num_connections_per_vp == expected_num_connections_per_vp)
-    assert(actual_num_static_connections_per_vp == expected_num_static_connections_per_vp)
-    assert(actual_num_stdp_connections_per_vp == expected_num_stdp_connections_per_vp)
+    assert actual_num_connections_per_vp == expected_num_connections_per_vp
+    assert actual_num_static_connections_per_vp == expected_num_static_connections_per_vp
+    assert actual_num_stdp_connections_per_vp == expected_num_stdp_connections_per_vp

@@ -37,11 +37,8 @@ import pytest
 
 @pytest.mark.skipif_missing_gsl
 class TestAeifCondAlphaMultisynapse:
-    @pytest.fixture(autouse=True)
-    def setup(self):
-        nest.SetKernelStatus({"overwrite_files": True})
 
-    def test_aeif_cond_alpha_multisynapse(self, have_plotting):
+    def test_single_multi_synapse_equivalence(self, have_plotting):
         simulation_t = 2500.    # ms
 
         dt = 0.1
@@ -55,7 +52,9 @@ class TestAeifCondAlphaMultisynapse:
         weight = [1., 5., 1., -1.]
         E_rev = [E_ex, E_ex, E_ex, E_in]
         spike_time = 1.
-        delays = [1., 500., 1500., 2250.]    # ms - The delays have to be ordered and needs enough space between them to avoid one PSC from affecting the next
+
+        # The delays have to be ordered and needs enough space between them to avoid one PSC from affecting the next
+        delays = [1., 500., 1500., 2250.]    # ms
 
         V_m_steadystate = -70.59992755
         w_steadystate = 0.00029113
@@ -121,11 +120,16 @@ class TestAeifCondAlphaMultisynapse:
             import matplotlib.pyplot as plt
 
             fig, ax = plt.subplots(nrows=6)
-            ax[0].plot(multisynapse_neuron_vm.get("events")["times"], multisynapse_neuron_vm.get("events")["V_m"], label="V_m multisyn", alpha=.5)
+            ax[0].plot(multisynapse_neuron_vm.get("events")["times"],
+                       multisynapse_neuron_vm.get("events")["V_m"],
+                       label="V_m multisyn",
+                       alpha=.5)
             ax[0].plot(multisynapse_neuron_vm.get("events")["times"], summed_V_m, label="V_m summed", alpha=.5)
 
             for i in range(4):
-                ax[i+1].plot(singlesynapse_neuron_vm[i].get("events")["times"], singlesynapse_neuron_vm[i].get("events")["V_m"], label="V_m single (" + str(i) + ")")
+                ax[i+1].plot(singlesynapse_neuron_vm[i].get("events")["times"],
+                             singlesynapse_neuron_vm[i].get("events")["V_m"],
+                             label="V_m single (" + str(i) + ")")
 
             for _ax in ax:
                 _ax.legend()
@@ -180,12 +184,12 @@ class TestAeifCondAlphaMultisynapse:
         nest.ResetKernel()
         nest.resolution = dt
 
-        E_rev = [0.0, 0.0, -85.0, 20.] # synaptic reversal potentials
-        tau_syn = [40.0, 20.0, 30.0, 25.] # synaptic time constants
-        weight = [1.0, 0.5, 2.0, 1.0] # synaptic weights
-        delays = [1.0, 3.0, 10.0, 10.] # ms - synaptic delays
-        spike_time = 10.     # time at which the single spike occurs
-        total_t = 500.    # total simulation time
+        E_rev = [0.0, 0.0, -85.0, 20.]    # synaptic reversal potentials
+        tau_syn = [40.0, 20.0, 30.0, 25.]    # synaptic time constants
+        weight = [1.0, 0.5, 2.0, 1.0]    # synaptic weights
+        delays = [1.0, 3.0, 10.0, 10.]    # ms - synaptic delays
+        spike_time = 10.    # time at which the single spike occurs
+        total_t = 500.   # total simulation time
 
         def alpha_function(t, W=1., tau=1., t0=0.):
             tdiff_over_tau = (t - t0) / tau
@@ -232,19 +236,17 @@ class TestAeifCondAlphaMultisynapse:
 
             theo_g = alpha_function(t, W, tau, t0)
 
-            if True:#have_plotting:
+            if have_plotting:
                 # plot timeseries as a sanity check
                 import matplotlib.pyplot as plt
 
                 fig, ax = plt.subplots(nrows=2)
                 ax[0].plot(t, sim_g, label="sim")
-                ax[0].plot(t,theo_g, label="theory")
+                ax[0].plot(t, theo_g, label="theory")
 
                 for _ax in ax:
                     _ax.legend()
 
-                fig.savefig("/tmp/test_aeif_cond_alpha_multisynapse_psc_shape_ " + str(i) + ".png")
-
+                fig.savefig("test_aeif_cond_alpha_multisynapse_psc_shape_ " + str(i) + ".png")
 
             np.testing.assert_allclose(sim_g, theo_g)
-

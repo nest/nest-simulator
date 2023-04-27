@@ -19,7 +19,6 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-
 """
 Test that the kernel variable num_connections reports the correct total number of VP-local connections and that
 synapse-type specific num_connections report the correct numbers of VP-local synapses of the specific type.
@@ -28,6 +27,7 @@ synapse-type specific num_connections report the correct numbers of VP-local syn
 import pytest
 import nest
 
+
 @pytest.mark.skipif_missing_threads
 def test_num_connections():
     """
@@ -35,11 +35,11 @@ def test_num_connections():
     fixed-indegree rule with indegrees K_static and K_stdp, respectively. Query the number of connections from the
     kernel and the synapse types and compare to the expected values.
     """
-    
-    N        = 100  # total number of neurons
+
+    N = 100  # total number of neurons
     K_static = 20   # number of incoming static connections per neuron
-    K_stdp   = 80   # number of incoming STDP connections per neuron
-    N_VP     = 4    # number of virtual processes
+    K_stdp = 80   # number of incoming STDP connections per neuron
+    N_VP = 4    # number of virtual processes
     expected_num_static_connections_per_vp = N * K_static
     expected_num_stdp_connections_per_vp = N * K_stdp
     expected_num_connections_per_vp = expected_num_static_connections_per_vp + expected_num_stdp_connections_per_vp
@@ -56,7 +56,7 @@ def test_num_connections():
     actual_num_connections_per_vp = nest.GetKernelStatus("num_connections")
     actual_num_static_connections_per_vp = nest.GetDefaults("static_synapse", ["num_connections"])[0]
     actual_num_stdp_connections_per_vp = nest.GetDefaults("stdp_synapse", ["num_connections"])[0]
-    
+
     assert(actual_num_connections_per_vp == expected_num_connections_per_vp)
     assert(actual_num_static_connections_per_vp == expected_num_static_connections_per_vp)
     assert(actual_num_stdp_connections_per_vp == expected_num_stdp_connections_per_vp)

@@ -64,6 +64,7 @@ class TestSeedingAndProcSetting:
     """
 
     NUM_PROCS = 2
+TEST_SEED = 123
 
     def test_default_seed_after_proc_change(self, proc_param_name):
         """
@@ -78,29 +79,26 @@ class TestSeedingAndProcSetting:
         Test that changing number of processes and then seeding and gives correct seed.
         """
 
-        test_seed = 123
         nest.set(**{proc_param_name: self.NUM_PROCS})
-        nest.rng_seed = test_seed
-        assert nest.rng_seed == test_seed
+        nest.rng_seed = TEST_SEED
+        assert nest.rng_seed == TEST_SEED
 
     def test_seed_then_set_procs(self, proc_param_name):
         """
         Test that seeding and then setting number of procs gives correct seed.
         """
 
-        test_seed = 123
-        nest.rng_seed = test_seed
+        nest.rng_seed = TEST_SEED
         nest.set(**{proc_param_name: self.NUM_PROCS})
-        assert nest.rng_seed == test_seed
+        assert nest.rng_seed == TEST_SEED
 
     def test_seed_and_set_procs_simultaneously(self, proc_param_name):
         """
         Test that changing number of processes and seeding in one call gives correct seed.
         """
 
-        test_seed = 123
-        nest.set(**{'rng_seed': test_seed, proc_param_name: self.NUM_PROCS})
-        assert nest.rng_seed == test_seed
+        nest.set(**{'rng_seed': TEST_SEED, proc_param_name: self.NUM_PROCS})
+        assert nest.rng_seed == TEST_SEED
 
 
 @pytest.mark.skipif_missing_threads

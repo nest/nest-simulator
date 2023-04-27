@@ -38,6 +38,6 @@ if [ ! $? -eq 0 ] || [ ${BRANCH} = "HEAD" ]; then
   BRANCH="unknown"
 fi
 
-# Print ingwith semicolons as separators, as this will be interpreted as
+# Printing with semicolons as separators, as this will be interpreted as
 # a list by cmake
 echo ${HASH}\;${BRANCH}\;${REMOTE}

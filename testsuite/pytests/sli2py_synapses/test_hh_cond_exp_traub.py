@@ -30,6 +30,7 @@ def neuron(reference_params):
     return n
 
 
+@pytest.fixture()
 def recording_devices(neuron):
     dc = nest.Create("dc_generator", {"amplitude": 100.0})
 
@@ -84,8 +85,8 @@ def test_setting_params(neuron, reference_params):
     assert neuron_status == reference_params
 
 
-def test_recoding_device_status(neuron, reference_data_vm, reference_data_mm):
-    vm, mm, sr = recording_devices(neuron)
+def test_recoding_device_status(recording_devices, reference_data_vm, reference_data_mm):
+    vm, mm, sr = recording_devices
     reference_data_vm = np.array(reference_data_vm)
     vm_events = vm.get("events")
     actual_vm_data = np.array(list(zip(vm_events["times"], vm_events["V_m"])))

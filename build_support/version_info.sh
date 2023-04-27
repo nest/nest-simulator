@@ -25,9 +25,9 @@
 HASH=$(git rev-parse HEAD)
 
 # Might fail if not on a branch, or no remote tracking branch is set
-REMOTE_BRANCH=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>&1)
+BRANCH_REMOTE=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>&1)
 if [ $? -eq 0 ]; then
-  REMOTE=$(echo ${REMOTE_BRANCH} | cut -d\/ -f1)
+  REMOTE=$(echo ${BRANCH_REMOTE} | cut -d\/ -f1)
 else
   REMOTE="unknown"
 fi

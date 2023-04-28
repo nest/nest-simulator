@@ -45,7 +45,7 @@ def build_net(num_neurons):
 
 def simulate_freeze_thaw(num_neurons):
     """
-    Build network and simulate with freeze and thaw cycles. 
+    Build network and simulate with freeze and thaw cycles.
 
     Only the first neuron in a NodeCollection will be freezed/thawed.
     """

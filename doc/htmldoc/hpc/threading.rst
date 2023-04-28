@@ -27,8 +27,11 @@ Pinning threads
 Pinning threads allows you to control the distribution of threads across available cores on your system, and is particularly
 useful in high performance computing (HPC) systems.
 
-Although allowing threads to move can be beneficial in some cases, we find for NEST, pinning threads typically decreases
-run time because NEST balances the work load internally. See our overview :ref:`handling threads with virtual processes <sec_virt_proc>`.
+Allowing threads to move can be beneficial in some cases. But when threads move, the data that is to be processed needs to move too.
+With NEST, each thread gets allocated a specific set of data objects to work with during simulation (due to the round robin distribution).
+This means that when a thread moves, it cannot perform any computation until its specific data gets to the right place.
+This is called *cache misses*. For this reason, pinning threads typically decreases run time.
+See our overview :ref:`handling threads with virtual processes <sec_virt_proc>`.
 
 There are different types of pinning schemes, and the optimal scheme will depend on your script.
 Here we show two different example schemes.
@@ -70,13 +73,13 @@ Table of OpenMP settings
      - variable telling OpenMP how many threads are used on a MPI process
    * - ``export OMP_PROC_BIND=true``
      - no movement of threads between OpenMP threads and OpenMP places
-   * - ``export OMP_PROC_BIND=close``
+   * - ``export OMP_PROC_BIND=close/spread``
      - no movement of threads between OpenMP threads and OpenMP places and OpenMP places are 'close' in a hardware sense
    * - ``export OMP_PLACES=threads/cores``
      - each OpenMP place corresponds to a hardware thread/core
-   * - ``export OPM_PLACES="{a : b : c}"``
+   * - ``export OMP_PLACES="{a : b : c}"``
      - OpenMP places are a, a+b, a+2c, ... a+nc=b (numbering usually relates to cores/hardware threads)
-   * - ``export OPM_DISPLAY_ENV=true``
+   * - ``export OMP_DISPLAY_ENV=true``
      - display OpenMP variables
 
 .. seealso::

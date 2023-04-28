@@ -43,7 +43,7 @@ variables related the implementation of the multiprocessing API.
    For general details on pinning options in OpenMPI see `the HPC wiki article <https://hpc-wiki.info/hpc/Binding/Pinning>`_.
    The `Slurm documentation <https://slurm.schedmd.com/mpi_guide.html#open_mpi>`_  contains additional options for running MPI.
 
-In addition, you can consider the number of CPUs you are using.
+In addition, you can consider the number of virtual processes (Number of MPI processes x number of threads) you are using.
 
 .. list-table::
   :header-rows: 1

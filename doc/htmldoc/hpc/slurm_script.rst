@@ -9,7 +9,11 @@ Typically, you specify system parameters for the job you want to run in a job sc
 
 This is an example job script that shows common settings useful when running NEST on HPC systems. The settings are applicable
 to other job schedulers other than Slurm but the syntax will be different.
-Always consult the documentation of the system you are running on to find out exactly what you need provide in your script.
+
+.. note::
+
+   The example script is compatible with Slurm version <22.05.
+   Always consult the documentation of the system you are running on to find out exactly what you need to provide in your script.
 
 You will likely need to alter the job script to optimize the performance on the system your're using.
 Finding the optimal parameters for your script may require some trial and error.
@@ -26,9 +30,9 @@ In this example, we are using 1 node, which contains 2 sockets and 64 cores per 
 .. code-block:: sh
 
    #!/bin/bash -l
-   #SBATCH --job-name="my_nest_simulation"
-   #SBATCH --account="my_account"
-   #SBATCH --partition=normal
+   #SBATCH --job-name=<job-name>
+   #SBATCH --account=<account-name>
+   #SBATCH --partition=<partition-type>
    #SBATCH --time=01:00:00
    #SBATCH --nodes=1
    #SBATCH --ntasks-per-node=2
@@ -39,11 +43,11 @@ In this example, we are using 1 node, which contains 2 sockets and 64 cores per 
    export OMP_PROC_BIND=TRUE
 
 
-   # On some systems, MPI is run by default
+   # On some systems, MPI is run by SLURM
    srun --exclusive python3 my_nest_simulation.py
 
    # On other systems, you must explicitly call MPI:
-   mpirun -n <num_of_processes> python3 my_nest_simulation.py
+   mpirun -n <num_of_processes> --hostfile <hostfile> python3 my_nest_simulation.py
 
 
 
@@ -68,7 +72,7 @@ You are submitting a shell script to Slurm. The "shebang" line must be the first
 
 ::
 
-   #SBATCH --job-name="my_nest_simulation"
+   #SBATCH --job-name=<job-name>
 
 The name of the job should be unique and descriptive enough to differentiate it from other jobs.
 
@@ -76,7 +80,7 @@ The name of the job should be unique and descriptive enough to differentiate it 
 
 ::
 
-   #SBATCH --account="my_account"
+   #SBATCH --account=<account-name>
 
 Name of your account
 
@@ -84,7 +88,7 @@ Name of your account
 
 ::
 
-   #SBATCH --partition=my_partition
+   #SBATCH --partition=<partition-type>
 
 The partition describes what architecture or hardware specifications your job will use.
 For example, some systems have GPU and CPU partitions.
@@ -200,18 +204,17 @@ It should match the number of ``cpus-per-task``.
 .. code-block:: python
 
    import nest
-   from nest import Create, Connect, Simulate
 
    # Set the local_num_threads to match the value in your job script.
-   nest.local_num_threads = 128
+   nest.local_num_threads = 64
 
    # In this example, we set the number of neurons to match the
    # number of threads. In this scenario each neuron would  be
    # placed on its own thread. In most setups, the number of
    # neurons would be different than the number of of threads.
-   n = Create("iaf_psc_alpha", 64)
-   pg = Create("poisson_generator", params={"rate": 50000.0})
-   sr = Create("spike_recorder", params={"record_to": "ascii"})
+   n = nest.Create("iaf_psc_alpha", 64)
+   pg = nest.Create("poisson_generator", params={"rate": 50000.0})
+   sr = nest.Create("spike_recorder", params={"record_to": "ascii"})
    nest.Connect(pg, n, 'all_to_all', syn_spec={'weight': 100})
    nest.Connect(n, sr)
    nest.Simulate(100.)

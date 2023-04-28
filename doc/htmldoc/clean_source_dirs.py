@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# cleandocdir.py
+# clean_source_dirs.py
 #
 # This file is part of NEST.
 #

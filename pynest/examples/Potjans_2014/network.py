@@ -273,11 +273,12 @@ class Network:
         nest.overwrite_files = self.sim_dict['overwrite_files']
         nest.print_time = self.sim_dict['print_time']
 
+        rng_seed = nest.rng_seed
+        vps = nest.total_num_virtual_procs
+
         if nest.Rank() == 0:
-            print('RNG seed: {}'.format(
-                nest.rng_seed))
-            print('Total number of virtual processes: {}'.format(
-                nest.total_num_virtual_procs))
+            print('RNG seed: {}'.format(rng_seed))
+            print('Total number of virtual processes: {}'.format(vps))
 
     def __create_neuronal_populations(self):
         """ Creates the neuronal populations.

@@ -31,6 +31,10 @@ from scipy.special import lambertw
 
 
 # Notes:
+# * copy docs
+# * add docs & examples
+# * add comments
+# * restructure
 # * test min delay stuff tests sim indep of mindelay, move out?
 # * `test_iaf_ps_dc_accuracy` tests kernel precision, move out?
 

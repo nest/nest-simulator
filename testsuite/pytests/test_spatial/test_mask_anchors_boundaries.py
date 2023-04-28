@@ -84,6 +84,7 @@ def compare_layers_and_connections(use_free_mask, tmp_path, mask_params, edge_wr
     directory = mask_params[0]
     connections_ref = np.loadtxt(
         f'spatial_test_references/{"free" if use_free_mask else "grid"}/{directory}/{file_name}.txt')
+    print("searching", f'spatial_test_references/{"free" if use_free_mask else "grid"}/{directory}/{file_name}.txt')
 
     assert np.all(stored_src == src_layer_ref)
     assert np.all(stored_target == target_layer_ref)
@@ -101,12 +102,12 @@ def test_free_circ_doughnut_anchor_and_boundary(tmp_path, mask_params, anchor, e
     compare_layers_and_connections(use_free_mask, tmp_path, mask_params, edge_wrap, anchor, extent)
 
 
+@pytest.mark.parametrize('use_free_mask', [True, False])
 @pytest.mark.parametrize('anchor', [[0.0, 0.0], [-0.5, -0.25]])
-def test_free_rect_anchor(tmp_path, anchor):
+def test_free_and_grid_rect_anchor(tmp_path, anchor, use_free_mask):
     mask_params = ('rectangular', {'lower_left': [0.0, 0.0], 'upper_right': [0.6, 0.3]})
     edge_wrap = False
     extent = [1.25, 1.25]
-    use_free_mask = True
 
     compare_layers_and_connections(use_free_mask, tmp_path, mask_params, edge_wrap, anchor, extent)
 
@@ -131,10 +132,61 @@ def test_free_rect_offset_with_edge_wrap(tmp_path):
     compare_layers_and_connections(use_free_mask, tmp_path, mask_params, edge_wrap, anchor, extent)
 
 
-@pytest.mark.parametrize('mask_params', [('circular', {'radius': 0.25})])
+@pytest.mark.parametrize('mask_params', [('doughnut', {'outer_radius': 0.25, 'inner_radius': 0.1}),
+                                         ('circular', {'radius': 0.25})])
 @pytest.mark.parametrize('anchor', [[0., 0.], [-0.25, 0.]])
 @pytest.mark.parametrize('edge_wrap', [True, False])
 def test_reg_circ_doughnut_anchor_and_boundary(tmp_path, mask_params, anchor, edge_wrap):
+    extent = [1.25, 1.25]
+    use_free_mask = False
+
+    compare_layers_and_connections(use_free_mask, tmp_path, mask_params, edge_wrap, anchor, extent)
+
+
+@pytest.mark.parametrize('anchor', [[0, 0], [0, 1], [1, 0], [5, 5]])
+@pytest.mark.parametrize('edge_wrap', [True, False])
+def test_reg_grid_anchor(tmp_path, anchor, edge_wrap):
+    mask_params = ('grid', {'shape': [3, 2]})
+    extent = [1.25, 1.25]
+    use_free_mask = False
+
+    compare_layers_and_connections(use_free_mask, tmp_path, mask_params, edge_wrap, anchor, extent)
+
+
+@pytest.mark.parametrize('anchor', [[0, -1], [-1, 0]])
+def test_reg_grid_anchor_negative(tmp_path, anchor):
+    mask_params = ('grid', {'shape': [3, 2]})
+    extent = [1.25, 1.25]
+    use_free_mask = False
+    edge_wrap = False
+
+    compare_layers_and_connections(use_free_mask, tmp_path, mask_params, edge_wrap, anchor, extent)
+
+
+def test_reg_grid_anchor_equal(tmp_path):
+    edge_wrap = False
+    mask_params = ('grid', {'shape': [3, 3]})
+    anchor = [1, 1]
+    extent = [1.25, 1.25]
+    use_free_mask = False
+
+    compare_layers_and_connections(use_free_mask, tmp_path, mask_params, edge_wrap, anchor, extent)
+
+
+@pytest.mark.parametrize('anchor', [[0., 0.], [-0.5, -0.25]])
+def test_reg_rect_anchor(tmp_path, anchor):
+    edge_wrap = False
+    mask_params = ('rectangular', {'lower_left': [0.0, 0.0], 'upper_right': [0.6, 0.3]})
+    extent = [1.25, 1.25]
+    use_free_mask = False
+
+    compare_layers_and_connections(use_free_mask, tmp_path, mask_params, edge_wrap, anchor, extent)
+
+
+def test_grid_rect_offset_with_edge_wrap(tmp_path):
+    edge_wrap = True
+    mask_params = ('rectangular', {'lower_left': [-0.001, -0.001], 'upper_right': [0.6, 0.3]})
+    anchor = [0.0, 0.0]
     extent = [1.25, 1.25]
     use_free_mask = False
 

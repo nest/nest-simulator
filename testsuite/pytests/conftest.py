@@ -41,7 +41,8 @@ sys.path.append(str(pathlib.Path(__file__).parent / "utilities"))
 # Ignore it during test collection
 collect_ignore = ["utilities"]
 
-import testutil, testsimulation
+import testutil  # noqa
+import testsimulation  # noqa
 
 
 @pytest.fixture(scope="session")

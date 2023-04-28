@@ -23,6 +23,9 @@
 Low-level API of PyNEST Module
 """
 
+# Since this is a low level module, we need some more trickery, thus:
+# pylint: disable=wrong-import-position
+
 import functools
 import inspect
 import keyword
@@ -34,12 +37,12 @@ import os
 # Python running on Ubuntu, when invoked from the terminal
 # "python -c 'import nest'"
 if 'linux' in sys.platform and 'Anaconda' in sys.version:
-    import readline
+    import readline  # noqa: F401
 
 # This is a workaround to avoid segmentation faults when importing
 # scipy *after* nest. See https://github.com/numpy/numpy/issues/2521
 try:
-    import scipy
+    import scipy  # noqa: F401
 except ImportError:
     pass
 
@@ -48,7 +51,7 @@ except ImportError:
 # yet other libraries.
 sys.setdlopenflags(os.RTLD_NOW | os.RTLD_GLOBAL)
 
-from . import pynestkernel as kernel      # noqa
+from . import pynestkernel as kernel      # noqa pylint: disable=no-name-in-module
 
 __all__ = [
     'check_stack',
@@ -90,20 +93,7 @@ def catching_sli_run(cmd):
         SLI errors are bubbled to the Python API as NESTErrors.
     """
 
-    if sys.version_info >= (3, ):
-        def encode(s):
-            return s
-
-        def decode(s):
-            return s
-    else:
-        def encode(s):
-            return s.encode('utf-8')
-
-        def decode(s):
-            return s.decode('utf-8')
-
-    engine.run('{%s} runprotected' % decode(cmd))
+    engine.run('{%s} runprotected' % cmd)
     if not sli_pop():
         errorname = sli_pop()
         message = sli_pop()
@@ -117,16 +107,16 @@ def catching_sli_run(cmd):
 sli_run = sr = catching_sli_run
 
 
-def sli_func(s, *args, **kwargs):
-    """Convenience function for executing an SLI command s with
+def sli_func(func, *args, **kwargs):
+    """Convenience function for executing an SLI command func with
     arguments args.
 
     This executes the SLI sequence:
-    ``sli_push(args); sli_run(s); y=sli_pop()``
+    ``sli_push(args); sli_run(func); y=sli_pop()``
 
     Parameters
     ----------
-    s : str
+    func : str
         Function to call
     *args
         Arbitrary number of arguments to pass to the SLI function
@@ -151,24 +141,24 @@ def sli_func(s, *args, **kwargs):
     # check for namespace
     slifun = 'sli_func'  # version not converting to literals
     if 'namespace' in kwargs:
-        s = kwargs['namespace'] + ' using ' + s + ' endusing'
+        func = f'{kwargs["namespace"]} using {func} endusing'
     elif 'litconv' in kwargs:
         if kwargs['litconv']:
             slifun = 'sli_func_litconv'
-    elif len(kwargs) > 0:
+    elif kwargs:
         raise kernel.NESTErrors.PyNESTError(
             "'namespace' and 'litconv' are the only valid keyword arguments.")
 
     sli_push(args)       # push array of arguments on SLI stack
-    sli_push(s)          # push command string
-    sli_run(slifun)      # SLI support code to execute s on args
-    r = sli_pop()        # return value is an array
+    sli_push(func)       # push command string
+    sli_run(slifun)      # SLI support code to execute func on args
+    result = sli_pop()        # return value is an array
 
-    if len(r) == 1:      # 1 return value is no tuple
-        return r[0]
-
-    if len(r) != 0:
-        return r
+    if not result:
+        return None
+    if len(result) == 1:      # 1 return value is no tuple
+        return result[0]
+    return result
 
 
 __debug = False
@@ -285,12 +275,12 @@ def set_communicator(comm):
 
     Raises
     ------
-    _kernel.NESTError
+    kernel.NESTError
     """
 
     if "mpi4py" not in sys.modules:
-        raise _kernel.NESTError("set_communicator: "
-                                "mpi4py not loaded.")
+        raise kernel.NESTError("set_communicator: "
+                               "mpi4py not loaded.")
 
     engine.set_communicator(comm)
 

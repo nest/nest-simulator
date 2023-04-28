@@ -28,7 +28,6 @@ import warnings
 
 from ..ll_api import check_stack, sps, sr, spp
 from .hl_api_helper import is_iterable, is_literal
-from .hl_api_parallel_computing import Rank
 
 __all__ = [
     'Cleanup',

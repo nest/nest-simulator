@@ -499,41 +499,6 @@ def getTitles(text):
     return titles
 
 
-def getSections(text, titles=None):
-    '''
-    Extract sections between titles
-
-    Parameters
-    ----------
-
-    text : str
-      Full documentation text
-
-    titles : list (optional)
-      Iterable with the ordered title re.match objects.  If not given, titles
-      will be generated with a call to `getTitles()`.
-
-
-    Returns
-    -------
-
-    list
-      tuples of each title re.match object and the text of the following section.
-    '''
-    if titles is None:
-        titles = getTitles(text)
-    sections = list()
-    for title, following in zip(titles, titles[1:]+[None]):
-        secstart = title.end()
-        secend = None   # None = end of string
-        if following:
-            secend = following.start()
-        if title.group('title') in sections:
-            log.warning('Duplicate title in user documentation of %s', filename)
-        sections.append((title.group('title'), text[secstart:secend].strip()))
-    return sections
-
-
 def ExtractUserDocs(listoffiles, basedir='..', outdir='userdocs/'):
     """
     Extract and build all user documentation and build tag indices.

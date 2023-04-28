@@ -58,7 +58,7 @@ def version_role(pattern):
 
         try:
             version = data[package.strip()][level.strip()]
-        except KeyError as e:
+        except KeyError:
             version = f"'{level}' was not found!"
 
         node = nodes.Text(version)

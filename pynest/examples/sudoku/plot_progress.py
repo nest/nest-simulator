@@ -49,7 +49,7 @@ import matplotlib.pyplot as plt
 
 
 def get_progress(puzzle, solution):
-    valid, boxes, rows, cols = helpers.validate_solution(puzzle, solution)
+    valid, boxes, rows, cols = helpers_sudoku.validate_solution(puzzle, solution)
     if valid:
         return 1.0
     return (boxes.sum() + rows.sum() + cols.sum()) / 27
@@ -124,10 +124,10 @@ for file in in_files:
         ax = plt.subplot2grid((3, 3), (0, 1), rowspan=3, colspan=2)
         if i == 0:
             # repeat the (colorless) starting configuration several times
-            helpers.plot_field(sim_data['puzzle'], sim_data['puzzle'], ax, False)
+            helpers_sudoku.plot_field(sim_data['puzzle'], sim_data['puzzle'], ax, False)
             image_repeat = 8
         else:
-            helpers.plot_field(puzzle, current_state, ax, True)
+            helpers_sudoku.plot_field(puzzle, current_state, ax, True)
             image_repeat = 1
 
         if i == len(solution_states) - 1:

@@ -110,6 +110,9 @@ run_test ()
 
     chmod 700 "${TEST_RUNFILE}"
 
+    cat "${TEST_RUNFILE}"
+    FOOBAR=$( "${TEST_RUNFILE}" )
+
     TIME_ELAPSED=$( time_cmd "${TEST_RUNFILE}" )
     TIME_TOTAL=$(( ${TIME_TOTAL:-0} + ${TIME_ELAPSED} ))
     JUNIT_TESTS=$(( ${JUNIT_TESTS:-0} + 1 ))

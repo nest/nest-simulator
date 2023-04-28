@@ -453,6 +453,9 @@ class Network:
                                 mean=self.net_dict['delay_matrix_mean'][i][j],
                                 std=(self.net_dict['delay_matrix_mean'][i][j] *
                                      self.net_dict['delay_rel_std'])),
+                            # resulting minimum delay is equal to resolution, see:
+                            # https://nest-simulator.readthedocs.io/en/latest/nest_behavior
+                            # /random_numbers.html#rounding-effects-when-randomizing-delays
                             min=nest.resolution - 0.5 * nest.resolution,
                             max=np.Inf)}
 
@@ -516,6 +519,9 @@ class Network:
                         mean=self.stim_dict['delay_th_mean'],
                         std=(self.stim_dict['delay_th_mean'] *
                              self.stim_dict['delay_th_rel_std'])),
+                    # resulting minimum delay is equal to resolution, see:
+                    # https://nest-simulator.readthedocs.io/en/latest/nest_behavior
+                    # /random_numbers.html#rounding-effects-when-randomizing-delays
                     min=nest.resolution - 0.5 * nest.resolution,
                     max=np.Inf)}
 

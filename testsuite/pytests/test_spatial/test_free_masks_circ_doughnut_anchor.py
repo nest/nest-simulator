@@ -33,11 +33,11 @@ Test free masks with varying anchors, boundary conditions and extents.
 
 class TestFreeMasks(SpatialTestRefs):
 
-    def network(self, mask_params, anchor, wrap):
+    def network(self, mask_params, anchor, wrap, extent):
         nest.ResetKernel()
         nest.set(use_compressed_spikes=False, sort_connections_by_source=False)
         positions = nest.spatial.free([[x, y] for x in np.linspace(-0.5, 0.5, 5) for y in np.linspace(0.5, -0.5, 5)],
-                                      edge_wrap=wrap, extent=[1.25, 1.25])
+                                      edge_wrap=wrap, extent=extent)
 
         population_type = 'iaf_psc_alpha'
 
@@ -50,8 +50,8 @@ class TestFreeMasks(SpatialTestRefs):
         nest.Connect(src_layer, target_layer, conns)
         return src_layer, target_layer
 
-    def compare_layers_and_connections(self, mask_params, edge_wrap, anchor):
-        src_layer, target_layer = self.network(mask_params, anchor, edge_wrap)
+    def compare_layers_and_connections(self, mask_params, edge_wrap, anchor, extent):
+        src_layer, target_layer = self.network(mask_params, anchor, edge_wrap, extent)
 
         # TODO: replace Dump methods by in-memory equivalent once available
         path = "TEMP_SOLUTION"
@@ -77,13 +77,32 @@ class TestFreeMasks(SpatialTestRefs):
                                              ('circular', {'radius': 0.25})])
     @pytest.mark.parametrize('anchor', [[0., 0.], [-0.25, 0.]])
     @pytest.mark.parametrize('edge_wrap', [True, False])
-    def test_layers_and_connection_match_with_varying_anchor_and_boundary_circ_doughnut(self, tmp_path, mask_params,
+    def test_layers_and_connection_match_with_varying_anchor_and_boundary_circ_doughnut(self, mask_params,
                                                                                         anchor, edge_wrap):
-        self.compare_layers_and_connections(mask_params, edge_wrap, anchor)
+        extent = [1.25, 1.25]
+
+        self.compare_layers_and_connections(mask_params, edge_wrap, anchor, extent)
 
     @pytest.mark.parametrize('anchor', [[0.0, 0.0], [-0.5, -0.25]])
-    def test_layers_and_connection_match_varying_anchor_rectangular(self, tmp_path, anchor):
+    def test_layers_and_connection_match_varying_anchor_rect(self, anchor):
         mask_params = ('rectangular', {'lower_left': [0.0, 0.0], 'upper_right': [0.6, 0.3]})
         edge_wrap = False
+        extent = [1.25, 1.25]
 
-        self.compare_layers_and_connections(mask_params, edge_wrap, anchor)
+        self.compare_layers_and_connections(mask_params, edge_wrap, anchor, extent)
+
+    def test_layers_and_connections_match_rect_edge_wrap_offset(self):
+        edge_wrap = True
+        mask_params = ('rectangular', {'lower_left': [-0.001, -0.001], 'upper_right': [0.6, 0.301]})
+        anchor = [0.0, 0.0]
+        extent = [1.05, 1.05]
+
+        self.compare_layers_and_connections(mask_params, edge_wrap, anchor, extent)
+
+    def test_layers_and_connections_match_rect_edge_wrap(self):
+        edge_wrap = True
+        mask_params = ('rectangular', {'lower_left': [0.0, 0.0], 'upper_right': [0.6, 0.3]})
+        anchor = [-0.5, -0.25]
+        extent = [1.25, 1.25]
+
+        self.compare_layers_and_connections(mask_params, edge_wrap, anchor, extent)

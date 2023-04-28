@@ -58,7 +58,7 @@ def synapse_filter(syn):
         n = nest.Create("iaf_psc_alpha")
         nest.Connect(n, n, syn_spec={"synapse_model": syn})
         nest.Simulate(10)
-    except:
+    except Exception:
         return False
     return True
 

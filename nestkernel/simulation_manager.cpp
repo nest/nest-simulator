@@ -75,14 +75,26 @@ nest::SimulationManager::initialize()
   clock_.calibrate();
 
   to_do_ = 0;
+  to_do_total_ = 0;
   slice_ = 0;
   from_step_ = 0;
   to_step_ = 0; // consistent with to_do_ = 0
+  t_real_ = 0;
 
   prepared_ = false;
   simulating_ = false;
   simulated_ = false;
   inconsistent_state_ = false;
+  print_time_ = false;
+  use_wfr_ = true;
+
+  wfr_comm_interval_ = 1.0;
+  wfr_tol_ = 0.0001;
+  wfr_max_iterations_ = 15;
+  wfr_interpolation_order_ = 3;
+  update_time_limit_ = std::numeric_limits< double >::infinity();
+  min_update_time_ = std::numeric_limits< double >::infinity();
+  max_update_time_ = -std::numeric_limits< double >::infinity();
 
   reset_timers_for_preparation();
   reset_timers_for_dynamics();

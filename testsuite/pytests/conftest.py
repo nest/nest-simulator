@@ -51,6 +51,20 @@ def have_threads():
 
 
 @pytest.fixture(scope="session")
+def have_plotting():
+    try:
+        import matplotlib
+        matplotlib.use("Agg")   # backend without window
+        import matplotlib.pyplot as plt
+        # make sure we can open a window; DISPLAY may not be set
+        fig = plt.figure()
+        plt.close(fig)
+        return True
+    except Exception:
+        return False
+
+
+@pytest.fixture(scope="session")
 def have_mpi():
     return nest.ll_api.sli_func("statusdict/have_mpi ::")
 

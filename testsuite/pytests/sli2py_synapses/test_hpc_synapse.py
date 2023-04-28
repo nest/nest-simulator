@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_hpc_synapse.pyp
+# test_hpc_synapse.py
 #
 # This file is part of NEST.
 #

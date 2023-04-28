@@ -50,11 +50,11 @@ class TestFreeMasks(SpatialTestRefs):
         nest.Connect(src_layer, target_layer, conns)
         return src_layer, target_layer
 
-    def compare_layers_and_connections(self, mask_params, edge_wrap, anchor, extent):
+    def compare_layers_and_connections(self, tmp_path, mask_params, edge_wrap, anchor, extent):
         src_layer, target_layer = self.network(mask_params, anchor, edge_wrap, extent)
+        path = str(tmp_path) + "tmp.txt"
 
         # TODO: replace Dump methods by in-memory equivalent once available
-        path = "TEMP_SOLUTION"
 
         nest.DumpLayerNodes(src_layer, path)
         stored_src = np.genfromtxt(path)
@@ -77,32 +77,32 @@ class TestFreeMasks(SpatialTestRefs):
                                              ('circular', {'radius': 0.25})])
     @pytest.mark.parametrize('anchor', [[0., 0.], [-0.25, 0.]])
     @pytest.mark.parametrize('edge_wrap', [True, False])
-    def test_layers_and_connection_match_with_varying_anchor_and_boundary_circ_doughnut(self, mask_params,
+    def test_layers_and_connection_match_with_varying_anchor_and_boundary_circ_doughnut(self, tmp_path, mask_params,
                                                                                         anchor, edge_wrap):
         extent = [1.25, 1.25]
 
-        self.compare_layers_and_connections(mask_params, edge_wrap, anchor, extent)
+        self.compare_layers_and_connections(tmp_path, mask_params, edge_wrap, anchor, extent)
 
     @pytest.mark.parametrize('anchor', [[0.0, 0.0], [-0.5, -0.25]])
-    def test_layers_and_connection_match_varying_anchor_rect(self, anchor):
+    def test_layers_and_connection_match_varying_anchor_rect(self, tmp_path, anchor):
         mask_params = ('rectangular', {'lower_left': [0.0, 0.0], 'upper_right': [0.6, 0.3]})
         edge_wrap = False
         extent = [1.25, 1.25]
 
-        self.compare_layers_and_connections(mask_params, edge_wrap, anchor, extent)
+        self.compare_layers_and_connections(tmp_path, mask_params, edge_wrap, anchor, extent)
 
-    def test_layers_and_connections_match_rect_edge_wrap_offset(self):
+    def test_layers_and_connections_match_rect_edge_wrap_offset(self, tmp_path):
         edge_wrap = True
         mask_params = ('rectangular', {'lower_left': [-0.001, -0.001], 'upper_right': [0.6, 0.301]})
         anchor = [0.0, 0.0]
         extent = [1.05, 1.05]
 
-        self.compare_layers_and_connections(mask_params, edge_wrap, anchor, extent)
+        self.compare_layers_and_connections(tmp_path, mask_params, edge_wrap, anchor, extent)
 
-    def test_layers_and_connections_match_rect_edge_wrap(self):
+    def test_layers_and_connections_match_rect_edge_wrap(self, tmp_path):
         edge_wrap = True
         mask_params = ('rectangular', {'lower_left': [0.0, 0.0], 'upper_right': [0.6, 0.3]})
         anchor = [-0.5, -0.25]
         extent = [1.25, 1.25]
 
-        self.compare_layers_and_connections(mask_params, edge_wrap, anchor, extent)
+        self.compare_layers_and_connections(tmp_path, mask_params, edge_wrap, anchor, extent)

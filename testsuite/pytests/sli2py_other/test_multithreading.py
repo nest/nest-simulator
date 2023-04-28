@@ -42,19 +42,22 @@ def prepare():
 
 
 def test_check_nodes_distribution():
-    nest.local_num_threads = 4
+    num_threads = 4
+    nest.local_num_threads = num_threads
 
-    neurons = nest.Create("iaf_psc_alpha", nest.local_num_threads)
-    vps = np.array(neurons.tolist()) % nest.local_num_threads
+    neurons = nest.Create("iaf_psc_alpha", num_threads)
+    vps = np.array(neurons.tolist()) % num_threads
+
     assert (neurons.vp == vps).all()
 
 
 def test_transmitted_spikes_btw_threads():
-    nest.local_num_threads = 4
+    num_threads = 4
+    nest.local_num_threads = num_threads
 
     sg = nest.Create("spike_generator", {"spike_times": [1.0]})
-    pA = nest.Create("parrot_neuron", nest.local_num_threads)
-    pB = nest.Create("parrot_neuron", nest.local_num_threads)
+    pA = nest.Create("parrot_neuron", num_threads)
+    pB = nest.Create("parrot_neuron", num_threads)
     sr = nest.Create("spike_recorder")
 
     nest.Connect(sg, pA, "all_to_all", syn_spec={"delay": 1.})
@@ -66,6 +69,6 @@ def test_transmitted_spikes_btw_threads():
 
     sr_times = sr.get("events")["times"]
 
-    excepted = [3] * (nest.local_num_threads ** 2)
+    excepted = [3] * (num_threads ** 2)
 
     nptest.assert_array_equal(sr_times, excepted)

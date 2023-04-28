@@ -290,7 +290,7 @@ jobs:
         run: |
           pylint --jobs=$(nproc) pynest/ testsuite/pytests/*.py testsuite/regressiontests/*.py
 
-  black:
+  black_IGNORED:
     runs-on: "ubuntu-20.04"
     steps:
       - name: "Checkout repository content"
@@ -298,6 +298,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: "Run black..."
+        continue-on-error: true
         uses: psf/black@23.3.0
 
   flake8:

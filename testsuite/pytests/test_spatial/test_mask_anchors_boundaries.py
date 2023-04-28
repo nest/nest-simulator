@@ -18,7 +18,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-
+import os
 
 import nest
 import numpy as np
@@ -41,6 +41,8 @@ target_layer_ref = np.array(
      [38, 0, 0], [39, 0, -0.25], [40, 0, -0.5], [41, 0.25, 0.5], [42, 0.25, 0.25], [43, 0.25, 0],
      [44, 0.25, -0.25], [45, 0.25, -0.5], [46, 0.5, 0.5], [47, 0.5, 0.25], [48, 0.5, 0], [49, 0.5, -0.25],
      [50, 0.5, -0.5]])
+
+home_path = os.path.abspath(os.path.dirname(__file__))
 
 
 def network(use_free_mask, mask_params, anchor, wrap, extent):
@@ -82,9 +84,9 @@ def compare_layers_and_connections(use_free_mask, tmp_path, mask_params, edge_wr
 
     file_name = f'wrap_{str(edge_wrap)}_anchor_' + '_'.join(str(x) for x in anchor)
     directory = mask_params[0]
-    connections_ref = np.loadtxt(
-        f'spatial_test_references/{"free" if use_free_mask else "grid"}/{directory}/{file_name}.txt')
-    print("searching", f'spatial_test_references/{"free" if use_free_mask else "grid"}/{directory}/{file_name}.txt')
+    reference_path = f'spatial_test_references/{"free" if use_free_mask else "grid"}/{directory}/{file_name}.txt'
+
+    connections_ref = np.loadtxt(os.path.join(home_path, reference_path))
 
     assert np.all(stored_src == src_layer_ref)
     assert np.all(stored_target == target_layer_ref)

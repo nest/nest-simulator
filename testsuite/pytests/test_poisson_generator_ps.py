@@ -31,10 +31,11 @@ problem. Therefore, failure of this script indicates that the configuration is n
 portable.
 """
 
+
 import nest
 import pytest
 import numpy as np
-import numpy.testing as nptest
+
 
 def test_poisson_generator_ps():
     nest.ResetKernel()
@@ -62,4 +63,3 @@ def test_poisson_generator_ps():
     # check there are no spikes between stop and start time
     assert not ((times1 > 500.) & (times1 < 1200.)).any()
     assert not ((times2 > 500.) & (times2 < 1200.)).any()
-

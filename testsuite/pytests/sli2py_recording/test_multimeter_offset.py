@@ -23,6 +23,7 @@
 This set of tests verify the behavior of the offset attribute of multimeter.
 """
 
+import numpy as np
 import numpy.testing as nptest
 import pytest
 
@@ -186,3 +187,80 @@ def test_creation_after_initial_simulation():
     mm2_times = mm2.events['times']
 
     nptest.assert_array_equal(mm1_times, mm2_times)
+
+
+def test_offset_after_initial_simulation():
+    """
+    Test correct behavior of offset after initial simulation time.
+
+    The sample should occur at 'offset' when initial simulation time is
+    less than offset and we have not recorded any parameters yet.
+    """
+
+    nest.resolution = 0.1
+
+    init_sim_time = 110.
+    sim_time = 250.
+    interval = 60.
+    offset = 170.3
+
+    expected_times = np.arange(offset, init_sim_time + sim_time, interval)
+
+    # Create neuron and perform initial simulation
+    nrn = nest.Create('iaf_psc_exp')
+    nest.Simulate(init_sim_time)
+
+    # Create multimeter and continue simulation
+    mm_params = {'interval': interval,
+                 'offset': offset,
+                 'record_from': ['V_m']
+                 }
+    conn_spec = {'rule': 'all_to_all'}
+    syn_spec = {'delay': 0.1}
+
+    mm = nest.Create('multimeter', mm_params)
+
+    nest.Connect(mm, nrn, conn_spec, syn_spec)
+    nest.Simulate(sim_time)
+
+    # Compare to reference data
+    actual_times = mm.events['times']
+    nptest.assert_array_equal(actual_times, expected_times)
+
+
+def test_initial_simulation_longer_than_offset():
+    """
+    Test correct behavior when initial simulation is longer than offset.
+
+    First recorded event should be between init simtime and interval.
+    """
+
+    nest.resolution = 0.1
+
+    init_sim_time = 250.
+    sim_time = 250.
+    interval = 60.
+    offset = 170.3
+
+    expected_times = np.arange(offset + 2 * interval, init_sim_time + sim_time, interval)
+
+    # Create neuron and perform initial simulation
+    nrn = nest.Create('iaf_psc_exp')
+    nest.Simulate(init_sim_time)
+
+    # Create multimeter and continue simulation
+    mm_params = {'interval': interval,
+                 'offset': offset,
+                 'record_from': ['V_m']
+                 }
+    conn_spec = {'rule': 'all_to_all'}
+    syn_spec = {'delay': 0.1}
+
+    mm = nest.Create('multimeter', mm_params)
+
+    nest.Connect(mm, nrn, conn_spec, syn_spec)
+    nest.Simulate(sim_time)
+
+    # Compare to reference data
+    actual_times = mm.events['times']
+    nptest.assert_array_equal(actual_times, expected_times)

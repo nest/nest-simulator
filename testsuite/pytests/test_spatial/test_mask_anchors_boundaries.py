@@ -82,7 +82,8 @@ def compare_layers_and_connections(use_free_mask, tmp_path, mask_params, edge_wr
 
     file_name = f'wrap_{str(edge_wrap)}_anchor_' + '_'.join(str(x) for x in anchor)
     directory = mask_params[0]
-    connections_ref = np.loadtxt(f'spatial_test_references/{directory}/{file_name}.txt')
+    connections_ref = np.loadtxt(
+        f'spatial_test_references/{"free" if use_free_mask else "grid"}/{directory}/{file_name}.txt')
 
     assert np.all(stored_src == src_layer_ref)
     assert np.all(stored_target == target_layer_ref)
@@ -126,5 +127,15 @@ def test_free_rect_offset_with_edge_wrap(tmp_path):
     anchor = [0.0, 0.0]
     extent = [1.05, 1.05]
     use_free_mask = True
+
+    compare_layers_and_connections(use_free_mask, tmp_path, mask_params, edge_wrap, anchor, extent)
+
+
+@pytest.mark.parametrize('mask_params', [('circular', {'radius': 0.25})])
+@pytest.mark.parametrize('anchor', [[0., 0.], [-0.25, 0.]])
+@pytest.mark.parametrize('edge_wrap', [True, False])
+def test_reg_circ_doughnut_anchor_and_boundary(tmp_path, mask_params, anchor, edge_wrap):
+    extent = [1.25, 1.25]
+    use_free_mask = False
 
     compare_layers_and_connections(use_free_mask, tmp_path, mask_params, edge_wrap, anchor, extent)

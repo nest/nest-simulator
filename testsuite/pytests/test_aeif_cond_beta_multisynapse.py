@@ -168,7 +168,7 @@ class TestAeifCondBetaMultisynapse:
             ax[0].plot(ts, V_m_summed, label="summed")
 
             ax[-1].semilogy(ts, np.abs(Vms - V_m_summed), label="error")
-            fig.savefig("/tmp/test_aeif_cond_beta_multisynapse.png")
+            fig.savefig("test_aeif_cond_beta_multisynapse.png")
 
         # large testing tolerance due to approximation (see documentation of the test)
         np.testing.assert_allclose(Vms, V_m_summed, atol=0., rtol=1E-5)
@@ -395,6 +395,6 @@ class TestAeifCondBetaMultisynapse:
                 for _ax in ax:
                     _ax.legend()
 
-                fig.savefig("/tmp/test_aeif_cond_beta_multisynapse_psc_shape_ " + str(i) + ".png")
+                fig.savefig("test_aeif_cond_beta_multisynapse_psc_shape_ " + str(i) + ".png")
 
             np.testing.assert_allclose(sim_g, theo_g)

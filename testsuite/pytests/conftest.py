@@ -30,7 +30,7 @@ Fixtures available to the entire testsuite directory.
     def test_gsl():
         pass
 """
-
+import dataclasses
 import pytest
 import nest
 import sys
@@ -40,6 +40,9 @@ import pathlib
 sys.path.append(str(pathlib.Path(__file__).parent / "utilities"))
 # Ignore it during test collection
 collect_ignore = ["utilities"]
+
+import testutil  # noqa
+import testsimulation  # noqa
 
 
 @pytest.fixture(scope="session")
@@ -112,3 +115,26 @@ def skipif_missing_threads(request, have_threads):
     """
     if not have_threads and request.node.get_closest_marker("skipif_missing_threads"):
         pytest.skip("skipped because missing multithreading support.")
+
+
+@pytest.fixture(autouse=True)
+def simulation_class(request):
+    return getattr(request, "param", testsimulation.Simulation)
+
+
+@pytest.fixture
+def simulation(request):
+    marker = request.node.get_closest_marker("simulation")
+    sim_cls = marker.args[0] if marker else testsimulation.Simulation
+    sim = sim_cls(
+        *(request.getfixturevalue(field.name) for field in dataclasses.fields(sim_cls))
+    )
+    nest.ResetKernel()
+    if getattr(sim, "set_resolution", True):
+        nest.resolution = sim.resolution
+    nest.local_num_threads = sim.local_num_threads
+    return sim
+
+
+# Inject the root simulation fixtures into this module to be always available.
+testutil.create_dataclass_fixtures(testsimulation.Simulation, __name__)

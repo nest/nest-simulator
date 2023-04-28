@@ -32,12 +32,6 @@ try:
 except ImportError:
     HAVE_CSA = False
 
-try:
-    import numpy
-    HAVE_NUMPY = True
-except ImportError:
-    HAVE_NUMPY = False
-
 nest.ll_api.sli_run("statusdict/have_libneurosim ::")
 HAVE_LIBNEUROSIM = nest.ll_api.sli_pop()
 

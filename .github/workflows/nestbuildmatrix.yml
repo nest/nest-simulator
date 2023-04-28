@@ -533,6 +533,7 @@ jobs:
       - name: "Build NEST"
         run: |
           cd "$NEST_VPATH"
+          env
           make VERBOSE=1
 
       - name: "Install NEST"
@@ -621,7 +622,7 @@ jobs:
           python -c "import pytest; print('package location:', pytest.__file__)"
           pip list
 
-      - name: "Build NEST"
+      - name: "Configure NEST build"
         run: |
           mkdir -p "$NEST_VPATH/reports" "$NEST_RESULT"
 
@@ -651,6 +652,7 @@ jobs:
       - name: "Build NEST"
         run: |
           cd "$NEST_VPATH"
+          env
           make VERBOSE=1
 
       - name: "Install NEST"

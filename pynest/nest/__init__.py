@@ -56,11 +56,11 @@ For more information visit https://www.nest-simulator.org.
 # instance later on. Use `.copy()` to prevent pollution with other variables
 _original_module_attrs = globals().copy()
 
-import sys                           # noqa
-import types                         # noqa
-import importlib                     # noqa
-import builtins                      # noqa
-from .ll_api import KernelAttribute  # noqa
+from .ll_api_kernel_attributes import KernelAttribute  # noqa
+import sys        # noqa
+import types      # noqa
+import importlib  # noqa
+import builtins   # noqa
 
 try:
     import versionchecker            # noqa: F401
@@ -536,6 +536,8 @@ def _lazy_module_property(module_name, optional=False, optional_hint=""):
 # Instantiate a NestModule to replace the nest Python module. Based on
 # https://mail.python.org/pipermail/python-ideas/2012-May/014969.html
 _module = NestModule(__name__)
+# A reference to the class of the module is required for the documentation.
+_module.__dict__["NestModule"] = NestModule
 # Set the nest module object as the return value of `import nest` using sys
 sys.modules[__name__] = _module
 # Some compiled/binary components (`pynestkernel.pyx` for example) of NEST

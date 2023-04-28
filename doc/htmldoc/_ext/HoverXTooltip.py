@@ -25,8 +25,6 @@ import sys
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
 
-from conf import doc_build_dir
-
 
 class HoverXTooltipDirective(Directive):
     """Directive to add a tooltip.
@@ -209,7 +207,7 @@ def get_desc_from_glossary(term):
     """
 
     try:
-        with open(str(doc_build_dir) + '/ref_material/glossary.rst') as f:
+        with open('ref_material/glossary.rst') as f:
             file_content = f.read()
 
         # generate a list of lines from file content.

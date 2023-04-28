@@ -66,9 +66,9 @@ def synapse_filter(syn):
 def get_hpc_models():
     all_syn_models = nest.synapse_models
 
-    hpc_models = list(filter(lambda syn: has_hpc_suffix(syn), all_syn_models))
-    hpc_counterpart = list(filter(lambda hpc_syn: hpc_syn[: len(hpc_syn) - 4] in nest.synapse_models, hpc_models))
-    hpc_models = list(filter(lambda syn: synapse_filter(syn), hpc_counterpart))
+    hpc_models = [model for model in all_syn_models if has_hpc_suffix(model)]
+    hpc_counterpart = [model for model in hpc_models if model[: len(model) - 4] in all_syn_models]
+    hpc_models = [model for model in all_syn_models if synapse_filter(hpc_counterpart)]
 
     return hpc_models
 

@@ -30,7 +30,7 @@ The current CI implementation is defined in `.github/workflows/nestbuildmatrix.y
 
    - cppcheck are used for more detailed semantic (but still static) code analysis.
 
-   - mypy, pylint and flake8 are used to statically check Python code. A few errors are intentionally ignored, defined in `tox.ini <https://github.com/nest/nest-simulator/blob/master/tox.ini>`_. Again, the maximum line length is 120 characters.
+   - mypy, pylint, black and flake8 are used to statically check Python code. A few errors are intentionally ignored, defined in `tox.ini <https://github.com/nest/nest-simulator/blob/master/tox.ini>`_. Again, the maximum line length is 120 characters.
 
    Errors that occurred in this stage are printed at the end of the log, including a list of affected files.
 

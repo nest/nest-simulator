@@ -34,28 +34,32 @@ def base_setup():
     Set number of threads to T and create T neurons, i.e., one neuron per thread.
     The thread-local ids of all T neurons should be 0 as they are first neurons per thread.
     """
-    
+
     T = 4  # number of threads
     nest.ResetKernel()
     nest.local_num_threads = T
     pytest.neurons = nest.Create("iaf_psc_alpha", T)
+
 
 @pytest.mark.skipif_missing_threads
 def test_thread_local_ids_after_connect():
     """
     Test that connecting with a static_synapse_hpc triggers the creation of thread-local ids (all 0).
     """
-    
-    nest.Connect(pytest.neurons, pytest.neurons, syn_spec={"synapse_model": "static_synapse_hpc"})
+
+    nest.Connect(
+        pytest.neurons, pytest.neurons, syn_spec={"synapse_model": "static_synapse_hpc"}
+    )
     thread_local_ids = np.array(nest.GetStatus(pytest.neurons, ["thread_local_id"]))
     assert np.all(thread_local_ids.flatten() == 0)
+
 
 @pytest.mark.skipif_missing_threads
 def test_thread_local_ids_after_simulate():
     """
     Test that simulating with a static_synapse_hpc triggers the creation of thread-local ids (all 0).
     """
-    
+
     nest.Simulate(1.0)
     thread_local_ids = np.array(nest.GetStatus(pytest.neurons, ["thread_local_id"]))
     assert np.all(thread_local_ids.flatten() == 0)

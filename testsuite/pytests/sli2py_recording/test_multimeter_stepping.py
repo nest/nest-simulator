@@ -45,10 +45,6 @@ skip_models = [
     'rate_transformer_sigmoid_gg_1998',
     'rate_transformer_tanh',
     'rate_transformer_threshold_lin',
-    'iaf_psc_alpha_multisynapse',  # Rport 0 SE
-    'iaf_psc_exp_multisynapse',  # Rport 0 SE
-    'gif_psc_exp_multisynapse',  # Rport 0 SE
-    'glif_psc',  # Receptor type 0 in glif_psc does not accept SpikeEvent.
     'ac_generator',
     'dc_generator',
     'noise_generator',
@@ -58,16 +54,23 @@ skip_models = [
     'erfc_neuron',
     'ginzburg_neuron',
     'mcculloch_pitts_neuron',
-    'iaf_cond_alpha_mc',  # Rport 0 SE
     'sinusoidal_gamma_generator',
-    'gif_cond_exp_multisynapse',  # Rport 0 SE
-    'glif_cond',  # Rport 0 SE
-    'ht_neuron',  # Receptor type 0 is not available in ht_neuron.
-    'aeif_cond_beta_multisynapse',  # Rport 0 SE
-    'aeif_cond_alpha_multisynapse',  # Rport 0 SE
     'siegert_neuron',
-    'pp_cond_exp_mc_urbanczik',  # Rport 0 SE
 ]
+
+extra_params = {
+    'iaf_psc_alpha_multisynapse': {'receptor_type': 1},
+    'iaf_psc_exp_multisynapse': {'receptor_type': 1},
+    'gif_psc_exp_multisynapse': {'receptor_type': 1},
+    'gif_cond_exp_multisynapse': {'receptor_type': 1},
+    'glif_psc': {'receptor_type': 1},
+    'iaf_cond_alpha_mc': {'receptor_type': 1},
+    'glif_cond': {'receptor_type': 1},
+    'ht_neuron': {'receptor_type': 1},
+    'aeif_cond_alpha_multisynapse': {'receptor_type': 1},
+    'aeif_cond_beta_multisynapse': {'receptor_type': 1},
+    'pp_cond_exp_mc_urbanczik': {'receptor_type': 1}
+}
 
 # Obtain all models with non-empty recordables list
 models = (model for model in nest.node_models
@@ -79,7 +82,7 @@ def build_net(model):
     Build network to be tested.
 
     A multimeter is set to record all recordables of the provided neuron model.
-    The neuron receives Poisson input. 
+    The neuron receives Poisson input.
     """
 
     nest.ResetKernel()
@@ -88,8 +91,13 @@ def build_net(model):
     pg = nest.Create('poisson_generator', params={'rate': 1e4})
     mm = nest.Create('multimeter', {'interval': 0.1,
                                     'record_from': nrn.recordables})
+
+    receptor_type = 0
+    if model in extra_params.keys():
+        receptor_type = extra_params[model]["receptor_type"]
+
     nest.Connect(mm, nrn)
-    nest.Connect(pg, nrn)
+    nest.Connect(pg, nrn, syn_spec={"receptor_type": receptor_type})
 
     return mm
 
@@ -97,7 +105,7 @@ def build_net(model):
 @pytest.mark.parametrize('model', models)
 def test_multimeter_stepping(model):
     """
-    Test multimeter recording in stepwise simulation. 
+    Test multimeter recording in stepwise simulation.
 
     The test first simulates the network for `50 x nest.min_delay`. Then, we
     reset and build the network again and perform 50 subsequent simulations

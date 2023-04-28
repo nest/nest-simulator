@@ -105,8 +105,7 @@ run_test ()
       echo "command=$command"
     fi
 
-    echo "env" >> "${TEST_RUNFILE}"
-    echo "${command}" >> "${TEST_RUNFILE}"
+    echo "env && ${command}" >> "${TEST_RUNFILE}"
     echo "echo \$? > '${TEST_RETFILE}' ; exit 0" >> "${TEST_RUNFILE}"
 
     chmod 700 "${TEST_RUNFILE}"

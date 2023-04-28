@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_free_masks_circ_doughnut_anchor.py
+# test_free_reg_masks.py
 #
 # This file is part of NEST.
 #
@@ -27,22 +27,24 @@ import pytest
 from testsuite.pytests.test_spatial.SpatialTestRefs import SpatialTestRefs
 
 """
-Test free masks with varying anchors, boundary conditions and extents.
+Tests free regular masks with varying anchors, for overlap and periodic boundaries.
 """
 
 
 class TestFreeMasks(SpatialTestRefs):
 
-    def network(self, mask_params, anchor, wrap):
+    def network(self, extent, anchor, wrap, mask_params=None):
+        if mask_params is None:
+            mask_params = {'lower_left': [0.0, 0.0], 'upper_right': [0.6, 0.3]}
+
         nest.ResetKernel()
         nest.set(use_compressed_spikes=False, sort_connections_by_source=False)
         positions = nest.spatial.free([[x, y] for x in np.linspace(-0.5, 0.5, 5) for y in np.linspace(0.5, -0.5, 5)],
-                                      edge_wrap=wrap, extent=[1.25, 1.25])
+                                      edge_wrap=wrap, extent=extent)
 
         population_type = 'iaf_psc_alpha'
 
-        mask_type, params = mask_params
-        conns = {'rule': 'pairwise_bernoulli', 'mask': {mask_type: params, 'anchor': anchor}}
+        conns = {'rule': 'pairwise_bernoulli', 'mask': {'rectangular': mask_params, 'anchor': anchor}}
 
         src_layer = nest.Create(population_type, positions=positions)
         target_layer = nest.Create(population_type, positions=positions)
@@ -50,11 +52,13 @@ class TestFreeMasks(SpatialTestRefs):
         nest.Connect(src_layer, target_layer, conns)
         return src_layer, target_layer
 
-    def compare_layers_and_connections(self, mask_params, edge_wrap, anchor):
-        src_layer, target_layer = self.network(mask_params, anchor, edge_wrap)
+    @pytest.mark.parametrize('anchor', [None, [-0.5, -0.25]])
+    def test_layers_and_connection_match_varying_anchor(self, tmp_path, anchor):
+        edge_wrap = False
+        src_layer, target_layer = self.network([1.25, 1.25], anchor, edge_wrap)
 
         # TODO: replace Dump methods by in-memory equivalent once available
-        path = "TEMP_SOLUTION"
+        path = str(tmp_path) + "/layer.txt"
 
         nest.DumpLayerNodes(src_layer, path)
         stored_src = np.genfromtxt(path)
@@ -66,24 +70,8 @@ class TestFreeMasks(SpatialTestRefs):
         stored_connections = np.genfromtxt(path)
 
         file_name = f'wrap_{str(edge_wrap)}_anchor_' + '_'.join(str(x) for x in anchor)
-        directory = mask_params[0]
-        connections_ref = np.loadtxt(f'spatial_test_references/{directory}/{file_name}.txt')
+        connections_ref = np.loadtxt(f'spatial_test_references/rectangular/{file_name}.txt')
 
         assert np.all(stored_src == self.src_layer_ref)
         assert np.all(stored_target == self.target_layer_ref)
         assert np.all(stored_connections == connections_ref)
-
-    @pytest.mark.parametrize('mask_params', [('doughnut', {'outer_radius': 0.25, 'inner_radius': 0.1}),
-                                             ('circular', {'radius': 0.25})])
-    @pytest.mark.parametrize('anchor', [[0., 0.], [-0.25, 0.]])
-    @pytest.mark.parametrize('edge_wrap', [True, False])
-    def test_layers_and_connection_match_with_varying_anchor_and_boundary_circ_doughnut(self, tmp_path, mask_params,
-                                                                                        anchor, edge_wrap):
-        self.compare_layers_and_connections(mask_params, edge_wrap, anchor)
-
-    @pytest.mark.parametrize('anchor', [[0.0, 0.0], [-0.5, -0.25]])
-    def test_layers_and_connection_match_varying_anchor_rectangular(self, tmp_path, anchor):
-        mask_params = ('rectangular', {'lower_left': [0.0, 0.0], 'upper_right': [0.6, 0.3]})
-        edge_wrap = False
-
-        self.compare_layers_and_connections(mask_params, edge_wrap, anchor)

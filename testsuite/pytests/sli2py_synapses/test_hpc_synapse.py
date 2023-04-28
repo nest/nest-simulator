@@ -105,7 +105,7 @@ def prepare_neurons(syn):
     return nodes.get("V_m")
 
 
-def prepare_frozen_neuron(syn, first_node_to_connect=1, before_connect=True):
+def prepare_frozen_neuron(syn, first_node_to_connect=1, freeze_before_connect=True):
     nest.ResetKernel()
     nest.local_num_threads = 4
 
@@ -114,7 +114,7 @@ def prepare_frozen_neuron(syn, first_node_to_connect=1, before_connect=True):
 
     nodes = nest.Create("iaf_psc_alpha", 4,  {"V_th": 100000.0})
 
-    if before_connect:
+    if freeze_before_connect:
         nodes[0].set(frozen=True)
 
     nest.Connect(sg, pn)
@@ -122,7 +122,7 @@ def prepare_frozen_neuron(syn, first_node_to_connect=1, before_connect=True):
     for node in nodes[first_node_to_connect:]:
         nest.Connect(pn, node, syn_spec={"synapse_model": syn, "weight": node.tolist()[0] * 100})
 
-    if not before_connect:
+    if not freeze_before_connect:
         nodes[0].set(frozen=True)
 
     nest.Simulate(10)

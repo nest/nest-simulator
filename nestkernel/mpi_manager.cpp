@@ -185,9 +185,9 @@ void
 nest::MPIManager::initialize()
 {
   std::cout << "FOOBAR\n";
-  for (int i = 0; environ[i] != nullptr; ++i)
+  for ( int i = 0; environ[ i ] != nullptr; ++i )
   {
-    std::cout << environ[i] << std::endl;
+    std::cout << environ[ i ] << std::endl;
   }
 
 #ifndef HAVE_MPI

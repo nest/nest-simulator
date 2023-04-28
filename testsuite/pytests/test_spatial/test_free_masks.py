@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_free_masks_circ_doughnut_anchor.py
+# test_free_masks.py
 #
 # This file is part of NEST.
 #

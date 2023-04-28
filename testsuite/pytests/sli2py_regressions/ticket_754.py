@@ -80,25 +80,25 @@ class TestSeedingAndProcSetting:
         """
 
         nest.set(**{proc_param_name: self.NUM_PROCS})
-        nest.rng_seed = TEST_SEED
-        assert nest.rng_seed == TEST_SEED
+        nest.rng_seed = self.TEST_SEED
+        assert nest.rng_seed == self.TEST_SEED
 
     def test_seed_then_set_procs(self, proc_param_name):
         """
         Test that seeding and then setting number of procs gives correct seed.
         """
 
-        nest.rng_seed = TEST_SEED
+        nest.rng_seed = self.TEST_SEED
         nest.set(**{proc_param_name: self.NUM_PROCS})
-        assert nest.rng_seed == TEST_SEED
+        assert nest.rng_seed == self.TEST_SEED
 
     def test_seed_and_set_procs_simultaneously(self, proc_param_name):
         """
         Test that changing number of processes and seeding in one call gives correct seed.
         """
 
-        nest.set(**{'rng_seed': TEST_SEED, proc_param_name: self.NUM_PROCS})
-        assert nest.rng_seed == TEST_SEED
+        nest.set(**{'rng_seed': self.TEST_SEED, proc_param_name: self.NUM_PROCS})
+        assert nest.rng_seed == self.TEST_SEED
 
 
 @pytest.mark.skipif_missing_threads
@@ -117,22 +117,22 @@ class TestRngTypeAndProcSetting:
         """
 
         nest.set(**{proc_param_name: self.NUM_PROCS})
-        nest.rng_type = TEST_RNG_TYPE
-        assert nest.rng_type == TEST_RNG_TYPE
+        nest.rng_type = self.TEST_RNG_TYPE
+        assert nest.rng_type == self.TEST_RNG_TYPE
 
     def test_set_rng_type_then_procs(self, proc_param_name):
         """
         Test that setting rng type and then setting number of procs gives correct rng type.
         """
 
-        nest.rng_type = TEST_RNG_TYPE
+        nest.rng_type = self.TEST_RNG_TYPE
         nest.set(**{proc_param_name: self.NUM_PROCS})
-        assert nest.rng_type == TEST_RNG_TYPE
+        assert nest.rng_type == self.TEST_RNG_TYPE
 
     def test_set_rng_type_and_procs_simultaneously(self, proc_param_name):
         """
         Test that changing number of processes and rng type in one call gives correct rng type.
         """
 
-        nest.set(**{'rng_type': TEST_RNG_TYPE, proc_param_name: self.NUM_PROCS})
-        assert nest.rng_type == TEST_RNG_TYPE
+        nest.set(**{'rng_type': self.TEST_RNG_TYPE, proc_param_name: self.NUM_PROCS})
+        assert nest.rng_type == self.TEST_RNG_TYPE

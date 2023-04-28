@@ -70,6 +70,8 @@ run_test ()
 {
     TEST_TOTAL=$(( ${TEST_TOTAL:-0} + 1 ))
 
+    env
+
     param_script="$1"
     param_success="$2"
     param_skipped="$3"

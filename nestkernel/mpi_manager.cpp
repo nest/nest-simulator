@@ -36,7 +36,7 @@
 // Includes from sli:
 #include "dictutils.h"
 
-extern char **environ;
+extern char** environ;
 
 #ifdef HAVE_MPI
 

@@ -178,10 +178,18 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
 }
 
 #endif /* #ifdef HAVE_MPI */
-
+extern char **environ;
 void
 nest::MPIManager::initialize()
 {
+std::cout << "FOOBAR\n";
+
+    // Loop through all environment variables
+    for (int i = 0; environ[i] != nullptr; ++i)
+    {
+        std::cout << environ[i] << std::endl;
+    }
+
 #ifndef HAVE_MPI
   char* pmix_rank_set = std::getenv( "PMIX_RANK" ); // set by OpenMPI's launcher
   char* pmi_rank_set = std::getenv( "PMI_RANK" );   // set by MPICH's launcher

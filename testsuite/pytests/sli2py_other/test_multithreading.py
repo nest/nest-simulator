@@ -27,7 +27,45 @@ correctly. The following things are tested:
   * Does ResetKernel reset the number of threads to 1?
   * Does default node distribution (modulo) work as expected?
   * Are spikes transmitted between threads as expected?
-
-The data collection over threads is tested in a separate script. See
-SeeAlso key below.
 """
+import pytest
+import nest
+import numpy as np
+import numpy.testing as nptest
+
+pytestmark = pytest.mark.skipif_missing_threads
+
+
+@pytest.fixture(autouse=True)
+def prepare():
+    nest.ResetKernel()
+
+
+def test_check_nodes_distribution():
+    nest.local_num_threads = 4
+
+    neurons = nest.Create("iaf_psc_alpha", nest.local_num_threads)
+    vps = np.array(neurons.tolist()) % nest.local_num_threads
+    assert (neurons.vp == vps).all()
+
+
+def test_transmitted_spikes_btw_threads():
+    nest.local_num_threads = 4
+
+    sg = nest.Create("spike_generator", {"spike_times": [1.0]})
+    pA = nest.Create("parrot_neuron", nest.local_num_threads)
+    pB = nest.Create("parrot_neuron", nest.local_num_threads)
+    sr = nest.Create("spike_recorder")
+
+    nest.Connect(sg, pA, "all_to_all", syn_spec={"delay": 1.})
+    nest.Connect(pA, pB, "all_to_all", syn_spec={"delay": 1.})
+    nest.Connect(pB, sr)
+
+    t_sim = 1.0 + 3 * 1.0
+    nest.Simulate(t_sim)
+
+    sr_times = sr.get("events")["times"]
+
+    excepted = [3] * (nest.local_num_threads ** 2)
+
+    nptest.assert_array_equal(sr_times, excepted)

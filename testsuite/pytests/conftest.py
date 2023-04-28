@@ -30,7 +30,7 @@ Fixtures available to the entire testsuite directory.
     def test_gsl():
         pass
 """
-
+import dataclasses
 import pytest
 import nest
 import sys
@@ -41,9 +41,37 @@ sys.path.append(str(pathlib.Path(__file__).parent / "utilities"))
 # Ignore it during test collection
 collect_ignore = ["utilities"]
 
-_have_mpi = nest.ll_api.sli_func("statusdict/have_mpi ::")
-_have_gsl = nest.ll_api.sli_func("statusdict/have_gsl ::")
-_have_threads = nest.ll_api.sli_func("statusdict/threading ::") != "no"
+import testutil  # noqa
+import testsimulation  # noqa
+
+
+@pytest.fixture(scope="session")
+def have_threads():
+    return nest.ll_api.sli_func("statusdict/threading ::") != "no"
+
+
+@pytest.fixture(scope="session")
+def have_plotting():
+    try:
+        import matplotlib
+        matplotlib.use("Agg")   # backend without window
+        import matplotlib.pyplot as plt
+        # make sure we can open a window; DISPLAY may not be set
+        fig = plt.figure()
+        plt.close(fig)
+        return True
+    except Exception:
+        return False
+
+
+@pytest.fixture(scope="session")
+def have_mpi():
+    return nest.ll_api.sli_func("statusdict/have_mpi ::")
+
+
+@pytest.fixture(scope="session")
+def have_gsl():
+    return nest.ll_api.sli_func("statusdict/have_gsl ::")
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -62,28 +90,51 @@ def safety_reset():
 
 
 @pytest.fixture(autouse=True)
-def skipif_missing_gsl(request):
+def skipif_missing_gsl(request, have_gsl):
     """
     Globally applied fixture that skips tests marked to be skipped when GSL is missing.
     """
-    if not _have_gsl and request.node.get_closest_marker("skipif_missing_gsl"):
+    if not have_gsl and request.node.get_closest_marker("skipif_missing_gsl"):
         pytest.skip("skipped because missing GSL support.")
 
 
 @pytest.fixture(autouse=True)
-def skipif_missing_mpi(request):
+def skipif_missing_mpi(request, have_mpi):
     """
     Globally applied fixture that skips tests marked to be skipped when MPI is missing.
     """
-    if not _have_mpi and request.node.get_closest_marker("skipif_missing_mpi"):
+    if not have_mpi and request.node.get_closest_marker("skipif_missing_mpi"):
         pytest.skip("skipped because missing MPI support.")
 
 
 @pytest.fixture(autouse=True)
-def skipif_missing_threads(request):
+def skipif_missing_threads(request, have_threads):
     """
     Globally applied fixture that skips tests marked to be skipped when multithreading
     support is missing.
     """
-    if not _have_threads and request.node.get_closest_marker("skipif_missing_threads"):
+    if not have_threads and request.node.get_closest_marker("skipif_missing_threads"):
         pytest.skip("skipped because missing multithreading support.")
+
+
+@pytest.fixture(autouse=True)
+def simulation_class(request):
+    return getattr(request, "param", testsimulation.Simulation)
+
+
+@pytest.fixture
+def simulation(request):
+    marker = request.node.get_closest_marker("simulation")
+    sim_cls = marker.args[0] if marker else testsimulation.Simulation
+    sim = sim_cls(
+        *(request.getfixturevalue(field.name) for field in dataclasses.fields(sim_cls))
+    )
+    nest.ResetKernel()
+    if getattr(sim, "set_resolution", True):
+        nest.resolution = sim.resolution
+    nest.local_num_threads = sim.local_num_threads
+    return sim
+
+
+# Inject the root simulation fixtures into this module to be always available.
+testutil.create_dataclass_fixtures(testsimulation.Simulation, __name__)

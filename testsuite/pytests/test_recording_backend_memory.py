@@ -34,7 +34,7 @@ class TestRecordingBackendMemory(unittest.TestCase):
         nest.ResetKernel()
 
         mm = nest.Create("multimeter", params={"record_to": "memory"})
-        events = mm.get("events")
+        events = mm.get("events")   # noqa: F841
 
     def testEventCounter(self):
         """Test that n_events counts the number of events correctly."""

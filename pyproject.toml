@@ -2,5 +2,6 @@
 markers = [
     "skipif_missing_gsl: skip test if NEST was built without GSL support",
     "skipif_missing_mpi: skip test if NEST was built without MPI support",
-    "skipif_missing_threading: skip test if NEST was built without multithreading support"
+    "skipif_missing_threads: skip test if NEST was built without multithreading support",
+    "simulation: the simulation class to use. Always pass a 2nd dummy argument"
 ]

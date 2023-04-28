@@ -31,7 +31,6 @@ import junitparser as jp
 import glob
 import os
 import sys
-import xml
 
 
 assert int(jp.version.split('.')[0]) >= 2, 'junitparser version must be >= 2'

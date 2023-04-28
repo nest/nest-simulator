@@ -144,6 +144,10 @@ SLIStartup::SLIStartup( int argc, char** argv )
   , debug_( false )
   , argv_name( "argv" )
   , version_name( "version" )
+  , version_git_info_name( "git_info" )
+  , version_git_hash_name( "hash" )
+  , version_git_branch_name( "branch" )
+  , version_git_remote_name( "remote" )
   , exitcode_name( "exitcode" )
   , prgbuilt_name( "built" )
   , prefix_name( "prefix" )
@@ -274,7 +278,14 @@ SLIStartup::init( SLIInterpreter* i )
   assert( statusdict.valid() );
 
   statusdict->insert_move( argv_name, commandline_args_ );
-  statusdict->insert( version_name, Token( new StringDatum( NEST_VERSION_STRING ) ) );
+  statusdict->insert( version_name, Token( new StringDatum( NEST_VERSION ) ) );
+#ifdef NEST_VERSION_GIT
+  DictionaryDatum rcsinfodict( new Dictionary() );
+  rcsinfodict->insert( version_git_hash_name, Token( new StringDatum( NEST_VERSION_GIT_HASH ) ) );
+  rcsinfodict->insert( version_git_branch_name, Token( new StringDatum( NEST_VERSION_GIT_BRANCH ) ) );
+  rcsinfodict->insert( version_git_remote_name, Token( new StringDatum( NEST_VERSION_GIT_REMOTE ) ) );
+  statusdict->insert( version_git_info_name, Token( rcsinfodict ) );
+#endif
   statusdict->insert( exitcode_name, Token( new IntegerDatum( EXIT_SUCCESS ) ) );
   statusdict->insert( prgbuilt_name, Token( new StringDatum( String::compose( "%1 %2", __DATE__, __TIME__ ) ) ) );
   statusdict->insert( prgdatadir_name, Token( new StringDatum( slilibdir ) ) );

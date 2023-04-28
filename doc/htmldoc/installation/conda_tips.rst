@@ -85,10 +85,10 @@ Obtain a good overview of which packages are installed where. You can use
 ``conda env export -n base`` and ``conda env export -n yournestenv``
 (replacing the ``yournestenv`` name with whatever you chose). Make
 sure each environment contains all dependencies. One way to make
-this obvious would be to reduce conda stack to ``0`` (conda documentation
-`on nested activations  <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#nested-activation>`_),
-and/or to a certain degree by not auto-activating the base environment (conda documentation
-`on conda-init <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#conda-init>`_).
+this obvious would be to reduce conda stack to ``0`` (see conda documentation on
+`nested activation <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#nested-activation>`_),
+and/or to a certain degree by not auto-activating the base environment (see conda documentation on
+`conda init <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#conda-init>`_).
 Then packages from base do not 'leak' into your new environments.
 
 .. note::

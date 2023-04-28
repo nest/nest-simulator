@@ -23,8 +23,6 @@
 import nest
 import pytest
 
-# TODO: This test looks useless!
-
 
 @pytest.fixture(autouse=True)
 def prepare():
@@ -42,3 +40,9 @@ def test_correct_position():
 def test_invalid_shape():
     with pytest.raises(Exception):
         nest.Create("iaf_psc_alpha", positions=nest.spatial.grid([1]))
+
+
+def test_shape_with_position():
+    with pytest.raises(Exception):
+        nest.Create("iaf_psc_alpha", positions=nest.spatial.grid(shape=[1, 1], positon=[0, 0]))
+        nest.Create("iaf_psc_alpha", positions=nest.spatial.free(shape=[1, 1], positon=[0, 0]))

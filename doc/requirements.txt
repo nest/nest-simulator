@@ -6,6 +6,8 @@ cython==0.29.0
 docutils==0.19
 example==0.1.0
 ipykernel==6.22.0
+# Pin ipython to a version compatible with Python 3.8, the latest supported by RTD
+ipython~=8.11.0
 jupyter==1.0.0
 matplotlib==3.7.1
 mock==5.0.2

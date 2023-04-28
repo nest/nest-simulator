@@ -43,6 +43,7 @@ collect_ignore = ["utilities"]
 
 import testutil, testsimulation
 
+
 @pytest.fixture(scope="session")
 def have_threads():
     return nest.ll_api.sli_func("statusdict/threading ::") != "no"

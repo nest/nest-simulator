@@ -107,6 +107,13 @@ For implementation details see the
 
 See also [1]_.
 
+.. admonition::
+   Under some conditions, the exponential function inside the numeric solver
+   routine for this model can cause a numerical instability. If the parameter
+   ``I_soma_max`` is set to a non-zero value, the total somatic current will
+   be evaluated at each solver timestep and its absolute value will be limited
+   to this value. Please note that setting ``I_soma_max`` could subtly change
+   the dynamics of the model.
 
 Parameters:
 +++++++++++++
@@ -121,16 +128,17 @@ The following parameters can be set in the status dictionary.
  w       pA      Spike-adaptation current
 ======== ======= =======================================
 
-======== ======= =======================================
+=========== ======= =======================================
 **Membrane Parameters**
 --------------------------------------------------------
- C_m     pF      Capacity of the membrane
- t_ref   ms      Duration of refractory period
- V_reset mV      Reset value for V_m after a spike
- E_L     mV      Leak reversal potential
- g_L     nS      Leak conductance
- I_e     pA      Constant external input current
-======== ======= =======================================
+ C_m        pF      Capacity of the membrane
+ t_ref      ms      Duration of refractory period
+ V_reset    mV      Reset value for V_m after a spike
+ E_L        mV      Leak reversal potential
+ g_L        nS      Leak conductance
+ I_soma_max pA      Maximum somatic current
+ I_e        pA      Constant external input current
+=========== ======= =======================================
 
 ======== ======= ==================================
 **Spike adaptation parameters**
@@ -255,6 +263,7 @@ private:
     double V_th;       //!< Spike threshold in mV
     double tau_syn_ex; //!< Excitatory synaptic kernel decay time in ms
     double tau_syn_in; //!< Inhibitory synaptic kernel decay time in ms
+    double I_soma_max; //!< Maximum somatic current in pA
     double I_e;        //!< Intrinsic current in pA
 
     double gsl_error_tol; //!< Error bound for GSL integrator

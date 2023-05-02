@@ -97,8 +97,7 @@ nest::RandomManager::finalize()
 void
 nest::RandomManager::change_number_of_threads()
 {
-  finalize();
-  initialize();
+  reset_rngs_();
 }
 
 void

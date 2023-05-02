@@ -537,14 +537,6 @@ ht_neuron::handles_test_event( SpikeEvent&, size_t receptor_type )
   {
     return receptor_type - 1;
   }
-
-
-  /*
-if (receptor_type != 0)
-{
-  throw UnknownReceptorType(receptor_type, get_name());
-}
-return 0;*/
 }
 
 inline size_t

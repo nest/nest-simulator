@@ -22,67 +22,29 @@
 
 import sys
 import os
+import json
+import subprocess
 
 from urllib.request import urlretrieve
 
 from pathlib import Path
 from shutil import copyfile
-import json
-import subprocess
 
+# Add the extension modules to the path
+extension_module_dir = os.path.abspath("./_ext")
+sys.path.append(extension_module_dir)
 
-source_dir = os.environ.get('NESTSRCDIR', False)
-if source_dir:
-    source_dir = Path(source_dir)
-else:
-    source_dir = Path(__file__).resolve().parent.parent.parent.resolve()
+from extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
 
+repo_root_dir = os.path.abspath("../..")
+pynest_dir = os.path.join(repo_root_dir, "pynest")
+# Add the NEST Python module to the path (just the py files, the binaries are mocked)
+sys.path.append(pynest_dir)
 
-if os.environ.get("READTHEDOCS") == "True":
-    doc_build_dir = source_dir / "doc/htmldoc"
-else:
-    doc_build_dir = Path(os.environ["OLDPWD"]) / "doc/htmldoc"
-
-sys.path.append(os.path.abspath("./_ext"))
+# -- General configuration ------------------------------------------------
 
 source_suffix = '.rst'
 master_doc = 'index'
-
-# Create the mockfile for extracting the PyNEST
-
-excfile = source_dir / "pynest/nest/lib/hl_api_exceptions.py"
-infile = source_dir / "pynest/pynestkernel.pyx"
-outfile = doc_build_dir / "pynestkernel_mock.py"
-
-sys.path.insert(0, str(source_dir))
-sys.path.insert(0, str(source_dir / 'doc'))
-sys.path.insert(0, str(source_dir / 'pynest'))
-sys.path.insert(0, str(source_dir / 'pynest/nest'))
-sys.path.insert(0, str(doc_build_dir))
-
-from mock_kernel import convert  # noqa
-
-with open(excfile, 'r') as fexc, open(infile, 'r') as fin, open(outfile, 'w') as fout:
-    mockedmodule = fexc.read() + "\n\n"
-    mockedmodule += "from mock import MagicMock\n\n"
-    mockedmodule += convert(fin)
-
-    fout.write(mockedmodule)
-
-import pynestkernel_mock  # noqa
-
-sys.modules["nest.pynestkernel"] = pynestkernel_mock
-sys.modules["nest.kernel"] = pynestkernel_mock
-
-# For the doc build, explicitly import `nest` here so that it isn't
-# `MagicMock`ed later on and expose `nest.NestModule` as `sphinx` does not seem
-# to autodoc properties the way the `autoclass` directive would. We can then
-# autoclass `nest.NestModule` to generate the documentation of the properties
-import nest  # noqa
-
-vars(nest)["NestModule"] = type(nest)        # direct write to nest.NestModule is suppressed as unknown attribute
-
-# -- General configuration ------------------------------------------------
 extensions = [
     'sphinx_gallery.gen_gallery',
     'sphinx.ext.autodoc',
@@ -98,23 +60,19 @@ extensions = [
     'VersionSyncRole',
 ]
 
+autodoc_mock_imports = ["nest.pynestkernel", "nest.ll_api"]
 mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-# "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
-# "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"  # noqa
-
 panels_add_bootstrap_css = False
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['templates']
 
 sphinx_gallery_conf = {
-     # 'doc_module': ('sphinx_gallery', 'numpy'),
-     # path to your examples scripts
-     'examples_dirs': str(source_dir / 'pynest/examples'),
-     # path where to save gallery generated examples
-     'gallery_dirs': str(doc_build_dir / 'auto_examples'),
-     # 'backreferences_dir': False
-     'plot_gallery': False,
-     'download_all_examples': False,
+    # path to your examples scripts
+    'examples_dirs': '../../pynest/examples',
+    # path where to save gallery generated examples
+    'gallery_dirs': 'auto_examples',
+    'plot_gallery': 'False',
+    'download_all_examples': False,
 }
 
 # General information about the project.
@@ -168,7 +126,7 @@ numfig_format = {'figure': 'Figure %s', 'table': 'Table %s',
 #
 html_theme = 'sphinx_material'
 html_title = 'NEST Simulator Documentation'
-html_logo = str(doc_build_dir / 'static/img/nest_logo.png')
+html_logo = 'static/img/nest_logo.png'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -204,7 +162,7 @@ html_theme_options = {
     'globaltoc_includehidden': True,
     }
 
-html_static_path = [str(doc_build_dir / 'static')]
+html_static_path = ['static']
 html_additional_pages = {'index': 'index.html'}
 html_sidebars = {
     "**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]
@@ -225,24 +183,23 @@ github_doc_root = ''
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
     'nestml': ('https://nestml.readthedocs.io/en/latest/', None),
-    'pynn': ('http://neuralensemble.org/docs/PyNN/', None),
+    'pynn': ('https://neuralensemble.org/docs/PyNN/', None),
     'elephant': ('https://elephant.readthedocs.io/en/latest/', None),
     'desktop': ('https://nest-desktop.readthedocs.io/en/latest/', None),
     'gpu': ('https://nest-gpu.readthedocs.io/en/latest/', None),
     'neuromorph': ('https://electronicvisions.github.io/hbp-sp9-guidebook/', None),
     'arbor': ('https://docs.arbor-sim.org/en/latest/', None),
-    'tvb': ('http://docs.thevirtualbrain.org/', None),
+    'tvb': ('https://docs.thevirtualbrain.org/', None),
     'extmod': ('https://nest-extension-module.readthedocs.io/en/latest/', None),
 }
 
-from doc.extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
-
 
 def config_inited_handler(app, config):
+    models_rst_dir = os.path.abspath("models")
     ExtractUserDocs(
-        listoffiles=relative_glob("models/*.h", "nestkernel/*.h", basedir=source_dir),
-        basedir=source_dir,
-        outdir=str(doc_build_dir / "models")
+        listoffiles=relative_glob("models/*.h", "nestkernel/*.h", basedir=repo_root_dir),
+        basedir=repo_root_dir,
+        outdir=models_rst_dir,
     )
 
 
@@ -283,7 +240,7 @@ notebooks%2Ffilepath.ipynb&branch=main
 
     # Find all relevant files
     # Inject prolog into Python example
-    files = list(Path(doc_build_dir / "auto_examples/").rglob("*.rst"))
+    files = list(Path("auto_examples/").rglob("*.rst"))
     for file in files:
 
         # Skip index files and benchmark file. These files do not have notebooks that can run
@@ -292,7 +249,7 @@ notebooks%2Ffilepath.ipynb&branch=main
             continue
 
         with open(file, "r") as f:
-            parent = Path(doc_build_dir / "auto_examples/")
+            parent = Path("auto_examples/")
             path2example = os.path.relpath(file, parent)
             path2example = os.path.splitext(path2example)[0]
             path2example = path2example.replace("/", "%2F")
@@ -315,7 +272,7 @@ notebooks%2Ffilepath.ipynb&branch=main
 
 def toc_customizer(app, docname, source):
     if docname == "models/models-toc":
-        models_toc = json.load(open(doc_build_dir / "models/toc-tree.json"))
+        models_toc = json.load(open("models/toc-tree.json"))
         html_context = {"nest_models": models_toc}
         models_source = source[0]
         rendered = app.builder.templates.render_string(models_source, html_context)
@@ -345,27 +302,6 @@ nitpick_ignore = [('py:class', 'None'),
                   ('cpp:identifier', 'ClopathArchivingNode'),
                   ('cpp:identifier', 'MessageHandler'),
                   ('cpp:identifer', 'CommonPropertiesHomW')]
-
-# -- Options for LaTeX output ---------------------------------------------
-
-
-latex_elements = {
-    # The paper size ('letterpaper' or 'a4paper').
-    #
-    # 'papersize': 'letterpaper',
-
-    # The font size ('10pt', '11pt' or '12pt').
-    #
-    # 'pointsize': '10pt',
-
-    # Additional stuff for the LaTeX preamble.
-    #
-    # 'preamble': '',
-
-    # Latex figure (float) alignment
-    #
-    # 'figure_align': 'htbp',
-}
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
@@ -399,21 +335,18 @@ texinfo_documents = [
 
 
 def copy_example_file(src):
-    copyfile(src, doc_build_dir / "static/img" / src.parts[-1])
+    copyfile(os.path.join(pynest_dir, src), Path("examples") / Path(src).parts[-1])
 
-
-def copy_acknowledgments_file(src):
-    copyfile(src, doc_build_dir / src.parts[-1])
-
-
-# -- Copy Acknowledgments file ----------------------------
-copy_acknowledgments_file(source_dir / "ACKNOWLEDGMENTS.md")
 
 # -- Copy documentation for Microcircuit Model ----------------------------
-copy_example_file(source_dir / "pynest/examples/Potjans_2014/box_plot.png")
-copy_example_file(source_dir / "pynest/examples/Potjans_2014/raster_plot.png")
-copy_example_file(source_dir / "pynest/examples/Potjans_2014/microcircuit.png")
-copy_example_file(source_dir / "pynest/examples/hpc_benchmark_connectivity.svg")
+copy_example_file("examples/Potjans_2014/box_plot.png")
+copy_example_file("examples/Potjans_2014/raster_plot.png")
+copy_example_file("examples/Potjans_2014/microcircuit.png")
+copy_example_file("examples/hpc_benchmark_connectivity.svg")
+copyfile(
+    os.path.join(pynest_dir, "examples/Potjans_2014/README.rst"),
+    "examples/README.rst",
+)
 
 
 def patch_documentation(patch_url):
@@ -444,7 +377,7 @@ def patch_documentation(patch_url):
 
     print("Preparing patch...")
     try:
-        git_dir = str(source_dir / ".git")
+        git_dir = repo_root_dir / ".git"
         git_hash = subprocess.check_output(
             f"GIT_DIR='{git_dir}' git rev-parse HEAD",
             shell=True,

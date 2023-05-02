@@ -339,7 +339,7 @@ nest::RecordingBackendSIONlib::close_files_()
       sion_fwrite( &SIONLIB_REC_BACKEND_VERSION, sizeof( sion_uint32 ), 1, file.sid );
 
       // write nest version into sionlib container file
-      const char* nest_version = NEST_VERSION_STRING;
+      const char* nest_version = NEST_VERSION;
       char version_buffer[ NEST_VERSION_BUFFERSIZE ];
       strncpy( version_buffer, nest_version, NEST_VERSION_BUFFERSIZE - 1 );
       version_buffer[ NEST_VERSION_BUFFERSIZE - 1 ] = '\0';

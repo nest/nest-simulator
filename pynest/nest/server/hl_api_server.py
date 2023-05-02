@@ -24,7 +24,6 @@ import inspect
 import io
 import sys
 
-import flask
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 
@@ -425,7 +424,7 @@ def combine(call_name, response):
 
     log("combine()", f"ERROR: cannot combine response={response}")
     msg = "Cannot combine data because of unknown reason"
-    raise Exception(msg)
+    raise Exception(msg)    # pylint: disable=W0719
 
 
 def merge_dicts(response):
@@ -454,7 +453,7 @@ def merge_dicts(response):
 
         if element_type not in ('neuron', 'recorder', 'stimulator'):
             msg = f'Cannot combine data of element with type "{element_type}".'
-            raise Exception(msg)
+            raise Exception(msg)    # pylint: disable=W0719
 
         if element_type == 'neuron':
             tmp = list(filter(lambda status: status['local'], device_dicts))
@@ -471,7 +470,7 @@ def merge_dicts(response):
             record_to = tmp['record_to']
             if record_to not in ('ascii', 'memory'):
                 msg = f'Cannot combine data when recording to "{record_to}".'
-                raise Exception(msg)
+                raise Exception(msg)    # pylint: disable=W0719
 
             if record_to == 'memory':
                 event_keys = tmp['events'].keys()

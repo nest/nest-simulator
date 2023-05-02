@@ -87,7 +87,7 @@ noise.set(noiseparams)
 ###############################################################################
 # Set the parameters specified above for the neurons. Neurons get an internal
 # current. The first neuron additionally receives the current with amplitude
-# `bias_begin`, the last neuron with amplitude `bias_end`.
+# ``bias_begin``, the last neuron with amplitude ``bias_end``.
 
 neurons.set(neuronparams)
 neurons.I_e = [(n * (bias_end - bias_begin) / N + bias_begin)
@@ -102,7 +102,7 @@ nest.Connect(noise, neurons)
 nest.Connect(neurons, sr)
 
 ###############################################################################
-# Simulate the network for time `T`.
+# Simulate the network for time ``T``.
 
 nest.Simulate(T)
 

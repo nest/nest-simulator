@@ -325,7 +325,7 @@ class TestNodeCollection(unittest.TestCase):
         nc_c = nest.NodeCollection([6, 8, 10, 12, 14])
 
         with self.assertRaises(nest.kernel.NESTError):
-            nc_sum = nc_a + nc_b + nc_c
+            nc_sum = nc_a + nc_b + nc_c     # noqa: F841
 
     def test_NodeCollection_membership(self):
         """Membership in NodeCollections"""
@@ -472,7 +472,7 @@ class TestNodeCollection(unittest.TestCase):
         num_c = 30
 
         n_a = nest.Create('iaf_psc_exp', num_a)
-        n_b = nest.Create('iaf_psc_alpha', num_b)
+        n_b = nest.Create('iaf_psc_alpha', num_b)   # noqa: F841
         n_c = nest.Create('iaf_psc_delta', num_c)
 
         nodes = n_a + n_c
@@ -519,7 +519,7 @@ class TestNodeCollection(unittest.TestCase):
         e = nest.Create('iaf_psc_delta', 13)
 
         with self.assertRaises(nest.kernel.NESTError):
-            f = d + e
+            f = d + e   # noqa: F841
 
     def test_model(self):
         """Correct NodeCollection model"""
@@ -573,7 +573,7 @@ class TestNodeCollection(unittest.TestCase):
 
         nest.ResetKernel()
 
-        nc = nest.Create('iaf_psc_exp', 5)
+        nc = nest.Create('iaf_psc_exp', 5)      # noqa: F841
 
         with self.assertRaises(nest.kernel.NESTError):
             nest.SetStatus(n, {'V_m': -40.})

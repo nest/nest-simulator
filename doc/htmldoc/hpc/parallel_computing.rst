@@ -255,16 +255,17 @@ more about the usage of ``mpirun``.
     .. code-block::
 
       if nest.Rank() == 0:
-            print('RNG seed: {}'.format(
-                nest.rng_seed))
+            rng_seed = nest.rng_seed
+            print(f"RNG seed: {rng_seed}")
 
 
     **Do this**
 
     .. code-block::
 
+     rng_seed = nest.rng_seed
      if nest.Rank() == 0:
-        print('RNG seed: {}'.format(rng_seed))
+        print(f"RNG seed: {rng_seed}")
 
 MPI related commands
 ~~~~~~~~~~~~~~~~~~~~

@@ -215,10 +215,10 @@ private:
 
   struct Parameters_
   {
-    Time delta_tau_;  //!< width of correlation histogram bins
-    Time tau_max_;    //!< maximum time difference of events to detect
-    Time Tstart_;     //!< start of recording
-    Time Tstop_;      //!< end of recording
+    Time delta_tau_;    //!< width of correlation histogram bins
+    Time tau_max_;      //!< maximum time difference of events to detect
+    Time Tstart_;       //!< start of recording
+    Time Tstop_;        //!< end of recording
     size_t N_channels_; //!< number of channels
 
     Parameters_();                     //!< Sets default parameter values

@@ -128,7 +128,7 @@ k_IP3R       1/(uM*ms) Astrocytic IP3R binding constant for calcium inhibition
 rate_L       1/ms      Rate constant for calcium leak from the astrocytic ER to cytosol
 SIC_th       nM        Threshold that determines the minimal level of intracellular astrocytic calcium sufficient to induce SIC
 rate_IP3R    1/ms      Maximum rate of calcium release via astrocytic IP3R
-rate_SERCA   uM/ms     Maximum rate of calcium uptake by astrocytic IP3R
+rate_SERCA   uM/ms     Maximum rate of calcium uptake by astrocytic SERCA pump
 tau_IP3      ms        Time constant of astrocytic IP3 degradation
 ============ ========= ========================================================================================================
 

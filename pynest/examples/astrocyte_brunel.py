@@ -75,9 +75,9 @@ import matplotlib.pyplot as plt
 # Simulation parameters.
 
 sim_params = {
-    "dt": 0.1,  # simulation resolution
-    "pre_sim_time": 1000.0,  # time before simulation
-    "sim_time": 1000.0,  # simulation time
+    "dt": 0.1,  # simulation resolution in ms
+    "pre_sim_time": 1000.0,  # time before simulation in ms
+    "sim_time": 1000.0,  # simulation time in ms
     "N_rec": 1000,  # number of neurons recorded
     "N_sample": 100,  # number of neurons sampled for analysis
     "data_path": "data"
@@ -99,21 +99,21 @@ network_params = {
     }
 
 syn_params = {
-    "synapse_model": "tsodyks_synapse",
-    "astro2post": "sic_connection",
-    "weight_astro2post": 4.0,
+    "synapse_model": "tsodyks_synapse",  # model of neuron-to-neuron and neuron-to-astrocyte connections
+    "astro2post": "sic_connection",  # model of astrocyte-to-neuron connection
+    "weight_astro2post": 4.0,  # weight of astrocyte-to-neuron connection
     "J_ee": 3.0,  # excitatory-to-excitatory synaptic weight in nS
     "J_ei": 3.0,  # excitatory-to-inhibitory synaptic weight in nS
     "J_ie": -6.0,  # inhibitory-to-excitatory synaptic weight in nS
     "J_ii": -6.0,  # inhibitory-to-inhibitory synaptic weight in nS
-    "tau_rec_ee": 2882.9445, # excitatory-to-excitatory depression time constant
-    "tau_rec_ei": 5317.747,  # excitatory-to-inhibitory depression time constant
-    "tau_rec_ie": 226.859,  # inhibitory-to-excitatory depression time constant
-    "tau_rec_ii": 2542.207,  # inhibitory-to-inhibitory depression time constant
-    "tau_fac_ee": 0.0,  # excitatory-to-excitatory facilitation time constant
-    "tau_fac_ei": 0.0,  # excitatory-to-inhibitory facilitation time constant
-    "tau_fac_ie": 0.0,  # inhibitory-to-excitatory facilitation time constant
-    "tau_fac_ii": 0.0,  # inhibitory-to-inhibitory facilitation time constant
+    "tau_rec_ee": 2882.9445, # excitatory-to-excitatory depression time constant in ms
+    "tau_rec_ei": 5317.747,  # excitatory-to-inhibitory depression time constant in ms
+    "tau_rec_ie": 226.859,  # inhibitory-to-excitatory depression time constant in ms
+    "tau_rec_ii": 2542.207,  # inhibitory-to-inhibitory depression time constant in ms
+    "tau_fac_ee": 0.0,  # excitatory-to-excitatory facilitation time constant in ms
+    "tau_fac_ei": 0.0,  # excitatory-to-inhibitory facilitation time constant in ms
+    "tau_fac_ie": 0.0,  # inhibitory-to-excitatory facilitation time constant in ms
+    "tau_fac_ii": 0.0,  # inhibitory-to-inhibitory facilitation time constant in ms
     "U_ee": 0.928,  # excitatory-to-excitatory release probability parameter
     "U_ei": 0.264,  # excitatory-to-inhibitory release probability parameter
     "U_ie": 0.541,  # inhibitory-to-excitatory release probability parameter
@@ -124,20 +124,20 @@ syn_params = {
 # Astrocyte parameters.
 
 astro_params = {
-    'Ca_tot': 2.0,  # Total free astrocytic calcium concentration
-    'IP3_0': 0.16,  # Baseline value of astrocytic IP3 concentration
-    'Kd_act': 0.08234,  # Astrocytic IP3R dissociation constant of calcium (activation)
-    'Kd_inh': 1.049,  # Astrocytic IP3R dissociation constant of calcium (inhibition)
-    'Kd_IP3_1': 0.13,  # First astrocytic IP3R dissociation constant of IP3
-    'Kd_IP3_2': 0.9434,  # Second astrocytic IP3R dissociation constant of IP3
-    'Km_SERCA': 0.1,  # Half-activation constant of astrocytic SERCA pump
+    'Ca_tot': 2.0,  # Total free astrocytic calcium concentration in uM
+    'IP3_0': 0.16,  # Baseline value of astrocytic IP3 concentration in uM
+    'Kd_act': 0.08234,  # Astrocytic IP3R dissociation constant of calcium (activation) in uM
+    'Kd_inh': 1.049,  # Astrocytic IP3R dissociation constant of calcium (inhibition) in uM
+    'Kd_IP3_1': 0.13,  # First astrocytic IP3R dissociation constant of IP3 in uM
+    'Kd_IP3_2': 0.9434,  # Second astrocytic IP3R dissociation constant of IP3 in uM
+    'Km_SERCA': 0.1,  # Half-activation constant of astrocytic SERCA pump in uM
     'ratio_ER_cyt': 0.185,  # Ratio between astrocytic ER and cytosol volumes
-    'incr_IP3': 0.1,  # Step increase in IP3 concentration with each unit synaptic weight received by the astrocyte
-    'k_IP3R': 0.001,  # Astrocytic IP3R binding constant for calcium
-    'rate_L': 0.00011,  # Rate constant for calcium leak from ER to cytosol
-    'tau_IP3': 300.0,  # Time constant of astrocytic IP3 degradation
-    'rate_IP3R': 0.006,  # Maximum rate of calcium release via astrocytic IP3R
-    'rate_SERCA': 0.0009,  # Maximum rate of calcium uptake by astrocytic SERCA pump
+    'incr_IP3': 0.1,  # Step increase in IP3 concentration with each unit synaptic weight received by the astrocyte in uM
+    'k_IP3R': 0.001,  # Astrocytic IP3R binding constant for calcium in 1/(uM*ms)
+    'rate_L': 0.00011,  # Rate constant for calcium leak from astrocytic ER to cytosol in 1/ms
+    'tau_IP3': 300.0,  # Time constant of astrocytic IP3 degradation in ms
+    'rate_IP3R': 0.006,  # Maximum rate of calcium release via astrocytic IP3R in 1/ms
+    'rate_SERCA': 0.0009,  # Maximum rate of calcium uptake by astrocytic SERCA pump in uM/ms
     }
 
 ###############################################################################

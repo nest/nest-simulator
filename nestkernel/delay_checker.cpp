@@ -78,7 +78,7 @@ nest::DelayChecker::set_min_max_delay_( const double min_d, const double max_d )
   // additional test.
 
   Time new_min_delay;
-  delay new_min_delay_steps = Time( Time::ms_stamp( min_d ) ).get_steps();
+  long new_min_delay_steps = Time( Time::ms_stamp( min_d ) ).get_steps();
   if ( Time( Time::step( new_min_delay_steps ) ).get_ms() > min_d )
   {
     new_min_delay_steps -= 1;

@@ -66,6 +66,6 @@ def test_correct_tics_per_step():
     assert actual == 2 ** (10)
 
 
-def test_correct_tics_per_step():
+def test_correct_ms_per_tic():
     actual = nest.GetKernelStatus("ms_per_tic")
     assert actual == 2 ** (-14)

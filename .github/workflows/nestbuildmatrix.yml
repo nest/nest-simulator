@@ -604,18 +604,17 @@ jobs:
       matrix:
         os: [macos-latest]
         cpp_compiler: ["clang"]
-        NEST_BUILD_TYPE: ["FULL_MACOS"]
+
+        # available use flags (all default to "OFF"):
+        # openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning, userdoc, music
+        use:
+          - "openmp, mpi, python, gsl, ltdl, boost, optimize, warning"
+
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-
-      - name: "Find changed files"
-        run: |
-          echo "CHANGED_FILES<<EOF" >>$GITHUB_ENV
-          echo "$(git diff --name-only ${{ github.event.before }}..${{ github.event.after }})" >>$GITHUB_ENV
-          echo 'EOF' >>$GITHUB_ENV
 
       - name: "Set up Python 3.x"
         uses: actions/setup-python@v4
@@ -652,12 +651,6 @@ jobs:
         run: |
           mkdir -p "$NEST_VPATH/reports" "$NEST_RESULT"
 
-          if [ "$xNEST_BUILD_COMPILER" = "CLANG" ]; then
-              export CC=clang-11
-              export CXX=clang++-11
-          fi
-          export CXX_FLAGS="-pedantic -Wextra -Wno-unknown-pragmas -D_GLIBCXX_ASSERTIONS"
-
           cd "$NEST_VPATH"
           cmake \
               -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
@@ -666,6 +659,7 @@ jobs:
               -Dwith-warning=${{ contains(matrix.use, 'warning') && 'ON' || 'OFF' }} \
               -Dwith-boost=${{ contains(matrix.use, 'boost') && 'ON' || 'OFF' }} \
               -Dwith-openmp=${{ contains(matrix.use, 'openmp') && 'ON' || 'OFF' }} \
+	      $${{ contains(matrix.use, 'openmp') && '-DOpenMP_ROOT=`brew --prefix libomp`' }} \
               -Dwith-mpi=${{ contains(matrix.use, 'mpi') && 'ON' || 'OFF' }} \
               -Dwith-python=${{ contains(matrix.use, 'python') && 'ON' || 'OFF' }} \
               -Dwith-gsl=${{ contains(matrix.use, 'gsl') && 'ON' || 'OFF' }} \
@@ -687,7 +681,6 @@ jobs:
           make install
         env:
           xNEST_BUILD_TYPE: ${{ matrix.NEST_BUILD_TYPE }}
-          CHANGED_FILES: ${{ env.CHANGED_FILES }}
 
       - name: "Initialize Matplotlibrc"
         run: |

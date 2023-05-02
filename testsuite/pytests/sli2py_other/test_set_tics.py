@@ -28,7 +28,7 @@ However, these values can also be changed at run time. This is of advantage
 if the correctness of a script or the validity of a result need to be checked
 by running the same simulation at different computation step sizes. While it
 is more comfortable in demonstrations and for beginners to operate with tics
-to the base of 10, in production it is often better to use base 2 because of 
+to the base of 10, in production it is often better to use base 2 because of
 the increased density of data points and exact representation in the double
 data type. Therefore, these parameters can also be specified at run time
 in the root object prior to the creation of any network element. Here, it is

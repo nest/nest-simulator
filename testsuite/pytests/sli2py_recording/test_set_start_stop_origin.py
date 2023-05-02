@@ -43,8 +43,7 @@ def device_attributes():
 
 def get_devices():
     all_models = nest.node_models
-    required_at_least_one_attr = device_attributes()
-    models = [model for model in all_models if len(required_at_least_one_attr.intersection(nest.GetDefaults(model).keys())) > 0]
+    models = [m for m in all_models if len(device_attributes().intersection(nest.GetDefaults(m).keys())) > 0]
     return models
 
 

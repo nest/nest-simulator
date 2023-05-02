@@ -184,11 +184,10 @@ class VogelsSprekelerConnectionTestCase(unittest.TestCase):
 
         # next pre-synaptic spike
         # first postspike in history
-        dt = 2.0
         Kplus_temp1 = self.decay(2.0, Kplus)
         weight = self.facilitate(weight, Kplus_temp1)
+
         # second postspike in history
-        dt = 3.0
         Kplus_temp2 = self.decay(3.0, Kplus)
         weight = self.facilitate(weight, Kplus_temp2)
 

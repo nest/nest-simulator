@@ -16,10 +16,10 @@ Installation and global setup
 1. `Install Git <http://git-scm.com/book/en/v2/Getting-Started-Installing-Git>`_.
 2. Introduce yourself to Git:
 
-.. code::
+   .. code::
 
-   git config --global user.email you@yourdomain.example.com
-   git config --global user.name "Your Name Comes Here"
+      git config --global user.email you@yourdomain.example.com
+      git config --global user.name "Your Name Comes Here"
 
 Setting up your GitHub account
 ##############################
@@ -156,27 +156,27 @@ Before you make any changes, ensure that your local copy is up to date with the
 
 1. Go to (checkout) the default master branch
 
-.. code::
+   .. code::
 
-   git checkout master
+      git checkout master
 
 2. Download (fetch) changes from upstream
 
-.. code::
+   .. code::
 
-   git fetch upstream
+      git fetch upstream
 
 3. Update your master branch - merge any changes that have been made upstream
 
-.. code::
+   .. code::
 
-   git merge upstream/master --ff-only
+      git merge upstream/master --ff-only
 
 4. Update the remote for your fork
 
-.. code::
+   .. code::
 
-   git push origin master
+      git push origin master
 
 We suggest using the ``--ff-only`` flag since it ensures that a new
 commit is not created when you merge the changes from ``upstream`` into your
@@ -209,33 +209,33 @@ Editing workflow - command list
 1. Improve ``modified_file`` with your text editor/IDE.
 2. Confirm what files have changed in the repository.
 
-.. code::
+   .. code::
 
-   git status
+      git status
 
 3. Review the changes you've made (optional).
 
-.. code::
+   .. code::
 
-   git diff
+      git diff
 
 4. Inform Git that you want to save these changes.
 
-.. code::
+   .. code::
 
-   git add modified_file
+      git add modified_file
 
 5. Save these changes.
 
-.. code::
+   .. code::
 
-  git commit
+     git commit
 
 6. Push these changes to the remote for your fork.
 
-.. code::
+   .. code::
 
-   git push origin my-new-feature
+      git push origin my-new-feature
 
 Editing workflow - commands explained
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -269,7 +269,7 @@ Editing workflow - commands explained
       diff --git a/development_workflow.rst b/development_workflow.rst
       index f05f0cd..e581f00 100644
       --- a/development_workflow.rst
-     +++ b/development_workflow.rst
+      +++ b/development_workflow.rst
       @@ -8,17 +8,22 @@ layout: index
 
 6. Inform Git of what modified or new files you want to save (stage) using ``git add modified_file``.

@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""
+r"""
 Random balanced network HPC benchmark
 -------------------------------------
 

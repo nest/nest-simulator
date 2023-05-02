@@ -28,8 +28,10 @@ import nest
 import numpy as np
 
 HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
+HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
 
 
+@unittest.skipIf(not HAVE_OPENMP, 'NEST was compiled without multi-threading')
 @nest.ll_api.check_stack
 class WeightRecorderTestCase(unittest.TestCase):
     """Tests for the Weight Recorder"""

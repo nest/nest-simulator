@@ -21,11 +21,11 @@
 
 
 """
-The base of the integer clock tics of NEST and the number of those tics 
+The base of the integer clock tics of NEST and the number of those tics
 per computation time step are specified at configuration time with
 options like --with-tics-per-ms='std::ldexp(1.0,14)' --with-tics-per-step='1024'.
 However, these values can also be changed at run time. This is of advantage
-if the correctness of a script or the validity of a result need to be checked 
+if the correctness of a script or the validity of a result need to be checked
 by running the same simulation at different computation step sizes. While it
 is more comfortable in demonstrations and for beginners to operate with tics 
 to the base of 10, in production it is often better to use base 2 because of 

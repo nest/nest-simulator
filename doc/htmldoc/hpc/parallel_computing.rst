@@ -241,6 +241,31 @@ command should look like this
 Please refer to the documentation of your MPI implementation to learn
 more about the usage of ``mpirun``.
 
+
+.. important::
+
+    One should never call any ``nest.*`` function inside a block that will only be executed on a subset of MPI ranks.
+
+    Trying to access kernel information with a subset of MPI processes causes a deadlock.
+
+    For example:
+
+    **Don't do this**
+
+    .. code-block::
+
+      if nest.Rank() == 0:
+            print('RNG seed: {}'.format(
+                nest.rng_seed))
+
+
+    **Do this**
+
+    .. code-block::
+
+     if nest.Rank() == 0:
+        print('RNG seed: {}'.format(rng_seed))
+
 MPI related commands
 ~~~~~~~~~~~~~~~~~~~~
 

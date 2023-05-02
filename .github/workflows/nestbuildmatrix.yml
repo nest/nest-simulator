@@ -345,8 +345,8 @@ jobs:
         run: |
           mkdir -pv build
           cd build
-          cmake -DCMAKE_INSTALL_PREFIX=../install ..
-          make html |& tee sphinx-output.log
+          cmake -Dwith-userdoc=ON ..
+          make docs |& tee sphinx-output.log
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3

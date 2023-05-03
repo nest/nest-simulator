@@ -19,15 +19,16 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
-import json
-import numpy as np
-import pandas as pd
 import itertools
+import json
+import os
 from pathlib import Path, PurePath
 
+import numpy as np
+import pandas as pd
+
 from .. import pynestkernel as kernel
-from ..ll_api import sps, sr, sli_func
+from ..ll_api import sli_func, sps, sr
 from .hl_api_models import GetDefaults
 from .hl_api_nodes import Create
 from .hl_api_simulation import SetKernelStatus, Simulate
@@ -35,18 +36,17 @@ from .hl_api_types import NodeCollection
 
 try:
     import h5py
+
     have_h5py = True
 except ImportError:
     have_h5py = False
 
 have_hdf5 = sli_func("statusdict/have_hdf5 ::")
 
-__all__ = [
-    "SonataNetwork"
-]
+__all__ = ["SonataNetwork"]
 
 
-class SonataNetwork():
+class SonataNetwork:
     """Class for building and simulating networks represented by the SONATA format.
 
     ``SonataNetwork`` provides native NEST support for building and simulating
@@ -95,7 +95,6 @@ class SonataNetwork():
     """
 
     def __init__(self, config, sim_config=None):
-
         if not have_hdf5:
             msg = "SonataNetwork unavailable because NEST was compiled without HDF5 support"
             raise kernel.NESTError(msg)
@@ -119,8 +118,7 @@ class SonataNetwork():
             raise ValueError(msg)
 
         if "dt" not in self._conf["run"]:
-            msg = ("Time resolution 'dt' must be specified in configuration "
-                   "file")
+            msg = "Time resolution 'dt' must be specified in configuration file"
             raise ValueError(msg)
 
         SetKernelStatus({"resolution": self._conf["run"]["dt"]})
@@ -144,8 +142,10 @@ class SonataNetwork():
         """
 
         if not isinstance(config, (str, PurePath, Path)):
-            msg = ("Path to JSON configuration file must be passed as str, "
-                   "pathlib.PurePath or pathlib.Path")
+            msg = (
+                "Path to JSON configuration file must be passed as str, "
+                "pathlib.PurePath or pathlib.Path"
+            )
             raise TypeError(msg)
 
         # Get absolute path
@@ -202,7 +202,6 @@ class SonataNetwork():
 
         # Iterate node config files
         for nodes_conf in self._conf["networks"]["nodes"]:
-
             csv_fn = nodes_conf["node_types_file"]
             nodes_df = pd.read_csv(csv_fn, sep=r"\s+")
 
@@ -211,8 +210,10 @@ class SonataNetwork():
             is_one_model_type = (model_types_arr[0] == model_types_arr).all()
 
             if not is_one_model_type:
-                msg = ("Only one model type per node types CSV file is "
-                       f"supported. {csv_fn} contains more than one.")
+                msg = (
+                    "Only one model type per node types CSV file is "
+                    f"supported. {csv_fn} contains more than one."
+                )
                 raise ValueError(msg)
 
             model_type = model_types_arr[0]
@@ -222,8 +223,10 @@ class SonataNetwork():
             elif model_type == "virtual":
                 self._create_spike_generators(nodes_conf)
             else:
-                msg = (f"Model type '{model_type}' in {csv_fn} is not "
-                       "supported by NEST.")
+                msg = (
+                    f"Model type '{model_type}' in {csv_fn} is not "
+                    "supported by NEST."
+                )
                 raise ValueError(msg)
 
         self._is_nodes_created = True
@@ -250,22 +253,22 @@ class SonataNetwork():
         one_model_name = models_arr[0] if is_one_model else None
 
         with h5py.File(nodes_conf["nodes_file"], "r") as nodes_h5f:
-
             # Iterate node populations in current node.h5 file
             for pop_name in nodes_h5f["nodes"]:
-
                 node_type_id_dset = nodes_h5f["nodes"][pop_name]["node_type_id"][:]
 
                 if is_one_model:
-                    nest_nodes = Create(one_model_name,
-                                        n=node_type_id_dset.size)
-                    node_type_ids, inv_ind = np.unique(node_type_id_dset,
-                                                       return_inverse=True)
+                    nest_nodes = Create(one_model_name, n=node_type_id_dset.size)
+                    node_type_ids, inv_ind = np.unique(
+                        node_type_id_dset, return_inverse=True
+                    )
 
                     # Extract node parameters
                     for i, node_type_id in enumerate(node_type_ids):
-                        params_path = PurePath(self._conf["components"]["point_neuron_models_dir"],
-                                               node_types_map[node_type_id]["dynamics_params"])
+                        params_path = PurePath(
+                            self._conf["components"]["point_neuron_models_dir"],
+                            node_types_map[node_type_id]["dynamics_params"],
+                        )
 
                         with open(params_path) as fp:
                             params = json.load(fp)
@@ -284,8 +287,10 @@ class SonataNetwork():
                         # len(list(g)) gives the number of consecutive occurrences of the current k
                         model = node_types_map[k]["model_template"]
                         n_nrns = len(list(g))
-                        params_path = PurePath(self._conf["components"]["point_neuron_models_dir"],
-                                               node_types_map[k]["dynamics_params"])
+                        params_path = PurePath(
+                            self._conf["components"]["point_neuron_models_dir"],
+                            node_types_map[k]["dynamics_params"],
+                        )
                         with open(params_path) as fp:
                             params = json.load(fp)
 
@@ -304,7 +309,6 @@ class SonataNetwork():
 
         with h5py.File(nodes_conf["nodes_file"], "r") as nodes_h5f:
             for pop_name in nodes_h5f["nodes"]:
-
                 node_type_id_dset = nodes_h5f["nodes"][pop_name]["node_type_id"]
                 n_nodes = node_type_id_dset.size
 
@@ -315,27 +319,42 @@ class SonataNetwork():
                         break  # Break once we found the matching population
 
                 if input_file is None:
-                    msg = ("Could not find an input file for population "
-                           f"{pop_name} in config file.")
+                    msg = (
+                        "Could not find an input file for population "
+                        f"{pop_name} in config file."
+                    )
                     raise ValueError(msg)
 
                 with h5py.File(input_file, "r") as input_h5f:
-
                     # Deduce the HDF5 file structure
-                    all_groups = all([isinstance(g, h5py.Group) for g in input_h5f["spikes"].values()])
-                    any_groups = any([isinstance(g, h5py.Group) for g in input_h5f["spikes"].values()])
+                    all_groups = all(
+                        [
+                            isinstance(g, h5py.Group)
+                            for g in input_h5f["spikes"].values()
+                        ]
+                    )
+                    any_groups = any(
+                        [
+                            isinstance(g, h5py.Group)
+                            for g in input_h5f["spikes"].values()
+                        ]
+                    )
                     if (all_groups or any_groups) and not (all_groups and any_groups):
-                        msg = ("Unsupported HDF5 structure; groups and "
-                               "datasets cannot be on the same hierarchical "
-                               f"level in input spikes file {input_file}")
+                        msg = (
+                            "Unsupported HDF5 structure; groups and "
+                            "datasets cannot be on the same hierarchical "
+                            f"level in input spikes file {input_file}"
+                        )
                         raise ValueError(msg)
 
                     if all_groups:
                         if pop_name in input_h5f["spikes"].keys():
                             spikes_grp = input_h5f["spikes"][pop_name]
                         else:
-                            msg = ("Did not find a matching HDF5 group name "
-                                   f"for population {pop_name} in {input_file}")
+                            msg = (
+                                "Did not find a matching HDF5 group name "
+                                f"for population {pop_name} in {input_file}"
+                            )
                             raise ValueError(msg)
                     else:
                         spikes_grp = input_h5f["spikes"]
@@ -345,20 +364,28 @@ class SonataNetwork():
                     elif "node_ids" in spikes_grp:
                         node_ids = spikes_grp["node_ids"][:]
                     else:
-                        msg = ("No dataset called 'gids' or 'node_ids' in "
-                               f"{input_file}")
+                        msg = (
+                            "No dataset called 'gids' or 'node_ids' in " f"{input_file}"
+                        )
                         raise ValueError(msg)
 
                     timestamps = spikes_grp["timestamps"][:]
 
                 # Map node id's to spike times
                 # TODO: Can this be done in a more efficient way?
-                spikes_map = {node_id: timestamps[node_ids == node_id] for node_id in range(n_nodes)}
-                params_lst = [{"spike_times": spikes_map[node_id], "allow_offgrid_times": True}
-                              for node_id in range(n_nodes)]
+                spikes_map = {
+                    node_id: timestamps[node_ids == node_id]
+                    for node_id in range(n_nodes)
+                }
+                params_lst = [
+                    {"spike_times": spikes_map[node_id], "allow_offgrid_times": True}
+                    for node_id in range(n_nodes)
+                ]
 
                 # Create and store NC
-                nest_nodes = Create("spike_train_injector", n=n_nodes, params=params_lst)
+                nest_nodes = Create(
+                    "spike_train_injector", n=n_nodes, params=params_lst
+                )
                 self._node_collections[pop_name] = nest_nodes
 
     def _create_node_type_parameter_map(self, nodes_df, csv_fn):
@@ -385,19 +412,25 @@ class SonataNetwork():
         """
 
         if "model_template" not in nodes_df.columns:
-            msg = ("Missing the required 'model_template' header specifying "
-                   f"NEST neuron models in {csv_fn}.")
+            msg = (
+                "Missing the required 'model_template' header specifying "
+                f"NEST neuron models in {csv_fn}."
+            )
             raise ValueError(msg)
 
         if "dynamics_params" not in nodes_df.columns:
-            msg = ("Missing the required 'dynamics_params' header specifying "
-                   f".json files with model parameters in {csv_fn}")
+            msg = (
+                "Missing the required 'dynamics_params' header specifying "
+                f".json files with model parameters in {csv_fn}"
+            )
             raise ValueError(msg)
 
-        nodes_df["model_template"] = nodes_df["model_template"].str.replace("nest:", '')
+        nodes_df["model_template"] = nodes_df["model_template"].str.replace("nest:", "")
 
         req_cols = ["model_template", "dynamics_params"]
-        node_types_map = nodes_df.set_index("node_type_id")[req_cols].to_dict(orient="index")
+        node_types_map = nodes_df.set_index("node_type_id")[req_cols].to_dict(
+            orient="index"
+        )
 
         return node_types_map
 
@@ -424,8 +457,10 @@ class SonataNetwork():
         """
 
         if not self._is_nodes_created:
-            msg = ("The SONATA network nodes must be created before any "
-                   "connections can be made")
+            msg = (
+                "The SONATA network nodes must be created before any "
+                "connections can be made"
+            )
             raise kernel.NESTError(msg)
 
         if chunk_size is None:
@@ -436,12 +471,14 @@ class SonataNetwork():
         graph_specs = self._create_graph_specs()
 
         # Check whether HDF5 files exist and are not blocked.
-        for d in graph_specs['edges']:
+        for d in graph_specs["edges"]:
             try:
                 f = h5py.File(d["edges_file"], "r")
                 f.close()
             except BlockingIOError as err:
-                raise BlockingIOError(f"{err.strerror} for {os.path.realpath(d['edges_file'])}") from None
+                raise BlockingIOError(
+                    f"{err.strerror} for {os.path.realpath(d['edges_file'])}"
+                ) from None
 
         sps(graph_specs)
         sps(chunk_size)
@@ -496,8 +533,7 @@ class SonataNetwork():
         """
 
         self._create_edges_maps()
-        graph_specs = {"nodes": self._node_collections,
-                       "edges": self._edges_maps}
+        graph_specs = {"nodes": self._node_collections, "edges": self._edges_maps}
         return graph_specs
 
     def _create_edges_maps(self):
@@ -510,25 +546,27 @@ class SonataNetwork():
 
         # Iterate edge config files
         for edges_conf in self._conf["networks"]["edges"]:
-
             edges_map = {}
             edges_csv_fn = edges_conf["edge_types_file"]
             edges_df = pd.read_csv(edges_csv_fn, sep=r"\s+")
 
             if "model_template" not in edges_df.columns:
-                msg = ("Missing the required 'model_template' header "
-                       f"specifying NEST synapse models in {edges_csv_fn}.")
+                msg = (
+                    "Missing the required 'model_template' header "
+                    f"specifying NEST synapse models in {edges_csv_fn}."
+                )
                 raise ValueError(msg)
 
             # Rename column labels to names used by NEST. Note that rename
             # don't throw an error for extra labels (we want this behavior)
-            edges_df.rename(columns={"model_template": "synapse_model",
-                                     "syn_weight": "weight"},
-                            inplace=True)
+            edges_df.rename(
+                columns={"model_template": "synapse_model", "syn_weight": "weight"},
+                inplace=True,
+            )
 
             models_arr = edges_df["synapse_model"].to_numpy()
             is_one_model = (models_arr[0] == models_arr).all()
-            have_dynamics = True if "dynamics_params" in edges_df.columns else False
+            have_dynamics = "dynamics_params" in edges_df.columns
             edges_df_cols = set(edges_df.columns)
 
             if is_one_model:
@@ -540,14 +578,17 @@ class SonataNetwork():
                 if have_dynamics:
                     extract_cols.append("dynamics_params")
 
-                syn_specs = edges_df.set_index("edge_type_id")[extract_cols].to_dict(orient="index")
+                syn_specs = edges_df.set_index("edge_type_id")[extract_cols].to_dict(
+                    orient="index"
+                )
 
                 if have_dynamics:
                     # Include parameters from JSON file in the map
                     for edge_type_id, syn_spec in syn_specs.copy().items():
-
-                        params_path = PurePath(self._conf["components"]["synaptic_models_dir"],
-                                               syn_spec["dynamics_params"])
+                        params_path = PurePath(
+                            self._conf["components"]["synaptic_models_dir"],
+                            syn_spec["dynamics_params"],
+                        )
                         with open(params_path) as fp:
                             params = json.load(fp)
 
@@ -567,8 +608,10 @@ class SonataNetwork():
 
                     if have_dynamics:
                         # Include parameters from JSON file in the map
-                        params_path = PurePath(self._conf["components"]["synaptic_models_dir"],
-                                               row[idx_map["dynamics_params"]])
+                        params_path = PurePath(
+                            self._conf["components"]["synaptic_models_dir"],
+                            row[idx_map["dynamics_params"]],
+                        )
 
                         with open(params_path) as fp:
                             params = json.load(fp)
@@ -625,8 +668,7 @@ class SonataNetwork():
 
         # Verify that network is built
         if not self._is_network_built:
-            msg = ("The SONATA network must be built before a simulation "
-                   "can be done")
+            msg = "The SONATA network must be built before a simulation " "can be done"
             raise kernel.NESTError(msg)
 
         if "tstop" in self._conf["run"]:
@@ -634,8 +676,10 @@ class SonataNetwork():
         elif "duration" in self._conf["run"]:
             T_sim = self._conf["run"]["duration"]
         else:
-            msg = ("Simulation time 'tstop' or 'duration' must be specified "
-                   "in configuration file")
+            msg = (
+                "Simulation time 'tstop' or 'duration' must be specified "
+                "in configuration file"
+            )
             raise ValueError(msg)
 
         Simulate(T_sim)

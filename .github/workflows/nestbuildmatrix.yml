@@ -340,6 +340,7 @@ jobs:
       - name: "Install dependencies"
         run: |
           pip install -r doc/requirements.txt
+          # The pandoc executable, which is required, cannot be installed via pip see: https://stackoverflow.com/a/71585691
           sudo apt-get install pandoc
 
       - name: "Test-build documentation"

@@ -14,14 +14,14 @@ Configure NEST for SONATA
 To use SONATA with NEST, both `HDF5 <https://hdfgroup.org/>`_ and `h5py <https://www.h5py.org/>`_ must be installed on
 the system and NEST must be configured properly.
 
-In the installation of NEST, you need to add the following configuration option to
-your CMake.
+If you install NEST from a pre-built package, NEST will automatically be configured for SONATA support.
+
+If you install NEST from source, the following configuration option must be added to
+your CMake invocation:
 
 .. code-block:: sh
 
-    cmake -Dwith-hdf5=[ON </path/to/hdf5>]
-    make
-    make install
+    -Dwith-hdf5=ON
 
 For further details, see :doc:`../installation/cmake_options`.
 

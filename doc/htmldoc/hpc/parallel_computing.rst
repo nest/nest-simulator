@@ -228,7 +228,7 @@ Run distributed simulations
 
 Distributed simulations **cannot be run interactively**, which means that
 the simulation has to be provided as a script. However, the script can be the same
-as a script for any simulation. No changes are necessary for distibuted simulation scripts:
+as a script for any simulation. No changes are necessary for distributed simulation scripts:
 inter-process communication and node distribution is managed transparently inside of NEST.
 
 To distribute a simulation onto 128 processes of a computer cluster, the
@@ -240,6 +240,7 @@ command should look like this
 
 Please refer to the documentation of your MPI implementation to learn
 more about the usage of ``mpirun``.
+
 
 MPI related commands
 ~~~~~~~~~~~~~~~~~~~~
@@ -264,6 +265,32 @@ commands are available:
 
  :py:func:`.SyncProcesses`
       Synchronize all MPI processes.
+
+.. important::
+
+    One should never call any ``nest.*`` function inside a block that will only be executed on a subset of MPI ranks.
+
+    Trying to access kernel information with a subset of MPI processes causes a deadlock.
+
+    For example:
+
+    **Don't do this**
+
+    .. code-block::
+
+      if nest.Rank() == 0:
+            rng_seed = nest.rng_seed
+            print(f"RNG seed: {rng_seed}")
+
+
+    **Do this**
+
+    .. code-block::
+
+     rng_seed = nest.rng_seed
+     if nest.Rank() == 0:
+        print(f"RNG seed: {rng_seed}")
+
 
 
 Reproducibility

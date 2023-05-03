@@ -21,8 +21,8 @@ frontend could really be anything that can talk HTTP. Under the hood,
 NEST Server forwards the commands it receives to PyNEST, and sends
 back the result data in response packets.
 
-NEST Server was initially developed as a backend for `NEST Desktop
-<https://nest-desktop.readthedocs.io/>`_, a web-based graphical
+NEST Server was initially developed as a backend for :doc:`NEST Desktop
+<desktop:index>`, a web-based graphical
 frontend for NEST. With growing interest in a more general server
 backend for NEST, the functionality of the original NEST Server was
 extended to accommodate for this broader range of application.
@@ -52,7 +52,7 @@ on the remote machine, and use the :ref:`NEST Client <nest_client>`
 locally or write your own client using one of the recipes provided in
 the :ref:`section on advanced applications <nest_server_advanced>`.
 
-`NEST Desktop <https://nest-desktop.readthedocs.io/>`_, the web-based
+:doc:`NEST Desktop <desktop:index>`, the web-based
 graphical user interface for NEST, uses NEST Server as its simulation
 backend. It supports server instances running either locally or
 remotely. More details about how to configure and run this setup can
@@ -95,21 +95,27 @@ Run NEST Server
 ~~~~~~~~~~~~~~~
 
 All NEST Server operations are managed using the ``nest-server``
-command that can either be run directly::
+command that can either be run directly:
 
-  nest-server start
+.. code-block:: text
+
+   nest-server start
 
 or supplied to the execution command line for running the Docker
-container::
+container:
+
+.. code-block:: text
 
   docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -p 52425:52425 nestsim/nest:latest nest-server start
 
 The generic invocation command line for the ``nest-server`` command
-looks as follows::
+looks as follows:
+
+.. code-block:: text
 
   nest-server <command> [-d] [-h <host>] [-o] [-p <port>]
 
-Possible commands are `start`, `stop`, `status`, or `log`. The meaning
+Possible commands are ``start``, ``stop``, ``status``, or ``log``. The meaning
 of the other arguments is as follows:
 
 -d
@@ -130,9 +136,11 @@ simulation script on each of the :hxt_ref:`MPI` processes. With NEST Server, thi
 would normally mean that one NEST Server instance would be spawned for
 each rank in a multi-process NEST simulation. To prevent this from
 happening, we provide a special version of the NEST Server command for
-use with MPI. It can be run as follows::
+use with MPI. It can be run as follows:
 
-  mpirun -np N nest-server-mpi [--host HOST] [--port PORT]
+.. code-block:: text
+
+    mpirun -np N nest-server-mpi [--host HOST] [--port PORT]
 
 If run like this, the RESTful API of the NEST Server will only be
 served by the :hxt_ref:`MPI` process with rank 0 (called the `master`), while all
@@ -281,38 +289,38 @@ NEST Client API
 
 .. py:method:: NESTClient.<call>(*args, **kwargs)
 
-    Execute a PyNEST function `<call>` on the NEST Server; the
-    arguments `args` and `kwargs` will be forwarded to the function
+    Execute a PyNEST function ``<call>`` on the NEST Server; the
+    arguments ``args`` and ``kwargs`` will be forwarded to the function
 
 .. py:method:: NESTClient.exec_script(source, return_vars=None)
 
     Execute a Python script on the NEST Server; the script has to be
-    given as a string in the `source` argument
+    given as a string in the ``source`` argument
 
 .. py:method:: NESTClient.from_file(filename, return_vars=None)
 
     Execute a Python script on the NEST Server; the argument
-    `filename` is the name of the file in which the script is stored
+    ``filename`` is the name of the file in which the script is stored
 
 REST API overview
 -----------------
 
-localhost:52425
+``localhost:52425``
     Get the version of NEST used by NEST Server
 
-localhost:52425/api
+``localhost:52425/api``
     List all available functions
 
-localhost:52425/api/<call>
-    Execute the function `<call>`
+``localhost:52425/api/<call>``
+    Execute the function ``<call>```
 
-localhost:52425/api/<call>?inspect=getdoc
-    Get the documentation for the function `<call>`
+``localhost:52425/api/<call>?inspect=getdoc``
+    Get the documentation for the function ``<call>``
 
-localhost:52425/api/<call>?inspect=getsource
-    Get the source code of the function `<call>`
+``localhost:52425/api/<call>?inspect=getsource``
+    Get the source code of the function ``<call>``
 
-localhost:52425/exec
+``localhost:52425/exec``
     Execute a Python script. This requires JSON data in the form
 
     .. code-block:: JSON
@@ -326,25 +334,35 @@ The preferred command line tool for interacting with NEST Server using
 a terminal is ``curl``. For more information, please visit the `curl
 website <https://curl.se/>`_.
 
-To obtain basic information about the running server, run::
+To obtain basic information about the running server, run:
+
+.. code-block::
 
   curl localhost:52425
 
-NEST Server responds to this by sending data in JSON format::
+NEST Server responds to this by sending data in JSON format:
+
+.. code-block::
 
   {"mpi":false,"nest":"3.2"}
 
-You can retrieve data about the callable functions of NEST by running::
+You can retrieve data about the callable functions of NEST by running:
+
+.. code-block::
 
   curl localhost:52425/api
 
-Retrieve the current kernel status dict from NEST::
+Retrieve the current kernel status dict from NEST:
+
+.. code-block::
 
   curl localhost:52425/api/GetKernelStatus
 
-Send API request with function arguments in JSON format::
+Send API request with function arguments in JSON format:
 
-  curl -H "Content-Type: application/json" -d '{"model": "iaf_psc_alpha"}' localhost:52425/api/GetDefaults
+.. code-block::
+
+   curl -H "Content-Type: application/json" -d '{"model": "iaf_psc_alpha"}' localhost:5000/api/GetDefaults
 
 .. note::
 
@@ -361,14 +379,16 @@ Send API request with function arguments in JSON format::
 API access from Python
 ~~~~~~~~~~~~~~~~~~~~~~
 
-If you prefer Python over `curl`, you can use the ``requests`` module,
+If you prefer Python over ``curl``, you can use the ``requests`` module,
 which provides a convenient API for communicating with RESTful APIs.
 On most systems this is already installed or can be easily installed
-using `pip`. Extensive documentation is available on the pages about
+using ``pip``. Extensive documentation is available on the pages about
 `HTTP for Humans <https://requests.readthedocs.io/en/master/>`_.
 
 Sending a simple request to the NEST Server using Python works as
-follows::
+follows:
+
+.. code-block::
 
   import requests
   requests.get('http://localhost:52425').json()
@@ -568,7 +588,7 @@ Using this function, sending an API-request to NEST Server becomes easy:
 
 The third type of request we might want to make is sending a custom
 Python script to NEST Server. As outlined above, this is supported by
-the `exec` route. to make use of that, we define a function with
+the ``exec`` route. to make use of that, we define a function with
 callback for POST requests to execute a script:
 
 .. code-block:: JavaScript

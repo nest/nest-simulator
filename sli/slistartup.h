@@ -74,6 +74,10 @@ class SLIStartup : public SLIModule
 public:
   Name argv_name;
   Name version_name;
+  Name version_git_info_name;
+  Name version_git_hash_name;
+  Name version_git_branch_name;
+  Name version_git_remote_name;
   Name exitcode_name;
   Name prgbuilt_name;
   Name prefix_name;

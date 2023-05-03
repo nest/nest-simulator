@@ -531,7 +531,7 @@ targets.
 Here is a simple example, cf. :numref:`fig_conn1`
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn1 #}
+    :start-after: # { conn1 #}
     :end-before: #{ end #}
 
 .. _fig_conn1:

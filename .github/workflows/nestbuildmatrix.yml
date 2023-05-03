@@ -335,6 +335,7 @@ jobs:
       - name: "Set up Python 3.x"
         uses: actions/setup-python@v4
         with:
+          # Using 3.8 because Read the docs does not work with higher versions.
           python-version: 3.8
 
       - name: "Install dependencies"

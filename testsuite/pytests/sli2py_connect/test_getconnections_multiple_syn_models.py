@@ -99,7 +99,7 @@ def test_retrieve_correct_proportion_of_synapse_model(network):
     # Obtain entries with duplicate sources only (i.e., only static + stdp connections)
     df_only_dup = df[df.duplicated(subset=["source"], keep=False)]
     # Must divide by 2 since sources are listed twice (once per synapse model)
-    actual_num_static_stdp = len(df_only_dup) / 2
+    actual_num_static_stdp = len(df_only_dup.index) / 2
 
     assert actual_num_static_only == expected_num_static_only
     assert actual_num_stdp_only == expected_num_stdp_only

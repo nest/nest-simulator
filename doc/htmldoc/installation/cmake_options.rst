@@ -88,7 +88,9 @@ External libraries
 | ``-Dwith-gsl=[OFF|ON|</path/to/gsl>]``                | Build with the GSL library [default=ON]. To set a specific library, give the install path.     |
 +-------------------------------------------------------+------------------------------------------------------------------------------------------------+
 +-------------------------------------------------------+------------------------------------------------------------------------------------------------+
-| ``-Dwith-hdf5=[OFF|ON|</path/to/hdf5>]``              | Build with HDF5 library [default=OFF]. To set a specific library, give the install path.       |
+| ``-Dwith-hdf5=[OFF|ON|</path/to/hdf5>]``              | Build with `HDF5 <https://hdfgroup.org/>`_ library [default=OFF]. To set a specific library,   |
+|                                                       | give the install path. HDF5 is needed to configure NEST for                                    |
+|                                                       | `SONATA <https://github.com/AllenInstitute/sonata>`_ support.                                  |
 +-------------------------------------------------------+------------------------------------------------------------------------------------------------+
 
 NEST properties

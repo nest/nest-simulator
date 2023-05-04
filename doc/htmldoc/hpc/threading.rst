@@ -82,6 +82,13 @@ Table of OpenMP settings
    * - ``export OMP_DISPLAY_ENV=true``
      - display OpenMP variables
 
+.. note::
+
+   Using ```python``` on HPC systems might lead to inconsistencies in multi-threading libraries resulting in a degredation of performance.
+   For instance, depending on the installation ```numpy``` uses the multi-threading library provided by the MKL.
+   To resolve this one needs to set ```export MKL_THREADING_LAYER=GNU``` in order to pass the OpenMP settings correctly.
+    
+
 .. seealso::
 
    For general details on pinning in HPC systems see `the HPC wiki article <https://hpc-wiki.info/hpc/Binding/Pinning>`_.

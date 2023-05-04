@@ -124,6 +124,7 @@ References
 
 :Authors: D Adams, N Gaiman
 """
+# flake8: noqa
 import nest  # [[ begin code section with imports]]
 import scipy
 
@@ -142,7 +143,7 @@ import scipy
 nest.SetStatus(noise, [{"rate": n_ex * r_ex}, {"rate": n_in * r_in}])
 nest.SetStatus(voltmeter, {"withgid": True, "withtime": True})
 
-complete code ...
+# complete code ...
 
 
 ##############################################################################

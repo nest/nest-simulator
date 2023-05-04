@@ -90,37 +90,38 @@ Rendering HTML
 You can build and preview the documentation locally by running the following
 commands.
 
-1. Go to the :ref:`build directory <dev_install>` of NEST:
+1. Clone the NEST repository:
 
 .. code-block:: bash
 
-   cd nest-simulator-x.y.z-build
+  git clone git@github.com:nest/nest-simulator
 
-2. Add `-Dwith-userdoc=ON` to your regular CMake command:
+2. Navigate to the ``doc/htmldoc`` folder:
 
 .. code-block:: bash
 
-   cmake -Dwith-userdoc=ON
+   cd nest-simulator/doc/htmldoc
 
 3. Build the docs:
 
+.. code-black:: bash
+
+   sphinx-build . ../_build/html -b html
+
+4. Preview files. They are located in ``doc/_build/html``
+
 .. code-block:: bash
 
-   make docs
+   browser ../_build/html/index.html
 
-4. Preview files. They are located in ``doc/htmldoc/_build/html``
+.. tip::
 
-.. code-block:: bash
+   You can also build the user documentation in the build directory with CMake:
 
-   browser doc/htmldoc/_build/html/index.html
+   .. code-block:: bash
 
-.. note::
-
-   If you are planning to install NEST, ``make docs`` is included
-   in ``make install`` as long as you toggle on the userdoc or devdoc
-
-   After installation the files are located in
-   ``<nest_install_dir>/share/doc/nest/html/index.html``
+       cmake -Dwith-userdoc=ON </path/to/NEST/src>
+       make docs
 
 Editing and creating pages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

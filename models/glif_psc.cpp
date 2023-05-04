@@ -464,7 +464,6 @@ nest::glif_psc::pre_run_hook()
 void
 nest::glif_psc::update( Time const& origin, const long from, const long to )
 {
-
   double v_old = S_.U_;
 
   for ( long lag = from; lag < to; ++lag )

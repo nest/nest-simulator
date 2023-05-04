@@ -26,8 +26,7 @@ Functions relating to spatial properties of nodes
 
 import numpy as np
 
-from ..ll_api import check_stack, sli_func, sps, sr, spp
-from .. import pynestkernel as kernel
+from ..ll_api import sli_func
 from .hl_api_helper import is_iterable
 from .hl_api_connections import GetConnections
 from .hl_api_parallel_computing import NumProcesses, Rank
@@ -162,7 +161,7 @@ def CreateMask(masktype, specs, anchor=None):
         By default the top-left corner of a grid mask, i.e., the grid
         mask element with grid index [0, 0], is aligned with the driver
         node. It can be changed by means of the 'anchor' parameter:
-            ::
+        ::
 
                 'anchor' :
                     {'row' : float,
@@ -492,7 +491,8 @@ def DumpLayerNodes(layer, outname):
 
     Write `node ID` and position data to `outname` file. For each node in `layer`,
     a line with the following information is written:
-        ::
+
+    ::
 
             node ID x-position y-position [z-position]
 
@@ -1120,9 +1120,6 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         _draw_extent(ax, xctr, yctr, xext, yext)
 
     elif len(ext) == 3:
-        # 3D layer
-        from mpl_toolkits.mplot3d import Axes3D
-
         # extract position information, transpose to list of x,y,z pos
         if len(layer) == 1:
             # handle case of single node
@@ -1266,9 +1263,6 @@ def PlotTargets(src_nrn, tgt_layer, syn_type=None, fig=None,
         _draw_extent(ax, xctr, yctr, xext, yext)
 
     else:
-        # 3D layer
-        from mpl_toolkits.mplot3d import Axes3D
-
         if fig is None:
             fig = plt.figure()
             ax = fig.add_subplot(111, projection='3d')

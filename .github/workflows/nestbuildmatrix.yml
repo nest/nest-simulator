@@ -413,8 +413,8 @@ jobs:
         # openmp, mpi, python, gsl, ltdl, boost, sionlib, libneurosim, optimize, warning, userdoc, music
         use:
           - "boost, optimize, warning"
-          - "openmp, python, gsl, ltdl, boost, hdf5, optimize, warning"
-          - "mpi, python, gsl, ltdl, boost, hdf5, optimize, warning"
+          - "openmp, python, gsl, ltdl, boost, optimize, warning"
+          - "mpi, python, gsl, ltdl, boost, optimize, warning"
           - "openmp, mpi, python, gsl, ltdl, boost, hdf5, sionlib, libneurosim, optimize, warning"
 
     steps:

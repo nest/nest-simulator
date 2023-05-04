@@ -668,7 +668,7 @@ class SonataNetwork:
 
         # Verify that network is built
         if not self._is_network_built:
-            msg = "The SONATA network must be built before a simulation " "can be done"
+            msg = "The SONATA network must be built before a simulation can be done"
             raise kernel.NESTError(msg)
 
         if "tstop" in self._conf["run"]:

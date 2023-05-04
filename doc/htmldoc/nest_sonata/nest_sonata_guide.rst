@@ -23,7 +23,7 @@ your CMake invocation:
 
     -Dwith-hdf5=ON
 
-For further details, see :doc:`../installation/cmake_options`.
+For further details, see :ref:`cmake_options`.
 
 .. _sec:sonata_overview:
 

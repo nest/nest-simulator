@@ -139,7 +139,7 @@ PyNEST examples
     .. grid-item-card:: SONATA network
            :img-top: ../static/img/300_pointneurons.png
 
-           * :doc:`../auto_examples/sonata_network`
+           * :doc:`../auto_examples/sonata_example/sonata_network`
 
 
 .. grid:: 1 1 2 3

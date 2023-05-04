@@ -76,7 +76,7 @@ Here is a minimal example of how to build and simulate from SONATA specification
 
 For more detailed examples, see
 
-* :doc:`../auto_examples/sonata_network`
+* :doc:`../auto_examples/sonata_example/sonata_network`
 
 .. _sec:sonata_nodes:
 
@@ -283,7 +283,7 @@ expects to be included:
 
 .. note::
 
-    NEST supports the use of two config files, i.e. one network and one simulation config. NEST does not currently 
+    NEST supports the use of two config files, that is, one network and one simulation config. NEST does not currently 
     support SONATA Spike Train Reports or utilize other ``output`` components in the SONATA config.
 
 .. _sec:sonata_refs:

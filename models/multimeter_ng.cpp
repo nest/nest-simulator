@@ -1,5 +1,5 @@
 /*
- *  multimeter.cpp
+ *  multimeter_ng.cpp
  *
  *  This file is part of NEST.
  *

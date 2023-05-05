@@ -46,7 +46,6 @@ namespace nest
 class RecordingDeviceNG : public NESTObjectInterface, public Device
 {
 public:
-
   RecordingDeviceNG();
   RecordingDeviceNG( const RecordingDevice& );
 

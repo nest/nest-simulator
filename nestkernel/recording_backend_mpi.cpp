@@ -73,7 +73,6 @@ nest::RecordingBackendMPI::finalize()
 void
 nest::RecordingBackendMPI::enroll( const NESTObjectInterface& device, const DictionaryDatum& )
 {
-  
   if ( sr )
   {
     thread tid = device.get_thread();

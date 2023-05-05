@@ -19,8 +19,6 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
-import subprocess as sp
 import unittest
 import nest
 import numpy as np
@@ -32,8 +30,10 @@ except ImportError:
     HAVE_MPI4PY = False
 
 HAVE_MPI = nest.ll_api.sli_func("statusdict/have_mpi ::")
+HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
 
 
+@unittest.skipIf(not HAVE_OPENMP, 'NEST was compiled without multi-threading')
 @unittest.skipIf(not HAVE_MPI4PY, 'mpi4py is not available')
 class TestConnectArraysMPICase(unittest.TestCase):
     """

@@ -362,7 +362,6 @@ nest::RecordingBackendSIONlib::close_files_()
         DeviceInfo& dev_info = it->second.info;
 
         node_id = static_cast< sion_uint64 >( dev_info.node_id );
-        
 
         sion_fwrite( &node_id, sizeof( sion_uint64 ), 1, file.sid );
 

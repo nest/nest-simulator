@@ -19,7 +19,6 @@
 
 set ( nestkernel_sources
       nest_object_interface.h  nest_object_interface.cpp
-      nest_enum_types.h
       universal_data_logger_impl.h universal_data_logger.h
       recordables_map.h
       archiving_node.h archiving_node.cpp

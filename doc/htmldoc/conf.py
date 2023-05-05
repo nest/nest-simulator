@@ -68,7 +68,7 @@ panels_add_bootstrap_css = False
 templates_path = ['templates']
 
 mermaid_output_format = "raw"
-mermaid_version = ""
+mermaid_version = "10.1.0"
 
 sphinx_gallery_conf = {
     # path to your examples scripts

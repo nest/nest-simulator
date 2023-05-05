@@ -38,13 +38,13 @@ except ImportError:
     PLOTTING_POSSIBLE = False
 
 try:
-    import pydot
+    import pydot    # noqa: F401
     HAVE_PYDOT = True
 except ImportError:
     HAVE_PYDOT = False
 
 try:
-    import pandas
+    import pandas   # noqa: F401
     HAVE_PANDAS = True
 except ImportError:
     HAVE_PANDAS = False

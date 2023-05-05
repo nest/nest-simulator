@@ -19,15 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-from ..math import exp
 from ..lib.hl_api_types import CreateParameter
-
-try:
-    import scipy.special
-    HAVE_SCIPY = True
-except ImportError:
-    HAVE_SCIPY = False
-
 
 __all__ = [
     'exponential',

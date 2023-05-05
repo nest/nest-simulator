@@ -453,12 +453,13 @@ different amplitudes at different times.
 Example 5
 ^^^^^^^^^
 
-::
+.. code-block:: text
 
    SLI ] /iaf_psc_alpha Create /n Set
    SLI ] /poisson_generator Create /pg Set
    SLI ] pg << /rate 220.0 Hz >> SetStatus
    SLI ] pg n Connect
+
 
 Recording devices
 ~~~~~~~~~~~~~~~~~
@@ -476,9 +477,9 @@ set ``memory``, which is also the default for all devices. Data
 stored in memory can be retrieved after the simulation using
 ``GetStatus``. To get a list of all available recording backends, run
 
-::
+.. code-block:: text
 
-   SLI ] GetKernelStatus /recording_backends get ==
+    SLI ] GetKernelStatus /recording_backends get ==
 
 A list of node models including all available device models can be retrieved by calling
 ``GetKernelStatus /node_models get``. The most important devices are:
@@ -495,13 +496,13 @@ this case.
 Example 6
 ^^^^^^^^^
 
-::
+.. code-block:: text
 
-   SLI ] /iaf_psc_alpha Create /n Set
-   SLI ] /voltmeter Create /vm Set
-   SLI ] /spike_recorder Create /sr Set
-   SLI ] vm n Connect
-   SLI ] n sr Connect
+    SLI ] /iaf_psc_alpha Create /n Set
+    SLI ] /voltmeter Create /vm Set
+    SLI ] /spike_recorder Create /sr Set
+    SLI ] vm n Connect
+    SLI ] n sr Connect
 
 Simulation
 ----------

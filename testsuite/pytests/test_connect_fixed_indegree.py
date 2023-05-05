@@ -27,6 +27,11 @@ import connect_test_base
 import nest
 
 
+HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
+
+
+@unittest.skipIf(not HAVE_OPENMP, 'NEST was compiled without multi-threading')
+@nest.ll_api.check_stack
 class TestFixedInDegree(connect_test_base.ConnectTestBase):
 
     # specify connection pattern and specific params

@@ -105,8 +105,8 @@ def test_register_outgoing_spikes(model):
 
     nrn = nest.Create(model)
 
-    if extra_params.get(model):
-        if extra_params[model].get("params"):
+    if model in extra_params:
+        if "params" in extra_params[model]:
             nrn.set(extra_params[model].get("params"))
 
     # if the model is compartmental, we need to add at least a root compartment
@@ -124,10 +124,10 @@ def test_register_outgoing_spikes(model):
 
     receptor_type = 0
     initial_weight = 10.0
-    if extra_params.get(model):
-        if extra_params[model].get("receptor_type"):
+    if model in extra_params:
+        if "receptor_type" in extra_params[model]:
             receptor_type = extra_params[model].get("receptor_type")
-        if extra_params[model].get("initial_weight"):
+        if "initial_weight" in extra_params[model]:
             initial_weight = extra_params[model].get("initial_weight")
 
     syn_spec = {
@@ -141,10 +141,10 @@ def test_register_outgoing_spikes(model):
 
     nest.Simulate(100.0)
 
-    neuron_spiked = srec.n_events
-    t_spike_set = nrn.t_spike
-    weight_changed = nest.GetConnections(parrot).get("weight")
+    num_spikes = srec.n_events
+    t_last_spike = nrn.t_spike
+    weight_after_sim = nest.GetConnections(parrot).get("weight")
 
-    print(neuron_spiked)
-    print(t_spike_set)
-    print(weight_changed)
+    assert num_spikes > 0
+    assert t_last_spike > 0
+    assert weight_after_sim != initial_weight

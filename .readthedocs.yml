@@ -7,8 +7,8 @@ build:
 
 sphinx:
   builder: html
-  configuration: source/conf.py
+  configuration: doc/htmldoc/conf.py
 
 python:
    install:
-   - requirements: requirements.txt
+   - requirements: doc/requirements.txt

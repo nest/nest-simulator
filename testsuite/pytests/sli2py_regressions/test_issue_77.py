@@ -20,13 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Regression test for Ticket #77 (GitHub).
-
-Ensure that all neuron models register outgoing spikes with archiving node.
-The test sends a very high-rate Poisson spike train into the neuron that
-should make any type of model neuron fire and checks both `t_spike` entry of
-the neuron (>0 if neuron has spiked) and checks that the connection weight
-differs from the initial value 1.0.
+Regression test for Issue #77 (GitHub).
 """
 
 import pytest
@@ -99,8 +93,14 @@ models = [
 
 @pytest.mark.parametrize("model", models)
 def test_register_outgoing_spikes(model):
-    """ """
+    """
+    Ensure that all neuron models register outgoing spikes with archiving node.
 
+    The test sends a very high-rate Poisson spike train into the neuron that
+    should make any type of model neuron fire and checks both `t_spike` entry
+    of the neuron (>0 if neuron has spiked) and checks that the connection
+    weight differs from the initial value 1.0.
+    """
     nest.ResetKernel()
 
     nrn = nest.Create(model)

@@ -74,7 +74,7 @@ def test_default_value_of_spike_trains():
     sgg = nest.Create("sinusoidal_gamma_generator")
     individual_spike_trains = sgg.get("individual_spike_trains")
 
-    assert individual_spike_trains == True
+    assert individual_spike_trains
 
 
 def test_override_default_value():
@@ -82,7 +82,7 @@ def test_override_default_value():
     sgg = nest.Create("sinusoidal_gamma_generator")
     individual_spike_trains = sgg.get("individual_spike_trains")
 
-    assert individual_spike_trains == False
+    assert not individual_spike_trains
 
 
 def test_copied_model_with_new_default():

@@ -103,6 +103,12 @@ public:
     return names::recorder;
   }
 
+  bool
+  is_recording_spikes() const override
+  {
+    return true;
+  }
+
   /**
    * Import sets of overloaded virtual functions.
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
@@ -116,7 +122,6 @@ public:
 
   port handles_test_event( SpikeEvent&, rport ) override;
 
-  Type get_type() const override;
   SignalType receives_signal() const override;
 
   void get_status( DictionaryDatum& ) const override;

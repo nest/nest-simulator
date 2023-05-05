@@ -167,7 +167,6 @@ public:
 
   SignalType sends_signal() const override;
 
-  Type get_type() const override;
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
 

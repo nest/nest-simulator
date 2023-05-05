@@ -71,7 +71,7 @@ nest::RecordingBackendMPI::finalize()
 void
 nest::RecordingBackendMPI::enroll( const RecordingDevice& device, const DictionaryDatum& )
 {
-  if ( device.get_type() == RecordingDevice::SPIKE_RECORDER )
+  if ( device.is_recording_spikes() )
   {
     thread tid = device.get_thread();
     index node_id = device.get_node_id();

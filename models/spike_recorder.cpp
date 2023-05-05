@@ -56,11 +56,6 @@ nest::spike_recorder::update( Time const&, const long, const long )
   // Nothing to do. Writing to the backend happens in handle().
 }
 
-nest::RecordingDevice::Type
-nest::spike_recorder::get_type() const
-{
-  return RecordingDevice::SPIKE_RECORDER;
-}
 
 void
 nest::spike_recorder::get_status( DictionaryDatum& d ) const

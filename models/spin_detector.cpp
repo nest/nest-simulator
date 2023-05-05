@@ -68,11 +68,6 @@ nest::spin_detector::update( Time const&, const long, const long )
   }
 }
 
-nest::RecordingDevice::Type
-nest::spin_detector::get_type() const
-{
-  return RecordingDevice::SPIN_DETECTOR;
-}
 
 void
 nest::spin_detector::get_status( DictionaryDatum& d ) const

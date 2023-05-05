@@ -303,7 +303,6 @@ private:
     }
 
     index node_id;
-    unsigned int type;
     std::string name;
     std::string label;
 

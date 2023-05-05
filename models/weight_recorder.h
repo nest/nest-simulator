@@ -119,7 +119,6 @@ public:
 
   port handles_test_event( WeightRecorderEvent&, rport ) override;
 
-  Type get_type() const override;
   SignalType receives_signal() const override;
 
   void get_status( DictionaryDatum& ) const override;

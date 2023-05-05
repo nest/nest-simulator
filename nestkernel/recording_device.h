@@ -138,16 +138,11 @@ public:
 
   bool is_active( Time const& T ) const override;
 
-  enum Type
+  virtual bool
+  is_recording_spikes() const
   {
-    MULTIMETER,
-    SPIKE_RECORDER,
-    SPIN_DETECTOR,
-    WEIGHT_RECORDER
-  };
-
-  virtual Type get_type() const = 0;
-
+    return false;
+  }
   const std::string& get_label() const;
 
   void set_status( const DictionaryDatum& ) override;

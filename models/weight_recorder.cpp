@@ -139,11 +139,6 @@ nest::weight_recorder::update( Time const&, const long, const long )
 {
 }
 
-nest::RecordingDevice::Type
-nest::weight_recorder::get_type() const
-{
-  return RecordingDevice::WEIGHT_RECORDER;
-}
 
 void
 nest::weight_recorder::get_status( DictionaryDatum& d ) const

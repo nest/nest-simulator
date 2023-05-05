@@ -83,7 +83,6 @@ nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device, const Dict
     DeviceInfo& info = entry.info;
 
     info.node_id = node_id;
-    info.type = static_cast< unsigned int >( device.get_type() );
     info.name = device.get_name();
     info.label = device.get_label();
 
@@ -350,7 +349,6 @@ nest::RecordingBackendSIONlib::close_files_()
       sion_fwrite( &n_dev, sizeof( sion_uint64 ), 1, file.sid );
 
       sion_uint64 node_id;
-      sion_uint32 type;
       sion_int64 origin;
       sion_int64 t_start;
       sion_int64 t_stop;
@@ -364,10 +362,9 @@ nest::RecordingBackendSIONlib::close_files_()
         DeviceInfo& dev_info = it->second.info;
 
         node_id = static_cast< sion_uint64 >( dev_info.node_id );
-        type = static_cast< sion_uint32 >( dev_info.type );
+        
 
         sion_fwrite( &node_id, sizeof( sion_uint64 ), 1, file.sid );
-        sion_fwrite( &type, sizeof( sion_uint32 ), 1, file.sid );
 
         char name[ DEV_NAME_BUFFERSIZE ];
         strncpy( name, dev_info.name.c_str(), DEV_NAME_BUFFERSIZE - 1 );

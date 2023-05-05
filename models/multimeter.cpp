@@ -224,12 +224,6 @@ multimeter::handle( DataLoggingReply& reply )
   }
 }
 
-RecordingDevice::Type
-multimeter::get_type() const
-{
-  return RecordingDevice::MULTIMETER;
-}
-
 voltmeter::voltmeter()
   : multimeter()
 {

@@ -28,7 +28,6 @@ Hans Ekkehard Plesser, UMB
 
 import nest
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 
 nest.ResetKernel()
 

@@ -93,7 +93,7 @@ class PostTraceTester:
                       'delay': self.delay_})
 
         # get STDP synapse
-        syn_ps = nest.GetConnections(source=pre_parrot_ps,
+        syn_ps = nest.GetConnections(source=pre_parrot_ps,              # noqa: F841
                                      synapse_model="stdp_synapse_rec")
 
         print("[py] Total simulation time: " + str(self.sim_time_) + " ms")

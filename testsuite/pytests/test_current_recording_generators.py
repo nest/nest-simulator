@@ -133,7 +133,6 @@ class CurrentRecordingGeneratorTestCase(unittest.TestCase):
 
         # retrieve vectors
         events_Vm = nest.GetStatus(m_Vm)[0]['events']
-        t_Vm = events_Vm['times']
         v_Vm = events_Vm['V_m']
 
         events_ac = nest.GetStatus(m_ac)[0]['events']

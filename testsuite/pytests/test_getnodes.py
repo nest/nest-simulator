@@ -34,11 +34,11 @@ class GetNodesTestCase(unittest.TestCase):
     def setUp(self):
         nest.ResetKernel()
 
-        a = nest.Create('iaf_psc_alpha', 3)
-        b = nest.Create('iaf_psc_delta', 2, {'V_m': -77.})
-        c = nest.Create('iaf_psc_alpha', 4, {'V_m': [-77., -66., -77., -66.],
+        a = nest.Create('iaf_psc_alpha', 3)                                     # noqa: F841
+        b = nest.Create('iaf_psc_delta', 2, {'V_m': -77.})                      # noqa: F841
+        c = nest.Create('iaf_psc_alpha', 4, {'V_m': [-77., -66., -77., -66.],   # noqa: F841
                                              'tau_m': [10., 11., 12., 13.]})
-        d = nest.Create('iaf_psc_exp', 4)
+        d = nest.Create('iaf_psc_exp', 4)                                       # noqa: F841
 
     def test_GetNodes(self):
         """test GetNodes"""

@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-set( models_sources
+set(models_sources
     ac_generator.h ac_generator.cpp
     aeif_cond_alpha.h aeif_cond_alpha.cpp
     aeif_cond_alpha_multisynapse.h aeif_cond_alpha_multisynapse.cpp
@@ -116,6 +116,7 @@ set( models_sources
     spike_recorder.h spike_recorder.cpp
     spike_generator.h spike_generator.cpp
     spin_detector.h spin_detector.cpp
+    spike_train_injector.h spike_train_injector.cpp
     static_synapse.h
     static_synapse_hom_w.h
     stdp_dopamine_synapse.h stdp_dopamine_synapse.cpp
@@ -139,30 +140,24 @@ set( models_sources
     vogels_sprekeler_synapse.h
     weight_recorder.h weight_recorder.cpp
     spike_dilutor.h spike_dilutor.cpp
-    )
+)
 
-add_library( models ${models_sources} )
-set_target_properties( models
+add_library(models STATIC ${models_sources})
+set_target_properties(models
     PROPERTIES
-    VERSION ${NEST_VERSION}
-    SOVERSION 3
-    )
-target_link_libraries( models nestutil sli_lib nestkernel )
+    POSITION_INDEPENDENT_CODE ON
+)
 
-target_include_directories( models PRIVATE
+target_link_libraries(models nestutil sli_lib nestkernel)
+
+target_include_directories(models PRIVATE
     ${PROJECT_SOURCE_DIR}/thirdparty
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
     ${PROJECT_SOURCE_DIR}/sli
     ${PROJECT_SOURCE_DIR}/nestkernel
-    )
+)
 
-install( TARGETS models
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    )
-
-FILTER_HEADERS("${models_sources}" install_headers )
-install( FILES ${install_headers}
+FILTER_HEADERS("${models_sources}" install_headers)
+install(FILES ${install_headers}
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)

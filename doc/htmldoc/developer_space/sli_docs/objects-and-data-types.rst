@@ -217,6 +217,7 @@ is a list of the most important types:
 * ``/xistreamtype``
 * ``/trietype``
 
+
 Getting type information
 ~~~~~~~~~~~~~~~~~~~~~~~~
 

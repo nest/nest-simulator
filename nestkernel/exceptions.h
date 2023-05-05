@@ -1242,6 +1242,26 @@ private:
   const std::string backend_;
 };
 
+class BackendAlreadyRegistered : public KernelException
+{
+public:
+  BackendAlreadyRegistered( const std::string& backend )
+    : backend_( backend )
+  {
+  }
+
+  BackendAlreadyRegistered( std::string&& backend )
+    : backend_( std::move( backend ) )
+  {
+  }
+
+
+  std::string message() const override;
+
+private:
+  const std::string backend_;
+};
+
 class LayerExpected : public KernelException
 {
 public:

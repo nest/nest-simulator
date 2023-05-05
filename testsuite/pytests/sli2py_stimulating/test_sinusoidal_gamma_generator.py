@@ -108,6 +108,7 @@ def check_arrays_equal(arrays):
     return all(np.array_equal(arrays[i], arrays[i + 1]) for i in range(len(arrays) - 1))
 
 
+@pytest.mark.skipif_missing_threads()
 @pytest.mark.parametrize("individual_spike_trains", [False, True])
 @pytest.mark.parametrize("num_threads", [1, 2])
 @pytest.mark.parametrize("nrns_per_thread", [4])
@@ -131,6 +132,7 @@ def test_network_with_spike_recorder(nrns_per_thread, num_threads, individual_sp
     assert check_arrays_equal(spike_times) == excepted
 
 
+@pytest.mark.skipif_missing_threads()
 @pytest.mark.parametrize("individual_spike_trains", [False, True])
 @pytest.mark.parametrize("num_threads", [1, 2])
 @pytest.mark.parametrize("nrns_per_thread", [4])

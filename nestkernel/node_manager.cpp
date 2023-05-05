@@ -56,7 +56,7 @@ NodeManager::NodeManager()
   , num_thread_local_devices_()
   , have_nodes_changed_( true )
   , exceptions_raised_() // cannot call kernel(), not complete yet
-  , nodeCollection_container_()
+  , node_collection_container_()
 {
 }
 
@@ -316,20 +316,20 @@ NodeManager::node_id_to_nodeCollection( const index node_id ) const
 {
   auto it = std::lower_bound( nodeCollection_last_.begin(), nodeCollection_last_.end(), node_id );
   size_t pos = it - nodeCollection_last_.begin();
-  return nodeCollection_container_.at( pos );
+  return node_collection_container_.at( pos );
 }
 
 void
 NodeManager::append_nodeCollection_( NodeCollectionPTR ncp )
 {
-  nodeCollection_container_.push_back( ncp );
+  node_collection_container_.push_back( ncp );
   nodeCollection_last_.push_back( ncp->get_last() );
 }
 
 void
 NodeManager::clear_nodeCollection_container()
 {
-  nodeCollection_container_.clear();
+  node_collection_container_.clear();
   nodeCollection_last_.clear();
 }
 

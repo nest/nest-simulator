@@ -99,9 +99,11 @@ network_params = {
 syn_params = {
     "synapse_model": "tsodyks_synapse",  # model of neuron-to-neuron and neuron-to-astrocyte connections
     "astro2post": "sic_connection",  # model of astrocyte-to-neuron connection
-    "w_e": 1.0,  # excitatory synaptic weight in nS
-    "w_i": -4.0,  # inhibitory synaptic weight in nS
     "w_a2n": 1.0,  # weight of astrocyte-to-neuron connection
+    "w_e": 1.0,  # weight of excitatory connection in nS
+    "w_i": -4.0,  # weight of inhibitory connection in nS
+    "d_e": 2.0,  # delay of excitatory connection in ms
+    "d_i": 1.0,  # delay of inhibitory connection in ms
     }
 
 ###############################################################################
@@ -134,7 +136,7 @@ neuron_params_in = {
 ###############################################################################
 # Function for network building.
 
-def create_astro_network(scale):
+def create_astro_network(scale=1):
     """Create nodes for a neuron-astrocyte network."""
     print("Creating nodes")
     nodes_ex = nest.Create(
@@ -174,14 +176,14 @@ def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise):
         "tau_psc": tau_syn_ex,
         "astro2post": syn_params["astro2post"],
         "weight_astro2post": syn_params["w_a2n"],
-        "delay": nest.random.uniform(2.0, 4.0)
+        "delay": syn_params["d_e"],
         }
     conn_params_i = {"rule": "pairwise_bernoulli", "p": network_params["p"]}
     syn_params_i = {
         "synapse_model": syn_params["synapse_model"],
         "weight": syn_params["w_i"],
         "tau_psc": tau_syn_in,
-        "delay": nest.random.uniform(0.1, 2.0)
+        "delay": syn_params["d_i"],
         }
     nest.Connect(nodes_ex, nodes_ex + nodes_in, conn_params_e, syn_params_e)
     nest.Connect(nodes_in, nodes_ex + nodes_in, conn_params_i, syn_params_i)
@@ -332,7 +334,7 @@ def run_simulation(data_path='data'):
 
     # Create and connect nodes
     exc, inh, astro, noise = \
-        create_astro_network(scale=1)
+        create_astro_network()
     connect_astro_network(exc, inh, astro, noise)
 
     # Create and connect recorders (multimeter default resolution = 1 ms)

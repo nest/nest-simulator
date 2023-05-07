@@ -1918,12 +1918,13 @@ nest::BernoulliAstroBuilder::connect_()
           // determine the source
           connected_snode_ids.insert( snode_id );
 
-          // prepare delays for connections; n2n and n2a delays are the same
-          std::vector< double > delays( synapse_model_id_.size() );
-          for ( size_t synapse_indx = 0; synapse_indx < synapse_model_id_.size(); ++synapse_indx )
-          {
-            delays[ synapse_indx ] = delays_astro_[ synapse_indx ]->value_double( target_thread, synced_rng, snode_id, target );
-          }
+          // (not working; cannot sync randomized parameters)
+          // // prepare delays for connections; n2n and n2a delays are the same
+          // std::vector< double > delays( synapse_model_id_.size() );
+          // for ( size_t synapse_indx = 0; synapse_indx < synapse_model_id_.size(); ++synapse_indx )
+          // {
+          //   delays[ synapse_indx ] = delays_astro_[ synapse_indx ]->value_double( target_thread, synced_rng, snode_id, target );
+          // }
 
           // increase i which counts the number of incoming connections
           ++i;
@@ -1936,14 +1937,14 @@ nest::BernoulliAstroBuilder::connect_()
             {
               update_param_dict_( snode_id, *target, target_thread, synced_rng, synapse_indx );
               double weight_n2n = weights_n2n_[ synapse_indx ]->value_double( target_thread, rng, snode_id, target );
-              // double delay = delays_astro_[ synapse_indx ]->value_double( target_thread, rng, snode_id, target );
+              double delay_n2n = delays_astro_[ synapse_indx ]->value_double( target_thread, rng, snode_id, target );
               // not compatible with connections that block individual weights
               kernel().connection_manager.connect( snode_id,
                 target,
                 target_thread,
                 synapse_model_id_[ synapse_indx ],
                 param_dicts_[ synapse_indx ][ target_thread ],
-                delays[ synapse_indx ],
+                delay_n2n,
                 weight_n2n );
             }
             // single_connect_( snode_id, *target, target_thread, synced_rng );
@@ -1979,14 +1980,14 @@ nest::BernoulliAstroBuilder::connect_()
             {
               update_param_dict_( snode_id, *astrocyte, astrocyte_thread, synced_rng, synapse_indx );
               double weight_n2a = weights_n2a_[ synapse_indx ]->value_double( astrocyte_thread, rng, snode_id, astrocyte );
-              // double delay = delays_astro_[ synapse_indx ]->value_double( astrocyte_thread, rng, snode_id, astrocyte );
+              double delay_n2a = delays_astro_[ synapse_indx ]->value_double( astrocyte_thread, rng, snode_id, astrocyte );
               // not compatible with connections that block individual weights
               kernel().connection_manager.connect( snode_id,
                 astrocyte,
                 astrocyte_thread,
                 synapse_model_id_[ synapse_indx ],
                 param_dicts_[ synapse_indx ][ astrocyte_thread ],
-                delays[ synapse_indx ],
+                delay_n2a,
                 weight_n2a );
             }
             // single_connect_( snode_id, *astrocyte, astrocyte_thread, synced_rng );

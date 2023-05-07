@@ -65,6 +65,8 @@ import sys
 import time
 import numpy as np
 import random
+import hashlib
+import json
 
 import nest
 import nest.raster_plot
@@ -78,8 +80,8 @@ sim_params = {
     "dt": 0.1,  # simulation resolution in ms
     "pre_sim_time": 0.0,  # pre-simulation time in ms
     "sim_time": 1000.0,  # simulation time in ms
-    "N_rec": 1000,  # number of neurons recorded
-    "N_ana": 100,  # number of neurons sampled for analysis
+    "N_rec_spk": 1000,  # number of neurons recorded for spikes
+    "N_analysis": 100,  # number of samples (neuron or astrocyte) for analysis
     }
 
 ###############################################################################
@@ -110,7 +112,7 @@ syn_params = {
 # Astrocyte parameters.
 
 astrocyte_model = "astrocyte"
-astro_params = {
+astrocyte_params = {
     'IP3': 0.4,  # IP3 initial value in uM
     'incr_IP3': 0.2,  # Step increase in IP3 concentration with each unit synaptic weight received by the astrocyte in uM
     'tau_IP3': 2.0,  # Time constant of astrocytic IP3 degradation in ms
@@ -138,13 +140,13 @@ neuron_params_in = {
 
 def create_astro_network(scale=1):
     """Create nodes for a neuron-astrocyte network."""
-    print("Creating nodes")
+    print("Creating nodes ...")
     nodes_ex = nest.Create(
         neuron_model, int(network_params["N_ex"]*scale), params=neuron_params_ex)
     nodes_in = nest.Create(
         neuron_model, int(network_params["N_in"]*scale), params=neuron_params_in)
     nodes_astro = nest.Create(
-        astrocyte_model, int(network_params["N_astro"]*scale), params=astro_params)
+        astrocyte_model, int(network_params["N_astro"]*scale), params=astrocyte_params)
     nodes_noise = nest.Create(
         "poisson_generator", params={"rate": network_params["poisson_rate"]}
         )
@@ -154,14 +156,14 @@ def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise):
     """Connect the nodes in a neuron-astrocyte network.
     The astrocytes are paired with excitatory connections only.
     """
-    print("Connecting Poisson generator")
+    print("Connecting Poisson generator ...")
     syn_params_noise = {
         "synapse_model": "static_synapse", "weight": syn_params["w_e"]
         }
     nest.Connect(
         nodes_noise, nodes_ex + nodes_in, syn_spec=syn_params_noise
         )
-    print("Connecting neurons and astrocytes")
+    print("Connecting neurons and astrocytes ...")
     conn_params_e = {
         "rule": "pairwise_bernoulli_astro",
         "astrocyte": nodes_astro,
@@ -215,13 +217,14 @@ def get_corr(hlist):
 # Function for calculating and plotting neuronal synchrony.
 
 def plot_synchrony(neuron_spikes, data_path, start, end, bw=10):
-    print("Sampling neurons and prepare data for analysis")
     # get data
     senders = neuron_spikes["senders"][neuron_spikes["times"]>start]
     times = neuron_spikes["times"][neuron_spikes["times"]>start]
-    rate = len(senders) / (end - start) * 1000.0 / sim_params["N_rec"]
+    rate = len(senders) / (end - start) * 1000.0 / sim_params["N_rec_spk"]
+    print(f"Mean neuronal firing rate = {rate} (n = {sim_params['N_rec_spk']})")
     # sample neurons
-    n_sample = np.minimum(len(set(senders)), sim_params["N_ana"])
+    print("Sampling spiking data for synchrony analysis ...")
+    n_sample = min(len(set(senders)), sim_params["N_analysis"])
     sampled = random.sample(list(set(senders)), n_sample)
     times = times[np.isin(senders, sampled)]
     senders = senders[np.isin(senders, sampled)]
@@ -230,50 +233,56 @@ def plot_synchrony(neuron_spikes, data_path, start, end, bw=10):
     hists = [np.histogram(times[senders==x], bins)[0].tolist() for x in set(senders)] # spiking histograms of individual neurons
     hist_global = (np.histogram(times, bins)[0]/len(set(senders))).tolist() # spiking histogram of all neurons sampled
     # calculate local and global synchrony of neurons sampled
-    print("Calculating neuronal local and global synchrony")
+    print("Calculating neuronal local and global synchrony ...")
     coefs, n_pass_, n_fail_ = get_corr(hists) # local (spike count correlation)
     lsync_mu, lsync_sd = np.mean(coefs), np.std(coefs)
     gsync = np.var(hist_global)/np.mean(np.var(hists, axis=1)) # global (variance of all/variance of individual)
     # make plot
     plt.hist(coefs)
-    plt.title(f"Local synchrony={lsync_mu:.3f} (s.d.={np.std(coefs):.3f}), total n={n_pass_}\nGlobal synchrony={gsync:.3f}, firing rate={rate:.2f} spikes/s\n")
+    title = f"n of neurons={n_sample}, firing rate={rate:.2f} spikes/s\n" \
+        + f"Local sync.={lsync_mu:.3f}$\pm${np.std(coefs):.3f} (total n of pairs={n_pass_})\n" \
+        + f"Global sync.={gsync:.3f}\n"
+    plt.title(title)
     plt.xlabel("Pairwise spike count correlation (Pearson's r)")
     plt.ylabel("n of pairs")
     plt.tight_layout()
     plt.savefig(os.path.join(data_path, "neuron_synchrony.png"))
     plt.close()
-    print(f"n of neurons sampled = {len(hists)}")
-    print(f"n of neuron pairs included/excluded = {n_pass_}/{n_fail_}")
-    print(f"Local and global synchrony = {lsync_mu:.3f} (s.d.={lsync_sd:.3f}) and {gsync:.3f}")
+    print(f"Local synchrony = {lsync_mu:.3f}+-{lsync_sd:.3f}")
+    print(f"Global synchrony = {gsync:.3f}")
+    print(f"n of neurons sampled for synchrony analysis = {len(hists)}")
+    print(f"n of pairs included/excluded = {n_pass_}/{n_fail_}\n")
 
 ###############################################################################
 # Function for plotting dynamics.
 
 def plot_dynamics(astro_data, neuron_data, data_path, start):
     # plot dynamics
-    print("Plotting dynamics")
+    print("Plotting dynamics ...")
+    # t0 = time.time()
     # astrocyte data
-    d = astro_data
-    d_t = d["times"]
-    d_ip3 = d["IP3"]
-    d_cal = d["Ca"]
-    d_ip3 = d_ip3[d_t>start]
-    d_cal = d_cal[d_t>start]
-    d_t = d_t[d_t>start]
-    m_ip3 = np.array([np.mean(d_ip3[d_t==t]) for t in set(d_t)])
-    s_ip3 = np.array([np.std(d_ip3[d_t==t]) for t in set(d_t)])
-    m_cal = np.array([np.mean(d_cal[d_t==t]) for t in set(d_t)])
-    s_cal = np.array([np.std(d_cal[d_t==t]) for t in set(d_t)])
-    t_astro = list(set(d_t))
+    a = astro_data
+    a_set = list(set(a["senders"]))
+    a_sampled = random.sample(a_set, min(len(a_set), sim_params["N_analysis"]))
+    a_mask = (a["times"]>start)&(np.isin(a["senders"], a_sampled))
+    a_ip3 = a["IP3"][a_mask]
+    a_cal = a["Ca"][a_mask]
+    a_t = a["times"][a_mask]
+    t_astro = list(set(a_t))
+    m_ip3 = np.array([np.mean(a_ip3[a_t==t]) for t in t_astro])
+    s_ip3 = np.array([np.std(a_ip3[a_t==t]) for t in t_astro])
+    m_cal = np.array([np.mean(a_cal[a_t==t]) for t in t_astro])
+    s_cal = np.array([np.std(a_cal[a_t==t]) for t in t_astro])
     # neuron data
-    d = neuron_data
-    d_t = d["times"]
-    d_sic = d["SIC"]
-    d_sic = d_sic[d_t>start]
-    d_t = d_t[d_t>start]
-    m_sic = np.array([np.mean(d_sic[d_t==t]) for t in set(d_t)])
-    s_sic = np.array([np.std(d_sic[d_t==t]) for t in set(d_t)])
-    t_neuro = list(set(d_t))
+    b = neuron_data
+    b_set = list(set(b["senders"]))
+    b_sampled = random.sample(b_set, min(len(b_set), sim_params["N_analysis"]))
+    b_mask = (b["times"]>start)&(np.isin(b["senders"], b_sampled))
+    b_sic = b["SIC"][b["times"]>start]
+    b_t = b["times"][b["times"]>start]
+    t_neuro = list(set(b_t))
+    m_sic = np.array([np.mean(b_sic[b_t==t]) for t in t_neuro])
+    s_sic = np.array([np.std(b_sic[b_t==t]) for t in t_neuro])
     # plots
     str_ip3 = r"IP$_{3}$"
     str_cal = r"Ca$^{2+}$"
@@ -282,7 +291,7 @@ def plot_dynamics(astro_data, neuron_data, data_path, start):
     color_sic = "tab:purple"
     fig, axes = plt.subplots(2, 1, sharex=True)
     # astrocyte plot
-    axes[0].set_title(f"{str_ip3} and {str_cal} in astrocytes (n={len(set(astro_data['senders']))})")
+    axes[0].set_title(f"{str_ip3} and {str_cal} in astrocytes (n={len(a_sampled)})")
     axes[0].set_ylabel(r"IP$_{3}$ ($\mu$M)")
     axes[0].tick_params(axis="y", labelcolor=color_ip3)
     axes[0].fill_between(
@@ -297,7 +306,7 @@ def plot_dynamics(astro_data, neuron_data, data_path, start):
         color=color_cal)
     ax.plot(t_astro, m_cal, linewidth=2, color=color_cal)
     # neuron plot
-    axes[1].set_title(f"SIC in neurons (n={len(set(neuron_data['senders']))})")
+    axes[1].set_title(f"SIC in neurons (n={len(b_sampled)})")
     axes[1].set_ylabel("SIC (pA)")
     axes[1].set_xlabel("Time (ms)")
     axes[1].fill_between(
@@ -308,6 +317,7 @@ def plot_dynamics(astro_data, neuron_data, data_path, start):
     plt.tight_layout()
     plt.savefig(os.path.join(data_path, "dynamics.png"))
     plt.close()
+    # print(f"plot_dynamics() time = {time.time() - t0:.2f} s\n")
 
 ###############################################################################
 # Main function for simulation.
@@ -328,6 +338,18 @@ def run_simulation(data_path='data'):
     sim_time = sim_params["sim_time"]
     os.system(f"mkdir -p {data_path}")
     os.system(f"cp astrocyte_brunel.py {data_path}")
+    params = {
+        "sim_params": sim_params,
+        "network_params": network_params,
+        "syn_params": syn_params,
+        "neuron_model": neuron_model,
+        "neuron_params_ex": neuron_params_ex,
+        "neuron_params_in": neuron_params_in,
+        "astrocyte_model": astrocyte_model,
+        "astrocyte_params": astrocyte_params,
+        }
+    with open(os.path.join(data_path, 'params.json'), 'w') as f:
+        json.dump(params, f, indent=4)
 
     # Time before building
     startbuild = time.time()
@@ -347,12 +369,14 @@ def run_simulation(data_path='data'):
     endbuild = time.time()
 
     # Run pre-simulation and simulation
-    print("Run pre-simulation")
+    print("Running pre-simulation ...")
     nest.Simulate(pre_sim_time)
-    print("Connect recorders and run simulation")
-    nest.Connect((exc + inh)[:sim_params["N_rec"]], sr_neuron)
-    nest.Connect(mm_neuron, (exc + inh)[:sim_params["N_rec"]])
+    print("Connecting recorders ...")
+    n_rec_spk = min(len(exc + inh), sim_params["N_rec_spk"])
+    nest.Connect((exc + inh)[:n_rec_spk], sr_neuron)
+    nest.Connect(mm_neuron, (exc + inh)[:sim_params["N_rec_spk"]])
     nest.Connect(mm_astro, astro)
+    print("Running simulation ...")
     nest.Simulate(sim_time)
 
     # Time after simulation
@@ -366,11 +390,9 @@ def run_simulation(data_path='data'):
     # Report firing rates and building/running time
     build_time = endbuild - startbuild
     run_time = endsimulate - endbuild
-    rate = sr_neuron.n_events / sim_time * 1000.0 / sim_params["N_rec"]
-    print("Brunel network with astrocytes")
-    print(f"Firing rate = {rate:.2f} spikes/s (n={sim_params['N_rec']})")
+    print("Brunel network with astrocytes:")
     print(f"Building time = {build_time:.2f} s")
-    print(f"Simulation time = {run_time:.2f} s")
+    print(f"Simulation time = {run_time:.2f} s\n")
 
     # Make raster plot and histogram
     nest.raster_plot.from_device(sr_neuron, hist=True)
@@ -384,9 +406,13 @@ def run_simulation(data_path='data'):
     # Plot dynamics in astrocytes and neurons
     plot_dynamics(astro_data, neuron_data, data_path, pre_sim_time)
 
+    # Copy files
+    os.system(f"cp *.jdf out.* err*. {data_path}")
+
     print("Done!")
 
 ###############################################################################
 # Run simulation.
 
-run_simulation()
+hash = hashlib.md5(os.urandom(16)).hexdigest()
+run_simulation(data_path=os.path.join("data", hash))

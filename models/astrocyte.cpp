@@ -31,6 +31,7 @@
 #include <iostream>
 
 // Includes from libnestutil:
+#include "dict_util.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -170,23 +171,23 @@ nest::astrocyte::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::astrocyte::Parameters_::set( const DictionaryDatum& d )
+nest::astrocyte::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-  updateValue< double >( d, names::Ca_tot, Ca_tot_ );
-  updateValue< double >( d, names::IP3_0, IP3_0_ );
-  updateValue< double >( d, names::Kd_act, Kd_act_ );
-  updateValue< double >( d, names::Kd_inh, Kd_inh_ );
-  updateValue< double >( d, names::Kd_IP3_1, Kd_IP3_1_ );
-  updateValue< double >( d, names::Kd_IP3_2, Kd_IP3_2_ );
-  updateValue< double >( d, names::Km_SERCA, Km_SERCA_ );
-  updateValue< double >( d, names::ratio_ER_cyt, ratio_ER_cyt_ );
-  updateValue< double >( d, names::incr_IP3, incr_IP3_ );
-  updateValue< double >( d, names::k_IP3R, k_IP3R_ );
-  updateValue< double >( d, names::SIC_th, SIC_th_ );
-  updateValue< double >( d, names::rate_L, rate_L_ );
-  updateValue< double >( d, names::rate_IP3R, rate_IP3R_ );
-  updateValue< double >( d, names::rate_SERCA, rate_SERCA_ );
-  updateValue< double >( d, names::tau_IP3, tau_IP3_ );
+  updateValueParam< double >( d, names::Ca_tot, Ca_tot_, node );
+  updateValueParam< double >( d, names::IP3_0, IP3_0_, node );
+  updateValueParam< double >( d, names::Kd_act, Kd_act_, node );
+  updateValueParam< double >( d, names::Kd_inh, Kd_inh_, node );
+  updateValueParam< double >( d, names::Kd_IP3_1, Kd_IP3_1_, node );
+  updateValueParam< double >( d, names::Kd_IP3_2, Kd_IP3_2_, node );
+  updateValueParam< double >( d, names::Km_SERCA, Km_SERCA_, node );
+  updateValueParam< double >( d, names::ratio_ER_cyt, ratio_ER_cyt_, node );
+  updateValueParam< double >( d, names::incr_IP3, incr_IP3_, node );
+  updateValueParam< double >( d, names::k_IP3R, k_IP3R_, node );
+  updateValueParam< double >( d, names::SIC_th, SIC_th_, node );
+  updateValueParam< double >( d, names::rate_L, rate_L_, node );
+  updateValueParam< double >( d, names::rate_IP3R, rate_IP3R_, node );
+  updateValueParam< double >( d, names::rate_SERCA, rate_SERCA_, node );
+  updateValueParam< double >( d, names::tau_IP3, tau_IP3_, node );
 
   if ( Ca_tot_ <= 0 )
   {
@@ -259,11 +260,11 @@ nest::astrocyte::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::astrocyte::State_::set( const DictionaryDatum& d )
+nest::astrocyte::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
 {
-  updateValue< double >( d, names::IP3, y_[ IP3 ] );
-  updateValue< double >( d, names::Ca, y_[ Ca ] );
-  updateValue< double >( d, names::h_IP3R, y_[ h_IP3R ] );
+  updateValueParam< double >( d, names::IP3, y_[ IP3 ], node );
+  updateValueParam< double >( d, names::Ca, y_[ Ca ], node );
+  updateValueParam< double >( d, names::h_IP3R, y_[ h_IP3R ], node );
 
   if ( y_[ IP3 ] <  0 )
   {

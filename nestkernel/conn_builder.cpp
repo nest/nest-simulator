@@ -1756,35 +1756,38 @@ nest::BernoulliAstroBuilder::connect_()
       int astro_index = 0;
       int n_astro_overlap_per_target = 0;
 
-      // user warnings
-      // when number of target neurons are larger than but cannot be exactly divided by number of astrocytes
-      if ( targets_size > astrocytes_size )
+      // user warnings for astro_pool_by_index
+      if ( astro_pool_by_index_ == true )
       {
-        if ( targets_size % astrocytes_size != 0 )
+        // when number of target neurons are larger than but cannot be exactly divided by number of astrocytes
+        if ( targets_size > astrocytes_size )
         {
-          LOG( M_WARNING,
-            "BernoulliAstroBuilder::connect",
-            "Number of target neurons cannot be exactly divided by number of astrocytes. "
-            "Some neurons will be excluded from neuron-astrocyte pairings. ");
+          if ( targets_size % astrocytes_size != 0 )
+          {
+            LOG( M_WARNING,
+              "BernoulliAstroBuilder::connect",
+              "Number of target neurons cannot be exactly divided by number of astrocytes. "
+              "Some neurons will be excluded from neuron-astrocyte pairings. ");
+          }
         }
-      }
-      // when number of astrocytes are larger than but cannot be exactly divided by number of target neurons
-      else
-      {
-        if ( astrocytes_size % targets_size != 0 )
+        // when number of astrocytes are larger than but cannot be exactly divided by number of target neurons
+        else
         {
-          LOG( M_WARNING,
-            "BernoulliAstroBuilder::connect",
-            "Number of astrocytes cannot be exactly divided by number of target neurons. "
-            "Some astrocytes will be excluded from neuron-astrocyte pairings. ");
+          if ( astrocytes_size % targets_size != 0 )
+          {
+            LOG( M_WARNING,
+              "BernoulliAstroBuilder::connect",
+              "Number of astrocytes cannot be exactly divided by number of target neurons. "
+              "Some astrocytes will be excluded from neuron-astrocyte pairings. ");
+          }
         }
-      }
-      // uneven pairings in a special case
-      if ( max_astro_per_target_ > 0 and max_astro_per_target_ % 2 == 0 and default_n_target_per_astro % 2 == 1)
-      {
-        LOG( M_WARNING,
-          "BernoulliAstroBuilder::connect",
-          "Numbers of astrocytes and target neurons could cause uneven pairings. ");
+        // // uneven pairings in a special case
+        // if ( max_astro_per_target_ > 0 and max_astro_per_target_ % 2 == 0 and default_n_target_per_astro % 2 == 1)
+        // {
+        //   LOG( M_WARNING,
+        //     "BernoulliAstroBuilder::connect",
+        //     "Uneven pairings could exist with the assigned neuron and astrocyte numbers. ");
+        // }
       }
 
       // when max_astro_per_target_ is not given, take max_astro_per_target_ = default_n_astro_per_target_

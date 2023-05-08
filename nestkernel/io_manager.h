@@ -106,11 +106,32 @@ public:
   bool is_valid_recording_backend( const Name ) const;
   bool is_valid_stimulation_backend( const Name ) const;
 
+
+  /**
+   * Send device data to a given recording backend.
+   *
+   * This function is called from a RecordingDevice `device` when it
+   * wants to write data to a given recording backend, identified by
+   * its `backend_name`. The function takes an Event `event` from
+   * which some fundamental data is taken and additionally vectors of
+   * `double_values` and `long_values` that have to be written. The
+   * data vectors may be empty, if no additional data has to be
+   * written.
+   *
+   * \param backend_name the name of the RecordingBackend to write to
+   * \param device a reference to the RecordingDevice that wants to write
+   * \param event the Event to be written
+   * \param double_values a vector of doubles to be written
+   * \param long_values a vector of longs to be written
+   */
+  void write( const Name backend_name,
+    const NESTObjectInterface& device,
+    const Event& event,
+    const std::vector< double >& double_values,
+    const std::vector< long >& long_values );
+
   void enroll_recorder( const Name&, const NESTObjectInterface&, const DictionaryDatum& );
   void enroll_stimulator( const Name&, StimulationDevice&, const DictionaryDatum& );
-
-  void enroll_recorder( const Name, const RecordingDevice&, const DictionaryDatum& );
-  void enroll_stimulator( const Name, StimulationDevice&, const DictionaryDatum& );
 
   void set_recording_value_names( const Name backend_name,
     const RecordingDevice& device,

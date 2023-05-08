@@ -424,7 +424,7 @@ nest::RecordingBackendSIONlib::close_files_()
 }
 
 void
-nest::RecordingBackendSIONlib::write( const RecordingDevice& device,
+nest::RecordingBackendSIONlib::write( const NESTObjectInterface& device,
   const Event& event,
   const std::vector< double >& double_values,
   const std::vector< long >& long_values )

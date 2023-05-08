@@ -100,7 +100,7 @@ nest::RecordingBackendMemory::cleanup()
 }
 
 void
-nest::RecordingBackendMemory::write( const RecordingDevice& device,
+nest::RecordingBackendMemory::write( const NESTObjectInterface& device,
   const Event& event,
   const std::vector< double >& double_values,
   const std::vector< long >& long_values )

@@ -242,7 +242,7 @@ public:
    *
    * @ingroup NESTio
    */
-  virtual void write( const RecordingDevice& device,
+  virtual void write( const NESTObjectInterface& device,
     const Event& event,
     const std::vector< double >& double_values,
     const std::vector< long >& long_values ) = 0;

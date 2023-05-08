@@ -25,9 +25,10 @@
 #define NEST_OBJECT_INTERFACE_H
 
 // Includes from nestkernel:
-#include "nest_enum_types.h"
+
 #include "nest_names.h"
 #include "nest_types.h"
+#include "node_collection.h"
 
 
 // Includes from sli:
@@ -74,6 +75,11 @@ public:
    */
   index get_node_id() const;
 
+
+  /**
+   * Return lockpointer to the NodeCollection that created this node.
+   */
+  NodeCollectionPTR get_nc() const;
 
   /**
    * Return model ID of the node.
@@ -233,6 +239,9 @@ private:
 
   thread thread_; //!< thread node is assigned to
   thread vp_;     //!< virtual process node is assigned to
+
+  NodeCollectionPTR nc_ptr_; //!< Original NodeCollection of this node, used to
+                             //!< extract node-specific metadata
 };
 
 
@@ -256,6 +265,11 @@ NESTObjectInterface::get_model_id() const
   return model_id_;
 }
 
+inline NodeCollectionPTR
+NESTObjectInterface::get_nc() const
+{
+  return nc_ptr_;
+}
 
 inline void
 NESTObjectInterface::set_model_id( int i )

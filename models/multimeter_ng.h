@@ -141,7 +141,7 @@ public:
    *       sample their targets through local communication.
    */
   bool
-  has_proxies() const override
+  has_proxies() const
   {
     return false;
   }
@@ -152,31 +152,15 @@ public:
     return names::recorder;
   }
 
-  nest_enum_types::DeviceType
-  get_type() const override
-  {
-    return type;
-  }
-  /**
-   * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
-   * Hiding
-   */
-  using Node::handle;
-  using Node::handles_test_event;
-  using Node::sends_signal;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  void handle( DataLoggingReply& );
 
-  void handle( DataLoggingReply& ) override;
+  SignalType sends_signal() const;
 
-  SignalType sends_signal() const override;
-
-  Type get_type() const override;
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
 
-  void calibrate_time( const TimeConverter& tc ) override;
+  void calibrate_time( const TimeConverter& tc );
 
 protected:
   void pre_run_hook() override;
@@ -188,10 +172,9 @@ protected:
    * that information. The sampled nodes must provide data from
    * the previous time slice.
    */
-  void update( Time const&, const long, const long ) override;
+  void update( Time const&, const long, const long );
 
 private:
-  nest_enum_types::DeviceType type;
   struct Buffers_;
 
   struct Parameters_
@@ -204,7 +187,7 @@ private:
     Parameters_( const Parameters_& );
     Parameters_& operator=( const Parameters_& );
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const Buffers_&, Node* node );
+    void set( const DictionaryDatum&, const Buffers_&, NESTObjectInterface* node );
   };
 
   // ------------------------------------------------------------
@@ -232,7 +215,7 @@ private:
 inline void
 nest::multimeter::get_status( DictionaryDatum& d ) const
 {
-  RecordingDevice::get_status( d );
+  RecordingDeviceNG::get_status( d );
   P_.get( d );
 
   if ( is_model_prototype() )
@@ -266,7 +249,7 @@ nest::multimeter::set_status( const DictionaryDatum& d )
   Parameters_ ptmp = P_;
   ptmp.set( d, B_, this );
 
-  RecordingDevice::set_status( d );
+  RecordingDeviceNG::set_status( d );
   P_ = ptmp;
 }
 

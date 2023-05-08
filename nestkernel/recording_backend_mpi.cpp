@@ -319,7 +319,7 @@ nest::RecordingBackendMPI::get_device_status( const nest::RecordingDevice&, Dict
 
 
 void
-nest::RecordingBackendMPI::write( const RecordingDevice& device,
+nest::RecordingBackendMPI::write( const NESTObjectInterface& device,
   const Event& event,
   const std::vector< double >&,
   const std::vector< long >& )

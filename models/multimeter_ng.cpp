@@ -32,32 +32,17 @@ namespace nest
 {
 
 multimeter::multimeter()
-  : RecordingDevice()
+  : RecordingDeviceNG()
   , P_()
   , B_()
-  , type( nest_enum_types::RecrodingDeviceType::MULTIMETER )
 {
 }
 
 multimeter::multimeter( const multimeter& n )
-  : RecordingDevice( n )
+  : RecordingDeviceNG( n )
   , P_( n.P_ )
   , B_()
-  , type( n.type )
 {
-}
-
-port
-multimeter::send_test_event( Node& target, rport receptor_type, synindex, bool )
-{
-  DataLoggingRequest e( P_.interval_, P_.offset_, P_.record_from_ );
-  e.set_sender( *this );
-  port p = target.handles_test_event( e, receptor_type );
-  if ( p != invalid_port and not is_model_prototype() )
-  {
-    B_.has_targets_ = true;
-  }
-  return p;
 }
 
 nest::multimeter::Parameters_::Parameters_()
@@ -106,7 +91,7 @@ nest::multimeter::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b, Node* node )
+nest::multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b, NESTObjectInterface* node )
 {
   if ( b.has_targets_
     and ( d->known( names::interval ) or d->known( names::offset ) or d->known( names::record_from ) ) )
@@ -174,7 +159,7 @@ nest::multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b,
 void
 multimeter::pre_run_hook()
 {
-  RecordingDevice::pre_run_hook( P_.record_from_, RecordingBackend::NO_LONG_VALUE_NAMES );
+  RecordingDeviceNG::pre_run_hook( P_.record_from_, RecordingBackend::NO_LONG_VALUE_NAMES );
 }
 
 void
@@ -185,20 +170,20 @@ multimeter::update( Time const& origin, const long from, const long )
      previous slice if we are called at the beginning of the slice. Otherwise,
      we do nothing.
    */
-  if ( origin.get_steps() == 0 or from != 0 )
-  {
-    return;
-  }
+  // if ( origin.get_steps() == 0 or from != 0 )
+  // {
+  //   return;
+  // }
 
-  // We send a request to each of our targets.
-  // The target then immediately returns a DataLoggingReply event,
-  // which is caught by multimeter::handle(), which in turn
-  // ensures that the event is recorded.
-  // handle() has access to request_, so it knows what we asked for.
-  //
-  // Note that not all nodes receiving the request will necessarily answer.
-  DataLoggingRequest req;
-  kernel().event_delivery_manager.send( *this, req );
+  // // We send a request to each of our targets.
+  // // The target then immediately returns a DataLoggingReply event,
+  // // which is caught by multimeter::handle(), which in turn
+  // // ensures that the event is recorded.
+  // // handle() has access to request_, so it knows what we asked for.
+  // //
+  // // Note that not all nodes receiving the request will necessarily answer.
+  // DataLoggingRequest req;
+  // kernel().event_delivery_manager.send( *this, req );
 }
 
 void
@@ -231,12 +216,6 @@ multimeter::handle( DataLoggingReply& reply )
 
     write( reply, info[ j ].data, RecordingBackend::NO_LONG_VALUES );
   }
-}
-
-RecordingDevice::Type
-multimeter::get_type() const
-{
-  return RecordingDevice::MULTIMETER;
 }
 
 

@@ -180,7 +180,8 @@ public:
 
   void post_step_hook() override;
 
-  void write( const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& ) override;
+  void
+  write( const NESTObjectInterface&, const Event&, const std::vector< double >&, const std::vector< long >& ) override;
 
   void set_status( const DictionaryDatum& ) override;
   void get_status( DictionaryDatum& ) const override;

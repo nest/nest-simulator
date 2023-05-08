@@ -40,7 +40,6 @@
 #include "nest_object_interface.h"
 #include "nest_time.h"
 #include "nest_types.h"
-#include "node_collection.h"
 #include "secondary_event.h"
 
 /** @file node.h
@@ -171,10 +170,6 @@ public:
    */
   virtual bool is_proxy() const;
 
-  /**
-   * Return lockpointer to the NodeCollection that created this node.
-   */
-  NodeCollectionPTR get_nc() const;
 
   /**
    *  Return a dictionary with the node's properties.
@@ -834,11 +829,7 @@ Node::get_element_type() const
   return names::neuron;
 }
 
-inline NodeCollectionPTR
-Node::get_nc() const
-{
-  return nc_ptr_;
-}
+
 
 inline void
 Node::set_nc_( NodeCollectionPTR nc_ptr )

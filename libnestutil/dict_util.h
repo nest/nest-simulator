@@ -42,7 +42,7 @@ namespace nest
  */
 template < typename FT, typename VT >
 bool
-updateValueParam( DictionaryDatum const& d, Name const n, VT& value, nest::Node* node )
+updateValueParam( DictionaryDatum const& d, Name const n, VT& value, nest::NESTObjectInterface* node )
 {
   const Token& t = d->lookup( n );
 

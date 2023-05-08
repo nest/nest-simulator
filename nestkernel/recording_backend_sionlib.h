@@ -218,7 +218,7 @@ public:
 
   void cleanup() override;
 
-  void write( const RecordingDevice& device,
+  void write( const NESTObjectInterface& device,
     const Event& event,
     const std::vector< double >& double_values,
     const std::vector< long >& long_values ) override;

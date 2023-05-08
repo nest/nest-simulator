@@ -136,7 +136,7 @@ nest::RecordingBackendASCII::cleanup()
 }
 
 void
-nest::RecordingBackendASCII::write( const RecordingDevice& device,
+nest::RecordingBackendASCII::write( const NESTObjectInterface& device,
   const Event& event,
   const std::vector< double >& double_values,
   const std::vector< long >& long_values )

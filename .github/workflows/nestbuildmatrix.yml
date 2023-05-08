@@ -679,7 +679,6 @@ jobs:
         run: |
           cd "$NEST_VPATH"
           make install
-        env:
 
       - name: "Initialize Matplotlibrc"
         run: |

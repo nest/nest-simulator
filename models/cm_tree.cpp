@@ -70,6 +70,7 @@ nest::Compartment::Compartment( const long compartment_index,
   , hh( 0.0 )
   , n_passed( 0 )
 {
+  compartment_params->clear_access_flags();
 
   updateValue< double >( compartment_params, names::C_m, ca );
   updateValue< double >( compartment_params, names::g_C, gc );
@@ -79,12 +80,17 @@ nest::Compartment::Compartment( const long compartment_index,
   v_comp = el;
 
   compartment_currents = CompartmentCurrents( compartment_params );
+
+  ALL_ENTRIES_ACCESSED( *compartment_params, "compartment_params", "Unread dictionary entries: " );
 }
 
 void
-nest::Compartment::pre_run_hook()
+nest::Compartment::pre_run_hook(const double v_init)
 {
-  compartment_currents.pre_run_hook();
+  compartment_currents.pre_run_hook(v_init);
+
+  // initialize voltage
+  v_comp = v_init;
 
   const double dt = Time::get_resolution().get_ms();
   ca__div__dt = ca / dt;
@@ -364,7 +370,7 @@ nest::CompTree::get_recordables()
  * Initialize state variables
  */
 void
-nest::CompTree::pre_run_hook()
+nest::CompTree::pre_run_hook(const double v_init)
 {
   if ( root_.comp_index < 0 )
   {
@@ -375,7 +381,7 @@ nest::CompTree::pre_run_hook()
   // initialize the compartments
   for ( auto compartment_it = compartments_.begin(); compartment_it != compartments_.end(); ++compartment_it )
   {
-    ( *compartment_it )->pre_run_hook();
+    ( *compartment_it )->pre_run_hook(v_init);
   }
 }
 

@@ -51,6 +51,40 @@ nest::Na::Na( const DictionaryDatum& channel_params )
 }
 
 void
+nest::Na::pre_run_hook(const double v_init)
+{
+  // compute limiting values for m and h given v_init as the initial state
+  /**
+   * Channel rate equations from the following .mod file:
+   * https://senselab.med.yale.edu/ModelDB/ShowModel?model=140828&file=/Branco_2010/mod.files/na.mod#tabs-2
+   */
+  // auxiliary variables
+  double v_init_plus_35 = v_init + 35.013;
+
+  // trap the case where alpha_m and beta_m are 0/0 by substituting explicitly
+  // precomputed limiting values
+  double alpha_m, frac_alpha_plus_beta_m;
+  if ( std::abs( v_init_plus_35 ) > 1e-5 )
+  {
+    double exp_vcp35_div_9 = std::exp( 0.111111111111111 * v_init_plus_35 );
+    double frac_evcp35d9 = 1. / ( exp_vcp35_div_9 - 1. );
+
+    alpha_m = 0.182 * v_init_plus_35 * exp_vcp35_div_9 * frac_evcp35d9;
+    double beta_m = 0.124 * v_init_plus_35 * frac_evcp35d9;
+    frac_alpha_plus_beta_m = 1. / ( alpha_m + beta_m );
+  }
+  else
+  {
+    alpha_m = 1.638;
+    frac_alpha_plus_beta_m = 1. / ( alpha_m + 1.116 );
+  }
+
+  // initialization of m_Na_ and h_Na_
+  m_Na_ = alpha_m * frac_alpha_plus_beta_m;
+  h_Na_ = 1. / ( 1. + std::exp( ( v_init + 65. ) / 6.2 ) );
+}
+
+void
 nest::Na::append_recordables( std::map< Name, double* >* recordables, const long compartment_idx )
 {
   ( *recordables )[ Name( "m_Na_" + std::to_string( compartment_idx ) ) ] = &m_Na_;
@@ -167,6 +201,40 @@ nest::K::K( const DictionaryDatum& channel_params )
   {
     e_K_ = getValue< double >( channel_params, "e_K" );
   }
+}
+
+void
+nest::K::pre_run_hook(const double v_init)
+{
+  // compute limiting value for n given v_init as the initial state
+  /**
+   * Channel rate equations from the following .mod file:
+   * https://senselab.med.yale.edu/ModelDB/ShowModel?model=140828&file=/Branco_2010/mod.files/kv.mod#tabs-2
+   */
+  // auxiliary variables
+  double v_init_minus_25 = v_init - 25.;
+
+  // trap the case where alpha_n and beta_n are 0/0 by substituting explicitly
+  // precomputed limiting values
+  double alpha_n, frac_alpha_plus_beta_n;
+  if ( std::abs( v_init_minus_25 ) > 1e-5 )
+  {
+    double exp_vm25_div_9 = std::exp( 0.111111111111111 * v_init_minus_25 );
+    double frac_evm25d9 = 1. / ( exp_vm25_div_9 - 1. );
+
+    alpha_n = 0.02 * v_init_minus_25 * exp_vm25_div_9 * frac_evm25d9;
+    double beta_n = 0.002 * v_init_minus_25 * frac_evm25d9;
+    frac_alpha_plus_beta_n = 1. / ( alpha_n + beta_n );
+  }
+  else
+  {
+    alpha_n = 0.18;
+    double beta_n = 0.018;
+    frac_alpha_plus_beta_n = 1. / ( alpha_n + beta_n );
+  }
+
+  // initialization of n_K_
+  n_K_ = alpha_n * frac_alpha_plus_beta_n;
 }
 
 void

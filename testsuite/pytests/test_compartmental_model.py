@@ -373,33 +373,34 @@ def create_2tdend_4comp(dt=0.1):
     aa[8, 6] = -DP[7]['g_C'] / 2.
     aa[8, 8] = DP[7]['C_m'] / dt + DP[7]['g_L'] / 2. + DP[7]['g_C'] / 2.
 
-    bb[0] = SP['C_m'] / dt * SP['e_L'] + SP['g_L'] * SP['e_L'] / 2. - \
-        DP[0]['g_C'] * (SP['e_L'] - DP[0]['e_L']) / 2. - \
-        DP[4]['g_C'] * (SP['e_L'] - DP[4]['e_L']) / 2.
+    v_init = -70.
 
-    bb[1] = DP[0]['C_m'] / dt * DP[0]['e_L'] + DP[0]['g_L'] * DP[0]['e_L'] / 2. - \
-        DP[0]['g_C'] * (DP[0]['e_L'] - SP['e_L']) / 2. - \
-        DP[1]['g_C'] * (DP[0]['e_L'] - DP[1]['e_L']) / 2.
-    bb[2] = DP[1]['C_m'] / dt * DP[1]['e_L'] + DP[1]['g_L'] * DP[1]['e_L'] / 2. - \
-        DP[1]['g_C'] * (DP[1]['e_L'] - DP[0]['e_L']) / 2. - \
-        DP[2]['g_C'] * (DP[1]['e_L'] - DP[2]['e_L']) / 2. - \
-        DP[3]['g_C'] * (DP[1]['e_L'] - DP[3]['e_L']) / 2.
-    bb[3] = DP[2]['C_m'] / dt * DP[2]['e_L'] + DP[2]['g_L'] * DP[2]['e_L'] / 2. - \
-        DP[2]['g_C'] * (DP[2]['e_L'] - DP[1]['e_L']) / 2.
-    bb[4] = DP[3]['C_m'] / dt * DP[3]['e_L'] + DP[3]['g_L'] * DP[3]['e_L'] / 2. - \
-        DP[3]['g_C'] * (DP[3]['e_L'] - DP[1]['e_L']) / 2.
+    bb[0] = SP['C_m'] / dt * v_init - \
+        SP['g_L'] * (v_init / 2. - SP['e_L'])
 
-    bb[5] = DP[4]['C_m'] / dt * DP[4]['e_L'] + DP[4]['g_L'] * DP[4]['e_L'] / 2. - \
-        DP[4]['g_C'] * (DP[4]['e_L'] - SP['e_L']) / 2. - \
-        DP[5]['g_C'] * (DP[4]['e_L'] - DP[5]['e_L']) / 2.
-    bb[6] = DP[5]['C_m'] / dt * DP[5]['e_L'] + DP[5]['g_L'] * DP[5]['e_L'] / 2. - \
-        DP[5]['g_C'] * (DP[5]['e_L'] - DP[4]['e_L']) / 2. - \
-        DP[6]['g_C'] * (DP[5]['e_L'] - DP[6]['e_L']) / 2. - \
-        DP[7]['g_C'] * (DP[5]['e_L'] - DP[7]['e_L']) / 2.
-    bb[7] = DP[6]['C_m'] / dt * DP[6]['e_L'] + DP[6]['g_L'] * DP[6]['e_L'] / 2. - \
-        DP[6]['g_C'] * (DP[6]['e_L'] - DP[5]['e_L']) / 2.
-    bb[8] = DP[7]['C_m'] / dt * DP[7]['e_L'] + DP[7]['g_L'] * DP[7]['e_L'] / 2. - \
-        DP[7]['g_C'] * (DP[7]['e_L'] - DP[5]['e_L']) / 2.
+    bb[1] = DP[0]['C_m'] / dt * v_init - \
+        DP[0]['g_L'] * (v_init / 2. - DP[0]['e_L'])
+
+    bb[2] = DP[1]['C_m'] / dt * v_init - \
+        DP[1]['g_L'] * (v_init / 2. - DP[1]['e_L'])
+
+    bb[3] = DP[2]['C_m'] / dt * v_init - \
+        DP[2]['g_L'] * (v_init / 2. - DP[2]['e_L'])
+
+    bb[4] = DP[3]['C_m'] / dt * v_init - \
+        DP[3]['g_L'] * (v_init / 2. - DP[3]['e_L'])
+
+    bb[5] = DP[4]['C_m'] / dt * v_init - \
+        DP[4]['g_L'] * (v_init / 2. - DP[4]['e_L'])
+
+    bb[6] = DP[5]['C_m'] / dt * v_init - \
+        DP[5]['g_L'] * (v_init / 2. - DP[5]['e_L'])
+
+    bb[7] = DP[6]['C_m'] / dt * v_init - \
+        DP[6]['g_L'] * (v_init / 2. - DP[6]['e_L'])
+
+    bb[8] = DP[7]['C_m'] / dt * v_init - \
+        DP[7]['g_L'] * (v_init / 2. - DP[7]['e_L'])
 
     # create steady state matrix for attenuation test
     ss = np.zeros((9, 9))
@@ -903,8 +904,11 @@ class CompartmentsTestCase(unittest.TestCase):
         m_neat = nest.Create('multimeter', 1, {'record_from': recordables, 'interval': 1.})
         nest.Connect(m_neat, n_neat)
 
-        nest.Simulate(12.)
-        nest.Simulate(88.)
+        # test the case where we continue a run without resetting the neural state
+        nest.Prepare()
+        nest.Run(12.)
+        nest.Run(88.)
+        nest.Cleanup()
         events_neat_1 = nest.GetStatus(m_neat, 'events')[0]
 
         for key in recordables:
@@ -963,6 +967,141 @@ class CompartmentsTestCase(unittest.TestCase):
         cm2.receptors += [{"comp_idx": 1, "receptor_type": "AMPA"}, {"comp_idx": 2, "receptor_type": "GABA"}]
         self.assertEqual(len(list(cm2.receptors)), 3)
 
+    def test_custom_v_init(self):
+        sp0 = {'C_m': 1.00, 'g_C': 0.00, 'g_L': 0.100, 'e_L': -60.0}
+        dp0 = {'C_m': 0.10, 'g_C': 0.10, 'g_L': 0.010, 'e_L': -60.0}
+        sp1 = {'C_m': 1.00, 'g_C': 0.00, 'g_L': 0.100, 'e_L': -75.0}
+        dp1 = {'C_m': 0.10, 'g_C': 0.10, 'g_L': 0.010, 'e_L': -80.0}
+        sp2 = {'C_m': 1.00, 'g_C': 0.00, 'g_L': 0.100, 'e_L': -70.0}
+        dp2 = {'C_m': 0.10, 'g_C': 0.10, 'g_L': 0.010, 'e_L': -70.0}
+        v_init = -60.
+
+        # test initialization equal to leak
+        cm = nest.Create('cm_default')
+        cm.compartments = [
+            {"parent_idx": -1, "params": sp0},
+            {"parent_idx": 0, "params": dp0},
+        ]
+        nest.SetStatus(cm, {"V_init": v_init})
+        cm.V_init = v_init
+        # cm.V_bla = v_init
+
+        mm = nest.Create('multimeter', 1, {'record_from': ["v_comp0", "v_comp1"], 'interval': 1.})
+        nest.Connect(mm, cm)
+
+        nest.Simulate(10.)
+
+        self.assertTrue(np.allclose(mm.events["v_comp0"], -60.0))
+        self.assertTrue(np.allclose(mm.events["v_comp1"], -60.0))
+
+        # test initialization different from leak
+        SP = {'C_m': 1.00, 'g_C': 0.00, 'g_L': 0.100, 'e_L': -90.0}
+        DP = {'C_m': 0.10, 'g_C': 0.10, 'g_L': 0.010, 'e_L': -80.0}
+
+        cm = nest.Create('cm_default')
+        cm.compartments = [
+            {"parent_idx": -1, "params": sp1},
+            {"parent_idx": 0, "params": dp1},
+        ]
+        cm.V_init = v_init
+
+        mm = nest.Create('multimeter', 1, {'record_from': ["v_comp0", "v_comp1"], 'interval': .1})
+        nest.Connect(mm, cm)
+
+        nest.Simulate(10.)
+
+        self.assertTrue(np.allclose(mm.events["v_comp0"][0], -60.0, atol=2e-1))
+        self.assertTrue(np.allclose(mm.events["v_comp1"][0], -60.0, atol=2e-1))
+        self.assertFalse(np.allclose(mm.events["v_comp0"][-1], -60.0, atol=2e-1))
+        self.assertFalse(np.allclose(mm.events["v_comp1"][-1], -60.0, atol=2e-1))
+
+        # test default initialization at -70.
+        cm = nest.Create('cm_default')
+        cm.compartments = [
+            {"parent_idx": -1, "params": sp2},
+            {"parent_idx": 0, "params": dp2},
+        ]
+
+        mm = nest.Create(
+            'multimeter',
+            1,
+            {
+                'record_from': ["v_comp0", "v_comp1", "m_Na_0", "h_Na_0", "n_K_0"],
+                'interval': 1.
+            }
+        )
+        nest.Connect(mm, cm)
+
+        nest.Simulate(10.)
+
+        self.assertTrue(np.allclose(mm.events["v_comp0"][0], -70.0))
+        self.assertTrue(np.allclose(mm.events["v_comp1"][0], -70.0))
+
+        # test whether activation functions are initialized correctly
+        v = -70.
+        def vfun(v_, th, r, q): return r * (v_ - th) / (1. - np.exp(-(v_ - th) / q))
+        alpha_m = vfun(v, -35.013, 0.182, 9.) # 1/ms
+        beta_m  = vfun(-v, 35.013, 0.124, 9.) # 1/ms
+        # non-standard h activation
+        m_Na_0 = alpha_m / (alpha_m + beta_m),
+        h_Na_0 = 1. / (1. + np.exp((v + 65.) / 6.2))
+
+        # activation functions
+        alpha_n =  0.02 * (v - 25.) / (1. - np.exp(-(v - 25.) / 9.))
+        beta_n = -0.002 * (v - 25.) / (1. - np.exp( (v - 25.) / 9.))
+        n_K_0 = alpha_n / (alpha_n + beta_n)
+
+        self.assertTrue(np.allclose(mm.events["m_Na_0"][0], m_Na_0))
+        self.assertTrue(np.allclose(mm.events["h_Na_0"][0], h_Na_0))
+        self.assertTrue(np.allclose(mm.events["n_K_0"][0], n_K_0))
+
+    def test_unused_dict_entries(self):
+        sp_real = {'C_m': 1.00, 'g_C': 0.00, 'g_L': 0.100, 'e_L': -60.0}
+        sp_fake = {'bla': 5.}
+        rp_real = {}
+        rp_fake = {'oops': 10.}
+
+        # test unused compartment param
+        cm = nest.Create('cm_default')
+
+        with self.assertRaisesRegex(nest.kernel.NESTError,
+                "DictError in SLI function SetStatus_id: Unused dictionary items:  bla"):
+            cm.compartments = [
+                {"parent_idx": -1, "params": sp_fake},
+            ]
+
+        # test unused compartment param
+        cm = nest.Create('cm_default')
+
+        with self.assertRaisesRegex(nest.kernel.NESTError,
+                "DictError in SLI function SetStatus_id: Unused dictionary items:  params_name"):
+            cm.compartments = [
+                {"parent_idx": -1, "params_name": sp_fake},
+            ]
+
+        # test unused receptor param
+        cm = nest.Create('cm_default')
+        cm.compartments = [
+            {"parent_idx": -1, "params": sp_real},
+        ]
+
+        with self.assertRaisesRegex(nest.kernel.NESTError,
+                "DictError in SLI function SetStatus_id: Unused dictionary items:  oops"):
+            cm.receptors = [
+                {"comp_idx": 0, "receptor_type": "AMPA", "params": rp_fake},
+            ]
+
+        # test unused receptor param
+        cm = nest.Create('cm_default')
+        cm.compartments = [
+            {"parent_idx": -1, "params": sp_real},
+        ]
+
+        with self.assertRaisesRegex(nest.kernel.NESTError,
+                "DictError in SLI function SetStatus_id: Unused dictionary items:  params_name"):
+            cm.receptors = [
+                {"comp_idx": 0, "receptor_type": "AMPA", "params_name": rp_real},
+            ]
 
 def suite():
     # makeSuite is sort of obsolete http://bugs.python.org/issue2721

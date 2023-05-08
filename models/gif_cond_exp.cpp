@@ -26,9 +26,6 @@
 
 // C++ includes:
 #include <cstdio>
-#include <iomanip>
-#include <iostream>
-#include <limits>
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -43,8 +40,6 @@
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 
 namespace nest
@@ -233,7 +228,6 @@ nest::gif_cond_exp::Parameters_::get( DictionaryDatum& d ) const
 void
 nest::gif_cond_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-
   updateValueParam< double >( d, names::I_e, I_e_, node );
   updateValueParam< double >( d, names::E_L, E_L_, node );
   updateValueParam< double >( d, names::g_L, g_L_, node );
@@ -312,7 +306,7 @@ nest::gif_cond_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
       throw BadProperty( "All time constants must be strictly positive." );
     }
   }
-  if ( tau_synE_ <= 0 || tau_synI_ <= 0 )
+  if ( tau_synE_ <= 0 or tau_synI_ <= 0 )
   {
     throw BadProperty( "Synapse time constants must be strictly positive." );
   }
@@ -477,10 +471,6 @@ nest::gif_cond_exp::pre_run_hook()
 void
 nest::gif_cond_exp::update( Time const& origin, const long from, const long to )
 {
-
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
 

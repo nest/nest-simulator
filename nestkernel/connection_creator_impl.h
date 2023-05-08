@@ -88,7 +88,7 @@ ConnectionCreator::connect_to_target_( Iterator from,
   const bool without_kernel = not kernel_.get();
   for ( Iterator iter = from; iter != to; ++iter )
   {
-    if ( ( not allow_autapses_ ) and ( iter->second == tgt_ptr->get_node_id() ) )
+    if ( not allow_autapses_ and ( iter->second == tgt_ptr->get_node_id() ) )
     {
       continue;
     }
@@ -344,11 +344,6 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
   Layer< D >& target,
   NodeCollectionPTR target_nc )
 {
-  if ( number_of_connections_ < 1 )
-  {
-    return;
-  }
-
   // fixed_indegree connections (fixed fan in)
   //
   // For each local target node:
@@ -398,6 +393,9 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
       std::vector< double > source_pos_vector( D );
       const std::vector< double > target_pos_vector = target_pos.get_vector();
 
+      unsigned long target_number_connections =
+        std::round( number_of_connections_->value( rng, source_pos_vector, target_pos_vector, source, tgt ) );
+
       // Get (position,node ID) pairs for sources inside mask
       positions.resize( std::distance( masked_source.begin( target_pos ), masked_source_end ) );
       std::copy( masked_source.begin( target_pos ), masked_source_end, positions.begin() );
@@ -422,8 +420,8 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         }
 
         if ( positions.empty()
-          or ( ( not allow_autapses_ ) and ( positions.size() == 1 ) and ( positions[ 0 ].second == target_id ) )
-          or ( ( not allow_multapses_ ) and ( positions.size() < number_of_connections_ ) ) )
+          or ( not allow_autapses_ and ( positions.size() == 1 ) and positions[ 0 ].second == target_id )
+          or ( not allow_multapses_ and ( positions.size() < target_number_connections ) ) )
         {
           std::string msg = String::compose( "Global target ID %1: Not enough sources found inside mask", target_id );
           throw KernelException( msg.c_str() );
@@ -439,20 +437,18 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         // sources have been selected already.
         std::vector< bool > is_selected( positions.size() );
 
-        // Draw `number_of_connections_` sources
-        for ( int i = 0; i < ( int ) number_of_connections_; ++i )
+        // Draw `target_number_connections` sources
+        while ( target_number_connections > 0 )
         {
-          index random_id = lottery( rng );
-          if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) )
+          const index random_id = lottery( rng );
+          if ( not allow_multapses_ and is_selected[ random_id ] )
           {
-            --i;
             continue;
           }
 
-          index source_id = positions[ random_id ].second;
-          if ( ( not allow_autapses_ ) and ( source_id == target_id ) )
+          const index source_id = positions[ random_id ].second;
+          if ( not allow_autapses_ and source_id == target_id )
           {
-            --i;
             continue;
           }
           positions[ random_id ].first.get_vector( source_pos_vector );
@@ -465,6 +461,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           }
 
           is_selected[ random_id ] = true;
+          --target_number_connections;
         }
       }
       else
@@ -473,8 +470,8 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         // no kernel
 
         if ( positions.empty()
-          or ( ( not allow_autapses_ ) and ( positions.size() == 1 ) and ( positions[ 0 ].second == target_id ) )
-          or ( ( not allow_multapses_ ) and ( positions.size() < number_of_connections_ ) ) )
+          or ( not allow_autapses_ and ( positions.size() == 1 ) and positions[ 0 ].second == target_id )
+          or ( not allow_multapses_ and ( positions.size() < target_number_connections ) ) )
         {
           std::string msg = String::compose( "Global target ID %1: Not enough sources found inside mask", target_id );
           throw KernelException( msg.c_str() );
@@ -484,17 +481,16 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         // sources have been selected already.
         std::vector< bool > is_selected( positions.size() );
 
-        // Draw `number_of_connections_` sources
-        for ( int i = 0; i < ( int ) number_of_connections_; ++i )
+        // Draw `target_number_connections` sources
+        while ( target_number_connections > 0 )
         {
-          index random_id = rng->ulrand( positions.size() );
-          if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) )
+          const index random_id = rng->ulrand( positions.size() );
+          if ( not allow_multapses_ and is_selected[ random_id ] )
           {
-            --i;
             continue;
           }
           positions[ random_id ].first.get_vector( source_pos_vector );
-          index source_id = positions[ random_id ].second;
+          const index source_id = positions[ random_id ].second;
           for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
           {
             const double w = weight_[ indx ]->value( rng, source_pos_vector, target_pos_vector, source, tgt );
@@ -504,6 +500,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           }
 
           is_selected[ random_id ] = true;
+          --target_number_connections;
         }
       }
     }
@@ -523,18 +520,20 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
       RngPtr rng = get_vp_specific_rng( target_thread );
       Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
 
+      unsigned long target_number_connections = std::round( number_of_connections_->value( rng, tgt ) );
+
       std::vector< double > source_pos_vector( D );
       const std::vector< double > target_pos_vector = target_pos.get_vector();
 
       if ( ( positions->size() == 0 )
-        or ( ( not allow_autapses_ ) and ( positions->size() == 1 ) and ( ( *positions )[ 0 ].second == target_id ) )
-        or ( ( not allow_multapses_ ) and ( positions->size() < number_of_connections_ ) ) )
+        or ( not allow_autapses_ and ( positions->size() == 1 ) and ( ( *positions )[ 0 ].second == target_id ) )
+        or ( not allow_multapses_ and ( positions->size() < target_number_connections ) ) )
       {
         std::string msg = String::compose( "Global target ID %1: Not enough sources found", target_id );
         throw KernelException( msg.c_str() );
       }
 
-      // We will select `number_of_connections_` sources within the mask.
+      // We will select `target_number_connections` sources within the mask.
       // If there is no kernel, we can just draw uniform random numbers,
       // but with a kernel we have to set up a probability distribution
       // function using a discrete_distribution.
@@ -563,20 +562,18 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         // sources have been selected already.
         std::vector< bool > is_selected( positions->size() );
 
-        // Draw `number_of_connections_` sources
-        for ( int i = 0; i < ( int ) number_of_connections_; ++i )
+        // Draw `target_number_connections` sources
+        while ( target_number_connections > 0 )
         {
-          index random_id = lottery( rng );
-          if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) )
+          const index random_id = lottery( rng );
+          if ( not allow_multapses_ and is_selected[ random_id ] )
           {
-            --i;
             continue;
           }
 
-          index source_id = ( *positions )[ random_id ].second;
-          if ( ( not allow_autapses_ ) and ( source_id == target_id ) )
+          const index source_id = ( *positions )[ random_id ].second;
+          if ( not allow_autapses_ and source_id == target_id )
           {
-            --i;
             continue;
           }
 
@@ -590,6 +587,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           }
 
           is_selected[ random_id ] = true;
+          --target_number_connections;
         }
       }
       else
@@ -601,20 +599,18 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
         // sources have been selected already.
         std::vector< bool > is_selected( positions->size() );
 
-        // Draw `number_of_connections_` sources
-        for ( int i = 0; i < ( int ) number_of_connections_; ++i )
+        // Draw `target_number_connections` sources
+        while ( target_number_connections > 0 )
         {
-          index random_id = rng->ulrand( positions->size() );
-          if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) )
+          const index random_id = rng->ulrand( positions->size() );
+          if ( not allow_multapses_ and is_selected[ random_id ] )
           {
-            --i;
             continue;
           }
 
-          index source_id = ( *positions )[ random_id ].second;
-          if ( ( not allow_autapses_ ) and ( source_id == target_id ) )
+          const index source_id = ( *positions )[ random_id ].second;
+          if ( not allow_autapses_ and source_id == target_id )
           {
-            --i;
             continue;
           }
 
@@ -628,6 +624,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
           }
 
           is_selected[ random_id ] = true;
+          --target_number_connections;
         }
       }
     }
@@ -642,11 +639,6 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
   Layer< D >& target,
   NodeCollectionPTR target_nc )
 {
-  if ( number_of_connections_ < 1 )
-  {
-    return;
-  }
-
   // protect against connecting to devices without proxies
   // we need to do this before creating the first connection to leave
   // the network untouched if any target does not have proxies
@@ -689,6 +681,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
   {
     const Position< D > source_pos = source_pos_node_id_pair.first;
     const index source_id = source_pos_node_id_pair.second;
+    const auto src = kernel().node_manager.get_node_or_proxy( source_id );
     const std::vector< double > source_pos_vector = source_pos.get_vector();
 
     // We create a target pos vector here that can be updated with the
@@ -718,8 +711,10 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
       probabilities.resize( target_pos_node_id_pairs.size(), 1.0 );
     }
 
+    unsigned long number_of_connections = std::round( number_of_connections_->value( grng, src ) );
+
     if ( target_pos_node_id_pairs.empty()
-      or ( ( not allow_multapses_ ) and ( target_pos_node_id_pairs.size() < number_of_connections_ ) ) )
+      or ( not allow_multapses_ and target_pos_node_id_pairs.size() < number_of_connections ) )
     {
       std::string msg = String::compose( "Global source ID %1: Not enough targets found", source_id );
       throw KernelException( msg.c_str() );
@@ -735,19 +730,17 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
     // targets have been selected already.
     std::vector< bool > is_selected( target_pos_node_id_pairs.size() );
 
-    // Draw `number_of_connections_` targets
-    for ( long i = 0; i < ( long ) number_of_connections_; ++i )
+    // Draw `number_of_connections` targets
+    while ( number_of_connections > 0 )
     {
-      index random_id = lottery( get_rank_synced_rng() );
-      if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) )
+      const index random_id = lottery( get_rank_synced_rng() );
+      if ( not allow_multapses_ and is_selected[ random_id ] )
       {
-        --i;
         continue;
       }
-      index target_id = target_pos_node_id_pairs[ random_id ].second;
-      if ( ( not allow_autapses_ ) and ( source_id == target_id ) )
+      const index target_id = target_pos_node_id_pairs[ random_id ].second;
+      if ( not allow_autapses_ and source_id == target_id )
       {
-        --i;
         continue;
       }
 
@@ -764,16 +757,17 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
         rng_delay_vec.push_back( delay_[ indx ]->value( grng, source_pos_vector, target_pos_vector, target, tgt ) );
       }
 
-      // We bail out for non-local neurons only now after all possible
-      // random numbers haven been drawn. Bailing out any earlier may lead
-      // to desynchronized global rngs.
+      // Each VP has now decided to create this connection and drawn any random parameter values
+      // required for it. Each VP thus counts the connection as created, but only the VP hosting the
+      // target neuron actually creates the connection.
+      --number_of_connections;
       if ( not kernel().node_manager.is_local_node_id( target_id ) )
       {
         continue;
       }
 
       Node* target_ptr = kernel().node_manager.get_node_or_proxy( target_id );
-      thread target_thread = target_ptr->get_thread();
+      const thread target_thread = target_ptr->get_thread();
 
       for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
       {

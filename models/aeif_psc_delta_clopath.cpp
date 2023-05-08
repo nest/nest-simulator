@@ -27,7 +27,6 @@
 // C++ includes:
 #include <cmath>
 #include <cstdio>
-#include <iomanip>
 #include <iostream>
 #include <limits>
 
@@ -42,10 +41,7 @@
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -65,7 +61,7 @@ template <>
 void
 RecordablesMap< aeif_psc_delta_clopath >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &aeif_psc_delta_clopath::get_y_elem_< aeif_psc_delta_clopath::State_::V_M > );
   insert_( names::w, &aeif_psc_delta_clopath::get_y_elem_< aeif_psc_delta_clopath::State_::W > );
   insert_( names::z, &aeif_psc_delta_clopath::get_y_elem_< aeif_psc_delta_clopath::State_::Z > );
@@ -98,7 +94,7 @@ nest::aeif_psc_delta_clopath_dynamics( double, const double y[], double f[], voi
 
   // Clamp membrane potential to V_reset while refractory, otherwise bound
   // it to V_peak.
-  const double& V = ( is_refractory || is_clamped ) ? ( is_clamped ? node.P_.V_clamp_ : node.P_.V_reset_ )
+  const double& V = ( is_refractory or is_clamped ) ? ( is_clamped ? node.P_.V_clamp_ : node.P_.V_reset_ )
                                                     : std::min( y[ S::V_M ], node.P_.V_peak_ );
   // shorthand for the other state variables
   const double& w = y[ S::W ];
@@ -112,7 +108,7 @@ nest::aeif_psc_delta_clopath_dynamics( double, const double y[], double f[], voi
     node.P_.Delta_T == 0. ? 0. : ( node.P_.g_L * node.P_.Delta_T * std::exp( ( V - V_th ) / node.P_.Delta_T ) );
 
   // dv/dt
-  f[ S::V_M ] = ( is_refractory || is_clamped )
+  f[ S::V_M ] = ( is_refractory or is_clamped )
     ? 0.0
     : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - w + z + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
@@ -200,7 +196,7 @@ nest::aeif_psc_delta_clopath::State_::operator=( const State_& s )
 }
 
 /* ----------------------------------------------------------------
- * Paramater and state extractions and manipulation functions
+ * Parameter and state extractions and manipulation functions
  * ---------------------------------------------------------------- */
 
 void
@@ -475,8 +471,6 @@ nest::aeif_psc_delta_clopath::pre_run_hook()
 void
 nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
   assert( State_::V_M == 0 );
 
   for ( long lag = from; lag < to; ++lag )
@@ -509,14 +503,14 @@ nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const
         throw GSLSolverFailure( get_name(), status );
       }
       // check for unreasonable values; we allow V_M to explode
-      if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6 || S_.y_[ State_::W ] > 1e6 )
+      if ( S_.y_[ State_::V_M ] < -1e3 or S_.y_[ State_::W ] < -1e6 or S_.y_[ State_::W ] > 1e6 )
       {
         throw NumericalInstability( get_name() );
       }
 
       // spikes are handled inside the while-loop
       // due to spike-driven adaptation
-      if ( S_.r_ == 0 && S_.clamp_r_ == 0 )
+      if ( S_.r_ == 0 and S_.clamp_r_ == 0 )
       {
         // neuron not refractory
         S_.y_[ State_::V_M ] = S_.y_[ State_::V_M ] + B_.spikes_.get_value( lag );
@@ -533,7 +527,7 @@ nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const
                                             // Delta_T == 0.
       }
 
-      if ( S_.y_[ State_::V_M ] >= V_.V_peak_ && S_.clamp_r_ == 0 )
+      if ( S_.y_[ State_::V_M ] >= V_.V_peak_ and S_.clamp_r_ == 0 )
       {
         S_.y_[ State_::V_M ] = P_.V_clamp_;
         S_.y_[ State_::W ] += P_.b;   // spike-driven adaptation

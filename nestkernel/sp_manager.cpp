@@ -268,13 +268,6 @@ SPManager::disconnect( NodeCollectionPTR sources,
 {
   if ( kernel().connection_manager.connections_have_changed() )
   {
-    if ( kernel().connection_manager.secondary_connections_exist() )
-    {
-      kernel().model_manager.create_secondary_events_prototypes(); // necessary before
-                                                                   // updating
-                                                                   // connection
-                                                                   // infrastructure
-    }
 #pragma omp parallel
     {
       const thread tid = kernel().vp_manager.get_thread_id();
@@ -294,7 +287,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
 
   if ( not kernel().connection_manager.valid_connection_rule( rule_name ) )
   {
-    throw BadProperty( "Unknown connectivty rule: " + rule_name );
+    throw BadProperty( "Unknown connectivity rule: " + rule_name );
   }
 
   if ( not sp_conn_builders_.empty() )

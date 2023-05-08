@@ -273,11 +273,12 @@ class Network:
         nest.overwrite_files = self.sim_dict['overwrite_files']
         nest.print_time = self.sim_dict['print_time']
 
+        rng_seed = nest.rng_seed
+        vps = nest.total_num_virtual_procs
+
         if nest.Rank() == 0:
-            print('RNG seed: {}'.format(
-                nest.rng_seed))
-            print('Total number of virtual processes: {}'.format(
-                nest.total_num_virtual_procs))
+            print('RNG seed: {}'.format(rng_seed))
+            print('Total number of virtual processes: {}'.format(vps))
 
     def __create_neuronal_populations(self):
         """ Creates the neuronal populations.
@@ -452,7 +453,10 @@ class Network:
                                 mean=self.net_dict['delay_matrix_mean'][i][j],
                                 std=(self.net_dict['delay_matrix_mean'][i][j] *
                                      self.net_dict['delay_rel_std'])),
-                            min=nest.resolution,
+                            # resulting minimum delay is equal to resolution, see:
+                            # https://nest-simulator.readthedocs.io/en/latest/nest_behavior
+                            # /random_numbers.html#rounding-effects-when-randomizing-delays
+                            min=nest.resolution - 0.5 * nest.resolution,
                             max=np.Inf)}
 
                     nest.Connect(
@@ -515,7 +519,10 @@ class Network:
                         mean=self.stim_dict['delay_th_mean'],
                         std=(self.stim_dict['delay_th_mean'] *
                              self.stim_dict['delay_th_rel_std'])),
-                    min=nest.resolution,
+                    # resulting minimum delay is equal to resolution, see:
+                    # https://nest-simulator.readthedocs.io/en/latest/nest_behavior
+                    # /random_numbers.html#rounding-effects-when-randomizing-delays
+                    min=nest.resolution - 0.5 * nest.resolution,
                     max=np.Inf)}
 
             nest.Connect(

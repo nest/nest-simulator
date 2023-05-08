@@ -23,7 +23,7 @@
 Classes defining the different PyNEST types
 """
 
-from ..ll_api import check_stack, sli_func, sps, sr, spp, take_array_index
+from ..ll_api import sli_func, sps, sr, spp, take_array_index
 from .. import pynestkernel as kernel
 from .hl_api_helper import (
     broadcast,
@@ -86,8 +86,8 @@ def CreateParameter(parametertype, specs):
 
     **Parameter types**
 
-    Some available parameter types (`parametertype` parameter), their function and
-    acceptable keys for their corresponding specification dictionaries
+    Examples of available parameter types (`parametertype` parameter), with their function and
+    acceptable keys for their corresponding specification dictionaries:
 
     * Constant
         ::
@@ -102,21 +102,15 @@ def CreateParameter(parametertype, specs):
                 {'min' : float, # minimum value, default: 0.0
                  'max' : float} # maximum value, default: 1.0
 
-            # random parameter with normal distribution, optionally truncated
-            # to [min,max)
+            # random parameter with normal distribution
             'normal':
                 {'mean' : float, # mean value, default: 0.0
-                 'sigma': float, # standard deviation, default: 1.0
-                 'min'  : float, # minimum value, default: -inf
-                 'max'  : float} # maximum value, default: +inf
+                 'std'  : float} # standard deviation, default: 1.0
 
-            # random parameter with lognormal distribution,
-            # optionally truncated to [min,max)
+            # random parameter with lognormal distribution
             'lognormal' :
-                {'mu'   : float, # mean value of logarithm, default: 0.0
-                 'sigma': float, # standard deviation of log, default: 1.0
-                 'min'  : float, # minimum value, default: -inf
-                 'max'  : float} # maximum value, default: +inf
+                {'mean' : float, # mean value of logarithm, default: 0.0
+                 'std'  : float} # standard deviation of log, default: 1.0
     """
     return sli_func('CreateParameter', {parametertype: specs})
 
@@ -919,6 +913,13 @@ class SynapseCollection:
         sr('2 arraystore')
         sr('Transpose { arrayload pop SetStatus } forall')
 
+    def disconnect(self):
+        """
+        Disconnect the connections in the `SynapseCollection`.
+        """
+        sps(self._datum)
+        sr('Disconnect_a')
+
 
 class CollocatedSynapses:
     """
@@ -929,18 +930,17 @@ class CollocatedSynapses:
     Example
     -------
 
-        ::
+    ::
+        nodes = nest.Create('iaf_psc_alpha', 3)
+        syn_spec = nest.CollocatedSynapses({'weight': 4., 'delay': 1.5},
+                                       {'synapse_model': 'stdp_synapse'},
+                                       {'synapse_model': 'stdp_synapse', 'alpha': 3.})
+        nest.Connect(nodes, nodes, conn_spec='one_to_one', syn_spec=syn_spec)
 
-            nodes = nest.Create('iaf_psc_alpha', 3)
-            syn_spec = nest.CollocatedSynapses({'weight': 4., 'delay': 1.5},
-                                               {'synapse_model': 'stdp_synapse'},
-                                               {'synapse_model': 'stdp_synapse', 'alpha': 3.})
-            nest.Connect(nodes, nodes, conn_spec='one_to_one', syn_spec=syn_spec)
+        conns = nest.GetConnections()
 
-            conns = nest.GetConnections()
-
-            print(conns.alpha)
-            print(len(syn_spec))
+        print(conns.alpha)
+        print(len(syn_spec))
     """
 
     def __init__(self, *args):
@@ -970,19 +970,19 @@ class Mask:
         self._datum = datum
 
     # Generic binary operation
-    def _binop(self, op, other):
-        if not isinstance(other, Mask):
+    def _binop(self, op, rhs):
+        if not isinstance(rhs, Mask):
             raise NotImplementedError()
-        return sli_func(op, self._datum, other._datum)
+        return sli_func(op, self._datum, rhs._datum)
 
-    def __or__(self, other):
-        return self._binop("or", other)
+    def __or__(self, rhs):
+        return self._binop("or", rhs)
 
-    def __and__(self, other):
-        return self._binop("and", other)
+    def __and__(self, rhs):
+        return self._binop("and", rhs)
 
-    def __sub__(self, other):
-        return self._binop("sub", other)
+    def __sub__(self, rhs):
+        return self._binop("sub", rhs)
 
     def Inside(self, point):
         """
@@ -1021,64 +1021,76 @@ class Parameter:
         self._datum = datum
 
     # Generic binary operation
-    def _binop(self, op, other, params=None):
-        if isinstance(other, (int, float)):
-            other = CreateParameter('constant', {'value': float(other)})
-        if not isinstance(other, Parameter):
+    def _binop(self, op, rhs, params=None):
+        if isinstance(rhs, (int, float)):
+            rhs = CreateParameter('constant', {'value': float(rhs)})
+        if not isinstance(rhs, Parameter):
             raise NotImplementedError()
 
         if params is None:
-            return sli_func(op, self._datum, other._datum)
+            return sli_func(op, self._datum, rhs._datum)
         else:
-            return sli_func(op, self._datum, other._datum, params)
+            return sli_func(op, self._datum, rhs._datum, params)
 
-    def __add__(self, other):
-        return self._binop("add", other)
+    def __add__(self, rhs):
+        return self._binop("add", rhs)
 
-    def __radd__(self, other):
-        return self + other
+    def __radd__(self, lhs):
+        return self + lhs
 
-    def __sub__(self, other):
-        return self._binop("sub", other)
+    def __sub__(self, rhs):
+        return self._binop("sub", rhs)
 
-    def __rsub__(self, other):
-        return self * (-1) + other
+    def __rsub__(self, lhs):
+        return self * (-1) + lhs
+
+    def __pos__(self):
+        return self
 
     def __neg__(self):
         return self * (-1)
 
-    def __mul__(self, other):
-        return self._binop("mul", other)
+    def __mul__(self, rhs):
+        return self._binop("mul", rhs)
 
-    def __rmul__(self, other):
-        return self * other
+    def __rmul__(self, lhs):
+        return self * lhs
 
-    def __div__(self, other):
-        return self._binop("div", other)
+    def __truediv__(self, rhs):
+        return self._binop("div", rhs)
 
-    def __truediv__(self, other):
-        return self._binop("div", other)
+    def __rtruediv__(self, lhs):
+        rhs_inv = CreateParameter('constant', {'value': 1 / float(self.GetValue())})
+        return rhs_inv._binop("mul", lhs)
 
     def __pow__(self, exponent):
+        try:
+            expo = float(exponent)
+        except TypeError:
+            raise TypeError("unsupported operand type for **: only int and float allow as exponent")
+
         return sli_func("pow", self._datum, float(exponent))
 
-    def __lt__(self, other):
-        return self._binop("compare", other, {'comparator': 0})
+    def __rpow__(self, lhs):
+        raise TypeError("unsupported operand type for **: only int and float allow as exponent")
 
-    def __le__(self, other):
-        return self._binop("compare", other, {'comparator': 1})
+    def __lt__(self, rhs):
+        return self._binop("compare", rhs, {'comparator': 0})
 
-    def __eq__(self, other):
-        return self._binop("compare", other, {'comparator': 2})
+    def __le__(self, rhs):
+        return self._binop("compare", rhs, {'comparator': 1})
 
-    def __ne__(self, other):
-        return self._binop("compare", other, {'comparator': 3})
+    def __eq__(self, rhs):
+        return self._binop("compare", rhs, {'comparator': 2})
 
-    def __ge__(self, other):
-        return self._binop("compare", other, {'comparator': 4})
+    def __ne__(self, rhs):
+        return self._binop("compare", rhs, {'comparator': 3})
 
-    def __gt__(self, other):
-        return self._binop("compare", other, {'comparator': 5})
+    def __ge__(self, rhs):
+        return self._binop("compare", rhs, {'comparator': 4})
+
+    def __gt__(self, rhs):
+        return self._binop("compare", rhs, {'comparator': 5})
 
     def GetValue(self):
         """
@@ -1100,7 +1112,7 @@ class Parameter:
                 import nest
 
                 # normal distribution parameter
-                P = nest.CreateParameter('normal', {'mean': 0.0, 'sigma': 1.0})
+                P = nest.CreateParameter('normal', {'mean': 0.0, 'std': 1.0})
 
                 # get out value
                 P.GetValue()
@@ -1135,7 +1147,6 @@ class CmBase:
             raise TypeError(f'elements must be a tuple of dicts, got {type(elements)}')
         self._elements = elements
         self._node_collection = node_collection
-        print(f'init {self.__class__}')
 
     def __add__(self, other):
         new_elements = list(self._elements)
@@ -1169,7 +1180,7 @@ class CmBase:
             raise NotImplementedError(f'{self.__class__.__name__} can only be added with dicts, lists of dicts,'
                                       f' or other {self.__class__.__name__}, got {type(other)}')
         self._node_collection.set({f'add_{self.__class__.__name__.lower()}': new_elements})
-        return None  # Flagging elements as added by returning None
+        # implicit `return None` to flag elements as added by returning None
 
     def __getitem__(self, key):
         return self._elements[key]

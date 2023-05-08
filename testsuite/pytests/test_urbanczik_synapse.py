@@ -194,10 +194,7 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
 
         # weight recorder
         data = nest.GetStatus(wr)
-        senders = data[0]['events']['senders']
-        targets = data[0]['events']['targets']
         weights = data[0]['events']['weights']
-        times = data[0]['events']['times']
 
         # spike recorder
         data = nest.GetStatus(sr_soma)[0]['events']
@@ -218,7 +215,6 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         g_L_prox = nrn_params['dendritic']['g_L']
         C_m_prox = nrn_params['dendritic']['C_m']
         tau_L = C_m_prox / g_L_prox
-        E_L_prox = nrn_params['dendritic']['E_L']
         t0 = 1.2
         alpha_response = (np.heaviside(t - t0, 0.5)*tau_s*(np.exp(-(t - t0) / tau_L) - np.exp(-(t - t0) / tau_s)) /
                           (g_L_prox*(tau_L - tau_s)))

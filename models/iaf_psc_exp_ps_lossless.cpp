@@ -27,19 +27,16 @@
 
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "iaf_propagator.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "propagator_stability.h"
 #include "regula_falsi.h"
 
 // Includes from sli:
-#include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 
 /* ----------------------------------------------------------------
@@ -56,7 +53,7 @@ template <>
 void
 RecordablesMap< iaf_psc_exp_ps_lossless >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &iaf_psc_exp_ps_lossless::get_V_m_ );
   insert_( names::I_syn, &iaf_psc_exp_ps_lossless::get_I_syn_ );
   insert_( names::I_syn_ex, &iaf_psc_exp_ps_lossless::get_I_syn_ex_ );
@@ -284,8 +281,11 @@ nest::iaf_psc_exp_ps_lossless::pre_run_hook()
   V_.exp_tau_in_ = std::exp( -V_.h_ms_ / P_.tau_in_ );
 
   V_.P20_ = -P_.tau_m_ / P_.c_m_ * numerics::expm1( -V_.h_ms_ / P_.tau_m_ );
-  V_.P21_ex_ = propagator_32( P_.tau_ex_, P_.tau_m_, P_.c_m_, V_.h_ms_ );
-  V_.P21_in_ = propagator_32( P_.tau_in_, P_.tau_m_, P_.c_m_, V_.h_ms_ );
+
+  propagator_ex_ = IAFPropagatorExp( P_.tau_ex_, P_.tau_m_, P_.c_m_ );
+  propagator_in_ = IAFPropagatorExp( P_.tau_in_, P_.tau_m_, P_.c_m_ );
+  V_.P21_ex_ = propagator_ex_.evaluate( V_.h_ms_ );
+  V_.P21_in_ = propagator_in_.evaluate( V_.h_ms_ );
 
   V_.refractory_steps_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
   assert( V_.refractory_steps_ >= 0 ); // since t_ref_ >= 0, this can only fail in error
@@ -315,10 +315,6 @@ nest::iaf_psc_exp_ps_lossless::pre_run_hook()
 void
 nest::iaf_psc_exp_ps_lossless::update( const Time& origin, const long from, const long to )
 {
-  assert( to >= 0 );
-  assert( static_cast< delay >( from ) < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   // at start of slice, tell input queue to prepare for delivery
   if ( from == 0 )
   {
@@ -341,7 +337,7 @@ nest::iaf_psc_exp_ps_lossless::update( const Time& origin, const long from, cons
 
     // if neuron returns from refractoriness during this step, place
     // pseudo-event in queue to mark end of refractory period
-    if ( S_.is_refractory_ && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
+    if ( S_.is_refractory_ and T + 1 - S_.last_spike_step_ == V_.refractory_steps_ )
     {
       B_.events_.add_refractory( T, S_.last_spike_offset_ );
     }
@@ -521,8 +517,8 @@ nest::iaf_psc_exp_ps_lossless::propagate_( const double dt )
   {
     const double P20 = -P_.tau_m_ / P_.c_m_ * numerics::expm1( -dt / P_.tau_m_ );
 
-    const double P21_ex = propagator_32( P_.tau_ex_, P_.tau_m_, P_.c_m_, dt );
-    const double P21_in = propagator_32( P_.tau_in_, P_.tau_m_, P_.c_m_, dt );
+    const double P21_ex = propagator_ex_.evaluate( dt );
+    const double P21_in = propagator_in_.evaluate( dt );
 
     S_.y2_ =
       P20 * ( P_.I_e_ + S_.y0_ ) + P21_ex * S_.I_syn_ex_ + P21_in * S_.I_syn_in_ + S_.y2_ * std::exp( -dt / P_.tau_m_ );
@@ -586,10 +582,10 @@ nest::iaf_psc_exp_ps_lossless::threshold_distance( double t_step ) const
 {
   const double P20 = -P_.tau_m_ / P_.c_m_ * numerics::expm1( -t_step / P_.tau_m_ );
 
-  const double P21_ex = propagator_32( P_.tau_ex_, P_.tau_m_, P_.c_m_, t_step );
-  const double P21_in = propagator_32( P_.tau_in_, P_.tau_m_, P_.c_m_, t_step );
+  const double P21_ex = propagator_ex_.evaluate( t_step );
+  const double P21_in = propagator_in_.evaluate( t_step );
 
-  double y2_root = P20 * ( P_.I_e_ + V_.y0_before_ ) + P21_ex * V_.I_syn_ex_before_ + P21_in * V_.I_syn_in_before_
+  const double y2_root = P20 * ( P_.I_e_ + V_.y0_before_ ) + P21_ex * V_.I_syn_ex_before_ + P21_in * V_.I_syn_in_before_
     + V_.y2_before_ * std::exp( -t_step / P_.tau_m_ );
 
   return y2_root - P_.U_th_;
@@ -628,7 +624,7 @@ nest::iaf_psc_exp_ps_lossless::is_spike_( const double dt )
   // no-spike, NS_1, (V <= g_h,I_e(I) and V < f_h,I_e(I))
   if ( ( V_0 < ( ( ( I_0 + I_e ) * ( V_.b1_ * exp_tau_m + V_.b2_ * exp_tau_s ) + V_.b3_ * ( exp_tau_m - exp_tau_s ) )
            / ( V_.b4_ * exp_tau_s ) ) )
-    and ( V_0 <= f ) )
+    and V_0 <= f )
   {
     return numerics::nan;
   }

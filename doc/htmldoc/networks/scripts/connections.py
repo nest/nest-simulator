@@ -23,7 +23,6 @@
 
 import nest
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d.axes3d import Axes3D
 import numpy as np
 
 # seed NumPy RNG to ensure identical results for runs with random placement
@@ -91,7 +90,7 @@ def conn_figure(fig, layer, connd, targets=None, showmask=True, kern=None,
 
 # Simple connection
 
-#{ conn1 #}
+# { conn1 #}
 spatial_nodes = nest.Create('iaf_psc_alpha',
                             positions=nest.spatial.grid(shape=[11, 11], extent=[11., 11.]))
 conndict = {'rule': 'pairwise_bernoulli',
@@ -99,7 +98,7 @@ conndict = {'rule': 'pairwise_bernoulli',
             'mask': {'rectangular': {'lower_left': [-2., -1.],
                                      'upper_right': [2., 1.]}}}
 nest.Connect(spatial_nodes, spatial_nodes, conndict)
-#{ end #}
+# { end #}
 
 fig = plt.figure()
 fig.add_subplot(121)
@@ -137,100 +136,100 @@ def free_mask_fig(fig, loc, cdict):
 
 fig = plt.figure()
 
-#{ conn2r #}
+# { conn2r #}
 conndict = {'rule': 'pairwise_bernoulli',
             'p': 1.0,
             'mask': {'rectangular': {'lower_left': [-2., -1.],
                                      'upper_right': [2., 1.]}}}
-#{ end #}
+# { end #}
 free_mask_fig(fig, 221, conndict)
 
-#{ conn2c #}
+# { conn2c #}
 conndict = {'rule': 'pairwise_bernoulli',
             'p': 1.0,
             'mask': {'circular': {'radius': 2.0}}}
-#{ end #}
+# { end #}
 free_mask_fig(fig, 222, conndict)
 
-#{ conn2d #}
+# { conn2d #}
 conndict = {'rule': 'pairwise_bernoulli',
             'p': 1.0,
             'mask': {'doughnut': {'inner_radius': 1.5,
                                   'outer_radius': 3.}}}
-#{ end #}
+# { end #}
 free_mask_fig(fig, 223, conndict)
 
-#{ conn2e #}
+# { conn2e #}
 conndict = {'rule': 'pairwise_bernoulli',
             'p': 1.0,
             'mask': {'elliptical': {'major_axis': 7.,
                                     'minor_axis': 4.}}}
-#{ end #}
+# { end #}
 free_mask_fig(fig, 224, conndict)
 
 plt.savefig('../user_manual_figures/conn2_a.png', bbox_inches='tight')
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------#
 
 fig = plt.figure()
 
-#{ conn2ro #}
+# { conn2ro #}
 conndict = {'rule': 'pairwise_bernoulli',
             'p': 1.0,
             'mask': {'rectangular': {'lower_left': [-2., -1.],
                                      'upper_right': [2., 1.]},
                      'anchor': [-1.5, -1.5]}}
-#{ end #}
+# { end #}
 free_mask_fig(fig, 221, conndict)
 
-#{ conn2co #}
+# { conn2co #}
 conndict = {'rule': 'pairwise_bernoulli',
             'p': 1.0,
             'mask': {'circular': {'radius': 2.0},
                      'anchor': [-2.0, 0.0]}}
-#{ end #}
+# { end #}
 free_mask_fig(fig, 222, conndict)
 
-#{ conn2do #}
+# { conn2do #}
 conndict = {'rule': 'pairwise_bernoulli',
             'p': 1.0,
             'mask': {'doughnut': {'inner_radius': 1.5,
                                   'outer_radius': 3.},
                      'anchor': [1.5, 1.5]}}
-#{ end #}
+# { end #}
 free_mask_fig(fig, 223, conndict)
 
-#{ conn2eo #}
+# { conn2eo #}
 conndict = {'rule': 'pairwise_bernoulli',
             'p': 1.0,
             'mask': {'elliptical': {'major_axis': 7.,
                                     'minor_axis': 4.},
                      'anchor': [2.0, -1.0]}}
-#{ end #}
+# { end #}
 free_mask_fig(fig, 224, conndict)
 
 plt.savefig('../user_manual_figures/conn2_b.png', bbox_inches='tight')
 
-#-----------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------#
 
 fig = plt.figure()
 
-#{ conn2rr #}
+# { conn2rr #}
 conndict = {'rule': 'pairwise_bernoulli',
             'p': 1.0,
             'mask': {'rectangular': {'lower_left': [-2., -1.],
                                      'upper_right': [2., 1.],
                                      'azimuth_angle': 120.}}}
-#{ end #}
+# { end #}
 free_mask_fig(fig, 121, conndict)
 
-#{ conn2er #}
+# { conn2er #}
 conndict = {'rule': 'pairwise_bernoulli',
             'p': 1.0,
             'mask': {'elliptical': {'major_axis': 7.,
                                     'minor_axis': 4.,
                                     'azimuth_angle': 45.}}}
-#{ end #}
+# { end #}
 free_mask_fig(fig, 122, conndict)
 
 plt.savefig('../user_manual_figures/conn2_c.png', bbox_inches='tight')
@@ -256,7 +255,7 @@ def conn_figure_3d(fig, layer, connd, targets=None, showmask=True,
                          src_size=250, tgt_color=clr, tgt_size=60,
                          probability_cmap='Greens')
 
-    ax = fig.gca()
+    ax = fig.gca()  # noqa: F841
     # ax.set_aspect('equal', 'box')
     plt.draw()
 
@@ -276,28 +275,28 @@ def free_mask_3d_fig(fig, loc, cdict):
 
 fig = plt.figure()
 
-#{ conn_3d_a #}
+# { conn_3d_a #}
 conndict = {'rule': 'pairwise_bernoulli',
             'p': 1.0,
             'mask': {'box': {'lower_left': [-2., -1., -1.],
                              'upper_right': [2., 1., 1.]}}}
-#{ end #}
+# { end #}
 # free_mask_3d_fig(fig, 121, conndict)
 
-#{ conn_3d_b #}
+# { conn_3d_b #}
 conndict = {'rule': 'pairwise_bernoulli',
             'p': 1.0,
             'mask': {'spherical': {'radius': 2.5}}}
-#{ end #}
+# { end #}
 # free_mask_3d_fig(fig, 122, conndict)
 
-#{ conn_3d_c #}
+# { conn_3d_c #}
 conndict = {'rule': 'pairwise_bernoulli',
             'p': 1.0,
             'mask': {'ellipsoidal': {'major_axis': 7.,
                                      'minor_axis': 4.,
                                      'polar_axis': 4.5}}}
-#{ end #}
+# { end #}
 
 # plt.savefig('../user_manual_figures/conn_3d.png', bbox_inches='tight')
 
@@ -320,27 +319,27 @@ def grid_mask_fig(fig, loc, cdict):
 
 fig = plt.figure()
 
-#{ conn3 #}
+# { conn3 #}
 conndict = {'rule': 'pairwise_bernoulli',
             'p': 1.0,
             'mask': {'grid': {'shape': [5, 3]}}}
-#{ end #}
+# { end #}
 grid_mask_fig(fig, 131, conndict)
 
-#{ conn3c #}
+# { conn3c #}
 conndict = {'rule': 'pairwise_bernoulli',
             'p': 1.0,
             'mask': {'grid': {'shape': [5, 3]},
                      'anchor': [2, 1]}}
-#{ end #}
+# { end #}
 grid_mask_fig(fig, 132, conndict)
 
-#{ conn3x #}
+# { conn3x #}
 conndict = {'rule': 'pairwise_bernoulli',
             'p': 1.0,
             'mask': {'grid': {'shape': [3, 5]},
                      'anchor': [2, -1]}}
-#{ end #}
+# { end #}
 grid_mask_fig(fig, 133, conndict)
 
 plt.savefig('../user_manual_figures/conn3.png', bbox_inches='tight')
@@ -365,38 +364,38 @@ def kernel_fig(fig, loc, cdict, kern=None):
 
 fig = plt.figure()
 
-#{ conn4cp #}
+# { conn4cp #}
 conndict = {'rule': 'pairwise_bernoulli',
             'p': 0.5,
             'mask': {'circular': {'radius': 4.}}}
-#{ end #}
+# { end #}
 kernel_fig(fig, 231, conndict)
 
-#{ conn4g #}
+# { conn4g #}
 conndict = {'rule': 'pairwise_bernoulli',
             'p': nest.spatial_distributions.gaussian(nest.spatial.distance, std=1.0),
             'mask': {'circular': {'radius': 4.}}}
-#{ end #}
+# { end #}
 kernel_fig(fig, 232, conndict, kern=nest.spatial_distributions.gaussian(nest.spatial.distance, std=1.0))
 
-#{ conn4cut #}
+# { conn4cut #}
 distribution = nest.spatial_distributions.gaussian(nest.spatial.distance, std=1.0)
 conndict = {'rule': 'pairwise_bernoulli',
             'p': nest.logic.conditional(distribution > 0.5,
                                         distribution,
                                         0),
             'mask': {'circular': {'radius': 4.}}}
-#{ end #}
+# { end #}
 kernel_fig(fig, 234, conndict)
 
-#{ conn42d #}
+# { conn42d #}
 conndict = {'rule': 'pairwise_bernoulli',
             'p': nest.spatial_distributions.gaussian2D(nest.spatial.distance.x,
                                                        nest.spatial.distance.y,
                                                        std_x=1.,
                                                        std_y=3.),
             'mask': {'circular': {'radius': 4.}}}
-#{ end #}
+# { end #}
 kernel_fig(fig, 235, conndict)
 
 plt.savefig('../user_manual_figures/conn4.png', bbox_inches='tight')
@@ -432,7 +431,7 @@ def wd_fig(fig, loc, pos, cdict, sdict, what, rpos=None,
 
 fig = plt.figure()
 
-#{ conn5lin #}
+# { conn5lin #}
 pos = nest.spatial.grid(shape=[51, 1], extent=[51., 1.], center=[25., 0.])
 spatial_nodes = nest.Create('iaf_psc_alpha', positions=pos)
 
@@ -444,7 +443,7 @@ sdict = {'weight': nest.math.max(1.0 - 0.05 * nest.spatial.distance, 0.),
          'delay': 0.1 + 0.02 * nest.spatial.distance}
 
 nest.Connect(spatial_nodes, spatial_nodes, cdict, sdict)
-#{ end #}
+# { end #}
 wd_fig(fig, 311, pos, cdict, sdict, 'weight', label='Weight')
 wd_fig(fig, 311, pos, cdict, sdict, 'delay', label='Delay', clr='red')
 fig.gca().legend()
@@ -453,14 +452,14 @@ ppos = nest.spatial.grid(shape=[51, 1],
                          extent=[51., 1.],
                          center=[25., 0.],
                          edge_wrap=True)
-#{ conn5linpbc #}
+# { conn5linpbc #}
 cdict = {'rule': 'pairwise_bernoulli',
          'p': 1.0,
          'mask': {'rectangular': {'lower_left': [-25.5, -0.5],
                                   'upper_right': [25.5, 0.5]}}}
 sdict = {'weight': nest.math.max(1.0 - 0.05 * nest.spatial.distance, 0.),
          'delay': 0.1 + 0.02 * nest.spatial.distance}
-#{ end #}
+# { end #}
 wd_fig(fig, 312, ppos, cdict, sdict, 'weight', label='Weight')
 wd_fig(fig, 312, ppos, cdict, sdict, 'delay', label='Delay', clr='red')
 fig.gca().legend(loc=1)
@@ -473,33 +472,33 @@ sdict = {'weight': nest.math.max(1.0 - 0.05 * nest.spatial.distance, 0.)}
 wd_fig(fig, 313, pos, cdict, sdict, 'weight', label='Linear',
        rpos=[25., 0.], clr='orange')
 
-#{ conn5exp #}
+# { conn5exp #}
 cdict = {'rule': 'pairwise_bernoulli',
          'p': 1.0,
          'mask': {'rectangular': {'lower_left': [-25.5, -0.5],
                                   'upper_right': [25.5, 0.5]}}}
 sdict = {'weight': nest.spatial_distributions.exponential(nest.spatial.distance, beta=5.)}
-#{ end #}
+# { end #}
 wd_fig(fig, 313, pos, cdict, sdict, 'weight', label='Exponential',
        rpos=[25., 0.])
 
-#{ conn5gauss #}
+# { conn5gauss #}
 cdict = {'rule': 'pairwise_bernoulli',
          'p': 1.0,
          'mask': {'rectangular': {'lower_left': [-25.5, -0.5],
                                   'upper_right': [25.5, 0.5]}}}
 sdict = {'weight': nest.spatial_distributions.gaussian(nest.spatial.distance, std=5.)}
-#{ end #}
+# { end #}
 wd_fig(fig, 313, pos, cdict, sdict, 'weight', label='Gaussian', clr='green',
        rpos=[25., 0.])
 
-#{ conn5uniform #}
+# { conn5uniform #}
 cdict = {'rule': 'pairwise_bernoulli',
          'p': 1.0,
          'mask': {'rectangular': {'lower_left': [-25.5, -0.5],
                                   'upper_right': [25.5, 0.5]}}}
 sdict = {'weight': nest.random.uniform(min=0.2, max=0.8)}
-#{ end #}
+# { end #}
 wd_fig(fig, 313, pos, cdict, sdict, 'weight', label='Uniform', clr='red',
        rpos=[25., 0.])
 
@@ -509,18 +508,18 @@ plt.savefig('../user_manual_figures/conn5.png', bbox_inches='tight')
 
 
 # --------------------------------
-#{ conn_param_design #}
+# { conn_param_design #}
 parameter = 0.5 + nest.spatial.distance.x + 2. * nest.spatial.distance.y
-#{ end #}
+# { end #}
 
-#{ conn_param_design_ex #}
+# { conn_param_design_ex #}
 spatial_nodes = nest.Create('iaf_psc_alpha',
                             positions=nest.spatial.grid(shape=[11, 11],
                                                         extent=[1., 1.]))
 nest.Connect(spatial_nodes, spatial_nodes, {'rule': 'pairwise_bernoulli',
                                             'p': parameter,
                                             'mask': {'circular': {'radius': 0.5}}})
-#{ end #}
+# { end #}
 
 # --------------------------------
 
@@ -557,7 +556,7 @@ fig = plt.figure()
 nest.ResetKernel()
 
 
-#{ conn6 #}
+# { conn6 #}
 pos = nest.spatial.free(nest.random.uniform(-1., 1.),
                         extent=[2., 2.], edge_wrap=True)
 spatial_nodes = nest.Create('iaf_psc_alpha', 1000, positions=pos)
@@ -568,14 +567,29 @@ cdict = {'rule': 'fixed_outdegree',
          'outdegree': 50,
          'allow_multapses': True, 'allow_autapses': False}
 nest.Connect(spatial_nodes, spatial_nodes, cdict)
-#{ end #}
+# { end #}
 pn_fig(fig, 111, spatial_nodes, cdict)
 
 plt.savefig('../user_manual_figures/conn6.png', bbox_inches='tight')
 
+#{ conn7 #}
+cdict_random_in = {'rule': 'fixed_indegree',
+                   'p': nest.spatial_distributions.gaussian(nest.spatial.distance, std=0.5),
+                   'mask': {'circular': {'radius': 1.0}},
+                   'indegree': nest.random.normal(mean=20.0, std=2.0),
+                   'allow_multapses': True, 'allow_multapses': True}
+
+cdict_dist_out = {'rule': 'fixed_outdegree',
+                  'p': nest.spatial_distributions.gaussian(nest.spatial.distance, std=0.5),
+                  'mask': {'circular': {'radius': 1.0}},
+                  'outdegree': nest.spatial_distributions.gaussian(nest.spatial.distance, std=0.5),
+                  'allow_multapses': True, 'allow_multapses': True}
+# { end #}
+
+
 # ----------------------------
 
-#{ conn8 #}
+# { conn8 #}
 nest.ResetKernel()
 nest.CopyModel('static_synapse', 'exc', {'weight': 2.0})
 nest.CopyModel('static_synapse', 'inh', {'weight': -8.0})
@@ -593,12 +607,12 @@ nest.Connect(in_nodes, ex_nodes, {'rule': 'pairwise_bernoulli',
                                   'mask': {'rectangular': {'lower_left': [-0.2, -0.2],
                                                            'upper_right': [0.2, 0.2]}}},
              {'synapse_model': 'inh'})
-#{ end #}
+# { end #}
 
 
 # ----------------------------
 
-#{ conn9 #}
+# { conn9 #}
 nrn_layer = nest.Create('iaf_psc_alpha',
                         positions=nest.spatial.grid(shape=[20, 20]))
 
@@ -611,12 +625,12 @@ cdict_stim = {'rule': 'pairwise_bernoulli',
                        'anchor': [0.2, 0.2]}}
 
 nest.Connect(stim, nrn_layer, cdict_stim)
-#{ end #}
+# { end #}
 
 
 # ----------------------------
 
-#{ conn10 #}
+# { conn10 #}
 rec = nest.Create('spike_recorder',
                   positions=nest.spatial.grid(shape=[1, 1]))
 
@@ -627,11 +641,11 @@ cdict_rec = {'rule': 'pairwise_bernoulli',
                       'anchor': [-0.2, 0.2]}}
 
 nest.Connect(nrn_layer, rec, cdict_rec)
-#{ end #}
+# { end #}
 
 # ----------------------------
 
-#{ conn11 #}
+# { conn11 #}
 rec = nest.Create('spike_recorder')
 nest.Connect(nrn_layer, rec)
-#{ end #}
+# { end #}

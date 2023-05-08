@@ -36,6 +36,9 @@
 """
 
 
+from msilib.schema import Error
+
+
 def GetConnections(source=None, target=None, synape_model=None, synapse_label=None):
     r"""Return a `SynapseCollection` representing the connection identifiers.
     [[ In a single 'summary line', state what the function does ]]
@@ -126,7 +129,5 @@ def GetConnections(source=None, target=None, synape_model=None, synapse_label=No
     # This code was included because of bug Y when running X
     # Temporary, I HOPE HOPE HOPE
 
-    if model is not None and syn_spec is not None:
-        raise kernel.NESTerror(
-            "'model' is an alias for 'syn_spec' and cannot"
-            " be used together with 'syn_spec'.")
+    if source is None and target is None:
+        raise Error("'source' and 'target' both cannot be None")

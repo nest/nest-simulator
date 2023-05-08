@@ -121,6 +121,10 @@ public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
+
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
@@ -238,6 +242,9 @@ private:
   double t_lastspike_;
 };
 
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties stdp_triplet_synapse< targetidentifierT >::properties;
+
 /**
  * Send an event to the receiver of this connection.
  * \param e The event to send
@@ -248,7 +255,6 @@ template < typename targetidentifierT >
 inline void
 stdp_triplet_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
 {
-
   double t_spike = e.get_stamp().get_ms();
   double dendritic_delay = get_delay();
   Node* target = get_target( t );

@@ -27,9 +27,6 @@
 
 // C++ includes:
 #include <cstdio>
-#include <iomanip>
-#include <iostream>
-#include <limits>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -42,10 +39,7 @@
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 
 nest::RecordablesMap< nest::hh_psc_alpha_clopath > nest::hh_psc_alpha_clopath::recordablesMap_;
@@ -58,7 +52,7 @@ template <>
 void
 RecordablesMap< hh_psc_alpha_clopath >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::V_M > );
   insert_( names::I_syn_ex, &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::I_EXC > );
   insert_( names::I_syn_in, &hh_psc_alpha_clopath::get_y_elem_< hh_psc_alpha_clopath::State_::I_INH > );
@@ -279,7 +273,7 @@ nest::hh_psc_alpha_clopath::State_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::u_bar_plus, y_[ U_BAR_PLUS ], node );
   updateValueParam< double >( d, names::u_bar_minus, y_[ U_BAR_MINUS ], node );
   updateValueParam< double >( d, names::u_bar_bar, y_[ U_BAR_BAR ], node );
-  if ( y_[ HH_M ] < 0 || y_[ HH_H ] < 0 || y_[ HH_N ] < 0 )
+  if ( y_[ HH_M ] < 0 or y_[ HH_H ] < 0 or y_[ HH_N ] < 0 )
   {
     throw BadProperty( "All (in)activation variables must be non-negative." );
   }
@@ -417,10 +411,6 @@ nest::hh_psc_alpha_clopath::pre_run_hook()
 void
 nest::hh_psc_alpha_clopath::update( Time const& origin, const long from, const long to )
 {
-
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
 
@@ -472,8 +462,8 @@ nest::hh_psc_alpha_clopath::update( Time const& origin, const long from, const l
       --S_.r_;
     }
     else
-      // (    threshold    &&     maximum       )
-      if ( S_.y_[ State_::V_M ] >= 0 && U_old > S_.y_[ State_::V_M ] )
+      // (    threshold    and     maximum       )
+      if ( S_.y_[ State_::V_M ] >= 0 and U_old > S_.y_[ State_::V_M ] )
       {
         S_.r_ = V_.RefractoryCounts_;
 

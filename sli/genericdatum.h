@@ -114,7 +114,7 @@ public:
 
     //    std::cerr << "d = " << d << " ddc = " << ddc << " dat = " << dat <<
     //    std::endl;
-    if ( ddc == NULL )
+    if ( not ddc )
     {
       return false;
     }

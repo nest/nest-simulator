@@ -111,7 +111,7 @@ nest::cm_default::set_status( const DictionaryDatum& statusdict )
    * Add a compartment (or compartments) to the tree, so that the new compartment
    * has the compartment specified by "parent_idx" as parent. The parent
    * has to be in the tree, otherwise an error will be raised.  We add either a
-   * single compartment or multiple compartments, depending on wether the
+   * single compartment or multiple compartments, depending on whether the
    * entry was a list of dicts or a single dict
    */
   const auto add_compartments_list_or_dict = [ this, statusdict ]( const Name name )
@@ -147,7 +147,7 @@ nest::cm_default::set_status( const DictionaryDatum& statusdict )
    * Add a receptor (or receptors) to the tree, so that the new receptor
    * targets the compartment specified by "comp_idx". The compartment
    * has to be in the tree, otherwise an error will be raised.  We add either a
-   * single receptor or multiple receptors, depending on wether the
+   * single receptor or multiple receptors, depending on whether the
    * entry was a list of dicts or a single dict
    */
   const auto add_receptors_list_or_dict = [ this, statusdict ]( const Name name )
@@ -316,9 +316,6 @@ nest::cm_default::pre_run_hook()
 void
 nest::cm_default::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
     const double v_0_prev = c_tree_.get_root()->v_comp;
@@ -327,7 +324,7 @@ nest::cm_default::update( Time const& origin, const long from, const long to )
     c_tree_.solve_matrix();
 
     // threshold crossing
-    if ( c_tree_.get_root()->v_comp >= V_th_ && v_0_prev < V_th_ )
+    if ( c_tree_.get_root()->v_comp >= V_th_ and v_0_prev < V_th_ )
     {
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
@@ -348,7 +345,7 @@ nest::cm_default::handle( SpikeEvent& e )
   }
 
   assert( e.get_delay_steps() > 0 );
-  assert( ( e.get_rport() >= 0 ) && ( ( size_t ) e.get_rport() < syn_buffers_.size() ) );
+  assert( ( e.get_rport() >= 0 ) and ( ( size_t ) e.get_rport() < syn_buffers_.size() ) );
 
   syn_buffers_[ e.get_rport() ].add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );

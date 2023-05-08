@@ -42,6 +42,7 @@
 
 namespace nest
 {
+
 class ModelManager : public ManagerInterface
 {
 public:
@@ -132,12 +133,7 @@ public:
    * @param name The name under which the ConnectorModel will be registered.
    */
   template < template < typename targetidentifierT > class ConnectionT >
-  void register_connection_model( const std::string& name,
-    const RegisterConnectionModelFlags flags = default_connection_model_flags );
-
-  template < template < typename targetidentifierT > class ConnectionT >
-  void register_secondary_connection_model( const std::string& name,
-    const RegisterConnectionModelFlags flags = default_secondary_connection_model_flags );
+  void register_connection_model( const std::string& name );
 
   /**
    * @return The model ID for a Model with a given name
@@ -158,21 +154,6 @@ public:
 
   DictionaryDatum get_connector_defaults( synindex syn_id ) const;
 
-  /**
-   * Checks, whether synapse type requires symmetric connections
-   */
-  bool connector_requires_symmetric( const synindex syn_id ) const;
-
-  /**
-   * Checks, whether synapse type requires Clopath archiving
-   */
-  bool connector_requires_clopath_archiving( const synindex syn_id ) const;
-
-  /**
-   * Checks, whether synapse type requires Urbanczik archiving
-   */
-  bool connector_requires_urbanczik_archiving( const synindex syn_id ) const;
-
   void set_connector_defaults( synindex syn_id, const DictionaryDatum& d );
 
   /**
@@ -190,11 +171,7 @@ public:
    */
   void memory_info() const;
 
-  void create_secondary_events_prototypes();
-
-  void delete_secondary_events_prototypes();
-
-  SecondaryEvent& get_secondary_event_prototype( const synindex syn_id, const thread tid ) const;
+  SecondaryEvent& get_secondary_event_prototype( const synindex syn_id, const thread tid );
 
 private:
   void clear_node_models_();
@@ -272,9 +249,6 @@ private:
    */
   std::vector< std::vector< ConnectorModel* > > connection_models_;
 
-  std::vector< ConnectorModel* > secondary_connector_models_;
-  std::vector< std::map< synindex, SecondaryEvent* > > secondary_events_prototypes_;
-
   DictionaryDatum modeldict_;   //!< Dictionary of all node models
   DictionaryDatum synapsedict_; //!< Dictionary of all synapse models
 
@@ -331,26 +305,11 @@ ModelManager::assert_valid_syn_id( synindex syn_id, thread t ) const
   }
 }
 
-inline void
-ModelManager::delete_secondary_events_prototypes()
-{
-  for ( auto it = secondary_events_prototypes_.begin(); it != secondary_events_prototypes_.end(); ++it )
-  {
-    for ( std::map< synindex, SecondaryEvent* >::iterator iit = it->begin(); iit != it->end(); ++iit )
-    {
-      ( *iit->second ).reset_supported_syn_ids();
-      delete iit->second;
-    }
-  }
-  secondary_events_prototypes_.clear();
-}
-
 inline SecondaryEvent&
-ModelManager::get_secondary_event_prototype( const synindex syn_id, const thread tid ) const
+ModelManager::get_secondary_event_prototype( const synindex syn_id, const thread tid )
 {
   assert_valid_syn_id( syn_id );
-  // Using .at() because operator[] does not guarantee constness.
-  return *( secondary_events_prototypes_[ tid ].at( syn_id ) );
+  return *get_connection_model( syn_id, tid ).get_secondary_event();
 }
 
 } // namespace nest

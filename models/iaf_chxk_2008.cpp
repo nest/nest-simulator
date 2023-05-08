@@ -26,9 +26,6 @@
 
 // C++ includes:
 #include <cstdio>
-#include <iomanip>
-#include <iostream>
-#include <limits>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -40,10 +37,7 @@
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -358,10 +352,6 @@ nest::iaf_chxk_2008::pre_run_hook()
 void
 nest::iaf_chxk_2008::update( Time const& origin, const long from, const long to )
 {
-
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
 

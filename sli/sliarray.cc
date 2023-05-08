@@ -30,9 +30,6 @@
 #include <cmath>
 #include <vector>
 
-// Generated includes:
-#include "config.h"
-
 // Includes from libnestutil:
 #include "numerics.h"
 
@@ -106,7 +103,7 @@ SLIArrayModule::RangeFunction::execute( SLIInterpreter* i ) const
   {
     IntegerDatum* n1d = dynamic_cast< IntegerDatum* >( ad->get( 0 ).datum() );
     IntegerDatum* n2d = dynamic_cast< IntegerDatum* >( ad->get( 1 ).datum() );
-    if ( ( n1d ) && ( n2d ) )
+    if ( n1d and n2d )
     {
       long n = 1 + n2d->get() - n1d->get();
 
@@ -130,7 +127,7 @@ SLIArrayModule::RangeFunction::execute( SLIInterpreter* i ) const
     {
       DoubleDatum* n1d = dynamic_cast< DoubleDatum* >( ad->get( 0 ).datum() );
       DoubleDatum* n2d = dynamic_cast< DoubleDatum* >( ad->get( 1 ).datum() );
-      if ( ( n1d ) && ( n2d ) )
+      if ( n1d and n2d )
       {
         long n = 1 + static_cast< long >( n2d->get() - n1d->get() );
 
@@ -161,7 +158,7 @@ SLIArrayModule::RangeFunction::execute( SLIInterpreter* i ) const
     IntegerDatum* n1d = dynamic_cast< IntegerDatum* >( ad->get( 0 ).datum() );
     IntegerDatum* n2d = dynamic_cast< IntegerDatum* >( ad->get( 1 ).datum() );
     IntegerDatum* n3d = dynamic_cast< IntegerDatum* >( ad->get( 2 ).datum() );
-    if ( ( n1d ) && ( n2d ) && ( n3d ) )
+    if ( n1d and n2d and n3d )
     {
       long di = n3d->get();
       long start = n1d->get();
@@ -192,7 +189,7 @@ SLIArrayModule::RangeFunction::execute( SLIInterpreter* i ) const
       DoubleDatum* n1d = dynamic_cast< DoubleDatum* >( ad->get( 0 ).datum() );
       DoubleDatum* n2d = dynamic_cast< DoubleDatum* >( ad->get( 1 ).datum() );
       DoubleDatum* n3d = dynamic_cast< DoubleDatum* >( ad->get( 2 ).datum() );
-      if ( ( n1d ) && ( n2d ) && ( n3d ) )
+      if ( n1d and n2d and n3d )
       {
         double di = n3d->get();
         double start = n1d->get();
@@ -286,7 +283,7 @@ SLIArrayModule::ArangeFunction::execute( SLIInterpreter* i ) const
   {
     IntegerDatum* n1d = dynamic_cast< IntegerDatum* >( ad->get( 0 ).datum() );
     IntegerDatum* n2d = dynamic_cast< IntegerDatum* >( ad->get( 1 ).datum() );
-    if ( ( n1d ) && ( n2d ) )
+    if ( n1d and n2d )
     {
       const long start = n1d->get();
       const long stop = n2d->get();
@@ -310,7 +307,7 @@ SLIArrayModule::ArangeFunction::execute( SLIInterpreter* i ) const
     {
       DoubleDatum* n1d = dynamic_cast< DoubleDatum* >( ad->get( 0 ).datum() );
       DoubleDatum* n2d = dynamic_cast< DoubleDatum* >( ad->get( 1 ).datum() );
-      if ( ( n1d ) && ( n2d ) )
+      if ( n1d and n2d )
       {
         double start = n1d->get();
         double stop = n2d->get();
@@ -338,7 +335,7 @@ SLIArrayModule::ArangeFunction::execute( SLIInterpreter* i ) const
     IntegerDatum* n1d = dynamic_cast< IntegerDatum* >( ad->get( 0 ).datum() );
     IntegerDatum* n2d = dynamic_cast< IntegerDatum* >( ad->get( 1 ).datum() );
     IntegerDatum* n3d = dynamic_cast< IntegerDatum* >( ad->get( 2 ).datum() );
-    if ( ( n1d ) && ( n2d ) && ( n3d ) )
+    if ( n1d and n2d and n3d )
     {
       long di = n3d->get();
       long start = n1d->get();
@@ -372,7 +369,7 @@ SLIArrayModule::ArangeFunction::execute( SLIInterpreter* i ) const
       DoubleDatum* n1d = dynamic_cast< DoubleDatum* >( ad->get( 0 ).datum() );
       DoubleDatum* n2d = dynamic_cast< DoubleDatum* >( ad->get( 1 ).datum() );
       DoubleDatum* n3d = dynamic_cast< DoubleDatum* >( ad->get( 2 ).datum() );
-      if ( ( n1d ) && ( n2d ) && ( n3d ) )
+      if ( n1d and n2d and n3d )
       {
         double di = n3d->get();
         double start = n1d->get();
@@ -907,7 +904,7 @@ SLIArrayModule::ArraycreateFunction::execute( SLIInterpreter* i ) const
   const Token mark_token( new LiteralDatum( i->mark_name ) );
   bool found = false;
 
-  while ( ( n < depth ) && not found )
+  while ( n < depth and not found )
   {
     found = ( i->OStack.pick( n ) == mark_token );
     ++n;
@@ -1613,26 +1610,21 @@ void
 SLIArrayModule::IMapThreadFunction::execute( SLIInterpreter* i ) const
 {
   ProcedureDatum* procd = static_cast< ProcedureDatum* >( i->EStack.pick( 1 ).datum() );
-  //    assert(procd != NULL);
 
   size_t proclimit = procd->size();
 
   IntegerDatum* argcountd = static_cast< IntegerDatum* >( i->EStack.pick( 2 ).datum() );
-  //  assert(argcountd != NULL);
 
   size_t argcount = argcountd->get();
 
   IntegerDatum* proccountd = static_cast< IntegerDatum* >( i->EStack.pick( 3 ).datum() );
-  // assert(proccountd != NULL);
+
   size_t proccount = proccountd->get();
 
   ArrayDatum* sarray = static_cast< ArrayDatum* >( i->EStack.pick( 4 ).datum() );
-  // assert(sarray != NULL);
   ArrayDatum* tarray = static_cast< ArrayDatum* >( i->EStack.pick( 5 ).datum() );
-  // assert(tarray != NULL);
 
   IntegerDatum* limitd = static_cast< IntegerDatum* >( i->EStack.pick( 6 ).datum() );
-  // assert(limitd != NULL);
 
   size_t args = sarray->size(); // number of argument arrays
   size_t limit = limitd->get(); // number of arguments per array
@@ -2073,7 +2065,7 @@ SLIArrayModule::AreaFunction::execute( SLIInterpreter* i ) const
   IntegerDatum* a_y_d = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
   IntegerDatum* a_x_d = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
-  //   if(s_h_d == NULL)
+  //   if(not s_h_d)
   //   {
   //     i->raiseerror(i->ArgumentTypeError);
   //     return;
@@ -2337,12 +2329,12 @@ SLIArrayModule::Area2Function::execute( SLIInterpreter* i ) const
   IntegerDatum* a_y_d = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
   IntegerDatum* a_x_d = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
-  //   if(s_h_d == NULL)
+  //   if(not s_h_d)
   //   {
   //     i->raiseerror(i->ArgumentTypeError);
   //     return;
   //   }
-  //   if(s_w_d == NULL)
+  //   if(not s_w_d)
   //   {
   //     i->raiseerror(i->ArgumentTypeError);
   //     return;
@@ -2739,7 +2731,7 @@ SLIArrayModule::GaborFunction::execute( SLIInterpreter* i ) const
     i->raiseerror( "RangeCheck" );
     return;
   }
-  if ( ( ncol < 2 ) || ( nrow < 2 ) )
+  if ( ncol < 2 or nrow < 2 )
   {
     i->message( SLIInterpreter::M_ERROR, "Gabor_", "Matrix must have at least two rows and two columns." );
     i->raiseerror( "RangeCheck" );
@@ -2847,7 +2839,7 @@ SLIArrayModule::Gauss2dFunction::execute( SLIInterpreter* i ) const
     i->raiseerror( "RangeCheck" );
     return;
   }
-  if ( ( ncol < 2 ) || ( nrow < 2 ) )
+  if ( ncol < 2 or nrow < 2 )
   {
     i->message( SLIInterpreter::M_ERROR, "gauss2d_", "Matrix must have at least two rows and two columns." );
     i->raiseerror( "RangeCheck" );
@@ -3930,7 +3922,7 @@ SLIArrayModule::FiniteQ_dFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
   const double x = getValue< double >( i->OStack.pick( 0 ) );
 
-  BoolDatum res( -std::numeric_limits< double >::max() <= x && x <= std::numeric_limits< double >::max() );
+  BoolDatum res( -std::numeric_limits< double >::max() <= x and x <= std::numeric_limits< double >::max() );
   i->OStack.push( res );
   i->EStack.pop();
 }
@@ -4135,7 +4127,7 @@ eq_execute( SLIInterpreter* i )
   op1->unlock();
   const std::vector< D >* d2 = op2->get();
   op2->unlock();
-  bool eq = ( d1 == d2 || *d1 == *d2 );
+  bool eq = ( d1 == d2 or *d1 == *d2 );
 
   i->OStack.pop( 2 );
   i->OStack.push_by_pointer( new BoolDatum( eq ) );

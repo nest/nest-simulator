@@ -95,9 +95,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
 
   if ( force_singlethreading_ and n_threads > 1 )
   {
-    std::string msg = "Multithreading requested, but unavailable. Using a single thread.";
-    LOG( M_WARNING, "VPManager::set_status", msg );
-    n_threads = 1;
+    throw BadProperty( "This installation of NEST was built without support for multiple threads." );
   }
 
   // We only want to act if new values differ from the old
@@ -106,7 +104,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
 
   if ( n_threads_updated or n_vps_updated )
   {
-    if ( kernel().sp_manager.is_structural_plasticity_enabled() and ( n_threads > 1 ) )
+    if ( kernel().sp_manager.is_structural_plasticity_enabled() and n_threads > 1 )
     {
       throw KernelException( "Structural plasticity enabled: multithreading cannot be enabled." );
     }
@@ -157,7 +155,7 @@ nest::VPManager::get_status( DictionaryDatum& d )
 void
 nest::VPManager::set_num_threads( nest::thread n_threads )
 {
-  if ( kernel().sp_manager.is_structural_plasticity_enabled() and ( n_threads > 1 ) )
+  if ( kernel().sp_manager.is_structural_plasticity_enabled() and n_threads > 1 )
   {
     throw KernelException( "Multiple threads can not be used if structural plasticity is enabled" );
   }

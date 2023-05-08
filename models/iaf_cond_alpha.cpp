@@ -27,9 +27,7 @@
 
 // C++ includes:
 #include <cstdio>
-#include <iomanip>
 #include <iostream>
-#include <limits>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -41,10 +39,7 @@
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -62,7 +57,7 @@ template <>
 void
 RecordablesMap< iaf_cond_alpha >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &iaf_cond_alpha::get_y_elem_< iaf_cond_alpha::State_::V_M > );
   insert_( names::g_ex, &iaf_cond_alpha::get_y_elem_< iaf_cond_alpha::State_::G_EXC > );
   insert_( names::g_in, &iaf_cond_alpha::get_y_elem_< iaf_cond_alpha::State_::G_INH > );
@@ -235,7 +230,7 @@ nest::iaf_cond_alpha::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Refractory time cannot be negative." );
   }
-  if ( tau_synE <= 0 || tau_synI <= 0 )
+  if ( tau_synE <= 0 or tau_synI <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
@@ -374,10 +369,6 @@ nest::iaf_cond_alpha::pre_run_hook()
 void
 nest::iaf_cond_alpha::update( Time const& origin, const long from, const long to )
 {
-
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
 

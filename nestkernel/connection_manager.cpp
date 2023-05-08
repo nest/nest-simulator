@@ -95,13 +95,16 @@ nest::ConnectionManager::initialize()
   connections_.resize( num_threads );
   secondary_recv_buffer_pos_.resize( num_threads );
   sort_connections_by_source_ = true;
+  keep_source_table_ = true;
   connections_have_changed_ = false;
-
-  compressed_spike_data_.resize( 0 );
-  check_primary_connections_.initialize( num_threads, false );
-  check_secondary_connections_.initialize( num_threads, false );
-
   get_connections_has_been_called_ = false;
+  use_compressed_spikes_ = true;
+  compressed_spike_data_.resize( 0 );
+  has_primary_connections_ = false;
+  check_primary_connections_.initialize( num_threads, false );
+  secondary_connections_exist_ = false;
+  check_secondary_connections_.initialize( num_threads, false );
+  stdp_eps_ = 1.0e-6;
 
 #pragma omp parallel
   {
@@ -740,8 +743,8 @@ nest::ConnectionManager::connect_arrays( long* sources,
 }
 
 void
-nest::ConnectionManager::connect_( Node& s,
-  Node& r,
+nest::ConnectionManager::connect_( Node& source,
+  Node& target,
   const index s_node_id,
   const thread tid,
   const synindex syn_id,
@@ -749,27 +752,22 @@ nest::ConnectionManager::connect_( Node& s,
   const double delay,
   const double weight )
 {
-  const bool is_primary = kernel().model_manager.get_connection_model( syn_id, tid ).is_primary();
+  ConnectorModel& conn_model = kernel().model_manager.get_connection_model( syn_id, tid );
 
-  if ( kernel().model_manager.connector_requires_clopath_archiving( syn_id )
-    and not dynamic_cast< ClopathArchivingNode* >( &r ) )
+  const bool clopath_archiving = conn_model.has_property( ConnectionModelProperties::REQUIRES_CLOPATH_ARCHIVING );
+  if ( clopath_archiving and not dynamic_cast< ClopathArchivingNode* >( &target ) )
   {
-    throw NotImplemented(
-      "This synapse model is not supported by the neuron model of at least one "
-      "connection." );
+    throw NotImplemented( "This synapse model is not supported by the neuron model of at least one connection." );
   }
 
-  if ( kernel().model_manager.connector_requires_urbanczik_archiving( syn_id )
-    and not r.supports_urbanczik_archiving() )
+  const bool urbanczik_archiving = conn_model.has_property( ConnectionModelProperties::REQUIRES_URBANCZIK_ARCHIVING );
+  if ( urbanczik_archiving and not target.supports_urbanczik_archiving() )
   {
-    throw NotImplemented(
-      "This synapse model is not supported by the neuron model of at least one "
-      "connection." );
+    throw NotImplemented( "This synapse model is not supported by the neuron model of at least one  connection." );
   }
 
-  kernel()
-    .model_manager.get_connection_model( syn_id, tid )
-    .add_connection( s, r, connections_[ tid ], syn_id, params, delay, weight );
+  const bool is_primary = conn_model.has_property( ConnectionModelProperties::IS_PRIMARY );
+  conn_model.add_connection( source, target, connections_[ tid ], syn_id, params, delay, weight );
   source_table_.add_source( tid, syn_id, s_node_id, is_primary );
 
   increase_connection_count( tid, syn_id );
@@ -791,8 +789,8 @@ nest::ConnectionManager::connect_( Node& s,
 }
 
 void
-nest::ConnectionManager::connect_to_device_( Node& s,
-  Node& r,
+nest::ConnectionManager::connect_to_device_( Node& source,
+  Node& target,
   const index s_node_id,
   const thread tid,
   const synindex syn_id,
@@ -801,14 +799,14 @@ nest::ConnectionManager::connect_to_device_( Node& s,
   const double weight )
 {
   // create entries in connection structure for connections to devices
-  target_table_devices_.add_connection_to_device( s, r, s_node_id, tid, syn_id, params, delay, weight );
+  target_table_devices_.add_connection_to_device( source, target, s_node_id, tid, syn_id, params, delay, weight );
 
   increase_connection_count( tid, syn_id );
 }
 
 void
-nest::ConnectionManager::connect_from_device_( Node& s,
-  Node& r,
+nest::ConnectionManager::connect_from_device_( Node& source,
+  Node& target,
   const thread tid,
   const synindex syn_id,
   const DictionaryDatum& params,
@@ -816,7 +814,7 @@ nest::ConnectionManager::connect_from_device_( Node& s,
   const double weight )
 {
   // create entries in connections vector of devices
-  target_table_devices_.add_connection_from_device( s, r, tid, syn_id, params, delay, weight );
+  target_table_devices_.add_connection_from_device( source, target, tid, syn_id, params, delay, weight );
 
   increase_connection_count( tid, syn_id );
 }
@@ -895,7 +893,7 @@ nest::ConnectionManager::trigger_update_weight( const long vt_id,
   for ( std::vector< ConnectorBase* >::iterator it = connections_[ tid ].begin(); it != connections_[ tid ].end();
         ++it )
   {
-    if ( *it != NULL )
+    if ( *it )
     {
       ( *it )->trigger_update_weight(
         vt_id, tid, dopa_spikes, t_trig, kernel().model_manager.get_connection_models( tid ) );
@@ -981,10 +979,15 @@ nest::ConnectionManager::get_connections( const DictionaryDatum& params )
   // as this may involve sorting connections by source node IDs.
   if ( connections_have_changed() )
   {
-    if ( not kernel().simulation_manager.has_been_simulated() )
-    {
-      kernel().model_manager.create_secondary_events_prototypes();
-    }
+    // We need to update min_delay because it is used by check_wfr_use() below
+    // to set secondary event data size.
+    update_delay_extrema_();
+
+    // Check whether waveform relaxation is used on any MPI process;
+    // needs to be called before update_connection_infrastructure since
+    // it resizes coefficient arrays for secondary events
+    kernel().node_manager.check_wfr_use();
+
 #pragma omp parallel
     {
       const thread tid = kernel().vp_manager.get_thread_id();
@@ -1374,7 +1377,10 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions( con
 
     if ( connections_[ tid ][ syn_id ] )
     {
-      if ( not kernel().model_manager.get_connection_model( syn_id, tid ).is_primary() )
+      ConnectorModel& conn_model = kernel().model_manager.get_connection_model( syn_id, tid );
+      const bool is_primary = conn_model.has_property( ConnectionModelProperties::IS_PRIMARY );
+
+      if ( not is_primary )
       {
         positions.clear();
         const size_t lcid_end = get_num_connections_( tid, syn_id );
@@ -1462,7 +1468,7 @@ nest::ConnectionManager::connection_required( Node*& source, Node*& target, thre
       const bool target_vp_local = kernel().vp_manager.is_local_vp( target_vp );
       const thread target_thread = kernel().vp_manager.vp_to_thread( target_vp );
 
-      if ( target_vp_local && target_thread == tid )
+      if ( target_vp_local and target_thread == tid )
       {
         const index source_node_id = source->get_node_id();
         source = kernel().node_manager.get_node_or_proxy( source_node_id, target_thread );
@@ -1529,7 +1535,9 @@ nest::ConnectionManager::deliver_secondary_events( const thread tid,
   const synindex syn_id_end = positions_tid.size();
   for ( synindex syn_id = 0; syn_id < syn_id_end; ++syn_id )
   {
-    if ( not called_from_wfr_update or kernel().model_manager.get_connection_models( tid )[ syn_id ]->supports_wfr() )
+    const ConnectorModel& conn_model = kernel().model_manager.get_connection_model( syn_id );
+    const bool supports_wfr = conn_model.has_property( ConnectionModelProperties::SUPPORTS_WFR );
+    if ( not called_from_wfr_update or supports_wfr )
     {
       if ( positions_tid[ syn_id ].size() > 0 )
       {

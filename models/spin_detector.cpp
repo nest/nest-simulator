@@ -22,24 +22,17 @@
 
 #include "spin_detector.h"
 
-// C++ includes:
-#include <numeric>
 
 // Includes from libnestutil:
 #include "compose.hpp"
-#include "dict_util.h"
-#include "logging.h"
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
 
 // Includes from sli:
-#include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 nest::spin_detector::spin_detector()
   : last_in_node_id_( 0 )
@@ -134,7 +127,7 @@ nest::spin_detector::handle( SpikeEvent& e )
     long m = e.get_multiplicity();
     index node_id = e.get_sender_node_id();
     const Time& t_spike = e.get_stamp();
-    if ( m == 1 && node_id == last_in_node_id_ && t_spike == t_last_in_spike_ )
+    if ( m == 1 and node_id == last_in_node_id_ and t_spike == t_last_in_spike_ )
     {
       // received twice the same node ID, so transition 0->1
       // revise the last event

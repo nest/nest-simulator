@@ -245,7 +245,7 @@ private:
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
 
     /**
-     * Set values from dicitonary.
+     * Set values from dictionary.
      * @returns true if the state needs to be reset after a change of
      *          binwidth or tau_max.
      */
@@ -270,7 +270,7 @@ private:
     std::vector< long > n_events_; //!< spike counters
     SpikelistType incoming_;       //!< incoming spikes, sorted
                                    /** Weighted covariance matrix.
-                                    *  @note Data type is double to accomodate weights.
+                                    *  @note Data type is double to accommodate weights.
                                     */
     std::vector< std::vector< std::vector< double > > > covariance_;
 
@@ -300,7 +300,7 @@ private:
 inline port
 correlomatrix_detector::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type < 0 || receptor_type > P_.N_channels_ - 1 )
+  if ( receptor_type < 0 or receptor_type > P_.N_channels_ - 1 )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }

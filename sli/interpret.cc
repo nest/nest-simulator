@@ -31,19 +31,14 @@
 #include <ctime>
 #include <exception>
 #include <fstream>
-#include <functional>
 #include <sstream>
 #include <string>
-
-// Generated includes:
-#include "config.h"
 
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "numerics.h"
 
 // Includes from sli:
-#include "booldatum.h"
 #include "dictdatum.h"
 #include "dictstack.h"
 #include "dictutils.h"
@@ -54,9 +49,7 @@
 #include "iostreamdatum.h"
 #include "namedatum.h"
 #include "parser.h"
-#include "scanner.h"
 #include "stringdatum.h"
-#include "tokenutils.h"
 #include "triedatum.h"
 
 // This function is the only interface to the driver program
@@ -504,7 +497,7 @@ SLIInterpreter::addmodule( SLIModule* m )
   }
   catch ( SLIException& e )
   {
-    message( M_ERROR, "SLIInterpreter", ( "An error occured while loading module " + m->name() ).c_str() );
+    message( M_ERROR, "SLIInterpreter", ( "An error occurred while loading module " + m->name() ).c_str() );
     message( M_ERROR, "SLIInterpreter", e.what() );
     message( M_ERROR, "SLIInterpreter", e.message().c_str() );
     return;
@@ -512,14 +505,14 @@ SLIInterpreter::addmodule( SLIModule* m )
   catch ( std::exception& e )
   {
     message(
-      M_ERROR, "SLIInterpreter", ( "A C++ library exception occured while loading module " + m->name() ).c_str() );
+      M_ERROR, "SLIInterpreter", ( "A C++ library exception occurred while loading module " + m->name() ).c_str() );
     message( M_ERROR, "SLIInterpreter", e.what() );
     return;
   }
   catch ( ... )
   {
     message(
-      M_ERROR, "SLIInterpreter", ( "An unspecified exception occured while loading module " + m->name() ).c_str() );
+      M_ERROR, "SLIInterpreter", ( "An unspecified exception occurred while loading module " + m->name() ).c_str() );
     return;
   }
 
@@ -612,7 +605,7 @@ SLIInterpreter::raiseerror( std::exception& err )
   {
     // plain std::exception: turn what() output into message
     errordict->insert( Name( "message" ), std::string( err.what() ) );
-    raiseerror( caller, "C++Exception" );
+    raiseerror( caller, "CppException" );
   }
 }
 
@@ -882,7 +875,7 @@ SLIInterpreter::message( std::ostream& out,
 
   for ( size_t i = 0; i < text_str.size(); ++i )
   {
-    if ( text_str.at( i ) == '\n' && i != text_str.size() - 1 )
+    if ( text_str.at( i ) == '\n' and i != text_str.size() - 1 )
     {
       // Print a lineshift followed by an indented whitespace
       // Manually inserted lineshift at the end of the message
@@ -906,8 +899,8 @@ SLIInterpreter::message( std::ostream& out,
       // Start on a new line if the next word is longer than the
       // space available (as long as the word is shorter than the
       // total width of the printout).
-      if ( i != 0 && text_str.at( i - 1 ) == ' '
-        && static_cast< int >( space - i ) > static_cast< int >( width - pos ) )
+      if ( i != 0 and text_str.at( i - 1 ) == ' '
+        and static_cast< int >( space - i ) > static_cast< int >( width - pos ) )
       {
         out << std::endl << std::string( indent, ' ' );
         pos = 0;
@@ -915,7 +908,7 @@ SLIInterpreter::message( std::ostream& out,
 
       // Only print character if we're not at the end of the
       // line and the last character is a space.
-      if ( not( width - pos == 0 && text_str.at( i ) == ' ' ) )
+      if ( not( width - pos == 0 and text_str.at( i ) == ' ' ) )
       {
         // Print the actual character.
         out << text_str.at( i );
@@ -1099,7 +1092,7 @@ SLIInterpreter::debug_commandline( Token& next )
       {
         stack_backtrace( EStack.load() );
       }
-      else if ( arg == "next" || arg == "n" )
+      else if ( arg == "next" or arg == "n" )
       {
         std::cerr << "Next token: ";
         next.pprint( std::cerr );
@@ -1129,13 +1122,13 @@ SLIInterpreter::debug_commandline( Token& next )
         catch_errors_ = not catch_errors_;
         std::cerr << "Catch error mode is now " << ( catch_errors_ ? " On." : "Off." ) << std::endl;
       }
-      else if ( arg == "tailrecursion" || arg == "tail" )
+      else if ( arg == "tailrecursion" or arg == "tail" )
       {
         opt_tailrecursion_ = not opt_tailrecursion_;
         std::cerr << "Tail-recursion optimization is now " << ( opt_tailrecursion_ ? " On." : "Off." ) << std::endl;
       }
     }
-    else if ( command == "list" || command == "l" )
+    else if ( command == "list" or command == "l" )
     {
       c = 'l';
       break;
@@ -1151,11 +1144,11 @@ SLIInterpreter::debug_commandline( Token& next )
       catch_errors_ = true;
       std::cerr << "Catch error mode is now " << ( catch_errors_ ? " On." : "Off." ) << std::endl;
     }
-    else if ( command == "where" || command == "w" )
+    else if ( command == "where" or command == "w" )
     {
       stack_backtrace( EStack.load() );
     }
-    else if ( command == "edit" || command == "break" || command == "e" )
+    else if ( command == "edit" or command == "break" or command == "e" )
     {
       debug_mode_off();
       std::cerr << "Type 'continue', to exit interactive mode." << std::endl;
@@ -1174,15 +1167,15 @@ SLIInterpreter::debug_commandline( Token& next )
     {
       EStack.dump( std::cerr );
     }
-    else if ( command == "help" || command == "?" || command == "h" )
+    else if ( command == "help" or command == "?" or command == "h" )
     {
       debug_options();
     }
-    else if ( command == "next" || command == "n" )
+    else if ( command == "next" or command == "n" )
     {
       break;
     }
-    else if ( command == "continue" || command == "cont" || command == "c" )
+    else if ( command == "continue" or command == "cont" or command == "c" )
     {
       max_call_depth_ = call_depth_; // will show lower levels only
     }
@@ -1190,7 +1183,7 @@ SLIInterpreter::debug_commandline( Token& next )
     {
       max_call_depth_ = call_depth_ + 1; // will this level and lower.
     }
-    else if ( command == "quit" || command == "q" )
+    else if ( command == "quit" or command == "q" )
     {
       debug_mode_ = false;
       break;
@@ -1210,7 +1203,7 @@ SLIInterpreter::startup()
   static bool is_initialized = false;
   int exitcode = EXIT_SUCCESS;
 
-  if ( not is_initialized && EStack.load() > 0 )
+  if ( not is_initialized and EStack.load() > 0 )
   {
     exitcode = execute_(); // run the interpreter
     is_initialized = true;
@@ -1290,7 +1283,7 @@ SLIInterpreter::execute_debug_( size_t exitlevel )
   }
   catch ( std::exception& e )
   {
-    message( M_FATAL, "SLIInterpreter", "A C++ library exception occured." );
+    message( M_FATAL, "SLIInterpreter", "A C++ library exception occurred." );
     OStack.dump( std::cerr );
     EStack.dump( std::cerr );
     message( M_FATAL, "SLIInterpreter", e.what() );
@@ -1299,7 +1292,7 @@ SLIInterpreter::execute_debug_( size_t exitlevel )
   }
   catch ( ... )
   {
-    message( M_FATAL, "SLIInterpreter", "An unknown c++ exception occured." );
+    message( M_FATAL, "SLIInterpreter", "An unknown c++ exception occurred." );
     OStack.dump( std::cerr );
     EStack.dump( std::cerr );
     exitcode = getValue< long >( *exitcodes, "exception" );
@@ -1343,7 +1336,7 @@ SLIInterpreter::execute_( size_t exitlevel )
   }
   catch ( std::exception& e )
   {
-    message( M_FATAL, "SLIInterpreter", "A C++ library exception occured." );
+    message( M_FATAL, "SLIInterpreter", "A C++ library exception occurred." );
     OStack.dump( std::cerr );
     EStack.dump( std::cerr );
     message( M_FATAL, "SLIInterpreter", e.what() );
@@ -1352,7 +1345,7 @@ SLIInterpreter::execute_( size_t exitlevel )
   }
   catch ( ... )
   {
-    message( M_FATAL, "SLIInterpreter", "An unknown c++ exception occured." );
+    message( M_FATAL, "SLIInterpreter", "An unknown c++ exception occurred." );
     OStack.dump( std::cerr );
     EStack.dump( std::cerr );
     exitcode = getValue< long >( *exitcodes, "exception" );

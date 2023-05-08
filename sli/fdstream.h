@@ -156,7 +156,7 @@ protected:
   sync() override
   {
     std::streamsize size = pptr() - pbase();
-    if ( size > 0 && ::write( m_fd, m_outbuf, size ) != size )
+    if ( size > 0 and ::write( m_fd, m_outbuf, size ) != size )
     {
       return -1;
     }

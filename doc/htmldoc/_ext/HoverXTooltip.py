@@ -25,8 +25,6 @@ import sys
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
 
-from conf import doc_build_dir
-
 
 class HoverXTooltipDirective(Directive):
     """Directive to add a tooltip.
@@ -117,8 +115,7 @@ def hxt_role(pattern):
             return [hover_raw_node, js_raw_node], []
 
         except Exception as e:
-            print("Something went wrong while parsing the hxt pattern: ({e})"
-                  .format(e))
+            print(f"Something went wrong while parsing the hxt pattern: ({e})")
             sys.exit(-1)
 
     return role
@@ -138,15 +135,16 @@ def hxt_role_ref(pattern):
         term = pattern % (text,)
         desc = get_desc_from_glossary(term)
 
+        term_conv = term.replace(" ", "-")
         base_url = inliner.document.attributes['source']
 
         # for rtd builds
         if os.environ.get("READTHEDOCS") == "True":
             branch_name = base_url.split('/doc/')[0].split('/')[-1]
-            refuri = (f'/en/{branch_name}/ref_material/glossary.html#term-{term}')
+            refuri = (f'/en/{branch_name}/ref_material/glossary.html#term-{term_conv}')
         # for local builds
         else:
-            refuri = base_url.split('htmldoc')[0] + f'htmldoc/html/glossary.html#term-{term}'
+            refuri = base_url.split('htmldoc')[0] + f'htmldoc/html/ref_material/glossary.html#term-{term_conv}'
 
         # the tag in which the term and description is defined.
         ref_tag = "<a class='reference external' " \
@@ -209,7 +207,7 @@ def get_desc_from_glossary(term):
     """
 
     try:
-        with open(str(doc_build_dir) + '/ref_material/glossary.rst') as f:
+        with open('ref_material/glossary.rst') as f:
             file_content = f.read()
 
         # generate a list of lines from file content.
@@ -219,7 +217,7 @@ def get_desc_from_glossary(term):
         glossary_dict = {}  # dictionary that holds terms and descriptions.
         for idx, line in enumerate(raw_file_content):
             # detect a term based on value of first column.
-            if len(line) > 1 and line[1] is not ' ':
+            if len(line) > 1 and line[1] != ' ':
                 # the key is the term in the dictionary.
                 key = line.strip('\n')
                 # the value is the description (which is on the next line).
@@ -242,8 +240,8 @@ def setup(app):
         TYPE: Description
     """
     # add external css/js files
-    app.add_js_file('js/bootstrap.min.js')
-    app.add_css_file('css/bootstrap.min.css')
+    app.add_js_file('js/bootstrap/bootstrap.bundle.min.js')
+    app.add_css_file('css/bootstrap/bootstrap.min.css')
 
     # add custom css file
     app.add_css_file('css/hoverxtooltip.css')

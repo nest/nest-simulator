@@ -166,7 +166,7 @@ nest::CompTree::CompTree()
 
 /**
  * Add a compartment to the tree structure via the python interface
- * root shoud have -1 as parent index. Add root compartment first.
+ * root should have -1 as parent index. Add root compartment first.
  * Assumes parent of compartment is already added
  */
 void
@@ -247,14 +247,14 @@ nest::CompTree::get_compartment( const long compartment_index, Compartment* comp
   else
   {
     auto child_it = compartment->children.begin();
-    while ( ( not r_compartment ) && child_it != compartment->children.end() )
+    while ( not r_compartment and child_it != compartment->children.end() )
     {
       r_compartment = get_compartment( compartment_index, &( *child_it ), 0 );
       ++child_it;
     }
   }
 
-  if ( ( not r_compartment ) && raise_flag )
+  if ( not r_compartment and raise_flag )
   {
     std::string msg = "does not exist in tree";
     throw UnknownCompartment( compartment_index, msg );

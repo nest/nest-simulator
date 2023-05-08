@@ -13,7 +13,7 @@ documentation. To learn more about the syntax, check out this `quick
 reference
 <https://thomas-cokelaer.info/tutorials/sphinx/rest_syntax.html>`_.
 
-The NEST simulator documentation lives alongside its code. It is
+The NEST Simulator documentation lives alongside its code. It is
 contained in the ``doc/htmldoc`` directory within the `NEST source
 code repository <https://github.com/nest/nest-simulator>`_ on GitHub.
 
@@ -71,6 +71,12 @@ documentation and avoid using Conda, you can use pip:
 
     pip3 install -r <nest_source_dir>/doc/requirements.txt
 
+If you use pip, install ``pandoc`` from your platform's package manager (e.g. apt):
+
+.. code-block:: bash
+
+    sudo apt-get install pandoc
+
 
 Generating documentation with Sphinx
 ++++++++++++++++++++++++++++++++++++
@@ -84,37 +90,38 @@ Rendering HTML
 You can build and preview the documentation locally by running the following
 commands.
 
-1. Go to the :ref:`build directory <dev_install>` of NEST (i.e., the
-directory where you ran ``cmake``)
+1. Clone the NEST repository:
 
 .. code-block:: bash
 
-   cd nest-simulator-x.y.z-build
+  git clone git@github.com:nest/nest-simulator
 
-2. Generate HTML files
-
-.. code-block:: bash
-
-   make html
-
-3. Preview files. They are located in ``doc/htmldoc/html``
+2. Navigate to the ``doc/htmldoc`` folder:
 
 .. code-block:: bash
 
-   browser doc/htmldoc/html/index.html
+   cd nest-simulator/doc/htmldoc
 
-To install the documentation under ``<nest_install_dir>`` along with
-the rest of NEST, the ``make html`` command can be followed by
+3. Build the docs:
+
+.. code-black:: bash
+
+   sphinx-build . ../_build/html -b html
+
+4. Preview files. They are located in ``doc/_build/html``
 
 .. code-block:: bash
 
-   make install
+   browser ../_build/html/index.html
 
-If you want to view the files after installation, you can run
+.. tip::
 
-.. code-block:: bash
+   You can also build the user documentation in the build directory with CMake:
 
-   browser <nest_install_dir>/share/doc/nest/html/index.html
+   .. code-block:: bash
+
+       cmake -Dwith-userdoc=ON </path/to/NEST/src>
+       make docs
 
 Editing and creating pages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -127,7 +134,7 @@ sphinx/rest_syntax.html>`_ files or to create new ones, follow the steps below:
 
 2. If you create a new page, open ``index.rst`` in the ``doc/htmldoc`` directory
    and add the file name under ``.. toctree::``. This will ensure it appears on
-   the NEST simulator documentation's table of contents.
+   the NEST Simulator documentation's table of contents.
 
 3. If you rename or move a file, please make sure you update all the
    corresponding cross-references.
@@ -164,7 +171,7 @@ Docs.
    import-guide.html#building-your-documentation>`_ your documentation.
 
 This allows you to preview your work on your Read the Docs account. In order
-to see the changes on the official NEST simulator documentation, please submit
+to see the changes on the official NEST Simulator documentation, please submit
 a pull request.
 
 Creating pull request

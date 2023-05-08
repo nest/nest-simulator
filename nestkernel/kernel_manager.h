@@ -60,11 +60,13 @@
                                                      s; read only).
  min_update_time                       doubletype  - Shortest wall-clock time measured so far for a full update step (in
                                                      s; read only).
- ms_per_tic                            doubletype  - The number of milliseconds per tic, defaults to 0.001.
+ ms_per_tic                            doubletype  - The number of milliseconds per tic, calculated by
+                                                     ms_per_tic = 1 / tics_per_ms (read_only).
  resolution                            doubletype  - The resolution of the simulation (in ms), defaults to 0.1.
  time                                  doubletype  - The current simulation time (in ms).
  tics_per_ms                           doubletype  - The number of tics per millisecond, defaults to 1000.0.
- tics_per_step                         integertype - The number of tics per simulation time step, defaults to 100.
+ tics_per_step                         integertype - The number of tics per simulation time step, calculated by
+                                                     tics_per_step = resolution * tics_per_ms (read_only).
  to_do                                 integertype - The number of steps yet to be simulated (read only).
  T_max                                 doubletype  - The largest representable time value (in ms; read only).
  T_min                                 doubletype  - The smallest representable time value (in ms; read only).
@@ -78,8 +80,10 @@
                                                      defaults to true.
  adaptive_target_buffers               booltype    - Whether MPI buffers for communication of connections resize on the
                                                      fly, defaults to true.
- buffer_size_secondary_events          integertype - Size of MPI buffers for communicating secondary events (in bytes;
-                                                     per MPI rank; for developers; read only).
+ send_buffer_size_secondary_events     integertype - Size of MPI send buffers for communicating secondary events (in
+                                                     bytes; per MPI rank; for developers; read only).
+ recv_buffer_size_secondary_events     integertype - Size of MPI recv buffers for communicating secondary events (in
+                                                     bytes; per MPI rank; for developers; read only).
  buffer_size_spike_data                integertype - Total size of MPI buffer for communication of spikes, defaults to
                                                      2.
  buffer_size_target_data               integertype - Total size of MPI buffer for communication of connections, defaults
@@ -144,7 +148,7 @@
                                                      element.
  structural_plasticity_update_interval integertype - Defines the time interval in ms at which the structural plasticity
                                                      manager will make changes in the structure of the network (creation
-                                                     and deletion of plastic synapses), defaults to 10000.0.
+                                                     and deletion of plastic synapses), defaults to 10000.
  synapse_models                        arraytype   - The list of the available synapse models (read only).
 
  Waveform relaxation method (wfr)

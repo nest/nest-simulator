@@ -105,7 +105,8 @@ public:
 
   void cleanup() override;
 
-  void write( const NESTObjectInterface&, const Event&, const std::vector< double >&, const std::vector< long >& ) override;
+  void
+  write( const NESTObjectInterface&, const Event&, const std::vector< double >&, const std::vector< long >& ) override;
 
   void pre_run_hook() override;
 

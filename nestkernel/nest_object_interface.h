@@ -215,6 +215,11 @@ private:
    */
   virtual DictionaryDatum get_status_dict_();
 
+  /**
+   * Set the original NodeCollection of this node.
+   */
+  void set_nc_( NodeCollectionPTR );
+
 
 private:
   /**
@@ -270,6 +275,13 @@ NESTObjectInterface::get_nc() const
 {
   return nc_ptr_;
 }
+
+inline void
+NESTObjectInterface::set_nc_( NodeCollectionPTR nc_ptr )
+{
+  nc_ptr_ = nc_ptr;
+}
+
 
 inline void
 NESTObjectInterface::set_model_id( int i )

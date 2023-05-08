@@ -710,11 +710,6 @@ public:
   DeprecationWarning deprecation_warning;
 
 private:
-  /**
-   * Set the original NodeCollection of this node.
-   */
-  void set_nc_( NodeCollectionPTR );
-
 protected:
   /**
    * Configure state variables depending on runtime information.
@@ -827,14 +822,6 @@ inline Name
 Node::get_element_type() const
 {
   return names::neuron;
-}
-
-
-
-inline void
-Node::set_nc_( NodeCollectionPTR nc_ptr )
-{
-  nc_ptr_ = nc_ptr;
 }
 
 template < typename ConcreteNode >

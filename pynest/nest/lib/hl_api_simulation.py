@@ -28,7 +28,6 @@ import warnings
 
 from ..ll_api import check_stack, sps, sr, spp
 from .hl_api_helper import is_iterable, is_literal
-from .hl_api_parallel_computing import Rank
 
 __all__ = [
     'Cleanup',
@@ -127,7 +126,7 @@ def Prepare():
 def Cleanup():
     """Cleans up resources after a `Run` calls.
 
-    `Cleanup` is automatically called by `Simulate` and `RunManager` .
+    `Cleanup` is automatically called by `Simulate` and `RunManager`.
 
     Closes state for a series of runs, such as flushing and closing files.
     A `Prepare` is needed after a `Cleanup` before any more calls to `Run`.

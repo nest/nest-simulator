@@ -380,9 +380,6 @@ nest::hh_cond_exp_traub::pre_run_hook()
 void
 nest::hh_cond_exp_traub::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
 

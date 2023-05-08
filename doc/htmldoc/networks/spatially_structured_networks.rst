@@ -403,11 +403,6 @@ be of interest:
     :start-after: #{ layer1s #}
     :end-before: #{ end #}
 
-.. literalinclude:: scripts/layers.log
-    :start-after: #{ layer1s.log #}
-    :end-before: #{ end.log #}
-
-
 
 The ``spatial`` property is read-only; changing any value will
 not change properties of the spatially distributed NodeCollection.
@@ -422,10 +417,6 @@ not change properties of the spatially distributed NodeCollection.
 .. literalinclude:: scripts/layers.py
     :start-after: #{ layer1p #}
     :end-before: #{ end #}
-
-.. literalinclude:: scripts/layers.log
-    :start-after: #{ layer1p.log #}
-    :end-before: #{ end.log #}
 
 .. _sec_connections:
 
@@ -540,7 +531,7 @@ targets.
 Here is a simple example, cf. :numref:`fig_conn1`
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn1 #}
+    :start-after: # { conn1 #}
     :end-before: #{ end #}
 
 .. _fig_conn1:

@@ -7,7 +7,7 @@ Get help on the command line interface
 
 * To access the High-level Python API reference material you can use the commands:
 
-.. code-block:: python
+.. code-block::
 
    # list all functions and attributes
    dir(nest)

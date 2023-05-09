@@ -3,7 +3,8 @@
 NEST SONATA guide 
 =====================
 
-NEST supports building and simulating networks of point neurons described by the SONATA format [1]_. 
+NEST supports building and simulating networks of point neurons described by the
+`SONATA <https://github.com/AllenInstitute/sonata>`_ format [1]_. 
 This guide provides the details about how a SONATA network must be specified to be supported natively by NEST.
 
 .. _sec:sonata_configure:

@@ -139,6 +139,10 @@ EventDeliveryManager::get_status( DictionaryDatum& dict )
   def< double >( dict, names::time_communicate_spike_data, sw_communicate_spike_data_.elapsed() );
   def< double >( dict, names::time_deliver_spike_data, sw_deliver_spike_data_.elapsed() );
   def< double >( dict, names::time_communicate_target_data, sw_communicate_target_data_.elapsed() );
+  def< double >( dict, names::time_deliver_conn, sw_deliver_conn_.elapsed() );
+  def< double >( dict, names::time_stdp_delivery, sw_stdp_delivery_.elapsed() );
+  def< double >( dict, names::time_static_delivery, sw_static_delivery_.elapsed() );
+  def< double >( dict, names::time_node_archive, sw_node_archive_.elapsed() );
 #endif
 }
 
@@ -286,6 +290,10 @@ EventDeliveryManager::reset_timers_for_dynamics()
   sw_collocate_spike_data_.reset();
   sw_communicate_spike_data_.reset();
   sw_deliver_spike_data_.reset();
+  sw_deliver_conn_.reset();
+  sw_stdp_delivery_.reset();
+  sw_static_delivery_.reset();
+  sw_node_archive_.reset();
 #endif
 }
 
@@ -613,6 +621,9 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
       se.set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
       se.set_offset( spike_data.get_offset() );
 
+#ifdef TIMER_DETAILED
+      sw_deliver_conn_.start();
+#endif
       if ( not kernel().connection_manager.use_compressed_spikes() )
       {
         if ( spike_data.get_tid() == tid )
@@ -641,6 +652,9 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
           }
         }
       }
+#ifdef TIMER_DETAILED
+      sw_deliver_conn_.stop();
+#endif
 
       // break if this was the last valid entry from this rank
       if ( spike_data.is_end_marker() )

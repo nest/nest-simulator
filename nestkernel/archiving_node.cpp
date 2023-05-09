@@ -104,6 +104,10 @@ ArchivingNode::register_stdp_connection( double t_first_read, double delay )
 double
 ArchivingNode::get_K_value( double t )
 {
+#ifdef TIMER_DETAILED
+  if ( get_thread() == 0 )
+    kernel().event_delivery_manager.sw_node_archive_.start();
+#endif
   // case when the neuron has not yet spiked
   if ( history_.empty() )
   {
@@ -126,12 +130,20 @@ ArchivingNode::get_K_value( double t )
   // this case occurs when the trace was requested at a time precisely at or
   // before the first spike in the history
   trace_ = 0.;
+#ifdef TIMER_DETAILED
+  if ( get_thread() == 0 )
+    kernel().event_delivery_manager.sw_node_archive_.stop();
+#endif
   return trace_;
 }
 
 void
 ArchivingNode::get_K_values( double t, double& K_value, double& nearest_neighbor_K_value, double& K_triplet_value )
 {
+#ifdef TIMER_DETAILED
+  if ( get_thread() == 0 )
+    kernel().event_delivery_manager.sw_node_archive_.start();
+#endif
   // case when the neuron has not yet spiked
   if ( history_.empty() )
   {
@@ -162,6 +174,10 @@ ArchivingNode::get_K_values( double t, double& K_value, double& nearest_neighbor
   K_triplet_value = 0.0;
   nearest_neighbor_K_value = 0.0;
   K_value = 0.0;
+#ifdef TIMER_DETAILED
+  if ( get_thread() == 0 )
+    kernel().event_delivery_manager.sw_node_archive_.stop();
+#endif
 }
 
 void
@@ -170,6 +186,10 @@ ArchivingNode::get_history( double t1,
   std::deque< histentry >::iterator* start,
   std::deque< histentry >::iterator* finish )
 {
+#ifdef TIMER_DETAILED
+  if ( get_thread() == 0 )
+    kernel().event_delivery_manager.sw_node_archive_.start();
+#endif
   *finish = history_.end();
   if ( history_.empty() )
   {
@@ -190,6 +210,10 @@ ArchivingNode::get_history( double t1,
     ++runner;
   }
   *start = runner.base();
+#ifdef TIMER_DETAILED
+  if ( get_thread() == 0 )
+    kernel().event_delivery_manager.sw_node_archive_.stop();
+#endif
 }
 
 void
@@ -201,6 +225,10 @@ ArchivingNode::set_spiketime( Time const& t_sp, double offset )
 
   if ( n_incoming_ )
   {
+#ifdef TIMER_DETAILED
+    if ( get_thread() == 0 )
+      kernel().event_delivery_manager.sw_node_archive_.start();
+#endif
     // prune all spikes from history which are no longer needed
     // only remove a spike if:
     // - its access counter indicates it has been read out by all connected
@@ -226,6 +254,10 @@ ArchivingNode::set_spiketime( Time const& t_sp, double offset )
     Kminus_triplet_ = Kminus_triplet_ * std::exp( ( last_spike_ - t_sp_ms ) * tau_minus_triplet_inv_ ) + 1.0;
     last_spike_ = t_sp_ms;
     history_.push_back( histentry( last_spike_, Kminus_, Kminus_triplet_, 0 ) );
+#ifdef TIMER_DETAILED
+    if ( get_thread() == 0 )
+      kernel().event_delivery_manager.sw_node_archive_.stop();
+#endif
   }
   else
   {
@@ -372,8 +404,16 @@ ArchivingNode::correct_synapses_stdp_ax_delay_( const Time& t_spike )
           &it_corr_entry->weight_revert_,
           t_spike.get_ms() );
       }
+#ifdef TIMER_DETAILED
+      if ( get_thread() == 0 )
+        kernel().event_delivery_manager.sw_node_archive_.start();
+#endif
       // indicate that the new spike was processed by these STDP synapses
       history_.back().access_counter_ += correction_entries_stdp_ax_delay_[ idx ].size();
+#ifdef TIMER_DETAILED
+      if ( get_thread() == 0 )
+        kernel().event_delivery_manager.sw_node_archive_.stop();
+#endif
     }
   }
 }

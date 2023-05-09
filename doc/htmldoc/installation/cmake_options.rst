@@ -89,8 +89,7 @@ External libraries
 +-------------------------------------------------------+------------------------------------------------------------------------------------------------+
 +-------------------------------------------------------+------------------------------------------------------------------------------------------------+
 | ``-Dwith-hdf5=[OFF|ON|</path/to/hdf5>]``              | Build with `HDF5 <https://hdfgroup.org/>`_ library [default=OFF]. To set a specific library,   |
-|                                                       | give the install path. HDF5 is required for                                                    |
-|                                                       | `SONATA <https://github.com/AllenInstitute/sonata>`_ support.                                  |
+|                                                       | give the install path. HDF5 is required for SONATA support, see :ref:`nest_sonata`.            |
 +-------------------------------------------------------+------------------------------------------------------------------------------------------------+
 
 NEST properties

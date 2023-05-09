@@ -106,7 +106,7 @@ class SonataNetwork:
         self._edges_maps = []
         self._hyperslab_size_default = 2**20
 
-        self._is_nodes_created = False
+        self._are_nodes_created = False
         self._is_network_built = False
 
         self._conf = self._parse_config(config)
@@ -229,7 +229,7 @@ class SonataNetwork:
                 )
                 raise ValueError(msg)
 
-        self._is_nodes_created = True
+        self._are_nodes_created = True
 
         return self._node_collections
 
@@ -456,7 +456,7 @@ class SonataNetwork:
             to create the connections. Default: ``2**20``.
         """
 
-        if not self._is_nodes_created:
+        if not self._are_nodes_created:
             msg = (
                 "The SONATA network nodes must be created before any "
                 "connections can be made"

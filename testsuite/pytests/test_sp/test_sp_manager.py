@@ -109,7 +109,7 @@ class TestStructuralPlasticityManager(unittest.TestCase):
             'Den_in': growth_curve,
             'Axon_ex': growth_curve,
         }
-        nodes = nest.Create(neuron_model,
+        nodes = nest.Create(neuron_model,                               # noqa: F841
                             2,
                             {'synaptic_elements': synaptic_elements}
                             )

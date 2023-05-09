@@ -95,13 +95,16 @@ nest::ConnectionManager::initialize()
   connections_.resize( num_threads );
   secondary_recv_buffer_pos_.resize( num_threads );
   sort_connections_by_source_ = true;
+  keep_source_table_ = true;
   connections_have_changed_ = false;
-
-  compressed_spike_data_.resize( 0 );
-  check_primary_connections_.initialize( num_threads, false );
-  check_secondary_connections_.initialize( num_threads, false );
-
   get_connections_has_been_called_ = false;
+  use_compressed_spikes_ = true;
+  compressed_spike_data_.resize( 0 );
+  has_primary_connections_ = false;
+  check_primary_connections_.initialize( num_threads, false );
+  secondary_connections_exist_ = false;
+  check_secondary_connections_.initialize( num_threads, false );
+  stdp_eps_ = 1.0e-6;
 
 #pragma omp parallel
   {
@@ -975,6 +978,15 @@ nest::ConnectionManager::get_connections( const DictionaryDatum& params )
   // as this may involve sorting connections by source node IDs.
   if ( connections_have_changed() )
   {
+    // We need to update min_delay because it is used by check_wfr_use() below
+    // to set secondary event data size.
+    update_delay_extrema_();
+
+    // Check whether waveform relaxation is used on any MPI process;
+    // needs to be called before update_connection_infrastructure since
+    // it resizes coefficient arrays for secondary events
+    kernel().node_manager.check_wfr_use();
+
 #pragma omp parallel
     {
       const thread tid = kernel().vp_manager.get_thread_id();

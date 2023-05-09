@@ -299,6 +299,8 @@ jobs:
           fetch-depth: 0
       - name: "Run black..."
         uses: psf/black@23.3.0
+        with:
+          jupyter: true
 
   flake8:
     runs-on: "ubuntu-20.04"

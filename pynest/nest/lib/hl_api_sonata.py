@@ -464,9 +464,9 @@ class SonataNetwork:
             raise kernel.NESTError(msg)
 
         if hdf5_hyperslab_size is None:
-            hyperslab_size = self._hyperslab_size_default
+            hdf5_hyperslab_size = self._hyperslab_size_default
 
-        self._verify_hyperslab_size(hyperslab_size)
+        self._verify_hyperslab_size(hdf5_hyperslab_size)
 
         graph_specs = self._create_graph_specs()
 
@@ -481,7 +481,7 @@ class SonataNetwork:
                 ) from None
 
         sps(graph_specs)
-        sps(hyperslab_size)
+        sps(hdf5_hyperslab_size)
         sr("ConnectSonata")
 
         self._is_network_built = True

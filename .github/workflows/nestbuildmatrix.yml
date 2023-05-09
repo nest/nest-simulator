@@ -335,22 +335,27 @@ jobs:
       - name: "Set up Python 3.x"
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          # Using 3.8 because Read the docs does not work with higher versions.
+          # See also: https://github.com/nest/nest-simulator/pull/2744
+          python-version: 3.8
 
       - name: "Install dependencies"
         run: |
           pip install -r doc/requirements.txt
+          # The pandoc executable, which is required, cannot be installed via pip see: https://stackoverflow.com/a/71585691
+          sudo apt install pandoc
 
       - name: "Test-build documentation"
         run: |
           mkdir -pv build
           cd build
-          cmake -DCMAKE_INSTALL_PREFIX=../install ..
-          make html |& tee sphinx-output.log
+          cmake -Dwith-userdoc=ON -DCMAKE_INSTALL_PREFIX=../install ..
+          make docs |& tee sphinx-output.log
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
+          name: "sphinx-rtd output"
           path: |
             build/sphinx-output.log
             build/userdoc/html/

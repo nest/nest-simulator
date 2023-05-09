@@ -91,11 +91,13 @@ public:
      */
     iterator( Ntree& q, index n );
 
-    value_type& operator*()
+    value_type&
+    operator*()
     {
       return ntree_->nodes_[ node_ ];
     }
-    value_type* operator->()
+    value_type*
+    operator->()
     {
       return &ntree_->nodes_[ node_ ];
     }
@@ -173,11 +175,13 @@ public:
      */
     masked_iterator( Ntree& q, const Mask< D >& mask, const Position< D >& anchor );
 
-    value_type& operator*()
+    value_type&
+    operator*()
     {
       return ntree_->nodes_[ node_ ];
     }
-    value_type* operator->()
+    value_type*
+    operator->()
     {
       return &ntree_->nodes_[ node_ ];
     }

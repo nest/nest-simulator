@@ -192,7 +192,8 @@ private:
 
 public:
   //! variant fields
-  union {
+  union
+  {
     TargetDataFields target_data;
     SecondaryTargetDataFields secondary_data;
   };

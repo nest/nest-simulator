@@ -35,7 +35,8 @@ BoolIndicatorUInt64::BoolIndicatorUInt64( const bool status )
 {
 }
 
-BoolIndicatorUInt64& PerThreadBoolIndicator::operator[]( const thread tid )
+BoolIndicatorUInt64&
+PerThreadBoolIndicator::operator[]( const thread tid )
 {
   return per_thread_status_[ tid ];
 }

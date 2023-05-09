@@ -645,7 +645,8 @@ NodeCollection::operator!=( NodeCollectionPTR rhs ) const
   return not( *this == rhs );
 }
 
-inline void NodeCollection::set_metadata( NodeCollectionMetadataPTR )
+inline void
+NodeCollection::set_metadata( NodeCollectionMetadataPTR )
 {
   throw KernelException( "Cannot set Metadata on this type of NodeCollection." );
 }
@@ -693,7 +694,8 @@ nc_const_iterator::get_current_part_offset( size_t& part, size_t& offset ) const
   offset = element_idx_;
 }
 
-inline index NodeCollectionPrimitive::operator[]( const size_t idx ) const
+inline index
+NodeCollectionPrimitive::operator[]( const size_t idx ) const
 {
   // throw exception if outside of NodeCollection
   if ( first_ + idx > last_ )

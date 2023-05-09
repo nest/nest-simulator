@@ -5,3 +5,6 @@ markers = [
     "skipif_missing_threads: skip test if NEST was built without multithreading support",
     "simulation: the simulation class to use. Always pass a 2nd dummy argument"
 ]
+
+[tool.black]
+line-length = 120

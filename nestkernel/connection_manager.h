@@ -165,9 +165,9 @@ public:
    * function `connect`.
    *
    * @param graph_specs Specification dictionary, see PyNEST `SonataNetwork._create_graph_specs` for details.
-   * @param chunk_size Size of the chunk to read in one read operation, applies to all HDF5 datasets.
+   * @param hyberslab_size Size of the hyperslab to read in one read operation, applies to all HDF5 datasets.
    */
-  void connect_sonata( const DictionaryDatum& graph_specs, const long chunk_size );
+  void connect_sonata( const DictionaryDatum& graph_specs, const long hyberslab_size );
 
   index find_connection( const thread tid, const synindex syn_id, const index snode_id, const index tnode_id );
 

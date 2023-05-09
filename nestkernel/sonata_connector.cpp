@@ -42,9 +42,9 @@ extern "C" herr_t get_member_names_callback_( hid_t loc_id, const char* name, co
 namespace nest
 {
 
-SonataConnector::SonataConnector( const DictionaryDatum& graph_specs, const long chunk_size )
+SonataConnector::SonataConnector( const DictionaryDatum& graph_specs, const long hyperslab_size )
   : graph_specs_( graph_specs )
-  , chunk_size_( chunk_size )
+  , hyperslab_size_( hyperslab_size )
   , weight_dataset_exist_( false )
   , delay_dataset_exist_( false )
 {
@@ -333,21 +333,21 @@ SonataConnector::sequential_chunkwise_connector_()
   // Retrieve number of connections described by datasets
   const auto num_conn = get_nrows_( tgt_node_id_dset_ );
 
-  //  Adjust if chunk_size is too large
-  if ( num_conn < chunk_size_ )
+  //  Adjust if hyperslab (chunk) size is too large
+  if ( num_conn < hyperslab_size_ )
   {
-    chunk_size_ = num_conn;
+    hyperslab_size_ = num_conn;
   }
 
   // organize chunks; dv.quot = integral quotient, dv.rem = reaminder
-  auto dv = std::div( static_cast< long long >( num_conn ), static_cast< long long >( chunk_size_ ) );
+  auto dv = std::div( static_cast< long long >( num_conn ), static_cast< long long >( hyperslab_size_ ) );
 
   // Iterate chunks
   hsize_t offset = 0; // start coordinates of data selection
   for ( long long i = 0; i < dv.quot; i++ )
   {
-    connect_chunk_( chunk_size_, offset );
-    offset += chunk_size_;
+    connect_chunk_( hyperslab_size_, offset );
+    offset += hyperslab_size_;
   }
 
   // Handle remainder
@@ -358,29 +358,29 @@ SonataConnector::sequential_chunkwise_connector_()
 }
 
 void
-SonataConnector::connect_chunk_( const hsize_t chunk_size, const hsize_t offset )
+SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t offset )
 {
 
   // Read subsets
-  std::vector< unsigned long > src_node_id_data_subset( chunk_size );
-  std::vector< unsigned long > tgt_node_id_data_subset( chunk_size );
-  std::vector< unsigned long > edge_type_id_data_subset( chunk_size );
+  std::vector< unsigned long > src_node_id_data_subset( hyperslab_size );
+  std::vector< unsigned long > tgt_node_id_data_subset( hyperslab_size );
+  std::vector< unsigned long > edge_type_id_data_subset( hyperslab_size );
   std::vector< double > syn_weight_data_subset;
   std::vector< double > delay_data_subset;
 
-  read_subset_( src_node_id_dset_, src_node_id_data_subset, H5::PredType::NATIVE_LONG, chunk_size, offset );
-  read_subset_( tgt_node_id_dset_, tgt_node_id_data_subset, H5::PredType::NATIVE_LONG, chunk_size, offset );
-  read_subset_( edge_type_id_dset_, edge_type_id_data_subset, H5::PredType::NATIVE_LONG, chunk_size, offset );
+  read_subset_( src_node_id_dset_, src_node_id_data_subset, H5::PredType::NATIVE_LONG, hyperslab_size, offset );
+  read_subset_( tgt_node_id_dset_, tgt_node_id_data_subset, H5::PredType::NATIVE_LONG, hyperslab_size, offset );
+  read_subset_( edge_type_id_dset_, edge_type_id_data_subset, H5::PredType::NATIVE_LONG, hyperslab_size, offset );
 
   if ( weight_dataset_exist_ )
   {
-    syn_weight_data_subset.resize( chunk_size );
-    read_subset_( syn_weight_dset_, syn_weight_data_subset, H5::PredType::NATIVE_DOUBLE, chunk_size, offset );
+    syn_weight_data_subset.resize( hyperslab_size );
+    read_subset_( syn_weight_dset_, syn_weight_data_subset, H5::PredType::NATIVE_DOUBLE, hyperslab_size, offset );
   }
   if ( delay_dataset_exist_ )
   {
-    delay_data_subset.resize( chunk_size );
-    read_subset_( delay_dset_, delay_data_subset, H5::PredType::NATIVE_DOUBLE, chunk_size, offset );
+    delay_data_subset.resize( hyperslab_size );
+    read_subset_( delay_dset_, delay_data_subset, H5::PredType::NATIVE_DOUBLE, hyperslab_size, offset );
   }
 
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
@@ -400,7 +400,7 @@ SonataConnector::connect_chunk_( const hsize_t chunk_size, const hsize_t offset 
     try
     {
       // Iterate the datasets and create the connections
-      for ( hsize_t i = 0; i < chunk_size; ++i )
+      for ( hsize_t i = 0; i < hyperslab_size; ++i )
       {
 
         const auto sonata_tgt_id = tgt_node_id_data_subset[ i ];
@@ -500,15 +500,15 @@ void
 SonataConnector::read_subset_( const H5::DataSet& dataset,
   std::vector< T >& data_buf,
   H5::PredType datatype,
-  hsize_t chunk_size,
+  hsize_t hyperslab_size,
   hsize_t offset )
 {
   try
   {
-    H5::DataSpace mspace( 1, &chunk_size, NULL );
+    H5::DataSpace mspace( 1, &hyperslab_size, NULL );
     H5::DataSpace dspace = dataset.getSpace();
     // Select hyperslab. H5S_SELECT_SET replaces any existing selection with this call
-    dspace.selectHyperslab( H5S_SELECT_SET, &chunk_size, &offset );
+    dspace.selectHyperslab( H5S_SELECT_SET, &hyperslab_size, &offset );
     dataset.read( data_buf.data(), datatype, mspace, dspace );
     mspace.close();
     dspace.close();

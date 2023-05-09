@@ -50,16 +50,16 @@ EXPECTED_NUM_NODES = 400  # 300 'internal' + 100 'external'
 EXPECTED_NUM_CONNECTIONS = 48432
 EXPECTED_NUM_SPIKES = 18828
 
-# Meaning of chunk sizes for 300_pointneurons model:
-# 2**10=1024 : Edge HDF5 files will be read in chunks
-# 2**20=1048576 : Edge files read in their entirety (default chunk size value)
-CHUNK_SIZES = [2**10, 2**20]
+# Meaning of hyperslab sizes for 300_pointneurons model:
+# 2**10=1024 : Edge HDF5 files will be read in hyperslabs (chunks)
+# 2**20=1048576 : Edge files read in their entirety (default hyperslab size value)
+HYPERSLAB_SIZES = [2**10, 2**20]
 NUM_THREADS = [1, 2, 4]
 
 
-@pytest.mark.parametrize("chunk_size", CHUNK_SIZES)
+@pytest.mark.parametrize("hyperslab_size", HYPERSLAB_SIZES)
 @pytest.mark.parametrize("num_threads", NUM_THREADS)
-def test_SonataNetwork(num_threads, chunk_size):
+def test_SonataNetwork(num_threads, hyperslab_size):
     # Tests must fail if input files not found, since that points to a
     # misconfiguration of the NEST installation.
     assert have_sonata_files, "SONATA files not found"
@@ -67,7 +67,7 @@ def test_SonataNetwork(num_threads, chunk_size):
     nest.ResetKernel()
     nest.set(total_num_virtual_procs=num_threads)
     sonata_net = nest.SonataNetwork(config, sim_config)
-    node_collections = sonata_net.BuildNetwork(chunk_size=chunk_size)
+    node_collections = sonata_net.BuildNetwork(hdf5_hyperslab_size=hyperslab_size)
 
     # Verify network was built correctly
     kernel_status = nest.GetKernelStatus()

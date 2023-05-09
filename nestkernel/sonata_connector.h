@@ -70,9 +70,9 @@ public:
    * @brief Constructor
    *
    * @param graph_specs Specification dictionary, see PyNEST `SonataNetwork._create_graph_specs` for details.
-   * @param chunk_size Size of the chunk to read in one read operation, applies to all HDF5 datasets.
+   * @param hyperslab_size Size of the hyperslab to read in one read operation, applies to all HDF5 datasets.
    */
-  SonataConnector( const DictionaryDatum& graph_specs, const long chunk_size );
+  SonataConnector( const DictionaryDatum& graph_specs, const long hyperslab_size );
 
   ~SonataConnector();
 
@@ -202,10 +202,10 @@ private:
 
   /**
    * @brief Create connections in chunks.
-   * @param chunk_size Size of chunk to be read from datasets
+   * @param hyperslab_size Size of hyperslab (chunk) to be read from datasets
    * @param offset Offset from start coordinate of data selection
    */
-  void connect_chunk_( const hsize_t chunk_size, const hsize_t offset );
+  void connect_chunk_( const hsize_t hyperslab_size, const hsize_t offset );
 
   /**
    * @brief Read subset of dataset into memory.
@@ -213,14 +213,14 @@ private:
    * @param dataset HDF5 dataset to read.
    * @param data_buf Buffer to store data in memory.
    * @param datatype Type of data in dataset.
-   * @param chunk_size Size of chunk to be read from dataset.
+   * @param hyperslab_size Size of hyperslab to be read from dataset.
    * @param offset Offset from start coordinate of data selection.
    */
   template < typename T >
   void read_subset_( const H5::DataSet& dataset,
     std::vector< T >& data_buf,
     H5::PredType datatype,
-    hsize_t chunk_size,
+    hsize_t hyperslab_size,
     hsize_t offset );
 
   /**
@@ -264,8 +264,8 @@ private:
   //! Dictionary containing SONATA graph specifications
   DictionaryDatum graph_specs_;
 
-  //! Size of chunk that is read into memory in one read operation. Applies to all relevant HDF5 datasets.
-  hsize_t chunk_size_;
+  //! Size of hyperslab that is read into memory in one read operation. Applies to all relevant HDF5 datasets.
+  hsize_t hyperslab_size_;
 
   //! Indicates whether weights are given as HDF5 dataset
   bool weight_dataset_exist_;

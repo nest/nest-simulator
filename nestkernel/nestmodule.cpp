@@ -974,9 +974,9 @@ NestModule::ConnectSonata_D_Function::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 2 );
 
   DictionaryDatum graph_specs = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
-  const long chunk_size = getValue< long >( i->OStack.pick( 0 ) );
+  const long hyberslab_size = getValue< long >( i->OStack.pick( 0 ) );
 
-  kernel().connection_manager.connect_sonata( graph_specs, chunk_size );
+  kernel().connection_manager.connect_sonata( graph_specs, hyberslab_size );
 
   i->OStack.pop( 2 );
   i->EStack.pop();

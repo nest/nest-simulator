@@ -49,7 +49,7 @@ import nest
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-nest.set_verbosity('M_ERROR')
+nest.set_verbosity("M_ERROR")
 nest.ResetKernel()
 
 ###############################################################################
@@ -83,15 +83,16 @@ sonata_net = nest.SonataNetwork(net_config, sim_config=sim_config)
 #
 # For large networks, the edges HDF5 files might not fit into memory in their
 # entirety. In the NEST kernel, the edges HDF5 datasets are therefore
-# read sequentially in chunks. The chunk size is modifiable through the
-# keyword argument ``chunk_size`` so that the user is able to achieve a balance
-# between the number of read operations and memory overhead.
+# read sequentially in blocks of contiguous hyperslabs. The hyperslab size is
+# modifiable through the keyword argument ``hdf5_hyperslab_size``. This allows
+# the user to control the balance between the number of read operations and
+# memory overhead.
 #
 # :py:meth:`~.SonataNetwork.BuildNetwork()` returns a dictionary containing
 # the created :py:class:`.NodeCollection`\s. The population names are the
 # dictionary keys.
 
-node_collections = sonata_net.BuildNetwork(chunk_size=2**20)
+node_collections = sonata_net.BuildNetwork(hdf5_hyperslab_size=2**20)
 
 ###############################################################################
 # We can now verify whether the built network has the expected number of

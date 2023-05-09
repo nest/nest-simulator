@@ -104,7 +104,7 @@ class SonataNetwork:
 
         self._node_collections = {}
         self._edges_maps = []
-        self._chunk_size_default = 2**20
+        self._hyperslab_size_default = 2**20
 
         self._is_nodes_created = False
         self._is_network_built = False
@@ -434,7 +434,7 @@ class SonataNetwork:
 
         return node_types_map
 
-    def Connect(self, chunk_size=None):
+    def Connect(self, hdf5_hyperslab_size=None):
         """Connect the SONATA network nodes.
 
         The connections are created by first parsing the edge (synapse) CSV
@@ -444,16 +444,16 @@ class SonataNetwork:
 
         For large networks, the edge HDF5 files might not fit into memory in
         their entirety. In the NEST kernel, the edge HDF5 datasets are therefore
-        read sequentially in chunks. The chunk size is modifiable so that the
-        user is able to achieve a balance between the number of read operations
-        and memory overhead.
+        read sequentially as blocks of contiguous hyperslabs. The hyperslab size
+        is modifiable so that the user is able to achieve a balance between
+        the number of read operations and memory overhead.
 
         Parameters
         ----------
-        chunk_size : int, optional
-            Size of the chunk to read in one read operation. The chunk size
-            is applied to all HDF5 datasets that need to be read in order to
-            create the connections. Default: ``2**20``.
+        hdf5_hyperslab_size : int, optional
+            Size of the hyperslab to read in one read operation. The hyperslab
+            size is applied to all HDF5 datasets that need to be read in order
+            to create the connections. Default: ``2**20``.
         """
 
         if not self._is_nodes_created:
@@ -463,10 +463,10 @@ class SonataNetwork:
             )
             raise kernel.NESTError(msg)
 
-        if chunk_size is None:
-            chunk_size = self._chunk_size_default
+        if hdf5_hyperslab_size is None:
+            hyperslab_size = self._hyperslab_size_default
 
-        self._verify_chunk_size(chunk_size)
+        self._verify_hyperslab_size(hyperslab_size)
 
         graph_specs = self._create_graph_specs()
 
@@ -481,18 +481,18 @@ class SonataNetwork:
                 ) from None
 
         sps(graph_specs)
-        sps(chunk_size)
+        sps(hyperslab_size)
         sr("ConnectSonata")
 
         self._is_network_built = True
 
-    def _verify_chunk_size(self, chunk_size):
-        """Check if provided chunk size is valid."""
+    def _verify_hyperslab_size(self, hyperslab_size):
+        """Check if provided hyperslab size is valid."""
 
-        if not isinstance(chunk_size, int):
-            raise TypeError("chunk_size must be passed as int")
-        if chunk_size <= 0:
-            raise ValueError("chunk_size must be strictly positive")
+        if not isinstance(hyperslab_size, int):
+            raise TypeError("hdf5_hyperslab_size must be passed as int")
+        if hyperslab_size <= 0:
+            raise ValueError("hdf5_hyperslab_size must be strictly positive")
 
     def _create_graph_specs(self):
         """Create graph specifications dictionary.
@@ -625,7 +625,7 @@ class SonataNetwork:
             edges_map["edges_file"] = edges_conf["edges_file"]
             self._edges_maps.append(edges_map)
 
-    def BuildNetwork(self, chunk_size=None):
+    def BuildNetwork(self, hdf5_hyperslab_size=None):
         """Build SONATA network.
 
         Convenience function for building the SONATA network. The function
@@ -637,8 +637,8 @@ class SonataNetwork:
 
         Parameters
         ----------
-        chunk_size : int, optional
-            Size of chunk that is read into memory in one read operation.
+        hdf5_hyperslab_size : int, optional
+            Size of hyperslab that is read into memory in one read operation.
             Applies to all HDF5 datasets relevant for creating the connections.
             Default: ``2**20``.
 
@@ -649,13 +649,13 @@ class SonataNetwork:
             for each population. The population names are keys.
         """
 
-        if chunk_size is not None:
+        if hdf5_hyperslab_size is not None:
             # Chunk size is verfified in Connect, but we also verify here
             # to save computational resources in case of wrong input
-            self._verify_chunk_size(chunk_size)
+            self._verify_hyperslab_size(hdf5_hyperslab_size)
 
         node_collections = self.Create()
-        self.Connect(chunk_size=chunk_size)
+        self.Connect(hdf5_hyperslab_size=hdf5_hyperslab_size)
 
         return node_collections
 

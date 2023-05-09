@@ -1037,9 +1037,11 @@ class CompartmentsTestCase(unittest.TestCase):
         self.assertTrue(np.allclose(mm.events["v_comp1"][0], -70.0))
 
         # test whether activation functions are initialized correctly
-        v = -70.
+
         def vfun(v_, th, r, q):
             return r * (v_ - th) / (1. - np.exp(-(v_ - th) / q))
+
+        v = -70.
         alpha_m = vfun(v, -35.013, 0.182, 9.)  # 1/ms
         beta_m = vfun(-v, 35.013, 0.124, 9.)  # 1/ms
         # non-standard h activation

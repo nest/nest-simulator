@@ -22,11 +22,11 @@
 from ..lib.hl_api_types import CreateParameter
 
 __all__ = [
-    'exponential',
-    'lognormal',
-    'normal',
-    'uniform',
-    'uniform_int',
+    "exponential",
+    "lognormal",
+    "normal",
+    "uniform",
+    "uniform_int",
 ]
 
 
@@ -53,7 +53,7 @@ def uniform(min=0.0, max=1.0):
     Parameter:
         Object yielding values drawn from the distribution.
     """
-    return CreateParameter('uniform', {'min': min, 'max': max})
+    return CreateParameter("uniform", {"min": min, "max": max})
 
 
 def uniform_int(max):
@@ -72,7 +72,7 @@ def uniform_int(max):
     Parameter:
         Object yielding values drawn from the distribution.
     """
-    return CreateParameter('uniform_int', {'max': max})
+    return CreateParameter("uniform_int", {"max": max})
 
 
 def normal(mean=0.0, std=1.0):
@@ -91,7 +91,7 @@ def normal(mean=0.0, std=1.0):
     Parameter:
         Object yielding values drawn from the distribution.
     """
-    return CreateParameter('normal', {'mean': mean, 'std': std})
+    return CreateParameter("normal", {"mean": mean, "std": std})
 
 
 def exponential(beta=1.0):
@@ -108,7 +108,7 @@ def exponential(beta=1.0):
     Parameter:
         Object yielding values drawn from the distribution.
     """
-    return CreateParameter('exponential', {'beta': beta})
+    return CreateParameter("exponential", {"beta": beta})
 
 
 def lognormal(mean=0.0, std=1.0):
@@ -127,4 +127,4 @@ def lognormal(mean=0.0, std=1.0):
     Parameter:
         Object yielding values drawn from the distribution.
     """
-    return CreateParameter('lognormal', {'mean': mean, 'std': std})
+    return CreateParameter("lognormal", {"mean": mean, "std": std})

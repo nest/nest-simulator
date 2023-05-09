@@ -54,8 +54,10 @@ def have_threads():
 def have_plotting():
     try:
         import matplotlib
-        matplotlib.use("Agg")   # backend without window
+
+        matplotlib.use("Agg")  # backend without window
         import matplotlib.pyplot as plt
+
         # make sure we can open a window; DISPLAY may not be set
         fig = plt.figure()
         plt.close(fig)
@@ -126,9 +128,7 @@ def simulation_class(request):
 def simulation(request):
     marker = request.node.get_closest_marker("simulation")
     sim_cls = marker.args[0] if marker else testsimulation.Simulation
-    sim = sim_cls(
-        *(request.getfixturevalue(field.name) for field in dataclasses.fields(sim_cls))
-    )
+    sim = sim_cls(*(request.getfixturevalue(field.name) for field in dataclasses.fields(sim_cls)))
     nest.ResetKernel()
     if getattr(sim, "set_resolution", True):
         nest.resolution = sim.resolution

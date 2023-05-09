@@ -35,10 +35,10 @@ def test_simulation_completes():
     """
     nest.ResetKernel()
     nest.local_num_threads = 4
-    nest.set_verbosity('M_ERROR')
+    nest.set_verbosity("M_ERROR")
 
     population_size = 10
-    population_type = 'iaf_psc_alpha'
+    population_type = "iaf_psc_alpha"
     in_degree = 5
 
     source_population = nest.Create(population_type, population_size)
@@ -46,14 +46,15 @@ def test_simulation_completes():
 
     generated_weights = np.arange(1, population_size * in_degree + 1).reshape((population_size, in_degree))
 
-    nest.Connect(source_population, target_population,
-                 {
-                     'rule': 'fixed_indegree',
-                     'indegree': in_degree,
-                 }, {
-                     'synapse_model': 'static_synapse',
-                     'weight': generated_weights
-                 })
+    nest.Connect(
+        source_population,
+        target_population,
+        {
+            "rule": "fixed_indegree",
+            "indegree": in_degree,
+        },
+        {"synapse_model": "static_synapse", "weight": generated_weights},
+    )
 
     weights = np.array([sorted(nest.GetConnections(target=t).weight) for t in target_population])
 

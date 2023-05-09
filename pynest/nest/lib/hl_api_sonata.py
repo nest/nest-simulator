@@ -564,26 +564,36 @@ class SonataNetwork:
                 inplace=True,
             )
 
-            models_arr = edges_df["synapse_model"].to_numpy()
-            is_one_model = (models_arr[0] == models_arr).all()
-            have_dynamics = "dynamics_params" in edges_df.columns
             edges_df_cols = set(edges_df.columns)
 
+            # If 'dynamics_params' is specified, additional synapse
+            # parameters may be given in a .json file
+            have_dynamics = "dynamics_params" in edges_df.columns
+
+            # Extract synapse models in the edge CSV file and check if
+            # only one model is present; we can then use a more efficient
+            # procedure for extracting the syn_specs.
+            models_arr = edges_df["synapse_model"].to_numpy()
+            is_one_model = (models_arr[0] == models_arr).all()
+
             if is_one_model:
+                # Only one model in the edge CSV file
+
                 synapse_model = models_arr[0]
-                # Set of settable parameters
+                # Find set of settable parameters for synapse model
                 settable_params = set([*GetDefaults(synapse_model)])
                 # Parameters to extract (elements common to both sets)
                 extract_cols = list(settable_params & edges_df_cols)
                 if have_dynamics:
                     extract_cols.append("dynamics_params")
 
+                # Extract syn_spec for each edge type
                 syn_specs = edges_df.set_index("edge_type_id")[extract_cols].to_dict(
                     orient="index"
                 )
 
                 if have_dynamics:
-                    # Include parameters from JSON file in the map
+                    # Include parameters from JSON file in the syn_spec
                     for edge_type_id, syn_spec in syn_specs.copy().items():
                         params_path = PurePath(
                             self._conf["components"]["synaptic_models_dir"],
@@ -595,7 +605,10 @@ class SonataNetwork:
                         syn_specs[edge_type_id].update(params)
                         syn_specs[edge_type_id].pop("dynamics_params")
             else:
-                # More than one synapse model in CSV file
+                # More than one synapse model in CSV file; in this case we
+                # must iterate each row in the CSV table. For each row,
+                # we extract the syn_spec associated with the specified model
+
                 syn_specs = {}
                 idx_map = {k: i for i, k in enumerate(list(edges_df), start=1)}
 

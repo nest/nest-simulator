@@ -1038,16 +1038,17 @@ class CompartmentsTestCase(unittest.TestCase):
 
         # test whether activation functions are initialized correctly
         v = -70.
-        def vfun(v_, th, r, q): return r * (v_ - th) / (1. - np.exp(-(v_ - th) / q))
-        alpha_m = vfun(v, -35.013, 0.182, 9.) # 1/ms
-        beta_m  = vfun(-v, 35.013, 0.124, 9.) # 1/ms
+        def vfun(v_, th, r, q):
+            return r * (v_ - th) / (1. - np.exp(-(v_ - th) / q))
+        alpha_m = vfun(v, -35.013, 0.182, 9.)  # 1/ms
+        beta_m = vfun(-v, 35.013, 0.124, 9.)  # 1/ms
         # non-standard h activation
         m_Na_0 = alpha_m / (alpha_m + beta_m),
         h_Na_0 = 1. / (1. + np.exp((v + 65.) / 6.2))
 
         # activation functions
-        alpha_n =  0.02 * (v - 25.) / (1. - np.exp(-(v - 25.) / 9.))
-        beta_n = -0.002 * (v - 25.) / (1. - np.exp( (v - 25.) / 9.))
+        alpha_n = 0.02 * (v - 25.) / (1. - np.exp(-(v - 25.) / 9.))
+        beta_n = -0.002 * (v - 25.) / (1. - np.exp((v - 25.) / 9.))
         n_K_0 = alpha_n / (alpha_n + beta_n)
 
         self.assertTrue(np.allclose(mm.events["m_Na_0"][0], m_Na_0))
@@ -1064,7 +1065,7 @@ class CompartmentsTestCase(unittest.TestCase):
         cm = nest.Create('cm_default')
 
         with self.assertRaisesRegex(nest.kernel.NESTError,
-                "DictError in SLI function SetStatus_id: Unused dictionary items:  bla"):
+                                    "DictError in SLI function SetStatus_id: Unused dictionary items:  bla"):
             cm.compartments = [
                 {"parent_idx": -1, "params": sp_fake},
             ]
@@ -1073,7 +1074,7 @@ class CompartmentsTestCase(unittest.TestCase):
         cm = nest.Create('cm_default')
 
         with self.assertRaisesRegex(nest.kernel.NESTError,
-                "DictError in SLI function SetStatus_id: Unused dictionary items:  params_name"):
+                                    "DictError in SLI function SetStatus_id: Unused dictionary items:  params_name"):
             cm.compartments = [
                 {"parent_idx": -1, "params_name": sp_fake},
             ]
@@ -1085,7 +1086,7 @@ class CompartmentsTestCase(unittest.TestCase):
         ]
 
         with self.assertRaisesRegex(nest.kernel.NESTError,
-                "DictError in SLI function SetStatus_id: Unused dictionary items:  oops"):
+                                    "DictError in SLI function SetStatus_id: Unused dictionary items:  oops"):
             cm.receptors = [
                 {"comp_idx": 0, "receptor_type": "AMPA", "params": rp_fake},
             ]
@@ -1097,10 +1098,11 @@ class CompartmentsTestCase(unittest.TestCase):
         ]
 
         with self.assertRaisesRegex(nest.kernel.NESTError,
-                "DictError in SLI function SetStatus_id: Unused dictionary items:  params_name"):
+                                    "DictError in SLI function SetStatus_id: Unused dictionary items:  params_name"):
             cm.receptors = [
                 {"comp_idx": 0, "receptor_type": "AMPA", "params_name": rp_real},
             ]
+
 
 def suite():
     # makeSuite is sort of obsolete http://bugs.python.org/issue2721

@@ -127,6 +127,11 @@ private:
   void try_open_edge_group_dsets_( const H5::Group* edge_grp );
 
   /**
+   * @brief Check consistency of datasets.
+   */
+  void check_dsets_consistency();
+
+  /**
    * @brief Close all open datasets.
    */
   void close_dsets_();

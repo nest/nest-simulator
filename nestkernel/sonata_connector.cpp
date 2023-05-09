@@ -140,6 +140,7 @@ SonataConnector::connect()
 
       open_required_dsets_( pop_grp );
       try_open_edge_group_dsets_( edge_grp );
+      check_dsets_consistency();
 
       // Retrieve source and target attributes to find which node population to map to
       get_attribute_( source_attribute_value_, src_node_id_dset_, "node_population" );
@@ -159,7 +160,6 @@ SonataConnector::connect()
 
   } // end iteration over edge files
 }
-
 
 H5::H5File*
 SonataConnector::open_file_( std::string& fname )
@@ -206,7 +206,6 @@ SonataConnector::open_group_( const H5::Group* group, const std::string& grp_nam
   return subgroup;
 }
 
-
 void
 SonataConnector::open_required_dsets_( const H5::Group* pop_grp )
 {
@@ -236,28 +235,12 @@ SonataConnector::open_required_dsets_( const H5::Group* pop_grp )
   {
     throw KernelException( "Could not open edge_type_id dataset in " + cur_fname_ + ": " + e.getDetailMsg() );
   }
-
-  // Consistency checks
-  const auto num_tgt_node_ids = get_nrows_( tgt_node_id_dset_ );
-
-  // Ensure that target and source population have the same size
-  if ( num_tgt_node_ids != get_nrows_( src_node_id_dset_ ) )
-  {
-    throw KernelException(
-      "target_node_id and source_node_id datasets in " + cur_fname_ + " must be of the same size" );
-  }
-
-  // Ensure that edge_type_id dataset size is consistent with the number of target node ids
-  if ( num_tgt_node_ids != get_nrows_( edge_type_id_dset_ ) )
-  {
-    throw KernelException( "target_node_id and edge_type_id datasets in " + cur_fname_ + " must be of the same size" );
-  }
 }
 
 void
 SonataConnector::try_open_edge_group_dsets_( const H5::Group* edge_grp )
 {
-  // TODO: Currently only works if the edge file has a single edge group
+  // NOTE: Currently only works if the edge file has a single edge group
 
   weight_dataset_exist_ = H5Lexists( edge_grp->getId(), "syn_weight", H5P_DEFAULT ) > 0;
   delay_dataset_exist_ = H5Lexists( edge_grp->getId(), "delay", H5P_DEFAULT ) > 0;
@@ -285,11 +268,47 @@ SonataConnector::try_open_edge_group_dsets_( const H5::Group* edge_grp )
       throw KernelException( "Could not open delay dataset in " + cur_fname_ + ": " + e.getDetailMsg() );
     }
   }
-
-  // TODO: If present, ensure correct size of syn_weight and delay dsets. This might not be straightforward if there
-  // are multiple edge id groups
 }
 
+void
+SonataConnector::check_dsets_consistency()
+{
+  // Consistency checks
+  const auto num_tgt_node_ids = get_nrows_( tgt_node_id_dset_ );
+
+  // Ensure that target and source population have the same size
+  if ( num_tgt_node_ids != get_nrows_( src_node_id_dset_ ) )
+  {
+    throw KernelException(
+      "target_node_id and source_node_id datasets in " + cur_fname_ + " must be of the same size" );
+  }
+
+  // Ensure that edge_type_id dataset size is consistent with the number of target node ids
+  if ( num_tgt_node_ids != get_nrows_( edge_type_id_dset_ ) )
+  {
+    throw KernelException( "target_node_id and edge_type_id datasets in " + cur_fname_ + " must be of the same size" );
+  }
+
+  // Ensure that, if provided, the syn_weight dataset size is consistent with the number of target node ids
+  // Note that this check assumes SONATA edge files with one edge group
+  if ( weight_dataset_exist_ )
+  {
+    if ( num_tgt_node_ids != get_nrows_( syn_weight_dset_ ) )
+    {
+      throw KernelException( "target_node_id and syn_weight datasets in " + cur_fname_ + " must be of the same size" );
+    }
+  }
+
+  // Ensure that, if provided, the delay dataset size is consistent with the number of target node ids
+  // Note that this check assumes SONATA edge files with one edge group
+  if ( delay_dataset_exist_ )
+  {
+    if ( num_tgt_node_ids != get_nrows_( delay_dset_ ) )
+    {
+      throw KernelException( "target_node_id and delay datasets in " + cur_fname_ + " must be of the same size" );
+    }
+  }
+}
 
 void
 SonataConnector::get_attribute_( std::string& attribute_value,
@@ -467,7 +486,6 @@ SonataConnector::get_nrows_( H5::DataSet dataset )
   return dims_out[ 0 ];
 }
 
-
 hsize_t
 SonataConnector::find_edge_groups_( H5::Group* pop_grp, std::vector< std::string >& edge_grp_names )
 {
@@ -493,7 +511,6 @@ SonataConnector::find_edge_groups_( H5::Group* pop_grp, std::vector< std::string
 
   return num_edge_grps;
 }
-
 
 template < typename T >
 void

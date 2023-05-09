@@ -833,7 +833,7 @@ class CompartmentsTestCase(unittest.TestCase):
 
         with self.assertRaisesRegex(
             nest.kernel.NESTError,
-            "UnknownCompartment in SLI function SetStatus_id: " "Compartment 12 does not exist in tree.",
+            "UnknownCompartment in SLI function SetStatus_id: Compartment 12 does not exist in tree.",
         ):
             n_neat.receptors = {"comp_idx": 12, "receptor_type": "GABA"}
 

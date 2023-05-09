@@ -146,9 +146,7 @@ def sli_func(func, *args, **kwargs):
         if kwargs["litconv"]:
             slifun = "sli_func_litconv"
     elif kwargs:
-        raise kernel.NESTErrors.PyNESTError(
-            "'namespace' and 'litconv' are the only valid keyword arguments."
-        )
+        raise kernel.NESTErrors.PyNESTError("'namespace' and 'litconv' are the only valid keyword arguments.")
 
     sli_push(args)  # push array of arguments on SLI stack
     sli_push(func)  # push command string

@@ -207,10 +207,10 @@ class free:
 
     def __init__(self, pos, extent=None, edge_wrap=False, num_dimensions=None):
         if extent and num_dimensions:
-            raise TypeError("extent and number of dimensions cannot be specified at the" " same time")
+            raise TypeError("extent and number of dimensions cannot be specified at the same time")
         if isinstance(pos, (list, tuple, np.ndarray)):
             if num_dimensions:
-                raise TypeError("number of dimensions cannot be specified when using an" " array of positions")
+                raise TypeError("number of dimensions cannot be specified when using an array of positions")
             if len(pos) == sum(isinstance(d, Parameter) for d in pos):
                 self.pos = self._parameter_list_to_dimension(pos, len(pos))
             else:
@@ -222,7 +222,7 @@ class free:
             # extent, or if it's not explicitly specified.
             if not num_dimensions:
                 raise TypeError(
-                    "could not infer number of dimensions. Set " "num_dimensions or extent when using Parameter as pos"
+                    "could not infer number of dimensions. Set num_dimensions or extent when using Parameter as pos"
                 )
             dim_parameters = [pos for _ in range(num_dimensions)]
             self.pos = self._parameter_list_to_dimension(dim_parameters, num_dimensions)

@@ -307,7 +307,7 @@ nest::cm_default::pre_run_hook()
   // initialize the recordables pointers
   init_recordables_pointers_();
 
-  c_tree_.pre_run_hook(V_init_);
+  c_tree_.pre_run_hook( V_init_ );
 }
 
 /**

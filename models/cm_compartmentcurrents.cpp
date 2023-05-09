@@ -51,7 +51,7 @@ nest::Na::Na( const DictionaryDatum& channel_params )
 }
 
 void
-nest::Na::pre_run_hook(const double v_init)
+nest::Na::pre_run_hook( const double v_init )
 {
   // compute limiting values for m and h given v_init as the initial state
   /**
@@ -204,7 +204,7 @@ nest::K::K( const DictionaryDatum& channel_params )
 }
 
 void
-nest::K::pre_run_hook(const double v_init)
+nest::K::pre_run_hook( const double v_init )
 {
   // compute limiting value for n given v_init as the initial state
   /**

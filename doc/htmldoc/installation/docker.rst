@@ -27,13 +27,14 @@ Docker provides an isolated container to run applications.
 Usage
 
 
-You can use the docker images directly out of docker-registry.ebrains.eu like this:
+You can use the docker images directly out of https://hub.docker.com/r/nest/nest-simulator 
+like this:
 
 .. code-block:: bash
 
-    docker pull docker-registry.ebrains.eu/nest/nest-simulator:TAG
+    docker pull nest/nest-simulator:<TAG>
 
-``TAG`` can be a version of NEST ``2.20.2`` or later. Alternatively, you can use ``dev`` for the
+``<TAG>`` can be a version of NEST ``2.20.2`` or later. Alternatively, you can use ``dev`` for the
 development branch (master).
 
 NEST 3.2 and later
@@ -45,7 +46,7 @@ To use 'docker-compose' you need the definition file from the git repository. Do
 
 .. code-block:: bash
 
-    wget https://raw.githubusercontent.com/steffengraber/nest-docker/master/docker-compose.yml
+    wget https://raw.githubusercontent.com/steffengraber/nest-docker/<TAG>/docker-compose.yml
 
 
 You can then run ``docker-compose up`` with one of the following options:
@@ -60,8 +61,8 @@ or
 
 .. code-block:: bash
 
-      docker run -it --rm -e NEST_CONTAINER_MODE=nest-server -p 52425:52425 /
-           docker-registry.ebrains.eu/nest/nest-simulator:<version>
+      docker run -it --rm -e NEST_CONTAINER_MODE=nest-server -p 52425:52425 \
+           nest/nest-simulator:<TAG>
 
 Starts the NEST API server container and opens the corresponding port 52425. Test it with `curl localhost:52425/api`.
 See the :ref:`nest_server` documentation for more details.
@@ -76,10 +77,10 @@ or
 
 .. code-block:: bash
 
-      docker run -it --rm -e NEST_CONTAINER_MODE=nest-server -p 52425:52425 /
-          docker-registry.ebrains.eu/nest/nest-simulator:<version>
-      docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -p 8000:8000  /
-          -e NEST_CONTAINER_MODE=nest-desktop docker-registry.ebrains.eu/nest/nest-simulator:<version>
+      docker run -it --rm -e NEST_CONTAINER_MODE=nest-server -p 52425:52425 \
+          nest/nest-simulator:<TAG>
+      docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -p 8000:8000  \
+          -e NEST_CONTAINER_MODE=nest-desktop nest/nest-simulator:<TAG>
 
 Starts the NEST server and the NEST desktop web interface. Port 8000 is also made available.
 Open NEST Desktop in the web browser using the following http link: `http://localhost:8000`
@@ -96,8 +97,8 @@ or
 
 .. code-block:: bash
 
-      docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -v $(pwd):/opt/data -e NEST_CONTAINER_MODE=notebook /
-          -p 8080:8080 docker-registry.ebrains.eu/nest/nest-simulator:<version>
+      docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -v $(pwd):/opt/data -e NEST_CONTAINER_MODE=notebook \
+          -p 8080:8080 nest/nest-simulator:<TAG>
 
 Starts a notebook server with pre-installed NEST. The corresponding URL is displayed in the console. You can copy an
 d paste into your browser.
@@ -113,8 +114,8 @@ or
 
 .. code-block:: bash
 
-      docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -v $(pwd):/opt/data -e NEST_CONTAINER_MODE=jupyterlab /
-          -p 8080:8080 docker-registry.ebrains.eu/nest/nest-simulator:<version>)
+      docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -v $(pwd):/opt/data -e NEST_CONTAINER_MODE=jupyterlab \
+          -p 8080:8080 nest/nest-simulator:<TAG>
 
 Starts a Jupyter lab server with pre-installed NEST. The corresponding URL is displayed in the console.
 Copy and paste the URL into your browser.
@@ -131,15 +132,15 @@ Jupyter notebook with NEST 2.20.2:
 
 .. code-block:: bash
 
-    docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -v $(pwd):/opt/data -e NEST_CONTAINER_MODE=notebook /
-               -p 8080:8080 docker-registry.ebrains.eu/nest/nest-simulator:2.20.2
+    docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -v $(pwd):/opt/data -e NEST_CONTAINER_MODE=notebook \
+               -p 8080:8080 nest/nest-simulator:2.20.2
 
 Jupyter lab with NEST 2.20.2
 
 .. code-block:: bash
 
-    docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -v $(pwd):/opt/data -e NEST_CONTAINER_MODE=jupyterlab /
-               -p 8080:8080 docker-registry.ebrains.eu/nest/nest-simulator:2.20.2
+    docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -v $(pwd):/opt/data -e NEST_CONTAINER_MODE=jupyterlab \
+               -p 8080:8080 nest/nest-simulator:2.20.2
 
 NEST dev
 ^^^^^^^^
@@ -148,7 +149,7 @@ If you want to use the compose configuration for the ``dev`` NEST version, you c
 
 .. code-block:: bash
 
-    wget https://raw.githubusercontent.com/steffengraber/nest-docker/master/docker-compose.yml
+    wget https://raw.githubusercontent.com/nest/nest-docker/master/docker-compose.yml
     docker-compose -f docker-compose-dev.yml up nest-notebook
 
 On Windows
@@ -161,22 +162,22 @@ On Windows
 
 .. code-block:: bash
 
-    docker run -it --rm -v %cd%:/opt/data -p 8080:8080 -e NEST_CONTAINER_MODE=<args> /
-        docker-registry.ebrains.eu/nest/nest-simulator:<version>
+    docker run -it --rm -v %cd%:/opt/data -p 8080:8080 -e NEST_CONTAINER_MODE=<args> \
+        nest/nest-simulator:<TAG>
 
 In Powershell, '%cd%' might not work for the current directory. Then
 you should explicitly specify a folder with existing write permissions.
 
 In any case, this will download the docker image with the pre-installed
-NEST master from docker-registry.ebrains.eu and start it. After booting an URL is presented.
-Click on it or copy it to your browser. Voilá Jupyter notebook starts from
-the docker image.
+NEST master from https://hub.docker.com/r/nest/nest-simulator and start it. 
+After booting an URL is presented. Click on it or copy it to your browser. 
+Voilá Jupyter notebook starts from the docker image.
 
 You can update the image with:
 
 .. code-block:: bash
 
-    docker pull docker-registry.ebrains.eu/nest/nest-simulator:<version>
+    docker pull nest/nest-simulator:<TAG>
 
 
 

@@ -408,6 +408,7 @@ SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t off
   const auto nest_nodes = getValue< DictionaryDatum >( graph_specs_->lookup( "nodes" ) );
 
   NodeCollectionPTR src_nc;
+
   try
   {
     src_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( source_attribute_value_ ) );
@@ -423,7 +424,7 @@ SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t off
   NodeCollectionPTR tgt_nc;
   try
   {
-    src_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( target_attribute_value_ ) );
+    tgt_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( target_attribute_value_ ) );
   }
   catch ( const TypeMismatch& e )
   {

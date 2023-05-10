@@ -406,8 +406,33 @@ SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t off
 
   // Retrieve the correct NodeCollections
   const auto nest_nodes = getValue< DictionaryDatum >( graph_specs_->lookup( "nodes" ) );
-  const auto src_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( source_attribute_value_ ) );
-  const auto tgt_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( target_attribute_value_ ) );
+
+  NodeCollectionPTR src_nc;
+  try
+  {
+    src_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( source_attribute_value_ ) );
+  }
+  catch ( const TypeMismatch& e )
+  {
+    throw KernelException(
+      "Unable to find source node population '" + source_attribute_value_ + "' in node collection dictionary. Error caused "
+      "by the population name specified by attribute of source_node_id dataset in "
+      + cur_fname_ );
+  }
+
+  NodeCollectionPTR tgt_nc;
+  try
+  {
+    src_nc = getValue< NodeCollectionPTR >( nest_nodes->lookup( target_attribute_value_ ) );
+  }
+  catch ( const TypeMismatch& e )
+  {
+    throw KernelException(
+      "Unable to find target node population '" + target_attribute_value_ + "' in node collection dictionary. Error caused "
+      "by the population name specified by attribute of target_node_id dataset in "
+      + cur_fname_ );
+  }
+
   const auto snode_begin = src_nc->begin();
   const auto tnode_begin = tgt_nc->begin();
 

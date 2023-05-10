@@ -78,8 +78,8 @@ plt.rcParams.update({'font.size': 13})
 
 sim_params = {
     "dt": 0.1,  # simulation resolution in ms
-    "pre_sim_time": 200.0,  # pre-simulation time in ms
-    "sim_time": 5000.0,  # simulation time in ms
+    "pre_sim_time": 0.0,  # pre-simulation time in ms
+    "sim_time": 100.0,  # simulation time in ms
     "N_rec_spk": 100,  # number of samples (neuron) for spike detector
     "N_rec_mm": 50,  # number of samples (neuron, astrocyte) for multimeter
     }
@@ -138,7 +138,7 @@ neuron_params_in = {
 ###############################################################################
 # Function for network building.
 
-def create_astro_network(scale=1):
+def create_astro_network(scale=1.0):
     """Create nodes for a neuron-astrocyte network."""
     print("Creating nodes ...")
     nodes_ex = nest.Create(
@@ -152,11 +152,12 @@ def create_astro_network(scale=1):
         )
     return nodes_ex, nodes_in, nodes_astro, nodes_noise
 
-def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise):
+def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise, scale=1.0):
     """Connect the nodes in a neuron-astrocyte network.
     The astrocytes are paired with excitatory connections only.
     """
     print("Connecting Poisson generator ...")
+    assert scale >= 1.0, "scale must be >= 1.0"
     syn_params_noise = {
         "synapse_model": "static_synapse", "weight": syn_params["w_e"]
         }
@@ -167,8 +168,8 @@ def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise):
     conn_params_e = {
         "rule": "pairwise_bernoulli_astro",
         "astrocyte": nodes_astro,
-        "p": network_params["p"],
-        "p_syn_astro": network_params["p_syn_astro"],
+        "p": network_params["p"]/scale,
+        "p_syn_astro": network_params["p_syn_astro"]/scale,
         "max_astro_per_target": network_params["max_astro_per_target"],
         "astro_pool_by_index": network_params["astro_pool_by_index"],
         }
@@ -180,7 +181,7 @@ def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise):
         "weight_astro2post": syn_params["w_a2n"],
         "delay": syn_params["d_e"],
         }
-    conn_params_i = {"rule": "pairwise_bernoulli", "p": network_params["p"]}
+    conn_params_i = {"rule": "pairwise_bernoulli", "p": network_params["p"]/scale}
     syn_params_i = {
         "synapse_model": syn_params["synapse_model"],
         "weight": syn_params["w_i"],

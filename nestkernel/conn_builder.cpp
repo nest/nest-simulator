@@ -1755,6 +1755,9 @@ nest::BernoulliAstroBuilder::connect_()
       int target_index = 0;
       int astro_index = 0;
       int n_astro_overlap_per_target = 0;
+      // for binomial distribution
+      binomial_distribution bino_dist;
+      binomial_distribution::param_type param( sources_->size(), p_ );
 
       // user warnings for astro_pool_by_index
       if ( astro_pool_by_index_ == true )
@@ -1802,32 +1805,28 @@ nest::BernoulliAstroBuilder::connect_()
         // get target node
         const index tnode_id = ( *target_it ).node_id;
         target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-        target_thread = tid;
         target_index = targets_->find( tnode_id );
-
-        // sample indegree according to truncated Binomial distribution
-        binomial_distribution bino_dist;
-        binomial_distribution::param_type param( sources_->size(), p_ );
-        do
-        {
-          indegree = bino_dist( synced_rng, param );
-        }
-        while ( indegree > sources_->size() );
-        // when p=1 and autapses not allowed but targets overlap with sources, the indegree must be forced to decrease by 1
-        if ( not allow_autapses_ and indegree == sources_->size() and sources_->find( tnode_id ) >= 0 )
-        {
-          // LOG( M_WARNING,
-          //   "BernoulliAstroBuilder::connect",
-          //   "Indegree equals source size and targets overlap with sources, but autapses not allowed. "
-          //   "In this case, connection probability p could be not exact. ");
-          indegree -= 1;
-        }
-        assert( indegree <= sources_->size() );
 
         // check if the target is on the current thread
         if ( target->is_proxy() )
         {
           target_thread = invalid_thread;
+        }
+        else
+        {
+          target_thread = tid;
+        }
+
+        // draw indegree for this target
+        indegree = bino_dist( synced_rng, param );
+        // when targets overlap with sources and p=1, but autapses are not allowed; indegree must be decreased by 1
+        if ( not allow_autapses_ and indegree == sources_->size() and sources_->find( tnode_id ) >= 0 )
+        {
+          LOG( M_WARNING,
+            "BernoulliAstroBuilder::connect",
+            "The indegree equals source size and targets overlap with sources, but autapses are not allowed. "
+            "The indegree has to be decreased by 1 (source size - 1). ");
+          indegree -= 1;
         }
 
         // reset lists of connected sources and astrocytes for this target
@@ -1960,7 +1959,7 @@ nest::BernoulliAstroBuilder::connect_()
           {
             anode_id = astro_pool_this_target.at( synced_rng->ulrand( astro_pool_this_target.size() ) );
           }
-          // otherwise, all astrocytes can be connected
+          // otherwise, any of the astrocytes can be connected
           else
           {
             anode_id = ( *astrocytes_ )[ synced_rng->ulrand( astrocytes_size ) ];
@@ -1968,13 +1967,18 @@ nest::BernoulliAstroBuilder::connect_()
 
           // if astrocyte is local, connect source=>astrocyte
           astrocyte = kernel().node_manager.get_node_or_proxy( anode_id, tid );
-          astrocyte_thread = tid;
           if ( astrocyte->is_proxy() )
           {
-            astrocyte_thread = invalid_thread;
+            // escape if both target and astrocyte are not local
+            if ( target_thread != tid )
+            {
+              continue;
+            }
+            // astrocyte_thread = invalid_thread;
           }
-          if ( astrocyte_thread == tid )
+          else
           {
+            astrocyte_thread = tid;
             assert( astrocyte != NULL );
             for ( size_t synapse_indx = 0; synapse_indx < synapse_model_id_.size(); ++synapse_indx )
             {
@@ -1993,14 +1997,14 @@ nest::BernoulliAstroBuilder::connect_()
             // single_connect_( snode_id, *astrocyte, astrocyte_thread, synced_rng );
           }
 
-          // avoid connecting the same astrocyte to the target more than once
-          if ( connected_anode_ids.find( anode_id ) != connected_anode_ids.end() )
-          {
-            continue;
-          }
           // if target is local, connect astrocyte=>target
           if ( target_thread == tid )
           {
+            // avoid connecting the same astrocyte to the target more than once
+            if ( connected_anode_ids.find( anode_id ) != connected_anode_ids.end() )
+            {
+              continue;
+            }
             assert( target != NULL );
             for ( size_t synapse_indx = 0; synapse_indx < synapse_model_id_.size(); ++synapse_indx )
             {

@@ -124,7 +124,6 @@ Copy and paste the URL into your browser.
 
 To stop and delete running containers use `docker-compose down`.
 
-
 To run NEST 2.20.2
 ^^^^^^^^^^^^^^^^^^
 
@@ -133,13 +132,6 @@ Jupyter notebook with NEST 2.20.2:
 .. code-block:: bash
 
     docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -v $(pwd):/opt/data -e NEST_CONTAINER_MODE=notebook \
-               -p 8080:8080 nest/nest-simulator:2.20.2
-
-Jupyter lab with NEST 2.20.2
-
-.. code-block:: bash
-
-    docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -v $(pwd):/opt/data -e NEST_CONTAINER_MODE=jupyterlab \
                -p 8080:8080 nest/nest-simulator:2.20.2
 
 NEST dev

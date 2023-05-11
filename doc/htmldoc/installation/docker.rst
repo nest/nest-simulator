@@ -79,11 +79,11 @@ or
 
       docker run -it --rm -e NEST_CONTAINER_MODE=nest-server -p 52425:52425 \
           nest/nest-simulator:<TAG>
-      docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -p 8000:8000  \
+      docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -p 54286:54286 \
           -e NEST_CONTAINER_MODE=nest-desktop nest/nest-simulator:<TAG>
 
-Starts the NEST server and the NEST desktop web interface. Port 8000 is also made available.
-Open NEST Desktop in the web browser using the following http link: `http://localhost:8000`
+Starts the NEST server and the NEST desktop web interface. Port 54286 is also made available.
+Open NEST Desktop in the web browser using the following http link: `http://localhost:54286`
 
 Visit the :doc:`NEST Desktop <desktop:index>` documentation to learn more.
 
@@ -141,7 +141,7 @@ If you want to use the compose configuration for the ``dev`` NEST version, you c
 
 .. code-block:: bash
 
-    wget https://raw.githubusercontent.com/nest/nest-docker/master/docker-compose.yml
+    wget https://raw.githubusercontent.com/nest/nest-docker/master/docker-compose-dev.yml
     docker-compose -f docker-compose-dev.yml up nest-notebook
 
 On Windows
@@ -162,8 +162,8 @@ you should explicitly specify a folder with existing write permissions.
 
 In any case, this will download the docker image with the pre-installed
 NEST master from https://hub.docker.com/r/nest/nest-simulator and start it. 
-After booting an URL is presented. Click on it or copy it to your browser. 
-Voilá Jupyter notebook starts from the docker image.
+After booting, a URL is presented. Click on it or copy it to your browser. 
+Voilá! Jupyter notebook starts from the docker image.
 
 You can update the image with:
 

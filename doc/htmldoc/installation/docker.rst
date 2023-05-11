@@ -149,7 +149,7 @@ If you want to use the compose configuration for the ``dev`` NEST version, you c
 
 .. code-block:: bash
 
-    wget https://raw.githubusercontent.com/nest/nest-docker/master/docker-compose.yml
+    wget https://raw.githubusercontent.com/nest/nest-docker/master/docker-compose-dev.yml
     docker-compose -f docker-compose-dev.yml up nest-notebook
 
 On Windows

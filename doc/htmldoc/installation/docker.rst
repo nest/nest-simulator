@@ -79,7 +79,7 @@ or
 
       docker run -it --rm -e NEST_CONTAINER_MODE=nest-server -p 52425:52425 \
           nest/nest-simulator:<TAG>
-      docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -p 8000:8000  \
+      docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -p 54286:54286 \
           -e NEST_CONTAINER_MODE=nest-desktop nest/nest-simulator:<TAG>
 
 Starts the NEST server and the NEST desktop web interface. Port 8000 is also made available.

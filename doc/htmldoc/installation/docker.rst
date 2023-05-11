@@ -171,7 +171,7 @@ you should explicitly specify a folder with existing write permissions.
 In any case, this will download the docker image with the pre-installed
 NEST master from https://hub.docker.com/r/nest/nest-simulator and start it. 
 After booting, a URL is presented. Click on it or copy it to your browser. 
-Voilá Jupyter notebook starts from the docker image.
+Voilá! Jupyter notebook starts from the docker image.
 
 You can update the image with:
 

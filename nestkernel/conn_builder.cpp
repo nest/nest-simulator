@@ -1609,7 +1609,6 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
   : ConnBuilder( sources, targets, conn_spec, syn_specs )
 {
   // Initialize parameters for astrocyte connectivity
-  // TODO: check if NodeCollection is astrocyte?
   astrocytes_ = getValue< NodeCollectionDatum >( conn_spec, names::astrocyte );
   weights_n2n_.resize( syn_specs.size() );
   weights_n2a_.resize( syn_specs.size() );
@@ -1663,10 +1662,10 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
     max_astro_per_target_ = 0;
   }
 
-  // weights and delays of connections involving astrocytes
+  // weights and delays of connections
   for ( size_t synapse_indx = 0; synapse_indx < syn_specs.size(); ++synapse_indx )
   {
-    // neuron=>astrocyte
+    // neuron=>neuron and neuron=>astrocyte
     if ( syn_specs[ synapse_indx ]->known( names::synapse_model ) )
     {
       std::string syn_name = ( *syn_specs[ synapse_indx ] )[ names::synapse_model ];
@@ -1677,9 +1676,6 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
       synapse_model_id_[ synapse_indx ] = kernel().model_manager.get_synapse_model_id( "tsodyks_synapse" );
     }
     DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
-    // weights_n2n_[ synapse_indx ] = syn_specs[ synapse_indx ]->known( names::weight )
-    //   ? ConnParameter::create( ( *syn_specs[ synapse_indx ] )[ names::weight ], kernel().vp_manager.get_num_threads() )
-    //   : ConnParameter::create( ( *syn_defaults )[ names::weight ], kernel().vp_manager.get_num_threads() );
     weights_n2n_[ synapse_indx ] = syn_specs[ synapse_indx ]->known( names::weight_pre2post )
       ? ConnParameter::create( ( *syn_specs[ synapse_indx ] )[ names::weight_pre2post ], kernel().vp_manager.get_num_threads() )
       : ConnParameter::create( ( *syn_defaults )[ names::weight ], kernel().vp_manager.get_num_threads() );
@@ -1917,14 +1913,6 @@ nest::BernoulliAstroBuilder::connect_()
           // determine the source
           connected_snode_ids.insert( snode_id );
 
-          // (not working; cannot sync randomized parameters)
-          // // prepare delays for connections; n2n and n2a delays are the same
-          // std::vector< double > delays( synapse_model_id_.size() );
-          // for ( size_t synapse_indx = 0; synapse_indx < synapse_model_id_.size(); ++synapse_indx )
-          // {
-          //   delays[ synapse_indx ] = delays_astro_[ synapse_indx ]->value_double( target_thread, synced_rng, snode_id, target );
-          // }
-
           // increase i which counts the number of incoming connections
           ++i;
 
@@ -1967,16 +1955,7 @@ nest::BernoulliAstroBuilder::connect_()
 
           // if astrocyte is local, connect source=>astrocyte
           astrocyte = kernel().node_manager.get_node_or_proxy( anode_id, tid );
-          if ( astrocyte->is_proxy() )
-          {
-            // escape if both target and astrocyte are not local
-            if ( target_thread != tid )
-            {
-              continue;
-            }
-            // astrocyte_thread = invalid_thread;
-          }
-          else
+          if ( !astrocyte->is_proxy() )
           {
             astrocyte_thread = tid;
             assert( astrocyte != NULL );

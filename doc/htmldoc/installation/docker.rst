@@ -82,7 +82,7 @@ or
       docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -p 54286:54286 \
           -e NEST_CONTAINER_MODE=nest-desktop nest/nest-simulator:<TAG>
 
-Starts the NEST server and the NEST desktop web interface. Port 8000 is also made available.
+Starts the NEST server and the NEST desktop web interface. Port 54286 is also made available.
 Open NEST Desktop in the web browser using the following http link: `http://localhost:54286`
 
 Visit the :doc:`NEST Desktop <desktop:index>` documentation to learn more.

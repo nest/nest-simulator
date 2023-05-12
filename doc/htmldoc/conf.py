@@ -60,6 +60,7 @@ extensions = [
     'VersionSyncRole',
 ]
 
+autosummary_generate = True
 autodoc_mock_imports = ["nest.pynestkernel", "nest.ll_api"]
 mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
 panels_add_bootstrap_css = False
@@ -277,7 +278,6 @@ def toc_customizer(app, docname, source):
         models_source = source[0]
         rendered = app.builder.templates.render_string(models_source, html_context)
         source[0] = rendered
-
 
 def setup(app):
     app.connect("source-read", toc_customizer)

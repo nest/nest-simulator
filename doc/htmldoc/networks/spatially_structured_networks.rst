@@ -532,7 +532,7 @@ Here is a simple example, cf. :numref:`fig_conn1`
 
 .. literalinclude:: scripts/connections.py
     :start-after: # { conn1 #}
-    :end-before: #{ end #}
+    :end-before: # { end #}
 
 .. _fig_conn1:
 
@@ -617,16 +617,16 @@ Rectangular
    same unit as element coordinates. Example:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn2r #}
-    :end-before: #{ end #}
+    :start-after: # { conn2r #}
+    :end-before: # { end #}
 
 Circular
    All nodes within a circle are connected. The area is specified by its
    radius.
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn2c #}
-    :end-before: #{ end #}
+    :start-after: # { conn2c #}
+    :end-before: # { end #}
 
 Doughnut
    All nodes between an inner and outer circle are connected. Note that
@@ -634,23 +634,23 @@ Doughnut
    by the radii of the inner and outer circles.
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn2d #}
-    :end-before: #{ end #}
+    :start-after: # { conn2d #}
+    :end-before: # { end #}
 
 Elliptical
    All nodes within an ellipsis are connected. The area is specified by
    its major and minor axis.
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn2e #}
-    :end-before: #{ end #}
+    :start-after: # { conn2e #}
+    :end-before: # { end #}
 
 .. _fig_conn2_a:
 
 .. figure:: figures/conn2_a.png
    :name: fig:conn2_a
 
-   Masks for 2D layers. For all mask types, the driver node is marked by
+   Masks for 2D..  layers. For all mask types, the driver node is marked by
    a wide light-red circle, the selected pool nodes by red dots and the
    masks are red. From left to right, top to bottom: rectangular,
    circular, doughnut and elliptical masks centered about the driver
@@ -664,20 +664,20 @@ of the mask center relative to the driver node, as in the following
 examples (cf.  :numref:`fig_conn2_b`).
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn2ro #}
-    :end-before: #{ end #}
+    :start-after: # { conn2ro #}
+    :end-before: # { end #}
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn2co #}
-    :end-before: #{ end #}
+    :start-after: # { conn2co #}
+    :end-before: # { end #}
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn2do #}
-    :end-before: #{ end #}
+    :start-after: # { conn2do #}
+    :end-before: # { end #}
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn2eo #}
-    :end-before: #{ end #}
+    :start-after: # { conn2eo #}
+    :end-before: # { end #}
 
 .. _fig_conn2_b:
 
@@ -695,12 +695,12 @@ add an ``'azimuth_angle'`` entry in the specific mask dictionary. The
 from the x-axis to the y-axis.
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn2rr #}
-    :end-before: #{ end #}
+    :start-after: # { conn2rr #}
+    :end-before: # { end #}
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn2er #}
-    :end-before: #{ end #}
+    :start-after: # { conn2er #}
+    :end-before: # { end #}
 
 .. _fig_conn2_c:
 
@@ -724,24 +724,24 @@ Box
    as element coordinates. Example:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn_3d_a #}
-    :end-before: #{ end #}
+    :start-after: # { conn_3d_a #}
+    :end-before: # { end #}
 
 Spherical
    All nodes within a sphere are connected. The area is specified by its
    radius.
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn_3d_b #}
-    :end-before: #{ end #}
+    :start-after: # { conn_3d_b #}
+    :end-before: # { end #}
 
 Ellipsoidal
    All nodes within an ellipsoid are connected. The area is specified by
    its major, minor, and polar axis.
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn_3d_c #}
-    :end-before: #{ end #}
+    :start-after: # { conn_3d_c #}
+    :end-before: # { end #}
 
 As in the 2D case, you can change the location of the mask relative to
 the driver node by specifying a 3D vector in the ``'anchor'`` entry in
@@ -775,8 +775,8 @@ right corner coordinates, but give their size in x and y direction, as in
 this example:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn3 #}
-    :end-before: #{ end #}
+    :start-after: # { conn3 #}
+    :end-before: # { end #}
 
 The resulting connections are shown in :numref:`fig_conn3`. By default
 the top-left corner of a grid mask, i.e., the grid mask element with
@@ -785,14 +785,14 @@ aligned with the driver node. You can change this alignment by
 specifying an *anchor* for the mask:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn3c #}
-    :end-before: #{ end #}
+    :start-after: # { conn3c #}
+    :end-before: # { end #}
 
 You can even place the anchor outside the mask:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn3x #}
-    :end-before: #{ end #}
+    :start-after: # { conn3x #}
+    :end-before: # { end #}
 
 The resulting connection patterns are shown in  :numref:`fig_conn3`.
 
@@ -952,8 +952,8 @@ Constant
    Fixed connection probability:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn4cp #}
-    :end-before: #{ end #}
+    :start-after: # { conn4cp #}
+    :end-before: # { end #}
 
 Gaussian
    The connection probability is a Gaussian distribution based on the distance
@@ -962,8 +962,8 @@ Gaussian
    deviation" of :math:`\sigma=1`:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn4g #}
-    :end-before: #{ end #}
+    :start-after: # { conn4g #}
+    :end-before: # { end #}
 
 Cut-off Gaussian
    In this example we have a distance-dependent Gaussian distributon,
@@ -972,8 +972,8 @@ Cut-off Gaussian
 .. TODO: Reference to full Parameter table with nest.logic.conditional().
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn4cut #}
-    :end-before: #{ end #}
+    :start-after: # { conn4cut #}
+    :end-before: # { end #}
 
 2D Gaussian
    We conclude with an example using a two-dimensional Gaussian
@@ -982,8 +982,8 @@ Cut-off Gaussian
    only on distance:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn42d #}
-    :end-before: #{ end #}
+    :start-after: # { conn42d #}
+    :end-before: # { end #}
 
 Note that for pool layers with periodic boundary conditions, NEST
 always uses the shortest possible displacement vector from driver to
@@ -1013,8 +1013,8 @@ entire NodeCollection and is centered about the driver node.
 
 Linear example
   .. literalinclude:: scripts/connections.py
-      :start-after: #{ conn5lin #}
-      :end-before: #{ end #}
+      :start-after: # { conn5lin #}
+      :end-before: # { end #}
 
   Results are shown in the top panel of  :numref:`fig_conn5`. Connection
   weights and delays are shown for the leftmost neuron as driver. Weights
@@ -1027,8 +1027,8 @@ Linear example
 
 Linear example with periodic boundary conditions
   .. literalinclude:: scripts/connections.py
-      :start-after: #{ conn5linpbc #}
-      :end-before: #{ end #}
+      :start-after: # { conn5linpbc #}
+      :end-before: # { end #}
 
   Results are shown in the middle panel of  :numref:`fig_conn5`. This example
   is identical to the previous, except that the (pool) layer has periodic
@@ -1039,12 +1039,12 @@ Linear example with periodic boundary conditions
 
 Various spatially dependent distributions
   .. literalinclude:: scripts/connections.py
-      :start-after: #{ conn5exp #}
-      :end-before: #{ end #}
+      :start-after: # { conn5exp #}
+      :end-before: # { end #}
 
   .. literalinclude:: scripts/connections.py
-      :start-after: #{ conn5gauss #}
-      :end-before: #{ end #}
+      :start-after: # { conn5gauss #}
+      :end-before: # { end #}
 
   Results are shown in the bottom panel of :numref:`fig_conn5`. It shows
   linear, exponential and Gaussian distributions of the distance between
@@ -1054,8 +1054,8 @@ Various spatially dependent distributions
 
 Randomized weights and delays
   .. literalinclude:: scripts/connections.py
-      :start-after: #{ conn5uniform #}
-      :end-before: #{ end #}
+      :start-after: # { conn5uniform #}
+      :end-before: # { end #}
 
   By using the ``nest.random.uniform()`` parameter for weights or delays, one can
   obtain randomized values for weights and delays, as shown by the red
@@ -1087,14 +1087,14 @@ linear (actually affine) with respect to the displacement between the nodes, of 
 target neuron on the x and y axis, respectively. The parameter is then simply:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn_param_design #}
-    :end-before: #{ end #}
+    :start-after: # { conn_param_design #}
+    :end-before: # { end #}
 
 This can be directly plugged into the :py:func:`.Connect` function:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn_param_design_ex #}
-    :end-before: #{ end #}
+    :start-after: # { conn_param_design_ex #}
+    :end-before: # { end #}
 
 Periodic boundary conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1193,8 +1193,8 @@ The resulting distribution of distances between connected nodes is shown in
  :numref:`fig_conn6`.
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn6 #}
-    :end-before: #{ end #}
+    :start-after: # { conn6 #}
+    :end-before: # { end #}
 
 .. _fig_conn6:
 
@@ -1215,8 +1215,8 @@ It is also possible to use a random parameter or spatially dependent parameter
 to set the number of incoming or outgoing connections.
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn7 #}
-    :end-before: #{ end #}
+    :start-after: # { conn7 #}
+    :end-before: # { end #}
 
 Synapse models and properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1227,8 +1227,8 @@ adding a ``'synapse_model'`` entry to the synapse specification
 dictionary, as in this example:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn8 #}
-    :end-before: #{ end #}
+    :start-after: # { conn8 #}
+    :end-before: # { end #}
 
 You have to use synapse models if you want to set, e.g., the receptor
 type of connections or parameters for plastic synapse models. These can
@@ -1248,15 +1248,15 @@ center of the mask. As demonstrated in the following example,
 stimulation devices have to be connected as the source layer.
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn9 #}
-    :end-before: #{ end #}
+    :start-after: # { conn9 #}
+    :end-before: # { end #}
 
 While recording devices, on the other hand, have to be connected as
 the target layer (see also the following section):
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn10 #}
-    :end-before: #{ end #}
+    :start-after: # { conn10 #}
+    :end-before: # { end #}
 
 Spatially distributed NodeCollections and recording devices
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1267,8 +1267,8 @@ create a single spike recorder and connect all neurons in the spatially
 distributed NodeCollection to that spike recorder:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn11 #}
-    :end-before: #{ end #}
+    :start-after: # { conn11 #}
+    :end-before: # { end #}
 
 Connecting a layer of neurons to a layer of recording devices as
 described in the section on :ref:`sec_dev_subregions`, is only

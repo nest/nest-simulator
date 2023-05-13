@@ -39,25 +39,12 @@ The :py:func:`.Connect` function can be called in any of the following ways:
     Connect(pre, post, conn_spec)
     Connect(pre, post, conn_spec, syn_spec)
 
-``pre`` and ``post`` ``NodeCollections``, defining the nodes of
+``pre`` and ``post`` are ``NodeCollections``, defining the nodes of
 origin (`sources`) and termination (`targets`) for the connections to
 be established.
 
 If ``conn_spec`` is not specified, the default connection rule
-``all_to_all`` will be used. When using a connection specification
-dictionary containing the rule name and rule-specific parameters, the
-additional switch ``allow_autapses`` (default: ``True``) can be set to
-allow or disallow self-connections. Likewise, ``allow_multapses``
-(default: ``True``) can be used to specify if multiple connections
-between the same pair of neurons are allowed or not.
-
-.. note::
-
-   The switches ``allow_autapses`` and ``allow_multapses`` are only
-   effective during each single call to :py:func:`.Connect`. Calling the
-   function multiple times with the same set of neurons might still
-   lead to violations of these constraints, even though the switches
-   were set to `False` in each individual call.
+``all_to_all`` will be used.
 
 The synapse specification ``syn_spec`` defaults to the synapse model
 :hxt_ref:`static_synapse`. By using the keyword variant (``Connect(pre, post,
@@ -74,6 +61,21 @@ done using the corresponding kernel attribute:
 
 Have a look at the :ref:`inspecting_connections` section further down
 to get more tips on how to examine the connections in greater detail.
+
+Multapses and autapses
+~~~~~~~~~~~~~~~~~~~~~~
+
+In the connection specification dictionary (containing the rule name and rule-
+specific parameters, the additional switch ``allow_autapses`` (default:
+``True``) can be set to allow or disallow self-connections.
+
+Likewise, ``allow_multapses`` (default: ``True``) can be used to specify if
+multiple connections between the same pair of neurons are allowed or not.
+
+These switches are only effective during each single call to
+:py:func:`.Connect`. Calling the function multiple times with the same set of
+neurons might still lead to violations of these constraints, even though the
+switches were set to `False` in each individual call.
 
 .. _conn_rules:
 

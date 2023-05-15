@@ -22,6 +22,13 @@
 # This script extracts version control information to be used in
 # cmake/NestVersionInfo.cmake
 
+# If we can't run git at all, set everything to unknown
+git --version
+if [ ! $? -eq 0 ]; then
+  echo unknown\;unknown\;unknown
+  exit 0
+fi
+
 HASH=$(git rev-parse HEAD)
 
 # Might fail if not on a branch, or no remote tracking branch is set

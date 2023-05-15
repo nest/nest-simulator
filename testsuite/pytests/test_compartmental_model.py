@@ -25,7 +25,6 @@ Tests for the compartmental model
 
 import nest
 import unittest
-import math
 import numpy as np
 
 

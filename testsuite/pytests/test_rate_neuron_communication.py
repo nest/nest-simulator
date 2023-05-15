@@ -24,7 +24,6 @@
 
 import nest
 import unittest
-import math
 import numpy as np
 
 

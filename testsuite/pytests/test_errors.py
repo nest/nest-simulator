@@ -98,7 +98,7 @@ class ErrorTestCase(unittest.TestCase):
 
         nest.ResetKernel()
 
-        nc = nest.Create('iaf_psc_alpha', 10)
+        nc = nest.Create('iaf_psc_alpha', 10)   # noqa: F841
         nest.ResetKernel()
 
         msg = "UnknownNode"

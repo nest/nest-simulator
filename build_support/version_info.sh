@@ -22,9 +22,8 @@
 # This script extracts version control information to be used in
 # cmake/NestVersionInfo.cmake
 
-# If we can't run git at all, set everything to unknown
-git --version 2>&1 > /dev/null
-if [ ! $? -eq 0 ]; then
+# If we can't run git at all, set everything to "unknown"
+if command -v git /dev/null 2>&1; then
   echo unknown\;unknown\;unknown
   exit 0
 fi

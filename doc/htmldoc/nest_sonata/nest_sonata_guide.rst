@@ -1,7 +1,7 @@
 .. _nest_sonata:
 
 NEST SONATA guide 
-=====================
+=================
 
 NEST supports building and simulating networks of point neurons described by the
 `SONATA <https://github.com/AllenInstitute/sonata>`_ format [1]_. 
@@ -10,7 +10,7 @@ This guide provides the details about how a SONATA network must be specified to 
 .. _sec:sonata_configure:
 
 Configure NEST for SONATA
---------------------------
+-------------------------
 
 To use SONATA with NEST, both `HDF5 <https://hdfgroup.org/>`_ and `h5py <https://www.h5py.org/>`_ must be installed on
 the system and NEST must be configured properly.
@@ -56,7 +56,7 @@ configuration files.
 .. _sec:sonata_examples:
 
 NEST SONATA Example
---------------------
+-------------------
 
 Here is a minimal example of how to build and simulate from SONATA specifications:
 

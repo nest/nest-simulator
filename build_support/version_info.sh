@@ -23,7 +23,7 @@
 # cmake/NestVersionInfo.cmake
 
 # If we can't run git at all, set everything to unknown
-git --version
+git --version 2>&1 > /dev/null
 if [ ! $? -eq 0 ]; then
   echo unknown\;unknown\;unknown
   exit 0

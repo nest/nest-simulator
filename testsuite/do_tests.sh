@@ -116,10 +116,18 @@ TEST_BASEDIR="${PREFIX}/share/nest/testsuite"
 
 # create the report directory in TEST_BASEDIR. Save and restore the old value
 # of TMPDIR.
-OLD_TMPDIR=$TMPDIR
+
+if [ -n "$TMPDIR" ]; then
+    OLD_TMPDIR=$TMPDIR
+fi
+
 TMPDIR=$TEST_BASEDIR
 REPORTDIR="$(mktemp -d test_report_XXX)"
-TMPDIR=OLD_TMPDIR
+
+if [ -n "$OLD_TMPDIR" ]; then
+    TMPDIR=OLD_TMPDIR
+    unset OLD_TMPDIR
+fi
 
 TEST_LOGFILE="${REPORTDIR}/installcheck.log"
 TEST_OUTFILE="${REPORTDIR}/output.log"

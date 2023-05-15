@@ -40,13 +40,17 @@ def get_arg_df(args):
 # Simulate and return recordings
 def simulate(time, prate, astro_params):
     nest.ResetKernel()
-    a = nest.Create('astrocyte', params=astro_params)
-    mm = nest.Create('multimeter', params={'record_from': ['IP3', 'Ca', 'SIC']})
+    astrocyte = nest.Create('astrocyte', params=astro_params)
+    mm_astro = nest.Create('multimeter', params={'record_from': ['IP3', 'Ca']})
     ps = nest.Create('poisson_generator', params={'rate': prate})
-    nest.Connect(mm, a)
-    nest.Connect(ps, a)
+    neuron = nest.Create('aeif_cond_alpha_astro')
+    mm_neuro = nest.Create('multimeter', params={'record_from': ['SIC']})
+    nest.Connect(mm_astro, astrocyte)
+    nest.Connect(ps, astrocyte)
+    nest.Connect(astrocyte, neuron, syn_spec={'synapse_model': 'sic_connection'})
+    nest.Connect(mm_neuro, neuron)
     nest.Simulate(time)
-    return mm.events
+    return mm_astro.events, mm_neuro.events
 
 # Main function
 def run(params, sim_time, poisson_rate, spath):
@@ -74,11 +78,11 @@ def run(params, sim_time, poisson_rate, spath):
         for k, v in row.items():
             astro_params[k] = v
             label += f'{k}={v},'
-        data = simulate(sim_time, poisson_rate, astro_params)
-        ts = data["times"]
-        ip3s = data["IP3"]
-        cas = data["Ca"]
-        sics = data["SIC"]
+        data_astro, data_neuro = simulate(sim_time, poisson_rate, astro_params)
+        ts = data_astro["times"]
+        ip3s = data_astro["IP3"]
+        cas = data_astro["Ca"]
+        sics = data_neuro["SIC"]
         axes[0].plot(ts, ip3s, label=label)
         axes[1].plot(ts, cas, label=label)
         axes[2].plot(ts, sics, label=label)

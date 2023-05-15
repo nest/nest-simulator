@@ -470,6 +470,10 @@ nest::astrocyte::update( Time const& origin, const long from, const long to )
       // to convert to pA from uA/cm2; now users can set the SIC weight
       B_.sic_values[ lag ] = std::log( calc_thr );
     }
+    else
+    {
+      B_.sic_values[ lag ] = 0;
+    }
 
   } // end for loop
 

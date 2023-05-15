@@ -114,7 +114,9 @@ nest::astrocyte::Parameters_::Parameters_()
   , ratio_ER_cyt_( 0.185 )
   , incr_IP3_( 5.0 )       // uM
   , k_IP3R_( 0.0002 )      // 1/(uM*ms)
+  , logarithmic_SIC_ ( true )
   , rate_L_( 0.00011 )     // 1/ms
+  , SIC_scale_( 1.0 )
   , SIC_th_( 196.69 )      // nM
   , tau_IP3_( 7142.0 )     // ms
   , rate_IP3R_( 0.006 )    // 1/ms
@@ -163,11 +165,13 @@ nest::astrocyte::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::ratio_ER_cyt, ratio_ER_cyt_ );
   def< double >( d, names::incr_IP3, incr_IP3_ );
   def< double >( d, names::k_IP3R, k_IP3R_ );
+  def< double >( d, names::SIC_scale, SIC_scale_ );
   def< double >( d, names::SIC_th, SIC_th_ );
   def< double >( d, names::rate_L, rate_L_ );
   def< double >( d, names::rate_IP3R, rate_IP3R_ );
   def< double >( d, names::rate_SERCA, rate_SERCA_ );
   def< double >( d, names::tau_IP3, tau_IP3_ );
+  def< bool >( d, names::logarithmic_SIC, logarithmic_SIC_ );
 }
 
 void
@@ -183,11 +187,13 @@ nest::astrocyte::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::ratio_ER_cyt, ratio_ER_cyt_, node );
   updateValueParam< double >( d, names::incr_IP3, incr_IP3_, node );
   updateValueParam< double >( d, names::k_IP3R, k_IP3R_, node );
+  updateValueParam< double >( d, names::SIC_scale, SIC_scale_, node );
   updateValueParam< double >( d, names::SIC_th, SIC_th_, node );
   updateValueParam< double >( d, names::rate_L, rate_L_, node );
   updateValueParam< double >( d, names::rate_IP3R, rate_IP3R_, node );
   updateValueParam< double >( d, names::rate_SERCA, rate_SERCA_, node );
   updateValueParam< double >( d, names::tau_IP3, tau_IP3_, node );
+  updateValueParam< bool >( d, names::logarithmic_SIC, logarithmic_SIC_, node );
 
   if ( Ca_tot_ <= 0 )
   {
@@ -228,6 +234,10 @@ nest::astrocyte::Parameters_::set( const DictionaryDatum& d, Node* node )
   if ( k_IP3R_ < 0 )
   {
     throw BadProperty( "Astrocytic IP2R binding constant for calcium inhibition must be non-negative." );
+  }
+  if ( SIC_scale_ <= 0 )
+  {
+    throw BadProperty( "Scale of SIC must be positive." );
   }
   if ( SIC_th_ < 0 )
   {
@@ -464,16 +474,25 @@ nest::astrocyte::update( Time const& origin, const long from, const long to )
     // normalize Calcium concentration
     // 1000.0: change unit from uM to nM
     double calc_thr = S_.y_[ State_::Ca ] * 1000.0 - P_.SIC_th_;
-    if ( calc_thr > 1.0 )
+    double sic_value = 0.0;
+    if ( P_.logarithmic_SIC_ == true )
     {
-      // originally this is multiplyed by std::pow(25, 2)*3.14*std::pow(10, -2)
-      // to convert to pA from uA/cm2; now users can set the SIC weight
-      B_.sic_values[ lag ] = std::log( calc_thr );
+      if ( calc_thr > 1.0 )
+      {
+        // multiplied by std::pow(25, 2)*3.14*std::pow(10, -2) in previous
+        // version to convert from uA/cm2 to pA; now users can set the scale of
+        // SIC by SIC_scale or SIC connection weight
+        sic_value = std::log( calc_thr )*P_.SIC_scale_;
+      }
     }
     else
     {
-      B_.sic_values[ lag ] = 0;
+      if ( calc_thr > 0.0 )
+      {
+        sic_value = calc_thr*P_.SIC_scale_/1000.0;
+      }
     }
+    B_.sic_values[ lag ] = sic_value;
 
   } // end for loop
 

@@ -15,7 +15,8 @@ import nest
 # Any astrocyte parameter can be added
 params_scan = {
     'tau_IP3': [10., 2.],
-    'rate_L': [0.0001, 0.00001]
+    'rate_L': [0.0001, 0.00001],
+    'logarithmic_SIC': [False]
 }
 
 # Helper for recording parameters

@@ -20,12 +20,11 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import nest
-import pytest
 from math import exp
 import numpy as np
 
 try:
-    import matplotlib as mpl
+    import matplotlib as mpl    # noqa: F401
     import matplotlib.pyplot as plt
 
     DEBUG_PLOTS = True
@@ -217,10 +216,10 @@ class TestSTDPSynapse:
         Kpre = 0.
         weight = initial_weight
 
-        t_log = list()
-        w_log = list()
-        Kpre_log = list()
-        pre_spike_times = list()
+        t_log = []
+        w_log = []
+        Kpre_log = []
+        pre_spike_times = []
 
         post_spikes_delayed = post_spikes + self.dendritic_delay
 

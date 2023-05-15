@@ -21,13 +21,12 @@
 
 # This script tests the parrot_neuron in NEST.
 
-import math
 import nest
 import numpy as np
 import pytest
 
 try:
-    import matplotlib as mpl
+    import matplotlib as mpl    # noqa: F401
     import matplotlib.pyplot as plt
     DEBUG_PLOTS = True
 except Exception:

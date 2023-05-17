@@ -29,7 +29,7 @@ Networks <pynest_examples>`, or
 have a look at at the source directory of your NEST installation in the
 subdirectory: ``pynest/examples/``.
 
-Parameterising synapse models
+Parametrizing synapse models
 -----------------------------
 
 NEST provides a variety of different synapse models. You can see the

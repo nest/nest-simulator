@@ -148,7 +148,7 @@ Generator Interface and randomly connects 10% of the neurons from
    import csa
    cg = csa.cset(csa.random(0.1), 10000.0, 1.0)
 
-   # Map weight and delay indices to vaules from cg
+   # Map weight and delay indices to values from cg
    params_map = {'weight': 0, 'delay': 1}
 
    conn_spec_dict = {'rule': 'conngen', 'cg': cg, 'params_map': params_map}

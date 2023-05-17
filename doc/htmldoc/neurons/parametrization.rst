@@ -470,7 +470,7 @@ Using parameters makes it easy to set node properties
 |                                               |                                                    |
 |     for gid in nrns:                          |     nrns.V_m=nest.random.uniform(-20., 20)         |
 |       v_m = numpy.random.uniform(-20., 20.)   |                                                    |
-|       nest.SetStatus([node_id], {'V_m': V_m}) |                                                    |
+|       nest.SetStatus(gid, {'V_m': v_m})       |                                                    |
 |                                               |                                                    |
 |                                               |                                                    |
 +-----------------------------------------------+----------------------------------------------------+

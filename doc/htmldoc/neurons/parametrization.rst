@@ -252,7 +252,7 @@ parameter:
     fig, ax = pyplot.subplots(figsize=(12, 6))
     bars = ax.hist(targets, bins=N, edgecolor='black', linewidth=1.2)
 
-    pyplot.xticks(bars[1] + 0.5,np.arange(1, N+1))
+    pyplot.xticks(bars[1] + 0.5,np.arange(1, N+2))
     ax.set_title('Connections from node with NodeID {}'.format(spatial_nodes[middle_node].get('global_id')))
     ax.set_xlabel('Target NodeID')
     ax.set_ylabel('Num. connections');

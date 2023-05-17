@@ -167,7 +167,7 @@ others can be used when connecting.
    spatial_nodes = nest.Create('iaf_psc_alpha', positions=positions)
 
    parameter = -60 + nest.spatial.pos.x + (0.4 * nest.spatial.pos.x * nest.random.normal())
-   spatial_nodes.set('V_m'=parameter)
+   spatial_nodes.set(V_m=parameter)
 
    node_pos = np.array(nest.GetPosition(spatial_nodes))
    node_pos[:,1]

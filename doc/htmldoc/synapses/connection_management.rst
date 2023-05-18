@@ -527,7 +527,7 @@ If you want to connect with different :ref:`receptor types
 You can see how many synapse parameters you have by calling ``len()`` on
 your ``CollocatedSynapses`` object:
 
-  >>> len(syn_spec)
+  >>> len(syn_spec_dict)
   2
 
 Spatially-structured networks

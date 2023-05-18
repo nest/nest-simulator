@@ -82,7 +82,7 @@ In linear simulation scripts that build a network, simulate it, carry
 out some post-processing and exit, the user does not have to worry about
 the delay extrema *dmin* and *dmax* as they are set automatically to the
 correct values. However, NEST also allows subsequent calls
-to\ :py:func:`.Simulate`, which only work correctly if the content of the spike
+to :py:func:`.Simulate`, which only work correctly if the content of the spike
 buffers is preserved over the simulations.
 
 As mentioned above, the size of that buffer depends on *dmin+dmax* and

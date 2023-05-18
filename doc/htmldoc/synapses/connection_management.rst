@@ -357,7 +357,7 @@ fixed outdegree
 ^^^^^^^^^^^^^^^
 
 For rule ``fixed_outdegree`` the array has to be a two-dimensional
-NumPy array or Python list with shape ``(len(pre), outdegree)``, where
+NumPy array or Python list with shape ``(len(A), outdegree)``, where
 :hxt_ref:`outdegree` is the number of outgoing connections per source
 neuron. This means that the rows describe the source, while the
 columns represent the connections starting from the source neuron

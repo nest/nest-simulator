@@ -586,14 +586,14 @@ columns and :math:`m` rows.
 
     # To only connect pairs with a nonzero weight, we use array indexing
     # to extract the weights and post-synaptic neurons.
-        nonzero_indices = numpy.where(weights != 0)[0]
+        nonzero_indices = np.where(weights != 0)[0]
         weights = weights[nonzero_indices]
         post = B[nonzero_indices]
 
     # Generate an array of node IDs for the column of the weight
     # matrix, with length based on the number of nonzero
     # elements. The array's dtype must be an integer.
-        pre_array = numpy.ones(len(nonzero_indices), dtype=numpy.int64) * pre.get('global_id')
+        pre_array = np.ones(len(nonzero_indices), dtype=np.int64) * pre.get('global_id')
 
     # nest.Connect() automatically converts post to a NumPy array
     # because pre_array contains multiple identical node IDs. When

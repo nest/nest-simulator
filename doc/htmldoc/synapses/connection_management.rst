@@ -752,7 +752,7 @@ given model.
 
 To further customize the process of creating synapses, it is often
 useful to have the same basic synapse model available with different
-parametizations. To this end, :py:func:`.CopyModel` can be used to
+parametrizations. To this end, :py:func:`.CopyModel` can be used to
 create custom synapse types from already existing synapse types. In
 the simplest case, it takes the names of the existing model and the
 copied type to be created. The optional argument ``params`` allows to

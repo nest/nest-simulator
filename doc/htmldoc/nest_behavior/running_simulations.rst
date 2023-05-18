@@ -125,7 +125,7 @@ also means that the membrane potential recording will never show values
 above the threshold. The time of the spike is always the time at *the
 end of the interval* during which the threshold was crossed.
 
-NEST also has a some models that determine the precise time of the
+NEST also has some models that determine the precise time of the
 threshold crossing during the interval. Please see the documentation on
 :ref:`precise spike time neurons <sim_precise_spike_times>`
 for details about neuron update in continuous time and the

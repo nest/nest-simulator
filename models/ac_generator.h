@@ -131,7 +131,7 @@ public:
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
 
-  StimulationDevice::Type get_type() const override;
+  // StimulationDevice::Type get_type() const override;
   void set_data_from_stimulation_backend( std::vector< double >& input_param ) override;
 
 private:
@@ -271,11 +271,11 @@ ac_generator::local_receiver() const
   return true;
 }
 
-inline StimulationDevice::Type
-ac_generator::get_type() const
-{
-  return StimulationDevice::Type::CURRENT_GENERATOR;
-}
+// inline StimulationDevice::Type
+// ac_generator::get_type() const
+// {
+//   return StimulationDevice::Type::CURRENT_GENERATOR;
+// }
 
 } // namespace
 

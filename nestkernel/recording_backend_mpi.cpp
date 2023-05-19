@@ -28,6 +28,8 @@
 #include "exceptions.h"
 #include "recording_backend_mpi.h"
 #include "recording_device.h"
+#include "recording_device_ng.h"
+
 
 nest::RecordingBackendMPI::RecordingBackendMPI()
   : enrolled_( false )
@@ -69,9 +71,9 @@ nest::RecordingBackendMPI::finalize()
 }
 
 void
-nest::RecordingBackendMPI::enroll( const RecordingDevice& device, const DictionaryDatum& )
+nest::RecordingBackendMPI::enroll( const NESTObjectInterface& device, const DictionaryDatum& )
 {
-  if ( device.get_type() == RecordingDevice::SPIKE_RECORDER )
+  if ( sr )
   {
     thread tid = device.get_thread();
     index node_id = device.get_node_id();
@@ -82,7 +84,7 @@ nest::RecordingBackendMPI::enroll( const RecordingDevice& device, const Dictiona
       devices_[ tid ].erase( device_it );
     }
 
-    std::tuple< int, MPI_Comm*, const RecordingDevice* > tuple = std::make_tuple( -1, nullptr, &device );
+    std::tuple< int, MPI_Comm*, const NESTObjectInterface* > tuple = std::make_tuple( -1, nullptr, sr );
     devices_[ tid ].insert( std::make_pair( node_id, tuple ) );
     enrolled_ = true;
   }
@@ -92,8 +94,9 @@ nest::RecordingBackendMPI::enroll( const RecordingDevice& device, const Dictiona
   }
 }
 
+
 void
-nest::RecordingBackendMPI::disenroll( const RecordingDevice& device )
+nest::RecordingBackendMPI::disenroll( const NESTObjectInterface& device )
 {
   const auto tid = device.get_thread();
   const auto node_id = device.get_node_id();
@@ -316,7 +319,7 @@ nest::RecordingBackendMPI::get_device_status( const nest::RecordingDevice&, Dict
 
 
 void
-nest::RecordingBackendMPI::write( const RecordingDevice& device,
+nest::RecordingBackendMPI::write( const NESTObjectInterface& device,
   const Event& event,
   const std::vector< double >&,
   const std::vector< long >& )
@@ -355,9 +358,9 @@ nest::RecordingBackendMPI::set_status( const DictionaryDatum& )
 }
 
 void
-nest::RecordingBackendMPI::get_port( const RecordingDevice* device, std::string* port_name )
+nest::RecordingBackendMPI::get_port( const NESTObjectInterface* device, std::string* port_name )
 {
-  get_port( device->get_node_id(), device->get_label(), port_name );
+  get_port( device->get_node_id(), "device->get_label()", port_name );
 }
 
 void

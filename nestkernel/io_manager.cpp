@@ -310,7 +310,7 @@ IOManager::is_valid_stimulation_backend( const Name backend_name ) const
 
 void
 IOManager::write( const Name backend_name,
-  const RecordingDevice& device,
+  const NESTObjectInterface& device,
   const Event& event,
   const std::vector< double >& double_values,
   const std::vector< long >& long_values )
@@ -319,7 +319,7 @@ IOManager::write( const Name backend_name,
 }
 
 void
-IOManager::enroll_recorder( const Name backend_name, const RecordingDevice& device, const DictionaryDatum& params )
+IOManager::enroll_recorder( const Name& backend_name, const NESTObjectInterface& device, const DictionaryDatum& params )
 {
   for ( auto& it : recording_backends_ )
   {
@@ -335,7 +335,7 @@ IOManager::enroll_recorder( const Name backend_name, const RecordingDevice& devi
 }
 
 void
-nest::IOManager::enroll_stimulator( const Name backend_name, StimulationDevice& device, const DictionaryDatum& params )
+nest::IOManager::enroll_stimulator( const Name& backend_name, StimulationDevice& device, const DictionaryDatum& params )
 {
 
   if ( not is_valid_stimulation_backend( backend_name ) and not backend_name.toString().empty() )

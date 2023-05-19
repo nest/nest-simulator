@@ -18,6 +18,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 set ( nestkernel_sources
+      nest_object_interface.h  nest_object_interface.cpp
       universal_data_logger_impl.h universal_data_logger.h
       recordables_map.h
       archiving_node.h archiving_node.cpp

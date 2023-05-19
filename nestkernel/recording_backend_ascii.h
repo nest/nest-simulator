@@ -159,9 +159,9 @@ public:
 
   void finalize() override;
 
-  void enroll( const RecordingDevice& device, const DictionaryDatum& params ) override;
+  void enroll( const NESTObjectInterface& device, const DictionaryDatum& params ) override;
 
-  void disenroll( const RecordingDevice& device ) override;
+  void disenroll( const NESTObjectInterface& device ) override;
 
   void set_value_names( const RecordingDevice& device,
     const std::vector< Name >& double_value_names,
@@ -180,7 +180,8 @@ public:
 
   void post_step_hook() override;
 
-  void write( const RecordingDevice&, const Event&, const std::vector< double >&, const std::vector< long >& ) override;
+  void
+  write( const NESTObjectInterface&, const Event&, const std::vector< double >&, const std::vector< long >& ) override;
 
   void set_status( const DictionaryDatum& ) override;
   void get_status( DictionaryDatum& ) const override;
@@ -190,7 +191,7 @@ public:
   void get_device_status( const RecordingDevice& device, DictionaryDatum& ) const override;
 
 private:
-  const std::string compute_vp_node_id_string_( const RecordingDevice& device ) const;
+  const std::string compute_vp_node_id_string_( const NESTObjectInterface& device ) const;
 
   struct DeviceData
   {

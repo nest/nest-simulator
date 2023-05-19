@@ -29,6 +29,7 @@
 // Includes from sli:
 #include "dictdatum.h"
 #include "name.h"
+#include "nest_object_interface.h"
 
 namespace nest
 {
@@ -116,7 +117,7 @@ public:
    *
    * @ingroup NESTio
    */
-  virtual void enroll( const RecordingDevice& device, const DictionaryDatum& params ) = 0;
+  virtual void enroll( const NESTObjectInterface& device, const DictionaryDatum& params ) = 0;
 
   /**
    * Disenroll a `RecordingDevice` from the `RecordingBackend`.
@@ -134,7 +135,7 @@ public:
    *
    * @ingroup NESTio
    */
-  virtual void disenroll( const RecordingDevice& device ) = 0;
+  virtual void disenroll( const NESTObjectInterface& device ) = 0;
 
   /**
    * To make the names of recorded quantities known to the
@@ -241,7 +242,7 @@ public:
    *
    * @ingroup NESTio
    */
-  virtual void write( const RecordingDevice& device,
+  virtual void write( const NESTObjectInterface& device,
     const Event& event,
     const std::vector< double >& double_values,
     const std::vector< long >& long_values ) = 0;

@@ -31,18 +31,16 @@
 #include <utility>
 #include <vector>
 
+
 // Includes from nestkernel:
 #include "deprecation_warning.h"
 #include "event.h"
 #include "histentry.h"
 #include "nest_names.h"
+#include "nest_object_interface.h"
 #include "nest_time.h"
 #include "nest_types.h"
-#include "node_collection.h"
 #include "secondary_event.h"
-
-// Includes from sli:
-#include "dictdatum.h"
 
 /** @file node.h
  * Declarations for base class Node
@@ -53,7 +51,6 @@ namespace nest
 class Model;
 class ArchivingNode;
 class TimeConverter;
-
 
 /**
  * @defgroup user_interface Model developer interface.
@@ -100,7 +97,7 @@ class TimeConverter;
    SeeAlso: GetStatus, SetStatus, elementstates
  */
 
-class Node
+class Node : public NESTObjectInterface
 {
   friend class NodeManager;
   friend class ModelManager;
@@ -128,10 +125,13 @@ public:
     return nullptr;
   }
 
+  Name get_element_type() const override;
+
   /**
    * Returns true if the node has proxies on remote threads. This is
    * used to discriminate between different types of nodes, when adding
    * new nodes to the network.
+   * TODO: To be deleted!
    */
   virtual bool has_proxies() const;
 
@@ -143,6 +143,7 @@ public:
   /**
    * Returns true if the node only receives events from nodes/devices
    * on the same thread.
+   * TODO: check this to delete!
    */
   virtual bool local_receiver() const;
 
@@ -169,48 +170,24 @@ public:
    */
   virtual bool is_proxy() const;
 
-  /**
-   * Return class name.
-   * Returns name of node model (e.g. "iaf_psc_alpha") as string.
-   * This name is identical to the name that is used to identify
-   * the model in the interpreter's model dictionary.
-   */
-  std::string get_name() const;
 
   /**
-   * Return the element type of the node.
-   * The returned Name is a free label describing the class of network
-   * elements a node belongs to. Currently used values are "neuron",
-   * "recorder", "stimulator", and "other", which are all defined as
-   * static Name objects in the names namespace.
-   * This function is overwritten with a corresponding value in the
-   * derived classes
-   */
-  virtual Name get_element_type() const;
-
-  /**
-   * Return global Network ID.
-   * Returns the global network ID of the Node.
-   * Each node has a unique network ID which can be used to access
-   * the Node comparable to a pointer.
+   *  Return a dictionary with the node's properties.
    *
-   * The smallest valid node ID is 1.
+   *  get_status_base() first gets a dictionary with the basic
+   *  information of an element, using get_status_dict_(). It then
+   *  calls the custom function get_status(DictionaryDatum) with
+   *  the created status dictionary as argument.
    */
-  index get_node_id() const;
+  DictionaryDatum get_status_base();
 
   /**
-   * Return lockpointer to the NodeCollection that created this node.
+   * Set status dictionary of a node.
+   *
+   * Forwards to set_status() of the derived class.
+   * @internal
    */
-  NodeCollectionPTR get_nc() const;
-
-  /**
-   * Return model ID of the node.
-   * Returns the model ID of the model for this node.
-   * Model IDs start with 0.
-   * @note The model ID is not stored in the model prototype instance.
-   *       It is only set when actual nodes are created from a prototype.
-   */
-  int get_model_id() const;
+  void set_status_base( const DictionaryDatum& );
 
   /**
    * Prints out one line of the tree view of the network.
@@ -334,22 +311,6 @@ public:
    * The configuration interface consists of four functions which
    * implement storage and retrieval of named parameter sets.
    */
-
-  /**
-   * Change properties of the node according to the
-   * entries in the dictionary.
-   * @param d Dictionary with named parameter settings.
-   * @ingroup status_interface
-   */
-  virtual void set_status( const DictionaryDatum& ) = 0;
-
-  /**
-   * Export properties of the node by setting
-   * entries in the status dictionary.
-   * @param d Dictionary.
-   * @ingroup status_interface
-   */
-  virtual void get_status( DictionaryDatum& ) const = 0;
 
 public:
   /**
@@ -713,35 +674,6 @@ public:
 
   virtual void event_hook( DSCurrentEvent& );
 
-  /**
-   * Store the number of the thread to which the node is assigned.
-   * The assignment is done after node creation by the Network class.
-   * @see: NodeManager::add_node().
-   */
-  void set_thread( thread );
-
-  /**
-   * Retrieve the number of the thread to which the node is assigned.
-   */
-  thread get_thread() const;
-
-  /**
-   * Store the number of the virtual process to which the node is assigned.
-   * This is assigned to the node in NodeManager::add_node().
-   */
-  void set_vp( thread );
-
-  /**
-   * Retrieve the number of the virtual process to which the node is assigned.
-   */
-  thread get_vp() const;
-
-  /** Set the model id.
-   * This method is called by NodeManager::add_node() when a node is created.
-   * @see get_model_id()
-   */
-  void set_model_id( int );
-
   /** Execute post-initialization actions in node models.
    * This method is called by NodeManager::add_node() on a node once
    * is fully initialized, i.e. after node ID, nc, model_id, thread, vp is
@@ -771,55 +703,6 @@ public:
     return SPIKE;
   }
 
-
-  /**
-   *  Return a dictionary with the node's properties.
-   *
-   *  get_status_base() first gets a dictionary with the basic
-   *  information of an element, using get_status_dict_(). It then
-   *  calls the custom function get_status(DictionaryDatum) with
-   *  the created status dictionary as argument.
-   */
-  DictionaryDatum get_status_base();
-
-  /**
-   * Set status dictionary of a node.
-   *
-   * Forwards to set_status() of the derived class.
-   * @internal
-   */
-  void set_status_base( const DictionaryDatum& );
-
-  /**
-   * Returns true if node is model prototype.
-   */
-  bool is_model_prototype() const;
-
-  /**
-   * set thread local index
-
-   */
-  void set_thread_lid( const index );
-
-  /**
-   * get thread local index
-   */
-  index get_thread_lid() const;
-
-  /**
-   * Sets the local device id.
-   * Throws an error if used on a non-device node.
-   * @see get_local_device_id
-   */
-  virtual void set_local_device_id( const index lsdid );
-
-  /**
-   * Gets the local device id.
-   * Throws an error if used on a non-device node.
-   * @see set_local_device_id
-   */
-  virtual index get_local_device_id() const;
-
   /**
    * Member of DeprecationWarning class to be used by models if parameters are
    * deprecated.
@@ -827,22 +710,6 @@ public:
   DeprecationWarning deprecation_warning;
 
 private:
-  void set_node_id_( index ); //!< Set global node id
-
-  /**
-   * Set the original NodeCollection of this node.
-   */
-  void set_nc_( NodeCollectionPTR );
-
-  /** Return a new dictionary datum .
-   *
-   * This function is called by get_status_base() and returns a new
-   * empty dictionary by default.  Some nodes may contain a
-   * permanent status dictionary which is then returned by
-   * get_status_dict_().
-   */
-  virtual DictionaryDatum get_status_dict_();
-
 protected:
   /**
    * Configure state variables depending on runtime information.
@@ -882,33 +749,19 @@ protected:
   const ConcreteNode& downcast( const Node& );
 
 private:
-  /**
-   * Global Element ID (node ID).
-   *
-   * The node ID is unique within the network. The smallest valid node ID is 1.
-   */
-  index node_id_;
-
-  /**
-   * Local id of this node in the thread-local vector of nodes.
-   */
-  index thread_lid_;
-
-  /**
-   * Model ID.
-   * It is only set for actual node instances, not for instances of class Node
-   * representing model prototypes. Model prototypes always have model_id_==-1.
-   * @see get_model_id(), set_model_id()
-   */
-  int model_id_;
-
-  thread thread_;      //!< thread node is assigned to
-  thread vp_;          //!< virtual process node is assigned to
   bool frozen_;        //!< node shall not be updated if true
   bool initialized_;   //!< state and buffers have been initialized
   bool node_uses_wfr_; //!< node uses waveform relaxation method
 
-  NodeCollectionPTR nc_ptr_; //!< Original NodeCollection of this node, used to extract node-specific metadata
+  NodeCollectionPTR nc_ptr_; //!< Original NodeCollection of this node, used to
+                             //!< extract node-specific metadata
+
+  // std::vector< RecordingDevice* >
+  //   recording_devices; //!< A list of assigned recording devices to the
+  //   neuron during the simulation
+
+  bool record_; //!< Indicates if the neuron should after one update step to
+                //!< record its internal data or emitted spikes.
 };
 
 inline bool
@@ -971,73 +824,6 @@ Node::get_element_type() const
   return names::neuron;
 }
 
-inline index
-Node::get_node_id() const
-{
-  return node_id_;
-}
-
-inline NodeCollectionPTR
-Node::get_nc() const
-{
-  return nc_ptr_;
-}
-
-inline void
-Node::set_node_id_( index i )
-{
-  node_id_ = i;
-}
-
-
-inline void
-Node::set_nc_( NodeCollectionPTR nc_ptr )
-{
-  nc_ptr_ = nc_ptr;
-}
-
-inline int
-Node::get_model_id() const
-{
-  return model_id_;
-}
-
-inline void
-Node::set_model_id( int i )
-{
-  model_id_ = i;
-}
-
-inline bool
-Node::is_model_prototype() const
-{
-  return vp_ == invalid_thread;
-}
-
-inline void
-Node::set_thread( thread t )
-{
-  thread_ = t;
-}
-
-inline thread
-Node::get_thread() const
-{
-  return thread_;
-}
-
-inline void
-Node::set_vp( thread vp )
-{
-  vp_ = vp;
-}
-
-inline thread
-Node::get_vp() const
-{
-  return vp_;
-}
-
 template < typename ConcreteNode >
 const ConcreteNode&
 Node::downcast( const Node& n )
@@ -1047,18 +833,6 @@ Node::downcast( const Node& n )
   return *tp;
 }
 
-inline void
-Node::set_thread_lid( const index tlid )
-{
-  thread_lid_ = tlid;
-}
-
-inline index
-Node::get_thread_lid() const
-{
-  return thread_lid_;
-}
-
-} // namespace
+} // namespace nest
 
 #endif

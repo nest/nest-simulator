@@ -206,9 +206,9 @@ public:
   void initialize() override;
   void finalize() override;
 
-  void enroll( const RecordingDevice& device, const DictionaryDatum& params ) override;
+  void enroll( const NESTObjectInterface& device, const DictionaryDatum& params ) override;
 
-  void disenroll( const RecordingDevice& device ) override;
+  void disenroll( const NESTObjectInterface& device ) override;
 
   void set_value_names( const RecordingDevice& device,
     const std::vector< Name >& double_value_names,
@@ -218,7 +218,7 @@ public:
 
   void cleanup() override;
 
-  void write( const RecordingDevice& device,
+  void write( const NESTObjectInterface& device,
     const Event& event,
     const std::vector< double >& double_values,
     const std::vector< long >& long_values ) override;

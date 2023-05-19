@@ -106,6 +106,7 @@ public:
   bool is_valid_recording_backend( const Name ) const;
   bool is_valid_stimulation_backend( const Name ) const;
 
+
   /**
    * Send device data to a given recording backend.
    *
@@ -124,13 +125,13 @@ public:
    * \param long_values a vector of longs to be written
    */
   void write( const Name backend_name,
-    const RecordingDevice& device,
+    const NESTObjectInterface& device,
     const Event& event,
     const std::vector< double >& double_values,
     const std::vector< long >& long_values );
 
-  void enroll_recorder( const Name, const RecordingDevice&, const DictionaryDatum& );
-  void enroll_stimulator( const Name, StimulationDevice&, const DictionaryDatum& );
+  void enroll_recorder( const Name&, const NESTObjectInterface&, const DictionaryDatum& );
+  void enroll_stimulator( const Name&, StimulationDevice&, const DictionaryDatum& );
 
   void set_recording_value_names( const Name backend_name,
     const RecordingDevice& device,

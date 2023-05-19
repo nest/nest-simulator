@@ -47,23 +47,22 @@ nest::RecordingBackendMemory::finalize()
 }
 
 void
-nest::RecordingBackendMemory::enroll( const RecordingDevice& device, const DictionaryDatum& params )
+nest::RecordingBackendMemory::enroll( const NESTObjectInterface& device, const DictionaryDatum& params )
 {
   thread t = device.get_thread();
   index node_id = device.get_node_id();
 
-  device_data_map::value_type::iterator device_data = device_data_[ t ].find( node_id );
-  if ( device_data == device_data_[ t ].end() )
+  bool is_new_entry = device_data_[ t ].empty() || std::prev( device_data_[ t ].end() )->first < node_id;
+  if ( is_new_entry )
   {
-    auto p = device_data_[ t ].insert( std::make_pair( node_id, DeviceData() ) );
-    device_data = p.first;
+    DeviceData device = DeviceData();
+    device.set_status( params );
+    device_data_[ t ].insert( std::make_pair( node_id, std::move( device ) ) );
   }
-
-  device_data->second.set_status( params );
 }
 
 void
-nest::RecordingBackendMemory::disenroll( const RecordingDevice& device )
+nest::RecordingBackendMemory::disenroll( const NESTObjectInterface& device )
 {
   thread t = device.get_thread();
   index node_id = device.get_node_id();
@@ -101,7 +100,7 @@ nest::RecordingBackendMemory::cleanup()
 }
 
 void
-nest::RecordingBackendMemory::write( const RecordingDevice& device,
+nest::RecordingBackendMemory::write( const NESTObjectInterface& device,
   const Event& event,
   const std::vector< double >& double_values,
   const std::vector< long >& long_values )

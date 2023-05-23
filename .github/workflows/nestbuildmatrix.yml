@@ -84,7 +84,7 @@ jobs:
           wget --progress=dot:mega 'https://github.com/errata-ai/vale/releases/download/v2.26.0/vale_2.26.0_Linux_64-bit.tar.gz'
           echo '956577b214ce3db8fb11483f99a183cf65673e3bd47423c6d4ebe37f085cadc7 vale_2.26.0_Linux_64-bit.tar.gz' | sha256sum -c
           tar -xzf 'vale_2.26.0_Linux_64-bit.tar.gz'
-
+          sudo apt update
 
       - name: "Run vale..."
         run: |

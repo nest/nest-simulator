@@ -21,9 +21,14 @@
 
 """
 Regression test for Issue #211 (GitHub).
+
+This set of tests create connections between neurons and devices using multiple
+threads and check whether the actually created connections coincide with the
+expected connections.
 """
 
 import pandas as pd
+import pandas.testing as pdtest
 import pytest
 
 import nest
@@ -32,68 +37,136 @@ pytestmark = pytest.mark.skipif_missing_threads
 
 
 @pytest.fixture(autouse=True)
-def set_resolution():
+def set_kernel():
     nest.ResetKernel()
     nest.resolution = 0.1
-
-
-def test_multithreaded():
-    """
-    test for correct creation of neuron-neuron, neuron-device, device-neuron
-    and device-device connections using multiple threads.
-
-    this script creates connections between neurons and devices and checks
-    whether the actually created connections coincide with the expected
-    connections
-
-    connect with a mixture of neuron and devices
-    """
     nest.set(total_num_virtual_procs=2)
 
-    # Create nodes
+
+def check_connections(expected_connections):
+    """
+    Check if actual connections coincide with expectations.
+
+    This function is used by the subsequent tests and asserts whether the
+    created connections match the provided expected connections.
+
+    The connections retrieved from `GetConnections` are sorted by, in decreasing
+    order of priority, the target thread id, source node id and target node id.
+    """
+
+    syn_collection = nest.GetConnections()
+    actual_connections = pd.DataFrame.from_dict(
+        syn_collection.get(["source", "target", "target_thread"])
+    )
+
+    actual_connections.sort_values(
+        by=["target_thread", "source", "target"], ignore_index=True, inplace=True
+    )
+
+    pdtest.assert_frame_equal(actual_connections, expected_connections)
+
+
+def test_connect_neuron_neuron_multithreaded():
+    """
+    Ensure correct creation of neuron-neuron connections using multiple threads.
+    """
+
     n1 = nest.Create("iaf_psc_delta")
     n2 = nest.Create("iaf_psc_delta")
     n3 = nest.Create("iaf_psc_delta")
-    sg = nest.Create("spike_generator")
-    sr = nest.Create("spike_recorder")
-    vt = nest.Create("volume_transmitter")
 
-    # Neuron-neuron
     nest.Connect(n1, n3)
     nest.Connect(n2, n3)
     nest.Connect(n2, n1)
     nest.Connect(n3, n1)
-    nest.Connect(n2, n1, syn_spec={"weight": 1.0})
 
-    # Neuron-device
+    expected_conns = pd.DataFrame(
+        [[1, 3, 1], [2, 1, 1], [2, 3, 1], [3, 1, 1]],
+        columns=["source", "target", "target_thread"],
+    )
+
+    check_connections(expected_conns)
+
+
+def test_connect_neuron_device_multithreaded():
+    """
+    Ensure correct creation of neuron-device connections using multiple threads.
+    """
+
+    n1 = nest.Create("iaf_psc_delta")
+    n2 = nest.Create("iaf_psc_delta")
+    n3 = nest.Create("iaf_psc_delta")
+    sr = nest.Create("spike_recorder")
+
     nest.Connect(n1, sr)
-    nest.Connect(n1, n3)
     nest.Connect(n2, sr)
     nest.Connect(n3, sr)
-    nest.Connect(n2, sr, syn_spec={"weight": 1.0})
 
-    # Device-neuron
+    expected_conns = pd.DataFrame(
+        [[2, 4, 0], [1, 4, 1], [3, 4, 1]],
+        columns=["source", "target", "target_thread"],
+    )
+
+    check_connections(expected_conns)
+
+
+def test_connect_device_neuron_multithreaded():
+    """
+    Ensure correct creation of device-neuron connections using multiple threads.
+    """
+
+    n1 = nest.Create("iaf_psc_delta")
+    n2 = nest.Create("iaf_psc_delta")
+    n3 = nest.Create("iaf_psc_delta")
+    sg = nest.Create("spike_generator")
+
+    nest.Connect(sg, n1)
     nest.Connect(sg, n2)
     nest.Connect(sg, n3)
-    nest.Connect(sg, n1)
-    nest.Connect(sg, n1)
-    nest.Connect(sg, n3, syn_spec={"weight": 1.0})
 
-    # Device-device
-    nest.Connect(sg, sr)
-    nest.Connect(sg, sr)
-    nest.Connect(sg, sr)
-    nest.Connect(sg, sr, syn_spec={"weight": 1.0})
+    expected_conns = pd.DataFrame(
+        [[4, 2, 0], [4, 1, 1], [4, 3, 1]],
+        columns=["source", "target", "target_thread"],
+    )
 
-    # Neuron-globally receiving device (volume transmitter)
+    check_connections(expected_conns)
+
+
+def test_connect_device_device_multithreaded():
+    """
+    Ensure correct creation of device-device connections using multiple threads.
+    """
+
+    sr1 = nest.Create("spike_recorder")
+    sr2 = nest.Create("spike_recorder")
+    sg = nest.Create("spike_generator")
+
+    nest.Connect(sg, sr1)
+    nest.Connect(sg, sr2)
+
+    expected_conns = pd.DataFrame(
+        [[3, 2, 0], [3, 1, 1]],
+        columns=["source", "target", "target_thread"],
+    )
+
+    check_connections(expected_conns)
+
+
+def test_connect_neuron_global_device_multithreaded():
+    """
+    Ensure correct creation of neuron-global device connections using multiple threads.
+    """
+
+    n1 = nest.Create("iaf_psc_delta")
+    n2 = nest.Create("iaf_psc_delta")
+    vt = nest.Create("volume_transmitter")
+
     nest.Connect(n1, vt)
     nest.Connect(n2, vt)
 
-    conns = nest.GetConnections()
-    print(pd.DataFrame.from_dict(conns.get()))
+    expected_conns = pd.DataFrame(
+        [[1, 3, 0], [2, 3, 0], [1, 3, 1], [2, 3, 1]],
+        columns=["source", "target", "target_thread"],
+    )
 
-    conn1 = nest.GetConnections(n1, n3)
-    conn_d = conn1.get(["source", "target", "target_thread"])
-    print(conn_d.values())
-    # print(pd.DataFrame.from_dict(conn1.get()))
-    # print(conn1.get(["source", "target", "target_thread"]))
+    check_connections(expected_conns)

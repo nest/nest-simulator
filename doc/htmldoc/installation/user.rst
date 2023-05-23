@@ -95,9 +95,9 @@ Debian users can install NEST via the Ubuntu PPA repository.
     dpkg-genbuildinfo --build=binary
     dpkg-genchanges --build=binary >../nest_2.20.0-0~202001311135~ubuntu20.04.1_amd64.changes
 
-   and note down the full package name. In the above example this would be
-   ``nest_2.20.0-0~202001311135~ubuntu20.04.1_amd64.deb``, where the number ``202001311135`` and potentially the
-   Ubuntu version number may be different.
+and note down the full package name. In the above example this would be
+``nest_2.20.0-0~202001311135~ubuntu20.04.1_amd64.deb``, where the number ``202001311135`` and potentially the
+Ubuntu version number may be different.
 
 6. Install the ready Debian package after the rebuild:
 

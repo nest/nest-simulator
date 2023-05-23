@@ -66,7 +66,7 @@ Multapses and autapses
 ~~~~~~~~~~~~~~~~~~~~~~
 
 In the connection specification dictionary (containing the rule name and rule-
-specific parameters, the additional switch ``allow_autapses`` (default:
+specific parameters), the additional switch ``allow_autapses`` (default:
 ``True``) can be set to allow or disallow self-connections.
 
 Likewise, ``allow_multapses`` (default: ``True``) can be used to specify if

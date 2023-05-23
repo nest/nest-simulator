@@ -73,8 +73,8 @@ A very simple example
 We create a first, grid-based simple NodeCollection with the following command:
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ layer1 #}
-    :end-before: #{ end #}
+    :start-after: # { layer1 #}
+    :end-before: # { end #}
 
 .. _fig_layer1:
 
@@ -142,8 +142,8 @@ different extent of a layer, i.e., its size in :math:`x`- and
 :math:`y`-direction by passing the ``extent`` argument to ``nest.spatial.grid()``:
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ layer2 #}
-    :end-before: #{ end #}
+    :start-after: # { layer2 #}
+    :end-before: # { end #}
 
 .. _fig_layer2:
 
@@ -172,8 +172,8 @@ The following code creates layers centered about :math:`(0,0)`,
 :math:`(-1,1)`, and :math:`(1.5,0.5)`, respectively:
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ layer3 #}
-    :end-before: #{ end #}
+    :start-after: # { layer3 #}
+    :end-before: # { end #}
 
 .. _fig_layer3:
 
@@ -218,8 +218,8 @@ are :math:`(n_x d/2, 0)`. The layer is created with the following code
 and shown in :numref:`fig_layer3a`:
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ layer3a #}
-    :end-before: #{ end #}
+    :start-after: # { layer3a #}
+    :end-before: # { end #}
 
 .. _fig_layer3a:
 
@@ -244,8 +244,8 @@ extent :math:`1\times 1`, i.e., spanning the square
 :math:`[-0.5,0.5]\times[-0.5,0.5]`:
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ layer4 #}
-    :end-before: #{ end #}
+    :start-after: # { layer4 #}
+    :end-before: # { end #}
 
 .. _fig_layer4:
 
@@ -281,8 +281,8 @@ Note the following points:
 To create a spatially distributed NodeCollection from a list, do the following:
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ layer4b #}
-    :end-before: #{ end #}
+    :start-after: # { layer4b #}
+    :end-before: # { end #}
 
 .. _fig_layer4b:
 
@@ -303,8 +303,8 @@ in NEST may in fact be 3-dimensional. The example from the previous
 section may be easily extended by updating number of dimensions for the positions:
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ layer4_3d #}
-    :end-before: #{ end #}
+    :start-after: # { layer4_3d #}
+    :end-before: # { end #}
 
 .. _fig_layer4_3d:
 
@@ -319,8 +319,8 @@ space. Another possibility is to create a 3D grid-layer, with 3 elements passed 
 the shape argument, ``shape=[nx, ny, nz]``:
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ layer4_3d_b #}
-    :end-before: #{ end #}
+    :start-after: # { layer4_3d_b #}
+    :end-before: # { end #}
 
 .. _fig_layer4_3d_b:
 
@@ -356,8 +356,8 @@ You specify periodic boundary conditions for a NodeCollection using
 the entry ``edge_wrap``:
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ player #}
-    :end-before: #{ end #}
+    :start-after: # { player #}
+    :end-before: # { end #}
 
 .. _fig_player:
 
@@ -400,8 +400,8 @@ be of interest:
    of this guide):
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ layer1s #}
-    :end-before: #{ end #}
+    :start-after: # { layer1s #}
+    :end-before: # { end #}
 
 
 The ``spatial`` property is read-only; changing any value will
@@ -415,8 +415,8 @@ not change properties of the spatially distributed NodeCollection.
    only be used on NodeCollections created with spatial distribution.
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ layer1p #}
-    :end-before: #{ end #}
+    :start-after: # { layer1p #}
+    :end-before: # { end #}
 
 .. _sec_connections:
 
@@ -1382,8 +1382,8 @@ is shown in :numref:`fig_vislayer`. All elements and the targets of the
 center neuron are shown, as well as mask and connection probability.
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ vislayer #}
-    :end-before: #{ end #}
+    :start-after: # { vislayer #}
+    :end-before: # { end #}
 
 .. _sec_custom_masks:
 

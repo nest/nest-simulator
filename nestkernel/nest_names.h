@@ -560,6 +560,7 @@ extern const Name time_deliver_conn;
 extern const Name time_stdp_delivery;
 extern const Name time_static_delivery;
 extern const Name time_node_archive;
+extern const Name time_correction;
 extern const Name time_deliver_spike_data;
 extern const Name time_gather_spike_data;
 extern const Name time_gather_target_data;

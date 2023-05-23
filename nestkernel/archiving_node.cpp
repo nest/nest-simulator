@@ -65,20 +65,36 @@ ArchivingNode::ArchivingNode( const ArchivingNode& n )
   , last_spike_( n.last_spike_ )
   , has_stdp_ax_delay_( false )
 {
+#ifdef TIMER_DETAILED
+  if ( get_thread() == 0 )
+    kernel().event_delivery_manager.sw_correction_.start();
+#endif
   const size_t num_time_slots =
     kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
   correction_entries_stdp_ax_delay_.resize( num_time_slots );
+#ifdef TIMER_DETAILED
+  if ( get_thread() == 0 )
+    kernel().event_delivery_manager.sw_correction_.stop();
+#endif
 }
 
 void
 ArchivingNode::pre_run_hook_()
 {
+#ifdef TIMER_DETAILED
+  if ( get_thread() == 0 )
+    kernel().event_delivery_manager.sw_correction_.start();
+#endif
   const size_t num_time_slots =
     kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
   if ( correction_entries_stdp_ax_delay_.size() != num_time_slots )
   {
     correction_entries_stdp_ax_delay_.resize( num_time_slots );
   }
+#ifdef TIMER_DETAILED
+  if ( get_thread() == 0 )
+    kernel().event_delivery_manager.sw_correction_.stop();
+#endif
 }
 
 void
@@ -112,6 +128,10 @@ ArchivingNode::get_K_value( double t )
   if ( history_.empty() )
   {
     trace_ = 0.;
+#ifdef TIMER_DETAILED
+    if ( get_thread() == 0 )
+      kernel().event_delivery_manager.sw_node_archive_.stop();
+#endif
     return trace_;
   }
 
@@ -122,6 +142,10 @@ ArchivingNode::get_K_value( double t )
     if ( t - history_[ i ].t_ > kernel().connection_manager.get_stdp_eps() )
     {
       trace_ = ( history_[ i ].Kminus_ * std::exp( ( history_[ i ].t_ - t ) * tau_minus_inv_ ) );
+#ifdef TIMER_DETAILED
+      if ( get_thread() == 0 )
+        kernel().event_delivery_manager.sw_node_archive_.stop();
+#endif
       return trace_;
     }
     --i;
@@ -150,6 +174,10 @@ ArchivingNode::get_K_values( double t, double& K_value, double& nearest_neighbor
     K_triplet_value = Kminus_triplet_;
     nearest_neighbor_K_value = Kminus_;
     K_value = Kminus_;
+#ifdef TIMER_DETAILED
+    if ( get_thread() == 0 )
+      kernel().event_delivery_manager.sw_node_archive_.stop();
+#endif
     return;
   }
 
@@ -164,6 +192,10 @@ ArchivingNode::get_K_values( double t, double& K_value, double& nearest_neighbor
         ( history_[ i ].Kminus_triplet_ * std::exp( ( history_[ i ].t_ - t ) * tau_minus_triplet_inv_ ) );
       K_value = ( history_[ i ].Kminus_ * std::exp( ( history_[ i ].t_ - t ) * tau_minus_inv_ ) );
       nearest_neighbor_K_value = std::exp( ( history_[ i ].t_ - t ) * tau_minus_inv_ );
+#ifdef TIMER_DETAILED
+      if ( get_thread() == 0 )
+        kernel().event_delivery_manager.sw_node_archive_.stop();
+#endif
       return;
     }
     --i;
@@ -194,6 +226,10 @@ ArchivingNode::get_history( double t1,
   if ( history_.empty() )
   {
     *start = *finish;
+#ifdef TIMER_DETAILED
+    if ( get_thread() == 0 )
+      kernel().event_delivery_manager.sw_node_archive_.stop();
+#endif
     return;
   }
   std::deque< histentry >::reverse_iterator runner = history_.rbegin();
@@ -264,7 +300,15 @@ ArchivingNode::set_spiketime( Time const& t_sp, double offset )
     last_spike_ = t_sp_ms;
   }
 
+#ifdef TIMER_DETAILED
+  if ( get_thread() == 0 )
+    kernel().event_delivery_manager.sw_correction_.start();
+#endif
   correct_synapses_stdp_ax_delay_( t_sp );
+#ifdef TIMER_DETAILED
+  if ( get_thread() == 0 )
+    kernel().event_delivery_manager.sw_correction_.stop();
+#endif
 }
 
 void
@@ -328,6 +372,10 @@ ArchivingNode::add_correction_entry_stdp_ax_delay( SpikeEvent& spike_event,
   const double weight_revert,
   const double dendritic_delay )
 {
+#ifdef TIMER_DETAILED
+  if ( get_thread() == 0 )
+    kernel().event_delivery_manager.sw_correction_.start();
+#endif
   if ( not has_stdp_ax_delay_ )
   {
     has_stdp_ax_delay_ = true;
@@ -358,6 +406,10 @@ ArchivingNode::add_correction_entry_stdp_ax_delay( SpikeEvent& spike_event,
     correction_entries_stdp_ax_delay_[ idx ].push_back(
       CorrectionEntrySTDPAxDelay( spike_event.get_sender_spike_data(), t_last_pre_spike, weight_revert ) );
   }
+#ifdef TIMER_DETAILED
+  if ( get_thread() == 0 )
+    kernel().event_delivery_manager.sw_correction_.stop();
+#endif
 }
 
 void
@@ -365,6 +417,10 @@ ArchivingNode::reset_correction_entries_stdp_ax_delay_()
 {
   if ( has_stdp_ax_delay_ )
   {
+#ifdef TIMER_DETAILED
+    if ( get_thread() == 0 )
+      kernel().event_delivery_manager.sw_correction_.start();
+#endif
     const long mindelay_steps = kernel().connection_manager.get_min_delay();
     assert( correction_entries_stdp_ax_delay_.size()
       == static_cast< size_t >( mindelay_steps + kernel().connection_manager.get_max_delay() ) );
@@ -377,6 +433,10 @@ ArchivingNode::reset_correction_entries_stdp_ax_delay_()
       correction_entries_stdp_ax_delay_[ idx ].clear();
     }
   }
+#ifdef TIMER_DETAILED
+  if ( get_thread() == 0 )
+    kernel().event_delivery_manager.sw_correction_.stop();
+#endif
 }
 
 void

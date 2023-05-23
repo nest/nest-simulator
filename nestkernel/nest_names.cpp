@@ -536,6 +536,7 @@ const Name time_deliver_conn( "time_deliver_conn" );
 const Name time_stdp_delivery( "time_stdp_delivery" );
 const Name time_static_delivery( "time_static_delivery" );
 const Name time_node_archive( "time_node_archive" );
+const Name time_correction( "time_correction" );
 const Name time_deliver_spike_data( "time_deliver_spike_data" );
 const Name time_gather_spike_data( "time_gather_spike_data" );
 const Name time_gather_target_data( "time_gather_target_data" );

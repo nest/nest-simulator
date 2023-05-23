@@ -143,6 +143,7 @@ EventDeliveryManager::get_status( DictionaryDatum& dict )
   def< double >( dict, names::time_stdp_delivery, sw_stdp_delivery_.elapsed() );
   def< double >( dict, names::time_static_delivery, sw_static_delivery_.elapsed() );
   def< double >( dict, names::time_node_archive, sw_node_archive_.elapsed() );
+  def< double >( dict, names::time_correction, sw_correction_.elapsed() );
 #endif
 }
 
@@ -294,6 +295,7 @@ EventDeliveryManager::reset_timers_for_dynamics()
   sw_stdp_delivery_.reset();
   sw_static_delivery_.reset();
   sw_node_archive_.reset();
+  sw_correction_.reset();
 #endif
 }
 

@@ -436,6 +436,7 @@ public:
   Stopwatch sw_stdp_delivery_;
   Stopwatch sw_static_delivery_;
   Stopwatch sw_node_archive_;
+  Stopwatch sw_correction_;
 private:
 #endif
 };

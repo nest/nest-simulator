@@ -1,0 +1,153 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structnest_1_1_recording_backend_s_i_o_nlib_1_1_parameters__" kind="struct" language="C++" prot="private">
+    <compoundname>nest::RecordingBackendSIONlib::Parameters_</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnest_1_1_recording_backend_s_i_o_nlib_1_1_parameters___1abe83c951533d29a24084b533bb3c56b3" prot="public" static="no" mutable="no">
+        <type>std::string</type>
+        <definition>std::string nest::RecordingBackendSIONlib::Parameters_::filename_</definition>
+        <argsstring></argsstring>
+        <name>filename_</name>
+        <briefdescription>
+<para>the file name extension to use, without . </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recording_backend_sionlib.h" line="351" column="17" bodyfile="nestkernel/recording_backend_sionlib.h" bodystart="351" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1_recording_backend_s_i_o_nlib_1_1_parameters___1abd58ab451e76d80017f5f50f280440bc" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::RecordingBackendSIONlib::Parameters_::sion_collective_</definition>
+        <argsstring></argsstring>
+        <name>sion_collective_</name>
+        <briefdescription>
+<para>use SIONlib&apos;s collective mode. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recording_backend_sionlib.h" line="352" column="10" bodyfile="nestkernel/recording_backend_sionlib.h" bodystart="352" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1_recording_backend_s_i_o_nlib_1_1_parameters___1a73c187d40a847127a7ec5b50afc2f85d" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long nest::RecordingBackendSIONlib::Parameters_::sion_chunksize_</definition>
+        <argsstring></argsstring>
+        <name>sion_chunksize_</name>
+        <briefdescription>
+<para>the size of SIONlib&apos;s buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recording_backend_sionlib.h" line="353" column="10" bodyfile="nestkernel/recording_backend_sionlib.h" bodystart="353" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1_recording_backend_s_i_o_nlib_1_1_parameters___1ad6f41e1d11ba92c5ad342c919761a1cc" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int nest::RecordingBackendSIONlib::Parameters_::sion_n_files_</definition>
+        <argsstring></argsstring>
+        <name>sion_n_files_</name>
+        <briefdescription>
+<para>the number of SIONLIB container files used. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recording_backend_sionlib.h" line="354" column="9" bodyfile="nestkernel/recording_backend_sionlib.h" bodystart="354" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1_recording_backend_s_i_o_nlib_1_1_parameters___1ac57ddbb2ebbab35e3003d3f06a7aa47d" prot="public" static="no" mutable="no">
+        <type>long</type>
+        <definition>long nest::RecordingBackendSIONlib::Parameters_::buffer_size_</definition>
+        <argsstring></argsstring>
+        <name>buffer_size_</name>
+        <briefdescription>
+<para>the size of the internal buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recording_backend_sionlib.h" line="355" column="10" bodyfile="nestkernel/recording_backend_sionlib.h" bodystart="355" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structnest_1_1_recording_backend_s_i_o_nlib_1_1_parameters___1a8806fe458043a23bd40ab59961c1727d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>nest::RecordingBackendSIONlib::Parameters_::Parameters_</definition>
+        <argsstring>()</argsstring>
+        <name>Parameters_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recording_backend_sionlib.h" line="357" column="5" bodyfile="nestkernel/recording_backend_sionlib.cpp" bodystart="613" bodyend="620"/>
+      </memberdef>
+      <memberdef kind="function" id="structnest_1_1_recording_backend_s_i_o_nlib_1_1_parameters___1a0e1a93d77689cd44cfa066f57fc1d315" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::RecordingBackendSIONlib::Parameters_::get</definition>
+        <argsstring>(const RecordingBackendSIONlib &amp;, DictionaryDatum &amp;) const</argsstring>
+        <name>get</name>
+        <param>
+          <type>const <ref refid="classnest_1_1_recording_backend_s_i_o_nlib" kindref="compound">RecordingBackendSIONlib</ref> &amp;</type>
+        </param>
+        <param>
+          <type>DictionaryDatum &amp;</type>
+          <defname>d</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recording_backend_sionlib.h" line="359" column="10" bodyfile="nestkernel/recording_backend_sionlib.cpp" bodystart="623" bodyend="630"/>
+      </memberdef>
+      <memberdef kind="function" id="structnest_1_1_recording_backend_s_i_o_nlib_1_1_parameters___1aefa2a77126fdf8d531af6cf8c041f013" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::RecordingBackendSIONlib::Parameters_::set</definition>
+        <argsstring>(const RecordingBackendSIONlib &amp;, const DictionaryDatum &amp;)</argsstring>
+        <name>set</name>
+        <param>
+          <type>const <ref refid="classnest_1_1_recording_backend_s_i_o_nlib" kindref="compound">RecordingBackendSIONlib</ref> &amp;</type>
+        </param>
+        <param>
+          <type>const DictionaryDatum &amp;</type>
+          <defname>d</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recording_backend_sionlib.h" line="360" column="10" bodyfile="nestkernel/recording_backend_sionlib.cpp" bodystart="633" bodyend="640"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>nest::RecordingBackendSIONlib::Parameters_</label>
+      </node>
+    </collaborationgraph>
+    <location file="nestkernel/recording_backend_sionlib.h" line="349" column="3" bodyfile="nestkernel/recording_backend_sionlib.h" bodystart="350" bodyend="361"/>
+    <listofallmembers>
+      <member refid="structnest_1_1_recording_backend_s_i_o_nlib_1_1_parameters___1ac57ddbb2ebbab35e3003d3f06a7aa47d" prot="public" virt="non-virtual"><scope>nest::RecordingBackendSIONlib::Parameters_</scope><name>buffer_size_</name></member>
+      <member refid="structnest_1_1_recording_backend_s_i_o_nlib_1_1_parameters___1abe83c951533d29a24084b533bb3c56b3" prot="public" virt="non-virtual"><scope>nest::RecordingBackendSIONlib::Parameters_</scope><name>filename_</name></member>
+      <member refid="structnest_1_1_recording_backend_s_i_o_nlib_1_1_parameters___1a0e1a93d77689cd44cfa066f57fc1d315" prot="public" virt="non-virtual"><scope>nest::RecordingBackendSIONlib::Parameters_</scope><name>get</name></member>
+      <member refid="structnest_1_1_recording_backend_s_i_o_nlib_1_1_parameters___1a8806fe458043a23bd40ab59961c1727d" prot="public" virt="non-virtual"><scope>nest::RecordingBackendSIONlib::Parameters_</scope><name>Parameters_</name></member>
+      <member refid="structnest_1_1_recording_backend_s_i_o_nlib_1_1_parameters___1aefa2a77126fdf8d531af6cf8c041f013" prot="public" virt="non-virtual"><scope>nest::RecordingBackendSIONlib::Parameters_</scope><name>set</name></member>
+      <member refid="structnest_1_1_recording_backend_s_i_o_nlib_1_1_parameters___1a73c187d40a847127a7ec5b50afc2f85d" prot="public" virt="non-virtual"><scope>nest::RecordingBackendSIONlib::Parameters_</scope><name>sion_chunksize_</name></member>
+      <member refid="structnest_1_1_recording_backend_s_i_o_nlib_1_1_parameters___1abd58ab451e76d80017f5f50f280440bc" prot="public" virt="non-virtual"><scope>nest::RecordingBackendSIONlib::Parameters_</scope><name>sion_collective_</name></member>
+      <member refid="structnest_1_1_recording_backend_s_i_o_nlib_1_1_parameters___1ad6f41e1d11ba92c5ad342c919761a1cc" prot="public" virt="non-virtual"><scope>nest::RecordingBackendSIONlib::Parameters_</scope><name>sion_n_files_</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

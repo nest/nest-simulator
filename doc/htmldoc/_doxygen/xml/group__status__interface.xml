@@ -1,0 +1,134 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="group__status__interface" kind="group">
+    <compoundname>status_interface</compoundname>
+    <title>Configuration interface.</title>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__status__interface_1ga320b94046161025ff8a388eec127392f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::Model::set_status</definition>
+        <argsstring>(DictionaryDatum)</argsstring>
+        <name>set_status</name>
+        <param>
+          <type>DictionaryDatum</type>
+          <defname>d</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Change properties of the prototype node according to the entries in the dictionary. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>d</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dictionary with named parameter settings. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/model.h" line="138" column="8" bodyfile="nestkernel/model.cpp" bodystart="108" bodyend="118"/>
+      </memberdef>
+      <memberdef kind="function" id="group__status__interface_1ga6b9f905cffe67e97a38715757cd31779" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>DictionaryDatum</type>
+        <definition>DictionaryDatum nest::Model::get_status</definition>
+        <argsstring>()</argsstring>
+        <name>get_status</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Export properties of the prototype node by setting entries in the status dictionary. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>d</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dictionary. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/model.h" line="146" column="19" bodyfile="nestkernel/model.cpp" bodystart="121" bodyend="150"/>
+      </memberdef>
+      <memberdef kind="function" id="group__status__interface_1ga9d7a4a3a64d03a4d7f6c5df87c80fe36" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void nest::Node::set_status</definition>
+        <argsstring>(const DictionaryDatum &amp;)=0</argsstring>
+        <name>set_status</name>
+        <reimplementedby refid="classnest_1_1_conn_test_dummy_node_base_1a5092d6cda27349b1e53760a36fdd1f33">set_status</reimplementedby>
+        <reimplementedby refid="classnest_1_1proxynode_1afe676f263f8848ca1a6990cf1949f634">set_status</reimplementedby>
+        <reimplementedby refid="classnest_1_1_recording_device_1a466c7b9ed8d05e9d42eed08009dc81e0">set_status</reimplementedby>
+        <reimplementedby refid="classnest_1_1_stimulation_device_1a1ebf88604667e02e4070d73ffcc63845">set_status</reimplementedby>
+        <reimplementedby refid="classnest_1_1_archiving_node_1ac69d56c97bed5fd58fab9c3c745328c4">set_status</reimplementedby>
+        <reimplementedby refid="classnest_1_1_clopath_archiving_node_1a7ba4e2728b3bcbccf08c78944fee033d">set_status</reimplementedby>
+        <reimplementedby refid="classnest_1_1_structural_plasticity_node_1a024eac5832f6de6336014cac45b2ad10">set_status</reimplementedby>
+        <reimplementedby refid="classnest_1_1_urbanczik_archiving_node_1a1b118e0208155781e44cbb9ccdb91a87">set_status</reimplementedby>
+        <param>
+          <type>const DictionaryDatum &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Change properties of the node according to the entries in the dictionary. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>d</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dictionary with named parameter settings. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="344" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="group__status__interface_1ga85f1a73dde2b60e4353429eb22c31bcf" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void nest::Node::get_status</definition>
+        <argsstring>(DictionaryDatum &amp;) const =0</argsstring>
+        <name>get_status</name>
+        <reimplementedby refid="classnest_1_1_conn_test_dummy_node_base_1ac98684d0fc231163a2f76c3fb05d9a8d">get_status</reimplementedby>
+        <reimplementedby refid="classnest_1_1proxynode_1adca2ab6d0bee88577982522f07ea6649">get_status</reimplementedby>
+        <reimplementedby refid="classnest_1_1_recording_device_1a60b60f1790b78bdaca10bf6d30ac3930">get_status</reimplementedby>
+        <reimplementedby refid="classnest_1_1_archiving_node_1acd46838612262b4a5d4cacdf7d901145">get_status</reimplementedby>
+        <reimplementedby refid="classnest_1_1_clopath_archiving_node_1a5323ca3c863862b223b1c264b5a8d1a9">get_status</reimplementedby>
+        <reimplementedby refid="classnest_1_1_stimulation_device_1a3c17981ffa0b79bf9b2e559bcfba1573">get_status</reimplementedby>
+        <reimplementedby refid="classnest_1_1_structural_plasticity_node_1ab462ef1110549f1efb3b26f8e48f38d5">get_status</reimplementedby>
+        <reimplementedby refid="classnest_1_1_urbanczik_archiving_node_1a54cac2900fc5fc3d7b66568de52d8fda">get_status</reimplementedby>
+        <param>
+          <type>DictionaryDatum &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Export properties of the node by setting entries in the status dictionary. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>d</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dictionary. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="352" column="16"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Functions and infrastructure, responsible for the configuration of Nodes from the SLI Interpreter level.</para>
+<para>Each node can be configured from the SLI level through a named parameter interface. In order to change parameters, the user can specify name value pairs for each parameter. These pairs are stored in a data structure which is called Dictionary. Likewise, the user can query the configuration of any node by requesting a dictionary with name value pairs.</para>
+<para>The configuration interface consists of four functions which implement storage and retrieval of named parameter sets. </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,153 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classnest_1_1_recordables_map" kind="class" language="C++" prot="public">
+    <compoundname>nest::RecordablesMap</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">std::map&lt; Name, double(HostNode::*)() const &gt;</basecompoundref>
+    <includes refid="recordables__map_8h" local="no">recordables_map.h</includes>
+    <templateparamlist>
+      <param>
+        <type>typename HostNode</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="classnest_1_1_recordables_map_1a92884f731600d368fa43e77981134768" prot="private" static="no">
+        <type>std::map&lt; Name, double(HostNode::*)() const &gt;</type>
+        <definition>typedef std::map&lt; Name, double ( HostNode::* )() const &gt; nest::RecordablesMap&lt; HostNode &gt;::Base_</definition>
+        <argsstring></argsstring>
+        <name>Base_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recordables_map.h" line="66" column="20" bodyfile="nestkernel/recordables_map.h" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-type">
+      <memberdef kind="typedef" id="classnest_1_1_recordables_map_1a0a2f3c8f32545314bc97d583a28bfbce" prot="public" static="no">
+        <type>double(HostNode::*</type>
+        <definition>typedef double( HostNode::* nest::RecordablesMap&lt; HostNode &gt;::DataAccessFct) () const</definition>
+        <argsstring>)() const</argsstring>
+        <name>DataAccessFct</name>
+        <briefdescription>
+<para>Datatype for access functions. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recordables_map.h" line="74" column="11" bodyfile="nestkernel/recordables_map.h" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classnest_1_1_recordables_map_1a16febc0d1fc99aa8e8be501dc7b008d9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type></type>
+        <definition>virtual nest::RecordablesMap&lt; HostNode &gt;::~RecordablesMap</definition>
+        <argsstring>()</argsstring>
+        <name>~RecordablesMap</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recordables_map.h" line="69" column="11" bodyfile="nestkernel/recordables_map.h" bodystart="69" bodyend="71"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_recordables_map_1a303b1d32c8f72ab936b4afe76bca9588" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::RecordablesMap&lt; HostNode &gt;::create</definition>
+        <argsstring>()</argsstring>
+        <name>create</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Create the map. This function must be specialized for each class owning a Recordables map and must fill the map. This should happen as part of the original constructor for the <ref refid="classnest_1_1_node" kindref="compound">Node</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recordables_map.h" line="82" column="8" bodyfile="nestkernel/recordables_map.h" bodystart="128" bodyend="131"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_recordables_map_1a8aa7c18011d00a166edc901cc6d343cc" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>ArrayDatum</type>
+        <definition>ArrayDatum nest::RecordablesMap&lt; HostNode &gt;::get_list</definition>
+        <argsstring>() const</argsstring>
+        <name>get_list</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Obtain SLI list of all recordables, for use by get_status().  </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recordables_map.h" line="92" column="3" bodyfile="nestkernel/recordables_map.h" bodystart="92" bodyend="103"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classnest_1_1_recordables_map_1a40749b8131338f4eeb47844af5a7fba1" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::RecordablesMap&lt; HostNode &gt;::insert_</definition>
+        <argsstring>(const Name &amp;n, const DataAccessFct f)</argsstring>
+        <name>insert_</name>
+        <param>
+          <type>const Name &amp;</type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classnest_1_1_recordables_map_1a0a2f3c8f32545314bc97d583a28bfbce" kindref="member">DataAccessFct</ref></type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+<para>Insertion functions to be used in <ref refid="classnest_1_1_recordables_map_1a303b1d32c8f72ab936b4afe76bca9588" kindref="member">create()</ref>, adds entry to map and list. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recordables_map.h" line="108" column="3" bodyfile="nestkernel/recordables_map.h" bodystart="108" bodyend="115"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Map names of recordables to data access functions.</para>
+<para>This map identifies the data access functions for recordable state variables in model neurons. Each neuron model shall have exactly one static instance of <ref refid="classnest_1_1_recordables_map" kindref="compound">RecordablesMap</ref>.</para>
+<para><simplesect kind="note"><para>The map is initialized by the <ref refid="classnest_1_1_recordables_map_1a303b1d32c8f72ab936b4afe76bca9588" kindref="member">create()</ref> member function and not by the constructor because of the following conflict: The recordablesMap_ shall be a private static member of its host class, since the same map applies to all objects. Creation by a constructor leads to static initialization conflicts with the Name class. Thus, creation is deferred to the plain constructor of the host <ref refid="classnest_1_1_node" kindref="compound">Node</ref> class, which is called only once to create the model prototype instance.</para>
+</simplesect>
+<simplesect kind="see"><para>multimeter, UniversalDataLogger </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>std::map&lt; Name, double(HostNode::*)() const &gt;</label>
+      </node>
+      <node id="1">
+        <label>nest::RecordablesMap&lt; HostNode &gt;</label>
+        <link refid="classnest_1_1_recordables_map"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>std::map&lt; Name, double(HostNode::*)() const &gt;</label>
+      </node>
+      <node id="1">
+        <label>nest::RecordablesMap&lt; HostNode &gt;</label>
+        <link refid="classnest_1_1_recordables_map"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="nestkernel/recordables_map.h" line="64" column="1" bodyfile="nestkernel/recordables_map.h" bodystart="65" bodyend="124"/>
+    <listofallmembers>
+      <member refid="classnest_1_1_recordables_map_1a92884f731600d368fa43e77981134768" prot="private" virt="non-virtual"><scope>nest::RecordablesMap</scope><name>Base_</name></member>
+      <member refid="classnest_1_1_recordables_map_1a303b1d32c8f72ab936b4afe76bca9588" prot="public" virt="non-virtual"><scope>nest::RecordablesMap</scope><name>create</name></member>
+      <member refid="classnest_1_1_recordables_map_1a0a2f3c8f32545314bc97d583a28bfbce" prot="public" virt="non-virtual"><scope>nest::RecordablesMap</scope><name>DataAccessFct</name></member>
+      <member refid="classnest_1_1_recordables_map_1a8aa7c18011d00a166edc901cc6d343cc" prot="public" virt="non-virtual"><scope>nest::RecordablesMap</scope><name>get_list</name></member>
+      <member refid="classnest_1_1_recordables_map_1a40749b8131338f4eeb47844af5a7fba1" prot="private" virt="non-virtual"><scope>nest::RecordablesMap</scope><name>insert_</name></member>
+      <member refid="classnest_1_1_recordables_map_1a16febc0d1fc99aa8e8be501dc7b008d9" prot="public" virt="virtual"><scope>nest::RecordablesMap</scope><name>~RecordablesMap</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

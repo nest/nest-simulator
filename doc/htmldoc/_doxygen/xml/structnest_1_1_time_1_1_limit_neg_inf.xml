@@ -1,0 +1,51 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structnest_1_1_time_1_1_limit_neg_inf" kind="struct" language="C++" prot="protected">
+    <compoundname>nest::Time::LimitNegInf</compoundname>
+    <includes refid="nest__time_8h" local="no">nest_time.h</includes>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="structnest_1_1_time_1_1_limit_neg_inf_1aa81a85aa0447910225fc8f214ec5aaa4" prot="public" static="yes" mutable="no">
+        <type>const <ref refid="namespacenest_1a824af732762ca1ba47526652442e562e" kindref="member">tic_t</ref></type>
+        <definition>const tic_t Time::LimitNegInf::tics</definition>
+        <argsstring></argsstring>
+        <name>tics</name>
+        <initializer>= -<ref refid="namespacenest_1a39616f30db57cea0cea5dea16ddde948" kindref="member">tic_t_max</ref> / <ref refid="structnest_1_1_time_1_1_range_1a2c3376890467144d48e6c2925c687ab2" kindref="member">Range::INF_MARGIN</ref> - 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/nest_time.h" line="236" column="24" bodyfile="nestkernel/nest_time.h" bodystart="236" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1_time_1_1_limit_neg_inf_1a31fc09941749e22abb287b1a45b5ec6d" prot="public" static="yes" mutable="no">
+        <type>const <ref refid="namespacenest_1a71a30fec90e57e114c45577d5294ce16" kindref="member">delay</ref></type>
+        <definition>const delay Time::LimitNegInf::steps</definition>
+        <argsstring></argsstring>
+        <name>steps</name>
+        <initializer>= -<ref refid="namespacenest_1ae78a3b9adaae63966b61e09f96f1855f" kindref="member">delay_max</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/nest_time.h" line="237" column="24" bodyfile="nestkernel/nest_time.h" bodystart="237" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>nest::Time::LimitNegInf</label>
+      </node>
+    </collaborationgraph>
+    <location file="nestkernel/nest_time.h" line="234" column="10" bodyfile="nestkernel/nest_time.h" bodystart="235" bodyend="239"/>
+    <listofallmembers>
+      <member refid="structnest_1_1_time_1_1_limit_neg_inf_1a31fc09941749e22abb287b1a45b5ec6d" prot="public" virt="non-virtual"><scope>nest::Time::LimitNegInf</scope><name>steps</name></member>
+      <member refid="structnest_1_1_time_1_1_limit_neg_inf_1aa81a85aa0447910225fc8f214ec5aaa4" prot="public" virt="non-virtual"><scope>nest::Time::LimitNegInf</scope><name>tics</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

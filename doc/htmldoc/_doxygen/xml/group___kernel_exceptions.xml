@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="group___kernel_exceptions" kind="group">
+    <compoundname>KernelExceptions</compoundname>
+    <title>NEST kernel exception classes</title>
+    <innerclass refid="classnest_1_1_kernel_exception" prot="public">nest::KernelException</innerclass>
+    <innerclass refid="classnest_1_1_unknown_model_name" prot="public">nest::UnknownModelName</innerclass>
+    <innerclass refid="classnest_1_1_unknown_component" prot="public">nest::UnknownComponent</innerclass>
+    <innerclass refid="classnest_1_1_new_model_name_exists" prot="public">nest::NewModelNameExists</innerclass>
+    <innerclass refid="classnest_1_1_model_in_use" prot="public">nest::ModelInUse</innerclass>
+    <innerclass refid="classnest_1_1_unknown_synapse_type" prot="public">nest::UnknownSynapseType</innerclass>
+    <innerclass refid="classnest_1_1_unknown_node" prot="public">nest::UnknownNode</innerclass>
+    <innerclass refid="classnest_1_1_no_thread_siblings_available" prot="public">nest::NoThreadSiblingsAvailable</innerclass>
+    <innerclass refid="classnest_1_1_unknown_port" prot="public">nest::UnknownPort</innerclass>
+    <innerclass refid="classnest_1_1_illegal_connection" prot="public">nest::IllegalConnection</innerclass>
+    <innerclass refid="classnest_1_1_inexistent_connection" prot="public">nest::InexistentConnection</innerclass>
+    <innerclass refid="classnest_1_1_unknown_thread" prot="public">nest::UnknownThread</innerclass>
+    <innerclass refid="classnest_1_1_bad_delay" prot="public">nest::BadDelay</innerclass>
+    <innerclass refid="classnest_1_1_unexpected_event" prot="public">nest::UnexpectedEvent</innerclass>
+    <innerclass refid="classnest_1_1_unsupported_event" prot="public">nest::UnsupportedEvent</innerclass>
+    <innerclass refid="classnest_1_1_bad_property" prot="public">nest::BadProperty</innerclass>
+    <innerclass refid="classnest_1_1_bad_parameter" prot="public">nest::BadParameter</innerclass>
+    <innerclass refid="classnest_1_1_dimension_mismatch" prot="public">nest::DimensionMismatch</innerclass>
+    <innerclass refid="classnest_1_1_distribution_error" prot="public">nest::DistributionError</innerclass>
+    <innerclass refid="classnest_1_1_invalid_default_resolution" prot="public">nest::InvalidDefaultResolution</innerclass>
+    <innerclass refid="classnest_1_1_invalid_time_in_model" prot="public">nest::InvalidTimeInModel</innerclass>
+    <innerclass refid="classnest_1_1_step_multiple_required" prot="public">nest::StepMultipleRequired</innerclass>
+    <innerclass refid="classnest_1_1_time_multiple_required" prot="public">nest::TimeMultipleRequired</innerclass>
+    <innerclass refid="classnest_1_1_g_s_l_solver_failure" prot="public">nest::GSLSolverFailure</innerclass>
+    <innerclass refid="classnest_1_1_numerical_instability" prot="public">nest::NumericalInstability</innerclass>
+    <innerclass refid="classnest_1_1_key_error" prot="public">nest::KeyError</innerclass>
+    <innerclass refid="classnest_1_1_internal_error" prot="public">nest::InternalError</innerclass>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Exception classes that are thrown by the NEST kernel to indicate an error. </para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

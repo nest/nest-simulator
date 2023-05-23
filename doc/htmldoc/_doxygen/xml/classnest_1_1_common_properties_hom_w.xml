@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classnest_1_1_common_properties_hom_w" kind="class" language="C++" prot="public">
+    <compoundname>nest::CommonPropertiesHomW</compoundname>
+    <basecompoundref refid="classnest_1_1_common_synapse_properties" prot="public" virt="non-virtual">nest::CommonSynapseProperties</basecompoundref>
+    <includes refid="common__properties__hom__w_8h" local="no">common_properties_hom_w.h</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classnest_1_1_common_properties_hom_w_1a73a2767ca0d3aa68adac899c9834cf5c" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::CommonPropertiesHomW::weight_</definition>
+        <argsstring></argsstring>
+        <name>weight_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/common_properties_hom_w.h" line="89" column="10" bodyfile="nestkernel/common_properties_hom_w.h" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classnest_1_1_common_properties_hom_w_1a6e9b46eaf3177de6de3510c080e11aa4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>nest::CommonPropertiesHomW::CommonPropertiesHomW</definition>
+        <argsstring>()</argsstring>
+        <name>CommonPropertiesHomW</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Default constructor. Sets all property values to defaults. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/common_properties_hom_w.h" line="55" column="3" bodyfile="nestkernel/common_properties_hom_w.h" bodystart="55" bodyend="59"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_common_properties_hom_w_1a75f9173f8537ef00c7f4f4c82fd3ff9d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::CommonPropertiesHomW::get_status</definition>
+        <argsstring>(DictionaryDatum &amp;d) const</argsstring>
+        <name>get_status</name>
+        <param>
+          <type>DictionaryDatum &amp;</type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get all properties and put them into a dictionary. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/common_properties_hom_w.h" line="65" column="3" bodyfile="nestkernel/common_properties_hom_w.h" bodystart="65" bodyend="69"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_common_properties_hom_w_1ade08eff55218001b37dd9d373ee37a62" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double nest::CommonPropertiesHomW::get_weight</definition>
+        <argsstring>() const</argsstring>
+        <name>get_weight</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/common_properties_hom_w.h" line="72" column="3" bodyfile="nestkernel/common_properties_hom_w.h" bodystart="72" bodyend="75"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_common_properties_hom_w_1a3502a9a4e49fdcbb96c03e90145279a7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::CommonPropertiesHomW::set_status</definition>
+        <argsstring>(const DictionaryDatum &amp;d, ConnectorModel &amp;cm)</argsstring>
+        <name>set_status</name>
+        <param>
+          <type>const DictionaryDatum &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type><ref refid="classnest_1_1_connector_model" kindref="compound">ConnectorModel</ref> &amp;</type>
+          <declname>cm</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Set properties from the values given in dictionary. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/common_properties_hom_w.h" line="81" column="3" bodyfile="nestkernel/common_properties_hom_w.h" bodystart="81" bodyend="85"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Class containing the common properties for all synapses with common weight. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>nest::CommonPropertiesHomW</label>
+        <link refid="classnest_1_1_common_properties_hom_w"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>nest::CommonSynapseProperties</label>
+        <link refid="classnest_1_1_common_synapse_properties"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>nest::CommonPropertiesHomW</label>
+        <link refid="classnest_1_1_common_properties_hom_w"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>nest::CommonSynapseProperties</label>
+        <link refid="classnest_1_1_common_synapse_properties"/>
+      </node>
+    </collaborationgraph>
+    <location file="nestkernel/common_properties_hom_w.h" line="48" column="1" bodyfile="nestkernel/common_properties_hom_w.h" bodystart="49" bodyend="90"/>
+    <listofallmembers>
+      <member refid="classnest_1_1_common_synapse_properties_1a661c1b822da792b2910624a09413fda3" prot="public" virt="non-virtual"><scope>nest::CommonPropertiesHomW</scope><name>calibrate</name></member>
+      <member refid="classnest_1_1_common_properties_hom_w_1a6e9b46eaf3177de6de3510c080e11aa4" prot="public" virt="non-virtual"><scope>nest::CommonPropertiesHomW</scope><name>CommonPropertiesHomW</name></member>
+      <member refid="classnest_1_1_common_synapse_properties_1aaa4b715cf5cc40b04641de93e00da3cd" prot="public" virt="non-virtual"><scope>nest::CommonPropertiesHomW</scope><name>CommonSynapseProperties</name></member>
+      <member refid="classnest_1_1_common_synapse_properties_1aa9b825878144c1edb42a968ccc1b71f1" prot="public" virt="non-virtual"><scope>nest::CommonPropertiesHomW</scope><name>get_node</name></member>
+      <member refid="classnest_1_1_common_properties_hom_w_1a75f9173f8537ef00c7f4f4c82fd3ff9d" prot="public" virt="non-virtual"><scope>nest::CommonPropertiesHomW</scope><name>get_status</name></member>
+      <member refid="classnest_1_1_common_synapse_properties_1ad8865e6beb6113a7254fc1c88e3a885c" prot="public" virt="non-virtual"><scope>nest::CommonPropertiesHomW</scope><name>get_vt_node_id</name></member>
+      <member refid="classnest_1_1_common_properties_hom_w_1ade08eff55218001b37dd9d373ee37a62" prot="public" virt="non-virtual"><scope>nest::CommonPropertiesHomW</scope><name>get_weight</name></member>
+      <member refid="classnest_1_1_common_synapse_properties_1add2b1deff9175e15d3e7ef6340f8c3f7" prot="public" virt="non-virtual"><scope>nest::CommonPropertiesHomW</scope><name>get_weight_recorder</name></member>
+      <member refid="classnest_1_1_common_synapse_properties_1a09118695a3291727c5474911f4dc0274" prot="public" virt="non-virtual"><scope>nest::CommonPropertiesHomW</scope><name>get_wr_node_id</name></member>
+      <member refid="classnest_1_1_common_properties_hom_w_1a3502a9a4e49fdcbb96c03e90145279a7" prot="public" virt="non-virtual"><scope>nest::CommonPropertiesHomW</scope><name>set_status</name></member>
+      <member refid="classnest_1_1_common_properties_hom_w_1a73a2767ca0d3aa68adac899c9834cf5c" prot="private" virt="non-virtual"><scope>nest::CommonPropertiesHomW</scope><name>weight_</name></member>
+      <member refid="classnest_1_1_common_synapse_properties_1a49fdd82a1707adbff649915065fe5ed5" prot="public" virt="non-virtual"><scope>nest::CommonPropertiesHomW</scope><name>~CommonSynapseProperties</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,141 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classnest_1_1_fixed_total_number_builder" kind="class" language="C++" prot="public">
+    <compoundname>nest::FixedTotalNumberBuilder</compoundname>
+    <basecompoundref refid="classnest_1_1_conn_builder" prot="public" virt="non-virtual">nest::ConnBuilder</basecompoundref>
+    <includes refid="conn__builder_8h" local="no">conn_builder.h</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classnest_1_1_fixed_total_number_builder_1a8fdfba30e0112cc55d75d5661af380db" prot="private" static="no" mutable="no">
+        <type>long</type>
+        <definition>long nest::FixedTotalNumberBuilder::N_</definition>
+        <argsstring></argsstring>
+        <name>N_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/conn_builder.h" line="364" column="8" bodyfile="nestkernel/conn_builder.h" bodystart="364" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classnest_1_1_fixed_total_number_builder_1a1f1e2cf60e602652e53b6850f50bb304" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder</definition>
+        <argsstring>(NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum &amp;, const std::vector&lt; DictionaryDatum &gt; &amp;)</argsstring>
+        <name>FixedTotalNumberBuilder</name>
+        <param>
+          <type><ref refid="namespacenest_1accbbbd2c49375cc6c2edd964cccda54e" kindref="member">NodeCollectionPTR</ref></type>
+          <defname>sources</defname>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1accbbbd2c49375cc6c2edd964cccda54e" kindref="member">NodeCollectionPTR</ref></type>
+          <defname>targets</defname>
+        </param>
+        <param>
+          <type>const DictionaryDatum &amp;</type>
+          <defname>conn_spec</defname>
+        </param>
+        <param>
+          <type>const std::vector&lt; DictionaryDatum &gt; &amp;</type>
+          <defname>syn_specs</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/conn_builder.h" line="355" column="3" bodyfile="nestkernel/conn_builder.cpp" bodystart="1374" bodyend="1407"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classnest_1_1_fixed_total_number_builder_1abab6d39ad2dc94125e09f5c6fc4212c4" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::FixedTotalNumberBuilder::connect_</definition>
+        <argsstring>() override</argsstring>
+        <name>connect_</name>
+        <reimplements refid="classnest_1_1_conn_builder_1abbe0a9ef49761e33196033449eb409cc">connect_</reimplements>
+        <briefdescription>
+<para>Implements the actual connection algorithm. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/conn_builder.h" line="361" column="8" bodyfile="nestkernel/conn_builder.cpp" bodystart="1410" bodyend="1541"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>nest::ConnBuilder</label>
+        <link refid="classnest_1_1_conn_builder"/>
+      </node>
+      <node id="1">
+        <label>nest::FixedTotalNumberBuilder</label>
+        <link refid="classnest_1_1_fixed_total_number_builder"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>nest::ConnBuilder</label>
+        <link refid="classnest_1_1_conn_builder"/>
+      </node>
+      <node id="1">
+        <label>nest::FixedTotalNumberBuilder</label>
+        <link refid="classnest_1_1_fixed_total_number_builder"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="nestkernel/conn_builder.h" line="352" column="1" bodyfile="nestkernel/conn_builder.h" bodystart="353" bodyend="365"/>
+    <listofallmembers>
+      <member refid="classnest_1_1_conn_builder_1a0a0cffe24ec8a736bafc21cf376a5078" prot="public" virt="non-virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>all_parameters_scalar_</name></member>
+      <member refid="classnest_1_1_conn_builder_1ae4f5e56dc411af3804240dd632c4f3ec" prot="protected" virt="non-virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>allow_autapses_</name></member>
+      <member refid="classnest_1_1_conn_builder_1a59ab20628f392f86dd5c7d739e648c66" prot="protected" virt="non-virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>allow_multapses_</name></member>
+      <member refid="classnest_1_1_conn_builder_1aaaf1a924c8030b8971b6f86e448615cb" prot="public" virt="non-virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>change_connected_synaptic_elements</name></member>
+      <member refid="classnest_1_1_conn_builder_1a530074df95dbb090b6fda4e3538c0102" prot="public" virt="non-virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>ConnBuilder</name></member>
+      <member refid="classnest_1_1_conn_builder_1a54828d7220c7a68e98b83529e0405208" prot="public" virt="virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>connect</name></member>
+      <member refid="classnest_1_1_fixed_total_number_builder_1abab6d39ad2dc94125e09f5c6fc4212c4" prot="protected" virt="virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>connect_</name></member>
+      <member refid="classnest_1_1_conn_builder_1aacdef9d1a02f25cd6b427cf4173ade5b" prot="protected" virt="non-virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>creates_symmetric_connections_</name></member>
+      <member refid="classnest_1_1_conn_builder_1a4fafe51332d31c75a637d4837bbaea4d" prot="public" virt="virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>disconnect</name></member>
+      <member refid="classnest_1_1_conn_builder_1a3e48d3be487889e2af93d8bc0c428f46" prot="protected" virt="virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>disconnect_</name></member>
+      <member refid="classnest_1_1_conn_builder_1abba02533d1aa42c88177b68ff11dd3f7" prot="protected" virt="non-virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>exceptions_raised_</name></member>
+      <member refid="classnest_1_1_fixed_total_number_builder_1a1f1e2cf60e602652e53b6850f50bb304" prot="public" virt="non-virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>FixedTotalNumberBuilder</name></member>
+      <member refid="classnest_1_1_conn_builder_1ad650895baae7bb9140f62132344305db" prot="public" virt="non-virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>get_default_delay</name></member>
+      <member refid="classnest_1_1_conn_builder_1a0e18431e792e5eea35cb7da0752f98aa" prot="public" virt="non-virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>get_synapse_model</name></member>
+      <member refid="classnest_1_1_conn_builder_1ac46d2f5b591f00c2e1fed3e35e6b9b35" prot="public" virt="virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>is_symmetric</name></member>
+      <member refid="classnest_1_1_conn_builder_1a90063b4c289115d9337a4bf3bc28bff8" prot="protected" virt="non-virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>loop_over_targets_</name></member>
+      <member refid="classnest_1_1_conn_builder_1a15a2456e42f5637e1d8001ae73fa7e52" prot="protected" virt="non-virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>make_symmetric_</name></member>
+      <member refid="classnest_1_1_fixed_total_number_builder_1a8fdfba30e0112cc55d75d5661af380db" prot="private" virt="non-virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>N_</name></member>
+      <member refid="classnest_1_1_conn_builder_1ae6927c7fa75b13b37b25fb0851cd5faa" prot="protected" virt="non-virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>param_dicts_</name></member>
+      <member refid="classnest_1_1_conn_builder_1a615837aeb966f6f205c4c6d04cb6d6f9" prot="protected" virt="non-virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>parameters_requiring_skipping_</name></member>
+      <member refid="classnest_1_1_conn_builder_1ae0242d555bdaa2756db3a6744a9da65b" prot="protected" virt="non-virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>post_synaptic_element_name_</name></member>
+      <member refid="classnest_1_1_conn_builder_1ac5ff17cf7dc8accebf3a60fb8ca08b83" prot="protected" virt="non-virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>pre_synaptic_element_name_</name></member>
+      <member refid="classnest_1_1_conn_builder_1a1e5a7be0ac2f6bcc77a77d3e974a8e6d" prot="public" virt="virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>requires_proxies</name></member>
+      <member refid="classnest_1_1_conn_builder_1a46694477447f70340fb29a9d31449b95" prot="public" virt="non-virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>set_post_synaptic_element_name</name></member>
+      <member refid="classnest_1_1_conn_builder_1a344a8fc339bc288dd272b370213ce18a" prot="public" virt="non-virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>set_pre_synaptic_element_name</name></member>
+      <member refid="classnest_1_1_conn_builder_1a3edb34cd9b903094a46df238bb26cfb9" prot="protected" virt="non-virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>single_connect_</name></member>
+      <member refid="classnest_1_1_conn_builder_1a07998ea08ce1a6d1afdf67b42d0f94c3" prot="protected" virt="non-virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>single_disconnect_</name></member>
+      <member refid="classnest_1_1_conn_builder_1a9cb089bbde94e308f255a41c2abd09a3" prot="protected" virt="non-virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>skip_conn_parameter_</name></member>
+      <member refid="classnest_1_1_conn_builder_1a464b9cad4d0148634d443398c1d7d5a9" prot="protected" virt="non-virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>sources_</name></member>
+      <member refid="classnest_1_1_conn_builder_1a9480e4b0e2834e4ee8a4dcd24a02106b" prot="protected" virt="virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>sp_connect_</name></member>
+      <member refid="classnest_1_1_conn_builder_1ae0b6de2eafc3c8a10286b5420bd1068d" prot="protected" virt="virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>sp_disconnect_</name></member>
+      <member refid="classnest_1_1_conn_builder_1ae01b03e86e9634b7dc9f6e6b08d123c5" prot="public" virt="virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>supports_symmetric</name></member>
+      <member refid="classnest_1_1_conn_builder_1a929370a7fd8d3c4036911cd985f7db59" prot="protected" virt="non-virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>synapse_model_id_</name></member>
+      <member refid="classnest_1_1_conn_builder_1a7cabed3a9ba94e4ef4cc401019bb824d" prot="protected" virt="non-virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>targets_</name></member>
+      <member refid="classnest_1_1_conn_builder_1a4b0dff13dcdd94d8a1e7184911b5f4b8" prot="protected" virt="non-virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>update_param_dict_</name></member>
+      <member refid="classnest_1_1_conn_builder_1af659175b2cda864bf117f842a0d75890" prot="protected" virt="non-virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>use_post_synaptic_element_</name></member>
+      <member refid="classnest_1_1_conn_builder_1a0b62b332165c32fce799605d34eede01" prot="protected" virt="non-virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>use_pre_synaptic_element_</name></member>
+      <member refid="classnest_1_1_conn_builder_1aea520ec2a84ea1ee1c416dcf996352d5" prot="protected" virt="non-virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>use_structural_plasticity_</name></member>
+      <member refid="classnest_1_1_conn_builder_1a8f4f6f5f4e9ac3ed75dd9f0cb6467740" prot="public" virt="virtual"><scope>nest::FixedTotalNumberBuilder</scope><name>~ConnBuilder</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

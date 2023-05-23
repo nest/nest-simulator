@@ -1,0 +1,172 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structnest_1_1_time_1_1_range" kind="struct" language="C++" prot="protected">
+    <compoundname>nest::Time::Range</compoundname>
+    <includes refid="nest__time_8h" local="no">nest_time.h</includes>
+      <sectiondef kind="public-static-attrib">
+      <memberdef kind="variable" id="structnest_1_1_time_1_1_range_1a78db1ab7738f65e9ba659fe244b9c53c" prot="public" static="yes" mutable="no">
+        <type><ref refid="namespacenest_1a824af732762ca1ba47526652442e562e" kindref="member">tic_t</ref></type>
+        <definition>tic_t Time::Range::TICS_PER_STEP</definition>
+        <argsstring></argsstring>
+        <name>TICS_PER_STEP</name>
+        <initializer>= <ref refid="structnest_1_1_time_1_1_range_1a509af6eb89c0a0a53fa2e3777d8f2de5" kindref="member">Time::Range::TICS_PER_STEP_DEFAULT</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/nest_time.h" line="156" column="18" bodyfile="nestkernel/nest_time.h" bodystart="156" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1_time_1_1_range_1ac113aaa24a972e54595714a04b8fe2b0" prot="public" static="yes" mutable="no">
+        <type>double</type>
+        <definition>double Time::Range::TICS_PER_STEP_INV</definition>
+        <argsstring></argsstring>
+        <name>TICS_PER_STEP_INV</name>
+        <initializer>= 1. / static_cast&lt; double &gt;( <ref refid="structnest_1_1_time_1_1_range_1a78db1ab7738f65e9ba659fe244b9c53c" kindref="member">Time::Range::TICS_PER_STEP</ref> )</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/nest_time.h" line="157" column="19" bodyfile="nestkernel/nest_time.h" bodystart="157" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1_time_1_1_range_1af22fda3a9d4f99f83b6f5a0adb8967ef" prot="public" static="yes" mutable="no">
+        <type><ref refid="namespacenest_1a824af732762ca1ba47526652442e562e" kindref="member">tic_t</ref></type>
+        <definition>tic_t Time::Range::TICS_PER_STEP_RND</definition>
+        <argsstring></argsstring>
+        <name>TICS_PER_STEP_RND</name>
+        <initializer>= <ref refid="structnest_1_1_time_1_1_range_1a78db1ab7738f65e9ba659fe244b9c53c" kindref="member">Time::Range::TICS_PER_STEP</ref> - 1</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/nest_time.h" line="158" column="18" bodyfile="nestkernel/nest_time.h" bodystart="158" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1_time_1_1_range_1a8b3186f93e973bf1f86c4df95293757a" prot="public" static="yes" mutable="no">
+        <type>double</type>
+        <definition>double Time::Range::TICS_PER_MS</definition>
+        <argsstring></argsstring>
+        <name>TICS_PER_MS</name>
+        <initializer>= <ref refid="structnest_1_1_time_1_1_range_1aaa234b8a586e2d484c35e865b17a85fd" kindref="member">Time::Range::TICS_PER_MS_DEFAULT</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/nest_time.h" line="160" column="19" bodyfile="nestkernel/nest_time.h" bodystart="160" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1_time_1_1_range_1af8a1bfe732baa7b721f46405dde7c577" prot="public" static="yes" mutable="no">
+        <type>double</type>
+        <definition>double Time::Range::MS_PER_TIC</definition>
+        <argsstring></argsstring>
+        <name>MS_PER_TIC</name>
+        <initializer>= 1 / <ref refid="structnest_1_1_time_1_1_range_1a8b3186f93e973bf1f86c4df95293757a" kindref="member">Time::Range::TICS_PER_MS</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/nest_time.h" line="161" column="19" bodyfile="nestkernel/nest_time.h" bodystart="161" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1_time_1_1_range_1a8ee8daa37ac4f0b10e3891b1bdcc08ab" prot="public" static="yes" mutable="no">
+        <type>double</type>
+        <definition>double Time::Range::STEPS_PER_MS</definition>
+        <argsstring></argsstring>
+        <name>STEPS_PER_MS</name>
+        <initializer>= 1 / <ref refid="structnest_1_1_time_1_1_range_1ac6073e534f1a85f9b47b68678f124457" kindref="member">Time::Range::MS_PER_STEP</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/nest_time.h" line="162" column="19" bodyfile="nestkernel/nest_time.h" bodystart="162" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1_time_1_1_range_1ac6073e534f1a85f9b47b68678f124457" prot="public" static="yes" mutable="no">
+        <type>double</type>
+        <definition>double Time::Range::MS_PER_STEP</definition>
+        <argsstring></argsstring>
+        <name>MS_PER_STEP</name>
+        <initializer>= <ref refid="structnest_1_1_time_1_1_range_1a78db1ab7738f65e9ba659fe244b9c53c" kindref="member">TICS_PER_STEP</ref> / <ref refid="structnest_1_1_time_1_1_range_1a8b3186f93e973bf1f86c4df95293757a" kindref="member">TICS_PER_MS</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/nest_time.h" line="163" column="19" bodyfile="nestkernel/nest_time.h" bodystart="163" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1_time_1_1_range_1a509af6eb89c0a0a53fa2e3777d8f2de5" prot="public" static="yes" mutable="no">
+        <type>const <ref refid="namespacenest_1a824af732762ca1ba47526652442e562e" kindref="member">tic_t</ref></type>
+        <definition>const tic_t Time::Range::TICS_PER_STEP_DEFAULT</definition>
+        <argsstring></argsstring>
+        <name>TICS_PER_STEP_DEFAULT</name>
+        <initializer>= <ref refid="nest__time_8cpp_1a03a8bf5c9e32ed7edf2d5b16005883c4" kindref="member">CONFIG_TICS_PER_STEP</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/nest_time.h" line="165" column="24" bodyfile="nestkernel/nest_time.h" bodystart="165" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1_time_1_1_range_1aaa234b8a586e2d484c35e865b17a85fd" prot="public" static="yes" mutable="no">
+        <type>const double</type>
+        <definition>const double Time::Range::TICS_PER_MS_DEFAULT</definition>
+        <argsstring></argsstring>
+        <name>TICS_PER_MS_DEFAULT</name>
+        <initializer>= <ref refid="nest__time_8cpp_1ada36c8f0ff796d30d5810abb4bdbdbd4" kindref="member">CONFIG_TICS_PER_MS</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/nest_time.h" line="166" column="25" bodyfile="nestkernel/nest_time.h" bodystart="166" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1_time_1_1_range_1a2c3376890467144d48e6c2925c687ab2" prot="public" static="yes" mutable="no">
+        <type>const long</type>
+        <definition>const long nest::Time::Range::INF_MARGIN</definition>
+        <argsstring></argsstring>
+        <name>INF_MARGIN</name>
+        <initializer>= 8</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/nest_time.h" line="168" column="23" bodyfile="nestkernel/nest_time.h" bodystart="168" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>nest::Time::Range</label>
+        <link refid="structnest_1_1_time_1_1_range"/>
+      </node>
+    </collaborationgraph>
+    <location file="nestkernel/nest_time.h" line="154" column="3" bodyfile="nestkernel/nest_time.h" bodystart="155" bodyend="169"/>
+    <listofallmembers>
+      <member refid="structnest_1_1_time_1_1_range_1a2c3376890467144d48e6c2925c687ab2" prot="public" virt="non-virtual"><scope>nest::Time::Range</scope><name>INF_MARGIN</name></member>
+      <member refid="structnest_1_1_time_1_1_range_1ac6073e534f1a85f9b47b68678f124457" prot="public" virt="non-virtual"><scope>nest::Time::Range</scope><name>MS_PER_STEP</name></member>
+      <member refid="structnest_1_1_time_1_1_range_1af8a1bfe732baa7b721f46405dde7c577" prot="public" virt="non-virtual"><scope>nest::Time::Range</scope><name>MS_PER_TIC</name></member>
+      <member refid="structnest_1_1_time_1_1_range_1a8ee8daa37ac4f0b10e3891b1bdcc08ab" prot="public" virt="non-virtual"><scope>nest::Time::Range</scope><name>STEPS_PER_MS</name></member>
+      <member refid="structnest_1_1_time_1_1_range_1a8b3186f93e973bf1f86c4df95293757a" prot="public" virt="non-virtual"><scope>nest::Time::Range</scope><name>TICS_PER_MS</name></member>
+      <member refid="structnest_1_1_time_1_1_range_1aaa234b8a586e2d484c35e865b17a85fd" prot="public" virt="non-virtual"><scope>nest::Time::Range</scope><name>TICS_PER_MS_DEFAULT</name></member>
+      <member refid="structnest_1_1_time_1_1_range_1a78db1ab7738f65e9ba659fe244b9c53c" prot="public" virt="non-virtual"><scope>nest::Time::Range</scope><name>TICS_PER_STEP</name></member>
+      <member refid="structnest_1_1_time_1_1_range_1a509af6eb89c0a0a53fa2e3777d8f2de5" prot="public" virt="non-virtual"><scope>nest::Time::Range</scope><name>TICS_PER_STEP_DEFAULT</name></member>
+      <member refid="structnest_1_1_time_1_1_range_1ac113aaa24a972e54595714a04b8fe2b0" prot="public" virt="non-virtual"><scope>nest::Time::Range</scope><name>TICS_PER_STEP_INV</name></member>
+      <member refid="structnest_1_1_time_1_1_range_1af22fda3a9d4f99f83b6f5a0adb8967ef" prot="public" virt="non-virtual"><scope>nest::Time::Range</scope><name>TICS_PER_STEP_RND</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

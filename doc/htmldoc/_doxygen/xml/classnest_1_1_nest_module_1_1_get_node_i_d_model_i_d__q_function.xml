@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classnest_1_1_nest_module_1_1_get_node_i_d_model_i_d__q_function" kind="class" language="C++" prot="public">
+    <compoundname>nest::NestModule::GetNodeIDModelID_qFunction</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">SLIFunction</basecompoundref>
+    <includes refid="nestmodule_8h" local="no">nestmodule.h</includes>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classnest_1_1_nest_module_1_1_get_node_i_d_model_i_d__q_function_1a342a904d11165aff3ac14f2280c989c3" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::NestModule::GetNodeIDModelID_qFunction::execute</definition>
+        <argsstring>(SLIInterpreter *) const override</argsstring>
+        <name>execute</name>
+        <param>
+          <type>SLIInterpreter *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/nestmodule.h" line="495" column="10" bodyfile="nestkernel/nestmodule.cpp" bodystart="1496" bodyend="1509"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>nest::NestModule::GetNodeIDModelID_qFunction</label>
+        <link refid="classnest_1_1_nest_module_1_1_get_node_i_d_model_i_d__q_function"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>nest::NestModule::GetNodeIDModelID_qFunction</label>
+        <link refid="classnest_1_1_nest_module_1_1_get_node_i_d_model_i_d__q_function"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIFunction</label>
+      </node>
+    </collaborationgraph>
+    <location file="nestkernel/nestmodule.h" line="493" column="3" bodyfile="nestkernel/nestmodule.h" bodystart="494" bodyend="496"/>
+    <listofallmembers>
+      <member refid="classnest_1_1_nest_module_1_1_get_node_i_d_model_i_d__q_function_1a342a904d11165aff3ac14f2280c989c3" prot="private" virt="non-virtual"><scope>nest::NestModule::GetNodeIDModelID_qFunction</scope><name>execute</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

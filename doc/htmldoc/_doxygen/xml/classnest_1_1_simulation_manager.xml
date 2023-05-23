@@ -1,0 +1,952 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classnest_1_1_simulation_manager" kind="class" language="C++" prot="public">
+    <compoundname>nest::SimulationManager</compoundname>
+    <basecompoundref refid="classnest_1_1_manager_interface" prot="public" virt="non-virtual">nest::ManagerInterface</basecompoundref>
+    <includes refid="simulation__manager_8h" local="no">simulation_manager.h</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classnest_1_1_simulation_manager_1a97ea61dedc707341d8e48e30cf45d4d8" prot="private" static="no" mutable="no">
+        <type><ref refid="classnest_1_1_time" kindref="compound">Time</ref></type>
+        <definition>Time nest::SimulationManager::clock_</definition>
+        <argsstring></argsstring>
+        <name>clock_</name>
+        <briefdescription>
+<para><ref refid="classnest_1_1_simulation_manager" kindref="compound">SimulationManager</ref> clock, updated once per slice. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="193" column="8" bodyfile="nestkernel/simulation_manager.h" bodystart="193" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_simulation_manager_1aa9c689387262008a33c49dc010ca903a" prot="private" static="no" mutable="no">
+        <type><ref refid="namespacenest_1a71a30fec90e57e114c45577d5294ce16" kindref="member">delay</ref></type>
+        <definition>delay nest::SimulationManager::slice_</definition>
+        <argsstring></argsstring>
+        <name>slice_</name>
+        <briefdescription>
+<para>current update slice </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="194" column="9" bodyfile="nestkernel/simulation_manager.h" bodystart="194" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_simulation_manager_1adb14342f7dfb8a7daefbbac5f8f38bf7" prot="private" static="no" mutable="no">
+        <type><ref refid="namespacenest_1a71a30fec90e57e114c45577d5294ce16" kindref="member">delay</ref></type>
+        <definition>delay nest::SimulationManager::to_do_</definition>
+        <argsstring></argsstring>
+        <name>to_do_</name>
+        <briefdescription>
+<para>number of pending steps </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="195" column="9" bodyfile="nestkernel/simulation_manager.h" bodystart="195" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_simulation_manager_1a72886a395537316a4226d4c92363de57" prot="private" static="no" mutable="no">
+        <type><ref refid="namespacenest_1a71a30fec90e57e114c45577d5294ce16" kindref="member">delay</ref></type>
+        <definition>delay nest::SimulationManager::to_do_total_</definition>
+        <argsstring></argsstring>
+        <name>to_do_total_</name>
+        <briefdescription>
+<para>number of requested steps in current simulation </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="196" column="9" bodyfile="nestkernel/simulation_manager.h" bodystart="196" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_simulation_manager_1ac4f127330c91e47112b00830b5e22745" prot="private" static="no" mutable="no">
+        <type><ref refid="namespacenest_1a71a30fec90e57e114c45577d5294ce16" kindref="member">delay</ref></type>
+        <definition>delay nest::SimulationManager::from_step_</definition>
+        <argsstring></argsstring>
+        <name>from_step_</name>
+        <briefdescription>
+<para>update clock_+from_step&lt;=T&lt;clock_+to_step_ </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="197" column="9" bodyfile="nestkernel/simulation_manager.h" bodystart="197" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_simulation_manager_1af08dde6b27d99fc89dc25166cf4e17bf" prot="private" static="no" mutable="no">
+        <type><ref refid="namespacenest_1a71a30fec90e57e114c45577d5294ce16" kindref="member">delay</ref></type>
+        <definition>delay nest::SimulationManager::to_step_</definition>
+        <argsstring></argsstring>
+        <name>to_step_</name>
+        <briefdescription>
+<para>update clock_+from_step&lt;=T&lt;clock_+to_step_ </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="198" column="9" bodyfile="nestkernel/simulation_manager.h" bodystart="198" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_simulation_manager_1a1a8798bcd17d04f6d407cf20279f7243" prot="private" static="no" mutable="no">
+        <type>timeval</type>
+        <definition>timeval nest::SimulationManager::t_slice_begin_</definition>
+        <argsstring></argsstring>
+        <name>t_slice_begin_</name>
+        <briefdescription>
+<para>Wall-clock time at the begin of a time slice. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="199" column="11" bodyfile="nestkernel/simulation_manager.h" bodystart="199" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_simulation_manager_1a8e437ef64a5bf044d2f41c85cd7691a4" prot="private" static="no" mutable="no">
+        <type>timeval</type>
+        <definition>timeval nest::SimulationManager::t_slice_end_</definition>
+        <argsstring></argsstring>
+        <name>t_slice_end_</name>
+        <briefdescription>
+<para>Wall-clock time at the end of time slice. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="200" column="11" bodyfile="nestkernel/simulation_manager.h" bodystart="200" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_simulation_manager_1aa8fa0bf3c4c32c4f4c84dc034ec31d66" prot="private" static="no" mutable="no">
+        <type>long</type>
+        <definition>long nest::SimulationManager::t_real_</definition>
+        <argsstring></argsstring>
+        <name>t_real_</name>
+        <briefdescription>
+<para>Accumulated wall-clock time spent simulating (in us) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="201" column="8" bodyfile="nestkernel/simulation_manager.h" bodystart="201" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_simulation_manager_1ae4d116c1207f5a9b3ebd5cdae5b95cf6" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::SimulationManager::prepared_</definition>
+        <argsstring></argsstring>
+        <name>prepared_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Indicates whether the <ref refid="classnest_1_1_simulation_manager" kindref="compound">SimulationManager</ref> is in a prepared state </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="202" column="8" bodyfile="nestkernel/simulation_manager.h" bodystart="202" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_simulation_manager_1a0c6956a4524b1d9ba989587a8fd6677a" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::SimulationManager::simulating_</definition>
+        <argsstring></argsstring>
+        <name>simulating_</name>
+        <briefdescription>
+<para>true if simulation in progress </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="204" column="8" bodyfile="nestkernel/simulation_manager.h" bodystart="204" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_simulation_manager_1ae930e691156acb078cc15613656dd05c" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::SimulationManager::simulated_</definition>
+        <argsstring></argsstring>
+        <name>simulated_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>indicates whether the <ref refid="classnest_1_1_simulation_manager" kindref="compound">SimulationManager</ref> has already been simulated for sometime </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="205" column="8" bodyfile="nestkernel/simulation_manager.h" bodystart="205" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_simulation_manager_1a8345ed7e7789b39c2c84be85258dbd23" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::SimulationManager::inconsistent_state_</definition>
+        <argsstring></argsstring>
+        <name>inconsistent_state_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>true after exception during update_ simulation must not be resumed </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="207" column="8" bodyfile="nestkernel/simulation_manager.h" bodystart="207" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_simulation_manager_1aaa655ac1423b979ea7a4f030266580f8" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::SimulationManager::print_time_</definition>
+        <argsstring></argsstring>
+        <name>print_time_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Indicates whether time should be printed during simulations (or not) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="209" column="8" bodyfile="nestkernel/simulation_manager.h" bodystart="209" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_simulation_manager_1a15163b5d9bc447c8cc1dd07a7c9841a4" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::SimulationManager::use_wfr_</definition>
+        <argsstring></argsstring>
+        <name>use_wfr_</name>
+        <briefdescription>
+<para>Indicates wheter waveform relaxation is used. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="211" column="8" bodyfile="nestkernel/simulation_manager.h" bodystart="211" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_simulation_manager_1a0346265275219381f2834c985097715e" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::SimulationManager::wfr_comm_interval_</definition>
+        <argsstring></argsstring>
+        <name>wfr_comm_interval_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Desired waveform relaxation communication interval (in ms) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="212" column="10" bodyfile="nestkernel/simulation_manager.h" bodystart="212" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_simulation_manager_1a42731283a13685fe0b29ed3839a4409b" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::SimulationManager::wfr_tol_</definition>
+        <argsstring></argsstring>
+        <name>wfr_tol_</name>
+        <briefdescription>
+<para>Convergence tolerance of waveform relaxation method. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="214" column="10" bodyfile="nestkernel/simulation_manager.h" bodystart="214" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_simulation_manager_1ae12b669102e2b027eb0fffb0b20e3479" prot="private" static="no" mutable="no">
+        <type>long</type>
+        <definition>long nest::SimulationManager::wfr_max_iterations_</definition>
+        <argsstring></argsstring>
+        <name>wfr_max_iterations_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>maximal number of iterations used for waveform relaxation </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="215" column="8" bodyfile="nestkernel/simulation_manager.h" bodystart="215" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_simulation_manager_1a1c19981717cd7aa779fd79a25d7b34c9" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t nest::SimulationManager::wfr_interpolation_order_</definition>
+        <argsstring></argsstring>
+        <name>wfr_interpolation_order_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>interpolation order for waveform relaxation method </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="217" column="10" bodyfile="nestkernel/simulation_manager.h" bodystart="217" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_simulation_manager_1a0692804c9e044f30e3974ed5cc383f6b" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::SimulationManager::update_time_limit_</definition>
+        <argsstring></argsstring>
+        <name>update_time_limit_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>throw exception if single update cycle takes longer than update_time_limit_ (seconds, default inf) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="219" column="10" bodyfile="nestkernel/simulation_manager.h" bodystart="219" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_simulation_manager_1a6c7e6dbcf801d9c0e087f23b97a95dea" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::SimulationManager::min_update_time_</definition>
+        <argsstring></argsstring>
+        <name>min_update_time_</name>
+        <briefdescription>
+<para>shortest update time seen so far (seconds) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="221" column="10" bodyfile="nestkernel/simulation_manager.h" bodystart="221" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_simulation_manager_1a8f012147b5482581534080d39f69d91b" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::SimulationManager::max_update_time_</definition>
+        <argsstring></argsstring>
+        <name>max_update_time_</name>
+        <briefdescription>
+<para>longest update time seen so far (seconds) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="222" column="10" bodyfile="nestkernel/simulation_manager.h" bodystart="222" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_simulation_manager_1a95067dd27eb4d4539b7be8a4c0d2135f" prot="private" static="no" mutable="no">
+        <type>Stopwatch</type>
+        <definition>Stopwatch nest::SimulationManager::sw_simulate_</definition>
+        <argsstring></argsstring>
+        <name>sw_simulate_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="225" column="13" bodyfile="nestkernel/simulation_manager.h" bodystart="225" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_simulation_manager_1ad0eb577c568b61132f8feb0f68412d27" prot="private" static="no" mutable="no">
+        <type>Stopwatch</type>
+        <definition>Stopwatch nest::SimulationManager::sw_communicate_prepare_</definition>
+        <argsstring></argsstring>
+        <name>sw_communicate_prepare_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="226" column="13" bodyfile="nestkernel/simulation_manager.h" bodystart="226" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1a5a0a4ac275c615dd63e7e8738a5fce73" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>nest::SimulationManager::SimulationManager</definition>
+        <argsstring>()</argsstring>
+        <name>SimulationManager</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="50" column="3" bodyfile="nestkernel/simulation_manager.cpp" bodystart="44" bodyend="66"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1a00834a4b46f5c2c47591efb7b6dda17c" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::SimulationManager::initialize</definition>
+        <argsstring>() override</argsstring>
+        <name>initialize</name>
+        <reimplements refid="classnest_1_1_manager_interface_1a43f881ab34500bff012a2514ad99ad79">initialize</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Prepare manager for operation.</para>
+<para>After this method has completed, the manager should be completely initialized and &quot;ready for action&quot;.</para>
+<para><simplesect kind="note"><para>Initialization of any given manager may depend on other managers having been initialized before. <ref refid="classnest_1_1_kernel_manager_1aa731562f03c98d8fa67f1d530056ede2" kindref="member">KernelManager::initialize()</ref> is responsible for calling the initialization routines on the specific managers in correct order.</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="classnest_1_1_simulation_manager_1ab8922b68742b365abda59437dbfa8ae8" kindref="member">finalize()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="52" column="8" bodyfile="nestkernel/simulation_manager.cpp" bodystart="69" bodyend="101"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1ab8922b68742b365abda59437dbfa8ae8" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::SimulationManager::finalize</definition>
+        <argsstring>() override</argsstring>
+        <name>finalize</name>
+        <reimplements refid="classnest_1_1_manager_interface_1a329d00818a7c57d2c7f9e83dbed56606">finalize</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Take down manager after operation.</para>
+<para>After this method has completed, all dynamic data structures created by the manager shall be deallocated and containers emptied. Plain variables need not be reset.</para>
+<para><simplesect kind="note"><para>Finalization of any given manager may depend on other managers not having been finalized yet. <ref refid="classnest_1_1_kernel_manager_1a9e1cccd4670b1da1f68208afb5e6622f" kindref="member">KernelManager::finalize()</ref> is responsible for calling the initialization routines on the specific managers in correct order, i.e., the opposite order of <ref refid="classnest_1_1_simulation_manager_1a00834a4b46f5c2c47591efb7b6dda17c" kindref="member">initialize()</ref> calls.</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="classnest_1_1_simulation_manager_1a00834a4b46f5c2c47591efb7b6dda17c" kindref="member">initialize()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="53" column="8" bodyfile="nestkernel/simulation_manager.cpp" bodystart="104" bodyend="106"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1a8e68ef9b61dd3e17a09829333503b6ac" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::SimulationManager::set_status</definition>
+        <argsstring>(const DictionaryDatum &amp;) override</argsstring>
+        <name>set_status</name>
+        <reimplements refid="classnest_1_1_manager_interface_1ad940557204d456c167f541dd72c81193">set_status</reimplements>
+        <param>
+          <type>const DictionaryDatum &amp;</type>
+          <defname>d</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="54" column="8" bodyfile="nestkernel/simulation_manager.cpp" bodystart="128" bodyend="407"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1af0b47533eada795a85ee39598f35d158" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::SimulationManager::get_status</definition>
+        <argsstring>(DictionaryDatum &amp;) override</argsstring>
+        <name>get_status</name>
+        <reimplements refid="classnest_1_1_manager_interface_1a0935d5415eafd0bc54d2c01294595a80">get_status</reimplements>
+        <param>
+          <type>DictionaryDatum &amp;</type>
+          <defname>d</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="55" column="8" bodyfile="nestkernel/simulation_manager.cpp" bodystart="410" bodyend="443"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1a556718d208f5f426cee43fb948c79a91" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::SimulationManager::assert_valid_simtime</definition>
+        <argsstring>(Time const &amp;)</argsstring>
+        <name>assert_valid_simtime</name>
+        <param>
+          <type><ref refid="classnest_1_1_time" kindref="compound">Time</ref> const &amp;</type>
+          <defname>t</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>check for errors in time before run <parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_kernel_exception" kindref="compound">KernelException</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if illegal time passed </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="61" column="8" bodyfile="nestkernel/simulation_manager.cpp" bodystart="512" bodyend="550"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1add7dd58374edc381ef64ee6197d24620" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::SimulationManager::prepare</definition>
+        <argsstring>() override</argsstring>
+        <name>prepare</name>
+        <reimplements refid="classnest_1_1_manager_interface_1a7a0e8989a48de50b52631e87ed3f2745">prepare</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Initialize simulation for a set of run calls. Must be called before a sequence of runs, and again after cleanup. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="73" column="8" bodyfile="nestkernel/simulation_manager.cpp" bodystart="446" bodyend="509"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1af942eab41c595fc8769f067dfb31c84b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::SimulationManager::run</definition>
+        <argsstring>(Time const &amp;)</argsstring>
+        <name>run</name>
+        <param>
+          <type><ref refid="classnest_1_1_time" kindref="compound">Time</ref> const &amp;</type>
+          <defname>t</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Run a simulation for another <computeroutput><ref refid="classnest_1_1_time" kindref="compound">Time</ref></computeroutput>. Can be repeated ad infinitum with calls to <ref refid="classnest_1_1_simulation_manager_1af0b47533eada795a85ee39598f35d158" kindref="member">get_status()</ref>, but any changes to the network are undefined, leading serious risk of incorrect results. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="80" column="8" bodyfile="nestkernel/simulation_manager.cpp" bodystart="553" bodyend="610"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1af2d373b936e4d432a688a78af29be0ce" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::SimulationManager::cleanup</definition>
+        <argsstring>() override</argsstring>
+        <name>cleanup</name>
+        <reimplements refid="classnest_1_1_manager_interface_1a883efc8a7266a9bc62d43e30cdd87147">cleanup</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Closes a set of runs, doing finalizations such as file closures. After <ref refid="classnest_1_1_simulation_manager_1af2d373b936e4d432a688a78af29be0ce" kindref="member">cleanup()</ref> is called, no more <ref refid="classnest_1_1_simulation_manager_1af942eab41c595fc8769f067dfb31c84b" kindref="member">run()</ref>s can be called before another <ref refid="classnest_1_1_simulation_manager_1add7dd58374edc381ef64ee6197d24620" kindref="member">prepare()</ref> call. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="87" column="8" bodyfile="nestkernel/simulation_manager.cpp" bodystart="613" bodyend="630"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1ade99232392fc1f09ecb6f8e18d5474b8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::SimulationManager::use_wfr</definition>
+        <argsstring>() const</argsstring>
+        <name>use_wfr</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns true if waveform relaxation is used. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="92" column="8" bodyfile="nestkernel/simulation_manager.h" bodystart="305" bodyend="308"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1ad45c6ba31aecb3dd3d5c3ecc07979450" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double nest::SimulationManager::get_wfr_comm_interval</definition>
+        <argsstring>() const</argsstring>
+        <name>get_wfr_comm_interval</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get the desired communication interval for the waveform relaxation </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="97" column="10" bodyfile="nestkernel/simulation_manager.h" bodystart="311" bodyend="314"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1a3d247a4135461fbf1c44bb89adca9135" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double nest::SimulationManager::get_wfr_tol</definition>
+        <argsstring>() const</argsstring>
+        <name>get_wfr_tol</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get the convergence tolerance of the waveform relaxation method </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="102" column="10" bodyfile="nestkernel/simulation_manager.h" bodystart="317" bodyend="320"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1aa1307dbcfa760da257d3359f66b09d14" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t nest::SimulationManager::get_wfr_interpolation_order</definition>
+        <argsstring>() const</argsstring>
+        <name>get_wfr_interpolation_order</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get the interpolation order of the waveform relaxation method </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="107" column="10" bodyfile="nestkernel/simulation_manager.h" bodystart="323" bodyend="326"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1ad9a019b2da1005769418e4896fb43ec3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classnest_1_1_time" kindref="compound">Time</ref> const  &amp;</type>
+        <definition>Time const  &amp; nest::SimulationManager::get_slice_origin</definition>
+        <argsstring>() const</argsstring>
+        <name>get_slice_origin</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get the time at the beginning of the current time slice. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="112" column="14" bodyfile="nestkernel/simulation_manager.h" bodystart="236" bodyend="239"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1a42b4794c8502b65aa8df978a5158e379" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classnest_1_1_time" kindref="compound">Time</ref> const</type>
+        <definition>nest::Time const nest::SimulationManager::get_previous_slice_origin</definition>
+        <argsstring>() const</argsstring>
+        <name>get_previous_slice_origin</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get the time at the beginning of the previous time slice. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="117" column="14" bodyfile="nestkernel/simulation_manager.cpp" bodystart="1138" bodyend="1141"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1a1b3b2b5c83ad2506cef7c78b2397dcbc" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classnest_1_1_time" kindref="compound">Time</ref> const</type>
+        <definition>Time const nest::SimulationManager::get_time</definition>
+        <argsstring>() const</argsstring>
+        <name>get_time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Precise time of simulation. <simplesect kind="note"><para>The precise time of the simulation is defined only while the simulation is not in progress. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="124" column="14" bodyfile="nestkernel/simulation_manager.h" bodystart="242" bodyend="246"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1a3f7210530c3638bdb4dfe94cdc96ca8e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::SimulationManager::has_been_simulated</definition>
+        <argsstring>() const</argsstring>
+        <name>has_been_simulated</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Return true, if the <ref refid="classnest_1_1_simulation_manager" kindref="compound">SimulationManager</ref> has already been simulated for some time. This does NOT indicate that simulate has been called (i.e. if Simulate is called with 0 as argument, the flag is still set to false.) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="131" column="8" bodyfile="nestkernel/simulation_manager.h" bodystart="249" bodyend="252"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1a5181fce49a9d987f7822947db90aa4b5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::SimulationManager::has_been_prepared</definition>
+        <argsstring>() const</argsstring>
+        <name>has_been_prepared</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Return true, if the <ref refid="classnest_1_1_simulation_manager" kindref="compound">SimulationManager</ref> has been prepared for simulation. This is the case from the time when the Prepare function is called until the simulation context is left by a call to Cleanup. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="138" column="8" bodyfile="nestkernel/simulation_manager.h" bodystart="255" bodyend="258"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1a30893f339a2906aa28bf2e7d6a3c5b4d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t nest::SimulationManager::get_slice</definition>
+        <argsstring>() const</argsstring>
+        <name>get_slice</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get slice number. Increased by one for each slice. Can be used to choose alternating buffers. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="144" column="10" bodyfile="nestkernel/simulation_manager.h" bodystart="261" bodyend="264"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1af7057a3b0e6bfb57db74a5586a16a5bc" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classnest_1_1_time" kindref="compound">Time</ref> const  &amp;</type>
+        <definition>Time const  &amp; nest::SimulationManager::get_clock</definition>
+        <argsstring>() const</argsstring>
+        <name>get_clock</name>
+        <briefdescription>
+<para>Return current simulation time. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="148" column="14" bodyfile="nestkernel/simulation_manager.h" bodystart="267" bodyend="270"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1a30e26ef505cebeda402cbd1ee4aa360a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classnest_1_1_time" kindref="compound">Time</ref></type>
+        <definition>Time nest::SimulationManager::run_duration</definition>
+        <argsstring>() const</argsstring>
+        <name>run_duration</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get the simulation duration in the current call to <ref refid="classnest_1_1_simulation_manager_1af942eab41c595fc8769f067dfb31c84b" kindref="member">run()</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="153" column="8" bodyfile="nestkernel/simulation_manager.h" bodystart="273" bodyend="276"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1a8a748f6cb590e9150cd939c89175f808" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classnest_1_1_time" kindref="compound">Time</ref></type>
+        <definition>Time nest::SimulationManager::run_start_time</definition>
+        <argsstring>() const</argsstring>
+        <name>run_start_time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get the start time of the current call to <ref refid="classnest_1_1_simulation_manager_1af942eab41c595fc8769f067dfb31c84b" kindref="member">run()</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="158" column="8" bodyfile="nestkernel/simulation_manager.h" bodystart="279" bodyend="283"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1a51943acec0b1955dabaa2d8aa2346d71" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classnest_1_1_time" kindref="compound">Time</ref></type>
+        <definition>Time nest::SimulationManager::run_end_time</definition>
+        <argsstring>() const</argsstring>
+        <name>run_end_time</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get the simulation&apos;s time at the end of the current call to <ref refid="classnest_1_1_simulation_manager_1af942eab41c595fc8769f067dfb31c84b" kindref="member">run()</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="163" column="8" bodyfile="nestkernel/simulation_manager.h" bodystart="286" bodyend="290"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1a47ceb3fa738660e247be133254b96f3a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenest_1a71a30fec90e57e114c45577d5294ce16" kindref="member">delay</ref></type>
+        <definition>delay nest::SimulationManager::get_from_step</definition>
+        <argsstring>() const</argsstring>
+        <name>get_from_step</name>
+        <briefdescription>
+<para>Return start of current time slice, in steps. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="167" column="9" bodyfile="nestkernel/simulation_manager.h" bodystart="293" bodyend="296"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1a5785570f24fc1bac6255d225a0990f41" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenest_1a71a30fec90e57e114c45577d5294ce16" kindref="member">delay</ref></type>
+        <definition>delay nest::SimulationManager::get_to_step</definition>
+        <argsstring>() const</argsstring>
+        <name>get_to_step</name>
+        <briefdescription>
+<para>Return end of current time slice, in steps. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="171" column="9" bodyfile="nestkernel/simulation_manager.h" bodystart="299" bodyend="302"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1aa457cadae541547d8d82bda9b1925ab0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::SimulationManager::update_connection_infrastructure</definition>
+        <argsstring>(const thread tid)</argsstring>
+        <name>update_connection_infrastructure</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <briefdescription>
+<para>Sorts source table and connections and create new target table. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="174" column="8" bodyfile="nestkernel/simulation_manager.cpp" bodystart="689" bodyend="767"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1a7ef3d9ef13988810582c4a86e2e61ddf" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::SimulationManager::reset_timers_for_preparation</definition>
+        <argsstring>()</argsstring>
+        <name>reset_timers_for_preparation</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Set time measurements for internal profiling to zero (reg. prep.) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="179" column="16" bodyfile="nestkernel/simulation_manager.cpp" bodystart="109" bodyend="115"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1a67d321ede83192bb29506684e257e491" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::SimulationManager::reset_timers_for_dynamics</definition>
+        <argsstring>()</argsstring>
+        <name>reset_timers_for_dynamics</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Set time measurements for internal profiling to zero (reg. sim. dyn.) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="184" column="16" bodyfile="nestkernel/simulation_manager.cpp" bodystart="118" bodyend="125"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1aa1ddc2339c6bda7ff3675efb16f6816c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::SimulationManager::call_update_</definition>
+        <argsstring>()</argsstring>
+        <name>call_update_</name>
+        <briefdescription>
+<para>actually run simulation, aka wrap update_ </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="187" column="8" bodyfile="nestkernel/simulation_manager.cpp" bodystart="633" bodyend="686"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1a4ad2ea77edb56fb13176de0932bac835" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::SimulationManager::update_</definition>
+        <argsstring>()</argsstring>
+        <name>update_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="188" column="8" bodyfile="nestkernel/simulation_manager.cpp" bodystart="776" bodyend="1074"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1a767010d73cfa7a2a304793765a33569e" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::SimulationManager::wfr_update_</definition>
+        <argsstring>(Node *)</argsstring>
+        <name>wfr_update_</name>
+        <param>
+          <type><ref refid="classnest_1_1_node" kindref="compound">Node</ref> *</type>
+          <defname>n</defname>
+        </param>
+        <briefdescription>
+<para>actually perform simulation </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="189" column="8" bodyfile="nestkernel/simulation_manager.cpp" bodystart="770" bodyend="773"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1a367e0a54fd85196fe34d543960d43110" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::SimulationManager::advance_time_</definition>
+        <argsstring>()</argsstring>
+        <name>advance_time_</name>
+        <briefdescription>
+<para>Update time to next time step. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="190" column="8" bodyfile="nestkernel/simulation_manager.cpp" bodystart="1077" bodyend="1108"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_simulation_manager_1a2d37052a9afcceeb089c5e9e20d23def" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::SimulationManager::print_progress_</definition>
+        <argsstring>()</argsstring>
+        <name>print_progress_</name>
+        <briefdescription>
+<para>TODO: Remove, replace by logging! </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/simulation_manager.h" line="191" column="8" bodyfile="nestkernel/simulation_manager.cpp" bodystart="1111" bodyend="1135"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>nest::ManagerInterface</label>
+        <link refid="classnest_1_1_manager_interface"/>
+      </node>
+      <node id="1">
+        <label>nest::SimulationManager</label>
+        <link refid="classnest_1_1_simulation_manager"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>nest::ManagerInterface</label>
+        <link refid="classnest_1_1_manager_interface"/>
+      </node>
+      <node id="1">
+        <label>nest::SimulationManager</label>
+        <link refid="classnest_1_1_simulation_manager"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="nestkernel/simulation_manager.h" line="47" column="1" bodyfile="nestkernel/simulation_manager.h" bodystart="48" bodyend="233"/>
+    <listofallmembers>
+      <member refid="classnest_1_1_simulation_manager_1a367e0a54fd85196fe34d543960d43110" prot="private" virt="non-virtual"><scope>nest::SimulationManager</scope><name>advance_time_</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a556718d208f5f426cee43fb948c79a91" prot="public" virt="non-virtual"><scope>nest::SimulationManager</scope><name>assert_valid_simtime</name></member>
+      <member refid="classnest_1_1_simulation_manager_1aa1ddc2339c6bda7ff3675efb16f6816c" prot="private" virt="non-virtual"><scope>nest::SimulationManager</scope><name>call_update_</name></member>
+      <member refid="classnest_1_1_manager_interface_1aa88c28844a59b4791eab4b7930fc62b0" prot="public" virt="virtual"><scope>nest::SimulationManager</scope><name>change_number_of_threads</name></member>
+      <member refid="classnest_1_1_simulation_manager_1af2d373b936e4d432a688a78af29be0ce" prot="public" virt="virtual"><scope>nest::SimulationManager</scope><name>cleanup</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a97ea61dedc707341d8e48e30cf45d4d8" prot="private" virt="non-virtual"><scope>nest::SimulationManager</scope><name>clock_</name></member>
+      <member refid="classnest_1_1_simulation_manager_1ab8922b68742b365abda59437dbfa8ae8" prot="public" virt="virtual"><scope>nest::SimulationManager</scope><name>finalize</name></member>
+      <member refid="classnest_1_1_simulation_manager_1ac4f127330c91e47112b00830b5e22745" prot="private" virt="non-virtual"><scope>nest::SimulationManager</scope><name>from_step_</name></member>
+      <member refid="classnest_1_1_simulation_manager_1af7057a3b0e6bfb57db74a5586a16a5bc" prot="public" virt="non-virtual"><scope>nest::SimulationManager</scope><name>get_clock</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a47ceb3fa738660e247be133254b96f3a" prot="public" virt="non-virtual"><scope>nest::SimulationManager</scope><name>get_from_step</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a42b4794c8502b65aa8df978a5158e379" prot="public" virt="non-virtual"><scope>nest::SimulationManager</scope><name>get_previous_slice_origin</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a30893f339a2906aa28bf2e7d6a3c5b4d" prot="public" virt="non-virtual"><scope>nest::SimulationManager</scope><name>get_slice</name></member>
+      <member refid="classnest_1_1_simulation_manager_1ad9a019b2da1005769418e4896fb43ec3" prot="public" virt="non-virtual"><scope>nest::SimulationManager</scope><name>get_slice_origin</name></member>
+      <member refid="classnest_1_1_simulation_manager_1af0b47533eada795a85ee39598f35d158" prot="public" virt="virtual"><scope>nest::SimulationManager</scope><name>get_status</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a1b3b2b5c83ad2506cef7c78b2397dcbc" prot="public" virt="non-virtual"><scope>nest::SimulationManager</scope><name>get_time</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a5785570f24fc1bac6255d225a0990f41" prot="public" virt="non-virtual"><scope>nest::SimulationManager</scope><name>get_to_step</name></member>
+      <member refid="classnest_1_1_simulation_manager_1ad45c6ba31aecb3dd3d5c3ecc07979450" prot="public" virt="non-virtual"><scope>nest::SimulationManager</scope><name>get_wfr_comm_interval</name></member>
+      <member refid="classnest_1_1_simulation_manager_1aa1307dbcfa760da257d3359f66b09d14" prot="public" virt="non-virtual"><scope>nest::SimulationManager</scope><name>get_wfr_interpolation_order</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a3d247a4135461fbf1c44bb89adca9135" prot="public" virt="non-virtual"><scope>nest::SimulationManager</scope><name>get_wfr_tol</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a5181fce49a9d987f7822947db90aa4b5" prot="public" virt="non-virtual"><scope>nest::SimulationManager</scope><name>has_been_prepared</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a3f7210530c3638bdb4dfe94cdc96ca8e" prot="public" virt="non-virtual"><scope>nest::SimulationManager</scope><name>has_been_simulated</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a8345ed7e7789b39c2c84be85258dbd23" prot="private" virt="non-virtual"><scope>nest::SimulationManager</scope><name>inconsistent_state_</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a00834a4b46f5c2c47591efb7b6dda17c" prot="public" virt="virtual"><scope>nest::SimulationManager</scope><name>initialize</name></member>
+      <member refid="classnest_1_1_manager_interface_1aeb056937c69d73ba501bab2fb371a56c" prot="public" virt="non-virtual"><scope>nest::SimulationManager</scope><name>ManagerInterface</name></member>
+      <member refid="classnest_1_1_manager_interface_1af07ff595521c144ddb81899fec66e251" prot="public" virt="non-virtual"><scope>nest::SimulationManager</scope><name>ManagerInterface</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a8f012147b5482581534080d39f69d91b" prot="private" virt="non-virtual"><scope>nest::SimulationManager</scope><name>max_update_time_</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a6c7e6dbcf801d9c0e087f23b97a95dea" prot="private" virt="non-virtual"><scope>nest::SimulationManager</scope><name>min_update_time_</name></member>
+      <member refid="classnest_1_1_manager_interface_1a9889d8ee2a6bd5f1799e86aed555db5e" prot="public" virt="non-virtual"><scope>nest::SimulationManager</scope><name>operator=</name></member>
+      <member refid="classnest_1_1_simulation_manager_1add7dd58374edc381ef64ee6197d24620" prot="public" virt="virtual"><scope>nest::SimulationManager</scope><name>prepare</name></member>
+      <member refid="classnest_1_1_simulation_manager_1ae4d116c1207f5a9b3ebd5cdae5b95cf6" prot="private" virt="non-virtual"><scope>nest::SimulationManager</scope><name>prepared_</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a2d37052a9afcceeb089c5e9e20d23def" prot="private" virt="non-virtual"><scope>nest::SimulationManager</scope><name>print_progress_</name></member>
+      <member refid="classnest_1_1_simulation_manager_1aaa655ac1423b979ea7a4f030266580f8" prot="private" virt="non-virtual"><scope>nest::SimulationManager</scope><name>print_time_</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a67d321ede83192bb29506684e257e491" prot="public" virt="virtual"><scope>nest::SimulationManager</scope><name>reset_timers_for_dynamics</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a7ef3d9ef13988810582c4a86e2e61ddf" prot="public" virt="virtual"><scope>nest::SimulationManager</scope><name>reset_timers_for_preparation</name></member>
+      <member refid="classnest_1_1_simulation_manager_1af942eab41c595fc8769f067dfb31c84b" prot="public" virt="non-virtual"><scope>nest::SimulationManager</scope><name>run</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a30e26ef505cebeda402cbd1ee4aa360a" prot="public" virt="non-virtual"><scope>nest::SimulationManager</scope><name>run_duration</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a51943acec0b1955dabaa2d8aa2346d71" prot="public" virt="non-virtual"><scope>nest::SimulationManager</scope><name>run_end_time</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a8a748f6cb590e9150cd939c89175f808" prot="public" virt="non-virtual"><scope>nest::SimulationManager</scope><name>run_start_time</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a8e68ef9b61dd3e17a09829333503b6ac" prot="public" virt="virtual"><scope>nest::SimulationManager</scope><name>set_status</name></member>
+      <member refid="classnest_1_1_simulation_manager_1ae930e691156acb078cc15613656dd05c" prot="private" virt="non-virtual"><scope>nest::SimulationManager</scope><name>simulated_</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a0c6956a4524b1d9ba989587a8fd6677a" prot="private" virt="non-virtual"><scope>nest::SimulationManager</scope><name>simulating_</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a5a0a4ac275c615dd63e7e8738a5fce73" prot="public" virt="non-virtual"><scope>nest::SimulationManager</scope><name>SimulationManager</name></member>
+      <member refid="classnest_1_1_simulation_manager_1aa9c689387262008a33c49dc010ca903a" prot="private" virt="non-virtual"><scope>nest::SimulationManager</scope><name>slice_</name></member>
+      <member refid="classnest_1_1_simulation_manager_1ad0eb577c568b61132f8feb0f68412d27" prot="private" virt="non-virtual"><scope>nest::SimulationManager</scope><name>sw_communicate_prepare_</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a95067dd27eb4d4539b7be8a4c0d2135f" prot="private" virt="non-virtual"><scope>nest::SimulationManager</scope><name>sw_simulate_</name></member>
+      <member refid="classnest_1_1_simulation_manager_1aa8fa0bf3c4c32c4f4c84dc034ec31d66" prot="private" virt="non-virtual"><scope>nest::SimulationManager</scope><name>t_real_</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a1a8798bcd17d04f6d407cf20279f7243" prot="private" virt="non-virtual"><scope>nest::SimulationManager</scope><name>t_slice_begin_</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a8e437ef64a5bf044d2f41c85cd7691a4" prot="private" virt="non-virtual"><scope>nest::SimulationManager</scope><name>t_slice_end_</name></member>
+      <member refid="classnest_1_1_simulation_manager_1adb14342f7dfb8a7daefbbac5f8f38bf7" prot="private" virt="non-virtual"><scope>nest::SimulationManager</scope><name>to_do_</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a72886a395537316a4226d4c92363de57" prot="private" virt="non-virtual"><scope>nest::SimulationManager</scope><name>to_do_total_</name></member>
+      <member refid="classnest_1_1_simulation_manager_1af08dde6b27d99fc89dc25166cf4e17bf" prot="private" virt="non-virtual"><scope>nest::SimulationManager</scope><name>to_step_</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a4ad2ea77edb56fb13176de0932bac835" prot="private" virt="non-virtual"><scope>nest::SimulationManager</scope><name>update_</name></member>
+      <member refid="classnest_1_1_simulation_manager_1aa457cadae541547d8d82bda9b1925ab0" prot="public" virt="non-virtual"><scope>nest::SimulationManager</scope><name>update_connection_infrastructure</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a0692804c9e044f30e3974ed5cc383f6b" prot="private" virt="non-virtual"><scope>nest::SimulationManager</scope><name>update_time_limit_</name></member>
+      <member refid="classnest_1_1_simulation_manager_1ade99232392fc1f09ecb6f8e18d5474b8" prot="public" virt="non-virtual"><scope>nest::SimulationManager</scope><name>use_wfr</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a15163b5d9bc447c8cc1dd07a7c9841a4" prot="private" virt="non-virtual"><scope>nest::SimulationManager</scope><name>use_wfr_</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a0346265275219381f2834c985097715e" prot="private" virt="non-virtual"><scope>nest::SimulationManager</scope><name>wfr_comm_interval_</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a1c19981717cd7aa779fd79a25d7b34c9" prot="private" virt="non-virtual"><scope>nest::SimulationManager</scope><name>wfr_interpolation_order_</name></member>
+      <member refid="classnest_1_1_simulation_manager_1ae12b669102e2b027eb0fffb0b20e3479" prot="private" virt="non-virtual"><scope>nest::SimulationManager</scope><name>wfr_max_iterations_</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a42731283a13685fe0b29ed3839a4409b" prot="private" virt="non-virtual"><scope>nest::SimulationManager</scope><name>wfr_tol_</name></member>
+      <member refid="classnest_1_1_simulation_manager_1a767010d73cfa7a2a304793765a33569e" prot="private" virt="non-virtual"><scope>nest::SimulationManager</scope><name>wfr_update_</name></member>
+      <member refid="classnest_1_1_manager_interface_1ac60a79d2ba0a48f1b039ab1f9d502ec4" prot="public" virt="virtual"><scope>nest::SimulationManager</scope><name>~ManagerInterface</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

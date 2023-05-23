@@ -1,0 +1,504 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classnest_1_1_base_random_generator" kind="class" language="C++" prot="public" abstract="yes">
+    <compoundname>nest::BaseRandomGenerator</compoundname>
+    <derivedcompoundref refid="classnest_1_1_random_generator" prot="public" virt="non-virtual">nest::RandomGenerator&lt; RandomEngineT &gt;</derivedcompoundref>
+    <includes refid="random__generators_8h" local="no">random_generators.h</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classnest_1_1_base_random_generator_1a060a5729c3fe031529c81baace4b983e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type></type>
+        <definition>virtual nest::BaseRandomGenerator::~BaseRandomGenerator</definition>
+        <argsstring>()</argsstring>
+        <name>~BaseRandomGenerator</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/random_generators.h" line="64" column="11" bodyfile="nestkernel/random_generators.h" bodystart="64" bodyend="66"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_base_random_generator_1a472253c50dffaecb1a448f6395483610" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>unsigned long</type>
+        <definition>virtual unsigned long nest::BaseRandomGenerator::operator()</definition>
+        <argsstring>(std::uniform_int_distribution&lt; unsigned long &gt; &amp;d)=0</argsstring>
+        <name>operator()</name>
+        <reimplementedby refid="classnest_1_1_random_generator_1aad40c7bf9e03db4e6d48b7c9ae35221d">operator()</reimplementedby>
+        <param>
+          <type>std::uniform_int_distribution&lt; unsigned long &gt; &amp;</type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+<para>Calls the provided distribution with the wrapped RNG engine. One operator per distribution must be defined. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>d</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Distribution that will be called. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/random_generators.h" line="74" column="25"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_base_random_generator_1a2512da8d7398489887ae02d73d694a6c" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>double</type>
+        <definition>virtual double nest::BaseRandomGenerator::operator()</definition>
+        <argsstring>(std::uniform_real_distribution&lt;&gt; &amp;d)=0</argsstring>
+        <name>operator()</name>
+        <reimplementedby refid="classnest_1_1_random_generator_1a450d4494f2a75a1414231a1ce601a079">operator()</reimplementedby>
+        <param>
+          <type>std::uniform_real_distribution&lt;&gt; &amp;</type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/random_generators.h" line="75" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_base_random_generator_1aaaaf7e40729f6e2c6439ccc4af2551c3" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>unsigned long</type>
+        <definition>virtual unsigned long nest::BaseRandomGenerator::operator()</definition>
+        <argsstring>(std::poisson_distribution&lt; unsigned long &gt; &amp;d)=0</argsstring>
+        <name>operator()</name>
+        <reimplementedby refid="classnest_1_1_random_generator_1ad62bb1efc952b130815ed16b49a34bab">operator()</reimplementedby>
+        <param>
+          <type>std::poisson_distribution&lt; unsigned long &gt; &amp;</type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/random_generators.h" line="76" column="25"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_base_random_generator_1ad20e37e78309a1608e75debc923e04d9" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>double</type>
+        <definition>virtual double nest::BaseRandomGenerator::operator()</definition>
+        <argsstring>(std::normal_distribution&lt;&gt; &amp;d)=0</argsstring>
+        <name>operator()</name>
+        <reimplementedby refid="classnest_1_1_random_generator_1a6378c3763e541efb730e6ae97016de94">operator()</reimplementedby>
+        <param>
+          <type>std::normal_distribution&lt;&gt; &amp;</type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/random_generators.h" line="77" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_base_random_generator_1aef117d929ee5ac4eed50be6d86f9a4bf" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>double</type>
+        <definition>virtual double nest::BaseRandomGenerator::operator()</definition>
+        <argsstring>(std::lognormal_distribution&lt;&gt; &amp;d)=0</argsstring>
+        <name>operator()</name>
+        <reimplementedby refid="classnest_1_1_random_generator_1a7ffb30a7a53986603631546109c43390">operator()</reimplementedby>
+        <param>
+          <type>std::lognormal_distribution&lt;&gt; &amp;</type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/random_generators.h" line="78" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_base_random_generator_1a1cb1527038b11069334f706094616f2f" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>unsigned long</type>
+        <definition>virtual unsigned long nest::BaseRandomGenerator::operator()</definition>
+        <argsstring>(std::binomial_distribution&lt; unsigned long &gt; &amp;d)=0</argsstring>
+        <name>operator()</name>
+        <reimplementedby refid="classnest_1_1_random_generator_1a7127b3b0d815e097f58f22645d7a1bfb">operator()</reimplementedby>
+        <param>
+          <type>std::binomial_distribution&lt; unsigned long &gt; &amp;</type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/random_generators.h" line="79" column="25"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_base_random_generator_1a1eaa74bc8d26b08098a6465a34b63da2" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>double</type>
+        <definition>virtual double nest::BaseRandomGenerator::operator()</definition>
+        <argsstring>(std::gamma_distribution&lt;&gt; &amp;d)=0</argsstring>
+        <name>operator()</name>
+        <reimplementedby refid="classnest_1_1_random_generator_1a662db7eb06758b8dfcce24c9759466bf">operator()</reimplementedby>
+        <param>
+          <type>std::gamma_distribution&lt;&gt; &amp;</type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/random_generators.h" line="80" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_base_random_generator_1a5d18f95f6ee9eb4eeb64c99e9dcbdd66" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>double</type>
+        <definition>virtual double nest::BaseRandomGenerator::operator()</definition>
+        <argsstring>(std::exponential_distribution&lt;&gt; &amp;d)=0</argsstring>
+        <name>operator()</name>
+        <reimplementedby refid="classnest_1_1_random_generator_1ac8e57968ef032ab08bfd9f10ed126d44">operator()</reimplementedby>
+        <param>
+          <type>std::exponential_distribution&lt;&gt; &amp;</type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/random_generators.h" line="81" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_base_random_generator_1a574b47da2aa4456e364aa6826157f84b" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>unsigned long</type>
+        <definition>virtual unsigned long nest::BaseRandomGenerator::operator()</definition>
+        <argsstring>(std::discrete_distribution&lt; unsigned long &gt; &amp;d)=0</argsstring>
+        <name>operator()</name>
+        <reimplementedby refid="classnest_1_1_random_generator_1aa84e11d50990909fe2388fc44ef78370">operator()</reimplementedby>
+        <param>
+          <type>std::discrete_distribution&lt; unsigned long &gt; &amp;</type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/random_generators.h" line="82" column="25"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_base_random_generator_1a06186796d519ed7f8f49da7397d54c5f" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>unsigned long</type>
+        <definition>virtual unsigned long nest::BaseRandomGenerator::operator()</definition>
+        <argsstring>(std::uniform_int_distribution&lt; unsigned long &gt; &amp;d, std::uniform_int_distribution&lt; unsigned long &gt;::param_type &amp;p)=0</argsstring>
+        <name>operator()</name>
+        <reimplementedby refid="classnest_1_1_random_generator_1a3c7741c888b6b597e0a9b2b62b13fa5f">operator()</reimplementedby>
+        <param>
+          <type>std::uniform_int_distribution&lt; unsigned long &gt; &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>std::uniform_int_distribution&lt; unsigned long &gt;::param_type &amp;</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+<para>Calls the provided distribution with the wrapped RNG engine, using provided distribution parameters. One operator per distribution must be defined. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>d</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Distribution that will be called. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>p</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Distribution parameters. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/random_generators.h" line="91" column="25"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_base_random_generator_1aefa0d58372b408a12aa5fae8cf2edafa" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>double</type>
+        <definition>virtual double nest::BaseRandomGenerator::operator()</definition>
+        <argsstring>(std::uniform_real_distribution&lt;&gt; &amp;d, std::uniform_real_distribution&lt;&gt;::param_type &amp;p)=0</argsstring>
+        <name>operator()</name>
+        <reimplementedby refid="classnest_1_1_random_generator_1a315d96e8a07cf14e44e4c77c1358ffc3">operator()</reimplementedby>
+        <param>
+          <type>std::uniform_real_distribution&lt;&gt; &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>std::uniform_real_distribution&lt;&gt;::param_type &amp;</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/random_generators.h" line="93" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_base_random_generator_1a5e45fdc276d15bd247630b51724dfa81" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>unsigned long</type>
+        <definition>virtual unsigned long nest::BaseRandomGenerator::operator()</definition>
+        <argsstring>(std::poisson_distribution&lt; unsigned long &gt; &amp;d, std::poisson_distribution&lt; unsigned long &gt;::param_type &amp;p)=0</argsstring>
+        <name>operator()</name>
+        <reimplementedby refid="classnest_1_1_random_generator_1abb59501479698026ebe46abee3d24577">operator()</reimplementedby>
+        <param>
+          <type>std::poisson_distribution&lt; unsigned long &gt; &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>std::poisson_distribution&lt; unsigned long &gt;::param_type &amp;</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/random_generators.h" line="94" column="25"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_base_random_generator_1a871b7a859435dc51adb2a59a7014b14f" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>double</type>
+        <definition>virtual double nest::BaseRandomGenerator::operator()</definition>
+        <argsstring>(std::normal_distribution&lt;&gt; &amp;d, std::normal_distribution&lt;&gt;::param_type &amp;p)=0</argsstring>
+        <name>operator()</name>
+        <reimplementedby refid="classnest_1_1_random_generator_1a3acd7572381608deed381a09e33d2d28">operator()</reimplementedby>
+        <param>
+          <type>std::normal_distribution&lt;&gt; &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>std::normal_distribution&lt;&gt;::param_type &amp;</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/random_generators.h" line="96" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_base_random_generator_1a37be54106f0a82695f451002fbaa1ab9" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>double</type>
+        <definition>virtual double nest::BaseRandomGenerator::operator()</definition>
+        <argsstring>(std::lognormal_distribution&lt;&gt; &amp;d, std::lognormal_distribution&lt;&gt;::param_type &amp;p)=0</argsstring>
+        <name>operator()</name>
+        <reimplementedby refid="classnest_1_1_random_generator_1a8b3c03079fc032775198d43ba9edb176">operator()</reimplementedby>
+        <param>
+          <type>std::lognormal_distribution&lt;&gt; &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>std::lognormal_distribution&lt;&gt;::param_type &amp;</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/random_generators.h" line="97" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_base_random_generator_1a0aeae4aeb22ddfba73e3469821c6a768" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>unsigned long</type>
+        <definition>virtual unsigned long nest::BaseRandomGenerator::operator()</definition>
+        <argsstring>(std::binomial_distribution&lt; unsigned long &gt; &amp;d, std::binomial_distribution&lt; unsigned long &gt;::param_type &amp;p)=0</argsstring>
+        <name>operator()</name>
+        <reimplementedby refid="classnest_1_1_random_generator_1a9bf1758f36f3cb4a34fc886801d0c50b">operator()</reimplementedby>
+        <param>
+          <type>std::binomial_distribution&lt; unsigned long &gt; &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>std::binomial_distribution&lt; unsigned long &gt;::param_type &amp;</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/random_generators.h" line="98" column="25"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_base_random_generator_1a2ef81f616be10a510228f00f89d9b729" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>double</type>
+        <definition>virtual double nest::BaseRandomGenerator::operator()</definition>
+        <argsstring>(std::gamma_distribution&lt;&gt; &amp;d, std::gamma_distribution&lt;&gt;::param_type &amp;p)=0</argsstring>
+        <name>operator()</name>
+        <reimplementedby refid="classnest_1_1_random_generator_1a7028eaf466643f4e5fa3c5540edbe7c6">operator()</reimplementedby>
+        <param>
+          <type>std::gamma_distribution&lt;&gt; &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>std::gamma_distribution&lt;&gt;::param_type &amp;</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/random_generators.h" line="100" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_base_random_generator_1a5ea3fba875a9cc81864288648dc2bb47" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>double</type>
+        <definition>virtual double nest::BaseRandomGenerator::operator()</definition>
+        <argsstring>(std::exponential_distribution&lt;&gt; &amp;d, std::exponential_distribution&lt;&gt;::param_type &amp;p)=0</argsstring>
+        <name>operator()</name>
+        <reimplementedby refid="classnest_1_1_random_generator_1ad860ff1d7e4304195517a4b2adb5c42c">operator()</reimplementedby>
+        <param>
+          <type>std::exponential_distribution&lt;&gt; &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>std::exponential_distribution&lt;&gt;::param_type &amp;</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/random_generators.h" line="101" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_base_random_generator_1a9d8fc0b53cd6528dd11a6727fc607ed9" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>unsigned long</type>
+        <definition>virtual unsigned long nest::BaseRandomGenerator::operator()</definition>
+        <argsstring>(std::discrete_distribution&lt; unsigned long &gt; &amp;d, std::discrete_distribution&lt; unsigned long &gt;::param_type &amp;p)=0</argsstring>
+        <name>operator()</name>
+        <reimplementedby refid="classnest_1_1_random_generator_1acecca5c056c7a2943e16f21aa1c3b384">operator()</reimplementedby>
+        <param>
+          <type>std::discrete_distribution&lt; unsigned long &gt; &amp;</type>
+          <declname>d</declname>
+        </param>
+        <param>
+          <type>std::discrete_distribution&lt; unsigned long &gt;::param_type &amp;</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/random_generators.h" line="102" column="25"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_base_random_generator_1ac9f238412d989640ad55a82e8d9e3a45" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>double</type>
+        <definition>virtual double nest::BaseRandomGenerator::drand</definition>
+        <argsstring>()=0</argsstring>
+        <name>drand</name>
+        <reimplementedby refid="classnest_1_1_random_generator_1a9699db4c43a8caef056f31fe5f4411d2">drand</reimplementedby>
+        <briefdescription>
+<para>Uses the wrapped RNG engine to draw a double from a uniform distribution in the range [0, 1). </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/random_generators.h" line="108" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_base_random_generator_1a3983c4b45417bf8fd09c592691f6c40e" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>unsigned long</type>
+        <definition>virtual unsigned long nest::BaseRandomGenerator::ulrand</definition>
+        <argsstring>(unsigned long N)=0</argsstring>
+        <name>ulrand</name>
+        <reimplementedby refid="classnest_1_1_random_generator_1a5adae48e125f4162d1e9dba8ee000dc6">ulrand</reimplementedby>
+        <param>
+          <type>unsigned long</type>
+          <declname>N</declname>
+        </param>
+        <briefdescription>
+<para>Uses the wrapped RNG engine to draw an unsigned long from a uniform distribution in the range [0, N). </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>N</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum value that can be drawn. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/random_generators.h" line="114" column="25"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Base class for RNG engine wrappers. </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>nest::BaseRandomGenerator</label>
+        <link refid="classnest_1_1_base_random_generator"/>
+      </node>
+      <node id="2">
+        <label>nest::RandomGenerator&lt; RandomEngineT &gt;</label>
+        <link refid="classnest_1_1_random_generator"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>nest::BaseRandomGenerator</label>
+        <link refid="classnest_1_1_base_random_generator"/>
+      </node>
+    </collaborationgraph>
+    <location file="nestkernel/random_generators.h" line="61" column="1" bodyfile="nestkernel/random_generators.h" bodystart="62" bodyend="115"/>
+    <listofallmembers>
+      <member refid="classnest_1_1_base_random_generator_1ac9f238412d989640ad55a82e8d9e3a45" prot="public" virt="pure-virtual"><scope>nest::BaseRandomGenerator</scope><name>drand</name></member>
+      <member refid="classnest_1_1_base_random_generator_1a472253c50dffaecb1a448f6395483610" prot="public" virt="pure-virtual"><scope>nest::BaseRandomGenerator</scope><name>operator()</name></member>
+      <member refid="classnest_1_1_base_random_generator_1a2512da8d7398489887ae02d73d694a6c" prot="public" virt="pure-virtual"><scope>nest::BaseRandomGenerator</scope><name>operator()</name></member>
+      <member refid="classnest_1_1_base_random_generator_1aaaaf7e40729f6e2c6439ccc4af2551c3" prot="public" virt="pure-virtual"><scope>nest::BaseRandomGenerator</scope><name>operator()</name></member>
+      <member refid="classnest_1_1_base_random_generator_1ad20e37e78309a1608e75debc923e04d9" prot="public" virt="pure-virtual"><scope>nest::BaseRandomGenerator</scope><name>operator()</name></member>
+      <member refid="classnest_1_1_base_random_generator_1aef117d929ee5ac4eed50be6d86f9a4bf" prot="public" virt="pure-virtual"><scope>nest::BaseRandomGenerator</scope><name>operator()</name></member>
+      <member refid="classnest_1_1_base_random_generator_1a1cb1527038b11069334f706094616f2f" prot="public" virt="pure-virtual"><scope>nest::BaseRandomGenerator</scope><name>operator()</name></member>
+      <member refid="classnest_1_1_base_random_generator_1a1eaa74bc8d26b08098a6465a34b63da2" prot="public" virt="pure-virtual"><scope>nest::BaseRandomGenerator</scope><name>operator()</name></member>
+      <member refid="classnest_1_1_base_random_generator_1a5d18f95f6ee9eb4eeb64c99e9dcbdd66" prot="public" virt="pure-virtual"><scope>nest::BaseRandomGenerator</scope><name>operator()</name></member>
+      <member refid="classnest_1_1_base_random_generator_1a574b47da2aa4456e364aa6826157f84b" prot="public" virt="pure-virtual"><scope>nest::BaseRandomGenerator</scope><name>operator()</name></member>
+      <member refid="classnest_1_1_base_random_generator_1a06186796d519ed7f8f49da7397d54c5f" prot="public" virt="pure-virtual"><scope>nest::BaseRandomGenerator</scope><name>operator()</name></member>
+      <member refid="classnest_1_1_base_random_generator_1aefa0d58372b408a12aa5fae8cf2edafa" prot="public" virt="pure-virtual"><scope>nest::BaseRandomGenerator</scope><name>operator()</name></member>
+      <member refid="classnest_1_1_base_random_generator_1a5e45fdc276d15bd247630b51724dfa81" prot="public" virt="pure-virtual"><scope>nest::BaseRandomGenerator</scope><name>operator()</name></member>
+      <member refid="classnest_1_1_base_random_generator_1a871b7a859435dc51adb2a59a7014b14f" prot="public" virt="pure-virtual"><scope>nest::BaseRandomGenerator</scope><name>operator()</name></member>
+      <member refid="classnest_1_1_base_random_generator_1a37be54106f0a82695f451002fbaa1ab9" prot="public" virt="pure-virtual"><scope>nest::BaseRandomGenerator</scope><name>operator()</name></member>
+      <member refid="classnest_1_1_base_random_generator_1a0aeae4aeb22ddfba73e3469821c6a768" prot="public" virt="pure-virtual"><scope>nest::BaseRandomGenerator</scope><name>operator()</name></member>
+      <member refid="classnest_1_1_base_random_generator_1a2ef81f616be10a510228f00f89d9b729" prot="public" virt="pure-virtual"><scope>nest::BaseRandomGenerator</scope><name>operator()</name></member>
+      <member refid="classnest_1_1_base_random_generator_1a5ea3fba875a9cc81864288648dc2bb47" prot="public" virt="pure-virtual"><scope>nest::BaseRandomGenerator</scope><name>operator()</name></member>
+      <member refid="classnest_1_1_base_random_generator_1a9d8fc0b53cd6528dd11a6727fc607ed9" prot="public" virt="pure-virtual"><scope>nest::BaseRandomGenerator</scope><name>operator()</name></member>
+      <member refid="classnest_1_1_base_random_generator_1a3983c4b45417bf8fd09c592691f6c40e" prot="public" virt="pure-virtual"><scope>nest::BaseRandomGenerator</scope><name>ulrand</name></member>
+      <member refid="classnest_1_1_base_random_generator_1a060a5729c3fe031529c81baace4b983e" prot="public" virt="virtual"><scope>nest::BaseRandomGenerator</scope><name>~BaseRandomGenerator</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

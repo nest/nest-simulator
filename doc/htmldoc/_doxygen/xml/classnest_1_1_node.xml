@@ -1,0 +1,2774 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classnest_1_1_node" kind="class" language="C++" prot="public" abstract="yes">
+    <compoundname>nest::Node</compoundname>
+    <derivedcompoundref refid="classnest_1_1_conn_test_dummy_node_base" prot="public" virt="non-virtual">nest::ConnTestDummyNodeBase</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_device_node" prot="public" virt="non-virtual">nest::DeviceNode</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_structural_plasticity_node" prot="public" virt="non-virtual">nest::StructuralPlasticityNode</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1proxynode" prot="public" virt="non-virtual">nest::proxynode</derivedcompoundref>
+    <includes refid="node_8h" local="no">node.h</includes>
+      <sectiondef kind="friend">
+      <memberdef kind="friend" id="classnest_1_1_node_1aa49a527d01a369f21afaddd4e13a9748" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class NodeManager</definition>
+        <argsstring></argsstring>
+        <name>NodeManager</name>
+        <param>
+          <type><ref refid="classnest_1_1_node_manager" kindref="compound">NodeManager</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="105" column="3" bodyfile="nestkernel/node.h" bodystart="105" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="friend" id="classnest_1_1_node_1aa54a149299ea6a38d6cee1943b2bddf9" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class ModelManager</definition>
+        <argsstring></argsstring>
+        <name>ModelManager</name>
+        <param>
+          <type><ref refid="classnest_1_1_model_manager" kindref="compound">ModelManager</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="106" column="3" bodyfile="nestkernel/node.h" bodystart="106" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="friend" id="classnest_1_1_node_1a157176d1c5146d6a93a538de218cbe8e" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class proxynode</definition>
+        <argsstring></argsstring>
+        <name>proxynode</name>
+        <param>
+          <type><ref refid="classnest_1_1proxynode" kindref="compound">proxynode</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="107" column="3" bodyfile="nestkernel/node.h" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="friend" id="classnest_1_1_node_1a4b5b0493670970044a06856861cf3c86" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class Synapse</definition>
+        <argsstring></argsstring>
+        <name>Synapse</name>
+        <param>
+          <type>Synapse</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="108" column="3" bodyfile="nestkernel/node.h" bodystart="108" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="friend" id="classnest_1_1_node_1a2bf2a0e9b454c55aa5dcb5aa4698697b" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class Model</definition>
+        <argsstring></argsstring>
+        <name>Model</name>
+        <param>
+          <type><ref refid="classnest_1_1_model" kindref="compound">Model</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="109" column="3" bodyfile="nestkernel/node.h" bodystart="109" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="friend" id="classnest_1_1_node_1a630a7fe19e19ffa310ad17522b70878e" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>class</type>
+        <definition>friend class SimulationManager</definition>
+        <argsstring></argsstring>
+        <name>SimulationManager</name>
+        <param>
+          <type><ref refid="classnest_1_1_simulation_manager" kindref="compound">SimulationManager</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="110" column="3" bodyfile="nestkernel/node.h" bodystart="110" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classnest_1_1_node_1a6c4750a3216c14453087bb14bc9a6a7a" prot="public" static="no" mutable="no">
+        <type><ref refid="classnest_1_1_deprecation_warning" kindref="compound">DeprecationWarning</ref></type>
+        <definition>DeprecationWarning nest::Node::deprecation_warning</definition>
+        <argsstring></argsstring>
+        <name>deprecation_warning</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Member of <ref refid="classnest_1_1_deprecation_warning" kindref="compound">DeprecationWarning</ref> class to be used by models if parameters are deprecated. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="827" column="22" bodyfile="nestkernel/node.h" bodystart="827" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classnest_1_1_node_1a9d697a1550c18613e0d2a0e57c67e836" prot="private" static="no" mutable="no">
+        <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+        <definition>index nest::Node::node_id_</definition>
+        <argsstring></argsstring>
+        <name>node_id_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Global Element ID (node ID).</para>
+<para>The node ID is unique within the network. The smallest valid node ID is 1. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="890" column="9" bodyfile="nestkernel/node.h" bodystart="890" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_node_1a4316e73a0c494ccb37e6a19b00664223" prot="private" static="no" mutable="no">
+        <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+        <definition>index nest::Node::thread_lid_</definition>
+        <argsstring></argsstring>
+        <name>thread_lid_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Local id of this node in the thread-local vector of nodes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="895" column="9" bodyfile="nestkernel/node.h" bodystart="895" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_node_1ae306f4602e575047801c45c9fec2a4d4" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int nest::Node::model_id_</definition>
+        <argsstring></argsstring>
+        <name>model_id_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><ref refid="classnest_1_1_model" kindref="compound">Model</ref> ID. It is only set for actual node instances, not for instances of class <ref refid="classnest_1_1_node" kindref="compound">Node</ref> representing model prototypes. <ref refid="classnest_1_1_model" kindref="compound">Model</ref> prototypes always have model_id_==-1. <simplesect kind="see"><para><ref refid="classnest_1_1_node_1a99139ba0b34f150c612f2f26c8645532" kindref="member">get_model_id()</ref>, <ref refid="classnest_1_1_node_1a8df5c7f9272bd5da51cb5de78db00161" kindref="member">set_model_id()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="903" column="7" bodyfile="nestkernel/node.h" bodystart="903" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_node_1a9ec98b82cf08796b726ca26666e5739d" prot="private" static="no" mutable="no">
+        <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+        <definition>thread nest::Node::thread_</definition>
+        <argsstring></argsstring>
+        <name>thread_</name>
+        <briefdescription>
+<para>thread node is assigned to </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="905" column="10" bodyfile="nestkernel/node.h" bodystart="905" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_node_1ad40bb2d1d3c32dd953374bbe6a76e5a6" prot="private" static="no" mutable="no">
+        <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+        <definition>thread nest::Node::vp_</definition>
+        <argsstring></argsstring>
+        <name>vp_</name>
+        <briefdescription>
+<para>virtual process node is assigned to </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="906" column="10" bodyfile="nestkernel/node.h" bodystart="906" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_node_1a7c48b06a535a6e036c88ea2dcbaf8283" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::Node::frozen_</definition>
+        <argsstring></argsstring>
+        <name>frozen_</name>
+        <briefdescription>
+<para>node shall not be updated if true </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="907" column="8" bodyfile="nestkernel/node.h" bodystart="907" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_node_1a95389430ba10f2da19aacded71503f74" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::Node::initialized_</definition>
+        <argsstring></argsstring>
+        <name>initialized_</name>
+        <briefdescription>
+<para>state and buffers have been initialized </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="908" column="8" bodyfile="nestkernel/node.h" bodystart="908" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_node_1a9f929d2c40ddaafd4a0822ea294f1ef9" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::Node::node_uses_wfr_</definition>
+        <argsstring></argsstring>
+        <name>node_uses_wfr_</name>
+        <briefdescription>
+<para>node uses waveform relaxation method </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="909" column="8" bodyfile="nestkernel/node.h" bodystart="909" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_node_1a3ec5fd1ce0e6f3f0bccabd314c6845c3" prot="private" static="no" mutable="no">
+        <type><ref refid="namespacenest_1accbbbd2c49375cc6c2edd964cccda54e" kindref="member">NodeCollectionPTR</ref></type>
+        <definition>NodeCollectionPTR nest::Node::nc_ptr_</definition>
+        <argsstring></argsstring>
+        <name>nc_ptr_</name>
+        <briefdescription>
+<para>Original <ref refid="classnest_1_1_node_collection" kindref="compound">NodeCollection</ref> of this node, used to extract node-specific metadata. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="911" column="21" bodyfile="nestkernel/node.h" bodystart="911" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classnest_1_1_node_1a9c99a8caa89a3eb73e975f25678d5d58" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classnest_1_1_node" kindref="compound">Node</ref> &amp;</type>
+        <definition>Node&amp; nest::Node::operator=</definition>
+        <argsstring>(const Node &amp;)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classnest_1_1_node" kindref="compound">Node</ref> &amp;</type>
+        </param>
+        <briefdescription>
+<para>not implemented </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="112" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a07451d06b3d812eae961d61397f5826c" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::Node::set_node_id_</definition>
+        <argsstring>(index)</argsstring>
+        <name>set_node_id_</name>
+        <param>
+          <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+<para>Set global node id. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="830" column="8" bodyfile="nestkernel/node.h" bodystart="987" bodyend="990"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a73f12f75b97e2fc6adc1a5d27a7f50b1" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::Node::set_nc_</definition>
+        <argsstring>(NodeCollectionPTR)</argsstring>
+        <name>set_nc_</name>
+        <param>
+          <type><ref refid="namespacenest_1accbbbd2c49375cc6c2edd964cccda54e" kindref="member">NodeCollectionPTR</ref></type>
+          <defname>nc_ptr</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Set the original <ref refid="classnest_1_1_node_collection" kindref="compound">NodeCollection</ref> of this node. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="835" column="8" bodyfile="nestkernel/node.h" bodystart="994" bodyend="997"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a54f0c50b08165643cee588bc89b464b8" prot="private" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>DictionaryDatum</type>
+        <definition>DictionaryDatum nest::Node::get_status_dict_</definition>
+        <argsstring>()</argsstring>
+        <name>get_status_dict_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Return a new dictionary datum .</para>
+<para>This function is called by <ref refid="classnest_1_1_node_1a885c4dc90e195ed2533af848c4fdad92" kindref="member">get_status_base()</ref> and returns a new empty dictionary by default. Some nodes may contain a permanent status dictionary which is then returned by get_status_dict_(). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="844" column="27" bodyfile="nestkernel/node.cpp" bodystart="126" bodyend="129"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classnest_1_1_node_1a1b36ccdeb480a962678afbc72e0e05a9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>nest::Node::Node</definition>
+        <argsstring>()</argsstring>
+        <name>Node</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="115" column="3" bodyfile="nestkernel/node.cpp" bodystart="41" bodyend="52"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a359cbbba44db2a94cced8f60bcf7c728" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>nest::Node::Node</definition>
+        <argsstring>(Node const &amp;)</argsstring>
+        <name>Node</name>
+        <param>
+          <type><ref refid="classnest_1_1_node" kindref="compound">Node</ref> const &amp;</type>
+          <defname>n</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="116" column="3" bodyfile="nestkernel/node.cpp" bodystart="54" bodyend="66"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a292ae9d034507fb6f382f61a9251cbe7" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>nest::Node::~Node</definition>
+        <argsstring>()</argsstring>
+        <name>~Node</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="117" column="11" bodyfile="nestkernel/node.cpp" bodystart="68" bodyend="70"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1ad88edfd6f881579328b545d88372807d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="classnest_1_1_node" kindref="compound">Node</ref> *</type>
+        <definition>virtual Node* nest::Node::clone</definition>
+        <argsstring>() const</argsstring>
+        <name>clone</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Virtual copy constructor. This function should create a new object by calling the derived class&apos; copy constructor and return its pointer. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="126" column="3" bodyfile="nestkernel/node.h" bodystart="126" bodyend="129"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a3cadfe2698c39c5fd327f5d70d0b8adf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>bool</type>
+        <definition>bool nest::Node::has_proxies</definition>
+        <argsstring>() const</argsstring>
+        <name>has_proxies</name>
+        <reimplementedby refid="classnest_1_1_stimulation_device_1a800a7aa91f1dc9411b1f7e052999a3b5">has_proxies</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns true if the node has proxies on remote threads. This is used to discriminate between different types of nodes, when adding new nodes to the network. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="136" column="16" bodyfile="nestkernel/node.h" bodystart="939" bodyend="942"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a1e0e3bdf9dd259183dcb8c457265383b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>bool</type>
+        <definition>bool nest::Node::supports_urbanczik_archiving</definition>
+        <argsstring>() const</argsstring>
+        <name>supports_urbanczik_archiving</name>
+        <reimplementedby refid="classnest_1_1_urbanczik_archiving_node_1a8a0be565a145216772b9ff61e127a994">supports_urbanczik_archiving</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns true if the node supports the Urbanczik-Senn plasticity rule </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="141" column="16" bodyfile="nestkernel/node.h" bodystart="927" bodyend="930"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1ac6e5bca87246812225ab04af4fd40df2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>bool</type>
+        <definition>bool nest::Node::local_receiver</definition>
+        <argsstring>() const</argsstring>
+        <name>local_receiver</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns true if the node only receives events from nodes/devices on the same thread. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="147" column="16" bodyfile="nestkernel/node.h" bodystart="945" bodyend="948"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a1168f649f515aea70ac6678ed66c48e4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>bool</type>
+        <definition>bool nest::Node::one_node_per_process</definition>
+        <argsstring>() const</argsstring>
+        <name>one_node_per_process</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns true if the node exists only once per process, but does not have proxies on remote threads. This is used to discriminate between different types of nodes, when adding new nodes to the network.</para>
+<para>TODO: Is this true for <emphasis>any</emphasis> model at all? Maybe MUSIC related? </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="157" column="16" bodyfile="nestkernel/node.h" bodystart="951" bodyend="954"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1acaf132bbee717313ffbc86fd291667c9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>bool</type>
+        <definition>bool nest::Node::is_off_grid</definition>
+        <argsstring>() const</argsstring>
+        <name>is_off_grid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns true if the node sends/receives off-grid events. This is used to discriminate between different types of nodes when adding new nodes to the network. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="164" column="16" bodyfile="nestkernel/node.h" bodystart="957" bodyend="960"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a895a3c75963a7926b3c9cac2d62dece3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>bool</type>
+        <definition>bool nest::Node::is_proxy</definition>
+        <argsstring>() const</argsstring>
+        <name>is_proxy</name>
+        <reimplementedby refid="classnest_1_1proxynode_1a62ddd878060750beaf7f1c7806076876">is_proxy</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns true if the node is a proxy node. This is implemented because the use of RTTI is rather expensive. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="170" column="16" bodyfile="nestkernel/node.h" bodystart="963" bodyend="966"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a86602cc948413d6fbe10fe4fefaca0ef" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string nest::Node::get_name</definition>
+        <argsstring>() const</argsstring>
+        <name>get_name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Return class name. Returns name of node model (e.g. &quot;iaf_psc_alpha&quot;) as string. This name is identical to the name that is used to identify the model in the interpreter&apos;s model dictionary. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="178" column="15" bodyfile="nestkernel/node.cpp" bodystart="108" bodyend="116"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a59915001de69fc05d8a155da42a89e56" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>Name</type>
+        <definition>Name nest::Node::get_element_type</definition>
+        <argsstring>() const</argsstring>
+        <name>get_element_type</name>
+        <reimplementedby refid="classnest_1_1_stimulation_device_1a07a29a4f1da521707bf0f8149fe9b9fb">get_element_type</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Return the element type of the node. The returned Name is a free label describing the class of network elements a node belongs to. Currently used values are &quot;neuron&quot;, &quot;recorder&quot;, &quot;stimulator&quot;, and &quot;other&quot;, which are all defined as static Name objects in the names namespace. This function is overwritten with a corresponding value in the derived classes </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="189" column="16" bodyfile="nestkernel/node.h" bodystart="969" bodyend="972"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a18f2dc5591f7de1e64b62d0d53cb4351" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+        <definition>index nest::Node::get_node_id</definition>
+        <argsstring>() const</argsstring>
+        <name>get_node_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Return global Network ID. Returns the global network ID of the <ref refid="classnest_1_1_node" kindref="compound">Node</ref>. Each node has a unique network ID which can be used to access the <ref refid="classnest_1_1_node" kindref="compound">Node</ref> comparable to a pointer.</para>
+<para>The smallest valid node ID is 1. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="199" column="9" bodyfile="nestkernel/node.h" bodystart="975" bodyend="978"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a0d0352c208e88979157bf69dac41a074" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenest_1accbbbd2c49375cc6c2edd964cccda54e" kindref="member">NodeCollectionPTR</ref></type>
+        <definition>NodeCollectionPTR nest::Node::get_nc</definition>
+        <argsstring>() const</argsstring>
+        <name>get_nc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Return lockpointer to the <ref refid="classnest_1_1_node_collection" kindref="compound">NodeCollection</ref> that created this node. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="204" column="21" bodyfile="nestkernel/node.h" bodystart="981" bodyend="984"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a99139ba0b34f150c612f2f26c8645532" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int nest::Node::get_model_id</definition>
+        <argsstring>() const</argsstring>
+        <name>get_model_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Return model ID of the node. Returns the model ID of the model for this node. <ref refid="classnest_1_1_model" kindref="compound">Model</ref> IDs start with 0. <simplesect kind="note"><para>The model ID is not stored in the model prototype instance. It is only set when actual nodes are created from a prototype. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="213" column="7" bodyfile="nestkernel/node.h" bodystart="1000" bodyend="1003"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1aa14ec598e02577c8353131316d8ed5c9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>std::string</type>
+        <definition>virtual std::string nest::Node::print_network</definition>
+        <argsstring>(int, int, std::string=&quot;&quot;)</argsstring>
+        <name>print_network</name>
+        <param>
+          <type>int</type>
+        </param>
+        <param>
+          <type>int</type>
+        </param>
+        <param>
+          <type>std::string</type>
+          <defval>&quot;&quot;</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Prints out one line of the tree view of the network. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="219" column="3" bodyfile="nestkernel/node.h" bodystart="219" bodyend="222"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1ab6ba7bb37d972a9a5e0f2a8e4c6fcc72" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::Node::is_frozen</definition>
+        <argsstring>() const</argsstring>
+        <name>is_frozen</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns true if node is frozen, i.e., shall not be updated. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="227" column="8" bodyfile="nestkernel/node.h" bodystart="915" bodyend="918"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a537f1a88cfaefa242f317637354442ad" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::Node::node_uses_wfr</definition>
+        <argsstring>() const</argsstring>
+        <name>node_uses_wfr</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns true if the node uses the waveform relaxation method </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="232" column="8" bodyfile="nestkernel/node.h" bodystart="921" bodyend="924"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a2344ea2328630ee3e1faaec8e4ca2071" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::Node::set_node_uses_wfr</definition>
+        <argsstring>(const bool)</argsstring>
+        <name>set_node_uses_wfr</name>
+        <param>
+          <type>const bool</type>
+          <defname>uwfr</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sets node_uses_wfr_ member variable (to be able to set it to &quot;true&quot; for any class derived from <ref refid="classnest_1_1_node" kindref="compound">Node</ref>) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="238" column="8" bodyfile="nestkernel/node.h" bodystart="933" bodyend="936"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a1943c3183a149f56fcd797f1d8bfe815" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::Node::init</definition>
+        <argsstring>()</argsstring>
+        <name>init</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Initialize node prior to first simulation after node has been created.</para>
+<para><ref refid="classnest_1_1_node_1a1943c3183a149f56fcd797f1d8bfe815" kindref="member">init()</ref> allows the node to configure internal data structures prior to being simulated. The method has an effect only the first time it is called on a given node, otherwise it returns immediately. <ref refid="classnest_1_1_node_1a1943c3183a149f56fcd797f1d8bfe815" kindref="member">init()</ref> calls virtual functions <ref refid="classnest_1_1_node_1a048ed537ecbe30cb98950a077106b0ef" kindref="member">init_state_()</ref> and <ref refid="classnest_1_1_node_1a5881b951d112d2c408865d080287f453" kindref="member">init_buffers_()</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="248" column="8" bodyfile="nestkernel/node.cpp" bodystart="78" bodyend="89"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1ad51550af656588536bcdf5afecdbf788" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void nest::Node::pre_run_hook</definition>
+        <argsstring>()=0</argsstring>
+        <name>pre_run_hook</name>
+        <reimplementedby refid="classnest_1_1_recording_device_1a56f87d667d7b32a2cd3f95459e424834">pre_run_hook</reimplementedby>
+        <reimplementedby refid="classnest_1_1_stimulation_device_1a56f87d667d7b32a2cd3f95459e424834">pre_run_hook</reimplementedby>
+        <reimplementedby refid="classnest_1_1_conn_test_dummy_node_base_1a3cd4f0e3d7ba66763c8ef54ae8068ef6">pre_run_hook</reimplementedby>
+        <reimplementedby refid="classnest_1_1proxynode_1aff7a8cc3e37e89c6b541cefe4ba1919c">pre_run_hook</reimplementedby>
+        <reimplementedby refid="classnest_1_1_stimulation_device_1a53ca0035b5b2ddedbf5f5d7a5fc47718">pre_run_hook</reimplementedby>
+        <reimplementedby refid="classnest_1_1_recording_device_1ad51550af656588536bcdf5afecdbf788">pre_run_hook</reimplementedby>
+        <reimplementedby refid="classnest_1_1_stimulation_device_1ad51550af656588536bcdf5afecdbf788">pre_run_hook</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Re-calculate dependent parameters of the node. This function is called each time a simulation is begun/resumed. It must re-calculate all internal Variables of the node required for spike handling or updating the node. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="257" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a93e4da4ded11807b07c5f2428401bbc7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>virtual void nest::Node::calibrate_time</definition>
+        <argsstring>(const TimeConverter &amp;)</argsstring>
+        <name>calibrate_time</name>
+        <param>
+          <type>const <ref refid="classnest_1_1_time_converter" kindref="compound">TimeConverter</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Re-calculate time-based properties of the node. This function is called after a change in resolution. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="264" column="3" bodyfile="nestkernel/node.h" bodystart="264" bodyend="266"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1adf0d915da7c36f25820d19f1e2b1b4a1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>virtual void nest::Node::post_run_cleanup</definition>
+        <argsstring>()</argsstring>
+        <name>post_run_cleanup</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Cleanup node after Run. Override this function if a node needs to &quot;wrap up&quot; things after a call to Run, i.e., before <ref refid="classnest_1_1_simulation_manager_1af942eab41c595fc8769f067dfb31c84b" kindref="member">SimulationManager::run()</ref> returns. Typical use-cases are devices that need to flush buffers. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="275" column="3" bodyfile="nestkernel/node.h" bodystart="275" bodyend="277"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a9f97c6432a9aa151df89653586f72ef1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>virtual void nest::Node::finalize</definition>
+        <argsstring>()</argsstring>
+        <name>finalize</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Finalize node. Override this function if a node needs to &quot;wrap up&quot; things after a full simulation, i.e., a cycle of Prepare, Run, Cleanup. Typical use-cases are devices that need to close files. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="286" column="3" bodyfile="nestkernel/node.h" bodystart="286" bodyend="288"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a69f3767afe7e7d1bc5b141e777778fd5" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void nest::Node::update</definition>
+        <argsstring>(Time const &amp;, const long, const long)=0</argsstring>
+        <name>update</name>
+        <reimplementedby refid="classnest_1_1_conn_test_dummy_node_base_1aa0238a34dad329cad3e1228b74819aaf">update</reimplementedby>
+        <reimplementedby refid="classnest_1_1proxynode_1abe83a049360c372ca96e6776b4d91d1a">update</reimplementedby>
+        <reimplementedby refid="classnest_1_1_stimulation_device_1a423c87811fa0812e957c9867344ac217">update</reimplementedby>
+        <param>
+          <type><ref refid="classnest_1_1_time" kindref="compound">Time</ref> const &amp;</type>
+        </param>
+        <param>
+          <type>const long</type>
+        </param>
+        <param>
+          <type>const long</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Bring the node from state $t$ to $t+n*dt$.</para>
+<para>n-&gt;update(T, from, to) performs the update steps beginning at T+from .. T+to-1, ie, emitting events with time stamps T+from+1 .. T+to.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_time" kindref="compound">Time</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para>network time at beginning of time slice. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>long</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>initial step inside time slice </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>long</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>post-final step inside time slice </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="302" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a86af40b228d33130e9a8257249a7af28" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool nest::Node::wfr_update</definition>
+        <argsstring>(Time const &amp;, const long, const long)</argsstring>
+        <name>wfr_update</name>
+        <param>
+          <type><ref refid="classnest_1_1_time" kindref="compound">Time</ref> const &amp;</type>
+        </param>
+        <param>
+          <type>const long</type>
+        </param>
+        <param>
+          <type>const long</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Bring the node from state $t$ to $t+n*dt$, sends SecondaryEvents (e.g. <ref refid="classnest_1_1_gap_junction_event" kindref="compound">GapJunctionEvent</ref>) and resets state variables to values at $t$.</para>
+<para>n-&gt;wfr_update(T, from, to) performs the update steps beginning at T+from .. T+to-1.</para>
+<para>Does not emit spikes, does not log state variables.</para>
+<para>throws <ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref> if not reimplemented in derived class</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_time" kindref="compound">Time</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para>network time at beginning of time slice. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>long</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>initial step inside time slice </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>long</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>post-final step inside time slice</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+Default implementation of wfr_update just throws <ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="320" column="16" bodyfile="nestkernel/node.cpp" bodystart="193" bodyend="196"/>
+      </memberdef>
+      <memberdef kind="function" id="group__status__interface_1ga9d7a4a3a64d03a4d7f6c5df87c80fe36" prot="public" static="no" const="no" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void nest::Node::set_status</definition>
+        <argsstring>(const DictionaryDatum &amp;)=0</argsstring>
+        <name>set_status</name>
+        <reimplementedby refid="classnest_1_1_conn_test_dummy_node_base_1a5092d6cda27349b1e53760a36fdd1f33">set_status</reimplementedby>
+        <reimplementedby refid="classnest_1_1proxynode_1afe676f263f8848ca1a6990cf1949f634">set_status</reimplementedby>
+        <reimplementedby refid="classnest_1_1_recording_device_1a466c7b9ed8d05e9d42eed08009dc81e0">set_status</reimplementedby>
+        <reimplementedby refid="classnest_1_1_stimulation_device_1a1ebf88604667e02e4070d73ffcc63845">set_status</reimplementedby>
+        <reimplementedby refid="classnest_1_1_archiving_node_1ac69d56c97bed5fd58fab9c3c745328c4">set_status</reimplementedby>
+        <reimplementedby refid="classnest_1_1_clopath_archiving_node_1a7ba4e2728b3bcbccf08c78944fee033d">set_status</reimplementedby>
+        <reimplementedby refid="classnest_1_1_structural_plasticity_node_1a024eac5832f6de6336014cac45b2ad10">set_status</reimplementedby>
+        <reimplementedby refid="classnest_1_1_urbanczik_archiving_node_1a1b118e0208155781e44cbb9ccdb91a87">set_status</reimplementedby>
+        <param>
+          <type>const DictionaryDatum &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Change properties of the node according to the entries in the dictionary. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>d</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dictionary with named parameter settings. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="344" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="group__status__interface_1ga85f1a73dde2b60e4353429eb22c31bcf" prot="public" static="no" const="yes" explicit="no" inline="no" virt="pure-virtual">
+        <type>void</type>
+        <definition>virtual void nest::Node::get_status</definition>
+        <argsstring>(DictionaryDatum &amp;) const =0</argsstring>
+        <name>get_status</name>
+        <reimplementedby refid="classnest_1_1_conn_test_dummy_node_base_1ac98684d0fc231163a2f76c3fb05d9a8d">get_status</reimplementedby>
+        <reimplementedby refid="classnest_1_1proxynode_1adca2ab6d0bee88577982522f07ea6649">get_status</reimplementedby>
+        <reimplementedby refid="classnest_1_1_recording_device_1a60b60f1790b78bdaca10bf6d30ac3930">get_status</reimplementedby>
+        <reimplementedby refid="classnest_1_1_archiving_node_1acd46838612262b4a5d4cacdf7d901145">get_status</reimplementedby>
+        <reimplementedby refid="classnest_1_1_clopath_archiving_node_1a5323ca3c863862b223b1c264b5a8d1a9">get_status</reimplementedby>
+        <reimplementedby refid="classnest_1_1_stimulation_device_1a3c17981ffa0b79bf9b2e559bcfba1573">get_status</reimplementedby>
+        <reimplementedby refid="classnest_1_1_structural_plasticity_node_1ab462ef1110549f1efb3b26f8e48f38d5">get_status</reimplementedby>
+        <reimplementedby refid="classnest_1_1_urbanczik_archiving_node_1a54cac2900fc5fc3d7b66568de52d8fda">get_status</reimplementedby>
+        <param>
+          <type>DictionaryDatum &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Export properties of the node by setting entries in the status dictionary. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>d</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dictionary. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="352" column="16"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a60608af8d6238b96071a9f64544ec5e3" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="namespacenest_1a440736750ce9e902e6729a1cb2153e95" kindref="member">port</ref></type>
+        <definition>port nest::Node::send_test_event</definition>
+        <argsstring>(Node &amp;receiving_node, rport receptor_type, synindex syn_id, bool dummy_target)</argsstring>
+        <name>send_test_event</name>
+        <reimplementedby refid="classnest_1_1proxynode_1a38ee31043d430d96132c5110e784e3a5">send_test_event</reimplementedby>
+        <param>
+          <type><ref refid="classnest_1_1_node" kindref="compound">Node</ref> &amp;</type>
+          <declname>receiving_node</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1ac9ee368898d374e0f5df4fa748ccd79b" kindref="member">rport</ref></type>
+          <declname>receptor_type</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1a2d283b4b36e5ee3b6f1d84b35c9ed475" kindref="member">synindex</ref></type>
+          <declname>syn_id</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>dummy_target</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Send an event to the receiving_node passed as an argument. This is required during the connection handshaking to test, if the receiving_node can handle the event type and receptor_type sent by the source node.</para>
+<para>If dummy_target is true, this indicates that receiving_node is derived from <ref refid="classnest_1_1_conn_test_dummy_node_base" kindref="compound">ConnTestDummyNodeBase</ref> and used in the first call to <ref refid="classnest_1_1_node_1a60608af8d6238b96071a9f64544ec5e3" kindref="member">send_test_event()</ref>. This can be ignored in most cases, but Nodes sending DS*Events to their own event hooks and then *Events to their proper targets must send DS*Events when called with the dummy target, and *Events when called with the real target, see #478.</para>
+<para>Default implementation of check_connection just throws <ref refid="classnest_1_1_illegal_connection" kindref="compound">IllegalConnection</ref> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="381" column="16" bodyfile="nestkernel/node.cpp" bodystart="202" bodyend="207"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1gaf65947fe5dfeaefe79ac3cdf86e5bb27" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="namespacenest_1a440736750ce9e902e6729a1cb2153e95" kindref="member">port</ref></type>
+        <definition>port nest::Node::handles_test_event</definition>
+        <argsstring>(SpikeEvent &amp;, rport receptor_type)</argsstring>
+        <name>handles_test_event</name>
+        <param>
+          <type><ref refid="classnest_1_1_spike_event" kindref="compound">SpikeEvent</ref> &amp;</type>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1ac9ee368898d374e0f5df4fa748ccd79b" kindref="member">rport</ref></type>
+          <declname>receptor_type</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Check if the node can handle a particular event and receptor type. This function is called upon connection setup by <ref refid="classnest_1_1_node_1a60608af8d6238b96071a9f64544ec5e3" kindref="member">send_test_event()</ref>.</para>
+<para><ref refid="group__event__interface_1gaf65947fe5dfeaefe79ac3cdf86e5bb27" kindref="member">handles_test_event()</ref> function is used to verify that the receiver can handle the event. It can also be used by the receiver to return information to the sender in form of the returned port. The default implementation throws an <ref refid="classnest_1_1_illegal_connection" kindref="compound">IllegalConnection</ref> exception. Any node class should define <ref refid="group__event__interface_1gaf65947fe5dfeaefe79ac3cdf86e5bb27" kindref="member">handles_test_event()</ref> functions for all those event types it can handle.</para>
+<para>See Kunkel et al, Front Neuroinform 8:78 (2014), Sec 3.</para>
+<para><simplesect kind="note"><para>The semantics of all other <ref refid="group__event__interface_1gaf65947fe5dfeaefe79ac3cdf86e5bb27" kindref="member">handles_test_event()</ref> functions is identical.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_illegal_connection" kindref="compound">IllegalConnection</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="401" column="16" bodyfile="nestkernel/node.cpp" bodystart="232" bodyend="237"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1abbddfb14a40279cdf7340f6ff9936179" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="namespacenest_1a440736750ce9e902e6729a1cb2153e95" kindref="member">port</ref></type>
+        <definition>port nest::Node::handles_test_event</definition>
+        <argsstring>(WeightRecorderEvent &amp;, rport receptor_type)</argsstring>
+        <name>handles_test_event</name>
+        <param>
+          <type><ref refid="classnest_1_1_weight_recorder_event" kindref="compound">WeightRecorderEvent</ref> &amp;</type>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1ac9ee368898d374e0f5df4fa748ccd79b" kindref="member">rport</ref></type>
+          <declname>receptor_type</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="402" column="16" bodyfile="nestkernel/node.cpp" bodystart="246" bodyend="249"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a5f91d66c3ceb67a60b066fcb01af2cd7" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="namespacenest_1a440736750ce9e902e6729a1cb2153e95" kindref="member">port</ref></type>
+        <definition>port nest::Node::handles_test_event</definition>
+        <argsstring>(RateEvent &amp;, rport receptor_type)</argsstring>
+        <name>handles_test_event</name>
+        <param>
+          <type><ref refid="classnest_1_1_rate_event" kindref="compound">RateEvent</ref> &amp;</type>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1ac9ee368898d374e0f5df4fa748ccd79b" kindref="member">rport</ref></type>
+          <declname>receptor_type</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="403" column="16" bodyfile="nestkernel/node.cpp" bodystart="258" bodyend="261"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1aa34f16a445a0d408588bf7d6463f1a8c" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="namespacenest_1a440736750ce9e902e6729a1cb2153e95" kindref="member">port</ref></type>
+        <definition>port nest::Node::handles_test_event</definition>
+        <argsstring>(DataLoggingRequest &amp;, rport receptor_type)</argsstring>
+        <name>handles_test_event</name>
+        <param>
+          <type><ref refid="classnest_1_1_data_logging_request" kindref="compound">DataLoggingRequest</ref> &amp;</type>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1ac9ee368898d374e0f5df4fa748ccd79b" kindref="member">rport</ref></type>
+          <declname>receptor_type</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="404" column="16" bodyfile="nestkernel/node.cpp" bodystart="282" bodyend="285"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a5c3e92ee9a4c7b6f660d6fb341a5c330" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="namespacenest_1a440736750ce9e902e6729a1cb2153e95" kindref="member">port</ref></type>
+        <definition>port nest::Node::handles_test_event</definition>
+        <argsstring>(CurrentEvent &amp;, rport receptor_type)</argsstring>
+        <name>handles_test_event</name>
+        <param>
+          <type><ref refid="classnest_1_1_current_event" kindref="compound">CurrentEvent</ref> &amp;</type>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1ac9ee368898d374e0f5df4fa748ccd79b" kindref="member">rport</ref></type>
+          <declname>receptor_type</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="405" column="16" bodyfile="nestkernel/node.cpp" bodystart="270" bodyend="273"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1abcc2e9e2acf3d08070679f2b03bd8e11" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="namespacenest_1a440736750ce9e902e6729a1cb2153e95" kindref="member">port</ref></type>
+        <definition>port nest::Node::handles_test_event</definition>
+        <argsstring>(ConductanceEvent &amp;, rport receptor_type)</argsstring>
+        <name>handles_test_event</name>
+        <param>
+          <type><ref refid="classnest_1_1_conductance_event" kindref="compound">ConductanceEvent</ref> &amp;</type>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1ac9ee368898d374e0f5df4fa748ccd79b" kindref="member">rport</ref></type>
+          <declname>receptor_type</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="406" column="16" bodyfile="nestkernel/node.cpp" bodystart="300" bodyend="303"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a1d2f3f1de23d48b953bc570771ca9d2e" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="namespacenest_1a440736750ce9e902e6729a1cb2153e95" kindref="member">port</ref></type>
+        <definition>port nest::Node::handles_test_event</definition>
+        <argsstring>(DoubleDataEvent &amp;, rport receptor_type)</argsstring>
+        <name>handles_test_event</name>
+        <param>
+          <type><ref refid="classnest_1_1_double_data_event" kindref="compound">DoubleDataEvent</ref> &amp;</type>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1ac9ee368898d374e0f5df4fa748ccd79b" kindref="member">rport</ref></type>
+          <declname>receptor_type</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="407" column="16" bodyfile="nestkernel/node.cpp" bodystart="312" bodyend="315"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a804bc701ca39ee9314df37f0cf75198d" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="namespacenest_1a440736750ce9e902e6729a1cb2153e95" kindref="member">port</ref></type>
+        <definition>port nest::Node::handles_test_event</definition>
+        <argsstring>(DSSpikeEvent &amp;, rport receptor_type)</argsstring>
+        <name>handles_test_event</name>
+        <param>
+          <type><ref refid="classnest_1_1_d_s_spike_event" kindref="compound">DSSpikeEvent</ref> &amp;</type>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1ac9ee368898d374e0f5df4fa748ccd79b" kindref="member">rport</ref></type>
+          <declname>receptor_type</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="408" column="16" bodyfile="nestkernel/node.cpp" bodystart="318" bodyend="321"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a874ca038dce3731fdbf62a21fb17de4e" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="namespacenest_1a440736750ce9e902e6729a1cb2153e95" kindref="member">port</ref></type>
+        <definition>port nest::Node::handles_test_event</definition>
+        <argsstring>(DSCurrentEvent &amp;, rport receptor_type)</argsstring>
+        <name>handles_test_event</name>
+        <param>
+          <type><ref refid="classnest_1_1_d_s_current_event" kindref="compound">DSCurrentEvent</ref> &amp;</type>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1ac9ee368898d374e0f5df4fa748ccd79b" kindref="member">rport</ref></type>
+          <declname>receptor_type</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="409" column="16" bodyfile="nestkernel/node.cpp" bodystart="324" bodyend="327"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a3f09ae49e6fa4cd4f2868f3e7eb4870e" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="namespacenest_1a440736750ce9e902e6729a1cb2153e95" kindref="member">port</ref></type>
+        <definition>port nest::Node::handles_test_event</definition>
+        <argsstring>(GapJunctionEvent &amp;, rport receptor_type)</argsstring>
+        <name>handles_test_event</name>
+        <param>
+          <type><ref refid="classnest_1_1_gap_junction_event" kindref="compound">GapJunctionEvent</ref> &amp;</type>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1ac9ee368898d374e0f5df4fa748ccd79b" kindref="member">rport</ref></type>
+          <declname>receptor_type</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="410" column="16" bodyfile="nestkernel/node.cpp" bodystart="336" bodyend="339"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a3f59fd074869893311cc2c46499713a5" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="namespacenest_1a440736750ce9e902e6729a1cb2153e95" kindref="member">port</ref></type>
+        <definition>port nest::Node::handles_test_event</definition>
+        <argsstring>(InstantaneousRateConnectionEvent &amp;, rport receptor_type)</argsstring>
+        <name>handles_test_event</name>
+        <param>
+          <type><ref refid="classnest_1_1_instantaneous_rate_connection_event" kindref="compound">InstantaneousRateConnectionEvent</ref> &amp;</type>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1ac9ee368898d374e0f5df4fa748ccd79b" kindref="member">rport</ref></type>
+          <declname>receptor_type</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="411" column="16" bodyfile="nestkernel/node.cpp" bodystart="354" bodyend="357"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a059108cabfdc59a2bae9bb8092448915" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="namespacenest_1a440736750ce9e902e6729a1cb2153e95" kindref="member">port</ref></type>
+        <definition>port nest::Node::handles_test_event</definition>
+        <argsstring>(DiffusionConnectionEvent &amp;, rport receptor_type)</argsstring>
+        <name>handles_test_event</name>
+        <param>
+          <type><ref refid="classnest_1_1_diffusion_connection_event" kindref="compound">DiffusionConnectionEvent</ref> &amp;</type>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1ac9ee368898d374e0f5df4fa748ccd79b" kindref="member">rport</ref></type>
+          <declname>receptor_type</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="412" column="16" bodyfile="nestkernel/node.cpp" bodystart="372" bodyend="375"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1abcdffe1cbefc66a5d11762a46aefea5b" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="namespacenest_1a440736750ce9e902e6729a1cb2153e95" kindref="member">port</ref></type>
+        <definition>port nest::Node::handles_test_event</definition>
+        <argsstring>(DelayedRateConnectionEvent &amp;, rport receptor_type)</argsstring>
+        <name>handles_test_event</name>
+        <param>
+          <type><ref refid="classnest_1_1_delayed_rate_connection_event" kindref="compound">DelayedRateConnectionEvent</ref> &amp;</type>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1ac9ee368898d374e0f5df4fa748ccd79b" kindref="member">rport</ref></type>
+          <declname>receptor_type</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="413" column="16" bodyfile="nestkernel/node.cpp" bodystart="390" bodyend="393"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1ga8cc1e073626a9ffc843b2685474238de" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::sends_secondary_event</definition>
+        <argsstring>(GapJunctionEvent &amp;ge)</argsstring>
+        <name>sends_secondary_event</name>
+        <reimplementedby refid="classnest_1_1proxynode_1afdfb38f8d6bd5837527a75eb4c6ff76e">sends_secondary_event</reimplementedby>
+        <param>
+          <type><ref refid="classnest_1_1_gap_junction_event" kindref="compound">GapJunctionEvent</ref> &amp;</type>
+          <declname>ge</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Required to check, if source neuron may send a <ref refid="classnest_1_1_secondary_event" kindref="compound">SecondaryEvent</ref>. This base class implementation throws <ref refid="classnest_1_1_illegal_connection" kindref="compound">IllegalConnection</ref> and needs to be overwritten in the derived class.</para>
+<para><parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_illegal_connection" kindref="compound">IllegalConnection</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="422" column="16" bodyfile="nestkernel/node.cpp" bodystart="342" bodyend="345"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1ga5469ac53c0b9d004829e1e2dbf41d120" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::sends_secondary_event</definition>
+        <argsstring>(InstantaneousRateConnectionEvent &amp;re)</argsstring>
+        <name>sends_secondary_event</name>
+        <reimplementedby refid="classnest_1_1proxynode_1ac211e3fbd950837944a19b0397a49bf7">sends_secondary_event</reimplementedby>
+        <param>
+          <type><ref refid="classnest_1_1_instantaneous_rate_connection_event" kindref="compound">InstantaneousRateConnectionEvent</ref> &amp;</type>
+          <declname>re</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Required to check, if source neuron may send a <ref refid="classnest_1_1_secondary_event" kindref="compound">SecondaryEvent</ref>. This base class implementation throws <ref refid="classnest_1_1_illegal_connection" kindref="compound">IllegalConnection</ref> and needs to be overwritten in the derived class.</para>
+<para><parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_illegal_connection" kindref="compound">IllegalConnection</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="431" column="16" bodyfile="nestkernel/node.cpp" bodystart="360" bodyend="363"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1gaa9414a7fa4241bc77bb110ba895968e0" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::sends_secondary_event</definition>
+        <argsstring>(DiffusionConnectionEvent &amp;de)</argsstring>
+        <name>sends_secondary_event</name>
+        <reimplementedby refid="classnest_1_1proxynode_1af4c165393526562c694aeee07fc62c31">sends_secondary_event</reimplementedby>
+        <param>
+          <type><ref refid="classnest_1_1_diffusion_connection_event" kindref="compound">DiffusionConnectionEvent</ref> &amp;</type>
+          <declname>de</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Required to check, if source neuron may send a <ref refid="classnest_1_1_secondary_event" kindref="compound">SecondaryEvent</ref>. This base class implementation throws <ref refid="classnest_1_1_illegal_connection" kindref="compound">IllegalConnection</ref> and needs to be overwritten in the derived class.</para>
+<para><parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_illegal_connection" kindref="compound">IllegalConnection</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="440" column="16" bodyfile="nestkernel/node.cpp" bodystart="378" bodyend="381"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1ga2732c32368c1ea09600a1a2ffddcb2f7" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::sends_secondary_event</definition>
+        <argsstring>(DelayedRateConnectionEvent &amp;re)</argsstring>
+        <name>sends_secondary_event</name>
+        <reimplementedby refid="classnest_1_1proxynode_1a2f9d087e4ad8a23bc023d1d17e927806">sends_secondary_event</reimplementedby>
+        <param>
+          <type><ref refid="classnest_1_1_delayed_rate_connection_event" kindref="compound">DelayedRateConnectionEvent</ref> &amp;</type>
+          <declname>re</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Required to check, if source neuron may send a <ref refid="classnest_1_1_secondary_event" kindref="compound">SecondaryEvent</ref>. This base class implementation throws <ref refid="classnest_1_1_illegal_connection" kindref="compound">IllegalConnection</ref> and needs to be overwritten in the derived class.</para>
+<para><parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_illegal_connection" kindref="compound">IllegalConnection</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="449" column="16" bodyfile="nestkernel/node.cpp" bodystart="396" bodyend="399"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a297b374f3b4513a6de5a5ba6b6d119d9" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::register_stdp_connection</definition>
+        <argsstring>(double, double)</argsstring>
+        <name>register_stdp_connection</name>
+        <reimplementedby refid="classnest_1_1_archiving_node_1a0f573e9b1e9f7f49a493aa2a533c2803">register_stdp_connection</reimplementedby>
+        <param>
+          <type>double</type>
+        </param>
+        <param>
+          <type>double</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Register a STDP connection</para>
+<para><parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_illegal_connection" kindref="compound">IllegalConnection</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Default implementation of <ref refid="classnest_1_1_node_1a297b374f3b4513a6de5a5ba6b6d119d9" kindref="member">register_stdp_connection()</ref> just throws <ref refid="classnest_1_1_illegal_connection" kindref="compound">IllegalConnection</ref> </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="457" column="16" bodyfile="nestkernel/node.cpp" bodystart="214" bodyend="217"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1gae810de070216d0f281833171a3b997bc" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::handle</definition>
+        <argsstring>(SpikeEvent &amp;e)</argsstring>
+        <name>handle</name>
+        <reimplementedby refid="classnest_1_1proxynode_1afee2333ceda2f29df27139c8703456c1">handle</reimplementedby>
+        <param>
+          <type><ref refid="classnest_1_1_spike_event" kindref="compound">SpikeEvent</ref> &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handle incoming spike events. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>thrd</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Id of the calling thread. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>e</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classnest_1_1_event" kindref="compound">Event</ref> object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+This handler has to be implemented if a <ref refid="classnest_1_1_node" kindref="compound">Node</ref> should accept spike events. <simplesect kind="see"><para>class <ref refid="classnest_1_1_spike_event" kindref="compound">SpikeEvent</ref></para>
+</simplesect>
+Default implementation of event handlers just throws an <ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref> exception. <simplesect kind="see"><para>class <ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref> </para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para>This is the default event to throw. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="469" column="16" bodyfile="nestkernel/node.cpp" bodystart="226" bodyend="229"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1ga18c58ec60440eae4dd4b264fb63a8d98" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::handle</definition>
+        <argsstring>(WeightRecorderEvent &amp;e)</argsstring>
+        <name>handle</name>
+        <param>
+          <type><ref refid="classnest_1_1_weight_recorder_event" kindref="compound">WeightRecorderEvent</ref> &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handle incoming weight recording events. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>thrd</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Id of the calling thread. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>e</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classnest_1_1_event" kindref="compound">Event</ref> object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+This handler has to be implemented if a <ref refid="classnest_1_1_node" kindref="compound">Node</ref> should accept weight recording events. <simplesect kind="see"><para>class WeightRecordingEvent </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="481" column="16" bodyfile="nestkernel/node.cpp" bodystart="240" bodyend="243"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1ga9686693f44cd03a5420633b836c25f27" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::handle</definition>
+        <argsstring>(RateEvent &amp;e)</argsstring>
+        <name>handle</name>
+        <param>
+          <type><ref refid="classnest_1_1_rate_event" kindref="compound">RateEvent</ref> &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handler for rate events. <simplesect kind="see"><para><ref refid="group__event__interface_1gae810de070216d0f281833171a3b997bc" kindref="member">handle(SpikeEvent&amp;)</ref></para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="489" column="16" bodyfile="nestkernel/node.cpp" bodystart="252" bodyend="255"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1gacd1458cf76e47c030beafb6a4d5147ba" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::handle</definition>
+        <argsstring>(DataLoggingRequest &amp;e)</argsstring>
+        <name>handle</name>
+        <param>
+          <type><ref refid="classnest_1_1_data_logging_request" kindref="compound">DataLoggingRequest</ref> &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handler for universal data logging request. <simplesect kind="see"><para><ref refid="group__event__interface_1gae810de070216d0f281833171a3b997bc" kindref="member">handle(SpikeEvent&amp;)</ref></para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="497" column="16" bodyfile="nestkernel/node.cpp" bodystart="276" bodyend="279"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1ga76de0226b6a5eef5dbe78a68d72c4492" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::handle</definition>
+        <argsstring>(DataLoggingReply &amp;e)</argsstring>
+        <name>handle</name>
+        <param>
+          <type><ref refid="classnest_1_1_data_logging_reply" kindref="compound">DataLoggingReply</ref> &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handler for universal data logging request. <simplesect kind="see"><para><ref refid="group__event__interface_1gae810de070216d0f281833171a3b997bc" kindref="member">handle(SpikeEvent&amp;)</ref></para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>There is no connect_sender() for <ref refid="classnest_1_1_data_logging_reply" kindref="compound">DataLoggingReply</ref>, since this event is only used as &quot;back channel&quot; for <ref refid="classnest_1_1_data_logging_request" kindref="compound">DataLoggingRequest</ref>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="507" column="16" bodyfile="nestkernel/node.cpp" bodystart="288" bodyend="291"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1gadef54045c4b20be6075910f936a723b6" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::handle</definition>
+        <argsstring>(CurrentEvent &amp;e)</argsstring>
+        <name>handle</name>
+        <param>
+          <type><ref refid="classnest_1_1_current_event" kindref="compound">CurrentEvent</ref> &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handler for current events. <simplesect kind="see"><para>handle(thread, SpikeEvent&amp;)</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="515" column="16" bodyfile="nestkernel/node.cpp" bodystart="264" bodyend="267"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1ga0b4b6baf37b18218fd5103ab72bc2cae" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::handle</definition>
+        <argsstring>(ConductanceEvent &amp;e)</argsstring>
+        <name>handle</name>
+        <param>
+          <type><ref refid="classnest_1_1_conductance_event" kindref="compound">ConductanceEvent</ref> &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handler for conductance events. <simplesect kind="see"><para>handle(thread, SpikeEvent&amp;)</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="523" column="16" bodyfile="nestkernel/node.cpp" bodystart="294" bodyend="297"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1ga1843f8e5565026ca51fc4b0fe1da77de" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::handle</definition>
+        <argsstring>(DoubleDataEvent &amp;e)</argsstring>
+        <name>handle</name>
+        <param>
+          <type><ref refid="classnest_1_1_double_data_event" kindref="compound">DoubleDataEvent</ref> &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handler for DoubleData events. <simplesect kind="see"><para>handle(thread, SpikeEvent&amp;)</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="531" column="16" bodyfile="nestkernel/node.cpp" bodystart="306" bodyend="309"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1ga32b0e430fb34b46f56dc2ebc6dc7bacb" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::handle</definition>
+        <argsstring>(GapJunctionEvent &amp;e)</argsstring>
+        <name>handle</name>
+        <param>
+          <type><ref refid="classnest_1_1_gap_junction_event" kindref="compound">GapJunctionEvent</ref> &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handler for gap junction events. <simplesect kind="see"><para>handle(thread, GapJunctionEvent&amp;)</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="539" column="16" bodyfile="nestkernel/node.cpp" bodystart="330" bodyend="333"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1gaec56b76a4286e1f662b33218f4083ce8" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::handle</definition>
+        <argsstring>(InstantaneousRateConnectionEvent &amp;e)</argsstring>
+        <name>handle</name>
+        <param>
+          <type><ref refid="classnest_1_1_instantaneous_rate_connection_event" kindref="compound">InstantaneousRateConnectionEvent</ref> &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handler for rate neuron events. <simplesect kind="see"><para>handle(thread, InstantaneousRateConnectionEvent&amp;)</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="547" column="16" bodyfile="nestkernel/node.cpp" bodystart="348" bodyend="351"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1gace17f7fc8aea06c6ecc4f12deb957a81" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::handle</definition>
+        <argsstring>(DiffusionConnectionEvent &amp;e)</argsstring>
+        <name>handle</name>
+        <param>
+          <type><ref refid="classnest_1_1_diffusion_connection_event" kindref="compound">DiffusionConnectionEvent</ref> &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handler for rate neuron events. <simplesect kind="see"><para>handle(thread, InstantaneousRateConnectionEvent&amp;)</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="555" column="16" bodyfile="nestkernel/node.cpp" bodystart="366" bodyend="369"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1ga2cebf7dc11a2a83795ff71c10c07f308" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::handle</definition>
+        <argsstring>(DelayedRateConnectionEvent &amp;e)</argsstring>
+        <name>handle</name>
+        <param>
+          <type><ref refid="classnest_1_1_delayed_rate_connection_event" kindref="compound">DelayedRateConnectionEvent</ref> &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handler for delay rate neuron events. <simplesect kind="see"><para>handle(thread, DelayedRateConnectionEvent&amp;)</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="563" column="16" bodyfile="nestkernel/node.cpp" bodystart="384" bodyend="387"/>
+      </memberdef>
+      <memberdef kind="function" id="group___s_p__functions_1gae46decb34ba3dc7f912fa6a691bb0de2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>double</type>
+        <definition>virtual double nest::Node::get_Ca_minus</definition>
+        <argsstring>() const</argsstring>
+        <name>get_Ca_minus</name>
+        <reimplementedby refid="classnest_1_1_structural_plasticity_node_1afb8ec0a74d457fd285665b3ff8077213">get_Ca_minus</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Return the Ca_minus value at time Ca_t which corresponds to the time of the last update in Calcium concentration which is performed each time a <ref refid="classnest_1_1_node" kindref="compound">Node</ref> spikes. Return 0.0 if not overridden </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="580" column="3" bodyfile="nestkernel/node.h" bodystart="580" bodyend="583"/>
+      </memberdef>
+      <memberdef kind="function" id="group___s_p__functions_1ga9ba39ec217579e3ef23db9ae20479955" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>double</type>
+        <definition>virtual double nest::Node::get_synaptic_elements</definition>
+        <argsstring>(Name) const</argsstring>
+        <name>get_synaptic_elements</name>
+        <reimplementedby refid="classnest_1_1_structural_plasticity_node_1af2415c16f2edd606035f497d6003c392">get_synaptic_elements</reimplementedby>
+        <param>
+          <type>Name</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get the number of synaptic element for the current <ref refid="classnest_1_1_node" kindref="compound">Node</ref> at Ca_t which corresponds to the time of the last spike. Return 0.0 if not overridden </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="592" column="3" bodyfile="nestkernel/node.h" bodystart="592" bodyend="595"/>
+      </memberdef>
+      <memberdef kind="function" id="group___s_p__functions_1ga058f999dd9dc5a26c98b0a0351c08707" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>int</type>
+        <definition>virtual int nest::Node::get_synaptic_elements_vacant</definition>
+        <argsstring>(Name) const</argsstring>
+        <name>get_synaptic_elements_vacant</name>
+        <reimplementedby refid="classnest_1_1_structural_plasticity_node_1a893ba9023105eb3c68c988dc3f912d2f">get_synaptic_elements_vacant</reimplementedby>
+        <param>
+          <type>Name</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get the number of vacant synaptic element for the current <ref refid="classnest_1_1_node" kindref="compound">Node</ref> Return 0 if not overridden </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="603" column="3" bodyfile="nestkernel/node.h" bodystart="603" bodyend="606"/>
+      </memberdef>
+      <memberdef kind="function" id="group___s_p__functions_1ga7a47b88c558984889d90d5ce027787cf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>int</type>
+        <definition>virtual int nest::Node::get_synaptic_elements_connected</definition>
+        <argsstring>(Name) const</argsstring>
+        <name>get_synaptic_elements_connected</name>
+        <reimplementedby refid="classnest_1_1_structural_plasticity_node_1a5708dead1beae2f0bccb87080356cd63">get_synaptic_elements_connected</reimplementedby>
+        <param>
+          <type>Name</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get the number of connected synaptic element for the current <ref refid="classnest_1_1_node" kindref="compound">Node</ref> Return 0 if not overridden </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="614" column="3" bodyfile="nestkernel/node.h" bodystart="614" bodyend="617"/>
+      </memberdef>
+      <memberdef kind="function" id="group___s_p__functions_1gaf35fbeeb8459557ea3a5baf5c6fe7d20" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>std::map&lt; Name, double &gt;</type>
+        <definition>virtual std::map&lt; Name, double &gt; nest::Node::get_synaptic_elements</definition>
+        <argsstring>() const</argsstring>
+        <name>get_synaptic_elements</name>
+        <reimplementedby refid="classnest_1_1_structural_plasticity_node_1a84df4d213b9f22e9dae6b26c8fd9905d">get_synaptic_elements</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get the number of all synaptic elements for the current <ref refid="classnest_1_1_node" kindref="compound">Node</ref> at time t Return an empty map if not overridden </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="625" column="3" bodyfile="nestkernel/node.h" bodystart="625" bodyend="628"/>
+      </memberdef>
+      <memberdef kind="function" id="group___s_p__functions_1gaff1fa7703153b16816ad55eef791982c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>virtual void nest::Node::update_synaptic_elements</definition>
+        <argsstring>(double)</argsstring>
+        <name>update_synaptic_elements</name>
+        <reimplementedby refid="classnest_1_1_structural_plasticity_node_1a74fc8e9d9ef49af9c53b35e19ee3ddd9">update_synaptic_elements</reimplementedby>
+        <param>
+          <type>double</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Triggers the update of all SynapticElements stored in the synaptic_element_map_. It also updates the calcium concentration. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>t</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>double time when the update is being performed </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="637" column="16" bodyfile="nestkernel/node.h" bodystart="637" bodyend="637"/>
+      </memberdef>
+      <memberdef kind="function" id="group___s_p__functions_1ga5242b7d1752a7981676852d1b70263b9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>virtual void nest::Node::decay_synaptic_elements_vacant</definition>
+        <argsstring>()</argsstring>
+        <name>decay_synaptic_elements_vacant</name>
+        <reimplementedby refid="classnest_1_1_structural_plasticity_node_1a0f11a1c88af75d6a51057d97fe1f6583">decay_synaptic_elements_vacant</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Is used to reduce the number of synaptic elements in the node through time. This amount is defined by tau_vacant. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="644" column="16" bodyfile="nestkernel/node.h" bodystart="644" bodyend="644"/>
+      </memberdef>
+      <memberdef kind="function" id="group___s_p__functions_1gaa5b5f01608036752d816d1980c39cb87" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>virtual void nest::Node::connect_synaptic_element</definition>
+        <argsstring>(Name, int)</argsstring>
+        <name>connect_synaptic_element</name>
+        <reimplementedby refid="classnest_1_1_structural_plasticity_node_1a8fb547186b1ee49384fddeb4e268481d">connect_synaptic_element</reimplementedby>
+        <param>
+          <type>Name</type>
+        </param>
+        <param>
+          <type>int</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Is used to update the number of connected synaptic elements (SynapticElement::z_connected_) when a synapse is formed or deleted. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Name, name of the synaptic element to connect </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>n</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>int number of new connections of the given type </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="654" column="16" bodyfile="nestkernel/node.h" bodystart="654" bodyend="654"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a1043e0cb5ea5bd3e8627e9a777328628" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>double</type>
+        <definition>double nest::Node::get_K_value</definition>
+        <argsstring>(double t)</argsstring>
+        <name>get_K_value</name>
+        <reimplementedby refid="classnest_1_1_archiving_node_1ab6c3dea0d46a9f24fc4d726bea34dd3a">get_K_value</reimplementedby>
+        <param>
+          <type>double</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>return the Kminus value at t (in ms). <parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="660" column="18" bodyfile="nestkernel/node.cpp" bodystart="409" bodyend="412"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a836bd9bd56b015902da2eab45c83ef34" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>double</type>
+        <definition>double nest::Node::get_LTD_value</definition>
+        <argsstring>(double t)</argsstring>
+        <name>get_LTD_value</name>
+        <reimplementedby refid="classnest_1_1_clopath_archiving_node_1a919f8a8c44b248c67c8ec7422f59cddb">get_LTD_value</reimplementedby>
+        <param>
+          <type>double</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="662" column="18" bodyfile="nestkernel/node.cpp" bodystart="403" bodyend="406"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a3c64984a1a3ca6c8fddf52d68dc33ab7" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::get_K_values</definition>
+        <argsstring>(double t, double &amp;Kminus, double &amp;nearest_neighbor_Kminus, double &amp;Kminus_triplet)</argsstring>
+        <name>get_K_values</name>
+        <reimplementedby refid="classnest_1_1_archiving_node_1aa756873904842e8e63e9144d1f49967f">get_K_values</reimplementedby>
+        <param>
+          <type>double</type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type>double &amp;</type>
+          <declname>Kminus</declname>
+        </param>
+        <param>
+          <type>double &amp;</type>
+          <declname>nearest_neighbor_Kminus</declname>
+        </param>
+        <param>
+          <type>double &amp;</type>
+          <declname>Kminus_triplet</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>write the Kminus, nearest_neighbor_Kminus, and Kminus_triplet values at t (in ms) to the provided locations. <parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="669" column="16" bodyfile="nestkernel/node.cpp" bodystart="416" bodyend="419"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a618d16c4286ef3724da901ce28c46cd6" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::get_history</definition>
+        <argsstring>(double t1, double t2, std::deque&lt; histentry &gt;::iterator *start, std::deque&lt; histentry &gt;::iterator *finish)</argsstring>
+        <name>get_history</name>
+        <reimplementedby refid="classnest_1_1_archiving_node_1a17dd209382eae47cbb5f02b88fbb997a">get_history</reimplementedby>
+        <param>
+          <type>double</type>
+          <declname>t1</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>t2</declname>
+        </param>
+        <param>
+          <type>std::deque&lt; <ref refid="classnest_1_1histentry" kindref="compound">histentry</ref> &gt;::iterator *</type>
+          <declname>start</declname>
+        </param>
+        <param>
+          <type>std::deque&lt; <ref refid="classnest_1_1histentry" kindref="compound">histentry</ref> &gt;::iterator *</type>
+          <declname>finish</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>return the spike history for (t1,t2]. <parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="675" column="16" bodyfile="nestkernel/node.cpp" bodystart="422" bodyend="425"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a2283e744ff8f6a39c4d2fb6c00fc7958" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::get_LTP_history</definition>
+        <argsstring>(double t1, double t2, std::deque&lt; histentry_extended &gt;::iterator *start, std::deque&lt; histentry_extended &gt;::iterator *finish)</argsstring>
+        <name>get_LTP_history</name>
+        <reimplementedby refid="classnest_1_1_clopath_archiving_node_1ac8d8ff55a5ff9eda5e25d67a98685950">get_LTP_history</reimplementedby>
+        <param>
+          <type>double</type>
+          <declname>t1</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>t2</declname>
+        </param>
+        <param>
+          <type>std::deque&lt; <ref refid="classnest_1_1histentry__extended" kindref="compound">histentry_extended</ref> &gt;::iterator *</type>
+          <declname>start</declname>
+        </param>
+        <param>
+          <type>std::deque&lt; <ref refid="classnest_1_1histentry__extended" kindref="compound">histentry_extended</ref> &gt;::iterator *</type>
+          <declname>finish</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="681" column="16" bodyfile="nestkernel/node.cpp" bodystart="428" bodyend="434"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a61d47288d1db6fa11aad35c522dae09a" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::get_urbanczik_history</definition>
+        <argsstring>(double t1, double t2, std::deque&lt; histentry_extended &gt;::iterator *start, std::deque&lt; histentry_extended &gt;::iterator *finish, int)</argsstring>
+        <name>get_urbanczik_history</name>
+        <reimplementedby refid="classnest_1_1_urbanczik_archiving_node_1ab72d9cc564354859a35ae98f30e2cd34">get_urbanczik_history</reimplementedby>
+        <param>
+          <type>double</type>
+          <declname>t1</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>t2</declname>
+        </param>
+        <param>
+          <type>std::deque&lt; <ref refid="classnest_1_1histentry__extended" kindref="compound">histentry_extended</ref> &gt;::iterator *</type>
+          <declname>start</declname>
+        </param>
+        <param>
+          <type>std::deque&lt; <ref refid="classnest_1_1histentry__extended" kindref="compound">histentry_extended</ref> &gt;::iterator *</type>
+          <declname>finish</declname>
+        </param>
+        <param>
+          <type>int</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="686" column="16" bodyfile="nestkernel/node.cpp" bodystart="437" bodyend="444"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a66b901cd57296f87cd25c00c4cfe3f74" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>double</type>
+        <definition>double nest::Node::get_C_m</definition>
+        <argsstring>(int comp)</argsstring>
+        <name>get_C_m</name>
+        <reimplementedby refid="classnest_1_1_urbanczik_archiving_node_1a7618181ca45950065860e955e7b6ac31">get_C_m</reimplementedby>
+        <param>
+          <type>int</type>
+          <declname>comp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="692" column="18" bodyfile="nestkernel/node.cpp" bodystart="447" bodyend="450"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a56d38a28f4070f373eb51ed97e5bee73" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>double</type>
+        <definition>double nest::Node::get_g_L</definition>
+        <argsstring>(int comp)</argsstring>
+        <name>get_g_L</name>
+        <reimplementedby refid="classnest_1_1_urbanczik_archiving_node_1af41824545b22c03f316faa364f4dfd92">get_g_L</reimplementedby>
+        <param>
+          <type>int</type>
+          <declname>comp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="693" column="18" bodyfile="nestkernel/node.cpp" bodystart="453" bodyend="456"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1af77e4c86987efb2065b531f752c58b5f" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>double</type>
+        <definition>double nest::Node::get_tau_L</definition>
+        <argsstring>(int comp)</argsstring>
+        <name>get_tau_L</name>
+        <reimplementedby refid="classnest_1_1_urbanczik_archiving_node_1a39f4f0955f070e6f831d60c63b2ef705">get_tau_L</reimplementedby>
+        <param>
+          <type>int</type>
+          <declname>comp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="694" column="18" bodyfile="nestkernel/node.cpp" bodystart="459" bodyend="462"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a76c9cb7ddfba60739af5b3bbf21bd3e7" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>double</type>
+        <definition>double nest::Node::get_tau_s</definition>
+        <argsstring>(int comp)</argsstring>
+        <name>get_tau_s</name>
+        <param>
+          <type>int</type>
+          <declname>comp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="695" column="18" bodyfile="nestkernel/node.cpp" bodystart="465" bodyend="468"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1ada393fd33ced09b317415c0f89f4ccd8" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>double</type>
+        <definition>double nest::Node::get_tau_syn_ex</definition>
+        <argsstring>(int comp)</argsstring>
+        <name>get_tau_syn_ex</name>
+        <reimplementedby refid="classnest_1_1_urbanczik_archiving_node_1a11e5cdcec6cfeaf5580e404b851149df">get_tau_syn_ex</reimplementedby>
+        <param>
+          <type>int</type>
+          <declname>comp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="696" column="18" bodyfile="nestkernel/node.cpp" bodystart="471" bodyend="474"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1ad3ab12792e13a44d9a34663fa4d90b87" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>double</type>
+        <definition>double nest::Node::get_tau_syn_in</definition>
+        <argsstring>(int comp)</argsstring>
+        <name>get_tau_syn_in</name>
+        <reimplementedby refid="classnest_1_1_urbanczik_archiving_node_1a4fcf80407a6f7514f2b249fe800d274f">get_tau_syn_in</reimplementedby>
+        <param>
+          <type>int</type>
+          <declname>comp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="697" column="18" bodyfile="nestkernel/node.cpp" bodystart="477" bodyend="480"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a2c85dd6317fe53edd65e97641aeb0535" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::event_hook</definition>
+        <argsstring>(DSSpikeEvent &amp;)</argsstring>
+        <name>event_hook</name>
+        <param>
+          <type><ref refid="classnest_1_1_d_s_spike_event" kindref="compound">DSSpikeEvent</ref> &amp;</type>
+          <defname>e</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Modify <ref refid="classnest_1_1_event" kindref="compound">Event</ref> object parameters during event delivery. Some Nodes want to perform a function on an event for each of their targets. An example is the poisson_generator which needs to draw a random number for each target. The <ref refid="classnest_1_1_d_s_spike_event" kindref="compound">DSSpikeEvent</ref>, DirectSendingSpikeEvent, calls sender-&gt;event_hook(thread, *this) in its operator() function instead of calling target-&gt;<ref refid="group__event__interface_1gae810de070216d0f281833171a3b997bc" kindref="member">handle()</ref>. The default implementation of <ref refid="classnest_1_1_node_1a2c85dd6317fe53edd65e97641aeb0535" kindref="member">Node::event_hook()</ref> just calls target-&gt;handle(DSSpikeEvent&amp;). Any reimplementation must also execute this call. Otherwise the event will not be delivered. If needed, target-&gt;handle(DSSpikeEvent) may be called more than once. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="712" column="16" bodyfile="nestkernel/node.cpp" bodystart="483" bodyend="486"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a2575699815b3eed15322b0868ec2f89d" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::event_hook</definition>
+        <argsstring>(DSCurrentEvent &amp;)</argsstring>
+        <name>event_hook</name>
+        <param>
+          <type><ref refid="classnest_1_1_d_s_current_event" kindref="compound">DSCurrentEvent</ref> &amp;</type>
+          <defname>e</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="714" column="16" bodyfile="nestkernel/node.cpp" bodystart="489" bodyend="492"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a4b386596a08e94fd4ad229b586f0e8ff" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::Node::set_thread</definition>
+        <argsstring>(thread)</argsstring>
+        <name>set_thread</name>
+        <param>
+          <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <defname>t</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Store the number of the thread to which the node is assigned. The assignment is done after node creation by the Network class. <simplesect kind="see"><para>: <ref refid="classnest_1_1_node_manager_1a8e6c4a313d6bf3d30f0d0ef111567575" kindref="member">NodeManager::add_node()</ref>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="721" column="8" bodyfile="nestkernel/node.h" bodystart="1018" bodyend="1021"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1ad578b3b25416a4a8c79d86e943a5c666" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+        <definition>thread nest::Node::get_thread</definition>
+        <argsstring>() const</argsstring>
+        <name>get_thread</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Retrieve the number of the thread to which the node is assigned. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="726" column="10" bodyfile="nestkernel/node.h" bodystart="1024" bodyend="1027"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a219e882ed608cca39c88b4863b037fbe" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::Node::set_vp</definition>
+        <argsstring>(thread)</argsstring>
+        <name>set_vp</name>
+        <param>
+          <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <defname>vp</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Store the number of the virtual process to which the node is assigned. This is assigned to the node in <ref refid="classnest_1_1_node_manager_1a8e6c4a313d6bf3d30f0d0ef111567575" kindref="member">NodeManager::add_node()</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="732" column="8" bodyfile="nestkernel/node.h" bodystart="1030" bodyend="1033"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a7812f4b7f634dc6838161319662d8947" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+        <definition>thread nest::Node::get_vp</definition>
+        <argsstring>() const</argsstring>
+        <name>get_vp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Retrieve the number of the virtual process to which the node is assigned. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="737" column="10" bodyfile="nestkernel/node.h" bodystart="1036" bodyend="1039"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a8df5c7f9272bd5da51cb5de78db00161" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::Node::set_model_id</definition>
+        <argsstring>(int)</argsstring>
+        <name>set_model_id</name>
+        <param>
+          <type>int</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Set the model id. This method is called by <ref refid="classnest_1_1_node_manager_1a8e6c4a313d6bf3d30f0d0ef111567575" kindref="member">NodeManager::add_node()</ref> when a node is created. <simplesect kind="see"><para><ref refid="classnest_1_1_node_1a99139ba0b34f150c612f2f26c8645532" kindref="member">get_model_id()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="743" column="8" bodyfile="nestkernel/node.h" bodystart="1006" bodyend="1009"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a9488f6aaf5ca2897eba23819251569e0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::Node::set_initialized</definition>
+        <argsstring>()</argsstring>
+        <name>set_initialized</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Execute post-initialization actions in node models. This method is called by <ref refid="classnest_1_1_node_manager_1a8e6c4a313d6bf3d30f0d0ef111567575" kindref="member">NodeManager::add_node()</ref> on a node once is fully initialized, i.e. after node ID, nc, model_id, thread, vp is set. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="750" column="8" bodyfile="nestkernel/node.cpp" bodystart="97" bodyend="100"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a849c236abc0ac5bf1b97fc86188c525f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="namespacenest_1ae09c68cd9f93a04713e7566dc7e732a2" kindref="member">SignalType</ref></type>
+        <definition>virtual SignalType nest::Node::sends_signal</definition>
+        <argsstring>() const</argsstring>
+        <name>sends_signal</name>
+        <reimplementedby refid="classnest_1_1proxynode_1a86ae0ceb13ec36aeaeaea6e0f1257ec0">sends_signal</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>type of signal this node produces used in check_connection to only connect neurons which send / receive compatible information </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="758" column="3" bodyfile="nestkernel/node.h" bodystart="758" bodyend="761"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a6d7d70e46c22988d76160cc00f93127a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type><ref refid="namespacenest_1ae09c68cd9f93a04713e7566dc7e732a2" kindref="member">SignalType</ref></type>
+        <definition>virtual SignalType nest::Node::receives_signal</definition>
+        <argsstring>() const</argsstring>
+        <name>receives_signal</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>type of signal this node consumes used in check_connection to only connect neurons which send / receive compatible information </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="769" column="3" bodyfile="nestkernel/node.h" bodystart="769" bodyend="772"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a885c4dc90e195ed2533af848c4fdad92" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>DictionaryDatum</type>
+        <definition>DictionaryDatum nest::Node::get_status_base</definition>
+        <argsstring>()</argsstring>
+        <name>get_status_base</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Return a dictionary with the node&apos;s properties.</para>
+<para><ref refid="classnest_1_1_node_1a885c4dc90e195ed2533af848c4fdad92" kindref="member">get_status_base()</ref> first gets a dictionary with the basic information of an element, using get_status_dict_(). It then calls the custom function get_status(DictionaryDatum) with the created status dictionary as argument. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="783" column="19" bodyfile="nestkernel/node.cpp" bodystart="145" bodyend="170"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1aa4d0cfaa54c461c66570d926c51a2078" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::Node::set_status_base</definition>
+        <argsstring>(const DictionaryDatum &amp;)</argsstring>
+        <name>set_status_base</name>
+        <param>
+          <type>const DictionaryDatum &amp;</type>
+          <defname>dict</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Set status dictionary of a node.</para>
+<para>Forwards to <ref refid="group__status__interface_1ga9d7a4a3a64d03a4d7f6c5df87c80fe36" kindref="member">set_status()</ref> of the derived class. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="791" column="8" bodyfile="nestkernel/node.cpp" bodystart="173" bodyend="186"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1ab0fc187ef5dd007086eb11ca2107a3a5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::Node::is_model_prototype</definition>
+        <argsstring>() const</argsstring>
+        <name>is_model_prototype</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns true if node is model prototype. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="796" column="8" bodyfile="nestkernel/node.h" bodystart="1012" bodyend="1015"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1ad6b1c6a7b2287c55a982debe99e66415" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::Node::set_thread_lid</definition>
+        <argsstring>(const index)</argsstring>
+        <name>set_thread_lid</name>
+        <param>
+          <type>const</type>
+          <declname>index</declname>
+          <defname>tlid</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>set thread local index </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="802" column="8" bodyfile="nestkernel/node.h" bodystart="1051" bodyend="1054"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a5f2e7e5708eaf8428071ee74128e81eb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+        <definition>index nest::Node::get_thread_lid</definition>
+        <argsstring>() const</argsstring>
+        <name>get_thread_lid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>get thread local index </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="807" column="9" bodyfile="nestkernel/node.h" bodystart="1057" bodyend="1060"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a7d4d7c594bd3cfbf892f040f248ac153" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::set_local_device_id</definition>
+        <argsstring>(const index lsdid)</argsstring>
+        <name>set_local_device_id</name>
+        <reimplementedby refid="classnest_1_1_device_node_1a8c8b80f5be38584cb4b36a18a2977772">set_local_device_id</reimplementedby>
+        <param>
+          <type>const <ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+          <declname>lsdid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sets the local device id. Throws an error if used on a non-device node. <simplesect kind="see"><para><ref refid="classnest_1_1_node_1a25b2b6f159ffa8834cd966b3802f2fef" kindref="member">get_local_device_id</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="814" column="16" bodyfile="nestkernel/node.cpp" bodystart="132" bodyend="135"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a25b2b6f159ffa8834cd966b3802f2fef" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+        <definition>index nest::Node::get_local_device_id</definition>
+        <argsstring>() const</argsstring>
+        <name>get_local_device_id</name>
+        <reimplementedby refid="classnest_1_1_device_node_1a170639eec44df6f43d5f9a5403959ba4">get_local_device_id</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Gets the local device id. Throws an error if used on a non-device node. <simplesect kind="see"><para><ref refid="classnest_1_1_node_1a7d4d7c594bd3cfbf892f040f248ac153" kindref="member">set_local_device_id</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="821" column="17" bodyfile="nestkernel/node.cpp" bodystart="138" bodyend="142"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classnest_1_1_node_1a048ed537ecbe30cb98950a077106b0ef" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::init_state_</definition>
+        <argsstring>()</argsstring>
+        <name>init_state_</name>
+        <reimplementedby refid="classnest_1_1_conn_test_dummy_node_base_1ab14303b4565015207f2d120c6600d05a">init_state_</reimplementedby>
+        <reimplementedby refid="classnest_1_1proxynode_1ae20ada5a19b34560c124febd373e9b04">init_state_</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Configure state variables depending on runtime information.</para>
+<para>Overload this method if the node needs to adapt state variables prior to first simulation to runtime information, e.g., the number of incoming connections. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="854" column="16" bodyfile="nestkernel/node.cpp" bodystart="73" bodyend="75"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a5881b951d112d2c408865d080287f453" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::init_buffers_</definition>
+        <argsstring>()</argsstring>
+        <name>init_buffers_</name>
+        <reimplementedby refid="classnest_1_1_conn_test_dummy_node_base_1a9e9303b5c466db71f8f65c23bc242d24">init_buffers_</reimplementedby>
+        <reimplementedby refid="classnest_1_1proxynode_1a6816f94d8e9be4ff2a89ee27b36c178d">init_buffers_</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Configure persistent internal data structures.</para>
+<para>Let node configure persistent internal data structures, such as input buffers or ODE solvers, to runtime information prior to first simulation. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="862" column="16" bodyfile="nestkernel/node.cpp" bodystart="92" bodyend="94"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1af1edec8d44fc63df732b8ff58f0788bf" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::set_initialized_</definition>
+        <argsstring>()</argsstring>
+        <name>set_initialized_</name>
+        <reimplementedby refid="classnest_1_1_stimulation_device_1ac67e5262a139223625a3eea557e7aa45">set_initialized_</reimplementedby>
+        <reimplementedby refid="classnest_1_1_recording_device_1ab77a88eadcacbb992e706e55aa88627a">set_initialized_</reimplementedby>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="864" column="16" bodyfile="nestkernel/node.cpp" bodystart="103" bodyend="105"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1af3b1227782c1fc9e0934a73ee7bf15f4" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classnest_1_1_model" kindref="compound">Model</ref> &amp;</type>
+        <definition>Model &amp; nest::Node::get_model_</definition>
+        <argsstring>() const</argsstring>
+        <name>get_model_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="866" column="9" bodyfile="nestkernel/node.cpp" bodystart="119" bodyend="123"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a72b316c5f1bb8bb566256efab5371f4b" prot="protected" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::Node::set_frozen_</definition>
+        <argsstring>(bool frozen)</argsstring>
+        <name>set_frozen_</name>
+        <param>
+          <type>bool</type>
+          <declname>frozen</declname>
+        </param>
+        <briefdescription>
+<para>Mark node as frozen. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="870" column="3" bodyfile="nestkernel/node.h" bodystart="870" bodyend="873"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_node_1a1c53a7fddc01f8d14531fb3af84a3881" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ConcreteNode</type>
+          </param>
+        </templateparamlist>
+        <type>const ConcreteNode &amp;</type>
+        <definition>const ConcreteNode &amp; nest::Node::downcast</definition>
+        <argsstring>(const Node &amp;)</argsstring>
+        <name>downcast</name>
+        <param>
+          <type>const <ref refid="classnest_1_1_node" kindref="compound">Node</ref> &amp;</type>
+          <defname>n</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Auxiliary function to downcast a <ref refid="classnest_1_1_node" kindref="compound">Node</ref> to a concrete class derived from <ref refid="classnest_1_1_node" kindref="compound">Node</ref>. <simplesect kind="note"><para>This function is used to convert generic <ref refid="classnest_1_1_node" kindref="compound">Node</ref> references to specific ones when intializing parameters or state from a prototype. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="882" column="22" bodyfile="nestkernel/node.h" bodystart="1043" bodyend="1048"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Base class for all NEST network objects.</para>
+<para>Class <ref refid="classnest_1_1_node" kindref="compound">Node</ref> is the top of the simulation object hierarchy. It defines the most general interface to a network element.</para>
+<para>Class <ref refid="classnest_1_1_node" kindref="compound">Node</ref> provide the interface for<itemizedlist>
+<listitem><para>updating the dynamic state of an object</para>
+</listitem><listitem><para>connecting nodes, using particular Events</para>
+</listitem><listitem><para>accepting connection requests</para>
+</listitem><listitem><para>handling incoming events A new type of <ref refid="classnest_1_1_node" kindref="compound">Node</ref> must be derived from this base class and implement its interface. In order to keep the inheritance hierarchy flat, it is encouraged to directly subclass from base class <ref refid="classnest_1_1_node" kindref="compound">Node</ref>.</para>
+</listitem></itemizedlist>
+</para>
+<para><simplesect kind="see"><para>class <ref refid="classnest_1_1_event" kindref="compound">Event</ref> @BeginDocumentation</para>
+</simplesect>
+Name: <ref refid="classnest_1_1_node" kindref="compound">Node</ref> - General properties of all nodes.</para>
+<para>Parameters: frozen booltype - Whether the node is updated during simulation global_id integertype - The node ID of the node (cf. local_id) local booltype - Whether the node is available on the local process model literaltype - The model type the node was created from state integertype - The state of the node (see the help on elementstates for details) thread integertype - The id of the thread the node is assigned to (valid locally) vp integertype - The id of the virtual process the node is assigned to (valid globally)</para>
+<para>SeeAlso: GetStatus, SetStatus, elementstates </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="8">
+        <label>nest::ClopathArchivingNode</label>
+        <link refid="classnest_1_1_clopath_archiving_node"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>nest::RecordingDevice</label>
+        <link refid="classnest_1_1_recording_device"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>nest::proxynode</label>
+        <link refid="classnest_1_1proxynode"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>nest::DeviceNode</label>
+        <link refid="classnest_1_1_device_node"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>nest::Node</label>
+        <link refid="classnest_1_1_node"/>
+      </node>
+      <node id="5">
+        <label>nest::StimulationDevice</label>
+        <link refid="classnest_1_1_stimulation_device"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>nest::UrbanczikArchivingNode&lt; urbanczik_parameters &gt;</label>
+        <link refid="classnest_1_1_urbanczik_archiving_node"/>
+        <childnode refid="7" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>nest::ConnTestDummyNodeBase</label>
+        <link refid="classnest_1_1_conn_test_dummy_node_base"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>nest::StructuralPlasticityNode</label>
+        <link refid="classnest_1_1_structural_plasticity_node"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>nest::ArchivingNode</label>
+        <link refid="classnest_1_1_archiving_node"/>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>nest::DeprecationWarning</label>
+        <link refid="classnest_1_1_deprecation_warning"/>
+      </node>
+      <node id="1">
+        <label>nest::Node</label>
+        <link refid="classnest_1_1_node"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>+deprecation_warning</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="nestkernel/node.h" line="103" column="1" bodyfile="nestkernel/node.h" bodystart="104" bodyend="912"/>
+    <listofallmembers>
+      <member refid="classnest_1_1_node_1a93e4da4ded11807b07c5f2428401bbc7" prot="public" virt="virtual"><scope>nest::Node</scope><name>calibrate_time</name></member>
+      <member refid="classnest_1_1_node_1ad88edfd6f881579328b545d88372807d" prot="public" virt="virtual"><scope>nest::Node</scope><name>clone</name></member>
+      <member refid="group___s_p__functions_1gaa5b5f01608036752d816d1980c39cb87" prot="public" virt="virtual"><scope>nest::Node</scope><name>connect_synaptic_element</name></member>
+      <member refid="group___s_p__functions_1ga5242b7d1752a7981676852d1b70263b9" prot="public" virt="virtual"><scope>nest::Node</scope><name>decay_synaptic_elements_vacant</name></member>
+      <member refid="classnest_1_1_node_1a6c4750a3216c14453087bb14bc9a6a7a" prot="public" virt="non-virtual"><scope>nest::Node</scope><name>deprecation_warning</name></member>
+      <member refid="classnest_1_1_node_1a1c53a7fddc01f8d14531fb3af84a3881" prot="protected" virt="non-virtual"><scope>nest::Node</scope><name>downcast</name></member>
+      <member refid="classnest_1_1_node_1a2c85dd6317fe53edd65e97641aeb0535" prot="public" virt="virtual"><scope>nest::Node</scope><name>event_hook</name></member>
+      <member refid="classnest_1_1_node_1a2575699815b3eed15322b0868ec2f89d" prot="public" virt="virtual"><scope>nest::Node</scope><name>event_hook</name></member>
+      <member refid="classnest_1_1_node_1a9f97c6432a9aa151df89653586f72ef1" prot="public" virt="virtual"><scope>nest::Node</scope><name>finalize</name></member>
+      <member refid="classnest_1_1_node_1a7c48b06a535a6e036c88ea2dcbaf8283" prot="private" virt="non-virtual"><scope>nest::Node</scope><name>frozen_</name></member>
+      <member refid="classnest_1_1_node_1a66b901cd57296f87cd25c00c4cfe3f74" prot="public" virt="virtual"><scope>nest::Node</scope><name>get_C_m</name></member>
+      <member refid="group___s_p__functions_1gae46decb34ba3dc7f912fa6a691bb0de2" prot="public" virt="virtual"><scope>nest::Node</scope><name>get_Ca_minus</name></member>
+      <member refid="classnest_1_1_node_1a59915001de69fc05d8a155da42a89e56" prot="public" virt="virtual"><scope>nest::Node</scope><name>get_element_type</name></member>
+      <member refid="classnest_1_1_node_1a56d38a28f4070f373eb51ed97e5bee73" prot="public" virt="virtual"><scope>nest::Node</scope><name>get_g_L</name></member>
+      <member refid="classnest_1_1_node_1a618d16c4286ef3724da901ce28c46cd6" prot="public" virt="virtual"><scope>nest::Node</scope><name>get_history</name></member>
+      <member refid="classnest_1_1_node_1a1043e0cb5ea5bd3e8627e9a777328628" prot="public" virt="virtual"><scope>nest::Node</scope><name>get_K_value</name></member>
+      <member refid="classnest_1_1_node_1a3c64984a1a3ca6c8fddf52d68dc33ab7" prot="public" virt="virtual"><scope>nest::Node</scope><name>get_K_values</name></member>
+      <member refid="classnest_1_1_node_1a25b2b6f159ffa8834cd966b3802f2fef" prot="public" virt="virtual"><scope>nest::Node</scope><name>get_local_device_id</name></member>
+      <member refid="classnest_1_1_node_1a836bd9bd56b015902da2eab45c83ef34" prot="public" virt="virtual"><scope>nest::Node</scope><name>get_LTD_value</name></member>
+      <member refid="classnest_1_1_node_1a2283e744ff8f6a39c4d2fb6c00fc7958" prot="public" virt="virtual"><scope>nest::Node</scope><name>get_LTP_history</name></member>
+      <member refid="classnest_1_1_node_1af3b1227782c1fc9e0934a73ee7bf15f4" prot="protected" virt="non-virtual"><scope>nest::Node</scope><name>get_model_</name></member>
+      <member refid="classnest_1_1_node_1a99139ba0b34f150c612f2f26c8645532" prot="public" virt="non-virtual"><scope>nest::Node</scope><name>get_model_id</name></member>
+      <member refid="classnest_1_1_node_1a86602cc948413d6fbe10fe4fefaca0ef" prot="public" virt="non-virtual"><scope>nest::Node</scope><name>get_name</name></member>
+      <member refid="classnest_1_1_node_1a0d0352c208e88979157bf69dac41a074" prot="public" virt="non-virtual"><scope>nest::Node</scope><name>get_nc</name></member>
+      <member refid="classnest_1_1_node_1a18f2dc5591f7de1e64b62d0d53cb4351" prot="public" virt="non-virtual"><scope>nest::Node</scope><name>get_node_id</name></member>
+      <member refid="group__status__interface_1ga85f1a73dde2b60e4353429eb22c31bcf" prot="public" virt="pure-virtual"><scope>nest::Node</scope><name>get_status</name></member>
+      <member refid="classnest_1_1_node_1a885c4dc90e195ed2533af848c4fdad92" prot="public" virt="non-virtual"><scope>nest::Node</scope><name>get_status_base</name></member>
+      <member refid="classnest_1_1_node_1a54f0c50b08165643cee588bc89b464b8" prot="private" virt="virtual"><scope>nest::Node</scope><name>get_status_dict_</name></member>
+      <member refid="group___s_p__functions_1ga9ba39ec217579e3ef23db9ae20479955" prot="public" virt="virtual"><scope>nest::Node</scope><name>get_synaptic_elements</name></member>
+      <member refid="group___s_p__functions_1gaf35fbeeb8459557ea3a5baf5c6fe7d20" prot="public" virt="virtual"><scope>nest::Node</scope><name>get_synaptic_elements</name></member>
+      <member refid="group___s_p__functions_1ga7a47b88c558984889d90d5ce027787cf" prot="public" virt="virtual"><scope>nest::Node</scope><name>get_synaptic_elements_connected</name></member>
+      <member refid="group___s_p__functions_1ga058f999dd9dc5a26c98b0a0351c08707" prot="public" virt="virtual"><scope>nest::Node</scope><name>get_synaptic_elements_vacant</name></member>
+      <member refid="classnest_1_1_node_1af77e4c86987efb2065b531f752c58b5f" prot="public" virt="virtual"><scope>nest::Node</scope><name>get_tau_L</name></member>
+      <member refid="classnest_1_1_node_1a76c9cb7ddfba60739af5b3bbf21bd3e7" prot="public" virt="virtual"><scope>nest::Node</scope><name>get_tau_s</name></member>
+      <member refid="classnest_1_1_node_1ada393fd33ced09b317415c0f89f4ccd8" prot="public" virt="virtual"><scope>nest::Node</scope><name>get_tau_syn_ex</name></member>
+      <member refid="classnest_1_1_node_1ad3ab12792e13a44d9a34663fa4d90b87" prot="public" virt="virtual"><scope>nest::Node</scope><name>get_tau_syn_in</name></member>
+      <member refid="classnest_1_1_node_1ad578b3b25416a4a8c79d86e943a5c666" prot="public" virt="non-virtual"><scope>nest::Node</scope><name>get_thread</name></member>
+      <member refid="classnest_1_1_node_1a5f2e7e5708eaf8428071ee74128e81eb" prot="public" virt="non-virtual"><scope>nest::Node</scope><name>get_thread_lid</name></member>
+      <member refid="classnest_1_1_node_1a61d47288d1db6fa11aad35c522dae09a" prot="public" virt="virtual"><scope>nest::Node</scope><name>get_urbanczik_history</name></member>
+      <member refid="classnest_1_1_node_1a7812f4b7f634dc6838161319662d8947" prot="public" virt="non-virtual"><scope>nest::Node</scope><name>get_vp</name></member>
+      <member refid="group__event__interface_1gae810de070216d0f281833171a3b997bc" prot="public" virt="virtual"><scope>nest::Node</scope><name>handle</name></member>
+      <member refid="group__event__interface_1ga18c58ec60440eae4dd4b264fb63a8d98" prot="public" virt="virtual"><scope>nest::Node</scope><name>handle</name></member>
+      <member refid="group__event__interface_1ga9686693f44cd03a5420633b836c25f27" prot="public" virt="virtual"><scope>nest::Node</scope><name>handle</name></member>
+      <member refid="group__event__interface_1gacd1458cf76e47c030beafb6a4d5147ba" prot="public" virt="virtual"><scope>nest::Node</scope><name>handle</name></member>
+      <member refid="group__event__interface_1ga76de0226b6a5eef5dbe78a68d72c4492" prot="public" virt="virtual"><scope>nest::Node</scope><name>handle</name></member>
+      <member refid="group__event__interface_1gadef54045c4b20be6075910f936a723b6" prot="public" virt="virtual"><scope>nest::Node</scope><name>handle</name></member>
+      <member refid="group__event__interface_1ga0b4b6baf37b18218fd5103ab72bc2cae" prot="public" virt="virtual"><scope>nest::Node</scope><name>handle</name></member>
+      <member refid="group__event__interface_1ga1843f8e5565026ca51fc4b0fe1da77de" prot="public" virt="virtual"><scope>nest::Node</scope><name>handle</name></member>
+      <member refid="group__event__interface_1ga32b0e430fb34b46f56dc2ebc6dc7bacb" prot="public" virt="virtual"><scope>nest::Node</scope><name>handle</name></member>
+      <member refid="group__event__interface_1gaec56b76a4286e1f662b33218f4083ce8" prot="public" virt="virtual"><scope>nest::Node</scope><name>handle</name></member>
+      <member refid="group__event__interface_1gace17f7fc8aea06c6ecc4f12deb957a81" prot="public" virt="virtual"><scope>nest::Node</scope><name>handle</name></member>
+      <member refid="group__event__interface_1ga2cebf7dc11a2a83795ff71c10c07f308" prot="public" virt="virtual"><scope>nest::Node</scope><name>handle</name></member>
+      <member refid="group__event__interface_1gaf65947fe5dfeaefe79ac3cdf86e5bb27" prot="public" virt="virtual"><scope>nest::Node</scope><name>handles_test_event</name></member>
+      <member refid="classnest_1_1_node_1abbddfb14a40279cdf7340f6ff9936179" prot="public" virt="virtual"><scope>nest::Node</scope><name>handles_test_event</name></member>
+      <member refid="classnest_1_1_node_1a5f91d66c3ceb67a60b066fcb01af2cd7" prot="public" virt="virtual"><scope>nest::Node</scope><name>handles_test_event</name></member>
+      <member refid="classnest_1_1_node_1aa34f16a445a0d408588bf7d6463f1a8c" prot="public" virt="virtual"><scope>nest::Node</scope><name>handles_test_event</name></member>
+      <member refid="classnest_1_1_node_1a5c3e92ee9a4c7b6f660d6fb341a5c330" prot="public" virt="virtual"><scope>nest::Node</scope><name>handles_test_event</name></member>
+      <member refid="classnest_1_1_node_1abcc2e9e2acf3d08070679f2b03bd8e11" prot="public" virt="virtual"><scope>nest::Node</scope><name>handles_test_event</name></member>
+      <member refid="classnest_1_1_node_1a1d2f3f1de23d48b953bc570771ca9d2e" prot="public" virt="virtual"><scope>nest::Node</scope><name>handles_test_event</name></member>
+      <member refid="classnest_1_1_node_1a804bc701ca39ee9314df37f0cf75198d" prot="public" virt="virtual"><scope>nest::Node</scope><name>handles_test_event</name></member>
+      <member refid="classnest_1_1_node_1a874ca038dce3731fdbf62a21fb17de4e" prot="public" virt="virtual"><scope>nest::Node</scope><name>handles_test_event</name></member>
+      <member refid="classnest_1_1_node_1a3f09ae49e6fa4cd4f2868f3e7eb4870e" prot="public" virt="virtual"><scope>nest::Node</scope><name>handles_test_event</name></member>
+      <member refid="classnest_1_1_node_1a3f59fd074869893311cc2c46499713a5" prot="public" virt="virtual"><scope>nest::Node</scope><name>handles_test_event</name></member>
+      <member refid="classnest_1_1_node_1a059108cabfdc59a2bae9bb8092448915" prot="public" virt="virtual"><scope>nest::Node</scope><name>handles_test_event</name></member>
+      <member refid="classnest_1_1_node_1abcdffe1cbefc66a5d11762a46aefea5b" prot="public" virt="virtual"><scope>nest::Node</scope><name>handles_test_event</name></member>
+      <member refid="classnest_1_1_node_1a3cadfe2698c39c5fd327f5d70d0b8adf" prot="public" virt="virtual"><scope>nest::Node</scope><name>has_proxies</name></member>
+      <member refid="classnest_1_1_node_1a1943c3183a149f56fcd797f1d8bfe815" prot="public" virt="non-virtual"><scope>nest::Node</scope><name>init</name></member>
+      <member refid="classnest_1_1_node_1a5881b951d112d2c408865d080287f453" prot="protected" virt="virtual"><scope>nest::Node</scope><name>init_buffers_</name></member>
+      <member refid="classnest_1_1_node_1a048ed537ecbe30cb98950a077106b0ef" prot="protected" virt="virtual"><scope>nest::Node</scope><name>init_state_</name></member>
+      <member refid="classnest_1_1_node_1a95389430ba10f2da19aacded71503f74" prot="private" virt="non-virtual"><scope>nest::Node</scope><name>initialized_</name></member>
+      <member refid="classnest_1_1_node_1ab6ba7bb37d972a9a5e0f2a8e4c6fcc72" prot="public" virt="non-virtual"><scope>nest::Node</scope><name>is_frozen</name></member>
+      <member refid="classnest_1_1_node_1ab0fc187ef5dd007086eb11ca2107a3a5" prot="public" virt="non-virtual"><scope>nest::Node</scope><name>is_model_prototype</name></member>
+      <member refid="classnest_1_1_node_1acaf132bbee717313ffbc86fd291667c9" prot="public" virt="virtual"><scope>nest::Node</scope><name>is_off_grid</name></member>
+      <member refid="classnest_1_1_node_1a895a3c75963a7926b3c9cac2d62dece3" prot="public" virt="virtual"><scope>nest::Node</scope><name>is_proxy</name></member>
+      <member refid="classnest_1_1_node_1ac6e5bca87246812225ab04af4fd40df2" prot="public" virt="virtual"><scope>nest::Node</scope><name>local_receiver</name></member>
+      <member refid="classnest_1_1_node_1a2bf2a0e9b454c55aa5dcb5aa4698697b" prot="private" virt="non-virtual"><scope>nest::Node</scope><name>Model</name></member>
+      <member refid="classnest_1_1_node_1ae306f4602e575047801c45c9fec2a4d4" prot="private" virt="non-virtual"><scope>nest::Node</scope><name>model_id_</name></member>
+      <member refid="classnest_1_1_node_1aa54a149299ea6a38d6cee1943b2bddf9" prot="private" virt="non-virtual"><scope>nest::Node</scope><name>ModelManager</name></member>
+      <member refid="classnest_1_1_node_1a3ec5fd1ce0e6f3f0bccabd314c6845c3" prot="private" virt="non-virtual"><scope>nest::Node</scope><name>nc_ptr_</name></member>
+      <member refid="classnest_1_1_node_1a1b36ccdeb480a962678afbc72e0e05a9" prot="public" virt="non-virtual"><scope>nest::Node</scope><name>Node</name></member>
+      <member refid="classnest_1_1_node_1a359cbbba44db2a94cced8f60bcf7c728" prot="public" virt="non-virtual"><scope>nest::Node</scope><name>Node</name></member>
+      <member refid="classnest_1_1_node_1a9d697a1550c18613e0d2a0e57c67e836" prot="private" virt="non-virtual"><scope>nest::Node</scope><name>node_id_</name></member>
+      <member refid="classnest_1_1_node_1a537f1a88cfaefa242f317637354442ad" prot="public" virt="non-virtual"><scope>nest::Node</scope><name>node_uses_wfr</name></member>
+      <member refid="classnest_1_1_node_1a9f929d2c40ddaafd4a0822ea294f1ef9" prot="private" virt="non-virtual"><scope>nest::Node</scope><name>node_uses_wfr_</name></member>
+      <member refid="classnest_1_1_node_1aa49a527d01a369f21afaddd4e13a9748" prot="private" virt="non-virtual"><scope>nest::Node</scope><name>NodeManager</name></member>
+      <member refid="classnest_1_1_node_1a1168f649f515aea70ac6678ed66c48e4" prot="public" virt="virtual"><scope>nest::Node</scope><name>one_node_per_process</name></member>
+      <member refid="classnest_1_1_node_1a9c99a8caa89a3eb73e975f25678d5d58" prot="private" virt="non-virtual"><scope>nest::Node</scope><name>operator=</name></member>
+      <member refid="classnest_1_1_node_1adf0d915da7c36f25820d19f1e2b1b4a1" prot="public" virt="virtual"><scope>nest::Node</scope><name>post_run_cleanup</name></member>
+      <member refid="classnest_1_1_node_1ad51550af656588536bcdf5afecdbf788" prot="public" virt="pure-virtual"><scope>nest::Node</scope><name>pre_run_hook</name></member>
+      <member refid="classnest_1_1_node_1aa14ec598e02577c8353131316d8ed5c9" prot="public" virt="virtual"><scope>nest::Node</scope><name>print_network</name></member>
+      <member refid="classnest_1_1_node_1a157176d1c5146d6a93a538de218cbe8e" prot="private" virt="non-virtual"><scope>nest::Node</scope><name>proxynode</name></member>
+      <member refid="classnest_1_1_node_1a6d7d70e46c22988d76160cc00f93127a" prot="public" virt="virtual"><scope>nest::Node</scope><name>receives_signal</name></member>
+      <member refid="classnest_1_1_node_1a297b374f3b4513a6de5a5ba6b6d119d9" prot="public" virt="virtual"><scope>nest::Node</scope><name>register_stdp_connection</name></member>
+      <member refid="classnest_1_1_node_1a60608af8d6238b96071a9f64544ec5e3" prot="public" virt="virtual"><scope>nest::Node</scope><name>send_test_event</name></member>
+      <member refid="group__event__interface_1ga8cc1e073626a9ffc843b2685474238de" prot="public" virt="virtual"><scope>nest::Node</scope><name>sends_secondary_event</name></member>
+      <member refid="group__event__interface_1ga5469ac53c0b9d004829e1e2dbf41d120" prot="public" virt="virtual"><scope>nest::Node</scope><name>sends_secondary_event</name></member>
+      <member refid="group__event__interface_1gaa9414a7fa4241bc77bb110ba895968e0" prot="public" virt="virtual"><scope>nest::Node</scope><name>sends_secondary_event</name></member>
+      <member refid="group__event__interface_1ga2732c32368c1ea09600a1a2ffddcb2f7" prot="public" virt="virtual"><scope>nest::Node</scope><name>sends_secondary_event</name></member>
+      <member refid="classnest_1_1_node_1a849c236abc0ac5bf1b97fc86188c525f" prot="public" virt="virtual"><scope>nest::Node</scope><name>sends_signal</name></member>
+      <member refid="classnest_1_1_node_1a72b316c5f1bb8bb566256efab5371f4b" prot="protected" virt="non-virtual"><scope>nest::Node</scope><name>set_frozen_</name></member>
+      <member refid="classnest_1_1_node_1a9488f6aaf5ca2897eba23819251569e0" prot="public" virt="non-virtual"><scope>nest::Node</scope><name>set_initialized</name></member>
+      <member refid="classnest_1_1_node_1af1edec8d44fc63df732b8ff58f0788bf" prot="protected" virt="virtual"><scope>nest::Node</scope><name>set_initialized_</name></member>
+      <member refid="classnest_1_1_node_1a7d4d7c594bd3cfbf892f040f248ac153" prot="public" virt="virtual"><scope>nest::Node</scope><name>set_local_device_id</name></member>
+      <member refid="classnest_1_1_node_1a8df5c7f9272bd5da51cb5de78db00161" prot="public" virt="non-virtual"><scope>nest::Node</scope><name>set_model_id</name></member>
+      <member refid="classnest_1_1_node_1a73f12f75b97e2fc6adc1a5d27a7f50b1" prot="private" virt="non-virtual"><scope>nest::Node</scope><name>set_nc_</name></member>
+      <member refid="classnest_1_1_node_1a07451d06b3d812eae961d61397f5826c" prot="private" virt="non-virtual"><scope>nest::Node</scope><name>set_node_id_</name></member>
+      <member refid="classnest_1_1_node_1a2344ea2328630ee3e1faaec8e4ca2071" prot="public" virt="non-virtual"><scope>nest::Node</scope><name>set_node_uses_wfr</name></member>
+      <member refid="group__status__interface_1ga9d7a4a3a64d03a4d7f6c5df87c80fe36" prot="public" virt="pure-virtual"><scope>nest::Node</scope><name>set_status</name></member>
+      <member refid="classnest_1_1_node_1aa4d0cfaa54c461c66570d926c51a2078" prot="public" virt="non-virtual"><scope>nest::Node</scope><name>set_status_base</name></member>
+      <member refid="classnest_1_1_node_1a4b386596a08e94fd4ad229b586f0e8ff" prot="public" virt="non-virtual"><scope>nest::Node</scope><name>set_thread</name></member>
+      <member refid="classnest_1_1_node_1ad6b1c6a7b2287c55a982debe99e66415" prot="public" virt="non-virtual"><scope>nest::Node</scope><name>set_thread_lid</name></member>
+      <member refid="classnest_1_1_node_1a219e882ed608cca39c88b4863b037fbe" prot="public" virt="non-virtual"><scope>nest::Node</scope><name>set_vp</name></member>
+      <member refid="classnest_1_1_node_1a630a7fe19e19ffa310ad17522b70878e" prot="private" virt="non-virtual"><scope>nest::Node</scope><name>SimulationManager</name></member>
+      <member refid="classnest_1_1_node_1a1e0e3bdf9dd259183dcb8c457265383b" prot="public" virt="virtual"><scope>nest::Node</scope><name>supports_urbanczik_archiving</name></member>
+      <member refid="classnest_1_1_node_1a4b5b0493670970044a06856861cf3c86" prot="private" virt="non-virtual"><scope>nest::Node</scope><name>Synapse</name></member>
+      <member refid="classnest_1_1_node_1a9ec98b82cf08796b726ca26666e5739d" prot="private" virt="non-virtual"><scope>nest::Node</scope><name>thread_</name></member>
+      <member refid="classnest_1_1_node_1a4316e73a0c494ccb37e6a19b00664223" prot="private" virt="non-virtual"><scope>nest::Node</scope><name>thread_lid_</name></member>
+      <member refid="classnest_1_1_node_1a69f3767afe7e7d1bc5b141e777778fd5" prot="public" virt="pure-virtual"><scope>nest::Node</scope><name>update</name></member>
+      <member refid="group___s_p__functions_1gaff1fa7703153b16816ad55eef791982c" prot="public" virt="virtual"><scope>nest::Node</scope><name>update_synaptic_elements</name></member>
+      <member refid="classnest_1_1_node_1ad40bb2d1d3c32dd953374bbe6a76e5a6" prot="private" virt="non-virtual"><scope>nest::Node</scope><name>vp_</name></member>
+      <member refid="classnest_1_1_node_1a86af40b228d33130e9a8257249a7af28" prot="public" virt="virtual"><scope>nest::Node</scope><name>wfr_update</name></member>
+      <member refid="classnest_1_1_node_1a292ae9d034507fb6f382f61a9251cbe7" prot="public" virt="virtual"><scope>nest::Node</scope><name>~Node</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

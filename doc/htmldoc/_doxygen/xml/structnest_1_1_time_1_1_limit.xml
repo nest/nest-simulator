@@ -1,0 +1,110 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structnest_1_1_time_1_1_limit" kind="struct" language="C++" prot="protected">
+    <compoundname>nest::Time::Limit</compoundname>
+    <includes refid="nest__time_8h" local="no">nest_time.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnest_1_1_time_1_1_limit_1a7af45a290a28fd0e802e03ebd5e8488d" prot="public" static="no" mutable="no">
+        <type><ref refid="namespacenest_1a824af732762ca1ba47526652442e562e" kindref="member">tic_t</ref></type>
+        <definition>tic_t nest::Time::Limit::tics</definition>
+        <argsstring></argsstring>
+        <name>tics</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/nest_time.h" line="209" column="11" bodyfile="nestkernel/nest_time.h" bodystart="209" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1_time_1_1_limit_1aeccbca975a4ec0a652b5ae08b7972364" prot="public" static="no" mutable="no">
+        <type><ref refid="namespacenest_1a71a30fec90e57e114c45577d5294ce16" kindref="member">delay</ref></type>
+        <definition>delay nest::Time::Limit::steps</definition>
+        <argsstring></argsstring>
+        <name>steps</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/nest_time.h" line="210" column="11" bodyfile="nestkernel/nest_time.h" bodystart="210" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1_time_1_1_limit_1a22ee87e9487945652fd71f9a23ad92ba" prot="public" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::Time::Limit::ms</definition>
+        <argsstring></argsstring>
+        <name>ms</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/nest_time.h" line="211" column="12" bodyfile="nestkernel/nest_time.h" bodystart="211" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structnest_1_1_time_1_1_limit_1ac475221500f737115f2f4d7a9f069648" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>nest::Time::Limit::Limit</definition>
+        <argsstring>(tic_t tics, delay steps, double ms)</argsstring>
+        <name>Limit</name>
+        <param>
+          <type><ref refid="namespacenest_1a824af732762ca1ba47526652442e562e" kindref="member">tic_t</ref></type>
+          <declname>tics</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1a71a30fec90e57e114c45577d5294ce16" kindref="member">delay</ref></type>
+          <declname>steps</declname>
+        </param>
+        <param>
+          <type>double</type>
+          <declname>ms</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/nest_time.h" line="213" column="5" bodyfile="nestkernel/nest_time.h" bodystart="213" bodyend="218"/>
+      </memberdef>
+      <memberdef kind="function" id="structnest_1_1_time_1_1_limit_1a2135ee3873ee2bbe7015804b06fafa50" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>Time::Limit::Limit</definition>
+        <argsstring>(const tic_t &amp;)</argsstring>
+        <name>Limit</name>
+        <param>
+          <type>const <ref refid="namespacenest_1a824af732762ca1ba47526652442e562e" kindref="member">tic_t</ref> &amp;</type>
+          <defname>t</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/nest_time.h" line="219" column="5" bodyfile="nestkernel/nest_time.cpp" bodystart="94" bodyend="99"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>nest::Time::Limit</label>
+        <link refid="structnest_1_1_time_1_1_limit"/>
+      </node>
+    </collaborationgraph>
+    <location file="nestkernel/nest_time.h" line="207" column="3" bodyfile="nestkernel/nest_time.h" bodystart="208" bodyend="220"/>
+    <listofallmembers>
+      <member refid="structnest_1_1_time_1_1_limit_1ac475221500f737115f2f4d7a9f069648" prot="public" virt="non-virtual"><scope>nest::Time::Limit</scope><name>Limit</name></member>
+      <member refid="structnest_1_1_time_1_1_limit_1a2135ee3873ee2bbe7015804b06fafa50" prot="public" virt="non-virtual"><scope>nest::Time::Limit</scope><name>Limit</name></member>
+      <member refid="structnest_1_1_time_1_1_limit_1a22ee87e9487945652fd71f9a23ad92ba" prot="public" virt="non-virtual"><scope>nest::Time::Limit</scope><name>ms</name></member>
+      <member refid="structnest_1_1_time_1_1_limit_1aeccbca975a4ec0a652b5ae08b7972364" prot="public" virt="non-virtual"><scope>nest::Time::Limit</scope><name>steps</name></member>
+      <member refid="structnest_1_1_time_1_1_limit_1a7af45a290a28fd0e802e03ebd5e8488d" prot="public" virt="non-virtual"><scope>nest::Time::Limit</scope><name>tics</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

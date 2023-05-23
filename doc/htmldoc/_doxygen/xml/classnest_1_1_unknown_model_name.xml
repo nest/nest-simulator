@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classnest_1_1_unknown_model_name" kind="class" language="C++" prot="public">
+    <compoundname>nest::UnknownModelName</compoundname>
+    <basecompoundref refid="classnest_1_1_kernel_exception" prot="public" virt="non-virtual">nest::KernelException</basecompoundref>
+    <includes refid="exceptions_8h" local="no">exceptions.h</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classnest_1_1_unknown_model_name_1a00c2c1afeafe59d24c56b043f194c30f" prot="private" static="no" mutable="no">
+        <type>const Name</type>
+        <definition>const Name nest::UnknownModelName::n_</definition>
+        <argsstring></argsstring>
+        <name>n_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/exceptions.h" line="95" column="14" bodyfile="nestkernel/exceptions.h" bodystart="95" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classnest_1_1_unknown_model_name_1a109b25b0f1258e34d4e910319debb0b3" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>nest::UnknownModelName::UnknownModelName</definition>
+        <argsstring>(const Name &amp;n)</argsstring>
+        <name>UnknownModelName</name>
+        <param>
+          <type>const Name &amp;</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/exceptions.h" line="98" column="12" bodyfile="nestkernel/exceptions.h" bodystart="98" bodyend="102"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_unknown_model_name_1ab68a96e4429401a7b1f1f513b0e21f26" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>nest::UnknownModelName::~UnknownModelName</definition>
+        <argsstring>() override</argsstring>
+        <name>~UnknownModelName</name>
+        <exceptions> throw ()</exceptions>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/exceptions.h" line="104" column="3" bodyfile="nestkernel/exceptions.h" bodystart="104" bodyend="106"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_unknown_model_name_1aa8d1e63c1c602435fb2dabffc80095bf" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string nest::UnknownModelName::message</definition>
+        <argsstring>() const override</argsstring>
+        <name>message</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/exceptions.h" line="107" column="15" bodyfile="nestkernel/exceptions.cpp" bodystart="35" bodyend="45"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Exception to be thrown if a model with the the specified name does not exist. <simplesect kind="see"><para><ref refid="classnest_1_1_unknown_component" kindref="compound">UnknownComponent</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>nest::UnknownModelName</label>
+        <link refid="classnest_1_1_unknown_model_name"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>SLIException</label>
+      </node>
+      <node id="2">
+        <label>nest::KernelException</label>
+        <link refid="classnest_1_1_kernel_exception"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>nest::UnknownModelName</label>
+        <link refid="classnest_1_1_unknown_model_name"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>SLIException</label>
+      </node>
+      <node id="2">
+        <label>nest::KernelException</label>
+        <link refid="classnest_1_1_kernel_exception"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="nestkernel/exceptions.h" line="93" column="1" bodyfile="nestkernel/exceptions.h" bodystart="94" bodyend="108"/>
+    <listofallmembers>
+      <member refid="classnest_1_1_kernel_exception_1aeb4d5e1c6351372f03f535806264fb6d" prot="public" virt="non-virtual"><scope>nest::UnknownModelName</scope><name>KernelException</name></member>
+      <member refid="classnest_1_1_kernel_exception_1a587cc59f8f1fac92da4370934c03ab15" prot="public" virt="non-virtual"><scope>nest::UnknownModelName</scope><name>KernelException</name></member>
+      <member refid="classnest_1_1_kernel_exception_1a1a10edf2a54c9d48aeab137024cd3144" prot="public" virt="non-virtual"><scope>nest::UnknownModelName</scope><name>KernelException</name></member>
+      <member refid="classnest_1_1_unknown_model_name_1aa8d1e63c1c602435fb2dabffc80095bf" prot="public" virt="non-virtual"><scope>nest::UnknownModelName</scope><name>message</name></member>
+      <member refid="classnest_1_1_unknown_model_name_1a00c2c1afeafe59d24c56b043f194c30f" prot="private" virt="non-virtual"><scope>nest::UnknownModelName</scope><name>n_</name></member>
+      <member refid="classnest_1_1_unknown_model_name_1a109b25b0f1258e34d4e910319debb0b3" prot="public" virt="non-virtual"><scope>nest::UnknownModelName</scope><name>UnknownModelName</name></member>
+      <member refid="classnest_1_1_kernel_exception_1aeaa4cd0b8db52d17bb0907ea6db41a44" prot="public" virt="non-virtual"><scope>nest::UnknownModelName</scope><name>~KernelException</name></member>
+      <member refid="classnest_1_1_unknown_model_name_1ab68a96e4429401a7b1f1f513b0e21f26" prot="public" virt="non-virtual"><scope>nest::UnknownModelName</scope><name>~UnknownModelName</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

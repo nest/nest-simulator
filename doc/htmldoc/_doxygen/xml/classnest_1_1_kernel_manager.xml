@@ -1,0 +1,668 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classnest_1_1_kernel_manager" kind="class" language="C++" prot="public">
+    <compoundname>nest::KernelManager</compoundname>
+    <includes refid="kernel__manager_8h" local="no">kernel_manager.h</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classnest_1_1_kernel_manager_1ad6d415e355dda65203b6cdb4535548da" prot="private" static="no" mutable="no">
+        <type>unsigned long</type>
+        <definition>unsigned long nest::KernelManager::fingerprint_</definition>
+        <argsstring></argsstring>
+        <name>fingerprint_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="180" column="17" bodyfile="nestkernel/kernel_manager.h" bodystart="180" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_kernel_manager_1afef487770e452bf70b65ea57e2eddf5d" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classnest_1_1_manager_interface" kindref="compound">ManagerInterface</ref> * &gt;</type>
+        <definition>std::vector&lt; ManagerInterface* &gt; nest::KernelManager::managers</definition>
+        <argsstring></argsstring>
+        <name>managers</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="258" column="15" bodyfile="nestkernel/kernel_manager.h" bodystart="258" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_kernel_manager_1a9db63ca2a845abc6a8200be8389ab583" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::KernelManager::initialized_</definition>
+        <argsstring></argsstring>
+        <name>initialized_</name>
+        <briefdescription>
+<para>true if the kernel is initialized </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="259" column="8" bodyfile="nestkernel/kernel_manager.h" bodystart="259" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-static-attrib">
+      <memberdef kind="variable" id="classnest_1_1_kernel_manager_1aa39ba4be729d9f15a353f34e73824ad9" prot="private" static="yes" mutable="no">
+        <type><ref refid="classnest_1_1_kernel_manager" kindref="compound">KernelManager</ref> *</type>
+        <definition>nest::KernelManager * nest::KernelManager::kernel_manager_instance_</definition>
+        <argsstring></argsstring>
+        <name>kernel_manager_instance_</name>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="182" column="24" bodyfile="nestkernel/kernel_manager.h" bodystart="182" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classnest_1_1_kernel_manager_1a1fd7bc2174776a5c17db95b72cbd773d" prot="public" static="no" mutable="no">
+        <type><ref refid="classnest_1_1_logging_manager" kindref="compound">LoggingManager</ref></type>
+        <definition>LoggingManager nest::KernelManager::logging_manager</definition>
+        <argsstring></argsstring>
+        <name>logging_manager</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="243" column="18" bodyfile="nestkernel/kernel_manager.h" bodystart="243" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_kernel_manager_1acb6c54ef758858ed478c76415e081de7" prot="public" static="no" mutable="no">
+        <type><ref refid="classnest_1_1_m_p_i_manager" kindref="compound">MPIManager</ref></type>
+        <definition>MPIManager nest::KernelManager::mpi_manager</definition>
+        <argsstring></argsstring>
+        <name>mpi_manager</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="244" column="14" bodyfile="nestkernel/kernel_manager.h" bodystart="244" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_kernel_manager_1ae5288531d5c8bfa7d8c1f0bad6964fd2" prot="public" static="no" mutable="no">
+        <type><ref refid="classnest_1_1_v_p_manager" kindref="compound">VPManager</ref></type>
+        <definition>VPManager nest::KernelManager::vp_manager</definition>
+        <argsstring></argsstring>
+        <name>vp_manager</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="245" column="13" bodyfile="nestkernel/kernel_manager.h" bodystart="245" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_kernel_manager_1a9b688b52b6a9c1673051084e681720de" prot="public" static="no" mutable="no">
+        <type><ref refid="classnest_1_1_random_manager" kindref="compound">RandomManager</ref></type>
+        <definition>RandomManager nest::KernelManager::random_manager</definition>
+        <argsstring></argsstring>
+        <name>random_manager</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="246" column="17" bodyfile="nestkernel/kernel_manager.h" bodystart="246" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_kernel_manager_1a4feb2ae20c19197830bf57c5e7247560" prot="public" static="no" mutable="no">
+        <type><ref refid="classnest_1_1_simulation_manager" kindref="compound">SimulationManager</ref></type>
+        <definition>SimulationManager nest::KernelManager::simulation_manager</definition>
+        <argsstring></argsstring>
+        <name>simulation_manager</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="247" column="21" bodyfile="nestkernel/kernel_manager.h" bodystart="247" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_kernel_manager_1a81f62008f5752675d486a9d91ef05831" prot="public" static="no" mutable="no">
+        <type><ref refid="classnest_1_1_model_range_manager" kindref="compound">ModelRangeManager</ref></type>
+        <definition>ModelRangeManager nest::KernelManager::modelrange_manager</definition>
+        <argsstring></argsstring>
+        <name>modelrange_manager</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="248" column="21" bodyfile="nestkernel/kernel_manager.h" bodystart="248" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_kernel_manager_1a0e27508a351fe5c17f42aea52caedb3e" prot="public" static="no" mutable="no">
+        <type><ref refid="classnest_1_1_connection_manager" kindref="compound">ConnectionManager</ref></type>
+        <definition>ConnectionManager nest::KernelManager::connection_manager</definition>
+        <argsstring></argsstring>
+        <name>connection_manager</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="249" column="21" bodyfile="nestkernel/kernel_manager.h" bodystart="249" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_kernel_manager_1a1bb61f56ad18de2dbd28058a4b05256b" prot="public" static="no" mutable="no">
+        <type><ref refid="classnest_1_1_s_p_manager" kindref="compound">SPManager</ref></type>
+        <definition>SPManager nest::KernelManager::sp_manager</definition>
+        <argsstring></argsstring>
+        <name>sp_manager</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="250" column="13" bodyfile="nestkernel/kernel_manager.h" bodystart="250" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_kernel_manager_1a39a94f269d1aeb7363ae5c33783b762e" prot="public" static="no" mutable="no">
+        <type><ref refid="classnest_1_1_event_delivery_manager" kindref="compound">EventDeliveryManager</ref></type>
+        <definition>EventDeliveryManager nest::KernelManager::event_delivery_manager</definition>
+        <argsstring></argsstring>
+        <name>event_delivery_manager</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="251" column="24" bodyfile="nestkernel/kernel_manager.h" bodystart="251" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_kernel_manager_1a3558ff4918f9a1a561a11f65ae757c76" prot="public" static="no" mutable="no">
+        <type><ref refid="classnest_1_1_model_manager" kindref="compound">ModelManager</ref></type>
+        <definition>ModelManager nest::KernelManager::model_manager</definition>
+        <argsstring></argsstring>
+        <name>model_manager</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="252" column="16" bodyfile="nestkernel/kernel_manager.h" bodystart="252" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_kernel_manager_1a1ee79f33da362c06ce4d394afbef2ae8" prot="public" static="no" mutable="no">
+        <type><ref refid="classnest_1_1_m_u_s_i_c_manager" kindref="compound">MUSICManager</ref></type>
+        <definition>MUSICManager nest::KernelManager::music_manager</definition>
+        <argsstring></argsstring>
+        <name>music_manager</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="253" column="16" bodyfile="nestkernel/kernel_manager.h" bodystart="253" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_kernel_manager_1a209742409c6552dbf3923b892a594db3" prot="public" static="no" mutable="no">
+        <type><ref refid="classnest_1_1_node_manager" kindref="compound">NodeManager</ref></type>
+        <definition>NodeManager nest::KernelManager::node_manager</definition>
+        <argsstring></argsstring>
+        <name>node_manager</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="254" column="15" bodyfile="nestkernel/kernel_manager.h" bodystart="254" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_kernel_manager_1abbcfa9636c48be572ae900cd57958a2f" prot="public" static="no" mutable="no">
+        <type><ref refid="classnest_1_1_i_o_manager" kindref="compound">IOManager</ref></type>
+        <definition>IOManager nest::KernelManager::io_manager</definition>
+        <argsstring></argsstring>
+        <name>io_manager</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="255" column="13" bodyfile="nestkernel/kernel_manager.h" bodystart="255" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classnest_1_1_kernel_manager_1a81a82ce46e44ef14c7575f82e5014681" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>nest::KernelManager::KernelManager</definition>
+        <argsstring>()</argsstring>
+        <name>KernelManager</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="177" column="3" bodyfile="nestkernel/kernel_manager.cpp" bodystart="47" bodyend="77"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_kernel_manager_1a4438fbfb8c9502280ebb0d79a58a77e4" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>nest::KernelManager::~KernelManager</definition>
+        <argsstring>()</argsstring>
+        <name>~KernelManager</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="178" column="3" bodyfile="nestkernel/kernel_manager.cpp" bodystart="79" bodyend="81"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_kernel_manager_1a0443e92861fca1a77fec8de473b6e373" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>nest::KernelManager::KernelManager</definition>
+        <argsstring>(KernelManager const &amp;)</argsstring>
+        <name>KernelManager</name>
+        <param>
+          <type><ref refid="classnest_1_1_kernel_manager" kindref="compound">KernelManager</ref> const &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="184" column="3"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_kernel_manager_1ac3494cba9bf4b445b8a6ec12b4e783d2" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::KernelManager::operator=</definition>
+        <argsstring>(KernelManager const &amp;)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type><ref refid="classnest_1_1_kernel_manager" kindref="compound">KernelManager</ref> const &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="185" column="8"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classnest_1_1_kernel_manager_1a4f1afc42929ded7d2911ee8976347d3c" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::KernelManager::create_kernel_manager</definition>
+        <argsstring>()</argsstring>
+        <name>create_kernel_manager</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Create/destroy and access the <ref refid="classnest_1_1_kernel_manager" kindref="compound">KernelManager</ref> singleton. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="191" column="15" bodyfile="nestkernel/kernel_manager.cpp" bodystart="28" bodyend="38"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_kernel_manager_1a1ee251f866b72233335ebc51be88b3db" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::KernelManager::destroy_kernel_manager</definition>
+        <argsstring>()</argsstring>
+        <name>destroy_kernel_manager</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="192" column="15" bodyfile="nestkernel/kernel_manager.cpp" bodystart="41" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_kernel_manager_1a24600a9e337f4c8d896d81d9b0d244bf" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classnest_1_1_kernel_manager" kindref="compound">KernelManager</ref> &amp;</type>
+        <definition>nest::KernelManager &amp; nest::KernelManager::get_kernel_manager</definition>
+        <argsstring>()</argsstring>
+        <name>get_kernel_manager</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="193" column="24" bodyfile="nestkernel/kernel_manager.h" bodystart="267" bodyend="271"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classnest_1_1_kernel_manager_1aa731562f03c98d8fa67f1d530056ede2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::KernelManager::initialize</definition>
+        <argsstring>()</argsstring>
+        <name>initialize</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Prepare kernel for operation.</para>
+<para>This method calls the initialization methods of the specific managers in the proper order.</para>
+<para><simplesect kind="see"><para><ref refid="classnest_1_1_kernel_manager_1a9e1cccd4670b1da1f68208afb5e6622f" kindref="member">finalize()</ref>, <ref refid="classnest_1_1_kernel_manager_1ab02294c81d950069b7d861c9ada5d7df" kindref="member">reset()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="203" column="8" bodyfile="nestkernel/kernel_manager.cpp" bodystart="84" bodyend="93"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_kernel_manager_1a9e1cccd4670b1da1f68208afb5e6622f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::KernelManager::finalize</definition>
+        <argsstring>()</argsstring>
+        <name>finalize</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Take down kernel after operation.</para>
+<para>This method calls the finalization methods of the specific managers in the proper order, i.e., inverse to <ref refid="classnest_1_1_kernel_manager_1aa731562f03c98d8fa67f1d530056ede2" kindref="member">initialize()</ref>.</para>
+<para><simplesect kind="see"><para><ref refid="classnest_1_1_kernel_manager_1aa731562f03c98d8fa67f1d530056ede2" kindref="member">initialize()</ref>, <ref refid="classnest_1_1_kernel_manager_1ab02294c81d950069b7d861c9ada5d7df" kindref="member">reset()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="213" column="8" bodyfile="nestkernel/kernel_manager.cpp" bodystart="114" bodyend="121"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_kernel_manager_1ab02294c81d950069b7d861c9ada5d7df" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::KernelManager::reset</definition>
+        <argsstring>()</argsstring>
+        <name>reset</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Reset kernel.</para>
+<para>Resets the kernel by finalizing and initializing all managers.</para>
+<para><simplesect kind="see"><para><ref refid="classnest_1_1_kernel_manager_1aa731562f03c98d8fa67f1d530056ede2" kindref="member">initialize()</ref>, <ref refid="classnest_1_1_kernel_manager_1a9e1cccd4670b1da1f68208afb5e6622f" kindref="member">finalize()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="222" column="8" bodyfile="nestkernel/kernel_manager.cpp" bodystart="124" bodyend="128"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_kernel_manager_1a31716dc6e65749cdfd87bcb6c637f6ed" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::KernelManager::change_number_of_threads</definition>
+        <argsstring>(thread new_num_threads)</argsstring>
+        <name>change_number_of_threads</name>
+        <param>
+          <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>new_num_threads</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Change number of threads.</para>
+<para>Set the new number of threads on all managers by calling <ref refid="classnest_1_1_kernel_manager_1a31716dc6e65749cdfd87bcb6c637f6ed" kindref="member">change_number_of_threads()</ref> on each of them. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="230" column="8" bodyfile="nestkernel/kernel_manager.cpp" bodystart="131" bodyend="145"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_kernel_manager_1a5faf0b3ca89382ef740ef151f5dedd41" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::KernelManager::set_status</definition>
+        <argsstring>(const DictionaryDatum &amp;)</argsstring>
+        <name>set_status</name>
+        <param>
+          <type>const DictionaryDatum &amp;</type>
+          <defname>dict</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="232" column="8" bodyfile="nestkernel/kernel_manager.cpp" bodystart="148" bodyend="156"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_kernel_manager_1af192b68cd69260d1d7e6547628282b16" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::KernelManager::get_status</definition>
+        <argsstring>(DictionaryDatum &amp;)</argsstring>
+        <name>get_status</name>
+        <param>
+          <type>DictionaryDatum &amp;</type>
+          <defname>dict</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="233" column="8" bodyfile="nestkernel/kernel_manager.cpp" bodystart="159" bodyend="167"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_kernel_manager_1aa04eacfced16ba64667115aea94ff79a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::KernelManager::prepare</definition>
+        <argsstring>()</argsstring>
+        <name>prepare</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="235" column="8" bodyfile="nestkernel/kernel_manager.cpp" bodystart="96" bodyend="102"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_kernel_manager_1a342dc637e6149e63765cb49a1215690b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::KernelManager::cleanup</definition>
+        <argsstring>()</argsstring>
+        <name>cleanup</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="236" column="8" bodyfile="nestkernel/kernel_manager.cpp" bodystart="105" bodyend="111"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_kernel_manager_1abe6a82bb839f73b5060449756e4efb1e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::KernelManager::is_initialized</definition>
+        <argsstring>() const</argsstring>
+        <name>is_initialized</name>
+        <briefdescription>
+<para>Returns true if kernel is initialized. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="239" column="8" bodyfile="nestkernel/kernel_manager.h" bodystart="280" bodyend="283"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_kernel_manager_1a99178c661d0c4145d812c7e576064a22" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>unsigned long</type>
+        <definition>unsigned long nest::KernelManager::get_fingerprint</definition>
+        <argsstring>() const</argsstring>
+        <name>get_fingerprint</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/kernel_manager.h" line="241" column="17" bodyfile="nestkernel/kernel_manager.h" bodystart="286" bodyend="289"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="6">
+        <label>nest::NodeManager</label>
+        <link refid="classnest_1_1_node_manager"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>nest::SPManager</label>
+        <link refid="classnest_1_1_s_p_manager"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>nest::ModelRangeManager</label>
+        <link refid="classnest_1_1_model_range_manager"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>nest::LoggingManager</label>
+        <link refid="classnest_1_1_logging_manager"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>nest::ManagerInterface</label>
+        <link refid="classnest_1_1_manager_interface"/>
+      </node>
+      <node id="7">
+        <label>nest::SimulationManager</label>
+        <link refid="classnest_1_1_simulation_manager"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>nest::RandomManager</label>
+        <link refid="classnest_1_1_random_manager"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>nest::VPManager</label>
+        <link refid="classnest_1_1_v_p_manager"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>nest::MPIManager</label>
+        <link refid="classnest_1_1_m_p_i_manager"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>nest::IOManager</label>
+        <link refid="classnest_1_1_i_o_manager"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>nest::ModelManager</label>
+        <link refid="classnest_1_1_model_manager"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>nest::EventDeliveryManager</label>
+        <link refid="classnest_1_1_event_delivery_manager"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>nest::KernelManager</label>
+        <link refid="classnest_1_1_kernel_manager"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>+sp_manager</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>+music_manager</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>+vp_manager</edgelabel>
+        </childnode>
+        <childnode refid="6" relation="usage">
+          <edgelabel>+node_manager</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>+simulation_manager</edgelabel>
+        </childnode>
+        <childnode refid="8" relation="usage">
+          <edgelabel>+random_manager</edgelabel>
+        </childnode>
+        <childnode refid="9" relation="usage">
+          <edgelabel>+logging_manager</edgelabel>
+        </childnode>
+        <childnode refid="10" relation="usage">
+          <edgelabel>+mpi_manager</edgelabel>
+        </childnode>
+        <childnode refid="11" relation="usage">
+          <edgelabel>+event_delivery_manager</edgelabel>
+        </childnode>
+        <childnode refid="12" relation="usage">
+          <edgelabel>+connection_manager</edgelabel>
+        </childnode>
+        <childnode refid="13" relation="usage">
+          <edgelabel>+modelrange_manager</edgelabel>
+        </childnode>
+        <childnode refid="14" relation="usage">
+          <edgelabel>+io_manager</edgelabel>
+        </childnode>
+        <childnode refid="15" relation="usage">
+          <edgelabel>+model_manager</edgelabel>
+        </childnode>
+      </node>
+      <node id="12">
+        <label>nest::ConnectionManager</label>
+        <link refid="classnest_1_1_connection_manager"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>nest::MUSICManager</label>
+        <link refid="classnest_1_1_m_u_s_i_c_manager"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="nestkernel/kernel_manager.h" line="174" column="1" bodyfile="nestkernel/kernel_manager.h" bodystart="175" bodyend="260"/>
+    <listofallmembers>
+      <member refid="classnest_1_1_kernel_manager_1a31716dc6e65749cdfd87bcb6c637f6ed" prot="public" virt="non-virtual"><scope>nest::KernelManager</scope><name>change_number_of_threads</name></member>
+      <member refid="classnest_1_1_kernel_manager_1a342dc637e6149e63765cb49a1215690b" prot="public" virt="non-virtual"><scope>nest::KernelManager</scope><name>cleanup</name></member>
+      <member refid="classnest_1_1_kernel_manager_1a0e27508a351fe5c17f42aea52caedb3e" prot="public" virt="non-virtual"><scope>nest::KernelManager</scope><name>connection_manager</name></member>
+      <member refid="classnest_1_1_kernel_manager_1a4f1afc42929ded7d2911ee8976347d3c" prot="public" virt="non-virtual"><scope>nest::KernelManager</scope><name>create_kernel_manager</name></member>
+      <member refid="classnest_1_1_kernel_manager_1a1ee251f866b72233335ebc51be88b3db" prot="public" virt="non-virtual"><scope>nest::KernelManager</scope><name>destroy_kernel_manager</name></member>
+      <member refid="classnest_1_1_kernel_manager_1a39a94f269d1aeb7363ae5c33783b762e" prot="public" virt="non-virtual"><scope>nest::KernelManager</scope><name>event_delivery_manager</name></member>
+      <member refid="classnest_1_1_kernel_manager_1a9e1cccd4670b1da1f68208afb5e6622f" prot="public" virt="non-virtual"><scope>nest::KernelManager</scope><name>finalize</name></member>
+      <member refid="classnest_1_1_kernel_manager_1ad6d415e355dda65203b6cdb4535548da" prot="private" virt="non-virtual"><scope>nest::KernelManager</scope><name>fingerprint_</name></member>
+      <member refid="classnest_1_1_kernel_manager_1a99178c661d0c4145d812c7e576064a22" prot="public" virt="non-virtual"><scope>nest::KernelManager</scope><name>get_fingerprint</name></member>
+      <member refid="classnest_1_1_kernel_manager_1a24600a9e337f4c8d896d81d9b0d244bf" prot="public" virt="non-virtual"><scope>nest::KernelManager</scope><name>get_kernel_manager</name></member>
+      <member refid="classnest_1_1_kernel_manager_1af192b68cd69260d1d7e6547628282b16" prot="public" virt="non-virtual"><scope>nest::KernelManager</scope><name>get_status</name></member>
+      <member refid="classnest_1_1_kernel_manager_1aa731562f03c98d8fa67f1d530056ede2" prot="public" virt="non-virtual"><scope>nest::KernelManager</scope><name>initialize</name></member>
+      <member refid="classnest_1_1_kernel_manager_1a9db63ca2a845abc6a8200be8389ab583" prot="private" virt="non-virtual"><scope>nest::KernelManager</scope><name>initialized_</name></member>
+      <member refid="classnest_1_1_kernel_manager_1abbcfa9636c48be572ae900cd57958a2f" prot="public" virt="non-virtual"><scope>nest::KernelManager</scope><name>io_manager</name></member>
+      <member refid="classnest_1_1_kernel_manager_1abe6a82bb839f73b5060449756e4efb1e" prot="public" virt="non-virtual"><scope>nest::KernelManager</scope><name>is_initialized</name></member>
+      <member refid="classnest_1_1_kernel_manager_1aa39ba4be729d9f15a353f34e73824ad9" prot="private" virt="non-virtual"><scope>nest::KernelManager</scope><name>kernel_manager_instance_</name></member>
+      <member refid="classnest_1_1_kernel_manager_1a81a82ce46e44ef14c7575f82e5014681" prot="private" virt="non-virtual"><scope>nest::KernelManager</scope><name>KernelManager</name></member>
+      <member refid="classnest_1_1_kernel_manager_1a0443e92861fca1a77fec8de473b6e373" prot="private" virt="non-virtual"><scope>nest::KernelManager</scope><name>KernelManager</name></member>
+      <member refid="classnest_1_1_kernel_manager_1a1fd7bc2174776a5c17db95b72cbd773d" prot="public" virt="non-virtual"><scope>nest::KernelManager</scope><name>logging_manager</name></member>
+      <member refid="classnest_1_1_kernel_manager_1afef487770e452bf70b65ea57e2eddf5d" prot="private" virt="non-virtual"><scope>nest::KernelManager</scope><name>managers</name></member>
+      <member refid="classnest_1_1_kernel_manager_1a3558ff4918f9a1a561a11f65ae757c76" prot="public" virt="non-virtual"><scope>nest::KernelManager</scope><name>model_manager</name></member>
+      <member refid="classnest_1_1_kernel_manager_1a81f62008f5752675d486a9d91ef05831" prot="public" virt="non-virtual"><scope>nest::KernelManager</scope><name>modelrange_manager</name></member>
+      <member refid="classnest_1_1_kernel_manager_1acb6c54ef758858ed478c76415e081de7" prot="public" virt="non-virtual"><scope>nest::KernelManager</scope><name>mpi_manager</name></member>
+      <member refid="classnest_1_1_kernel_manager_1a1ee79f33da362c06ce4d394afbef2ae8" prot="public" virt="non-virtual"><scope>nest::KernelManager</scope><name>music_manager</name></member>
+      <member refid="classnest_1_1_kernel_manager_1a209742409c6552dbf3923b892a594db3" prot="public" virt="non-virtual"><scope>nest::KernelManager</scope><name>node_manager</name></member>
+      <member refid="classnest_1_1_kernel_manager_1ac3494cba9bf4b445b8a6ec12b4e783d2" prot="private" virt="non-virtual"><scope>nest::KernelManager</scope><name>operator=</name></member>
+      <member refid="classnest_1_1_kernel_manager_1aa04eacfced16ba64667115aea94ff79a" prot="public" virt="non-virtual"><scope>nest::KernelManager</scope><name>prepare</name></member>
+      <member refid="classnest_1_1_kernel_manager_1a9b688b52b6a9c1673051084e681720de" prot="public" virt="non-virtual"><scope>nest::KernelManager</scope><name>random_manager</name></member>
+      <member refid="classnest_1_1_kernel_manager_1ab02294c81d950069b7d861c9ada5d7df" prot="public" virt="non-virtual"><scope>nest::KernelManager</scope><name>reset</name></member>
+      <member refid="classnest_1_1_kernel_manager_1a5faf0b3ca89382ef740ef151f5dedd41" prot="public" virt="non-virtual"><scope>nest::KernelManager</scope><name>set_status</name></member>
+      <member refid="classnest_1_1_kernel_manager_1a4feb2ae20c19197830bf57c5e7247560" prot="public" virt="non-virtual"><scope>nest::KernelManager</scope><name>simulation_manager</name></member>
+      <member refid="classnest_1_1_kernel_manager_1a1bb61f56ad18de2dbd28058a4b05256b" prot="public" virt="non-virtual"><scope>nest::KernelManager</scope><name>sp_manager</name></member>
+      <member refid="classnest_1_1_kernel_manager_1ae5288531d5c8bfa7d8c1f0bad6964fd2" prot="public" virt="non-virtual"><scope>nest::KernelManager</scope><name>vp_manager</name></member>
+      <member refid="classnest_1_1_kernel_manager_1a4438fbfb8c9502280ebb0d79a58a77e4" prot="private" virt="non-virtual"><scope>nest::KernelManager</scope><name>~KernelManager</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

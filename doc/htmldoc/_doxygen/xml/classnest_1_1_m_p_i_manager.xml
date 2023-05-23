@@ -1,0 +1,1584 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classnest_1_1_m_p_i_manager" kind="class" language="C++" prot="public">
+    <compoundname>nest::MPIManager</compoundname>
+    <basecompoundref refid="classnest_1_1_manager_interface" prot="public" virt="non-virtual">nest::ManagerInterface</basecompoundref>
+    <includes refid="mpi__manager_8h" local="no">mpi_manager.h</includes>
+    <innerclass refid="classnest_1_1_m_p_i_manager_1_1_off_grid_spike" prot="public">nest::MPIManager::OffGridSpike</innerclass>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classnest_1_1_m_p_i_manager_1a425422a2d1c254877762d68633f935a5" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int nest::MPIManager::num_processes_</definition>
+        <argsstring></argsstring>
+        <name>num_processes_</name>
+        <briefdescription>
+<para>number of MPI processes </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="323" column="7" bodyfile="nestkernel/mpi_manager.h" bodystart="323" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_m_p_i_manager_1aa1f343be1c8a50737afb6b00ab3e5a82" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int nest::MPIManager::rank_</definition>
+        <argsstring></argsstring>
+        <name>rank_</name>
+        <briefdescription>
+<para>rank of the MPI process </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="324" column="7" bodyfile="nestkernel/mpi_manager.h" bodystart="324" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_m_p_i_manager_1a67fb5fafad3290bf4d1bb35ddeb9a467" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int nest::MPIManager::send_buffer_size_</definition>
+        <argsstring></argsstring>
+        <name>send_buffer_size_</name>
+        <briefdescription>
+<para>expected size of send buffer </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="325" column="7" bodyfile="nestkernel/mpi_manager.h" bodystart="325" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_m_p_i_manager_1a788e4de7bc751db11d4ce4df46539770" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int nest::MPIManager::recv_buffer_size_</definition>
+        <argsstring></argsstring>
+        <name>recv_buffer_size_</name>
+        <briefdescription>
+<para>size of receive buffer </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="326" column="7" bodyfile="nestkernel/mpi_manager.h" bodystart="326" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_m_p_i_manager_1a38009b4f6f058e48c255356daa4b6287" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::MPIManager::use_mpi_</definition>
+        <argsstring></argsstring>
+        <name>use_mpi_</name>
+        <briefdescription>
+<para>whether MPI is used </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="327" column="8" bodyfile="nestkernel/mpi_manager.h" bodystart="327" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_m_p_i_manager_1a251570e0cee30162885025726e87d908" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t nest::MPIManager::buffer_size_target_data_</definition>
+        <argsstring></argsstring>
+        <name>buffer_size_target_data_</name>
+        <briefdescription>
+<para>total size of MPI buffer for </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="328" column="10" bodyfile="nestkernel/mpi_manager.h" bodystart="328" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_m_p_i_manager_1ae1ca94ababdfeae9b75f675b53797971" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t nest::MPIManager::buffer_size_spike_data_</definition>
+        <argsstring></argsstring>
+        <name>buffer_size_spike_data_</name>
+        <briefdescription>
+<para>total size of MPI buffer for </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="331" column="10" bodyfile="nestkernel/mpi_manager.h" bodystart="331" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_m_p_i_manager_1a07ec4745cbe5f33fd6f22ec026b539b5" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t nest::MPIManager::max_buffer_size_target_data_</definition>
+        <argsstring></argsstring>
+        <name>max_buffer_size_target_data_</name>
+        <briefdescription>
+<para>maximal size of MPI buffer for </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="334" column="10" bodyfile="nestkernel/mpi_manager.h" bodystart="334" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_m_p_i_manager_1a7ec3474591c046215b7b13450d3c4259" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t nest::MPIManager::max_buffer_size_spike_data_</definition>
+        <argsstring></argsstring>
+        <name>max_buffer_size_spike_data_</name>
+        <briefdescription>
+<para>maximal size of MPI buffer for </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="337" column="10" bodyfile="nestkernel/mpi_manager.h" bodystart="337" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_m_p_i_manager_1ada8b0b0a12ee7459c908bf0bbd7da613" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::MPIManager::adaptive_target_buffers_</definition>
+        <argsstring></argsstring>
+        <name>adaptive_target_buffers_</name>
+        <briefdescription>
+<para>whether MPI buffers for communication of </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="340" column="8" bodyfile="nestkernel/mpi_manager.h" bodystart="340" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_m_p_i_manager_1af73161718b3ea5f05da0d7e92f5d3d6b" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::MPIManager::adaptive_spike_buffers_</definition>
+        <argsstring></argsstring>
+        <name>adaptive_spike_buffers_</name>
+        <briefdescription>
+<para>whether MPI buffers for communication of </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="343" column="8" bodyfile="nestkernel/mpi_manager.h" bodystart="343" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_m_p_i_manager_1a679f79cb405f71b95646106d4a6693ac" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::MPIManager::growth_factor_buffer_spike_data_</definition>
+        <argsstring></argsstring>
+        <name>growth_factor_buffer_spike_data_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="346" column="10" bodyfile="nestkernel/mpi_manager.h" bodystart="346" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_m_p_i_manager_1a8e5cbd63224766d80bbe3c77c2bebe73" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::MPIManager::growth_factor_buffer_target_data_</definition>
+        <argsstring></argsstring>
+        <name>growth_factor_buffer_target_data_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="347" column="10" bodyfile="nestkernel/mpi_manager.h" bodystart="347" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_m_p_i_manager_1a6354c6fc26b13dc32a2030730fd18867" prot="private" static="no" mutable="no">
+        <type>double</type>
+        <definition>double nest::MPIManager::shrink_factor_buffer_spike_data_</definition>
+        <argsstring></argsstring>
+        <name>shrink_factor_buffer_spike_data_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="349" column="10" bodyfile="nestkernel/mpi_manager.h" bodystart="349" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_m_p_i_manager_1a5ae689d0a8108ef49b59c67d5d6a2193" prot="private" static="no" mutable="no">
+        <type>unsigned int</type>
+        <definition>unsigned int nest::MPIManager::send_recv_count_spike_data_per_rank_</definition>
+        <argsstring></argsstring>
+        <name>send_recv_count_spike_data_per_rank_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="351" column="16" bodyfile="nestkernel/mpi_manager.h" bodystart="351" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_m_p_i_manager_1a8fdf6d8eb671e809d67579cd46a5c065" prot="private" static="no" mutable="no">
+        <type>unsigned int</type>
+        <definition>unsigned int nest::MPIManager::send_recv_count_target_data_per_rank_</definition>
+        <argsstring></argsstring>
+        <name>send_recv_count_target_data_per_rank_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="352" column="16" bodyfile="nestkernel/mpi_manager.h" bodystart="352" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_m_p_i_manager_1a21b2930bdc41519c882343edfbcd5714" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; int &gt;</type>
+        <definition>std::vector&lt; int &gt; nest::MPIManager::recv_counts_secondary_events_in_int_per_rank_</definition>
+        <argsstring></argsstring>
+        <name>recv_counts_secondary_events_in_int_per_rank_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>how many secondary elements (in ints) will be received from each rank </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="354" column="15" bodyfile="nestkernel/mpi_manager.h" bodystart="354" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_m_p_i_manager_1a009f41cc3ad6dce8b97158dc7ccf2631" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; int &gt;</type>
+        <definition>std::vector&lt; int &gt; nest::MPIManager::send_counts_secondary_events_in_int_per_rank_</definition>
+        <argsstring></argsstring>
+        <name>send_counts_secondary_events_in_int_per_rank_</name>
+        <briefdescription>
+<para>how many secondary elements (in ints) will be sent to each rank </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="357" column="5" bodyfile="nestkernel/mpi_manager.h" bodystart="357" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_m_p_i_manager_1af032a50939d2919d7e790e970130b178" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; int &gt;</type>
+        <definition>std::vector&lt; int &gt; nest::MPIManager::recv_displacements_secondary_events_in_int_per_rank_</definition>
+        <argsstring></argsstring>
+        <name>recv_displacements_secondary_events_in_int_per_rank_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>offset in the MPI receive buffer (in ints) at which elements received from each rank will be written </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="359" column="15" bodyfile="nestkernel/mpi_manager.h" bodystart="359" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_m_p_i_manager_1a3ad3002dfbbdc1a079bfc36d5d843501" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; int &gt;</type>
+        <definition>std::vector&lt; int &gt; nest::MPIManager::send_displacements_secondary_events_in_int_per_rank_</definition>
+        <argsstring></argsstring>
+        <name>send_displacements_secondary_events_in_int_per_rank_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>offset in the MPI send buffer (in ints) from which elements send to each rank will be read </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="363" column="15" bodyfile="nestkernel/mpi_manager.h" bodystart="363" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a6aae08ff665103404592b801bee4fc8d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>nest::MPIManager::MPIManager</definition>
+        <argsstring>()</argsstring>
+        <name>MPIManager</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="63" column="3" bodyfile="nestkernel/mpi_manager.cpp" bodystart="54" bodyend="78"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a50fc6121179dc705ff7ac68885e0caf8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>nest::MPIManager::~MPIManager</definition>
+        <argsstring>() override</argsstring>
+        <name>~MPIManager</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="64" column="3" bodyfile="nestkernel/mpi_manager.h" bodystart="64" bodyend="66"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a255066ece2aedc9d6faef73e63286664" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::MPIManager::initialize</definition>
+        <argsstring>() override</argsstring>
+        <name>initialize</name>
+        <reimplements refid="classnest_1_1_manager_interface_1a43f881ab34500bff012a2514ad99ad79">initialize</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Prepare manager for operation.</para>
+<para>After this method has completed, the manager should be completely initialized and &quot;ready for action&quot;.</para>
+<para><simplesect kind="note"><para>Initialization of any given manager may depend on other managers having been initialized before. <ref refid="classnest_1_1_kernel_manager_1aa731562f03c98d8fa67f1d530056ede2" kindref="member">KernelManager::initialize()</ref> is responsible for calling the initialization routines on the specific managers in correct order.</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="classnest_1_1_m_p_i_manager_1a09a36899c01cb8ca1acebddcd55cb380" kindref="member">finalize()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="68" column="8" bodyfile="nestkernel/mpi_manager.cpp" bodystart="183" bodyend="198"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a09a36899c01cb8ca1acebddcd55cb380" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::MPIManager::finalize</definition>
+        <argsstring>() override</argsstring>
+        <name>finalize</name>
+        <reimplements refid="classnest_1_1_manager_interface_1a329d00818a7c57d2c7f9e83dbed56606">finalize</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Take down manager after operation.</para>
+<para>After this method has completed, all dynamic data structures created by the manager shall be deallocated and containers emptied. Plain variables need not be reset.</para>
+<para><simplesect kind="note"><para>Finalization of any given manager may depend on other managers not having been finalized yet. <ref refid="classnest_1_1_kernel_manager_1a9e1cccd4670b1da1f68208afb5e6622f" kindref="member">KernelManager::finalize()</ref> is responsible for calling the initialization routines on the specific managers in correct order, i.e., the opposite order of <ref refid="classnest_1_1_m_p_i_manager_1a255066ece2aedc9d6faef73e63286664" kindref="member">initialize()</ref> calls.</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="classnest_1_1_m_p_i_manager_1a255066ece2aedc9d6faef73e63286664" kindref="member">initialize()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="69" column="8" bodyfile="nestkernel/mpi_manager.cpp" bodystart="201" bodyend="203"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a97c0ce2af5728bb4b425edd45b010daf" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::MPIManager::set_status</definition>
+        <argsstring>(const DictionaryDatum &amp;) override</argsstring>
+        <name>set_status</name>
+        <reimplements refid="classnest_1_1_manager_interface_1ad940557204d456c167f541dd72c81193">set_status</reimplements>
+        <param>
+          <type>const DictionaryDatum &amp;</type>
+          <defname>dict</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="70" column="8" bodyfile="nestkernel/mpi_manager.cpp" bodystart="206" bodyend="234"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1aaa37ecf1d94ec3d8bb0b5f45033d8a6b" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::MPIManager::get_status</definition>
+        <argsstring>(DictionaryDatum &amp;) override</argsstring>
+        <name>get_status</name>
+        <reimplements refid="classnest_1_1_manager_interface_1a0935d5415eafd0bc54d2c01294595a80">get_status</reimplements>
+        <param>
+          <type>DictionaryDatum &amp;</type>
+          <defname>dict</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="71" column="8" bodyfile="nestkernel/mpi_manager.cpp" bodystart="237" bodyend="250"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a339bb79dd6ca362ef20da865ec7feca7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::MPIManager::init_mpi</definition>
+        <argsstring>(int *argc, char **argv[])</argsstring>
+        <name>init_mpi</name>
+        <param>
+          <type>int *</type>
+          <declname>argc</declname>
+        </param>
+        <param>
+          <type>char **</type>
+          <declname>argv</declname>
+          <array>[]</array>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="73" column="8" bodyfile="nestkernel/mpi_manager.cpp" bodystart="83" bodyend="96"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a496c51140dd2f76db937357bb70ac565" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+        <definition>thread nest::MPIManager::get_num_processes</definition>
+        <argsstring>() const</argsstring>
+        <name>get_num_processes</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Return the number of processes used during simulation. This functions returns the number of processes. Since each process has the same number of threads, the total number of threads is given by get_num_threads()*get_num_processes(). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="90" column="10" bodyfile="nestkernel/mpi_manager.h" bodystart="513" bodyend="516"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a746fe27ef39fe10ee6acbfa58957aeb6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::MPIManager::set_num_processes</definition>
+        <argsstring>(thread n_procs)</argsstring>
+        <name>set_num_processes</name>
+        <param>
+          <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>n_procs</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Set the number of processes state variable. This is used by dryrun_mode. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="96" column="8" bodyfile="nestkernel/mpi_manager.h" bodystart="519" bodyend="522"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a6fa640ce78eda75f8304879ff396ab78" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+        <definition>thread nest::MPIManager::get_rank</definition>
+        <argsstring>() const</argsstring>
+        <name>get_rank</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get rank of MPI process </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="101" column="10" bodyfile="nestkernel/mpi_manager.h" bodystart="525" bodyend="528"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a1fbad26739451a698618a1407b85124f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+        <definition>nest::thread nest::MPIManager::get_process_id_of_vp</definition>
+        <argsstring>(const thread vp) const</argsstring>
+        <name>get_process_id_of_vp</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>vp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Return the process id for a given virtual process. The real process&apos; id of a virtual process is defined by the relation: p = (vp mod P), where P is the total number of processes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="108" column="10" bodyfile="nestkernel/mpi_manager_impl.h" bodystart="39" bodyend="42"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1aae0ed1a42dfe4326ef1e6ab33411f6a9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+        <definition>nest::thread nest::MPIManager::get_process_id_of_node_id</definition>
+        <argsstring>(const index node_id) const</argsstring>
+        <name>get_process_id_of_node_id</name>
+        <param>
+          <type>const <ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+          <declname>node_id</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="113" column="10" bodyfile="nestkernel/mpi_manager_impl.h" bodystart="97" bodyend="100"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a52182d4b13ae15f937d8f1a9d844b8ee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::MPIManager::mpi_finalize</definition>
+        <argsstring>(int exitcode)</argsstring>
+        <name>mpi_finalize</name>
+        <param>
+          <type>int</type>
+          <declname>exitcode</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Finalize MPI communication (needs to be separate from <ref refid="classnest_1_1_m_p_i_manager_1a09a36899c01cb8ca1acebddcd55cb380" kindref="member">MPIManager::finalize</ref> when compiled with MUSIC since spikes can arrive and handlers called here) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="119" column="8" bodyfile="nestkernel/mpi_manager.cpp" bodystart="282" bodyend="284"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a5cabda0a34c4a3e579f9df617576d09f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::MPIManager::mpi_abort</definition>
+        <argsstring>(int exitcode)</argsstring>
+        <name>mpi_abort</name>
+        <param>
+          <type>int</type>
+          <declname>exitcode</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>If MPI is available, this method calls MPI_Abort with the exitcode. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="124" column="8" bodyfile="nestkernel/mpi_manager.h" bodystart="693" bodyend="695"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a58b6aff1f3e00bf84e886cce814bb708" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::MPIManager::communicate</definition>
+        <argsstring>(std::vector&lt; long &gt; &amp;send_buffer, std::vector&lt; long &gt; &amp;recv_buffer)</argsstring>
+        <name>communicate</name>
+        <param>
+          <type>std::vector&lt; long &gt; &amp;</type>
+          <declname>send_buffer</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; long &gt; &amp;</type>
+          <declname>recv_buffer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="130" column="8" bodyfile="nestkernel/mpi_manager.cpp" bodystart="1061" bodyend="1063"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a3d071cc58ba12b005c083bf5a5e21d52" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::MPIManager::communicate</definition>
+        <argsstring>(std::vector&lt; unsigned int &gt; &amp;send_buffer, std::vector&lt; unsigned int &gt; &amp;recv_buffer, std::vector&lt; int &gt; &amp;displacements)</argsstring>
+        <name>communicate</name>
+        <param>
+          <type>std::vector&lt; unsigned int &gt; &amp;</type>
+          <declname>send_buffer</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; unsigned int &gt; &amp;</type>
+          <declname>recv_buffer</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; int &gt; &amp;</type>
+          <declname>displacements</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>communicate (on-grid) if compiled without MPI </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="132" column="8" bodyfile="nestkernel/mpi_manager.cpp" bodystart="991" bodyend="1003"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a764b50e04fa606ebfc13b444d13193e1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::MPIManager::communicate</definition>
+        <argsstring>(std::vector&lt; OffGridSpike &gt; &amp;send_buffer, std::vector&lt; OffGridSpike &gt; &amp;recv_buffer, std::vector&lt; int &gt; &amp;displacements)</argsstring>
+        <name>communicate</name>
+        <param>
+          <type>std::vector&lt; <ref refid="classnest_1_1_m_p_i_manager_1_1_off_grid_spike" kindref="compound">OffGridSpike</ref> &gt; &amp;</type>
+          <declname>send_buffer</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; <ref refid="classnest_1_1_m_p_i_manager_1_1_off_grid_spike" kindref="compound">OffGridSpike</ref> &gt; &amp;</type>
+          <declname>recv_buffer</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; int &gt; &amp;</type>
+          <declname>displacements</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>communicate (off-grid) if compiled without MPI </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="136" column="8" bodyfile="nestkernel/mpi_manager.cpp" bodystart="1009" bodyend="1021"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a39c902ba1913c492bf90a1da1fa1bebc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::MPIManager::communicate</definition>
+        <argsstring>(std::vector&lt; double &gt; &amp;send_buffer, std::vector&lt; double &gt; &amp;recv_buffer, std::vector&lt; int &gt; &amp;displacements)</argsstring>
+        <name>communicate</name>
+        <param>
+          <type>std::vector&lt; double &gt; &amp;</type>
+          <declname>send_buffer</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; double &gt; &amp;</type>
+          <declname>recv_buffer</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; int &gt; &amp;</type>
+          <declname>displacements</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="140" column="8" bodyfile="nestkernel/mpi_manager.cpp" bodystart="1024" bodyend="1031"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a28da093a648885b5f7636d0bd44ecb60" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::MPIManager::communicate</definition>
+        <argsstring>(std::vector&lt; unsigned long &gt; &amp;send_buffer, std::vector&lt; unsigned long &gt; &amp;recv_buffer, std::vector&lt; int &gt; &amp;displacements)</argsstring>
+        <name>communicate</name>
+        <param>
+          <type>std::vector&lt; unsigned long &gt; &amp;</type>
+          <declname>send_buffer</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; unsigned long &gt; &amp;</type>
+          <declname>recv_buffer</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; int &gt; &amp;</type>
+          <declname>displacements</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="144" column="8" bodyfile="nestkernel/mpi_manager.cpp" bodystart="1034" bodyend="1041"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1aecb6fc37dcd91414e5ebea0cbde79ecc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::MPIManager::communicate</definition>
+        <argsstring>(std::vector&lt; int &gt; &amp;send_buffer, std::vector&lt; int &gt; &amp;recv_buffer, std::vector&lt; int &gt; &amp;displacements)</argsstring>
+        <name>communicate</name>
+        <param>
+          <type>std::vector&lt; int &gt; &amp;</type>
+          <declname>send_buffer</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; int &gt; &amp;</type>
+          <declname>recv_buffer</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; int &gt; &amp;</type>
+          <declname>displacements</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="149" column="3" bodyfile="nestkernel/mpi_manager.cpp" bodystart="1044" bodyend="1051"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a9177a2672104bd517a0be8613e52d803" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::MPIManager::communicate</definition>
+        <argsstring>(double, std::vector&lt; double &gt; &amp;)</argsstring>
+        <name>communicate</name>
+        <param>
+          <type>double</type>
+          <defname>send_val</defname>
+        </param>
+        <param>
+          <type>std::vector&lt; double &gt; &amp;</type>
+          <defname>recv_buffer</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="151" column="8" bodyfile="nestkernel/mpi_manager.cpp" bodystart="1054" bodyend="1058"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1ae2e75d70cecd1a171e4a2faa91c26dd9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::MPIManager::communicate</definition>
+        <argsstring>(std::vector&lt; int &gt; &amp;)</argsstring>
+        <name>communicate</name>
+        <param>
+          <type>std::vector&lt; int &gt; &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="152" column="8" bodyfile="nestkernel/mpi_manager.h" bodystart="698" bodyend="700"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a55aac568d53ad30a4f0ab5b40bfca812" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::MPIManager::communicate</definition>
+        <argsstring>(std::vector&lt; long &gt; &amp;)</argsstring>
+        <name>communicate</name>
+        <param>
+          <type>std::vector&lt; long &gt; &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="153" column="8" bodyfile="nestkernel/mpi_manager.h" bodystart="703" bodyend="705"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a086a7a137050c61329df3c7e74f4e21d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::MPIManager::communicate_Allreduce_sum_in_place</definition>
+        <argsstring>(double buffer)</argsstring>
+        <name>communicate_Allreduce_sum_in_place</name>
+        <param>
+          <type>double</type>
+          <declname>buffer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="158" column="8" bodyfile="nestkernel/mpi_manager.cpp" bodystart="1066" bodyend="1068"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1add6ba165a09ff9a1cad316993f6c1bfd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::MPIManager::communicate_Allreduce_sum_in_place</definition>
+        <argsstring>(std::vector&lt; double &gt; &amp;buffer)</argsstring>
+        <name>communicate_Allreduce_sum_in_place</name>
+        <param>
+          <type>std::vector&lt; double &gt; &amp;</type>
+          <declname>buffer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="159" column="8" bodyfile="nestkernel/mpi_manager.cpp" bodystart="1071" bodyend="1073"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a439afdf0a9307bba8f3d2332a5b7bdcf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::MPIManager::communicate_Allreduce_sum_in_place</definition>
+        <argsstring>(std::vector&lt; int &gt; &amp;buffer)</argsstring>
+        <name>communicate_Allreduce_sum_in_place</name>
+        <param>
+          <type>std::vector&lt; int &gt; &amp;</type>
+          <declname>buffer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="160" column="8" bodyfile="nestkernel/mpi_manager.cpp" bodystart="1076" bodyend="1078"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a72072f9f17d9782a712920ebe70c9c7d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::MPIManager::communicate_Allreduce_sum</definition>
+        <argsstring>(std::vector&lt; double &gt; &amp;send_buffer, std::vector&lt; double &gt; &amp;recv_buffer)</argsstring>
+        <name>communicate_Allreduce_sum</name>
+        <param>
+          <type>std::vector&lt; double &gt; &amp;</type>
+          <declname>send_buffer</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; double &gt; &amp;</type>
+          <declname>recv_buffer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="161" column="8" bodyfile="nestkernel/mpi_manager.cpp" bodystart="1081" bodyend="1084"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1ad3ef1f745a7dea6644faa06cb0bf3389" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::MPIManager::equal_cross_ranks</definition>
+        <argsstring>(const double value)</argsstring>
+        <name>equal_cross_ranks</name>
+        <param>
+          <type>const double</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Equal across all ranks.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>value on calling rank </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if values across all ranks are equal, false otherwise or if any rank passes -inf as value </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="170" column="8" bodyfile="nestkernel/mpi_manager.cpp" bodystart="1087" bodyend="1090"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a1135c22e6c613c5573fa05ef72427358" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string nest::MPIManager::get_processor_name</definition>
+        <argsstring>()</argsstring>
+        <name>get_processor_name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="172" column="15" bodyfile="nestkernel/mpi_manager.h" bodystart="684" bodyend="690"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a1f9918ee54c8ab5220924406389d74ae" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::MPIManager::is_mpi_used</definition>
+        <argsstring>()</argsstring>
+        <name>is_mpi_used</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="174" column="8" bodyfile="nestkernel/mpi_manager.h" bodystart="531" bodyend="534"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1ae6e47063d48f81ce88fdd038e48cc0a5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t nest::MPIManager::get_buffer_size_target_data</definition>
+        <argsstring>() const</argsstring>
+        <name>get_buffer_size_target_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns total size of MPI buffer for communication of connections. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="179" column="10" bodyfile="nestkernel/mpi_manager.h" bodystart="537" bodyend="540"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1ad8e6adb3b3fd160e3e73d2d903c33137" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>unsigned int</type>
+        <definition>unsigned int nest::MPIManager::get_send_recv_count_target_data_per_rank</definition>
+        <argsstring>() const</argsstring>
+        <name>get_send_recv_count_target_data_per_rank</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns size of MPI buffer for connections divided by number of processes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="184" column="16" bodyfile="nestkernel/mpi_manager.h" bodystart="543" bodyend="546"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a7bb1ff23f81e7dcda38d40ce4a56822a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t nest::MPIManager::get_buffer_size_spike_data</definition>
+        <argsstring>() const</argsstring>
+        <name>get_buffer_size_spike_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns total size of MPI buffer for communication of spikes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="189" column="10" bodyfile="nestkernel/mpi_manager.h" bodystart="549" bodyend="552"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a87898b9d856a468e237f8f9aba5fbf86" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>unsigned int</type>
+        <definition>unsigned int nest::MPIManager::get_send_recv_count_spike_data_per_rank</definition>
+        <argsstring>() const</argsstring>
+        <name>get_send_recv_count_spike_data_per_rank</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns size of MPI buffer for spikes divided by number of processes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="194" column="16" bodyfile="nestkernel/mpi_manager.h" bodystart="555" bodyend="558"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1ac61abfed28a79440bd2ed9382c22e5dd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t nest::MPIManager::get_send_buffer_size_secondary_events_in_int</definition>
+        <argsstring>() const</argsstring>
+        <name>get_send_buffer_size_secondary_events_in_int</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns total size of MPI send buffer for communication of secondary events. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="199" column="10" bodyfile="nestkernel/mpi_manager.h" bodystart="561" bodyend="566"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a14af825fd3abced38e70125c32bbd26b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t nest::MPIManager::get_recv_buffer_size_secondary_events_in_int</definition>
+        <argsstring>() const</argsstring>
+        <name>get_recv_buffer_size_secondary_events_in_int</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns total size of MPI recv buffer for communication of secondary events. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="204" column="10" bodyfile="nestkernel/mpi_manager.h" bodystart="569" bodyend="574"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a73c37d41ecb627f7415a0e61e07fb1fa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class D</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void nest::MPIManager::communicate_Alltoall</definition>
+        <argsstring>(std::vector&lt; D &gt; &amp;send_buffer, std::vector&lt; D &gt; &amp;recv_buffer, const unsigned int send_recv_count)</argsstring>
+        <name>communicate_Alltoall</name>
+        <param>
+          <type>std::vector&lt; D &gt; &amp;</type>
+          <declname>send_buffer</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; D &gt; &amp;</type>
+          <declname>recv_buffer</declname>
+        </param>
+        <param>
+          <type>const unsigned int</type>
+          <declname>send_recv_count</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="220" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a81c759c101ee667a5a4a5ef18438ae47" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class D</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void nest::MPIManager::communicate_target_data_Alltoall</definition>
+        <argsstring>(std::vector&lt; D &gt; &amp;send_buffer, std::vector&lt; D &gt; &amp;recv_buffer)</argsstring>
+        <name>communicate_target_data_Alltoall</name>
+        <param>
+          <type>std::vector&lt; D &gt; &amp;</type>
+          <declname>send_buffer</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; D &gt; &amp;</type>
+          <declname>recv_buffer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="224" column="8" bodyfile="nestkernel/mpi_manager.h" bodystart="809" bodyend="815"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a76f1dd6951d6470f9454ac44065f24a2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class D</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void nest::MPIManager::communicate_spike_data_Alltoall</definition>
+        <argsstring>(std::vector&lt; D &gt; &amp;send_buffer, std::vector&lt; D &gt; &amp;recv_buffer)</argsstring>
+        <name>communicate_spike_data_Alltoall</name>
+        <param>
+          <type>std::vector&lt; D &gt; &amp;</type>
+          <declname>send_buffer</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; D &gt; &amp;</type>
+          <declname>recv_buffer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="226" column="8" bodyfile="nestkernel/mpi_manager.h" bodystart="819" bodyend="825"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a4d2f7857afa91c0318722fc90ccc7a79" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class D</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void nest::MPIManager::communicate_off_grid_spike_data_Alltoall</definition>
+        <argsstring>(std::vector&lt; D &gt; &amp;send_buffer, std::vector&lt; D &gt; &amp;recv_buffer)</argsstring>
+        <name>communicate_off_grid_spike_data_Alltoall</name>
+        <param>
+          <type>std::vector&lt; D &gt; &amp;</type>
+          <declname>send_buffer</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; D &gt; &amp;</type>
+          <declname>recv_buffer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="228" column="8" bodyfile="nestkernel/mpi_manager.h" bodystart="829" bodyend="835"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a09f9cf4fd6452ee4edbef07adde36d84" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class D</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void nest::MPIManager::communicate_secondary_events_Alltoallv</definition>
+        <argsstring>(std::vector&lt; D &gt; &amp;send_buffer, std::vector&lt; D &gt; &amp;recv_buffer)</argsstring>
+        <name>communicate_secondary_events_Alltoallv</name>
+        <param>
+          <type>std::vector&lt; D &gt; &amp;</type>
+          <declname>send_buffer</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; D &gt; &amp;</type>
+          <declname>recv_buffer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="230" column="8" bodyfile="nestkernel/mpi_manager.h" bodystart="800" bodyend="803"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a79d9980ccd091cc70c2992de2f13a9c3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::MPIManager::synchronize</definition>
+        <argsstring>()</argsstring>
+        <name>synchronize</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="232" column="8" bodyfile="nestkernel/mpi_manager.h" bodystart="708" bodyend="710"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a3a49dc7c95b5a7e8daadb0480cae3c4c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::MPIManager::any_true</definition>
+        <argsstring>(const bool)</argsstring>
+        <name>any_true</name>
+        <param>
+          <type>const bool</type>
+          <defname>my_bool</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="234" column="8" bodyfile="nestkernel/mpi_manager.h" bodystart="723" bodyend="726"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1ac59befbcc83f0a423c942371f8bea65f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double nest::MPIManager::time_communicate</definition>
+        <argsstring>(int num_bytes, int samples=1000)</argsstring>
+        <name>time_communicate</name>
+        <param>
+          <type>int</type>
+          <declname>num_bytes</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>samples</declname>
+          <defval>1000</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Benchmark communication time of different MPI methods</para>
+<para>The methods <computeroutput>time_communicate*</computeroutput> can be used to benchmark the timing of different MPI communication methods. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="242" column="10" bodyfile="nestkernel/mpi_manager.h" bodystart="729" bodyend="732"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a35577b8a35a607547962f228d49ccbf4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double nest::MPIManager::time_communicatev</definition>
+        <argsstring>(int num_bytes, int samples=1000)</argsstring>
+        <name>time_communicatev</name>
+        <param>
+          <type>int</type>
+          <declname>num_bytes</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>samples</declname>
+          <defval>1000</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="243" column="10" bodyfile="nestkernel/mpi_manager.h" bodystart="735" bodyend="738"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a040b1b11834b2cd4fa67aadb08d4ab2a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double nest::MPIManager::time_communicate_offgrid</definition>
+        <argsstring>(int num_bytes, int samples=1000)</argsstring>
+        <name>time_communicate_offgrid</name>
+        <param>
+          <type>int</type>
+          <declname>num_bytes</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>samples</declname>
+          <defval>1000</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="244" column="10" bodyfile="nestkernel/mpi_manager.h" bodystart="741" bodyend="744"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1ab1a3608671ee3fd5a2088e7078ecfced" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double nest::MPIManager::time_communicate_alltoall</definition>
+        <argsstring>(int num_bytes, int samples=1000)</argsstring>
+        <name>time_communicate_alltoall</name>
+        <param>
+          <type>int</type>
+          <declname>num_bytes</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>samples</declname>
+          <defval>1000</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="245" column="10" bodyfile="nestkernel/mpi_manager.h" bodystart="747" bodyend="750"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1aacfd5441fbe9e7f9bbb48534a20cd2c0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double nest::MPIManager::time_communicate_alltoallv</definition>
+        <argsstring>(int num_bytes, int samples=1000)</argsstring>
+        <name>time_communicate_alltoallv</name>
+        <param>
+          <type>int</type>
+          <declname>num_bytes</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>samples</declname>
+          <defval>1000</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="246" column="10" bodyfile="nestkernel/mpi_manager.h" bodystart="753" bodyend="756"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a73df0e7d6e7d2a93bc02860ada5d3b40" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::MPIManager::set_buffer_size_target_data</definition>
+        <argsstring>(size_t buffer_size)</argsstring>
+        <name>set_buffer_size_target_data</name>
+        <param>
+          <type>size_t</type>
+          <declname>buffer_size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="248" column="8" bodyfile="nestkernel/mpi_manager.h" bodystart="577" bodyend="592"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a7b5822098592331c4fefa996c971e88b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::MPIManager::set_buffer_size_spike_data</definition>
+        <argsstring>(size_t buffer_size)</argsstring>
+        <name>set_buffer_size_spike_data</name>
+        <param>
+          <type>size_t</type>
+          <declname>buffer_size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="249" column="8" bodyfile="nestkernel/mpi_manager.h" bodystart="595" bodyend="610"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1ad5f2de3f6fad7e8386a7f0087e38b771" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::MPIManager::increase_buffer_size_target_data</definition>
+        <argsstring>()</argsstring>
+        <name>increase_buffer_size_target_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Increases the size of the MPI buffer for communication of connections if it needs to be increased. Returns whether the size was changed. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="255" column="8" bodyfile="nestkernel/mpi_manager.h" bodystart="613" bodyend="635"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a45b3ffb582d6dcfb4e87b10bc08e9948" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::MPIManager::increase_buffer_size_spike_data</definition>
+        <argsstring>()</argsstring>
+        <name>increase_buffer_size_spike_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Increases the size of the MPI buffer for communication of spikes if it needs to be increased. Returns whether the size was changed. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="261" column="8" bodyfile="nestkernel/mpi_manager.h" bodystart="638" bodyend="657"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a684020fed2453292e78ae30e3449e452" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::MPIManager::decrease_buffer_size_spike_data</definition>
+        <argsstring>()</argsstring>
+        <name>decrease_buffer_size_spike_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Decreases the size of the MPI buffer for communication of spikes if it can be decreased. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="267" column="8" bodyfile="nestkernel/mpi_manager.h" bodystart="660" bodyend="668"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a3de4a5c863a5445a9a25d9c05179c87c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::MPIManager::adaptive_target_buffers</definition>
+        <argsstring>() const</argsstring>
+        <name>adaptive_target_buffers</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns whether MPI buffers for communication of connections are adaptive. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="272" column="8" bodyfile="nestkernel/mpi_manager.h" bodystart="671" bodyend="674"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a25b9345634e7f08030bac79d7747228c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::MPIManager::adaptive_spike_buffers</definition>
+        <argsstring>() const</argsstring>
+        <name>adaptive_spike_buffers</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns whether MPI buffers for communication of spikes are adaptive. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="277" column="8" bodyfile="nestkernel/mpi_manager.h" bodystart="677" bodyend="680"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1ab121916e205170e224570f0d7ab75b6a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::MPIManager::set_recv_counts_secondary_events_in_int_per_rank</definition>
+        <argsstring>(const std::vector&lt; int &gt; &amp;recv_counts_in_int_per_rank)</argsstring>
+        <name>set_recv_counts_secondary_events_in_int_per_rank</name>
+        <param>
+          <type>const std::vector&lt; int &gt; &amp;</type>
+          <declname>recv_counts_in_int_per_rank</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sets the recvcounts parameter of Alltoallv for communication of secondary events, i.e., the number of elements (in ints) to recv from the corresponding rank. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="284" column="8" bodyfile="nestkernel/mpi_manager.h" bodystart="465" bodyend="472"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a6414ac50545c359d75b3cb5f5dfabfc7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t nest::MPIManager::get_recv_count_secondary_events_in_int</definition>
+        <argsstring>(const size_t source_rank) const</argsstring>
+        <name>get_recv_count_secondary_events_in_int</name>
+        <param>
+          <type>const size_t</type>
+          <declname>source_rank</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the recvcounts parameter of Alltoallv for communication of secondary events, i.e., the number of elements (in ints) to recv from <computeroutput>source_rank</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="291" column="10" bodyfile="nestkernel/mpi_manager.h" bodystart="475" bodyend="478"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a07e2b31026ad12cab3e3e782e18524ae" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t nest::MPIManager::get_recv_displacement_secondary_events_in_int</definition>
+        <argsstring>(const size_t source_rank) const</argsstring>
+        <name>get_recv_displacement_secondary_events_in_int</name>
+        <param>
+          <type>const size_t</type>
+          <declname>source_rank</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the rdispls parameter of Alltoallv for communication of secondary events, i.e., the offset in the MPI buffer where elements from <computeroutput>source_rank</computeroutput> are written. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="298" column="10" bodyfile="nestkernel/mpi_manager.h" bodystart="481" bodyend="484"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1aa0280cb7436cf8894d55210d34813c8b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t nest::MPIManager::get_send_count_secondary_events_in_int</definition>
+        <argsstring>(const size_t target_rank) const</argsstring>
+        <name>get_send_count_secondary_events_in_int</name>
+        <param>
+          <type>const size_t</type>
+          <declname>target_rank</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the number of elements (in ints) to be sent to <computeroutput>target_rank</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="303" column="10" bodyfile="nestkernel/mpi_manager.h" bodystart="487" bodyend="490"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a88fd87ff51b591041d4a7ac10c05fd58" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t nest::MPIManager::get_send_displacement_secondary_events_in_int</definition>
+        <argsstring>(const size_t target_rank) const</argsstring>
+        <name>get_send_displacement_secondary_events_in_int</name>
+        <param>
+          <type>const size_t</type>
+          <declname>target_rank</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the send displacement of elements (in ints) to be sent to rank <computeroutput>target_rank</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="308" column="10" bodyfile="nestkernel/mpi_manager.h" bodystart="493" bodyend="496"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1ad07af006439dd02531adc2ba30698147" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t nest::MPIManager::get_done_marker_position_in_secondary_events_send_buffer</definition>
+        <argsstring>(const size_t target_rank) const</argsstring>
+        <name>get_done_marker_position_in_secondary_events_send_buffer</name>
+        <param>
+          <type>const size_t</type>
+          <declname>target_rank</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns where the done marker is located in the MPI send buffer for <computeroutput>target_rank</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="313" column="10" bodyfile="nestkernel/mpi_manager.h" bodystart="499" bodyend="503"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1afddda2f5cf3f1ac9f1c252719b62ebd5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t nest::MPIManager::get_done_marker_position_in_secondary_events_recv_buffer</definition>
+        <argsstring>(const size_t source_rank) const</argsstring>
+        <name>get_done_marker_position_in_secondary_events_recv_buffer</name>
+        <param>
+          <type>const size_t</type>
+          <declname>source_rank</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns where the done marker is located in the MPI recv buffer for <computeroutput>source_rank</computeroutput>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="318" column="10" bodyfile="nestkernel/mpi_manager.h" bodystart="506" bodyend="510"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_m_p_i_manager_1a664afc6040a9de3474310aab062a906a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::MPIManager::communicate_recv_counts_secondary_events</definition>
+        <argsstring>()</argsstring>
+        <name>communicate_recv_counts_secondary_events</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/mpi_manager.h" line="320" column="8" bodyfile="nestkernel/mpi_manager.cpp" bodystart="1093" bodyend="1101"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>nest::ManagerInterface</label>
+        <link refid="classnest_1_1_manager_interface"/>
+      </node>
+      <node id="1">
+        <label>nest::MPIManager</label>
+        <link refid="classnest_1_1_m_p_i_manager"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>nest::ManagerInterface</label>
+        <link refid="classnest_1_1_manager_interface"/>
+      </node>
+      <node id="1">
+        <label>nest::MPIManager</label>
+        <link refid="classnest_1_1_m_p_i_manager"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="nestkernel/mpi_manager.h" line="57" column="1" bodyfile="nestkernel/mpi_manager.h" bodystart="58" bodyend="462"/>
+    <listofallmembers>
+      <member refid="classnest_1_1_m_p_i_manager_1a25b9345634e7f08030bac79d7747228c" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>adaptive_spike_buffers</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1af73161718b3ea5f05da0d7e92f5d3d6b" prot="private" virt="non-virtual"><scope>nest::MPIManager</scope><name>adaptive_spike_buffers_</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a3de4a5c863a5445a9a25d9c05179c87c" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>adaptive_target_buffers</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1ada8b0b0a12ee7459c908bf0bbd7da613" prot="private" virt="non-virtual"><scope>nest::MPIManager</scope><name>adaptive_target_buffers_</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a3a49dc7c95b5a7e8daadb0480cae3c4c" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>any_true</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1ae1ca94ababdfeae9b75f675b53797971" prot="private" virt="non-virtual"><scope>nest::MPIManager</scope><name>buffer_size_spike_data_</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a251570e0cee30162885025726e87d908" prot="private" virt="non-virtual"><scope>nest::MPIManager</scope><name>buffer_size_target_data_</name></member>
+      <member refid="classnest_1_1_manager_interface_1aa88c28844a59b4791eab4b7930fc62b0" prot="public" virt="virtual"><scope>nest::MPIManager</scope><name>change_number_of_threads</name></member>
+      <member refid="classnest_1_1_manager_interface_1a883efc8a7266a9bc62d43e30cdd87147" prot="public" virt="virtual"><scope>nest::MPIManager</scope><name>cleanup</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a58b6aff1f3e00bf84e886cce814bb708" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>communicate</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a3d071cc58ba12b005c083bf5a5e21d52" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>communicate</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a764b50e04fa606ebfc13b444d13193e1" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>communicate</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a39c902ba1913c492bf90a1da1fa1bebc" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>communicate</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a28da093a648885b5f7636d0bd44ecb60" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>communicate</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1aecb6fc37dcd91414e5ebea0cbde79ecc" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>communicate</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a9177a2672104bd517a0be8613e52d803" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>communicate</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1ae2e75d70cecd1a171e4a2faa91c26dd9" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>communicate</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a55aac568d53ad30a4f0ab5b40bfca812" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>communicate</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a72072f9f17d9782a712920ebe70c9c7d" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>communicate_Allreduce_sum</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a086a7a137050c61329df3c7e74f4e21d" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>communicate_Allreduce_sum_in_place</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1add6ba165a09ff9a1cad316993f6c1bfd" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>communicate_Allreduce_sum_in_place</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a439afdf0a9307bba8f3d2332a5b7bdcf" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>communicate_Allreduce_sum_in_place</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a73c37d41ecb627f7415a0e61e07fb1fa" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>communicate_Alltoall</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a4d2f7857afa91c0318722fc90ccc7a79" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>communicate_off_grid_spike_data_Alltoall</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a664afc6040a9de3474310aab062a906a" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>communicate_recv_counts_secondary_events</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a09f9cf4fd6452ee4edbef07adde36d84" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>communicate_secondary_events_Alltoallv</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a76f1dd6951d6470f9454ac44065f24a2" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>communicate_spike_data_Alltoall</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a81c759c101ee667a5a4a5ef18438ae47" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>communicate_target_data_Alltoall</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a684020fed2453292e78ae30e3449e452" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>decrease_buffer_size_spike_data</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1ad3ef1f745a7dea6644faa06cb0bf3389" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>equal_cross_ranks</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a09a36899c01cb8ca1acebddcd55cb380" prot="public" virt="virtual"><scope>nest::MPIManager</scope><name>finalize</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a7bb1ff23f81e7dcda38d40ce4a56822a" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>get_buffer_size_spike_data</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1ae6e47063d48f81ce88fdd038e48cc0a5" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>get_buffer_size_target_data</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1afddda2f5cf3f1ac9f1c252719b62ebd5" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>get_done_marker_position_in_secondary_events_recv_buffer</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1ad07af006439dd02531adc2ba30698147" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>get_done_marker_position_in_secondary_events_send_buffer</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a496c51140dd2f76db937357bb70ac565" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>get_num_processes</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1aae0ed1a42dfe4326ef1e6ab33411f6a9" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>get_process_id_of_node_id</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a1fbad26739451a698618a1407b85124f" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>get_process_id_of_vp</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a1135c22e6c613c5573fa05ef72427358" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>get_processor_name</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a6fa640ce78eda75f8304879ff396ab78" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>get_rank</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a14af825fd3abced38e70125c32bbd26b" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>get_recv_buffer_size_secondary_events_in_int</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a6414ac50545c359d75b3cb5f5dfabfc7" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>get_recv_count_secondary_events_in_int</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a07e2b31026ad12cab3e3e782e18524ae" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>get_recv_displacement_secondary_events_in_int</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1ac61abfed28a79440bd2ed9382c22e5dd" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>get_send_buffer_size_secondary_events_in_int</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1aa0280cb7436cf8894d55210d34813c8b" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>get_send_count_secondary_events_in_int</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a88fd87ff51b591041d4a7ac10c05fd58" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>get_send_displacement_secondary_events_in_int</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a87898b9d856a468e237f8f9aba5fbf86" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>get_send_recv_count_spike_data_per_rank</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1ad8e6adb3b3fd160e3e73d2d903c33137" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>get_send_recv_count_target_data_per_rank</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1aaa37ecf1d94ec3d8bb0b5f45033d8a6b" prot="public" virt="virtual"><scope>nest::MPIManager</scope><name>get_status</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a679f79cb405f71b95646106d4a6693ac" prot="private" virt="non-virtual"><scope>nest::MPIManager</scope><name>growth_factor_buffer_spike_data_</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a8e5cbd63224766d80bbe3c77c2bebe73" prot="private" virt="non-virtual"><scope>nest::MPIManager</scope><name>growth_factor_buffer_target_data_</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a45b3ffb582d6dcfb4e87b10bc08e9948" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>increase_buffer_size_spike_data</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1ad5f2de3f6fad7e8386a7f0087e38b771" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>increase_buffer_size_target_data</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a339bb79dd6ca362ef20da865ec7feca7" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>init_mpi</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a255066ece2aedc9d6faef73e63286664" prot="public" virt="virtual"><scope>nest::MPIManager</scope><name>initialize</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a1f9918ee54c8ab5220924406389d74ae" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>is_mpi_used</name></member>
+      <member refid="classnest_1_1_manager_interface_1aeb056937c69d73ba501bab2fb371a56c" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>ManagerInterface</name></member>
+      <member refid="classnest_1_1_manager_interface_1af07ff595521c144ddb81899fec66e251" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>ManagerInterface</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a7ec3474591c046215b7b13450d3c4259" prot="private" virt="non-virtual"><scope>nest::MPIManager</scope><name>max_buffer_size_spike_data_</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a07ec4745cbe5f33fd6f22ec026b539b5" prot="private" virt="non-virtual"><scope>nest::MPIManager</scope><name>max_buffer_size_target_data_</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a5cabda0a34c4a3e579f9df617576d09f" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>mpi_abort</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a52182d4b13ae15f937d8f1a9d844b8ee" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>mpi_finalize</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a6aae08ff665103404592b801bee4fc8d" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>MPIManager</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a425422a2d1c254877762d68633f935a5" prot="private" virt="non-virtual"><scope>nest::MPIManager</scope><name>num_processes_</name></member>
+      <member refid="classnest_1_1_manager_interface_1a9889d8ee2a6bd5f1799e86aed555db5e" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>operator=</name></member>
+      <member refid="classnest_1_1_manager_interface_1a7a0e8989a48de50b52631e87ed3f2745" prot="public" virt="virtual"><scope>nest::MPIManager</scope><name>prepare</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1aa1f343be1c8a50737afb6b00ab3e5a82" prot="private" virt="non-virtual"><scope>nest::MPIManager</scope><name>rank_</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a788e4de7bc751db11d4ce4df46539770" prot="private" virt="non-virtual"><scope>nest::MPIManager</scope><name>recv_buffer_size_</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a21b2930bdc41519c882343edfbcd5714" prot="private" virt="non-virtual"><scope>nest::MPIManager</scope><name>recv_counts_secondary_events_in_int_per_rank_</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1af032a50939d2919d7e790e970130b178" prot="private" virt="non-virtual"><scope>nest::MPIManager</scope><name>recv_displacements_secondary_events_in_int_per_rank_</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a67fb5fafad3290bf4d1bb35ddeb9a467" prot="private" virt="non-virtual"><scope>nest::MPIManager</scope><name>send_buffer_size_</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a009f41cc3ad6dce8b97158dc7ccf2631" prot="private" virt="non-virtual"><scope>nest::MPIManager</scope><name>send_counts_secondary_events_in_int_per_rank_</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a3ad3002dfbbdc1a079bfc36d5d843501" prot="private" virt="non-virtual"><scope>nest::MPIManager</scope><name>send_displacements_secondary_events_in_int_per_rank_</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a5ae689d0a8108ef49b59c67d5d6a2193" prot="private" virt="non-virtual"><scope>nest::MPIManager</scope><name>send_recv_count_spike_data_per_rank_</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a8fdf6d8eb671e809d67579cd46a5c065" prot="private" virt="non-virtual"><scope>nest::MPIManager</scope><name>send_recv_count_target_data_per_rank_</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a7b5822098592331c4fefa996c971e88b" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>set_buffer_size_spike_data</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a73df0e7d6e7d2a93bc02860ada5d3b40" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>set_buffer_size_target_data</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a746fe27ef39fe10ee6acbfa58957aeb6" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>set_num_processes</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1ab121916e205170e224570f0d7ab75b6a" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>set_recv_counts_secondary_events_in_int_per_rank</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a97c0ce2af5728bb4b425edd45b010daf" prot="public" virt="virtual"><scope>nest::MPIManager</scope><name>set_status</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a6354c6fc26b13dc32a2030730fd18867" prot="private" virt="non-virtual"><scope>nest::MPIManager</scope><name>shrink_factor_buffer_spike_data_</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a79d9980ccd091cc70c2992de2f13a9c3" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>synchronize</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1ac59befbcc83f0a423c942371f8bea65f" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>time_communicate</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1ab1a3608671ee3fd5a2088e7078ecfced" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>time_communicate_alltoall</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1aacfd5441fbe9e7f9bbb48534a20cd2c0" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>time_communicate_alltoallv</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a040b1b11834b2cd4fa67aadb08d4ab2a" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>time_communicate_offgrid</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a35577b8a35a607547962f228d49ccbf4" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>time_communicatev</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a38009b4f6f058e48c255356daa4b6287" prot="private" virt="non-virtual"><scope>nest::MPIManager</scope><name>use_mpi_</name></member>
+      <member refid="classnest_1_1_manager_interface_1ac60a79d2ba0a48f1b039ab1f9d502ec4" prot="public" virt="virtual"><scope>nest::MPIManager</scope><name>~ManagerInterface</name></member>
+      <member refid="classnest_1_1_m_p_i_manager_1a50fc6121179dc705ff7ac68885e0caf8" prot="public" virt="non-virtual"><scope>nest::MPIManager</scope><name>~MPIManager</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

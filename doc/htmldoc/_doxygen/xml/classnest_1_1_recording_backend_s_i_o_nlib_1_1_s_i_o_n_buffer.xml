@@ -1,0 +1,284 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer" kind="class" language="C++" prot="private">
+    <compoundname>nest::RecordingBackendSIONlib::SIONBuffer</compoundname>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1ac9aa479fd2fdce78a67b7a0a6b8a8fc2" prot="private" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* nest::RecordingBackendSIONlib::SIONBuffer::buffer_</definition>
+        <argsstring></argsstring>
+        <name>buffer_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recording_backend_sionlib.h" line="251" column="10" bodyfile="nestkernel/recording_backend_sionlib.h" bodystart="251" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1ae29bb7dc67392d3e6e6f1ac891f2a380" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t nest::RecordingBackendSIONlib::SIONBuffer::ptr_</definition>
+        <argsstring></argsstring>
+        <name>ptr_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recording_backend_sionlib.h" line="252" column="12" bodyfile="nestkernel/recording_backend_sionlib.h" bodystart="252" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1afc052ffff9f19b585635b41b797da71e" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t nest::RecordingBackendSIONlib::SIONBuffer::max_size_</definition>
+        <argsstring></argsstring>
+        <name>max_size_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recording_backend_sionlib.h" line="253" column="12" bodyfile="nestkernel/recording_backend_sionlib.h" bodystart="253" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1a2e5849b62555da639e9cbedc092392a6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>nest::RecordingBackendSIONlib::SIONBuffer::SIONBuffer</definition>
+        <argsstring>()</argsstring>
+        <name>SIONBuffer</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recording_backend_sionlib.h" line="256" column="5" bodyfile="nestkernel/recording_backend_sionlib.cpp" bodystart="538" bodyend="543"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1ae0912d7a8c84ed152c53451beeca546a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>nest::RecordingBackendSIONlib::SIONBuffer::SIONBuffer</definition>
+        <argsstring>(size_t size)</argsstring>
+        <name>SIONBuffer</name>
+        <param>
+          <type>size_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recording_backend_sionlib.h" line="257" column="5" bodyfile="nestkernel/recording_backend_sionlib.cpp" bodystart="545" bodyend="551"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1aeadb51f83730323db320dd018131ddc3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>nest::RecordingBackendSIONlib::SIONBuffer::~SIONBuffer</definition>
+        <argsstring>()</argsstring>
+        <name>~SIONBuffer</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recording_backend_sionlib.h" line="258" column="5" bodyfile="nestkernel/recording_backend_sionlib.cpp" bodystart="553" bodyend="559"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1af8e58c492e4adc93104d945b41c8f35e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::RecordingBackendSIONlib::SIONBuffer::reserve</definition>
+        <argsstring>(size_t size)</argsstring>
+        <name>reserve</name>
+        <param>
+          <type>size_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recording_backend_sionlib.h" line="260" column="10" bodyfile="nestkernel/recording_backend_sionlib.cpp" bodystart="562" bodyend="574"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1a76d616645006b0f5351d40a9e10d3027" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::RecordingBackendSIONlib::SIONBuffer::ensure_space</definition>
+        <argsstring>(size_t size)</argsstring>
+        <name>ensure_space</name>
+        <param>
+          <type>size_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recording_backend_sionlib.h" line="261" column="10" bodyfile="nestkernel/recording_backend_sionlib.cpp" bodystart="577" bodyend="583"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1aaa60e8fc0c3506ef64444db0396723ba" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::RecordingBackendSIONlib::SIONBuffer::write</definition>
+        <argsstring>(const char *v, size_t n)</argsstring>
+        <name>write</name>
+        <param>
+          <type>const char *</type>
+          <declname>v</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recording_backend_sionlib.h" line="262" column="10" bodyfile="nestkernel/recording_backend_sionlib.cpp" bodystart="586" bodyend="599"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1a8f21c43af71ca1fb4c6b0b6d7774e124" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t nest::RecordingBackendSIONlib::SIONBuffer::get_capacity</definition>
+        <argsstring>()</argsstring>
+        <name>get_capacity</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recording_backend_sionlib.h" line="265" column="5" bodyfile="nestkernel/recording_backend_sionlib.h" bodystart="265" bodyend="268"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1a19e6affea9930e717f541fad8dd616a6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t nest::RecordingBackendSIONlib::SIONBuffer::get_size</definition>
+        <argsstring>()</argsstring>
+        <name>get_size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recording_backend_sionlib.h" line="271" column="5" bodyfile="nestkernel/recording_backend_sionlib.h" bodystart="271" bodyend="274"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1a2edfb7be0080b7f34eee1c284a0b2c44" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t nest::RecordingBackendSIONlib::SIONBuffer::get_free</definition>
+        <argsstring>()</argsstring>
+        <name>get_free</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recording_backend_sionlib.h" line="277" column="5" bodyfile="nestkernel/recording_backend_sionlib.h" bodystart="277" bodyend="280"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1accbbbb3235e0468dd3d5858a176a4ed4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::RecordingBackendSIONlib::SIONBuffer::clear</definition>
+        <argsstring>()</argsstring>
+        <name>clear</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recording_backend_sionlib.h" line="283" column="5" bodyfile="nestkernel/recording_backend_sionlib.h" bodystart="283" bodyend="286"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1a916a34cf40cfc13584609b9e31a00243" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>char *</type>
+        <definition>char* nest::RecordingBackendSIONlib::SIONBuffer::read</definition>
+        <argsstring>()</argsstring>
+        <name>read</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recording_backend_sionlib.h" line="289" column="5" bodyfile="nestkernel/recording_backend_sionlib.h" bodystart="289" bodyend="292"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1a48ec43b86d282b6f98b90f4e5deac790" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>SIONBuffer &amp;</type>
+        <definition>SIONBuffer&amp; nest::RecordingBackendSIONlib::SIONBuffer::operator&lt;&lt;</definition>
+        <argsstring>(const T data)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <param>
+          <type>const T</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recording_backend_sionlib.h" line="295" column="5"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1aa6afa5d95fd52ccdd6661c135a77cd41" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>nest::RecordingBackendSIONlib::SIONBuffer &amp;</type>
+        <definition>nest::RecordingBackendSIONlib::SIONBuffer&amp; nest::RecordingBackendSIONlib::SIONBuffer::operator&lt;&lt;</definition>
+        <argsstring>(const T data)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <param>
+          <type>const T</type>
+          <declname>data</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recording_backend_sionlib.cpp" line="602" column="1" bodyfile="nestkernel/recording_backend_sionlib.cpp" bodystart="603" bodyend="607"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>nest::RecordingBackendSIONlib::SIONBuffer</label>
+      </node>
+    </collaborationgraph>
+    <location file="nestkernel/recording_backend_sionlib.h" line="248" column="3" bodyfile="nestkernel/recording_backend_sionlib.h" bodystart="249" bodyend="296"/>
+    <listofallmembers>
+      <member refid="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1ac9aa479fd2fdce78a67b7a0a6b8a8fc2" prot="private" virt="non-virtual"><scope>nest::RecordingBackendSIONlib::SIONBuffer</scope><name>buffer_</name></member>
+      <member refid="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1accbbbb3235e0468dd3d5858a176a4ed4" prot="public" virt="non-virtual"><scope>nest::RecordingBackendSIONlib::SIONBuffer</scope><name>clear</name></member>
+      <member refid="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1a76d616645006b0f5351d40a9e10d3027" prot="public" virt="non-virtual"><scope>nest::RecordingBackendSIONlib::SIONBuffer</scope><name>ensure_space</name></member>
+      <member refid="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1a8f21c43af71ca1fb4c6b0b6d7774e124" prot="public" virt="non-virtual"><scope>nest::RecordingBackendSIONlib::SIONBuffer</scope><name>get_capacity</name></member>
+      <member refid="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1a2edfb7be0080b7f34eee1c284a0b2c44" prot="public" virt="non-virtual"><scope>nest::RecordingBackendSIONlib::SIONBuffer</scope><name>get_free</name></member>
+      <member refid="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1a19e6affea9930e717f541fad8dd616a6" prot="public" virt="non-virtual"><scope>nest::RecordingBackendSIONlib::SIONBuffer</scope><name>get_size</name></member>
+      <member refid="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1afc052ffff9f19b585635b41b797da71e" prot="private" virt="non-virtual"><scope>nest::RecordingBackendSIONlib::SIONBuffer</scope><name>max_size_</name></member>
+      <member refid="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1a48ec43b86d282b6f98b90f4e5deac790" prot="public" virt="non-virtual"><scope>nest::RecordingBackendSIONlib::SIONBuffer</scope><name>operator&lt;&lt;</name></member>
+      <member refid="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1aa6afa5d95fd52ccdd6661c135a77cd41" prot="public" virt="non-virtual"><scope>nest::RecordingBackendSIONlib::SIONBuffer</scope><name>operator&lt;&lt;</name></member>
+      <member refid="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1ae29bb7dc67392d3e6e6f1ac891f2a380" prot="private" virt="non-virtual"><scope>nest::RecordingBackendSIONlib::SIONBuffer</scope><name>ptr_</name></member>
+      <member refid="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1a916a34cf40cfc13584609b9e31a00243" prot="public" virt="non-virtual"><scope>nest::RecordingBackendSIONlib::SIONBuffer</scope><name>read</name></member>
+      <member refid="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1af8e58c492e4adc93104d945b41c8f35e" prot="public" virt="non-virtual"><scope>nest::RecordingBackendSIONlib::SIONBuffer</scope><name>reserve</name></member>
+      <member refid="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1a2e5849b62555da639e9cbedc092392a6" prot="public" virt="non-virtual"><scope>nest::RecordingBackendSIONlib::SIONBuffer</scope><name>SIONBuffer</name></member>
+      <member refid="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1ae0912d7a8c84ed152c53451beeca546a" prot="public" virt="non-virtual"><scope>nest::RecordingBackendSIONlib::SIONBuffer</scope><name>SIONBuffer</name></member>
+      <member refid="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1aaa60e8fc0c3506ef64444db0396723ba" prot="public" virt="non-virtual"><scope>nest::RecordingBackendSIONlib::SIONBuffer</scope><name>write</name></member>
+      <member refid="classnest_1_1_recording_backend_s_i_o_nlib_1_1_s_i_o_n_buffer_1aeadb51f83730323db320dd018131ddc3" prot="public" virt="non-virtual"><scope>nest::RecordingBackendSIONlib::SIONBuffer</scope><name>~SIONBuffer</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structnest_1_1_recording_backend_s_i_o_nlib_1_1_device_entry" kind="struct" language="C++" prot="private">
+    <compoundname>nest::RecordingBackendSIONlib::DeviceEntry</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnest_1_1_recording_backend_s_i_o_nlib_1_1_device_entry_1a4ce58c07819be36325f22e4bedda1ad0" prot="public" static="no" mutable="no">
+        <type>const <ref refid="classnest_1_1_recording_device" kindref="compound">RecordingDevice</ref> &amp;</type>
+        <definition>const RecordingDevice&amp; nest::RecordingBackendSIONlib::DeviceEntry::device</definition>
+        <argsstring></argsstring>
+        <name>device</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recording_backend_sionlib.h" line="325" column="27" bodyfile="nestkernel/recording_backend_sionlib.h" bodystart="325" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1_recording_backend_s_i_o_nlib_1_1_device_entry_1ae79ebf162468061bfb2dbef8d0c20ba9" prot="public" static="no" mutable="no">
+        <type>DeviceInfo</type>
+        <definition>DeviceInfo nest::RecordingBackendSIONlib::DeviceEntry::info</definition>
+        <argsstring></argsstring>
+        <name>info</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recording_backend_sionlib.h" line="326" column="16" bodyfile="nestkernel/recording_backend_sionlib.h" bodystart="326" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structnest_1_1_recording_backend_s_i_o_nlib_1_1_device_entry_1acceb27744d9aeafa844895ab96277634" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>nest::RecordingBackendSIONlib::DeviceEntry::DeviceEntry</definition>
+        <argsstring>(const RecordingDevice &amp;device)</argsstring>
+        <name>DeviceEntry</name>
+        <param>
+          <type>const <ref refid="classnest_1_1_recording_device" kindref="compound">RecordingDevice</ref> &amp;</type>
+          <declname>device</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/recording_backend_sionlib.h" line="319" column="5" bodyfile="nestkernel/recording_backend_sionlib.h" bodystart="319" bodyend="323"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="5">
+        <label>nest::DeprecationWarning</label>
+        <link refid="classnest_1_1_deprecation_warning"/>
+      </node>
+      <node id="7">
+        <label>nest::RecordingBackendSIONlib::DeviceInfo</label>
+      </node>
+      <node id="2">
+        <label>nest::RecordingDevice</label>
+        <link refid="classnest_1_1_recording_device"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+        <childnode refid="6" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>nest::DeviceNode</label>
+        <link refid="classnest_1_1_device_node"/>
+        <childnode refid="4" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>nest::Device</label>
+        <link refid="classnest_1_1_device"/>
+      </node>
+      <node id="4">
+        <label>nest::Node</label>
+        <link refid="classnest_1_1_node"/>
+        <childnode refid="5" relation="usage">
+          <edgelabel>+deprecation_warning</edgelabel>
+        </childnode>
+      </node>
+      <node id="1">
+        <label>nest::RecordingBackendSIONlib::DeviceEntry</label>
+        <childnode refid="2" relation="usage">
+          <edgelabel>+device</edgelabel>
+        </childnode>
+        <childnode refid="7" relation="usage">
+          <edgelabel>+info</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="nestkernel/recording_backend_sionlib.h" line="317" column="3" bodyfile="nestkernel/recording_backend_sionlib.h" bodystart="318" bodyend="327"/>
+    <listofallmembers>
+      <member refid="structnest_1_1_recording_backend_s_i_o_nlib_1_1_device_entry_1a4ce58c07819be36325f22e4bedda1ad0" prot="public" virt="non-virtual"><scope>nest::RecordingBackendSIONlib::DeviceEntry</scope><name>device</name></member>
+      <member refid="structnest_1_1_recording_backend_s_i_o_nlib_1_1_device_entry_1acceb27744d9aeafa844895ab96277634" prot="public" virt="non-virtual"><scope>nest::RecordingBackendSIONlib::DeviceEntry</scope><name>DeviceEntry</name></member>
+      <member refid="structnest_1_1_recording_backend_s_i_o_nlib_1_1_device_entry_1ae79ebf162468061bfb2dbef8d0c20ba9" prot="public" virt="non-virtual"><scope>nest::RecordingBackendSIONlib::DeviceEntry</scope><name>info</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

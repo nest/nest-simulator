@@ -1,0 +1,873 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classnest_1_1_source_table" kind="class" language="C++" prot="public">
+    <compoundname>nest::SourceTable</compoundname>
+    <includes refid="source__table_8h" local="no">source_table.h</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classnest_1_1_source_table_1a86279d17871e147254e4d02a3ef9f85b" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; std::vector&lt; BlockVector&lt; <ref refid="classnest_1_1_source" kindref="compound">Source</ref> &gt; &gt; &gt;</type>
+        <definition>std::vector&lt; std::vector&lt; BlockVector&lt; Source &gt; &gt; &gt; nest::SourceTable::sources_</definition>
+        <argsstring></argsstring>
+        <name>sources_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>3D structure storing node IDs of presynaptic neurons. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="70" column="15" bodyfile="nestkernel/source_table.h" bodystart="70" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_source_table_1ae50f16d3d54685a7ff1c6d99f3fc620a" prot="private" static="no" mutable="no">
+        <type><ref refid="classnest_1_1_per_thread_bool_indicator" kindref="compound">PerThreadBoolIndicator</ref></type>
+        <definition>PerThreadBoolIndicator nest::SourceTable::is_cleared_</definition>
+        <argsstring></argsstring>
+        <name>is_cleared_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Whether the 3D structure has been deleted. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="75" column="26" bodyfile="nestkernel/source_table.h" bodystart="75" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_source_table_1a86a7cc65e08b2fd9de21905fe9712b86" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="structnest_1_1_source_table_position" kindref="compound">SourceTablePosition</ref> &gt;</type>
+        <definition>std::vector&lt; SourceTablePosition &gt; nest::SourceTable::current_positions_</definition>
+        <argsstring></argsstring>
+        <name>current_positions_</name>
+        <briefdescription>
+<para>Needed during readout of sources_. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="78" column="15" bodyfile="nestkernel/source_table.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_source_table_1aa2c5c193bd5dd6cfb52ed3a5f18e0a2e" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="structnest_1_1_source_table_position" kindref="compound">SourceTablePosition</ref> &gt;</type>
+        <definition>std::vector&lt; SourceTablePosition &gt; nest::SourceTable::saved_positions_</definition>
+        <argsstring></argsstring>
+        <name>saved_positions_</name>
+        <briefdescription>
+<para>Needed during readout of sources_. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="80" column="15" bodyfile="nestkernel/source_table.h" bodystart="80" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_source_table_1ad282d0262f53a76f8bbbf2df73801a48" prot="private" static="no" mutable="no">
+        <type><ref refid="classnest_1_1_per_thread_bool_indicator" kindref="compound">PerThreadBoolIndicator</ref></type>
+        <definition>PerThreadBoolIndicator nest::SourceTable::saved_entry_point_</definition>
+        <argsstring></argsstring>
+        <name>saved_entry_point_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>If we detect an overflow in one of the MPI buffer parts, we save our current position in sources_ to continue at that point in the next communication round, while filling up (possible) remaining parts of the MPI buffer. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="88" column="26" bodyfile="nestkernel/source_table.h" bodystart="88" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_source_table_1a0a096f4cead60ecd3f5a048e0d0485e3" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; std::vector&lt; std::map&lt; <ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref>, <ref refid="classnest_1_1_spike_data" kindref="compound">SpikeData</ref> &gt; &gt; &gt;</type>
+        <definition>std::vector&lt; std::vector&lt; std::map&lt; index, SpikeData &gt; &gt; &gt; nest::SourceTable::compressible_sources_</definition>
+        <argsstring></argsstring>
+        <name>compressible_sources_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>A structure to temporarily hold information about all process local targets will be addressed by incoming spikes. Data from this structure is transferred to the compressed_spike_data_ structure of <ref refid="classnest_1_1_connection_manager" kindref="compound">ConnectionManager</ref> during construction of the postsynaptic connection infrastructure. Arranged as a two dimensional vector (thread|synapse) with an inner map (source node id -&gt; spike data). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="141" column="15" bodyfile="nestkernel/source_table.h" bodystart="141" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_source_table_1acba3e20dd4cf0cae319727e724b5b091" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; std::vector&lt; std::map&lt; <ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref>, size_t &gt; &gt; &gt;</type>
+        <definition>std::vector&lt; std::vector&lt; std::map&lt; index, size_t &gt; &gt; &gt; nest::SourceTable::compressed_spike_data_map_</definition>
+        <argsstring></argsstring>
+        <name>compressed_spike_data_map_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>A structure to temporarily store locations of &quot;unpacked spikes&quot; in the compressed_spike_data_ structure of <ref refid="classnest_1_1_connection_manager" kindref="compound">ConnectionManager</ref>. Data from this structure is transferred to the presynaptic side during construction of the presynaptic connection infrastructure. Arranged as a two dimensional vector (thread|synapse) with an inner map (source node id -&gt; index). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="151" column="15" bodyfile="nestkernel/source_table.h" bodystart="151" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-static-attrib">
+      <memberdef kind="variable" id="classnest_1_1_source_table_1abfc4e97ad7e0acdef0014ba5751af94b" prot="private" static="yes" mutable="no">
+        <type>const size_t</type>
+        <definition>const size_t nest::SourceTable::min_deleted_elements_</definition>
+        <argsstring></argsstring>
+        <name>min_deleted_elements_</name>
+        <initializer>= 1000000</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Minimal number of sources that need to be deleted per synapse type and thread before a reallocation of the respective vector is performed. Balances number of reallocations and memory usage.</para>
+<para><simplesect kind="see"><para><ref refid="classnest_1_1_source_table_1ac038d1355e698abb17e3e74a66a8b7e6" kindref="member">SourceTable::clean()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="97" column="23" bodyfile="nestkernel/source_table.h" bodystart="97" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classnest_1_1_source_table_1ad8820b545b13a93b1fa33f46eaf1d186" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::SourceTable::source_should_be_processed_</definition>
+        <argsstring>(const thread rank_start, const thread rank_end, const Source &amp;source) const</argsstring>
+        <name>source_should_be_processed_</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>rank_start</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>rank_end</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classnest_1_1_source" kindref="compound">Source</ref> &amp;</type>
+          <declname>source</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns whether this <ref refid="classnest_1_1_source" kindref="compound">Source</ref> object should be considered when constructing MPI buffers for communicating connections. Returns false if i) this entry was already processed, or ii) this entry is disabled (e.g., by structural plastcity) or iii) the reading thread is not responsible for the particular part of the MPI buffer where this entry would be written. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="108" column="8" bodyfile="nestkernel/source_table.cpp" bodystart="279" bodyend="289"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1ab1a4ac5a832fced02275d667529efaed" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::SourceTable::next_entry_has_same_source_</definition>
+        <argsstring>(const SourceTablePosition &amp;current_position, const Source &amp;current_source) const</argsstring>
+        <name>next_entry_has_same_source_</name>
+        <param>
+          <type>const <ref refid="structnest_1_1_source_table_position" kindref="compound">SourceTablePosition</ref> &amp;</type>
+          <declname>current_position</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classnest_1_1_source" kindref="compound">Source</ref> &amp;</type>
+          <declname>current_source</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns true if the following entry in the <ref refid="classnest_1_1_source_table" kindref="compound">SourceTable</ref> has the same source gid. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="114" column="8" bodyfile="nestkernel/source_table.cpp" bodystart="292" bodyend="302"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1a88dd05c73fb0befe340db581607bd6ea" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::SourceTable::previous_entry_has_same_source_</definition>
+        <argsstring>(const SourceTablePosition &amp;current_position, const Source &amp;current_source) const</argsstring>
+        <name>previous_entry_has_same_source_</name>
+        <param>
+          <type>const <ref refid="structnest_1_1_source_table_position" kindref="compound">SourceTablePosition</ref> &amp;</type>
+          <declname>current_position</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classnest_1_1_source" kindref="compound">Source</ref> &amp;</type>
+          <declname>current_source</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns true if the previous entry in the <ref refid="classnest_1_1_source_table" kindref="compound">SourceTable</ref> has the same source gid. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="120" column="8" bodyfile="nestkernel/source_table.cpp" bodystart="305" bodyend="316"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1a427e9d3941f3d9f61ee1515d8b1c6521" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::SourceTable::populate_target_data_fields_</definition>
+        <argsstring>(const SourceTablePosition &amp;current_position, const Source &amp;current_source, const thread source_rank, TargetData &amp;next_target_data) const</argsstring>
+        <name>populate_target_data_fields_</name>
+        <param>
+          <type>const <ref refid="structnest_1_1_source_table_position" kindref="compound">SourceTablePosition</ref> &amp;</type>
+          <declname>current_position</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classnest_1_1_source" kindref="compound">Source</ref> &amp;</type>
+          <declname>current_source</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>source_rank</declname>
+        </param>
+        <param>
+          <type><ref refid="classnest_1_1_target_data" kindref="compound">TargetData</ref> &amp;</type>
+          <declname>next_target_data</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Fills the fields of a <ref refid="classnest_1_1_target_data" kindref="compound">TargetData</ref> during construction of * presynaptic connection infrastructure. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="127" column="8" bodyfile="nestkernel/source_table.cpp" bodystart="319" bodyend="384"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classnest_1_1_source_table_1a53525e37d651be8610620ed44bdf4ba2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>nest::SourceTable::SourceTable</definition>
+        <argsstring>()</argsstring>
+        <name>SourceTable</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="154" column="3" bodyfile="nestkernel/source_table.cpp" bodystart="34" bodyend="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1af602ed4924f5c78627170bdeffe69eb5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>nest::SourceTable::~SourceTable</definition>
+        <argsstring>()</argsstring>
+        <name>~SourceTable</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="155" column="3" bodyfile="nestkernel/source_table.cpp" bodystart="38" bodyend="40"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1a887d62b81ea5823fea5298bca4434601" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::SourceTable::initialize</definition>
+        <argsstring>()</argsstring>
+        <name>initialize</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Initialize data structure. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="160" column="8" bodyfile="nestkernel/source_table.cpp" bodystart="43" bodyend="63"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1a1d7018ea91dfa76701d4bc7a8ff963a2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::SourceTable::finalize</definition>
+        <argsstring>()</argsstring>
+        <name>finalize</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Delete data structures. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="165" column="8" bodyfile="nestkernel/source_table.cpp" bodystart="66" bodyend="83"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1a9ffaa28e50f84b26d84dc254efad2c12" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::SourceTable::add_source</definition>
+        <argsstring>(const thread tid, const synindex syn_id, const index node_id, const bool is_primary)</argsstring>
+        <name>add_source</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacenest_1a2d283b4b36e5ee3b6f1d84b35c9ed475" kindref="member">synindex</ref></type>
+          <declname>syn_id</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+          <declname>node_id</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>is_primary</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Adds a source to sources_. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="170" column="8" bodyfile="nestkernel/source_table.h" bodystart="310" bodyend="314"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1a27bdf608ea88eb4afc2309654fee35a1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::SourceTable::clear</definition>
+        <argsstring>(const thread tid)</argsstring>
+        <name>clear</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Clears sources_. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="175" column="8" bodyfile="nestkernel/source_table.h" bodystart="317" bodyend="325"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1aa88eeb6c1c6a285878b6559f2a7ae636" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::SourceTable::is_cleared</definition>
+        <argsstring>() const</argsstring>
+        <name>is_cleared</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns true if sources_ has been cleared. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="180" column="8" bodyfile="nestkernel/source_table.cpp" bodystart="86" bodyend="89"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1ac7f8bae3617bf28a6995058adfae00fd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::SourceTable::get_next_target_data</definition>
+        <argsstring>(const thread tid, const thread rank_start, const thread rank_end, thread &amp;source_rank, TargetData &amp;next_target_data)</argsstring>
+        <name>get_next_target_data</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>rank_start</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>rank_end</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref> &amp;</type>
+          <declname>source_rank</declname>
+        </param>
+        <param>
+          <type><ref refid="classnest_1_1_target_data" kindref="compound">TargetData</ref> &amp;</type>
+          <declname>next_target_data</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the next target data, according to the current_positions_. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="185" column="8" bodyfile="nestkernel/source_table.cpp" bodystart="387" bodyend="452"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1abe85f527077c45ca1ff2912b5268bf1b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::SourceTable::reject_last_target_data</definition>
+        <argsstring>(const thread tid)</argsstring>
+        <name>reject_last_target_data</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Rejects the last target data, and resets the current_positions_ accordingly. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="195" column="8" bodyfile="nestkernel/source_table.h" bodystart="328" bodyend="339"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1a64c0475fbb8798086a3397725045d5e8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::SourceTable::save_entry_point</definition>
+        <argsstring>(const thread tid)</argsstring>
+        <name>save_entry_point</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Stores current_positions_ in saved_positions_. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="200" column="8" bodyfile="nestkernel/source_table.h" bodystart="342" bodyend="366"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1ac2dfaa479a812347eabc1733afcb05a5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::SourceTable::restore_entry_point</definition>
+        <argsstring>(const thread tid)</argsstring>
+        <name>restore_entry_point</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Restores current_positions_ from saved_positions_. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="205" column="8" bodyfile="nestkernel/source_table.h" bodystart="369" bodyend="373"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1a40ed9782abd6c3ee75d1317172cd2f5d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::SourceTable::reset_entry_point</definition>
+        <argsstring>(const thread tid)</argsstring>
+        <name>reset_entry_point</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Resets saved_positions_ to end of sources_. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="210" column="8" bodyfile="nestkernel/source_table.h" bodystart="376" bodyend="400"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1ad0dc55ce4b7c808d7d61df8f97d2ff03" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+        <definition>nest::index nest::SourceTable::get_node_id</definition>
+        <argsstring>(const thread tid, const synindex syn_id, const index lcid) const</argsstring>
+        <name>get_node_id</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacenest_1a2d283b4b36e5ee3b6f1d84b35c9ed475" kindref="member">synindex</ref></type>
+          <declname>syn_id</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+          <declname>lcid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the node ID of the source at tid|syn_id|lcid. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="215" column="9" bodyfile="nestkernel/source_table.cpp" bodystart="158" bodyend="165"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1a64341bd9068a49d50ad8c51aaa39b6bd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>std::vector&lt; BlockVector&lt; <ref refid="classnest_1_1_source" kindref="compound">Source</ref> &gt; &gt; &amp;</type>
+        <definition>std::vector&lt; BlockVector&lt; nest::Source &gt; &gt; &amp; nest::SourceTable::get_thread_local_sources</definition>
+        <argsstring>(const thread tid)</argsstring>
+        <name>get_thread_local_sources</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns a reference to all sources local on thread; necessary for sorting. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="221" column="15" bodyfile="nestkernel/source_table.cpp" bodystart="92" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1a5dc7dd2128af0f9f34d8ae92a0fa81fd" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="structnest_1_1_source_table_position" kindref="compound">SourceTablePosition</ref></type>
+        <definition>nest::SourceTablePosition nest::SourceTable::find_maximal_position</definition>
+        <argsstring>() const</argsstring>
+        <name>find_maximal_position</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Determines maximal saved_positions_ after which it is safe to delete sources during <ref refid="classnest_1_1_source_table_1ac038d1355e698abb17e3e74a66a8b7e6" kindref="member">clean()</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="227" column="23" bodyfile="nestkernel/source_table.cpp" bodystart="98" bodyend="109"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1a633f97bbf39389143a0e2996cd10e01b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::SourceTable::reset_processed_flags</definition>
+        <argsstring>(const thread tid)</argsstring>
+        <name>reset_processed_flags</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Resets all processed flags. Needed for restructuring connection tables, e.g., during structural plasticity update. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="233" column="8" bodyfile="nestkernel/source_table.h" bodystart="403" bodyend="412"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1ac038d1355e698abb17e3e74a66a8b7e6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::SourceTable::clean</definition>
+        <argsstring>(const thread tid)</argsstring>
+        <name>clean</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Removes all entries marked as processed. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="238" column="8" bodyfile="nestkernel/source_table.cpp" bodystart="112" bodyend="155"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1a57247c92a5f430b24d74286089222ac9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::SourceTable::no_targets_to_process</definition>
+        <argsstring>(const thread tid)</argsstring>
+        <name>no_targets_to_process</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sets current_positions_ for this thread to minimal values so that these are not considered in <ref refid="classnest_1_1_source_table_1a5dc7dd2128af0f9f34d8ae92a0fa81fd" kindref="member">find_maximal_position()</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="244" column="8" bodyfile="nestkernel/source_table.h" bodystart="415" bodyend="420"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1a15e7c1635c267bf81b15d1b445252792" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources</definition>
+        <argsstring>(const thread tid, std::map&lt; index, size_t &gt; &amp;buffer_pos_of_source_node_id_syn_id_)</argsstring>
+        <name>compute_buffer_pos_for_unique_secondary_sources</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <param>
+          <type>std::map&lt; <ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref>, size_t &gt; &amp;</type>
+          <declname>buffer_pos_of_source_node_id_syn_id_</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Computes MPI buffer positions for unique combination of source node ID and synapse type across all threads for all secondary connections. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="251" column="8" bodyfile="nestkernel/source_table.cpp" bodystart="202" bodyend="270"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1ae241786bcfe17aa06e1c9ffd59cc25e9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+        <definition>index nest::SourceTable::find_first_source</definition>
+        <argsstring>(const thread tid, const synindex syn_id, const index snode_id) const</argsstring>
+        <name>find_first_source</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacenest_1a2d283b4b36e5ee3b6f1d84b35c9ed475" kindref="member">synindex</ref></type>
+          <declname>syn_id</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+          <declname>snode_id</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Finds the first entry in sources_ at the given thread id and synapse type that is equal to snode_id. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="258" column="9" bodyfile="nestkernel/source_table.h" bodystart="423" bodyend="444"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1a95488c7e9b2751cc920ec285d7c58ff1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::SourceTable::disable_connection</definition>
+        <argsstring>(const thread tid, const synindex syn_id, const index lcid)</argsstring>
+        <name>disable_connection</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacenest_1a2d283b4b36e5ee3b6f1d84b35c9ed475" kindref="member">synindex</ref></type>
+          <declname>syn_id</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+          <declname>lcid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Marks entry in sources_ at given position as disabled. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="263" column="8" bodyfile="nestkernel/source_table.h" bodystart="447" bodyend="453"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1af983ed462e1627dde228f1f561dc3d66" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+        <definition>nest::index nest::SourceTable::remove_disabled_sources</definition>
+        <argsstring>(const thread tid, const synindex syn_id)</argsstring>
+        <name>remove_disabled_sources</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacenest_1a2d283b4b36e5ee3b6f1d84b35c9ed475" kindref="member">synindex</ref></type>
+          <declname>syn_id</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Removes all entries from sources_ that are marked as disabled. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="268" column="9" bodyfile="nestkernel/source_table.cpp" bodystart="168" bodyend="199"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1aa0fe593f1b91ae3c63d0f915d54b6479" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::SourceTable::get_source_node_ids</definition>
+        <argsstring>(const thread tid, const synindex syn_id, const std::vector&lt; index &gt; &amp;source_lcids, std::vector&lt; index &gt; &amp;sources)</argsstring>
+        <name>get_source_node_ids</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacenest_1a2d283b4b36e5ee3b6f1d84b35c9ed475" kindref="member">synindex</ref></type>
+          <declname>syn_id</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; <ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref> &gt; &amp;</type>
+          <declname>source_lcids</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; <ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref> &gt; &amp;</type>
+          <declname>sources</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns node IDs for entries in sources_ for the given thread id, synapse type and local connections ids. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="274" column="8" bodyfile="nestkernel/source_table.h" bodystart="456" bodyend="465"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1afadfaeac3f1f913dd8ccfc6c84835104" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t nest::SourceTable::num_unique_sources</definition>
+        <argsstring>(const thread tid, const synindex syn_id) const</argsstring>
+        <name>num_unique_sources</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacenest_1a2d283b4b36e5ee3b6f1d84b35c9ed475" kindref="member">synindex</ref></type>
+          <declname>syn_id</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the number of unique node IDs for given thread id and synapse type in sources_. This number corresponds to the number of targets that need to be communicated during construction of the presynaptic connection infrastructure. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="285" column="10" bodyfile="nestkernel/source_table.h" bodystart="468" bodyend="483"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1a543cad6bd3ce8310d4b9bfef9ff9fb45" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::SourceTable::resize_sources</definition>
+        <argsstring>(const thread tid)</argsstring>
+        <name>resize_sources</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Resizes sources_ according to total number of threads and synapse types. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="291" column="8" bodyfile="nestkernel/source_table.cpp" bodystart="273" bodyend="276"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1a35098dc6022aaf0e464e8fe428d4c327" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+        <definition>index nest::SourceTable::pack_source_node_id_and_syn_id</definition>
+        <argsstring>(const index source_node_id, const synindex syn_id) const</argsstring>
+        <name>pack_source_node_id_and_syn_id</name>
+        <param>
+          <type>const <ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+          <declname>source_node_id</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacenest_1a2d283b4b36e5ee3b6f1d84b35c9ed475" kindref="member">synindex</ref></type>
+          <declname>syn_id</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Encodes combination of node ID and synapse types as single long number. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="297" column="9" bodyfile="nestkernel/source_table.h" bodystart="486" bodyend="493"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1a5883368d1ce3572f88b6cb04f0d051af" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::SourceTable::resize_compressible_sources</definition>
+        <argsstring>()</argsstring>
+        <name>resize_compressible_sources</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="299" column="8" bodyfile="nestkernel/source_table.cpp" bodystart="455" bodyend="463"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1ac02029a347c0cf3a0d9737e5f987b417" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::SourceTable::collect_compressible_sources</definition>
+        <argsstring>(const thread tid)</argsstring>
+        <name>collect_compressible_sources</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="302" column="8" bodyfile="nestkernel/source_table.cpp" bodystart="466" bodyend="487"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1a199dd1f7d70ceb20323d7ec3812953e5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::SourceTable::fill_compressed_spike_data</definition>
+        <argsstring>(std::vector&lt; std::vector&lt; std::vector&lt; SpikeData &gt; &gt; &gt; &amp;compressed_spike_data)</argsstring>
+        <name>fill_compressed_spike_data</name>
+        <param>
+          <type>std::vector&lt; std::vector&lt; std::vector&lt; <ref refid="classnest_1_1_spike_data" kindref="compound">SpikeData</ref> &gt; &gt; &gt; &amp;</type>
+          <declname>compressed_spike_data</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="304" column="8" bodyfile="nestkernel/source_table.cpp" bodystart="490" bodyend="553"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_source_table_1aac62088810dbb1d9020e01fd34676e0f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::SourceTable::clear_compressed_spike_data_map</definition>
+        <argsstring>(const thread tid)</argsstring>
+        <name>clear_compressed_spike_data_map</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/source_table.h" line="306" column="8" bodyfile="nestkernel/source_table.h" bodystart="496" bodyend="502"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>This data structure stores the node IDs of presynaptic neurons during postsynaptic connection creation, before the connection information has been transferred to the presynaptic side. The core structure is the three dimensional sources vector, which is arranged as follows: 1st dimension: threads 2nd dimension: synapse types 3rd dimension: node IDs After all connections have been created, the information stored in this structure is transferred to the presynaptic side and the sources vector can be cleared. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>nest::SourceTable</label>
+        <link refid="classnest_1_1_source_table"/>
+      </node>
+    </collaborationgraph>
+    <location file="nestkernel/source_table.h" line="64" column="1" bodyfile="nestkernel/source_table.h" bodystart="65" bodyend="307"/>
+    <listofallmembers>
+      <member refid="classnest_1_1_source_table_1a9ffaa28e50f84b26d84dc254efad2c12" prot="public" virt="non-virtual"><scope>nest::SourceTable</scope><name>add_source</name></member>
+      <member refid="classnest_1_1_source_table_1ac038d1355e698abb17e3e74a66a8b7e6" prot="public" virt="non-virtual"><scope>nest::SourceTable</scope><name>clean</name></member>
+      <member refid="classnest_1_1_source_table_1a27bdf608ea88eb4afc2309654fee35a1" prot="public" virt="non-virtual"><scope>nest::SourceTable</scope><name>clear</name></member>
+      <member refid="classnest_1_1_source_table_1aac62088810dbb1d9020e01fd34676e0f" prot="public" virt="non-virtual"><scope>nest::SourceTable</scope><name>clear_compressed_spike_data_map</name></member>
+      <member refid="classnest_1_1_source_table_1ac02029a347c0cf3a0d9737e5f987b417" prot="public" virt="non-virtual"><scope>nest::SourceTable</scope><name>collect_compressible_sources</name></member>
+      <member refid="classnest_1_1_source_table_1acba3e20dd4cf0cae319727e724b5b091" prot="private" virt="non-virtual"><scope>nest::SourceTable</scope><name>compressed_spike_data_map_</name></member>
+      <member refid="classnest_1_1_source_table_1a0a096f4cead60ecd3f5a048e0d0485e3" prot="private" virt="non-virtual"><scope>nest::SourceTable</scope><name>compressible_sources_</name></member>
+      <member refid="classnest_1_1_source_table_1a15e7c1635c267bf81b15d1b445252792" prot="public" virt="non-virtual"><scope>nest::SourceTable</scope><name>compute_buffer_pos_for_unique_secondary_sources</name></member>
+      <member refid="classnest_1_1_source_table_1a86a7cc65e08b2fd9de21905fe9712b86" prot="private" virt="non-virtual"><scope>nest::SourceTable</scope><name>current_positions_</name></member>
+      <member refid="classnest_1_1_source_table_1a95488c7e9b2751cc920ec285d7c58ff1" prot="public" virt="non-virtual"><scope>nest::SourceTable</scope><name>disable_connection</name></member>
+      <member refid="classnest_1_1_source_table_1a199dd1f7d70ceb20323d7ec3812953e5" prot="public" virt="non-virtual"><scope>nest::SourceTable</scope><name>fill_compressed_spike_data</name></member>
+      <member refid="classnest_1_1_source_table_1a1d7018ea91dfa76701d4bc7a8ff963a2" prot="public" virt="non-virtual"><scope>nest::SourceTable</scope><name>finalize</name></member>
+      <member refid="classnest_1_1_source_table_1ae241786bcfe17aa06e1c9ffd59cc25e9" prot="public" virt="non-virtual"><scope>nest::SourceTable</scope><name>find_first_source</name></member>
+      <member refid="classnest_1_1_source_table_1a5dc7dd2128af0f9f34d8ae92a0fa81fd" prot="public" virt="non-virtual"><scope>nest::SourceTable</scope><name>find_maximal_position</name></member>
+      <member refid="classnest_1_1_source_table_1ac7f8bae3617bf28a6995058adfae00fd" prot="public" virt="non-virtual"><scope>nest::SourceTable</scope><name>get_next_target_data</name></member>
+      <member refid="classnest_1_1_source_table_1ad0dc55ce4b7c808d7d61df8f97d2ff03" prot="public" virt="non-virtual"><scope>nest::SourceTable</scope><name>get_node_id</name></member>
+      <member refid="classnest_1_1_source_table_1aa0fe593f1b91ae3c63d0f915d54b6479" prot="public" virt="non-virtual"><scope>nest::SourceTable</scope><name>get_source_node_ids</name></member>
+      <member refid="classnest_1_1_source_table_1a64341bd9068a49d50ad8c51aaa39b6bd" prot="public" virt="non-virtual"><scope>nest::SourceTable</scope><name>get_thread_local_sources</name></member>
+      <member refid="classnest_1_1_source_table_1a887d62b81ea5823fea5298bca4434601" prot="public" virt="non-virtual"><scope>nest::SourceTable</scope><name>initialize</name></member>
+      <member refid="classnest_1_1_source_table_1aa88eeb6c1c6a285878b6559f2a7ae636" prot="public" virt="non-virtual"><scope>nest::SourceTable</scope><name>is_cleared</name></member>
+      <member refid="classnest_1_1_source_table_1ae50f16d3d54685a7ff1c6d99f3fc620a" prot="private" virt="non-virtual"><scope>nest::SourceTable</scope><name>is_cleared_</name></member>
+      <member refid="classnest_1_1_source_table_1abfc4e97ad7e0acdef0014ba5751af94b" prot="private" virt="non-virtual"><scope>nest::SourceTable</scope><name>min_deleted_elements_</name></member>
+      <member refid="classnest_1_1_source_table_1ab1a4ac5a832fced02275d667529efaed" prot="private" virt="non-virtual"><scope>nest::SourceTable</scope><name>next_entry_has_same_source_</name></member>
+      <member refid="classnest_1_1_source_table_1a57247c92a5f430b24d74286089222ac9" prot="public" virt="non-virtual"><scope>nest::SourceTable</scope><name>no_targets_to_process</name></member>
+      <member refid="classnest_1_1_source_table_1afadfaeac3f1f913dd8ccfc6c84835104" prot="public" virt="non-virtual"><scope>nest::SourceTable</scope><name>num_unique_sources</name></member>
+      <member refid="classnest_1_1_source_table_1a35098dc6022aaf0e464e8fe428d4c327" prot="public" virt="non-virtual"><scope>nest::SourceTable</scope><name>pack_source_node_id_and_syn_id</name></member>
+      <member refid="classnest_1_1_source_table_1a427e9d3941f3d9f61ee1515d8b1c6521" prot="private" virt="non-virtual"><scope>nest::SourceTable</scope><name>populate_target_data_fields_</name></member>
+      <member refid="classnest_1_1_source_table_1a88dd05c73fb0befe340db581607bd6ea" prot="private" virt="non-virtual"><scope>nest::SourceTable</scope><name>previous_entry_has_same_source_</name></member>
+      <member refid="classnest_1_1_source_table_1abe85f527077c45ca1ff2912b5268bf1b" prot="public" virt="non-virtual"><scope>nest::SourceTable</scope><name>reject_last_target_data</name></member>
+      <member refid="classnest_1_1_source_table_1af983ed462e1627dde228f1f561dc3d66" prot="public" virt="non-virtual"><scope>nest::SourceTable</scope><name>remove_disabled_sources</name></member>
+      <member refid="classnest_1_1_source_table_1a40ed9782abd6c3ee75d1317172cd2f5d" prot="public" virt="non-virtual"><scope>nest::SourceTable</scope><name>reset_entry_point</name></member>
+      <member refid="classnest_1_1_source_table_1a633f97bbf39389143a0e2996cd10e01b" prot="public" virt="non-virtual"><scope>nest::SourceTable</scope><name>reset_processed_flags</name></member>
+      <member refid="classnest_1_1_source_table_1a5883368d1ce3572f88b6cb04f0d051af" prot="public" virt="non-virtual"><scope>nest::SourceTable</scope><name>resize_compressible_sources</name></member>
+      <member refid="classnest_1_1_source_table_1a543cad6bd3ce8310d4b9bfef9ff9fb45" prot="public" virt="non-virtual"><scope>nest::SourceTable</scope><name>resize_sources</name></member>
+      <member refid="classnest_1_1_source_table_1ac2dfaa479a812347eabc1733afcb05a5" prot="public" virt="non-virtual"><scope>nest::SourceTable</scope><name>restore_entry_point</name></member>
+      <member refid="classnest_1_1_source_table_1a64c0475fbb8798086a3397725045d5e8" prot="public" virt="non-virtual"><scope>nest::SourceTable</scope><name>save_entry_point</name></member>
+      <member refid="classnest_1_1_source_table_1ad282d0262f53a76f8bbbf2df73801a48" prot="private" virt="non-virtual"><scope>nest::SourceTable</scope><name>saved_entry_point_</name></member>
+      <member refid="classnest_1_1_source_table_1aa2c5c193bd5dd6cfb52ed3a5f18e0a2e" prot="private" virt="non-virtual"><scope>nest::SourceTable</scope><name>saved_positions_</name></member>
+      <member refid="classnest_1_1_source_table_1ad8820b545b13a93b1fa33f46eaf1d186" prot="private" virt="non-virtual"><scope>nest::SourceTable</scope><name>source_should_be_processed_</name></member>
+      <member refid="classnest_1_1_source_table_1a86279d17871e147254e4d02a3ef9f85b" prot="private" virt="non-virtual"><scope>nest::SourceTable</scope><name>sources_</name></member>
+      <member refid="classnest_1_1_source_table_1a53525e37d651be8610620ed44bdf4ba2" prot="public" virt="non-virtual"><scope>nest::SourceTable</scope><name>SourceTable</name></member>
+      <member refid="classnest_1_1_source_table_1af602ed4924f5c78627170bdeffe69eb5" prot="public" virt="non-virtual"><scope>nest::SourceTable</scope><name>~SourceTable</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

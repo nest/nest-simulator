@@ -1,0 +1,230 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classnest_1_1_target_table" kind="class" language="C++" prot="public">
+    <compoundname>nest::TargetTable</compoundname>
+    <includes refid="target__table_8h" local="no">target_table.h</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classnest_1_1_target_table_1a79bdd9f26d31db51b7c9e47e35ec51b8" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; std::vector&lt; std::vector&lt; <ref refid="classnest_1_1_target" kindref="compound">Target</ref> &gt; &gt; &gt;</type>
+        <definition>std::vector&lt; std::vector&lt; std::vector&lt; Target &gt; &gt; &gt; nest::TargetTable::targets_</definition>
+        <argsstring></argsstring>
+        <name>targets_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Stores targets of local neurons Three dimensional objects:<itemizedlist>
+<listitem><para>first dim: threads</para>
+</listitem><listitem><para>second dim: local neurons</para>
+</listitem><listitem><para>third dim: targets </para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/target_table.h" line="55" column="15" bodyfile="nestkernel/target_table.h" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_target_table_1ad8c7a0f3ad8fda370acafbb894ed7610" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; std::vector&lt; std::vector&lt; std::vector&lt; size_t &gt; &gt; &gt; &gt;</type>
+        <definition>std::vector&lt; std::vector&lt; std::vector&lt; std::vector&lt; size_t &gt; &gt; &gt; &gt; nest::TargetTable::secondary_send_buffer_pos_</definition>
+        <argsstring></argsstring>
+        <name>secondary_send_buffer_pos_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Stores MPI send buffer positions for secondary targets of local neurons. Four dimensional object:<itemizedlist>
+<listitem><para>first dim: threads</para>
+</listitem><listitem><para>second dim: local neurons</para>
+</listitem><listitem><para>third dim: synapse types</para>
+</listitem><listitem><para>fourth dim: MPI send buffer positions </para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/target_table.h" line="66" column="15" bodyfile="nestkernel/target_table.h" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classnest_1_1_target_table_1adce528ee6c871274e1a9b2242068d3bd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::TargetTable::initialize</definition>
+        <argsstring>()</argsstring>
+        <name>initialize</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Initializes data structures. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/target_table.h" line="72" column="8" bodyfile="nestkernel/target_table.cpp" bodystart="31" bodyend="43"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_target_table_1aacbcebfadb55deae20da0cd82f049866" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::TargetTable::finalize</definition>
+        <argsstring>()</argsstring>
+        <name>finalize</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Deletes data structure. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/target_table.h" line="77" column="8" bodyfile="nestkernel/target_table.cpp" bodystart="46" bodyend="50"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_target_table_1ab2b10c675f23dfc38f8922f61b521127" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::TargetTable::prepare</definition>
+        <argsstring>(const thread tid)</argsstring>
+        <name>prepare</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Adjusts targets_ to number of local nodes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/target_table.h" line="82" column="8" bodyfile="nestkernel/target_table.cpp" bodystart="53" bodyend="68"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_target_table_1ad19a4c20b88fb930687b5b29a526d71c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::TargetTable::add_target</definition>
+        <argsstring>(const thread tid, const thread target_rank, const TargetData &amp;target_data)</argsstring>
+        <name>add_target</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>target_rank</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classnest_1_1_target_data" kindref="compound">TargetData</ref> &amp;</type>
+          <declname>target_data</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Adds entry to targets_. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/target_table.h" line="87" column="8" bodyfile="nestkernel/target_table.cpp" bodystart="87" bodyend="110"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_target_table_1aa6fd385f8ce64bcb2e0b88c7f8091176" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::vector&lt; <ref refid="classnest_1_1_target" kindref="compound">Target</ref> &gt; &amp;</type>
+        <definition>const std::vector&lt; Target &gt; &amp; nest::TargetTable::get_targets</definition>
+        <argsstring>(const thread tid, const index lid) const</argsstring>
+        <name>get_targets</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+          <declname>lid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns all targets of a neuron. Used for filling EventDeliveryManager::emitted_spikes_register_. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/target_table.h" line="93" column="21" bodyfile="nestkernel/target_table.h" bodystart="115" bodyend="118"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_target_table_1a05c036cf6d0375ec15ce1776df762e25" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const std::vector&lt; size_t &gt; &amp;</type>
+        <definition>const std::vector&lt; size_t &gt; &amp; nest::TargetTable::get_secondary_send_buffer_positions</definition>
+        <argsstring>(const thread tid, const index lid, const synindex syn_id) const</argsstring>
+        <name>get_secondary_send_buffer_positions</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+          <declname>lid</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacenest_1a2d283b4b36e5ee3b6f1d84b35c9ed475" kindref="member">synindex</ref></type>
+          <declname>syn_id</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns all MPI send buffer positions of a neuron. Used to fill MPI buffer in <ref refid="classnest_1_1_event_delivery_manager" kindref="compound">EventDeliveryManager</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/target_table.h" line="100" column="3" bodyfile="nestkernel/target_table.h" bodystart="121" bodyend="125"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_target_table_1a1d6992013e99c3286879a12f44f309a6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::TargetTable::clear</definition>
+        <argsstring>(const thread tid)</argsstring>
+        <name>clear</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Clears all entries of targets_. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/target_table.h" line="105" column="8" bodyfile="nestkernel/target_table.h" bodystart="128" bodyend="132"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_target_table_1a780264fd12eaf15112d0e68007c58f3d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::TargetTable::compress_secondary_send_buffer_pos</definition>
+        <argsstring>(const thread tid)</argsstring>
+        <name>compress_secondary_send_buffer_pos</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Removes identical MPI send buffer positions to avoid writing data multiple times. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/target_table.h" line="111" column="8" bodyfile="nestkernel/target_table.cpp" bodystart="71" bodyend="84"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>This data structure stores all targets of the local neurons. This is the presynaptic part of the connection infrastructure. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>nest::TargetTable</label>
+        <link refid="classnest_1_1_target_table"/>
+      </node>
+    </collaborationgraph>
+    <location file="nestkernel/target_table.h" line="45" column="1" bodyfile="nestkernel/target_table.h" bodystart="46" bodyend="112"/>
+    <listofallmembers>
+      <member refid="classnest_1_1_target_table_1ad19a4c20b88fb930687b5b29a526d71c" prot="public" virt="non-virtual"><scope>nest::TargetTable</scope><name>add_target</name></member>
+      <member refid="classnest_1_1_target_table_1a1d6992013e99c3286879a12f44f309a6" prot="public" virt="non-virtual"><scope>nest::TargetTable</scope><name>clear</name></member>
+      <member refid="classnest_1_1_target_table_1a780264fd12eaf15112d0e68007c58f3d" prot="public" virt="non-virtual"><scope>nest::TargetTable</scope><name>compress_secondary_send_buffer_pos</name></member>
+      <member refid="classnest_1_1_target_table_1aacbcebfadb55deae20da0cd82f049866" prot="public" virt="non-virtual"><scope>nest::TargetTable</scope><name>finalize</name></member>
+      <member refid="classnest_1_1_target_table_1a05c036cf6d0375ec15ce1776df762e25" prot="public" virt="non-virtual"><scope>nest::TargetTable</scope><name>get_secondary_send_buffer_positions</name></member>
+      <member refid="classnest_1_1_target_table_1aa6fd385f8ce64bcb2e0b88c7f8091176" prot="public" virt="non-virtual"><scope>nest::TargetTable</scope><name>get_targets</name></member>
+      <member refid="classnest_1_1_target_table_1adce528ee6c871274e1a9b2242068d3bd" prot="public" virt="non-virtual"><scope>nest::TargetTable</scope><name>initialize</name></member>
+      <member refid="classnest_1_1_target_table_1ab2b10c675f23dfc38f8922f61b521127" prot="public" virt="non-virtual"><scope>nest::TargetTable</scope><name>prepare</name></member>
+      <member refid="classnest_1_1_target_table_1ad8c7a0f3ad8fda370acafbb894ed7610" prot="private" virt="non-virtual"><scope>nest::TargetTable</scope><name>secondary_send_buffer_pos_</name></member>
+      <member refid="classnest_1_1_target_table_1a79bdd9f26d31db51b7c9e47e35ec51b8" prot="private" virt="non-virtual"><scope>nest::TargetTable</scope><name>targets_</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

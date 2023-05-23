@@ -1,0 +1,492 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classnest_1_1_v_p_manager" kind="class" language="C++" prot="public">
+    <compoundname>nest::VPManager</compoundname>
+    <basecompoundref refid="classnest_1_1_manager_interface" prot="public" virt="non-virtual">nest::ManagerInterface</basecompoundref>
+    <includes refid="vp__manager_8h" local="no">vp_manager.h</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classnest_1_1_v_p_manager_1a3e6b539023e28bf2403f162879a24625" prot="private" static="no" mutable="no">
+        <type>const bool</type>
+        <definition>const bool nest::VPManager::force_singlethreading_</definition>
+        <argsstring></argsstring>
+        <name>force_singlethreading_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/vp_manager.h" line="158" column="14" bodyfile="nestkernel/vp_manager.h" bodystart="158" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_v_p_manager_1a9517fa9a6ee322cd3ef9cd432cdb9f1d" prot="private" static="no" mutable="no">
+        <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+        <definition>index nest::VPManager::n_threads_</definition>
+        <argsstring></argsstring>
+        <name>n_threads_</name>
+        <briefdescription>
+<para>Number of threads per process. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/vp_manager.h" line="159" column="9" bodyfile="nestkernel/vp_manager.h" bodystart="159" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classnest_1_1_v_p_manager_1a22b72deda948cf529da7a6d669787c66" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>nest::VPManager::VPManager</definition>
+        <argsstring>()</argsstring>
+        <name>VPManager</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/vp_manager.h" line="54" column="3" bodyfile="nestkernel/vp_manager.cpp" bodystart="37" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_v_p_manager_1aacaa12c97e613e45c78614f35da9ea7e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>nest::VPManager::~VPManager</definition>
+        <argsstring>() override</argsstring>
+        <name>~VPManager</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/vp_manager.h" line="55" column="3" bodyfile="nestkernel/vp_manager.h" bodystart="55" bodyend="57"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_v_p_manager_1a8364a5cc732ac45e292210c09070d5fe" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::VPManager::initialize</definition>
+        <argsstring>() override</argsstring>
+        <name>initialize</name>
+        <reimplements refid="classnest_1_1_manager_interface_1a43f881ab34500bff012a2514ad99ad79">initialize</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Prepare manager for operation.</para>
+<para>After this method has completed, the manager should be completely initialized and &quot;ready for action&quot;.</para>
+<para><simplesect kind="note"><para>Initialization of any given manager may depend on other managers having been initialized before. <ref refid="classnest_1_1_kernel_manager_1aa731562f03c98d8fa67f1d530056ede2" kindref="member">KernelManager::initialize()</ref> is responsible for calling the initialization routines on the specific managers in correct order.</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="classnest_1_1_v_p_manager_1a35393250b59cc345611b967cde1e38cb" kindref="member">finalize()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/vp_manager.h" line="59" column="8" bodyfile="nestkernel/vp_manager.cpp" bodystart="48" bodyend="62"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_v_p_manager_1a35393250b59cc345611b967cde1e38cb" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::VPManager::finalize</definition>
+        <argsstring>() override</argsstring>
+        <name>finalize</name>
+        <reimplements refid="classnest_1_1_manager_interface_1a329d00818a7c57d2c7f9e83dbed56606">finalize</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Take down manager after operation.</para>
+<para>After this method has completed, all dynamic data structures created by the manager shall be deallocated and containers emptied. Plain variables need not be reset.</para>
+<para><simplesect kind="note"><para>Finalization of any given manager may depend on other managers not having been finalized yet. <ref refid="classnest_1_1_kernel_manager_1a9e1cccd4670b1da1f68208afb5e6622f" kindref="member">KernelManager::finalize()</ref> is responsible for calling the initialization routines on the specific managers in correct order, i.e., the opposite order of <ref refid="classnest_1_1_v_p_manager_1a8364a5cc732ac45e292210c09070d5fe" kindref="member">initialize()</ref> calls.</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="classnest_1_1_v_p_manager_1a8364a5cc732ac45e292210c09070d5fe" kindref="member">initialize()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/vp_manager.h" line="60" column="8" bodyfile="nestkernel/vp_manager.cpp" bodystart="65" bodyend="67"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_v_p_manager_1a62cacb654bd036d5110926a0d0c9f9f9" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::VPManager::set_status</definition>
+        <argsstring>(const DictionaryDatum &amp;) override</argsstring>
+        <name>set_status</name>
+        <reimplements refid="classnest_1_1_manager_interface_1ad940557204d456c167f541dd72c81193">set_status</reimplements>
+        <param>
+          <type>const DictionaryDatum &amp;</type>
+          <defname>d</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/vp_manager.h" line="62" column="8" bodyfile="nestkernel/vp_manager.cpp" bodystart="70" bodyend="146"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_v_p_manager_1a7a731dfafff4a74cfb48e2d58b870b4a" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::VPManager::get_status</definition>
+        <argsstring>(DictionaryDatum &amp;) override</argsstring>
+        <name>get_status</name>
+        <reimplements refid="classnest_1_1_manager_interface_1a0935d5415eafd0bc54d2c01294595a80">get_status</reimplements>
+        <param>
+          <type>DictionaryDatum &amp;</type>
+          <defname>d</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/vp_manager.h" line="63" column="8" bodyfile="nestkernel/vp_manager.cpp" bodystart="149" bodyend="153"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_v_p_manager_1a144a9ac1401713a125c8df3d31721b0c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+        <definition>nest::thread nest::VPManager::get_thread_id</definition>
+        <argsstring>() const</argsstring>
+        <name>get_thread_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Gets ID of local thread. Returns thread ID if OpenMP is installed and zero otherwise. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/vp_manager.h" line="70" column="10" bodyfile="nestkernel/vp_manager.h" bodystart="164" bodyend="171"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_v_p_manager_1a9cfc82ff31df2bafa59fee6d56ef0a89" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::VPManager::set_num_threads</definition>
+        <argsstring>(const thread n_threads)</argsstring>
+        <name>set_num_threads</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>n_threads</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Set the number of threads by setting the internal variable n_threads_, the corresponding value in the Communicator, and the OpenMP number of threads. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/vp_manager.h" line="77" column="8" bodyfile="nestkernel/vp_manager.cpp" bodystart="156" bodyend="167"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_v_p_manager_1a1096a508aefc459782911e3f2a4b7480" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+        <definition>nest::thread nest::VPManager::get_num_threads</definition>
+        <argsstring>() const</argsstring>
+        <name>get_num_threads</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get number of threads. This function returns the total number of threads per process. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/vp_manager.h" line="83" column="10" bodyfile="nestkernel/vp_manager.h" bodystart="174" bodyend="177"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_v_p_manager_1ad183b0fe2d3035ae792b23200472a118" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::VPManager::is_node_id_vp_local</definition>
+        <argsstring>(const index node_id) const</argsstring>
+        <name>is_node_id_vp_local</name>
+        <param>
+          <type>const <ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+          <declname>node_id</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns true if the given global node exists on this vp. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/vp_manager.h" line="88" column="8" bodyfile="nestkernel/vp_manager_impl.h" bodystart="73" bodyend="76"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_v_p_manager_1a1bd607210e78d946f9db311877dad6b9" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+        <definition>index nest::VPManager::node_id_to_lid</definition>
+        <argsstring>(const index node_id) const</argsstring>
+        <name>node_id_to_lid</name>
+        <param>
+          <type>const <ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+          <declname>node_id</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns thread local index of a given global node. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/vp_manager.h" line="93" column="9" bodyfile="nestkernel/vp_manager_impl.h" bodystart="79" bodyend="83"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_v_p_manager_1a0b651e895f995d5a1e581f1a05200be0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+        <definition>index nest::VPManager::lid_to_node_id</definition>
+        <argsstring>(const index lid) const</argsstring>
+        <name>lid_to_node_id</name>
+        <param>
+          <type>const <ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+          <declname>lid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the node ID of a given local index. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/vp_manager.h" line="98" column="9" bodyfile="nestkernel/vp_manager_impl.h" bodystart="86" bodyend="90"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_v_p_manager_1aa87079f6760fd34ffd921c955a8af9eb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+        <definition>thread nest::VPManager::get_vp</definition>
+        <argsstring>() const</argsstring>
+        <name>get_vp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns virtual process index. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/vp_manager.h" line="103" column="10" bodyfile="nestkernel/vp_manager_impl.h" bodystart="37" bodyend="40"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_v_p_manager_1a847b957940c17b0a9c912facf1996f3c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+        <definition>thread nest::VPManager::node_id_to_vp</definition>
+        <argsstring>(const index node_id) const</argsstring>
+        <name>node_id_to_vp</name>
+        <param>
+          <type>const <ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+          <declname>node_id</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Return a thread number for a given global node id. Each node has a default thread on which it will run. The thread is defined by the relation: t = (node_id div P) mod T, where P is the number of simulation processes and T the number of threads. This may be used by Network::add_node() if the user has not specified anything. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/vp_manager.h" line="113" column="10" bodyfile="nestkernel/vp_manager_impl.h" bodystart="43" bodyend="46"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_v_p_manager_1a58ddc7ca0a301790ffe71f5a9c795de7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+        <definition>thread nest::VPManager::vp_to_thread</definition>
+        <argsstring>(const thread vp) const</argsstring>
+        <name>vp_to_thread</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>vp</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Convert a given VP ID to the corresponding thread ID </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/vp_manager.h" line="118" column="10" bodyfile="nestkernel/vp_manager_impl.h" bodystart="49" bodyend="52"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_v_p_manager_1aa3d11af1445df6d186a4be6a5bbd5b3f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+        <definition>thread nest::VPManager::thread_to_vp</definition>
+        <argsstring>(const thread tid) const</argsstring>
+        <name>thread_to_vp</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Convert a given thread ID to the corresponding VP ID </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/vp_manager.h" line="123" column="10" bodyfile="nestkernel/vp_manager_impl.h" bodystart="67" bodyend="70"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_v_p_manager_1a7fec83282e1abdf3097ec5e9df6ee637" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::VPManager::is_local_vp</definition>
+        <argsstring>(const thread tid) const</argsstring>
+        <name>is_local_vp</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Return true, if the given VP is on the local machine </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/vp_manager.h" line="128" column="8" bodyfile="nestkernel/vp_manager_impl.h" bodystart="61" bodyend="64"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_v_p_manager_1a8ddd2beb1aea2c9385b93ad4b842a2cb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>thread nest::VPManager::get_num_virtual_processes</definition>
+        <argsstring>() const</argsstring>
+        <name>get_num_virtual_processes</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the number of virtual processes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/vp_manager.h" line="133" column="7" bodyfile="nestkernel/vp_manager_impl.h" bodystart="55" bodyend="58"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_v_p_manager_1aa88c5746d1c2291408167785c3b7bf61" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+        <definition>thread nest::VPManager::get_num_assigned_ranks_per_thread</definition>
+        <argsstring>() const</argsstring>
+        <name>get_num_assigned_ranks_per_thread</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the number of processes that are taken care of by a single thread while processing MPI buffers in a multithreaded environment. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/vp_manager.h" line="144" column="10" bodyfile="nestkernel/vp_manager_impl.h" bodystart="93" bodyend="96"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_v_p_manager_1ad3eca4329e612aebdb911e4290495a3f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+        <definition>thread nest::VPManager::get_start_rank_per_thread</definition>
+        <argsstring>(const thread tid) const</argsstring>
+        <name>get_start_rank_per_thread</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/vp_manager.h" line="146" column="10" bodyfile="nestkernel/vp_manager_impl.h" bodystart="99" bodyend="102"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_v_p_manager_1a3b2e80efe935567e598d2074a3b40bb3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+        <definition>thread nest::VPManager::get_end_rank_per_thread</definition>
+        <argsstring>(const thread rank_start, const thread num_assigned_ranks_per_thread) const</argsstring>
+        <name>get_end_rank_per_thread</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>rank_start</declname>
+        </param>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>num_assigned_ranks_per_thread</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/vp_manager.h" line="147" column="10" bodyfile="nestkernel/vp_manager_impl.h" bodystart="105" bodyend="118"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_v_p_manager_1a11253846992f6c6f8b068ac77d13525b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="structnest_1_1_assigned_ranks" kindref="compound">AssignedRanks</ref></type>
+        <definition>AssignedRanks nest::VPManager::get_assigned_ranks</definition>
+        <argsstring>(const thread tid)</argsstring>
+        <name>get_assigned_ranks</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns assigned ranks per thread to fill MPI buffers. Thread tid is responsible for all ranks in [assigned_ranks.begin, assigned_ranks.end), which are in total assigned_ranks.size and at most assigned_ranks.max_size </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/vp_manager.h" line="155" column="17" bodyfile="nestkernel/vp_manager_impl.h" bodystart="121" bodyend="129"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classnest_1_1_v_p_manager_1afbe0b686ed8bd6ee420e58cb17fa8272" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::VPManager::assert_single_threaded</definition>
+        <argsstring>()</argsstring>
+        <name>assert_single_threaded</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Fails if NEST is in thread-parallel section. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/vp_manager.h" line="138" column="15" bodyfile="nestkernel/vp_manager.cpp" bodystart="170" bodyend="175"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>nest::ManagerInterface</label>
+        <link refid="classnest_1_1_manager_interface"/>
+      </node>
+      <node id="1">
+        <label>nest::VPManager</label>
+        <link refid="classnest_1_1_v_p_manager"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>nest::ManagerInterface</label>
+        <link refid="classnest_1_1_manager_interface"/>
+      </node>
+      <node id="1">
+        <label>nest::VPManager</label>
+        <link refid="classnest_1_1_v_p_manager"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="nestkernel/vp_manager.h" line="51" column="1" bodyfile="nestkernel/vp_manager.h" bodystart="52" bodyend="160"/>
+    <listofallmembers>
+      <member refid="classnest_1_1_v_p_manager_1afbe0b686ed8bd6ee420e58cb17fa8272" prot="public" virt="non-virtual"><scope>nest::VPManager</scope><name>assert_single_threaded</name></member>
+      <member refid="classnest_1_1_manager_interface_1aa88c28844a59b4791eab4b7930fc62b0" prot="public" virt="virtual"><scope>nest::VPManager</scope><name>change_number_of_threads</name></member>
+      <member refid="classnest_1_1_manager_interface_1a883efc8a7266a9bc62d43e30cdd87147" prot="public" virt="virtual"><scope>nest::VPManager</scope><name>cleanup</name></member>
+      <member refid="classnest_1_1_v_p_manager_1a35393250b59cc345611b967cde1e38cb" prot="public" virt="virtual"><scope>nest::VPManager</scope><name>finalize</name></member>
+      <member refid="classnest_1_1_v_p_manager_1a3e6b539023e28bf2403f162879a24625" prot="private" virt="non-virtual"><scope>nest::VPManager</scope><name>force_singlethreading_</name></member>
+      <member refid="classnest_1_1_v_p_manager_1a11253846992f6c6f8b068ac77d13525b" prot="public" virt="non-virtual"><scope>nest::VPManager</scope><name>get_assigned_ranks</name></member>
+      <member refid="classnest_1_1_v_p_manager_1a3b2e80efe935567e598d2074a3b40bb3" prot="public" virt="non-virtual"><scope>nest::VPManager</scope><name>get_end_rank_per_thread</name></member>
+      <member refid="classnest_1_1_v_p_manager_1aa88c5746d1c2291408167785c3b7bf61" prot="public" virt="non-virtual"><scope>nest::VPManager</scope><name>get_num_assigned_ranks_per_thread</name></member>
+      <member refid="classnest_1_1_v_p_manager_1a1096a508aefc459782911e3f2a4b7480" prot="public" virt="non-virtual"><scope>nest::VPManager</scope><name>get_num_threads</name></member>
+      <member refid="classnest_1_1_v_p_manager_1a8ddd2beb1aea2c9385b93ad4b842a2cb" prot="public" virt="non-virtual"><scope>nest::VPManager</scope><name>get_num_virtual_processes</name></member>
+      <member refid="classnest_1_1_v_p_manager_1ad3eca4329e612aebdb911e4290495a3f" prot="public" virt="non-virtual"><scope>nest::VPManager</scope><name>get_start_rank_per_thread</name></member>
+      <member refid="classnest_1_1_v_p_manager_1a7a731dfafff4a74cfb48e2d58b870b4a" prot="public" virt="virtual"><scope>nest::VPManager</scope><name>get_status</name></member>
+      <member refid="classnest_1_1_v_p_manager_1a144a9ac1401713a125c8df3d31721b0c" prot="public" virt="non-virtual"><scope>nest::VPManager</scope><name>get_thread_id</name></member>
+      <member refid="classnest_1_1_v_p_manager_1aa87079f6760fd34ffd921c955a8af9eb" prot="public" virt="non-virtual"><scope>nest::VPManager</scope><name>get_vp</name></member>
+      <member refid="classnest_1_1_v_p_manager_1a8364a5cc732ac45e292210c09070d5fe" prot="public" virt="virtual"><scope>nest::VPManager</scope><name>initialize</name></member>
+      <member refid="classnest_1_1_v_p_manager_1a7fec83282e1abdf3097ec5e9df6ee637" prot="public" virt="non-virtual"><scope>nest::VPManager</scope><name>is_local_vp</name></member>
+      <member refid="classnest_1_1_v_p_manager_1ad183b0fe2d3035ae792b23200472a118" prot="public" virt="non-virtual"><scope>nest::VPManager</scope><name>is_node_id_vp_local</name></member>
+      <member refid="classnest_1_1_v_p_manager_1a0b651e895f995d5a1e581f1a05200be0" prot="public" virt="non-virtual"><scope>nest::VPManager</scope><name>lid_to_node_id</name></member>
+      <member refid="classnest_1_1_manager_interface_1aeb056937c69d73ba501bab2fb371a56c" prot="public" virt="non-virtual"><scope>nest::VPManager</scope><name>ManagerInterface</name></member>
+      <member refid="classnest_1_1_manager_interface_1af07ff595521c144ddb81899fec66e251" prot="public" virt="non-virtual"><scope>nest::VPManager</scope><name>ManagerInterface</name></member>
+      <member refid="classnest_1_1_v_p_manager_1a9517fa9a6ee322cd3ef9cd432cdb9f1d" prot="private" virt="non-virtual"><scope>nest::VPManager</scope><name>n_threads_</name></member>
+      <member refid="classnest_1_1_v_p_manager_1a1bd607210e78d946f9db311877dad6b9" prot="public" virt="non-virtual"><scope>nest::VPManager</scope><name>node_id_to_lid</name></member>
+      <member refid="classnest_1_1_v_p_manager_1a847b957940c17b0a9c912facf1996f3c" prot="public" virt="non-virtual"><scope>nest::VPManager</scope><name>node_id_to_vp</name></member>
+      <member refid="classnest_1_1_manager_interface_1a9889d8ee2a6bd5f1799e86aed555db5e" prot="public" virt="non-virtual"><scope>nest::VPManager</scope><name>operator=</name></member>
+      <member refid="classnest_1_1_manager_interface_1a7a0e8989a48de50b52631e87ed3f2745" prot="public" virt="virtual"><scope>nest::VPManager</scope><name>prepare</name></member>
+      <member refid="classnest_1_1_v_p_manager_1a9cfc82ff31df2bafa59fee6d56ef0a89" prot="public" virt="non-virtual"><scope>nest::VPManager</scope><name>set_num_threads</name></member>
+      <member refid="classnest_1_1_v_p_manager_1a62cacb654bd036d5110926a0d0c9f9f9" prot="public" virt="virtual"><scope>nest::VPManager</scope><name>set_status</name></member>
+      <member refid="classnest_1_1_v_p_manager_1aa3d11af1445df6d186a4be6a5bbd5b3f" prot="public" virt="non-virtual"><scope>nest::VPManager</scope><name>thread_to_vp</name></member>
+      <member refid="classnest_1_1_v_p_manager_1a58ddc7ca0a301790ffe71f5a9c795de7" prot="public" virt="non-virtual"><scope>nest::VPManager</scope><name>vp_to_thread</name></member>
+      <member refid="classnest_1_1_v_p_manager_1a22b72deda948cf529da7a6d669787c66" prot="public" virt="non-virtual"><scope>nest::VPManager</scope><name>VPManager</name></member>
+      <member refid="classnest_1_1_manager_interface_1ac60a79d2ba0a48f1b039ab1f9d502ec4" prot="public" virt="virtual"><scope>nest::VPManager</scope><name>~ManagerInterface</name></member>
+      <member refid="classnest_1_1_v_p_manager_1aacaa12c97e613e45c78614f35da9ea7e" prot="public" virt="non-virtual"><scope>nest::VPManager</scope><name>~VPManager</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

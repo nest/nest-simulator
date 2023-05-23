@@ -1,0 +1,216 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structnest_1_1_device_1_1_parameters__" kind="struct" language="C++" prot="private">
+    <compoundname>nest::Device::Parameters_</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structnest_1_1_device_1_1_parameters___1ab5448f5ac2744d58417b6c31500573b9" prot="public" static="no" mutable="no">
+        <type><ref refid="classnest_1_1_time" kindref="compound">Time</ref></type>
+        <definition>Time nest::Device::Parameters_::origin_</definition>
+        <argsstring></argsstring>
+        <name>origin_</name>
+        <briefdescription>
+<para>Origin of device time axis, relative to network time. Defaults to 0. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Start time, relative to origin. Defaults to 0. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/device.h" line="121" column="10" bodyfile="nestkernel/device.h" bodystart="121" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1_device_1_1_parameters___1a9655611a983adc4fe9b59a6934e93273" prot="public" static="no" mutable="no">
+        <type><ref refid="classnest_1_1_time" kindref="compound">Time</ref></type>
+        <definition>Time nest::Device::Parameters_::start_</definition>
+        <argsstring></argsstring>
+        <name>start_</name>
+        <briefdescription>
+<para>Stop time, relative to origin. Defaults to &quot;infinity&quot;. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/device.h" line="124" column="10" bodyfile="nestkernel/device.h" bodystart="124" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structnest_1_1_device_1_1_parameters___1af98b3809f8f1b3cad94e7efd6c91a380" prot="public" static="no" mutable="no">
+        <type><ref refid="classnest_1_1_time" kindref="compound">Time</ref></type>
+        <definition>Time nest::Device::Parameters_::stop_</definition>
+        <argsstring></argsstring>
+        <name>stop_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/device.h" line="127" column="10" bodyfile="nestkernel/device.h" bodystart="127" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structnest_1_1_device_1_1_parameters___1aee5e4dd50b3b720ca5f5f09ec1b581df" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>nest::Device::Parameters_::Parameters_</definition>
+        <argsstring>()</argsstring>
+        <name>Parameters_</name>
+        <briefdescription>
+<para>Sets default parameter values. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/device.h" line="129" column="5" bodyfile="nestkernel/device.cpp" bodystart="41" bodyend="46"/>
+      </memberdef>
+      <memberdef kind="function" id="structnest_1_1_device_1_1_parameters___1a6b6d48fda8c38ca54926d700d615ce97" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>nest::Device::Parameters_::Parameters_</definition>
+        <argsstring>(const Parameters_ &amp;)</argsstring>
+        <name>Parameters_</name>
+        <param>
+          <type>const Parameters_ &amp;</type>
+          <defname>p</defname>
+        </param>
+        <briefdescription>
+<para>Copy and recalibrate parameter set. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/device.h" line="132" column="5" bodyfile="nestkernel/device.cpp" bodystart="48" bodyend="60"/>
+      </memberdef>
+      <memberdef kind="function" id="structnest_1_1_device_1_1_parameters___1a1376bc6ec394327077fff1a3a3416718" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Parameters_ &amp;</type>
+        <definition>nest::Device::Parameters_ &amp; nest::Device::Parameters_::operator=</definition>
+        <argsstring>(const Parameters_ &amp;)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const Parameters_ &amp;</type>
+          <defname>p</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/device.h" line="134" column="17" bodyfile="nestkernel/device.cpp" bodystart="63" bodyend="70"/>
+      </memberdef>
+      <memberdef kind="function" id="structnest_1_1_device_1_1_parameters___1a9290cf8e5dabc82ec671e335083a7d85" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::Device::Parameters_::get</definition>
+        <argsstring>(DictionaryDatum &amp;) const</argsstring>
+        <name>get</name>
+        <param>
+          <type>DictionaryDatum &amp;</type>
+          <defname>d</defname>
+        </param>
+        <briefdescription>
+<para>Store current values in dictionary. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/device.h" line="136" column="10" bodyfile="nestkernel/device.cpp" bodystart="78" bodyend="83"/>
+      </memberdef>
+      <memberdef kind="function" id="structnest_1_1_device_1_1_parameters___1adc7cda0e9c0872003c8935c157471cdb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::Device::Parameters_::set</definition>
+        <argsstring>(const DictionaryDatum &amp;)</argsstring>
+        <name>set</name>
+        <param>
+          <type>const DictionaryDatum &amp;</type>
+          <defname>d</defname>
+        </param>
+        <briefdescription>
+<para>Set values from dictionary. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/device.h" line="137" column="10" bodyfile="nestkernel/device.cpp" bodystart="111" bodyend="121"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="structnest_1_1_device_1_1_parameters___1a0c84f2fe712eb36c2893e34e84d5aa82" prot="private" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::Device::Parameters_::update_</definition>
+        <argsstring>(const DictionaryDatum &amp;, const Name &amp;, Time &amp;)</argsstring>
+        <name>update_</name>
+        <param>
+          <type>const DictionaryDatum &amp;</type>
+          <defname>d</defname>
+        </param>
+        <param>
+          <type>const Name &amp;</type>
+          <defname>name</defname>
+        </param>
+        <param>
+          <type><ref refid="classnest_1_1_time" kindref="compound">Time</ref> &amp;</type>
+          <defname>value</defname>
+        </param>
+        <briefdescription>
+<para>Update given <ref refid="classnest_1_1_time" kindref="compound">Time</ref> parameter including error checking. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/device.h" line="141" column="17" bodyfile="nestkernel/device.cpp" bodystart="86" bodyend="108"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Independent parameters of the model. </para>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="4">
+        <label>nest::Time::LimitPosInf</label>
+      </node>
+      <node id="3">
+        <label>nest::Time::LimitNegInf</label>
+      </node>
+      <node id="1">
+        <label>nest::Device::Parameters_</label>
+        <childnode refid="2" relation="usage">
+          <edgelabel>+origin_</edgelabel>
+          <edgelabel>+start_</edgelabel>
+          <edgelabel>+stop_</edgelabel>
+        </childnode>
+      </node>
+      <node id="2">
+        <label>nest::Time</label>
+        <link refid="classnest_1_1_time"/>
+        <childnode refid="3" relation="usage">
+          <edgelabel>#LIM_NEG_INF</edgelabel>
+        </childnode>
+        <childnode refid="4" relation="usage">
+          <edgelabel>#LIM_POS_INF</edgelabel>
+        </childnode>
+        <childnode refid="5" relation="usage">
+          <edgelabel>#LIM_MAX</edgelabel>
+          <edgelabel>#LIM_MIN</edgelabel>
+        </childnode>
+      </node>
+      <node id="5">
+        <label>nest::Time::Limit</label>
+        <link refid="structnest_1_1_time_1_1_limit"/>
+      </node>
+    </collaborationgraph>
+    <location file="nestkernel/device.h" line="118" column="3" bodyfile="nestkernel/device.h" bodystart="119" bodyend="142"/>
+    <listofallmembers>
+      <member refid="structnest_1_1_device_1_1_parameters___1a9290cf8e5dabc82ec671e335083a7d85" prot="public" virt="non-virtual"><scope>nest::Device::Parameters_</scope><name>get</name></member>
+      <member refid="structnest_1_1_device_1_1_parameters___1a1376bc6ec394327077fff1a3a3416718" prot="public" virt="non-virtual"><scope>nest::Device::Parameters_</scope><name>operator=</name></member>
+      <member refid="structnest_1_1_device_1_1_parameters___1ab5448f5ac2744d58417b6c31500573b9" prot="public" virt="non-virtual"><scope>nest::Device::Parameters_</scope><name>origin_</name></member>
+      <member refid="structnest_1_1_device_1_1_parameters___1aee5e4dd50b3b720ca5f5f09ec1b581df" prot="public" virt="non-virtual"><scope>nest::Device::Parameters_</scope><name>Parameters_</name></member>
+      <member refid="structnest_1_1_device_1_1_parameters___1a6b6d48fda8c38ca54926d700d615ce97" prot="public" virt="non-virtual"><scope>nest::Device::Parameters_</scope><name>Parameters_</name></member>
+      <member refid="structnest_1_1_device_1_1_parameters___1adc7cda0e9c0872003c8935c157471cdb" prot="public" virt="non-virtual"><scope>nest::Device::Parameters_</scope><name>set</name></member>
+      <member refid="structnest_1_1_device_1_1_parameters___1a9655611a983adc4fe9b59a6934e93273" prot="public" virt="non-virtual"><scope>nest::Device::Parameters_</scope><name>start_</name></member>
+      <member refid="structnest_1_1_device_1_1_parameters___1af98b3809f8f1b3cad94e7efd6c91a380" prot="public" virt="non-virtual"><scope>nest::Device::Parameters_</scope><name>stop_</name></member>
+      <member refid="structnest_1_1_device_1_1_parameters___1a0c84f2fe712eb36c2893e34e84d5aa82" prot="private" virt="non-virtual"><scope>nest::Device::Parameters_</scope><name>update_</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

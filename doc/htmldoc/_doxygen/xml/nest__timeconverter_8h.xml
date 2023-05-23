@@ -1,0 +1,740 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="nest__timeconverter_8h" kind="file" language="C++">
+    <compoundname>nest_timeconverter.h</compoundname>
+    <includes refid="nest__types_8h" local="yes">nest_types.h</includes>
+    <includedby refid="common__synapse__properties_8cpp" local="yes">common_synapse_properties.cpp</includedby>
+    <includedby refid="connection_8h" local="yes">connection.h</includedby>
+    <includedby refid="connection__manager_8h" local="yes">connection_manager.h</includedby>
+    <includedby refid="connector__model__impl_8h" local="yes">connector_model_impl.h</includedby>
+    <includedby refid="delay__checker_8cpp" local="yes">delay_checker.cpp</includedby>
+    <includedby refid="model__manager_8h" local="yes">model_manager.h</includedby>
+    <includedby refid="nest__timeconverter_8cpp" local="yes">nest_timeconverter.cpp</includedby>
+    <incdepgraph>
+      <node id="6">
+        <label>limits</label>
+      </node>
+      <node id="2">
+        <label>nest_types.h</label>
+        <link refid="nest__types_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>cstdint</label>
+      </node>
+      <node id="7">
+        <label>stdint.h</label>
+      </node>
+      <node id="3">
+        <label>cfloat</label>
+      </node>
+      <node id="1">
+        <label>nest_timeconverter.h</label>
+        <link refid="nest__timeconverter_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>cstddef</label>
+      </node>
+      <node id="4">
+        <label>climits</label>
+      </node>
+      <node id="8">
+        <label>config.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="39">
+        <label>kernel_manager.cpp</label>
+        <link refid="kernel__manager_8cpp"/>
+      </node>
+      <node id="54">
+        <label>sparse_node_array.cpp</label>
+        <link refid="sparse__node__array_8cpp"/>
+      </node>
+      <node id="34">
+        <label>delay_checker.cpp</label>
+        <link refid="delay__checker_8cpp"/>
+      </node>
+      <node id="15">
+        <label>archiving_node.cpp</label>
+        <link refid="archiving__node_8cpp"/>
+      </node>
+      <node id="3">
+        <label>connection.h</label>
+        <link refid="connection_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>parameter.cpp</label>
+        <link refid="parameter_8cpp"/>
+      </node>
+      <node id="7">
+        <label>connection_manager_impl.h</label>
+        <link refid="connection__manager__impl_8h"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="66">
+        <label>ring_buffer_impl.h</label>
+        <link refid="ring__buffer__impl_8h"/>
+      </node>
+      <node id="8">
+        <label>event_delivery_manager.cpp</label>
+        <link refid="event__delivery__manager_8cpp"/>
+      </node>
+      <node id="44">
+        <label>mpi_manager.cpp</label>
+        <link refid="mpi__manager_8cpp"/>
+      </node>
+      <node id="74">
+        <label>target_identifier.h</label>
+        <link refid="target__identifier_8h"/>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>layer.cpp</label>
+        <link refid="layer_8cpp"/>
+      </node>
+      <node id="9">
+        <label>event_delivery_manager_impl.h</label>
+        <link refid="event__delivery__manager__impl_8h"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>mpi_manager_impl.h</label>
+        <link refid="mpi__manager__impl_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+      </node>
+      <node id="77">
+        <label>model_manager.h</label>
+        <link refid="model__manager_8h"/>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>connection_manager.h</label>
+        <link refid="connection__manager_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>simulation_manager.cpp</label>
+        <link refid="simulation__manager_8cpp"/>
+      </node>
+      <node id="68">
+        <label>slice_ring_buffer.cpp</label>
+        <link refid="slice__ring__buffer_8cpp"/>
+      </node>
+      <node id="46">
+        <label>nest.cpp</label>
+        <link refid="nest_8cpp"/>
+      </node>
+      <node id="59">
+        <label>node.cpp</label>
+        <link refid="node_8cpp"/>
+      </node>
+      <node id="12">
+        <label>source_table.cpp</label>
+        <link refid="source__table_8cpp"/>
+      </node>
+      <node id="62">
+        <label>recording_backend_mpi.cpp</label>
+        <link refid="recording__backend__mpi_8cpp"/>
+      </node>
+      <node id="72">
+        <label>structural_plasticity_node.cpp</label>
+        <link refid="structural__plasticity__node_8cpp"/>
+      </node>
+      <node id="41">
+        <label>model_manager_impl.h</label>
+        <link refid="model__manager__impl_8h"/>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>model_manager.cpp</label>
+        <link refid="model__manager_8cpp"/>
+      </node>
+      <node id="32">
+        <label>connector_model_impl.h</label>
+        <link refid="connector__model__impl_8h"/>
+        <childnode refid="33" relation="include">
+        </childnode>
+      </node>
+      <node id="75">
+        <label>target_table.cpp</label>
+        <link refid="target__table_8cpp"/>
+      </node>
+      <node id="31">
+        <label>connector_base_impl.h</label>
+        <link refid="connector__base__impl_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>free_layer.h</label>
+        <link refid="free__layer_8h"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="55">
+        <label>target_table_devices.cpp</label>
+        <link refid="target__table__devices_8cpp"/>
+      </node>
+      <node id="47">
+        <label>node_collection.cpp</label>
+        <link refid="node__collection_8cpp"/>
+      </node>
+      <node id="4">
+        <label>proxynode.cpp</label>
+        <link refid="proxynode_8cpp"/>
+      </node>
+      <node id="14">
+        <label>neststartup.cpp</label>
+        <link refid="neststartup_8cpp"/>
+      </node>
+      <node id="24">
+        <label>layer.h</label>
+        <link refid="layer_8h"/>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>connection_creator_impl.h</label>
+        <link refid="connection__creator__impl_8h"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>io_manager.cpp</label>
+        <link refid="io__manager_8cpp"/>
+      </node>
+      <node id="61">
+        <label>recording_device.h</label>
+        <link refid="recording__device_8h"/>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="62" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+      </node>
+      <node id="57">
+        <label>music_manager.cpp</label>
+        <link refid="music__manager_8cpp"/>
+      </node>
+      <node id="30">
+        <label>layer_impl.h</label>
+        <link refid="layer__impl_8h"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="76">
+        <label>urbanczik_archiving_node_impl.h</label>
+        <link refid="urbanczik__archiving__node__impl_8h"/>
+      </node>
+      <node id="51">
+        <label>recording_backend_ascii.cpp</label>
+        <link refid="recording__backend__ascii_8cpp"/>
+      </node>
+      <node id="6">
+        <label>connection_manager.cpp</label>
+        <link refid="connection__manager_8cpp"/>
+      </node>
+      <node id="52">
+        <label>recording_backend_memory.cpp</label>
+        <link refid="recording__backend__memory_8cpp"/>
+      </node>
+      <node id="2">
+        <label>common_synapse_properties.cpp</label>
+        <link refid="common__synapse__properties_8cpp"/>
+      </node>
+      <node id="42">
+        <label>node_manager.cpp</label>
+        <link refid="node__manager_8cpp"/>
+      </node>
+      <node id="73">
+        <label>synaptic_element.cpp</label>
+        <link refid="synaptic__element_8cpp"/>
+      </node>
+      <node id="67">
+        <label>slice_ring_buffer.h</label>
+        <link refid="slice__ring__buffer_8h"/>
+        <childnode refid="68" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>nest_timeconverter.h</label>
+        <link refid="nest__timeconverter_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="77" relation="include">
+        </childnode>
+        <childnode refid="78" relation="include">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>spatial.cpp</label>
+        <link refid="spatial_8cpp"/>
+      </node>
+      <node id="29">
+        <label>grid_layer.h</label>
+        <link refid="grid__layer_8h"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>deprecation_warning.cpp</label>
+        <link refid="deprecation__warning_8cpp"/>
+      </node>
+      <node id="70">
+        <label>stimulation_backend_mpi.cpp</label>
+        <link refid="stimulation__backend__mpi_8cpp"/>
+      </node>
+      <node id="65">
+        <label>ring_buffer.cpp</label>
+        <link refid="ring__buffer_8cpp"/>
+      </node>
+      <node id="43">
+        <label>modelrange_manager.cpp</label>
+        <link refid="modelrange__manager_8cpp"/>
+      </node>
+      <node id="13">
+        <label>kernel_manager.h</label>
+        <link refid="kernel__manager_8h"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="57" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="58" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="59" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="60" relation="include">
+        </childnode>
+        <childnode refid="61" relation="include">
+        </childnode>
+        <childnode refid="64" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="67" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="69" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="70" relation="include">
+        </childnode>
+        <childnode refid="71" relation="include">
+        </childnode>
+        <childnode refid="72" relation="include">
+        </childnode>
+        <childnode refid="73" relation="include">
+        </childnode>
+        <childnode refid="74" relation="include">
+        </childnode>
+        <childnode refid="75" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="76" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+        <childnode refid="49" relation="include">
+        </childnode>
+      </node>
+      <node id="53">
+        <label>recording_backend_sionlib.cpp</label>
+        <link refid="recording__backend__sionlib_8cpp"/>
+      </node>
+      <node id="49">
+        <label>vp_manager_impl.h</label>
+        <link refid="vp__manager__impl_8h"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
+        </childnode>
+        <childnode refid="52" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+        <childnode refid="56" relation="include">
+        </childnode>
+        <childnode refid="48" relation="include">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>genericmodel_impl.h</label>
+        <link refid="genericmodel__impl_8h"/>
+        <childnode refid="33" relation="include">
+        </childnode>
+      </node>
+      <node id="50">
+        <label>random_manager.cpp</label>
+        <link refid="random__manager_8cpp"/>
+      </node>
+      <node id="71">
+        <label>stimulation_device.cpp</label>
+        <link refid="stimulation__device_8cpp"/>
+      </node>
+      <node id="40">
+        <label>model.cpp</label>
+        <link refid="model_8cpp"/>
+      </node>
+      <node id="16">
+        <label>clopath_archiving_node.cpp</label>
+        <link refid="clopath__archiving__node_8cpp"/>
+      </node>
+      <node id="36">
+        <label>event.cpp</label>
+        <link refid="event_8cpp"/>
+      </node>
+      <node id="19">
+        <label>conn_parameter.cpp</label>
+        <link refid="conn__parameter_8cpp"/>
+      </node>
+      <node id="64">
+        <label>ring_buffer.h</label>
+        <link refid="ring__buffer_8h"/>
+        <childnode refid="65" relation="include">
+        </childnode>
+        <childnode refid="66" relation="include">
+        </childnode>
+      </node>
+      <node id="69">
+        <label>sp_manager.cpp</label>
+        <link refid="sp__manager_8cpp"/>
+      </node>
+      <node id="17">
+        <label>conn_builder.cpp</label>
+        <link refid="conn__builder_8cpp"/>
+      </node>
+      <node id="10">
+        <label>nestmodule.cpp</label>
+        <link refid="nestmodule_8cpp"/>
+      </node>
+      <node id="18">
+        <label>conn_builder_impl.h</label>
+        <link refid="conn__builder__impl_8h"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>connection_creator.cpp</label>
+        <link refid="connection__creator_8cpp"/>
+      </node>
+      <node id="63">
+        <label>recording_backend_screen.cpp</label>
+        <link refid="recording__backend__screen_8cpp"/>
+      </node>
+      <node id="26">
+        <label>spatial.h</label>
+        <link refid="spatial_8h"/>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>vp_manager.cpp</label>
+        <link refid="vp__manager_8cpp"/>
+      </node>
+      <node id="58">
+        <label>nest_impl.h</label>
+        <link refid="nest__impl_8h"/>
+      </node>
+      <node id="20">
+        <label>connection_creator.h</label>
+        <link refid="connection__creator_8h"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+      </node>
+      <node id="60">
+        <label>recording_device.cpp</label>
+        <link refid="recording__device_8cpp"/>
+      </node>
+      <node id="56">
+        <label>target_table_devices_impl.h</label>
+        <link refid="target__table__devices__impl_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+      </node>
+      <node id="78">
+        <label>nest_timeconverter.cpp</label>
+        <link refid="nest__timeconverter_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classnest_1_1_time_converter" prot="public">nest::TimeConverter</innerclass>
+    <innernamespace refid="namespacenest">nest</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/><sp/>nest_timeconverter.h</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/><sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>NEST.</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="6"><highlight class="comment"><sp/>*<sp/><sp/>Copyright<sp/>(C)<sp/>2004<sp/>The<sp/>NEST<sp/>Initiative</highlight></codeline>
+<codeline lineno="7"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="8"><highlight class="comment"><sp/>*<sp/><sp/>NEST<sp/>is<sp/>free<sp/>software:<sp/>you<sp/>can<sp/>redistribute<sp/>it<sp/>and/or<sp/>modify</highlight></codeline>
+<codeline lineno="9"><highlight class="comment"><sp/>*<sp/><sp/>it<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>the<sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>as<sp/>published<sp/>by</highlight></codeline>
+<codeline lineno="10"><highlight class="comment"><sp/>*<sp/><sp/>the<sp/>Free<sp/>Software<sp/>Foundation,<sp/>either<sp/>version<sp/>2<sp/>of<sp/>the<sp/>License,<sp/>or</highlight></codeline>
+<codeline lineno="11"><highlight class="comment"><sp/>*<sp/><sp/>(at<sp/>your<sp/>option)<sp/>any<sp/>later<sp/>version.</highlight></codeline>
+<codeline lineno="12"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="13"><highlight class="comment"><sp/>*<sp/><sp/>NEST<sp/>is<sp/>distributed<sp/>in<sp/>the<sp/>hope<sp/>that<sp/>it<sp/>will<sp/>be<sp/>useful,</highlight></codeline>
+<codeline lineno="14"><highlight class="comment"><sp/>*<sp/><sp/>but<sp/>WITHOUT<sp/>ANY<sp/>WARRANTY;<sp/>without<sp/>even<sp/>the<sp/>implied<sp/>warranty<sp/>of</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"><sp/>*<sp/><sp/>MERCHANTABILITY<sp/>or<sp/>FITNESS<sp/>FOR<sp/>A<sp/>PARTICULAR<sp/>PURPOSE.<sp/><sp/>See<sp/>the</highlight></codeline>
+<codeline lineno="16"><highlight class="comment"><sp/>*<sp/><sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>for<sp/>more<sp/>details.</highlight></codeline>
+<codeline lineno="17"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="18"><highlight class="comment"><sp/>*<sp/><sp/>You<sp/>should<sp/>have<sp/>received<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>GNU<sp/>General<sp/>Public<sp/>License</highlight></codeline>
+<codeline lineno="19"><highlight class="comment"><sp/>*<sp/><sp/>along<sp/>with<sp/>NEST.<sp/><sp/>If<sp/>not,<sp/>see<sp/>&lt;http://www.gnu.org/licenses/&gt;.</highlight></codeline>
+<codeline lineno="20"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="21"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="24"><highlight class="comment"><sp/>*<sp/>first<sp/>version</highlight></codeline>
+<codeline lineno="25"><highlight class="comment"><sp/>*<sp/>date:<sp/>april<sp/>2008</highlight></codeline>
+<codeline lineno="26"><highlight class="comment"><sp/>*<sp/>author:<sp/>Moritz<sp/>Helias</highlight></codeline>
+<codeline lineno="27"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="28"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>NEST_TIME_CONVERTER_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>NEST_TIME_CONVERTER_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="nest__types_8h" kindref="compound">nest_types.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="34"><highlight class="normal"></highlight></codeline>
+<codeline lineno="35"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacenest" kindref="compound">nest</ref></highlight></codeline>
+<codeline lineno="36"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">Time;</highlight></codeline>
+<codeline lineno="47" refid="classnest_1_1_time_converter" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classnest_1_1_time_converter" kindref="compound">TimeConverter</ref></highlight></codeline>
+<codeline lineno="48"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"></highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>OLD_TICS_PER_MS;</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>OLD_TICS_PER_STEP;</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1_time_converter_1ac8108a41c4b77624444f4d5842ea898d" kindref="member">TimeConverter</ref>();</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61"><highlight class="normal"></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1_time" kindref="compound">Time</ref><sp/><ref refid="classnest_1_1_time_converter_1ac87d0cd883224a57f34faf424f7a6432" kindref="member">from_old_steps</ref>(<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>s_old<sp/>)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1_time" kindref="compound">Time</ref><sp/><ref refid="classnest_1_1_time_converter_1a6dd858c951ee0d6d846c5fc11a9eadc3" kindref="member">from_old_tics</ref>(<sp/><ref refid="namespacenest_1a824af732762ca1ba47526652442e562e" kindref="member">tic_t</ref><sp/>t_old<sp/>)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>of<sp/>namespace<sp/>nest</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="nestkernel/nest_timeconverter.h"/>
+  </compounddef>
+</doxygen>

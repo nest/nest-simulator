@@ -1,0 +1,216 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="syn__id__delay_8h" kind="file" language="C++">
+    <compoundname>syn_id_delay.h</compoundname>
+    <includes refid="nest__time_8h" local="yes">nest_time.h</includes>
+    <includes refid="nest__types_8h" local="yes">nest_types.h</includes>
+    <includedby refid="connection_8h" local="yes">connection.h</includedby>
+    <incdepgraph>
+      <node id="8">
+        <label>limits</label>
+      </node>
+      <node id="11">
+        <label>nest_types.h</label>
+        <link refid="nest__types_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>cstdint</label>
+      </node>
+      <node id="14">
+        <label>stdint.h</label>
+      </node>
+      <node id="5">
+        <label>cmath</label>
+      </node>
+      <node id="3">
+        <label>cassert</label>
+      </node>
+      <node id="9">
+        <label>string</label>
+      </node>
+      <node id="2">
+        <label>nest_time.h</label>
+        <link refid="nest__time_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>syn_id_delay.h</label>
+        <link refid="syn__id__delay_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>cfloat</label>
+      </node>
+      <node id="6">
+        <label>cstdlib</label>
+      </node>
+      <node id="7">
+        <label>iostream</label>
+      </node>
+      <node id="10">
+        <label>numerics.h</label>
+      </node>
+      <node id="13">
+        <label>cstddef</label>
+      </node>
+      <node id="12">
+        <label>climits</label>
+      </node>
+      <node id="15">
+        <label>config.h</label>
+      </node>
+    </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>connection.h</label>
+        <link refid="connection_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>syn_id_delay.h</label>
+        <link refid="syn__id__delay_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>proxynode.cpp</label>
+        <link refid="proxynode_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="structnest_1_1_syn_id_delay" prot="public">nest::SynIdDelay</innerclass>
+    <innernamespace refid="namespacenest">nest</innernamespace>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="2"><highlight class="comment"><sp/>*<sp/><sp/>syn_id_delay.h</highlight></codeline>
+<codeline lineno="3"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="4"><highlight class="comment"><sp/>*<sp/><sp/>This<sp/>file<sp/>is<sp/>part<sp/>of<sp/>NEST.</highlight></codeline>
+<codeline lineno="5"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="6"><highlight class="comment"><sp/>*<sp/><sp/>Copyright<sp/>(C)<sp/>2004<sp/>The<sp/>NEST<sp/>Initiative</highlight></codeline>
+<codeline lineno="7"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="8"><highlight class="comment"><sp/>*<sp/><sp/>NEST<sp/>is<sp/>free<sp/>software:<sp/>you<sp/>can<sp/>redistribute<sp/>it<sp/>and/or<sp/>modify</highlight></codeline>
+<codeline lineno="9"><highlight class="comment"><sp/>*<sp/><sp/>it<sp/>under<sp/>the<sp/>terms<sp/>of<sp/>the<sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>as<sp/>published<sp/>by</highlight></codeline>
+<codeline lineno="10"><highlight class="comment"><sp/>*<sp/><sp/>the<sp/>Free<sp/>Software<sp/>Foundation,<sp/>either<sp/>version<sp/>2<sp/>of<sp/>the<sp/>License,<sp/>or</highlight></codeline>
+<codeline lineno="11"><highlight class="comment"><sp/>*<sp/><sp/>(at<sp/>your<sp/>option)<sp/>any<sp/>later<sp/>version.</highlight></codeline>
+<codeline lineno="12"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="13"><highlight class="comment"><sp/>*<sp/><sp/>NEST<sp/>is<sp/>distributed<sp/>in<sp/>the<sp/>hope<sp/>that<sp/>it<sp/>will<sp/>be<sp/>useful,</highlight></codeline>
+<codeline lineno="14"><highlight class="comment"><sp/>*<sp/><sp/>but<sp/>WITHOUT<sp/>ANY<sp/>WARRANTY;<sp/>without<sp/>even<sp/>the<sp/>implied<sp/>warranty<sp/>of</highlight></codeline>
+<codeline lineno="15"><highlight class="comment"><sp/>*<sp/><sp/>MERCHANTABILITY<sp/>or<sp/>FITNESS<sp/>FOR<sp/>A<sp/>PARTICULAR<sp/>PURPOSE.<sp/><sp/>See<sp/>the</highlight></codeline>
+<codeline lineno="16"><highlight class="comment"><sp/>*<sp/><sp/>GNU<sp/>General<sp/>Public<sp/>License<sp/>for<sp/>more<sp/>details.</highlight></codeline>
+<codeline lineno="17"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="18"><highlight class="comment"><sp/>*<sp/><sp/>You<sp/>should<sp/>have<sp/>received<sp/>a<sp/>copy<sp/>of<sp/>the<sp/>GNU<sp/>General<sp/>Public<sp/>License</highlight></codeline>
+<codeline lineno="19"><highlight class="comment"><sp/>*<sp/><sp/>along<sp/>with<sp/>NEST.<sp/><sp/>If<sp/>not,<sp/>see<sp/>&lt;http://www.gnu.org/licenses/&gt;.</highlight></codeline>
+<codeline lineno="20"><highlight class="comment"><sp/>*</highlight></codeline>
+<codeline lineno="21"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="22"><highlight class="normal"></highlight></codeline>
+<codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#ifndef<sp/>SYN_ID_DELAY_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="24"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SYN_ID_DELAY_H</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Includes<sp/>from<sp/>nestkernel:</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="nest__time_8h" kindref="compound">nest_time.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="nest__types_8h" kindref="compound">nest_types.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacenest" kindref="compound">nest</ref></highlight></codeline>
+<codeline lineno="31"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33" refid="structnest_1_1_syn_id_delay" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structnest_1_1_syn_id_delay" kindref="compound">SynIdDelay</ref></highlight></codeline>
+<codeline lineno="34"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="35" refid="structnest_1_1_syn_id_delay_1ac5588fbb27f68655030c4a243fd430fd" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structnest_1_1_syn_id_delay_1ac5588fbb27f68655030c4a243fd430fd" kindref="member">delay</ref><sp/>:<sp/><ref refid="namespacenest_1a1ad5097f8e2f886e292c374c067e22f4" kindref="member">NUM_BITS_DELAY</ref>;</highlight></codeline>
+<codeline lineno="36" refid="structnest_1_1_syn_id_delay_1a458c24aea1b7838a7b1b079cd268974f" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="structnest_1_1_syn_id_delay_1a458c24aea1b7838a7b1b079cd268974f" kindref="member">syn_id</ref><sp/>:<sp/><ref refid="namespacenest_1a223556c51f2b0a74f4a30422cd0d7863" kindref="member">NUM_BITS_SYN_ID</ref>;</highlight></codeline>
+<codeline lineno="37" refid="structnest_1_1_syn_id_delay_1a80e7fb1e8e2ad349880388a0bcb140ff" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structnest_1_1_syn_id_delay_1a80e7fb1e8e2ad349880388a0bcb140ff" kindref="member">more_targets</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="38" refid="structnest_1_1_syn_id_delay_1a7ccbcc5b95ec6f8b20f106ace4b69b59" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structnest_1_1_syn_id_delay_1a7ccbcc5b95ec6f8b20f106ace4b69b59" kindref="member">disabled</ref><sp/>:<sp/>1;</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40" refid="structnest_1_1_syn_id_delay_1a31fe12eb13df6feb19c031394cab3986" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/><ref refid="structnest_1_1_syn_id_delay_1a31fe12eb13df6feb19c031394cab3986" kindref="member">SynIdDelay</ref>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacenest_1_1names_1a8881fb5c6cc400d4eb90a2035d9a2df5" kindref="member">d</ref><sp/>)</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/><sp/><sp/>:<sp/><ref refid="structnest_1_1_syn_id_delay_1a458c24aea1b7838a7b1b079cd268974f" kindref="member">syn_id</ref>(<sp/><ref refid="namespacenest_1a32bdd353a98ed7e8fc719f244afa157c" kindref="member">invalid_synindex</ref><sp/>)</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="structnest_1_1_syn_id_delay_1a80e7fb1e8e2ad349880388a0bcb140ff" kindref="member">more_targets</ref>(<sp/>false<sp/>)</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="structnest_1_1_syn_id_delay_1a7ccbcc5b95ec6f8b20f106ace4b69b59" kindref="member">disabled</ref>(<sp/>false<sp/>)</highlight></codeline>
+<codeline lineno="44"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structnest_1_1_syn_id_delay_1ad9db4f5ce6cf00ac5a507c597ac46966" kindref="member">set_delay_ms</ref>(<sp/><ref refid="namespacenest_1_1names_1a8881fb5c6cc400d4eb90a2035d9a2df5" kindref="member">d</ref><sp/>);</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"></highlight></codeline>
+<codeline lineno="48" refid="structnest_1_1_syn_id_delay_1a7eecd95e81d1adbb8cde0620a7875b95" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="structnest_1_1_syn_id_delay_1a7eecd95e81d1adbb8cde0620a7875b95" kindref="member">SynIdDelay</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structnest_1_1_syn_id_delay" kindref="compound">SynIdDelay</ref>&amp;<sp/>s<sp/>)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="49" refid="structnest_1_1_syn_id_delay_1acc810e1abea3710cb477780a1605c22f" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="structnest_1_1_syn_id_delay" kindref="compound">SynIdDelay</ref>&amp;<sp/><ref refid="structnest_1_1_syn_id_delay_1acc810e1abea3710cb477780a1605c22f" kindref="member">operator=</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structnest_1_1_syn_id_delay" kindref="compound">SynIdDelay</ref>&amp;<sp/>s<sp/>)<sp/>=<sp/></highlight><highlight class="keywordflow">default</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="55" refid="structnest_1_1_syn_id_delay_1a04f8aa49a16adbc48d96115048c1f2bd" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="structnest_1_1_syn_id_delay_1a04f8aa49a16adbc48d96115048c1f2bd" kindref="member">get_delay_ms</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="56"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_time_1a24d25307fd9f343ac6ae01ff0f17f0fe" kindref="member">Time::delay_steps_to_ms</ref>(<sp/><ref refid="namespacenest_1a71a30fec90e57e114c45577d5294ce16" kindref="member">delay</ref><sp/>);</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="64" refid="structnest_1_1_syn_id_delay_1ad9db4f5ce6cf00ac5a507c597ac46966" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="structnest_1_1_syn_id_delay_1ad9db4f5ce6cf00ac5a507c597ac46966" kindref="member">set_delay_ms</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacenest_1_1names_1a8881fb5c6cc400d4eb90a2035d9a2df5" kindref="member">d</ref><sp/>)</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacenest_1a71a30fec90e57e114c45577d5294ce16" kindref="member">delay</ref><sp/>=<sp/><ref refid="classnest_1_1_time_1a817fe09798a12167761ce5711af5ce48" kindref="member">Time::delay_ms_to_steps</ref>(<sp/><ref refid="namespacenest_1_1names_1a8881fb5c6cc400d4eb90a2035d9a2df5" kindref="member">d</ref><sp/>);</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="70" refid="structnest_1_1_syn_id_delay_1aa6fdbd5055dbd33554593c47badd2221" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="structnest_1_1_syn_id_delay_1aa6fdbd5055dbd33554593c47badd2221" kindref="member">set_source_has_more_targets</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="structnest_1_1_syn_id_delay_1a80e7fb1e8e2ad349880388a0bcb140ff" kindref="member">more_targets</ref><sp/>)</highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/>this-&gt;more_targets<sp/>=<sp/><ref refid="structnest_1_1_syn_id_delay_1a80e7fb1e8e2ad349880388a0bcb140ff" kindref="member">more_targets</ref>;</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76" refid="structnest_1_1_syn_id_delay_1a25fc08ad7adddab1be069bb90b986ac6" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="structnest_1_1_syn_id_delay_1a25fc08ad7adddab1be069bb90b986ac6" kindref="member">source_has_more_targets</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="77"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="structnest_1_1_syn_id_delay_1a80e7fb1e8e2ad349880388a0bcb140ff" kindref="member">more_targets</ref>;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="87" refid="structnest_1_1_syn_id_delay_1a376577aa3f24f1346393efddc5a9bc56" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="structnest_1_1_syn_id_delay_1a376577aa3f24f1346393efddc5a9bc56" kindref="member">disable</ref>()</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="structnest_1_1_syn_id_delay_1a7ccbcc5b95ec6f8b20f106ace4b69b59" kindref="member">disabled</ref><sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"></highlight></codeline>
+<codeline lineno="97"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="98" refid="structnest_1_1_syn_id_delay_1afd0f99d2a349627c88db97dfd6ac12bb" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="structnest_1_1_syn_id_delay_1afd0f99d2a349627c88db97dfd6ac12bb" kindref="member">is_disabled</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="99"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="structnest_1_1_syn_id_delay_1a7ccbcc5b95ec6f8b20f106ace4b69b59" kindref="member">disabled</ref>;</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="102"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="105" refid="namespacenest_1a043aaa35c6bba9f769c4cf97d05ebf4d" refkind="member"><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="namespacenest_1a043aaa35c6bba9f769c4cf97d05ebf4d" kindref="member">success_syn_id_delay_data_size</ref><sp/>=<sp/><ref refid="structnest_1_1_static_assert" kindref="compound">StaticAssert</ref>&lt;<sp/></highlight><highlight class="keyword">sizeof</highlight><highlight class="normal">(<sp/><ref refid="structnest_1_1_syn_id_delay" kindref="compound">SynIdDelay</ref><sp/>)<sp/>==<sp/>4<sp/>&gt;::success;</highlight></codeline>
+<codeline lineno="106"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"></highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
+    </programlisting>
+    <location file="nestkernel/syn_id_delay.h"/>
+  </compounddef>
+</doxygen>

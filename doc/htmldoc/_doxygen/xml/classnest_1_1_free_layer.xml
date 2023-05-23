@@ -1,0 +1,345 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classnest_1_1_free_layer" kind="class" language="C++" prot="public">
+    <compoundname>nest::FreeLayer</compoundname>
+    <basecompoundref refid="classnest_1_1_layer" prot="public" virt="non-virtual">nest::Layer&lt; D &gt;</basecompoundref>
+    <includes refid="free__layer_8h" local="no">free_layer.h</includes>
+    <innerclass refid="classnest_1_1_free_layer_1_1_node_position_data" prot="protected">nest::FreeLayer::NodePositionData</innerclass>
+    <templateparamlist>
+      <param>
+        <type>int</type>
+        <declname>D</declname>
+        <defname>D</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classnest_1_1_free_layer_1a8733508fe4998adf0c25afc412126936" prot="protected" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classnest_1_1_position" kindref="compound">Position</ref>&lt; D &gt; &gt;</type>
+        <definition>std::vector&lt; Position&lt; D &gt; &gt; nest::FreeLayer&lt; D &gt;::positions_</definition>
+        <argsstring></argsstring>
+        <name>positions_</name>
+        <briefdescription>
+<para>Vector of positions. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/free_layer.h" line="76" column="15" bodyfile="nestkernel/free_layer.h" bodystart="76" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_free_layer_1af3209bf045d48ec434d83130cde96910" prot="protected" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t nest::FreeLayer&lt; D &gt;::num_local_nodes_</definition>
+        <argsstring></argsstring>
+        <name>num_local_nodes_</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/free_layer.h" line="78" column="10" bodyfile="nestkernel/free_layer.h" bodystart="78" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classnest_1_1_free_layer_1a6baeb70ed0dc8b7bd41fa0c135e4b509" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classnest_1_1_position" kindref="compound">Position</ref>&lt; D &gt;</type>
+        <definition>Position&lt; D &gt; nest::FreeLayer&lt; D &gt;::get_position</definition>
+        <argsstring>(index sind) const</argsstring>
+        <name>get_position</name>
+        <reimplements refid="classnest_1_1_layer_1acd44b40683a603583aca0a1a51c1468f">get_position</reimplements>
+        <param>
+          <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+          <declname>sind</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Get position of node. Only possible for local nodes. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>sind</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>index of node </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>position of node. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/free_layer.h" line="51" column="12" bodyfile="nestkernel/free_layer.h" bodystart="269" bodyend="272"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_free_layer_1acb2f436d36da84d837609d56562af384" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::FreeLayer&lt; D &gt;::set_status</definition>
+        <argsstring>(const DictionaryDatum &amp;)</argsstring>
+        <name>set_status</name>
+        <reimplements refid="classnest_1_1_abstract_layer_1ad06fa8f1d890798881a7ae445b964108">set_status</reimplements>
+        <param>
+          <type>const DictionaryDatum &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Change properties of the layer according to the entries in the dictionary. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>d</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dictionary with named parameter settings. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/free_layer.h" line="52" column="8" bodyfile="nestkernel/free_layer.h" bodystart="113" bodyend="251"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_free_layer_1aa4bc8a616463884614fd0d29592ab51a" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::FreeLayer&lt; D &gt;::get_status</definition>
+        <argsstring>(DictionaryDatum &amp;) const</argsstring>
+        <name>get_status</name>
+        <reimplements refid="classnest_1_1_abstract_layer_1a4e6967b12d99eccd9dc329daa1149c96">get_status</reimplements>
+        <param>
+          <type>DictionaryDatum &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Export properties of the layer by setting entries in the status dictionary. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>d</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Dictionary. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/free_layer.h" line="53" column="8" bodyfile="nestkernel/free_layer.h" bodystart="255" bodyend="265"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-func">
+      <memberdef kind="function" id="classnest_1_1_free_layer_1ad3fe5e6f34d4be2486cd8d325c71ec56" prot="protected" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class Ins</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void nest::FreeLayer&lt; D &gt;::communicate_positions_</definition>
+        <argsstring>(Ins iter, NodeCollectionPTR node_collection)</argsstring>
+        <name>communicate_positions_</name>
+        <param>
+          <type>Ins</type>
+          <declname>iter</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1accbbbd2c49375cc6c2edd964cccda54e" kindref="member">NodeCollectionPTR</ref></type>
+          <declname>node_collection</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Communicate positions across MPI processes <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>iter</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Insert iterator which will receive pairs of <ref refid="classnest_1_1_position" kindref="compound">Position</ref>,node ID </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>node_collection</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classnest_1_1_node_collection" kindref="compound">NodeCollection</ref> of the layer </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/free_layer.h" line="62" column="8" bodyfile="nestkernel/free_layer.h" bodystart="277" bodyend="327"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_free_layer_1ab3201672033e5215b9bdeb2cb526f061" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::FreeLayer&lt; D &gt;::insert_global_positions_ntree_</definition>
+        <argsstring>(Ntree&lt; D, index &gt; &amp;tree, NodeCollectionPTR node_collection)</argsstring>
+        <name>insert_global_positions_ntree_</name>
+        <reimplements refid="classnest_1_1_layer_1ac03f53f6e62c44af5adc7f8043ab52ca">insert_global_positions_ntree_</reimplements>
+        <param>
+          <type><ref refid="classnest_1_1_ntree" kindref="compound">Ntree</ref>&lt; D, <ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref> &gt; &amp;</type>
+          <declname>tree</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1accbbbd2c49375cc6c2edd964cccda54e" kindref="member">NodeCollectionPTR</ref></type>
+          <declname>node_collection</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Insert global position info into ntree. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/free_layer.h" line="64" column="8" bodyfile="nestkernel/free_layer.h" bodystart="331" bodyend="335"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_free_layer_1a09296d377a06ea3aa2dd32332ce67272" prot="protected" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::FreeLayer&lt; D &gt;::insert_global_positions_vector_</definition>
+        <argsstring>(std::vector&lt; std::pair&lt; Position&lt; D &gt;, index &gt; &gt; &amp;vec, NodeCollectionPTR node_collection)</argsstring>
+        <name>insert_global_positions_vector_</name>
+        <reimplements refid="classnest_1_1_layer_1a7a60d49f6d728e7694ff2557391b9f2a">insert_global_positions_vector_</reimplements>
+        <param>
+          <type>std::vector&lt; std::pair&lt; <ref refid="classnest_1_1_position" kindref="compound">Position</ref>&lt; D &gt;, <ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref> &gt; &gt; &amp;</type>
+        </param>
+        <param>
+          <type><ref refid="namespacenest_1accbbbd2c49375cc6c2edd964cccda54e" kindref="member">NodeCollectionPTR</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Insert global position info into vector. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/free_layer.h" line="65" column="8" bodyfile="nestkernel/free_layer.h" bodystart="347" bodyend="355"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_free_layer_1a7b8c3cd27e95f1464825521bc22f734e" prot="protected" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+        <definition>index nest::FreeLayer&lt; D &gt;::lid_to_position_id_</definition>
+        <argsstring>(index lid) const</argsstring>
+        <name>lid_to_position_id_</name>
+        <param>
+          <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
+          <declname>lid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Calculate the index in the position vector on this MPI process based on the local ID. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>lid</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>local ID of the node </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>index in the local position vector </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/free_layer.h" line="73" column="9" bodyfile="nestkernel/free_layer.h" bodystart="359" bodyend="375"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para><ref refid="classnest_1_1_layer" kindref="compound">Layer</ref> with free positioning of neurons, positions specified by user. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>nest::Layer&lt; D &gt;</label>
+        <link refid="classnest_1_1_layer"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>nest::FreeLayer&lt; D &gt;</label>
+        <link refid="classnest_1_1_free_layer"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>nest::AbstractLayer</label>
+        <link refid="classnest_1_1_abstract_layer"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>nest::Layer&lt; D &gt;</label>
+        <link refid="classnest_1_1_layer"/>
+        <childnode refid="3" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>nest::FreeLayer&lt; D &gt;</label>
+        <link refid="classnest_1_1_free_layer"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>nest::AbstractLayer</label>
+        <link refid="classnest_1_1_abstract_layer"/>
+      </node>
+    </collaborationgraph>
+    <location file="nestkernel/free_layer.h" line="48" column="1" bodyfile="nestkernel/free_layer.h" bodystart="49" bodyend="109"/>
+    <listofallmembers>
+      <member refid="classnest_1_1_abstract_layer_1a0ad131746b1272ec9866a336dc380a91" prot="public" virt="non-virtual"><scope>nest::FreeLayer</scope><name>AbstractLayer</name></member>
+      <member refid="classnest_1_1_layer_1a003b69d3b9c07caafa4b91c5afd26e71" prot="protected" virt="non-virtual"><scope>nest::FreeLayer</scope><name>cached_ntree_</name></member>
+      <member refid="classnest_1_1_abstract_layer_1a1e8fda88e7029c3b23f35819cba848c6" prot="protected" virt="non-virtual"><scope>nest::FreeLayer</scope><name>cached_ntree_md_</name></member>
+      <member refid="classnest_1_1_layer_1a078e2a5d9e67fd18a21f8cfabb74bebb" prot="protected" virt="non-virtual"><scope>nest::FreeLayer</scope><name>cached_vector_</name></member>
+      <member refid="classnest_1_1_abstract_layer_1add028a9b29284bac5c09ac20f6b42c3b" prot="protected" virt="non-virtual"><scope>nest::FreeLayer</scope><name>cached_vector_md_</name></member>
+      <member refid="classnest_1_1_layer_1a3bdf16e4d5e8ce0a7d2c8807b9e858c2" prot="protected" virt="virtual"><scope>nest::FreeLayer</scope><name>clear_ntree_cache_</name></member>
+      <member refid="classnest_1_1_layer_1a0320d45963d9093ac80d6908f140b3f0" prot="protected" virt="virtual"><scope>nest::FreeLayer</scope><name>clear_vector_cache_</name></member>
+      <member refid="classnest_1_1_free_layer_1ad3fe5e6f34d4be2486cd8d325c71ec56" prot="protected" virt="non-virtual"><scope>nest::FreeLayer</scope><name>communicate_positions_</name></member>
+      <member refid="classnest_1_1_layer_1a5bdc6e9ae51ca2c547ef62a25315681d" prot="public" virt="non-virtual"><scope>nest::FreeLayer</scope><name>compute_displacement</name></member>
+      <member refid="classnest_1_1_layer_1a52c45681c7e56df3264fe31db5032108" prot="public" virt="virtual"><scope>nest::FreeLayer</scope><name>compute_displacement</name></member>
+      <member refid="classnest_1_1_layer_1a066ca032ad333cb421c3f4538fb2630f" prot="public" virt="non-virtual"><scope>nest::FreeLayer</scope><name>compute_displacement</name></member>
+      <member refid="classnest_1_1_layer_1a319156f736642bdb7bc5483c79b10530" prot="public" virt="virtual"><scope>nest::FreeLayer</scope><name>compute_displacement</name></member>
+      <member refid="classnest_1_1_layer_1acb771d17f684fe36675ad7395d520b2e" prot="public" virt="non-virtual"><scope>nest::FreeLayer</scope><name>compute_distance</name></member>
+      <member refid="classnest_1_1_layer_1ad01a6f6f14f46165fea0ec5c6fc9da08" prot="public" virt="virtual"><scope>nest::FreeLayer</scope><name>compute_distance</name></member>
+      <member refid="classnest_1_1_layer_1a8680705537ec5ed10f3dadd966075feb" prot="public" virt="virtual"><scope>nest::FreeLayer</scope><name>compute_distance</name></member>
+      <member refid="classnest_1_1_layer_1a805e0bc30af5b8449cbb5ee09fbd71fb" prot="public" virt="virtual"><scope>nest::FreeLayer</scope><name>connect</name></member>
+      <member refid="classnest_1_1_abstract_layer_1a268b14297e57188c5f29a44bad369990" prot="public" virt="non-virtual"><scope>nest::FreeLayer</scope><name>create_layer</name></member>
+      <member refid="classnest_1_1_layer_1af80ad7c54c28a5b07c63093944324cfe" prot="protected" virt="non-virtual"><scope>nest::FreeLayer</scope><name>do_get_global_positions_ntree_</name></member>
+      <member refid="classnest_1_1_layer_1ac1b9a1c8651f3eefae09c200e00974af" prot="public" virt="virtual"><scope>nest::FreeLayer</scope><name>dump_connections</name></member>
+      <member refid="classnest_1_1_layer_1a84ccd5b88b173dedb7cb3b4b9b6c2a95" prot="public" virt="virtual"><scope>nest::FreeLayer</scope><name>dump_nodes</name></member>
+      <member refid="classnest_1_1_layer_1a3fe40a896502071fc257e0bf4b7f5961" prot="protected" virt="non-virtual"><scope>nest::FreeLayer</scope><name>extent_</name></member>
+      <member refid="classnest_1_1_layer_1a53c46f3e1dabf057073dab59b51813e3" prot="public" virt="non-virtual"><scope>nest::FreeLayer</scope><name>get_center</name></member>
+      <member refid="classnest_1_1_layer_1ad1eb42e8f942fcd2dd85c64ef4233900" prot="public" virt="non-virtual"><scope>nest::FreeLayer</scope><name>get_extent</name></member>
+      <member refid="classnest_1_1_layer_1a72db1887553137c059800b8b2fc58cd1" prot="public" virt="virtual"><scope>nest::FreeLayer</scope><name>get_global_nodes</name></member>
+      <member refid="classnest_1_1_layer_1a616cfe345fae749c13eb188e9ea41df5" prot="public" virt="non-virtual"><scope>nest::FreeLayer</scope><name>get_global_positions_ntree</name></member>
+      <member refid="classnest_1_1_layer_1a6dd26a0979ad92d43e94bb71c45fd687" prot="public" virt="non-virtual"><scope>nest::FreeLayer</scope><name>get_global_positions_ntree</name></member>
+      <member refid="classnest_1_1_layer_1a40a6e749847f747190339cd061acb284" prot="public" virt="non-virtual"><scope>nest::FreeLayer</scope><name>get_global_positions_vector</name></member>
+      <member refid="classnest_1_1_layer_1a9cf7738cc88a6531a2aab4adf2be51df" prot="public" virt="virtual"><scope>nest::FreeLayer</scope><name>get_global_positions_vector</name></member>
+      <member refid="classnest_1_1_layer_1ab711e33971020b78cde12543b57d4be4" prot="public" virt="non-virtual"><scope>nest::FreeLayer</scope><name>get_lower_left</name></member>
+      <member refid="classnest_1_1_abstract_layer_1a560ba4e701334a2040b56a34c60f3d64" prot="protected" virt="non-virtual"><scope>nest::FreeLayer</scope><name>get_metadata</name></member>
+      <member refid="classnest_1_1_abstract_layer_1aa22fca27ef998582d5ede2a7f293478b" prot="public" virt="non-virtual"><scope>nest::FreeLayer</scope><name>get_node_collection</name></member>
+      <member refid="classnest_1_1_layer_1a6e68c37a78e18c593855cc6875c1dbf2" prot="public" virt="virtual"><scope>nest::FreeLayer</scope><name>get_num_dimensions</name></member>
+      <member refid="classnest_1_1_layer_1a8ea1571c299ddf01b5dcd2544507c83e" prot="public" virt="non-virtual"><scope>nest::FreeLayer</scope><name>get_periodic_mask</name></member>
+      <member refid="classnest_1_1_free_layer_1a6baeb70ed0dc8b7bd41fa0c135e4b509" prot="public" virt="virtual"><scope>nest::FreeLayer</scope><name>get_position</name></member>
+      <member refid="classnest_1_1_layer_1a96bf140046dc1815263bad1be6395219" prot="public" virt="virtual"><scope>nest::FreeLayer</scope><name>get_position_vector</name></member>
+      <member refid="classnest_1_1_free_layer_1aa4bc8a616463884614fd0d29592ab51a" prot="public" virt="virtual"><scope>nest::FreeLayer</scope><name>get_status</name></member>
+      <member refid="classnest_1_1_free_layer_1ab3201672033e5215b9bdeb2cb526f061" prot="protected" virt="virtual"><scope>nest::FreeLayer</scope><name>insert_global_positions_ntree_</name></member>
+      <member refid="classnest_1_1_free_layer_1a09296d377a06ea3aa2dd32332ce67272" prot="protected" virt="virtual"><scope>nest::FreeLayer</scope><name>insert_global_positions_vector_</name></member>
+      <member refid="classnest_1_1_layer_1a44db808bdb6b71ff3392cd4d743f49e1" prot="public" virt="non-virtual"><scope>nest::FreeLayer</scope><name>Layer</name></member>
+      <member refid="classnest_1_1_layer_1afe8b87e0bc750f510e35a413e6cea13b" prot="public" virt="non-virtual"><scope>nest::FreeLayer</scope><name>Layer</name></member>
+      <member refid="classnest_1_1_free_layer_1a7b8c3cd27e95f1464825521bc22f734e" prot="protected" virt="non-virtual"><scope>nest::FreeLayer</scope><name>lid_to_position_id_</name></member>
+      <member refid="classnest_1_1_layer_1af53da8f0c9a40e6c25a99fac5e303487" prot="protected" virt="non-virtual"><scope>nest::FreeLayer</scope><name>lower_left_</name></member>
+      <member refid="classnest_1_1_abstract_layer_1a32cbd1dbb9fdfd0b12903814aeb5c066" prot="protected" virt="non-virtual"><scope>nest::FreeLayer</scope><name>node_collection_</name></member>
+      <member refid="classnest_1_1_free_layer_1af3209bf045d48ec434d83130cde96910" prot="protected" virt="non-virtual"><scope>nest::FreeLayer</scope><name>num_local_nodes_</name></member>
+      <member refid="classnest_1_1_layer_1ac2a10c1e0879d2166cdbcfdb0ba3a82e" prot="protected" virt="non-virtual"><scope>nest::FreeLayer</scope><name>periodic_</name></member>
+      <member refid="classnest_1_1_free_layer_1a8733508fe4998adf0c25afc412126936" prot="protected" virt="non-virtual"><scope>nest::FreeLayer</scope><name>positions_</name></member>
+      <member refid="classnest_1_1_abstract_layer_1a54c83f92a30139407e7477a8ce019414" prot="public" virt="non-virtual"><scope>nest::FreeLayer</scope><name>set_node_collection</name></member>
+      <member refid="classnest_1_1_free_layer_1acb2f436d36da84d837609d56562af384" prot="public" virt="virtual"><scope>nest::FreeLayer</scope><name>set_status</name></member>
+      <member refid="classnest_1_1_abstract_layer_1a5ffddcffaba780d5e7b61d2850d2c922" prot="public" virt="virtual"><scope>nest::FreeLayer</scope><name>~AbstractLayer</name></member>
+      <member refid="classnest_1_1_layer_1a5c95831f62337f6b03b7a3030721140e" prot="public" virt="non-virtual"><scope>nest::FreeLayer</scope><name>~Layer</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

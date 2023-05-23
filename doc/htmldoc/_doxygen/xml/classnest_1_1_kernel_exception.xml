@@ -1,0 +1,378 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classnest_1_1_kernel_exception" kind="class" language="C++" prot="public">
+    <compoundname>nest::KernelException</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">SLIException</basecompoundref>
+    <derivedcompoundref refid="classnest_1_1_backend_already_registered" prot="public" virt="non-virtual">nest::BackendAlreadyRegistered</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_backend_not_prepared" prot="public" virt="non-virtual">nest::BackendNotPrepared</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_backend_prepared" prot="public" virt="non-virtual">nest::BackendPrepared</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_bad_delay" prot="public" virt="non-virtual">nest::BadDelay</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_bad_parameter" prot="public" virt="non-virtual">nest::BadParameter</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_bad_property" prot="public" virt="non-virtual">nest::BadProperty</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_dimension_mismatch" prot="public" virt="non-virtual">nest::DimensionMismatch</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_distribution_error" prot="public" virt="non-virtual">nest::DistributionError</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_g_s_l_solver_failure" prot="public" virt="non-virtual">nest::GSLSolverFailure</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_illegal_connection" prot="public" virt="non-virtual">nest::IllegalConnection</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_incompatible_receptor_type" prot="public" virt="non-virtual">nest::IncompatibleReceptorType</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_inexistent_connection" prot="public" virt="non-virtual">nest::InexistentConnection</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_internal_error" prot="public" virt="non-virtual">nest::InternalError</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_invalid_default_resolution" prot="public" virt="non-virtual">nest::InvalidDefaultResolution</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_invalid_time_in_model" prot="public" virt="non-virtual">nest::InvalidTimeInModel</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_key_error" prot="public" virt="non-virtual">nest::KeyError</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_layer_expected" prot="public" virt="non-virtual">nest::LayerExpected</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_layer_node_expected" prot="public" virt="non-virtual">nest::LayerNodeExpected</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_local_node_expected" prot="public" virt="non-virtual">nest::LocalNodeExpected</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_model_in_use" prot="public" virt="non-virtual">nest::ModelInUse</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_new_model_name_exists" prot="public" virt="non-virtual">nest::NewModelNameExists</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_no_thread_siblings_available" prot="public" virt="non-virtual">nest::NoThreadSiblingsAvailable</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_node_with_proxies_expected" prot="public" virt="non-virtual">nest::NodeWithProxiesExpected</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_numerical_instability" prot="public" virt="non-virtual">nest::NumericalInstability</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_step_multiple_required" prot="public" virt="non-virtual">nest::StepMultipleRequired</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_time_multiple_required" prot="public" virt="non-virtual">nest::TimeMultipleRequired</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_unexpected_event" prot="public" virt="non-virtual">nest::UnexpectedEvent</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_unknown_compartment" prot="public" virt="non-virtual">nest::UnknownCompartment</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_unknown_component" prot="public" virt="non-virtual">nest::UnknownComponent</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_unknown_model_name" prot="public" virt="non-virtual">nest::UnknownModelName</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_unknown_node" prot="public" virt="non-virtual">nest::UnknownNode</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_unknown_port" prot="public" virt="non-virtual">nest::UnknownPort</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_unknown_receptor_type" prot="public" virt="non-virtual">nest::UnknownReceptorType</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_unknown_synapse_type" prot="public" virt="non-virtual">nest::UnknownSynapseType</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_unknown_thread" prot="public" virt="non-virtual">nest::UnknownThread</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_unmatched_steps" prot="public" virt="non-virtual">nest::UnmatchedSteps</derivedcompoundref>
+    <derivedcompoundref refid="classnest_1_1_unsupported_event" prot="public" virt="non-virtual">nest::UnsupportedEvent</derivedcompoundref>
+    <includes refid="exceptions_8h" local="no">exceptions.h</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classnest_1_1_kernel_exception_1aeb4d5e1c6351372f03f535806264fb6d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>nest::KernelException::KernelException</definition>
+        <argsstring>()</argsstring>
+        <name>KernelException</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/exceptions.h" line="61" column="3" bodyfile="nestkernel/exceptions.h" bodystart="61" bodyend="64"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_kernel_exception_1a587cc59f8f1fac92da4370934c03ab15" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>nest::KernelException::KernelException</definition>
+        <argsstring>(char const *const what)</argsstring>
+        <name>KernelException</name>
+        <param>
+          <type>char const *const</type>
+          <declname>what</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/exceptions.h" line="66" column="12" bodyfile="nestkernel/exceptions.h" bodystart="66" bodyend="69"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_kernel_exception_1a1a10edf2a54c9d48aeab137024cd3144" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>nest::KernelException::KernelException</definition>
+        <argsstring>(const std::string &amp;what)</argsstring>
+        <name>KernelException</name>
+        <param>
+          <type>const std::string &amp;</type>
+          <declname>what</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/exceptions.h" line="71" column="12" bodyfile="nestkernel/exceptions.h" bodystart="71" bodyend="74"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_kernel_exception_1aeaa4cd0b8db52d17bb0907ea6db41a44" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>nest::KernelException::~KernelException</definition>
+        <argsstring>() override</argsstring>
+        <name>~KernelException</name>
+        <exceptions> throw ()</exceptions>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/exceptions.h" line="76" column="3" bodyfile="nestkernel/exceptions.h" bodystart="76" bodyend="78"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_kernel_exception_1a485c64ff3ea756a5eb6118799e0f1c74" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::string</type>
+        <definition>std::string nest::KernelException::message</definition>
+        <argsstring>() const override</argsstring>
+        <name>message</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/exceptions.h" line="81" column="3" bodyfile="nestkernel/exceptions.h" bodystart="81" bodyend="84"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Base class for all Kernel exceptions. </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="24">
+        <label>nest::NoThreadSiblingsAvailable</label>
+        <link refid="classnest_1_1_no_thread_siblings_available"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>nest::ModelInUse</label>
+        <link refid="classnest_1_1_model_in_use"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>nest::KeyError</label>
+        <link refid="classnest_1_1_key_error"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>nest::GSLSolverFailure</label>
+        <link refid="classnest_1_1_g_s_l_solver_failure"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>nest::TimeMultipleRequired</label>
+        <link refid="classnest_1_1_time_multiple_required"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>nest::LayerNodeExpected</label>
+        <link refid="classnest_1_1_layer_node_expected"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>nest::InvalidDefaultResolution</label>
+        <link refid="classnest_1_1_invalid_default_resolution"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>nest::DistributionError</label>
+        <link refid="classnest_1_1_distribution_error"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>nest::IncompatibleReceptorType</label>
+        <link refid="classnest_1_1_incompatible_receptor_type"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>nest::BackendNotPrepared</label>
+        <link refid="classnest_1_1_backend_not_prepared"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>nest::InternalError</label>
+        <link refid="classnest_1_1_internal_error"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>nest::BadDelay</label>
+        <link refid="classnest_1_1_bad_delay"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>nest::IllegalConnection</label>
+        <link refid="classnest_1_1_illegal_connection"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>nest::LayerExpected</label>
+        <link refid="classnest_1_1_layer_expected"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>nest::BadProperty</label>
+        <link refid="classnest_1_1_bad_property"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>nest::UnknownComponent</label>
+        <link refid="classnest_1_1_unknown_component"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>nest::UnexpectedEvent</label>
+        <link refid="classnest_1_1_unexpected_event"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>nest::UnknownReceptorType</label>
+        <link refid="classnest_1_1_unknown_receptor_type"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>nest::InvalidTimeInModel</label>
+        <link refid="classnest_1_1_invalid_time_in_model"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>nest::UnknownNode</label>
+        <link refid="classnest_1_1_unknown_node"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>nest::StepMultipleRequired</label>
+        <link refid="classnest_1_1_step_multiple_required"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>nest::InexistentConnection</label>
+        <link refid="classnest_1_1_inexistent_connection"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>nest::BadParameter</label>
+        <link refid="classnest_1_1_bad_parameter"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>nest::BackendPrepared</label>
+        <link refid="classnest_1_1_backend_prepared"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>nest::UnknownModelName</label>
+        <link refid="classnest_1_1_unknown_model_name"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>nest::LocalNodeExpected</label>
+        <link refid="classnest_1_1_local_node_expected"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>nest::NumericalInstability</label>
+        <link refid="classnest_1_1_numerical_instability"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>nest::UnmatchedSteps</label>
+        <link refid="classnest_1_1_unmatched_steps"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="34">
+        <label>nest::UnknownPort</label>
+        <link refid="classnest_1_1_unknown_port"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>nest::NodeWithProxiesExpected</label>
+        <link refid="classnest_1_1_node_with_proxies_expected"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>nest::DimensionMismatch</label>
+        <link refid="classnest_1_1_dimension_mismatch"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>nest::UnknownCompartment</label>
+        <link refid="classnest_1_1_unknown_compartment"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>nest::UnknownSynapseType</label>
+        <link refid="classnest_1_1_unknown_synapse_type"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>nest::UnsupportedEvent</label>
+        <link refid="classnest_1_1_unsupported_event"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>nest::UnknownThread</label>
+        <link refid="classnest_1_1_unknown_thread"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>nest::NewModelNameExists</label>
+        <link refid="classnest_1_1_new_model_name_exists"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>nest::BackendAlreadyRegistered</label>
+        <link refid="classnest_1_1_backend_already_registered"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>SLIException</label>
+      </node>
+      <node id="1">
+        <label>nest::KernelException</label>
+        <link refid="classnest_1_1_kernel_exception"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>SLIException</label>
+      </node>
+      <node id="1">
+        <label>nest::KernelException</label>
+        <link refid="classnest_1_1_kernel_exception"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="nestkernel/exceptions.h" line="58" column="1" bodyfile="nestkernel/exceptions.h" bodystart="59" bodyend="85"/>
+    <listofallmembers>
+      <member refid="classnest_1_1_kernel_exception_1aeb4d5e1c6351372f03f535806264fb6d" prot="public" virt="non-virtual"><scope>nest::KernelException</scope><name>KernelException</name></member>
+      <member refid="classnest_1_1_kernel_exception_1a587cc59f8f1fac92da4370934c03ab15" prot="public" virt="non-virtual"><scope>nest::KernelException</scope><name>KernelException</name></member>
+      <member refid="classnest_1_1_kernel_exception_1a1a10edf2a54c9d48aeab137024cd3144" prot="public" virt="non-virtual"><scope>nest::KernelException</scope><name>KernelException</name></member>
+      <member refid="classnest_1_1_kernel_exception_1a485c64ff3ea756a5eb6118799e0f1c74" prot="public" virt="non-virtual"><scope>nest::KernelException</scope><name>message</name></member>
+      <member refid="classnest_1_1_kernel_exception_1aeaa4cd0b8db52d17bb0907ea6db41a44" prot="public" virt="non-virtual"><scope>nest::KernelException</scope><name>~KernelException</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

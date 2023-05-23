@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classnest_1_1_nest_module_1_1_copy_model__l__l___d_function" kind="class" language="C++" prot="public">
+    <compoundname>nest::NestModule::CopyModel_l_l_DFunction</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">SLIFunction</basecompoundref>
+    <includes refid="nestmodule_8h" local="no">nestmodule.h</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classnest_1_1_nest_module_1_1_copy_model__l__l___d_function_1a79f13278240061e8b4eeb21a97ae382d" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::NestModule::CopyModel_l_l_DFunction::execute</definition>
+        <argsstring>(SLIInterpreter *) const override</argsstring>
+        <name>execute</name>
+        <param>
+          <type>SLIInterpreter *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>@BeginDocumentation Name: CopyModel - copy a model to a new name, set parameters for copy, if given Synopsis: /model /new_model param_dict -&gt; - /model /new_model -&gt; - Parameters: /model - literal naming an existing model /new_model - literal name of the copy to create, must not exist before /param_dict - parameters to set in the new_model Description: A copy of model is created and registered under the name new_model. If a parameter dictionary is given, the parameters are set in new_model. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/nestmodule.h" line="281" column="10" bodyfile="nestkernel/nestmodule.cpp" bodystart="785" bodyend="798"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>SLIFunction</label>
+      </node>
+      <node id="1">
+        <label>nest::NestModule::CopyModel_l_l_DFunction</label>
+        <link refid="classnest_1_1_nest_module_1_1_copy_model__l__l___d_function"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>SLIFunction</label>
+      </node>
+      <node id="1">
+        <label>nest::NestModule::CopyModel_l_l_DFunction</label>
+        <link refid="classnest_1_1_nest_module_1_1_copy_model__l__l___d_function"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="nestkernel/nestmodule.h" line="278" column="3" bodyfile="nestkernel/nestmodule.h" bodystart="279" bodyend="282"/>
+    <listofallmembers>
+      <member refid="classnest_1_1_nest_module_1_1_copy_model__l__l___d_function_1a79f13278240061e8b4eeb21a97ae382d" prot="public" virt="non-virtual"><scope>nest::NestModule::CopyModel_l_l_DFunction</scope><name>execute</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

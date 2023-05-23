@@ -1,0 +1,1450 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classnest_1_1_event_delivery_manager" kind="class" language="C++" prot="public">
+    <compoundname>nest::EventDeliveryManager</compoundname>
+    <basecompoundref refid="classnest_1_1_manager_interface" prot="public" virt="non-virtual">nest::ManagerInterface</basecompoundref>
+    <includes refid="event__delivery__manager_8h" local="no">event_delivery_manager.h</includes>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classnest_1_1_event_delivery_manager_1a0de8439d2f279732ec3875945429db6c" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::EventDeliveryManager::off_grid_spiking_</definition>
+        <argsstring></argsstring>
+        <name>off_grid_spiking_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>indicates whether spikes are not constrained to the grid </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="359" column="8" bodyfile="nestkernel/event_delivery_manager.h" bodystart="359" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_event_delivery_manager_1a7e4a1a74f66867104a87df6f25c2e50c" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="namespacenest_1a71a30fec90e57e114c45577d5294ce16" kindref="member">delay</ref> &gt;</type>
+        <definition>std::vector&lt; delay &gt; nest::EventDeliveryManager::moduli_</definition>
+        <argsstring></argsstring>
+        <name>moduli_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Table of pre-computed modulos. This table is used to map time steps, given as offset from now, to ring-buffer bins. There are min_delay+max_delay bins in a ring buffer, and the moduli_ array is rotated by min_delay elements after each slice is completed. <simplesect kind="see"><para><ref refid="classnest_1_1_ring_buffer" kindref="compound">RingBuffer</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="370" column="15" bodyfile="nestkernel/event_delivery_manager.h" bodystart="370" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_event_delivery_manager_1a9458935de0a8a8123c0836c59017ac40" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="namespacenest_1a71a30fec90e57e114c45577d5294ce16" kindref="member">delay</ref> &gt;</type>
+        <definition>std::vector&lt; delay &gt; nest::EventDeliveryManager::slice_moduli_</definition>
+        <argsstring></argsstring>
+        <name>slice_moduli_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Table of pre-computed slice-based modulos. This table is used to map time steps, give as offset from now, to slice-based ring-buffer bins. There are ceil(max_delay/min_delay) bins in a slice-based ring buffer, one per slice within max_delay. Since max_delay may not be a multiple of min_delay, we cannot simply rotate the table content after each slice, but have to recompute the table anew. <simplesect kind="see"><para><ref refid="classnest_1_1_slice_ring_buffer" kindref="compound">SliceRingBuffer</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="382" column="15" bodyfile="nestkernel/event_delivery_manager.h" bodystart="382" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_event_delivery_manager_1a32353bda32d23bdc0a262b0a10e4338d" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; std::vector&lt; std::vector&lt; std::vector&lt; <ref refid="classnest_1_1_target" kindref="compound">Target</ref> &gt; &gt; &gt; &gt;</type>
+        <definition>std::vector&lt; std::vector&lt; std::vector&lt; std::vector&lt; Target &gt; &gt; &gt; &gt; nest::EventDeliveryManager::emitted_spikes_register_</definition>
+        <argsstring></argsstring>
+        <name>emitted_spikes_register_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Register for node IDs of neurons that spiked. This is a 4-dim structure. While spikes are written to the buffer they are immediately sorted by the thread that will later move the spikes to the MPI buffers.<itemizedlist>
+<listitem><para>First dim: write threads (from node to register)</para>
+</listitem><listitem><para>Second dim: read threads (from register to MPI buffer)</para>
+</listitem><listitem><para>Third dim: lag</para>
+</listitem><listitem><para>Fourth dim: <ref refid="classnest_1_1_target" kindref="compound">Target</ref> (will be converted in <ref refid="classnest_1_1_spike_data" kindref="compound">SpikeData</ref>) </para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="394" column="15" bodyfile="nestkernel/event_delivery_manager.h" bodystart="394" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_event_delivery_manager_1a8e4bf83c7276f63076ace2be3ad44aba" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; std::vector&lt; std::vector&lt; std::vector&lt; <ref refid="classnest_1_1_off_grid_target" kindref="compound">OffGridTarget</ref> &gt; &gt; &gt; &gt;</type>
+        <definition>std::vector&lt; std::vector&lt; std::vector&lt; std::vector&lt; OffGridTarget &gt; &gt; &gt; &gt; nest::EventDeliveryManager::off_grid_emitted_spike_register_</definition>
+        <argsstring></argsstring>
+        <name>off_grid_emitted_spike_register_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Register for node IDs of precise neurons that spiked. This is a 4-dim structure. While spikes are written to the buffer they are immediately sorted by the thread that will later move the spikes to the MPI buffers.<itemizedlist>
+<listitem><para>First dim: write threads (from node to register)</para>
+</listitem><listitem><para>Second dim: read threads (from register to MPI buffer)</para>
+</listitem><listitem><para>Third dim: lag</para>
+</listitem><listitem><para>Fourth dim: <ref refid="classnest_1_1_off_grid_target" kindref="compound">OffGridTarget</ref> (will be converted in <ref refid="classnest_1_1_off_grid_spike_data" kindref="compound">OffGridSpikeData</ref>) </para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="406" column="15" bodyfile="nestkernel/event_delivery_manager.h" bodystart="406" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_event_delivery_manager_1a485e216effe906d07710f9a3ce0d421a" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; unsigned int &gt;</type>
+        <definition>std::vector&lt; unsigned int &gt; nest::EventDeliveryManager::send_buffer_secondary_events_</definition>
+        <argsstring></argsstring>
+        <name>send_buffer_secondary_events_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Buffer to collect the secondary events after serialization. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="412" column="15" bodyfile="nestkernel/event_delivery_manager.h" bodystart="412" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_event_delivery_manager_1a7ee7a4c6771f8d0c440340f20e78b599" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; unsigned int &gt;</type>
+        <definition>std::vector&lt; unsigned int &gt; nest::EventDeliveryManager::recv_buffer_secondary_events_</definition>
+        <argsstring></argsstring>
+        <name>recv_buffer_secondary_events_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="413" column="15" bodyfile="nestkernel/event_delivery_manager.h" bodystart="413" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_event_delivery_manager_1a59b2c15cce5382c4b5ae9c61be08f87a" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; unsigned long &gt;</type>
+        <definition>std::vector&lt; unsigned long &gt; nest::EventDeliveryManager::local_spike_counter_</definition>
+        <argsstring></argsstring>
+        <name>local_spike_counter_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Number of generated spike events (both off- and on-grid) during the last call to simulate. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="419" column="15" bodyfile="nestkernel/event_delivery_manager.h" bodystart="419" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_event_delivery_manager_1afec3619f86899bed367a2d555a0328a1" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classnest_1_1_spike_data" kindref="compound">SpikeData</ref> &gt;</type>
+        <definition>std::vector&lt; SpikeData &gt; nest::EventDeliveryManager::send_buffer_spike_data_</definition>
+        <argsstring></argsstring>
+        <name>send_buffer_spike_data_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="421" column="15" bodyfile="nestkernel/event_delivery_manager.h" bodystart="421" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_event_delivery_manager_1a0dc5467fcda53c70d0f42bb6ff48b7cd" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classnest_1_1_spike_data" kindref="compound">SpikeData</ref> &gt;</type>
+        <definition>std::vector&lt; SpikeData &gt; nest::EventDeliveryManager::recv_buffer_spike_data_</definition>
+        <argsstring></argsstring>
+        <name>recv_buffer_spike_data_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="422" column="15" bodyfile="nestkernel/event_delivery_manager.h" bodystart="422" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_event_delivery_manager_1af51f6db9b3f0712737518e88cda66a96" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classnest_1_1_off_grid_spike_data" kindref="compound">OffGridSpikeData</ref> &gt;</type>
+        <definition>std::vector&lt; OffGridSpikeData &gt; nest::EventDeliveryManager::send_buffer_off_grid_spike_data_</definition>
+        <argsstring></argsstring>
+        <name>send_buffer_off_grid_spike_data_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="423" column="15" bodyfile="nestkernel/event_delivery_manager.h" bodystart="423" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_event_delivery_manager_1aa92765a8565e93885adb733e10556ad0" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classnest_1_1_off_grid_spike_data" kindref="compound">OffGridSpikeData</ref> &gt;</type>
+        <definition>std::vector&lt; OffGridSpikeData &gt; nest::EventDeliveryManager::recv_buffer_off_grid_spike_data_</definition>
+        <argsstring></argsstring>
+        <name>recv_buffer_off_grid_spike_data_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="424" column="15" bodyfile="nestkernel/event_delivery_manager.h" bodystart="424" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_event_delivery_manager_1a0c3cd576a8b4d81db19cd6d30ba033fd" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classnest_1_1_target_data" kindref="compound">TargetData</ref> &gt;</type>
+        <definition>std::vector&lt; TargetData &gt; nest::EventDeliveryManager::send_buffer_target_data_</definition>
+        <argsstring></argsstring>
+        <name>send_buffer_target_data_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="426" column="15" bodyfile="nestkernel/event_delivery_manager.h" bodystart="426" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_event_delivery_manager_1a58bab76a0910099580facdde11e16919" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="classnest_1_1_target_data" kindref="compound">TargetData</ref> &gt;</type>
+        <definition>std::vector&lt; TargetData &gt; nest::EventDeliveryManager::recv_buffer_target_data_</definition>
+        <argsstring></argsstring>
+        <name>recv_buffer_target_data_</name>
+        <briefdescription>
+<para>whether size of MPI buffer for communication of connections was changed </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="427" column="15" bodyfile="nestkernel/event_delivery_manager.h" bodystart="427" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_event_delivery_manager_1a18c40bfcbc331b6ae1c763be1e1d01d3" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::EventDeliveryManager::buffer_size_target_data_has_changed_</definition>
+        <argsstring></argsstring>
+        <name>buffer_size_target_data_has_changed_</name>
+        <briefdescription>
+<para>whether size of MPI buffer for communication of spikes was changed </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="429" column="8" bodyfile="nestkernel/event_delivery_manager.h" bodystart="429" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_event_delivery_manager_1a4ca4fbfaa2c7c306c42145471f89fedb" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::EventDeliveryManager::buffer_size_spike_data_has_changed_</definition>
+        <argsstring></argsstring>
+        <name>buffer_size_spike_data_has_changed_</name>
+        <briefdescription>
+<para>whether size of MPI buffer for communication of spikes can be decreased </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="431" column="8" bodyfile="nestkernel/event_delivery_manager.h" bodystart="431" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_event_delivery_manager_1a133d299716551740f4c8070355824281" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool nest::EventDeliveryManager::decrease_buffer_size_spike_data_</definition>
+        <argsstring></argsstring>
+        <name>decrease_buffer_size_spike_data_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="433" column="8" bodyfile="nestkernel/event_delivery_manager.h" bodystart="433" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classnest_1_1_event_delivery_manager_1adb65e8ba08c38237b6734319e4cab2a3" prot="private" static="no" mutable="no">
+        <type><ref refid="classnest_1_1_per_thread_bool_indicator" kindref="compound">PerThreadBoolIndicator</ref></type>
+        <definition>PerThreadBoolIndicator nest::EventDeliveryManager::gather_completed_checker_</definition>
+        <argsstring></argsstring>
+        <name>gather_completed_checker_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="435" column="26" bodyfile="nestkernel/event_delivery_manager.h" bodystart="435" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a657229df18185930c8db8e78bf83ae01" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>nest::EventDeliveryManager::EventDeliveryManager</definition>
+        <argsstring>()</argsstring>
+        <name>EventDeliveryManager</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="60" column="3" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="45" bodyend="65"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a19c4cc76a5143e8febe9497dc34420ae" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>nest::EventDeliveryManager::~EventDeliveryManager</definition>
+        <argsstring>() override</argsstring>
+        <name>~EventDeliveryManager</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="61" column="3" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="67" bodyend="69"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a4f1f5d8833960c364461389d78c63bd1" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::initialize</definition>
+        <argsstring>() override</argsstring>
+        <name>initialize</name>
+        <reimplements refid="classnest_1_1_manager_interface_1a43f881ab34500bff012a2514ad99ad79">initialize</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Prepare manager for operation.</para>
+<para>After this method has completed, the manager should be completely initialized and &quot;ready for action&quot;.</para>
+<para><simplesect kind="note"><para>Initialization of any given manager may depend on other managers having been initialized before. <ref refid="classnest_1_1_kernel_manager_1aa731562f03c98d8fa67f1d530056ede2" kindref="member">KernelManager::initialize()</ref> is responsible for calling the initialization routines on the specific managers in correct order.</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="classnest_1_1_event_delivery_manager_1a25b13da9ade9fe32eb374dcdb6e7d997" kindref="member">finalize()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="63" column="8" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="72" bodyend="100"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a25b13da9ade9fe32eb374dcdb6e7d997" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::finalize</definition>
+        <argsstring>() override</argsstring>
+        <name>finalize</name>
+        <reimplements refid="classnest_1_1_manager_interface_1a329d00818a7c57d2c7f9e83dbed56606">finalize</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Take down manager after operation.</para>
+<para>After this method has completed, all dynamic data structures created by the manager shall be deallocated and containers emptied. Plain variables need not be reset.</para>
+<para><simplesect kind="note"><para>Finalization of any given manager may depend on other managers not having been finalized yet. <ref refid="classnest_1_1_kernel_manager_1a9e1cccd4670b1da1f68208afb5e6622f" kindref="member">KernelManager::finalize()</ref> is responsible for calling the initialization routines on the specific managers in correct order, i.e., the opposite order of <ref refid="classnest_1_1_event_delivery_manager_1a4f1f5d8833960c364461389d78c63bd1" kindref="member">initialize()</ref> calls.</para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="classnest_1_1_event_delivery_manager_1a4f1f5d8833960c364461389d78c63bd1" kindref="member">initialize()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="64" column="8" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="103" bodyend="115"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a7f1f77dcc6bd0f8c98c12ebf58ee376c" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::change_number_of_threads</definition>
+        <argsstring>() override</argsstring>
+        <name>change_number_of_threads</name>
+        <reimplements refid="classnest_1_1_manager_interface_1aa88c28844a59b4791eab4b7930fc62b0">change_number_of_threads</reimplements>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Change the number of threads</para>
+<para>Many data structures within the different managers depend on the number of threads. This function is called on each manager upon a change of that number and allows the manager to re-allocate data structures accordingly. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="65" column="8" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="118" bodyend="122"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a9fd97dd2b3f5bf3bc6556c3db2dd08c6" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::set_status</definition>
+        <argsstring>(const DictionaryDatum &amp;) override</argsstring>
+        <name>set_status</name>
+        <reimplements refid="classnest_1_1_manager_interface_1ad940557204d456c167f541dd72c81193">set_status</reimplements>
+        <param>
+          <type>const DictionaryDatum &amp;</type>
+          <defname>dict</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="66" column="8" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="125" bodyend="128"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1aac3689e8ed6047a1d5250e1bdb60725a" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::get_status</definition>
+        <argsstring>(DictionaryDatum &amp;) override</argsstring>
+        <name>get_status</name>
+        <reimplements refid="classnest_1_1_manager_interface_1a0935d5415eafd0bc54d2c01294595a80">get_status</reimplements>
+        <param>
+          <type>DictionaryDatum &amp;</type>
+          <defname>dict</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="67" column="8" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="131" bodyend="143"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a9a350f7997aebc9c0a3b0620639ac0a4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class EventT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::send</definition>
+        <argsstring>(Node &amp;source, EventT &amp;e, const long lag=0)</argsstring>
+        <name>send</name>
+        <param>
+          <type><ref refid="classnest_1_1_node" kindref="compound">Node</ref> &amp;</type>
+          <declname>source</declname>
+        </param>
+        <param>
+          <type>EventT &amp;</type>
+          <declname>e</declname>
+        </param>
+        <param>
+          <type>const long</type>
+          <declname>lag</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Standard routine for sending events. This method decides if the event has to be delivered locally or globally. It exists to keep a clean and unitary interface for the event sending mechanism. <simplesect kind="note"><para>Only specialization for <ref refid="classnest_1_1_spike_event" kindref="compound">SpikeEvent</ref> does remote sending. Specialized for <ref refid="classnest_1_1_d_s_spike_event" kindref="compound">DSSpikeEvent</ref> to avoid that these events are sent to remote processes. </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="classnest_1_1_event_delivery_manager_1a06b8635d4ef201b0249c3a7a3b862627" kindref="member">send_local()</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="80" column="8" bodyfile="nestkernel/event_delivery_manager_impl.h" bodystart="60" bodyend="63"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a8737cdbec8c0111d2bce0bf7e8d324a2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::send_secondary</definition>
+        <argsstring>(Node &amp;source, SecondaryEvent &amp;e)</argsstring>
+        <name>send_secondary</name>
+        <param>
+          <type><ref refid="classnest_1_1_node" kindref="compound">Node</ref> &amp;</type>
+          <declname>source</declname>
+        </param>
+        <param>
+          <type><ref refid="classnest_1_1_secondary_event" kindref="compound">SecondaryEvent</ref> &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Send a secondary event remote. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="85" column="8" bodyfile="nestkernel/event_delivery_manager_impl.h" bodystart="142" bodyend="174"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a06b8635d4ef201b0249c3a7a3b862627" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::send_local</definition>
+        <argsstring>(thread t, Node &amp;source, Event &amp;e)</argsstring>
+        <name>send_local</name>
+        <param>
+          <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type><ref refid="classnest_1_1_node" kindref="compound">Node</ref> &amp;</type>
+          <declname>source</declname>
+        </param>
+        <param>
+          <type><ref refid="classnest_1_1_event" kindref="compound">Event</ref> &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Send event e to all targets of node source on thread t </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="90" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a0a6bec5fc67fcee1df2e08b46f7110f7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::send_remote</definition>
+        <argsstring>(thread tid, SpikeEvent &amp;, const long lag=0)</argsstring>
+        <name>send_remote</name>
+        <param>
+          <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <param>
+          <type><ref refid="classnest_1_1_spike_event" kindref="compound">SpikeEvent</ref> &amp;</type>
+          <defname>e</defname>
+        </param>
+        <param>
+          <type>const long</type>
+          <declname>lag</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Add node ID of event sender to the spike_register. An event sent through this method will remain in the queue until the network time has advanced by min_delay_ steps. After this period the buffers are collocated and sent to the partner machines.</para>
+<para>Old documentation from network.h: Place an event in the global event queue. Add event to the queue to be delivered when it is due. At the delivery time, the target list of the sender is iterated and the event is delivered to all targets. The event is guaranteed to arrive at the receiver when all elements are updated and the system is in a synchronised (single threaded) state. <simplesect kind="see"><para>send_to_targets() </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="109" column="8" bodyfile="nestkernel/event_delivery_manager_impl.h" bodystart="104" bodyend="120"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a72294da04cb238f288aa5f9d1f7386ed" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::send_off_grid_remote</definition>
+        <argsstring>(thread tid, SpikeEvent &amp;e, const long lag=0)</argsstring>
+        <name>send_off_grid_remote</name>
+        <param>
+          <type><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <param>
+          <type><ref refid="classnest_1_1_spike_event" kindref="compound">SpikeEvent</ref> &amp;</type>
+          <declname>e</declname>
+        </param>
+        <param>
+          <type>const long</type>
+          <declname>lag</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Add node ID of event sender to the spike_register. Store event offset with node ID. An event sent through this method will remain in the queue until the network time has advanced by min_delay_ steps. After this period the buffers are collocated and sent to the partner machines.</para>
+<para>Old documentation from network.h: Place an event in the global event queue. Add event to the queue to be delivered when it is due. At the delivery time, the target list of the sender is iterated and the event is delivered to all targets. The event is guaranteed to arrive at the receiver when all elements are updated and the system is in a synchronised (single threaded) state. <simplesect kind="see"><para>send_to_targets() </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="129" column="8" bodyfile="nestkernel/event_delivery_manager_impl.h" bodystart="123" bodyend="139"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a2b79478683a0eac7e42addee1fb6d09b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::send_to_node</definition>
+        <argsstring>(Event &amp;e)</argsstring>
+        <name>send_to_node</name>
+        <param>
+          <type><ref refid="classnest_1_1_event" kindref="compound">Event</ref> &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Send event e directly to its target node. This should be used only where necessary, e.g. if a node wants to reply to a *RequestEvent immediately. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="136" column="8" bodyfile="nestkernel/event_delivery_manager.h" bodystart="506" bodyend="509"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a1dab058ff700f340803928c6afc328b7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::EventDeliveryManager::get_off_grid_communication</definition>
+        <argsstring>() const</argsstring>
+        <name>get_off_grid_communication</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>return current communication style. A result of true means off_grid, false means on_grid communication. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="142" column="8" bodyfile="nestkernel/event_delivery_manager.h" bodystart="512" bodyend="515"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1abecd604a0371f3f9a0625ceb9795ee36" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::set_off_grid_communication</definition>
+        <argsstring>(bool off_grid_spiking)</argsstring>
+        <name>set_off_grid_communication</name>
+        <param>
+          <type>bool</type>
+          <declname>off_grid_spiking</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>set communication style to off_grid (true) or on_grid </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="147" column="8" bodyfile="nestkernel/event_delivery_manager.h" bodystart="518" bodyend="521"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a9a140d30b7f622d0290c78dd211eb3d2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t nest::EventDeliveryManager::write_toggle</definition>
+        <argsstring>() const</argsstring>
+        <name>write_toggle</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Return 0 for even, 1 for odd time slices.</para>
+<para>This is useful for buffers that need to be written alternatingly by time slice. The value is given by get_slice_() % 2. <simplesect kind="see"><para><ref refid="classnest_1_1_event_delivery_manager_1a2ae9cdc38714deba72bf4728ca51cbcd" kindref="member">read_toggle</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="156" column="10" bodyfile="nestkernel/event_delivery_manager_impl.h" bodystart="177" bodyend="180"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a2ae9cdc38714deba72bf4728ca51cbcd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t nest::EventDeliveryManager::read_toggle</definition>
+        <argsstring>() const</argsstring>
+        <name>read_toggle</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Return 1 - <ref refid="classnest_1_1_event_delivery_manager_1a9a140d30b7f622d0290c78dd211eb3d2" kindref="member">write_toggle()</ref>.</para>
+<para>This is useful for buffers that need to be read alternatingly by slice. The value is given by 1-<ref refid="classnest_1_1_event_delivery_manager_1a9a140d30b7f622d0290c78dd211eb3d2" kindref="member">write_toggle()</ref>. <simplesect kind="see"><para><ref refid="classnest_1_1_event_delivery_manager_1a9a140d30b7f622d0290c78dd211eb3d2" kindref="member">write_toggle</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="165" column="10" bodyfile="nestkernel/event_delivery_manager.h" bodystart="524" bodyend="528"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1addcfcb9c29cd99d6b27d67a44e441b78" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenest_1a71a30fec90e57e114c45577d5294ce16" kindref="member">delay</ref></type>
+        <definition>delay nest::EventDeliveryManager::get_modulo</definition>
+        <argsstring>(delay d)</argsstring>
+        <name>get_modulo</name>
+        <param>
+          <type><ref refid="namespacenest_1a71a30fec90e57e114c45577d5294ce16" kindref="member">delay</ref></type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Return (T+d) mod max_delay. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="170" column="9" bodyfile="nestkernel/event_delivery_manager.h" bodystart="531" bodyend="538"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a7d7aae61ce48850bdbe5fffa7dd3886e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="namespacenest_1a71a30fec90e57e114c45577d5294ce16" kindref="member">delay</ref></type>
+        <definition>delay nest::EventDeliveryManager::get_slice_modulo</definition>
+        <argsstring>(delay d)</argsstring>
+        <name>get_slice_modulo</name>
+        <param>
+          <type><ref refid="namespacenest_1a71a30fec90e57e114c45577d5294ce16" kindref="member">delay</ref></type>
+          <declname>d</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Index to slice-based buffer. Return ((T+d)/min_delay) % ceil(max_delay/min_delay). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="177" column="9" bodyfile="nestkernel/event_delivery_manager.h" bodystart="541" bodyend="548"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a9de27ed5f42c60efc6875208aa86c813" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::configure_spike_data_buffers</definition>
+        <argsstring>()</argsstring>
+        <name>configure_spike_data_buffers</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Resize spike_register and comm_buffer to correct dimensions. Resizes also off_grid_*_buffer_. This is done by <ref refid="namespacenest_1ab9b390746b0a6fc00893571a8823161a" kindref="member">simulate()</ref> when called for the first time. The spike buffers cannot be reconfigured later, whence neither the number of local threads or the min_delay can change after <ref refid="namespacenest_1ab9b390746b0a6fc00893571a8823161a" kindref="member">simulate()</ref> has been called. ConnectorModel::check_delay() and Network::set_status() ensure this. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="188" column="8" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="166" bodyend="176"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1aa81b19d0db3bbfa6f270defd5fe20a56" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::configure_spike_register</definition>
+        <argsstring>()</argsstring>
+        <name>configure_spike_register</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="190" column="8" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="179" bodyend="186"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1ad9be35d3f6b58eac97354bec54503ac3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::resize_send_recv_buffers_target_data</definition>
+        <argsstring>()</argsstring>
+        <name>resize_send_recv_buffers_target_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="192" column="8" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="146" bodyend="151"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1ad10ad6a43540d15a7c39e3bd6801eed7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::configure_secondary_buffers</definition>
+        <argsstring>()</argsstring>
+        <name>configure_secondary_buffers</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="194" column="8" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="189" bodyend="195"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a7aa93a50833ee3043dfb46b5e915c051" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::gather_spike_data</definition>
+        <argsstring>(const thread tid)</argsstring>
+        <name>gather_spike_data</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Collocates spikes from register to MPI buffers, communicates via MPI and delivers events to targets. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="200" column="8" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="319" bodyend="329"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1afdf89d8b5bd8a4b64d46d6f5c294e5c1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::gather_target_data</definition>
+        <argsstring>(const thread tid)</argsstring>
+        <name>gather_target_data</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Collocates presynaptic connection information, communicates via MPI and creates presynaptic connection infrastructure. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="206" column="8" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="663" bodyend="732"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1ab0e3a51e5cf662c3cee14517575aefd2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::gather_secondary_target_data</definition>
+        <argsstring>()</argsstring>
+        <name>gather_secondary_target_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Collocates presynaptic connection information for secondary events (MPI buffer offsets), communicates via MPI and create presynaptic connection infrastructure for secondary events. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="213" column="8"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1af1a3ceddd4ba303238c6d508dfc135b1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::write_done_marker_secondary_events_</definition>
+        <argsstring>(const bool done)</argsstring>
+        <name>write_done_marker_secondary_events_</name>
+        <param>
+          <type>const bool</type>
+          <declname>done</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="215" column="8" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="293" bodyend="301"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a9686fe3b77c602b6f8fe7750f1358de7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::gather_secondary_events</definition>
+        <argsstring>(const bool done)</argsstring>
+        <name>gather_secondary_events</name>
+        <param>
+          <type>const bool</type>
+          <declname>done</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="217" column="8" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="304" bodyend="309"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a23401736e55713e86c6f4b55805d8105" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::EventDeliveryManager::deliver_secondary_events</definition>
+        <argsstring>(const thread tid, const bool called_from_wfr_update)</argsstring>
+        <name>deliver_secondary_events</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>called_from_wfr_update</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="219" column="8" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="312" bodyend="316"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a18e210cef727c0b93605fa3dcd941a28" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::update_moduli</definition>
+        <argsstring>()</argsstring>
+        <name>update_moduli</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Update table of fixed modulos, including slice-based.</para>
+<para>This function is called after all nodes have been updated. We can compute the value of (T+d) mod max_delay without explicit reference to the network clock, because compute_moduli_ is called whenever the network clock advances. The various modulos for all available delays are stored in a lookup-table and this table is rotated once per time slice. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="224" column="8" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="239" bodyend="263"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a0c223a5656aa437fb3f358230e2834c2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::init_moduli</definition>
+        <argsstring>()</argsstring>
+        <name>init_moduli</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Initialize modulo table.</para>
+<para>TODO: can probably be private </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="231" column="8" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="198" bodyend="228"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1ab2856ff263d5e398c21939cf8fe96d8f" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::reset_counters</definition>
+        <argsstring>()</argsstring>
+        <name>reset_counters</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Set local spike counter to zero. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="236" column="16" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="266" bodyend="272"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a2f74974db15862c787e991d66ab77ba5" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::reset_timers_for_preparation</definition>
+        <argsstring>()</argsstring>
+        <name>reset_timers_for_preparation</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Set time measurements for internal profiling to zero (reg. prep.) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="241" column="16" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="275" bodyend="280"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1aee4c15d750af6466de783ee2a1a7ead5" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::reset_timers_for_dynamics</definition>
+        <argsstring>()</argsstring>
+        <name>reset_timers_for_dynamics</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Set time measurements for internal profiling to zero (reg. sim. dyn.) </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="246" column="16" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="283" bodyend="290"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a5e4b094adb9d2d4780566a91be4fe3ec" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::send</definition>
+        <argsstring>(Node &amp;source, SpikeEvent &amp;e, const long lag)</argsstring>
+        <name>send</name>
+        <param>
+          <type><ref refid="classnest_1_1_node" kindref="compound">Node</ref> &amp;</type>
+          <declname>source</declname>
+        </param>
+        <param>
+          <type><ref refid="classnest_1_1_spike_event" kindref="compound">SpikeEvent</ref> &amp;</type>
+          <declname>e</declname>
+        </param>
+        <param>
+          <type>const long</type>
+          <declname>lag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager_impl.h" line="66" column="8" bodyfile="nestkernel/event_delivery_manager_impl.h" bodystart="67" bodyend="93"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a7725d187201a456ce8093912417f9fb3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::send</definition>
+        <argsstring>(Node &amp;source, DSSpikeEvent &amp;e, const long lag)</argsstring>
+        <name>send</name>
+        <param>
+          <type><ref refid="classnest_1_1_node" kindref="compound">Node</ref> &amp;</type>
+          <declname>source</declname>
+        </param>
+        <param>
+          <type><ref refid="classnest_1_1_d_s_spike_event" kindref="compound">DSSpikeEvent</ref> &amp;</type>
+          <declname>e</declname>
+        </param>
+        <param>
+          <type>const long</type>
+          <declname>lag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager_impl.h" line="96" column="8" bodyfile="nestkernel/event_delivery_manager_impl.h" bodystart="97" bodyend="101"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a571ba855a00e3c96c4ff01ba59ea0e1c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename SpikeDataT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::gather_spike_data_</definition>
+        <argsstring>(const thread tid, std::vector&lt; SpikeDataT &gt; &amp;send_buffer, std::vector&lt; SpikeDataT &gt; &amp;recv_buffer)</argsstring>
+        <name>gather_spike_data_</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; SpikeDataT &gt; &amp;</type>
+          <declname>send_buffer</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; SpikeDataT &gt; &amp;</type>
+          <declname>recv_buffer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="250" column="8" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="333" bodyend="462"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1ae11e441d619bad5f3d53822efce96677" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::resize_send_recv_buffers_spike_data_</definition>
+        <argsstring>()</argsstring>
+        <name>resize_send_recv_buffers_spike_data_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="254" column="8" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="154" bodyend="163"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a17fcdfc05eafc9927bd858c8852ef15e" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename TargetT</type>
+          </param>
+          <param>
+            <type>typename SpikeDataT</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool nest::EventDeliveryManager::collocate_spike_data_buffers_</definition>
+        <argsstring>(const thread tid, const AssignedRanks &amp;assigned_ranks, SendBufferPosition &amp;send_buffer_position, std::vector&lt; std::vector&lt; std::vector&lt; std::vector&lt; TargetT &gt; &gt; &gt; &gt; &amp;spike_register, std::vector&lt; SpikeDataT &gt; &amp;send_buffer)</argsstring>
+        <name>collocate_spike_data_buffers_</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structnest_1_1_assigned_ranks" kindref="compound">AssignedRanks</ref> &amp;</type>
+          <declname>assigned_ranks</declname>
+        </param>
+        <param>
+          <type><ref refid="classnest_1_1_send_buffer_position" kindref="compound">SendBufferPosition</ref> &amp;</type>
+          <declname>send_buffer_position</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; std::vector&lt; std::vector&lt; std::vector&lt; TargetT &gt; &gt; &gt; &gt; &amp;</type>
+          <declname>spike_register</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; SpikeDataT &gt; &amp;</type>
+          <declname>send_buffer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Moves spikes from on grid and off grid spike registers to correct locations in MPI buffers. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="261" column="8" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="466" bodyend="512"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a821a74c50b9c70e559e0c4683afc6943" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename SpikeDataT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::set_end_and_invalid_markers_</definition>
+        <argsstring>(const AssignedRanks &amp;assigned_ranks, const SendBufferPosition &amp;send_buffer_position, std::vector&lt; SpikeDataT &gt; &amp;send_buffer)</argsstring>
+        <name>set_end_and_invalid_markers_</name>
+        <param>
+          <type>const <ref refid="structnest_1_1_assigned_ranks" kindref="compound">AssignedRanks</ref> &amp;</type>
+          <declname>assigned_ranks</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classnest_1_1_send_buffer_position" kindref="compound">SendBufferPosition</ref> &amp;</type>
+          <declname>send_buffer_position</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; SpikeDataT &gt; &amp;</type>
+          <declname>send_buffer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Marks end of valid regions in MPI buffers. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="271" column="8" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="516" bodyend="542"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1ae854281972a1644c23e7168c986bda1c" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename SpikeDataT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::reset_complete_marker_spike_data_</definition>
+        <argsstring>(const AssignedRanks &amp;assigned_ranks, const SendBufferPosition &amp;send_buffer_position, std::vector&lt; SpikeDataT &gt; &amp;send_buffer) const</argsstring>
+        <name>reset_complete_marker_spike_data_</name>
+        <param>
+          <type>const <ref refid="structnest_1_1_assigned_ranks" kindref="compound">AssignedRanks</ref> &amp;</type>
+          <declname>assigned_ranks</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classnest_1_1_send_buffer_position" kindref="compound">SendBufferPosition</ref> &amp;</type>
+          <declname>send_buffer_position</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; SpikeDataT &gt; &amp;</type>
+          <declname>send_buffer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Resets marker in MPI buffer that signals end of communication across MPI ranks. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="280" column="8" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="546" bodyend="555"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a83a4ebf3569be0438705d03fe0553922" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename SpikeDataT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::set_complete_marker_spike_data_</definition>
+        <argsstring>(const AssignedRanks &amp;assigned_ranks, const SendBufferPosition &amp;send_buffer_position, std::vector&lt; SpikeDataT &gt; &amp;send_buffer) const</argsstring>
+        <name>set_complete_marker_spike_data_</name>
+        <param>
+          <type>const <ref refid="structnest_1_1_assigned_ranks" kindref="compound">AssignedRanks</ref> &amp;</type>
+          <declname>assigned_ranks</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classnest_1_1_send_buffer_position" kindref="compound">SendBufferPosition</ref> &amp;</type>
+          <declname>send_buffer_position</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; SpikeDataT &gt; &amp;</type>
+          <declname>send_buffer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sets marker in MPI buffer that signals end of communication across MPI ranks. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="289" column="8" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="559" bodyend="570"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1aba9898648e890ea2ac369891420259d9" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename SpikeDataT</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool nest::EventDeliveryManager::deliver_events_</definition>
+        <argsstring>(const thread tid, const std::vector&lt; SpikeDataT &gt; &amp;recv_buffer)</argsstring>
+        <name>deliver_events_</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; SpikeDataT &gt; &amp;</type>
+          <declname>recv_buffer</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Reads spikes from MPI buffers and delivers them to ringbuffer of nodes. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="298" column="8" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="574" bodyend="660"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a743e7cd5faceb671a54fedfe4202e2cc" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::reset_spike_register_</definition>
+        <argsstring>(const thread tid)</argsstring>
+        <name>reset_spike_register_</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Deletes all spikes from spike registers and resets spike counters. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="304" column="8" bodyfile="nestkernel/event_delivery_manager.h" bodystart="448" bodyend="470"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1aabd329e4a0fd579f7165ba35906bd362" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::resize_spike_register_</definition>
+        <argsstring>(const thread tid)</argsstring>
+        <name>resize_spike_register_</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Resizes spike registers according minimal delay so it can accommodate all possible lags. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="310" column="8" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="866" bodyend="878"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a188d10eb47063d5d26eb459b90c2aae9" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::clean_spike_register_</definition>
+        <argsstring>(const thread tid)</argsstring>
+        <name>clean_spike_register_</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Removes spikes that were successfully moved to MPI buffers from spike register, such that they are not considered in (potential) next communication round. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="324" column="8" bodyfile="nestkernel/event_delivery_manager.h" bodystart="479" bodyend="503"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a0ef552ea0836e10de6ed2d44816a155f" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::EventDeliveryManager::collocate_target_data_buffers_</definition>
+        <argsstring>(const thread tid, const AssignedRanks &amp;assigned_ranks, SendBufferPosition &amp;send_buffer_position)</argsstring>
+        <name>collocate_target_data_buffers_</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structnest_1_1_assigned_ranks" kindref="compound">AssignedRanks</ref> &amp;</type>
+          <declname>assigned_ranks</declname>
+        </param>
+        <param>
+          <type><ref refid="classnest_1_1_send_buffer_position" kindref="compound">SendBufferPosition</ref> &amp;</type>
+          <declname>send_buffer_position</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Fills MPI buffer for communication of connection information from presynaptic to postsynaptic side. Builds <ref refid="classnest_1_1_target_data" kindref="compound">TargetData</ref> objects from <ref refid="classnest_1_1_source_table" kindref="compound">SourceTable</ref> and connections information. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="331" column="8" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="735" bodyend="812"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a1d4d4be8d0766ef22cd9ecbd28099d42" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::set_complete_marker_target_data_</definition>
+        <argsstring>(const AssignedRanks &amp;assigned_ranks, const SendBufferPosition &amp;send_buffer_position)</argsstring>
+        <name>set_complete_marker_target_data_</name>
+        <param>
+          <type>const <ref refid="structnest_1_1_assigned_ranks" kindref="compound">AssignedRanks</ref> &amp;</type>
+          <declname>assigned_ranks</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classnest_1_1_send_buffer_position" kindref="compound">SendBufferPosition</ref> &amp;</type>
+          <declname>send_buffer_position</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sets marker in MPI buffer that signals end of communication across MPI ranks. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="339" column="8" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="815" bodyend="823"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a74794a506a31d2a674d0d4ebfa383a2c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::EventDeliveryManager::distribute_target_data_buffers_</definition>
+        <argsstring>(const thread tid)</argsstring>
+        <name>distribute_target_data_buffers_</name>
+        <param>
+          <type>const <ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref></type>
+          <declname>tid</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Reads <ref refid="classnest_1_1_target_data" kindref="compound">TargetData</ref> objects from MPI buffers and creates <ref refid="classnest_1_1_target" kindref="compound">Target</ref> objects on <ref refid="classnest_1_1_target_table" kindref="compound">TargetTable</ref> (presynaptic part of connection infrastructure). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="347" column="8" bodyfile="nestkernel/event_delivery_manager.cpp" bodystart="826" bodyend="863"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1ad8c20f2ee5dea459b38de6063e63aee3" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class EventT</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::send_local_</definition>
+        <argsstring>(Node &amp;source, EventT &amp;e, const long lag)</argsstring>
+        <name>send_local_</name>
+        <param>
+          <type><ref refid="classnest_1_1_node" kindref="compound">Node</ref> &amp;</type>
+          <declname>source</declname>
+        </param>
+        <param>
+          <type>EventT &amp;</type>
+          <declname>e</declname>
+        </param>
+        <param>
+          <type>const long</type>
+          <declname>lag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Sends event e to all targets of node source. Delivers events from devices directly to targets. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="354" column="8" bodyfile="nestkernel/event_delivery_manager_impl.h" bodystart="37" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a2714ea67021bbf8d415fb05c781814d4" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::EventDeliveryManager::send_local_</definition>
+        <argsstring>(Node &amp;source, SecondaryEvent &amp;e, const long lag)</argsstring>
+        <name>send_local_</name>
+        <param>
+          <type><ref refid="classnest_1_1_node" kindref="compound">Node</ref> &amp;</type>
+          <declname>source</declname>
+        </param>
+        <param>
+          <type><ref refid="classnest_1_1_secondary_event" kindref="compound">SecondaryEvent</ref> &amp;</type>
+          <declname>e</declname>
+        </param>
+        <param>
+          <type>const long</type>
+          <declname>lag</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="355" column="8" bodyfile="nestkernel/event_delivery_manager_impl.h" bodystart="48" bodyend="56"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classnest_1_1_event_delivery_manager_1a61f59feb1cbfbc0713eabb7b15dc7053" prot="private" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool nest::EventDeliveryManager::is_marked_for_removal_</definition>
+        <argsstring>(const Target &amp;target)</argsstring>
+        <name>is_marked_for_removal_</name>
+        <param>
+          <type>const <ref refid="classnest_1_1_target" kindref="compound">Target</ref> &amp;</type>
+          <declname>target</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns true if spike has been moved to MPI buffer, such that it can be removed by clean_spike_register. Required static function by std::remove_if. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/event_delivery_manager.h" line="317" column="15" bodyfile="nestkernel/event_delivery_manager.h" bodystart="473" bodyend="476"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>nest::ManagerInterface</label>
+        <link refid="classnest_1_1_manager_interface"/>
+      </node>
+      <node id="1">
+        <label>nest::EventDeliveryManager</label>
+        <link refid="classnest_1_1_event_delivery_manager"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>nest::ManagerInterface</label>
+        <link refid="classnest_1_1_manager_interface"/>
+      </node>
+      <node id="1">
+        <label>nest::EventDeliveryManager</label>
+        <link refid="classnest_1_1_event_delivery_manager"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="nestkernel/event_delivery_manager.h" line="57" column="1" bodyfile="nestkernel/event_delivery_manager.h" bodystart="58" bodyend="445"/>
+    <listofallmembers>
+      <member refid="classnest_1_1_event_delivery_manager_1a4ca4fbfaa2c7c306c42145471f89fedb" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>buffer_size_spike_data_has_changed_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a18c40bfcbc331b6ae1c763be1e1d01d3" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>buffer_size_target_data_has_changed_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a7f1f77dcc6bd0f8c98c12ebf58ee376c" prot="public" virt="virtual"><scope>nest::EventDeliveryManager</scope><name>change_number_of_threads</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a188d10eb47063d5d26eb459b90c2aae9" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>clean_spike_register_</name></member>
+      <member refid="classnest_1_1_manager_interface_1a883efc8a7266a9bc62d43e30cdd87147" prot="public" virt="virtual"><scope>nest::EventDeliveryManager</scope><name>cleanup</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a17fcdfc05eafc9927bd858c8852ef15e" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>collocate_spike_data_buffers_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a0ef552ea0836e10de6ed2d44816a155f" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>collocate_target_data_buffers_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1ad10ad6a43540d15a7c39e3bd6801eed7" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>configure_secondary_buffers</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a9de27ed5f42c60efc6875208aa86c813" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>configure_spike_data_buffers</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1aa81b19d0db3bbfa6f270defd5fe20a56" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>configure_spike_register</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a133d299716551740f4c8070355824281" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>decrease_buffer_size_spike_data_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1aba9898648e890ea2ac369891420259d9" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>deliver_events_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a23401736e55713e86c6f4b55805d8105" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>deliver_secondary_events</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a74794a506a31d2a674d0d4ebfa383a2c" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>distribute_target_data_buffers_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a32353bda32d23bdc0a262b0a10e4338d" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>emitted_spikes_register_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a657229df18185930c8db8e78bf83ae01" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>EventDeliveryManager</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a25b13da9ade9fe32eb374dcdb6e7d997" prot="public" virt="virtual"><scope>nest::EventDeliveryManager</scope><name>finalize</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1adb65e8ba08c38237b6734319e4cab2a3" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>gather_completed_checker_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a9686fe3b77c602b6f8fe7750f1358de7" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>gather_secondary_events</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1ab0e3a51e5cf662c3cee14517575aefd2" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>gather_secondary_target_data</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a7aa93a50833ee3043dfb46b5e915c051" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>gather_spike_data</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a571ba855a00e3c96c4ff01ba59ea0e1c" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>gather_spike_data_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1afdf89d8b5bd8a4b64d46d6f5c294e5c1" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>gather_target_data</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1addcfcb9c29cd99d6b27d67a44e441b78" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>get_modulo</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a1dab058ff700f340803928c6afc328b7" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>get_off_grid_communication</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a7d7aae61ce48850bdbe5fffa7dd3886e" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>get_slice_modulo</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1aac3689e8ed6047a1d5250e1bdb60725a" prot="public" virt="virtual"><scope>nest::EventDeliveryManager</scope><name>get_status</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a0c223a5656aa437fb3f358230e2834c2" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>init_moduli</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a4f1f5d8833960c364461389d78c63bd1" prot="public" virt="virtual"><scope>nest::EventDeliveryManager</scope><name>initialize</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a61f59feb1cbfbc0713eabb7b15dc7053" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>is_marked_for_removal_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a59b2c15cce5382c4b5ae9c61be08f87a" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>local_spike_counter_</name></member>
+      <member refid="classnest_1_1_manager_interface_1aeb056937c69d73ba501bab2fb371a56c" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>ManagerInterface</name></member>
+      <member refid="classnest_1_1_manager_interface_1af07ff595521c144ddb81899fec66e251" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>ManagerInterface</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a7e4a1a74f66867104a87df6f25c2e50c" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>moduli_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a8e4bf83c7276f63076ace2be3ad44aba" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>off_grid_emitted_spike_register_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a0de8439d2f279732ec3875945429db6c" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>off_grid_spiking_</name></member>
+      <member refid="classnest_1_1_manager_interface_1a9889d8ee2a6bd5f1799e86aed555db5e" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>operator=</name></member>
+      <member refid="classnest_1_1_manager_interface_1a7a0e8989a48de50b52631e87ed3f2745" prot="public" virt="virtual"><scope>nest::EventDeliveryManager</scope><name>prepare</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a2ae9cdc38714deba72bf4728ca51cbcd" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>read_toggle</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1aa92765a8565e93885adb733e10556ad0" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>recv_buffer_off_grid_spike_data_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a7ee7a4c6771f8d0c440340f20e78b599" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>recv_buffer_secondary_events_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a0dc5467fcda53c70d0f42bb6ff48b7cd" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>recv_buffer_spike_data_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a58bab76a0910099580facdde11e16919" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>recv_buffer_target_data_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1ae854281972a1644c23e7168c986bda1c" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>reset_complete_marker_spike_data_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1ab2856ff263d5e398c21939cf8fe96d8f" prot="public" virt="virtual"><scope>nest::EventDeliveryManager</scope><name>reset_counters</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a743e7cd5faceb671a54fedfe4202e2cc" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>reset_spike_register_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1aee4c15d750af6466de783ee2a1a7ead5" prot="public" virt="virtual"><scope>nest::EventDeliveryManager</scope><name>reset_timers_for_dynamics</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a2f74974db15862c787e991d66ab77ba5" prot="public" virt="virtual"><scope>nest::EventDeliveryManager</scope><name>reset_timers_for_preparation</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1ae11e441d619bad5f3d53822efce96677" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>resize_send_recv_buffers_spike_data_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1ad9be35d3f6b58eac97354bec54503ac3" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>resize_send_recv_buffers_target_data</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1aabd329e4a0fd579f7165ba35906bd362" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>resize_spike_register_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a9a350f7997aebc9c0a3b0620639ac0a4" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>send</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a5e4b094adb9d2d4780566a91be4fe3ec" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>send</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a7725d187201a456ce8093912417f9fb3" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>send</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1af51f6db9b3f0712737518e88cda66a96" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>send_buffer_off_grid_spike_data_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a485e216effe906d07710f9a3ce0d421a" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>send_buffer_secondary_events_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1afec3619f86899bed367a2d555a0328a1" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>send_buffer_spike_data_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a0c3cd576a8b4d81db19cd6d30ba033fd" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>send_buffer_target_data_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a06b8635d4ef201b0249c3a7a3b862627" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>send_local</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1ad8c20f2ee5dea459b38de6063e63aee3" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>send_local_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a2714ea67021bbf8d415fb05c781814d4" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>send_local_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a72294da04cb238f288aa5f9d1f7386ed" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>send_off_grid_remote</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a0a6bec5fc67fcee1df2e08b46f7110f7" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>send_remote</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a8737cdbec8c0111d2bce0bf7e8d324a2" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>send_secondary</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a2b79478683a0eac7e42addee1fb6d09b" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>send_to_node</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a83a4ebf3569be0438705d03fe0553922" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>set_complete_marker_spike_data_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a1d4d4be8d0766ef22cd9ecbd28099d42" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>set_complete_marker_target_data_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a821a74c50b9c70e559e0c4683afc6943" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>set_end_and_invalid_markers_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1abecd604a0371f3f9a0625ceb9795ee36" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>set_off_grid_communication</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a9fd97dd2b3f5bf3bc6556c3db2dd08c6" prot="public" virt="virtual"><scope>nest::EventDeliveryManager</scope><name>set_status</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a9458935de0a8a8123c0836c59017ac40" prot="private" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>slice_moduli_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a18e210cef727c0b93605fa3dcd941a28" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>update_moduli</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1af1a3ceddd4ba303238c6d508dfc135b1" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>write_done_marker_secondary_events_</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a9a140d30b7f622d0290c78dd211eb3d2" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>write_toggle</name></member>
+      <member refid="classnest_1_1_event_delivery_manager_1a19c4cc76a5143e8febe9497dc34420ae" prot="public" virt="non-virtual"><scope>nest::EventDeliveryManager</scope><name>~EventDeliveryManager</name></member>
+      <member refid="classnest_1_1_manager_interface_1ac60a79d2ba0a48f1b039ab1f9d502ec4" prot="public" virt="virtual"><scope>nest::EventDeliveryManager</scope><name>~ManagerInterface</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

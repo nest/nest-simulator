@@ -1,0 +1,553 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="group__event__interface" kind="group">
+    <compoundname>event_interface</compoundname>
+    <title>Communication.</title>
+    <innerclass refid="classnest_1_1_conn_test_dummy_node_base" prot="public">nest::ConnTestDummyNodeBase</innerclass>
+    <innerclass refid="classnest_1_1_event" prot="public">nest::Event</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group__event__interface_1gaf65947fe5dfeaefe79ac3cdf86e5bb27" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>port</type>
+        <definition>port nest::Node::handles_test_event</definition>
+        <argsstring>(SpikeEvent &amp;, rport receptor_type)</argsstring>
+        <name>handles_test_event</name>
+        <param>
+          <type>SpikeEvent &amp;</type>
+        </param>
+        <param>
+          <type>rport</type>
+          <declname>receptor_type</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Check if the node can handle a particular event and receptor type. This function is called upon connection setup by <ref refid="classnest_1_1_node_1a60608af8d6238b96071a9f64544ec5e3" kindref="member">send_test_event()</ref>.</para>
+<para><ref refid="group__event__interface_1gaf65947fe5dfeaefe79ac3cdf86e5bb27" kindref="member">handles_test_event()</ref> function is used to verify that the receiver can handle the event. It can also be used by the receiver to return information to the sender in form of the returned port. The default implementation throws an <ref refid="classnest_1_1_illegal_connection" kindref="compound">IllegalConnection</ref> exception. Any node class should define <ref refid="group__event__interface_1gaf65947fe5dfeaefe79ac3cdf86e5bb27" kindref="member">handles_test_event()</ref> functions for all those event types it can handle.</para>
+<para>See Kunkel et al, Front Neuroinform 8:78 (2014), Sec 3.</para>
+<para><simplesect kind="note"><para>The semantics of all other <ref refid="group__event__interface_1gaf65947fe5dfeaefe79ac3cdf86e5bb27" kindref="member">handles_test_event()</ref> functions is identical.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_illegal_connection" kindref="compound">IllegalConnection</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="401" column="16" bodyfile="nestkernel/node.cpp" bodystart="232" bodyend="237"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1ga8cc1e073626a9ffc843b2685474238de" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::sends_secondary_event</definition>
+        <argsstring>(GapJunctionEvent &amp;ge)</argsstring>
+        <name>sends_secondary_event</name>
+        <reimplementedby refid="classnest_1_1proxynode_1afdfb38f8d6bd5837527a75eb4c6ff76e">sends_secondary_event</reimplementedby>
+        <param>
+          <type>GapJunctionEvent &amp;</type>
+          <declname>ge</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Required to check, if source neuron may send a <ref refid="classnest_1_1_secondary_event" kindref="compound">SecondaryEvent</ref>. This base class implementation throws <ref refid="classnest_1_1_illegal_connection" kindref="compound">IllegalConnection</ref> and needs to be overwritten in the derived class.</para>
+<para><parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_illegal_connection" kindref="compound">IllegalConnection</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="422" column="16" bodyfile="nestkernel/node.cpp" bodystart="342" bodyend="345"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1ga5469ac53c0b9d004829e1e2dbf41d120" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::sends_secondary_event</definition>
+        <argsstring>(InstantaneousRateConnectionEvent &amp;re)</argsstring>
+        <name>sends_secondary_event</name>
+        <reimplementedby refid="classnest_1_1proxynode_1ac211e3fbd950837944a19b0397a49bf7">sends_secondary_event</reimplementedby>
+        <param>
+          <type>InstantaneousRateConnectionEvent &amp;</type>
+          <declname>re</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Required to check, if source neuron may send a <ref refid="classnest_1_1_secondary_event" kindref="compound">SecondaryEvent</ref>. This base class implementation throws <ref refid="classnest_1_1_illegal_connection" kindref="compound">IllegalConnection</ref> and needs to be overwritten in the derived class.</para>
+<para><parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_illegal_connection" kindref="compound">IllegalConnection</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="431" column="16" bodyfile="nestkernel/node.cpp" bodystart="360" bodyend="363"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1gaa9414a7fa4241bc77bb110ba895968e0" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::sends_secondary_event</definition>
+        <argsstring>(DiffusionConnectionEvent &amp;de)</argsstring>
+        <name>sends_secondary_event</name>
+        <reimplementedby refid="classnest_1_1proxynode_1af4c165393526562c694aeee07fc62c31">sends_secondary_event</reimplementedby>
+        <param>
+          <type>DiffusionConnectionEvent &amp;</type>
+          <declname>de</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Required to check, if source neuron may send a <ref refid="classnest_1_1_secondary_event" kindref="compound">SecondaryEvent</ref>. This base class implementation throws <ref refid="classnest_1_1_illegal_connection" kindref="compound">IllegalConnection</ref> and needs to be overwritten in the derived class.</para>
+<para><parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_illegal_connection" kindref="compound">IllegalConnection</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="440" column="16" bodyfile="nestkernel/node.cpp" bodystart="378" bodyend="381"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1ga2732c32368c1ea09600a1a2ffddcb2f7" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::sends_secondary_event</definition>
+        <argsstring>(DelayedRateConnectionEvent &amp;re)</argsstring>
+        <name>sends_secondary_event</name>
+        <reimplementedby refid="classnest_1_1proxynode_1a2f9d087e4ad8a23bc023d1d17e927806">sends_secondary_event</reimplementedby>
+        <param>
+          <type>DelayedRateConnectionEvent &amp;</type>
+          <declname>re</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Required to check, if source neuron may send a <ref refid="classnest_1_1_secondary_event" kindref="compound">SecondaryEvent</ref>. This base class implementation throws <ref refid="classnest_1_1_illegal_connection" kindref="compound">IllegalConnection</ref> and needs to be overwritten in the derived class.</para>
+<para><parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_illegal_connection" kindref="compound">IllegalConnection</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="449" column="16" bodyfile="nestkernel/node.cpp" bodystart="396" bodyend="399"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1gae810de070216d0f281833171a3b997bc" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::handle</definition>
+        <argsstring>(SpikeEvent &amp;e)</argsstring>
+        <name>handle</name>
+        <reimplementedby refid="classnest_1_1proxynode_1afee2333ceda2f29df27139c8703456c1">handle</reimplementedby>
+        <param>
+          <type>SpikeEvent &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handle incoming spike events. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>thrd</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Id of the calling thread. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>e</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classnest_1_1_event" kindref="compound">Event</ref> object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+This handler has to be implemented if a <ref refid="classnest_1_1_node" kindref="compound">Node</ref> should accept spike events. <simplesect kind="see"><para>class <ref refid="classnest_1_1_spike_event" kindref="compound">SpikeEvent</ref></para>
+</simplesect>
+Default implementation of event handlers just throws an <ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref> exception. <simplesect kind="see"><para>class <ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref> </para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para>This is the default event to throw. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="469" column="16" bodyfile="nestkernel/node.cpp" bodystart="226" bodyend="229"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1ga18c58ec60440eae4dd4b264fb63a8d98" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::handle</definition>
+        <argsstring>(WeightRecorderEvent &amp;e)</argsstring>
+        <name>handle</name>
+        <param>
+          <type>WeightRecorderEvent &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handle incoming weight recording events. <parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>thrd</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Id of the calling thread. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>e</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classnest_1_1_event" kindref="compound">Event</ref> object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+This handler has to be implemented if a <ref refid="classnest_1_1_node" kindref="compound">Node</ref> should accept weight recording events. <simplesect kind="see"><para>class WeightRecordingEvent </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="481" column="16" bodyfile="nestkernel/node.cpp" bodystart="240" bodyend="243"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1ga9686693f44cd03a5420633b836c25f27" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::handle</definition>
+        <argsstring>(RateEvent &amp;e)</argsstring>
+        <name>handle</name>
+        <param>
+          <type>RateEvent &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handler for rate events. <simplesect kind="see"><para><ref refid="group__event__interface_1gae810de070216d0f281833171a3b997bc" kindref="member">handle(SpikeEvent&amp;)</ref></para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="489" column="16" bodyfile="nestkernel/node.cpp" bodystart="252" bodyend="255"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1gacd1458cf76e47c030beafb6a4d5147ba" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::handle</definition>
+        <argsstring>(DataLoggingRequest &amp;e)</argsstring>
+        <name>handle</name>
+        <param>
+          <type>DataLoggingRequest &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handler for universal data logging request. <simplesect kind="see"><para><ref refid="group__event__interface_1gae810de070216d0f281833171a3b997bc" kindref="member">handle(SpikeEvent&amp;)</ref></para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="497" column="16" bodyfile="nestkernel/node.cpp" bodystart="276" bodyend="279"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1ga76de0226b6a5eef5dbe78a68d72c4492" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::handle</definition>
+        <argsstring>(DataLoggingReply &amp;e)</argsstring>
+        <name>handle</name>
+        <param>
+          <type>DataLoggingReply &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handler for universal data logging request. <simplesect kind="see"><para><ref refid="group__event__interface_1gae810de070216d0f281833171a3b997bc" kindref="member">handle(SpikeEvent&amp;)</ref></para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>There is no connect_sender() for <ref refid="classnest_1_1_data_logging_reply" kindref="compound">DataLoggingReply</ref>, since this event is only used as &quot;back channel&quot; for <ref refid="classnest_1_1_data_logging_request" kindref="compound">DataLoggingRequest</ref>. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="507" column="16" bodyfile="nestkernel/node.cpp" bodystart="288" bodyend="291"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1gadef54045c4b20be6075910f936a723b6" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::handle</definition>
+        <argsstring>(CurrentEvent &amp;e)</argsstring>
+        <name>handle</name>
+        <param>
+          <type>CurrentEvent &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handler for current events. <simplesect kind="see"><para>handle(thread, SpikeEvent&amp;)</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="515" column="16" bodyfile="nestkernel/node.cpp" bodystart="264" bodyend="267"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1ga0b4b6baf37b18218fd5103ab72bc2cae" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::handle</definition>
+        <argsstring>(ConductanceEvent &amp;e)</argsstring>
+        <name>handle</name>
+        <param>
+          <type>ConductanceEvent &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handler for conductance events. <simplesect kind="see"><para>handle(thread, SpikeEvent&amp;)</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="523" column="16" bodyfile="nestkernel/node.cpp" bodystart="294" bodyend="297"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1ga1843f8e5565026ca51fc4b0fe1da77de" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::handle</definition>
+        <argsstring>(DoubleDataEvent &amp;e)</argsstring>
+        <name>handle</name>
+        <param>
+          <type>DoubleDataEvent &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handler for DoubleData events. <simplesect kind="see"><para>handle(thread, SpikeEvent&amp;)</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="531" column="16" bodyfile="nestkernel/node.cpp" bodystart="306" bodyend="309"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1ga32b0e430fb34b46f56dc2ebc6dc7bacb" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::handle</definition>
+        <argsstring>(GapJunctionEvent &amp;e)</argsstring>
+        <name>handle</name>
+        <param>
+          <type>GapJunctionEvent &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handler for gap junction events. <simplesect kind="see"><para>handle(thread, GapJunctionEvent&amp;)</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="539" column="16" bodyfile="nestkernel/node.cpp" bodystart="330" bodyend="333"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1gaec56b76a4286e1f662b33218f4083ce8" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::handle</definition>
+        <argsstring>(InstantaneousRateConnectionEvent &amp;e)</argsstring>
+        <name>handle</name>
+        <param>
+          <type>InstantaneousRateConnectionEvent &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handler for rate neuron events. <simplesect kind="see"><para>handle(thread, InstantaneousRateConnectionEvent&amp;)</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="547" column="16" bodyfile="nestkernel/node.cpp" bodystart="348" bodyend="351"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1gace17f7fc8aea06c6ecc4f12deb957a81" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::handle</definition>
+        <argsstring>(DiffusionConnectionEvent &amp;e)</argsstring>
+        <name>handle</name>
+        <param>
+          <type>DiffusionConnectionEvent &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handler for rate neuron events. <simplesect kind="see"><para>handle(thread, InstantaneousRateConnectionEvent&amp;)</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="555" column="16" bodyfile="nestkernel/node.cpp" bodystart="366" bodyend="369"/>
+      </memberdef>
+      <memberdef kind="function" id="group__event__interface_1ga2cebf7dc11a2a83795ff71c10c07f308" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void nest::Node::handle</definition>
+        <argsstring>(DelayedRateConnectionEvent &amp;e)</argsstring>
+        <name>handle</name>
+        <param>
+          <type>DelayedRateConnectionEvent &amp;</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+<para>Handler for delay rate neuron events. <simplesect kind="see"><para>handle(thread, DelayedRateConnectionEvent&amp;)</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classnest_1_1_unexpected_event" kindref="compound">UnexpectedEvent</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/node.h" line="563" column="16" bodyfile="nestkernel/node.cpp" bodystart="384" bodyend="387"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+<para>Functions and infrastructure, responsible for communication between Nodes.</para>
+<para>Nodes communicate by sending an receiving events. The communication interface consists of two parts:<orderedlist>
+<listitem><para>Functions to handle incoming events.</para>
+</listitem><listitem><para>Functions to check if a connection between nodes is possible.</para>
+</listitem></orderedlist>
+</para>
+<para><simplesect kind="see"><para><ref refid="classnest_1_1_event" kindref="compound">Event</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classnest_1_1_nest_module_1_1_sub___m___m_function" kind="class" language="C++" prot="public">
+    <compoundname>nest::NestModule::Sub_M_MFunction</compoundname>
+    <basecompoundref prot="public" virt="non-virtual">SLIFunction</basecompoundref>
+    <includes refid="nestmodule_8h" local="no">nestmodule.h</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classnest_1_1_nest_module_1_1_sub___m___m_function_1a244fc64360f149ce45aac6779bd3f10b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void nest::NestModule::Sub_M_MFunction::execute</definition>
+        <argsstring>(SLIInterpreter *) const override</argsstring>
+        <name>execute</name>
+        <param>
+          <type>SLIInterpreter *</type>
+          <defname>i</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="nestkernel/nestmodule.h" line="775" column="10" bodyfile="nestkernel/nestmodule.cpp" bodystart="2495" bodyend="2507"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>SLIFunction</label>
+      </node>
+      <node id="1">
+        <label>nest::NestModule::Sub_M_MFunction</label>
+        <link refid="classnest_1_1_nest_module_1_1_sub___m___m_function"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>SLIFunction</label>
+      </node>
+      <node id="1">
+        <label>nest::NestModule::Sub_M_MFunction</label>
+        <link refid="classnest_1_1_nest_module_1_1_sub___m___m_function"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="nestkernel/nestmodule.h" line="772" column="3" bodyfile="nestkernel/nestmodule.h" bodystart="773" bodyend="776"/>
+    <listofallmembers>
+      <member refid="classnest_1_1_nest_module_1_1_sub___m___m_function_1a244fc64360f149ce45aac6779bd3f10b" prot="public" virt="non-virtual"><scope>nest::NestModule::Sub_M_MFunction</scope><name>execute</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

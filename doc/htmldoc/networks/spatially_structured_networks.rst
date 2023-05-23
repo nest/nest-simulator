@@ -650,7 +650,7 @@ Elliptical
 .. figure:: figures/conn2_a.png
    :name: fig:conn2_a
 
-   Masks for 2D..  layers. For all mask types, the driver node is marked by
+   Masks for 2D layers. For all mask types, the driver node is marked by
    a wide light-red circle, the selected pool nodes by red dots and the
    masks are red. From left to right, top to bottom: rectangular,
    circular, doughnut and elliptical masks centered about the driver

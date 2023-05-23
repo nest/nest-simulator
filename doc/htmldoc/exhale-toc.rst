@@ -1,13 +1,21 @@
 Breathe test
 ===============
 
-.. doxygenindex::
 
-.. doxygengroup:: Devices
+.. doxygenclass:: nest::Connection
+
+jinja
+-----
 
 
 
-
-.. doxygenclass:: nest::ConnParameter
+{% for item in cpp_class_list %}
+.. doxygenclass:: nest::{{ item }}
+   :project: NEST Simulator
    :members:
-   :private-members:
+
+{% endfor %}
+.. .. doxygennamespace:: nest
+   :project: NEST Simulator
+   :members:
+   :outline:

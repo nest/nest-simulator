@@ -118,3 +118,9 @@ Functions related to mathematical expressions
 
 .. automodule:: nest.logic.hl_api_logic
     :members:
+
+Functions related to SONATA networks
+------------------------------------
+
+.. automodule:: nest.lib.hl_api_sonata
+    :members:

@@ -35,6 +35,8 @@ Author:  December 2012, May 2013, Plesser, based on test_poisson_generator.sli
 See also: test_sinusoidal_poisson_generator_{1,2,3,4,5}, test_sinusoidal_poisson_generator_nostat
 */
 
+skip_if_not_threaded
+
 (unittest) run
 /unittest using
 

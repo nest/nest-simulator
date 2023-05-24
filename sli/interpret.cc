@@ -605,7 +605,7 @@ SLIInterpreter::raiseerror( std::exception& err )
   {
     // plain std::exception: turn what() output into message
     errordict->insert( Name( "message" ), std::string( err.what() ) );
-    raiseerror( caller, "C++Exception" );
+    raiseerror( caller, "CppException" );
   }
 }
 

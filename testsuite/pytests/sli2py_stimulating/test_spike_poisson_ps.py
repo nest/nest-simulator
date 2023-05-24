@@ -20,10 +20,10 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Test that spike times are independent of resolution. 
+Test that spike times are independent of resolution.
 
 This test connects a `poisson_generator_ps` to a `spike_recorder` and
-performs simulations for different time resolutions. The difference in spike 
+performs simulations for different time resolutions. The difference in spike
 times should be exactly 0.0 between all resolutions. The test checks whether
 the spike times indeed are independent of the resolution.
 """

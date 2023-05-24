@@ -106,7 +106,7 @@ container:
 
 .. code-block:: text
 
-  docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -p 52425:52425 nestsim/nest:latest nest-server start
+  docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -p 52425:52425 nest/nest-simulator:dev nest-server start
 
 The generic invocation command line for the ``nest-server`` command
 looks as follows:

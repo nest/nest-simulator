@@ -300,7 +300,7 @@ jobs:
           fetch-depth: 0
       - name: "Run black..."
         continue-on-error: true
-        uses: psf/black@23.3.0
+        uses: psf/black@bf7a16254ec96b084a6caf3d435ec18f0f245cc7   # 23.3.0
 
   flake8:
     runs-on: "ubuntu-20.04"
@@ -374,7 +374,7 @@ jobs:
           fetch-depth: 0
 
       - name: Install Conda
-        uses: conda-incubator/setup-miniconda@v2
+        uses: conda-incubator/setup-miniconda@3b0f2504dd76ef23b6d31f291f4913fb60ab5ff3   # v2.2.0
         with:
           auto-update-conda: true
           python-version: "3.7"

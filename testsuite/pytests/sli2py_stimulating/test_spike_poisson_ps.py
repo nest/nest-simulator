@@ -101,4 +101,4 @@ def test_spikes_independent_of_resolution(reference_spikes, resolution):
     # Compute absolute relative error
     are = np.abs((reference_spikes - spikes) / reference_spikes)
 
-    assert np.all(are) < 1e-14
+    assert np.all(are < 1e-14)

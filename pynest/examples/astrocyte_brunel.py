@@ -78,8 +78,8 @@ plt.rcParams.update({'font.size': 13})
 
 sim_params = {
     "dt": 0.1,  # simulation resolution in ms
-    "pre_sim_time": 0.0,  # pre-simulation time in ms
-    "sim_time": 100.0,  # simulation time in ms
+    "pre_sim_time": 100.0,  # pre-simulation time in ms
+    "sim_time": 1000.0,  # simulation time in ms
     "N_rec_spk": 100,  # number of samples (neuron) for spike detector
     "N_rec_mm": 50,  # number of samples (neuron, astrocyte) for multimeter
     }

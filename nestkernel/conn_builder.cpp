@@ -1980,10 +1980,10 @@ nest::BernoulliAstroBuilder::connect_()
           if ( target_thread == tid )
           {
             // avoid connecting the same astrocyte to the target more than once
-            // if ( connected_anode_ids.find( anode_id ) != connected_anode_ids.end() )
-            // {
-            //   continue;
-            // }
+            if ( connected_anode_ids.find( anode_id ) != connected_anode_ids.end() )
+            {
+              continue;
+            }
             assert( target != NULL );
             for ( size_t synapse_indx = 0; synapse_indx < synapse_model_id_.size(); ++synapse_indx )
             {

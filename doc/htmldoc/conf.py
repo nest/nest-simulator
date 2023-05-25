@@ -342,9 +342,18 @@ def cpp_customizer(app, docname, source):
         rendered = app.builder.templates.render_string(cpp_source, html_context)
         source[0] = rendered
 
+def special_customizer(app, docname, source):
+    if docname == "doxy-toc":
+        special = json.load(open("specialtags.json"))
+        html_context = {"special_list": special}
+        special_source = source[0]
+        rendered = app.builder.templates.render_string(special_source, html_context)
+        source[0] = rendered
+
 def setup(app):
     app.connect("source-read", toc_customizer)
     app.connect("source-read", cpp_customizer)
+    app.connect("source-read", special_customizer)
     app.add_css_file('css/custom.css')
     app.add_css_file('css/pygments.css')
     app.add_js_file("js/custom.js")

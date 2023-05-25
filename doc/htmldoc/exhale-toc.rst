@@ -2,19 +2,31 @@ Breathe test
 ===============
 
 
-.. doxygenclass:: nest::Connection
+
 
 jinja
 -----
 
-
+List of classes in ``nest`` module
 
 {% for item in cpp_class_list %}
-.. doxygenclass:: nest::{{ item }}
+{% if 'NestModule' not in item %}
+
+* :cpp:class:`{{ item }}`
+
+
+
+{% endif %}
+{% endfor %}
+
+
+.. doxygengroup:: Devices
    :project: NEST Simulator
    :members:
 
-{% endfor %}
+
+
+
 .. .. doxygennamespace:: nest
    :project: NEST Simulator
    :members:

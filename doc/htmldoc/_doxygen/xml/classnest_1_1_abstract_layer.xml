@@ -498,7 +498,7 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
-<para>Dumps information about all connections of the given type having their source in the given layer to the given output stream. For distributed simulations this function will dump the connections with local targets only. <parameterlist kind="param"><parameteritem>
+          <para> specialtag_here is some super special things_end Dumps information about all connections of the given type having their source in the given layer to the given output stream. For distributed simulations this function will dump the connections with local targets only. <parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>out</parametername>
 </parameternamelist>

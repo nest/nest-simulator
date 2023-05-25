@@ -84,6 +84,15 @@ section#kernel-attributes dl.py.class dd dl.py.attribute dd dl.field-list.simple
 .sphx-glr-download-jupyter {
   display: none;
 }
+
+.cpp.class{
+ border-style:dashed;
+ border-width: 0.13em;
+
+}
+.sig.sig-object.cpp {
+   background-color: #3332;
+}
 /**************************************************************************************
  Settings for overriding material design theme 
  Setting nest colors to override sphinx material "orange" and other default colors

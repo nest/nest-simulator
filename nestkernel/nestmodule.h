@@ -539,25 +539,12 @@ public:
     void execute( SLIInterpreter* ) const override;
   } connect_g_g_D_afunction;
 
-  /** @BeginDocumentation
-   * Name: ResetKernel - Put the simulation kernel back to its initial state.
-   * Description:
-   * This function re-initializes the simulation kernel, returning it to the
-   * same state as after NEST has started.
-   * In particular,
-   * - all network nodes
-   * - all connections
-   * - all user-defined neuron and synapse models
-   * are deleted, and
-   * - time
-   * - random generators
-   * are reset. The only exception is that dynamically loaded modules are not
-   * unloaded. This may change in a future version of NEST. The SLI interpreter
-   * is not affected by ResetKernel.
-   * Availability: NEST
-   * Author: Marc-oliver Gewaltig
-   * SeeAlso: reset, ResetOptions
-   */
+  class ConnectSonata_D_Function : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } ConnectSonata_D_Function;
+
   class ResetKernelFunction : public SLIFunction
   {
   public:

@@ -47,6 +47,7 @@
 #include "aeif_psc_exp.h"
 #include "amat2_psc_exp.h"
 #include "astrocyte.h"
+#include "astrocyte_surrogate.h"
 #include "cm_default.h"
 #include "erfc_neuron.h"
 #include "gauss_rate.h"
@@ -81,7 +82,6 @@
 #include "iaf_psc_exp_multisynapse.h"
 #include "iaf_psc_exp_ps.h"
 #include "iaf_psc_exp_ps_lossless.h"
-#include "ignore_and_sic.h"
 #include "izhikevich.h"
 #include "lin_rate.h"
 #include "mat2_psc_exp.h"
@@ -270,8 +270,6 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< correlospinmatrix_detector >( "correlospinmatrix_detector" );
   kernel().model_manager.register_node_model< volume_transmitter >( "volume_transmitter" );
 
-  kernel().model_manager.register_node_model< ignore_and_sic >( "ignore_and_sic" );
-
 #ifdef HAVE_GSL
   kernel().model_manager.register_node_model< iaf_chxk_2008 >( "iaf_chxk_2008" );
   kernel().model_manager.register_node_model< iaf_cond_alpha >( "iaf_cond_alpha" );
@@ -292,6 +290,7 @@ ModelsModule::init( SLIInterpreter* )
 
   kernel().model_manager.register_node_model< aeif_psc_delta_clopath >( "aeif_psc_delta_clopath" );
   kernel().model_manager.register_node_model< astrocyte >( "astrocyte" );
+  kernel().model_manager.register_node_model< astrocyte_surrogate >( "astrocyte_surrogate" );
   kernel().model_manager.register_node_model< aeif_cond_alpha >( "aeif_cond_alpha" );
   kernel().model_manager.register_node_model< aeif_cond_alpha_astro >( "aeif_cond_alpha_astro" );
   kernel().model_manager.register_node_model< aeif_cond_exp >( "aeif_cond_exp" );

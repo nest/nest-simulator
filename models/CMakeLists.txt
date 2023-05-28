@@ -30,6 +30,7 @@ set(models_sources
     aeif_psc_delta_clopath.h aeif_psc_delta_clopath.cpp
     amat2_psc_exp.h amat2_psc_exp.cpp
     astrocyte.h astrocyte.cpp
+    astrocyte_surrogate.h astrocyte_surrogate.cpp
     bernoulli_synapse.h
     binary_neuron.h
     cm_default.h cm_default.cpp
@@ -78,7 +79,6 @@ set(models_sources
     iaf_psc_exp_multisynapse.h iaf_psc_exp_multisynapse.cpp
     iaf_psc_exp_ps.cpp iaf_psc_exp_ps.h
     iaf_psc_exp_ps_lossless.cpp iaf_psc_exp_ps_lossless.h
-    ignore_and_sic.cpp ignore_and_sic.h
     izhikevich.h izhikevich.cpp
     jonke_synapse.h
     lin_rate.h lin_rate.cpp

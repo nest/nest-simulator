@@ -27,7 +27,6 @@
 // C++ includes:
 #include <cmath>
 #include <cstdio>
-// #include <iomanip>
 #include <iostream>
 #include <limits>
 
@@ -42,10 +41,7 @@
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-// #include "dict.h"
 #include "dictutils.h"
-// #include "doubledatum.h"
-// #include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -369,13 +365,6 @@ nest::aeif_cond_alpha_astro::~aeif_cond_alpha_astro()
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_cond_alpha_astro::init_state_( const Node& proto )
-{
-  const aeif_cond_alpha_astro& pr = downcast< aeif_cond_alpha_astro >( proto );
-  S_ = pr.S_;
-}
-
-void
 nest::aeif_cond_alpha_astro::init_buffers_()
 {
   B_.spike_exc_.clear(); // includes resize
@@ -455,8 +444,6 @@ nest::aeif_cond_alpha_astro::pre_run_hook()
 void
 nest::aeif_cond_alpha_astro::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
   assert( State_::V_M == 0 );
 
   for ( long lag = from; lag < to; ++lag )

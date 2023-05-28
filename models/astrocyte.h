@@ -202,7 +202,7 @@ public:
   void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_state_( const Node& proto );
+  // void init_state_( const Node& proto );
   void init_buffers_() override;
   void pre_run_hook() override;
 

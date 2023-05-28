@@ -355,13 +355,6 @@ nest::astrocyte::~astrocyte()
  * ---------------------------------------------------------------- */
 
 void
-nest::astrocyte::init_state_( const Node& proto )
-{
-  const astrocyte& pr = downcast< astrocyte >( proto );
-  S_ = pr.S_;
-}
-
-void
 nest::astrocyte::init_buffers_()
 {
   B_.spike_exc_.clear(); // includes resize
@@ -427,9 +420,6 @@ nest::astrocyte::pre_run_hook()
 inline void
 nest::astrocyte::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
     // B_.lag is needed by astrocyte_dynamics to

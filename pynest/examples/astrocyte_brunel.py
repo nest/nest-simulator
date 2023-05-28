@@ -101,7 +101,7 @@ network_params = {
 syn_params = {
     "synapse_model": "tsodyks_synapse",  # model of neuron-to-neuron and neuron-to-astrocyte connections
     "astro2post": "sic_connection",  # model of astrocyte-to-neuron connection
-    "w_a2n": 1.0,  # weight of astrocyte-to-neuron connection
+    "w_a2n": 0.01,  # weight of astrocyte-to-neuron connection
     "w_e": 1.0,  # weight of excitatory connection in nS
     "w_i": -4.0,  # weight of inhibitory connection in nS
     "d_e": 2.0,  # delay of excitatory connection in ms
@@ -169,7 +169,7 @@ def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise, scale=1.
         "rule": "pairwise_bernoulli_astro",
         "astrocyte": nodes_astro,
         "p": network_params["p"]/scale,
-        "p_syn_astro": network_params["p_syn_astro"]/scale,
+        "p_syn_astro": network_params["p_syn_astro"],
         "max_astro_per_target": network_params["max_astro_per_target"],
         "astro_pool_by_index": network_params["astro_pool_by_index"],
         }

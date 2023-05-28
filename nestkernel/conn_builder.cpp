@@ -1,3 +1,4 @@
+// To-do: modulize astrocyte pool selection
 /*
  *  conn_builder.cpp
  *
@@ -1789,10 +1790,17 @@ nest::BernoulliAstroBuilder::connect_()
         // }
       }
 
-      // when max_astro_per_target_ is not given, take max_astro_per_target_ = default_n_astro_per_target_
+      // when max_astro_per_target_ is not given, take defaults
       if ( max_astro_per_target_ == 0 )
       {
-        max_astro_per_target_ = default_n_astro_per_target_;
+        if ( astro_pool_by_index_ == true )
+        {
+          max_astro_per_target_ = default_n_astro_per_target_;
+        }
+        else
+        {
+          max_astro_per_target_ = astrocytes_size;
+        }
       }
 
       // iterate through targets
@@ -1980,10 +1988,10 @@ nest::BernoulliAstroBuilder::connect_()
           if ( target_thread == tid )
           {
             // avoid connecting the same astrocyte to the target more than once
-            if ( connected_anode_ids.find( anode_id ) != connected_anode_ids.end() )
-            {
-              continue;
-            }
+            // if ( connected_anode_ids.find( anode_id ) != connected_anode_ids.end() )
+            // {
+            //   continue;
+            // }
             assert( target != NULL );
             for ( size_t synapse_indx = 0; synapse_indx < synapse_model_id_.size(); ++synapse_indx )
             {

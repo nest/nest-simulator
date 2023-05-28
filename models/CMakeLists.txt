@@ -29,7 +29,7 @@ set(models_sources
     aeif_psc_delta.h aeif_psc_delta.cpp
     aeif_psc_delta_clopath.h aeif_psc_delta_clopath.cpp
     amat2_psc_exp.h amat2_psc_exp.cpp
-    astrocyte.h astrocyte.cpp
+    astrocyte_lr_1994.h astrocyte_lr_1994.cpp
     astrocyte_surrogate.h astrocyte_surrogate.cpp
     bernoulli_synapse.h
     binary_neuron.h

@@ -53,7 +53,7 @@ rank = comm.Get_rank()
 
 pre_neurons = nest.Create('aeif_cond_alpha_astro', 20)
 post_neurons = nest.Create('aeif_cond_alpha_astro', 20)
-astrocytes = nest.Create('astrocyte', 10)
+astrocytes = nest.Create('astrocyte_lr_1994', 10)
 nest.Connect(
     pre_neurons, post_neurons,
     conn_spec={

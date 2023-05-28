@@ -1,5 +1,5 @@
 /*
- *  astrocyte.cpp
+ *  astrocyte_lr_1994.cpp
  *
  *  This file is part of NEST.
  *
@@ -21,7 +21,7 @@
  */
 
 
-#include "astrocyte.h"
+#include "astrocyte_lr_1994.h"
 
 #ifdef HAVE_GSL
 
@@ -42,7 +42,7 @@
 // Includes from sli:
 #include "dictutils.h"
 
-nest::RecordablesMap< nest::astrocyte > nest::astrocyte::recordablesMap_;
+nest::RecordablesMap< nest::astrocyte_lr_1994 > nest::astrocyte_lr_1994::recordablesMap_;
 
 namespace nest
 {
@@ -50,24 +50,24 @@ namespace nest
 // for each quantity to be recorded.
 template <>
 void
-RecordablesMap< astrocyte >::create()
+RecordablesMap< astrocyte_lr_1994 >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_( names::IP3, &astrocyte::get_y_elem_< astrocyte::State_::IP3 > );
-  insert_( names::Ca, &astrocyte::get_y_elem_< astrocyte::State_::Ca > );
-  insert_( names::h_IP3R, &astrocyte::get_y_elem_< astrocyte::State_::h_IP3R > );
-  insert_( names::SIC, &astrocyte::get_sic_ ); // for testing, to be deleted
+  insert_( names::IP3, &astrocyte_lr_1994::get_y_elem_< astrocyte_lr_1994::State_::IP3 > );
+  insert_( names::Ca, &astrocyte_lr_1994::get_y_elem_< astrocyte_lr_1994::State_::Ca > );
+  insert_( names::h_IP3R, &astrocyte_lr_1994::get_y_elem_< astrocyte_lr_1994::State_::h_IP3R > );
+  insert_( names::SIC, &astrocyte_lr_1994::get_sic_ ); // for testing, to be deleted
 }
 
 extern "C" int
-astrocyte_dynamics( double time, const double y[], double f[], void* pnode )
+astrocyte_lr_1994_dynamics( double time, const double y[], double f[], void* pnode )
 {
   // a shorthand
-  typedef nest::astrocyte::State_ S;
+  typedef nest::astrocyte_lr_1994::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::astrocyte& node = *( reinterpret_cast< nest::astrocyte* >( pnode ) );
+  const nest::astrocyte_lr_1994& node = *( reinterpret_cast< nest::astrocyte_lr_1994* >( pnode ) );
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
@@ -103,7 +103,7 @@ astrocyte_dynamics( double time, const double y[], double f[], void* pnode )
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::astrocyte::Parameters_::Parameters_()
+nest::astrocyte_lr_1994::Parameters_::Parameters_()
   : Ca_tot_( 2.0 )         // uM
   , IP3_0_( 0.16 )         // uM
   , Kd_IP3_1_( 0.13 )      // uM
@@ -124,14 +124,14 @@ nest::astrocyte::Parameters_::Parameters_()
 {
 }
 
-nest::astrocyte::State_::State_( const Parameters_& p )
+nest::astrocyte_lr_1994::State_::State_( const Parameters_& p )
 {
   y_[ IP3 ] = p.IP3_0_; // uM
   y_[ Ca ] = 0.073;           // uM
   y_[ h_IP3R ] = 0.793;
 }
 
-nest::astrocyte::State_::State_( const State_& s )
+nest::astrocyte_lr_1994::State_::State_( const State_& s )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
   {
@@ -139,7 +139,7 @@ nest::astrocyte::State_::State_( const State_& s )
   }
 }
 
-nest::astrocyte::State_& nest::astrocyte::State_::operator=( const State_& s )
+nest::astrocyte_lr_1994::State_& nest::astrocyte_lr_1994::State_::operator=( const State_& s )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
   {
@@ -153,7 +153,7 @@ nest::astrocyte::State_& nest::astrocyte::State_::operator=( const State_& s )
  * ---------------------------------------------------------------- */
 
 void
-nest::astrocyte::Parameters_::get( DictionaryDatum& d ) const
+nest::astrocyte_lr_1994::Parameters_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::Ca_tot, Ca_tot_ );
   def< double >( d, names::IP3_0, IP3_0_ );
@@ -175,7 +175,7 @@ nest::astrocyte::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::astrocyte::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::astrocyte_lr_1994::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   updateValueParam< double >( d, names::Ca_tot, Ca_tot_, node );
   updateValueParam< double >( d, names::IP3_0, IP3_0_, node );
@@ -262,7 +262,7 @@ nest::astrocyte::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-nest::astrocyte::State_::get( DictionaryDatum& d ) const
+nest::astrocyte_lr_1994::State_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::IP3, y_[ IP3 ] );
   def< double >( d, names::Ca, y_[ Ca ] );
@@ -270,7 +270,7 @@ nest::astrocyte::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::astrocyte::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
+nest::astrocyte_lr_1994::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
 {
   updateValueParam< double >( d, names::IP3, y_[ IP3 ], node );
   updateValueParam< double >( d, names::Ca, y_[ Ca ], node );
@@ -278,11 +278,11 @@ nest::astrocyte::State_::set( const DictionaryDatum& d, const Parameters_&, Node
 
   if ( y_[ IP3 ] <  0 )
   {
-    throw BadProperty( "IP3 concentration in the astrocyte cytosol must be non-negative." );
+    throw BadProperty( "IP3 concentration must be non-negative." );
   }
   if ( y_[ Ca ] < 0 )
   {
-    throw BadProperty( "Calcium concentration in the astrocyte cytosol must be non-negative." );
+    throw BadProperty( "Calcium concentration must be non-negative." );
   }
   if ( y_[ h_IP3R ] < 0 || y_[ h_IP3R ] > 1 )
   {
@@ -290,7 +290,7 @@ nest::astrocyte::State_::set( const DictionaryDatum& d, const Parameters_&, Node
   }
 }
 
-nest::astrocyte::Buffers_::Buffers_( astrocyte& n )
+nest::astrocyte_lr_1994::Buffers_::Buffers_( astrocyte_lr_1994& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -300,7 +300,7 @@ nest::astrocyte::Buffers_::Buffers_( astrocyte& n )
   // init_buffers_().
 }
 
-nest::astrocyte::Buffers_::Buffers_( const Buffers_&, astrocyte& n )
+nest::astrocyte_lr_1994::Buffers_::Buffers_( const Buffers_&, astrocyte_lr_1994& n )
   : logger_( n )
   , s_( nullptr )
   , c_( nullptr )
@@ -314,7 +314,7 @@ nest::astrocyte::Buffers_::Buffers_( const Buffers_&, astrocyte& n )
  * Default and copy constructor for node, and destructor
  * ---------------------------------------------------------------- */
 
-nest::astrocyte::astrocyte()
+nest::astrocyte_lr_1994::astrocyte_lr_1994()
   : ArchivingNode()
   , P_()
   , S_( P_ )
@@ -324,7 +324,7 @@ nest::astrocyte::astrocyte()
   // Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
 }
 
-nest::astrocyte::astrocyte( const astrocyte& n )
+nest::astrocyte_lr_1994::astrocyte_lr_1994( const astrocyte_lr_1994& n )
   : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -333,7 +333,7 @@ nest::astrocyte::astrocyte( const astrocyte& n )
   // Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
 }
 
-nest::astrocyte::~astrocyte()
+nest::astrocyte_lr_1994::~astrocyte_lr_1994()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
@@ -355,7 +355,7 @@ nest::astrocyte::~astrocyte()
  * ---------------------------------------------------------------- */
 
 void
-nest::astrocyte::init_buffers_()
+nest::astrocyte_lr_1994::init_buffers_()
 {
   B_.spike_exc_.clear(); // includes resize
 
@@ -395,14 +395,14 @@ nest::astrocyte::init_buffers_()
     gsl_odeiv_evolve_reset( B_.e_ );
   }
 
-  B_.sys_.function = astrocyte_dynamics;
+  B_.sys_.function = astrocyte_lr_1994_dynamics;
   B_.sys_.jacobian = nullptr;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
 }
 
 void
-nest::astrocyte::pre_run_hook()
+nest::astrocyte_lr_1994::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -418,11 +418,11 @@ nest::astrocyte::pre_run_hook()
  * ---------------------------------------------------------------- */
 
 inline void
-nest::astrocyte::update( Time const& origin, const long from, const long to )
+nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
-    // B_.lag is needed by astrocyte_dynamics to
+    // B_.lag is needed by astrocyte_lr_1994_dynamics to
     // determine the current section
     B_.lag_ = lag;
 
@@ -494,7 +494,7 @@ nest::astrocyte::update( Time const& origin, const long from, const long to )
 }
 
 void
-nest::astrocyte::handle( SpikeEvent& e )
+nest::astrocyte_lr_1994::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -506,7 +506,7 @@ nest::astrocyte::handle( SpikeEvent& e )
 }
 
 void
-nest::astrocyte::handle( DataLoggingRequest& e )
+nest::astrocyte_lr_1994::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }

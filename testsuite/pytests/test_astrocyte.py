@@ -52,7 +52,7 @@ path = os.path.abspath(os.path.dirname(__file__))
 #
 
 di_tolerances_odeint = {
-    "astrocyte": {"IP3": 1e-4, "Ca": 1e-4, "h_IP3R": 1e-4},
+    "astrocyte_lr_1994": {"IP3": 1e-4, "Ca": 1e-4, "h_IP3R": 1e-4},
 }
 
 
@@ -61,13 +61,13 @@ di_tolerances_odeint = {
 # -------------------------
 #
 
-models = ["astrocyte"]
+models = ["astrocyte_lr_1994"]
 
 num_models = len(models)
 
 # parameters with which the ODEINT reference solution was generated
 
-astrocyte_default = nest.GetDefaults('astrocyte')
+astrocyte_default = nest.GetDefaults('astrocyte_lr_1994')
 astrocyte_param = {
     # use different values for state variables to produce dynamics
     'IP3': 1.0,

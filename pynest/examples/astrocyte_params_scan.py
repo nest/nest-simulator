@@ -41,7 +41,7 @@ def get_arg_df(args):
 # Simulate and return recordings
 def simulate(time, prate, astro_params):
     nest.ResetKernel()
-    astrocyte = nest.Create('astrocyte', params=astro_params)
+    astrocyte = nest.Create('astrocyte_lr_1994', params=astro_params)
     mm_astro = nest.Create('multimeter', params={'record_from': ['IP3', 'Ca']})
     ps = nest.Create('poisson_generator', params={'rate': prate})
     neuron = nest.Create('aeif_cond_alpha_astro')
@@ -60,7 +60,7 @@ def run(params, sim_time, poisson_rate, spath):
     os.system(f'cp astrocyte_params_scan.py {spath}')
 
     # Save parameter defaults
-    default = nest.GetDefaults('astrocyte')
+    default = nest.GetDefaults('astrocyte_lr_1994')
     out = open(os.path.join(spath, 'astrocyte_params_default.json'), 'w')
     json.dump(default, out, indent=4, cls=NumpyEncoder)
     out.close()

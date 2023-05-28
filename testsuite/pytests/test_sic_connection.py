@@ -41,7 +41,7 @@ class SICConnectionTestCase(unittest.TestCase):
         nest.set_verbosity('M_WARNING')
 
         supported_sources = [
-            'astrocyte',
+            'astrocyte_lr_1994', 'astrocyte_surrogate'
         ]
         supported_targets = [
             'aeif_cond_alpha_astro',
@@ -70,7 +70,7 @@ class SICConnectionTestCase(unittest.TestCase):
         nest.ResetKernel()
 
         # Create neurons and devices
-        astrocyte = nest.Create('astrocyte', {'Ca': 0.2})
+        astrocyte = nest.Create('astrocyte_lr_1994', {'Ca': 0.2})
         neuron = nest.Create('aeif_cond_alpha_astro')
 
         mm_neuron = nest.Create('multimeter', params={
@@ -86,7 +86,7 @@ class SICConnectionTestCase(unittest.TestCase):
 
         # Evaluation
         # The expected SIC values are calculated based on the astrocyte dynamics
-        # implemented in astrocyte.cpp. SIC connection has a constant delay of 1
+        # implemented in astrocyte_lr_1994.cpp. SIC connection has a constant delay of 1
         # ms, so the values are shifted for comparison.
         data_neuron = nest.GetStatus(mm_neuron)
         actual_sic_values = data_neuron[0]['events']['SIC']

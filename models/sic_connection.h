@@ -40,7 +40,7 @@ Description
 
 ``sic_connection`` connects an astrocyte to a target neuron. It sends SICEvent
 to the neuron to model a continuous current input, with amplitudes determined by
-the astrocyte. The source node of ``sic_connection`` should be ``astrocyte``,
+the astrocyte. The source node of ``sic_connection`` should be an astrocyte,
 and the target node should be ``aeif_cond_alpha_astro``. ``sic_connection`` is
 adapted from ``gap_junction`` but unidirectional.
 
@@ -75,7 +75,7 @@ References
 See also
 ++++++++
 
-astrocyte, aeif_cond_alpha_astro, gap_junction
+astrocyte_lr_1994, aeif_cond_alpha_astro, gap_junction
 
 EndUserDocs */
 

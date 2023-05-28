@@ -111,7 +111,7 @@ syn_params = {
 ###############################################################################
 # Astrocyte parameters.
 
-astrocyte_model = "astrocyte"
+astrocyte_model = "astrocyte_lr_1994"
 astrocyte_params = {
     'IP3': 0.4,  # IP3 initial value in uM
     'incr_IP3': 0.2,  # Step increase in IP3 concentration with each unit synaptic weight received by the astrocyte in uM

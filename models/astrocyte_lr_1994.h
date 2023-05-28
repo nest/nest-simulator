@@ -1,5 +1,5 @@
 /*
- *  astrocyte.h
+ *  astrocyte_lr_1994.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ASTROCYTE_H
-#define ASTROCYTE_H
+#ifndef ASTROCYTE_LR_1994_H
+#define ASTROCYTE_LR_1994_H
 
 #include "config.h"
 
@@ -56,7 +56,7 @@ namespace nest
  *       through a function pointer.
  * @param void* Pointer to model neuron instance.
  */
-extern "C" int astrocyte_dynamics( double, const double*, double*, void* );
+extern "C" int astrocyte_lr_1994_dynamics( double, const double*, double*, void* );
 
 /* BeginUserDocs: astrocyte
 
@@ -68,7 +68,7 @@ A model of astrocyte with dynamics of three variables
 Description
 +++++++++++
 
-``astrocyte`` is a model of astrocyte developed by adapting a Hodgkin-Huxley
+``astrocyte_lr_1994`` is a model of astrocyte developed by adapting a Hodgkin-Huxley
 neuron model (``hh_psc_alpha_gap``). It can be connected with neuron models to
 study neuron-astrocyte interactions. The model defines dynamics of the
 following variables:
@@ -79,7 +79,7 @@ Ca     uM       Calcium concentration in the astrocytic cytosol
 h_IP3R unitless The fraction of active IP3 receptors on the astrocytic ER
 ====== ======== ==============================================================
 
-Incoming spike events to an ``astrocyte`` determine its dynamics according to
+Incoming spike events to an ``astrocyte_lr_1994`` determine its dynamics according to
 the model described in Nadkarni & Jung (2003) [1], with an adaptation of the IP3
 production mechanism in equation (4). The model is based on the original study
 by Li & Rinzel (1994) [2].
@@ -166,15 +166,15 @@ aeif_cond_alpha_astro, sic_connection, hh_psc_alpha_gap
 
 EndUserDocs */
 
-class astrocyte : public ArchivingNode
+class astrocyte_lr_1994 : public ArchivingNode
 {
 
 public:
   typedef Node base;
 
-  astrocyte();
-  astrocyte( const astrocyte& );
-  ~astrocyte() override;
+  astrocyte_lr_1994();
+  astrocyte_lr_1994( const astrocyte_lr_1994& );
+  ~astrocyte_lr_1994() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -218,11 +218,11 @@ private:
   // Friends --------------------------------------------------------
 
   // make dynamics function quasi-member
-  friend int astrocyte_dynamics( double, const double*, double*, void* );
+  friend int astrocyte_lr_1994_dynamics( double, const double*, double*, void* );
 
   // The next two classes need to be friend to access the State_ class/member
-  friend class RecordablesMap< astrocyte >;
-  friend class UniversalDataLogger< astrocyte >;
+  friend class RecordablesMap< astrocyte_lr_1994 >;
+  friend class UniversalDataLogger< astrocyte_lr_1994 >;
 
 private:
   // ----------------------------------------------------------------
@@ -298,12 +298,12 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( astrocyte& ); //!< Sets buffer pointers to 0
+    Buffers_( astrocyte_lr_1994& ); //!< Sets buffer pointers to 0
     //! Sets buffer pointers to 0
-    Buffers_( const Buffers_&, astrocyte& );
+    Buffers_( const Buffers_&, astrocyte_lr_1994& );
 
     //! Logger for all analog data
-    UniversalDataLogger< astrocyte > logger_;
+    UniversalDataLogger< astrocyte_lr_1994 > logger_;
 
     /** buffers and sums up incoming spikes/currents */
     RingBuffer spike_exc_;
@@ -354,11 +354,11 @@ private:
   Buffers_ B_;
 
   //! Mapping of recordables names to access functions
-  static RecordablesMap< astrocyte > recordablesMap_;
+  static RecordablesMap< astrocyte_lr_1994 > recordablesMap_;
 };
 
 inline port
-astrocyte::send_test_event( Node& target, rport receptor_type, synindex, bool )
+astrocyte_lr_1994::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent se;
   se.set_sender( *this );
@@ -367,7 +367,7 @@ astrocyte::send_test_event( Node& target, rport receptor_type, synindex, bool )
 
 
 inline port
-astrocyte::handles_test_event( SpikeEvent&, rport receptor_type )
+astrocyte_lr_1994::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -377,7 +377,7 @@ astrocyte::handles_test_event( SpikeEvent&, rport receptor_type )
 }
 
 inline port
-astrocyte::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+astrocyte_lr_1994::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -387,7 +387,7 @@ astrocyte::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 }
 
 inline void
-astrocyte::get_status( DictionaryDatum& d ) const
+astrocyte_lr_1994::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
@@ -397,7 +397,7 @@ astrocyte::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-astrocyte::set_status( const DictionaryDatum& d )
+astrocyte_lr_1994::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_;     // temporary copy in case of errors
   ptmp.set( d, this );       // throws if BadProperty
@@ -418,4 +418,4 @@ astrocyte::set_status( const DictionaryDatum& d )
 } // namespace
 
 #endif // HAVE_GSL
-#endif // ASTROCYTE_H
+#endif // ASTROCYTE_LR_1994_H

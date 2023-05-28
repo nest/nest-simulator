@@ -184,7 +184,7 @@ References
 See also
 ++++++++
 
-iaf_cond_alpha, aeif_cond_exp, astrocyte, sic_connection
+iaf_cond_alpha, aeif_cond_exp, astrocyte_lr_1994, sic_connection
 
 EndUserDocs */
 

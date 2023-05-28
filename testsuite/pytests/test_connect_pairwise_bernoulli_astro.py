@@ -31,6 +31,7 @@ class TestPairwiseBernoulliAstro(connect_test_base.ConnectTestBase):
 
     # specify connection pattern and specific params
     rule = 'pairwise_bernoulli_astro'
+    astrocyte_model = 'astrocyte_lr_1994'
     p = 0.5
     p_syn_astro = 1.0
     max_astro_per_target = 1
@@ -54,7 +55,7 @@ class TestPairwiseBernoulliAstro(connect_test_base.ConnectTestBase):
             N2 = self.N_t
         self.pop1 = nest.Create(neuron_model, N1)
         self.pop2 = nest.Create(neuron_model, N2)
-        self.pop_astro = nest.Create('astrocyte', N2)
+        self.pop_astro = nest.Create(self.astrocyte_model, N2)
         conn_dict['astrocyte'] = self.pop_astro
         nest.set_verbosity('M_FATAL')
         nest.Connect(self.pop1, self.pop2, conn_dict, syn_dict)
@@ -97,7 +98,7 @@ class TestPairwiseBernoulliAstro(connect_test_base.ConnectTestBase):
         conn_params['p'] = 1.
         conn_params['allow_autapses'] = True
         pop = nest.Create('aeif_cond_alpha_astro', N)
-        astro_pop = nest.Create('astrocyte', N)
+        astro_pop = nest.Create(self.astrocyte_model, N)
         conn_params['astrocyte'] = astro_pop
         nest.Connect(pop, pop, conn_params)
         # make sure all connections do exist
@@ -112,7 +113,7 @@ class TestPairwiseBernoulliAstro(connect_test_base.ConnectTestBase):
         conn_params['p'] = 1.
         conn_params['allow_autapses'] = False
         pop = nest.Create('aeif_cond_alpha_astro', N)
-        astro_pop = nest.Create('astrocyte', N)
+        astro_pop = nest.Create(self.astrocyte_model, N)
         conn_params['astrocyte'] = astro_pop
         nest.Connect(pop, pop, conn_params)
         # make sure all connections do exist
@@ -127,7 +128,7 @@ class TestPairwiseBernoulliAstro(connect_test_base.ConnectTestBase):
                       'receptor_type': rtype}
         self.pop1 = nest.Create(neuron_model, self.N_s, neuron_dict)
         self.pop2 = nest.Create(neuron_model, self.N_t, neuron_dict)
-        self.pop_astro = nest.Create('astrocyte', self.N_t)
+        self.pop_astro = nest.Create(self.astrocyte_model, self.N_t)
         self.conn_dict['astrocyte'] = self.pop_astro
         conn_spec = self.conn_dict.copy()
         # astrocyte excluded because not compatible
@@ -157,7 +158,7 @@ class TestPairwiseBernoulliAstro(connect_test_base.ConnectTestBase):
                                        'tau_syn': [0.2, 0.5]})
             self.pop2 = nest.Create('iaf_psc_exp_multisynapse', self.N_t, {
                                        'tau_syn': [0.2, 0.5]})
-            self.pop_astro = nest.Create('astrocyte', self.N_t)
+            self.pop_astro = nest.Create(self.astrocyte_model, self.N_t)
             self.conn_dict['astrocyte'] = self.pop_astro
             conn_spec = self.conn_dict.copy()
             # astrocyte excluded because not compatible

@@ -46,7 +46,7 @@
 #include "aeif_psc_delta_clopath.h"
 #include "aeif_psc_exp.h"
 #include "amat2_psc_exp.h"
-#include "astrocyte.h"
+#include "astrocyte_lr_1994.h"
 #include "astrocyte_surrogate.h"
 #include "cm_default.h"
 #include "erfc_neuron.h"
@@ -289,7 +289,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< glif_cond >( "glif_cond" );
 
   kernel().model_manager.register_node_model< aeif_psc_delta_clopath >( "aeif_psc_delta_clopath" );
-  kernel().model_manager.register_node_model< astrocyte >( "astrocyte" );
+  kernel().model_manager.register_node_model< astrocyte_lr_1994 >( "astrocyte_lr_1994" );
   kernel().model_manager.register_node_model< astrocyte_surrogate >( "astrocyte_surrogate" );
   kernel().model_manager.register_node_model< aeif_cond_alpha >( "aeif_cond_alpha" );
   kernel().model_manager.register_node_model< aeif_cond_alpha_astro >( "aeif_cond_alpha_astro" );

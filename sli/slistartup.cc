@@ -175,6 +175,7 @@ SLIStartup::SLIStartup( int argc, char** argv )
   , have_music_name( "have_music" )
   , have_libneurosim_name( "have_libneurosim" )
   , have_sionlib_name( "have_sionlib" )
+  , have_hdf5_name( "have_hdf5" )
   , ndebug_name( "ndebug" )
   , mpiexec_name( "mpiexec" )
   , mpiexec_numproc_flag_name( "mpiexec_numproc_flag" )
@@ -339,6 +340,12 @@ SLIStartup::init( SLIInterpreter* i )
   statusdict->insert( have_sionlib_name, Token( new BoolDatum( true ) ) );
 #else
   statusdict->insert( have_sionlib_name, Token( new BoolDatum( false ) ) );
+#endif
+
+#ifdef HAVE_HDF5
+  statusdict->insert( have_hdf5_name, Token( new BoolDatum( true ) ) );
+#else
+  statusdict->insert( have_hdf5_name, Token( new BoolDatum( false ) ) );
 #endif
 
 #ifdef NDEBUG

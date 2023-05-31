@@ -9,21 +9,22 @@ This interface is known as PyNEST. You can browse the various functions to use i
 
 
 
-
 :doc:`Functions related to nodes <nest.lib.hl_api_nodes>`
 ----------------------------------------------------------
 
 
-.. automodule::   nest.lib.hl_api_nodes
 
+.. automodule::   nest.lib.hl_api_nodes
 
    .. autosummary::
 
-      Create
-      GetLocalNodeCollection
-      GetNodes
-      PrintNodes
-
+      {% for key, value in api_dict.items() %}
+          {% if key == 'hl_api_nodes' %}
+              {% for item in value %}
+                  {{ item }}
+              {% endfor %}
+          {% endif %}
+      {% endfor %}
 
 :doc:`Functions related to models <nest.lib.hl_api_models>`
 -----------------------------------------------------------
@@ -34,11 +35,13 @@ This interface is known as PyNEST. You can browse the various functions to use i
 
    .. autosummary::
 
-      ConnectionRules
-      CopyModel
-      GetDefaults
-      Models
-      SetDefaults
+      {% for key, value in api_dict.items() %}
+          {% if key == 'hl_api_models' %}
+              {% for item in value %}
+                  {{ item }}
+              {% endfor %}
+          {% endif %}
+      {% endfor %}
 
 
 :doc:`Functions related to parameters for nodes and synapses  <nest.lib.hl_api_types>`
@@ -50,20 +53,14 @@ This interface is known as PyNEST. You can browse the various functions to use i
 
    .. autosummary::
 
-      CreateParameter
-      serializable
-      to_json
+      {% for key, value in api_dict.items() %}
+          {% if key == 'hl_api_types' %}
+              {% for item in value %}
+                  {{ item }}
+              {% endfor %}
+          {% endif %}
+      {% endfor %}
 
-
-   .. autosummary::
-
-      CollocatedSynapses
-      Compartments
-      Mask
-      NodeCollection
-      Parameter
-      Receptors
-      SynapseCollection
 
 .. automodule:: nest.lib.hl_api_info
 
@@ -82,9 +79,14 @@ This interface is known as PyNEST. You can browse the various functions to use i
 
    .. autosummary::
 
-      Connect
-      Disconnect
-      GetConnections
+      {% for key, value in api_dict.items() %}
+          {% if key == 'hl_api_connections' %}
+              {% for item in value %}
+                  {{ item }}
+              {% endfor %}
+          {% endif %}
+      {% endfor %}
+
 
 :doc:`Functions related to simulations  <nest.lib.hl_api_simulation>`
 ---------------------------------------------------------------------
@@ -95,17 +97,14 @@ This interface is known as PyNEST. You can browse the various functions to use i
 
    .. autosummary::
 
-      Cleanup
-      DisableStructuralPlasticity
-      EnableStructuralPlasticity
-      GetKernelStatus
-      Install
-      Prepare
-      ResetKernel
-      Run
-      RunManager
-      SetKernelStatus
-      Simulate
+      {% for key, value in api_dict.items() %}
+          {% if key == 'hl_api_simulation' %}
+              {% for item in value %}
+                  {{ item }}
+              {% endfor %}
+          {% endif %}
+      {% endfor %}
+
 
 
 :doc:`Functions related to spatial networks  <nest.lib.hl_api_spatial>`
@@ -116,44 +115,42 @@ This interface is known as PyNEST. You can browse the various functions to use i
 
    .. autosummary::
 
-      CreateMask
-      Displacement
-      Distance
-      DumpLayerConnections
-      DumpLayerNodes
-      FindCenterElement
-      FindNearestElement
-      GetPosition
-      GetSourceNodes
-      GetSourcePositions
-      GetTargetNodes
-      GetTargetPositions
-      PlotLayer
-      PlotProbabilityParameter
-      PlotSources
-      PlotTargets
-      SelectNodesByMask
+      {% for key, value in api_dict.items() %}
+          {% if key == 'lib.hl_api_spatial' %}
+              {% for item in value %}
+                  {{ item }}
+              {% endfor %}
+          {% endif %}
+      {% endfor %}
+
 
 .. automodule:: nest.spatial_distributions.hl_api_spatial_distributions
 
 
    .. autosummary::
 
-      exponential
-      gaussian
-      gaussian2D
-      gamma
+      {% for key, value in api_dict.items() %}
+          {% if key == 'hl_api_spatial_distributions' %}
+              {% for item in value %}
+                  {{ item }}
+              {% endfor %}
+          {% endif %}
+      {% endfor %}
+
 
 .. automodule:: nest.spatial.hl_api_spatial
 
 
    .. autosummary::
 
-      grid
-      free
-      pos
-      source_pos
-      target_pos
+      {% for key, value in api_dict.items() %}
+          {% if key == 'hl_api_spatial' %}
+              {% for item in value %}
+                  {{ item }}
+              {% endfor %}
+          {% endif %}
+      {% endfor %}
+
 
 :doc:`Functions related to math and logic  <nest.math.hl_api_math>`
 -------------------------------------------------------------------
@@ -163,19 +160,28 @@ This interface is known as PyNEST. You can browse the various functions to use i
 
    .. autosummary::
 
-      exp
-      sin
-      cos
-      min
-      max
-      redraw
+      {% for key, value in api_dict.items() %}
+          {% if key == 'hl_api_math' %}
+              {% for item in value %}
+                  {{ item }}
+              {% endfor %}
+          {% endif %}
+      {% endfor %}
+
 
 .. automodule::   nest.logic.hl_api_logic
 
 
    .. autosummary::
 
-      conditional
+      {% for key, value in api_dict.items() %}
+          {% if key == 'hl_api_logic' %}
+              {% for item in value %}
+                  {{ item }}
+              {% endfor %}
+          {% endif %}
+      {% endfor %}
+
 
 :doc:`Functions related to randomizaton  <nest.random.hl_api_random>`
 ---------------------------------------------------------------------
@@ -185,11 +191,14 @@ This interface is known as PyNEST. You can browse the various functions to use i
 
    .. autosummary::
 
-      exponential
-      lognormal
-      normal
-      uniform
-      uniform_int
+      {% for key, value in api_dict.items() %}
+          {% if key == 'hl_api_random' %}
+              {% for item in value %}
+                  {{ item }}
+              {% endfor %}
+          {% endif %}
+      {% endfor %}
+
 
 :doc:`Functions related to parallel computing  <nest.lib.hl_api_parallel_computing>`
 ------------------------------------------------------------------------------------
@@ -199,12 +208,14 @@ This interface is known as PyNEST. You can browse the various functions to use i
 
    .. autosummary::
 
-      GetLocalVPs
-      NumProcesses
-      Rank
-      SetAcceptableLatency
-      SetMaxBuffered
-      SyncProcesses
+      {% for key, value in api_dict.items() %}
+          {% if key == 'hl_api_parallel_computing' %}
+              {% for item in value %}
+                  {{ item }}
+              {% endfor %}
+          {% endif %}
+      {% endfor %}
+
 
 :doc:`Functions related NEST server  <nest.server.hl_api_server>`
 -----------------------------------------------------------------
@@ -214,11 +225,14 @@ This interface is known as PyNEST. You can browse the various functions to use i
 
    .. autosummary::
 
-      app
-      do_exec
-      set_mpi_comm
-      run_mpi_app
-      nestify
+      {% for key, value in api_dict.items() %}
+          {% if key == 'hl_api_server' %}
+              {% for item in value %}
+                  {{ item }}
+              {% endfor %}
+          {% endif %}
+      {% endfor %}
+
 
 :doc:`Functions related to voltage trace  <nest.voltage_trace>`
 ----------------------------------------------------------------
@@ -228,8 +242,14 @@ This interface is known as PyNEST. You can browse the various functions to use i
 
    .. autosummary::
 
-      from_device
-      from_file
+      {% for key, value in api_dict.items() %}
+          {% if key == 'voltage_trace' %}
+              {% for item in value %}
+                  {{ item }}
+              {% endfor %}
+          {% endif %}
+      {% endfor %}
+
 
 :doc:`Functions related to raster plots <nest.raster_plot>`
 ------------------------------------------------------------
@@ -239,12 +259,14 @@ This interface is known as PyNEST. You can browse the various functions to use i
 
    .. autosummary::
 
-      extract_events
-      from_data
-      from_device
-      from_file
-      from_file_numpy
-      from_file_pandas
+      {% for key, value in api_dict.items() %}
+          {% if key == 'raster_plot' %}
+              {% for item in value %}
+                  {{ item }}
+              {% endfor %}
+          {% endif %}
+      {% endfor %}
+
 
 :doc:`Functions related to plotting networks  <nest.visualization>`
 -------------------------------------------------------------------
@@ -254,69 +276,29 @@ This interface is known as PyNEST. You can browse the various functions to use i
 
    .. autosummary::
 
-      plot_network
+      {% for key, value in api_dict.items() %}
+          {% if key == 'visualization' %}
+              {% for item in value %}
+                  {{ item }}
+              {% endfor %}
+          {% endif %}
+      {% endfor %}
+
 
 :doc:`Functions related to kernel attributes  <kernel_attributes>`
 ------------------------------------------------------------------
 
 .. autoclass:: nest.NestModule
 
-     .. autosummary::
+   .. autosummary::
 
-        adaptive_spike_buffers
-        adaptive_target_buffers
-        biological_time
-        buffer_size_spike_data
-        buffer_size_target_data
-        connection_rules
-        data_path
-        data_prefix
-        dict_miss_is_error
-        growth_curves
-        growth_factor_buffer_spike_data
-        growth_factor_buffer_target_data
-        keep_source_table
-        kernel_status
-        local_num_threads
-        local_spike_counter
-        max_buffer_size_spike_data
-        max_buffer_size_target_data
-        max_delay
-        min_delay
-        max_num_syn_models
-        min_update_time
-        ms_per_tic
-        network_size
-        node_models
-        num_connections
-        num_processes
-        off_grid_spiking
-        print_time
-        recv_buffer_size_secondary_events
-        recording_backends
-        resolution
-        rng_seed
-        rng_type
-        rng_types
-        send_buffer_size_secondary_events
-        sort_connections_by_source
-        stimulation_backends
-        structural_plasticity_synapses
-        structural_plasticity_update_interval
-        synapse_models
-        T_max
-        T_min
-        tics_per_ms
-        tics_per_step
-        to_do
-        total_num_virtual_procs
-        update_time_limit
-        use_compressed_spikes
-        use_wfr
-        wfr_comm_interval
-        wfr_interpolation_order
-        wfr_max_iterations
-        wfr_tol
+      {% for key, value in api_dict.items() %}
+          {% if key == 'nestModule' %}
+              {% for item in value | sort %}
+                  {{ item }}
+              {% endfor %}
+          {% endif %}
+      {% endfor %}
 
 
 :doc:`Functions related to help and info  <nest.lib.hl_api_helper>`
@@ -327,28 +309,14 @@ This interface is known as PyNEST. You can browse the various functions to use i
 
    .. autosummary::
 
-      broadcast
-      deprecated
-      get_parameters
-      get_parameters_hierarchical_addressing
-      get_unistring_type
-      get_wrapped_text
-      is_coercible_to_sli_array
-      is_iterable
-      is_literal
-      is_sequence_of_connections
-      is_sequence_of_node_ids
-      is_string
-      load_help
-      model_deprecation_warning
-      restructure_data
-      show_deprecation_warning
-      show_help_with_pager
+      {% for key, value in api_dict.items() %}
+          {% if key == 'hl_api_helper' %}
+              {% for item in value %}
+                  {{ item }}
+              {% endfor %}
+          {% endif %}
+      {% endfor %}
 
-
-   .. autosummary::
-
-      SuppressedDeprecationWarning
 
 .. automodule:: nest.lib.hl_api_info
 

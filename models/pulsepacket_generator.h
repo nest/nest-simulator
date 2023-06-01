@@ -49,10 +49,9 @@ Description
 +++++++++++
 
 The ``pulsepacket_generator`` produces a spike train contains Gaussian pulse
-packets centered about given  times.  A Gaussian pulse packet is
-a given number of spikes with normal distributed random displacements
-from the center time of the pulse.
-It resembles the output of synfire groups of neurons.
+packets centered about given  times.  A Gaussian pulse packet is a given
+number of spikes with normal distributed random displacements from the center
+time of the pulse. It resembles the output of synfire groups of neurons.
 
 - All targets receive identical spike trains.
 - New pulse packets are generated when activity or ``sdev`` are changed.
@@ -64,13 +63,13 @@ It resembles the output of synfire groups of neurons.
 .. include:: ../models/stimulation_device.rst
 
 pulse_times
-    Times of the centers of pulses in ms.
+    List of times of the centers of pulses in ms.
 
 activity
-    Number of spikes per pulse (default : ``0``).
+    Number of spikes per pulse. Default: ``0``.
 
 sdev
-    Standard deviation of spike times in each pulse in ms (default : ``0.0``).
+    Standard deviation of spike times in each pulse in ms. Default: ``0.0``.
 
 Setting parameters from a stimulation backend
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

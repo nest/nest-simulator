@@ -28,9 +28,9 @@ from sphinx.util.docutils import SphinxDirective
 
 def find_all_variables(file_path):
     """
-    This function gets the names of all functions listed in __all__
+    This function gets the names of all functions listed in ``__all__``
     in each of the PyNEST API files, along with the Kernel Attributes
-    found in __init__.py of pynest/nest/.
+    found in ``__init__.py`` of ``pynest/nest/``.
     """
     all_variables = None
 
@@ -73,12 +73,12 @@ def process_directory(directory):
         for file in files:
             if file.endswith('.py'):
                 file_path = os.path.join(root, file)
-                # there are two hl_api_spatial files (one in 'lib', the other in
-                # 'spatial' in PyNEST, so we need to distinguish them from each other
+                # There are two hl_api_spatial files (one in ``lib``, the other in
+                # ``spatial``) in PyNEST, so we need to distinguish them from each other
                 if 'lib/hl_api_spatial' in file_path:
                     file = 'lib.hl_api_spatial.py'
-                # We are interested in the nest Module kernel attributes
-                # so we rename the key to nestModule so it's clearer
+                # We want the nestModule kernel attributes, which are in ``__init__``
+                # Rename the key to nestModule
                 if 'pynest/nest/__init__' in file_path:
                     file = 'nestModule.py'
                 filename = os.path.splitext(file)[0]
@@ -89,7 +89,7 @@ def process_directory(directory):
 
 def ExtractPyNESTAPIS():
 
-    directory = '../../pynest/nest/'  # Provide the directory to search Python files in
+    directory = '../../pynest/nest/'
     all_variables_dict = process_directory(directory)
 
     with open('api_function_list.json', 'w') as outfile:

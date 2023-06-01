@@ -92,7 +92,7 @@ network_params = {
     "N_in": 2000,  # number of inhibitory neurons
     "N_astro": 10000,  # number of astrocytes
     "p": 0.1,  # neuron-neuron connection probability.
-    "p_syn_astro": 1.0,  # synapse-astrocyte pairing probability
+    "p_syn_astro": 0.5,  # synapse-astrocyte pairing probability
     "max_astro_per_target": 10,  # max number of astrocytes per target neuron
     "astro_pool_by_index": False,  # Astrocyte pool selection by index
     "poisson_rate": 2000,  # rate of Poisson input
@@ -114,7 +114,7 @@ syn_params = {
 astrocyte_model = "astrocyte_lr_1994"
 astrocyte_params = {
     'IP3': 0.4,  # IP3 initial value in uM
-    'incr_IP3': 0.2,  # Step increase in IP3 concentration with each unit synaptic weight received by the astrocyte in uM
+    'incr_IP3': 0.5,  # Step increase in IP3 concentration with each unit synaptic weight received by the astrocyte in uM
     'tau_IP3': 2.0,  # Time constant of astrocytic IP3 degradation in ms
     }
 

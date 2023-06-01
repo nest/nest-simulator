@@ -455,6 +455,22 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
         throw GSLSolverFailure( get_name(), status );
       }
     }
+
+    // limit calcium concentration within boundaries
+    // first boundary: Ca_cyt*V_cyt no larger than Ca_tot*V_tot
+    // Ca_cyt (Ca here), V_cyt: calcium concentration and volumn of cytosol
+    // Ca_tot, V_tot: calcium concentraion and volumn in total (cell)
+    // ratio_ER_cyt_ is V_ER/V_cyt, and V_ER + V_cyt = V_tot
+    if ( S_.y_[ State_::Ca ] > P_.Ca_tot_ + P_.Ca_tot_*P_.ratio_ER_cyt_ )
+    {
+      S_.y_[ State_::Ca ] = P_.Ca_tot_ + P_.Ca_tot_*P_.ratio_ER_cyt_;
+    }
+    // second boundary: Ca_cyt no smaller than 0
+    else if ( S_.y_[ State_::Ca ] < 0.0 )
+    {
+      S_.y_[ State_::Ca ] = 0.0;
+    }
+
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );
 

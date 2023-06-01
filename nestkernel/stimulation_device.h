@@ -48,14 +48,15 @@ global offset that shifts the stimulation period. All three values are
 set as times in ms.
 
 - For spike-emitting devices, only spikes with times `t` that fulfill
-  `start` < `t` <= `stop` are emitted. Spikes that have timestamp of
-  `t` = `start` are not emitted.
+  :math:`\mathit{start} < t \leq \mathit{stop}` are emitted. Spikes
+  that have timestamp of :math:`t = \mathit{start}` are not emitted.
 
 - For current-emitting devices, the current is activated and
   deactivated such that the current first affects the target dynamics
-  during the update step (start, start+h], i.e., an effect can be
-  recorded at the earliest at time start+h. The last interval during
-  which the current affects the target's dynamics is (stop-h, stop].
+  during the update step :math:`(\mathit{start}, \mathit{start}+h]`,
+  that is, an effect can be recorded at the earliest at time
+  :math:`\mathit{start}+h`. The last interval during which the current
+  affects the target's dynamics is :math:`(\textit{stop}-h, \texit{stop}]`.
 
 The property ``stimulus_source`` defaults to an empty string. It can
 be set to the name of a stimulation backend, in which case it will
@@ -68,28 +69,28 @@ Parameters
 ++++++++++
 
 label
-    A string (default: `""`) specifying an arbitrary textual label for
+    A string (default: ``""``) specifying an arbitrary textual label for
     the device. Stimulation backends might use the label to generate
     device specific identifiers like filenames and such.
 
 origin
-    A positive floating point number (default : `0.0`) used as the
-    reference time in ms for `start` and `stop`.
+    A positive floating point number (default : ``0.0``) used as the
+    reference time in ms for ``start`` and ``stop``.
 
 start
-    A positive floating point number (default: `0.0`) specifying the
-    activation time in ms, relative to `origin`.
+    A positive floating point number (default: ``0.0``) specifying the
+    activation time in ms, relative to ``origin``.
 
 stimulus_source
-    A string (default: `""`) specifying the name of the stimulation
+    A string (default: ``""``) specifying the name of the stimulation
     backend from which to get the data for updating the stimulus
     parameters of the device. By default the device uses its
     internally stored parameters for updating the stimulus.
 
 stop
-    A floating point number (default: `infinity`) specifying the
-    deactivation time in ms, relative to `origin`. The value of `stop`
-    must be greater than or equal to `start`.
+    A floating point number (default: ``infinity``) specifying the
+    deactivation time in ms, relative to ``origin``. The value of ``stop``
+    must be greater than or equal to ``start``.
 
 EndUserDocs */
 

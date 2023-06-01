@@ -35,21 +35,6 @@ def reset():
     nest.ResetKernel()
 
 
-def build_network_with_spike_recorders(n):
-    """
-    Function for building `n` neuron network with `n` spike recorders.
-    """
-
-    parrots = nest.Create("parrot_neuron", n)
-    srecs = nest.Create("spike_recorder", n)
-    sspg = nest.Create("sinusoidal_poisson_generator")
-
-    nest.Connect(sspg, parrots)
-    nest.Connect(parrots, srecs, "one_to_one")
-
-    return srecs
-
-
 def test_individual_spike_trains_true_by_default():
     """
     Test that `individual_spike_trains` is true by default.

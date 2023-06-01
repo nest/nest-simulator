@@ -234,7 +234,7 @@ def add_button_to_examples(app, env, docnames):
     :margin: 2
     :text-align: center
     :link: https://lab.ebrains.eu/hub/user-redirect/\
-git-pull?repo=https%3A%2F%2Fgithub.com%2Fnest%2Fnest-simulator-examples\&urlpath=lab\
+git-pull?repo=https%3A%2F%2Fgithub.com%2Fnest%2Fnest-simulator-examples&urlpath=lab\
 %2Ftree%2Fnest-simulator-examples%2Fnotebooks%2Fnotebooks%2Ffilepath.ipynb&branch=main
     :link-alt: JupyterHub service
 

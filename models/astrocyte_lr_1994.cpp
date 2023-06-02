@@ -512,11 +512,9 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
     if ( P_.exponential_SIC_ == true )
     {
       sic_value = S_.y_[ State_::SIC ];
-      // std::cout << calc_thr << ',' << S_.y_[ State_::SIC ] << ',' << 0.1*P_.amplitude_SIC_ << std::endl;
       if ( calc_thr > 0.0 and S_.y_[ State_::SIC ] < std::exp(-1)*P_.amplitude_SIC_ )
       {
         S_.y_[ State_::SIC ] += P_.amplitude_SIC_;
-        std::cout << S_.y_[ State_::SIC ] << ',' << std::exp(-1)*P_.amplitude_SIC_ << std::endl;
       }
     }
     else

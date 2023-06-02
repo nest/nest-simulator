@@ -331,9 +331,16 @@ if test "${PYTHON}"; then
   tests_collect="$tests_collect py"
 fi
 for test_ext in ${tests_collect} ; do
-      for test_name in $(ls "${TEST_BASEDIR}/unittests/" | grep ".*\.${test_ext}\$") ; do
-          run_test "unittests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
-      done
+    for test_name in $(ls "${TEST_BASEDIR}/unittests/" | grep ".*\.${test_ext}\$") ; do
+        run_test "unittests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
+    done
+    for test_name in $(ls "${TEST_BASEDIR}/unittests/sli2py_ignore/" | grep ".*\.${test_ext}\$") ; do
+        run_test "unittests/sli2py_ignore/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
+    done
+done
+
+for test_ext in ${tests_collect} ; do
+      
 done
 
 junit_close

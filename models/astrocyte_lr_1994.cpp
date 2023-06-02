@@ -91,6 +91,10 @@ astrocyte_lr_1994_dynamics( double time, const double y[], double f[], void* pno
   const double I_channel = node.P_.ratio_ER_cyt_ * node.P_.rate_IP3R_ * std::pow(m_inf, 3) * std::pow(n_inf, 3) *
     std::pow(f_ip3r, 3) * (calc_ER - calc);
 
+  // if ( node.P_.exponential_SIC_ == true )?
+  const double& sic = y[ S::SIC ];
+  f[ S::SIC ] = -sic/node.P_.tau_SIC_;
+
   f[ S::IP3 ] = ( node.P_.IP3_0_ - ip3 ) / node.P_.tau_IP3_;
   f[ S::Ca ] = I_channel - I_pump + I_leak;
   f[ S::h_IP3R ] = alpha_f_ip3r * ( 1.0 - f_ip3r ) - beta_f_ip3r * f_ip3r;
@@ -121,6 +125,9 @@ nest::astrocyte_lr_1994::Parameters_::Parameters_()
   , tau_IP3_( 7142.0 )     // ms
   , rate_IP3R_( 0.006 )    // 1/ms
   , rate_SERCA_( 0.0009 )  // uM/ms
+  , exponential_SIC_( false )
+  , tau_SIC_( 1000.0 ) // ms
+  , amplitude_SIC_( 1.0 ) // pA
 {
 }
 
@@ -129,6 +136,7 @@ nest::astrocyte_lr_1994::State_::State_( const Parameters_& p )
   y_[ IP3 ] = p.IP3_0_; // uM
   y_[ Ca ] = 0.073;           // uM
   y_[ h_IP3R ] = 0.793;
+  y_[ SIC ] = 0.0; // pA
 }
 
 nest::astrocyte_lr_1994::State_::State_( const State_& s )
@@ -172,6 +180,9 @@ nest::astrocyte_lr_1994::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::rate_SERCA, rate_SERCA_ );
   def< double >( d, names::tau_IP3, tau_IP3_ );
   def< bool >( d, names::logarithmic_SIC, logarithmic_SIC_ );
+  def< bool >( d, names::exponential_SIC, exponential_SIC_ );
+  def< double >( d, names::tau_SIC, tau_SIC_ );
+  def< double >( d, names::amplitude_SIC, amplitude_SIC_ );
 }
 
 void
@@ -194,6 +205,9 @@ nest::astrocyte_lr_1994::Parameters_::set( const DictionaryDatum& d, Node* node 
   updateValueParam< double >( d, names::rate_SERCA, rate_SERCA_, node );
   updateValueParam< double >( d, names::tau_IP3, tau_IP3_, node );
   updateValueParam< bool >( d, names::logarithmic_SIC, logarithmic_SIC_, node );
+  updateValueParam< bool >( d, names::exponential_SIC, exponential_SIC_, node );
+  updateValueParam< double >( d, names::tau_SIC, tau_SIC_, node );
+  updateValueParam< double >( d, names::amplitude_SIC, amplitude_SIC_, node );
 
   if ( Ca_tot_ <= 0 )
   {
@@ -259,6 +273,14 @@ nest::astrocyte_lr_1994::Parameters_::set( const DictionaryDatum& d, Node* node 
   {
     throw BadProperty( "Time constant of astrocytic IP3 degradation must be positive." );
   }
+  if ( tau_SIC_ <= 0 )
+  {
+    throw BadProperty( "Time constant of SIC must be positive." );
+  }
+  if ( amplitude_SIC_ < 0 )
+  {
+    throw BadProperty( "Amplitude of SIC must be non-negative." );
+  }
 }
 
 void
@@ -267,6 +289,7 @@ nest::astrocyte_lr_1994::State_::get( DictionaryDatum& d ) const
   def< double >( d, names::IP3, y_[ IP3 ] );
   def< double >( d, names::Ca, y_[ Ca ] );
   def< double >( d, names::h_IP3R, y_[ h_IP3R ] );
+  def< double >( d, names::SIC, y_[ SIC ] );
 }
 
 void
@@ -275,6 +298,7 @@ nest::astrocyte_lr_1994::State_::set( const DictionaryDatum& d, const Parameters
   updateValueParam< double >( d, names::IP3, y_[ IP3 ], node );
   updateValueParam< double >( d, names::Ca, y_[ Ca ], node );
   updateValueParam< double >( d, names::h_IP3R, y_[ h_IP3R ], node );
+  updateValueParam< double >( d, names::SIC, y_[ SIC ], node );
 
   if ( y_[ IP3 ] <  0 )
   {
@@ -287,6 +311,10 @@ nest::astrocyte_lr_1994::State_::set( const DictionaryDatum& d, const Parameters
   if ( y_[ h_IP3R ] < 0 || y_[ h_IP3R ] > 1 )
   {
      throw BadProperty( "The fraction of active IP3 receptors on the astrocytic ER must be between 0 and 1." );
+  }
+  if ( y_[ SIC ] < 0 )
+  {
+    throw BadProperty( "SIC must be non-negative." );
   }
 }
 
@@ -481,21 +509,34 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
     // 1000.0: change unit from uM to nM
     double calc_thr = S_.y_[ State_::Ca ] * 1000.0 - P_.SIC_th_;
     double sic_value = 0.0;
-    if ( P_.logarithmic_SIC_ == true )
+    if ( P_.exponential_SIC_ == true )
     {
-      if ( calc_thr > 1.0 )
+      sic_value = S_.y_[ State_::SIC ];
+      // std::cout << calc_thr << ',' << S_.y_[ State_::SIC ] << ',' << 0.1*P_.amplitude_SIC_ << std::endl;
+      if ( calc_thr > 0.0 and S_.y_[ State_::SIC ] < std::exp(-1)*P_.amplitude_SIC_ )
       {
-        // multiplied by std::pow(25, 2)*3.14*std::pow(10, -2) in previous
-        // version to convert from uA/cm2 to pA; now users can set the scale of
-        // SIC by SIC_scale or SIC connection weight
-        sic_value = std::log( calc_thr )*P_.SIC_scale_;
+        S_.y_[ State_::SIC ] += P_.amplitude_SIC_;
+        std::cout << S_.y_[ State_::SIC ] << ',' << std::exp(-1)*P_.amplitude_SIC_ << std::endl;
       }
     }
     else
     {
-      if ( calc_thr > 0.0 )
+      if ( P_.logarithmic_SIC_ == true )
       {
-        sic_value = calc_thr*P_.SIC_scale_/1000.0;
+        if ( calc_thr > 1.0 )
+        {
+          // multiplied by std::pow(25, 2)*3.14*std::pow(10, -2) in previous
+          // version to convert from uA/cm2 to pA; now users can set the scale of
+          // SIC by SIC_scale or SIC connection weight
+          sic_value = std::log( calc_thr )*P_.SIC_scale_;
+        }
+      }
+      else
+      {
+        if ( calc_thr > 0.0 )
+        {
+          sic_value = calc_thr*P_.SIC_scale_/1000.0;
+        }
       }
     }
     B_.sic_values[ lag ] = sic_value;

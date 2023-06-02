@@ -248,6 +248,9 @@ private:
     double tau_IP3_;      //!< Time constant of astrocytic IP3 degradation in ms
     double rate_IP3R_;    //!< Maximum rate of calcium release via astrocytic IP3R in 1/ms
     double rate_SERCA_;   //!< Maximum rate of calcium uptake by astrocytic IP3R in uM/ms
+    bool exponential_SIC_;
+    double tau_SIC_;
+    double amplitude_SIC_;
 
     Parameters_(); //!< Sets default parameter values
 
@@ -276,6 +279,7 @@ public:
       IP3 = 0,
       Ca,     // 1
       h_IP3R, // 2
+      SIC,
       STATE_VEC_SIZE
     };
 

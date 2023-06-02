@@ -22,15 +22,70 @@
 """
 Regression test for Issue #410 (GitHub).
 
-This test ensures that models with precise timing handle input spikes
-arriving at exactly the same times correctly.
+This test ensures thread safety of volume transmitter.
 """
 
 import pytest
 
 import nest
 
+pytestmark = [pytest.mark.skipif_missing_gsl, pytest.mark.skipif_missing_threads]
 
-@pytest.fixture(autouse=True)
-def reset():
+
+def simulator(num_threads):
+    """
+    Simulate the system with provided number of threads and return weight.
+    """
+
     nest.ResetKernel()
+
+    nest.local_num_threads = num_threads
+
+    stim1 = nest.Create("dc_generator", {"amplitude": 1500.0})
+    stim2 = nest.Create("dc_generator", {"amplitude": 1000.0})
+    nrn1 = nest.Create("iaf_psc_alpha", {"C_m": 100.0, "tau_m": 10.0})
+    nrn2 = nest.Create(
+        "iaf_psc_alpha", {"C_m": 100.0, "tau_m": 10.0, "tau_minus": 10.0}
+    )
+    dopa = nest.Create(
+        "iaf_cond_alpha", 100, {"V_reset": -70.0, "C_m": 80.0, "V_th": -60.0}
+    )
+    vt = nest.Create("volume_transmitter")
+
+    nest.CopyModel(
+        "stdp_dopamine_synapse",
+        "syn1",
+        {
+            "Wmax": 1000.0,
+            "Wmin": 0.0,
+            "tau_plus": 10.0,
+            "A_minus": 0.05,
+            "A_plus": 0.05,
+            "b": 45.45,
+            "tau_c": 1.0,
+            "tau_n": 100.0,
+            "vt": vt.get("global_id"),
+        },
+    )
+
+    return None
+
+
+@pytest.fixture(scope="module")
+def reference_weight():
+    """
+    Fixture that simulates reference.
+    """
+
+    ref_weight = simulator(1)
+    return ref_weight
+
+
+@pytest.mark.parametrize("num_threads", [2, 4, 8, 16, 32])
+def test_(reference_weight, num_threads):
+    """
+    Test
+    """
+
+    weight = simulator(num_threads)
+    assert weight == reference_weight

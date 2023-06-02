@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-This test ensures that calling SetDefaults with a wrong datatype sets it correctly nonetheless.
+This test ensures that calling various setters with incorrect properties correctly raises an error.
 """
 
 import nest
@@ -28,13 +28,19 @@ import pytest
 
 
 @pytest.mark.skipif_missing_threads
-@pytest.mark.parametrize('num_threads', [1, 4])
-@pytest.mark.parametrize('data', [('stdp_synapse', 'tau_plus'), ('iaf_psc_alpha', 'C_m')])
-def test_incorrect_integer_data_type_works_with_defaults(num_threads, data):
+def test_setters_raise_error_on_bad_properties():
     nest.ResetKernel()
-    nest.local_num_threads = num_threads
-    model, option = data
+    nest.local_num_threads = 4
 
-    nest.SetDefaults(model,
-                     {option: 10})
-    assert nest.GetDefaults(model)[option] == 10
+    # test defaults
+    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+        nest.SetDefaults('iaf_psc_alpha', {'tau_m': -10})
+
+    # test neuron
+    n = nest.Create('iaf_psc_alpha')
+    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+        n.set({'tau_m': -10})
+
+    # test synapse
+    with pytest.raises(nest.kernel.NESTErrors.BadDelay):
+        nest.Connect(n, n, syn_spec={'delay': -10})

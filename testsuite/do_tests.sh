@@ -339,10 +339,6 @@ for test_ext in ${tests_collect} ; do
     done
 done
 
-for test_ext in ${tests_collect} ; do
-      
-done
-
 junit_close
 
 echo

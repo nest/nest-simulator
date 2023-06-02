@@ -58,23 +58,23 @@ def test_spike_generator_precise_time_false(prepare_kernel):
                           ([1.0, 1.9999, 3.0001], False, [10, 20, 30]),
                           ([1.0, 1.05, 3.0001], True, [10, 11, 30])])
 def test_spike_generator(prepare_kernel, spike_times, allow_offgrid_times, expected_spike_times):
-    sg = nest.Create("spike_generator")
-    sg_params = {"precise_times": False,
-                 "spike_times": spike_times,
-                 "allow_offgrid_times": allow_offgrid_times,
-                 "origin": 0.,
-                 "start": 0.,
-                 "stop": 6.0}
-    sg.set(sg_params)
+    sg_params = {
+        "precise_times": False,
+        "spike_times": spike_times,
+        "allow_offgrid_times": allow_offgrid_times,
+        "origin": 0.0,
+        "start": 0.0,
+        "stop": 6.0,
+    }
 
-    sr = nest.Create("spike_recorder")
-    sr.set({"time_in_steps": True})
+    sg = nest.Create("spike_generator", sg_params)
+    sr = nest.Create("spike_recorder", {"time_in_steps": True})
     nest.Connect(sg, sr, syn_spec={"delay": 1.0, "weight": 1.0})
 
-    nest.Simulate(10.)
+    nest.Simulate(10.0)
 
-    spike_times = sr.get("events")["times"]
-    nptest.assert_array_equal(spike_times, expected_spike_times)
+    actual_spike_times = sr.events["times"]
+    nptest.assert_array_equal(actual_spike_times, expected_spike_times)
 
 
 def test_spike_generator_spike_not_res_multiple(prepare_kernel):
@@ -88,27 +88,27 @@ def test_spike_generator_spike_not_res_multiple(prepare_kernel):
 
 
 def test_spike_generator_precise_spikes(prepare_kernel):
-    sg = nest.Create("spike_generator")
-    sg_params = {"precise_times": True,
-                 "spike_times": [1.0, 1.05, 3.0001],
-                 "origin": 0.,
-                 "start": 0.,
-                 "stop": 6.0}
-    sg.set(sg_params)
+    sg_params = {
+        "precise_times": True,
+        "spike_times": [1.0, 1.05, 3.0001],
+        "origin": 0.0,
+        "start": 0.0,
+        "stop": 6.0,
+    }
 
-    sr = nest.Create("spike_recorder")
-    sr.set({"time_in_steps": True})
+    sg = nest.Create("spike_generator", sg_params)
+    sr = nest.Create("spike_recorder", {"time_in_steps": True})
     nest.Connect(sg, sr, syn_spec={"delay": 1.0, "weight": 1.0})
 
-    nest.Simulate(10.)
+    nest.Simulate(10.0)
 
-    spike_times = sr.get("events")["times"]
     expected_spike_times = [10, 11, 31]
-    nptest.assert_array_equal(spike_times, expected_spike_times)
+    actual_spike_times = sr.events["times"]
+    nptest.assert_array_equal(actual_spike_times, expected_spike_times)
 
-    offsets = sr.get("events")["offsets"]
     expected_offsets = [0, 0.05, 0.0999]
-    assert offsets == pytest.approx(expected_offsets)
+    actual_offsets = sr.events["offsets"]
+    nptest.assert_almost_equal(actual_offsets, expected_offsets)
 
 
 def test_spike_generator_spike_time_at_simulation_end_time(prepare_kernel):
@@ -116,66 +116,56 @@ def test_spike_generator_spike_time_at_simulation_end_time(prepare_kernel):
     sr = nest.Create("spike_recorder")
     nest.Connect(sg, sr)
 
-    nest.Simulate(10.)
-    sg_params = {"spike_times": [10.0001],
-                 "origin": 0.,
-                 "start": 0.,
-                 "stop": 16.}
+    nest.Simulate(10.0)
+
+    sg_params = {"spike_times": [10.0001], "origin": 0.0, "start": 0.0, "stop": 16.0}
     sg.set(sg_params)
 
-    nest.Simulate(10.)
-    n_events = sr.get("n_events")
-    assert n_events == 0
+    nest.Simulate(10.0)
+
+    assert sr.n_events == 0
 
 
 def test_spike_generator_precise_time_future_spike(prepare_kernel):
-    sg = nest.Create("spike_generator")
-    sg_params = {"precise_times": True,
-                 "origin": 0.,
-                 "start": 0.}
-    sg.set(sg_params)
+    sg_params = {"precise_times": True, "origin": 0.0, "start": 0.0}
+    sg = nest.Create("spike_generator", sg_params)
     sr = nest.Create("spike_recorder", {"time_in_steps": True})
     nest.Connect(sg, sr)
 
-    nest.Simulate(10.)
+    nest.Simulate(10.0)
 
     sg.set({"spike_times": [10.0001]})
 
-    nest.Simulate(10.)
-
-    spike_times = sr.get("events")["times"]
-    offsets = sr.get("events")["offsets"]
+    nest.Simulate(10.0)
 
     expected_spike_times = [101]
-    nptest.assert_array_equal(spike_times, expected_spike_times)
+    actual_spike_times = sr.events["times"]
+    nptest.assert_array_equal(actual_spike_times, expected_spike_times)
 
     expected_offsets = [0.0999]
-    assert offsets == pytest.approx(expected_offsets)
+    actual_offsets = sr.events["offsets"]
+    nptest.assert_almost_equal(actual_offsets, expected_offsets)
 
 
 def test_spike_generator_with_shift_now_spikes(prepare_kernel):
-    sg = nest.Create("spike_generator")
-    sg_params = {"shift_now_spikes": True,
-                 "origin": 0.,
-                 "start": 0.}
-    sg.set(sg_params)
+    sg_params = {"shift_now_spikes": True, "origin": 0.0, "start": 0.0}
+    sg = nest.Create("spike_generator", sg_params)
     sr = nest.Create("spike_recorder", {"time_in_steps": True})
     nest.Connect(sg, sr, syn_spec={"weight": 1.0, "delay": 1.0})
 
-    nest.Simulate(10.)
+    nest.Simulate(10.0)
 
     sg.set({"spike_times": [10.0001, 11.0001]})
 
-    nest.Simulate(10.)
-
-    spike_times = sr.get("events")["times"]
-    offsets = sr.get("events")["offsets"]
+    nest.Simulate(10.0)
 
     expected_spike_times = [101, 110]
-    nptest.assert_array_equal(spike_times, expected_spike_times)
+    actual_spike_times = sr.events["times"]
+    nptest.assert_array_equal(actual_spike_times, expected_spike_times)
 
     expected_offsets = [0, 0]
-    assert offsets == pytest.approx(expected_offsets)
+    actual_offsets = sr.events["offsets"]
+    nptest.assert_almost_equal(actual_offsets, expected_offsets)
 
 
 def test_spike_generator_precise_times_and_allow_offgrid_times(prepare_kernel):
@@ -205,10 +195,8 @@ def test_spike_generator_precise_times_and_shift_now_spikes(prepare_kernel):
 def test_spike_generator_set_and_get(prepare_kernel, sg_params, expected_spike_times):
     sg = nest.Create("spike_generator")
     sg.set(sg_params)
-
-    # Get spike times
-    spike_times = sg.get("spike_times")
-    assert spike_times == pytest.approx(expected_spike_times)
+    actual_spike_times = sg.get("spike_times")
+    nptest.assert_almost_equal(actual_spike_times, expected_spike_times, decimal=5)
 
 
 @pytest.mark.parametrize("h", [0.1, 0.2, 0.5, 1.0,])
@@ -216,18 +204,19 @@ def test_spike_generator_set_and_get(prepare_kernel, sg_params, expected_spike_t
 def test_spike_generator_precise_times_different_resolution(h, expected_spike_times):
     nest.ResetKernel()
     nest.resolution = h
-    sg = nest.Create("spike_generator")
-    sg_params = {"precise_times": True,
-                 "spike_times": [0.1, 5.0, 5.3, 5.300001, 5.399999, 5.9, 6.0, 9.3],
-                 "origin": 0.,
-                 "start": 5.,
-                 "stop": 6.}
-    sg.set(sg_params)
 
+    sg_params = {
+        "precise_times": True,
+        "spike_times": [0.1, 5.0, 5.3, 5.300001, 5.399999, 5.9, 6.0, 9.3],
+        "origin": 0.0,
+        "start": 5.0,
+        "stop": 6.0,
+    }
+    sg = nest.Create("spike_generator", sg_params)
     sr = nest.Create("spike_recorder")
     nest.Connect(sg, sr, syn_spec={"delay": 1.0, "weight": 1.0})
 
     nest.Simulate(7.0)
 
-    spike_times = sr.get("events")["times"]
-    assert spike_times == pytest.approx(expected_spike_times)
+    actual_spike_times = sr.events["times"]
+    nptest.assert_almost_equal(actual_spike_times, expected_spike_times)

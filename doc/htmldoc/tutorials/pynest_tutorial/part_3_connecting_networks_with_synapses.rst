@@ -33,7 +33,7 @@ Parametrizing synapse models
 -----------------------------
 
 NEST provides a variety of different synapse models. You can see the
-available models by using the command ``Models(synapses)``, which picks
+available models by using the command ``synapse_models``, which picks
 only the synapse models out of the list of all available models.
 
 Synapse models can be parameterised analogously to neuron models. You

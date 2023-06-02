@@ -355,6 +355,9 @@ for test_ext in ${tests_collect} ; do
     for test_name in $(ls "${TEST_BASEDIR}/regressiontests/" | grep ".*\.${test_ext}$") ; do
         run_test "regressiontests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
     done
+    for test_name in $(ls "${TEST_BASEDIR}/regressiontests/sli2py_ignore/" | grep ".*\.${test_ext}$") ; do
+        run_test "regressiontests/sli2py_ignore/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
+    done
 done
 
 junit_close

@@ -21,8 +21,6 @@
 
 """
 Regression test for Issue #410 (GitHub).
-
-This test ensures thread safety of volume transmitter.
 """
 
 import pytest
@@ -35,6 +33,8 @@ pytestmark = [pytest.mark.skipif_missing_gsl, pytest.mark.skipif_missing_threads
 def simulator(num_threads):
     """
     Simulate the system with provided number of threads and return weight.
+
+    Based on simulation script provided in Issue #410.
     """
 
     nest.ResetKernel()
@@ -68,7 +68,19 @@ def simulator(num_threads):
         },
     )
 
-    return None
+    nest.Connect(stim1, nrn1, syn_spec={"weight": 10.0, "delay": 1.0})
+    nest.Connect(stim2, dopa, syn_spec={"weight": 10.0, "delay": 1.0})
+    nest.Connect(
+        nrn1, nrn2, syn_spec={"synapse_model": "syn1", "weight": 500.0, "delay": 1.0}
+    )
+    nest.Connect(dopa, vt)
+
+    nest.Simulate(2000.0)
+
+    conns = nest.GetConnections(source=nrn1, target=nrn2)
+    weight = conns.get("weight")
+
+    return weight
 
 
 @pytest.fixture(scope="module")
@@ -82,9 +94,11 @@ def reference_weight():
 
 
 @pytest.mark.parametrize("num_threads", [2, 4, 8, 16, 32])
-def test_(reference_weight, num_threads):
+def test_multithreaded_volume_transmitter_and_stdp_dopamine_synapse(
+    reference_weight, num_threads
+):
     """
-    Test
+    Test that ensures thread safety of volume transmitter.
     """
 
     weight = simulator(num_threads)

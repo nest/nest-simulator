@@ -52,11 +52,11 @@ def from_file(fname, title=None, grayscale=False):
 
     if isinstance(fname, (list, tuple)):
         data = None
-        for f in fname:
+        for file in fname:
             if data is None:
-                data = numpy.loadtxt(f)
+                data = numpy.loadtxt(file)
             else:
-                data = numpy.concatenate((data, numpy.loadtxt(f)))
+                data = numpy.concatenate((data, numpy.loadtxt(file)))
     else:
         data = numpy.loadtxt(fname)
 
@@ -77,15 +77,15 @@ def from_file(fname, title=None, grayscale=False):
 
         plotid = []
         data_dict = {}
-        for d in data:
-            if not d[0] in data_dict:
-                data_dict[d[0]] = [d[1]]
+        for dat in data:
+            if not dat[0] in data_dict:
+                data_dict[dat[0]] = [dat[1]]
             else:
-                data_dict[d[0]].append(d[1])
+                data_dict[dat[0]].append(dat[1])
 
-        for d in data_dict:
+        for dat in data_dict:
             plotid.append(
-                plt.plot(data_dict[d], line_style, label="Neuron %i" % d)
+                plt.plot(data_dict[dat], line_style, label="Neuron %i" % dat)
             )
 
         plt.xlabel("Time (steps of length interval)")

@@ -51,6 +51,7 @@
 #include "mpi_manager_impl.h"
 #include "nest_names.h"
 #include "node.h"
+#include "sonata_connector.h"
 #include "target_table_devices_impl.h"
 #include "vp_manager_impl.h"
 
@@ -59,6 +60,7 @@
 #include "sliexceptions.h"
 #include "token.h"
 #include "tokenutils.h"
+
 
 nest::ConnectionManager::ConnectionManager()
   : connruledict_( new Dictionary() )
@@ -95,13 +97,16 @@ nest::ConnectionManager::initialize()
   connections_.resize( num_threads );
   secondary_recv_buffer_pos_.resize( num_threads );
   sort_connections_by_source_ = true;
+  keep_source_table_ = true;
   connections_have_changed_ = false;
-
-  compressed_spike_data_.resize( 0 );
-  check_primary_connections_.initialize( num_threads, false );
-  check_secondary_connections_.initialize( num_threads, false );
-
   get_connections_has_been_called_ = false;
+  use_compressed_spikes_ = true;
+  compressed_spike_data_.resize( 0 );
+  has_primary_connections_ = false;
+  check_primary_connections_.initialize( num_threads, false );
+  secondary_connections_exist_ = false;
+  check_secondary_connections_.initialize( num_threads, false );
+  stdp_eps_ = 1.0e-6;
 
 #pragma omp parallel
   {
@@ -740,6 +745,21 @@ nest::ConnectionManager::connect_arrays( long* sources,
 }
 
 void
+nest::ConnectionManager::connect_sonata( const DictionaryDatum& graph_specs, const long hyberslab_size )
+{
+#ifdef HAVE_HDF5
+  SonataConnector sonata_connector( graph_specs, hyberslab_size );
+
+  // Set flag before calling sonata_connector.connect() in case exception is thrown after some connections have been
+  // created.
+  set_connections_have_changed();
+  sonata_connector.connect();
+#else
+  throw KernelException( "Cannot use connect_sonata because NEST was compiled without HDF5 support" );
+#endif
+}
+
+void
 nest::ConnectionManager::connect_( Node& source,
   Node& target,
   const index s_node_id,
@@ -976,6 +996,15 @@ nest::ConnectionManager::get_connections( const DictionaryDatum& params )
   // as this may involve sorting connections by source node IDs.
   if ( connections_have_changed() )
   {
+    // We need to update min_delay because it is used by check_wfr_use() below
+    // to set secondary event data size.
+    update_delay_extrema_();
+
+    // Check whether waveform relaxation is used on any MPI process;
+    // needs to be called before update_connection_infrastructure since
+    // it resizes coefficient arrays for secondary events
+    kernel().node_manager.check_wfr_use();
+
 #pragma omp parallel
     {
       const thread tid = kernel().vp_manager.get_thread_id();

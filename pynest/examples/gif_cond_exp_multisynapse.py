@@ -25,8 +25,9 @@ Example network using generalized IAF neuron with postsynaptic conductances
 
 """
 
-import nest
 import numpy as np
+
+import nest
 
 neuron = nest.Create('gif_cond_exp_multisynapse',
                      params={'E_rev': [0.0, -85.0],

@@ -19,32 +19,41 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+Test models with calcium concentration.
+This set of tests verify the behavior of the calcium concentration in models
+that inherit from the strutural plasticity node class in the kernel.
+"""
+
 import nest
 import numpy as np
 import pytest
 
-from conftest import get_node_models_by_attribute
+
+@pytest.fixture(autouse=True)
+def reset_kernel(self):
+    nest.ResetKernel()
 
 
-class TestCalcium:
-    r"""
-    Check that we can set and get the calcium concentration from all nodes that inherit from the structural plasticity
-    node class in C++.
+# Obtain all models with calcium concentration
+models = [model for model in nest.node_models if "Ca" in nest.GetDefaults(model)]
+
+
+def test_at_least_one_model():
+    """
+    Verify that that at least one model contains calcium concentration.
+    """
+    assert len(models) > 0
+
+
+@pytest.mark.parametrize("model", models)
+def test_calcium_set_get(model):
+    """
+    Verify setters and getters for models with calcium concentration.
     """
 
-    @pytest.fixture(autouse=True)
-    def prepare_test(self):
-        nest.ResetKernel()
-
-    def _test_calcium_single_model(self, model):
-        ca_default = nest.GetDefaults(model, "Ca")
-        n = nest.Create(model, params={'Ca': ca_default + 42.})
-        np.testing.assert_allclose(n.Ca, ca_default + 42.)
-        n.Ca = ca_default + 99999.
-        np.testing.assert_allclose(n.Ca, ca_default + 99999.)
-
-    def test_calcium(self):
-        models = get_node_models_by_attribute("Ca")
-        assert len(models) > 0
-        for model in models:
-            self._test_calcium_single_model(model)
+    ca_default = nest.GetDefaults(model, "Ca")
+    n = nest.Create(model, params={"Ca": ca_default + 42.0})
+    np.testing.assert_allclose(n.Ca, ca_default + 42.)
+    n.Ca = n.Ca + 99999.0
+    np.testing.assert_allclose(n.Ca, ca_default + 42. + 99999.)

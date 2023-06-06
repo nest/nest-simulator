@@ -46,7 +46,10 @@ sim_dict = {
     # Seed for NEST
     'rng_seed': 55,
     # number of threads per MPI process
-    'local_num_threads': 1,
+    # Note that the microcircuit will not run correctly if
+    # there is only 1 virtual process (i.e., a thread in an MPI process)
+    # If you have more than 1 MPI process then you can set this value to 1.
+    'local_num_threads': 4,
     # recording interval of the membrane potential (in ms)
     'rec_V_int': 1.0,
     # if True, data will be overwritten,

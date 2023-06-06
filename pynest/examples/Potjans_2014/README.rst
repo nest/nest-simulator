@@ -54,6 +54,15 @@ The output will be saved in the ``data`` directory.
 
 The code can be `parallelized <https://nest-simulator.readthedocs.io/en/latest/guides/parallel_computing.html>`_ using OpenMP and MPI, if NEST has been built with these features.
 The number of threads (per MPI process) can be chosen by adjusting ``local_num_threads`` in ``sim_params.py``.
+
+
+.. important::
+
+   The microcircuit model does not run correctly on a single virtual process. This means
+   The number of threads must be greater than 1. You can either increase
+   the number of MPI processes or set ``local_num_threads`` to a value > 1.
+
+
 The command for running the script with two MPI processes is:
 
 .. code-block:: bash

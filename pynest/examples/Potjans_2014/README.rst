@@ -59,7 +59,7 @@ The number of threads (per MPI process) can be chosen by adjusting ``local_num_t
 .. important::
 
    The microcircuit model does not run correctly on a single virtual process. This means
-   The number of threads must be greater than 1. You can either increase
+   the number of threads must be greater than 1. You can either increase
    the number of MPI processes or set ``local_num_threads`` to a value > 1.
 
 

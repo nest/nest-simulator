@@ -221,7 +221,7 @@ class SonataNetwork:
             if model_type in ["point_neuron", "point_process"]:
                 self._create_neurons(nodes_conf, nodes_df, csv_fn)
             elif model_type == "virtual":
-                self._create_spike_generators(nodes_conf)
+                self._create_spike_train_injectors(nodes_conf)
             else:
                 msg = (
                     f"Model type '{model_type}' in {csv_fn} is not "
@@ -298,8 +298,8 @@ class SonataNetwork:
 
                 self._node_collections[pop_name] = nest_nodes
 
-    def _create_spike_generators(self, nodes_conf):
-        """Create spike generator nodes.
+    def _create_spike_train_injectors(self, nodes_conf):
+        """Create spike train injector nodes.
 
         Parameters
         ----------

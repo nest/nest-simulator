@@ -33,10 +33,10 @@ Overview of the SONATA format
 
 The SONATA (Scalable Open Network Architecture TemplAte) format provides a framework for storage and exchange of 
 network models and simulation configurations. A network is considered as a graph made of nodes and edges. Nodes of a 
-network can be arranged into multiple populations. There are two categories of nodes: explicitly simulated nodes 
-(neurons) and virtual nodes (devices) that only provide inputs to the simulated system. Nodes within and between 
-populations are connected through edges (synapses). The SONATA format explicitly tabulates information about nodes 
-and edges in the table-based file formats HDF5 and CSV. 
+network can be arranged into multiple populations. There are two categories of nodes: explicitly simulated nodes  
+and virtual nodes that only provide inputs to the simulated system. Nodes within and between populations are connected 
+through edges (synapses). The SONATA format explicitly tabulates information about nodes and edges in the table-based 
+file formats HDF5 and CSV. 
 
 The cell and synapse properties of the nodes and edges, respectively, can be described either individually or for 
 whole subsets. Nodes that share a global set of properties constitute a node type. Similarly, a subset of edges 
@@ -109,8 +109,8 @@ NEST supports the following SONATA node ``model_type``\s:
 * ``virtual`` 
 
 Both ``point_neuron`` and ``point_process`` mean that the node is a neuron model (explicitly simulated; the two terms can be used interchangeably) whereas ``virtual`` 
-means that the node only provide inputs to the simulated system. ``virtual`` nodes are modeled as ``spike_generator``\s 
-(see :doc:`../models/spike_generator`\). NEST requires that only one ``model_type`` is present per node type CSV file. 
+means that the node only provide inputs to the simulated system. ``virtual`` nodes are modeled as ``spike_train_injector``\s 
+(see :doc:`../models/spike_train_injector`\). NEST requires that only one ``model_type`` is present per node type CSV file. 
 
 The required headers for node type CSV files that describe neuron models are: 
 
@@ -153,8 +153,8 @@ Below is an example of a node type CSV file with the required headers for neuron
 | 2            | point_process | nest:iaf_psc_alpha | params_2.json   |
 +--------------+---------------+--------------------+-----------------+
 
-The only required CSV header for ``virtual`` nodes is ``model_type``. The ``spike_generator``\s spike-time arrays are expected
-to be provided in HDF5 datasets with the configuration details specified in the JSON configuration file.  
+The only required CSV header for ``virtual`` nodes is ``model_type``. The ``spike_train_injector``\s spike-time arrays 
+are expected to be provided in HDF5 datasets with the configuration details specified in the JSON configuration file.  
 
 
 .. _sec:sonata_edges:

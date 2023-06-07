@@ -102,7 +102,6 @@ import nest
 M_INFO = 10
 M_ERROR = 30
 
-
 ###############################################################################
 # Parameter section
 # Define all relevant parameters: changes should be made here
@@ -337,7 +336,7 @@ def build_network(logger):
 
     if params['record_spikes']:
         if params['nvp'] != 1:
-            local_neurons = nest.GetLocalNodeCollection(E_neurons)
+            local_neurons = nest.GetLocalNodeCollection(E_neurons + I_neurons)
             # GetLocalNodeCollection returns a stepped composite NodeCollection, which
             # cannot be sliced. In order to allow slicing it later on, we're creating a
             # new regular NodeCollection from the plain node IDs.
@@ -345,17 +344,17 @@ def build_network(logger):
         else:
             local_neurons = E_neurons
 
-        if len(local_neurons) < brunel_params['Nrec']:
-            nest.message(
-                M_ERROR, 'build_network',
-                """Spikes can only be recorded from local neurons, but the
-                number of local neurons is smaller than the number of neurons
-                spikes should be recorded from. Aborting the simulation!""")
-            exit(1)
+        # if len(local_neurons) < brunel_params['Nrec']:
+        #     nest.message(
+        #         M_ERROR, 'build_network',
+        #         """Spikes can only be recorded from local neurons, but the
+        #         number of local neurons is smaller than the number of neurons
+        #         spikes should be recorded from. Aborting the simulation!""")
+        #     exit(1)
 
         nest.message(M_INFO, 'build_network', 'Connecting spike recorders.')
-        nest.Connect(local_neurons[:brunel_params['Nrec']], E_recorder,
-                     'all_to_all', 'static_synapse_hpc')
+        # nest.Connect(local_neurons[:brunel_params['Nrec']], E_recorder, 'all_to_all', 'static_synapse')
+        nest.Connect(local_neurons, E_recorder, 'all_to_all', 'syn_ex')
 
     # read out time used for building
     BuildEdgeTime = time.time() - tic

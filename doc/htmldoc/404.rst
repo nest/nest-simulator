@@ -6,9 +6,7 @@
 
 Sorry, it looks like the page you were looking for doesn't exist.
 
-This page might not exist in the version of NEST you're on.
 
-NEST version: |version| 
 
 
 

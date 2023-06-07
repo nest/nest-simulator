@@ -575,6 +575,7 @@ extern const Name times;
 extern const Name to_do;
 extern const Name total_num_virtual_procs;
 extern const Name type_id;
+extern const Name num_corrections;
 
 extern const Name U;
 extern const Name U_m;

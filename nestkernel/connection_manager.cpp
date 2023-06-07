@@ -93,6 +93,7 @@ ConnectionManager::initialize()
   const thread num_threads = kernel().vp_manager.get_num_threads();
   connections_.resize( num_threads );
   secondary_recv_buffer_pos_.resize( num_threads );
+  correction_counter_.resize( num_threads, 0 );
   sort_connections_by_source_ = true;
   connections_have_changed_ = false;
 
@@ -202,6 +203,7 @@ ConnectionManager::get_status( DictionaryDatum& dict )
   def< bool >( dict, names::use_compressed_spikes, use_compressed_spikes_ );
 
   def< double >( dict, names::time_construction_connect, sw_construction_connect.elapsed() );
+  def< long >( dict, names::num_corrections, std::accumulate( correction_counter_.begin(), correction_counter_.end(), 0) );
 
   ArrayDatum connection_rules;
   for ( auto const& element : *connruledict_ )

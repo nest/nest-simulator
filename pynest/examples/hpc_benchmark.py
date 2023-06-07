@@ -109,16 +109,14 @@ M_ERROR = 30
 
 
 params = {
-    'nvp': 1,               # total number of virtual processes
-    'scale': .015,          # scaling factor of the network size
-    # total network size = scale*11250 neurons
-    'simtime': 250.,        # total simulation time in ms
-    'presimtime': 50.,      # simulation time until reaching equilibrium
-    'dt': 0.1,              # simulation step
-    'record_spikes': True,  # switch to record spikes of excitatory
-    # neurons to file
-    'path_name': '.',       # path where all files will have to be written
-    'log_file': 'log',      # naming scheme for the log files
+    'nvp': 4,                # total number of virtual processes
+    'scale': 1.,             # scaling factor of the network size (total network size = scale*11250 neurons)
+    'simtime': 1000.,        # total simulation time in ms
+    'presimtime': 500.,      # simulation time until reaching equilibrium
+    'dt': 0.1,               # simulation step
+    'record_spikes': False,  # switch to record spikes of excitatory neurons to file
+    'path_name': '.',        # path where all files will have to be written
+    'log_file': 'log',       # naming scheme for the log files
 }
 
 
@@ -138,8 +136,8 @@ def convert_synapse_weight(tau_m, tau_syn, C_m):
     t_rise = 1.0 / b * (-lambertwm1(-np.exp(-1.0 / a) / a).real - 1.0 / a)
 
     v_max = np.exp(1.0) / (tau_syn * C_m * b) * (
-            (np.exp(-t_rise / tau_m) - np.exp(-t_rise / tau_syn)) /
-            b - t_rise * np.exp(-t_rise / tau_syn))
+        (np.exp(-t_rise / tau_m) - np.exp(-t_rise / tau_syn)) /
+        b - t_rise * np.exp(-t_rise / tau_syn))
     return 1. / v_max
 
 ###############################################################################
@@ -157,7 +155,7 @@ brunel_params = {
     'NE': int(9000 * params['scale']),  # number of excitatory neurons
     'NI': int(2250 * params['scale']),  # number of inhibitory neurons
 
-    'Nrec': 100,  # number of neurons to record spikes from
+    'Nrec': 1000,  # number of neurons to record spikes from
 
     'model_params': {  # Set variables for iaf_psc_alpha
         'E_L': 0.0,  # Resting membrane potential(mV)
@@ -193,7 +191,8 @@ brunel_params = {
     'g': -5.0,
 
     'stdp_params': {
-        'delay': 1.5,
+        'delay': 0.5,
+        'axonal_delay': 1.0,
         'alpha': 0.0513,
         'lambda': 0.1,  # STDP step size
         'mu': 0.4,  # STDP weight dependence exponent(potentiation)
@@ -229,6 +228,9 @@ def build_network(logger):
     nest.print_time = True
     nest.resolution = params['dt']
     nest.overwrite_files = True
+    nest.use_compressed_spikes = True
+    nest.rng_seed = 55
+    nest.keep_source_table = False
 
     nest.message(M_INFO, 'build_network', 'Creating excitatory population.')
     E_neurons = nest.Create('iaf_psc_alpha_ax_delay', NE, params=model_params)
@@ -298,10 +300,8 @@ def build_network(logger):
 
     # Connect Poisson generator to neuron
 
-    nest.Connect(E_stimulus, E_neurons, {'rule': 'all_to_all'},
-                 {'synapse_model': 'syn_ex'})
-    nest.Connect(E_stimulus, I_neurons, {'rule': 'all_to_all'},
-                 {'synapse_model': 'syn_ex'})
+    nest.Connect(E_stimulus, E_neurons, {'rule': 'all_to_all'}, {'synapse_model': 'syn_ex'})
+    nest.Connect(E_stimulus, I_neurons, {'rule': 'all_to_all'}, {'synapse_model': 'syn_ex'})
 
     nest.message(M_INFO, 'build_network',
                  'Connecting excitatory -> excitatory population.')
@@ -371,7 +371,6 @@ def run_simulation():
 
     # open log file
     with Logger(params['log_file']) as logger:
-
         nest.ResetKernel()
         nest.set_verbosity(M_INFO)
 
@@ -381,16 +380,25 @@ def run_simulation():
 
         tic = time.time()
 
-        nest.Simulate(params['presimtime'])
+        nest.Simulate(params['dt'])
 
-        PreparationTime = time.time() - tic
+        InitTime = time.time() - tic
+
+        tic = time.time()
+        logger.log(str(memory_thisjob()) + ' # virt_mem_after_init')
+        logger.log(str(InitTime) + ' # init_time')
+
+        nest.Simulate(params['presimtime'] + params['simtime'] - params['dt'])
+
+        PresimulationTime = time.time() - tic
 
         logger.log(str(memory_thisjob()) + ' # virt_mem_after_presim')
-        logger.log(str(PreparationTime) + ' # presim_time')
+        logger.log(str(PresimulationTime) + ' # presim_time')
 
         tic = time.time()
 
-        nest.Simulate(params['simtime'])
+        # nest.Simulate(params['simtime'])
+        # nest.Simulate(5)
 
         SimCPUTime = time.time() - tic
 
@@ -446,7 +454,6 @@ class Logger:
 
     def __enter__(self):
         if nest.Rank() < self.max_rank_log:
-
             # convert rank to string, prepend 0 if necessary to make
             # numbers equally wide for all ranks
             rank = '{:0' + str(len(str(self.max_rank_log))) + '}'

@@ -31,7 +31,7 @@ import pytest
 
 
 @pytest.fixture(autouse=True)
-def reset_kernel(self):
+def reset_kernel():
     nest.ResetKernel()
 
 

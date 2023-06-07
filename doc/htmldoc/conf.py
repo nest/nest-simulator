@@ -59,6 +59,7 @@ extensions = [
     'HoverXTooltip',
     'VersionSyncRole',
     'sphinx_copybutton',
+    'notfound.extension',
 ]
 
 autodoc_mock_imports = ["nest.pynestkernel", "nest.ll_api"]

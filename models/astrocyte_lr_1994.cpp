@@ -427,6 +427,7 @@ nest::astrocyte_lr_1994::init_buffers_()
   B_.sys_.jacobian = nullptr;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
+  B_.sic_on_ = false;
 }
 
 void
@@ -455,6 +456,12 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
     B_.lag_ = lag;
 
     double t = 0.0;
+
+    double calc_thr_last = S_.y_[ State_::Ca ] * 1000.0 - P_.SIC_th_;
+    if ( B_.sic_on_ == true and S_.y_[ State_::Ca ] * 1000.0 < 0.5*P_.SIC_th_ )
+    {
+      B_.sic_on_ = false;
+    }
 
     // numerical integration with adaptive step size control:
     // ------------------------------------------------------
@@ -512,9 +519,11 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
     if ( P_.exponential_SIC_ == true )
     {
       sic_value = S_.y_[ State_::SIC ];
-      if ( calc_thr > 0.0 and S_.y_[ State_::SIC ] < std::exp(-1)*P_.amplitude_SIC_ )
+      // catch threshold-crossing point
+      if ( !B_.sic_on_ and calc_thr > 0.0 and calc_thr_last <= 0.0 )
       {
         S_.y_[ State_::SIC ] += P_.amplitude_SIC_;
+        B_.sic_on_ = true;
       }
     }
     else

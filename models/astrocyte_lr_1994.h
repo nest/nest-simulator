@@ -329,6 +329,9 @@ private:
 
     // values to be sent by SIC event
     std::vector< double > sic_values;
+
+    // To switch between SIC-on and SIC-off phases
+    bool sic_on_;
   };
 
   // ----------------------------------------------------------------

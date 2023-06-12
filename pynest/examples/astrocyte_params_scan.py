@@ -16,7 +16,8 @@ import nest
 params_scan = {
     'tau_IP3': [10., 2.],
     'rate_L': [0.0001, 0.00001],
-    'exponential_SIC': [True]
+    'alpha_SIC': [True],
+    'tau_SIC': [250]
 }
 
 # Helper for recording parameters

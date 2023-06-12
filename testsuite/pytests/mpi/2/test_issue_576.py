@@ -63,7 +63,7 @@ def test_simulation_completes():
                   'I_e': 220.}
 
     nest.SetDefaults('iaf_cond_exp', neuronDict)
-    neuronsE = nest.Create('iaf_cond_exp', 1, {
+    neuronsE = nest.Create('iaf_cond_exp', 1, {             # noqa: F841
         'synaptic_elements': structural_p_elements_E})
 
     synDictE = {'synapse_model': 'static_synapse',

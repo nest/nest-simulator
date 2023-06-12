@@ -50,11 +50,10 @@ usage ()
     fi
 
     cat <<EOF
-Usage: $0 --prefix=<path> --report-dir=<path> [options]
+Usage: $0 --prefix=<path> [options]
 
 Required arguments:
     --prefix=<path>        The base installation path of NEST
-    --report-dir=<path>    The directory to store the output to
 
 Options:
     --with-python=<exe>    The Python executable to use
@@ -66,7 +65,6 @@ EOF
 }
 
 PREFIX=""
-REPORTDIR=""
 PYTHON=""
 MUSIC=""
 while test $# -gt 0 ; do
@@ -76,9 +74,6 @@ while test $# -gt 0 ; do
             ;;
         --prefix=*)
             PREFIX="$( echo "$1" | sed 's/^--prefix=//' )"
-            ;;
-        --report-dir=*)
-            REPORTDIR="$( echo "$1" | sed 's/^--report-dir=//' )"
             ;;
         --with-python=*)
             PYTHON="$( echo "$1" | sed 's/^--with-python=//' )"
@@ -95,10 +90,6 @@ done
 
 if test ! "${PREFIX:-}"; then
     usage 2 "--prefix";
-fi
-
-if test ! "${REPORTDIR:-}"; then
-    usage 2 "--report-dir";
 fi
 
 if test "${PYTHON}"; then
@@ -121,12 +112,23 @@ fi
 . "$(dirname $0)/junit_xml.sh"
 . "$(dirname $0)/run_test.sh"
 
-if test -d "${REPORTDIR}"; then
-    rm -rf "${REPORTDIR}"
-fi
-mkdir "${REPORTDIR}"
-
 TEST_BASEDIR="${PREFIX}/share/nest/testsuite"
+
+# create the report directory in TEST_BASEDIR. Save and restore the old value
+# of TMPDIR.
+
+if [[ "${TMPDIR-}" ]]; then
+    OLD_TMPDIR=$TMPDIR
+fi
+
+TMPDIR=$TEST_BASEDIR
+REPORTDIR="$(mktemp -d test_report_XXX)"
+
+if [[ "${OLD_TMPDIR-}" ]]; then
+    TMPDIR=OLD_TMPDIR
+    unset OLD_TMPDIR
+fi
+
 TEST_LOGFILE="${REPORTDIR}/installcheck.log"
 TEST_OUTFILE="${REPORTDIR}/output.log"
 TEST_RETFILE="${REPORTDIR}/output.ret"
@@ -392,7 +394,7 @@ if test "${MUSIC}"; then
 
     # Create a temporary directory with a unique name.
     BASEDIR="$PWD"
-    tmpdir="$(mktemp -d)"
+    TMPDIR_MUSIC="$(mktemp -d)"
 
     TESTDIR="${TEST_BASEDIR}/musictests/"
 
@@ -421,16 +423,16 @@ if test "${MUSIC}"; then
         echo          "Running test '${test_name}' with $np $proc_txt... " >> "${TEST_LOGFILE}"
         printf '%s' "  Running test '${test_name}' with $np $proc_txt... "
 
-        # Copy everything to 'tmpdir'.
+        # Copy everything to TMPDIR_MUSIC.
         # Variables might also be empty. To prevent 'cp' from terminating in such a case,
         # the exit code is suppressed.
-        cp ${music_file} ${sh_file} ${input_file} ${sli_files} ${tmpdir} 2>/dev/null || true
+        cp ${music_file} ${sh_file} ${input_file} ${sli_files} ${TMPDIR_MUSIC} 2>/dev/null || true
 
-        # Create the runner script in 'tmpdir'.
-        cd "${tmpdir}"
+        # Create the runner script in TMPDIR_MUSIC.
+        cd "${TMPDIR_MUSIC}"
         echo "#!/bin/sh" >  runner.sh
         echo "set +e" >> runner.sh
-        echo "NEST_DATA_PATH=\"${tmpdir}\"" >> runner.sh
+        echo "NEST_DATA_PATH=\"${TMPDIR_MUSIC}\"" >> runner.sh
         echo "${test_command} > ${TEST_OUTFILE} 2>&1" >> runner.sh
         if test -n "${sh_file}"; then
             chmod 755 "$(basename "${sh_file}")"
@@ -481,8 +483,6 @@ if test "${MUSIC}"; then
         cd "${BASEDIR}"
     done
 
-    rm -rf "$tmpdir"
-
     junit_close
 else
   echo "  Not running MUSIC tests because NEST was compiled without support"
@@ -499,11 +499,12 @@ if test "${PYTHON}"; then
 
     # Run all tests except those in the mpi* subdirectories because they cannot be run concurrently
     XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
+    env
     set +e
     "${PYTHON}" -m pytest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" --numprocesses=1 \
           --ignore="${PYNEST_TEST_DIR}/mpi" "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}"
     set -e
-    
+
     # Run tests in the mpi* subdirectories, grouped by number of processes
     if test "${HAVE_MPI}" = "true"; then
         if test "${MPI_LAUNCHER}"; then

@@ -68,8 +68,6 @@ class StepRateGeneratorTestCase(unittest.TestCase):
             data['rate'][np.where(data['senders'] == neuron.get('global_id'))])
         rates_srg = np.array(data['rate'][
             np.where(data['senders'] == srg.get('global_id'))])
-        times = np.array(data['times'][
-            np.where(data['senders'] == neuron.get('global_id'))])
 
         # make sure that srg produces the desired rates
         assert(np.array_equal(rates, rates_srg))

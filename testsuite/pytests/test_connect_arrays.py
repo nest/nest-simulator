@@ -209,7 +209,6 @@ class TestConnectArrays(unittest.TestCase):
         weights = np.ones(len(sources))
         delays = np.ones(len(sources))
         receptor_type = np.ones(len(sources), dtype=np.uint64)
-        syn_model = 'static_synapse'
 
         nest.Connect(sources, targets, conn_spec='one_to_one',
                      syn_spec={'weight': weights, 'delay': delays, 'receptor_type': receptor_type})
@@ -299,7 +298,6 @@ class TestConnectArrays(unittest.TestCase):
         targets = np.array(self.non_unique, dtype=np.double)
         weights = np.ones(n)
         delays = np.ones(n)
-        syn_model = 'static_synapse'
 
         with self.assertRaises(nest.kernel.NESTErrors.ArgumentType):
             nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays},
@@ -341,7 +339,7 @@ class TestConnectArrays(unittest.TestCase):
 
         nest.local_num_threads = 4
 
-        neurons = nest.Create("iaf_psc_exp", 10)
+        neurons = nest.Create("iaf_psc_exp", 10)    # noqa: F841
         # syn_spec parameters are dependent on source, so we test with source id's not starting with 1
         source = np.array([2, 5, 3, 10, 1, 9, 4, 6, 8, 7])
         target = 1 + np.random.choice(10, 10, replace=True)

@@ -59,6 +59,7 @@ set( with-libneurosim OFF CACHE STRING "Build with libneurosim [default=OFF]. Op
 set( with-music OFF CACHE STRING "Build with MUSIC [default=OFF]. Optionally give the directory where MUSIC is installed." )
 set( with-sionlib OFF CACHE STRING "Build with SIONlib [default=OFF]. Optionally give the directory where sionlib is installed." )
 set( with-boost ON CACHE STRING "Build with Boost [default=ON]. To set a specific Boost installation, give the install path." )
+set( with-hdf5 OFF CACHE STRING "Find a HDF5 library. To set a specific HDF5 installation, set install path. [default=ON]" )
 set( with-readline ON CACHE STRING "Build with GNU Readline library [default=ON]. To set a specific library, give the install path." )
 set( with-ltdl ON CACHE STRING "Build with ltdl library [default=ON]. To set a specific ltdl, give the  install path. NEST uses ltdl for dynamic loading of external user modules." )
 set( with-gsl ON CACHE STRING "Build with the GSL library [default=ON]. To set a specific library, give the install path." )
@@ -148,6 +149,7 @@ nest_process_with_music()
 nest_process_with_sionlib()
 nest_process_with_mpi4py()
 nest_process_with_boost()
+nest_process_with_hdf5()
 nest_process_target_bits_split()
 nest_process_userdoc()
 nest_process_devdoc()
@@ -200,7 +202,6 @@ add_custom_target( installcheck
   COMMAND ${CMAKE_COMMAND} -E env
     ${CMAKE_INSTALL_FULL_DATADIR}/testsuite/do_tests.sh
 	--prefix=${CMAKE_INSTALL_PREFIX}
-	--report-dir="${PROJECT_BINARY_DIR}/reports"
 	${TEST_OPTS}
   WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
   COMMENT "Executing NEST's testsuite..."

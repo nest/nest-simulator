@@ -83,7 +83,7 @@ namespace nest
 
 /**
  * @noop DocKeywords: io, recording device, recording, device, connection
-*/
+ */
 class weight_recorder : public RecordingDevice
 {
 

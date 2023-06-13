@@ -89,7 +89,7 @@ namespace nest
 
 /**
  * @noop DocKeywords: io, io backend, stimulation backend, stimulation, mpi
- * 
+ *
  * A simple input backend MPI implementation.
  *
  * Communication protocol diagram:

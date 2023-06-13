@@ -154,6 +154,7 @@ public:
   port send_test_event( Node&, rport, synindex, bool );
 
   void handle( SpikeEvent& );
+  void handle( CorrectionSpikeEvent& );
   void handle( CurrentEvent& );
   void handle( DataLoggingRequest& );
 

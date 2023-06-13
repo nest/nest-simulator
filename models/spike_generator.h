@@ -227,6 +227,10 @@ poisson_generator, spike_train_injector
 
 EndUserDocs
 */
+
+/**
+ * @noop DocKeywords: io, stimulation device, stimulation, device, spike
+ */
 class spike_generator : public StimulationDevice
 {
 

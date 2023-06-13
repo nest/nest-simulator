@@ -75,7 +75,7 @@ namespace nest
 {
 
 /**
- * Class spike_recorder
+ * @noop DocKeywords: io, recording device, recording, device, spike
  */
 
 class spike_recorder : public RecordingDevice

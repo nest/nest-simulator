@@ -87,6 +87,8 @@ namespace nest
 {
 
 /**
+ * @noop DocKeywords: io, io backend, recording backend, recording, mpi
+ *
  * A recording backend for sending information with MPI.
  * Communication protocol diagram:
  * \image html MPI_backend_protocol_of_communication.svg

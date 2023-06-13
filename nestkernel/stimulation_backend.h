@@ -35,7 +35,10 @@
 namespace nest
 {
 
+
 /**
+ * @noop DocKeywords: io, io backend, stimulation backend, stimulation, interface
+ * 
  * Abstract bass class for all NESTio stimulation backends
  *
  * This class provides the interface for NESTio stimulation backends

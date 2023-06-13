@@ -90,6 +90,9 @@ poisson_generator, parrot_neuron_ps
 
 EndUserDocs */
 
+/**
+ * @noop DocKeywords: io, stimulation device, stimulation, device, spike, precise
+ */
 class poisson_generator_ps : public StimulationDevice
 {
 

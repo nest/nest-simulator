@@ -120,6 +120,9 @@ poisson_generator, sinusoidal_gamma_generator
 
 EndUserDocs */
 
+/**
+ * @noop DocKeywords: io, stimulation device, stimulation, device, spike
+ */
 class sinusoidal_poisson_generator : public StimulationDevice
 {
 

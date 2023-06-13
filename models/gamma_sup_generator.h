@@ -90,6 +90,9 @@ ppd_sup_generator, poisson_generator_ps, spike_generator
 
 EndUserDocs */
 
+/**
+ *  @noop DocKeywords: io, stimulation device, stimulation, device, spike
+ */
 class gamma_sup_generator : public StimulationDevice
 {
 

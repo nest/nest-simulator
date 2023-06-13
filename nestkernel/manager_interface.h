@@ -33,6 +33,8 @@ namespace nest
 {
 
 /**
+ * @noop DocKeywords: manager, interface
+ *
  * Interface for kernel manager classes.
  *
  * This class defines the common interface for all manager classes

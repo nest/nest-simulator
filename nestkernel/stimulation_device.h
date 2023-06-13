@@ -94,6 +94,8 @@ stop
 EndUserDocs */
 
 /**
+ *  @noop DocKeywords: io, io device, stimulation device, stimulation, device, interface
+ *
  * Base class for common properties of StimulationDevices.
  *
  * Stimulation devices are all devices injecting currents, spike trains

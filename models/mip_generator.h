@@ -100,9 +100,12 @@ poisson_generator
 
 EndUserDocs */
 
-/*! Class mip_generator generates spike trains as described
-    in the MIP model.
-*/
+/**
+ * @noop DocKeywords: io, stimulation device, stimulation, device, spike
+ *
+ *  Class mip_generator generates spike trains as described
+ *  in the MIP model.
+ */
 class mip_generator : public StimulationDevice
 {
 

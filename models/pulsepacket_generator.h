@@ -96,6 +96,9 @@ spike_generator
 
 EndUserDocs */
 
+/**
+ * @noop DocKeywords: io, stimulation device, stimulation, device, spike
+ */
 class pulsepacket_generator : public StimulationDevice
 {
 

@@ -129,6 +129,9 @@ EndUserDocs */
 namespace nest
 {
 
+/**
+ * @noop DocKeywords: io, recording device, recording, device, continuous
+ */
 class multimeter : public RecordingDevice
 {
 
@@ -282,6 +285,9 @@ nest::multimeter::calibrate_time( const TimeConverter& tc )
 // Declaration of voltmeter subclass
 //
 
+/**
+ * @noop DocKeywords: io, recording device, recording, device, continuous
+ */
 class voltmeter : public multimeter
 {
 public:

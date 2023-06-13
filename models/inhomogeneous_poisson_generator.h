@@ -97,6 +97,9 @@ sinusoidal_poisson_generator, step_current_generator
 
 EndUserDocs */
 
+/**
+ *  @noop DocKeywords: io, stimulation device, stimulation, device, spike
+ */
 class inhomogeneous_poisson_generator : public StimulationDevice
 {
 

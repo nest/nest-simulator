@@ -189,6 +189,10 @@ EndUserDocs */
 
 namespace nest
 {
+/**
+ * @noop DocKeywords: io, io backend, recording backend, recording, mpi
+ *
+ */
 
 class RecordingBackendSIONlib : public RecordingBackend
 {

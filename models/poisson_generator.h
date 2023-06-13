@@ -77,6 +77,9 @@ poisson_generator_ps
 
 EndUserDocs */
 
+/**
+ * @noop DocKeywords: io, stimulation device, stimulation, device, spike
+ */
 class poisson_generator : public StimulationDevice
 {
 

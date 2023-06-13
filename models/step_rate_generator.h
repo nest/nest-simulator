@@ -101,6 +101,9 @@ step_current_generator
 
 EndUserDocs */
 
+/**
+ * @noop DocKeywords: io, stimulation device, stimulation, device, rate
+ */
 class step_rate_generator : public StimulationDevice
 {
 

@@ -85,6 +85,8 @@ SpikeEvent
 EndUserDocs */
 
 /**
+ * @noop DocKeywords: io, recording device, recording, device, binary
+ *
  * Spin detector class.
  *
  * This class decodes binary states based on incoming spikes. It receives

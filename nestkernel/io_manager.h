@@ -35,7 +35,9 @@
 namespace nest
 {
 
-/*
+/**
+ * @noop DocKeywords: io, manager
+ * 
   IOManager: Handles data storage files from spike recorders and
   multimeters to file system(s)/memory/output. Distinct from logging
   for error streams.

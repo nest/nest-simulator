@@ -140,6 +140,8 @@ sinusoidal_poisson_generator, gamma_sup_generator
 EndUserDocs */
 
 /**
+ * @noop DocKeywords: io, stimulation device, stimulation, device, spike
+ *
  * AC Gamma Generator.
  * Generates AC-modulated inhomogeneous gamma process.
  *

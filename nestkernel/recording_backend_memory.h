@@ -95,6 +95,8 @@ namespace nest
 {
 
 /**
+ * @noop DocKeywords: io, io backend, recording backend, recording
+ *
  * Memory specialization of the RecordingBackend interface.
  *
  * Recorded data is stored in memory on a per-device-per-thread

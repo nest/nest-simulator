@@ -98,6 +98,9 @@ ac_generator, dc_generator, noise_generator
 
 EndUserDocs */
 
+/**
+ * @noop DocKeywords: io, stimulation device, stimulation, device, continuous
+ */
 class step_current_generator : public StimulationDevice
 {
 

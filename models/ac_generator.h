@@ -109,6 +109,9 @@ EndUserDocs */
 
 namespace nest
 {
+  /**
+   * @noop DocKeywords: io, stimulation device, stimulation, device, continuous
+  */
 class ac_generator : public StimulationDevice
 {
 

@@ -146,7 +146,9 @@ private:
   };
 
   // ------------------------------------------------------------
-
+  /**
+   * @noop DocKeywords: io, stimulation device, stimulation, device, spike
+   */
   class DilutorStimulationDevice : public StimulationDevice
   {
     StimulationDevice::Type

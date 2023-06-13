@@ -318,13 +318,13 @@ private:
    */
   std::vector< SparseNodeArray > local_nodes_;
 
-  std::vector< NodeCollectionPTR >
+  std::vector< NodeCollectionPTR > node_collection_container_; //!< a vector of the original/primitive NodeCollection
 
-    std::vector< index >
-      nodeCollection_last_; //!< Store the ID of the last element in each NodeCollection instance.
-                            //!<  Mainly, the nodeCollection_last_ must be the same size as node_collection_container,
-                            //!< where each  element at position i in the nodeCollection_last_ is the last node ID
-                            //!< stored in the node_collection_container_ at position i.
+  std::vector< index >
+    node_collection_last_; //!< Store the ID of the last element in each NodeCollection instance.
+                           //!<  Mainly, the node_collection_last_ must be the same size as node_collection_container,
+                           //!< where each  element at position i in the nodeCollection_last_ is the last node ID
+                           //!< stored in the node_collection_container_ at position i.
 
   std::vector< std::vector< Node* > > wfr_nodes_vec_; //!< Nodelists for unfrozen nodes that
                                                       //!< use the waveform relaxation method

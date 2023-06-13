@@ -314,11 +314,11 @@ NodeManager::add_music_nodes_( Model& model, index min_node_id, index max_node_i
 NodeCollectionPTR
 NodeManager::node_id_to_node_collection( const index node_id ) const
 {
-  // find the largest element `e` in the nodeCollection_last_ so that `e` < node_id
-  auto it = std::lower_bound( nodeCollection_last_.begin(), nodeCollection_last_.end(), node_id );
+  // find the largest element `e` in the node_collection_last_ so that `e` < node_id
+  auto it = std::lower_bound( node_collection_last_.begin(), node_collection_last_.end(), node_id );
 
   // compute the position of the nodeCollection based on the position of `e`
-  size_t pos = it - nodeCollection_last_.begin();
+  size_t pos = it - node_collection_last_.begin();
   return node_collection_container_.at( pos );
 }
 
@@ -332,14 +332,14 @@ void
 NodeManager::append_node_collection_( NodeCollectionPTR ncp )
 {
   node_collection_container_.push_back( ncp );
-  nodeCollection_last_.push_back( ncp->get_last() );
+  node_collection_last_.push_back( ncp->get_last() );
 }
 
 void
 NodeManager::clear_node_collection_container()
 {
   node_collection_container_.clear();
-  nodeCollection_last_.clear();
+  node_collection_last_.clear();
 }
 
 NodeCollectionPTR

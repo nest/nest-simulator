@@ -19,85 +19,88 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-r"""
-Test the AEIF multisynapse model with synaptic conductance modeled by a beta function.
-
-This test creates a multisynapse neuron with three receptor ports with
-different synaptic rise times and decay times, and connects it to
-two excitatory and one inhibitory signals. At the end, the script compares
-the simulated values of :math:`V(t)` with an approximate analytical formula, which
-can be derived as follows:
-
-For small excitatory inputs the synaptic current can be approximated as
-
-.. math::
-
-    I(t) = g(t) \left( V_\mathrm{rest} - E_\mathrm{ex} \right),
-
-where :math:`g(t)` is the synaptic conductance, :math:`V_\mathrm{rest}` is
-the resting potential and :math:`E_\mathrm{ex}` is the excitatory reverse
-potential (see Roth and van Rossum, p. 144).
-
-Using the LIF model, the differential equation for the membrane potential
-can be written as
-
-.. math::
-
-    \tau_m \frac{\mathrm{d}v}{\mathrm{d}t} = -v + G,
-
-where :math:`\tau_m = C_m / g_L`, :math:`v = V_m - V_\mathrm{rest}`
-and :math:`G = g(t) \left( E_\mathrm{ex} - V_\mathrm{rest} / g_L`.
-
-Using a first-order Taylor expansion of :math:`v` around a generic time :math:`t_0`:
-
-.. math::
-
-     v \left( t_0 + \tau_m \right) = v \left( t_0 \right) + \tau_m \frac{\mathrm{d}v}{\mathrm{d}t}
-     + O \left( \tau_m^2 \right)
-
-and substituting :math:`t = t_0 + \tau_m`, we get
-
-.. math::
-
-     v(t) = G \left( t - \tau_m \right).
-
-This approximation is valid for small excitatory inputs if :math:`\tau_m` is small
-compared to the time scale of variation of :math:`G(t)`. Basically, this happens
-when the synaptic rise time and decay time are much greater than :math:`\tau_m`.
-An analogous approximation can be derived for small inhibitory inputs.
-
-References
-----------
-
-A. Roth and M. C. W. van Rossum, Modeling synapses, in Computational
-Modeling Methods for Neuroscientists, MIT Press 2013, Chapter 6, pp. 139-159
-"""
-
 import math
 import nest
 import numpy as np
+import os
 import pytest
 
 
 @pytest.mark.skipif_missing_gsl
 class TestAeifCondBetaMultisynapse:
+    r"""
+    Test the AEIF multisynapse model with synaptic conductance modeled by a beta function.
+
+    This test creates a multisynapse neuron with three receptor ports with
+    different synaptic rise times and decay times, and connects it to
+    two excitatory and one inhibitory signals. At the end, the script compares
+    the simulated values of :math:`V(t)` with an approximate analytical formula, which
+    can be derived as follows:
+
+    For small excitatory inputs the synaptic current can be approximated as
+
+    .. math::
+
+        I(t) = g(t) \left( V_\mathrm{rest} - E_\mathrm{ex} \right),
+
+    where :math:`g(t)` is the synaptic conductance, :math:`V_\mathrm{rest}` is
+    the resting potential and :math:`E_\mathrm{ex}` is the excitatory reverse
+    potential (see Roth and van Rossum, p. 144).
+
+    Using the LIF model, the differential equation for the membrane potential
+    can be written as
+
+    .. math::
+
+        \tau_m \frac{\mathrm{d}v}{\mathrm{d}t} = -v + G,
+
+    where :math:`\tau_m = C_m / g_L`, :math:`v = V_m - V_\mathrm{rest}`
+    and :math:`G = g(t) \left( E_\mathrm{ex} - V_\mathrm{rest} / g_L`.
+
+    Using a first-order Taylor expansion of :math:`v` around a generic time :math:`t_0`:
+
+    .. math::
+
+        v \left( t_0 + \tau_m \right) = v \left( t_0 \right) + \tau_m \frac{\mathrm{d}v}{\mathrm{d}t}
+        + O \left( \tau_m^2 \right)
+
+    and substituting :math:`t = t_0 + \tau_m`, we get
+
+    .. math::
+
+        v(t) = G \left( t - \tau_m \right).
+
+    This approximation is valid for small excitatory inputs if :math:`\tau_m` is small
+    compared to the time scale of variation of :math:`G(t)`. Basically, this happens
+    when the synaptic rise time and decay time are much greater than :math:`\tau_m`.
+    An analogous approximation can be derived for small inhibitory inputs.
+
+    References
+    ----------
+
+    A. Roth and M. C. W. van Rossum, Modeling synapses, in Computational
+    Modeling Methods for Neuroscientists, MIT Press 2013, Chapter 6, pp. 139-159
+    """
 
     def test_aeif_cond_beta_multisynapse(self, have_plotting):
-        simulation_t = 300.   # ms
-        dt = 0.1    # time step
+        r"""Test postsynaptic response and membrane potential dynamics against
+        analytic solutions. Deflections in membrane potential are assumed to
+        be small, so its dynamics can be appoximated as linear."""
+        simulation_t = 300.0    # simulation duration [ms]
+        dt = 0.1    # time step [ms]
 
-        spike_time = 10.
+        spike_time = 10.0    # spike time of spike generator
 
-        V_peak = 0.
-        a = 4.
-        b = 80.5
-        E_rev = [20.0, 0.0, -85.0]    # synaptic reversal potentials
-        tau_decay = [40.0, 20.0, 30.0]   # synaptic decay times
-        tau_rise = [20.0, 10.0, 5.0]   # synaptic rise times
-        weights = [0.01, 0.02, 0.015]   # synaptic weights
-        delays = [1., 100., 130.]   # ms - synaptic delays
-        Vrest = -70.6    # resting potential
-        g_L = 300.0
+        V_peak = 0.0    # spike detection threshold
+        a = 4.0    # subthreshold adaptation
+        b = 80.5    # spike-triggered adaptation
+        E_rev = [20.0, 0.0, -85.0]    # synaptic reversal potentials [mV]
+        tau_decay = [40.0, 20.0, 30.0]    # synaptic decay times [ms]
+        tau_rise = [20.0, 10.0, 5.0]    # synaptic rise times [ms]
+        weights = [0.01, 0.02, 0.015]    # synaptic weights
+        delays = [1.0, 100.0, 130.0]    # synaptic delays [ms]
+        Vrest = -70.6    # resting potential [mV]
+        g_L = 300.0    # leak conductance [nS]
 
         sg = nest.Create("spike_generator", params={"spike_times": [spike_time]})
         vm = nest.Create("voltmeter", params={"interval": dt})
@@ -139,9 +142,9 @@ class TestAeifCondBetaMultisynapse:
             ax[0].plot(ts,
                        Vms,
                        label="V_m multisyn",
-                       alpha=.5)
+                       alpha=0.5)
 
-        V_m_summed = 0.
+        V_m_summed = 0.0
 
         # loop over synapse index
         for i in range(3):
@@ -161,17 +164,12 @@ class TestAeifCondBetaMultisynapse:
 
             # approximate analytical calculation of V(t)
             Vtheor = g0 * (np.exp(-(ts - t0) / tau_decay[i]) - np.exp(-(ts - t0) / tau_rise[i]))
-            Vtheor[ts < t0] = 0.
+            Vtheor[ts < t0] = 0.0
             V_m_summed += Vtheor
             Vtheor += Vrest
 
             if have_plotting:
                 ax[i + 1].plot(ts, Vtheor)
-
-                # for i in range(4):
-                #     ax[i+1].plot(singlesynapse_neuron_vm[i].get("events")["times"],
-                #                  singlesynapse_neuron_vm[i].get("events")["V_m"],
-                #                  label="V_m single (" + str(i) + ")")
 
                 for _ax in ax:
                     _ax.legend()
@@ -182,25 +180,27 @@ class TestAeifCondBetaMultisynapse:
             ax[0].plot(ts, V_m_summed, label="summed")
 
             ax[-1].semilogy(ts, np.abs(Vms - V_m_summed), label="error")
-            fig.savefig("test_aeif_cond_beta_multisynapse.png")
+            fname = "test_aeif_cond_beta_multisynapse.png"
+            fname = os.path.join(os.environ.get("REPORTDIR", ""), fname)
+            fig.savefig(fname)
 
         # large testing tolerance due to approximation (see documentation of the test)
-        np.testing.assert_allclose(Vms, V_m_summed, atol=0., rtol=1E-5)
+        np.testing.assert_allclose(Vms, V_m_summed, atol=0.0, rtol=1E-5)
         np.testing.assert_allclose(Vms, V_m_summed, atol=1E-3)
 
-    @pytest.mark.parametrize("t_ref", [0., .1])
+    @pytest.mark.parametrize("t_ref", [0.0, 0.1])
     def test_refractoriness_clamping(self, t_ref):
-        """test for t_ref == 0"""
+        r"""Test that refractoriness mechanism and voltage reset/clamping after spike works for t_ref == 0"""
         nest.ResetKernel()
-        nest.resolution = .1
-        V_reset = -111.
+        nest.resolution = 0.1
+        V_reset = -111.0
 
-        nrn = nest.Create("aeif_cond_beta_multisynapse", params={"w": 0.,
-                                                                 "a": 0.,
-                                                                 "b": 0.,
-                                                                 "Delta_T": 0.,
+        nrn = nest.Create("aeif_cond_beta_multisynapse", params={"w": 0.0,
+                                                                 "a": 0.0,
+                                                                 "b": 0.0,
+                                                                 "Delta_T": 0.0,
                                                                  "t_ref": t_ref,
-                                                                 "I_e": 1000.,
+                                                                 "I_e": 1000.0,
                                                                  "V_reset": V_reset})
 
         sr = nest.Create("spike_recorder", params={"time_in_steps": True})
@@ -210,7 +210,7 @@ class TestAeifCondBetaMultisynapse:
         nest.Connect(nrn, sr)
         nest.Connect(vm, nrn)
 
-        nest.Simulate(10.)
+        nest.Simulate(10.0)
 
         stime = sr.events["times"][0] - 1    # minus one because of 1-based indexing
 
@@ -229,23 +229,23 @@ class TestAeifCondBetaMultisynapse:
             assert vm.events["V_m"][stime + 2] > V_reset
 
     def test_w_dynamics_during_refractoriness(self):
-        """Test that w-dynamics during refractoriness is based on V==V_reset"""
+        r"""Test that w-dynamics during refractoriness is based on V==V_reset"""
         nest.ResetKernel()
-        nest.resolution = 1.
-        V_reset = -111.
-        E_L = -70.
-        t_ref = 100.
-        a = 10.
-        b = 100.
+        nest.resolution = 1.0
+        V_reset = -111.0
+        E_L = -70.0
+        t_ref = 100.0
+        a = 10.0
+        b = 100.0
         tau_w = 1.0
 
-        nrn = nest.Create("aeif_cond_beta_multisynapse", params={"w": 0.,
+        nrn = nest.Create("aeif_cond_beta_multisynapse", params={"w": 0.0,
                                                                  "a": a,
                                                                  "b": b,
                                                                  "tau_w": tau_w,
-                                                                 "Delta_T": 0.,
+                                                                 "Delta_T": 0.0,
                                                                  "t_ref": t_ref,
-                                                                 "I_e": 1000.,
+                                                                 "I_e": 1000.0,
                                                                  "E_L": E_L,
                                                                  "V_reset": V_reset})
 
@@ -256,7 +256,7 @@ class TestAeifCondBetaMultisynapse:
         nest.Connect(nrn, sr)
         nest.Connect(vm, nrn)
 
-        nest.Simulate(50.)
+        nest.Simulate(50.0)
 
         stime = sr.events["times"][0] - 1    # minus one because of 1-based indexing
 
@@ -282,6 +282,7 @@ class TestAeifCondBetaMultisynapse:
         np.testing.assert_allclose(w1, w_theory)
 
     def test_recordables(self):
+        r"""Test that the right number of recordables are created when setting ``record_from``."""
         nest.ResetKernel()
 
         nrn = nest.Create("aeif_cond_beta_multisynapse")
@@ -295,18 +296,18 @@ class TestAeifCondBetaMultisynapse:
         assert len(nrn.recordables) == 3
 
     def test_resize_recordables(self):
-        """Test that the recordable g's change when changing the number of receptor ports"""
+        r"""Test that the recordable g's change when changing the number of receptor ports"""
         nest.ResetKernel()
 
         E_rev1 = [0.0, 0.0, -85.0]
         E_rev2 = [0.0, 0.0]
-        E_rev3 = [0.0, 0.0, -85.0, 0.]
+        E_rev3 = [0.0, 0.0, -85.0, 0.0]
         tau_rise1 = [5.0, 1.0, 25.0]
         tau_rise2 = [5.0, 1.0]
-        tau_rise3 = [5.0, 1.0, 25.0, 50.]
+        tau_rise3 = [5.0, 1.0, 25.0, 50.0]
         tau_decay1 = [20.0, 10.0, 85.0]
         tau_decay2 = [20.0, 10.0]
-        tau_decay3 = [20.0, 10.0, 85.0, 100.]
+        tau_decay3 = [20.0, 10.0, 85.0, 100.0]
 
         nrn = nest.Create("aeif_cond_beta_multisynapse", params={"E_rev": E_rev1,
                                                                  "tau_rise": tau_rise1,
@@ -324,30 +325,27 @@ class TestAeifCondBetaMultisynapse:
         assert len(nrn.recordables) == 6
 
     def test_g_beta_dynamics(self, have_plotting):
-        """
+        r"""
         Test that g has beta function dynamics when tau_rise and tau_decay are
-        different, and has alpha function dynamics when they are the same
+        different, and has alpha function dynamics when they are the same.
         """
+        total_t = 500.0    # total simulation time [ms]
+        dt = 0.1    # time step [ms]
 
-        dt = 0.1     # time step
+        spike_time = 10.0    # time at which the single spike occurs [ms]
 
-        nest.ResetKernel()
-        nest.resolution = dt
-
-        E_rev = [0.0, 0.0, -85.0, 20.]    # synaptic reversal potentials
-        tau_rise = [20.0, 10.0, 5.0, 25.]    # synaptic rise times
-        tau_decay = [40.0, 20.0, 30.0, 25.]    # synaptic decay times
+        E_rev = [0.0, 0.0, -85.0, 20.0]    # synaptic reversal potentials [mV]
+        tau_rise = [20.0, 10.0, 5.0, 25.0]    # synaptic rise times [ms]
+        tau_decay = [40.0, 20.0, 30.0, 25.0]    # synaptic decay times [ms]
         weight = [1.0, 0.5, 2.0, 1.0]    # synaptic weights
-        delays = [1.0, 3.0, 10.0, 10.]    # ms - synaptic delays
-        spike_time = 10.    # time at which the single spike occurs
-        total_t = 500.   # total simulation time
+        delays = [1.0, 3.0, 10.0, 10.0]    # synaptic delays [ms]
 
-        def alpha_function(t, W=1., tau=1., t0=0.):
+        def alpha_function(t, W=1.0, tau=1.0, t0=0.0):
             tdiff_over_tau = (t - t0) / tau
             tdiff_over_tau[tdiff_over_tau < 0] = 0
             return W * tdiff_over_tau * np.e * np.exp(-tdiff_over_tau)
 
-        def beta_function(t, W=1., tau_rise=1., tau_decay=2., t0=0.):
+        def beta_function(t, W=1.0, tau_rise=1.0, tau_decay=2.0, t0=0.0):
             if math.isclose(tau_rise, tau_decay):
                 return alpha_function(t, W, tau_rise, t0)
 
@@ -359,13 +357,16 @@ class TestAeifCondBetaMultisynapse:
 
             return W * num / den
 
+        nest.ResetKernel()
+        nest.resolution = dt
+
         # Create the multisynapse neuron
-        nrn = nest.Create("aeif_cond_beta_multisynapse", params={"w": 0.,
-                                                                 "a": 0.,
-                                                                 "b": 0.,
-                                                                 "Delta_T": 0.,
-                                                                 "t_ref": 0.,
-                                                                 "I_e": 0.,
+        nrn = nest.Create("aeif_cond_beta_multisynapse", params={"w": 0.0,
+                                                                 "a": 0.0,
+                                                                 "b": 0.0,
+                                                                 "Delta_T": 0.0,
+                                                                 "t_ref": 0.0,
+                                                                 "I_e": 0.0,
                                                                  "E_rev": E_rev,
                                                                  "tau_rise": tau_rise,
                                                                  "tau_decay": tau_decay})
@@ -409,6 +410,8 @@ class TestAeifCondBetaMultisynapse:
                 for _ax in ax:
                     _ax.legend()
 
-                fig.savefig("test_aeif_cond_beta_multisynapse_psc_shape_ " + str(i) + ".png")
+                fname = "test_aeif_cond_beta_multisynapse_psc_shape_ " + str(i) + ".png"
+                fname = os.path.join(os.environ.get("REPORTDIR", ""), fname)
+                fig.savefig(fname)
 
             np.testing.assert_allclose(sim_g, theo_g)

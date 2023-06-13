@@ -319,7 +319,6 @@ NodeManager::node_id_to_node_collection( const index node_id ) const
 
   // compute the position of the nodeCollection based on the position of `e`
   size_t pos = it - nodeCollection_last_.begin();
-  
   return node_collection_container_.at( pos );
 }
 

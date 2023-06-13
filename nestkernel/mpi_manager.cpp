@@ -184,16 +184,25 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
 void
 nest::MPIManager::initialize()
 {
-  std::cout << "FOOBAR\n";
-  for ( int i = 0; environ[ i ] != nullptr; ++i )
-  {
-    std::cout << environ[ i ] << std::endl;
-  }
-
 #ifndef HAVE_MPI
   char* pmix_rank_set = std::getenv( "PMIX_RANK" ); // set by OpenMPI's launcher
   char* pmi_rank_set = std::getenv( "PMI_RANK" );   // set by MPICH's launcher
-  if ( pmix_rank_set or pmi_rank_set )
+  const bool mpi_launcher_or_mpi4py_used = pmix_rank_set or pmi_rank_set;
+
+  long mpi_num_procs = 0;
+  char* mpi_localnranks = std::getenv( "MPI_LOCALNRANKS" );
+  if ( mpi_localnranks )
+  {
+    mpi_num_procs = std::atoi( mpi_localnranks );
+  }
+
+  char* ompi_comm_world_size = std::getenv( "OMPI_COMM_WORLD_SIZE" );
+  if ( ompi_comm_world_size )
+  {
+    mpi_num_procs = std::atoi( ompi_comm_world_size );
+  }
+
+  if ( mpi_launcher_or_mpi4py_used and mpi_num_procs > 1 )
   {
     LOG( M_FATAL,
       "MPIManager::initialize()",

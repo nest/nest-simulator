@@ -56,14 +56,15 @@ For more information visit https://www.nest-simulator.org.
 # instance later on. Use `.copy()` to prevent pollution with other variables
 _original_module_attrs = globals().copy()
 
-from .ll_api_kernel_attributes import KernelAttribute  # noqa
-import sys        # noqa
-import types      # noqa
+import builtins  # noqa
 import importlib  # noqa
-import builtins   # noqa
+import sys  # noqa
+import types  # noqa
+
+from .ll_api_kernel_attributes import KernelAttribute  # noqa
 
 try:
-    import versionchecker            # noqa: F401
+    import versionchecker  # noqa: F401
 except ImportError:
     pass
 
@@ -75,39 +76,40 @@ class NestModule(types.ModuleType):
     some submodules and importing the public APIs of the `lib` submodules.
     """
 
-    from . import ll_api                             # noqa
-    from . import pynestkernel as kernel             # noqa
-    from . import random                             # noqa
-    from . import math                               # noqa
-    from . import spatial_distributions              # noqa
-    from . import logic                              # noqa
+    from . import ll_api  # noqa
+    from . import logic  # noqa
+    from . import math  # noqa
+    from . import random  # noqa
+    from . import spatial_distributions  # noqa
+    from . import pynestkernel as kernel  # noqa
     from .ll_api import set_communicator
 
     def __init__(self, name):
         super().__init__(name)
         # Copy over the original module attributes to preserve all interpreter-given
         # magic attributes such as `__name__`, `__path__`, `__package__`, ...
-        self.__dict__.update(_original_module_attrs)    # noqa
+        self.__dict__.update(_original_module_attrs)  # noqa
 
         # Import public APIs of submodules into the `nest.` namespace
-        _rel_import_star(self, ".lib.hl_api_connections")           # noqa: F821
-        _rel_import_star(self, ".lib.hl_api_exceptions")            # noqa: F821
-        _rel_import_star(self, ".lib.hl_api_info")                  # noqa: F821
-        _rel_import_star(self, ".lib.hl_api_models")                # noqa: F821
-        _rel_import_star(self, ".lib.hl_api_nodes")                 # noqa: F821
-        _rel_import_star(self, ".lib.hl_api_parallel_computing")    # noqa: F821
-        _rel_import_star(self, ".lib.hl_api_simulation")            # noqa: F821
-        _rel_import_star(self, ".lib.hl_api_spatial")               # noqa: F821
-        _rel_import_star(self, ".lib.hl_api_types")                 # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_connections")  # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_exceptions")  # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_info")  # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_models")  # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_nodes")  # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_parallel_computing")  # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_simulation")  # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_sonata")  # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_spatial")  # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_types")  # noqa: F821
 
         # Lazy loaded modules. They are descriptors, so add them to the type object
-        type(self).raster_plot = _lazy_module_property("raster_plot")       # noqa: F821
-        type(self).server = _lazy_module_property("server")                 # noqa: F821
-        type(self).spatial = _lazy_module_property("spatial")               # noqa: F821
-        type(self).visualization = _lazy_module_property("visualization")   # noqa: F821
-        type(self).voltage_trace = _lazy_module_property("voltage_trace")   # noqa: F821
+        type(self).raster_plot = _lazy_module_property("raster_plot")  # noqa: F821
+        type(self).server = _lazy_module_property("server")  # noqa: F821
+        type(self).spatial = _lazy_module_property("spatial")  # noqa: F821
+        type(self).visualization = _lazy_module_property("visualization")  # noqa: F821
+        type(self).voltage_trace = _lazy_module_property("voltage_trace")  # noqa: F821
 
-        self.__version__ = ll_api.sli_func("statusdict /version get")       # noqa: F821
+        self.__version__ = ll_api.sli_func("statusdict /version get")  # noqa: F821
         # Finalize the nest module with a public API.
         _api = list(k for k in self.__dict__ if not k.startswith("_"))
         _api.extend(k for k in dir(type(self)) if not k.startswith("_"))
@@ -117,11 +119,11 @@ class NestModule(types.ModuleType):
         type(self).__setattr__ = _setattr_error
 
     def set(self, **kwargs):
-        'Forward kernel attribute setting to `SetKernelStatus()`.'
+        "Forward kernel attribute setting to `SetKernelStatus()`."
         return self.SetKernelStatus(kwargs)
 
     def get(self, *args):
-        'Forward kernel attribute getting to `GetKernelStatus()`.'
+        "Forward kernel attribute getting to `GetKernelStatus()`."
         if not args:
             return self.GetKernelStatus()
         if len(args) == 1:
@@ -146,9 +148,7 @@ class NestModule(types.ModuleType):
     resolution = KernelAttribute(
         "float", "The resolution of the simulation (in ms)", default=0.1
     )
-    biological_time = KernelAttribute(
-        "float", "The current simulation time (in ms)"
-    )
+    biological_time = KernelAttribute("float", "The current simulation time (in ms)")
     to_do = KernelAttribute(
         "int", "The number of steps yet to be simulated", readonly=True
     )
@@ -172,7 +172,7 @@ class NestModule(types.ModuleType):
             "The number of tics per millisecond. Change of tics_per_ms "
             + "requires simultaneous specification of resolution"
         ),
-        default=1000.0
+        default=1000.0,
     )
     tics_per_step = KernelAttribute(
         "int",
@@ -180,7 +180,7 @@ class NestModule(types.ModuleType):
             "The number of tics per simulation time step. Calculated by "
             + "tics_per_step = resolution * tics_per_ms"
         ),
-        readonly=True
+        readonly=True,
     )
     T_max = KernelAttribute(
         "float", "The largest representable time value", readonly=True
@@ -209,12 +209,8 @@ class NestModule(types.ModuleType):
     total_num_virtual_procs = KernelAttribute(
         "int", "The total number of virtual processes", default=1
     )
-    local_num_threads = KernelAttribute(
-        "int", "The local number of threads", default=1
-    )
-    num_processes = KernelAttribute(
-        "int", "The number of MPI processes", readonly=True
-    )
+    local_num_threads = KernelAttribute("int", "The local number of threads", default=1)
+    num_processes = KernelAttribute("int", "The number of MPI processes", readonly=True)
     off_grid_spiking = KernelAttribute(
         "bool",
         "Whether to transmit precise spike times in MPI communication",
@@ -301,9 +297,7 @@ class NestModule(types.ModuleType):
         default=15,
     )
     wfr_interpolation_order = KernelAttribute(
-        "int",
-        "Interpolation order of polynomial used in wfr iterations",
-        default=3
+        "int", "Interpolation order of polynomial used in wfr iterations", default=3
     )
     max_num_syn_models = KernelAttribute(
         "int", "Maximal number of synapse models supported", readonly=True
@@ -394,7 +388,7 @@ class NestModule(types.ModuleType):
         (
             "Number of spikes fired by neurons on a given MPI rank during the"
             + " most recent call to :py:func:`.Simulate`. Only spikes from"
-            + " \"normal\" neurons are counted, not spikes generated by devices"
+            + ' "normal" neurons are counted, not spikes generated by devices'
             + " such as ``poisson_generator``. Resets on each call to ``Simulate`` or ``Run``."
         ),
         readonly=True,
@@ -514,7 +508,7 @@ def _lazy_module_property(module_name, optional=False, optional_hint=""):
     """
 
     def lazy_loader(self):
-        'Wrap lazy loaded property.'
+        "Wrap lazy loaded property."
         cls = type(self)
         delattr(cls, module_name)
         try:

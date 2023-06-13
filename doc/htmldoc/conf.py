@@ -58,6 +58,7 @@ extensions = [
     'sphinx_design',
     'HoverXTooltip',
     'VersionSyncRole',
+    'sphinx_copybutton',
 ]
 
 autodoc_mock_imports = ["nest.pynestkernel", "nest.ll_api"]
@@ -225,19 +226,35 @@ def add_button_to_examples(app, env, docnames):
     example_prolog = """
 .. only:: html
 
-  .. card:: Run this example as a Jupyter notebook
-    :margin: auto
-    :width: 50%
+----
+
+ Run this example as a Jupyter notebook:
+
+  .. card::
+    :width: 25%
+    :margin: 2
     :text-align: center
+    :link: https://lab.ebrains.eu/hub/user-redirect/\
+git-pull?repo=https%3A%2F%2Fgithub.com%2Fnest%2Fnest-simulator-examples&urlpath=lab\
+%2Ftree%2Fnest-simulator-examples%2Fnotebooks%2Fnotebooks%2Ffilepath.ipynb&branch=main
+    :link-alt: JupyterHub service
 
     .. image:: https://nest-simulator.org/TryItOnEBRAINS.png
-         :target: https://lab.ebrains.eu/hub/user-redirect/git-pull?repo=\
-https%3A%2F%2Fgithub.com%2Fnest%2Fnest-simulator-examples\
-&urlpath=lab%2Ftree%2Fnest-simulator-examples%2Fnotebooks%2F\
-notebooks%2Ffilepath.ipynb&branch=main
 
-    For details and troubleshooting see :ref:`run_jupyter`."""
 
+.. grid:: 1 1 1 1
+   :padding: 0 0 2 0
+
+   .. grid-item::
+     :class: sd-text-muted
+     :margin: 0 0 3 0
+     :padding: 0 0 3 0
+     :columns: 4
+
+     See :ref:`our guide <run_jupyter>` for more information and troubleshooting.
+
+----
+"""
     # Find all relevant files
     # Inject prolog into Python example
     files = list(Path("auto_examples/").rglob("*.rst"))
@@ -280,13 +297,12 @@ def toc_customizer(app, docname, source):
 
 
 def setup(app):
+    # for events see
+    # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
     app.connect("source-read", toc_customizer)
     app.add_css_file('css/custom.css')
     app.add_css_file('css/pygments.css')
     app.add_js_file("js/custom.js")
-
-    # for events see
-    # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
     app.connect('env-before-read-docs', add_button_to_examples)
     app.connect('config-inited', config_inited_handler)
 

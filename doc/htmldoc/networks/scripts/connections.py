@@ -572,7 +572,7 @@ pn_fig(fig, 111, spatial_nodes, cdict)
 
 plt.savefig('../user_manual_figures/conn6.png', bbox_inches='tight')
 
-#{ conn7 #}
+# { conn7 #}
 cdict_random_in = {'rule': 'fixed_indegree',
                    'p': nest.spatial_distributions.gaussian(nest.spatial.distance, std=0.5),
                    'mask': {'circular': {'radius': 1.0}},

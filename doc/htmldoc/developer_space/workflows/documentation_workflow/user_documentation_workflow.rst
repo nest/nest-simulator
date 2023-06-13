@@ -40,7 +40,7 @@ If you notice any errors or weaknesses in the documentation, please
 submit an `Issue <https://github.com/nest/nest-simulator/issues>`_ in
 our GitHub repository.
 
-You can also make changes directly to your forked copy of the `source
+You can also make changes directly to your forked copy of the `NEST source
 code repository <https://github.com/nest/nest-simulator>`_ and create a `pull
 request <https://github.com/nest/nest-simulator/pulls>`_. Just follow the
 workflow below!
@@ -92,27 +92,27 @@ commands.
 
 1. Clone the NEST repository:
 
-   .. code-block:: bash
+.. code-block:: bash
 
-       git clone git@github.com:nest/nest-simulator
+   git clone git@github.com:nest/nest-simulator
 
 2. Navigate to the ``doc/htmldoc`` folder:
 
-   .. code-block:: bash
+.. code-block:: bash
 
-       cd nest-simulator/doc/htmldoc
+   cd nest-simulator/doc/htmldoc
 
 3. Build the docs:
 
-   .. code-black:: bash
+.. code-black:: bash
 
-       sphinx-build . ../_build/html -b html
+   sphinx-build . ../_build/html -b html
 
 4. Preview files. They are located in ``doc/_build/html``
 
-   .. code-block:: bash
+.. code-block:: bash
 
-       browser ../_build/html/index.html
+   browser ../_build/html/index.html
 
 .. tip::
 
@@ -122,7 +122,6 @@ commands.
 
        cmake -Dwith-userdoc=ON </path/to/NEST/src>
        make docs
-
 
 Editing and creating pages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -153,15 +152,15 @@ Docs.
 
 1. Check that unwanted directories are listed in ``.gitignore``:
 
-   .. code-block:: bash
+.. code-block:: bash
 
-       _build
-       _static
-       _templates
+   _build
+   _static
+   _templates
 
 2. Add, commit and push your changes to GitHub.
 
-3. `Sign up for a Read the Docs account <https://readthedocs.org/>`_,
+3. Go to `Read the Docs <https://readthedocs.org/>`_. Sign up for an account
    if you don't have one.
 
 4. `Import <https://readthedocs.org/dashboard/import/>`_ the project.

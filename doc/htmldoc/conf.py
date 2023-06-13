@@ -136,6 +136,7 @@ html_theme_options = {
     # Set the name of the project to appear in the navigation.
     # Set you GA account ID to enable tracking
     # 'google_analytics_account': 'UA-XXXXX',
+
     # Specify a base_url used to generate sitemap.xml. If not
     # specified, then no sitemap will be built.
     "base_url": "https://nest-simulator.readthedocs.io/en/latest/",
@@ -392,7 +393,9 @@ def patch_documentation(patch_url):
 
     print("Preparing patch...")
     try:
-        git_dir = repo_root_dir / ".git"
+        git_dir = f"{repo_root_dir} /.git"
+        print(f"  Git dir: {git_dir}")
+
         git_hash = subprocess.check_output(
             f"GIT_DIR='{git_dir}' git rev-parse HEAD", shell=True, encoding="utf8"
         ).strip()
@@ -402,7 +405,11 @@ def patch_documentation(patch_url):
         print(f"  retrieving {patch_url}")
         urlretrieve(patch_url, patch_file)
         print(f"  applying {patch_file}")
-        result = subprocess.check_output("patch -p3", stdin=open(patch_file, "r"), stderr=subprocess.STDOUT, shell=True)
+        result = subprocess.check_output('patch -p3', 
+                                         stdin=open(patch_file, 'r'), 
+                                         stderr=subprocess.STDOUT, 
+                                         shell=True
+                                         )
         print(f"Patch result: {result}")
     except Exception as exc:
         print(f"Error while applying patch: {exc}")

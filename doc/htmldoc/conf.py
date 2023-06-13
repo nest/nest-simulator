@@ -393,8 +393,6 @@ def patch_documentation(patch_url):
     print("Preparing patch...")
     try:
         git_dir = f"{repo_root_dir}/.git"
-        print(f"  Git dir: {git_dir}")
-
         git_hash = subprocess.check_output(
             f"GIT_DIR='{git_dir}' git rev-parse HEAD",
             shell=True,

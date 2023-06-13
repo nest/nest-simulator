@@ -170,7 +170,7 @@ public:
   void connect_sonata( const DictionaryDatum& graph_specs, const long hyberslab_size );
 
   size_t find_connection( const size_t tid, const synindex syn_id, const size_t snode_id, const size_t tnode_id );
-  
+
   void disconnect( const size_t tid, const synindex syn_id, const size_t snode_id, const size_t tnode_id );
 
   /**

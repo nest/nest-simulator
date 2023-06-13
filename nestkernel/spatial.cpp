@@ -115,7 +115,7 @@ get_position( const index node_id )
     throw KernelException( "GetPosition is currently implemented for local nodes only." );
   }
 
-  NodeCollectionPTR nc = kernel().node_manager.node_id_to_nodeCollection( node_id );
+  NodeCollectionPTR nc = kernel().node_manager.node_id_to_node_collection( node_id );
   NodeCollectionMetadataPTR meta = nc->get_metadata();
 
   if ( not meta )
@@ -342,7 +342,7 @@ distance( const ArrayDatum conns )
     }
 
 
-    NodeCollectionPTR trgt_nc = kernel().node_manager.node_id_to_nodeCollection( trgt );
+    NodeCollectionPTR trgt_nc = kernel().node_manager.node_id_to_node_collection( trgt );
     NodeCollectionMetadataPTR meta = trgt_nc->get_metadata();
 
     // distance is NaN if source, target is not spatially distributed

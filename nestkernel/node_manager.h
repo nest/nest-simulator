@@ -234,7 +234,14 @@ public:
    * @param node_id  node ID
    * @return The primitive nodeCollection object containing the node ID that falls in [first, last)
    */
-  NodeCollectionPTR node_id_to_nodeCollection( const index node_id ) const;
+  NodeCollectionPTR node_id_to_node_collection( const index node_id ) const;
+
+  /**
+   * @brief Map the the node to its original primitive NodeCollection object.
+   * @param node  Node instance
+   * @return The primitive nodeCollection object containing the node with node ID  falls in [first, last)
+   */
+  NodeCollectionPTR node_id_to_node_collection( Node* node ) const;
 
 private:
   /**
@@ -300,9 +307,9 @@ private:
    * @brief Append the NodeCollection instance into the NodeManager::nodeCollection_container.
    * @param ncp  The NodeCollection instance.
    */
-  void append_nodeCollection_( NodeCollectionPTR ncp );
+  void append_node_collection_( NodeCollectionPTR ncp );
 
-  void clear_nodeCollection_container();
+  void clear_node_collection_container();
 
 private:
   /**
@@ -310,6 +317,14 @@ private:
    * which contains only the thread-local nodes.
    */
   std::vector< SparseNodeArray > local_nodes_;
+
+  std::vector< NodeCollectionPTR >
+
+    std::vector< index >
+      nodeCollection_last_; //!< Store the ID of the last element in each NodeCollection instance.
+                            //!<  Mainly, the nodeCollection_last_ must be the same size as node_collection_container,
+                            //!< where each  element at position i in the nodeCollection_last_ is the last node ID
+                            //!< stored in the node_collection_container_ at position i.
 
   std::vector< std::vector< Node* > > wfr_nodes_vec_; //!< Nodelists for unfrozen nodes that
                                                       //!< use the waveform relaxation method
@@ -329,12 +344,6 @@ private:
 
   // private stop watch for benchmarking purposes
   Stopwatch sw_construction_create_;
-
-  // Store all original primitive NodeCollection objects created by the kernel
-  std::vector< NodeCollectionPTR > nodeCollection_container_;
-
-  // Store the index of the last element in each NodeCollection instance.
-  std::vector< index > nodeCollection_last_;
 };
 
 inline index

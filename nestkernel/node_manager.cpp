@@ -64,7 +64,7 @@ NodeManager::~NodeManager()
 {
   // We must destruct nodes here, since devices may need to close files.
   destruct_nodes_();
-  clear_nodeCollection_container();
+  clear_node_collection_container();
 }
 
 void
@@ -83,7 +83,7 @@ void
 NodeManager::finalize()
 {
   destruct_nodes_();
-  clear_nodeCollection_container();
+  clear_node_collection_container();
 }
 
 void
@@ -140,7 +140,7 @@ NodeManager::add_node( index model_id, long n )
     .swap( exceptions_raised_ );
 
   auto nc_ptr = NodeCollectionPTR( new NodeCollectionPrimitive( min_node_id, max_node_id, model_id ) );
-  append_nodeCollection_( nc_ptr );
+  append_node_collection_( nc_ptr );
 
   if ( model->has_proxies() )
   {
@@ -312,22 +312,32 @@ NodeManager::add_music_nodes_( Model& model, index min_node_id, index max_node_i
 }
 
 NodeCollectionPTR
-NodeManager::node_id_to_nodeCollection( const index node_id ) const
+NodeManager::node_id_to_node_collection( const index node_id ) const
 {
+  // find the largest element `e` in the nodeCollection_last_ so that `e` < node_id
   auto it = std::lower_bound( nodeCollection_last_.begin(), nodeCollection_last_.end(), node_id );
+
+  // compute the position of the nodeCollection based on the position of `e`
   size_t pos = it - nodeCollection_last_.begin();
+  
   return node_collection_container_.at( pos );
 }
 
+NodeCollectionPTR
+NodeManager::node_id_to_node_collection( Node* node ) const
+{
+  return node_id_to_node_collection( node->get_node_id() );
+}
+
 void
-NodeManager::append_nodeCollection_( NodeCollectionPTR ncp )
+NodeManager::append_node_collection_( NodeCollectionPTR ncp )
 {
   node_collection_container_.push_back( ncp );
   nodeCollection_last_.push_back( ncp->get_last() );
 }
 
 void
-NodeManager::clear_nodeCollection_container()
+NodeManager::clear_node_collection_container()
 {
   node_collection_container_.clear();
   nodeCollection_last_.clear();

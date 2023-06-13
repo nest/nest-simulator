@@ -368,8 +368,14 @@ public:
    */
   virtual bool has_proxies() const = 0;
 
+  /**
+   * return the first stored ID (i.e, ID at index zero) inside the NodeCollection
+   */
   index get_first() const;
 
+  /**
+   * return the last stored ID inside the NodeCollection
+   */
   index get_last() const;
 
 

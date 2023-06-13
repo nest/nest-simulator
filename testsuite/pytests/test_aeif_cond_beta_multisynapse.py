@@ -19,37 +19,51 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
+r"""
+Test the AEIF multisynapse model with synaptic conductance modeled by a beta function.
+
 This test creates a multisynapse neuron with three receptor ports with
-different synaptic rise times and decay times, and connect it to
+different synaptic rise times and decay times, and connects it to
 two excitatory and one inhibitory signals. At the end, the script compares
-the simulated values of V(t) with an approximate analytical formula, which
+the simulated values of :math:`V(t)` with an approximate analytical formula, which
 can be derived as follows:
 
 For small excitatory inputs the synaptic current can be approximated as
 
-I(t)=g(t)[Vrest-Eex]
+.. math::
 
-where g(t) is the synaptic conductance, Vrest is the resting potential and
-Eex is the excitatory reverse potential (see Roth and van Rossum, p. 144).
+    I(t) = g(t) \left( V_\mathrm{rest} - E_\mathrm{ex} \right),
+
+where :math:`g(t)` is the synaptic conductance, :math:`V_\mathrm{rest}` is
+the resting potential and :math:`E_\mathrm{ex}` is the excitatory reverse
+potential (see Roth and van Rossum, p. 144).
 
 Using the LIF model, the differential equation for the membrane potential
 can be written as
 
-tau_m dv/dt = -v + G
+.. math::
 
-where tau_m = Cm/gL, v = Vm - Vrest, and G=g(t)(Eex-Vrest)/gL
-Using a first-order Taylor expansion of v around a generic time t0:
+    \tau_m \frac{\mathrm{d}v}{\mathrm{d}t} = -v + G,
 
-v(t0+tau_m)=v(t0)+tau_m dv/dt + O(tau_m^2)
+where :math:`\tau_m = C_m / g_L`, :math:`v = V_m - V_\mathrm{rest}`
+and :math:`G = g(t) \left( E_\mathrm{ex} - V_\mathrm{rest} / g_L`.
 
-and substituting t=t0+tau_m we get
+Using a first-order Taylor expansion of :math:`v` around a generic time :math:`t_0`:
 
-v(t)=G(t-tau_m)
+.. math::
 
-This approximation is valid for small excitatory inputs if tau_m is small
-compared to the time scale of variation of G(t). Basically, this happens
-when the synaptic rise time and decay time are much greater than tau_m.
+     v \left( t_0 + \tau_m \right) = v \left( t_0 \right) + \tau_m \frac{\mathrm{d}v}{\mathrm{d}t}
+     + O \left( \tau_m^2 \right)
+
+and substituting :math:`t = t_0 + \tau_m`, we get
+
+.. math::
+
+     v(t) = G \left( t - \tau_m \right).
+
+This approximation is valid for small excitatory inputs if :math:`\tau_m` is small
+compared to the time scale of variation of :math:`G(t)`. Basically, this happens
+when the synaptic rise time and decay time are much greater than :math:`\tau_m`.
 An analogous approximation can be derived for small inhibitory inputs.
 
 References

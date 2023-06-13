@@ -403,11 +403,10 @@ def patch_documentation(patch_url):
         print(f"  retrieving {patch_url}")
         urlretrieve(patch_url, patch_file)
         print(f"  applying {patch_file}")
-        result = subprocess.check_output('git apply', 
-                                         stdin=open(patch_file, 'r'), 
-                                         stderr=subprocess.STDOUT, 
-                                         shell=True
-                                         )
+        result = subprocess.check_output('git apply',
+                                         stdin=open(patch_file, 'r'),
+                                         stderr=subprocess.STDOUT,
+                                         shell=True)
         print(f"Patch result: {result}")
     except Exception as exc:
         print(f"Error while applying patch: {exc}")

@@ -405,7 +405,7 @@ def patch_documentation(patch_url):
         print(f"  retrieving {patch_url}")
         urlretrieve(patch_url, patch_file)
         print(f"  applying {patch_file}")
-        result = subprocess.check_output('patch -p3', 
+        result = subprocess.check_output('patch -p3 --binary', 
                                          stdin=open(patch_file, 'r'), 
                                          stderr=subprocess.STDOUT, 
                                          shell=True

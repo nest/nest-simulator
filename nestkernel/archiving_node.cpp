@@ -430,7 +430,7 @@ ArchivingNode::reset_correction_entries_stdp_ax_delay_()
       const long idx = kernel().event_delivery_manager.get_modulo( lag );
       assert( static_cast< size_t >( idx ) < correction_entries_stdp_ax_delay_.size() );
 
-      correction_entries_stdp_ax_delay_[ idx ].clear();
+      std::vector< CorrectionEntrySTDPAxDelay >().swap( correction_entries_stdp_ax_delay_[ idx ] );
     }
   }
 #ifdef TIMER_DETAILED

@@ -334,26 +334,27 @@ def toc_customizer(app, docname, source):
         source[0] = rendered
 
 
-def cpp_customizer(app, docname, source):
-    if docname == "exhale-toc":
-        cpp_class = json.load(open("cpp_output.json"))
-        html_context = {"cpp_class_list": cpp_class}
-        cpp_source = source[0]
-        rendered = app.builder.templates.render_string(cpp_source, html_context)
-        source[0] = rendered
+#def cpp_customizer(app, docname, source):
+#    if docname == "exhale-toc":
+#        cpp_class = json.load(open("cpp_output.json"))
+#        html_context = {"cpp_class_list": cpp_class}
+#        cpp_source = source[0]
+#        rendered = app.builder.templates.render_string(cpp_source, html_context)
+#        source[0] = rendered
 
-def special_customizer(app, docname, source):
-    if docname == "doxy-toc":
-        special = json.load(open("specialtags.json"))
-        html_context = {"special_list": special}
+def tags_devdocs(app, docname, source):
+    if docname == "dev_iomanager":
+        special = json.load(open("test_list.json"))
+        cpp_class = json.load(open("cpp_output.json"))
+        html_context = {"io_manager_list": special, "cpp_class_list": cpp_class}
         special_source = source[0]
         rendered = app.builder.templates.render_string(special_source, html_context)
         source[0] = rendered
 
 def setup(app):
     app.connect("source-read", toc_customizer)
-    app.connect("source-read", cpp_customizer)
-    app.connect("source-read", special_customizer)
+#    app.connect("source-read", cpp_customizer)
+    app.connect("source-read", tags_devdocs)
     app.add_css_file('css/custom.css')
     app.add_css_file('css/pygments.css')
     app.add_js_file("js/custom.js")

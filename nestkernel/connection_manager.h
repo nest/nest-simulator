@@ -158,8 +158,19 @@ public:
     size_t n,
     std::string syn_model );
 
-  size_t find_connection( const size_t tid, const synindex syn_id, const size_t snode_id, const size_t tnode_id );
+  /**
+   * @brief Connect nodes from SONATA specification.
+   *
+   * This function instantiates the `SonataConnector` class and calls the class member
+   * function `connect`.
+   *
+   * @param graph_specs Specification dictionary, see PyNEST `SonataNetwork._create_graph_specs` for details.
+   * @param hyberslab_size Size of the hyperslab to read in one read operation, applies to all HDF5 datasets.
+   */
+  void connect_sonata( const DictionaryDatum& graph_specs, const long hyberslab_size );
 
+  size_t find_connection( const size_t tid, const synindex syn_id, const size_t snode_id, const size_t tnode_id );
+  
   void disconnect( const size_t tid, const synindex syn_id, const size_t snode_id, const size_t tnode_id );
 
   /**

@@ -809,7 +809,6 @@ NodeCollectionPrimitive::has_proxies() const
   return not nodes_have_no_proxies_;
 }
 
-
 inline NodeCollectionComposite::const_iterator
 NodeCollectionComposite::begin( NodeCollectionPTR cp ) const
 {

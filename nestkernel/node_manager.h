@@ -230,16 +230,16 @@ public:
   void set_have_nodes_changed( const bool changed );
 
   /**
-   * @brief Map the the node ID to its original primitive NodeCollection object.
-   * @param node_id  node ID
-   * @return The primitive nodeCollection object containing the node ID that falls in [first, last)
+   * @brief Map the node ID to its original primitive NodeCollection object.
+   * @param node_id  The node ID
+   * @return The primitive NodeCollection object containing the node ID that falls in [first, last)
    */
   NodeCollectionPTR node_id_to_node_collection( const index node_id ) const;
 
   /**
-   * @brief Map the the node to its original primitive NodeCollection object.
+   * @brief Map the node to its original primitive NodeCollection object.
    * @param node  Node instance
-   * @return The primitive nodeCollection object containing the node with node ID  falls in [first, last)
+   * @return The primitive NodeCollection object containing the node with node ID  falls in [first, last)
    */
   NodeCollectionPTR node_id_to_node_collection( Node* node ) const;
 
@@ -320,7 +320,7 @@ private:
 
   std::vector< NodeCollectionPTR > node_collection_container_; //!< a vector of the original/primitive NodeCollection
 
-  std::vector< index >
+  std::vector< size_t >
     node_collection_last_; //!< Store the ID of the last element in each NodeCollection instance.
                            //!<  Mainly, the node_collection_last_ must be the same size as node_collection_container,
                            //!< where each  element at position i in the nodeCollection_last_ is the last node ID

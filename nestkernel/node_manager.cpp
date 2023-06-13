@@ -26,7 +26,6 @@
 #include <algorithm>
 #include <set>
 
-
 // Includes from libnestutil:
 #include "compose.hpp"
 #include "logging.h"
@@ -314,10 +313,10 @@ NodeManager::add_music_nodes_( Model& model, index min_node_id, index max_node_i
 NodeCollectionPTR
 NodeManager::node_id_to_node_collection( const index node_id ) const
 {
-  // find the largest element `e` in the node_collection_last_ so that `e` < node_id
+  // find the largest ID in node_collection_last_ that is still smaller than node_id
   auto it = std::lower_bound( node_collection_last_.begin(), node_collection_last_.end(), node_id );
 
-  // compute the position of the nodeCollection based on the position of `e`
+  // compute the position of the nodeCollection based on the position of the ID found above
   size_t pos = it - node_collection_last_.begin();
   return node_collection_container_.at( pos );
 }

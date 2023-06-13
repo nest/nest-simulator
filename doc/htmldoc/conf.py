@@ -195,7 +195,7 @@ intersphinx_mapping = {
 }
 
 
-def config_inited_handler(app, config):
+def config_inited_handler(app, config): 
     models_rst_dir = os.path.abspath("models")
     ExtractUserDocs(
         listoffiles=relative_glob("models/*.h", "nestkernel/*.h", basedir=repo_root_dir),
@@ -288,10 +288,7 @@ git-pull?repo=https%3A%2F%2Fgithub.com%2Fnest%2Fnest-simulator-examples&urlpath=
 
 
 def toc_customizer(app, docname, source):
-    if docname == "models/models-toc":
-        models_toc = json.load(open("models/toc-tree.json"))
-        html_context = {"nest_models": models_toc}
-        models_source = source[0]
+    if docname == "models/models-toc":/steffengraber/nest-simulator
         rendered = app.builder.templates.render_string(models_source, html_context)
         source[0] = rendered
 
@@ -390,10 +387,11 @@ def patch_documentation(patch_url):
       3. retrieve the patch
 
     """
-
     print("Preparing patch...")
     try:
-        git_dir = repo_root_dir / ".git"
+        git_dir = f"{repo_root_dir} /.git"
+        print(f"  Git dir: {git_dir}")
+
         git_hash = subprocess.check_output(
             f"GIT_DIR='{git_dir}' git rev-parse HEAD",
             shell=True,
@@ -404,7 +402,11 @@ def patch_documentation(patch_url):
         print(f"  retrieving {patch_url}")
         urlretrieve(patch_url, patch_file)
         print(f"  applying {patch_file}")
-        result = subprocess.check_output('patch -p3', stdin=open(patch_file, 'r'), stderr=subprocess.STDOUT, shell=True)
+        result = subprocess.check_output('patch -p3', 
+                                         stdin=open(patch_file, 'r'), 
+                                         stderr=subprocess.STDOUT, 
+                                         shell=True
+                                         )
         print(f"Patch result: {result}")
     except Exception as exc:
         print(f"Error while applying patch: {exc}")

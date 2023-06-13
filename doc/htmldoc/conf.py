@@ -288,7 +288,10 @@ git-pull?repo=https%3A%2F%2Fgithub.com%2Fnest%2Fnest-simulator-examples&urlpath=
 
 
 def toc_customizer(app, docname, source):
-    if docname == "models/models-toc":/steffengraber/nest-simulator
+    if docname == "models/models-toc":
+        models_toc = json.load(open("models/toc-tree.json"))
+        html_context = {"nest_models": models_toc}
+        models_source = source[0]
         rendered = app.builder.templates.render_string(models_source, html_context)
         source[0] = rendered
 

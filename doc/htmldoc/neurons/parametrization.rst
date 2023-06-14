@@ -468,7 +468,7 @@ Using parameters makes it easy to set node properties
 |                                               |                                                    |
 | ::                                            | ::                                                 |
 |                                               |                                                    |
-|     for gid in nrns:                          |     nrns.V_m=nest.random.uniform(-20., 20)         |
+|     for gid in nrns:                          |     nrns.V_m = nest.random.uniform(-20.0, 20.0)    |
 |       v_m = numpy.random.uniform(-20.0, 20.0) |                                                    |
 |       nest.SetStatus(gid, {"V_m": v_m})       |                                                    |
 |                                               |                                                    |

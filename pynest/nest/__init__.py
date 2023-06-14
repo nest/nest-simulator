@@ -97,6 +97,7 @@ class NestModule(types.ModuleType):
         _rel_import_star(self, ".lib.hl_api_nodes")  # noqa: F821
         _rel_import_star(self, ".lib.hl_api_parallel_computing")  # noqa: F821
         _rel_import_star(self, ".lib.hl_api_simulation")  # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_sonata")  # noqa: F821
         _rel_import_star(self, ".lib.hl_api_spatial")  # noqa: F821
         _rel_import_star(self, ".lib.hl_api_types")  # noqa: F821
 
@@ -161,9 +162,8 @@ class NestModule(types.ModuleType):
     )
     tics_per_step = KernelAttribute(
         "int",
-        ("The number of tics per simulation time step. Calculated by " + "tics_per_step = resolution * tics_per_ms"),
+        ("The number of tics per simulation time step. Calculated as tics_per_step = resolution * tics_per_ms"),
         readonly=True,
-    )
     T_max = KernelAttribute("float", "The largest representable time value", readonly=True)
     T_min = KernelAttribute("float", "The smallest representable time value", readonly=True)
     rng_types = KernelAttribute(
@@ -257,7 +257,6 @@ class NestModule(types.ModuleType):
     )
     wfr_interpolation_order = KernelAttribute(
         "int", "Interpolation order of polynomial used in wfr iterations", default=3
-    )
     max_num_syn_models = KernelAttribute("int", "Maximal number of synapse models supported", readonly=True)
     sort_connections_by_source = KernelAttribute(
         "bool",

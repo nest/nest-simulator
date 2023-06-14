@@ -305,9 +305,9 @@ layer1 = nest.Create("iaf_cond_alpha", positions=nest.spatial.grid(shape=[2, 1])
 layer2 = nest.Create("poisson_generator", positions=nest.spatial.grid(shape=[2, 1]))
 # { end #}
 
-print("#{ layer6 #}")
+print("# { layer6 #}")
 nest.PrintNodes()
-print("#{ end #}")
+print("# { end #}")
 
 # --------------------------------------------------
 

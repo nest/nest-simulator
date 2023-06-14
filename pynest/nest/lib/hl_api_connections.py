@@ -205,6 +205,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
     ---------
     :ref:`connection_management`
     """
+
     use_connect_arrays, pre, post = _process_input_nodes(pre, post, conn_spec)
 
     # Converting conn_spec to dict, without putting it on the SLI stack.
@@ -217,7 +218,9 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
     # the node IDs are connected one-to-one.
     if use_connect_arrays:
         if return_synapsecollection:
-            raise ValueError("SynapseCollection cannot be returned when connecting two arrays of node IDs")
+            raise ValueError(
+                "SynapseCollection cannot be returned when connecting two arrays of node IDs"
+            )
 
         if processed_syn_spec is None:
             raise ValueError(
@@ -249,7 +252,9 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
         }
 
         if len(reduced_processed_syn_spec) > 0:
-            syn_param_keys = numpy.array(list(reduced_processed_syn_spec.keys()), dtype=numpy.string_)
+            syn_param_keys = numpy.array(
+                list(reduced_processed_syn_spec.keys()), dtype=numpy.string_
+            )
             syn_param_values = numpy.zeros([len(reduced_processed_syn_spec), len(pre)])
 
             for i, value in enumerate(reduced_processed_syn_spec.values()):
@@ -258,7 +263,9 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
             syn_param_keys = None
             syn_param_values = None
 
-        connect_arrays(pre, post, weights, delays, synapse_model, syn_param_keys, syn_param_values)
+        connect_arrays(
+            pre, post, weights, delays, synapse_model, syn_param_keys, syn_param_values
+        )
 
         return
 

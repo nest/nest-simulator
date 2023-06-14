@@ -258,6 +258,7 @@ class NestModule(types.ModuleType):
     )
     wfr_interpolation_order = KernelAttribute(
         "int", "Interpolation order of polynomial used in wfr iterations", default=3
+    )
     max_num_syn_models = KernelAttribute("int", "Maximal number of synapse models supported", readonly=True)
     sort_connections_by_source = KernelAttribute(
         "bool",

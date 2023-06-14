@@ -103,8 +103,12 @@ parameter setting of voltage_reset_fraction and voltage_reset_add may lead to th
 situation that voltage is bigger than threshold after reset. In this case, the neuron
 will continue to spike until the end of the simulation regardless the stimulated inputs.
 We recommend the setting of the parameters of these three models to follow the
-condition of :math:`(E_L + \text{voltage_reset_fraction} * ( V_{th} - E_L ) + \text{voltage_reset_add})
-< (V_{th} + \text{th_spike_add})`.
+condition of 
+
+.. math::
+
+    E_L + \mathrm{voltage_reset_fraction} \cdot \left( V_\mathrm{th} - E_L \right)
+    + \mathrm{voltage_reset_add} < V_\mathrm{th} + \mathrm{th_spike_add}
 
 Parameters
 ++++++++++

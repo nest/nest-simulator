@@ -460,7 +460,7 @@ SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t off
         const size_t snode_id = ( *( snode_begin + sonata_src_id ) ).node_id;
 
         Node* target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-        const thread target_thread = target->get_thread();
+        const size_t target_thread = target->get_thread();
 
         const auto edge_type_id = edge_type_id_data_subset[ i ];
         const auto syn_spec = getValue< DictionaryDatum >( cur_edge_params_->lookup( std::to_string( edge_type_id ) ) );
@@ -490,7 +490,7 @@ SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t off
   } // end parallel region
 
   // Check if any exceptions have been raised
-  for ( thread thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+  for ( size_t thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
   {
     if ( exceptions_raised_.at( thr ).get() )
     {
@@ -611,7 +611,7 @@ SonataConnector::set_synapse_params_( DictionaryDatum syn_dict, size_t synapse_m
   // region. Currently, creation of NumericDatum objects is not thread-safe because sli::pool memory is a static
   // member variable; thus is also the new operator a static member function.
   // Note that this also applies to the equivalent loop in conn_builder.cpp
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
     edge_type_id_2_param_dicts_[ type_id ][ tid ] = new Dictionary;
 
@@ -632,7 +632,7 @@ SonataConnector::set_synapse_params_( DictionaryDatum syn_dict, size_t synapse_m
 void
 SonataConnector::get_synapse_params_( size_t snode_id,
   Node& target,
-  thread target_thread,
+  size_t target_thread,
   RngPtr rng,
   int edge_type_id )
 {

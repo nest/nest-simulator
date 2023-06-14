@@ -46,7 +46,7 @@ import pytest
 @pytest.fixture(autouse=True)
 def prepare():
     nest.ResetKernel()
-    nest.set(tics_per_ms=2 ** 14, resolution=2 ** (-4))
+    nest.set(tics_per_ms=2**14, resolution=2 ** (-4))
 
 
 def test_correct_ticks_per_ms():

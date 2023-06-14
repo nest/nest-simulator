@@ -162,8 +162,9 @@ class NestModule(types.ModuleType):
     )
     tics_per_step = KernelAttribute(
         "int",
-        ("The number of tics per simulation time step. Calculated as tics_per_step = resolution * tics_per_ms"),
+        "The number of tics per simulation time step. Calculated as tics_per_step = resolution * tics_per_ms",
         readonly=True,
+    )
     T_max = KernelAttribute("float", "The largest representable time value", readonly=True)
     T_min = KernelAttribute("float", "The smallest representable time value", readonly=True)
     rng_types = KernelAttribute(

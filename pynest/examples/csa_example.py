@@ -58,13 +58,17 @@ import matplotlib.pyplot as plt
 
 try:
     import csa
+
     haveCSA = True
 except ImportError:
-    print("This example requires CSA to be installed in order to run.\n" +
-          "Please make sure you compiled NEST using\n" +
-          "  -Dwith-libneurosim=[OFF|ON|</path/to/libneurosim>]\n" +
-          "and CSA and libneurosim are available.")
+    print(
+        "This example requires CSA to be installed in order to run.\n"
+        + "Please make sure you compiled NEST using\n"
+        + "  -Dwith-libneurosim=[OFF|ON|</path/to/libneurosim>]\n"
+        + "and CSA and libneurosim are available."
+    )
     import sys
+
     sys.exit(1)
 
 ###############################################################################

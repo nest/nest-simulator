@@ -291,7 +291,7 @@ jobs:
         run: |
           pylint --jobs=$(nproc) pynest/ testsuite/pytests/*.py testsuite/regressiontests/*.py
 
-  black_IGNORED:
+  black:
     runs-on: "ubuntu-20.04"
     steps:
       - name: "Checkout repository content"
@@ -299,8 +299,9 @@ jobs:
         with:
           fetch-depth: 0
       - name: "Run black..."
-        continue-on-error: true
         uses: psf/black@bf7a16254ec96b084a6caf3d435ec18f0f245cc7   # 23.3.0
+        with:
+          jupyter: true
 
   flake8:
     runs-on: "ubuntu-20.04"
@@ -404,7 +405,7 @@ jobs:
   build_linux:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, black_IGNORED, flake8]
+    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, black, flake8]
     env:
       CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
       NEST_VPATH: "build"
@@ -612,7 +613,7 @@ jobs:
   build_macos:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, black_IGNORED, flake8]
+    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, black, flake8]
     env:
       CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
       NEST_VPATH: "build"

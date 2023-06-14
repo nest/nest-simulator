@@ -142,7 +142,7 @@ class SonataNetwork:
         """
 
         if not isinstance(config, (str, PurePath, Path)):
-            msg = "Path to JSON configuration file must be passed as str, " "pathlib.PurePath or pathlib.Path"
+            msg = "Path to JSON configuration file must be passed as str, pathlib.PurePath or pathlib.Path"
             raise TypeError(msg)
 
         # Get absolute path
@@ -207,7 +207,7 @@ class SonataNetwork:
             is_one_model_type = (model_types_arr[0] == model_types_arr).all()
 
             if not is_one_model_type:
-                msg = "Only one model type per node types CSV file is " f"supported. {csv_fn} contains more than one."
+                msg = f"Only one model type per node types CSV file is supported. {csv_fn} contains more than one."
                 raise ValueError(msg)
 
             model_type = model_types_arr[0]
@@ -217,7 +217,7 @@ class SonataNetwork:
             elif model_type == "virtual":
                 self._create_spike_generators(nodes_conf)
             else:
-                msg = f"Model type '{model_type}' in {csv_fn} is not " "supported by NEST."
+                msg = f"Model type '{model_type}' in {csv_fn} is not supported by NEST."
                 raise ValueError(msg)
 
         self._are_nodes_created = True
@@ -308,7 +308,7 @@ class SonataNetwork:
                         break  # Break once we found the matching population
 
                 if input_file is None:
-                    msg = "Could not find an input file for population " f"{pop_name} in config file."
+                    msg = f"Could not find an input file for population {pop_name} in config file."
                     raise ValueError(msg)
 
                 with h5py.File(input_file, "r") as input_h5f:
@@ -327,9 +327,7 @@ class SonataNetwork:
                         if pop_name in input_h5f["spikes"].keys():
                             spikes_grp = input_h5f["spikes"][pop_name]
                         else:
-                            msg = (
-                                "Did not find a matching HDF5 group name " f"for population {pop_name} in {input_file}"
-                            )
+                            msg = f"Did not find a matching HDF5 group name for population {pop_name} in {input_file}"
                             raise ValueError(msg)
                     else:
                         spikes_grp = input_h5f["spikes"]
@@ -339,7 +337,7 @@ class SonataNetwork:
                     elif "node_ids" in spikes_grp:
                         node_ids = spikes_grp["node_ids"][:]
                     else:
-                        msg = "No dataset called 'gids' or 'node_ids' in " f"{input_file}"
+                        msg = f"No dataset called 'gids' or 'node_ids' in {input_file}"
                         raise ValueError(msg)
 
                     timestamps = spikes_grp["timestamps"][:]
@@ -379,7 +377,7 @@ class SonataNetwork:
         """
 
         if "model_template" not in nodes_df.columns:
-            msg = "Missing the required 'model_template' header specifying " f"NEST neuron models in {csv_fn}."
+            msg = f"Missing the required 'model_template' header specifying NEST neuron models in {csv_fn}."
             raise ValueError(msg)
 
         if "dynamics_params" not in nodes_df.columns:
@@ -419,7 +417,7 @@ class SonataNetwork:
         """
 
         if not self._are_nodes_created:
-            msg = "The SONATA network nodes must be created before any " "connections can be made"
+            msg = "The SONATA network nodes must be created before any connections can be made"
             raise kernel.NESTError(msg)
 
         if hdf5_hyperslab_size is None:
@@ -508,9 +506,7 @@ class SonataNetwork:
             edges_df = pd.read_csv(edges_csv_fn, sep=r"\s+")
 
             if "model_template" not in edges_df.columns:
-                msg = (
-                    "Missing the required 'model_template' header " f"specifying NEST synapse models in {edges_csv_fn}."
-                )
+                msg = f"Missing the required 'model_template' header specifying NEST synapse models in {edges_csv_fn}."
                 raise ValueError(msg)
 
             # Rename column labels to names used by NEST. Note that rename
@@ -643,7 +639,7 @@ class SonataNetwork:
         elif "duration" in self._conf["run"]:
             T_sim = self._conf["run"]["duration"]
         else:
-            msg = "Simulation time 'tstop' or 'duration' must be specified " "in configuration file"
+            msg = "Simulation time 'tstop' or 'duration' must be specified in configuration file"
             raise ValueError(msg)
 
         Simulate(T_sim)

@@ -570,7 +570,7 @@ aeif_cond_alpha_multisynapse::update( Time const& origin, const long from, const
 size_t
 aeif_cond_alpha_multisynapse::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
-  if ( receptor_type <= 0 or receptor_type > static_cast< size_t >( P_.n_receptors() ) )
+  if ( receptor_type <= 0 or receptor_type > P_.n_receptors() )
   {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
   }

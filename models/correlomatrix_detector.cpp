@@ -340,7 +340,7 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
       for ( SpikelistType::const_iterator spike_j = otherSpikes.begin(); spike_j != otherSpikes.end(); ++spike_j )
       {
         size_t bin;
-        size_t other = static_cast< size_t >( spike_j->receptor_channel_ );
+        long other = spike_j->receptor_channel_;
         long sender_ind, other_ind;
 
         if ( spike_i < spike_j->timestep_ )

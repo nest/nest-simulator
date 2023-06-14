@@ -630,7 +630,11 @@ SonataConnector::set_synapse_params_( DictionaryDatum syn_dict, size_t synapse_m
 }
 
 void
-SonataConnector::get_synapse_params_( size_t snode_id, Node& target, thread target_thread, RngPtr rng, int edge_type_id )
+SonataConnector::get_synapse_params_( size_t snode_id,
+  Node& target,
+  thread target_thread,
+  RngPtr rng,
+  int edge_type_id )
 {
   for ( auto const& syn_param : edge_type_id_2_syn_spec_.at( edge_type_id ) )
   {

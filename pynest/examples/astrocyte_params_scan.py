@@ -17,7 +17,9 @@ params_scan = {
     'tau_IP3': [10., 2.],
     'rate_L': [0.0001, 0.00001],
     'alpha_SIC': [True],
-    'tau_SIC': [250]
+    'tau_SIC': [250],
+    'logarithmic_SIC': [True],
+    'SIC_scale': [10.],
 }
 
 # Helper for recording parameters

@@ -531,7 +531,17 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
         if ( B_.sic_flag_ == true and B_.sic_on_timer_ >= P_.delay_SIC_ )
         {
           // generate a SIC
-          S_.y_[ State_::DSIC ] += 0.001*calc_thr*B_.i0_ex_;
+          if ( P_.logarithmic_SIC_ == true )
+          {
+            if ( calc_thr > 1.0 )
+            {
+              S_.y_[ State_::DSIC ] += P_.SIC_scale_*std::log( calc_thr )*B_.i0_ex_;
+            }
+          }
+          else
+          {
+            S_.y_[ State_::DSIC ] += 0.001*P_.SIC_scale_*calc_thr*B_.i0_ex_;
+          }
           B_.sic_flag_ = false;
         }
         // condition to return to SIC-off state; to be discussed

@@ -188,6 +188,9 @@ nest::astrocyte_lr_1994::Parameters_::get( DictionaryDatum& d ) const
   def< bool >( d, names::logarithmic_SIC, logarithmic_SIC_ );
   def< bool >( d, names::alpha_SIC, alpha_SIC_ );
   def< double >( d, names::tau_SIC, tau_SIC_ );
+  def< double >( d, names::delay_SIC, delay_SIC_ );
+  def< double >( d, names::SIC_reactivate_th, SIC_reactivate_th_ );
+  def< double >( d, names::SIC_reactivate_time, SIC_reactivate_time_ );
 }
 
 void

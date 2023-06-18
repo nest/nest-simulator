@@ -130,6 +130,8 @@ nest::astrocyte_lr_1994::Parameters_::Parameters_()
   , alpha_SIC_( false )
   , tau_SIC_( 1000.0 ) // ms
   , delay_SIC_( 1000.0 ) // ms
+  , SIC_reactivate_th_( 196.69 ) // nM
+  , SIC_reactivate_time_( 100 ) // ms
 {
 }
 
@@ -211,6 +213,8 @@ nest::astrocyte_lr_1994::Parameters_::set( const DictionaryDatum& d, Node* node 
   updateValueParam< bool >( d, names::alpha_SIC, alpha_SIC_, node );
   updateValueParam< double >( d, names::tau_SIC, tau_SIC_, node );
   updateValueParam< double >( d, names::delay_SIC, delay_SIC_, node );
+  updateValueParam< double >( d, names::SIC_reactivate_th, SIC_reactivate_th_, node );
+  updateValueParam< double >( d, names::SIC_reactivate_time, SIC_reactivate_time_, node );
 
   if ( Ca_tot_ <= 0 )
   {
@@ -283,6 +287,14 @@ nest::astrocyte_lr_1994::Parameters_::set( const DictionaryDatum& d, Node* node 
   if ( delay_SIC_ < 0 )
   {
     throw BadProperty( "Delay of SIC must be non-negative." );
+  }
+  if ( SIC_reactivate_th_ < 0 or SIC_reactivate_th_ > SIC_th_ )
+  {
+    throw BadProperty( "Calcium threshold for reactivating SIC must be non-negative and not larger than calcium threshold for producing SIC." );
+  }
+  if ( SIC_reactivate_time_ < 0 )
+  {
+    throw BadProperty( "Time required for reactivating SIC must be non-negative." );
   }
 }
 
@@ -433,7 +445,8 @@ nest::astrocyte_lr_1994::init_buffers_()
   B_.sic_on_ = false;
   B_.sic_on_timer_ = 0.0;
   B_.i0_ex_ = 1.0 * numerics::e / P_.tau_SIC_;
-  B_.sic_flag_ = true;
+  B_.sic_started_flag_ = false;
+  B_.sic_off_timer_ = 0.0;
 
 }
 
@@ -520,15 +533,16 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
     // 1000.0: change unit from uM to nM
     double calc_thr = S_.y_[ State_::Ca ] * 1000.0 - P_.SIC_th_;
     double sic_value = 0.0;
-    // alpha shape SIC with delay and time constant
+    // alpha-shaped SIC
     if ( P_.alpha_SIC_ == true )
     {
       sic_value = S_.y_[ State_::SIC ];
+      // SIC-on (activated/deactivated) state
       if ( B_.sic_on_ == true )
       {
         // timer for delayed SIC
         B_.sic_on_timer_ += B_.step_;
-        if ( B_.sic_flag_ == true and B_.sic_on_timer_ >= P_.delay_SIC_ )
+        if ( B_.sic_started_flag_ == false and B_.sic_on_timer_ >= P_.delay_SIC_ )
         {
           // generate a SIC
           if ( P_.logarithmic_SIC_ == true )
@@ -542,28 +556,40 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
           {
             S_.y_[ State_::DSIC ] += 0.001*P_.SIC_scale_*calc_thr*B_.i0_ex_;
           }
-          B_.sic_flag_ = false;
+          B_.sic_started_flag_ = true;
         }
-        // condition to return to SIC-off state; to be discussed
-        if ( S_.y_[ State_::Ca ] * 1000.0 < 0.5*P_.SIC_th_ )
+        // condition to return to SIC-off (reactivated) state; to be discussed
+        if ( S_.y_[ State_::Ca ] * 1000.0 < P_.SIC_reactivate_th_ )
         {
-          B_.sic_on_ = false;
-          B_.sic_flag_ = true;
-          B_.sic_on_timer_ = 0.0;
+          // timer for SIC-off
+          B_.sic_off_timer_ += B_.step_;
+          if ( B_.sic_off_timer_ >= P_.SIC_reactivate_time_ )
+          {
+            B_.sic_on_ = false;
+            B_.sic_started_flag_ = false;
+            B_.sic_on_timer_ = 0.0;
+            B_.sic_off_timer_ = 0.0;
+          }
+        }
+        else
+        {
+          B_.sic_off_timer_ = 0.0;
         }
       }
+      // SIC-off (reactivated) state
       else
       {
-        // catch threshold-crossing point
+        // catch threshold-crossing point to activate SIC
         if ( calc_thr > 0.0 and calc_thr_last <= 0.0 )
         {
           B_.sic_on_ = true;
         }
       }
     }
+    // original version of SIC
     else
     {
-      // logarithmic SIC
+      // logarithmic
       if ( P_.logarithmic_SIC_ == true )
       {
         if ( calc_thr > 1.0 )
@@ -574,7 +600,7 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
           sic_value = std::log( calc_thr )*P_.SIC_scale_;
         }
       }
-      // let SIC simply copy calcium
+      // simply copy calcium
       else
       {
         if ( calc_thr > 0.0 )

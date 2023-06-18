@@ -248,9 +248,13 @@ private:
     double tau_IP3_;      //!< Time constant of astrocytic IP3 degradation in ms
     double rate_IP3R_;    //!< Maximum rate of calcium release via astrocytic IP3R in 1/ms
     double rate_SERCA_;   //!< Maximum rate of calcium uptake by astrocytic IP3R in uM/ms
+
+    // For alpha-shaped SIC; experimental
     bool alpha_SIC_;
     double tau_SIC_;
     double delay_SIC_;
+    double SIC_reactivate_th_;
+    double SIC_reactivate_time_;
 
     Parameters_(); //!< Sets default parameter values
 
@@ -331,12 +335,13 @@ private:
     // values to be sent by SIC event
     std::vector< double > sic_values;
 
-    // To switch between SIC-on and SIC-off phases
+    // for alpha-shaped SIC
+    // switch between SIC-on (activated) and SIC-off (reactivated) states
     bool sic_on_;
-
     double sic_on_timer_;
     double i0_ex_;
-    bool sic_flag_;
+    bool sic_started_flag_;
+    double sic_off_timer_;
   };
 
   // ----------------------------------------------------------------

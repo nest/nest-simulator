@@ -448,6 +448,8 @@ extern const Name rule;
 extern const Name S;
 extern const Name S_act_NMDA;
 extern const Name SIC;
+extern const Name SIC_reactivate_th;
+extern const Name SIC_reactivate_time;
 extern const Name SIC_scale;
 extern const Name SIC_th;
 extern const Name sdev;

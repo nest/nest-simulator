@@ -19,41 +19,42 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-This test creates a multisynapse neuron and first checks if time constants
-can be set correctly.
-
-Afterwards, it simulates the mutisynapse neuron with n (n=4) different time
-constants and records the neuron's synaptic current. At the same time, it simulates
-n (n=4) single synapse neurons with according parameters.
-At the end, it compares the multisynapse neuron currents with each according single
-synapse current.
-"""
-
 import nest
 import numpy as np
+import os
 import pytest
 
 
 @pytest.mark.skipif_missing_gsl
 class TestAeifCondAlphaMultisynapse:
+    r"""
+    This test creates a multisynapse neuron and first checks if time constants
+    can be set correctly.
+
+    Afterwards, it simulates the mutisynapse neuron with n (n=4) different time
+    constants and records the neuron's synaptic current. At the same time, it simulates
+    n (n=4) single synapse neurons with according parameters.
+    At the end, it compares the multisynapse neuron currents with each according single
+    synapse current.
+    """
+
     def test_single_multi_synapse_equivalence(self, have_plotting):
-        simulation_t = 2500.0  # ms
+        simulation_t = 2500.0    # total simulation time [ms]
 
-        dt = 0.1
+        dt = 0.1    # time step [ms]
 
-        E_ex = 0.0  # mV
-        E_in = -85.0  # mV
-        V_peak = 0.0
+        E_ex = 0.0   # excitatory reversal potential [mV]
+        E_in = -85.0   # inhibitory reversal potential [mV]
+        V_peak = 0.0    # spike detection threshold [mV]
         a = 4.0
         b = 80.5
-        tau_syn = [0.2, 0.5, 1.0, 10.0]
-        weight = [1.0, 5.0, 1.0, -1.0]
-        E_rev = [E_ex, E_ex, E_ex, E_in]
-        spike_time = 1.0
+        tau_syn = [0.2, 0.5, 1.0, 10.0]    # synaptic times [ms]
+        weight = [1.0, 5.0, 1.0, -1.0]    # synaptic weights
+        E_rev = [E_ex, E_ex, E_ex, E_in]    # synaptic reversal potentials [mV]
+        spike_time = 1.0    # time at which the single spike occurs [ms]
 
         # The delays have to be ordered and needs enough space between them to avoid one PSC from affecting the next
-        delays = [1.0, 500.0, 1500.0, 2250.0]  # ms
+        delays = [1.0, 500.0, 1500.0, 2250.0]    # ms
 
         V_m_steadystate = -70.59992755
         w_steadystate = 0.00029113
@@ -147,12 +148,13 @@ class TestAeifCondAlphaMultisynapse:
                 _ax.legend()
 
             ax[-1].semilogy(multisynapse_neuron_vm.get("events")["times"], error, label="errror")
-            fig.savefig("test_aeif_cond_alpha_multisynapse.png")
+            fig.savefig(os.path.join(os.environ.get("REPORTDIR", ""), "test_aeif_cond_alpha_multisynapse.png"))
 
         # compare with a large tolerance because previous PSPs affect subsequent PSPs in the multisynapse neuron
         np.testing.assert_allclose(error, 0, atol=1e-6)
 
     def test_recordables(self):
+        r"""Test that the right number of recordables are created when setting ``record_from``."""
         nest.ResetKernel()
 
         nrn = nest.Create("aeif_cond_alpha_multisynapse")
@@ -166,7 +168,7 @@ class TestAeifCondAlphaMultisynapse:
         assert len(nrn.recordables) == 3
 
     def test_resize_recordables(self):
-        """Test that the recordable g's change when changing the number of receptor ports"""
+        r"""Test that the recordable g's change when changing the number of receptor ports"""
         nest.ResetKernel()
 
         E_rev1 = [0.0, 0.0, -85.0]
@@ -186,19 +188,19 @@ class TestAeifCondAlphaMultisynapse:
         assert len(nrn.recordables) == 6
 
     def test_g_alpha_dynamics(self, have_plotting):
-        """Test that g has alpha function dynamics"""
+        r"""Test that g has alpha function dynamics"""
 
         dt = 0.1  # time step
 
         nest.ResetKernel()
         nest.resolution = dt
 
-        E_rev = [0.0, 0.0, -85.0, 20.0]  # synaptic reversal potentials
-        tau_syn = [40.0, 20.0, 30.0, 25.0]  # synaptic time constants
+        E_rev = [0.0, 0.0, -85.0, 20.0]    # synaptic reversal potentials
+        tau_syn = [40.0, 20.0, 30.0, 25.0]    # synaptic time constants
         weight = [1.0, 0.5, 2.0, 1.0]  # synaptic weights
-        delays = [1.0, 3.0, 10.0, 10.0]  # ms - synaptic delays
-        spike_time = 10.0  # time at which the single spike occurs
-        total_t = 500.0  # total simulation time
+        delays = [1.0, 3.0, 10.0, 10.0]    # synaptic delays [ms]
+        spike_time = 10.0    # time at which the single spike occurs
+        total_t = 500.0    # total simulation time
 
         def alpha_function(t, W=1.0, tau=1.0, t0=0.0):
             tdiff_over_tau = (t - t0) / tau
@@ -206,19 +208,14 @@ class TestAeifCondAlphaMultisynapse:
             return W * tdiff_over_tau * np.e * np.exp(-tdiff_over_tau)
 
         # Create the multisynapse neuron
-        nrn = nest.Create(
-            "aeif_cond_alpha_multisynapse",
-            params={
-                "w": 0.0,
-                "a": 0.0,
-                "b": 0.0,
-                "Delta_T": 0.0,
-                "t_ref": 0.0,
-                "I_e": 0.0,
-                "E_rev": E_rev,
-                "tau_syn": tau_syn,
-            },
-        )
+        nrn = nest.Create("aeif_cond_alpha_multisynapse", params={"w": 0.0,
+                                                                  "a": 0.0,
+                                                                  "b": 0.0,
+                                                                  "Delta_T": 0.0,
+                                                                  "t_ref": 0.0,
+                                                                  "I_e": 0.0,
+                                                                  "E_rev": E_rev,
+                                                                  "tau_syn": tau_syn})
 
         # Create a spike generator that generates a single spike
         sg = nest.Create("spike_generator", params={"spike_times": [spike_time]})
@@ -258,6 +255,8 @@ class TestAeifCondAlphaMultisynapse:
                 for _ax in ax:
                     _ax.legend()
 
-                fig.savefig("test_aeif_cond_alpha_multisynapse_psc_shape_ " + str(i) + ".png")
+                fname = "test_aeif_cond_alpha_multisynapse_psc_shape_ " + str(i) + ".png"
+                fname = os.path.join(os.environ.get("REPORTDIR", ""), fname)
+                fig.savefig(fname)
 
             np.testing.assert_allclose(sim_g, theo_g)

@@ -289,6 +289,12 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::send( Event& e,
 
   // t_lastspike_ = 0 initially
 
+#ifdef TIMER_DETAILED
+  if ( tid == 0 )
+  {
+    kernel().event_delivery_manager.sw_deliver_node_.start();
+  }
+#endif
   Node* target = get_target( tid );
 
   // get spike history in relevant range (t1, t2] from postsynaptic neuron
@@ -327,14 +333,14 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::send( Event& e,
   if ( tid == 0 )
   {
     kernel().event_delivery_manager.sw_stdp_delivery_.stop();
-    kernel().event_delivery_manager.sw_deliver_conn_.start();
+    kernel().event_delivery_manager.sw_deliver_node_.start();
   }
 #endif
   e();
 #ifdef TIMER_DETAILED
 if ( tid == 0 )
   {
-    kernel().event_delivery_manager.sw_deliver_conn_.stop();
+    kernel().event_delivery_manager.sw_deliver_node_.stop();
     kernel().event_delivery_manager.sw_stdp_delivery_.start();
   }
 #endif

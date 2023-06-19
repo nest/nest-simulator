@@ -155,7 +155,10 @@ public:
   {
 #ifdef TIMER_DETAILED
     if ( tid == 0 )
+    {
+      kernel().event_delivery_manager.sw_deliver_conn_.stop();
       kernel().event_delivery_manager.sw_static_delivery_.start();
+    }
 #endif
     e.set_weight( weight_ );
     e.set_delay_steps( get_dendritic_delay_steps() );
@@ -165,14 +168,14 @@ public:
     if ( tid == 0 )
     {
       kernel().event_delivery_manager.sw_static_delivery_.stop();
-      kernel().event_delivery_manager.sw_deliver_conn_.start();
+      kernel().event_delivery_manager.sw_deliver_node_.start();
     }
 #endif
     e();
 #ifdef TIMER_DETAILED
     if ( tid == 0 )
     {
-      kernel().event_delivery_manager.sw_deliver_conn_.stop();
+      kernel().event_delivery_manager.sw_deliver_node_.stop();
     }
 #endif
   }

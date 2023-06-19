@@ -432,6 +432,7 @@ private:
   Stopwatch sw_deliver_spike_data_;
   Stopwatch sw_communicate_target_data_;
 public:
+  Stopwatch sw_deliver_node_;
   Stopwatch sw_deliver_conn_;
   Stopwatch sw_stdp_delivery_;
   Stopwatch sw_static_delivery_;

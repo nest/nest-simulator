@@ -220,7 +220,10 @@ ArchivingNode::get_history( double t1,
 {
 #ifdef TIMER_DETAILED
   if ( get_thread() == 0 )
+  {
+    kernel().event_delivery_manager.sw_deliver_node_.stop();
     kernel().event_delivery_manager.sw_node_archive_.start();
+  }
 #endif
   *finish = history_.end();
   if ( history_.empty() )

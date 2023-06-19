@@ -222,6 +222,7 @@ ArchivingNode::get_history( double t1,
   if ( get_thread() == 0 )
   {
     kernel().event_delivery_manager.sw_deliver_node_.stop();
+    kernel().event_delivery_manager.sw_stdp_delivery_.start();
     kernel().event_delivery_manager.sw_node_archive_.start();
   }
 #endif

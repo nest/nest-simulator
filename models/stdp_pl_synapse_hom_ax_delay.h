@@ -292,6 +292,7 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::send( Event& e,
 #ifdef TIMER_DETAILED
   if ( tid == 0 )
   {
+    kernel().event_delivery_manager.sw_stdp_delivery_.stop();
     kernel().event_delivery_manager.sw_deliver_node_.start();
   }
 #endif

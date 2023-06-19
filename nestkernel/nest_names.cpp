@@ -532,6 +532,7 @@ const Name tics_per_step( "tics_per_step" );
 const Name time_collocate_spike_data( "time_collocate_spike_data" );
 const Name time_communicate_spike_data( "time_communicate_spike_data" );
 const Name time_communicate_target_data( "time_communicate_target_data" );
+const Name time_deliver_node( "time_deliver_node" );
 const Name time_deliver_conn( "time_deliver_conn" );
 const Name time_stdp_delivery( "time_stdp_delivery" );
 const Name time_static_delivery( "time_static_delivery" );

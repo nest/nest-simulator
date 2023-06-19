@@ -49,7 +49,7 @@ Provide a piecewise constant DC input current
 Description
 +++++++++++
 
-The ``dc_generator`` provides a piecewise constant DC input to the
+The ``step_current_generator`` provides a piecewise constant DC input to the
 connected node(s).  The amplitude of the current is changed at the
 specified times. The unit of the current is pA.
 

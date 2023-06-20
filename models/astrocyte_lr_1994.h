@@ -188,9 +188,11 @@ public:
   port send_test_event( Node& target, rport receptor_type, synindex, bool ) override;
 
   void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
   void handle( DataLoggingRequest& ) override;
 
   port handles_test_event( SpikeEvent&, rport ) override;
+  port handles_test_event( CurrentEvent&, rport ) override;
   port handles_test_event( DataLoggingRequest&, rport ) override;
 
   void
@@ -316,6 +318,7 @@ private:
 
     /** buffers and sums up incoming spikes/currents */
     RingBuffer spike_exc_;
+    RingBuffer currents_;
 
     /** GSL ODE stuff */
     gsl_odeiv_step* s_;    //!< stepping function
@@ -331,6 +334,15 @@ private:
 
     // remembers current lag for piecewise interpolation
     long lag_;
+
+    /**
+     * Input current injected by CurrentEvent.
+     * This variable is used to transport the current applied into the
+     * _dynamics function computing the derivative of the state vector.
+     * It must be a part of Buffers_, since it is initialized once before
+     * the first simulation, but not modified before later Simulate calls.
+     */
+    double I_stim_;
 
     // values to be sent by SIC event
     std::vector< double > sic_values;
@@ -385,6 +397,16 @@ astrocyte_lr_1994::send_test_event( Node& target, rport receptor_type, synindex,
 
 inline port
 astrocyte_lr_1994::handles_test_event( SpikeEvent&, rport receptor_type )
+{
+  if ( receptor_type != 0 )
+  {
+    throw UnknownReceptorType( receptor_type, get_name() );
+  }
+  return 0;
+}
+
+inline port
+astrocyte_lr_1994::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

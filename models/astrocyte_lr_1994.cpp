@@ -98,7 +98,7 @@ astrocyte_lr_1994_dynamics( double time, const double y[], double f[], void* pno
   f[ S::SIC ] = dsic - sic / node.P_.tau_SIC_;
 
   f[ S::IP3 ] = ( node.P_.IP3_0_ - ip3 ) / node.P_.tau_IP3_;
-  f[ S::Ca ] = I_channel - I_pump + I_leak;
+  f[ S::Ca ] = I_channel - I_pump + I_leak + node.B_.I_stim_;
   f[ S::h_IP3R ] = alpha_f_ip3r * ( 1.0 - f_ip3r ) - beta_f_ip3r * f_ip3r;
 
   return GSL_SUCCESS;
@@ -404,6 +404,7 @@ void
 nest::astrocyte_lr_1994::init_buffers_()
 {
   B_.spike_exc_.clear(); // includes resize
+  B_.currents_.clear();
 
   B_.sic_values.resize( kernel().connection_manager.get_min_delay(), 0.0 );
 
@@ -444,6 +445,9 @@ nest::astrocyte_lr_1994::init_buffers_()
   B_.sys_.function = astrocyte_lr_1994_dynamics;
   B_.sys_.jacobian = nullptr;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
+
+  B_.I_stim_ = 0.0;
+
   B_.sys_.params = reinterpret_cast< void* >( this );
   B_.sic_on_ = false;
   B_.sic_on_timer_ = 0.0;
@@ -528,6 +532,9 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
 
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );
+
+    // set new input current
+    B_.I_stim_ = B_.currents_.get_value( lag );
 
     // this is to add the incoming spikes to the state variable
     S_.y_[ State_::IP3 ] += P_.incr_IP3_ * B_.spike_exc_.get_value( lag );
@@ -633,6 +640,17 @@ nest::astrocyte_lr_1994::handle( SpikeEvent& e )
     B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
+}
+
+void
+nest::astrocyte_lr_1994::handle( CurrentEvent& e )
+{
+  assert( e.get_delay_steps() > 0 );
+
+  const double c = e.get_current();
+  const double w = e.get_weight();
+
+  B_.currents_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
 }
 
 void

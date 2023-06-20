@@ -14,7 +14,7 @@ import nest
 # Values of parameters to be scanned
 # Any astrocyte parameter can be added
 params_scan = {
-    'tau_IP3': [10., 2.],
+    # 'tau_IP3': [10., 2.],
     'rate_L': [0.0001, 0.00001],
     'alpha_SIC': [True],
     'tau_SIC': [250],
@@ -47,10 +47,12 @@ def simulate(time, prate, astro_params):
     astrocyte = nest.Create('astrocyte_lr_1994', params=astro_params)
     mm_astro = nest.Create('multimeter', params={'record_from': ['IP3', 'Ca']})
     ps = nest.Create('poisson_generator', params={'rate': prate})
+    ng = nest.Create('noise_generator', params={'mean': 5e-4, 'std': 2e-3})
     neuron = nest.Create('aeif_cond_alpha_astro')
     mm_neuro = nest.Create('multimeter', params={'record_from': ['SIC']})
     nest.Connect(mm_astro, astrocyte)
-    nest.Connect(ps, astrocyte)
+    # nest.Connect(ps, astrocyte)
+    nest.Connect(ng, astrocyte)
     nest.Connect(astrocyte, neuron, syn_spec={'synapse_model': 'sic_connection'})
     nest.Connect(mm_neuro, neuron)
     nest.Simulate(time)

@@ -635,17 +635,33 @@ function( NEST_PROCESS_TARGET_BITS_SPLIT )
   endif()
 endfunction()
 
-function( NEST_DEFAULT_MODULES )
-    # requires HAVE_LIBNEUROSIM set
-    # Static modules
-    set( SLI_MODULES models )
-    set( SLI_MODULES ${SLI_MODULES} PARENT_SCOPE )
+function( NEST_PROCESS_MODELS )
+  # check mutual exclusivity of -Dwith-models and -Dwith-modelset
+  if ( ( NOT with-modelset STREQUAL "full" ) AND  with-models )
+    printError( "Only one of -Dwith-modelset or -Dwith-models can be specified." )
+  endif ()
 
-    set( SLI_MODULE_INCLUDE_DIRS )
-    foreach ( mod ${SLI_MODULES} )
-      list( APPEND SLI_MODULE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/${mod}" )
-    endforeach ()
-    set( SLI_MODULE_INCLUDE_DIRS ${SLI_MODULE_INCLUDE_DIRS} PARENT_SCOPE )
+  # get the list of models to be built in either from the commandline
+  # argument directly or by reading the provided modelset file
+  if ( with-models )
+    set( BUILTIN_MODELS ${with-models} )
+  else()
+    if ( NOT EXISTS "${PROJECT_SOURCE_DIR}/modelsets/${with-modelset}" )
+      printError( "Cannot find model set configuration 'modelsets/${with-modelset}'" )
+    endif ()
+    file(STRINGS "${PROJECT_SOURCE_DIR}/modelsets/${with-modelset}" BUILTIN_MODELS)
+  endif()
+
+  execute_process(
+    COMMAND "${Python_EXECUTABLE}" "${PROJECT_SOURCE_DIR}/build_support/generate_modelsmodule.py"
+    "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}" "${BUILTIN_MODELS}"
+    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+    OUTPUT_VARIABLE MODELS_SOURCES
+    COMMAND_ERROR_IS_FATAL ANY
+  )
+
+  set( BUILTIN_MODELS ${BUILTIN_MODELS} PARENT_SCOPE )
+  set( MODELS_SOURCES_GENERATED ${MODELS_SOURCES} PARENT_SCOPE )
 endfunction()
 
 function( NEST_PROCESS_WITH_MPI4PY )

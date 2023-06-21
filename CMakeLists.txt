@@ -155,6 +155,7 @@ nest_process_with_hdf5()
 nest_process_target_bits_split()
 nest_process_userdoc()
 nest_process_devdoc()
+nest_process_minimal_model_set()
 
 nest_process_models()
 

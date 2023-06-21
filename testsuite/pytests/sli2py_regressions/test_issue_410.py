@@ -44,12 +44,8 @@ def simulator(num_threads):
     stim1 = nest.Create("dc_generator", {"amplitude": 1500.0})
     stim2 = nest.Create("dc_generator", {"amplitude": 1000.0})
     nrn1 = nest.Create("iaf_psc_alpha", {"C_m": 100.0, "tau_m": 10.0})
-    nrn2 = nest.Create(
-        "iaf_psc_alpha", {"C_m": 100.0, "tau_m": 10.0, "tau_minus": 10.0}
-    )
-    dopa = nest.Create(
-        "iaf_cond_alpha", 100, {"V_reset": -70.0, "C_m": 80.0, "V_th": -60.0}
-    )
+    nrn2 = nest.Create("iaf_psc_alpha", {"C_m": 100.0, "tau_m": 10.0, "tau_minus": 10.0})
+    dopa = nest.Create("iaf_cond_alpha", 100, {"V_reset": -70.0, "C_m": 80.0, "V_th": -60.0})
     vt = nest.Create("volume_transmitter")
 
     nest.CopyModel(
@@ -70,9 +66,7 @@ def simulator(num_threads):
 
     nest.Connect(stim1, nrn1, syn_spec={"weight": 10.0, "delay": 1.0})
     nest.Connect(stim2, dopa, syn_spec={"weight": 10.0, "delay": 1.0})
-    nest.Connect(
-        nrn1, nrn2, syn_spec={"synapse_model": "syn1", "weight": 500.0, "delay": 1.0}
-    )
+    nest.Connect(nrn1, nrn2, syn_spec={"synapse_model": "syn1", "weight": 500.0, "delay": 1.0})
     nest.Connect(dopa, vt)
 
     nest.Simulate(2000.0)
@@ -94,9 +88,7 @@ def reference_weight():
 
 
 @pytest.mark.parametrize("num_threads", [2, 4, 8, 16, 32])
-def test_multithreaded_volume_transmitter_and_stdp_dopamine_synapse(
-    reference_weight, num_threads
-):
+def test_multithreaded_volume_transmitter_and_stdp_dopamine_synapse(reference_weight, num_threads):
     """
     Test that ensures thread safety of volume transmitter.
     """

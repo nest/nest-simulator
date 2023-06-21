@@ -29,6 +29,5 @@ breathe
 csvkit
 docutils
 PyYAML >= 4.2b1
-pydot
 tqdm
 yamllint

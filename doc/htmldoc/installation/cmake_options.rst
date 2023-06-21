@@ -55,7 +55,7 @@ NEST to your needs:
 |                                     | directory in the top-level of the source tree. This flag is mutually         |
 |                                     | exclusive with -Dwith-models. [default=full].                                |
 +-------------------------------------+------------------------------------------------------------------------------+
-| ``-Dwith.models=[OFF|ON]``          | Specify the models to include as a semicolon-separated list. This option is  |
+| ``-Dwith.models=[<modellist>|OFF]`` | Specify the models to include as a semicolon-separated list. This option is  |
 |                                     | mutually exclusive with -Dwith-modelset [default=OFF].                       |
 +-----------------------------------------------+--------------------------------------------------------------------+
 

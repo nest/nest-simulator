@@ -86,8 +86,7 @@ extra_params = {
 models = [
     model
     for model in nest.node_models
-    if (nest.GetDefaults(model, "element_type") == "neuron")
-    and model not in skip_models
+    if (nest.GetDefaults(model, "element_type") == "neuron") and model not in skip_models
 ]
 
 

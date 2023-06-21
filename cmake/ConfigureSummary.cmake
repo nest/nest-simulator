@@ -23,6 +23,7 @@ function( NEST_PRINT_CONFIG_SUMMARY )
   message( "--------------------------------------------------------------------------------" )
   message( "NEST Configuration Summary" )
   message( "--------------------------------------------------------------------------------" )
+
   message( "" )
   if ( CMAKE_BUILD_TYPE )
     message( "Build type          : ${CMAKE_BUILD_TYPE}" )

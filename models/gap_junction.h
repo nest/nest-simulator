@@ -77,7 +77,7 @@ hh_psc_alpha_gap
 EndUserDocs */
 
 template < typename targetidentifierT >
-class GapJunction : public Connection< targetidentifierT >
+class gap_junction : public Connection< targetidentifierT >
 {
 
 public:
@@ -92,7 +92,7 @@ public:
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  GapJunction()
+  gap_junction()
     : ConnectionBase()
     , weight_( 1.0 )
   {
@@ -154,11 +154,11 @@ private:
 };
 
 template < typename targetidentifierT >
-constexpr ConnectionModelProperties GapJunction< targetidentifierT >::properties;
+constexpr ConnectionModelProperties gap_junction< targetidentifierT >::properties;
 
 template < typename targetidentifierT >
 void
-GapJunction< targetidentifierT >::get_status( DictionaryDatum& d ) const
+gap_junction< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   // We have to include the delay here to prevent
   // errors due to internal calls of
@@ -170,14 +170,14 @@ GapJunction< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 SecondaryEvent*
-GapJunction< targetidentifierT >::get_secondary_event()
+gap_junction< targetidentifierT >::get_secondary_event()
 {
   return new GapJunctionEvent();
 }
 
 template < typename targetidentifierT >
 void
-GapJunction< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+gap_junction< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   // If the delay is set, we throw a BadProperty
   if ( d->known( names::delay ) )

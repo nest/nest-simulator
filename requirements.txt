@@ -1,69 +1,28 @@
-# Required Python packages for NEST Simulator
+# Required Python packages for NEST Simulator.
 #
 # This file specifies the required Python packages for those who would
 # like to compile NEST or build NEST documentation themselves.
 # If you just want to execute NEST, you should install NEST
 # directly as described in https://www.nest-simulator.org/installation.
 #
+# Note that this file only specifies the required Python packages and 
+# not the entire software stack needed to build and work with NEST Simulator.
+# To create a conda environment with the entire software stack for NEST
+# Simulator, use the the environment yaml file.
 #
+# The requirements from this file can be installed by
+#
+#     pip install -r requirements.txt
+ 
 
+# To build and work with PyNEST
+-r requirements_pynest.txt
 
-# Basics
-cython
-numpy
-pandas
-scipy
-matplotlib
-mpi4py
-h5py
+# To run NEST testsuite
+-r requirements_testing.txt
 
-# Working with NEST
-notebook
-jupyterlab
+# To build NEST documentation
+-r requirements_docs.txt
 
-# Testing NEST
-pytest
-pytest-timeout
-pytest-xdist
-pytest-pylint
-pytest-mypy
-pytest-cov
-black
-pre-commit # must run "pre-commit install" to set up the git hook scripts
-data-science-types
-terminaltables
-pycodestyle
-pydocstyle
-rstcheck
-mypy>=0.8
-junitparser>=2
-clang-format==13.0
-
-# Building NEST documentation
-sphinx>=4.0.2
-sphinx_rtd_theme
-sphinx_autobuild
-sphinx_gallery
-sphinx-tabs
-sphinx_design
-sphinx-material
-sphinx-copybutton
-nbsphinx
-numpydoc
-example
-Image
-breathe
-csvkit
-docutils
-PyYAML>=4.2b1
-#mock  # if still used: "mock is now part of the Python standard library, available as unittest.mock in Python 3.3 onwards"
-pydot
-tqdm
-yamllint
-
-# Running NEST Server ----
-Flask
-flask-cors
-gunicorn
-requests
-RestrictedPython
+# To run NEST Server
+-r requirements_nest_server.txt

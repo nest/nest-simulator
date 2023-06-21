@@ -40,6 +40,7 @@ dependencies:
   - hdf5
   - cppcheck
   - doxygen
+  - graphviz
 
   # mpi4py must be installed by conda in order to automatically find the path
   # to OpenMPI installed by conda. Note that mpi4py also is included in

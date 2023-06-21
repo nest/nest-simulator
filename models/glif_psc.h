@@ -191,7 +191,7 @@ EndUserDocs */
 namespace nest
 {
 
-class glif_psc : public nest::ArchivingNode
+class glif_psc : public ArchivingNode
 {
 public:
   glif_psc();

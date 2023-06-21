@@ -123,7 +123,7 @@ def get_models_from_file(model_file):
     types = []
     with open(fname, "r") as file:
         for line in file:
-            if line.startswith(f"#ifdef HAVE_"):
+            if line.startswith("#ifdef HAVE_"):
                 guards.append(line.strip().split()[1])
             if line.startswith(f"class {model_file} :"):
                 for mtype, pattern in model_patterns.items():

@@ -35,9 +35,7 @@ def set_resolution():
 
 
 # Obtain all models with non-empty recordables list
-models = [
-    model for model in nest.node_models if nest.GetDefaults(model).get("recordables")
-]
+models = [model for model in nest.node_models if nest.GetDefaults(model).get("recordables")]
 
 
 @pytest.mark.parametrize("model", models)
@@ -59,9 +57,7 @@ def test_recordables_are_recorded(set_resolution, model):
 
     nrn = nest.Create(model)
     recordables = nrn.recordables
-    mm = nest.Create(
-        "multimeter", {"interval": recording_interval, "record_from": recordables}
-    )
+    mm = nest.Create("multimeter", {"interval": recording_interval, "record_from": recordables})
     nest.Connect(mm, nrn)
     nest.Simulate(simtime)
 

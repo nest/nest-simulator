@@ -113,8 +113,7 @@ def test_spike_multiplicity_parrot_neuron():
     [
         model
         for model in nest.node_models
-        if model not in skip_list
-        and nest.GetDefaults(model)["element_type"] == "neuron"
+        if model not in skip_list and nest.GetDefaults(model)["element_type"] == "neuron"
     ],
 )
 def test_spike_multiplicity(model):
@@ -136,9 +135,7 @@ def test_spike_multiplicity(model):
     # A third spike generator sends one spike with multiplicity of 2
     sg1 = nest.Create("spike_generator", {"spike_times": [5.0]})
     sg2 = nest.Create("spike_generator", {"spike_times": [5.0]})
-    sg3 = nest.Create(
-        "spike_generator", {"spike_times": [5.0], "spike_multiplicities": [2]}
-    )
+    sg3 = nest.Create("spike_generator", {"spike_times": [5.0], "spike_multiplicities": [2]})
 
     syn_spec = {
         "synapse_model": "static_synapse",

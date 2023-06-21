@@ -76,9 +76,7 @@ extra_params = {
 
 # Obtain all models with non-empty recordables list
 models = (
-    model
-    for model in nest.node_models
-    if (nest.GetDefaults(model).get("recordables") and model not in skip_models)
+    model for model in nest.node_models if (nest.GetDefaults(model).get("recordables") and model not in skip_models)
 )
 
 

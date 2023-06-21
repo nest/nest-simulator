@@ -150,11 +150,11 @@ SonataConnector::connect()
       sequential_chunkwise_connector_();
 
       close_dsets_();
-      reset_params_();
 
     } // end iteration over population groups
 
-    // Close H5 objects in scope
+    // Reset and close H5 objects in scope
+    reset_params_();
     edges_top_level_grp->close();
     file->close();
 

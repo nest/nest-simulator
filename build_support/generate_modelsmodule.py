@@ -34,33 +34,6 @@ from pathlib import Path
 from pprint import pprint
 from textwrap import dedent
 
-# Model types are either classes derived from a specific base class
-# (different types of neurons and devices) or they are typedefs for
-# specialized template classes (mostly binary and rate neurons). The
-# following dictionary defines unique pattern that allow to infer the
-# correct model type.
-model_patterns = {
-    "neuron": "public ArchivingNode",
-    "stimulator": "public StimulationDevice",
-    "recorder": "public RecordingDevice",
-    "devicelike": "public DeviceNode",
-    "connection": "public Connection",
-    "node": "public Node",
-    "clopath": "public ClopathArchivingNode",
-    "urbanczik": "public UrbanczikArchivingNode",
-    "binary": "typedef binary_neuron",
-    "rate": "typedef rate_",
-}
-
-# As different model types need to be registered in different ways, we
-# define a set of string templates to be used later on.
-node_reg = 'kernel().model_manager.register_node_model< {model} >( "{model}" );'
-conn_reg = 'register_connection_model< {model} >( "{model}" );'
-model_registrations = {}
-for model_type in model_patterns.keys():
-    model_registrations[str(model_type)] = node_reg
-model_registrations["connection"] = conn_reg
-
 
 def parse_commandline():
     """Parse the commandline arguments and put them into variables.
@@ -99,6 +72,20 @@ def parse_commandline():
 def get_models_from_file(model_file):
     """Extract model information from a given model file.
 
+    This function applies a series of simple heuristics to find the
+    preprocessor guards and the list of models in the file. Guards are
+    expected to be in the form "#ifdef HAVE_<LIB>" with one guard per
+    line. For the models, a list of unique pattern is used to infer
+    the correct model type from the line in the file.
+
+    The majority of neuron, device, and connection models are classes
+    derived from a specific base class (like Node, ArchivingNode, or
+    Connection) or from another model. The latter can only be detected
+    if the base model has the same name as the file.
+
+    The rate and binary neurons are typedefs for specialized template
+    classes and multiple of such typedefs may be present in a file.
+
     Parameters
     ----------
     model_file: str
@@ -111,7 +98,21 @@ def get_models_from_file(model_file):
         0: HAVE_* preprocessor guards required for the models in the file
         1: a zip of model types and model names found in the file and
            that need registering
+
     """
+
+    model_patterns = {
+        "neuron": "public ArchivingNode",
+        "stimulator": "public StimulationDevice",
+        "recorder": "public RecordingDevice",
+        "devicelike": "public DeviceNode",
+        "connection": "public Connection",
+        "node": "public Node",
+        "clopath": "public ClopathArchivingNode",
+        "urbanczik": "public UrbanczikArchivingNode",
+        "binary": "typedef binary_neuron",
+        "rate": "typedef rate_",
+    }
 
     fname = Path(srcdir) / "models" / f"{model_file}.h"
     if not os.path.exists(fname):
@@ -125,16 +126,25 @@ def get_models_from_file(model_file):
         for line in file:
             if line.startswith("#ifdef HAVE_"):
                 guards.append(line.strip().split()[1])
-            if line.startswith(f"class {model_file} :"):
+            if line.startswith(f"class {model_file} : "):
                 for mtype, pattern in model_patterns.items():
                     if pattern in line:
-                        types.append(mtype)
                         names.append(model_file)
+                        types.append(mtype)
+            if line.startswith("class") and line.strip().endswith(f" : public {model_file}"):
+                names.append(line.split(" ", 2)[1])
+                # try to infer the type of the derived model from the
+                # base model, assuming that that was defined earlier
+                # in the file
+                try:
+                    types.append(types[names.index(model_file)])
+                except:
+                    types.append("node")
             if line.startswith("typedef "):
                 for mtype, pattern in model_patterns.items():
                     if pattern in line:
+                        names.append(line.rsplit(" ", 1)[-1].strip())
                         types.append(mtype)
-                        names.append(line.rsplit(" ", 1)[-1][:-2])
 
     return tuple(guards), zip(types, names)
 
@@ -229,7 +239,6 @@ def generate_modelsmodule():
 
     """
 
-    # Open the copyright header template
     fname = Path(srcdir) / "doc" / "copyright_header.cpp"
     with open(fname, "r") as file:
         copyright_header = file.read()
@@ -290,13 +299,18 @@ def generate_modelsmodule():
             )
         )
 
+        conn_reg = '  register_connection_model< {model} >( "{model}" );\n'
+        node_reg = '  kernel().model_manager.register_node_model< {model} >( "{model}" );\n'
+
         for model_type, guards_mnames in models.items():
             file.write(f"\n  // {model_type.capitalize()} models\n")
             for guards, mnames in guards_mnames.items():
                 file.write(start_guard(guards))
                 for mname in mnames:
-                    reg_line = model_registrations[model_type].format(model=mname)
-                    file.write("  " + reg_line + "\n")
+                    if model_type == "connection":
+                        file.write(conn_reg.format(model=mname))
+                    else:
+                        file.write(node_reg.format(model=mname))
                 file.write(end_guard(guards))
 
         file.write("}")

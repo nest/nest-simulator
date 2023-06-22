@@ -143,7 +143,7 @@ def get_models_from_file(model_file):
             if line.startswith("typedef "):
                 for mtype, pattern in model_patterns.items():
                     if pattern in line:
-                        names.append(line.rsplit(" ", 1)[-1].strip())
+                        names.append(line.rsplit(" ", 1)[-1].strip()[:-1])
                         types.append(mtype)
 
     return tuple(guards), zip(types, names)

@@ -97,7 +97,7 @@ stdp_nn_restr_synapse
 stdp_nn_symm_synapse
 stdp_pl_synapse_hom
 stdp_synapse
-stdp_synapse_facetshw_hom
+stdp_facetshw_synapse_hom
 stdp_synapse_hom
 stdp_triplet_synapse
 step_current_generator

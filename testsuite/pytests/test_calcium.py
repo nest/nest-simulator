@@ -21,6 +21,7 @@
 
 """
 Test models with calcium concentration.
+
 This set of tests verify the behavior of the calcium concentration in models
 that inherit from the strutural plasticity node class in the kernel.
 """
@@ -43,6 +44,7 @@ def test_at_least_one_model():
     """
     Verify that that at least one model contains calcium concentration.
     """
+
     assert len(models) > 0
 
 
@@ -54,6 +56,6 @@ def test_calcium_set_get(model):
 
     ca_default = nest.GetDefaults(model, "Ca")
     n = nest.Create(model, params={"Ca": ca_default + 42.0})
-    np.testing.assert_allclose(n.Ca, ca_default + 42.)
+    np.testing.assert_allclose(n.Ca, ca_default + 42.0)
     n.Ca = n.Ca + 99999.0
-    np.testing.assert_allclose(n.Ca, ca_default + 42. + 99999.)
+    np.testing.assert_allclose(n.Ca, ca_default + 42.0 + 99999.0)

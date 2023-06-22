@@ -138,7 +138,7 @@ def get_models_from_file(model_file):
                 # in the file
                 try:
                     types.append(types[names.index(model_file)])
-                except:
+                except (ValueError, KeyError) as e:
                     types.append("node")
             if line.startswith("typedef "):
                 for mtype, pattern in model_patterns.items():

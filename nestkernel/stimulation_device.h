@@ -56,7 +56,7 @@ set as times in ms.
   during the update step :math:`(\mathrm{start}, \mathrm{start}+h]`,
   that is, an effect can be recorded at the earliest at time
   :math:`\mathrm{start}+h`. The last interval during which the current
-  affects the target's dynamics is :math:`(\textrm{stop}-h, \texrm{stop}]`.
+  affects the target's dynamics is :math:`(\textrm{stop}-h, \textrm{stop}]`.
 
 The property ``stimulus_source`` defaults to an empty string. It can
 be set to the name of a stimulation backend, in which case it will

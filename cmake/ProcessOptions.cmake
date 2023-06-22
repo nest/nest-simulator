@@ -647,17 +647,21 @@ function( NEST_PROCESS_MODELS )
     set( BUILTIN_MODELS ${with-models} )
   else()
     if ( NOT EXISTS "${PROJECT_SOURCE_DIR}/modelsets/${with-modelset}" )
-      printError( "Cannot find model set configuration 'modelsets/${with-modelset}'" )
+      printError( "Cannot find modelset configuration 'modelsets/${with-modelset}'" )
     endif ()
     file(STRINGS "${PROJECT_SOURCE_DIR}/modelsets/${with-modelset}" BUILTIN_MODELS)
   endif()
 
+  # We use python3 here directly, as some of the CI jobs don't seem to have PYTHON
+  # or Python_EXECUTABLE set properly.
   execute_process(
-    COMMAND "${PYTHON}" "${PROJECT_SOURCE_DIR}/build_support/generate_modelsmodule.py"
+    COMMAND "python3" "${PROJECT_SOURCE_DIR}/build_support/generate_modelsmodule.py"
     "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}" "${BUILTIN_MODELS}"
     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
     OUTPUT_VARIABLE MODELS_SOURCES
     ERROR_VARIABLE MODELS_SOURCES_ERROR
+    # Uncomment for debugging: ECHO_OUTPUT_VARIABLE ECHO_ERROR_VARIABLE COMMAND_ECHO STDOUT
+    COMMAND_ERROR_IS_FATAL ANY
   )
 
   if ( MODELS_SOURCES_ERROR )

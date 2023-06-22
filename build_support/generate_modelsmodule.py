@@ -22,8 +22,8 @@
 """Script to generate the modelsmodule implementation file.
 
 This script is called during the run of CMake and generates the file
-modelsmodule.cpp as well as a list of source files to be compiled by
-CMake.
+models/modelsmodule.cpp as well as the list of source files to be
+compiled by CMake.
 """
 
 import os
@@ -31,7 +31,6 @@ import sys
 import argparse
 
 from pathlib import Path
-from pprint import pprint
 from textwrap import dedent
 
 
@@ -133,9 +132,8 @@ def get_models_from_file(model_file):
                         types.append(mtype)
             if line.startswith("class") and line.strip().endswith(f" : public {model_file}"):
                 names.append(line.split(" ", 2)[1])
-                # try to infer the type of the derived model from the
-                # base model, assuming that that was defined earlier
-                # in the file
+                # try to infer the type of the derived model from the base model,
+                # assuming that that was defined earlier in the file
                 try:
                     types.append(types[names.index(model_file)])
                 except (ValueError, KeyError) as e:
@@ -191,7 +189,7 @@ def get_include_and_model_data():
             else:
                 includes[tp] = {guards: set([fname])}
 
-            if Path(Path(srcdir) / "models" / f"{model_file}_impl.h").is_file():
+            if (Path(srcdir) / "models" / f"{model_file}_impl.h").is_file():
                 includes[tp][guards].add(f"{model_file}_impl.h")
 
             # Assemble a nested dictionary for the models:

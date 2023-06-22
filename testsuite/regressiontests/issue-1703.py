@@ -44,7 +44,7 @@ EXIT_SEGFAULT = 139
 # If not, the test is skipped.
 try:
     import nest
-    from mpi4py import MPI      # noqa: F401
+    from mpi4py import MPI  # noqa: F401
 except ImportError:
     sys.exit(EXIT_SKIPPED)
 

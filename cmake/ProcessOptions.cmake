@@ -653,7 +653,7 @@ function( NEST_PROCESS_MODELS )
   endif()
 
   execute_process(
-    COMMAND "${Python_EXECUTABLE}" "${PROJECT_SOURCE_DIR}/build_support/generate_modelsmodule.py"
+    COMMAND "${PYTHON}" "${PROJECT_SOURCE_DIR}/build_support/generate_modelsmodule.py"
     "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}" "${BUILTIN_MODELS}"
     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
     OUTPUT_VARIABLE MODELS_SOURCES

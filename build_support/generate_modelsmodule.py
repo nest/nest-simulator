@@ -116,8 +116,8 @@ def get_models_from_file(model_file):
 
     fname = Path(srcdir) / "models" / f"{model_file}.h"
     if not os.path.exists(fname):
-        print(f"ERROR: Model with name {model_file}.h does not exist")
-        sys.exit()
+        print(f"ERROR: Model with name {model_file}.h does not exist", file=sys.stderr)
+        sys.exit(128)
 
     guards = []
     names = []

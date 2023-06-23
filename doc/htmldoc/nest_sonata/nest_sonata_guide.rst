@@ -110,7 +110,7 @@ NEST supports the following SONATA node ``model_type``\s:
 
 Both ``point_neuron`` and ``point_process`` mean that the node is a neuron model (explicitly simulated; the two terms
 can be used interchangeably) whereas ``virtual`` means that the node only provide inputs to the simulated system.
-``virtual`` nodes are modeled as ``spike_train_injector``\s (see :doc:`../models/spike_train_injector`\). NEST requires
+``virtual`` nodes are modeled as ``spike_train_injector``\s (see :doc:`the model documentation for spike_train_injector <../models/spike_train_injector>`\). NEST requires
 that only one ``model_type`` is present per node type CSV file.
 
 The required headers for node type CSV files that describe neuron models are:

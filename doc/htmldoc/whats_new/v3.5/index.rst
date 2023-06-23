@@ -60,7 +60,7 @@ New model: spike_train_injector
 
 The :doc:`spike_train_injector <../../../../models/spike_train_injector>` emits spikes at prescribed spike times which are given as an array.
 
-We recommend its use in multithreaded simulations where spike emitting neurons, in a somewhat large external population, are modeled on an individual-basis.
+We recommend its use in multi-threaded simulations where spike-emitting neurons, in a somewhat large external population, are modeled on an individual basis.
 
 It was created to prevent an unwanted increase in memory consumption with replication at each virtual process, which
 happened when external neurons were modeled as a ``spike_generator``.

@@ -62,7 +62,7 @@ def set_defaults_create(model, new_vm_value):
     return n
 
 
-@pytest.mark.parametrize('model', get_models())
+@pytest.mark.parametrize("model", get_models())
 def test_set_vm(model):
     new_vm_value = random.uniform(0, 1)
 

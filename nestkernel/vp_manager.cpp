@@ -69,8 +69,8 @@ nest::VPManager::finalize()
 void
 nest::VPManager::set_status( const DictionaryDatum& d )
 {
-  long n_threads = get_num_threads();
-  long n_vps = get_num_virtual_processes();
+  size_t n_threads = get_num_threads();
+  size_t n_vps = get_num_virtual_processes();
 
   bool n_threads_updated = updateValue< long >( d, names::local_num_threads, n_threads );
   bool n_vps_updated = updateValue< long >( d, names::total_num_virtual_procs, n_vps );
@@ -153,7 +153,7 @@ nest::VPManager::get_status( DictionaryDatum& d )
 }
 
 void
-nest::VPManager::set_num_threads( nest::thread n_threads )
+nest::VPManager::set_num_threads( size_t n_threads )
 {
   if ( kernel().sp_manager.is_structural_plasticity_enabled() and n_threads > 1 )
   {

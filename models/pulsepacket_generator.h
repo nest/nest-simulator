@@ -106,7 +106,7 @@ public:
   // behaves like normal node, since it must provide identical
   // output to all targets
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
@@ -180,8 +180,8 @@ private:
   Variables_ V_;
 };
 
-inline port
-pulsepacket_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
+inline size_t
+pulsepacket_generator::send_test_event( Node& target, size_t receptor_type, synindex syn_id, bool )
 {
   StimulationDevice::enforce_single_syn_type( syn_id );
 

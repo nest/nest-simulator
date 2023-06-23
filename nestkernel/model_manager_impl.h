@@ -40,7 +40,7 @@ namespace nest
 {
 
 template < class ModelT >
-index
+size_t
 ModelManager::register_node_model( const Name& name, std::string deprecation_info )
 {
   if ( modeldict_->known( name ) )
@@ -77,7 +77,7 @@ ModelManager::register_connection_model( const std::string& name )
 }
 
 inline Node*
-ModelManager::get_proxy_node( thread tid, index node_id )
+ModelManager::get_proxy_node( size_t tid, size_t node_id )
 {
   const int model_id = kernel().modelrange_manager.get_model_id( node_id );
   Node* proxy = proxy_nodes_[ tid ].at( model_id );

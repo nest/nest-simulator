@@ -291,7 +291,7 @@ jobs:
         run: |
           pylint --jobs=$(nproc) pynest/ testsuite/pytests/*.py testsuite/regressiontests/*.py
 
-  black_IGNORED:
+  black:
     runs-on: "ubuntu-20.04"
     steps:
       - name: "Checkout repository content"
@@ -299,8 +299,9 @@ jobs:
         with:
           fetch-depth: 0
       - name: "Run black..."
-        continue-on-error: true
         uses: psf/black@bf7a16254ec96b084a6caf3d435ec18f0f245cc7   # 23.3.0
+        with:
+          jupyter: true
 
   flake8:
     runs-on: "ubuntu-20.04"
@@ -404,7 +405,7 @@ jobs:
   build_linux:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, black_IGNORED, flake8]
+    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, black, flake8]
     env:
       CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
       NEST_VPATH: "build"
@@ -456,6 +457,8 @@ jobs:
           sudo apt-get install ccache
           sudo apt-get install libltdl-dev libreadline6-dev libncurses5-dev libgsl0-dev python3-all-dev jq libpcre3 libpcre3-dev
           sudo apt-get install tcl8.6 tcl8.6-dev tk8.6-dev
+          # Install MPI dependencies regardless of whether we compile NEST with or without MPI, so the installation of MPI4Py works 
+          sudo apt-get install openmpi-bin libopenmpi-dev
           sudo apt-get install libboost-filesystem-dev libboost-regex-dev libboost-wave-dev libboost-python-dev libboost-program-options-dev libboost-test-dev
           sudo apt-get install pkg-config
           sudo ldconfig
@@ -464,11 +467,6 @@ jobs:
         if: "${{ contains(matrix.use, 'gsl') }}"
         run: |
           sudo apt-get install libgsl0-dev
-
-      - name: "Install MPI system dependencies"
-        if: "${{ contains(matrix.use, 'mpi') }}"
-        run: |
-          sudo apt-get install openmpi-bin libopenmpi-dev
 
       - name: "Install HDF5 system dependencies"
         if: "${{ contains(matrix.use, 'hdf5') }}"
@@ -511,14 +509,11 @@ jobs:
           python -m pip install --upgrade pip setuptools
           python -c "import setuptools; print('package location:', setuptools.__file__)"
           python -m pip install --force-reinstall --upgrade scipy 'junitparser>=2' numpy pytest pytest-timeout pytest-xdist cython matplotlib terminaltables pandoc pandas
+          # Install mpi4py regardless of whether we compile NEST with or without MPI, so regressiontests/issue-1703.py will run in both cases
+          python -m pip install --force-reinstall --upgrade mpi4py
           test \! -e "=2"   # assert junitparser is correctly quoted and '>' is not interpreted as shell redirect
           python -c "import pytest; print('package location:', pytest.__file__)"
           pip list
-
-      - name: "Install MPI Python dependencies"
-        if: "${{ contains(matrix.use, 'mpi') }}"
-        run: |
-          python -m pip install --force-reinstall --upgrade mpi4py
 
       - name: "Install h5py"
         if: "${{ contains(matrix.use, 'hdf5') }}"
@@ -612,7 +607,7 @@ jobs:
   build_macos:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}
-    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, black_IGNORED, flake8]
+    needs: [clang-format, mypy, copyright_headers, unused_names, forbidden_types, pylint, black, flake8]
     env:
       CXX_FLAGS: "-pedantic -Wextra -Woverloaded-virtual -Wno-unknown-pragmas"
       NEST_VPATH: "build"

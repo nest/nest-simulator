@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# astrocyte_connect.py
+# astrocyte_small_network.py
 #
 # This file is part of NEST.
 #
@@ -165,23 +165,23 @@ def plot_connections(conn_n2n, conn_n2a, conn_a2n, rank=0): # Doesn't work with 
         ax.spines['left'].set_visible(False)
         ax.spines['right'].set_visible(False)
 
-    fig, axs = plt.subplots(1, 1, figsize=(10, 5))
+    fig, axs = plt.subplots(1, 1, figsize=(10, 8))
     axs.scatter(
-        sset_n2a, [2]*len(sset_n2a), s=100, color='gray', marker='^', label='pre_neurons', zorder=3)
+        sset_n2a, [2]*len(sset_n2a), s=400, color='gray', marker='^', label='pre_neurons', zorder=3)
     axs.scatter(
-        aset_a2n, [1]*len(aset_a2n), s=100, color='g', marker='o', label='astrocyte', zorder=3)
+        aset_a2n, [1]*len(aset_a2n), s=400, color='g', marker='o', label='astrocyte', zorder=3)
     axs.scatter(
-        tset_a2n, [0]*len(tset_a2n), s=100, color='k', marker='^', label='post_neurons', zorder=3)
+        tset_a2n, [0]*len(tset_a2n), s=400, color='k', marker='^', label='post_neurons', zorder=3)
     for sx, tx in zip(slist_n2n, tlist_n2n):
         axs.plot(
-            [sx, tx], [2, 0], linestyle=':', color='b', alpha=0.5, linewidth=2)
+            [sx, tx], [2, 0], linestyle=':', color='b', alpha=0.5, linewidth=1)
     for sx, tx in zip(slist_n2a, alist_n2a):
         axs.plot(
-            [sx, tx], [2, 1], linestyle='-', color='gray', alpha=0.5, linewidth=2)
+            [sx, tx], [2, 1], linestyle='-', color='orange', alpha=0.5, linewidth=2)
     for sx, tx in zip(alist_a2n, tlist_a2n):
         axs.plot(
-            [sx, tx], [1, 0], linestyle='-', color='g', alpha=0.5, linewidth=2)
-    axs.legend(loc='right')
+            [sx, tx], [1, 0], linestyle='-', color='g', alpha=0.8, linewidth=4)
+    axs.legend(bbox_to_anchor=(0.5, 1.1), loc='upper center', ncol=3)
     set_frame_invisible(axs)
     plt.tight_layout()
     plt.savefig(os.path.join(spath, f'connections_rank={rank}.png'))

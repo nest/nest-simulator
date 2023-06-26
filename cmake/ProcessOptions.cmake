@@ -22,21 +22,14 @@
 # add custom warnings and optimizations
 function( NEST_PROCESS_WITH_OPTIMIZE )
   if ( with-optimize )
-    if ( with-optimize STREQUAL "ON" )
+  string(TOUPPER "${with-optimize}" WITHOPTIMIZE)
+    if ( WITHOPTIMIZE STREQUAL "ON" )
       set( with-optimize "-O2" )
     endif ()
-    foreach ( flag ${with-optimize} )
-      set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${flag}" PARENT_SCOPE )
-      set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}" PARENT_SCOPE )
-    endforeach ()
-  endif ()
-endfunction()
-
-function( NEST_PROCESS_VERSION_SUFFIX )
-  if ( with-version-suffix )
-    foreach ( flag ${with-version-suffix} )
-      set( NEST_VERSION_SUFFIX "${flag}" PARENT_SCOPE )
-    endforeach ()
+    set(OPTIMIZATION_FLAGS "")
+    string(JOIN " " OPTIMIZATION_FLAGS  ${with-optimize} )
+    set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OPTIMIZATION_FLAGS}" PARENT_SCOPE )
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OPTIMIZATION_FLAGS}" PARENT_SCOPE )
   endif ()
 endfunction()
 
@@ -605,6 +598,32 @@ function( NEST_PROCESS_WITH_BOOST )
       set( BOOST_VERSION "${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION}.${Boost_SUBMINOR_VERSION}" PARENT_SCOPE )
 
       include_directories( ${Boost_INCLUDE_DIRS} )
+    endif ()
+  endif ()
+endfunction()
+
+function( NEST_PROCESS_WITH_HDF5 )
+
+  set( HAVE_HDF5 OFF PARENT_SCOPE )
+  if ( with-hdf5 )
+    if ( NOT ${with-hdf5} STREQUAL "ON" )
+      # a path is set
+      set( HDF5_ROOT "${with-hdf5}" )
+    endif ()
+
+    find_package( HDF5 REQUIRED COMPONENTS C CXX )
+    if ( HDF5_FOUND )
+      # export found variables to parent scope
+      set( HAVE_HDF5 ON PARENT_SCOPE )
+      set( HDF5_FOUND "${HDF5_FOUND}" PARENT_SCOPE )
+      set( HDF5_LIBRARIES "${HDF5_LIBRARIES}" PARENT_SCOPE )
+      set( HDF5_INCLUDE_DIR "${HDF5_INCLUDE_DIRS}" PARENT_SCOPE )
+      set( HDF5_VERSION "${HDF5_VERSION}" PARENT_SCOPE )
+      set( HDF5_HL_LIBRARIES "${HDF5_HL_LIBRARIES}" PARENT_SCOPE )
+      set( HDF5_DEFINITIONS "${HDF5_DEFINITIONS}" PARENT_SCOPE )
+      
+      include_directories( ${HDF5_INCLUDE_DIRS} )
+
     endif ()
   endif ()
 endfunction()

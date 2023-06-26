@@ -29,11 +29,11 @@ Networks <pynest_examples>`, or
 have a look at at the source directory of your NEST installation in the
 subdirectory: ``pynest/examples/``.
 
-Parameterising synapse models
+Parametrizing synapse models
 -----------------------------
 
 NEST provides a variety of different synapse models. You can see the
-available models by using the command ``Models(synapses)``, which picks
+available models by using the command ``synapse_models``, which picks
 only the synapse models out of the list of all available models.
 
 Synapse models can be parameterised analogously to neuron models. You
@@ -74,7 +74,7 @@ as follows:
 
     nest.Create("iaf_psc_alpha", params={"tau_minus": 30.0})
 
-or by using any of the other methods of parameterising neurons
+or by using any of the other methods of parametrizing neurons
 demonstrated in the first two parts of this introduction.
 
 Connecting with synapse models

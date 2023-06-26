@@ -30,6 +30,7 @@
 #include "delay_checker.h"
 #include "event.h"
 #include "kernel_manager.h"
+#include "nest.h"
 #include "nest_names.h"
 #include "nest_time.h"
 #include "nest_timeconverter.h"
@@ -96,7 +97,6 @@ class ConnTestDummyNodeBase : public Node
   }
 };
 
-
 /**
  * Base class for representing connections.
  * It provides the mandatory properties receiver port and target,
@@ -115,10 +115,8 @@ class Connection
 {
 
 public:
-  // this typedef may be overwritten in the derived connection classes in order
-  // to attach a specific event type to this connection type, used in secondary
-  // connections not used in primary connectors
-  typedef SecondaryEvent EventType;
+  // properties used when registering a connection with the ModelManager
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::NONE;
 
   Connection()
     : target_()
@@ -128,6 +126,14 @@ public:
 
   Connection( const Connection< targetidentifierT >& rhs ) = default;
   Connection& operator=( const Connection< targetidentifierT >& rhs ) = default;
+
+  /**
+   * Get a pointer to an instance of a SecondaryEvent if this connection supports secondary events.
+   *
+   * To prevent erronous calls of this function on primary connections, the base class implementation
+   * below just contains `assert(false)`.
+   */
+  SecondaryEvent* get_secondary_event();
 
   /**
    * Get all properties of this connection and put them into a dictionary.
@@ -223,17 +229,17 @@ public:
    * triggers an update of a synaptic weight
    * this function is needed for neuromodulated synaptic plasticity
    */
-  void trigger_update_weight( const thread,
+  void trigger_update_weight( const size_t,
     const std::vector< spikecounter >&,
     const double,
     const CommonSynapseProperties& );
 
   Node*
-  get_target( const thread tid ) const
+  get_target( const size_t tid ) const
   {
     return target_.get_target_ptr( tid );
   }
-  rport
+  size_t
   get_rport() const
   {
     return target_.get_rport();
@@ -295,28 +301,27 @@ protected:
    * \param the last spike produced by the presynaptic neuron (for STDP and
    * maturing connections)
    */
-  void check_connection_( Node& dummy_target, Node& source, Node& target, const rport receptor_type );
+  void check_connection_( Node& dummy_target, Node& source, Node& target, const size_t receptor_type );
 
-  /* the order of the members below is critical
-     as it influcences the size of the object. Please leave unchanged
-     as
-     targetidentifierT target_;
-     SynIdDelay syn_id_delay_;        //!< syn_id (char) and delay (24 bit) in
-     timesteps of this
-     connection
-  */
+  /* the order of the members below is critical as it influcences the size of the object.
+   * Please leave unchanged as:
+   *   targetidentifierT target_;
+   *   SynIdDelay syn_id_delay_;
+   */
   targetidentifierT target_;
   //! syn_id (9 bit), delay (21 bit) in timesteps of this connection and more_targets and disabled flags (each 1 bit)
   SynIdDelay syn_id_delay_;
 };
 
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties Connection< targetidentifierT >::properties;
 
 template < typename targetidentifierT >
 inline void
 Connection< targetidentifierT >::check_connection_( Node& dummy_target,
   Node& source,
   Node& target,
-  const rport receptor_type )
+  const size_t receptor_type )
 {
   // 1. does this connection support the event type sent by source
   // try to send event from source to dummy_target
@@ -384,12 +389,19 @@ Connection< targetidentifierT >::calibrate( const TimeConverter& tc )
 
 template < typename targetidentifierT >
 inline void
-Connection< targetidentifierT >::trigger_update_weight( const thread,
+Connection< targetidentifierT >::trigger_update_weight( const size_t,
   const std::vector< spikecounter >&,
   const double,
   const CommonSynapseProperties& )
 {
   throw IllegalConnection( "Connection does not support updates that are triggered by a volume transmitter." );
+}
+
+template < typename targetidentifierT >
+SecondaryEvent*
+Connection< targetidentifierT >::get_secondary_event()
+{
+  assert( false );
 }
 
 } // namespace nest

@@ -66,39 +66,23 @@ else ()
   set( OUT_OF_TREE_BUILD "True" )
 endif ()
 
-# Determine doc paths
-set( DOC_BUILD_DIR "${PROJECT_BINARY_DIR}/doc/htmldoc" )
-set( DOC_SOURCE_DIR "${PROJECT_SOURCE_DIR}/doc/htmldoc" )
 
 if ( BUILD_SPHINX_DOCS )
-  # Configure the Sphinx documentation.
-  # 1. In out-of-tree builds, we need to copy over the source doc dir to the build dir,
-  #    exact reasons currently unknown.
-  # 2. The NEST source directory is passed to Sphinx by setting env:NESTSRCDIR, so that
-  #    Sphinx can rewrite the source `pynestkernel.pyx` into a mocked `pynestkernel.py`
-  # 3. Sphinx builds the documentation into the build directory, which then later gets
-  #    installed into the target docdir.
-  # 4. Sphinx generates the models RST documentation from the models/*.h files. But we
-  #    need to copy them into a deeper directory.
-  # 5. To make Python's `help` results more useful, `include` directives are inlined using
-  #    `resolve_includes.py`
-  # 6. This assembled Sphinx folder is marked to be installed, together with the logos.
+  message( STATUS "Configuring Sphinx documentation" )
+  set( _SPHINX_SOURCE_DIR "${PROJECT_SOURCE_DIR}/doc/htmldoc" )
+  set( _SPHINX_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/_build/html" )
   add_custom_target( sphinxdocs
-    COMMAND [ "${OUT_OF_TREE_BUILD}" = "True" ] && rm -rf "${DOC_BUILD_DIR}" || true
-    COMMAND [ "${OUT_OF_TREE_BUILD}" = "True" ] && cp -r "${DOC_SOURCE_DIR}" "${DOC_BUILD_DIR}" || true
-    COMMAND NESTSRCDIR=${PROJECT_SOURCE_DIR} ${SPHINX_EXECUTABLE} -b html
-    "${DOC_BUILD_DIR}"
-    "${DOC_BUILD_DIR}/html"
-    COMMAND cp "${DOC_BUILD_DIR}/models/*.rst" "${DOC_BUILD_DIR}/html/models"
-    COMMAND ${Python_EXECUTABLE} "${DOC_BUILD_DIR}/resolve_includes.py" "${DOC_BUILD_DIR}/html/models"
+    WORKING_DIRECTORY ${_SPHINX_SOURCE_DIR}
+    COMMAND ${Python_EXECUTABLE} clean_source_dirs.py
+    COMMAND ${SPHINX_EXECUTABLE} -b html . ${_SPHINX_BUILD_DIR}
+    COMMAND ${Python_EXECUTABLE} resolve_includes.py ${SPHINX_BUILD_DIR}/models
   )
   add_dependencies( docs sphinxdocs )
 
-  install( DIRECTORY "${DOC_BUILD_DIR}/html"
-    DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}"
+  install( DIRECTORY ${_SPHINX_BUILD_DIR}
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}
     OPTIONAL
     )
-
   install( DIRECTORY logos
       DESTINATION ${CMAKE_INSTALL_DOCDIR}
       )

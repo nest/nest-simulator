@@ -127,6 +127,10 @@ public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
+
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
@@ -165,7 +169,7 @@ public:
    * \param e The event to send
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e, thread t, const CommonSynapseProperties& cp );
+  void send( Event& e, size_t t, const CommonSynapseProperties& cp );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -174,15 +178,15 @@ public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
-    port
-    handles_test_event( SpikeEvent&, rport ) override
+    size_t
+    handles_test_event( SpikeEvent&, size_t ) override
     {
       return invalid_port;
     }
   };
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
 
@@ -224,6 +228,8 @@ private:
   double t_lastspike_;
 };
 
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties stdp_nn_symm_synapse< targetidentifierT >::properties;
 
 /**
  * Send an event to the receiver of this connection.
@@ -233,7 +239,7 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-stdp_nn_symm_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
+stdp_nn_symm_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapseProperties& )
 {
   // synapse STDP depressing/facilitation dynamics
   double t_spike = e.get_stamp().get_ms();

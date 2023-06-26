@@ -57,7 +57,7 @@ template <>
 void
 RecordablesMap< hh_cond_beta_gap_traub >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &hh_cond_beta_gap_traub::get_y_elem_< hh_cond_beta_gap_traub::State_::V_M > );
   insert_( names::g_ex, &hh_cond_beta_gap_traub::get_y_elem_< hh_cond_beta_gap_traub::State_::G_EXC > );
   insert_( names::g_in, &hh_cond_beta_gap_traub::get_y_elem_< hh_cond_beta_gap_traub::State_::G_INH > );
@@ -470,10 +470,6 @@ nest::hh_cond_beta_gap_traub::update_( Time const& origin,
   const long to,
   const bool called_from_wfr_update )
 {
-
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   const size_t interpolation_order = kernel().simulation_manager.get_wfr_interpolation_order();
   const double wfr_tol = kernel().simulation_manager.get_wfr_tol();
   bool wfr_tol_exceeded = false;

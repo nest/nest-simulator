@@ -28,20 +28,19 @@ import warnings
 
 from ..ll_api import check_stack, sps, sr, spp
 from .hl_api_helper import is_iterable, is_literal
-from .hl_api_parallel_computing import Rank
 
 __all__ = [
-    'Cleanup',
-    'DisableStructuralPlasticity',
-    'EnableStructuralPlasticity',
-    'GetKernelStatus',
-    'Install',
-    'Prepare',
-    'ResetKernel',
-    'Run',
-    'RunManager',
-    'SetKernelStatus',
-    'Simulate',
+    "Cleanup",
+    "DisableStructuralPlasticity",
+    "EnableStructuralPlasticity",
+    "GetKernelStatus",
+    "Install",
+    "Prepare",
+    "ResetKernel",
+    "Run",
+    "RunManager",
+    "SetKernelStatus",
+    "Simulate",
 ]
 
 
@@ -63,7 +62,7 @@ def Simulate(t):
     """
 
     sps(float(t))
-    sr('ms Simulate')
+    sr("ms Simulate")
 
 
 @check_stack
@@ -102,7 +101,7 @@ def Run(t):
     """
 
     sps(float(t))
-    sr('ms Run')
+    sr("ms Run")
 
 
 @check_stack
@@ -120,14 +119,14 @@ def Prepare():
 
     """
 
-    sr('Prepare')
+    sr("Prepare")
 
 
 @check_stack
 def Cleanup():
     """Cleans up resources after a `Run` calls.
 
-    `Cleanup` is automatically called by `Simulate` and `RunManager` .
+    `Cleanup` is automatically called by `Simulate` and `RunManager`.
 
     Closes state for a series of runs, such as flushing and closing files.
     A `Prepare` is needed after a `Cleanup` before any more calls to `Run`.
@@ -137,7 +136,7 @@ def Cleanup():
     Run, Prepare, Simulate, RunManager
 
     """
-    sr('Cleanup')
+    sr("Cleanup")
 
 
 @contextmanager
@@ -197,9 +196,9 @@ def ResetKernel():
     are reset. The only exception is that dynamically loaded modules are not
     unloaded. This may change in a future version of NEST.
 
-   """
+    """
 
-    sr('ResetKernel')
+    sr("ResetKernel")
 
 
 @check_stack
@@ -225,28 +224,31 @@ def SetKernelStatus(params):
     # _kernel_attr_names and _readonly_kernel_attrs. As hl_api_simulation is
     # imported during nest module initialization, we can't put the import on
     # the module level, but have to have it on the function level.
-    import nest    # noqa
-    raise_errors = params.get('dict_miss_is_error', nest.dict_miss_is_error)
+    import nest  # noqa
+
+    raise_errors = params.get("dict_miss_is_error", nest.dict_miss_is_error)
     valids = nest._kernel_attr_names
     readonly = nest._readonly_kernel_attrs
     keys = list(params.keys())
     for key in keys:
         msg = None
         if key not in valids:
-            msg = f'`{key}` is not a valid kernel parameter, ' + \
-                  'valid parameters are: ' + \
-                  ', '.join(f"'{p}'" for p in sorted(valids))
+            msg = (
+                f"`{key}` is not a valid kernel parameter, "
+                + "valid parameters are: "
+                + ", ".join(f"'{p}'" for p in sorted(valids))
+            )
         elif key in readonly:
-            msg = f'`{key}` is a readonly kernel parameter'
+            msg = f"`{key}` is a readonly kernel parameter"
         if msg is not None:
             if raise_errors:
                 raise ValueError(msg)
             else:
-                warnings.warn(msg + f' \n`{key}` has been ignored')
+                warnings.warn(msg + f" \n`{key}` has been ignored")
                 del params[key]
 
     sps(params)
-    sr('SetKernelStatus')
+    sr("SetKernelStatus")
 
 
 @check_stack
@@ -285,7 +287,7 @@ def GetKernelStatus(keys=None):
 
     """
 
-    sr('GetKernelStatus')
+    sr("GetKernelStatus")
     status_root = spp()
 
     if keys is None:
@@ -338,7 +340,7 @@ def EnableStructuralPlasticity():
 
     """
 
-    sr('EnableStructuralPlasticity')
+    sr("EnableStructuralPlasticity")
 
 
 @check_stack
@@ -350,4 +352,4 @@ def DisableStructuralPlasticity():
     EnableStructuralPlasticity
 
     """
-    sr('DisableStructuralPlasticity')
+    sr("DisableStructuralPlasticity")

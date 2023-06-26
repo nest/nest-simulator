@@ -197,6 +197,10 @@ public:
   typedef STDPDopaCommonProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
+
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
@@ -242,9 +246,9 @@ public:
    * Send an event to the receiver of this connection.
    * \param e The event to send
    */
-  void send( Event& e, thread t, const STDPDopaCommonProperties& cp );
+  void send( Event& e, size_t t, const STDPDopaCommonProperties& cp );
 
-  void trigger_update_weight( thread t,
+  void trigger_update_weight( size_t t,
     const std::vector< spikecounter >& dopa_spikes,
     double t_trig,
     const STDPDopaCommonProperties& cp );
@@ -255,8 +259,8 @@ public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
-    port
-    handles_test_event( SpikeEvent&, rport ) override
+    size_t
+    handles_test_event( SpikeEvent&, size_t ) override
     {
       return invalid_port;
     }
@@ -278,7 +282,7 @@ public:
    * \param receptor_type The ID of the requested receptor type
    */
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& cp )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& cp )
   {
     if ( not cp.vt_ )
     {
@@ -320,7 +324,7 @@ private:
   // dopa_spikes_idx_ refers to the dopamine spike that has just been processes
   // after trigger_update_weight a pseudo dopamine spike at t_trig is stored at
   // index 0 and dopa_spike_idx_ = 0
-  index dopa_spikes_idx_;
+  size_t dopa_spikes_idx_;
 
   // time of last update, which is either time of last presyn. spike or
   // time-driven update
@@ -328,6 +332,9 @@ private:
 
   double t_lastspike_;
 };
+
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties stdp_dopamine_synapse< targetidentifierT >::properties;
 
 //
 // Implementation of class stdp_dopamine_synapse.
@@ -356,6 +363,7 @@ stdp_dopamine_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) con
   def< double >( d, names::weight, weight_ );
 
   // own properties, different for individual synapse
+  def< double >( d, names::Kplus, Kplus_ );
   def< double >( d, names::c, c_ );
   def< double >( d, names::n, n_ );
 }
@@ -368,8 +376,14 @@ stdp_dopamine_synapse< targetidentifierT >::set_status( const DictionaryDatum& d
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
 
+  updateValue< double >( d, names::Kplus, Kplus_ );
   updateValue< double >( d, names::c, c_ );
   updateValue< double >( d, names::n, n_ );
+
+  if ( Kplus_ < 0 )
+  {
+    throw BadProperty( "Kplus must be non-negative." );
+  }
 }
 
 template < typename targetidentifierT >
@@ -526,7 +540,7 @@ stdp_dopamine_synapse< targetidentifierT >::depress_( double kminus, const STDPD
  */
 template < typename targetidentifierT >
 inline void
-stdp_dopamine_synapse< targetidentifierT >::send( Event& e, thread t, const STDPDopaCommonProperties& cp )
+stdp_dopamine_synapse< targetidentifierT >::send( Event& e, size_t t, const STDPDopaCommonProperties& cp )
 {
   Node* target = get_target( t );
 
@@ -578,7 +592,7 @@ stdp_dopamine_synapse< targetidentifierT >::send( Event& e, thread t, const STDP
 
 template < typename targetidentifierT >
 inline void
-stdp_dopamine_synapse< targetidentifierT >::trigger_update_weight( thread t,
+stdp_dopamine_synapse< targetidentifierT >::trigger_update_weight( size_t t,
   const std::vector< spikecounter >& dopa_spikes,
   const double t_trig,
   const STDPDopaCommonProperties& cp )

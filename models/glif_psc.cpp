@@ -464,7 +464,6 @@ nest::glif_psc::pre_run_hook()
 void
 nest::glif_psc::update( Time const& origin, const long from, const long to )
 {
-
   double v_old = S_.U_;
 
   for ( long lag = from; lag < to; ++lag )
@@ -592,10 +591,10 @@ nest::glif_psc::update( Time const& origin, const long from, const long to )
   }
 }
 
-nest::port
-nest::glif_psc::handles_test_event( SpikeEvent&, rport receptor_type )
+size_t
+nest::glif_psc::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
-  if ( receptor_type <= 0 or receptor_type > static_cast< port >( P_.n_receptors_() ) )
+  if ( receptor_type <= 0 or receptor_type > P_.n_receptors_() )
   {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
   }

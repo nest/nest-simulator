@@ -150,7 +150,7 @@ Setting and getting attributes directly
 
 Getting connection parameters
     Just as with NodeCollection, you can get parameters of the connections with
-    :py:meth:`~.SynpaseCollection.get`. The same function arguments as for :ref:`NodeCollections get() <get_param>`
+    :py:meth:`~.SynapseCollection.get`. The same function arguments as for :ref:`NodeCollections get() <get_param>`
     apply here. The returned values also follow the same rules.
 
     If you call ``get()`` without any arguments, a dictionary with all parameters is

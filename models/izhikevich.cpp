@@ -52,7 +52,7 @@ template <>
 void
 RecordablesMap< izhikevich >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &izhikevich::get_V_m_ );
   insert_( names::U_m, &izhikevich::get_U_m_ );
 }
@@ -101,7 +101,6 @@ nest::izhikevich::Parameters_::get( DictionaryDatum& d ) const
 void
 nest::izhikevich::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-
   updateValueParam< double >( d, names::V_th, V_th_, node );
   updateValueParam< double >( d, names::V_min, V_min_, node );
   updateValueParam< double >( d, names::I_e, I_e_, node );
@@ -188,9 +187,6 @@ nest::izhikevich::pre_run_hook()
 void
 nest::izhikevich::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   const double h = Time::get_resolution().get_ms();
   double v_old, u_old;
 

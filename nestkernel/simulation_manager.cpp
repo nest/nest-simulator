@@ -809,8 +809,11 @@ nest::SimulationManager::update_()
                 i != kernel().node_manager.get_local_nodes( tid ).end();
                 ++i )
           {
-            StructuralPlasticityNode* node = static_cast< StructuralPlasticityNode* >( i->get_node() );
-            node->update_synaptic_elements( Time( Time::step( clock_.get_steps() + from_step_ ) ).get_ms() );
+            StructuralPlasticityNode* node = dynamic_cast< StructuralPlasticityNode* >( i->get_node() );
+            if ( node )
+            {
+              node->update_synaptic_elements( Time( Time::step( clock_.get_steps() + from_step_ ) ).get_ms() );
+            }
           }
 #pragma omp barrier
 #pragma omp single
@@ -822,8 +825,11 @@ nest::SimulationManager::update_()
                 i != kernel().node_manager.get_local_nodes( tid ).end();
                 ++i )
           {
-            StructuralPlasticityNode* node = static_cast< StructuralPlasticityNode* >( i->get_node() );
-            node->decay_synaptic_elements_vacant();
+            StructuralPlasticityNode* node = dynamic_cast< StructuralPlasticityNode* >( i->get_node() );
+            if ( node )
+            {
+              node->decay_synaptic_elements_vacant();
+            }
           }
 
           // after structural plasticity has created and deleted
@@ -1039,13 +1045,16 @@ nest::SimulationManager::update_()
 
       } while ( to_do_ > 0 and not update_time_limit_exceeded and not exceptions_raised.at( tid ) );
 
-      // End of the slice, we update the number of synaptic elements
+      // End of the slice, we update the number of synaptic elements for structural plasticity nodes
       for ( SparseNodeArray::const_iterator i = kernel().node_manager.get_local_nodes( tid ).begin();
             i != kernel().node_manager.get_local_nodes( tid ).end();
             ++i )
       {
-        StructuralPlasticityNode* node = static_cast< StructuralPlasticityNode* >( i->get_node() );
-        node->update_synaptic_elements( Time( Time::step( clock_.get_steps() + to_step_ ) ).get_ms() );
+        StructuralPlasticityNode* node = dynamic_cast< StructuralPlasticityNode* >( i->get_node() );
+        if ( node )
+        {
+          node->update_synaptic_elements( Time( Time::step( clock_.get_steps() + to_step_ ) ).get_ms() );
+        }
       }
     }
     catch ( std::exception& e )

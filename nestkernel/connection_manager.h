@@ -236,8 +236,8 @@ public:
   /**
    * Used only for structural plasticity.
    */
-  void get_targets( const std::vector< index >& sources,
-    const index syn_id,
+  void get_targets( const std::vector< size_t >& sources,
+    const size_t syn_id,
     const std::string& post_synaptic_element,
     std::vector< std::vector< size_t > >& targets );
 

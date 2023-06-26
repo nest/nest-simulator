@@ -542,7 +542,7 @@ SPManager::delete_synapse( const size_t snode_id,
   {
     StructuralPlasticityNode* const source =
       static_cast< StructuralPlasticityNode* const >( kernel().node_manager.get_node_or_proxy( snode_id ) );
-    const thread source_thread = source->get_thread();
+    const size_t source_thread = source->get_thread();
     if ( tid == source_thread )
     {
       source->connect_synaptic_element( se_pre_name, -1 );
@@ -553,7 +553,7 @@ SPManager::delete_synapse( const size_t snode_id,
   {
     StructuralPlasticityNode* const target =
       static_cast< StructuralPlasticityNode* const >( kernel().node_manager.get_node_or_proxy( tnode_id ) );
-    const thread target_thread = target->get_thread();
+    const size_t target_thread = target->get_thread();
     if ( tid == target_thread )
     {
       kernel().connection_manager.disconnect( tid, syn_id, snode_id, tnode_id );
@@ -658,23 +658,26 @@ nest::SPManager::get_synaptic_elements( std::string se_name,
     for ( node_it = local_nodes.begin(); node_it < local_nodes.end(); node_it++ )
     {
       node_id = node_it->get_node_id();
-      StructuralPlasticityNode* node = static_cast< StructuralPlasticityNode* >( node_it->get_node() );
-      n = node->get_synaptic_elements_vacant( se_name );
-      if ( n > 0 )
+      StructuralPlasticityNode* node = dynamic_cast< StructuralPlasticityNode* >( node_it->get_node() );
+      if ( node )
       {
-        ( *vacant_id_it ) = node_id;
-        ( *vacant_n_it ) = n;
-        n_vacant_id++;
-        vacant_id_it++;
-        vacant_n_it++;
-      }
-      if ( n < 0 )
-      {
-        ( *deleted_id_it ) = node_id;
-        ( *deleted_n_it ) = n;
-        n_deleted_id++;
-        deleted_id_it++;
-        deleted_n_it++;
+        n = node->get_synaptic_elements_vacant( se_name );
+        if ( n > 0 )
+        {
+          ( *vacant_id_it ) = node_id;
+          ( *vacant_n_it ) = n;
+          n_vacant_id++;
+          vacant_id_it++;
+          vacant_n_it++;
+        }
+        if ( n < 0 )
+        {
+          ( *deleted_id_it ) = node_id;
+          ( *deleted_n_it ) = n;
+          n_deleted_id++;
+          deleted_id_it++;
+          deleted_n_it++;
+        }
       }
     }
   }

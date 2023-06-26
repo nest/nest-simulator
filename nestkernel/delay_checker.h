@@ -76,7 +76,7 @@ public:
    *       working with continuous delays.
    * @note Not const, since it may update delay extrema as a side-effect.
    */
-  void assert_two_valid_delays_steps( delay, delay );
+  void assert_two_valid_delays_steps( long, long );
 
   bool get_user_set_delay_extrema() const;
 
@@ -91,6 +91,8 @@ private:
   bool user_set_delay_extrema_; //!< Flag indicating if the user set the delay
                                 //!< extrema.
   bool freeze_delay_update_;
+
+  void set_min_max_delay_( const double, const double );
 };
 
 inline const Time&

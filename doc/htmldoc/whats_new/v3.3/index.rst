@@ -48,6 +48,7 @@ implemented using a conditional expression in a list comprehension.
 | ``nest.Models(mtype="nodes", sel="iaf")``  | ``[m for m in nest.node_models if "iaf" in m]``  |
 +--------------------------------------------+--------------------------------------------------+
 
+
 New kernel attributes
 ~~~~~~~~~~~~~~~~~~~~~
 

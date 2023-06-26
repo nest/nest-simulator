@@ -176,11 +176,11 @@ SPManager::set_status( const DictionaryDatum& d )
   }
 }
 
-delay
+long
 SPManager::builder_min_delay() const
 {
-  delay min_delay = Time::pos_inf().get_steps();
-  delay builder_delay = Time::pos_inf().get_steps();
+  long min_delay = Time::pos_inf().get_steps();
+  long builder_delay = Time::pos_inf().get_steps();
 
   for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin(); i != sp_conn_builders_.end(); i++ )
   {
@@ -190,11 +190,11 @@ SPManager::builder_min_delay() const
   return min_delay;
 }
 
-delay
+long
 SPManager::builder_max_delay() const
 {
-  delay max_delay = Time::neg_inf().get_steps();
-  delay builder_delay = Time::neg_inf().get_steps();
+  long max_delay = Time::neg_inf().get_steps();
+  long builder_delay = Time::neg_inf().get_steps();
 
   for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin(); i != sp_conn_builders_.end(); i++ )
   {
@@ -212,7 +212,7 @@ SPManager::builder_max_delay() const
  * @param syn_id
  */
 void
-SPManager::disconnect( const index snode_id, Node* target, thread target_thread, const index syn_id )
+SPManager::disconnect( const size_t snode_id, Node* target, size_t target_thread, const size_t syn_id )
 {
   Node* const source = kernel().node_manager.get_node_or_proxy( snode_id );
   // normal nodes and devices with proxies
@@ -241,8 +241,8 @@ SPManager::disconnect( const index snode_id, Node* target, thread target_thread,
     {
       return;
     }
-    const thread n_threads = kernel().vp_manager.get_num_threads();
-    for ( thread t = 0; t < n_threads; t++ )
+    const size_t n_threads = kernel().vp_manager.get_num_threads();
+    for ( size_t t = 0; t < n_threads; t++ )
     {
       target = kernel().node_manager.get_node_or_proxy( target->get_node_id(), t );
       target_thread = target->get_thread();
@@ -270,7 +270,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
   {
 #pragma omp parallel
     {
-      const thread tid = kernel().vp_manager.get_thread_id();
+      const size_t tid = kernel().vp_manager.get_thread_id();
       kernel().simulation_manager.update_connection_infrastructure( tid );
     }
   }
@@ -341,19 +341,19 @@ void
 SPManager::update_structural_plasticity( SPBuilder* sp_builder )
 {
   // Index of neurons having a vacant synaptic element
-  std::vector< index > pre_vacant_id;  // pre synaptic elements (e.g Axon)
-  std::vector< index > post_vacant_id; // postsynaptic element (e.g Den)
-  std::vector< int > pre_vacant_n;     // number of synaptic elements
-  std::vector< int > post_vacant_n;    // number of synaptic elements
+  std::vector< size_t > pre_vacant_id;  // pre synaptic elements (e.g Axon)
+  std::vector< size_t > post_vacant_id; // postsynaptic element (e.g Den)
+  std::vector< int > pre_vacant_n;      // number of synaptic elements
+  std::vector< int > post_vacant_n;     // number of synaptic elements
 
   // Index of neuron deleting a synaptic element
-  std::vector< index > pre_deleted_id, post_deleted_id;
+  std::vector< size_t > pre_deleted_id, post_deleted_id;
   std::vector< int > pre_deleted_n, post_deleted_n;
 
   // Global vector for vacant and deleted synaptic element
-  std::vector< index > pre_vacant_id_global, post_vacant_id_global;
+  std::vector< size_t > pre_vacant_id_global, post_vacant_id_global;
   std::vector< int > pre_vacant_n_global, post_vacant_n_global;
-  std::vector< index > pre_deleted_id_global, post_deleted_id_global;
+  std::vector< size_t > pre_deleted_id_global, post_deleted_id_global;
   std::vector< int > pre_deleted_n_global, post_deleted_n_global;
 
   // Vector of displacements for communication
@@ -427,14 +427,14 @@ SPManager::update_structural_plasticity( SPBuilder* sp_builder )
  * @return true if synapses are created
  */
 bool
-SPManager::create_synapses( std::vector< index >& pre_id,
+SPManager::create_synapses( std::vector< size_t >& pre_id,
   std::vector< int >& pre_n,
-  std::vector< index >& post_id,
+  std::vector< size_t >& post_id,
   std::vector< int >& post_n,
   SPBuilder* sp_conn_builder )
 {
-  std::vector< index > pre_id_rnd;
-  std::vector< index > post_id_rnd;
+  std::vector< size_t > pre_id_rnd;
+  std::vector< size_t > post_id_rnd;
 
   // shuffle the vacant element
   serialize_id( pre_id, pre_n, pre_id_rnd );
@@ -473,9 +473,9 @@ SPManager::create_synapses( std::vector< index >& pre_id,
  * @param se_post_name postsynaptic element name
  */
 void
-SPManager::delete_synapses_from_pre( const std::vector< index >& pre_deleted_id,
+SPManager::delete_synapses_from_pre( const std::vector< size_t >& pre_deleted_id,
   std::vector< int >& pre_deleted_n,
-  const index synapse_model,
+  const size_t synapse_model,
   const std::string& se_pre_name,
   const std::string& se_post_name )
 {
@@ -485,13 +485,13 @@ SPManager::delete_synapses_from_pre( const std::vector< index >& pre_deleted_id,
    */
 
   // Connectivity
-  std::vector< std::vector< index > > connectivity;
-  std::vector< index > global_targets;
+  std::vector< std::vector< size_t > > connectivity;
+  std::vector< size_t > global_targets;
   std::vector< int > displacements;
 
   // iterators
-  std::vector< std::vector< index > >::iterator connectivity_it;
-  std::vector< index >::const_iterator id_it;
+  std::vector< std::vector< size_t > >::iterator connectivity_it;
+  std::vector< size_t >::const_iterator id_it;
   std::vector< int >::iterator n_it;
 
   kernel().connection_manager.get_targets( pre_deleted_id, synapse_model, se_post_name, connectivity );
@@ -530,14 +530,14 @@ SPManager::delete_synapses_from_pre( const std::vector< index >& pre_deleted_id,
  * @param se_post_name name of the postsynaptic element
  */
 void
-SPManager::delete_synapse( const index snode_id,
-  const index tnode_id,
+SPManager::delete_synapse( const size_t snode_id,
+  const size_t tnode_id,
   const long syn_id,
   const std::string se_pre_name,
   const std::string se_post_name )
 {
   // get thread id
-  const int tid = kernel().vp_manager.get_thread_id();
+  const size_t tid = kernel().vp_manager.get_thread_id();
   if ( kernel().node_manager.is_local_node_id( snode_id ) )
   {
     StructuralPlasticityNode* const source =
@@ -574,9 +574,9 @@ SPManager::delete_synapse( const index snode_id,
  * @param se_post_name postsynaptic element name
  */
 void
-SPManager::delete_synapses_from_post( std::vector< index >& post_deleted_id,
+SPManager::delete_synapses_from_post( std::vector< size_t >& post_deleted_id,
   std::vector< int >& post_deleted_n,
-  index synapse_model,
+  size_t synapse_model,
   std::string se_pre_name,
   std::string se_post_name )
 {
@@ -587,13 +587,13 @@ SPManager::delete_synapses_from_post( std::vector< index >& post_deleted_id,
    */
 
   // Connectivity
-  std::vector< std::vector< index > > connectivity;
-  std::vector< index > global_sources;
+  std::vector< std::vector< size_t > > connectivity;
+  std::vector< size_t > global_sources;
   std::vector< int > displacements;
 
   // iterators
-  std::vector< std::vector< index > >::iterator connectivity_it;
-  std::vector< index >::iterator id_it;
+  std::vector< std::vector< size_t > >::iterator connectivity_it;
+  std::vector< size_t >::iterator id_it;
   std::vector< int >::iterator n_it;
 
   // Retrieve the connected sources
@@ -624,15 +624,15 @@ SPManager::delete_synapses_from_post( std::vector< index >& post_deleted_id,
 
 void
 nest::SPManager::get_synaptic_elements( std::string se_name,
-  std::vector< index >& se_vacant_id,
+  std::vector< size_t >& se_vacant_id,
   std::vector< int >& se_vacant_n,
-  std::vector< index >& se_deleted_id,
+  std::vector< size_t >& se_deleted_id,
   std::vector< int >& se_deleted_n )
 {
   // local nodes
-  index n_vacant_id = 0;
-  index n_deleted_id = 0;
-  index node_id;
+  size_t n_vacant_id = 0;
+  size_t n_deleted_id = 0;
+  size_t node_id;
   int n;
   size_t n_nodes = kernel().node_manager.size();
   se_vacant_id.clear();
@@ -645,13 +645,13 @@ nest::SPManager::get_synaptic_elements( std::string se_name,
   se_deleted_id.resize( n_nodes );
   se_deleted_n.resize( n_nodes );
 
-  std::vector< index >::iterator vacant_id_it = se_vacant_id.begin();
+  std::vector< size_t >::iterator vacant_id_it = se_vacant_id.begin();
   std::vector< int >::iterator vacant_n_it = se_vacant_n.begin();
-  std::vector< index >::iterator deleted_id_it = se_deleted_id.begin();
+  std::vector< size_t >::iterator deleted_id_it = se_deleted_id.begin();
   std::vector< int >::iterator deleted_n_it = se_deleted_n.begin();
   SparseNodeArray::const_iterator node_it;
 
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
     const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
     SparseNodeArray::const_iterator node_it;
@@ -685,11 +685,11 @@ nest::SPManager::get_synaptic_elements( std::string se_name,
 }
 
 void
-nest::SPManager::serialize_id( std::vector< index >& id, std::vector< int >& n, std::vector< index >& res )
+nest::SPManager::serialize_id( std::vector< size_t >& id, std::vector< int >& n, std::vector< size_t >& res )
 {
   // populate res with indexes of nodes corresponding to the number of elements
   res.clear();
-  std::vector< index >::iterator id_it;
+  std::vector< size_t >::iterator id_it;
   std::vector< int >::iterator n_it;
   int j;
   id_it = id.begin();
@@ -704,7 +704,7 @@ nest::SPManager::serialize_id( std::vector< index >& id, std::vector< int >& n, 
 }
 
 void
-nest::SPManager::global_shuffle( std::vector< index >& v )
+nest::SPManager::global_shuffle( std::vector< size_t >& v )
 {
   global_shuffle( v, v.size() );
 }
@@ -713,16 +713,16 @@ nest::SPManager::global_shuffle( std::vector< index >& v )
  * Shuffles the n first items of the vector v
  */
 void
-nest::SPManager::global_shuffle( std::vector< index >& v, size_t n )
+nest::SPManager::global_shuffle( std::vector< size_t >& v, size_t n )
 {
   assert( n <= v.size() );
 
   // shuffle res using the global random number generator
   unsigned int N = v.size();
-  std::vector< index > v2;
-  index tmp;
+  std::vector< size_t > v2;
+  size_t tmp;
   unsigned int rnd;
-  std::vector< index >::iterator rndi;
+  std::vector< size_t >::iterator rndi;
   for ( unsigned int i = 0; i < n; i++ )
   {
     N = v.size();

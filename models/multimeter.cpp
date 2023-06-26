@@ -45,12 +45,12 @@ multimeter::multimeter( const multimeter& n )
 {
 }
 
-port
-multimeter::send_test_event( Node& target, rport receptor_type, synindex, bool )
+size_t
+multimeter::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   DataLoggingRequest e( P_.interval_, P_.offset_, P_.record_from_ );
   e.set_sender( *this );
-  port p = target.handles_test_event( e, receptor_type );
+  size_t p = target.handles_test_event( e, receptor_type );
   if ( p != invalid_port and not is_model_prototype() )
   {
     B_.has_targets_ = true;
@@ -205,9 +205,6 @@ multimeter::handle( DataLoggingReply& reply )
   // easy access to relevant information
   DataLoggingReply::Container const& info = reply.get_info();
 
-  // count records that have been skipped during inactivity
-  size_t inactive_skipped = 0;
-
   // record all data, time point by time point
   for ( size_t j = 0; j < info.size(); ++j )
   {
@@ -218,14 +215,10 @@ multimeter::handle( DataLoggingReply& reply )
 
     if ( not is_active( info[ j ].timestamp ) )
     {
-      ++inactive_skipped;
       continue;
     }
 
     reply.set_stamp( info[ j ].timestamp );
-    // const index sender = reply.get_sender_node_id();
-    // const Time stamp = reply.get_stamp();
-    // const double offset = reply.get_offset();
 
     write( reply, info[ j ].data, RecordingBackend::NO_LONG_VALUES );
   }
@@ -236,11 +229,6 @@ multimeter::get_type() const
 {
   return RecordingDevice::MULTIMETER;
 }
-
-
-//
-// Definition of voltmeter subclass
-//
 
 voltmeter::voltmeter()
   : multimeter()

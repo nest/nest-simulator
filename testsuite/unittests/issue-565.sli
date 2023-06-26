@@ -21,6 +21,13 @@
  */
 
 
+% SLI2PY: Move to regressiontests
+% SLI2PY: Overlap with corresponding conn/disconn tests elsewhere?
+% SLI2PY: We no longer have het/hom connectors
+
+% SLI2PYComplexity: High --- what does this test do?
+
+
  /** @BeginDocumentation
 Name: testsuite::issue-565
 

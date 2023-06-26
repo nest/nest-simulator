@@ -49,7 +49,7 @@ nest::MultiChannelInputBuffer< num_channels >::clear()
 {
   resize(); // does nothing if size is fine
   // set all elements to 0.0
-  for ( index slot = 0; slot < buffer_.size(); ++slot )
+  for ( size_t slot = 0; slot < buffer_.size(); ++slot )
   {
     reset_values_all_channels( slot );
   }

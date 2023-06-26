@@ -204,8 +204,10 @@ def config_inited_handler(app, config):
         outdir=models_rst_dir,
     )
 
+
 def get_pynest_list(app, env, docname):
-   ExtractPyNESTAPIS()
+    ExtractPyNESTAPIS()
+
 
 def add_button_to_examples(app, env, docnames):
     """Find all examples and include a link to launch notebook.
@@ -282,6 +284,7 @@ def api_customizer(app, docname, source):
         rendered = app.builder.templates.render_string(api_source, html_context)
         source[0] = rendered
 
+
 def toc_customizer(app, docname, source):
     if docname == "models/models-toc":
         models_toc = json.load(open("models/toc-tree.json"))
@@ -289,6 +292,7 @@ def toc_customizer(app, docname, source):
         models_source = source[0]
         rendered = app.builder.templates.render_string(models_source, html_context)
         source[0] = rendered
+
 
 def setup(app):
     app.connect("source-read", toc_customizer)

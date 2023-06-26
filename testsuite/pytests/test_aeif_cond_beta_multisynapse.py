@@ -86,43 +86,48 @@ class TestAeifCondBetaMultisynapse:
         r"""Test postsynaptic response and membrane potential dynamics against
         analytic solutions. Deflections in membrane potential are assumed to
         be small, so its dynamics can be appoximated as linear."""
-        simulation_t = 300.0    # simulation duration [ms]
-        dt = 0.1    # time step [ms]
+        simulation_t = 300.0  # simulation duration [ms]
+        dt = 0.1  # time step [ms]
 
-        spike_time = 10.0    # spike time of spike generator
+        spike_time = 10.0  # spike time of spike generator
 
-        V_peak = 0.0    # spike detection threshold
-        a = 4.0    # subthreshold adaptation
-        b = 80.5    # spike-triggered adaptation
-        E_rev = [20.0, 0.0, -85.0]    # synaptic reversal potentials [mV]
-        tau_decay = [40.0, 20.0, 30.0]    # synaptic decay times [ms]
-        tau_rise = [20.0, 10.0, 5.0]    # synaptic rise times [ms]
-        weights = [0.01, 0.02, 0.015]    # synaptic weights
-        delays = [1.0, 100.0, 130.0]    # synaptic delays [ms]
-        Vrest = -70.6    # resting potential [mV]
-        g_L = 300.0    # leak conductance [nS]
+        V_peak = 0.0  # spike detection threshold
+        a = 4.0  # subthreshold adaptation
+        b = 80.5  # spike-triggered adaptation
+        E_rev = [20.0, 0.0, -85.0]  # synaptic reversal potentials [mV]
+        tau_decay = [40.0, 20.0, 30.0]  # synaptic decay times [ms]
+        tau_rise = [20.0, 10.0, 5.0]  # synaptic rise times [ms]
+        weights = [0.01, 0.02, 0.015]  # synaptic weights
+        delays = [1.0, 100.0, 130.0]  # synaptic delays [ms]
+        Vrest = -70.6  # resting potential [mV]
+        g_L = 300.0  # leak conductance [nS]
 
         sg = nest.Create("spike_generator", params={"spike_times": [spike_time]})
         vm = nest.Create("voltmeter", params={"interval": dt})
 
         # Create one aeif_conf_beta_multisynapse neuron
-        multisynapse_neuron = nest.Create("aeif_cond_beta_multisynapse", params={"E_rev": E_rev,
-                                                                                 "tau_decay": tau_decay,
-                                                                                 "tau_rise": tau_rise,
-                                                                                 "V_peak": V_peak,
-                                                                                 "a": a,
-                                                                                 "b": b,
-                                                                                 "E_L": Vrest,
-                                                                                 "g_L": g_L})
+        multisynapse_neuron = nest.Create(
+            "aeif_cond_beta_multisynapse",
+            params={
+                "E_rev": E_rev,
+                "tau_decay": tau_decay,
+                "tau_rise": tau_rise,
+                "V_peak": V_peak,
+                "a": a,
+                "b": b,
+                "E_L": Vrest,
+                "g_L": g_L,
+            },
+        )
 
         # create an array of synaptic indexes
         synapses_idx = range(len(weights))
 
         # connect spike generator to each port
         for i in synapses_idx:
-            nest.Connect(sg, multisynapse_neuron, syn_spec={"delay": delays[i],
-                                                            "weight": weights[i],
-                                                            "receptor_type": i + 1})
+            nest.Connect(
+                sg, multisynapse_neuron, syn_spec={"delay": delays[i], "weight": weights[i], "receptor_type": i + 1}
+            )
 
         # connect voltmeter
         nest.Connect(vm, multisynapse_neuron)
@@ -139,16 +144,13 @@ class TestAeifCondBetaMultisynapse:
             import matplotlib.pyplot as plt
 
             fig, ax = plt.subplots(nrows=6)
-            ax[0].plot(ts,
-                       Vms,
-                       label="V_m multisyn",
-                       alpha=0.5)
+            ax[0].plot(ts, Vms, label="V_m multisyn", alpha=0.5)
 
         V_m_summed = 0.0
 
         # loop over synapse index
         for i in range(3):
-            t0 = spike_time + delays[i]    # peak starting time
+            t0 = spike_time + delays[i]  # peak starting time
 
             # Evaluates the driving force
             Vforce = E_rev[i] - Vrest
@@ -185,8 +187,8 @@ class TestAeifCondBetaMultisynapse:
             fig.savefig(fname)
 
         # large testing tolerance due to approximation (see documentation of the test)
-        np.testing.assert_allclose(Vms, V_m_summed, atol=0.0, rtol=1E-5)
-        np.testing.assert_allclose(Vms, V_m_summed, atol=1E-3)
+        np.testing.assert_allclose(Vms, V_m_summed, atol=0.0, rtol=1e-5)
+        np.testing.assert_allclose(Vms, V_m_summed, atol=1e-3)
 
     @pytest.mark.parametrize("t_ref", [0.0, 0.1])
     def test_refractoriness_clamping(self, t_ref):
@@ -195,24 +197,20 @@ class TestAeifCondBetaMultisynapse:
         nest.resolution = 0.1
         V_reset = -111.0
 
-        nrn = nest.Create("aeif_cond_beta_multisynapse", params={"w": 0.0,
-                                                                 "a": 0.0,
-                                                                 "b": 0.0,
-                                                                 "Delta_T": 0.0,
-                                                                 "t_ref": t_ref,
-                                                                 "I_e": 1000.0,
-                                                                 "V_reset": V_reset})
+        nrn = nest.Create(
+            "aeif_cond_beta_multisynapse",
+            params={"w": 0.0, "a": 0.0, "b": 0.0, "Delta_T": 0.0, "t_ref": t_ref, "I_e": 1000.0, "V_reset": V_reset},
+        )
 
         sr = nest.Create("spike_recorder", params={"time_in_steps": True})
-        vm = nest.Create("voltmeter", params={"time_in_steps": True,
-                                              "interval": nest.resolution})
+        vm = nest.Create("voltmeter", params={"time_in_steps": True, "interval": nest.resolution})
 
         nest.Connect(nrn, sr)
         nest.Connect(vm, nrn)
 
         nest.Simulate(10.0)
 
-        stime = sr.events["times"][0] - 1    # minus one because of 1-based indexing
+        stime = sr.events["times"][0] - 1  # minus one because of 1-based indexing
 
         # test that V_m == V_reset at spike time
         np.testing.assert_almost_equal(vm.events["V_m"][stime], V_reset)
@@ -239,26 +237,31 @@ class TestAeifCondBetaMultisynapse:
         b = 100.0
         tau_w = 1.0
 
-        nrn = nest.Create("aeif_cond_beta_multisynapse", params={"w": 0.0,
-                                                                 "a": a,
-                                                                 "b": b,
-                                                                 "tau_w": tau_w,
-                                                                 "Delta_T": 0.0,
-                                                                 "t_ref": t_ref,
-                                                                 "I_e": 1000.0,
-                                                                 "E_L": E_L,
-                                                                 "V_reset": V_reset})
+        nrn = nest.Create(
+            "aeif_cond_beta_multisynapse",
+            params={
+                "w": 0.0,
+                "a": a,
+                "b": b,
+                "tau_w": tau_w,
+                "Delta_T": 0.0,
+                "t_ref": t_ref,
+                "I_e": 1000.0,
+                "E_L": E_L,
+                "V_reset": V_reset,
+            },
+        )
 
         sr = nest.Create("spike_recorder", params={"time_in_steps": True})
-        vm = nest.Create("multimeter", params={"time_in_steps": True,
-                                               "interval": nest.resolution,
-                                               "record_from": ["V_m", "w"]})
+        vm = nest.Create(
+            "multimeter", params={"time_in_steps": True, "interval": nest.resolution, "record_from": ["V_m", "w"]}
+        )
         nest.Connect(nrn, sr)
         nest.Connect(vm, nrn)
 
         nest.Simulate(50.0)
 
-        stime = sr.events["times"][0] - 1    # minus one because of 1-based indexing
+        stime = sr.events["times"][0] - 1  # minus one because of 1-based indexing
 
         # time, voltage, w at spike
         w0 = vm.events["w"][stime]
@@ -272,9 +275,9 @@ class TestAeifCondBetaMultisynapse:
 
         dt = t1 - t0
 
-        assert dt < t_ref   # check that still refractory
-        assert V0 == V1   # V_m clamped
-        assert V0 == V_reset    # V_m clamped
+        assert dt < t_ref  # check that still refractory
+        assert V0 == V1  # V_m clamped
+        assert V0 == V_reset  # V_m clamped
 
         # expected w
         w_theory = w0 * np.exp(-dt / tau_w) + a * (V_reset - E_L) * (1 - np.exp(-dt / tau_w))
@@ -287,9 +290,9 @@ class TestAeifCondBetaMultisynapse:
 
         nrn = nest.Create("aeif_cond_beta_multisynapse")
 
-        mm = nest.Create("multimeter", params={"time_in_steps": True,
-                                               "interval": 1.0,
-                                               "record_from": ["V_m", "w", "g_1"]})
+        mm = nest.Create(
+            "multimeter", params={"time_in_steps": True, "interval": 1.0, "record_from": ["V_m", "w", "g_1"]}
+        )
 
         nest.Connect(mm, nrn)
 
@@ -309,19 +312,15 @@ class TestAeifCondBetaMultisynapse:
         tau_decay2 = [20.0, 10.0]
         tau_decay3 = [20.0, 10.0, 85.0, 100.0]
 
-        nrn = nest.Create("aeif_cond_beta_multisynapse", params={"E_rev": E_rev1,
-                                                                 "tau_rise": tau_rise1,
-                                                                 "tau_decay": tau_decay1})
+        nrn = nest.Create(
+            "aeif_cond_beta_multisynapse", params={"E_rev": E_rev1, "tau_rise": tau_rise1, "tau_decay": tau_decay1}
+        )
         assert len(nrn.recordables) == 5
 
-        nrn.set({"E_rev": E_rev2,
-                 "tau_rise": tau_rise2,
-                 "tau_decay": tau_decay2})
+        nrn.set({"E_rev": E_rev2, "tau_rise": tau_rise2, "tau_decay": tau_decay2})
         assert len(nrn.recordables) == 4
 
-        nrn.set({"E_rev": E_rev3,
-                 "tau_rise": tau_rise3,
-                 "tau_decay": tau_decay3})
+        nrn.set({"E_rev": E_rev3, "tau_rise": tau_rise3, "tau_decay": tau_decay3})
         assert len(nrn.recordables) == 6
 
     def test_g_beta_dynamics(self, have_plotting):
@@ -329,16 +328,16 @@ class TestAeifCondBetaMultisynapse:
         Test that g has beta function dynamics when tau_rise and tau_decay are
         different, and has alpha function dynamics when they are the same.
         """
-        total_t = 500.0    # total simulation time [ms]
-        dt = 0.1    # time step [ms]
+        total_t = 500.0  # total simulation time [ms]
+        dt = 0.1  # time step [ms]
 
-        spike_time = 10.0    # time at which the single spike occurs [ms]
+        spike_time = 10.0  # time at which the single spike occurs [ms]
 
-        E_rev = [0.0, 0.0, -85.0, 20.0]    # synaptic reversal potentials [mV]
-        tau_rise = [20.0, 10.0, 5.0, 25.0]    # synaptic rise times [ms]
-        tau_decay = [40.0, 20.0, 30.0, 25.0]    # synaptic decay times [ms]
-        weight = [1.0, 0.5, 2.0, 1.0]    # synaptic weights
-        delays = [1.0, 3.0, 10.0, 10.0]    # synaptic delays [ms]
+        E_rev = [0.0, 0.0, -85.0, 20.0]  # synaptic reversal potentials [mV]
+        tau_rise = [20.0, 10.0, 5.0, 25.0]  # synaptic rise times [ms]
+        tau_decay = [40.0, 20.0, 30.0, 25.0]  # synaptic decay times [ms]
+        weight = [1.0, 0.5, 2.0, 1.0]  # synaptic weights
+        delays = [1.0, 3.0, 10.0, 10.0]  # synaptic delays [ms]
 
         def alpha_function(t, W=1.0, tau=1.0, t0=0.0):
             tdiff_over_tau = (t - t0) / tau
@@ -361,26 +360,28 @@ class TestAeifCondBetaMultisynapse:
         nest.resolution = dt
 
         # Create the multisynapse neuron
-        nrn = nest.Create("aeif_cond_beta_multisynapse", params={"w": 0.0,
-                                                                 "a": 0.0,
-                                                                 "b": 0.0,
-                                                                 "Delta_T": 0.0,
-                                                                 "t_ref": 0.0,
-                                                                 "I_e": 0.0,
-                                                                 "E_rev": E_rev,
-                                                                 "tau_rise": tau_rise,
-                                                                 "tau_decay": tau_decay})
+        nrn = nest.Create(
+            "aeif_cond_beta_multisynapse",
+            params={
+                "w": 0.0,
+                "a": 0.0,
+                "b": 0.0,
+                "Delta_T": 0.0,
+                "t_ref": 0.0,
+                "I_e": 0.0,
+                "E_rev": E_rev,
+                "tau_rise": tau_rise,
+                "tau_decay": tau_decay,
+            },
+        )
 
         # Create a spike generator that generates a single spike
         sg = nest.Create("spike_generator", params={"spike_times": [spike_time]})
         for i in range(len(weight)):
-            nest.Connect(sg, nrn, syn_spec={"delay": delays[i],
-                                            "weight": weight[i],
-                                            "receptor_type": i + 1})
+            nest.Connect(sg, nrn, syn_spec={"delay": delays[i], "weight": weight[i], "receptor_type": i + 1})
 
         # Create the multimeter that will record from the conductance channels
-        mm = nest.Create("multimeter", params={"interval": dt,
-                                               "record_from": ["g_1", "g_2", "g_3", "g_4"]})
+        mm = nest.Create("multimeter", params={"interval": dt, "record_from": ["g_1", "g_2", "g_3", "g_4"]})
         nest.Connect(mm, nrn)
 
         nest.Simulate(total_t)

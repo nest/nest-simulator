@@ -41,9 +41,7 @@ def test_weight_recorder_with_probabilistic_synapse():
     tgt_parrot = nest.Create("parrot_neuron")
     wrec = nest.Create("weight_recorder")
 
-    nest.CopyModel(
-        "bernoulli_synapse", "bernoulli_synapse_wrec", {"weight_recorder": wrec}
-    )
+    nest.CopyModel("bernoulli_synapse", "bernoulli_synapse_wrec", {"weight_recorder": wrec})
 
     nest.Connect(sgen, src_parrot)
     nest.Connect(

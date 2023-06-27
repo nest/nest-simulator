@@ -35,10 +35,10 @@ def set_resolution():
 
 
 # Obtain all models with non-empty recordables list
-models = [model for model in nest.node_models if nest.GetDefaults(model).get('recordables')]
+models = [model for model in nest.node_models if nest.GetDefaults(model).get("recordables")]
 
 
-@pytest.mark.parametrize('model', models)
+@pytest.mark.parametrize("model", models)
 def test_recordables_are_recorded(set_resolution, model):
     """
     Test that recordables are recorded.
@@ -57,19 +57,18 @@ def test_recordables_are_recorded(set_resolution, model):
 
     nrn = nest.Create(model)
     recordables = nrn.recordables
-    mm = nest.Create('multimeter', {'interval': recording_interval,
-                                    'record_from': recordables})
+    mm = nest.Create("multimeter", {"interval": recording_interval, "record_from": recordables})
     nest.Connect(mm, nrn)
     nest.Simulate(simtime)
 
     result = mm.events
 
-    for r in recordables + ('times', 'senders'):
+    for r in recordables + ("times", "senders"):
         assert r in result
         assert len(result[r]) == num_data_expected
 
 
-@pytest.mark.parametrize('model', models)
+@pytest.mark.parametrize("model", models)
 def test_correct_amount_data_collected(model):
     """
     Test that the correct of amount of data is collected for each recordable.
@@ -87,14 +86,16 @@ def test_correct_amount_data_collected(model):
     nrn = nest.Create(model)
 
     # if the model is compartmental, we need to add at least a root compartment
-    if 'compartments' in nest.GetDefaults(model):
-        nrn.compartments = {"parent_idx": -1, }
+    if "compartments" in nest.GetDefaults(model):
+        nrn.compartments = {
+            "parent_idx": -1,
+        }
 
     recordables = nrn.recordables
-    mm = nest.Create('multimeter', {'record_from': recordables})
+    mm = nest.Create("multimeter", {"record_from": recordables})
 
     nest.Connect(mm, nrn)
-    nest.Simulate(10.)
+    nest.Simulate(10.0)
 
     for recordable in recordables:
         assert len(mm.events[recordable]) == 9
@@ -105,6 +106,6 @@ def test_multimeter_freeze():
     Ensure that frozen parameter can be set to False but not True on multimeter.
     """
 
-    nest.Create('multimeter', params={'frozen': False})
+    nest.Create("multimeter", params={"frozen": False})
     with pytest.raises(Exception):
-        nest.Create('multimeter', params={'frozen': True})
+        nest.Create("multimeter", params={"frozen": True})

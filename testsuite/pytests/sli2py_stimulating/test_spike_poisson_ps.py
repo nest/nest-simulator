@@ -55,9 +55,7 @@ def simulator(resolution):
     # nearest multiple of the resolution.
     sim_time = stim_time + np.ceil(3.0 / resolution) * resolution
 
-    pgen_ps = nest.Create(
-        "poisson_generator_ps", params={"rate": 128921.3, "stop": stim_time}
-    )
+    pgen_ps = nest.Create("poisson_generator_ps", params={"rate": 128921.3, "stop": stim_time})
     srec = nest.Create("spike_recorder")
     nest.Connect(pgen_ps, srec)
 

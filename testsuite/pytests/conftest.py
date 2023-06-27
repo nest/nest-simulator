@@ -148,9 +148,7 @@ def simulation_class(request):
 def simulation(request):
     marker = request.node.get_closest_marker("simulation")
     sim_cls = marker.args[0] if marker else testsimulation.Simulation
-    sim = sim_cls(
-        *(request.getfixturevalue(field.name) for field in dataclasses.fields(sim_cls))
-    )
+    sim = sim_cls(*(request.getfixturevalue(field.name) for field in dataclasses.fields(sim_cls)))
     nest.ResetKernel()
     if getattr(sim, "set_resolution", True):
         nest.resolution = sim.resolution

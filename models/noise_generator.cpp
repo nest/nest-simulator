@@ -258,8 +258,8 @@ nest::noise_generator::pre_run_hook()
  * Update function and event hook
  * ---------------------------------------------------------------- */
 
-nest::port
-nest::noise_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
+size_t
+nest::noise_generator::send_test_event( Node& target, size_t receptor_type, synindex syn_id, bool dummy_target )
 {
   StimulationDevice::enforce_single_syn_type( syn_id );
 
@@ -273,7 +273,7 @@ nest::noise_generator::send_test_event( Node& target, rport receptor_type, synin
   {
     CurrentEvent e;
     e.set_sender( *this );
-    const port p = target.handles_test_event( e, receptor_type );
+    const size_t p = target.handles_test_event( e, receptor_type );
     if ( p != invalid_port and not is_model_prototype() )
     {
       ++P_.num_targets_;
@@ -340,10 +340,10 @@ void
 nest::noise_generator::event_hook( DSCurrentEvent& e )
 {
   // get port number
-  const port prt = e.get_port();
+  const size_t prt = e.get_port();
 
   // we handle only one port here, get reference to vector elem
-  assert( 0 <= prt and static_cast< size_t >( prt ) < B_.amps_.size() );
+  assert( prt < B_.amps_.size() );
 
   e.set_current( B_.amps_[ prt ] );
   e.get_receiver().handle( e );

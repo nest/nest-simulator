@@ -172,9 +172,7 @@ def test_free_grid_with_periodic_bc_distance_from_node():
     Test distance between nodes on free grid with periodic BC.
     """
 
-    positions = nest.spatial.free(
-        pos=[[-0.75, 0.5], [0.75, 0.0]], extent=[2.0, 2.0], edge_wrap=True
-    )
+    positions = nest.spatial.free(pos=[[-0.75, 0.5], [0.75, 0.0]], extent=[2.0, 2.0], edge_wrap=True)
     layer = nest.Create("iaf_psc_alpha", positions=positions)
 
     expected_dists = [0.0, sqrt(0.5**2 + 0.5**2)]

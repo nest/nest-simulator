@@ -46,11 +46,7 @@ ignore_model = [
     "correlospinmatrix_detector",  # binary recorder
 ]
 
-models = [
-    m
-    for m in nest.node_models
-    if nest.GetDefaults(m, "element_type") == "recorder" and m not in ignore_model
-]
+models = [m for m in nest.node_models if nest.GetDefaults(m, "element_type") == "recorder" and m not in ignore_model]
 
 
 @pytest.mark.parametrize("model", models)

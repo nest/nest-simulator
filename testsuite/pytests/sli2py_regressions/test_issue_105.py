@@ -44,9 +44,7 @@ def test_min_delay_on_fresh_connection(delay):
     """
 
     nrn = nest.Create("iaf_psc_alpha")
-    conn = nest.Connect(
-        nrn, nrn, "one_to_one", {"delay": delay}, return_synapsecollection=True
-    )
+    conn = nest.Connect(nrn, nrn, "one_to_one", {"delay": delay}, return_synapsecollection=True)
 
     expected_delay = 0.8
     assert conn.delay == expected_delay
@@ -81,9 +79,7 @@ def test_max_delay_on_fresh_connection(delay):
     """
 
     nrn = nest.Create("iaf_psc_alpha")
-    conn = nest.Connect(
-        nrn, nrn, "one_to_one", {"delay": delay}, return_synapsecollection=True
-    )
+    conn = nest.Connect(nrn, nrn, "one_to_one", {"delay": delay}, return_synapsecollection=True)
 
     expected_delay = 0.9
     assert conn.delay == expected_delay

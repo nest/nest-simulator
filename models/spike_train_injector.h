@@ -242,7 +242,7 @@ public:
   spike_train_injector();
   spike_train_injector( const spike_train_injector& );
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
   bool is_active( const Time& ) const override;
@@ -323,8 +323,8 @@ private:
 };
 
 
-inline port
-spike_train_injector::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+spike_train_injector::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

@@ -34,7 +34,7 @@ def reset():
 
 
 DEFAULT_SEED = 143202461
-DEFAULT_RNG_TYPE = 'mt19937_64'
+DEFAULT_RNG_TYPE = "mt19937_64"
 
 
 def test_confirm_base_seed():
@@ -51,13 +51,13 @@ def test_reset_kernel_resets_seed():
     """
 
     nest.rng_seed = 123
-    nest.rng_type = 'mt19937'
+    nest.rng_type = "mt19937"
     nest.ResetKernel()
     assert nest.rng_seed == DEFAULT_SEED and nest.rng_type == DEFAULT_RNG_TYPE
 
 
 @pytest.mark.skipif_missing_threads
-@pytest.mark.parametrize('proc_param_name', ['local_num_threads', 'total_num_virtual_procs'])
+@pytest.mark.parametrize("proc_param_name", ["local_num_threads", "total_num_virtual_procs"])
 class TestSeedingAndProcSetting:
     """
     Tests that setting seed and number of thread or of VPs works in arbitrary order.
@@ -97,19 +97,19 @@ class TestSeedingAndProcSetting:
         Test that changing number of processes and seeding in one call gives correct seed.
         """
 
-        nest.set(**{'rng_seed': self.TEST_SEED, proc_param_name: self.NUM_PROCS})
+        nest.set(**{"rng_seed": self.TEST_SEED, proc_param_name: self.NUM_PROCS})
         assert nest.rng_seed == self.TEST_SEED
 
 
 @pytest.mark.skipif_missing_threads
-@pytest.mark.parametrize('proc_param_name', ['local_num_threads', 'total_num_virtual_procs'])
+@pytest.mark.parametrize("proc_param_name", ["local_num_threads", "total_num_virtual_procs"])
 class TestRngTypeAndProcSetting:
     """
     Tests that setting rng type and number of thread or of VPs works in arbitrary order.
     """
 
     NUM_PROCS = 2
-    TEST_RNG_TYPE = 'mt19937'
+    TEST_RNG_TYPE = "mt19937"
 
     def test_set_procs_then_rng_type(self, proc_param_name):
         """
@@ -134,5 +134,5 @@ class TestRngTypeAndProcSetting:
         Test that changing number of processes and rng type in one call gives correct rng type.
         """
 
-        nest.set(**{'rng_type': self.TEST_RNG_TYPE, proc_param_name: self.NUM_PROCS})
+        nest.set(**{"rng_type": self.TEST_RNG_TYPE, proc_param_name: self.NUM_PROCS})
         assert nest.rng_type == self.TEST_RNG_TYPE

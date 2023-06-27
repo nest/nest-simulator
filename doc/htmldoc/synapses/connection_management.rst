@@ -63,7 +63,7 @@ Have a look at the :ref:`inspecting_connections` section further down
 to get more tips on how to examine the connections in greater detail.
 
 Multapses and autapses
-~~~~~~~~~~~~~~~~~~~~~~
+----------------------
 
 In the connection specification dictionary (containing the rule name and rule-
 specific parameters), the additional switch ``allow_autapses`` (default:
@@ -324,8 +324,8 @@ Array parameters can be used with the rules ``all_to_all``,
 lists. As with the scalar parameters, all parameters have to be
 specified as arrays of the correct type.
 
-all-to-all
-^^^^^^^^^^
+rule: all-to-all
+^^^^^^^^^^^^^^^^
 
 When connecting with rule ``all_to_all``, the array parameter must
 have dimension `len(B) x len(A)`.
@@ -337,8 +337,8 @@ have dimension `len(B) x len(A)`.
     syn_spec_dict = {'weight': [[1.2, -3.5, 2.5], [0.4, -0.2, 0.7]]}
     nest.Connect(A, B, syn_spec=syn_spec_dict)
 
-fixed indegree
-^^^^^^^^^^^^^^
+rule: fixed indegree
+^^^^^^^^^^^^^^^^^^^^
 
 For rule ``fixed_indegree`` the array has to be a two-dimensional
 NumPy array or Python list with shape ``(len(B), indegree)``, where
@@ -355,8 +355,8 @@ of the identity of the source neurons.
     syn_spec_dict = {'weight': [[1.2, -3.5],[0.4, -0.2],[0.6, 2.2]]}
     nest.Connect(A, B, conn_spec_dict, syn_spec_dict)
 
-fixed outdegree
-^^^^^^^^^^^^^^^
+rule: fixed outdegree
+^^^^^^^^^^^^^^^^^^^^^
 
 For rule ``fixed_outdegree`` the array has to be a two-dimensional
 NumPy array or Python list with shape ``(len(pre), outdegree)``, where
@@ -373,8 +373,8 @@ regardless of the identity of the target neuron.
     syn_spec_dict = {'weight': [[1.2, -3.5, 0.4], [-0.2, 0.6, 2.2]]}
     nest.Connect(A, B, conn_spec_dict, syn_spec_dict)
 
-fixed total number
-^^^^^^^^^^^^^^^^^^
+rule: fixed total number
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 For rule ``fixed_total_number``, the array has to be same the length as the
 number of connections ``N``.
@@ -387,8 +387,8 @@ number of connections ``N``.
     syn_spec_dict = {'weight': [1.2, -3.5, 0.4, -0.2]}
     nest.Connect(A, B, conn_spec_dict, syn_spec_dict)
 
-one-to-one
-^^^^^^^^^^
+rule: one-to-one
+^^^^^^^^^^^^^^^^
 
 For rule ``one_to_one`` the array must have the same length as there
 are nodes in ``A`` and ``B``.

@@ -89,12 +89,8 @@ def test_retrieve_correct_proportion_of_synapse_model(network):
 
     # Remove entries with duplicate sources (i.e., no static + stdp connections)
     df_no_dup = df.drop_duplicates(subset=["source"], keep=False)
-    actual_num_static_only = len(
-        df_no_dup.loc[df_no_dup["synapse_model"] == "static_synapse"].index
-    )
-    actual_num_stdp_only = len(
-        df_no_dup.loc[df_no_dup["synapse_model"] == "stdp_synapse"].index
-    )
+    actual_num_static_only = len(df_no_dup.loc[df_no_dup["synapse_model"] == "static_synapse"].index)
+    actual_num_stdp_only = len(df_no_dup.loc[df_no_dup["synapse_model"] == "stdp_synapse"].index)
 
     # Obtain entries with duplicate sources only (i.e., only static + stdp connections)
     df_only_dup = df[df.duplicated(subset=["source"], keep=False)]

@@ -8,7 +8,7 @@ on: [push, pull_request]
 
 jobs:
   clang-format:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-latest"
     env:
       CLANG_REQUIRE_VERSION: 13
       CLANG_FORMAT_FILE: ".clang-format"
@@ -28,7 +28,7 @@ jobs:
           diff -u <(cat ${files}) <(clang-format ${files})
 
   cppcheck:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-latest"
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v3
@@ -45,7 +45,7 @@ jobs:
           cppcheck --enable=all --language=c++ --std=c++11 -i sli/ --suppressions-list=.cppcheck_suppressions ./
 
   rstcheck:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-latest"
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v3
@@ -66,7 +66,7 @@ jobs:
           rstcheck -r doc/
 
   vale:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-latest"
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v3
@@ -92,7 +92,7 @@ jobs:
           ./vale doc
 
   copyright_headers:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-latest"
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v3
@@ -113,7 +113,7 @@ jobs:
           python build_support/check_copyright_headers.py
 
   unused_names:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-latest"
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v3
@@ -130,7 +130,7 @@ jobs:
           python build_support/check_unused_names.py
 
   forbidden_types:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-latest"
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v3
@@ -142,7 +142,7 @@ jobs:
           ./build_support/check_forbidden_types.sh
 
   lychee_IGNORED:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-latest"
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v3
@@ -163,7 +163,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   pydocstyle:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-latest"
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v3
@@ -184,7 +184,7 @@ jobs:
           pydocstyle pynest/
 
   mypy:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-latest"
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v3
@@ -205,7 +205,7 @@ jobs:
           mypy pynest/
 
   # pytest-linux:
-  #   runs-on: "ubuntu-20.04"
+  #   runs-on: "ubuntu-latest"
   #   needs: [build_linux]
   #   env:
   #     NEST_VPATH: "build"
@@ -214,7 +214,7 @@ jobs:
   #   strategy:
   #     fail-fast: true
   #     matrix:
-  #       os: ["ubuntu-20.04"]
+  #       os: ["ubuntu-latest"]
   #       cpp_compiler: ["gcc"]
 
   #       # available use flags (all default to "OFF"):
@@ -271,7 +271,7 @@ jobs:
   #         pytest pynest/
 
   pylint:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-latest"
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v3
@@ -292,7 +292,7 @@ jobs:
           pylint --jobs=$(nproc) pynest/ testsuite/pytests/*.py testsuite/regressiontests/*.py
 
   black:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-latest"
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v3
@@ -304,7 +304,7 @@ jobs:
           jupyter: true
 
   flake8:
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-latest"
     steps:
       - name: "Checkout repository content"
         uses: actions/checkout@v3
@@ -326,7 +326,7 @@ jobs:
 
   sphinx-rtd:
     # as close as possible to the Readthedocs setup (system install cmake, pip install -r doc/requirements.txt)
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-latest"
     needs: [pydocstyle, rstcheck, vale]
     steps:
       - name: "Checkout repository content"
@@ -365,7 +365,7 @@ jobs:
 
   sphinx-conda:
     # as close as possible to the suggested user docs build in the documentation
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-latest"
     if: false
     needs: [pydocstyle, rstcheck, vale]
     steps:
@@ -414,7 +414,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu-20.04"]
+        os: ["ubuntu-latest"]
         cpp_compiler: ["gcc"]
 
         # available use flags (all default to "OFF"):

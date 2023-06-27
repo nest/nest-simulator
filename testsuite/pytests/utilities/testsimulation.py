@@ -41,9 +41,7 @@ class Simulation:
     def simulate(self):
         nest.Simulate(self.duration)
         if hasattr(self, "voltmeter"):
-            return np.column_stack(
-                (self.voltmeter.events["times"], self.voltmeter.events["V_m"])
-            )
+            return np.column_stack((self.voltmeter.events["times"], self.voltmeter.events["V_m"]))
 
     def run(self):
         self.setup()

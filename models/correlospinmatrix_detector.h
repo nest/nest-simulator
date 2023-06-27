@@ -162,7 +162,7 @@ public:
 
   void handle( SpikeEvent& ) override;
 
-  port handles_test_event( SpikeEvent&, rport ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
 
   SignalType receives_signal() const override;
 
@@ -215,11 +215,11 @@ private:
 
   struct Parameters_
   {
-    Time delta_tau_;  //!< width of correlation histogram bins
-    Time tau_max_;    //!< maximum time difference of events to detect
-    Time Tstart_;     //!< start of recording
-    Time Tstop_;      //!< end of recording
-    long N_channels_; //!< number of channels
+    Time delta_tau_;    //!< width of correlation histogram bins
+    Time tau_max_;      //!< maximum time difference of events to detect
+    Time Tstart_;       //!< start of recording
+    Time Tstop_;        //!< end of recording
+    size_t N_channels_; //!< number of channels
 
     Parameters_();                     //!< Sets default parameter values
     Parameters_( const Parameters_& ); //!< Recalibrate all times
@@ -256,7 +256,7 @@ private:
                                     * rport of last event coming in
                                     * (needed for decoding logic of binary events)
                                     */
-    rport last_i_;
+    size_t last_i_;
     /**
      * time of last event coming in (needed for decoding logic of binary events)
      */
@@ -293,10 +293,10 @@ private:
   State_ S_;
 };
 
-inline port
-correlospinmatrix_detector::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+correlospinmatrix_detector::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
-  if ( receptor_type < 0 or receptor_type > P_.N_channels_ - 1 )
+  if ( receptor_type > P_.N_channels_ - 1 )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }

@@ -28,6 +28,7 @@ import nest
 
 try:
     import numpy as np
+
     HAVE_NUMPY = True
 except ImportError:
     HAVE_NUMPY = False
@@ -44,7 +45,7 @@ class TestNodeCollection(unittest.TestCase):
         """Conversion from NodeCollection to list"""
 
         n_neurons = 10
-        n = nest.Create('iaf_psc_alpha', n_neurons)
+        n = nest.Create("iaf_psc_alpha", n_neurons)
         n_list = n.tolist()
         self.assertEqual(n_list, list(range(1, n_neurons + 1)))
 
@@ -57,7 +58,7 @@ class TestNodeCollection(unittest.TestCase):
             nc = nest.NodeCollection(node_ids_in)
 
         # Creating composite NodeCollection from list
-        nest.Create('iaf_psc_alpha', 20)
+        nest.Create("iaf_psc_alpha", 20)
         node_ids_in = [5, 10, 15, 20]
         nc = nest.NodeCollection(node_ids_in)
         for node_id, compare in zip(nc, node_ids_in):
@@ -66,7 +67,7 @@ class TestNodeCollection(unittest.TestCase):
         nest.ResetKernel()
 
         # Creating primitive NodeCollection from list
-        nest.Create('iaf_psc_alpha', 10)
+        nest.Create("iaf_psc_alpha", 10)
         node_ids_in = list(range(2, 8))
         nc = nest.NodeCollection(node_ids_in)
         self.assertEqual(nc.tolist(), node_ids_in)
@@ -75,7 +76,7 @@ class TestNodeCollection(unittest.TestCase):
         """Conversion from NodeCollection to NumPy array"""
         if HAVE_NUMPY:
             n_neurons = 10
-            nc = nest.Create('iaf_psc_alpha', n_neurons)
+            nc = nest.Create("iaf_psc_alpha", n_neurons)
 
             # direct array conversion
             n_arr = np.array(nc)
@@ -87,19 +88,19 @@ class TestNodeCollection(unittest.TestCase):
 
             start = 2
 
-            arr[start:start + n_neurons] = nc
+            arr[start : start + n_neurons] = nc
 
-            self.assertEqual(arr[start:start + n_neurons].tolist(), nc.tolist())
+            self.assertEqual(arr[start : start + n_neurons].tolist(), nc.tolist())
 
     def test_equal(self):
         """Equality of NodeCollections"""
 
-        n = nest.Create('iaf_psc_exp', 10)
+        n = nest.Create("iaf_psc_exp", 10)
         n_list = n.tolist()
 
         nest.ResetKernel()
 
-        n_new = nest.Create('iaf_psc_exp', 10)
+        n_new = nest.Create("iaf_psc_exp", 10)
         new_list = n_new.tolist()
         self.assertEqual(n_list, new_list)
         self.assertEqual(n, n_new)
@@ -115,7 +116,7 @@ class TestNodeCollection(unittest.TestCase):
     def test_indexing(self):
         """Index of NodeCollections"""
 
-        n = nest.Create('iaf_psc_alpha', 5)
+        n = nest.Create("iaf_psc_alpha", 5)
         nc_0 = nest.NodeCollection([1])
         nc_2 = nest.NodeCollection([3])
         nc_4 = nest.NodeCollection([5])
@@ -136,7 +137,7 @@ class TestNodeCollection(unittest.TestCase):
         nodes = nest.Create("iaf_psc_alpha", 10)
         counter = 1
         for nc in nodes:
-            self.assertEqual(nc.get('global_id'), counter)
+            self.assertEqual(nc.get("global_id"), counter)
             counter += 1
         for i in range(10):
             nc = nest.NodeCollection([i + 1])
@@ -145,7 +146,7 @@ class TestNodeCollection(unittest.TestCase):
     def test_slicing(self):
         """Slices of NodeCollections"""
 
-        n = nest.Create('iaf_psc_alpha', 10)
+        n = nest.Create("iaf_psc_alpha", 10)
         n_slice = n[:5]
         n_list = n_slice.tolist()
         self.assertEqual(n_list, [1, 2, 3, 4, 5])
@@ -191,7 +192,7 @@ class TestNodeCollection(unittest.TestCase):
             n[::-3]
 
         primitive = n
-        composite = n + nest.Create('iaf_psc_exp')
+        composite = n + nest.Create("iaf_psc_exp")
         for nodes in [primitive, composite]:
             n_list = nodes.tolist()
             # With slice without arguments
@@ -200,38 +201,39 @@ class TestNodeCollection(unittest.TestCase):
 
             # With start values
             for start in range(-len(nodes), len(nodes)):
-                self.assertEqual(nodes[start:].tolist(), n_list[start:], f'with [{start}:]')
+                self.assertEqual(nodes[start:].tolist(), n_list[start:], f"with [{start}:]")
 
             # With stop values
             for stop in range(-len(nodes) + 1, len(nodes) + 1):
                 if stop == 0:
                     continue  # Slicing an empty NodeCollection is not allowed.
-                self.assertEqual(nodes[:stop].tolist(), n_list[:stop], f'with [:{stop}]')
+                self.assertEqual(nodes[:stop].tolist(), n_list[:stop], f"with [:{stop}]")
 
             # With step values
             for step in range(1, len(nodes)):
-                self.assertEqual(nodes[::step].tolist(), n_list[::step], f'with [::{step}]')
+                self.assertEqual(nodes[::step].tolist(), n_list[::step], f"with [::{step}]")
 
             # With start and step values
             for start in range(-len(nodes), len(nodes)):
                 for step in range(1, len(nodes)):
-                    self.assertEqual(nodes[start::step].tolist(), n_list[start::step], f'with [{start}::{step}]')
+                    self.assertEqual(nodes[start::step].tolist(), n_list[start::step], f"with [{start}::{step}]")
 
             # With stop and step values
             for stop in range(-len(nodes) + 1, len(nodes) + 1):
                 if stop == 0:
                     continue  # Slicing an empty NodeCollection is not allowed.
                 for step in range(1, len(nodes)):
-                    self.assertEqual(nodes[:stop:step].tolist(), n_list[:stop:step], f'with [:{stop}:{step}]')
+                    self.assertEqual(nodes[:stop:step].tolist(), n_list[:stop:step], f"with [:{stop}:{step}]")
 
             # With start, stop, and step values
             for start in range(-len(nodes), len(nodes)):
-                for stop in range(start+1, len(nodes) + 1):
-                    if stop == 0 or (start < 0 and start+len(nodes) >= stop):
+                for stop in range(start + 1, len(nodes) + 1):
+                    if stop == 0 or (start < 0 and start + len(nodes) >= stop):
                         continue  # Cannot slice an empty NodeCollection, or use stop <= start.
                     for step in range(1, len(nodes)):
-                        self.assertEqual(nodes[start:stop:step].tolist(), n_list[start:stop:step],
-                                         f'with [{start}:{stop}:{step}]')
+                        self.assertEqual(
+                            nodes[start:stop:step].tolist(), n_list[start:stop:step], f"with [{start}:{stop}:{step}]"
+                        )
 
     def test_correct_index(self):
         """Multiple NodeCollection calls give right indexing"""
@@ -248,7 +250,7 @@ class TestNodeCollection(unittest.TestCase):
     def test_iterating(self):
         """Iteration of NodeCollections"""
 
-        n = nest.Create('iaf_psc_alpha', 15)
+        n = nest.Create("iaf_psc_alpha", 15)
         compare = 0
         for nc in n:
             self.assertEqual(nc, n[compare])
@@ -272,12 +274,12 @@ class TestNodeCollection(unittest.TestCase):
         n_neurons_d = 5
         n_a_b = n_neurons_a + n_neurons_b
         n_a_b_c = n_a_b + n_neurons_c
-        nodes_a = nest.Create('iaf_psc_alpha', n_neurons_a)
-        nodes_b = nest.Create('iaf_psc_alpha', n_neurons_b)
-        nodes_ba = nest.Create('iaf_psc_alpha', n_neurons_b)
-        nodes_bb = nest.Create('iaf_psc_alpha', n_neurons_b)
-        nodes_c = nest.Create('iaf_psc_exp', n_neurons_c)
-        nodes_d = nest.Create('iaf_cond_alpha', n_neurons_d)
+        nodes_a = nest.Create("iaf_psc_alpha", n_neurons_a)
+        nodes_b = nest.Create("iaf_psc_alpha", n_neurons_b)
+        nodes_ba = nest.Create("iaf_psc_alpha", n_neurons_b)
+        nodes_bb = nest.Create("iaf_psc_alpha", n_neurons_b)
+        nodes_c = nest.Create("iaf_psc_exp", n_neurons_c)
+        nodes_d = nest.Create("iaf_cond_alpha", n_neurons_d)
 
         node_b_a = nodes_b + nodes_a
         node_b_a_list = node_b_a.tolist()
@@ -320,21 +322,22 @@ class TestNodeCollection(unittest.TestCase):
 
         nest.ResetKernel()
 
-        nc_a = nest.Create('iaf_psc_alpha', 10)
-        nc_b = nest.Create('iaf_psc_exp', 7)
+        nc_a = nest.Create("iaf_psc_alpha", 10)
+        nc_b = nest.Create("iaf_psc_exp", 7)
         nc_c = nest.NodeCollection([6, 8, 10, 12, 14])
 
         with self.assertRaises(nest.kernel.NESTError):
-            nc_sum = nc_a + nc_b + nc_c     # noqa: F841
+            nc_sum = nc_a + nc_b + nc_c  # noqa: F841
 
     def test_NodeCollection_membership(self):
         """Membership in NodeCollections"""
+
         def check_membership(nc, reference, inverse_ref):
             """Checks that all node IDs in reference are in nc, and that elements in inverse_ref are not in the nc."""
             for i in reference:
-                self.assertTrue(i in nc, f'{i} in {nc.tolist()}')
+                self.assertTrue(i in nc, f"{i} in {nc.tolist()}")
             for j in inverse_ref:
-                self.assertFalse(j in nc, f'{j} not in {nc.tolist()}')
+                self.assertFalse(j in nc, f"{j} not in {nc.tolist()}")
 
             self.assertFalse(reference[-1] + 1 in nc)
             self.assertFalse(0 in nc)
@@ -342,13 +345,13 @@ class TestNodeCollection(unittest.TestCase):
 
         # Primitive NodeCollection
         N = 10
-        primitive = nest.Create('iaf_psc_alpha', N)
+        primitive = nest.Create("iaf_psc_alpha", N)
         check_membership(primitive, range(1, N + 1), [])
 
         # Composite NodeCollection
         exp_N = 5
         N += exp_N
-        composite = primitive + nest.Create('iaf_psc_exp', exp_N)
+        composite = primitive + nest.Create("iaf_psc_exp", exp_N)
         check_membership(composite, range(1, N + 1), [])
 
         # Sliced NodeCollection
@@ -374,10 +377,11 @@ class TestNodeCollection(unittest.TestCase):
 
     def test_NodeCollection_index(self):
         """NodeCollections index function"""
+
         def check_index_against_list(nc, inverse_ref):
             """Checks NC index against list index, and that elements specified in inverse_ref are not found."""
             for i in nc.tolist():
-                self.assertEqual(nc.index(i), nc.tolist().index(i), 'i={}'.format(i))
+                self.assertEqual(nc.index(i), nc.tolist().index(i), "i={}".format(i))
             for j in inverse_ref:
                 with self.assertRaises(ValueError):
                     nc.index(j)
@@ -390,12 +394,12 @@ class TestNodeCollection(unittest.TestCase):
 
         # Primitive NodeCollection
         N = 10
-        primitive = nest.Create('iaf_psc_alpha', N)
+        primitive = nest.Create("iaf_psc_alpha", N)
         check_index_against_list(primitive, [])
 
         # Composite NodeCollection
         exp_N = 5
-        composite = primitive + nest.Create('iaf_psc_exp', exp_N)
+        composite = primitive + nest.Create("iaf_psc_exp", exp_N)
         check_index_against_list(composite, [])
 
         # Sliced NodeCollection
@@ -422,20 +426,20 @@ class TestNodeCollection(unittest.TestCase):
     def test_correct_len_on_NodeCollection(self):
         """len function on NodeCollection"""
 
-        a = nest.Create('iaf_psc_exp', 10)
+        a = nest.Create("iaf_psc_exp", 10)
         self.assertEqual(len(a), 10)
 
-        b = nest.Create('iaf_psc_alpha', 7)
+        b = nest.Create("iaf_psc_alpha", 7)
         nodes = a + b
         self.assertEqual(len(nodes), 17)
 
-        c = nest.Create('iaf_psc_delta', 20)
+        c = nest.Create("iaf_psc_delta", 20)
         c = c[3:17:4]
         self.assertEqual(len(c), 4)
 
     def test_raises_with_nonunique_nodes(self):
         """Non-unique nodes in NodeCollection raises error"""
-        n = nest.Create('iaf_psc_alpha', 10)
+        n = nest.Create("iaf_psc_alpha", 10)
 
         with self.assertRaises(nest.kernel.NESTError):
             n[1:3] + n[2:5]
@@ -446,7 +450,7 @@ class TestNodeCollection(unittest.TestCase):
 
     def test_from_list_unsorted_raises(self):
         """Creating NodeCollection from unsorted list raises error"""
-        nest.Create('iaf_psc_alpha', 10)
+        nest.Create("iaf_psc_alpha", 10)
 
         with self.assertRaises(nest.kernel.NESTError):
             nest.NodeCollection([5, 4, 6])
@@ -455,7 +459,7 @@ class TestNodeCollection(unittest.TestCase):
 
     def test_slice_with_unsorted_raises(self):
         """Slicing NodeCollection with unsorted list raises error"""
-        n = nest.Create('iaf_psc_alpha', 10)
+        n = nest.Create("iaf_psc_alpha", 10)
 
         with self.assertRaises(nest.kernel.NESTError):
             n[[6, 5, 4]]
@@ -471,14 +475,14 @@ class TestNodeCollection(unittest.TestCase):
         num_b = 15
         num_c = 30
 
-        n_a = nest.Create('iaf_psc_exp', num_a)
-        n_b = nest.Create('iaf_psc_alpha', num_b)   # noqa: F841
-        n_c = nest.Create('iaf_psc_delta', num_c)
+        n_a = nest.Create("iaf_psc_exp", num_a)
+        n_b = nest.Create("iaf_psc_alpha", num_b)  # noqa: F841
+        n_c = nest.Create("iaf_psc_delta", num_c)
 
         nodes = n_a + n_c
         nodes_step = nodes[::2]
         nodes_list = nodes_step.tolist()
-        compare_list = (list(range(1, 11))[::2] + list(range(26, 55))[::2])
+        compare_list = list(range(1, 11))[::2] + list(range(26, 55))[::2]
         self.assertEqual(nodes_list, compare_list)
 
         self.assertEqual(nodes_list[2], 5)
@@ -512,34 +516,34 @@ class TestNodeCollection(unittest.TestCase):
         NodeCollection
         """
 
-        a = nest.Create('iaf_psc_alpha', 10)
-        b = nest.Create('iaf_psc_exp', 7)
+        a = nest.Create("iaf_psc_alpha", 10)
+        b = nest.Create("iaf_psc_exp", 7)
         c = a + b
         d = c[::2]
-        e = nest.Create('iaf_psc_delta', 13)
+        e = nest.Create("iaf_psc_delta", 13)
 
         with self.assertRaises(nest.kernel.NESTError):
-            f = d + e   # noqa: F841
+            f = d + e  # noqa: F841
 
     def test_model(self):
         """Correct NodeCollection model"""
 
-        n = nest.Create('iaf_psc_alpha')
+        n = nest.Create("iaf_psc_alpha")
 
         for model in nest.node_models:
             n += nest.Create(model)
 
         self.assertTrue(len(n) > 0)
 
-        models = ['iaf_psc_alpha'] + list(nest.node_models)
+        models = ["iaf_psc_alpha"] + list(nest.node_models)
         for count, nc in enumerate(n):
-            self.assertEqual(nc.get('model'), models[count])
+            self.assertEqual(nc.get("model"), models[count])
 
     def test_connect(self):
         """Connect works with NodeCollections"""
 
-        n = nest.Create('iaf_psc_exp', 10)
-        nest.Connect(n, n, {'rule': 'one_to_one'})
+        n = nest.Create("iaf_psc_exp", 10)
+        nest.Connect(n, n, {"rule": "one_to_one"})
         self.assertEqual(nest.num_connections, 10)
 
         for nc in n:
@@ -548,7 +552,7 @@ class TestNodeCollection(unittest.TestCase):
 
         nest.ResetKernel()
 
-        n = nest.Create('iaf_psc_alpha', 2)
+        n = nest.Create("iaf_psc_alpha", 2)
         nest.Connect(n[0], n[1])
         self.assertEqual(nest.num_connections, 1)
 
@@ -559,38 +563,38 @@ class TestNodeCollection(unittest.TestCase):
         """
 
         num_nodes = 10
-        n = nest.Create('iaf_psc_alpha', num_nodes)
-        nest.SetStatus(n, {'V_m': 3.5})
-        self.assertEqual(nest.GetStatus(n, 'V_m')[0], 3.5)
+        n = nest.Create("iaf_psc_alpha", num_nodes)
+        nest.SetStatus(n, {"V_m": 3.5})
+        self.assertEqual(nest.GetStatus(n, "V_m")[0], 3.5)
 
-        V_m = [1., 2., 3., 4., 5., 6., 7., 8., 9., 10.]
-        nest.SetStatus(n, 'V_m', V_m)
+        V_m = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
+        nest.SetStatus(n, "V_m", V_m)
         for i in range(num_nodes):
-            self.assertEqual(nest.GetStatus(n, 'V_m')[i], V_m[i])
+            self.assertEqual(nest.GetStatus(n, "V_m")[i], V_m[i])
 
         with self.assertRaises(TypeError):
-            nest.SetStatus(n, [{'V_m': 34.}, {'V_m': -5.}])
+            nest.SetStatus(n, [{"V_m": 34.0}, {"V_m": -5.0}])
 
         nest.ResetKernel()
 
-        nc = nest.Create('iaf_psc_exp', 5)      # noqa: F841
+        nc = nest.Create("iaf_psc_exp", 5)  # noqa: F841
 
         with self.assertRaises(nest.kernel.NESTError):
-            nest.SetStatus(n, {'V_m': -40.})
+            nest.SetStatus(n, {"V_m": -40.0})
         with self.assertRaises(nest.kernel.NESTError):
             nest.GetStatus(n)
 
         nest.ResetKernel()
-        n = nest.Create('iaf_psc_alpha', 3)
-        nest.SetStatus(n, [{'V_m': 10.}, {'V_m': -10.}, {'V_m': -20.}])
-        self.assertEqual(nest.GetStatus(n, 'V_m'), (10., -10., -20.))
+        n = nest.Create("iaf_psc_alpha", 3)
+        nest.SetStatus(n, [{"V_m": 10.0}, {"V_m": -10.0}, {"V_m": -20.0}])
+        self.assertEqual(nest.GetStatus(n, "V_m"), (10.0, -10.0, -20.0))
 
     def test_GetConnections(self):
         """
         GetConnection works as expected
         """
 
-        n = nest.Create('iaf_psc_alpha', 3)
+        n = nest.Create("iaf_psc_alpha", 3)
         nest.Connect(n, n)
 
         get_conn = nest.GetConnections()
@@ -601,27 +605,33 @@ class TestNodeCollection(unittest.TestCase):
 
         compare_source = [1, 1, 1, 3, 3, 3]
         compare_target = [1, 2, 3, 1, 2, 3]
-        self.assertEqual(get_conn_some.get('source'), compare_source)
-        self.assertEqual(get_conn_some.get('target'), compare_target)
+        self.assertEqual(get_conn_some.get("source"), compare_source)
+        self.assertEqual(get_conn_some.get("target"), compare_target)
 
         expected_syn_id = nest.GetDefaults("static_synapse", "synapse_modelid")
 
         compare_list = [3, 1, 0, expected_syn_id, 6]
-        conn = [get_conn_some.get('source')[3],
-                get_conn_some.get('target')[3],
-                get_conn_some.get('target_thread')[3],
-                get_conn_some.get('synapse_id')[3],
-                get_conn_some.get('port')[3]]
+        conn = [
+            get_conn_some.get("source")[3],
+            get_conn_some.get("target")[3],
+            get_conn_some.get("target_thread")[3],
+            get_conn_some.get("synapse_id")[3],
+            get_conn_some.get("port")[3],
+        ]
         self.assertEqual(conn, compare_list)
 
         conns = nest.GetConnections(n[0]).get()
 
-        connections = [[conns['source'][i],
-                        conns['target'][i],
-                        conns['target_thread'][i],
-                        conns['synapse_id'][i],
-                        conns['port'][i]]
-                       for i in range(len(nest.GetConnections(n[0])))]
+        connections = [
+            [
+                conns["source"][i],
+                conns["target"][i],
+                conns["target_thread"][i],
+                conns["synapse_id"][i],
+                conns["port"][i],
+            ]
+            for i in range(len(nest.GetConnections(n[0])))
+        ]
 
         ref = [[1, 1, 0, expected_syn_id, 0], [1, 2, 0, expected_syn_id, 1], [1, 3, 0, expected_syn_id, 2]]
         for conn, conn_ref in zip(connections, ref):
@@ -632,11 +642,11 @@ class TestNodeCollection(unittest.TestCase):
         GetConnection with sliced works NodeCollections
         """
 
-        nodes = nest.Create('iaf_psc_alpha', 11)
+        nodes = nest.Create("iaf_psc_alpha", 11)
         nest.Connect(nodes, nodes)
 
         conns = nest.GetConnections(nodes[1:9:3])
-        source = conns.get('source')
+        source = conns.get("source")
         source_ref = [2] * 11 + [5] * 11 + [8] * 11
 
         self.assertEqual(source_ref, source)
@@ -646,7 +656,7 @@ class TestNodeCollection(unittest.TestCase):
         GetConnection raises a TypeError when called with 0
         """
 
-        n = nest.Create('iaf_psc_alpha', 3)
+        n = nest.Create("iaf_psc_alpha", 3)
         nest.Connect(n, n)
 
         with self.assertRaises(TypeError):
@@ -657,7 +667,7 @@ class TestNodeCollection(unittest.TestCase):
         Senders and targets for weight recorder works as NodeCollection and list
         """
 
-        wr = nest.Create('weight_recorder')
+        wr = nest.Create("weight_recorder")
         pre = nest.Create("parrot_neuron", 5)
         post = nest.Create("parrot_neuron", 5)
 
@@ -683,7 +693,7 @@ class TestNodeCollection(unittest.TestCase):
         """
         NodeCollection apply
         """
-        n = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid([2, 2]))
+        n = nest.Create("iaf_psc_alpha", positions=nest.spatial.grid([2, 2]))
         param = nest.spatial.pos.x
         ref_positions = np.array(nest.GetPosition(n))
         self.assertEqual(param.apply(n), tuple(ref_positions[:, 0]))
@@ -697,21 +707,23 @@ class TestNodeCollection(unittest.TestCase):
         """
         NodeCollection apply with positions
         """
-        n = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid([2, 2]))
+        n = nest.Create("iaf_psc_alpha", positions=nest.spatial.grid([2, 2]))
         param = nest.spatial.distance
         # Single target position
-        target = [[1., 2.], ]
+        target = [
+            [1.0, 2.0],
+        ]
         for source in n:
             source_x, source_y = nest.GetPosition(source)
             target_x, target_y = (target[0][0], target[0][1])
-            ref_distance = np.sqrt((target_x - source_x) ** 2 + (target_y - source_y)**2)
+            ref_distance = np.sqrt((target_x - source_x) ** 2 + (target_y - source_y) ** 2)
             self.assertEqual(param.apply(source, target), ref_distance)
 
         # Multiple target positions
         targets = np.array(nest.GetPosition(n))
         for source in n:
             source_x, source_y = nest.GetPosition(source)
-            ref_distances = np.sqrt((targets[:, 0] - source_x)**2 + (targets[:, 1] - source_y)**2)
+            ref_distances = np.sqrt((targets[:, 0] - source_x) ** 2 + (targets[:, 1] - source_y) ** 2)
             self.assertEqual(param.apply(source, list(targets)), tuple(ref_distances))
 
         # Raises when passing source with multiple node IDs
@@ -721,33 +733,34 @@ class TestNodeCollection(unittest.TestCase):
         # Erroneous position specification
         source = n[0]
         with self.assertRaises(nest.kernel.NESTError):
-            param.apply(source, [[1., 2., 3.], ])  # Too many dimensions
+            param.apply(
+                source,
+                [
+                    [1.0, 2.0, 3.0],
+                ],
+            )  # Too many dimensions
         with self.assertRaises(TypeError):
-            param.apply(source, [1., 2.])  # Not a list of lists
+            param.apply(source, [1.0, 2.0])  # Not a list of lists
         with self.assertRaises(ValueError):
             # Not consistent dimensions
-            param.apply(source, [[1., 2.], [1., 2., 3.]])
+            param.apply(source, [[1.0, 2.0], [1.0, 2.0, 3.0]])
 
     def test_Create_accepts_empty_params_dict(self):
         """
         Create with empty parameter dictionary
         """
-        nest.Create('iaf_psc_delta', params={})
+        nest.Create("iaf_psc_delta", params={})
 
     def test_array_indexing(self):
         """NodeCollection array indexing"""
-        n = nest.Create('iaf_psc_alpha', 10)
-        cases = [[1, 2],
-                 [2, 5],
-                 [0, 2, 5, 7, 9],
-                 (2, 5),
-                 []
-                 ]
-        fail_cases = [([5, 10, 15], IndexError),  # Index not in NodeCollection
-                      ([2, 5.5], TypeError),  # Not all indices are ints
-                      ([[2, 4], [6, 8]], TypeError),  # Too many dimensions
-                      ([2, 2], ValueError),  # Non-unique elements
-                      ]
+        n = nest.Create("iaf_psc_alpha", 10)
+        cases = [[1, 2], [2, 5], [0, 2, 5, 7, 9], (2, 5), []]
+        fail_cases = [
+            ([5, 10, 15], IndexError),  # Index not in NodeCollection
+            ([2, 5.5], TypeError),  # Not all indices are ints
+            ([[2, 4], [6, 8]], TypeError),  # Too many dimensions
+            ([2, 2], ValueError),  # Non-unique elements
+        ]
         if HAVE_NUMPY:
             cases += [np.array(c) for c in cases]
             fail_cases += [(np.array(c), e) for c, e in fail_cases]
@@ -764,17 +777,19 @@ class TestNodeCollection(unittest.TestCase):
 
     def test_array_indexing_bools(self):
         """NodeCollection array indexing with bools"""
-        n = nest.Create('iaf_psc_alpha', 5)
-        cases = [[True for _ in range(len(n))],
-                 [False for _ in range(len(n))],
-                 [True, False, True, False, True],
-                 ]
-        fail_cases = [([True for _ in range(len(n)-1)], IndexError),  # Too few bools
-                      ([True for _ in range(len(n)+1)], IndexError),  # Too many bools
-                      ([[True, False], [True, False]], TypeError),    # Too many dimensions
-                      ([True, False, 2.5, False, True], TypeError),   # Not all indices are bools
-                      ([1, False, 1, False, 1], TypeError),  # Mixing bools and ints
-                      ]
+        n = nest.Create("iaf_psc_alpha", 5)
+        cases = [
+            [True for _ in range(len(n))],
+            [False for _ in range(len(n))],
+            [True, False, True, False, True],
+        ]
+        fail_cases = [
+            ([True for _ in range(len(n) - 1)], IndexError),  # Too few bools
+            ([True for _ in range(len(n) + 1)], IndexError),  # Too many bools
+            ([[True, False], [True, False]], TypeError),  # Too many dimensions
+            ([True, False, 2.5, False, True], TypeError),  # Not all indices are bools
+            ([1, False, 1, False, 1], TypeError),  # Mixing bools and ints
+        ]
         if HAVE_NUMPY:
             cases += [np.array(c) for c in cases]
             # Cutting off fail_cases before cases that mix bools and ints,
@@ -792,10 +807,9 @@ class TestNodeCollection(unittest.TestCase):
 
     def test_empty_nc(self):
         """Connection with empty NodeCollection raises error"""
-        nodes = nest.Create('iaf_psc_alpha', 5)
+        nodes = nest.Create("iaf_psc_alpha", 5)
 
         for empty_nc in [nest.NodeCollection(), nest.NodeCollection([])]:
-
             with self.assertRaises(nest.kernel.NESTErrors.IllegalConnection):
                 nest.Connect(nodes, empty_nc)
 
@@ -818,10 +832,10 @@ class TestNodeCollection(unittest.TestCase):
     def test_empty_nc_addition(self):
         """Combine NodeCollection with empty NodeCollection and connect"""
         n = 5
-        vm = -50.
+        vm = -50.0
 
         nodes_a = nest.NodeCollection()
-        nodes_a += nest.Create('iaf_psc_alpha', n)
+        nodes_a += nest.Create("iaf_psc_alpha", n)
         nest.Connect(nodes_a, nodes_a)
         self.assertEqual(nest.num_connections, n * n)
         self.assertTrue(nodes_a)
@@ -831,7 +845,7 @@ class TestNodeCollection(unittest.TestCase):
 
         nest.ResetKernel()
 
-        nodes_b = nest.Create('iaf_psc_alpha', n)
+        nodes_b = nest.Create("iaf_psc_alpha", n)
         nodes_b += nest.NodeCollection([])
         nest.Connect(nodes_b, nodes_b)
         self.assertEqual(nest.num_connections, n * n)
@@ -842,7 +856,7 @@ class TestNodeCollection(unittest.TestCase):
 
 
 def suite():
-    suite = unittest.makeSuite(TestNodeCollection, 'test')
+    suite = unittest.makeSuite(TestNodeCollection, "test")
     return suite
 
 

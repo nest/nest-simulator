@@ -36,9 +36,7 @@ def reset():
     nest.ResetKernel()
 
 
-@pytest.mark.parametrize(
-    "model", ["iaf_psc_alpha_ps", "iaf_psc_delta_ps", "iaf_psc_exp_ps"]
-)
+@pytest.mark.parametrize("model", ["iaf_psc_alpha_ps", "iaf_psc_delta_ps", "iaf_psc_exp_ps"])
 def test_linear_summation_of_input_ps_models(model):
     """
     Test linear summation of input for precise spiking neuron models.
@@ -63,9 +61,7 @@ def test_linear_summation_of_input_ps_models(model):
     w1 = 5.0  # sufficiently small to avoid psc_delta spikes
     w2 = -10.0
 
-    sg = nest.Create(
-        "spike_generator", {"precise_times": True, "spike_times": [t_spike1]}
-    )
+    sg = nest.Create("spike_generator", {"precise_times": True, "spike_times": [t_spike1]})
     n1 = nest.Create(model)
     n2 = nest.Create(model)
     n3 = nest.Create(model)
@@ -119,9 +115,7 @@ def test_linear_summation_of_input_ps_models_with_two_time_constants(model):
     t_spike1 = 2.375  # 2.5 - 0.125 offset
     w1 = 1000.0
 
-    sg = nest.Create(
-        "spike_generator", {"precise_times": True, "spike_times": [t_spike1]}
-    )
+    sg = nest.Create("spike_generator", {"precise_times": True, "spike_times": [t_spike1]})
     n1 = nest.Create(model)
     n2 = nest.Create(model)
     n3 = nest.Create(model)

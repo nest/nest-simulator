@@ -150,7 +150,7 @@ Generator Interface and randomly connects 10% of the neurons from
    import csa
    cg = csa.cset(csa.random(0.1), 10000.0, 1.0)
 
-   # Map weight and delay indices to vaules from cg
+   # Map weight and delay indices to values from cg
    params_map = {'weight': 0, 'delay': 1}
 
    conn_spec_dict = {'rule': 'conngen', 'cg': cg, 'params_map': params_map}
@@ -359,7 +359,7 @@ fixed outdegree
 ^^^^^^^^^^^^^^^
 
 For rule ``fixed_outdegree`` the array has to be a two-dimensional
-NumPy array or Python list with shape ``(len(pre), outdegree)``, where
+NumPy array or Python list with shape ``(len(A), outdegree)``, where
 :hxt_ref:`outdegree` is the number of outgoing connections per source
 neuron. This means that the rows describe the source, while the
 columns represent the connections starting from the source neuron
@@ -765,7 +765,7 @@ given model.
 
 To further customize the process of creating synapses, it is often
 useful to have the same basic synapse model available with different
-parametizations. To this end, :py:func:`.CopyModel` can be used to
+parametrizations. To this end, :py:func:`.CopyModel` can be used to
 create custom synapse types from already existing synapse types. In
 the simplest case, it takes the names of the existing model and the
 copied type to be created. The optional argument ``params`` allows to

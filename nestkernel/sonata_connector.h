@@ -166,7 +166,7 @@ private:
    * @param synapse_model_id Model id of synapse
    * @param type_id SONATA edge type id for mapping synapse parameters.
    */
-  void set_synapse_params_( DictionaryDatum syn_dict, index synapse_model_id, int type_id );
+  void set_synapse_params_( DictionaryDatum syn_dict, size_t synapse_model_id, int type_id );
 
   /**
    * @brief Get synapse parameters.
@@ -179,7 +179,7 @@ private:
    * @param rng rng pointer of target thread
    * @param edge_type_id type id of current edge to be connected
    */
-  void get_synapse_params_( index snode_id, Node& target, thread target_thread, RngPtr rng, int edge_type_id );
+  void get_synapse_params_( size_t snode_id, Node& target, size_t target_thread, RngPtr rng, int edge_type_id );
 
   /**
    * @brief Get synapse property.
@@ -288,7 +288,7 @@ private:
   DictionaryDatum cur_edge_params_;
 
   //! Map from edge type id (SONATA specification) to synapse model
-  std::map< int, index > edge_type_id_2_syn_model_;
+  std::map< int, size_t > edge_type_id_2_syn_model_;
 
   //! Map from edge type id (SONATA specification) to synapse dictionary with ConnParameter's
   std::map< int, ConnParameterMap > edge_type_id_2_syn_spec_;

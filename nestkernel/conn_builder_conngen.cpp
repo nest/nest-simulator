@@ -87,7 +87,7 @@ ConnectionGeneratorBuilder::connect_()
       // No need to check for locality of the target, as the mask
       // created by cg_set_masks() only contains local nodes.
       Node* const target_node = kernel().node_manager.get_node_or_proxy( ( *targets_ )[ target ] );
-      const thread target_thread = target_node->get_thread();
+      const size_t target_thread = target_node->get_thread();
       single_connect_( ( *sources_ )[ source ], *target_node, target_thread, rng );
     }
   }
@@ -116,7 +116,7 @@ ConnectionGeneratorBuilder::connect_()
       // No need to check for locality of the target node, as the mask
       // created by cg_set_masks() only contains local nodes.
       Node* target_node = kernel().node_manager.get_node_or_proxy( ( *targets_ )[ target ] );
-      const thread target_thread = target_node->get_thread();
+      const size_t target_thread = target_node->get_thread();
 
       update_param_dict_( ( *sources_ )[ source ], *target_node, target_thread, rng, 0 );
 
@@ -246,8 +246,8 @@ ConnectionGeneratorBuilder::cg_set_masks()
  * \param nodes The std::vector<long> of node IDs to search in
  * \returns the right border of the range
  */
-index
-ConnectionGeneratorBuilder::cg_get_right_border( index left, size_t step, const NodeCollectionPTR nodes )
+size_t
+ConnectionGeneratorBuilder::cg_get_right_border( size_t left, size_t step, const NodeCollectionPTR nodes )
 {
   // Check if left is already the index of the last element in
   // node IDs. If yes, return left as the right border
@@ -273,7 +273,7 @@ ConnectionGeneratorBuilder::cg_get_right_border( index left, size_t step, const 
     // right border of the contiguous range (last_i) and return it.
     const bool end_of_nodes = i == static_cast< long >( nodes->size() ) - 1;
     const auto dist_a = ( *nodes )[ i ] - ( *nodes )[ left ];
-    const auto dist_b = i - static_cast< index >( left );
+    const auto dist_b = i - static_cast< size_t >( left );
     const bool same_dist = dist_a == dist_b;
 
     if ( ( end_of_nodes and same_dist ) or i == leftmost_r )
@@ -289,7 +289,7 @@ ConnectionGeneratorBuilder::cg_get_right_border( index left, size_t step, const 
     // set i to the right by step steps, else update the variable
     // for leftmost_r to the current i (i.e. the known leftmost
     // position) and set i to the left by step steps.
-    if ( ( *nodes )[ i ] - ( *nodes )[ left ] == i - static_cast< index >( left ) )
+    if ( ( *nodes )[ i ] - ( *nodes )[ left ] == i - static_cast< size_t >( left ) )
     {
       i += step;
     }
@@ -328,7 +328,7 @@ ConnectionGeneratorBuilder::cg_get_right_border( index left, size_t step, const 
 void
 ConnectionGeneratorBuilder::cg_get_ranges( RangeSet& ranges, const NodeCollectionPTR nodes )
 {
-  index right, left = 0;
+  size_t right, left = 0;
   while ( true )
   {
     // Determine the right border of the contiguous range starting

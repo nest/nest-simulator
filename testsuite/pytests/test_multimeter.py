@@ -68,15 +68,11 @@ extra_params = {
 }
 
 # Obtain all models with non-empty recordables list
-all_models_with_rec = [
-    model for model in nest.node_models if nest.GetDefaults(model).get("recordables")
-]
+all_models_with_rec = [model for model in nest.node_models if nest.GetDefaults(model).get("recordables")]
 
 # Obtain all models with non-empty recordables list and not in skip list
 subset_models_with_rec = [
-    model
-    for model in nest.node_models
-    if (nest.GetDefaults(model).get("recordables") and model not in skip_models)
+    model for model in nest.node_models if (nest.GetDefaults(model).get("recordables") and model not in skip_models)
 ]
 
 
@@ -145,9 +141,7 @@ def test_recordables_are_recorded(model):
 
     nrn = nest.Create(model)
     recordables = nrn.recordables
-    mm = nest.Create(
-        "multimeter", {"interval": recording_interval, "record_from": recordables}
-    )
+    mm = nest.Create("multimeter", {"interval": recording_interval, "record_from": recordables})
     nest.Connect(mm, nrn)
     nest.Simulate(simtime)
 

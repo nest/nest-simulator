@@ -74,7 +74,7 @@ public:
      model they represent, they can now answer a call to check
      connection by referring back to the model.
    */
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
   void sends_secondary_event( GapJunctionEvent& ge ) override;
 
@@ -186,8 +186,8 @@ GenericModel< ElementT >::calibrate_time( const TimeConverter& tc )
 }
 
 template < typename ElementT >
-inline port
-GenericModel< ElementT >::send_test_event( Node& target, rport receptor, synindex syn_id, bool dummy_target )
+inline size_t
+GenericModel< ElementT >::send_test_event( Node& target, size_t receptor, synindex syn_id, bool dummy_target )
 {
   return proto_.send_test_event( target, receptor, syn_id, dummy_target );
 }

@@ -195,7 +195,7 @@ public:
   sinusoidal_gamma_generator();
   sinusoidal_gamma_generator( const sinusoidal_gamma_generator& );
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -208,7 +208,7 @@ public:
 
   void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( DataLoggingRequest&, rport ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
@@ -339,7 +339,7 @@ private:
   double deltaLambda_( const Parameters_&, double, double ) const;
 
   //! compute hazard for given target index, including time-step factor
-  double hazard_( port ) const;
+  double hazard_( size_t ) const;
 
   static RecordablesMap< sinusoidal_gamma_generator > recordablesMap_;
 
@@ -349,8 +349,8 @@ private:
   Buffers_ B_;
 };
 
-inline port
-sinusoidal_gamma_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
+inline size_t
+sinusoidal_gamma_generator::send_test_event( Node& target, size_t receptor_type, synindex syn_id, bool dummy_target )
 {
   StimulationDevice::enforce_single_syn_type( syn_id );
 
@@ -368,7 +368,7 @@ sinusoidal_gamma_generator::send_test_event( Node& target, rport receptor_type, 
     {
       SpikeEvent e;
       e.set_sender( *this );
-      const rport r = target.handles_test_event( e, receptor_type );
+      const size_t r = target.handles_test_event( e, receptor_type );
       if ( r != invalid_port and not is_model_prototype() )
       {
         ++P_.num_trains_;
@@ -386,8 +386,8 @@ sinusoidal_gamma_generator::send_test_event( Node& target, rport receptor_type, 
   }
 }
 
-inline port
-sinusoidal_gamma_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+sinusoidal_gamma_generator::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

@@ -91,7 +91,7 @@ public:
   /**
    * get node ID of weight_recorder
    */
-  index get_wr_node_id() const;
+  size_t get_wr_node_id() const;
 
   /**
    * get weight_recorder
@@ -110,7 +110,7 @@ CommonSynapseProperties::get_vt_node_id() const
   return -1;
 }
 
-inline index
+inline size_t
 CommonSynapseProperties::get_wr_node_id() const
 {
   return wr_node_id_;

@@ -34,9 +34,7 @@ pytestmark = [pytest.mark.skipif_missing_hdf5, pytest.mark.skipif_missing_thread
 # - When running from the source dir, this file is in $SOURCEDIR/testsuite/pytests,
 #   while the data is in $SOURCEDIR/pynest/examples/sonata_example.
 for relpath in ["../../../doc/nest/examples/pynest", "../../pynest/examples"]:
-    sonata_path = (
-        Path(__file__).parent / relpath / "sonata_example" / "300_pointneurons"
-    )
+    sonata_path = Path(__file__).parent / relpath / "sonata_example" / "300_pointneurons"
     config = sonata_path / "circuit_config.json"
     sim_config = sonata_path / "simulation_config.json"
     have_sonata_files = config.is_file() and sim_config.is_file()

@@ -206,10 +206,10 @@ void
 nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
 {
   // get port number
-  const port prt = e.get_port();
+  const size_t prt = e.get_port();
 
   // we handle only one port here, get reference to vector elem
-  assert( 0 <= prt and static_cast< size_t >( prt ) < B_.next_spike_.size() );
+  assert( prt < B_.next_spike_.size() );
 
   // obtain rng
   RngPtr rng = get_vp_specific_rng( get_thread() );

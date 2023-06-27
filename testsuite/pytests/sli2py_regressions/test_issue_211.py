@@ -55,13 +55,9 @@ def check_connections(expected_connections):
     """
 
     syn_collection = nest.GetConnections()
-    actual_connections = pd.DataFrame.from_dict(
-        syn_collection.get(["source", "target", "target_thread"])
-    )
+    actual_connections = pd.DataFrame.from_dict(syn_collection.get(["source", "target", "target_thread"]))
 
-    actual_connections.sort_values(
-        by=["target_thread", "source", "target"], ignore_index=True, inplace=True
-    )
+    actual_connections.sort_values(by=["target_thread", "source", "target"], ignore_index=True, inplace=True)
 
     pdtest.assert_frame_equal(actual_connections, expected_connections)
 

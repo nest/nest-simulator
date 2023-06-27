@@ -61,9 +61,7 @@ def test_set_individual_spike_trains_on_creation():
     Test whether `individual_spike_trains` can be set on model creation.
     """
 
-    sspg = nest.Create(
-        "sinusoidal_poisson_generator", params={"individual_spike_trains": False}
-    )
+    sspg = nest.Create("sinusoidal_poisson_generator", params={"individual_spike_trains": False})
     individual_spike_trains_bool = sspg.get("individual_spike_trains")
     assert not individual_spike_trains_bool
 
@@ -97,9 +95,7 @@ def test_set_individual_spike_trains_on_instance():
 @pytest.mark.skipif_missing_threads()
 @pytest.mark.parametrize("individual_spike_trains", [False, True])
 @pytest.mark.parametrize("num_threads", [1, 2])
-def test_sinusoidal_poisson_generator_with_spike_recorder(
-    num_threads, individual_spike_trains
-):
+def test_sinusoidal_poisson_generator_with_spike_recorder(num_threads, individual_spike_trains):
     """
     Test spike recording with both `False` and `True` `individual_spike_trains`.
 
@@ -157,9 +153,7 @@ def test_sinusoidal_poisson_generator_with_spike_recorder(
 @pytest.mark.skipif_missing_threads()
 @pytest.mark.parametrize("individual_spike_trains", [False, True])
 @pytest.mark.parametrize("num_threads", [1, 2])
-def test_sinusoidal_poisson_generator_with_multimeter(
-    num_threads, individual_spike_trains
-):
+def test_sinusoidal_poisson_generator_with_multimeter(num_threads, individual_spike_trains):
     """
     Test multimeter recording with both `False` and `True` `individual_spike_trains`.
 

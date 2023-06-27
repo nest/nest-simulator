@@ -1,6 +1,6 @@
 .. _docker:
 
-|macos| |linux| |windows| Docker
+Docker |macos| |linux| |windows|
 --------------------------------
 
 Docker provides an isolated container to run applications.
@@ -176,11 +176,14 @@ You can update the image with:
 For more information, you can checkout the `nest-docker repository <https://github.com/nest/nest-docker>`_
 
 .. |linux| image:: ../static/img/linux.png
+   :class: no-scaled-link
    :scale: 15%
 
 .. |macos| image:: ../static/img/macos.png
+   :class: no-scaled-link
    :scale: 15%
 
 
 .. |windows| image:: ../static/img/windows.png
+   :class: no-scaled-link
    :scale: 15%

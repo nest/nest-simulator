@@ -171,7 +171,7 @@ public:
    * Send an event to the receiver of this connection.
    * \param e The event to send
    */
-  void send( Event& e, thread t, const STDPPLHomCommonProperties& );
+  void send( Event& e, size_t t, const STDPPLHomCommonProperties& );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -179,8 +179,8 @@ public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
-    port
-    handles_test_event( SpikeEvent&, rport ) override
+    size_t
+    handles_test_event( SpikeEvent&, size_t ) override
     {
       return invalid_port;
     }
@@ -200,7 +200,7 @@ public:
    * \param receptor_type The ID of the requested receptor type
    */
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
 
@@ -249,7 +249,7 @@ constexpr ConnectionModelProperties stdp_pl_synapse_hom< targetidentifierT >::pr
  */
 template < typename targetidentifierT >
 inline void
-stdp_pl_synapse_hom< targetidentifierT >::send( Event& e, thread t, const STDPPLHomCommonProperties& cp )
+stdp_pl_synapse_hom< targetidentifierT >::send( Event& e, size_t t, const STDPPLHomCommonProperties& cp )
 {
   // synapse STDP depressing/facilitation dynamics
 

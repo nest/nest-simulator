@@ -107,7 +107,7 @@ public:
    * \param target_thread Thread that hosts the target node.
    * \param syn_id The synapse model to use.
    */
-  void disconnect( const index snode_id, Node* target, thread target_thread, const index syn_id );
+  void disconnect( const size_t snode_id, Node* target, size_t target_thread, const size_t syn_id );
 
   void update_structural_plasticity();
   void update_structural_plasticity( SPBuilder* );
@@ -133,7 +133,7 @@ public:
    * ConnectionManager::min_delay() methods have to respect this delay
    * as well.
    */
-  delay builder_min_delay() const;
+  long builder_min_delay() const;
 
   /**
    * Returns the maximum delay of all SP builders.
@@ -142,38 +142,38 @@ public:
    * ConnectionManager::max_delay() methods have to respect this delay
    * as well.
    */
-  delay builder_max_delay() const;
+  long builder_max_delay() const;
 
   // Creation of synapses
-  bool create_synapses( std::vector< index >& pre_vacant_id,
+  bool create_synapses( std::vector< size_t >& pre_vacant_id,
     std::vector< int >& pre_vacant_n,
-    std::vector< index >& post_vacant_id,
+    std::vector< size_t >& post_vacant_id,
     std::vector< int >& post_vacant_n,
     SPBuilder* sp_conn_builder );
   // Deletion of synapses on the pre synaptic side
-  void delete_synapses_from_pre( const std::vector< index >& pre_deleted_id,
+  void delete_synapses_from_pre( const std::vector< size_t >& pre_deleted_id,
     std::vector< int >& pre_deleted_n,
-    const index synapse_model,
+    const size_t synapse_model,
     const std::string& se_pre_name,
     const std::string& se_post_name );
   // Deletion of synapses on the postsynaptic side
-  void delete_synapses_from_post( std::vector< index >& post_deleted_id,
+  void delete_synapses_from_post( std::vector< size_t >& post_deleted_id,
     std::vector< int >& post_deleted_n,
-    index synapse_model,
+    size_t synapse_model,
     std::string se_pre_name,
     std::string se_post_name );
   // Deletion of synapses
-  void delete_synapse( index source, index target, long syn_id, std::string se_pre_name, std::string se_post_name );
+  void delete_synapse( size_t source, size_t target, long syn_id, std::string se_pre_name, std::string se_post_name );
 
   void get_synaptic_elements( std::string se_name,
-    std::vector< index >& se_vacant_id,
+    std::vector< size_t >& se_vacant_id,
     std::vector< int >& se_vacant_n,
-    std::vector< index >& se_deleted_id,
+    std::vector< size_t >& se_deleted_id,
     std::vector< int >& se_deleted_n );
 
-  void serialize_id( std::vector< index >& id, std::vector< int >& n, std::vector< index >& res );
-  void global_shuffle( std::vector< index >& v );
-  void global_shuffle( std::vector< index >& v, size_t n );
+  void serialize_id( std::vector< size_t >& id, std::vector< int >& n, std::vector< size_t >& res );
+  void global_shuffle( std::vector< size_t >& v );
+  void global_shuffle( std::vector< size_t >& v, size_t n );
 
 private:
   /**

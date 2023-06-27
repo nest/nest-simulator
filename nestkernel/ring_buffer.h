@@ -144,7 +144,7 @@ private:
    * @returns index to buffer element into which event should be
    * recorded.
    */
-  size_t get_index_( const delay d ) const;
+  size_t get_index_( const long d ) const;
 };
 
 inline void
@@ -163,7 +163,7 @@ inline double
 RingBuffer::get_value( const long offs )
 {
   assert( 0 <= offs and ( size_t ) offs < buffer_.size() );
-  assert( ( delay ) offs < kernel().connection_manager.get_min_delay() );
+  assert( ( long ) offs < kernel().connection_manager.get_min_delay() );
 
   // offs == 0 is beginning of slice, but we have to
   // take modulo into account when indexing
@@ -177,7 +177,7 @@ inline double
 RingBuffer::get_value_wfr_update( const long offs )
 {
   assert( 0 <= offs and ( size_t ) offs < buffer_.size() );
-  assert( ( delay ) offs < kernel().connection_manager.get_min_delay() );
+  assert( ( long ) offs < kernel().connection_manager.get_min_delay() );
 
   // offs == 0 is beginning of slice, but we have to
   // take modulo into account when indexing
@@ -187,7 +187,7 @@ RingBuffer::get_value_wfr_update( const long offs )
 }
 
 inline size_t
-RingBuffer::get_index_( const delay d ) const
+RingBuffer::get_index_( const long d ) const
 {
   const long idx = kernel().event_delivery_manager.get_modulo( d );
   assert( 0 <= idx );
@@ -244,7 +244,7 @@ private:
    * @returns index to buffer element into which event should be
    * recorded.
    */
-  size_t get_index_( const delay d ) const;
+  size_t get_index_( const long d ) const;
 };
 
 inline void
@@ -258,7 +258,7 @@ inline double
 MultRBuffer::get_value( const long offs )
 {
   assert( 0 <= offs and ( size_t ) offs < buffer_.size() );
-  assert( ( delay ) offs < kernel().connection_manager.get_min_delay() );
+  assert( ( long ) offs < kernel().connection_manager.get_min_delay() );
 
   // offs == 0 is beginning of slice, but we have to
   // take modulo into account when indexing
@@ -269,7 +269,7 @@ MultRBuffer::get_value( const long offs )
 }
 
 inline size_t
-MultRBuffer::get_index_( const delay d ) const
+MultRBuffer::get_index_( const long d ) const
 {
   const long idx = kernel().event_delivery_manager.get_modulo( d );
   assert( 0 <= idx and ( size_t ) idx < buffer_.size() );
@@ -323,7 +323,7 @@ private:
    * @returns index to buffer element into which event should be
    * recorded.
    */
-  size_t get_index_( const delay d ) const;
+  size_t get_index_( const long d ) const;
 };
 
 inline void
@@ -336,7 +336,7 @@ inline std::list< double >&
 ListRingBuffer::get_list( const long offs )
 {
   assert( 0 <= offs and ( size_t ) offs < buffer_.size() );
-  assert( ( delay ) offs < kernel().connection_manager.get_min_delay() );
+  assert( ( long ) offs < kernel().connection_manager.get_min_delay() );
 
   // offs == 0 is beginning of slice, but we have to
   // take modulo into account when indexing
@@ -345,7 +345,7 @@ ListRingBuffer::get_list( const long offs )
 }
 
 inline size_t
-ListRingBuffer::get_index_( const delay d ) const
+ListRingBuffer::get_index_( const long d ) const
 {
   const long idx = kernel().event_delivery_manager.get_modulo( d );
   assert( 0 <= idx );
@@ -360,10 +360,10 @@ class MultiChannelInputBuffer
 public:
   MultiChannelInputBuffer();
 
-  void add_value( const index slot, const index channel, const double value );
+  void add_value( const size_t slot, const size_t channel, const double value );
 
-  const std::array< double, num_channels >& get_values_all_channels( const index slot ) const;
-  void reset_values_all_channels( const index slot );
+  const std::array< double, num_channels >& get_values_all_channels( const size_t slot ) const;
+  void reset_values_all_channels( const size_t slot );
 
   void clear();
 
@@ -382,7 +382,7 @@ private:
 
 template < unsigned int num_channels >
 inline void
-MultiChannelInputBuffer< num_channels >::reset_values_all_channels( const index slot )
+MultiChannelInputBuffer< num_channels >::reset_values_all_channels( const size_t slot )
 {
   assert( slot < buffer_.size() );
   buffer_[ slot ].fill( 0.0 );
@@ -390,14 +390,14 @@ MultiChannelInputBuffer< num_channels >::reset_values_all_channels( const index 
 
 template < unsigned int num_channels >
 inline void
-MultiChannelInputBuffer< num_channels >::add_value( const index slot, const index channel, const double value )
+MultiChannelInputBuffer< num_channels >::add_value( const size_t slot, const size_t channel, const double value )
 {
   buffer_[ slot ][ channel ] += value;
 }
 
 template < unsigned int num_channels >
 inline const std::array< double, num_channels >&
-MultiChannelInputBuffer< num_channels >::get_values_all_channels( const index slot ) const
+MultiChannelInputBuffer< num_channels >::get_values_all_channels( const size_t slot ) const
 {
   assert( slot < buffer_.size() );
   return buffer_[ slot ];

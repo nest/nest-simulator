@@ -55,7 +55,7 @@ jobs:
       - name: "Set up Python 3.x"
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: 3.10
 
       - name: "Install dependencies"
         run: |
@@ -76,7 +76,7 @@ jobs:
       - name: "Set up Python 3.x"
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: 3.10
 
       - name: "Install dependencies"
         run: |
@@ -102,7 +102,7 @@ jobs:
       - name: "Set up Python 3.x"
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: 3.10
 
       - name: "Install dependencies"
         run: |
@@ -123,7 +123,7 @@ jobs:
       - name: "Set up Python 3.x"
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: 3.10
 
       - name: "Check for unused nest::names..."
         run: |
@@ -173,7 +173,7 @@ jobs:
       - name: "Set up Python 3.x"
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: 3.10
 
       - name: "Install dependencies"
         run: |
@@ -194,7 +194,7 @@ jobs:
       - name: "Set up Python 3.x"
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: 3.10
 
       - name: "Install dependencies"
         run: |
@@ -233,7 +233,7 @@ jobs:
   #     - name: "Set up Python 3.x"
   #       uses: actions/setup-python@v4
   #       with:
-  #         python-version: 3.9
+  #         python-version: 3.10
 
   #     - name: "Install dependencies"
   #       run: |
@@ -260,7 +260,7 @@ jobs:
   #     - name: "Set up Python 3.x"
   #       uses: actions/setup-python@v4
   #       with:
-  #         python-version: 3.9
+  #         python-version: 3.10
 
   #     - name: "Install dependencies"
   #       run: |
@@ -281,7 +281,7 @@ jobs:
       - name: "Set up Python 3.x"
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: 3.10
 
       - name: "Install dependencies"
         run: |
@@ -314,7 +314,7 @@ jobs:
       - name: "Set up Python 3.x"
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: 3.10
 
       - name: "Install dependencies"
         run: |
@@ -339,7 +339,7 @@ jobs:
         with:
           # Using 3.8 because Read the docs does not work with higher versions.
           # See also: https://github.com/nest/nest-simulator/pull/2744
-          python-version: 3.8
+          python-version: 3.10
 
       - name: "Install dependencies"
         run: |
@@ -378,7 +378,7 @@ jobs:
         uses: conda-incubator/setup-miniconda@3b0f2504dd76ef23b6d31f291f4913fb60ab5ff3   # v2.2.0
         with:
           auto-update-conda: true
-          python-version: "3.7"
+          python-version: 3.10
 
       - name: Install conda dependencies
         shell: bash -l {0}
@@ -434,7 +434,7 @@ jobs:
       - name: "Set up Python 3.x"
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: 3.10
 
       - name: "Restore apt cache"
         uses: actions/cache@v3
@@ -633,7 +633,7 @@ jobs:
       - name: "Set up Python 3.x"
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
+          python-version: 3.10
 
       - name: "Install MacOS system dependencies"
         run: |

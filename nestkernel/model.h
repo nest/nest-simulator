@@ -87,7 +87,7 @@ public:
    * is allowed to modify the Model object for
    * 'administrative' purposes.
    */
-  Node* create( thread t );
+  Node* create( size_t t );
 
   /**
    * Deletes all nodes which belong to this model.
@@ -98,7 +98,7 @@ public:
   /**
    * Reserve space for n additional Nodes.
    */
-  void reserve_additional( thread t, size_t n );
+  void reserve_additional( size_t t, size_t n );
 
   /**
    * Return name of the Model.
@@ -145,7 +145,7 @@ public:
    */
   DictionaryDatum get_status();
 
-  virtual port send_test_event( Node&, rport, synindex, bool ) = 0;
+  virtual size_t send_test_event( Node&, size_t, synindex, bool ) = 0;
 
   virtual void sends_secondary_event( GapJunctionEvent& ge ) = 0;
   virtual void sends_secondary_event( InstantaneousRateConnectionEvent& re ) = 0;
@@ -191,12 +191,12 @@ public:
    * Set the model id on the prototype.
    */
   void
-  set_type_id( index id )
+  set_type_id( size_t id )
   {
     type_id_ = id;
   }
 
-  index
+  size_t
   get_type_id() const
   {
     return type_id_;
@@ -212,7 +212,7 @@ private:
    * Set the number of threads.
    * @see set_threads()
    */
-  void set_threads_( thread t );
+  void set_threads_( size_t t );
 
   /**
    * Create a new object.
@@ -232,7 +232,7 @@ private:
    * For copied models, the type_id equals the type_id of the base model.
    * This number is needed to automatically save and restore copied models.
    */
-  index type_id_;
+  size_t type_id_;
 
   /**
    * Memory for all nodes sorted by threads.
@@ -242,7 +242,7 @@ private:
 
 
 inline Node*
-Model::create( thread t )
+Model::create( size_t t )
 {
   assert( ( size_t ) t < memory_.size() );
   Node* n = create_();

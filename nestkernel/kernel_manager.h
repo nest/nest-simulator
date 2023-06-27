@@ -227,7 +227,7 @@ public:
    * Set the new number of threads on all managers by calling
    * change_number_of_threads() on each of them.
    */
-  void change_number_of_threads( thread new_num_threads );
+  void change_number_of_threads( size_t new_num_threads );
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& );

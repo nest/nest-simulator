@@ -72,7 +72,7 @@ template < typename HostNode >
 void
 nest::DynamicUniversalDataLogger< HostNode >::handle( const DataLoggingRequest& dlr )
 {
-  const rport rport = dlr.get_rport();
+  const size_t rport = dlr.get_rport();
   assert( rport >= 1 );
   assert( static_cast< size_t >( rport ) <= data_loggers_.size() );
   data_loggers_[ rport - 1 ].handle( host_, dlr );
@@ -277,7 +277,7 @@ template < typename HostNode >
 void
 nest::UniversalDataLogger< HostNode >::handle( const DataLoggingRequest& dlr )
 {
-  const rport rport = dlr.get_rport();
+  const size_t rport = dlr.get_rport();
   assert( rport >= 1 );
   assert( static_cast< size_t >( rport ) <= data_loggers_.size() );
   data_loggers_[ rport - 1 ].handle( host_, dlr );

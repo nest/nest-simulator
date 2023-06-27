@@ -34,8 +34,7 @@ import matplotlib.pyplot as plt
 
 nest.ResetKernel()
 
-l1 = nest.Create('iaf_psc_alpha',
-                 positions=nest.spatial.grid(shape=[4, 3], extent=[2., 1.5]))
+l1 = nest.Create("iaf_psc_alpha", positions=nest.spatial.grid(shape=[4, 3], extent=[2.0, 1.5]))
 
 nest.PrintNodes()
 
@@ -43,12 +42,12 @@ nest.PlotLayer(l1, nodesize=50)
 
 # beautify
 plt.axis([-1.0, 1.0, -0.75, 0.75])
-plt.axes().set_aspect('equal', 'box')
+plt.axes().set_aspect("equal", "box")
 plt.axes().set_xticks((-0.75, -0.25, 0.25, 0.75))
 plt.axes().set_yticks((-0.5, 0, 0.5))
 plt.grid(True)
-plt.xlabel('4 Columns, Extent: 1.5')
-plt.ylabel('2 Rows, Extent: 1.0')
+plt.xlabel("4 Columns, Extent: 1.5")
+plt.ylabel("2 Rows, Extent: 1.0")
 
 plt.show()
 

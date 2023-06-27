@@ -20,9 +20,10 @@
     --nest-green: #36B34F;
     --sd-color-primary: var(--nest-orange);
     --sd-color-primary-highlight: #e05a2d;
+    --sd-color-muted: #adadad;
     --sd-color-info: var(--nest-blue);
     --sd-color-success: var(--nest-green);
-    --sd-color-card-border-hover: var(--nest-blue);
+    --sd-color-card-border-hover: var(--nest-orange);
 }
 /* Define base font color and style */
 body{
@@ -84,6 +85,7 @@ section#kernel-attributes dl.py.class dd dl.py.attribute dd dl.field-list.simple
 .sphx-glr-download-jupyter {
   display: none;
 }
+
 /**************************************************************************************
  Settings for overriding material design theme 
  Setting nest colors to override sphinx material "orange" and other default colors
@@ -828,7 +830,7 @@ ul.srt-menu li li li.sfHover ul {
 
 .grid_1 { width: 8.33333333%; }
 .grid_2 { width: 16.66666667%; }
-.grid_3 { width: 25%; }
+.grid_3 { width: 70%; }
 .grid_4 { width: 33.33333333%; }
 .grid_5 { width: 41.66666667%; }
 .grid_6 { width: 50%; }

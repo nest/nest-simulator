@@ -27,8 +27,8 @@ import nest
 import numpy
 
 __all__ = [
-    'from_device',
-    'from_file',
+    "from_device",
+    "from_file",
 ]
 
 
@@ -66,14 +66,18 @@ def from_file(fname, title=None, grayscale=False):
         line_style = ""
 
     if len(data.shape) == 1:
-        print("INFO: only found 1 column in the file. \
-            Assuming that only one neuron was recorded.")
+        print(
+            "INFO: only found 1 column in the file. \
+            Assuming that only one neuron was recorded."
+        )
         plotid = plt.plot(data, line_style)
         plt.xlabel("Time (steps of length interval)")
 
     elif data.shape[1] == 2:
-        print("INFO: found 2 columns in the file. Assuming \
-            them to be node ID, pot.")
+        print(
+            "INFO: found 2 columns in the file. Assuming \
+            them to be node ID, pot."
+        )
 
         plotid = []
         data_dict = {}
@@ -84,9 +88,7 @@ def from_file(fname, title=None, grayscale=False):
                 data_dict[dat[0]].append(dat[1])
 
         for dat in data_dict:
-            plotid.append(
-                plt.plot(data_dict[dat], line_style, label="Neuron %i" % dat)
-            )
+            plotid.append(plt.plot(data_dict[dat], line_style, label="Neuron %i" % dat))
 
         plt.xlabel("Time (steps of length interval)")
         plt.legend()
@@ -105,9 +107,7 @@ def from_file(fname, title=None, grayscale=False):
                 t.append(d[1])
 
         for d in data_dict:
-            plotid.append(
-                plt.plot(t, data_dict[d], line_style, label="Neuron %i" % d)
-            )
+            plotid.append(plt.plot(t, data_dict[d], line_style, label="Neuron %i" % d))
 
         plt.xlabel("Time (ms)")
         plt.legend()
@@ -125,8 +125,7 @@ def from_file(fname, title=None, grayscale=False):
     return plotid
 
 
-def from_device(detec, neurons=None, title=None, grayscale=False,
-                timeunit="ms"):
+def from_device(detec, neurons=None, title=None, grayscale=False, timeunit="ms"):
     """Plot the membrane potential of a set of neurons recorded by
     the given voltmeter or multimeter.
 
@@ -153,23 +152,27 @@ def from_device(detec, neurons=None, title=None, grayscale=False,
     if len(detec) > 1:
         raise nest.kernel.NESTError("Please provide a single voltmeter.")
 
-    type_id = nest.GetDefaults(detec.get('model'), 'type_id')
-    if type_id not in ('voltmeter', 'multimeter'):
-        raise nest.kernel.NESTError("Please provide a voltmeter or a \
-            multimeter measuring V_m.")
-    elif type_id == 'multimeter':
+    type_id = nest.GetDefaults(detec.get("model"), "type_id")
+    if type_id not in ("voltmeter", "multimeter"):
+        raise nest.kernel.NESTError(
+            "Please provide a voltmeter or a \
+            multimeter measuring V_m."
+        )
+    elif type_id == "multimeter":
         if "V_m" not in detec.get("record_from"):
-            raise nest.kernel.NESTError("Please provide a multimeter \
-                measuring V_m.")
-        elif (not detec.get("record_to") == "memory" and
-              len(detec.get("record_from")) > 1):
-            raise nest.kernel.NESTError("Please provide a multimeter \
-                measuring only V_m or record to memory!")
+            raise nest.kernel.NESTError(
+                "Please provide a multimeter \
+                measuring V_m."
+            )
+        elif not detec.get("record_to") == "memory" and len(detec.get("record_from")) > 1:
+            raise nest.kernel.NESTError(
+                "Please provide a multimeter \
+                measuring only V_m or record to memory!"
+            )
 
     if detec.get("record_to") == "memory":
-
         timefactor = 1.0
-        if not detec.get('time_in_steps'):
+        if not detec.get("time_in_steps"):
             if timeunit == "s":
                 timefactor = 1000.0
             else:
@@ -193,10 +196,7 @@ def from_device(detec, neurons=None, title=None, grayscale=False,
                 line_style = ""
 
             try:
-                plotids.append(
-                    plt.plot(time_values, voltages[neuron],
-                             line_style, label="Neuron %i" % neuron)
-                )
+                plotids.append(plt.plot(time_values, voltages[neuron], line_style, label="Neuron %i" % neuron))
             except KeyError:
                 print("INFO: Wrong ID: {0}".format(neuron))
 
@@ -206,7 +206,7 @@ def from_device(detec, neurons=None, title=None, grayscale=False,
 
         plt.ylabel("Membrane potential (mV)")
 
-        if nest.GetStatus(detec)[0]['time_in_steps']:
+        if nest.GetStatus(detec)[0]["time_in_steps"]:
             plt.xlabel("Steps")
         else:
             plt.xlabel("Time (%s)" % timeunit)
@@ -220,8 +220,10 @@ def from_device(detec, neurons=None, title=None, grayscale=False,
         fname = detec.get("filenames")
         return from_file(fname, title, grayscale)
     else:
-        raise nest.kernel.NESTError("Provided devices neither record to \
-            ascii file, nor to memory.")
+        raise nest.kernel.NESTError(
+            "Provided devices neither record to \
+            ascii file, nor to memory."
+        )
 
 
 def _from_memory(detec):
@@ -232,35 +234,34 @@ def _from_memory(detec):
     """
     import array
 
-    ev = detec.get('events')
-    potentials = ev['V_m']
-    senders = ev['senders']
+    ev = detec.get("events")
+    potentials = ev["V_m"]
+    senders = ev["senders"]
 
     v = {}
     t = {}
 
-    if 'times' in ev:
-        times = ev['times']
+    if "times" in ev:
+        times = ev["times"]
         for s, currentsender in enumerate(senders):
             if currentsender not in v:
-                v[currentsender] = array.array('f')
-                t[currentsender] = array.array('f')
+                v[currentsender] = array.array("f")
+                t[currentsender] = array.array("f")
 
             v[currentsender].append(float(potentials[s]))
             t[currentsender].append(float(times[s]))
     else:
         # reconstruct the time vector, if not stored explicitly
-        origin = detec.get('origin')
-        start = detec.get('start')
-        interval = detec.get('interval')
+        origin = detec.get("origin")
+        start = detec.get("start")
+        interval = detec.get("interval")
         senders_uniq = numpy.unique(senders)
         num_intvls = len(senders) / len(senders_uniq)
-        times_s = origin + start + interval + \
-            interval * numpy.array(range(num_intvls))
+        times_s = origin + start + interval + interval * numpy.array(range(num_intvls))
 
         for s, currentsender in enumerate(senders):
             if currentsender not in v:
-                v[currentsender] = array.array('f')
+                v[currentsender] = array.array("f")
                 t[currentsender] = times_s
             v[currentsender].append(float(potentials[s]))
 

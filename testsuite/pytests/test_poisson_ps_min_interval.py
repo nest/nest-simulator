@@ -53,8 +53,8 @@ def test_poisson_ps_min_interval():
 
     nest.Connect(pg, sr)
 
-    nest.Simulate(10000.)
+    nest.Simulate(10000.0)
 
     isi = np.ediff1d(sr.events["times"])
 
-    assert isi.min() < nest.ms_per_tic / 10.
+    assert isi.min() < nest.ms_per_tic / 10.0

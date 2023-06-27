@@ -38,34 +38,35 @@ def test_rate_times_and_values_match(prepare_kernel):
     inh_pg = nest.Create("inhomogeneous_poisson_generator")
 
     with pytest.raises(nest.kernel.NESTErrors.BadProperty, match="Rate times and values must be reset together"):
-        inh_pg.set(rate_values=[10.])
+        inh_pg.set(rate_values=[10.0])
 
 
 def test_rate_times_len_and_values_match(prepare_kernel):
     inh_pg = nest.Create("inhomogeneous_poisson_generator")
 
     with pytest.raises(nest.kernel.NESTErrors.BadProperty, match="Rate times and values have to be the same size"):
-        inh_pg.set(rate_times=[1., 2.], rate_values=[10.])
+        inh_pg.set(rate_times=[1.0, 2.0], rate_values=[10.0])
 
 
 def test_rate_times_strictly_increasing(prepare_kernel):
     inh_pg = nest.Create("inhomogeneous_poisson_generator")
 
     with pytest.raises(nest.kernel.NESTErrors.BadProperty, match="Rate times must be strictly increasing"):
-        inh_pg.set(rate_times=[1., 5., 3.], rate_values=[10., 20., 5.])
+        inh_pg.set(rate_times=[1.0, 5.0, 3.0], rate_values=[10.0, 20.0, 5.0])
 
 
 def test_offgrid_time_point(prepare_kernel):
     inh_pg = nest.Create("inhomogeneous_poisson_generator")
 
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty,
-                       match="Time point 1.23 is not representable in current resolution"):
-        inh_pg.set(rate_times=[1.23], rate_values=[10.])
+    with pytest.raises(
+        nest.kernel.NESTErrors.BadProperty, match="Time point 1.23 is not representable in current resolution"
+    ):
+        inh_pg.set(rate_times=[1.23], rate_values=[10.0])
 
 
 def test_allow_offgrid_time_point(prepare_kernel):
     inh_pg = nest.Create("inhomogeneous_poisson_generator", {"allow_offgrid_times": True})
-    inh_pg.set(rate_times=[1.23], rate_values=[10.])
+    inh_pg.set(rate_times=[1.23], rate_values=[10.0])
     defaults = inh_pg.get()
 
     # assert that the rate time is rounded up to the next step
@@ -74,24 +75,26 @@ def test_allow_offgrid_time_point(prepare_kernel):
 
 def test_no_allow_offgrid_times_after_rate_set(prepare_kernel):
     inh_pg = nest.Create("inhomogeneous_poisson_generator")
-    inh_pg.set(rate_times=[1.2], rate_values=[10.])
+    inh_pg.set(rate_times=[1.2], rate_values=[10.0])
 
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty,
-                       match="Option can only be set together with rate times or if no rate times have been set"):
+    with pytest.raises(
+        nest.kernel.NESTErrors.BadProperty,
+        match="Option can only be set together with rate times or if no rate times have been set",
+    ):
         inh_pg.set(allow_offgrid_times=True)
 
 
 def test_allow_offgrid_times_modified_after_rate_set(prepare_kernel):
     inh_pg = nest.Create("inhomogeneous_poisson_generator", {"allow_offgrid_times": True})
-    inh_pg.set(rate_times=[1.23], rate_values=[10.])
+    inh_pg.set(rate_times=[1.23], rate_values=[10.0])
 
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty,
-                       match="Time point 1.25 is not representable in current resolution"):
-        inh_pg.set(allow_offgrid_times=False, rate_times=[1.25], rate_values=[10.])
+    with pytest.raises(
+        nest.kernel.NESTErrors.BadProperty, match="Time point 1.25 is not representable in current resolution"
+    ):
+        inh_pg.set(allow_offgrid_times=False, rate_times=[1.25], rate_values=[10.0])
 
 
 def test_time_points_in_future(prepare_kernel):
     inh_pg = nest.Create("inhomogeneous_poisson_generator")
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty,
-                       match="Time points must lie strictly in the future."):
-        inh_pg.set(rate_times=[0.], rate_values=[30.])
+    with pytest.raises(nest.kernel.NESTErrors.BadProperty, match="Time points must lie strictly in the future."):
+        inh_pg.set(rate_times=[0.0], rate_values=[30.0])

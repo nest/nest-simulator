@@ -265,10 +265,10 @@ void
 nest::ppd_sup_generator::event_hook( DSSpikeEvent& e )
 {
   // get port number
-  const port prt = e.get_port();
+  const size_t prt = e.get_port();
 
   // we handle only one port here, get reference to vector element
-  assert( 0 <= prt and static_cast< size_t >( prt ) < B_.age_distributions_.size() );
+  assert( prt < B_.age_distributions_.size() );
 
   // age_distribution object propagates one time step and returns number of
   // spikes

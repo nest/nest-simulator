@@ -30,11 +30,15 @@ default_delay = nest.GetDefaults("static_synapse", "delay")
 default_weight = nest.GetDefaults("static_synapse", "weight")
 
 
-@pytest.mark.parametrize('wd_spec, w_expect, d_expect',
-                         [[{}, default_weight, default_delay],
-                          [{'delay': 15.5}, default_weight, 15.5],
-                          [{'weight': 23.4}, 23.4, default_delay],
-                          [{'weight': 17.3, 'delay': 10.1}, 17.3, 10.1]])
+@pytest.mark.parametrize(
+    "wd_spec, w_expect, d_expect",
+    [
+        [{}, default_weight, default_delay],
+        [{"delay": 15.5}, default_weight, 15.5],
+        [{"weight": 23.4}, 23.4, default_delay],
+        [{"weight": 17.3, "delay": 10.1}, 17.3, 10.1],
+    ],
+)
 def test_default_delay_and_weight(wd_spec, w_expect, d_expect):
     nest.ResetKernel()
     neuron = nest.Create("iaf_psc_alpha")

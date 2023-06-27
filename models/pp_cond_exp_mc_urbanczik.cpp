@@ -691,7 +691,7 @@ void
 nest::pp_cond_exp_mc_urbanczik::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
-  assert( 0 <= e.get_rport() and e.get_rport() < 2 * NCOMP );
+  assert( e.get_rport() < 2 * NCOMP );
 
   B_.spikes_[ e.get_rport() ].add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
@@ -702,7 +702,7 @@ nest::pp_cond_exp_mc_urbanczik::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
   // not 100% clean, should look at MIN, SUP
-  assert( 0 <= e.get_rport() and e.get_rport() < NCOMP );
+  assert( e.get_rport() < NCOMP );
 
   // add weighted current; HEP 2002-10-04
   B_.currents_[ e.get_rport() ].add_value(

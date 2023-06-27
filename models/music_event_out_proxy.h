@@ -120,7 +120,7 @@ public:
 
   void handle( SpikeEvent& );
 
-  port handles_test_event( SpikeEvent&, rport );
+  size_t handles_test_event( SpikeEvent&, size_t );
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
@@ -180,8 +180,8 @@ private:
   Variables_ V_;
 };
 
-inline port
-music_event_out_proxy::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+music_event_out_proxy::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   // receptor_type i is mapped to channel i of the MUSIC port so we
   // have to generate the index map here, that assigns the channel

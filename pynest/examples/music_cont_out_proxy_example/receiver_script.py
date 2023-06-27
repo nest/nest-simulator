@@ -43,7 +43,7 @@ pin.map(data, interpolate=False)
 
 runtime = setup.runtime(timestep)
 mintime = timestep
-maxtime = stoptime+timestep
+maxtime = stoptime + timestep
 start = dropwhile(lambda t: t < mintime, runtime)
 times = takewhile(lambda t: t < maxtime, start)
 for time in times:

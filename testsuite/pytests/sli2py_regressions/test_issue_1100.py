@@ -40,9 +40,7 @@ def test_local_spike_counter_with_spike_multiplicity():
     """
 
     parrot = nest.Create("parrot_neuron")
-    sgen = nest.Create(
-        "spike_generator", params={"spike_times": [1.0], "spike_multiplicities": [2]}
-    )
+    sgen = nest.Create("spike_generator", params={"spike_times": [1.0], "spike_multiplicities": [2]})
     srec = nest.Create("spike_recorder")
 
     nest.Connect(sgen, parrot)

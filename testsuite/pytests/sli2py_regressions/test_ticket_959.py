@@ -32,18 +32,17 @@ def record_spikes(sim_time, repeats):
     nest.ResetKernel()
     nest.set_verbosity("M_ERROR")
 
-    neuron_params = {'tau_sfa': 34.0,
-                     'q_sfa': 0.0}
+    neuron_params = {"tau_sfa": 34.0, "q_sfa": 0.0}
 
-    population = nest.Create('pp_psc_delta', params=neuron_params)
+    population = nest.Create("pp_psc_delta", params=neuron_params)
     spike_recorder = nest.Create("spike_recorder")
 
     nest.Connect(population, spike_recorder)
 
     for w in range(0, repeats):
         nest.Simulate(sim_time)
-    events = spike_recorder.get('events')
-    return np.vstack((events['senders'], events['times']))
+    events = spike_recorder.get("events")
+    return np.vstack((events["senders"], events["times"]))
 
 
 def test_generation_matches():

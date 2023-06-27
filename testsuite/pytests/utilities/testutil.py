@@ -26,9 +26,7 @@ import sys
 
 
 def parameter_fixture(name, default_factory=lambda: None):
-    return pytest.fixture(autouse=True, name=name)(
-        lambda request: getattr(request, "param", default_factory())
-    )
+    return pytest.fixture(autouse=True, name=name)(lambda request: getattr(request, "param", default_factory()))
 
 
 def isin_approx(A, B, tol=1e-06):
@@ -54,9 +52,7 @@ def isin_approx(A, B, tol=1e-06):
 def get_comparable_timesamples(actual, expected):
     simulated_points = isin_approx(actual[:, 0], expected[:, 0])
     expected_points = isin_approx(expected[:, 0], actual[:, 0])
-    assert (
-        len(actual[simulated_points]) > 0
-    ), "The recorded data did not contain any relevant timesamples"
+    assert len(actual[simulated_points]) > 0, "The recorded data did not contain any relevant timesamples"
     return actual[simulated_points], pytest.approx(expected[expected_points])
 
 

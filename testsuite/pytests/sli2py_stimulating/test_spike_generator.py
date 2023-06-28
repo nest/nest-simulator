@@ -42,7 +42,7 @@ def test_check_spike_time_zero_error(prepare_kernel):
     sg = nest.Create("spike_generator")
 
     with pytest.raises(nest.kernel.NESTError, match="spike time cannot be set to 0"):
-        sg.set({"spike_times": [0.]})
+        sg.set({"spike_times": [0.0]})
 
 
 def test_spike_generator_precise_time_false(prepare_kernel):
@@ -50,19 +50,19 @@ def test_spike_generator_precise_time_false(prepare_kernel):
     This test checks if truncating spike times to grid causes an assertion with "precise_times" set to false.
     """
     sg = nest.Create("spike_generator")
-    sg_params = {"precise_times": False,
-                 "spike_times": [4.33],
-                 "origin": 0.,
-                 "start": 0.,
-                 "stop": 0.}
+    sg_params = {"precise_times": False, "spike_times": [4.33], "origin": 0.0, "start": 0.0, "stop": 0.0}
     with pytest.raises(nest.kernel.NESTError, match="Time point 4.33 is not representable in current resolution"):
         sg.set(sg_params)
 
 
-@pytest.mark.parametrize("spike_times, allow_offgrid_times, expected_spike_times",
-                         [([2.9999, 4.3001], False, [30, 43]),
-                          ([1.0, 1.9999, 3.0001], False, [10, 20, 30]),
-                          ([1.0, 1.05, 3.0001], True, [10, 11, 30])])
+@pytest.mark.parametrize(
+    "spike_times, allow_offgrid_times, expected_spike_times",
+    [
+        ([2.9999, 4.3001], False, [30, 43]),
+        ([1.0, 1.9999, 3.0001], False, [10, 20, 30]),
+        ([1.0, 1.05, 3.0001], True, [10, 11, 30]),
+    ],
+)
 def test_spike_generator(prepare_kernel, spike_times, allow_offgrid_times, expected_spike_times):
     """
     This test checks if the spikes are rounded up or down based on the value of "allow_offgrid_times" set to True
@@ -96,10 +96,7 @@ def test_spike_generator_spike_not_res_multiple(prepare_kernel):
     This test checks if the spike time is a multiple of the resolution with the "allow_offgrid_times" False (default).
     """
     sg = nest.Create("spike_generator")
-    sg_params = {"spike_times": [1.0, 1.05, 3.0001],
-                 "origin": 0.,
-                 "start": 0.,
-                 "stop": 6.0}
+    sg_params = {"spike_times": [1.0, 1.05, 3.0001], "origin": 0.0, "start": 0.0, "stop": 6.0}
     with pytest.raises(nest.kernel.NESTError, match="Time point 1.05 is not representable in current resolution"):
         sg.set(sg_params)
 
@@ -209,9 +206,11 @@ def test_spike_generator_precise_times_and_allow_offgrid_times(prepare_kernel):
     """
     This test ensures the exclusivity between options "precise_times" and "allow_offgrid_times".
     """
-    with pytest.raises(nest.kernel.NESTError,
-                       match="Option precise_times cannot be set to true when either allow_offgrid_times or "
-                             "shift_now_spikes is set to true."):
+    with pytest.raises(
+        nest.kernel.NESTError,
+        match="Option precise_times cannot be set to true when either allow_offgrid_times or "
+        "shift_now_spikes is set to true.",
+    ):
         sg = nest.Create("spike_generator", {"precise_times": True, "allow_offgrid_times": True})
 
 
@@ -219,22 +218,26 @@ def test_spike_generator_precise_times_and_shift_now_spikes(prepare_kernel):
     """
     This test ensures the exclusivity between options "precise_times" and "shift_now_spikes".
     """
-    with pytest.raises(nest.kernel.NESTError,
-                       match="Option precise_times cannot be set to true when either allow_offgrid_times or "
-                             "shift_now_spikes is set to true."):
+    with pytest.raises(
+        nest.kernel.NESTError,
+        match="Option precise_times cannot be set to true when either allow_offgrid_times or "
+        "shift_now_spikes is set to true.",
+    ):
         sg = nest.Create("spike_generator", {"precise_times": True, "shift_now_spikes": True})
 
 
-@pytest.mark.parametrize("sg_params, expected_spike_times",
-                         [
-                             [{"spike_times": [0.1, 10.0, 10.5, 10.50001]}, [0.1, 10.0, 10.5, 10.5]],
-                             [{"spike_times": [0.1, 10.0, 10.5, 10.50001, 10.55], "allow_offgrid_times": True},
-                              [0.1, 10.0, 10.5, 10.5, 10.6]],
-                             [{"spike_times": [0.1, 10.0, 10.5, 10.50001, 10.55], "precise_times": True},
-                              [0.1, 10.0, 10.5, 10.5, 10.55]],
-                             [{"spike_times": [0.0, 10.0, 10.5, 10.50001], "shift_now_spikes": True},
-                              [0.1, 10.0, 10.5, 10.5]]
-                         ])
+@pytest.mark.parametrize(
+    "sg_params, expected_spike_times",
+    [
+        [{"spike_times": [0.1, 10.0, 10.5, 10.50001]}, [0.1, 10.0, 10.5, 10.5]],
+        [
+            {"spike_times": [0.1, 10.0, 10.5, 10.50001, 10.55], "allow_offgrid_times": True},
+            [0.1, 10.0, 10.5, 10.5, 10.6],
+        ],
+        [{"spike_times": [0.1, 10.0, 10.5, 10.50001, 10.55], "precise_times": True}, [0.1, 10.0, 10.5, 10.5, 10.55]],
+        [{"spike_times": [0.0, 10.0, 10.5, 10.50001], "shift_now_spikes": True}, [0.1, 10.0, 10.5, 10.5]],
+    ],
+)
 def test_spike_generator_set_and_get(prepare_kernel, sg_params, expected_spike_times):
     """
     This test checks the set and get functions of the spike generator.
@@ -249,7 +252,15 @@ def test_spike_generator_set_and_get(prepare_kernel, sg_params, expected_spike_t
     nptest.assert_almost_equal(actual_spike_times, expected_spike_times, decimal=5)
 
 
-@pytest.mark.parametrize("h", [0.1, 0.2, 0.5, 1.0,])
+@pytest.mark.parametrize(
+    "h",
+    [
+        0.1,
+        0.2,
+        0.5,
+        1.0,
+    ],
+)
 @pytest.mark.parametrize("expected_spike_times", [[5.3, 5.300001, 5.399999, 5.9, 6.0]])
 def test_spike_generator_precise_times_different_resolution(h, expected_spike_times):
     """

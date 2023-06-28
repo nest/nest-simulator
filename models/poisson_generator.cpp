@@ -40,7 +40,7 @@
  * ---------------------------------------------------------------- */
 
 nest::poisson_generator::Parameters_::Parameters_()
-  : rate_( 0.0 ) // pA
+  : rate_( 0.0 ) // Hz
 {
 }
 

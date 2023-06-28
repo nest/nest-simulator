@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Test parameter setting and statistical correctness of `pulsepacket_generator`.
+Test parameter setting and correct number of spikes emitted by `pulsepacket_generator`.
 """
 
 import numpy as np

@@ -78,9 +78,9 @@ def test_valid_to_pass_empty_pulse_times():
     nest.Simulate(1.0)
 
 
-def test_statistical_correctness():
+def test_number_of_spikes():
     """
-    Test the statistical correctness of `pulsepacket_generator`.
+    Test that `pulsepacket_generator` emits expected number of spikes.
 
     The test builds and simulates a system with `pulsepacket_generator`
     connected to a `spike_recorder`. The test checks the number of

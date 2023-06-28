@@ -64,7 +64,7 @@ def test_poisson_ps_intervals():
 
     nest.Connect(pg, sr)
 
-    nest.Simulate(10000.)
+    nest.Simulate(10000.0)
 
     times = sr.events["times"]
     isi = np.ediff1d(times)

@@ -6,17 +6,6 @@
 
 Sorry, it looks like the page you were looking for doesn't exist in this version or has moved.
 
-
-
-
-
-.. button-ref:: index
-   :ref-type: ref
-   :color: primary
-   :shadow:
-
-   NEST Docs Homepage
-
-
+Try the search bar or the navigation sidebar.
 
 

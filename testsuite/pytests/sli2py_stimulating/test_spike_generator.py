@@ -36,6 +36,9 @@ def prepare_kernel():
 
 
 def test_check_spike_time_zero_error(prepare_kernel):
+    """
+    This test checks if setting spike time to 0 causes an exception.
+    """
     sg = nest.Create("spike_generator")
 
     with pytest.raises(nest.kernel.NESTError, match="spike time cannot be set to 0"):
@@ -43,6 +46,9 @@ def test_check_spike_time_zero_error(prepare_kernel):
 
 
 def test_spike_generator_precise_time_false(prepare_kernel):
+    """
+    This test checks if truncating spike times to grid causes an assertion with "precise_times" set to false.
+    """
     sg = nest.Create("spike_generator")
     sg_params = {"precise_times": False,
                  "spike_times": [4.33],
@@ -58,6 +64,14 @@ def test_spike_generator_precise_time_false(prepare_kernel):
                           ([1.0, 1.9999, 3.0001], False, [10, 20, 30]),
                           ([1.0, 1.05, 3.0001], True, [10, 11, 30])])
 def test_spike_generator(prepare_kernel, spike_times, allow_offgrid_times, expected_spike_times):
+    """
+    This test checks if the spikes are rounded up or down based on the value of "allow_offgrid_times" set to True
+    or False.
+
+    ""allow_offgrid_times": If false, spike times will be rounded to the nearest step if the spike time is less than
+    tic/2 from the step.
+    If true, spike times are rounded to the nearest step if within tic/2 from the step, or to the end of the time step.
+    """
     sg_params = {
         "precise_times": False,
         "spike_times": spike_times,
@@ -78,6 +92,9 @@ def test_spike_generator(prepare_kernel, spike_times, allow_offgrid_times, expec
 
 
 def test_spike_generator_spike_not_res_multiple(prepare_kernel):
+    """
+    This test checks if the spike time is a multiple of the resolution with the "allow_offgrid_times" False (default).
+    """
     sg = nest.Create("spike_generator")
     sg_params = {"spike_times": [1.0, 1.05, 3.0001],
                  "origin": 0.,
@@ -88,6 +105,9 @@ def test_spike_generator_spike_not_res_multiple(prepare_kernel):
 
 
 def test_spike_generator_precise_spikes(prepare_kernel):
+    """
+    This test checks the spike times and offsets of the spikes when "precise_times" is set to True.
+    """
     sg_params = {
         "precise_times": True,
         "spike_times": [1.0, 1.05, 3.0001],
@@ -112,6 +132,12 @@ def test_spike_generator_precise_spikes(prepare_kernel):
 
 
 def test_spike_generator_spike_time_at_simulation_end_time(prepare_kernel):
+    """
+    This test checks the spikes after the simulation time are not recorded.
+
+    Here, the spike time is within tic/2 of step 100, rounded down to 100 thus not in the future; spike will not
+    be emitted
+    """
     sg = nest.Create("spike_generator")
     sr = nest.Create("spike_recorder")
     nest.Connect(sg, sr)
@@ -127,6 +153,11 @@ def test_spike_generator_spike_time_at_simulation_end_time(prepare_kernel):
 
 
 def test_spike_generator_precise_time_future_spike(prepare_kernel):
+    """
+    This test checks the future spike times with "precise_times" set to True.
+
+    In this test, the spike occurs at step 101, offset -0.0999 is in the future, and spike is shifted to the future.
+    """
     sg_params = {"precise_times": True, "origin": 0.0, "start": 0.0}
     sg = nest.Create("spike_generator", sg_params)
     sr = nest.Create("spike_recorder", {"time_in_steps": True})
@@ -148,6 +179,12 @@ def test_spike_generator_precise_time_future_spike(prepare_kernel):
 
 
 def test_spike_generator_with_shift_now_spikes(prepare_kernel):
+    """
+    This test checks the spike times with "shift_now_spikes" set to True.
+
+    In this test, first the spike occurs at step 101 and shifted into the future.
+    A second spike occurs at step 110 is not shifted, since it is in the future anyways.
+    """
     sg_params = {"shift_now_spikes": True, "origin": 0.0, "start": 0.0}
     sg = nest.Create("spike_generator", sg_params)
     sr = nest.Create("spike_recorder", {"time_in_steps": True})
@@ -169,6 +206,9 @@ def test_spike_generator_with_shift_now_spikes(prepare_kernel):
 
 
 def test_spike_generator_precise_times_and_allow_offgrid_times(prepare_kernel):
+    """
+    This test ensures the exclusivity between options "precise_times" and "allow_offgrid_times".
+    """
     with pytest.raises(nest.kernel.NESTError,
                        match="Option precise_times cannot be set to true when either allow_offgrid_times or "
                              "shift_now_spikes is set to true."):
@@ -176,6 +216,9 @@ def test_spike_generator_precise_times_and_allow_offgrid_times(prepare_kernel):
 
 
 def test_spike_generator_precise_times_and_shift_now_spikes(prepare_kernel):
+    """
+    This test ensures the exclusivity between options "precise_times" and "shift_now_spikes".
+    """
     with pytest.raises(nest.kernel.NESTError,
                        match="Option precise_times cannot be set to true when either allow_offgrid_times or "
                              "shift_now_spikes is set to true."):
@@ -193,6 +236,13 @@ def test_spike_generator_precise_times_and_shift_now_spikes(prepare_kernel):
                               [0.1, 10.0, 10.5, 10.5]]
                          ])
 def test_spike_generator_set_and_get(prepare_kernel, sg_params, expected_spike_times):
+    """
+    This test checks the set and get functions of the spike generator.
+    - set and get with default values
+    - set and get with "allow_offgrid_times" set to True
+    - set and get with "precise_times" set to True
+    - set and get with "shift_now_spikes" set to True
+    """
     sg = nest.Create("spike_generator")
     sg.set(sg_params)
     actual_spike_times = sg.get("spike_times")
@@ -202,6 +252,9 @@ def test_spike_generator_set_and_get(prepare_kernel, sg_params, expected_spike_t
 @pytest.mark.parametrize("h", [0.1, 0.2, 0.5, 1.0,])
 @pytest.mark.parametrize("expected_spike_times", [[5.3, 5.300001, 5.399999, 5.9, 6.0]])
 def test_spike_generator_precise_times_different_resolution(h, expected_spike_times):
+    """
+    This test checks the precise times of spikes for different simulation resolution values.
+    """
     nest.ResetKernel()
     nest.resolution = h
 

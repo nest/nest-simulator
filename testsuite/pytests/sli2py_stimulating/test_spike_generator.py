@@ -68,7 +68,7 @@ def test_spike_generator(prepare_kernel, spike_times, allow_offgrid_times, expec
     Check if the spikes are rounded up or down based on whether ``allow_offgrid_times`` is set to ``True`` or ``False``.
 
     If ``allow_offgrid_times=False``, spike times will be rounded to the nearest step if the spike time is less than
-    ``tic/2`` from the step. If ``allow_offgrid_times=True`, spike times are rounded to the nearest step if 
+    ``tic/2`` from the step. If ``allow_offgrid_times=True``, spike times are rounded to the nearest step if
     within ``tic/2`` from the step and to the end of the time step otherwise.
     """
     sg_params = {
@@ -240,7 +240,7 @@ def test_spike_generator_precise_times_and_shift_now_spikes(prepare_kernel):
 def test_spike_generator_set_and_get(prepare_kernel, sg_params, expected_spike_times):
     """
     Test the ``set`` and ``get`` functions of ``spike_generator``.
-    
+
     The test checks ``set`` and ``get`` with:
     - default values.
     - ``allow_offgrid_times`` set to ``True``.

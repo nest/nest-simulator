@@ -111,8 +111,8 @@ to follow the condition of
 
 .. math::
 
-    E_L + \mathrm{voltage_reset_fraction} \cdot \left( V_\mathrm{th} - E_L \right)
-    + \mathrm{voltage_reset_add} < V_\mathrm{th} + \mathrm{th_spike_add}
+    E_L + \mathrm{voltage\_reset\_fraction} \cdot \left( V_\mathrm{th} - E_L \right)
+    + \mathrm{voltage\_reset\_add} < V_\mathrm{th} + \mathrm{th\_spike\_add}
 
 Parameters
 ++++++++++

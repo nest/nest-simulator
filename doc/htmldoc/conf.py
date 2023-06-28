@@ -46,20 +46,20 @@ sys.path.append(pynest_dir)
 source_suffix = ".rst"
 master_doc = "index"
 extensions = [
-    'sphinx_gallery.gen_gallery',
-    'sphinx.ext.autodoc',
-    'sphinx.ext.napoleon',
-    'sphinx.ext.autosummary',
-    'sphinx.ext.doctest',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.mathjax',
-    'IPython.sphinxext.ipython_console_highlighting',
-    'nbsphinx',
-    'sphinx_design',
-    'HoverXTooltip',
-    'VersionSyncRole',
-    'sphinx_copybutton',
-    'notfound.extension',
+    "sphinx_gallery.gen_gallery",
+    "sphinx.ext.autodoc",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.doctest",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.mathjax",
+    "IPython.sphinxext.ipython_console_highlighting",
+    "nbsphinx",
+    "sphinx_design",
+    "HoverXTooltip",
+    "VersionSyncRole",
+    "sphinx_copybutton",
+    "notfound.extension",
 ]
 
 autodoc_mock_imports = ["nest.pynestkernel", "nest.ll_api"]

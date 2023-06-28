@@ -11,6 +11,7 @@ Sorry, it looks like the page you were looking for doesn't exist in this version
 
 
 .. button-ref:: index
+   :ref-type: ref
    :color: primary
    :shadow:
 

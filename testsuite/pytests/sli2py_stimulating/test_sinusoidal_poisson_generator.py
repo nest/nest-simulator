@@ -41,8 +41,8 @@ def test_individual_spike_trains_true_by_default():
     """
 
     sspg = nest.Create("sinusoidal_poisson_generator")
-    individual_spike_trains_bool = sspg.get("individual_spike_trains")
-    assert individual_spike_trains_bool
+    individual_spike_trains = sspg.get("individual_spike_trains")
+    assert individual_spike_trains
 
 
 def test_set_individual_spike_trains_on_set_defaults():
@@ -52,8 +52,8 @@ def test_set_individual_spike_trains_on_set_defaults():
 
     nest.SetDefaults("sinusoidal_poisson_generator", {"individual_spike_trains": False})
     sspg = nest.Create("sinusoidal_poisson_generator")
-    individual_spike_trains_bool = sspg.get("individual_spike_trains")
-    assert not individual_spike_trains_bool
+    individual_spike_trains = sspg.get("individual_spike_trains")
+    assert not individual_spike_trains
 
 
 def test_set_individual_spike_trains_on_creation():
@@ -62,8 +62,8 @@ def test_set_individual_spike_trains_on_creation():
     """
 
     sspg = nest.Create("sinusoidal_poisson_generator", params={"individual_spike_trains": False})
-    individual_spike_trains_bool = sspg.get("individual_spike_trains")
-    assert not individual_spike_trains_bool
+    individual_spike_trains = sspg.get("individual_spike_trains")
+    assert not individual_spike_trains
 
 
 def test_set_individual_spike_trains_on_copy_model():
@@ -77,8 +77,8 @@ def test_set_individual_spike_trains_on_copy_model():
         params={"individual_spike_trains": False},
     )
     sspg = nest.Create("sinusoidal_poisson_generator_copy")
-    individual_spike_trains_bool = sspg.get("individual_spike_trains")
-    assert not individual_spike_trains_bool
+    individual_spike_trains = sspg.get("individual_spike_trains")
+    assert not individual_spike_trains
 
 
 def test_set_individual_spike_trains_on_instance():
@@ -131,23 +131,21 @@ def test_sinusoidal_poisson_generator_with_spike_recorder(num_threads, individua
     nest.Simulate(500.0)
 
     # Nested list of recorded spike times from each sender
-    spikes_all_nrns = [sender_event["times"] for sender_event in srecs.events]
+    spikes_all_nrns = srecs.get("events", "times")
 
     # Check that we actually obtained a spike times array for each neuron
     assert len(spikes_all_nrns) == total_num_nrns
 
-    # The below will be true if the spike times from all neurons are identical
-    # and false otherwise
-    actual = all(
-        [
-            np.array_equal(spikes_nrn_i, spikes_nrn_j)
-            for spikes_nrn_i, spikes_nrn_j in zip(spikes_all_nrns, spikes_all_nrns[1:])
-        ]
-    )
-
-    excpected = not individual_spike_trains
-
-    assert actual == excpected
+    if individual_spike_trains:
+        # all trains must be pairwise different
+        assert all(
+            not np.array_equal(left, right)
+            for idx, left in enumerate(spikes_all_nrns[:-1])
+            for right in spikes_all_nrns[(idx + 1) :]
+        )
+    else:
+        # all trains should be equal
+        assert all(np.array_equal(spikes_all_nrns[0], right) for right in spikes_all_nrns[1:])
 
 
 @pytest.mark.skipif_missing_threads()

@@ -43,15 +43,15 @@ def set_kernel():
     nest.set(total_num_virtual_procs=2)
 
 
-def check_connections(expected_connections):
+def get_actual_connections():
     """
-    Check if actual connections coincide with expectations.
+    Retrieve actual connections as a sorted `pandas.DataFrame`.
 
-    This function is used by the subsequent tests and asserts whether the
-    created connections match the provided expected connections.
-
-    The connections retrieved from `GetConnections` are sorted by, in decreasing
-    order of priority, the target thread id, source node id and target node id.
+    This is a helper function used by the subsequent tests. The connections
+    created by the kernel must be sorted in order for deterministic comparison
+    with expectations. The connections retrieved from `GetConnections` are
+    sorted by, in decreasing order of priority, the target thread id, source
+    node id and target node id.
     """
 
     syn_collection = nest.GetConnections()
@@ -59,7 +59,7 @@ def check_connections(expected_connections):
 
     actual_connections.sort_values(by=["target_thread", "source", "target"], ignore_index=True, inplace=True)
 
-    pdtest.assert_frame_equal(actual_connections, expected_connections)
+    return actual_connections
 
 
 def test_connect_neuron_neuron_multithreaded():
@@ -80,8 +80,9 @@ def test_connect_neuron_neuron_multithreaded():
         [[1, 3, 1], [2, 1, 1], [2, 3, 1], [3, 1, 1]],
         columns=["source", "target", "target_thread"],
     )
+    actual_conns = get_actual_connections()
 
-    check_connections(expected_conns)
+    pdtest.assert_frame_equal(actual_conns, expected_conns)
 
 
 def test_connect_neuron_device_multithreaded():
@@ -102,8 +103,9 @@ def test_connect_neuron_device_multithreaded():
         [[2, 4, 0], [1, 4, 1], [3, 4, 1]],
         columns=["source", "target", "target_thread"],
     )
+    actual_conns = get_actual_connections()
 
-    check_connections(expected_conns)
+    pdtest.assert_frame_equal(actual_conns, expected_conns)
 
 
 def test_connect_device_neuron_multithreaded():
@@ -124,8 +126,9 @@ def test_connect_device_neuron_multithreaded():
         [[4, 2, 0], [4, 1, 1], [4, 3, 1]],
         columns=["source", "target", "target_thread"],
     )
+    actual_conns = get_actual_connections()
 
-    check_connections(expected_conns)
+    pdtest.assert_frame_equal(actual_conns, expected_conns)
 
 
 def test_connect_device_device_multithreaded():
@@ -144,8 +147,9 @@ def test_connect_device_device_multithreaded():
         [[3, 2, 0], [3, 1, 1]],
         columns=["source", "target", "target_thread"],
     )
+    actual_conns = get_actual_connections()
 
-    check_connections(expected_conns)
+    pdtest.assert_frame_equal(actual_conns, expected_conns)
 
 
 def test_connect_neuron_global_device_multithreaded():
@@ -164,5 +168,6 @@ def test_connect_neuron_global_device_multithreaded():
         [[1, 3, 0], [2, 3, 0], [1, 3, 1], [2, 3, 1]],
         columns=["source", "target", "target_thread"],
     )
+    actual_conns = get_actual_connections()
 
-    check_connections(expected_conns)
+    pdtest.assert_frame_equal(actual_conns, expected_conns)

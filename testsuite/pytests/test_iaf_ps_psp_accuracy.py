@@ -23,20 +23,20 @@
 test_iaf_ps_psp_accuracy.sli checks the voltage response of the precise versions of the iaf_psc_alpha
 model neurons to a single incoming spike. The voltage excursion is
 called postsynaptic potential (PSP). In the model neurons
-the postsynaptic current is described by an alpha-function 
-(see [1] and references therein). The resulting PSP has a finite 
-rise-time, with voltage and current beeing zero in the initial 
+the postsynaptic current is described by an alpha-function
+(see [1] and references therein). The resulting PSP has a finite
+rise-time, with voltage and current beeing zero in the initial
 condition (see [1]).
 
 The dynamics is tested by connecting a device that emits spikes
-at individually configurable times (see test_spike_generator) to 
-a model neuron. 
+at individually configurable times (see test_spike_generator) to
+a model neuron.
 
 The weight of the connection specifies the peak value (amplitude)
 of the postsynaptic current (PSC) in pA.
 
 The subthreshold dynamics of the model neurons is integrated exactly.
-Therefore, it is suitable to check whether the simulation kernel 
+Therefore, it is suitable to check whether the simulation kernel
 produces results independent of the computation step size
 (resolution).
 
@@ -44,7 +44,7 @@ In order to obtain identical results for different computation
 step sizes h, the SLI script needs to be independent of h.
 This is achieved by specifying all time parameters in milliseconds
 (ms). In particular the time of spike emission and the synaptic
-delay need to be integer multiples of the computation step sizes 
+delay need to be integer multiples of the computation step sizes
 to be tested. test_iaf_dc_aligned_delay demonstrates the strategy
 for the case of DC current input.
 
@@ -59,33 +59,40 @@ SeeAlso: testsuite::test_iaf_psp, testsuite::test_iaf_ps_dc_accuracy
 
 import nest
 import pytest
+import math
 from math import exp
 
+tau_syn = 0.3
+tau_m = 10.
+C_m = 250.
 
 neuron_params = {"E_L": 0.,
                  "V_m": 0.,
                  "V_th": 15.,
                  "I_e": 0.,
-                 "tau_m": 10.,
-                 "tau_syn_ex": 0.3,
-                 "tau_syn_in": 0.3,
-                 "C_m": 250.}
-
+                 "tau_m": tau_m,
+                 "tau_syn_ex": tau_syn,
+                 "tau_syn_in": tau_syn,
+                 "C_m": C_m}
 
 T = 6.
 spike_emission = [2.]
 delay = 1.
 weight = 500.
 
-analytical_u = weight * 
+# Compute analytical solution
+t = T - delay - spike_emission[0]
+prefactor = analytical_u = weight * math.e / (tau_syn * C_m)
+t1 = (exp(-t / tau_m) - exp(-t / tau_syn)) / (1 / tau_syn - 1 / tau_m)**2
+t2 = t * exp(-t / tau_syn) / (1 / tau_syn - 1 / tau_m)
+analytical_u = prefactor * (t1 - t2)
 
 
-
-
-
-def aligned_impact(h):
+@pytest.mark.parametrize("h", [(i) for i in range(-12, 1, 2)])
+def test_correctness_different_stepsizes(h):
     nest.ResetKernel()
-    nest.set(tics_per_ms=2**(-12), resolution=h)
+    print(h)
+    nest.set(tics_per_ms=2**14, resolution=2**h)
 
     sg = nest.Create("spike_generator")
     sg.set(precise_times=False,
@@ -95,35 +102,11 @@ def aligned_impact(h):
            stop=5.
            )
 
+    neuron = nest.Create("iaf_psc_alpha_ps")
+    neuron.set(neuron_params)
 
-
-
-    model = nest.Create("iaf_psc_alpha_ps")
-    model.set(*p)
-    
     nest.Connect(sg, neuron, syn_spec={"weight": weight, "delay": delay})
 
     nest.Simulate(T)
     u = neuron.get("V_m")
-    assert abs(analytical_u - u) < 1e-12    
-
-h_list = range(-12, 1)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    assert abs(analytical_u - u) < 1e-12

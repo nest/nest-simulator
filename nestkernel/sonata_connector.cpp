@@ -449,7 +449,7 @@ SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t off
       {
 
         const auto sonata_tgt_id = tgt_node_id_data_subset[ i ];
-        const index tnode_id = ( *( tnode_begin + sonata_tgt_id ) ).node_id;
+        const size_t tnode_id = ( *( tnode_begin + sonata_tgt_id ) ).node_id;
 
         if ( not kernel().vp_manager.is_node_id_vp_local( tnode_id ) )
         {
@@ -457,10 +457,10 @@ SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t off
         }
 
         const auto sonata_src_id = src_node_id_data_subset[ i ];
-        const index snode_id = ( *( snode_begin + sonata_src_id ) ).node_id;
+        const size_t snode_id = ( *( snode_begin + sonata_src_id ) ).node_id;
 
         Node* target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-        const thread target_thread = target->get_thread();
+        const size_t target_thread = target->get_thread();
 
         const auto edge_type_id = edge_type_id_data_subset[ i ];
         const auto syn_spec = getValue< DictionaryDatum >( cur_edge_params_->lookup( std::to_string( edge_type_id ) ) );
@@ -490,7 +490,7 @@ SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t off
   } // end parallel region
 
   // Check if any exceptions have been raised
-  for ( thread thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+  for ( size_t thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
   {
     if ( exceptions_raised_.at( thr ).get() )
     {
@@ -572,7 +572,7 @@ SonataConnector::create_edge_type_id_2_syn_spec_( DictionaryDatum edge_params )
     const auto syn_name = getValue< std::string >( ( *d )[ "synapse_model" ] );
 
     // The following call will throw "UnknownSynapseType" if syn_name is not naming a known model
-    const index synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
+    const size_t synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
 
     set_synapse_params_( d, synapse_model_id, type_id );
     edge_type_id_2_syn_model_[ type_id ] = synapse_model_id;
@@ -580,7 +580,7 @@ SonataConnector::create_edge_type_id_2_syn_spec_( DictionaryDatum edge_params )
 }
 
 void
-SonataConnector::set_synapse_params_( DictionaryDatum syn_dict, index synapse_model_id, int type_id )
+SonataConnector::set_synapse_params_( DictionaryDatum syn_dict, size_t synapse_model_id, int type_id )
 {
   DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
   ConnParameterMap synapse_params;
@@ -611,7 +611,7 @@ SonataConnector::set_synapse_params_( DictionaryDatum syn_dict, index synapse_mo
   // region. Currently, creation of NumericDatum objects is not thread-safe because sli::pool memory is a static
   // member variable; thus is also the new operator a static member function.
   // Note that this also applies to the equivalent loop in conn_builder.cpp
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
     edge_type_id_2_param_dicts_[ type_id ][ tid ] = new Dictionary;
 
@@ -630,7 +630,11 @@ SonataConnector::set_synapse_params_( DictionaryDatum syn_dict, index synapse_mo
 }
 
 void
-SonataConnector::get_synapse_params_( index snode_id, Node& target, thread target_thread, RngPtr rng, int edge_type_id )
+SonataConnector::get_synapse_params_( size_t snode_id,
+  Node& target,
+  size_t target_thread,
+  RngPtr rng,
+  int edge_type_id )
 {
   for ( auto const& syn_param : edge_type_id_2_syn_spec_.at( edge_type_id ) )
   {

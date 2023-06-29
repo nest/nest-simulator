@@ -29,6 +29,7 @@
 
 // Includes from libnestutil:
 #include "dict_util.h"
+#include "iaf_propagator.h"
 
 // Includes from sli:
 #include "dict.h"
@@ -36,7 +37,6 @@
 
 #include "compose.hpp"
 #include "numerics.h"
-#include "propagator_stability.h"
 
 namespace nest
 {
@@ -132,7 +132,6 @@ nest::gif_psc_exp::Parameters_::get( DictionaryDatum& d ) const
 void
 nest::gif_psc_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-
   updateValueParam< double >( d, names::I_e, I_e_, node );
   updateValueParam< double >( d, names::E_L, E_L_, node );
   updateValueParam< double >( d, names::g_L, g_L_, node );
@@ -287,8 +286,8 @@ nest::gif_psc_exp::pre_run_hook()
   const double tau_m = P_.c_m_ / P_.g_L_;
 
   // these are determined according to a numeric stability criterion
-  V_.P21ex_ = propagator_32( P_.tau_ex_, tau_m, P_.c_m_, h );
-  V_.P21in_ = propagator_32( P_.tau_in_, tau_m, P_.c_m_, h );
+  V_.P21ex_ = IAFPropagatorExp( P_.tau_ex_, tau_m, P_.c_m_ ).evaluate( h );
+  V_.P21in_ = IAFPropagatorExp( P_.tau_in_, tau_m, P_.c_m_ ).evaluate( h );
 
   V_.P33_ = std::exp( -h / tau_m );
   V_.P30_ = -1 / P_.c_m_ * numerics::expm1( -h / tau_m ) * tau_m;
@@ -320,10 +319,6 @@ nest::gif_psc_exp::pre_run_hook()
 void
 nest::gif_psc_exp::update( Time const& origin, const long from, const long to )
 {
-
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
 

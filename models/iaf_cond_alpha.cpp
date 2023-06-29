@@ -57,7 +57,7 @@ template <>
 void
 RecordablesMap< iaf_cond_alpha >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &iaf_cond_alpha::get_y_elem_< iaf_cond_alpha::State_::V_M > );
   insert_( names::g_ex, &iaf_cond_alpha::get_y_elem_< iaf_cond_alpha::State_::G_EXC > );
   insert_( names::g_in, &iaf_cond_alpha::get_y_elem_< iaf_cond_alpha::State_::G_INH > );
@@ -369,10 +369,6 @@ nest::iaf_cond_alpha::pre_run_hook()
 void
 nest::iaf_cond_alpha::update( Time const& origin, const long from, const long to )
 {
-
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
 

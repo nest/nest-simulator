@@ -59,6 +59,7 @@ set( with-libneurosim OFF CACHE STRING "Build with libneurosim [default=OFF]. Op
 set( with-music OFF CACHE STRING "Build with MUSIC [default=OFF]. Optionally give the directory where MUSIC is installed." )
 set( with-sionlib OFF CACHE STRING "Build with SIONlib [default=OFF]. Optionally give the directory where sionlib is installed." )
 set( with-boost ON CACHE STRING "Build with Boost [default=ON]. To set a specific Boost installation, give the install path." )
+set( with-hdf5 OFF CACHE STRING "Find a HDF5 library. To set a specific HDF5 installation, set install path. [default=ON]" )
 set( with-readline ON CACHE STRING "Build with GNU Readline library [default=ON]. To set a specific library, give the install path." )
 set( with-ltdl ON CACHE STRING "Build with ltdl library [default=ON]. To set a specific ltdl, give the  install path. NEST uses ltdl for dynamic loading of external user modules." )
 set( with-gsl ON CACHE STRING "Build with the GSL library [default=ON]. To set a specific library, give the install path." )
@@ -80,7 +81,10 @@ set( with-intel-compiler-flags OFF CACHE STRING "User defined flags for the Inte
 set( with-libraries OFF CACHE STRING "Link additional libraries [default=OFF]. Give full path. Separate multiple libraries by ';'." )
 set( with-includes OFF CACHE STRING "Add additional include paths [default=OFF]. Give full path without '-I'. Separate multiple include paths by ';'." )
 set( with-defines OFF CACHE STRING "Additional defines, e.g. '-DXYZ=1' [default=OFF]. Separate multiple defines by ';'." )
-set( with-version-suffix "" CACHE STRING "Set a user defined version suffix [default='']." )
+
+# documentation build configuration
+set( with-userdoc OFF CACHE STRING "Build user documentation [default=OFF]")
+set( with-devdoc OFF CACHE STRING "Build developer documentation [default=OFF]")
 
 ################################################################################
 ##################      Project Directory variables           ##################
@@ -96,8 +100,6 @@ set( CMAKE_INSTALL_DATADIR "share/${PROJECT_NAME}" CACHE STRING "Relative direct
 ##################           Find utility programs            ##################
 ################################################################################
 
-# needed for target doc and fulldoc
-find_package( Doxygen )
 find_program( SED NAMES sed gsed )
 
 ################################################################################
@@ -126,8 +128,6 @@ get_target_triple( NEST_TARGET_TRIPLE NEST_TARGET_ARCH NEST_TARGET_VENDOR NEST_T
 nest_process_with_python()
 include( GNUInstallDirs )
 nest_post_process_with_python()
-nest_process_with_optimize()
-nest_process_with_debug()
 nest_process_with_std()
 nest_process_with_intel_compiler_flags()
 nest_process_with_warning()
@@ -149,8 +149,16 @@ nest_process_with_music()
 nest_process_with_sionlib()
 nest_process_with_mpi4py()
 nest_process_with_boost()
+nest_process_with_hdf5()
 nest_process_target_bits_split()
-nest_process_version_suffix()
+nest_process_userdoc()
+nest_process_devdoc()
+
+# These two function calls must come last, as to prevent unwanted interactions of the newly set flags
+# with detection/compilation operations carried out in earlier functions. The optimize/debug flags set
+# using these functions should only apply to the compilation of NEST.
+nest_process_with_optimize()
+nest_process_with_debug()
 
 nest_get_color_flags()
 set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${NEST_C_COLOR_FLAGS}" )
@@ -175,17 +183,10 @@ nest_check_have_std_nan()
 nest_check_have_std_isnan()
 nest_check_random123()
 
-################################################################################
-##################           Create version string            ##################
-################################################################################
-
 include( NestVersionInfo )
 get_version_info()
-printInfo("-- NEST version: ${NEST_VERSION_STRING}")
+printInfo("Done configuring NEST version: ${NEST_VERSION}")
 
-################################################################################
-##################         Enable Testing Targets             ##################
-################################################################################
 enable_testing()
 set( TEST_OPTS "" )
 
@@ -201,7 +202,6 @@ add_custom_target( installcheck
   COMMAND ${CMAKE_COMMAND} -E env
     ${CMAKE_INSTALL_FULL_DATADIR}/testsuite/do_tests.sh
 	--prefix=${CMAKE_INSTALL_PREFIX}
-	--report-dir="${PROJECT_BINARY_DIR}/reports"
 	${TEST_OPTS}
   WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
   COMMENT "Executing NEST's testsuite..."
@@ -273,9 +273,8 @@ endforeach ()
 
 # libraries required to link extension modules
 set( MODULE_LINK_LIBS
-  "-lnestutil"
+  "-lnest"
   "-lsli"
-  "-lnestkernel"
   "${OpenMP_CXX_FLAGS}"
   "${LTDL_LIBRARIES}"
   "${READLINE_LIBRARIES}"
@@ -340,11 +339,6 @@ configure_file(
 )
 
 configure_file(
-    "${PROJECT_SOURCE_DIR}/doc/normaldoc.conf.in"
-    "${PROJECT_BINARY_DIR}/doc/normaldoc.conf" @ONLY
-)
-
-configure_file(
     "${PROJECT_SOURCE_DIR}/doc/fulldoc.conf.in"
     "${PROJECT_BINARY_DIR}/doc/fulldoc.conf" @ONLY
 )
@@ -362,9 +356,5 @@ configure_file(
 install( FILES LICENSE README.md
     DESTINATION ${CMAKE_INSTALL_DOCDIR}
     )
-
-add_custom_target( install-nodoc
-  COMMAND $(MAKE) NEST_INSTALL_NODOC=true install
-)
 
 nest_print_config_summary()

@@ -51,7 +51,7 @@ public:
 protected:
   void connect_();
   void cg_set_masks();
-  index cg_get_right_border( index left, size_t step, const NodeCollectionPTR nodes );
+  size_t cg_get_right_border( size_t left, size_t step, const NodeCollectionPTR nodes );
   void cg_get_ranges( RangeSet& ranges, const NodeCollectionPTR nodes );
 
 private:

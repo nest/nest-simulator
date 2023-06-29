@@ -20,9 +20,10 @@
     --nest-green: #36B34F;
     --sd-color-primary: var(--nest-orange);
     --sd-color-primary-highlight: #e05a2d;
+    --sd-color-muted: #adadad;
     --sd-color-info: var(--nest-blue);
     --sd-color-success: var(--nest-green);
-    --sd-color-card-border-hover: var(--nest-blue);
+    --sd-color-card-border-hover: var(--nest-orange);
 }
 /* Define base font color and style */
 body{
@@ -76,6 +77,15 @@ section#kernel-attributes dl.py.class dd dl.py.attribute dd dl.field-list.simple
   display: none;
 }
 
+.sphx-glr-download-link-note {
+
+ display: none;
+}
+
+.sphx-glr-download-jupyter {
+  display: none;
+}
+
 /**************************************************************************************
  Settings for overriding material design theme 
  Setting nest colors to override sphinx material "orange" and other default colors
@@ -91,10 +101,35 @@ section#kernel-attributes dl.py.class dd dl.py.attribute dd dl.field-list.simple
 .md-typeset h6 {
    font-weight: 600;
 }
+.md-typeset h1[id]:before,
+.md-typeset h2[id]:before, 
+.md-typeset h3[id]:before,
+.md-typeset h4[id]:before {
+   margin-top: -3.4rem;
+  padding-top: 3.4rem;
+}
 
 [data-md-color-primary=orange] .md-tabs {
   background-color: var(--nest-orange);
  }
+
+/* To add matching styling for the header in index.html */
+div[role="main"] .md-header {
+  background-color: var(--nest-orange);
+  scale: 140%;
+  padding-top: 0.3rem;
+  height: 2.6rem;
+	transition: background-color .25s,color .25s,box-shadow .25s;
+	box-shadow: 0 0 .2rem rgba(0,0,0,.1),0 .2rem .4rem rgba(0,0,0,.2);
+}
+
+div[role="main"] .md-source {
+    display: none;
+}
+
+.md-typeset blockquote {
+	border-left: none;
+}
 
 [data-md-color-primary="orange"] .md-header, [data-md-color-primary="orange"] .md-hero {
   background-color: var(--nest-orange);
@@ -130,7 +165,6 @@ div.sd-card-title.sd-font-weight-bold.sd-d-flex-row.docutils a.reference.interna
 }
 
 .md-typeset .admonition {
-  background-color: var(--nest-blue);
   border-left: .2rem solid var(--nest-blue);
   border-radius: 5px;
 }
@@ -588,13 +622,13 @@ MEDIAQUERIES
  {
   background-image: linear-gradient(to bottom, rgba(255, 102, 51, 0.63), rgba(255, 102, 51, 0.1), rgba(255, 102, 51, 0.73)), url('../img/background-particles-flattened.png');
   background-color: #ff6633;
-  height: 350px;
+  height: 240px;
  }
 
 header{
   background-color: var(--nest-orange);
   padding:15px 0;
-  height: 350px;
+  height: 240px;
  }
 .tsparticles-canvas-el {
     margin-top: -275px;
@@ -607,13 +641,13 @@ header{
  {
   background-image: linear-gradient(to bottom, rgba(255, 102, 51, 0.63), rgba(255, 102, 51, 0.1), rgba(255, 102, 51, 0.73)), url('../img/background-particles-flattened.png');
   background-color: #ff6633;
-  height: 250px;
+  height: 210px;
 
  }
 header{
   background-color: var(--nest-orange);
   padding:0 0;
-  height: 250px;
+  height: 210px;
 }
  #banner{
    padding-top: 50px;
@@ -680,11 +714,6 @@ margin: 0;
 .flex-control-nav {bottom: 5px;}
 
 
-aside {
-	float:right;
-	width:30%;
-}
-
 /*** MAIN MENU - ESSENTIAL STYLES ***/
 .menu-toggle{display:none;}
 #menu-main-navigation{display:block;}
@@ -750,7 +779,7 @@ ul.srt-menu li li li.sfHover ul {
 /*** DEMO2 SKIN ***/
 #topnav, .srt-menu {
 	float:right;
-	margin: 125px 100px 0 0;
+	margin: 85px 100px 0 0;
 }
 .srt-menu a {
 	text-decoration:none;
@@ -801,7 +830,7 @@ ul.srt-menu li li li.sfHover ul {
 
 .grid_1 { width: 8.33333333%; }
 .grid_2 { width: 16.66666667%; }
-.grid_3 { width: 25%; }
+.grid_3 { width: 70%; }
 .grid_4 { width: 33.33333333%; }
 .grid_5 { width: 41.66666667%; }
 .grid_6 { width: 50%; }

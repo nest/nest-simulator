@@ -297,7 +297,7 @@ nest::sinusoidal_gamma_generator::pre_run_hook()
 }
 
 double
-nest::sinusoidal_gamma_generator::hazard_( port tgt_idx ) const
+nest::sinusoidal_gamma_generator::hazard_( size_t tgt_idx ) const
 {
   // Note: We compute Lambda for the entire interval since the last spike/
   //       parameter change each time for better accuracy.
@@ -309,9 +309,6 @@ nest::sinusoidal_gamma_generator::hazard_( port tgt_idx ) const
 void
 nest::sinusoidal_gamma_generator::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
     const Time t = Time( Time::step( origin.get_steps() + lag + 1 ) );
@@ -347,8 +344,8 @@ void
 nest::sinusoidal_gamma_generator::event_hook( DSSpikeEvent& e )
 {
   // get port number --- see #737
-  const port tgt_idx = e.get_port();
-  assert( 0 <= tgt_idx and static_cast< size_t >( tgt_idx ) < B_.t0_ms_.size() );
+  const size_t tgt_idx = e.get_port();
+  assert( tgt_idx < B_.t0_ms_.size() );
 
   if ( V_.rng_->drand() < hazard_( tgt_idx ) )
   {

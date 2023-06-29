@@ -475,10 +475,6 @@ nest::gif_cond_exp_multisynapse::pre_run_hook()
 void
 nest::gif_cond_exp_multisynapse::update( Time const& origin, const long from, const long to )
 {
-
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
 
@@ -587,8 +583,8 @@ nest::gif_cond_exp_multisynapse::handle( SpikeEvent& e )
   if ( e.get_weight() < 0 )
   {
     throw BadProperty(
-      "Synaptic weights for conductance based models "
-      "must be positive." );
+      "Synaptic weights for conductance-based multisynapse models "
+      "must be non-negative." );
   }
   assert( e.get_delay_steps() > 0 );
   assert( ( e.get_rport() > 0 ) and ( ( size_t ) e.get_rport() <= P_.n_receptors() ) );

@@ -156,7 +156,7 @@ nest::ConnBuilder::~ConnBuilder()
  * @return
  */
 bool
-nest::ConnBuilder::change_connected_synaptic_elements( index snode_id, index tnode_id, const thread tid, int update )
+nest::ConnBuilder::change_connected_synaptic_elements( size_t snode_id, size_t tnode_id, const size_t tid, int update )
 {
 
   int local = true;
@@ -164,7 +164,7 @@ nest::ConnBuilder::change_connected_synaptic_elements( index snode_id, index tno
   if ( kernel().node_manager.is_local_node_id( snode_id ) )
   {
     Node* const source = kernel().node_manager.get_node_or_proxy( snode_id, tid );
-    const thread source_thread = source->get_thread();
+    const size_t source_thread = source->get_thread();
 
     // check whether the source is on our thread
     if ( tid == source_thread )
@@ -182,7 +182,7 @@ nest::ConnBuilder::change_connected_synaptic_elements( index snode_id, index tno
   else
   {
     Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-    const thread target_thread = target->get_thread();
+    const size_t target_thread = target->get_thread();
     // check whether the target is on our thread
     if ( tid != target_thread )
     {
@@ -205,9 +205,12 @@ nest::ConnBuilder::connect()
 {
   // We test here, and not in the ConnBuilder constructor, so the derived
   // classes are fully constructed when the test is executed
-  for ( auto syn_model : synapse_model_id_ )
+  for ( auto synapse_model_id : synapse_model_id_ )
   {
-    if ( kernel().model_manager.connector_requires_symmetric( syn_model ) and not( is_symmetric() or make_symmetric_ ) )
+    const ConnectorModel& synapse_model = kernel().model_manager.get_connection_model( synapse_model_id );
+    const bool requires_symmetric = synapse_model.has_property( ConnectionModelProperties::REQUIRES_SYMMETRIC );
+
+    if ( requires_symmetric and not( is_symmetric() or make_symmetric_ ) )
     {
       throw BadProperty(
         "Connections with this synapse model can only be created as "
@@ -253,7 +256,7 @@ nest::ConnBuilder::connect()
     }
   }
   // check if any exceptions have been raised
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
     if ( exceptions_raised_.at( tid ).get() )
     {
@@ -278,7 +281,7 @@ nest::ConnBuilder::disconnect()
   }
 
   // check if any exceptions have been raised
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
     if ( exceptions_raised_.at( tid ).get() )
     {
@@ -288,13 +291,13 @@ nest::ConnBuilder::disconnect()
 }
 
 void
-nest::ConnBuilder::update_param_dict_( index snode_id,
+nest::ConnBuilder::update_param_dict_( size_t snode_id,
   Node& target,
-  thread target_thread,
+  size_t target_thread,
   RngPtr rng,
-  index synapse_indx )
+  size_t synapse_indx )
 {
-  assert( kernel().vp_manager.get_num_threads() == static_cast< thread >( param_dicts_[ synapse_indx ].size() ) );
+  assert( kernel().vp_manager.get_num_threads() == static_cast< size_t >( param_dicts_[ synapse_indx ].size() ) );
 
   for ( auto synapse_parameter : synapse_params_[ synapse_indx ] )
   {
@@ -316,7 +319,7 @@ nest::ConnBuilder::update_param_dict_( index snode_id,
 }
 
 void
-nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_thread, RngPtr rng )
+nest::ConnBuilder::single_connect_( size_t snode_id, Node& target, size_t target_thread, RngPtr rng )
 {
   if ( this->requires_proxies() and not target.has_proxies() )
   {
@@ -442,7 +445,7 @@ nest::ConnBuilder::set_synapse_model_( DictionaryDatum syn_params, size_t synaps
   const std::string syn_name = ( *syn_params )[ names::synapse_model ];
 
   // The following call will throw "UnknownSynapseType" if syn_name is not naming a known model
-  const index synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
+  const size_t synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
   synapse_model_id_[ synapse_indx ] = synapse_model_id;
 
   // We need to make sure that Connect can process all synapse parameters specified.
@@ -507,7 +510,7 @@ nest::ConnBuilder::set_synapse_params( DictionaryDatum syn_defaults, DictionaryD
 
   // Now create dictionary with dummy values that we will use to pass settings to the synapses created. We
   // create it here once to avoid re-creating the object over and over again.
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
     param_dicts_[ synapse_indx ].push_back( new Dictionary() );
 
@@ -608,7 +611,7 @@ nest::OneToOneBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -625,8 +628,8 @@ nest::OneToOneBuilder::connect_()
         {
           assert( source_it < sources_->end() );
 
-          const index snode_id = ( *source_it ).node_id;
-          const index tnode_id = ( *target_it ).node_id;
+          const size_t snode_id = ( *source_it ).node_id;
+          const size_t tnode_id = ( *target_it ).node_id;
 
           if ( snode_id == tnode_id and not allow_autapses_ )
           {
@@ -652,7 +655,7 @@ nest::OneToOneBuilder::connect_()
         {
           Node* target = n->get_node();
 
-          const index tnode_id = n->get_node_id();
+          const size_t tnode_id = n->get_node_id();
           const int idx = targets_->find( tnode_id );
           if ( idx < 0 ) // Is local node in target list?
           {
@@ -660,7 +663,7 @@ nest::OneToOneBuilder::connect_()
           }
 
           // one-to-one, thus we can use target idx for source as well
-          const index snode_id = ( *sources_ )[ idx ];
+          const size_t snode_id = ( *sources_ )[ idx ];
           if ( not allow_autapses_ and snode_id == tnode_id )
           {
             // no skipping required / possible,
@@ -692,7 +695,7 @@ nest::OneToOneBuilder::disconnect_()
 #pragma omp parallel
   {
     // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -702,8 +705,8 @@ nest::OneToOneBuilder::disconnect_()
       {
         assert( source_it < sources_->end() );
 
-        const index tnode_id = ( *target_it ).node_id;
-        const index snode_id = ( *source_it ).node_id;
+        const size_t tnode_id = ( *target_it ).node_id;
+        const size_t snode_id = ( *source_it ).node_id;
 
         // check whether the target is on this mpi machine
         if ( not kernel().node_manager.is_local_node_id( tnode_id ) )
@@ -713,7 +716,7 @@ nest::OneToOneBuilder::disconnect_()
         }
 
         Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-        const thread target_thread = target->get_thread();
+        const size_t target_thread = target->get_thread();
 
         // check whether the target is a proxy
         if ( target->is_proxy() )
@@ -746,7 +749,7 @@ nest::OneToOneBuilder::sp_connect_()
 #pragma omp parallel
   {
     // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -758,8 +761,8 @@ nest::OneToOneBuilder::sp_connect_()
       {
         assert( source_it < sources_->end() );
 
-        const index snode_id = ( *source_it ).node_id;
-        const index tnode_id = ( *target_it ).node_id;
+        const size_t snode_id = ( *source_it ).node_id;
+        const size_t tnode_id = ( *target_it ).node_id;
 
         if ( snode_id == tnode_id and not allow_autapses_ )
         {
@@ -772,7 +775,7 @@ nest::OneToOneBuilder::sp_connect_()
           continue;
         }
         Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-        const thread target_thread = target->get_thread();
+        const size_t target_thread = target->get_thread();
 
         single_connect_( snode_id, *target, target_thread, rng );
       }
@@ -799,7 +802,7 @@ nest::OneToOneBuilder::sp_disconnect_()
 #pragma omp parallel
   {
     // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -809,8 +812,8 @@ nest::OneToOneBuilder::sp_disconnect_()
       {
         assert( source_it < sources_->end() );
 
-        const index snode_id = ( *source_it ).node_id;
-        const index tnode_id = ( *target_it ).node_id;
+        const size_t snode_id = ( *source_it ).node_id;
+        const size_t tnode_id = ( *target_it ).node_id;
 
         if ( not change_connected_synaptic_elements( snode_id, tnode_id, tid, -1 ) )
         {
@@ -818,7 +821,7 @@ nest::OneToOneBuilder::sp_disconnect_()
         }
 
         Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-        const thread target_thread = target->get_thread();
+        const size_t target_thread = target->get_thread();
 
         single_disconnect_( snode_id, *target, target_thread );
       }
@@ -839,7 +842,7 @@ nest::AllToAllBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -850,7 +853,7 @@ nest::AllToAllBuilder::connect_()
         NodeCollection::const_iterator target_it = targets_->begin();
         for ( ; target_it < targets_->end(); ++target_it )
         {
-          const index tnode_id = ( *target_it ).node_id;
+          const size_t tnode_id = ( *target_it ).node_id;
           Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
           if ( target->is_proxy() )
           {
@@ -867,7 +870,7 @@ nest::AllToAllBuilder::connect_()
         SparseNodeArray::const_iterator n;
         for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
         {
-          const index tnode_id = n->get_node_id();
+          const size_t tnode_id = n->get_node_id();
 
           // Is the local node in the targets list?
           if ( targets_->find( tnode_id ) < 0 )
@@ -889,12 +892,12 @@ nest::AllToAllBuilder::connect_()
 }
 
 void
-nest::AllToAllBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, index tnode_id, bool skip )
+nest::AllToAllBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, size_t tnode_id, bool skip )
 {
-  const thread target_thread = target->get_thread();
+  const size_t target_thread = target->get_thread();
 
   // check whether the target is on our thread
-  if ( tid != target_thread )
+  if ( static_cast< size_t >( tid ) != target_thread )
   {
     if ( skip )
     {
@@ -906,7 +909,7 @@ nest::AllToAllBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, 
   NodeCollection::const_iterator source_it = sources_->begin();
   for ( ; source_it < sources_->end(); ++source_it )
   {
-    const index snode_id = ( *source_it ).node_id;
+    const size_t snode_id = ( *source_it ).node_id;
 
     if ( not allow_autapses_ and snode_id == tnode_id )
     {
@@ -933,7 +936,7 @@ nest::AllToAllBuilder::sp_connect_()
 #pragma omp parallel
   {
     // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
     try
     {
       RngPtr rng = get_vp_specific_rng( tid );
@@ -941,12 +944,12 @@ nest::AllToAllBuilder::sp_connect_()
       NodeCollection::const_iterator target_it = targets_->begin();
       for ( ; target_it < targets_->end(); ++target_it )
       {
-        const index tnode_id = ( *target_it ).node_id;
+        const size_t tnode_id = ( *target_it ).node_id;
 
         NodeCollection::const_iterator source_it = sources_->begin();
         for ( ; source_it < sources_->end(); ++source_it )
         {
-          const index snode_id = ( *source_it ).node_id;
+          const size_t snode_id = ( *source_it ).node_id;
 
           if ( not allow_autapses_ and snode_id == tnode_id )
           {
@@ -959,7 +962,7 @@ nest::AllToAllBuilder::sp_connect_()
             continue;
           }
           Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-          const thread target_thread = target->get_thread();
+          const size_t target_thread = target->get_thread();
           single_connect_( snode_id, *target, target_thread, rng );
         }
       }
@@ -985,14 +988,14 @@ nest::AllToAllBuilder::disconnect_()
 #pragma omp parallel
   {
     // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
     try
     {
       NodeCollection::const_iterator target_it = targets_->begin();
       for ( ; target_it < targets_->end(); ++target_it )
       {
-        const index tnode_id = ( *target_it ).node_id;
+        const size_t tnode_id = ( *target_it ).node_id;
 
         // check whether the target is on this mpi machine
         if ( not kernel().node_manager.is_local_node_id( tnode_id ) )
@@ -1002,7 +1005,7 @@ nest::AllToAllBuilder::disconnect_()
         }
 
         Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-        const thread target_thread = target->get_thread();
+        const size_t target_thread = target->get_thread();
 
         // check whether the target is a proxy
         if ( target->is_proxy() )
@@ -1014,7 +1017,7 @@ nest::AllToAllBuilder::disconnect_()
         NodeCollection::const_iterator source_it = sources_->begin();
         for ( ; source_it < sources_->end(); ++source_it )
         {
-          const index snode_id = ( *source_it ).node_id;
+          const size_t snode_id = ( *source_it ).node_id;
           single_disconnect_( snode_id, *target, target_thread );
         }
       }
@@ -1040,19 +1043,19 @@ nest::AllToAllBuilder::sp_disconnect_()
 #pragma omp parallel
   {
     // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
     try
     {
       NodeCollection::const_iterator target_it = targets_->begin();
       for ( ; target_it < targets_->end(); ++target_it )
       {
-        const index tnode_id = ( *target_it ).node_id;
+        const size_t tnode_id = ( *target_it ).node_id;
 
         NodeCollection::const_iterator source_it = sources_->begin();
         for ( ; source_it < sources_->end(); ++source_it )
         {
-          const index snode_id = ( *source_it ).node_id;
+          const size_t snode_id = ( *source_it ).node_id;
 
           if ( not change_connected_synaptic_elements( snode_id, tnode_id, tid, -1 ) )
           {
@@ -1060,7 +1063,7 @@ nest::AllToAllBuilder::sp_disconnect_()
             continue;
           }
           Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-          const thread target_thread = target->get_thread();
+          const size_t target_thread = target->get_thread();
           single_disconnect_( snode_id, *target, target_thread );
         }
       }
@@ -1136,7 +1139,7 @@ nest::FixedInDegreeBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -1147,7 +1150,7 @@ nest::FixedInDegreeBuilder::connect_()
         NodeCollection::const_iterator target_it = targets_->begin();
         for ( ; target_it < targets_->end(); ++target_it )
         {
-          const index tnode_id = ( *target_it ).node_id;
+          const size_t tnode_id = ( *target_it ).node_id;
           Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
 
           const long indegree_value = std::round( indegree_->value( rng, target ) );
@@ -1167,7 +1170,7 @@ nest::FixedInDegreeBuilder::connect_()
         SparseNodeArray::const_iterator n;
         for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
         {
-          const index tnode_id = n->get_node_id();
+          const size_t tnode_id = n->get_node_id();
 
           // Is the local node in the targets list?
           if ( targets_->find( tnode_id ) < 0 )
@@ -1194,14 +1197,14 @@ void
 nest::FixedInDegreeBuilder::inner_connect_( const int tid,
   RngPtr rng,
   Node* target,
-  index tnode_id,
+  size_t tnode_id,
   bool skip,
   long indegree_value )
 {
-  const thread target_thread = target->get_thread();
+  const size_t target_thread = target->get_thread();
 
   // check whether the target is on our thread
-  if ( tid != target_thread )
+  if ( static_cast< size_t >( tid ) != target_thread )
   {
     // skip array parameters handled in other virtual processes
     if ( skip )
@@ -1217,7 +1220,7 @@ nest::FixedInDegreeBuilder::inner_connect_( const int tid,
   for ( long j = 0; j < indegree_value; ++j )
   {
     unsigned long s_id;
-    index snode_id;
+    size_t snode_id;
     bool skip_autapse = false;
     bool skip_multapse = false;
 
@@ -1304,10 +1307,10 @@ nest::FixedOutDegreeBuilder::connect_()
   NodeCollection::const_iterator source_it = sources_->begin();
   for ( ; source_it < sources_->end(); ++source_it )
   {
-    const index snode_id = ( *source_it ).node_id;
+    const size_t snode_id = ( *source_it ).node_id;
 
     std::set< long > ch_ids;
-    std::vector< index > tgt_ids_;
+    std::vector< size_t > tgt_ids_;
     const long n_rnd = targets_->size();
 
     Node* source_node = kernel().node_manager.get_node_or_proxy( snode_id );
@@ -1315,7 +1318,7 @@ nest::FixedOutDegreeBuilder::connect_()
     for ( long j = 0; j < outdegree_value; ++j )
     {
       unsigned long t_id;
-      index tnode_id;
+      size_t tnode_id;
       bool skip_autapse = false;
       bool skip_multapse = false;
 
@@ -1338,13 +1341,13 @@ nest::FixedOutDegreeBuilder::connect_()
 #pragma omp parallel
     {
       // get thread id
-      const thread tid = kernel().vp_manager.get_thread_id();
+      const size_t tid = kernel().vp_manager.get_thread_id();
 
       try
       {
         RngPtr rng = get_vp_specific_rng( tid );
 
-        std::vector< index >::const_iterator tnode_id_it = tgt_ids_.begin();
+        std::vector< size_t >::const_iterator tnode_id_it = tgt_ids_.begin();
         for ( ; tnode_id_it != tgt_ids_.end(); ++tnode_id_it )
         {
           Node* const target = kernel().node_manager.get_node_or_proxy( *tnode_id_it, tid );
@@ -1415,7 +1418,7 @@ nest::FixedTotalNumberBuilder::connect_()
   // Compute the distribution of targets over processes using the modulo
   // function
   std::vector< size_t > number_of_targets_on_vp( M, 0 );
-  std::vector< index > local_targets;
+  std::vector< size_t > local_targets;
   local_targets.reserve( size_targets / kernel().mpi_manager.get_num_processes() );
   for ( size_t t = 0; t < targets_->size(); t++ )
   {
@@ -1477,7 +1480,7 @@ nest::FixedTotalNumberBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -1488,10 +1491,10 @@ nest::FixedTotalNumberBuilder::connect_()
         RngPtr rng = get_vp_specific_rng( tid );
 
         // gather local target node IDs
-        std::vector< index > thread_local_targets;
+        std::vector< size_t > thread_local_targets;
         thread_local_targets.reserve( number_of_targets_on_vp[ vp_id ] );
 
-        std::vector< index >::const_iterator tnode_id_it = local_targets.begin();
+        std::vector< size_t >::const_iterator tnode_id_it = local_targets.begin();
         for ( ; tnode_id_it != local_targets.end(); ++tnode_id_it )
         {
           if ( kernel().vp_manager.node_id_to_vp( *tnode_id_it ) == vp_id )
@@ -1518,7 +1521,7 @@ nest::FixedTotalNumberBuilder::connect_()
           const long tnode_id = thread_local_targets[ t_index ];
 
           Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-          const thread target_thread = target->get_thread();
+          const size_t target_thread = target->get_thread();
 
           if ( allow_autapses_ or snode_id != tnode_id )
           {
@@ -1569,7 +1572,7 @@ nest::BernoulliBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -1580,7 +1583,7 @@ nest::BernoulliBuilder::connect_()
         NodeCollection::const_iterator target_it = targets_->begin();
         for ( ; target_it < targets_->end(); ++target_it )
         {
-          const index tnode_id = ( *target_it ).node_id;
+          const size_t tnode_id = ( *target_it ).node_id;
           Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
           if ( target->is_proxy() )
           {
@@ -1599,7 +1602,7 @@ nest::BernoulliBuilder::connect_()
         SparseNodeArray::const_iterator n;
         for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
         {
-          const index tnode_id = n->get_node_id();
+          const size_t tnode_id = n->get_node_id();
 
           // Is the local node in the targets list?
           if ( targets_->find( tnode_id ) < 0 )
@@ -1621,12 +1624,12 @@ nest::BernoulliBuilder::connect_()
 }
 
 void
-nest::BernoulliBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, index tnode_id )
+nest::BernoulliBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, size_t tnode_id )
 {
-  const thread target_thread = target->get_thread();
+  const size_t target_thread = target->get_thread();
 
   // check whether the target is on our thread
-  if ( tid != target_thread )
+  if ( static_cast< size_t >( tid ) != target_thread )
   {
     return;
   }
@@ -1637,7 +1640,7 @@ nest::BernoulliBuilder::inner_connect_( const int tid, RngPtr rng, Node* target,
   NodeCollection::const_iterator source_it = sources_->begin();
   for ( ; source_it < sources_->end(); ++source_it )
   {
-    const index snode_id = ( *source_it ).node_id;
+    const size_t snode_id = ( *source_it ).node_id;
 
     if ( not allow_autapses_ and snode_id == tnode_id )
     {
@@ -1690,7 +1693,7 @@ nest::SymmetricBernoulliBuilder::connect_()
 {
 #pragma omp parallel
   {
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
     // Use RNG generating same number sequence on all threads
     RngPtr synced_rng = get_vp_synced_rng( tid );
@@ -1701,12 +1704,12 @@ nest::SymmetricBernoulliBuilder::connect_()
       binomial_distribution::param_type param( sources_->size(), p_ );
 
       unsigned long indegree;
-      index snode_id;
-      std::set< index > previous_snode_ids;
+      size_t snode_id;
+      std::set< size_t > previous_snode_ids;
       Node* target;
-      thread target_thread;
+      size_t target_thread;
       Node* source;
-      thread source_thread;
+      size_t source_thread;
 
       for ( NodeCollection::const_iterator tnode_id = targets_->begin(); tnode_id != targets_->end(); ++tnode_id )
       {
@@ -1803,7 +1806,7 @@ nest::SPBuilder::SPBuilder( NodeCollectionPTR sources,
 }
 
 void
-nest::SPBuilder::update_delay( delay& d ) const
+nest::SPBuilder::update_delay( long& d ) const
 {
   if ( get_default_delay() )
   {
@@ -1814,12 +1817,12 @@ nest::SPBuilder::update_delay( delay& d ) const
 }
 
 void
-nest::SPBuilder::sp_connect( const std::vector< index >& sources, const std::vector< index >& targets )
+nest::SPBuilder::sp_connect( const std::vector< size_t >& sources, const std::vector< size_t >& targets )
 {
   connect_( sources, targets );
 
   // check if any exceptions have been raised
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
     if ( exceptions_raised_.at( tid ).get() )
     {
@@ -1844,7 +1847,7 @@ nest::SPBuilder::connect_( NodeCollectionPTR, NodeCollectionPTR )
 }
 
 void
-nest::SPBuilder::connect_( const std::vector< index >& sources, const std::vector< index >& targets )
+nest::SPBuilder::connect_( const std::vector< size_t >& sources, const std::vector< size_t >& targets )
 {
   // Code copied and adapted from OneToOneBuilder::connect_()
   // make sure that target and source population have the same size
@@ -1856,14 +1859,14 @@ nest::SPBuilder::connect_( const std::vector< index >& sources, const std::vecto
 #pragma omp parallel
   {
     // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
     try
     {
       RngPtr rng = get_vp_specific_rng( tid );
 
-      std::vector< index >::const_iterator tnode_id_it = targets.begin();
-      std::vector< index >::const_iterator snode_id_it = sources.begin();
+      std::vector< size_t >::const_iterator tnode_id_it = targets.begin();
+      std::vector< size_t >::const_iterator snode_id_it = sources.begin();
       for ( ; tnode_id_it != targets.end(); ++tnode_id_it, ++snode_id_it )
       {
         assert( snode_id_it != sources.end() );

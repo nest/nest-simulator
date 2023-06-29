@@ -24,21 +24,19 @@ The current CI implementation is defined in `.github/workflows/nestbuildmatrix.y
 
 #. Static checks
 
-   This first stage checks the code without building or running it.
+   This first stages check the code without building or running it.
 
    - clang-format checks C++ code formatting (whitespace, etc.). Please note that a specific version of clang-format is used for consistency. The maximum line length is set to 120 characters.
 
-   - Vera++ and cppcheck are used for more detailed semantic (but still static) code analysis.
+   - cppcheck are used for more detailed semantic (but still static) code analysis.
 
-   - pycodestyle is used to statically check Python code. A few errors are intentionally ignored, defined in the variable ``PYCODESTYLE_IGNORES`` in `build_support/static_code_analysis.sh <https://github.com/nest/nest-simulator/blob/master/build_support/static_code_analysis.sh>`_. Again, the maximum line length is 120 characters.
+   - mypy, pylint, black and flake8 are used to statically check Python code. A few errors are intentionally ignored, defined in `tox.ini <https://github.com/nest/nest-simulator/blob/master/tox.ini>`_. Again, the maximum line length is 120 characters.
 
    Errors that occurred in this stage are printed at the end of the log, including a list of affected files.
 
 #. Build of NEST Simulator
 
-   To ensure that changes in the code do not increase the number of compiler warnings generated during the build, warnings are counted and compared to a hardcoded number in the function ``makebuild_summary()`` in `build_support/parse_build_log.py <https://github.com/nest/nest-simulator/blob/master/build_support/parse_build_log.py>`_. The number of counted and expected warnings is printed in the "Build report" table printed at the end of the stage. For changes that legitimately increase the number of warnings, these values should be changed as part of the pull request.
-
-   The CI builds cover both the gcc and clang compilers.
+   For details about the CI stages, please see the GitHub Actions workflow file https://github.com/nest/nest-simulator/blob/master/.github/workflows/nestbuildmatrix.yml.
 
 #. Unit testing
 

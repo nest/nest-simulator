@@ -43,7 +43,7 @@
 Name: allocations - Return the number of array reallocations.
 Synopsis: - allocations -> int
 Description: This function returns the total number of array-allocations
-which have occured during the run-time of the SLI interpreter.
+which have occurred during the run-time of the SLI interpreter.
 This number is important in the context of benchmarking and optimization.
 */
 void

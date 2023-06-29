@@ -57,7 +57,7 @@ template <>
 void
 RecordablesMap< aeif_cond_alpha >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &aeif_cond_alpha::get_y_elem_< aeif_cond_alpha::State_::V_M > );
   insert_( names::g_ex, &aeif_cond_alpha::get_y_elem_< aeif_cond_alpha::State_::G_EXC > );
   insert_( names::g_in, &aeif_cond_alpha::get_y_elem_< aeif_cond_alpha::State_::G_INH > );
@@ -444,8 +444,6 @@ nest::aeif_cond_alpha::pre_run_hook()
 void
 nest::aeif_cond_alpha::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
   assert( State_::V_M == 0 );
 
   for ( long lag = from; lag < to; ++lag )

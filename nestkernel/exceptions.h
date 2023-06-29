@@ -1175,7 +1175,7 @@ private:
 class MPIPortsFileUnknown : public KernelException
 {
 public:
-  explicit MPIPortsFileUnknown( const index node_id )
+  explicit MPIPortsFileUnknown( const size_t node_id )
     : node_id_( node_id )
   {
   }
@@ -1183,7 +1183,7 @@ public:
   std::string message() const;
 
 private:
-  const index node_id_;
+  const size_t node_id_;
 };
 #endif
 
@@ -1235,6 +1235,26 @@ public:
     : backend_( std::move( backend ) )
   {
   }
+
+  std::string message() const override;
+
+private:
+  const std::string backend_;
+};
+
+class BackendAlreadyRegistered : public KernelException
+{
+public:
+  BackendAlreadyRegistered( const std::string& backend )
+    : backend_( backend )
+  {
+  }
+
+  BackendAlreadyRegistered( std::string&& backend )
+    : backend_( std::move( backend ) )
+  {
+  }
+
 
   std::string message() const override;
 

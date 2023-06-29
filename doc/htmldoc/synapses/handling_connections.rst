@@ -40,7 +40,7 @@ as NodeCollections.
 Printing
     Printing a SynapseCollection produces a table with source and target node IDs, synapse model, weight and delay.
     If your SynapseCollection has more than 36 elements, only the first and last 15 connections are displayed.
-    To print all, first set ``print_all = True`` on your SynapseCollection.
+    To print all, first set ``print_full = True`` on your SynapseCollection.
 
     >>>  nest.Connect(nodes[:2], nodes[:2])
     >>>  synapses = nest.GetConnections()
@@ -52,7 +52,7 @@ Printing
                2        1  static_synapse    1.000   1.000
                2        2  static_synapse    1.000   1.000
 
-    >>> synapses.print_all = True
+    >>> synapses.print_full = True
 
 .. _conn_indexing:
 
@@ -150,7 +150,7 @@ Setting and getting attributes directly
 
 Getting connection parameters
     Just as with NodeCollection, you can get parameters of the connections with
-    :py:meth:`~.SynpaseCollection.get`. The same function arguments as for :ref:`NodeCollections get() <get_param>`
+    :py:meth:`~.SynapseCollection.get`. The same function arguments as for :ref:`NodeCollections get() <get_param>`
     apply here. The returned values also follow the same rules.
 
     If you call ``get()`` without any arguments, a dictionary with all parameters is
@@ -227,8 +227,8 @@ as the ``syn_spec`` argument of :py:func:`.Connect`, instead of the usual syn_sp
   conns = nest.GetConnections()
   print(conns.alpha)
 
-This will create 9 connections: 3 using ``static_synapse`` with a ``weight`` of `4` and ``delay`` of `1.5`, and 6 using
-the ``stdp_synapse``. Of the 6 using ``stdp_synapse``, 3 will have the default alpha value, and 3 will have an alpha of
+This will create 9 connections: 3 using :hxt_ref:`static_synapse` with a ``weight`` of `4` and ``delay`` of `1.5`, and 6 using
+the :hxt_ref:`stdp_synapse`. Of the 6 using ``stdp_synapse``, 3 will have the default alpha value, and 3 will have an alpha of
 `3.0`.
 
   >>> print(nest.GetKernelStatus('num_connections'))

@@ -70,7 +70,6 @@
 #include "iaf_cond_exp.h"
 #include "iaf_cond_exp_sfa_rr.h"
 #include "iaf_psc_alpha.h"
-#include "iaf_psc_alpha_canon.h"
 #include "iaf_psc_alpha_multisynapse.h"
 #include "iaf_psc_alpha_ps.h"
 #include "iaf_psc_delta.h"
@@ -88,11 +87,11 @@
 #include "parrot_neuron.h"
 #include "parrot_neuron_ps.h"
 #include "pp_cond_exp_mc_urbanczik.h"
-#include "pp_pop_psc_delta.h"
 #include "pp_psc_delta.h"
 #include "siegert_neuron.h"
 #include "sigmoid_rate.h"
 #include "sigmoid_rate_gg_1998.h"
+#include "spike_train_injector.h"
 #include "tanh_rate.h"
 #include "threshold_lin_rate.h"
 
@@ -216,8 +215,6 @@ ModelsModule::init( SLIInterpreter* )
 
   kernel().model_manager.register_node_model< iaf_chs_2007 >( "iaf_chs_2007" );
   kernel().model_manager.register_node_model< iaf_psc_alpha >( "iaf_psc_alpha" );
-  kernel().model_manager.register_node_model< iaf_psc_alpha_canon >(
-    "iaf_psc_alpha_canon", /*deprecation_info*/ "a future version of NEST" );
   kernel().model_manager.register_node_model< iaf_psc_alpha_multisynapse >( "iaf_psc_alpha_multisynapse" );
   kernel().model_manager.register_node_model< iaf_psc_alpha_ps >( "iaf_psc_alpha_ps" );
   kernel().model_manager.register_node_model< iaf_psc_delta >( "iaf_psc_delta" );
@@ -235,11 +232,10 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< parrot_neuron >( "parrot_neuron" );
   kernel().model_manager.register_node_model< parrot_neuron_ps >( "parrot_neuron_ps" );
   kernel().model_manager.register_node_model< pp_psc_delta >( "pp_psc_delta" );
-  kernel().model_manager.register_node_model< pp_pop_psc_delta >(
-    "pp_pop_psc_delta", /*deprecation_info*/ "a future version of NEST" );
   kernel().model_manager.register_node_model< gif_psc_exp >( "gif_psc_exp" );
   kernel().model_manager.register_node_model< gif_psc_exp_multisynapse >( "gif_psc_exp_multisynapse" );
   kernel().model_manager.register_node_model< glif_psc >( "glif_psc" );
+  kernel().model_manager.register_node_model< spike_train_injector >( "spike_train_injector" );
 
   kernel().model_manager.register_node_model< ac_generator >( "ac_generator" );
   kernel().model_manager.register_node_model< dc_generator >( "dc_generator" );
@@ -316,8 +312,7 @@ ModelsModule::init( SLIInterpreter* )
 
   // register all synapse models
   register_connection_model< bernoulli_synapse >( "bernoulli_synapse" );
-  register_connection_model< clopath_synapse >(
-    "clopath_synapse", default_connection_model_flags | RegisterConnectionModelFlags::REQUIRES_CLOPATH_ARCHIVING );
+  register_connection_model< clopath_synapse >( "clopath_synapse" );
   register_connection_model< cont_delay_synapse >( "cont_delay_synapse" );
   register_connection_model< ht_synapse >( "ht_synapse" );
   register_connection_model< jonke_synapse >( "jonke_synapse" );
@@ -336,19 +331,14 @@ ModelsModule::init( SLIInterpreter* )
   register_connection_model< tsodyks_synapse >( "tsodyks_synapse" );
   register_connection_model< tsodyks_synapse_hom >( "tsodyks_synapse_hom" );
   register_connection_model< tsodyks2_synapse >( "tsodyks2_synapse" );
-  register_connection_model< urbanczik_synapse >(
-    "urbanczik_synapse", default_connection_model_flags | RegisterConnectionModelFlags::REQUIRES_URBANCZIK_ARCHIVING );
+  register_connection_model< urbanczik_synapse >( "urbanczik_synapse" );
   register_connection_model< vogels_sprekeler_synapse >( "vogels_sprekeler_synapse" );
 
   // register secondary connection models
-  register_secondary_connection_model< GapJunction >(
-    "gap_junction", RegisterConnectionModelFlags::REQUIRES_SYMMETRIC | RegisterConnectionModelFlags::SUPPORTS_WFR );
-  register_secondary_connection_model< RateConnectionInstantaneous >(
-    "rate_connection_instantaneous", RegisterConnectionModelFlags::SUPPORTS_WFR );
-  register_secondary_connection_model< RateConnectionDelayed >(
-    "rate_connection_delayed", RegisterConnectionModelFlags::HAS_DELAY );
-  register_secondary_connection_model< DiffusionConnection >(
-    "diffusion_connection", RegisterConnectionModelFlags::SUPPORTS_WFR );
+  register_connection_model< GapJunction >( "gap_junction" );
+  register_connection_model< RateConnectionInstantaneous >( "rate_connection_instantaneous" );
+  register_connection_model< RateConnectionDelayed >( "rate_connection_delayed" );
+  register_connection_model< DiffusionConnection >( "diffusion_connection" );
 }
 
 } // namespace nest

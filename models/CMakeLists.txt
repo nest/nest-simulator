@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-set(models_sources
+set( models_sources
     ac_generator.h ac_generator.cpp
     aeif_cond_alpha.h aeif_cond_alpha.cpp
     aeif_cond_alpha_multisynapse.h aeif_cond_alpha_multisynapse.cpp
@@ -67,7 +67,6 @@ set(models_sources
     iaf_cond_exp.h iaf_cond_exp.cpp
     iaf_cond_exp_sfa_rr.h iaf_cond_exp_sfa_rr.cpp
     iaf_psc_alpha.h iaf_psc_alpha.cpp
-    iaf_psc_alpha_canon.cpp iaf_psc_alpha_canon.cpp
     iaf_psc_alpha_multisynapse.h iaf_psc_alpha_multisynapse.cpp
     iaf_psc_alpha_ps.cpp iaf_psc_alpha_ps.h
     iaf_psc_delta.h iaf_psc_delta.cpp
@@ -100,7 +99,6 @@ set(models_sources
     poisson_generator.h poisson_generator.cpp
     poisson_generator_ps.cpp poisson_generator_ps.h
     pp_psc_delta.h pp_psc_delta.cpp
-    pp_pop_psc_delta.h pp_pop_psc_delta.cpp
     pp_cond_exp_mc_urbanczik.h pp_cond_exp_mc_urbanczik.cpp
     ppd_sup_generator.h ppd_sup_generator.cpp
     pulsepacket_generator.h pulsepacket_generator.cpp
@@ -118,6 +116,7 @@ set(models_sources
     spike_recorder.h spike_recorder.cpp
     spike_generator.h spike_generator.cpp
     spin_detector.h spin_detector.cpp
+    spike_train_injector.h spike_train_injector.cpp
     static_synapse.h
     static_synapse_hom_w.h
     stdp_dopamine_synapse.h stdp_dopamine_synapse.cpp
@@ -143,15 +142,15 @@ set(models_sources
     spike_dilutor.h spike_dilutor.cpp
 )
 
-add_library(models ${models_sources})
-set_target_properties(models
+add_library( models STATIC ${models_sources} )
+set_target_properties( models
     PROPERTIES
     VERSION ${NEST_VERSION}
     SOVERSION 3
 )
-target_link_libraries(models nestutil sli_lib nestkernel)
+target_link_libraries( models nestutil sli_lib nestkernel )
 
-target_include_directories(models PRIVATE
+target_include_directories( models PRIVATE
     ${PROJECT_SOURCE_DIR}/thirdparty
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
@@ -159,12 +158,12 @@ target_include_directories(models PRIVATE
     ${PROJECT_SOURCE_DIR}/nestkernel
 )
 
-install(TARGETS models
+install( TARGETS models
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
-FILTER_HEADERS("${models_sources}" install_headers)
-install(FILES ${install_headers}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)
+FILTER_HEADERS( "${models_sources}" install_headers )
+install( FILES ${install_headers}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest )

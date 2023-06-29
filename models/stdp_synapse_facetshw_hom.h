@@ -235,6 +235,10 @@ public:
   typedef STDPFACETSHWHomCommonProperties< targetidentifierT > CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
+
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
@@ -271,7 +275,7 @@ public:
    * Send an event to the receiver of this connection.
    * \param e The event to send
    */
-  void send( Event& e, thread t, const STDPFACETSHWHomCommonProperties< targetidentifierT >& );
+  void send( Event& e, size_t t, const STDPFACETSHWHomCommonProperties< targetidentifierT >& );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -280,8 +284,8 @@ public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
-    port
-    handles_test_event( SpikeEvent&, rport ) override
+    size_t
+    handles_test_event( SpikeEvent&, size_t ) override
     {
       return invalid_port;
     }
@@ -302,7 +306,7 @@ public:
    * \param receptor_type The ID of the requested receptor type
    */
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
 
@@ -345,6 +349,9 @@ private:
                                  // properties or "static"?
   double t_lastspike_;
 };
+
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties stdp_facetshw_synapse_hom< targetidentifierT >::properties;
 
 template < typename targetidentifierT >
 inline bool
@@ -395,7 +402,7 @@ stdp_facetshw_synapse_hom< targetidentifierT >::lookup_( unsigned int discrete_w
 template < typename targetidentifierT >
 inline void
 stdp_facetshw_synapse_hom< targetidentifierT >::send( Event& e,
-  thread t,
+  size_t t,
   const STDPFACETSHWHomCommonProperties< targetidentifierT >& cp )
 {
   // synapse STDP dynamics

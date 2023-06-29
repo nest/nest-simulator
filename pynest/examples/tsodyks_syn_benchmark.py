@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# tsodyks_nrn_benchmark.py
+# tsodyks_syn_benchmark.py
 #
 # This file is part of NEST.
 #

@@ -1,13 +1,12 @@
 {
 	"python": {
-		"min": 3.10
+		"min": "3.10"
 	},
 	"pip": {
 		"min": "20.3.3"
 	},
 	"cmake": {
-		"min": 3.12,
-		"max": 3.16
+		"min": "3.12"
 	},
 	"cython": {
 		"min": "0.28.3"
@@ -16,19 +15,19 @@
 		"min": "4.0.3"
 	},
 	"boost": {
-		"min": 1.69
+		"min": "1.69"
 	},
 	"gsl": {
-		"min": 1.11
+		"min": "1.11"
 	},
 	"libtool": {
 		"min": "2.4.6"
 	},
 	"readline": {
-		"min": 8.0
+		"min": "8.0"
 	},
 	"hdf5": {
-		"min": 1.12
+		"min": "1.12"
 	},
 	"numpy": {
 		"min": "1.19.4"
@@ -37,18 +36,18 @@
 		"min": "1.5.4"
 	},
 	"matplotlib": {
-		"min": 3.0
+		"min": "3.0"
 	},
 	"pandas": {
-		"min": 2.0
+		"min": "2.0"
 	},
 	"h5py": {
-		"min": 3.9
+		"min": "3.9"
 	},
 	"ipython": {
 		"min": "5.8.0"
 	},
 	"libncurses": {
-		"min": 6.2
+		"min": "6.2"
 	}
 }

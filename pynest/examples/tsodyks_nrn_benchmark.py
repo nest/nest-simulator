@@ -296,7 +296,7 @@ if __name__ == "__main__":
     print(f"[Rank {nest.Rank()}] elapsed wall time: {end_time} s")
     print(f"[Rank {nest.Rank()}] total memory usage: {mem_sim - mem_ini} GB")
 
-    """ 
+    """
     sts_exc_count = {}
     for i, st_exc in enumerate(sts_exc):
         sts_exc_count[f"node {i+1}"] = len(st_exc)

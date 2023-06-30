@@ -48,7 +48,7 @@ def network():
     nest.Connect(
         nodes,
         nodes,
-        conn_spec={"rule": "all_to_all"},
+        conn_spec={"rule": "one_to_one"},
         syn_spec={"synapse_model": "static_synapse_lbl", "synapse_label": 456},
     )
 

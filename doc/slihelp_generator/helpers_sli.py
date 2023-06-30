@@ -45,8 +45,8 @@ def check_ifdef(item, filetext, docstring):
 
     If there is an 'ifdef' requirement write it to the data.
     """
-    ifdefstring = r'(\#ifdef((.*?)\n(.*?)\n*))\#endif'
-    require_reg = re.compile(r'HAVE\_((.*?)*)\n')
+    ifdefstring = r"(\#ifdef((.*?)\n(.*?)\n*))\#endif"
+    require_reg = re.compile(r"HAVE\_((.*?)*)\n")
     # every doc in an #ifdef
     ifdefs = re.findall(ifdefstring, filetext, re.DOTALL)
     for ifitem in ifdefs:
@@ -76,8 +76,8 @@ def create_helpdirs(path):
     """
     Create the directories for the help files.
     """
-    makedirs(os.path.join(path, 'sli'))
-    makedirs(os.path.join(path, 'cc'))
+    makedirs(os.path.join(path, "sli"))
+    makedirs(os.path.join(path, "cc"))
 
 
 def delete_helpdir(path):

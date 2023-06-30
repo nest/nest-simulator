@@ -151,7 +151,7 @@ private:
    * given thread with its MPI index and device. Only the master
    * thread has a valid MPI communicator pointer.
    */
-  typedef std::vector< std::map< index, std::tuple< int, MPI_Comm*, const RecordingDevice* > > > device_map;
+  typedef std::vector< std::map< size_t, std::tuple< int, MPI_Comm*, const RecordingDevice* > > > device_map;
   device_map devices_;
 
   /**
@@ -164,7 +164,7 @@ private:
   comm_map commMap_;
 
   static void get_port( const RecordingDevice* device, std::string* port_name );
-  static void get_port( index index_node, const std::string& label, std::string* port_name );
+  static void get_port( size_t index_node, const std::string& label, std::string* port_name );
   static void send_data( const MPI_Comm* comm, const double data[], int size );
 };
 

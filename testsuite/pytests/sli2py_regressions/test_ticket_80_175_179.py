@@ -43,10 +43,32 @@ import pytest
 
 @pytest.fixture
 def setup():
-    vm_params = {"origin": 0.0, "start": 0.0, "stop": 100.0, "interval": nest.resolution}
+    vm_params = {
+        "origin": 0.0,
+        "start": 0.0,
+        "stop": 100.0,
+        "interval": nest.resolution,
+    }
     sr_params = {"origin": 0.0, "start": 0.0, "stop": 100.0, "time_in_steps": True}
     sg_params = {
-        "spike_times": [4.8, 11.6, 18.4, 25.2, 32.0, 38.8, 45.6, 52.4, 59.2, 66.0, 72.8, 79.6, 86.4, 93.2, 100.0]}
+        "spike_times": [
+            4.8,
+            11.6,
+            18.4,
+            25.2,
+            32.0,
+            38.8,
+            45.6,
+            52.4,
+            59.2,
+            66.0,
+            72.8,
+            79.6,
+            86.4,
+            93.2,
+            100.0,
+        ]
+    }
     iaf_params = {"I_e": 1000.0}
     sim_blocks = [0.1, 0.3, 0.5, 0.7, 1.0, 1.3, 1.5, 1.7, 110.0]
 
@@ -81,8 +103,8 @@ def setup():
         while sim_time >= nest.biological_time:
             nest.Simulate(block)
 
-        sr_timings = np.array([sr.get('events')['times'] for sr in spike_recorders])
-        vm_timings = np.array([vm.get('events')['V_m'] for vm in voltmeters])
+        sr_timings = np.array([sr.get("events")["times"] for sr in spike_recorders])
+        vm_timings = np.array([vm.get("events")["V_m"] for vm in voltmeters])
 
         return sr_timings, vm_timings
 

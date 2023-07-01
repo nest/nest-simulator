@@ -104,12 +104,12 @@ class PerThreadBoolIndicator
 public:
   PerThreadBoolIndicator() {};
 
-  BoolIndicatorUInt64& operator[]( const thread tid );
+  BoolIndicatorUInt64& operator[]( const size_t tid );
 
   /**
    * Resize to the given number of threads and set all elements to false.
    */
-  void initialize( const thread num_threads, const bool status );
+  void initialize( const size_t num_threads, const bool status );
 
   /**
    * Waits for all threads and returns whether all elements are false.

@@ -20,17 +20,19 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import nest
-import pytest
 from math import exp
 import numpy as np
 
-try:
-    import matplotlib as mpl
-    import matplotlib.pyplot as plt
+DEBUG_PLOTS = False
 
-    DEBUG_PLOTS = False  # TODO
-except Exception:
-    DEBUG_PLOTS = False
+if DEBUG_PLOTS:
+    try:
+        import matplotlib as mpl  # noqa: F401
+        import matplotlib.pyplot as plt
+
+        DEBUG_PLOTS = True
+    except Exception:
+        DEBUG_PLOTS = False
 
 
 @nest.ll_api.check_stack
@@ -44,13 +46,13 @@ class TestSTDPSynapse:
 
     def init_params(self):
         self.resolution = 0.1  # [ms]
-        self.simulation_duration = 1E3  # [ms]
+        self.simulation_duration = 1e3  # [ms]
         self.synapse_model = "stdp_synapse"
-        self.presynaptic_firing_rate = 0.  # [ms^-1]
-        self.postsynaptic_firing_rate = 0.  # [ms^-1]
+        self.presynaptic_firing_rate = 100.0  # [ms^-1]
+        self.postsynaptic_firing_rate = 100.0  # [ms^-1]
         self.tau_pre = 16.8
         self.tau_post = 33.7
-        self.init_weight = .5
+        self.init_weight = 0.5
         self.synapse_parameters = {
             "synapse_model": self.synapse_model,
             "receptor_type": 0,
@@ -70,16 +72,22 @@ class TestSTDPSynapse:
         # While the random sequences, fairly long, would supposedly reveal small differences in the weight change
         # between NEST and ours, some low-probability events (say, coinciding spikes) can well not have occurred.
         # To generate and test every possible combination of pre/post order, we append some hardcoded spike sequences.
-        self.hardcoded_pre_times = np.array(
-            [1, 5, 6, 7, 9, 11, 12, 13, 14.5, 16.1], dtype=float)
-        self.hardcoded_post_times = np.array(
-            [2, 3, 4, 8, 9, 10, 12, 12.2, 14.1, 15.4], dtype=float)
-        self.hardcoded_trains_length = 5. + max(
-            np.amax(self.hardcoded_pre_times),
-            np.amax(self.hardcoded_post_times))
+        self.hardcoded_pre_times = np.array([1, 5, 6, 7, 9, 11, 12, 13, 14.5, 16.1], dtype=float)
+        self.hardcoded_post_times = np.array([2, 3, 4, 8, 9, 10, 12, 12.2, 14.1, 15.4], dtype=float)
+        self.hardcoded_trains_length = 5. + max(np.amax(self.hardcoded_pre_times), np.amax(self.hardcoded_post_times))
 
     def do_nest_simulation_and_compare_to_reproduced_weight(self, fname_snip):
         pre_spikes, post_spikes, t_weight_by_nest, weight_by_nest = self.do_the_nest_simulation()
+
+        if DEBUG_PLOTS:
+            self.plot_weight_evolution(
+                pre_spikes,
+                post_spikes,
+                t_weight_by_nest,
+                weight_by_nest,
+                fname_snip=fname_snip,
+                title_snip=self.nest_neuron_model + " (NEST)",
+            )
 
         t_weight_reproduced_independently, weight_reproduced_independently, Kpre_log, Kpost_log = \
             self.reproduce_weight_drift(pre_spikes, post_spikes, self.init_weight, fname_snip=fname_snip)
@@ -115,7 +123,7 @@ class TestSTDPSynapse:
         This function is where calls to NEST reside. Returns the generated pre- and post spike sequences and the
         resulting weight established by STDP.
         """
-        nest.set_verbosity('M_WARNING')
+        nest.set_verbosity("M_WARNING")
         nest.ResetKernel()
         nest.SetKernelStatus({
             'resolution': self.resolution,
@@ -134,13 +142,14 @@ class TestSTDPSynapse:
         presynaptic_generator = generators[0]
         postsynaptic_generator = generators[1]
 
-        wr = nest.Create('weight_recorder')
+        wr = nest.Create("weight_recorder")
         nest.CopyModel(self.synapse_model, self.synapse_model + "_rec", {"weight_recorder": wr})
 
         spike_senders = nest.Create("spike_generator", 2, params=(
             {"spike_times": self.hardcoded_pre_times + self.simulation_duration - self.hardcoded_trains_length},
             {"spike_times": self.hardcoded_post_times + self.simulation_duration - self.hardcoded_trains_length}
         ))
+
         pre_spike_generator = spike_senders[0]
         post_spike_generator = spike_senders[1]
 
@@ -157,6 +166,7 @@ class TestSTDPSynapse:
                                "weight": 3000.})
         nest.Connect(presynaptic_neuron + postsynaptic_neuron, spike_recorder,
                      syn_spec={"synapse_model": "static_synapse"})
+
         # The synapse of interest itself
         self.synapse_parameters["synapse_model"] += "_rec"
         nest.Connect(presynaptic_neuron, postsynaptic_neuron, syn_spec=self.synapse_parameters)
@@ -164,9 +174,9 @@ class TestSTDPSynapse:
 
         nest.Simulate(self.simulation_duration)
 
-        all_spikes = nest.GetStatus(spike_recorder, keys='events')[0]
-        pre_spikes = all_spikes['times'][all_spikes['senders'] == presynaptic_neuron.tolist()[0]]
-        post_spikes = all_spikes['times'][all_spikes['senders'] == postsynaptic_neuron.tolist()[0]]
+        all_spikes = nest.GetStatus(spike_recorder, keys="events")[0]
+        pre_spikes = all_spikes["times"][all_spikes["senders"] == presynaptic_neuron.tolist()[0]]
+        post_spikes = all_spikes["times"][all_spikes["senders"] == postsynaptic_neuron.tolist()[0]]
 
         t_hist = nest.GetStatus(wr, "events")[0]["times"]
         weight = nest.GetStatus(wr, "events")[0]["weights"]
@@ -176,27 +186,32 @@ class TestSTDPSynapse:
     def reproduce_weight_drift(self, pre_spikes, post_spikes, initial_weight, fname_snip=""):
         """Independent, self-contained model of STDP"""
 
-        def facilitate(w, Kpre, Wmax_=1.):
+        def facilitate(w, Kpre, Wmax_=1.0):
             norm_w = (w / self.synapse_parameters["Wmax"]) + (
-                    self.synapse_parameters["lambda"] * pow(1 - (w / self.synapse_parameters["Wmax"]),
-                                                            self.synapse_parameters["mu_plus"]) * Kpre)
+                self.synapse_parameters["lambda"]
+                * pow(1 - (w / self.synapse_parameters["Wmax"]), self.synapse_parameters["mu_plus"])
+                * Kpre
+            )
             if norm_w < 1.0:
                 return norm_w * self.synapse_parameters["Wmax"]
             else:
                 return self.synapse_parameters["Wmax"]
 
         def depress(w, Kpost):
-            norm_w = (w / self.synapse_parameters["Wmax"]) - \
-                     (self.synapse_parameters["alpha"] * self.synapse_parameters["lambda"] *
-                      pow(w / self.synapse_parameters["Wmax"], self.synapse_parameters["mu_minus"]) * Kpost)
+            norm_w = (w / self.synapse_parameters["Wmax"]) - (
+                self.synapse_parameters["alpha"]
+                * self.synapse_parameters["lambda"]
+                * pow(w / self.synapse_parameters["Wmax"], self.synapse_parameters["mu_minus"])
+                * Kpost
+            )
             if norm_w > 0.0:
                 return norm_w * self.synapse_parameters["Wmax"]
             else:
-                return 0.
+                return 0.0
 
         def Kpost_at_time(t, spikes, inclusive=True):
-            t_curr = 0.
-            Kpost = 0.
+            t_curr = 0.0
+            Kpost = 0.0
             for spike_idx, t_sp in enumerate(spikes):
                 if t < t_sp:
                     # integrate to t
@@ -205,11 +220,11 @@ class TestSTDPSynapse:
                 # integrate to t_sp
                 Kpost *= exp(-(t_sp - t_curr) / self.tau_post)
                 if inclusive:
-                    Kpost += 1.
+                    Kpost += 1.0
                 if t == t_sp:
                     return Kpost
                 if not inclusive:
-                    Kpost += 1.
+                    Kpost += 1.0
                 t_curr = t_sp
             # if we get here, t > t_last_spike
             # integrate to t
@@ -217,11 +232,12 @@ class TestSTDPSynapse:
             return Kpost
 
         eps = 1e-6
-        t = 0.
+        t = 0.0
         idx_next_pre_spike = 0
         idx_next_post_spike = 0
         t_last_pre_spike = -1
         t_last_post_spike = -1
+
         Kplus = 0.
         Kminus = 0.
         weight = initial_weight
@@ -313,8 +329,9 @@ class TestSTDPSynapse:
         fig, ax = plt.subplots(nrows=3)
 
         n_spikes = len(pre_spikes)
+        print(n_spikes)
         for i in range(n_spikes):
-            ax[0].plot(2 * [pre_spikes[i]], [0, 1], linewidth=2, color="blue", alpha=.4)
+            ax[0].plot(2 * [pre_spikes[i]], [0, 1], linewidth=2, color="blue", alpha=0.4)
         ax[0].set_ylabel("Pre spikes")
         ax0_ = ax[0].twinx()
         if Kpre_log:
@@ -322,7 +339,7 @@ class TestSTDPSynapse:
 
         n_spikes = len(post_spikes)
         for i in range(n_spikes):
-            ax[1].plot(2 * [post_spikes[i]], [0, 1], linewidth=2, color="red", alpha=.4)
+            ax[1].plot(2 * [post_spikes[i]], [0, 1], linewidth=2, color="red", alpha=0.4)
         ax1_ = ax[1].twinx()
         ax[1].set_ylabel("Post spikes")
         if Kpost_log:
@@ -334,9 +351,9 @@ class TestSTDPSynapse:
         ax[2].set_xlabel("Time [ms]")
         for _ax in ax:
             _ax.grid(which="major", axis="both")
-            _ax.grid(which="minor", axis="x", linestyle=":", alpha=.4)
+            _ax.grid(which="minor", axis="x", linestyle=":", alpha=0.4)
             _ax.minorticks_on()
-            _ax.set_xlim(0., self.simulation_duration)
+            _ax.set_xlim(0.0, self.simulation_duration)
 
         fig.suptitle(title_snip)
         fig.savefig("/tmp/nest_stdp_synapse_test" + fname_snip + ".png", dpi=300)
@@ -360,3 +377,4 @@ class TestSTDPSynapse:
 
 if __name__ == "__main__":
     TestSTDPSynapse().test_stdp_synapse()
+

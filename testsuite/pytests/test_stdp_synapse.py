@@ -242,10 +242,10 @@ class TestSTDPSynapse:
         Kminus = 0.
         weight = initial_weight
 
-        t_log = list()
-        w_log = list()
-        Kplus_log = list()
-        Kminus_log = list()
+        t_log = []
+        w_log = []
+        Kplus_log = []
+        Kminus_log = []
 
         # Make sure only spikes that were relevant for simulation are actually considered in the test
         # For pre-spikes that will be all spikes with: t_pre < sim_duration

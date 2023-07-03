@@ -22,7 +22,7 @@
 """
 Regression test for Issue #1305 (GitHub).
 
-This set of tests ensures that NEST hcan set small resolutions and deals with
+This set of tests ensures that NEST can set small resolutions and deals with
 rounding errors correctly.
 """
 

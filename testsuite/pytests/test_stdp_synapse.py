@@ -371,16 +371,16 @@ class TestSTDPSynapse:
         return np.array(t_log), np.array(w_log), Kplus_log, Kminus_log
 
     def plot_weight_evolution(
-            self,
-            pre_spikes,
-            post_spikes,
-            t_log,
-            w_log,
-            Kpre_log=None,
-            Kpost_log=None,
-            pre_indices=slice(-1),
-            fname_snip="",
-            title_snip="",
+        self,
+        pre_spikes,
+        post_spikes,
+        t_log,
+        w_log,
+        Kpre_log=None,
+        Kpost_log=None,
+        pre_indices=slice(-1),
+        fname_snip="",
+        title_snip="",
     ):
         fig, ax = plt.subplots(nrows=3)
 

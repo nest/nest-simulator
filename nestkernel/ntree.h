@@ -89,7 +89,7 @@ public:
      * which must be a leaf. The top of the tree is the first ancestor of
      * the Ntree.
      */
-    iterator( Ntree& q, index n );
+    iterator( Ntree& q, size_t n );
 
     value_type&
     operator*()
@@ -143,7 +143,7 @@ public:
 
     Ntree* ntree_;
     Ntree* top_;
-    index node_;
+    size_t node_;
   };
 
   /**
@@ -262,12 +262,12 @@ public:
     Ntree* ntree_;
     Ntree* top_;
     Ntree* allin_top_;
-    index node_;
+    size_t node_;
     const Mask< D >* mask_;
     Position< D > anchor_;
     Position< D > anchored_position_;
     std::vector< Position< D > > anchors_;
-    index current_anchor_;
+    size_t current_anchor_;
   };
 
   /**
@@ -432,7 +432,7 @@ Ntree< D, T, max_capacity, max_depth >::~Ntree()
 }
 
 template < int D, class T, int max_capacity, int max_depth >
-Ntree< D, T, max_capacity, max_depth >::iterator::iterator( Ntree& q, index n )
+Ntree< D, T, max_capacity, max_depth >::iterator::iterator( Ntree& q, size_t n )
   : ntree_( &q )
   , top_( &q )
   , node_( n )

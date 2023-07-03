@@ -58,8 +58,8 @@ nest::RecordingBackendASCII::finalize()
 void
 nest::RecordingBackendASCII::enroll( const RecordingDevice& device, const DictionaryDatum& params )
 {
-  const thread t = device.get_thread();
-  const index node_id = device.get_node_id();
+  const size_t t = device.get_thread();
+  const size_t node_id = device.get_node_id();
 
   data_map::value_type::iterator device_data = device_data_[ t ].find( node_id );
   if ( device_data == device_data_[ t ].end() )
@@ -76,8 +76,8 @@ nest::RecordingBackendASCII::enroll( const RecordingDevice& device, const Dictio
 void
 nest::RecordingBackendASCII::disenroll( const RecordingDevice& device )
 {
-  const thread t = device.get_thread();
-  const thread node_id = device.get_node_id();
+  const size_t t = device.get_thread();
+  const size_t node_id = device.get_node_id();
 
   data_map::value_type::iterator device_data = device_data_[ t ].find( node_id );
   if ( device_data != device_data_[ t ].end() )
@@ -91,8 +91,8 @@ nest::RecordingBackendASCII::set_value_names( const RecordingDevice& device,
   const std::vector< Name >& double_value_names,
   const std::vector< Name >& long_value_names )
 {
-  const thread t = device.get_thread();
-  const thread node_id = device.get_node_id();
+  const size_t t = device.get_thread();
+  const size_t node_id = device.get_node_id();
 
   data_map::value_type::iterator device_data = device_data_[ t ].find( node_id );
   assert( device_data != device_data_[ t ].end() );
@@ -141,8 +141,8 @@ nest::RecordingBackendASCII::write( const RecordingDevice& device,
   const std::vector< double >& double_values,
   const std::vector< long >& long_values )
 {
-  const thread t = device.get_thread();
-  const index node_id = device.get_node_id();
+  const size_t t = device.get_thread();
+  const size_t node_id = device.get_node_id();
 
   data_map::value_type::iterator device_data = device_data_[ t ].find( node_id );
   if ( device_data == device_data_[ t ].end() )
@@ -209,8 +209,8 @@ nest::RecordingBackendASCII::get_device_defaults( DictionaryDatum& params ) cons
 void
 nest::RecordingBackendASCII::get_device_status( const nest::RecordingDevice& device, DictionaryDatum& d ) const
 {
-  const thread t = device.get_thread();
-  const index node_id = device.get_node_id();
+  const size_t t = device.get_thread();
+  const size_t node_id = device.get_node_id();
 
   data_map::value_type::const_iterator device_data = device_data_[ t ].find( node_id );
   if ( device_data != device_data_[ t ].end() )

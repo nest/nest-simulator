@@ -205,10 +205,10 @@ protected:
   struct Limit
   {
     tic_t tics;
-    delay steps;
+    long steps;
     double ms;
 
-    Limit( tic_t tics, delay steps, double ms )
+    Limit( tic_t tics, long steps, double ms )
       : tics( tics )
       , steps( steps )
       , ms( ms )
@@ -225,14 +225,14 @@ protected:
   static struct LimitPosInf
   {
     static const tic_t tics = tic_t_max / Range::INF_MARGIN + 1;
-    static const delay steps = delay_max;
+    static const long steps = delay_max;
 #define LIM_POS_INF_ms DBL_MAX // because C++ bites
   } LIM_POS_INF;
 
   static struct LimitNegInf
   {
     static const tic_t tics = -tic_t_max / Range::INF_MARGIN - 1;
-    static const delay steps = -delay_max;
+    static const long steps = -delay_max;
 #define LIM_NEG_INF_ms ( -DBL_MAX ) // c++ bites
   } LIM_NEG_INF;
 
@@ -250,8 +250,8 @@ public:
 
   struct step
   {
-    delay t;
-    explicit step( delay t )
+    long t;
+    explicit step( long t )
       : t( t )
     {
     }
@@ -514,7 +514,7 @@ public:
     return Range::MS_PER_TIC * tics;
   }
 
-  delay
+  long
   get_steps() const
   {
     if ( is_pos_inf() )
@@ -540,12 +540,12 @@ public:
    * up. See #903.
    */
   static double
-  delay_steps_to_ms( delay steps )
+  delay_steps_to_ms( long steps )
   {
     return steps * Range::MS_PER_STEP;
   }
 
-  static delay
+  static long
   delay_ms_to_steps( double ms )
   {
     return ld_round( ms * Range::STEPS_PER_MS );

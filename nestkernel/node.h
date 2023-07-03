@@ -203,7 +203,7 @@ public:
    *
    * The smallest valid node ID is 1.
    */
-  index get_node_id() const;
+  size_t get_node_id() const;
 
   /**
    * Return lockpointer to the NodeCollection that created this node.
@@ -394,7 +394,7 @@ public:
    * DS*Events when called with the dummy target, and *Events when called with
    * the real target, see #478.
    */
-  virtual port send_test_event( Node& receiving_node, rport receptor_type, synindex syn_id, bool dummy_target );
+  virtual size_t send_test_event( Node& receiving_node, size_t receptor_type, synindex syn_id, bool dummy_target );
 
   /**
    * Check if the node can handle a particular event and receptor type.
@@ -415,19 +415,19 @@ public:
    * @ingroup event_interface
    * @throws IllegalConnection
    */
-  virtual port handles_test_event( SpikeEvent&, rport receptor_type );
-  virtual port handles_test_event( WeightRecorderEvent&, rport receptor_type );
-  virtual port handles_test_event( RateEvent&, rport receptor_type );
-  virtual port handles_test_event( DataLoggingRequest&, rport receptor_type );
-  virtual port handles_test_event( CurrentEvent&, rport receptor_type );
-  virtual port handles_test_event( ConductanceEvent&, rport receptor_type );
-  virtual port handles_test_event( DoubleDataEvent&, rport receptor_type );
-  virtual port handles_test_event( DSSpikeEvent&, rport receptor_type );
-  virtual port handles_test_event( DSCurrentEvent&, rport receptor_type );
-  virtual port handles_test_event( GapJunctionEvent&, rport receptor_type );
-  virtual port handles_test_event( InstantaneousRateConnectionEvent&, rport receptor_type );
-  virtual port handles_test_event( DiffusionConnectionEvent&, rport receptor_type );
-  virtual port handles_test_event( DelayedRateConnectionEvent&, rport receptor_type );
+  virtual size_t handles_test_event( SpikeEvent&, size_t receptor_type );
+  virtual size_t handles_test_event( WeightRecorderEvent&, size_t receptor_type );
+  virtual size_t handles_test_event( RateEvent&, size_t receptor_type );
+  virtual size_t handles_test_event( DataLoggingRequest&, size_t receptor_type );
+  virtual size_t handles_test_event( CurrentEvent&, size_t receptor_type );
+  virtual size_t handles_test_event( ConductanceEvent&, size_t receptor_type );
+  virtual size_t handles_test_event( DoubleDataEvent&, size_t receptor_type );
+  virtual size_t handles_test_event( DSSpikeEvent&, size_t receptor_type );
+  virtual size_t handles_test_event( DSCurrentEvent&, size_t receptor_type );
+  virtual size_t handles_test_event( GapJunctionEvent&, size_t receptor_type );
+  virtual size_t handles_test_event( InstantaneousRateConnectionEvent&, size_t receptor_type );
+  virtual size_t handles_test_event( DiffusionConnectionEvent&, size_t receptor_type );
+  virtual size_t handles_test_event( DelayedRateConnectionEvent&, size_t receptor_type );
 
   /**
    * Required to check, if source neuron may send a SecondaryEvent.
@@ -764,24 +764,24 @@ public:
    * The assignment is done after node creation by the Network class.
    * @see: NodeManager::add_node().
    */
-  void set_thread( thread );
+  void set_thread( size_t );
 
   /**
    * Retrieve the number of the thread to which the node is assigned.
    */
-  thread get_thread() const;
+  size_t get_thread() const;
 
   /**
    * Store the number of the virtual process to which the node is assigned.
    *
    * This is assigned to the node in NodeManager::add_node().
    */
-  void set_vp( thread );
+  void set_vp( size_t );
 
   /**
    * Retrieve the number of the virtual process to which the node is assigned.
    */
-  thread get_vp() const;
+  size_t get_vp() const;
 
   /**
    * Set the model id.
@@ -850,12 +850,12 @@ public:
    * set thread local index
 
    */
-  void set_thread_lid( const index );
+  void set_thread_lid( const size_t );
 
   /**
    * get thread local index
    */
-  index get_thread_lid() const;
+  size_t get_thread_lid() const;
 
   /**
    * Sets the local device id.
@@ -863,7 +863,7 @@ public:
    * Throws an error if used on a non-device node.
    * @see get_local_device_id
    */
-  virtual void set_local_device_id( const index lsdid );
+  virtual void set_local_device_id( const size_t lsdid );
 
   /**
    * Gets the local device id.
@@ -871,7 +871,7 @@ public:
    * Throws an error if used on a non-device node.
    * @see set_local_device_id
    */
-  virtual index get_local_device_id() const;
+  virtual size_t get_local_device_id() const;
 
   /**
    * Member of DeprecationWarning class to be used by models if parameters are
@@ -880,7 +880,7 @@ public:
   DeprecationWarning deprecation_warning;
 
 private:
-  void set_node_id_( index ); //!< Set global node id
+  void set_node_id_( size_t ); //!< Set global node id
 
   /**
    * Set the original NodeCollection of this node.
@@ -940,12 +940,12 @@ private:
    *
    * The node ID is unique within the network. The smallest valid node ID is 1.
    */
-  index node_id_;
+  size_t node_id_;
 
   /**
    * Local id of this node in the thread-local vector of nodes.
    */
-  index thread_lid_;
+  size_t thread_lid_;
 
   /**
    * Model ID.
@@ -956,8 +956,8 @@ private:
    */
   int model_id_;
 
-  thread thread_;      //!< thread node is assigned to
-  thread vp_;          //!< virtual process node is assigned to
+  size_t thread_;      //!< thread node is assigned to
+  size_t vp_;          //!< virtual process node is assigned to
   bool frozen_;        //!< node shall not be updated if true
   bool initialized_;   //!< state and buffers have been initialized
   bool node_uses_wfr_; //!< node uses waveform relaxation method
@@ -1025,7 +1025,7 @@ Node::get_element_type() const
   return names::neuron;
 }
 
-inline index
+inline size_t
 Node::get_node_id() const
 {
   return node_id_;
@@ -1038,7 +1038,7 @@ Node::get_nc() const
 }
 
 inline void
-Node::set_node_id_( index i )
+Node::set_node_id_( size_t i )
 {
   node_id_ = i;
 }
@@ -1069,24 +1069,24 @@ Node::is_model_prototype() const
 }
 
 inline void
-Node::set_thread( thread t )
+Node::set_thread( size_t t )
 {
   thread_ = t;
 }
 
-inline thread
+inline size_t
 Node::get_thread() const
 {
   return thread_;
 }
 
 inline void
-Node::set_vp( thread vp )
+Node::set_vp( size_t vp )
 {
   vp_ = vp;
 }
 
-inline thread
+inline size_t
 Node::get_vp() const
 {
   return vp_;
@@ -1102,12 +1102,12 @@ Node::downcast( const Node& n )
 }
 
 inline void
-Node::set_thread_lid( const index tlid )
+Node::set_thread_lid( const size_t tlid )
 {
   thread_lid_ = tlid;
 }
 
-inline index
+inline size_t
 Node::get_thread_lid() const
 {
   return thread_lid_;

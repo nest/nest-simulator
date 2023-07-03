@@ -67,7 +67,7 @@ noise[1].rate = 15000.0
 # Fourth, the neuron is connected to the ``poisson_generator`` and to the
 # ``voltmeter``. We also specify the synaptic weight and delay in this step.
 
-nest.Connect(noise, neuron, syn_spec={'weight': [[1.2, -1.0]], 'delay': 1.0})
+nest.Connect(noise, neuron, syn_spec={"weight": [[1.2, -1.0]], "delay": 1.0})
 nest.Connect(voltmeter, neuron)
 
 ###############################################################################

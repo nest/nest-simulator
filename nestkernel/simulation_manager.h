@@ -170,14 +170,14 @@ public:
 
   //! Return start of current time slice, in steps.
   // TODO: rename / precisely how defined?
-  delay get_from_step() const;
+  long get_from_step() const;
 
   //! Return end of current time slice, in steps.
   // TODO: rename / precisely how defined?
-  delay get_to_step() const;
+  long get_to_step() const;
 
   //! Sorts source table and connections and create new target table.
-  void update_connection_infrastructure( const thread tid );
+  void update_connection_infrastructure( const size_t tid );
 
   /**
    * Set time measurements for internal profiling to zero (reg. prep.)
@@ -197,11 +197,11 @@ private:
   void print_progress_(); //!< TODO: Remove, replace by logging!
 
   Time clock_;                     //!< SimulationManager clock, updated once per slice
-  delay slice_;                    //!< current update slice
-  delay to_do_;                    //!< number of pending steps
-  delay to_do_total_;              //!< number of requested steps in current simulation
-  delay from_step_;                //!< update clock_+from_step<=T<clock_+to_step_
-  delay to_step_;                  //!< update clock_+from_step<=T<clock_+to_step_
+  long slice_;                     //!< current update slice
+  long to_do_;                     //!< number of pending steps
+  long to_do_total_;               //!< number of requested steps in current simulation
+  long from_step_;                 //!< update clock_+from_step<=T<clock_+to_step_
+  long to_step_;                   //!< update clock_+from_step<=T<clock_+to_step_
   timeval t_slice_begin_;          //!< Wall-clock time at the begin of a time slice
   timeval t_slice_end_;            //!< Wall-clock time at the end of time slice
   long t_real_;                    //!< Accumulated wall-clock time spent simulating (in us)
@@ -295,13 +295,13 @@ SimulationManager::run_end_time() const
   return ( get_time().get_steps() + to_do_ ) * Time::get_resolution();
 }
 
-inline delay
+inline long
 SimulationManager::get_from_step() const
 {
   return from_step_;
 }
 
-inline delay
+inline long
 SimulationManager::get_to_step() const
 {
   return to_step_;

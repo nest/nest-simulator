@@ -65,8 +65,8 @@ nest::StimulationBackendMPI::finalize()
 void
 nest::StimulationBackendMPI::enroll( nest::StimulationDevice& device, const DictionaryDatum& )
 {
-  thread tid = device.get_thread();
-  index node_id = device.get_node_id();
+  size_t tid = device.get_thread();
+  size_t node_id = device.get_node_id();
 
   // for each thread, add the input device if it's not already in the map
   auto device_it = devices_[ tid ].find( node_id );
@@ -76,7 +76,7 @@ nest::StimulationBackendMPI::enroll( nest::StimulationDevice& device, const Dict
   }
   // the MPI communication will be initialised during the prepare function
   std::pair< MPI_Comm*, StimulationDevice* > pair = std::make_pair( nullptr, &device );
-  std::pair< index, std::pair< const MPI_Comm*, StimulationDevice* > > secondpair = std::make_pair( node_id, pair );
+  std::pair< size_t, std::pair< const MPI_Comm*, StimulationDevice* > > secondpair = std::make_pair( node_id, pair );
   devices_[ tid ].insert( secondpair );
   enrolled_ = true;
 }
@@ -85,8 +85,8 @@ nest::StimulationBackendMPI::enroll( nest::StimulationDevice& device, const Dict
 void
 nest::StimulationBackendMPI::disenroll( nest::StimulationDevice& device )
 {
-  thread tid = device.get_thread();
-  index node_id = device.get_node_id();
+  size_t tid = device.get_thread();
+  size_t node_id = device.get_node_id();
 
   // remove the device from the map
   auto device_it = devices_[ tid ].find( node_id );
@@ -110,7 +110,7 @@ nest::StimulationBackendMPI::prepare()
   }
 
   // need to be run only by the master thread : it is the case because this part is not running in parallel
-  thread thread_id_master = kernel().vp_manager.get_thread_id();
+  size_t thread_id_master = kernel().vp_manager.get_thread_id();
   // Create the connection with MPI
   // 1) take all the ports of the connections. Get port and update the list of device only for master
   for ( auto& it_device : devices_[ thread_id_master ] )
@@ -271,7 +271,7 @@ nest::StimulationBackendMPI::cleanup()
     }
     // clear map of devices
     commMap_.clear();
-    thread thread_id_master = kernel().vp_manager.get_thread_id();
+    size_t thread_id_master = kernel().vp_manager.get_thread_id();
     for ( auto& it_device : devices_[ thread_id_master ] )
     {
       it_device.second.first = nullptr;
@@ -287,7 +287,7 @@ nest::StimulationBackendMPI::get_port( nest::StimulationDevice* device, std::str
 }
 
 void
-nest::StimulationBackendMPI::get_port( const index index_node, const std::string& label, std::string* port_name )
+nest::StimulationBackendMPI::get_port( const size_t index_node, const std::string& label, std::string* port_name )
 {
   // path of the file : path+label+id+.txt
   // (file contains only one line with name of the port)
@@ -358,7 +358,7 @@ nest::StimulationBackendMPI::update_device( int* array_index,
     if ( data.first[ 0 ] != 0 )
     {
       // if there are some data
-      thread thread_id = kernel().vp_manager.get_thread_id();
+      size_t thread_id = kernel().vp_manager.get_thread_id();
       int index_id_device = 0; // the index for the array of device in the data
       // get the first id of the device for the current thread
       // if the thread_id == 0, the index_id_device equals 0

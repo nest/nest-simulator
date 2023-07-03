@@ -71,7 +71,7 @@ EventDeliveryManager::~EventDeliveryManager()
 void
 EventDeliveryManager::initialize()
 {
-  const thread num_threads = kernel().vp_manager.get_num_threads();
+  const size_t num_threads = kernel().vp_manager.get_num_threads();
 
   init_moduli();
   local_spike_counter_.resize( num_threads, 0 );
@@ -89,7 +89,7 @@ EventDeliveryManager::initialize()
 
 #pragma omp parallel
   {
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
     emitted_spikes_register_[ tid ].resize( num_threads,
       std::vector< std::vector< Target > >( kernel().connection_manager.get_min_delay(), std::vector< Target >() ) );
 
@@ -178,7 +178,7 @@ EventDeliveryManager::configure_spike_data_buffers()
 void
 EventDeliveryManager::configure_spike_register()
 {
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
     reset_spike_register_( tid );
     resize_spike_register_( tid );
@@ -197,8 +197,8 @@ EventDeliveryManager::configure_secondary_buffers()
 void
 EventDeliveryManager::init_moduli()
 {
-  delay min_delay = kernel().connection_manager.get_min_delay();
-  delay max_delay = kernel().connection_manager.get_max_delay();
+  long min_delay = kernel().connection_manager.get_min_delay();
+  long max_delay = kernel().connection_manager.get_max_delay();
   assert( min_delay != 0 );
   assert( max_delay != 0 );
 
@@ -209,7 +209,7 @@ EventDeliveryManager::init_moduli()
 
   moduli_.resize( min_delay + max_delay );
 
-  for ( delay d = 0; d < min_delay + max_delay; ++d )
+  for ( long d = 0; d < min_delay + max_delay; ++d )
   {
     moduli_[ d ] = ( kernel().simulation_manager.get_clock().get_steps() + d ) % ( min_delay + max_delay );
   }
@@ -219,7 +219,7 @@ EventDeliveryManager::init_moduli()
   // The slice_moduli_ table maps time steps to these bins
   const size_t nbuff = static_cast< size_t >( std::ceil( static_cast< double >( min_delay + max_delay ) / min_delay ) );
   slice_moduli_.resize( min_delay + max_delay );
-  for ( delay d = 0; d < min_delay + max_delay; ++d )
+  for ( long d = 0; d < min_delay + max_delay; ++d )
   {
     slice_moduli_[ d ] = ( ( kernel().simulation_manager.get_clock().get_steps() + d ) / min_delay ) % nbuff;
   }
@@ -228,21 +228,23 @@ EventDeliveryManager::init_moduli()
 void
 EventDeliveryManager::update_moduli()
 {
-  delay min_delay = kernel().connection_manager.get_min_delay();
-  delay max_delay = kernel().connection_manager.get_max_delay();
+  long min_delay = kernel().connection_manager.get_min_delay();
+  long max_delay = kernel().connection_manager.get_max_delay();
   assert( min_delay != 0 );
   assert( max_delay != 0 );
 
-  // Note that for updating the modulos, it is sufficient
-  // to rotate the buffer to the left.
-  assert( moduli_.size() == ( index ) ( min_delay + max_delay ) );
+  /*
+   * Note that for updating the modulos, it is sufficient
+   * to rotate the buffer to the left.
+   */
+  assert( moduli_.size() == ( size_t ) ( min_delay + max_delay ) );
   std::rotate( moduli_.begin(), moduli_.begin() + min_delay, moduli_.end() );
 
   // For the slice-based ring buffer, we cannot rotate the table, but
   // have to re-compute it, since max_delay_ may not be a multiple of
   // min_delay_.  Reference time is the time at the beginning of the slice.
   const size_t nbuff = static_cast< size_t >( std::ceil( static_cast< double >( min_delay + max_delay ) / min_delay ) );
-  for ( delay d = 0; d < min_delay + max_delay; ++d )
+  for ( long d = 0; d < min_delay + max_delay; ++d )
   {
     slice_moduli_[ d ] = ( ( kernel().simulation_manager.get_clock().get_steps() + d ) / min_delay ) % nbuff;
   }
@@ -279,7 +281,7 @@ void
 EventDeliveryManager::write_done_marker_secondary_events_( const bool done )
 {
   // write done marker at last position in every chunk
-  for ( thread rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
+  for ( size_t rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
   {
     send_buffer_secondary_events_[ kernel().mpi_manager.get_done_marker_position_in_secondary_events_send_buffer(
       rank ) ] = done;
@@ -295,14 +297,14 @@ EventDeliveryManager::gather_secondary_events( const bool done )
 }
 
 bool
-EventDeliveryManager::deliver_secondary_events( const thread tid, const bool called_from_wfr_update )
+EventDeliveryManager::deliver_secondary_events( const size_t tid, const bool called_from_wfr_update )
 {
   return kernel().connection_manager.deliver_secondary_events(
     tid, called_from_wfr_update, recv_buffer_secondary_events_ );
 }
 
 void
-EventDeliveryManager::gather_spike_data( const thread tid )
+EventDeliveryManager::gather_spike_data( const size_t tid )
 {
   if ( off_grid_spiking_ )
   {
@@ -316,7 +318,7 @@ EventDeliveryManager::gather_spike_data( const thread tid )
 
 template < typename SpikeDataT >
 void
-EventDeliveryManager::gather_spike_data_( const thread tid,
+EventDeliveryManager::gather_spike_data_( const size_t tid,
   std::vector< SpikeDataT >& send_buffer,
   std::vector< SpikeDataT >& recv_buffer )
 {
@@ -449,7 +451,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 
 template < typename TargetT, typename SpikeDataT >
 bool
-EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
+EventDeliveryManager::collocate_spike_data_buffers_( const size_t tid,
   const AssignedRanks& assigned_ranks,
   SendBufferPosition& send_buffer_position,
   std::vector< std::vector< std::vector< std::vector< TargetT > > > >& emitted_spikes_register,
@@ -474,7 +476,7 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
       {
         assert( not emitted_spike.is_processed() );
 
-        const thread rank = emitted_spike.get_rank();
+        const size_t rank = emitted_spike.get_rank();
 
         if ( send_buffer_position.is_chunk_filled( rank ) )
         {
@@ -503,7 +505,7 @@ EventDeliveryManager::set_end_and_invalid_markers_( const AssignedRanks& assigne
   const SendBufferPosition& send_buffer_position,
   std::vector< SpikeDataT >& send_buffer )
 {
-  for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
+  for ( size_t rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
   {
     // thread-local index of (global) rank
     if ( send_buffer_position.idx( rank ) > send_buffer_position.begin( rank ) )
@@ -532,9 +534,9 @@ EventDeliveryManager::reset_complete_marker_spike_data_( const AssignedRanks& as
   const SendBufferPosition& send_buffer_position,
   std::vector< SpikeDataT >& send_buffer ) const
 {
-  for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
+  for ( size_t rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
   {
-    const thread idx = send_buffer_position.end( rank ) - 1;
+    const size_t idx = send_buffer_position.end( rank ) - 1;
     send_buffer[ idx ].reset_marker();
   }
 }
@@ -545,18 +547,18 @@ EventDeliveryManager::set_complete_marker_spike_data_( const AssignedRanks& assi
   const SendBufferPosition& send_buffer_position,
   std::vector< SpikeDataT >& send_buffer ) const
 {
-  for ( thread target_rank = assigned_ranks.begin; target_rank < assigned_ranks.end; ++target_rank )
+  for ( size_t target_rank = assigned_ranks.begin; target_rank < assigned_ranks.end; ++target_rank )
   {
     // Use last entry for completion marker. For possible collision
     // with end marker, see comment in set_end_and_invalid_markers_.
-    const thread idx = send_buffer_position.end( target_rank ) - 1;
+    const size_t idx = send_buffer_position.end( target_rank ) - 1;
     send_buffer[ idx ].set_complete_marker();
   }
 }
 
 template < typename SpikeDataT >
 bool
-EventDeliveryManager::deliver_events_( const thread tid, const std::vector< SpikeDataT >& recv_buffer )
+EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< SpikeDataT >& recv_buffer )
 {
   const unsigned int send_recv_count_spike_data_per_rank =
     kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
@@ -576,7 +578,7 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
     prepared_timestamps[ lag ] = kernel().simulation_manager.get_clock() + Time::step( lag + 1 );
   }
 
-  for ( thread rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
+  for ( size_t rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
   {
     // check last entry for completed marker; needs to be done before
     // checking invalid marker to assure that this is always read
@@ -602,8 +604,8 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
       {
         if ( spike_data.get_tid() == tid )
         {
-          const index syn_id = spike_data.get_syn_id();
-          const index lcid = spike_data.get_lcid();
+          const size_t syn_id = spike_data.get_syn_id();
+          const size_t lcid = spike_data.get_lcid();
 
           // non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
           // only if needed, as this is computationally costly
@@ -613,17 +615,17 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
       }
       else
       {
-        const index syn_id = spike_data.get_syn_id();
+        const size_t syn_id = spike_data.get_syn_id();
         // for compressed spikes lcid holds the index in the
         // compressed_spike_data structure
-        const index idx = spike_data.get_lcid();
+        const size_t idx = spike_data.get_lcid();
         const std::vector< SpikeData >& compressed_spike_data =
           kernel().connection_manager.get_compressed_spike_data( syn_id, idx );
         for ( auto it = compressed_spike_data.cbegin(); it != compressed_spike_data.cend(); ++it )
         {
           if ( it->get_tid() == tid )
           {
-            const index lcid = it->get_lcid();
+            const size_t lcid = it->get_lcid();
 
             // non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
             // only if needed, as this is computationally costly
@@ -645,7 +647,7 @@ EventDeliveryManager::deliver_events_( const thread tid, const std::vector< Spik
 }
 
 void
-EventDeliveryManager::gather_target_data( const thread tid )
+EventDeliveryManager::gather_target_data( const size_t tid )
 {
   assert( not kernel().connection_manager.is_source_table_cleared() );
 
@@ -717,11 +719,11 @@ EventDeliveryManager::gather_target_data( const thread tid )
 }
 
 bool
-EventDeliveryManager::collocate_target_data_buffers_( const thread tid,
+EventDeliveryManager::collocate_target_data_buffers_( const size_t tid,
   const AssignedRanks& assigned_ranks,
   SendBufferPosition& send_buffer_position )
 {
-  thread source_rank;
+  size_t source_rank;
   TargetData next_target_data;
   bool valid_next_target_data;
   bool is_source_table_read = true;
@@ -734,7 +736,7 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid,
   }
 
   // reset markers
-  for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
+  for ( size_t rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
   {
     // reset last entry to avoid accidentally communicating done
     // marker
@@ -780,7 +782,7 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid,
     else // all connections have been processed
     {
       // mark end of valid data for each rank
-      for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
+      for ( size_t rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
       {
         if ( send_buffer_position.idx( rank ) > send_buffer_position.begin( rank ) )
         {
@@ -800,21 +802,21 @@ void
 nest::EventDeliveryManager::set_complete_marker_target_data_( const AssignedRanks& assigned_ranks,
   const SendBufferPosition& send_buffer_position )
 {
-  for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
+  for ( size_t rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
   {
-    const thread idx = send_buffer_position.end( rank ) - 1;
+    const size_t idx = send_buffer_position.end( rank ) - 1;
     send_buffer_target_data_[ idx ].set_complete_marker();
   }
 }
 
 bool
-nest::EventDeliveryManager::distribute_target_data_buffers_( const thread tid )
+nest::EventDeliveryManager::distribute_target_data_buffers_( const size_t tid )
 {
   bool are_others_completed = true;
   const unsigned int send_recv_count_target_data_per_rank =
     kernel().mpi_manager.get_send_recv_count_target_data_per_rank();
 
-  for ( thread rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
+  for ( size_t rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
   {
     // Check last entry for completed marker
     if ( not recv_buffer_target_data_[ ( rank + 1 ) * send_recv_count_target_data_per_rank - 1 ].is_complete_marker() )
@@ -848,7 +850,7 @@ nest::EventDeliveryManager::distribute_target_data_buffers_( const thread tid )
 }
 
 void
-EventDeliveryManager::resize_spike_register_( const thread tid )
+EventDeliveryManager::resize_spike_register_( const size_t tid )
 {
   for ( auto& emitted_spikes_for_current_thread : emitted_spikes_register_[ tid ] )
   {

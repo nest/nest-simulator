@@ -313,7 +313,7 @@ NestModule::SetStatus_idFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 2 );
 
   DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.top() );
-  index node_id = getValue< long >( i->OStack.pick( 1 ) );
+  size_t node_id = getValue< long >( i->OStack.pick( 1 ) );
 
   set_node_status( node_id, dict );
 
@@ -435,7 +435,7 @@ NestModule::GetStatus_gFunction::execute( SLIInterpreter* i ) const
 
   for ( NodeCollection::const_iterator it = nc->begin(); it < nc->end(); ++it )
   {
-    index node_id = ( *it ).node_id;
+    size_t node_id = ( *it ).node_id;
     DictionaryDatum dict = get_node_status( node_id );
     result.push_back( dict );
   }
@@ -450,7 +450,7 @@ NestModule::GetStatus_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  index node_id = getValue< long >( i->OStack.pick( 0 ) );
+  size_t node_id = getValue< long >( i->OStack.pick( 0 ) );
   DictionaryDatum dict = get_node_status( node_id );
 
   i->OStack.pop();
@@ -1123,7 +1123,7 @@ NestModule::GetNodeID_qFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
   NodeCollectionIteratorDatum it = getValue< NodeCollectionIteratorDatum >( i->OStack.pick( 0 ) );
 
-  index node_id = ( **it ).node_id;
+  size_t node_id = ( **it ).node_id;
 
   i->OStack.pop();
   i->OStack.push( node_id );
@@ -1205,7 +1205,7 @@ NestModule::Get_g_iFunction::execute( SLIInterpreter* i ) const
     throw RangeCheck();
   }
 
-  const index node_id = ( *nodecollection )[ idx ];
+  const size_t node_id = ( *nodecollection )[ idx ];
 
   i->OStack.pop( 2 );
   i->OStack.push( node_id );
@@ -1953,7 +1953,7 @@ NestModule::SelectNodesByMask_g_a_MFunction::execute( SLIInterpreter* i ) const
   std::vector< double > anchor = getValue< std::vector< double > >( i->OStack.pick( 1 ) );
   MaskDatum mask = getValue< MaskDatum >( i->OStack.pick( 0 ) );
 
-  std::vector< index > mask_node_ids;
+  std::vector< size_t > mask_node_ids;
 
   const int dim = anchor.size();
 
@@ -1974,7 +1974,8 @@ NestModule::SelectNodesByMask_g_a_MFunction::execute( SLIInterpreter* i ) const
 
     MaskedLayer< 2 > ml = MaskedLayer< 2 >( *layer, mask, false, layer_nc );
 
-    for ( Ntree< 2, index >::masked_iterator it = ml.begin( Position< 2 >( anchor[ 0 ], anchor[ 1 ] ) ); it != ml.end();
+    for ( Ntree< 2, size_t >::masked_iterator it = ml.begin( Position< 2 >( anchor[ 0 ], anchor[ 1 ] ) );
+          it != ml.end();
           ++it )
     {
       mask_node_ids.push_back( it->second );
@@ -1990,7 +1991,7 @@ NestModule::SelectNodesByMask_g_a_MFunction::execute( SLIInterpreter* i ) const
 
     MaskedLayer< 3 > ml = MaskedLayer< 3 >( *layer, mask, false, layer_nc );
 
-    for ( Ntree< 3, index >::masked_iterator it = ml.begin( Position< 3 >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );
+    for ( Ntree< 3, size_t >::masked_iterator it = ml.begin( Position< 3 >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );
           it != ml.end();
           ++it )
     {

@@ -83,33 +83,7 @@ public:
 protected:
   void connect_();
   void cg_set_masks();
-
-  /**
-   * Calculate the right border of the contiguous range of node IDs
-   * starting at left.
-   *
-   * The element is found using a binary search with
-   * stepsize step.
-   *
-   * \param left The leftmost element of the range
-   * \param step The step size for the binary search
-   * \param nodes The std::vector<long> of node IDs to search in
-   * \returns the right border of the range
-   */
-  index cg_get_right_border( index left, size_t step, const NodeCollectionPTR nodes );
-
-  /**
-   * Determine all contiguous ranges found in a given vector of node IDs
-   * and add the ranges to the given RangeSet.
-   *
-   * \param ranges A reference to the RangeSet to add to
-   * \param nodes A reference to a std::vector<long> of node IDs
-   *
-   * \note We do not store the indices into the given range, but
-   * instead we store the actual node IDs. This allows us to use CG
-   * generated indices as indices into the ranges spanned by the
-   * RangeSet. Index translation is done in cg_create_masks().
-   */
+  size_t cg_get_right_border( size_t left, size_t step, const NodeCollectionPTR nodes );
   void cg_get_ranges( RangeSet& ranges, const NodeCollectionPTR nodes );
 
 private:

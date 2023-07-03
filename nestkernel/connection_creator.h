@@ -121,17 +121,17 @@ private:
     PoolWrapper_();
     ~PoolWrapper_();
     void define( MaskedLayer< D >* );
-    void define( std::vector< std::pair< Position< D >, index > >* );
+    void define( std::vector< std::pair< Position< D >, size_t > >* );
 
-    typename Ntree< D, index >::masked_iterator masked_begin( const Position< D >& pos ) const;
-    typename Ntree< D, index >::masked_iterator masked_end() const;
+    typename Ntree< D, size_t >::masked_iterator masked_begin( const Position< D >& pos ) const;
+    typename Ntree< D, size_t >::masked_iterator masked_end() const;
 
-    typename std::vector< std::pair< Position< D >, index > >::iterator begin() const;
-    typename std::vector< std::pair< Position< D >, index > >::iterator end() const;
+    typename std::vector< std::pair< Position< D >, size_t > >::iterator begin() const;
+    typename std::vector< std::pair< Position< D >, size_t > >::iterator end() const;
 
   private:
     MaskedLayer< D >* masked_layer_;
-    std::vector< std::pair< Position< D >, index > >* positions_;
+    std::vector< std::pair< Position< D >, size_t > >* positions_;
   };
 
   void extract_params_( const DictionaryDatum& dict_datum, std::vector< DictionaryDatum >& params );
@@ -141,7 +141,7 @@ private:
     Iterator to,
     Node* tgt_ptr,
     const Position< D >& tgt_pos,
-    thread tgt_thread,
+    size_t tgt_thread,
     const Layer< D >& source );
 
   template < int D >
@@ -171,7 +171,7 @@ private:
   std::shared_ptr< Parameter > number_of_connections_;
   std::shared_ptr< AbstractMask > mask_;
   std::shared_ptr< Parameter > kernel_;
-  std::vector< index > synapse_model_;
+  std::vector< size_t > synapse_model_;
   std::vector< std::vector< DictionaryDatum > > param_dicts_;
   std::vector< std::shared_ptr< Parameter > > weight_;
   std::vector< std::shared_ptr< Parameter > > delay_;

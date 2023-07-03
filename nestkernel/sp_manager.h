@@ -120,15 +120,8 @@ public:
    * \param target_thread Thread that hosts the target node.
    * \param syn_id The synapse model to use.
    */
-  void disconnect( const index snode_id, Node* target, thread target_thread, const index syn_id );
-  /**
-   * Handles the general dynamic creation and deletion of synapses when
-   * structural plasticity is enabled.
-   *
-   * Retrieves the number of available synaptic elements to create new synapses.
-   * Retrieves the number of deleted synaptic elements to delete already created synapses.
-   * @param sp_builder The structural plasticity connection builder to use
-   */
+  void disconnect( const size_t snode_id, Node* target, size_t target_thread, const size_t syn_id );
+
   void update_structural_plasticity();
   void update_structural_plasticity( SPBuilder* );
 
@@ -154,7 +147,7 @@ public:
    * ConnectionManager::min_delay() methods have to respect this delay
    * as well.
    */
-  delay builder_min_delay() const;
+  long builder_min_delay() const;
 
   /**
    * Returns the maximum delay of all SP builders.
@@ -164,79 +157,38 @@ public:
    * ConnectionManager::max_delay() methods have to respect this delay
    * as well.
    */
-  delay builder_max_delay() const;
+  long builder_max_delay() const;
 
-  /**
-   * Dynamic creation of synapses
-   *
-   * @param pre_id source id
-   * @param pre_n number of available synaptic elements in the pre node
-   * @param post_id target id
-   * @param post_n number of available synaptic elements in the post node
-   * @param sp_conn_builder structural plasticity connection builder to use
-   *
-   * @return true if synapses are created
-   */
-  bool create_synapses( std::vector< index >& pre_vacant_id,
+  // Creation of synapses
+  bool create_synapses( std::vector< size_t >& pre_vacant_id,
     std::vector< int >& pre_vacant_n,
-    std::vector< index >& post_vacant_id,
+    std::vector< size_t >& post_vacant_id,
     std::vector< int >& post_vacant_n,
-    SPBuilder* sp_conn_builder );
-  /**
-   * Deletion of synapses due to the loss of a pre synaptic element.
-   *
-   * The corresponding pre synaptic element will still remain available for a new
-   * connection on the following updates in connectivity
-   * @param pre_deleted_id Id of the node with the deleted pre synaptic element
-   * @param pre_deleted_n number of deleted pre synaptic elements
-   * @param synapse_model model name
-   * @param se_pre_name pre synaptic element name
-   * @param se_post_name postsynaptic element name
-   */
-  void delete_synapses_from_pre( const std::vector< index >& pre_deleted_id,
+    SPBuilder* sp_conn_builder )  void delete_synapses_from_pre( const std::vector< index >& pre_deleted_id,
+  // Deletion of synapses on the pre synaptic side
+  void delete_synapses_from_pre( const std::vector< size_t >& pre_deleted_id,
     std::vector< int >& pre_deleted_n,
-    const index synapse_model,
+    const size_t synapse_model,
     const std::string& se_pre_name,
     const std::string& se_post_name );
-  /**
-   * Deletion of synapses due to the loss of a postsynaptic element.
-   *
-   * The corresponding pre synaptic element will still remain available for a new
-   * connection on the following updates in connectivity
-   * @param post_deleted_id Id of the node with the deleted postsynaptic element
-   * @param post_deleted_n number of deleted postsynaptic elements
-   * @param synapse_model model name
-   * @param se_pre_name pre synaptic element name
-   * @param se_post_name postsynaptic element name
-   */
-  void delete_synapses_from_post( std::vector< index >& post_deleted_id,
+  // Deletion of synapses on the postsynaptic side
+  void delete_synapses_from_post( std::vector< size_t >& post_deleted_id,
     std::vector< int >& post_deleted_n,
-    index synapse_model,
+    size_t synapse_model,
     std::string se_pre_name,
     std::string se_post_name );
-  /**
-   * Handles the deletion of synapses between source and target node.
-   *
-   * The deletion is defined by the pre and postsynaptic elements and the synapse
-   * type. Updates the number of connected synaptic elements in the source and
-   * target.
-   * @param snode_id source id
-   * @param tnode_id target id
-   * @param syn_id synapse type
-   * @param se_pre_name name of the pre synaptic element
-   * @param se_post_name name of the postsynaptic element
-   */
-  void delete_synapse( index source, index target, long syn_id, std::string se_pre_name, std::string se_post_name );
+  // Deletion of synapses
+  void delete_synapse( size_t source, size_t target, long syn_id, std::string se_pre_name, std::string se_post_name );
 
   void get_synaptic_elements( std::string se_name,
-    std::vector< index >& se_vacant_id,
+    std::vector< size_t >& se_vacant_id,
     std::vector< int >& se_vacant_n,
-    std::vector< index >& se_deleted_id,
+    std::vector< size_t >& se_deleted_id,
     std::vector< int >& se_deleted_n );
 
-  void serialize_id( std::vector< index >& id, std::vector< int >& n, std::vector< index >& res );
-  void global_shuffle( std::vector< index >& v );
-  void global_shuffle( std::vector< index >& v, size_t n );
+  void serialize_id( std::vector< size_t >& id, std::vector< int >& n, std::vector< size_t >& res );
+  void global_shuffle( std::vector< size_t >& v );
+  void global_shuffle( std::vector< size_t >& v, size_t n );
 
 private:
   /**

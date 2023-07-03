@@ -140,7 +140,7 @@ private:
    * thread. The map associates the node ID of a device on a given thread
    * with its device. Only the master thread has a valid MPI communicator pointer.
    */
-  using device_map = std::vector< std::map< index, std::pair< const MPI_Comm*, StimulationDevice* > > >;
+  using device_map = std::vector< std::map< size_t, std::pair< const MPI_Comm*, StimulationDevice* > > >;
   device_map devices_;
   /**
    * A map of MPI communicators used by the master thread for the MPI communication.
@@ -157,7 +157,7 @@ private:
    * @param port_name : result of the port name
    */
   static void get_port( StimulationDevice* device, std::string* port_name );
-  static void get_port( index index_node, const std::string& label, std::string* port_name );
+  static void get_port( size_t index_node, const std::string& label, std::string* port_name );
   /**
    * MPI communication for receiving the data before each run.
    *

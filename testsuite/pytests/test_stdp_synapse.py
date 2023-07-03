@@ -72,8 +72,8 @@ class TestSTDPSynapse:
         # While the random sequences, fairly long, would supposedly reveal small differences in the weight change
         # between NEST and ours, some low-probability events (say, coinciding spikes) can well not have occurred.
         # To generate and test every possible combination of pre/post order, we append some hardcoded spike sequences.
-        self.hardcoded_pre_times = np.array([1, 5, 6, 7, 9, 11, 12, 13, 14.5, 16.1], dtype=float)
-        self.hardcoded_post_times = np.array([2, 3, 4, 8, 9, 10, 12, 12.2, 14.1, 15.4], dtype=float)
+        self.hardcoded_pre_times = np.array([1, 5, 6, 7, 9, 11, 12, 13, 14.5, 16.1, 21, 25, 26, 27, 29, 31, 32, 33, 34.5, 36.1], dtype=float)
+        self.hardcoded_post_times = np.array([2, 3, 4, 8, 9, 10, 12, 12.2, 14.1, 15.4, 22, 23, 24, 28, 29, 30, 32, 33.2, 35.1, 36.4], dtype=float)
         self.hardcoded_trains_length = 5.0 + max(np.amax(self.hardcoded_pre_times), np.amax(self.hardcoded_post_times))
 
     def do_nest_simulation_and_compare_to_reproduced_weight(self, fname_snip):
@@ -220,7 +220,7 @@ class TestSTDPSynapse:
     def reproduce_weight_drift(self, pre_spikes, post_spikes, initial_weight, fname_snip=""):
         """Independent, self-contained model of STDP"""
 
-        def facilitate(w, Kpre, Wmax_=1.0):
+        def facilitate(w, Kpre):
             norm_w = (w / self.synapse_parameters["Wmax"]) + (
                 self.synapse_parameters["lambda"]
                 * pow(1 - (w / self.synapse_parameters["Wmax"]), self.synapse_parameters["mu_plus"])
@@ -381,7 +381,6 @@ class TestSTDPSynapse:
         fig, ax = plt.subplots(nrows=3)
 
         n_spikes = len(pre_spikes)
-        print(n_spikes)
         for i in range(n_spikes):
             ax[0].plot(2 * [pre_spikes[i]], [0, 1], linewidth=2, color="blue", alpha=0.4)
         ax[0].set_ylabel("Pre spikes")

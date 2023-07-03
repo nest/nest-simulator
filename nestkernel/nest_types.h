@@ -146,7 +146,7 @@ __attribute__( ( __unused__ ) ) const size_t max_targetindex = invalid_targetind
 /**
  * Marker for invalid LCID values.
  */
-constexpr index invalid_lcid = MAX_LCID;
+constexpr size_t invalid_lcid = MAX_LCID;
 
 /**
  * Value for invalid connection thread id.

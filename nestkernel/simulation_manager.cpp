@@ -1017,7 +1017,6 @@ nest::SimulationManager::update_()
         if ( tid == 0 )
         {
           sw_update_.stop();
-          sw_gather_spike_data_.start();
         }
 #endif
 
@@ -1025,6 +1024,9 @@ nest::SimulationManager::update_()
 // the other threads are enforced to wait at the end of the block
 #pragma omp master
       {
+#ifdef TIMER_DETAILED
+        sw_gather_spike_data_.start();
+#endif
 
         // gather and deliver only at end of slice, i.e., end of min_delay step
         if ( to_step_ == kernel().connection_manager.get_min_delay() )
@@ -1035,20 +1037,14 @@ nest::SimulationManager::update_()
           }
           if ( kernel().connection_manager.secondary_connections_exist() )
           {
-#pragma omp single
             {
               kernel().event_delivery_manager.gather_secondary_events( true );
             }
-            kernel().event_delivery_manager.deliver_secondary_events( tid, false );
           }
         }
       
-#pragma omp barrier
 #ifdef TIMER_DETAILED
-        if ( tid == 0 )
-        {
           sw_gather_spike_data_.stop();
-        }
 #endif
 
           advance_time_();

@@ -248,7 +248,7 @@ EventDeliveryManager::configure_spike_register()
 {
 #pragma omp parallel
   {
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
     reset_spike_register_( tid );
     resize_spike_register_( tid );
   }
@@ -660,7 +660,7 @@ EventDeliveryManager::get_max_spike_data_per_thread_( const AssignedRanks& assig
 }
 
 void
-EventDeliveryManager::deliver_events( const thread tid )
+EventDeliveryManager::deliver_events( const size_t tid )
 {
 #ifdef TIMER_DETAILED
   if ( tid == 0 )
@@ -721,7 +721,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
       continue;
     }
 
-    index num_valid_entries = 0;
+    size_t num_valid_entries = 0;
     for ( unsigned int i = 0; i < send_recv_count_spike_data_per_rank; ++i )
     {
       const SpikeDataT& spike_data = recv_buffer[ rank * send_recv_count_spike_data_per_rank + i ];
@@ -737,9 +737,9 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
     const unsigned int num_batches = num_valid_entries / BATCH_SIZE;
     const unsigned int num_remaining_entries = num_valid_entries - num_batches * BATCH_SIZE;
 
-    thread tid_batch[ BATCH_SIZE ];
-    index syn_id_batch[ BATCH_SIZE ];
-    index lcid_batch[ BATCH_SIZE ];
+    size_t tid_batch[ BATCH_SIZE ];
+    size_t syn_id_batch[ BATCH_SIZE ];
+    size_t lcid_batch[ BATCH_SIZE ];
 
     if ( not kernel().connection_manager.use_compressed_spikes() )
     {
@@ -941,7 +941,7 @@ EventDeliveryManager::gather_target_data( const size_t tid )
 }
 
 void
-EventDeliveryManager::gather_target_data_compressed( const thread tid )
+EventDeliveryManager::gather_target_data_compressed( const size_t tid )
 {
   assert( not kernel().connection_manager.is_source_table_cleared() );
 
@@ -1121,7 +1121,7 @@ EventDeliveryManager::collocate_target_data_buffers_( const size_t tid,
 }
 
 bool
-EventDeliveryManager::collocate_target_data_buffers_compressed_( const thread tid,
+EventDeliveryManager::collocate_target_data_buffers_compressed_( const size_t tid,
   const AssignedRanks& assigned_ranks,
   SendBufferPosition& send_buffer_position )
 {
@@ -1132,7 +1132,7 @@ EventDeliveryManager::collocate_target_data_buffers_compressed_( const thread ti
   }
 
   // reset markers
-  for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
+  for ( size_t rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
   {
     FULL_LOGGING_ONLY( kernel().write_to_dump(
       String::compose( "marker reset: r%1 t%2 br%3", kernel().mpi_manager.get_rank(), tid, rank ) ); )

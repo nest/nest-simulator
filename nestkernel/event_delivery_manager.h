@@ -205,13 +205,13 @@ public:
    */
   void gather_target_data( const size_t tid );
 
-  void gather_target_data_compressed( const thread tid );
+  void gather_target_data_compressed( const size_t tid );
 
 
   /**
    * Delivers events to targets.
    */
-  void deliver_events( const thread tid );
+  void deliver_events( const size_t tid );
 
   /**
    * Collocates presynaptic connection information for secondary events (MPI
@@ -347,7 +347,7 @@ private:
     const AssignedRanks& assigned_ranks,
     SendBufferPosition& send_buffer_position );
 
-  bool collocate_target_data_buffers_compressed_( const thread tid,
+  bool collocate_target_data_buffers_compressed_( const size_t tid,
     const AssignedRanks& assigned_ranks,
     SendBufferPosition& send_buffer_position );
 

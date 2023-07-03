@@ -514,7 +514,7 @@ nest::SourceTable::fill_compressed_spike_data(
   compressed_spike_data.clear();
   compressed_spike_data.resize( num_synapse_models );
   compressed_spike_data_map_.clear();
-  compressed_spike_data_map_.resize( num_synapse_models, std::map< index, CSDMapEntry >() );
+  compressed_spike_data_map_.resize( num_synapse_models, std::map< size_t, CSDMapEntry >() );
 
   // For each synapse type, and for each source neuron with at least one local target,
   // store in compressed_spike_data one SpikeData entry for each local thread that
@@ -525,7 +525,7 @@ nest::SourceTable::fill_compressed_spike_data(
   //       Maybe one can exploit that to avoid searching with find() below.
   for ( synindex syn_id = 0; syn_id < kernel().model_manager.get_num_connection_models(); ++syn_id )
   {
-    for ( size_t target_thread = 0; target_thread < static_cast< thread >( compressible_sources_.size() );
+    for ( size_t target_thread = 0; target_thread < static_cast< size_t >( compressible_sources_.size() );
           ++target_thread )
     {
       for ( const auto& connection : compressible_sources_[ target_thread ][ syn_id ] )

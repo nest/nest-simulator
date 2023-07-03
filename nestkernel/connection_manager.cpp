@@ -1693,9 +1693,9 @@ nest::ConnectionManager::collect_compressed_spike_data( const size_t tid )
 }
 
 bool
-nest::ConnectionManager::fill_target_buffer( const thread tid,
-  const thread rank_start,
-  const thread rank_end,
+nest::ConnectionManager::fill_target_buffer( const size_t tid,
+  const size_t rank_start,
+  const size_t rank_end,
   std::vector< TargetData >& send_buffer_target_data,
   SendBufferPosition& send_buffer_position )
 {
@@ -1741,7 +1741,7 @@ nest::ConnectionManager::fill_target_buffer( const thread tid,
         //
         // We store where we need to continue and stop iteration for now.
         iteration_state_.at( tid ) =
-          std::pair< size_t, std::map< index, CSDMapEntry >::const_iterator >( syn_id, source_2_idx );
+          std::pair< size_t, std::map< size_t, CSDMapEntry >::const_iterator >( syn_id, source_2_idx );
 
         FULL_LOGGING_ONLY( kernel().write_to_dump( String::compose( "chunk full : r%1 t%2 src_rank %3 syn %4 s2i.1 %5 ",
           kernel().mpi_manager.get_rank(),
@@ -1805,13 +1805,13 @@ nest::ConnectionManager::fill_target_buffer( const thread tid,
   // this thread so we store a non-existing syn_id with a meaningless iterator to inform that
   // this thread has nothing to do in the next round.
   iteration_state_.at( tid ) =
-    std::pair< size_t, std::map< index, CSDMapEntry >::const_iterator >( syn_id, source_2_idx );
+    std::pair< size_t, std::map< size_t, CSDMapEntry >::const_iterator >( syn_id, source_2_idx );
 
   FULL_LOGGING_ONLY( kernel().write_to_dump(
     String::compose( "fill done : r%1 t%2 syn %3", kernel().mpi_manager.get_rank(), tid, syn_id ) ); )
 
   // Mark end of data for this round
-  for ( thread rank = rank_start; rank < rank_end; ++rank )
+  for ( size_t rank = rank_start; rank < rank_end; ++rank )
   {
     if ( send_buffer_position.idx( rank ) > send_buffer_position.begin( rank ) )
     {
@@ -1830,7 +1830,7 @@ nest::ConnectionManager::fill_target_buffer( const thread tid,
 void
 nest::ConnectionManager::initialize_iteration_state()
 {
-  const thread num_threads = kernel().vp_manager.get_num_threads();
+  const size_t num_threads = kernel().vp_manager.get_num_threads();
   iteration_state_.clear();
   iteration_state_.reserve( num_threads );
 
@@ -1838,8 +1838,8 @@ nest::ConnectionManager::initialize_iteration_state()
   // so we must have at least one synapse model and we can start iteration
   // at the beginning of its compressed spike data map.
   auto begin = source_table_.compressed_spike_data_map_.at( 0 ).cbegin();
-  for ( thread t = 0; t < num_threads; ++t )
+  for ( size_t t = 0; t < num_threads; ++t )
   {
-    iteration_state_.push_back( std::pair< size_t, std::map< index, CSDMapEntry >::const_iterator >( 0, begin ) );
+    iteration_state_.push_back( std::pair< size_t, std::map< size_t, CSDMapEntry >::const_iterator >( 0, begin ) );
   }
 }

@@ -327,9 +327,9 @@ public:
     size_t& target_rank,
     TargetData& next_target_data );
 
-  bool fill_target_buffer( const thread tid,
-    const thread rank_start,
-    const thread rank_end,
+  bool fill_target_buffer( const size_t tid,
+    const size_t rank_start,
+    const size_t rank_end,
     std::vector< TargetData >& send_buffer_target_data,
     SendBufferPosition& send_buffer_position );
 
@@ -659,7 +659,7 @@ private:
 
   //! For each thread, store (syn_id, compressed_spike_data_map_::iterator) pair for next iteration while filling target
   //! buffers
-  std::vector< std::pair< size_t, std::map< index, CSDMapEntry >::const_iterator > > iteration_state_;
+  std::vector< std::pair< size_t, std::map< size_t, CSDMapEntry >::const_iterator > > iteration_state_;
 };
 
 inline bool

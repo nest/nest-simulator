@@ -226,9 +226,9 @@ class TestSTDPSynapse:
 
         def facilitate(w, Kpre):
             norm_w = (w / self.synapse_parameters["Wmax"]) + (
-                    self.synapse_parameters["lambda"]
-                    * pow(1 - (w / self.synapse_parameters["Wmax"]), self.synapse_parameters["mu_plus"])
-                    * Kpre
+                self.synapse_parameters["lambda"]
+                * pow(1 - (w / self.synapse_parameters["Wmax"]), self.synapse_parameters["mu_plus"])
+                * Kpre
             )
             if norm_w < 1.0:
                 return norm_w * self.synapse_parameters["Wmax"]
@@ -237,37 +237,15 @@ class TestSTDPSynapse:
 
         def depress(w, Kpost):
             norm_w = (w / self.synapse_parameters["Wmax"]) - (
-                    self.synapse_parameters["alpha"]
-                    * self.synapse_parameters["lambda"]
-                    * pow(w / self.synapse_parameters["Wmax"], self.synapse_parameters["mu_minus"])
-                    * Kpost
+                self.synapse_parameters["alpha"]
+                * self.synapse_parameters["lambda"]
+                * pow(w / self.synapse_parameters["Wmax"], self.synapse_parameters["mu_minus"])
+                * Kpost
             )
             if norm_w > 0.0:
                 return norm_w * self.synapse_parameters["Wmax"]
             else:
                 return 0.0
-
-        def Kpost_at_time(t, spikes, inclusive=True):
-            t_curr = 0.0
-            Kpost = 0.0
-            for spike_idx, t_sp in enumerate(spikes):
-                if t < t_sp:
-                    # integrate to t
-                    Kpost *= exp(-(t - t_curr) / self.tau_post)
-                    return Kpost
-                # integrate to t_sp
-                Kpost *= exp(-(t_sp - t_curr) / self.tau_post)
-                if inclusive:
-                    Kpost += 1.0
-                if t == t_sp:
-                    return Kpost
-                if not inclusive:
-                    Kpost += 1.0
-                t_curr = t_sp
-            # if we get here, t > t_last_spike
-            # integrate to t
-            Kpost *= exp(-(t - t_curr) / self.tau_post)
-            return Kpost
 
         eps = 1e-6
         t = 0.0

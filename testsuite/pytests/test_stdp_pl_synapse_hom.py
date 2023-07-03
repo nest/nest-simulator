@@ -24,13 +24,16 @@ import pytest
 from math import exp
 import numpy as np
 
-try:
-    import matplotlib as mpl
-    import matplotlib.pyplot as plt
+DEBUG_PLOTS = False
 
-    DEBUG_PLOTS = False  # True
-except Exception:
-    DEBUG_PLOTS = False
+if DEBUG_PLOTS:
+    try:
+        import matplotlib as mpl  # noqa: F401
+        import matplotlib.pyplot as plt
+
+        DEBUG_PLOTS = True
+    except Exception:
+        DEBUG_PLOTS = False
 
 
 @nest.ll_api.check_stack
@@ -301,6 +304,18 @@ class TestSTDPPlSynapse:
             w_log.append(weight)
             Kplus_log.append(Kplus)
             Kminus_log.append(Kminus)
+
+        if DEBUG_PLOTS:
+            self.plot_weight_evolution(
+                pre_spikes,
+                post_spikes,
+                t_log,
+                w_log,
+                Kplus_log,
+                Kminus_log,
+                fname_snip=fname_snip + "_ref",
+                title_snip="Reference",
+            )
 
         return np.array(t_log), np.array(w_log), Kplus_log, Kminus_log
 

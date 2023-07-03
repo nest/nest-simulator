@@ -72,8 +72,12 @@ class TestSTDPSynapse:
         # While the random sequences, fairly long, would supposedly reveal small differences in the weight change
         # between NEST and ours, some low-probability events (say, coinciding spikes) can well not have occurred.
         # To generate and test every possible combination of pre/post order, we append some hardcoded spike sequences.
-        self.hardcoded_pre_times = np.array([1, 5, 6, 7, 9, 11, 12, 13, 14.5, 16.1, 21, 25, 26, 27, 29, 31, 32, 33, 34.5, 36.1], dtype=float)
-        self.hardcoded_post_times = np.array([2, 3, 4, 8, 9, 10, 12, 12.2, 14.1, 15.4, 22, 23, 24, 28, 29, 30, 32, 33.2, 35.1, 36.4], dtype=float)
+        self.hardcoded_pre_times = np.array(
+            [1, 5, 6, 7, 9, 11, 12, 13, 14.5, 16.1, 21, 25, 26, 27, 29, 31, 32, 33, 34.5, 36.1], dtype=float
+        )
+        self.hardcoded_post_times = np.array(
+            [2, 3, 4, 8, 9, 10, 12, 12.2, 14.1, 15.4, 22, 23, 24, 28, 29, 30, 32, 33.2, 35.1, 36.4], dtype=float
+        )
         self.hardcoded_trains_length = 5.0 + max(np.amax(self.hardcoded_pre_times), np.amax(self.hardcoded_post_times))
 
     def do_nest_simulation_and_compare_to_reproduced_weight(self, fname_snip):
@@ -222,9 +226,9 @@ class TestSTDPSynapse:
 
         def facilitate(w, Kpre):
             norm_w = (w / self.synapse_parameters["Wmax"]) + (
-                self.synapse_parameters["lambda"]
-                * pow(1 - (w / self.synapse_parameters["Wmax"]), self.synapse_parameters["mu_plus"])
-                * Kpre
+                    self.synapse_parameters["lambda"]
+                    * pow(1 - (w / self.synapse_parameters["Wmax"]), self.synapse_parameters["mu_plus"])
+                    * Kpre
             )
             if norm_w < 1.0:
                 return norm_w * self.synapse_parameters["Wmax"]
@@ -233,10 +237,10 @@ class TestSTDPSynapse:
 
         def depress(w, Kpost):
             norm_w = (w / self.synapse_parameters["Wmax"]) - (
-                self.synapse_parameters["alpha"]
-                * self.synapse_parameters["lambda"]
-                * pow(w / self.synapse_parameters["Wmax"], self.synapse_parameters["mu_minus"])
-                * Kpost
+                    self.synapse_parameters["alpha"]
+                    * self.synapse_parameters["lambda"]
+                    * pow(w / self.synapse_parameters["Wmax"], self.synapse_parameters["mu_minus"])
+                    * Kpost
             )
             if norm_w > 0.0:
                 return norm_w * self.synapse_parameters["Wmax"]
@@ -367,16 +371,16 @@ class TestSTDPSynapse:
         return np.array(t_log), np.array(w_log), Kplus_log, Kminus_log
 
     def plot_weight_evolution(
-        self,
-        pre_spikes,
-        post_spikes,
-        t_log,
-        w_log,
-        Kpre_log=None,
-        Kpost_log=None,
-        pre_indices=slice(-1),
-        fname_snip="",
-        title_snip="",
+            self,
+            pre_spikes,
+            post_spikes,
+            t_log,
+            w_log,
+            Kpre_log=None,
+            Kpost_log=None,
+            pre_indices=slice(-1),
+            fname_snip="",
+            title_snip="",
     ):
         fig, ax = plt.subplots(nrows=3)
 

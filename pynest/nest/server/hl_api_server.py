@@ -89,12 +89,12 @@ def do_exec(args, kwargs):
             if len(stdout) > 0:
                 response["stdout"] = "\n".join(stdout)
         else:
-            code = RestrictedPython.compile_restricted(source_cleaned, '<inline>', 'exec')  # noqa
+            code = RestrictedPython.compile_restricted(source_cleaned, "<inline>", "exec")  # noqa
             globals_ = get_restricted_globals()
             globals_.update(get_modules_from_env())
             exec(code, globals_, locals_)
-            if '_print' in locals_:
-                response['stdout'] = ''.join(locals_['_print'].txt)
+            if "_print" in locals_:
+                response["stdout"] = "".join(locals_["_print"].txt)
 
         if "return" in kwargs:
             if isinstance(kwargs["return"], list):
@@ -252,24 +252,24 @@ def get_arguments(request):
 
 
 def get_modules_from_env():
-    """ Get modules from environment variable NEST_SERVER_MODULES.
+    """Get modules from environment variable NEST_SERVER_MODULES.
 
-        This function converts the content of the environment variable NEST_SERVER_MODULES:
-        to a formatted dictionary for updating the Python `globals`.
+    This function converts the content of the environment variable NEST_SERVER_MODULES:
+    to a formatted dictionary for updating the Python `globals`.
 
-        Here is an example:
-            `NEST_SERVER_MODULES="nest,numpy as np,random from numpy"`
-        is converted to the following dictionary:
-            `{'nest': <module 'nest'> 'np': <module 'numpy'>, 'random': <module 'numpy.random'>}`
+    Here is an example:
+        `NEST_SERVER_MODULES="nest,numpy as np,random from numpy"`
+    is converted to the following dictionary:
+        `{'nest': <module 'nest'> 'np': <module 'numpy'>, 'random': <module 'numpy.random'>}`
     """
     modules = {}
     for module in MODULES:
-        if ' as ' in module:
-            modname, modvar = module.split(' as ')
+        if " as " in module:
+            modname, modvar = module.split(" as ")
             modules[modvar] = importlib.import_module(modname)
-        elif ' from ' in module:
-            modvar, modname = module.split(' from ')
-            modules[modvar] = importlib.import_module(f'{modname}.{modvar}')
+        elif " from " in module:
+            modvar, modname = module.split(" from ")
+            modules[modvar] = importlib.import_module(f"{modname}.{modvar}")
         else:
             modules[module] = importlib.import_module(module)
     return modules

@@ -65,8 +65,12 @@ class TestSTDPPlSynapse:
         # generate and test every possible combination of pre/post order, we append some hardcoded spike sequences:
         # pre: 1       5 6 7   9    11 12 13    15    17 18 19   20.1
         # post:  2 3 4       8 9 10    12    14    16    18 19.1 20
-        self.hardcoded_pre_times = np.array([1, 5, 6, 7, 9, 11, 12, 13, 14.5, 16.1, 21, 25, 26, 27, 29, 31, 32, 33, 34.5, 36.1], dtype=float)
-        self.hardcoded_post_times = np.array([2, 3, 4, 8, 9, 10, 12, 12.2, 14.1, 15.4, 22, 23, 24, 28, 29, 30, 32, 33.2, 35.1, 36.4], dtype=float)
+        self.hardcoded_pre_times = np.array(
+            [1, 5, 6, 7, 9, 11, 12, 13, 14.5, 16.1, 21, 25, 26, 27, 29, 31, 32, 33, 34.5, 36.1], dtype=float
+        )
+        self.hardcoded_post_times = np.array(
+            [2, 3, 4, 8, 9, 10, 12, 12.2, 14.1, 15.4, 22, 23, 24, 28, 29, 30, 32, 33.2, 35.1, 36.4], dtype=float
+        )
         self.hardcoded_trains_length = 5.0 + max(np.amax(self.hardcoded_pre_times), np.amax(self.hardcoded_post_times))
 
     def do_nest_simulation_and_compare_to_reproduced_weight(self, fname_snip):

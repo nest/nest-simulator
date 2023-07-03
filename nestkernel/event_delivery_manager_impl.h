@@ -39,8 +39,8 @@ EventDeliveryManager::send_local_( Node& source, EventT& e, const long lag )
   assert( not source.has_proxies() );
   e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
   e.set_sender( source );
-  const thread t = source.get_thread();
-  const index ldid = source.get_local_device_id();
+  const size_t t = source.get_thread();
+  const size_t ldid = source.get_local_device_id();
   kernel().connection_manager.send_from_device( t, ldid, e );
 }
 
@@ -50,8 +50,8 @@ EventDeliveryManager::send_local_( Node& source, SecondaryEvent& e, const long )
   assert( not source.has_proxies() );
   e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( 1 ) );
   e.set_sender( source );
-  const thread t = source.get_thread();
-  const index ldid = source.get_local_device_id();
+  const size_t t = source.get_thread();
+  const size_t ldid = source.get_local_device_id();
   kernel().connection_manager.send_from_device( t, ldid, e );
 }
 
@@ -66,8 +66,8 @@ template <>
 inline void
 EventDeliveryManager::send< SpikeEvent >( Node& source, SpikeEvent& e, const long lag )
 {
-  const thread tid = source.get_thread();
-  const index source_node_id = source.get_node_id();
+  const size_t tid = source.get_thread();
+  const size_t source_node_id = source.get_node_id();
   e.set_sender_node_id( source_node_id );
   if ( source.has_proxies() )
   {
@@ -101,7 +101,7 @@ EventDeliveryManager::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const
 }
 
 inline void
-EventDeliveryManager::send_remote( thread tid, SpikeEvent& e, const long lag )
+EventDeliveryManager::send_remote( size_t tid, SpikeEvent& e, const long lag )
 {
   FULL_LOGGING_ONLY( kernel().write_to_dump( String::compose( "sr called: r%1 t%2 s%3 m%4",
     kernel().mpi_manager.get_rank(),
@@ -110,7 +110,7 @@ EventDeliveryManager::send_remote( thread tid, SpikeEvent& e, const long lag )
     e.get_multiplicity() ) ); )
 
   // Put the spike in a buffer for the remote machines
-  const index lid = kernel().vp_manager.node_id_to_lid( e.get_sender().get_node_id() );
+  const size_t lid = kernel().vp_manager.node_id_to_lid( e.get_sender().get_node_id() );
   const std::vector< Target >& targets = kernel().connection_manager.get_remote_targets_of_local_node( tid, lid );
 
   for ( std::vector< Target >::const_iterator it = targets.begin(); it != targets.end(); ++it )
@@ -132,10 +132,10 @@ EventDeliveryManager::send_remote( thread tid, SpikeEvent& e, const long lag )
 }
 
 inline void
-EventDeliveryManager::send_off_grid_remote( thread tid, SpikeEvent& e, const long lag )
+EventDeliveryManager::send_off_grid_remote( size_t tid, SpikeEvent& e, const long lag )
 {
   // Put the spike in a buffer for the remote machines
-  const index lid = kernel().vp_manager.node_id_to_lid( e.get_sender().get_node_id() );
+  const size_t lid = kernel().vp_manager.node_id_to_lid( e.get_sender().get_node_id() );
   const std::vector< Target >& targets = kernel().connection_manager.get_remote_targets_of_local_node( tid, lid );
 
   for ( std::vector< Target >::const_iterator it = targets.begin(); it != targets.end(); ++it )
@@ -151,9 +151,9 @@ EventDeliveryManager::send_off_grid_remote( thread tid, SpikeEvent& e, const lon
 inline void
 EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e )
 {
-  const thread tid = kernel().vp_manager.get_thread_id();
-  const index source_node_id = source.get_node_id();
-  const index lid = kernel().vp_manager.node_id_to_lid( source_node_id );
+  const size_t tid = kernel().vp_manager.get_thread_id();
+  const size_t source_node_id = source.get_node_id();
+  const size_t lid = kernel().vp_manager.node_id_to_lid( source_node_id );
 
   if ( source.has_proxies() )
   {

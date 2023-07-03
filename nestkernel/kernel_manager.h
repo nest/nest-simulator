@@ -66,11 +66,13 @@
                                                      s; read only).
  min_update_time                       doubletype  - Shortest wall-clock time measured so far for a full update step (in
                                                      s; read only).
- ms_per_tic                            doubletype  - The number of milliseconds per tic, defaults to 0.001.
+ ms_per_tic                            doubletype  - The number of milliseconds per tic, calculated by
+                                                     ms_per_tic = 1 / tics_per_ms (read_only).
  resolution                            doubletype  - The resolution of the simulation (in ms), defaults to 0.1.
  time                                  doubletype  - The current simulation time (in ms).
  tics_per_ms                           doubletype  - The number of tics per millisecond, defaults to 1000.0.
- tics_per_step                         integertype - The number of tics per simulation time step, defaults to 100.
+ tics_per_step                         integertype - The number of tics per simulation time step, calculated by
+                                                     tics_per_step = resolution * tics_per_ms (read_only).
  to_do                                 integertype - The number of steps yet to be simulated (read only).
  T_max                                 doubletype  - The largest representable time value (in ms; read only).
  T_min                                 doubletype  - The smallest representable time value (in ms; read only).
@@ -153,7 +155,7 @@
                                                      element.
  structural_plasticity_update_interval integertype - Defines the time interval in ms at which the structural plasticity
                                                      manager will make changes in the structure of the network (creation
-                                                     and deletion of plastic synapses), defaults to 10000.0.
+                                                     and deletion of plastic synapses), defaults to 10000.
  synapse_models                        arraytype   - The list of the available synapse models (read only).
 
  Waveform relaxation method (wfr)
@@ -238,7 +240,7 @@ public:
    * Set the new number of threads on all managers by calling
    * change_number_of_threads() on each of them.
    */
-  void change_number_of_threads( thread new_num_threads );
+  void change_number_of_threads( size_t new_num_threads );
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& );

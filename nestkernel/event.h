@@ -137,7 +137,7 @@ public:
   /**
    * Return node ID of receiving Node.
    */
-  index get_receiver_node_id() const;
+  size_t get_receiver_node_id() const;
 
   /**
    * Return reference to sending Node.
@@ -156,23 +156,23 @@ public:
    *
    * @note This will trigger an assertion if sender node id has not been set.
    */
-  index get_sender_node_id() const;
+  size_t get_sender_node_id() const;
 
   /**
    * Sender is not local. Retrieve node ID of sending Node from SourceTable and return it.
    */
-  index retrieve_sender_node_id_from_source_table() const;
+  size_t retrieve_sender_node_id_from_source_table() const;
 
   /**
    * Change node ID of sending Node.
    */
-  void set_sender_node_id( const index );
+  void set_sender_node_id( const size_t );
 
   /**
    * Set tid, syn_id, lcid of spike_data_.
    * These are required to retrieve the Node ID of a non-local sender from the SourceTable.
    */
-  void set_sender_node_id_info( const thread tid, const synindex syn_id, const index lcid );
+  void set_sender_node_id_info( const size_t tid, const synindex syn_id, const size_t lcid );
 
   /**
    * Return time stamp of the event.
@@ -191,14 +191,14 @@ public:
    * @param t delay.
    */
 
-  void set_delay_steps( delay );
+  void set_delay_steps( long );
 
   /**
    * Return transmission delay of the event.
    * The delay refers to the time until the event is
    * expected to arrive at the receiver.
    */
-  delay get_delay_steps() const;
+  long get_delay_steps() const;
 
   /**
    * Relative spike delivery time in steps.
@@ -220,7 +220,7 @@ public:
    * @retval A negative return value indicates that no port number
    * was available.
    */
-  port get_port() const;
+  size_t get_port() const;
 
   /**
    * Return the receiver port number of the event.
@@ -228,7 +228,7 @@ public:
    * Event was sent.
    * @note A return value of 0 indicates that the r-port is not used.
    */
-  rport get_rport() const;
+  size_t get_rport() const;
 
   /**
    * Set the port number.
@@ -238,7 +238,7 @@ public:
    * object.
    * @param p Port number of the connection, or -1 if unknown.
    */
-  void set_port( port p );
+  void set_port( size_t p );
 
   /**
    * Set the receiver port number (r-port).
@@ -248,7 +248,7 @@ public:
    * number defaults to zero.
    * @param p Receiver port number of the connection, or 0 if unused.
    */
-  void set_rport( rport p );
+  void set_rport( size_t p );
 
   /**
    * Return the creation time offset of the Event.
@@ -272,22 +272,22 @@ public:
   /**
    * Return the weight.
    */
-  weight get_weight() const;
+  double get_weight() const;
 
   /**
    * Set weight of the event.
    */
-  void set_weight( weight t );
+  void set_weight( double t );
 
   /**
    * Set drift_factor of the event (see DiffusionConnectionEvent).
    */
-  virtual void set_drift_factor( weight ) {};
+  virtual void set_drift_factor( double ) {};
 
   /**
    * Set diffusion_factor of the event (see DiffusionConnectionEvent).
    */
-  virtual void set_diffusion_factor( weight ) {};
+  virtual void set_diffusion_factor( double ) {};
 
   /**
    * Returns true if the pointer to the sender node is valid.
@@ -314,7 +314,7 @@ public:
   void set_stamp( Time const& );
 
 protected:
-  index sender_node_id_;        //!< node ID of sender or 0
+  size_t sender_node_id_;       //!< node ID of sender or 0
   SpikeData sender_spike_data_; //!< spike data of sender node, in some cases required to retrieve node ID
   /*
    * The original formulation used references to Nodes as
@@ -335,7 +335,7 @@ protected:
    * locate target-specific information.  @note A negative port
    * number indicates an unknown port.
    */
-  port p_;
+  size_t p_;
 
   /**
    * Receiver port number (r-port).
@@ -346,7 +346,7 @@ protected:
    * @note The use of this port number is optional.
    * @note An r-port number of 0 indicates that the port is not used.
    */
-  rport rp_;
+  size_t rp_;
 
   /**
    * Transmission delay.
@@ -354,7 +354,7 @@ protected:
    * delivered at the receiver.
    * The delay must be at least 1.
    */
-  delay d_;
+  long d_;
 
   /**
    * Time stamp.
@@ -383,7 +383,7 @@ protected:
   /**
    * Weight of the connection.
    */
-  weight w_;
+  double w_;
 };
 
 
@@ -443,16 +443,16 @@ public:
   /**
    * Return node ID of receiving Node.
    */
-  index get_receiver_node_id() const;
+  size_t get_receiver_node_id() const;
 
   /**
    * Change node ID of receiving Node.
    */
 
-  void set_receiver_node_id( index );
+  void set_receiver_node_id( size_t );
 
 protected:
-  index receiver_node_id_; //!< node ID of receiver or 0.
+  size_t receiver_node_id_; //!< node ID of receiver or 0.
 };
 
 inline WeightRecorderEvent::WeightRecorderEvent()
@@ -467,12 +467,12 @@ WeightRecorderEvent::clone() const
 }
 
 inline void
-WeightRecorderEvent::set_receiver_node_id( index node_id )
+WeightRecorderEvent::set_receiver_node_id( size_t node_id )
 {
   receiver_node_id_ = node_id;
 }
 
-inline index
+inline size_t
 WeightRecorderEvent::get_receiver_node_id() const
 {
   return receiver_node_id_;
@@ -895,13 +895,13 @@ Event::set_sender( Node& s )
 }
 
 inline void
-Event::set_sender_node_id( const index node_id )
+Event::set_sender_node_id( const size_t node_id )
 {
   sender_node_id_ = node_id;
 }
 
 inline void
-Event::set_sender_node_id_info( const thread tid, const synindex syn_id, const index lcid )
+Event::set_sender_node_id_info( const size_t tid, const synindex syn_id, const size_t lcid )
 {
   // lag and offset of SpikeData are not used here
   sender_spike_data_.set( tid, syn_id, lcid, 0, 0.0 );
@@ -919,21 +919,21 @@ Event::get_sender() const
   return *sender_;
 }
 
-inline index
+inline size_t
 Event::get_sender_node_id() const
 {
   assert( sender_node_id_ > 0 );
   return sender_node_id_;
 }
 
-inline weight
+inline double
 Event::get_weight() const
 {
   return w_;
 }
 
 inline void
-Event::set_weight( weight w )
+Event::set_weight( double w )
 {
   w_ = w;
 }
@@ -954,7 +954,7 @@ Event::set_stamp( Time const& s )
                     // get_rel_delivery_steps)
 }
 
-inline delay
+inline long
 Event::get_delay_steps() const
 {
   return d_;
@@ -971,7 +971,7 @@ Event::get_rel_delivery_steps( const Time& t ) const
 }
 
 inline void
-Event::set_delay_steps( delay d )
+Event::set_delay_steps( long d )
 {
   d_ = d;
 }
@@ -988,26 +988,26 @@ Event::set_offset( double t )
   offset_ = t;
 }
 
-inline port
+inline size_t
 Event::get_port() const
 {
   return p_;
 }
 
-inline rport
+inline size_t
 Event::get_rport() const
 {
   return rp_;
 }
 
 inline void
-Event::set_port( port p )
+Event::set_port( size_t p )
 {
   p_ = p;
 }
 
 inline void
-Event::set_rport( rport rp )
+Event::set_rport( size_t rp )
 {
   rp_ = rp;
 }

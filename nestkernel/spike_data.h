@@ -80,7 +80,7 @@ class SpikeData
 protected:
   static constexpr int MAX_LAG = generate_max_value( NUM_BITS_LAG );
 
-  index lcid_ : NUM_BITS_LCID;                       //!< local connection index
+  size_t lcid_ : NUM_BITS_LCID;                      //!< local connection index
   unsigned int marker_ : NUM_BITS_MARKER_SPIKE_DATA; //!< status flag
   unsigned int lag_ : NUM_BITS_LAG;                  //!< lag in this min-delay interval
   unsigned int tid_ : NUM_BITS_TID;                  //!< thread index
@@ -89,11 +89,11 @@ protected:
 public:
   SpikeData();
   SpikeData( const SpikeData& rhs );
-  SpikeData( const thread tid, const synindex syn_id, const index lcid, const unsigned int lag );
+  SpikeData( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag );
 
   SpikeData& operator=( const SpikeData& rhs );
 
-  void set( const thread tid, const synindex syn_id, const index lcid, const unsigned int lag, const double offset );
+  void set( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag, const double offset );
 
   template < class TargetT >
   void set( const TargetT& target, const unsigned int lag );
@@ -101,7 +101,7 @@ public:
   /**
    * Returns local connection ID.
    */
-  index get_lcid() const;
+  size_t get_lcid() const;
 
   /**
    * Sets lcid value, only for communication of max buffer size
@@ -116,7 +116,7 @@ public:
   /**
    * Returns thread index.
    */
-  thread get_tid() const;
+  size_t get_tid() const;
 
   /**
    * Returns synapse-type index.
@@ -185,7 +185,7 @@ inline SpikeData::SpikeData( const SpikeData& rhs )
 {
 }
 
-inline SpikeData::SpikeData( const thread tid, const synindex syn_id, const index lcid, const unsigned int lag )
+inline SpikeData::SpikeData( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag )
   : lcid_( lcid )
   , marker_( SPIKE_DATA_ID_DEFAULT )
   , lag_( lag )
@@ -206,9 +206,8 @@ SpikeData::operator=( const SpikeData& rhs )
 }
 
 inline void
-SpikeData::set( const thread tid, const synindex syn_id, const index lcid, const unsigned int lag, const double )
+SpikeData::set( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag, const double )
 {
-  assert( 0 <= tid );
   assert( tid <= MAX_TID );
   assert( syn_id <= MAX_SYN_ID );
   assert( lcid <= MAX_LCID );
@@ -235,7 +234,7 @@ SpikeData::set( const TargetT& target, const unsigned int lag )
   syn_id_ = target.get_syn_id();
 }
 
-inline index
+inline size_t
 SpikeData::get_lcid() const
 {
   return lcid_;
@@ -254,7 +253,7 @@ SpikeData::get_lag() const
   return lag_;
 }
 
-inline thread
+inline size_t
 SpikeData::get_tid() const
 {
   return tid_;
@@ -321,14 +320,14 @@ private:
 
 public:
   OffGridSpikeData();
-  OffGridSpikeData( const thread tid,
+  OffGridSpikeData( const size_t tid,
     const synindex syn_id,
-    const index lcid,
+    const size_t lcid,
     const unsigned int lag,
     const double offset );
   OffGridSpikeData( const OffGridSpikeData& rhs );
   OffGridSpikeData& operator=( const OffGridSpikeData& rhs );
-  void set( const thread tid, const synindex syn_id, const index lcid, const unsigned int lag, const double offset );
+  void set( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag, const double offset );
 
   template < class TargetT >
   void set( const TargetT& target, const unsigned int lag );
@@ -344,9 +343,9 @@ inline OffGridSpikeData::OffGridSpikeData()
 {
 }
 
-inline OffGridSpikeData::OffGridSpikeData( const thread tid,
+inline OffGridSpikeData::OffGridSpikeData( const size_t tid,
   const synindex syn_id,
-  const index lcid,
+  const size_t lcid,
   const unsigned int lag,
   const double offset )
   : SpikeData( tid, syn_id, lcid, lag )
@@ -374,9 +373,9 @@ OffGridSpikeData::operator=( const OffGridSpikeData& rhs )
 
 
 inline void
-OffGridSpikeData::set( const thread tid,
+OffGridSpikeData::set( const size_t tid,
   const synindex syn_id,
-  const index lcid,
+  const size_t lcid,
   const unsigned int lag,
   const double offset )
 {

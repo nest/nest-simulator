@@ -252,7 +252,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   // We must use a local variable here to hold the actual value of the
   // receptor type. We must not change the receptor_type_ data member, because
   // that represents the *default* value. See #921.
-  rport actual_receptor_type = receptor_type_;
+  size_t actual_receptor_type = receptor_type_;
 #ifdef HAVE_MUSIC
   // We allow music_channel as alias for receptor_type during connection setup
   updateValue< long >( p, names::music_channel, actual_receptor_type );
@@ -270,7 +270,7 @@ GenericConnectorModel< ConnectionT >::add_connection_( Node& src,
   std::vector< ConnectorBase* >& thread_local_connectors,
   const synindex syn_id,
   ConnectionT& connection,
-  const rport receptor_type )
+  const size_t receptor_type )
 {
   assert( syn_id != invalid_synindex );
 

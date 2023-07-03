@@ -62,16 +62,17 @@ The number of threads (per MPI process) can be chosen by adjusting ``local_num_t
 
 .. important::
 
-   The microcircuit model does not run correctly on a single virtual process. This means
-   the number of threads must be greater than 1. You can either increase
-   the number of MPI processes or set either ``local_num_threads`` to a value > 1 or replace ``local_num_threads`` by ``total_num_virtual_procs`` and set it to a value > 1.
+   When scaling up the microcircuit model, you may encounter errors during simulation when there is less than 4 virtual processes.
+   The number of threads should, therefore, be 4 or more. You can increase
+   the number of MPI processes or set either ``local_num_threads`` to a value >= 4 or replace ``local_num_threads`` by ``total_num_virtual_procs`` and set it to a value >= 4.
 
+   For more information about MPI processes and threading see :ref:`our guide on HPC systems <optimize_performance>`.
 
-The command for running the script with two MPI processes is:
+The command for running the script with four MPI processes is:
 
 .. code-block:: bash
 
-   mpirun -n 2 python3 run_microcircuit.py
+   mpirun -n 4 python3 run_microcircuit.py
 
 External drive and initial conditions
 -------------------------------------

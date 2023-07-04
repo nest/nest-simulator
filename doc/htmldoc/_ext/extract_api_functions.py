@@ -89,7 +89,6 @@ def process_directory(directory):
 
 
 def ExtractPyNESTAPIS():
-
     directory = "../../pynest/nest/"
     all_variables_dict = process_directory(directory)
 
@@ -98,5 +97,4 @@ def ExtractPyNESTAPIS():
 
 
 if __name__ == "__main__":
-
     ExtractPyNESTAPIS()

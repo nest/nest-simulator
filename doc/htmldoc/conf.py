@@ -35,7 +35,7 @@ extension_module_dir = os.path.abspath("./_ext")
 sys.path.append(extension_module_dir)
 
 from extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
-from extract_api_functions import ExtractPyNESTAPIS # noqa
+from extract_api_functions import ExtractPyNESTAPIS  # noqa
 
 repo_root_dir = os.path.abspath("../..")
 pynest_dir = os.path.join(repo_root_dir, "pynest")

@@ -611,9 +611,7 @@ private:
 
   DictionaryDatum connruledict_; //!< Dictionary for connection rules.
 
-  /**
-   * ConnBuilder factories, indexed by connruledict_ elements.
-   */
+  //! ConnBuilder factories, indexed by connruledict_ elements.
   std::vector< GenericConnBuilderFactory* > connbuilder_factories_;
 
   long min_delay_; //!< Value of the smallest delay in the network.

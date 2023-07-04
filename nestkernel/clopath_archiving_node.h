@@ -96,14 +96,14 @@ protected:
   void write_clopath_history( Time const& t_sp, double u, double u_bar_plus, double u_bar_minus, double u_bar_bar );
 
   /**
-   * Implementation of the delay of the convolved membrane potentials. This
-   * delay is not described in Clopath et al. 2010 but is present in the code
-   * (https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566) on
-   * ModelDB which was presumably used to create the figures in the paper.
-   * Since we write into the buffer before we read from it, we have to
-   * add 1 to the size of the buffers.
+   * Initialization of buffers.
+   *
+   * The implementation of the delay of the convolved membrane potentials as used
+   * here is not described in Clopath et al. 2010, but is present in the code
+   * on ModelDB (https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566)
+   * which was presumably used to create the figures in the paper. Since we write
+   * into the buffer before we read from it, we have to add 1 to the size of the buffers.
    */
-
   void init_clopath_buffers();
   void get_status( DictionaryDatum& d ) const override;
   void set_status( const DictionaryDatum& d ) override;

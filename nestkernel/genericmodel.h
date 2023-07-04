@@ -61,19 +61,13 @@ public:
   bool one_node_per_process() override;
   bool is_off_grid() override;
   void calibrate_time( const TimeConverter& tc ) override;
+
   /**
-   *  @note The decision of whether one node can receive a certain
-   *  event was originally in the node. But in the distributed case,
-   *  it may be that you only have a proxy node and not he real
-   *  thing. Thus, you need to be able to make this decision without
-   *  having the node. Since the model now takes responsibility for a
-   *  lot of general node properties, it was a natural place to put
-   *  this function.
+   * Send a test event to a target node.
    *
-   *  Model::send_test_event() is a forwarding function that calls
-   *  send_test_event() from the prototype. Since proxies know the
-   *  model they represent, they can now answer a call to check
-   *  connection by referring back to the model.
+   * This is a forwarding function that calls Node::send_test_event() from the prototype.
+   * Since proxies know the model they represent, they can now answer a call to check
+   * connection by referring back to the model.
    */
   size_t send_test_event( Node&, size_t, synindex, bool ) override;
 

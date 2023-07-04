@@ -20,16 +20,6 @@
  *
  */
 
-/*
-    dynamicloader.cpp -- Implements the class DynamicLoaderModule
-    to allow for dymanically loaded modules for extending the kernel.
-
-    Author(s):
-    Moritz Helias
-
-    First Version: November 2005
- */
-
 #include "dynamicloader.h"
 
 #ifdef HAVE_LIBLTDL

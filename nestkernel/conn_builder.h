@@ -64,15 +64,7 @@ class SparseNodeArray;
 class ConnBuilder
 {
 public:
-  /**
-   * Connect sources to targets according to specifications in dictionary with or without structural plasticity
-   *
-   * To create a connection, call
-   *
-   *   cb.connect();
-   *
-   * where conn_spec_dict speficies connection type and its parameters.
-   */
+  //! Connect with or without structural plasticity
   virtual void connect();
 
   //! Delete synapses with or without structural plasticity
@@ -109,7 +101,16 @@ public:
 
   bool all_parameters_scalar_() const;
 
-  bool change_connected_synaptic_elements( size_t, size_t, const size_t, int );
+  /**
+   * Updates the number of connected synaptic elements in the target and the source.
+   *
+   * @param snode_id The node ID of the source
+   * @param tnode_id The node ID of the target
+   * @param tid the thread of the target
+   * @param update Amount of connected synaptic elements to update
+   * @return A bool indicating if the target node is on the local thread/process or not
+   */
+  bool change_connected_synaptic_elements( size_t snode_id, size_t tnode_id, const size_t tid, int update );
 
   virtual bool
   supports_symmetric() const
@@ -133,8 +134,8 @@ public:
 protected:
   //! Implements the actual connection algorithm
   virtual void connect_() = 0;
-  virtual void
 
+  virtual void
   sp_connect_()
   {
     throw NotImplemented( "This connection rule is not implemented for structural plasticity." );
@@ -196,8 +197,7 @@ protected:
   //! buffer for exceptions raised in threads
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_;
 
-  // Name of the pre synaptic and postsynaptic elements for this connection
-  // builder
+  // Name of the pre synaptic and postsynaptic elements for this connection builder
   Name pre_synaptic_element_name_;
   Name post_synaptic_element_name_;
 
@@ -286,30 +286,26 @@ public:
 
 protected:
   void connect_() override;
+
   /**
-   * Solves the connection of two nodes on a OneToOne basis with
-   * structural plasticity.
+   * Connect two nodes in a OneToOne fashion with structural plasticity.
    *
-   * This means this method is used by the
-   * structural plasticity manager based on the homostatic rules defined
+   * This method is used by the SPManager based on the homostatic rules defined
    * for the synaptic elements on each node.
    */
   void sp_connect_() override;
+
   /**
-   * Solves the disconnection of two nodes on a OneToOne basis without
-   * structural plasticity.
+   * Disconnecti two nodes connected in a OneToOne fashion without structural plasticity.
    *
-   * This means this method can be manually called
-   * by the user to delete existing synapses.
+   * This method can be manually called by the user to delete existing synapses.
    */
   void disconnect_() override;
 
   /**
-   * Solves the disconnection of two nodes on a OneToOne basis with
-   * structural plasticity.
+   * Disconnect two nodes connected in a OneToOne fashion with structural plasticity.
    *
-   * This means this method is used by the
-   * structural plasticity manager based on the homostatic rules defined
+   * This method is used by the SPManager based on the homostatic rules defined
    * for the synaptic elements on each node.
    */
   void sp_disconnect_() override;
@@ -340,29 +336,26 @@ public:
 
 protected:
   void connect_() override;
+
   /**
-   * Solves the connection of two nodes on a AllToAll basis with
-   * structural plasticity.
+   * Connect two nodes in a AllToAll fashion with structural plasticity.
    *
-   * This means this method is used by the
-   * structural plasticity manager based on the homostatic rules defined
+   * This method is used by the SPManager based on the homostatic rules defined
    * for the synaptic elements on each node.
    */
   void sp_connect_() override;
+
   /**
-   * Solves the disconnection of two nodes on a AllToAll basis without
-   * structural plasticity.
+   * Disconnecti two nodes connected in a AllToAll fashion without structural plasticity.
    *
-   * This means this method can be manually called
-   * by the user to delete existing synapses.
+   * This method can be manually called by the user to delete existing synapses.
    */
   void disconnect_() override;
+
   /**
-   * Solves the disconnection of two nodes on a AllToAll basis with
-   * structural plasticity.
+   * Disconnect two nodes connected in a AllToAll fashion with structural plasticity.
    *
-   * This means this method is used by the
-   * structural plasticity manager based on the homostatic rules defined
+   * This method is used by the SPManager based on the homostatic rules defined
    * for the synaptic elements on each node.
    */
   void sp_disconnect_() override;
@@ -462,11 +455,10 @@ public:
    * The SPBuilder is in charge of the creation of synapses during the simulation
    * under the control of the structural plasticity manager
    *
-   * @param net the network
    * @param sources the source nodes on which synapses can be created/deleted
    * @param targets the target nodes on which synapses can be created/deleted
-   * @param conn_spec connectivity specs
-   * @param syn_spec synapse specs
+   * @param conn_spec connectivity specification
+   * @param syn_spec synapse specifications
    */
   SPBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
@@ -478,6 +470,7 @@ public:
   {
     return pre_synaptic_element_name_.toString();
   }
+
   std::string
   get_post_synaptic_element_name() const
   {
@@ -485,11 +478,9 @@ public:
   }
 
   /**
-   * Writes the default delay of the connection model, if the
-   * SPBuilder only uses the default delay.
+   * Writes the default delay of the connection model, if the SPBuilder only uses the default delay.
    *
-   * If not, the min/max_delay
-   * has to be specified explicitly with the kernel status.
+   * If not, the min/max_delay has to be specified explicitly with the kernel status.
    */
   void update_delay( long& d ) const;
 

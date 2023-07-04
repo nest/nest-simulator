@@ -69,13 +69,10 @@ public:
   /**
    * Standard routine for sending events.
    *
-   * This method decides if
-   * the event has to be delivered locally or globally. It exists
-   * to keep a clean and unitary interface for the event sending
-   * mechanism.
-   * @note Only specialization for SpikeEvent does remote sending.
-   *       Specialized for DSSpikeEvent to avoid that these events
-   *       are sent to remote processes.
+   * This method decides if the event has to be delivered locally or globally. It exists
+   * to keep a clean and unitary interface for the event sending mechanism.
+   * @note Only specializations of SpikeEvent send remotely. A specialization for
+   *       DSSpikeEvent exists to avoid that these events are sent to remote processes.
    * \see send_local()
    */
   template < class EventT >
@@ -226,8 +223,9 @@ public:
   bool deliver_secondary_events( const size_t tid, const bool called_from_wfr_update );
 
   /**
-   * This function is called after all nodes have been updated.
+   * Update modulo table based on current time settings.
    *
+   * This function is called after all nodes have been updated.
    * We can compute the value of (T+d) mod max_delay without explicit
    * reference to the network clock, because compute_moduli_ is
    * called whenever the network clock advances.
@@ -236,7 +234,6 @@ public:
    *
    * Update table of fixed modulos, including slice-based.
    */
-
   void update_moduli();
 
   /**

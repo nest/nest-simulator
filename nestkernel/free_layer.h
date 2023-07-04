@@ -77,7 +77,10 @@ protected:
   std::vector< Position< D > > positions_;
 
   size_t num_local_nodes_ = 0;
-  // This class is used when communicating positions across MPI procs.
+
+  /**
+   * Class to be used when communicating positions across MPI processes.
+   */
   class NodePositionData
   {
   public:

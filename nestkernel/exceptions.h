@@ -211,8 +211,7 @@ public:
 };
 
 /**
- * Exception to be thrown if the specified
- * Node does not exist.
+ * Exception to be thrown if the specified Node does not exist.
  *
  * This exception is thrown, if
  * -# an address did not point to an existing node.
@@ -244,8 +243,7 @@ public:
 };
 
 /**
- * Exception to be thrown if the specified
- * Node does not exist.
+ * Exception to be thrown if the specified Node does not exist.
  *
  * This exception is thrown, if
  * -# an address did not point to an existing node.
@@ -313,8 +311,9 @@ public:
   std::string message() const override;
 };
 
-// Exception to be thrown if the parent
-// compartment does not exist
+/**
+ * Exception to be thrown if the parent compartment does not exist
+ */
 class UnknownCompartment : public KernelException
 {
   long compartment_idx_;
@@ -450,8 +449,7 @@ private:
 };
 
 /**
- * To be thrown if a connection does not exists but something is to be done with
- * it.
+ * To be thrown if a connection does not exists but something is to be done with it.
  *
  * This exception is e.g. thrown if a deletion was attempted with
  * an inexistent connection.
@@ -582,8 +580,7 @@ public:
 };
 
 /**
- * Exception to be thrown if a status parameter
- * is incomplete or inconsistent.
+ * Exception to be thrown if a status parameter is incomplete or inconsistent.
  *
  * Thrown by Node::set_/get_property methods.
  * @ingroup KernelExceptions
@@ -613,8 +610,7 @@ public:
 };
 
 /**
- * Exception to be thrown if a parameter
- * cannot be set.
+ * Exception to be thrown if a parameter cannot be set.
  *
  * Thrown by Node::set_/get_property methods.
  * @ingroup KernelExceptions
@@ -644,8 +640,7 @@ public:
 };
 
 /**
- * Exception to be thrown if the dimensions
- * of two or more objects do not agree.
+ * Exception to be thrown if the dimensions of two or more objects do not agree.
  *
  * Thrown by Node::set_/get_property methods.
  * @ingroup KernelExceptions
@@ -707,8 +702,7 @@ public:
 };
 
 /**
- * Exception to be thrown on prototype construction if Time objects
- * incompatible.
+ * Exception to be thrown on prototype construction if Time objects incompatible.
  *
  * This exception is to be thrown by the default constructor of
  * nodes which require that Time objects have properties wrt resolution.

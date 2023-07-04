@@ -37,8 +37,7 @@ namespace nest
 class AbstractGeneric;
 
 /**
- * Generic Factory class for objects deriving from a base class
- * BaseT.
+ * Generic Factory class for objects deriving from a base class BaseT.
  *
  * Keeps a register of subtypes which may be created
  * dynamically. New subtypes may be added by registering either a class

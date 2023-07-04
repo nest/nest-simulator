@@ -339,8 +339,7 @@ public:
 
 
   /**
-   * Get positions for all nodes in layer, including nodes on other MPI
-   * processes.
+   * Get positions for all nodes in layer, including nodes on other MPI processes.
    *
    * The positions will be cached so that subsequent calls for
    * the same layer are fast. One one layer is cached at the time, so the
@@ -350,8 +349,7 @@ public:
   std::shared_ptr< Ntree< D, size_t > > get_global_positions_ntree( NodeCollectionPTR node_collection );
 
   /**
-   * Get positions globally, overriding the dimensions of the layer and
-   * the periodic flags.
+   * Get positions globally, overriding the dimensions of the layer and the periodic flags.
 
    * The supplied lower left corner and extent
    * coordinates are only used for the dimensions where the supplied
@@ -465,6 +463,8 @@ class MaskedLayer
 {
 public:
   /**
+   * Regular constructor.
+   *
    * @param layer           The layer to mask
    * @param mask            The mask to apply to the layer
    * @param allow_oversized If true, allow larges masks than layers when using

@@ -83,22 +83,22 @@ class TimeConverter;
  */
 
 /** @BeginDocumentation
- *
- *  Name: Node - General properties of all nodes.
- *
- *  Parameters:
- *  frozen     booltype    - Whether the node is updated during simulation
- *  global_id  integertype - The node ID of the node (cf. local_id)
- *  local      booltype    - Whether the node is available on the local process
- *  model      literaltype - The model type the node was created from
- *  state      integertype - The state of the node (see the help on elementstates
- *                            for details)
- *  thread     integertype - The id of the thread the node is assigned to (valid
- *                           locally)
- *  vp         integertype - The id of the virtual process the node is assigned
- *                           to (valid globally)
- *
- *  SeeAlso: GetStatus, SetStatus, elementstates
+
+   Name: Node - General properties of all nodes.
+
+   Parameters:
+   frozen     booltype    - Whether the node is updated during simulation
+   global_id  integertype - The node ID of the node (cf. local_id)
+   local      booltype    - Whether the node is available on the local process
+   model      literaltype - The model type the node was created from
+   state      integertype - The state of the node (see the help on elementstates
+                            for details)
+   thread     integertype - The id of the thread the node is assigned to (valid
+                            locally)
+   vp         integertype - The id of the virtual process the node is assigned
+                            to (valid globally)
+
+   SeeAlso: GetStatus, SetStatus, elementstates
  */
 
 class Node
@@ -118,9 +118,8 @@ public:
   virtual ~Node();
 
   /**
-   * This function should create a new object by
-   * calling the derived class' copy constructor and
-   * return its pointer.
+   * This function creates a new object by calling the derived class' copy constructor and
+   * returning its pointer.
    */
   virtual Node*
   clone() const
@@ -152,9 +151,7 @@ public:
    * not have proxies on remote threads.
    *
    * This is used to discriminate between different types of nodes, when adding new
-   * nodes to the network.
-   *
-   * TODO: Is this true for *any* model at all? Maybe MUSIC related?
+   * nodes to the network. As of now, this function is only true for MUSIC related proxies?
    */
   virtual bool one_node_per_process() const;
 

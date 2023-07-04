@@ -425,4 +425,4 @@ MultiChannelInputBuffer< num_channels >::size() const
 } // namespace nest
 
 
-#endif
+#endif /* #ifndef RING_BUFFER_H */

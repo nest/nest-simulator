@@ -20,13 +20,6 @@
  *
  */
 
-/**
- * Implementation of archiving_node to record and manage spike history
- * \author Moritz Helias, Abigail Morrison
- * \date april 2006
- * \note moved to separate file to avoid circular inclusion in node.h
- */
-
 #include "histentry.h"
 
 nest::histentry::histentry( double t, double Kminus, double Kminus_triplet, size_t access_counter )

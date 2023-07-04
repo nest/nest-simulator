@@ -35,9 +35,16 @@
 namespace nest
 {
 
-//  IOManager: Handles data storage files from spike recorders and
-//  multimeters to file system(s)/memory/output. Distinct from logging
-//  for error streams.
+/**
+ * Manager to handle everything related to input and output.
+ *
+ * IOManager handles the data path and prefix variables of the NEST kernel and
+ * manages the recording and stimulation backends and the routing of data from
+ * and to devices to and from the backends.
+ *
+ * This manager is not responsible for logging and messaging to the user.
+ * See LoggingManager if you are looging for that.
+ */
 class IOManager : public ManagerInterface
 {
 public:

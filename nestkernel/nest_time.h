@@ -287,15 +287,13 @@ protected:
   Time( tic_t tics )
     : tics( tics )
   {
-  } // This doesn't check ranges.
-  // Ergo: LIM_MAX.tics >= tics >= LIM_MIN.tics or tics == LIM_POS_INF.tics or LIM_NEG_INF.tics
+    // This doesn't check ranges.
+    // Ergo: LIM_MAX.tics >= tics >= LIM_MIN.tics or tics == LIM_POS_INF.tics or LIM_NEG_INF.tics
+  }
 
 public:
   Time()
     : tics( 0 ) {};
-
-  // Default copy constructor: assumes legal time object
-  // Defined by compiler. Time(const Time& t);
 
   Time( tic t )
     : tics( ( time_abs( t.t ) < LIM_MAX.tics ) ? t.t
@@ -386,13 +384,11 @@ public:
   bool
   is_neg_inf() const
   {
+    // Currently tics can never become smaller than LIM_NEG_INF.tics. However, if
+    // LIM_NEG_INF.tics represent negative infinity, any smaller
+    // value cannot be larger and thus must be infinity as well. to be on the safe side
+    // we use less-or-equal instead of just equal.
     return tics <= LIM_NEG_INF.tics;
-    /*
-     * Currently tics can never become smaller than LIM_NEG_INF.tics. However, if
-     * LIM_NEG_INF.tics represent negative infinity, any smaller
-     * value cannot be larger and thus must be infinity as well. to be on the safe side
-     * we use less-or-equal instead of just equal.
-     */
   }
   bool
   is_pos_inf() const

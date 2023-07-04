@@ -158,7 +158,7 @@ public:
   void communicate( std::vector< int >& );
   void communicate( std::vector< long >& );
 
-  // Sum across all rank
+  //! Sum across all ranks
   void communicate_Allreduce_sum_in_place( double buffer );
   void communicate_Allreduce_sum_in_place( std::vector< double >& buffer );
   void communicate_Allreduce_sum_in_place( std::vector< int >& buffer );
@@ -237,7 +237,6 @@ public:
    * Ensure all processes have reached the same stage by waiting until all
    * processes have sent a dummy message to process 0.
    */
-
   void synchronize();
 
   bool any_true( const bool );
@@ -360,27 +359,24 @@ private:
   unsigned int send_recv_count_spike_data_per_rank_;
   unsigned int send_recv_count_target_data_per_rank_;
 
-  /**
-   * how many secondary elements (in ints) will be received from each rank
-   */
+  //! How many secondary elements (in ints) will be received from each rank
   std::vector< int > recv_counts_secondary_events_in_int_per_rank_;
 
   std::vector< int >
     send_counts_secondary_events_in_int_per_rank_; //!< how many secondary elements (in ints) will be sent to each rank
 
-  /**
-   * offset in the MPI receive buffer (in ints) at which elements received from each rank will be written
-   */
+  //! Offset in the MPI receive buffer (in ints) at which elements received from each rank will be written
   std::vector< int > recv_displacements_secondary_events_in_int_per_rank_;
 
-  /**
-   * offset in the MPI send buffer (in ints) from which elements send to each rank will be read
-   */
+  //! Offset in the MPI send buffer (in ints) from which elements send to each rank will be read
   std::vector< int > send_displacements_secondary_events_in_int_per_rank_;
+
 #ifdef HAVE_MPI
+
   std::vector< int > comm_step_;
-  //! array containing communication partner for each step.
-  unsigned int COMM_OVERFLOW_ERROR;
+
+  unsigned int COMM_OVERFLOW_ERROR; //<! array containing communication partner for each step.
+
 
   //! Variable to hold the MPI communicator to use (the datatype matters).
   MPI_Comm comm;
@@ -768,7 +764,7 @@ MPIManager::time_communicate_alltoallv( int, int )
   return 0.0;
 }
 
-#endif /* HAVE_MPI  */
+#endif /* HAVE_MPI */
 
 #ifdef HAVE_MPI
 template < class D >

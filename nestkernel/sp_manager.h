@@ -20,11 +20,6 @@
  *
  */
 
-// File:   sp_updater.h
-// Author: naveau
-//
-// Created on November 26, 2013, 2:28 PM
-
 #ifndef SP_MANAGER_H
 #define SP_MANAGER_H
 
@@ -95,6 +90,9 @@ public:
    * Disconnect two collections of nodes.
    *
    * The connection is established on the thread/process that owns the target node.
+   *
+   * Obtains the right connection builder and performs a synapse deletion
+   * according to the specified connection specs.
    *
    * \param sources Node collection of the source Nodes.
    * \param targets Node collection of the target Nodes.

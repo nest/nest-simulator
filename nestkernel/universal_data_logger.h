@@ -569,6 +569,7 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const Da
   recording_interval_ = req.get_recording_interval();
   recording_offset_ = req.get_recording_offset();
 }
-}
 
-#endif /* UNIVERSAL_DATA_LOGGER_H */
+} // namespace nest
+
+#endif /* #ifndef UNIVERSAL_DATA_LOGGER_H */

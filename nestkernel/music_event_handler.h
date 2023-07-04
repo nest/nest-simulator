@@ -65,8 +65,7 @@ public:
   void publish_port();
 
   /**
-   * Called by MUSIC from within tick() to deliver events to
-   * NEST.
+   * Called by MUSIC from within tick() to deliver events to NEST.
    *
    * This function only queues the events. Delivery to the
    * targets takes place in update().
@@ -102,6 +101,6 @@ private:
 
 } // namespace nest
 
-#endif /* HAVE_MUSIC */
+#endif /* #ifdef HAVE_MUSIC */
 
-#endif /* MUSIC_EVENT_HANDLER */
+#endif /* #ifndef MUSIC_EVENT_HANDLER */

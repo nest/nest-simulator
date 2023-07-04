@@ -55,17 +55,14 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   , parameters_requiring_skipping_()
   , param_dicts_()
 {
-  /* read out rule-related parameters
-   * - /rule has been taken care of above
-   * - rule-specific params are handled by subclass c'tor
-   */
+  // We only read a subset of rule-related parameters here. The property 'rule'
+  // has already been taken care of in ConnectionManager::get_conn_builder() and
+  // rule-specific parameters are handled by the subclass constructors.
   updateValue< bool >( conn_spec, names::allow_autapses, allow_autapses_ );
   updateValue< bool >( conn_spec, names::allow_multapses, allow_multapses_ );
   updateValue< bool >( conn_spec, names::make_symmetric, make_symmetric_ );
 
-  // read out synapse-related parameters ----------------------
-
-  // synapse-specific parameters that should be skipped when we set default synapse parameters
+  // Synapse-specific parameters that should be skipped when we set default synapse parameters
   skip_syn_params_ = {
     names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model
   };
@@ -91,8 +88,7 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
     DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
 
 #ifdef HAVE_MUSIC
-    // We allow music_channel as alias for receptor_type during
-    // connection setup
+    // We allow music_channel as alias for receptor_type during connection setup
     ( *syn_defaults )[ names::music_channel ] = 0;
 #endif
 
@@ -101,7 +97,7 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
 
   set_structural_plasticity_parameters( syn_specs );
 
-  // If make_symmetric_ is requested call reset on all parameters in order
+  // If make_symmetric_ is requested, call reset on all parameters in order
   // to check if all parameters support symmetric connections
   if ( make_symmetric_ )
   {
@@ -147,8 +143,8 @@ nest::ConnBuilder::~ConnBuilder()
 bool
 nest::ConnBuilder::change_connected_synaptic_elements( size_t snode_id, size_t tnode_id, const size_t tid, int update )
 {
-
   int local = true;
+
   // check whether the source is on this mpi machine
   if ( kernel().node_manager.is_local_node_id( snode_id ) )
   {
@@ -183,6 +179,7 @@ nest::ConnBuilder::change_connected_synaptic_elements( size_t snode_id, size_t t
       target->connect_synaptic_element( post_synaptic_element_name_, update );
     }
   }
+
   return local;
 }
 
@@ -447,11 +444,9 @@ nest::ConnBuilder::set_default_weight_or_delay_( DictionaryDatum syn_params, siz
 
   default_delay_[ synapse_indx ] = not syn_params->known( names::delay );
 
-  /*
-   * If neither weight nor delay are given in the dict, we handle this separately. Important for
-   * hom_w synapses, on which weight cannot be set. However, we use default weight and delay for
-   * _all_ types of synapses.
-   */
+  // If neither weight nor delay are given in the dict, we handle this separately. Important for
+  // hom_w synapses, on which weight cannot be set. However, we use default weight and delay for
+  // _all_ types of synapses.
   default_weight_and_delay_[ synapse_indx ] = ( default_weight_[ synapse_indx ] and default_delay_[ synapse_indx ] );
 
   if ( not default_weight_and_delay_[ synapse_indx ] )
@@ -604,11 +599,9 @@ nest::OneToOneBuilder::connect_()
 
       if ( loop_over_targets_() )
       {
-        /*
-         * A more efficient way of doing this might be to use NodeCollection's local_begin(). For this to work we would
-         * need to change some of the logic, sources and targets might not be on the same process etc., so therefore
-         * we are not doing it at the moment. This also applies to other ConnBuilders below.
-         */
+        // A more efficient way of doing this might be to use NodeCollection's local_begin(). For this to work we would
+        // need to change some of the logic, sources and targets might not be on the same process etc., so therefore
+        // we are not doing it at the moment. This also applies to other ConnBuilders below.
         NodeCollection::const_iterator target_it = targets_->begin();
         NodeCollection::const_iterator source_it = sources_->begin();
         for ( ; target_it < targets_->end(); ++target_it, ++source_it )

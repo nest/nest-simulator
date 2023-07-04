@@ -297,4 +297,4 @@ TargetData::is_primary() const
 }
 } // namespace nest
 
-#endif /* TARGET_DATA_H */
+#endif /* #ifndef TARGET_DATA_H */

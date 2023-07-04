@@ -40,7 +40,7 @@ namespace nest
 {
 
 /**
- * A archiving node which additionally archives parameters
+ * An archiving node which additionally archives parameters
  * and buffers needed for the Urbanczik-Senn plasticity rule
  */
 template < class urbanczik_parameters >
@@ -143,5 +143,6 @@ UrbanczikArchivingNode< urbanczik_parameters >::get_tau_syn_in( int comp )
   return urbanczik_params->tau_syn_in[ comp ];
 }
 
-} // of namespace
-#endif
+} // namespace nest
+
+#endif /* #ifndef URBANCZIK_ARCHIVING_NODE_H */

@@ -20,11 +20,6 @@
  *
  */
 
-// File:   sp_updater.cpp
-// Author: naveau
-//
-// Created on November 26, 2013, 2:28 PM
-
 #include "sp_manager.h"
 
 // C++ includes:
@@ -85,7 +80,6 @@ SPManager::finalize()
   sp_conn_builders_.clear();
 }
 
-// Methods to retrieve data regarding structural plasticity variables
 void
 SPManager::get_status( DictionaryDatum& d )
 {
@@ -126,6 +120,7 @@ SPManager::set_status( const DictionaryDatum& d )
   {
     return;
   }
+
   // Configure synapses model updated during the simulation.
   Token synmodel;
   DictionaryDatum syn_specs, syn_spec;
@@ -234,10 +229,6 @@ SPManager::disconnect( const size_t snode_id, Node* target, size_t target_thread
   }
 }
 
-/**
- * Obtains the right connection builder and performs a synapse deletion
- * according to the specified connection specs.
- */
 void
 SPManager::disconnect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
@@ -633,7 +624,6 @@ nest::SPManager::global_shuffle( std::vector< size_t >& v )
   global_shuffle( v, v.size() );
 }
 
-// Shuffles the n first items of the vector v
 void
 nest::SPManager::global_shuffle( std::vector< size_t >& v, size_t n )
 {
@@ -658,7 +648,6 @@ nest::SPManager::global_shuffle( std::vector< size_t >& v, size_t n )
 }
 
 
-// Enable structural plasticity
 void
 nest::SPManager::enable_structural_plasticity()
 {
@@ -681,12 +670,10 @@ nest::SPManager::enable_structural_plasticity()
   structural_plasticity_enabled_ = true;
 }
 
-// Disable  structural plasticity
 void
 nest::SPManager::disable_structural_plasticity()
 {
   structural_plasticity_enabled_ = false;
 }
-
 
 } // namespace nest

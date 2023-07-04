@@ -86,4 +86,6 @@ Connections
        nest.Connect(n, n[:1], sync_spec={'model'='exc_dist_syn'})
        nest.Simulate(10)
 
+.. _faqs_precise_neurons:
+
 .. include:: qa-precise-spike-times.rst

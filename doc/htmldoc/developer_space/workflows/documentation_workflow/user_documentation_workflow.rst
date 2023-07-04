@@ -104,7 +104,7 @@ commands.
 
 3. Build the docs:
 
-.. code-black:: bash
+.. code-block:: bash
 
    sphinx-build . ../_build/html -b html
 

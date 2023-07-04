@@ -374,11 +374,6 @@ copy_example_file("examples/Potjans_2014/box_plot.png")
 copy_example_file("examples/Potjans_2014/raster_plot.png")
 copy_example_file("examples/Potjans_2014/microcircuit.png")
 copy_example_file("examples/hpc_benchmark_connectivity.svg")
-copyfile(
-    os.path.join(pynest_dir, "examples/Potjans_2014/README.rst"),
-    "examples/README.rst",
-)
-
 
 def patch_documentation(patch_url):
     """Apply a hot-fix patch to the documentation before building it.
@@ -405,10 +400,9 @@ def patch_documentation(patch_url):
       3. retrieve the patch
 
     """
-
     print("Preparing patch...")
     try:
-        git_dir = repo_root_dir / ".git"
+        git_dir = f"{repo_root_dir}/.git"
         git_hash = subprocess.check_output(
             f"GIT_DIR='{git_dir}' git rev-parse HEAD", shell=True, encoding="utf8"
         ).strip()
@@ -418,7 +412,7 @@ def patch_documentation(patch_url):
         print(f"  retrieving {patch_url}")
         urlretrieve(patch_url, patch_file)
         print(f"  applying {patch_file}")
-        result = subprocess.check_output("patch -p3", stdin=open(patch_file, "r"), stderr=subprocess.STDOUT, shell=True)
+        result = subprocess.check_output(f"git apply '{patch_file}'", stderr=subprocess.STDOUT, shell=True)
         print(f"Patch result: {result}")
     except Exception as exc:
         print(f"Error while applying patch: {exc}")

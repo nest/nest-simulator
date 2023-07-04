@@ -111,7 +111,7 @@ The following parameters can be set in the status dictionary.
  I_in    pA      Inhibitory synaptic current
  dI_in   pA/ms   First derivative of I_in
  w       pA      Spike-adaptation current
- g       pa      Spike-adaptation current
+ g       pA      Spike-adaptation current
 ======== ======= =======================================
 
 ======== ======= =======================================
@@ -128,7 +128,7 @@ The following parameters can be set in the status dictionary.
 ======== ======= ==================================
 **Spike adaptation parameters**
 ---------------------------------------------------
- a       ns      Subthreshold adaptation
+ a       nS      Subthreshold adaptation
  b       pA      Spike-triggered adaptation
  Delta_T mV      Slope factor
  tau_w   ms      Adaptation time constant

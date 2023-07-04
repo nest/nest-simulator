@@ -375,7 +375,7 @@ private:
 
   std::vector< int > comm_step_;
 
-  unsigned int COMM_OVERFLOW_ERROR;  //<! array containing communication partner for each step.
+  unsigned int COMM_OVERFLOW_ERROR; //<! array containing communication partner for each step.
 
 
   //! Variable to hold the MPI communicator to use (the datatype matters).

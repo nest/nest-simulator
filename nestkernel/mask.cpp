@@ -153,39 +153,39 @@ BoxMask< 2 >::calculate_min_max_values_()
 }
 
 
-  /**
-   * Specialization of calculate_min_max_values_() for 3 dimensions.
-   *
-   * Rotate the corners of the box to find the new minimum and maximum x, y and
-   * z values to define the bounding box of the rotated box. We need to rotate
-   * all eight corners. If the box is not rotated, the min values correspond
-   * to the lower_left values and the max values correspond to the upper_right
-   * values.
-   *
-   *        LLH      LHH
-   *       *--------*
-   *      /|       /|
-   *     / |LLL   / |LHL
-   *    *--*-----*--*
-   * HLH| /   HHH| /
-   *    |/       |/
-   *    *--------*
-   * HLL      HHL
-   *
-   *                       max_values_
-   *       *-----*------------*
-   *     /    /     \        /|
-   *    *---/----------\----* |
-   *    | /               \ | |
-   *    *                   * |
-   *    | \               / | |
-   *    *    \          /   * |
-   *    | \      \    /   / | |
-   *    |    \      *   /   | *
-   *    |       \   | /     |/
-   *    *-----------*-------*
-   * min_values_
-   */
+/**
+ * Specialization of calculate_min_max_values_() for 3 dimensions.
+ *
+ * Rotate the corners of the box to find the new minimum and maximum x, y and
+ * z values to define the bounding box of the rotated box. We need to rotate
+ * all eight corners. If the box is not rotated, the min values correspond
+ * to the lower_left values and the max values correspond to the upper_right
+ * values.
+ *
+ *        LLH      LHH
+ *       *--------*
+ *      /|       /|
+ *     / |LLL   / |LHL
+ *    *--*-----*--*
+ * HLH| /   HHH| /
+ *    |/       |/
+ *    *--------*
+ * HLL      HHL
+ *
+ *                       max_values_
+ *       *-----*------------*
+ *     /    /     \        /|
+ *    *---/----------\----* |
+ *    | /               \ | |
+ *    *                   * |
+ *    | \               / | |
+ *    *    \          /   * |
+ *    | \      \    /   / | |
+ *    |    \      *   /   | *
+ *    |       \   | /     |/
+ *    *-----------*-------*
+ * min_values_
+ */
 template <>
 void
 BoxMask< 3 >::calculate_min_max_values_()

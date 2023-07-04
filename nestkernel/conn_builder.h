@@ -106,7 +106,7 @@ public:
    *
    * @param snode_id The node ID of the source
    * @param tnode_id The node ID of the target
-   * @param tid the thread of the target 
+   * @param tid the thread of the target
    * @param update Amount of connected synaptic elements to update
    * @return A bool indicating if the target node is on the local thread/process or not
    */

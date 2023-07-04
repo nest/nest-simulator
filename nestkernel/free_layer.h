@@ -80,7 +80,7 @@ protected:
 
   /**
    * Class to be used when communicating positions across MPI processes.
-   */ 
+   */
   class NodePositionData
   {
   public:

@@ -289,7 +289,8 @@ protected:
   {
     // This doesn't check ranges.
     // Ergo: LIM_MAX.tics >= tics >= LIM_MIN.tics or tics == LIM_POS_INF.tics or LIM_NEG_INF.tics
-  } 
+  }
+
 public:
   Time()
     : tics( 0 ) {};

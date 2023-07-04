@@ -313,7 +313,7 @@ def setup(app):
     app.add_css_file("css/custom.css")
     app.add_css_file("css/pygments.css")
     app.add_js_file("js/custom.js")
-    app.connect('env-before-read-docs', get_pynest_list)
+    app.connect("env-before-read-docs", get_pynest_list)
     app.connect("env-before-read-docs", add_button_to_examples)
     app.connect("config-inited", config_inited_handler)
 
@@ -374,6 +374,7 @@ copy_example_file("examples/Potjans_2014/box_plot.png")
 copy_example_file("examples/Potjans_2014/raster_plot.png")
 copy_example_file("examples/Potjans_2014/microcircuit.png")
 copy_example_file("examples/hpc_benchmark_connectivity.svg")
+
 
 def patch_documentation(patch_url):
     """Apply a hot-fix patch to the documentation before building it.

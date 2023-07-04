@@ -34,18 +34,18 @@ def find_all_variables(file_path):
     """
     all_variables = None
 
-    if 'pynest/nest/__init__' in file_path:
+    if "pynest/nest/__init__" in file_path:
         # Read the __init__.py file
-        with open(file_path, 'r') as init_file:
+        with open(file_path, "r") as init_file:
             file_content = init_file.read()
 
         # Find the class definition
-        match = re.search(r'class\s+NestModule\(.*?\):', file_content, re.DOTALL)
+        match = re.search(r"class\s+NestModule\(.*?\):", file_content, re.DOTALL)
         if match:
             # Find the variable assignments within the class
-            all_variables = re.findall(r'(\w+)\s*=\s*KernelAttribute', file_content)
+            all_variables = re.findall(r"(\w+)\s*=\s*KernelAttribute", file_content)
 
-    with open(file_path, 'r') as file:
+    with open(file_path, "r") as file:
         try:
             tree = ast.parse(file.read())
         except SyntaxError:
@@ -55,7 +55,7 @@ def find_all_variables(file_path):
     for node in ast.iter_child_nodes(tree):
         if isinstance(node, ast.Assign) and len(node.targets) == 1:
             target = node.targets[0]
-            if isinstance(target, ast.Name) and target.id == '__all__':
+            if isinstance(target, ast.Name) and target.id == "__all__":
                 value = node.value
                 if isinstance(value, ast.List):
                     all_variables = [elem.s for elem in value.elts if isinstance(elem, ast.Str)]
@@ -71,31 +71,32 @@ def process_directory(directory):
     result = {}
     for root, _, files in os.walk(directory):
         for file in files:
-            if file.endswith('.py'):
+            if file.endswith(".py"):
                 file_path = os.path.join(root, file)
                 # There are two hl_api_spatial files (one in ``lib``, the other in
                 # ``spatial``) in PyNEST, so we need to distinguish them from each other
-                if 'lib/hl_api_spatial' in file_path:
-                    file = 'lib.hl_api_spatial.py'
+                if "lib/hl_api_spatial" in file_path:
+                    file = "lib.hl_api_spatial.py"
                 # We want the nestModule kernel attributes, which are in ``__init__``
                 # Rename the key to nestModule
-                if 'pynest/nest/__init__' in file_path:
-                    file = 'nestModule.py'
+                if "pynest/nest/__init__" in file_path:
+                    file = "nestModule.py"
                 filename = os.path.splitext(file)[0]
                 all_variables = find_all_variables(file_path)
                 if all_variables:
                     result[filename] = all_variables
     return result
 
+
 def ExtractPyNESTAPIS():
 
-    directory = '../../pynest/nest/'
+    directory = "../../pynest/nest/"
     all_variables_dict = process_directory(directory)
 
-    with open('api_function_list.json', 'w') as outfile:
+    with open("api_function_list.json", "w") as outfile:
         json.dump(all_variables_dict, outfile, indent=4)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     ExtractPyNESTAPIS()

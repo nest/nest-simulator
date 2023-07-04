@@ -164,7 +164,8 @@ public:
     std::vector< int >& pre_vacant_n,
     std::vector< size_t >& post_vacant_id,
     std::vector< int >& post_vacant_n,
-    SPBuilder* sp_conn_builder )  void delete_synapses_from_pre( const std::vector< index >& pre_deleted_id,
+    SPBuilder* sp_conn_builder );
+  void delete_synapses_from_pre( const std::vector< index >& pre_deleted_id,
   // Deletion of synapses on the pre synaptic side
   void delete_synapses_from_pre( const std::vector< size_t >& pre_deleted_id,
     std::vector< int >& pre_deleted_n,

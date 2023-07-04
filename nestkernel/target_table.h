@@ -137,4 +137,4 @@ TargetTable::clear( const size_t tid )
 
 } // namespace nest
 
-#endif
+#endif /* #ifndef TARGET_TABLE_H */

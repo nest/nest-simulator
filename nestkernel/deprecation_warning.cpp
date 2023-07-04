@@ -58,4 +58,4 @@ DeprecationWarning::deprecation_warning( std::string name, std::string new_name 
 }
 }
 
-#endif /* DEPRECATION_WARNING_IMPL_H  */
+#endif /* DEPRECATION_WARNING_IMPL_H */

@@ -20,13 +20,6 @@
  *
  */
 
-/**
- * Definition of SynapticElement which is capable of
- * managing a synaptic element of a node.
- * \author Mikael Naveau
- * \date July 2013
- */
-
 #ifndef SYNAPTIC_ELEMENT_H
 #define SYNAPTIC_ELEMENT_H
 
@@ -266,4 +259,4 @@ private:
 
 } // of namespace
 
-#endif
+#endif /* #ifndef SYNAPTIC_ELEMENT_H */

@@ -55,15 +55,11 @@ public:
   void get_status( DictionaryDatum& ) override;
 
   /**
-      Check for errors in time before run
-
-      @throws KernelException if illegal time passed
-  */
+   *  Check for errors in time before run
+   *
+   *   @throws KernelException if illegal time passed
+   */
   void assert_valid_simtime( Time const& );
-
-  // Simulate can be broken up into .. prepare... run.. run.. cleanup..
-  // instead of calling simulate multiple times, and thus reduplicating
-  // effort in prepare, cleanup many times.
 
   /**
    * Initialize simulation for a set of run calls.
@@ -333,4 +329,4 @@ SimulationManager::get_wfr_interpolation_order() const
 }
 
 
-#endif /* SIMULATION_MANAGER_H */
+#endif /* #ifndef SIMULATION_MANAGER_H */

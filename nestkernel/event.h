@@ -100,7 +100,6 @@ class Node;
 
  * @ingroup event_interface
  */
-
 class Event
 {
 

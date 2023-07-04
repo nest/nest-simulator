@@ -40,58 +40,59 @@
 namespace nest
 {
 
-/** BeginUserDocs: NOINDEX
- * All stimulation devices share the parameters ``start`` and ``stop``,
- * which control the stimulation period. The property ``origin`` is a
- * global offset that shifts the stimulation period. All three values are
- * set as times in ms.
- *
- * - For spike-emitting devices, only spikes with times `t` that fulfill
- *   :math:`\mathrm{start} < t \leq \mathrm{stop}` are emitted. Spikes
- *   that have timestamp of :math:`t = \mathrm{start}` are not emitted.
- *
- * - For current-emitting devices, the current is activated and
- *   deactivated such that the current first affects the target dynamics
- *   during the update step :math:`(\mathrm{start}, \mathrm{start}+h]`,
- *   that is, an effect can be recorded at the earliest at time
- *   :math:`\mathrm{start}+h`. The last interval during which the current
- *   affects the target's dynamics is :math:`(\textrm{stop}-h, \textrm{stop}]`.
- *
- * The property ``stimulus_source`` defaults to an empty string. It can
- * be set to the name of a stimulation backend, in which case it will
- * take its parameters from the configured backend instead of from the
- * internally stored values. More details on available backends and their
- * properties can be found in the :ref:`guide to stimulating the network
- * <sec_stimulation_backends>`.
- *
- * Parameters
- * ++++++++++
- *
- * label
- *     A string specifying an arbitrary textual label for the device.
- *     Stimulation backends might use the label to generate device specific
- *     identifiers like filenames and such. Default: ``""``.
- *
- * origin
- *     A positive floating point number used as the reference time in ms
- *     for ``start`` and ``stop``. Default: ``0.0``.
- *
- * start
- *     A positive floating point number specifying the activation time in ms,
- *     relative to ``origin``. Default: ``0.0``.
- *
- * stimulus_source
- *     A string specifying the name of the stimulation backend from which to
- *     get the data for updating the stimulus parameters of the device.
- *     By default, the device uses its internally stored parameters for updating
- *     the stimulus. Default: ``""``.
- *
- * stop
- *     A floating point number specifying the deactivation time in ms, relative
- *     to ``origin``. The value of ``stop`` must be greater than or equal to
- *     ``start``. Default: ``infinity``.
- *
- * EndUserDocs */
+/* BeginUserDocs: NOINDEX
+
+All stimulation devices share the parameters ``start`` and ``stop``,
+which control the stimulation period. The property ``origin`` is a
+global offset that shifts the stimulation period. All three values are
+set as times in ms.
+
+- For spike-emitting devices, only spikes with times `t` that fulfill
+  :math:`\mathrm{start} < t \leq \mathrm{stop}` are emitted. Spikes
+  that have timestamp of :math:`t = \mathrm{start}` are not emitted.
+
+- For current-emitting devices, the current is activated and
+  deactivated such that the current first affects the target dynamics
+  during the update step :math:`(\mathrm{start}, \mathrm{start}+h]`,
+  that is, an effect can be recorded at the earliest at time
+  :math:`\mathrm{start}+h`. The last interval during which the current
+  affects the target's dynamics is :math:`(\textrm{stop}-h, \textrm{stop}]`.
+
+The property ``stimulus_source`` defaults to an empty string. It can
+be set to the name of a stimulation backend, in which case it will
+take its parameters from the configured backend instead of from the
+internally stored values. More details on available backends and their
+properties can be found in the :ref:`guide to stimulating the network
+<sec_stimulation_backends>`.
+
+Parameters
+++++++++++
+
+label
+    A string specifying an arbitrary textual label for the device.
+    Stimulation backends might use the label to generate device specific
+    identifiers like filenames and such. Default: ``""``.
+
+origin
+    A positive floating point number used as the reference time in ms
+    for ``start`` and ``stop``. Default: ``0.0``.
+
+start
+    A positive floating point number specifying the activation time in ms,
+    relative to ``origin``. Default: ``0.0``.
+
+stimulus_source
+    A string specifying the name of the stimulation backend from which to
+    get the data for updating the stimulus parameters of the device.
+    By default, the device uses its internally stored parameters for updating
+    the stimulus. Default: ``""``.
+
+stop
+    A floating point number specifying the deactivation time in ms, relative
+    to ``origin``. The value of ``stop`` must be greater than or equal to
+    ``start``. Default: ``infinity``.
+
+EndUserDocs */
 
 /**
  * Base class for common properties of StimulationDevices.
@@ -236,5 +237,4 @@ StimulationDevice::has_proxies() const
 
 } // namespace nest
 
-
-#endif
+#endif /* #ifndef STIMULATION_DEVICE_H */

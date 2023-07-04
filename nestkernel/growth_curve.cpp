@@ -20,12 +20,6 @@
  *
  */
 
-/**
- * Implementation of growth_curve
- * \author Mikael Naveau
- * \date July 2013
- */
-
 #include "growth_curve.h"
 
 // C++ includes:

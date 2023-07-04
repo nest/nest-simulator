@@ -256,7 +256,7 @@ void
 nest::StimulationBackendMPI::cleanup()
 {
 // Disconnect all the MPI connection and send information about this disconnection
-// Clean all the elements in the map  and disconnect MPI message
+// Clean all the elements in the map and disconnect MPI message
 #pragma omp master
   {
     for ( auto& it_comm : commMap_ )

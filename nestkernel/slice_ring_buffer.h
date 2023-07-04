@@ -38,6 +38,7 @@
 
 namespace nest
 {
+
 /**
  * Queue for all spikes arriving into a neuron.
  *
@@ -257,6 +258,7 @@ SliceRingBuffer::SpikeInfo::operator>( const SpikeInfo& b ) const
 {
   return stamp_ == b.stamp_ ? ps_offset_ < b.ps_offset_ : stamp_ > b.stamp_;
 }
-}
 
-#endif
+} // namespace nest
+
+#endif /* #ifndef SLICE_RING_BUFFER_H */

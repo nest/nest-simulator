@@ -54,37 +54,24 @@ public:
   ArchivingNode( const ArchivingNode& );
 
   /**
-   * Return the Kminus (synaptic trace) value at t (in ms).
+   * Return the Kminus (synaptic trace) value at time t (given in ms).
    *
-   * When the trace is requested at the exact same time that
-   * the neuron emits a spike, the trace
-   * value as it was just before the spike is returned.
+   * When the trace is requested at the exact same time that the neuron emits a spike,
+   * the trace value as it was just before the spike is returned.
    */
   double get_K_value( double t ) override;
 
   /**
-   * Write the Kminus (eligibility trace for STDP),
-   * nearest_neighbour_Kminus (eligibility trace for nearest-neighbour STDP
+   * Write the different STDP K values at time t (in ms) to the provided locations.
    *
-   * Like Kminus, but increased to 1, rather than by 1, on a spike
-   * occurrence), and Kminus_triplet values at t (in ms) to the provided locations.
+   * @param Kminus the eligibility trace for STDP
+   * @param nearest_neighbour_Kminus eligibility trace for nearest-neighbour STDP, like Kminus,
+                                     but increased to 1, rather than by 1, when a spike occurs
+   * @param Kminus_triplet eligibility trace for triplet STDP
+   *
    * @throws UnexpectedEvent
    */
   void get_K_values( double t, double& Kminus, double& nearest_neighbor_Kminus, double& Kminus_triplet ) override;
-
-  /**
-   * The legacy version of the function
-   *
-   * Kept for compatibility
-   * after changing the function signature in PR #865.
-   * @throws UnexpectedEvent
-   */
-  void
-  get_K_values( double t, double& Kminus, double& Kminus_triplet )
-  {
-    double nearest_neighbor_Kminus_to_discard;
-    get_K_values( t, Kminus, nearest_neighbor_Kminus_to_discard, Kminus_triplet );
-  }
 
   /**
    * Return the triplet Kminus value for the associated iterator.
@@ -92,8 +79,7 @@ public:
   double get_K_triplet_value( const std::deque< histentry >::iterator& iter );
 
   /**
-   * Return the spike times (in steps) of spikes which occurred in the range
-   * [t1,t2].
+   * Return the spike times (in steps) of spikes which occurred in the range [t1,t2].
    */
   void get_history( double t1,
     double t2,
@@ -130,7 +116,7 @@ protected:
   /**
    * Number of incoming connections from STDP connectors.
    *
-   * It is needed to determine, if every incoming connection has
+   * This variable is needed to determine if every incoming connection has
    * read the spikehistory for a given point in time
    */
   size_t n_incoming_;

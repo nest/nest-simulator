@@ -229,7 +229,7 @@ public:
   /**
    * Triggers an update of a synaptic weight
    *
-   * this function is needed for neuromodulated synaptic plasticity
+   * This function is needed for neuromodulated synaptic plasticity
    */
   void trigger_update_weight( const size_t,
     const std::vector< spikecounter >&,
@@ -305,14 +305,10 @@ protected:
    */
   void check_connection_( Node& dummy_target, Node& source, Node& target, const size_t receptor_type );
 
-  // The order of the members below is critical
-  // as it influcences the size of the object.
-  // Please leave unchanged as
-  // targetidentifierT target_;
-  // SynIdDelay syn_id_delay_;
-
+  // The order of the members below is critical as it influcences the size of the object.
+  // Please leave unchanged!
   targetidentifierT target_;
-  //! syn_id (9 bit), delay (21 bit) in timesteps of this connection and more_targets and disabled flags (each 1 bit)
+  // syn_id (9 bit), delay (21 bit) in timesteps of this connection and more_targets and disabled flags (each 1 bit)
   SynIdDelay syn_id_delay_;
 };
 

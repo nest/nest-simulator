@@ -179,4 +179,4 @@ nest::VPManager::get_num_threads() const
   return n_threads_;
 }
 
-#endif /* VP_MANAGER_H */
+#endif /* #ifndef VP_MANAGER_H */

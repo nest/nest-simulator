@@ -36,6 +36,7 @@
 
 namespace nest
 {
+
 /**
  * Create the masks for sources and targets and set them on the
  * Connection Generator.
@@ -68,7 +69,6 @@ namespace nest
  * interface MPI aware and communicating the masks during connection
  * setup.
  */
-
 class ConnectionGeneratorBuilder : public ConnBuilder
 {
   typedef std::vector< ConnectionGenerator::ClosedInterval > RangeSet;
@@ -84,6 +84,19 @@ protected:
   void connect_();
   void cg_set_masks();
   size_t cg_get_right_border( size_t left, size_t step, const NodeCollectionPTR nodes );
+
+  /**
+   * Determine all contiguous ranges found in a given vector of node IDs
+   * and add the ranges to the given RangeSet.
+   *
+   * \param ranges A reference to the RangeSet to add to
+   * \param nodes A reference to a std::vector<long> of node IDs
+   *
+   * \note We do not store the indices into the given range, but
+   * instead we store the actual node IDs. This allows us to use CG
+   * generated indices as indices into the ranges spanned by the
+   * RangeSet. Index translation is done in cg_create_masks().
+   */
   void cg_get_ranges( RangeSet& ranges, const NodeCollectionPTR nodes );
 
 private:

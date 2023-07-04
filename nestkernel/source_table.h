@@ -510,4 +510,4 @@ SourceTable::clear_compressed_spike_data_map( const size_t tid )
 
 } // namespace nest
 
-#endif /* SOURCE_TABLE_H */
+#endif /* #ifndef SOURCE_TABLE_H */

@@ -206,7 +206,6 @@ EventDeliveryManager::init_moduli()
   // with given time stamps, relative to the beginning of the slice in which
   // the spikes are delivered from the queue, ie, the slice after the one
   // in which they were generated. The pertaining offsets are 0..max_delay-1.
-
   moduli_.resize( min_delay + max_delay );
 
   for ( long d = 0; d < min_delay + max_delay; ++d )

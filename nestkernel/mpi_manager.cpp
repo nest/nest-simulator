@@ -716,9 +716,6 @@ nest::MPIManager::communicate_Allgather( std::vector< int >& buffer )
   MPI_Allgather( &my_val, 1, MPI_INT, &buffer[ 0 ], 1, MPI_INT, comm );
 }
 
-
-// Sum across all rank
-
 void
 nest::MPIManager::communicate_Allreduce_sum_in_place( double buffer )
 {
@@ -993,8 +990,9 @@ nest::MPIManager::time_communicate_alltoallv( int num_bytes, int samples )
   return foo.elapsed() / samples;
 }
 
-#else /* #ifdef */
+#else /* #ifdef HAVE_MPI */
 
+// communicate (on-grid) if compiled without MPI
 void
 nest::MPIManager::communicate( std::vector< unsigned int >& send_buffer,
   std::vector< unsigned int >& recv_buffer,
@@ -1010,6 +1008,7 @@ nest::MPIManager::communicate( std::vector< unsigned int >& send_buffer,
   recv_buffer.swap( send_buffer );
 }
 
+// communicate (off-grid) if compiled without MPI
 void
 nest::MPIManager::communicate( std::vector< OffGridSpike >& send_buffer,
   std::vector< OffGridSpike >& recv_buffer,

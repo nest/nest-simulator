@@ -20,11 +20,6 @@
  *
  */
 
-// File:   sp_updater.h
-// Author: naveau
-//
-// Created on November 26, 2013, 2:28 PM
-
 #ifndef SP_MANAGER_H
 #define SP_MANAGER_H
 
@@ -96,6 +91,9 @@ public:
    *
    * The connection is established on the thread/process that owns the target node.
    *
+   * Obtains the right connection builder and performs a synapse deletion
+   * according to the specified connection specs.
+   *
    * \param sources Node collection of the source Nodes.
    * \param targets Node collection of the target Nodes.
    * \param connectivity Params connectivity Dictionary
@@ -164,7 +162,7 @@ public:
     std::vector< int >& pre_vacant_n,
     std::vector< size_t >& post_vacant_id,
     std::vector< int >& post_vacant_n,
-    SPBuilder* sp_conn_builder )  void delete_synapses_from_pre( const std::vector< index >& pre_deleted_id,
+    SPBuilder* sp_conn_builder );
   // Deletion of synapses on the pre synaptic side
   void delete_synapses_from_pre( const std::vector< size_t >& pre_deleted_id,
     std::vector< int >& pre_deleted_n,

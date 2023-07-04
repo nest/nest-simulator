@@ -197,4 +197,4 @@ public:
 
 } // namespace
 
-#endif /* STIMULATION_BACKEND_H */
+#endif /* #ifndef STIMULATION_BACKEND_H */

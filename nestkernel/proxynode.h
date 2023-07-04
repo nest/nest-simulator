@@ -84,11 +84,10 @@ public:
   void sends_secondary_event( GapJunctionEvent& ) override;
 
   /**
-   * @returns type of signal this node produces
+   * This function returns the type of signal this node produces.
    *
-   * used in check_connection to only connect neurons which send / receive
-   * compatible information
-   * delgates to underlying model
+   * It is used in check_connection to only connect neurons which send / receive
+   * compatible information. This function delgates to the underlying model
    */
   SignalType sends_signal() const override;
 
@@ -148,4 +147,4 @@ proxynode::is_proxy() const
 
 } // namespace
 
-#endif /* PROXYNODE_H */
+#endif /* #ifndef PROXYNODE_H */

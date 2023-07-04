@@ -76,7 +76,7 @@ public:
   }
 
   /**
-   * Issues deprecation warning.
+   * Issue a deprecation warning.
    */
   void deprecation_warning( std::string name );
   void deprecation_warning( std::string name, std::string new_name );

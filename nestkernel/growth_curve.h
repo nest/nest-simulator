@@ -24,9 +24,12 @@
 #define GROWTH_CURVE_H
 
 /**
- *
- * \author Mikael Naveau
- * \date July 2013
+ * \file growth_curve.h
+ * \todo All BeginDocumentation blocks in this file need to be converted to
+ *       BeginUserDocs blocks. That, however, either requires that the doc
+ *       is modified to support multiple such blocks in a single file, or
+ *       (and IMO better) to split this file into multiple files with one
+ *       growth rule per file.
  */
 
 // Includes from nestkernel:
@@ -280,7 +283,6 @@ private:
  */
 
 /**
- * \class GrowthCurveSigmoid
  * Uses a forward Euler integration method to update the number of synaptic
  * elements:
  * dz/dt = nu ((2 / (1 + e^((Ca(t) - eps)/psi))) - 1)

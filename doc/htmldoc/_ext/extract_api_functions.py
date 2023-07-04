@@ -22,8 +22,6 @@ import os
 import ast
 import json
 import re
-from docutils import nodes
-from sphinx.util.docutils import SphinxDirective
 
 
 def find_all_variables(file_path):

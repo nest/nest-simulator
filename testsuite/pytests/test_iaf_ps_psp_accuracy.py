@@ -5,7 +5,6 @@
 # This file is part of NEST.
 #
 # Copyright (C) 2004 The NEST Initiative
-#
 # NEST is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
@@ -62,9 +61,13 @@ import pytest
 import math
 from math import exp
 
+# Global parameters
+T = 6.
 tau_syn = 0.3
 tau_m = 10.
 C_m = 250.
+delay = 1.
+weight = 500.
 
 neuron_params = {"E_L": 0.,
                  "V_m": 0.,
@@ -75,21 +78,31 @@ neuron_params = {"E_L": 0.,
                  "tau_syn_in": tau_syn,
                  "C_m": C_m}
 
-T = 6.
 spike_emission = [2.]
-delay = 1.
-weight = 500.
 
-# Compute analytical solution
-t = T - delay - spike_emission[0]
-prefactor = analytical_u = weight * math.e / (tau_syn * C_m)
-t1 = (exp(-t / tau_m) - exp(-t / tau_syn)) / (1 / tau_syn - 1 / tau_m)**2
-t2 = t * exp(-t / tau_syn) / (1 / tau_syn - 1 / tau_m)
-analytical_u = prefactor * (t1 - t2)
+
+def alpha_fn(t):
+    prefactor = analytical_u = weight * math.e / (tau_syn * C_m)
+    t1 = (exp(-t / tau_m) - exp(-t / tau_syn)) / (1 / tau_syn - 1 / tau_m)**2
+    t2 = t * exp(-t / tau_syn) / (1 / tau_syn - 1 / tau_m)
+    return prefactor * (t1 - t2)
+
+
+def spiketrain_response(spiketrain):
+    response = 0.
+    for sp in spiketrain:
+        t = T - delay - sp
+        response += alpha_fn(t)
+    return response
+
+
+@pytest.fixture(scope="module")
+def reference_potential():
+    return spiketrain_response(spike_emission)
 
 
 @pytest.mark.parametrize("h", [(i) for i in range(-12, 1, 2)])
-def test_correctness_different_stepsizes(h):
+def test_single_spike_different_stepsizes(h, reference_potential):
     nest.ResetKernel()
     print(h)
     nest.set(tics_per_ms=2**14, resolution=2**h)
@@ -109,4 +122,4 @@ def test_correctness_different_stepsizes(h):
 
     nest.Simulate(T)
     u = neuron.get("V_m")
-    assert abs(analytical_u - u) < 1e-12
+    assert abs(reference_potential - u) < 1e-12

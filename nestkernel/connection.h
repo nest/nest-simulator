@@ -99,6 +99,7 @@ class ConnTestDummyNodeBase : public Node
 
 /**
  * Base class for representing connections.
+ *
  * It provides the mandatory properties receiver port and target,
  * as well as the functions get_status() and set_status()
  * to read and write them. A suitable Connector containing these
@@ -226,8 +227,9 @@ public:
   }
 
   /**
-   * triggers an update of a synaptic weight
-   * this function is needed for neuromodulated synaptic plasticity
+   * Triggers an update of a synaptic weight
+   *
+   * This function is needed for neuromodulated synaptic plasticity
    */
   void trigger_update_weight( const size_t,
     const std::vector< spikecounter >&,
@@ -303,13 +305,10 @@ protected:
    */
   void check_connection_( Node& dummy_target, Node& source, Node& target, const size_t receptor_type );
 
-  /* the order of the members below is critical as it influcences the size of the object.
-   * Please leave unchanged as:
-   *   targetidentifierT target_;
-   *   SynIdDelay syn_id_delay_;
-   */
+  // The order of the members below is critical as it influcences the size of the object.
+  // Please leave unchanged!
   targetidentifierT target_;
-  //! syn_id (9 bit), delay (21 bit) in timesteps of this connection and more_targets and disabled flags (each 1 bit)
+  // syn_id (9 bit), delay (21 bit) in timesteps of this connection and more_targets and disabled flags (each 1 bit)
   SynIdDelay syn_id_delay_;
 };
 
@@ -406,4 +405,4 @@ Connection< targetidentifierT >::get_secondary_event()
 
 } // namespace nest
 
-#endif // CONNECTION_H
+#endif /* CONNECTION_H */

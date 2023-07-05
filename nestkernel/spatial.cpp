@@ -147,9 +147,8 @@ displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
   int counter = 0;
   ArrayDatum result;
 
-  // If layer_from has size equal to one, but layer_to do not, we want the
-  // displacement between every node in layer_to against the one in layer_from.
-  // Likewise if layer_to has size 1 and layer_from do not.
+  // If layer_from has size equal to one, but layer_to do not, we want the displacement between every node
+  // in layer_to against the one in layer_from. Likewise if layer_to has size 1 and layer_from do not.
   if ( layer_from_nc->size() == 1 )
   {
     size_t node_id = layer_from_nc->operator[]( 0 );
@@ -240,9 +239,8 @@ distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
   int counter = 0;
   std::vector< double > result;
 
-  // If layer_from has size equal to one, but layer_to do not, we want the
-  // distance between every node in layer_to against the one in layer_from.
-  // Likewise if layer_to has size 1 and layer_from do not.
+  // If layer_from has size equal to one, but layer_to do not, we want the distance between every node
+  // in layer_to against the one in layer_from. Likewise if layer_to has size 1 and layer_from do not.
   if ( layer_from_nc->size() == 1 )
   {
     size_t node_id = layer_from_nc->operator[]( 0 );

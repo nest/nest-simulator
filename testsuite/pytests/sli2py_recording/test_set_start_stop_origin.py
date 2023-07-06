@@ -20,20 +20,22 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-For all models having start, stop, and origin parameters, this test checks that
-- default values can be set successfully
-- nodes are created with correct default values
-- nodes can be created with correct default values from the command line
-- parameters can be set via SetStatus
+Test if `start`, `stop` and `origin` are set properly.
+For all models (i.e, Devices) having `start`, `stop`, and `origin` parameters, this test 
+checks the following:
+    - Default values can be set successfully.
+    - Nodes are created with correct default values.
+    - Nodes can be created with correct default values from the command line.
+    - Parameters can be set via SetStatus.
 """
 
 import nest
-import pytest
 import numpy as np
+import pytest
 
 
 @pytest.fixture(autouse=True)
-def prepare():
+def reset():
     nest.ResetKernel()
 
 
@@ -49,6 +51,8 @@ def get_devices():
 
 @pytest.mark.parametrize('device', get_devices())
 def test_one_attr_implies_all_attr(device):
+    """Check that any model that has one of the attributes `start`, ``stop` or `origin`, it must have all"""
+
     model_defaults = nest.GetDefaults(device)
     required_all_attr = device_attributes()
 
@@ -60,6 +64,8 @@ def test_one_attr_implies_all_attr(device):
 
 @pytest.mark.parametrize('device', get_devices())
 def test_initial_default_value(device):
+    """Ensure that no default value is equal to test value."""
+
     model_defaults = nest.GetDefaults(device, device_attributes())
 
     unexpected_value = 1234.0 * 42
@@ -69,6 +75,8 @@ def test_initial_default_value(device):
 @pytest.mark.parametrize('device', get_devices())
 @pytest.mark.parametrize('attr', device_attributes())
 def test_setting_new_default_value(device, attr):
+    """Check that default value of each attribute can be set."""
+
     value = 1234.0 * 42
     nest.SetDefaults(device, {attr: value})
 
@@ -80,6 +88,8 @@ def test_setting_new_default_value(device, attr):
 @pytest.mark.parametrize('device', get_devices())
 @pytest.mark.parametrize('attr', device_attributes())
 def test_inheriting_new_default_on_instance(device, attr):
+    """Check that default value of each attribute are transferred to the model instance."""
+
     value = 1234.0 * 42
 
     nest.SetDefaults(device, {attr: value})
@@ -92,6 +102,8 @@ def test_inheriting_new_default_on_instance(device, attr):
 @pytest.mark.parametrize('device', get_devices())
 @pytest.mark.parametrize('attr', device_attributes())
 def test_setting_new_value_on_create(device, attr):
+    """Check that values can be set on creation."""
+
     value = 1234.0 * 42
 
     device_instance = nest.Create(device, params={attr: value})
@@ -104,6 +116,8 @@ def test_setting_new_value_on_create(device, attr):
 @pytest.mark.parametrize('device', get_devices())
 @pytest.mark.parametrize('attr', device_attributes())
 def test_setting_new_value_after_create(device, attr):
+    """Check that values can be set on model instances."""
+
     value = 1234.0 * 42
 
     device_instance = nest.Create(device)

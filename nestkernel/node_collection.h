@@ -43,6 +43,7 @@
 
 namespace nest
 {
+class Node;
 class NodeCollection;
 class NodeCollectionPrimitive;
 class NodeCollectionComposite;
@@ -208,6 +209,14 @@ public:
    * @return a NodeCollection pointer to the created NodeCollection
    */
   static NodeCollectionPTR create( const size_t node_id );
+
+  /**
+   * Create a NodeCollection from a single node pointer. Results in a primitive.
+   *
+   * @param node Node pointer from which to create the NodeCollection
+   * @return a NodeCollection pointer to the created NodeCollection
+   */
+  static NodeCollectionPTR create( const Node* node );
 
   /**
    * Create a NodeCollection from an array of node IDs. Results in a primitive if the

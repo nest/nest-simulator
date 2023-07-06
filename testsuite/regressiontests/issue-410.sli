@@ -69,7 +69,7 @@ skip_if_not_threaded
                   /b 45.45
                   /tau_c 1.0
                   /tau_n 100.0
-                  /vt vt 0 get >> CopyModel
+                  /volume_transmitter vt >> CopyModel
 
   stim1 neuron1    10.0 1.0       Connect
   stim2 dopa       10.0 1.0       Connect

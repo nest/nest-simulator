@@ -21,10 +21,11 @@
  */
 
 #include "node_collection.h"
+
+// Includes from nestkernel:
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
 #include "vp_manager_impl.h"
-
 
 // C++ includes:
 #include <algorithm> // copy
@@ -246,7 +247,6 @@ NodeCollection::create( const TokenArray& node_ids_array )
   }
   return NodeCollection::create_( node_ids );
 }
-
 
 NodeCollectionPTR
 NodeCollection::create( const size_t node_id )

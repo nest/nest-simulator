@@ -76,11 +76,6 @@ CommonSynapseProperties::set_status( const DictionaryDatum& d, ConnectorModel& )
   }
 }
 
-Node*
-CommonSynapseProperties::get_node()
-{
-  return nullptr;
-}
 
 void
 CommonSynapseProperties::calibrate( const TimeConverter& )

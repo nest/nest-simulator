@@ -101,17 +101,4 @@ STDPDopaCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& 
   updateValue< double >( d, names::Wmax, Wmax_ );
 }
 
-Node*
-STDPDopaCommonProperties::get_node()
-{
-  if ( not vt_ )
-  {
-    throw BadProperty( "No volume transmitter has been assigned to the dopamine synapse." );
-  }
-  else
-  {
-    return vt_;
-  }
-}
-
 } // of namespace nest

@@ -79,11 +79,6 @@ public:
   void calibrate( const TimeConverter& );
 
   /**
-   * get reference to registering node
-   */
-  Node* get_node();
-
-  /**
    * get node ID of volume transmitter
    */
   long get_vt_node_id() const;

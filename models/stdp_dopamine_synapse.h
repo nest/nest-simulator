@@ -157,8 +157,6 @@ public:
    */
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
-  Node* get_node();
-
   long get_vt_node_id() const;
 
   volume_transmitter* vt_;

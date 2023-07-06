@@ -43,6 +43,7 @@ class TimeConverter;
 
 /**
  * Class containing the common properties for all connections of a certain type.
+ *
  * Everything that needs to be stored commonly for all synapses goes into a
  * CommonProperty class derived by this base class.
  * Base class for all CommonProperty classes.
@@ -54,12 +55,10 @@ class CommonSynapseProperties
 public:
   /**
    * Standard constructor. Sets all common properties to default values.
+   * Default implementation of an empty CommonSynapseProperties object.
    */
   CommonSynapseProperties();
 
-  /**
-   * Destructor.
-   */
   ~CommonSynapseProperties();
 
   /**
@@ -76,16 +75,15 @@ public:
   /**
    * Calibrate all time objects, which might be contained in this object.
    */
-
   void calibrate( const TimeConverter& );
 
   /**
-   * get node ID of volume transmitter
+   * Get node ID of volume transmitter
    */
   long get_vt_node_id() const;
 
   /**
-   * get weight_recorder
+   * Get weight_recorder
    */
   weight_recorder* get_weight_recorder() const;
 

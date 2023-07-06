@@ -202,13 +202,10 @@ EventDeliveryManager::init_moduli()
   assert( min_delay != 0 );
   assert( max_delay != 0 );
 
-  /*
-   * Ring buffers use modulos to determine where to store incoming events
-   * with given time stamps, relative to the beginning of the slice in which
-   * the spikes are delivered from the queue, ie, the slice after the one
-   * in which they were generated. The pertaining offsets are 0..max_delay-1.
-   */
-
+  // Ring buffers use modulos to determine where to store incoming events
+  // with given time stamps, relative to the beginning of the slice in which
+  // the spikes are delivered from the queue, ie, the slice after the one
+  // in which they were generated. The pertaining offsets are 0..max_delay-1.
   moduli_.resize( min_delay + max_delay );
 
   for ( long d = 0; d < min_delay + max_delay; ++d )
@@ -227,14 +224,6 @@ EventDeliveryManager::init_moduli()
   }
 }
 
-/**
- * This function is called after all nodes have been updated.
- * We can compute the value of (T+d) mod max_delay without explicit
- * reference to the network clock, because compute_moduli_ is
- * called whenever the network clock advances.
- * The various modulos for all available delays are stored in
- * a lookup-table and this table is rotated once per time slice.
- */
 void
 EventDeliveryManager::update_moduli()
 {
@@ -250,11 +239,9 @@ EventDeliveryManager::update_moduli()
   assert( moduli_.size() == ( size_t ) ( min_delay + max_delay ) );
   std::rotate( moduli_.begin(), moduli_.begin() + min_delay, moduli_.end() );
 
-  /*
-   For the slice-based ring buffer, we cannot rotate the table, but
-   have to re-compute it, since max_delay_ may not be a multiple of
-   min_delay_.  Reference time is the time at the beginning of the slice.
-   */
+  // For the slice-based ring buffer, we cannot rotate the table, but
+  // have to re-compute it, since max_delay_ may not be a multiple of
+  // min_delay_.  Reference time is the time at the beginning of the slice.
   const size_t nbuff = static_cast< size_t >( std::ceil( static_cast< double >( min_delay + max_delay ) / min_delay ) );
   for ( long d = 0; d < min_delay + max_delay; ++d )
   {
@@ -529,7 +516,6 @@ EventDeliveryManager::set_end_and_invalid_markers_( const AssignedRanks& assigne
       // marker. However, the effect of an end marker and a complete
       // marker /at the last position in a chunk/ leads effectively
       // to the same behavior: after this entry, the first entry of
-      // the next chunk is read, i.e., the next element in the buffer.
       assert( send_buffer_position.idx( rank ) - 1 < send_buffer_position.end( rank ) );
       send_buffer[ send_buffer_position.idx( rank ) - 1 ].set_end_marker();
     }

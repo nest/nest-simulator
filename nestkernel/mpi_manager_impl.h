@@ -35,8 +35,8 @@
 // Includes from nestkernel:
 #include "kernel_manager.h"
 
-inline nest::thread
-nest::MPIManager::get_process_id_of_vp( const thread vp ) const
+inline size_t
+nest::MPIManager::get_process_id_of_vp( const size_t vp ) const
 {
   return vp % num_processes_;
 }
@@ -50,16 +50,6 @@ extern MPI::Intracomm comm;
 extern MPI_Comm comm;
 #endif /* #ifdef HAVE_MUSIC */
 
-
-/* ------------------------------------------------------
-   The following datatypes are defined here in communicator_impl.h
-   file instead of as static class members, to avoid inclusion
-   of mpi.h in the .h file, which caused problems on BlueGene systems.
-   Having mpi.h in the .h file would lead to requirements on include-order
-   throughout the NEST code base and is not acceptable.
-   Reported by Mikael Djurfeldt.
-   Hans Ekkehard Plesser, 2010-01-28
- */
 template < typename T >
 struct MPI_Type
 {
@@ -84,8 +74,8 @@ nest::MPIManager::communicate_Allgatherv( std::vector< T >& send_buffer,
     comm );
 }
 
-inline nest::thread
-nest::MPIManager::get_process_id_of_node_id( const index node_id ) const
+inline size_t
+nest::MPIManager::get_process_id_of_node_id( const size_t node_id ) const
 {
   return node_id % kernel().vp_manager.get_num_virtual_processes() % num_processes_;
 }
@@ -93,8 +83,8 @@ nest::MPIManager::get_process_id_of_node_id( const index node_id ) const
 #else // HAVE_MPI
 
 
-inline nest::thread
-nest::MPIManager::get_process_id_of_node_id( const index ) const
+inline size_t
+nest::MPIManager::get_process_id_of_node_id( const size_t ) const
 {
   return 0;
 }

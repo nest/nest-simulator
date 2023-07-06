@@ -64,23 +64,19 @@ class SparseNodeArray;
 class ConnBuilder
 {
 public:
-  /**
-   * Connect sources to targets according to specifications in dictionary.
-   *
-   * To create a connection, call
-   *
-   *   cb.connect();
-   *
-   * where conn_spec_dict speficies connection type and its parameters.
-   */
+  //! Connect with or without structural plasticity
   virtual void connect();
+
+  //! Delete synapses with or without structural plasticity
   virtual void disconnect();
 
-  //! parameters: sources, targets, specifications
-  ConnBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const std::vector< DictionaryDatum >& );
+  ConnBuilder( NodeCollectionPTR sources,
+    NodeCollectionPTR targets,
+    const DictionaryDatum& conn_spec,
+    const std::vector< DictionaryDatum >& syn_specs );
   virtual ~ConnBuilder();
 
-  index
+  size_t
   get_synapse_model() const
   {
     if ( synapse_model_id_.size() > 1 )
@@ -105,7 +101,16 @@ public:
 
   bool all_parameters_scalar_() const;
 
-  bool change_connected_synaptic_elements( index, index, const int, int );
+  /**
+   * Updates the number of connected synaptic elements in the target and the source.
+   *
+   * @param snode_id The node ID of the source
+   * @param tnode_id The node ID of the target
+   * @param tid the thread of the target
+   * @param update Amount of connected synaptic elements to update
+   * @return A bool indicating if the target node is on the local thread/process or not
+   */
+  bool change_connected_synaptic_elements( size_t snode_id, size_t tnode_id, const size_t tid, int update );
 
   virtual bool
   supports_symmetric() const
@@ -129,27 +134,30 @@ public:
 protected:
   //! Implements the actual connection algorithm
   virtual void connect_() = 0;
+
   virtual void
   sp_connect_()
   {
     throw NotImplemented( "This connection rule is not implemented for structural plasticity." );
   }
+
   virtual void
   disconnect_()
   {
     throw NotImplemented( "This disconnection rule is not implemented." );
   }
+
   virtual void
   sp_disconnect_()
   {
     throw NotImplemented( "This connection rule is not implemented for structural plasticity." );
   }
 
-  void update_param_dict_( index snode_id, Node& target, thread target_thread, RngPtr rng, index indx );
+  void update_param_dict_( size_t snode_id, Node& target, size_t target_thread, RngPtr rng, size_t indx );
 
   //! Create connection between given nodes, fill parameter values
-  void single_connect_( index, Node&, thread, RngPtr );
-  void single_disconnect_( index, Node&, thread );
+  void single_connect_( size_t, Node&, size_t, RngPtr );
+  void single_disconnect_( size_t, Node&, size_t );
 
   /**
    * Moves pointer in parameter array.
@@ -160,7 +168,7 @@ protected:
    * node is not located on the current thread or MPI-process and read of an
    * array.
    */
-  void skip_conn_parameter_( thread, size_t n_skip = 1 );
+  void skip_conn_parameter_( size_t, size_t n_skip = 1 );
 
   /**
    * Returns true if conventional looping over targets is indicated.
@@ -189,8 +197,7 @@ protected:
   //! buffer for exceptions raised in threads
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_;
 
-  // Name of the pre synaptic and postsynaptic elements for this connection
-  // builder
+  // Name of the pre synaptic and postsynaptic elements for this connection builder
   Name pre_synaptic_element_name_;
   Name post_synaptic_element_name_;
 
@@ -206,7 +213,7 @@ protected:
   //! pointers to connection parameters specified as arrays
   std::vector< ConnParameter* > parameters_requiring_skipping_;
 
-  std::vector< index > synapse_model_id_;
+  std::vector< size_t > synapse_model_id_;
 
   //! dictionaries to pass to connect function, one per thread for every syn_spec
   std::vector< std::vector< DictionaryDatum > > param_dicts_;
@@ -242,7 +249,7 @@ private:
    */
   void register_parameters_requiring_skipping_( ConnParameter& param );
 
-  /*
+  /**
    * Set synapse specific parameters.
    */
   void set_synapse_model_( DictionaryDatum syn_params, size_t indx );
@@ -279,8 +286,28 @@ public:
 
 protected:
   void connect_() override;
+
+  /**
+   * Connect two nodes in a OneToOne fashion with structural plasticity.
+   *
+   * This method is used by the SPManager based on the homostatic rules defined
+   * for the synaptic elements on each node.
+   */
   void sp_connect_() override;
+
+  /**
+   * Disconnecti two nodes connected in a OneToOne fashion without structural plasticity.
+   *
+   * This method can be manually called by the user to delete existing synapses.
+   */
   void disconnect_() override;
+
+  /**
+   * Disconnect two nodes connected in a OneToOne fashion with structural plasticity.
+   *
+   * This method is used by the SPManager based on the homostatic rules defined
+   * for the synaptic elements on each node.
+   */
   void sp_disconnect_() override;
 };
 
@@ -309,12 +336,32 @@ public:
 
 protected:
   void connect_() override;
+
+  /**
+   * Connect two nodes in a AllToAll fashion with structural plasticity.
+   *
+   * This method is used by the SPManager based on the homostatic rules defined
+   * for the synaptic elements on each node.
+   */
   void sp_connect_() override;
+
+  /**
+   * Disconnecti two nodes connected in a AllToAll fashion without structural plasticity.
+   *
+   * This method can be manually called by the user to delete existing synapses.
+   */
   void disconnect_() override;
+
+  /**
+   * Disconnect two nodes connected in a AllToAll fashion with structural plasticity.
+   *
+   * This method is used by the SPManager based on the homostatic rules defined
+   * for the synaptic elements on each node.
+   */
   void sp_disconnect_() override;
 
 private:
-  void inner_connect_( const int, RngPtr, Node*, index, bool );
+  void inner_connect_( const int, RngPtr, Node*, size_t, bool );
 };
 
 
@@ -330,7 +377,7 @@ protected:
   void connect_() override;
 
 private:
-  void inner_connect_( const int, RngPtr, Node*, index, bool, long );
+  void inner_connect_( const int, RngPtr, Node*, size_t, bool, long );
   ParameterDatum indegree_;
 };
 
@@ -376,7 +423,7 @@ protected:
   void connect_() override;
 
 private:
-  void inner_connect_( const int, RngPtr, Node*, index );
+  void inner_connect_( const int, RngPtr, Node*, size_t );
   ParameterDatum p_; //!< connection probability
 };
 
@@ -404,6 +451,15 @@ private:
 class SPBuilder : public ConnBuilder
 {
 public:
+  /**
+   * The SPBuilder is in charge of the creation of synapses during the simulation
+   * under the control of the structural plasticity manager
+   *
+   * @param sources the source nodes on which synapses can be created/deleted
+   * @param targets the target nodes on which synapses can be created/deleted
+   * @param conn_spec connectivity specification
+   * @param syn_spec synapse specifications
+   */
   SPBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
@@ -414,6 +470,7 @@ public:
   {
     return pre_synaptic_element_name_.toString();
   }
+
   std::string
   get_post_synaptic_element_name() const
   {
@@ -421,16 +478,16 @@ public:
   }
 
   /**
-   * Writes the default delay of the connection model, if the
-   * SPBuilder only uses the default delay. If not, the min/max_delay
-   * has to be specified explicitly with the kernel status.
+   * Writes the default delay of the connection model, if the SPBuilder only uses the default delay.
+   *
+   * If not, the min/max_delay has to be specified explicitly with the kernel status.
    */
-  void update_delay( delay& d ) const;
+  void update_delay( long& d ) const;
 
   /**
    *  @note Only for internal use by SPManager.
    */
-  void sp_connect( const std::vector< index >& sources, const std::vector< index >& targets );
+  void sp_connect( const std::vector< size_t >& sources, const std::vector< size_t >& targets );
 
 protected:
   using ConnBuilder::connect_;
@@ -439,10 +496,11 @@ protected:
 
   /**
    * In charge of dynamically creating the new synapses
+   *
    * @param sources nodes from which synapses can be created
    * @param targets target nodes for the newly created synapses
    */
-  void connect_( const std::vector< index >& sources, const std::vector< index >& targets );
+  void connect_( const std::vector< size_t >& sources, const std::vector< size_t >& targets );
 };
 
 inline void
@@ -455,7 +513,7 @@ ConnBuilder::register_parameters_requiring_skipping_( ConnParameter& param )
 }
 
 inline void
-ConnBuilder::skip_conn_parameter_( thread target_thread, size_t n_skip )
+ConnBuilder::skip_conn_parameter_( size_t target_thread, size_t n_skip )
 {
   for ( std::vector< ConnParameter* >::iterator it = parameters_requiring_skipping_.begin();
         it != parameters_requiring_skipping_.end();

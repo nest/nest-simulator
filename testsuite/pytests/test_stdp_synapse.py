@@ -22,6 +22,7 @@
 import nest
 from math import exp
 import numpy as np
+import pytest
 
 try:
     import matplotlib as mpl  # noqa: F401
@@ -30,6 +31,10 @@ try:
     DEBUG_PLOTS = True
 except Exception:
     DEBUG_PLOTS = False
+
+
+# Defined here so we can use it in init_params() and in parametrization
+RESOLUTION = 0.1  # [ms]
 
 
 @nest.ll_api.check_stack
@@ -42,8 +47,8 @@ class TestSTDPSynapse:
     """
 
     def init_params(self):
-        self.resolution = 0.1  # [ms]
-        self.simulation_duration = 1e3  # [ms]
+        self.resolution = RESOLUTION  # [ms]
+        self.simulation_duration = 1000  # [ms]
         self.synapse_model = "stdp_synapse"
         self.presynaptic_firing_rate = 20.0  # [ms^-1]
         self.postsynaptic_firing_rate = 20.0  # [ms^-1]
@@ -93,9 +98,11 @@ class TestSTDPSynapse:
 
         # ``weight_by_nest`` contains only weight values at pre spike times, ``weight_reproduced_independently``
         # contains the weight at pre *and* post times: check that weights are equal for pre spike times
+        # Also ensure only values within simulation time are considered.
         assert len(weight_by_nest) > 0
-        np.testing.assert_allclose(t_weight_by_nest, t_weight_reproduced_independently)
-        np.testing.assert_allclose(weight_by_nest, weight_reproduced_independently)
+        t_valid = t_weight_reproduced_independently < self.simulation_duration
+        np.testing.assert_allclose(t_weight_by_nest, t_weight_reproduced_independently[t_valid])
+        np.testing.assert_allclose(weight_by_nest, weight_reproduced_independently[t_valid])
 
     def do_the_nest_simulation(self):
         """
@@ -310,7 +317,7 @@ class TestSTDPSynapse:
                 title_snip="Reference",
             )
 
-        return pre_spike_times, [w_log[i] for i, t in enumerate(t_log) if t in pre_spike_times]
+        return np.array(pre_spike_times), np.array([w_log[i] for i, t in enumerate(t_log) if t in pre_spike_times])
 
     def plot_weight_evolution(
         self, pre_spikes, post_spikes, t_log, w_log, Kpre_log=None, Kpost_log=None, fname_snip="", title_snip=""
@@ -347,12 +354,13 @@ class TestSTDPSynapse:
         fig.savefig("/tmp/nest_stdp_synapse_test" + fname_snip + ".png", dpi=300)
         plt.close(fig)
 
-    def test_stdp_synapse(self):
-        self.dendritic_delay = float("nan")
+    @pytest.mark.parametrize("dend_delay", [RESOLUTION, 1.0])
+    @pytest.mark.parametrize("model", ["iaf_psc_exp", "iaf_cond_exp"])
+    def test_stdp_synapse(self, dend_delay, model):
+        self.dendritic_delay = dend_delay
+        self.nest_neuron_model = model
         self.init_params()
-        for self.dendritic_delay in [1.0, self.resolution]:
-            self.init_params()
-            for self.nest_neuron_model in ["iaf_psc_exp", "iaf_cond_exp"]:
-                fname_snip = "_[nest_neuron_mdl=" + self.nest_neuron_model + "]"
-                fname_snip += "_[dend_delay=" + str(self.dendritic_delay) + "]"
-                self.do_nest_simulation_and_compare_to_reproduced_weight(fname_snip=fname_snip)
+
+        fname_snip = "_[nest_neuron_mdl=" + self.nest_neuron_model + "]"
+        fname_snip += "_[dend_delay=" + str(self.dendritic_delay) + "]"
+        self.do_nest_simulation_and_compare_to_reproduced_weight(fname_snip=fname_snip)

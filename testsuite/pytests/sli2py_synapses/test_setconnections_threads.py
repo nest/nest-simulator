@@ -26,7 +26,6 @@ import pytest
 pytestmark = pytest.mark.skipif_missing_threads
 
 
-
 @pytest.fixture(autouse=True)
 def prepare(have_threads):
     nest.ResetKernel()
@@ -39,7 +38,7 @@ def test_connect_with_threads():
     target = nest.Create("iaf_psc_alpha")
 
     nest.Connect(source, target, syn_spec={"synapse_model": "stdp_synapse"})
-    conn = nest.GetConnections(source=source,  synapse_model="stdp_synapse")
+    conn = nest.GetConnections(source=source, synapse_model="stdp_synapse")
     conn_dict = conn.get()
 
     assert conn_dict["weight"] == 1.0

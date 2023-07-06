@@ -76,10 +76,18 @@ void
 nest::StructuralPlasticityNode::set_status( const DictionaryDatum& d )
 {
   // We need to preserve values in case invalid values are set
+  double new_Ca_ = Ca_minus_;
   double new_tau_Ca = tau_Ca_;
   double new_beta_Ca = beta_Ca_;
+  updateValue< double >( d, names::Ca, new_Ca_ );
   updateValue< double >( d, names::tau_Ca, new_tau_Ca );
   updateValue< double >( d, names::beta_Ca, new_beta_Ca );
+
+  if ( new_Ca_ < 0.0 )
+  {
+    throw BadProperty( "Calcium concentration cannot be negative." );
+  }
+  Ca_minus_ = new_Ca_;
 
   if ( new_tau_Ca <= 0.0 )
   {

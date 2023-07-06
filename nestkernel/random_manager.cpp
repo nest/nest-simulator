@@ -204,10 +204,10 @@ nest::RandomManager::check_rng_synchrony() const
   // We check thread-synchrony under all circumstances to keep the code simple.
   for ( auto n = 0; n < NUM_ROUNDS; ++n )
   {
-    const index num_threads = kernel().vp_manager.get_num_threads();
+    const size_t num_threads = kernel().vp_manager.get_num_threads();
     double local_min = std::numeric_limits< double >::max();
     double local_max = std::numeric_limits< double >::min();
-    for ( index t = 0; t < num_threads; ++t )
+    for ( size_t t = 0; t < num_threads; ++t )
     {
       const auto r = vp_synced_rngs_[ t ]->drand();
       local_min = std::min( r, local_min );

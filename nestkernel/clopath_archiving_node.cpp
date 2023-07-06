@@ -64,12 +64,6 @@ nest::ClopathArchivingNode::ClopathArchivingNode( const ClopathArchivingNode& n 
 void
 nest::ClopathArchivingNode::init_clopath_buffers()
 {
-  // Implementation of the delay of the convolved membrane potentials. This
-  // delay is not described in Clopath et al. 2010 but is present in the code
-  // (https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566) on
-  // ModelDB which was presumably used to create the figures in the paper.
-  // Since we write into the buffer before we read from it, we have to
-  // add 1 to the size of the buffers.
   delayed_u_bars_idx_ = 0;
   delay_u_bars_steps_ = Time::delay_ms_to_steps( delay_u_bars_ ) + 1;
   delayed_u_bar_plus_.resize( delay_u_bars_steps_ );
@@ -170,6 +164,7 @@ nest::ClopathArchivingNode::get_LTP_history( double t1,
   else
   {
     std::deque< histentry_extended >::iterator runner = ltp_history_.begin();
+
     // To have a well defined discretization of the integral, we make sure
     // that we exclude the entry at t1 but include the one at t2 by subtracting
     // a small number so that runner->t_ is never equal to t1 or t2.

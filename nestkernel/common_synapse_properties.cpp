@@ -29,7 +29,7 @@
 #include "node.h"
 
 // Includes from models:
-# include "weight_recorder.h"
+#include "weight_recorder.h"
 
 // Includes from sli:
 #include "dictdatum.h"
@@ -49,7 +49,7 @@ CommonSynapseProperties::~CommonSynapseProperties()
 void
 CommonSynapseProperties::get_status( DictionaryDatum& d ) const
 {
-  const NodeCollectionDatum wr = NodeCollectionDatum( NodeCollection::create( weight_recorder_) );
+  const NodeCollectionDatum wr = NodeCollectionDatum( NodeCollection::create( weight_recorder_ ) );
   def< NodeCollectionDatum >( d, names::weight_recorder, wr );
 }
 

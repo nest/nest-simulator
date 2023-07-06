@@ -56,7 +56,7 @@ STDPDopaCommonProperties::get_status( DictionaryDatum& d ) const
 {
   CommonSynapseProperties::get_status( d );
 
-  const NodeCollectionDatum vt = NodeCollectionDatum( NodeCollection::create( volume_transmitter_) );
+  const NodeCollectionDatum vt = NodeCollectionDatum( NodeCollection::create( volume_transmitter_ ) );
   def< NodeCollectionDatum >( d, names::volume_transmitter, vt );
 
   def< double >( d, names::A_plus, A_plus_ );

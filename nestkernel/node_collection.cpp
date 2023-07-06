@@ -25,8 +25,8 @@
 // Includes from nestkernel:
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
-#include "vp_manager_impl.h"
 #include "node.h"
+#include "vp_manager_impl.h"
 
 // C++ includes:
 #include <algorithm> // copy

@@ -21,7 +21,7 @@
 
 """
 Test if `start`, `stop` and `origin` are set properly.
-For all models (i.e, Devices) having `start`, `stop`, and `origin` parameters, this test 
+For all models (i.e, Devices) having `start`, `stop`, and `origin` parameters, this test
 checks the following:
     - Default values can be set successfully.
     - Nodes are created with correct default values.
@@ -49,7 +49,7 @@ def get_devices():
     return models
 
 
-@pytest.mark.parametrize('device', get_devices())
+@pytest.mark.parametrize("device", get_devices())
 def test_one_attr_implies_all_attr(device):
     """Check that any model that has one of the attributes `start`, ``stop` or `origin`, it must have all"""
 
@@ -62,7 +62,7 @@ def test_one_attr_implies_all_attr(device):
     assert actual == excepted
 
 
-@pytest.mark.parametrize('device', get_devices())
+@pytest.mark.parametrize("device", get_devices())
 def test_initial_default_value(device):
     """Ensure that no default value is equal to test value."""
 
@@ -72,8 +72,8 @@ def test_initial_default_value(device):
     assert np.all(model_defaults != unexpected_value)
 
 
-@pytest.mark.parametrize('device', get_devices())
-@pytest.mark.parametrize('attr', device_attributes())
+@pytest.mark.parametrize("device", get_devices())
+@pytest.mark.parametrize("attr", device_attributes())
 def test_setting_new_default_value(device, attr):
     """Check that default value of each attribute can be set."""
 
@@ -85,8 +85,8 @@ def test_setting_new_default_value(device, attr):
     assert actual == value
 
 
-@pytest.mark.parametrize('device', get_devices())
-@pytest.mark.parametrize('attr', device_attributes())
+@pytest.mark.parametrize("device", get_devices())
+@pytest.mark.parametrize("attr", device_attributes())
 def test_inheriting_new_default_on_instance(device, attr):
     """Check that default value of each attribute are transferred to the model instance."""
 
@@ -99,8 +99,8 @@ def test_inheriting_new_default_on_instance(device, attr):
     assert actual == value
 
 
-@pytest.mark.parametrize('device', get_devices())
-@pytest.mark.parametrize('attr', device_attributes())
+@pytest.mark.parametrize("device", get_devices())
+@pytest.mark.parametrize("attr", device_attributes())
 def test_setting_new_value_on_create(device, attr):
     """Check that values can be set on creation."""
 
@@ -113,8 +113,8 @@ def test_setting_new_value_on_create(device, attr):
     assert actual == value
 
 
-@pytest.mark.parametrize('device', get_devices())
-@pytest.mark.parametrize('attr', device_attributes())
+@pytest.mark.parametrize("device", get_devices())
+@pytest.mark.parametrize("attr", device_attributes())
 def test_setting_new_value_after_create(device, attr):
     """Check that values can be set on model instances."""
 

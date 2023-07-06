@@ -23,6 +23,10 @@ import nest
 import pytest
 
 
+pytestmark = pytest.mark.skipif_missing_threads
+
+
+
 @pytest.fixture(autouse=True)
 def prepare(have_threads):
     nest.ResetKernel()

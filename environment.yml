@@ -106,9 +106,9 @@ dependencies:
     - example
     - Image
     - sphinx_autobuild
+    - sphinx_copybutton
     - sphinx_gallery
     - sphinx-tabs
     - sphinx_design
     - sphinx-material
     - sphinx-copybutton
-    - sphinx-notfound-page

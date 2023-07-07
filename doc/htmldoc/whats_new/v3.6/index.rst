@@ -33,8 +33,8 @@ the property `volume_transmitter` of the synapse's common properties:
 |                                                  |                                                  |
 |     vt = nest.Create("volume_tranmitter")        |     vt = nest.Create("volume_tranmitter")        |
 |     nest.SetDefaults(                            |     nest.SetDefaults(                            |
-|         "stdp_dopamine_synapse",                 |         "stdp_dopamine_synapse", {"vt": vt}      |
-|         {"vt": vol.get("global_id")}             |     )                                            |
-|     )                                            |                                                  |
+|         "stdp_dopamine_synapse",                 |         "stdp_dopamine_synapse",                 |
+|         {"vt": vol.get("global_id")}             |          {"volume_transmitter": vt}              |
+|     )                                            |     )                                            |
 |                                                  |                                                  |
 +--------------------------------------------------+--------------------------------------------------+

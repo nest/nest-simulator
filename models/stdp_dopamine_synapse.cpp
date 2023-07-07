@@ -87,7 +87,7 @@ STDPDopaCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& 
     volume_transmitter* vt = dynamic_cast< volume_transmitter* >( vt_node );
     if ( not vt )
     {
-      throw BadProperty( "Property vt must be set to a node of type volume_transmitter" );
+      throw BadProperty( "Property volume_transmitter must be set to a node of type volume_transmitter" );
     }
 
     volume_transmitter_ = vt;

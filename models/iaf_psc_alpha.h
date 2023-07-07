@@ -40,71 +40,98 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Leaky integrate-and-fire neuron model
+Leaky integrate-and-fire model with alpha-shaped input currents
 
 Description
 +++++++++++
 
-``iaf_psc_alpha`` is an implementation of a leaky integrate-and-fire model
-with alpha-function shaped synaptic currents. Thus, synaptic currents
-and the resulting postsynaptic potentials have a finite rise time.
+``iaf_psc_alpha`` is a leaky integrate-and-fire neuron model with
 
-The threshold crossing is followed by an absolute refractory period
-during which the membrane potential is clamped to the resting potential.
+* a hard threshold,
+* a fixed refractory period,
+* no adaptation mechanisms,
+* :math:`\alpha`-shaped synaptic input currents.
 
-The linear subthreshold dynamics is integrated by the Exact
-Integration scheme [1]_. The neuron dynamics is solved on the time
-grid given by the computation step size. Incoming as well as emitted
-spikes are forced to that grid.
+The membrane potential evolves according to
 
-An additional state variable and the corresponding differential
-equation represents a piecewise constant external current.
+.. math::
 
-The general framework for the consistent formulation of systems with
-neuron like dynamics interacting by point events is described in
-[1]_.  A flow chart can be found in [2]_.
+   \frac{dV_m}{dt} = -\frac{V_m - E_L}{\tau_m} + \frac{I_{\text{syn}} + I_e}{C_m}
 
-Critical tests for the formulation of the neuron model are the
-comparisons of simulation results for different computation step
-sizes and the testsuite contains a number of such tests.
+where the synaptic input current :math:`I_{\text{syn}}(t)` is discussed below and :math:`I_e` is
+a constant input current set as a model parameter.
 
-The ``iaf_psc_alpha`` is the standard model used to check the consistency
-of the nest simulation kernel because it is at the same time complex
-enough to exhibit non-trivial dynamics and simple enough compute
-relevant measures analytically.
+A spike is emitted at time step :math:`t^*=t_{k+1}` if
+
+.. math::
+
+   V_m(t_k) < V_{th} \quad\text{and}\quad V_m(t_{k+1})\geq V_{th} \;.
+
+Subsequently,
+
+.. math::
+
+   V_m(t) = V_{\text{reset}} \quad\text{for}\quad t^* \leq t < t^* + t_{\text{ref}} \;,
+
+i.e., the membrane potential is clamped to :math:`V_{\text{reset}}` during the refractory period.
+
+The synaptic input current has an excitatory and an inhibitory component
+
+.. math::
+
+   I_{\text{syn}}(t) = I_{\text{syn, ex}}(t) + I_{\text{syn, in}}(t)
+
+where
+
+.. math::
+
+   I_{\text{syn, ex}}(t) = \sum_{(t_m, w_m)\\w_m\geq 0} w_m i_{\text{syn, ex}}(t-t_m)
+
+is the sum over all incoming excitatory spikes, with a corresponding expression for inhibitory spikes (:math:`w_m < 0`).
+Finally, individual post-synaptic currents are given by
+
+.. math::
+
+   i_{\text{syn, X}}(t) = \frac{e}{\tau_{\text{syn, X}}} t e^{-\frac{t}{\tau_{\text{syn, X}}}} \Theta(t)
+
+where :math:`\Theta(x)` is the Heaviside step function. The PSCs are normalized to unit maximum, i.e.,
+
+.. math::
+
+   i_{\text{syn, X}}(t) = 1 \Leftrightarrow t = \tau_{\text{syn, X}} \;.
+
+As a consequence, the total charge transferred by a single PSC depends
+on the synaptic time constant according to
+
+.. math::
+
+   \int_0^{infty}  i_{\text{syn, X}}(t) dt = e \tau_{\text{syn, X}} \;.
+
+By default, :math:`V_m` is not bounded from below. To limit
+hyperpolarization to biophysically plausible values, set parameter
+:math:`V_{\text{min}}` as lower bound of :math:`V_m`.
 
 .. note::
 
-   The present implementation uses individual variables for the
-   components of the state vector and the non-zero matrix elements of
-   the propagator. Because the propagator is a lower triangular matrix,
-   no full matrix multiplication needs to be carried out and the
-   computation can be done "in place", i.e. no temporary state vector
-   object is required.
+   NEST uses exact integration [1]_, [2]_ to integrate subthreshold membrane
+   dynamics with maximum precision; see also [3]_.
 
-   The template support of recent C++ compilers enables a more succinct
-   formulation without loss of runtime performance already at minimal
-   optimization levels. A future version of iaf_psc_alpha will probably
-   address the problem of efficient usage of appropriate vector and
-   matrix objects.
-
-.. note::
-
-   If ``tau_m`` is very close to ``tau_syn_ex`` or ``tau_syn_in``, the model
-   will numerically behave as if ``tau_m`` is equal to ``tau_syn_ex`` or
-   ``tau_syn_in``, respectively, to avoid numerical instabilities.
+   If :math:`\tau_m\approx \tau_{\text{syn, ex}}` or
+   :math:`\tau_m\approx \tau_{\text{syn, in}}`, the model will
+   numerically behave as if :math:`\tau_m = \tau_{\text{syn, ex}}` or
+   :math:`\tau_m = \tau_{\text{syn, in}}`, respectively, to avoid
+   numerical instabilities.
 
    For implementation details see the
    `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
 
-See also [3]_.
 
 Parameters
 ++++++++++
 
 The following parameters can be set in the status dictionary.
 
-=========== ======  ==========================================================
+=========== ======  =======================================================================
  V_m        mV      Membrane potential
  E_L        mV      Resting membrane potential
  C_m        pF      Capacity of the membrane
@@ -115,8 +142,8 @@ The following parameters can be set in the status dictionary.
  tau_syn_ex ms      Rise time of the excitatory synaptic alpha function
  tau_syn_in ms      Rise time of the inhibitory synaptic alpha function
  I_e        pA      Constant input current
- V_min      mV      Absolute lower value for the membrane potenial
-=========== ======  ==========================================================
+ V_min      mV      Absolute lower value for the membrane potenial (default `math:-\infty`)
+=========== ======  =======================================================================
 
 References
 ++++++++++

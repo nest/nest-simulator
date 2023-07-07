@@ -18,7 +18,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-from nest.ll_api import sr
 
 """
 Test correct spike transmission for multiple threads.
@@ -37,9 +36,9 @@ class TestSpikeTransmission:
     the spike arrives at the correct time and once per connection at each target.
     """
 
-    dt = 0.1         # time step
-    t_spike = 0.5    # time at which to send spike
-    delay = 1.0      # transmission delay
+    dt = 0.1  # time step
+    t_spike = 0.5  # time at which to send spike
+    delay = 1.0  # transmission delay
     t_arrival = t_spike + 2 * delay  # expected spike arrival time
 
     @classmethod
@@ -62,7 +61,7 @@ class TestSpikeTransmission:
         post = nest.Create("parrot_neuron", n_post)
 
         nest.Connect(sg, pre)
-        nest.Connect(pre, post, conn_rule, syn_spec={'delay': cls.delay, 'weight': 1})
+        nest.Connect(pre, post, conn_rule, syn_spec={"delay": cls.delay, "weight": 1})
         nest.Connect(post, sr)
 
         nest.Simulate(cls.t_spike + 3 * cls.delay)
@@ -81,10 +80,11 @@ class TestSpikeTransmission:
         Expectation: Each post neuron receives exactly one spike from each pre neuron.
         """
 
-        post_pop, spike_data = self._simulate_network(num_neurons, num_neurons, 'one_to_one',
-                                                      num_threads, compressed_spikes)
-        assert sorted(spike_data['senders']) == sorted(post_pop.tolist())
-        assert all(spike_data['times'] == self.t_arrival)
+        post_pop, spike_data = self._simulate_network(
+            num_neurons, num_neurons, "one_to_one", num_threads, compressed_spikes
+        )
+        assert sorted(spike_data["senders"]) == sorted(post_pop.tolist())
+        assert all(spike_data["times"] == self.t_arrival)
 
     @pytest.mark.parametrize("compressed_spikes", [False, True])
     @pytest.mark.parametrize("num_neurons", [4, 5])
@@ -98,9 +98,9 @@ class TestSpikeTransmission:
         Expectation: Each post neuron receives exactly one spike from pre neuron.
         """
 
-        post_pop, spike_data = self._simulate_network(1, num_neurons, 'all_to_all', num_threads, compressed_spikes)
-        assert sorted(spike_data['senders']) == sorted(post_pop.tolist())
-        assert all(spike_data['times'] == self.t_arrival)
+        post_pop, spike_data = self._simulate_network(1, num_neurons, "all_to_all", num_threads, compressed_spikes)
+        assert sorted(spike_data["senders"]) == sorted(post_pop.tolist())
+        assert all(spike_data["times"] == self.t_arrival)
 
     @pytest.mark.parametrize("compressed_spikes", [False, True])
     @pytest.mark.parametrize("num_neurons", [4, 5])
@@ -114,11 +114,10 @@ class TestSpikeTransmission:
         Expectation: The post neuron receives exactly one spike from each pre neuron.
         """
 
-        post_pop, spike_data = self._simulate_network(num_neurons, 1, 'all_to_all',
-                                                      num_threads, compressed_spikes)
+        post_pop, spike_data = self._simulate_network(num_neurons, 1, "all_to_all", num_threads, compressed_spikes)
         # post_pop is one neuron, which receives a spike from each pre neuron
-        assert all(spike_data['senders'] == num_neurons * post_pop.tolist())
-        assert all(spike_data['times'] == self.t_arrival)
+        assert all(spike_data["senders"] == num_neurons * post_pop.tolist())
+        assert all(spike_data["times"] == self.t_arrival)
 
     @pytest.mark.parametrize("compressed_spikes", [False, True])
     @pytest.mark.parametrize("num_neurons", [4, 5])
@@ -132,7 +131,8 @@ class TestSpikeTransmission:
         Expectation: Each post neuron receives exactly one spike from each pre neuron.
         """
 
-        post_pop, spike_data = self._simulate_network(num_neurons, num_neurons, 'all_to_all',
-                                                      num_threads, compressed_spikes)
-        assert sorted(spike_data['senders']) == sorted(num_neurons * post_pop.tolist())
-        assert all(spike_data['times'] == self.t_arrival)
+        post_pop, spike_data = self._simulate_network(
+            num_neurons, num_neurons, "all_to_all", num_threads, compressed_spikes
+        )
+        assert sorted(spike_data["senders"]) == sorted(num_neurons * post_pop.tolist())
+        assert all(spike_data["times"] == self.t_arrival)

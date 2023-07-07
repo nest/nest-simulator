@@ -849,32 +849,32 @@ nest::SimulationManager::update_()
 
         } // of structural plasticity
 
-      // Do not deliver events at beginning of first slice, nothing can be there yet
-      // and invalid markers have not been properly set in send buffers.
-      if ( slice_ > 0 and from_step_ == 0 )
-      {
-#ifdef TIMER_DETAILED
-        if ( tid == 0 )
+        // Do not deliver events at beginning of first slice, nothing can be there yet
+        // and invalid markers have not been properly set in send buffers.
+        if ( slice_ > 0 and from_step_ == 0 )
         {
-          sw_gather_spike_data_.start();
-        }
+#ifdef TIMER_DETAILED
+          if ( tid == 0 )
+          {
+            sw_gather_spike_data_.start();
+          }
 #endif
 
-        if ( kernel().connection_manager.has_primary_connections() )
-        {
-          // Deliver spikes from receive buffer to ring buffers.
-          kernel().event_delivery_manager.deliver_events( tid );
-        }
-        if ( kernel().connection_manager.secondary_connections_exist() )
-        {
-          kernel().event_delivery_manager.deliver_secondary_events( tid, false );
-        }
+          if ( kernel().connection_manager.has_primary_connections() )
+          {
+            // Deliver spikes from receive buffer to ring buffers.
+            kernel().event_delivery_manager.deliver_events( tid );
+          }
+          if ( kernel().connection_manager.secondary_connections_exist() )
+          {
+            kernel().event_delivery_manager.deliver_secondary_events( tid, false );
+          }
 
 #ifdef TIMER_DETAILED
-        if ( tid == 0 )
-        {
-          sw_gather_spike_data_.stop();
-        }
+          if ( tid == 0 )
+          {
+            sw_gather_spike_data_.stop();
+          }
 #endif
 
 #ifdef HAVE_MUSIC
@@ -904,7 +904,7 @@ nest::SimulationManager::update_()
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier
 #endif
-      } // if from_step == 0
+        } // if from_step == 0
 
         // preliminary update of nodes that use waveform relaxtion, only
         // necessary if secondary connections exist and any node uses
@@ -1020,29 +1020,29 @@ nest::SimulationManager::update_()
         }
 #endif
 
-	// the following block is executed by the master thread only
+        // the following block is executed by the master thread only
 // the other threads are enforced to wait at the end of the block
 #pragma omp master
-      {
+        {
 #ifdef TIMER_DETAILED
-        sw_gather_spike_data_.start();
+          sw_gather_spike_data_.start();
 #endif
 
-        // gather and deliver only at end of slice, i.e., end of min_delay step
-        if ( to_step_ == kernel().connection_manager.get_min_delay() )
-        {
-          if ( kernel().connection_manager.has_primary_connections() )
+          // gather and deliver only at end of slice, i.e., end of min_delay step
+          if ( to_step_ == kernel().connection_manager.get_min_delay() )
           {
-            kernel().event_delivery_manager.gather_spike_data( tid );
-          }
-          if ( kernel().connection_manager.secondary_connections_exist() )
-          {
+            if ( kernel().connection_manager.has_primary_connections() )
             {
-              kernel().event_delivery_manager.gather_secondary_events( true );
+              kernel().event_delivery_manager.gather_spike_data( tid );
+            }
+            if ( kernel().connection_manager.secondary_connections_exist() )
+            {
+              {
+                kernel().event_delivery_manager.gather_secondary_events( true );
+              }
             }
           }
-        }
-      
+
 #ifdef TIMER_DETAILED
           sw_gather_spike_data_.stop();
 #endif
@@ -1066,14 +1066,14 @@ nest::SimulationManager::update_()
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier
 
-      // if block to avoid omp barrier if SIONLIB is not used
+        // if block to avoid omp barrier if SIONLIB is not used
 #ifdef HAVE_SIONLIB
-      kernel().io_manager.post_step_hook();
+        kernel().io_manager.post_step_hook();
 // enforce synchronization after post-step activities of the recording backends
 #pragma omp barrier
 #endif
-      const double end_current_update = sw_simulate_.elapsed();
-      if ( end_current_update - start_current_update > update_time_limit_ )
+        const double end_current_update = sw_simulate_.elapsed();
+        if ( end_current_update - start_current_update > update_time_limit_ )
         {
           LOG( M_ERROR, "SimulationManager::update", "Update time limit exceeded." );
           throw KernelException();

@@ -34,19 +34,15 @@ class TestOngridOffgrid:
     @pytest.fixture(autouse=True)
     def build_base(self):
         nest.ResetKernel()
-        self.g = nest.Create('spike_generator', params={'spike_times': [1.0, 1.0]})
-        self.pre = {'plain': nest.Create('parrot_neuron'),
-                    'precise': nest.Create('parrot_neuron_ps')}
-        self.post = {'plain': nest.Create('parrot_neuron'),
-                     'precise': nest.Create('parrot_neuron_ps')}
+        self.g = nest.Create("spike_generator", params={"spike_times": [1.0, 1.0]})
+        self.pre = {"plain": nest.Create("parrot_neuron"), "precise": nest.Create("parrot_neuron_ps")}
+        self.post = {"plain": nest.Create("parrot_neuron"), "precise": nest.Create("parrot_neuron_ps")}
         for nrn in self.pre.values():
             nest.Connect(self.g, nrn)
 
-    @pytest.mark.parametrize('pre_type, post_type',
-                             [['plain', 'plain'],
-                              ['plain', 'precise'],
-                              ['precise', 'plain'],
-                              ['precise', 'precise']])
+    @pytest.mark.parametrize(
+        "pre_type, post_type", [["plain", "plain"], ["plain", "precise"], ["precise", "plain"], ["precise", "precise"]]
+    )
     def test_ongrid_offgrid(self, pre_type, post_type):
         """
         Connect pre-type to post-type neuron and check post-type neuron receives spike.
@@ -67,9 +63,9 @@ class TestOngridOffgrid:
         """
 
         for ntype in self.pre:
-            nest.Connect(self.pre[ntype], self.post[ntype], syn_spec={'synapse_model': 'stdp_synapse'})
+            nest.Connect(self.pre[ntype], self.post[ntype], syn_spec={"synapse_model": "stdp_synapse"})
 
         nest.Simulate(5)
 
         # confirm postsynaptic neuron has received and thus emitted a spike
-        assert self.post['plain'].t_spike > 0 and self.post['precise'].t_spike > 0
+        assert self.post["plain"].t_spike > 0 and self.post["precise"].t_spike > 0

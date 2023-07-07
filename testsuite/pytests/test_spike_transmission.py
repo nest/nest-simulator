@@ -27,6 +27,16 @@ import nest
 import pytest
 
 
+# This is a hack until I find out how to use the have_threads fixture to
+# implement this switch. Then, one should also see if we can parametrize
+# the entire class instead of parametrizing each test in the class in the
+# same way.
+if nest.ll_api.sli_func("is_threaded"):
+    THREAD_NUMBERS = [1, 2, 3, 4]
+else:
+    THREAD_NUMBERS = [1]
+
+
 @nest.ll_api.check_stack
 class TestSpikeTransmission:
     """
@@ -70,7 +80,7 @@ class TestSpikeTransmission:
 
     @pytest.mark.parametrize("compressed_spikes", [False, True])
     @pytest.mark.parametrize("num_neurons", [4, 5])
-    @pytest.mark.parametrize("num_threads", [1, 2, 3, 4])
+    @pytest.mark.parametrize("num_threads", THREAD_NUMBERS)
     def test_one_to_one(self, compressed_spikes, num_neurons, num_threads):
         """
         Test for one-to-one connectivity.
@@ -88,7 +98,7 @@ class TestSpikeTransmission:
 
     @pytest.mark.parametrize("compressed_spikes", [False, True])
     @pytest.mark.parametrize("num_neurons", [4, 5])
-    @pytest.mark.parametrize("num_threads", [1, 2, 3, 4])
+    @pytest.mark.parametrize("num_threads", THREAD_NUMBERS)
     def test_one_to_all(self, compressed_spikes, num_neurons, num_threads):
         """
         Test for one-to-all connectivity.
@@ -104,7 +114,7 @@ class TestSpikeTransmission:
 
     @pytest.mark.parametrize("compressed_spikes", [False, True])
     @pytest.mark.parametrize("num_neurons", [4, 5])
-    @pytest.mark.parametrize("num_threads", [1, 2, 3, 4])
+    @pytest.mark.parametrize("num_threads", THREAD_NUMBERS)
     def test_all_to_one(self, compressed_spikes, num_neurons, num_threads):
         """
         Test for all-to-one connectivity.
@@ -121,7 +131,7 @@ class TestSpikeTransmission:
 
     @pytest.mark.parametrize("compressed_spikes", [False, True])
     @pytest.mark.parametrize("num_neurons", [4, 5])
-    @pytest.mark.parametrize("num_threads", [1, 2, 3, 4])
+    @pytest.mark.parametrize("num_threads", THREAD_NUMBERS)
     def test_all_to_all(self, compressed_spikes, num_neurons, num_threads):
         """
         Test for all-to-all connectivity.

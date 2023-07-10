@@ -65,7 +65,7 @@ def parse_commandline():
     blddir = args.blddir
 
     model_names = [model_file.strip() for model_file in args.models.split(";")]
-    model_names = [model for model in model_names if not model.startswith("#")]
+    model_names = [model for model in model_names if model and not model.startswith("#")]
 
 
 def get_models_from_file(model_file):

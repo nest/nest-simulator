@@ -1,3 +1,6 @@
+# Full modelset for NEST including spiking, binary and rate models
+
+
 ac_generator
 aeif_cond_alpha
 aeif_cond_alpha_multisynapse

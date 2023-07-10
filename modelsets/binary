@@ -1,3 +1,5 @@
+# Modelset for binary neurons for NEST
+
 corellospinmatrix_detector
 erfc_neuron
 ginzburg_neuron

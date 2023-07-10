@@ -1,3 +1,5 @@
+# Modelset for rate based neurons for NEST
+
 threshold_lin_rate
 tanh_rate
 step_rate_generator

@@ -1,3 +1,6 @@
+# Modelset for precise spiking neurons for NEST
+# See https://nest-simulator.readthedocs.io/en/stable/neurons/simulations_with_precise_spike_times.html
+
 ac_generator
 dc_generator
 noise_generator

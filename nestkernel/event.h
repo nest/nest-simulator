@@ -250,7 +250,7 @@ public:
    * Event was sent.
    * @note A return value of 0 indicates that the r-port is not used.
    */
-  rport get_rport() const;
+  size_t get_rport() const;
 
   /**
    * Set the receiver port number (r-port).
@@ -303,7 +303,6 @@ public:
    */
   bool is_valid() const;
 
-   *
 protected:
   size_t sender_node_id_;       //!< node ID of sender or 0
   SpikeData sender_spike_data_; //!< spike data of sender node, in some cases required to retrieve node ID

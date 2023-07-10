@@ -34,10 +34,6 @@
 namespace nest
 {
 
-/**
- * Default implementation of an empty CommonSynapseProperties object.
- */
-
 CommonSynapseProperties::CommonSynapseProperties()
   : weight_recorder_()
   , wr_node_id_( 0 )

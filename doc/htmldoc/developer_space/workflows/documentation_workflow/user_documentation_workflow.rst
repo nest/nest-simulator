@@ -94,7 +94,7 @@ commands.
 
 .. code-block:: bash
 
-  git clone git@github.com:nest/nest-simulator
+   git clone git@github.com:nest/nest-simulator
 
 2. Navigate to the ``doc/htmldoc`` folder:
 
@@ -104,7 +104,7 @@ commands.
 
 3. Build the docs:
 
-.. code-black:: bash
+.. code-block:: bash
 
    sphinx-build . ../_build/html -b html
 

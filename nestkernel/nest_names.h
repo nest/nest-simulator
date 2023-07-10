@@ -33,8 +33,9 @@ namespace nest
 {
 
 /**
- * This namespace contains global Name objects. These can be used in
- * Node::get_status and Node::set_status to make data exchange more
+ * This namespace contains global Name objects.
+ *
+ * These can be used in Node::get_status and Node::set_status to make data exchange more
  * efficient and consistent. Creating a Name from a std::string is in
  * O(log n), for n the number of Names already created. Using
  * predefined names makes data exchange much more efficient as it

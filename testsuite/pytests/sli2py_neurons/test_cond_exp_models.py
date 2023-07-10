@@ -24,11 +24,12 @@ import pytest
 skip_list = ["pp_cond_exp_mc_urbanczik"]  # cannot read V_m directly
 
 # List of models to be checked
-models = [node for node in nest.node_models
-          if node not in skip_list and "cond_exp" in node and "multisynapse" not in node]
+models = [
+    node for node in nest.node_models if node not in skip_list and "cond_exp" in node and "multisynapse" not in node
+]
 
 
-@pytest.mark.parametrize('model', models)
+@pytest.mark.parametrize("model", models)
 class TestCondExpModels:
     """
     Test for cond_exp models
@@ -37,8 +38,7 @@ class TestCondExpModels:
     # Some models don't have a known resting potential, and thus get a drift in
     # some tests. In these cases, instead of checking that the potential is
     # unchanged, we check that the drift is not too large.
-    inaccurate_rest_pot_diff_limit = {"hh_cond_exp_traub": 6.0e-2,
-                                      "aeif_cond_exp": 5.4e-7}
+    inaccurate_rest_pot_diff_limit = {"hh_cond_exp_traub": 6.0e-2, "aeif_cond_exp": 5.4e-7}
 
     SIM_TIME = 5.0
 
@@ -75,31 +75,26 @@ class TestCondExpModels:
         v_m = n.get("V_m")
         return v_m
 
-    @pytest.mark.parametrize("get_vm", [{"E_ex": "E_ex", "E_in": "E_in", "sg_weight": 5.0}],
-                             indirect=True)
+    @pytest.mark.parametrize("get_vm", [{"E_ex": "E_ex", "E_in": "E_in", "sg_weight": 5.0}], indirect=True)
     def test_with_excitatory_input(self, reference_vm, get_vm):
         assert reference_vm < get_vm
 
-    @pytest.mark.parametrize("get_vm", [{"E_ex": "E_ex", "E_in": "E_in", "sg_weight": -5.0}],
-                             indirect=True)
+    @pytest.mark.parametrize("get_vm", [{"E_ex": "E_ex", "E_in": "E_in", "sg_weight": -5.0}], indirect=True)
     def test_with_inhibitory_input(self, reference_vm, get_vm):
         assert reference_vm > get_vm
 
-    @pytest.mark.parametrize("get_vm", [{"E_ex": "E_in", "E_in": "E_ex", "sg_weight": 5.0}],
-                             indirect=True)
+    @pytest.mark.parametrize("get_vm", [{"E_ex": "E_in", "E_in": "E_ex", "sg_weight": 5.0}], indirect=True)
     def test_excitatory_input_with_flipped_params(self, reference_vm, get_vm):
         assert reference_vm > get_vm
 
-    @pytest.mark.parametrize("get_vm", [{"E_ex": "E_L", "E_in": "E_L", "sg_weight": 5.0}],
-                             indirect=True)
+    @pytest.mark.parametrize("get_vm", [{"E_ex": "E_L", "E_in": "E_L", "sg_weight": 5.0}], indirect=True)
     def test_with_excitatory_input_and_resting_potential(self, model, reference_vm, get_vm):
         if model in self.inaccurate_rest_pot_diff_limit.keys():
             assert abs(reference_vm - get_vm) < self.inaccurate_rest_pot_diff_limit[model]
         else:
             assert reference_vm == get_vm
 
-    @pytest.mark.parametrize("get_vm", [{"E_ex": "E_L", "E_in": "E_L", "sg_weight": -5.0}],
-                             indirect=True)
+    @pytest.mark.parametrize("get_vm", [{"E_ex": "E_L", "E_in": "E_L", "sg_weight": -5.0}], indirect=True)
     def test_with_inhibitory_input_and_resting_potential(self, model, reference_vm, get_vm):
         if model in self.inaccurate_rest_pot_diff_limit.keys():
             assert abs(reference_vm - get_vm) < self.inaccurate_rest_pot_diff_limit[model]

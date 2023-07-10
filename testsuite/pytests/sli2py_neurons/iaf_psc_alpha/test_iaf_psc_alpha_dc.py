@@ -66,9 +66,7 @@ class TestIAFPSCAlphaDC:
         actual, expected = testutil.get_comparable_timesamples(results, expect_default)
         assert actual == expected
 
-    @pytest.mark.parametrize(
-        "resolution,delay", [(0.1, 0.1), (0.2, 0.2), (0.5, 0.5), (1.0, 1.0)]
-    )
+    @pytest.mark.parametrize("resolution,delay", [(0.1, 0.1), (0.2, 0.2), (0.5, 0.5), (1.0, 1.0)])
     def test_dc_aligned(self, simulation):
         simulation.setup()
 
@@ -88,9 +86,7 @@ class TestIAFPSCAlphaDC:
         actual, expected = testutil.get_comparable_timesamples(results, expect_aligned)
         assert actual == expected
 
-    @pytest.mark.parametrize(
-        "resolution,delay", [(0.1, 0.1), (0.2, 0.2), (0.5, 0.5), (1.0, 1.0)]
-    )
+    @pytest.mark.parametrize("resolution,delay", [(0.1, 0.1), (0.2, 0.2), (0.5, 0.5), (1.0, 1.0)])
     def test_dc_aligned_auto(self, simulation):
         simulation.setup()
 
@@ -106,9 +102,7 @@ class TestIAFPSCAlphaDC:
         actual, expected = testutil.get_comparable_timesamples(results, expect_aligned)
         assert actual == expected
 
-    @pytest.mark.parametrize(
-        "resolution,delay", [(0.1, 0.1), (0.2, 0.2), (0.5, 0.5), (1.0, 1.0)]
-    )
+    @pytest.mark.parametrize("resolution,delay", [(0.1, 0.1), (0.2, 0.2), (0.5, 0.5), (1.0, 1.0)])
     @pytest.mark.parametrize("duration", [10.0])
     def test_dc_aligned_stop(self, simulation):
         simulation.setup()

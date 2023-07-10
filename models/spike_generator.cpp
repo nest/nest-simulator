@@ -38,7 +38,7 @@
 
 
 /* ----------------------------------------------------------------
- * Default constructors defining default parameters and state
+ * Default constructor defining default parameters
  * ---------------------------------------------------------------- */
 
 nest::spike_generator::Parameters_::Parameters_()
@@ -52,11 +52,6 @@ nest::spike_generator::Parameters_::Parameters_()
 {
 }
 
-nest::spike_generator::State_::State_()
-  : position_( 0 )
-{
-}
-
 
 /* ----------------------------------------------------------------
  * Parameter extraction and manipulation functions
@@ -66,12 +61,9 @@ void
 nest::spike_generator::Parameters_::get( DictionaryDatum& d ) const
 {
   const size_t n_spikes = spike_stamps_.size();
-  const size_t n_offsets = spike_offsets_.size();
-
-  assert( ( precise_times_ and n_offsets == n_spikes ) or ( not precise_times_ and n_offsets == 0 ) );
-
   auto* times_ms = new std::vector< double >();
   times_ms->reserve( n_spikes );
+
   for ( size_t n = 0; n < n_spikes; ++n )
   {
     times_ms->push_back( spike_stamps_[ n ].get_ms() );
@@ -80,6 +72,7 @@ nest::spike_generator::Parameters_::get( DictionaryDatum& d ) const
       ( *times_ms )[ n ] -= spike_offsets_[ n ];
     }
   }
+
   ( *d )[ names::spike_times ] = DoubleVectorDatum( times_ms );
   ( *d )[ names::spike_weights ] = DoubleVectorDatum( new std::vector< double >( spike_weights_ ) );
   ( *d )[ names::spike_multiplicities ] = IntVectorDatum( new std::vector< long >( spike_multiplicities_ ) );
@@ -272,6 +265,16 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
 
 
 /* ----------------------------------------------------------------
+ * Default constructor defining default state
+ * ---------------------------------------------------------------- */
+
+nest::spike_generator::State_::State_()
+  : position_( 0 )
+{
+}
+
+
+/* ----------------------------------------------------------------
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
@@ -392,6 +395,7 @@ nest::spike_generator::event_hook( DSSpikeEvent& e )
   e.set_weight( P_.spike_weights_[ S_.position_ ] * e.get_weight() );
   e.get_receiver().handle( e );
 }
+
 
 /* ----------------------------------------------------------------
  * Other functions

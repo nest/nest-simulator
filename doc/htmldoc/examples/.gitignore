@@ -1,0 +1,5 @@
+# The example's README is copied over from the source directory.
+README.rst
+# The figures are copied over from the source directory as well.
+*.png
+*.svg

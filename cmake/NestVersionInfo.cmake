@@ -17,59 +17,31 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-# Determine NEST version based on git branch
+# Put NEST version number and version control information into CMake variables
 #
 # This module defines
-#  NEST_VERSION_BRANCH, the current git branch (nest-3.0)
-#  NEST_VERSION_SUFFIX, set using -Dwith-version-suffix=<suffix>. ("-pre")
-#  NEST_VERSION, the numeric version number plus the suffix  ("3.0-pre")
-#  NEST_VERSION_GITHASH, the current git revision hash (empty for tarballs) ("dd47c39ce")
-#  NEST_VERSION_STRING, the full NEST version string ("nest-3.0-pre@dd47c39ce")
+#   NEST_VERSION, the numeric version number including a suffix
+#   NEST_VERSION_GIT, a boolean indicating if source is managed by git
+#   NEST_VERSION_GIT_HASH, the current git revision hash (unset for tarballs)
+#   NEST_VERSION_GIT_BRANCH, the current git branch (unset for tarballs)
+#   NEST_VERSION_GIT_REMOTE, the upstream remote (if any) of the tracked branch (unset for tarballs)
 #
-# In release branches, the string "UNKNOWN" below has to be replaced
-# with the proper version (e.g. "nest-2.20") in order to get the
-# correct version number if building from tarballs.
-
 
 macro(get_version_info)
 
-    if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/.git")
-        execute_process(
-            COMMAND "git" "rev-parse" "--short" "HEAD"
-            OUTPUT_VARIABLE NEST_VERSION_GITHASH
-            OUTPUT_STRIP_TRAILING_WHITESPACE
-            WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
-        )
+  file (STRINGS "${CMAKE_SOURCE_DIR}/VERSION" NEST_VERSION )
 
-        execute_process(
-            COMMAND "git" "rev-parse" "--abbrev-ref" "HEAD"
-            OUTPUT_VARIABLE NEST_VERSION_BRANCH
-            OUTPUT_STRIP_TRAILING_WHITESPACE
-            WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
-        )
-
-        if (NEST_VERSION_SUFFIX)
-            set(versionsuffix "-${NEST_VERSION_SUFFIX}")
-        endif()
-
-        if (NEST_VERSION_GITHASH)
-            set(githash "@${NEST_VERSION_GITHASH}")
-        endif()
-    endif()
-
-    if (NOT NEST_VERSION_BRANCH)
-        set(NEST_VERSION_BRANCH "UNKNOWN")
-    endif()
-
-    string(SUBSTRING "${NEST_VERSION_BRANCH}" 0 5 isRelease)
-    if (isRelease STREQUAL "nest-")
-        string(SUBSTRING "${NEST_VERSION_BRANCH}${versionsuffix}" 5 99999 NEST_VERSION)
-    else()
-        set(NEST_VERSION "${NEST_VERSION_BRANCH}${versionsuffix}")
-    endif()
-
-    set(NEST_VERSION_STRING "${NEST_VERSION_BRANCH}${versionsuffix}${githash}")
-    unset(branchname)
-    unset(versionsuffix)
+  if (EXISTS "${CMAKE_SOURCE_DIR}/.git")
+    set( NEST_VERSION_GIT 1 )
+    execute_process(
+      COMMAND "bash" "${PROJECT_SOURCE_DIR}/build_support/version_info.sh"
+      OUTPUT_VARIABLE NEST_VERSION_INFO
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    )
+    list( GET NEST_VERSION_INFO 0 NEST_VERSION_GIT_HASH )
+    list( GET NEST_VERSION_INFO 1 NEST_VERSION_GIT_BRANCH )
+    list( GET NEST_VERSION_INFO 2 NEST_VERSION_GIT_REMOTE )
+  endif()
 
 endmacro()

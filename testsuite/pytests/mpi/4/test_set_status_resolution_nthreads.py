@@ -30,7 +30,7 @@ def reset():
     nest.ResetKernel()
 
 
-@pytest.mark.skipif(not HAVE_OPENMP, reason='NEST was compiled without multi-threading')
+@pytest.mark.skipif(not HAVE_OPENMP, reason="NEST was compiled without multi-threading")
 def testSetStatus_resolution_before_nthreads(reset):
     """Test if resolution can be set before number of threads."""
 
@@ -41,7 +41,7 @@ def testSetStatus_resolution_before_nthreads(reset):
     assert nest.local_num_threads == 4
 
 
-@pytest.mark.skipif(not HAVE_OPENMP, reason='NEST was compiled without multi-threading')
+@pytest.mark.skipif(not HAVE_OPENMP, reason="NEST was compiled without multi-threading")
 def testSetStatus_nthreads_before_resolution(reset):
     """Test if number of threads can be set before resolution."""
 

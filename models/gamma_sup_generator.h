@@ -101,7 +101,7 @@ public:
 
   using Node::event_hook;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
@@ -211,8 +211,8 @@ private:
   Buffers_ B_;
 };
 
-inline port
-gamma_sup_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
+inline size_t
+gamma_sup_generator::send_test_event( Node& target, size_t receptor_type, synindex syn_id, bool dummy_target )
 {
   StimulationDevice::enforce_single_syn_type( syn_id );
 
@@ -226,7 +226,7 @@ gamma_sup_generator::send_test_event( Node& target, rport receptor_type, syninde
   {
     SpikeEvent e;
     e.set_sender( *this );
-    const port p = target.handles_test_event( e, receptor_type );
+    const size_t p = target.handles_test_event( e, receptor_type );
     if ( p != invalid_port )
     {
       // count number of targets

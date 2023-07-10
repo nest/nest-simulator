@@ -155,7 +155,7 @@ of keys, as an optional argument to :py:meth:`~.NodeCollection.get`:
     neuron.get(["V_reset", "V_th"])
 
 In the first case we query the value of the constant background current
-``I_e``; the result is given as a floating point element. In the second
+:hxt_ref:`I_e`; the result is given as a floating point element. In the second
 case, we query the values of the reset potential and threshold of the
 neuron, and receive the result as a dictionary . If :py:meth:`~.NodeCollection.get` is
 called on a NodeCollection with more than one element, the returned dictionary
@@ -165,12 +165,12 @@ called with a specific key on a NodeCollection with several elements, a list
 the size of the NodeCollection will be returned.
 
 To modify the properties in the dictionary, we use :py:meth:`~.NodeCollection.set`. In the
-following example, the background current is set to 375.0pA, a value
+following example, the background current is set to 376.0pA, a value
 causing the neuron to spike periodically.
 
 ::
 
-    neuron.set(I_e=375.0)
+    neuron.set(I_e=376.0)
 
 Note that we can set several properties at the same time by giving
 multiple comma separated key:value pairs in a dictionary. Also be
@@ -179,7 +179,7 @@ aware that NEST is type sensitive - if a particular property is of type
 
 ::
 
-    neuron.set({"I_e": 375})
+    neuron.set({"I_e": 376})
 
 will result in an error. This conveniently protects us from making
 integer division errors, which are hard to catch.
@@ -192,7 +192,7 @@ directly
     neuron.I_e = 376.0
     neuron.I_e
 
-Next we create a ``multimeter``, a *device* we can use to record the
+Next we create a :hxt_ref:`multimeter`, a *device* we can use to record the
 membrane voltage of a neuron over time. The property ``record_from``
 expects a list of the names of the variables we would like to
 record. The variables exposed to the multimeter vary from model to
@@ -276,9 +276,9 @@ the multimeter.
     Vms = dmm["events"]["V_m"]
     ts = dmm["events"]["times"]
 
-In the first line, we obtain a dictionary with status parameters for the ``multimeter``.
+In the first line, we obtain a dictionary with status parameters for the :hxt_ref:`multimeter`.
 This dictionary contains an entry named ``events`` which holds the
-recorded data. It is itself a dictionary with the entries ``V_m`` and
+recorded data. It is itself a dictionary with the entries :hxt_ref:`V_m` and
 ``times``, which we store separately in ``Vms`` and ``ts``, in the
 second and third line, respectively. If you are having trouble imagining
 dictionaries of dictionaries and what you are extracting from where, try
@@ -302,11 +302,11 @@ obtain and display the spikes from the spike recorder.
 
 ::
 
-    dSD = spikerecorder.get("events")
-    evs = dSD["senders"]
-    ts = dSD["times"]
+    events = spikerecorder.get("events")
+    senders = events["senders"]
+    ts = events["times"]
     plt.figure(2)
-    plt.plot(ts, evs, ".")
+    plt.plot(ts, senders, ".")
     plt.show()
 
 Here we extract the events more concisely by sending the parameter name to
@@ -341,7 +341,7 @@ now connect this newly created neuron to the multimeter:
 
 Run the simulation and plot the results, they will look incorrect. To
 fix this you must plot the two neuron traces separately. Replace the
-code that extracts the events from the ``multimeter`` with the following
+code that extracts the events from the :hxt_ref:`multimeter` with the following
 lines.
 
 ::
@@ -487,9 +487,10 @@ Nodes
       - A dictionary with either single values or lists of size n.
         The single values will be applied to all nodes, while the lists will be distributed across
         the nodes. Both single values and lists can be given at the same time.
+
       - A list with n dictionaries, one dictionary for each node.
 
-   If omitted, the ``model``\ ’s defaults are used.
+    If omitted, the ``model``\ ’s defaults are used.
 
 -  ``get(*params, **kwargs)``
     Return a dictionary with parameter values for the NodeCollection it is called

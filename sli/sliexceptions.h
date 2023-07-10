@@ -346,7 +346,7 @@ public:
 
 // -------------------- Stack Error -------------------------
 /**
- * Exception to be thrown if an error occured while accessing the stack.
+ * Exception to be thrown if an error occurred while accessing the stack.
  * @ingroup SLIExceptions
  */
 class StackUnderflow : public InterpreterError
@@ -366,7 +366,7 @@ public:
 
 // -------------------- I/O Error -------------------------
 /**
- * Exception to be thrown if an error occured in an I/O operation.
+ * Exception to be thrown if an error occurred in an I/O operation.
  * @ingroup SLIExceptions
  */
 class IOError : public SLIException

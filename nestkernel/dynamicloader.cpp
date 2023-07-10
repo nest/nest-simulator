@@ -20,18 +20,6 @@
  *
  */
 
-/*
-   This file is part of NEST.
-
-   dynamicloader.cpp -- Implements the class DynamicLoaderModule
-   to allow for dymanically loaded modules for extending the kernel.
-
-   Author(s):
-   Moritz Helias
-
-   First Version: November 2005
-*/
-
 #include "dynamicloader.h"
 
 #ifdef HAVE_LIBLTDL
@@ -87,11 +75,6 @@ DynamicLoaderModule::getLinkedModules()
 }
 
 
-/*! At the time when DynamicLoaderModule is constructed, the SLI Interpreter
-  and NestModule must be already constructed and initialized.
-  DynamicLoaderModule relies on the presence of
-  the following SLI datastructures: Name, Dictionary.
-*/
 DynamicLoaderModule::DynamicLoaderModule( SLIInterpreter& interpreter )
   : dyn_modules()
   , loadmodule_function( dyn_modules )
@@ -139,13 +122,6 @@ has_name( SLIModule const* const m, const std::string n )
 }
 
 
-/** @BeginDocumentation
-  Name: Install - Load a dynamic module to extend the functionality.
-
-  Description:
-
-  Synopsis: (module_name) Install -> handle
-*/
 DynamicLoaderModule::LoadModuleFunction::LoadModuleFunction( vecDynModules& dyn_modules )
   : dyn_modules_( dyn_modules )
 {
@@ -227,7 +203,6 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
     // We should uninstall the partially installed module here, but
     // this must wait for #152.
     // For now, we just close the module file and rethrow the exception.
-
     lt_dlclose( hModule );
     lt_dlerror(); // remove any error caused by lt_dlclose()
     throw;        // no arg re-throws entire exception, see Stroustrup 14.3.1
@@ -305,4 +280,4 @@ DynamicLoaderModule::initLinkedModules( SLIInterpreter& interpreter )
 
 } // namespace nest
 
-#endif // HAVE_LIBLTDL
+#endif /* HAVE_LIBLTDL */

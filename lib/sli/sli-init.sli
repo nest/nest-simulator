@@ -732,7 +732,7 @@ def
 
 /** @BeginDocumentation
 
-   Name: who - list contents of  the top-level dicitonary
+   Name: who - list contents of  the top-level dictionary
 
    Synopsis: who -> -
 
@@ -756,7 +756,7 @@ def
 
 /** @BeginDocumentation
 
-   Name: whos - list contents of all dictionaries on the dicitonary stack
+   Name: whos - list contents of all dictionaries on the dictionary stack
 
    Synopsis: whos -> -
 
@@ -1325,7 +1325,7 @@ Description:
   It issues error messages according to the
   state of the errordict.
   The command that caused the error is left at the
-  top of the dicitonary stack.
+  top of the dictionary stack.
 
   An error is raised by the command 
      /func /error raiseerror
@@ -2130,7 +2130,7 @@ moduleinitializers
 
       % Execute in stopped context so we can detect uncaught errors
       % We also check if /newerror is set in errordict. This in case
-      % an error occured in a stopped context without proper error 
+      % an error occurred in a stopped context without proper error
       % handler.
       { { run } forall } stopped { handleerror scripterror quit_i } if
       quit    

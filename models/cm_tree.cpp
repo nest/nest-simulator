@@ -70,7 +70,6 @@ nest::Compartment::Compartment( const long compartment_index,
   , hh( 0.0 )
   , n_passed( 0 )
 {
-
   updateValue< double >( compartment_params, names::C_m, ca );
   updateValue< double >( compartment_params, names::g_C, gc );
   updateValue< double >( compartment_params, names::g_L, gl );
@@ -160,7 +159,7 @@ nest::CompTree::CompTree()
 
 /**
  * Add a compartment to the tree structure via the python interface
- * root shoud have -1 as parent index. Add root compartment first.
+ * root should have -1 as parent index. Add root compartment first.
  * Assumes parent of compartment is already added
  */
 void

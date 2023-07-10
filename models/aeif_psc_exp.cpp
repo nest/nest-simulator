@@ -61,7 +61,7 @@ template <>
 void
 RecordablesMap< aeif_psc_exp >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &aeif_psc_exp::get_y_elem_< aeif_psc_exp::State_::V_M > );
   insert_( names::I_syn_ex, &aeif_psc_exp::get_y_elem_< aeif_psc_exp::State_::I_EXC > );
   insert_( names::I_syn_in, &aeif_psc_exp::get_y_elem_< aeif_psc_exp::State_::I_INH > );
@@ -170,7 +170,7 @@ nest::aeif_psc_exp::State_::operator=( const State_& s )
 }
 
 /* ----------------------------------------------------------------
- * Paramater and state extractions and manipulation functions
+ * Parameter and state extractions and manipulation functions
  * ---------------------------------------------------------------- */
 
 void
@@ -427,8 +427,6 @@ nest::aeif_psc_exp::pre_run_hook()
 void
 nest::aeif_psc_exp::update( const Time& origin, const long from, const long to )
 {
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
   assert( State_::V_M == 0 );
 
   for ( long lag = from; lag < to; ++lag )

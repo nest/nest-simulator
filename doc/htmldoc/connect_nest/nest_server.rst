@@ -21,8 +21,8 @@ frontend could really be anything that can talk HTTP. Under the hood,
 NEST Server forwards the commands it receives to PyNEST, and sends
 back the result data in response packets.
 
-NEST Server was initially developed as a backend for `NEST Desktop
-<https://nest-desktop.readthedocs.io/>`_, a web-based graphical
+NEST Server was initially developed as a backend for :doc:`NEST Desktop
+<desktop:index>`, a web-based graphical
 frontend for NEST. With growing interest in a more general server
 backend for NEST, the functionality of the original NEST Server was
 extended to accommodate for this broader range of application.
@@ -45,15 +45,14 @@ you a better idea of what NEST Server is good for, here are some of
 its main use cases.
 
 One scenario in which NEST Server comes in handy, is if you want to
-work on your laptop, but run your NEST simulations on a
-machine with higher performance or more memory, for instance, a big
-workstation or computer cluster at your lab. For this, you would
-deploy NEST Server on the remote machine, and use the provided
-:ref:`NEST Server Client <nest_server_client>` locally or write your
-own client using one of the recipes provided in the :ref:`section on
-advanced applications <nest_server_advanced>`.
+work on your laptop, but run your NEST simulations on a machine with
+higher performance or more memory, for instance, a big workstation or
+computer cluster at your lab. For this, you would deploy NEST Server
+on the remote machine, and use the :ref:`NEST Client <nest_client>`
+locally or write your own client using one of the recipes provided in
+the :ref:`section on advanced applications <nest_server_advanced>`.
 
-`NEST Desktop <https://nest-desktop.readthedocs.io/>`_, the web-based
+:doc:`NEST Desktop <desktop:index>`, the web-based
 graphical user interface for NEST, uses NEST Server as its simulation
 backend. It supports server instances running either locally or
 remotely. More details about how to configure and run this setup can
@@ -96,21 +95,27 @@ Run NEST Server
 ~~~~~~~~~~~~~~~
 
 All NEST Server operations are managed using the ``nest-server``
-command that can either be run directly::
+command that can either be run directly:
 
-  nest-server start
+.. code-block:: text
+
+   nest-server start
 
 or supplied to the execution command line for running the Docker
-container::
+container:
 
-  docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -p 52425:52425 nestsim/nest:latest nest-server start
+.. code-block:: text
+
+  docker run -it --rm -e LOCAL_USER_ID=`id -u $USER` -p 52425:52425 nest/nest-simulator:dev nest-server start
 
 The generic invocation command line for the ``nest-server`` command
-looks as follows::
+looks as follows:
+
+.. code-block:: text
 
   nest-server <command> [-d] [-h <host>] [-o] [-p <port>]
 
-Possible commands are `start`, `stop`, `status`, or `log`. The meaning
+Possible commands are ``start``, ``stop``, ``status``, or ``log``. The meaning
 of the other arguments is as follows:
 
 -d
@@ -127,16 +132,18 @@ Run with MPI
 
 If NEST was compiled with support for :ref:`distributed computing via
 MPI <distributed_computing>`, it will usually execute the exact same
-simulation script on each of the MPI processes. With NEST Server, this
+simulation script on each of the :hxt_ref:`MPI` processes. With NEST Server, this
 would normally mean that one NEST Server instance would be spawned for
 each rank in a multi-process NEST simulation. To prevent this from
 happening, we provide a special version of the NEST Server command for
-use with MPI. It can be run as follows::
+use with MPI. It can be run as follows:
 
-  mpirun -np N nest-server-mpi [--host HOST] [--port PORT]
+.. code-block:: text
+
+    mpirun -np N nest-server-mpi [--host HOST] [--port PORT]
 
 If run like this, the RESTful API of the NEST Server will only be
-served by the MPI process with rank 0 (called the `master`), while all
+served by the :hxt_ref:`MPI` process with rank 0 (called the `master`), while all
 other N-1 ranks will start the NEST Server in `worker` mode. Upon
 receiving a request, the master relays all commands to the workers,
 which execute them, collect all result data, and send it back to the
@@ -148,21 +155,21 @@ completely the same as one coming from the serial version of the NEST
 Server. The only difference may be that information pertaining to
 process-local data structures is being replaced by generic values.
 
-.. _nest_server_client:
+.. _nest_client:
 
-The NEST Server Client
-----------------------
+The NEST Client
+---------------
 
-The easiest way to interact with the NEST Server is the `NEST Server
-Client` provided in ``examples/NESTServerClient`` in the source
-distribution of NEST. It can be used either by directly starting
-a Python session in that directory or installing it by running ``python3
-setup.py install`` therein. NEST itself does not have to be installed
-in order to use the NEST Server Client.
+The easiest way to interact with the NEST Server is the `NEST Client`
+provided in `<https://github.com/nest/nest-client/>`_. It can be used
+either by directly starting a Python session in a clone of that
+repository, or by installing it by running ``python3 setup.py
+install`` therein. NEST itself does not have to be installed in order
+to use the NEST Client.
 
-Using a dynamic function mapping mechanism, the NEST Server Client
-supports the same functions as PyNEST does. However, instead of
-directly executing calls in NEST, it forwards them together with their
+Using a dynamic function mapping mechanism, the NEST Client supports
+the same functions as PyNEST does. However, instead of directly
+executing calls in NEST, it forwards them together with their
 arguments to the NEST Server, which in turn executes them. To you as a
 user, everything looks much like a typical simulation code for NEST
 Simulator.
@@ -172,16 +179,15 @@ Basic usage
 
 To give you an idea of the usage, the following table shows a
 comparison of a typical simulation once for PyNEST and once using the
-NEST Server Client.
+NEST Client.
 
 .. list-table::
 
     * - **PyNEST directly**
-      - **via NEST Server Client**
+      - **via NEST Client**
     * - .. code-block:: Python
 
             import nest
-
 
             # Reset the kernel
             nest.ResetKernel()
@@ -205,8 +211,8 @@ NEST Server Client.
 
       - .. code-block:: Python
 
-            from NESTServerClient import NESTServerClient
-            nsc = NESTServerClient()
+            from nest_client import NESTClient
+            nsc = NESTClient()
 
             # Reset the kernel
             nsc.ResetKernel()
@@ -231,7 +237,7 @@ NEST Server Client.
 Run scripts
 ~~~~~~~~~~~
 
-The NEST Server Client is able to send complete simulation scripts to
+The NEST Client is able to send complete simulation scripts to
 the NEST Server using the functions ``exec_script`` and ``from_file``.
 The following listing shows a Python snippet using the NEST Server
 Client to execute a simple script on the Server using the
@@ -239,8 +245,8 @@ Client to execute a simple script on the Server using the
 
 .. code-block:: Python
 
-    from NESTServerClient import NESTServerClient
-    nsc = NESTServerClient()
+    from nest_client import NESTClient
+    nsc = NESTClient()
 
     script = "print('Hello world!')"
     response = nsc.exec_script(script)
@@ -254,12 +260,12 @@ Client to execute a simple script on the Server using the
 In a more realistic scenario, you probably already have your
 simulation script stored in a file. Such scripts can be sent to the
 NEST Server for execution using the ``from_file`` function provided by
-the NEST Server Client.
+the NEST Client.
 
 .. code-block:: Python
 
-    from NESTServerClient import NESTServerClient
-    nsc = NESTServerClient()
+    from nest_client import NESTClient
+    nsc = NESTClient()
 
     response = nsc.from_file('simulation_script.py', return_vars='n_events')
     n_events = response['data']
@@ -274,47 +280,47 @@ the NEST Server Client.
     on :ref:`security and modules <nest_server_security>` below.
 
 
-NEST Server Client API
-~~~~~~~~~~~~~~~~~~~~~~
+NEST Client API
+~~~~~~~~~~~~~~~
 
-.. py:class:: NESTServerClient
+.. py:class:: NESTClient
 
     The client object to interact with the NEST Server
 
-.. py:method:: NESTServerClient.<call>(*args, **kwargs)
+.. py:method:: NESTClient.<call>(*args, **kwargs)
 
-    Execute a PyNEST function `<call>` on the NEST Server; the
-    arguments `args` and `kwargs` will be forwarded to the function
+    Execute a PyNEST function ``<call>`` on the NEST Server; the
+    arguments ``args`` and ``kwargs`` will be forwarded to the function
 
-.. py:method:: NESTServerClient.exec_script(source, return_vars=None)
+.. py:method:: NESTClient.exec_script(source, return_vars=None)
 
     Execute a Python script on the NEST Server; the script has to be
-    given as a string in the `source` argument
+    given as a string in the ``source`` argument
 
-.. py:method:: NESTServerClient.from_file(filename, return_vars=None)
+.. py:method:: NESTClient.from_file(filename, return_vars=None)
 
     Execute a Python script on the NEST Server; the argument
-    `filename` is the name of the file in which the script is stored
+    ``filename`` is the name of the file in which the script is stored
 
 REST API overview
 -----------------
 
-localhost:52425
+``localhost:52425``
     Get the version of NEST used by NEST Server
 
-localhost:52425/api
+``localhost:52425/api``
     List all available functions
 
-localhost:52425/api/<call>
-    Execute the function `<call>`
+``localhost:52425/api/<call>``
+    Execute the function ``<call>```
 
-localhost:52425/api/<call>?inspect=getdoc
-    Get the documentation for the function `<call>`
+``localhost:52425/api/<call>?inspect=getdoc``
+    Get the documentation for the function ``<call>``
 
-localhost:52425/api/<call>?inspect=getsource
-    Get the source code of the function `<call>`
+``localhost:52425/api/<call>?inspect=getsource``
+    Get the source code of the function ``<call>``
 
-localhost:52425/exec
+``localhost:52425/exec``
     Execute a Python script. This requires JSON data in the form
 
     .. code-block:: JSON
@@ -328,25 +334,35 @@ The preferred command line tool for interacting with NEST Server using
 a terminal is ``curl``. For more information, please visit the `curl
 website <https://curl.se/>`_.
 
-To obtain basic information about the running server, run::
+To obtain basic information about the running server, run:
+
+.. code-block::
 
   curl localhost:52425
 
-NEST Server responds to this by sending data in JSON format::
+NEST Server responds to this by sending data in JSON format:
+
+.. code-block::
 
   {"mpi":false,"nest":"3.2"}
 
-You can retrieve data about the callable functions of NEST by running::
+You can retrieve data about the callable functions of NEST by running:
+
+.. code-block::
 
   curl localhost:52425/api
 
-Retrieve the current kernel status dict from NEST::
+Retrieve the current kernel status dict from NEST:
+
+.. code-block::
 
   curl localhost:52425/api/GetKernelStatus
 
-Send API request with function arguments in JSON format::
+Send API request with function arguments in JSON format:
 
-  curl -H "Content-Type: application/json" -d '{"model": "iaf_psc_alpha"}' localhost:52425/api/GetDefaults
+.. code-block::
+
+   curl -H "Content-Type: application/json" -d '{"model": "iaf_psc_alpha"}' localhost:5000/api/GetDefaults
 
 .. note::
 
@@ -363,14 +379,16 @@ Send API request with function arguments in JSON format::
 API access from Python
 ~~~~~~~~~~~~~~~~~~~~~~
 
-If you prefer Python over `curl`, you can use the ``requests`` module,
+If you prefer Python over ``curl``, you can use the ``requests`` module,
 which provides a convenient API for communicating with RESTful APIs.
 On most systems this is already installed or can be easily installed
-using `pip`. Extensive documentation is available on the pages about
+using ``pip``. Extensive documentation is available on the pages about
 `HTTP for Humans <https://requests.readthedocs.io/en/master/>`_.
 
 Sending a simple request to the NEST Server using Python works as
-follows::
+follows:
+
+.. code-block::
 
   import requests
   requests.get('http://localhost:52425').json()
@@ -429,8 +447,8 @@ After this, NumPy can be used from within scripts in the regular way:
 
 .. code-block:: Python
 
-    from NESTServerClient import NESTServerClient
-    nsc = NESTServerClient()
+    from nest_client import NESTClient
+    nest = NESTClient()
     response = nsc.exec_script("a = numpy.arange(10)", 'a')
     print(response['data'][::2])                    # [0, 2, 4, 6, 8]
 
@@ -476,7 +494,7 @@ line. For such situations, we recommend using a JSON file as input for
     }
 
 If we assume that the above JSON object is stored in a file called
-``simulation_script.json``, you can execute it using the follwing
+``simulation_script.json``, you can execute it using the following
 command:
 
 .. code-block:: sh
@@ -570,7 +588,7 @@ Using this function, sending an API-request to NEST Server becomes easy:
 
 The third type of request we might want to make is sending a custom
 Python script to NEST Server. As outlined above, this is supported by
-the `exec` route. to make use of that, we define a function with
+the ``exec`` route. to make use of that, we define a function with
 callback for POST requests to execute a script:
 
 .. code-block:: JavaScript

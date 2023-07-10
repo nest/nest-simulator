@@ -125,13 +125,13 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
   void handle( SpikeEvent& ) override;
   void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport ) override;
-  port handles_test_event( DataLoggingRequest&, rport ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
@@ -284,8 +284,8 @@ private:
   static RecordablesMap< iaf_chs_2007 > recordablesMap_;
 };
 
-inline port
-iaf_chs_2007::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+iaf_chs_2007::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -293,8 +293,8 @@ iaf_chs_2007::send_test_event( Node& target, rport receptor_type, synindex, bool
   return target.handles_test_event( e, receptor_type );
 }
 
-inline port
-iaf_chs_2007::handles_test_event( SpikeEvent&, port receptor_type )
+inline size_t
+iaf_chs_2007::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -303,8 +303,8 @@ iaf_chs_2007::handles_test_event( SpikeEvent&, port receptor_type )
   return 0;
 }
 
-inline port
-iaf_chs_2007::handles_test_event( DataLoggingRequest& dlr, port receptor_type )
+inline size_t
+iaf_chs_2007::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

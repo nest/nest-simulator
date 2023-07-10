@@ -182,4 +182,4 @@ MusicEventHandler::update( Time const& origin, const long from, const long to )
 
 } // namespace nest
 
-#endif // #ifdef HAVE_MUSIC
+#endif /* #ifdef HAVE_MUSIC */

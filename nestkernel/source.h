@@ -171,4 +171,4 @@ operator==( const Source& lhs, const Source& rhs )
 
 } // namespace nest
 
-#endif // SOURCE_H
+#endif /* #ifndef SOURCE_H */

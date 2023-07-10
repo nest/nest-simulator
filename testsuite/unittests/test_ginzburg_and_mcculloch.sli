@@ -19,7 +19,9 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
- 
+
+% SLI2PYComplexity: Low
+
  
 /** @BeginDocumentation
  Name: testsuite::test_ginzburg_and_mcculloch

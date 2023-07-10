@@ -128,7 +128,7 @@ nest::KernelManager::reset()
 }
 
 void
-nest::KernelManager::change_number_of_threads( thread new_num_threads )
+nest::KernelManager::change_number_of_threads( size_t new_num_threads )
 {
   // Inputs are checked in VPManager::set_status().
   // Just double check here that all values are legal.

@@ -1,0 +1,35 @@
+{
+  "manifest": {
+    "$BASE_DIR": "${configdir}",
+    "$NETWORK_DIR": "$BASE_DIR/network",
+    "$COMPONENTS_DIR": "$BASE_DIR/components"
+  },
+  "components": {
+    "point_neuron_models_dir": "$COMPONENTS_DIR/cell_models",
+    "synaptic_models_dir": "$COMPONENTS_DIR/synaptic_models"
+  },
+  "networks": {
+    "nodes": [
+      {
+        "nodes_file": "$NETWORK_DIR/internal_nodes.h5",
+        "node_types_file": "$NETWORK_DIR/internal_node_types.csv"
+      },
+      {
+        "nodes_file": "$NETWORK_DIR/external_nodes.h5",
+        "node_types_file": "$NETWORK_DIR/external_node_types.csv"
+      }
+    ],
+    "edges": [
+      {
+        "edges_file": "$NETWORK_DIR/internal_internal_edges.h5",
+        "edge_types_file": "$NETWORK_DIR/internal_internal_edge_types.csv",
+        "enabled": true
+      },
+      {
+        "edges_file": "$NETWORK_DIR/external_internal_edges.h5",
+        "edge_types_file": "$NETWORK_DIR/external_internal_edge_types.csv"
+      }
+    ]
+  },
+  "target_simulator": "NEST"
+}

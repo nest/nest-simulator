@@ -1,0 +1,41 @@
+{
+  "manifest": {
+    "$BASE_DIR": ".",
+    "$OUTPUT_DIR": "$BASE_DIR/output",
+    "$INPUT_DIR": "$BASE_DIR/inputs"
+  },
+  "run": {
+    "tstop": 1500.0,
+    "dt": 0.01,
+    "nsteps_block": 5000
+  },
+  "target_simulator": "NEST",
+  "network": "$BASE_DIR/circuit_config.json",
+  "conditions": {
+    "celsius": 34.0,
+    "v_init": -80
+  },
+  "node_sets_file": "$BASE_DIR/node_sets.json",
+  "inputs": {
+    "external_spike_trains": {
+      "input_type": "spikes",
+      "module": "h5",
+      "input_file": "$INPUT_DIR/external_spike_trains.h5",
+      "node_set": "external"
+    }
+  },
+  "output": {
+    "log_file": "log.txt",
+    "output_dir": "$OUTPUT_DIR",
+    "spikes_file": "spikes.h5",
+    "spikes_sort_order": "time"
+  },
+  "reports": {
+    "membrane_potential": {
+      "cells": "recorded_cells",
+      "variable_name": "V_m",
+      "module": "membrane_report",
+      "sections": "multimeter_report"
+    }
+  }
+}

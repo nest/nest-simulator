@@ -29,7 +29,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapse, connection with delay, rate
+/* BeginUserDocs: synapse, rate
 
 Short description
 +++++++++++++++++
@@ -79,7 +79,8 @@ public:
   // this line determines which common properties to use
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
-  typedef DelayedRateConnectionEvent EventType;
+
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY;
 
   /**
    * Default Constructor.
@@ -90,6 +91,8 @@ public:
     , weight_( 1.0 )
   {
   }
+
+  SecondaryEvent* get_secondary_event();
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase.
@@ -102,9 +105,9 @@ public:
   using ConnectionBase::get_target;
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
-    EventType ge;
+    DelayedRateConnectionEvent ge;
 
     s.sends_secondary_event( ge );
     ge.set_sender( s );
@@ -118,7 +121,7 @@ public:
    * \param p The port under which this connection is stored in the Connector.
    */
   void
-  send( Event& e, thread t, const CommonSynapseProperties& )
+  send( Event& e, size_t t, const CommonSynapseProperties& )
   {
     e.set_weight( weight_ );
     e.set_delay_steps( get_delay_steps() );
@@ -142,6 +145,9 @@ private:
 };
 
 template < typename targetidentifierT >
+constexpr ConnectionModelProperties RateConnectionDelayed< targetidentifierT >::properties;
+
+template < typename targetidentifierT >
 void
 RateConnectionDelayed< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
@@ -156,6 +162,13 @@ RateConnectionDelayed< targetidentifierT >::set_status( const DictionaryDatum& d
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
+}
+
+template < typename targetidentifierT >
+SecondaryEvent*
+RateConnectionDelayed< targetidentifierT >::get_secondary_event()
+{
+  return new DelayedRateConnectionEvent();
 }
 
 } // namespace

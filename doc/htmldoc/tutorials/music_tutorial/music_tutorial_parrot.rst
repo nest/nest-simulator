@@ -26,7 +26,7 @@ channels that its local targets request.
 
 But if you connect the input proxies directly to the spike recorder,
 *all* channels have a local spike recorder target on every computing
-node. We would get duplicate spike traces, one for each MPI process on
+node. We would get duplicate spike traces, one for each :hxt_ref:`MPI` process on
 the receiving side. To test this, replace line 18 in
 ``receive.py`` with
 

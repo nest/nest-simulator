@@ -79,21 +79,6 @@ if ( HAVE_PYTHON )
       PATTERN "versionchecker.py.in" EXCLUDE
   )
   install( TARGETS pynestkernel DESTINATION ${PYEXECDIR}/nest/ )
-  install( CODE "
-      execute_process(
-          COMMAND ${PYTHON} ${CMAKE_CURRENT_BINARY_DIR}/setup.py install_egg_info
-            --install-dir=${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}
-          WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}\"
-      )
-      # Use Python's standard library `pkg_resources` module to find
-      # the install requirements of `nest` as specified in `setup.py`.
-      # Then feed them into the stdin pipe of `pip install`.
-      execute_process(
-          COMMAND ${PYTHON} -c \"import pkg_resources as pkg; print('\\\\n'.join(str(r) for r in pkg.get_distribution('nest-simulator').requires()))\"
-          COMMAND ${PYTHON} -m pip install -r /dev/stdin
-      )
-      "
-  )
 
   install( DIRECTORY examples/
       DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples/pynest

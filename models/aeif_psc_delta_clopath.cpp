@@ -61,7 +61,7 @@ template <>
 void
 RecordablesMap< aeif_psc_delta_clopath >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &aeif_psc_delta_clopath::get_y_elem_< aeif_psc_delta_clopath::State_::V_M > );
   insert_( names::w, &aeif_psc_delta_clopath::get_y_elem_< aeif_psc_delta_clopath::State_::W > );
   insert_( names::z, &aeif_psc_delta_clopath::get_y_elem_< aeif_psc_delta_clopath::State_::Z > );
@@ -196,7 +196,7 @@ nest::aeif_psc_delta_clopath::State_::operator=( const State_& s )
 }
 
 /* ----------------------------------------------------------------
- * Paramater and state extractions and manipulation functions
+ * Parameter and state extractions and manipulation functions
  * ---------------------------------------------------------------- */
 
 void
@@ -471,8 +471,6 @@ nest::aeif_psc_delta_clopath::pre_run_hook()
 void
 nest::aeif_psc_delta_clopath::update( const Time& origin, const long from, const long to )
 {
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
   assert( State_::V_M == 0 );
 
   for ( long lag = from; lag < to; ++lag )

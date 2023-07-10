@@ -142,4 +142,4 @@ MusicRateInHandler::update( Time const&, const long, const long )
 
 } // namespace nest
 
-#endif // #ifdef HAVE_MUSIC
+#endif /* #ifdef HAVE_MUSIC */

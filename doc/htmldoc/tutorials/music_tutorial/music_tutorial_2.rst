@@ -15,7 +15,6 @@ called *send.py*.
 
 
 .. code-block:: python
-    :linenos:
 
     #!/usr/bin/env python3
 

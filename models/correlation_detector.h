@@ -190,7 +190,7 @@ public:
 
   void handle( SpikeEvent& ) override;
 
-  port handles_test_event( SpikeEvent&, rport ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
 
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
@@ -252,7 +252,7 @@ private:
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
 
     /**
-     * Set values from dicitonary.
+     * Set values from dictionary.
      * @returns true if the state needs to be reset after a change of
      *          binwidth or tau_max.
      */
@@ -307,10 +307,10 @@ private:
   State_ S_;
 };
 
-inline port
-correlation_detector::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+correlation_detector::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
-  if ( receptor_type < 0 or receptor_type > 1 )
+  if ( receptor_type > 1 )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }

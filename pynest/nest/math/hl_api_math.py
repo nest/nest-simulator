@@ -22,12 +22,12 @@
 from ..ll_api import sli_func
 
 __all__ = [
-    'exp',
-    'sin',
-    'cos',
-    'min',
-    'max',
-    'redraw',
+    "exp",
+    "sin",
+    "cos",
+    "min",
+    "max",
+    "redraw",
 ]
 
 # TODO: Special cases when argument is a number?

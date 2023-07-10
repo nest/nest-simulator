@@ -84,7 +84,9 @@ public:
   // this line determines which common properties to use
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
-  typedef GapJunctionEvent EventType;
+
+  static constexpr ConnectionModelProperties properties =
+    ConnectionModelProperties::REQUIRES_SYMMETRIC | ConnectionModelProperties::SUPPORTS_WFR;
 
   /**
    * Default Constructor.
@@ -96,6 +98,8 @@ public:
   {
   }
 
+  SecondaryEvent* get_secondary_event();
+
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
   // functions are used. Since ConnectionBase depends on the template parameter,
@@ -105,9 +109,9 @@ public:
   using ConnectionBase::get_target;
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
-    EventType ge;
+    GapJunctionEvent ge;
 
     s.sends_secondary_event( ge );
     ge.set_sender( s );
@@ -121,7 +125,7 @@ public:
    * \param p The port under which this connection is stored in the Connector.
    */
   void
-  send( Event& e, thread t, const CommonSynapseProperties& )
+  send( Event& e, size_t t, const CommonSynapseProperties& )
   {
     e.set_weight( weight_ );
     e.set_receiver( *get_target( t ) );
@@ -150,6 +154,9 @@ private:
 };
 
 template < typename targetidentifierT >
+constexpr ConnectionModelProperties GapJunction< targetidentifierT >::properties;
+
+template < typename targetidentifierT >
 void
 GapJunction< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
@@ -159,6 +166,13 @@ GapJunction< targetidentifierT >::get_status( DictionaryDatum& d ) const
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
   def< long >( d, names::size_of, sizeof( *this ) );
+}
+
+template < typename targetidentifierT >
+SecondaryEvent*
+GapJunction< targetidentifierT >::get_secondary_event()
+{
+  return new GapJunctionEvent();
 }
 
 template < typename targetidentifierT >

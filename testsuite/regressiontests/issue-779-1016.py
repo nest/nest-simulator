@@ -27,7 +27,6 @@ This is a regression test for GitHub issues 779 and 1016.
 """
 
 from subprocess import check_output, STDOUT
-from os.path import join
 from tempfile import mktemp
 import sys
 

@@ -48,7 +48,7 @@ Before merging, reviewers have to make sure that:
    be adequate for the release notes
 
 1. pull request titles are complete sentences that start with an
-  upper-case, present-tense verb and end without punctuation
+   upper-case, present-tense verb and end without punctuation
 
 1. pull requests are assigned to projects and properly and completely
    labeled

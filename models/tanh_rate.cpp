@@ -47,7 +47,7 @@ template <>
 void
 RecordablesMap< nest::tanh_rate_ipn >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::rate, &nest::tanh_rate_ipn::get_rate_ );
   insert_( names::noise, &nest::tanh_rate_ipn::get_noise_ );
 }
@@ -56,7 +56,7 @@ template <>
 void
 RecordablesMap< nest::tanh_rate_opn >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::rate, &nest::tanh_rate_opn::get_rate_ );
   insert_( names::noise, &nest::tanh_rate_opn::get_noise_ );
   insert_( names::noisy_rate, &nest::tanh_rate_opn::get_noisy_rate_ );
@@ -66,7 +66,7 @@ template <>
 void
 RecordablesMap< nest::rate_transformer_tanh >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::rate, &nest::rate_transformer_tanh::get_rate_ );
 }
 

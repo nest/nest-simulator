@@ -29,7 +29,7 @@
 #include "vp_manager_impl.h"
 
 
-nest::SparseNodeArray::NodeEntry::NodeEntry( Node& node, index node_id )
+nest::SparseNodeArray::NodeEntry::NodeEntry( Node& node, size_t node_id )
   : node_( &node )
   , node_id_( node_id )
 {
@@ -69,7 +69,7 @@ nest::SparseNodeArray::clear()
 void
 nest::SparseNodeArray::add_local_node( Node& node )
 {
-  const index node_id = node.get_node_id();
+  const size_t node_id = node.get_node_id();
 
   // ensure increasing order
   assert( node_id > local_max_node_id_ );
@@ -113,7 +113,7 @@ nest::SparseNodeArray::add_local_node( Node& node )
 }
 
 void
-nest::SparseNodeArray::set_max_node_id( index node_id )
+nest::SparseNodeArray::set_max_node_id( size_t node_id )
 {
   assert( node_id > 0 ); // minimum node ID is 1
   assert( node_id >= local_max_node_id_ );
@@ -125,7 +125,7 @@ nest::SparseNodeArray::set_max_node_id( index node_id )
 }
 
 nest::Node*
-nest::SparseNodeArray::get_node_by_node_id( index node_id ) const
+nest::SparseNodeArray::get_node_by_node_id( size_t node_id ) const
 {
   assert( is_consistent_() );
 
@@ -140,15 +140,13 @@ nest::SparseNodeArray::get_node_by_node_id( index node_id ) const
     return nullptr;
   }
 
-  /* Find base index and node ID for estimating location of desired node in array.
-   *
-   * In the expression for base_id, split_node_id_ will only be used if we are on the
-   * right side, when the value is well-defined.
-   */
+  // Find base index and node ID for estimating location of desired node in array.
+  // In the expression for base_id, split_node_id_ will only be used if we are on the
+  // right side, when the value is well-defined.
   const bool left_side = node_id < split_node_id_;
   const double scale = left_side ? left_scale_ : right_scale_;
   const size_t base_idx = left_side ? 0 : split_idx_;
-  const index base_id = left_side ? local_min_node_id_ : split_node_id_;
+  const size_t base_id = left_side ? local_min_node_id_ : split_node_id_;
 
   // estimate index, limit to array size for safety size
   auto idx =

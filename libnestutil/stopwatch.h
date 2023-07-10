@@ -72,11 +72,11 @@ public:
   enum
   {
     MICROSEC = ( timeunit_t ) 1,
-    MILLISEC = MICROSEC * 1000,
-    SECONDS = MILLISEC * 1000,
-    MINUTES = SECONDS * 60,
-    HOURS = MINUTES * 60,
-    DAYS = HOURS * 24
+    MILLISEC = MICROSEC * ( timeunit_t ) 1000,
+    SECONDS = MILLISEC * ( timeunit_t ) 1000,
+    MINUTES = SECONDS * ( timeunit_t ) 60,
+    HOURS = MINUTES * ( timeunit_t ) 60,
+    DAYS = HOURS * ( timeunit_t ) 24
   };
 
   static bool correct_timeunit( timeunit_t t );

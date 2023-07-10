@@ -83,34 +83,36 @@ public:
 
   /**
    * Return the number of processes used during simulation.
+   *
    * This functions returns the number of processes.
    * Since each process has the same number of threads, the total number
    * of threads is given by get_num_threads()*get_num_processes().
    */
-  thread get_num_processes() const;
+  size_t get_num_processes() const;
 
   /**
    * Set the number of processes state variable.
    * This is used by dryrun_mode.
    */
-  void set_num_processes( thread n_procs );
+  void set_num_processes( size_t n_procs );
 
   /**
    * Get rank of MPI process
    */
-  thread get_rank() const;
+  size_t get_rank() const;
 
   /**
-   * Return the process id for a given virtual process. The real process' id
-   * of a virtual process is defined by the relation: p = (vp mod P), where
+   * Return the process id for a given virtual process.
+   * The real process' id of a virtual process is defined
+   * by the relation: p = (vp mod P), where
    * P is the total number of processes.
    */
-  thread get_process_id_of_vp( const thread vp ) const;
+  size_t get_process_id_of_vp( const size_t vp ) const;
 
   /*
    * Return the process id of the node with the specified node ID.
    */
-  thread get_process_id_of_node_id( const index node_id ) const;
+  size_t get_process_id_of_node_id( const size_t node_id ) const;
 
   /**
    * Finalize MPI communication (needs to be separate from MPIManager::finalize
@@ -123,16 +125,20 @@ public:
    */
   void mpi_abort( int exitcode );
 
-  /*
-   * gather all send_buffer vectors on other mpi process to recv_buffer
-   * vector
-   */
+  // gather all send_buffer vectors on other mpi process to recv_buffer
+  // vector
   void communicate( std::vector< long >& send_buffer, std::vector< long >& recv_buffer );
 
+  /**
+   * communicate (on-grid) if compiled without MPI
+   */
   void communicate( std::vector< unsigned int >& send_buffer,
     std::vector< unsigned int >& recv_buffer,
     std::vector< int >& displacements );
 
+  /**
+   * communicate (off-grid) if compiled without MPI
+   */
   void communicate( std::vector< OffGridSpike >& send_buffer,
     std::vector< OffGridSpike >& recv_buffer,
     std::vector< int >& displacements );
@@ -152,9 +158,7 @@ public:
   void communicate( std::vector< int >& );
   void communicate( std::vector< long >& );
 
-  /*
-   * Sum across all rank
-   */
+  //! Sum across all ranks
   void communicate_Allreduce_sum_in_place( double buffer );
   void communicate_Allreduce_sum_in_place( std::vector< double >& buffer );
   void communicate_Allreduce_sum_in_place( std::vector< int >& buffer );
@@ -214,7 +218,7 @@ public:
     const int* recv_counts,
     const int* recv_displacements );
 
-#endif // HAVE_MPI
+#endif /* HAVE_MPI */
 
   template < class D >
   void communicate_Alltoall( std::vector< D >& send_buffer,
@@ -229,6 +233,10 @@ public:
   template < class D >
   void communicate_secondary_events_Alltoallv( std::vector< D >& send_buffer, std::vector< D >& recv_buffer );
 
+  /**
+   * Ensure all processes have reached the same stage by waiting until all
+   * processes have sent a dummy message to process 0.
+   */
   void synchronize();
 
   bool any_true( const bool );
@@ -236,8 +244,8 @@ public:
   /**
    * Benchmark communication time of different MPI methods
    *
-   *  The methods `time_communicate*` can be used to benchmark the timing
-   *  of different MPI communication methods.
+   * The methods `time_communicate*` can be used to benchmark the timing
+   * of different MPI communication methods.
    */
   double time_communicate( int num_bytes, int samples = 1000 );
   double time_communicatev( int num_bytes, int samples = 1000 );
@@ -351,23 +359,24 @@ private:
   unsigned int send_recv_count_spike_data_per_rank_;
   unsigned int send_recv_count_target_data_per_rank_;
 
-  std::vector< int > recv_counts_secondary_events_in_int_per_rank_; //!< how many secondary elements (in ints) will be
-                                                                    //!< received from each rank
+  //! How many secondary elements (in ints) will be received from each rank
+  std::vector< int > recv_counts_secondary_events_in_int_per_rank_;
+
   std::vector< int >
     send_counts_secondary_events_in_int_per_rank_; //!< how many secondary elements (in ints) will be sent to each rank
 
-  std::vector< int > recv_displacements_secondary_events_in_int_per_rank_; //!< offset in the MPI receive buffer (in
-  //!< ints) at which elements received from each
-  //!< rank will be written
+  //! Offset in the MPI receive buffer (in ints) at which elements received from each rank will be written
+  std::vector< int > recv_displacements_secondary_events_in_int_per_rank_;
 
-  std::vector< int > send_displacements_secondary_events_in_int_per_rank_; //!< offset in the MPI send buffer (in ints)
-  //!< from which elements send to each rank will
-  //!< be read
+  //! Offset in the MPI send buffer (in ints) from which elements send to each rank will be read
+  std::vector< int > send_displacements_secondary_events_in_int_per_rank_;
 
 #ifdef HAVE_MPI
-  //! array containing communication partner for each step.
+
   std::vector< int > comm_step_;
-  unsigned int COMM_OVERFLOW_ERROR;
+
+  unsigned int COMM_OVERFLOW_ERROR; //<! array containing communication partner for each step.
+
 
   //! Variable to hold the MPI communicator to use (the datatype matters).
   MPI_Comm comm;
@@ -509,19 +518,19 @@ MPIManager::get_done_marker_position_in_secondary_events_recv_buffer( const size
     + get_recv_count_secondary_events_in_int( source_rank ) - 1;
 }
 
-inline thread
+inline size_t
 MPIManager::get_num_processes() const
 {
   return num_processes_;
 }
 
 inline void
-MPIManager::set_num_processes( thread n_procs )
+MPIManager::set_num_processes( size_t n_procs )
 {
   num_processes_ = n_procs;
 }
 
-inline thread
+inline size_t
 MPIManager::get_rank() const
 {
   return rank_;
@@ -802,7 +811,7 @@ MPIManager::communicate_secondary_events_Alltoallv( std::vector< D >& send_buffe
   recv_buffer.swap( send_buffer );
 }
 
-#endif // HAVE_MPI
+#endif /* HAVE_MPI */
 
 template < class D >
 void

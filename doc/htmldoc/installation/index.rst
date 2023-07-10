@@ -19,7 +19,7 @@ Install NEST
 
 .. grid:: 1 1 2 2
 
-    .. grid-item-card:: |admin| Install NEST for supercomputers and clusters 
+    .. grid-item-card:: |admin| Install NEST for supercomputers and clusters
        :class-title: sd-d-flex-row sd-align-minor-center
 
        I'm an admin or user who wants to :ref:`run NEST on HPC <admin_install>`
@@ -29,7 +29,19 @@ Install NEST
 
        I'm a developer who wants to :ref:`do development in NEST <dev_install>`
 
+.. grid:: 1 1 2 2
+
+    .. grid-item-card:: |nestml| Install NEST with NESTML
+       :class-title: sd-d-flex-row sd-align-minor-center
+
+       I'm a user who wants to :doc:`create or customize models <nestml:installation>`.
+
+|
+
+
+
 ----
+
 
 If installation didn't work, see the :ref:`troubleshooting section <troubleshooting>`.
 
@@ -48,3 +60,5 @@ If installation didn't work, see the :ref:`troubleshooting section <troubleshoot
 .. |teacher| image:: ../static/img/014-teacher.svg
 .. |admin| image:: ../static/img/001-shuttle.svg
 .. |dev| image:: ../static/img/dev_orange.svg
+.. |nestml| image:: ../static/img/nestml-logo.png
+      :scale: 15%

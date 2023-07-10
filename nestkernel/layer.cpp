@@ -54,7 +54,7 @@ AbstractLayer::~AbstractLayer()
 NodeCollectionPTR
 AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
 {
-  index length = 0;
+  size_t length = 0;
   AbstractLayer* layer_local = nullptr;
 
   auto element_name = getValue< std::string >( layer_dict, names::elements );

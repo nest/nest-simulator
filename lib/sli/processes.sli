@@ -178,7 +178,7 @@ trie
     %stack: Command PID
     pop %stack: Command
     {exec} stopped %protect from errors!
-    {% an error occured.
+    {% an error occurred.
      % define error message:
        /errormessage
        (SLI CHILD PROCESS ) getPID cvs join

@@ -1,9 +1,7 @@
 :orphan:
 
-.. _hpc_index:
-
-All about high performance computing
-====================================
+High performance computing
+==========================
 
 .. toctree::
   :maxdepth: 1

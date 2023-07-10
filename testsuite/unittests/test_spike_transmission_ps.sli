@@ -65,7 +65,7 @@ for the kernel.
 /T         4.0 def   % simulation time
 /Tstop     3.0 def   % end of recording
 /prate 12892.3 def   % rate of Poisson generator
-/delay     1.0 def   % connection delay, needs to be set explicity due to #161
+/delay     1.0 def   % connection delay, needs to be set explicitly due to #161
 
 /resolutions [0.1 0.01 0.001] def
 

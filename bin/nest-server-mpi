@@ -9,7 +9,7 @@ Usage:
 Options:
   -h --help     display usage information and exit
   --host HOST   use hostname/IP address HOST for server [default: 127.0.0.1]
-  --port PORT   use port PORT for opening the socket [default: 5000]
+  --port PORT   use port PORT for opening the socket [default: 52425]
 
 """
 
@@ -25,6 +25,10 @@ import sys
 import nest
 import nest.server
 
+import os
+
+HOST = os.getenv("NEST_SERVER_HOST", "127.0.0.1")
+PORT = os.getenv("NEST_SERVER_PORT", "52425")
 
 comm = MPI.COMM_WORLD.Clone()
 rank = comm.Get_rank()
@@ -38,7 +42,7 @@ def log(call_name, msg):
 if rank == 0:
     print("==> Starting NEST Server Master on rank 0", flush=True)
     nest.server.set_mpi_comm(comm)
-    nest.server.run_mpi_app(host=opt['--host'], port=opt['--port'])
+    nest.server.run_mpi_app(host=opt.get('--host', HOST), port=opt.get('--port', PORT))
 
 else:
     print(f"==> Starting NEST Server Worker on rank {rank}", flush=True)

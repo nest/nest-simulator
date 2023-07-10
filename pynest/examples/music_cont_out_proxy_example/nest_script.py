@@ -31,13 +31,13 @@ values are forwarded through MUSIC to the receiver.
 """
 import nest
 
-proxy = nest.Create('music_cont_out_proxy', 1)
-proxy.port_name = 'out'
+proxy = nest.Create("music_cont_out_proxy", 1)
+proxy.port_name = "out"
 proxy.set(record_from=["V_m"], interval=0.1)
 
-neuron_grp = nest.Create('iaf_cond_exp', 2)
+neuron_grp = nest.Create("iaf_cond_exp", 2)
 proxy.targets = neuron_grp
-neuron_grp[0].I_e = 300.
-neuron_grp[1].I_e = 600.
+neuron_grp[0].I_e = 300.0
+neuron_grp[1].I_e = 600.0
 
 nest.Simulate(200)

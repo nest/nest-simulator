@@ -447,6 +447,14 @@ nest::BackendNotPrepared::message() const
 }
 
 std::string
+nest::BackendAlreadyRegistered::message() const
+{
+  std::ostringstream msg;
+  msg << "Backend " << backend_ << " has already been registered.";
+  return msg.str();
+}
+
+std::string
 nest::KeyError::message() const
 {
   std::ostringstream msg;

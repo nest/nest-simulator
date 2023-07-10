@@ -40,7 +40,7 @@ class CreateTestCase(unittest.TestCase):
 
         for model in nest.node_models:
             node = nest.Create(model)
-            self.assertGreater(node.get('global_id'), 0)
+            self.assertGreater(node.get("global_id"), 0)
 
     def test_ModelCreateN(self):
         """Model Creation with N"""
@@ -55,24 +55,25 @@ class CreateTestCase(unittest.TestCase):
 
         num_nodes = 10
         voltage = 12.0
-        n = nest.Create('iaf_psc_alpha', num_nodes, {'V_m': voltage})
+        n = nest.Create("iaf_psc_alpha", num_nodes, {"V_m": voltage})
 
-        self.assertEqual(nest.GetStatus(n, 'V_m'), (voltage, ) * num_nodes)
+        self.assertEqual(nest.GetStatus(n, "V_m"), (voltage,) * num_nodes)
 
     def test_erroneous_param_to_create(self):
         """Erroneous param to Create raises exception"""
         num_nodes = 3
         nest_errors = nest.kernel.NESTErrors
-        params = [(tuple(), TypeError),
-                  ({'V_m': [-50]}, IndexError),
-                  ({'V_mm': num_nodes*[-50.]}, nest_errors.DictError),
-                  ]
+        params = [
+            (tuple(), TypeError),
+            ({"V_m": [-50]}, IndexError),
+            ({"V_mm": num_nodes * [-50.0]}, nest_errors.DictError),
+        ]
 
         for p, err in params:
             with warnings.catch_warnings(record=True) as w:
-                warnings.simplefilter('always')
-                self.assertRaises(err, nest.Create, 'iaf_psc_alpha', num_nodes, p)
-                self.assertEqual(len(w), 1, 'warning was not issued')
+                warnings.simplefilter("always")
+                self.assertRaises(err, nest.Create, "iaf_psc_alpha", num_nodes, p)
+                self.assertEqual(len(w), 1, "warning was not issued")
                 self.assertTrue(issubclass(w[0].category, UserWarning))
 
     def test_ModelDicts(self):
@@ -80,13 +81,13 @@ class CreateTestCase(unittest.TestCase):
 
         num_nodes = 10
         V_m = (0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0)
-        n = nest.Create('iaf_psc_alpha', num_nodes, [{'V_m': v} for v in V_m])
+        n = nest.Create("iaf_psc_alpha", num_nodes, [{"V_m": v} for v in V_m])
 
-        self.assertEqual(nest.GetStatus(n, 'V_m'), V_m)
+        self.assertEqual(nest.GetStatus(n, "V_m"), V_m)
 
 
 def suite():
-    suite = unittest.makeSuite(CreateTestCase, 'test')
+    suite = unittest.makeSuite(CreateTestCase, "test")
     return suite
 
 

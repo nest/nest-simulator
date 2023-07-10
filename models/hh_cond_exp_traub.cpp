@@ -53,7 +53,7 @@ template <>
 void
 RecordablesMap< hh_cond_exp_traub >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &hh_cond_exp_traub::get_y_elem_< hh_cond_exp_traub::State_::V_M > );
   insert_( names::g_ex, &hh_cond_exp_traub::get_y_elem_< hh_cond_exp_traub::State_::G_EXC > );
   insert_( names::g_in, &hh_cond_exp_traub::get_y_elem_< hh_cond_exp_traub::State_::G_INH > );
@@ -380,9 +380,6 @@ nest::hh_cond_exp_traub::pre_run_hook()
 void
 nest::hh_cond_exp_traub::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
 

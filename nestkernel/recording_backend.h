@@ -326,4 +326,4 @@ public:
 
 } // namespace
 
-#endif // RECORDING_BACKEND_H
+#endif /* #ifndef RECORDING_BACKEND_H */

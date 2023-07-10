@@ -27,28 +27,35 @@
 
 namespace nest
 {
-template < class RBType >
-void
-IOManager::register_recording_backend( Name name )
-{
-  RBType* recording_backend = new RBType();
-  recording_backend->pre_run_hook();
 
+template < class RecordingBackendT >
+void
+IOManager::register_recording_backend( const Name name )
+{
+  if ( recording_backends_.find( name ) != recording_backends_.end() )
+  {
+    throw BackendAlreadyRegistered( name.toString() );
+  }
+
+  RecordingBackendT* recording_backend = new RecordingBackendT();
+  recording_backend->pre_run_hook();
   recording_backends_.insert( std::make_pair( name, recording_backend ) );
 }
 
-template < class SBType >
+template < class StimulationBackendT >
 void
-IOManager::register_stimulation_backend( Name name )
+IOManager::register_stimulation_backend( const Name name )
 {
-  SBType* stimulation_backend = new SBType();
-  auto it = stimulation_backends_.find( name );
-  if ( it == stimulation_backends_.end() )
+  if ( stimulation_backends_.find( name ) != stimulation_backends_.end() )
   {
-    stimulation_backend->pre_run_hook();
-    stimulation_backends_.insert( std::make_pair( name, stimulation_backend ) );
+    throw BackendAlreadyRegistered( name.toString() );
   }
+
+  StimulationBackendT* stimulation_backend = new StimulationBackendT();
+  stimulation_backend->pre_run_hook();
+  stimulation_backends_.insert( std::make_pair( name, stimulation_backend ) );
 }
-}
+
+} // namespace nest
 
 #endif /* #ifndef IO_MANAGER_IMPL_H */

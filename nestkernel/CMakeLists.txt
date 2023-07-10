@@ -69,6 +69,7 @@ set ( nestkernel_sources
       conn_builder.h conn_builder_impl.h conn_builder.cpp
       conn_builder_factory.h
       conn_builder_conngen.h conn_builder_conngen.cpp
+      sonata_connector.h sonata_connector.cpp
       music_event_handler.h music_event_handler.cpp
       music_rate_in_handler.h music_rate_in_handler.cpp
       music_manager.cpp music_manager.h
@@ -136,15 +137,15 @@ endif ()
 set_source_files_properties( dynamicloader.cpp PROPERTIES COMPILE_OPTIONS "-O0" )
 
 
-add_library( nestkernel ${nestkernel_sources} )
+add_library( nestkernel STATIC ${nestkernel_sources} )
 set_target_properties( nestkernel
     PROPERTIES
-    VERSION ${NEST_VERSION}
-    SOVERSION 3
+    POSITION_INDEPENDENT_CODE ON
     )
+
 target_link_libraries( nestkernel
     nestutil sli_lib
-    ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES}
+    ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES} ${HDF5_LIBRARIES}
     )
 
 target_include_directories( nestkernel PRIVATE
@@ -154,12 +155,6 @@ target_include_directories( nestkernel PRIVATE
     ${PROJECT_SOURCE_DIR}/sli
     ${PROJECT_SOURCE_DIR}/nestkernel
     ${PROJECT_SOURCE_DIR}/nestkernel/spatial
-    )
-
-install( TARGETS nestkernel
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
 
 FILTER_HEADERS("${nestkernel_sources}" install_headers )

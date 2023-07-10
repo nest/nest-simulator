@@ -101,7 +101,7 @@ kernel attribute ``recording_backends``.
 
 If a recording backend has global properties (i.e., parameters shared
 by all enrolled recording devices), those can be inspected with
-:py:func`.GetDefaults`
+:py:func:`.GetDefaults`
 
 ::
 

@@ -268,14 +268,14 @@ cdef class NESTEngine:
         cdef Datum* nc_datum = python_object_to_datum(node_collection)
 
         try:
-            if array.dtype == numpy.bool:
+            if array.dtype == bool:
                 # Boolean C-type arrays are not supported in NumPy, so we use an 8-bit integer array
                 array_bool_mv = numpy.ascontiguousarray(array, dtype=numpy.uint8)
                 array_bool_ptr = &array_bool_mv[0]
                 new_nc_datum = node_collection_array_index(nc_datum, array_bool_ptr, len(array))
                 return sli_datum_to_object(new_nc_datum)
             elif numpy.issubdtype(array.dtype, numpy.integer):
-                array_long_mv = numpy.ascontiguousarray(array, dtype=numpy.long)
+                array_long_mv = numpy.ascontiguousarray(array, dtype=int)
                 array_long_ptr = &array_long_mv[0]
                 new_nc_datum = node_collection_array_index(nc_datum, array_long_ptr, len(array))
                 return sli_datum_to_object(new_nc_datum)
@@ -321,10 +321,10 @@ cdef class NESTEngine:
                 raise ValueError('syn_param_values must be a matrix with arrays of the same length as sources and targets.')
 
         # Get pointers to the first element in each NumPy array
-        cdef long[::1] sources_mv = numpy.ascontiguousarray(sources, dtype=numpy.long)
+        cdef long[::1] sources_mv = numpy.ascontiguousarray(sources, dtype=int)
         cdef long* sources_ptr = &sources_mv[0]
 
-        cdef long[::1] targets_mv = numpy.ascontiguousarray(targets, dtype=numpy.long)
+        cdef long[::1] targets_mv = numpy.ascontiguousarray(targets, dtype=int)
         cdef long* targets_ptr = &targets_mv[0]
 
         cdef double[::1] weights_mv
@@ -610,13 +610,13 @@ cdef inline object sli_vector_to_object(sli_vector_ptr_t dat, vector_value_t _ =
         arr = array.clone(ARRAY_LONG, vector_ptr.size(), False)
         array_data = arr.data.as_longs
         if HAVE_NUMPY:
-            ret_dtype = numpy.int_
+            ret_dtype = int
     elif sli_vector_ptr_t is sli_vector_double_ptr_t and vector_value_t is double:
         vector_ptr = deref_dvector(dat)
         arr = array.clone(ARRAY_DOUBLE, vector_ptr.size(), False)
         array_data = arr.data.as_doubles
         if HAVE_NUMPY:
-            ret_dtype = numpy.float_
+            ret_dtype = float
     else:
         raise NESTErrors.PyNESTError("unsupported specialization")
 

@@ -31,7 +31,7 @@ The test probes the interaction of a spike generator implementing a
 poisson process in continuous time with a neuron model capable of
 handling off-grid spike times. The result is verified by comparing the
 superposition of postsynaptic potentials in the neuron model to the
-the corresonding analytical solution. To achieve this, spike
+the corresponding analytical solution. To achieve this, spike
 generation of the neuron mode is prevented by setting the spike
 threshold to a very high value. The test employs the parrot neuron for
 precise spike times to provide the neuron model and the spike recorder

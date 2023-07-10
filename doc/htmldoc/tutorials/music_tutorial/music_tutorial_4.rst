@@ -16,7 +16,6 @@ differences to the C++ API. The full example code is in the
 ``pymusic`` directory in the MUSIC repository.
 
 .. code-block:: python
-    :linenos:
 
     #!/usr/bin/env python3
     import music
@@ -55,7 +54,6 @@ current simulation time, and repeatedly send new sets of events as long
 as the current time is smaller than the simulation time.
 
 .. code-block:: python
-    :linenos:
 
     import Queue
 
@@ -89,7 +87,7 @@ our event queue.
 
 The input handler function has signature
 ``(float time, int indextype, int channel_id)``. The
-``time`` and ``channel_id`` are the event
+:hxt_ref:`time` and ``channel_id`` are the event
 times and IDs as before. The ``indextype`` is the type of
 the map index for this input and is ``music.Index.LOCAL``
 or ``music.Index.GLOBAL``.

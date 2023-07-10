@@ -25,9 +25,11 @@
 
 /**
  * \file growth_curve.h
- *
- * \author Mikael Naveau
- * \date July 2013
+ * \todo All BeginDocumentation blocks in this file need to be converted to
+ *       BeginUserDocs blocks. That, however, either requires that the doc
+ *       is modified to support multiple such blocks in a single file, or
+ *       (and IMO better) to split this file into multiple files with one
+ *       growth rule per file.
  */
 
 // Includes from nestkernel:
@@ -41,7 +43,6 @@ namespace nest
 {
 
 /**
- * \class GrowthCurve
  * Defines the way the number of synaptic elements changes through time
  * according to the calcium concentration of the neuron.
  */
@@ -75,54 +76,54 @@ protected:
 };
 
 /** @BeginDocumentation
+ *
+ *  Name: growth_curve_linear - Linear version of a growth curve
+ *
+ *  Description:
+ *   This class represents a linear growth rule for the number of synaptic
+ *   elements inside a neuron. The creation and deletion of synaptic elements
+ *   when structural plasticity is enabled, allows the dynamic rewiring of the
+ *   network during the simulation.
+ *   This type of growth curve uses an exact integration method to update the
+ *   number of synaptic elements: dz/dt = nu (1 - (1/eps) * Ca(t)), where nu is
+ *   the growth rate [elements/ms] and eps is the desired average calcium
+ *   concentration. The growth rate nu is defined in the SynapticElement class.
+ *
+ *  Parameters:
+ *   eps          double -  The target calcium concentration that
+ *                          the neuron should look to achieve by creating or
+ *                          deleting synaptic elements. It should always be a
+ *                          positive value.  It is important to note that the
+ *                          calcium concentration is linearly proportional to the
+ *                          firing rate. This is because dCa/dt = - Ca(t)/tau_Ca
+ *                          + beta_Ca if the neuron fires and dCa/dt = -
+ *                          Ca(t)/tau_Ca otherwise, where tau_Ca is the calcium
+ *                          concentration decay constant and beta_Ca is the
+ *                          calcium intake constant (see SynapticElement class).
+ *                          This means that eps also defines the desired firing
+ *                          rate that the neuron should achieve.  For example, an
+ *                          eps = 0.05 [Ca2+] with tau_Ca = 10000.0 and beta_Ca =
+ *                          0.001 for a synaptic element means a desired firing
+ *                          rate of 5Hz.
+ *
+ *  References:
+ *   [1] Butz, Markus, Florentin Wörgötter, and Arjen van Ooyen.
+ *   "Activity-dependent structural plasticity." Brain research reviews 60.2
+ *   (2009): 287-305.
+ *
+ *   [2] Butz, Markus, and Arjen van Ooyen. "A simple rule for dendritic spine
+ *   and axonal bouton formation can account for cortical reorganization after
+ *   focal retinal lesions." PLoS Comput Biol 9.10 (2013): e1003259.
+ *
+ *  FirstVersion: July 2013
+ *
+ *  Author: Mikael Naveau
+ *
+ *  SeeAlso: SynapticElement, SPManager, SPBuilder, GrowthCurveLinear,
+ *           GrowthCurveGaussian
+ */
 
-  Name: growth_curve_linear - Linear version of a growth curve
-
-  Description:
-   This class represents a linear growth rule for the number of synaptic
-   elements inside a neuron. The creation and deletion of synaptic elements
-   when structural plasticity is enabled, allows the dynamic rewiring of the
-   network during the simulation.
-   This type of growth curve uses an exact integration method to update the
-   number of synaptic elements: dz/dt = nu (1 - (1/eps) * Ca(t)), where nu is
-   the growth rate [elements/ms] and eps is the desired average calcium
-   concentration. The growth rate nu is defined in the SynapticElement class.
-
-  Parameters:
-   eps          double -  The target calcium concentration that
-                          the neuron should look to achieve by creating or
-                          deleting synaptic elements. It should always be a
-                          positive value.  It is important to note that the
-                          calcium concentration is linearly proportional to the
-                          firing rate. This is because dCa/dt = - Ca(t)/tau_Ca
-                          + beta_Ca if the neuron fires and dCa/dt = -
-                          Ca(t)/tau_Ca otherwise, where tau_Ca is the calcium
-                          concentration decay constant and beta_Ca is the
-                          calcium intake constant (see SynapticElement class).
-                          This means that eps also defines the desired firing
-                          rate that the neuron should achieve.  For example, an
-                          eps = 0.05 [Ca2+] with tau_Ca = 10000.0 and beta_Ca =
-                          0.001 for a synaptic element means a desired firing
-                          rate of 5Hz.
-
-  References:
-   [1] Butz, Markus, Florentin Wörgötter, and Arjen van Ooyen.
-   "Activity-dependent structural plasticity." Brain research reviews 60.2
-   (2009): 287-305.
-
-   [2] Butz, Markus, and Arjen van Ooyen. "A simple rule for dendritic spine
-   and axonal bouton formation can account for cortical reorganization after
-   focal retinal lesions." PLoS Comput Biol 9.10 (2013): e1003259.
-
-  FirstVersion: July 2013
-
-  Author: Mikael Naveau
-
-  SeeAlso: SynapticElement, SPManager, SPBuilder, GrowthCurveLinear,
-           GrowthCurveGaussian
-*/
 /**
- * \class GrowthCurveLinear
  * Uses an exact integration method to update the number of synaptic elements:
  * dz/dt = nu (1 - (1/eps) * Ca(t)), where nu is the growth rate and
  * eps is the desired average calcium concentration.
@@ -141,73 +142,74 @@ private:
 };
 
 /** @BeginDocumentation
-  Name: growth_curve_gaussian - Gaussian version of a growth curve
+ *  Name: growth_curve_gaussian - Gaussian version of a growth curve
+ *
+ *  Description:
+ *   This class represents a Gaussian growth rule for the number of synaptic
+ *   elements inside a neuron. The creation and deletion of synaptic elements
+ *   when structural plasticity is enabled, allows the dynamic rewiring of the
+ *   network during the simulation.
+ *   This type of growth curve  uses a forward Euler integration method to update
+ *   the number of synaptic elements:
+ *   dz/dt = nu (2 * e^(- ((Ca(t) - xi)/z)^2 ) - 1)
+ *   where xi = (eta  + eps)/2,
+ *   zeta = (eps - eta)/2 * sqrt(ln(2))),
+ *   eta is the minimum calcium concentration required for any synaptic element
+ *   to be created, eps is the target mean calcium concentration in the neuron
+ *   and nu is the growth rate in elements/ms. The growth rate nu is defined in
+ *   the SynapticElement class.
+ *
+ *  Parameters:
+ *   eta          double -  Minimum amount of calcium concentration that the
+ *                          neuron needs to start creating synaptic elements.
+ *                          eta can have a negative value, making the growth
+ *                          curve move its maximum to the left. For example, if
+ *                          eta=-0.5 and eps=0.5 [Ca2+], the maximum growth rate
+ *                          (elements/ms) will be achieved at 0.0 [Ca2+]. If
+ *                          eta=0.0 [Ca2+] and eps=0.5 [Ca2+] the maximum growth
+ *                          rate will be achieved at 0.25 [Ca2+] while at 0.0
+ *                          [Ca+2] no new elements will be created.
+ *
+ *   eps          double -  The target calcium concentration that
+ *                          the neuron should look to achieve by creating or
+ *                          deleting synaptic elements. It should always be a
+ *                          positive value.  It is important to note that the
+ *                          calcium concentration is linearly proportional to the
+ *                          firing rate. This is because dCa/dt = - Ca(t)/tau_Ca
+ *                          + beta_Ca if the neuron fires and dCa/dt = -
+ *                          Ca(t)/tau_Ca otherwise, where tau_Ca is the calcium
+ *                          concentration decay constant and beta_Ca is the
+ *                          calcium intake constant (see SynapticElement class).
+ *                          This means that eps can also be seen as the desired
+ *                          firing rate that the neuron should achieve.  For
+ *                          example, an eps = 0.05 [Ca2+] with tau_Ca = 10000.0
+ *                          and beta_Ca = 0.001 for a synaptic element means a
+ *                          desired firing rate of 5Hz.
+ *
+ *   nu           double -  Growth rate in elements/ms. The growth rate nu is
+ *                          defined in the SynapticElement class. Can be negative.
+ *
+ *  References:
+ *   [1] Butz, Markus, Florentin Wörgötter, and Arjen van Ooyen.
+ *   "Activity-dependent structural plasticity." Brain research reviews 60.2
+ *   (2009): 287-305.
+ *
+ *   [2] Butz, Markus, and Arjen van Ooyen. "A simple rule for dendritic spine
+ *   and axonal bouton formation can account for cortical reorganization after
+ *   focal retinal lesions." PLoS Comput Biol 9.10 (2013): e1003259.
+ *
+ *  FirstVersion: July 2013
+ *
+ *  Author: Mikael Naveau
+ *
+ *  SeeAlso: SynapticElement, SPManager, SPBuilder, GrowthCurveLinear,
+ *           GrowthCurveGaussian
+ */
 
-  Description:
-   This class represents a Gaussian growth rule for the number of synaptic
-   elements inside a neuron. The creation and deletion of synaptic elements
-   when structural plasticity is enabled, allows the dynamic rewiring of the
-   network during the simulation.
-   This type of growth curve  uses a forward Euler integration method to update
-   the number of synaptic elements:
-   dz/dt = nu (2 * e^(- ((Ca(t) - xi)/z)^2 ) - 1)
-   where xi = (eta  + eps)/2,
-   zeta = (eps - eta)/2 * sqrt(ln(2))),
-   eta is the minimum calcium concentration required for any synaptic element
-   to be created, eps is the target mean calcium concentration in the neuron
-   and nu is the growth rate in elements/ms. The growth rate nu is defined in
-   the SynapticElement class.
-
-  Parameters:
-   eta          double -  Minimum amount of calcium concentration that the
-                          neuron needs to start creating synaptic elements.
-                          eta can have a negative value, making the growth
-                          curve move its maximum to the left. For example, if
-                          eta=-0.5 and eps=0.5 [Ca2+], the maximum growth rate
-                          (elements/ms) will be achieved at 0.0 [Ca2+]. If
-                          eta=0.0 [Ca2+] and eps=0.5 [Ca2+] the maximum growth
-                          rate will be achieved at 0.25 [Ca2+] while at 0.0
-                          [Ca+2] no new elements will be created.
-
-   eps          double -  The target calcium concentration that
-                          the neuron should look to achieve by creating or
-                          deleting synaptic elements. It should always be a
-                          positive value.  It is important to note that the
-                          calcium concentration is linearly proportional to the
-                          firing rate. This is because dCa/dt = - Ca(t)/tau_Ca
-                          + beta_Ca if the neuron fires and dCa/dt = -
-                          Ca(t)/tau_Ca otherwise, where tau_Ca is the calcium
-                          concentration decay constant and beta_Ca is the
-                          calcium intake constant (see SynapticElement class).
-                          This means that eps can also be seen as the desired
-                          firing rate that the neuron should achieve.  For
-                          example, an eps = 0.05 [Ca2+] with tau_Ca = 10000.0
-                          and beta_Ca = 0.001 for a synaptic element means a
-                          desired firing rate of 5Hz.
-
-   nu           double -  Growth rate in elements/ms. The growth rate nu is
-                          defined in the SynapticElement class. Can be negative.
-
-  References:
-   [1] Butz, Markus, Florentin Wörgötter, and Arjen van Ooyen.
-   "Activity-dependent structural plasticity." Brain research reviews 60.2
-   (2009): 287-305.
-
-   [2] Butz, Markus, and Arjen van Ooyen. "A simple rule for dendritic spine
-   and axonal bouton formation can account for cortical reorganization after
-   focal retinal lesions." PLoS Comput Biol 9.10 (2013): e1003259.
-
-  FirstVersion: July 2013
-
-  Author: Mikael Naveau
-
-  SeeAlso: SynapticElement, SPManager, SPBuilder, GrowthCurveLinear,
-           GrowthCurveGaussian
-*/
 /**
- * \class GrowthCurveGaussian
  * Uses a forward Euler integration method to update the number of synaptic
- * elements:
+ * elements.
+ *
  * dz/dt = nu (2 * e^(- ((Ca(t) - xi)/zeta)^2 ) - 1)
  * where xi = (eta  + eps)/2,
  * zeta = (eps - eta)/2 * sqrt(ln(2))),
@@ -230,57 +232,57 @@ private:
 };
 
 /** @BeginDocumentation
-  Name: growth_curve_sigmoid - Sigmoid version of a growth curve
+ *  Name: growth_curve_sigmoid - Sigmoid version of a growth curve
+ *
+ *  Description:
+ *   This class represents a Sigmoid growth rule for the number of synaptic
+ *   elements inside a neuron. The creation and deletion of synaptic elements
+ *   when structural plasticity is enabled, allows the dynamic rewiring of the
+ *   network during the simulation.
+ *   This type of growth curve  uses a forward Euler integration method to update
+ *   the number of synaptic elements:
+ *   dz/dt = nu ((2 / (1 + e^((Ca(t) - eps)/psi))) - 1)
+ *   eps is the target mean calcium concentration in the
+ *   neuron, psi controls the width of the sigmoid and nu is the growth rate in
+ *   elements/ms. The growth rate nu is defined in the SynapticElement class.
+ *
+ *  Parameters:
+ *   eps          double -  The target calcium concentration that
+ *                          the neuron should look to achieve by creating or
+ *                          deleting synaptic elements. It should always be a
+ *                          positive value.  It is important to note that the
+ *                          calcium concentration is linearly proportional to the
+ *                          firing rate. This is because dCa/dt = - Ca(t)/tau_Ca
+ *                          + beta_Ca if the neuron fires and dCa/dt = -
+ *                          Ca(t)/tau_Ca otherwise, where tau_Ca is the calcium
+ *                          concentration decay constant and beta_Ca is the
+ *                          calcium intake constant (see SynapticElement class).
+ *                          This means that eps can also be seen as the desired
+ *                          firing rate that the neuron should achieve.  For
+ *                          example, an eps = 0.05 [Ca2+] with tau_Ca = 10000.0
+ *                          and beta_Ca = 0.001 for a synaptic element means a
+ *                          desired firing rate of 5Hz.
+ *
+ *   nu           double -  Growth rate in elements/ms. The growth rate nu is
+ *                          defined in the SynapticElement class. Can be negative.
+ *
+ *   psi          double -  Parameter that controls the width of the curve.
+ *                          Must be greater than 0
+ *
+ *  References:
+ *   [1] Butz, Markus, Steenbuck, Ines D., and Arjen van Ooyen.
+ *   "Homeostatic structural plasticity increases the efficiency of small-world
+ *   networks." Frontiers in Synaptic Neuroscience 6 (2014): 7.
+ *
+ *  FirstVersion: September 2016
+ *
+ *  Author: Ankur Sinha
+ *
+ *  SeeAlso: SynapticElement, SPManager, SPBuilder, GrowthCurveLinear,
+ *           GrowthCurveSigmoid
+ */
 
-  Description:
-   This class represents a Sigmoid growth rule for the number of synaptic
-   elements inside a neuron. The creation and deletion of synaptic elements
-   when structural plasticity is enabled, allows the dynamic rewiring of the
-   network during the simulation.
-   This type of growth curve  uses a forward Euler integration method to update
-   the number of synaptic elements:
-   dz/dt = nu ((2 / (1 + e^((Ca(t) - eps)/psi))) - 1)
-   eps is the target mean calcium concentration in the
-   neuron, psi controls the width of the sigmoid and nu is the growth rate in
-   elements/ms. The growth rate nu is defined in the SynapticElement class.
-
-  Parameters:
-   eps          double -  The target calcium concentration that
-                          the neuron should look to achieve by creating or
-                          deleting synaptic elements. It should always be a
-                          positive value.  It is important to note that the
-                          calcium concentration is linearly proportional to the
-                          firing rate. This is because dCa/dt = - Ca(t)/tau_Ca
-                          + beta_Ca if the neuron fires and dCa/dt = -
-                          Ca(t)/tau_Ca otherwise, where tau_Ca is the calcium
-                          concentration decay constant and beta_Ca is the
-                          calcium intake constant (see SynapticElement class).
-                          This means that eps can also be seen as the desired
-                          firing rate that the neuron should achieve.  For
-                          example, an eps = 0.05 [Ca2+] with tau_Ca = 10000.0
-                          and beta_Ca = 0.001 for a synaptic element means a
-                          desired firing rate of 5Hz.
-
-   nu           double -  Growth rate in elements/ms. The growth rate nu is
-                          defined in the SynapticElement class. Can be negative.
-
-   psi          double -  Parameter that controls the width of the curve.
-                          Must be greater than 0
-
-  References:
-   [1] Butz, Markus, Steenbuck, Ines D., and Arjen van Ooyen.
-   "Homeostatic structural plasticity increases the efficiency of small-world
-   networks." Frontiers in Synaptic Neuroscience 6 (2014): 7.
-
-  FirstVersion: September 2016
-
-  Author: Ankur Sinha
-
-  SeeAlso: SynapticElement, SPManager, SPBuilder, GrowthCurveLinear,
-           GrowthCurveSigmoid
-*/
 /**
- * \class GrowthCurveSigmoid
  * Uses a forward Euler integration method to update the number of synaptic
  * elements:
  * dz/dt = nu ((2 / (1 + e^((Ca(t) - eps)/psi))) - 1)

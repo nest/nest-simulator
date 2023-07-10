@@ -60,7 +60,7 @@
     see the SeeAlso key below.
 
 
-    The second part tests wether the lossless spike detection algorithm [1] is
+    The second part tests whether the lossless spike detection algorithm [1] is
     working correctly.
 
     The algorithm checks whether a spike is emitted on the basis of the neurons position 
@@ -77,7 +77,7 @@
 
     If you need to reproduce the reference data, ask the authors of [1] for the script
     regions_algorithm.py which they used to generate Fig. 6. Here you can adjust the
-    parameters as whished and obtain the respective regions. 
+    parameters as wished and obtain the respective regions.
     
 
     References:

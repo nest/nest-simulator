@@ -1,0 +1,13 @@
+---
+extends: substitution
+message: Use '%s' instead of '%s'.
+level: error
+ignorecase: true
+swap:
+  centOS: CentOS
+  debian: Debian
+  fedora: Fedora
+  gentoo: Gentoo
+  openSUSE: OpenSUSE
+  ubuntu: Ubuntu
+  MacOS: macOS

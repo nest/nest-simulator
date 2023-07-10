@@ -1384,7 +1384,7 @@ GetlineFunction::execute( SLIInterpreter* i ) const
      Description: getline reads a line from the supplied stream.
      If the read process was successful, a result string and
      the boolean true are returned.
-     If an error occured while reading from the stream, only the
+     If an error occurred while reading from the stream, only the
      stream and boolean false is returned.
      Diagnostics: No errors are raised. If getline is applied to an
      invalid stream, the return value is false. The return value

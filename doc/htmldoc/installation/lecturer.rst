@@ -17,7 +17,9 @@ There are several materials for Bachelor and Master's level already prepared.
 Docker install
 ~~~~~~~~~~~~~~
 
-We provide a docker container for NEST, with options to include NEST-Desktop, Jupyter notebooks or Jupyterlab.
+We provide a docker container for NEST that also includes NESTML. You can select from options
+to also include NEST-Desktop, Jupyter Notebooks, or JupyterLab.
+
 
 See :ref:`instructions for docker here <docker>`.
 

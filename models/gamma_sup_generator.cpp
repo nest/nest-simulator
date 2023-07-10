@@ -229,9 +229,6 @@ nest::gamma_sup_generator::pre_run_hook()
 void
 nest::gamma_sup_generator::update( Time const& T, const long from, const long to )
 {
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   if ( P_.rate_ <= 0 or P_.num_targets_ == 0 )
   {
     return;
@@ -256,10 +253,10 @@ void
 nest::gamma_sup_generator::event_hook( DSSpikeEvent& e )
 {
   // get port number
-  const port prt = e.get_port();
+  const size_t prt = e.get_port();
 
   // we handle only one port here, get reference to vector elem
-  assert( 0 <= prt and static_cast< size_t >( prt ) < B_.internal_states_.size() );
+  assert( prt < B_.internal_states_.size() );
 
   // age_distribution object propagates one time step and returns number of spikes
   unsigned long n_spikes =

@@ -20,11 +20,11 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import functools as _functools
-from .hl_api_spatial import *  # noqa
+from .hl_api_spatial import *  # noqa: F401,F403
 from .hl_api_spatial import DistanceParameter as _DistanceParameter
 
 
-@_functools.cache
+@_functools.lru_cache(maxsize=None)
 def __getattr__(name):
     if name == "distance":
         return _DistanceParameter()

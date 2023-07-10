@@ -125,7 +125,7 @@ nest::spin_detector::handle( SpikeEvent& e )
     // are conveyed by setting the multiplicity accordingly.
 
     long m = e.get_multiplicity();
-    index node_id = e.get_sender_node_id();
+    size_t node_id = e.get_sender_node_id();
     const Time& t_spike = e.get_stamp();
     if ( m == 1 and node_id == last_in_node_id_ and t_spike == t_last_in_spike_ )
     {

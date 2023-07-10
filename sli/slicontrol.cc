@@ -74,7 +74,7 @@ Synopsis: backtrace_on -> -
 Description:
 
 This functions enables a human readable backtrace of the execution
-stack. This is useful to locate where precisely an error occured. Note
+stack. This is useful to locate where precisely an error occurred. Note
 that this function also disables the interpreter's tail recursion
 optimization and will therefore impose a small performance
 penalty. The command backtrace_off disables the stack backtrace and

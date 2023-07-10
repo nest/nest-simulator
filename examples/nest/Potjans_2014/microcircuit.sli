@@ -40,7 +40,7 @@
     Please see the file README.txt for details.
 */
 
-% CheckParameters - This function perfoms a (non-exhaustive) check of
+% CheckParameters - This function performs a (non-exhaustive) check of
 % parameter dimensions and values.
 %
 % In particular, the following is checked:
@@ -435,7 +435,7 @@ close
 			% fill the delay dictionary for Connect and insert it into the synapse dictionary
                         syn_dict /delay
                         << /normal << /mean delays source_pop get /std delays_sd source_pop get abs >> >> CreateParameter
-                        0.1 (inf) cvd redraw
+                        0.05 (inf) cvd redraw
                         put
 
 			% fill the connectivity dictionary with the number of synapses to be used
@@ -478,7 +478,7 @@ close
                     % insert the delay dictionary into the synapse dictionary
                     syn_dict /delay
                     << /normal << /mean delay_th /std delay_th_sd abs >> >> CreateParameter
-                    0.1 (inf) cvd redraw
+                    0.05 (inf) cvd redraw
                     put
 
 		    % fill the connectivity dictionary with the number of synapses to be used

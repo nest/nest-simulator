@@ -131,7 +131,7 @@ private:
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const;                 //!< Store current values in dictionary
-    void set( const DictionaryDatum&, State_&, Node* ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, State_&, Node* ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------

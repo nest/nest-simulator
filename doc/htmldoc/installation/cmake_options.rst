@@ -38,6 +38,8 @@ Options for configuring NEST
 
 NEST allows for several configuration options for custom builds:
 
+.. _modelset_config:
+
 Select built-in models
 ~~~~~~~~~~~~~~~~~~~~~~
 
@@ -49,15 +51,15 @@ leads to quite long compilation times and is often not necessary.
 There are two ways to restrict the set of built-in models to tailor
 NEST to your needs:
 
-+-------------------------------------+------------------------------------------------------------------------------+
-| ``-Dwith-modelset=<modelset>``      | Specify the modelset to include. Sample configurations are in the            |
-|                                     | `modelsets <https://github.com/nest/nest-simulator/tree/master/modelsets>`_  |
-|                                     | directory in the top-level of the source tree. This flag is mutually         |
-|                                     | exclusive with -Dwith-models. [default=full].                                |
-+-------------------------------------+------------------------------------------------------------------------------+
-| ``-Dwith-models=[<modellist>|OFF]`` | Specify the models to include as a semicolon-separated list. This option is  |
-|                                     | mutually exclusive with -Dwith-modelset [default=OFF].                       |
-+-----------------------------------------------+--------------------------------------------------------------------+
++---------------------------------------+------------------------------------------------------------------------------+
+| ``-Dwith-modelset=<modelset>``        | Specify the modelset to include. Sample configurations are in the            |
+|                                       | `modelsets <https://github.com/nest/nest-simulator/tree/master/modelsets>`_  |
+|                                       | directory in the top-level of the source tree. This flag is mutually         |
+|                                       | exclusive with -Dwith-models. [default=full].                                |
++---------------------------------------+------------------------------------------------------------------------------+
+| ``-Dwith-models=[<modellist>|OFF]``   | Specify the models to include as a semicolon-separated list. This option is  |
+|                                       | mutually exclusive with -Dwith-modelset [default=OFF].                       |
++---------------------------------------+------------------------------------------------------------------------------+
 
 Use Python to build PyNEST
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

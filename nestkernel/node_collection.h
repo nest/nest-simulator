@@ -101,18 +101,21 @@ private:
 
   /**
    * Pointer to primitive collection to iterate over.
+   *
    * Zero if iterator is for composite collection.
    */
   NodeCollectionPrimitive const* const primitive_collection_;
 
   /**
    * Pointer to composite collection to iterate over.
+   *
    * Zero if iterator is for primitive collection.
    */
   NodeCollectionComposite const* const composite_collection_;
 
   /**
    * Create safe iterator for NodeCollectionPrimitive.
+   *
    * @param collection_ptr smart pointer to collection to keep collection alive
    * @param collection  Collection to iterate over
    * @param offset  Index of collection element iterator points to
@@ -125,6 +128,7 @@ private:
 
   /**
    * Create safe iterator for NodeCollectionComposite.
+   *
    * @param collection_ptr smart pointer to collection to keep collection alive
    * @param collection  Collection to iterate over
    * @param part    Index of part of collection iterator points to
@@ -184,7 +188,9 @@ public:
   virtual ~NodeCollection() = default;
 
   /**
-   * Create a NodeCollection from a vector of node IDs. Results in a primitive if the
+   * Create a NodeCollection from a vector of node IDs.
+   *
+   * Results in a primitive if the
    * node IDs are homogeneous and contiguous, or a composite otherwise.
    *
    * @param node_ids Vector of node IDs from which to create the NodeCollection
@@ -193,7 +199,9 @@ public:
   static NodeCollectionPTR create( const IntVectorDatum& node_ids );
 
   /**
-   * Create a NodeCollection from an array of node IDs. Results in a primitive if the
+   * Create a NodeCollection from an array of node IDs.
+   *
+   * Results in a primitive if the
    * node IDs are homogeneous and contiguous, or a composite otherwise.
    *
    * @param node_ids Array of node IDs from which to create the NodeCollection
@@ -210,7 +218,9 @@ public:
   static NodeCollectionPTR create( const size_t node_id );
 
   /**
-   * Create a NodeCollection from an array of node IDs. Results in a primitive if the
+   * Create a NodeCollection from an array of node IDs.
+   *
+   * Results in a primitive if the
    * node IDs are homogeneous and contiguous, or a composite otherwise.
    *
    * @param node_ids Array of node IDs from which to create the NodeCollection
@@ -241,7 +251,9 @@ public:
   virtual size_t operator[]( size_t ) const = 0;
 
   /**
-   * Join two NodeCollections. May return a primitive or composite, depending on
+   * Join two NodeCollections.
+   *
+   * May return a primitive or composite, depending on
    * the input.
    *
    * @param rhs NodeCollection pointer to the NodeCollection to be added
@@ -322,7 +334,9 @@ public:
 
   /**
    * Slices the NodeCollection to the boundaries, with an optional step
-   * parameter. Note that the boundaries being specified are inclusive.
+   * parameter.
+   *
+   * Note that the boundaries being specified are inclusive.
    *
    * @param start Index of the NodeCollection to start at
    * @param end One past the index of the NodeCollection to stop at

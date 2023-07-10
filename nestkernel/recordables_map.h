@@ -75,6 +75,7 @@ public:
 
   /**
    * Create the map.
+   *
    * This function must be specialized for each class owning a
    * Recordables map and must fill the map. This should happen
    * as part of the original constructor for the Node.
@@ -83,6 +84,7 @@ public:
 
   /**
    * Obtain SLI list of all recordables, for use by get_status().
+   *
    * @todo This fct should return the recordables_ entry, but since
    *       filling recordables_ leads to seg fault on exit, we just
    *       build the list every time, even though that beats the
@@ -116,6 +118,7 @@ private:
 
   /**
    * SLI list of names of recordables
+   *
    * @todo Once the segfault-on-exit issue mentioned in the comment on
    * get_list() is resolved, the next code line should be activated again.
    *
@@ -181,6 +184,7 @@ public:
 
   /**
    * Create the map.
+   *
    * This function must be specialized for each class instance owning a
    * Recordables map and must fill the map. This should happen
    * as part of the original constructor for the Node.
@@ -189,6 +193,7 @@ public:
 
   /**
    * Obtain SLI list of all recordables, for use by get_status().
+   *
    * @todo This fct should return the recordables_ entry, but since
    *       filling recordables_ leads to seg fault on exit, we just
    *       build the list every time, even though that beats the

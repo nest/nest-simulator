@@ -55,16 +55,14 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   , parameters_requiring_skipping_()
   , param_dicts_()
 {
-  // read out rule-related parameters -------------------------
-  //  - /rule has been taken care of above
-  //  - rule-specific params are handled by subclass c'tor
+  // We only read a subset of rule-related parameters here. The property 'rule'
+  // has already been taken care of in ConnectionManager::get_conn_builder() and
+  // rule-specific parameters are handled by the subclass constructors.
   updateValue< bool >( conn_spec, names::allow_autapses, allow_autapses_ );
   updateValue< bool >( conn_spec, names::allow_multapses, allow_multapses_ );
   updateValue< bool >( conn_spec, names::make_symmetric, make_symmetric_ );
 
-  // read out synapse-related parameters ----------------------
-
-  // synapse-specific parameters that should be skipped when we set default synapse parameters
+  // Synapse-specific parameters that should be skipped when we set default synapse parameters
   skip_syn_params_ = {
     names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model
   };
@@ -90,8 +88,7 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
     DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
 
 #ifdef HAVE_MUSIC
-    // We allow music_channel as alias for receptor_type during
-    // connection setup
+    // We allow music_channel as alias for receptor_type during connection setup
     ( *syn_defaults )[ names::music_channel ] = 0;
 #endif
 
@@ -100,7 +97,7 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
 
   set_structural_plasticity_parameters( syn_specs );
 
-  // If make_symmetric_ is requested call reset on all parameters in order
+  // If make_symmetric_ is requested, call reset on all parameters in order
   // to check if all parameters support symmetric connections
   if ( make_symmetric_ )
   {
@@ -143,23 +140,11 @@ nest::ConnBuilder::~ConnBuilder()
   }
 }
 
-/**
- * Updates the number of connected synaptic elements in the
- * target and the source.
- * Returns 0 if the target is either on another
- * MPI machine or another thread. Returns 1 otherwise.
- *
- * @param snode_id id of the source
- * @param tnode_id id of the target
- * @param tid thread id
- * @param update amount of connected synaptic elements to update
- * @return
- */
 bool
 nest::ConnBuilder::change_connected_synaptic_elements( size_t snode_id, size_t tnode_id, const size_t tid, int update )
 {
-
   int local = true;
+
   // check whether the source is on this mpi machine
   if ( kernel().node_manager.is_local_node_id( snode_id ) )
   {
@@ -196,12 +181,10 @@ nest::ConnBuilder::change_connected_synaptic_elements( size_t snode_id, size_t t
       target->connect_synaptic_element( post_synaptic_element_name_, update );
     }
   }
+
   return local;
 }
 
-/**
- * Now we can connect with or without structural plasticity
- */
 void
 nest::ConnBuilder::connect()
 {
@@ -267,9 +250,6 @@ nest::ConnBuilder::connect()
   }
 }
 
-/**
- * Now we can delete synapses with or without structural plasticity
- */
 void
 nest::ConnBuilder::disconnect()
 {
@@ -685,11 +665,6 @@ nest::OneToOneBuilder::connect_()
   }
 }
 
-/**
- * Solves the disconnection of two nodes on a OneToOne basis without
- * structural plasticity. This means this method can be manually called
- * by the user to delete existing synapses.
- */
 void
 nest::OneToOneBuilder::disconnect_()
 {
@@ -738,12 +713,6 @@ nest::OneToOneBuilder::disconnect_()
   }
 }
 
-/**
- * Solves the connection of two nodes on a OneToOne basis with
- * structural plasticity. This means this method is used by the
- * structural plasticity manager based on the homostatic rules defined
- * for the synaptic elements on each node.
- */
 void
 nest::OneToOneBuilder::sp_connect_()
 {
@@ -791,12 +760,6 @@ nest::OneToOneBuilder::sp_connect_()
   }
 }
 
-/**
- * Solves the disconnection of two nodes on a OneToOne basis with
- * structural plasticity. This means this method is used by the
- * structural plasticity manager based on the homostatic rules defined
- * for the synaptic elements on each node.
- */
 void
 nest::OneToOneBuilder::sp_disconnect_()
 {
@@ -926,12 +889,6 @@ nest::AllToAllBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, 
   }
 }
 
-/**
- * Solves the connection of two nodes on a AllToAll basis with
- * structural plasticity. This means this method is used by the
- * structural plasticity manager based on the homostatic rules defined
- * for the synaptic elements on each node.
- */
 void
 nest::AllToAllBuilder::sp_connect_()
 {
@@ -978,11 +935,6 @@ nest::AllToAllBuilder::sp_connect_()
   }
 }
 
-/**
- * Solves the disconnection of two nodes on a AllToAll basis without
- * structural plasticity. This means this method can be manually called
- * by the user to delete existing synapses.
- */
 void
 nest::AllToAllBuilder::disconnect_()
 {
@@ -1033,12 +985,6 @@ nest::AllToAllBuilder::disconnect_()
   }
 }
 
-/**
- * Solves the disconnection of two nodes on a AllToAll basis with
- * structural plasticity. This means this method is used by the
- * structural plasticity manager based on the homostatic rules defined
- * for the synaptic elements on each node.
- */
 void
 nest::AllToAllBuilder::sp_disconnect_()
 {
@@ -1785,15 +1731,6 @@ nest::SymmetricBernoulliBuilder::connect_()
 }
 
 
-/**
- * The SPBuilder is in charge of the creation of synapses during the simulation
- * under the control of the structural plasticity manager
- * @param net the network
- * @param sources the source nodes on which synapses can be created/deleted
- * @param targets the target nodes on which synapses can be created/deleted
- * @param conn_spec connectivity specs
- * @param syn_spec synapse specs
- */
 nest::SPBuilder::SPBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,

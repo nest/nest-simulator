@@ -101,11 +101,7 @@ nest::aeif_cond_alpha_dynamics( double, const double y[], double f[], void* pnod
     node.P_.Delta_T == 0. ? 0. : ( node.P_.g_L * node.P_.Delta_T * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T ) );
 
   // limiting current due to exponential term -- prevent numerical instability in the integrator
-  if ( node.P_.I_soma_max > 0 )
-  {
-    I_spike = std::min( I_spike, node.P_.I_soma_max );
-    I_spike = std::max( I_spike, -node.P_.I_soma_max );
-  }
+  I_spike = std::min( I_spike, node.P_.I_spike_max );
 
   // dv/dt
   f[ S::V_M ] = is_refractory
@@ -133,23 +129,23 @@ nest::aeif_cond_alpha_dynamics( double, const double y[], double f[], void* pnod
  * ---------------------------------------------------------------- */
 
 nest::aeif_cond_alpha::Parameters_::Parameters_()
-  : V_peak_( 0.0 )    // mV
-  , V_reset_( -60.0 ) // mV
-  , t_ref_( 0.0 )     // ms
-  , g_L( 30.0 )       // nS
-  , C_m( 281.0 )      // pF
-  , E_ex( 0.0 )       // mV
-  , E_in( -85.0 )     // mV
-  , E_L( -70.6 )      // mV
-  , Delta_T( 2.0 )    // mV
-  , tau_w( 144.0 )    // ms
-  , a( 4.0 )          // nS
-  , b( 80.5 )         // pA
-  , V_th( -50.4 )     // mV
-  , tau_syn_ex( 0.2 ) // ms
-  , tau_syn_in( 2.0 ) // ms
-  , I_soma_max( 0.0 ) // pA
-  , I_e( 0.0 )        // pA
+  : V_peak_( 0.0 )                                           // mV
+  , V_reset_( -60.0 )                                        // mV
+  , t_ref_( 0.0 )                                            // ms
+  , g_L( 30.0 )                                              // nS
+  , C_m( 281.0 )                                             // pF
+  , E_ex( 0.0 )                                              // mV
+  , E_in( -85.0 )                                            // mV
+  , E_L( -70.6 )                                             // mV
+  , Delta_T( 2.0 )                                           // mV
+  , tau_w( 144.0 )                                           // ms
+  , a( 4.0 )                                                 // nS
+  , b( 80.5 )                                                // pA
+  , V_th( -50.4 )                                            // mV
+  , tau_syn_ex( 0.2 )                                        // ms
+  , tau_syn_in( 2.0 )                                        // ms
+  , I_spike_max( std::numeric_limits< double >::infinity() ) // pA
+  , I_e( 0.0 )                                               // pA
   , gsl_error_tol( 1e-6 )
 {
 }
@@ -207,7 +203,7 @@ nest::aeif_cond_alpha::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_w, tau_w );
   def< double >( d, names::I_e, I_e );
   def< double >( d, names::V_peak, V_peak_ );
-  def< double >( d, names::I_soma_max, I_soma_max );
+  def< double >( d, names::I_spike_max, I_spike_max );
   def< double >( d, names::gsl_error_tol, gsl_error_tol );
 }
 
@@ -223,7 +219,7 @@ nest::aeif_cond_alpha::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::E_in, E_in, node );
   updateValueParam< double >( d, names::C_m, C_m, node );
   updateValueParam< double >( d, names::g_L, g_L, node );
-  updateValueParam< double >( d, names::I_soma_max, I_soma_max, node );
+  updateValueParam< double >( d, names::I_spike_max, I_spike_max, node );
 
   updateValueParam< double >( d, names::tau_syn_ex, tau_syn_ex, node );
   updateValueParam< double >( d, names::tau_syn_in, tau_syn_in, node );
@@ -281,9 +277,9 @@ nest::aeif_cond_alpha::Parameters_::set( const DictionaryDatum& d, Node* node )
     throw BadProperty( "All time constants must be strictly positive." );
   }
 
-  if ( I_soma_max < 0 )
+  if ( I_spike_max < 0 )
   {
-    throw BadProperty( "Maximum somatic current cannot be negative." );
+    throw BadProperty( "Maximum spike current cannot be negative." );
   }
 
   if ( gsl_error_tol <= 0. )

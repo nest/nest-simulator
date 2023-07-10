@@ -54,11 +54,14 @@ NEST to your needs:
 +---------------------------------------+------------------------------------------------------------------------------+
 | ``-Dwith-modelset=<modelset>``        | Specify the modelset to include. Sample configurations are in the            |
 |                                       | `modelsets <https://github.com/nest/nest-simulator/tree/master/modelsets>`_  |
-|                                       | directory in the top-level of the source tree. This flag is mutually         |
-|                                       | exclusive with -Dwith-models. [default=full].                                |
+|                                       | directory in the top-level of the source tree. A modelset is just a file     |
+|                                       | listing one model header files (without the .h filename extension) to scan   |
+|                                       | for models.                                                                  |
+|                                       | This option is mutually exclusive with -Dwith-models. [default=full].        |
 +---------------------------------------+------------------------------------------------------------------------------+
-| ``-Dwith-models=[<modellist>|OFF]``   | Specify the models to include as a semicolon-separated list. This option is  |
-|                                       | mutually exclusive with -Dwith-modelset [default=OFF].                       |
+| ``-Dwith-models=[<modellist>|OFF]``   | Specify the models to include as a semicolon-separated list of model header  |
+|                                       | files (without the .h filename extension) that are to be scanned for models. |
+|                                       | This option is mutually exclusive with -Dwith-modelset. [default=OFF].       |
 +---------------------------------------+------------------------------------------------------------------------------+
 
 Use Python to build PyNEST

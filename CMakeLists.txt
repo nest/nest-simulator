@@ -65,8 +65,8 @@ set( with-ltdl ON CACHE STRING "Build with ltdl library [default=ON]. To set a s
 set( with-gsl ON CACHE STRING "Build with the GSL library [default=ON]. To set a specific library, give the install path." )
 
 # NEST properties
-set( with-modelset "full" CACHE STRING "Specify the modelset to include. Sample configurations are in modelsets. This is mutually exclusive with -Dwith-models. [default=full]." )
-set( with-models OFF CACHE STRING "Specify the models to include as a semicolon-separated list. This option is mutually exclusive with -Dwith-modelset [default=OFF]." )
+set( with-modelset "full" CACHE STRING "The modelset to include. Sample configurations are in the modelsets directory. This option is mutually exclusive with -Dwith-models. [default=full]." )
+set( with-models OFF CACHE STRING "The models to include as a semicolon-separated list of model headers (without the .h extension). This option is mutually exclusive with -Dwith-modelset. [default=OFF]." )
 set( tics_per_ms "1000.0" CACHE STRING "Specify elementary unit of time [default=1000 tics per ms]." )
 set( tics_per_step "100" CACHE STRING "Specify resolution [default=100 tics per step]." )
 set( external-modules OFF CACHE STRING "External NEST modules to be linked in, separated by ';', [default=OFF]." )

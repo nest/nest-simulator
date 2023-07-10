@@ -78,6 +78,7 @@ public:
 
   /**
    * Get number of threads.
+   *
    * This function returns the total number of threads per process.
    */
   size_t get_num_threads() const;
@@ -104,6 +105,7 @@ public:
 
   /**
    * Return a thread number for a given global node id.
+   *
    * Each node has a default thread on which it will run.
    * The thread is defined by the relation:
    * t = (node_id div P) mod T, where P is the number of simulation processes and
@@ -147,8 +149,9 @@ public:
   size_t get_end_rank_per_thread( const size_t rank_start, const size_t num_assigned_ranks_per_thread ) const;
 
   /**
-   * Returns assigned ranks per thread to fill MPI buffers. Thread tid
-   * is responsible for all ranks in [assigned_ranks.begin,
+   * Returns assigned ranks per thread to fill MPI buffers.
+   *
+   * Thread tid is responsible for all ranks in [assigned_ranks.begin,
    * assigned_ranks.end), which are in total assigned_ranks.size and
    * at most assigned_ranks.max_size
    */
@@ -176,4 +179,4 @@ nest::VPManager::get_num_threads() const
   return n_threads_;
 }
 
-#endif /* VP_MANAGER_H */
+#endif /* #ifndef VP_MANAGER_H */

@@ -54,6 +54,7 @@ class TargetData;
  * information has been transferred to the presynaptic side. The core
  * structure is the three dimensional sources vector, which is
  * arranged as follows:
+ *
  * 1st dimension: threads
  * 2nd dimension: synapse types
  * 3rd dimension: node IDs
@@ -99,8 +100,9 @@ private:
 
   /**
    * Returns whether this Source object should be considered when
-   * constructing MPI buffers for communicating connections. Returns
-   * false if i) this entry was already processed, or ii) this entry
+   * constructing MPI buffers for communicating connections.
+   *
+   * Returns false if i) this entry was already processed, or ii) this entry
    * is disabled (e.g., by structural plastcity) or iii) the reading
    * thread is not responsible for the particular part of the MPI
    * buffer where this entry would be written.
@@ -131,8 +133,9 @@ private:
 
   /**
    * A structure to temporarily hold information about all process
-   * local targets will be addressed by incoming spikes. Data from
-   * this structure is transferred to the compressed_spike_data_
+   * local targets will be addressed by incoming spikes.
+   *
+   * Data from this structure is transferred to the compressed_spike_data_
    * structure of ConnectionManager during construction of the
    * postsynaptic connection infrastructure. Arranged as a two
    * dimensional vector (thread|synapse) with an inner map (source
@@ -143,7 +146,9 @@ private:
   /**
    * A structure to temporarily store locations of "unpacked spikes"
    * in the compressed_spike_data_ structure of
-   * ConnectionManager. Data from this structure is transferred to the
+   * ConnectionManager.
+   *
+   * Data from this structure is transferred to the
    * presynaptic side during construction of the presynaptic
    * connection infrastructure. Arranged as a two dimensional vector
    * (thread|synapse) with an inner map (source node id -> index).
@@ -278,7 +283,9 @@ public:
 
   /**
    * Returns the number of unique node IDs for given thread id and
-   * synapse type in sources_. This number corresponds to the number
+   * synapse type in sources_.i
+   *
+   * This number corresponds to the number
    * of targets that need to be communicated during construction of
    * the presynaptic connection infrastructure.
    */
@@ -503,4 +510,4 @@ SourceTable::clear_compressed_spike_data_map( const size_t tid )
 
 } // namespace nest
 
-#endif // SOURCE_TABLE_H
+#endif /* #ifndef SOURCE_TABLE_H */

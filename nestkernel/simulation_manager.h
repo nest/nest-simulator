@@ -55,25 +55,23 @@ public:
   void get_status( DictionaryDatum& ) override;
 
   /**
-      check for errors in time before run
-      @throws KernelException if illegal time passed
-  */
+   *  Check for errors in time before run
+   *
+   *   @throws KernelException if illegal time passed
+   */
   void assert_valid_simtime( Time const& );
-
-  /*
-     Simulate can be broken up into .. prepare... run.. run.. cleanup..
-     instead of calling simulate multiple times, and thus reduplicating
-     effort in prepare, cleanup many times.
-  */
 
   /**
    * Initialize simulation for a set of run calls.
+   *
    * Must be called before a sequence of runs, and again after cleanup.
    */
   void prepare() override;
 
   /**
-   * Run a simulation for another `Time`. Can be repeated ad infinitum with
+   * Run a simulation for another `Time`.
+   *
+   * Can be repeated ad infinitum with
    * calls to get_status(), but any changes to the network are undefined,
    * leading serious risk of incorrect results.
    */
@@ -81,6 +79,7 @@ public:
 
   /**
    * Closes a set of runs, doing finalizations such as file closures.
+   *
    * After cleanup() is called, no more run()s can be called before another
    * prepare() call.
    */
@@ -118,6 +117,7 @@ public:
 
   /**
    * Precise time of simulation.
+   *
    * @note The precise time of the simulation is defined only
    *       while the simulation is not in progress.
    */
@@ -125,7 +125,9 @@ public:
 
   /**
    * Return true, if the SimulationManager has already been simulated for some
-   * time. This does NOT indicate that simulate has been called (i.e. if
+   * time.
+   *
+   * This does NOT indicate that simulate has been called (i.e. if
    * Simulate is called with 0 as argument, the flag is still set to false.)
    */
   bool has_been_simulated() const;
@@ -327,4 +329,4 @@ SimulationManager::get_wfr_interpolation_order() const
 }
 
 
-#endif /* SIMULATION_MANAGER_H */
+#endif /* #ifndef SIMULATION_MANAGER_H */

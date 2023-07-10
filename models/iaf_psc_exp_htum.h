@@ -93,7 +93,7 @@ neuron like dynamics interacting by point events is described in
    ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
     For implementation details see the
-    `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+    `IAF Integration Singularity notebook <../model_details/IAF_Integration_Singularity.ipynb>`_.
 
 
 See also [4]_.

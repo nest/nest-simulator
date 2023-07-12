@@ -36,7 +36,6 @@
 #include <mpi.h>
 #endif
 
-
 std::string
 nest::UnknownModelName::message() const
 {

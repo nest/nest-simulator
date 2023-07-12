@@ -287,6 +287,7 @@ const Name min( "min" );
 const Name min_delay( "min_delay" );
 const Name min_update_time( "min_update_time" );
 const Name minor_axis( "minor_axis" );
+const Name mpi_address( "mpi_address" );
 const Name model( "model" );
 const Name model_id( "model_id" );
 const Name ms_per_tic( "ms_per_tic" );

@@ -47,6 +47,12 @@ The `mpi` stimulation backend collects data from MPI channels and
 updates stimulation devices just before each run. This is useful for
 co-simulation or for receiving stimuli from external software.
 
+There are two ways to set the MPI port. If both are set, option A has precedence
+
+A)
+The address is supplied via the recording backends "mpi_address" status property.
+
+B)
 The name of the MPI port to receive data on is read from a file for
 each device configured to use this backend.  The file needs to be
 named according to the following pattern:
@@ -150,14 +156,16 @@ private:
   typedef std::map< std::string, std::tuple< MPI_Comm*, std::vector< int >*, int* > > comm_map;
   comm_map commMap_;
 
+
+  std::string mpi_address_;
   /**
    * Getting the port name for the MPI connection
    *
    * @param device : input device for finding the file with the port
    * @param port_name : result of the port name
    */
-  static void get_port( StimulationDevice* device, std::string* port_name );
-  static void get_port( size_t index_node, const std::string& label, std::string* port_name );
+  void get_port( StimulationDevice* device, std::string* port_name );
+  void get_port( size_t index_node, const std::string& label, std::string* port_name );
   /**
    * MPI communication for receiving the data before each run.
    *

@@ -47,6 +47,12 @@ Description
 The `mpi` recording backend sends collected data to a remote process
 using MPI.
 
+There are two ways to set the MPI port. If both are set, option A has precedence
+
+A)
+The address is supplied via the recording backends "mpi_address" status property.
+
+B)
 The name of the MPI port to send data to is read from a file for each
 device configured to use this backend. The file needs to be named
 according to the following pattern:
@@ -169,10 +175,14 @@ private:
   typedef std::map< std::string, std::tuple< int, MPI_Comm*, int > > comm_map;
   comm_map commMap_;
 
-  static void get_port( const RecordingDevice* device, std::string* port_name );
-  static void get_port( size_t index_node, const std::string& label, std::string* port_name );
-  static void send_data( const MPI_Comm* comm, const double data[], int size );
+
+  std::string mpi_address_;
+
+  void get_port( const RecordingDevice* device, std::string* port_name );
+  void get_port( size_t index_node, const std::string& label, std::string* port_name );
+  void send_data( const MPI_Comm* comm, const double data[], int size );
 };
+
 
 } // namespace
 

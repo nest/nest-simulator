@@ -63,7 +63,7 @@ nest::StimulationBackendMPI::finalize()
 }
 
 void
-nest::StimulationBackendMPI::enroll( nest::StimulationDevice& device, const DictionaryDatum& )
+nest::StimulationBackendMPI::enroll( nest::StimulationDevice& device, const DictionaryDatum& datum )
 {
   size_t tid = device.get_thread();
   size_t node_id = device.get_node_id();
@@ -79,6 +79,9 @@ nest::StimulationBackendMPI::enroll( nest::StimulationDevice& device, const Dict
   std::pair< size_t, std::pair< const MPI_Comm*, StimulationDevice* > > secondpair = std::make_pair( node_id, pair );
   devices_[ tid ].insert( secondpair );
   enrolled_ = true;
+
+  // Try to read the mpi_address from the device status
+  updateValue< std::string >( datum, names::mpi_address, mpi_address_ );
 }
 
 
@@ -283,7 +286,21 @@ nest::StimulationBackendMPI::cleanup()
 void
 nest::StimulationBackendMPI::get_port( nest::StimulationDevice* device, std::string* port_name )
 {
-  get_port( device->get_node_id(), device->get_label(), port_name );
+  const std::string& label = device->get_label();
+  // The MPI address can be provided by two different means.
+  // a) the address is given via the mpi_address device status
+  // b) the file is provided via a file: {data_path}/{data_prefix}{label}/{node_id}.txt
+
+  // Case a: MPI address is given via device status, use the supplied address
+  if ( !mpi_address_.empty() )
+  {
+    *port_name = mpi_address_;
+  }
+  // Case b: fallback to get_port implementation that reads the address from file
+  else
+  {
+    get_port( device->get_node_id(), label, port_name );
+  }
 }
 
 void

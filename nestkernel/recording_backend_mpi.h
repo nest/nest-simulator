@@ -49,13 +49,11 @@ using MPI.
 
 There are two ways to set the MPI port. If both are set, option A has precedence
 
-A)
-The address is supplied via the recording backends "mpi_address" status property.
+1. The address is supplied via the recording backends "mpi_address" status property.
 
-B)
-The name of the MPI port to send data to is read from a file for each
-device configured to use this backend. The file needs to be named
-according to the following pattern:
+2. The name of the MPI port to send data to is read from a file for each
+   device configured to use this backend. The file needs to be named
+   according to the following pattern:
 
 ::
 

@@ -410,7 +410,8 @@ std::string
 nest::MPIPortsFileMissing::message() const
 {
   std::ostringstream msg;
-  msg << "The node with ID " << node_id_ << " has no file that contains the MPI address.";
+  msg << "The node with ID " << node_id_ << " expects a file with the MPI address at location " << path_
+      << ". The file does not seem to exist.";
   return msg.str();
 }
 

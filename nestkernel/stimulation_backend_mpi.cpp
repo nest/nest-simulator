@@ -317,7 +317,7 @@ nest::StimulationBackendMPI::get_port( const size_t index_node, const std::strin
   std::ifstream file( basename.str() );
   if ( !file.good() )
   {
-    throw MPIPortsFileMissing( index_node );
+    throw MPIPortsFileMissing( index_node, basename.str() );
   }
 
   // read the file

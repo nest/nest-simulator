@@ -1209,8 +1209,9 @@ private:
 class MPIPortsFileMissing : public KernelException
 {
 public:
-  explicit MPIPortsFileMissing( const size_t node_id )
+  explicit MPIPortsFileMissing( const size_t node_id, const std::string path )
     : node_id_( node_id )
+    , path_( path )
   {
   }
 
@@ -1218,6 +1219,7 @@ public:
 
 private:
   const size_t node_id_;
+  const std::string path_;
 };
 #endif
 

@@ -389,7 +389,7 @@ nest::RecordingBackendMPI::get_port( const size_t index_node, const std::string&
   std::ifstream file( basename.str() );
   if ( !file.good() )
   {
-    throw MPIPortsFileMissing( index_node );
+    throw MPIPortsFileMissing( index_node, basename.str() );
   }
   if ( file.is_open() )
   {

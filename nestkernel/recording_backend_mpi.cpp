@@ -174,11 +174,13 @@ nest::RecordingBackendMPI::prepare()
   // 2) connect the thread to the MPI process it needs to be connected to
   for ( auto& it_comm : commMap_ )
   {
-    MPI_Comm_connect( it_comm.first.data(),
-      MPI_INFO_NULL,
-      0,
-      MPI_COMM_WORLD,
-      std::get< 1 >( it_comm.second ) ); // should use the status for handle error
+    int ret =
+      MPI_Comm_connect( it_comm.first.data(), MPI_INFO_NULL, 0, MPI_COMM_WORLD, std::get< 1 >( it_comm.second ) );
+
+    if ( ret != MPI_SUCCESS )
+    {
+      throw MPIErrorCode( ret );
+    }
     std::ostringstream msg;
     msg << "Connect to " << it_comm.first.data() << "\n";
     LOG( M_INFO, "MPI Record connect", msg.str() );
@@ -383,8 +385,11 @@ nest::RecordingBackendMPI::get_port( const size_t index_node, const std::string&
   }
 
   basename << "/" << index_node << ".txt";
-  std::cout << basename.rdbuf() << std::endl;
   std::ifstream file( basename.str() );
+  if ( !file.good() )
+  {
+    throw MPIPortsFileMissing( index_node, basename.str() );
+  }
   if ( file.is_open() )
   {
     getline( file, *port_name );

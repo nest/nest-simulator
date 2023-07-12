@@ -69,7 +69,7 @@ nest::RecordingBackendMPI::finalize()
 }
 
 void
-nest::RecordingBackendMPI::enroll( const RecordingDevice& device, const DictionaryDatum& datum )
+nest::RecordingBackendMPI::enroll( const RecordingDevice& device, const DictionaryDatum& params )
 {
   if ( device.get_type() == RecordingDevice::SPIKE_RECORDER )
   {
@@ -86,7 +86,7 @@ nest::RecordingBackendMPI::enroll( const RecordingDevice& device, const Dictiona
     devices_[ tid ].insert( std::make_pair( node_id, tuple ) );
     enrolled_ = true;
 
-    updateValue< std::string >( datum, names::mpi_address, mpi_address_ );
+    updateValue< std::string >( params, names::mpi_address, mpi_address_ );
   }
   else
   {
@@ -351,7 +351,7 @@ nest::RecordingBackendMPI::get_status( DictionaryDatum& ) const
 }
 
 void
-nest::RecordingBackendMPI::set_status( const DictionaryDatum& datum )
+nest::RecordingBackendMPI::set_status( const DictionaryDatum& )
 {
   // nothing to do
 }
@@ -366,7 +366,7 @@ nest::RecordingBackendMPI::get_port( const RecordingDevice* device, std::string*
   // b) the file is provided via a file: {data_path}/{data_prefix}{label}/{node_id}.txt
 
   // Case a: MPI address is given via device status, use the supplied address
-  if ( !mpi_address_.empty() )
+  if ( not mpi_address_.empty() )
   {
     *port_name = mpi_address_;
   }

@@ -63,7 +63,7 @@ nest::StimulationBackendMPI::finalize()
 }
 
 void
-nest::StimulationBackendMPI::enroll( nest::StimulationDevice& device, const DictionaryDatum& datum )
+nest::StimulationBackendMPI::enroll( nest::StimulationDevice& device, const DictionaryDatum& params )
 {
   size_t tid = device.get_thread();
   size_t node_id = device.get_node_id();
@@ -81,7 +81,7 @@ nest::StimulationBackendMPI::enroll( nest::StimulationDevice& device, const Dict
   enrolled_ = true;
 
   // Try to read the mpi_address from the device status
-  updateValue< std::string >( datum, names::mpi_address, mpi_address_ );
+  updateValue< std::string >( params, names::mpi_address, mpi_address_ );
 }
 
 
@@ -292,7 +292,7 @@ nest::StimulationBackendMPI::get_port( nest::StimulationDevice* device, std::str
   // b) the file is provided via a file: {data_path}/{data_prefix}{label}/{node_id}.txt
 
   // Case a: MPI address is given via device status, use the supplied address
-  if ( !mpi_address_.empty() )
+  if ( not mpi_address_.empty() )
   {
     *port_name = mpi_address_;
   }

@@ -156,7 +156,6 @@ private:
   typedef std::map< std::string, std::tuple< MPI_Comm*, std::vector< int >*, int* > > comm_map;
   comm_map commMap_;
 
-
   std::string mpi_address_;
   /**
    * Getting the port name for the MPI connection

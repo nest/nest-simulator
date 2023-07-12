@@ -258,20 +258,22 @@ def get_modules_from_env():
     to a formatted dictionary for updating the Python `globals`.
 
     Here is an example:
-        `NEST_SERVER_MODULES="nest,numpy as np,random from numpy"`
+        `NEST_SERVER_MODULES="import nest; import numpy as np; from numpy import random"`
     is converted to the following dictionary:
         `{'nest': <module 'nest'> 'np': <module 'numpy'>, 'random': <module 'numpy.random'>}`
     """
     modules = {}
-    for module in MODULES:
-        if " as " in module:
-            modname, modvar = module.split(" as ")
-            modules[modvar] = importlib.import_module(modname)
-        elif " from " in module:
-            modvar, modname = module.split(" from ")
-            modules[modvar] = importlib.import_module(f"{modname}.{modvar}")
-        else:
-            modules[module] = importlib.import_module(module)
+    try:
+        parsed = ast.iter_child_nodes(ast.parse(MODULES))
+    except (SyntaxError, ValueError):
+        raise SyntaxError("The NEST server module environment variables contains syntax errors.")
+    for node in parsed:
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                modules[alias.asname or alias.name] = importlib.import_module(alias.name)
+        elif isinstance(node, ast.ImportFrom):
+            for alias in node.names:
+                modules[alias.asname or alias.name] = importlib.import_module(f"{node.module}.{alias.name}")
     return modules
 
 

@@ -2,11 +2,11 @@ from docutils import nodes
 from docutils.parsers.rst import Directive
 import json
 from sphinx.locale import _
-#from sphinx.util.docutils import SphinxDirective
-#from sphinx.util.nodes import nested_parse_with_titles
+from sphinx.util.docutils import SphinxDirective
+from sphinx.util.nodes import nested_parse_with_titles
 
 
-class listExamplesDirective(Directive):
+class ListExamplesDirective(Directive):
 # Create a directive that requires one argument
 # (.. HelloWorld:: argument), which is the model name
 
@@ -17,7 +17,10 @@ class listExamplesDirective(Directive):
     def run(self):
         my_arg = self.arguments[0]
 
-        # TODO: Add script to generate this list for this extension
+        # TODO: Use code that generates this file in this extension
+        # The script that generated this json file should be included
+        # as a function in this extension somehow, removing the need
+        # for using file. The script is still WIP
         with open("_ext/model_match_examples.json") as json_file:
             examples_data = json.load(json_file)
 
@@ -41,9 +44,8 @@ class listExamplesDirective(Directive):
         return [bullet_list]
 
 
-
 def setup(app):
-    app.add_directive("listExamples", listExamplesDirective)
+    app.add_directive("listExamples", ListExamplesDirective)
 
     return {
         "version": "0.1",

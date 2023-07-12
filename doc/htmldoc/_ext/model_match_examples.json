@@ -178,8 +178,8 @@
     ],
     "iaf_psc_alpha": [
         "../auto_examples/BrodyHopfield",
-        "auto_examples/brunel_alpha_nest",
-        "auto_examples/one_neuron",
+        "../auto_examples/brunel_alpha_nest",
+        "../auto_examples/one_neuron",
         "../auto_examples/hpc_benchmark",
         "../auto_examples/one_neuron_with_noise",
         "../auto_examples/CampbellSiegert",

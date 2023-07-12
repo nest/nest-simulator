@@ -45,7 +45,8 @@ class ListExamplesDirective(Directive):
 
 
 def setup(app):
-    app.add_directive("listExamples", ListExamplesDirective)
+    # Note that the directive names need to be all lower case
+    app.add_directive("listexamples", ListExamplesDirective)
 
     return {
         "version": "0.1",

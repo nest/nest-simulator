@@ -69,7 +69,7 @@ nest::RecordingBackendMPI::finalize()
 }
 
 void
-nest::RecordingBackendMPI::enroll( const RecordingDevice& device, const DictionaryDatum& )
+nest::RecordingBackendMPI::enroll( const RecordingDevice& device, const DictionaryDatum& params )
 {
   if ( device.get_type() == RecordingDevice::SPIKE_RECORDER )
   {
@@ -85,6 +85,8 @@ nest::RecordingBackendMPI::enroll( const RecordingDevice& device, const Dictiona
     std::tuple< int, MPI_Comm*, const RecordingDevice* > tuple = std::make_tuple( -1, nullptr, &device );
     devices_[ tid ].insert( std::make_pair( node_id, tuple ) );
     enrolled_ = true;
+
+    updateValue< std::string >( params, names::mpi_address, mpi_address_ );
   }
   else
   {
@@ -359,7 +361,22 @@ nest::RecordingBackendMPI::set_status( const DictionaryDatum& )
 void
 nest::RecordingBackendMPI::get_port( const RecordingDevice* device, std::string* port_name )
 {
-  get_port( device->get_node_id(), device->get_label(), port_name );
+  const std::string& label = device->get_label();
+
+  // The MPI address can be provided by two different means.
+  // a) the address is given via the mpi_address device status
+  // b) the file is provided via a file: {data_path}/{data_prefix}{label}/{node_id}.txt
+
+  // Case a: MPI address is given via device status, use the supplied address
+  if ( not mpi_address_.empty() )
+  {
+    *port_name = mpi_address_;
+  }
+  // Case b: fallback to get_port implementation that reads the address from file
+  else
+  {
+    get_port( device->get_node_id(), label, port_name );
+  }
 }
 
 void

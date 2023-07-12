@@ -313,7 +313,6 @@ nest::StimulationBackendMPI::get_port( const size_t index_node, const std::strin
   }
   // add the id of the device to the path
   basename << "/" << index_node << ".txt";
-  std::cout << basename.str() << std::endl;
   std::ifstream file( basename.str() );
   if ( !file.good() )
   {

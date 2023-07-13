@@ -447,7 +447,7 @@ private:
   std::vector< ConnParameter* > weights_n2n_; //!< synaptic weights neuron=>neuron
   std::vector< ConnParameter* > weights_n2a_; //!< synaptic weights neuron=>astrocyte
   std::vector< ConnParameter* > delays_astro_; //!< synaptic delays neuron=>neuron and neuron=>astrocyte
-  std::vector< index > synapse_model_id_a2n_; //!< synapse models astrocyte=>neuron
+  std::vector< size_t > synapse_model_id_a2n_; //!< synapse models astrocyte=>neuron
   std::vector< ConnParameter* > weights_a2n_; //!< synaptic weights astrocyte=>neuron
 };
 

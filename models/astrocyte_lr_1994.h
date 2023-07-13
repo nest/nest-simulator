@@ -185,15 +185,15 @@ public:
   using Node::handles_test_event;
   using Node::sends_secondary_event;
 
-  port send_test_event( Node& target, rport receptor_type, synindex, bool ) override;
+  size_t send_test_event( Node& target, size_t receptor_type, synindex, bool ) override;
 
   void handle( SpikeEvent& ) override;
   void handle( CurrentEvent& ) override;
   void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport ) override;
-  port handles_test_event( CurrentEvent&, rport ) override;
-  port handles_test_event( DataLoggingRequest&, rport ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
   void
   sends_secondary_event( SICEvent& ) override
@@ -386,8 +386,8 @@ private:
   static RecordablesMap< astrocyte_lr_1994 > recordablesMap_;
 };
 
-inline port
-astrocyte_lr_1994::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+astrocyte_lr_1994::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent se;
   se.set_sender( *this );
@@ -395,8 +395,8 @@ astrocyte_lr_1994::send_test_event( Node& target, rport receptor_type, synindex,
 }
 
 
-inline port
-astrocyte_lr_1994::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+astrocyte_lr_1994::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -405,8 +405,8 @@ astrocyte_lr_1994::handles_test_event( SpikeEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-astrocyte_lr_1994::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+astrocyte_lr_1994::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -415,8 +415,8 @@ astrocyte_lr_1994::handles_test_event( CurrentEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-astrocyte_lr_1994::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+astrocyte_lr_1994::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

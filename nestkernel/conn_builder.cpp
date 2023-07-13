@@ -1723,7 +1723,7 @@ nest::BernoulliAstroBuilder::connect_()
 {
 #pragma omp parallel
   {
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
     // use RNG generating same number sequence on all threads
     RngPtr synced_rng = get_vp_synced_rng( tid );
@@ -1732,19 +1732,19 @@ nest::BernoulliAstroBuilder::connect_()
     try
     {
       // for source neuron
-      index snode_id;
-      std::set< index > connected_snode_ids;
+      size_t snode_id;
+      std::set< size_t > connected_snode_ids;
       // for target neuron
       Node* target;
-      thread target_thread;
+      size_t target_thread;
       unsigned long indegree;
       // for astrocyte
       Node* astrocyte;
-      thread astrocyte_thread;
-      index anode_id;
-      std::set< index > connected_anode_ids;
+      size_t astrocyte_thread;
+      size_t anode_id;
+      std::set< size_t > connected_anode_ids;
       // for astrocyte pool selection
-      std::vector< index > astro_pool_this_target;
+      std::vector< size_t > astro_pool_this_target;
       size_t astrocytes_size = astrocytes_->size();
       size_t targets_size = targets_->size();
       int default_n_astro_per_target_ = astrocytes_size / targets_size > 1 ? astrocytes_size / targets_size : 1;
@@ -1807,7 +1807,7 @@ nest::BernoulliAstroBuilder::connect_()
       for ( NodeCollection::const_iterator target_it = targets_->begin(); target_it != targets_->end(); ++target_it )
       {
         // get target node
-        const index tnode_id = ( *target_it ).node_id;
+        const size_t tnode_id = ( *target_it ).node_id;
         target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
         target_index = targets_->find( tnode_id );
 

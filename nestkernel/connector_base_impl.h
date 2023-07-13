@@ -25,6 +25,9 @@
 // Includes from nestkernel:
 #include "kernel_manager.h"
 
+// Includes from models:
+#include "weight_recorder.h"
+
 #ifndef CONNECTOR_BASE_IMPL_H
 #define CONNECTOR_BASE_IMPL_H
 
@@ -51,8 +54,7 @@ Connector< ConnectionT >::send_weight_event( const size_t tid,
     wr_e.set_sender_node_id( kernel().connection_manager.get_source_node_id( tid, syn_id_, lcid ) );
     wr_e.set_weight( e.get_weight() );
     wr_e.set_delay_steps( e.get_delay_steps() );
-    // Set weight_recorder as receiver
-    wr_e.set_receiver( *dynamic_cast< Node* >( cp.get_weight_recorder() ) );
+    wr_e.set_receiver( *static_cast< Node* >( cp.get_weight_recorder() ) );
     // Set the node_id of the postsynaptic node as receiver node ID
     wr_e.set_receiver_node_id( e.get_receiver_node_id() );
     wr_e();

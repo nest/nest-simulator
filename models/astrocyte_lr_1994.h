@@ -68,9 +68,8 @@ A model of astrocyte with dynamics of three variables
 Description
 +++++++++++
 
-``astrocyte_lr_1994`` is a model of astrocyte developed by adapting a Hodgkin-Huxley
-neuron model (``hh_psc_alpha_gap``). It can be connected with neuron models to
-study neuron-astrocyte interactions. The model defines dynamics of the
+``astrocyte_lr_1994`` is a model of astrocyte. It can be connected with neuron
+models to study neuron-astrocyte interactions. The model defines dynamics of the
 following variables:
 
 ====== ======== ==============================================================
@@ -79,22 +78,36 @@ Ca     uM       Calcium concentration in the astrocytic cytosol
 h_IP3R unitless The fraction of active IP3 receptors on the astrocytic ER
 ====== ======== ==============================================================
 
-Incoming spike events to an ``astrocyte_lr_1994`` determine its dynamics according to
-the model described in Nadkarni & Jung (2003) [1], with an adaptation of the IP3
-production mechanism in equation (4). The model is based on the original study
-by Li & Rinzel (1994) [2].
+``astrocyte_lr_1994`` is implemented according to the original model of
+astrocyte dynamics by Li & Rinzel (1994) [1] and the derived model by Nadkarni &
+Jung (2003) [2], where mechanisms for astrocytic IP3 generation and
+calcium-depedent output are added. ``astrocyte_lr_1994`` implements all
+equations in [2], except modifying the IP3 generation mechanism:
 
-The astrocyte dynamics determine the SICEvent being sent from the astrocyte
-to its target neurons through the ``sic_connection``. The SICEvent models a
-continuous current input as in equation (9) in [1], with the weight of
-``sic_connection`` as the scaling coefficient.
+.. math::
 
-The connectivity of a neuron-astrocyte network should be created with the
-``pairwise_bernoulli_astro`` rule. ``sic_connection`` should be used to connect
-target neurons to the astrocyte. The target node for ``sic_connection`` can only
-be the ``aeif_cond_alpha_astro`` model.
+ \frac{dIP3}{dt} =
+ \frac{IP3_0 - IP3}{\tau_{IP3}} + incr_{IP3}J_{syn}(t)
 
-For implementation details see the
+Here :math:`J_{syn}(t)` is the summed synaptic weight received by the astrocyte
+at time :math:`t`.
+
+By default, the astrocytic output, the slow inward current (SIC), is determined
+according to equation 9 in [2]:
+
+.. math::
+
+ I_{SIC} = SIC_{scale}\Theta \left( ln(y) \right) ln(y),\:y = Ca/nM - 196.69
+
+Here :math:`I_{SIC}` is the SIC output, and :math:`\Theta(x)` is the Heaviside
+function.
+
+The output is implemented as ``SICEvent`` sent from the astrocyte to its targets
+through the ``sic_connection``. The ``SICEvent`` models a continuous current
+from the astrocyte to its targets. The weight of ``sic_connection`` can be used
+to scale the SIC specific to the connection.
+
+For implementation details, see the
 `astrocyte_model_implementation <../model_details/astrocyte_model_implementation.ipynb>`_ notebook.
 
 See also [1]_, [2]_, [3]_.
@@ -137,13 +150,13 @@ tau_IP3         ms        Time constant of astrocytic IP3 degradation
 References
 ++++++++++
 
-.. [1] Nadkarni S, and Jung P. Spontaneous oscillations of dressed neurons: A
-       new mechanism for epilepsy? Physical Review Letters, 91:26. DOI:
-       10.1103/PhysRevLett.91.268101
-.. [2] Li, Y. X., & Rinzel, J. (1994). Equations for InsP3 receptor-mediated
+.. [1] Li, Y. X., & Rinzel, J. (1994). Equations for InsP3 receptor-mediated
        [Ca2+]i oscillations derived from a detailed kinetic model: a
        Hodgkin-Huxley like formalism. Journal of theoretical Biology, 166(4),
        461-473.
+.. [2] Nadkarni S, and Jung P. Spontaneous oscillations of dressed neurons: A
+       new mechanism for epilepsy? Physical Review Letters, 91:26. DOI:
+       10.1103/PhysRevLett.91.268101
 .. [3] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A, Diesmann M
        (2015). A unified framework for spiking and gap-junction interactions
        in distributed neuronal netowrk simulations. Frontiers in

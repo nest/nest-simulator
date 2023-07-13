@@ -317,7 +317,7 @@ def plot_dynamics(astro_data, neuron_data, data_path, start):
 ###############################################################################
 # Main function for simulation.
 
-def run_simulation(data_path='data'):
+def run_simulation(data_path):
     # NEST configuration
     nest.ResetKernel()
     nest.resolution = sim_params["dt"]
@@ -413,4 +413,4 @@ def run_simulation(data_path='data'):
 # Run simulation.
 
 hash = hashlib.md5(os.urandom(16)).hexdigest()
-run_simulation(data_path=os.path.join("data", hash))
+run_simulation(os.path.join("astrocyte_brunel", hash))

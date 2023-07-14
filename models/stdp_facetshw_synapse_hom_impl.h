@@ -1,5 +1,5 @@
 /*
- *  stdp_synapse_facetshw_hom_impl.h
+ *  stdp_facetshw_synapse_hom_impl.h
  *
  *  This file is part of NEST.
  *
@@ -23,7 +23,7 @@
 #ifndef STDP_SYNAPSE_FACETSHW_HOM_IMPL_H
 #define STDP_SYNAPSE_FACETSHW_HOM_IMPL_H
 
-#include "stdp_synapse_facetshw_hom.h"
+#include "stdp_facetshw_synapse_hom.h"
 
 // Includes from nestkernel:
 #include "common_synapse_properties.h"

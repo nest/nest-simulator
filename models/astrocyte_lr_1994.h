@@ -138,13 +138,13 @@ Km_SERCA        uM        Half-activation constant of astrocytic SERCA pump
 ratio_ER_cyt    unitless  Ratio between astrocytic ER and cytosol volumes
 incr_IP3        uM        Step increase in IP3 concentration with each unit synaptic weight received by the astrocyte
 k_IP3R          1/(uM*ms) Astrocytic IP3R binding constant for calcium inhibition
-logarithmic_SIC boolean   Use logarithmic SIC output
 rate_L          1/ms      Rate constant for calcium leak from the astrocytic ER to cytosol
-SIC_scale       unitless  Scale of SIC output
-SIC_th          nM        Threshold that determines the minimal level of intracellular astrocytic calcium sufficient to induce SIC
 rate_IP3R       1/ms      Maximum rate of calcium release via astrocytic IP3R
 rate_SERCA      uM/ms     Maximum rate of calcium uptake by astrocytic SERCA pump
 tau_IP3         ms        Time constant of astrocytic IP3 degradation
+SIC_th          nM        Threshold that determines the minimal level of intracellular astrocytic calcium sufficient to induce SIC
+logarithmic_SIC boolean   Use logarithmic SIC output
+SIC_scale       unitless  Scale of SIC output
 =============== ========= ========================================================================================================
 
 References
@@ -256,20 +256,20 @@ private:
     double ratio_ER_cyt_; //!< Ratio between astrocytic ER and cytosol volumes
     double incr_IP3_;     //!< Step increase in IP3 concentration with each unit synaptic weight received by the astrocyte in uM
     double k_IP3R_;       //!< Astrocytic IP3R binding constant for calcium in 1/(uM*ms)
-    bool logarithmic_SIC_; //!< Use logarithmic SIC if true
     double rate_L_;       //!< Rate constant for calcium leak from the astrocytic ER to cytosol in 1/ms
-    double SIC_scale_;    //!< Scale of SIC output
     double SIC_th_;       //!< Calcium threshold for producing SIC in nM
     double tau_IP3_;      //!< Time constant of astrocytic IP3 degradation in ms
     double rate_IP3R_;    //!< Maximum rate of calcium release via astrocytic IP3R in 1/ms
     double rate_SERCA_;   //!< Maximum rate of calcium uptake by astrocytic IP3R in uM/ms
 
-    // For alpha-shaped SIC; experimental
-    bool alpha_SIC_;
-    double tau_SIC_;
-    double delay_SIC_;
-    double SIC_reactivate_th_;
-    double SIC_reactivate_time_;
+    // For SIC; experimental
+    bool logarithmic_SIC_; //!< Use logarithmic SIC if true
+    double SIC_scale_;     //!< Scale of SIC output
+    bool alpha_SIC_;       //!< Use alpha-shaped SIC if true
+    double tau_SIC_;       //!< Time constant of alpha-shaped SIC
+    double delay_SIC_;     //!< Delay of alpha-shaped SIC
+    double SIC_reactivate_th_;   //!< Calcium level for reactivating SIC
+    double SIC_reactivate_time_; //!< Time staying SIC_reactivate_th_ required for reactivating SIC
 
     Parameters_(); //!< Sets default parameter values
 

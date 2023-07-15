@@ -63,14 +63,14 @@ extern "C" int astrocyte_lr_1994_dynamics( double, const double*, double*, void*
 Short description
 +++++++++++++++++
 
-A model of astrocyte with dynamics of three variables
+An astrocyte model based on Li & Rinzel (1994)
 
 Description
 +++++++++++
 
-``astrocyte_lr_1994`` is a model of astrocyte. It can be connected with neuron
-models to study neuron-astrocyte interactions. The model defines dynamics of the
-following variables:
+``astrocyte_lr_1994`` is an astrocyte model based on Li & Rinzel (1994) [1]. It
+can be connected with neurons to study neuron-astrocyte interactions. The model
+defines dynamics of the following variables:
 
 ====== ======== ==============================================================
 IP3    uM       Inositol trisphosphate concentration in the astrocytic cytosol
@@ -78,34 +78,44 @@ Ca     uM       Calcium concentration in the astrocytic cytosol
 h_IP3R unitless The fraction of active IP3 receptors on the astrocytic ER
 ====== ======== ==============================================================
 
-``astrocyte_lr_1994`` is implemented according to the original model of
-astrocyte dynamics by Li & Rinzel (1994) [1] and the derived model by Nadkarni &
-Jung (2003) [2], where mechanisms for astrocytic IP3 generation and
-calcium-depedent output are added. ``astrocyte_lr_1994`` implements all
-equations in [2], except modifying the IP3 generation mechanism:
+``astrocyte_lr_1994`` is implemented according to the model by Nadkarni & Jung
+(2003) [2], which is derived from [1] by adding mechanisms for astrocytic IP3
+generation and calcium-depedent output. ``astrocyte_lr_1994`` includes all
+equations in [2], with modification of the mechanisms for IP3 generation and
+astrocytic output.
+
+The equation for IP3 generation is adapted from equation 4 in [2]:
 
 .. math::
 
  \frac{dIP3}{dt} =
  \frac{IP3_0 - IP3}{\tau_{IP3}} + incr_{IP3}J_{syn}(t)
 
-Here :math:`J_{syn}(t)` is the summed synaptic weight received by the astrocyte
-at time :math:`t`.
+Here :math:`IP3_0` is the baseline value of IP3, :math:`\tau_{IP3}` is the time
+constant of IP3 degradation, :math:`incr_{IP3}` is the step increase in IP3 with
+each unit synaptic weight the astrocyte receives, and :math:`J_{syn}(t)` is the
+summed synaptic weight the astrocyte receives at time :math:`t`.
 
-By default, the astrocytic output, the slow inward current (SIC), is determined
-according to equation 9 in [2]:
+The equation for astrocytic output, the slow inward current (SIC), is adapted
+from equation 9 in [2]:
 
 .. math::
 
- I_{SIC} = SIC_{scale}\Theta \left( ln(y) \right) ln(y),\:y = Ca/nM - 196.69
+ I_{SIC} = SIC_{scale} H \left( ln(y) \right) ln(y)
 
-Here :math:`I_{SIC}` is the SIC output, and :math:`\Theta(x)` is the Heaviside
-function.
+and
+
+.. math::
+
+ y = Ca/nM - 196.69
+
+Here :math:`I_{SIC}` is the SIC output, :math:`SIC_{scale}` is the astrocytic
+coefficient to scale the SIC output with, :math:`H(x)` is the Heaviside function,
+:math:`y` is the above-threshold calcium concentration in nM, with the
+:math:`I_{SIC}` production threshold for calcium being 196.69 nM.
 
 The output is implemented as ``SICEvent`` sent from the astrocyte to its targets
-through the ``sic_connection``. The ``SICEvent`` models a continuous current
-from the astrocyte to its targets. The weight of ``sic_connection`` can be used
-to scale the SIC specific to the connection.
+through the ``sic_connection``.
 
 For implementation details, see the
 `astrocyte_model_implementation <../model_details/astrocyte_model_implementation.ipynb>`_ notebook.
@@ -136,7 +146,7 @@ Kd_IP3_1        uM        First astrocytic IP3R dissociation constant of IP3
 Kd_IP3_2        uM        Second astrocytic IP3R dissociation constant of IP3
 Km_SERCA        uM        Half-activation constant of astrocytic SERCA pump
 ratio_ER_cyt    unitless  Ratio between astrocytic ER and cytosol volumes
-incr_IP3        uM        Step increase in IP3 concentration with each unit synaptic weight received by the astrocyte
+incr_IP3        uM        Step increase in IP3 concentration with each unit synaptic weight the astrocyte receives
 k_IP3R          1/(uM*ms) Astrocytic IP3R binding constant for calcium inhibition
 rate_L          1/ms      Rate constant for calcium leak from the astrocytic ER to cytosol
 rate_IP3R       1/ms      Maximum rate of calcium release via astrocytic IP3R
@@ -144,7 +154,7 @@ rate_SERCA      uM/ms     Maximum rate of calcium uptake by astrocytic SERCA pum
 tau_IP3         ms        Time constant of astrocytic IP3 degradation
 SIC_th          nM        Threshold that determines the minimal level of intracellular astrocytic calcium sufficient to induce SIC
 logarithmic_SIC boolean   Use logarithmic SIC output
-SIC_scale       unitless  Scale of SIC output
+SIC_scale       unitless  Astrocytic coefficient to scale the SIC output with
 =============== ========= ========================================================================================================
 
 References
@@ -175,7 +185,7 @@ SpikeEvent, DataLoggingRequest
 See also
 ++++++++
 
-aeif_cond_alpha_astro, sic_connection, hh_psc_alpha_gap
+aeif_cond_alpha_astro, sic_connection
 
 EndUserDocs */
 
@@ -263,7 +273,7 @@ private:
     double rate_SERCA_;   //!< Maximum rate of calcium uptake by astrocytic IP3R in uM/ms
 
     // For SIC; experimental
-    bool logarithmic_SIC_; //!< Use logarithmic SIC if true
+    bool logarithmic_SIC_; //!< Use logarithmic SIC if true (otherwise linear)
     double SIC_scale_;     //!< Scale of SIC output
     bool alpha_SIC_;       //!< Use alpha-shaped SIC if true
     double tau_SIC_;       //!< Time constant of alpha-shaped SIC

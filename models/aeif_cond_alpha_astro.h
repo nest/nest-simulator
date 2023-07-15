@@ -68,12 +68,12 @@ extern "C" int aeif_cond_alpha_astro_dynamics( double, const double*, double*, v
  */
 extern "C" int aeif_cond_alpha_astro_dynamics_DT0( double, const double*, double*, void* );
 
-/* BeginUserDocs: neuron, integrate-and-fire, adaptive threshold, conductance-based
+/* BeginUserDocs: neuron, integrate-and-fire, adaptive threshold, conductance-based, astrocyte
 
 Short description
 +++++++++++++++++
 
-Conductance based exponential integrate-and-fire neuron model supporting
+Conductance based exponential integrate-and-fire neuron model with support for
 neuron-astrocyte interactions
 
 Description
@@ -81,24 +81,9 @@ Description
 
 ``aeif_cond_alpha_astro`` is an adaptive exponential integrate and fire neuron
 adated from ``aeif_cond_alpha`` to support neuron-astrocyte interactions. It can
-be connected with astrocytes through ``sic_connection``, which sends SICEvent to
-model a continuous current input (I_sic), with amplitudes determined by the
-astrocytes.
-
-The membrane potential is given by the following differential equation:
-
-.. math::
-
- C_m \frac{dV}{dt} =
- -g_L(V-E_L)+g_L\Delta_T\exp\left(\frac{V-V_{th}}{\Delta_T}\right) -
- g_e(t)(V-E_e) \\
-                                                     -g_i(t)(V-E_i)-w +I_e + I_{sic}
-
-and
-
-.. math::
-
- \tau_w \frac{dw}{dt} = a(V-E_L) - w
+be connected with astrocytes through the ``sic_connection``, which sends
+``SICEvent`` to the neuron to model a continuous current input, the slow inward
+current (SIC).
 
 For implementation details of the adaptive exponential integrate and fire neuron
 model, see the

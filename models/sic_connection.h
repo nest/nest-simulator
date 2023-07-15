@@ -33,44 +33,25 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Connection type from astrocytes to neurons
+Connection type for connecting astrocytes to neurons
 
 Description
 +++++++++++
 
-``sic_connection`` connects an astrocyte to a target neuron. It sends SICEvent
-to the neuron to model a continuous current input, with amplitudes determined by
-the astrocyte. The source node of ``sic_connection`` should be an astrocyte,
-and the target node should be ``aeif_cond_alpha_astro``. ``sic_connection`` is
-adapted from ``gap_junction`` but unidirectional.
+``sic_connection`` connects an astrocyte to a target neuron. It sends
+``SICEvent`` from the astrocyte to the neuron to model a continuous current
+input to the neuron, the slow inward current (SIC). The amplitude of the current
+is the product of the astrocytic output and the weight of the ``sic_connection``.
 
-Connections of this type can be created with the ``pairwise_bernoulli_astro``
-rule, as a part of a neuron-astrocyte network.
-
-The value of the parameter ``delay`` is ignored for connections of
-type ``sic_connection``.
-
-See also [1]_, [2]_.
+The source node of ``sic_connection`` should be an astrocyte, and the target
+node should be a neuron that receives ``SICEvent``. ``sic_connection`` is
+adapted from ``gap_junction`` but unidirectional. The parameter ``delay`` is
+ignored in this connection type.
 
 Sends
 +++++
 
 SICEvent
-
-References
-++++++++++
-
-.. [1] Nadkarni S, and Jung P. Spontaneous oscillations of dressed neurons: A
-       new mechanism for epilepsy? Physical Review Letters, 91:26. DOI:
-       10.1103/PhysRevLett.91.268101
-.. [2] Li, Y. X., & Rinzel, J. (1994). Equations for InsP3 receptor-mediated
-       [Ca2+]i oscillations derived from a detailed kinetic model: a
-       Hodgkin-Huxley like formalism. Journal of theoretical Biology, 166(4),
-       461-473.
-.. [3] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A, Diesmann M
-       (2015). A unified framework for spiking and gap-junction interactions
-       in distributed neuronal netowrk simulations. Frontiers in
-       Neuroinformatics, 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
 
 See also
 ++++++++

@@ -120,13 +120,13 @@ nest::astrocyte_lr_1994::Parameters_::Parameters_()
   , ratio_ER_cyt_( 0.185 )
   , incr_IP3_( 5.0 )       // uM
   , k_IP3R_( 0.0002 )      // 1/(uM*ms)
-  , logarithmic_SIC_ ( true )
   , rate_L_( 0.00011 )     // 1/ms
-  , SIC_scale_( 1.0 )
   , SIC_th_( 196.69 )      // nM
   , tau_IP3_( 7142.0 )     // ms
   , rate_IP3R_( 0.006 )    // 1/ms
   , rate_SERCA_( 0.0009 )  // uM/ms
+  , logarithmic_SIC_ ( true )
+  , SIC_scale_( 1.0 )
   , alpha_SIC_( false )
   , tau_SIC_( 1000.0 ) // ms
   , delay_SIC_( 1000.0 ) // ms

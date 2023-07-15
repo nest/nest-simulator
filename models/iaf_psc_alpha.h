@@ -131,19 +131,21 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-=========== ======  =======================================================================
- V_m        mV      Membrane potential
- E_L        mV      Resting membrane potential
- C_m        pF      Capacity of the membrane
- tau_m      ms      Membrane time constant
- t_ref      ms      Duration of refractory period
- V_th       mV      Spike threshold
- V_reset    mV      Reset potential of the membrane
- tau_syn_ex ms      Rise time of the excitatory synaptic alpha function
- tau_syn_in ms      Rise time of the inhibitory synaptic alpha function
- I_e        pA      Constant input current
- V_min      mV      Absolute lower value for the membrane potenial (default `math:-\infty`)
-=========== ======  =======================================================================
+=============== ======== =============================== ========================================================================
+**Parameter**   **Unit** **Math equivalent**             **Description**
+=============== ======== =============================== ========================================================================
+ ``V_m``         mV       :math:`V_{\text{m}}`           Membrane potential
+ ``E_L``         mV       :math:`E_L`                    Resting membrane potential
+ ``C_m``         pF       :math:`C_{\text{m}}`           Capacity of the membrane
+ ``tau_m``       ms       :math:`\tau_{\text{m}}`        Membrane time constant
+ ``t_ref``       ms       :math:`t_{\text{ref}}`         Duration of refractory period
+ ``V_th``        mV       :math:`V_{\text{th}}`          Spike threshold
+ ``V_reset``     mV       :math:`V_{\text{reset}}`       Reset potential of the membrane
+ ``tau_syn_ex``  ms       :math:`\tau_{\text{syn, ex}}`  Rise time of the excitatory synaptic alpha function
+ ``tau_syn_in``  ms       :math:`\tau_{\text{syn, in}}`  Rise time of the inhibitory synaptic alpha function
+ ``I_e``         pA       :math:`I_e`                    Constant input current
+ ``V_min``       mV       :math:`V_{\text{min}}`         Absolute lower value for the membrane potenial (default :math:`-\infty`)
+=============== ======== =============================== ========================================================================
 
 References
 ++++++++++

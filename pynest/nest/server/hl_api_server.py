@@ -54,6 +54,7 @@ def get_boolean_environ(env_key, default_value='false'):
 
 
 _default_origins = 'http://localhost'
+ACCESS_TOKEN = os.environ.get('NEST_SERVER_ACCESS_TOKEN', '')
 AUTH_DISABLED = get_boolean_environ('NEST_SERVER_DISABLE_AUTH')
 CORS_ORIGINS = os.environ.get('NEST_SERVER_CORS_ORIGINS', _default_origins).split(',')
 EXEC_CALL_ENABLED = get_boolean_environ('NEST_SERVER_ENABLE_EXEC_CALL')
@@ -118,6 +119,9 @@ def setup_auth():
         import time  # noqa
         import hashlib  # noqa
         import hmac  # noqa
+
+        if ACCESS_TOKEN:
+            self._hash = ACCESS_TOKEN
 
         # Find our reference to the current function in the garbage collector.
         frame = inspect.currentframe()

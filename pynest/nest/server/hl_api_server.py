@@ -134,16 +134,16 @@ def setup_auth():
                             return ("Unauthorized", 403)
         self = funcs[0]
 
-        if ACCESS_TOKEN:
-            self._hash = ACCESS_TOKEN
-
         # Use the salted hash (unless `PYTHONHASHSEED` is fixed) of the location of this
         # function in the Python heap and the current timestamp to create a SHA512 hash.
         if not hasattr(self, "_hash"):
-            hasher = hashlib.sha512()
-            hasher.update(str(hash(id(self))).encode("utf-8"))
-            hasher.update(str(time.perf_counter()).encode("utf-8"))
-            self._hash = hasher.hexdigest()[:48]
+            if ACCESS_TOKEN:
+                self._hash = ACCESS_TOKEN
+            else:
+                hasher = hashlib.sha512()
+                hasher.update(str(hash(id(self))).encode("utf-8"))
+                hasher.update(str(time.perf_counter()).encode("utf-8"))
+                self._hash = hasher.hexdigest()[:48]
             if not AUTH_DISABLED:
                 print(f"\nBearer token to NEST server: {self._hash}\n")
         # The first time we hit the line below is when below the function definition we

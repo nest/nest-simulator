@@ -606,7 +606,7 @@ extern const Name voltage_clamp;
 extern const Name voltage_reset_add;
 extern const Name voltage_reset_fraction;
 extern const Name vp;
-extern const Name vt;
+extern const Name volume_transmitter;
 
 extern const Name w;
 extern const Name weight;

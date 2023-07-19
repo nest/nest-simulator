@@ -171,6 +171,7 @@ def _setup_auth():
     except Exception:  # noqa
         return ("Unauthorized", 403)
 
+
 print(80 * "*")
 _check_security()
 _setup_auth()

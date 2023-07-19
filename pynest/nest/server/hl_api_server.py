@@ -179,7 +179,6 @@ print(80 * "*")
 
 
 @app.route("/", methods=["GET"])
-@cross_origin()
 def index():
     return jsonify(
         {

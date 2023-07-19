@@ -26,6 +26,7 @@ import logging
 import io
 import sys
 
+import flask
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask.logging import default_handler
@@ -73,19 +74,19 @@ __all__ = [
 app = Flask(__name__)
 # Inform client-side user agents that they should not attempt to call our server from any
 # non-whitelisted domain.
-CORS(app, origins=CORS_ORIGINS, methods=["GET", "POST"])
+CORS(app, origins=CORS_ORIGINS, methods=['GET', 'POST'])
 
 mpi_comm = None
 
 
-def check_security():
+def _check_security():
     """
     Checks the security level of the NEST Server instance.
     """
 
     msg = []
     if AUTH_DISABLED:
-        msg.append('AUTH:\tThe authentication is disabled.')
+        msg.append('AUTH:\tThe authorization is disabled.')
     if '*' in CORS_ORIGINS:
         msg.append('CORS:\tAllowed origins is not restricted.')
     if EXEC_CALL_ENABLED:
@@ -93,17 +94,15 @@ def check_security():
         if RESTRICTION_DISABLED:
             msg.append('RESTRICTION: Code scripts will be executed without a restricted environment.')
 
-    level = ['HIGHEST', 'HIGH', 'MODERATE', 'LOW', 'LOWEST']
-    print(f'The security level of NEST Server is {level[len(msg)]}.')
     if len(msg) > 0:
         print('WARNING: The security of your system can not be ensured!')
         print('\n - '.join([' '] + msg) + '\n')
     else:
-        print('INFO: The security of your system can be ensured!')
+        print('INFO: The security of your system can be ensured!\n')
 
 
 @app.before_request
-def setup_auth():
+def _setup_auth():
     """
     Authentication function that generates and validates the Authorization header with a
     bearer token.
@@ -146,7 +145,11 @@ def setup_auth():
                 hasher.update(str(time.perf_counter()).encode("utf-8"))
                 self._hash = hasher.hexdigest()[:48]
             if not AUTH_DISABLED:
-                print(f"\nBearer token to NEST server: {self._hash}\n")
+                print(f"   Bearer token to NEST server: {self._hash}\n")
+
+        if request.method == 'OPTIONS':
+            return
+
         # The first time we hit the line below is when below the function definition we
         # call `setup_auth` without any Flask request existing yet, so the function errors
         # and exits here after generating and storing the auth hash.
@@ -173,9 +176,9 @@ def setup_auth():
 
 
 print( 80 * '*')
-check_security()
-setup_auth()
-del setup_auth
+_check_security()
+_setup_auth()
+del _setup_auth
 print( 80 * '*')
 
 

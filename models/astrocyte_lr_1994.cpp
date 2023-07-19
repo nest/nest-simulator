@@ -630,6 +630,16 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
   sic_ = B_.sic_values[0]; // for testing, to be deleted
 }
 
+/**
+ * Default implementation of register_stdp_connection() just
+ * throws IllegalConnection
+ */
+void
+nest::astrocyte_lr_1994::register_stdp_connection( double, double )
+{
+  throw IllegalConnection( "The target node does not support STDP synapses." );
+}
+
 void
 nest::astrocyte_lr_1994::handle( SpikeEvent& e )
 {

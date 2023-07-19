@@ -66,27 +66,11 @@ models = ["astrocyte_lr_1994"]
 num_models = len(models)
 
 # parameters with which the ODEINT reference solution was generated
-
-astrocyte_default = nest.GetDefaults('astrocyte_lr_1994')
 astrocyte_param = {
     # use different values for state variables to produce dynamics
     'IP3': 1.0,
     'Ca': 1.0,
     'h_IP3R': 1.0,
-    'Ca_tot': astrocyte_default['Ca_tot'],
-    'IP3_0': astrocyte_default['IP3_0'],
-    'Kd_act': astrocyte_default['Kd_act'],
-    'Kd_inh': astrocyte_default['Kd_inh'],
-    'Kd_IP3_1': astrocyte_default['Kd_IP3_1'],
-    'Kd_IP3_2': astrocyte_default['Kd_IP3_2'],
-    'Km_SERCA': astrocyte_default['Km_SERCA'],
-    'ratio_ER_cyt': astrocyte_default['ratio_ER_cyt'],
-    'incr_IP3': astrocyte_default['incr_IP3'],
-    'k_IP3R': astrocyte_default['k_IP3R'],
-    'rate_L': astrocyte_default['rate_L'],
-    'tau_IP3': astrocyte_default['tau_IP3'],
-    'rate_IP3R': astrocyte_default['rate_IP3R'],
-    'rate_SERCA': astrocyte_default['rate_SERCA'],
 }
 
 

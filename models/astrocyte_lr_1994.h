@@ -223,6 +223,8 @@ public:
   {
   }
 
+  void register_stdp_connection( double t_first_read, double delay ) override;
+
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
 

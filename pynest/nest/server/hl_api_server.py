@@ -49,32 +49,32 @@ root = logging.getLogger()
 root.addHandler(default_handler)
 
 
-def get_boolean_environ(env_key, default_value='false'):
+def get_boolean_environ(env_key, default_value="false"):
     env_value = os.environ.get(env_key, default_value)
-    return env_value.lower() in ['yes', 'true', 't', '1']
+    return env_value.lower() in ["yes", "true", "t", "1"]
 
 
-_default_origins = 'http://localhost'
-ACCESS_TOKEN = os.environ.get('NEST_SERVER_ACCESS_TOKEN', '')
-AUTH_DISABLED = get_boolean_environ('NEST_SERVER_DISABLE_AUTH')
-CORS_ORIGINS = os.environ.get('NEST_SERVER_CORS_ORIGINS', _default_origins).split(',')
-EXEC_CALL_ENABLED = get_boolean_environ('NEST_SERVER_ENABLE_EXEC_CALL')
-MODULES = os.environ.get('NEST_SERVER_MODULES', 'nest').split(',')
-RESTRICTION_DISABLED = get_boolean_environ('NEST_SERVER_DISABLE_RESTRICTION')
+_default_origins = "http://localhost"
+ACCESS_TOKEN = os.environ.get("NEST_SERVER_ACCESS_TOKEN", "")
+AUTH_DISABLED = get_boolean_environ("NEST_SERVER_DISABLE_AUTH")
+CORS_ORIGINS = os.environ.get("NEST_SERVER_CORS_ORIGINS", _default_origins).split(",")
+EXEC_CALL_ENABLED = get_boolean_environ("NEST_SERVER_ENABLE_EXEC_CALL")
+MODULES = os.environ.get("NEST_SERVER_MODULES", "nest").split(",")
+RESTRICTION_DISABLED = get_boolean_environ("NEST_SERVER_DISABLE_RESTRICTION")
 EXCEPTION_ERROR_STATUS = 400
 
 __all__ = [
-    'app',
-    'do_exec',
-    'set_mpi_comm',
-    'run_mpi_app',
-    'nestify',
+    "app",
+    "do_exec",
+    "set_mpi_comm",
+    "run_mpi_app",
+    "nestify",
 ]
 
 app = Flask(__name__)
 # Inform client-side user agents that they should not attempt to call our server from any
 # non-whitelisted domain.
-CORS(app, origins=CORS_ORIGINS, methods=['GET', 'POST'])
+CORS(app, origins=CORS_ORIGINS, methods=["GET", "POST"])
 
 mpi_comm = None
 
@@ -86,19 +86,19 @@ def _check_security():
 
     msg = []
     if AUTH_DISABLED:
-        msg.append('AUTH:\tThe authorization is disabled.')
-    if '*' in CORS_ORIGINS:
-        msg.append('CORS:\tAllowed origins is not restricted.')
+        msg.append("AUTH:\tThe authorization is disabled.")
+    if "*" in CORS_ORIGINS:
+        msg.append("CORS:\tAllowed origins is not restricted.")
     if EXEC_CALL_ENABLED:
-        msg.append('EXEC CALL:\tAny code scripts can be executed!')
+        msg.append("EXEC CALL:\tAny code scripts can be executed!")
         if RESTRICTION_DISABLED:
-            msg.append('RESTRICTION: Code scripts will be executed without a restricted environment.')
+            msg.append("RESTRICTION: Code scripts will be executed without a restricted environment.")
 
     if len(msg) > 0:
-        print('WARNING: The security of your system can not be ensured!')
-        print('\n - '.join([' '] + msg) + '\n')
+        print("WARNING: The security of your system can not be ensured!")
+        print("\n - ".join([" "] + msg) + "\n")
     else:
-        print('INFO: The security of your system can be ensured!\n')
+        print("INFO: The security of your system can be ensured!\n")
 
 
 @app.before_request
@@ -147,7 +147,7 @@ def _setup_auth():
             if not AUTH_DISABLED:
                 print(f"   Bearer token to NEST server: {self._hash}\n")
 
-        if request.method == 'OPTIONS':
+        if request.method == "OPTIONS":
             return
 
         # The first time we hit the line below is when below the function definition we
@@ -164,10 +164,7 @@ def _setup_auth():
         # Things get more straightforward here: Every time a request is handled, compare
         # the Authorization header to the hash, with a constant-time algorithm to avoid
         # timing attacks.
-        if not (
-            AUTH_DISABLED
-            or hmac.compare_digest(auth, f"Bearer {self._hash}")
-        ):
+        if not (AUTH_DISABLED or hmac.compare_digest(auth, f"Bearer {self._hash}")):
             return ("Unauthorized", 403)
     # DON'T LINT! Intentional bare except clause! Even `KeyboardInterrupt` and
     # `SystemExit` exceptions should not bypass authentication!
@@ -175,25 +172,27 @@ def _setup_auth():
         return ("Unauthorized", 403)
 
 
-print( 80 * '*')
+print(80 * "*")
 _check_security()
 _setup_auth()
 del _setup_auth
-print( 80 * '*')
+print(80 * "*")
 
 
-@app.route('/', methods=['GET'])
+@app.route("/", methods=["GET"])
 @cross_origin()
 def index():
-    return jsonify({
-        'nest': nest.__version__,
-        'mpi': mpi_comm is not None,
-    })
+    return jsonify(
+        {
+            "nest": nest.__version__,
+            "mpi": mpi_comm is not None,
+        }
+    )
 
 
 def do_exec(args, kwargs):
     try:
-        source_code = kwargs.get('source', '')
+        source_code = kwargs.get("source", "")
         source_cleaned = clean_code(source_code)
 
         locals_ = dict()
@@ -204,7 +203,7 @@ def do_exec(args, kwargs):
                 globals_.update(get_modules_from_env())
                 exec(source_cleaned, globals_, locals_)
             if len(stdout) > 0:
-                response['stdout'] = '\n'.join(stdout)
+                response["stdout"] = "\n".join(stdout)
         else:
             code = RestrictedPython.compile_restricted(source_cleaned, "<inline>", "exec")  # noqa
             globals_ = get_restricted_globals()
@@ -213,10 +212,10 @@ def do_exec(args, kwargs):
             if "_print" in locals_:
                 response["stdout"] = "".join(locals_["_print"].txt)
 
-        if 'return' in kwargs:
-            if isinstance(kwargs['return'], list):
+        if "return" in kwargs:
+            if isinstance(kwargs["return"], list):
                 data = dict()
-                for variable in kwargs['return']:
+                for variable in kwargs["return"]:
                     data[variable] = locals_.get(variable, None)
             else:
                 data = locals_.get(kwargs["return"], None)
@@ -230,7 +229,7 @@ def do_exec(args, kwargs):
 
 
 def log(call_name, msg):
-    msg = f'==> MASTER 0/{time.time():.7f} ({call_name}): {msg}'
+    msg = f"==> MASTER 0/{time.time():.7f} ({call_name}): {msg}"
     print(msg, flush=True)
 
 
@@ -258,41 +257,40 @@ def do_call(call_name, args=[], kwargs={}):
         assert mpi_comm.Get_rank() == 0
 
     if mpi_comm is not None:
-        log(call_name, 'sending call bcast')
+        log(call_name, "sending call bcast")
         mpi_comm.bcast(call_name, root=0)
         data = (args, kwargs)
-        log(call_name, f'sending data bcast, data={data}')
+        log(call_name, f"sending data bcast, data={data}")
         mpi_comm.bcast(data, root=0)
 
-    if call_name == 'exec':
+    if call_name == "exec":
         master_response = do_exec(args, kwargs)
     else:
         call, args, kwargs = nestify(call_name, args, kwargs)
-        log(call_name, f'local call, args={args}, kwargs={kwargs}')
+        log(call_name, f"local call, args={args}, kwargs={kwargs}")
         master_response = call(*args, **kwargs)
 
     response = [master_response]
     if mpi_comm is not None:
-        log(call_name, 'waiting for response gather')
+        log(call_name, "waiting for response gather")
         response = mpi_comm.gather(response[0], root=0)
-        log(call_name, f'received response gather, data={response}')
+        log(call_name, f"received response gather, data={response}")
 
     return combine(call_name, response)
 
 
-@app.route('/exec', methods=['GET', 'POST'])
+@app.route("/exec", methods=["GET", "POST"])
 def route_exec():
-    """ Route to execute script in Python.
-    """
+    """Route to execute script in Python."""
 
     if EXEC_CALL_ENABLED:
         args, kwargs = get_arguments(request)
-        response = do_call('exec', args, kwargs)
+        response = do_call("exec", args, kwargs)
         return jsonify(response)
     else:
         flask.abort(
             403,
-            'The route `/exec` has been disabled. Please contact the server administrator.',
+            "The route `/exec` has been disabled. Please contact the server administrator.",
         )
 
 
@@ -301,21 +299,19 @@ def route_exec():
 # --------------------------
 
 nest_calls = dir(nest)
-nest_calls = list(filter(lambda x: not x.startswith('_'), nest_calls))
+nest_calls = list(filter(lambda x: not x.startswith("_"), nest_calls))
 nest_calls.sort()
 
 
-@app.route('/api', methods=['GET'])
+@app.route("/api", methods=["GET"])
 def route_api():
-    """ Route to list call functions in NEST.
-    """
+    """Route to list call functions in NEST."""
     return jsonify(nest_calls)
 
 
-@app.route('/api/<call>', methods=['GET', 'POST'])
+@app.route("/api/<call>", methods=["GET", "POST"])
 def route_api_call(call):
-    """ Route to call function in NEST.
-    """
+    """Route to call function in NEST."""
     print(f"\n{'='*40}\n", flush=True)
     args, kwargs = get_arguments(request)
     log("route_api_call", f"call={call}, args={args}, kwargs={kwargs}")
@@ -327,8 +323,9 @@ def route_api_call(call):
 # Helpers for the server
 # ----------------------
 
+
 class Capturing(list):
-    """ Monitor stdout contents i.e. print. """
+    """Monitor stdout contents i.e. print."""
 
     def __enter__(self):
         self._stdout = sys.stdout
@@ -337,19 +334,18 @@ class Capturing(list):
 
     def __exit__(self, *args):
         self.extend(self._stringio.getvalue().splitlines())
-        del self._stringio    # free up some memory
+        del self._stringio  # free up some memory
         sys.stdout = self._stdout
 
 
 def clean_code(source):
-    codes = source.split('\n')
-    code_cleaned = filter(lambda code: not (code.startswith('import') or code.startswith('from')), codes)  # noqa
-    return '\n'.join(code_cleaned)
+    codes = source.split("\n")
+    code_cleaned = filter(lambda code: not (code.startswith("import") or code.startswith("from")), codes)  # noqa
+    return "\n".join(code_cleaned)
 
 
 def get_arguments(request):
-    """ Get arguments from the request.
-    """
+    """Get arguments from the request."""
     args, kwargs = [], {}
     if request.is_json:
         json = request.get_json()
@@ -359,16 +355,16 @@ def get_arguments(request):
             args = json
         elif isinstance(json, dict):
             kwargs = json
-            if 'args' in kwargs:
-                args = kwargs.pop('args')
+            if "args" in kwargs:
+                args = kwargs.pop("args")
     elif len(request.form) > 0:
-        if 'args' in request.form:
-            args = request.form.getlist('args')
+        if "args" in request.form:
+            args = request.form.getlist("args")
         else:
             kwargs = request.form.to_dict()
     elif len(request.args) > 0:
-        if 'args' in request.args:
-            args = request.args.getlist('args')
+        if "args" in request.args:
+            args = request.args.getlist("args")
         else:
             kwargs = request.args.to_dict()
     return list(args), kwargs
@@ -401,8 +397,8 @@ def get_modules_from_env():
 
 
 def get_or_error(func):
-    """ Wrapper to get data and status.
-    """
+    """Wrapper to get data and status."""
+
     def func_wrapper(call, args, kwargs):
         try:
             return func(call, args, kwargs)
@@ -410,12 +406,13 @@ def get_or_error(func):
             for line in traceback.format_exception(*sys.exc_info()):
                 print(line, flush=True)
             flask.abort(EXCEPTION_ERROR_STATUS, str(e))
+
     return func_wrapper
 
 
 def get_restricted_globals():
-    """ Get restricted globals for exec function.
-    """
+    """Get restricted globals for exec function."""
+
     def getitem(obj, index):
         typelist = (list, tuple, dict, nest.NodeCollection)
         if obj is not None and type(obj) in typelist:
@@ -426,12 +423,14 @@ def get_restricted_globals():
     restricted_builtins = RestrictedPython.safe_builtins.copy()
     restricted_builtins.update(RestrictedPython.limited_builtins)
     restricted_builtins.update(RestrictedPython.utility_builtins)
-    restricted_builtins.update(dict(
-        max=max,
-        min=min,
-        sum=sum,
-        time=time,
-    ))
+    restricted_builtins.update(
+        dict(
+            max=max,
+            min=min,
+            sum=sum,
+            time=time,
+        )
+    )
 
     restricted_globals = dict(
         __builtins__=restricted_builtins,
@@ -447,14 +446,12 @@ def get_restricted_globals():
 
 
 def nestify(call_name, args, kwargs):
-    """ Get the NEST API call and convert arguments if neccessary.
-    """
+    """Get the NEST API call and convert arguments if neccessary."""
 
     call = getattr(nest, call_name)
-    objectnames = ['nodes', 'source', 'target', 'pre', 'post']
+    objectnames = ["nodes", "source", "target", "pre", "post"]
     paramKeys = list(inspect.signature(call).parameters.keys())
-    args = [nest.NodeCollection(arg) if paramKeys[idx] in objectnames
-            else arg for (idx, arg) in enumerate(args)]
+    args = [nest.NodeCollection(arg) if paramKeys[idx] in objectnames else arg for (idx, arg) in enumerate(args)]
     for (key, value) in kwargs.items():
         if key in objectnames:
             kwargs[key] = nest.NodeCollection(value)
@@ -464,16 +461,13 @@ def nestify(call_name, args, kwargs):
 
 @get_or_error
 def api_client(call_name, args, kwargs):
-    """ API Client to call function in NEST.
-    """
+    """API Client to call function in NEST."""
 
     call = getattr(nest, call_name)
 
     if callable(call):
-        if 'inspect' in kwargs:
-            response = {
-                'data': getattr(inspect, kwargs['inspect'])(call)
-            }
+        if "inspect" in kwargs:
+            response = {"data": getattr(inspect, kwargs["inspect"])(call)}
         else:
             response = do_call(call_name, args, kwargs)
     else:
@@ -495,7 +489,7 @@ def run_mpi_app(host="127.0.0.1", port=52425):
 
 
 def combine(call_name, response):
-    """ Combine responses from different MPI processes.
+    """Combine responses from different MPI processes.
 
     In a distributed scenario, each MPI process creates its own share
     of the response from the data available locally. To present a
@@ -539,8 +533,7 @@ def combine(call_name, response):
         return None
 
     # return the master response if all responses are known to be the same
-    if call_name in ('exec', 'Create', 'GetDefaults', 'GetKernelStatus',
-                     'SetKernelStatus', 'SetStatus'):
+    if call_name in ("exec", "Create", "GetDefaults", "GetKernelStatus", "SetKernelStatus", "SetStatus"):
         return response[0]
 
     # return a single response if there is only one which is not None
@@ -583,45 +576,45 @@ def merge_dicts(response):
         # and local or make them lists that contain the values from
         # all dicts.
 
-        element_type = device_dicts[0]['element_type']
+        element_type = device_dicts[0]["element_type"]
 
-        if element_type not in ('neuron', 'recorder', 'stimulator'):
+        if element_type not in ("neuron", "recorder", "stimulator"):
             msg = f'Cannot combine data of element with type "{element_type}".'
             raise Exception(msg)
 
-        if element_type == 'neuron':
-            tmp = list(filter(lambda status: status['local'], device_dicts))
+        if element_type == "neuron":
+            tmp = list(filter(lambda status: status["local"], device_dicts))
             assert len(tmp) == 1
             result.append(tmp[0])
 
-        if element_type == 'recorder':
+        if element_type == "recorder":
             tmp = deepcopy(device_dicts[0])
-            tmp['n_events'] = 0
+            tmp["n_events"] = 0
 
             for device_dict in device_dicts:
-                tmp['n_events'] += device_dict['n_events']
+                tmp["n_events"] += device_dict["n_events"]
 
-            record_to = tmp['record_to']
-            if record_to not in ('ascii', 'memory'):
+            record_to = tmp["record_to"]
+            if record_to not in ("ascii", "memory"):
                 msg = f'Cannot combine data when recording to "{record_to}".'
                 raise Exception(msg)
 
-            if record_to == 'memory':
-                event_keys = tmp['events'].keys()
+            if record_to == "memory":
+                event_keys = tmp["events"].keys()
                 for key in event_keys:
-                    tmp['events'][key] = []
+                    tmp["events"][key] = []
                 for device_dict in device_dicts:
                     for key in event_keys:
-                        tmp['events'][key].extend(device_dict['events'][key])
+                        tmp["events"][key].extend(device_dict["events"][key])
 
-            if record_to == 'ascii':
-                tmp['filenames'] = []
+            if record_to == "ascii":
+                tmp["filenames"] = []
                 for device_dict in device_dicts:
-                    tmp['filenames'].extend(device_dict['filenames'])
+                    tmp["filenames"].extend(device_dict["filenames"])
 
             result.append(tmp)
 
-        if element_type == 'stimulator':
+        if element_type == "stimulator":
             result.append(device_dicts[0])
 
     return result

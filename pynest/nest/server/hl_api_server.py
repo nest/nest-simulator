@@ -437,7 +437,7 @@ def nestify(call_name, args, kwargs):
     objectnames = ["nodes", "source", "target", "pre", "post"]
     paramKeys = list(inspect.signature(call).parameters.keys())
     args = [nest.NodeCollection(arg) if paramKeys[idx] in objectnames else arg for (idx, arg) in enumerate(args)]
-    for (key, value) in kwargs.items():
+    for key, value in kwargs.items():
         if key in objectnames:
             kwargs[key] = nest.NodeCollection(value)
 

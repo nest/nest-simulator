@@ -556,7 +556,6 @@ def merge_dicts(response):
     result = []
 
     for device_dicts in zip(*response):
-
         # TODO: either stip fields like thread, vp, thread_local_id,
         # and local or make them lists that contain the values from
         # all dicts.

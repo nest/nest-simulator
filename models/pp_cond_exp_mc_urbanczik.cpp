@@ -562,7 +562,7 @@ nest::pp_cond_exp_mc_urbanczik::pre_run_hook()
   // since t_ref >= 0, this can only fail in error
   assert( V_.RefractoryCounts_ >= 0 );
 
-  assert( static_cast< int >( NCOMP ) == static_cast< int >( pp_cond_exp_mc_urbanczik_parameters::NCOMP ) );
+  assert( ( int ) NCOMP == ( int ) pp_cond_exp_mc_urbanczik_parameters::NCOMP );
 }
 
 
@@ -573,10 +573,6 @@ nest::pp_cond_exp_mc_urbanczik::pre_run_hook()
 void
 nest::pp_cond_exp_mc_urbanczik::update( Time const& origin, const long from, const long to )
 {
-
-  assert( to >= 0 and static_cast< delay >( from ) < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
 
@@ -695,7 +691,7 @@ void
 nest::pp_cond_exp_mc_urbanczik::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
-  assert( 0 <= e.get_rport() and e.get_rport() < 2 * NCOMP );
+  assert( e.get_rport() < 2 * NCOMP );
 
   B_.spikes_[ e.get_rport() ].add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );
@@ -706,7 +702,7 @@ nest::pp_cond_exp_mc_urbanczik::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
   // not 100% clean, should look at MIN, SUP
-  assert( 0 <= e.get_rport() and e.get_rport() < NCOMP );
+  assert( e.get_rport() < NCOMP );
 
   // add weighted current; HEP 2002-10-04
   B_.currents_[ e.get_rport() ].add_value(

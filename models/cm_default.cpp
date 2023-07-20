@@ -304,9 +304,6 @@ nest::cm_default::pre_run_hook()
 void
 nest::cm_default::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 and static_cast< delay >( from ) < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
     const double v_0_prev = c_tree_.get_root()->v_comp;
@@ -336,7 +333,7 @@ nest::cm_default::handle( SpikeEvent& e )
   }
 
   assert( e.get_delay_steps() > 0 );
-  assert( ( e.get_rport() >= 0 ) and ( static_cast< size_t >( e.get_rport() ) < syn_buffers_.size() ) );
+  assert( e.get_rport() < syn_buffers_.size() );
 
   syn_buffers_[ e.get_rport() ].add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );

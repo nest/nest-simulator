@@ -37,7 +37,7 @@ class DelayChecker
 {
 public:
   DelayChecker();
-  DelayChecker( const DelayChecker& );
+  DelayChecker( const DelayChecker& cr );
 
   const Time& get_min_delay() const;
 
@@ -45,7 +45,9 @@ public:
 
   /**
    * This method freezes the min/ max delay update in SetDefaults of connections
-   * method. This is used, when the delay of default connections in the
+   * method.
+   *
+   * This is used, when the delay of default connections in the
    * ConnectorModel is set: we do not know, whether new connections with this
    * delay will ever be created.
    */
@@ -53,7 +55,9 @@ public:
 
   /**
    * This method enables the min/ max delay update in SetDefaults of connections
-   * method. This is used, when the delay of default connections in the
+   * method.
+   *
+   * This is used, when the delay of default connections in the
    * ConnectorModel is set: we do not know, whether new connections with this
    * delay will ever be created.
    */
@@ -76,14 +80,14 @@ public:
    *       working with continuous delays.
    * @note Not const, since it may update delay extrema as a side-effect.
    */
-  void assert_two_valid_delays_steps( delay, delay );
+  void assert_two_valid_delays_steps( long, long );
 
   bool get_user_set_delay_extrema() const;
 
-  void calibrate( const TimeConverter& );
+  void calibrate( const TimeConverter& tc );
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& d ) const;
+  void set_status( const DictionaryDatum& d );
 
 private:
   Time min_delay_;              //!< Minimal delay of all created synapses.
@@ -91,6 +95,8 @@ private:
   bool user_set_delay_extrema_; //!< Flag indicating if the user set the delay
                                 //!< extrema.
   bool freeze_delay_update_;
+
+  void set_min_max_delay_( const double, const double );
 };
 
 inline const Time&

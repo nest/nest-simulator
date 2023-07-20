@@ -130,7 +130,6 @@ nest::ppd_sup_generator::Parameters_::get( DictionaryDatum& d ) const
 void
 nest::ppd_sup_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
-
   updateValueParam< double >( d, names::dead_time, dead_time_, node );
   if ( dead_time_ < 0 )
   {
@@ -231,9 +230,6 @@ nest::ppd_sup_generator::pre_run_hook()
 void
 nest::ppd_sup_generator::update( Time const& T, const long from, const long to )
 {
-  assert( to >= 0 and static_cast< delay >( from ) < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   if ( P_.rate_ <= 0 or P_.num_targets_ == 0 )
   {
     return;
@@ -269,10 +265,10 @@ void
 nest::ppd_sup_generator::event_hook( DSSpikeEvent& e )
 {
   // get port number
-  const port prt = e.get_port();
+  const size_t prt = e.get_port();
 
   // we handle only one port here, get reference to vector element
-  assert( 0 <= prt and static_cast< size_t >( prt ) < B_.age_distributions_.size() );
+  assert( prt < B_.age_distributions_.size() );
 
   // age_distribution object propagates one time step and returns number of
   // spikes

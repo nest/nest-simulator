@@ -30,12 +30,12 @@ if not nest.ll_api.sli_func("statusdict/have_music ::"):
 
 nest.set_verbosity("M_ERROR")
 
-meip = nest.Create('music_event_in_proxy')
-n = nest.Create('iaf_psc_alpha')
-meip.set({'port_name': 'spikes_in', 'music_channel': 0})
-nest.Connect(meip, n, 'one_to_one', {'weight': 750.0})
+meip = nest.Create("music_event_in_proxy")
+n = nest.Create("iaf_psc_alpha")
+meip.set({"port_name": "spikes_in", "music_channel": 0})
+nest.Connect(meip, n, "one_to_one", {"weight": 750.0})
 
-vm = nest.Create('voltmeter')
+vm = nest.Create("voltmeter")
 vm.record_to = "screen"
 nest.Connect(vm, n)
 

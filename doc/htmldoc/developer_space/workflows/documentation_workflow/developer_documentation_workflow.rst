@@ -24,36 +24,35 @@ Instructions
 
 1. Install Doxygen and graphviz.
 
-If you are a Linux user, type:
+   If you are a Linux user, type:
 
-.. code-block::
-   :name: Linux
+   .. code-block::
 
-   sudo apt install doxygen graphviz
+      sudo apt install doxygen graphviz
 
-For macOS, please use `Homebrew <https://brew.sh/>`_:
+   For macOS, please use `Homebrew <https://brew.sh/>`_:
 
-.. code-block::
+   .. code-block::
 
-   brew install doxygen graphviz
+      brew install doxygen graphviz
 
 2. Navigate to, or create a ``build`` directory. See :ref:`install_nest`.
 
 3. Add the ``-Dwith-devdoc=ON`` flag to your regular CMake command:
 
-.. code-block::
+   .. code-block::
 
-   cmake -Dwith-devdoc=ON
+      cmake -Dwith-devdoc=ON
 
 3. Generate HTML:
 
-.. code-block::
+   .. code-block::
 
-   make docs
+      make docs
 
 4. Preview documentation:
 
-.. code-block::
+   .. code-block::
 
-   cd doc/doxygen/html
-   browser index.html
+      cd doc/doxygen/html
+      browser index.html

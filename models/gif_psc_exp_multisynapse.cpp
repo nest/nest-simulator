@@ -343,10 +343,6 @@ nest::gif_psc_exp_multisynapse::pre_run_hook()
 void
 nest::gif_psc_exp_multisynapse::update( Time const& origin, const long from, const long to )
 {
-
-  assert( to >= 0 and static_cast< delay >( from ) < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
 
@@ -427,7 +423,7 @@ void
 gif_psc_exp_multisynapse::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
-  assert( ( e.get_rport() > 0 ) and ( static_cast< size_t >( e.get_rport() ) <= P_.n_receptors_() ) );
+  assert( ( e.get_rport() > 0 ) and ( ( size_t ) e.get_rport() <= P_.n_receptors_() ) );
 
   B_.spikes_[ e.get_rport() - 1 ].add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );

@@ -3,6 +3,74 @@
 Connection Management
 =====================
 
+.. grid:: 4
+    :gutter: 1
+
+    .. card::
+		:link: one_to_one
+		:link-type: ref
+
+		.. image:: ../static/img/One_to_one_H.png
+
+    .. card::
+		:link: all_to_all
+		:link-type: ref
+
+		.. image:: ../static/img/All_to_all_H.png
+
+    .. card::
+		:link: fixed_indegree
+		:link-type: ref
+
+		.. image:: ../static/img/Fixed_indegree_H.png
+
+    .. card::
+		:link: fixed_outdegree
+		:link-type: ref
+
+		.. image:: ../static/img/Fixed_outdegree_H.png
+
+.. grid:: 4
+    :gutter: 1
+
+    .. card::
+		:link: fixed_total_number
+		:link-type: ref
+
+		.. image:: ../static/img/Fixed_total_number_H.png
+
+    .. card::
+		:link: pairwise_bernoulli
+		:link-type: ref
+
+		.. image:: ../static/img/Pairwise_bernoulli_H.png
+
+    .. card::
+		:link: multapse_autapse
+		:link-type: ref
+
+		.. image:: ../static/img/Autapse_H.png
+
+    .. card::
+		:link: multapse_autapse
+		:link-type: ref
+
+		.. image:: ../static/img/Multapse_H.png
+		
+		
+
+We here provide formal definitions of connectivity concepts for neuronal network models. These concepts encompass the basic connectivity rules illustrated above which are already commonly used by the computational neuroscience community. Beyond that, we discuss concepts to reflect some of the richness of anatomical brain connectivity and complement in particular non-spatial connectivity rules with rules for spatially organized connectivity.
+
+For each high-level connectivity rule, we give both an algorithmic construction rule and the resulting connectivity distribution. Modelers can use these definitions to succinctly specify connection rules in their studies. However, if details differ from our standard definitions, these details should still be specified. Furthermore, we suggest symbols that can be used to indicate the corresponding connectivity types in network diagrams and add the corresponding CSA expressions from [1]_.
+
+In the specification of connectivity concepts we use the following notations and definitions. Let :math:`\mathcal{S}=\{s_1,\ldots, s_{N_s}\}` be the ordered set of sources of cardinality :math:`N_s` and :math:`\mathcal{T}=\{t_1,\ldots, t_{N_t}\}` the set of targets of cardinality :math:`N_t`. Then the set of all possible directed edges between members of :math:`\mathcal{S}` and :math:`\mathcal{T}` is given by the Cartesian product :math:`\mathcal{E}_{ST}=\mathcal{S \times T}` of cardinality :math:`N_s\cdot N_t`.
+
+If the source and target populations are identical (:math:`\mathcal{S= T}`) a source can be its own target. We call such a self-connection an :ref:`autapse <multapse_autapse>`.
+If autapses are not allowed, the target set for any node :math:`i \in \mathcal{S}` is :math:`\mathcal{T=S} \setminus i`, with cardinality :math:`N_t=N_s-1`.
+If there is more than one edge between a source and target (or from a node to itself), we call this a :ref:`multapse <multapse_autapse>`.
+
+The :math:`{degree\ distribution}\ P(k)` is the distribution across nodes of the number of edges per node. In a directed network, the distribution of the number of edges going out of (into) a node is called the :math:`{out\!-\!degree} (in\!-\!degree)` distribution. The distributions given below describe the effect of applying a connection rule once to a given :math:`\mathcal{S}-\mathcal{T}` pair.
+
 Connections between populations of neurons and between neurons and
 devices for stimulation and recording in NEST are created with the
 :py:func:`.Connect` function. Although each connection is internally
@@ -62,8 +130,18 @@ done using the corresponding kernel attribute:
 Have a look at the :ref:`inspecting_connections` section further down
 to get more tips on how to examine the connections in greater detail.
 
-Multapses and autapses
-----------------------
+
+
+
+.. _multapse_autapse:
+
+Autapses and multapses
+----------------------------------------------
+
+.. image:: ../static/img/Autapse_multapse.png
+     :width: 450px
+     :align: center
+
 
 In the connection specification dictionary (containing the rule name and rule-
 specific parameters), the additional switch ``allow_autapses`` (default:
@@ -76,6 +154,336 @@ These switches are only effective during each single call to
 :py:func:`.Connect`. Calling the function multiple times with the same set of
 neurons might still lead to violations of these constraints, even though the
 switches were set to `False` in each individual call.
+
+
+
+Deterministic connectivity rules
+-------------------------------------------------
+Deterministic connectivity rules establish precisely defined sets of connections without any variability across network realizations.
+
+.. _one_to_one:
+
+One-to-one
+~~~~~~~~~~
+
+.. image:: ../static/img/One_to_one.png
+     :width: 200px
+     :align: center
+
+The `i`\-th node in ``S`` (source) is connected to the `i`\-th node in ``T`` (target). The
+NodeCollections of ``S`` and ``T`` have to contain the same number of
+nodes.
+
+.. code-block:: python
+
+    n = 5
+    S = nest.Create('iaf_psc_alpha', n)
+    T = nest.Create('spike_recorder', n)
+    nest.Connect(S, T, 'one_to_one')
+
+.. dropdown:: Mathematical details: One-to-one
+
+	|		**Symbol:** :math:`\delta`
+	|		**CSA:** :math:`\delta`
+	|		**Definition:** Each node in :math:`\mathcal{S}` is uniquely connected to one node in :math:`\mathcal{T}`. 
+	|		:math:`\mathcal{S}` and :math:`\mathcal{T}` must have identical cardinality :math:`N_s=N_t`, see :ref:`one to one <one_to_one>`. Both sources and targets can be permuted independently even if :math:`\mathcal{S}=\mathcal{T}`. The in- and out-degree distributions are given by :math:`P(K)=\delta_{K,1}`, with Kronecker delta :math:`\delta_{i,j}=1` if :math:`i=j`, and zero otherwise.
+
+
+.. _all_to_all:
+
+All-to-all
+~~~~~~~~~~
+
+.. image:: ../static/img/All_to_all.png
+     :width: 200px
+     :align: center
+
+Each node in ``S`` is connected to every node in ``T``. Since
+``all_to_all`` is the default, the rule doesn't actually have to be
+specified.
+
+.. code-block:: python
+
+    n, m = 5, 5
+    S = nest.Create('iaf_psc_alpha', n)
+    T = nest.Create('iaf_psc_alpha', m)
+    nest.Connect(S, T, 'all_to_all')
+    nest.Connect(S, T)  # equivalent
+
+.. dropdown:: Mathematical details: All-to-all
+
+	|		**Symbol:** :math:`\Omega`
+	|		**CSA:** :math:`\Omega`
+	|		**Definition:** Each node in :math:`\mathcal{S}` is  connected to all nodes in :math:`\mathcal{T}`. 
+	|		The resulting edge set is the full edge set :math:`\mathcal{E}_\mathcal{ST}`. The in- and out-degree distributions are :math:`P_\text{in}(K)=\delta_{K,N_s}` for :math:`\mathcal{T}`, and :math:`P_\text{out}(K)=\delta_{K,N_t}` for :math:`\mathcal{S}`, respectively. An example is shown in :ref:`all to all <all_to_all>`.
+
+.. dropdown:: Mathematical details: Explicit connections
+
+	|		**Symbol:** X
+	|		**CSA:** Not applicable
+	|		**Definition:** Connections are established according to an explicit list of source-target pairs. 
+	|		Connectivity is defined by an explicit list of sources and targets, also known as *adjacency list*, as for instance derived from anatomical measurements. It is, hence, not the result of any specific algorithm. An alternative way of representing a fixed connectivity is by means of the *adjacency matrix A*, such that :math:`A_{ij}=1` if :math:`j` is connected to :math:`i`, and zero otherwise. We here adopt the common computational neuroscience practice to have the first index :math:`i` denote the target and the second index :math:`j` denote the source node.
+
+Probabilistic connectivity rules
+------------------------------------------------
+Probabilistic connectivity rules establish edges according to a probabilistic rule. Consequently, the exact connectivity varies with realizations. Still, such connectivity leads to specific expectation values of network characteristics, such as degree distributions or correlation structure.
+
+.. _pairwise_bernoulli:
+
+Pairwise bernoulli
+~~~~~~~~~~~~~~~~~~
+
+.. image:: ../static/img/Pairwise_bernoulli.png
+     :width: 200px
+     :align: center
+
+For each possible pair of nodes from ``S`` and ``T``, a connection is
+created with probability ``p``.
+
+.. code-block:: python
+
+    n, m, p = 5, 5, 0.5
+    S= nest.Create('iaf_psc_alpha', n)
+    T = nest.Create('iaf_psc_alpha', m)
+    conn_spec_dict = {'rule': 'pairwise_bernoulli', 'p': p}
+    nest.Connect(S, T, conn_spec_dict)
+	
+.. dropdown:: Mathematical details: Pairwise bernoulli
+
+	|		**Symbol:** :math:`p`
+	|		**CSA:** :math:`\rho(p)`
+	|		**Definition:** Each pair of nodes, with source in :math:`\mathcal{S}` and target in :math:`\mathcal{T}`, is connected with probability :math:`p`.
+	|		In its standard form this rule cannot produce multapses since each possible edge is visited only once. If :math:`\mathcal{S=T}`, this concept is similar to Erdős-Rényi-graphs of the *constant probability* :math:`p-ensemble\ G(N,p)`---also called *binomial ensemble* [2]_; the only difference being that we here consider directed graphs, whereas the Erdős-Rényi model is undirected. The distribution of both in- and out-degrees is binomial,
+
+	.. math::
+		P(K_\text{in}=K)=\mathcal{B}(K|N_s,p):=\begin{pmatrix}N_s\\K\end{pmatrix}p^{K}(1-p)^{N_s-K}
+
+	and
+
+	.. math::
+		P(K_\text{out}=K)=\mathcal{B}(K|N_t,p)\,,
+	 
+	respectively.
+	The expected total number of edges equals :math:`\text{E}[N_\text{syn}]=pN_tN_s`.
+
+Symmetric pairwise bernoulli
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For each possible pair of nodes from ``S`` and ``T``, a connection is
+created with probability ``p`` from ``S`` to ``T``, as well as a
+connection from ``T`` to ``S`` (two connections in total). To use
+this rule, ``allow_autapses`` must be ``False``, and ``make_symmetric``
+must be ``True``.
+
+.. code-block:: python
+
+    n, m, p = 10, 12, 0.2
+    S = nest.Create('iaf_psc_alpha', n)
+    T = nest.Create('iaf_psc_alpha', m)
+    conn_spec_dict = {'rule': 'symmetric_pairwise_bernoulli', 'p': p,
+                      'allow_autapses': False, 'make_symmetric': True}
+    nest.Connect(S, T, conn_spec_dict)
+
+.. _fixed_total_number:
+
+
+
+Random, fixed total number
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. image:: ../static/img/Fixed_total_number.png
+     :width: 200px
+     :align: center
+
+
+The nodes in ``S`` are randomly connected with the nodes in ``T``
+such that the total number of connections equals ``N``.
+
+.. code-block:: python
+
+    n, m, N = 5, 5, 10
+    S = nest.Create('iaf_psc_alpha', n)
+    T = nest.Create('iaf_psc_alpha', m)
+    conn_spec_dict = {'rule': 'fixed_total_number', 'N': N}
+    # By default multapses are allowed, 
+    # optionally if multapses are not allowed the following parameter must be set
+    # conn_spec_dict = {'rule': 'fixed_total_number', 'N': N, 'allow_autapses': False}
+    nest.Connect(S, T, conn_spec_dict)
+
+.. dropdown:: Mathematical details: Random, fixed total number without multapses
+
+	|		**Symbol:** :math:`N_\text{syn} \cancel{M}`
+	|		**CSA:** :math:`\mathbf{\rho_{N}}(N_\text{syn})(\mathbb{N}_S \times \mathbb{N}_T)`
+	|		**Definition:** :math:`N_\text{syn}\in\{0,\ldots,N_sN_t\}` edges are randomly drawn from the edge set :math:`\mathcal{E}_\mathcal{ST}` without replacement. 
+	|		For :math:`\mathcal{S}=\mathcal{T}` this is a directed graph generalization of Erdős-Rényi graphs of the *constant number of edges* :math:`N_\text{syn}`-ensemble :math:`G(N,N_\text{syn})` [3]_. There are :math:`\begin{pmatrix}N_s N_t\\N_\text{syn}\end{pmatrix}` possible networks for any given number :math:`N_\text{syn}\leq N_sN_t`, which all have the same probability. The resulting in- and out-degree distributions are multivariate hypergeometric distributions.
+
+	.. math::
+		\begin{split}
+		&P(K_{\text{in},1}=K_1,\ldots,K_{\text{in},N_t}=K_{N_t})\\
+		& \quad \quad \quad = \begin{cases}
+		\prod_{j=1}^{N_t} \begin{pmatrix} N_s\\K_j\end{pmatrix}\Bigg/\begin{pmatrix} N_sN_t\\N_\text{syn}\end{pmatrix}
+		&  \text{if}\,\,\sum_{j=1}^{N_t} K_j = N_\text{syn}\\
+		 \phantom{bl}0  & \text{otherwise}\end{cases}\,,
+		 \end{split}
+
+	and analogously :math:`P(K_{\text{out},1}=K_1,\ldots,K_{\text{out},N_s}=K_{N_s})`
+	with :math:`K_\text{out}` instead of :math:`K_\text{in}` and source and target indices switched.
+
+	The marginal distributions, i.e., the probability distribution for any specific node :math:`j` to have in-degree :math:`K_j`, are hypergeometric distributions
+
+	.. math::
+		P(K_{\text{in},j}=K_j)=
+		\begin{pmatrix} N_s\\K_j \end{pmatrix} \begin{pmatrix}N_sN_t-1 \\
+		  N_\text{syn}-K_j \end{pmatrix}\Bigg/\begin{pmatrix}N_sN_t
+			\\ N_\text{syn}\end{pmatrix} \,,
+
+	with sources and targets switched for :math:`P(K_{\text{out},j}=K_j)`.
+
+
+
+.. dropdown:: Mathematical details: Random, fixed total number with multapses
+
+	|		**Symbol:** :math:`\mathbf{\rho_N}(N_\text{syn})\mathbf{M}(\mathbb{N}_S \times \mathbb{N}_T)`
+	|		**CSA:** :math:`\mathbf{\rho_N}(N_\text{syn})\mathbf{M}(\mathbb{N}_S \times \mathbb{N}_T)`
+	|		**Definition:** :math:`N_\text{syn}\in\{0,\ldots,N_sN_t\}` edges are randomly drawn from the edge set :math:`\mathcal{E}_\mathcal{ST}` with replacement.
+	|		If multapses are allowed, there are :math:`\begin{pmatrix}N_sN_t+N_\text{syn}-1\\N_\text{syn}\end{pmatrix}` possible networks for any given number :math:`N_\text{syn}\leq N_sN_t`.
+	|		Because exactly :math:`N_\text{syn}` connections are distributed across :math:`N_t` targets with replacement, the joint in-degree distribution is multinomial, 
+
+	.. math::
+		\begin{equation}\label{eq:randfixKm}
+		\begin{split}
+		&P(K_{\text{in},1}=K_1,\ldots,K_{\text{in},N_t}=K_{N_t})\\
+		& \quad \quad \quad=\begin{cases}
+		\frac{N_\text{syn}!}{K_1!...K_{N_t}!} \,p^{N_\text{syn}}  &  \text{if}\,\,\sum_{j=1}^{N_t} K_j = N_\text{syn}\\
+		 \quad\quad 0  & \text{otherwise}\end{cases}\,
+		\end{split}
+		\end{equation}
+		
+	with :math:`p=1/N_t`.
+
+	The out-degrees have an analogous multinomial distribution :math:`P(K_{\text{out},1}=K_1,\ldots,K_{\text{out},N_s}=K_{N_s})`, with :math:`p=1/N_s` and sources and targets switched. The marginal distributions are binomial distributions :math:`P(K_{\text{in},j}=K)= \mathcal{B}(K|N_\text{syn},1/N_t)` and :math:`P(K_{\text{out},j}=K)= \mathcal{B}(K|N_\text{syn},1/N_s)`, respectively.
+
+	The :math:`\mathbf{M}`-operator of CSA should not be confused with the ":math:`M`" indicating that multapses are allowed in our symbolic notation.
+
+.. _fixed_indegree:
+
+Random, fixed indegree
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. image:: ../static/img/Fixed_indegree.png
+     :width: 200px
+     :align: center
+
+The nodes in ``S`` are randomly connected with the nodes in ``T`` such
+that each node in ``T`` has a fixed :hxt_ref:`indegree` of ``N``.
+
+.. code-block:: python
+
+    n, m, N = 5, 5, 2
+    S = nest.Create('iaf_psc_alpha', n)
+    T = nest.Create('iaf_psc_alpha', m)
+    conn_spec_dict = {'rule': 'fixed_indegree', 'indegree': N}
+    # By default multapses are allowed, 
+    # optionally if multapses are not allowed the following parameter must be set
+    # conn_spec_dict = {rule': 'fixed_indegree', 'indegree': N, 'allow_autapses': False}
+    nest.Connect(S, T, conn_spec_dict)
+	
+.. dropdown:: Mathematical details: Random, fixed in-degree without multapses
+
+	| 		**Symbol:** :math:`K_{in}, \cancel{M}`
+	|		**CSA:** :math:`{\rho_1}(K)(\mathbb{N}_S \times \mathbb{N}_T)`
+	|		**Definition:** Each target node in :math:`\mathcal{T}` is connected to :math:`K_\text{in}` nodes in :math:`\mathcal{S}` randomly chosen without replacement. 
+	|		The in-degree distribution is by definition :math:`P(K)=\delta_{K,K_\text{in}}`. To obtain the out-degree distribution, observe that after one target node has drawn its :math:`K_\text{out}` sources the joint probability distribution of out-degrees :math:`K_{\text{out},j}` is multivariate-hypergeometric such that
+
+	.. math::
+		\begin{equation}\label{eq:hypmult}
+		\begin{split}
+		&P(K_{\text{out},1}=K_1, \ldots,K_{\text{out},N_s}=K_{N_s})\\
+		& \quad \quad \quad= \begin{cases}
+		\prod_{j=1}^{N_s} \begin{pmatrix} 1\\K_j\end{pmatrix}\Bigg/\begin{pmatrix} N_s\\K_\text{in}\end{pmatrix}
+		&  \text{if}\,\,\sum_{j=1}^{N_s} K_j = K_\text{in}\\
+		 \phantom{bl}0  & \text{otherwise}\end{cases}\,, \qquad (1) 
+		\end{split}
+		\end{equation}
+
+	where :math:`\forall_j\,K_j\in\{0,1\}`.
+	The marginal distributions are hypergeometric distributions
+
+	.. math::
+		\begin{eqnarray}\label{eq:hypmarg}
+		P(K_{\text{out},j}=K)=
+		\begin{pmatrix} 1\\K \end{pmatrix} \begin{pmatrix}N_s-1 \\
+		  K_\text{in}-K \end{pmatrix}\Bigg/\begin{pmatrix}N_s
+			\\ K_\text{in}\end{pmatrix} = \text{Ber}(K_\text{in}/N_s)\,, \qquad (2) 
+		\end{eqnarray}
+
+	with :math:`\text{Ber}(p)` denoting the Bernoulli distribution with parameter :math:`p`, because :math:`K\in\{0,1\}`.
+	The full joint distribution is the sum of :math:`N_t` independent instances of equation (1).
+
+.. dropdown:: Mathematical details: Random, fixed in-degree with multapses
+
+	| 		**Symbol:** :math:`K_{in}, M`
+	| 		**CSA:** :math:`\mathbf{\rho_1}(K)\mathbf{M}(\mathbb{N}_S \times \mathbb{N}_T)`
+	| 		**Definition:** Each target node in :math:`\mathcal{T}` is connected to :math:`K_\text{in}` nodes in :math:`\mathcal{S}` randomly chosen with replacement.
+	|		:math:`N_s` is the number of source nodes from which exactly :math:`K_\text{in}` connections are drawn with equal probability :math:`p=1/N_s` for each of the :math:`N_t` target nodes :math:`t_i\in\mathcal{T}`. The in-degree distribution is by definition :math:`P(K)=\delta_{K,K_\text{in}}`. To obtain the out-degree distribution, we observe that because multapses are allowed, drawing :math:`N_t` times :math:`K_{\text{in},i}=K_\text{in}` from :math:`\mathcal{S}` is equivalent to drawing :math:`N_t K_\text{in}` times with replacement from :math:`\mathcal{S}`. This procedure yields a multinomial distribution of the out-degrees :math:`K_{\text{out},j}` of source nodes :math:`s_j\in\mathcal{S}` [4]_, i.e.,
+
+	.. math::
+		\begin{equation}\label{eq:rfin}
+		\begin{split}
+		&P(K_{\text{out},1}=K_1,\ldots,K_{\text{out},N_s}=K_{N_s})\\
+		& \quad \quad \quad =\begin{cases}
+		\frac{(N_tK_\text{in})!}{K_1!...K_{N_s}!} p^{N_tK_\text{in}}  &  \text{if}\,\,\sum_{j=1}^{N_s} K_j = N_tK_\text{in}\\
+		 \quad\quad 0  & \text{otherwise}\end{cases}
+		\end{split}
+		\end{equation}
+
+	The marginal distributions are binomial distributions 
+
+	.. math::
+		\begin{equation}\label{eq:rfinmarg}
+		P(K_{\text{out},j}=K)= \mathcal{B}(K|N_tK_\text{in},1/N_s)\,.
+		\end{equation}
+
+
+
+.. _fixed_outdegree:
+
+Random, fixed outdegree
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. image:: ../static/img/Fixed_outdegree.png
+     :width: 200px
+     :align: center
+
+The nodes in ``S`` are randomly connected with the nodes in ``T`` such
+that each node in ``S`` has a fixed :hxt_ref:`outdegree` of ``N``.
+
+.. code-block:: python
+
+    n, m, N = 5, 5, 2
+    S = nest.Create('iaf_psc_alpha', n)
+    T = nest.Create('iaf_psc_alpha', m)
+    conn_spec_dict = {'rule': 'fixed_outdegree', 'outdegree': N}
+		
+    # By default multapses are allowed, 
+    # optionally if multapses are not allowed the following parameter must be set
+    # conn_spec_dict = {'rule': 'fixed_outdegree', 'outdegree': N, 'allow_autapses': False}
+    nest.Connect(S, T, conn_spec_dict)
+
+.. dropdown:: Mathematical details: Random, fixed out-degree without multapses
+
+	| 		**Symbol:** :math:`K_{out},\cancel{M}`
+	| 		**CSA:** :math:`\mathbf{\rho_0}(K)(\mathbb{N}_S \times \mathbb{N}_T)`
+	| 		**Definition:**  Each source node in :math:`S` is connected to :math:`K_\text{out}` nodes in :math:`\mathcal{T}` randomly chosen without replacement. 
+	|		The out-degree distribution is by definition :math:`P(K)=\delta_{K,K_\text{out}}`, while the in-degree distribution is obtained by switching source and target indices, and replacing :math:`K_\text{out}` with :math:`K_\text{in}` in equation (2) from :ref:`Random, fixed in-degree without multapses <fixed_indegree>`.
+
+	
+.. dropdown:: Mathematical details: Random, fixed out-degree with multapses
+
+	| 		**Symbol:** :math:`K_{out}, M`
+	| 		**CSA:** :math:`\mathbf{\rho_0}(K)\mathbf{M}(\mathbb{N}_S \times \mathbb{N}_T)`
+	| 		**Definition:** Each source node in :math:`\mathcal{S}` is connected to :math:`K_\text{out}` nodes in :math:`\mathcal{T}` randomly chosen with replacement. 
+	|		By definition, the out-degree distribution is a :math:`P(K)=\delta_{K,K_\text{out}}`. The respective in-degree distribution and marginal distributions are obtained by switching source and target indices, and replacing :math:`K_\text{out}` with :math:`K_\text{in}` in equation from :ref:`Random, fixed in-degree with multapses <fixed_indegree>` [4]_.
 
 .. _conn_rules:
 
@@ -91,28 +499,15 @@ required. Examples for such parameters might be in- and out-degrees,
 or the probability for establishing a connection. A description of
 all connection rules available in NEST is available below.
 
-all-to-all
-~~~~~~~~~~
 
-.. image:: ../static/img/All_to_all.png
-     :width: 200px
-     :align: center
 
-Each node in ``A`` is connected to every node in ``B``. Since
-``all_to_all`` is the default, the rule doesn't actually have to be
-specified.
 
-.. code-block:: python
 
-    n, m = 10, 12
-    A = nest.Create('iaf_psc_alpha', n)
-    B = nest.Create('iaf_psc_alpha', m)
-    nest.Connect(A, B, 'all_to_all')
-    nest.Connect(A, B)  # equivalent
+
 
 .. _conn_builder_conngen:
 
-conngen
+Conngen
 ~~~~~~~
 
 .. admonition:: Availability
@@ -121,7 +516,7 @@ conngen
    :ref:`support for libneurosim <compile_with_libneurosim>`.
 
 To allow the generation of connectivity by means of an external
-library, NEST supports the Connection Generator Interface [1]_. For
+library, NEST supports the Connection Generator Interface [5]_. For
 more details on this interface, see the Git repository of `libneurosim
 <https://github.com/INCF/libneurosim>`_.
 
@@ -156,825 +551,14 @@ Generator Interface and randomly connects 10% of the neurons from
    conn_spec_dict = {'rule': 'conngen', 'cg': cg, 'params_map': params_map}
    nest.Connect(A, B, conn_spec_dict)
 
-fixed indegree
-~~~~~~~~~~~~~~
-
-.. image:: ../static/img/Fixed_indegree.png
-     :width: 200px
-     :align: center
-
-The nodes in ``A`` are randomly connected with the nodes in ``B`` such
-that each node in ``B`` has a fixed :hxt_ref:`indegree` of ``N``.
-
-.. code-block:: python
-
-    n, m, N = 10, 12, 2
-    A = nest.Create('iaf_psc_alpha', n)
-    B = nest.Create('iaf_psc_alpha', m)
-    conn_spec_dict = {'rule': 'fixed_indegree', 'indegree': N}
-    nest.Connect(A, B, conn_spec_dict)
-
-fixed outdegree
-~~~~~~~~~~~~~~~
-
-.. image:: ../static/img/Fixed_outdegree.png
-     :width: 200px
-     :align: center
-
-The nodes in ``A`` are randomly connected with the nodes in ``B`` such
-that each node in ``A`` has a fixed :hxt_ref:`outdegree` of ``N``.
-
-.. code-block:: python
-
-    n, m, N = 10, 12, 2
-    A = nest.Create('iaf_psc_alpha', n)
-    B = nest.Create('iaf_psc_alpha', m)
-    conn_spec_dict = {'rule': 'fixed_outdegree', 'outdegree': N}
-    nest.Connect(A, B, conn_spec_dict)
-
-fixed total number
-~~~~~~~~~~~~~~~~~~
-
-The nodes in ``A`` are randomly connected with the nodes in ``B``
-such that the total number of connections equals ``N``.
-
-.. code-block:: python
-
-    n, m, N = 10, 12, 30
-    A = nest.Create('iaf_psc_alpha', n)
-    B = nest.Create('iaf_psc_alpha', m)
-    conn_spec_dict = {'rule': 'fixed_total_number', 'N': N}
-    nest.Connect(A, B, conn_spec_dict)
-
-one-to-one
-~~~~~~~~~~
-
-.. image:: ../static/img/One_to_one.png
-     :width: 200px
-     :align: center
-
-The `i`\ th node in ``A`` is connected to the `i`\ th node in ``B``. The
-NodeCollections of ``A`` and ``B`` have to contain the same number of
-nodes.
-
-.. code-block:: python
-
-    n = 10
-    A = nest.Create('iaf_psc_alpha', n)
-    B = nest.Create('spike_recorder', n)
-    nest.Connect(A, B, 'one_to_one')
-
-pairwise bernoulli
-~~~~~~~~~~~~~~~~~~
-
-For each possible pair of nodes from ``A`` and ``B``, a connection is
-created with probability ``p``.
-
-.. code-block:: python
-
-    n, m, p = 10, 12, 0.2
-    A = nest.Create('iaf_psc_alpha', n)
-    B = nest.Create('iaf_psc_alpha', m)
-    conn_spec_dict = {'rule': 'pairwise_bernoulli', 'p': p}
-    nest.Connect(A, B, conn_spec_dict)
-
-symmetric pairwise bernoulli
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-For each possible pair of nodes from ``A`` and ``B``, a connection is
-created with probability ``p`` from ``A`` to ``B``, as well as a
-connection from ``B`` to ``A`` (two connections in total). To use
-this rule, ``allow_autapses`` must be ``False``, and ``make_symmetric``
-must be ``True``.
-
-.. code-block:: python
-
-    n, m, p = 10, 12, 0.2
-    A = nest.Create('iaf_psc_alpha', n)
-    B = nest.Create('iaf_psc_alpha', m)
-    conn_spec_dict = {'rule': 'symmetric_pairwise_bernoulli', 'p': p,
-                      'allow_autapses': False, 'make_symmetric': True}
-    nest.Connect(A, B, conn_spec_dict)
-
-.. _synapse_spec:
-
-Synapse Specification
----------------------
-
-The synapse properties can be given as just the name of the desired
-synapse model as a string, as a dictionary specifying synapse model
-and parameters, or as a ``CollocatedSynapse`` object creating
-multiple synapses for each source-target pair as detailed in
-the section on :ref:`collocated synapses <collocated_synapses>`.
-
-.. code-block:: python
-
-    n = 10
-    A = nest.Create('iaf_psc_alpha', n)
-    B = nest.Create('iaf_psc_alpha', n)
-    nest.Connect(A, B, syn_spec='static_synapse')
-
-    syn_spec_dict = {'synapse_model': 'stdp_synapse',
-                     'weight': 2.5, 'delay': 0.5}
-    nest.Connect(A, B, syn_spec=syn_spec_dict)
-
-If synapse properties are given as a dictionary, it may include the keys
-``synapse_model`` (default `static_synapse`), ``weight`` (default 1.0),
-``delay`` (default 1.0), and ``receptor_type`` (default 0, see :ref:`receptor-types` for details),
-as well as parameters specific to the chosen synapse model. The specification of
-all parameters is optional, and unspecified parameters will take on the
-default values of the chosen synapse model that can be inspected using
-``nest.GetDefaults(synapse_model)``.
-
-Parameters can be either :ref:`fixed scalar values <scalar_params>`,
-:ref:`arrays of values <array_params>`, or :ref:`expressions <dist_params>`.
-
-One synapse dictionary can contain an arbitrary combination of parameter types,
-as long as they are supported by the chosen connection rule.
-
-
-.. _scalar_params:
-
-Scalar parameters
-~~~~~~~~~~~~~~~~~
-
-Scalar parameters must be given with the correct type. The ``weight``
-for instance must be a float, while the ``receptor_type`` has to be of
-type integer. When a synapse parameter is given as a scalar, the value
-will be applied to all connections created in the current
-:py:func:`.Connect` call.
-
-.. code-block:: python
-
-    n = 10
-    neuron_dict = {'tau_syn': [0.3, 1.5]}
-    A = nest.Create('iaf_psc_exp_multisynapse', n, neuron_dict)
-    B = nest.Create('iaf_psc_exp_multisynapse', n, neuron_dict)
-    syn_spec_dict ={'synapse_model': 'static_synapse', 'weight': 2.5, 'delay': 0.5, 'receptor_type': 1}
-    nest.Connect(A, B, syn_spec=syn_spec_dict)
-
-.. _array_params:
-
-Array parameters
-~~~~~~~~~~~~~~~~
-
-Array parameters can be used with the rules ``all_to_all``,
-``fixed_indegree``, ``fixed_outdegree``, ``fixed_total_number`` and
-``one_to_one``. The arrays can be specified as NumPy arrays or Python
-lists. As with the scalar parameters, all parameters have to be
-specified as arrays of the correct type.
-
-rule: all-to-all
-^^^^^^^^^^^^^^^^
-
-When connecting with rule ``all_to_all``, the array parameter must
-have dimension `len(B) x len(A)`.
-
-.. code-block:: python
-
-    A = nest.Create('iaf_psc_alpha', 3)
-    B = nest.Create('iaf_psc_alpha', 2)
-    syn_spec_dict = {'weight': [[1.2, -3.5, 2.5], [0.4, -0.2, 0.7]]}
-    nest.Connect(A, B, syn_spec=syn_spec_dict)
-
-rule: fixed indegree
-^^^^^^^^^^^^^^^^^^^^
-
-For rule ``fixed_indegree`` the array has to be a two-dimensional
-NumPy array or Python list with shape ``(len(B), indegree)``, where
-:hxt_ref:`indegree` is the number of incoming connections per target neuron.
-This means that the rows describe the target, while the columns
-represent the connections converging on the target neuron, regardless
-of the identity of the source neurons.
-
-.. code-block:: python
-
-    A = nest.Create('iaf_psc_alpha', 5)
-    B = nest.Create('iaf_psc_alpha', 3)
-    conn_spec_dict = {'rule': 'fixed_indegree', 'indegree': 2}
-    syn_spec_dict = {'weight': [[1.2, -3.5],[0.4, -0.2],[0.6, 2.2]]}
-    nest.Connect(A, B, conn_spec_dict, syn_spec_dict)
-
-rule: fixed outdegree
-^^^^^^^^^^^^^^^^^^^^^
-
-For rule ``fixed_outdegree`` the array has to be a two-dimensional
-NumPy array or Python list with shape ``(len(A), outdegree)``, where
-:hxt_ref:`outdegree` is the number of outgoing connections per source
-neuron. This means that the rows describe the source, while the
-columns represent the connections starting from the source neuron
-regardless of the identity of the target neuron.
-
-.. code-block:: python
-
-    A = nest.Create('iaf_psc_alpha', 2)
-    B = nest.Create('iaf_psc_alpha', 5)
-    conn_spec_dict = {'rule': 'fixed_outdegree', 'outdegree': 3}
-    syn_spec_dict = {'weight': [[1.2, -3.5, 0.4], [-0.2, 0.6, 2.2]]}
-    nest.Connect(A, B, conn_spec_dict, syn_spec_dict)
-
-rule: fixed total number
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-For rule ``fixed_total_number``, the array has to be same the length as the
-number of connections ``N``.
-
-.. code-block:: python
-
-    A = nest.Create('iaf_psc_alpha', 3)
-    B = nest.Create('iaf_psc_alpha', 4)
-    conn_spec_dict = {'rule': 'fixed_total_number', 'N': 4}
-    syn_spec_dict = {'weight': [1.2, -3.5, 0.4, -0.2]}
-    nest.Connect(A, B, conn_spec_dict, syn_spec_dict)
-
-rule: one-to-one
-^^^^^^^^^^^^^^^^
-
-For rule ``one_to_one`` the array must have the same length as there
-are nodes in ``A`` and ``B``.
-
-.. code-block:: python
-
-    A = nest.Create('iaf_psc_alpha', 2)
-    B = nest.Create('spike_recorder', 2)
-    conn_spec_dict = {'rule': 'one_to_one'}
-    syn_spec_dict = {'weight': [1.2, -3.5]}
-    nest.Connect(A, B, conn_spec_dict, syn_spec_dict)
-
-.. _dist_params:
-
-Expressions as parameters
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
-``nest.Parameter`` objects support a flexible specification of synapse
-parameters through expressions.  This includes parameters drawn from random
-distributions and
-depending on spatial properties of source and target neurons. Parameters
-can be combined through mathematical expressions including conditionals,
-providing for a high degree of flexibility.
-
-The following parameters and functionalities are provided:
-
-- Random parameters
-- Spatial parameters
-- Spatially distributed parameters
-- Mathematical functions
-- Clipping, redrawing, and conditional parameters
-
-For more information, check out the guide on
-:ref:`parametrization <param_ex>` or the documentation on the
-different :ref:`PyNEST APIs <pynest_api>`.
-
-.. code-block:: python
-
-    n = 10
-    A = nest.Create('iaf_psc_alpha', n)
-    B = nest.Create('iaf_psc_alpha', n)
-    syn_spec_dict = {
-        'synapse_model': 'stdp_synapse',
-        'weight': 2.5,
-        'delay': nest.random.uniform(min=0.8, max=2.5),
-        'alpha': nest.math.redraw(nest.random.normal(mean=5.0, std=1.0), min=0.5, max=10000.)
-    }
-    nest.Connect(A, B, syn_spec=syn_spec_dict)
-
-In this example, the default connection rule ``all_to_all`` is used
-and connections will be using synapse model :hxt_ref:`stdp_synapse`. All synapses
-are created with a static weight of 2.5 and a delay that is uniformly
-distributed in [0.8, 2.5]. The parameter ``alpha`` is drawn from a
-normal distribution with mean 5.0 and standard deviation 1.0;
-values below 0.5 and above 10000 are excluded by re-drawing if they should occur.
-Thus, the actual distribution is a slightly distorted Gaussian.
-
-If the synapse type is supposed to have a unique name and still use
-distributed parameters, it needs to be defined in two steps:
-
-.. code-block:: python
-
-    n = 10
-    A = nest.Create('iaf_psc_alpha', n)
-    B = nest.Create('iaf_psc_alpha', n)
-    nest.CopyModel('stdp_synapse', 'excitatory', {'weight':2.5})
-    syn_dict = {
-        'synapse_model': 'excitatory',
-        'weight': 2.5,
-        'delay': nest.random.uniform(min=0.8, max=2.5),
-        'alpha': nest.math.redraw(nest.random.normal(mean=5.0, std=1.0), min=0.5, max=10000.)
-    }
-    nest.Connect(A, B, syn_spec=syn_dict)
-
-For further information on the available distributions see
-:ref:`Random numbers in NEST <random_numbers>`.
-
-.. _collocated_synapses:
-
-Collocated synapses
-~~~~~~~~~~~~~~~~~~~
-
-Some modeling applications require multiple connections between the
-same pairs of nodes. An example of this could be a network, where each
-pre-synaptic neuron connects with a static synapse to a modulatory
-receptor on the post-synaptic neuron and with a plastic synapse to a
-normal NMDA-type receptor.
-
-This type of connectivity is especially hard to realize when using
-randomized connection rules, as the chosen pairs that are actually
-connected are only known internally, and have to be retrieved manually
-after the call to :py:func:`.Connect` returns.
-
-To ease the setup of such connectivity patterns, NEST supports a
-concept called `collocated synapses`. This allows the creation of several
-connections between chosen pairs of neurons (possibly with different
-synapse types or parameters) in a single call to ``nest.Connect()``.
-
-To create collocated synapses, the synapse specification consists of
-an object of type ``CollocatedSynapses``, whose constructor takes
-synapse specification dictionaries as arguments and applies the given
-dictionaries to each source-target pair internally.
-
-.. code-block:: python
-
-    nodes = nest.Create('iaf_psc_alpha', 3)
-    syn_spec = nest.CollocatedSynapses({'weight': 4.0, 'delay': 1.5},
-                                       {'synapse_model': 'stdp_synapse'},
-                                       {'synapse_model': 'stdp_synapse', 'alpha': 3.0})
-    nest.Connect(nodes, nodes, conn_spec='one_to_one', syn_spec=syn_spec)
-    print(nest.GetConnections().alpha)
-
-The example above will create 9 connections in total because there are
-3 neurons times 3 synapse specifications in the :py:func:`.CollocatedSynapses`
-object, and the connection rule ``one_to_one`` is used.
-
-
-.. code-block:: python
-
-    >>> print(nest.num_connections)
-    9
-
-In more detail, the connections have the following properties:
-
-* 3 are of type :hxt_ref:`static_synapse` with `weight` 4.0 and `delay` 1.5
-* 3 are of type :hxt_ref:`stdp_synapse` with the default value for `alpha`
-* 3 are of type :hxt_ref:`stdp_synapse` with an `alpha` of 3.0.
-
-If you want to connect with different :ref:`receptor types
-<receptor-types>`, you can do the following:
-
-.. code-block:: python
-
-    A = nest.Create('iaf_psc_exp_multisynapse', 7)
-    B = nest.Create('iaf_psc_exp_multisynapse', 7, {'tau_syn': [0.1 + i for i in range(7)]})
-    syn_spec_dict = nest.CollocatedSynapses({'weight': 5.0, 'receptor_type': 2},
-                                            {'weight': 1.5, 'receptor_type': 7})
-    nest.Connect(A, B, 'one_to_one', syn_spec_dict)
-
-.. code-block:: python
-
-    >>> print(nest.GetConnections().get())
-
-You can see how many synapse parameters you have by calling ``len()`` on
-your ``CollocatedSynapses`` object:
-
-.. code-block:: python
-
-    >>> len(syn_spec_dict)
-    2
-
-Spatially-structured networks
------------------------------
-
-Nodes in NEST can be created so that they have a position in two- or
-three-dimensional space. To take full advantage of the arrangement of
-nodes, connection parameters can be based on the nodes' positions or
-their spatial relation to each other. See :ref:`Spatially-structured
-networks <spatial_networks>` for the full information about how to create
-and connect such networks.
-
-Connecting sparse matrices with array indexing
-----------------------------------------------
-
-Oftentimes, you will find yourself in a situation, where you want to
-base your connectivity on actual data instead of rules. A common
-scenario is that you have a (sometimes sparse) connection matrix
-coming from an experiment or from a graph algorithm. Let's assume you
-have a weight matrix of the form:
-
-.. math::
-
-    W = \begin{bmatrix}
-    w_{11} & w_{21} & \cdots & w_{n1} \\
-    w_{12} & w_{22} & \cdots & w_{n2} \\
-    \vdots & \vdots & \ddots & \vdots \\
-    w_{1m} & w_{2m} & \cdots & w_{nm} \\
-    \end{bmatrix}
-
-where :math:`w_{ij}` is the weight of the connection with pre-synaptic
-node :math:`i` and post-synaptic node :math:`j`. In all generality, we
-can assume that some weights are zero, indicating that there is no
-connection at all.
-
-As there is no support for creating connections from the whole matrix
-directly, we will instead just iterate the pre-synaptic neurons and
-connect one column at a time. We assume that there are :math:`n`
-pre-synaptic nodes in the NodeCollection ``A`` and :math:`m`
-post-synaptic nodes in ``B``. We also assume that we have our weight
-matrix given as a two-dimensional NumPy array `W`, with :math:`n`
-columns and :math:`m` rows.
-
-.. code-block:: python
-
-    W = numpy.array([[0.5,  0.0, 1.5],
-                     [1.3,  0.2, 0.0],
-                     [0.0, 1.25, 1.3]])
-
-    A = nest.Create('iaf_psc_alpha', 3)
-    B = nest.Create('iaf_psc_alpha', 3)
-
-    for i, pre in enumerate(A):
-        # Extract the weights column.
-        weights = W[:, i]
-
-        # To only connect pairs with a nonzero weight, we use array indexing
-        # to extract the weights and post-synaptic neurons.
-        nonzero_indices = numpy.where(weights != 0)[0]
-        weights = weights[nonzero_indices]
-        post = B[nonzero_indices]
-
-        # Generate an array of node IDs for the column of the weight
-        # matrix, with length based on the number of nonzero
-        # elements. The array's dtype must be an integer.
-        pre_array = numpy.ones(len(nonzero_indices), dtype=int) * pre.get('global_id')
-
-        # nest.Connect() automatically converts post to a NumPy array
-        # because pre_array contains multiple identical node IDs. When
-        # also specifying a one_to_one connection rule, the arrays of
-        # node IDs can then be connected.
-        nest.Connect(pre_array, post, conn_spec='one_to_one', syn_spec={'weight': weights})
-
-.. _receptor-types:
-
-Receptor Types
---------------
-
-Conceptually, each connection in NEST terminates at a `receptor` on
-the target node. The exact meaning of such a receptor depends on the
-concrete type of that node. In a multi-compartment neuron, for
-instance, the different compartments could be addressed as different
-receptors, while another neuron model might make sets of different
-synaptic parameters available for each receptor. Please refer to the
-:doc:`model documentation <../models/index_neuron>` for details.
-
-In order to connect a pre-synaptic node to a certain receptor on a
-post-synaptic node, the integer ID of the target receptor can be
-supplied under the key ``receptor_type`` in the ``syn_spec``
-dictionary during the call to :py:func:`.Connect`. If unspecified, the
-receptor will take on its default value of 0. If you request a
-receptor that is not available in the target node, this will result in
-a runtime error.
-
-To illustrate the concept of receptors in more detail, the following
-example shows how to connect several ``iaf_psc_alpha`` neurons to the
-different compartments of a multi-compartment integrate-and-fire
-neuron (``iaf_cond_alpha_mc``) that are represented by different
-receptors.
-
-.. image:: ../static/img/Receptor_types.png
-     :width: 200px
-     :align: center
-
-.. code-block:: python
-
-    A1 = nest.Create('iaf_psc_alpha')
-    A2 = nest.Create('iaf_psc_alpha')
-    A3 = nest.Create('iaf_psc_alpha')
-    A4 = nest.Create('iaf_psc_alpha')
-    B = nest.Create('iaf_cond_alpha_mc')
-
-    receptors = nest.GetDefaults('iaf_cond_alpha_mc')['receptor_types']
-
-.. code-block:: python
-
-    >>> print(receptors)
-    {'soma_exc': 1,
-     'soma_inh': 2,
-     'soma_curr': 7,
-     'proximal_exc': 3
-     'proximal_inh': 4,
-     'proximal_curr': 8,
-     'distal_exc': 5,
-     'distal_inh': 6,
-     'distal_curr': 9,}
-
-.. code-block:: python
-
-    nest.Connect(A1, B, syn_spec={'receptor_type': receptors['distal_inh']})
-    nest.Connect(A2, B, syn_spec={'receptor_type': receptors['proximal_inh']})
-    nest.Connect(A3, B, syn_spec={'receptor_type': receptors['proximal_exc']})
-    nest.Connect(A4, B, syn_spec={'receptor_type': receptors['soma_inh']})
-
-In the example above, we retrieve a map of available receptors and
-their IDs by extracting the `receptor_types` property from the model
-defaults. This functionality is, however, only available for models
-with a predefined number of receptors, while models with a variable
-number of receptors usually don't provide such an enumeration.
-
-An example for the latter are the `*_multisynapse` neuron models that
-support multiple individual synaptic time constants for the different
-receptors. In these models, the number of available receptors is not
-predefined, but determined only by the length of the ``tau_syn``
-vector that is supplied to the model instance. The following example
-shows the setup and connection of such a model in more detail:
-
-.. code-block:: python
-
-    A = nest.Create('iaf_psc_alpha')
-    B = nest.Create('iaf_psc_exp_multisynapse', params={'tau_syn': [0.1, 0.2, 0.3]})
-
-    print(B.n_synapses)   # This will print 3, as we set 3 different tau_syns
-
-    nest.Connect(A, B, syn_spec={'receptor_type': 2})
-
-
-.. _synapse-types:
-
-Synapse Types
--------------
-
-NEST provides a number of built-in synapse models that can be used
-during connection setup. The default model is the :hxt_ref:`static_synapse`,
-whose only parameters ``weight`` and ``delay`` do not change over
-time. Other synapse models implement learning and adaptation in the
-form of long-term or short-term plasticity. A list of available
-synapse models is accessible via the command ``nest.synapse_models``.
-More detailed information about each of them can be found in the
-:doc:`model directory <../models/index_synapse>`.
-
-.. note::
-   Not all nodes can be connected via all available synapse types. The
-   events a synapse type is able to transmit is documented in the
-   ``Transmits`` section of the model documentation.
-
-All synapses store their parameters on a per-connection basis.
-However, each of the built-in models is registered with the simulation
-kernel in a number of different ways that slightly modify the
-available properties of the connections instantiated from the model.
-The different variants are indicated by specific suffixes:
-
-.. glossary::
-
- ``_lbl``
-   denotes `labeled synapses` that have an additional parameter
-   `synapse_label` (type: int), which can be set to a user-defined
-   value. In a common application this label is used to store an
-   additional projection identifier. Please note that using this
-   synapse variant may drive up the memory requirements of your
-   simulations significantly, as the label is stored on a
-   `per-synapse` basis.
-
- ``_hpc``
-   denotes `synapses for high-performance computing scenarios`, which
-   have minimal memory requirements by using thread-local target node
-   indices internally. Use this version if you are running very large
-   simulations.
-
- ``_hom``
-   denotes `homogeneous synapses` that store certain parameters like
-   `weight` and `delay` only once for all synapses of the same type
-   and can thus be used to save memory.
-
-The default parameter values of a synapse model can be inspected using
-the command :py:func:`.GetDefaults`, which only takes the name of the
-synapse model as an argument and returns a dictionary. Likewise, the
-function :py:func:`.SetDefaults` takes the name of a synapse type and a
-parameter dictionary as arguments and will modify the defaults of the
-given model.
-
-.. code-block:: python
-
-    >>> print(nest.GetDefaults('static_synapse'))
-    {'delay': 1.0,
-     'has_delay': True,
-     'num_connections': 0,
-     'receptor_type': 0,
-     'requires_symmetric': False,
-     'sizeof': 32,
-     'synapse_model': 'static_synapse',
-     'weight': 1.0,
-     'weight_recorder': ()}
-    >>> nest.SetDefaults('static_synapse', {'weight': 2.5})
-
-To further customize the process of creating synapses, it is often
-useful to have the same basic synapse model available with different
-parametrizations. To this end, :py:func:`.CopyModel` can be used to
-create custom synapse types from already existing synapse types. In
-the simplest case, it takes the names of the existing model and the
-copied type to be created. The optional argument ``params`` allows to
-directly customize the new type during the copy operation. If omitted,
-the defaults of the copied model are taken.
-
-.. code-block:: python
-
-    nest.CopyModel('static_synapse', 'inhibitory', {'weight': -2.5})
-    nest.Connect(A, B, syn_spec='inhibitory')
-
-.. _inspecting_connections:
-
-Inspecting Connections
-----------------------
-
-In order to assert that the instantiated network model actually looks
-like what was intended, it is oftentimes useful to inspect the
-connections in the network. For this, NEST provides the function
-
-.. code-block:: python
-
-    nest.GetConnections(source=None, target=None, synapse_model=None, synapse_label=None)
-
-This function returns a ``SynapseCollection`` object that contains the
-identifiers for connections that match the given filters.  ``source``
-and ``target`` are given as NodeCollections, ``synapse_model`` is the
-name of the model as a string and ``synapse_label`` is an integer
-identifier. Any combination of these parameters is permitted. If
-``nest.GetConnections()`` is called without parameters it returns all
-connections in the network.
-
-Internally, each connection in the SynapseCollection is represented by
-the following five entries: source node ID, target node ID, thread ID
-of the target, numeric synapse ID, and port.
-
-The result of :py:func:`.GetConnections` can be further processed by
-giving it as an argument to :py:func:`GetStatus`, or, better yet, by
-using the :py:meth:`~.SynapseCollection.get` function on the SynapseCollection directly. Both
-ways will yield a dictionary with the parameters of the connections
-that match the filter criterions given to ``nest.GetConnections()``:
-
-.. code-block:: python
-
-    A = nest.Create('iaf_psc_alpha', 2)
-    B = nest.Create('iaf_psc_alpha')
-    nest.Connect(A, B)
-    conn = nest.GetConnections()
-
-.. code-block:: python
-
-    >>> conn.get()
-    {'delay': [1.0, 1.0],
-     'port': [0, 1],
-     'receptor': [0, 0],
-     'sizeof': [32, 32],
-     'source': [1, 2],
-     'synapse_id': [18, 18],
-     'synapse_model': ['static_synapse', 'static_synapse'],
-     'target': [3, 3],
-     'target_thread': [0, 0],
-     'weight': [1.0, 1.0]}
-
-The ``get()`` function of a SynapseCollection can optionally also take
-a string or list of strings to only retrieve specific parameters. This
-is useful if you do not want to inspect the entire synapse dictionary:
-
-.. code-block:: python
-
-    >>> conn.get('weight')
-    [1.0, 1.0]
-
-.. code-block:: python
-
-    >>> conn.get(['source', 'target'])
-    {'source': [1, 2], 'target': [3, 3]}
-
-Another way of retrieving specific parameters is by getting them
-directly from the SynapseCollection using the dot-notation:
-
-.. code-block:: python
-
-    >>> conn.delay
-    [1.0, 1.0]
-
-For :ref:`spatially distributed networks <spatial_networks>`, you can
-access the distance between the source-target pairs by querying
-`distance` on your SynapseCollection.
-
-.. code-block:: python
-
-    >>> spatial_conn.distance
-        (0.47140452079103173,
-         0.33333333333333337,
-         0.4714045207910317,
-         0.33333333333333337,
-         3.925231146709438e-17,
-         0.33333333333333326,
-         0.4714045207910317,
-         0.33333333333333326,
-         0.47140452079103157)
-
-You can further examine the SynapseCollection by checking the length
-of it or by printing it to the terminal. The printout will be in the
-form of a table that lists source and target node IDs, synapse model,
-weight and delay:
-
-.. code-block:: python
-
-    >>> len(conn)
-    2
-    >>>  print(conn)
-     source   target   synapse model   weight   delay
-    -------- -------- --------------- -------- -------
-          1        3  static_synapse    1.000   1.000
-          2        3  static_synapse    1.000   1.000
-
-A SynapseCollection can be indexed or sliced, if you only want to
-inspect a subset of the connections contained in it:
-
-.. code-block:: python
-
-    >>> print(conn[0:2:2])
-     source   target   synapse model   weight   delay
-    -------- -------- --------------- -------- -------
-         1        3  static_synapse    1.000   1.000
-
-Last, but not least, SynapseCollection can be iterated, to retrieve
-one connection at a time:
-
-.. code-block:: python
-
-    >>>  for c in conn:
-    ...      print(c.source)
-    1
-    2
-
-Modifying Existing Connections
-------------------------------
-
-To modify the parameters of an existing connection, you first have to
-obtain handles to them using :py:func:`.GetConnections`. These handles
-can then be given as arguments to the :py:func:`.SetStatus` function,
-or by using the :py:meth:`~.SynapseCollection.set` function on the SynapseCollection directly:
-
-.. code-block:: python
-
-    n1 = nest.Create('iaf_psc_alpha', 2)
-    n2 = nest.Create('iaf_psc_alpha', 2)
-    nest.Connect(n1, n2)
-    conn = nest.GetConnections()
-    conn.set(weight=2.0)
-
-.. code-block:: python
-
-    >>> conn.get()
-    {'delay': [1.0, 1.0, 1.0, 1.0],
-     'port': [0, 1, 2, 3],
-     'receptor': [0, 0, 0, 0],
-     'sizeof': [32, 32, 32, 32],
-     'source': [1, 1, 2, 2],
-     'synapse_id': [18, 18, 18, 18],
-     'synapse_model': ['static_synapse', 'static_synapse', 'static_synapse', static_synapse'],
-     'target': [3, 4, 3, 4],
-     'target_thread': [0, 0, 0, 0],
-     'weight': [2.0, 2.0, 2.0, 2.0]}
-
-To update a single parameter of a connection or a set of connections,
-you can call the ``set()`` function of the SynapseCollection with the
-keyword argument ``parameter_name``. The value for this argument can
-be a single value, a list, or a ``nest.Parameter``. If a single value
-is given, the value is set on all connections. If you use a list to
-set the parameter, the list needs to be the same length as there are
-connections in the SynapseCollection.
-
-.. code-block:: python
-
-    conn.set(weight=[4.0, 4.5, 5.0, 5.5])
-
-Similar to how you retrieve several parameters at once with the
-:py:meth:`~.SynapseCollection.get` function explained above, you can also set multiple
-parameters at once using ``set(parameter_dictionary)``. Again, the
-values of the dictionary can be a single value, a list, or a
-``nest.Parameter``.
-
-.. code-block:: python
-
-    conn.set({'weight': [1.5, 2.0, 2.5, 3.0], 'delay': 2.0})
-
-Finally, you can also directly set parameters on a SynapseCollection
-using the dot-notation:
-
-.. code-block:: python
-
-    >>> conn.weight = 5.
-    >>> conn.weight
-    [5.0, 5.0, 5.0, 5.0]
-    >>> conn.delay = [5.1, 5.2, 5.3, 5.4]
-    >>> conn.delay
-    [5.1, 5.2, 5.3, 5.4]
-
-Note that some parameters like ``source`` and ``target`` are read-only and
-cannot be set. The documentation of a specific synapse model will
-point out which parameters can be set and which are read-only.
 
 References
 ----------
-
-.. [1] Djurfeldt M, Davison AP and Eppler JM (2014). Efficient generation of
+.. [1] Djurfeldt M. The Connection-set Algebra—A Novel Formalism for the Representation of Connectivity Structure in Neuronal Network Models. Neuroinformatics. 2012; 10: 287–304. https://doi.org/10.1007/s12021-012-9146-1
+.. [2] Albert R, Barabási AL. Statistical mechanics of complex networks. Rev Mod Phys. 2002; 74: 47–97. https://doi.org/10.1103/RevModPhys.74.47
+.. [3] Erdős P, Rényi A. On random graphs. Publications Mathematicae. 1959; 6: 290–297.
+.. [4] Hjertholm D. Statistical tests for connection algorithms for structured neural networks [master’s thesis]. Norwegian University of Life Sciences. Ås, Norway; 2013. Available from: http://hdl.handle.net/11250/189117
+.. [5] Djurfeldt M, Davison AP and Eppler JM (2014). Efficient generation of
        connectivity in neuronal networks from simulator-independent
        descriptions. Front. Neuroinform.
        https://doi.org/10.3389/fninf.2014.00043

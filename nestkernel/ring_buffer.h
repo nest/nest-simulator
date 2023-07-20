@@ -170,7 +170,7 @@ inline double
 RingBuffer::get_value( const long offs )
 {
   assert( 0 <= offs and static_cast< size_t >( offs ) < buffer_.size() );
-  assert( static_cast< long >( offs ) < kernel().connection_manager.get_min_delay() );
+  assert( offs < kernel().connection_manager.get_min_delay() );
 
   // offs == 0 is beginning of slice, but we have to
   // take modulo into account when indexing
@@ -184,7 +184,7 @@ inline double
 RingBuffer::get_value_wfr_update( const long offs )
 {
   assert( 0 <= offs and static_cast< size_t >( offs ) < buffer_.size() );
-  assert( static_cast< long >( offs ) < kernel().connection_manager.get_min_delay() );
+  assert( offs < kernel().connection_manager.get_min_delay() );
 
   // offs == 0 is beginning of slice, but we have to
   // take modulo into account when indexing
@@ -266,7 +266,7 @@ inline double
 MultRBuffer::get_value( const long offs )
 {
   assert( 0 <= offs and static_cast< size_t >( offs ) < buffer_.size() );
-  assert( static_cast< long >( offs ) < kernel().connection_manager.get_min_delay() );
+  assert( offs < kernel().connection_manager.get_min_delay() );
 
   // offs == 0 is beginning of slice, but we have to
   // take modulo into account when indexing
@@ -347,7 +347,7 @@ inline std::list< double >&
 ListRingBuffer::get_list( const long offs )
 {
   assert( 0 <= offs and static_cast< size_t >( offs ) < buffer_.size() );
-  assert( static_cast< long >( offs ) < kernel().connection_manager.get_min_delay() );
+  assert( offs < kernel().connection_manager.get_min_delay() );
 
   // offs == 0 is beginning of slice, but we have to
   // take modulo into account when indexing

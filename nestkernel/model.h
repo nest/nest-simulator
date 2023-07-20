@@ -255,7 +255,7 @@ private:
 inline Node*
 Model::create( size_t t )
 {
-  assert( static_cast< size_t >( t ) < memory_.size() );
+  assert( t < memory_.size() );
   Node* n = create_();
   memory_[ t ].emplace_back( n );
   return n;

@@ -78,18 +78,18 @@ astrocyte_lr_1994_dynamics( double time, const double y[], double f[], void* pno
   // shorthand for state variables
   const double& ip3 = y[ S::IP3 ];
   const double& calc = y[ S::Ca ];
-  const double& f_ip3r = y[ S::h_IP3R ];
+  const double& h_ip3r = y[ S::h_IP3R ];
 
-  const double alpha_f_ip3r = node.P_.k_IP3R_ * node.P_.Kd_inh_ * ( ip3 + node.P_.Kd_IP3_1_ ) / ( ip3 +
+  const double alpha_h_ip3r = node.P_.k_IP3R_ * node.P_.Kd_inh_ * ( ip3 + node.P_.Kd_IP3_1_ ) / ( ip3 +
       node.P_.Kd_IP3_2_ );
-  const double beta_f_ip3r = node.P_.k_IP3R_ * calc;
-  const double I_pump = node.P_.rate_SERCA_ * std::pow(calc, 2) / (std::pow(node.P_.Km_SERCA_, 2) + std::pow(calc, 2));
+  const double beta_h_ip3r = node.P_.k_IP3R_ * calc;
+  const double J_pump = node.P_.rate_SERCA_ * std::pow(calc, 2) / (std::pow(node.P_.Km_SERCA_, 2) + std::pow(calc, 2));
   const double m_inf = ip3 / (ip3 + node.P_.Kd_IP3_1_);
   const double n_inf = calc / (calc + node.P_.Kd_act_);
   const double calc_ER = (node.P_.Ca_tot_ - calc) / node.P_.ratio_ER_cyt_;
-  const double I_leak = node.P_.ratio_ER_cyt_ * node.P_.rate_L_ * (calc_ER - calc);
-  const double I_channel = node.P_.ratio_ER_cyt_ * node.P_.rate_IP3R_ * std::pow(m_inf, 3) * std::pow(n_inf, 3) *
-    std::pow(f_ip3r, 3) * (calc_ER - calc);
+  const double J_leak = node.P_.ratio_ER_cyt_ * node.P_.rate_L_ * (calc_ER - calc);
+  const double J_channel = node.P_.ratio_ER_cyt_ * node.P_.rate_IP3R_ * std::pow(m_inf, 3) * std::pow(n_inf, 3) *
+    std::pow(h_ip3r, 3) * (calc_ER - calc);
 
   // alpha shape for SIC
   const double& dsic = y[ S::DSIC ];
@@ -98,8 +98,8 @@ astrocyte_lr_1994_dynamics( double time, const double y[], double f[], void* pno
   f[ S::SIC ] = dsic - sic / node.P_.tau_SIC_;
 
   f[ S::IP3 ] = ( node.P_.IP3_0_ - ip3 ) / node.P_.tau_IP3_;
-  f[ S::Ca ] = I_channel - I_pump + I_leak + node.B_.I_stim_;
-  f[ S::h_IP3R ] = alpha_f_ip3r * ( 1.0 - f_ip3r ) - beta_f_ip3r * f_ip3r;
+  f[ S::Ca ] = J_channel - J_pump + J_leak + node.B_.I_stim_;
+  f[ S::h_IP3R ] = alpha_h_ip3r * ( 1.0 - h_ip3r ) - beta_h_ip3r * h_ip3r;
 
   return GSL_SUCCESS;
 }

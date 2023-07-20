@@ -68,9 +68,9 @@ An astrocyte model based on Li & Rinzel (1994)
 Description
 +++++++++++
 
-``astrocyte_lr_1994`` is an astrocyte model based on Li & Rinzel (1994) [1]. It
-can be connected with neurons to study neuron-astrocyte interactions. The model
-defines dynamics of the following variables:
+``astrocyte_lr_1994`` is an astrocyte model based on the model by Li & Rinzel
+(1994) [1]. It can be connected with neurons to study neuron-astrocyte
+interactions. The model defines dynamics of the following variables:
 
 ====== ======== ==============================================================
 IP3    uM       Inositol trisphosphate concentration in the astrocytic cytosol
@@ -80,24 +80,27 @@ h_IP3R unitless The fraction of active IP3 receptors on the astrocytic ER
 
 ``astrocyte_lr_1994`` is implemented according to the model by Nadkarni & Jung
 (2003) [2], which is derived from [1] by adding mechanisms for astrocytic IP3
-generation and calcium-depedent output. ``astrocyte_lr_1994`` includes all
-equations in [2], with modification of the mechanisms for IP3 generation and
-astrocytic output.
+generation and calcium-dependent astrocytic output. ``astrocyte_lr_1994``
+includes all equations in [2], with modifications of the mechanisms for IP3
+generation and for astrocytic output, as follows.
 
-The equation for IP3 generation is adapted from equation 4 in [2]:
+The mechanism for IP3 generation is defined by the following equation
+(adapted from equation 4 in [2]):
 
 .. math::
 
  \frac{dIP3}{dt} =
- \frac{IP3_0 - IP3}{\tau_{IP3}} + incr_{IP3}J_{syn}(t)
+ \frac{IP3_0 - IP3}{\tau_{IP3}} + \Delta_{IP3}J_{syn}(t)
 
-Here :math:`IP3_0` is the baseline value of IP3, :math:`\tau_{IP3}` is the time
-constant of IP3 degradation, :math:`incr_{IP3}` is the step increase in IP3 with
-each unit synaptic weight the astrocyte receives, and :math:`J_{syn}(t)` is the
-summed synaptic weight the astrocyte receives at time :math:`t`.
+Here :math:`IP3_0`, :math:`\tau_{IP3}`, and :math:`\Delta_{IP3}` are parameters
+of the model. :math:`IP3_0` is the baseline value of IP3, :math:`\tau_{IP3}` is
+the IP3 exponential decay constant, and :math:`\Delta_{IP3}` is the parameter
+for the rate of IP3 increment induced by synaptic input. :math:`J_{syn}(t)` is
+the summed synaptic weight the astrocyte receives at time :math:`t`.
 
-The equation for astrocytic output, the slow inward current (SIC), is adapted
-from equation 9 in [2]:
+The mechanism for the astrocytic output, the slow inward current (SIC,
+represented by :math:`I_{SIC}` here), is defined by the following equation
+(adapted from equation 9 in [2]):
 
 .. math::
 
@@ -107,12 +110,12 @@ and
 
 .. math::
 
- y = Ca/nM - 196.69
+ y = Ca/nM - SIC_{th}
 
-Here :math:`I_{SIC}` is the SIC output, :math:`SIC_{scale}` is the astrocytic
-coefficient to scale the SIC output with, :math:`H(x)` is the Heaviside function,
-:math:`y` is the above-threshold calcium concentration in nM, with the
-:math:`I_{SIC}` production threshold for calcium being 196.69 nM.
+Here :math:`SIC_{scale}` and :math:`SIC_{th}` are parameters of the model.
+:math:`SIC_{scale}` is a parameter for the scale of SIC output, and
+:math:`SIC_{th}` is the calcium threshold in nM for :math:`I_{SIC}` production.
+:math:`H(x)` is the Heaviside function.
 
 The output is implemented as ``SICEvent`` sent from the astrocyte to its targets
 through the ``sic_connection``.
@@ -146,15 +149,14 @@ Kd_IP3_1        uM        First astrocytic IP3R dissociation constant of IP3
 Kd_IP3_2        uM        Second astrocytic IP3R dissociation constant of IP3
 Km_SERCA        uM        Half-activation constant of astrocytic SERCA pump
 ratio_ER_cyt    unitless  Ratio between astrocytic ER and cytosol volumes
-incr_IP3        uM        Step increase in IP3 concentration with each unit synaptic weight the astrocyte receives
+incr_IP3        uM        Parameter for the rate of IP3 increment induced by synaptic input
 k_IP3R          1/(uM*ms) Astrocytic IP3R binding constant for calcium inhibition
 rate_L          1/ms      Rate constant for calcium leak from the astrocytic ER to cytosol
 rate_IP3R       1/ms      Maximum rate of calcium release via astrocytic IP3R
 rate_SERCA      uM/ms     Maximum rate of calcium uptake by astrocytic SERCA pump
-tau_IP3         ms        Time constant of astrocytic IP3 degradation
+tau_IP3         ms        IP3 exponential decay constant
 SIC_th          nM        Threshold that determines the minimal level of intracellular astrocytic calcium sufficient to induce SIC
-logarithmic_SIC boolean   Use logarithmic SIC output
-SIC_scale       unitless  Astrocytic coefficient to scale the SIC output with
+SIC_scale       unitless  Parameter for the scale of SIC output
 =============== ========= ========================================================================================================
 
 References

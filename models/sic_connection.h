@@ -33,7 +33,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Connection type for connecting astrocytes to neurons
+Synapse type for astrocyte-neuron connections
 
 Description
 +++++++++++
@@ -41,10 +41,11 @@ Description
 ``sic_connection`` connects an astrocyte to a target neuron. It sends
 ``SICEvent`` from the astrocyte to the neuron to model a continuous current
 input to the neuron, the slow inward current (SIC). The amplitude of the current
-is the product of the astrocytic output and the weight of the ``sic_connection``.
+is the product of the astrocytic output and the weight of the
+``sic_connection``.
 
 The source node of ``sic_connection`` should be an astrocyte, and the target
-node should be a neuron that receives ``SICEvent``. ``sic_connection`` is
+node should be a neuron that handles ``SICEvent``. ``sic_connection`` is
 adapted from ``gap_junction`` but unidirectional. The parameter ``delay`` is
 ignored in this connection type.
 

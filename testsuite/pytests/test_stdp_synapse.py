@@ -406,7 +406,3 @@ class TestSTDPSynapse:
                             fname_snip += "_[dend_delay=" + str(self.dendritic_delay) + "]"
                             fname_snip += "_[t_ref=" + str(self.neuron_parameters["t_ref"]) + "]"
                             self.do_nest_simulation_and_compare_to_reproduced_weight(fname_snip=fname_snip)
-
-
-if __name__ == "__main__":
-    TestSTDPSynapse().test_stdp_synapse()

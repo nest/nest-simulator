@@ -15,7 +15,7 @@ import nest
 # Simulation time
 sim_time = 60000
 # Poisson rate for neuron
-poisson_rate_neuro = 1500.0
+poisson_rate_neuro = 1700.0
 # Poisson rate for astrocyte
 poisson_rate_astro = 0.0
 # Neuron parameters
@@ -23,7 +23,7 @@ params_neuro = {'tau_syn_ex': 2.0}
 # Astrocyte parameters
 params_astro = {'IP3_0': 0.16}
 # Connection weights
-w_pre2astro = 1.0
+w_pre2astro = 0.1
 w_pre2post = 1.0
 w_astro2post = 1.0
 
@@ -37,14 +37,13 @@ data_path = os.path.join('astrocyte_tripartite', hashlib.md5(os.urandom(16)).hex
 # Function for simulation.
 
 def simulate():
-    # Initialize NEST kernel
-    nest.ResetKernel()
     # Create astrocyte and its devices
     astrocyte = nest.Create('astrocyte_lr_1994', params=params_astro)
     ps_astro = nest.Create('poisson_generator', params={'rate': poisson_rate_astro})
     mm_astro = nest.Create('multimeter', params={'record_from': ['IP3', 'Ca']})
     nest.Connect(ps_astro, astrocyte)
     nest.Connect(mm_astro, astrocyte)
+
     # Create neurons and their devices
     pre_neuron = nest.Create('aeif_cond_alpha_astro', params=params_neuro)
     post_neuron = nest.Create('aeif_cond_alpha_astro', params=params_neuro)
@@ -54,10 +53,12 @@ def simulate():
     nest.Connect(ps_pre, pre_neuron)
     nest.Connect(mm_pre, pre_neuron)
     nest.Connect(mm_post, post_neuron)
+
     # Create tripartite connectivity
     nest.Connect(pre_neuron, post_neuron, syn_spec={'weight': w_pre2post})
     nest.Connect(pre_neuron, astrocyte, syn_spec={'weight': w_pre2astro})
     nest.Connect(astrocyte, post_neuron, syn_spec={'synapse_model': 'sic_connection', 'weight': w_astro2post})
+
     # Simulate
     nest.Simulate(sim_time)
     return mm_astro.events, mm_pre.events, mm_post.events
@@ -89,9 +90,9 @@ def run():
     axes[3].plot(data_astro["times"], data_astro["Ca"])
 
     # Label and show plots
-    axes[0].set_title(f'Presynaptic neuron\n(Poisson rate = {poisson_rate_neuro} Hz)')
+    axes[0].set_title(f'Presynaptic neuron')
     axes[0].set_ylabel('Membrane potential (mV)')
-    axes[1].set_title(f'Astrocyte\n(Poisson rate = {poisson_rate_astro} Hz)')
+    axes[1].set_title(f'Astrocyte')
     axes[1].set_ylabel(r"[IP$_{3}$] ($\mu$M)")
     axes[2].set_title(f'Postsynaptic neuron')
     axes[2].set_ylabel("Slow inward current (pA)")

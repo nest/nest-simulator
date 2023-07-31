@@ -83,7 +83,7 @@ Description
 (AdEx) that can receive inputs from astrocytes, in addition to receiving
 synaptic inputs from other neurons. It is adapted from the standard NEST
 implementation of AdEx (``aeif_cond_alpha``). The connection with astrocytes is
-established through ``sic_connection``, which sends ``SICEvent`` from astrocyte
+established through ``sic_connection``, which sends ``SICEvent`` from an astrocyte
 to ``aeif_cond_alpha_astro``. These events implement the continuous slow inward
 current (SIC).
 
@@ -106,7 +106,7 @@ and
 Here, :math:`I_{SIC}` is the sum of ``SICEvent`` inputs received from all
 astrocytes connected to the considered neuron.
 
-For implementation details of the adaptive exponential integrate and fire neuron
+For implementation details of the adaptive exponential integrate-and-fire neuron
 model, see the
 `aeif_models_implementation <../model_details/aeif_models_implementation.ipynb>`_ notebook.
 
@@ -118,7 +118,7 @@ Parameters
 The following parameters can be set in the status dictionary.
 
 ======== ======= =======================================
-**Dynamic state variables:**
+**Dynamic state variables**
 --------------------------------------------------------
  V_m     mV      Membrane potential
  g_ex    nS      Excitatory synaptic conductance

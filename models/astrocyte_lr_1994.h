@@ -68,17 +68,17 @@ An astrocyte model based on Li & Rinzel (1994)
 Description
 +++++++++++
 
-``astrocyte_lr_1994`` is a model of astrocytic calcium dynamics. The model is
+``astrocyte_lr_1994`` is a model of astrocytic calcium dynamics. The model was
 first proposed by Li & Rinzel (1994) and it is based on earlier work of DeYoung
 & Kaiser (1992). The input and output of the model are implemented according to
 Nadkarni & Jung (2003).
 
 The model is defined by three variables, the concentration of inositol
-1,4,5-trisphosphate in the astrocyte - IP3, the calcium concentration in the
-astrocytic cytosol - Ca, and the fraction of active IP3 receptors on the
-astrocytic Endoplasmatic Reticulum (ER) - h_IP3R.
+1,4,5-trisphosphate in the astrocyte (IP3), the calcium concentration in the
+astrocytic cytosol (Ca), and the fraction of active IP3 receptors on the
+astrocytic Endoplasmatic Reticulum (h_IP3R).
 
-Astrocyte receives an input through IP3 variable and outputs a SIC current
+The astrocyte receives an input through IP3 variable and outputs a SIC current
 dependent on its calcium dynamics (see ``sic_connection``) to selected neurons
 according to the model from Nadkarni & Jung (2003).
 
@@ -87,13 +87,12 @@ directly into the variable for cytosolic calcium, to account for small
 nonspecific random fluctuations.
 
 ``astrocyte_lr_1994`` includes all equations in Nadkarni & Jung (2003), with
-modifications of the mechanisms for IP3 generation and for astrocytic output,
-as follows.
+adaptations regarding input and output as follows:
 
 **Input:** In this model, astrocyte receives inputs from neighboring
 glutamatergic synapses (neighboring synapses and neurons are defined by the
 connectivity scheme). These inputs directly affect IP3 variable according to the
-following equation.
+following equation:
 
 .. math::
 
@@ -126,12 +125,12 @@ where
 When the astrocytic calcium (normalized to nM) exceeds the threshold value
 (:math:`\mbox{SIC}_{th}`) a SIC output is generated. This thresholding is modeled as a
 Heaviside function (:math:`H(\cdot)`). In this implementation, we treat the SIC
-threshold $\mbox{SIC}_{th}$ as well as the scaling constant :math:`\mbox{SIC}_{scale}` as
+threshold :math:`\mbox{SIC}_{th}` as well as the scaling constant :math:`\mbox{SIC}_{scale}` as
 external model parameters that can be set together with other astrocyte
-parameters. Nadkarni and Jung (2003) propose values for these parameters by
+parameters. Nadkarni and Jung (2003) proposed values for these parameters by
 fitting the equation for :math:`I_{SIC}` to an experimental data set.
 
-The output is implemented as ``SICEvent`` sent from the astrocyte to its targets
+The output is implemented as ``SICEvent`` sent from the astrocyte to its target neurons
 through the ``sic_connection``.
 
 For implementation details, see the
@@ -144,13 +143,13 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-======  ========= ==============================================================
+======  ========= ====================================================================
 **Dynamic state variables**
---------------------------------------------------------------------------------
-IP3     uM        Inositol trisphosphate concentration in the astrocytic cytosol
+--------------------------------------------------------------------------------------
+IP3     uM        Inositol 1,4,5-trisphosphate concentration in the astrocytic cytosol
 Ca      uM        Calcium concentration in the astrocytic cytosol
 h_IP3R  unitless  The fraction of active IP3 receptors on the astrocytic ER
-======  ========= ==============================================================
+======  ========= ====================================================================
 
 =============== ========= ========================================================================================================
 **Parameters**

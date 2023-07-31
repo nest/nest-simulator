@@ -68,54 +68,68 @@ An astrocyte model based on Li & Rinzel (1994)
 Description
 +++++++++++
 
-``astrocyte_lr_1994`` is an astrocyte model based on the model by Li & Rinzel
-(1994) [1]. It can be connected with neurons to study neuron-astrocyte
-interactions. The model defines dynamics of the following variables:
+``astrocyte_lr_1994`` is a model of astrocytic calcium dynamics. The model is
+first proposed by Li & Rinzel (1994) and it is based on earlier work of DeYoung
+& Kaiser (1992). The input and output of the model are implemented according to
+Nadkarni & Jung (2003).
 
-====== ======== ==============================================================
-IP3    uM       Inositol trisphosphate concentration in the astrocytic cytosol
-Ca     uM       Calcium concentration in the astrocytic cytosol
-h_IP3R unitless The fraction of active IP3 receptors on the astrocytic ER
-====== ======== ==============================================================
+The model is defined by three variables, the concentration of inositol
+1,4,5-trisphosphate in the astrocyte - IP3, the calcium concentration in the
+astrocytic cytosol - Ca, and the fraction of active IP3 receptors on the
+astrocytic Endoplasmatic Reticulum (ER) - h_IP3R.
 
-``astrocyte_lr_1994`` is implemented according to the model by Nadkarni & Jung
-(2003) [2], which is derived from [1] by adding mechanisms for astrocytic IP3
-generation and calcium-dependent astrocytic output. ``astrocyte_lr_1994``
-includes all equations in [2], with modifications of the mechanisms for IP3
-generation and for astrocytic output, as follows.
+Astrocyte receives an input through IP3 variable and outputs a SIC current
+dependent on its calcium dynamics (see ``sic_connection``) to selected neurons
+according to the model from Nadkarni & Jung (2003).
 
-The mechanism for IP3 generation is defined by the following equation
-(adapted from equation 4 in [2]):
+In addition, a current in the form of Gaussian white noise can be injected
+directly into the variable for cytosolic calcium, to account for small
+nonspecific random fluctuations.
+
+``astrocyte_lr_1994`` includes all equations in Nadkarni & Jung (2003), with
+modifications of the mechanisms for IP3 generation and for astrocytic output,
+as follows.
+
+**Input:** In this model, astrocyte receives inputs from neighboring
+glutamatergic synapses (neighboring synapses and neurons are defined by the
+connectivity scheme). These inputs directly affect IP3 variable according to the
+following equation.
 
 .. math::
 
  \frac{dIP3}{dt} =
- \frac{IP3_0 - IP3}{\tau_{IP3}} + \Delta_{IP3}J_{syn}(t)
+ \frac{IP3_0 - IP3}{\tau_{IP3}} + \Delta_{IP3} \cdot J_{syn}(t)
 
-Here :math:`IP3_0`, :math:`\tau_{IP3}`, and :math:`\Delta_{IP3}` are parameters
-of the model. :math:`IP3_0` is the baseline value of IP3, :math:`\tau_{IP3}` is
-the IP3 exponential decay constant, and :math:`\Delta_{IP3}` is the parameter
-for the rate of IP3 increment induced by synaptic input. :math:`J_{syn}(t)` is
-the summed synaptic weight the astrocyte receives at time :math:`t`.
+In the absence of inputs, IP3 decays to its baseline value (:math:`IP3_0`) with
+the time constant (:math:`\tau_{IP3}`). Each time when a neighboring synapse
+releases glutamate, part of it is uptaken by the astrocyte which, in this model,
+triggers an instantaneous increase of IP3. The summed input from all neighboring
+synapses at time :math:`t` is given by :math:`J_{syn}(t)`. The parameter
+:math:`\Delta_{IP3}` scales the impact of synaptic inputs on the IP3 dynamics.
 
-The mechanism for the astrocytic output, the slow inward current (SIC,
-represented by :math:`I_{SIC}` here), is defined by the following equation
-(adapted from equation 9 in [2]):
-
-.. math::
-
- I_{SIC} = SIC_{scale} H \left( ln(y) \right) ln(y)
-
-and
+**Output:** If an astrocyte receives a glutamatergic input from a synapse
+it might output a slow inward current (SIC, :math:`I_{SIC}`) to the
+postsynaptic neuron. This current depends on the levels of calcium in the
+astrocytic cytosol, the dependency is modeled according to the expressions first
+proposed in Nadkarni & Jung (2003):
 
 .. math::
 
- y = Ca/nM - SIC_{th}
+ I_{SIC} =  \mbox{SIC}_{scale} \cdot H \left(\mbox{ln}(y)\right) \cdot \mbox{ln}(y)
 
-Here :math:`SIC_{scale}` and :math:`SIC_{th}` are parameters of the model.
-:math:`SIC_{scale}` is a parameter for the scale of SIC output, and
-:math:`SIC_{th}` is the calcium threshold in nM for :math:`I_{SIC}` production.
-:math:`H(x)` is the Heaviside function.
+where
+
+.. math::
+
+ y = Ca/nM - \mbox{SIC}_{th}
+
+When the astrocytic calcium (normalized to nM) exceeds the threshold value
+(:math:`\mbox{SIC}_{th}`) a SIC output is generated. This thresholding is modeled as a
+Heaviside function (:math:`H(\cdot)`). In this implementation, we treat the SIC
+threshold $\mbox{SIC}_{th}$ as well as the scaling constant :math:`\mbox{SIC}_{scale}` as
+external model parameters that can be set together with other astrocyte
+parameters. Nadkarni and Jung (2003) propose values for these parameters by
+fitting the equation for :math:`I_{SIC}` to an experimental data set.
 
 The output is implemented as ``SICEvent`` sent from the astrocyte to its targets
 through the ``sic_connection``.
@@ -162,17 +176,17 @@ SIC_scale       unitless  Parameter for the scale of SIC output
 References
 ++++++++++
 
-.. [1] Li, Y. X., & Rinzel, J. (1994). Equations for InsP3 receptor-mediated
+.. [1] De Young, G. W., & Keizer, J. (1992). A single-pool inositol
+       1,4,5-trisphosphate-receptor-based model for agonist-stimulated
+       oscillations in Ca2+ concentration. Proceedings of the National Academy
+       of Sciences, 89(20), 9895-9899.
+.. [2] Li, Y. X., & Rinzel, J. (1994). Equations for InsP3 receptor-mediated
        [Ca2+]i oscillations derived from a detailed kinetic model: a
        Hodgkin-Huxley like formalism. Journal of theoretical Biology, 166(4),
        461-473.
-.. [2] Nadkarni S, and Jung P. Spontaneous oscillations of dressed neurons: A
+.. [3] Nadkarni S, and Jung P. Spontaneous oscillations of dressed neurons: A
        new mechanism for epilepsy? Physical Review Letters, 91:26. DOI:
        10.1103/PhysRevLett.91.268101
-.. [3] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A, Diesmann M
-       (2015). A unified framework for spiking and gap-junction interactions
-       in distributed neuronal netowrk simulations. Frontiers in
-       Neuroinformatics, 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
 
 Sends
 +++++

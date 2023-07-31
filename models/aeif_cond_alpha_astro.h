@@ -79,11 +79,13 @@ neuron-astrocyte interactions
 Description
 +++++++++++
 
-``aeif_cond_alpha_astro`` is an adaptive exponential integrate and fire neuron
-adated from ``aeif_cond_alpha`` to support neuron-astrocyte interactions. It can
-be connected with astrocytes through the ``sic_connection``, which sends
-``SICEvent`` from an astrocyte to ``aeif_cond_alpha_astro`` to model a
-continuous current input, the slow inward current (SIC).
+``aeif_cond_alpha_astro`` is an adaptive exponential integrate-and-fire neuron
+(AdEx) that can receive inputs from astrocytes, in addition to receiving
+synaptic inputs from other neurons. It is adapted from the standard NEST
+implementation of AdEx (``aeif_cond_alpha``). The connection with astrocytes is
+established through ``sic_connection``, which sends ``SICEvent`` from astrocyte
+to ``aeif_cond_alpha_astro``. These events implement the continuous slow inward
+current (SIC).
 
 The membrane potential is given by the following differential equation
 (adapted from ``aeif_cond_alpha``):
@@ -101,8 +103,8 @@ and
 
  \tau_w \frac{dw}{dt} = a(V-E_L) - w
 
-Here :math:`I_{SIC}` is the summed value of ``SICEvent`` sent from astrocytes
-through ``sic_connection`` to ``aeif_cond_alpha_astro``.
+Here, :math:`I_{SIC}` is the sum of ``SICEvent`` inputs received from all
+astrocytes connected to the considered neuron.
 
 For implementation details of the adaptive exponential integrate and fire neuron
 model, see the

@@ -141,7 +141,10 @@ class AstrocyteTestCase(unittest.TestCase):
     def test_closeness_nest_odeint(self):
         # Compare models to the ODEINT implementation.
 
+        # declare the same parameters as the reference
         simtime = 100.
+        spike_times = [10.0 - nest.resolution] # compensate for delay
+        spike_weights = [1.0]
 
         # get ODEINT reference
         odeint = np.loadtxt(os.path.join(path, 'test_astrocyte.dat')).T
@@ -149,20 +152,28 @@ class AstrocyteTestCase(unittest.TestCase):
         Ca_astro_interp = interp1d(odeint[0, :], odeint[2, :])
         h_IP3R_astro_interp = interp1d(odeint[0, :], odeint[3, :])
 
-        # create the neurons and devices
+        # create astrocytes and devices
         cells = {model: nest.Create(model, params=astrocyte_param)
                    for model in models}
         multimeters = {model: nest.Create("multimeter") for model in models}
-        # connect them and simulate
+        spk_ge = {model: nest.Create("spike_generator") for model in models}
+
+        # connect astrocytes and devices
         for model, mm in iter(multimeters.items()):
             nest.SetStatus(mm, {"interval": nest.resolution,
                                 "record_from": ["IP3", "Ca", "h_IP3R"]})
             nest.Connect(mm, cells[model])
+        for model, ge in iter(spk_ge.items()):
+            nest.SetStatus(ge, {"spike_times": spike_times, "spike_weights": spike_weights})
+            nest.Connect(ge, cells[model], syn_spec={'delay': nest.resolution})
+
+        # simulate
         nest.Simulate(simtime)
 
         # relative differences: interpolate ODEINT to match NEST times
         mm0 = next(iter(multimeters.values()))
         nest_times = nest.GetStatus(mm0, "events")[0]["times"]
+        ip3 = nest.GetStatus(mm0, "events")[0]["IP3"]
         reference = {
             'IP3': IP3_astro_interp(nest_times),
             'Ca': Ca_astro_interp(nest_times),

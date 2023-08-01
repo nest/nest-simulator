@@ -168,7 +168,7 @@ rate_L          1/ms      Rate constant for calcium leak from the astrocytic ER 
 rate_IP3R       1/ms      Maximum rate of calcium release via astrocytic IP3R
 rate_SERCA      uM/ms     Maximum rate of calcium uptake by astrocytic SERCA pump
 tau_IP3         ms        IP3 exponential decay constant
-SIC_th          nM        Threshold that determines the minimal level of intracellular astrocytic calcium sufficient to induce SIC
+SIC_th          uM        Threshold that determines the minimal level of intracellular astrocytic calcium sufficient to induce SIC
 SIC_scale       unitless  Parameter for the scale of SIC output
 =============== ========= ========================================================================================================
 
@@ -284,7 +284,7 @@ private:
     double incr_IP3_;     //!< Step increase in IP3 concentration with each unit synaptic weight received by the astrocyte in uM
     double k_IP3R_;       //!< Astrocytic IP3R binding constant for calcium in 1/(uM*ms)
     double rate_L_;       //!< Rate constant for calcium leak from the astrocytic ER to cytosol in 1/ms
-    double SIC_th_;       //!< Calcium threshold for producing SIC in nM
+    double SIC_th_;       //!< Calcium threshold for producing SIC in uM
     double tau_IP3_;      //!< Time constant of astrocytic IP3 degradation in ms
     double rate_IP3R_;    //!< Maximum rate of calcium release via astrocytic IP3R in 1/ms
     double rate_SERCA_;   //!< Maximum rate of calcium uptake by astrocytic IP3R in uM/ms

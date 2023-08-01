@@ -121,7 +121,7 @@ nest::astrocyte_lr_1994::Parameters_::Parameters_()
   , incr_IP3_( 5.0 )       // uM
   , k_IP3R_( 0.0002 )      // 1/(uM*ms)
   , rate_L_( 0.00011 )     // 1/ms
-  , SIC_th_( 196.69 )      // nM
+  , SIC_th_( 0.19669 )      // uM
   , tau_IP3_( 7142.0 )     // ms
   , rate_IP3R_( 0.006 )    // 1/ms
   , rate_SERCA_( 0.0009 )  // uM/ms
@@ -130,7 +130,7 @@ nest::astrocyte_lr_1994::Parameters_::Parameters_()
   , alpha_SIC_( false )
   , tau_SIC_( 1000.0 ) // ms
   , delay_SIC_( 1000.0 ) // ms
-  , SIC_reactivate_th_( 196.69 ) // nM
+  , SIC_reactivate_th_( 0.19669 ) // uM
   , SIC_reactivate_time_( 100 ) // ms
 {
 }
@@ -485,7 +485,7 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
     double t = 0.0;
     // get the last normalized calcium concentration before solving ODE
     // this is for threshold-crossing judgement
-    double calc_thr_last = S_.y_[ State_::Ca ] * 1000.0 - P_.SIC_th_;
+    double calc_thr_last = ( S_.y_[ State_::Ca ] - P_.SIC_th_ ) * 1000.0;
 
     // numerical integration with adaptive step size control:
     // ------------------------------------------------------
@@ -541,7 +541,7 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
 
     // get normalized calcium concentration
     // 1000.0: change unit from uM to nM
-    double calc_thr = S_.y_[ State_::Ca ] * 1000.0 - P_.SIC_th_;
+    double calc_thr = ( S_.y_[ State_::Ca ] - P_.SIC_th_ ) * 1000.0;
     double sic_value = 0.0;
     // alpha-shaped SIC
     if ( P_.alpha_SIC_ == true )
@@ -569,7 +569,7 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
           B_.sic_started_flag_ = true;
         }
         // condition to return to SIC-off (reactivated) state; to be discussed
-        if ( S_.y_[ State_::Ca ] * 1000.0 < P_.SIC_reactivate_th_ )
+        if ( S_.y_[ State_::Ca ] < P_.SIC_reactivate_th_ )
         {
           // timer for SIC-off
           B_.sic_off_timer_ += B_.step_;

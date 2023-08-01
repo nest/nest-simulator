@@ -564,18 +564,11 @@ nest::glif_psc_double_alpha::update( Time const& origin, const long from, const 
       S_.I_syn_slow_ = 0.0;
       for ( size_t i = 0; i < P_.n_receptors_(); i++ )
       {
-        // S_.U_ += V_.P31_slow_[ i ] * S_.y1_slow_[ i ] + (V_.P32_slow_[ i ] * S_.y2_slow_[ i ]) * P_.amp_slow_[ i ];
         S_.U_ += V_.P31_slow_[ i ] * S_.y1_slow_[ i ] + V_.P32_slow_[ i ] * S_.y2_slow_[ i ];
-        // multiply amp_slow_
         S_.I_syn_slow_ += S_.y2_slow_[ i ];
-        // print all components of P3x and y the slow current.
-        // std::cout << "P31_slow: " << V_.P31_slow_[ i ] << " y1_slow: " << S_.y1_slow_[ i ] << " y2_slow:" <<
-        // S_.y2_slow_[ i ] << std::endl;
       }
       // add the fast and slow components
       S_.I_syn_ = S_.I_syn_fast_ + S_.I_syn_slow_;
-      // print to diagnose the synaptic current
-      // std::cout << "I_syn_fast: " << S_.I_syn_fast_ << " I_syn_slow: " << S_.I_syn_slow_ << std::endl;
 
       // Calculate exact voltage component of the threshold for glif5 model with
       // "A"
@@ -656,11 +649,6 @@ nest::glif_psc_double_alpha::update( Time const& origin, const long from, const 
       S_.y2_slow_[ i ] = V_.P21_slow_[ i ] * S_.y1_slow_[ i ] + V_.P22_slow_[ i ] * S_.y2_slow_[ i ];
       S_.y1_slow_[ i ] *= V_.P11_slow_[ i ];
       S_.y1_slow_[ i ] += V_.PSCInitialValues_slow_[ i ] * spike_value;
-      // print y1 and y1 slow
-      //  std::cout << "y1: " << S_.y1_[ i ] << " y1_slow: " << S_.y1_slow_[ i ] << std::endl;
-      //  print PSCInitlaValues
-      //  std::cout << "PSCInitialValues: " << V_.PSCInitialValues_[ i ] << " PSCInitialValues_slow: " <<
-      //  V_.PSCInitialValues_slow_[ i ] << std::endl;
     }
 
     // Update any external currents

@@ -387,18 +387,6 @@ private:
     return S_.I_syn_;
   }
 
-  // double
-  // get_I_syn_fast_() const
-  // {
-  //   return S_.I_syn_fast_;
-  // }
-
-  // double
-  // get_I_syn_slow_() const
-  // {
-  //   return S_.I_syn_slow_;
-  // }
-
   double
   get_threshold_() const
   {

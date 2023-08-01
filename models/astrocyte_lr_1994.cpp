@@ -530,12 +530,6 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
       S_.y_[ State_::Ca ] = 0.0;
     }
 
-    // log state data
-    B_.logger_.record_data( origin.get_steps() + lag );
-
-    // set new input current
-    B_.I_stim_ = B_.currents_.get_value( lag );
-
     // this is to add the incoming spikes to the state variable
     S_.y_[ State_::IP3 ] += P_.incr_IP3_ * B_.spike_exc_.get_value( lag );
 
@@ -621,6 +615,11 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
     }
     B_.sic_values[ lag ] = sic_value;
 
+    // set new input current
+    B_.I_stim_ = B_.currents_.get_value( lag );
+
+    // log state data
+    B_.logger_.record_data( origin.get_steps() + lag );
   } // end for loop
 
   // Send SIC event

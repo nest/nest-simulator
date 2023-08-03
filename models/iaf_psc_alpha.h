@@ -105,7 +105,7 @@ on the synaptic time constant according to
 
 .. math::
 
-   \int_0^{infty}  i_{\text{syn, X}}(t) dt = e \tau_{\text{syn, X}} \;.
+   q = \int_0^{\infty}  i_{\text{syn, X}}(t) dt = e \tau_{\text{syn, X}} \;.
 
 By default, :math:`V_m` is not bounded from below. To limit
 hyperpolarization to biophysically plausible values, set parameter

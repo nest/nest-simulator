@@ -111,3 +111,4 @@ dependencies:
     - sphinx_gallery
     - sphinx-material
     - sphinx-tabs
+    - sphinx-notfound-page

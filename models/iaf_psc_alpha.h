@@ -125,7 +125,7 @@ hyperpolarization to biophysically plausible values, set parameter
    numerical instabilities.
 
    For implementation details see the
-   `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+   `IAF Integration Singularity notebook <../model_details/IAF_Integration_Singularity.ipynb>`_.
 
 
 Parameters

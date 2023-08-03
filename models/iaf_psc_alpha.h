@@ -85,12 +85,13 @@ where
 
 .. math::
 
-   I_{\text{syn, ex}}(t) = \sum_{\begin{stack}(t_m, w_m)\\w_m > 0\end{stack}} w_m i_{\text{syn, ex}}(t-t_m)
+   I_{\text{syn, ex}}(t) = \sum_{j} w_j \sum_k i_{\text{syn, ex}}(t-t_j^k-d_j) \;,
 
-is the sum over the excitatory spikes arriving at times $t_m$ with
-weights $w_m$. There is a corresponding expression for inhibitory
-spikes (:math:`w_m \leq 0`).  Finally, individual post-synaptic
-currents are given by
+where :math:`j` indexes excitatory presynaptic neurons, :math:`k`
+indexes the spike times of neuron :math:`j`, and :math:`d_j` is the
+delay from neuron :math:`j`.
+
+The individual post-synaptic currents (PSCs) are given by
 
 .. math::
 

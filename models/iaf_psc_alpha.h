@@ -58,20 +58,20 @@ The membrane potential evolves according to
 
    \frac{dV_\text{m}}{dt} = -\frac{V_{\text{m}} - E_\text{L}}{\tau_{\text{m}}} + \frac{I_{\text{syn}} + I_\text{e}}{C_{\text{m}}}
 
-where the synaptic input current :math:`I_{\text{syn}}(t)` is discussed below and :math:`I_e` is
+where the synaptic input current :math:`I_{\text{syn}}(t)` is discussed below and :math:`I_\text{e}` is
 a constant input current set as a model parameter.
 
 A spike is emitted at time step :math:`t^*=t_{k+1}` if
 
 .. math::
 
-   V_m(t_k) < V_{th} \quad\text{and}\quad V_m(t_{k+1})\geq V_{th} \;.
+   V_\text{m}(t_k) < V_{th} \quad\text{and}\quad V_\text{m}(t_{k+1})\geq V_\text{th} \;.
 
 Subsequently,
 
 .. math::
 
-   V_m(t) = V_{\text{reset}} \quad\text{for}\quad t^* \leq t < t^* + t_{\text{ref}} \;,
+   V_\text{m}(t) = V_{\text{reset}} \quad\text{for}\quad t^* \leq t < t^* + t_{\text{ref}} \;,
 
 that is, the membrane potential is clamped to :math:`V_{\text{reset}}` during the refractory period.
 
@@ -85,10 +85,12 @@ where
 
 .. math::
 
-   I_{\text{syn, ex}}(t) = \sum_{(t_m, w_m)\\w_m > 0} w_m i_{\text{syn, ex}}(t-t_m)
+   I_{\text{syn, ex}}(t) = \sum_{\begin{stack}(t_m, w_m)\\w_m > 0\end{stack}} w_m i_{\text{syn, ex}}(t-t_m)
 
-is the sum over all incoming excitatory spikes, with a corresponding expression for inhibitory spikes (:math:`w_m < 0`).
-Finally, individual post-synaptic currents are given by
+is the sum over the excitatory spikes arriving at times $t_m$ with
+weights $w_m$. There is a corresponding expression for inhibitory
+spikes (:math:`w_m \leq 0`).  Finally, individual post-synaptic
+currents are given by
 
 .. math::
 
@@ -98,7 +100,7 @@ where :math:`\Theta(x)` is the Heaviside step function. The PSCs are normalized 
 
 .. math::
 
-   i_{\text{syn, X}}(t) = 1 \Leftrightarrow t = \tau_{\text{syn, X}} \;.
+   i_{\text{syn, X}}(t= \tau_{\text{syn, X}}) = 1 \;.
 
 As a consequence, the total charge :math:`q` transferred by a single PSC depends
 on the synaptic time constant according to
@@ -107,19 +109,19 @@ on the synaptic time constant according to
 
    q = \int_0^{\infty}  i_{\text{syn, X}}(t) dt = e \tau_{\text{syn, X}} \;.
 
-By default, :math:`V_m` is not bounded from below. To limit
+By default, :math:`V_\text{m}` is not bounded from below. To limit
 hyperpolarization to biophysically plausible values, set parameter
-:math:`V_{\text{min}}` as lower bound of :math:`V_m`.
+:math:`V_{\text{min}}` as lower bound of :math:`V_\text{m}`.
 
 .. note::
 
    NEST uses exact integration [1]_, [2]_ to integrate subthreshold membrane
    dynamics with maximum precision; see also [3]_.
 
-   If :math:`\tau_m\approx \tau_{\text{syn, ex}}` or
-   :math:`\tau_m\approx \tau_{\text{syn, in}}`, the model will
-   numerically behave as if :math:`\tau_m = \tau_{\text{syn, ex}}` or
-   :math:`\tau_m = \tau_{\text{syn, in}}`, respectively, to avoid
+   If :math:`\tau_\text{m}\approx \tau_{\text{syn, ex}}` or
+   :math:`\tau_\text{m}\approx \tau_{\text{syn, in}}`, the model will
+   numerically behave as if :math:`\tau_\text{m} = \tau_{\text{syn, ex}}` or
+   :math:`\tau_\text{m} = \tau_{\text{syn, in}}`, respectively, to avoid
    numerical instabilities.
 
    For implementation details see the
@@ -135,7 +137,7 @@ The following parameters can be set in the status dictionary.
 **Parameter**   **Unit** **Math equivalent**             **Description**
 =============== ======== =============================== ========================================================================
  ``V_m``         mV       :math:`V_{\text{m}}`           Membrane potential
- ``E_L``         mV       :math:`E_L`                    Resting membrane potential
+ ``E_L``         mV       :math:`E_\text{L}`             Resting membrane potential
  ``C_m``         pF       :math:`C_{\text{m}}`           Capacity of the membrane
  ``tau_m``       ms       :math:`\tau_{\text{m}}`        Membrane time constant
  ``t_ref``       ms       :math:`t_{\text{ref}}`         Duration of refractory period
@@ -143,7 +145,7 @@ The following parameters can be set in the status dictionary.
  ``V_reset``     mV       :math:`V_{\text{reset}}`       Reset potential of the membrane
  ``tau_syn_ex``  ms       :math:`\tau_{\text{syn, ex}}`  Rise time of the excitatory synaptic alpha function
  ``tau_syn_in``  ms       :math:`\tau_{\text{syn, in}}`  Rise time of the inhibitory synaptic alpha function
- ``I_e``         pA       :math:`I_e`                    Constant input current
+ ``I_e``         pA       :math:`I_\text{e}`             Constant input current
  ``V_min``       mV       :math:`V_{\text{min}}`         Absolute lower value for the membrane potenial (default :math:`-\infty`)
 =============== ======== =============================== ========================================================================
 

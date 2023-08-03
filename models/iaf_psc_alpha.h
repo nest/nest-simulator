@@ -56,7 +56,7 @@ The membrane potential evolves according to
 
 .. math::
 
-   \frac{dV_m}{dt} = -\frac{V_m - E_L}{\tau_m} + \frac{I_{\text{syn}} + I_e}{C_m}
+   \frac{dV_\text{m}}{dt} = -\frac{V_{\text{m}} - E_\text{L}}{\tau_{\text{m}}} + \frac{I_{\text{syn}} + I_\text{e}}{C_{\text{m}}}
 
 where the synaptic input current :math:`I_{\text{syn}}(t)` is discussed below and :math:`I_e` is
 a constant input current set as a model parameter.
@@ -73,7 +73,7 @@ Subsequently,
 
    V_m(t) = V_{\text{reset}} \quad\text{for}\quad t^* \leq t < t^* + t_{\text{ref}} \;,
 
-i.e., the membrane potential is clamped to :math:`V_{\text{reset}}` during the refractory period.
+that is, the membrane potential is clamped to :math:`V_{\text{reset}}` during the refractory period.
 
 The synaptic input current has an excitatory and an inhibitory component
 
@@ -94,7 +94,7 @@ Finally, individual post-synaptic currents are given by
 
    i_{\text{syn, X}}(t) = \frac{e}{\tau_{\text{syn, X}}} t e^{-\frac{t}{\tau_{\text{syn, X}}}} \Theta(t)
 
-where :math:`\Theta(x)` is the Heaviside step function. The PSCs are normalized to unit maximum, i.e.,
+where :math:`\Theta(x)` is the Heaviside step function. The PSCs are normalized to unit maximum, that is,
 
 .. math::
 

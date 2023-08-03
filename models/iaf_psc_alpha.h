@@ -100,7 +100,7 @@ where :math:`\Theta(x)` is the Heaviside step function. The PSCs are normalized 
 
    i_{\text{syn, X}}(t) = 1 \Leftrightarrow t = \tau_{\text{syn, X}} \;.
 
-As a consequence, the total charge transferred by a single PSC depends
+As a consequence, the total charge :math:`q` transferred by a single PSC depends
 on the synaptic time constant according to
 
 .. math::

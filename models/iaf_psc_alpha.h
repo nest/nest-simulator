@@ -85,7 +85,7 @@ where
 
 .. math::
 
-   I_{\text{syn, ex}}(t) = \sum_{(t_m, w_m)\\w_m\geq 0} w_m i_{\text{syn, ex}}(t-t_m)
+   I_{\text{syn, ex}}(t) = \sum_{(t_m, w_m)\\w_m > 0} w_m i_{\text{syn, ex}}(t-t_m)
 
 is the sum over all incoming excitatory spikes, with a corresponding expression for inhibitory spikes (:math:`w_m < 0`).
 Finally, individual post-synaptic currents are given by

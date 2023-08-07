@@ -70,7 +70,13 @@ class TestDisconnectSingle(unittest.TestCase):
                 nest.resolution = 0.1
                 nest.total_num_virtual_procs = nest.num_processes
 
-                neurons = nest.Create("iaf_psc_alpha", 4)
+                if "eprop_synapse" in syn_model:
+                    neurons = nest.Create("eprop_iaf_psc_delta", 4)
+                elif "eprop_learning_signal_connection" in syn_model:
+                    neurons = nest.Create("eprop_readout", 2) + nest.Create("eprop_iaf_psc_delta", 2)
+                else:
+                    neurons = nest.Create("iaf_psc_alpha", 4)
+
                 syn_dict = {"synapse_model": syn_model}
 
                 nest.Connect(neurons[0], neurons[2], "one_to_one", syn_dict)

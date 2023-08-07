@@ -49,10 +49,39 @@ class histentry_extended
 public:
   histentry_extended( double t, double dw, size_t access_counter );
 
-  double t_;              //!< point in time when spike occurred (in ms)
-  double dw_;             //!< value dependend on the additional factor
-  size_t access_counter_; //!< access counter to enable removal of the entry, once all neurons read it
+  double t_; //!< point in time when spike occurred (in ms)
+  double dw_;
+  //! how often this entry was accessed (to enable removal, once read by all
+  //! neurons which need it)
+  size_t access_counter_;
+
+  friend bool operator<( const histentry_extended he, double t );
 };
+
+class histentry_eprop
+{
+public:
+  histentry_eprop( double t, double V_m_pseudo_deriv, double learning_signal, size_t access_counter );
+
+  double t_;                //!< spike time (ms)
+  double V_m_pseudo_deriv_; //!< pseudo derivative of membrane voltage
+  double learning_signal_;  //!< learning signal
+  size_t access_counter_;   //!< counts accesses to this entry to enable removal once read by all neurons using it
+
+  friend bool operator<( const histentry_eprop he, double t );
+};
+
+inline bool
+operator<( const histentry_extended he, double t )
+{
+  return ( he.t_ ) < t;
+}
+
+inline bool
+operator<( const histentry_eprop he, double t )
+{
+  return ( he.t_ ) < t;
+}
 }
 
 #endif

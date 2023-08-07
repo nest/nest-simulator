@@ -185,6 +185,10 @@ public:
    */
   virtual void reset_timers_for_dynamics();
 
+  double get_eprop_update_interval() const;
+  long get_eprop_update_interval_steps() const;
+  bool get_eprop_update_interval_reset() const;
+
 private:
   void call_update_(); //!< actually run simulation, aka wrap update_
   void update_();      //! actually perform simulation
@@ -232,6 +236,10 @@ private:
   Stopwatch sw_update_;
   Stopwatch sw_gather_target_data_;
 #endif
+
+  double eprop_update_interval_;
+  long eprop_update_interval_steps_;
+  bool eprop_update_interval_reset_;
 };
 
 inline Time const&
@@ -325,6 +333,24 @@ inline size_t
 SimulationManager::get_wfr_interpolation_order() const
 {
   return wfr_interpolation_order_;
+}
+
+inline double
+SimulationManager::get_eprop_update_interval() const
+{
+  return eprop_update_interval_;
+}
+
+inline long
+SimulationManager::get_eprop_update_interval_steps() const
+{
+  return eprop_update_interval_steps_;
+}
+
+inline bool
+SimulationManager::get_eprop_update_interval_reset() const
+{
+  return eprop_update_interval_reset_;
 }
 }
 

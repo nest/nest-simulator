@@ -348,6 +348,23 @@ public:
 };
 
 /**
+ * Event for rate model connections with delay. The event transmits
+ * the rate to the connected neurons.
+ */
+class LearningSignalConnectionEvent : public DataSecondaryEvent< double, LearningSignalConnectionEvent >
+{
+
+public:
+  LearningSignalConnectionEvent()
+  {
+  }
+
+  void operator()() override;
+  LearningSignalConnectionEvent* clone() const override;
+};
+
+
+/**
  * Event for diffusion connections (rate model connections for the
  * siegert_neuron). The event transmits the rate to the connected neurons.
  */
@@ -414,6 +431,12 @@ inline DelayedRateConnectionEvent*
 DelayedRateConnectionEvent::clone() const
 {
   return new DelayedRateConnectionEvent( *this );
+}
+
+inline LearningSignalConnectionEvent*
+LearningSignalConnectionEvent::clone() const
+{
+  return new LearningSignalConnectionEvent( *this );
 }
 
 inline DiffusionConnectionEvent*

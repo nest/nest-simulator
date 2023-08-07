@@ -387,7 +387,16 @@ class NestModule(types.ModuleType):
         ),
         default=float("+inf"),
     )
-
+    eprop_update_interval = KernelAttribute(
+        "float",
+        ("Task-specific update interval with the e-prop plasticity mechanism."),
+        default=1000.0,
+    )
+    eprop_update_interval_reset = KernelAttribute(
+        "bool",
+        ("If True, reset dynamic variables of neurons involved in e-prop plasticity."),
+        default=True,
+    )
     # Kernel attribute indices, used for fast lookup in `ll_api.py`
     _kernel_attr_names = builtins.set(k for k, v in vars().items() if isinstance(v, KernelAttribute))
     _readonly_kernel_attrs = builtins.set(

@@ -425,6 +425,7 @@ public:
   virtual size_t handles_test_event( InstantaneousRateConnectionEvent&, size_t receptor_type );
   virtual size_t handles_test_event( DiffusionConnectionEvent&, size_t receptor_type );
   virtual size_t handles_test_event( DelayedRateConnectionEvent&, size_t receptor_type );
+  virtual size_t handles_test_event( LearningSignalConnectionEvent&, size_t receptor_type );
 
   /**
    * Required to check, if source neuron may send a SecondaryEvent.
@@ -466,6 +467,8 @@ public:
    */
   virtual void sends_secondary_event( DelayedRateConnectionEvent& re );
 
+  virtual void sends_secondary_event( LearningSignalConnectionEvent& re );
+
   /**
    * Register a STDP connection
    *
@@ -473,6 +476,8 @@ public:
    *
    */
   virtual void register_stdp_connection( double, double );
+
+  virtual void register_eprop_connection( double, double );
 
   /**
    * Handle incoming spike events.
@@ -592,6 +597,8 @@ public:
    */
   virtual void handle( DelayedRateConnectionEvent& e );
 
+  virtual void handle( LearningSignalConnectionEvent& e );
+
   /**
    * @defgroup SP_functions Structural Plasticity in NEST.
    *
@@ -701,6 +708,15 @@ public:
 
   virtual double get_LTD_value( double t );
 
+  virtual double get_leak_propagator() const;
+  virtual double get_leak_propagator_complement() const;
+
+  virtual double get_adapt_propagator() const;
+  virtual double get_adapt_beta() const;
+
+  virtual std::string get_eprop_node_type() const;
+  virtual void init_eprop_buffers( double delay );
+
   /**
    * write the Kminus, nearest_neighbor_Kminus, and Kminus_triplet
    * values at t (in ms) to the provided locations.
@@ -736,6 +752,21 @@ public:
   virtual double get_tau_s( int comp );
   virtual double get_tau_syn_ex( int comp );
   virtual double get_tau_syn_in( int comp );
+
+  virtual void get_eprop_history( double t1,
+    double t2,
+    double t3,
+    double t4,
+    std::deque< histentry_eprop >::iterator* start,
+    std::deque< histentry_eprop >::iterator* finish );
+
+  virtual void get_spike_history( double t1,
+    double t2,
+    std::deque< double >::iterator* start,
+    std::deque< double >::iterator* finish );
+
+  virtual void tidy_eprop_history();
+  virtual void tidy_spike_history();
 
   /**
    * Modify Event object parameters during event delivery.

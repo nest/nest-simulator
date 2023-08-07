@@ -109,6 +109,7 @@ def get_models_from_file(model_file):
         "node": "public Node",
         "clopath": "public ClopathArchivingNode",
         "urbanczik": "public UrbanczikArchivingNode",
+        "eprop": "public EpropArchivingNode",
         "binary": "typedef binary_neuron",
         "rate": "typedef rate_",
     }

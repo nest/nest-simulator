@@ -48,6 +48,12 @@ class TestDisconnect(unittest.TestCase):
             "urbanczik_synapse",
             "urbanczik_synapse_lbl",
             "urbanczik_synapse_hpc",
+            "eprop_synapse",
+            "eprop_synapse_lbl",
+            "eprop_synapse_hpc",
+            "eprop_learning_signal_connection",
+            "eprop_learning_signal_connection_lbl",
+            "eprop_learning_signal_connection_hpc",
         ]
 
     def test_multiple_synapse_deletion_all_to_all(self):

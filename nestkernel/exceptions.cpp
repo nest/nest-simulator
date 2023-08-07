@@ -512,3 +512,11 @@ nest::LayerNodeExpected::message() const
 {
   return std::string();
 }
+
+std::string
+nest::StepRateGeneratorExpected::message() const
+{
+  std::ostringstream msg;
+  msg << "eprop_readout neurons expect a connection with a step_rate_generator node through receptor_type 2.";
+  return msg.str();
+}

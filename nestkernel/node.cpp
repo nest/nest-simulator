@@ -216,6 +216,12 @@ Node::register_stdp_connection( double, double )
   throw IllegalConnection( "The target node does not support STDP synapses." );
 }
 
+void
+Node::register_eprop_connection( double, double )
+{
+  throw IllegalConnection( "The target node does not support e-prop synapses." );
+}
+
 /**
  * Default implementation of event handlers just throws
  * an UnexpectedEvent exception.
@@ -398,6 +404,26 @@ Node::sends_secondary_event( DelayedRateConnectionEvent& )
   throw IllegalConnection( "The source node does not support delayed rate output." );
 }
 
+void
+Node::handle( LearningSignalConnectionEvent& )
+{
+  throw UnexpectedEvent();
+}
+
+size_t
+Node::handles_test_event( LearningSignalConnectionEvent&, size_t )
+{
+  throw IllegalConnection(
+    "The target node cannot handle learning signal events or"
+    " synapse is not of type eprop_learning_signal_connection." );
+  return invalid_port;
+}
+
+void
+Node::sends_secondary_event( LearningSignalConnectionEvent& )
+{
+  throw IllegalConnection();
+}
 
 double
 Node::get_LTD_value( double )
@@ -411,6 +437,41 @@ Node::get_K_value( double )
   throw UnexpectedEvent();
 }
 
+double
+Node::get_leak_propagator() const
+{
+  throw UnexpectedEvent();
+}
+
+double
+Node::get_leak_propagator_complement() const
+{
+  throw UnexpectedEvent();
+}
+
+double
+Node::get_adapt_propagator() const
+{
+  throw UnexpectedEvent();
+}
+
+double
+Node::get_adapt_beta() const
+{
+  throw UnexpectedEvent();
+}
+
+std::string
+Node::get_eprop_node_type() const
+{
+  throw UnexpectedEvent();
+}
+
+void
+Node::init_eprop_buffers( double )
+{
+  throw UnexpectedEvent();
+}
 
 void
 Node::get_K_values( double, double&, double&, double& )
@@ -475,6 +536,35 @@ nest::Node::get_tau_syn_ex( int )
 
 double
 nest::Node::get_tau_syn_in( int )
+{
+  throw UnexpectedEvent();
+}
+
+void
+nest::Node::get_eprop_history( double,
+  double,
+  double,
+  double,
+  std::deque< histentry_eprop >::iterator*,
+  std::deque< histentry_eprop >::iterator* )
+{
+  throw UnexpectedEvent();
+}
+
+void
+nest::Node::get_spike_history( double, double, std::deque< double >::iterator*, std::deque< double >::iterator* )
+{
+  throw UnexpectedEvent();
+}
+
+void
+Node::tidy_eprop_history()
+{
+  throw UnexpectedEvent();
+}
+
+void
+Node::tidy_spike_history()
 {
   throw UnexpectedEvent();
 }

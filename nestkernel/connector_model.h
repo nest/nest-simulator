@@ -57,7 +57,8 @@ enum class ConnectionModelProperties : unsigned
   SUPPORTS_WFR = 1 << 4,
   REQUIRES_SYMMETRIC = 1 << 5,
   REQUIRES_CLOPATH_ARCHIVING = 1 << 6,
-  REQUIRES_URBANCZIK_ARCHIVING = 1 << 7
+  REQUIRES_URBANCZIK_ARCHIVING = 1 << 7,
+  REQUIRES_EPROP_ARCHIVING = 1 << 8
 };
 
 template <>

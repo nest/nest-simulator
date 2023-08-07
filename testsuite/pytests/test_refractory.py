@@ -62,6 +62,11 @@ neurons_interspike_ps = [
     "iaf_psc_exp_ps",
 ]
 
+neurons_eprop = [
+    "eprop_iaf_psc_delta",
+    "eprop_iaf_psc_delta_adapt",
+]
+
 # Models that first clamp the membrane potential at a higher value
 neurons_with_clamping = [
     "aeif_psc_delta_clopath",
@@ -84,6 +89,7 @@ ignore_model = [
     "iaf_psc_exp_ps_lossless",  # This one use presice times
     "siegert_neuron",  # This one does not connect to voltmeter
     "step_rate_generator",  # No regular neuron model
+    "eprop_readout",  # This one does not spike
 ]
 
 tested_models = [
@@ -145,7 +151,7 @@ class TestRefractoryCase(unittest.TestCase):
         if model in neurons_interspike:
             # Spike emitted at next timestep so substract resolution
             return spike_times[1] - spike_times[0] - resolution
-        elif model in neurons_interspike_ps:
+        elif model in neurons_interspike_ps + neurons_eprop:
             return spike_times[1] - spike_times[0]
         else:
             Vr = nest.GetStatus(neuron, "V_reset")[0]
@@ -190,7 +196,7 @@ class TestRefractoryCase(unittest.TestCase):
             # For models that do not clamp V_m, use very large current to
             # trigger almost immediate spiking => t_ref almost equals
             # interspike
-            if model in neurons_interspike_ps:
+            if model in neurons_interspike_ps + neurons_eprop:
                 nest.SetStatus(cg, "amplitude", 10000000.0)
             elif model == "ht_neuron":
                 # ht_neuron use too long time with a very large amplitude
@@ -212,7 +218,7 @@ class TestRefractoryCase(unittest.TestCase):
                 t_ref_sim = t_ref_sim - nest.GetStatus(neuron, "t_clamp")[0]
 
             # Approximate result for precise spikes (interpolation error)
-            if model in neurons_interspike_ps:
+            if model in neurons_interspike_ps + neurons_eprop:
                 self.assertAlmostEqual(
                     t_ref,
                     t_ref_sim,

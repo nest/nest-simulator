@@ -55,6 +55,13 @@ class LabeledSynapsesTestCase(unittest.TestCase):
 
         self.urbanczik_synapses = ["urbanczik_synapse", "urbanczik_synapse_lbl", "urbanczik_synapse_hpc"]
 
+        self.eprop_synapses = ["eprop_synapse", "eprop_synapse_lbl", "eprop_synapse_hpc"]
+        self.eprop_connections = [
+            "eprop_learning_signal_connection",
+            "eprop_learning_signal_connection_lbl",
+            "eprop_learning_signal_connection_hpc",
+        ]
+
         # create neurons that accept all synapse connections (especially gap
         # junctions)... hh_psc_alpha_gap is only available with GSL, hence the
         # skipIf above
@@ -78,6 +85,12 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             neurons = nest.Create("pp_cond_exp_mc_urbanczik", 5)
             syns = nest.GetDefaults("pp_cond_exp_mc_urbanczik")["receptor_types"]
             r_type = syns["soma_exc"]
+
+        if syn_model in self.eprop_synapses:
+            neurons = nest.Create("eprop_iaf_psc_delta", 5)
+
+        if syn_model in self.eprop_connections:
+            neurons = nest.Create("eprop_readout", 5) + nest.Create("eprop_iaf_psc_delta", 5)
 
         return neurons, r_type
 
@@ -182,11 +195,21 @@ class LabeledSynapsesTestCase(unittest.TestCase):
                 nest.Connect(
                     a, a, {"rule": "one_to_one", "make_symmetric": symm}, {"synapse_model": syn, "synapse_label": 123}
                 )
-
             # plain connection
-            nest.Connect(
-                a, a, {"rule": "one_to_one", "make_symmetric": symm}, {"synapse_model": syn, "receptor_type": r_type}
-            )
+            if syn in self.eprop_connections:
+                nest.Connect(
+                    a[: len(a) // 2],
+                    a[len(a) // 2 :],
+                    {"rule": "one_to_one", "make_symmetric": symm},
+                    {"synapse_model": syn, "receptor_type": r_type},
+                )
+            else:
+                nest.Connect(
+                    a,
+                    a,
+                    {"rule": "one_to_one", "make_symmetric": symm},
+                    {"synapse_model": syn, "receptor_type": r_type},
+                )
             # try set on SetStatus
             c = nest.GetConnections(a, a)
 

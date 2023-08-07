@@ -93,6 +93,7 @@ public:
    * with t > t_first_read.
    */
   void register_stdp_connection( double t_first_read, double delay ) override;
+  void register_eprop_connection( double t_first_read, double delay ) override;
 
   void get_status( DictionaryDatum& d ) const override;
   void set_status( const DictionaryDatum& d ) override;

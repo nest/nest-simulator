@@ -13,3 +13,4 @@ gauss_rate
 music_rate_out_proxy
 music_rate_in_proxy
 multimeter
+eprop_learning_signal_connection

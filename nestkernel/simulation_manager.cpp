@@ -62,6 +62,9 @@ nest::SimulationManager::SimulationManager()
   , update_time_limit_( std::numeric_limits< double >::infinity() )
   , min_update_time_( std::numeric_limits< double >::infinity() )
   , max_update_time_( -std::numeric_limits< double >::infinity() )
+  , eprop_update_interval_( 1000. )
+  , eprop_update_interval_steps_( 1000. )
+  , eprop_update_interval_reset_( true )
 {
 }
 
@@ -404,6 +407,11 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
 
     update_time_limit_ = t_new;
   }
+
+  updateValue< double >( d, names::eprop_update_interval, eprop_update_interval_ );
+  eprop_update_interval_steps_ = Time( Time::ms( eprop_update_interval_ ) ).get_steps();
+
+  updateValue< bool >( d, names::eprop_update_interval_reset, eprop_update_interval_reset_ );
 }
 
 void
@@ -440,6 +448,8 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
   def< double >( d, names::time_update, sw_update_.elapsed() );
   def< double >( d, names::time_gather_target_data, sw_gather_target_data_.elapsed() );
 #endif
+  def< double >( d, names::eprop_update_interval, eprop_update_interval_ );
+  def< bool >( d, names::eprop_update_interval_reset, eprop_update_interval_reset_ );
 }
 
 void

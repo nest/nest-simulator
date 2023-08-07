@@ -46,6 +46,7 @@ dependencies:
   - hdf5
 
   # Testing NEST ------------
+  - attrs
   - pytest
   - pytest-timeout
   - pytest-xdist

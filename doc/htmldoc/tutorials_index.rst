@@ -1,7 +1,26 @@
 Understand how NEST works
 =========================
 
-Here you can dive into various topics about NEST.
+First steps in NEST
+-------------------
+
+.. grid:: 1 1 2 3
+
+   .. grid-item-card::
+
+     * :ref:`pynest_tutorial_1`
+     * :ref:`pynest_tutorial_2`
+     * :ref:`pynest_tutorial_3`
+     * :ref:`pynest_tutorial_4`
+
+  .. grid-item-card:: Video tutorial
+      :columns: 6
+      :link: videos/index
+      :link-type: doc
+
+
+Tutorials per topic
+-------------------
 
 .. grid:: 1 1 2 3
 
@@ -72,6 +91,8 @@ Here you can dive into various topics about NEST.
        * :ref:`nest_server`
 
        * :ref:`nest_music`
+
+       * :ref:`nest_music_tutorial`
 
 
    .. grid-item-card:: |hpc| High performance computers (HPC)

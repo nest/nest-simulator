@@ -6,10 +6,10 @@ NEST Simulator documentaiton
    :hidden:
 
    Installation <installation/index>
-   Tutorials and examples <get-started_index>
-   Understand how NEST works <understand_index>
-   PyNEST API <ref_material/pynest_apis>
+   Tutorials <tutorials_index>
+   Examples <examples/index>
    Available models <models/index>
+   API reference <ref_material/pynest_apis>
    Contribute <developer_space/index>
    What's new? <whats_new/index>
    Community <community>

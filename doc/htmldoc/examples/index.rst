@@ -1,7 +1,7 @@
 .. _pynest_examples:
 
-PyNEST examples
-===============
+Examples
+========
 
 .. grid:: 1 1 2 3
 

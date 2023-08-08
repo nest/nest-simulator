@@ -125,4 +125,3 @@ def test_single_spike_different_stepsizes(h, reference_potential):
     nest.Simulate(T)
     u = neuron.get("V_m")
     nptest.assert_allclose(reference_potential, u)
-

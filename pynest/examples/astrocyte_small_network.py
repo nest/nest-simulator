@@ -96,10 +96,12 @@ nest.Connect(
         'astro_pool_by_index': True,
     },
     syn_spec={
-        'delay': 1.0,
         'weight_pre2post': 1.0,
         'weight_pre2astro': 1.0,
         'weight_astro2post': 1.0,
+        'delay_pre2post': 1.0,
+        'delay_pre2astro': 1.0,
+        'delay_astro2post': 1.0,
     }
 )
 

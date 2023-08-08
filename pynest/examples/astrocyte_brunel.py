@@ -179,7 +179,8 @@ def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise, scale=1.
         "tau_psc": tau_syn_ex,
         "astro2post": syn_params["astro2post"],
         "weight_astro2post": syn_params["w_a2n"],
-        "delay": syn_params["d_e"],
+        "delay_pre2post": syn_params["d_e"],
+        "delay_pre2astro": syn_params["d_e"],
         }
     conn_params_i = {"rule": "pairwise_bernoulli", "p": network_params["p"]/scale}
     syn_params_i = {

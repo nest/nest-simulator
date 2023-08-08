@@ -1613,9 +1613,11 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
   astrocytes_ = getValue< NodeCollectionDatum >( conn_spec, names::astrocyte );
   weights_n2n_.resize( syn_specs.size() );
   weights_n2a_.resize( syn_specs.size() );
-  delays_astro_.resize( syn_specs.size() );
+  delays_n2n_.resize( syn_specs.size() );
+  delays_n2a_.resize( syn_specs.size() );
   synapse_model_id_a2n_.resize( syn_specs.size() );
   weights_a2n_.resize( syn_specs.size() );
+  delays_a2n_.resize( syn_specs.size() );
 
   // probability of neuron=>neuron connection
   p_ = ( *conn_spec )[ names::p ];
@@ -1683,24 +1685,14 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
     weights_n2a_[ synapse_indx ] = syn_specs[ synapse_indx ]->known( names::weight_pre2astro )
       ? ConnParameter::create( ( *syn_specs[ synapse_indx ] )[ names::weight_pre2astro ], kernel().vp_manager.get_num_threads() )
       : ConnParameter::create( ( *syn_defaults )[ names::weight ], kernel().vp_manager.get_num_threads() );
-    delays_astro_[ synapse_indx ] = syn_specs[ synapse_indx ]->known( names::delay )
-      ? ConnParameter::create( ( *syn_specs[ synapse_indx ] )[ names::delay ], kernel().vp_manager.get_num_threads() )
+    delays_n2n_[ synapse_indx ] = syn_specs[ synapse_indx ]->known( names::delay_pre2post )
+      ? ConnParameter::create( ( *syn_specs[ synapse_indx ] )[ names::delay_pre2post ], kernel().vp_manager.get_num_threads() )
+      : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
+    delays_n2a_[ synapse_indx ] = syn_specs[ synapse_indx ]->known( names::delay_pre2astro )
+      ? ConnParameter::create( ( *syn_specs[ synapse_indx ] )[ names::delay_pre2astro ], kernel().vp_manager.get_num_threads() )
       : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
 
-    // // warning when the assigned delays cannot be paired between neurons and astrocytes (not a fixed value or an array)
-    // if ( syn_specs[ synapse_indx ]->known( names::delay ) )
-    // {
-    //   const Name type_str =  ( *( *syn_specs[ synapse_indx ] )[ names::delay ] ).gettypename();
-    //   if ( type_str != "doubletype" and type_str != "arraytype" )
-    //   {
-    //     LOG( M_WARNING,
-    //       "BernoulliAstroBuilder::BernoulliAstroBuilder",
-    //       "Assigned delay is not a fixed value or an array. "
-    //       "The synaptic delay to a postsynaptic neuron could be different from the astrocyte it is paired with. ");
-    //   }
-    // }
-
-    // astrocyte=>neuron (no delays)
+    // astrocyte=>neuron
     if ( syn_specs[ synapse_indx ]->known( names::astro2post ) )
     {
       std::string syn_name = ( *syn_specs[ synapse_indx ] )[ names::astro2post ];
@@ -1714,6 +1706,9 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
     weights_a2n_[ synapse_indx ] = syn_specs[ synapse_indx ]->known( names::weight_astro2post )
       ? ConnParameter::create( ( *syn_specs[ synapse_indx ] )[ names::weight_astro2post ], kernel().vp_manager.get_num_threads() )
       : ConnParameter::create( ( *syn_defaults_a2n )[ names::weight ], kernel().vp_manager.get_num_threads() );
+    delays_a2n_[ synapse_indx ] = syn_specs[ synapse_indx ]->known( names::delay_astro2post )
+      ? ConnParameter::create( ( *syn_specs[ synapse_indx ] )[ names::delay_astro2post ], kernel().vp_manager.get_num_threads() )
+      : ConnParameter::create( ( *syn_defaults_a2n )[ names::delay ], kernel().vp_manager.get_num_threads() );
   }
 }
 
@@ -1932,7 +1927,7 @@ nest::BernoulliAstroBuilder::connect_()
             {
               update_param_dict_( snode_id, *target, target_thread, synced_rng, synapse_indx );
               double weight_n2n = weights_n2n_[ synapse_indx ]->value_double( target_thread, rng, snode_id, target );
-              double delay_n2n = delays_astro_[ synapse_indx ]->value_double( target_thread, rng, snode_id, target );
+              double delay_n2n = delays_n2n_[ synapse_indx ]->value_double( target_thread, rng, snode_id, target );
               // not compatible with connections that block individual weights
               kernel().connection_manager.connect( snode_id,
                 target,
@@ -1971,7 +1966,7 @@ nest::BernoulliAstroBuilder::connect_()
             {
               update_param_dict_( snode_id, *astrocyte, astrocyte_thread, synced_rng, synapse_indx );
               double weight_n2a = weights_n2a_[ synapse_indx ]->value_double( astrocyte_thread, rng, snode_id, astrocyte );
-              double delay_n2a = delays_astro_[ synapse_indx ]->value_double( astrocyte_thread, rng, snode_id, astrocyte );
+              double delay_n2a = delays_n2a_[ synapse_indx ]->value_double( astrocyte_thread, rng, snode_id, astrocyte );
               // not compatible with connections that block individual weights
               kernel().connection_manager.connect( snode_id,
                 astrocyte,
@@ -1997,12 +1992,13 @@ nest::BernoulliAstroBuilder::connect_()
             {
               update_param_dict_( anode_id, *target, target_thread, synced_rng, synapse_indx );
               double weight_a2n = weights_a2n_[ synapse_indx ]->value_double( target_thread, rng, anode_id, target );
+              double delay_a2n = delays_a2n_[ synapse_indx ]->value_double( target_thread, rng, snode_id, target );
               kernel().connection_manager.connect( anode_id,
                 target,
                 target_thread,
                 synapse_model_id_a2n_[ synapse_indx ],
                 param_dicts_[ synapse_indx ][ target_thread ],
-                numerics::nan,
+                delay_a2n,
                 weight_a2n );
               connected_anode_ids.insert( anode_id );
             }

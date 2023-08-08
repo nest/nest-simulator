@@ -61,6 +61,7 @@ import nest
 import pytest
 import math
 from math import exp
+import numpy.testing as nptest
 
 # Global parameters
 T = 6.
@@ -123,4 +124,5 @@ def test_single_spike_different_stepsizes(h, reference_potential):
 
     nest.Simulate(T)
     u = neuron.get("V_m")
-    assert abs(reference_potential - u) < 1e-12
+    nptest.assert_allclose(reference_potential, u)
+

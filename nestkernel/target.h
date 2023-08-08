@@ -35,8 +35,10 @@ namespace nest
 {
 
 /**
- * This class implements a 64-bit target neuron identifier type. It uniquely identifies
- * a target neuron on a (remote) machine. Used in TargetTable for the presynaptic part
+ * This class implements a 64-bit target neuron identifier type.
+ *
+ * It uniquely identifies a target neuron on a (remote) machine.
+ * Used in TargetTable for the presynaptic part
  * of the connection infrastructure.
  *
  * The bitwise layout of the neuron identifier for the "standard" CMAKE option:
@@ -331,4 +333,4 @@ OffGridTarget::get_offset() const
 
 } // namespace nest
 
-#endif // TARGET_H
+#endif /* #ifndef TARGET_H */

@@ -64,20 +64,16 @@ class SparseNodeArray;
 class ConnBuilder
 {
 public:
-  /**
-   * Connect sources to targets according to specifications in dictionary.
-   *
-   * To create a connection, call
-   *
-   *   cb.connect();
-   *
-   * where conn_spec_dict speficies connection type and its parameters.
-   */
+  //! Connect with or without structural plasticity
   virtual void connect();
+
+  //! Delete synapses with or without structural plasticity
   virtual void disconnect();
 
-  //! parameters: sources, targets, specifications
-  ConnBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const std::vector< DictionaryDatum >& );
+  ConnBuilder( NodeCollectionPTR sources,
+    NodeCollectionPTR targets,
+    const DictionaryDatum& conn_spec,
+    const std::vector< DictionaryDatum >& syn_specs );
   virtual ~ConnBuilder();
 
   size_t
@@ -105,7 +101,16 @@ public:
 
   bool all_parameters_scalar_() const;
 
-  bool change_connected_synaptic_elements( size_t, size_t, const size_t, int );
+  /**
+   * Updates the number of connected synaptic elements in the target and the source.
+   *
+   * @param snode_id The node ID of the source
+   * @param tnode_id The node ID of the target
+   * @param tid the thread of the target
+   * @param update Amount of connected synaptic elements to update
+   * @return A bool indicating if the target node is on the local thread/process or not
+   */
+  bool change_connected_synaptic_elements( size_t snode_id, size_t tnode_id, const size_t tid, int update );
 
   virtual bool
   supports_symmetric() const
@@ -129,16 +134,19 @@ public:
 protected:
   //! Implements the actual connection algorithm
   virtual void connect_() = 0;
+
   virtual void
   sp_connect_()
   {
     throw NotImplemented( "This connection rule is not implemented for structural plasticity." );
   }
+
   virtual void
   disconnect_()
   {
     throw NotImplemented( "This disconnection rule is not implemented." );
   }
+
   virtual void
   sp_disconnect_()
   {
@@ -189,8 +197,7 @@ protected:
   //! buffer for exceptions raised in threads
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_;
 
-  // Name of the pre synaptic and postsynaptic elements for this connection
-  // builder
+  // Name of the pre synaptic and postsynaptic elements for this connection builder
   Name pre_synaptic_element_name_;
   Name post_synaptic_element_name_;
 
@@ -242,7 +249,7 @@ private:
    */
   void register_parameters_requiring_skipping_( ConnParameter& param );
 
-  /*
+  /**
    * Set synapse specific parameters.
    */
   void set_synapse_model_( DictionaryDatum syn_params, size_t indx );
@@ -279,8 +286,28 @@ public:
 
 protected:
   void connect_() override;
+
+  /**
+   * Connect two nodes in a OneToOne fashion with structural plasticity.
+   *
+   * This method is used by the SPManager based on the homostatic rules defined
+   * for the synaptic elements on each node.
+   */
   void sp_connect_() override;
+
+  /**
+   * Disconnecti two nodes connected in a OneToOne fashion without structural plasticity.
+   *
+   * This method can be manually called by the user to delete existing synapses.
+   */
   void disconnect_() override;
+
+  /**
+   * Disconnect two nodes connected in a OneToOne fashion with structural plasticity.
+   *
+   * This method is used by the SPManager based on the homostatic rules defined
+   * for the synaptic elements on each node.
+   */
   void sp_disconnect_() override;
 };
 
@@ -309,8 +336,28 @@ public:
 
 protected:
   void connect_() override;
+
+  /**
+   * Connect two nodes in a AllToAll fashion with structural plasticity.
+   *
+   * This method is used by the SPManager based on the homostatic rules defined
+   * for the synaptic elements on each node.
+   */
   void sp_connect_() override;
+
+  /**
+   * Disconnecti two nodes connected in a AllToAll fashion without structural plasticity.
+   *
+   * This method can be manually called by the user to delete existing synapses.
+   */
   void disconnect_() override;
+
+  /**
+   * Disconnect two nodes connected in a AllToAll fashion with structural plasticity.
+   *
+   * This method is used by the SPManager based on the homostatic rules defined
+   * for the synaptic elements on each node.
+   */
   void sp_disconnect_() override;
 
 private:
@@ -404,6 +451,15 @@ private:
 class SPBuilder : public ConnBuilder
 {
 public:
+  /**
+   * The SPBuilder is in charge of the creation of synapses during the simulation
+   * under the control of the structural plasticity manager
+   *
+   * @param sources the source nodes on which synapses can be created/deleted
+   * @param targets the target nodes on which synapses can be created/deleted
+   * @param conn_spec connectivity specification
+   * @param syn_spec synapse specifications
+   */
   SPBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
@@ -414,6 +470,7 @@ public:
   {
     return pre_synaptic_element_name_.toString();
   }
+
   std::string
   get_post_synaptic_element_name() const
   {
@@ -421,9 +478,9 @@ public:
   }
 
   /**
-   * Writes the default delay of the connection model, if the
-   * SPBuilder only uses the default delay. If not, the min/max_delay
-   * has to be specified explicitly with the kernel status.
+   * Writes the default delay of the connection model, if the SPBuilder only uses the default delay.
+   *
+   * If not, the min/max_delay has to be specified explicitly with the kernel status.
    */
   void update_delay( long& d ) const;
 
@@ -439,6 +496,7 @@ protected:
 
   /**
    * In charge of dynamically creating the new synapses
+   *
    * @param sources nodes from which synapses can be created
    * @param targets target nodes for the newly created synapses
    */

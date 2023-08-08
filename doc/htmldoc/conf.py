@@ -60,6 +60,7 @@ extensions = [
     "HoverXTooltip",
     "VersionSyncRole",
     "sphinx_copybutton",
+    "notfound.extension",
 ]
 
 autodoc_mock_imports = ["nest.pynestkernel", "nest.ll_api"]
@@ -82,6 +83,9 @@ project = "NEST Simulator user documentation"
 copyright = "2004, nest-simulator"
 author = "nest-simulator"
 
+copybutton_prompt_text = ">>> "
+# The output lines will not be copied if set to True
+copybutton_only_copy_prompt_lines = True
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -370,9 +374,6 @@ def copy_example_file(src):
 
 
 # -- Copy documentation for Microcircuit Model ----------------------------
-copy_example_file("examples/Potjans_2014/box_plot.png")
-copy_example_file("examples/Potjans_2014/raster_plot.png")
-copy_example_file("examples/Potjans_2014/microcircuit.png")
 copy_example_file("examples/hpc_benchmark_connectivity.svg")
 
 

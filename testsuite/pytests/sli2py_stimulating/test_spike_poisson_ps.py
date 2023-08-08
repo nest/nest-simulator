@@ -29,6 +29,7 @@ the spike times indeed are independent of the resolution.
 """
 
 import numpy as np
+import numpy.testing as nptest
 import pytest
 
 import nest
@@ -88,15 +89,10 @@ def test_spikes_independent_of_resolution(reference_spikes, resolution):
     when step-multiple and offset are recombined. This splitting and
     recombination apparently gives reproducible results.
 
-    The test simulates the system for different resolutions and computes the
-    absolute relative error of the spike times against the reference spikes.
-    To account for rounding errors, the relative error tolerance is set to
-    1e-14.
+    The test simulates the system for different resolutions and compares the
+    spike times against reference spikes. To account for rounding errors, the
+    error tolerance is set to 1e-14.
     """
 
-    spikes = simulator(resolution)
-
-    # Compute absolute relative error
-    are = np.abs((reference_spikes - spikes) / reference_spikes)
-
-    assert np.all(are < 1e-14)
+    actual_spikes = simulator(resolution)
+    nptest.assert_almost_equal(actual_spikes, reference_spikes, decimal=14)

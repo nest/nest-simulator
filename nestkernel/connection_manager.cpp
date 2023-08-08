@@ -1697,7 +1697,7 @@ nest::ConnectionManager::fill_target_buffer( const size_t tid,
   const size_t rank_start,
   const size_t rank_end,
   std::vector< TargetData >& send_buffer_target_data,
-  SendBufferPosition& send_buffer_position )
+  TargetSendBufferPosition& send_buffer_position )
 {
   // At this point, NEST has at least one synapse type (because we can only get here at least
   // one connection has been created) and we know that iteration_state_ for each thread

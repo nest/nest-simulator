@@ -53,6 +53,7 @@ typedef MPIManager::OffGridSpike OffGridSpike;
 
 class TargetData;
 class SendBufferPosition;
+class TargetSendBufferPosition;
 
 class EventDeliveryManager : public ManagerInterface
 {
@@ -270,7 +271,6 @@ private:
    */
   template < typename TargetT, typename SpikeDataT >
   void collocate_spike_data_buffers_( const size_t tid,
-    const AssignedRanks& assigned_ranks,
     SendBufferPosition& send_buffer_position,
     std::vector< std::vector< std::vector< TargetT > >* >& spike_register,
     std::vector< SpikeDataT >& send_buffer,
@@ -280,8 +280,7 @@ private:
    * Set end marker for per-rank-chunks signalling completion and providing shrink/grow infomation.
    */
   template < typename SpikeDataT >
-  void set_end_marker_( const AssignedRanks& assigned_ranks,
-    const SendBufferPosition& send_buffer_position,
+  void set_end_marker_( const SendBufferPosition& send_buffer_position,
     std::vector< SpikeDataT >& send_buffer,
     size_t per_thread_max_spikes_per_rank );
 
@@ -290,8 +289,7 @@ private:
    * across MPI ranks.
    */
   template < typename SpikeDataT >
-  void reset_complete_marker_spike_data_( const AssignedRanks& assigned_ranks,
-    const SendBufferPosition& send_buffer_position,
+  void reset_complete_marker_spike_data_( const SendBufferPosition& send_buffer_position,
     std::vector< SpikeDataT >& send_buffer ) const;
 
   /**
@@ -300,8 +298,7 @@ private:
    * @returns maximum over required buffer sizes communicated by all ranks
    */
   template < typename SpikeDataT >
-  size_t get_max_spike_data_per_thread_( const AssignedRanks& assigned_ranks,
-    const SendBufferPosition& send_buffer_position,
+  size_t get_max_spike_data_per_thread_( const SendBufferPosition& send_buffer_position,
     std::vector< SpikeDataT >& recv_buffer ) const;
 
 
@@ -345,18 +342,18 @@ private:
    */
   bool collocate_target_data_buffers_( const size_t tid,
     const AssignedRanks& assigned_ranks,
-    SendBufferPosition& send_buffer_position );
+    TargetSendBufferPosition& send_buffer_position );
 
   bool collocate_target_data_buffers_compressed_( const size_t tid,
     const AssignedRanks& assigned_ranks,
-    SendBufferPosition& send_buffer_position );
+    TargetSendBufferPosition& send_buffer_position );
 
   /**
    * Sets marker in MPI buffer that signals end of communication
    * across MPI ranks.
    */
   void set_complete_marker_target_data_( const AssignedRanks& assigned_ranks,
-    const SendBufferPosition& send_buffer_position );
+    const TargetSendBufferPosition& send_buffer_position );
 
   /**
    * Reads TargetData objects from MPI buffers and creates Target

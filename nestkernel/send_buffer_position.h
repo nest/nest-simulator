@@ -41,6 +41,92 @@ namespace nest
 class SendBufferPosition
 {
 private:
+  size_t num_spike_data_written_;
+  size_t max_num_spike_data_;
+  std::vector< size_t > begin_;
+  std::vector< size_t > end_;
+  std::vector< size_t > idx_;
+
+public:
+  SendBufferPosition();
+
+  /**
+   * Returns begin index of specified rank in MPI buffer.
+   */
+  size_t begin( const size_t rank ) const;
+
+  /**
+   * Returns end index of specified rank in MPI buffer.
+   */
+  size_t end( const size_t rank ) const;
+
+  /**
+   * Returns current index of specified rank in MPI buffer.
+   */
+  size_t idx( const size_t rank ) const;
+
+  /**
+   * Returns whether the part of the buffer on the specified rank has been
+   * filled.
+   *
+   * @param rank Rank denoting which part of the buffer we check
+   */
+  bool is_chunk_filled( const size_t rank ) const;
+
+  /**
+   * Returns whether the parts of the  MPI buffer assigned to this thread has
+   * been filled.
+   */
+  bool are_all_chunks_filled() const;
+
+  void increase( const size_t rank );
+};
+
+inline size_t
+SendBufferPosition::idx( const size_t rank ) const
+{
+  return idx_[ rank ];
+}
+
+inline size_t
+SendBufferPosition::begin( const size_t rank ) const
+{
+  return begin_[ rank ];
+}
+
+inline size_t
+SendBufferPosition::end( const size_t rank ) const
+{
+  return end_[ rank ];
+}
+
+inline bool
+SendBufferPosition::is_chunk_filled( const size_t rank ) const
+{
+  return idx_[ rank ] == end_[ rank ];
+}
+
+inline bool
+SendBufferPosition::are_all_chunks_filled() const
+{
+  return num_spike_data_written_ == max_num_spike_data_;
+}
+
+inline void
+SendBufferPosition::increase( const size_t rank )
+{
+  ++idx_[ rank ];
+  ++num_spike_data_written_;
+}
+
+
+/**
+ * This class simplifies keeping track of write position in MPI buffer
+ * while collocating targets.
+ */
+class TargetSendBufferPosition
+{
+private:
   size_t begin_rank_;
   size_t end_rank_;
   size_t max_size_;
@@ -53,7 +139,7 @@ private:
   size_t rank_to_index_( const size_t rank ) const;
 
 public:
-  SendBufferPosition( const AssignedRanks& assigned_ranks, const unsigned int send_recv_count_per_rank );
+  TargetSendBufferPosition( const AssignedRanks& assigned_ranks, const unsigned int send_recv_count_per_rank );
 
   /**
    * Returns current index of specified rank in MPI buffer.
@@ -87,7 +173,7 @@ public:
   void increase( const size_t rank );
 };
 
-inline SendBufferPosition::SendBufferPosition( const AssignedRanks& assigned_ranks,
+inline TargetSendBufferPosition::TargetSendBufferPosition( const AssignedRanks& assigned_ranks,
   const unsigned int send_recv_count_per_rank )
   : begin_rank_( assigned_ranks.begin )
   , end_rank_( assigned_ranks.end )
@@ -110,7 +196,7 @@ inline SendBufferPosition::SendBufferPosition( const AssignedRanks& assigned_ran
 }
 
 inline size_t
-SendBufferPosition::rank_to_index_( const size_t rank ) const
+TargetSendBufferPosition::rank_to_index_( const size_t rank ) const
 {
   assert( begin_rank_ <= rank );
   assert( rank < end_rank_ );
@@ -118,7 +204,7 @@ SendBufferPosition::rank_to_index_( const size_t rank ) const
 }
 
 inline unsigned int
-SendBufferPosition::idx( const size_t rank ) const
+TargetSendBufferPosition::idx( const size_t rank ) const
 {
   if ( rank >= end_rank_ )
   {
@@ -129,7 +215,7 @@ SendBufferPosition::idx( const size_t rank ) const
 }
 
 inline unsigned int
-SendBufferPosition::begin( const size_t rank ) const
+TargetSendBufferPosition::begin( const size_t rank ) const
 {
   if ( rank >= end_rank_ )
   {
@@ -140,7 +226,7 @@ SendBufferPosition::begin( const size_t rank ) const
 }
 
 inline unsigned int
-SendBufferPosition::end( const size_t rank ) const
+TargetSendBufferPosition::end( const size_t rank ) const
 {
   if ( rank >= end_rank_ )
   {
@@ -151,7 +237,7 @@ SendBufferPosition::end( const size_t rank ) const
 }
 
 inline bool
-SendBufferPosition::is_chunk_filled( const size_t rank ) const
+TargetSendBufferPosition::is_chunk_filled( const size_t rank ) const
 {
   if ( rank >= end_rank_ )
   {
@@ -162,13 +248,13 @@ SendBufferPosition::is_chunk_filled( const size_t rank ) const
 }
 
 inline bool
-SendBufferPosition::are_all_chunks_filled() const
+TargetSendBufferPosition::are_all_chunks_filled() const
 {
   return num_spike_data_written_ == send_recv_count_per_rank_ * idx_.size();
 }
 
 inline void
-SendBufferPosition::increase( const size_t rank )
+TargetSendBufferPosition::increase( const size_t rank )
 {
   if ( rank >= end_rank_ )
   {

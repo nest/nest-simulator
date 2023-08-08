@@ -331,7 +331,7 @@ public:
     const size_t rank_start,
     const size_t rank_end,
     std::vector< TargetData >& send_buffer_target_data,
-    SendBufferPosition& send_buffer_position );
+    TargetSendBufferPosition& send_buffer_position );
 
   void reject_last_target_data( const size_t tid );
 

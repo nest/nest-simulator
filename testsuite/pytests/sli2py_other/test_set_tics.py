@@ -38,32 +38,34 @@ This script tests whether the NEST kernel accepts a modification of the
 parameters and whether the corresponding conversions are correct.
 """
 
-import nest
 import numpy as np
 import pytest
+
+import nest
 
 
 @pytest.fixture(autouse=True)
 def prepare():
     nest.ResetKernel()
     nest.set(tics_per_ms=2**14, resolution=2 ** (-4))
+    nest.set(tics_per_ms=2**14, resolution=2**-4)
 
 
 def test_correct_ticks_per_ms():
     actual = nest.GetKernelStatus("tics_per_ms")
-    assert actual == 2 ** (14)
+    assert actual == 2**14
 
 
 def test_correct_resolution():
     actual = nest.GetKernelStatus("resolution")
-    assert actual == 2 ** (-4)
+    assert actual == 2**-4
 
 
 def test_correct_tics_per_step():
     actual = nest.GetKernelStatus("tics_per_step")
-    assert actual == 2 ** (10)
+    assert actual == 2**10
 
 
 def test_correct_ms_per_tic():
     actual = nest.GetKernelStatus("ms_per_tic")
-    assert actual == 2 ** (-14)
+    assert actual == 2**-14

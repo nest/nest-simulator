@@ -67,17 +67,20 @@ protected:
 
   /**
    * Calculate the index in the position vector on this MPI process based on the local ID.
+   *
    * @param lid local ID of the node
    * @return index in the local position vector
    */
   size_t lid_to_position_id_( size_t lid ) const;
 
-  /// Vector of positions.
+  //! Vector of positions.
   std::vector< Position< D > > positions_;
 
   size_t num_local_nodes_ = 0;
 
-  /// This class is used when communicating positions across MPI procs.
+  /**
+   * Class to be used when communicating positions across MPI processes.
+   */
   class NodePositionData
   {
   public:

@@ -69,7 +69,7 @@ nest::RecordingBackendMPI::finalize()
 }
 
 void
-nest::RecordingBackendMPI::enroll( const RecordingDevice& device, const DictionaryDatum& )
+nest::RecordingBackendMPI::enroll( const RecordingDevice& device, const DictionaryDatum& params )
 {
   if ( device.get_type() == RecordingDevice::SPIKE_RECORDER )
   {
@@ -85,6 +85,8 @@ nest::RecordingBackendMPI::enroll( const RecordingDevice& device, const Dictiona
     std::tuple< int, MPI_Comm*, const RecordingDevice* > tuple = std::make_tuple( -1, nullptr, &device );
     devices_[ tid ].insert( std::make_pair( node_id, tuple ) );
     enrolled_ = true;
+
+    updateValue< std::string >( params, names::mpi_address, mpi_address_ );
   }
   else
   {
@@ -174,11 +176,13 @@ nest::RecordingBackendMPI::prepare()
   // 2) connect the thread to the MPI process it needs to be connected to
   for ( auto& it_comm : commMap_ )
   {
-    MPI_Comm_connect( it_comm.first.data(),
-      MPI_INFO_NULL,
-      0,
-      MPI_COMM_WORLD,
-      std::get< 1 >( it_comm.second ) ); // should use the status for handle error
+    int ret =
+      MPI_Comm_connect( it_comm.first.data(), MPI_INFO_NULL, 0, MPI_COMM_WORLD, std::get< 1 >( it_comm.second ) );
+
+    if ( ret != MPI_SUCCESS )
+    {
+      throw MPIErrorCode( ret );
+    }
     std::ostringstream msg;
     msg << "Connect to " << it_comm.first.data() << "\n";
     LOG( M_INFO, "MPI Record connect", msg.str() );
@@ -357,7 +361,22 @@ nest::RecordingBackendMPI::set_status( const DictionaryDatum& )
 void
 nest::RecordingBackendMPI::get_port( const RecordingDevice* device, std::string* port_name )
 {
-  get_port( device->get_node_id(), device->get_label(), port_name );
+  const std::string& label = device->get_label();
+
+  // The MPI address can be provided by two different means.
+  // a) the address is given via the mpi_address device status
+  // b) the file is provided via a file: {data_path}/{data_prefix}{label}/{node_id}.txt
+
+  // Case a: MPI address is given via device status, use the supplied address
+  if ( not mpi_address_.empty() )
+  {
+    *port_name = mpi_address_;
+  }
+  // Case b: fallback to get_port implementation that reads the address from file
+  else
+  {
+    get_port( device->get_node_id(), label, port_name );
+  }
 }
 
 void
@@ -383,8 +402,11 @@ nest::RecordingBackendMPI::get_port( const size_t index_node, const std::string&
   }
 
   basename << "/" << index_node << ".txt";
-  std::cout << basename.rdbuf() << std::endl;
   std::ifstream file( basename.str() );
+  if ( !file.good() )
+  {
+    throw MPIPortsFileMissing( index_node, basename.str() );
+  }
   if ( file.is_open() )
   {
     getline( file, *port_name );

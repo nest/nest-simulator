@@ -305,7 +305,7 @@ def Disconnect(*args, conn_spec=None, syn_spec=None):
     Parameters
     ----------
     args : SynapseCollection or NodeCollections
-        Either a collection of connections to disconnect, or pre- and postsynaptic nodes given as `NodeCollection`s
+        Either a collection of connections to disconnect, or pre- and postsynaptic nodes given as NodeCollections
     conn_spec : str or dict
         Disconnection rule when specifying pre- and postsynaptic nodes, see below
     syn_spec : str or dict

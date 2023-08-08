@@ -51,7 +51,7 @@ ResetKernel
 /r4 /spike_recorder Create def
 /g5 /spike_generator Create def
 /v6 /volume_transmitter Create def
-/stdp_dopamine_synapse << /vt v6 0 get >> SetDefaults
+/stdp_dopamine_synapse << /volume_transmitter v6 >> SetDefaults
 
 % neuron-neuron
 n1 n3 Connect

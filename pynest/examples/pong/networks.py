@@ -270,7 +270,7 @@ class PongNetDopa(PongNet):
         nest.SetDefaults(
             "stdp_dopamine_synapse",
             {
-                "vt": self.vt.get("global_id"),
+                "vt": self.vt,
                 "tau_c": 70,
                 "tau_n": 30,
                 "tau_plus": 45,

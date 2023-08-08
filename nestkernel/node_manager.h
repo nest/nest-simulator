@@ -59,13 +59,17 @@ public:
   void get_status( DictionaryDatum& ) override;
 
   /**
-   * Get properties of a node. The specified node must exist.
+   * Get properties of a node.
+   *
+   * The specified node must exist.
    * @throws nest::UnknownNode       Target does not exist in the network.
    */
   DictionaryDatum get_status( size_t );
 
   /**
-   * Set properties of a Node. The specified node must exist.
+   * Set properties of a Node.
+   *
+   * The specified node must exist.
    * @throws nest::UnknownNode Target does not exist in the network.
    * @throws nest::UnaccessedDictionaryEntry  Non-proxy target did not read dict
    *                                          entry.
@@ -75,6 +79,7 @@ public:
 
   /**
    * Add a number of nodes to the network.
+   *
    * This function creates n Node objects of Model m and adds them
    * to the Network at the current position.
    * @param m valid Model ID.
@@ -131,7 +136,9 @@ public:
   bool is_local_node_id( size_t node_id ) const;
 
   /**
-   * Return pointer to the specified Node. The function expects that
+   * Return pointer to the specified Node.
+   *
+   * The function expects that
    * the given node ID and thread are valid. If they are not, an assertion
    * will fail. In case the given Node does not exist on the fiven
    * thread, a proxy is returned instead.
@@ -149,7 +156,7 @@ public:
    */
   Node* get_node_or_proxy( size_t );
 
-  /*
+  /**
    * Return pointer of Node on the thread we are on.
    *
    * If the node has proxies, it returns the node on the first thread (used by
@@ -161,6 +168,7 @@ public:
 
   /**
    * Return a vector that contains the thread siblings.
+   *
    * @param i Index of the specified Node.
    *
    * @throws nest::NoThreadSiblingsAvailable Node does not have thread siblings.
@@ -171,6 +179,7 @@ public:
 
   /**
    * Ensure that all nodes in the network have valid thread-local IDs.
+   *
    * Create up-to-date vector of local nodes, nodes_vec_.
    * This method also sets the thread-local ID on all local nodes.
    */
@@ -185,6 +194,7 @@ public:
 
   /**
    * Prepare nodes for simulation and register nodes in node_list.
+   *
    * Calls prepare_node_() for each pertaining Node.
    * @see prepare_node_()
    */
@@ -208,6 +218,9 @@ public:
 
   /**
    * Invoke finalize() on all nodes.
+   *
+   * This function is called only if the thread data structures are properly set
+   * up.
    */
   void finalize_nodes();
 
@@ -232,6 +245,7 @@ public:
 private:
   /**
    * Initialize the network data structures.
+   *
    * init_() is used by the constructor and by reset().
    * @see reset()
    */
@@ -240,6 +254,7 @@ private:
 
   /**
    * Helper function to set properties on single node.
+   *
    * @param node to set properties for
    * @param dictionary containing properties
    * @param if true (default), access flags are called before
@@ -250,6 +265,7 @@ private:
 
   /**
    * Initialized buffers, register in list of nodes to update/finalize.
+   *
    * @see prepare_nodes_()
    */
   void prepare_node_( Node* );

@@ -13,7 +13,12 @@ jobs:
       pull-requests: write
 
     steps:
-    - uses: actions/stale@v3
+    - name: Harden Runner
+      uses: step-security/harden-runner@cba0d00b1fc9a034e1e642ea0f1103c282990604 # v2.5.0
+      with:
+        egress-policy: audit
+
+    - uses: actions/stale@98ed4cb500039dbcccf4bd9bedada4d0187f2757 # v3.0.19
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
         stale-issue-message: 'Issue automatically marked stale!'

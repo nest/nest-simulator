@@ -54,9 +54,9 @@ the learning signal emitted by the readout neurons.
 Furthermore, a firing rate regularization mechanism keeps the firing rate of the
 postsynaptic neuron close to the set ``target_firing_rate``:
 
-.. match..
+.. math..
     \Delta W_{ji}^\text{reg} &= \eta c_\text{reg}
-    \sum_t \frac{1}{Tn_\text{trial}} \left( f^\text{target}-f^\text{av}_j\right)e_{ji}^t 
+    \sum_t \frac{1}{Tn_\text{trial}} \left( f^\text{target}-f^\text{av}_j\right)e_{ji}^t
 
 E-prop synapses require archiving of continuous quantities. Therefore e-prop
 synapses can only be connected to neuron models that are capable of doing this

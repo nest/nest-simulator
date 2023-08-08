@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_issue_2795.py
+# test_issue_2636_2795.py
 #
 # This file is part of NEST.
 #
@@ -20,16 +20,19 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Regression test for Issue #2795 (GitHub).
+Regression test for Issue #2636 and #2795 (GitHub).
 
-The issue was that the following resulted in a crash instead of an error
-message:
+This issue occurred when no nodes had been created and ``node_id=0`` was
+provided as an array-like object to ``Connect`` or to access a 
+``NodeCollection``. That is, the following cases would result in a crash
+instead of an error message:
 
 .. code-block:: python
 
    import nest
-
-   nest.Connect([0], [0])
+   
+   nest.Connect([0], [0])    # Crash case 1
+   nest.NodeCollection([0])  # Crash case 2
 
 The reason was that ``node_id=0`` passed through the consistency check of
 ``ModelRangeManager::is_in_range`` due to the default values of the expected
@@ -43,9 +46,23 @@ import nest
 
 
 @pytest.mark.parametrize("node_id", [0, 1])
-def test_connection_without_creation(node_id):
+def test_nc_access_fail_without_node_creation(node_id):
     """
-    Ensure that connecting non-existent nodes fails.
+    Ensure that accessing non-existent nodes fails (Issue #2636).
+
+    This test ensures that accessing node ids when no nodes have not been
+    created results in an ``UnknownNode`` error, including the invalid
+    ``node_id=0``.
+    """
+
+    with pytest.raises(nest.kernel.NESTErrors.UnknownNode):
+        nest.NodeCollection([node_id])
+
+
+@pytest.mark.parametrize("node_id", [0, 1])
+def test_connection_fail_without_node_creation(node_id):
+    """
+    Ensure that connecting non-existent nodes fails (Issue #2795).
 
     This test ensures that connecting node ids when no nodes have not been
     created results in an ``UnknownNode`` error, including the invalid

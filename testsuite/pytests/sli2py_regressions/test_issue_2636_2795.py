@@ -23,14 +23,14 @@
 Regression test for Issue #2636 and #2795 (GitHub).
 
 This issue occurred when no nodes had been created and ``node_id=0`` was
-provided as an array-like object to ``Connect`` or to access a 
+provided as an array-like object to ``Connect`` or to access a
 ``NodeCollection``. That is, the following cases would result in a crash
 instead of an error message:
 
 .. code-block:: python
 
    import nest
-   
+
    nest.Connect([0], [0])    # Crash case 1
    nest.NodeCollection([0])  # Crash case 2
 

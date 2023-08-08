@@ -190,7 +190,7 @@ class TestPairwiseBernoulliAstro(connect_test_base.ConnectTestBase):
                 'ht_synapse', 'quantal_stp_synapse',
                 'tsodyks2_synapse', 'tsodyks_synapse'
                 ]
-        syn_params = {'delay': 0.4}
+        syn_params = {'delay_pre2post': 0.4}
 
         for syn in syns:
             if syn == 'stdp_dopamine_synapse':
@@ -198,9 +198,24 @@ class TestPairwiseBernoulliAstro(connect_test_base.ConnectTestBase):
                 nest.SetDefaults('stdp_dopamine_synapse', {'vt': vol.get('global_id')})
             syn_params['synapse_model'] = syn
             connect_test_base.check_synapse(
-                ['delay'], [syn_params['delay']], syn_params, self)
+                ['delay'], [syn_params['delay_pre2post']], syn_params, self)
             self.setUp()
 
+    def testDelaySetting(self):
+        # test if delays are set correctly
+
+        # one delay for all connections
+        d0 = 0.275
+        syn_params ={'delay_pre2post': d0}
+        self.setUpNetwork(self.conn_dict, syn_params)
+        connections = nest.GetConnections(self.pop1, self.pop2)
+        nest_delays = connections.get("delay")
+        # all delays need to be equal
+        self.assertTrue(connect_test_base.all_equal(nest_delays))
+        # delay (rounded) needs to equal the delay that was put in
+        self.assertTrue(abs(d0 - nest_delays[0]) < self.dt)
+
+    # skip all STDP synapses
     def testStdpFacetshwSynapseHom(self):
         pass
 

@@ -29,7 +29,7 @@ import os
 
 
 def ModelMatchExamples():
-# Get list of models and search the examples directory for matches
+    # Get list of models and search the examples directory for matches
 
     filepath_models = "../../models/"
     filepath_examples = "auto_examples/"
@@ -80,17 +80,19 @@ class ListExamplesDirective(Directive):
                     # A leading '/'  is added to the example path to take advantage of the
                     # std:label (ref role) syntax (see also objects.inv doc for intersphinx)
                     # we also need the names to be all lower case
-                    value_label = "/"+ value.lower()
+                    value_label = "/" + value.lower()
                     link_text = value.split("/")[-1]
-                    # equivalen to HTML <li>
+                    # equivalent to HTML <li>
                     list_item = nodes.list_item()
-                    link_node = pending_xref("",
-                           reftype="ref",
-                           refdomain="std",
-                           refexplicit=False,
-                           reftarget=value_label,
-                           refwarn=True,
-                           classes=["xref", "std", "std-ref"],)
+                    link_node = pending_xref(
+                        "",
+                        reftype="ref",
+                        refdomain="std",
+                        refexplicit=False,
+                        reftarget=value_label,
+                        refwarn=True,
+                        classes=["xref", "std", "std-ref"],
+                    )
                     link_node += nodes.inline(text=link_text)
                     para = nodes.paragraph()
                     para.append(link_node)

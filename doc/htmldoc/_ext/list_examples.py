@@ -21,14 +21,46 @@
 
 from docutils import nodes
 from docutils.parsers.rst import Directive, Parser
+from sphinx.addnodes import pending_xref
 from sphinx.application import Sphinx
 import json
 import re
+import os
+
+
+def ModelMatchExamples():
+# Get list of models and search the examples directory for matches
+
+    filepath_models = "../../models/"
+    filepath_examples = "auto_examples/"
+
+    model_files = []
+    for filename in os.listdir(filepath_models):
+        if filename.endswith(".h"):
+            model_files.append(os.path.splitext(filename)[0])
+
+    matches = {}
+    for root, dirs, files in os.walk(filepath_examples):
+        for filename in files:
+            if filename.endswith(".rst"):
+                full_path = os.path.join(root, filename)
+                if "auto_examples/index" in full_path:
+                    continue
+                with open(full_path, "r", errors="ignore") as file:
+                    content = file.read()
+                    for model_file in model_files:
+                        if model_file in content:
+                            if model_file not in matches:
+                                matches[model_file] = []
+                            matches[model_file].append(full_path)
+
+    return matches
 
 
 class ListExamplesDirective(Directive):
-    # Create a directive that requires one argument
-    # (.. helloworld:: argument), which is the model name
+    # Provide a list of the examples that contain the given model name.
+    # The model name is the required argument in the directive
+    # (.. listexamples:: model_name). No options, nor content is expected.
 
     has_content = False
     required_arguments = 1
@@ -37,57 +69,40 @@ class ListExamplesDirective(Directive):
     def run(self):
         my_arg = self.arguments[0]
 
-        # TODO: Use code that generates this file in this extension
-        # The script that generated this json file should be included
-        # as a function in this extension somehow, removing the need
-        # for using file. The script is still WIP
-        with open("_ext/model_match_examples.json") as json_file:
-            examples_data = json.load(json_file)
-            # bullet list equivalent to HTML <ul>
-            bullet_list = nodes.bullet_list()
-            for key, values in examples_data.items():
-                if key == my_arg:
-                    for value in values:
-                        path = value.split("/", 1)[1] + ".rst"
-                        # UPDATE need to figure out how to add output from one class to another, considerieng we have? to use setup(app)
-                        link_text = get_first_heading(path)
-                        #link_text = value.split("/")[-1]
-                        # equivalen to HTML <li>
-                        list_item = nodes.list_item()
-                        newnode = nodes.reference(value, link_text)
-                        newnode["refuri"] = value + ".html"
-                        para = nodes.paragraph()
-                        para.append(newnode)
-                        list_item.append(para)
-                        bullet_list += list_item
+        # bullet list equivalent to HTML <ul>
+        bullet_list = nodes.bullet_list()
+        examples_list = ModelMatchExamples()
+
+        sorted_examples = {key: sorted(values) for key, values in examples_list.items()}
+        for key, values in sorted_examples.items():
+            if key == my_arg:
+                for value in values:
+                    # A leading '/'  is added to the example path to take advantage of the
+                    # std:label (ref role) syntax (see also objects.inv doc for intersphinx)
+                    # we also need the names to be all lower case
+                    value_label = "/"+ value.lower()
+                    link_text = value.split("/")[-1]
+                    # equivalen to HTML <li>
+                    list_item = nodes.list_item()
+                    link_node = pending_xref("",
+                           reftype="ref",
+                           refdomain="std",
+                           refexplicit=False,
+                           reftarget=value_label,
+                           refwarn=True,
+                           classes=["xref", "std", "std-ref"],)
+                    link_node += nodes.inline(text=link_text)
+                    para = nodes.paragraph()
+                    para.append(link_node)
+                    list_item.append(para)
+                    bullet_list += list_item
 
         return [bullet_list]
-
-
-
-
-from sphinx.environment import BuildEnvironment
-from sphinx.environment.collectors import EnvironmentCollector
-
-# Trying to figure out how to get the title from a file in Sphinx - using fmtlib github repo as example
-# I have not  run antying to test it
-# maybe I dont need this exact class, but can use the code( the travers part)  in "doctree resolved" or something?
-class TitleCollector(EnvironmentCollector):
-     def process_doc(self, app: Sphinx, doctree: nodes.document) -> None:
-
-        titlenode = nodes.title()
-        longtitlenode = titlenode
-        for node in doctree.traverse(nodes.section):
-            visitor = SphinxContentsFilter(doctree)
-            node[0].walkabout(visitor)
-            titlenode += visitor.get_entry_text()
-
 
 
 def setup(app):
     # Note that the directive names need to be all lower case
     app.add_directive("listexamples", ListExamplesDirective)
-    app.add_env_collector(TitleCollector)
 
     return {
         "version": "0.1",

@@ -20,13 +20,18 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-test_iaf_ps_psp_accuracy.sli checks the voltage response of the precise versions of the iaf_psc_alpha
-model neurons to a single incoming spike. The voltage excursion is
-called postsynaptic potential (PSP). In the model neurons
-the postsynaptic current is described by an alpha-function
+Compares the voltage response of iaf_psc_alpha_ps from a single incoming
+excitatory spike at an off-grid time to the analytical solution. 
+Also checks that the equivalent non-ps iaf_psc_alpha does not give the same result.
+
+test_iaf_ps_psp_accuracy.sli checks the voltage response of the precise
+versions of the iaf_psc_alpha model neurons to a single incoming spike.
+The voltage excursion is called postsynaptic potential (PSP). In the model
+neurons the postsynaptic current is described by an alpha-function
 (see [1] and references therein). The resulting PSP has a finite
 rise-time, with voltage and current beeing zero in the initial
 condition (see [1]).
+
 
 The dynamics is tested by connecting a device that emits spikes
 at individually configurable times (see test_spike_generator) to
@@ -61,67 +66,59 @@ import nest
 import pytest
 import math
 from math import exp
-import numpy.testing as nptest
 
 # Global parameters
-T = 6.
+T = 6.0
 tau_syn = 0.3
-tau_m = 10.
-C_m = 250.
-delay = 1.
-weight = 500.
+tau_m = 10.0
+C_m = 250.0
+delay = 1.0
+weight = 500.0
 
-neuron_params = {"E_L": 0.,
-                 "V_m": 0.,
-                 "V_th": 15.,
-                 "I_e": 0.,
-                 "tau_m": tau_m,
-                 "tau_syn_ex": tau_syn,
-                 "tau_syn_in": tau_syn,
-                 "C_m": C_m}
+neuron_params = {
+    "E_L": 0.0,
+    "V_m": 0.0,
+    "V_th": 15.0,
+    "I_e": 0.0,
+    "tau_m": tau_m,
+    "tau_syn_ex": tau_syn,
+    "tau_syn_in": tau_syn,
+    "C_m": C_m,
+}
 
-spike_emission = [2.]
+spike_emission = [2.132123512]
 
 
 def alpha_fn(t):
     prefactor = analytical_u = weight * math.e / (tau_syn * C_m)
-    t1 = (exp(-t / tau_m) - exp(-t / tau_syn)) / (1 / tau_syn - 1 / tau_m)**2
+    t1 = (exp(-t / tau_m) - exp(-t / tau_syn)) / (1 / tau_syn - 1 / tau_m) ** 2
     t2 = t * exp(-t / tau_syn) / (1 / tau_syn - 1 / tau_m)
     return prefactor * (t1 - t2)
 
 
-def spiketrain_response(spiketrain):
-    response = 0.
-    for sp in spiketrain:
-        t = T - delay - sp
-        response += alpha_fn(t)
-    return response
-
-
-@pytest.fixture(scope="module")
-def reference_potential():
-    return spiketrain_response(spike_emission)
-
-
-@pytest.mark.parametrize("h", [(i) for i in range(-12, 1, 2)])
-def test_single_spike_different_stepsizes(h, reference_potential):
+@pytest.mark.parametrize("h", range(-12, 1, 2))
+def test_single_spike_different_stepsizes(h):
     nest.ResetKernel()
-    print(h)
-    nest.set(tics_per_ms=2**14, resolution=2**h)
+    res = 2**h
+    nest.set(tics_per_ms=2**14, resolution=res)
 
     sg = nest.Create("spike_generator")
-    sg.set(precise_times=False,
-           origin=0.,
-           spike_times=spike_emission,
-           start=0.,
-           stop=5.
-           )
+    sg.set(precise_times=True, origin=0.0, spike_times=spike_emission, start=0.0, stop=5.0)
 
-    neuron = nest.Create("iaf_psc_alpha_ps")
-    neuron.set(neuron_params)
+    neuron_ps = nest.Create("iaf_psc_alpha_ps", params=neuron_params)
 
+    neuron = nest.Create("iaf_psc_alpha", params=neuron_params)
+
+    nest.Connect(sg, neuron_ps, syn_spec={"weight": weight, "delay": delay})
     nest.Connect(sg, neuron, syn_spec={"weight": weight, "delay": delay})
 
     nest.Simulate(T)
+
     u = neuron.get("V_m")
-    nptest.assert_allclose(reference_potential, u)
+    u_ps = neuron_ps.get("V_m")
+
+    t = T - delay - spike_emission[0]
+    reference_potential = alpha_fn(t)
+
+    assert reference_potential == pytest.approx(u_ps)
+    assert reference_potential != pytest.approx(u)

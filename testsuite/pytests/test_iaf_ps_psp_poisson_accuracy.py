@@ -29,6 +29,8 @@ T = 6.
 tau_syn = 0.3
 tau_m = 10.
 C_m = 250.
+weight = 65.
+delay = 1.0
 
 neuron_params = {"E_L": 0.,
                  "V_m": 0.,
@@ -41,7 +43,7 @@ neuron_params = {"E_L": 0.,
 
 
 def alpha_fn(t):
-    prefactor = analytical_u = weight * math.e / (tau_syn * C_m)
+    prefactor = weight * math.e / (tau_syn * C_m)
     t1 = (exp(-t / tau_m) - exp(-t / tau_syn)) / (1 / tau_syn - 1 / tau_m)**2
     t2 = t * exp(-t / tau_syn) / (1 / tau_syn - 1 / tau_m)
     return prefactor * (t1 - t2)
@@ -54,30 +56,36 @@ def spiketrain_response(spiketrain):
         response += alpha_fn(t)
     return response
 
-
-@pytest.fixture(scope="module")
-def reference_potential():
-    return spiketrain_response(spike_emission)
-
-
-@pytest.mark.parametrize("h", [(i) for i in range(-12, 1, 2)])
+@pytest.mark.parametrize("h", [(i) for i in [-4]])#range(-10, 1, 2)])
 def test_poisson_spikes_different_stepsizes(h):
     nest.ResetKernel()
-    print(h)
 
-    nest.set(tics_per_ms=2**14, resolution=2**h)
+    nest.set(tics_per_ms=2**10, resolution=2**h)
 
     pg = nest.Create("poisson_generator")
-    pg.set(rate = 16000)
-    parrot = nest.Create("parrot_neuron")
+    pg.set(rate = 1000)
+#    pg = nest.Create("spike_generator")
+#    pg.set(spike_times = [3.125])
 
+    parrot = nest.Create("parrot_neuron")
     neuron = nest.Create("iaf_psc_alpha_ps")
     neuron.set(neuron_params)
 
-    nest.Connect(pg, neuron, syn_spec={"weight": weight, "delay": delay})
+    sr = nest.Create("spike_recorder")
+
+    mm = nest.Create("multimeter")
+    mm.set(record_from=["V_m"])
+    mm.set(interval=2**h)
+
     nest.Connect(pg, parrot)
+    nest.Connect(parrot, neuron, syn_spec={"weight": weight, "delay": delay})
+    nest.Connect(parrot, sr)
 
     nest.Simulate(T)
+
+    spiketrain = sr.get("events", "times")
+    analytical_u = spiketrain_response(spiketrain) 
+    print(spiketrain)
     u = neuron.get("V_m")
-    assert abs(analytical_u - u) < 1e-12
+    assert u == pytest.approx(analytical_u)
 

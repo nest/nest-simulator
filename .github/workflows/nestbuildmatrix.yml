@@ -302,7 +302,7 @@ jobs:
       - name: "Run isort..."
         uses: isort/isort-action@f14e57e1d457956c45a19c05a89cccdf087846e5  # 1.1.0
         with:
-          configuration: --profile black --check-only --diff
+          configuration: --profile=black --thirdparty="nest" --check-only --diff
 
   black:
     runs-on: "ubuntu-20.04"

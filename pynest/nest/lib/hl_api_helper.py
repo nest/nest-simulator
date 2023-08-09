@@ -24,17 +24,16 @@ These are helper functions to ease the definition of the high-level
 API of the PyNEST wrapper.
 """
 
-import warnings
-import json
 import functools
-import textwrap
+import json
 import os
 import pydoc
-
+import textwrap
+import warnings
 from string import Template
 
-from ..ll_api import sli_func, sps, sr, spp
 from .. import pynestkernel as kernel
+from ..ll_api import sli_func, spp, sps, sr
 
 __all__ = [
     "broadcast",

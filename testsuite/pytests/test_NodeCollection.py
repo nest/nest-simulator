@@ -24,6 +24,7 @@ NodeCollection tests
 """
 
 import unittest
+
 import nest
 
 try:

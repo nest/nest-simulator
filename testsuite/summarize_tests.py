@@ -27,11 +27,11 @@
 #
 # <No of tests run> <No of skipped tests> <No of failed tests> <No of errored tests> <List of unsuccessful tests>
 
-import junitparser as jp
 import glob
 import os
 import sys
 
+import junitparser as jp
 
 assert int(jp.version.split(".")[0]) >= 2, "junitparser version must be >= 2"
 

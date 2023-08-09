@@ -27,9 +27,9 @@ the spikes have arrived must be identical in both cases.
 """
 
 import nest
-import pytest
 import numpy as np
 import numpy.testing as nptest
+import pytest
 
 skip_list = [
     "ginzburg_neuron",  # binary neuron

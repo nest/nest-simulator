@@ -29,8 +29,8 @@ BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
 """
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 import numpy as np
 
 for ctr in [(0.0, 0.0), (-2.0, 2.0), (0.5, 1.0)]:

@@ -23,9 +23,10 @@
 NodeCollection get/set tests
 """
 
-import unittest
-import nest
 import json
+import unittest
+
+import nest
 
 try:
     import numpy as np

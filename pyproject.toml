@@ -9,6 +9,7 @@ markers = [
 
 [tool.isort]
 profile = "black"
+known_third_party = "nest"
 
 [tool.black]
 line-length = 120

@@ -19,11 +19,10 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+import nest
 import numpy as np
 import numpy.testing as nptest
 import pytest
-
-import nest
 
 
 def build_net(num_neurons):

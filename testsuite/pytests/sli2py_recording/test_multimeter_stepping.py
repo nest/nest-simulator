@@ -23,11 +23,10 @@
 Test multimeter recording in stepwise simulation.
 """
 
+import nest
 import pandas as pd
 import pandas.testing as pdtest
 import pytest
-
-import nest
 
 skip_models = [
     "gauss_rate_ipn",

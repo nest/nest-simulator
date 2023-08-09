@@ -28,9 +28,9 @@ Remarks:
   The test does not test weighted correlations.
 """
 
-import pytest
 import nest
 import numpy as np
+import pytest
 
 
 @pytest.fixture()

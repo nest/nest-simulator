@@ -56,10 +56,11 @@ For more information visit https://www.nest-simulator.org.
 # instance later on. Use `.copy()` to prevent pollution with other variables
 _original_module_attrs = globals().copy()
 
+import builtins  # noqa
+import importlib  # noqa
 import sys  # noqa
 import types  # noqa
-import importlib  # noqa
-import builtins  # noqa
+
 from .ll_api_kernel_attributes import KernelAttribute  # noqa
 
 try:
@@ -76,11 +77,11 @@ class NestModule(types.ModuleType):
     """
 
     from . import ll_api  # noqa
-    from . import pynestkernel as kernel  # noqa
-    from . import random  # noqa
-    from . import math  # noqa
-    from . import spatial_distributions  # noqa
     from . import logic  # noqa
+    from . import math  # noqa
+    from . import random  # noqa
+    from . import spatial_distributions  # noqa
+    from . import pynestkernel as kernel  # noqa
     from .ll_api import set_communicator
 
     def __init__(self, name):

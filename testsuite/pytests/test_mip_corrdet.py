@@ -26,8 +26,8 @@ to known value.
 
 
 import nest
-import pytest
 import numpy.testing as nptest
+import pytest
 
 
 def test_correlation_detector_mip():

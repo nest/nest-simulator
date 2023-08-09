@@ -26,8 +26,8 @@ A spatial network in 3D
 Hans Ekkehard Plesser, UMB
 """
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 
 nest.ResetKernel()
 

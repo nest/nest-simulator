@@ -21,8 +21,8 @@
 
 # create connectivity figures for spatial manual
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 import numpy as np
 
 # seed NumPy RNG to ensure identical results for runs with random placement

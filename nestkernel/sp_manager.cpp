@@ -126,7 +126,6 @@ SPManager::set_status( const DictionaryDatum& d )
   DictionaryDatum syn_specs;
   DictionaryDatum syn_spec;
   DictionaryDatum conn_spec = DictionaryDatum( new Dictionary() );
- 
   NodeCollectionPTR sources( new NodeCollectionPrimitive() );
   NodeCollectionPTR targets( new NodeCollectionPrimitive() );
 
@@ -135,7 +134,7 @@ SPManager::set_status( const DictionaryDatum& d )
     delete ( *i );
   }
   sp_conn_builders_.clear();
-  updateValue< DictionaryDatum >( d, names::structural_plasticity_synapses, syn_specs ); 
+  updateValue< DictionaryDatum >( d, names::structural_plasticity_synapses, syn_specs );
   for ( Dictionary::const_iterator i = syn_specs->begin(); i != syn_specs->end(); ++i )
   {
     syn_spec = getValue< DictionaryDatum >( syn_specs, i->first );

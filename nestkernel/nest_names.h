@@ -33,8 +33,9 @@ namespace nest
 {
 
 /**
- * This namespace contains global Name objects. These can be used in
- * Node::get_status and Node::set_status to make data exchange more
+ * This namespace contains global Name objects.
+ *
+ * These can be used in Node::get_status and Node::set_status to make data exchange more
  * efficient and consistent. Creating a Name from a std::string is in
  * O(log n), for n the number of Names already created. Using
  * predefined names makes data exchange much more efficient as it
@@ -311,6 +312,7 @@ extern const Name min;
 extern const Name min_delay;
 extern const Name min_update_time;
 extern const Name minor_axis;
+extern const Name mpi_address;
 extern const Name model;
 extern const Name model_id;
 extern const Name ms_per_tic;
@@ -602,7 +604,7 @@ extern const Name voltage_clamp;
 extern const Name voltage_reset_add;
 extern const Name voltage_reset_fraction;
 extern const Name vp;
-extern const Name vt;
+extern const Name volume_transmitter;
 
 extern const Name w;
 extern const Name weight;

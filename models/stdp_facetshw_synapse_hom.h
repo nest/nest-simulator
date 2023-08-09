@@ -1,5 +1,5 @@
 /*
- *  stdp_synapse_facetshw_hom.h
+ *  stdp_facetshw_synapse_hom.h
  *
  *  This file is part of NEST.
  *

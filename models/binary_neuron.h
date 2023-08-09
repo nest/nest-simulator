@@ -94,34 +94,34 @@ public:
   using Node::receives_signal;
   using Node::sends_signal;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  SignalType sends_signal() const;
-  SignalType receives_signal() const;
+  SignalType sends_signal() const override;
+  SignalType receives_signal() const override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
-  void calibrate_time( const TimeConverter& tc );
+  void calibrate_time( const TimeConverter& tc ) override;
 
 
 private:
-  void init_buffers_();
-  void pre_run_hook();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
   // gain function functor
   // must have an double operator(double) defined
   TGainfunction gain_;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< binary_neuron< TGainfunction > >;
@@ -140,7 +140,7 @@ private:
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   // ----------------------------------------------------------------
@@ -229,8 +229,8 @@ private:
 
 
 template < class TGainfunction >
-inline port
-binary_neuron< TGainfunction >::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+binary_neuron< TGainfunction >::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -239,8 +239,8 @@ binary_neuron< TGainfunction >::send_test_event( Node& target, rport receptor_ty
 }
 
 template < class TGainfunction >
-inline port
-binary_neuron< TGainfunction >::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+binary_neuron< TGainfunction >::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -250,8 +250,8 @@ binary_neuron< TGainfunction >::handles_test_event( SpikeEvent&, rport receptor_
 }
 
 template < class TGainfunction >
-inline port
-binary_neuron< TGainfunction >::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+binary_neuron< TGainfunction >::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -261,8 +261,8 @@ binary_neuron< TGainfunction >::handles_test_event( CurrentEvent&, rport recepto
 }
 
 template < class TGainfunction >
-inline port
-binary_neuron< TGainfunction >::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+binary_neuron< TGainfunction >::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -456,9 +456,6 @@ template < class TGainfunction >
 void
 binary_neuron< TGainfunction >::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
     // update the input current
@@ -536,7 +533,7 @@ binary_neuron< TGainfunction >::handle( SpikeEvent& e )
   if ( m == 1 )
   { // multiplicity == 1, either a single 1->0 event or the first or second of a
     // pair of 0->1 events
-    if ( node_id == S_.last_in_node_id_ && t_spike == S_.t_last_in_spike_ )
+    if ( node_id == S_.last_in_node_id_ and t_spike == S_.t_last_in_spike_ )
     {
       // received twice the same node ID, so transition 0->1
       // take double weight to compensate for subtracting first event

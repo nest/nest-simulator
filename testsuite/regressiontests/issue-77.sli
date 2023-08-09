@@ -59,7 +59,6 @@ M_ERROR setverbosity
              /ginzburg_neuron             % binary neuron
              /mcculloch_pitts_neuron      % binary neuron
              /erfc_neuron                 % binary neuron
-             /pp_pop_psc_delta            % population model, not suitable for STDP
              /gif_pop_psc_exp             % population model, not suitable for STDP
              /lin_rate_ipn                % rate neuron
              /lin_rate_opn                % rate neuron
@@ -71,6 +70,7 @@ M_ERROR setverbosity
              /gauss_rate_ipn              % rate neuron
              /sigmoid_rate_gg_1998_ipn    % rate neuron
              /sigmoid_rate_ipn            % rate neuron
+             /spike_train_injector        % spike emitting neuron, does not support spike input
              /rate_transformer_lin             % rate transformer
              /rate_transformer_tanh            % rate transformer
              /rate_transformer_threshold_lin   % rate transformer
@@ -103,9 +103,10 @@ M_ERROR setverbosity
                                   /receptor_type 1 >>
    /iaf_psc_exp_multisynapse << /params << /tau_syn [ 1.0 ] >>
                                   /receptor_type 1 >>
-   /aeif_cond_alpha_multisynapse << /params << /tau_syn [ 2.0 ] >>
+   /aeif_cond_alpha_multisynapse << /params << /E_rev [ -20.0 ]
+                                               /tau_syn [ 2.0 ] >>
                                   /receptor_type 1 >>
-   /aeif_cond_beta_multisynapse << /params << /E_rev [ 0.0 ]
+   /aeif_cond_beta_multisynapse << /params << /E_rev [ -20.0 ]
                                               /tau_rise [ 1.0 ]
                                               /tau_decay [ 2.0 ] >>
                                   /receptor_type 1 >>

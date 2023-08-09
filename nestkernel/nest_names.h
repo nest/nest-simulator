@@ -33,8 +33,9 @@ namespace nest
 {
 
 /**
- * This namespace contains global Name objects. These can be used in
- * Node::get_status and Node::set_status to make data exchange more
+ * This namespace contains global Name objects.
+ *
+ * These can be used in Node::get_status and Node::set_status to make data exchange more
  * efficient and consistent. Creating a Name from a std::string is in
  * O(log n), for n the number of Names already created. Using
  * predefined names makes data exchange much more efficient as it
@@ -75,6 +76,8 @@ extern const Name activity;
 extern const Name adapting_threshold;
 extern const Name adaptive_spike_buffers;
 extern const Name adaptive_target_buffers;
+extern const Name add_compartments;
+extern const Name add_receptors;
 extern const Name after_spike_currents;
 extern const Name ahp_bug;
 extern const Name allow_autapses;
@@ -147,7 +150,6 @@ extern const Name deliver_interval;
 extern const Name delta;
 extern const Name delta_P;
 extern const Name delta_tau;
-extern const Name delta_u;
 extern const Name dendritic_curr;
 extern const Name dendritic_exc;
 extern const Name dendritic_inh;
@@ -264,7 +266,6 @@ extern const Name I_syn_ex;
 extern const Name I_syn_in;
 extern const Name Inact_h;
 extern const Name Inact_p;
-extern const Name Interpol_Order;
 extern const Name indegree;
 extern const Name index_map;
 extern const Name individual_spike_trains;
@@ -311,6 +312,7 @@ extern const Name min;
 extern const Name min_delay;
 extern const Name min_update_time;
 extern const Name minor_axis;
+extern const Name mpi_address;
 extern const Name model;
 extern const Name model_id;
 extern const Name ms_per_tic;
@@ -415,7 +417,6 @@ extern const Name requires_symmetric;
 extern const Name reset_pattern;
 extern const Name resolution;
 extern const Name rho;
-extern const Name rho_0;
 extern const Name rng_seed;
 extern const Name rng_type;
 extern const Name rng_types;
@@ -500,7 +501,6 @@ extern const Name tau_decay_NMDA;
 extern const Name tau_decay_ex;
 extern const Name tau_decay_in;
 extern const Name tau_epsp;
-extern const Name tau_eta;
 extern const Name tau_fac;
 extern const Name tau_m;
 extern const Name tau_max;
@@ -600,12 +600,11 @@ extern const Name V_th_alpha_2;
 extern const Name V_th_max;
 extern const Name V_th_rest;
 extern const Name V_th_v;
-extern const Name val_eta;
 extern const Name voltage_clamp;
 extern const Name voltage_reset_add;
 extern const Name voltage_reset_fraction;
 extern const Name vp;
-extern const Name vt;
+extern const Name volume_transmitter;
 
 extern const Name w;
 extern const Name weight;
@@ -623,8 +622,6 @@ extern const Name Wmin;
 extern const Name x;
 extern const Name x_bar;
 
-extern const Name y1;
-extern const Name y2;
 extern const Name y;
 extern const Name y_0;
 extern const Name y_1;

@@ -96,6 +96,10 @@ public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
+
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
@@ -129,22 +133,22 @@ public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
-    port
-    handles_test_event( SpikeEvent&, rport )
+    size_t
+    handles_test_event( SpikeEvent&, size_t ) override
     {
       return invalid_port;
     }
   };
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
   }
 
   void
-  send( Event& e, thread t, const CommonSynapseProperties& )
+  send( Event& e, size_t t, const CommonSynapseProperties& )
   {
     SpikeEvent e_spike = static_cast< SpikeEvent& >( e );
 
@@ -189,6 +193,9 @@ private:
 };
 
 template < typename targetidentifierT >
+constexpr ConnectionModelProperties bernoulli_synapse< targetidentifierT >::properties;
+
+template < typename targetidentifierT >
 void
 bernoulli_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
@@ -206,7 +213,7 @@ bernoulli_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Co
   updateValue< double >( d, names::weight, weight_ );
   updateValue< double >( d, names::p_transmit, p_transmit_ );
 
-  if ( p_transmit_ < 0 || p_transmit_ > 1 )
+  if ( p_transmit_ < 0 or p_transmit_ > 1 )
   {
     throw BadProperty( "Spike transmission probability must be in [0, 1]." );
   }

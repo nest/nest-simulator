@@ -185,7 +185,7 @@ Running and debugging
 ~~~~~~~~~~~~~~~~~~~~~
 
 Running a NEST Python script
-############################
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The steps below give a rough guide to how you can run a NEST Python script. For more detailed
 documentation on working with Python in VS Code, see the
@@ -210,7 +210,7 @@ documentation on working with Python in VS Code, see the
    **Run Python file in Terminal**. A panel should open with a terminal showing the output.
 
 Running a NEST Python script with a Python debugger
-###################################################
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The steps below give a rough guide to how you can run a NEST Python script with the built-in debugger. For more detailed
 documentation on Python debugging in VS Code, see the
@@ -228,7 +228,7 @@ documentation on Python debugging in VS Code, see the
 #. A panel with output will open, and the program will run until it finishes, or encounters an error or a breakpoint.
 
 Running a SLI script with a debugger
-####################################
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The steps below give a rough guide to how you can run NEST with GDB in VS Code. For more detailed
 documentation on C++ debugging in VS Code, see the
@@ -249,7 +249,7 @@ documentation on C++ debugging in VS Code, see the
 Xcode Workflow
 --------------
 
-This section contains instructions on how to develop NEST on a Mac (OSX 10.10.3 as of this writing) using Xcode (Version 6.3.2). As the shipped gcc, aka clang (based on LLVM 3.6.0svn), does not support OpenMP and there is no MPI shipped by default, this also explains how to get a proper gcc (with OpenMP and MPI enabled) installed on Mac.
+This section contains instructions on how to develop NEST on a Mac (OSX 10.10.3 as of this writing) using Xcode (Version 6.3.2). As the shipped gcc, aka clang (based on LLVM 3.6.0svn), does not support OpenMP and there is no :hxt_ref:`MPI` shipped by default, this also explains how to get a proper gcc (with OpenMP and MPI enabled) installed on Mac.
 
 Setup Infrastructure
 ~~~~~~~~~~~~~~~~~~~~
@@ -368,30 +368,21 @@ Get Xcode working with NEST
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1. Create a new project, which we will call ``NEST-fork`` in this article. In the menu select File -> New -> Project... . Then select OS X -> Other -> External Build System (with build tool ``/usr/bin/make``)
-1. Add the NEST sources to the project. There is a ``+`` in the left-bottom corner (see image). Click ``Add Files to "NEST-fork"...``. Then select the ``<somebase>/NEST/src/`` folder (do not copy items and use groups).
+1. Add the NEST sources to the project. There is a ``+`` in the left-bottom corner. Click ``Add Files to "NEST-fork"...``. Then select the ``<somebase>/NEST/src/`` folder (do not copy items and use groups).
 
-   .. figure:: _images/xcode_article/add_files.png
-      :alt: Add Sources
+Also add the generated files:
 
-   Also add the generated files:
+  .. code-block::
 
-   .. code-block::
+    <somebase>/NEST/build/libnestutil/config.h
+    <somebase>/NEST/build/libnestutil/sliconfig.h
+    <somebase>/NEST/build/nest/static_modules.h
 
-      <somebase>/NEST/build/libnestutil/config.h
-      <somebase>/NEST/build/libnestutil/sliconfig.h
-      <somebase>/NEST/build/nest/static_modules.h
-
-1. On the left panel select the newly created project ``NEST-fork``, then select the created target:
-
-   .. figure:: _images/xcode_article/execution_dir.png
-      :alt: Execution path
+1. On the left panel select the newly created project ``NEST-fork``, then select the created target.
 
    Here you set set Directory to ``<somebase>/NEST/build``. This will be the directory, in which the ``make`` command is executed. Also check ``Pass build settings in environment``.
 
 1. Next select the ``Build Settings`` panel.
-
-   .. figure:: _images/xcode_article/add_path.png
-      :alt: Add $PATH
 
   Here you ``Add User-Defined Setting`` and name it ``PATH``. In the ``NEST-fork`` column (the second) you copy the content of your ``PATH`` variable (do ``echo $PATH`` in the Terminal).
 
@@ -422,8 +413,4 @@ We have to create a new target and configure it appropriately:
 1. Make the target a OS X -> Command Line Tool (Next), of type C++ in your project (preselected). We call it ``completion``
 1. Remove all files and folders that are created with the new target.
 1. In the tab "Build Phase" of the new target, under "Compile Sources" add all ``*.h``, ``*.hpp``, ``*.c``, ``*.cc``, ``*.cpp`` files from the list (you can use CMD+a).
-
-   .. figure:: _images/xcode_article/completion.png
-      :alt: Code Completion
-
 1. Now Xcode generates its index and after that code completion should work.

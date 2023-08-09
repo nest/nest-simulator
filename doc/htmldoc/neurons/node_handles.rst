@@ -1,7 +1,7 @@
 .. _node_handles:
 
-New functionality for node handles (neurons and devices)
-========================================================
+How to handle nodes (neurons and devices)
+==========================================
 
 In NEST 3.0, ``nest.Create()`` returns a *NodeCollection* object instead of a list of global IDs.
 This provides a more compact and flexible way for handling nodes.
@@ -21,20 +21,20 @@ NodeCollection supports the following functionality:
 -  Access to node properties with :ref:`get() <get_param>` and  :ref:`set() <set_param>` or by using :ref:`direct attributes <direct_attributes>`
 -  :ref:`Parametrization <param_ex>`  with spatial, random, distributions, math, and logic parameters
 
-  +-----------------------------------------------+------------------------------------------------+
-  | NEST 2.x                                      | NEST 3.0                                       |
-  +===============================================+================================================+
-  |                                               |                                                |
-  | ::                                            | ::                                             |
-  |                                               |                                                |
-  |     # A list of 10 GIDs is returned           |     # A NodeCollection object is returned      |
-  |     neurons = nest.Create('iaf_psc_alpha', 10)|     neurons = nest.Create('iaf_psc_alpha', 10) |
-  |                                               |                                                |
-  |     # Use lists as arguments in Connect       |     # Use NodeCollection objects as            |
-  |     nest.Connect(neurons, neurons)            |     # arguments in Connect                     |
-  |                                               |     nest.Connect(neurons, neurons)             |
-  |                                               |                                                |
-  +-----------------------------------------------+------------------------------------------------+
++-----------------------------------------------+------------------------------------------------+
+| NEST 2.x                                      | NEST 3.0                                       |
++===============================================+================================================+
+|                                               |                                                |
+| ::                                            | ::                                             |
+|                                               |                                                |
+|     # A list of 10 GIDs is returned           |     # A NodeCollection object is returned      |
+|     neurons = nest.Create('iaf_psc_alpha', 10)|     neurons = nest.Create('iaf_psc_alpha', 10) |
+|                                               |                                                |
+|     # Use lists as arguments in Connect       |     # Use NodeCollection objects as            |
+|     nest.Connect(neurons, neurons)            |     # arguments in Connect                     |
+|                                               |     nest.Connect(neurons, neurons)             |
+|                                               |                                                |
++-----------------------------------------------+------------------------------------------------+
 
 .. _nodeID_support:
 
@@ -248,7 +248,7 @@ This returns a dictionary with tuples. If the NodeCollection is a single-element
 To get specific parameters in the collection, use
 ``get([parameter_name_1, parameter_name_2, ... , parameter_name_n])``.
 
-Get the parameters ``V_m`` and ``V_reset`` of all nodes
+Get the parameters :hxt_ref:`V_m` and :hxt_ref:`V_reset` of all nodes
 
 >>>    nodes = nest.Create('iaf_psc_alpha', 10, {'V_m': -55.})
 >>>    nodes.get(['V_m', 'V_reset'])

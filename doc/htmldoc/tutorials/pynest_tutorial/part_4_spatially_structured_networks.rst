@@ -141,7 +141,7 @@ The following snippet produces :numref:`grid`:
 
 ::
 
-    positions = nest.spatial.grid(shape=[10, 10]  # the number of rows and column in this grid ...
+    positions = nest.spatial.grid(shape=[10, 10],  # the number of rows and column in this grid ...
                                   extent=[2., 2.]  # the size of the grid in mm
                                   )
     nest.Create('iaf_psc_alpha', positions=positions)
@@ -374,6 +374,7 @@ was built correctly:
 
    -  ``nest.PlotLayer()``
    -  ``nest.PlotTargets()``
+   -  ``nest.PlotSources()``
    -  ``nest.PlotProbabilityParameter()``
 
    which allow us to generate the plots used with NUTM and this handout.

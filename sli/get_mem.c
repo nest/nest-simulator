@@ -20,9 +20,6 @@
  *
  */
 
-// Generated includes:
-#include "config.h"
-
 // C includes:
 #include <assert.h>
 
@@ -36,7 +33,7 @@ darwin_get_used_mem()
   mach_msg_type_number_t t_info_count = TASK_BASIC_INFO_COUNT;
 
   kern_return_t result = task_info( mach_task_self(), TASK_BASIC_INFO, ( task_info_t ) &t_info, &t_info_count );
-  assert( result == KERN_SUCCESS || "Problem occured during getting of task_info." );
+  assert( result == KERN_SUCCESS || "Problem occurred during getting of task_info." );
   return t_info.resident_size;
 }
 #else

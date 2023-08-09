@@ -153,7 +153,7 @@ public:
 
   RecordingBackendASCII();
 
-  ~RecordingBackendASCII() throw();
+  ~RecordingBackendASCII() throw() override;
 
   void initialize() override;
 
@@ -224,4 +224,4 @@ private:
 
 } // namespace
 
-#endif // RECORDING_BACKEND_ASCII_H
+#endif /* #ifndef RECORDING_BACKEND_ASCII_H */

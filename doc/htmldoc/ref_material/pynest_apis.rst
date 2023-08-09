@@ -96,10 +96,15 @@ Functions related to randomization
 .. automodule:: nest.random.hl_api_random
     :members:
 
+.. _pynest_spatial:
+
 Functions related to spatial distributions
 ------------------------------------------
 
-.. automodule:: nest.spatial.hl_api_spatial
+.. automodule:: nest.spatial
+    :members: distance
+
+.. automodule:: nest.spatial
     :members:
 
 .. automodule:: nest.spatial_distributions.hl_api_spatial_distributions
@@ -112,4 +117,10 @@ Functions related to mathematical expressions
     :members:
 
 .. automodule:: nest.logic.hl_api_logic
+    :members:
+
+Functions related to SONATA networks
+------------------------------------
+
+.. automodule:: nest.lib.hl_api_sonata
     :members:

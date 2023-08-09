@@ -3,12 +3,16 @@
 Cite NEST
 =========
 
-Please cite the version of NEST you used in your work. You can :ref:`let us know <contact_us>` about your publications that used NEST, and we
+Please cite the *version of NEST you used in your work*. 
+
+For all versions from 2.8 onwards, you can find the full citation `on Zenodo <https://zenodo.org/search?page=1&size=20&q=title:NEST%20AND%20-description:graphical%20AND%20simulator&file_type=gz&sort=-publication_date>`_
+You can also specify the commit hash for work done in the development branches.
+
+You can :ref:`let us know <contact_us>` about your publications that used NEST, and we
 will add them to our `publication list <https://www.nest-simulator.org/publications/>`_; this will help make them
 visible to potential readers.
 
-For all versions from 2.8 onwards, you can find the full citation `on Zenondo <https://zenodo.org/search?page=1&size=20&q=title:NEST%20AND%20-description:graphical&file_type=gz&sort=-publication_date>`_.
-
+You can also `get the NEST logo <https://github.com/nest/nest-simulator/tree/master/doc/logos>`_ for your poster or presentation.
 
 ----
 

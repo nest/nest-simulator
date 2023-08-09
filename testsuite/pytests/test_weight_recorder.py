@@ -28,25 +28,30 @@ import nest
 import numpy as np
 
 HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
+HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
 
 
+@unittest.skipIf(not HAVE_OPENMP, "NEST was compiled without multi-threading")
 @nest.ll_api.check_stack
 class WeightRecorderTestCase(unittest.TestCase):
     """Tests for the Weight Recorder"""
 
     def is_subset(self, a, b, places=6, msg=None):
-
         a = np.round(a, places)
         b = np.round(b, places)
 
         if set(a) <= set(b):
             return
 
-        msg = self._formatMessage(msg, """List A is not subset of list B
+        msg = self._formatMessage(
+            msg,
+            """List A is not subset of list B
                                   and/or the items are not equal within
                                   a certain range of precision.
-                                  List A is {0} and list B is {1}"""
-                                  .format(a, b))
+                                  List A is {0} and list B is {1}""".format(
+                a, b
+            ),
+        )
         raise self.failureException(msg)
 
     def testSingleThread(self):
@@ -55,12 +60,10 @@ class WeightRecorderTestCase(unittest.TestCase):
         nest.ResetKernel()
         nest.local_num_threads = 1
 
-        wr = nest.Create('weight_recorder')
-        nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
-                       {"weight_recorder": wr, "weight": 1.})
+        wr = nest.Create("weight_recorder")
+        nest.CopyModel("stdp_synapse", "stdp_synapse_rec", {"weight_recorder": wr, "weight": 1.0})
 
-        sg = nest.Create("spike_generator",
-                         params={"spike_times": [10., 15., 55., 70.]})
+        sg = nest.Create("spike_generator", params={"spike_times": [10.0, 15.0, 55.0, 70.0]})
         pre = nest.Create("parrot_neuron", 5)
         post = nest.Create("parrot_neuron", 5)
 
@@ -85,12 +88,10 @@ class WeightRecorderTestCase(unittest.TestCase):
         nest.ResetKernel()
         nest.local_num_threads = 2
 
-        wr = nest.Create('weight_recorder')
-        nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
-                       {"weight_recorder": wr, "weight": 1.})
+        wr = nest.Create("weight_recorder")
+        nest.CopyModel("stdp_synapse", "stdp_synapse_rec", {"weight_recorder": wr, "weight": 1.0})
 
-        sg = nest.Create("spike_generator",
-                         params={"spike_times": [10., 15., 55., 70.]})
+        sg = nest.Create("spike_generator", params={"spike_times": [10.0, 15.0, 55.0, 70.0]})
         pre = nest.Create("parrot_neuron", 5)
         post = nest.Create("parrot_neuron", 5)
 
@@ -115,12 +116,10 @@ class WeightRecorderTestCase(unittest.TestCase):
         nest.ResetKernel()
         nest.local_num_threads = 1
 
-        wr = nest.Create('weight_recorder')
-        nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
-                       {"weight_recorder": wr, "weight": 1.})
+        wr = nest.Create("weight_recorder")
+        nest.CopyModel("stdp_synapse", "stdp_synapse_rec", {"weight_recorder": wr, "weight": 1.0})
 
-        sg = nest.Create("spike_generator",
-                         params={"spike_times": [10., 15., 55., 70.]})
+        sg = nest.Create("spike_generator", params={"spike_times": [10.0, 15.0, 55.0, 70.0]})
         pre = nest.Create("parrot_neuron", 5)
         post = nest.Create("parrot_neuron", 5)
 
@@ -146,12 +145,10 @@ class WeightRecorderTestCase(unittest.TestCase):
         nest.ResetKernel()
         nest.local_num_threads = 1
 
-        wr = nest.Create('weight_recorder')
-        nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
-                       {"weight_recorder": wr, "weight": 1.})
+        wr = nest.Create("weight_recorder")
+        nest.CopyModel("stdp_synapse", "stdp_synapse_rec", {"weight_recorder": wr, "weight": 1.0})
 
-        sg = nest.Create("spike_generator",
-                         params={"spike_times": [10., 15., 55., 70.]})
+        sg = nest.Create("spike_generator", params={"spike_times": [10.0, 15.0, 55.0, 70.0]})
         pre = nest.Create("parrot_neuron", 5)
         post = nest.Create("parrot_neuron", 5)
 
@@ -177,12 +174,10 @@ class WeightRecorderTestCase(unittest.TestCase):
         nest.ResetKernel()
         nest.local_num_threads = 1
 
-        wr = nest.Create('weight_recorder')
-        nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
-                       {"weight_recorder": wr, "weight": 1.})
+        wr = nest.Create("weight_recorder")
+        nest.CopyModel("stdp_synapse", "stdp_synapse_rec", {"weight_recorder": wr, "weight": 1.0})
 
-        sg = nest.Create("spike_generator",
-                         params={"spike_times": [10., 15., 55., 70.]})
+        sg = nest.Create("spike_generator", params={"spike_times": [10.0, 15.0, 55.0, 70.0]})
         pre = nest.Create("parrot_neuron", 5)
         post = nest.Create("parrot_neuron", 5)
 
@@ -212,17 +207,15 @@ class WeightRecorderTestCase(unittest.TestCase):
         nest.ResetKernel()
         nest.local_num_threads = 2
 
-        wr = nest.Create('weight_recorder')
-        nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
-                       {"weight_recorder": wr, "weight": 1.})
+        wr = nest.Create("weight_recorder")
+        nest.CopyModel("stdp_synapse", "stdp_synapse_rec", {"weight_recorder": wr, "weight": 1.0})
 
-        sg = nest.Create("spike_generator",
-                         params={"spike_times": [10., 15., 55., 70.]})
+        sg = nest.Create("spike_generator", params={"spike_times": [10.0, 15.0, 55.0, 70.0]})
         pre = nest.Create("parrot_neuron", 5)
         post = nest.Create("parrot_neuron", 5)
 
-        nest.Connect(pre, post, 'one_to_one', syn_spec="stdp_synapse_rec")
-        nest.Connect(pre, post, 'one_to_one', syn_spec="stdp_synapse_rec")
+        nest.Connect(pre, post, "one_to_one", syn_spec="stdp_synapse_rec")
+        nest.Connect(pre, post, "one_to_one", syn_spec="stdp_synapse_rec")
         nest.Connect(sg, pre)
 
         # simulate before GetConnections
@@ -230,10 +223,9 @@ class WeightRecorderTestCase(unittest.TestCase):
         nest.Simulate(1)
 
         conn = nest.GetConnections(pre, post)
-        conn_dict = conn.get(['source', 'target', 'port'])
+        conn_dict = conn.get(["source", "target", "port"])
 
-        connections = list(zip(conn_dict['source'], conn_dict['target'],
-                               conn_dict['port']))
+        connections = list(zip(conn_dict["source"], conn_dict["target"], conn_dict["port"]))
 
         nest.Simulate(100)
 
@@ -252,41 +244,35 @@ class WeightRecorderTestCase(unittest.TestCase):
 
         self.assertEqual(sorted(unique_ids), sorted(connections))
 
-    @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
+    @unittest.skipIf(not HAVE_GSL, "GSL is not available")
     def testRPorts(self):
         """Weight Recorder rports"""
 
         nest.ResetKernel()
         nest.local_num_threads = 1
 
-        wr = nest.Create('weight_recorder')
+        wr = nest.Create("weight_recorder")
 
-        nest.CopyModel("stdp_synapse", "stdp_synapse_rec_0",
-                       {"weight_recorder": wr, "weight": 1.,
-                        "receptor_type": 1})
+        nest.CopyModel("stdp_synapse", "stdp_synapse_rec_0", {"weight_recorder": wr, "weight": 1.0, "receptor_type": 1})
 
-        nest.CopyModel("stdp_synapse", "stdp_synapse_rec_1",
-                       {"weight_recorder": wr, "weight": 1.,
-                        "receptor_type": 2})
+        nest.CopyModel("stdp_synapse", "stdp_synapse_rec_1", {"weight_recorder": wr, "weight": 1.0, "receptor_type": 2})
 
-        sg = nest.Create("spike_generator",
-                         params={"spike_times": [10., 15., 55., 70.]})
+        sg = nest.Create("spike_generator", params={"spike_times": [10.0, 15.0, 55.0, 70.0]})
 
         pre = nest.Create("parrot_neuron", 5)
-        post = nest.Create("aeif_cond_alpha_multisynapse", 5,
-                           {"V_th": -69.9, 'tau_syn': [20., 30.],
-                            'E_rev': [0., 0.]})
+        post = nest.Create(
+            "aeif_cond_alpha_multisynapse", 5, {"V_th": -69.9, "tau_syn": [20.0, 30.0], "E_rev": [0.0, 0.0]}
+        )
 
-        nest.Connect(pre, post, 'one_to_one', syn_spec="stdp_synapse_rec_0")
-        nest.Connect(pre, post, 'one_to_one', syn_spec="stdp_synapse_rec_1")
+        nest.Connect(pre, post, "one_to_one", syn_spec="stdp_synapse_rec_0")
+        nest.Connect(pre, post, "one_to_one", syn_spec="stdp_synapse_rec_1")
         nest.Connect(sg, pre)
 
         connections = nest.GetConnections(pre, post)
         receptors = connections.get("receptor")
         sources = connections.get("source")
         targets = connections.get("target")
-        connections = [(sources[i], targets[i], receptors[i])
-                       for i in range(len(connections))]
+        connections = [(sources[i], targets[i], receptors[i]) for i in range(len(connections))]
 
         nest.Simulate(100)
 
@@ -308,12 +294,10 @@ class WeightRecorderTestCase(unittest.TestCase):
 
 
 def suite():
-
     suite = unittest.TestLoader().loadTestsFromTestCase(WeightRecorderTestCase)
     return suite
 
 
 if __name__ == "__main__":
-
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())

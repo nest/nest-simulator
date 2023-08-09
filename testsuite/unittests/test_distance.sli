@@ -20,6 +20,10 @@
  *
  */
 
+% SLI2PY: Check for overlap with PyNEST spatial
+% SLI2PY: Use approximate comparisons
+% SLI2PYComplexity: Medium
+
 % simple tests for distance calculations
 
 (unittest) run

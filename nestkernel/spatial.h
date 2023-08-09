@@ -53,14 +53,14 @@ class LayerMetadata : public NodeCollectionMetadata
 {
 public:
   LayerMetadata( AbstractLayerPTR );
-  ~LayerMetadata()
+  ~LayerMetadata() override
   {
   }
 
-  void set_status( const DictionaryDatum&, bool ) {};
+  void set_status( const DictionaryDatum&, bool ) override {};
 
   void
-  get_status( DictionaryDatum& d ) const
+  get_status( DictionaryDatum& d ) const override
   {
     layer_->get_status( d );
   }
@@ -74,28 +74,28 @@ public:
 
   // Using string as enum would make stuff more complicated
   std::string
-  get_type() const
+  get_type() const override
   {
     return "spatial";
   }
 
   void
-  set_first_node_id( index node_id )
+  set_first_node_id( size_t node_id ) override
   {
     first_node_id_ = node_id;
   }
 
-  index
-  get_first_node_id() const
+  size_t
+  get_first_node_id() const override
   {
     return first_node_id_;
   }
 
   bool
-  operator==( const NodeCollectionMetadataPTR rhs ) const
+  operator==( const NodeCollectionMetadataPTR rhs ) const override
   {
     const auto rhs_layer_metadata = dynamic_cast< LayerMetadata* >( rhs.get() );
-    if ( rhs_layer_metadata == nullptr )
+    if ( not rhs_layer_metadata )
     {
       return false;
     }
@@ -109,13 +109,13 @@ public:
 
 private:
   const AbstractLayerPTR layer_; //!< layer object
-  index first_node_id_;
+  size_t first_node_id_;
 };
 
 AbstractLayerPTR get_layer( NodeCollectionPTR layer_nc );
 NodeCollectionPTR create_layer( const DictionaryDatum& layer_dict );
 ArrayDatum get_position( NodeCollectionPTR layer_nc );
-std::vector< double > get_position( const index node_id );
+std::vector< double > get_position( const size_t node_id );
 ArrayDatum displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc );
 ArrayDatum displacement( NodeCollectionPTR layer_nc, const ArrayDatum point );
 std::vector< double > distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc );

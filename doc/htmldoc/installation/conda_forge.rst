@@ -46,8 +46,3 @@ Conda forge install
 
    - We currently provide NEST with thread-based parallelization on conda. This should suffice for most
      uses on personal computers.
-   - Until dedicated conda builds for Apple's M1 chip (arm64) become available, you should expect relatively
-     poor performance on computers with the M1 chip. You need to :ref:`build NEST yourself <mac_install>` on
-     M1 systems for good performance.
-
-

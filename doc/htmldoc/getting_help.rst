@@ -1,53 +1,37 @@
-.. _getting_help:
-
-Get help
---------
-
-Have a specific question or problem with NEST?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Check out the :ref:`troubleshooting section <troubleshooting>` for
-common issues.
-
-If your question is not on there, you are welcome to subscribe to our
-:ref:`Mailing List <contact_us>` and ask.
+.. _command_help:
 
 Get help on the command line interface
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+======================================
 
 * The :py:func:`.helpdesk` command will launch the documentation pages on your browser.
 
 * To access the High-level Python API reference material you can use the commands:
 
-    .. code-block:: python
+.. code-block::
 
-       # list all functions and attributes
-       dir(nest)
+   # list all functions and attributes
+   dir(nest)
 
-       # Get docstring for function in Python ...
-       help('nest.FunctionName')
+   # Get docstring for function in Python ...
+   help('nest.FunctionName')
 
-       # ... or in IPython
-       nest.FunctionName?
+   # ... or in IPython
+   nest.FunctionName?
 
 Model information
 ~~~~~~~~~~~~~~~~~
 
 * To get a list of available neuron models, use:
 
-    .. code-block:: python
+.. code-block:: python
 
-       nest.node_models
+   nest.node_models
 
 * To get a list of available synapse models, use:
 
-    .. code-block:: python
+.. code-block:: python
 
-       nest.synapse_models
+   nest.synapse_models
 
-* To get details on model equations and parameters, use:
-
-    .. code-block:: python
-
-       nest.help('model_name')
-
+* To get details on the model equations and parameters,
+  please check out our :doc:`model documentation <models/index>`.

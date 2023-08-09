@@ -18,6 +18,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+#
+# isort: skip_file
 
 """
 Store and restore a network simulation
@@ -47,18 +49,17 @@ the same network using the stored weights.
 ###############################################################################
 # Import necessary modules.
 
-import pickle
-import textwrap
-
-import matplotlib.pyplot as plt
 import nest
-import numpy as np
-import pandas as pd
-from matplotlib import gridspec
+import pickle
 
 ###############################################################################
 # These modules are only needed for illustrative plotting.
 
+import matplotlib.pyplot as plt
+from matplotlib import gridspec
+import numpy as np
+import pandas as pd
+import textwrap
 
 ###############################################################################
 # Implement network as class.

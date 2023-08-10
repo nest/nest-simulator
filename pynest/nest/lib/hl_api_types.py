@@ -252,7 +252,7 @@ class NodeCollection:
                     raise IndexError("Bool index array must be the same length as NodeCollection")
                 np_key = numpy.array(key, dtype=bool)
             # Checking that elements are not instances of bool too, because bool inherits from int
-            elif all(isinstance(x, int) and not isinstance(x, bool) for x in key):
+            elif all(isinstance(x, (int, numpy.integer)) and not isinstance(x, bool) for x in key):
                 np_key = numpy.array(key, dtype=numpy.uint64)
                 if len(numpy.unique(np_key)) != len(np_key):
                     raise ValueError("All node IDs in a NodeCollection have to be unique")

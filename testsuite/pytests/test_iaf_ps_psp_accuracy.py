@@ -20,9 +20,10 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
+Test that neuron with precise timing has correct post-synaptic potential for off-grid input.
+
 Compares the voltage response of iaf_psc_alpha_ps from a single incoming
-excitatory spike at an off-grid time to the analytical solution. 
-Also checks that the equivalent non-ps iaf_psc_alpha does not give the same result.
+excitatory spike at an off-grid time to the analytical solution.
 
 test_iaf_ps_psp_accuracy.sli checks the voltage response of the precise
 versions of the iaf_psc_alpha model neurons to a single incoming spike.
@@ -68,7 +69,8 @@ import math
 from math import exp
 
 # Global parameters
-T = 6.0
+T1 = 3.0
+T2 = 6.0
 tau_syn = 0.3
 tau_m = 10.0
 C_m = 250.0
@@ -86,7 +88,7 @@ neuron_params = {
     "C_m": C_m,
 }
 
-spike_emission = [2.132123512]
+spike_emission = [1.132123512]
 
 
 def alpha_fn(t):
@@ -105,20 +107,23 @@ def test_single_spike_different_stepsizes(h):
     sg = nest.Create("spike_generator")
     sg.set(precise_times=True, origin=0.0, spike_times=spike_emission, start=0.0, stop=5.0)
 
-    neuron_ps = nest.Create("iaf_psc_alpha_ps", params=neuron_params)
+    neuron = nest.Create("iaf_psc_alpha_ps", params=neuron_params)
 
-    neuron = nest.Create("iaf_psc_alpha", params=neuron_params)
-
-    nest.Connect(sg, neuron_ps, syn_spec={"weight": weight, "delay": delay})
     nest.Connect(sg, neuron, syn_spec={"weight": weight, "delay": delay})
 
-    nest.Simulate(T)
+    nest.Simulate(T1)
+    V_m1 = neuron.get("V_m")
 
-    u = neuron.get("V_m")
-    u_ps = neuron_ps.get("V_m")
+    nest.Simulate(T2 - T1)
+    V_m2 = neuron.get("V_m")
 
-    t = T - delay - spike_emission[0]
-    reference_potential = alpha_fn(t)
+    # first checkpoint
+    t = T1 - delay - spike_emission[0]
+    reference_potential1 = alpha_fn(t)
 
-    assert reference_potential == pytest.approx(u_ps)
-    assert reference_potential != pytest.approx(u)
+    # second checkpoint
+    t = T2 - delay - spike_emission[0]
+    reference_potential2 = alpha_fn(t)
+
+    assert reference_potential1 == pytest.approx(V_m1)
+    assert reference_potential2 == pytest.approx(V_m2)

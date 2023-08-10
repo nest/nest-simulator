@@ -34,7 +34,8 @@
 
 namespace nest
 {
-
+  // Disable clang-formatting for documentation due to over-wide table.  
+// clang-format off
 /* BeginUserDocs: neuron, integrate-and-fire, current-based
 
 Short description
@@ -182,6 +183,7 @@ See also
 iaf_psc_delta, iaf_psc_exp, iaf_cond_exp
 
 EndUserDocs */
+// clang-format off
 
 class iaf_psc_alpha : public ArchivingNode
 {

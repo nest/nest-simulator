@@ -287,6 +287,7 @@ const Name min( "min" );
 const Name min_delay( "min_delay" );
 const Name min_update_time( "min_update_time" );
 const Name minor_axis( "minor_axis" );
+const Name mpi_address( "mpi_address" );
 const Name model( "model" );
 const Name model_id( "model_id" );
 const Name ms_per_tic( "ms_per_tic" );
@@ -578,7 +579,7 @@ const Name voltage_clamp( "voltage_clamp" );
 const Name voltage_reset_add( "voltage_reset_add" );
 const Name voltage_reset_fraction( "voltage_reset_fraction" );
 const Name vp( "vp" );
-const Name vt( "vt" );
+const Name volume_transmitter( "volume_transmitter" );
 
 const Name Wmax( "Wmax" );
 const Name Wmin( "Wmin" );

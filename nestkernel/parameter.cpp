@@ -477,4 +477,4 @@ dimension_parameter( const std::shared_ptr< Parameter > x_parameter,
   return std::shared_ptr< Parameter >( new DimensionParameter( x_parameter, y_parameter, z_parameter ) );
 }
 
-} /* namespace nest */
+} // namespace nest

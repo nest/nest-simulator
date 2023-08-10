@@ -202,7 +202,6 @@ inline SpikeData::SpikeData( const Target& target, const size_t lag )
 {
 }
 
-
 inline SpikeData::SpikeData( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag )
   : lcid_( lcid )
   , marker_( SPIKE_DATA_ID_DEFAULT )

@@ -373,7 +373,9 @@ nest::ConnectionManager::get_conn_builder( const std::string& name,
   const std::vector< DictionaryDatum >& syn_specs )
 {
   const size_t rule_id = connruledict_->lookup( name );
-  return connbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_specs );
+  ConnBuilder* cb = connbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_specs );
+  assert( cb );
+  return cb;
 }
 
 void
@@ -411,17 +413,14 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
   {
     throw BadProperty( "The connection specification must contain a connection rule." );
   }
-  const Name rule_name = static_cast< const std::string >( ( *conn_spec )[ names::rule ] );
+  const std::string rule_name = static_cast< const std::string >( ( *conn_spec )[ names::rule ] );
 
   if ( not connruledict_->known( rule_name ) )
   {
     throw BadProperty( String::compose( "Unknown connection rule: %1", rule_name ) );
   }
 
-  const long rule_id = ( *connruledict_ )[ rule_name ];
-
-  ConnBuilder* cb = connbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_specs );
-  assert( cb );
+  ConnBuilder* cb = get_conn_builder( rule_name, sources, targets, conn_spec, syn_specs );
 
   // at this point, all entries in conn_spec and syn_spec have been checked
   ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries in conn_spec: " );
@@ -1350,12 +1349,6 @@ nest::ConnectionManager::compute_target_data_buffer_size()
   // has its own data structures, we need to count connections on every
   // thread separately to compute the total number of sources.
   size_t num_target_data = 0;
-
-  // TODO:
-  // This heuristic is probably wrong. It certainly needs modification for
-  // handling compressed spikes. But it is only for estimating an initial
-  // size, code should work fine also if the initial buffer size is too
-  // small or too large.
   for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
     num_target_data += get_num_target_data( tid );

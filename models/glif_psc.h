@@ -111,7 +111,7 @@ to follow the condition of
   ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
   For implementation details see the
-  `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+  `IAF Integration Singularity notebook <../model_details/IAF_Integration_Singularity.ipynb>`_.
 
 Parameters
 ++++++++++
@@ -199,7 +199,7 @@ EndUserDocs */
 namespace nest
 {
 
-class glif_psc : public nest::ArchivingNode
+class glif_psc : public ArchivingNode
 {
 public:
   glif_psc();

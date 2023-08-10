@@ -139,7 +139,7 @@ Scanner::Scanner( std::istream* is )
 
   code.Group( alpha, "ABCDFGHIJKLMNOPQRSTUVWXYZ" );
   code.Group( alpha, "abcdfghijklmopqrsuvwxyz" );
-  code.Range( alpha, ( char ) 161, ( char ) 255 );
+  code.Range( alpha, static_cast< char >( 161 ), static_cast< char >( 255 ) );
   code[ '_' ] = alpha;
   code.Group( alpha, "~`!@#$^&=|:;'<,>?\"" ); // according to PS
 

@@ -269,10 +269,10 @@ private:
    * Accumulates count of spikes to be sent to any rank in num_spikes_per_rank.
    * Passed as argument, so that values accumulate as we call once for plain and once for offgrid spikes.
    */
-  template < typename TargetT, typename SpikeDataT >
+  template < typename SpikeDataWithRankT, typename SpikeDataT >
   void collocate_spike_data_buffers_( const size_t tid,
     SendBufferPosition& send_buffer_position,
-    std::vector< std::vector< std::vector< TargetT > >* >& spike_register,
+    std::vector< std::vector< SpikeDataWithRankT >* >& spike_register,
     std::vector< SpikeDataT >& send_buffer,
     std::vector< size_t >& num_spikes_per_rank );
 
@@ -316,24 +316,11 @@ private:
   void reset_spike_register_( const size_t tid );
 
   /**
-   * Resizes spike registers according minimal delay so it can
-   * accommodate all possible lags.
-   */
-  void resize_spike_register_( const size_t tid );
-
-  /**
    * Returns true if spike has been moved to MPI buffer, such that it
    * can be removed by clean_spike_register. Required static function
    * by std::remove_if.
    */
   static bool is_marked_for_removal_( const Target& target );
-
-  /**
-   * Removes spikes that were successfully moved to MPI buffers from
-   * spike register, such that they are not considered in (potential)
-   * next communication round.
-   */
-  void clean_spike_register_( const size_t tid );
 
   /**
    * Fills MPI buffer for communication of connection information from
@@ -403,12 +390,9 @@ private:
    * immediately sorted by the thread that will later move the spikes to the
    * MPI buffers.
    * - First dim: write threads (from node to register)
-   * - Second dim: read threads (from register to MPI buffer) --> REMOVE this dim in this test branch (for 1 MPI)  //
-   * TODO: Check if we should re-activate assinging to threads
-   * - Third dim: lag
-   * - Fourth dim: Target (will be converted in SpikeData)
+   * - Second dim: spikes as spike data
    */
-  std::vector< std::vector< std::vector< Target > >* > emitted_spikes_register_;
+  std::vector< std::vector< SpikeDataWithRank >* > emitted_spikes_register_;
 
   /**
    * Register for node IDs of precise neurons that spiked. This is a 4-dim
@@ -416,12 +400,9 @@ private:
    * immediately sorted by the thread that will later move the spikes to the
    * MPI buffers.
    * - First dim: write threads (from node to register)
-   * - Second dim: read threads (from register to MPI buffer) --> REMOVE this dim in this test branch (for 1 MPI)  //
-   * TODO: Check if we should re-activate assinging to threads
-   * - Third dim: lag
-   * - Fourth dim: OffGridTarget (will be converted in OffGridSpikeData)
+   * - Second dim: spikes as offgrid spike data
    */
-  std::vector< std::vector< std::vector< OffGridTarget > >* > off_grid_emitted_spike_register_;
+  std::vector< std::vector< OffGridSpikeDataWithRank >* > off_grid_emitted_spikes_register_;
 
   /**
    * Buffer to collect the secondary events
@@ -473,44 +454,14 @@ private:
 inline void
 EventDeliveryManager::reset_spike_register_( const size_t tid )
 {
-  for ( std::vector< std::vector< Target > >::iterator it = emitted_spikes_register_[ tid ]->begin();
-        it < emitted_spikes_register_[ tid ]->end();
-        ++it )
-  {
-    ( *it ).clear();
-  }
-
-  for ( std::vector< std::vector< OffGridTarget > >::iterator it = off_grid_emitted_spike_register_[ tid ]->begin();
-        it < off_grid_emitted_spike_register_[ tid ]->end();
-        ++it )
-  {
-    ( *it ).clear();
-  }
+  emitted_spikes_register_[ tid ]->clear();
+  off_grid_emitted_spikes_register_[ tid ]->clear();
 }
 
 inline bool
 EventDeliveryManager::is_marked_for_removal_( const Target& target )
 {
   return target.is_processed();
-}
-
-inline void
-EventDeliveryManager::clean_spike_register_( const size_t tid )
-{
-  for ( std::vector< std::vector< Target > >::iterator it = emitted_spikes_register_[ tid ]->begin();
-        it < emitted_spikes_register_[ tid ]->end();
-        ++it )
-  {
-    std::vector< Target >::iterator new_end = std::remove_if( it->begin(), it->end(), is_marked_for_removal_ );
-    it->erase( new_end, it->end() );
-  }
-  for ( std::vector< std::vector< OffGridTarget > >::iterator it = off_grid_emitted_spike_register_[ tid ]->begin();
-        it < off_grid_emitted_spike_register_[ tid ]->end();
-        ++it )
-  {
-    std::vector< OffGridTarget >::iterator new_end = std::remove_if( it->begin(), it->end(), is_marked_for_removal_ );
-    it->erase( new_end, it->end() );
-  }
 }
 
 inline void

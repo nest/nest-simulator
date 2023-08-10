@@ -30,6 +30,7 @@
 #include "nest_types.h"
 #include "target.h"
 
+
 namespace nest
 {
 
@@ -89,10 +90,12 @@ protected:
 public:
   SpikeData();
   SpikeData( const SpikeData& rhs );
+  SpikeData( const Target& target, const size_t lag );
   SpikeData( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag );
 
   SpikeData& operator=( const SpikeData& rhs );
 
+  //! Required in connection with direct-send events.
   void set( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag, const double offset );
 
   template < class TargetT >
@@ -122,6 +125,11 @@ public:
    * Returns synapse-type index.
    */
   synindex get_syn_id() const;
+
+  /**
+   * Returns marker.
+   */
+  unsigned int get_marker() const;
 
   /**
    * Resets the status flag to default value.
@@ -184,6 +192,16 @@ inline SpikeData::SpikeData( const SpikeData& rhs )
   , syn_id_( rhs.syn_id_ )
 {
 }
+
+inline SpikeData::SpikeData( const Target& target, const size_t lag )
+  : lcid_( target.get_lcid() )
+  , marker_( SPIKE_DATA_ID_DEFAULT )
+  , lag_( lag )
+  , tid_( target.get_tid() )
+  , syn_id_( target.get_syn_id() )
+{
+}
+
 
 inline SpikeData::SpikeData( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag )
   : lcid_( lcid )
@@ -265,6 +283,12 @@ SpikeData::get_syn_id() const
   return syn_id_;
 }
 
+inline unsigned int
+SpikeData::get_marker() const
+{
+  return marker_;
+}
+
 inline void
 SpikeData::reset_marker()
 {
@@ -320,6 +344,7 @@ private:
 
 public:
   OffGridSpikeData();
+  OffGridSpikeData( const Target& target, const size_t lag, const double offset );
   OffGridSpikeData( const size_t tid,
     const synindex syn_id,
     const size_t lcid,
@@ -327,6 +352,7 @@ public:
     const double offset );
   OffGridSpikeData( const OffGridSpikeData& rhs );
   OffGridSpikeData& operator=( const OffGridSpikeData& rhs );
+  OffGridSpikeData& operator=( const SpikeData& rhs );
   void set( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag, const double offset );
 
   template < class TargetT >
@@ -339,7 +365,13 @@ using success_offgrid_spike_data_size = StaticAssert< sizeof( OffGridSpikeData )
 
 inline OffGridSpikeData::OffGridSpikeData()
   : SpikeData()
-  , offset_( 0. )
+  , offset_( 0.0 )
+{
+}
+
+inline OffGridSpikeData::OffGridSpikeData( const Target& target, const size_t lag, const double offset )
+  : SpikeData( target, lag )
+  , offset_( offset )
 {
 }
 
@@ -371,6 +403,19 @@ OffGridSpikeData::operator=( const OffGridSpikeData& rhs )
   return *this;
 }
 
+inline OffGridSpikeData&
+OffGridSpikeData::operator=( const SpikeData& rhs )
+{
+  // Need to use get_*() here, direct access to protected members of base-class instance is prohibited,
+  // see example in https://en.cppreference.com/w/cpp/language/access.
+  lcid_ = rhs.get_lcid();
+  marker_ = rhs.get_marker();
+  lag_ = rhs.get_lag();
+  tid_ = rhs.get_tid();
+  syn_id_ = rhs.get_syn_id();
+  offset_ = 0;
+  return *this;
+}
 
 inline void
 OffGridSpikeData::set( const size_t tid,
@@ -406,6 +451,46 @@ OffGridSpikeData::get_offset() const
 {
   return offset_;
 }
+
+
+/**
+ * Combine target rank and spike data information for storage in emitted_spikes_register.
+ *
+ * @note Not using std::pair<> to be able to emplace_back().
+ */
+struct SpikeDataWithRank
+{
+  SpikeDataWithRank( const Target& target, const size_t lag );
+
+  const size_t rank;          //!< rank of target neuron
+  const SpikeData spike_data; //! data on spike transmitted
+};
+
+inline SpikeDataWithRank::SpikeDataWithRank( const Target& target, const size_t lag )
+  : rank( target.get_rank() )
+  , spike_data( target, lag )
+{
+}
+
+/**
+ * Combine target rank and spike data information for storage in emitted_off_grid_spikes_register.
+ *
+ * @note Not using std::pair<> to be able to emplace_back().
+ */
+struct OffGridSpikeDataWithRank
+{
+  OffGridSpikeDataWithRank( const Target& target, const size_t lag, const double offset );
+
+  const size_t rank;                 //!< rank of target neuron
+  const OffGridSpikeData spike_data; //! data on spike transmitted
+};
+
+inline OffGridSpikeDataWithRank::OffGridSpikeDataWithRank( const Target& target, const size_t lag, const double offset )
+  : rank( target.get_rank() )
+  , spike_data( target, lag, offset )
+{
+}
+
 
 } // namespace nest
 

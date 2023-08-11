@@ -24,15 +24,16 @@ with each release of NEST having its own documentation.
 This workflow aims for the concept of **user-correctable documentation**.
 
 .. mermaid::
+   :zoom:
 
    flowchart TB
     subgraph build
      html
      pre-html-->html
      subgraph pre-html
-      auto_examples/\*.ipynb
-      auto_examples/\*.rst
-      auto_examples/\*.py
+      ai["auto_examples: ipynb"]
+      ar["auto_examples: rst"]
+      ap["auto_examples: py"]
      end
     end
     subgraph sphinx
@@ -41,9 +42,9 @@ This workflow aims for the concept of **user-correctable documentation**.
       api_docstrings-->html
      end
      subgraph gallery
-      py_examples-->auto_examples/\*.ipynb
-      py_examples-->auto_examples/\*.rst
-      py_examples-->auto_examples/\*.py
+      py_examples-->ai
+      py_examples-->ar
+      py_examples-->ap
      end
      subgraph custom_extensions
       extractor_userdocs.py-->html
@@ -51,14 +52,17 @@ This workflow aims for the concept of **user-correctable documentation**.
      end
     end
     subgraph source_files
-     doc/htmldoc/\*\*/\*.rst-->sphinx
-     models/\*.h-->custom_extensions
-     pynest/examples-->gallery
-     pynest/nest-->autodoc
+     docs["doc/htmldoc: rst"]-->sphinx
+     models["models: h"]-->custom_extensions
+     py["pynest/examples"]-->gallery
+     api["pynest/nest"]-->autodoc
     end
     subgraph nest/nest-simulator-examples
-     Jupyter_notebook_pyexamples-->button["add_button_to_examples: conf.py"]
+     Jupyter_notebook_pyexamples-->button
     end
+
+
+|
 
 .. mermaid::
 

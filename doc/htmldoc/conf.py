@@ -55,7 +55,7 @@ extensions = [
     "sphinx.ext.mathjax",
     "IPython.sphinxext.ipython_console_highlighting",
     "nbsphinx",
-    'sphinxcontrib.mermaid',
+    "sphinxcontrib.mermaid",
     "sphinx_design",
     "HoverXTooltip",
     "VersionSyncRole",
@@ -71,6 +71,8 @@ templates_path = ["templates"]
 
 mermaid_output_format = "raw"
 mermaid_version = "10.2.0"
+#mermaid_init_js = "mermaid.initialize({startOnLoad:true});"
+mermaid_d3_zoom = True
 
 sphinx_gallery_conf = {
     # path to your examples scripts
@@ -306,6 +308,7 @@ def setup(app):
     app.add_css_file("css/custom.css")
     app.add_css_file("css/pygments.css")
     app.add_js_file("js/custom.js")
+    #app.add_js_file("js/mermaid.js")
     app.connect("env-before-read-docs", add_button_to_examples)
     app.connect("config-inited", config_inited_handler)
 

@@ -27,7 +27,7 @@
 
 ####### NEST_EXITCODE_ABORT ########
 function( NEST_CHECK_EXITCODE_ABORT )
-  message( STATUS "Check the abort exitcode." )
+  printInfo( "Check the abort exitcode." )
   set( ABORT_ERR "" )
   try_compile( COMPILE_VAR
       ${CMAKE_BINARY_DIR}
@@ -49,13 +49,13 @@ function( NEST_CHECK_EXITCODE_ABORT )
       file( REMOVE "${CMAKE_BINARY_DIR}/assert_value" )
     endif ()
   endif ()
-  message( STATUS "Check the abort exitcode. ${ABORT_ERR}" )
+  printInfo( "Check the abort exitcode. ${ABORT_ERR}" )
   set( NEST_EXITCODE_ABORT ${ABORT_ERR} PARENT_SCOPE )
 endfunction()
 
 ####### NEST_EXITCODE_SEGFAULT ########
 function( NEST_CHECK_EXITCODE_SEGFAULT )
-  message( STATUS "Check the segmentation fault exitcode." )
+  printInfo( "Check the segmentation fault exitcode." )
   set( SEG_ERR "" )
   try_compile( COMPILE_VAR
       ${CMAKE_BINARY_DIR}
@@ -77,13 +77,13 @@ function( NEST_CHECK_EXITCODE_SEGFAULT )
       file( REMOVE "${CMAKE_BINARY_DIR}/segfault_value" )
     endif ()
   endif ()
-  message( STATUS "Check the segmentation fault exitcode. ${SEG_ERR}" )
+  printInfo( "Check the segmentation fault exitcode. ${SEG_ERR}" )
   set( NEST_EXITCODE_SEGFAULT ${SEG_ERR} PARENT_SCOPE )
 endfunction()
 
 ####### HAVE_CMATH_MAKROS_IGNORED ########
 function( NEST_CHECK_HAVE_CMATH_MAKROS_IGNORED )
-  message( STATUS "Check whether the compiler ignores cmath makros." )
+  printInfo( "Check whether the compiler ignores cmath makros." )
   try_compile( COMPILE_RESULT
       ${CMAKE_BINARY_DIR}
       ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/CMathMacros.cxx
@@ -94,13 +94,13 @@ function( NEST_CHECK_HAVE_CMATH_MAKROS_IGNORED )
   else ()
     set( HAVE_CMATH_MAKROS_IGNORED ON )
   endif ()
-  message( STATUS "Check whether the compiler ignores cmath makros. ${HAVE_CMATH_MAKROS_IGNORED}" )
+  printInfo( "Check whether the compiler ignores cmath makros. ${HAVE_CMATH_MAKROS_IGNORED}" )
   set( HAVE_CMATH_MAKROS_IGNORED ${HAVE_CMATH_MAKROS_IGNORED} PARENT_SCOPE)
 endfunction()
 
 ####### HAVE_ALPHA_CXX_STD_BUG ########
 function( NEST_CHECK_HAVE_ALPHA_CXX_STD_BUG )
-  message( STATUS "Check whether the compiler does NOT include <*.h> headers ISO conformant." )
+  printInfo( "Check whether the compiler does NOT include <*.h> headers ISO conformant." )
   try_compile( COMPILE_RESULT
       ${CMAKE_BINARY_DIR}
       ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/AlphaCXXBug.cxx
@@ -112,12 +112,12 @@ function( NEST_CHECK_HAVE_ALPHA_CXX_STD_BUG )
     set( HAVE_ALPHA_CXX_STD_BUG ON )
   endif ()
   set( HAVE_ALPHA_CXX_STD_BUG ${HAVE_ALPHA_CXX_STD_BUG} PARENT_SCOPE )
-  message( STATUS "Check whether the compiler does NOT include <*.h> headers ISO conformant. ${HAVE_ALPHA_CXX_STD_BUG}" )
+  printInfo( "Check whether the compiler does NOT include <*.h> headers ISO conformant. ${HAVE_ALPHA_CXX_STD_BUG}" )
 endfunction()
 
 ####### HAVE_SIGUSR_IGNORED ########
 function( NEST_CHECK_HAVE_SIGUSR_IGNORED )
-  message( STATUS "Check whether the compiler respects symbolic signal names in signal.h." )
+  printInfo( "Check whether the compiler respects symbolic signal names in signal.h." )
   try_compile( COMPILE_RESULT
       ${CMAKE_BINARY_DIR}
       ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/SigUsrIgnored.cxx
@@ -129,12 +129,12 @@ function( NEST_CHECK_HAVE_SIGUSR_IGNORED )
     set( HAVE_SIGUSR_IGNORED ON )
   endif ()
   set( HAVE_SIGUSR_IGNORED ${HAVE_SIGUSR_IGNORED} PARENT_SCOPE )
-  message( STATUS "Check whether the compiler respects symbolic signal names in signal.h. ${HAVE_SIGUSR_IGNORED}" )
+  printInfo( "Check whether the compiler respects symbolic signal names in signal.h. ${HAVE_SIGUSR_IGNORED}" )
 endfunction()
 
 ####### HAVE_STATIC_TEMPLATE_DECLARATION_FAIL ########
 function( NEST_CHECK_HAVE_STATIC_TEMPLATE_DECLARATION_FAIL )
-  message( STATUS "Check static template member declaration." )
+  printInfo( "Check static template member declaration." )
   try_compile( COMPILE_RESULT
       ${CMAKE_BINARY_DIR}
       ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/StaticTemplateDeclaration.cxx
@@ -146,12 +146,12 @@ function( NEST_CHECK_HAVE_STATIC_TEMPLATE_DECLARATION_FAIL )
     set( HAVE_STATIC_TEMPLATE_DECLARATION_FAIL ON )
   endif ()
   set( HAVE_STATIC_TEMPLATE_DECLARATION_FAIL ${HAVE_STATIC_TEMPLATE_DECLARATION_FAIL} PARENT_SCOPE )
-  message( STATUS "Check static template member declaration. ${HAVE_STATIC_TEMPLATE_DECLARATION_FAIL}" )
+  printInfo( "Check static template member declaration. ${HAVE_STATIC_TEMPLATE_DECLARATION_FAIL}" )
 endfunction()
 
 ####### HAVE_STL_VECTOR_CAPACITY_BASE_UNITY ########
 function( NEST_CHECK_HAVE_STL_VECTOR_CAPACITY_BASE_UNITY )
-  message( STATUS "Check for STL vector capacity base unity." )
+  printInfo( "Check for STL vector capacity base unity." )
   set( RUN_RESULT 0 )
   set( RUN_RESULT__TRYRUN_OUTPUT "" )
   try_run( RUN_RESULT COMPILE_RESULT
@@ -166,12 +166,12 @@ function( NEST_CHECK_HAVE_STL_VECTOR_CAPACITY_BASE_UNITY )
     set( HAVE_STL_VECTOR_CAPACITY_BASE_UNITY OFF )
   endif ()
   set( HAVE_STL_VECTOR_CAPACITY_BASE_UNITY ${HAVE_STL_VECTOR_CAPACITY_BASE_UNITY} PARENT_SCOPE )
-  message( STATUS "Check for STL vector capacity base unity. ${HAVE_STL_VECTOR_CAPACITY_BASE_UNITY}" )
+  printInfo( "Check for STL vector capacity base unity. ${HAVE_STL_VECTOR_CAPACITY_BASE_UNITY}" )
 endfunction()
 
 ####### HAVE_STL_VECTOR_CAPACITY_DOUBLING ########
 function( NEST_CHECK_HAVE_STL_VECTOR_CAPACITY_DOUBLING )
-  message( STATUS "Check for STL vector capacity doubling strategy." )
+  printInfo( "Check for STL vector capacity doubling strategy." )
   set( RUN_RESULT 0 )
   set( RUN_RESULT__TRYRUN_OUTPUT "" )
   try_run( RUN_RESULT COMPILE_RESULT
@@ -186,7 +186,7 @@ function( NEST_CHECK_HAVE_STL_VECTOR_CAPACITY_DOUBLING )
     set( HAVE_STL_VECTOR_CAPACITY_DOUBLING OFF )
   endif ()
   set( HAVE_STL_VECTOR_CAPACITY_DOUBLING ${HAVE_STL_VECTOR_CAPACITY_DOUBLING} PARENT_SCOPE )
-  message( STATUS "Check for STL vector capacity doubling strategy. ${HAVE_STL_VECTOR_CAPACITY_DOUBLING}" )
+  printInfo( "Check for STL vector capacity doubling strategy. ${HAVE_STL_VECTOR_CAPACITY_DOUBLING}" )
 endfunction()
 
 function( NEST_CHECK_HAVE_XLC_ICE_ON_USING )
@@ -196,7 +196,7 @@ function( NEST_CHECK_HAVE_XLC_ICE_ON_USING )
   #
   # @author Hans E. Plesser
 
-  message( STATUS "Check whether the compiler fails with ICE." )
+  printInfo( "Check whether the compiler fails with ICE." )
   try_compile( COMPILE_RESULT
       ${CMAKE_BINARY_DIR}
       ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/ICE.cxx
@@ -208,12 +208,12 @@ function( NEST_CHECK_HAVE_XLC_ICE_ON_USING )
     set( HAVE_XLC_ICE_ON_USING ON )
   endif ()
   set( HAVE_XLC_ICE_ON_USING ${HAVE_XLC_ICE_ON_USING} PARENT_SCOPE )
-  message( STATUS "Check whether the compiler fails with ICE. ${HAVE_XLC_ICE_ON_USING}" )
+  printInfo( "Check whether the compiler fails with ICE. ${HAVE_XLC_ICE_ON_USING}" )
 endfunction()
 
 ####### Test if ::nan(...) is defined #######
 function( NEST_CHECK_HAVE_STD_NAN )
-  message( STATUS "Check if ::nan is available from cmath." )
+  printInfo( "Check if ::nan is available from cmath." )
   try_compile( COMPILE_RESULT
       ${CMAKE_BINARY_DIR}
       ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/std_nan.cxx
@@ -225,12 +225,12 @@ function( NEST_CHECK_HAVE_STD_NAN )
     set( HAVE_STD_NAN OFF )
   endif ()
   set( HAVE_STD_NAN ${HAVE_STD_NAN} PARENT_SCOPE )
-  message( STATUS "Check if ::nan is available from cmath. ${HAVE_STD_NAN}" )
+  printInfo( "Check if ::nan is available from cmath. ${HAVE_STD_NAN}" )
 endfunction()
 
 ####### Test if ::isnan(...) is defined #######
 function( NEST_CHECK_HAVE_STD_ISNAN )
-  message( STATUS "Check if ::isnan is available from cmath." )
+  printInfo( "Check if ::isnan is available from cmath." )
   try_compile( COMPILE_RESULT
       ${CMAKE_BINARY_DIR}
       ${CMAKE_CURRENT_SOURCE_DIR}/cmake/CheckFiles/std_isnan.cxx
@@ -242,12 +242,12 @@ function( NEST_CHECK_HAVE_STD_ISNAN )
     set( HAVE_STD_ISNAN OFF )
   endif ()
   set( HAVE_STD_ISNAN ${HAVE_STD_ISNAN} PARENT_SCOPE )
-  message( STATUS "Check if ::isnan is available from cmath. ${HAVE_STD_ISNAN}" )
+  printInfo( "Check if ::isnan is available from cmath. ${HAVE_STD_ISNAN}" )
 endfunction()
 
 ####### Test if Random123 generators work #######
 function( NEST_CHECK_RANDOM123 )
-  message( STATUS "Check if Random123 generators work." )
+  printInfo( "Check if Random123 generators work." )
   try_run( RUN_RESULT COMPILE_RESULT
       ${CMAKE_BINARY_DIR}
       ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/Random123/tests/kat_cpp.cpp
@@ -257,14 +257,14 @@ function( NEST_CHECK_RANDOM123 )
       ARGS ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/Random123/tests/kat_vectors
       )
   if ( NOT ${COMPILE_RESULT} )
-    message("Compilation of Random123 tests failed")
+  printInfo("Compilation of Random123 tests failed")
     set( HAVE_RANDOM123 OFF )
   elseif ( NOT "${RUN_RESULT}" EQUAL 0 )
-    message( ${RUN_OUTPUT} )
+  printInfo( ${RUN_OUTPUT} )
     set( HAVE_RANDOM123 OFF )
   else ()
     set( HAVE_RANDOM123 ON )
   endif ()
   set( HAVE_RANDOM123 ${HAVE_RANDOM123} PARENT_SCOPE )
-  message( STATUS "Check if Random123 generators work. ${HAVE_RANDOM123}" )
+  printInfo( "Check if Random123 generators work. ${HAVE_RANDOM123}" )
 endfunction()

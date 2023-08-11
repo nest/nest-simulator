@@ -29,10 +29,11 @@
 // Generated includes:
 #include "config.h"
 
-// Includes from nestkernel:
+// Includes from libnestutil:
 #include "archiving_node.h"
 #include "connection.h"
 #include "event.h"
+#include "iaf_propagator.h"
 #include "nest_types.h"
 #include "recordables_map.h"
 #include "ring_buffer.h"
@@ -89,10 +90,10 @@ can only change at on-grid times.
   `tau_syn_in`, respectively, to avoid numerical instabilities.
 
   For implementation details see the
-  `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+  `IAF Integration Singularity notebook <../model_details/IAF_Integration_Singularity.ipynb>`_.
 
 For details about exact subthreshold integration, please see
-:doc:`../guides/exact-integration`.
+:doc:`../neurons/exact-integration`.
 
 Parameters
 ++++++++++
@@ -167,24 +168,24 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
   bool
-  is_off_grid() const
+  is_off_grid() const override
   {
     return true;
   }
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
   /**
    * Based on the current state, compute the value of the membrane potential
@@ -203,8 +204,8 @@ private:
    * only through a Node*.
    */
   //@{
-  void init_buffers_();
-  void pre_run_hook();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
   /**
    * Time Evolution Operator.
@@ -223,7 +224,7 @@ private:
    * While the neuron is refractory, membrane potential (y2_) is
    * clamped to U_reset_.
    */
-  void update( Time const& origin, const long from, const long to );
+  void update( Time const& origin, const long from, const long to ) override;
   //@}
 
   // The next two classes need to be friends to access the State_ class/member
@@ -259,6 +260,10 @@ private:
    * @param spike_offset  Time offset for spike
    */
   void emit_instant_spike_( const Time& origin, const long lag, const double spike_offset );
+
+  /** Propagator object for updating synaptic components */
+  IAFPropagatorExp propagator_ex_;
+  IAFPropagatorExp propagator_in_;
 
   // ----------------------------------------------------------------
 
@@ -409,16 +414,16 @@ private:
   static RecordablesMap< iaf_psc_exp_ps > recordablesMap_;
 };
 
-inline port
-nest::iaf_psc_exp_ps::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+nest::iaf_psc_exp_ps::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
   return target.handles_test_event( e, receptor_type );
 }
 
-inline port
-iaf_psc_exp_ps::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+iaf_psc_exp_ps::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -427,8 +432,8 @@ iaf_psc_exp_ps::handles_test_event( SpikeEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-iaf_psc_exp_ps::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+iaf_psc_exp_ps::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -437,8 +442,8 @@ iaf_psc_exp_ps::handles_test_event( CurrentEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-iaf_psc_exp_ps::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+iaf_psc_exp_ps::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

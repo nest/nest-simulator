@@ -46,22 +46,22 @@ public:
   /**
    * Sets the local connection ID.
    */
-  void set_lcid( const index lcid );
+  void set_lcid( const size_t lcid );
 
   /**
    * Returns the local connection ID.
    */
-  index get_lcid() const;
+  size_t get_lcid() const;
 
   /**
    * Sets the target ID.
    */
-  void set_tid( const thread tid );
+  void set_tid( const size_t tid );
 
   /**
    * Returns the target ID.
    */
-  thread get_tid() const;
+  size_t get_tid() const;
 
   /**
    * Sets the synapse-type ID.
@@ -78,24 +78,24 @@ public:
 using success_target_data_fields_size = StaticAssert< sizeof( TargetDataFields ) == 8 >::success;
 
 inline void
-TargetDataFields::set_lcid( const index lcid )
+TargetDataFields::set_lcid( const size_t lcid )
 {
   lcid_ = lcid;
 }
 
-inline index
+inline size_t
 TargetDataFields::get_lcid() const
 {
   return lcid_;
 }
 
 inline void
-TargetDataFields::set_tid( const thread tid )
+TargetDataFields::set_tid( const size_t tid )
 {
   tid_ = tid;
 }
 
-inline thread
+inline size_t
 TargetDataFields::get_tid() const
 {
   return tid_;
@@ -168,13 +168,13 @@ enum enum_status_target_data_id
  * Used to communicate part of the connection infrastructure from
  * post- to presynaptic side. These are the elements of the MPI
  * buffers.
+ *
  * SeeAlso: SpikeData
  */
 class TargetData
 {
   // Members must be set explicitly -- no defaults
-  // Done this way to create large vector without preconstruction
-  // and to handle variant fields
+  // Done this way to create large vector without preconstruction and to handle variant fields
 
 private:
   static constexpr uint8_t NUM_BITS_LID = 19U;
@@ -192,7 +192,8 @@ private:
 
 public:
   //! variant fields
-  union {
+  union
+  {
     TargetDataFields target_data;
     SecondaryTargetDataFields secondary_data;
   };
@@ -204,10 +205,10 @@ public:
   bool is_complete_marker() const;
   bool is_end_marker() const;
   bool is_invalid_marker() const;
-  void set_source_lid( const index source_lid );
-  void set_source_tid( const thread source_tid );
-  index get_source_lid() const;
-  thread get_source_tid() const;
+  void set_source_lid( const size_t source_lid );
+  void set_source_tid( const size_t source_tid );
+  size_t get_source_lid() const;
+  size_t get_source_tid() const;
   void set_is_primary( const bool is_primary );
   bool is_primary() const;
 };
@@ -258,26 +259,26 @@ TargetData::is_invalid_marker() const
 }
 
 inline void
-TargetData::set_source_lid( const index source_lid )
+TargetData::set_source_lid( const size_t source_lid )
 {
   assert( source_lid < MAX_LID );
   source_lid_ = source_lid;
 }
 
 inline void
-TargetData::set_source_tid( const thread source_tid )
+TargetData::set_source_tid( const size_t source_tid )
 {
   assert( source_tid < MAX_TID );
   source_tid_ = source_tid;
 }
 
-inline index
+inline size_t
 TargetData::get_source_lid() const
 {
   return source_lid_;
 }
 
-inline thread
+inline size_t
 TargetData::get_source_tid() const
 {
   return source_tid_;
@@ -296,4 +297,4 @@ TargetData::is_primary() const
 }
 } // namespace nest
 
-#endif // TARGET_DATA_H
+#endif /* #ifndef TARGET_DATA_H */

@@ -40,7 +40,7 @@
  * ---------------------------------------------------------------- */
 
 nest::poisson_generator::Parameters_::Parameters_()
-  : rate_( 0.0 ) // pA
+  : rate_( 0.0 ) // Hz
 {
 }
 
@@ -117,9 +117,6 @@ nest::poisson_generator::pre_run_hook()
 void
 nest::poisson_generator::update( Time const& T, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   if ( P_.rate_ <= 0 )
   {
     return;

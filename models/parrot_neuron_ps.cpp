@@ -22,9 +22,6 @@
 
 #include "parrot_neuron_ps.h"
 
-// C++ includes:
-#include <limits>
-
 // Includes from libnestutil:
 #include "numerics.h"
 
@@ -34,10 +31,7 @@
 #include "kernel_manager.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 namespace nest
 {
@@ -58,10 +52,6 @@ parrot_neuron_ps::init_buffers_()
 void
 parrot_neuron_ps::update( Time const& origin, long const from, long const to )
 {
-  assert( to >= 0 );
-  assert( static_cast< delay >( from ) < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   // at start of slice, tell input queue to prepare for delivery
   if ( from == 0 )
   {

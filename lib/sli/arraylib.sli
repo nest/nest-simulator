@@ -222,7 +222,7 @@ SeeAlso: arraylib::Product, arraylib::Sum, arraylib::Mean, arraylib::Var
 %----------------------------------------------------------------------------
 /** @BeginDocumentation
 
-Name: arraylib::Reform - Reform the dimensions of a hyperrectengular array
+Name: arraylib::Reform - Reform the dimensions of a hyperrectangular array
 
 Synopsis: [array] [dim1 dim2 ... dimn] Reform -> [reformedArray]
 

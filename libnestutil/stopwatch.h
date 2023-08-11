@@ -71,12 +71,12 @@ public:
 
   enum
   {
-    MICROSEC = ( timeunit_t ) 1,
-    MILLISEC = MICROSEC * 1000,
-    SECONDS = MILLISEC * 1000,
-    MINUTES = SECONDS * 60,
-    HOURS = MINUTES * 60,
-    DAYS = HOURS * 24
+    MICROSEC = static_cast< timeunit_t >( 1 ),
+    MILLISEC = MICROSEC * static_cast< timeunit_t >( 1000 ),
+    SECONDS = MILLISEC * static_cast< timeunit_t >( 1000 ),
+    MINUTES = SECONDS * static_cast< timeunit_t >( 60 ),
+    HOURS = MINUTES * static_cast< timeunit_t >( 60 ),
+    DAYS = HOURS * static_cast< timeunit_t >( 24 )
   };
 
   static bool correct_timeunit( timeunit_t t );
@@ -158,7 +158,7 @@ private:
 inline bool
 Stopwatch::correct_timeunit( timeunit_t t )
 {
-  return t == MICROSEC || t == MILLISEC || t == SECONDS || t == MINUTES || t == HOURS || t == DAYS;
+  return t == MICROSEC or t == MILLISEC or t == SECONDS or t == MINUTES or t == HOURS or t == DAYS;
 }
 
 inline void
@@ -222,7 +222,7 @@ nest::Stopwatch::elapsed_timestamp() const
     return _end - _beg + _prev_elapsed;
   }
 #else
-  return ( timestamp_t ) 0;
+  return static_cast< timestamp_t >( 0 );
 #endif
 }
 
@@ -281,7 +281,7 @@ nest::Stopwatch::get_timestamp()
   // * JuQueen (BG/Q)
   // * MacOS 10.9
   struct timeval now;
-  gettimeofday( &now, ( struct timezone* ) 0 );
+  gettimeofday( &now, static_cast< struct timezone* >( nullptr ) );
   return ( nest::Stopwatch::timestamp_t ) now.tv_usec
     + ( nest::Stopwatch::timestamp_t ) now.tv_sec * nest::Stopwatch::SECONDS;
 }

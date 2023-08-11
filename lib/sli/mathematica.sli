@@ -32,7 +32,7 @@ certain functions. Within the dictionary each
 function name is associated with a dictionary
 which contains the options for that function.
 
-Note that the accessibility, i.e. the dicitonary
+Note that the accessibility, i.e. the dictionary
 in which a function is defined is not accounted for.
 
 It is suggested that you use a C++-like notation to indicate the
@@ -99,7 +99,7 @@ Synopsis: /f  optiondict SetOptions -> --
 Description:
 SetOptions set all option values given in
 the supplied dictionary. Options which are not listed
-in this dicitonary are not modified.
+in this dictionary are not modified.
 Note that only those options can be modified which were
 initially defined by the Options command.
 
@@ -2450,7 +2450,7 @@ def
      [ [22 9] [53 31] [47 56] [39 57] ]
     ]
 
-  Bugs: Bad performace: TensorRank should be rewritten in C++
+  Bugs: Bad performance: TensorRank should be rewritten in C++
    not yet protected by trie
   Author: Diesmann
   FirstVersion: 31.5.2000
@@ -2689,7 +2689,7 @@ Description: add can be used to add numbers and arrays.
   If applied to numbers, add returns the sum of the numbers. If one
   of the arguments is a double, the result is also a double.
 
-  Applied to arrays, add perfoms a per-component addition of the two
+  Applied to arrays, add performs a per-component addition of the two
   arrays. The components must be numbers, however, integer and double
   values may be mixed.
 
@@ -2742,7 +2742,7 @@ Description: sub can be used to subtract numbers and arrays.
   If applied to numbers, sub returns the difference of the numbers. If one
   of the arguments is a double, the result is also a double.
 
-  Applied to arrays, sub perfoms a per-component subtraction of the two
+  Applied to arrays, sub performs a per-component subtraction of the two
   arrays. The components must be numbers, however, integer and double
   values may be mixed.
 

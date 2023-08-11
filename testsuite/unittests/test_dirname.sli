@@ -20,6 +20,8 @@
  *
  */
 
+% SLI2PY: Ignore
+
 /** @BeginDocumentation
    Name: testsuite::test_dirname - tests dirname from filesystem.sli for POSIX conformance
 

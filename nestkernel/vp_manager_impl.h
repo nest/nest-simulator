@@ -33,98 +33,92 @@
 namespace nest
 {
 
-inline thread
+inline size_t
 VPManager::get_vp() const
 {
   return kernel().mpi_manager.get_rank() + get_thread_id() * kernel().mpi_manager.get_num_processes();
 }
 
-inline thread
-VPManager::node_id_to_vp( const index node_id ) const
+inline size_t
+VPManager::node_id_to_vp( const size_t node_id ) const
 {
   return node_id % get_num_virtual_processes();
 }
 
-inline thread
-VPManager::vp_to_thread( const thread vp ) const
+inline size_t
+VPManager::vp_to_thread( const size_t vp ) const
 {
   return vp / kernel().mpi_manager.get_num_processes();
 }
 
-inline thread
+inline size_t
 VPManager::get_num_virtual_processes() const
 {
   return get_num_threads() * kernel().mpi_manager.get_num_processes();
 }
 
 inline bool
-VPManager::is_local_vp( const thread vp ) const
+VPManager::is_local_vp( const size_t vp ) const
 {
   return kernel().mpi_manager.get_process_id_of_vp( vp ) == kernel().mpi_manager.get_rank();
 }
 
-inline thread
-VPManager::thread_to_vp( const thread tid ) const
+inline size_t
+VPManager::thread_to_vp( const size_t tid ) const
 {
   return tid * kernel().mpi_manager.get_num_processes() + kernel().mpi_manager.get_rank();
 }
 
 inline bool
-VPManager::is_node_id_vp_local( const index node_id ) const
+VPManager::is_node_id_vp_local( const size_t node_id ) const
 {
-  return ( node_id % get_num_virtual_processes() == static_cast< index >( get_vp() ) );
+  return ( node_id % get_num_virtual_processes() == static_cast< size_t >( get_vp() ) );
 }
 
-inline index
-VPManager::node_id_to_lid( const index node_id ) const
+inline size_t
+VPManager::node_id_to_lid( const size_t node_id ) const
 {
   // starts at lid 0 for node_ids >= 1 (expected value for neurons, excl. node ID 0)
-  return ceil( static_cast< double >( node_id ) / get_num_virtual_processes() ) - 1;
+  return std::ceil( static_cast< double >( node_id ) / get_num_virtual_processes() ) - 1;
 }
 
-inline index
-VPManager::lid_to_node_id( const index lid ) const
+inline size_t
+VPManager::lid_to_node_id( const size_t lid ) const
 {
-  const index vp = get_vp();
-  return ( lid + static_cast< index >( vp == 0 ) ) * get_num_virtual_processes() + vp;
+  const size_t vp = get_vp();
+  return ( lid + static_cast< size_t >( vp == 0 ) ) * get_num_virtual_processes() + vp;
 }
 
-inline thread
+inline size_t
 VPManager::get_num_assigned_ranks_per_thread() const
 {
-  return ceil( float( kernel().mpi_manager.get_num_processes() ) / n_threads_ );
+  return std::ceil( static_cast< double >( kernel().mpi_manager.get_num_processes() ) / n_threads_ );
 }
 
-inline thread
-VPManager::get_start_rank_per_thread( const thread tid ) const
+inline size_t
+VPManager::get_start_rank_per_thread( const size_t tid ) const
 {
   return tid * get_num_assigned_ranks_per_thread();
 }
 
-inline thread
-VPManager::get_end_rank_per_thread( const thread rank_start, const thread num_assigned_ranks_per_thread ) const
+inline size_t
+VPManager::get_end_rank_per_thread( const size_t rank_start, const size_t num_assigned_ranks_per_thread ) const
 {
-  thread rank_end = rank_start + num_assigned_ranks_per_thread;
+  size_t rank_end = rank_start + num_assigned_ranks_per_thread;
 
   // if we have more threads than ranks, or if ranks can not be
   // distributed evenly on threads, we need to make sure, that all
   // threads care only about existing ranks
-  while ( rank_end > kernel().mpi_manager.get_num_processes() )
+  if ( rank_end > kernel().mpi_manager.get_num_processes() )
   {
-    --rank_end;
-    // we use rank_end == rank_start, as a sign, that this thread
-    // does not do any work
-    if ( rank_end == rank_start )
-    {
-      break;
-    }
+    rank_end = std::max( rank_start, kernel().mpi_manager.get_num_processes() );
   }
 
   return rank_end;
 }
 
 inline AssignedRanks
-VPManager::get_assigned_ranks( const thread tid )
+VPManager::get_assigned_ranks( const size_t tid )
 {
   AssignedRanks assigned_ranks;
   assigned_ranks.begin = get_start_rank_per_thread( tid );

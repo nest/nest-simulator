@@ -27,20 +27,15 @@
 
 // Includes from libnestutil:
 #include "dict_util.h"
-#include "numerics.h"
-#include "propagator_stability.h"
-
-// Includes from nestkernel:
 #include "exceptions.h"
+#include "iaf_propagator.h"
 #include "kernel_manager.h"
+#include "numerics.h"
 #include "ring_buffer_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 nest::RecordablesMap< nest::iaf_psc_alpha > nest::iaf_psc_alpha::recordablesMap_;
 
@@ -55,7 +50,7 @@ template <>
 void
 RecordablesMap< iaf_psc_alpha >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &iaf_psc_alpha::get_V_m_ );
   insert_( names::I_syn_ex, &iaf_psc_alpha::get_I_syn_ex_ );
   insert_( names::I_syn_in, &iaf_psc_alpha::get_I_syn_in_ );
@@ -162,7 +157,7 @@ iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d, Node* node )
     throw BadProperty( "Membrane time constant must be > 0." );
   }
 
-  if ( tau_ex_ <= 0.0 || tau_in_ <= 0.0 )
+  if ( tau_ex_ <= 0.0 or tau_in_ <= 0.0 )
   {
     throw BadProperty( "All synaptic time constants must be > 0." );
   }
@@ -266,10 +261,8 @@ iaf_psc_alpha::pre_run_hook()
   V_.P21_in_ = h * V_.P11_in_;
 
   // these are determined according to a numeric stability criterion
-  V_.P31_ex_ = propagator_31( P_.tau_ex_, P_.Tau_, P_.C_, h );
-  V_.P32_ex_ = propagator_32( P_.tau_ex_, P_.Tau_, P_.C_, h );
-  V_.P31_in_ = propagator_31( P_.tau_in_, P_.Tau_, P_.C_, h );
-  V_.P32_in_ = propagator_32( P_.tau_in_, P_.Tau_, P_.C_, h );
+  std::tie( V_.P31_ex_, V_.P32_ex_ ) = IAFPropagatorAlpha( P_.tau_ex_, P_.Tau_, P_.C_ ).evaluate( h );
+  std::tie( V_.P31_in_, V_.P32_in_ ) = IAFPropagatorAlpha( P_.tau_in_, P_.Tau_, P_.C_ ).evaluate( h );
 
   V_.EPSCInitialValue_ = 1.0 * numerics::e / P_.tau_ex_;
   V_.IPSCInitialValue_ = 1.0 * numerics::e / P_.tau_in_;
@@ -306,9 +299,6 @@ iaf_psc_alpha::pre_run_hook()
 void
 iaf_psc_alpha::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
     if ( S_.r_ == 0 )
@@ -331,7 +321,7 @@ iaf_psc_alpha::update( Time const& origin, const long from, const long to )
     S_.dI_ex_ *= V_.P11_ex_;
 
     // get read access to the correct input-buffer slot
-    const index input_buffer_slot = kernel().event_delivery_manager.get_modulo( lag );
+    const size_t input_buffer_slot = kernel().event_delivery_manager.get_modulo( lag );
     auto& input = B_.input_buffer_.get_values_all_channels( input_buffer_slot );
 
     // Apply spikes delivered in this step; spikes arriving at T+1 have
@@ -379,7 +369,7 @@ iaf_psc_alpha::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  const index input_buffer_slot = kernel().event_delivery_manager.get_modulo(
+  const size_t input_buffer_slot = kernel().event_delivery_manager.get_modulo(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
 
   const double s = e.get_weight() * e.get_multiplicity();
@@ -393,7 +383,7 @@ iaf_psc_alpha::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  const index input_buffer_slot = kernel().event_delivery_manager.get_modulo(
+  const size_t input_buffer_slot = kernel().event_delivery_manager.get_modulo(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
 
   const double I = e.get_current();

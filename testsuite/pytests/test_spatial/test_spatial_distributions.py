@@ -116,35 +116,13 @@ class SpatialTester:
         self._all_dists = None
 
         spatial_distributions = {
-<<<<<<< HEAD
-            'constant': self._constant,
-            'linear': self._linear,
-            'exponential': self._exponential,
-            'gaussian': self._gauss,
-            'gaussian2d': self._gauss2d,
-            'gamma': self._gamma,
-            'gabor': self._gabor}
-        self._distribution = spatial_distributions[spatial_distribution]
-
-        default_params = {
-            'constant': 1.,
-            'linear': {'a': -math.sqrt(2) / self._L, 'c': 1.0},
-            'exponential': {'a': 1.0, 'c': 0.0, 'tau': -self._L /
-                            (math.sqrt(2) * math.log((.1 - 0) / 1))},
-            'gaussian': {'p_center': 1., 'sigma': self._L / 4.,
-                         'mean': 0., 'c': 0.},
-            'gaussian2d': {'p_center': 1., 'sigma_x': self._L / 4., 'sigma_y': self._L / 4.,
-                           'mean_x': 0.5, 'mean_y': 0.7, 'rho': 0.5, 'c': 0.},
-            'gamma': {'kappa': 3., 'theta': self._L / 4.},
-            'gabor': {'std': self._L, 'gamma': 0.7, 'lam': self._L,
-                      'theta': 360. / 8., 'psi': - 360. / 6.}}
-=======
             "constant": self._constant,
             "linear": self._linear,
             "exponential": self._exponential,
             "gaussian": self._gauss,
             "gaussian2d": self._gauss2d,
             "gamma": self._gamma,
+            "gabor": self._gabor,
         }
         self._distribution = spatial_distributions[spatial_distribution]
 
@@ -163,6 +141,8 @@ class SpatialTester:
                 "c": 0.0,
             },
             "gamma": {"kappa": 3.0, "theta": self._L / 4.0},
+            "gabor": {"std": self._L, "gamma": 0.7, "lam": self._L,
+                      "theta": 360. / 8., "psi": - 360. / 6.}}
         }
         self._params = default_params[spatial_distribution]
         if distribution_params is not None:

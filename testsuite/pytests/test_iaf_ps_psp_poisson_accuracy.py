@@ -97,19 +97,15 @@ def test_poisson_spikes_different_stepsizes(h):
 
     nest.set(tics_per_ms=2**10, resolution=2**h)
 
-    pg = nest.Create("poisson_generator_ps")
-    pg.set(rate=16000)
+    pg = nest.Create("poisson_generator_ps", params={"rate": 16000.0})
 
     parrot = nest.Create("parrot_neuron")
-    neuron = nest.Create("iaf_psc_alpha_ps")
-    neuron.set(neuron_params)
+    neuron = nest.Create("iaf_psc_alpha_ps", params=neuron_params)
 
     sr = nest.Create("spike_recorder")
 
     if DEBUG:
-        mm = nest.Create("multimeter")
-        mm.set(record_from=["V_m"])
-        mm.set(interval=2**h)
+        mm = nest.Create("multimeter", params={"record_from": ["V_m"], "interval": 2**h})
         nest.Connect(mm, neuron)
 
     nest.Connect(pg, parrot)

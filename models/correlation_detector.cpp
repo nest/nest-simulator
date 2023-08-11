@@ -259,11 +259,11 @@ nest::correlation_detector::handle( SpikeEvent& e )
 {
   // The receiver port identifies the sending node in our
   // sender list.
-  const rport sender = e.get_rport();
+  const size_t sender = e.get_rport();
 
   // If this assertion breaks, the sender does not honor the
   // receiver port during connection or sending.
-  assert( 0 <= sender and sender <= 1 );
+  assert( sender <= 1 );
 
   // accept spikes only if detector was active when spike was emitted
   Time const stamp = e.get_stamp();
@@ -272,7 +272,7 @@ nest::correlation_detector::handle( SpikeEvent& e )
   {
 
     const long spike_i = stamp.get_steps();
-    const port other = 1 - sender; // port of the neuron not sending
+    const size_t other = 1 - sender; // port of the neuron not sending
     SpikelistType& otherSpikes = S_.incoming_[ other ];
     const double tau_edge = P_.tau_max_.get_steps() + 0.5 * P_.delta_tau_.get_steps();
 

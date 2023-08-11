@@ -20,15 +20,6 @@
  *
  */
 
-/**
- * \file histentry.h
- * Part of definition of ArchivingNode which is capable of
- * recording and managing a spike history.
- * \author Moritz Helias, Abigail Morrison
- * \note moved to separate file to avoid circular inclusion in node.h
- * \date april 2006
- */
-
 #ifndef HISTENTRY_H
 #define HISTENTRY_H
 
@@ -38,7 +29,9 @@
 namespace nest
 {
 
-// entry in the spiking history
+/**
+ * Class to represent a single entry in the spiking history of the ArchivingNode.
+ */
 class histentry
 {
 public:

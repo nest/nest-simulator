@@ -43,47 +43,52 @@ sys.path.append(pynest_dir)
 
 # -- General configuration ------------------------------------------------
 
-source_suffix = '.rst'
-master_doc = 'index'
+source_suffix = ".rst"
+master_doc = "index"
 extensions = [
-    'sphinx_gallery.gen_gallery',
-    'sphinx.ext.autodoc',
-    'sphinx.ext.napoleon',
-    'sphinx.ext.autosummary',
-    'sphinx.ext.doctest',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.mathjax',
-    'IPython.sphinxext.ipython_console_highlighting',
-    'nbsphinx',
+    "sphinx_gallery.gen_gallery",
+    "sphinx.ext.autodoc",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.doctest",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.mathjax",
+    "IPython.sphinxext.ipython_console_highlighting",
+    "nbsphinx",
     'sphinxcontrib.mermaid',
-    'sphinx_design',
-    'HoverXTooltip',
-    'VersionSyncRole',
+    "sphinx_design",
+    "HoverXTooltip",
+    "VersionSyncRole",
+    "sphinx_copybutton",
+    "notfound.extension",
 ]
 
 autodoc_mock_imports = ["nest.pynestkernel", "nest.ll_api"]
 mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
 panels_add_bootstrap_css = False
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['templates']
+templates_path = ["templates"]
 
 mermaid_output_format = "raw"
 mermaid_version = "9.4.0"
 
 sphinx_gallery_conf = {
     # path to your examples scripts
-    'examples_dirs': '../../pynest/examples',
+    "examples_dirs": "../../pynest/examples",
     # path where to save gallery generated examples
-    'gallery_dirs': 'auto_examples',
-    'plot_gallery': 'False',
-    'download_all_examples': False,
+    "gallery_dirs": "auto_examples",
+    "plot_gallery": "False",
+    "download_all_examples": False,
 }
 
 # General information about the project.
-project = u'NEST Simulator user documentation'
-copyright = u'2004, nest-simulator'
-author = u'nest-simulator'
+project = "NEST Simulator user documentation"
+copyright = "2004, nest-simulator"
+author = "nest-simulator"
 
+copybutton_prompt_text = ">>> "
+# The output lines will not be copied if set to True
+copybutton_only_copy_prompt_lines = True
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -95,23 +100,23 @@ author = u'nest-simulator'
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = 'en'
+language = "en"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
 exclude_patterns = [
-    '**.ipynb_checkpoints',
-    '.DS_Store',
-    'README.md',
-    'Thumbs.db',
-    'auto_examples/**.ipynb',
-    'auto_examples/index.rst',
-    'nest_by_example',
+    "**.ipynb_checkpoints",
+    ".DS_Store",
+    "README.md",
+    "Thumbs.db",
+    "auto_examples/**.ipynb",
+    "auto_examples/index.rst",
+    "nest_by_example",
 ]
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'manni'
+pygments_style = "manni"
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
@@ -119,18 +124,17 @@ todo_include_todos = False
 # add numbered figure link
 numfig = True
 
-numfig_secnum_depth = (2)
-numfig_format = {'figure': 'Figure %s', 'table': 'Table %s',
-                 'code-block': 'Code Block %s'}
+numfig_secnum_depth = 2
+numfig_format = {"figure": "Figure %s", "table": "Table %s", "code-block": "Code Block %s"}
 
 # -- Options for HTML output ----------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinx_material'
-html_title = 'NEST Simulator Documentation'
-html_logo = 'static/img/nest_logo.png'
+html_theme = "sphinx_material"
+html_title = "NEST Simulator Documentation"
+html_logo = "static/img/nest_logo.png"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -140,61 +144,58 @@ html_theme_options = {
     # Set the name of the project to appear in the navigation.
     # Set you GA account ID to enable tracking
     # 'google_analytics_account': 'UA-XXXXX',
-
     # Specify a base_url used to generate sitemap.xml. If not
     # specified, then no sitemap will be built.
-    'base_url': 'https://nest-simulator.readthedocs.io/en/latest/',
-    'html_minify': False,
-    'html_prettify': False,
-    'css_minify': True,
+    "base_url": "https://nest-simulator.readthedocs.io/en/latest/",
+    "html_minify": False,
+    "html_prettify": False,
+    "css_minify": True,
     # Set the color and the accent color
-    'color_primary': 'orange',
-    'color_accent': 'white',
-    'theme_color': 'ff6633',
-    'master_doc': True,
+    "color_primary": "orange",
+    "color_accent": "white",
+    "theme_color": "ff6633",
+    "master_doc": True,
     # Set the repo location to get a badge with stats
-    'repo_url': 'https://github.com/nest/nest-simulator/',
-    'repo_name': 'NEST Simulator',
+    "repo_url": "https://github.com/nest/nest-simulator/",
+    "repo_name": "NEST Simulator",
     # "nav_links": [
     #     {"href": "index", "internal": True, "title": "NEST docs home"}
     #     ],
     # Visible levels of the global TOC; -1 means unlimited
-    'globaltoc_depth': 1,
+    "globaltoc_depth": 1,
     # If False, expand all TOC entries
-    'globaltoc_collapse': True,
+    "globaltoc_collapse": True,
     # If True, show hidden TOC entries
-    'globaltoc_includehidden': True,
-    }
-
-html_static_path = ['static']
-html_additional_pages = {'index': 'index.html'}
-html_sidebars = {
-    "**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]
+    "globaltoc_includehidden": True,
 }
+
+html_static_path = ["static"]
+html_additional_pages = {"index": "index.html"}
+html_sidebars = {"**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]}
 
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'NESTsimulatordoc'
+htmlhelp_basename = "NESTsimulatordoc"
 
 html_show_sphinx = False
 html_show_copyright = False
 
 # This way works for ReadTheDocs
 # With this local 'make html' is broken!
-github_doc_root = ''
+github_doc_root = ""
 
 intersphinx_mapping = {
-    'python': ('https://docs.python.org/3', None),
-    'nestml': ('https://nestml.readthedocs.io/en/latest/', None),
-    'pynn': ('https://neuralensemble.org/docs/PyNN/', None),
-    'elephant': ('https://elephant.readthedocs.io/en/latest/', None),
-    'desktop': ('https://nest-desktop.readthedocs.io/en/latest/', None),
-    'gpu': ('https://nest-gpu.readthedocs.io/en/latest/', None),
-    'neuromorph': ('https://electronicvisions.github.io/hbp-sp9-guidebook/', None),
-    'arbor': ('https://docs.arbor-sim.org/en/latest/', None),
-    'tvb': ('https://docs.thevirtualbrain.org/', None),
-    'extmod': ('https://nest-extension-module.readthedocs.io/en/latest/', None),
+    "python": ("https://docs.python.org/3", None),
+    "nestml": ("https://nestml.readthedocs.io/en/latest/", None),
+    "pynn": ("https://neuralensemble.org/docs/PyNN/", None),
+    "elephant": ("https://elephant.readthedocs.io/en/latest/", None),
+    "desktop": ("https://nest-desktop.readthedocs.io/en/latest/", None),
+    "gpu": ("https://nest-gpu.readthedocs.io/en/latest/", None),
+    "neuromorph": ("https://electronicvisions.github.io/hbp-sp9-guidebook/", None),
+    "arbor": ("https://docs.arbor-sim.org/en/latest/", None),
+    "tvb": ("https://docs.thevirtualbrain.org/", None),
+    "extmod": ("https://nest-extension-module.readthedocs.io/en/latest/", None),
 }
 
 
@@ -210,43 +211,58 @@ def config_inited_handler(app, config):
 def add_button_to_examples(app, env, docnames):
     """Find all examples and include a link to launch notebook.
 
-     Function finds all restructured text files in auto_examples
-     and injects the multistring prolog, which is rendered
-     as a button link in HTML. The target is set to a Jupyter notebook of
-     the same name and a service to run it.
-     The nameholder in the string is replaced with the file name.
+    Function finds all restructured text files in auto_examples
+    and injects the multistring prolog, which is rendered
+    as a button link in HTML. The target is set to a Jupyter notebook of
+    the same name and a service to run it.
+    The nameholder in the string is replaced with the file name.
 
-     The rst files are generated at build time by Sphinx_gallery.
-     The notebooks that the target points to are linked with
-     services (like EBRAINS JupyterHub) that runs notebooks using nbgitpuller.
-     See https://hub.jupyter.org/nbgitpuller/link.html
-     The notebooks are located in the repository nest/nest-simulator-examples/.
-     The notebooks are generated from the CI workflow of NEST
-     on GitHub, which converts the source Python files to .ipynb.
+    The rst files are generated at build time by Sphinx_gallery.
+    The notebooks that the target points to are linked with
+    services (like EBRAINS JupyterHub) that runs notebooks using nbgitpuller.
+    See https://hub.jupyter.org/nbgitpuller/link.html
+    The notebooks are located in the repository nest/nest-simulator-examples/.
+    The notebooks are generated from the CI workflow of NEST
+    on GitHub, which converts the source Python files to .ipynb.
 
-     The link to run the notebook is rendered in an image within a card directive.
+    The link to run the notebook is rendered in an image within a card directive.
     """
     example_prolog = """
 .. only:: html
 
-  .. card:: Run this example as a Jupyter notebook
-    :margin: auto
-    :width: 50%
+----
+
+ Run this example as a Jupyter notebook:
+
+  .. card::
+    :width: 25%
+    :margin: 2
     :text-align: center
+    :link: https://lab.ebrains.eu/hub/user-redirect/\
+git-pull?repo=https%3A%2F%2Fgithub.com%2Fnest%2Fnest-simulator-examples&urlpath=lab\
+%2Ftree%2Fnest-simulator-examples%2Fnotebooks%2Fnotebooks%2Ffilepath.ipynb&branch=main
+    :link-alt: JupyterHub service
 
     .. image:: https://nest-simulator.org/TryItOnEBRAINS.png
-         :target: https://lab.ebrains.eu/hub/user-redirect/git-pull?repo=\
-https%3A%2F%2Fgithub.com%2Fnest%2Fnest-simulator-examples\
-&urlpath=lab%2Ftree%2Fnest-simulator-examples%2Fnotebooks%2F\
-notebooks%2Ffilepath.ipynb&branch=main
 
-    For details and troubleshooting see :ref:`run_jupyter`."""
 
+.. grid:: 1 1 1 1
+   :padding: 0 0 2 0
+
+   .. grid-item::
+     :class: sd-text-muted
+     :margin: 0 0 3 0
+     :padding: 0 0 3 0
+     :columns: 4
+
+     See :ref:`our guide <run_jupyter>` for more information and troubleshooting.
+
+----
+"""
     # Find all relevant files
     # Inject prolog into Python example
     files = list(Path("auto_examples/").rglob("*.rst"))
     for file in files:
-
         # Skip index files and benchmark file. These files do not have notebooks that can run
         # on the service.
         if file.stem == "index" or file.stem == "hpc_benchmark":
@@ -267,9 +283,9 @@ notebooks%2Ffilepath.ipynb&branch=main
                 break
 
         # insert prolog into rst file after heading
-        lines.insert(i + 1, prolog + '\n')
+        lines.insert(i + 1, prolog + "\n")
 
-        with open(file, 'w') as f:
+        with open(file, "w") as f:
             lines = "".join(lines)
             f.write(lines)
 
@@ -284,35 +300,35 @@ def toc_customizer(app, docname, source):
 
 
 def setup(app):
-    app.connect("source-read", toc_customizer)
-    app.add_css_file('css/custom.css')
-    app.add_css_file('css/pygments.css')
-    app.add_js_file("js/custom.js")
-
     # for events see
     # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
-    app.connect('env-before-read-docs', add_button_to_examples)
-    app.connect('config-inited', config_inited_handler)
+    app.connect("source-read", toc_customizer)
+    app.add_css_file("css/custom.css")
+    app.add_css_file("css/pygments.css")
+    app.add_js_file("js/custom.js")
+    app.connect("env-before-read-docs", add_button_to_examples)
+    app.connect("config-inited", config_inited_handler)
 
 
-nitpick_ignore = [('py:class', 'None'),
-                  ('py:class', 'optional'),
-                  ('py:class', 's'),
-                  ('cpp:identifier', 'CommonSynapseProperties'),
-                  ('cpp:identifier', 'Connection<targetidentifierT>'),
-                  ('cpp:identifier', 'ArchivingNode'),
-                  ('cpp:identifier', 'DeviceNode'),
-                  ('cpp:identifier', 'Node'),
-                  ('cpp:identifier', 'ClopathArchivingNode'),
-                  ('cpp:identifier', 'MessageHandler'),
-                  ('cpp:identifer', 'CommonPropertiesHomW')]
+nitpick_ignore = [
+    ("py:class", "None"),
+    ("py:class", "optional"),
+    ("py:class", "s"),
+    ("cpp:identifier", "CommonSynapseProperties"),
+    ("cpp:identifier", "Connection<targetidentifierT>"),
+    ("cpp:identifier", "ArchivingNode"),
+    ("cpp:identifier", "DeviceNode"),
+    ("cpp:identifier", "Node"),
+    ("cpp:identifier", "ClopathArchivingNode"),
+    ("cpp:identifier", "MessageHandler"),
+    ("cpp:identifer", "CommonPropertiesHomW"),
+]
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'NESTsimulator.tex', u'NEST Simulator Documentation',
-     u'NEST Developer Community', 'manual'),
+    (master_doc, "NESTsimulator.tex", "NEST Simulator Documentation", "NEST Developer Community", "manual"),
 ]
 
 
@@ -320,10 +336,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [
-    (master_doc, 'nestsimulator', u'NEST Simulator Documentation',
-     [author], 1)
-]
+man_pages = [(master_doc, "nestsimulator", "NEST Simulator Documentation", [author], 1)]
 
 
 # -- Options for Texinfo output -------------------------------------------
@@ -332,9 +345,15 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'NESTsimulator', u'NEST Simulator Documentation',
-     author, 'NESTsimulator', 'One line description of project.',
-     'Miscellaneous'),
+    (
+        master_doc,
+        "NESTsimulator",
+        "NEST Simulator Documentation",
+        author,
+        "NESTsimulator",
+        "One line description of project.",
+        "Miscellaneous",
+    ),
 ]
 
 
@@ -343,14 +362,7 @@ def copy_example_file(src):
 
 
 # -- Copy documentation for Microcircuit Model ----------------------------
-copy_example_file("examples/Potjans_2014/box_plot.png")
-copy_example_file("examples/Potjans_2014/raster_plot.png")
-copy_example_file("examples/Potjans_2014/microcircuit.png")
 copy_example_file("examples/hpc_benchmark_connectivity.svg")
-copyfile(
-    os.path.join(pynest_dir, "examples/Potjans_2014/README.rst"),
-    "examples/README.rst",
-)
 
 
 def patch_documentation(patch_url):
@@ -378,21 +390,19 @@ def patch_documentation(patch_url):
       3. retrieve the patch
 
     """
-
     print("Preparing patch...")
     try:
-        git_dir = repo_root_dir / ".git"
+        git_dir = f"{repo_root_dir}/.git"
         git_hash = subprocess.check_output(
-            f"GIT_DIR='{git_dir}' git rev-parse HEAD",
-            shell=True,
-            encoding='utf8').strip()
+            f"GIT_DIR='{git_dir}' git rev-parse HEAD", shell=True, encoding="utf8"
+        ).strip()
         print(f"  current git hash: {git_hash}")
-        patch_file = f'{git_hash}_doc.patch'
-        patch_url = f'{patch_url}/{patch_file}'
+        patch_file = f"{git_hash}_doc.patch"
+        patch_url = f"{patch_url}/{patch_file}"
         print(f"  retrieving {patch_url}")
         urlretrieve(patch_url, patch_file)
         print(f"  applying {patch_file}")
-        result = subprocess.check_output('patch -p3', stdin=open(patch_file, 'r'), stderr=subprocess.STDOUT, shell=True)
+        result = subprocess.check_output(f"git apply '{patch_file}'", stderr=subprocess.STDOUT, shell=True)
         print(f"Patch result: {result}")
     except Exception as exc:
         print(f"Error while applying patch: {exc}")

@@ -2,7 +2,6 @@
 extends: existence
 message: "Add a space between a numeral and a unit of measure."
 level: error
-noword: true
 tokens:
   - '\d+(?:MB|Gbit|GB|kbps|KB|kb)'
 

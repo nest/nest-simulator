@@ -41,7 +41,8 @@ further adjust settings for your system.
     python3-pip \
     python3-pytest \
     python3-pytest-timeout \
-    python3-pytest-xdist
+    python3-pytest-xdist \
+    python3-pandas
 
 * Create an install directory
 

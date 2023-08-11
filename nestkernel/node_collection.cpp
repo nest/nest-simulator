@@ -21,10 +21,12 @@
  */
 
 #include "node_collection.h"
+
+// Includes from nestkernel:
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
+#include "node.h"
 #include "vp_manager_impl.h"
-
 
 // C++ includes:
 #include <algorithm> // copy
@@ -211,11 +213,11 @@ NodeCollection::create( const IntVectorDatum& node_ids_datum )
     return NodeCollection::create_();
   }
 
-  std::vector< index > node_ids;
+  std::vector< size_t > node_ids;
   node_ids.reserve( node_ids_datum->size() );
   for ( const auto& datum : *node_ids_datum )
   {
-    node_ids.push_back( static_cast< index >( getValue< long >( datum ) ) );
+    node_ids.push_back( static_cast< size_t >( getValue< long >( datum ) ) );
   }
 
   if ( not std::is_sorted( node_ids.begin(), node_ids.end() ) )
@@ -233,11 +235,11 @@ NodeCollection::create( const TokenArray& node_ids_array )
     return NodeCollection::create_();
   }
 
-  std::vector< index > node_ids;
+  std::vector< size_t > node_ids;
   node_ids.reserve( node_ids_array.size() );
   for ( const auto& node_id_token : node_ids_array )
   {
-    node_ids.push_back( static_cast< index >( getValue< long >( node_id_token ) ) );
+    node_ids.push_back( static_cast< size_t >( getValue< long >( node_id_token ) ) );
   }
 
   if ( not std::is_sorted( node_ids.begin(), node_ids.end() ) )
@@ -247,15 +249,24 @@ NodeCollection::create( const TokenArray& node_ids_array )
   return NodeCollection::create_( node_ids );
 }
 
-
 NodeCollectionPTR
-NodeCollection::create( const index node_id )
+NodeCollection::create( const size_t node_id )
 {
   return NodeCollection::create_( { node_id } );
 }
 
 NodeCollectionPTR
-NodeCollection::create( const std::vector< index >& node_ids_vector )
+NodeCollection::create( const Node* node )
+{
+  if ( node )
+  {
+    return NodeCollection::create( node->get_node_id() );
+  }
+  return NodeCollection::create_();
+}
+
+NodeCollectionPTR
+NodeCollection::create( const std::vector< size_t >& node_ids_vector )
 {
   if ( node_ids_vector.empty() )
   {
@@ -275,15 +286,15 @@ NodeCollection::create_()
 }
 
 NodeCollectionPTR
-NodeCollection::create_( const std::vector< index >& node_ids )
+NodeCollection::create_( const std::vector< size_t >& node_ids )
 {
-  index current_first = node_ids[ 0 ];
-  index current_last = current_first;
-  index current_model = kernel().modelrange_manager.get_model_id( node_ids[ 0 ] );
+  size_t current_first = node_ids[ 0 ];
+  size_t current_last = current_first;
+  size_t current_model = kernel().modelrange_manager.get_model_id( node_ids[ 0 ] );
 
   std::vector< NodeCollectionPrimitive > parts;
 
-  index old_node_id = current_first;
+  size_t old_node_id = current_first;
   for ( auto node_id = ++( node_ids.begin() ); node_id != node_ids.end(); ++node_id )
   {
     if ( *node_id == old_node_id )
@@ -292,7 +303,7 @@ NodeCollection::create_( const std::vector< index >& node_ids )
     }
     old_node_id = *node_id;
 
-    const index next_model = kernel().modelrange_manager.get_model_id( *node_id );
+    const size_t next_model = kernel().modelrange_manager.get_model_id( *node_id );
 
     if ( next_model == current_model and *node_id == ( current_last + 1 ) )
     {
@@ -328,9 +339,9 @@ NodeCollection::valid() const
   return fingerprint_ == kernel().get_fingerprint();
 }
 
-NodeCollectionPrimitive::NodeCollectionPrimitive( index first,
-  index last,
-  index model_id,
+NodeCollectionPrimitive::NodeCollectionPrimitive( size_t first,
+  size_t last,
+  size_t model_id,
   NodeCollectionMetadataPTR meta )
   : first_( first )
   , last_( last )
@@ -343,7 +354,7 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( index first,
   assert( first_ <= last_ );
 }
 
-NodeCollectionPrimitive::NodeCollectionPrimitive( index first, index last, index model_id )
+NodeCollectionPrimitive::NodeCollectionPrimitive( size_t first, size_t last, size_t model_id )
   : first_( first )
   , last_( last )
   , model_id_( model_id )
@@ -353,7 +364,7 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( index first, index last, index
   assert( first_ <= last_ );
 }
 
-NodeCollectionPrimitive::NodeCollectionPrimitive( index first, index last )
+NodeCollectionPrimitive::NodeCollectionPrimitive( size_t first, size_t last )
   : first_( first )
   , last_( last )
   , model_id_( invalid_index )
@@ -364,7 +375,7 @@ NodeCollectionPrimitive::NodeCollectionPrimitive( index first, index last )
   // find the model_id
   const auto first_model_id = kernel().modelrange_manager.get_model_id( first );
   const auto init_index = first + 1;
-  for ( index node_id = init_index; node_id <= last; ++node_id )
+  for ( size_t node_id = init_index; node_id <= last; ++node_id )
   {
     const auto model_id = kernel().modelrange_manager.get_model_id( node_id );
     if ( model_id != first_model_id )
@@ -581,9 +592,9 @@ NodeCollectionPrimitive::overlapping( const NodeCollectionPrimitive& rhs ) const
 }
 
 void
-NodeCollectionPrimitive::assert_consistent_model_ids_( const index expected_model_id ) const
+NodeCollectionPrimitive::assert_consistent_model_ids_( const size_t expected_model_id ) const
 {
-  for ( index node_id = first_; node_id <= last_; ++node_id )
+  for ( size_t node_id = first_; node_id <= last_; ++node_id )
   {
     const auto model_id = kernel().modelrange_manager.get_model_id( node_id );
     if ( model_id != expected_model_id )
@@ -799,7 +810,7 @@ NodeCollectionComposite::operator+( const NodeCollectionPrimitive& rhs ) const
   }
 }
 
-index
+size_t
 NodeCollectionComposite::operator[]( const size_t i ) const
 {
   if ( is_sliced_ )
@@ -968,13 +979,13 @@ NodeCollectionComposite::merge_parts_( std::vector< NodeCollectionPrimitive >& p
 }
 
 bool
-NodeCollectionComposite::contains( const index node_id ) const
+NodeCollectionComposite::contains( const size_t node_id ) const
 {
   return find( node_id ) != -1;
 }
 
 long
-NodeCollectionComposite::find( const index node_id ) const
+NodeCollectionComposite::find( const size_t node_id ) const
 {
   const auto add_size_op = []( const long a, const NodeCollectionPrimitive& b ) { return a + b.size(); };
 
@@ -1059,7 +1070,7 @@ NodeCollectionComposite::print_me( std::ostream& out ) const
     size_t current_part = 0;
     size_t current_offset = 0;
     size_t previous_part = std::numeric_limits< size_t >::infinity();
-    index primitive_last = 0;
+    size_t primitive_last = 0;
 
     size_t primitive_size = 0;
     NodeIDTriple first_in_primitive = *begin();

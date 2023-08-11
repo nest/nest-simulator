@@ -33,7 +33,7 @@ Parametrizing synapse models
 -----------------------------
 
 NEST provides a variety of different synapse models. You can see the
-available models by using the command ``Models(synapses)``, which picks
+available models by using the command ``synapse_models``, which picks
 only the synapse models out of the list of all available models.
 
 Synapse models can be parameterised analogously to neuron models. You
@@ -119,7 +119,7 @@ parameters associated with the distribution can be set (for example
     nest.Connect(epop1, neuron, "all_to_all", syn_dict)
 
 Available distributions and associated parameters are described in
-:ref:`Connection Managementi <connection_management>`, the most common
+:ref:`Connection Management <connection_management>`, the most common
 ones are:
 
 +-------------------+------------------------+

@@ -55,11 +55,11 @@ M_ERROR setverbosity
 
   copy_model
   {
-    /stdp_dopamine_synapse /mysyn << /vt vt >> CopyModel
+    /stdp_dopamine_synapse /mysyn << /volume_transmitter vt >> CopyModel
     /syn_model /mysyn def
   }
   {
-    /stdp_dopamine_synapse << /vt vt >> SetDefaults
+    /stdp_dopamine_synapse << /volume_transmitter vt >> SetDefaults
     /syn_model /stdp_dopamine_synapse def
   }
   ifelse

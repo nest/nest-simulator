@@ -23,6 +23,58 @@ with each release of NEST having its own documentation.
 
 This workflow aims for the concept of **user-correctable documentation**.
 
+.. mermaid::
+
+   flowchart TB
+    subgraph build
+     html
+     pre-html-->html
+     subgraph pre-html
+      auto_examples/\*.ipynb
+      auto_examples/\*.rst
+      auto_examples/\*.py
+     end
+    end
+    subgraph sphinx
+     rst-->html
+     subgraph autodoc
+      api_docstrings-->html
+     end
+     subgraph gallery
+      py_examples-->auto_examples/\*.ipynb
+      py_examples-->auto_examples/\*.rst
+      py_examples-->auto_examples/\*.py
+     end
+     subgraph custom_extensions
+      extractor_userdocs.py-->html
+      button["add_button_to_examples: conf.py"]-->html
+     end
+    end
+    subgraph source_files
+     doc/htmldoc/\*\*/\*.rst-->sphinx
+     models/\*.h-->custom_extensions
+     pynest/examples-->gallery
+     pynest/nest-->autodoc
+    end
+    subgraph nest/nest-simulator-examples
+     Jupyter_notebook_pyexamples-->button["add_button_to_examples: conf.py"]
+    end
+
+.. mermaid::
+
+   sequenceDiagram
+      user -> simulation_manager: prepare()
+      simulation_manager -> node_manager: prepare_nodes()
+      node_manager -> node: init()
+      node_manager -> node: pre_run_hook()
+      Note left of node_manager: state:<br/>prepared
+      user -> simulation_manager: run()
+      Note right of simulation_manager: 1
+      user -> simulation_manager: run()
+      Note left of user: store results<br/>...
+      user -> simulation_manager: cleanup()
+
+
 .. image:: ../../../static/img/documentation_workflow.png
   :width: 500
   :alt: Alternative text

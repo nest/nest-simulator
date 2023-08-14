@@ -53,9 +53,9 @@ extensions = [
     "sphinx.ext.doctest",
     "sphinx.ext.intersphinx",
     "sphinx.ext.mathjax",
+    "sphinxcontrib.mermaid",
     "IPython.sphinxext.ipython_console_highlighting",
     "nbsphinx",
-    "sphinxcontrib.mermaid",
     "sphinx_design",
     "HoverXTooltip",
     "VersionSyncRole",
@@ -70,9 +70,9 @@ panels_add_bootstrap_css = False
 templates_path = ["templates"]
 
 mermaid_output_format = "raw"
-mermaid_version = "10.2.0"
+mermaid_version = "9.4.0"
 #mermaid_init_js = "mermaid.initialize({startOnLoad:true});"
-mermaid_d3_zoom = True
+#mermaid_d3_zoom = True
 
 sphinx_gallery_conf = {
     # path to your examples scripts

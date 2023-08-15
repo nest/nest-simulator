@@ -70,9 +70,9 @@ panels_add_bootstrap_css = False
 templates_path = ["templates"]
 
 mermaid_output_format = "raw"
-mermaid_version = "9.4.0"
-#mermaid_init_js = "mermaid.initialize({startOnLoad:true});"
-#mermaid_d3_zoom = True
+mermaid_version = "10.2.0"
+# disable require js - mermaid doesn't work if require.js is loaded before it
+nbsphinx_requirejs_path=""
 
 sphinx_gallery_conf = {
     # path to your examples scripts

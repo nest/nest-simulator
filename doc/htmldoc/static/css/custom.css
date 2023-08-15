@@ -86,6 +86,26 @@ section#kernel-attributes dl.py.class dd dl.py.attribute dd dl.field-list.simple
   display: none;
 }
 
+/*************************************************************
+ * Rules for  mermaid diagrams
+ *************************************************************/
+
+.mermaid .cluster rect {
+	fill: #fff !important;
+	stroke: #0E6A93 !important;
+	stroke-width: 1px !important;
+}
+
+
+rect.basic.label-container {
+	fill: #e2e2e200; !important
+	stroke: #ff6633;
+	stroke-width: 1px;
+}
+
+figure, .align-default {
+	text-align: center;
+}
 /**************************************************************************************
  Settings for overriding material design theme 
  Setting nest colors to override sphinx material "orange" and other default colors

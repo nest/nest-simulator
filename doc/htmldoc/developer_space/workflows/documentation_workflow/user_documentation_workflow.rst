@@ -23,60 +23,53 @@ with each release of NEST having its own documentation.
 
 This workflow aims for the concept of **user-correctable documentation**.
 
+
+
 .. mermaid::
    :zoom:
+   :caption: Overview of documentation build. Drag and zoom to explore.
 
-   flowchart TB
-    subgraph build
-     html
-     pre-html-->html
-     subgraph pre-html
-      ai["auto_examples: ipynb"]
-      ar["auto_examples: rst"]
-      ap["auto_examples: py"]
-     end
-    end
-    subgraph sphinx
-     rst-->html
-     subgraph autodoc
-      api_docstrings-->html
-     end
-     subgraph gallery
-      py_examples-->ai
-      py_examples-->ar
-      py_examples-->ap
-     end
-     subgraph custom_extensions
-      extractor_userdocs.py-->html
-      button["add_button_to_examples: conf.py"]-->html
-     end
-    end
-    subgraph source_files
-     docs["doc/htmldoc: rst"]-->sphinx
-     models["models: h"]-->custom_extensions
-     py["pynest/examples"]-->gallery
-     api["pynest/nest"]-->autodoc
-    end
-    subgraph nest/nest-simulator-examples
-     Jupyter_notebook_pyexamples-->button
-    end
+   flowchart LR
 
+      subgraph BUILD: Read the docs or _build/
+        subgraph output
+         html
+         arti
+        end
+        ar-->html
+        ap-->arti["artifacts (downloadable)"]
+        ai-->arti
+        subgraph sphinx
+         rst_parse-->html
+          subgraph autodoc
+           api_docstrings-->html
+          end
+         subgraph gallery
+          ai["auto_examples: ipynb"]
+          ar["auto_examples: rst"]
+          ap["auto_examples: py"]
+         end
+         subgraph custom_extensions
+          extractor_userdocs.py-->html
+          button["fn add_button_to_examples: conf.py"]-->html
+         end
+         subgraph nbsphinx
+          notebooks --> html
+         end
+        end
+      end
 
-|
-
-.. mermaid::
-
-   sequenceDiagram
-      user -> simulation_manager: prepare()
-      simulation_manager -> node_manager: prepare_nodes()
-      node_manager -> node: init()
-      node_manager -> node: pre_run_hook()
-      Note left of node_manager: state:<br/>prepared
-      user -> simulation_manager: run()
-      Note right of simulation_manager: 1
-      user -> simulation_manager: run()
-      Note left of user: store results<br/>...
-      user -> simulation_manager: cleanup()
+      subgraph SOURCE: nest/nest-simulator
+       docs["doc/htmldoc: .rst"]-->sphinx
+       models["cpp models: .h"]-->extractor_userdocs.py
+       py["pynest/examples: .py"]-->gallery
+       api["pynest/nest .py"]-->autodoc
+       ipynb["model_details: .ipynb"]-->nbsphinx
+      end
+      subgraph nest/nest-simulator-examples
+       Jupyter_notebook_pyexamples-->button
+       ai -..-> Jupyter_notebook_pyexamples
+      end
 
 
 .. image:: ../../../static/img/documentation_workflow.png

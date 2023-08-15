@@ -31,43 +31,45 @@ This workflow aims for the concept of **user-correctable documentation**.
 
    flowchart LR
 
+      classDef nest stroke:#f63, stroke-width:1px, fill:#e2e2e200;
+
       subgraph BUILD: Read the docs or _build/
         subgraph output
-         html
+         html:::nest
          arti
         end
         ar-->html
-        ap-->arti["artifacts (downloadable)"]
+        ap-->arti["artifacts (downloadable)"]:::nest
         ai-->arti
         subgraph sphinx
-         rst_parse-->html
+         parse((parse rst)):::nest-->html
           subgraph autodoc
-           api_docstrings-->html
+           api_docstrings:::nest-->html
           end
          subgraph gallery
-          ai["auto_examples: ipynb"]
-          ar["auto_examples: rst"]
-          ap["auto_examples: py"]
+          ai["auto_examples: ipynb"]:::nest
+          ar["auto_examples: rst"]:::nest
+          ap["auto_examples: py"]:::nest
          end
          subgraph custom_extensions
-          extractor_userdocs.py-->html
-          button["fn add_button_to_examples: conf.py"]-->html
+          extractor_userdocs.py:::nest-->html
+          button["fn add_button_to_examples: conf.py"]:::nest-->html
          end
          subgraph nbsphinx
-          notebooks --> html
+          notebooks:::nest --> html
          end
         end
       end
 
       subgraph SOURCE: nest/nest-simulator
-       docs["doc/htmldoc: .rst"]-->sphinx
-       models["cpp models: .h"]-->extractor_userdocs.py
-       py["pynest/examples: .py"]-->gallery
-       api["pynest/nest .py"]-->autodoc
-       ipynb["model_details: .ipynb"]-->nbsphinx
+       docs["doc/htmldoc: .rst"]:::nest-->sphinx
+       models["cpp models: .h"]:::nest-->extractor_userdocs.py
+       py["pynest/examples: .py"]:::nest-->gallery
+       api["pynest/nest .py"]:::nest-->autodoc
+       ipynb["model_details: .ipynb"]:::nest-->nbsphinx
       end
       subgraph nest/nest-simulator-examples
-       Jupyter_notebook_pyexamples-->button
+       Jupyter_notebook_pyexamples:::nest-->button
        ai -..-> Jupyter_notebook_pyexamples
       end
 

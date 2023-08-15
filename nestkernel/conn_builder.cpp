@@ -511,39 +511,23 @@ nest::ConnBuilder::set_synapse_params( DictionaryDatum syn_defaults, DictionaryD
 void
 nest::ConnBuilder::set_structural_plasticity_parameters( std::vector< DictionaryDatum > syn_specs )
 {
-  // Check if both pre and postsynaptic element are provided. Currently only possible to have
-  // structural plasticity with single element syn_spec.
-  bool have_both_sp_keys = false;
-  bool have_one_sp_key = false;
-  for ( auto syn_params : syn_specs )
+  if ( syn_specs.size() > 1 )
   {
-    if ( not have_both_sp_keys
-      and ( syn_params->known( names::pre_synaptic_element ) and syn_params->known( names::post_synaptic_element ) ) )
-    {
-      have_both_sp_keys = true;
-    }
-    if ( not have_one_sp_key
-      and ( syn_params->known( names::pre_synaptic_element ) or syn_params->known( names::post_synaptic_element ) ) )
-    {
-      have_one_sp_key = true;
-    }
+    throw KernelException( "Structural plasticity can only be used with a single syn_spec." );
   }
 
-  if ( have_both_sp_keys and syn_specs.size() > 1 )
-  {
-    throw KernelException( "Structural plasticity is only possible with single syn_spec" );
-  }
-  else if ( have_both_sp_keys )
-  {
-    pre_synaptic_element_name_ = getValue< std::string >( syn_specs[ 0 ], names::pre_synaptic_element );
-    post_synaptic_element_name_ = getValue< std::string >( syn_specs[ 0 ], names::post_synaptic_element );
+  DictionaryDatum syn_spec = syn_specs[ 0 ];
 
-    use_pre_synaptic_element_ = true;
-    use_post_synaptic_element_ = true;
-  }
-  else if ( have_one_sp_key )
+  if ( syn_spec->known( names::pre_synaptic_element ) xor syn_spec->known( names::post_synaptic_element ) )
   {
-    throw BadProperty( "Structural plasticity requires both a pre and postsynaptic element." );
+    throw BadProperty( "Structural plasticity requires both a pre- and postsynaptic element." );
+  }
+
+  if ( syn_spec->known( names::pre_synaptic_element ) and syn_spec->known( names::post_synaptic_element ) )
+  {
+    pre_synaptic_element_name_ = getValue< std::string >( syn_spec, names::pre_synaptic_element );
+    post_synaptic_element_name_ = getValue< std::string >( syn_spec, names::post_synaptic_element );
+    use_structural_plasticity_ = true;
   }
 }
 

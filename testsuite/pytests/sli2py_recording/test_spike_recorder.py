@@ -45,24 +45,14 @@ def simulator(resolution):
 
     nest.Simulate(8.0)
 
-    return srec.events["times"]
+    return srec.events["times"], spike_times
 
 
-@pytest.fixture(scope="module")
-def reference_spikes():
-    """
-    Fixture that simulates reference spikes.
-    """
-
-    ref_spikes = simulator(1.0)
-    return ref_spikes
-
-
-@pytest.mark.parametrize("resolution", [0.1, 0.02, 0.01, 0.001])
-def test_spike_recorder_different_resolutions(reference_spikes, resolution):
+@pytest.mark.parametrize("resolution", [1.0, 0.1, 0.02, 0.01, 0.001])
+def test_spike_recorder_different_resolutions(resolution):
     """
     Test that recorded spike times are independent of resolution.
     """
 
-    spikes = simulator(resolution)
-    nptest.assert_almost_equal(spikes, reference_spikes)
+    actual_spikes, expected_spikes = simulator(resolution)
+    nptest.assert_almost_equal(actual_spikes, expected_spikes)

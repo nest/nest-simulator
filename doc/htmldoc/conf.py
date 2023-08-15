@@ -52,8 +52,8 @@ extensions = [
     "sphinx.ext.autosummary",
     "sphinx.ext.doctest",
     "sphinx.ext.intersphinx",
-    "sphinx.ext.mathjax",
     "sphinxcontrib.mermaid",
+    "sphinx.ext.mathjax",
     "IPython.sphinxext.ipython_console_highlighting",
     "nbsphinx",
     "sphinx_design",
@@ -69,11 +69,6 @@ panels_add_bootstrap_css = False
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["templates"]
 
-mermaid_output_format = "raw"
-mermaid_version = "10.2.0"
-# disable require js - mermaid doesn't work if require.js is loaded before it
-nbsphinx_requirejs_path=""
-
 sphinx_gallery_conf = {
     # path to your examples scripts
     "examples_dirs": "../../pynest/examples",
@@ -87,6 +82,12 @@ sphinx_gallery_conf = {
 project = "NEST Simulator user documentation"
 copyright = "2004, nest-simulator"
 author = "nest-simulator"
+
+mermaid_output_format = "raw"
+mermaid_version = "10.2.0"
+# disable require js - mermaid doesn't work if require.js is loaded before it
+nbsphinx_requirejs_path=""
+
 
 copybutton_prompt_text = ">>> "
 # The output lines will not be copied if set to True
@@ -174,6 +175,8 @@ html_theme_options = {
 html_static_path = ["static"]
 html_additional_pages = {"index": "index.html"}
 html_sidebars = {"**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]}
+
+html_favicon = "static/img/nest_favicon.ico"
 
 # -- Options for HTMLHelp output ------------------------------------------
 
@@ -308,7 +311,6 @@ def setup(app):
     app.add_css_file("css/custom.css")
     app.add_css_file("css/pygments.css")
     app.add_js_file("js/custom.js")
-    #app.add_js_file("js/mermaid.js")
     app.connect("env-before-read-docs", add_button_to_examples)
     app.connect("config-inited", config_inited_handler)
 

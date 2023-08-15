@@ -86,8 +86,7 @@ author = "nest-simulator"
 mermaid_output_format = "raw"
 mermaid_version = "10.2.0"
 # disable require js - mermaid doesn't work if require.js is loaded before it
-nbsphinx_requirejs_path=""
-
+nbsphinx_requirejs_path= ""
 
 copybutton_prompt_text = ">>> "
 # The output lines will not be copied if set to True

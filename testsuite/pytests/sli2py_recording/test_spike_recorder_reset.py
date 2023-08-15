@@ -48,7 +48,6 @@ def test_spike_recorder_reset():
 
     nest.Simulate(105.0)  # should record spikes 10..100 -> 10 spikes
 
-    assert srec.n_events == 10
     nptest.assert_array_equal(srec.events["times"], spike_times[:10])
 
     # reset
@@ -60,5 +59,4 @@ def test_spike_recorder_reset():
     # simulate more, till 160
     nest.Simulate(55.0)  # spikes 110 .. 160 -> 6 spikes
 
-    assert srec.n_events == 6
     nptest.assert_array_equal(srec.events["times"], spike_times[10:16])

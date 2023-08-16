@@ -112,10 +112,8 @@ SPManager::get_status( DictionaryDatum& d )
 void
 SPManager::set_status( const DictionaryDatum& d )
 {
-  if ( d->known( names::structural_plasticity_update_interval ) )
-  {
-    updateValue< double >( d, names::structural_plasticity_update_interval, structural_plasticity_update_interval_ );
-  }
+  updateValue< double >( d, names::structural_plasticity_update_interval, structural_plasticity_update_interval_ );
+
   if ( not d->known( names::structural_plasticity_synapses ) )
   {
     return;

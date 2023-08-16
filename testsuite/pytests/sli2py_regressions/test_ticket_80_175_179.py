@@ -87,7 +87,6 @@ def setup():
 
     for block in sim_blocks:
         nest.ResetKernel()
-        nest.set_verbosity("M_ERROR")
         nest.resolution = 0.1
 
         sg_pre = nest.Create("spike_generator", 1, sg_params)

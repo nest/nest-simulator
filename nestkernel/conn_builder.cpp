@@ -50,8 +50,7 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   , make_symmetric_( false )
   , creates_symmetric_connections_( false )
   , exceptions_raised_( kernel().vp_manager.get_num_threads() )
-  , use_pre_synaptic_element_( false )
-  , use_post_synaptic_element_( false )
+  , use_structural_plasticity_( false )
   , parameters_requiring_skipping_()
   , param_dicts_()
 {
@@ -208,7 +207,7 @@ nest::ConnBuilder::connect()
     throw NotImplemented( "This connection rule does not support symmetric connections." );
   }
 
-  if ( use_structural_plasticity_() )
+  if ( use_structural_plasticity_ )
   {
     if ( make_symmetric_ )
     {
@@ -251,7 +250,7 @@ nest::ConnBuilder::connect()
 void
 nest::ConnBuilder::disconnect()
 {
-  if ( use_structural_plasticity_() )
+  if ( use_structural_plasticity_ )
   {
     sp_disconnect_();
   }
@@ -353,27 +352,17 @@ nest::ConnBuilder::single_connect_( size_t snode_id, Node& target, size_t target
 }
 
 void
-nest::ConnBuilder::set_pre_synaptic_element_name( const std::string& name )
+nest::ConnBuilder::set_synaptic_element_names( const std::string& pre_name, const std::string& post_name )
 {
-  if ( name.empty() )
+  if ( pre_name.empty() or post_name.empty() )
   {
-    throw BadProperty( "pre_synaptic_element cannot be empty." );
+    throw BadProperty( "synaptic element names cannot be empty." );
   }
 
-  pre_synaptic_element_name_ = Name( name );
-  use_pre_synaptic_element_ = not name.empty();
-}
+  pre_synaptic_element_name_ = pre_name;
+  post_synaptic_element_name_ = post_name;
 
-void
-nest::ConnBuilder::set_post_synaptic_element_name( const std::string& name )
-{
-  if ( name.empty() )
-  {
-    throw BadProperty( "post_synaptic_element cannot be empty." );
-  }
-
-  post_synaptic_element_name_ = Name( name );
-  use_post_synaptic_element_ = not name.empty();
+  use_structural_plasticity_ = true;
 }
 
 bool
@@ -1720,7 +1709,7 @@ nest::SPBuilder::SPBuilder( NodeCollectionPTR sources,
   : ConnBuilder( sources, targets, conn_spec, syn_specs )
 {
   // Check that both pre and postsynaptic element are provided
-  if ( not use_structural_plasticity_() )
+  if ( not use_structural_plasticity_ )
   {
     throw BadProperty( "pre_synaptic_element and/or post_synaptic_elements is missing." );
   }

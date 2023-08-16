@@ -96,8 +96,7 @@ public:
     return default_delay_[ 0 ];
   }
 
-  void set_pre_synaptic_element_name( const std::string& name );
-  void set_post_synaptic_element_name( const std::string& name );
+  void set_synaptic_element_names( const std::string& pre_name, const std::string& post_name );
 
   bool all_parameters_scalar_() const;
 
@@ -198,17 +197,10 @@ protected:
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_;
 
   // Name of the pre synaptic and postsynaptic elements for this connection builder
-  Name pre_synaptic_element_name_;
-  Name post_synaptic_element_name_;
+  std::string pre_synaptic_element_name_;
+  std::string post_synaptic_element_name_;
 
-  bool use_pre_synaptic_element_;
-  bool use_post_synaptic_element_;
-
-  inline bool
-  use_structural_plasticity_() const
-  {
-    return use_pre_synaptic_element_ and use_post_synaptic_element_;
-  }
+  bool use_structural_plasticity_;
 
   //! pointers to connection parameters specified as arrays
   std::vector< ConnParameter* > parameters_requiring_skipping_;
@@ -468,13 +460,13 @@ public:
   std::string
   get_pre_synaptic_element_name() const
   {
-    return pre_synaptic_element_name_.toString();
+    return pre_synaptic_element_name_;
   }
 
   std::string
   get_post_synaptic_element_name() const
   {
-    return post_synaptic_element_name_.toString();
+    return post_synaptic_element_name_;
   }
 
   /**

@@ -267,8 +267,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
       if ( ( *i )->get_synapse_model() == kernel().model_manager.get_synapse_model_id( synModel ) )
       {
         cb = kernel().connection_manager.get_conn_builder( rule_name, sources, targets, conn_spec, { syn_spec } );
-        cb->set_post_synaptic_element_name( ( *i )->get_post_synaptic_element_name() );
-        cb->set_pre_synaptic_element_name( ( *i )->get_pre_synaptic_element_name() );
+        cb->set_synaptic_element_names( ( *i )->get_pre_synaptic_element_name(), ( *i )->get_post_synaptic_element_name() );
       }
     }
   }

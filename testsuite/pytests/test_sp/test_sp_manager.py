@@ -104,7 +104,8 @@ class TestStructuralPlasticityManager(unittest.TestCase):
             "Den_in": growth_curve,
             "Axon_ex": growth_curve,
         }
-        nodes = nest.Create(neuron_model, 2, {"synaptic_elements": synaptic_elements})  # noqa: F841
+
+        nest.Create(neuron_model, 2, {"synaptic_elements": synaptic_elements})
 
         sp_synapses = nest.structural_plasticity_synapses["syn1"]
         assert "pre_synaptic_element" in sp_synapses

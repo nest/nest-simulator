@@ -527,6 +527,7 @@ extern const Name tau_spike;
 extern const Name tau_stc;
 extern const Name tau_syn;
 extern const Name tau_syn_ex;
+extern const Name tau_syn_fast;
 extern const Name tau_syn_in;
 extern const Name tau_syn_slow;
 extern const Name tau_theta;

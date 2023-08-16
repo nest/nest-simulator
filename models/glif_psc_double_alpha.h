@@ -37,7 +37,8 @@
 Short description
 +++++++++++++++++
 
-Current-based generalized leaky integrate-and-fire (GLIF) models (from the Allen Institute)
+Current-based generalized leaky integrate-and-fire (GLIF) models
+(from the Allen Institute)
 
 Description
 +++++++++++
@@ -47,12 +48,12 @@ Description
 Incoming spike events induce a postsynaptic change of current modeled
 by sum of two alpha functions [2]_. The alpha function is normalized such that an event
 of weight 1.0 results in a peak current of the fast component of the alpha function to
-be 1 pA at :math:`t = tau_syn`. The peak current of the slow component of the alpha is
-given as amp_slow pA, at :math:`t = tau_syn_slow`. By default, glif_psc_double_alpha has
-a single synapse that is accessible through receptor_port 1. An arbitrary number of
+be 1 pA at :math:`t = tau_syn_fast`. The peak current of the slow component of the alpha
+is given as amp_slow pA, at :math:`t = tau_syn_slow`. By default, glif_psc_double_alpha
+has a single synapse that is accessible through receptor_port 1. An arbitrary number of
 synapses with different time constants can be configured by setting the desired time
-constants as tau_syn array. The resulting synapses are addressed through receptor_port
-1, 2, 3, ....
+constants as tau_syn_fast array. The resulting synapses are addressed through
+receptor_port 1, 2, 3, ....
 
 The five GLIF models are:
 
@@ -167,8 +168,8 @@ th_voltage_decay           double         Voltage-induced threshold time
                                           voltage-dependent component of the
                                           threshold in 1/ms (bv in Equation
                                           (4) in [1]_)
-tau_syn                    double vector  Rise time constants of the synaptic
-                                          alpha function in ms
+tau_syn_fast               double vector  Rise time constants of the faster
+                                          synaptic alpha function in ms
 tau_syn_slow               double vector  Rise time constants of the slower
                                           synaptic alpha function in ms
 amp_slow                   double vector  Relative amplitude of the slower
@@ -263,7 +264,7 @@ private:
     std::vector< double > asc_decay_;    //!< predefined time scale in 1/ms
     std::vector< double > asc_amps_;     //!< in pA
     std::vector< double > asc_r_;        //!< coefficient
-    std::vector< double > tau_syn_;      //!< synaptic port time constants in ms
+    std::vector< double > tau_syn_fast_;      //!< synaptic port time constants in ms
     std::vector< double > tau_syn_slow_; //!< synaptic port time constants in ms
     std::vector< double > amp_slow_;     //!< synaptic port time constants in ms
 
@@ -279,7 +280,7 @@ private:
     //! boolean flag which indicates whether the neuron has voltage dependent threshold component
     bool has_theta_voltage_;
 
-    size_t n_receptors_() const; //!< Returns the size of tau_syn_
+    size_t n_receptors_() const; //!< Returns the size of tau_syn_fast_
 
     Parameters_();
 
@@ -300,8 +301,8 @@ private:
     std::vector< double > ASCurrents_; //!< after-spike currents in pA
     double ASCurrents_sum_;            //!< in pA
     int refractory_steps_;             //!< Number of refractory steps remaining
-    std::vector< double > y1_;         //!< synapse current evolution state 1 in pA
-    std::vector< double > y2_;         //!< synapse current evolution state 2 in pA
+    std::vector< double > y1_fast_;         //!< synapse current evolution state 1 in pA
+    std::vector< double > y2_fast_;         //!< synapse current evolution state 2 in pA
     std::vector< double > y1_slow_;    //!< synapse current evolution state 1 in pA
     std::vector< double > y2_slow_;    //!< synapse current evolution state 2 in pA
 
@@ -337,20 +338,18 @@ private:
     std::vector< double > asc_refractory_decay_rates_; //!< after spike current decay rates during refractory
     double phi;                                        //!< threshold voltage component coefficient
 
-    std::vector< double > P11_; //!< synaptic current evolution parameter
-    std::vector< double > P21_; //!< synaptic current evolution parameter
-    std::vector< double > P22_; //!< synaptic current evolution parameter
+    std::vector< double > P11_fast_; //!< synaptic current evolution parameter
+    std::vector< double > P21_fast_; //!< synaptic current evolution parameter
+    std::vector< double > P22_fast_; //!< synaptic current evolution parameter
     double P30_;                //!< membrane current/voltage evolution parameter
     double P33_;                //!< membrane voltage evolution parameter
-    std::vector< double > P31_; //!< synaptic/membrane current evolution parameter
-    std::vector< double > P32_; //!< synaptic/membrane current evolution parameter
+    std::vector< double > P31_fast_; //!< synaptic/membrane current evolution parameter
+    std::vector< double > P32_fast_; //!< synaptic/membrane current evolution parameter
 
     // slow component
     std::vector< double > P11_slow_; //!< synaptic current evolution parameter
     std::vector< double > P21_slow_; //!< synaptic current evolution parameter
     std::vector< double > P22_slow_; //!< synaptic current evolution parameter
-    double P30_slow_;                //!< membrane current/voltage evolution parameter
-    double P33_slow_;                //!< membrane voltage evolution parameter
     std::vector< double > P31_slow_; //!< synaptic/membrane current evolution parameter
     std::vector< double > P32_slow_; //!< synaptic/membrane current evolution parameter
 
@@ -418,7 +417,7 @@ private:
 inline size_t
 nest::glif_psc_double_alpha::Parameters_::n_receptors_() const
 {
-  return tau_syn_.size();
+  return tau_syn_fast_.size();
 }
 
 inline size_t

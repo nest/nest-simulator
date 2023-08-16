@@ -22,7 +22,7 @@
 """
 Test basic properties of ``step_current_generator``.
 
-This set of tests checks parameter setting and test actual simulation
+This set of tests checks parameter setting and compares actual simulation
 result against expectation for one application.
 """
 

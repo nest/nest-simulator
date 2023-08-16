@@ -21,33 +21,45 @@
 
 
 """
-   This test verifies that:
-   voltmeter and spike_recorder record identical signals from iaf_psc_alpha
-   driven by internal dc independent of how simulation time is blocked
-   and how elements are placed in script. Additionally, two spike generators,
-   placed before and after the recorders, emit the same spike trains that
-   are expected from the neurons for the given parameters.
+Regression test for ticket #80, #175 and #179.
 
-   Protocol:
-   1. One iaf_psc_alpha created before voltmeters and spike recorders, one after.
-   2. Devices recording from both neurons.
-   3. Neurons driven by internal dc current.
-   4. Resolution fixed, but simulation time subdivided in different ways.
-   5. Test that all devices yield identical results under all conditions.
+This set of test verifies that ``voltmeter`` and ``spike_recorder`` record
+identical signals from ``iaf_psc_alpha`` driven by internal DC independent
+of how simulation time is blocked and how elements are placed in script.
+Additionally, two spike generators, placed before and after the recorders,
+emit the same spike trains that are expected from the neurons for the given
+parameters.
 """
 
 import nest
 import numpy as np
+import numpy.testing as nptest
 import pytest
 
 
 @pytest.fixture
 def setup():
+    """
+    Fixture for setting up and simulating the system.
+
+    The system is set up and simulated according to the following protocol:
+
+        1. One ``iaf_psc_alpha`` created before voltmeters and spike recorders,
+        one after.
+        2. Devices recording from both neurons.
+        3. Neurons driven by internal DC current.
+        4. Resolution fixed, but simulation time subdivided in different ways.
+
+    The fixture returns all of the ``spike_recorder`` and ``voltmeter``
+    recordings which are use to ensure  ensure that the devices yield identical
+    results in the subsequent tests.
+    """
+
     vm_params = {
         "origin": 0.0,
         "start": 0.0,
         "stop": 100.0,
-        "interval": nest.resolution,
+        "interval": 0.1,
     }
     sr_params = {"origin": 0.0, "start": 0.0, "stop": 100.0, "time_in_steps": True}
     sg_params = {
@@ -70,50 +82,52 @@ def setup():
         ]
     }
     iaf_params = {"I_e": 1000.0}
-    sim_blocks = [0.1, 0.3, 0.5, 0.7, 1.0, 1.3, 1.5, 1.7, 110.0]
 
-    sim_time = vm_params["stop"] + 2.0
+    sim_blocks = [0.1, 0.3, 0.5, 0.7, 1.0, 1.3, 1.5, 1.7, 110.0]
 
     for block in sim_blocks:
         nest.ResetKernel()
         nest.resolution = 0.1
 
-        nest.SetDefaults("iaf_psc_alpha", iaf_params)
-        nest.SetDefaults("voltmeter", vm_params)
-        nest.SetDefaults("spike_recorder", sr_params)
-        nest.SetDefaults("spike_generator", sg_params)
+        sg_pre = nest.Create("spike_generator", 1, sg_params)
+        nrn_pre = nest.Create("iaf_psc_alpha", 1, iaf_params)
+        srs = nest.Create("spike_recorder", 4, sr_params)
+        vms = nest.Create("voltmeter", 2, vm_params)
+        sg_post = nest.Create("spike_generator", 1, sg_params)
+        nrn_post = nest.Create("iaf_psc_alpha", 1, iaf_params)
 
-        spike_gen_pre = nest.Create("spike_generator")
-        iaf_psc_alpha_pre = nest.Create("iaf_psc_alpha")
+        nest.Connect(nrn_pre, srs[0])
+        nest.Connect(nrn_post, srs[1])
+        nest.Connect(sg_pre, srs[2])
+        nest.Connect(sg_post, srs[3])
+        nest.Connect(vms[0], nrn_pre)
+        nest.Connect(vms[1], nrn_post)
 
-        spike_recorders = [nest.Create("spike_recorder") for _ in range(4)]
-        voltmeters = [nest.Create("voltmeter") for _ in range(2)]
+        nest.Simulate(block)
 
-        spike_gen_post = nest.Create("spike_generator")
-        iaf_psc_alpha_post = nest.Create("iaf_psc_alpha")
+    srs_times = srs.get("events", "times")
+    vms_recs = vms.get("events", "V_m")
 
-        nest.Connect(iaf_psc_alpha_pre, spike_recorders[0])
-        nest.Connect(iaf_psc_alpha_post, spike_recorders[1])
-        nest.Connect(spike_gen_pre, spike_recorders[2])
-        nest.Connect(spike_gen_post, spike_recorders[3])
-
-        nest.Connect(voltmeters[0], iaf_psc_alpha_pre)
-        nest.Connect(voltmeters[1], iaf_psc_alpha_post)
-
-        while sim_time >= nest.biological_time:
-            nest.Simulate(block)
-
-        sr_timings = np.array([sr.get("events")["times"] for sr in spike_recorders])
-        vm_timings = np.array([vm.get("events")["V_m"] for vm in voltmeters])
-
-        return sr_timings, vm_timings
+    return srs_times, vms_recs
 
 
-def test_sr_produce_same_output(setup):
-    sr_timings, _ = setup
-    assert np.all((sr_timings[0] == sr_timings).all(axis=1))
+def test_identical_spike_recordings(setup):
+    """
+    Ensure that the 4 ``spike_recorder`` recordings are identical.
+    """
+
+    srs_times, _ = setup
+
+    nptest.assert_array_equal(srs_times[0], srs_times[1])
+    nptest.assert_array_equal(srs_times[0], srs_times[2])
+    nptest.assert_array_equal(srs_times[0], srs_times[3])
 
 
-def test_vm_produce_same_output(setup):
-    _, vm_timings = setup
-    assert np.all((vm_timings[0] == vm_timings).all(axis=1))
+def test_identical_voltmeter_recordings(setup):
+    """
+    Ensure that the 2 ``voltmeter`` recordings are identical.
+    """
+
+    _, vms_recs = setup
+
+    nptest.assert_array_equal(vms_recs[0], vms_recs[1])

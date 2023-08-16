@@ -80,7 +80,7 @@ nest::glif_psc_double_alpha::Parameters_::Parameters_()
   , asc_decay_( std::vector< double > { 0.003, 0.1 } )    // in 1/ms
   , asc_amps_( std::vector< double > { -9.18, -198.94 } ) // in pA
   , asc_r_( std::vector< double >( 2, 1.0 ) )
-  , tau_syn_( std::vector< double >( 1, 2.0 ) )      // in ms
+  , tau_syn_fast_( std::vector< double >( 1, 2.0 ) )      // in ms
   , tau_syn_slow_( std::vector< double >( 1, 6.0 ) ) // in ms
   , amp_slow_( std::vector< double >( 1, 0.3 ) )     // amplitude relative to the fast component, unitless
   , has_connections_( false )
@@ -107,8 +107,8 @@ nest::glif_psc_double_alpha::State_::State_( const Parameters_& p )
   {
     ASCurrents_sum_ += ASCurrents_[ a ];
   }
-  y1_.clear();
-  y2_.clear();
+  y1_fast_.clear();
+  y2_fast_.clear();
   y1_slow_.clear();
   y2_slow_.clear();
 }
@@ -140,8 +140,8 @@ nest::glif_psc_double_alpha::Parameters_::get( DictionaryDatum& d ) const
   def< std::vector< double > >( d, names::asc_amps, asc_amps_ );
   def< std::vector< double > >( d, names::asc_r, asc_r_ );
 
-  ArrayDatum tau_syn_ad( tau_syn_ );
-  def< ArrayDatum >( d, names::tau_syn, tau_syn_ad );
+  ArrayDatum tau_syn_fast_ad( tau_syn_fast_ );
+  def< ArrayDatum >( d, names::tau_syn_fast, tau_syn_fast_ad );
 
   ArrayDatum tau_syn_slow_ad( tau_syn_slow_ );
   def< ArrayDatum >( d, names::tau_syn_slow, tau_syn_slow_ad );
@@ -289,7 +289,7 @@ nest::glif_psc_double_alpha::Parameters_::set( const DictionaryDatum& d, Node* n
   }
 
   const size_t old_n_receptors = this->n_receptors_();
-  if ( updateValue< std::vector< double > >( d, names::tau_syn, tau_syn_ ) )
+  if ( updateValue< std::vector< double > >( d, names::tau_syn_fast, tau_syn_fast_ ) )
   {
     if ( this->n_receptors_() != old_n_receptors and has_connections_ )
     {
@@ -297,9 +297,9 @@ nest::glif_psc_double_alpha::Parameters_::set( const DictionaryDatum& d, Node* n
         "The neuron has connections, therefore the number of ports cannot be "
         "reduced." );
     }
-    for ( size_t i = 0; i < tau_syn_.size(); ++i )
+    for ( size_t i = 0; i < tau_syn_fast_.size(); ++i )
     {
-      if ( tau_syn_[ i ] <= 0 )
+      if ( tau_syn_fast_[ i ] <= 0 )
       {
         throw BadProperty( "All synaptic time constants must be strictly positive." );
       }
@@ -458,11 +458,11 @@ nest::glif_psc_double_alpha::pre_run_hook()
   }
 
   // postsynaptic currents
-  V_.P11_.resize( P_.n_receptors_() );
-  V_.P21_.resize( P_.n_receptors_() );
-  V_.P22_.resize( P_.n_receptors_() );
-  V_.P31_.resize( P_.n_receptors_() );
-  V_.P32_.resize( P_.n_receptors_() );
+  V_.P11_fast_.resize( P_.n_receptors_() );
+  V_.P21_fast_.resize( P_.n_receptors_() );
+  V_.P22_fast_.resize( P_.n_receptors_() );
+  V_.P31_fast_.resize( P_.n_receptors_() );
+  V_.P32_fast_.resize( P_.n_receptors_() );
 
   // Additional variables for the slow component
   V_.P11_slow_.resize( P_.n_receptors_() );
@@ -471,8 +471,8 @@ nest::glif_psc_double_alpha::pre_run_hook()
   V_.P31_slow_.resize( P_.n_receptors_() );
   V_.P32_slow_.resize( P_.n_receptors_() );
 
-  S_.y1_.resize( P_.n_receptors_() );
-  S_.y2_.resize( P_.n_receptors_() );
+  S_.y1_fast_.resize( P_.n_receptors_() );
+  S_.y2_fast_.resize( P_.n_receptors_() );
   S_.y1_slow_.resize( P_.n_receptors_() ); // Slow component
   S_.y2_slow_.resize( P_.n_receptors_() ); // Slow component
   V_.PSCInitialValues_.resize( P_.n_receptors_() );
@@ -487,13 +487,13 @@ nest::glif_psc_double_alpha::pre_run_hook()
   for ( size_t i = 0; i < P_.n_receptors_(); i++ )
   {
     // these P are independent
-    V_.P11_[ i ] = V_.P22_[ i ] = std::exp( -h / P_.tau_syn_[ i ] );
+    V_.P11_fast_[ i ] = V_.P22_fast_[ i ] = std::exp( -h / P_.tau_syn_fast_[ i ] );
 
-    V_.P21_[ i ] = h * V_.P11_[ i ];
+    V_.P21_fast_[ i ] = h * V_.P11_fast_[ i ];
 
     // these are determined according to a numeric stability criterion
     // input time parameter shall be in ms, capacity in pF
-    std::tie( V_.P31_[ i ], V_.P32_[ i ] ) = IAFPropagatorAlpha( P_.tau_syn_[ i ], Tau_, P_.C_m_ ).evaluate( h );
+    std::tie( V_.P31_fast_[ i ], V_.P32_fast_[ i ] ) = IAFPropagatorAlpha( P_.tau_syn_fast_[ i ], Tau_, P_.C_m_ ).evaluate( h );
 
     // Slow component
     V_.P11_slow_[ i ] = V_.P22_slow_[ i ] = std::exp( -h / P_.tau_syn_slow_[ i ] );
@@ -502,7 +502,7 @@ nest::glif_psc_double_alpha::pre_run_hook()
       IAFPropagatorAlpha( P_.tau_syn_slow_[ i ], Tau_, P_.C_m_ ).evaluate( h );
 
 
-    V_.PSCInitialValues_[ i ] = 1.0 * numerics::e / P_.tau_syn_[ i ];
+    V_.PSCInitialValues_[ i ] = 1.0 * numerics::e / P_.tau_syn_fast_[ i ];
     V_.PSCInitialValues_slow_[ i ] = 1.0 * numerics::e / P_.tau_syn_slow_[ i ] * P_.amp_slow_[ i ];
     B_.spikes_[ i ].resize();
   }
@@ -557,8 +557,8 @@ nest::glif_psc_double_alpha::update( Time const& origin, const long from, const 
       S_.I_syn_fast_ = 0.0;
       for ( size_t i = 0; i < P_.n_receptors_(); i++ )
       {
-        S_.U_ += V_.P31_[ i ] * S_.y1_[ i ] + V_.P32_[ i ] * S_.y2_[ i ];
-        S_.I_syn_fast_ += S_.y2_[ i ];
+        S_.U_ += V_.P31_fast_[ i ] * S_.y1_fast_[ i ] + V_.P32_fast_[ i ] * S_.y2_fast_[ i ];
+        S_.I_syn_fast_ += S_.y2_fast_[ i ];
       }
       // slow component
       S_.I_syn_slow_ = 0.0;
@@ -641,9 +641,9 @@ nest::glif_psc_double_alpha::update( Time const& origin, const long from, const 
       // Apply spikes delivered in this step: The spikes arriving at T+1 have an
       // immediate effect on the state of the neuron
       // store B_.spikes_[ i ].get_value( lag ); into a variable
-      S_.y2_[ i ] = V_.P21_[ i ] * S_.y1_[ i ] + V_.P22_[ i ] * S_.y2_[ i ];
-      S_.y1_[ i ] *= V_.P11_[ i ];
-      S_.y1_[ i ] += V_.PSCInitialValues_[ i ] * spike_value;
+      S_.y2_fast_[ i ] = V_.P21_fast_[ i ] * S_.y1_fast_[ i ] + V_.P22_fast_[ i ] * S_.y2_fast_[ i ];
+      S_.y1_fast_[ i ] *= V_.P11_fast_[ i ];
+      S_.y1_fast_[ i ] += V_.PSCInitialValues_[ i ] * spike_value;
 
       // slow component
       S_.y2_slow_[ i ] = V_.P21_slow_[ i ] * S_.y1_slow_[ i ] + V_.P22_slow_[ i ] * S_.y2_slow_[ i ];

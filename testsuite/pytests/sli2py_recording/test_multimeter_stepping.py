@@ -64,6 +64,7 @@ extra_params = {
     "gif_psc_exp_multisynapse": {"receptor_type": 1},
     "gif_cond_exp_multisynapse": {"receptor_type": 1},
     "glif_psc": {"receptor_type": 1},
+    "glif_psc_double_alpha": {"receptor_type": 1},
     "iaf_cond_alpha_mc": {"receptor_type": 1},
     "glif_cond": {"receptor_type": 1},
     "ht_neuron": {"receptor_type": 1},

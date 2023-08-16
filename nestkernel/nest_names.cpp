@@ -502,6 +502,7 @@ const Name tau_spike( "tau_spike" );
 const Name tau_stc( "tau_stc" );
 const Name tau_syn( "tau_syn" );
 const Name tau_syn_ex( "tau_syn_ex" );
+const Name tau_syn_fast( "tau_syn_fast" );
 const Name tau_syn_in( "tau_syn_in" );
 const Name tau_syn_slow( "tau_syn_slow" );
 const Name tau_theta( "tau_theta" );

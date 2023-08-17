@@ -91,7 +91,7 @@ def test_fail_if_amplitude_times_not_strictly_increases():
         nest.SetDefaults("step_current_generator", params)
 
 
-def test_step_current_generator_simulation(reference_recording):
+def test_step_current_generator_simulation(expected_V_m):
     """
     Test
     """

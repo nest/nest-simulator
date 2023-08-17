@@ -115,14 +115,14 @@ def test_step_current_generator_simulation(reference_recording):
 
     nest.Simulate(25.0)
 
-    actual_recording = vm.events["V_m"]
+    actual_V_m = vm.events["V_m"]
 
-    nptest.assert_almost_equal(actual_recording, reference_recording, decimal=5)
+    nptest.assert_almost_equal(actual_V_m, expected_V_m, decimal=5)
 
 
 @pytest.fixture(scope="module")
-def reference_recording():
-    ref_rec = [
+def expected_V_m():
+    expected = [
         0.0,
         0.0,
         0.0,
@@ -364,4 +364,4 @@ def reference_recording():
         -2.090390e-03,
         -1.891470e-03,
     ]
-    return ref_rec
+    return expected

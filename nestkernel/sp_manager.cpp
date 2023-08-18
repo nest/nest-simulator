@@ -91,9 +91,9 @@ SPManager::get_status( DictionaryDatum& d )
     sp_synapse = DictionaryDatum( new Dictionary() );
     def< std::string >( sp_synapse, names::pre_synaptic_element, ( *i )->get_pre_synaptic_element_name() );
     def< std::string >( sp_synapse, names::post_synaptic_element, ( *i )->get_post_synaptic_element_name() );
-    def< std::string >( sp_synapse,
-      names::synapse_model,
-      kernel().model_manager.get_connection_model( ( *i )->get_synapse_model(), 0 ).get_name() );
+    const std::string synapse_model = kernel().model_manager.get_connection_model( ( *i )->get_synapse_model(), 0 ).get_name();
+    def< std::string >( sp_synapse, names::synapse_model, synapse_model );
+
     std::stringstream syn_name;
     syn_name << "syn" << ( sp_conn_builders_.end() - i );
     def< DictionaryDatum >( sp_synapses, syn_name.str(), sp_synapse );

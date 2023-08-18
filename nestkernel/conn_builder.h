@@ -481,6 +481,18 @@ public:
     return post_synaptic_element_name_;
   }
 
+  void
+  set_name( const std::string& name )
+  {
+    name_ = name;
+  }
+
+  std::string
+  get_name() const
+  {
+    return name_;
+  }
+
   /**
    * Writes the default delay of the connection model, if the SPBuilder only uses the default delay.
    *
@@ -494,6 +506,8 @@ public:
   void sp_connect( const std::vector< size_t >& sources, const std::vector< size_t >& targets );
 
 protected:
+  std::string name_;
+
   using ConnBuilder::connect_;
   void connect_() override;
   void connect_( NodeCollectionPTR sources, NodeCollectionPTR targets );

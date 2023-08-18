@@ -41,8 +41,8 @@ class TestStructuralPlasticityAutapses(unittest.TestCase):
             },
         }
 
-        assert nest.structural_plasticity_synapses["synapse_ex"]["allow_autapses"] == False
-        assert nest.structural_plasticity_synapses["synapse_ex"]["allow_multapses"] == True  # the default
+        assert nest.structural_plasticity_synapses["synapse_ex"]["allow_multapses"]  # default
+        assert not nest.structural_plasticity_synapses["synapse_ex"]["allow_autapses"]
 
     def test_multapses(self):
         """Test if allow_multapses can be set on structural plasticity synapses."""
@@ -59,8 +59,8 @@ class TestStructuralPlasticityAutapses(unittest.TestCase):
             },
         }
 
-        assert nest.structural_plasticity_synapses["synapse_ex"]["allow_multapses"] == False
-        assert nest.structural_plasticity_synapses["synapse_ex"]["allow_autapses"] == True  # the default
+        assert nest.structural_plasticity_synapses["synapse_ex"]["allow_autapses"]  # the default
+        assert not nest.structural_plasticity_synapses["synapse_ex"]["allow_multapses"]
 
 
 def suite():

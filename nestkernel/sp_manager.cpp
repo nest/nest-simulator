@@ -96,6 +96,10 @@ SPManager::get_status( DictionaryDatum& d )
 
     std::stringstream syn_name;
     syn_name << "syn" << ( sp_conn_builders_.end() - i );
+
+    def< bool >( sp_synapse, names::allow_autapses, ( *i )->allows_autapses() );
+    def< bool >( sp_synapse, names::allow_multapses, ( *i )->allows_multapses() );
+
     def< DictionaryDatum >( sp_synapses, syn_name.str(), sp_synapse );
   }
 

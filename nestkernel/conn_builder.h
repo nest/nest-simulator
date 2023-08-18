@@ -123,6 +123,18 @@ public:
     return false;
   }
 
+  bool
+  allows_autapses() const
+  {
+    return allow_autapses_;
+  }
+
+  bool
+  allows_multapses() const
+  {
+    return allow_multapses_;
+  }
+
   //! Return true if rule is applicable only to nodes with proxies
   virtual bool
   requires_proxies() const

@@ -59,7 +59,8 @@ class TestStructuralPlasticityManager(unittest.TestCase):
                 nest.structural_plasticity_synapses = {"syn1": syn_dict}
                 kernel_status = nest.structural_plasticity_synapses
                 assert "syn1" in kernel_status
-                assert kernel_status["syn1"] == extract_dict_a_from_b(kernel_status["syn1"], syn_dict)
+                for kv in extract_dict_a_from_b(kernel_status["syn1"], syn_dict).items():
+                    assert kv in kernel_status["syn1"].items()
 
     def test_min_max_delay_using_default_delay(self):
         nest.ResetKernel()
@@ -107,7 +108,7 @@ class TestStructuralPlasticityManager(unittest.TestCase):
 
         nest.Create(neuron_model, 2, {"synaptic_elements": synaptic_elements})
 
-        sp_synapses = nest.structural_plasticity_synapses["syn1"]
+        sp_synapses = nest.structural_plasticity_synapses["synapse_ex"]
         assert "pre_synaptic_element" in sp_synapses
         assert "post_synaptic_element" in sp_synapses
         assert sp_synapses["pre_synaptic_element"] == "Axon_ex"

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_sp_autapses.py
+# test_sp_autapses_multapses.py
 #
 # This file is part of NEST.
 #

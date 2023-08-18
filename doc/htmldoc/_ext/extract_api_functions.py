@@ -66,24 +66,27 @@ def process_directory(directory):
     """
     Get the PyNEST API files and set the keys to the base name
     """
-    result = {}
+    api_dict = {}
     for root, _, files in os.walk(directory):
         for file in files:
             if file.endswith(".py"):
-                file_path = os.path.join(root, file)
-                # There are two hl_api_spatial files (one in ``lib``, the other in
-                # ``spatial``) in PyNEST, so we need to distinguish them from each other
-                if "lib/hl_api_spatial" in file_path:
-                    file = "lib.hl_api_spatial.py"
-                # We want the nestModule kernel attributes, which are in ``__init__``
-                # Rename the key to nestModule
+                file_path = os.path.join(root,file)
                 if "pynest/nest/__init__" in file_path:
-                    file = "nestModule.py"
-                filename = os.path.splitext(file)[0]
-                all_variables = find_all_variables(file_path)
-                if all_variables:
-                    result[filename] = all_variables
-    return result
+                    api_name = "nest.NestModule"
+                    all_variables = find_all_variables(file_path)
+                    if all_variables:
+                        api_dict[api_name] = all_variables
+                else:
+                    if "hl_" in file and "connection_helpers" not in file:
+                        parts = file_path.split(os.path.sep)
+                        nest_index = parts.index("nest")
+                        module_path = ".".join(parts[nest_index + 1:-1])
+                        module_name = os.path.splitext(parts[-1])[0]
+                        api_name = f"nest.{module_path}.{module_name}"
+                        all_variables = find_all_variables(file_path)
+                        if all_variables:
+                            api_dict[api_name] = all_variables
+    return api_dict
 
 
 def ExtractPyNESTAPIS():

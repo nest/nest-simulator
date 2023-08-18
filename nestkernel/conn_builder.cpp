@@ -500,13 +500,7 @@ nest::ConnBuilder::set_synapse_params( DictionaryDatum syn_defaults, DictionaryD
 void
 nest::ConnBuilder::set_structural_plasticity_parameters( std::vector< DictionaryDatum > syn_specs )
 {
-  if ( syn_specs.size() > 1 )
-  {
-    throw KernelException( "Structural plasticity can only be used with a single syn_spec." );
-  }
-
   DictionaryDatum syn_spec = syn_specs[ 0 ];
-
   if ( syn_spec->known( names::pre_synaptic_element ) xor syn_spec->known( names::post_synaptic_element ) )
   {
     throw BadProperty( "Structural plasticity requires both a pre- and postsynaptic element." );
@@ -514,6 +508,11 @@ nest::ConnBuilder::set_structural_plasticity_parameters( std::vector< Dictionary
 
   if ( syn_spec->known( names::pre_synaptic_element ) and syn_spec->known( names::post_synaptic_element ) )
   {
+    if ( syn_specs.size() > 1 )
+    {
+      throw KernelException( "Structural plasticity can only be used with a single syn_spec." );
+    }
+
     pre_synaptic_element_name_ = getValue< std::string >( syn_spec, names::pre_synaptic_element );
     post_synaptic_element_name_ = getValue< std::string >( syn_spec, names::post_synaptic_element );
     use_structural_plasticity_ = true;

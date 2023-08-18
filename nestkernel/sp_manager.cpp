@@ -36,18 +36,6 @@
 namespace nest
 {
 
-template < typename T >
-void
-print_vector( const std::vector< T >& vec )
-{
-  std::cout << "#######BEGIN############################\n";
-  for ( typename std::vector< T >::const_iterator cit = vec.begin(); cit != vec.end(); ++cit )
-  {
-    std::cout << *cit << ", ";
-  }
-  std::cout << "########END############################\n";
-}
-
 SPManager::SPManager()
   : ManagerInterface()
   , structural_plasticity_update_interval_( 10000. )

@@ -54,9 +54,12 @@ M_PROGRESS setverbosity
   /y 0.0 def
   /z 0.0 def
 
+  xvals length_a ==
+
   x_vals
   {
     /x Set
+    %x ==
     /positions positions [ x y z ] append def
   } forall
 

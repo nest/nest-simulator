@@ -259,6 +259,22 @@ private:
   void set_synapse_model_( DictionaryDatum syn_params, size_t indx );
   void set_default_weight_or_delay_( DictionaryDatum syn_params, size_t indx );
   void set_synapse_params( DictionaryDatum syn_defaults, DictionaryDatum syn_params, size_t indx );
+
+  /**
+   * Set structural plasticity parameters (if provided)
+   *
+   * This function first checks if any of the given syn_specs contains
+   * one of the structural plasticity parameters pre_synaptic_element
+   * or post_synaptic_element. If that is the case and only a single
+   * syn_spec is given, the parameters are copied to the variables
+   * pre_synaptic_element_name_ and post_synaptic_element_name_, and
+   * the flag use_structural_plasticity_ is set to true.
+   *
+   * An exception is thrown if either
+   * * only one of the structural plasticity parameter is given
+   * * multiple syn_specs are given and structural plasticity parameters
+   *   are present
+   */
   void set_structural_plasticity_parameters( std::vector< DictionaryDatum > syn_specs );
 
   /**

@@ -169,6 +169,8 @@ html_static_path = ["static"]
 html_additional_pages = {"index": "index.html"}
 html_sidebars = {"**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]}
 
+html_favicon = "static/img/nest_favicon.ico"
+
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.

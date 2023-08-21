@@ -43,6 +43,7 @@
 
 namespace nest
 {
+class Node;
 class NodeCollection;
 class NodeCollectionPrimitive;
 class NodeCollectionComposite;
@@ -201,8 +202,8 @@ public:
   /**
    * Create a NodeCollection from an array of node IDs.
    *
-   * Results in a primitive if the
-   * node IDs are homogeneous and contiguous, or a composite otherwise.
+   * Results in a primitive if the node IDs are homogeneous and
+   * contiguous, or a composite otherwise.
    *
    * @param node_ids Array of node IDs from which to create the NodeCollection
    * @return a NodeCollection pointer to the created NodeCollection
@@ -210,7 +211,9 @@ public:
   static NodeCollectionPTR create( const TokenArray& node_ids );
 
   /**
-   * Create a NodeCollection from a single node ID. Results in a primitive.
+   * Create a NodeCollection from a single node ID.
+   *
+   * Results in a primitive unconditionally.
    *
    * @param node_id Node ID from which to create the NodeCollection
    * @return a NodeCollection pointer to the created NodeCollection
@@ -218,10 +221,20 @@ public:
   static NodeCollectionPTR create( const size_t node_id );
 
   /**
+   * Create a NodeCollection from a single node pointer.
+   *
+   * Results in a primitive unconditionally.
+   *
+   * @param node Node pointer from which to create the NodeCollection
+   * @return a NodeCollection pointer to the created NodeCollection
+   */
+  static NodeCollectionPTR create( const Node* node );
+
+  /**
    * Create a NodeCollection from an array of node IDs.
    *
-   * Results in a primitive if the
-   * node IDs are homogeneous and contiguous, or a composite otherwise.
+   * Results in a primitive if the node IDs are homogeneous and
+   * contiguous, or a composite otherwise.
    *
    * @param node_ids Array of node IDs from which to create the NodeCollection
    * @return a NodeCollection pointer to the created NodeCollection

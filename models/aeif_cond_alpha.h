@@ -142,7 +142,8 @@ The following parameters can be set in the status dictionary.
 
 =========== ======= =======================================
 **Membrane Parameters**
---------------------------------------------------------
+-----------------------------------------------------------
+``
  C_m        pF      Capacity of the membrane
  t_ref      ms      Duration of refractory period
  V_reset    mV      Reset value for V_m after a spike

@@ -485,13 +485,13 @@ public:
     const DictionaryDatum& conn_spec,
     const std::vector< DictionaryDatum >& syn_spec );
 
-  std::string
+  const std::string&
   get_pre_synaptic_element_name() const
   {
     return pre_synaptic_element_name_;
   }
 
-  std::string
+  const std::string&
   get_post_synaptic_element_name() const
   {
     return post_synaptic_element_name_;

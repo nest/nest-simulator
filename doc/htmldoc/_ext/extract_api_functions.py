@@ -71,13 +71,13 @@ def process_directory(directory):
         for file in files:
             if file.endswith(".py"):
                 file_path = os.path.join(root,file)
-                if "pynest/nest/__init__" in file_path:
-                    api_name = "nest.NestModule"
-                    all_variables = find_all_variables(file_path)
-                    if all_variables:
-                        api_dict[api_name] = all_variables
-                else:
-                    if "hl_" in file and "connection_helpers" not in file:
+                if "helper" not in file:
+                    if "pynest/nest/__init__" in file_path:
+                        api_name = "nest.NestModule"
+                        all_variables = find_all_variables(file_path)
+                        if all_variables:
+                            api_dict[api_name] = all_variables
+                    if "hl_" in file:
                         parts = file_path.split(os.path.sep)
                         nest_index = parts.index("nest")
                         module_path = ".".join(parts[nest_index + 1:-1])
@@ -86,8 +86,16 @@ def process_directory(directory):
                         all_variables = find_all_variables(file_path)
                         if all_variables:
                             api_dict[api_name] = all_variables
-    return api_dict
+                    if "raster_plot" in file or "visualization" in file or "voltage_trace" in file:
+                           parts = file_path.split(os.path.sep)
+                           nest_index = parts.index("nest")
+                           module_name = os.path.splitext(parts[-1])[0]
+                           api_name = f"nest.{module_name}"
+                           all_variables = find_all_variables(file_path)
+                           if all_variables:
+                               api_dict[api_name] = all_variables
 
+    return api_dict
 
 def ExtractPyNESTAPIS():
     directory = "../../pynest/nest/"

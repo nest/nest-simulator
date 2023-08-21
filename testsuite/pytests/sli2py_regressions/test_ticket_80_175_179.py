@@ -32,12 +32,14 @@ parameters.
 """
 
 import nest
-import numpy as np
 import numpy.testing as nptest
 import pytest
 
+vm_stop = 100.0
+total_sim_time = vm_stop + 2.0
 
-@pytest.fixture
+
+@pytest.fixture(scope="module")
 def setup():
     """
     Fixture for setting up and simulating the system.
@@ -58,7 +60,7 @@ def setup():
     vm_params = {
         "origin": 0.0,
         "start": 0.0,
-        "stop": 100.0,
+        "stop": vm_stop,
         "interval": 0.1,
     }
     sr_params = {"origin": 0.0, "start": 0.0, "stop": 100.0, "time_in_steps": True}
@@ -83,51 +85,55 @@ def setup():
     }
     iaf_params = {"I_e": 1000.0}
 
-    sim_blocks = [0.1, 0.3, 0.5, 0.7, 1.0, 1.3, 1.5, 1.7, 110.0]
+    nest.ResetKernel()
+    nest.resolution = 0.1
 
-    for block in sim_blocks:
-        nest.ResetKernel()
-        nest.resolution = 0.1
+    sg_pre = nest.Create("spike_generator", 1, sg_params)
+    nrn_pre = nest.Create("iaf_psc_alpha", 1, iaf_params)
+    srs = nest.Create("spike_recorder", 4, sr_params)
+    vms = nest.Create("voltmeter", 2, vm_params)
+    sg_post = nest.Create("spike_generator", 1, sg_params)
+    nrn_post = nest.Create("iaf_psc_alpha", 1, iaf_params)
 
-        sg_pre = nest.Create("spike_generator", 1, sg_params)
-        nrn_pre = nest.Create("iaf_psc_alpha", 1, iaf_params)
-        srs = nest.Create("spike_recorder", 4, sr_params)
-        vms = nest.Create("voltmeter", 2, vm_params)
-        sg_post = nest.Create("spike_generator", 1, sg_params)
-        nrn_post = nest.Create("iaf_psc_alpha", 1, iaf_params)
+    nest.Connect(nrn_pre, srs[0])
+    nest.Connect(nrn_post, srs[1])
+    nest.Connect(sg_pre, srs[2])
+    nest.Connect(sg_post, srs[3])
+    nest.Connect(vms[0], nrn_pre)
+    nest.Connect(vms[1], nrn_post)
 
-        nest.Connect(nrn_pre, srs[0])
-        nest.Connect(nrn_post, srs[1])
-        nest.Connect(sg_pre, srs[2])
-        nest.Connect(sg_post, srs[3])
-        nest.Connect(vms[0], nrn_pre)
-        nest.Connect(vms[1], nrn_post)
+    return srs, vms
 
-        nest.Simulate(block)
+
+@pytest.fixture
+def reference_run(setup):
+    """
+    Fixture for running the reference simulation, full simulation time in one go.
+    """
+    srs, vms = setup
+    nest.Simulate(total_sim_time)
+    srs_reference = srs.get("events", "times")
+    vms_reference = vms.get("events", "V_m")
+    return srs_reference, vms_reference
+
+
+@pytest.mark.parametrize("block", [0.1, 0.3, 0.5, 0.7, 1.0, 1.3, 1.5, 1.7, 110.0])
+def test_things(block, setup, reference_run):
+    """
+    Test that the ``voltmeter`` and ``spike_recorder`` yield identical results independent simulation time blocking.
+    """
+    with nest.RunManager():
+        while nest.biological_time < total_sim_time:
+            nest.Run(block)
+
+    srs, vms = setup
+    srs_reference, vms_reference = reference_run
 
     srs_times = srs.get("events", "times")
     vms_recs = vms.get("events", "V_m")
 
-    return srs_times, vms_recs
+    nptest.assert_array_equal(srs_reference[0], srs_times[1])
+    nptest.assert_array_equal(srs_reference[0], srs_times[2])
+    nptest.assert_array_equal(srs_reference[0], srs_times[3])
 
-
-def test_identical_spike_recordings(setup):
-    """
-    Ensure that the 4 ``spike_recorder`` recordings are identical.
-    """
-
-    srs_times, _ = setup
-
-    nptest.assert_array_equal(srs_times[0], srs_times[1])
-    nptest.assert_array_equal(srs_times[0], srs_times[2])
-    nptest.assert_array_equal(srs_times[0], srs_times[3])
-
-
-def test_identical_voltmeter_recordings(setup):
-    """
-    Ensure that the 2 ``voltmeter`` recordings are identical.
-    """
-
-    _, vms_recs = setup
-
-    nptest.assert_array_equal(vms_recs[0], vms_recs[1])
+    nptest.assert_array_equal(vms_reference[0], vms_recs[1])

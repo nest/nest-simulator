@@ -82,7 +82,8 @@ def CreateParameter(parametertype, specs):
 
     Notes
     -----
-    - Instead of using `CreateParameter` you can also use the various parametrizations embedded in NEST. See for
+
+    Instead of using `CreateParameter` you can also use the various parametrizations embedded in NEST. See for
     instance :py:func:`.uniform`.
 
     **Parameter types**
@@ -91,11 +92,14 @@ def CreateParameter(parametertype, specs):
     acceptable keys for their corresponding specification dictionaries:
 
     * Constant
+
         ::
 
             'constant' :
                 {'value' : float} # constant value
+
     * Randomization
+
         ::
 
             # random parameter with uniform distribution in [min,max)
@@ -112,6 +116,7 @@ def CreateParameter(parametertype, specs):
             'lognormal' :
                 {'mean' : float, # mean value of logarithm, default: 0.0
                  'std'  : float} # standard deviation of log, default: 1.0
+
     """
     return sli_func("CreateParameter", {parametertype: specs})
 
@@ -247,7 +252,7 @@ class NodeCollection:
                     raise IndexError("Bool index array must be the same length as NodeCollection")
                 np_key = numpy.array(key, dtype=bool)
             # Checking that elements are not instances of bool too, because bool inherits from int
-            elif all(isinstance(x, int) and not isinstance(x, bool) for x in key):
+            elif all(isinstance(x, (int, numpy.integer)) and not isinstance(x, bool) for x in key):
                 np_key = numpy.array(key, dtype=numpy.uint64)
                 if len(numpy.unique(np_key)) != len(np_key):
                     raise ValueError("All node IDs in a NodeCollection have to be unique")
@@ -929,6 +934,7 @@ class CollocatedSynapses:
     -------
 
     ::
+
         nodes = nest.Create('iaf_psc_alpha', 3)
         syn_spec = nest.CollocatedSynapses({'weight': 4., 'delay': 1.5},
                                        {'synapse_model': 'stdp_synapse'},
@@ -939,6 +945,7 @@ class CollocatedSynapses:
 
         print(conns.alpha)
         print(len(syn_spec))
+
     """
 
     def __init__(self, *args):

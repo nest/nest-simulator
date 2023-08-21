@@ -6,7 +6,7 @@ Administrator installation instructions
 If you need to deploy NEST on a machine
 
 
-*  Check out our guides to :ref:`optimizing NEST for HPC systems <hpc_index>`
+*  Check out our guides to :ref:`optimizing NEST for HPC systems <optimize_performance>`
 
 Configure HPC systems
 ~~~~~~~~~~~~~~~~~~~~~

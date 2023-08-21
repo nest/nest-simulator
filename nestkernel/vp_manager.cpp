@@ -50,12 +50,11 @@ nest::VPManager::initialize()
 // When the VPManager is initialized, you will have 1 thread again.
 // Setting more threads will be done via nest::set_kernel_status
 #ifdef _OPENMP
-  /* The next line is required because we use the OpenMP
-   threadprivate() directive in the allocator, see OpenMP
-   API Specifications v 3.1, Ch 2.9.2, p 89, l 14f.
-   It keeps OpenMP from automagically changing the number
-   of threads used for parallel regions.
-   */
+  // The next line is required because we use the OpenMP
+  // threadprivate() directive in the allocator, see OpenMP
+  // API Specifications v 3.1, Ch 2.9.2, p 89, l 14f.
+  // It keeps OpenMP from automagically changing the number
+  // of threads used for parallel regions.
   omp_set_dynamic( false );
 #endif
   set_num_threads( 1 );
@@ -69,8 +68,8 @@ nest::VPManager::finalize()
 void
 nest::VPManager::set_status( const DictionaryDatum& d )
 {
-  long n_threads = get_num_threads();
-  long n_vps = get_num_virtual_processes();
+  size_t n_threads = get_num_threads();
+  size_t n_vps = get_num_virtual_processes();
 
   bool n_threads_updated = updateValue< long >( d, names::local_num_threads, n_threads );
   bool n_vps_updated = updateValue< long >( d, names::total_num_virtual_procs, n_vps );
@@ -153,7 +152,7 @@ nest::VPManager::get_status( DictionaryDatum& d )
 }
 
 void
-nest::VPManager::set_num_threads( nest::thread n_threads )
+nest::VPManager::set_num_threads( size_t n_threads )
 {
   if ( kernel().sp_manager.is_structural_plasticity_enabled() and n_threads > 1 )
   {

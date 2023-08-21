@@ -59,6 +59,7 @@ extensions = [
     "HoverXTooltip",
     "VersionSyncRole",
     "sphinx_copybutton",
+    "notfound.extension",
 ]
 
 autodoc_mock_imports = ["nest.pynestkernel", "nest.ll_api"]
@@ -81,6 +82,9 @@ project = "NEST Simulator user documentation"
 copyright = "2004, nest-simulator"
 author = "nest-simulator"
 
+copybutton_prompt_text = ">>> "
+# The output lines will not be copied if set to True
+copybutton_only_copy_prompt_lines = True
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -164,6 +168,8 @@ html_theme_options = {
 html_static_path = ["static"]
 html_additional_pages = {"index": "index.html"}
 html_sidebars = {"**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]}
+
+html_favicon = "static/img/nest_favicon.ico"
 
 # -- Options for HTMLHelp output ------------------------------------------
 
@@ -354,14 +360,7 @@ def copy_example_file(src):
 
 
 # -- Copy documentation for Microcircuit Model ----------------------------
-copy_example_file("examples/Potjans_2014/box_plot.png")
-copy_example_file("examples/Potjans_2014/raster_plot.png")
-copy_example_file("examples/Potjans_2014/microcircuit.png")
 copy_example_file("examples/hpc_benchmark_connectivity.svg")
-copyfile(
-    os.path.join(pynest_dir, "examples/Potjans_2014/README.rst"),
-    "examples/README.rst",
-)
 
 
 def patch_documentation(patch_url):
@@ -389,10 +388,9 @@ def patch_documentation(patch_url):
       3. retrieve the patch
 
     """
-
     print("Preparing patch...")
     try:
-        git_dir = repo_root_dir / ".git"
+        git_dir = f"{repo_root_dir}/.git"
         git_hash = subprocess.check_output(
             f"GIT_DIR='{git_dir}' git rev-parse HEAD", shell=True, encoding="utf8"
         ).strip()
@@ -402,7 +400,7 @@ def patch_documentation(patch_url):
         print(f"  retrieving {patch_url}")
         urlretrieve(patch_url, patch_file)
         print(f"  applying {patch_file}")
-        result = subprocess.check_output("patch -p3", stdin=open(patch_file, "r"), stderr=subprocess.STDOUT, shell=True)
+        result = subprocess.check_output(f"git apply '{patch_file}'", stderr=subprocess.STDOUT, shell=True)
         print(f"Patch result: {result}")
     except Exception as exc:
         print(f"Error while applying patch: {exc}")

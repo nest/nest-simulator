@@ -25,7 +25,6 @@ import os
 from pathlib import Path, PurePath
 
 import numpy as np
-import pandas as pd
 
 from .. import pynestkernel as kernel
 from ..ll_api import sli_func, sps, sr
@@ -33,6 +32,13 @@ from .hl_api_models import GetDefaults
 from .hl_api_nodes import Create
 from .hl_api_simulation import SetKernelStatus, Simulate
 from .hl_api_types import NodeCollection
+
+try:
+    import pandas as pd
+
+    have_pandas = True
+except ImportError:
+    have_pandas = False
 
 try:
     import h5py
@@ -100,6 +106,9 @@ class SonataNetwork:
             raise kernel.NESTError(msg)
         if not have_h5py:
             msg = "SonataNetwork unavailable because h5py is not installed or could not be imported"
+            raise kernel.NESTError(msg)
+        if not have_pandas:
+            msg = "SonataNetwork unavailable because pandas is not installed or could not be imported"
             raise kernel.NESTError(msg)
 
         self._node_collections = {}
@@ -215,7 +224,7 @@ class SonataNetwork:
             if model_type in ["point_neuron", "point_process"]:
                 self._create_neurons(nodes_conf, nodes_df, csv_fn)
             elif model_type == "virtual":
-                self._create_spike_generators(nodes_conf)
+                self._create_spike_train_injectors(nodes_conf)
             else:
                 msg = f"Model type '{model_type}' in {csv_fn} is not supported by NEST."
                 raise ValueError(msg)
@@ -287,8 +296,8 @@ class SonataNetwork:
 
                 self._node_collections[pop_name] = nest_nodes
 
-    def _create_spike_generators(self, nodes_conf):
-        """Create spike generator nodes.
+    def _create_spike_train_injectors(self, nodes_conf):
+        """Create spike train injector nodes.
 
         Parameters
         ----------

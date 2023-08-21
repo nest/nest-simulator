@@ -80,13 +80,13 @@ public:
   size_t
   size() const
   {
-    return ( size_t ) ( begin_of_free_storage - p );
+    return static_cast< size_t >( begin_of_free_storage - p );
   }
 
   size_t
   capacity() const
   {
-    return ( size_t ) ( end_of_free_storage - p );
+    return static_cast< size_t >( end_of_free_storage - p );
   }
 
   Token&

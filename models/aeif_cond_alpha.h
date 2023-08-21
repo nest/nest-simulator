@@ -115,7 +115,7 @@ exponential term will be evaluated at each solver timestep and its
 absolute value will be limited to this value. Setting ``I_spike_max`` can
 change the dynamics of the model.
 
-As a guideline to choose a plausible maximum current, [1]_ use forward Euler
+As a guideline to choose a plausible maximum current, Brette and Gerstner [1]_ use forward Euler
 with a fixed time step. Now assume that at the beginning of a timestep the
 membrane potential is immediately below the threshold for calling a spike,
 which is

@@ -107,7 +107,8 @@ For implementation details see the
 
 See also [1]_.
 
-.. admonition::
+.. note::
+
    Under some conditions, the exponential function inside the numeric solver
    routine for this model can cause a numerical instability. If the parameter
    ``I_soma_max`` is set to a non-zero value, the total somatic current will

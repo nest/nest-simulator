@@ -121,7 +121,7 @@ membrane potential is immediately below the threshold for calling a spike,
 which is
 :math:`V_T + 5\Delta_T` in their example. Then, `I_spike` in their
 implementation can never exceed
-:math:`g_L\Delta_T e^5=30~\text{nS}\times2~\text{mV}\times e^5\approx 8900~\text{pA}$.
+:math:`g_L\Delta_T e^5=30~\text{nS}\times2~\text{mV}\times e^5\approx 8900~\text{pA}$`.
 
 
 Parameters

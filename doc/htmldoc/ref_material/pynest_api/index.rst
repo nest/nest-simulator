@@ -1,11 +1,11 @@
 PyNEST API listing
 ==================
 
-{% for key, value in api_dict.items() -%}
+{% for key, value in api_dict | dictsort -%}
 
 
 :doc:`{{ key }}`
---------------------------------------------
+--------------------------------------------------------------
 
 .. automodule:: {{ key }}
    :noindex:
@@ -16,7 +16,7 @@ PyNEST API listing
            {{ item }}
        {% endfor %}
 
-{%- endfor %}
+{% endfor %}
 
 
 

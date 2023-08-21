@@ -52,9 +52,8 @@ def setup():
         3. Neurons driven by internal DC current.
         4. Resolution fixed, but simulation time subdivided in different ways.
 
-    The fixture returns all of the ``spike_recorder`` and ``voltmeter``
-    recordings which are use to ensure  ensure that the devices yield identical
-    results in the subsequent tests.
+    The fixture returns the ``spike_recorder`` and ``voltmeter``
+    devices used for retrieval of recording data in subsequent comparisons.
     """
 
     vm_params = {

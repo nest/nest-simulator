@@ -24,6 +24,55 @@ with each release of NEST having its own documentation.
 This workflow aims for the concept of **user-correctable documentation**.
 
 
+.. mermaid::
+   :zoom:
+   :caption: Overview of documentation build. Drag and zoom to explore.
+
+   flowchart LR
+
+      classDef source color:#fff, stroke:#f63, stroke-width:2px, fill:#f63;
+      classDef ext color:#fff, stroke:#c072f42, stroke-width:2px, fill:#072f42;
+      classDef sphinx color:#fff, stroke:#652200, stroke-width:2px, fill:#652200;
+
+      subgraph BUILD: Read the docs or _build/
+        subgraph output
+         html:::sphinx
+         arti
+        end
+        ar-->html
+        ap-->arti["artifacts (downloadable)"]:::sphinx
+        ai-->arti
+        subgraph sphinx
+         parse((parse rst)):::sphinx-->html
+          subgraph autodoc
+           api_docstrings:::sphinx-->html
+          end
+         subgraph gallery
+          ai["auto_examples: ipynb"]:::sphinx
+          ar["auto_examples: rst"]:::sphinx
+          ap["auto_examples: py"]:::sphinx
+         end
+         subgraph custom_extensions
+          extractor_userdocs.py:::ext-->html
+          button["fn add_button_to_examples: conf.py"]:::ext-->html
+         end
+         subgraph nbsphinx
+          notebooks:::sphinx --> html
+         end
+        end
+      end
+
+      subgraph SOURCE: nest/nest-simulator
+       docs["doc/htmldoc: .rst"]:::source-->sphinx
+       models["cpp models: .h"]:::source-->extractor_userdocs.py
+       py["pynest/examples: .py"]:::source-->gallery
+       api["pynest/nest .py"]:::source-->autodoc
+       ipynb["model_details: .ipynb"]:::source-->nbsphinx
+      end
+      subgraph nest/nest-simulator-examples
+       Jupyter_notebook_pyexamples:::source-->button
+       ai -..-> Jupyter_notebook_pyexamples
+      end
 
 .. mermaid::
    :zoom:
@@ -31,7 +80,7 @@ This workflow aims for the concept of **user-correctable documentation**.
 
    flowchart LR
 
-      classDef nest stroke:#f63, stroke-width:1px, fill:#e2e2e200;
+      classDef nest stroke:#f63, stroke-width:2px, fill:#fff;
 
       subgraph BUILD: Read the docs or _build/
         subgraph output

@@ -91,9 +91,9 @@ section#kernel-attributes dl.py.class dd dl.py.attribute dd dl.field-list.simple
  *************************************************************/
 
 .mermaid .cluster rect {
-	fill: #fff !important;
-	stroke: #0E6A93 !important;
-	stroke-width: 1px !important;
+	fill: #0E6A9322 !important;
+	stroke: None !important;
+	stroke-width: None !important;
 }
 
 

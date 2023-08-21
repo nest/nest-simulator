@@ -117,7 +117,7 @@ def reference_run(setup):
 
 
 @pytest.mark.parametrize("block", [0.1, 0.3, 0.5, 0.7, 1.0, 1.3, 1.5, 1.7, 110.0])
-def test_things(block, setup, reference_run):
+def test_vm_and_sr_produce_same_output(block, setup, reference_run):
     """
     Test that the ``voltmeter`` and ``spike_recorder`` yield identical results independent simulation time blocking.
     """

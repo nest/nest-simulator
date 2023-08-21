@@ -32,6 +32,7 @@ Used in a Jinja template to generate the autosummary for each module in
 the API documentation (``ref_material/pynest_api/``)
 """
 
+
 def find_all_variables(file_path):
     """
     This function gets the names of all functions listed in ``__all__``
@@ -76,10 +77,9 @@ def process_directory(directory):
     """
     api_dict = {}
     api_exception_list = ["raster_plot", "visualization", "voltage_trace"]
-    files = glob.glob(directory+"**/*.py", recursive = True)
+    files = glob.glob(directory + "**/*.py", recursive=True)
 
     for file in files:
-
         # ignoring the connection_helpers and helper modules
         if "helper" in file:
             continue

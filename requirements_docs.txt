@@ -21,6 +21,7 @@ sphinx-tabs
 sphinx_design
 sphinx-material
 sphinx-copybutton
+sphinx-notfound-page
 nbsphinx
 numpydoc
 example

@@ -35,8 +35,8 @@ def test_ntree_split():
     Test that ``ntree`` split does not fail when node positions cause roundoff error.
     """
 
-    # Generate positions. The values used here have cause rounding errors previously.
-    # previously. We need to have more than 100 position to force the ntree to split.
+    # Generate positions. The values used here have caused rounding errors previously.
+    # We need to have more than 100 position to force the ntree to split.
     positions = [[x, 0.0, 0.0] for x in np.linspace(-0.45, 0.45, 110)]
 
     # Create source layer based on the generated positions.

@@ -39,7 +39,7 @@ vm_stop = 100.0
 total_sim_time = vm_stop + 2.0
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def setup():
     """
     Fixture for setting up and simulating the system.

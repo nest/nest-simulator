@@ -35,20 +35,9 @@ def test_ntree_split():
     Test that ``ntree`` split does not fail when node positions cause roundoff error.
     """
 
-    # Generate positions. The parameters pre_n_x and r should be defined such
-    # that we get roundoff errors. pre_n_x must be larger than 100 to make the
-    # ntree split.
-    pre_n_x = 110
-    r = 0.45
-
-    low_xy = -r
-    high_xy = r
-    dx = (high_xy - low_xy) / (pre_n_x - 1)
-    xs = np.arange(low_xy, high_xy + dx, dx)
-    y = 0.0
-    z = 0.0
-
-    positions = [[x, y, z] for x in xs]
+    # Generate positions. The values used here have cause rounding errors previously.
+    # previously. We need to have more than 100 position to force the ntree to split.
+    positions = [[x, 0.0, 0.0] for x in np.linspace(-0.45, 0.45, 110)]
 
     # Create source layer based on the generated positions.
     pre = nest.Create("iaf_psc_alpha", positions=nest.spatial.free(positions, edge_wrap=True))

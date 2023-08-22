@@ -20,7 +20,10 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-a
+Test cornercase when splitting the ``ntree``.
+
+This test connects spatial populations where the positions of nodes are
+defined such that they cause roundoff errors when the ``ntree`` is split.
 """
 
 import nest
@@ -29,7 +32,7 @@ import numpy as np
 
 def test_ntree_split():
     """
-    a
+    Test that ``ntree`` split does not fail when node positions cause roundoff error.
     """
 
     # Generate positions. The parameters pre_n_x and r should be defined such
@@ -37,11 +40,28 @@ def test_ntree_split():
     # ntree split.
     pre_n_x = 110
     r = 0.45
-    positions = np.zeros((pre_n_x, 3))
 
     low_xy = -r
     high_xy = r
     dx = (high_xy - low_xy) / (pre_n_x - 1)
+    xs = np.arange(low_xy, high_xy + dx, dx)
+    y = 0.0
+    z = 0.0
 
-    positions[:, 0] = np.arange(low_xy, high_xy + dx, dx)
-    print(positions)
+    positions = [[x, y, z] for x in xs]
+
+    # Create source layer based on the generated positions.
+    pre = nest.Create("iaf_psc_alpha", positions=nest.spatial.free(positions, edge_wrap=True))
+
+    # Create target layer with a single position.
+    post = nest.Create(
+        "iaf_psc_alpha", positions=nest.spatial.free([[1.0, 0.0, 0.0]], extent=[1.0, 1.0, 1.0], edge_wrap=True)
+    )
+
+    # We must specify a mask to generate a MaskedLayer, which splits the ntree.
+    mask = {"box": {"lower_left": [-0.5, -0.5, -0.5], "upper_right": [0.5, 0.5, 0.5]}}
+
+    # Probability intentionally set to zero because we don't have to actually create the connections in this test.
+    nest.Connect(
+        pre, post, conn_spec={"rule": "pairwise_bernoulli", "p": 0.0, "mask": mask, "allow_oversized_mask": True}
+    )

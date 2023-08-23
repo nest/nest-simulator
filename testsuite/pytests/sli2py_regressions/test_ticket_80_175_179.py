@@ -113,6 +113,12 @@ def reference_run():
     srs_reference = srs.get("events", "times")
     vms_reference = vms.get("events", "V_m")
 
+    # Ensure that the reference recordings are identical
+    nptest.assert_array_equal(srs_reference[0], srs_reference[1])
+    nptest.assert_array_equal(srs_reference[0], srs_reference[2])
+    nptest.assert_array_equal(srs_reference[0], srs_reference[3])
+    nptest.assert_array_equal(vms_reference[0], vms_reference[1])
+
     return srs_reference, vms_reference
 
 
@@ -133,18 +139,6 @@ def test_vm_and_sr_produce_same_output(block, reference_run):
 
     srs_reference, vms_reference = reference_run
 
-    # Ensure that the reference recordings are identical
-    nptest.assert_array_equal(srs_reference[0], srs_reference[1])
-    nptest.assert_array_equal(srs_reference[0], srs_reference[2])
-    nptest.assert_array_equal(srs_reference[0], srs_reference[3])
-
-    nptest.assert_array_equal(vms_reference[0], vms_reference[1])
-
     # Test that recorders give identical results independent of simulation time blocking
-    nptest.assert_array_equal(srs_reference[0], srs_times[0])
-    nptest.assert_array_equal(srs_reference[0], srs_times[1])
-    nptest.assert_array_equal(srs_reference[0], srs_times[2])
-    nptest.assert_array_equal(srs_reference[0], srs_times[3])
-
-    nptest.assert_array_equal(vms_reference[0], vms_recs[0])
-    nptest.assert_array_equal(vms_reference[0], vms_recs[1])
+    nptest.assert_array_equal(srs_reference, srs_times)
+    nptest.assert_array_equal(vms_reference, vms_recs)

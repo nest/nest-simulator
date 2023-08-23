@@ -80,8 +80,8 @@ def process_directory(directory):
     files = glob.glob(directory + "**/*.py", recursive=True)
 
     for file in files:
-        # ignoring the connection_helpers and helper modules
-        if "helper" in file:
+        # ignoring the low level api and connection_helpers and helper modules
+        if "helper" in file or "ll_api" in file:
             continue
 
         # get the NestModule for the kernel attributes

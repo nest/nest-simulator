@@ -78,6 +78,13 @@ section#kernel-attributes-nest-nestmodule dl.field-list.simple dt.field-odd{
 section#kernel-attributes-nest-nestmodule dl.field-list.simple dd.field-odd{
   padding-left: 4rem;
 }
+
+dt#nest\.NestModule {
+ display: none;
+}
+section#kernel-attributes-nest-nestmodule dd {
+  margin-left: 0em;
+}
 .sphx-glr-download-link-note {
 
  display: none;
@@ -91,6 +98,7 @@ section#kernel-attributes-nest-nestmodule dl.field-list.simple dd.field-odd{
         border: none;
         border-bottom: 1px solid #ddd;
 }
+
 
 /**************************************************************************************
  Settings for overriding material design theme 

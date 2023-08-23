@@ -24,8 +24,8 @@
 
 // Includes from libnestutil:
 #include "dict_util.h"
+#include "iaf_propagator.h"
 #include "numerics.h"
-#include "propagator_stability.h"
 
 // Includes from nestkernel:
 #include "exceptions.h"
@@ -289,8 +289,8 @@ nest::iaf_tsodyks::pre_run_hook()
   V_.P22_ = std::exp( -h / P_.Tau_ );
 
   // these are determined according to a numeric stability criterion
-  V_.P21ex_ = propagator_32( P_.tau_ex_, P_.Tau_, P_.C_, h );
-  V_.P21in_ = propagator_32( P_.tau_in_, P_.Tau_, P_.C_, h );
+  V_.P21ex_ = IAFPropagatorExp( P_.tau_ex_, P_.Tau_, P_.C_ ).evaluate( h );
+  V_.P21in_ = IAFPropagatorExp( P_.tau_in_, P_.Tau_, P_.C_ ).evaluate( h );
 
   V_.P20_ = P_.Tau_ / P_.C_ * ( 1.0 - V_.P22_ );
 
@@ -321,9 +321,6 @@ nest::iaf_tsodyks::pre_run_hook()
 void
 nest::iaf_tsodyks::update( const Time& origin, const long from, const long to )
 {
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   const double h = Time::get_resolution().get_ms();
 
 
@@ -349,7 +346,7 @@ nest::iaf_tsodyks::update( const Time& origin, const long from, const long to )
     S_.i_syn_ex_ += ( 1. - V_.P11ex_ ) * S_.i_1_;
 
     // get read access to the correct input-buffer slot
-    const index input_buffer_slot = kernel().event_delivery_manager.get_modulo( lag );
+    const size_t input_buffer_slot = kernel().event_delivery_manager.get_modulo( lag );
     auto& input = B_.input_buffer_.get_values_all_channels( input_buffer_slot );
 
     // the spikes arriving at T+1 have an immediate effect on the state of the

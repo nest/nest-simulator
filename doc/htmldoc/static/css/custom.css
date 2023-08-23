@@ -87,6 +87,11 @@ section#kernel-attributes-nest-nestmodule dl.field-list.simple dd.field-odd{
   display: none;
 }
 
+.autosummary tr {
+        border: none;
+        border-bottom: 1px solid #ddd;
+}
+
 /**************************************************************************************
  Settings for overriding material design theme 
  Setting nest colors to override sphinx material "orange" and other default colors

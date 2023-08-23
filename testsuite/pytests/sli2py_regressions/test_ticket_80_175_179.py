@@ -32,7 +32,7 @@ parameters.
 """
 
 import nest
-import numpy.testing as nptest
+import numpy as np
 import pytest
 
 vm_stop = 100.0
@@ -128,11 +128,8 @@ def test_vm_and_sr_produce_same_output(block, setup, reference_run):
     srs, vms = setup
     srs_reference, vms_reference = reference_run
 
-    srs_times = srs.get("events", "times")
-    vms_recs = vms.get("events", "V_m")
+    srs_times = np.array(srs.get("events", "times"))
+    vms_recs = np.array(vms.get("events", "V_m"))
 
-    nptest.assert_array_equal(srs_reference[0], srs_times[1])
-    nptest.assert_array_equal(srs_reference[0], srs_times[2])
-    nptest.assert_array_equal(srs_reference[0], srs_times[3])
-
-    nptest.assert_array_equal(vms_reference[0], vms_recs[1])
+    assert np.all(srs_times == srs_reference)
+    assert np.all(vms_recs == vms_reference)

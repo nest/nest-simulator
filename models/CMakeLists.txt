@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-set( models_sources
+set(models_sources
     modelsmodule.h ${PROJECT_BINARY_DIR}/models/modelsmodule.cpp
     binary_neuron.h
     cm_compartmentcurrents.h cm_compartmentcurrents.cpp
@@ -28,15 +28,15 @@ set( models_sources
     ${MODELS_SOURCES_GENERATED}
 )
 
-add_library( models STATIC ${models_sources} )
-set_target_properties( models
+add_library(models STATIC ${models_sources})
+set_target_properties(models
     PROPERTIES
-    VERSION ${NEST_VERSION}
-    SOVERSION 3
+    POSITION_INDEPENDENT_CODE ON
 )
-target_link_libraries( models nestutil sli_lib nestkernel )
 
-target_include_directories( models PRIVATE
+target_link_libraries(models nestutil sli_lib nestkernel)
+
+target_include_directories(models PRIVATE
     ${PROJECT_SOURCE_DIR}/thirdparty
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
@@ -46,12 +46,6 @@ target_include_directories( models PRIVATE
     ${PROJECT_SOURCE_DIR}/nestkernel
 )
 
-install( TARGETS models
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
-
-FILTER_HEADERS( "${models_sources}" install_headers )
-install( FILES ${install_headers}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest )
+FILTER_HEADERS("${models_sources}" install_headers)
+install(FILES ${install_headers}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)

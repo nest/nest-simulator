@@ -29,7 +29,9 @@
 
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "iaf_propagator.h"
 #include "kernel_manager.h"
+#include "numerics.h"
 #include "ring_buffer_impl.h"
 #include "universal_data_logger_impl.h"
 
@@ -323,7 +325,6 @@ nest::iaf_tsodyks::update( const Time& origin, const long from, const long to )
 {
   const double h = Time::get_resolution().get_ms();
 
-
   // evolve from timestep 'from' to timestep 'to' with steps of h each
   for ( long lag = from; lag < to; ++lag )
   {
@@ -351,6 +352,7 @@ nest::iaf_tsodyks::update( const Time& origin, const long from, const long to )
 
     // the spikes arriving at T+1 have an immediate effect on the state of the
     // neuron
+
     V_.weighted_spikes_ex_ = input[ Buffers_::SYN_EX ];
     V_.weighted_spikes_in_ = input[ Buffers_::SYN_IN ];
 
@@ -409,7 +411,6 @@ nest::iaf_tsodyks::update( const Time& origin, const long from, const long to )
       S_.x_ -= delta_y_tsp;
       S_.y_ += delta_y_tsp;
 
-
       // send spike with datafield
       SpikeEvent se;
       se.set_offset( delta_y_tsp );
@@ -433,7 +434,7 @@ nest::iaf_tsodyks::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  const index input_buffer_slot = kernel().event_delivery_manager.get_modulo(
+  const size_t input_buffer_slot = kernel().event_delivery_manager.get_modulo(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
 
   // Multiply with datafield from SpikeEvent
@@ -460,7 +461,7 @@ nest::iaf_tsodyks::handle( CurrentEvent& e )
   const double c = e.get_current();
   const double w = e.get_weight();
 
-  const index input_buffer_slot = kernel().event_delivery_manager.get_modulo(
+  const size_t input_buffer_slot = kernel().event_delivery_manager.get_modulo(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
 
   if ( 0 == e.get_rport() )

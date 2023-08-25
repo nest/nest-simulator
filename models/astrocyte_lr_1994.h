@@ -73,25 +73,18 @@ first proposed by Li & Rinzel (1994) and it is based on earlier work of DeYoung
 & Kaiser (1992). The input and output of the model are implemented according to
 Nadkarni & Jung (2003).
 
-The model is defined by three variables, the concentration of inositol
-1,4,5-trisphosphate in the astrocyte (IP3), the calcium concentration in the
-astrocytic cytosol (Ca), and the fraction of active IP3 receptors on the
-astrocytic Endoplasmatic Reticulum (h_IP3R).
+The model has three dynamic state variables: the concentration of inositol
+1,4,5-trisphosphate in the astrocyte (:math:`IP3`), the calcium concentration in
+the astrocytic cytosol (:math:`Ca`), and the fraction of active IP3 receptors on
+the astrocytic endoplasmatic reticulum (:math:`h_{IP3R}`).
 
-The astrocyte receives an input through IP3 variable and outputs a SIC current
-dependent on its calcium dynamics (see ``sic_connection``) to selected neurons
-according to the model from Nadkarni & Jung (2003).
+The astrocyte receives excitatory synaptic inputs, which affect its IP3
+concentration, and outputs a slow inward current (SIC) dependent on its
+cytosolic calcium dynamics to its target neurons. The input and output are based
+on the equations in Nadkarni & Jung (2003) but with adaptations:
 
-In addition, a current in the form of Gaussian white noise can be injected
-directly into the variable for cytosolic calcium, to account for small
-nonspecific random fluctuations.
-
-``astrocyte_lr_1994`` includes all equations in Nadkarni & Jung (2003), with
-adaptations regarding input and output as follows:
-
-**Input:** In this model, astrocyte receives inputs from neighboring
-glutamatergic synapses (neighboring synapses and neurons are defined by the
-connectivity scheme). These inputs directly affect IP3 variable according to the
+**Input:** The astrocyte receives inputs from excitatory (glutamatergic)
+synapses. The synaptic inputs directly affect IP3 concentration according to the
 following equation:
 
 .. math::
@@ -99,18 +92,33 @@ following equation:
  \frac{dIP3}{dt} =
  \frac{IP3_0 - IP3}{\tau_{IP3}} + \Delta_{IP3} \cdot J_{syn}(t)
 
-In the absence of inputs, IP3 decays to its baseline value (:math:`IP3_0`) with
-the time constant (:math:`\tau_{IP3}`). Each time when a neighboring synapse
-releases glutamate, part of it is uptaken by the astrocyte which, in this model,
-triggers an instantaneous increase of IP3. The summed input from all neighboring
-synapses at time :math:`t` is given by :math:`J_{syn}(t)`. The parameter
-:math:`\Delta_{IP3}` scales the impact of synaptic inputs on the IP3 dynamics.
+In the absence of inputs, :math:`IP3` decays to its baseline value
+(:math:`IP3_0`) with the time constant (:math:`\tau_{IP3}`). Each time when an
+astrocyte receives an excitatory synaptic input, it triggers an instantaneous
+increase of :math:`IP3`. In this implementation, the inputs are spike events
+sent from neurons. The summed synaptic weight the astrocyte receives at time
+:math:`t` is given by :math:`J_{syn}(t)`. The parameter :math:`\Delta_{IP3}`
+scales the impact of synaptic inputs on the IP3 dynamics.
 
-**Output:** If an astrocyte receives a glutamatergic input from a synapse
-it might output a slow inward current (SIC, :math:`I_{SIC}`) to the
-postsynaptic neuron. This current depends on the levels of calcium in the
-astrocytic cytosol, the dependency is modeled according to the expressions first
-proposed in Nadkarni & Jung (2003):
+In addition, in this implementation a current input to the astrocyte is directly
+added to its cytosolic calcium concentration. Generators that send out currents
+can be connected to astrocytes to directly generate fluctuations in cytosolic
+calcium:
+
+.. math::
+
+ \frac{dCa}{dt} =
+ J_{channel} - J_{pump} + J_{leak} + J_{noise}
+
+Here, :math:`Ca` is the cytosolic calcium concentration, and :math:`J_{noise}`
+is the current input. :math:`J_{channel}`, :math:`J_{pump}`, :math:`J_{leak}`
+are the calcium flux defined as in Nadkarni & Jung (2003), which are affected by
+:math:`IP3`.
+
+**Output:** If the astrocyte receives excitatory synaptic inputs, it might
+output SIC to the its target neurons. This current depends on the cytosolic
+calcium concentration. This dependency is modeled according to the expressions
+first proposed in Nadkarni & Jung (2003):
 
 .. math::
 
@@ -122,16 +130,16 @@ where
 
  y = Ca/nM - \mbox{SIC}_{th}
 
-When the astrocytic calcium (normalized to nM) exceeds the threshold value
-(:math:`\mbox{SIC}_{th}`) a SIC output is generated. This thresholding is modeled as a
-Heaviside function (:math:`H(\cdot)`). In this implementation, we treat the SIC
-threshold :math:`\mbox{SIC}_{th}` as well as the scaling constant :math:`\mbox{SIC}_{scale}` as
-external model parameters that can be set together with other astrocyte
-parameters. Nadkarni and Jung (2003) proposed values for these parameters by
-fitting the equation for :math:`I_{SIC}` to an experimental data set.
+When the cytosolic calcium concentration of the astrocyte exceeds the threshold
+value (:math:`\mbox{SIC}_{th}`) a SIC output (:math:`I_{SIC}`) is generated.
+This thresholding is modeled as a Heaviside function (:math:`H(\cdot)`). In this
+implementation, the SIC threshold :math:`\mbox{SIC}_{th}` as well as the scaling
+constant :math:`\mbox{SIC}_{scale}` are treated as model parameters that can be
+set together with other parameters. Nadkarni & Jung (2003) proposed values for
+these parameters by fitting the equation for SIC to an experimental data set.
 
-The output is implemented as ``SICEvent`` sent from the astrocyte to its target neurons
-through the ``sic_connection``.
+The output is implemented as SICEvent sent from the astrocyte to its target
+neurons through the ``sic_connection``.
 
 For implementation details, see the
 `astrocyte_model_implementation <../model_details/astrocyte_model_implementation.ipynb>`_ notebook.

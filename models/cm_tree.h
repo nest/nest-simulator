@@ -91,10 +91,10 @@ public:
   // constructor, destructor
   Compartment( const long compartment_index, const long parent_index );
   Compartment( const long compartment_index, const long parent_index, const DictionaryDatum& compartment_params );
-  ~Compartment(){};
+  ~Compartment() {};
 
   // initialization
-  void calibrate();
+  void pre_run_hook();
   std::map< Name, double* > get_recordables();
 
   // matrix construction
@@ -116,6 +116,7 @@ nest::Compartment::gather_input( const std::pair< double, double >& in )
   xx_ += in.first;
   yy_ += in.second;
 }
+
 inline std::pair< double, double >
 nest::Compartment::io()
 {
@@ -129,6 +130,7 @@ nest::Compartment::io()
 
   return std::make_pair( g_val, f_val );
 }
+
 inline double
 nest::Compartment::calc_v( const double v_in )
 {
@@ -168,13 +170,13 @@ private:
 public:
   // constructor, destructor
   CompTree();
-  ~CompTree(){};
+  ~CompTree() {};
 
   // initialization functions for tree structure
   void add_compartment( const long parent_index );
   void add_compartment( const long parent_index, const DictionaryDatum& compartment_params );
   void add_compartment( Compartment* compartment, const long parent_index );
-  void calibrate();
+  void pre_run_hook();
   void init_pointers();
   void set_syn_buffers( std::vector< RingBuffer >& syn_buffers );
   std::map< Name, double* > get_recordables();

@@ -28,13 +28,13 @@ if not nest.ll_api.sli_func("statusdict/have_music ::"):
     print("NEST was not compiled with support for MUSIC, not running.")
     sys.exit()
 
-mcip = nest.Create('music_cont_in_proxy')
-nest.SetStatus(mcip, {'port_name': 'contdata'})
+mcip = nest.Create("music_cont_in_proxy")
+nest.SetStatus(mcip, {"port_name": "contdata"})
 
 # Simulate and get vector data with a granularity of 10 ms:
 time = 0
 while time < 1000:
     nest.Simulate(10)
-    data = nest.GetStatus(mcip, 'data')
+    data = nest.GetStatus(mcip, "data")
     print(data)
     time += 10

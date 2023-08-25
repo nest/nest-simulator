@@ -58,7 +58,7 @@ Parameter::apply( const NodeCollectionPTR& nc, const TokenArray& token_array )
   }
 
   assert( nc->size() == 1 );
-  const index source_lid = nc->operator[]( 0 ) - source_metadata->get_first_node_id();
+  const size_t source_lid = nc->operator[]( 0 ) - source_metadata->get_first_node_id();
   std::vector< double > source_pos = source_layer->get_position_vector( source_lid );
 
   // For each position, calculate the displacement, then calculate the parameter value
@@ -157,7 +157,7 @@ NodePosParameter::get_node_pos_( Node* node ) const
   {
     throw KernelException( "NodePosParameter: not valid layer" );
   }
-  index lid = node->get_node_id() - meta->get_first_node_id();
+  size_t lid = node->get_node_id() - meta->get_first_node_id();
   std::vector< double > pos = layer->get_position_vector( lid );
   if ( ( unsigned int ) dimension_ >= pos.size() )
   {
@@ -477,4 +477,4 @@ dimension_parameter( const std::shared_ptr< Parameter > x_parameter,
   return std::shared_ptr< Parameter >( new DimensionParameter( x_parameter, y_parameter, z_parameter ) );
 }
 
-} /* namespace nest */
+} // namespace nest

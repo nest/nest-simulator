@@ -27,15 +27,16 @@ skip_if_without_music
 
 M_ERROR setverbosity
 
+% create voltmeter first to ensure same GID in sender and receiver
+/voltmeter Create /vm Set
+vm << /label (receiver) /record_to /ascii >> SetStatus
+
 /music_event_in_proxy Create /meip Set
 meip << /port_name (spikes_in) /music_channel 0 >> SetStatus
 
 /iaf_psc_alpha Create /n Set
 
 meip n /one_to_one << /weight 750.0 >> Connect
-
-/voltmeter Create /vm Set
-vm << /label (receiver) /record_to /ascii >> SetStatus
 
 vm n Connect
 

@@ -67,6 +67,7 @@ public:
 
   /**
    * @brief Calls the provided distribution with the wrapped RNG engine.
+   *
    * One operator per distribution must be defined.
    *
    * @param d Distribution that will be called.
@@ -83,6 +84,7 @@ public:
 
   /**
    * @brief Calls the provided distribution with the wrapped RNG engine, using provided distribution parameters.
+   *
    * One operator per distribution must be defined.
    *
    * @param d Distribution that will be called.
@@ -109,6 +111,7 @@ public:
 
   /**
    * @brief Uses the wrapped RNG engine to draw an unsigned long from a uniform distribution in the range [0, N).
+   *
    * @param N Maximum value that can be drawn.
    */
   virtual unsigned long ulrand( unsigned long N ) = 0;
@@ -116,6 +119,7 @@ public:
 
 /**
  * @brief Wrapper for RNG engines.
+ *
  * @tparam RandomEngineT Type of the wrapped engine, must conform with the C++11 random engine interface.
  */
 template < typename RandomEngineT >
@@ -127,7 +131,7 @@ public:
   RandomGenerator() = delete;
   RandomGenerator( const RandomEngineT& rng ) = delete;
 
-  RandomGenerator( std::initializer_list< std::uint32_t > seed )
+  explicit RandomGenerator( std::initializer_list< std::uint32_t > seed )
     : rng_()
     , uniform_double_dist_0_1_( 0.0, 1.0 )
   {
@@ -278,6 +282,7 @@ public:
 
   /**
    * @brief Clones the RNG wrapper and sets the state of the cloned RNG engine.
+   *
    * @param seed_initializer Initializer list for C++11-conforming SeedSeq for RNG.
    */
   virtual RngPtr create( std::initializer_list< std::uint32_t > seed_initializer ) const = 0;
@@ -299,6 +304,7 @@ public:
 
 /**
  * @brief Wrapper for distributions.
+ *
  * The result_type of the distribution must be unsigned long or double.
  *
  * @tparam DistributionT Type of the wrapped RandomDistribution.
@@ -351,6 +357,7 @@ public:
 
   /**
    * @brief Sets the distribution's associated parameter set to params.
+   *
    * @param params New contents of the distribution's associated parameter set.
    */
   inline void

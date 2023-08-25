@@ -114,14 +114,14 @@ public:
   using Node::handles_test_event;
 
   void handle( SpikeEvent& );
-  port send_test_event( Node&, rport, synindex, bool );
+  size_t send_test_event( Node&, size_t, synindex, bool );
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
 private:
   void init_buffers_();
-  void calibrate();
+  void pre_run_hook();
 
   void
   update( Time const&, const long, const long )
@@ -141,7 +141,7 @@ private:
     void get( DictionaryDatum& ) const;
 
     /**
-     * Set values from dicitonary.
+     * Set values from dictionary.
      */
     void set( const DictionaryDatum&, State_& );
   };
@@ -166,8 +166,8 @@ private:
   State_ S_;
 };
 
-inline port
-music_event_in_proxy::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+music_event_in_proxy::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

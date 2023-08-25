@@ -22,14 +22,14 @@
 
 #include "kernel_manager.h"
 
-nest::KernelManager* nest::KernelManager::kernel_manager_instance_ = 0;
+nest::KernelManager* nest::KernelManager::kernel_manager_instance_ = nullptr;
 
 void
 nest::KernelManager::create_kernel_manager()
 {
 #pragma omp critical( create_kernel_manager )
   {
-    if ( kernel_manager_instance_ == 0 )
+    if ( not kernel_manager_instance_ )
     {
       kernel_manager_instance_ = new KernelManager();
       assert( kernel_manager_instance_ );
@@ -128,7 +128,7 @@ nest::KernelManager::reset()
 }
 
 void
-nest::KernelManager::change_number_of_threads( thread new_num_threads )
+nest::KernelManager::change_number_of_threads( size_t new_num_threads )
 {
   // Inputs are checked in VPManager::set_status().
   // Just double check here that all values are legal.

@@ -113,17 +113,24 @@ def reference_run():
     srs_reference = srs.get("events", "times")
     vms_reference = vms.get("events", "V_m")
 
-    # Ensure that the reference recordings are identical
-    nptest.assert_array_equal(srs_reference[0], srs_reference[1])
-    nptest.assert_array_equal(srs_reference[0], srs_reference[2])
-    nptest.assert_array_equal(srs_reference[0], srs_reference[3])
-    nptest.assert_array_equal(vms_reference[0], vms_reference[1])
-
     return srs_reference, vms_reference
 
 
-@pytest.mark.parametrize("block", [0.1, 0.3, 0.5, 0.7, 1.0, 1.3, 1.5, 1.7, 110.0])
-def test_vm_and_sr_produce_same_output(block, reference_run):
+def test_reference_recordings_identical(reference_run):
+    """
+    Consistency test to ensure that the reference recordings are identical.
+    """
+
+    srs_reference, vms_reference = reference_run
+
+    for srec in srs_reference[1:]:
+        nptest.assert_array_equal(srs_reference[0], srec)
+
+    nptest.assert_array_equal(vms_reference[0], vms_reference[1])
+
+
+@pytest.mark.parametrize("t_block", [0.1, 0.3, 0.5, 0.7, 1.0, 1.3, 1.5, 1.7, 110.0])
+def test_vm_and_sr_produce_same_output(t_block, reference_run):
     """
     Test that the ``voltmeter`` and ``spike_recorder`` yield identical results independent simulation time blocking.
     """
@@ -132,7 +139,7 @@ def test_vm_and_sr_produce_same_output(block, reference_run):
 
     with nest.RunManager():
         while nest.biological_time < total_sim_time:
-            nest.Run(block)
+            nest.Run(t_block)
 
     srs_times = srs.get("events", "times")
     vms_recs = vms.get("events", "V_m")

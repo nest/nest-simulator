@@ -61,7 +61,7 @@ astrocyte_lr_1994, aeif_cond_alpha_astro, gap_junction
 EndUserDocs */
 
 template < typename targetidentifierT >
-class SICConnection : public Connection< targetidentifierT >
+class sic_connection : public Connection< targetidentifierT >
 {
 
 public:
@@ -75,7 +75,7 @@ public:
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  SICConnection()
+  sic_connection()
     : ConnectionBase()
     , weight_( 1.0 )
   {
@@ -138,11 +138,11 @@ private:
 };
 
 template < typename targetidentifierT >
-constexpr ConnectionModelProperties SICConnection< targetidentifierT >::properties;
+constexpr ConnectionModelProperties sic_connection< targetidentifierT >::properties;
 
 template < typename targetidentifierT >
 void
-SICConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
+sic_connection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   // We have to include the delay here to prevent
   // errors due to internal calls of
@@ -154,14 +154,14 @@ SICConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 SecondaryEvent*
-SICConnection< targetidentifierT >::get_secondary_event()
+sic_connection< targetidentifierT >::get_secondary_event()
 {
   return new SICEvent();
 }
 
 template < typename targetidentifierT >
 void
-SICConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+sic_connection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   // If the delay is set, we throw a BadProperty
   // if ( d->known( names::delay ) )

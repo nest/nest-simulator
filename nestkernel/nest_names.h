@@ -98,8 +98,6 @@ extern const Name asc_decay;
 extern const Name asc_init;
 extern const Name asc_r;
 extern const Name astrocyte;
-extern const Name astrocyte_lr_1994;
-extern const Name astrocyte_surrogate;
 extern const Name astro_pool_by_index;
 extern const Name available;
 extern const Name azimuth_angle;

@@ -237,8 +237,10 @@ PyNEST examples
     .. grid-item-card:: Astrocytes
            :img-top: ../static/img/nest_logo-faded.png
 
+           * :doc:`../auto_examples/astrocyte_single`
+           * :doc:`../auto_examples/astrocyte_tripartite`
+           * :doc:`../auto_examples/astrocyte_small_network`
            * :doc:`../auto_examples/astrocyte_brunel`
-           * :doc:`../auto_examples/astrocyte_connect`
 
 .. toctree::
    :hidden:
@@ -322,8 +324,10 @@ PyNEST examples
    ../auto_examples/csa_example
    ../auto_examples/csa_spatial_example
    ../auto_examples/hpc_benchmark
+   ../auto_examples/astrocyte_single
+   ../auto_examples/astrocyte_tripartite
+   ../auto_examples/astrocyte_small_network
    ../auto_examples/astrocyte_brunel
-   ../auto_examples/astrocyte_connect
 
 .. toctree::
    :hidden:

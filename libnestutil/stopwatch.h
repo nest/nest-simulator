@@ -71,12 +71,12 @@ public:
 
   enum
   {
-    MICROSEC = ( timeunit_t ) 1,
-    MILLISEC = MICROSEC * ( timeunit_t ) 1000,
-    SECONDS = MILLISEC * ( timeunit_t ) 1000,
-    MINUTES = SECONDS * ( timeunit_t ) 60,
-    HOURS = MINUTES * ( timeunit_t ) 60,
-    DAYS = HOURS * ( timeunit_t ) 24
+    MICROSEC = static_cast< timeunit_t >( 1 ),
+    MILLISEC = MICROSEC * static_cast< timeunit_t >( 1000 ),
+    SECONDS = MILLISEC * static_cast< timeunit_t >( 1000 ),
+    MINUTES = SECONDS * static_cast< timeunit_t >( 60 ),
+    HOURS = MINUTES * static_cast< timeunit_t >( 60 ),
+    DAYS = HOURS * static_cast< timeunit_t >( 24 )
   };
 
   static bool correct_timeunit( timeunit_t t );
@@ -222,7 +222,7 @@ nest::Stopwatch::elapsed_timestamp() const
     return _end - _beg + _prev_elapsed;
   }
 #else
-  return ( timestamp_t ) 0;
+  return static_cast< timestamp_t >( 0 );
 #endif
 }
 

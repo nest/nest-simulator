@@ -614,7 +614,7 @@ const Name voltage_clamp( "voltage_clamp" );
 const Name voltage_reset_add( "voltage_reset_add" );
 const Name voltage_reset_fraction( "voltage_reset_fraction" );
 const Name vp( "vp" );
-const Name vt( "vt" );
+const Name volume_transmitter( "volume_transmitter" );
 
 const Name Wmax( "Wmax" );
 const Name Wmin( "Wmin" );

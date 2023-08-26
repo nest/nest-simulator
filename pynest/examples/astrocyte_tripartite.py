@@ -20,10 +20,11 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-A tripartite network of two neurons and one astrocyte.
+A tripartite interaction between two neurons and one astrocyte.
 ------------------------------------------------------------
 
-This script simulates a tripartite network of two neurons and one astrocyte.
+This script simulates a tripartite interaction between two neurons and one
+astrocyte.
 
 References
 ~~~~~~~~~~

@@ -20,11 +20,12 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Neuron-astrocyte connection
+A small neuron-astrocyte network
 ------------------------------------------------------------
 
 This script demonstrates how to use the NEST connection builder and the
-"pairwise_bernoulli_astro" rule to create a small neuron-astrocyte network.
+"pairwise_bernoulli_astro" rule to create a small neuron-astrocyte network with
+20 neurons and 10 astrocytes.
 
 See Also
 ~~~~~~~~

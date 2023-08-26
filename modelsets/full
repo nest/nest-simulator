@@ -13,6 +13,7 @@ aeif_psc_delta
 aeif_psc_delta_clopath
 amat2_psc_exp
 astrocyte_lr_1994
+astrocyte_surrogate
 bernoulli_synapse
 cm_default
 clopath_synapse

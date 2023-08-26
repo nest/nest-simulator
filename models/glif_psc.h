@@ -165,7 +165,7 @@ th_voltage_decay           double         Voltage-induced threshold time
                                           voltage-dependent component of the
                                           threshold in 1/ms (bv in Equation
                                           (4) in [1]_)
-tau_syn                    double vector  Rise time constants of the synaptic
+tau_syn                    double vector  Time constants of the synaptic
                                           alpha function in ms
 E_rev                      double vector  Reversal potential in mV
 spike_dependent_threshold  bool           flag whether the neuron has

@@ -70,10 +70,10 @@ poisson_rate = 1.0
 poisson_weight = 0.1
 
 ###############################################################################
-# Main function to run the simulation
+# Main function to run the simulation.
 
 def run():
-    # Create data directory and save relevant data (testing only)
+    # Create data directory and save relevant data
     data_path = os.path.join('astrocyte_single', hashlib.md5(os.urandom(16)).hexdigest())
     os.system(f'mkdir -p {data_path}')
     os.system(f'cp astrocyte_single.py {data_path}')
@@ -102,7 +102,7 @@ def run():
     axes[1].set_ylabel(r"[Ca$^{2+}$] ($\mu$M)")
     axes[1].set_xlabel('Time (ms)')
     plt.tight_layout()
-    plt.savefig(os.path.join(data_path, 'astrocyte_single.png')) # (testing only)
+    plt.savefig(os.path.join(data_path, 'astrocyte_single.png'))
     plt.show()
     plt.close()
 

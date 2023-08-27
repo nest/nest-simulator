@@ -298,7 +298,6 @@ private:
     double rate_SERCA_;   //!< Maximum rate of calcium uptake by astrocytic IP3R in uM/ms
 
     // For SIC; experimental
-    bool logarithmic_SIC_; //!< Use logarithmic SIC if true (otherwise linear)
     double SIC_scale_;     //!< Scale of SIC output
     bool alpha_SIC_;       //!< Use alpha-shaped SIC if true
     double tau_SIC_;       //!< Time constant of alpha-shaped SIC

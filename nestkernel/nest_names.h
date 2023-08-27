@@ -306,7 +306,6 @@ extern const Name linear_summation;
 extern const Name local;
 extern const Name local_num_threads;
 extern const Name local_spike_counter;
-extern const Name logarithmic_SIC;
 extern const Name lookuptable_0;
 extern const Name lookuptable_1;
 extern const Name lookuptable_2;

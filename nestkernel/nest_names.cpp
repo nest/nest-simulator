@@ -281,7 +281,6 @@ const Name linear_summation( "linear_summation" );
 const Name local( "local" );
 const Name local_num_threads( "local_num_threads" );
 const Name local_spike_counter( "local_spike_counter" );
-const Name logarithmic_SIC( "logarithmic_SIC" );
 const Name lookuptable_0( "lookuptable_0" );
 const Name lookuptable_1( "lookuptable_1" );
 const Name lookuptable_2( "lookuptable_2" );

@@ -125,7 +125,6 @@ nest::astrocyte_lr_1994::Parameters_::Parameters_()
   , tau_IP3_( 7142.0 )     // ms
   , rate_IP3R_( 0.006 )    // 1/ms
   , rate_SERCA_( 0.0009 )  // uM/ms
-  , logarithmic_SIC_ ( true )
   , SIC_scale_( 1.0 )
   , alpha_SIC_( false )
   , tau_SIC_( 1000.0 ) // ms
@@ -185,7 +184,6 @@ nest::astrocyte_lr_1994::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::rate_IP3R, rate_IP3R_ );
   def< double >( d, names::rate_SERCA, rate_SERCA_ );
   def< double >( d, names::tau_IP3, tau_IP3_ );
-  def< bool >( d, names::logarithmic_SIC, logarithmic_SIC_ );
   def< bool >( d, names::alpha_SIC, alpha_SIC_ );
   def< double >( d, names::tau_SIC, tau_SIC_ );
   def< double >( d, names::delay_SIC, delay_SIC_ );
@@ -212,7 +210,6 @@ nest::astrocyte_lr_1994::Parameters_::set( const DictionaryDatum& d, Node* node 
   updateValueParam< double >( d, names::rate_IP3R, rate_IP3R_, node );
   updateValueParam< double >( d, names::rate_SERCA, rate_SERCA_, node );
   updateValueParam< double >( d, names::tau_IP3, tau_IP3_, node );
-  updateValueParam< bool >( d, names::logarithmic_SIC, logarithmic_SIC_, node );
   updateValueParam< bool >( d, names::alpha_SIC, alpha_SIC_, node );
   updateValueParam< double >( d, names::tau_SIC, tau_SIC_, node );
   updateValueParam< double >( d, names::delay_SIC, delay_SIC_, node );
@@ -549,16 +546,9 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
         if ( B_.sic_started_flag_ == false and B_.sic_on_timer_ >= P_.delay_SIC_ )
         {
           // generate a SIC
-          if ( P_.logarithmic_SIC_ == true )
+          if ( calc_thr > 1.0 )
           {
-            if ( calc_thr > 1.0 )
-            {
-              S_.y_[ State_::DSIC ] += P_.SIC_scale_*std::log( calc_thr )*B_.i0_ex_;
-            }
-          }
-          else
-          {
-            S_.y_[ State_::DSIC ] += 0.001*P_.SIC_scale_*calc_thr*B_.i0_ex_;
+            S_.y_[ State_::DSIC ] += P_.SIC_scale_*std::log( calc_thr )*B_.i0_ex_;
           }
           B_.sic_started_flag_ = true;
         }
@@ -593,24 +583,12 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
     // original version of SIC
     else
     {
-      // logarithmic
-      if ( P_.logarithmic_SIC_ == true )
+      if ( calc_thr > 1.0 )
       {
-        if ( calc_thr > 1.0 )
-        {
-          // multiplied by std::pow(25, 2)*3.14*std::pow(10, -2) in previous
-          // version to convert from uA/cm2 to pA; now users can set the scale of
-          // SIC by SIC_scale or SIC connection weight
-          sic_value = std::log( calc_thr )*P_.SIC_scale_;
-        }
-      }
-      // simply copy calcium
-      else
-      {
-        if ( calc_thr > 0.0 )
-        {
-          sic_value = calc_thr*P_.SIC_scale_/1000.0;
-        }
+        // multiplied by std::pow(25, 2)*3.14*std::pow(10, -2) in previous
+        // version to convert from uA/cm2 to pA; now users can set the scale of
+        // SIC by SIC_scale or SIC connection weight
+        sic_value = std::log( calc_thr )*P_.SIC_scale_;
       }
     }
     B_.sic_values[ lag ] = sic_value;

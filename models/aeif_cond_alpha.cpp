@@ -104,6 +104,7 @@ nest::aeif_cond_alpha_dynamics( double, const double y[], double f[], void* pnod
 
   // limiting current due to exponential term -- prevent numerical instability in the integrator
   I_soma = std::min( I_soma, node.P_.I_soma_max );
+  I_soma = std::max( I_soma, -node.P_.I_soma_max );
 
   // dv/dt
   f[ S::V_M ] = is_refractory
@@ -280,7 +281,7 @@ nest::aeif_cond_alpha::Parameters_::set( const DictionaryDatum& d, Node* node )
 
   if ( I_soma_max < 0 )
   {
-    throw BadProperty( "Maximum spike current cannot be negative." );
+    throw BadProperty( "Maximum somatic current cannot be negative." );
   }
 
   if ( gsl_error_tol <= 0. )

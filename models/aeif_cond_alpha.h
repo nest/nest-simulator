@@ -109,10 +109,11 @@ Numerical stability
 -------------------
 
 Under some conditions, the exponential function inside the numeric solver
-routine for this model can cause a numerical instability. If the parameter
-``I_soma_max`` is set to a non-zero value, the total somatic current will be
-evaluated at each solver timestep and its absolute value will be limited to
-this value. Setting ``I_soma_max`` can change the dynamics of the model.
+routine for this model can cause a numerical instability. The total somatic
+current will be evaluated at each solver timestep and its absolute value
+limited to the value given by the parameter ``I_soma_max``. By default the
+value is set to positive infinity, which means somatic current is unbounded.
+Setting ``I_soma_max`` to any other value changes the dynamics of the model.
 
 As a guideline to choose a plausible maximum current, Brette and Gerstner [2]_
 use forward Euler integration with a fixed time step. Now assume that at the
@@ -148,7 +149,7 @@ The following parameters can be set in the status dictionary.
  V_reset    mV      Reset value for V_m after a spike
  E_L        mV      Leak reversal potential
  g_L        nS      Leak conductance
- I_spike_max pA      Maximum somatic current
+ I_soma_max pA      Maximum absolute somatic current
  I_e        pA      Constant external input current
 =========== ======= =======================================
 
@@ -264,20 +265,20 @@ private:
     double V_reset_; //!< Reset Potential in mV
     double t_ref_;   //!< Refractory period in ms
 
-    double g_L;         //!< Leak Conductance in nS
-    double C_m;         //!< Membrane Capacitance in pF
-    double E_ex;        //!< Excitatory reversal Potential in mV
-    double E_in;        //!< Inhibitory reversal Potential in mV
-    double E_L;         //!< Leak reversal Potential (aka resting potential) in mV
-    double Delta_T;     //!< Slope factor in mV
-    double tau_w;       //!< Adaptation time-constant in ms
-    double a;           //!< Subthreshold adaptation in nS
-    double b;           //!< Spike-triggered adaptation in pA
-    double V_th;        //!< Spike threshold in mV
-    double tau_syn_ex;  //!< Excitatory synaptic rise time
-    double tau_syn_in;  //!< Excitatory synaptic rise time
-    double I_spike_max; //!< Maximum somatic current in pA
-    double I_e;         //!< Intrinsic current in pA
+    double g_L;        //!< Leak Conductance in nS
+    double C_m;        //!< Membrane Capacitance in pF
+    double E_ex;       //!< Excitatory reversal Potential in mV
+    double E_in;       //!< Inhibitory reversal Potential in mV
+    double E_L;        //!< Leak reversal Potential (aka resting potential) in mV
+    double Delta_T;    //!< Slope factor in mV
+    double tau_w;      //!< Adaptation time-constant in ms
+    double a;          //!< Subthreshold adaptation in nS
+    double b;          //!< Spike-triggered adaptation in pA
+    double V_th;       //!< Spike threshold in mV
+    double tau_syn_ex; //!< Excitatory synaptic rise time
+    double tau_syn_in; //!< Excitatory synaptic rise time
+    double I_soma_max; //!< Maximum absolute somatic current in pA
+    double I_e;        //!< Intrinsic current in pA
 
     double gsl_error_tol; //!< Error bound for GSL integrator
 

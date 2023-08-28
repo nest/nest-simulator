@@ -1384,7 +1384,7 @@ public:
     , px_( p.px_ )
     , py_( p.py_ )
     , cos_( p.cos_ )
-    , sin_( p.sin_)
+    , sin_( p.sin_ )
     , gamma_( p.gamma_ )
     , inv_two_std2_( p.inv_two_std2_ )
     , lambda_( p.lambda_ )

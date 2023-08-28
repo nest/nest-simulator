@@ -142,7 +142,7 @@ class SpatialTester:
             },
             "gamma": {"kappa": 3.0, "theta": self._L / 4.0},
             "gabor": {"std": self._L, "gamma": 0.7, "lam": self._L,
-                      "theta": 360. / 8., "psi": - 360. / 6.}}
+                      "theta": 360. / 8., "psi": - 360. / 6.}
         }
         self._params = default_params[spatial_distribution]
         if distribution_params is not None:

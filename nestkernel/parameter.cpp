@@ -384,11 +384,11 @@ GaborParameter::value( RngPtr rng,
   const auto dx = px_->value( rng, source_pos, target_pos, layer, node );
   const auto dy = py_->value( rng, source_pos, target_pos, layer, node );
   const auto dx_prime = dx * cos_ + dy * sin_;
-  const auto dy_prime = - dx * sin_ + dy * cos_;
+  const auto dy_prime = -dx * sin_ + dy * cos_;
   const auto gabor_exp =
-      std::exp( -gamma_ * gamma_ * dx_prime * dx_prime * inv_two_std2_ - dy_prime * dy_prime * inv_two_std2_ );
+    std::exp( -gamma_ * gamma_ * dx_prime * dx_prime * inv_two_std2_ - dy_prime * dy_prime * inv_two_std2_ );
   const auto gabor_cos_plus =
-      std::max( std::cos( 2 * numerics::pi * dy_prime / lambda_ + psi_ * numerics::pi / 180. ), 0. );
+    std::max( std::cos( 2 * numerics::pi * dy_prime / lambda_ + psi_ * numerics::pi / 180. ), 0. );
   const auto gabor_res = gabor_exp * gabor_cos_plus;
 
   return gabor_res;

@@ -1,5 +1,5 @@
 /*
- *  iaf_tsodyks.cpp
+ *  iaf_tum_2000.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,7 +20,7 @@
  *
  */
 
-#include "iaf_tsodyks.h"
+#include "iaf_tum_2000.h"
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -42,21 +42,20 @@
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::iaf_tsodyks > nest::iaf_tsodyks::recordablesMap_;
+nest::RecordablesMap< nest::iaf_tum_2000 > nest::iaf_tum_2000::recordablesMap_;
 
 namespace nest
 {
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
-// TODO: Should state variables (x, y, u) also be recordable? No
 template <>
 void
-RecordablesMap< iaf_tsodyks >::create()
+RecordablesMap< iaf_tum_2000 >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_( names::V_m, &iaf_tsodyks::get_V_m_ );
-  insert_( names::I_syn_ex, &iaf_tsodyks::get_I_syn_ex_ );
-  insert_( names::I_syn_in, &iaf_tsodyks::get_I_syn_in_ );
+  insert_( names::V_m, &iaf_tum_2000::get_V_m_ );
+  insert_( names::I_syn_ex, &iaf_tum_2000::get_I_syn_ex_ );
+  insert_( names::I_syn_in, &iaf_tum_2000::get_I_syn_in_ );
 }
 }
 
@@ -64,7 +63,7 @@ RecordablesMap< iaf_tsodyks >::create()
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::iaf_tsodyks::Parameters_::Parameters_()
+nest::iaf_tum_2000::Parameters_::Parameters_()
   : Tau_( 10.0 )             // in ms
   , C_( 250.0 )              // in pF
   , t_ref_( 2.0 )            // in ms
@@ -83,7 +82,7 @@ nest::iaf_tsodyks::Parameters_::Parameters_()
 {
 }
 
-nest::iaf_tsodyks::State_::State_()
+nest::iaf_tum_2000::State_::State_()
   : i_0_( 0.0 )
   , i_1_( 0.0 )
   , i_syn_ex_( 0.0 )
@@ -101,7 +100,7 @@ nest::iaf_tsodyks::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_tsodyks::Parameters_::get( DictionaryDatum& d ) const
+nest::iaf_tum_2000::Parameters_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::E_L, E_L_ ); // resting potential
   def< double >( d, names::I_e, I_e_ );
@@ -121,7 +120,7 @@ nest::iaf_tsodyks::Parameters_::get( DictionaryDatum& d ) const
 }
 
 double
-nest::iaf_tsodyks::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::iaf_tum_2000::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   // if E_L_ is changed, we need to adjust all variables defined relative to
   // E_L_
@@ -194,7 +193,7 @@ nest::iaf_tsodyks::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-nest::iaf_tsodyks::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+nest::iaf_tum_2000::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
   def< double >( d, names::V_m, V_m_ + p.E_L_ ); // Membrane potential
   def< double >( d, names::x, x_ );
@@ -203,7 +202,7 @@ nest::iaf_tsodyks::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 }
 
 void
-nest::iaf_tsodyks::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
+nest::iaf_tum_2000::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
 {
 
   double x = x_;
@@ -232,12 +231,12 @@ nest::iaf_tsodyks::State_::set( const DictionaryDatum& d, const Parameters_& p, 
   }
 }
 
-nest::iaf_tsodyks::Buffers_::Buffers_( iaf_tsodyks& n )
+nest::iaf_tum_2000::Buffers_::Buffers_( iaf_tum_2000& n )
   : logger_( n )
 {
 }
 
-nest::iaf_tsodyks::Buffers_::Buffers_( const Buffers_&, iaf_tsodyks& n )
+nest::iaf_tum_2000::Buffers_::Buffers_( const Buffers_&, iaf_tum_2000& n )
   : logger_( n )
 {
 }
@@ -246,7 +245,7 @@ nest::iaf_tsodyks::Buffers_::Buffers_( const Buffers_&, iaf_tsodyks& n )
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::iaf_tsodyks::iaf_tsodyks()
+nest::iaf_tum_2000::iaf_tum_2000()
   : ArchivingNode()
   , P_()
   , S_()
@@ -255,7 +254,7 @@ nest::iaf_tsodyks::iaf_tsodyks()
   recordablesMap_.create();
 }
 
-nest::iaf_tsodyks::iaf_tsodyks( const iaf_tsodyks& n )
+nest::iaf_tum_2000::iaf_tum_2000( const iaf_tum_2000& n )
   : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -268,7 +267,7 @@ nest::iaf_tsodyks::iaf_tsodyks( const iaf_tsodyks& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_tsodyks::init_buffers_()
+nest::iaf_tum_2000::init_buffers_()
 {
   B_.input_buffer_.clear(); // includes resize
   B_.logger_.reset();
@@ -276,7 +275,7 @@ nest::iaf_tsodyks::init_buffers_()
 }
 
 void
-nest::iaf_tsodyks::pre_run_hook()
+nest::iaf_tum_2000::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -319,7 +318,7 @@ nest::iaf_tsodyks::pre_run_hook()
 }
 
 void
-nest::iaf_tsodyks::update( const Time& origin, const long from, const long to )
+nest::iaf_tum_2000::update( const Time& origin, const long from, const long to )
 {
   const double h = Time::get_resolution().get_ms();
 
@@ -427,7 +426,7 @@ nest::iaf_tsodyks::update( const Time& origin, const long from, const long to )
 }
 
 void
-nest::iaf_tsodyks::handle( SpikeEvent& e )
+nest::iaf_tum_2000::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -447,7 +446,7 @@ nest::iaf_tsodyks::handle( SpikeEvent& e )
 }
 
 void
-nest::iaf_tsodyks::handle( CurrentEvent& e )
+nest::iaf_tum_2000::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -468,7 +467,7 @@ nest::iaf_tsodyks::handle( CurrentEvent& e )
 }
 
 void
-nest::iaf_tsodyks::handle( DataLoggingRequest& e )
+nest::iaf_tum_2000::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }

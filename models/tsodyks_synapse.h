@@ -127,7 +127,7 @@ SpikeEvent
 See also
 ++++++++
 
-iaf_tsodyks, stdp_synapse, static_synapse, iaf_psc_exp, iaf_tum_2000
+iaf_tum_2000, stdp_synapse, static_synapse, iaf_psc_exp
 
 EndUserDocs */
 

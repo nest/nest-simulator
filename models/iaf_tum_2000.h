@@ -1,5 +1,5 @@
 /*
- *  iaf_tsodyks.h
+ *  iaf_tum_2000.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef IAF_TSODYKS_H
-#define IAF_TSODYKS_H
+#ifndef IAF_TUM_2000_H
+#define IAF_TUM_2000_H
 
 // Includes from nestkernel:
 #include "archiving_node.h"
@@ -177,12 +177,12 @@ EndUserDocs */
  */
 
 // iaf_tum_2000
-class iaf_tsodyks : public ArchivingNode
+class iaf_tum_2000 : public ArchivingNode
 {
 
 public:
-  iaf_tsodyks();
-  iaf_tsodyks( const iaf_tsodyks& );
+  iaf_tum_2000();
+  iaf_tum_2000( const iaf_tum_2000& );
 
   /**
    * Import sets of overloaded virtual functions.
@@ -221,8 +221,8 @@ private:
   double phi_() const;
 
   // The next two classes need to be friends to access the State_ class/member
-  friend class RecordablesMap< iaf_tsodyks >;
-  friend class UniversalDataLogger< iaf_tsodyks >;
+  friend class RecordablesMap< iaf_tum_2000 >;
+  friend class UniversalDataLogger< iaf_tum_2000 >;
 
   // ----------------------------------------------------------------
 
@@ -319,8 +319,8 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_tsodyks& );
-    Buffers_( const Buffers_&, iaf_tsodyks& );
+    Buffers_( iaf_tum_2000& );
+    Buffers_( const Buffers_&, iaf_tum_2000& );
 
     //! Indices for access to different channels of input_buffer_
     enum
@@ -336,7 +336,7 @@ private:
     MultiChannelInputBuffer< NUM_INPUT_CHANNELS > input_buffer_;
 
     //! Logger for all analog data
-    UniversalDataLogger< iaf_tsodyks > logger_;
+    UniversalDataLogger< iaf_tum_2000 > logger_;
   };
 
   // ----------------------------------------------------------------
@@ -406,12 +406,12 @@ private:
   /** @} */
 
   //! Mapping of recordables names to access functions
-  static RecordablesMap< iaf_tsodyks > recordablesMap_;
+  static RecordablesMap< iaf_tum_2000 > recordablesMap_;
 };
 
 
 inline size_t
-nest::iaf_tsodyks::send_test_event( Node& target, size_t receptor_type, synindex, bool )
+nest::iaf_tum_2000::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   if ( target.get_model_id() != this->get_model_id() and target.is_off_grid() )
   {
@@ -424,7 +424,7 @@ nest::iaf_tsodyks::send_test_event( Node& target, size_t receptor_type, synindex
 }
 
 inline size_t
-iaf_tsodyks::handles_test_event( SpikeEvent& e, size_t receptor_type )
+iaf_tum_2000::handles_test_event( SpikeEvent& e, size_t receptor_type )
 {
   if ( receptor_type > 1 )
   {
@@ -438,7 +438,7 @@ iaf_tsodyks::handles_test_event( SpikeEvent& e, size_t receptor_type )
 }
 
 inline size_t
-iaf_tsodyks::handles_test_event( CurrentEvent&, size_t receptor_type )
+iaf_tum_2000::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type == 0 )
   {
@@ -455,7 +455,7 @@ iaf_tsodyks::handles_test_event( CurrentEvent&, size_t receptor_type )
 }
 
 inline size_t
-iaf_tsodyks::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
+iaf_tum_2000::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -465,7 +465,7 @@ iaf_tsodyks::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 }
 
 inline void
-iaf_tsodyks::get_status( DictionaryDatum& d ) const
+iaf_tum_2000::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
@@ -475,7 +475,7 @@ iaf_tsodyks::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-iaf_tsodyks::set_status( const DictionaryDatum& d )
+iaf_tum_2000::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_;                       // temporary copy in case of errors
   const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
@@ -494,7 +494,7 @@ iaf_tsodyks::set_status( const DictionaryDatum& d )
 }
 
 inline double
-iaf_tsodyks::phi_() const
+iaf_tum_2000::phi_() const
 {
   assert( P_.delta_ > 0. );
   return P_.rho_ * std::exp( 1. / P_.delta_ * ( S_.V_m_ - P_.Theta_ ) );
@@ -502,4 +502,4 @@ iaf_tsodyks::phi_() const
 
 } // namespace
 
-#endif // IAF_TSODYKS_H
+#endif // IAF_TUM_2000_H

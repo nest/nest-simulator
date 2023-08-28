@@ -22,9 +22,8 @@
 from pprint import pprint
 
 import matplotlib.pyplot as plt
-import numpy as np
-
 import nest
+import numpy as np
 
 # TODO: This is just a test script, remove from repository before PR
 
@@ -33,15 +32,15 @@ nest.ResetKernel()
 weight = 250.0
 delay = 0.1
 
-nest.SetDefaults("iaf_tsodyks", {"I_e": 0.0})
+nest.SetDefaults("iaf_tum_2000", {"I_e": 0.0})
 
 spikegen = nest.Create("spike_generator", 1)
 nest.SetStatus(spikegen, {"spike_times": [1.0]})
 
-# iaf_tsodyks with static synapse
+# iaf_tum_2000 with static synapse
 # nrn_pre = nest.Create("iaf_psc_exp_ps", 1)
-nrn_pre = nest.Create("iaf_tsodyks", 1)
-nrn_post = nest.Create("iaf_tsodyks", 1)
+nrn_pre = nest.Create("iaf_tum_2000", 1)
+nrn_post = nest.Create("iaf_tum_2000", 1)
 
 
 # Set huge synaptic weight, control spike releases by refractory period

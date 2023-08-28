@@ -68,10 +68,10 @@ def brunel_tsodyks_network(
 
     # CREATE NETWORK ELEMENTS
     # Create excitatory nodes
-    nodes_exc = nest.Create("iaf_tsodyks", model_params["NE"], params=neuron_params_ex)
+    nodes_exc = nest.Create("iaf_tum_2000", model_params["NE"], params=neuron_params_ex)
 
     # Create inhibitory nodes
-    nodes_inh = nest.Create("iaf_tsodyks", model_params["NI"], params=neuron_params_in)
+    nodes_inh = nest.Create("iaf_tum_2000", model_params["NI"], params=neuron_params_in)
 
     # Create Poisson generator; the excitatory stimuli from the external
     # population. The firing rate of the whole external population is given
@@ -224,7 +224,7 @@ if __name__ == "__main__":
         "NI": NI,  # number of inhibitory neurons
         "CE": CE,  # number of excitatory synapses per neuron
         "CI": CI,  # number of inhibitory synapses per neuron
-        "neuron_params_ex": {  # Set parameters for excitatory iaf_tsodyks
+        "neuron_params_ex": {  # Set parameters for excitatory iaf_tum_2000
             "tau_m": 20,  # membrance time constant [ms]
             "t_ref": 2.0,  # refractory period [ms]
             "C_m": 250.0,  # membrane capacitance [pF]
@@ -240,7 +240,7 @@ if __name__ == "__main__":
             "x": 0.0,
             "y": 0.0,
         },
-        "neuron_params_in": {  # Set parameters for excitatory iaf_tsodyks
+        "neuron_params_in": {  # Set parameters for excitatory iaf_tum_2000
             "tau_m": 20,  # membrance time constant [ms]
             "t_ref": 2.0,  # refractory period [ms]
             "C_m": 250.0,  # membrane capacitance [pF]

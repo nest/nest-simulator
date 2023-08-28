@@ -522,6 +522,7 @@ public:
   void sp_connect( const std::vector< size_t >& sources, const std::vector< size_t >& targets );
 
 protected:
+  //! The name of the SPBuilder; used to identify its properties in the structural_plasticity_synapses kernel attributes
   std::string name_;
 
   using ConnBuilder::connect_;

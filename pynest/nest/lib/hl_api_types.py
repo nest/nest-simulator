@@ -217,14 +217,25 @@ class NodeCollection:
 
     def __add__(self, other):
         if not isinstance(other, NodeCollection):
-            raise NotImplementedError()
+            if other == 0:
+                other = NodeCollection()
+            else:
+                raise NotImplementedError()
 
         return sli_func("join", self._datum, other._datum)
 
     def __radd__(self, other):
         if other == 0:
             other = NodeCollection()
-        return sli_func("join", other._datum, self._datum)
+
+        if not isinstance(other, NodeCollection):
+            raise TypeError(
+                "A 'NodeCollection' can only be concatenated with "
+                "another 'NodeCollection', you passed an object of "
+                f"type '{type(other).__name__}'"
+            )
+
+        return sli_func("join", self._datum, other._datum)
 
     def __getitem__(self, key):
         if isinstance(key, slice):

@@ -19,9 +19,8 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import numpy as np
-
 import nest
+import numpy as np
 
 nest.set_verbosity(level="M_QUIET")  # make NEST less chatty
 
@@ -122,7 +121,7 @@ def brunel_tsodyks_network(
             "allow_autapses": False,
             "allow_multapses": True,
         },
-        syn_spec="syn_exc",
+        syn_spec={"synapse_model": "static_synapse", "weight": JE, "receptor_type": 1},
     )
 
     # Connect the inhibitory population
@@ -135,7 +134,7 @@ def brunel_tsodyks_network(
             "allow_autapses": False,
             "allow_multapses": True,
         },
-        syn_spec="syn_inh",
+        syn_spec={"synapse_model": "static_synapse", "weight": JI, "receptor_type": 1},
     )
 
     # SIMULATE

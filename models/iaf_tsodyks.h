@@ -176,6 +176,7 @@ EndUserDocs */
  * matrix objects.
  */
 
+// iaf_tum_2000
 class iaf_tsodyks : public ArchivingNode
 {
 
@@ -412,19 +413,28 @@ private:
 inline size_t
 nest::iaf_tsodyks::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
+  if ( target.get_model_id() != this->get_model_id() and target.is_off_grid() )
+  {
+    throw IllegalConnection( "iaf_tum_2000 neurons cannot be connected to precise spiking neurons." );
+  }
+
   SpikeEvent e;
   e.set_sender( *this );
   return target.handles_test_event( e, receptor_type );
 }
 
 inline size_t
-iaf_tsodyks::handles_test_event( SpikeEvent&, size_t receptor_type )
+iaf_tsodyks::handles_test_event( SpikeEvent& e, size_t receptor_type )
 {
-  if ( receptor_type != 0 )
+  if ( receptor_type > 1 )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
-  return 0;
+  else if ( receptor_type != 1 and e.get_sender().get_model_id() == this->get_model_id() )
+  {
+    throw IllegalConnection( "iaf_tum_2000 neurons must be connected via receptor_type 1." );
+  }
+  return receptor_type;
 }
 
 inline size_t

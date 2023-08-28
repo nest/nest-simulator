@@ -48,7 +48,7 @@ namespace nest
 {
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
-// TODO: Should state variables (x, y, u) also be recordable?
+// TODO: Should state variables (x, y, u) also be recordable? No
 template <>
 void
 RecordablesMap< iaf_tsodyks >::create()
@@ -80,7 +80,6 @@ nest::iaf_tsodyks::Parameters_::Parameters_()
   , tau_psc_( 2.0 )          // in ms
   , tau_rec_( 400.0 )        // in ms
   , U_( 0.5 )                // dimensionless
-
 {
 }
 
@@ -312,7 +311,6 @@ nest::iaf_tsodyks::pre_run_hook()
   // step h will lead to accurate (up to the resolution h) and self-consistent
   // results. However, a neuron model capable of operating with real valued
   // spike time may exhibit a different effective refractory time.
-
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
   // since t_ref_ >= 0, this can only fail in error
   assert( V_.RefractoryCounts_ >= 0 );
@@ -396,7 +394,6 @@ nest::iaf_tsodyks::update( const Time& origin, const long from, const long to )
 
       // propagation t_lastspike_ -> t_spike
       // don't change the order !
-
       S_.u_ *= Puu;
       S_.x_ += Pxy * S_.y_ + Pxz * z;
       S_.y_ *= Pyy;
@@ -405,7 +402,7 @@ nest::iaf_tsodyks::update( const Time& origin, const long from, const long to )
       S_.u_ += P_.U_ * ( 1.0 - S_.u_ );
 
       // postsynaptic current step caused by incoming spike
-      double delta_y_tsp = S_.u_ * S_.x_;
+      const double delta_y_tsp = S_.u_ * S_.x_;
 
       // delta function x, y
       S_.x_ -= delta_y_tsp;
@@ -440,13 +437,9 @@ nest::iaf_tsodyks::handle( SpikeEvent& e )
   // Multiply with datafield from SpikeEvent
   double s = e.get_weight() * e.get_multiplicity();
 
-  const auto offset = e.get_offset();
-
-  // TODO: Temporary solution, use rports instead. This assumes that an offset set
-  // by a neuron will be a different value than 0
-  if ( offset != 0.0 )
+  if ( e.get_rport() == 1 )
   {
-    s *= offset;
+    s *= e.get_offset();
   }
 
   // separate buffer channels for excitatory and inhibitory inputs

@@ -22,9 +22,8 @@
 from pprint import pprint
 
 import matplotlib.pyplot as plt
-import numpy as np
-
 import nest
+import numpy as np
 
 nest.ResetKernel()
 
@@ -47,7 +46,7 @@ nrn_tsodyks_post = nest.Create("iaf_tsodyks", 1)
 m_tsodyks = nest.Create("multimeter", 1)
 nest.SetStatus(m_tsodyks, {"record_from": ["V_m", "I_syn_ex"]})
 
-nest.CopyModel("static_synapse", "syn_static", {"weight": weight, "delay": delay})
+nest.CopyModel("static_synapse", "syn_static", {"weight": weight, "delay": delay, "receptor_type": 1})
 nest.CopyModel("static_synapse", "spike_forcing_syn", {"weight": 10000000.0, "delay": delay})
 
 nest.Connect(spikegen, nrn_tsodyks_pre, syn_spec="spike_forcing_syn")

@@ -21,7 +21,7 @@
 
 """
 A tripartite interaction between two neurons and one astrocyte
-------------------------------------------------------------
+--------------------------------------------------------------
 
 This script simulates a tripartite interaction between two neurons and one
 astrocyte. This interaction is a part of the astrocyte biology described in
@@ -29,123 +29,138 @@ astrocyte. This interaction is a part of the astrocyte biology described in
 calcium dynamics.
 
 ``astrocyte_lr_1994`` is used to model the astrocyte, which implements the
-astrocytic calcium dynamics based on the articles [2]_, [3]_, and [4]_.
+dynamics in the astrocyte based on the articles [2]_, [3]_, and [4]_.
 ``tsodyks_synapse`` is used to create connections from the presynaptic neuron
 to the postsynaptic neuron, and from the presynaptic neuron to the astrocyte.
 ``sic_connection`` is used to create a connection from the astrocyte to the
-postsynaptic neuron. Recordings are made for the membrance voltage of
-the presynaptic neuron, the inositol 1,4,5-trisphosphate (IP3) and calcium in
-the astrocyte, and the slow inward current (SIC) in the postsynaptic neuron.
-This demonstrates an tripartite interaction where the presynaptic spikes induce
-changes in IP3 and calcium in the astrocyte, which then induces SIC in the
-postsynaptic neuron.
+postsynaptic neuron. Recordings are made for the following variables: membrance
+voltage of the presynaptic neuron, inositol 1,4,5-trisphosphate (IP3) and
+calcium in the astrocyte, and slow inward current (SIC) in the postsynaptic
+neuron. The result demonstrates an tripartite interaction where the presynaptic
+spikes induce changes in IP3 and calcium in the astrocyte, which then induces
+the generation of SIC in the postsynaptic neuron.
+
+See Also
+~~~~~~~~
+
+:doc:`astrocyte_single`
 
 References
 ~~~~~~~~~~
 .. [1] Bazargani, N., & Attwell, D. (2016). Astrocyte calcium signaling: the
-       third wave. Nature neuroscience, 19(2), 182-189.
+       third wave. Nature neuroscience, 19(2), 182-189. DOI:
+       https://doi.org/10.1038/nn.4201
+
 .. [2] De Young, G. W., & Keizer, J. (1992). A single-pool inositol
        1,4,5-trisphosphate-receptor-based model for agonist-stimulated
        oscillations in Ca2+ concentration. Proceedings of the National Academy
-       of Sciences, 89(20), 9895-9899.
+       of Sciences, 89(20), 9895-9899. DOI:
+       https://doi.org/10.1073/pnas.89.20.9895
+
 .. [3] Li, Y. X., & Rinzel, J. (1994). Equations for InsP3 receptor-mediated
        [Ca2+]i oscillations derived from a detailed kinetic model: a
        Hodgkin-Huxley like formalism. Journal of theoretical Biology, 166(4),
-       461-473.
+       461-473. DOI: https://doi.org/10.1006/jtbi.1994.1041
+
 .. [4] Nadkarni S, and Jung P. Spontaneous oscillations of dressed neurons: A
        new mechanism for epilepsy? Physical Review Letters, 91:26. DOI:
-       10.1103/PhysRevLett.91.268101
+       https://doi.org/10.1103/PhysRevLett.91.268101
 
 """
 
 ###############################################################################
 # Import all necessary modules for simulation and plotting.
 
+# (debug)
 import os
 import json
 import hashlib
 
 import matplotlib.pyplot as plt
-plt.rcParams.update({'font.size': 14})
 
 import nest
 
 ###############################################################################
 # Set parameters for the simulation.
 
-# Simulation time
+# simulation time
 sim_time = 60000
 # Poisson input for the presynaptic neuron
 poisson_rate_neuro = 1500.0
-# Neuron parameters
+# neuron parameters
 params_neuro = {'tau_syn_ex': 2.0}
-# Astrocyte parameters
+# astrocyte parameters
 params_astro = {'IP3_0': 0.16}
-# Weights of connections
+# weights of connections
 w_pre2astro = 1.0
 w_pre2post = 1.0
 w_astro2post = 1.0
 
 ###############################################################################
-# Main function to run the simulation.
+# Save data (debug).
 
-def run():
-    # Save parameters
-    data_path = os.path.join('astrocyte_tripartite', hashlib.md5(os.urandom(16)).hexdigest())
-    os.system(f'mkdir -p {data_path}')
-    os.system(f'cp astrocyte_tripartite.py {data_path}')
-    default = nest.GetDefaults('astrocyte_lr_1994')
-    default.update(params_astro)
-    out = open(os.path.join(data_path, 'astrocyte_params.json'), 'w')
-    json.dump(default, out, indent=4)
-    out.close()
+data_path = os.path.join('astrocyte_tripartite', hashlib.md5(os.urandom(16)).hexdigest())
+os.system(f'mkdir -p {data_path}')
+os.system(f'cp astrocyte_tripartite.py {data_path}')
+default = nest.GetDefaults('astrocyte_lr_1994')
+default.update(params_astro)
+out = open(os.path.join(data_path, 'astrocyte_params.json'), 'w')
+json.dump(default, out, indent=4)
+out.close()
 
-    # Create and connect the astrocyte and its devices
-    astrocyte = nest.Create('astrocyte_lr_1994', params=params_astro)
-    mm_astro = nest.Create('multimeter', params={'record_from': ['IP3', 'Ca']})
-    nest.Connect(mm_astro, astrocyte)
+###############################################################################
+# Create and connect the astrocyte and its devices.
 
-    # Create and connect the neurons and their devices
-    pre_neuron = nest.Create('aeif_cond_alpha_astro', params=params_neuro)
-    post_neuron = nest.Create('aeif_cond_alpha_astro', params=params_neuro)
-    ps_pre = nest.Create('poisson_generator', params={'rate': poisson_rate_neuro})
-    mm_pre = nest.Create('multimeter', params={'record_from': ['V_m']})
-    mm_post = nest.Create('multimeter', params={'record_from': ['SIC']})
-    nest.Connect(ps_pre, pre_neuron)
-    nest.Connect(mm_pre, pre_neuron)
-    nest.Connect(mm_post, post_neuron)
+astrocyte = nest.Create('astrocyte_lr_1994', params=params_astro)
+mm_astro = nest.Create('multimeter', params={'record_from': ['IP3', 'Ca']})
+nest.Connect(mm_astro, astrocyte)
 
-    # Create tripartite connectivity
-    nest.Connect(pre_neuron, post_neuron, syn_spec={'weight': w_pre2post})
-    nest.Connect(pre_neuron, astrocyte, syn_spec={'weight': w_pre2astro})
-    nest.Connect(astrocyte, post_neuron, syn_spec={'synapse_model': 'sic_connection', 'weight': w_astro2post})
+###############################################################################
+# Create and connect the neurons and their devices.
 
-    # Run simulation and get results
-    nest.Simulate(sim_time)
-    data_pre = mm_pre.events
-    data_post = mm_post.events
-    data_astro = mm_astro.events
+pre_neuron = nest.Create('aeif_cond_alpha_astro', params=params_neuro)
+post_neuron = nest.Create('aeif_cond_alpha_astro', params=params_neuro)
+ps_pre = nest.Create('poisson_generator', params={'rate': poisson_rate_neuro})
+mm_pre = nest.Create('multimeter', params={'record_from': ['V_m']})
+mm_post = nest.Create('multimeter', params={'record_from': ['SIC']})
+nest.Connect(ps_pre, pre_neuron)
+nest.Connect(mm_pre, pre_neuron)
+nest.Connect(mm_post, post_neuron)
 
-    # Create and show plots
-    fig, ax = plt.subplots(2, 2, sharex=True, figsize=(10, 8))
-    axes = ax.flat
-    axes[0].plot(data_pre["times"], data_pre["V_m"])
-    axes[1].plot(data_astro["times"], data_astro["IP3"])
-    axes[2].plot(data_post["times"], data_post["SIC"])
-    axes[3].plot(data_astro["times"], data_astro["Ca"])
-    axes[0].set_title(f'Presynaptic neuron\n(Poisson rate = {poisson_rate_neuro} Hz)')
-    axes[0].set_ylabel('Membrane potential (mV)')
-    axes[2].set_title(f'Postsynaptic neuron')
-    axes[2].set_ylabel("Slow inward current (pA)")
-    axes[2].set_xlabel('Time (ms)')
-    axes[1].set_title(f'Astrocyte')
-    axes[1].set_ylabel(r"[IP$_{3}$] ($\mu$M)")
-    axes[3].set_ylabel(r"[Ca$^{2+}$] ($\mu$M)")
-    axes[3].set_xlabel('Time (ms)')
-    plt.tight_layout()
-    plt.savefig(os.path.join(data_path, 'astrocyte_tripartite.png'))
-    plt.show()
-    plt.close()
+###############################################################################
+# Create tripartite connectivity.
 
-if __name__ == "__main__":
-    run()
+nest.Connect(pre_neuron, post_neuron, syn_spec={'weight': w_pre2post})
+nest.Connect(pre_neuron, astrocyte, syn_spec={'weight': w_pre2astro})
+nest.Connect(astrocyte, post_neuron, syn_spec={'synapse_model': 'sic_connection', 'weight': w_astro2post})
+
+###############################################################################
+# Run simulation and get results.
+
+nest.Simulate(sim_time)
+data_pre = mm_pre.events
+data_post = mm_post.events
+data_astro = mm_astro.events
+
+###############################################################################
+# Create and show plots.
+
+fig, ax = plt.subplots(2, 2, sharex=True, figsize=(10, 8))
+axes = ax.flat
+axes[0].plot(data_pre["times"], data_pre["V_m"])
+axes[1].plot(data_astro["times"], data_astro["IP3"])
+axes[2].plot(data_post["times"], data_post["SIC"])
+axes[3].plot(data_astro["times"], data_astro["Ca"])
+axes[0].set_title(f'Presynaptic neuron\n(Poisson rate = {poisson_rate_neuro} Hz)')
+axes[0].set_ylabel('Membrane potential (mV)')
+axes[2].set_title(f'Postsynaptic neuron')
+axes[2].set_ylabel("Slow inward current (pA)")
+axes[2].set_xlabel('Time (ms)')
+axes[1].set_title(f'Astrocyte')
+axes[1].set_ylabel(r"[IP$_{3}$] ($\mu$M)")
+axes[3].set_ylabel(r"[Ca$^{2+}$] ($\mu$M)")
+axes[3].set_xlabel('Time (ms)')
+plt.tight_layout()
+plt.savefig(os.path.join(data_path, 'astrocyte_tripartite.png')) # (debug)
+plt.show()
+plt.close()

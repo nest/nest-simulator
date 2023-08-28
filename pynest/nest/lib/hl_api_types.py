@@ -23,8 +23,13 @@
 Classes defining the different PyNEST types
 """
 
-from ..ll_api import sli_func, sps, sr, spp, take_array_index
+import json
+from math import floor, log
+
+import numpy
+
 from .. import pynestkernel as kernel
+from ..ll_api import sli_func, spp, sps, sr, take_array_index
 from .hl_api_helper import (
     broadcast,
     get_parameters,
@@ -34,10 +39,6 @@ from .hl_api_helper import (
     restructure_data,
 )
 from .hl_api_simulation import GetKernelStatus
-
-import numpy
-import json
-from math import floor, log
 
 try:
     import pandas
@@ -219,6 +220,11 @@ class NodeCollection:
             raise NotImplementedError()
 
         return sli_func("join", self._datum, other._datum)
+
+    def __radd__(self, other):
+        if other == 0:
+            other = NodeCollection()
+        return sli_func("join", other._datum, self._datum)
 
     def __getitem__(self, key):
         if isinstance(key, slice):

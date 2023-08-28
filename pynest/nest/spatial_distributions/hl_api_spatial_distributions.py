@@ -21,7 +21,7 @@
 
 from ..lib.hl_api_types import CreateParameter
 
-__all__ = [ "exponential", "gaussian", "gaussian2D", "gamma", "gabor" ]
+__all__ = ["exponential", "gaussian", "gaussian2D", "gamma", "gabor"]
 
 
 def exponential(x, beta=1.0):
@@ -172,12 +172,15 @@ def gabor(x, y, theta=0.0, gamma=1.0, std=1.0, lam=1.0, psi=0.0):
     Parameter:
         Object yielding values drawn from the distribution.
     """
-    return CreateParameter('gabor', {
-        'x': x,
-        'y': y,
-        'theta': theta,
-        'gamma': gamma,
-        'std': std,
-        'lam': lam,
-        'psi': psi,
-    })
+    return CreateParameter(
+        "gabor",
+        {
+            "x": x,
+            "y": y,
+            "theta": theta,
+            "gamma": gamma,
+            "std": std,
+            "lam": lam,
+            "psi": psi,
+        },
+    )

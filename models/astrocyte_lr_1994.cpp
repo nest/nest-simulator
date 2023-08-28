@@ -118,7 +118,7 @@ nest::astrocyte_lr_1994::Parameters_::Parameters_()
   , Kd_act_( 0.08234 )     // uM
   , Kd_inh_( 1.049 )       // uM
   , ratio_ER_cyt_( 0.185 )
-  , incr_IP3_( 5.0 )       // uM
+  , delta_IP3_( 5.0 )       // uM
   , k_IP3R_( 0.0002 )      // 1/(uM*ms)
   , rate_L_( 0.00011 )     // 1/ms
   , SIC_th_( 0.19669 )      // uM
@@ -176,7 +176,7 @@ nest::astrocyte_lr_1994::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::Kd_IP3_2, Kd_IP3_2_ );
   def< double >( d, names::Km_SERCA, Km_SERCA_ );
   def< double >( d, names::ratio_ER_cyt, ratio_ER_cyt_ );
-  def< double >( d, names::incr_IP3, incr_IP3_ );
+  def< double >( d, names::delta_IP3, delta_IP3_ );
   def< double >( d, names::k_IP3R, k_IP3R_ );
   def< double >( d, names::SIC_scale, SIC_scale_ );
   def< double >( d, names::SIC_th, SIC_th_ );
@@ -202,7 +202,7 @@ nest::astrocyte_lr_1994::Parameters_::set( const DictionaryDatum& d, Node* node 
   updateValueParam< double >( d, names::Kd_IP3_2, Kd_IP3_2_, node );
   updateValueParam< double >( d, names::Km_SERCA, Km_SERCA_, node );
   updateValueParam< double >( d, names::ratio_ER_cyt, ratio_ER_cyt_, node );
-  updateValueParam< double >( d, names::incr_IP3, incr_IP3_, node );
+  updateValueParam< double >( d, names::delta_IP3, delta_IP3_, node );
   updateValueParam< double >( d, names::k_IP3R, k_IP3R_, node );
   updateValueParam< double >( d, names::SIC_scale, SIC_scale_, node );
   updateValueParam< double >( d, names::SIC_th, SIC_th_, node );
@@ -248,7 +248,7 @@ nest::astrocyte_lr_1994::Parameters_::set( const DictionaryDatum& d, Node* node 
   {
     throw BadProperty( "Ratio between astrocytic ER and cytosol volumes must be positive." );
   }
-  if ( incr_IP3_ < 0 )
+  if ( delta_IP3_ < 0 )
   {
     throw BadProperty( "Rate constant of strocytic IP3R production must be non-negative." );
   }
@@ -528,7 +528,7 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
     }
 
     // this is to add the incoming spikes to the state variable
-    S_.y_[ State_::IP3 ] += P_.incr_IP3_ * B_.spike_exc_.get_value( lag );
+    S_.y_[ State_::IP3 ] += P_.delta_IP3_ * B_.spike_exc_.get_value( lag );
 
     // get normalized calcium concentration
     // 1000.0: change unit from uM to nM

@@ -386,7 +386,7 @@ const Name q_stc( "q_stc" );
 
 const Name radius( "radius" );
 const Name ratio_ER_cyt( "ratio_ER_cyt" );
-const Name incr_IP3( "incr_IP3");
+const Name delta_IP3( "delta_IP3");
 const Name k_IP3R( "k_IP3R" );
 const Name rate_L( "rate_L" );
 const Name rate( "rate" );

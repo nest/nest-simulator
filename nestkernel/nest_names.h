@@ -410,7 +410,7 @@ extern const Name q_sfa;
 extern const Name q_stc;
 
 extern const Name ratio_ER_cyt;
-extern const Name incr_IP3;
+extern const Name delta_IP3;
 extern const Name k_IP3R;
 extern const Name rate_L;
 extern const Name radius;

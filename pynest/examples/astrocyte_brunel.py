@@ -127,7 +127,7 @@ syn_params = {
 astrocyte_model = "astrocyte_lr_1994"
 astrocyte_params = {
     'IP3': 0.4,  # IP3 initial value in uM
-    'incr_IP3': 0.5,  # Step increase in IP3 concentration with each unit synaptic weight received by the astrocyte in uM
+    'delta_IP3': 0.5,  # Step increase in IP3 concentration with each unit synaptic weight received by the astrocyte in uM
     'tau_IP3': 2.0,  # Time constant of astrocytic IP3 degradation in ms
     }
 

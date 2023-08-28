@@ -313,6 +313,7 @@ extern const Name min;
 extern const Name min_delay;
 extern const Name min_update_time;
 extern const Name minor_axis;
+extern const Name mpi_address;
 extern const Name model;
 extern const Name model_id;
 extern const Name ms_per_tic;
@@ -604,7 +605,7 @@ extern const Name voltage_clamp;
 extern const Name voltage_reset_add;
 extern const Name voltage_reset_fraction;
 extern const Name vp;
-extern const Name vt;
+extern const Name volume_transmitter;
 
 extern const Name w;
 extern const Name weight;

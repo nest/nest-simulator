@@ -21,13 +21,7 @@
 
 from ..lib.hl_api_types import CreateParameter
 
-__all__ = [
-    "exponential",
-    "gaussian",
-    "gaussian2D",
-    "gamma",
-    "gabor"
-]
+__all__ = [ "exponential", "gaussian", "gaussian2D", "gamma", "gabor" ]
 
 
 def exponential(x, beta=1.0):

@@ -170,14 +170,14 @@ Kd_IP3_1        uM        First astrocytic IP3R dissociation constant of IP3
 Kd_IP3_2        uM        Second astrocytic IP3R dissociation constant of IP3
 Km_SERCA        uM        Half-activation constant of astrocytic SERCA pump
 ratio_ER_cyt    unitless  Ratio between astrocytic ER and cytosol volumes
-delta_IP3        uM        Parameter for the rate of IP3 increment induced by synaptic input
+delta_IP3       uM        Parameter determining the rate of astrocytic IP3 generation induced by synaptic input
 k_IP3R          1/(uM*ms) Astrocytic IP3R binding constant for calcium inhibition
 rate_L          1/ms      Rate constant for calcium leak from the astrocytic ER to cytosol
 rate_IP3R       1/ms      Maximum rate of calcium release via astrocytic IP3R
 rate_SERCA      uM/ms     Maximum rate of calcium uptake by astrocytic SERCA pump
-tau_IP3         ms        IP3 exponential decay constant
+tau_IP3         ms        Time constant of the exponential decay of astrocytic IP3
 SIC_th          uM        Threshold that determines the minimal level of intracellular astrocytic calcium sufficient to induce SIC
-SIC_scale       unitless  Parameter for the scale of SIC output
+SIC_scale       unitless  Parameter determining the scale of astrocytic SIC output
 =============== ========= ========================================================================================================
 
 References

@@ -107,9 +107,7 @@ nest::aeif_cond_alpha_dynamics( double, const double y[], double f[], void* pnod
   I_soma = std::max( I_soma, -node.P_.I_soma_max );
 
   // dv/dt
-  f[ S::V_M ] = is_refractory
-    ? 0.
-    : I_soma / node.P_.C_m;
+  f[ S::V_M ] = is_refractory ? 0. : I_soma / node.P_.C_m;
 
   f[ S::DG_EXC ] = -dg_ex / node.P_.tau_syn_ex;
   // Synaptic Conductance (nS)

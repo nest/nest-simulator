@@ -104,11 +104,7 @@ nest::aeif_cond_exp_dynamics( double, const double y[], double f[], void* pnode 
     node.P_.Delta_T == 0. ? 0. : ( node.P_.g_L * node.P_.Delta_T * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T ) );
 
   // limiting current due to exponential term -- prevent numerical instability in the integrator
-  if ( node.P_.I_soma_max > 0 )
-  {
-    I_spike = std::min( I_spike, node.P_.I_soma_max );
-    I_spike = std::max( I_spike, -node.P_.I_soma_max );
-  }
+  I_spike = std::min( I_spike, node.P_.I_soma_max );
 
   // dv/dt
   f[ S::V_M ] = is_refractory

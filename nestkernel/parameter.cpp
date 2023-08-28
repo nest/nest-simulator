@@ -359,8 +359,8 @@ GaborParameter::GaborParameter( const DictionaryDatum& d )
   , sin_( std::sin( getValue< double >( d, "theta") * numerics::pi / 180. ) )
   , gamma_( getValue< double >( d, "gamma") )
   , inv_two_std2_( 1.0 / ( 2 * getValue< double >( d, "std" ) * getValue< double >( d, "std" ) ) )
-  , lambda_( getValue< double >( d, "lam") )
-  , psi_( getValue< double >( d, "psi") )
+  , lambda_( getValue< double >( d, "lam" ) )
+  , psi_( getValue< double >( d, "psi" ) )
 {
   const auto gamma = getValue< double >( d, "gamma" );
   const auto std = getValue< double >( d, "std" );

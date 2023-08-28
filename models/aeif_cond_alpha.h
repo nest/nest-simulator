@@ -110,15 +110,14 @@ Numerical stability
 
 Under some conditions, the exponential function inside the numeric solver
 routine for this model can cause a numerical instability. If the parameter
-``I_spike_max`` is set to a non-zero value, the total current due to the
-exponential term will be evaluated at each solver timestep and its
-absolute value will be limited to this value. Setting ``I_spike_max`` can
-change the dynamics of the model.
+``I_soma_max`` is set to a non-zero value, the total somatic current will be
+evaluated at each solver timestep and its absolute value will be limited to
+this value. Setting ``I_soma_max`` can change the dynamics of the model.
 
-As a guideline to choose a plausible maximum current, Brette and Gerstner [1]_ use forward Euler
-with a fixed time step. Now assume that at the beginning of a timestep the
-membrane potential is immediately below the threshold for calling a spike,
-which is
+As a guideline to choose a plausible maximum current, Brette and Gerstner [2]_
+use forward Euler integration with a fixed time step. Now assume that at the
+beginning of a timestep the membrane potential is immediately below the
+threshold for calling a spike, which is
 :math:`V_T + 5\Delta_T` in their example. Then, `I_spike` in their
 implementation can never exceed
 :math:`g_L\Delta_T e^5=30~\text{nS}\times2~\text{mV}\times e^5\approx 8900~\text{pA}$`.
@@ -200,6 +199,8 @@ References
        integrate-and-fire model as an effective description of neuronal
        activity. Journal of Neurophysiology. 943637-3642
        DOI: https://doi.org/10.1152/jn.00686.2005
+
+.. [2] https://brian2.readthedocs.io/en/stable/examples/frompapers.Brette_Gerstner_2005.html
 
 See also
 ++++++++

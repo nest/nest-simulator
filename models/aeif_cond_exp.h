@@ -79,7 +79,7 @@ Description
 +++++++++++
 
 ``aeif_cond_exp`` is the adaptive exponential integrate and fire neuron
-according to Brette and Gerstner (2005) [1], with postsynaptic
+according to Brette and Gerstner (2005), with postsynaptic
 conductances in the form of truncated exponentials.
 
 This implementation uses the embedded 4th order Runge-Kutta-Fehlberg
@@ -107,21 +107,6 @@ For implementation details see the
 
 See also [1]_.
 
-.. note::
-
-   Under some conditions, the exponential function inside the numeric solver
-   routine for this model can cause a numerical instability. If the parameter
-   ``I_soma_max`` is set to a non-zero value, the total somatic current will
-   be evaluated at each solver timestep and its absolute value will be limited
-   to this value. Please note that setting ``I_soma_max`` could subtly change
-   the dynamics of the model.
-
-   In the reference implementation [2], forward Euler with a fixed time step
-   is used. Assume that at the beginning of a timestep the membrane potential
-   is immediately below the threshold for calling a spike, which is
-   :math:`V_T+5\Delta_T` in their example. Then, I_spike in their
-   implementation can never exceed
-   :math:`g_L\Delta_T e^5=30\text{nS}\times2\text{mV}\times e^5\approx 8900\text{pA}`.
 
 Parameters:
 +++++++++++++
@@ -136,17 +121,16 @@ The following parameters can be set in the status dictionary.
  w       pA      Spike-adaptation current
 ======== ======= =======================================
 
-=========== ======= =======================================
+======== ======= =======================================
 **Membrane Parameters**
------------------------------------------------------------
- C_m        pF      Capacity of the membrane
- t_ref      ms      Duration of refractory period
- V_reset    mV      Reset value for V_m after a spike
- E_L        mV      Leak reversal potential
- g_L        nS      Leak conductance
- I_soma_max pA      Maximum somatic current
- I_e        pA      Constant external input current
-=========== ======= =======================================
+--------------------------------------------------------
+ C_m     pF      Capacity of the membrane
+ t_ref   ms      Duration of refractory period
+ V_reset mV      Reset value for V_m after a spike
+ E_L     mV      Leak reversal potential
+ g_L     nS      Leak conductance
+ I_e     pA      Constant external input current
+======== ======= =======================================
 
 ======== ======= ==================================
 **Spike adaptation parameters**
@@ -195,8 +179,6 @@ References
        Integrate-and-Fire Model as an Effective Description of Neuronal
        Activity. J Neurophysiol 94:3637-3642.
        DOI: https://doi.org/10.1152/jn.00686.2005
-
-.. [2] https://brian2.readthedocs.io/en/stable/examples/frompapers.Brette_Gerstner_2005.html
 
 
 See also
@@ -273,7 +255,6 @@ private:
     double V_th;       //!< Spike threshold in mV
     double tau_syn_ex; //!< Excitatory synaptic kernel decay time in ms
     double tau_syn_in; //!< Inhibitory synaptic kernel decay time in ms
-    double I_soma_max; //!< Maximum somatic current in pA
     double I_e;        //!< Intrinsic current in pA
 
     double gsl_error_tol; //!< Error bound for GSL integrator

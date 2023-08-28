@@ -21,11 +21,15 @@
 
 from docutils import nodes
 from docutils.parsers.rst import Directive, Parser
-from sphinx.addnodes import pending_xref
+
+# from docutils.core import publish_doctree
 from sphinx.application import Sphinx
+from sphinx.util.docutils import SphinxDirective
+from sphinx.addnodes import pending_xref
 import json
 import re
 import os
+import glob
 
 
 def ModelMatchExamples():
@@ -50,12 +54,12 @@ def ModelMatchExamples():
                 if model_file in content:
                     if model_file not in matches:
                         matches[model_file] = []
-                    matches[model_file].append(full_path)
+                    matches[model_file].append(filename)
 
     return matches
 
 
-class ListExamplesDirective(Directive):
+class ListExamplesDirective(SphinxDirective):
     # Provide a list of the examples that contain the given model name.
     # The model name is the required argument in the directive
     # (.. listexamples:: model_name). No options, nor content is expected.
@@ -71,32 +75,29 @@ class ListExamplesDirective(Directive):
         bullet_list = nodes.bullet_list()
         examples_list = ModelMatchExamples()
 
-        sorted_examples = {key: sorted(values) for key, values in examples_list.items()}
-        # for key, values in sorted_examples.items():
-        if key == my_arg:
-            values = example_list[key]
-            for value in values:
-                # A leading '/'  is added to the example path to take advantage of the
-                # std:label (ref role) syntax (see also objects.inv doc for intersphinx)
-                # we also need the names to be all lower case
-                value_label = "/" + value.lower()
-                link_text = value.split("/")[-1]
-                # equivalent to HTML <li>
-                list_item = nodes.list_item()
-                link_node = pending_xref(
-                    "",
-                    reftype="ref",
-                    refdomain="std",
-                    refexplicit=False,
-                    reftarget=value_label,
-                    refwarn=True,
-                    classes=["xref", "std", "std-ref"],
-                )
-                link_node += nodes.inline(text=link_text)
-                para = nodes.paragraph()
-                para.append(link_node)
-                list_item.append(para)
-                bullet_list += list_item
+        values = examples_list[my_arg]
+        for value in values:
+            # A leading '/'  is added to the example path to take advantage of the
+            # std:label (ref role) syntax (see also objects.inv doc for intersphinx)
+            # we also need the names to be all lower case
+            value_label = "/" + value.lower()
+            link_text = value.split("/")[-1]
+            # equivalent to HTML <li>
+            list_item = nodes.list_item()
+            link_node = pending_xref(
+                "",
+                reftype="ref",
+                refdomain="std",
+                refexplicit=False,
+                reftarget=value_label,
+                refwarn=True,
+                classes=["xref", "std", "std-ref"],
+            )
+            link_node += nodes.inline(text=link_text)
+            para = nodes.paragraph()
+            para.append(link_node)
+            list_item.append(para)
+            bullet_list += list_item
 
         return [bullet_list]
 

@@ -219,8 +219,6 @@ class astrocyte_lr_1994 : public ArchivingNode
 {
 
 public:
-  typedef Node base;
-
   astrocyte_lr_1994();
   astrocyte_lr_1994( const astrocyte_lr_1994& );
   ~astrocyte_lr_1994() override;
@@ -249,20 +247,20 @@ public:
   {
   }
 
+  // disable the use of STDP connections in this model
   void register_stdp_connection( double t_first_read, double delay ) override;
 
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
 
 private:
-  // void init_state_( const Node& proto );
   void init_buffers_() override;
   void pre_run_hook() override;
 
   /** This is the actual update function. The additional boolean parameter
    * determines if the function is called by update (false) or wfr_update (true)
    */
-  bool update_( Time const&, const long, const long, const bool );
+  // bool update_( Time const&, const long, const long, const bool );
 
   void update( Time const&, const long, const long ) override;
 
@@ -277,13 +275,11 @@ private:
   friend class RecordablesMap< astrocyte_lr_1994 >;
   friend class UniversalDataLogger< astrocyte_lr_1994 >;
 
-private:
   // ----------------------------------------------------------------
 
-  //! Independent parameters
+  //! Model parameters
   struct Parameters_
   {
-
     double Ca_tot_;       //!< Total free astrocytic calcium concentration in uM
     double IP3_0_;        //!< Baseline value of the astrocytic IP3 concentration in uM
     double Kd_IP3_1_;     //!< First astrocytic IP3R dissociation constant of IP3 in uM
@@ -292,19 +288,19 @@ private:
     double Kd_act_;       //!< Astrocytic IP3R dissociation constant of calcium (activation) in uM
     double Kd_inh_;       //!< Astrocytic IP3R dissociation constant of calcium (inhibition) in uM
     double ratio_ER_cyt_; //!< Ratio between astrocytic ER and cytosol volumes
-    double delta_IP3_;     //!< Step increase in IP3 concentration with each unit synaptic weight received by the astrocyte in uM
+    double delta_IP3_;    //!< Step increase in IP3 concentration with each unit synaptic weight received by the astrocyte in uM
     double k_IP3R_;       //!< Astrocytic IP3R binding constant for calcium in 1/(uM*ms)
     double rate_L_;       //!< Rate constant for calcium leak from the astrocytic ER to cytosol in 1/ms
+    double SIC_scale_;    //!< Scale of SIC output
     double SIC_th_;       //!< Calcium threshold for producing SIC in uM
     double tau_IP3_;      //!< Time constant of astrocytic IP3 degradation in ms
     double rate_IP3R_;    //!< Maximum rate of calcium release via astrocytic IP3R in 1/ms
     double rate_SERCA_;   //!< Maximum rate of calcium uptake by astrocytic IP3R in uM/ms
 
-    // For SIC; experimental
-    double SIC_scale_;     //!< Scale of SIC output
-    bool alpha_SIC_;       //!< Use alpha-shaped SIC if true
-    double tau_SIC_;       //!< Time constant of alpha-shaped SIC
-    double delay_SIC_;     //!< Delay of alpha-shaped SIC
+    // For alpha-shaped SIC (experimental)
+    bool alpha_SIC_;             //!< Use alpha-shaped SIC if true
+    double tau_SIC_;             //!< Time constant of alpha-shaped SIC
+    double delay_SIC_;           //!< Delay of alpha-shaped SIC
     double SIC_reactivate_th_;   //!< Calcium level for reactivating SIC
     double SIC_reactivate_time_; //!< Time staying SIC_reactivate_th_ required for reactivating SIC
 
@@ -335,16 +331,17 @@ public:
       IP3 = 0,
       Ca,     // 1
       h_IP3R, // 2
-      SIC,
-      DSIC,
+      SIC,    // 3
+      DSIC,   // 4
       STATE_VEC_SIZE
     };
 
-    //! neuron state, must be C-array for GSL solver
+    //! cell state, must be C-array for GSL solver
     double y_[ STATE_VEC_SIZE ];
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
+
     State_& operator=( const State_& );
 
     void get( DictionaryDatum& ) const;
@@ -353,15 +350,13 @@ public:
 
   // ----------------------------------------------------------------
 
-private:
   /**
    * Buffers of the model.
    */
   struct Buffers_
   {
-    Buffers_( astrocyte_lr_1994& ); //!< Sets buffer pointers to 0
-    //! Sets buffer pointers to 0
-    Buffers_( const Buffers_&, astrocyte_lr_1994& );
+    Buffers_( astrocyte_lr_1994& );                  //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, astrocyte_lr_1994& ); //!< Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< astrocyte_lr_1994 > logger_;
@@ -383,7 +378,7 @@ private:
     double IntegrationStep_; //!< current integration time step, updated by GSL
 
     // remembers current lag for piecewise interpolation
-    long lag_;
+    // long lag_;
 
     /**
      * Input current injected by CurrentEvent.
@@ -416,14 +411,6 @@ private:
   get_y_elem_() const
   {
     return S_.y_[ elem ];
-  }
-
-  //! Read out SIC values; for testing, to be deleted
-  double sic_ = 0.0;
-  double
-  get_sic_() const
-  {
-    return sic_;
   }
 
   // ----------------------------------------------------------------

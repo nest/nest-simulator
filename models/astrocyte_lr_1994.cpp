@@ -26,7 +26,7 @@
 #ifdef HAVE_GSL
 
 // C++ includes:
-#include <cmath> // in case we need isnan() // fabs
+#include <cmath>
 #include <cstdio>
 #include <iostream>
 
@@ -56,7 +56,6 @@ RecordablesMap< astrocyte_lr_1994 >::create()
   insert_( names::IP3, &astrocyte_lr_1994::get_y_elem_< astrocyte_lr_1994::State_::IP3 > );
   insert_( names::Ca, &astrocyte_lr_1994::get_y_elem_< astrocyte_lr_1994::State_::Ca > );
   insert_( names::h_IP3R, &astrocyte_lr_1994::get_y_elem_< astrocyte_lr_1994::State_::h_IP3R > );
-  insert_( names::SIC, &astrocyte_lr_1994::get_sic_ ); // for testing, to be deleted
 }
 
 extern "C" int
@@ -121,11 +120,11 @@ nest::astrocyte_lr_1994::Parameters_::Parameters_()
   , delta_IP3_( 5.0 )       // uM
   , k_IP3R_( 0.0002 )      // 1/(uM*ms)
   , rate_L_( 0.00011 )     // 1/ms
+  , SIC_scale_( 1.0 )
   , SIC_th_( 0.19669 )      // uM
   , tau_IP3_( 7142.0 )     // ms
   , rate_IP3R_( 0.006 )    // 1/ms
   , rate_SERCA_( 0.0009 )  // uM/ms
-  , SIC_scale_( 1.0 )
   , alpha_SIC_( false )
   , tau_SIC_( 1000.0 ) // ms
   , delay_SIC_( 1000.0 ) // ms
@@ -136,12 +135,11 @@ nest::astrocyte_lr_1994::Parameters_::Parameters_()
 
 nest::astrocyte_lr_1994::State_::State_( const Parameters_& p )
 {
-  y_[ IP3 ] = p.IP3_0_; // uM
-  y_[ Ca ] = 0.073;           // uM
+  y_[ IP3 ] = p.IP3_0_;
+  y_[ Ca ] = 0.073;
   y_[ h_IP3R ] = 0.793;
-  y_[ SIC ] = 0.0; // pA
+  y_[ SIC ] = 0.0;
   y_[ DSIC ] = 0.0;
-  // y_[ I_EXC ] = 0.0;
 }
 
 nest::astrocyte_lr_1994::State_::State_( const State_& s )
@@ -304,7 +302,6 @@ nest::astrocyte_lr_1994::State_::get( DictionaryDatum& d ) const
   def< double >( d, names::IP3, y_[ IP3 ] );
   def< double >( d, names::Ca, y_[ Ca ] );
   def< double >( d, names::h_IP3R, y_[ h_IP3R ] );
-  def< double >( d, names::SIC, y_[ SIC ] );
 }
 
 void
@@ -313,7 +310,6 @@ nest::astrocyte_lr_1994::State_::set( const DictionaryDatum& d, const Parameters
   updateValueParam< double >( d, names::IP3, y_[ IP3 ], node );
   updateValueParam< double >( d, names::Ca, y_[ Ca ], node );
   updateValueParam< double >( d, names::h_IP3R, y_[ h_IP3R ], node );
-  updateValueParam< double >( d, names::SIC, y_[ SIC ], node );
 
   if ( y_[ IP3 ] <  0 )
   {
@@ -326,10 +322,6 @@ nest::astrocyte_lr_1994::State_::set( const DictionaryDatum& d, const Parameters
   if ( y_[ h_IP3R ] < 0 || y_[ h_IP3R ] > 1 )
   {
      throw BadProperty( "The fraction of active IP3 receptors on the astrocytic ER must be between 0 and 1." );
-  }
-  if ( y_[ SIC ] < 0 )
-  {
-    throw BadProperty( "SIC must be non-negative." );
   }
 }
 
@@ -364,7 +356,6 @@ nest::astrocyte_lr_1994::astrocyte_lr_1994()
   , B_( *this )
 {
   recordablesMap_.create();
-  // Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
 }
 
 nest::astrocyte_lr_1994::astrocyte_lr_1994( const astrocyte_lr_1994& n )
@@ -373,7 +364,6 @@ nest::astrocyte_lr_1994::astrocyte_lr_1994( const astrocyte_lr_1994& n )
   , S_( n.S_ )
   , B_( n.B_, *this )
 {
-  // Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
 }
 
 nest::astrocyte_lr_1994::~astrocyte_lr_1994()
@@ -402,8 +392,7 @@ nest::astrocyte_lr_1994::init_buffers_()
 {
   B_.spike_exc_.clear(); // includes resize
   B_.currents_.clear();
-
-  B_.sic_values.resize( kernel().connection_manager.get_min_delay(), 0.0 );
+  B_.sic_values.resize( kernel().connection_manager.get_min_delay(), 0.0 ); // set size of SIC buffer according to min_delay
 
   ArchivingNode::clear_history();
 
@@ -442,10 +431,11 @@ nest::astrocyte_lr_1994::init_buffers_()
   B_.sys_.function = astrocyte_lr_1994_dynamics;
   B_.sys_.jacobian = nullptr;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
+  B_.sys_.params = reinterpret_cast< void* >( this );
 
   B_.I_stim_ = 0.0;
 
-  B_.sys_.params = reinterpret_cast< void* >( this );
+  // for alpha-shaped SIC
   B_.sic_on_ = false;
   B_.sic_on_timer_ = 0.0;
   B_.i0_ex_ = 1.0 * numerics::e / P_.tau_SIC_;
@@ -475,14 +465,14 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
 {
   for ( long lag = from; lag < to; ++lag )
   {
-    // B_.lag is needed by astrocyte_lr_1994_dynamics to
-    // determine the current section
-    B_.lag_ = lag;
+    // B_.lag_ = lag;
 
     double t = 0.0;
+
+    // for alpha-shaped SIC
     // get the last normalized calcium concentration before solving ODE
     // this is for threshold-crossing judgement
-    double calc_thr_last = ( S_.y_[ State_::Ca ] - P_.SIC_th_ ) * 1000.0;
+    double calc_thr_last = S_.y_[ State_::Ca ] - P_.SIC_th_;
 
     // numerical integration with adaptive step size control:
     // ------------------------------------------------------
@@ -513,10 +503,11 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
     }
 
     // limit calcium concentration within boundaries
+    // boundary conditions:
+    // V_ER + V_cyt = V_tot, ratio_ER_cyt_ = V_ER/V_cyt
+    // (Ca_cyt, V_cyt: calcium concentration and volumn of the cytosol)
+    // (Ca_tot, V_tot: calcium concentraion and volumn of the whole astrocyte)
     // first boundary: Ca_cyt*V_cyt no larger than Ca_tot*V_tot
-    // Ca_cyt (Ca here), V_cyt: calcium concentration and volumn of cytosol
-    // Ca_tot, V_tot: calcium concentraion and volumn in total (cell)
-    // ratio_ER_cyt_ is V_ER/V_cyt, and V_ER + V_cyt = V_tot
     if ( S_.y_[ State_::Ca ] > P_.Ca_tot_ + P_.Ca_tot_*P_.ratio_ER_cyt_ )
     {
       S_.y_[ State_::Ca ] = P_.Ca_tot_ + P_.Ca_tot_*P_.ratio_ER_cyt_;
@@ -527,11 +518,10 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
       S_.y_[ State_::Ca ] = 0.0;
     }
 
-    // this is to add the incoming spikes to the state variable
+    // this is to add the incoming spikes to the state variable of IP3
     S_.y_[ State_::IP3 ] += P_.delta_IP3_ * B_.spike_exc_.get_value( lag );
 
-    // get normalized calcium concentration
-    // 1000.0: change unit from uM to nM
+    // get the value of ( calcium - threshold ) for SIC generation
     double calc_thr = ( S_.y_[ State_::Ca ] - P_.SIC_th_ ) * 1000.0;
     double sic_value = 0.0;
     // alpha-shaped SIC
@@ -585,9 +575,7 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
     {
       if ( calc_thr > 1.0 )
       {
-        // multiplied by std::pow(25, 2)*3.14*std::pow(10, -2) in previous
-        // version to convert from uA/cm2 to pA; now users can set the scale of
-        // SIC by SIC_scale or SIC connection weight
+        // users can set the scale of SIC by SIC_scale
         sic_value = std::log( calc_thr )*P_.SIC_scale_;
       }
     }
@@ -598,13 +586,12 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
 
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );
-  } // end for loop
+  }
 
-  // Send SIC event
+  // send SIC event
   SICEvent sic;
   sic.set_coeffarray( B_.sic_values );
   kernel().event_delivery_manager.send_secondary( *this, sic );
-  sic_ = B_.sic_values[0]; // for testing, to be deleted
 }
 
 /**

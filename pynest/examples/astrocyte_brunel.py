@@ -65,7 +65,7 @@ References
 See Also
 ~~~~~~~~
 
-:doc:`astrocyte_connect`
+:doc:`astrocyte_small_network`
 
 """
 

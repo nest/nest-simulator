@@ -26,21 +26,18 @@ import unittest
 import numpy as np
 from scipy.interpolate import interp1d
 
-# from collections import defaultdict
-
 import nest
 
 """
-Comparing the astrocyte model to the reference solution
-obrained using the Scipy ODEINT solver (see
+Comparing the astrocyte model to the reference solution obtained using the Scipy
+ODEINT solver (see
 ``doc/htmldoc/model_details/astrocyte_model_implementation.ipynb``).
 
-The reference solution is stored in ``test_astrocyte.dat`` and was
-generated using the same dictionary of parameters.
+The reference solution is stored in ``test_astrocyte.dat`` and was generated
+using the same initial values of state variables as the ones used here.
 
-Details:
-  We assess that the difference between the
-  recorded variables and the reference is smaller than a given tolerance.
+We assess that the difference between the recorded variables and the reference
+is smaller than a given tolerance.
 """
 
 HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
@@ -65,9 +62,9 @@ models = ["astrocyte_lr_1994"]
 
 num_models = len(models)
 
-# parameters with which the ODEINT reference solution was generated
+# initial values of state variables with which the ODEINT reference solution was generated
+# for the other parameters, default is used, as in the reference solution
 astrocyte_param = {
-    # use different values for state variables to produce dynamics
     'IP3': 1.0,
     'Ca': 1.0,
     'h_IP3R': 1.0,
@@ -141,16 +138,16 @@ class AstrocyteTestCase(unittest.TestCase):
     def test_closeness_nest_odeint(self):
         # Compare models to the ODEINT implementation.
 
-        # declare the same parameters as the reference
+        # declare the same simulation parameters as in the reference solution
         simtime = 100.
-        spike_times = [10.0 - nest.resolution] # compensate for delay
+        spike_times = [10.0 - nest.resolution] # compensate for the communication delay
         spike_weights = [1.0]
 
         # get ODEINT reference
         odeint = np.loadtxt(os.path.join(path, 'test_astrocyte.dat')).T
-        IP3_astro_interp = interp1d(odeint[0, :], odeint[1, :])
-        Ca_astro_interp = interp1d(odeint[0, :], odeint[2, :])
-        h_IP3R_astro_interp = interp1d(odeint[0, :], odeint[3, :])
+        IP3_interp = interp1d(odeint[0, :], odeint[1, :])
+        Ca_interp = interp1d(odeint[0, :], odeint[2, :])
+        h_IP3R_interp = interp1d(odeint[0, :], odeint[3, :])
 
         # create astrocytes and devices
         cells = {model: nest.Create(model, params=astrocyte_param)
@@ -160,8 +157,7 @@ class AstrocyteTestCase(unittest.TestCase):
 
         # connect astrocytes and devices
         for model, mm in iter(multimeters.items()):
-            nest.SetStatus(mm, {"interval": nest.resolution,
-                                "record_from": ["IP3", "Ca", "h_IP3R"]})
+            nest.SetStatus(mm, {"interval": nest.resolution, "record_from": ["IP3", "Ca", "h_IP3R"]})
             nest.Connect(mm, cells[model])
         for model, ge in iter(spk_ge.items()):
             nest.SetStatus(ge, {"spike_times": spike_times, "spike_weights": spike_weights})
@@ -172,15 +168,13 @@ class AstrocyteTestCase(unittest.TestCase):
 
         # relative differences: interpolate ODEINT to match NEST times
         mm0 = next(iter(multimeters.values()))
-        nest_times = nest.GetStatus(mm0, "events")[0]["times"]
-        ip3 = nest.GetStatus(mm0, "events")[0]["IP3"]
+        nest_times = mm0.events["times"]
         reference = {
-            'IP3': IP3_astro_interp(nest_times),
-            'Ca': Ca_astro_interp(nest_times),
-            'h_IP3R': h_IP3R_astro_interp(nest_times)}
+            'IP3': IP3_interp(nest_times),
+            'Ca': Ca_interp(nest_times),
+            'h_IP3R': h_IP3R_interp(nest_times)}
 
-        rel_diff = self.compute_difference(multimeters, astrocyte_param, reference,
-                                           ['IP3', 'Ca', 'h_IP3R'])
+        rel_diff = self.compute_difference(multimeters, astrocyte_param, reference, ['IP3', 'Ca', 'h_IP3R'])
         self.assert_pass_tolerance(rel_diff, di_tolerances_odeint)
 
 

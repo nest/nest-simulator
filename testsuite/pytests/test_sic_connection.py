@@ -41,7 +41,7 @@ class SICConnectionTestCase(unittest.TestCase):
         nest.set_verbosity('M_WARNING')
 
         supported_sources = [
-            'astrocyte_lr_1994', 'astrocyte_surrogate'
+            'astrocyte_lr_1994',
         ]
         supported_targets = [
             'aeif_cond_alpha_astro',
@@ -68,14 +68,14 @@ class SICConnectionTestCase(unittest.TestCase):
 
         nest.set_verbosity('M_WARNING')
         nest.ResetKernel()
+        resol = nest.resolution
 
         # Create neurons and devices
-        astrocyte = nest.Create('astrocyte_lr_1994', {'Ca': 0.2})
+        astrocyte = nest.Create('astrocyte_lr_1994', {'Ca': 0.2}) # a calcium value which produces SIC
         neuron = nest.Create('aeif_cond_alpha_astro')
 
-        mm_neuron = nest.Create('multimeter', params={
-                         'record_from': ['SIC'], 'interval': 0.1})
-        mm_astro = nest.Create('multimeter', params={'record_from': ['Ca'], 'interval': 0.1})
+        mm_neuron = nest.Create('multimeter', params={'record_from': ['SIC'], 'interval': resol})
+        mm_astro = nest.Create('multimeter', params={'record_from': ['Ca'], 'interval': resol})
 
         nest.Connect(astrocyte, neuron, syn_spec={'synapse_model': 'sic_connection'})
         nest.Connect(mm_neuron, neuron)
@@ -87,18 +87,16 @@ class SICConnectionTestCase(unittest.TestCase):
         # Evaluation
         # The expected SIC values are calculated based on the astrocyte dynamics
         # implemented in astrocyte_lr_1994.cpp.
-        data_neuron = nest.GetStatus(mm_neuron)
-        actual_sic_values = data_neuron[0]['events']['SIC']
-
-        data_astro = nest.GetStatus(mm_astro)
-        Ca = data_astro[0]['events']['Ca']
+        actual_sic_values = mm_neuron.events['SIC']
+        Ca = mm_astro.events['Ca']
         f_v = np.vectorize(lambda x: np.log(x*1000.0 - 196.69) if x*1000.0 - 196.69 > 1.0 else 0.0)
         expected_sic_values = f_v(Ca)
 
-        # The sic_connection has a default delay of 1 ms, so the values after
-        # 1 ms are compared with the expected values.
-        self.assertTrue(np.allclose(
-            actual_sic_values[10:], expected_sic_values[:-10], rtol=1e-7))
+        # The sic_connection has a default delay (1 ms), thus the values after
+        # the number of steps of delay are compared with the expected values.
+        sic_delay = nest.GetDefaults('sic_connection')['delay']
+        n_step_delay = int(sic_delay/resol)
+        self.assertTrue(np.allclose(actual_sic_values[n_step_delay:], expected_sic_values[:-n_step_delay], rtol=1e-7))
 
 def suite():
     suite = unittest.makeSuite(SICConnectionTestCase, 'test')

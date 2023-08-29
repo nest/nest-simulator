@@ -71,7 +71,7 @@ except ImportError:
 
 class NestModule(types.ModuleType):
     """
-    A module class for the `nest` root module to control the dynamic generation
+    A module class for the ``nest`` root module to control the dynamic generation
     of module level attributes such as the KernelAttributes, lazy loading
     some submodules and importing the public APIs of the `lib` submodules.
     """

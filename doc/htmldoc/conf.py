@@ -32,6 +32,7 @@ from urllib.request import urlretrieve
 extension_module_dir = os.path.abspath("./_ext")
 sys.path.append(extension_module_dir)
 
+from extract_api_functions import ExtractPyNESTAPIS  # noqa
 from extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
 
 repo_root_dir = os.path.abspath("../..")
@@ -167,6 +168,8 @@ html_static_path = ["static"]
 html_additional_pages = {"index": "index.html"}
 html_sidebars = {"**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]}
 
+html_favicon = "static/img/nest_favicon.ico"
+
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
@@ -200,6 +203,10 @@ def config_inited_handler(app, config):
         basedir=repo_root_dir,
         outdir=models_rst_dir,
     )
+
+
+def get_pynest_list(app, env, docname):
+    ExtractPyNESTAPIS()
 
 
 def add_button_to_examples(app, env, docnames):
@@ -284,6 +291,15 @@ git-pull?repo=https%3A%2F%2Fgithub.com%2Fnest%2Fnest-simulator-examples&urlpath=
             f.write(lines)
 
 
+def api_customizer(app, docname, source):
+    if docname == "ref_material/pynest_api/index":
+        list_apis = json.load(open("api_function_list.json"))
+        html_context = {"api_dict": list_apis}
+        api_source = source[0]
+        rendered = app.builder.templates.render_string(api_source, html_context)
+        source[0] = rendered
+
+
 def toc_customizer(app, docname, source):
     if docname == "models/models-toc":
         models_toc = json.load(open("models/toc-tree.json"))
@@ -297,9 +313,11 @@ def setup(app):
     # for events see
     # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
     app.connect("source-read", toc_customizer)
+    app.connect("source-read", api_customizer)
     app.add_css_file("css/custom.css")
     app.add_css_file("css/pygments.css")
     app.add_js_file("js/custom.js")
+    app.connect("env-before-read-docs", get_pynest_list)
     app.connect("env-before-read-docs", add_button_to_examples)
     app.connect("config-inited", config_inited_handler)
 

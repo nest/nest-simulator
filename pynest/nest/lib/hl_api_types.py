@@ -55,7 +55,7 @@ __all__ = [
     "NodeCollection",
     "Parameter",
     "Receptors",
-    "serializable",
+    "serialize_data",
     "SynapseCollection",
     "to_json",
 ]
@@ -253,7 +253,7 @@ class NodeCollection:
                     raise IndexError("Bool index array must be the same length as NodeCollection")
                 np_key = numpy.array(key, dtype=bool)
             # Checking that elements are not instances of bool too, because bool inherits from int
-            elif all(isinstance(x, int) and not isinstance(x, bool) for x in key):
+            elif all(isinstance(x, (int, numpy.integer)) and not isinstance(x, bool) for x in key):
                 np_key = numpy.array(key, dtype=numpy.uint64)
                 if len(numpy.unique(np_key)) != len(np_key):
                     raise ValueError("All node IDs in a NodeCollection have to be unique")
@@ -318,7 +318,7 @@ class NodeCollection:
               This is for hierarchical addressing.
         output : str, ['pandas','json'], optional
              If the returned data should be in a Pandas DataFrame or in a
-             JSON serializable format.
+             JSON string format.
 
         Returns
         -------
@@ -769,7 +769,7 @@ class SynapseCollection:
             belonging to the given `keys`.
         output : str, ['pandas','json'], optional
             If the returned data should be in a Pandas DataFrame or in a
-            JSON serializable format.
+            JSON string format.
 
         Returns
         -------
@@ -1213,8 +1213,8 @@ class Receptors(CmBase):
     pass
 
 
-def serializable(data):
-    """Make data serializable for JSON.
+def serialize_data(data):
+    """Serialize data for JSON.
 
     Parameters
     ----------
@@ -1228,21 +1228,21 @@ def serializable(data):
 
     if isinstance(data, (numpy.ndarray, NodeCollection)):
         return data.tolist()
-    if isinstance(data, SynapseCollection):
+    elif isinstance(data, SynapseCollection):
         # Get full information from SynapseCollection
-        return serializable(data.get())
-    if isinstance(data, kernel.SLILiteral):
+        return serialize_data(data.get())
+    elif isinstance(data, kernel.SLILiteral):
         # Get name of SLILiteral.
         return data.name
-    if isinstance(data, (list, tuple)):
-        return [serializable(d) for d in data]
-    if isinstance(data, dict):
-        return dict([(key, serializable(value)) for key, value in data.items()])
+    elif isinstance(data, (list, tuple)):
+        return [serialize_data(d) for d in data]
+    elif isinstance(data, dict):
+        return dict([(key, serialize_data(value)) for key, value in data.items()])
     return data
 
 
 def to_json(data, **kwargs):
-    """Serialize data to JSON.
+    """Convert the object to a JSON string.
 
     Parameters
     ----------
@@ -1253,9 +1253,9 @@ def to_json(data, **kwargs):
     Returns
     -------
     data_json : str
-        JSON format of the data
+        JSON string format of the data
     """
 
-    data_serialized = serializable(data)
+    data_serialized = serialize_data(data)
     data_json = json.dumps(data_serialized, **kwargs)
     return data_json

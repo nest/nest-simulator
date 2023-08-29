@@ -104,7 +104,7 @@ section#kernel-attributes-nest-nestmodule dd {
  *************************************************************/
 
 .mermaid .cluster rect {
-	fill: #0E6A9322 !important;
+	fill: #47555B21 !important;
 	stroke: None !important;
 	stroke-width: None !important;
 }
@@ -119,8 +119,12 @@ rect.basic.label-container {
 figure, .align-default {
 	text-align: center;
 }
-
-
+.mermaid svg {
+	/* outline: auto; */
+	outline-color: #f0f0f069;
+	outline-width: medium;
+	outline-style: groove;
+}
 
 
 /**************************************************************************************

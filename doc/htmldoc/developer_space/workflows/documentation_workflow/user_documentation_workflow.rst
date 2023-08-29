@@ -23,109 +23,41 @@ with each release of NEST having its own documentation.
 
 This workflow aims for the concept of **user-correctable documentation**.
 
-
 .. mermaid::
    :zoom:
    :caption: Overview of documentation build. Drag and zoom to explore.
 
-   flowchart LR
+   flowchart TB
 
-      classDef source color:#fff, stroke:#f63, stroke-width:2px, fill:#f63;
-      classDef ext color:#fff, stroke:#c072f42, stroke-width:2px, fill:#072f42;
-      classDef sphinx color:#fff, stroke:#652200, stroke-width:2px, fill:#652200;
+      sphinx:::TextPosition
 
-      subgraph BUILD: Read the docs or _build/
-        subgraph output
-         html:::sphinx
-         arti
+      classDef TextPosition padding-right:20em, padding-top:10em;
+      classDef orangeFill color:#fff, stroke:#f63, stroke-width:2px, fill:#f63;
+      classDef blueFill color:#fff, stroke:#072f42, stroke-width:2px, fill:#072f42;
+      classDef brownFill color:#fff, stroke:#652200, stroke-width:2px, fill:#652200;
+
+      subgraph sphinx[SPHINX]
+        read(Read source files):::blueFill-->ext
+        read-->custom
+       subgraph Parse_rst ["Parse rst"]
+          ext(sphinx_extensions):::blueFill
+          custom(custom_extensions):::blueFill
         end
-        ar-->html
-        ap-->arti["artifacts (downloadable)"]:::sphinx
-        ai-->arti
-        subgraph sphinx
-         parse((parse rst)):::sphinx-->html
-          subgraph autodoc
-           api_docstrings:::sphinx-->html
-          end
-         subgraph gallery
-          ai["auto_examples: ipynb"]:::sphinx
-          ar["auto_examples: rst"]:::sphinx
-          ap["auto_examples: py"]:::sphinx
-         end
-         subgraph custom_extensions
-          extractor_userdocs.py:::ext-->html
-          button["fn add_button_to_examples: conf.py"]:::ext-->html
-         end
-         subgraph nbsphinx
-          notebooks:::sphinx --> html
-         end
-        end
+      Parse_rst-->build
+      build(Build output formats):::blueFill
       end
+    subgraph SOURCE FILES
+      source(repo: nest/nest-simulator):::orangeFill-->read
+     end
 
-      subgraph SOURCE: nest/nest-simulator
-       docs["doc/htmldoc: .rst"]:::source-->sphinx
-       models["cpp models: .h"]:::source-->extractor_userdocs.py
-       py["pynest/examples: .py"]:::source-->gallery
-       api["pynest/nest .py"]:::source-->autodoc
-       ipynb["model_details: .ipynb"]:::source-->nbsphinx
-      end
-      subgraph nest/nest-simulator-examples
-       Jupyter_notebook_pyexamples:::source-->button
-       ai -..-> Jupyter_notebook_pyexamples
-      end
+     subgraph OUTPUT["OUTPUT"]
+       direction TB
+       build--local-->local(_build directory):::brownFill
+       build-->rtd(Read the Docs):::brownFill
+       local-->HTML(HTML):::brownFill
+       rtd-->HTML
+     end
 
-.. mermaid::
-   :zoom:
-   :caption: Overview of documentation build. Drag and zoom to explore.
-
-   flowchart LR
-
-      classDef nest stroke:#f63, stroke-width:2px, fill:#fff;
-
-      subgraph BUILD: Read the docs or _build/
-        subgraph output
-         html:::nest
-         arti
-        end
-        ar-->html
-        ap-->arti["artifacts (downloadable)"]:::nest
-        ai-->arti
-        subgraph sphinx
-         parse((parse rst)):::nest-->html
-          subgraph autodoc
-           api_docstrings:::nest-->html
-          end
-         subgraph gallery
-          ai["auto_examples: ipynb"]:::nest
-          ar["auto_examples: rst"]:::nest
-          ap["auto_examples: py"]:::nest
-         end
-         subgraph custom_extensions
-          extractor_userdocs.py:::nest-->html
-          button["fn add_button_to_examples: conf.py"]:::nest-->html
-         end
-         subgraph nbsphinx
-          notebooks:::nest --> html
-         end
-        end
-      end
-
-      subgraph SOURCE: nest/nest-simulator
-       docs["doc/htmldoc: .rst"]:::nest-->sphinx
-       models["cpp models: .h"]:::nest-->extractor_userdocs.py
-       py["pynest/examples: .py"]:::nest-->gallery
-       api["pynest/nest .py"]:::nest-->autodoc
-       ipynb["model_details: .ipynb"]:::nest-->nbsphinx
-      end
-      subgraph nest/nest-simulator-examples
-       Jupyter_notebook_pyexamples:::nest-->button
-       ai -..-> Jupyter_notebook_pyexamples
-      end
-
-
-.. image:: ../../../static/img/documentation_workflow.png
-  :width: 500
-  :alt: Alternative text
 
 .. note::
    This workflow shows you how to create **user-level documentation**

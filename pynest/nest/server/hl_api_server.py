@@ -104,7 +104,7 @@ def do_exec(args, kwargs):
                     data[variable] = locals_.get(variable, None)
             else:
                 data = locals_.get(kwargs["return"], None)
-            response["data"] = nest.serializable(data)
+            response["data"] = nest.serialize_data(data)
         return response
 
     except Exception as e:
@@ -355,7 +355,7 @@ def api_client(call_name, args, kwargs):
     else:
         response = call
 
-    return nest.serializable(response)
+    return nest.serialize_data(response)
 
 
 def set_mpi_comm(comm):

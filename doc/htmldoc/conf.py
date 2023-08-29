@@ -35,6 +35,7 @@ extension_module_dir = os.path.abspath("./_ext")
 sys.path.append(extension_module_dir)
 
 from extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
+from extract_api_functions import ExtractPyNESTAPIS  # noqa
 
 repo_root_dir = os.path.abspath("../..")
 pynest_dir = os.path.join(repo_root_dir, "pynest")
@@ -83,15 +84,12 @@ project = "NEST Simulator user documentation"
 copyright = "2004, nest-simulator"
 author = "nest-simulator"
 
-mermaid_output_format = "raw"
-mermaid_version = "10.2.0"
-# disable require js - mermaid doesn't work if require.js is loaded before it
-nbsphinx_requirejs_path = ""
-
 copybutton_prompt_text = ">>> "
 # The output lines will not be copied if set to True
 copybutton_only_copy_prompt_lines = True
 
+mermaid_output_format = "raw"
+mermaid_version = "10.2.0"
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
@@ -212,6 +210,10 @@ def config_inited_handler(app, config):
     )
 
 
+def get_pynest_list(app, env, docname):
+    ExtractPyNESTAPIS()
+
+
 def add_button_to_examples(app, env, docnames):
     """Find all examples and include a link to launch notebook.
 
@@ -294,6 +296,15 @@ git-pull?repo=https%3A%2F%2Fgithub.com%2Fnest%2Fnest-simulator-examples&urlpath=
             f.write(lines)
 
 
+def api_customizer(app, docname, source):
+    if docname == "ref_material/pynest_api/index":
+        list_apis = json.load(open("api_function_list.json"))
+        html_context = {"api_dict": list_apis}
+        api_source = source[0]
+        rendered = app.builder.templates.render_string(api_source, html_context)
+        source[0] = rendered
+
+
 def toc_customizer(app, docname, source):
     if docname == "models/models-toc":
         models_toc = json.load(open("models/toc-tree.json"))
@@ -307,9 +318,11 @@ def setup(app):
     # for events see
     # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
     app.connect("source-read", toc_customizer)
+    app.connect("source-read", api_customizer)
     app.add_css_file("css/custom.css")
     app.add_css_file("css/pygments.css")
     app.add_js_file("js/custom.js")
+    app.connect("env-before-read-docs", get_pynest_list)
     app.connect("env-before-read-docs", add_button_to_examples)
     app.connect("config-inited", config_inited_handler)
 

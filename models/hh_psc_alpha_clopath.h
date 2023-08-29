@@ -103,6 +103,7 @@ u_bar_bar   mV      Low-pass filtered u_bar_minus
 -------------------------------------------------------------------------------
 E_L         mV      Leak reversal potential
 C_m         pF      Capacity of the membrane
+t_ref       ms      Duration of refractory period
 g_L         nS      Leak conductance
 tau_ex      ms      Rise time of the excitatory synaptic alpha function
 tau_in      ms      Rise time of the inhibitory synaptic alpha function

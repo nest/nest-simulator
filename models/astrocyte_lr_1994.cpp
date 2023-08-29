@@ -470,8 +470,7 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
     double t = 0.0;
 
     // for alpha-shaped SIC
-    // get the last normalized calcium concentration before solving ODE
-    // this is for threshold-crossing judgement
+    // get the last value of calcium concentration for threshold-crossing judgement
     double calc_thr_last = S_.y_[ State_::Ca ] - P_.SIC_th_;
 
     // numerical integration with adaptive step size control:
@@ -521,7 +520,7 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
     // this is to add the incoming spikes to IP3
     S_.y_[ State_::IP3 ] += P_.delta_IP3_ * B_.spike_exc_.get_value( lag );
 
-    // Here, calcium concentration above threshold determines SIC generation.
+    // suprathreshold calcium concentration determines SIC generation
     // 1000.0: change unit to nM as in the original paper
     double calc_thr = ( S_.y_[ State_::Ca ] - P_.SIC_th_ ) * 1000.0;
     double sic_value = 0.0;

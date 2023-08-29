@@ -82,12 +82,11 @@ class SICConnectionTestCase(unittest.TestCase):
         nest.Connect(mm_astro, astrocyte)
 
         # Simulation
-        nest.Simulate(20.)
+        nest.Simulate(1000.)
 
         # Evaluation
         # The expected SIC values are calculated based on the astrocyte dynamics
-        # implemented in astrocyte_lr_1994.cpp. SIC connection has a constant delay of 1
-        # ms, so the values are shifted for comparison.
+        # implemented in astrocyte_lr_1994.cpp.
         data_neuron = nest.GetStatus(mm_neuron)
         actual_sic_values = data_neuron[0]['events']['SIC']
 
@@ -96,6 +95,8 @@ class SICConnectionTestCase(unittest.TestCase):
         f_v = np.vectorize(lambda x: np.log(x*1000.0 - 196.69) if x*1000.0 - 196.69 > 1.0 else 0.0)
         expected_sic_values = f_v(Ca)
 
+        # The sic_connection has a default delay of 1 ms, so the values after
+        # 1 ms are compared with the expected values.
         self.assertTrue(np.allclose(
             actual_sic_values[10:], expected_sic_values[:-10], rtol=1e-7))
 

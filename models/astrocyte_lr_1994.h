@@ -74,9 +74,9 @@ first proposed by Li & Rinzel (1994) and it is based on earlier work of DeYoung
 Nadkarni & Jung (2003).
 
 The model has three dynamic state variables: the concentration of inositol
-1,4,5-trisphosphate in the astrocyte (:math:`IP3`), the calcium concentration in
-the astrocytic cytosol (:math:`Ca`), and the fraction of active IP3 receptors on
-the astrocytic endoplasmatic reticulum (:math:`h_{IP3R}`).
+1,4,5-trisphosphate in the astrocyte (:math:`\mathrm{[IP3]}`), the calcium concentration in
+the astrocytic cytosol (:math:`\mathrm{[Ca^{2+}]}`), and the fraction of active IP3 receptors on
+the astrocytic endoplasmatic reticulum (:math:`h_\mathrm{IP3R}`).
 
 In this model, excitatory synaptic inputs to the astrocyte trigger its IP3
 generation and then change its calcium dynamics. This might induce an astrocytic
@@ -90,16 +90,17 @@ following equation:
 
 .. math::
 
- \frac{dIP3}{dt} =
- \frac{IP3_0 - IP3}{\tau_{IP3}} + \Delta_{IP3} \cdot J_{syn}(t)
+ \frac{d[\mathrm{IP3}]}{dt} =
+ \frac{[\mathrm{IP3}]_0 - [\mathrm{IP3}]}{\tau_\mathrm{IP3}} + \Delta_\mathrm{IP3} \cdot J_\mathrm{syn}(t)
 
-In the absence of inputs, :math:`IP3` decays to its baseline value
-(:math:`IP3_0`) with the time constant (:math:`\tau_{IP3}`). Each time when an
+In the absence of inputs, :math:`\mathrm{[IP3]}` decays to its baseline value
+(:math:`[\mathrm{IP3}]_0`) with the time constant (:math:`\tau_\mathrm{IP3}`). Each time when an
 astrocyte receives an excitatory synaptic input, it triggers an instantaneous
-increase of :math:`IP3`. In this implementation, the inputs are spike events
+increase of :math:`\mathrm{[IP3]}`. In this implementation, the inputs are spike events
 sent from neurons. The summed synaptic weight the astrocyte receives at time
-:math:`t` is given by :math:`J_{syn}(t)`. The parameter :math:`\Delta_{IP3}`
-scales the impact of synaptic inputs on the IP3 dynamics.
+:math:`t` is given by :math:`J_\mathrm{syn}(t)`. The parameter
+:math:`\Delta_\mathrm{IP3}` scales the impact of synaptic inputs on the
+IP3 dynamics.
 
 In addition, in this implementation a current input to the astrocyte is directly
 added to its cytosolic calcium concentration. Generators that send out currents
@@ -108,13 +109,13 @@ calcium:
 
 .. math::
 
- \frac{dCa}{dt} =
- J_{channel} - J_{pump} + J_{leak} + J_{noise}
+ \frac{d[\mathrm{Ca^{2+}}]}{dt} =
+ J_\mathrm{channel} - J_\mathrm{pump} + J_\mathrm{leak} + J_\mathrm{noise}
 
-Here, :math:`Ca` is the cytosolic calcium concentration, and :math:`J_{noise}`
-is the current input. :math:`J_{channel}`, :math:`J_{pump}`, :math:`J_{leak}`
+Here, :math:`\mathrm{[Ca^{2+}]}` is the cytosolic calcium concentration, and :math:`J_\mathrm{noise}`
+is the current input. :math:`J_\mathrm{channel}`, :math:`J_\mathrm{pump}`, :math:`J_\mathrm{leak}`
 are the calcium flux defined as in Nadkarni & Jung (2003), which are affected by
-:math:`IP3`.
+:math:`\mathrm{[IP3]}`.
 
 **Output:** If the astrocyte receives excitatory synaptic inputs, it might
 output SIC to the its target neurons. This current depends on the cytosolic
@@ -123,19 +124,19 @@ first proposed in Nadkarni & Jung (2003):
 
 .. math::
 
- I_{SIC} =  \mbox{SIC}_{scale} \cdot H \left(\mbox{ln}(y)\right) \cdot \mbox{ln}(y)
+ I_\mathrm{SIC} =  \mathrm{SIC_{scale}} \cdot \mathrm{H}\left(\mathrm{ln}(y)\right) \cdot \mathrm{ln}(y)
 
 where
 
 .. math::
 
- y = Ca/nM - \mbox{SIC}_{th}
+ y = \mathrm{[Ca^{2+}]} - \mathrm{SIC_{th}}
 
 When the cytosolic calcium concentration of the astrocyte exceeds the threshold
-value (:math:`\mbox{SIC}_{th}`) a SIC output (:math:`I_{SIC}`) is generated.
-This thresholding is modeled as a Heaviside function (:math:`H(\cdot)`). In this
-implementation, the SIC threshold :math:`\mbox{SIC}_{th}` as well as the scaling
-constant :math:`\mbox{SIC}_{scale}` are treated as model parameters that can be
+value (:math:`\mathrm{SIC_{th}}`) a SIC output (:math:`I_\mathrm{SIC}`) is generated.
+This thresholding is modeled as a Heaviside function (:math:`\mathrm{H(\cdot)}`). In this
+implementation, the SIC threshold :math:`\mathrm{SIC_{th}}` as well as the scaling
+constant :math:`\mathrm{SIC_{scale}}` are treated as model parameters that can be
 set together with other parameters. Nadkarni & Jung (2003) proposed values for
 these parameters by fitting the equation for SIC to an experimental data set.
 

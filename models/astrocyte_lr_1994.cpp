@@ -90,7 +90,7 @@ astrocyte_lr_1994_dynamics( double time, const double y[], double f[], void* pno
   const double J_channel = node.P_.ratio_ER_cyt_ * node.P_.rate_IP3R_ * std::pow(m_inf, 3) * std::pow(n_inf, 3) *
     std::pow(h_ip3r, 3) * (calc_ER - calc);
 
-  // alpha shape for SIC
+  // for alpha-shaped SIC
   const double& dsic = y[ S::DSIC ];
   const double& sic = y[ S::SIC ];
   f[ S::DSIC ] = -dsic / node.P_.tau_SIC_;
@@ -109,27 +109,27 @@ astrocyte_lr_1994_dynamics( double time, const double y[], double f[], void* pno
  * ---------------------------------------------------------------- */
 
 nest::astrocyte_lr_1994::Parameters_::Parameters_()
-  : Ca_tot_( 2.0 )         // uM
-  , IP3_0_( 0.16 )         // uM
-  , Kd_IP3_1_( 0.13 )      // uM
-  , Kd_IP3_2_( 0.9434 )    // uM
-  , Km_SERCA_( 0.1 )       // uM
-  , Kd_act_( 0.08234 )     // uM
-  , Kd_inh_( 1.049 )       // uM
-  , ratio_ER_cyt_( 0.185 )
-  , delta_IP3_( 5.0 )       // uM
-  , k_IP3R_( 0.0002 )      // 1/(uM*ms)
-  , rate_L_( 0.00011 )     // 1/ms
+  : Ca_tot_( 2.0 )                // uM
+  , IP3_0_( 0.16 )                // uM
+  , Kd_IP3_1_( 0.13 )             // uM
+  , Kd_IP3_2_( 0.9434 )           // uM
+  , Kd_act_( 0.08234 )            // uM
+  , Kd_inh_( 1.049 )              // uM
+  , Km_SERCA_( 0.1 )              // uM
   , SIC_scale_( 1.0 )
-  , SIC_th_( 0.19669 )      // uM
-  , tau_IP3_( 7142.0 )     // ms
-  , rate_IP3R_( 0.006 )    // 1/ms
-  , rate_SERCA_( 0.0009 )  // uM/ms
+  , SIC_th_( 0.19669 )            // uM
+  , delta_IP3_( 5.0 )             // uM
+  , k_IP3R_( 0.0002 )             // 1/(uM*ms)
+  , rate_IP3R_( 0.006 )           // 1/ms
+  , rate_L_( 0.00011 )            // 1/ms
+  , rate_SERCA_( 0.0009 )         // uM/ms
+  , ratio_ER_cyt_( 0.185 )
+  , tau_IP3_( 7142.0 )            // ms
   , alpha_SIC_( false )
-  , tau_SIC_( 1000.0 ) // ms
-  , delay_SIC_( 1000.0 ) // ms
   , SIC_reactivate_th_( 0.19669 ) // uM
-  , SIC_reactivate_time_( 100 ) // ms
+  , SIC_reactivate_time_( 100 )   // ms
+  , delay_SIC_( 1000.0 )          // ms
+  , tau_SIC_( 1000.0 )            // ms
 {
 }
 
@@ -216,11 +216,11 @@ nest::astrocyte_lr_1994::Parameters_::set( const DictionaryDatum& d, Node* node 
 
   if ( Ca_tot_ <= 0 )
   {
-    throw BadProperty( "Total free astrocytic concentration must be positive." );
+    throw BadProperty( "Total free astrocytic calcium concentration must be positive." );
   }
   if ( IP3_0_ < 0 )
   {
-    throw BadProperty( "Baseline value of astrocytic IP3 must be non-negative." );
+    throw BadProperty( "Baseline value of the astrocytic IP3 concentration must be non-negative." );
   }
   if ( Kd_act_ <= 0 )
   {
@@ -232,11 +232,11 @@ nest::astrocyte_lr_1994::Parameters_::set( const DictionaryDatum& d, Node* node 
   }
   if ( Kd_IP3_1_ <= 0 )
   {
-    throw BadProperty( "Astrocytic IP3R dissociation constant of IP3 must be positive." );
+    throw BadProperty( "First astrocytic IP3R dissociation constant of IP3 must be positive." );
   }
   if ( Kd_IP3_2_ <= 0 )
   {
-    throw BadProperty( "Astrocytic IP3R dissociation constant of IP3 must be positive." );
+    throw BadProperty( "Second astrocytic IP3R dissociation constant of IP3 must be positive." );
   }
   if ( Km_SERCA_ <= 0 )
   {
@@ -248,19 +248,19 @@ nest::astrocyte_lr_1994::Parameters_::set( const DictionaryDatum& d, Node* node 
   }
   if ( delta_IP3_ < 0 )
   {
-    throw BadProperty( "Rate constant of strocytic IP3R production must be non-negative." );
+    throw BadProperty( "Parameter determining the rate of astrocytic IP3 generation induced by synaptic input must be non-negative." );
   }
   if ( k_IP3R_ < 0 )
   {
-    throw BadProperty( "Astrocytic IP2R binding constant for calcium inhibition must be non-negative." );
+    throw BadProperty( "Astrocytic IP3R binding constant for calcium inhibition must be non-negative." );
   }
   if ( SIC_scale_ <= 0 )
   {
-    throw BadProperty( "Scale of SIC must be positive." );
+    throw BadProperty( "Parameter determining the scale of astrocytic SIC output must be positive." );
   }
   if ( SIC_th_ < 0 )
   {
-    throw BadProperty( "Calcium threshold for producing SIC must be non-negative." );
+    throw BadProperty( "Threshold that determines the minimal level of intracellular astrocytic calcium sufficient to induce SIC must be non-negative." );
   }
   if ( rate_L_ < 0 )
   {
@@ -268,31 +268,31 @@ nest::astrocyte_lr_1994::Parameters_::set( const DictionaryDatum& d, Node* node 
   }
   if ( rate_IP3R_ < 0 )
   {
-    throw BadProperty( "Maximal rate of calcium release via astrocytic IP3R must be non-negative." );
+    throw BadProperty( "Maximum rate of calcium release via astrocytic IP3R must be non-negative." );
   }
   if ( rate_SERCA_ < 0 )
   {
-    throw BadProperty( "Maximal rate of calcium uptake by astrocytic SERCA pump must be non-negative." );
+    throw BadProperty( "Maximum rate of calcium uptake by astrocytic SERCA pump must be non-negative." );
   }
   if ( tau_IP3_ <= 0 )
   {
-    throw BadProperty( "Time constant of astrocytic IP3 degradation must be positive." );
+    throw BadProperty( "Time constant of the exponential decay of astrocytic IP3 must be positive." );
   }
   if ( tau_SIC_ <= 0 )
   {
-    throw BadProperty( "Time constant of SIC must be positive." );
+    throw BadProperty( "Time constant of alpha-shaped SIC must be positive." );
   }
   if ( delay_SIC_ < 0 )
   {
-    throw BadProperty( "Delay of SIC must be non-negative." );
+    throw BadProperty( "Delay of alpha-shaped SIC must be non-negative." );
   }
   if ( SIC_reactivate_th_ < 0 or SIC_reactivate_th_ > SIC_th_ )
   {
-    throw BadProperty( "Calcium threshold for reactivating SIC must be non-negative and not larger than calcium threshold for producing SIC." );
+    throw BadProperty( "Calcium level for the reactivation of alpha-shaped SIC must be non-negative and not larger than SIC_th." );
   }
   if ( SIC_reactivate_time_ < 0 )
   {
-    throw BadProperty( "Time required for reactivating SIC must be non-negative." );
+    throw BadProperty( "Time required for calcium to stay lower than SIC_reactivate_th for the reactivation of alpha-shaped SIC must be non-negative." );
   }
 }
 
@@ -502,50 +502,52 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
       }
     }
 
-    // limit calcium concentration within boundaries
-    // boundary conditions:
-    // V_ER + V_cyt = V_tot, ratio_ER_cyt_ = V_ER/V_cyt
-    // (Ca_cyt, V_cyt: calcium concentration and volumn of the cytosol)
-    // (Ca_tot, V_tot: calcium concentraion and volumn of the whole astrocyte)
-    // first boundary: Ca_cyt*V_cyt no larger than Ca_tot*V_tot
+    // We limit cytosolic calcium concentration within boudnaries. Here, total
+    // volume of astrocyte consists of cytosol and endoplasmic retimulum (ER):
+    // V_tot = V_cyt + V_ER. So, ratio of cytosol vs. ER (ratio_ER_cyt) is
+    // (V_tot - V_cyt)/V_cyt. Then, cytosolic calcium concentration should not
+    // be larger than Ca_tot*(V_tot/V_cyt), which is equal to
+    // Ca_tot + Ca_tot*ratio_ER_cyt.
     if ( S_.y_[ State_::Ca ] > P_.Ca_tot_ + P_.Ca_tot_*P_.ratio_ER_cyt_ )
     {
       S_.y_[ State_::Ca ] = P_.Ca_tot_ + P_.Ca_tot_*P_.ratio_ER_cyt_;
     }
-    // second boundary: Ca_cyt no smaller than 0
+    // Also, it should not be smaller than 0.
     else if ( S_.y_[ State_::Ca ] < 0.0 )
     {
       S_.y_[ State_::Ca ] = 0.0;
     }
 
-    // this is to add the incoming spikes to the state variable of IP3
+    // this is to add the incoming spikes to IP3
     S_.y_[ State_::IP3 ] += P_.delta_IP3_ * B_.spike_exc_.get_value( lag );
 
-    // get the value of ( calcium - threshold ) for SIC generation
+    // Here, calcium concentration above threshold determines SIC generation.
+    // 1000.0: change unit to nM as in the original paper
     double calc_thr = ( S_.y_[ State_::Ca ] - P_.SIC_th_ ) * 1000.0;
     double sic_value = 0.0;
-    // alpha-shaped SIC
+    // alpha-shaped version of SIC
     if ( P_.alpha_SIC_ == true )
     {
+      // assign SIC value at the moment
       sic_value = S_.y_[ State_::SIC ];
-      // SIC-on (activated/deactivated) state
+      // SIC-on state: next SIC blocked until reactivated
       if ( B_.sic_on_ == true )
       {
-        // timer for delayed SIC
+        // timer for a delay before initiating the SIC
         B_.sic_on_timer_ += B_.step_;
-        if ( B_.sic_started_flag_ == false and B_.sic_on_timer_ >= P_.delay_SIC_ )
+        // initiate an alpha-shaped SIC if conditions are met
+        if ( B_.sic_started_flag_ == false and B_.sic_on_timer_ >= P_.delay_SIC_ and calc_thr > 1.0)
         {
-          // generate a SIC
-          if ( calc_thr > 1.0 )
-          {
-            S_.y_[ State_::DSIC ] += P_.SIC_scale_*std::log( calc_thr )*B_.i0_ex_;
-          }
+          S_.y_[ State_::DSIC ] += P_.SIC_scale_*std::log( calc_thr )*B_.i0_ex_;
+          // block the next SIC once initiated
           B_.sic_started_flag_ = true;
         }
-        // condition to return to SIC-off (reactivated) state; to be discussed
+        // If calcium concentration stays lower than SIC_reactivate_th for a
+        // period of time longer than SIC_reactivate_time, the astrocyte returns
+        // to the state where SIC can be triggered again (reactivated).
         if ( S_.y_[ State_::Ca ] < P_.SIC_reactivate_th_ )
         {
-          // timer for SIC-off
+          // timer
           B_.sic_off_timer_ += B_.step_;
           if ( B_.sic_off_timer_ >= P_.SIC_reactivate_time_ )
           {
@@ -557,25 +559,26 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
         }
         else
         {
+          // reset timer if calcium concentration becomes higher than SIC_reactivate_th
           B_.sic_off_timer_ = 0.0;
         }
       }
-      // SIC-off (reactivated) state
+      // SIC-off state: SIC can be triggered again (reactivated)
       else
       {
-        // catch threshold-crossing point to activate SIC
+        // threshold-crossing; SIC will be initiated with a delay
         if ( calc_thr > 0.0 and calc_thr_last <= 0.0 )
         {
           B_.sic_on_ = true;
         }
       }
     }
-    // original version of SIC
+    // SIC generation according to Nadkarni & Jung, 2003
+    // take the logarithmic of calcium concentration
     else
     {
       if ( calc_thr > 1.0 )
       {
-        // users can set the scale of SIC by SIC_scale
         sic_value = std::log( calc_thr )*P_.SIC_scale_;
       }
     }

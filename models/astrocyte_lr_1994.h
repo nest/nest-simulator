@@ -78,10 +78,11 @@ The model has three dynamic state variables: the concentration of inositol
 the astrocytic cytosol (:math:`Ca`), and the fraction of active IP3 receptors on
 the astrocytic endoplasmatic reticulum (:math:`h_{IP3R}`).
 
-The astrocyte receives excitatory synaptic inputs, which affect its IP3
-concentration, and outputs a slow inward current (SIC) dependent on its
-cytosolic calcium dynamics to its target neurons. The input and output are based
-on the equations in Nadkarni & Jung (2003) but with adaptations:
+In this model, excitatory synaptic inputs to the astrocyte trigger its IP3
+generation and then change its calcium dynamics. This might induce an astrocytic
+output of a slow inward current (SIC), which is dependent on its calcium
+dynamics, to its target neurons. The input and output are based on the equations
+in Nadkarni & Jung (2003) but with adaptations:
 
 **Input:** The astrocyte receives inputs from excitatory (glutamatergic)
 synapses. The synaptic inputs directly affect IP3 concentration according to the
@@ -164,20 +165,21 @@ h_IP3R  unitless  The fraction of active IP3 receptors on the astrocytic ER
 ----------------------------------------------------------------------------------------------------------------------------------
 Ca_tot          uM        Total free astrocytic calcium concentration
 IP3_0           uM        Baseline value of the astrocytic IP3 concentration
-Kd_act          uM        Astrocytic IP3R dissociation constant of calcium (activation)
-Kd_inh          uM        Astrocytic IP3R dissociation constant of calcium (inhibition)
 Kd_IP3_1        uM        First astrocytic IP3R dissociation constant of IP3
 Kd_IP3_2        uM        Second astrocytic IP3R dissociation constant of IP3
+Kd_act          uM        Astrocytic IP3R dissociation constant of calcium (activation)
+Kd_inh          uM        Astrocytic IP3R dissociation constant of calcium (inhibition)
 Km_SERCA        uM        Half-activation constant of astrocytic SERCA pump
-ratio_ER_cyt    unitless  Ratio between astrocytic ER and cytosol volumes
+SIC_scale       unitless  Parameter determining the scale of astrocytic SIC output
+SIC_th          uM        Threshold that determines the minimal level of intracellular astrocytic calcium sufficient to induce SIC
 delta_IP3       uM        Parameter determining the rate of astrocytic IP3 generation induced by synaptic input
 k_IP3R          1/(uM*ms) Astrocytic IP3R binding constant for calcium inhibition
-rate_L          1/ms      Rate constant for calcium leak from the astrocytic ER to cytosol
 rate_IP3R       1/ms      Maximum rate of calcium release via astrocytic IP3R
+rate_L          1/ms      Rate constant of calcium leak from astrocytic ER to cytosol
 rate_SERCA      uM/ms     Maximum rate of calcium uptake by astrocytic SERCA pump
+ratio_ER_cyt    unitless  Ratio between astrocytic ER and cytosol volumes
 tau_IP3         ms        Time constant of the exponential decay of astrocytic IP3
-SIC_th          uM        Threshold that determines the minimal level of intracellular astrocytic calcium sufficient to induce SIC
-SIC_scale       unitless  Parameter determining the scale of astrocytic SIC output
+alpha_SIC       boolean   Alpha-shaped SIC is generated if true
 =============== ========= ========================================================================================================
 
 References
@@ -280,29 +282,30 @@ private:
   //! Model parameters
   struct Parameters_
   {
+    // parameters according to Nadkarni & Jung, 2003
     double Ca_tot_;       //!< Total free astrocytic calcium concentration in uM
     double IP3_0_;        //!< Baseline value of the astrocytic IP3 concentration in uM
     double Kd_IP3_1_;     //!< First astrocytic IP3R dissociation constant of IP3 in uM
     double Kd_IP3_2_;     //!< Second astrocytic IP3R dissociation constant of IP3 in uM
-    double Km_SERCA_;     //!< Activation constant of astrocytic SERCA pump in uM
     double Kd_act_;       //!< Astrocytic IP3R dissociation constant of calcium (activation) in uM
     double Kd_inh_;       //!< Astrocytic IP3R dissociation constant of calcium (inhibition) in uM
-    double ratio_ER_cyt_; //!< Ratio between astrocytic ER and cytosol volumes
-    double delta_IP3_;    //!< Step increase in IP3 concentration with each unit synaptic weight received by the astrocyte in uM
-    double k_IP3R_;       //!< Astrocytic IP3R binding constant for calcium in 1/(uM*ms)
-    double rate_L_;       //!< Rate constant for calcium leak from the astrocytic ER to cytosol in 1/ms
-    double SIC_scale_;    //!< Scale of SIC output
-    double SIC_th_;       //!< Calcium threshold for producing SIC in uM
-    double tau_IP3_;      //!< Time constant of astrocytic IP3 degradation in ms
+    double Km_SERCA_;     //!< Half-activation constant of astrocytic SERCA pump in uM
+    double SIC_scale_;    //!< Parameter determining the scale of astrocytic SIC output
+    double SIC_th_;       //!< Threshold that determines the minimal level of intracellular astrocytic calcium sufficient to induce SIC in uM
+    double delta_IP3_;    //!< Parameter determining the rate of astrocytic IP3 generation induced by synaptic input in uM
+    double k_IP3R_;       //!< Astrocytic IP3R binding constant for calcium inhibition in 1/(uM*ms)
     double rate_IP3R_;    //!< Maximum rate of calcium release via astrocytic IP3R in 1/ms
-    double rate_SERCA_;   //!< Maximum rate of calcium uptake by astrocytic IP3R in uM/ms
+    double rate_L_;       //!< Rate constant of calcium leak from astrocytic ER to cytosol in 1/ms
+    double rate_SERCA_;   //!< Maximum rate of calcium uptake by astrocytic SERCA pump in uM/ms
+    double ratio_ER_cyt_; //!< Ratio between astrocytic ER and cytosol volumes
+    double tau_IP3_;      //!< Time constant of the exponential decay of astrocytic IP3 in ms
 
-    // For alpha-shaped SIC (experimental)
-    bool alpha_SIC_;             //!< Use alpha-shaped SIC if true
-    double tau_SIC_;             //!< Time constant of alpha-shaped SIC
-    double delay_SIC_;           //!< Delay of alpha-shaped SIC
-    double SIC_reactivate_th_;   //!< Calcium level for reactivating SIC
-    double SIC_reactivate_time_; //!< Time staying SIC_reactivate_th_ required for reactivating SIC
+    // parameters for alpha-shaped SIC
+    bool alpha_SIC_;             //!< Alpha-shaped SIC is generated if true
+    double SIC_reactivate_th_;   //!< Calcium level for the reactivation of alpha-shaped SIC in uM
+    double SIC_reactivate_time_; //!< Time required for calcium to stay lower than SIC_reactivate_th for the reactivation of alpha-shaped SIC in ms
+    double delay_SIC_;           //!< Delay of alpha-shaped SIC in ms
+    double tau_SIC_;             //!< Time constant of alpha-shaped SIC in ms
 
     Parameters_(); //!< Sets default parameter values
 

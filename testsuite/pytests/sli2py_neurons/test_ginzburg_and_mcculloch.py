@@ -30,8 +30,6 @@ def test_ginzburg_and_mcculloch_pitts_neurons():
     a `mcculloch_pitts_neuron` and that we can then run a simulation.
     """
 
-    nest.ResetKernel()
-
     ginzburg = nest.Create("ginzburg_neuron")
     mcculloch = nest.Create("mcculloch_pitts_neuron")
     nest.Connect(ginzburg, mcculloch)

@@ -56,9 +56,7 @@ def test_multisynapse_model_rport_one(multisyn_model):
     nrn = nest.Create(multisyn_model)
     nest.Connect(nrn, nrn, syn_spec={"receptor_type": 1})
 
-    expected_nconns = 1
-    actual_nconns = nest.GetKernelStatus("num_connections")
-    assert actual_nconns == expected_nconns
+    assert nest.num_connections == 1
 
 
 @pytest.mark.parametrize("multisyn_model", multisyn_models)
@@ -73,17 +71,10 @@ def test_multisynapse_model_empty_param_vector(multisyn_model):
     nrn = nest.Create(multisyn_model)
     default_params = nrn.get()
 
-    empty_params = {}
-    # Fill empty params with valid entries
-    possible_param_names = ["E_rev", "tau_syn", "tau_rise", "tau_decay"]
-    for possible_param_name in possible_param_names:
-        if possible_param_name in default_params:
-            empty_params[possible_param_name] = []
+    empty_params = {pname: [] for pname in ["E_rev", "tau_syn", "tau_rise", "tau_decay"] if pname in default_params}
 
     # Try to set params as empty vectors
     nrn.set(empty_params)
 
     # Verify that the set params indeed are empty
-    for set_param_name in empty_params:
-        set_param_val = nrn.get(set_param_name)
-        assert len(set_param_val) == 0
+    assert all(len(nrn.get(pname)) == 0 for pname in empty_params)

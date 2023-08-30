@@ -25,18 +25,15 @@ Regression test for Issue #1085 (GitHub).
 This set of tests check that `GetConnections` filter by synapse label.
 """
 
+import nest
 import pytest
 
-import nest
 
-
-@pytest.fixture()
+@pytest.fixture(scope="module")
 def network():
     """
     Fixture for building network.
     """
-
-    nest.ResetKernel()
 
     nodes = nest.Create("iaf_psc_alpha", 5)
     nest.Connect(
@@ -56,10 +53,10 @@ def network():
 
 
 @pytest.mark.parametrize(
-    ("source", "target"),
-    [("network", None), (None, "network"), ("network", "network")],
+    ("source_filter", "target_filter"),
+    [(True, False), (False, True), (True, True)],
 )
-def test_getconnections_filter_by_synapse_label(request, source, target):
+def test_getconnections_filter_by_synapse_label(request, source_filter, target_filter):
     """
     Test that `GetConnections` filter correctly by synapse label.
 
@@ -73,10 +70,8 @@ def test_getconnections_filter_by_synapse_label(request, source, target):
     The `nodes` are retrieved from the `network` fixture.
     """
 
-    if source:
-        source = request.getfixturevalue(source)
-    if target:
-        target = request.getfixturevalue(target)
+    sources = request.getfixturevalue("network") if source_filter else None
+    targets = request.getfixturevalue("network") if target_filter else None
 
-    conns = nest.GetConnections(source=source, target=target, synapse_label=123)
+    conns = nest.GetConnections(source=sources, target=targets, synapse_label=123)
     assert len(conns) == 25

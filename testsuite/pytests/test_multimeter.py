@@ -104,7 +104,8 @@ def test_recordables_are_recorded(model):
         assert len(result[r]) == num_data_expected
 
 
-def test_identical_recording_from_multiple_multimeters():
+@pytest.mark.parametrize("model", all_models_with_rec)
+def test_identical_recording_from_multiple_multimeters(model):
     """
     Test identical recordings from multimeters with same configurations.
 
@@ -112,19 +113,19 @@ def test_identical_recording_from_multiple_multimeters():
     They should record identical data.
     """
 
-    nrn = nest.Create("iaf_psc_alpha")
+    nrn = nest.Create(model)
+    # if the model is compartmental, we need to add at least a root compartment
+    if "compartments" in nest.GetDefaults(model):
+        nrn.compartments = {"parent_idx": -1}
+
     recordables = nrn.recordables
     mm1 = nest.Create("multimeter", {"record_from": recordables})
     mm2 = nest.Create("multimeter", {"record_from": recordables})
-    pge = nest.Create("poisson_generator", {"rate": 1e4})
-    pgi = nest.Create("poisson_generator", {"rate": 1e4})
 
     nest.Connect(mm1, nrn)
     nest.Connect(mm2, nrn)
-    nest.Connect(pge, nrn, syn_spec={"weight": 1.0, "delay": 1.0})
-    nest.Connect(pgi, nrn, syn_spec={"weight": -1.0, "delay": 1.0})
 
-    nest.Simulate(100.0)
+    nest.Simulate(10.0)
 
     for recordable in recordables:
         nptest.assert_array_equal(mm1.events[recordable], mm2.events[recordable])

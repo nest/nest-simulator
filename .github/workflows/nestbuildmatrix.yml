@@ -409,8 +409,6 @@ jobs:
       fail-fast: false
       matrix:
         os: ["ubuntu-22.04", "macos-latest"]
-
-    if: false
     needs: [pydocstyle, rstcheck, vale]
     steps:
       - name: "Checkout repository content"

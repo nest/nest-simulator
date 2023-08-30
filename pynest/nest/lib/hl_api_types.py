@@ -24,6 +24,7 @@ Classes defining the different PyNEST types
 """
 
 import json
+import numbers
 from math import floor, log
 
 import numpy
@@ -217,13 +218,20 @@ class NodeCollection:
 
     def __add__(self, other):
         if not isinstance(other, NodeCollection):
-            if other == 0:
+            if isinstance(other, numbers.Number) and other == 0:
+                other = NodeCollection()
+            else:
+                raise TypeError(f"Cannot add object of type '{type(other).__name__}' to 'NodeCollection'")
+            """
+            if isinstance(other, int) and other == 0:
                 other = NodeCollection()
             else:
                 raise NotImplementedError()
+            """
 
         return sli_func("join", self._datum, other._datum)
 
+    """
     def __radd__(self, other):
         if other == 0:
             other = NodeCollection()
@@ -236,6 +244,10 @@ class NodeCollection:
             )
 
         return sli_func("join", self._datum, other._datum)
+    """
+
+    def __radd__(self, other):
+        return self + other
 
     def __getitem__(self, key):
         if isinstance(key, slice):

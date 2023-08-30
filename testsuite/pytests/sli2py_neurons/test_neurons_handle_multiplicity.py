@@ -26,11 +26,13 @@ as two events with multiplicity one. The membrane potential after
 the spikes have arrived must be identical in both cases.
 """
 
-import nest
-import pytest
 import numpy as np
 import numpy.testing as nptest
+import pytest
 
+import nest
+
+# The following models will not be tested:
 skip_list = [
     "ginzburg_neuron",  # binary neuron
     "mcculloch_pitts_neuron",  # binary neuron
@@ -87,7 +89,10 @@ def test_spike_multiplicity_parrot_neuron():
     nest.ResetKernel()
     multiplicities = [1, 3, 2]
     spikes = [1.0, 2.0, 3.0]
-    sg = nest.Create("spike_generator", {"spike_times": spikes, "spike_multiplicities": multiplicities})
+    sg = nest.Create(
+        "spike_generator",
+        {"spike_times": spikes, "spike_multiplicities": multiplicities},
+    )
     pn = nest.Create("parrot_neuron")
     sr = nest.Create("spike_recorder")
 
@@ -112,7 +117,6 @@ def test_spike_multiplicity_parrot_neuron():
     ],
 )
 def test_spike_multiplicity(model):
-    print("model name:", model)
     nest.ResetKernel()
 
     n1 = nest.Create(model)

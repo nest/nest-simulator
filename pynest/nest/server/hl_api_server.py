@@ -19,6 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+import ast
 import importlib
 import inspect
 import io
@@ -83,12 +84,16 @@ def do_exec(args, kwargs):
         response = dict()
         if RESTRICTION_OFF:
             with Capturing() as stdout:
-                exec(source_cleaned, get_globals(), locals_)
+                globals_ = globals().copy()
+                globals_.update(get_modules_from_env())
+                exec(source_cleaned, globals_, locals_)
             if len(stdout) > 0:
                 response["stdout"] = "\n".join(stdout)
         else:
             code = RestrictedPython.compile_restricted(source_cleaned, "<inline>", "exec")  # noqa
-            exec(code, get_restricted_globals(), locals_)
+            globals_ = get_restricted_globals()
+            globals_.update(get_modules_from_env())
+            exec(code, globals_, locals_)
             if "_print" in locals_:
                 response["stdout"] = "".join(locals_["_print"].txt)
 
@@ -99,7 +104,7 @@ def do_exec(args, kwargs):
                     data[variable] = locals_.get(variable, None)
             else:
                 data = locals_.get(kwargs["return"], None)
-            response["data"] = nest.serializable(data)
+            response["data"] = nest.serialize_data(data)
         return response
 
     except Exception as e:
@@ -150,7 +155,7 @@ def do_call(call_name, args=[], kwargs={}):
         log(call_name, f"local call, args={args}, kwargs={kwargs}")
         master_response = call(*args, **kwargs)
 
-    response = [nest.serializable(master_response)]
+    response = [master_response]
     if mpi_comm is not None:
         log(call_name, "waiting for response gather")
         response = mpi_comm.gather(response[0], root=0)
@@ -247,16 +252,30 @@ def get_arguments(request):
     return list(args), kwargs
 
 
-def get_globals():
-    """Get globals for exec function."""
-    copied_globals = globals().copy()
+def get_modules_from_env():
+    """Get modules from environment variable NEST_SERVER_MODULES.
 
-    # Add modules to copied globals
-    modlist = [(module, importlib.import_module(module)) for module in MODULES]
-    modules = dict(modlist)
-    copied_globals.update(modules)
+    This function converts the content of the environment variable NEST_SERVER_MODULES:
+    to a formatted dictionary for updating the Python `globals`.
 
-    return copied_globals
+    Here is an example:
+        `NEST_SERVER_MODULES="import nest; import numpy as np; from numpy import random"`
+    is converted to the following dictionary:
+        `{'nest': <module 'nest'> 'np': <module 'numpy'>, 'random': <module 'numpy.random'>}`
+    """
+    modules = {}
+    try:
+        parsed = ast.iter_child_nodes(ast.parse(MODULES))
+    except (SyntaxError, ValueError):
+        raise SyntaxError("The NEST server module environment variables contains syntax errors.")
+    for node in parsed:
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                modules[alias.asname or alias.name] = importlib.import_module(alias.name)
+        elif isinstance(node, ast.ImportFrom):
+            for alias in node.names:
+                modules[alias.asname or alias.name] = importlib.import_module(f"{node.module}.{alias.name}")
+    return modules
 
 
 def get_or_error(func):
@@ -305,11 +324,6 @@ def get_restricted_globals():
         _write_=RestrictedPython.Guards.full_write_guard,
     )
 
-    # Add modules to restricted globals
-    modlist = [(module, importlib.import_module(module)) for module in MODULES]
-    modules = dict(modlist)
-    restricted_globals.update(modules)
-
     return restricted_globals
 
 
@@ -341,7 +355,7 @@ def api_client(call_name, args, kwargs):
     else:
         response = call
 
-    return response
+    return nest.serialize_data(response)
 
 
 def set_mpi_comm(comm):

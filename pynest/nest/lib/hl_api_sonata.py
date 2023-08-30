@@ -19,13 +19,17 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+Functions to build and simulate networks with the SONATA format
+"""
+
+
 import itertools
 import json
 import os
 from pathlib import Path, PurePath
 
 import numpy as np
-import pandas as pd
 
 from .. import pynestkernel as kernel
 from ..ll_api import sli_func, sps, sr
@@ -33,6 +37,13 @@ from .hl_api_models import GetDefaults
 from .hl_api_nodes import Create
 from .hl_api_simulation import SetKernelStatus, Simulate
 from .hl_api_types import NodeCollection
+
+try:
+    import pandas as pd
+
+    have_pandas = True
+except ImportError:
+    have_pandas = False
 
 try:
     import h5py
@@ -100,6 +111,9 @@ class SonataNetwork:
             raise kernel.NESTError(msg)
         if not have_h5py:
             msg = "SonataNetwork unavailable because h5py is not installed or could not be imported"
+            raise kernel.NESTError(msg)
+        if not have_pandas:
+            msg = "SonataNetwork unavailable because pandas is not installed or could not be imported"
             raise kernel.NESTError(msg)
 
         self._node_collections = {}

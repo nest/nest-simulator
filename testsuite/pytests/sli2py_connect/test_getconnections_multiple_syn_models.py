@@ -34,12 +34,7 @@ import pytest
 import nest
 
 
-@pytest.fixture(autouse=True)
-def reset_kernel():
-    nest.ResetKernel()
-
-
-@pytest.fixture()
+@pytest.fixture(scope="module")
 def network():
     """
     Fixture for building network.
@@ -61,13 +56,51 @@ def network():
     nest.Connect(static_sources, static_targets, "one_to_one", "static_synapse")
     nest.Connect(stdp_sources, stdp_targets, "one_to_one", "stdp_synapse")
 
-    d = {
-        "static_sources": static_sources,
-        "static_targets": static_targets,
-        "stdp_sources": stdp_sources,
-        "stdp_targets": stdp_targets,
+    return {
+        "static_synapse": {"sources": static_sources, "targets": static_targets},
+        "stdp_synapse": {"sources": stdp_sources, "targets": stdp_targets},
     }
-    return d
+
+
+@pytest.mark.parametrize("syn_model", ["static_synapse", "stdp_synapse"])
+def test_retrieve_correct_sources_and_targets(network, syn_model):
+    """
+    Verify that the expected sources and targets are retrieved.
+    """
+
+    conns = nest.GetConnections(synapse_model=syn_model)
+    actual_sources = conns.get("source")
+    actual_targets = conns.get("target")
+
+    expected_sources = network[f"{syn_model}"]["sources"].tolist()
+    expected_targets = network[f"{syn_model}"]["targets"].tolist()
+
+    nptest.assert_array_equal(actual_sources, expected_sources)
+    nptest.assert_array_equal(actual_targets, expected_targets)
+
+
+def test_retrieve_all_connections(network):
+    """
+    Test retrieval of all connections.
+
+    Note that ``static_synapse`` connections will come first.
+    """
+
+    conns = nest.GetConnections()
+
+    actual_sources = conns.get("source")
+    actual_targets = conns.get("target")
+
+    expected_static_sources = network["static_synapse"]["sources"].tolist()
+    expected_stdp_sources = network["stdp_synapse"]["sources"].tolist()
+    expected_all_sources = expected_static_sources + expected_stdp_sources
+
+    expected_static_targets = network["static_synapse"]["targets"].tolist()
+    expected_stdp_targets = network["stdp_synapse"]["targets"].tolist()
+    expected_all_targets = expected_static_targets + expected_stdp_targets
+
+    nptest.assert_array_equal(actual_sources, expected_all_sources)
+    nptest.assert_array_equal(actual_targets, expected_all_targets)
 
 
 def test_retrieve_correct_proportion_of_synapse_model(network):
@@ -102,6 +135,7 @@ def test_retrieve_correct_proportion_of_synapse_model(network):
     assert actual_num_static_stdp == expected_num_static_stdp
 
 
+'''
 @pytest.mark.parametrize("syn_model", ["static", "stdp"])
 def test_retrieve_correct_sources_and_targets(network, syn_model):
     """
@@ -120,3 +154,4 @@ def test_retrieve_correct_sources_and_targets(network, syn_model):
 
     nptest.assert_array_equal(actual_sources, expected_sources)
     nptest.assert_array_equal(actual_targets, expected_targets)
+'''

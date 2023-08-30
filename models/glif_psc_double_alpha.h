@@ -51,7 +51,7 @@ This function is normalized such that an event of weight 1.0 results in a peak c
 of the fast component of the alpha function to be 1 pA at
 :math:`t = \tau_\text{syn_fast}`.
 The relative peak current of the slow component is given as amp_slow, at
-:math:`t = \tau_\text{syn\_slow}`. Namely,
+:math:`t = \tau_\text{syn_slow}`. Namely,
 :math:`I_\text{syn} = \text{alpha\_function}(\tau_\text{syn} = \tau_\text{syn\_fast}) +
 \text{amp_slow} * \text{alpha\_function}(\tau_\text{syn} = \tau_\text{syn\_slow})`.
 Therefore if amp_slow is not 0, the peak current of the total synaptic current is larger

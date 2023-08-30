@@ -402,6 +402,51 @@ jobs:
             build/sphinx-output.log
             build/userdoc/html/
 
+  conda-packaging:
+    # as close as possible to the conda-forge build
+    runs-on: "ubuntu-22.04"
+    if: false
+    needs: [pydocstyle, rstcheck, vale]
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install Mamba
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          python-version: 3.10
+          mamba-version: "*"
+          channels: conda-forge,defaults
+          channel-priority: true
+          activate-environment: test-mambabuild
+          environment-file: environment.yml
+      - shell: bash -el {0}
+        run: |
+          mamba info
+          printenv | sort
+      #- shell: bash -el {0}
+      #  run: mamba install jupyterlab
+
+      #- name: "Test-build conda package"
+      #  shell: bash -l {0}
+      #  run: |
+      #    git clone   
+      #    mkdir -pv build
+      #    cd build
+      #    cmake -DCMAKE_INSTALL_PREFIX=../install ..
+      #    make html |& tee sphinx-output.log
+
+      #- name: Upload artifacts
+      #  uses: actions/upload-artifact@v3
+      #  with:
+      #    path: |
+      #      build/sphinx-output.log
+      #      build/userdoc/html/
+
+
+
   build_linux:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}

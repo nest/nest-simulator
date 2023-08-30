@@ -49,7 +49,7 @@ Incoming spike events induce a postsynaptic change of current modeled
 by the sum of two alpha functions (fast and slow components) for each receptor [2]_.
 This function is normalized such that an event of weight 1.0 results in a peak current
 of the fast component of the alpha function to be 1 pA at
-:math:`t = \tau_\text{syn\_fast}`.
+:math:`t = \tau_\text{syn_fast}`.
 The relative peak current of the slow component is given as amp_slow, at
 :math:`t = \tau_\text{syn\_slow}`. Namely,
 :math:`I_\text{syn} = \text{alpha\_function}(\tau_\text{syn} = \tau_\text{syn\_fast}) +

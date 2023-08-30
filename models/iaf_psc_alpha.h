@@ -86,11 +86,12 @@ where
 
 .. math::
 
-   I_{\text{syn, ex}}(t) = \sum_{j} w_j \sum_k i_{\text{syn, ex}}(t-t_j^k-d_j) \;,
+   I_{\text{syn, X}}(t) = \sum_{j} w_j \sum_k i_{\text{syn, X}}(t-t_j^k-d_j) \;,
 
-where :math:`j` indexes excitatory presynaptic neurons, :math:`k`
-indexes the spike times of neuron :math:`j`, and :math:`d_j` is the
-delay from neuron :math:`j`.
+where :math:`j` indexes either excitatory (:math:`\text{X} = \text{ex}`)
+or inhibitory (:math:`\text{X} = \text{in}`) presynaptic neurons,
+:math:`k` indexes the spike times of neuron :math:`j`, and :math:`d_j`
+is the delay from neuron :math:`j`.
 
 The individual post-synaptic currents (PSCs) are given by
 

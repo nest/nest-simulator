@@ -36,8 +36,8 @@ def test_ginzburg_and_mcculloch_pitts_neurons():
     mcculloch = nest.Create("mcculloch_pitts_neuron")
     nest.Connect(ginzburg, mcculloch)
 
-    assert nest.GetKernelStatus("num_connections") == 1
+    assert nest.num_connections == 1
 
     nest.Simulate(100.0)
 
-    assert nest.GetKernelStatus("local_spike_counter") >= 1
+    assert nest.local_spike_counter >= 1

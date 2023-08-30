@@ -77,7 +77,8 @@ extra_params = {
     "glif_cond": {"params": {"tau_syn": [1.0], "E_rev": [-85.0]}, "receptor_type": 1},
     "glif_psc": {"params": {"tau_syn": [1.0]}, "receptor_type": 1},
     "glif_psc_double_alpha": {
-        "params": {"tau_syn_fast": [1.0], "tau_syn_slow": [2.0], "amp_slow": [0.5]}, "receptor_type": 1,
+        "params": {"tau_syn_fast": [1.0], "tau_syn_slow": [2.0], "amp_slow": [0.5]},
+        "receptor_type": 1,
     },
     "aeif_cond_alpha_multisynapse": {"params": {"tau_syn": [1.0]}, "receptor_type": 1},
     "aeif_cond_beta_multisynapse": {

@@ -205,15 +205,15 @@ div.sd-card-title.sd-font-weight-bold.sd-d-flex-row.docutils a.reference.interna
  
 }
 
-.md-typeset .admonition {
+.md-typeset .admonition, .md-typeset .admonition.tip {
   border-left: .2rem solid var(--nest-blue);
   border-radius: 5px;
 }
 
-.md-typeset .admonition > .admonition-title::before, .md-typeset .admonition.important > .admonition-title::before {
+.md-typeset .admonition > .admonition-title::before, .md-typeset .admonition.important > .admonition-title::before, .md-typeset .admonition.tip > .admonition-title::before {
   color: #fff;
 }
-.md-typeset .admonition > .admonition-title{
+.md-typeset .admonition > .admonition-title, .md-typeset .admonition.tip > .admonition-title {
   background-color: var(--nest-blue);
   color: #fff;
 }

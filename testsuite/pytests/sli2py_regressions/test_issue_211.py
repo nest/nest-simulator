@@ -27,11 +27,10 @@ threads and check whether the actually created connections coincide with the
 expected connections.
 """
 
+import nest
 import pandas as pd
 import pandas.testing as pdtest
 import pytest
-
-import nest
 
 pytestmark = pytest.mark.skipif_missing_threads
 
@@ -39,8 +38,7 @@ pytestmark = pytest.mark.skipif_missing_threads
 @pytest.fixture(autouse=True)
 def set_kernel():
     nest.ResetKernel()
-    nest.resolution = 0.1
-    nest.set(total_num_virtual_procs=2)
+    nest.local_num_threads = 2
 
 
 def get_actual_connections():
@@ -75,9 +73,10 @@ def test_connect_neuron_neuron_multithreaded():
     nest.Connect(n2, n3)
     nest.Connect(n2, n1)
     nest.Connect(n3, n1)
+    nest.Connect(n2, n1, syn_spec={"weight": 1.0})
 
     expected_conns = pd.DataFrame(
-        [[1, 3, 1], [2, 1, 1], [2, 3, 1], [3, 1, 1]],
+        [[1, 3, 1], [2, 1, 1], [2, 1, 1], [2, 3, 1], [3, 1, 1]],
         columns=["source", "target", "target_thread"],
     )
     actual_conns = get_actual_connections()

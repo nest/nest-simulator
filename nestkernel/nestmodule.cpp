@@ -2192,6 +2192,7 @@ NestModule::init( SLIInterpreter* i )
   register_parameter< Gaussian2DParameter >( "gaussian2d" );
   register_parameter< GammaParameter >( "gamma" );
   register_parameter< ExpDistParameter >( "exp_distribution" );
+  register_parameter< GaborParameter >( "gabor" );
 
 #ifdef HAVE_LIBNEUROSIM
   i->createcommand( "CGParse", &cgparse_sfunction );

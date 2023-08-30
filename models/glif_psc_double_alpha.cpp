@@ -80,7 +80,7 @@ nest::glif_psc_double_alpha::Parameters_::Parameters_()
   , asc_decay_( std::vector< double > { 0.003, 0.1 } )    // in 1/ms
   , asc_amps_( std::vector< double > { -9.18, -198.94 } ) // in pA
   , asc_r_( std::vector< double >( 2, 1.0 ) )
-  , tau_syn_fast_( std::vector< double >( 1, 2.0 ) )      // in ms
+  , tau_syn_fast_( std::vector< double >( 1, 2.0 ) ) // in ms
   , tau_syn_slow_( std::vector< double >( 1, 6.0 ) ) // in ms
   , amp_slow_( std::vector< double >( 1, 0.3 ) )     // amplitude relative to the fast component, unitless
   , has_connections_( false )
@@ -493,7 +493,8 @@ nest::glif_psc_double_alpha::pre_run_hook()
 
     // these are determined according to a numeric stability criterion
     // input time parameter shall be in ms, capacity in pF
-    std::tie( V_.P31_fast_[ i ], V_.P32_fast_[ i ] ) = IAFPropagatorAlpha( P_.tau_syn_fast_[ i ], Tau_, P_.C_m_ ).evaluate( h );
+    std::tie( V_.P31_fast_[ i ], V_.P32_fast_[ i ] ) =
+      IAFPropagatorAlpha( P_.tau_syn_fast_[ i ], Tau_, P_.C_m_ ).evaluate( h );
 
     // Slow component
     V_.P11_slow_[ i ] = V_.P22_slow_[ i ] = std::exp( -h / P_.tau_syn_slow_[ i ] );

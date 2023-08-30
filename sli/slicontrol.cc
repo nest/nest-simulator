@@ -1550,11 +1550,11 @@ PclocksFunction::execute( SLIInterpreter* i ) const
     return;
   }
 
-  Token rtime( ( long ) realtime );
-  Token utime( ( long ) foo.tms_utime );
-  Token stime( ( long ) foo.tms_stime );
-  Token cutime( ( long ) foo.tms_cutime );
-  Token cstime( ( long ) foo.tms_cstime );
+  Token rtime( static_cast< long >( realtime ) );
+  Token utime( static_cast< long >( foo.tms_utime ) );
+  Token stime( static_cast< long >( foo.tms_stime ) );
+  Token cutime( static_cast< long >( foo.tms_cutime ) );
+  Token cstime( static_cast< long >( foo.tms_cstime ) );
 
   ArrayDatum result;
   result.push_back( rtime );

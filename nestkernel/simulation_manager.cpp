@@ -502,7 +502,7 @@ nest::SimulationManager::prepare()
   {
 #pragma omp parallel
     {
-      const thread tid = kernel().vp_manager.get_thread_id();
+      const size_t tid = kernel().vp_manager.get_thread_id();
       update_connection_infrastructure( tid );
     } // of omp parallel
   }
@@ -686,7 +686,7 @@ nest::SimulationManager::call_update_()
 }
 
 void
-nest::SimulationManager::update_connection_infrastructure( const thread tid )
+nest::SimulationManager::update_connection_infrastructure( const size_t tid )
 {
 #pragma omp barrier
   if ( tid == 0 )
@@ -778,7 +778,7 @@ nest::SimulationManager::update_()
   // to store done values of the different threads
   std::vector< bool > done;
   bool done_all = true;
-  delay old_to_step;
+  long old_to_step;
 
   double start_current_update = sw_simulate_.elapsed();
   bool update_time_limit_exceeded = false;
@@ -787,7 +787,7 @@ nest::SimulationManager::update_()
 // parallel section begins
 #pragma omp parallel
   {
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
     // We update in a parallel region. Therefore, we need to catch
     // exceptions here and then handle them after the parallel region.
@@ -1062,7 +1062,7 @@ nest::SimulationManager::update_()
   }
 
   // check if any exceptions have been raised
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
     if ( exceptions_raised.at( tid ).get() )
     {
@@ -1080,7 +1080,7 @@ nest::SimulationManager::advance_time_()
   to_do_ -= to_step_ - from_step_;
 
   // advance clock, update modulos, slice counter only if slice completed
-  if ( ( delay ) to_step_ == kernel().connection_manager.get_min_delay() )
+  if ( to_step_ == kernel().connection_manager.get_min_delay() )
   {
     clock_ += Time::step( kernel().connection_manager.get_min_delay() );
     ++slice_;
@@ -1094,7 +1094,7 @@ nest::SimulationManager::advance_time_()
 
   long end_sim = from_step_ + to_do_;
 
-  if ( kernel().connection_manager.get_min_delay() < ( delay ) end_sim )
+  if ( kernel().connection_manager.get_min_delay() < end_sim )
   {
     // update to end of time slice
     to_step_ = kernel().connection_manager.get_min_delay();
@@ -1104,7 +1104,7 @@ nest::SimulationManager::advance_time_()
     to_step_ = end_sim; // update to end of simulation time
   }
 
-  assert( to_step_ - from_step_ <= ( long ) kernel().connection_manager.get_min_delay() );
+  assert( to_step_ - from_step_ <= kernel().connection_manager.get_min_delay() );
 }
 
 void

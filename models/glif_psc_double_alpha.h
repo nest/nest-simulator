@@ -270,7 +270,7 @@ private:
     std::vector< double > asc_decay_;    //!< predefined time scale in 1/ms
     std::vector< double > asc_amps_;     //!< in pA
     std::vector< double > asc_r_;        //!< coefficient
-    std::vector< double > tau_syn_fast_;      //!< synaptic port time constants in ms
+    std::vector< double > tau_syn_fast_; //!< synaptic port time constants in ms
     std::vector< double > tau_syn_slow_; //!< synaptic port time constants in ms
     std::vector< double > amp_slow_;     //!< synaptic port time constants in ms
 
@@ -307,8 +307,8 @@ private:
     std::vector< double > ASCurrents_; //!< after-spike currents in pA
     double ASCurrents_sum_;            //!< in pA
     int refractory_steps_;             //!< Number of refractory steps remaining
-    std::vector< double > y1_fast_;         //!< synapse current evolution state 1 in pA
-    std::vector< double > y2_fast_;         //!< synapse current evolution state 2 in pA
+    std::vector< double > y1_fast_;    //!< synapse current evolution state 1 in pA
+    std::vector< double > y2_fast_;    //!< synapse current evolution state 2 in pA
     std::vector< double > y1_slow_;    //!< synapse current evolution state 1 in pA
     std::vector< double > y2_slow_;    //!< synapse current evolution state 2 in pA
 
@@ -347,8 +347,8 @@ private:
     std::vector< double > P11_fast_; //!< synaptic current evolution parameter
     std::vector< double > P21_fast_; //!< synaptic current evolution parameter
     std::vector< double > P22_fast_; //!< synaptic current evolution parameter
-    double P30_;                //!< membrane current/voltage evolution parameter
-    double P33_;                //!< membrane voltage evolution parameter
+    double P30_;                     //!< membrane current/voltage evolution parameter
+    double P33_;                     //!< membrane voltage evolution parameter
     std::vector< double > P31_fast_; //!< synaptic/membrane current evolution parameter
     std::vector< double > P32_fast_; //!< synaptic/membrane current evolution parameter
 

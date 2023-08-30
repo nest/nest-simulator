@@ -57,6 +57,7 @@ public:
 
   /**
    * Resize the structures for the Connector objects if necessary.
+   *
    * This function should be called after number of threads, min_delay,
    * max_delay, and time representation have been changed in the scheduler.
    * The TimeConverter is used to convert times from the old to the new
@@ -74,6 +75,7 @@ public:
 
   /**
    * Return pointer to protoype for given synapse id.
+   *
    * @throws UnknownSynapseType
    *
    * @todo: make the return type const, after the increment of
@@ -86,6 +88,7 @@ public:
 
   /**
    * Register a node-model prototype.
+   *
    * This function must be called exactly once for each model class to make
    * it known in the simulator. The natural place for a call to this function
    * is in a *module.cpp file.
@@ -100,6 +103,7 @@ public:
 
   /**
    * Copy an existing model and register it as a new model.
+   *
    * This function allows users to create their own, cloned models.
    * @param old_name name of existing model.
    * @param new_name name of new model.
@@ -111,6 +115,7 @@ public:
 
   /**
    * Set the default parameters of a model.
+   *
    * @param name of model.
    * @param params default parameters to be set.
    * @return true if the operation succeeded, else false
@@ -184,6 +189,7 @@ private:
 
   /**
    * Copy an existing node model and register it as a new model.
+   *
    * @param old_id ID of existing model.
    * @param new_name name of new model.
    * @return model ID of new Model object.
@@ -193,6 +199,7 @@ private:
 
   /**
    * Copy an existing synapse model and register it as a new model.
+   *
    * @param old_id ID of existing model.
    * @param new_name name of new model.
    * @return model ID of new Model object.
@@ -202,6 +209,7 @@ private:
 
   /**
    * Set the default parameters of a model.
+   *
    * @param model_id of model.
    * @param params default parameters to be set.
    * @see set_model_defaults, set_synapse_defaults_
@@ -210,6 +218,7 @@ private:
 
   /**
    * Set the default parameters of a model.
+   *
    * @param name of model.
    * @param params default parameters to be set.
    * @see set_model_defaults, set_node_defaults_
@@ -226,8 +235,9 @@ private:
 
   /**
    * List of usable node models. This list is cleared and repopulated
-   * upon application startup and calls to ResetKernel. It contains
-   * copies of the built-in models, models registered from extension
+   * upon application startup and calls to ResetKernel.
+   *
+   * It contains copies of the built-in models, models registered from extension
    * modules, and models created by calls to CopyModel(). The elements
    * of this list also keep the user-modified defaults.
    */
@@ -239,8 +249,9 @@ private:
   std::vector< ConnectorModel* > builtin_connection_models_;
 
   /**
-   * The list of usable connection models. The first dimension keeps
-   * one entry per thread, the second dimension has the actual models.
+   * The list of usable connection models.
+   *
+   * The first dimension keeps one entry per thread, the second dimension has the actual models.
    * This list is cleared and repopulated upon application startup and
    * calls to ResetKernel. The inner list contains copies of the
    * built-in models, models registered from extension modules, and

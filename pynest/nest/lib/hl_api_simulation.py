@@ -189,10 +189,12 @@ def ResetKernel():
     * all network nodes
     * all connections
     * all user-defined neuron and synapse models
+
     are deleted, and
 
     * time
     * random generators
+
     are reset. The only exception is that dynamically loaded modules are not
     unloaded. This may change in a future version of NEST.
 

@@ -54,6 +54,7 @@ extensions = [
     "sphinx.ext.doctest",
     "sphinx.ext.intersphinx",
     "sphinx.ext.mathjax",
+    "sphinx_carousel.carousel",
     "IPython.sphinxext.ipython_console_highlighting",
     "nbsphinx",
     "sphinx_design",
@@ -77,6 +78,9 @@ sphinx_gallery_conf = {
     "plot_gallery": "False",
     "download_all_examples": False,
 }
+
+carousel_show_captions_below = True
+carousel_show_controls = True
 
 # General information about the project.
 project = "NEST Simulator user documentation"
@@ -167,7 +171,7 @@ html_theme_options = {
 }
 
 html_static_path = ["static"]
-html_additional_pages = {"index": "index.html"}
+# html_additional_pages = {"index": "index.html"}
 html_sidebars = {"**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]}
 
 html_favicon = "static/img/nest_favicon.ico"

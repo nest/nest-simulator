@@ -48,16 +48,18 @@ Description
 Incoming spike events induce a postsynaptic change of current modeled
 by the sum of two alpha functions (fast and slow components) for each receptor [2]_.
 This function is normalized such that an event of weight 1.0 results in a peak current
-of the fast component of the alpha function to be 1 pA at :math:`t = tau_syn_fast`.
+of the fast component of the alpha function to be 1 pA at
+:math:`t = \tau_\text{syn\_fast}`.
 The relative peak current of the slow component is given as amp_slow, at
-:math:`t = tau_syn_slow`. Namely,
-:math:`I_{syn} = alpha_function(tau_syn=tau_syn_fast) + amp_slow *
-alpha_function(tau_syn=tau_syn_slow)`. Therefore if amp_slow is not 0, the peak current
-of the total synaptic current is larger than the specified weight. By default,
-glif_psc_double_alpha has a single synapse that is accessible through receptor_port 1.
-An arbitrary number of synapses with different time constants and amp_slow can be 
-configured by setting the desired parameters of tau_syn_fast, tau_syn_slow, and amp_slow
-arrays. The resulting synapses are addressed through receptor_port 1, 2, 3, ....
+:math:`t = \tau_\text{syn\_slow}`. Namely,
+:math:`I_\text{syn} = \text{alpha\_function}(\tau_\text{syn} = \tau_\text{syn\_fast}) +
+\text{amp_slow} * \text{alpha\_function}(\tau_\text{syn} = \tau_\text{syn\_slow})`.
+Therefore if amp_slow is not 0, the peak current of the total synaptic current is larger
+than the specified weight. By default, glif_psc_double_alpha has a single synapse that
+is accessible through receptor_port 1. An arbitrary number of synapses with different
+time constants and amp_slow can be configured by setting the desired parameters of
+tau_syn_fast, tau_syn_slow, and amp_slow arrays. The resulting synapses are addressed
+through receptor_port 1, 2, 3, ....
 
 The five GLIF models are:
 

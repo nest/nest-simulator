@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# ticket_459.py
+# test_ticket_459.py
 #
 # This file is part of NEST.
 #

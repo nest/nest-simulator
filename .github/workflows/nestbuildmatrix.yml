@@ -404,7 +404,12 @@ jobs:
 
   conda-packaging:
     # as close as possible to the conda-forge build
-    runs-on: "ubuntu-22.04"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu-22.04", "macos-latest"]
+
     if: false
     needs: [pydocstyle, rstcheck, vale]
     steps:

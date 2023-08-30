@@ -30,8 +30,8 @@ import nest
 
 
 @pytest.mark.skipif_missing_threads
-@pytest.mark.parametrize("num_threads", [1, 2, 3, 4])
-@pytest.mark.parametrize("num_neurons", range(1, 11, 1))
+@pytest.mark.parametrize("num_threads", [2, 3, 4])
+@pytest.mark.parametrize("num_neurons", range(1, 11))
 def test_getconnections_with_pre_post_device_multithreaded(num_threads, num_neurons):
     """
     Multithreaded test of `GetConnections` with devices as source and target.

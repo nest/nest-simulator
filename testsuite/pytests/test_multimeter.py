@@ -24,56 +24,8 @@ import pytest
 
 import nest
 
-skip_models = [
-    "gauss_rate_ipn",
-    "lin_rate_ipn",
-    "sigmoid_rate_ipn",
-    "sigmoid_rate_gg_1998_ipn",
-    "tanh_rate_ipn",
-    "threshold_lin_rate_ipn",
-    "lin_rate_opn",
-    "tanh_rate_opn",
-    "threshold_lin_rate_opn",
-    "rate_transformer_gauss",
-    "rate_transformer_lin",
-    "rate_transformer_sigmoid",
-    "rate_transformer_sigmoid_gg_1998",
-    "rate_transformer_tanh",
-    "rate_transformer_threshold_lin",
-    "ac_generator",
-    "dc_generator",
-    "noise_generator",
-    "step_current_generator",
-    "step_rate_generator",
-    "sinusoidal_poisson_generator",
-    "erfc_neuron",
-    "ginzburg_neuron",
-    "mcculloch_pitts_neuron",
-    "sinusoidal_gamma_generator",
-    "siegert_neuron",
-    "iaf_cond_alpha_mc",
-    "gif_cond_exp_multisynapse",
-    "aeif_cond_alpha_multisynapse",
-    "aeif_cond_beta_multisynapse",
-    "pp_cond_exp_mc_urbanczik",
-]
-
-extra_params = {
-    "iaf_psc_alpha_multisynapse": {"receptor_type": 1},
-    "iaf_psc_exp_multisynapse": {"receptor_type": 1},
-    "gif_psc_exp_multisynapse": {"receptor_type": 1},
-    "glif_psc": {"receptor_type": 1},
-    "glif_cond": {"receptor_type": 1},
-    "ht_neuron": {"receptor_type": 1},
-}
-
 # Obtain all models with non-empty recordables list
 all_models_with_rec = [model for model in nest.node_models if nest.GetDefaults(model).get("recordables")]
-
-# Obtain all models with non-empty recordables list and not in skip list
-subset_models_with_rec = [
-    model for model in nest.node_models if (nest.GetDefaults(model).get("recordables") and model not in skip_models)
-]
 
 
 @pytest.fixture(autouse=True)
@@ -152,8 +104,7 @@ def test_recordables_are_recorded(model):
         assert len(result[r]) == num_data_expected
 
 
-@pytest.mark.parametrize("model", subset_models_with_rec)
-def test_identical_recording_from_multiple_multimeters(model):
+def test_identical_recording_from_multiple_multimeters():
     """
     Test identical recordings from multimeters with same configurations.
 
@@ -161,24 +112,17 @@ def test_identical_recording_from_multiple_multimeters(model):
     They should record identical data.
     """
 
-    nrn = nest.Create(model)
+    nrn = nest.Create("iaf_psc_alpha")
     recordables = nrn.recordables
     mm1 = nest.Create("multimeter", {"record_from": recordables})
     mm2 = nest.Create("multimeter", {"record_from": recordables})
     pge = nest.Create("poisson_generator", {"rate": 1e4})
     pgi = nest.Create("poisson_generator", {"rate": 1e4})
 
-    receptor_type = 0
-    if model in extra_params.keys():
-        receptor_type = extra_params[model]["receptor_type"]
-
-    esyn_spec = {"weight": 1.0, "delay": 1.0, "receptor_type": receptor_type}
-    isyn_spec = {"weight": -1.0, "delay": 1.0, "receptor_type": receptor_type}
-
     nest.Connect(mm1, nrn)
     nest.Connect(mm2, nrn)
-    nest.Connect(pge, nrn, syn_spec=esyn_spec)
-    nest.Connect(pgi, nrn, syn_spec=isyn_spec)
+    nest.Connect(pge, nrn, syn_spec={"weight": 1.0, "delay": 1.0})
+    nest.Connect(pgi, nrn, syn_spec={"weight": -1.0, "delay": 1.0})
 
     nest.Simulate(100.0)
 

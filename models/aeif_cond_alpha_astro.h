@@ -155,7 +155,7 @@ The following parameters can be set in the status dictionary.
 **Synaptic parameters**
 -------------------------------------------------------------------------------
  E_ex       mV      Excitatory reversal potential
- tau_syn_ex ms      Rise time of excitatory synaptic conductance (alpha
+ tau_syn_ex ms      Rise time of the excitatory synaptic conductance (alpha
                     function)
  E_in       mV      Inhibitory reversal potential
  tau_syn_in ms      Rise time of the inhibitory synaptic conductance

@@ -75,12 +75,13 @@ Nadkarni & Jung (2003).
 
 The model has three dynamic state variables: the concentration of inositol
 1,4,5-trisphosphate in the astrocyte (:math:`\mathrm{[IP3]}`), the calcium concentration in
-the astrocytic cytosol (:math:`\mathrm{[Ca^{2+}]}`), and the fraction of active IP3 receptors on
-the astrocytic endoplasmatic reticulum (:math:`h_\mathrm{IP3R}`).
+the astrocytic cytosol (:math:`\mathrm{[Ca^{2+}]}`), and the fraction of IP3 receptors
+on the astrocytic endoplasmic reticulum (ER) that are not yet inactivated by
+calcium (:math:`h_\mathrm{IP3R}`).
 
-In this model, excitatory synaptic inputs to the astrocyte trigger its IP3
-generation and then change its calcium dynamics. This might induce an astrocytic
-output of a slow inward current (SIC), which is dependent on its calcium
+In this model, excitatory synaptic inputs to the astrocyte trigger IP3 generation
+and change in calcium dynamics in the astrocyte. This might induce an astrocytic
+output in the form of a slow inward current (SIC), which is dependent on its calcium
 dynamics, to its target neurons. The input and output are based on the equations
 in Nadkarni & Jung (2003) but with adaptations:
 
@@ -97,7 +98,7 @@ In the absence of inputs, :math:`\mathrm{[IP3]}` decays to its baseline value
 (:math:`[\mathrm{IP3}]_0`) with the time constant (:math:`\tau_\mathrm{IP3}`). Each time when an
 astrocyte receives an excitatory synaptic input, it triggers an instantaneous
 increase of :math:`\mathrm{[IP3]}`. In this implementation, the inputs are spike events
-sent from neurons. The summed synaptic weight the astrocyte receives at time
+sent from neurons or generators. The summed synaptic weight the astrocyte receives at time
 :math:`t` is given by :math:`J_\mathrm{syn}(t)`. The parameter
 :math:`\Delta_\mathrm{IP3}` scales the impact of synaptic inputs on the
 IP3 dynamics.
@@ -114,11 +115,10 @@ calcium:
 
 Here, :math:`\mathrm{[Ca^{2+}]}` is the cytosolic calcium concentration, and :math:`J_\mathrm{noise}`
 is the current input. :math:`J_\mathrm{channel}`, :math:`J_\mathrm{pump}`, :math:`J_\mathrm{leak}`
-are the calcium flux defined as in Nadkarni & Jung (2003), which are affected by
-:math:`\mathrm{[IP3]}`.
+are the calcium fluxes defined as in Nadkarni & Jung (2003).
 
 **Output:** If the astrocyte receives excitatory synaptic inputs, it might
-output SIC to the its target neurons. This current depends on the cytosolic
+output SIC to its target neurons. This current depends on the cytosolic
 calcium concentration. This dependency is modeled according to the expressions
 first proposed in Nadkarni & Jung (2003):
 
@@ -133,7 +133,7 @@ where
  y = \left( \mathrm{[Ca^{2+}]} - \mathrm{SIC_{th}} \right)/\mathrm{nM}
 
 When the cytosolic calcium concentration of the astrocyte exceeds the threshold
-value (:math:`\mathrm{SIC_{th}}`) a SIC output (:math:`I_\mathrm{SIC}`) is generated.
+value (:math:`\mathrm{SIC_{th}}`), a SIC output (:math:`I_\mathrm{SIC}`) is generated.
 This thresholding is modeled as a Heaviside function (:math:`\mathrm{H(\cdot)}`). In this
 implementation, the SIC threshold :math:`\mathrm{SIC_{th}}` as well as the scaling
 constant :math:`\mathrm{SIC_{scale}}` are treated as model parameters that can be

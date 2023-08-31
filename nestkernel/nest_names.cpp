@@ -386,7 +386,7 @@ const Name q_stc( "q_stc" );
 
 const Name radius( "radius" );
 const Name ratio_ER_cyt( "ratio_ER_cyt" );
-const Name delta_IP3( "delta_IP3");
+const Name delta_IP3( "delta_IP3" );
 const Name k_IP3R( "k_IP3R" );
 const Name rate_L( "rate_L" );
 const Name rate( "rate" );
@@ -505,7 +505,7 @@ const Name tau_decay_ex( "tau_decay_ex" );
 const Name tau_decay_in( "tau_decay_in" );
 const Name tau_epsp( "tau_epsp" );
 const Name tau_fac( "tau_fac" );
-const Name tau_IP3( "tau_IP3");
+const Name tau_IP3( "tau_IP3" );
 const Name tau_m( "tau_m" );
 const Name tau_max( "tau_max" );
 const Name tau_minus( "tau_minus" );

@@ -150,7 +150,8 @@ DiffusionConnectionEvent::operator()()
   receiver_->handle( *this );
 }
 
-void SICEvent::operator()()
+void
+SICEvent::operator()()
 {
   receiver_->handle( *this );
 }

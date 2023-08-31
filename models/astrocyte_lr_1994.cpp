@@ -79,16 +79,17 @@ astrocyte_lr_1994_dynamics( double time, const double y[], double f[], void* pno
   const double& calc = y[ S::Ca ];
   const double& h_ip3r = y[ S::h_IP3R ];
 
-  const double alpha_h_ip3r = node.P_.k_IP3R_ * node.P_.Kd_inh_ * ( ip3 + node.P_.Kd_IP3_1_ ) / ( ip3 +
-      node.P_.Kd_IP3_2_ );
+  const double alpha_h_ip3r =
+    node.P_.k_IP3R_ * node.P_.Kd_inh_ * ( ip3 + node.P_.Kd_IP3_1_ ) / ( ip3 + node.P_.Kd_IP3_2_ );
   const double beta_h_ip3r = node.P_.k_IP3R_ * calc;
-  const double J_pump = node.P_.rate_SERCA_ * std::pow(calc, 2) / (std::pow(node.P_.Km_SERCA_, 2) + std::pow(calc, 2));
-  const double m_inf = ip3 / (ip3 + node.P_.Kd_IP3_1_);
-  const double n_inf = calc / (calc + node.P_.Kd_act_);
-  const double calc_ER = (node.P_.Ca_tot_ - calc) / node.P_.ratio_ER_cyt_;
-  const double J_leak = node.P_.ratio_ER_cyt_ * node.P_.rate_L_ * (calc_ER - calc);
-  const double J_channel = node.P_.ratio_ER_cyt_ * node.P_.rate_IP3R_ * std::pow(m_inf, 3) * std::pow(n_inf, 3) *
-    std::pow(h_ip3r, 3) * (calc_ER - calc);
+  const double J_pump =
+    node.P_.rate_SERCA_ * std::pow( calc, 2 ) / ( std::pow( node.P_.Km_SERCA_, 2 ) + std::pow( calc, 2 ) );
+  const double m_inf = ip3 / ( ip3 + node.P_.Kd_IP3_1_ );
+  const double n_inf = calc / ( calc + node.P_.Kd_act_ );
+  const double calc_ER = ( node.P_.Ca_tot_ - calc ) / node.P_.ratio_ER_cyt_;
+  const double J_leak = node.P_.ratio_ER_cyt_ * node.P_.rate_L_ * ( calc_ER - calc );
+  const double J_channel = node.P_.ratio_ER_cyt_ * node.P_.rate_IP3R_ * std::pow( m_inf, 3 ) * std::pow( n_inf, 3 )
+    * std::pow( h_ip3r, 3 ) * ( calc_ER - calc );
 
   // for alpha-shaped SIC
   const double& dsic = y[ S::DSIC ];
@@ -109,22 +110,22 @@ astrocyte_lr_1994_dynamics( double time, const double y[], double f[], void* pno
  * ---------------------------------------------------------------- */
 
 nest::astrocyte_lr_1994::Parameters_::Parameters_()
-  : Ca_tot_( 2.0 )                // uM
-  , IP3_0_( 0.16 )                // uM
-  , Kd_IP3_1_( 0.13 )             // uM
-  , Kd_IP3_2_( 0.9434 )           // uM
-  , Kd_act_( 0.08234 )            // uM
-  , Kd_inh_( 1.049 )              // uM
-  , Km_SERCA_( 0.1 )              // uM
+  : Ca_tot_( 2.0 )      // uM
+  , IP3_0_( 0.16 )      // uM
+  , Kd_IP3_1_( 0.13 )   // uM
+  , Kd_IP3_2_( 0.9434 ) // uM
+  , Kd_act_( 0.08234 )  // uM
+  , Kd_inh_( 1.049 )    // uM
+  , Km_SERCA_( 0.1 )    // uM
   , SIC_scale_( 1.0 )
-  , SIC_th_( 0.19669 )            // uM
-  , delta_IP3_( 5.0 )             // uM
-  , k_IP3R_( 0.0002 )             // 1/(uM*ms)
-  , rate_IP3R_( 0.006 )           // 1/ms
-  , rate_L_( 0.00011 )            // 1/ms
-  , rate_SERCA_( 0.0009 )         // uM/ms
+  , SIC_th_( 0.19669 )    // uM
+  , delta_IP3_( 5.0 )     // uM
+  , k_IP3R_( 0.0002 )     // 1/(uM*ms)
+  , rate_IP3R_( 0.006 )   // 1/ms
+  , rate_L_( 0.00011 )    // 1/ms
+  , rate_SERCA_( 0.0009 ) // uM/ms
   , ratio_ER_cyt_( 0.185 )
-  , tau_IP3_( 7142.0 )            // ms
+  , tau_IP3_( 7142.0 ) // ms
   , alpha_SIC_( false )
   , SIC_reactivate_th_( 0.19669 ) // uM
   , SIC_reactivate_time_( 100 )   // ms
@@ -150,7 +151,8 @@ nest::astrocyte_lr_1994::State_::State_( const State_& s )
   }
 }
 
-nest::astrocyte_lr_1994::State_& nest::astrocyte_lr_1994::State_::operator=( const State_& s )
+nest::astrocyte_lr_1994::State_&
+nest::astrocyte_lr_1994::State_::operator=( const State_& s )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
   {
@@ -248,7 +250,8 @@ nest::astrocyte_lr_1994::Parameters_::set( const DictionaryDatum& d, Node* node 
   }
   if ( delta_IP3_ < 0 )
   {
-    throw BadProperty( "Parameter determining the rate of astrocytic IP3 generation induced by synaptic input must be non-negative." );
+    throw BadProperty(
+      "Parameter determining the rate of astrocytic IP3 generation induced by synaptic input must be non-negative." );
   }
   if ( k_IP3R_ < 0 )
   {
@@ -260,7 +263,9 @@ nest::astrocyte_lr_1994::Parameters_::set( const DictionaryDatum& d, Node* node 
   }
   if ( SIC_th_ < 0 )
   {
-    throw BadProperty( "Threshold that determines the minimal level of intracellular astrocytic calcium sufficient to induce SIC must be non-negative." );
+    throw BadProperty(
+      "Threshold that determines the minimal level of intracellular astrocytic calcium sufficient to induce SIC must "
+      "be non-negative." );
   }
   if ( rate_L_ < 0 )
   {
@@ -288,11 +293,14 @@ nest::astrocyte_lr_1994::Parameters_::set( const DictionaryDatum& d, Node* node 
   }
   if ( SIC_reactivate_th_ < 0 or SIC_reactivate_th_ > SIC_th_ )
   {
-    throw BadProperty( "Calcium level for the reactivation of alpha-shaped SIC must be non-negative and not larger than SIC_th." );
+    throw BadProperty(
+      "Calcium level for the reactivation of alpha-shaped SIC must be non-negative and not larger than SIC_th." );
   }
   if ( SIC_reactivate_time_ < 0 )
   {
-    throw BadProperty( "Time required for calcium to stay lower than SIC_reactivate_th for the reactivation of alpha-shaped SIC must be non-negative." );
+    throw BadProperty(
+      "Time required for calcium to stay lower than SIC_reactivate_th for the reactivation of alpha-shaped SIC must be "
+      "non-negative." );
   }
 }
 
@@ -311,7 +319,7 @@ nest::astrocyte_lr_1994::State_::set( const DictionaryDatum& d, const Parameters
   updateValueParam< double >( d, names::Ca, y_[ Ca ], node );
   updateValueParam< double >( d, names::h_IP3R, y_[ h_IP3R ], node );
 
-  if ( y_[ IP3 ] <  0 )
+  if ( y_[ IP3 ] < 0 )
   {
     throw BadProperty( "IP3 concentration must be non-negative." );
   }
@@ -321,7 +329,7 @@ nest::astrocyte_lr_1994::State_::set( const DictionaryDatum& d, const Parameters
   }
   if ( y_[ h_IP3R ] < 0 || y_[ h_IP3R ] > 1 )
   {
-     throw BadProperty( "The fraction of active IP3 receptors on the astrocytic ER must be between 0 and 1." );
+    throw BadProperty( "The fraction of active IP3 receptors on the astrocytic ER must be between 0 and 1." );
   }
 }
 
@@ -392,7 +400,8 @@ nest::astrocyte_lr_1994::init_buffers_()
 {
   B_.spike_exc_.clear(); // includes resize
   B_.currents_.clear();
-  B_.sic_values.resize( kernel().connection_manager.get_min_delay(), 0.0 ); // set size of SIC buffer according to min_delay
+  B_.sic_values.resize(
+    kernel().connection_manager.get_min_delay(), 0.0 ); // set size of SIC buffer according to min_delay
 
   ArchivingNode::clear_history();
 
@@ -441,7 +450,6 @@ nest::astrocyte_lr_1994::init_buffers_()
   B_.i0_ex_ = 1.0 * numerics::e / P_.tau_SIC_;
   B_.sic_started_flag_ = false;
   B_.sic_off_timer_ = 0.0;
-
 }
 
 void
@@ -507,9 +515,9 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
     // (V_tot - V_cyt)/V_cyt. Then, cytosolic calcium concentration should not
     // be larger than Ca_tot*(V_tot/V_cyt), which is equal to
     // Ca_tot + Ca_tot*ratio_ER_cyt.
-    if ( S_.y_[ State_::Ca ] > P_.Ca_tot_ + P_.Ca_tot_*P_.ratio_ER_cyt_ )
+    if ( S_.y_[ State_::Ca ] > P_.Ca_tot_ + P_.Ca_tot_ * P_.ratio_ER_cyt_ )
     {
-      S_.y_[ State_::Ca ] = P_.Ca_tot_ + P_.Ca_tot_*P_.ratio_ER_cyt_;
+      S_.y_[ State_::Ca ] = P_.Ca_tot_ + P_.Ca_tot_ * P_.ratio_ER_cyt_;
     }
     // Also, it should not be smaller than 0.
     else if ( S_.y_[ State_::Ca ] < 0.0 )
@@ -535,9 +543,9 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
         // timer for a delay before initiating the SIC
         B_.sic_on_timer_ += B_.step_;
         // initiate an alpha-shaped SIC if conditions are met
-        if ( B_.sic_started_flag_ == false and B_.sic_on_timer_ >= P_.delay_SIC_ and calc_thr > 1.0)
+        if ( B_.sic_started_flag_ == false and B_.sic_on_timer_ >= P_.delay_SIC_ and calc_thr > 1.0 )
         {
-          S_.y_[ State_::DSIC ] += P_.SIC_scale_*std::log( calc_thr )*B_.i0_ex_;
+          S_.y_[ State_::DSIC ] += P_.SIC_scale_ * std::log( calc_thr ) * B_.i0_ex_;
           // block the next SIC once initiated
           B_.sic_started_flag_ = true;
         }
@@ -578,7 +586,7 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
     {
       if ( calc_thr > 1.0 )
       {
-        sic_value = std::log( calc_thr )*P_.SIC_scale_;
+        sic_value = std::log( calc_thr ) * P_.SIC_scale_;
       }
     }
     B_.sic_values[ lag ] = sic_value;

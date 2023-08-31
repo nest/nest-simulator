@@ -440,17 +440,17 @@ protected:
 
 private:
   NodeCollectionPTR astrocytes_;
-  double p_; //!< connection probability for neuron=>neuron connections
-  double p_syn_astro_; //!< probability of astrocyte pairing
-  bool astro_pool_by_index_; //!< if true, select astrocyte pool per target by index
-  size_t max_astro_per_target_; //!< max number of astrocytes per tartget neuron
-  std::vector< ConnParameter* > weights_n2n_; //!< synaptic weights neuron=>neuron
-  std::vector< ConnParameter* > weights_n2a_; //!< synaptic weights neuron=>astrocyte
-  std::vector< ConnParameter* > delays_n2n_; //!< synaptic delays neuron=>neuron and neuron=>astrocyte
-  std::vector< ConnParameter* > delays_n2a_; //!< synaptic delays neuron=>neuron and neuron=>astrocyte
+  double p_;                                   //!< connection probability for neuron=>neuron connections
+  double p_syn_astro_;                         //!< probability of astrocyte pairing
+  bool astro_pool_by_index_;                   //!< if true, select astrocyte pool per target by index
+  size_t max_astro_per_target_;                //!< max number of astrocytes per tartget neuron
+  std::vector< ConnParameter* > weights_n2n_;  //!< synaptic weights neuron=>neuron
+  std::vector< ConnParameter* > weights_n2a_;  //!< synaptic weights neuron=>astrocyte
+  std::vector< ConnParameter* > delays_n2n_;   //!< synaptic delays neuron=>neuron and neuron=>astrocyte
+  std::vector< ConnParameter* > delays_n2a_;   //!< synaptic delays neuron=>neuron and neuron=>astrocyte
   std::vector< size_t > synapse_model_id_a2n_; //!< synapse models astrocyte=>neuron
-  std::vector< ConnParameter* > weights_a2n_; //!< synaptic weights astrocyte=>neuron
-  std::vector< ConnParameter* > delays_a2n_; //!< synaptic weights astrocyte=>neuron
+  std::vector< ConnParameter* > weights_a2n_;  //!< synaptic weights astrocyte=>neuron
+  std::vector< ConnParameter* > delays_a2n_;   //!< synaptic weights astrocyte=>neuron
 };
 
 class SymmetricBernoulliBuilder : public ConnBuilder

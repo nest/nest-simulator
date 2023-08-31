@@ -602,7 +602,7 @@ public:
    */
   virtual void handle( DelayedRateConnectionEvent& e );
 
- /**
+  /**
    * Handler for delay rate neuron events.
    * @see handle(thread, DelayedRateConnectionEvent&)
    * @ingroup event_interface

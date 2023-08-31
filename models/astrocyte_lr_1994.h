@@ -284,33 +284,35 @@ private:
   struct Parameters_
   {
     // parameters according to Nadkarni & Jung, 2003
-    double Ca_tot_;       //!< Total free astrocytic calcium concentration in uM
-    double IP3_0_;        //!< Baseline value of the astrocytic IP3 concentration in uM
-    double Kd_IP3_1_;     //!< First astrocytic IP3R dissociation constant of IP3 in uM
-    double Kd_IP3_2_;     //!< Second astrocytic IP3R dissociation constant of IP3 in uM
-    double Kd_act_;       //!< Astrocytic IP3R dissociation constant of calcium (activation) in uM
-    double Kd_inh_;       //!< Astrocytic IP3R dissociation constant of calcium (inhibition) in uM
-    double Km_SERCA_;     //!< Half-activation constant of astrocytic SERCA pump in uM
-    double SIC_scale_;    //!< Parameter determining the scale of astrocytic SIC output
-    double SIC_th_;       //!< Threshold that determines the minimal level of intracellular astrocytic calcium sufficient to induce SIC in uM
-    double delta_IP3_;    //!< Parameter determining the rate of astrocytic IP3 generation induced by synaptic input in uM
-    double k_IP3R_;       //!< Astrocytic IP3R binding constant for calcium inhibition in 1/(uM*ms)
-    double rate_IP3R_;    //!< Maximum rate of calcium release via astrocytic IP3R in 1/ms
-    double rate_L_;       //!< Rate constant of calcium leak from astrocytic ER to cytosol in 1/ms
-    double rate_SERCA_;   //!< Maximum rate of calcium uptake by astrocytic SERCA pump in uM/ms
+    double Ca_tot_;    //!< Total free astrocytic calcium concentration in uM
+    double IP3_0_;     //!< Baseline value of the astrocytic IP3 concentration in uM
+    double Kd_IP3_1_;  //!< First astrocytic IP3R dissociation constant of IP3 in uM
+    double Kd_IP3_2_;  //!< Second astrocytic IP3R dissociation constant of IP3 in uM
+    double Kd_act_;    //!< Astrocytic IP3R dissociation constant of calcium (activation) in uM
+    double Kd_inh_;    //!< Astrocytic IP3R dissociation constant of calcium (inhibition) in uM
+    double Km_SERCA_;  //!< Half-activation constant of astrocytic SERCA pump in uM
+    double SIC_scale_; //!< Parameter determining the scale of astrocytic SIC output
+    double SIC_th_; //!< Threshold that determines the minimal level of intracellular astrocytic calcium sufficient to
+                    //!< induce SIC in uM
+    double delta_IP3_;  //!< Parameter determining the rate of astrocytic IP3 generation induced by synaptic input in uM
+    double k_IP3R_;     //!< Astrocytic IP3R binding constant for calcium inhibition in 1/(uM*ms)
+    double rate_IP3R_;  //!< Maximum rate of calcium release via astrocytic IP3R in 1/ms
+    double rate_L_;     //!< Rate constant of calcium leak from astrocytic ER to cytosol in 1/ms
+    double rate_SERCA_; //!< Maximum rate of calcium uptake by astrocytic SERCA pump in uM/ms
     double ratio_ER_cyt_; //!< Ratio between astrocytic ER and cytosol volumes
     double tau_IP3_;      //!< Time constant of the exponential decay of astrocytic IP3 in ms
 
     // parameters for alpha-shaped SIC
     bool alpha_SIC_;             //!< Alpha-shaped SIC is generated if true
     double SIC_reactivate_th_;   //!< Calcium level for the reactivation of alpha-shaped SIC in uM
-    double SIC_reactivate_time_; //!< Time required for calcium to stay lower than SIC_reactivate_th for the reactivation of alpha-shaped SIC in ms
+    double SIC_reactivate_time_; //!< Time required for calcium to stay lower than SIC_reactivate_th for the
+                                 //!< reactivation of alpha-shaped SIC in ms
     double delay_SIC_;           //!< Delay of alpha-shaped SIC in ms
     double tau_SIC_;             //!< Time constant of alpha-shaped SIC in ms
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
     void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
   };
 

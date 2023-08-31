@@ -37,7 +37,7 @@
 Short description
 +++++++++++++++++
 
-Current-based generalized leaky integrate-and-fire (GLIF) models
+Current-based generalized leaky integrate-and-fire (GLIF) models with double alpha-function
 (from the Allen Institute)
 
 Description
@@ -49,17 +49,20 @@ Incoming spike events induce a postsynaptic change of current modeled
 by the sum of two alpha functions (fast and slow components) for each receptor [2]_.
 This function is normalized such that an event of weight 1.0 results in a peak current
 of the fast component of the alpha function to be 1 pA at
-:math:`t = \tau_\text{syn_fast}`.
-The relative peak current of the slow component is given as amp_slow, at
+:math:`t = \tau_\text{syn, fast}`.
+The relative peak current of the slow component is given as ``amp_slow``, at
 :math:`t = \tau_\text{syn_slow}`. Namely,
-:math:`I_\text{syn} = \text{alpha_function}(\tau_\text{syn} = \tau_\text{syn_fast}) +
-\text{amp_slow} * \text{alpha_function}(\tau_\text{syn} = \tau_\text{syn_slow})`.
-Therefore if amp_slow is not 0, the peak current of the total synaptic current is larger
-than the specified weight. By default, glif_psc_double_alpha has a single synapse that
-is accessible through receptor_port 1. An arbitrary number of synapses with different
-time constants and amp_slow can be configured by setting the desired parameters of
-tau_syn_fast, tau_syn_slow, and amp_slow arrays. The resulting synapses are addressed
-through receptor_port 1, 2, 3, ....
+
+.. math::
+
+    I_\text{syn} = \text{alpha_function} \left( \tau_\text{syn} = \tau_\text{syn, fast} \right) + \text{amp_slow} \cdot \text{alpha_function} \left( \tau_\text{syn} = \tau_\text{syn, slow} \right).
+
+Therefore if ``amp_slow`` is not 0, the peak current of the total synaptic current is larger
+than the specified weight. By default, ``glif_psc_double_alpha`` has a single synapse that
+is accessible through ``receptor_port`` 1. An arbitrary number of synapses with different
+time constants and ``amp_slow`` can be configured by setting the desired parameters of
+``tau_syn_fast``, ``tau_syn_slow``, and ``amp_slow`` arrays. The resulting synapses are addressed
+through ``receptor_port`` 1, 2, 3, ....
 
 The five GLIF models are:
 
@@ -102,7 +105,7 @@ F, s, A) to NEST used units (i.e., mV, nS (1/GOhm), pF, ms, pA) and values
 being rounded to appropriate digits for simplification.
 
 For models with spike dependent threshold (i.e., GLIF2, GLIF4 and GLIF5),
-parameter setting of voltage_reset_fraction and voltage_reset_add may lead to the
+parameter setting of ``voltage_reset_fraction`` and ``voltage_reset_add`` may lead to the
 situation that voltage is bigger than threshold after reset. In this case, the neuron
 will continue to spike until the end of the simulation regardless the stimulated inputs.
 We recommend the setting of the parameters of these three models to follow the

@@ -1,4 +1,3 @@
-// To-do: modulize astrocyte pool selection
 /*
  *  conn_builder.cpp
  *

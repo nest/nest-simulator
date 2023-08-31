@@ -252,7 +252,7 @@ private:
   double t_last_update_;
   double t_next_update_;
   double c_reg_;
-  double target_firing_rate_;
+  double f_target_;
   double tau_decay_; // time constant for low pass filtering of eligibility trace
   double kappa_;     // exp( -dt / tau_decay_ )
   double adam_m_;    // auxiliary variable for adam optimizer
@@ -377,10 +377,10 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
         target->get_spike_history( t_last_update_, t_last_update_ + update_interval_, &start_spike, &finish_spike );
 
         int nspikes = std::distance( start_spike, finish_spike );
-        double avg_firing_rate = nspikes / update_interval_;
-        double target_firing_rate_kHz = target_firing_rate_ / 1000.;
+        double f_av = nspikes / update_interval_;
+        double f_target = f_target_ / 1000.; // convert to kHz
 
-        grad += c_reg_ * ( avg_firing_rate - target_firing_rate_kHz ) * sum_e_bar / update_interval_;
+        grad += c_reg_ * dt * ( f_av - f_target ) * sum_e_bar / update_interval_;
       }
 
       grad *= dt;
@@ -463,7 +463,7 @@ eprop_synapse< targetidentifierT >::eprop_synapse()
   , t_last_update_( 2.0 )
   , t_next_update_( 1002.0 )
   , c_reg_( 0. )
-  , target_firing_rate_( 10. )
+  , f_target_( 10.0 )
   , tau_decay_( 0.0 )
   , kappa_( 0.0 )
   , adam_m_( 0.0 )
@@ -482,7 +482,7 @@ eprop_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
   def< double >( d, names::Wmin, Wmin_ );
   def< double >( d, names::Wmax, Wmax_ );
   def< double >( d, names::c_reg, c_reg_ );
-  def< double >( d, names::target_firing_rate, target_firing_rate_ );
+  def< double >( d, names::f_target, f_target_ );
   def< double >( d, names::tau_decay, tau_decay_ );
   def< long >( d, names::size_of, sizeof( *this ) );
   def< double >( d, names::adam_m, adam_m_ );
@@ -499,7 +499,7 @@ eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
   updateValue< double >( d, names::Wmin, Wmin_ );
   updateValue< double >( d, names::Wmax, Wmax_ );
   updateValue< double >( d, names::c_reg, c_reg_ );
-  updateValue< double >( d, names::target_firing_rate, target_firing_rate_ );
+  updateValue< double >( d, names::f_target, f_target_ );
   updateValue< double >( d, names::tau_decay, tau_decay_ );
   updateValue< double >( d, names::adam_m, adam_m_ );
   updateValue< double >( d, names::adam_v, adam_v_ );

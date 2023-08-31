@@ -186,6 +186,7 @@ const Name events( "events" );
 const Name extent( "extent" );
 const Name e_L( "e_L" );
 
+const Name f_target( "f_target" );
 const Name file_extension( "file_extension" );
 const Name filename( "filename" );
 const Name filenames( "filenames" );
@@ -474,7 +475,6 @@ const Name t_ref_remaining( "t_ref_remaining" );
 const Name t_ref_tot( "t_ref_tot" );
 const Name t_spike( "t_spike" );
 const Name target( "target" );
-const Name target_firing_rate( "target_firing_rate" );
 const Name target_signal( "target_signal" );
 const Name target_thread( "target_thread" );
 const Name targets( "targets" );

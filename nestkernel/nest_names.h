@@ -211,6 +211,7 @@ extern const Name eta;
 extern const Name events;
 extern const Name extent;
 
+extern const Name f_target;
 extern const Name file_extension;
 extern const Name filename;
 extern const Name filenames;
@@ -499,7 +500,6 @@ extern const Name t_ref_remaining;
 extern const Name t_ref_tot;
 extern const Name t_spike;
 extern const Name target;
-extern const Name target_firing_rate;
 extern const Name target_signal;
 extern const Name target_thread;
 extern const Name targets;

@@ -70,12 +70,12 @@ class EpropPlasticityTestCase(unittest.TestCase):
         update_interval = 20.0
         resolution = 1.0
         start = 15.0
-        regression = True
 
         nest.set_verbosity("M_WARNING")
         nest.ResetKernel()
         nest.SetKernelStatus(
             {
+                "eprop_regression": True,
                 "eprop_update_interval": update_interval,
                 "eprop_update_interval_reset": True,
                 "resolution": resolution,
@@ -252,7 +252,6 @@ class EpropPlasticityTestCase(unittest.TestCase):
             "adapt_tau": 2000.0,
             "adaptation": 0.0,
             "gamma": 0.3,
-            "regression": regression,
             "t_ref": 5.0 * resolution,
             "tau_m": 20.0,
         }
@@ -262,7 +261,6 @@ class EpropPlasticityTestCase(unittest.TestCase):
             "E_L": 0.0,
             "gamma": 0.3,
             "I_e": 0.0,
-            "regression": regression,
             "t_ref": 5.0 * resolution,
             "tau_m": 20.0,
             "V_m": 0.0,
@@ -273,7 +271,6 @@ class EpropPlasticityTestCase(unittest.TestCase):
             "C_m": 20.0,
             "E_L": 0.0,
             "I_e": 0.0,
-            "regression": regression,
             "start_learning": start,
             "tau_m": 20.0,
             "V_m": 0.0,
@@ -491,12 +488,12 @@ class EpropPlasticityTestCase(unittest.TestCase):
         update_interval = 20.0
         resolution = 1.0
         start = 15.0
-        regression = False
 
         nest.set_verbosity("M_WARNING")
         nest.ResetKernel()
         nest.SetKernelStatus(
             {
+                "eprop_regression": False,
                 "eprop_update_interval": update_interval,
                 "eprop_update_interval_reset": True,
                 "resolution": resolution,
@@ -671,7 +668,6 @@ class EpropPlasticityTestCase(unittest.TestCase):
             "E_L": 0.0,
             "gamma": 0.3,
             "I_e": 0.0,
-            "regression": regression,
             "t_ref": 5.0 * resolution,
             "tau_m": 20.0,
             "V_m": 0.0,
@@ -683,7 +679,6 @@ class EpropPlasticityTestCase(unittest.TestCase):
             "E_L": 0.0,
             "gamma": 0.3,
             "I_e": 0.0,
-            "regression": regression,
             "t_ref": 5.0 * resolution,
             "tau_m": 20.0,
             "V_m": 0.0,
@@ -694,7 +689,6 @@ class EpropPlasticityTestCase(unittest.TestCase):
             "C_m": 20.0,
             "E_L": 0.0,
             "I_e": 0.0,
-            "regression": regression,
             "start_learning": start,
             "tau_m": 20.0,
             "V_m": 0.0,

@@ -72,7 +72,6 @@ nest::eprop_iaf_psc_delta_adapt::Parameters_::Parameters_()
   , V_min_( -std::numeric_limits< double >::max() ) // mV
   , adapt_beta_( 1.0 )
   , adapt_tau_( 10.0 ) // ms
-  , regression_( true )
 {
 }
 
@@ -112,7 +111,6 @@ nest::eprop_iaf_psc_delta_adapt::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::t_ref, t_ref_ );
   def< double >( d, names::adapt_beta, adapt_beta_ );
   def< double >( d, names::adapt_tau, adapt_tau_ );
-  def< bool >( d, names::regression, regression_ );
 }
 
 double
@@ -132,7 +130,6 @@ nest::eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Nod
   updateValueParam< double >( d, names::t_ref, t_ref_, node );
   updateValueParam< double >( d, names::adapt_beta, adapt_beta_, node );
   updateValueParam< double >( d, names::adapt_tau, adapt_tau_, node );
-  updateValueParam< bool >( d, names::regression, regression_, node );
 
   if ( C_m_ <= 0 )
     throw BadProperty( "Capacitance must be > 0." );
@@ -212,11 +209,12 @@ nest::eprop_iaf_psc_delta_adapt::pre_run_hook()
   B_.logger_.init(); // ensures initialization in case multimeter connected after Simulate
 
   const double h = Time::get_resolution().get_ms();
+  const bool is_regression = kernel().simulation_manager.get_eprop_regression();
 
   V_.P33_ = std::exp( -h / P_.tau_m_ ); // alpha
   V_.P30_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - V_.P33_ );
   V_.Pa_ = std::exp( -h / P_.adapt_tau_ );
-  V_.P33_complement_ = P_.regression_ ? 1.0 - V_.P33_ : 1.0;
+  V_.P33_complement_ = is_regression ? 1.0 - V_.P33_ : 1.0;
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
 }
 

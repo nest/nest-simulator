@@ -194,7 +194,6 @@ private:
     double V_min_;      //!< lower membrane voltage bound relative to leak potential (mV)
     double adapt_beta_; //!< prefactor of the adaptive threshold voltage
     double adapt_tau_;  //!< time constant of the adaptive threshold (ms)
-    bool regression_;   //!< if True, perform regression; if False, classification
 
     Parameters_();
 

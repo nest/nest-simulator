@@ -188,6 +188,7 @@ public:
   double get_eprop_update_interval() const;
   long get_eprop_update_interval_steps() const;
   bool get_eprop_update_interval_reset() const;
+  bool get_eprop_regression() const;
 
 private:
   void call_update_(); //!< actually run simulation, aka wrap update_
@@ -240,6 +241,7 @@ private:
   double eprop_update_interval_;
   long eprop_update_interval_steps_;
   bool eprop_update_interval_reset_;
+  bool eprop_regression_;
 };
 
 inline Time const&
@@ -351,6 +353,12 @@ inline bool
 SimulationManager::get_eprop_update_interval_reset() const
 {
   return eprop_update_interval_reset_;
+}
+
+inline bool
+SimulationManager::get_eprop_regression() const
+{
+  return eprop_regression_;
 }
 }
 

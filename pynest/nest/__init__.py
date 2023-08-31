@@ -397,6 +397,11 @@ class NestModule(types.ModuleType):
         ("If True, reset dynamic variables of neurons involved in e-prop plasticity."),
         default=True,
     )
+    eprop_regression = KernelAttribute(
+        "bool",
+        ("If True, regression task, if False, classification task with e-prop plasticity."),
+        default=True,
+    )
     # Kernel attribute indices, used for fast lookup in `ll_api.py`
     _kernel_attr_names = builtins.set(k for k, v in vars().items() if isinstance(v, KernelAttribute))
     _readonly_kernel_attrs = builtins.set(

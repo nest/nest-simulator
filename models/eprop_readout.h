@@ -161,7 +161,6 @@ private:
     double I_e_;            //!< external DC current (pA)
     double V_min_;          //!< lower membrane voltage bound relative to leak potential (mV)
     double start_learning_; //!< time point to start sending learning signals
-    bool regression_;       //!< if True, perform regression; if False, classification
 
     Parameters_();
 

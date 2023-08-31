@@ -316,6 +316,7 @@ PyNEST examples
    ../auto_examples/csa_example
    ../auto_examples/csa_spatial_example
    ../auto_examples/hpc_benchmark
+   ../auto_examples/eprop_plasticity/index
 
 .. toctree::
    :hidden:

@@ -422,7 +422,9 @@ jobs:
         run: |
           wget -O Mambaforge3.sh "https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-$(uname)-$(uname -m).sh"
           bash Mambaforge3.sh -b -p "${HOME}/conda" 
+          source "${HOME}/conda/etc/profile.d/conda.sh
           source "${HOME}/conda/etc/profile.d/mamba.sh"
+          mamba activate
           mamba info
           printenv | sort
       - name: Fetch recipe

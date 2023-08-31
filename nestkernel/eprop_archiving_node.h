@@ -94,7 +94,6 @@ private:
   std::deque< double > spike_history_;
 
   std::vector< histentry_extended > t_last_update_per_synapse_;
-
 };
 
 } // namespace nest

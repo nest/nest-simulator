@@ -550,7 +550,7 @@ nest::Node::get_eprop_history( double,
 }
 
 void
-nest::Node::register_update( double, double)
+nest::Node::register_update( double, double )
 {
   throw UnexpectedEvent();
 }

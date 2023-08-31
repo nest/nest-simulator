@@ -123,7 +123,8 @@ nest::EpropArchivingNode::register_update( double t_last_update, double t_curren
     ++it_reg->access_counter_;
   }
   // search for old entry, decrease access counter, and delete entry if the access counter equals zero
-  it_reg = std::lower_bound( t_last_update_per_synapse_.begin(), t_last_update_per_synapse_.end(), t_last_update - eps_ );
+  it_reg =
+    std::lower_bound( t_last_update_per_synapse_.begin(), t_last_update_per_synapse_.end(), t_last_update - eps_ );
 
   if ( it_reg == t_last_update_per_synapse_.end() || fabs( t_last_update - it_reg->t_ ) > eps_ )
   {

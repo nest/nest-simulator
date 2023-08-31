@@ -371,14 +371,12 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
       double grad = 0.0;
       double last_z_bar = 0.0;
 
-      double shift = target_node == "readout" ? dendritic_delay: 0.0 ;
+      double shift = target_node == "readout" ? dendritic_delay : 0.0;
 
-      presyn_spike_times_.insert( --presyn_spike_times_.end(), t_next_update_ - (dendritic_delay-shift) );
-      target->get_eprop_history( presyn_spike_times_[ 0 ] + dendritic_delay,
-        t_last_update_ + shift + update_interval_,
-        &start,
-        &finish );
-      target->register_update(t_last_update_ + shift, t_current_update_ + shift);
+      presyn_spike_times_.insert( --presyn_spike_times_.end(), t_next_update_ - ( dendritic_delay - shift ) );
+      target->get_eprop_history(
+        presyn_spike_times_[ 0 ] + dendritic_delay, t_last_update_ + shift + update_interval_, &start, &finish );
+      target->register_update( t_last_update_ + shift, t_current_update_ + shift );
 
       std::vector< double > presyn_isis( presyn_spike_times_.size() - 1 );
       std::adjacent_difference( presyn_spike_times_.begin(), --presyn_spike_times_.end(), presyn_isis.begin() );

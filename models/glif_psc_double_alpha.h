@@ -57,12 +57,12 @@ The relative peak current of the slow component is given as ``amp_slow``, at
 
     I_\text{syn} = \text{alpha_function} \left( \tau_\text{syn} = \tau_\text{syn, fast} \right) + \text{amp_slow} \cdot \text{alpha_function} \left( \tau_\text{syn} = \tau_\text{syn, slow} \right).
 
-Therefore if amp_slow is not 0, the peak current of the total synaptic current is larger
-than the specified weight. By default, glif_psc_double_alpha has a single synapse that
-is accessible through receptor_port 1. An arbitrary number of synapses with different
-time constants and amp_slow can be configured by setting the desired parameters of
-tau_syn_fast, tau_syn_slow, and amp_slow arrays. The resulting synapses are addressed
-through receptor_port 1, 2, 3, ....
+Therefore if ``amp_slow`` is not 0, the peak current of the total synaptic current is larger
+than the specified weight. By default, ``glif_psc_double_alpha`` has a single synapse that
+is accessible through ``receptor_port`` 1. An arbitrary number of synapses with different
+time constants and ``amp_slow`` can be configured by setting the desired parameters of
+``tau_syn_fast``, ``tau_syn_slow``, and ``amp_slow`` arrays. The resulting synapses are addressed
+through ``receptor_port`` 1, 2, 3, ....
 
 The five GLIF models are:
 

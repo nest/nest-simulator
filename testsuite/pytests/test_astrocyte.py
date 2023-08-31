@@ -87,7 +87,7 @@ class AstrocyteTestCase(unittest.TestCase):
         Clean up and initialize NEST before each test.
         """
         nest.ResetKernel()
-        nest.resolution = 0.01
+        nest.resolution = 0.1
         nest.rng_seed = 123456
 
     def compute_difference(self, multimeters, params, reference, recordables):

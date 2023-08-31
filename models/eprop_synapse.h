@@ -143,7 +143,7 @@ EpropCommonProperties::EpropCommonProperties()
   , adam_beta2_( 0.999 )
   , adam_epsilon_( 1e-8 )
   , batch_size_( 1 )
-  , recall_duration_( 1. )
+  , recall_duration_( 1.0 )
 {
 }
 
@@ -255,8 +255,8 @@ private:
   double f_target_;
   double tau_m_out_; // time constant for low pass filtering of eligibility trace
   double kappa_;     // exp( -dt / tau_m_out_ )
-  double adam_m_;    // auxiliary variable for adam optimizer
-  double adam_v_;    // auxiliary variable for adam optimizer
+  double adam_m_;    // auxiliary variable for Adam optimizer
+  double adam_v_;    // auxiliary variable for Adam optimizer
   double sum_grads_; // sum of the gradients in one batch
 
   std::vector< double > presyn_spike_times_;
@@ -358,7 +358,7 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
             if ( target_node == "adaptive" )
             {
               e_bar -= psi * beta * epsilon;
-              epsilon = psi * last_z_bar + ( rho - beta * psi ) * epsilon;
+              epsilon = psi * last_z_bar + ( rho - psi * beta ) * epsilon;
             }
             sum_t_prime = kappa_ * sum_t_prime + ( 1.0 - kappa_ ) * e_bar;
             grad += sum_t_prime * dt * start->learning_signal_;
@@ -462,7 +462,7 @@ eprop_synapse< targetidentifierT >::eprop_synapse()
   , t_last_spike_( 0.0 )
   , t_last_update_( 2.0 )
   , t_next_update_( 1002.0 )
-  , c_reg_( 0. )
+  , c_reg_( 0.0 )
   , f_target_( 10.0 )
   , tau_m_out_( 10.0 )
   , kappa_( 0.0 )

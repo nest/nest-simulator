@@ -169,13 +169,13 @@ private:
 
   struct Parameters_
   {
-    double tau_m_;    //!< membrane time constant (ms)
-    double C_m_;      //!< membrane capacitance (pF)
-    double t_ref_;    //!< refractory period (ms)
-    double E_L_;      //!< leak potential (mV)
-    double I_e_;      //!< external DC current (pA)
-    double V_th_;     //!< spike treshold voltage relative to leak potential (mV)
-    double V_min_;    //!< lower membrane voltage bound relative to leak potential (mV)
+    double tau_m_; //!< membrane time constant (ms)
+    double C_m_;   //!< membrane capacitance (pF)
+    double t_ref_; //!< refractory period (ms)
+    double E_L_;   //!< leak potential (mV)
+    double I_e_;   //!< external DC current (pA)
+    double V_th_;  //!< spike treshold voltage relative to leak potential (mV)
+    double V_min_; //!< lower membrane voltage bound relative to leak potential (mV)
 
     Parameters_();
 

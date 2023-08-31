@@ -443,7 +443,7 @@ jobs:
           printenv | sort
           cd ../nest-simulator-feedstock 
           mamba install --update-specs --yes --quiet --channel conda-forge conda-build pip boa conda-forge-ci-setup=3
-          conda mambabuild . -m ./.ci_support/linux_64_numpy1.23python3.11.____cpython.yaml --suppress-variables --clobber-file ./.ci_support/clobber_linux_64_numpy1.23python3.11.____cpython.yaml
+          conda mambabuild . -m ./.ci_support/linux_64_numpy1.23python3.10.____cpython.yaml --suppress-variables --clobber-file ./.ci_support/clobber_linux_64_numpy1.23python3.10.____cpython.yaml
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:

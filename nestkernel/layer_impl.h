@@ -308,6 +308,7 @@ Layer< D >::dump_connections( std::ostream& out,
   // Dictionary with parameters for get_connections()
   DictionaryDatum ncdict( new Dictionary );
   def( ncdict, names::synapse_model, syn_model );
+  def( ncdict, names::target, NodeCollectionDatum( target_layer->get_node_collection() ) );
 
   // Avoid setting up new array for each iteration of the loop
   std::vector< size_t > source_array( 1 );
@@ -344,7 +345,8 @@ Layer< D >::dump_connections( std::ostream& out,
       Layer< D >* tgt_layer = dynamic_cast< Layer< D >* >( target_layer.get() );
 
       out << ' ';
-      const size_t tnode_id = tgt_layer->node_collection_->find( target_node_id );
+      const long tnode_id = tgt_layer->node_collection_->find( target_node_id );
+      assert( tnode_id > 0 );
       tgt_layer->compute_displacement( source_pos, tnode_id ).print( out );
       out << '\n';
     }

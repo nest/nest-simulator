@@ -636,7 +636,7 @@ nest::OneToOneBuilder::connect_()
           Node* target = n->get_node();
 
           const size_t tnode_id = n->get_node_id();
-          const int idx = targets_->find( tnode_id );
+          const long idx = targets_->find( tnode_id );
           if ( idx < 0 ) // Is local node in target list?
           {
             continue;

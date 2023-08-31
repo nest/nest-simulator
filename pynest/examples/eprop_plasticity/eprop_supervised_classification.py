@@ -196,7 +196,7 @@ params_nrn_ad = {
 }
 
 params_nrn_ad["adapt_beta"] = (
-    1.7 * (1.0 - np.exp(-1.0 / params_nrn_ad["adapt_tau"])) / (1.0 - np.exp(-1.0 / params_nrn_ad["tau"]))
+    1.7 * (1.0 - np.exp(-1.0 / params_nrn_ad["adapt_tau"])) / (1.0 - np.exp(-1.0 / params_nrn_ad["tau_m"]))
 )  # prefactor of adaptive threshold
 
 params_nrn_out = {

@@ -447,7 +447,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: "conda package Linux x86_64"
+          name: "nest_conda_Linux_x86_64"
           path: |
             /home/runner/work/nest-simulator/conda/conda-bld/
             

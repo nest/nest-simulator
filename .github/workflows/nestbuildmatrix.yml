@@ -421,16 +421,19 @@ jobs:
         with:
           python-version: 3.10
           mamba-version: "*"
-          channels: conda-forge,defaults
+          channels: conda-forge
           channel-priority: true
           activate-environment: test-mambabuild
-          environment-file: environment.yml
+          #environment-file: environment.yml
       - shell: bash -el {0}
         run: |
           mamba info
           printenv | sort
-      #- shell: bash -el {0}
-      #  run: mamba install jupyterlab
+      - shell: bash -el {0}
+        run: |
+          mamba install libarchive -n base -c conda-forge
+          mamba env update --name test-mambabuild --file environment.yml
+
 
       #- name: "Test-build conda package"
       #  shell: bash -l {0}

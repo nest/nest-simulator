@@ -65,9 +65,9 @@ num_models = len(models)
 # initial values of state variables with which the ODEINT reference solution was generated
 # for the other parameters, default is used, as in the reference solution
 astrocyte_param = {
-    'IP3': 1.0,
-    'Ca': 1.0,
-    'h_IP3R': 1.0,
+    "IP3": 1.0,
+    "Ca": 1.0,
+    "h_IP3R": 1.0,
 }
 
 
@@ -76,21 +76,22 @@ astrocyte_param = {
 # -------------------------
 #
 
+
 class AstrocyteTestCase(unittest.TestCase):
     """
     Check the coherence between reference solution and NEST implementation.
     """
 
     def setUp(self):
-        '''
+        """
         Clean up and initialize NEST before each test.
-        '''
+        """
         nest.ResetKernel()
         nest.resolution = 0.01
         nest.rng_seed = 123456
 
     def compute_difference(self, multimeters, params, reference, recordables):
-        '''
+        """
         Compute the relative differences between the values recorded by the
         multimeter and those of the reference (recorded at same times).
 
@@ -111,47 +112,48 @@ class AstrocyteTestCase(unittest.TestCase):
         rel_diff : dict of dict of doubles
             Relative differences between recorded data and reference (one dict
             per model, containing one value per entry in `recordables`).
-        '''
+        """
         rel_diff = {model: {} for model in multimeters.keys()}
 
         for model, mm in iter(multimeters.items()):
             dmm = nest.GetStatus(mm, "events")[0]
             for record in recordables:
                 rds = np.abs(reference[record] - dmm[record])
-                nonzero = np.where(~np.isclose(reference[record], 0.))[0]
+                nonzero = np.where(~np.isclose(reference[record], 0.0))[0]
                 if np.any(nonzero):
                     rds = rds[nonzero] / np.abs(reference[record][nonzero])
                 rel_diff[model][record] = np.average(rds)
         return rel_diff
 
     def assert_pass_tolerance(self, rel_diff, di_tol):
-        '''
+        """
         Test that relative differences are indeed smaller than the tolerance.
-        '''
+        """
         for model, di_rel_diff in iter(rel_diff.items()):
             for var, diff in iter(di_rel_diff.items()):
-                self.assertLess(diff, di_tol[model][var],
-                                "{} failed test for {}: {} > {}.".format(
-                                    model, var, diff, di_tol[model][var]))
+                self.assertLess(
+                    diff,
+                    di_tol[model][var],
+                    "{} failed test for {}: {} > {}.".format(model, var, diff, di_tol[model][var]),
+                )
 
-    @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
+    @unittest.skipIf(not HAVE_GSL, "GSL is not available")
     def test_closeness_nest_odeint(self):
         # Compare models to the ODEINT implementation.
 
         # declare the same simulation parameters as in the reference solution
-        simtime = 100.
-        spike_times = [10.0 - nest.resolution] # compensate for the communication delay
+        simtime = 100.0
+        spike_times = [10.0 - nest.resolution]  # compensate for the communication delay
         spike_weights = [1.0]
 
         # get ODEINT reference
-        odeint = np.loadtxt(os.path.join(path, 'test_astrocyte.dat')).T
+        odeint = np.loadtxt(os.path.join(path, "test_astrocyte.dat")).T
         IP3_interp = interp1d(odeint[0, :], odeint[1, :])
         Ca_interp = interp1d(odeint[0, :], odeint[2, :])
         h_IP3R_interp = interp1d(odeint[0, :], odeint[3, :])
 
         # create astrocytes and devices
-        cells = {model: nest.Create(model, params=astrocyte_param)
-                   for model in models}
+        cells = {model: nest.Create(model, params=astrocyte_param) for model in models}
         multimeters = {model: nest.Create("multimeter") for model in models}
         spk_ge = {model: nest.Create("spike_generator") for model in models}
 
@@ -161,7 +163,7 @@ class AstrocyteTestCase(unittest.TestCase):
             nest.Connect(mm, cells[model])
         for model, ge in iter(spk_ge.items()):
             nest.SetStatus(ge, {"spike_times": spike_times, "spike_weights": spike_weights})
-            nest.Connect(ge, cells[model], syn_spec={'delay': nest.resolution})
+            nest.Connect(ge, cells[model], syn_spec={"delay": nest.resolution})
 
         # simulate
         nest.Simulate(simtime)
@@ -169,12 +171,9 @@ class AstrocyteTestCase(unittest.TestCase):
         # relative differences: interpolate ODEINT to match NEST times
         mm0 = next(iter(multimeters.values()))
         nest_times = mm0.events["times"]
-        reference = {
-            'IP3': IP3_interp(nest_times),
-            'Ca': Ca_interp(nest_times),
-            'h_IP3R': h_IP3R_interp(nest_times)}
+        reference = {"IP3": IP3_interp(nest_times), "Ca": Ca_interp(nest_times), "h_IP3R": h_IP3R_interp(nest_times)}
 
-        rel_diff = self.compute_difference(multimeters, astrocyte_param, reference, ['IP3', 'Ca', 'h_IP3R'])
+        rel_diff = self.compute_difference(multimeters, astrocyte_param, reference, ["IP3", "Ca", "h_IP3R"])
         self.assert_pass_tolerance(rel_diff, di_tolerances_odeint)
 
 
@@ -183,7 +182,8 @@ class AstrocyteTestCase(unittest.TestCase):
 # ------------------------
 #
 
-@unittest.skipIf(not HAVE_GSL, 'GSL is not available')
+
+@unittest.skipIf(not HAVE_GSL, "GSL is not available")
 def suite():
     return unittest.makeSuite(AstrocyteTestCase, "test")
 
@@ -193,5 +193,5 @@ def run():
     runner.run(suite())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run()

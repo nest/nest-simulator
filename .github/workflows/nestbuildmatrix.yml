@@ -440,7 +440,7 @@ jobs:
           mamba info
           printenv | sort
           cd ../nest-simulator-feedstock 
-          mamba install --update-specs --yes --quiet --channel conda-forge conda-build pip boa conda-forge-ci-setup=3
+          mamba install --update-specs --yes --quiet --channel conda-forge conda-build pip boa conda-forge-ci-setup=3 rhash
           conda mambabuild . -m ./.ci_support/linux_64_numpy1.23python3.11.____cpython.yaml --suppress-variables --clobber-file ./.ci_support/clobber_linux_64_numpy1.23python3.11.____cpython.yaml
       # - name: Upload artifacts
       #   uses: actions/upload-artifact@v3

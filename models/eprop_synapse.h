@@ -34,70 +34,144 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Synapse type for eprop-plasticity
+Synapse type for e-prop plasticity
 
 Description
 +++++++++++
 
-``eprop_synapse`` is a connector to create e-prop synapses as defined
-in [1]_. The change of the synaptic weight depends on the presynaptic
-spikes, the pseudo-derivative of the postsynaptic membrane voltage and
-the learning signal emitted by the readout neurons.
+``eprop_synapse`` is a connector to create e-prop synapses between postsynaptic
+neurons :math:`j` and presynaptic neurons and :math:`i` as defined in [1]_.  The
+change of the synaptic weight :math:`\Delta W_{ji}` depends on the presynaptic
+spikes :math:`z_i^{t-1}`, the pseudo-derivative of the postsynaptic membrane
+voltage :math:`\psi_j^t` (which together form the eligibility trace
+:math:`e_{ji}`), and the learning signal :math:`L_j^t` emitted by the readout
+neurons. The eligibility trace and the presynaptic spike trains are
+low-pass-filtered with kernels :math:`\mathcal{F}_\kappa` with
+:math:`\kappa=\exp\left(\frac{-\delta t}{\tau_\text{out}}\right)` and
+:math:`\mathcal{F}_\alpha` with
+:math:`\kappa=\exp\left(\frac{-\delta t}{\tau_\text{m, out}}\right)`.
+The overall weight update is scaled by the learning rate :math:`\eta`. The
+general formula computing weight updates for eprop synapses projecting onto
+recurrent neurons are thus given by:
 
 .. math::
-    \Delta W_{ji}^\text{rec} &= -\eta \sum_t L_j^t \bar{e}_{ji}^t \\
-                             &= -\eta \sum_t L_j^t \mathcal{F}_\kappa
-                                \left( \psi^t_j \bar{z}_i^{t-1}\right) \\
-                             &= -\eta \sum_t L_j^t \sum_{t'\leq t} \kappa^{t-t'}
-                                \psi^t_j \mathcal{F}_\alpha\left( z_j^{t-1}\right)
+  \Delta W_{ji}^\text{rec} &= -\eta \sum_t L_j^t \bar{e}_{ji}^t \\
+   &= -\eta \sum_t L_j^t \mathcal{F}_\kappa \left( \psi^t_j \bar{z}_i^{t-1}\right) \\
+   &= -\eta \sum_t L_j^t \sum_{t'\leq t} \kappa^{t-t'} \psi^t_j \mathcal{F}_\alpha\left( z_i^{t-1}\right)\,.
 
-Furthermore, a firing rate regularization mechanism keeps the firing rate of the
-postsynaptic neuron close to the set ``target_firing_rate``:
+If the postsynaptic neuron is a adaptive neuron, next to the membrane voltage, a
+second hidden state variable, the threshold adaptation, is present, which
+changes the eligibility trace:
 
-.. math..
-    \Delta W_{ji}^\text{reg} &= \eta c_\text{reg}
-    \sum_t \frac{1}{Tn_\text{trial}} \left( f^\text{target}-f^\text{av}_j\right)e_{ji}^t
+.. math::
+  e_{ji}^t &= \psi_j^t \left(\bar{z}^{t-1} - \beta \epsilon_{ji,a}^{t-1}\right)\,, \\
+  \epsilon^{t-1}_{ji,\text{a}} &= \psi_j^{t-1}\bar{z}_i^{t-2} + \left( \rho - \psi_j^{t-1} \beta \right)
+\epsilon^{t-2}_{ji,a}\,, \\ \rho &= \exp\left(-\frac{\delta t}{\tau_\text{a}}\right)\,.
+
+Furthermore, a firing rate regularization mechanism keeps the average firing
+rate :math:`f^\text{av}_j` of the postsynaptic neuron close to a target firing rate
+:math:`f^\text{target}`.
+
+.. math::
+  \Delta W_{ji}^\text{reg} = \eta c_\text{reg}
+  \sum_t \frac{1}{Tn_\text{trial}} \left( f^\text{target}-f^\text{av}_j\right)e_{ji}^t,
+
+whereby :math:`c_\text{reg}` scales the overall regularization and the average
+is taken over the time that passed since the last update, i.e., the number of
+trials :math:`n_\text{trials}` times the duration of an update interval :math:`T`.
+
+The overall recurrent weight update is given by adding :math:`\Delta W_{ji}^\text{rec}`
+and :math:`\Delta W_{ji}^\text{reg}`.
+
+Since readout neurons :math:`k` are leaky integrators without a spiking
+mechanism, the formula for computing weight updates for synapses projecting onto
+readout neurons lacks the pseudo derivative and a firing regularization term.
+
+.. math::
+  \Delta W_{kj}^\text{out} = -\eta \sum_t L_j^t \mathcal{F}_\kappa \left(z_j^t\right).
+
+The weights can also be optimized with the Adam scheme [2]_:
+
+.. math::
+  m_0 &= 0, v_0 = 0, t = 1 \\
+  m_t &= \beta_1 \cdot m_{t-1} + \left(1-\beta_1\right) \cdot g_t \\
+  v_t &= \beta_2 \cdot v_{t-1} + \left(1-\beta_2\right) \cdot g_t^2 \\
+  \hat{m}_t &= \frac{m_t}{1-\beta_1^t} \\
+  \hat{v}_t &= \frac{v_t}{1-\beta_2^t} \\
+  \Delta W &= - \eta\frac{\hat{m_t}}{\sqrt{\hat{v}_t} + \epsilon}
 
 E-prop synapses require archiving of continuous quantities. Therefore e-prop
 synapses can only be connected to neuron models that are capable of doing this
 archiving. So far, compatible models are ``eprop_iaf_psc_delta``,
 ``eprop_iaf_psc_delta_adapt``, and ``eprop_readout``.
 
-Common Synapse Parameters
-+++++++++++++++++++++++++
+For more information on e-prop plasticity see the documentation on the other e-prop models,
+:doc:`eprop_iaf_psc_delta<../models/eprop_iaf_psc_delta/>`,
+:doc:`eprop_readout<../models/eprop_readout/>`, and
+:doc:`eprop_synapse<../models/eprop_synapse/>`,
+:doc:`eprop_learning_signal_connection<../models/eprop_learning_signal_connection/>`.
 
-The following parameters can be set in the status dictionary and will be shared by
-all synapses of that type.
+Details on the event-based NEST implementation of e-prop can be found in [3]_.
 
-More details on the event-based NEST implementation of e-prop can be found in [2]_.
+.. warning::
 
-===============  ======  ==========================================================
-adam             bool    If True, use Adam optimizer, if False, gradient descent
-adam_beta1               Beta1 parameter of Adam optimizer
-adam_beta2               Beta2 parameter of Adam optimizer
-adam epsilon             Epsilon parameter of Adam optimizer
-batch_size               Size of batch
-recall_duration  ms      Duration over which gradients are averaged
-===============  ======  ==========================================================
+   This synaptic plasticity rule does not take
+   :ref:`precise spike timing <sim_precise_spike_times>` into
+   account. When calculating the weight update, the precise spike time part
+   of the timestamp is ignored.
 
 Parameters
 ++++++++++
 
 The following parameters can be set in the status dictionary.
 
-==================  ===  ===============================================================
-adam_m                   Initial value of first moment estimate m of Adam optimizer
-adam_v                   Initial value of second moment raw estimate v of Adam optimizer
-eta                      Learning rate
-delay               ms   Dendritic delay
-c_reg                    Prefactor of firing rate regularization
-target_firing_rate  Hz   Target firing rate of rate regularization
-tau_decay           ms   Time constant for low-pass filtering of eligibility trace
-weight              pA   Synaptic weight
-Wmax                pA   Maximal value for synaptic weight
-Wmin                pA   Minimal value for synaptic weight
-==================  ===  ===============================================================
+===============  ========  ================  =======  =======================================================
+**Common synapse properties**
+-------------------------------------------------------------------------------------------------------------
+Parameter        Unit      Math equivalent   Default  Description
+===============  ========  ================  =======  =======================================================
+adam             boolean                     False    If True, use Adam optimizer, if False, gradient descent
+adam_beta1                 :math:`\beta_1`   0.9      Beta1 parameter of Adam optimizer
+adam_beta2                 :math:`\beta_2`   0.999    Beta2 parameter of Adam optimizer
+adam_epsilon               :math:`\epsilon`  1e-8     Epsilon parameter of Adam optimizer
+batch_size                                   1        Size of batch
+recall_duration  ms                          1.0      Duration over which gradients are averaged
+===============  ========  ================  =======  =======================================================
 
+
+=========  ====  =========================  =======  ===============================================================
+**Individual synapse properties**
+--------------------------------------------------------------------------------------------------------------------
+Parameter  Unit  Math equivalent            Default  Description
+=========  ====  =========================  =======  ===============================================================
+adam_m           :math:`m`                      0.0  Initial value of first moment estimate m of Adam optimizer
+adam_v           :math:`v`                      0.0  Initial value of second moment raw estimate v of Adam optimizer
+c_reg            :math:`c_\text{reg}`           0.0  Prefactor of firing rate regularization
+delay      ms    :math:`d_{ji}`                 1.0  Dendritic delay
+eta              :math:`\eta`                  1e-4  Learning rate
+f_target   Hz    :math:`f^\text{target}`       10.0  Target firing rate of rate regularization
+tau_m_out  ms    :math:`\tau_\text{m,out}`      0.0  Time constant for low-pass filtering of eligibility trace
+weight     pA    :math:`W_{ji}`                 1.0  Synaptic weight
+Wmax       pA    :math:`W_{ji}^\text{max}`    100.0  Maximal value for synaptic weight
+Wmin       pA    :math:`W_{ji}^\text{min}`      0.0  Minimal value for synaptic weight
+=========  ====  =========================  =======  ===============================================================
+
+Recordables
++++++++++++
+
+The following variables can be recorded.
+
+  - ``weight``
+
+Usage
++++++
+
+This model can only be used in combination with the other e-prop models,
+whereby the network architecture requires specific wiring, input, and output.
+The usage is demonstrated in a
+:doc:`supervised regression task <../auto_examples/eprop_plasticity/eprop_supervised_regression/>`
+and a :doc:`supervised classification task <../auto_examples/eprop_plasticity/eprop_supervised_classification>`,
+reproducing the original proof-of-concept tasks in [1]_.
 
 Transmits
 +++++++++
@@ -110,8 +184,13 @@ References
 .. [1] Bellec G, Scherr F, Subramoney F, Hajek E, Salaj D, Legenstein R,
        Maass W (2020). A solution to the learning dilemma for recurrent
        networks of spiking neurons. Nature Communications, 11:3625.
-       DOI: https://doi.org/10.1038/s41467-020-17236-y
-.. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D,
+       https://doi.org/10.1038/s41467-020-17236-y
+
+.. [2] Kingma DP, Ba JL (2015). Adam: A method for stochastic optimization.
+       Proceedings of International Conference on Learning Representations (ICLR).
+       https://doi.org/10.48550/arXiv.1412.6980
+
+.. [3] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D,
        van Albada SJ, Bolten M, Diesmann M. Event-based implementation of
        eligibility propagation (in preparation)
 
@@ -507,7 +586,7 @@ eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
   if ( tau_m_out_ <= 0 )
     throw BadProperty( "Membrane time of readout neuron constant must be > 0." );
 
-    const double h = Time::get_resolution().get_ms();
+  const double h = Time::get_resolution().get_ms();
   kappa_ = exp( -h / tau_m_out_ );
 
   if ( not( ( Wmax_ >= weight_ ) && ( Wmin_ <= weight_ ) ) )

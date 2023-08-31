@@ -44,14 +44,35 @@ Description
 neurons to ``eprop_iaf_psc_delta`` or ``eprop_iaf_psc_delta_adapt`` neurons and
 transmits the learning signals for e-prop plasticity [1]_.
 
-More details on the event-based NEST implementation of e-prop can be found in [2]_.
+For more information on e-prop plasticity see the documentation on the other e-prop models,
+:doc:`eprop_iaf_psc_delta<../models/eprop_iaf_psc_delta/>`,
+:doc:`eprop_iaf_psc_delta_adapt<../models/eprop_iaf_psc_delta_adapt/>`.
+:doc:`eprop_readout<../models/eprop_readout/>`, and
+:doc:`eprop_synapse<../models/eprop_synapse/>`,
+
+Details on the event-based NEST implementation of e-prop can be found in [2]_.
 
 Parameters
 ++++++++++
 
-===============  ======  ==========================================================
-weight                   Initial synaptic weight of the connection.
-===============  ======  ==========================================================
+===========  =======  =======================  =======  =========================================
+**Neuron parameters**
+-------------------------------------------------------------------------------------------------
+Parameter     Unit     Math equivalent         Default  Description
+===========  =======  =======================  =======  =========================================
+delay        ms       :math:`d_{jk}`               1.0  Dendritic delay
+weight       pA       :math:`B_{jk}`               1.0  Initial synaptic weight of the connection
+===========  =======  =======================  =======  =========================================
+
+Usage
++++++
+
+This model can only be used in combination with the other e-prop models,
+whereby the network architecture requires specific wiring, input, and output.
+The usage is demonstrated in a
+:doc:`supervised regression task <../auto_examples/eprop_plasticity/eprop_supervised_regression/>`
+and a :doc:`supervised classification task <../auto_examples/eprop_plasticity/eprop_supervised_classification>`,
+reproducing the original proof-of-concept tasks in [1]_.
 
 Transmits
 +++++++++
@@ -64,7 +85,7 @@ References
 .. [1] Bellec G, Scherr F, Subramoney F, Hajek E, Salaj D, Legenstein R,
        Maass W (2020). A solution to the learning dilemma for recurrent
        networks of spiking neurons. Nature Communications, 11:3625.
-       DOI: https://doi.org/10.1038/s41467-020-17236-y
+       https://doi.org/10.1038/s41467-020-17236-y
 .. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D,
        van Albada SJ, Bolten M, Diesmann M. Event-based implementation of
        eligibility propagation (in preparation)

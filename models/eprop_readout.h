@@ -58,23 +58,53 @@ equation represents a piecewise constant external current.
 See the documentation on the ``iaf_psc_delta`` neuron model for more information
 on the integration of the subthreshold dynamics.
 
-More details on the event-based NEST implementation of e-prop can be found in [2]_.
+For more information on e-prop plasticity see the documentation on the other e-prop models,
+:doc:`eprop_iaf_psc_delta<../models/eprop_iaf_psc_delta/>`,
+:doc:`eprop_iaf_psc_delta_adapt<../models/eprop_iaf_psc_delta_adapt/>`, and
+:doc:`eprop_synapse<../models/eprop_synapse/>`,
+:doc:`eprop_learning_signal_connection<../models/eprop_learning_signal_connection/>`.
+
+Details on the event-based NEST implementation of e-prop can be found in [2]_.
 
 Parameters
 ++++++++++
 
 The following parameters can be set in the status dictionary.
 
-================= ======= ======================================================
- V_m              mV      Initial value of the membrane voltage
- E_L              mV      Leak membrane potential
- C_m              pF      Capacity of the membrane
- tau_m            ms      Time constant of the membrane
- I_e              pA      Constant external input current
- V_min            mV      Absolute lower value of the membrane voltage
- start_learning   ms      Time point to start sending learning signals
- regression       boolean If True, regression; if False, classification
-================= ======= ======================================================
+==================  =======  =======================  ==========  ================================================
+**Neuron parameters**
+------------------------------------------------------------------------------------------------------------------
+Parameter           Unit     Math equivalent          Default     Description
+==================  =======  =======================  ==========  ================================================
+ C_m                pF       :math:`C_\text{m}`            250.0  Capacity of the membrane
+ E_L                mV       :math:`E_\text{L}`              0.0  Leak membrane potential
+ gamma                       :math:`\gamma`                  0.3  Scaling of pseudo-derivative of membrane voltage
+ I_e                pA       :math:`I_\text{e}`              0.0  Constant external input current
+ start_learning     ms                                       0.0  Time point to start sending learning signals
+ tau_m              ms       :math:`\tau_\text{m}`          10.0  Time constant of the membrane
+ V_m                mV       :math:`v_j^0`                   0.0  Initial value of the membrane voltage
+ V_min              mV       :math:`v_\text{min}`     -1.79e+308  Absolute lower value of the membrane voltage
+==================  =======  =======================  ==========  ================================================
+
+Recordables
++++++++++++
+
+The following variables can be recorded.
+
+  - ``error_signal``
+  - ``readout_signal``
+  - ``target_signal``
+  - ``V_m``
+
+Usage
++++++
+
+This model can only be used in combination with the other e-prop models,
+whereby the network architecture requires specific wiring, input, and output.
+The usage is demonstrated in a
+:doc:`supervised regression task <../auto_examples/eprop_plasticity/eprop_supervised_regression/>`
+and a :doc:`supervised classification task <../auto_examples/eprop_plasticity/eprop_supervised_classification>`,
+reproducing the original proof-of-concept tasks in [1]_.
 
 References
 ++++++++++
@@ -82,7 +112,7 @@ References
 .. [1] Bellec G, Scherr F, Subramoney F, Hajek E, Salaj D, Legenstein R,
        Maass W (2020). A solution to the learning dilemma for recurrent
        networks of spiking neurons. Nature Communications, 11:3625.
-       DOI: https://doi.org/10.1038/s41467-020-17236-y
+       https://doi.org/10.1038/s41467-020-17236-y
 .. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D,
        van Albada SJ, Bolten M, Diesmann M. Event-based implementation of
        eligibility propagation (in preparation)

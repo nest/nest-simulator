@@ -58,23 +58,22 @@ The membrane voltage time course is given by:
              + \sum_i W_{ji}^\mathrm{in}x_i^t-z_j^{t-1}v_\mathrm{th} \,, \\
     \alpha &= e^{-\frac{\delta t}{\tau_\mathrm{m}}} \,.
 
-The treshold adaptation is parameterized by ``adapt_beta`` and `adapt_tau`` and
-given by:
+The threshold adaptation is given by:
 
 .. math::
     A_j^t &= v_\mathrm{th} + \beta a_j^t \,, \\
     a_j^t &= \rho a_j^{t-1} + z_j^{t-1} \,, \\
     \rho &= e^{-\frac{\delta t}{\tau_\mathrm{a}}} \,.
 
-The spike state variable is given by:
+The spike state variable is expressed by a Heaviside function:
 
 .. math::
     z_j^t = H\left(v_j^t-A_j^t\right) \,.
 
 If the membrane voltage crosses the adaptive threshold voltage, a spike is
-emitted and the membrane voltage is reduced by ``V_th`` in the next time step.
-Counted from the time step of the spike emission, the neuron is not able to
-spike for an absolute refractory period ``t_ref``.
+emitted and the membrane voltage is reduced by :math:`v_\text{th}` in the next
+time step. Counted from the time step of the spike emission, the neuron is not
+able to spike for an absolute refractory period :math:`t_\text{ref}`.
 
 An additional state variable and the corresponding differential equation
 represents a piecewise constant external current.
@@ -89,29 +88,58 @@ plasticity is calculated:
 See the documentation on the ``iaf_psc_delta`` neuron model for more information
 on the integration of the subthreshold dynamics.
 
-See the examples eprop_nest_evidence_accumulation.py and eprop_nest_pattern_generation.py
-on how to use e-prop plasticity.
+For more information on e-prop plasticity see the documentation on the other e-prop models,
+:doc:`eprop_iaf_psc_delta<../models/eprop_iaf_psc_delta/>`,
+:doc:`eprop_readout<../models/eprop_readout/>`, and
+:doc:`eprop_synapse<../models/eprop_synapse/>`,
+:doc:`eprop_learning_signal_connection<../models/eprop_learning_signal_connection/>`.
 
-More details on the event-based NEST implementation of e-prop can be found in [2]_.
+Details on the event-based NEST implementation of e-prop can be found in [2]_.
 
 Parameters
 ++++++++++
 
 The following parameters can be set in the status dictionary.
 
-================= ======= ======================================================
- V_m              mV      Initial value of the membrane voltage
- E_L              mV      Leak membrane potential
- C_m              pF      Capacity of the membrane
- tau_m            ms      Time constant of the membrane
- t_ref            ms      Duration of the refractory period
- V_th             mV      Spike threshold
- I_e              pA      Constant external input current
- V_min            mV      Absolute lower value of the membrane voltage
- adapt_beta               Prefactor of the threshold adaptation
- adapt_tau        ms      Time constant of the threshold adaptation
- regression       boolean If True, regression; if False, classification
-================= ======= ======================================================
+==================  =======  =======================  ==========  ================================================
+**Neuron parameters**
+------------------------------------------------------------------------------------------------------------------
+Parameter           Unit     Math equivalent          Default     Description
+==================  =======  =======================  ==========  ================================================
+ adapt_beta                  :math:`\beta`                   1.0  Prefactor of the threshold adaptation
+ adapt_tau          ms       :math:`\tau_\text{a}`          10.0  Time constant of the threshold adaptation
+ adaptation                  :math:`a_j^0`                   0.0  Initial value of the adaptation variable
+ C_m                pF       :math:`C_\text{m}`            250.0  Capacity of the membrane
+ E_L                mV       :math:`E_\text{L}`            -70.0  Leak membrane potential
+ gamma                       :math:`\gamma`                  0.3  Scaling of pseudo-derivative of membrane voltage
+ I_e                pA       :math:`I_\text{e}`              0.0  Constant external input current
+ t_ref              ms       :math:`t_\text{ref}`            2.0  Duration of the refractory period
+ tau_m              ms       :math:`\tau_\text{m}`          20.0  Time constant of the membrane
+ V_m                mV       :math:`v_j^0`                 -70.0  Initial value of the membrane voltage
+ V_min              mV       :math:`v_\text{min}`     -1.79e+308  Absolute lower value of the membrane voltage
+ V_th               mV       :math:`v_\text{th}`           -55.0  Spike threshold
+==================  =======  =======================  ==========  ================================================
+
+Recordables
++++++++++++
+
+The following variables can be recorded.
+
+  - ``adaptation``
+  - ``adapting_threshold``
+  - ``learning_signal``
+  - ``V_m``
+  - ``V_m_pseudo_deriv``
+
+Usage
++++++
+
+This model can only be used in combination with the other e-prop models,
+whereby the network architecture requires specific wiring, input, and output.
+The usage is demonstrated in a
+:doc:`supervised regression task <../auto_examples/eprop_plasticity/eprop_supervised_regression/>`
+and a :doc:`supervised classification task <../auto_examples/eprop_plasticity/eprop_supervised_classification>`,
+reproducing the original proof-of-concept tasks in [1]_.
 
 References
 ++++++++++
@@ -119,7 +147,7 @@ References
 .. [1] Bellec G, Scherr F, Subramoney F, Hajek E, Salaj D, Legenstein R,
        Maass W (2020). A solution to the learning dilemma for recurrent
        networks of spiking neurons. Nature Communications, 11:3625.
-       DOI: https://doi.org/10.1038/s41467-020-17236-y
+       https://doi.org/10.1038/s41467-020-17236-y
 .. [2] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D,
        van Albada SJ, Bolten M, Diesmann M. Event-based implementation of
        eligibility propagation (in preparation)

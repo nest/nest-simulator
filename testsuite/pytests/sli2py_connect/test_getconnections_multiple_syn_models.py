@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Test `GetConnections` in the context of more than one synapse model.
+Test ``GetConnections`` in the context of more than one synapse model.
 
 The test constructs a network where the connections are modeled by two
 synapse models. A subset of the neurons have one of the synapse models,
@@ -101,6 +101,51 @@ def test_retrieve_all_connections(network):
 
     nptest.assert_array_equal(actual_sources, expected_all_sources)
     nptest.assert_array_equal(actual_targets, expected_all_targets)
+
+
+@pytest.mark.parametrize()
+def test_retrieve_connections_for_some_sources(network):
+    """
+    Test
+
+    Cannot add NodeCollection to a sliced composite
+    """
+
+    # Take first 3 static sources and targets
+    src_static = network["static_synapse"]["sources"][:3].tolist()
+    tgt_static = network["static_synapse"]["targets"][:3].tolist()
+
+    # Take final 3 stpd sources and targes to avoid those with static+stdp
+    src_stdp = network["stdp_synapse"]["sources"][-3:].tolist()
+    tgt_stpd = network["stdp_synapse"]["targets"][-3:].tolist()
+
+    src_all = src_static + src_stdp
+    # tgt_all = tgt_static + tgt_stpd
+    print(src_all)
+
+    conns = nest.GetConnections(source=nest.NodeCollection(src_all))
+
+    actual_sources = conns.get("source")
+    print(actual_sources)
+
+    nptest.assert_array_equal(actual_sources, src_all)
+
+    # nptest.assert_array_equal(actual_targets, expected_all_targets)
+
+    """
+    /ssrc_static static_sources 3 Take def
+    /stgt_static static_targets 3 Take def
+    /ssrc_stdp stdp_sources -3 Take def     % take final three to avoid
+    /stgt_stdp stdp_targets -3 Take def     % those with static+stdp
+    /ssrc_all ssrc_static ssrc_stdp join def
+    /stgt_all stgt_static stgt_stdp join def
+    /conns << /source ssrc_all cvnodecollection >> GetConnections GetStatus def
+    /csrc conns { /source get } Map def
+    /ctgt conns { /target get } Map def
+
+    csrc ssrc_all eq
+    ctgt stgt_all eq and
+    """
 
 
 def test_retrieve_correct_proportion_of_synapse_model(network):

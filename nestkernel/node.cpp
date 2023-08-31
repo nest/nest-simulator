@@ -543,10 +543,14 @@ nest::Node::get_tau_syn_in( int )
 void
 nest::Node::get_eprop_history( double,
   double,
-  double,
-  double,
   std::deque< histentry_eprop >::iterator*,
   std::deque< histentry_eprop >::iterator* )
+{
+  throw UnexpectedEvent();
+}
+
+void
+nest::Node::register_update( double, double)
 {
   throw UnexpectedEvent();
 }

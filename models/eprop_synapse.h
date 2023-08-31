@@ -371,26 +371,14 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
       double grad = 0.0;
       double last_z_bar = 0.0;
 
-      double t_next_ud = t_next_update_;
-      double t_last_ud = t_last_update_;
-      double t_curr_ud = t_current_update_;
+      double shift = target_node == "readout" ? dendritic_delay: 0.0 ;
 
-      if ( target_node == "readout" )
-      {
-        t_last_ud += dendritic_delay;
-        t_curr_ud += dendritic_delay;
-      }
-      else
-      {
-        t_next_ud -= dendritic_delay;
-      }
-      presyn_spike_times_.insert( --presyn_spike_times_.end(), t_next_ud );
+      presyn_spike_times_.insert( --presyn_spike_times_.end(), t_next_update_ - (dendritic_delay-shift) );
       target->get_eprop_history( presyn_spike_times_[ 0 ] + dendritic_delay,
-        t_last_ud + update_interval_,
-        t_last_ud,
-        t_curr_ud,
+        t_last_update_ + shift + update_interval_,
         &start,
         &finish );
+      target->register_update(t_last_update_ + shift, t_current_update_ + shift);
 
       std::vector< double > presyn_isis( presyn_spike_times_.size() - 1 );
       std::adjacent_difference( presyn_spike_times_.begin(), --presyn_spike_times_.end(), presyn_isis.begin() );
@@ -416,8 +404,8 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
         double sum_t_prime = 0.0;
         double sum_e_bar = 0.0;
 
-        double beta;
-        double rho;
+        double beta = 0.0;
+        double rho = 0.0;
         double epsilon = 0.0;
 
         if ( target_node == "adaptive" )

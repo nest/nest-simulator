@@ -66,11 +66,11 @@ nest::EpropArchivingNode::init_eprop_buffers( double delay )
   // register first entry for every synapse, increase access counter if entry already in list
 
   std::vector< histentry_extended >::iterator it_reg =
-    std::lower_bound( last_spike_per_synapse_.begin(), last_spike_per_synapse_.end(), delay - eps_ );
+    std::lower_bound( t_last_update_per_synapse_.begin(), t_last_update_per_synapse_.end(), delay - eps_ );
 
-  if ( it_reg == last_spike_per_synapse_.end() || fabs( delay - it_reg->t_ ) > eps_ )
+  if ( it_reg == t_last_update_per_synapse_.end() || fabs( delay - it_reg->t_ ) > eps_ )
   {
-    last_spike_per_synapse_.insert( it_reg, histentry_extended( delay, 0.0, 1 ) );
+    t_last_update_per_synapse_.insert( it_reg, histentry_extended( delay, 0.0, 1 ) );
   }
   else
   {
@@ -108,26 +108,26 @@ nest::EpropArchivingNode::find_eprop_hist_entries( double t1,
 }
 
 void
-nest::EpropArchivingNode::register_update( double t_lastupdate, double t_update )
+nest::EpropArchivingNode::register_update( double t_last_update, double t_current_update )
 {
   // register spike time if it is not in the list, otherwise increase access counter
   std::vector< histentry_extended >::iterator it_reg =
-    std::lower_bound( last_spike_per_synapse_.begin(), last_spike_per_synapse_.end(), t_update - eps_ );
+    std::lower_bound( t_last_update_per_synapse_.begin(), t_last_update_per_synapse_.end(), t_current_update - eps_ );
 
-  if ( it_reg == last_spike_per_synapse_.end() || fabs( t_update - it_reg->t_ ) > eps_ )
+  if ( it_reg == t_last_update_per_synapse_.end() || fabs( t_current_update - it_reg->t_ ) > eps_ )
   {
-    last_spike_per_synapse_.insert( it_reg, histentry_extended( t_update, 0.0, 1 ) );
+    t_last_update_per_synapse_.insert( it_reg, histentry_extended( t_current_update, 0.0, 1 ) );
   }
   else
   {
     ++it_reg->access_counter_;
   }
   // search for old entry, decrease access counter, and delete entry if the access counter equals zero
-  it_reg = std::lower_bound( last_spike_per_synapse_.begin(), last_spike_per_synapse_.end(), t_lastupdate - eps_ );
+  it_reg = std::lower_bound( t_last_update_per_synapse_.begin(), t_last_update_per_synapse_.end(), t_last_update - eps_ );
 
-  if ( it_reg == last_spike_per_synapse_.end() || fabs( t_lastupdate - it_reg->t_ ) > eps_ )
+  if ( it_reg == t_last_update_per_synapse_.end() || fabs( t_last_update - it_reg->t_ ) > eps_ )
   {
-    std::cout << "found no spike to register in scanned " + std::to_string( t_lastupdate ) + " ms interval \n";
+    std::cout << "found no entry to register in scanned " + std::to_string( t_last_update ) + " ms interval \n";
   }
   else
   {
@@ -135,7 +135,7 @@ nest::EpropArchivingNode::register_update( double t_lastupdate, double t_update 
 
     if ( it_reg->access_counter_ == 0 )
     {
-      it_reg = last_spike_per_synapse_.erase( it_reg ); // erase old entry
+      it_reg = t_last_update_per_synapse_.erase( it_reg ); // erase old entry
     }
   }
 }
@@ -143,12 +143,9 @@ nest::EpropArchivingNode::register_update( double t_lastupdate, double t_update 
 void
 nest::EpropArchivingNode::get_eprop_history( double t1,
   double t2,
-  double t3,
-  double t4,
   std::deque< histentry_eprop >::iterator* start,
   std::deque< histentry_eprop >::iterator* finish )
 {
-  register_update( t3, t4 );
   nest::EpropArchivingNode::find_eprop_hist_entries( t1, t2, start, finish );
 }
 
@@ -182,14 +179,14 @@ nest::EpropArchivingNode::get_spike_history( double t1,
 void
 nest::EpropArchivingNode::tidy_eprop_history()
 {
-  double smallest_time_to_keep = ( last_spike_per_synapse_.begin() )->t_;
+  double earliest_time_to_keep = ( t_last_update_per_synapse_.begin() )->t_;
   if ( !eprop_history_.empty() )
   {
     std::deque< histentry_eprop >::iterator start;
     std::deque< histentry_eprop >::iterator finish;
 
-    // find eprop history entries for times smaller than smallest last spike time
-    nest::EpropArchivingNode::find_eprop_hist_entries( 0.0, smallest_time_to_keep, &start, &finish );
+    // find eprop history entries for times earlier than earliest last update time
+    nest::EpropArchivingNode::find_eprop_hist_entries( 0.0, earliest_time_to_keep, &start, &finish );
 
     eprop_history_.erase( eprop_history_.begin(), finish ); // erase found entries since no longer used
   }
@@ -198,8 +195,8 @@ nest::EpropArchivingNode::tidy_eprop_history()
 void
 nest::EpropArchivingNode::tidy_spike_history()
 {
-  double smallest_time_to_keep = ( last_spike_per_synapse_.begin() )->t_;
-  while ( ( !spike_history_.empty() ) && ( spike_history_.front() + 1.0e-6 < smallest_time_to_keep ) )
+  double earliest_time_to_keep = ( t_last_update_per_synapse_.begin() )->t_;
+  while ( ( !spike_history_.empty() ) && ( spike_history_.front() + 1.0e-6 < earliest_time_to_keep ) )
   {
     spike_history_.pop_front();
   }

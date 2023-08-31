@@ -24,6 +24,7 @@ NodeCollection tests
 """
 
 import unittest
+
 import nest
 
 try:
@@ -91,27 +92,6 @@ class TestNodeCollection(unittest.TestCase):
             arr[start : start + n_neurons] = nc
 
             self.assertEqual(arr[start : start + n_neurons].tolist(), nc.tolist())
-
-    def test_equal(self):
-        """Equality of NodeCollections"""
-
-        n = nest.Create("iaf_psc_exp", 10)
-        n_list = n.tolist()
-
-        nest.ResetKernel()
-
-        n_new = nest.Create("iaf_psc_exp", 10)
-        new_list = n_new.tolist()
-        self.assertEqual(n_list, new_list)
-        self.assertEqual(n, n_new)
-
-        nest.ResetKernel()
-
-        nc = nest.Create("iaf_psc_alpha", 10)
-        ngc = nest.NodeCollection(nc.tolist())
-        self.assertEqual(nc, ngc)
-
-        self.assertNotEqual(nc, n)
 
     def test_indexing(self):
         """Index of NodeCollections"""

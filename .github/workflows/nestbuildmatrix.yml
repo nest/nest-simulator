@@ -408,7 +408,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu-22.04", "macos-latest"]
+        # os: ["ubuntu-22.04", "macos-latest"]
         os: ["ubuntu-22.04"]
     needs: [pydocstyle, rstcheck, vale]
     steps:

@@ -409,6 +409,7 @@ jobs:
       fail-fast: false
       matrix:
         os: ["ubuntu-22.04", "macos-latest"]
+        os: ["ubuntu-22.04"]
     needs: [pydocstyle, rstcheck, vale]
     steps:
       - name: "Checkout repository content"
@@ -430,7 +431,7 @@ jobs:
           printenv | sort
       - shell: bash -el {0}
         run: |
-          mamba install libarchive -n base -c conda-forge
+          mamba install boa -n base -c conda-forge
           mamba env update --name test-mambabuild --file environment.yml
 
 

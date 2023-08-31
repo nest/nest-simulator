@@ -51,7 +51,7 @@ This function is normalized such that an event of weight 1.0 results in a peak c
 of the fast component of the alpha function to be 1 pA at
 :math:`t = \tau_\text{syn, fast}`.
 The relative peak current of the slow component is given as ``amp_slow``, at
-:math:`t = \tau_\text{syn_slow}`. Namely,
+:math:`t = \tau_\text{syn, slow}`. Namely,
 
 .. math::
 

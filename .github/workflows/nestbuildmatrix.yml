@@ -444,35 +444,13 @@ jobs:
           cd ../nest-simulator-feedstock 
           mamba install --update-specs --yes --quiet --channel conda-forge conda-build pip boa conda-forge-ci-setup=3
           conda mambabuild . -m ./.ci_support/linux_64_numpy1.23python3.11.____cpython.yaml --suppress-variables --clobber-file ./.ci_support/clobber_linux_64_numpy1.23python3.11.____cpython.yaml
-      # - name: Upload artifacts
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     name: "conda package"
-      #     path: |
-      #       build_artifacts
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: "conda package Linux x86_64"
+          path: |
+            ../conda/conda-bld/
             
-    
-
-
-
-      #- name: "Test-build conda package"
-      #  shell: bash -l {0}
-      #  run: |
-      #    git clone   
-      #    mkdir -pv build
-      #    cd build
-      #    cmake -DCMAKE_INSTALL_PREFIX=../install ..
-      #    make html |& tee sphinx-output.log
-
-      #- name: Upload artifacts
-      #  uses: actions/upload-artifact@v3
-      #  with:
-      #    path: |
-      #      build/sphinx-output.log
-      #      build/userdoc/html/
-
-
-
   build_linux:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}

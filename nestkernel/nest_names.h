@@ -525,6 +525,7 @@ extern const Name tau_decay_in;
 extern const Name tau_epsp;
 extern const Name tau_fac;
 extern const Name tau_m;
+extern const Name tau_m_out;
 extern const Name tau_max;
 extern const Name tau_minus;
 extern const Name tau_minus_stdp;

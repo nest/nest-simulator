@@ -253,8 +253,8 @@ private:
   double t_next_update_;
   double c_reg_;
   double f_target_;
-  double tau_decay_; // time constant for low pass filtering of eligibility trace
-  double kappa_;     // exp( -dt / tau_decay_ )
+  double tau_m_out_; // time constant for low pass filtering of eligibility trace
+  double kappa_;     // exp( -dt / tau_m_out_ )
   double adam_m_;    // auxiliary variable for adam optimizer
   double adam_v_;    // auxiliary variable for adam optimizer
   double sum_grads_; // sum of the gradients in one batch
@@ -464,7 +464,7 @@ eprop_synapse< targetidentifierT >::eprop_synapse()
   , t_next_update_( 1002.0 )
   , c_reg_( 0. )
   , f_target_( 10.0 )
-  , tau_decay_( 0.0 )
+  , tau_m_out_( 10.0 )
   , kappa_( 0.0 )
   , adam_m_( 0.0 )
   , adam_v_( 0.0 )
@@ -483,7 +483,7 @@ eprop_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
   def< double >( d, names::Wmax, Wmax_ );
   def< double >( d, names::c_reg, c_reg_ );
   def< double >( d, names::f_target, f_target_ );
-  def< double >( d, names::tau_decay, tau_decay_ );
+  def< double >( d, names::tau_m_out, tau_m_out_ );
   def< long >( d, names::size_of, sizeof( *this ) );
   def< double >( d, names::adam_m, adam_m_ );
   def< double >( d, names::adam_v, adam_v_ );
@@ -500,23 +500,15 @@ eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
   updateValue< double >( d, names::Wmax, Wmax_ );
   updateValue< double >( d, names::c_reg, c_reg_ );
   updateValue< double >( d, names::f_target, f_target_ );
-  updateValue< double >( d, names::tau_decay, tau_decay_ );
+  updateValue< double >( d, names::tau_m_out, tau_m_out_ );
   updateValue< double >( d, names::adam_m, adam_m_ );
   updateValue< double >( d, names::adam_v, adam_v_ );
 
-  if ( tau_decay_ > 0.0 )
-  {
+  if ( tau_m_out_ <= 0 )
+    throw BadProperty( "Membrane time of readout neuron constant must be > 0." );
+
     const double h = Time::get_resolution().get_ms();
-    kappa_ = exp( -h / tau_decay_ );
-  }
-  else if ( tau_decay_ == 0.0 )
-  {
-    kappa_ = 0.0;
-  }
-  else
-  {
-    throw BadProperty( "The synaptic time constant tau_decay must be greater than zero." );
-  }
+  kappa_ = exp( -h / tau_m_out_ );
 
   if ( not( ( Wmax_ >= weight_ ) && ( Wmin_ <= weight_ ) ) )
   {

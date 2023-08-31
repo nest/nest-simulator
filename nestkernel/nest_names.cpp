@@ -500,6 +500,7 @@ const Name tau_decay_in( "tau_decay_in" );
 const Name tau_epsp( "tau_epsp" );
 const Name tau_fac( "tau_fac" );
 const Name tau_m( "tau_m" );
+const Name tau_m_out( "tau_m_out" );
 const Name tau_max( "tau_max" );
 const Name tau_minus( "tau_minus" );
 const Name tau_minus_stdp( "tau_minus_stdp" );

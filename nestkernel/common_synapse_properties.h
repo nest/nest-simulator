@@ -37,11 +37,13 @@ namespace nest
 {
 
 // forward declarations
+class weight_recorder;
 class ConnectorModel;
 class TimeConverter;
 
 /**
  * Class containing the common properties for all connections of a certain type.
+ *
  * Everything that needs to be stored commonly for all synapses goes into a
  * CommonProperty class derived by this base class.
  * Base class for all CommonProperty classes.
@@ -53,12 +55,10 @@ class CommonSynapseProperties
 public:
   /**
    * Standard constructor. Sets all common properties to default values.
+   * Default implementation of an empty CommonSynapseProperties object.
    */
   CommonSynapseProperties();
 
-  /**
-   * Destructor.
-   */
   ~CommonSynapseProperties();
 
   /**
@@ -75,33 +75,21 @@ public:
   /**
    * Calibrate all time objects, which might be contained in this object.
    */
-
   void calibrate( const TimeConverter& );
 
   /**
-   * get reference to registering node
-   */
-  Node* get_node();
-
-  /**
-   * get node ID of volume transmitter
+   * Get node ID of volume transmitter
    */
   long get_vt_node_id() const;
 
   /**
-   * get node ID of weight_recorder
+   * Get weight_recorder
    */
-  size_t get_wr_node_id() const;
-
-  /**
-   * get weight_recorder
-   */
-  NodeCollectionDatum get_weight_recorder() const;
+  weight_recorder* get_weight_recorder() const;
 
 
 private:
-  NodeCollectionDatum weight_recorder_;
-  long wr_node_id_;
+  weight_recorder* weight_recorder_;
 };
 
 inline long
@@ -110,13 +98,7 @@ CommonSynapseProperties::get_vt_node_id() const
   return -1;
 }
 
-inline size_t
-CommonSynapseProperties::get_wr_node_id() const
-{
-  return wr_node_id_;
-}
-
-inline NodeCollectionDatum
+inline weight_recorder*
 CommonSynapseProperties::get_weight_recorder() const
 {
   return weight_recorder_;

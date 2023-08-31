@@ -345,9 +345,9 @@ Layer< D >::dump_connections( std::ostream& out,
       Layer< D >* tgt_layer = dynamic_cast< Layer< D >* >( target_layer.get() );
 
       out << ' ';
-      const long tnode_id = tgt_layer->node_collection_->find( target_node_id );
-      assert( tnode_id > 0 );
-      tgt_layer->compute_displacement( source_pos, tnode_id ).print( out );
+      const long tnode_id_idx = tgt_layer->node_collection_->find( target_node_id );
+      assert( tnode_id_idx >= 0 );
+      tgt_layer->compute_displacement( source_pos, tnode_id_idx ).print( out );
       out << '\n';
     }
   }

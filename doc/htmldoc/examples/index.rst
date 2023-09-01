@@ -76,6 +76,7 @@ PyNEST examples
 
            * :doc:`../auto_examples/glif_cond_neuron`
            * :doc:`../auto_examples/glif_psc_neuron`
+           * :doc:`../auto_examples/glif_psc_double_alpha_neuron`
 
 
 
@@ -260,6 +261,7 @@ PyNEST examples
    ../auto_examples/mc_neuron
    ../auto_examples/glif_cond_neuron
    ../auto_examples/glif_psc_neuron
+   ../auto_examples/glif_psc_double_alpha_neuron
    ../auto_examples/precise_spiking
    ../auto_examples/CampbellSiegert
    ../auto_examples/vinit_example

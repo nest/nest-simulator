@@ -230,7 +230,8 @@ nest::astrocyte_lr_1994::Parameters_::set( const DictionaryDatum& d, Node* node 
   if ( delta_IP3_ < 0 )
   {
     throw BadProperty(
-      "Parameter determining the rate of astrocytic IP3 generation induced by synaptic input must be non-negative." );
+      "Parameter determining the increase in astrocytic IP3 concentration induced by synaptic input must be "
+      "non-negative." );
   }
   if ( k_IP3R_ < 0 )
   {

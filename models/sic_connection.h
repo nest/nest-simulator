@@ -56,7 +56,7 @@ SICEvent
 See also
 ++++++++
 
-astrocyte_lr_1994, aeif_cond_alpha_astro, gap_junction
+astrocyte_lr_1994, aeif_cond_alpha_astro
 
 EndUserDocs */
 

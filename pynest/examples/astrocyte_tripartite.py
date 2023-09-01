@@ -47,24 +47,25 @@ See Also
 
 References
 ~~~~~~~~~~
+
 .. [1] Bazargani, N., & Attwell, D. (2016). Astrocyte calcium signaling: the
        third wave. Nature neuroscience, 19(2), 182-189. DOI:
        https://doi.org/10.1038/nn.4201
 
-.. [2] De Young, G. W., & Keizer, J. (1992). A single-pool inositol
+.. [2] Li, Y. X., & Rinzel, J. (1994). Equations for InsP3 receptor-mediated
+       [Ca2+]i oscillations derived from a detailed kinetic model: a
+       Hodgkin-Huxley like formalism. Journal of theoretical Biology, 166(4),
+       461-473. DOI: https://doi.org/10.1006/jtbi.1994.1041
+
+.. [3] De Young, G. W., & Keizer, J. (1992). A single-pool inositol
        1,4,5-trisphosphate-receptor-based model for agonist-stimulated
        oscillations in Ca2+ concentration. Proceedings of the National Academy
        of Sciences, 89(20), 9895-9899. DOI:
        https://doi.org/10.1073/pnas.89.20.9895
 
-.. [3] Li, Y. X., & Rinzel, J. (1994). Equations for InsP3 receptor-mediated
-       [Ca2+]i oscillations derived from a detailed kinetic model: a
-       Hodgkin-Huxley like formalism. Journal of theoretical Biology, 166(4),
-       461-473. DOI: https://doi.org/10.1006/jtbi.1994.1041
-
-.. [4] Nadkarni S, and Jung P. Spontaneous oscillations of dressed neurons: A
-       new mechanism for epilepsy? Physical Review Letters, 91:26. DOI:
-       https://doi.org/10.1103/PhysRevLett.91.268101
+.. [4] Nadkarni, S., & Jung, P. (2003). Spontaneous oscillations of dressed
+       neurons: a new mechanism for epilepsy?. Physical review letters, 91(26),
+       268101. DOI: https://doi.org/10.1103/PhysRevLett.91.268101
 
 """
 
@@ -145,7 +146,7 @@ data_astro = mm_astro.events
 ###############################################################################
 # Create and show plots.
 
-fig, ax = plt.subplots(2, 2, sharex=True, figsize=(10, 8))
+fig, ax = plt.subplots(2, 2, sharex=True, figsize=(6.4, 4.8), dpi=100)
 axes = ax.flat
 axes[0].plot(data_pre["times"], data_pre["V_m"])
 axes[1].plot(data_astro["times"], data_astro["IP3"])
@@ -161,6 +162,6 @@ axes[1].set_ylabel(r"[IP$_{3}$] ($\mu$M)")
 axes[3].set_ylabel(r"[Ca$^{2+}$] ($\mu$M)")
 axes[3].set_xlabel("Time (ms)")
 plt.tight_layout()
-plt.savefig(os.path.join(data_path, "astrocyte_tripartite.png"))  # (debug)
+plt.savefig(os.path.join(data_path, "astrocyte_tripartite.png"), dpi=100)  # (debug)
 plt.show()
 plt.close()

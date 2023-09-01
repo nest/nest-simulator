@@ -42,7 +42,6 @@ class SICConnectionTestCase(unittest.TestCase):
 
         supported_sources = [
             "astrocyte_lr_1994",
-            "astrocyte_surrogate",
         ]
         supported_targets = [
             "aeif_cond_alpha_astro",

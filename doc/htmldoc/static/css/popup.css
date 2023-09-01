@@ -1,0 +1,40 @@
+.popuptext {
+  display: none;
+  position: absolute;
+  /*z-index: 1;*/
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  width: 200px;
+  margin-right: 10px;
+}
+.popuptext.visible {
+  display: flex;
+}
+/* I think this one can be removed (check)  TODO */
+.path {
+  position: relative;
+}
+
+/*
+.popup {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+*/
+
+@-webkit-keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity:1 ;}
+}
+
+

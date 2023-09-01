@@ -53,6 +53,7 @@ extensions = [
     "sphinx.ext.autosummary",
     "sphinx.ext.doctest",
     "sphinx.ext.intersphinx",
+    "test_source",
     "sphinx.ext.mathjax",
     "IPython.sphinxext.ipython_console_highlighting",
     "nbsphinx",

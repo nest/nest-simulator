@@ -71,7 +71,6 @@ const Name asc_amps( "asc_amps" );
 const Name asc_decay( "asc_decay" );
 const Name asc_init( "asc_init" );
 const Name asc_r( "asc_r" );
-const Name astrocyte( "astrocyte" );
 const Name available( "available" );
 const Name azimuth_angle( "azimuth_angle" );
 

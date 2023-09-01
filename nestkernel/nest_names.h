@@ -96,7 +96,6 @@ extern const Name asc_amps;
 extern const Name asc_decay;
 extern const Name asc_init;
 extern const Name asc_r;
-extern const Name astrocyte;
 extern const Name available;
 extern const Name azimuth_angle;
 

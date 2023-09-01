@@ -67,15 +67,15 @@ workflow below!
 
 If you have not done so alrealdy first
 
-#. Fork the nest-simulator repository (see :ref:`here <fork>` for details on first time setup)
+* Fork the nest-simulator repository (see :ref:`here <fork>` for details on first time setup)
 
-#. Clone the nest-simulator:
+* Clone the nest-simulator:
 
 .. code-block:: bash
 
    git clone git@github.com:<my-username>/nest-simulator
 
-#. Create a branch to a make your changes
+* Create a branch to a make your changes
 
 .. code-block:: bash
 

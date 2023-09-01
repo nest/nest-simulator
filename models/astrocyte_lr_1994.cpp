@@ -91,12 +91,6 @@ astrocyte_lr_1994_dynamics( double time, const double y[], double f[], void* pno
   const double J_channel = node.P_.ratio_ER_cyt_ * node.P_.rate_IP3R_ * std::pow( m_inf, 3 ) * std::pow( n_inf, 3 )
     * std::pow( h_ip3r, 3 ) * ( calc_ER - calc );
 
-  // for alpha-shaped SIC
-  const double& dsic = y[ S::DSIC ];
-  const double& sic = y[ S::SIC ];
-  f[ S::DSIC ] = -dsic / node.P_.tau_SIC_;
-  f[ S::SIC ] = dsic - sic / node.P_.tau_SIC_;
-
   f[ S::IP3 ] = ( node.P_.IP3_0_ - ip3 ) / node.P_.tau_IP3_;
   f[ S::Ca ] = J_channel - J_pump + J_leak + node.B_.I_stim_;
   f[ S::h_IP3R ] = alpha_h_ip3r * ( 1.0 - h_ip3r ) - beta_h_ip3r * h_ip3r;
@@ -126,11 +120,6 @@ nest::astrocyte_lr_1994::Parameters_::Parameters_()
   , rate_SERCA_( 0.0009 ) // uM/ms
   , ratio_ER_cyt_( 0.185 )
   , tau_IP3_( 7142.0 ) // ms
-  , alpha_SIC_( false )
-  , SIC_reactivate_th_( 0.19669 ) // uM
-  , SIC_reactivate_time_( 100 )   // ms
-  , delay_SIC_( 1000.0 )          // ms
-  , tau_SIC_( 1000.0 )            // ms
 {
 }
 
@@ -184,11 +173,6 @@ nest::astrocyte_lr_1994::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::rate_IP3R, rate_IP3R_ );
   def< double >( d, names::rate_SERCA, rate_SERCA_ );
   def< double >( d, names::tau_IP3, tau_IP3_ );
-  def< bool >( d, names::alpha_SIC, alpha_SIC_ );
-  def< double >( d, names::tau_SIC, tau_SIC_ );
-  def< double >( d, names::delay_SIC, delay_SIC_ );
-  def< double >( d, names::SIC_reactivate_th, SIC_reactivate_th_ );
-  def< double >( d, names::SIC_reactivate_time, SIC_reactivate_time_ );
 }
 
 void
@@ -210,11 +194,6 @@ nest::astrocyte_lr_1994::Parameters_::set( const DictionaryDatum& d, Node* node 
   updateValueParam< double >( d, names::rate_IP3R, rate_IP3R_, node );
   updateValueParam< double >( d, names::rate_SERCA, rate_SERCA_, node );
   updateValueParam< double >( d, names::tau_IP3, tau_IP3_, node );
-  updateValueParam< bool >( d, names::alpha_SIC, alpha_SIC_, node );
-  updateValueParam< double >( d, names::tau_SIC, tau_SIC_, node );
-  updateValueParam< double >( d, names::delay_SIC, delay_SIC_, node );
-  updateValueParam< double >( d, names::SIC_reactivate_th, SIC_reactivate_th_, node );
-  updateValueParam< double >( d, names::SIC_reactivate_time, SIC_reactivate_time_, node );
 
   if ( Ca_tot_ <= 0 )
   {
@@ -282,25 +261,6 @@ nest::astrocyte_lr_1994::Parameters_::set( const DictionaryDatum& d, Node* node 
   if ( tau_IP3_ <= 0 )
   {
     throw BadProperty( "Time constant of the exponential decay of astrocytic IP3 must be positive." );
-  }
-  if ( tau_SIC_ <= 0 )
-  {
-    throw BadProperty( "Time constant of alpha-shaped SIC must be positive." );
-  }
-  if ( delay_SIC_ < 0 )
-  {
-    throw BadProperty( "Delay of alpha-shaped SIC must be non-negative." );
-  }
-  if ( SIC_reactivate_th_ < 0 or SIC_reactivate_th_ > SIC_th_ )
-  {
-    throw BadProperty(
-      "Calcium level for the reactivation of alpha-shaped SIC must be non-negative and not larger than SIC_th." );
-  }
-  if ( SIC_reactivate_time_ < 0 )
-  {
-    throw BadProperty(
-      "Time required for calcium to stay lower than SIC_reactivate_th for the reactivation of alpha-shaped SIC must be "
-      "non-negative." );
   }
 }
 
@@ -443,13 +403,6 @@ nest::astrocyte_lr_1994::init_buffers_()
   B_.sys_.params = reinterpret_cast< void* >( this );
 
   B_.I_stim_ = 0.0;
-
-  // for alpha-shaped SIC
-  B_.sic_on_ = false;
-  B_.sic_on_timer_ = 0.0;
-  B_.i0_ex_ = 1.0 * numerics::e / P_.tau_SIC_;
-  B_.sic_started_flag_ = false;
-  B_.sic_off_timer_ = 0.0;
 }
 
 void
@@ -473,13 +426,7 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
 {
   for ( long lag = from; lag < to; ++lag )
   {
-    // B_.lag_ = lag;
-
     double t = 0.0;
-
-    // for alpha-shaped SIC
-    // get the last value of calcium concentration for threshold-crossing judgement
-    double calc_thr_last = S_.y_[ State_::Ca ] - P_.SIC_th_;
 
     // numerical integration with adaptive step size control:
     // ------------------------------------------------------
@@ -532,62 +479,11 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
     // 1000.0: change unit to nM as in the original paper
     double calc_thr = ( S_.y_[ State_::Ca ] - P_.SIC_th_ ) * 1000.0;
     double sic_value = 0.0;
-    // alpha-shaped version of SIC
-    if ( P_.alpha_SIC_ == true )
-    {
-      // assign SIC value at the moment
-      sic_value = S_.y_[ State_::SIC ];
-      // SIC-on state: next SIC blocked until reactivated
-      if ( B_.sic_on_ == true )
-      {
-        // timer for a delay before initiating the SIC
-        B_.sic_on_timer_ += B_.step_;
-        // initiate an alpha-shaped SIC if conditions are met
-        if ( B_.sic_started_flag_ == false and B_.sic_on_timer_ >= P_.delay_SIC_ and calc_thr > 1.0 )
-        {
-          S_.y_[ State_::DSIC ] += P_.SIC_scale_ * std::log( calc_thr ) * B_.i0_ex_;
-          // block the next SIC once initiated
-          B_.sic_started_flag_ = true;
-        }
-        // If calcium concentration stays lower than SIC_reactivate_th for a
-        // period of time longer than SIC_reactivate_time, the astrocyte returns
-        // to the state where SIC can be triggered again (reactivated).
-        if ( S_.y_[ State_::Ca ] < P_.SIC_reactivate_th_ )
-        {
-          // timer
-          B_.sic_off_timer_ += B_.step_;
-          if ( B_.sic_off_timer_ >= P_.SIC_reactivate_time_ )
-          {
-            B_.sic_on_ = false;
-            B_.sic_started_flag_ = false;
-            B_.sic_on_timer_ = 0.0;
-            B_.sic_off_timer_ = 0.0;
-          }
-        }
-        else
-        {
-          // reset timer if calcium concentration becomes higher than SIC_reactivate_th
-          B_.sic_off_timer_ = 0.0;
-        }
-      }
-      // SIC-off state: SIC can be triggered again (reactivated)
-      else
-      {
-        // threshold-crossing; SIC will be initiated with a delay
-        if ( calc_thr > 0.0 and calc_thr_last <= 0.0 )
-        {
-          B_.sic_on_ = true;
-        }
-      }
-    }
     // SIC generation according to Nadkarni & Jung, 2003
     // take the logarithmic of calcium concentration
-    else
+    if ( calc_thr > 1.0 )
     {
-      if ( calc_thr > 1.0 )
-      {
-        sic_value = std::log( calc_thr ) * P_.SIC_scale_;
-      }
+      sic_value = std::log( calc_thr ) * P_.SIC_scale_;
     }
     B_.sic_values[ lag ] = sic_value;
 

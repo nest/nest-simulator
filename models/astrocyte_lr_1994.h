@@ -301,14 +301,6 @@ private:
     double ratio_ER_cyt_; //!< Ratio between astrocytic ER and cytosol volumes
     double tau_IP3_;      //!< Time constant of the exponential decay of astrocytic IP3 in ms
 
-    // parameters for alpha-shaped SIC
-    bool alpha_SIC_;             //!< Alpha-shaped SIC is generated if true
-    double SIC_reactivate_th_;   //!< Calcium level for the reactivation of alpha-shaped SIC in uM
-    double SIC_reactivate_time_; //!< Time required for calcium to stay lower than SIC_reactivate_th for the
-                                 //!< reactivation of alpha-shaped SIC in ms
-    double delay_SIC_;           //!< Delay of alpha-shaped SIC in ms
-    double tau_SIC_;             //!< Time constant of alpha-shaped SIC in ms
-
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
@@ -382,9 +374,6 @@ public:
     double step_;            //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
 
-    // remembers current lag for piecewise interpolation
-    // long lag_;
-
     /**
      * Input current injected by CurrentEvent.
      * This variable is used to transport the current applied into the
@@ -396,14 +385,6 @@ public:
 
     // values to be sent by SIC event
     std::vector< double > sic_values;
-
-    // for alpha-shaped SIC
-    // switch between SIC-on (activated) and SIC-off (reactivated) states
-    bool sic_on_;
-    double sic_on_timer_;
-    double i0_ex_;
-    bool sic_started_flag_;
-    double sic_off_timer_;
   };
 
   // ----------------------------------------------------------------

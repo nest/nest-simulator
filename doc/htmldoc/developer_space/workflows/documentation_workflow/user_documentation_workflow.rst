@@ -75,6 +75,12 @@ If you have not done so alrealdy first
 
    git clone git@github.com:<my-username>/nest-simulator
 
+#. Create a branch to a make your changes
+
+.. code-block:: bash
+
+   git checkout -b <my-new-feature>
+
 Set up your environment
 ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -197,7 +203,7 @@ Github has a nice help page that outlines the process for
 Reviewers will be assigned and go through your changes.
 
 If you are a first time contributor, we ask that you fill out the
-:download:`NEST Contributor Agreement <https://nest-simulator.readthedocs.io/en/latest/_downloads/9b65adbdacba6bfed66e68c62af4e308/NEST_Contributor_Agreement.pdf>` 
+:download:`NEST Contributor Agreement <https://nest-simulator.readthedocs.io/en/latest/_downloads/9b65adbdacba6bfed66e68c62af4e308/NEST_Contributor_Agreement.pdf>`
 form to transfer your copyright to the NEST initiative and send it to *info [at] nest-initiative.org*.
 
 .. tip::

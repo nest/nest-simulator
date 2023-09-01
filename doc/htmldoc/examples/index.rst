@@ -235,7 +235,7 @@ PyNEST examples
            * :doc:`../auto_examples/csa_spatial_example`
 
     .. grid-item-card:: Astrocytes
-           :img-top: ../static/img/nest_logo-faded.png
+           :img-top: ../static/img/astrocyte_tripartite.png
 
            * :doc:`../auto_examples/astrocyte_single`
            * :doc:`../auto_examples/astrocyte_tripartite`

@@ -72,11 +72,6 @@ References
 ###############################################################################
 # Import all necessary modules for simulation and plotting.
 
-# (debug)
-import os
-import json
-import hashlib
-
 import matplotlib.pyplot as plt
 
 import nest
@@ -96,18 +91,6 @@ params_astro = {"IP3_0": 0.16}
 w_pre2astro = 1.0
 w_pre2post = 1.0
 w_astro2post = 1.0
-
-###############################################################################
-# Save data (debug).
-
-data_path = os.path.join("astrocyte_tripartite", hashlib.md5(os.urandom(16)).hexdigest())
-os.system(f"mkdir -p {data_path}")
-os.system(f"cp astrocyte_tripartite.py {data_path}")
-default = nest.GetDefaults("astrocyte_lr_1994")
-default.update(params_astro)
-out = open(os.path.join(data_path, "astrocyte_params.json"), "w")
-json.dump(default, out, indent=4)
-out.close()
 
 ###############################################################################
 # Create and connect the astrocyte and its devices.
@@ -162,6 +145,5 @@ axes[1].set_ylabel(r"[IP$_{3}$] ($\mu$M)")
 axes[3].set_ylabel(r"[Ca$^{2+}$] ($\mu$M)")
 axes[3].set_xlabel("Time (ms)")
 plt.tight_layout()
-plt.savefig(os.path.join(data_path, "astrocyte_tripartite.png"), dpi=100)  # (debug)
 plt.show()
 plt.close()

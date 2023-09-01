@@ -59,11 +59,6 @@ References
 ###############################################################################
 # Import all necessary modules for simulation and plotting.
 
-# (debug)
-import os
-import json
-import hashlib
-
 import matplotlib.pyplot as plt
 
 import nest
@@ -78,18 +73,6 @@ params_astro = {"IP3_0": 0.16}
 # Poisson input for the astrocyte
 poisson_rate = 1.0
 poisson_weight = 0.1
-
-###############################################################################
-# Save data (debug).
-
-data_path = os.path.join("astrocyte_single", hashlib.md5(os.urandom(16)).hexdigest())
-os.system(f"mkdir -p {data_path}")
-os.system(f"cp astrocyte_single.py {data_path}")
-default = nest.GetDefaults("astrocyte_lr_1994")
-default.update(params_astro)
-out = open(os.path.join(data_path, "astrocyte_params.json"), "w")
-json.dump(default, out, indent=4)
-out.close()
 
 ###############################################################################
 # Create astrocyte and devices and connect them.
@@ -109,13 +92,12 @@ data = mm_astro.events
 ###############################################################################
 # Create and show plots.
 
-fig, ax = plt.subplots(2, 1, sharex=True, figsize=(6.4, 4.8), dpi=100)
+fig, axes = plt.subplots(2, 1, sharex=True, figsize=(6.4, 4.8), dpi=100)
 axes[0].plot(data["times"], data["IP3"])
 axes[1].plot(data["times"], data["Ca"])
 axes[0].set_ylabel(r"[IP$_{3}$] ($\mu$M)")
 axes[1].set_ylabel(r"[Ca$^{2+}$] ($\mu$M)")
 axes[1].set_xlabel("Time (ms)")
 plt.tight_layout()
-plt.savefig(os.path.join(data_path, "astrocyte_single.png"), dpi=100)  # (debug)
 plt.show()
 plt.close()

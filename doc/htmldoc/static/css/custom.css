@@ -16,13 +16,15 @@
 /* Define colors*/
 :root {
     --nest-orange: #ff6633;
-    --nest-blue: #1281B3;
-    --nest-green: #36B34F;
+    --nest-blue: #0E6A93;
+    --nest-dkblue: #072f42;
+    --nest-brown: #4b210c; /*formally green */
     --sd-color-primary: var(--nest-orange);
+    --sd-color-success: var(--nest-brown);
+    --sd-color-dark: var(--nest-dkblue);
     --sd-color-primary-highlight: #e05a2d;
     --sd-color-muted: #adadad;
     --sd-color-info: var(--nest-blue);
-    --sd-color-success: var(--nest-green);
     --sd-color-card-border-hover: var(--nest-orange);
 }
 /* Define base font color and style */
@@ -153,6 +155,9 @@ div[role="main"] .md-source {
 }
 [data-md-color-primary="orange"] .md-typeset a {
   color: var(--nest-orange);
+	background-color: #ffffff8a;
+	border-radius: 5px;
+	padding: 2px;
 }
 .md-typeset details {
    background-color: white;
@@ -164,18 +169,26 @@ div[role="main"] .md-source {
   display: none;
 }
 
+#learn-and-explore-nest .sd-mb-4 {
+  margin-bottom: 0px !important;
+}
 /* settings for icons */
 .md-typeset .sd-card-title img {
   border: none;
-  opacity: 0.75;
+  opacity: 0.9;
   width: 64px;
   height: auto;
-  margin-right: 0.7em;
-}
-div.sd-card-title.sd-font-weight-bold.sd-d-flex-row.docutils a.reference.internal img {
  margin-right: 2em;
  margin-bottom: 0.5em;
- 
+
+}
+.md-typeset .sd-summary-title img {
+  border: none;
+  opacity: 0.9;
+  width: auto;
+  height: 64px;
+ margin-right: 2em;
+ margin-bottom: 0.5em;
 }
 
 .md-typeset .admonition {
@@ -197,14 +210,14 @@ div.sd-card-title.sd-font-weight-bold.sd-d-flex-row.docutils a.reference.interna
    margin-right: 15px;
 }
 .md-typeset .admonition.seealso > .admonition-title, .md-typeset .admonition.important > .admonition-title {
-   background-color: var(--nest-green);
+   background-color: var(--nest-dkblue);
 }
 .md-typeset .admonition.seealso, .md-typeset .admonition.important {
-  border-left: .2rem solid var(--nest-green);
+  border-left: .2rem solid var(--nest-dkblue);
 }
 .md-typeset .admonition.warning {
    border-left-color: #be1717;
-} 
+}
 .md-typeset .admonition.warning > .admonition-title {
    background-color: #be1717;
 }
@@ -242,6 +255,14 @@ div.md-header-nav__source a.md-source div.md-source__repository, div.md-source__
  padding-top: 0px;
 }
 
+/* dropdowns */
+.md-typeset details > summary {
+   background-color: #ff663310;
+}
+
+.md-typeset details {
+  border-left: none;
+}
 
 /***********************************
  * Adjust settings for sphinx design
@@ -250,11 +271,11 @@ div.md-header-nav__source a.md-source div.md-source__repository, div.md-source__
   color: white;
   text-align: center;
 }
+
 #pynest-examples img.sd-card-img-top {
   width: auto;
   height: max-content;
 }
-
 .sd-card-body {
    padding: 0.6rem;
 }
@@ -465,7 +486,7 @@ a.buttonlink:hover{
 }
 
 .greenelement{
-    background: var(--nest-green);
+    background: var(--nest-brown);
     color:#fff;
 }
 
@@ -484,7 +505,7 @@ a.buttonlink:hover{
 }
 
 .green {
-   color: var(--nest-green);
+   color: var(--nest-brown);
 }
 
 .darkgreen {

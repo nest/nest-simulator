@@ -91,6 +91,7 @@ copybutton_prompt_text = ">>> "
 # The output lines will not be copied if set to True
 copybutton_only_copy_prompt_lines = True
 
+nbsphinx_requirejs_path = ""
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
@@ -171,6 +172,17 @@ html_theme_options = {
 }
 
 html_static_path = ["static"]
+
+html_css_files = [
+    "css/custom.css",
+    "css/popup.css",
+    "css/pygments.css",
+]
+
+html_js_files = [
+    "js/custom.js",
+    "js/popup.js",
+]
 # html_additional_pages = {"index": "index.html"}
 html_sidebars = {"**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]}
 
@@ -320,9 +332,6 @@ def setup(app):
     # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
     app.connect("source-read", toc_customizer)
     app.connect("source-read", api_customizer)
-    app.add_css_file("css/custom.css")
-    app.add_css_file("css/pygments.css")
-    app.add_js_file("js/custom.js")
     app.connect("env-before-read-docs", get_pynest_list)
     app.connect("env-before-read-docs", add_button_to_examples)
     app.connect("config-inited", config_inited_handler)

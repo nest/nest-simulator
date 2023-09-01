@@ -110,6 +110,7 @@ public:
 /**
  * Exception to be thrown if a component with the the specified name
  * does not exist.
+ *
  * @see UnknownModelName
  * @ingroup KernelExceptions
  */
@@ -133,6 +134,7 @@ public:
 /**
  * Exception to be thrown if a name requested for a user-defined
  * model exist already.
+ *
  * @ingroup KernelExceptions
  */
 class NewModelNameExists : public KernelException
@@ -154,7 +156,8 @@ public:
 /**
  * Exception to be thrown if a (neuron/synapse) model with the the specified ID
  * is used within the network and the providing module hence cannot be
- * uninstalled. This exception can occur if the user tries to uninstall a
+ * uninstalled.
+ * This exception can occur if the user tries to uninstall a
  * module.
  * @ingroup KernelExceptions
  */
@@ -208,8 +211,8 @@ public:
 };
 
 /**
- * Exception to be thrown if the specified
- * Node does not exist.
+ * Exception to be thrown if the specified Node does not exist.
+ *
  * This exception is thrown, if
  * -# an address did not point to an existing node.
  * -# a node id did not point to an existing node.
@@ -240,8 +243,8 @@ public:
 };
 
 /**
- * Exception to be thrown if the specified
- * Node does not exist.
+ * Exception to be thrown if the specified Node does not exist.
+ *
  * This exception is thrown, if
  * -# an address did not point to an existing node.
  * -# a node id did not point to an existing node.
@@ -308,9 +311,8 @@ public:
   std::string message() const override;
 };
 
-/*
- * Exception to be thrown if the parent
- * compartment does not exist
+/**
+ * Exception to be thrown if the parent compartment does not exist
  */
 class UnknownCompartment : public KernelException
 {
@@ -416,6 +418,7 @@ public:
 
 /**
  * To be thrown if a connection is not possible.
+ *
  * This exception is e.g. thrown if a connection was attempted with
  * an unsupported Event type.
  * @ingroup KernelExceptions
@@ -446,8 +449,8 @@ private:
 };
 
 /**
- * To be thrown if a connection does not exists but something is to be done with
- * it.
+ * To be thrown if a connection does not exists but something is to be done with it.
+ *
  * This exception is e.g. thrown if a deletion was attempted with
  * an inexistent connection.
  * @ingroup KernelExceptions
@@ -527,6 +530,7 @@ public:
 /**
  * Exception to be thrown by the event handler
  * of a node if it receives an event it cannot handle.
+ *
  * This case should be prevented by connect_sender().
  * @ingroup KernelExceptions
  */
@@ -576,8 +580,8 @@ public:
 };
 
 /**
- * Exception to be thrown if a status parameter
- * is incomplete or inconsistent.
+ * Exception to be thrown if a status parameter is incomplete or inconsistent.
+ *
  * Thrown by Node::set_/get_property methods.
  * @ingroup KernelExceptions
  */
@@ -606,8 +610,8 @@ public:
 };
 
 /**
- * Exception to be thrown if a parameter
- * cannot be set.
+ * Exception to be thrown if a parameter cannot be set.
+ *
  * Thrown by Node::set_/get_property methods.
  * @ingroup KernelExceptions
  */
@@ -636,8 +640,8 @@ public:
 };
 
 /**
- * Exception to be thrown if the dimensions
- * of two or more objects do not agree.
+ * Exception to be thrown if the dimensions of two or more objects do not agree.
+ *
  * Thrown by Node::set_/get_property methods.
  * @ingroup KernelExceptions
  */
@@ -698,8 +702,9 @@ public:
 };
 
 /**
- * Exception to be thrown on prototype construction if Time objects
- * incompatible. This exception is to be thrown by the default constructor of
+ * Exception to be thrown on prototype construction if Time objects incompatible.
+ *
+ * This exception is to be thrown by the default constructor of
  * nodes which require that Time objects have properties wrt resolution.
  * @ingroup KernelExceptions
  * @see InvalidTimeInModel
@@ -735,6 +740,7 @@ private:
 
 /**
  * Exception to be thrown on instance construction if Time objects incompatible.
+ *
  * This exception is to be thrown by the copy constructor of nodes which
  * require that Time objects have properties wrt resolution.
  * @ingroup KernelExceptions
@@ -1175,7 +1181,7 @@ private:
 class MPIPortsFileUnknown : public KernelException
 {
 public:
-  explicit MPIPortsFileUnknown( const index node_id )
+  explicit MPIPortsFileUnknown( const size_t node_id )
     : node_id_( node_id )
   {
   }
@@ -1183,7 +1189,37 @@ public:
   std::string message() const;
 
 private:
-  const index node_id_;
+  const size_t node_id_;
+};
+
+class MPIErrorCode : public KernelException
+{
+public:
+  explicit MPIErrorCode( const int error_code )
+    : error_code_( error_code )
+  {
+  }
+
+  std::string message() const;
+
+private:
+  int error_code_;
+};
+
+class MPIPortsFileMissing : public KernelException
+{
+public:
+  explicit MPIPortsFileMissing( const size_t node_id, const std::string path )
+    : node_id_( node_id )
+    , path_( path )
+  {
+  }
+
+  std::string message() const;
+
+private:
+  const size_t node_id_;
+  const std::string path_;
 };
 #endif
 

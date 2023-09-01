@@ -1,9 +1,9 @@
-NEST Simulator documentaiton
+NEST Simulator documentation
 ============================
 
 
-Welcome
--------
+Welcome!
+--------
 
 
 .. grid::
@@ -37,7 +37,6 @@ Welcome
               OR SUDOKU
 
             .. figure:: static/img/pynest/spatial_test3d.png
-              :target: architecture.html
 
               Create 3D spatially structured networks
 
@@ -46,54 +45,212 @@ Welcome
 
               Showcase cool examples
 
-              Provide users with a glimpse of what nest can do
+
+----
+
+Conceptual appraoch
+-------------------
+
+.. grid::
+   :outline:
+
+   .. grid-item::
+      :columns: 8
+
+      .. raw:: html
+         :file: static/img/network-brain_1.1.svg
+
+   .. grid-item::
+      :columns: 4
+      :child-align: center
+
+      .. raw:: html
+
+         <div class="popuptext" id="neuron">
+         <a href="neurons_nest.html"> <img src="_static/img/neuron_text.svg" alt="neuron triangle graphic">
+         </a>
+         </div>
+         <div class="popuptext" id="synapse">
+         <a href="neurons_nest.html"> <img src="_static/img/synapse_text.svg" alt="neuron circle graphic">
+         </a>
+         </div>
+         <div class="popuptext" id="device">
+         <a href="neurons_nest.html"> <img src="_static/img/device_af.svg" alt="neuron circle graphic">
+         </a>
+         </div>
+
+Learn and explore NEST
+----------------------
 
 
-.. grid:: 1 2 3 3
 
-   .. grid-item-card:: Install NEST
-     :class-item: sd-text-center sd-text-white sd-bg-primary
+.. grid:: 1 1 2 3
 
+   .. grid-item::
+      :margin: 0
+      :padding: 0
 
-     .. code-block:: python
+      .. dropdown:: Get started
+          :class-title: sd-d-flex-item sd-align-minor-center sd-bg-primary sd-text-white
 
-         pip install nest-simulator
-
-     See more installation options here.
-
-   .. grid-item-card:: Learn NEST
-     :class-item: sd-text-center sd-text-white sd-bg-success
+          * :ref:`install`
+          * :ref:`pynest_tutorial`
 
 
-     Our PyNEST tutorial will show you how to create your
-     first script with NEST simulator. :ref:`tutorial-link <tutorial>`
 
-     Learn how to use  neurons, synapses and devices
+   .. grid-item::
+      :margin: 0
+      :padding: 0
 
-   .. grid-item-card:: Explore our models
-     :class-item: sd-text-center sd-text-white sd-bg-info
+      .. dropdown:: Explore example use cases
+          :class-title: sd-d-flex-item sd-align-minor-center sd-bg-primary sd-text-white
 
-     NEST has extensive model catalog from . . .
-     :ref:`Check out our model catalog <modelsmain>`
+          * :ref:`connection_management`
 
-.. grid:: 1 2 3 3
+          * :ref:`handling_connections`
 
-   .. grid-item-card:: PyNEST API
-     :class-item: sd-text-center sd-text-white sd-bg-dark
 
-     Find a function
+   .. grid-item::
+      :margin: 0
+      :padding: 0
 
-   .. grid-item-card:: Network models
-     :class-item: sd-text-left sd-text-white sd-bg-primary
+      .. dropdown:: PyNEST API
+          :class-title: sd-d-flex-item sd-align-minor-center sd-bg-primary sd-text-white
 
-     * Spatially structured networks ?
-     * Microcircuit
-     * Mulit area model
+          * :ref:`pynest_api`
 
-   .. grid-item-card::  HPC
-     :class-item: sd-text-left sd-text-white sd-bg-success
+          * :ref:`stimulate_network`
 
-     * Run NEST on clusters and supercomputers
+
+.. grid:: 1 1 2 3
+
+   .. grid-item::
+      :margin: 0
+      :padding: 0
+
+      .. dropdown:: |neuron| All about neurons
+          :class-title: sd-d-flex-row sd-align-minor-center sd-bg-success sd-text-white
+
+          * :ref:`node_handles`
+
+          * :ref:`param_ex`
+
+          * :ref:`sim_precise_spike_times`
+
+          * :ref:`exact_integration`
+
+   .. grid-item::
+      :margin: 0
+      :padding: 0
+
+      .. dropdown:: |synapse|  All about synapses and connections
+          :class-title: sd-d-flex-row sd-align-minor-center sd-bg-success sd-text-white
+
+          * :ref:`connection_management`
+
+          * :ref:`handling_connections`
+
+          * :ref:`sim_gap_junctions`
+
+          * :ref:`weight_normalization`
+
+
+   .. grid-item::
+      :margin: 0
+      :padding: 0
+
+      .. dropdown:: |device| All about devices
+          :class-title: sd-d-flex-row sd-align-minor-center sd-bg-success sd-text-white
+
+          * :ref:`record_simulations`
+
+          * :ref:`stimulate_network`
+
+.. grid:: 1 1 2 3
+
+   .. grid-item::
+      :margin: 0
+      :padding: 0
+
+      .. dropdown:: |network| Spatially-structured networks
+          :class-title: sd-d-flex-row sd-align-minor-center sd-bg-info sd-text-white
+
+          :ref:`spatial_networks`
+
+
+   .. grid-item::
+      :margin: 0
+      :padding: 0
+
+      .. dropdown:: |math| Models in NEST
+          :class-title: sd-d-flex-row sd-align-minor-center sd-bg-info sd-text-white
+
+          :ref:`modelsmain`
+
+
+   .. grid-item::
+      :margin: 0
+      :padding: 0
+
+      .. dropdown:: |sonata| NEST SONATA guide
+          :class-title: sd-d-flex-row sd-align-minor-center sd-bg-info sd-text-white
+
+          :ref:`nest_sonata`
+
+
+.. grid:: 1 1 2 3
+
+   .. grid-item::
+      :margin: 0
+      :padding: 0
+
+      .. dropdown:: |random| NEST behavior
+          :class-title: sd-d-flex-row sd-align-minor-center sd-bg-dark sd-text-white
+
+          * :ref:`built_in_timers`
+
+          * :ref:`random_numbers`
+
+          * :ref:`run_simulations`
+
+   .. grid-item::
+      :margin: 0
+      :padding: 0
+
+      .. dropdown:: |connect| Connect to other tools
+          :class-title: sd-d-flex-row sd-align-minor-center sd-bg-dark sd-text-white
+
+          * :ref:`nest_server`
+
+          * :ref:`nest_music`
+
+   .. grid-item::
+      :margin: 0
+      :padding: 0
+
+      .. dropdown:: |hpc| High performance computers (HPC)
+          :class-title: sd-d-flex-row sd-align-minor-center sd-bg-dark sd-text-white
+
+          * :ref:`optimize_performance`
+          * :ref:`parallel_computing`
+          * :ref:`benchmark`
+
+.. grid:: 1 1 2 3
+
+   .. grid-item-card:: |refresh| Convert NEST 2.X scripts to 3.X
+       :class-title: sd-d-flex-row sd-align-minor-center
+       :link: refguide_2_3
+       :link-type: ref
+
+   .. grid-item-card:: |git| What's new?
+       :class-title: sd-d-flex-row sd-align-minor-center
+       :link: whats_new
+       :link-type: ref
+
+   .. grid-item-card::  |glossary| Glossary
+       :class-title: sd-d-flex-row sd-align-minor-center
+       :link: glossary
+       :link-type: ref
 
 
 Example script
@@ -189,42 +346,6 @@ this works - TODO add text into image
 
             * :py:func:`.Simulate`
             * See all PyNEST functions
-Install NEST
-------------
-
-
-.. grid:: 1 1 2 2
-
-   .. grid-item-card::  |user| Install pre-built NEST package
-       :class-title: sd-d-flex-row sd-align-minor-center
-
-       I'm a user who wants to :ref:`install NEST on my computer <user_install>`
-
-
-   .. grid-item-card:: |teacher| Install NEST for a class or workshop
-       :class-title: sd-d-flex-row sd-align-minor-center
-
-       I'm a lecturer who wants to :ref:`use NEST to teach <lecturer>`
-
-
-.. grid:: 1 1 2 2
-
-    .. grid-item-card:: |admin| Install NEST for supercomputers and clusters
-       :class-title: sd-d-flex-row sd-align-minor-center
-
-       I'm an admin or user who wants to :ref:`run NEST on HPC <admin_install>`
-
-    .. grid-item-card:: |dev| Install NEST from source
-       :class-title: sd-d-flex-row sd-align-minor-center
-
-       I'm a developer who wants to :ref:`do development in NEST <dev_install>`
-
-.. grid:: 1 1 2 2
-
-    .. grid-item-card:: |nestml| Install NEST with NESTML
-       :class-title: sd-d-flex-row sd-align-minor-center
-
-       I'm a user who wants to :doc:`create or customize models <nestml:installation>`.
 
 
 .. toctree::
@@ -240,7 +361,7 @@ Install NEST
    Neurons in NEST <neurons/index>
    Synapses in NEST <synapses/index>
    Devices in NEST <devices/index>
-   Spatially structured networks <networks/spatially_structured_networks> 
+   Spatially structured networks <networks/spatially_structured_networks>
    Cite NEST <citing-nest>
    ref_material/glossary
    Community <community>
@@ -282,3 +403,15 @@ Install NEST
 .. |dev| image:: static/img/dev_orange.svg
 .. |nestml| image:: static/img/nestml-logo.png
       :scale: 15%
+.. |synapse| image:: static/img/synapse_white.svg
+.. |neuron|  image:: static/img/neuron_white.svg
+.. |glossary|  image:: static/img/glossary_white.svg
+.. |git|  image:: static/img/git_white.svg
+.. |refresh|  image:: static/img/refresh_white.svg
+.. |hpc|  image:: static/img/hpc_white.svg
+.. |random|  image:: static/img/random_white.svg
+.. |math|  image:: static/img/math_white.svg
+.. |network|  image:: static/img/network_brain_white.svg
+.. |device|  image:: static/img/device_white.svg
+.. |connect|  image:: static/img/connect_white.svg
+.. |sonata|  image:: static/img/sonata_white.svg

@@ -386,7 +386,7 @@ public:
    *
    * @return Index of node with given node ID; -1 if node not in NodeCollection.
    */
-  virtual long find( const size_t ) const = 0;
+  virtual long get_lid( const size_t ) const = 0;
 
   /**
    * Returns whether the NodeCollection contains any nodes with proxies or not.
@@ -512,7 +512,7 @@ public:
   bool is_range() const override;
   bool empty() const override;
 
-  long find( const size_t ) const override;
+  long get_lid( const size_t ) const override;
 
   bool has_proxies() const override;
 
@@ -650,7 +650,7 @@ public:
   bool is_range() const override;
   bool empty() const override;
 
-  long find( const size_t ) const override;
+  long get_lid( const size_t ) const override;
 
   bool has_proxies() const override;
 };
@@ -807,7 +807,7 @@ NodeCollectionPrimitive::empty() const
 }
 
 inline long
-NodeCollectionPrimitive::find( const size_t neuron_id ) const
+NodeCollectionPrimitive::get_lid( const size_t neuron_id ) const
 {
   if ( neuron_id > last_ )
   {

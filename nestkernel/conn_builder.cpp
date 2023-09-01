@@ -636,14 +636,14 @@ nest::OneToOneBuilder::connect_()
           Node* target = n->get_node();
 
           const size_t tnode_id = n->get_node_id();
-          const long idx = targets_->find( tnode_id );
-          if ( idx < 0 ) // Is local node in target list?
+          const long lid = targets_->get_lid( tnode_id );
+          if ( lid < 0 ) // Is local node in target list?
           {
             continue;
           }
 
           // one-to-one, thus we can use target idx for source as well
-          const size_t snode_id = ( *sources_ )[ idx ];
+          const size_t snode_id = ( *sources_ )[ lid ];
           if ( not allow_autapses_ and snode_id == tnode_id )
           {
             // no skipping required / possible,
@@ -836,7 +836,7 @@ nest::AllToAllBuilder::connect_()
           const size_t tnode_id = n->get_node_id();
 
           // Is the local node in the targets list?
-          if ( targets_->find( tnode_id ) < 0 )
+          if ( targets_->get_lid( tnode_id ) < 0 )
           {
             continue;
           }
@@ -1119,7 +1119,7 @@ nest::FixedInDegreeBuilder::connect_()
           const size_t tnode_id = n->get_node_id();
 
           // Is the local node in the targets list?
-          if ( targets_->find( tnode_id ) < 0 )
+          if ( targets_->get_lid( tnode_id ) < 0 )
           {
             continue;
           }
@@ -1551,7 +1551,7 @@ nest::BernoulliBuilder::connect_()
           const size_t tnode_id = n->get_node_id();
 
           // Is the local node in the targets list?
-          if ( targets_->find( tnode_id ) < 0 )
+          if ( targets_->get_lid( tnode_id ) < 0 )
           {
             continue;
           }

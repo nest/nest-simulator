@@ -603,13 +603,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
       {
         if ( spike_data.get_tid() == tid )
         {
-          const size_t syn_id = spike_data.get_syn_id();
-          const size_t lcid = spike_data.get_lcid();
-
-          // non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
-          // only if needed, as this is computationally costly
-          se.set_sender_node_id_info( tid, syn_id, lcid );
-          kernel().connection_manager.send( tid, syn_id, lcid, cm, se );
+          kernel().connection_manager.send( tid, spike_data.get_syn_id(), spike_data.get_lcid(), cm, se );
         }
       }
       else
@@ -624,12 +618,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
         {
           if ( it->get_tid() == tid )
           {
-            const size_t lcid = it->get_lcid();
-
-            // non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
-            // only if needed, as this is computationally costly
-            se.set_sender_node_id_info( tid, syn_id, lcid );
-            kernel().connection_manager.send( tid, syn_id, lcid, cm, se );
+            kernel().connection_manager.send( tid, syn_id, it->get_lcid(), cm, se );
           }
         }
       }

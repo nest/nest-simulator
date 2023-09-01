@@ -87,9 +87,7 @@ def test_correct_amount_data_collected(model):
 
     # if the model is compartmental, we need to add at least a root compartment
     if "compartments" in nest.GetDefaults(model):
-        nrn.compartments = {
-            "parent_idx": -1,
-        }
+        nrn.compartments = {"parent_idx": -1}
 
     recordables = nrn.recordables
     mm = nest.Create("multimeter", {"record_from": recordables})

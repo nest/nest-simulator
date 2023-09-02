@@ -320,7 +320,7 @@ private:
   void add_music_nodes_( Model& model, size_t min_node_id, size_t max_node_id );
 
   /**
-z   * @brief Append the NodeCollection instance into the NodeManager::nodeCollection_container.
+z  * @brief Append the NodeCollection instance into the NodeManager::nodeCollection_container.
    * @param ncp  The NodeCollection instance.
    */
   void append_node_collection_( NodeCollectionPTR ncp );

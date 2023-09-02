@@ -323,9 +323,9 @@ private:
     * @brief Append the NodeCollection instance into the NodeManager::nodeCollection_container.
     * @param ncp  The NodeCollection instance.
     */
-   void append_node_collection_( NodeCollectionPTR ncp );
+  void append_node_collection_( NodeCollectionPTR ncp );
 
-   void clear_node_collection_container();
+  void clear_node_collection_container();
    
 private:
   /**

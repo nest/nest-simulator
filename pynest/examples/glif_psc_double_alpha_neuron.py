@@ -19,7 +19,6 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-# %%
 """
 Current-based generalized leaky integrate and fire (GLIF) neuron with double alpha
 synaptic function example
@@ -28,15 +27,14 @@ synaptic function example
 Simple example of how to use the ``glif_psc_double_alpha`` neuron model that illustrates
 difference from the ``glif_psc`` neuron model.
 
-The behavior of the ``glif_psc_double_alpha`` neuron model the same as the ``glif_psc``
+The behavior of the ``glif_psc_double_alpha`` neuron model is the same as the ``glif_psc``
 neuron model, except that the synaptic currents are modeled as a double alpha function.
 Therefore, in this example, we only compare the difference in the synaptic currents
-between the two models. compared to the single alpha function, the double alpha function
+between the two models. Compared to the single alpha function, the double alpha function
 has much more control over the shape of the tail of the synaptic current.
 
-Simple synaptic inputs are applied to the neuron and the resulting voltage traces,
+Simple synaptic inputs are applied to the neuron and the resulting voltage and
 current traces are shown for the two models.
-
 """
 
 ##############################################################################
@@ -58,8 +56,8 @@ nest.resolution = resolution
 # We also pre-define the synapse time constant arrays.
 # In contrast to ``glif_psc`` models, ``glif_psc_double_alpha`` models have
 # two components of synaptic currents, one for the fast component and the other
-# for the slow component. The relative amplitude also need to be set, so there
-# are three parameters to define per port. For this example, we keep the
+# for the slow component. The relative amplitude also needs to be set, so there
+# are three parameters to define per receptor port. For this example, we keep the
 # ``tau_syn_fast`` to 2 ms for simplicity, and vary the ``tau_syn_slow`` and
 # ``amp_slow`` to illustrate how the parameters affect the shape of the synaptic
 # currents.
@@ -121,7 +119,7 @@ n_glif_psc_double_alpha_amp = nest.Create(
 neurons = n_glif_psc + n_glif_psc_double_alpha_timing + n_glif_psc_double_alpha_amp
 
 ###############################################################################
-# For the stimulation input to the glif_psc neurons, we create three excitation
+# For the stimulation input to the ``glif_psc`` neurons, we create three excitation
 # spike generators, each one with a single spike.
 
 espike1 = nest.Create("spike_generator", params={"spike_times": [10.0], "spike_weights": [20.0]})

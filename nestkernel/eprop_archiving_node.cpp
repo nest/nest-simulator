@@ -108,8 +108,7 @@ nest::EpropArchivingNode::get_eprop_history( double t1,
 }
 
 void
-nest::EpropArchivingNode::get_eprop_history( double t1,
-  std::deque< histentry_eprop >::iterator* start )
+nest::EpropArchivingNode::get_eprop_history( double t1, std::deque< histentry_eprop >::iterator* start )
 {
   // set start pointer to the eprop history entry corresponding to time t1
   if ( eprop_history_.empty() )
@@ -130,7 +129,6 @@ nest::EpropArchivingNode::get_eprop_history( double t1,
     *start = it_first + std::max( 0, pos_t1 );
   }
 }
-
 
 
 void

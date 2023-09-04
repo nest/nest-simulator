@@ -37,9 +37,7 @@ nest::histentry_extended::histentry_extended( double t, double dw, size_t access
 {
 }
 
-nest::histentry_eprop::histentry_eprop( double t,
-  double V_m_pseudo_deriv,
-  double learning_signal )
+nest::histentry_eprop::histentry_eprop( double t, double V_m_pseudo_deriv, double learning_signal )
   : t_( t )
   , V_m_pseudo_deriv_( V_m_pseudo_deriv )
   , learning_signal_( learning_signal )

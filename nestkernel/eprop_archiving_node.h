@@ -57,8 +57,7 @@ public:
     std::deque< histentry_eprop >::iterator* start,
     std::deque< histentry_eprop >::iterator* finish ) override;
 
-  void get_eprop_history( double t1,
-    std::deque< histentry_eprop >::iterator* start ) override;
+  void get_eprop_history( double t1, std::deque< histentry_eprop >::iterator* start ) override;
 
   void get_spike_history( double t1,
     double t2,

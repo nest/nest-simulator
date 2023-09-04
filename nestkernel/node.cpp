@@ -550,6 +550,13 @@ nest::Node::get_eprop_history( double,
 }
 
 void
+nest::Node::get_eprop_history( double,
+  std::deque< histentry_eprop >::iterator* )
+{
+  throw UnexpectedEvent();
+}
+
+void
 nest::Node::register_update( double, double )
 {
   throw UnexpectedEvent();

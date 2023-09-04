@@ -361,9 +361,6 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
 
     if ( t_spike >= t_next_update_ )
     {
-      std::deque< histentry_eprop >::iterator start;
-      std::deque< histentry_eprop >::iterator finish;
-
       double const dt = Time::get_resolution().get_ms();
       double idx_current_update = floor( ( t_spike - dt ) / update_interval_ );
       double t_current_update_ = idx_current_update * update_interval_ + 2.0 * dendritic_delay;
@@ -374,8 +371,10 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
       double shift = target_node == "readout" ? dendritic_delay : 0.0;
 
       presyn_spike_times_.insert( --presyn_spike_times_.end(), t_next_update_ - ( dendritic_delay - shift ) );
-      target->get_eprop_history(
-        presyn_spike_times_[ 0 ] + dendritic_delay, t_last_update_ + shift + update_interval_, &start, &finish );
+
+      std::deque< histentry_eprop >::iterator start;
+
+      target->get_eprop_history( presyn_spike_times_[ 0 ] + dendritic_delay, &start );
       target->register_update( t_last_update_ + shift, t_current_update_ + shift );
 
       std::vector< double > presyn_isis( presyn_spike_times_.size() - 1 );

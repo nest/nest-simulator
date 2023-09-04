@@ -758,6 +758,10 @@ public:
     std::deque< histentry_eprop >::iterator* start,
     std::deque< histentry_eprop >::iterator* finish );
 
+  virtual void get_eprop_history( double t1,
+    std::deque< histentry_eprop >::iterator* start );
+
+
   virtual void register_update( double t_lastupdate, double t_update );
 
   virtual void get_spike_history( double t1,

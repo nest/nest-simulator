@@ -79,7 +79,7 @@ nest::EpropArchivingNode::init_eprop_buffers( double delay )
 }
 
 void
-nest::EpropArchivingNode::find_eprop_hist_entries( double t1,
+nest::EpropArchivingNode::get_eprop_history( double t1,
   double t2,
   std::deque< histentry_eprop >::iterator* start,
   std::deque< histentry_eprop >::iterator* finish )
@@ -106,6 +106,32 @@ nest::EpropArchivingNode::find_eprop_hist_entries( double t1,
     *finish = it_first + std::max( 0, pos_t2 );
   }
 }
+
+void
+nest::EpropArchivingNode::get_eprop_history( double t1,
+  std::deque< histentry_eprop >::iterator* start )
+{
+  // set start pointer to the eprop history entry corresponding to time t1
+  if ( eprop_history_.empty() )
+  {
+    *start = eprop_history_.end();
+    return;
+  }
+  else
+  {
+    // compute the positions of the pointer pointing to the entry at t1
+    // since no time steps are missing in eprop history, just ensure that *start
+    // points at least to begin()
+    double t_first = eprop_history_.begin()->t_;
+    double h = Time::get_resolution().get_ms();
+    int pos_t1 = std::max( 0, ( ( int ) std::round( ( t1 - t_first ) / h ) ) );
+
+    std::deque< histentry_eprop >::iterator it_first = eprop_history_.begin();
+    *start = it_first + std::max( 0, pos_t1 );
+  }
+}
+
+
 
 void
 nest::EpropArchivingNode::register_update( double t_last_update, double t_current_update )
@@ -141,14 +167,6 @@ nest::EpropArchivingNode::register_update( double t_last_update, double t_curren
   }
 }
 
-void
-nest::EpropArchivingNode::get_eprop_history( double t1,
-  double t2,
-  std::deque< histentry_eprop >::iterator* start,
-  std::deque< histentry_eprop >::iterator* finish )
-{
-  nest::EpropArchivingNode::find_eprop_hist_entries( t1, t2, start, finish );
-}
 
 void
 nest::EpropArchivingNode::get_spike_history( double t1,
@@ -187,7 +205,7 @@ nest::EpropArchivingNode::tidy_eprop_history()
     std::deque< histentry_eprop >::iterator finish;
 
     // find eprop history entries for times earlier than earliest last update time
-    nest::EpropArchivingNode::find_eprop_hist_entries( 0.0, earliest_time_to_keep, &start, &finish );
+    nest::EpropArchivingNode::get_eprop_history( 0.0, earliest_time_to_keep, &start, &finish );
 
     eprop_history_.erase( eprop_history_.begin(), finish ); // erase found entries since no longer used
   }
@@ -256,7 +274,7 @@ nest::EpropArchivingNode::write_learning_signal_to_eprop_history( LearningSignal
   std::deque< histentry_eprop >::iterator finish;
 
   // get part of eprop history to which the learning signal is added
-  nest::EpropArchivingNode::find_eprop_hist_entries(
+  nest::EpropArchivingNode::get_eprop_history(
     t_ms, t_ms + Time::delay_steps_to_ms( delay ), &start, &finish ); // implicitely increase access counter
 
   std::vector< unsigned int >::iterator it = e.begin();

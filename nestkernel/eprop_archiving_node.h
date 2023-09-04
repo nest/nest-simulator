@@ -50,12 +50,15 @@ public:
   EpropArchivingNode();
   EpropArchivingNode( const EpropArchivingNode& );
 
+  void register_update( double t_last_update, double t_current_update );
+
   void get_eprop_history( double t1,
     double t2,
     std::deque< histentry_eprop >::iterator* start,
     std::deque< histentry_eprop >::iterator* finish ) override;
 
-  void register_update( double t_last_update, double t_current_update );
+  void get_eprop_history( double t1,
+    std::deque< histentry_eprop >::iterator* start ) override;
 
   void get_spike_history( double t1,
     double t2,
@@ -80,11 +83,6 @@ protected:
 
   void get_status( DictionaryDatum& d ) const override;
   void set_status( const DictionaryDatum& d ) override;
-
-  void find_eprop_hist_entries( double t1,
-    double t2,
-    std::deque< histentry_eprop >::iterator* start,
-    std::deque< histentry_eprop >::iterator* finish );
 
 private:
   double gamma_;

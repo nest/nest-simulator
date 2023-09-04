@@ -24,7 +24,7 @@ A tripartite interaction between two neurons and one astrocyte
 --------------------------------------------------------------
 
 This script simulates a tripartite interaction between two neurons and one
-astrocyte. This interaction is a part of the astrocyte biology described in
+astrocyte. This interaction is part of the astrocyte biology described in
 [1]_ that involves the neuron-astrocyte glutamate signaling and the astrocytic
 calcium dynamics.
 
@@ -36,7 +36,7 @@ to the postsynaptic neuron, and from the presynaptic neuron to the astrocyte.
 postsynaptic neuron. Recordings are made for the following variables: membrance
 voltage of the presynaptic neuron, inositol 1,4,5-trisphosphate (IP3) and
 calcium in the astrocyte, and slow inward current (SIC) in the postsynaptic
-neuron. The result demonstrates an tripartite interaction where the presynaptic
+neuron. The result demonstrates a tripartite interaction where the presynaptic
 spikes induce changes in IP3 and calcium in the astrocyte, which then induces
 the generation of SIC in the postsynaptic neuron.
 

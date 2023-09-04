@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-A model of single astrocyte with calcium dynamics
--------------------------------------------------
+A model using a single astrocyte with calcium dynamics
+-------------------------------------------------------
 
 This script simulates an astrocyte with the model ``astrocyte_lr_1994``, which
 implements the dynamics in the astrocyte based on the articles [1]_, [2]_, and

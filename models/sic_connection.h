@@ -39,13 +39,13 @@ Description
 +++++++++++
 
 ``sic_connection`` connects an astrocyte to a target neuron. It sends
-SICEvent from the astrocyte to the neuron to model a continuous current
-input to the neuron, the slow inward current (SIC). The amplitude of the current
+SICEvent from the astrocyte to the neuron to model a continuous current (i.e, the slow inward current (SIC))
+input to the neuron. The amplitude of the current
 is the product of the astrocytic output and the weight of the
 ``sic_connection``.
 
 The source node of ``sic_connection`` should be an astrocyte, and the target
-node should be a neuron that handles SICEvent. A delay can be set for this
+node should be a neuron that handles the SICEvent. A delay can be set for this
 connection type.
 
 Sends

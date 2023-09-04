@@ -412,10 +412,6 @@ jobs:
         os: ["ubuntu-22.04"]
     needs: [pydocstyle, rstcheck, vale]
     steps:
-      - name: "Checkout repository content"
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
       - name: Fetch recipe
         shell: bash -el {0}
         run: |

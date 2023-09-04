@@ -34,7 +34,7 @@ dynamics in the astrocyte based on the articles [2]_, [3]_, and [4]_.
 to the postsynaptic neuron, and from the presynaptic neuron to the astrocyte.
 ``sic_connection`` is used to create a connection from the astrocyte to the
 postsynaptic neuron. Recordings are made for the following variables: membrance
-voltage of the presynaptic neuron, inositol 1,4,5-trisphosphate (IP3) and
+voltage of the presynaptic neuron, inositol 1,4,5-trisphosphate (IP3), and
 calcium in the astrocyte, and slow inward current (SIC) in the postsynaptic
 neuron. The result demonstrates a tripartite interaction where the presynaptic
 spikes induce changes in IP3 and calcium in the astrocyte, which then induces

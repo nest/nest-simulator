@@ -54,6 +54,12 @@ PyNEST examples
            * :doc:`../auto_examples/pong/run_simulations`
            * :doc:`../auto_examples/pong/generate_gif`
 
+   .. grid-item-card:: Astrocytes
+          :img-top: ../static/img/astrocyte_tripartite.png
+
+          * :doc:`../auto_examples/astrocyte_single`
+          * :doc:`../auto_examples/astrocyte_tripartite`
+
 .. grid:: 1 1 2 3
 
     .. grid-item-card:: Random balanced networks (Brunel)
@@ -233,12 +239,6 @@ PyNEST examples
 
            * :doc:`../auto_examples/csa_example`
            * :doc:`../auto_examples/csa_spatial_example`
-
-    .. grid-item-card:: Astrocytes
-           :img-top: ../static/img/astrocyte_tripartite.png
-
-           * :doc:`../auto_examples/astrocyte_single`
-           * :doc:`../auto_examples/astrocyte_tripartite`
 
 .. toctree::
    :hidden:

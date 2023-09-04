@@ -155,34 +155,46 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-======  ========= ======================================================================================
+======  ========= =============================================================
 **Dynamic state variables**
---------------------------------------------------------------------------------------------------------
-IP3     uM        Inositol 1,4,5-trisphosphate concentration in the astrocytic cytosol
+-------------------------------------------------------------------------------
+IP3     uM        Inositol 1,4,5-trisphosphate concentration in the astrocytic
+                  cytosol
 Ca      uM        Calcium concentration in the astrocytic cytosol
-h_IP3R  unitless  Fraction of IP3 receptors on the astrocytic ER that are not yet inactivated by calcium
-======  ========= ======================================================================================
+h_IP3R  unitless  Fraction of IP3 receptors on the astrocytic ER that are not
+                  yet inactivated by calcium
+======  ========= =============================================================
 
-=============== ========= ========================================================================================================
+=============== ========= =====================================================
 **Parameters**
-----------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 Ca_tot          uM        Total free astrocytic calcium concentration
 IP3_0           uM        Baseline value of the astrocytic IP3 concentration
 Kd_IP3_1        uM        First astrocytic IP3R dissociation constant of IP3
 Kd_IP3_2        uM        Second astrocytic IP3R dissociation constant of IP3
-Kd_act          uM        Astrocytic IP3R dissociation constant of calcium (activation)
-Kd_inh          uM        Astrocytic IP3R dissociation constant of calcium (inhibition)
+Kd_act          uM        Astrocytic IP3R dissociation constant of calcium
+                          (activation)
+Kd_inh          uM        Astrocytic IP3R dissociation constant of calcium
+                          (inhibition)
 Km_SERCA        uM        Half-activation constant of astrocytic SERCA pump
-SIC_scale       unitless  Parameter determining the scale of astrocytic SIC output
-SIC_th          uM        Threshold that determines the minimal level of intracellular astrocytic calcium sufficient to induce SIC
-delta_IP3       uM        Parameter determining the increase in astrocytic IP3 concentration induced by synaptic input
-k_IP3R          1/(uM*ms) Astrocytic IP3R binding constant for calcium inhibition
+SIC_scale       unitless  Parameter determining the scale of astrocytic SIC
+                          output
+SIC_th          uM        Threshold that determines the minimal level of
+                          intracellular astrocytic calcium sufficient to induce
+                          SIC
+delta_IP3       uM        Parameter determining the increase in astrocytic IP3
+                          concentration induced by synaptic input
+k_IP3R          1/(uM*ms) Astrocytic IP3R binding constant for calcium
+                          inhibition
 rate_IP3R       1/ms      Maximum rate of calcium release via astrocytic IP3R
-rate_L          1/ms      Rate constant of calcium leak from astrocytic ER to cytosol
-rate_SERCA      uM/ms     Maximum rate of calcium uptake by astrocytic SERCA pump
+rate_L          1/ms      Rate constant of calcium leak from astrocytic ER to
+                          cytosol
+rate_SERCA      uM/ms     Maximum rate of calcium uptake by astrocytic SERCA
+                          pump
 ratio_ER_cyt    unitless  Ratio between astrocytic ER and cytosol volumes
-tau_IP3         ms        Time constant of the exponential decay of astrocytic IP3
-=============== ========= ========================================================================================================
+tau_IP3         ms        Time constant of the exponential decay of astrocytic
+                          IP3
+=============== ========= =====================================================
 
 References
 ++++++++++

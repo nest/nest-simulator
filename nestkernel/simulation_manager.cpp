@@ -1080,7 +1080,7 @@ nest::SimulationManager::advance_time_()
   to_do_ -= to_step_ - from_step_;
 
   // advance clock, update modulos, slice counter only if slice completed
-  if ( ( long ) to_step_ == kernel().connection_manager.get_min_delay() )
+  if ( to_step_ == kernel().connection_manager.get_min_delay() )
   {
     clock_ += Time::step( kernel().connection_manager.get_min_delay() );
     ++slice_;
@@ -1094,7 +1094,7 @@ nest::SimulationManager::advance_time_()
 
   long end_sim = from_step_ + to_do_;
 
-  if ( kernel().connection_manager.get_min_delay() < ( long ) end_sim )
+  if ( kernel().connection_manager.get_min_delay() < end_sim )
   {
     // update to end of time slice
     to_step_ = kernel().connection_manager.get_min_delay();
@@ -1104,7 +1104,7 @@ nest::SimulationManager::advance_time_()
     to_step_ = end_sim; // update to end of simulation time
   }
 
-  assert( to_step_ - from_step_ <= ( long ) kernel().connection_manager.get_min_delay() );
+  assert( to_step_ - from_step_ <= kernel().connection_manager.get_min_delay() );
 }
 
 void

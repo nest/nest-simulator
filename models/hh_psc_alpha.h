@@ -92,6 +92,7 @@ The following parameters can be set in the status dictionary.
 V_m       mV      Membrane potential
 E_L       mV      Leak reversal potential
 C_m       pF      Capacity of the membrane
+t_ref     ms      Duration of refractory period
 g_L       nS      Leak conductance
 tau_ex    ms      Rise time of the excitatory synaptic alpha function
 tau_in    ms      Rise time of the inhibitory synaptic alpha function

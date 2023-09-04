@@ -96,8 +96,7 @@ public:
     return default_delay_[ 0 ];
   }
 
-  void set_pre_synaptic_element_name( const std::string& name );
-  void set_post_synaptic_element_name( const std::string& name );
+  void set_synaptic_element_names( const std::string& pre_name, const std::string& post_name );
 
   bool all_parameters_scalar_() const;
 
@@ -122,6 +121,18 @@ public:
   is_symmetric() const
   {
     return false;
+  }
+
+  bool
+  allows_autapses() const
+  {
+    return allow_autapses_;
+  }
+
+  bool
+  allows_multapses() const
+  {
+    return allow_multapses_;
   }
 
   //! Return true if rule is applicable only to nodes with proxies
@@ -198,17 +209,10 @@ protected:
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_;
 
   // Name of the pre synaptic and postsynaptic elements for this connection builder
-  Name pre_synaptic_element_name_;
-  Name post_synaptic_element_name_;
+  std::string pre_synaptic_element_name_;
+  std::string post_synaptic_element_name_;
 
-  bool use_pre_synaptic_element_;
-  bool use_post_synaptic_element_;
-
-  inline bool
-  use_structural_plasticity_() const
-  {
-    return use_pre_synaptic_element_ and use_post_synaptic_element_;
-  }
+  bool use_structural_plasticity_;
 
   //! pointers to connection parameters specified as arrays
   std::vector< ConnParameter* > parameters_requiring_skipping_;
@@ -255,6 +259,22 @@ private:
   void set_synapse_model_( DictionaryDatum syn_params, size_t indx );
   void set_default_weight_or_delay_( DictionaryDatum syn_params, size_t indx );
   void set_synapse_params( DictionaryDatum syn_defaults, DictionaryDatum syn_params, size_t indx );
+
+  /**
+   * Set structural plasticity parameters (if provided)
+   *
+   * This function first checks if any of the given syn_specs contains
+   * one of the structural plasticity parameters pre_synaptic_element
+   * or post_synaptic_element. If that is the case and only a single
+   * syn_spec is given, the parameters are copied to the variables
+   * pre_synaptic_element_name_ and post_synaptic_element_name_, and
+   * the flag use_structural_plasticity_ is set to true.
+   *
+   * An exception is thrown if either
+   * * only one of the structural plasticity parameter is given
+   * * multiple syn_specs are given and structural plasticity parameters
+   *   are present
+   */
   void set_structural_plasticity_parameters( std::vector< DictionaryDatum > syn_specs );
 
   /**
@@ -465,16 +485,28 @@ public:
     const DictionaryDatum& conn_spec,
     const std::vector< DictionaryDatum >& syn_spec );
 
-  std::string
+  const std::string&
   get_pre_synaptic_element_name() const
   {
-    return pre_synaptic_element_name_.toString();
+    return pre_synaptic_element_name_;
+  }
+
+  const std::string&
+  get_post_synaptic_element_name() const
+  {
+    return post_synaptic_element_name_;
+  }
+
+  void
+  set_name( const std::string& name )
+  {
+    name_ = name;
   }
 
   std::string
-  get_post_synaptic_element_name() const
+  get_name() const
   {
-    return post_synaptic_element_name_.toString();
+    return name_;
   }
 
   /**
@@ -490,6 +522,9 @@ public:
   void sp_connect( const std::vector< size_t >& sources, const std::vector< size_t >& targets );
 
 protected:
+  //! The name of the SPBuilder; used to identify its properties in the structural_plasticity_synapses kernel attributes
+  std::string name_;
+
   using ConnBuilder::connect_;
   void connect_() override;
   void connect_( NodeCollectionPTR sources, NodeCollectionPTR targets );

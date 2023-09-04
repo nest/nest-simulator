@@ -61,12 +61,11 @@ public:
 class histentry_eprop
 {
 public:
-  histentry_eprop( double t, double V_m_pseudo_deriv, double learning_signal, size_t access_counter );
+  histentry_eprop( double t, double V_m_pseudo_deriv, double learning_signal );
 
   double t_;                //!< spike time (ms)
   double V_m_pseudo_deriv_; //!< pseudo derivative of membrane voltage
   double learning_signal_;  //!< learning signal
-  size_t access_counter_;   //!< counts accesses to this entry to enable removal once read by all neurons using it
 
   friend bool operator<( const histentry_eprop he, double t );
 };

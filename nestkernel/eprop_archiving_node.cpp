@@ -228,7 +228,7 @@ nest::EpropArchivingNode::write_v_m_pseudo_deriv_to_eprop_history( long time_ste
   {
     const Time time_step_ = Time::step( time_step );
     const double time_ms = time_step_.get_ms();
-    eprop_history_.push_back( histentry_eprop( time_ms, v_m_pseudo_deriv, 0.0, 0 ) );
+    eprop_history_.push_back( histentry_eprop( time_ms, v_m_pseudo_deriv, 0.0 ) );
   }
 }
 
@@ -237,7 +237,7 @@ nest::EpropArchivingNode::write_error_signal_to_eprop_history( long time_step, d
 {
   const Time time_step_ = Time::step( time_step );
   const double time_ms = time_step_.get_ms();
-  eprop_history_.push_back( histentry_eprop( time_ms, 0.0, error_signal, 0 ) );
+  eprop_history_.push_back( histentry_eprop( time_ms, 0.0, error_signal ) );
 }
 
 void

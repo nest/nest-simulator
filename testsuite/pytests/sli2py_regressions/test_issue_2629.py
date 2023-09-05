@@ -25,6 +25,18 @@ Regression test for Issue #2629 (GitHub).
 The issue was that ``DumpLayerConnections`` failed when a source layer was
 connected to more than one target layer. The test ensures that this is no
 longer the case.
+
+For each connection between the specified source and target layer,
+``DumpLayerConnections`` writes the following to file:
+
+    source_node_id target_node_id weight delay dx dy [dz]
+
+where (dx, dy [, dz]) is the displacement from source to target node.
+
+This test uses the ``tmp_path`` Pytest fixture, which will provide a
+temporary directory unique to the test invocation. ``tmp_path`` is a
+``pathlib.Path`` object. Hence, the test also implicitly verifies that it
+is possible to pass a ``pathlib.Path`` object as filename.
 """
 
 import pytest
@@ -32,27 +44,9 @@ import pytest
 import nest
 
 
-@pytest.fixture(autouse=True)
-def reset():
-    nest.ResetKernel()
-
-
-def test_dump_layer_connections_multiple_targets(tmp_path):
-    """
-    Test that dumping connections works when connecting a source to multiple targets.
-
-    For each connection between the specified source and target layer,
-    ``DumpLayerConnections`` writes the following to file:
-
-        source_node_id target_node_id weight delay dx dy [dz]
-
-    where (dx, dy [, dz]) is the displacement from source to target node.
-
-    This test uses the ``tmp_path`` Pytest fixture, which will provide a
-    temporary directory unique to the test invocation. ``tmp_path`` is a
-    ``pathlib.Path`` object. Hence, the test also implicitly verifies that it
-    is possible to pass a ``pathlib.Path`` object as filename.
-    """
+@pytest.fixture(scope="module")
+def network():
+    """Fixture for building network."""
 
     grid = nest.spatial.grid(shape=[2, 1])
     src_layer = nest.Create("iaf_psc_alpha", positions=grid)
@@ -61,6 +55,14 @@ def test_dump_layer_connections_multiple_targets(tmp_path):
 
     nest.Connect(src_layer, tgt_layer_1, "all_to_all")
     nest.Connect(src_layer, tgt_layer_2, "one_to_one")
+
+    return src_layer, tgt_layer_1, tgt_layer_2
+
+
+def test_dump_layer_connections_target_1(tmp_path, network):
+    """Test that dumping connections with target layer 1 works."""
+
+    src_layer, tgt_layer_1, _ = network
 
     fname_1 = tmp_path / "conns_1.txt"
     nest.DumpLayerConnections(src_layer, tgt_layer_1, "static_synapse", fname_1)
@@ -72,6 +74,12 @@ def test_dump_layer_connections_multiple_targets(tmp_path):
     ]
     actual_dump_1 = fname_1.read_text().splitlines()
     assert actual_dump_1 == expected_dump_1
+
+
+def test_dump_layer_connections_target_2(tmp_path, network):
+    """Test that dumping connections with target layer 2 works."""
+
+    src_layer, _, tgt_layer_2 = network
 
     fname_2 = tmp_path / "conns_2.txt"
     nest.DumpLayerConnections(src_layer, tgt_layer_2, "static_synapse", fname_2)

@@ -35,7 +35,7 @@ def reset():
 
 
 def test_node_collection_equal():
-    """Test equality of NodeCollections."""
+    """Test ``NodeCollection`` equality."""
 
     nc_exp_1 = nest.Create("iaf_psc_exp", 10)
     nc_exp_list_1 = nc_exp_1.tolist()
@@ -57,23 +57,105 @@ def test_node_collection_equal():
     assert nc_alpha_1 != nc_exp_1
 
 
-def test_node_collection_indexing():
-    """Test indexing of NodeCollections."""
+def test_primitive_node_collection_add():
+    """Test primitive ``NodeCollection`` addition."""
 
-    nc = nest.Create("iaf_psc_alpha", 5)
-    nc_0 = nest.NodeCollection([1])
-    nc_2 = nest.NodeCollection([3])
-    nc_4 = nest.NodeCollection([5])
+    nodes_a = nest.Create("iaf_psc_alpha", 2)
+    nodes_b = nest.Create("iaf_psc_alpha", 2)
+    prim_nc = nodes_a + nodes_b
+    assert prim_nc.tolist() == [1, 2, 3, 4]
 
-    assert nc[0] == nc_0
-    assert nc[2] == nc_2
-    assert nc[4] == nc_4
-    assert nc[-1] == nc_4
-    assert nc[-3] == nc_2
-    assert nc[-5] == nc_0
 
-    with pytest.raises(IndexError):
-        nc[5]
+def test_node_collection_add():
+    """Test"""
 
-    with pytest.raises(IndexError):
-        nc[-6]
+    n_nrns_a = 10
+    n_nrns_b = 15
+    n_nrns_c = 7
+    n_nrns_d = 5
+    n_nrns_a_b = n_nrns_a + n_nrns_b
+    n_nrns_a_b_c = n_nrns_a_b + n_nrns_c
+
+
+def test_node_collection_iteration():
+    """Test ``NodeCollection`` iteration."""
+
+    nc = nest.Create("iaf_psc_alpha", 15)
+    for i, node in enumerate(nc):
+        assert node == nc[i]
+
+
+def test_node_collection_membership():
+    """
+    Test ``NodeCollection`` membership.
+
+    Test that all node IDs in reference are in NodeCollection, and that
+    elements in inverse reference are not.
+    """
+
+    N_alpha = 10
+    N_exp = 5
+    N_tot = N_alpha + N_exp
+    start = 3
+    stop = 12
+    step = 3
+
+    # case 1: primitive NodeCollection
+    prim_nc = nest.Create("iaf_psc_alpha", N_alpha)
+    prim_ref = range(1, N_alpha + 1)
+    prim_inv_ref = []
+
+    # case 2: composite NodeCollection
+    comp_nc = prim_nc + nest.Create("iaf_psc_exp", N_exp)
+    comp_ref = range(1, N_tot + 1)
+    comp_inv_ref = []
+
+    # case 3: sliced NodeCollection
+    sliced_nc = comp_nc[start:stop]
+    sliced_ref = range(start + 1, stop + 1)
+    sliced_inv_ref = list(range(1, N_tot))
+    del sliced_inv_ref[start:stop]
+
+    # case 4: NodeCollection with step
+    step_nc = comp_nc[::step]
+    step_ref = range(1, N_tot + 1, step)
+    step_inv_ref = list(range(1, N_tot))
+    del step_inv_ref[::step]
+
+    # case 5: sliced NodeCollection with step
+    sliced_step_nc = comp_nc[start:stop:step]
+    sliced_step_ref = range(start + 1, stop + 1, step)
+    sliced_step_inv_ref = list(range(1, N_tot))
+    del sliced_step_inv_ref[start:stop:step]
+
+    # concatenate cases
+    ncs = [prim_nc, comp_nc, sliced_nc, step_nc, sliced_step_nc]
+    refs = [prim_ref, comp_ref, sliced_ref, step_ref, sliced_step_ref]
+    inv_refs = [prim_inv_ref, comp_inv_ref, sliced_inv_ref, step_inv_ref, sliced_step_inv_ref]
+
+    # iterate and test the different cases
+    for nc, ref, inv_ref in zip(ncs, refs, inv_refs):
+        for node_id in ref:
+            assert node_id in nc
+        for node_id in inv_ref:
+            assert not node_id in nc
+        assert not ref[-1] + 1 in nc
+        assert not 0 in nc
+        assert not -1 in nc
+
+
+def test_composite_node_collection_add_sliced_raises():
+    """
+    Test that an error is raised when trying to add a sliced composite and ``NodeCollection``.
+    """
+
+    # composite NodeCollection
+    comp_nc = nest.Create("iaf_psc_alpha", 10) + nest.Create("iaf_psc_exp", 7)
+
+    # sliced composite
+    sliced_comp_nc = comp_nc[::2]
+
+    nc = nest.Create("iaf_psc_delta")
+
+    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+        sliced_comp_nc + nc

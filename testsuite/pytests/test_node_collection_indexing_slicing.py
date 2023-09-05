@@ -272,3 +272,142 @@ def test_node_collection_with_nonunique_nodes_raises():
 
     with pytest.raises(nest.kernel.NESTErrors.BadProperty):
         nest.NodeCollection([2]) + nest.NodeCollection([1, 2])
+
+
+def test_composite_node_collection_with_patched_node_ids_correct_nodes():
+    """Test correct node IDs for composite ``NodeCollection`` with patched node IDs."""
+
+    nc_a = nest.Create("iaf_psc_exp", 10)
+    nest.Create("iaf_psc_alpha", 15)  # will not be part of composite
+    nc_c = nest.Create("iaf_psc_delta", 30)
+
+    comp_nc = nc_a + nc_c
+    step_comp_nc = comp_nc[::2]
+    step_comp_nc_list = step_comp_nc.tolist()
+
+    expected = list(range(1, 11))[::2] + list(range(26, 55))[::2]
+    assert step_comp_nc_list == expected
+
+
+def test_sliced_composite_node_collection_with_patched_node_ids_iteration():
+    """Test iteration of sliced composite ``NodeCollection`` with patched node IDs."""
+
+    nc_a = nest.Create("iaf_psc_exp", 10)
+    nest.Create("iaf_psc_alpha", 15)  # will not be part of composite
+    nc_c = nest.Create("iaf_psc_delta", 30)
+
+    comp_nc = nc_a + nc_c
+    step_comp_nc = comp_nc[::2]
+
+    compare_list = list(range(1, 11))[::2] + list(range(26, 55))[::2]
+
+    i = 0
+    for node in step_comp_nc:
+        assert node == nest.NodeCollection([compare_list[i]])
+        i += 1
+
+
+def test_composite_node_collection_with_patched_node_ids_slicing():
+    """Test correct node IDs for sliced composite ``NodeCollection`` with patched node IDs."""
+
+    nc_a = nest.Create("iaf_psc_exp", 10)
+    nest.Create("iaf_psc_alpha", 15)  # will not be part of composite
+    nc_c = nest.Create("iaf_psc_delta", 30)
+
+    comp_nc = nc_a + nc_c
+
+    nc_slice_first = comp_nc[:10]
+    nc_slice_middle = comp_nc[2:7]
+    nc_slice_middle_jump = comp_nc[2:12:2]
+
+    expected_first = list(range(1, 11))
+    expected_middle = list(range(3, 8))
+    expected_middle_jump = [3, 5, 7, 9, 26]
+
+    assert nc_slice_first.tolist() == expected_first
+    assert nc_slice_middle.tolist() == expected_middle
+    assert nc_slice_middle_jump.tolist() == expected_middle_jump
+
+
+@pytest.mark.parametrize("indices", [[1, 2], [2, 5], [0, 2, 5, 7, 9], (2, 5), []])
+def test_node_collection_array_indexing(indices):
+    """Test ``NodeCollection`` array indexing."""
+
+    nc = nest.Create("iaf_psc_alpha", 10)
+
+    expected_node_ids = [i + 1 for i in indices]
+
+    # indexing with standard Python data structures
+    assert nc[indices].tolist() == expected_node_ids
+
+    # indexing with NumPy array
+    indices_numpy = np.array(indices)
+    assert nc[indices_numpy].tolist() == expected_node_ids
+
+
+@pytest.mark.parametrize(
+    "indices, expected_error",
+    [
+        ([5, 10, 15], IndexError),  # Index not in NodeCollection
+        ([2, 5.5], TypeError),  # Not all indices are ints
+        ([[2, 4], [6, 8]], TypeError),  # Too many dimensions
+        ([2, 2], ValueError),  # Non-unique elements
+    ],
+)
+def test_node_collection_erroneous_array_indexing_raises(indices, expected_error):
+    """Test that``NodeCollection`` erroneous array indexing raises error."""
+
+    nc = nest.Create("iaf_psc_alpha", 10)
+
+    # erroneous indexing with standard Python data structures
+    with pytest.raises(expected_error):
+        nc[indices]
+
+    # erroneous indexing with Numpy array
+    indices_numpy = np.array(indices)
+    with pytest.raises(expected_error):
+        nc[indices_numpy]
+
+
+@pytest.mark.parametrize("indices", [[True] * 5, [False] * 5, [True, False, True, False, True]])
+def test_node_collection_bool_array_indexing(indices):
+    """Test ``NodeCollection`` bool array indexing."""
+
+    nc = nest.Create("iaf_psc_alpha", 5)
+
+    expected_node_ids = [i for i, b in zip(range(1, 6), indices) if b]
+
+    # indexing with standard Python data structures
+    assert nc[indices].tolist() == expected_node_ids
+
+    # indexing with NumPy array
+    indices_numpy = np.array(indices)
+    assert nc[indices_numpy].tolist() == expected_node_ids
+
+
+@pytest.mark.parametrize(
+    "indices, expected_error",
+    [
+        ([True] * 4, IndexError),  # Too few bools
+        ([True] * 6, IndexError),  # Too many bools
+        ([[True, False], [True, False]], TypeError),  # Too many dimensions
+        ([True, False, 2.5, False, True], TypeError),  # Not all indices are bools
+        ([1, False, 1, False, 1], TypeError),  # Mixing bools and ints
+    ],
+)
+def test_node_collection_erroneous_bool_array_indexing_raises(indices, expected_error):
+    """Test that``NodeCollection`` erroneous array indexing raises error."""
+
+    nc = nest.Create("iaf_psc_alpha", 5)
+
+    # erroneous indexing with standard Python data structures
+    with pytest.raises(expected_error):
+        nc[indices]
+
+    # erroneous indexing with NumPy array
+    if all(isinstance(i, bool) for i in indices):
+        # Omit cases that mix bools and ints, because converting them to
+        # NumPy arrays converts bools to ints.
+        indices_numpy = np.array(indices)
+        with pytest.raises(expected_error):
+            nc[indices_numpy]

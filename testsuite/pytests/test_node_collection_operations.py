@@ -66,23 +66,82 @@ def test_primitive_node_collection_add():
     assert prim_nc.tolist() == [1, 2, 3, 4]
 
 
-def test_node_collection_add():
-    """Test"""
+def test_primitive_node_collection_reverse_add_sorted():
+    """Test primitive ``NodeCollection`` reverse addition sorted correctly."""
 
-    n_nrns_a = 10
-    n_nrns_b = 15
-    n_nrns_c = 7
-    n_nrns_d = 5
-    n_nrns_a_b = n_nrns_a + n_nrns_b
-    n_nrns_a_b_c = n_nrns_a_b + n_nrns_c
+    nodes_a = nest.Create("iaf_psc_alpha", 10)
+    nodes_b = nest.Create("iaf_psc_alpha", 15)
+    prim_nc = nodes_b + nodes_a
+
+    expected = nodes_a.tolist() + nodes_b.tolist()
+    assert prim_nc.tolist() == expected
+
+
+def test_composite_node_collection_addition():
+    """Test composite ``NodeCollection`` addition."""
+
+    nodes_a = nest.Create("iaf_psc_alpha", 10)
+    nodes_b = nest.Create("iaf_psc_alpha", 15)
+    nodes_c = nest.Create("iaf_psc_exp", 7)
+    nodes_d = nest.Create("iaf_psc_delta", 5)
+
+    comp_nc_ac = nodes_a + nodes_c
+    comp_nc_bd = nodes_b + nodes_d
+
+    comp_nc_abcd = comp_nc_bd + comp_nc_ac
+
+    expected = nodes_a.tolist() + nodes_b.tolist() + nodes_c.tolist() + nodes_d.tolist()
+
+    assert comp_nc_abcd.tolist() == expected
+
+
+def test_node_collection_add_all_node_models():
+    """Test against expectation when adding all possible ``NodeCollection`` neuron models."""
+
+    models = nest.node_models
+    nc_list = []
+
+    for model in models:
+        nc = nest.Create(model, 10)
+        nc_list += nc.tolist()
+
+    expected = list(range(1, len(models) * 10 + 1))
+
+    assert nc_list == expected
+
+
+def test_node_collection_add_overlapping_raises():
+    """Test that joining overlapping ``NodeCollection``s raises an error."""
+
+    nc_a = nest.Create("iaf_psc_alpha", 10)
+    nc_b = nest.Create("iaf_psc_exp", 7)
+    nc_c = nest.NodeCollection([6, 8, 10, 12, 14])
+
+    with pytest.raises(nest.kernel.NESTError):
+        nc_a + nc_b + nc_c
+
+
+def test_empty_node_collection_add():
+    """Test left add of empty ``NodeCollection``."""
+
+    n_nrns = 5
+
+    nc = nest.NodeCollection()
+    nc += nest.Create("iaf_psc_alpha", n_nrns)
+
+    nest.Connect(nc, nc)
+
+    assert nest.num_connections == n_nrns * n_nrns
 
 
 def test_node_collection_iteration():
     """Test ``NodeCollection`` iteration."""
 
     nc = nest.Create("iaf_psc_alpha", 15)
-    for i, node in enumerate(nc):
+    i = 0
+    for node in nc:
         assert node == nc[i]
+        i += 1
 
 
 def test_node_collection_membership():
@@ -138,10 +197,10 @@ def test_node_collection_membership():
         for node_id in ref:
             assert node_id in nc
         for node_id in inv_ref:
-            assert not node_id in nc
-        assert not ref[-1] + 1 in nc
-        assert not 0 in nc
-        assert not -1 in nc
+            assert node_id not in nc
+        assert ref[-1] + 1 not in nc
+        assert 0 not in nc
+        assert -1 not in nc
 
 
 def test_composite_node_collection_add_sliced_raises():

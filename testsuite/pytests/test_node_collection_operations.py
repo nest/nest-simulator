@@ -134,6 +134,57 @@ def test_empty_node_collection_add():
     assert nest.num_connections == n_nrns * n_nrns
 
 
+def test_node_collection_add_zero():
+    """Test that adding zero and ``NodeCollection`` results in same ``NodeCollection``."""
+
+    nc = nest.Create("iaf_psc_alpha")
+
+    assert nc + 0 == nc
+    assert 0 + nc == nc
+
+
+def test_single_node_collection_summation():
+    """Test that sum over single ``NodeCollection`` results in the same ``NodeCollection``."""
+
+    nc = nest.Create("iaf_psc_alpha")
+    assert sum(nc) == nc
+
+
+def test_primitive_node_collection_summation():
+    """Test primitive ``NodeCollection`` summation."""
+
+    nc_a = nest.Create("iaf_psc_alpha", 2)
+    nc_b = nest.Create("iaf_psc_alpha", 4)
+
+    expected_prim_nc = nc_a + nc_b
+    assert sum([nc_a, nc_b]) == expected_prim_nc
+
+
+def test_composite_node_collection_summation():
+    """Test composite ``NodeCollection`` summation."""
+
+    nc_a = nest.Create("iaf_psc_alpha", 2)
+    nc_b = nest.Create("iaf_psc_exp", 4)
+
+    expected_comp_nc = nc_a + nc_b
+    assert sum([nc_a, nc_b]) == expected_comp_nc
+
+
+@pytest.mark.parametrize("invalid_type", [1, [], [0], (0,)])
+def test_node_collection_add_invalid_type_raises(invalid_type):
+    """Test that adding invalid type to ``NodeCollection`` raises error."""
+
+    nc = nest.Create("iaf_psc_alpha")
+
+    # test right add
+    with pytest.raises(TypeError):
+        nc + invalid_type
+
+    # test left add
+    with pytest.raises(TypeError):
+        invalid_type + nc
+
+
 def test_node_collection_iteration():
     """Test ``NodeCollection`` iteration."""
 

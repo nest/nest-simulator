@@ -400,17 +400,8 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
         double alpha_complement = target->get_leak_propagator_complement();
         double sum_t_prime = 0.0;
         double sum_e_bar = 0.0;
-
-        double beta = 0.0;
-        double rho = 0.0;
         double epsilon = 0.0;
-
-        if ( target_node == "adaptive" )
-        {
-          beta = target->get_adapt_beta();
-          rho = target->get_adapt_propagator();
-        }
-
+        
         for ( auto presyn_isi : presyn_isis )
         {
           last_z_bar += alpha_complement;
@@ -421,6 +412,8 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
 
             if ( target_node == "adaptive" )
             {
+              double beta = target->get_adapt_beta();
+              double rho = target->get_adapt_propagator();
               e_bar -= psi * beta * epsilon;
               epsilon = psi * last_z_bar + ( rho - psi * beta ) * epsilon;
             }

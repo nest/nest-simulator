@@ -126,8 +126,6 @@ def test_get_connections_correct_table_with_node_collection_index():
     nodes = nest.Create("iaf_psc_alpha", 3)
     nest.Connect(nodes, nodes)
 
-    print(nodes[0], type(nodes[0]))
-
     actual_conns = pd.DataFrame(
         nest.GetConnections(nodes[0]).get(["source", "target", "target_thread", "synapse_id", "port"])
     )

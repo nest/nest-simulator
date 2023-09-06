@@ -136,6 +136,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   stdp_triplet_synapse( const stdp_triplet_synapse& ) = default;
+  stdp_triplet_synapse( const stdp_triplet_synapse& rhs, const size_t ) : stdp_triplet_synapse( rhs ) {};
   stdp_triplet_synapse& operator=( const stdp_triplet_synapse& ) = default;
 
   /**
@@ -162,7 +163,7 @@ public:
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const DictionaryDatum& d, const size_t, ConnectorModel& cm );
 
   /**
    * Send an event to the receiver of this connection.
@@ -339,9 +340,9 @@ stdp_triplet_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) cons
 
 template < typename targetidentifierT >
 void
-stdp_triplet_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+stdp_triplet_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, const size_t tid, ConnectorModel& cm )
 {
-  ConnectionBase::set_status( d, cm );
+  ConnectionBase::set_status( d, tid, cm );
   updateValue< double >( d, names::weight, weight_ );
   updateValue< double >( d, names::tau_plus, tau_plus_ );
   updateValue< double >( d, names::tau_plus_triplet, tau_plus_triplet_ );

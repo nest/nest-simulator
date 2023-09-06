@@ -126,12 +126,13 @@ public:
   }
 
   Connection( const Connection< targetidentifierT >& rhs ) = default;
+  Connection( const Connection< targetidentifierT >& rhs, const size_t tid ) : Connection( rhs ) {}
   Connection& operator=( const Connection< targetidentifierT >& rhs ) = default;
 
   /**
    * Get a pointer to an instance of a SecondaryEvent if this connection supports secondary events.
    *
-   * To prevent erronous calls of this function on primary connections, the base class implementation
+   * To prevent erroneous calls of this function on primary connections, the base class implementation
    * below just contains `assert(false)`.
    */
   SecondaryEvent* get_secondary_event();
@@ -147,7 +148,7 @@ public:
    * @note Target and Rport cannot be changed after a connection has been
    * created.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const DictionaryDatum& d, const size_t tid, ConnectorModel& cm );
 
   /**
    * Check syn_spec dictionary for parameters that are not allowed with the
@@ -231,16 +232,17 @@ public:
    *
    * This function is needed for neuromodulated synaptic plasticity
    */
-  void trigger_update_weight( const size_t,
-    const std::vector< spikecounter >&,
-    const double,
-    const CommonSynapseProperties& );
+  void trigger_update_weight( const size_t tid,
+    const std::vector< spikecounter >& spikes,
+    const double t,
+    const CommonSynapseProperties& cp );
 
   Node*
   get_target( const size_t tid ) const
   {
     return target_.get_target_ptr( tid );
   }
+
   size_t
   get_rport() const
   {
@@ -356,7 +358,7 @@ Connection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 inline void
-Connection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& )
+Connection< targetidentifierT >::set_status( const DictionaryDatum& d, const size_t, ConnectorModel& )
 {
   double delay;
   if ( updateValue< double >( d, names::delay, delay ) )

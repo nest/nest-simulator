@@ -84,6 +84,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   static_synapse( const static_synapse& rhs ) = default;
+  static_synapse( const static_synapse& rhs, const size_t ) : static_synapse( rhs ) {};
   static_synapse& operator=( const static_synapse& rhs ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
@@ -162,7 +163,7 @@ public:
 
   void get_status( DictionaryDatum& d ) const;
 
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const DictionaryDatum& d, const size_t, ConnectorModel& cm );
 
   void
   set_weight( double w )
@@ -186,9 +187,9 @@ static_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-static_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+static_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, const size_t tid, ConnectorModel& cm )
 {
-  ConnectionBase::set_status( d, cm );
+  ConnectionBase::set_status( d, tid, cm );
   updateValue< double >( d, names::weight, weight_ );
 }
 

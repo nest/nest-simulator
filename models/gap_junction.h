@@ -98,6 +98,14 @@ public:
   {
   }
 
+  /**
+   * Copy constructor from a property object.
+   * Needs to be defined properly in order for GenericConnector to work.
+   */
+  gap_junction( const gap_junction& rhs ) = default;
+  gap_junction( const gap_junction& rhs, const size_t ) : gap_junction( rhs ) {};
+  gap_junction& operator=( const gap_junction& rhs ) = default;
+
   SecondaryEvent* get_secondary_event();
 
   // Explicitly declare all methods inherited from the dependent base
@@ -135,7 +143,7 @@ public:
 
   void get_status( DictionaryDatum& d ) const;
 
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const DictionaryDatum& d, const size_t, ConnectorModel& cm );
 
   void
   set_weight( double w )
@@ -177,7 +185,7 @@ gap_junction< targetidentifierT >::get_secondary_event()
 
 template < typename targetidentifierT >
 void
-gap_junction< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+gap_junction< targetidentifierT >::set_status( const DictionaryDatum& d, const size_t tid, ConnectorModel& cm )
 {
   // If the delay is set, we throw a BadProperty
   if ( d->known( names::delay ) )
@@ -185,7 +193,7 @@ gap_junction< targetidentifierT >::set_status( const DictionaryDatum& d, Connect
     throw BadProperty( "gap_junction connection has no delay" );
   }
 
-  ConnectionBase::set_status( d, cm );
+  ConnectionBase::set_status( d, tid, cm );
   updateValue< double >( d, names::weight, weight_ );
 }
 

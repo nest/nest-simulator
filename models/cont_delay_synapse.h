@@ -96,6 +96,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   cont_delay_synapse( const cont_delay_synapse& ) = default;
+  cont_delay_synapse( const cont_delay_synapse& rhs, const size_t ) : cont_delay_synapse( rhs ) {};
 
   /**
    * Default Destructor.
@@ -128,7 +129,7 @@ public:
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const DictionaryDatum& d, const size_t, ConnectorModel& cm );
 
   /**
    * Issue warning if delay is given in syn_spec.

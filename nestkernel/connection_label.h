@@ -58,6 +58,10 @@ class ConnectionLabel : public ConnectionT
 public:
   ConnectionLabel();
 
+  ConnectionLabel( const ConnectionLabel& rhs ) = default;
+  ConnectionLabel( const ConnectionLabel& rhs, const size_t ) : ConnectionLabel( rhs ) {};
+  ConnectionLabel& operator=( const ConnectionLabel& rhs ) = default;
+
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
@@ -69,7 +73,7 @@ public:
    * @note Target and Rport cannot be changed after a connection has been
    * created.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const DictionaryDatum& d, const size_t, ConnectorModel& cm );
 
   long get_label() const;
 
@@ -98,7 +102,7 @@ ConnectionLabel< ConnectionT >::get_status( DictionaryDatum& d ) const
 
 template < typename ConnectionT >
 void
-ConnectionLabel< ConnectionT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+ConnectionLabel< ConnectionT >::set_status( const DictionaryDatum& d, const size_t tid, ConnectorModel& cm )
 {
   long lbl;
   if ( updateValue< long >( d, names::synapse_label, lbl ) )
@@ -112,7 +116,7 @@ ConnectionLabel< ConnectionT >::set_status( const DictionaryDatum& d, ConnectorM
       throw BadProperty( "Connection label must not be negative." );
     }
   }
-  ConnectionT::set_status( d, cm );
+  ConnectionT::set_status( d, tid, cm );
 }
 
 template < typename ConnectionT >

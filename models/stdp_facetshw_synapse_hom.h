@@ -250,6 +250,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   stdp_facetshw_synapse_hom( const stdp_facetshw_synapse_hom& ) = default;
+  stdp_facetshw_synapse_hom( const stdp_facetshw_synapse_hom& rhs, const size_t ) : stdp_facetshw_synapse_hom( rhs ) {};
   stdp_facetshw_synapse_hom& operator=( const stdp_facetshw_synapse_hom& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
@@ -269,7 +270,7 @@ public:
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const DictionaryDatum& d, const size_t, ConnectorModel& cm );
 
   /**
    * Send an event to the receiver of this connection.

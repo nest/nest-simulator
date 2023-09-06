@@ -128,6 +128,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   urbanczik_synapse( const urbanczik_synapse& ) = default;
+  urbanczik_synapse( const urbanczik_synapse& rhs, const size_t ) : urbanczik_synapse( rhs ) {};
   urbanczik_synapse& operator=( const urbanczik_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
@@ -147,7 +148,7 @@ public:
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const DictionaryDatum& d, const size_t, ConnectorModel& cm );
 
   /**
    * Send an event to the receiver of this connection.
@@ -308,9 +309,9 @@ urbanczik_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-urbanczik_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+urbanczik_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, const size_t tid, ConnectorModel& cm )
 {
-  ConnectionBase::set_status( d, cm );
+  ConnectionBase::set_status( d, tid, cm );
   updateValue< double >( d, names::weight, weight_ );
   updateValue< double >( d, names::tau_Delta, tau_Delta_ );
   updateValue< double >( d, names::eta, eta_ );

@@ -92,6 +92,14 @@ public:
   {
   }
 
+  /**
+   * Copy constructor.
+   * Needs to be defined properly in order for GenericConnector to work.
+   */
+  rate_connection_delayed( const rate_connection_delayed& ) = default;
+  rate_connection_delayed( const rate_connection_delayed& rhs, const size_t ) : rate_connection_delayed( rhs ) {};
+  rate_connection_delayed& operator=( const rate_connection_delayed& ) = default;
+
   SecondaryEvent* get_secondary_event();
 
   // Explicitly declare all methods inherited from the dependent base
@@ -132,7 +140,7 @@ public:
 
   void get_status( DictionaryDatum& d ) const;
 
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const DictionaryDatum& d, const size_t, ConnectorModel& cm );
 
   void
   set_weight( double w )
@@ -158,9 +166,9 @@ rate_connection_delayed< targetidentifierT >::get_status( DictionaryDatum& d ) c
 
 template < typename targetidentifierT >
 void
-rate_connection_delayed< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+rate_connection_delayed< targetidentifierT >::set_status( const DictionaryDatum& d, const size_t tid, ConnectorModel& cm )
 {
-  ConnectionBase::set_status( d, cm );
+  ConnectionBase::set_status( d, tid, cm );
   updateValue< double >( d, names::weight, weight_ );
 }
 

@@ -105,6 +105,14 @@ public:
   {
   }
 
+  /**
+   * Copy constructor from a property object.
+   * Needs to be defined properly in order for GenericConnector to work.
+   */
+  diffusion_connection( const diffusion_connection& rhs ) = default;
+  diffusion_connection( const diffusion_connection& rhs, const size_t ) : diffusion_connection( rhs ) {};
+  diffusion_connection& operator=( const diffusion_connection& rhs ) = default;
+
   SecondaryEvent* get_secondary_event();
 
   // Explicitly declare all methods inherited from the dependent base
@@ -145,7 +153,7 @@ public:
 
   void get_status( DictionaryDatum& d ) const;
 
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const DictionaryDatum& d, const size_t, ConnectorModel& cm );
 
   void
   set_weight( double )
@@ -183,7 +191,7 @@ diffusion_connection< targetidentifierT >::get_status( DictionaryDatum& d ) cons
 
 template < typename targetidentifierT >
 void
-diffusion_connection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+diffusion_connection< targetidentifierT >::set_status( const DictionaryDatum& d, const size_t tid, ConnectorModel& cm )
 {
   // If the delay is set, we throw a BadProperty
   if ( d->known( names::delay ) )
@@ -198,7 +206,7 @@ diffusion_connection< targetidentifierT >::set_status( const DictionaryDatum& d,
       "diffusion_factor to specifiy the weights." );
   }
 
-  ConnectionBase::set_status( d, cm );
+  ConnectionBase::set_status( d, tid, cm );
   updateValue< double >( d, names::drift_factor, drift_factor_ );
   updateValue< double >( d, names::diffusion_factor, diffusion_factor_ );
 }

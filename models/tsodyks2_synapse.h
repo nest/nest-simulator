@@ -133,6 +133,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   tsodyks2_synapse( const tsodyks2_synapse& ) = default;
+  tsodyks2_synapse( const tsodyks2_synapse& rhs, const size_t ) : tsodyks2_synapse( rhs ) {};
   tsodyks2_synapse& operator=( const tsodyks2_synapse& ) = default;
 
   /**
@@ -159,7 +160,7 @@ public:
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const DictionaryDatum& d, const size_t, ConnectorModel& cm );
 
   /**
    * Send an event to the receiver of this connection.
@@ -270,9 +271,9 @@ tsodyks2_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-tsodyks2_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+tsodyks2_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, const size_t tid, ConnectorModel& cm )
 {
-  ConnectionBase::set_status( d, cm );
+  ConnectionBase::set_status( d, tid, cm );
   updateValue< double >( d, names::weight, weight_ );
 
   updateValue< double >( d, names::dU, U_ );

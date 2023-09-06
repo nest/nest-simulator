@@ -146,6 +146,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   stdp_pl_synapse_hom( const stdp_pl_synapse_hom& ) = default;
+  stdp_pl_synapse_hom( const stdp_pl_synapse_hom& rhs, const size_t ) : stdp_pl_synapse_hom( rhs ) {};
   stdp_pl_synapse_hom& operator=( const stdp_pl_synapse_hom& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
@@ -165,7 +166,7 @@ public:
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const DictionaryDatum& d, const size_t, ConnectorModel& cm );
 
   /**
    * Send an event to the receiver of this connection.
@@ -317,10 +318,10 @@ stdp_pl_synapse_hom< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-stdp_pl_synapse_hom< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+stdp_pl_synapse_hom< targetidentifierT >::set_status( const DictionaryDatum& d, const size_t tid, ConnectorModel& cm )
 {
   // base class properties
-  ConnectionBase::set_status( d, cm );
+  ConnectionBase::set_status( d, tid, cm );
   updateValue< double >( d, names::weight, weight_ );
 
   updateValue< double >( d, names::Kplus, Kplus_ );

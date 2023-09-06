@@ -57,9 +57,9 @@ cont_delay_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-cont_delay_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+cont_delay_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, const size_t tid, ConnectorModel& cm )
 {
-  ConnectionBase::set_status( d, cm );
+  ConnectionBase::set_status( d, tid, cm );
 
   updateValue< double >( d, names::weight, weight_ );
 

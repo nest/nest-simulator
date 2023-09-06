@@ -128,7 +128,7 @@ GenericConnectorModel< ConnectionT >::set_status( const DictionaryDatum& d )
   kernel().connection_manager.get_delay_checker().freeze_delay_update();
 
   cp_.set_status( d, *this );
-  default_connection_.set_status( d, *this );
+  default_connection_.set_status( d, 0, *this );
 
   kernel().connection_manager.get_delay_checker().enable_delay_update();
 
@@ -189,7 +189,8 @@ GenericConnectorModel< ConnectionT >::set_syn_id( synindex syn_id )
 
 template < typename ConnectionT >
 void
-GenericConnectorModel< ConnectionT >::add_connection( Node& src,
+GenericConnectorModel< ConnectionT >::add_connection( const size_t tid,
+  Node& src,
   Node& tgt,
   std::vector< ConnectorBase* >& thread_local_connectors,
   const synindex syn_id,
@@ -230,7 +231,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   }
 
   // create a new instance of the default connection
-  ConnectionT connection = ConnectionT( default_connection_ );
+  ConnectionT connection = ConnectionT( default_connection_, tid );
 
   if ( not numerics::is_nan( weight ) )
   {
@@ -246,7 +247,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   {
     // Reference to connector model needed here to check delay (maybe this could
     // be done one level above?).
-    connection.set_status( p, *this );
+    connection.set_status( p, tid, *this );
   }
 
   // We must use a local variable here to hold the actual value of the

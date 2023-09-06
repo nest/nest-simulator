@@ -226,7 +226,7 @@ TargetTableDevices::set_synapse_status_from_device( const size_t tid,
   const DictionaryDatum& dict,
   const size_t lcid )
 {
-  target_from_devices_[ tid ][ ldid ][ syn_id ]->set_synapse_status( lcid, dict, cm );
+  target_from_devices_[ tid ][ ldid ][ syn_id ]->set_synapse_status( tid, lcid, dict, cm );
 }
 
 inline void

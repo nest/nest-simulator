@@ -92,7 +92,8 @@ public:
    * omitted, NAN indicates this and weight/delay are set only if they are
    * valid.
    */
-  virtual void add_connection( Node& src,
+  virtual void add_connection( const size_t tid,
+    Node& src,
     Node& tgt,
     std::vector< ConnectorBase* >& hetconn,
     const synindex syn_id,
@@ -167,7 +168,8 @@ public:
   {
   }
 
-  void add_connection( Node& src,
+  void add_connection( const size_t tid,
+    Node& src,
     Node& tgt,
     std::vector< ConnectorBase* >& hetconn,
     const synindex syn_id,

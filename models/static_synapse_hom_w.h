@@ -130,6 +130,21 @@ public:
     }
   };
 
+  /**
+   * Default Constructor.
+   * Sets default values for all parameters. Needed by GenericConnectorModel.
+   */
+  static_synapse_hom_w() = default;
+
+  /**
+   * Copy constructor.
+   * Needs to be defined properly in order for GenericConnector to work.
+   */
+  static_synapse_hom_w( const static_synapse_hom_w& ) = default;
+  static_synapse_hom_w( const static_synapse_hom_w& rhs, const size_t ) : static_synapse_hom_w( rhs ) {};
+  static_synapse_hom_w& operator=( const static_synapse_hom_w& ) = default;
+
+
   void get_status( DictionaryDatum& d ) const;
 
   void

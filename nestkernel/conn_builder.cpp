@@ -1426,7 +1426,7 @@ nest::FixedTotalNumberBuilder::connect_()
         std::vector< size_t >::const_iterator tnode_id_it = local_targets.begin();
         for ( ; tnode_id_it != local_targets.end(); ++tnode_id_it )
         {
-          if ( kernel().vp_manager.node_id_to_vp( *tnode_id_it ) == vp_id )
+          if ( kernel().vp_manager.node_id_to_vp( *tnode_id_it ) == static_cast< size_t >( vp_id ) )
           {
             thread_local_targets.push_back( *tnode_id_it );
           }

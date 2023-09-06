@@ -187,6 +187,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   tsodyks_synapse_hom( const tsodyks_synapse_hom& ) = default;
+  tsodyks_synapse_hom( const tsodyks_synapse_hom& rhs, const size_t ) : tsodyks_synapse_hom( rhs ) {};
   tsodyks_synapse_hom& operator=( const tsodyks_synapse_hom& ) = default;
 
   /**
@@ -212,7 +213,7 @@ public:
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const DictionaryDatum& d, const size_t, ConnectorModel& cm );
 
   /**
    * Send an event to the receiver of this connection.
@@ -337,7 +338,7 @@ tsodyks_synapse_hom< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-tsodyks_synapse_hom< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+tsodyks_synapse_hom< targetidentifierT >::set_status( const DictionaryDatum& d, const size_t tid, ConnectorModel& cm )
 {
   // Handle parameters that may throw an exception first, so we can leave the
   // synapse untouched in case of invalid parameter values
@@ -354,7 +355,7 @@ tsodyks_synapse_hom< targetidentifierT >::set_status( const DictionaryDatum& d, 
   x_ = x;
   y_ = y;
 
-  ConnectionBase::set_status( d, cm );
+  ConnectionBase::set_status( d, tid, cm );
 
   updateValue< double >( d, names::u, u_ );
 }

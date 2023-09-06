@@ -114,6 +114,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   ht_synapse( const ht_synapse& ) = default;
+  ht_synapse( const ht_synapse& rhs, const size_t ) : ht_synapse( rhs ) {};
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
@@ -127,19 +128,19 @@ public:
   /**
    * Default Destructor.
    */
-  virtual ~ht_synapse()
+  ~ht_synapse()
   {
   }
 
   /**
    * Get all properties of this connection and put them into a dictionary.
    */
-  virtual void get_status( DictionaryDatum& d ) const;
+  void get_status( DictionaryDatum& d ) const;
 
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  virtual void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const DictionaryDatum& d, const size_t, ConnectorModel& cm );
 
   /**
    * Send an event to the receiver of this connection.
@@ -241,9 +242,9 @@ ht_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-ht_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+ht_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, const size_t tid, ConnectorModel& cm )
 {
-  ConnectionBase::set_status( d, cm );
+  ConnectionBase::set_status( d, tid, cm );
 
   updateValue< double >( d, names::weight, weight_ );
   updateValue< double >( d, names::tau_P, tau_P_ );

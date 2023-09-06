@@ -141,6 +141,7 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   stdp_nn_restr_synapse( const stdp_nn_restr_synapse& ) = default;
+  stdp_nn_restr_synapse( const stdp_nn_restr_synapse& rhs, const size_t ) : stdp_nn_restr_synapse( rhs ) {};
   stdp_nn_restr_synapse& operator=( const stdp_nn_restr_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
@@ -160,7 +161,7 @@ public:
   /**
    * Set properties of this connection from the values given in dictionary.
    */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const DictionaryDatum& d, const size_t, ConnectorModel& cm );
 
   /**
    * Send an event to the receiver of this connection.
@@ -335,9 +336,9 @@ stdp_nn_restr_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) con
 
 template < typename targetidentifierT >
 void
-stdp_nn_restr_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+stdp_nn_restr_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, const size_t tid, ConnectorModel& cm )
 {
-  ConnectionBase::set_status( d, cm );
+  ConnectionBase::set_status( d, tid, cm );
   updateValue< double >( d, names::weight, weight_ );
   updateValue< double >( d, names::tau_plus, tau_plus_ );
   updateValue< double >( d, names::lambda, lambda_ );

@@ -93,6 +93,14 @@ public:
   {
   }
 
+  /**
+   * Copy constructor.
+   * Needs to be defined properly in order for GenericConnector to work.
+   */
+  rate_connection_instantaneous( const rate_connection_instantaneous& ) = default;
+  rate_connection_instantaneous( const rate_connection_instantaneous& rhs, const size_t ) : rate_connection_instantaneous( rhs ) {};
+  rate_connection_instantaneous& operator=( const rate_connection_instantaneous& ) = default;
+
   SecondaryEvent* get_secondary_event();
 
   // Explicitly declare all methods inherited from the dependent base
@@ -132,7 +140,7 @@ public:
 
   void get_status( DictionaryDatum& d ) const;
 
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void set_status( const DictionaryDatum& d, const size_t, ConnectorModel& cm );
 
   void
   set_weight( double w )
@@ -166,7 +174,7 @@ rate_connection_instantaneous< targetidentifierT >::get_status( DictionaryDatum&
 
 template < typename targetidentifierT >
 void
-rate_connection_instantaneous< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+rate_connection_instantaneous< targetidentifierT >::set_status( const DictionaryDatum& d, const size_t tid, ConnectorModel& cm )
 {
   // If the delay is set, we throw a BadProperty
   if ( d->known( names::delay ) )
@@ -176,7 +184,7 @@ rate_connection_instantaneous< targetidentifierT >::set_status( const Dictionary
       "rate_connection_delayed." );
   }
 
-  ConnectionBase::set_status( d, cm );
+  ConnectionBase::set_status( d, tid, cm );
   updateValue< double >( d, names::weight, weight_ );
 }
 

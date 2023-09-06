@@ -314,10 +314,10 @@ stdp_facetshw_synapse_hom< targetidentifierT >::get_status( DictionaryDatum& d )
 
 template < typename targetidentifierT >
 void
-stdp_facetshw_synapse_hom< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+stdp_facetshw_synapse_hom< targetidentifierT >::set_status( const DictionaryDatum& d, const size_t tid, ConnectorModel& cm )
 {
   // base class properties
-  ConnectionBase::set_status( d, cm );
+  ConnectionBase::set_status( d, tid, cm );
   updateValue< double >( d, names::weight, weight_ );
 
   updateValue< double >( d, names::a_causal, a_causal_ );

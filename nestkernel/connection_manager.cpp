@@ -283,7 +283,7 @@ nest::ConnectionManager::set_synapse_status( const size_t source_node_id,
       or ( ( source->has_proxies() and not target->has_proxies() and not target->local_receiver()
         and connections_[ tid ][ syn_id ] ) ) )
     {
-      connections_[ tid ][ syn_id ]->set_synapse_status( lcid, dict, cm );
+      connections_[ tid ][ syn_id ]->set_synapse_status( tid, lcid, dict, cm );
     }
     else if ( source->has_proxies() and not target->has_proxies() and target->local_receiver() )
     {
@@ -783,7 +783,7 @@ nest::ConnectionManager::connect_( Node& source,
   }
 
   const bool is_primary = conn_model.has_property( ConnectionModelProperties::IS_PRIMARY );
-  conn_model.add_connection( source, target, connections_[ tid ], syn_id, params, delay, weight );
+  conn_model.add_connection( tid, source, target, connections_[ tid ], syn_id, params, delay, weight );
   source_table_.add_source( tid, syn_id, s_node_id, is_primary );
 
   increase_connection_count( tid, syn_id );

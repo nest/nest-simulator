@@ -353,7 +353,7 @@ this works - TODO add text into image
    :hidden:
    :glob:
 
-   install <installation/index>
+   Install <installation/index>
    Tutorials <get-started_index>
    PyNEST API <ref_material/pynest_api/index>
    Examples <examples/index>
@@ -362,9 +362,18 @@ this works - TODO add text into image
    Synapses in NEST <synapses/index>
    Devices in NEST <devices/index>
    Spatially structured networks <networks/spatially_structured_networks>
-   Cite NEST <citing-nest>
    ref_material/glossary
-   Community <community>
+
+.. toctree::
+   :caption: COMMUNITY
+   :hidden:
+   :glob:
+
+   Cite NEST <citing-nest>
+   Contact us <community>
+   Contribute <developer_space/index>
+   What's new? <whats_new/index>
+   NEST Homepage <https://nest-simulator.org>
 
 .. toctree::
    :caption: TECHNICAL DETAILS
@@ -374,17 +383,16 @@ this works - TODO add text into image
    nest_sonata/nest_sonata_guide
    connect_nest/nest_server
    model implementation <model_details>
-   nest_behavior <nest_behavior/index>
-   release_notes <whats_new/index>
-   maintenance <developer_space/index>
+   NEST behavior <nest_behavior/index>
+   Developer Docs <developer_space/index>
 
 .. toctree::
    :caption: RELATED PROJECTS
    :hidden:
 
-   nest-desktop <https://nest-desktop.readthedocs.io/en/latest/>
-   nestml <https://nestml.readthedocs.io/en/latest/>
-   nestgpu <https://nestgpu.readthedocs.io/en/latest/>
+   NEST Desktop <https://nest-desktop.readthedocs.io/en/latest/>
+   NESTML <https://nestml.readthedocs.io/en/latest/>
+   NESTGPU <https://nestgpu.readthedocs.io/en/latest/>
    pynn <https://google.com>
    elephant <https://google.com>
    cosim <https://google.com>

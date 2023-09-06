@@ -96,7 +96,8 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   cont_delay_synapse( const cont_delay_synapse& ) = default;
-  cont_delay_synapse( const cont_delay_synapse& rhs, const size_t ) : cont_delay_synapse( rhs ) {};
+  cont_delay_synapse( const cont_delay_synapse& rhs, const size_t )
+    : cont_delay_synapse( rhs ) {};
 
   /**
    * Default Destructor.

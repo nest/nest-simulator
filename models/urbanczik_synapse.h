@@ -128,7 +128,8 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   urbanczik_synapse( const urbanczik_synapse& ) = default;
-  urbanczik_synapse( const urbanczik_synapse& rhs, const size_t ) : urbanczik_synapse( rhs ) {};
+  urbanczik_synapse( const urbanczik_synapse& rhs, const size_t )
+    : urbanczik_synapse( rhs ) {};
   urbanczik_synapse& operator=( const urbanczik_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base

@@ -116,7 +116,8 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   bernoulli_synapse( const bernoulli_synapse& rhs ) = default;
-  bernoulli_synapse( const bernoulli_synapse& rhs, const size_t ) : bernoulli_synapse( rhs ) {};
+  bernoulli_synapse( const bernoulli_synapse& rhs, const size_t )
+    : bernoulli_synapse( rhs ) {};
   bernoulli_synapse& operator=( const bernoulli_synapse& rhs ) = default;
 
   // Explicitly declare all methods inherited from the dependent base

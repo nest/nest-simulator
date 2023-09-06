@@ -98,7 +98,8 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   rate_connection_instantaneous( const rate_connection_instantaneous& ) = default;
-  rate_connection_instantaneous( const rate_connection_instantaneous& rhs, const size_t ) : rate_connection_instantaneous( rhs ) {};
+  rate_connection_instantaneous( const rate_connection_instantaneous& rhs, const size_t )
+    : rate_connection_instantaneous( rhs ) {};
   rate_connection_instantaneous& operator=( const rate_connection_instantaneous& ) = default;
 
   SecondaryEvent* get_secondary_event();
@@ -174,7 +175,9 @@ rate_connection_instantaneous< targetidentifierT >::get_status( DictionaryDatum&
 
 template < typename targetidentifierT >
 void
-rate_connection_instantaneous< targetidentifierT >::set_status( const DictionaryDatum& d, const size_t tid, ConnectorModel& cm )
+rate_connection_instantaneous< targetidentifierT >::set_status( const DictionaryDatum& d,
+  const size_t tid,
+  ConnectorModel& cm )
 {
   // If the delay is set, we throw a BadProperty
   if ( d->known( names::delay ) )

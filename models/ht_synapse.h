@@ -114,7 +114,8 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   ht_synapse( const ht_synapse& ) = default;
-  ht_synapse( const ht_synapse& rhs, const size_t ) : ht_synapse( rhs ) {};
+  ht_synapse( const ht_synapse& rhs, const size_t )
+    : ht_synapse( rhs ) {};
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these

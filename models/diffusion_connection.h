@@ -110,7 +110,8 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   diffusion_connection( const diffusion_connection& rhs ) = default;
-  diffusion_connection( const diffusion_connection& rhs, const size_t ) : diffusion_connection( rhs ) {};
+  diffusion_connection( const diffusion_connection& rhs, const size_t )
+    : diffusion_connection( rhs ) {};
   diffusion_connection& operator=( const diffusion_connection& rhs ) = default;
 
   SecondaryEvent* get_secondary_event();

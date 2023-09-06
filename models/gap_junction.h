@@ -103,7 +103,8 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   gap_junction( const gap_junction& rhs ) = default;
-  gap_junction( const gap_junction& rhs, const size_t ) : gap_junction( rhs ) {};
+  gap_junction( const gap_junction& rhs, const size_t )
+    : gap_junction( rhs ) {};
   gap_junction& operator=( const gap_junction& rhs ) = default;
 
   SecondaryEvent* get_secondary_event();

@@ -123,7 +123,8 @@ public:
    * Copy constructor to propagate common properties.
    */
   quantal_stp_synapse( const quantal_stp_synapse& ) = default;
-  quantal_stp_synapse( const quantal_stp_synapse& rhs, const size_t ) : quantal_stp_synapse( rhs ) {};
+  quantal_stp_synapse( const quantal_stp_synapse& rhs, const size_t )
+    : quantal_stp_synapse( rhs ) {};
   quantal_stp_synapse& operator=( const quantal_stp_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base

@@ -187,7 +187,8 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   tsodyks_synapse_hom( const tsodyks_synapse_hom& ) = default;
-  tsodyks_synapse_hom( const tsodyks_synapse_hom& rhs, const size_t ) : tsodyks_synapse_hom( rhs ) {};
+  tsodyks_synapse_hom( const tsodyks_synapse_hom& rhs, const size_t )
+    : tsodyks_synapse_hom( rhs ) {};
   tsodyks_synapse_hom& operator=( const tsodyks_synapse_hom& ) = default;
 
   /**

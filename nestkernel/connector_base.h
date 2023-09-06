@@ -87,7 +87,8 @@ public:
    * Set status of the connection at position lcid according to the
    * dictionary dict.
    */
-  virtual void set_synapse_status( const size_t tid, const size_t lcid, const DictionaryDatum& dict, ConnectorModel& cm ) = 0;
+  virtual void
+  set_synapse_status( const size_t tid, const size_t lcid, const DictionaryDatum& dict, ConnectorModel& cm ) = 0;
 
   /**
    * Add ConnectionID with given source_node_id and lcid to conns. If

@@ -126,7 +126,10 @@ public:
   }
 
   Connection( const Connection< targetidentifierT >& rhs ) = default;
-  Connection( const Connection< targetidentifierT >& rhs, const size_t tid ) : Connection( rhs ) {}
+  Connection( const Connection< targetidentifierT >& rhs, const size_t tid )
+    : Connection( rhs )
+  {
+  }
   Connection& operator=( const Connection< targetidentifierT >& rhs ) = default;
 
   /**

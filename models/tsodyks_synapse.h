@@ -153,7 +153,8 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   tsodyks_synapse( const tsodyks_synapse& ) = default;
-  tsodyks_synapse( const tsodyks_synapse& rhs, const size_t ) : tsodyks_synapse( rhs ) {};
+  tsodyks_synapse( const tsodyks_synapse& rhs, const size_t )
+    : tsodyks_synapse( rhs ) {};
   tsodyks_synapse& operator=( const tsodyks_synapse& ) = default;
 
   /**

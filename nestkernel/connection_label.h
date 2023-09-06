@@ -59,7 +59,8 @@ public:
   ConnectionLabel();
 
   ConnectionLabel( const ConnectionLabel& rhs ) = default;
-  ConnectionLabel( const ConnectionLabel& rhs, const size_t ) : ConnectionLabel( rhs ) {};
+  ConnectionLabel( const ConnectionLabel& rhs, const size_t )
+    : ConnectionLabel( rhs ) {};
   ConnectionLabel& operator=( const ConnectionLabel& rhs ) = default;
 
   /**

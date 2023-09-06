@@ -172,7 +172,8 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   stdp_synapse_hom( const stdp_synapse_hom& ) = default;
-  stdp_synapse_hom( const stdp_synapse_hom& rhs, const size_t ) : stdp_synapse_hom( rhs ) {};
+  stdp_synapse_hom( const stdp_synapse_hom& rhs, const size_t )
+    : stdp_synapse_hom( rhs ) {};
   stdp_synapse_hom& operator=( const stdp_synapse_hom& ) = default;
 
 

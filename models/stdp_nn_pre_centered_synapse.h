@@ -146,7 +146,8 @@ public:
    * Needs to be defined properly in order for GenericConnector to work.
    */
   stdp_nn_pre_centered_synapse( const stdp_nn_pre_centered_synapse& ) = default;
-  stdp_nn_pre_centered_synapse( const stdp_nn_pre_centered_synapse& rhs, const size_t ) : stdp_nn_pre_centered_synapse( rhs ) {};
+  stdp_nn_pre_centered_synapse( const stdp_nn_pre_centered_synapse& rhs, const size_t )
+    : stdp_nn_pre_centered_synapse( rhs ) {};
   stdp_nn_pre_centered_synapse& operator=( const stdp_nn_pre_centered_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
@@ -346,7 +347,9 @@ stdp_nn_pre_centered_synapse< targetidentifierT >::get_status( DictionaryDatum& 
 
 template < typename targetidentifierT >
 void
-stdp_nn_pre_centered_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, const size_t tid, ConnectorModel& cm )
+stdp_nn_pre_centered_synapse< targetidentifierT >::set_status( const DictionaryDatum& d,
+  const size_t tid,
+  ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, tid, cm );
   updateValue< double >( d, names::weight, weight_ );

@@ -25,6 +25,7 @@ Test that per-thread nodes vectors are updated.
 
 import numpy as np
 import pytest
+
 import nest
 
 

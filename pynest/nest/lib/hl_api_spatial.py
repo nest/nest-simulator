@@ -29,7 +29,7 @@ import numpy as np
 
 from ..ll_api import sli_func
 from .hl_api_connections import GetConnections
-from .hl_api_helper import is_iterable
+from .hl_api_helper import is_iterable, stringify_path
 from .hl_api_parallel_computing import NumProcesses, Rank
 from .hl_api_types import NodeCollection
 
@@ -531,8 +531,11 @@ def DumpLayerNodes(layer, outname):
             nest.DumpLayerNodes(s_nodes, 'positions.txt')
 
     """
+
     if not isinstance(layer, NodeCollection):
         raise TypeError("layer must be a NodeCollection")
+
+    outname = stringify_path(outname)
 
     sli_func(
         """
@@ -607,12 +610,7 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
     if not isinstance(target_layer, NodeCollection):
         raise TypeError("target_layer must be a NodeCollection")
 
-    # Attempt to convert path-like object to a string by coercing objects
-    # supporting the fspath protocol to its __fspath__ method. Anything that
-    # is not path-like, which includes bytes and strings, is passed through
-    # unchanged.
-    if isinstance(outname, os.PathLike):
-        outname = outname.__fspath__()
+    outname = stringify_path(outname)
 
     sli_func(
         """

@@ -22,14 +22,55 @@
 from docutils import nodes
 from docutils.parsers.rst import Directive, Parser
 
-# from docutils.core import publish_doctree
 from sphinx.application import Sphinx
 from sphinx.util.docutils import SphinxDirective
-from sphinx.addnodes import pending_xref
-import json
-import re
 import os
 import glob
+
+
+class listnode(nodes.General, nodes.Element):
+    pass
+
+
+def ProcessExamples(app, doctree, docname):
+    # Create the bullet list of examples, sorted by title
+    # given by the model name in the directive argument
+
+    env = app.builder.env
+    mydict = {}
+
+    dict_match = ModelMatchExamples()
+
+    for node in doctree.findall(listnode):
+        for item in env.all_examples:
+            # compare current location with attribute location to get
+            # correct model name
+            if item["name"] == docname:
+                list_of_examples = dict_match[item["model_name"]]
+                for value in list_of_examples:
+                    mydocname = os.path.splitext(value)[0]
+                    mydict[mydocname] = str(env.titles[mydocname].children[0])
+
+            sorted_examples = dict(sorted(mydict.items(), key=lambda x: x[1]))
+
+            bullet_list = nodes.bullet_list()
+
+            for filename, title in sorted_examples.items():
+                # Create a reference node that links to the example
+                # equivalent to HTML <li>
+                list_item = nodes.list_item()
+                newnode = nodes.reference("", "")
+                newnode["internal"] = True
+                newnode["refdocname"] = filename
+                newnode["refuri"] = app.builder.get_relative_uri(docname, filename)
+                newnode.append(nodes.Text(title))
+                para = nodes.paragraph()
+                para += newnode
+                # para.append(link_node)
+                list_item.append(para)
+                bullet_list += list_item
+
+        node.replace_self(bullet_list)
 
 
 def ModelMatchExamples():
@@ -71,40 +112,22 @@ class ListExamplesDirective(SphinxDirective):
     def run(self):
         my_arg = self.arguments[0]
 
-        # bullet list equivalent to HTML <ul>
-        bullet_list = nodes.bullet_list()
-        examples_list = ModelMatchExamples()
+        if not hasattr(self.env, "all_examples"):
+            self.env.all_examples = []
 
-        values = examples_list[my_arg]
-        for value in values:
-            # A leading '/'  is added to the example path to take advantage of the
-            # std:label (ref role) syntax (see also objects.inv doc for intersphinx)
-            # we also need the names to be all lower case
-            value_label = "/" + value.lower()
-            link_text = value.split("/")[-1]
-            # equivalent to HTML <li>
-            list_item = nodes.list_item()
-            link_node = pending_xref(
-                "",
-                reftype="ref",
-                refdomain="std",
-                refexplicit=False,
-                reftarget=value_label,
-                refwarn=True,
-                classes=["xref", "std", "std-ref"],
-            )
-            link_node += nodes.inline(text=link_text)
-            para = nodes.paragraph()
-            para.append(link_node)
-            list_item.append(para)
-            bullet_list += list_item
+        # See TODO tutorial in Sphinx for more info.
+        # Using environment attribute all_examples to store argument and
+        # its location (docname)
+        self.env.all_examples.append({"model_name": my_arg, "name": self.env.docname})
 
-        return [bullet_list]
+        return [listnode("")]
 
 
 def setup(app):
     # Note that the directive names need to be all lower case
     app.add_directive("listexamples", ListExamplesDirective)
+    app.add_node(listnode)
+    app.connect("doctree-resolved", ProcessExamples)
 
     return {
         "version": "0.1",

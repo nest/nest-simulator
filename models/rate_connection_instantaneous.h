@@ -73,7 +73,7 @@ EndUserDocs */
  * has the properties weight and receiver port.
  */
 template < typename targetidentifierT >
-class RateConnectionInstantaneous : public Connection< targetidentifierT >
+class rate_connection_instantaneous : public Connection< targetidentifierT >
 {
 
 public:
@@ -87,7 +87,7 @@ public:
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  RateConnectionInstantaneous()
+  rate_connection_instantaneous()
     : ConnectionBase()
     , weight_( 1.0 )
   {
@@ -106,7 +106,7 @@ public:
   using ConnectionBase::get_target;
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
     InstantaneousRateConnectionEvent ge;
 
@@ -122,7 +122,7 @@ public:
    * \param p The port under which this connection is stored in the Connector.
    */
   void
-  send( Event& e, thread t, const CommonSynapseProperties& )
+  send( Event& e, size_t t, const CommonSynapseProperties& )
   {
     e.set_weight( weight_ );
     e.set_receiver( *get_target( t ) );
@@ -153,11 +153,11 @@ private:
 };
 
 template < typename targetidentifierT >
-constexpr ConnectionModelProperties RateConnectionInstantaneous< targetidentifierT >::properties;
+constexpr ConnectionModelProperties rate_connection_instantaneous< targetidentifierT >::properties;
 
 template < typename targetidentifierT >
 void
-RateConnectionInstantaneous< targetidentifierT >::get_status( DictionaryDatum& d ) const
+rate_connection_instantaneous< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
@@ -166,7 +166,7 @@ RateConnectionInstantaneous< targetidentifierT >::get_status( DictionaryDatum& d
 
 template < typename targetidentifierT >
 void
-RateConnectionInstantaneous< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+rate_connection_instantaneous< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   // If the delay is set, we throw a BadProperty
   if ( d->known( names::delay ) )
@@ -182,7 +182,7 @@ RateConnectionInstantaneous< targetidentifierT >::set_status( const DictionaryDa
 
 template < typename targetidentifierT >
 SecondaryEvent*
-RateConnectionInstantaneous< targetidentifierT >::get_secondary_event()
+rate_connection_instantaneous< targetidentifierT >::get_secondary_event()
 {
   return new InstantaneousRateConnectionEvent();
 }

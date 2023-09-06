@@ -51,7 +51,7 @@ class TestBernoulliSynapse:
         p = 0.25
 
         # allowed absolute deviation: three standard deviations of the binomial distribution with (N_spikes, p)
-        margin = 3 * (N_spikes * p * (1 - p))**.5
+        margin = 3 * (N_spikes * p * (1 - p)) ** 0.5
 
         # build
         sg = nest.Create("spike_generator", {"spike_times": np.arange(1, N_spikes).astype(float)})
@@ -64,14 +64,13 @@ class TestBernoulliSynapse:
 
         # connect presynaptic parrot neuron to postsynaptic parrot neuron via bernoulli_synapse with transmission
         # probability p
-        nest.Connect(pre, post, syn_spec={"synapse_model": "bernoulli_synapse",
-                                          "p_transmit": p})
+        nest.Connect(pre, post, syn_spec={"synapse_model": "bernoulli_synapse", "p_transmit": p})
 
         # connect parrot neuron to spike_recorder
         nest.Connect(post, sr)
 
         # simulate for 1002 ms to allow all spikes to be recorded accordingly
-        nest.Simulate(2. + N_spikes)
+        nest.Simulate(2.0 + N_spikes)
 
         # get number of spikes transmitted
         N_spikes_transmitted = len(sr.get("events")["times"])
@@ -90,9 +89,7 @@ class TestBernoulliSynapse:
         post = nest.Create("parrot_neuron")
 
         with pytest.raises(nest.kernel.NESTError):
-            nest.Connect(pre, post, syn_spec={"synapse_model": "bernoulli_synapse",
-                                              "p_transmit": -0.1})
+            nest.Connect(pre, post, syn_spec={"synapse_model": "bernoulli_synapse", "p_transmit": -0.1})
 
         with pytest.raises(nest.kernel.NESTError):
-            nest.Connect(pre, post, syn_spec={"synapse_model": "bernoulli_synapse",
-                                              "p_transmit": 1.1})
+            nest.Connect(pre, post, syn_spec={"synapse_model": "bernoulli_synapse", "p_transmit": 1.1})

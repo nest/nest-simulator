@@ -1,0 +1,15 @@
+# Modelset for rate based neurons for NEST
+
+threshold_lin_rate
+tanh_rate
+step_rate_generator
+sigmoid_rate_gg_1998
+sigmoid_rate
+siegert_neuron
+rate_connection_instantaneous
+rate_connection_delayed
+lin_rate
+gauss_rate
+music_rate_out_proxy
+music_rate_in_proxy
+multimeter

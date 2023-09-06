@@ -24,7 +24,7 @@
 #include <mpi.h>
 #ifdef BG_MULTIFILE
 #include <mpix.h>
-#endif // BG_MULTIFILE
+#endif /* BG_MULTIFILE */
 
 // Generated includes:
 #include "config.h"
@@ -73,8 +73,8 @@ nest::RecordingBackendSIONlib::finalize()
 void
 nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device, const DictionaryDatum& )
 {
-  const thread t = device.get_thread();
-  const thread node_id = device.get_node_id();
+  const size_t t = device.get_thread();
+  const size_t node_id = device.get_node_id();
 
   device_map::value_type::iterator device_it = devices_[ t ].find( node_id );
   if ( device_it == devices_[ t ].end() )
@@ -100,8 +100,8 @@ nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device, const Dict
 void
 nest::RecordingBackendSIONlib::disenroll( const RecordingDevice& device )
 {
-  const thread t = device.get_thread();
-  const thread node_id = device.get_node_id();
+  const size_t t = device.get_thread();
+  const size_t node_id = device.get_node_id();
 
   device_map::value_type::iterator device_it = devices_[ t ].find( node_id );
   if ( device_it != devices_[ t ].end() )
@@ -115,8 +115,8 @@ nest::RecordingBackendSIONlib::set_value_names( const RecordingDevice& device,
   const std::vector< Name >& double_value_names,
   const std::vector< Name >& long_value_names )
 {
-  const thread t = device.get_thread();
-  const thread node_id = device.get_node_id();
+  const size_t t = device.get_thread();
+  const size_t node_id = device.get_node_id();
 
   device_map::value_type::iterator device_it = devices_[ t ].find( node_id );
   if ( device_it != devices_[ t ].end() )
@@ -160,7 +160,7 @@ nest::RecordingBackendSIONlib::open_files_()
       MPIX_Pset_same_comm_create( &local_comm_ );
     }
 #pragma omp barrier
-#endif // BG_MULTIFILE
+#endif /* BG_MULTIFILE */
     // use additional local variable for local communicator to
     // avoid problems when calling sion_paropen_ompi(..)
     MPI_Comm local_comm = local_comm_;
@@ -170,8 +170,8 @@ nest::RecordingBackendSIONlib::open_files_()
     WrappedThreadException* we = nullptr;
 
     // This code is executed in a parallel region (opened above)!
-    const thread t = kernel().vp_manager.get_thread_id();
-    const thread task = kernel().vp_manager.thread_to_vp( t );
+    const size_t t = kernel().vp_manager.get_thread_id();
+    const size_t task = kernel().vp_manager.thread_to_vp( t );
     if ( not task )
     {
       t_start_ = kernel().simulation_manager.get_time().get_ms();
@@ -215,7 +215,7 @@ nest::RecordingBackendSIONlib::open_files_()
       int n_files = -1;
 #else
       int n_files = P_.sion_n_files_;
-#endif // BG_MULTIFILE
+#endif /* BG_MULTIFILE */
       sion_int32 fs_block_size = -1;
       sion_int64 sion_chunksize = P_.sion_chunksize_;
       int rank = kernel().mpi_manager.get_rank();
@@ -273,8 +273,8 @@ nest::RecordingBackendSIONlib::close_files_()
 
 #pragma omp parallel
   {
-    const thread t = kernel().vp_manager.get_thread_id();
-    const thread task = kernel().vp_manager.thread_to_vp( t );
+    const size_t t = kernel().vp_manager.get_thread_id();
+    const size_t task = kernel().vp_manager.thread_to_vp( t );
 
     assert( ( files_.find( task ) != files_.end() ) and "initialize() was not called before calling cleanup()" );
 
@@ -294,7 +294,7 @@ nest::RecordingBackendSIONlib::close_files_()
       device_map::value_type::iterator it;
       for ( it = devices_[ t ].begin(); it != devices_[ t ].end(); ++it )
       {
-        const index node_id = it->first;
+        const size_t node_id = it->first;
         sion_uint64 n_rec = 0;
 
         // accumulate number of locally recorded data points over all local
@@ -429,7 +429,7 @@ nest::RecordingBackendSIONlib::write( const RecordingDevice& device,
   const std::vector< double >& double_values,
   const std::vector< long >& long_values )
 {
-  const thread t = device.get_thread();
+  const size_t t = device.get_thread();
   const sion_uint64 device_node_id = static_cast< sion_uint64 >( device.get_node_id() );
 
   if ( devices_[ t ].find( device_node_id ) == devices_[ t ].end() )
@@ -676,8 +676,8 @@ nest::RecordingBackendSIONlib::post_step_hook()
     return;
   }
 
-  const thread t = kernel().vp_manager.get_thread_id();
-  const thread task = kernel().vp_manager.thread_to_vp( t );
+  const size_t t = kernel().vp_manager.get_thread_id();
+  const size_t task = kernel().vp_manager.thread_to_vp( t );
 
   FileEntry& file = files_[ task ];
   SIONBuffer& buffer = file.buffer;

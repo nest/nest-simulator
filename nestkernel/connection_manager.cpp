@@ -843,8 +843,9 @@ nest::ConnectionManager::increase_connection_count( const size_t tid, const syni
     num_connections_[ tid ].resize( syn_id + 1 );
   }
   ++num_connections_[ tid ][ syn_id ];
-  if ( num_connections_[ tid ][ syn_id ] >= MAX_LCID - 1 )
+  if ( num_connections_[ tid ][ syn_id ] > MAX_LCID - 1 )
   {
+    // MAX_LCID is used as invalid marker an can therefore not be used as a proper value
     throw KernelException(
       String::compose( "Too many connections: at most %1 connections supported per virtual "
                        "process and synapse model.",

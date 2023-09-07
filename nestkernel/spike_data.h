@@ -107,7 +107,9 @@ public:
   size_t get_lcid() const;
 
   /**
-   * Sets lcid value, only for communication of max buffer size
+   * Sets lcid value.
+   *
+   * @note Allows each rank to send the locally required buffer size per rank.
    */
   void set_lcid( size_t );
 
@@ -225,9 +227,9 @@ SpikeData::operator=( const SpikeData& rhs )
 inline void
 SpikeData::set( const size_t tid, const synindex syn_id, const size_t lcid, const unsigned int lag, const double )
 {
-  assert( tid <= MAX_TID );
-  assert( syn_id <= MAX_SYN_ID );
-  assert( lcid <= MAX_LCID );
+  assert( tid <= MAX_TID );  // MAX_TID is allowed since it is not use as invalid value
+  assert( syn_id < MAX_SYN_ID );
+  assert( lcid < MAX_LCID );
   assert( lag < MAX_LAG );
 
   lcid_ = lcid;
@@ -423,9 +425,9 @@ OffGridSpikeData::set( const size_t tid,
   const unsigned int lag,
   const double offset )
 {
-  assert( tid <= MAX_TID );
-  assert( syn_id <= MAX_SYN_ID );
-  assert( lcid <= MAX_LCID );
+  assert( tid <= MAX_TID ); // MAX_TID is allowed since it is not use as invalid value
+  assert( syn_id < MAX_SYN_ID );
+  assert( lcid < MAX_LCID );
   assert( lag < MAX_LAG );
 
   lcid_ = lcid;

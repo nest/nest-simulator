@@ -3,10 +3,12 @@
 Install from source in a conda environment
 ==========================================
 
-.. note:: If you encounter problems installing the NEST conda package and 
-   environment, we recommend using mamba (https://mamba.readthedocs.io). 
-   Mamba provides a huge speed advantage installing conda packages and 
-   environments and can be used as a complete drop-in replacement.
+.. note:: 
+
+   If you encounter problems installing the NEST conda package and 
+   environment, we recommend using Mamba (https://mamba.readthedocs.io). 
+   Mamba has the advantage of installing conda packages and 
+   environments more quickly and can be used as a complete drop-in replacement for conda.
 
 * Create a conda environment from the `environment.yml <https://github.com/nest/nest-simulator/blob/master/environment.yml>`_ file.
   We recommend specifying a dedicated location (``-p <path/to/conda/env>``) for your environment.

@@ -3,9 +3,13 @@
 Tips for installing NEST with conda
 ===================================
 
+.. note:: If you encounter problems installing the NEST conda package and 
+   environment, we recommend using mamba (https://mamba.readthedocs.io). 
+   Mamba provides a huge speed advantage installing conda packages and
+   environments and can be used as a complete drop-in replacement.
+
 This page provides a series of recommendations for installing pre-built NEST with
 conda or to set up conda environments for building NEST and NEST documentation.
-
 
 Basic conda setup
 -----------------

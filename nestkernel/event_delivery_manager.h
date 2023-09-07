@@ -55,6 +55,24 @@ class TargetData;
 class SendBufferPosition;
 class TargetSendBufferPosition;
 
+/**
+ * Collect information on spike transmission buffer resizing.
+ */
+class ResizeLog
+{
+public:
+  ResizeLog();
+  void clear();
+  void add_entry( size_t global_max_spikes_sent, size_t new_buffer_size );
+  void to_dict( DictionaryDatum& ) const;
+
+private:
+  std::vector< long > time_steps_;             //!< Time of resize event in steps
+  std::vector< long > global_max_spikes_sent_; //!< Spike number that triggered resize
+  std::vector< long > new_buffer_size_;        //!< Buffer size after resize
+};
+
+
 class EventDeliveryManager : public ManagerInterface
 {
 public:
@@ -444,14 +462,16 @@ private:
   //! largest number of spikes sent between any two ranks in most recent gather round
   size_t max_per_thread_max_spikes_per_rank_;
 
-  double send_recv_buffer_shrink_limit_;  //!< shrink buffer only if below this limit
-  double send_recv_buffer_shrink_factor_; //!< shrink buffer by this factor
-  double send_recv_buffer_growth_extra_;  //!< when growing, add this fraction extra space
+  double send_recv_buffer_shrink_limit_; //!< shrink buffer only if below this limit
+  double send_recv_buffer_shrink_spare_; //!< leave this fraction more size than minimally needed
+  double send_recv_buffer_grow_extra_;   //!< when growing, add this fraction extra space
 
-  size_t send_recv_buffer_shrink_count_; //!< number of shrink ops done
-  size_t send_recv_buffer_shrink_delta_; //!< sum of per-rank reductions
-  size_t send_recv_buffer_grow_count_;   //!< number of grow ops done
-  size_t send_recv_buffer_grow_delta_;   //!< sum of per-rank reductions
+  /**
+   * Log all resize events.
+   *
+   * This is maintained by the main thread, which is responsible for communication and resizing.
+   */
+  ResizeLog send_recv_buffer_resize_log_;
 
   PerThreadBoolIndicator gather_completed_checker_;
 

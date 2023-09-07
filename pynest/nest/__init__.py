@@ -225,10 +225,10 @@ class NestModule(types.ModuleType):
         "Maximal size of MPI buffers for communication of connections",
         default=16777216,
     )
-    buffer_growth_extra = KernelAttribute(
+    buffer_grow_extra = KernelAttribute(
         "float",
-        "When spike exchange buffer needs to be expanded, resize to `(1 + buffer_growth_extra) * required_buffer_size`",
-        default=0.05,
+        "When spike exchange buffer needs to be expanded, resize to `(1 + buffer_grow_extra) * required_buffer_size`",
+        default=0.5,
     )
     buffer_shrink_limit = KernelAttribute(
         "float",
@@ -238,20 +238,27 @@ class NestModule(types.ModuleType):
             + "`buffer_shrink_limit == 0` means that buffers never shrink. "
             + "See `buffer_shrink_factor` for how much buffer shrinks"
         ),
-        default=0.0,
+        default=0.3,
     )
-    buffer_shrink_factor = KernelAttribute(
+    buffer_shrink_spare = KernelAttribute(
         "float",
         (
-            "When buffer needs to shrink, set new size to `buffer_shrink_factor * old_buffer_size`. "
+            "When buffer needs to shrink, set new size to `(1 + buffer_shrink_spare) * required_buffer_size`. "
             + "See `buffer_shrink_limit` for when buffers shrink"
         ),
-        default=0.8,
+        default=0.1,
     )
-    buffer_grow_count = KernelAttribute("int", "Number of times spike exchange buffers have grown", readonly=True)
-    buffer_grow_delta = KernelAttribute("int", "Sum of all buffer growth steps", readonly=True)
-    buffer_shrink_count = KernelAttribute("int", "Number of times spike exchange buffers have shrunk", readonly=True)
-    buffer_shrink_delta = KernelAttribute("int", "Sum of all buffer shrink steps (absolute values)", readonly=True)
+    buffer_resize_log = KernelAttribute(
+        "dict",
+        (
+            "Information on spike buffer resizing as dictionary. It contains the "
+            + "times of the resizings (simulation clock in steps, always multiple of min_delay), "
+            + "`global_max_spikes_sent`, i.e., the observed spike number that triggered the resize, "
+            + "and the `new_buffer_size`. Sizes are for the section addressing one rank."
+        ),
+        readonly=True,
+    )
+
     use_wfr = KernelAttribute("bool", "Whether to use waveform relaxation method", default=True)
     wfr_comm_interval = KernelAttribute(
         "float",

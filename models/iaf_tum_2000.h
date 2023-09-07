@@ -40,7 +40,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Synapse type with short term plasticity
+Leaky integrate-and-fire neuron model with exponential PSCs and integrated synapse type with short term plasticity
 
 Description
 +++++++++++

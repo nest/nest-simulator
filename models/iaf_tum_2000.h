@@ -35,7 +35,7 @@
 namespace nest
 {
 
-/* BeginUserDocs: synapse, short-term plasticity
+/* BeginUserDocs: neuron, integrate-and-fire, current-based, synapse, short-term plasticity
 
 Short description
 +++++++++++++++++

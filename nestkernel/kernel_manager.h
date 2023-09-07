@@ -102,15 +102,11 @@
  num_processes                         integertype - The number of MPI processes (read only).
  off_grid_spiking                      booltype    - Whether to transmit precise spike times in MPI communication (read
                                                      only).
- sort_connections_by_source            booltype    - Whether to sort connections by their source; increases construction
-                                                     time of presynaptic data structures, decreases simulation time if
-                                                     the average number of outgoing connections per neuron is smaller
-                                                     than the total number of threads, defaults to true.
  total_num_virtual_procs               integertype - The total number of virtual processes, defaults to 1.
  use_compressed_spikes                 booltype    - Whether to use spike compression; if a neuron has targets on
                                                      multiple threads of a process, this switch makes sure that only a
                                                      single packet is sent to the process instead of one packet per
-                                                     target thread (requires sort_connections_by_source = true),
+                                                     target thread (implies that connections will be sorted by source),
                                                      defaults to true.
 
  Random number generators

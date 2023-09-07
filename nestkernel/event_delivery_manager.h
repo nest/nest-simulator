@@ -306,7 +306,7 @@ private:
   /**
    * Get required buffer size.
    *
-   * @returns maximum over required buffer sizes communicated by all ranks
+   * @returns maximum of required buffer sizes communicated by all ranks
    */
   template < typename SpikeDataT >
   size_t get_max_spike_data_per_thread_( const SendBufferPosition& send_buffer_position,

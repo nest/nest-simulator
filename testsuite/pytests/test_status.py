@@ -36,7 +36,13 @@ class StatusTestCase(unittest.TestCase):
 
         nest.ResetKernel()
 
-        self.assertEqual(nest.GetKernelStatus(), nest.kernel_status)
+        # Remove entry containing numpy arrays from status dicts since they do not compare well
+        gks_result = nest.GetKernelStatus()
+        ks_result = nest.kernel_status
+        del gks_result["buffer_resize_log"]
+        del ks_result["buffer_resize_log"]
+        self.assertEqual(gks_result, ks_result)
+
         self.assertEqual(nest.GetKernelStatus("resolution"), nest.resolution)
 
         nest.resolution = 0.4

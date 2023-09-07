@@ -318,6 +318,8 @@ nest::SourceTable::populate_target_data_fields_( const SourceTablePosition& curr
   const size_t source_rank,
   TargetData& next_target_data ) const
 {
+  assert( not kernel().connection_manager.use_compressed_spikes() );  // handled elsewhere
+  
   const auto node_id = current_source.get_node_id();
 
   // set values of next_target_data
@@ -331,16 +333,10 @@ nest::SourceTable::populate_target_data_fields_( const SourceTablePosition& curr
 
     TargetDataFields& target_fields = next_target_data.target_data;
     target_fields.set_syn_id( current_position.syn_id );
-    if ( kernel().connection_manager.use_compressed_spikes() )
-    {
-      assert( false ); // compressed connections handled elsewhere
-    }
-    else
-    {
-      // we store the thread index of the source table, not our own tid!
-      target_fields.set_tid( current_position.tid );
-      target_fields.set_lcid( current_position.lcid );
-    }
+
+    // we store the thread index of the source table, not our own tid!
+    target_fields.set_tid( current_position.tid );
+    target_fields.set_lcid( current_position.lcid );
   }
   else // secondary connection, e.g., gap junctions
   {

@@ -202,7 +202,7 @@ public:
    * Collocates spikes from register to MPI buffers, communicates via
    * MPI and delivers events to targets.
    */
-  void gather_spike_data( const size_t tid );
+  void gather_spike_data();
 
   /**
    * Collocates presynaptic connection information, communicates via
@@ -269,8 +269,7 @@ public:
 
 private:
   template < typename SpikeDataT >
-  void gather_spike_data_( const size_t tid,
-    std::vector< SpikeDataT >& send_buffer,
+  void gather_spike_data_( std::vector< SpikeDataT >& send_buffer,
     std::vector< SpikeDataT >& recv_buffer );
 
   void resize_send_recv_buffers_spike_data_();
@@ -283,8 +282,7 @@ private:
    * Passed as argument, so that values accumulate as we call once for plain and once for offgrid spikes.
    */
   template < typename SpikeDataWithRankT, typename SpikeDataT >
-  void collocate_spike_data_buffers_( const size_t tid,
-    SendBufferPosition& send_buffer_position,
+  void collocate_spike_data_buffers_( SendBufferPosition& send_buffer_position,
     std::vector< std::vector< SpikeDataWithRankT >* >& spike_register,
     std::vector< SpikeDataT >& send_buffer,
     std::vector< size_t >& num_spikes_per_rank );

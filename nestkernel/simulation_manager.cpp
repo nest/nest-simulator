@@ -1033,13 +1033,11 @@ nest::SimulationManager::update_()
           {
             if ( kernel().connection_manager.has_primary_connections() )
             {
-              kernel().event_delivery_manager.gather_spike_data( tid );
+              kernel().event_delivery_manager.gather_spike_data();
             }
             if ( kernel().connection_manager.secondary_connections_exist() )
             {
-              {
                 kernel().event_delivery_manager.gather_secondary_events( true );
-              }
             }
           }
 

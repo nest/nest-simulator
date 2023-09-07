@@ -368,28 +368,25 @@ EventDeliveryManager::deliver_secondary_events( const size_t tid, const bool cal
 }
 
 void
-EventDeliveryManager::gather_spike_data( const size_t tid )
+EventDeliveryManager::gather_spike_data()
 {
   if ( off_grid_spiking_ )
   {
-    gather_spike_data_( tid, send_buffer_off_grid_spike_data_, recv_buffer_off_grid_spike_data_ );
+    gather_spike_data_( send_buffer_off_grid_spike_data_, recv_buffer_off_grid_spike_data_ );
   }
   else
   {
-    gather_spike_data_( tid, send_buffer_spike_data_, recv_buffer_spike_data_ );
+    gather_spike_data_( send_buffer_spike_data_, recv_buffer_spike_data_ );
   }
 }
 
 template < typename SpikeDataT >
 void
-EventDeliveryManager::gather_spike_data_( const size_t tid,
-  std::vector< SpikeDataT >& send_buffer,
+EventDeliveryManager::gather_spike_data_( std::vector< SpikeDataT >& send_buffer,
   std::vector< SpikeDataT >& recv_buffer )
 {
   // NOTE: For meaning and logic of SpikeData flags for detecting complete transmission
   //       and information for shrink/grow, see comment in spike_data.h.
-
-  assert( tid == 0 );
 
   const size_t old_buff_size_per_rank = kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
 
@@ -426,12 +423,12 @@ EventDeliveryManager::gather_spike_data_( const size_t tid,
 
     // Collocate spikes to send buffer
     collocate_spike_data_buffers_(
-      tid, send_buffer_position, emitted_spikes_register_, send_buffer, num_spikes_per_rank );
+      send_buffer_position, emitted_spikes_register_, send_buffer, num_spikes_per_rank );
 
     if ( off_grid_spiking_ )
     {
       collocate_spike_data_buffers_(
-        tid, send_buffer_position, off_grid_emitted_spikes_register_, send_buffer, num_spikes_per_rank );
+        send_buffer_position, off_grid_emitted_spikes_register_, send_buffer, num_spikes_per_rank );
     }
 
     FULL_LOGGING_ONLY( for ( auto c
@@ -501,7 +498,7 @@ EventDeliveryManager::gather_spike_data_( const size_t tid,
 
 template < typename SpikeDataWithRankT, typename SpikeDataT >
 void
-EventDeliveryManager::collocate_spike_data_buffers_( const size_t tid,
+EventDeliveryManager::collocate_spike_data_buffers_(
   SendBufferPosition& send_buffer_position,
   std::vector< std::vector< SpikeDataWithRankT >* >& emitted_spikes_register,
   std::vector< SpikeDataT >& send_buffer,

@@ -193,8 +193,8 @@ Target::operator=( const Target& other )
 inline Target::Target( const size_t tid, const size_t rank, const synindex syn_id, const size_t lcid )
   : remote_target_id_( 0 )
 {
-  assert( tid <= MAX_TID ); // MAX_TID is allowed since it is not use as invalid value
-  assert( rank <= MAX_RANK );  // MAX_RANK is allowed since it is not use as invalid value
+  assert( tid <= MAX_TID );   // MAX_TID is allowed since it is not use as invalid value
+  assert( rank <= MAX_RANK ); // MAX_RANK is allowed since it is not use as invalid value
   assert( syn_id < MAX_SYN_ID );
   assert( lcid < MAX_LCID );
 

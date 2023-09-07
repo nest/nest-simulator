@@ -318,8 +318,8 @@ nest::SourceTable::populate_target_data_fields_( const SourceTablePosition& curr
   const size_t source_rank,
   TargetData& next_target_data ) const
 {
-  assert( not kernel().connection_manager.use_compressed_spikes() );  // handled elsewhere
-  
+  assert( not kernel().connection_manager.use_compressed_spikes() ); // handled elsewhere
+
   const auto node_id = current_source.get_node_id();
 
   // set values of next_target_data

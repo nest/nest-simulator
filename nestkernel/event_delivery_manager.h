@@ -269,8 +269,7 @@ public:
 
 private:
   template < typename SpikeDataT >
-  void gather_spike_data_( std::vector< SpikeDataT >& send_buffer,
-    std::vector< SpikeDataT >& recv_buffer );
+  void gather_spike_data_( std::vector< SpikeDataT >& send_buffer, std::vector< SpikeDataT >& recv_buffer );
 
   void resize_send_recv_buffers_spike_data_();
 

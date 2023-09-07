@@ -1037,7 +1037,7 @@ nest::SimulationManager::update_()
             }
             if ( kernel().connection_manager.secondary_connections_exist() )
             {
-                kernel().event_delivery_manager.gather_secondary_events( true );
+              kernel().event_delivery_manager.gather_secondary_events( true );
             }
           }
 

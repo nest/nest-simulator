@@ -422,8 +422,7 @@ EventDeliveryManager::gather_spike_data_( std::vector< SpikeDataT >& send_buffer
     std::vector< size_t > num_spikes_per_rank( kernel().mpi_manager.get_num_processes(), 0 );
 
     // Collocate spikes to send buffer
-    collocate_spike_data_buffers_(
-      send_buffer_position, emitted_spikes_register_, send_buffer, num_spikes_per_rank );
+    collocate_spike_data_buffers_( send_buffer_position, emitted_spikes_register_, send_buffer, num_spikes_per_rank );
 
     if ( off_grid_spiking_ )
     {
@@ -498,8 +497,7 @@ EventDeliveryManager::gather_spike_data_( std::vector< SpikeDataT >& send_buffer
 
 template < typename SpikeDataWithRankT, typename SpikeDataT >
 void
-EventDeliveryManager::collocate_spike_data_buffers_(
-  SendBufferPosition& send_buffer_position,
+EventDeliveryManager::collocate_spike_data_buffers_( SendBufferPosition& send_buffer_position,
   std::vector< std::vector< SpikeDataWithRankT >* >& emitted_spikes_register,
   std::vector< SpikeDataT >& send_buffer,
   std::vector< size_t >& num_spikes_per_rank )
@@ -674,7 +672,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
 
     // Find number of spikes received from current rank
     size_t num_spikes_received = 0;
-    for ( size_t i = 0; i < spike_buffer_size_per_rank ; ++i )
+    for ( size_t i = 0; i < spike_buffer_size_per_rank; ++i )
     {
       const SpikeDataT& spike_data = recv_buffer[ rank * spike_buffer_size_per_rank + i ];
 
@@ -698,7 +696,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
 
     if ( not kernel().connection_manager.use_compressed_spikes() )
     {
-      for ( size_t  i = 0; i < num_batches; ++i )
+      for ( size_t i = 0; i < num_batches; ++i )
       {
         for ( size_t j = 0; j < SPIKES_PER_BATCH; ++j )
         {
@@ -710,7 +708,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
           lcid_batch[ j ] = spike_data.get_lcid();
           se_batch[ j ].set_sender_node_id_info( tid_batch[ j ], syn_id_batch[ j ], lcid_batch[ j ] );
         }
-        for ( size_t  j = 0; j < SPIKES_PER_BATCH; ++j )
+        for ( size_t j = 0; j < SPIKES_PER_BATCH; ++j )
         {
           if ( tid_batch[ j ] == tid )
           {
@@ -718,9 +716,9 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
           }
         }
       }
-      
+
       // Processed all regular-sized batches, now do remainder
-      for ( size_t  j = 0; j < num_remaining_entries; ++j )
+      for ( size_t j = 0; j < num_remaining_entries; ++j )
       {
         const SpikeDataT& spike_data =
           recv_buffer[ rank * spike_buffer_size_per_rank + num_batches * SPIKES_PER_BATCH + j ];
@@ -731,7 +729,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
         lcid_batch[ j ] = spike_data.get_lcid();
         se_batch[ j ].set_sender_node_id_info( tid_batch[ j ], syn_id_batch[ j ], lcid_batch[ j ] );
       }
-      for ( size_t  j = 0; j < num_remaining_entries; ++j )
+      for ( size_t j = 0; j < num_remaining_entries; ++j )
       {
         if ( tid_batch[ j ] == tid )
         {
@@ -743,9 +741,9 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
     }
     else // compressed spikes
     {
-      for ( size_t  i = 0; i < num_batches; ++i )
+      for ( size_t i = 0; i < num_batches; ++i )
       {
-        for ( size_t  j = 0; j < SPIKES_PER_BATCH; ++j )
+        for ( size_t j = 0; j < SPIKES_PER_BATCH; ++j )
         {
           const SpikeDataT& spike_data = recv_buffer[ rank * spike_buffer_size_per_rank + i * SPIKES_PER_BATCH + j ];
 
@@ -757,14 +755,14 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
           // compressed_spike_data structure
           lcid_batch[ j ] = spike_data.get_lcid();
         }
-        for ( size_t  j = 0; j < SPIKES_PER_BATCH; ++j )
+        for ( size_t j = 0; j < SPIKES_PER_BATCH; ++j )
         {
           // find the spike-data entry for this thread
           const std::vector< SpikeData >& compressed_spike_data =
             kernel().connection_manager.get_compressed_spike_data( syn_id_batch[ j ], lcid_batch[ j ] );
           lcid_batch[ j ] = compressed_spike_data[ tid ].get_lcid();
         }
-        for ( size_t  j = 0; j < SPIKES_PER_BATCH; ++j )
+        for ( size_t j = 0; j < SPIKES_PER_BATCH; ++j )
         {
           if ( lcid_batch[ j ] != invalid_lcid )
           {
@@ -773,7 +771,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
             se_batch[ j ].set_sender_node_id_info( tid, syn_id_batch[ j ], lcid_batch[ j ] );
           }
         }
-        for ( size_t  j = 0; j < SPIKES_PER_BATCH; ++j )
+        for ( size_t j = 0; j < SPIKES_PER_BATCH; ++j )
         {
           if ( lcid_batch[ j ] != invalid_lcid )
           {
@@ -783,7 +781,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
       }
 
       // Processed all regular-sized batches, now do remainder
-      for ( size_t  j = 0; j < num_remaining_entries; ++j )
+      for ( size_t j = 0; j < num_remaining_entries; ++j )
       {
         const SpikeDataT& spike_data =
           recv_buffer[ rank * spike_buffer_size_per_rank + num_batches * SPIKES_PER_BATCH + j ];
@@ -794,14 +792,14 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
         // compressed_spike_data structure
         lcid_batch[ j ] = spike_data.get_lcid();
       }
-      for ( size_t  j = 0; j < num_remaining_entries; ++j )
+      for ( size_t j = 0; j < num_remaining_entries; ++j )
       {
         // find the spike-data entry for this thread
         const std::vector< SpikeData >& compressed_spike_data =
           kernel().connection_manager.get_compressed_spike_data( syn_id_batch[ j ], lcid_batch[ j ] );
         lcid_batch[ j ] = compressed_spike_data[ tid ].get_lcid();
       }
-      for ( size_t  j = 0; j < num_remaining_entries; ++j )
+      for ( size_t j = 0; j < num_remaining_entries; ++j )
       {
         if ( lcid_batch[ j ] != invalid_lcid )
         {
@@ -810,7 +808,7 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
           se_batch[ j ].set_sender_node_id_info( tid, syn_id_batch[ j ], lcid_batch[ j ] );
         }
       }
-      for ( size_t  j = 0; j < num_remaining_entries; ++j )
+      for ( size_t j = 0; j < num_remaining_entries; ++j )
       {
         if ( lcid_batch[ j ] != invalid_lcid )
         {

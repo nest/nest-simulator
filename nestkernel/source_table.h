@@ -61,7 +61,8 @@ public:
     , target_thread_( target_thread )
   {
     // MAX_LCID cannot be used since the value is used to mark invalid entries.
-    // MAX_TID is defined based on the NUM_BITS_TID field width and thus much smaller than invalid_thread and can be used.
+    // MAX_TID is defined based on the NUM_BITS_TID field width and thus much smaller than invalid_thread and can be
+    // used.
     assert( source_index < MAX_LCID );
     assert( target_thread <= MAX_TID );
   }

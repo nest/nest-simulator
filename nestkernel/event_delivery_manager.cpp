@@ -96,7 +96,7 @@ EventDeliveryManager::EventDeliveryManager()
   , send_buffer_target_data_()
   , recv_buffer_target_data_()
   , buffer_size_target_data_has_changed_( false )
-  , max_per_thread_max_spikes_per_rank_( 0 )
+  , global_max_spikes_per_rank_( 0 )
   , send_recv_buffer_shrink_limit_( 0.3 )
   , send_recv_buffer_shrink_spare_( 0.1 )
   , send_recv_buffer_grow_extra_( 0.5 )
@@ -420,14 +420,14 @@ EventDeliveryManager::gather_spike_data_( std::vector< SpikeDataT >& send_buffer
 
   const size_t old_buff_size_per_rank = kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
 
-  if ( max_per_thread_max_spikes_per_rank_ < send_recv_buffer_shrink_limit_ * old_buff_size_per_rank )
+  if ( global_max_spikes_per_rank_ < send_recv_buffer_shrink_limit_ * old_buff_size_per_rank )
   {
-    const size_t new_buff_size_per_rank = std::max(
-      2UL, static_cast< size_t >( ( 1 + send_recv_buffer_shrink_spare_ ) * max_per_thread_max_spikes_per_rank_ ) );
+    const size_t new_buff_size_per_rank =
+      std::max( 2UL, static_cast< size_t >( ( 1 + send_recv_buffer_shrink_spare_ ) * global_max_spikes_per_rank_ ) );
     kernel().mpi_manager.set_buffer_size_spike_data(
       kernel().mpi_manager.get_num_processes() * new_buff_size_per_rank );
     resize_send_recv_buffers_spike_data_();
-    send_recv_buffer_resize_log_.add_entry( max_per_thread_max_spikes_per_rank_, new_buff_size_per_rank );
+    send_recv_buffer_resize_log_.add_entry( global_max_spikes_per_rank_, new_buff_size_per_rank );
   }
 
   /* The following do-while loop is executed
@@ -462,15 +462,12 @@ EventDeliveryManager::gather_spike_data_( std::vector< SpikeDataT >& send_buffer
     FULL_LOGGING_ONLY( for ( auto c
                              : num_spikes_per_rank ) { kernel().write_to_dump( String::compose( "nspr %1", c ) ); } )
 
-    // Largest number of spikes sent from this rank to any other rank. This is *not* a global maximum, that is collected
-    // below.
-    const auto per_thread_max_spikes_per_rank =
-      *std::max_element( num_spikes_per_rank.begin(), num_spikes_per_rank.end() );
+    // Largest number of spikes sent from this rank to any other rank.
+    const auto local_max_spikes_per_rank = *std::max_element( num_spikes_per_rank.begin(), num_spikes_per_rank.end() );
 
     // At this point, all send_buffer entries with spikes to be transmitted, as well
     // as all chunk-end entries, have marker DEFAULT.
-
-    set_end_marker_( send_buffer_position, send_buffer, per_thread_max_spikes_per_rank );
+    set_end_marker_( send_buffer_position, send_buffer, local_max_spikes_per_rank );
 
 #ifdef TIMER_DETAILED
     {
@@ -495,20 +492,20 @@ EventDeliveryManager::gather_spike_data_( std::vector< SpikeDataT >& send_buffer
     }
 #endif
 
-    max_per_thread_max_spikes_per_rank_ = get_max_spike_data_per_thread_( send_buffer_position, recv_buffer );
+    global_max_spikes_per_rank_ = get_global_max_spikes_per_rank_( send_buffer_position, recv_buffer );
 
     all_spikes_transmitted =
-      max_per_thread_max_spikes_per_rank_ <= kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
+      global_max_spikes_per_rank_ <= kernel().mpi_manager.get_send_recv_count_spike_data_per_rank();
 
     if ( not all_spikes_transmitted )
     {
       const size_t new_buff_size_per_rank =
-        static_cast< size_t >( ( 1 + send_recv_buffer_grow_extra_ ) * max_per_thread_max_spikes_per_rank_ );
+        static_cast< size_t >( ( 1 + send_recv_buffer_grow_extra_ ) * global_max_spikes_per_rank_ );
 
       kernel().mpi_manager.set_buffer_size_spike_data(
         kernel().mpi_manager.get_num_processes() * new_buff_size_per_rank );
       resize_send_recv_buffers_spike_data_();
-      send_recv_buffer_resize_log_.add_entry( max_per_thread_max_spikes_per_rank_, new_buff_size_per_rank );
+      send_recv_buffer_resize_log_.add_entry( global_max_spikes_per_rank_, new_buff_size_per_rank );
     }
 
   } while ( not all_spikes_transmitted );
@@ -557,10 +554,10 @@ template < typename SpikeDataT >
 void
 EventDeliveryManager::set_end_marker_( const SendBufferPosition& send_buffer_position,
   std::vector< SpikeDataT >& send_buffer,
-  size_t per_thread_max_spikes_per_rank )
+  size_t local_max_spikes_per_rank )
 {
   // See comment in spike_data.h for logic.
-  const bool collocate_complete = per_thread_max_spikes_per_rank
+  const bool collocate_complete = local_max_spikes_per_rank
     <= static_cast< size_t >( kernel().mpi_manager.get_send_recv_count_spike_data_per_rank() );
 
   for ( size_t rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
@@ -569,7 +566,7 @@ EventDeliveryManager::set_end_marker_( const SendBufferPosition& send_buffer_pos
     if ( not collocate_complete )
     {
       SpikeDataT dummy;
-      dummy.set_lcid( per_thread_max_spikes_per_rank );
+      dummy.set_lcid( local_max_spikes_per_rank );
       dummy.set_invalid_marker();
       send_buffer[ end_idx ] = dummy;
       continue;
@@ -592,7 +589,7 @@ EventDeliveryManager::set_end_marker_( const SendBufferPosition& send_buffer_pos
       // at least one spike written, but none to end_idx, thus we need complete marker
       // and size information
       SpikeDataT dummy;
-      dummy.set_lcid( per_thread_max_spikes_per_rank );
+      dummy.set_lcid( local_max_spikes_per_rank );
       dummy.set_complete_marker();
       send_buffer[ end_idx ] = dummy;
     }
@@ -613,7 +610,7 @@ EventDeliveryManager::reset_complete_marker_spike_data_( const SendBufferPositio
 
 template < typename SpikeDataT >
 size_t
-EventDeliveryManager::get_max_spike_data_per_thread_( const SendBufferPosition& send_buffer_position,
+EventDeliveryManager::get_global_max_spikes_per_rank_( const SendBufferPosition& send_buffer_position,
   std::vector< SpikeDataT >& recv_buffer ) const
 {
   // TODO: send_buffer_position not needed here, only used to get endpoint of each per-rank section of buffer

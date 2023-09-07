@@ -310,7 +310,7 @@ private:
   template < typename SpikeDataT >
   void set_end_marker_( const SendBufferPosition& send_buffer_position,
     std::vector< SpikeDataT >& send_buffer,
-    size_t per_thread_max_spikes_per_rank );
+    size_t local_max_spikes_per_rank );
 
   /**
    * Resets marker in MPI buffer that signals end of communication
@@ -326,7 +326,7 @@ private:
    * @returns maximum of required buffer sizes communicated by all ranks
    */
   template < typename SpikeDataT >
-  size_t get_max_spike_data_per_thread_( const SendBufferPosition& send_buffer_position,
+  size_t get_global_max_spikes_per_rank_( const SendBufferPosition& send_buffer_position,
     std::vector< SpikeDataT >& recv_buffer ) const;
 
 
@@ -459,8 +459,13 @@ private:
   //! whether size of MPI buffer for communication of connections was changed
   bool buffer_size_target_data_has_changed_;
 
-  //! largest number of spikes sent between any two ranks in most recent gather round
-  size_t max_per_thread_max_spikes_per_rank_;
+  /**
+   * Largest number of spikes sent from any rank to any other rank in last spike exchange round.
+   *
+   * The spike buffer section for any rank must be at least this size. Therefore, this number controls
+   * buffer resizing.
+   */
+  size_t global_max_spikes_per_rank_;
 
   double send_recv_buffer_shrink_limit_; //!< shrink buffer only if below this limit
   double send_recv_buffer_shrink_spare_; //!< leave this fraction more size than minimally needed

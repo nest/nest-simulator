@@ -76,7 +76,7 @@ or inhibitory (:math:`\text{X} = \text{in}`) presynaptic neurons,
 :math:`k` indexes the spike times of neuron :math:`j`, and :math:`d_j`
 is the delay from neuron :math:`j`.
 
-This model differs from the synapse model "tsodyks_synapse" in that this
+This model differs from the synapse model ``tsodyks_synapse`` in that this
 model integrates synaptic variables :math:`x,y,z,u` in the pre-synaptic neuron instead
 of the synapse model. This leads to more efficient simulations.
 Since the equations are linear, the post-synaptic current can be found as

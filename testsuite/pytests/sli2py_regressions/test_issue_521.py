@@ -29,10 +29,13 @@ import nest
 
 
 @pytest.mark.skipif_missing_threads
-@pytest.mark.parametrize("num_threads", [1, 2, 4, 8, 16])
+@pytest.mark.parametrize("num_threads", [1, 2, 5, 11])
 def test_hpc_synapse_correct_global_target_node_id_multithreaded(num_threads):
     """
     Ensure that *_hpc connections also return correct global target node ID on ``GetConnections``.
+
+    The test connects two neurons from a larger ``NodeCollection``. The chosen node IDs of these
+    neurons together with the choice of number of threads ensures variation of thread placement.
     """
 
     nest.ResetKernel()
@@ -40,10 +43,9 @@ def test_hpc_synapse_correct_global_target_node_id_multithreaded(num_threads):
 
     nc = nest.Create("iaf_psc_alpha", 20)
 
-    # connect two neurons (prime number node ids to increase variations of thread placement)
+    # connect two neurons
     n1 = nc[4]
     n2 = nc[12]
-
     nest.Connect(n1, n2, syn_spec={"synapse_model": "static_synapse"})
     nest.Connect(n1, n2, syn_spec={"synapse_model": "static_synapse_hpc"})
 

@@ -190,11 +190,6 @@ class NestModule(types.ModuleType):
         "Whether to transmit precise spike times in MPI communication",
         readonly=True,
     )
-    adaptive_spike_buffers = KernelAttribute(
-        "bool",
-        "Whether MPI buffers for communication of spikes resize on the fly",
-        default=True,
-    )
     adaptive_target_buffers = KernelAttribute(
         "bool",
         "Whether MPI buffers for communication of connections resize on the fly",
@@ -220,26 +215,43 @@ class NestModule(types.ModuleType):
         "Total size of MPI buffer for communication of connections",
         default=2,
     )
-    growth_factor_buffer_spike_data = KernelAttribute(
-        "float",
-        ("If MPI buffers for communication of spikes resize on the fly, " + "grow them by this factor each round"),
-        default=1.5,
-    )
     growth_factor_buffer_target_data = KernelAttribute(
         "float",
         ("If MPI buffers for communication of connections resize on the " + "fly, grow them by this factor each round"),
         default=1.5,
-    )
-    max_buffer_size_spike_data = KernelAttribute(
-        "int",
-        "Maximal size of MPI buffers for communication of spikes",
-        default=8388608,
     )
     max_buffer_size_target_data = KernelAttribute(
         "int",
         "Maximal size of MPI buffers for communication of connections",
         default=16777216,
     )
+    buffer_growth_extra = KernelAttribute(
+        "float",
+        "When spike exchange buffer needs to be expanded, resize to `(1 + buffer_growth_extra) * required_buffer_size`",
+        default=0.05,
+    )
+    buffer_shrink_limit = KernelAttribute(
+        "float",
+        (
+            "If largest number of spikes sent from any rank to any rank is less than "
+            + "`buffer_shrink_limit * buffer_size`, then reduce buffer size. "
+            + "`buffer_shrink_limit == 0` means that buffers never shrink. "
+            + "See `buffer_shrink_factor` for how much buffer shrinks"
+        ),
+        default=0.0,
+    )
+    buffer_shrink_factor = KernelAttribute(
+        "float",
+        (
+            "When buffer needs to shrink, set new size to `buffer_shrink_factor * old_buffer_size`. "
+            + "See `buffer_shrink_limit` for when buffers shrink"
+        ),
+        default=0.8,
+    )
+    buffer_grow_count = KernelAttribute("int", "Number of times spike exchange buffers have grown", readonly=True)
+    buffer_grow_delta = KernelAttribute("int", "Sum of all buffer growth steps", readonly=True)
+    buffer_shrink_count = KernelAttribute("int", "Number of times spike exchange buffers have shrunk", readonly=True)
+    buffer_shrink_delta = KernelAttribute("int", "Sum of all buffer shrink steps (absolute values)", readonly=True)
     use_wfr = KernelAttribute("bool", "Whether to use waveform relaxation method", default=True)
     wfr_comm_interval = KernelAttribute(
         "float",
@@ -260,16 +272,6 @@ class NestModule(types.ModuleType):
         "int", "Interpolation order of polynomial used in wfr iterations", default=3
     )
     max_num_syn_models = KernelAttribute("int", "Maximal number of synapse models supported", readonly=True)
-    sort_connections_by_source = KernelAttribute(
-        "bool",
-        (
-            "Whether to sort connections by their source; increases"
-            + " construction time of presynaptic data structures, decreases"
-            + " simulation time if the average number of outgoing connections"
-            + " per neuron is smaller than the total number of threads"
-        ),
-        default=True,
-    )
     structural_plasticity_synapses = KernelAttribute(
         "dict",
         (
@@ -299,8 +301,7 @@ class NestModule(types.ModuleType):
             "Whether to use spike compression; if a neuron has targets on"
             + " multiple threads of a process, this switch makes sure that only"
             + " a single packet is sent to the process instead of one packet"
-            + " per target thread; requires"
-            + " ``nest.sort_connections_by_source = True``"
+            + " per target thread; implies that connection are sorted by source."
         ),
         default=True,
     )
@@ -387,7 +388,6 @@ class NestModule(types.ModuleType):
         ),
         default=float("+inf"),
     )
-    buffer_growth_extra = KernelAttribute("float", "foo", default=0.05)
 
     # Kernel attribute indices, used for fast lookup in `ll_api.py`
     _kernel_attr_names = builtins.set(k for k, v in vars().items() if isinstance(v, KernelAttribute))

@@ -49,7 +49,7 @@ This neuron model implements synaptic short-term depression and short-term
 facilitation according to [1]_. In particular it solves Eqs (3) and (4) from
 this paper in an exact manner.
 
-This model differs from the iaf_psc_exp model by the addition of synaptic
+This model differs from the ``iaf_psc_exp`` model by the addition of synaptic
 state variables :math:`x`, :math:`z` and :math:`u`, which together
 with the membrane potential :math:`V_\text{m}` and synaptic current :math:`I_\text{syn}`
 obey the following dynamics:

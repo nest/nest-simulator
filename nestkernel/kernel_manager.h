@@ -82,8 +82,6 @@
                                                      occurs within a single update step.
 
  Parallel processing
- adaptive_spike_buffers                booltype    - Whether MPI buffers for communication of spikes resize on the fly,
-                                                     defaults to true.
  adaptive_target_buffers               booltype    - Whether MPI buffers for communication of connections resize on the
                                                      fly, defaults to true.
  send_buffer_size_secondary_events     integertype - Size of MPI send buffers for communicating secondary events (in
@@ -95,8 +93,6 @@
  buffer_size_target_data               integertype - Total size of MPI buffer for communication of connections, defaults
                                                      to 2.
  local_num_threads                     integertype - The local number of threads, defaults to 1.
- max_buffer_size_spike_data            integertype - Maximal size of MPI buffers for communication of spikes, defaults
-                                                     to 8388608.
  max_buffer_size_target_data           integertype - Maximal size of MPI buffers for communication of connections,
                                                      defaults to 16777216.
  num_processes                         integertype - The number of MPI processes (read only).

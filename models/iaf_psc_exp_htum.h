@@ -209,7 +209,7 @@ private:
     /** External current in pA */
     double I_e_;
 
-    /** Threshold, RELATIVE TO RESTING POTENTAIL(!).
+    /** Threshold, RELATIVE TO RESTING POTENTIAL(!).
         I.e. the real threshold is (E_L_+Theta_). */
     double Theta_;
 

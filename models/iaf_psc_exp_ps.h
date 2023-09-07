@@ -293,11 +293,11 @@ private:
     /** External DC current [pA] */
     double I_e_;
 
-    /** Threshold, RELATIVE TO RESTING POTENTAIL(!).
+    /** Threshold, RELATIVE TO RESTING POTENTIAL(!).
         I.e. the real threshold is U_th_ + E_L_. */
     double U_th_;
 
-    /** Lower bound, RELATIVE TO RESTING POTENTAIL(!).
+    /** Lower bound, RELATIVE TO RESTING POTENTIAL(!).
         I.e. the real lower bound is U_min_+E_L_. */
     double U_min_;
 

@@ -213,15 +213,6 @@ public:
   int get_model_id() const;
 
   /**
-   * Prints out one line of the tree view of the network.
-   */
-  virtual std::string
-  print_network( int, int, std::string = "" )
-  {
-    return std::string();
-  }
-
-  /**
    * Returns true if node is frozen, i.e., shall not be updated.
    */
   bool is_frozen() const;

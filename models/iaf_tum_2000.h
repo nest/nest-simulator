@@ -35,6 +35,7 @@
 namespace nest
 {
 
+// clang-format off
 /* BeginUserDocs: neuron, integrate-and-fire, current-based, synapse, short-term plasticity
 
 Short description
@@ -137,6 +138,7 @@ See also
 iaf_psc_exp, tsodyks_synapse, stdp_synapse, static_synapse
 
 EndUserDocs */
+// clang-format on
 
 // iaf_tum_2000
 class iaf_tum_2000 : public ArchivingNode

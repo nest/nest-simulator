@@ -225,34 +225,34 @@ class NestModule(types.ModuleType):
         "Maximal size of MPI buffers for communication of connections",
         default=16777216,
     )
-    buffer_grow_extra = KernelAttribute(
+    spike_buffer_grow_extra = KernelAttribute(
         "float",
-        "When spike exchange buffer needs to be expanded, resize to `(1 + buffer_grow_extra) * required_buffer_size`",
+        "When spike exchange buffer needs to be expanded, resize to `(1 + spike_buffer_grow_extra) * required_buffer_size`",
         default=0.5,
     )
-    buffer_shrink_limit = KernelAttribute(
+    spike_buffer_shrink_limit = KernelAttribute(
         "float",
         (
             "If largest number of spikes sent from any rank to any rank is less than "
-            + "`buffer_shrink_limit * buffer_size`, then reduce buffer size. "
-            + "`buffer_shrink_limit == 0` means that buffers never shrink. "
-            + "See `buffer_shrink_factor` for how much buffer shrinks"
+            + "`spike_buffer_shrink_limit * buffer_size`, then reduce buffer size. "
+            + "`spike_buffer_shrink_limit == 0` means that buffers never shrink. "
+            + "See `spike_buffer_shrink_factor` for how much buffer shrinks"
         ),
         default=0.3,
     )
-    buffer_shrink_spare = KernelAttribute(
+    spike_buffer_shrink_spare = KernelAttribute(
         "float",
         (
-            "When buffer needs to shrink, set new size to `(1 + buffer_shrink_spare) * required_buffer_size`. "
-            + "See `buffer_shrink_limit` for when buffers shrink"
+            "When buffer needs to shrink, set new size to `(1 + spike_buffer_shrink_spare) * required_buffer_size`. "
+            + "See `spike_buffer_shrink_limit` for when buffers shrink"
         ),
         default=0.1,
     )
-    buffer_resize_log = KernelAttribute(
+    spike_buffer_resize_log = KernelAttribute(
         "dict",
         (
             "Information on spike buffer resizing as dictionary. It contains the "
-            + "times of the resizings (simulation clock in steps, always multiple of min_delay), "
+            + "`times` of the resizings (simulation clock in steps, always multiple of min_delay), "
             + "`global_max_spikes_sent`, i.e., the observed spike number that triggered the resize, "
             + "and the `new_buffer_size`. Sizes are for the section addressing one rank."
         ),

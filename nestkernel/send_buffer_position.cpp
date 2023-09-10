@@ -26,10 +26,7 @@
 #include "send_buffer_position.h"
 
 nest::SendBufferPosition::SendBufferPosition()
-  : num_spike_data_written_( 0 )
-  , max_num_spike_data_(
-      kernel().mpi_manager.get_num_processes() * kernel().mpi_manager.get_send_recv_count_spike_data_per_rank() )
-  , begin_( kernel().mpi_manager.get_num_processes(), 0 )
+  : begin_( kernel().mpi_manager.get_num_processes(), 0 )
   , end_( kernel().mpi_manager.get_num_processes(), 0 )
   , idx_( kernel().mpi_manager.get_num_processes(), 0 )
 {

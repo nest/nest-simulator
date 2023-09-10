@@ -41,11 +41,9 @@ namespace nest
 class SendBufferPosition
 {
 private:
-  size_t num_spike_data_written_;
-  size_t max_num_spike_data_;
-  std::vector< size_t > begin_;
-  std::vector< size_t > end_;
-  std::vector< size_t > idx_;
+  std::vector< size_t > begin_; //!< first entry for rank
+  std::vector< size_t > end_;   //!< one beyond last entry for rank
+  std::vector< size_t > idx_;   //!< next entry in rank to write to
 
 public:
   SendBufferPosition();
@@ -66,18 +64,11 @@ public:
   size_t idx( const size_t rank ) const;
 
   /**
-   * Returns whether the part of the buffer on the specified rank has been
-   * filled.
+   * Returns whether the part of the buffer on the specified rank has been filled.
    *
    * @param rank Rank denoting which part of the buffer we check
    */
   bool is_chunk_filled( const size_t rank ) const;
-
-  /**
-   * Returns whether the parts of the  MPI buffer assigned to this thread has
-   * been filled.
-   */
-  bool are_all_chunks_filled() const;
 
   void increase( const size_t rank );
 };
@@ -106,17 +97,10 @@ SendBufferPosition::is_chunk_filled( const size_t rank ) const
   return idx_[ rank ] == end_[ rank ];
 }
 
-inline bool
-SendBufferPosition::are_all_chunks_filled() const
-{
-  return num_spike_data_written_ == max_num_spike_data_;
-}
-
 inline void
 SendBufferPosition::increase( const size_t rank )
 {
   ++idx_[ rank ];
-  ++num_spike_data_written_;
 }
 
 
@@ -130,7 +114,7 @@ private:
   size_t begin_rank_;
   size_t end_rank_;
   size_t max_size_;
-  size_t num_spike_data_written_;
+  size_t num_target_data_written_;
   size_t send_recv_count_per_rank_;
   std::vector< size_t > idx_;
   std::vector< size_t > begin_;
@@ -178,7 +162,7 @@ inline TargetSendBufferPosition::TargetSendBufferPosition( const AssignedRanks& 
   : begin_rank_( assigned_ranks.begin )
   , end_rank_( assigned_ranks.end )
   , max_size_( assigned_ranks.max_size )
-  , num_spike_data_written_( 0 )
+  , num_target_data_written_( 0 )
   , send_recv_count_per_rank_( send_recv_count_per_rank )
 {
   idx_.resize( assigned_ranks.size );
@@ -230,14 +214,14 @@ TargetSendBufferPosition::is_chunk_filled( const size_t rank ) const
 inline bool
 TargetSendBufferPosition::are_all_chunks_filled() const
 {
-  return num_spike_data_written_ == send_recv_count_per_rank_ * idx_.size();
+  return num_target_data_written_ == send_recv_count_per_rank_ * idx_.size();
 }
 
 inline void
 TargetSendBufferPosition::increase( const size_t rank )
 {
   ++idx_[ rank_to_index_( rank ) ];
-  ++num_spike_data_written_;
+  ++num_target_data_written_;
 }
 
 } // namespace nest

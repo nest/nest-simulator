@@ -41,26 +41,41 @@ namespace nest
  * @note To ensure that we only need two bits for this flag, flags will be interpreted differently
  *       depending on where they are used in a send buffer.
  *
- *  Below, begin and end refer to the first and last entries for a given rank-specific chunk of the send buffer.
+ *  Below,
+ *  - begpos and endpos refer to the first and last entries for a given rank-specific chunk of the send buffer
+ *  - `local_max_spikes_per_rank` is the largest number of spikes a given rank needs to transmit to any other rank.
+ *  - `global_max_spikes_per_rank` is the maximum of all `local_max_spikes_per_rank` values. It determines the
  *
- * - DEFAULT: Normal entry, cannot occur in end
- * - END: Marks last entry containing data. If it occurs in end, it implies COMPLETE.
- *      - Implies that largest number of spikes written to any chunk is equal to chunk size
- * - COMPLETE: Can only occur in end and indicates that MPI process could write all spikes to send buffer.
- *      - END is in earlier position.
- *      - In this case, lcid of end is the largest number of spikes written into any chunk of send buffer.
- * - INVALID:
- *      - In begin indicates that no spikes are transmitted (@note: END at begin means one spike transmitted)
- *      - In end, indicates that MPI process could not write all spikes. lcid of end is required chunk size to write all
- * spikes.
+ * `SpikeData` marker values are defined as follows: have
+ *    - `DEFAULT`: Normal entry, cannot occur in endpos
+ *    - `END`: Marks last entry containing data.
+ *      - If it occurs in endpos,
+ *        - it implies COMPLETE
+ *        - it indicates that `local_max_spikes_per_rank` of the sending rank is equal to the current buffer size
+ *    - COMPLETE: Can only occur in endpos and indicates that the sending rank could write all emitted spikes to the
+ transmission buffer.
+ *          - END is then in earlier position.
+ *          - The LCID entry of endpos contains the `local_max_spikes_per_rank` of the corresponding sending rank.
+ *     - INVALID:
+ *          - In begpos indicates that no spikes are transmitted (@note: END at begpos means one spike transmitted)
+ *          - In endpos, indicates that the pertaining rank could not send all spikes.
+ *           - The LCID entry of endpos contains the `local_max_spikes_per_rank` of the corresponding sending rank.
  *
- * @note Logic for reading from spike buffer
- * 1. If begin for a rank is INVALID, nothing to read
- * 2. Read until END is met.
- * 3. Check end:
- *    - If END, required chunk size is current chunk size
- *    - COMPLETE or INVALID, required chunk size is given by lcid stored in end
- *    - Spike transmission is complete if either END or COMPLETE.
+ *
+ * @note Logic for reading from spike transmission buffer
+ * 1. If marker at begpos for a rank is INVALID, there are no spikes to read
+ * 2. Read until END marker is met. All entries including the one with END contain valid spikes.
+ * 3. Check marker in endpos for completeness of transmission and required transmission buffer chunk size
+ *     1. Completeness
+ *         - If `COMPLETE` or `END`, transmission is complete
+ *         - If `INVALID`, not all spikes could be sent, repeat with increased chunk size
+ *         - If `DEFAULT`, something is seriously wrong
+ *     2. Required chunk size
+ *         - If marker is `END`, the required chunk size is equal to current chunk size (and LCID field contains LCID
+ for spike in endpos)
+ *         - If marker is `COMPLETE` or `INVALID`, the required chunk size is given by the valued stored in the LCID
+ field of endpos
+ *
  */
 enum enum_status_spike_data_id
 {

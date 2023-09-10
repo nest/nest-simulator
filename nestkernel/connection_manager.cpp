@@ -1700,6 +1700,7 @@ nest::ConnectionManager::fill_target_buffer( const size_t tid,
       const auto source_rank = kernel().mpi_manager.get_process_id_of_node_id( source_gid );
       if ( not( rank_start <= source_rank and source_rank < rank_end ) )
       {
+        // We are not responsible for this source.
         ++source_2_idx;
         continue;
       }
@@ -1793,10 +1794,12 @@ nest::ConnectionManager::fill_target_buffer( const size_t tid,
   {
     if ( send_buffer_position.idx( rank ) > send_buffer_position.begin( rank ) )
     {
+      // We have written data for the rank, mark last written entry with END marker
       send_buffer_target_data.at( send_buffer_position.idx( rank ) - 1 ).set_end_marker();
     }
     else
     {
+      // We have not written anything, mark beginning of chunk with INVALID marker
       send_buffer_target_data.at( send_buffer_position.begin( rank ) ).set_invalid_marker();
     }
   }

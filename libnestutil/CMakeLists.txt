@@ -38,22 +38,13 @@ set(nestutil_sources
     vector_util.h
 )
 
-add_library(nestutil ${nestutil_sources})
+add_library(nestutil STATIC ${nestutil_sources})
 
 if(APPLE)
-    set_target_properties(nestutil
-        PROPERTIES
-        VERSION ${NEST_VERSION}
-        SOVERSION 3
-        LINK_FLAGS "-Wl,-undefined -Wl,dynamic_lookup"
-    )
-else()
-    set_target_properties(nestutil
-        PROPERTIES
-        VERSION ${NEST_VERSION}
-        SOVERSION 3
-    )
+    set_target_properties(nestutil PROPERTIES LINK_FLAGS "-Wl,-undefined -Wl,dynamic_lookup")
 endif()
+
+set_target_properties(nestutil PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 target_link_libraries(nestutil ${GSL_LIBRARIES} ${SIONLIB_LIBS})
 
@@ -65,12 +56,8 @@ target_include_directories(nestutil PRIVATE
     ${Boost_INCLUDE_DIRS}
 )
 
-install(TARGETS nestutil
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
-
 FILTER_HEADERS("${nestutil_sources}" install_headers)
+
 install(FILES ${install_headers} ${PROJECT_BINARY_DIR}/libnestutil/config.h
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest
+)

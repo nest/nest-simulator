@@ -23,9 +23,11 @@ import unittest
 import nest
 import numpy as np
 
+HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
 
+
+@unittest.skipIf(not HAVE_OPENMP, "NEST was compiled without multi-threading")
 class TestRecordingBackendMemory(unittest.TestCase):
-
     def testEventsDict(self):
         """Test if the event dict is there from the start."""
 
@@ -125,6 +127,6 @@ def suite():
     return suite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())

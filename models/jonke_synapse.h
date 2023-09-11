@@ -418,7 +418,7 @@ jonke_synapse< targetidentifierT >::set_status( const dictionary& d, ConnectorMo
   if ( Kplus_ < 0 )
   {
     throw BadProperty( "Kplus must be non-negative." );
-  }  
+  }
 }
 
 template < typename targetidentifierT >

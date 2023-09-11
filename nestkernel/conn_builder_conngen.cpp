@@ -36,7 +36,7 @@ ConnectionGeneratorBuilder::ConnectionGeneratorBuilder( NodeCollectionPTR source
   const dictionary& conn_spec,
   const std::vector< dictionary >& syn_specs )
   : ConnBuilder( sources, targets, conn_spec, syn_specs )
-  , cg_( )
+  , cg_()
   , params_map_()
 {
   conn_spec.update_value( "cg", cg_ );

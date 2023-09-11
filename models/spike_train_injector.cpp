@@ -1,5 +1,5 @@
 /*
- *  spike_generator.cpp
+ *  spike_train_injector.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,7 +20,7 @@
  *
  */
 
-#include "spike_generator.h"
+#include "spike_train_injector.h"
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
@@ -37,10 +37,9 @@ namespace nest
  * Default constructor defining default parameters
  * ---------------------------------------------------------------- */
 
-spike_generator::Parameters_::Parameters_()
+spike_train_injector::Parameters_::Parameters_()
   : spike_stamps_()
   , spike_offsets_()
-  , spike_weights_()
   , spike_multiplicities_()
   , precise_times_( false )
   , allow_offgrid_times_( false )
@@ -54,7 +53,7 @@ spike_generator::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-spike_generator::Parameters_::get( dictionary& d ) const
+spike_train_injector::Parameters_::get( dictionary& d ) const
 {
   const size_t n_spikes = spike_stamps_.size();
   std::vector< double > times_ms( n_spikes );
@@ -69,7 +68,6 @@ spike_generator::Parameters_::get( dictionary& d ) const
   }
 
   d[ names::spike_times ] = times_ms;
-  d[ names::spike_weights ] = spike_weights_;
   d[ names::spike_multiplicities ] = spike_multiplicities_;
   d[ names::precise_times ] = precise_times_;
   d[ names::allow_offgrid_times ] = allow_offgrid_times_;
@@ -77,11 +75,11 @@ spike_generator::Parameters_::get( dictionary& d ) const
 }
 
 void
-spike_generator::Parameters_::assert_valid_spike_time_and_insert_( double t, const Time& origin, const Time& now )
+spike_train_injector::Parameters_::assert_valid_spike_time_and_insert_( double t, const Time& origin, const Time& now )
 {
   if ( t == 0.0 and not shift_now_spikes_ )
   {
-    throw BadProperty( "spike time cannot be set to 0." );
+    throw BadProperty( "Spike time cannot be set to 0." );
   }
 
   Time t_spike;
@@ -106,7 +104,7 @@ spike_generator::Parameters_::assert_valid_spike_time_and_insert_( double t, con
       else
       {
         std::stringstream msg;
-        msg << "spike_generator: Time point " << t << " is not representable in current resolution.";
+        msg << "spike_train_injector: Time point " << t << " is not representable in current resolution.";
         throw BadProperty( msg.str() );
       }
     }
@@ -117,10 +115,10 @@ spike_generator::Parameters_::assert_valid_spike_time_and_insert_( double t, con
       t_spike.advance();
     }
   }
-  // when we get here, we know that the spike time is valid and
-  // t_spike is the correct time stamp given the chosen options
-  spike_stamps_.push_back( t_spike );
+  // t_spike is now the correct time stamp given the chosen options
 
+  // when we get here, we know that the spike time is valid
+  spike_stamps_.push_back( t_spike );
   if ( precise_times_ )
   {
     // t_spike is created with ms_stamp() that aligns the time to the next
@@ -142,7 +140,11 @@ spike_generator::Parameters_::assert_valid_spike_time_and_insert_( double t, con
 }
 
 void
-spike_generator::Parameters_::set( const dictionary& d, State_& s, const Time& origin, const Time& now, Node* node )
+spike_train_injector::Parameters_::set( const dictionary& d,
+  State_& s,
+  const Time& origin,
+  const Time& now,
+  Node* node )
 {
   bool precise_times_changed = update_value_param( d, names::precise_times, precise_times_, node );
   bool shift_now_spikes_changed = update_value_param( d, names::shift_now_spikes, shift_now_spikes_, node );
@@ -197,30 +199,6 @@ spike_generator::Parameters_::set( const dictionary& d, State_& s, const Time& o
     }
   }
 
-  // spike_weights can be the same size as spike_times, or can be of size 0 to
-  // only use the spike_times array
-  bool updated_spike_weights = d.known( names::spike_weights );
-  if ( updated_spike_weights )
-  {
-    auto spike_weights = d.get< std::vector< double > >( names::spike_weights );
-
-    if ( spike_weights.empty() )
-    {
-      spike_weights_.clear();
-    }
-    else
-    {
-      if ( spike_weights.size() != spike_stamps_.size() )
-      {
-        throw BadProperty(
-          "spike_weights must have the same number of elements as spike_times,"
-          " or 0 elements to clear the property." );
-      }
-
-      spike_weights_.swap( spike_weights );
-    }
-  }
-
   // spike_multiplicities can be the same size as spike_times,
   // or can be of size 0 to only use the spike_times array
   bool updated_spike_multiplicities = d.known( names::spike_multiplicities );
@@ -246,7 +224,7 @@ spike_generator::Parameters_::set( const dictionary& d, State_& s, const Time& o
   }
 
   // Set position to start if something changed
-  if ( updated_spike_times or updated_spike_weights or updated_spike_multiplicities or d.known( names::origin ) )
+  if ( updated_spike_times or updated_spike_multiplicities or d.known( names::origin ) )
   {
     s.position_ = 0;
   }
@@ -257,7 +235,7 @@ spike_generator::Parameters_::set( const dictionary& d, State_& s, const Time& o
  * Default constructor defining default state
  * ---------------------------------------------------------------- */
 
-spike_generator::State_::State_()
+spike_train_injector::State_::State_()
   : position_( 0 )
 {
 }
@@ -267,17 +245,19 @@ spike_generator::State_::State_()
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-spike_generator::spike_generator()
-  : StimulationDevice()
-  , P_()
+spike_train_injector::spike_train_injector()
+  : Node()
+  , Device()
   , S_()
+  , P_()
 {
 }
 
-spike_generator::spike_generator( const spike_generator& n )
-  : StimulationDevice( n )
-  , P_( n.P_ )
+spike_train_injector::spike_train_injector( const spike_train_injector& n )
+  : Node( n )
+  , Device( n )
   , S_( n.S_ )
+  , P_( n.P_ )
 {
 }
 
@@ -287,29 +267,53 @@ spike_generator::spike_generator( const spike_generator& n )
  * ---------------------------------------------------------------- */
 
 void
-spike_generator::init_state_()
+spike_train_injector::init_state_()
 {
-  StimulationDevice::init_state();
+  Node::init_state_();
 }
 
 void
-spike_generator::init_buffers_()
+spike_train_injector::init_buffers_()
 {
-  StimulationDevice::init_buffers();
 }
 
 void
-spike_generator::pre_run_hook()
+spike_train_injector::pre_run_hook()
 {
-  StimulationDevice::pre_run_hook();
+  // We do not need to recalibrate time objects, since they are
+  // recalibrated on instance construction and resolution cannot
+  // change after a single node instance has been created.
+
+  // Off-grid communication needs to be activated here since this model
+  // is not an exclusive precise spiking model
+  if ( is_off_grid() )
+  {
+    kernel().event_delivery_manager.set_off_grid_communication( true );
+    LOG( M_INFO,
+      "spike_train_injector::pre_run_hook",
+      "Spike train injector has been configured to emit precisely timed "
+      "spikes: the kernel property off_grid_spiking has been set to true.\n\n"
+      "NOTE: Mixing precise-spiking and normal neuron models may "
+      "lead to inconsistent results." );
+  }
+
+  Device::pre_run_hook();
 }
 
 
 /* ----------------------------------------------------------------
  * Other functions
  * ---------------------------------------------------------------- */
+
+bool
+spike_train_injector::is_active( const Time& T ) const
+{
+  long step = T.get_steps();
+  return get_t_min_() < step and step <= get_t_max_();
+}
+
 void
-spike_generator::update( Time const& sliceT0, const long from, const long to )
+spike_train_injector::update( Time const& sliceT0, const long from, const long to )
 {
   if ( P_.spike_stamps_.empty() )
   {
@@ -317,12 +321,11 @@ spike_generator::update( Time const& sliceT0, const long from, const long to )
   }
 
   assert( not P_.precise_times_ or P_.spike_stamps_.size() == P_.spike_offsets_.size() );
-  assert( P_.spike_weights_.empty() or P_.spike_stamps_.size() == P_.spike_weights_.size() );
   assert( P_.spike_multiplicities_.empty() or P_.spike_stamps_.size() == P_.spike_multiplicities_.size() );
 
   const Time tstart = sliceT0 + Time::step( from );
   const Time tstop = sliceT0 + Time::step( to );
-  const Time& origin = StimulationDevice::get_origin();
+  const Time& origin = Device::get_origin();
 
   // We fire all spikes with time stamps up to including sliceT0 + to
   while ( S_.position_ < P_.spike_stamps_.size() )
@@ -340,87 +343,30 @@ spike_generator::update( Time const& sliceT0, const long from, const long to )
       break;
     }
 
-    if ( StimulationDevice::is_active( tnext_stamp ) )
-    {
-      SpikeEvent* se;
+    long step = tnext_stamp.get_steps();
 
-      // if we have to deliver weighted spikes, we need to get the
-      // event back to set its weight according to the entry in
-      // spike_weights_, so we use a DSSpike event and event_hook()
-      if ( not P_.spike_weights_.empty() )
-      {
-        se = new DSSpikeEvent;
-      }
-      else
-      {
-        se = new SpikeEvent;
-      }
+    if ( get_t_min_() < step and step <= get_t_max_() )
+    {
+      SpikeEvent se;
 
       if ( P_.precise_times_ )
       {
-        se->set_offset( P_.spike_offsets_[ S_.position_ ] );
+        se.set_offset( P_.spike_offsets_[ S_.position_ ] );
       }
 
       if ( not P_.spike_multiplicities_.empty() )
       {
-        se->set_multiplicity( P_.spike_multiplicities_[ S_.position_ ] );
+        se.set_multiplicity( P_.spike_multiplicities_[ S_.position_ ] );
       }
 
       // we need to subtract one from stamp which is added again in send()
       long lag = Time( tnext_stamp - sliceT0 ).get_steps() - 1;
 
-      // all spikes are sent locally, so offset information is always preserved
-      kernel().event_delivery_manager.send( *this, *se, lag );
-      delete se;
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     ++S_.position_;
   }
-}
-
-void
-spike_generator::event_hook( DSSpikeEvent& e )
-{
-  e.set_weight( P_.spike_weights_[ S_.position_ ] * e.get_weight() );
-  e.get_receiver().handle( e );
-}
-
-
-/* ----------------------------------------------------------------
- * Other functions
- * ---------------------------------------------------------------- */
-
-void
-spike_generator::set_data_from_stimulation_backend( std::vector< double >& input_spikes )
-{
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-
-  if ( ptmp.precise_times_ and not input_spikes.empty() )
-  {
-    throw BadProperty( "Option precise_times is not supported with an stimulation backend\n" );
-  }
-
-  const Time& origin = StimulationDevice::get_origin();
-  // For the input backend
-  if ( not input_spikes.empty() )
-  {
-
-    dictionary d;
-    std::vector< double > times_ms;
-    const size_t n_spikes = P_.spike_stamps_.size();
-    times_ms.reserve( n_spikes + input_spikes.size() );
-    for ( size_t n = 0; n < n_spikes; ++n )
-    {
-      times_ms.push_back( P_.spike_stamps_[ n ].get_ms() );
-    }
-    std::copy( input_spikes.begin(), input_spikes.end(), std::back_inserter( times_ms ) );
-    d[ names::spike_times ] = times_ms;
-
-    ptmp.set( d, S_, origin, Time::step( times_ms[ times_ms.size() - 1 ] ), this );
-  }
-
-  // if we get here, temporary contains consistent set of properties
-  P_ = ptmp;
 }
 
 } // namespace nest

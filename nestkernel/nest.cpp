@@ -57,6 +57,7 @@
 #include "poisson_generator_ps.h"
 #include "pp_psc_delta.h"
 #include "spike_generator.h"
+#include "spike_train_injector.h"
 #include "spike_recorder.h"
 #include "tanh_rate.h"
 
@@ -149,6 +150,7 @@ init_nest( int* argc, char** argv[] )
   kernel().model_manager.register_node_model< ac_generator >( "ac_generator" );
   kernel().model_manager.register_node_model< dc_generator >( "dc_generator" );
   kernel().model_manager.register_node_model< spike_generator >( "spike_generator" );
+  kernel().model_manager.register_node_model< spike_train_injector >( "spike_train_injector" );
   kernel().model_manager.register_node_model< spike_recorder >( "spike_recorder" );
   kernel().model_manager.register_node_model< poisson_generator >( "poisson_generator" );
   kernel().model_manager.register_node_model< poisson_generator_ps >( "poisson_generator_ps" );

@@ -278,8 +278,6 @@ endforeach ()
 
 # libraries required to link extension modules
 set( MODULE_LINK_LIBS
-  "-lnestutil"
-  "-lnestkernel"
   "${OpenMP_CXX_FLAGS}"
   "${LTDL_LIBRARIES}"
   "${READLINE_LIBRARIES}"

@@ -43,6 +43,9 @@ namespace nest
 class IOManager : public ManagerInterface
 {
 public:
+  IOManager();
+  ~IOManager() override;
+
   void initialize() override;
   void finalize() override;
 
@@ -53,9 +56,6 @@ public:
 
   void set_recording_backend_status( std::string, const dictionary& );
   dictionary get_recording_backend_status( std::string );
-
-  IOManager(); // Construct only by meta-manager
-  ~IOManager() override;
 
   /**
    * The prefix for files written by devices.
@@ -99,14 +99,31 @@ public:
   void cleanup() override;
   void prepare() override;
 
-  template < class RBT >
-  void register_recording_backend( std::string );
-  template < class RBT >
-  void register_stimulation_backend( std::string );
+  template < class RecordingBackendT >
+  void register_recording_backend( const std::string& );
+  template < class StimulationBackendT >
+  void register_stimulation_backend( const std::string& );
 
   bool is_valid_recording_backend( const std::string& ) const;
   bool is_valid_stimulation_backend( const std::string& ) const;
 
+  /**
+   * Send device data to a given recording backend.
+   *
+   * This function is called from a RecordingDevice `device` when it
+   * wants to write data to a given recording backend, identified by
+   * its `backend_name`. The function takes an Event `event` from
+   * which some fundamental data is taken and additionally vectors of
+   * `double_values` and `long_values` that have to be written. The
+   * data vectors may be empty, if no additional data has to be
+   * written.
+   *
+   * \param backend_name the name of the RecordingBackend to write to
+   * \param device a reference to the RecordingDevice that wants to write
+   * \param event the Event to be written
+   * \param double_values a vector of doubles to be written
+   * \param long_values a vector of longs to be written
+   */
   void write( const std::string&,
     const RecordingDevice&,
     const Event&,
@@ -127,8 +144,6 @@ public:
 
 private:
   void set_data_path_prefix_( const dictionary& );
-  void register_recording_backends_();
-  void register_stimulation_backends_();
 
   std::string data_path_;   //!< Path for all files written by devices
   std::string data_prefix_; //!< Prefix for all files written by devices
@@ -165,5 +180,4 @@ nest::IOManager::overwrite_files() const
   return overwrite_files_;
 }
 
-
-#endif /* IO_MANAGER_H */
+#endif /* #ifndef IO_MANAGER_H */

@@ -185,26 +185,16 @@ endif()
 # Prevent problems with Conda path substitution (see #2348)
 set_source_files_properties(dynamicloader.cpp PROPERTIES COMPILE_OPTIONS "-O0")
 
-add_library(nestkernel ${nestkernel_sources})
+add_library(nestkernel STATIC ${nestkernel_sources})
 
 if(APPLE)
-  set_target_properties(nestkernel
-    PROPERTIES
-    VERSION ${NEST_VERSION}
-    SOVERSION 3
-    LINK_FLAGS "-Wl,-undefined -Wl,dynamic_lookup"
-  )
-else()
-  set_target_properties(nestkernel
-    PROPERTIES
-    VERSION ${NEST_VERSION}
-    SOVERSION 3
-  )
+  set_target_properties(nestkernel PROPERTIES LINK_FLAGS "-Wl,-undefined -Wl,dynamic_lookup")
 endif()
 
+set_target_properties(nestkernel PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
 target_link_libraries(nestkernel
-  nestutil
-  ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES}
+  nestutil ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES}
 )
 
 target_include_directories(nestkernel PRIVATE
@@ -216,12 +206,7 @@ target_include_directories(nestkernel PRIVATE
   ${PROJECT_SOURCE_DIR}/models
 )
 
-install(TARGETS nestkernel
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/nest
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
-
 FILTER_HEADERS("${nestkernel_sources}" install_headers)
 install(FILES ${install_headers}
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest
+)

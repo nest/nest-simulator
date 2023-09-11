@@ -264,7 +264,7 @@ nest::SimulationManager::set_status( const dictionary& d )
     }
     else
     {
-      throw KernelException( "Change of tics_per_step requires simultaneous specification of resolution." );
+      throw KernelException( "Change of tics_per_ms requires simultaneous specification of resolution." );
     }
   }
 

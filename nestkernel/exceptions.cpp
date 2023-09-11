@@ -455,6 +455,14 @@ nest::BackendNotPrepared::what() const noexcept
 }
 
 const char*
+nest::BackendAlreadyRegistered::what() const noexcept
+{
+  std::ostringstream msg;
+  msg << "Backend " << backend_ << " has already been registered.";
+  return msg.str().c_str();
+}
+
+const char*
 nest::UndefinedName::what() const noexcept
 {
   std::ostringstream msg;

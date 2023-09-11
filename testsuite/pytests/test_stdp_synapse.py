@@ -399,15 +399,17 @@ class TestSTDPSynapse:
 
     @pytest.mark.parametrize("dend_delay", [RESOLUTION, 1.0])
     @pytest.mark.parametrize("model", ["iaf_psc_exp", "iaf_cond_exp"])
-    @pytest.mark.parametrize("min_delay", (1.0, 0.4, self.resolution))
+    @pytest.mark.parametrize("min_delay", (1.0, 0.4, RESOLUTION))
     @pytest.mark.parametrize("max_delay", (1.0, 3.0))
-    @pytest.mark.parametrize("t_ref", (self.resolution, 0.5, 1.0, 1.1, 2.5))
+    @pytest.mark.parametrize("t_ref", (RESOLUTION, 0.5, 1.0, 1.1, 2.5))
     def test_stdp_synapse(self, dend_delay, model, min_delay, max_delay, t_ref):
+        self.init_params()
         self.dendritic_delay = dend_delay
         self.nest_neuron_model = model
-        self.init_params()
         self.min_delay = min(min_delay, max_delay)
         self.max_delay = max(min_delay, max_delay)
+        self.neuron_parameters["t_ref"] = t_ref
+        self.synapse_parameters["delay"] = self.dendritic_delay
 
         fname_snip = "_[nest_neuron_mdl=" + self.nest_neuron_model + "]"
         fname_snip += "_[dend_delay=" + str(self.dendritic_delay) + "]"

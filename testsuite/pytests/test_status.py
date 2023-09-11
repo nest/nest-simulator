@@ -39,8 +39,8 @@ class StatusTestCase(unittest.TestCase):
         # Remove entry containing numpy arrays from status dicts since they do not compare well
         gks_result = nest.GetKernelStatus()
         ks_result = nest.kernel_status
-        del gks_result["buffer_resize_log"]
-        del ks_result["buffer_resize_log"]
+        del gks_result["spike_buffer_resize_log"]
+        del ks_result["spike_buffer_resize_log"]
         self.assertEqual(gks_result, ks_result)
 
         self.assertEqual(nest.GetKernelStatus("resolution"), nest.resolution)

@@ -634,13 +634,6 @@ EventDeliveryManager::get_global_max_spikes_per_rank_( const SendBufferPosition&
 void
 EventDeliveryManager::deliver_events( const size_t tid )
 {
-#ifdef TIMER_DETAILED
-  if ( tid == 0 )
-  {
-    sw_deliver_spike_data_.start();
-  }
-#endif
-
   if ( off_grid_spiking_ )
   {
     deliver_events_( tid, recv_buffer_off_grid_spike_data_ );
@@ -649,14 +642,6 @@ EventDeliveryManager::deliver_events( const size_t tid )
   {
     deliver_events_( tid, recv_buffer_spike_data_ );
   }
-
-#ifdef TIMER_DETAILED
-  if ( tid == 0 )
-  {
-    sw_deliver_spike_data_.stop();
-  }
-#endif
-
   reset_spike_register_( tid );
 }
 

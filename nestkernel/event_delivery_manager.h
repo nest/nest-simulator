@@ -289,7 +289,7 @@ private:
     std::vector< size_t >& num_spikes_per_rank );
 
   /**
-   * Set end marker for per-rank-chunks signalling completion and providing shrink/grow infomation.
+   * Set end marker for per-rank-chunks signalling completion and providing shrink/grow information.
    */
   template < typename SpikeDataT >
   void set_end_marker_( const SendBufferPosition& send_buffer_position,
@@ -455,7 +455,7 @@ private:
   size_t global_max_spikes_per_rank_;
 
   double send_recv_buffer_shrink_limit_; //!< shrink buffer only if below this limit
-  double send_recv_buffer_shrink_spare_; //!< leave this fraction more size than minimally needed
+  double send_recv_buffer_shrink_spare_; //!< leave this fraction more space than minimally needed
   double send_recv_buffer_grow_extra_;   //!< when growing, add this fraction extra space
 
   /**

@@ -227,7 +227,8 @@ class NestModule(types.ModuleType):
     )
     spike_buffer_grow_extra = KernelAttribute(
         "float",
-        "When spike exchange buffer needs to be expanded, resize to `(1 + spike_buffer_grow_extra) * required_buffer_size`",
+        "When spike exchange buffer needs to be expanded, resize to "
+        + "`(1 + spike_buffer_grow_extra) * required_buffer_size`",
         default=0.5,
     )
     spike_buffer_shrink_limit = KernelAttribute(
@@ -243,7 +244,8 @@ class NestModule(types.ModuleType):
     spike_buffer_shrink_spare = KernelAttribute(
         "float",
         (
-            "When the buffer needs to shrink, set the new size to `(1 + spike_buffer_shrink_spare) * required_buffer_size`. "
+            "When the buffer needs to shrink, set the new size to "
+            + "`(1 + spike_buffer_shrink_spare) * required_buffer_size`. "
             + "See `spike_buffer_shrink_limit` for when buffers shrink"
         ),
         default=0.1,

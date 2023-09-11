@@ -48,7 +48,7 @@ Welcome!
 
 ----
 
-Conceptual appraoch
+Conceptual approach
 -------------------
 
 .. grid::
@@ -58,7 +58,7 @@ Conceptual appraoch
       :columns: 8
 
       .. raw:: html
-         :file: static/img/network-brain_1.1.svg
+         :file: static/img/network-brain_1.1comp.svg
 
    .. grid-item::
       :columns: 4
@@ -349,20 +349,32 @@ this works - TODO add text into image
 
 
 .. toctree::
-   :caption: USAGE
+   :caption: BASIC USAGE
    :hidden:
    :glob:
 
    Install <installation/index>
    Tutorials <get-started_index>
-   PyNEST API <ref_material/pynest_api/index>
    Examples <examples/index>
+   PyNEST API <ref_material/pynest_api/index>
    Available models <models/index>
    Neurons in NEST <neurons/index>
    Synapses in NEST <synapses/index>
    Devices in NEST <devices/index>
    Spatially structured networks <networks/spatially_structured_networks>
    ref_material/glossary
+
+.. toctree::
+   :caption: TECHNICAL DETAILS
+   :hidden:
+
+   NEST on HPC <hpc/optimizing_nest>
+   nest_sonata/nest_sonata_guide
+   connect_nest/nest_server
+   model implementation <model_details>
+   NEST behavior <nest_behavior/index>
+   Developer Docs <developer_space/index>
+
 
 .. toctree::
    :caption: COMMUNITY
@@ -376,31 +388,16 @@ this works - TODO add text into image
    NEST Homepage <https://nest-simulator.org>
 
 .. toctree::
-   :caption: TECHNICAL DETAILS
-   :hidden:
-
-   NEST on HPC <hpc/optimizing_nest>
-   nest_sonata/nest_sonata_guide
-   connect_nest/nest_server
-   model implementation <model_details>
-   NEST behavior <nest_behavior/index>
-   Developer Docs <developer_space/index>
-
-.. toctree::
    :caption: RELATED PROJECTS
    :hidden:
 
    NEST Desktop <https://nest-desktop.readthedocs.io/en/latest/>
    NESTML <https://nestml.readthedocs.io/en/latest/>
    NESTGPU <https://nestgpu.readthedocs.io/en/latest/>
-   pynn <https://google.com>
-   elephant <https://google.com>
-   cosim <https://google.com>
-   tvb <https://google.com>
-   arbor <https://google.com>
 
 .. toctree::
    :maxdepth: 1
+   :caption: LICENSE
    :hidden:
 
    license

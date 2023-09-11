@@ -246,6 +246,12 @@ div.md-header-nav__source a.md-source div.md-source__repository, div.md-source__
   color: #fff;
 }
 
+span.md-nav__link.caption {
+
+  padding-top: 0.6rem;
+  padding-bottom: 0.1rem;
+}
+
 /*remove logo from header */
 .md-header-nav__button {
   display: none;

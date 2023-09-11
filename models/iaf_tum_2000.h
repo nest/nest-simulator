@@ -63,9 +63,9 @@ obey the following dynamics:
 
    I_\text{syn,X} &= \sum_{j \in X} w_j y_j
 
-   \frac{dx_j}{dt} &= \frac{z_j}{\tau_{\text{rec}}} -u_j x_j \delta(t - t_j)
+   \frac{dx_j}{dt} &= \frac{z_j}{\tau_{\text{rec}}} - u_j x_j \delta(t - t_j)
 
-   \frac{dy_j}{dt} &= -\frac{y_j}{\tau_{\text{syn}}} -u_j x_j \delta(t - t_j)
+   \frac{dy_j}{dt} &= -\frac{y_j}{\tau_{\text{syn}}} + u_j x_j \delta(t - t_j)
  
    \frac{dz_j}{dt} &= \frac{y_j}{\tau_{\text{syn}}} - \frac{y_j}{\tau_{\text{rec}}} 
 
@@ -111,7 +111,7 @@ The following parameters can be set in the status dictionary.
  ``tau_syn_in``  ms       :math:`\tau_{\text{syn, in}}`  Inhibitory synaptic time constant
  ``U``           real     :math:`U`                      Parameter determining the increase in u with each spike [0,1]
  ``tau_fac``     ms       :math:`\tau_{\text{fac}}`      Time constant for facilitation
- ``tau_rec``     ms       :math:`\tau_{\text{fac}}`      Time constant for depression
+ ``tau_rec``     ms       :math:`\tau_{\text{rec}}`      Time constant for depression
  ``x``           real     :math:`x`                      Initial fraction of synaptic vesicles in the readily releasable pool [0,1]
  ``y``           real     :math:`y`                      Initial fraction of synaptic vesicles in the synaptic cleft [0,1]
  ``u``           real     :math:`u`                      Initial release probability of synaptic vesicles [0,1]

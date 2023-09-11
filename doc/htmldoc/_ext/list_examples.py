@@ -66,7 +66,6 @@ def ProcessExamples(app, doctree, docname):
                 newnode.append(nodes.Text(title))
                 para = nodes.paragraph()
                 para += newnode
-                # para.append(link_node)
                 list_item.append(para)
                 bullet_list += list_item
 

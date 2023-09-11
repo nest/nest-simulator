@@ -305,7 +305,7 @@ private:
     std::vector< size_t >& num_spikes_per_rank );
 
   /**
-   * Set end marker for per-rank-chunks signalling completion and providing shrink/grow infomation.
+   * Set end marker for per-rank-chunks signalling completion and providing shrink/grow information.
    */
   template < typename SpikeDataT >
   void set_end_marker_( const SendBufferPosition& send_buffer_position,

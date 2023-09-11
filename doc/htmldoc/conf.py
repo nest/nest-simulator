@@ -53,6 +53,7 @@ extensions = [
     "sphinx.ext.autosummary",
     "sphinx.ext.doctest",
     "sphinx.ext.intersphinx",
+    "sphinxcontrib.mermaid",
     "sphinx.ext.mathjax",
     "add_button_notebook",
     "IPython.sphinxext.ipython_console_highlighting",
@@ -88,6 +89,11 @@ copybutton_prompt_text = ">>> "
 # The output lines will not be copied if set to True
 copybutton_only_copy_prompt_lines = True
 
+mermaid_output_format = "raw"
+mermaid_version = "10.2.0"
+
+# disable require js - mermaid doesn't work if require.js is loaded before it
+nbsphinx_requirejs_path = ""
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.

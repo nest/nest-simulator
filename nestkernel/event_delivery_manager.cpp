@@ -185,7 +185,7 @@ EventDeliveryManager::set_status( const DictionaryDatum& dict )
   updateValue< bool >( dict, names::off_grid_spiking, off_grid_spiking_ );
 
   double bsl = send_recv_buffer_shrink_limit_;
-  if ( updateValue< double >( dict, names::buffer_shrink_limit, bsl ) )
+  if ( updateValue< double >( dict, names::spike_buffer_shrink_limit, bsl ) )
   {
     if ( bsl < 0 )
     {
@@ -195,7 +195,7 @@ EventDeliveryManager::set_status( const DictionaryDatum& dict )
   }
 
   double bss = send_recv_buffer_shrink_spare_;
-  if ( updateValue< double >( dict, names::buffer_shrink_spare, bss ) )
+  if ( updateValue< double >( dict, names::spike_buffer_shrink_spare, bss ) )
   {
     if ( bss < 0 or bss > 1 )
     {
@@ -205,7 +205,7 @@ EventDeliveryManager::set_status( const DictionaryDatum& dict )
   }
 
   double bge = send_recv_buffer_grow_extra_;
-  if ( updateValue< double >( dict, names::buffer_grow_extra, bge ) )
+  if ( updateValue< double >( dict, names::spike_buffer_grow_extra, bge ) )
   {
     if ( bge < 0 )
     {
@@ -221,18 +221,17 @@ EventDeliveryManager::get_status( DictionaryDatum& dict )
   def< bool >( dict, names::off_grid_spiking, off_grid_spiking_ );
   def< unsigned long >(
     dict, names::local_spike_counter, std::accumulate( local_spike_counter_.begin(), local_spike_counter_.end(), 0 ) );
-  def< double >( dict, names::buffer_shrink_limit, send_recv_buffer_shrink_limit_ );
-  def< double >( dict, names::buffer_shrink_spare, send_recv_buffer_shrink_spare_ );
-  def< double >( dict, names::buffer_grow_extra, send_recv_buffer_grow_extra_ );
+  def< double >( dict, names::spike_buffer_shrink_limit, send_recv_buffer_shrink_limit_ );
+  def< double >( dict, names::spike_buffer_shrink_spare, send_recv_buffer_shrink_spare_ );
+  def< double >( dict, names::spike_buffer_grow_extra, send_recv_buffer_grow_extra_ );
 
   DictionaryDatum log_events = DictionaryDatum( new Dictionary );
-  ( *dict )[ names::buffer_resize_log ] = log_events;
+  ( *dict )[ names::spike_buffer_resize_log ] = log_events;
   send_recv_buffer_resize_log_.to_dict( log_events );
 
 #ifdef TIMER_DETAILED
   def< double >( dict, names::time_collocate_spike_data, sw_collocate_spike_data_.elapsed() );
   def< double >( dict, names::time_communicate_spike_data, sw_communicate_spike_data_.elapsed() );
-  def< double >( dict, names::time_deliver_spike_data, sw_deliver_spike_data_.elapsed() );
   def< double >( dict, names::time_communicate_target_data, sw_communicate_target_data_.elapsed() );
 #endif
 }
@@ -367,7 +366,6 @@ EventDeliveryManager::reset_timers_for_dynamics()
 #ifdef TIMER_DETAILED
   sw_collocate_spike_data_.reset();
   sw_communicate_spike_data_.reset();
-  sw_deliver_spike_data_.reset();
 #endif
 }
 

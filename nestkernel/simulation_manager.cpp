@@ -121,6 +121,7 @@ nest::SimulationManager::reset_timers_for_dynamics()
 #ifdef TIMER_DETAILED
   sw_gather_spike_data_.reset();
   sw_update_.reset();
+  sw_deliver_spike_data_.reset();
 #endif
 }
 
@@ -439,6 +440,7 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
   def< double >( d, names::time_gather_spike_data, sw_gather_spike_data_.elapsed() );
   def< double >( d, names::time_update, sw_update_.elapsed() );
   def< double >( d, names::time_gather_target_data, sw_gather_target_data_.elapsed() );
+  def< double >( d, names::time_deliver_spike_data, sw_deliver_spike_data_.elapsed() );
 #endif
 }
 

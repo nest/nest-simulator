@@ -238,7 +238,7 @@ class NestModule(types.ModuleType):
             + "`spike_buffer_shrink_limit == 0` means that buffers never shrink. "
             + "See `spike_buffer_shrink_factor` for how much buffer shrinks"
         ),
-        default=0.3,
+        default=0.0,
     )
     spike_buffer_shrink_spare = KernelAttribute(
         "float",

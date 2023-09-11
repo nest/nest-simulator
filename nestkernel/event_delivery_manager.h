@@ -33,6 +33,7 @@
 #include "stopwatch.h"
 
 // Includes from nestkernel:
+#include "buffer_resize_log.h"
 #include "event.h"
 #include "mpi_manager.h" // OffGridSpike
 #include "nest_time.h"
@@ -54,23 +55,6 @@ typedef MPIManager::OffGridSpike OffGridSpike;
 class TargetData;
 class SendBufferPosition;
 class TargetSendBufferPosition;
-
-/**
- * Collect information on spike transmission buffer resizing.
- */
-class ResizeLog
-{
-public:
-  ResizeLog();
-  void clear();
-  void add_entry( size_t global_max_spikes_sent, size_t new_buffer_size );
-  void to_dict( DictionaryDatum& ) const;
-
-private:
-  std::vector< long > time_steps_;             //!< Time of resize event in steps
-  std::vector< long > global_max_spikes_sent_; //!< Spike number that triggered resize
-  std::vector< long > new_buffer_size_;        //!< Buffer size after resize
-};
 
 
 class EventDeliveryManager : public ManagerInterface
@@ -415,37 +399,39 @@ private:
   std::vector< long > slice_moduli_;
 
   /**
-   * Register for node IDs of neurons that spiked.
+   * Register of emitted spikes.
    *
-   * This is a 4-dim structure. While spikes are written to the buffer they are
-   * immediately sorted by the thread that will later move the spikes to the
-   * MPI buffers.
-   * - First dim: write threads (from node to register)
-   * - Second dim: spikes as spike data
+   * All spikes to be delivered non-locally are first written to this register by the thread generating the spike.
+   * They are later transferred to communication buffers and exchanged globally.
+   *
+   * The outer dimension represents the thread generating the spikes, the second dimension the individual spikes.
+   *
+   * @note We store here pointers to the vectors for the individual threads so that those vectors, including their
+   * administrative metadata will be stored in thread-local memory.
    */
   std::vector< std::vector< SpikeDataWithRank >* > emitted_spikes_register_;
 
   /**
-   * Register for node IDs of precise neurons that spiked.
+   * Register of emitted off-grid spikes.
    *
-   * This is a 4-dim structure. While spikes are written to the buffer they are
-   * immediately sorted by the thread that will later move the spikes to the
-   * MPI buffers.
-   * - First dim: write threads (from node to register)
-   * - Second dim: spikes as offgrid spike data
+   * All off-grid spikes to be delivered non-locally are first written to this register by the thread generating the spike.
+   * They are later transferred to communication buffers and exchanged globally.
+   *
+   * The outer dimension represents the thread generating the spikes, the second dimension the individual spikes.
+   *
+   * @note We store here pointers to the vectors for the individual threads so that those vectors, including their
+   * administrative metadata will be stored in thread-local memory.
    */
   std::vector< std::vector< OffGridSpikeDataWithRank >* > off_grid_emitted_spikes_register_;
 
   /**
-   * Buffer to collect the secondary events
-   * after serialization.
+   * Buffer to collect the secondary events after serialization.
    */
   std::vector< unsigned int > send_buffer_secondary_events_;
   std::vector< unsigned int > recv_buffer_secondary_events_;
 
   /**
-   * Number of generated spike events (both off- and on-grid) during the last
-   * call to simulate.
+   * Number of generated spike events (both off- and on-grid) during the last call to simulate.
    */
   std::vector< unsigned long > local_spike_counter_;
 
@@ -456,6 +442,7 @@ private:
 
   std::vector< TargetData > send_buffer_target_data_;
   std::vector< TargetData > recv_buffer_target_data_;
+  
   //! whether size of MPI buffer for communication of connections was changed
   bool buffer_size_target_data_has_changed_;
 
@@ -476,7 +463,7 @@ private:
    *
    * This is maintained by the main thread, which is responsible for communication and resizing.
    */
-  ResizeLog send_recv_buffer_resize_log_;
+  BufferResizeLog send_recv_buffer_resize_log_;
 
   PerThreadBoolIndicator gather_completed_checker_;
 

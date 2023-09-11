@@ -45,39 +45,6 @@
 namespace nest
 {
 
-ResizeLog::ResizeLog()
-  : time_steps_()
-  , global_max_spikes_sent_()
-  , new_buffer_size_()
-{
-}
-
-void
-ResizeLog::clear()
-{
-  time_steps_.clear();
-  global_max_spikes_sent_.clear();
-  new_buffer_size_.clear();
-}
-
-void
-ResizeLog::add_entry( size_t global_max_spikes_sent, size_t new_buffer_size )
-{
-  time_steps_.emplace_back( kernel().simulation_manager.get_clock().get_steps() );
-  global_max_spikes_sent_.emplace_back( global_max_spikes_sent );
-  new_buffer_size_.emplace_back( new_buffer_size );
-}
-
-void
-ResizeLog::to_dict( DictionaryDatum& events ) const
-{
-  initialize_property_intvector( events, names::times );
-  append_property( events, names::times, time_steps_ );
-  initialize_property_intvector( events, "global_max_spikes_sent" );
-  append_property( events, "global_max_spikes_sent", global_max_spikes_sent_ );
-  initialize_property_intvector( events, "new_buffer_size" );
-  append_property( events, "new_buffer_size", new_buffer_size_ );
-}
 
 
 EventDeliveryManager::EventDeliveryManager()

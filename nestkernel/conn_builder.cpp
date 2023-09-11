@@ -1413,7 +1413,7 @@ nest::FixedTotalNumberBuilder::connect_()
 
     try
     {
-      const int vp_id = kernel().vp_manager.thread_to_vp( tid );
+      const size_t vp_id = kernel().vp_manager.thread_to_vp( tid );
 
       if ( kernel().vp_manager.is_local_vp( vp_id ) )
       {

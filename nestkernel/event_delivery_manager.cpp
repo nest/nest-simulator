@@ -459,9 +459,6 @@ EventDeliveryManager::gather_spike_data_( std::vector< SpikeDataT >& send_buffer
         send_buffer_position, off_grid_emitted_spikes_register_, send_buffer, num_spikes_per_rank );
     }
 
-    FULL_LOGGING_ONLY( for ( auto c
-                             : num_spikes_per_rank ) { kernel().write_to_dump( String::compose( "nspr %1", c ) ); } )
-
     // Largest number of spikes sent from this rank to any other rank.
     const auto local_max_spikes_per_rank = *std::max_element( num_spikes_per_rank.begin(), num_spikes_per_rank.end() );
 
@@ -757,8 +754,6 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
       {
         if ( tid_batch[ j ] == tid )
         {
-          FULL_LOGGING_ONLY( kernel().write_to_dump( String::compose(
-            "denc %1 %2 %3 %4 %5", j, tid, syn_id_batch[ j ], lcid_batch[ j ], se_batch[ j ].get_stamp() ) ); )
           kernel().connection_manager.send( tid_batch[ j ], syn_id_batch[ j ], lcid_batch[ j ], cm, se_batch[ j ] );
         }
       }
@@ -836,8 +831,6 @@ EventDeliveryManager::deliver_events_( const size_t tid, const std::vector< Spik
       {
         if ( lcid_batch[ j ] != invalid_lcid )
         {
-          FULL_LOGGING_ONLY( kernel().write_to_dump( String::compose(
-            "decm %1 %2 %3 %4 %5", j, tid, syn_id_batch[ j ], lcid_batch[ j ], se_batch[ j ].get_stamp() ) ); )
           kernel().connection_manager.send( tid, syn_id_batch[ j ], lcid_batch[ j ], cm, se_batch[ j ] );
         }
       }
@@ -929,20 +922,10 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
 
   const AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
 
-  FULL_LOGGING_ONLY( kernel().write_to_dump( String::compose( "Assigned Ranks: r%1 t%2 ar_beg%3 ar_end%4",
-    kernel().mpi_manager.get_rank(),
-    tid,
-    assigned_ranks.begin,
-    assigned_ranks.end ) ); )
-
-
   kernel().connection_manager.prepare_target_table( tid );
 
   while ( gather_completed_checker_.any_false() )
   {
-    FULL_LOGGING_ONLY( kernel().write_to_dump(
-      String::compose( "GTDC Entering While: r%1 t%2", kernel().mpi_manager.get_rank(), tid ) ); )
-
     // assume this is the last gather round and change to false otherwise
     gather_completed_checker_[ tid ].set_true();
 
@@ -950,13 +933,7 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
     {
       if ( kernel().mpi_manager.adaptive_target_buffers() and buffer_size_target_data_has_changed_ )
       {
-        FULL_LOGGING_ONLY( kernel().write_to_dump( String::compose(
-          "resize from: r%1 t%2 bsz %3 ", kernel().mpi_manager.get_rank(), tid, send_buffer_target_data_.size() ) ); )
-
         resize_send_recv_buffers_target_data();
-
-        FULL_LOGGING_ONLY( kernel().write_to_dump( String::compose(
-          "resize to  : r%1 t%2 bsz %3", kernel().mpi_manager.get_rank(), tid, send_buffer_target_data_.size() ) ); )
       }
     } // of omp single; implicit barrier
 
@@ -972,12 +949,6 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
     {
       set_complete_marker_target_data_( assigned_ranks, send_buffer_position );
     }
-
-    FULL_LOGGING_ONLY( kernel().write_to_dump( String::compose( "Gather complete: r%1 t%2 loc %3 glob %4",
-      kernel().mpi_manager.get_rank(),
-      tid,
-      gather_completed_checker_[ tid ].is_true(),
-      gather_completed_checker_.all_true() ) ); )
 
 #pragma omp barrier
 
@@ -1007,12 +978,6 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
       }
     }
 
-    FULL_LOGGING_ONLY( kernel().write_to_dump( String::compose( "Distrib complete: r%1 t%2 loc %3 glob %4 szchg %5",
-      kernel().mpi_manager.get_rank(),
-      tid,
-      gather_completed_checker_[ tid ].is_true(),
-      gather_completed_checker_.all_true(),
-      gather_completed_checker_.any_false() and kernel().mpi_manager.adaptive_target_buffers() ) ); )
   } // of while
 
   kernel().connection_manager.clear_source_table( tid );
@@ -1112,9 +1077,6 @@ EventDeliveryManager::collocate_target_data_buffers_compressed_( const size_t ti
   // reset markers
   for ( size_t rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
   {
-    FULL_LOGGING_ONLY( kernel().write_to_dump(
-      String::compose( "marker reset: r%1 t%2 br%3", kernel().mpi_manager.get_rank(), tid, rank ) ); )
-
     // reset last entry to avoid accidentally communicating done
     // marker
     send_buffer_target_data_[ send_buffer_position.end( rank ) - 1 ].reset_marker();

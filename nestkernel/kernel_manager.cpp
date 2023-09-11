@@ -91,7 +91,7 @@ nest::KernelManager::initialize()
   ++fingerprint_;
   initialized_ = true;
   FULL_LOGGING_ONLY(
-    dump_.open( String::compose( "kd_%1_%2.log", mpi_manager.get_num_processes(), mpi_manager.get_rank() ).c_str() ); )
+    dump_.open( String::compose( "dump_%1_%2.log", mpi_manager.get_num_processes(), mpi_manager.get_rank() ).c_str() ); )
 }
 
 void

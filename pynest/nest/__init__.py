@@ -233,17 +233,17 @@ class NestModule(types.ModuleType):
     spike_buffer_shrink_limit = KernelAttribute(
         "float",
         (
-            "If largest number of spikes sent from any rank to any rank is less than "
+            "If the largest number of spikes sent from any rank to any rank is less than "
             + "`spike_buffer_shrink_limit * buffer_size`, then reduce buffer size. "
             + "`spike_buffer_shrink_limit == 0` means that buffers never shrink. "
-            + "See `spike_buffer_shrink_factor` for how much buffer shrinks"
+            + "See ``spike_buffer_shrink_factor`` for how much buffer shrinks"
         ),
         default=0.0,
     )
     spike_buffer_shrink_spare = KernelAttribute(
         "float",
         (
-            "When buffer needs to shrink, set new size to `(1 + spike_buffer_shrink_spare) * required_buffer_size`. "
+            "When the buffer needs to shrink, set the new size to `(1 + spike_buffer_shrink_spare) * required_buffer_size`. "
             + "See `spike_buffer_shrink_limit` for when buffers shrink"
         ),
         default=0.1,
@@ -251,10 +251,10 @@ class NestModule(types.ModuleType):
     spike_buffer_resize_log = KernelAttribute(
         "dict",
         (
-            "Information on spike buffer resizing as dictionary. It contains the "
-            + "`times` of the resizings (simulation clock in steps, always multiple of min_delay), "
-            + "`global_max_spikes_sent`, i.e., the observed spike number that triggered the resize, "
-            + "and the `new_buffer_size`. Sizes are for the section addressing one rank."
+            "Information on spike buffer resizing as a dictionary. It contains the "
+            + "`times` of the resizings (simulation clock in steps, always multiple of ``min_delay``), "
+            + "``global_max_spikes_sent``, that is, the observed spike number that triggered the resize, "
+            + "and the ``new_buffer_size``. Sizes are for the section addressing one rank."
         ),
         readonly=True,
     )
@@ -308,7 +308,7 @@ class NestModule(types.ModuleType):
             "Whether to use spike compression; if a neuron has targets on"
             + " multiple threads of a process, this switch makes sure that only"
             + " a single packet is sent to the process instead of one packet"
-            + " per target thread; implies that connection are sorted by source."
+            + " per target thread; it implies that connections are sorted by source."
         ),
         default=True,
     )

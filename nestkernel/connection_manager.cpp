@@ -1672,7 +1672,7 @@ nest::ConnectionManager::fill_target_buffer( const size_t tid,
   std::vector< TargetData >& send_buffer_target_data,
   TargetSendBufferPosition& send_buffer_position )
 {
-  // At this point, NEST has at least one synapse type (because we can only get here at least
+  // At this point, NEST has at least one synapse type (because we can only get here if at least
   // one connection has been created) and we know that iteration_state_ for each thread
   // contains a valid entry.
   const auto& csd_maps = source_table_.compressed_spike_data_map_;

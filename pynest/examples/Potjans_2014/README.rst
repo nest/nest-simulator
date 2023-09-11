@@ -13,11 +13,11 @@ The network model represents four layers of cortex, L2/3, L4, L5, and L6, each c
 
    .. grid-item::
 
-     .. image:: ../../static/img/raster_plot.png
+     .. image:: ../../static/img/mc_raster_plot.png
 
    .. grid-item::
 
-     .. image:: ../../static/img/box_plot.png
+     .. image:: ../../static/img/mc_box_plot.png
 
 
 

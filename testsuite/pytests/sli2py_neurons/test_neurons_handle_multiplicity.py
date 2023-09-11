@@ -67,6 +67,7 @@ skip_list = [
     "music_message_out_proxy",  # music device
     "music_rate_in_proxy",  # music device
     "music_rate_out_proxy",  # music device
+    "astrocyte_lr_1994",  # does not have V_m
 ]
 
 extra_params = {

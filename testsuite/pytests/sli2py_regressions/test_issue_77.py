@@ -57,6 +57,7 @@ skip_models = [
     "music_message_in_proxy",  # MUSIC device
     "music_rate_in_proxy",  # MUSIC device
     "music_rate_out_proxy",  # MUSIC device
+    "astrocyte_lr_1994",  # does not send spikes
 ]
 
 # The following models require connections to rport 1 or other specific parameters:

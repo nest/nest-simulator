@@ -48,6 +48,7 @@ class TestDisconnect(unittest.TestCase):
             "urbanczik_synapse",
             "urbanczik_synapse_lbl",
             "urbanczik_synapse_hpc",
+            "sic_connection",
         ]
 
     def test_multiple_synapse_deletion_all_to_all(self):

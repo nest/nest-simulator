@@ -118,7 +118,7 @@ nest::SourceTable::clean( const size_t tid )
   // delete part of the sources table, with indices larger than those
   // in max_position; if this thread is larger than max_positions's
   // thread, we can delete all sources; otherwise we do nothing.
-  if ( max_position.tid == tid )
+  if ( max_position.tid == static_cast< long >( tid ) )
   {
     for ( synindex syn_id = max_position.syn_id; syn_id < sources_[ tid ].size(); ++syn_id )
     {
@@ -140,14 +140,14 @@ nest::SourceTable::clean( const size_t tid )
       }
     }
   }
-  else if ( max_position.tid < tid )
+  else if ( max_position.tid < static_cast< long >( tid ) )
   {
     sources_[ tid ].clear();
   }
   else
   {
     // do nothing
-    assert( tid < max_position.tid );
+    assert( static_cast< long >( tid ) < max_position.tid );
   }
 }
 

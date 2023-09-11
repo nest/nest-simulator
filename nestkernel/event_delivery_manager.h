@@ -468,7 +468,7 @@ private:
   size_t global_max_spikes_per_rank_;
 
   double send_recv_buffer_shrink_limit_; //!< shrink buffer only if below this limit
-  double send_recv_buffer_shrink_spare_; //!< leave this fraction more size than minimally needed
+  double send_recv_buffer_shrink_spare_; //!< leave this fraction more space than minimally needed
   double send_recv_buffer_grow_extra_;   //!< when growing, add this fraction extra space
 
   /**

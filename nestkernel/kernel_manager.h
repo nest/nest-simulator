@@ -169,7 +169,10 @@
  SeeAlso: Simulate, Node
 */
 
-#ifdef FULL_LOGGING
+/**
+ * Wrap debugging output code for easy enabling/disabling via -Dwith-full-logging=ON/OFF.
+ */
+#ifdef ENABLE_FULL_LOGGING
 #define FULL_LOGGING_ONLY( code ) code
 #else
 #define FULL_LOGGING_ONLY( code )
@@ -247,8 +250,12 @@ public:
 
   unsigned long get_fingerprint() const;
 
-  //! Write data to file per rank and thread, if FULL_LOGGING is set; has critical section
-  FULL_LOGGING_ONLY( void write_to_dump( const std::string& msg ); )
+  /**
+   * Write data to file per rank and thread. For use with FULL_LOGGING.
+   *
+   * @note This method has a `omp critical` section to avoid write-collisions from threads.
+   */
+  void write_to_dump( const std::string& msg );
 
   LoggingManager logging_manager;
   MPIManager mpi_manager;
@@ -267,7 +274,7 @@ public:
 private:
   std::vector< ManagerInterface* > managers;
   bool initialized_; //!< true if the kernel is initialized
-  FULL_LOGGING_ONLY( std::ofstream dump_; )
+  std::ofstream dump_; //!< for FULL_LOGGING output
 };
 
 KernelManager& kernel();

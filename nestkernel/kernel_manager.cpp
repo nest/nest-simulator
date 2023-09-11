@@ -170,8 +170,6 @@ nest::KernelManager::get_status( DictionaryDatum& dict )
   }
 }
 
-// Cannot use macro here because of #pragma in method
-#ifdef FULL_LOGGING
 void
 nest::KernelManager::write_to_dump( const std::string& msg )
 {
@@ -181,4 +179,3 @@ nest::KernelManager::write_to_dump( const std::string& msg )
     dump_ << msg << std::endl << std::flush;
   }
 }
-#endif

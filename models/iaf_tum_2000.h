@@ -35,146 +35,110 @@
 namespace nest
 {
 
-// NOTE: The docs is for iaf_psc_exp
-
-/* BeginUserDocs: neuron, integrate-and-fire, current-based
+// clang-format off
+/* BeginUserDocs: neuron, integrate-and-fire, current-based, synapse, short-term plasticity
 
 Short description
 +++++++++++++++++
 
-Leaky integrate-and-fire neuron model with exponential PSCs
+Leaky integrate-and-fire neuron model with exponential PSCs and integrated synapse type with short term plasticity
 
 Description
 +++++++++++
 
-``iaf_psc_exp`` is an implementation of a leaky integrate-and-fire model
-with exponential shaped postsynaptic currents (PSCs) according to [1]_.
-Thus, postsynaptic currents have an infinitely short rise time.
+This neuron model implements synaptic short-term depression and short-term
+facilitation according to [1]_. In particular it solves Eqs (3) and (4) from
+this paper in an exact manner.
 
-The threshold crossing is followed by an absolute refractory period (``t_ref``)
-during which the membrane potential is clamped to the resting potential
-and spiking is prohibited.
+This model differs from the ``iaf_psc_exp`` model by the addition of synaptic
+state variables :math:`x`, :math:`z` and :math:`u`, which together
+with the membrane potential :math:`V_\text{m}` and synaptic current :math:`I_\text{syn}`
+obey the following dynamics:
 
-The neuron dynamics is solved on the time grid given by the computation step
-size. Incoming as well as emitted spikes are forced to that grid.
+.. math::
 
-The linear subthreshold dynamics is integrated by the Exact
-Integration scheme [2]_, which is more precise, but different from the
-implementation in [1]_, which uses the forward Euler integration scheme.
-This precludes an exact numerical reproduction of the results from [1]_.
+   \frac{dV_\text{m}}{dt} &= -\frac{V_{\text{m}} - E_\text{L}}{\tau_{\text{m}}} + \frac{I_{\text{syn}} + I_\text{e}}{C_{\text{m}}}
 
-An additional state variable and the corresponding differential
-equation represents a piecewise constant external current.
+   I_{\text{syn}} &= I_\text{syn,ex} + I_\text{syn,in}
 
-The general framework for the consistent formulation of systems with
-neuron like dynamics interacting by point events is described in
-[2]_. A flow chart can be found in [3]_.
+   I_\text{syn,X} &= \sum_{j \in X} w_j y_j
 
-Spiking in this model can be either deterministic (delta=0) or stochastic (delta
-> 0). In the stochastic case this model implements a type of spike response
-model with escape noise [4]_.
+   \frac{dx_j}{dt} &= \frac{z_j}{\tau_{\text{rec}}} - u_j x_j \delta(t - t_j)
 
-.. note::
+   \frac{dy_j}{dt} &= -\frac{y_j}{\tau_{\text{syn}}} + u_j x_j \delta(t - t_j)
+ 
+   \frac{dz_j}{dt} &= \frac{y_j}{\tau_{\text{syn}}} - \frac{y_j}{\tau_{\text{rec}}} 
+
+   \frac{du_j}{dt} &= -\frac{u}{\tau_{\text{fac}}} + U(1 - u) \delta(t - t_j)
 
 
-  If ``tau_m`` is very close to ``tau_syn_ex`` or ``tau_syn_in``, the model
-  will numerically behave as if ``tau_m`` is equal to ``tau_syn_ex`` or
-  ``tau_syn_in``, respectively, to avoid numerical instabilities.
+where :math:`j` indexes either excitatory (:math:`\text{X} = \text{ex}`)
+or inhibitory (:math:`\text{X} = \text{in}`) presynaptic neurons,
+:math:`k` indexes the spike times of neuron :math:`j`, and :math:`d_j`
+is the delay from neuron :math:`j`.
 
-  For implementation details see the
-  `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+This model differs from the synapse model ``tsodyks_synapse`` in that this
+model integrates synaptic variables :math:`x,y,z,u` in the pre-synaptic neuron instead
+of the synapse model. This leads to more efficient simulations.
+Since the equations are linear, the post-synaptic current can be found as
+the sum of all pre-synaptic synaptic currents computed in the pre-synaptic
+neurons.
 
-``iaf_psc_exp`` can handle current input in two ways:
+In order for the additional synapse dynamics to take effect, the pre-synaptic
+neuron must be of type ``iaf_tum_2000``. The post-synaptic neurons should either
+be of type ``iaf_tum_2000`` or of type ``iaf_psc_exp`` since an exponential
+post-synaptic current is assumed in this model. 
+Due to the nature of the model implementation, using neurons with precise spike
+timing will produce nonsensical results and must be avoided.
 
-1. Current input through ``receptor_type`` 0 is handled as a stepwise constant
-   current input as in other iaf models, that is, this current directly enters the
-   membrane potential equation.
-2. In contrast, current input through ``receptor_type`` 1 is filtered through an
-   exponential kernel with the time constant of the excitatory synapse,
-   ``tau_syn_ex``.
-
-   For an example application, see [4]_.
-
-   **Warning:** this current input is added to the state variable
-   ``i_syn_ex_``. If this variable is being recorded, its numerical value
-   will thus not correspond to the excitatory synaptic input current, but to
-   the sum of excitatory synaptic input current and the contribution from
-   receptor type 1 currents.
-
-For conversion between postsynaptic potentials (PSPs) and PSCs,
-please refer to the ``postsynaptic_potential_to_current`` function in
-:doc:`PyNEST Microcircuit: Helper Functions <../auto_examples/Potjans_2014/helpers>`.
 
 Parameters
 ++++++++++
 
 The following parameters can be set in the status dictionary.
 
-===========  =======  ========================================================
- E_L          mV      Resting membrane potential
- C_m          pF      Capacity of the membrane
- tau_m        ms      Membrane time constant
- tau_syn_ex   ms      Exponential decay time constant of excitatory synaptic
-                      current kernel
- tau_syn_in   ms      Exponential decay time constant of inhibitory synaptic
-                      current kernel
- t_ref        ms      Duration of refractory period (V_m = V_reset)
- V_m          mV      Membrane potential in mV
- V_th         mV      Spike threshold in mV
- V_reset      mV      Reset membrane potential after a spike
- I_e          pA      Constant input current
- t_spike      ms      Point in time of last spike
-===========  =======  ========================================================
+=============== ======== =============================== ========================================================================
+**Parameter**   **Unit** **Math equivalent**             **Description**
+=============== ======== =============================== ========================================================================
+ ``V_m``         mV       :math:`V_{\text{m}}`           Membrane potential
+ ``E_L``         mV       :math:`E_\text{L}`             Resting membrane potential
+ ``C_m``         pF       :math:`C_{\text{m}}`           Capacity of the membrane
+ ``tau_m``       ms       :math:`\tau_{\text{m}}`        Membrane time constant
+ ``t_ref``       ms       :math:`t_{\text{ref}}`         Duration of refractory period
+ ``V_th``        mV       :math:`V_{\text{th}}`          Spike threshold
+ ``V_reset``     mV       :math:`V_{\text{reset}}`       Reset potential of the membrane
+ ``tau_syn_ex``  ms       :math:`\tau_{\text{syn, ex}}`  Excitatory synaptic time constant
+ ``tau_syn_in``  ms       :math:`\tau_{\text{syn, in}}`  Inhibitory synaptic time constant
+ ``U``           real     :math:`U`                      Parameter determining the increase in u with each spike [0,1]
+ ``tau_fac``     ms       :math:`\tau_{\text{fac}}`      Time constant for facilitation
+ ``tau_rec``     ms       :math:`\tau_{\text{rec}}`      Time constant for depression
+ ``x``           real     :math:`x`                      Initial fraction of synaptic vesicles in the readily releasable pool [0,1]
+ ``y``           real     :math:`y`                      Initial fraction of synaptic vesicles in the synaptic cleft [0,1]
+ ``u``           real     :math:`u`                      Initial release probability of synaptic vesicles [0,1]
+ ``I_e``         pA       :math:`I_\text{e}`             Constant input current
+ ``V_min``       mV       :math:`V_{\text{min}}`         Absolute lower value for the membrane potenial (default :math:`-\infty`)
+=============== ======== =============================== ========================================================================
+
 
 References
 ++++++++++
 
 .. [1] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
-       networks with frequency-dependent synapses. The Journal of Neuroscience,
-       20,RC50:1-5. URL: https://infoscience.epfl.ch/record/183402
-.. [2] Rotter S,  Diesmann M (1999). Exact simulation of
-       time-invariant linear systems with applications to neuronal
-       modeling. Biologial Cybernetics 81:381-402.
-       DOI: https://doi.org/10.1007/s004220050570
-.. [3] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001). State
-       space analysis of synchronous spiking in cortical neural
-       networks. Neurocomputing 38-40:565-571.
-       DOI: https://doi.org/10.1016/S0925-2312(01)00409-X
-.. [4] Schuecker J, Diesmann M, Helias M (2015). Modulated escape from a
-       metastable state driven by colored noise. Physical Review E 92:052119
-       DOI: https://doi.org/10.1103/PhysRevE.92.052119
+       networks with frequency-dependent synapses. Journal of Neuroscience,
+       20 RC50. URL: http://infoscience.epfl.ch/record/183402
 
-Sends
-+++++
+Transmits
++++++++++
 
 SpikeEvent
-
-Receives
-++++++++
-
-SpikeEvent, CurrentEvent, DataLoggingRequest
 
 See also
 ++++++++
 
-iaf_cond_exp, iaf_psc_exp_ps
+iaf_psc_exp, tsodyks_synapse, stdp_synapse, static_synapse
 
 EndUserDocs */
-
-/**
- * The present implementation uses individual variables for the
- * components of the state vector and the non-zero matrix elements of
- * the propagator. Because the propagator is a lower triangular matrix,
- * no full matrix multiplication needs to be carried out and the
- * computation can be done "in place", i.e. no temporary state vector
- * object is required.
- *
- * The template support of recent C++ compilers enables a more succinct
- * formulation without loss of runtime performance already at minimal
- * optimization levels. A future version of iaf_psc_exp will probably
- * address the problem of efficient usage of appropriate vector and
- * matrix objects.
- */
+// clang-format on
 
 // iaf_tum_2000
 class iaf_tum_2000 : public ArchivingNode

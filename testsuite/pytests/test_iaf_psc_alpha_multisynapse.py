@@ -38,25 +38,17 @@ import numpy.testing as nptest
 import pytest
 
 
-tau_syn = [2., 20., 60., 100.]
-delays = [100., 200., 500., 1200.]
+tau_syn = [2.0, 20.0, 60.0, 100.0]
+delays = [100.0, 200.0, 500.0, 1200.0]
 spike_time = 100.0
-weight = 1.
+weight = 1.0
 dt = 0.1
-C_m = 250.
-tau_m = 15.
+C_m = 250.0
+tau_m = 15.0
 spike_time = 10.0
 simtime = 2500.0
 
-neuron_params = {
-    "E_L": 0.0,
-    "V_m": 0.0,
-    "V_th": 1500.0,
-    "I_e": 0.0,
-    "tau_m": tau_m,
-    "tau_syn": tau_syn,
-    "C_m": C_m
-    }
+neuron_params = {"E_L": 0.0, "V_m": 0.0, "V_th": 1500.0, "I_e": 0.0, "tau_m": tau_m, "tau_syn": tau_syn, "C_m": C_m}
 
 
 def test_I_syn_1_in_recordables():
@@ -97,15 +89,11 @@ def test_simulation_against_analytical_soln():
     sg = nest.Create("spike_generator", params={"spike_times": [spike_time]})
     conn_spec = "one_to_one"
     for i, syn_id in enumerate(range(1, 5)):
-        syn_spec = {"synapse_model": "static_synapse",
-                    "delay": delays[i],
-                    "weight": weight,
-                    "receptor_type": syn_id}
+        syn_spec = {"synapse_model": "static_synapse", "delay": delays[i], "weight": weight, "receptor_type": syn_id}
 
         nest.Connect(sg, nrn, conn_spec=conn_spec, syn_spec=syn_spec)
 
-    mm = nest.Create("multimeter",
-                     params={"record_from": ["I_syn_1", "I_syn_2", "I_syn_3", "I_syn_4"]})
+    mm = nest.Create("multimeter", params={"record_from": ["I_syn_1", "I_syn_2", "I_syn_3", "I_syn_4"]})
 
     nest.Connect(mm, nrn)
     nest.Simulate(simtime)

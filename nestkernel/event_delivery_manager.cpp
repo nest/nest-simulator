@@ -46,7 +46,6 @@ namespace nest
 {
 
 
-
 EventDeliveryManager::EventDeliveryManager()
   : off_grid_spiking_( false )
   , moduli_()

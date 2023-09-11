@@ -414,8 +414,8 @@ private:
   /**
    * Register of emitted off-grid spikes.
    *
-   * All off-grid spikes to be delivered non-locally are first written to this register by the thread generating the spike.
-   * They are later transferred to communication buffers and exchanged globally.
+   * All off-grid spikes to be delivered non-locally are first written to this register by the thread generating the
+   * spike. They are later transferred to communication buffers and exchanged globally.
    *
    * The outer dimension represents the thread generating the spikes, the second dimension the individual spikes.
    *
@@ -442,7 +442,7 @@ private:
 
   std::vector< TargetData > send_buffer_target_data_;
   std::vector< TargetData > recv_buffer_target_data_;
-  
+
   //! whether size of MPI buffer for communication of connections was changed
   bool buffer_size_target_data_has_changed_;
 

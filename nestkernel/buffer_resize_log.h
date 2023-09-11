@@ -29,8 +29,9 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-namespace nest {
-  
+namespace nest
+{
+
 /**
  * Collect information on spike transmission buffer resizing.
  */

@@ -26,7 +26,8 @@
 #include "kernel_manager.h"
 #include "nest_names.h"
 
-namespace nest {
+namespace nest
+{
 
 BufferResizeLog::BufferResizeLog()
   : time_steps_()

@@ -273,7 +273,7 @@ public:
 
 private:
   std::vector< ManagerInterface* > managers;
-  bool initialized_; //!< true if the kernel is initialized
+  bool initialized_;   //!< true if the kernel is initialized
   std::ofstream dump_; //!< for FULL_LOGGING output
 };
 

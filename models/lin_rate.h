@@ -124,6 +124,11 @@ See also
 rate_connection_instantaneous, rate_connection_delayed,
 rate_neuron_ipn, rate_neuron_opn
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: lin_rate
+
 EndUserDocs */
 
 class nonlinearities_lin_rate

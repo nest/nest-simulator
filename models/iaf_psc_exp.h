@@ -157,6 +157,11 @@ See also
 
 iaf_cond_exp, iaf_psc_exp_ps
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_psc_exp
+
 EndUserDocs */
 
 /**

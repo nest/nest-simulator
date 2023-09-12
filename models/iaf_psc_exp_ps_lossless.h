@@ -136,6 +136,11 @@ See also
 
 iaf_psc_exp_ps
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_psc_exp_ps_lossless
+
 EndUserDocs */
 
 class iaf_psc_exp_ps_lossless : public ArchivingNode

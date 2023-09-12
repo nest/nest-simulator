@@ -516,10 +516,14 @@ nest::astrocyte_lr_1994::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  if ( e.get_weight() > 0.0 )
+  if ( e.get_weight() >= 0.0 )
   {
     B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
+  else
+  {
+    throw KernelException( "astrocyte_lr_1994 cannot handle input spikes with negative weights.");
   }
 }
 

@@ -603,8 +603,8 @@ public:
   virtual void handle( DelayedRateConnectionEvent& e );
 
   /**
-   * Handler for delay rate neuron events.
-   * @see handle(thread, DelayedRateConnectionEvent&)
+   * Handler for slow inward current events (SICEvents).
+   * @see handle(thread,SICEvent&)
    * @ingroup event_interface
    * @throws UnexpectedEvent
    */

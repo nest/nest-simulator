@@ -248,7 +248,6 @@ public:
   using Node::handles_test_event;
   using Node::sends_secondary_event;
 
-  size_t send_test_event( Node& target, size_t receptor_type, synindex, bool ) override;
 
   void handle( SpikeEvent& ) override;
   void handle( CurrentEvent& ) override;
@@ -424,13 +423,6 @@ public:
   static RecordablesMap< astrocyte_lr_1994 > recordablesMap_;
 };
 
-inline size_t
-astrocyte_lr_1994::send_test_event( Node& target, size_t receptor_type, synindex, bool )
-{
-  SpikeEvent se;
-  se.set_sender( *this );
-  return target.handles_test_event( se, receptor_type );
-}
 
 
 inline size_t

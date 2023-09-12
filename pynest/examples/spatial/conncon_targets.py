@@ -21,7 +21,7 @@
 
 """
 Spatial networks: Convergent projection and rectangular mask, from source perspective
---------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
 
 Create two populations of iaf_psc_alpha neurons on a 30x30 grid
 Connect the two populations with convergent projection and rectangular mask, and

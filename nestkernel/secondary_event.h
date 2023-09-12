@@ -435,7 +435,7 @@ DiffusionConnectionEvent::get_diffusion_factor() const
 }
 
 /**
- * Event for slow inward current (SIC) connections between astrocytes and neurons. 
+ * Event for slow inward current (SIC) connections between astrocytes and neurons.
  *
  * The event transmits the slow inward current to the connected neurons.
  */

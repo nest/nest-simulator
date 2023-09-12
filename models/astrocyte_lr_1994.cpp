@@ -104,6 +104,7 @@ astrocyte_lr_1994_dynamics( double time, const double y[], double f[], void* pno
  * ---------------------------------------------------------------- */
 
 nest::astrocyte_lr_1994::Parameters_::Parameters_()
+  // parameters following Nadkarni & Jung, 2003
   : Ca_tot_( 2.0 )      // uM
   , IP3_0_( 0.16 )      // uM
   , Kd_IP3_1_( 0.13 )   // uM
@@ -129,7 +130,6 @@ nest::astrocyte_lr_1994::State_::State_( const Parameters_& p )
   y_[ Ca ] = 0.073;
   y_[ h_IP3R ] = 0.793;
   y_[ SIC ] = 0.0;
-  y_[ DSIC ] = 0.0;
 }
 
 nest::astrocyte_lr_1994::State_::State_( const State_& s )
@@ -523,7 +523,7 @@ nest::astrocyte_lr_1994::handle( SpikeEvent& e )
   }
   else
   {
-    throw KernelException( "astrocyte_lr_1994 cannot handle input spikes with negative weights.");
+    throw KernelException( "astrocyte_lr_1994 cannot handle input spikes with negative weights." );
   }
 }
 

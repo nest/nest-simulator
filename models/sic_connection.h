@@ -38,9 +38,13 @@ Synapse type for astrocyte-neuron connections
 Description
 +++++++++++
 
-``sic_connection`` connects an astrocyte to a target neuron. It exposes the target neuron to a slow inward current (SIC) induced by the astrocyte. The amplitude of the current is the product of the astrocytic current and the weight of the ``sic_connection``.
+``sic_connection`` connects an astrocyte to a target neuron. It exposes the target neuron to a slow inward current (SIC)
+induced by the astrocyte. The amplitude of the current is the product of the astrocytic current and the weight of the
+``sic_connection``.
 
-The source node of a ``sic_connection`` must be an astrocyte emitting a slow inward current, and the target node must be able to handle slow inward current input. Currently, :doc:`aeif_conda_alpha_astro` is the only neuron model that can receive ``sic_connection``s. The connection may have a delay.
+The source node of a ``sic_connection`` must be an astrocyte emitting a slow inward current, and the target node must be
+able to handle slow inward current input. Currently, :doc:`aeif_conda_alpha_astro` is the only neuron model that can
+receive ``sic_connection``s. The connection may have a delay.
 
 Sends
 +++++

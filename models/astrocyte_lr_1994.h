@@ -343,7 +343,6 @@ public:
       Ca,     // 1
       h_IP3R, // 2
       SIC,    // 3
-      DSIC,   // 4
       STATE_VEC_SIZE
     };
 
@@ -422,7 +421,6 @@ public:
   //! Mapping of recordables names to access functions
   static RecordablesMap< astrocyte_lr_1994 > recordablesMap_;
 };
-
 
 
 inline size_t

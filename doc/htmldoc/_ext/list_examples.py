@@ -110,7 +110,7 @@ class ListExamplesDirective(SphinxDirective):
     option_spec = {}
 
     def run(self):
-        my_arg = self.arguments[0]
+        model_arg = self.arguments[0]
 
         if not hasattr(self.env, "all_examples"):
             self.env.all_examples = []
@@ -118,7 +118,7 @@ class ListExamplesDirective(SphinxDirective):
         # See TODO tutorial in Sphinx for more info.
         # Using environment attribute all_examples to store argument and
         # its location (docname)
-        self.env.all_examples.append({"model_name": my_arg, "name": self.env.docname})
+        self.env.all_examples.append({"model_name": model_arg, "name": self.env.docname})
 
         return [listnode("")]
 

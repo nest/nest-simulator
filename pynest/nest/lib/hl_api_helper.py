@@ -51,6 +51,7 @@ __all__ = [
     "restructure_data",
     "show_deprecation_warning",
     "show_help_with_pager",
+    "stringify_path",
     "SuppressedDeprecationWarning",
 ]
 
@@ -145,6 +146,31 @@ def deprecated(alt_func_name, text=None):
         return new_func
 
     return deprecated_decorator
+
+
+def stringify_path(filepath):
+    """
+    Convert path-like object to string form.
+
+    Attempt to convert path-like object to a string by coercing objects
+    supporting the fspath protocol to its ``__fspath__`` method. Anything that
+    is not path-like, which includes bytes and strings, is passed through
+    unchanged.
+
+    Parameters
+    ----------
+    filepath : object
+        Object representing file system path.
+
+    Returns
+    -------
+    filepath : str
+        Stringified filepath.
+    """
+
+    if isinstance(filepath, os.PathLike):
+        filepath = filepath.__fspath__()  # should return str or bytes object
+    return filepath
 
 
 def is_literal(obj):

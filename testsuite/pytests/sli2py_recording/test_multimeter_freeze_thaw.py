@@ -61,6 +61,16 @@ def simulate_freeze_thaw(num_neurons):
     return mm
 
 
+def test_multimeter_freeze():
+    """
+    Ensure that frozen parameter can be set to False but not True on multimeter.
+    """
+
+    nest.Create("multimeter", params={"frozen": False})
+    with pytest.raises(Exception):
+        nest.Create("multimeter", params={"frozen": True})
+
+
 def test_freeze_thaw_simulation_against_only_thawed_simulation():
     """
     Verify identical results from freeze/thaw and non-freeze simulation.

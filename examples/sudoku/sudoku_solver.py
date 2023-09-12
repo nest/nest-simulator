@@ -64,15 +64,15 @@ import pickle
 from helpers_sudoku import get_puzzle, validate_solution, plot_field
 import matplotlib.pyplot as plt
 
-nest.SetKernelStatus({'local_num_threads': 8})
-nest.set_verbosity(nest.verbosity.M_WARNING)
+nest.local_num_threads = 8
+nest.set_verbosity("M_WARNING")
 logging.basicConfig(level=logging.INFO)
 
 puzzle_index = 4
 noise_rate = 350
 sim_time = 100
 max_sim_time = 10000
-max_iterations = max_sim_time//sim_time
+max_iterations = max_sim_time // sim_time
 
 puzzle = get_puzzle(puzzle_index)
 network = sudoku_net.SudokuNet(pop_size=5, input=puzzle, noise_rate=noise_rate)
@@ -97,12 +97,10 @@ while not valid:
 
             # spiketrains for all digits in the current cells
             cell_spikes = spiketrains[spike_recorders]
-            spike_counts = np.array(
-                [len(s["times"]) for s in cell_spikes])
+            spike_counts = np.array([len(s["times"]) for s in cell_spikes])
 
             # if two digits have the same activation, pick one at random
-            winning_digit = int(np.random.choice(
-                np.flatnonzero(spike_counts == spike_counts.max()))) + 1
+            winning_digit = int(np.random.choice(np.flatnonzero(spike_counts == spike_counts.max()))) + 1
             solution[row, col] = winning_digit
 
     solution_states[run] = solution
@@ -110,8 +108,7 @@ while not valid:
 
     if not valid:
         ratio_correct = (np.sum(cells) + np.sum(rows) + np.sum(cols)) / 27
-        logging.info(f"{run*sim_time}ms, performance: "
-                     f"{np.round(ratio_correct, 3)}")
+        logging.info(f"{run*sim_time}ms, performance: " f"{np.round(ratio_correct, 3)}")
     else:
         logging.info(f"{run*sim_time}ms, valid solution found.")
         break
@@ -134,7 +131,7 @@ output = {}
 output["noise_rate"] = noise_rate
 output["sim_time"] = sim_time
 output["max_sim_time"] = max_sim_time
-output["solution_states"] = solution_states[:run+1]
+output["solution_states"] = solution_states[: run + 1]
 output["puzzle"] = puzzle
 
 with open(out_name, "wb") as f:

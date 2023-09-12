@@ -23,6 +23,9 @@
 Low-level API of PyNEST Module
 """
 
+# Since this is a low level module, we need some more trickery, thus:
+# pylint: disable=wrong-import-position
+
 import functools
 import inspect
 import keyword
@@ -33,13 +36,13 @@ import os
 # This is a workaround for readline import errors encountered with Anaconda
 # Python running on Ubuntu, when invoked from the terminal
 # "python -c 'import nest'"
-if 'linux' in sys.platform and 'Anaconda' in sys.version:
-    import readline
+if "linux" in sys.platform and "Anaconda" in sys.version:
+    import readline  # noqa: F401
 
 # This is a workaround to avoid segmentation faults when importing
 # scipy *after* nest. See https://github.com/numpy/numpy/issues/2521
 try:
-    import scipy
+    import scipy  # noqa: F401
 except ImportError:
     pass
 
@@ -53,9 +56,9 @@ from . import nestkernel_api as nestkernel  # noqa
 from .lib.hl_api_exceptions import NESTError, NESTErrors
 
 __all__ = [
-    'set_communicator',
+    "set_communicator",
     # 'take_array_index',
-    'KernelAttribute',
+    "KernelAttribute",
 ]
 
 
@@ -75,8 +78,7 @@ def set_communicator(comm):
     """
 
     if "mpi4py" not in sys.modules:
-        raise NESTError("set_communicator: "
-                                "mpi4py not loaded.")
+        raise NESTError("set_communicator: " "mpi4py not loaded.")
 
     # TODO-PYNEST-NG: set_communicator
     # engine.set_communicator(comm)
@@ -86,6 +88,7 @@ class KernelAttribute:
     """
     Descriptor that dispatches attribute access to the nest kernel.
     """
+
     def __init__(self, typehint, description, readonly=False, default=None, localonly=False):
         self._readonly = readonly
         self._localonly = localonly
@@ -155,7 +158,7 @@ def init(argv):
     # or other modules.
     nest_argv = argv[:]
 
-    quiet = "--quiet" in nest_argv or 'PYNEST_QUIET' in os.environ
+    quiet = "--quiet" in nest_argv or "PYNEST_QUIET" in os.environ
     if "--quiet" in nest_argv:
         nest_argv.remove("--quiet")
     if "--debug" in nest_argv:
@@ -164,14 +167,14 @@ def init(argv):
         nest_argv.remove("--sli-debug")
         nest_argv.append("--debug")
 
-    if 'PYNEST_DEBUG' in os.environ and '--debug' not in nest_argv:
+    if "PYNEST_DEBUG" in os.environ and "--debug" not in nest_argv:
         nest_argv.append("--debug")
 
     path = os.path.dirname(__file__)
     nestkernel.init(nest_argv)
 
     if not quiet:
-        print('NEST initialized successfully!')
+        print("NEST initialized successfully!")
 
     # Dirty hack to get tab-completion for models in IPython.
     try:
@@ -180,6 +183,7 @@ def init(argv):
         pass
     else:
         from .lib.hl_api_simulation import GetKernelStatus  # noqa
+
         keyword_lists = (
             "connection_rules",
             "node_models",
@@ -190,5 +194,6 @@ def init(argv):
         )
         for kwl in keyword_lists:
             keyword.kwlist += GetKernelStatus(kwl)
+
 
 init(sys.argv)

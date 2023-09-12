@@ -34,7 +34,7 @@ class StatusTestCase(unittest.TestCase):
         """JSON data of GetDefaults"""
 
         for model in nest.node_models + nest.synapse_models:
-            d_json = nest.GetDefaults(model, output='json')
+            d_json = nest.GetDefaults(model, output="json")
             self.assertIsInstance(d_json, str)
 
             d = nest.GetDefaults(model)
@@ -54,18 +54,18 @@ class StatusTestCase(unittest.TestCase):
         for model in nest.node_models:
             nest.ResetKernel()
             n = nest.Create(model)
-            d_json = n.get(output='json')
+            d_json = n.get(output="json")
             self.assertIsInstance(d_json, str)
 
         nest.ResetKernel()
         n = nest.NodeCollection()
-        d_json = n.get(output='json')
+        d_json = n.get(output="json")
         self.assertIsInstance(d_json, str)
-        self.assertEqual(d_json, '{}')
+        self.assertEqual(d_json, "{}")
 
 
 def suite():
-    suite = unittest.makeSuite(StatusTestCase, 'test')
+    suite = unittest.makeSuite(StatusTestCase, "test")
     return suite
 
 

@@ -89,7 +89,7 @@ ModelManager::initialize()
   }
 
   // Re-create the node model list from the clean prototypes
-  for ( index i = 0; i < builtin_node_models_.size(); ++i )
+  for ( size_t i = 0; i < builtin_node_models_.size(); ++i )
   {
     // set the number of threads for the number of sli pools
     builtin_node_models_[ i ]->set_threads();
@@ -103,7 +103,7 @@ ModelManager::initialize()
 
 #pragma omp parallel
   {
-    const thread t = kernel().vp_manager.get_thread_id();
+    const size_t t = kernel().vp_manager.get_thread_id();
     proxy_nodes_[ t ].clear();
 
     for ( auto&& builtin_node_model : builtin_node_models_ )
@@ -127,7 +127,7 @@ ModelManager::initialize()
       std::string name = connection_model->get_name();
       const synindex syn_id = connection_models_[ 0 ].size();
 
-      for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
+      for ( size_t t = 0; t < static_cast< size_t >( kernel().vp_manager.get_num_threads() ); ++t )
       {
         connection_models_[ t ].push_back( connection_model->clone( name, syn_id ) );
       }
@@ -184,7 +184,7 @@ ModelManager::get_status( dictionary& dict )
   dict[ names::max_num_syn_models ] = MAX_SYN_ID + 1;
 }
 
-index
+size_t
 ModelManager::copy_model( std::string old_name, std::string new_name, dictionary params )
 {
   if ( modeldict_.known( new_name ) or synapsedict_.known( new_name ) )
@@ -192,17 +192,17 @@ ModelManager::copy_model( std::string old_name, std::string new_name, dictionary
     throw NewModelNameExists( new_name );
   }
 
-  index new_id;
+  size_t new_id;
   if ( modeldict_.known( old_name ) )
   {
-    index old_id = modeldict_.get< index >( old_name );
+    size_t old_id = modeldict_.get< size_t >( old_name );
     new_id = copy_node_model_( old_id, new_name );
     set_node_defaults_( new_id, params );
   }
   else if ( synapsedict_.known( old_name ) )
   {
     synindex old_id = synapsedict_.get< synindex >( old_name );
-    new_id = copy_synapse_model_( old_id, new_name );
+    new_id = copy_connection_model_( old_id, new_name );
     set_synapse_defaults_( new_id, params );
   }
   else
@@ -213,10 +213,10 @@ ModelManager::copy_model( std::string old_name, std::string new_name, dictionary
   return new_id;
 }
 
-index
+size_t
 ModelManager::register_node_model_( Model* model )
 {
-  const index id = node_models_.size();
+  const size_t id = node_models_.size();
   const std::string name = model->get_name();
 
   model->set_model_id( id );
@@ -231,21 +231,21 @@ ModelManager::register_node_model_( Model* model )
 
 #pragma omp parallel
   {
-    const thread t = kernel().vp_manager.get_thread_id();
+    const size_t t = kernel().vp_manager.get_thread_id();
     proxy_nodes_[ t ].push_back( create_proxynode_( t, id ) );
   }
 
   return id;
 }
 
-index
-ModelManager::copy_node_model_( index old_id, std::string new_name )
+size_t
+ModelManager::copy_node_model_( size_t old_id, std::string new_name )
 {
   Model* old_model = get_node_model( old_id );
   old_model->deprecation_warning( "CopyModel" );
 
   Model* new_model = old_model->clone( new_name );
-  const index new_id = node_models_.size();
+  const size_t new_id = node_models_.size();
   new_model->set_model_id( new_id );
 
   node_models_.push_back( new_model );
@@ -253,15 +253,15 @@ ModelManager::copy_node_model_( index old_id, std::string new_name )
 
 #pragma omp parallel
   {
-    const thread t = kernel().vp_manager.get_thread_id();
+    const size_t t = kernel().vp_manager.get_thread_id();
     proxy_nodes_[ t ].push_back( create_proxynode_( t, new_id ) );
   }
 
   return new_id;
 }
 
-index
-ModelManager::copy_synapse_model_( index old_id, std::string new_name )
+size_t
+ModelManager::copy_connection_model_( size_t old_id, std::string new_name )
 {
   size_t new_id = connection_models_[ 0 ].size();
 
@@ -274,7 +274,7 @@ ModelManager::copy_synapse_model_( index old_id, std::string new_name )
   }
   assert( new_id != invalid_synindex );
 
-  for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
+  for ( size_t t = 0; t < static_cast< size_t >( kernel().vp_manager.get_num_threads() ); ++t )
   {
     connection_models_[ t ].push_back( get_connection_model( old_id ).clone( new_name, new_id ) );
   }
@@ -290,10 +290,10 @@ ModelManager::copy_synapse_model_( index old_id, std::string new_name )
 bool
 ModelManager::set_model_defaults( std::string name, dictionary params )
 {
-  index id;
+  size_t id;
   if ( modeldict_.known( name ) )
   {
-    id = modeldict_.get< index >( name );
+    id = modeldict_.get< size_t >( name );
     set_node_defaults_( id, params );
     return true;
   }
@@ -311,7 +311,7 @@ ModelManager::set_model_defaults( std::string name, dictionary params )
 
 
 void
-ModelManager::set_node_defaults_( index model_id, const dictionary& params )
+ModelManager::set_node_defaults_( size_t model_id, const dictionary& params )
 {
   params.init_access_flags();
 
@@ -322,7 +322,7 @@ ModelManager::set_node_defaults_( index model_id, const dictionary& params )
 }
 
 void
-ModelManager::set_synapse_defaults_( index model_id, const dictionary& params )
+ModelManager::set_synapse_defaults_( size_t model_id, const dictionary& params )
 {
   params.init_access_flags();
 
@@ -334,7 +334,7 @@ ModelManager::set_synapse_defaults_( index model_id, const dictionary& params )
 // thread, such as volume_transmitter.
 #pragma omp parallel
   {
-    thread tid = kernel().vp_manager.get_thread_id();
+    size_t tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -348,7 +348,7 @@ ModelManager::set_synapse_defaults_( index model_id, const dictionary& params )
     }
   }
 
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
     if ( exceptions_raised_.at( tid ).get() )
     {
@@ -360,20 +360,18 @@ ModelManager::set_synapse_defaults_( index model_id, const dictionary& params )
   model_defaults_modified_ = true;
 }
 
-// TODO: replace int with index and return value -1 with invalid_index, also
-// change all pertaining code
-int
+size_t
 ModelManager::get_node_model_id( const std::string model_name ) const
 {
   if ( modeldict_.known( model_name ) )
   {
-    return modeldict_.get< index >( model_name );
+    return modeldict_.get< size_t >( model_name );
   }
 
   throw UnknownModelName( model_name );
 }
 
-index
+size_t
 ModelManager::get_synapse_model_id( std::string model_name )
 {
   if ( synapsedict_.known( model_name ) )
@@ -392,7 +390,7 @@ ModelManager::get_connector_defaults( synindex syn_id ) const
 
   dictionary dict;
 
-  for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
+  for ( size_t t = 0; t < static_cast< size_t >( kernel().vp_manager.get_num_threads() ); ++t )
   {
     // each call adds to num_connections
     connection_models_[ t ][ syn_id ]->get_status( dict );
@@ -459,7 +457,7 @@ ModelManager::calibrate( const TimeConverter& tc )
   {
     model->calibrate_time( tc );
   }
-  for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
+  for ( size_t t = 0; t < static_cast< size_t >( kernel().vp_manager.get_num_threads() ); ++t )
   {
     for ( auto&& connection_model : connection_models_[ t ] )
     {
@@ -484,9 +482,9 @@ ModelManager::memory_info() const
 {
 
   std::cout.setf( std::ios::left );
-  std::vector< index > idx( node_models_.size() );
+  std::vector< size_t > idx( node_models_.size() );
 
-  for ( index i = 0; i < node_models_.size(); ++i )
+  for ( size_t i = 0; i < node_models_.size(); ++i )
   {
     idx[ i ] = i;
   }
@@ -500,7 +498,7 @@ ModelManager::memory_info() const
             << std::endl;
   std::cout << sep << std::endl;
 
-  for ( index i = 0; i < node_models_.size(); ++i )
+  for ( size_t i = 0; i < node_models_.size(); ++i )
   {
     Model* mod = node_models_[ idx[ i ] ];
     if ( mod->mem_capacity() != 0 )
@@ -529,7 +527,7 @@ ModelManager::register_connection_model_( ConnectorModel* cf )
   builtin_connection_models_.push_back( cf );
 
   const synindex syn_id = connection_models_[ 0 ].size();
-  for ( thread t = 0; t < static_cast< thread >( kernel().vp_manager.get_num_threads() ); ++t )
+  for ( size_t t = 0; t < static_cast< size_t >( kernel().vp_manager.get_num_threads() ); ++t )
   {
     connection_models_[ t ].push_back( cf->clone( cf->get_name(), syn_id ) );
   }
@@ -544,7 +542,7 @@ ModelManager::register_connection_model_( ConnectorModel* cf )
 }
 
 Node*
-ModelManager::create_proxynode_( thread t, int model_id )
+ModelManager::create_proxynode_( size_t t, int model_id )
 {
   Node* proxy = proxynode_model_->create( t );
   proxy->set_model_id( model_id );

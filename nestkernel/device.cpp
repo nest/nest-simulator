@@ -48,10 +48,9 @@ nest::Device::Parameters_::Parameters_( const Parameters_& p )
   , start_( p.start_ )
   , stop_( p.stop_ )
 {
-  /* The resolution of the simulation may have changed since the
-     original parameters were set. We thus must calibrate the copies
-     to ensure consistency of the time values.
-  */
+  // The resolution of the simulation may have changed since the
+  // original parameters were set. We thus must calibrate the copies
+  // to ensure consistency of the time values.
   origin_.calibrate();
   start_.calibrate();
   stop_.calibrate();
@@ -83,14 +82,13 @@ nest::Device::Parameters_::get( dictionary& d ) const
 void
 nest::Device::Parameters_::update_( const dictionary& d, const std::string& name, Time& value )
 {
-  /* We cannot update the Time values directly, since updateValue()
-         doesn't support Time objects. We thus read the value in ms into
-         a double first and then update the time object if a value was
-         given.
-
-         To be valid, time values must either be on the time grid,
-         or be infinite. Infinite values are handled gracefully.
-  */
+  // We cannot update the Time values directly, since updateValue()
+  // doesn't support Time objects. We thus read the value in ms into
+  // a double first and then update the time object if a value was
+  // given.
+  //
+  // To be valid, time values must either be on the time grid,
+  // or be infinite. Infinite values are handled gracefully.
 
   double val;
   if ( d.update_value( name, val ) )
@@ -158,8 +156,8 @@ nest::Device::pre_run_hook()
   // We do not need to recalibrate time objects, since they are
   // recalibrated on instance construction and resolution cannot
   // change after a single node instance has been created.
-
-  // by adding time objects, all overflows will be handled gracefully
+  //
+  //  by adding time objects, all overflows will be handled gracefully
   V_.t_min_ = ( P_.origin_ + P_.start_ ).get_steps();
   V_.t_max_ = ( P_.origin_ + P_.stop_ ).get_steps();
 }

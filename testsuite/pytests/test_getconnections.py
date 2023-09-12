@@ -58,7 +58,7 @@ class GetConnectionsTestCase(unittest.TestCase):
 
         c5 = nest.GetConnections(a, a)
         c5.set(d1)
-        self.assertEqual(c5.get('weight'), weights)
+        self.assertEqual(c5.get("weight"), weights)
 
         c6 = nest.GetConnections()
         self.assertEqual(c1, c6)
@@ -67,7 +67,7 @@ class GetConnectionsTestCase(unittest.TestCase):
         """GetConnections iterating models for target"""
         for model in nest.node_models:
             nest.ResetKernel()
-            alpha = nest.Create('iaf_psc_alpha')
+            alpha = nest.Create("iaf_psc_alpha")
             try:
                 other = nest.Create(model)
                 nest.Connect(alpha, other)
@@ -75,20 +75,21 @@ class GetConnectionsTestCase(unittest.TestCase):
                 # If we can't create a node with this model, or connect
                 # to a node of this model, we ignore it.
                 continue
-            for get_conn_args in [{'source': alpha, 'target': other},
-                                  {'source': alpha},
-                                  {'target': other}]:
+            for get_conn_args in [{"source": alpha, "target": other}, {"source": alpha}, {"target": other}]:
                 conns = nest.GetConnections(**get_conn_args)
                 self.assertEqual(
-                    len(conns), 1,
-                    'Failed to get connection with target model {} (specifying {})'.format(
-                        model, ', '.join(get_conn_args.keys())))
+                    len(conns),
+                    1,
+                    "Failed to get connection with target model {} (specifying {})".format(
+                        model, ", ".join(get_conn_args.keys())
+                    ),
+                )
 
     def test_GetConnectionsSourceModels(self):
         """GetConnections iterating models for source"""
         for model in nest.node_models:
             nest.ResetKernel()
-            alpha = nest.Create('iaf_psc_alpha')
+            alpha = nest.Create("iaf_psc_alpha")
             try:
                 other = nest.Create(model)
                 nest.Connect(other, alpha)
@@ -96,14 +97,15 @@ class GetConnectionsTestCase(unittest.TestCase):
                 # If we can't create a node with this model, or connect
                 # to a node of this model, we ignore it.
                 continue
-            for get_conn_args in [{'source': other, 'target': alpha},
-                                  {'source': other},
-                                  {'target': alpha}]:
+            for get_conn_args in [{"source": other, "target": alpha}, {"source": other}, {"target": alpha}]:
                 conns = nest.GetConnections(**get_conn_args)
                 self.assertEqual(
-                    len(conns), 1,
-                    'Failed to get connection with source model {} (specifying {})'.format(
-                        model, ', '.join(get_conn_args.keys())))
+                    len(conns),
+                    1,
+                    "Failed to get connection with source model {} (specifying {})".format(
+                        model, ", ".join(get_conn_args.keys())
+                    ),
+                )
 
     def test_GetConnectionsSynapseModel(self):
         """GetConnections using synapse_model as argument"""
@@ -114,22 +116,22 @@ class GetConnectionsTestCase(unittest.TestCase):
         for synapse_model in nest.synapse_models:
             nest.ResetKernel()
 
-            src = nest.Create('iaf_psc_alpha', num_src)
-            tgt = nest.Create('iaf_psc_alpha', num_tgt)
+            src = nest.Create("iaf_psc_alpha", num_src)
+            tgt = nest.Create("iaf_psc_alpha", num_tgt)
 
             # First create one connection with static_synapse
             nest.Connect(src[0], tgt[0])
 
             try:
                 # Connect with specified synapse
-                nest.Connect(src, tgt, syn_spec={'synapse_model': synapse_model})
+                nest.Connect(src, tgt, syn_spec={"synapse_model": synapse_model})
             except nest.NESTError:
                 # If we can't connect iaf_psc_alpha with the given synapse_model, we ignore it.
                 continue
 
             reference_list = [synapse_model] * num_src * num_tgt
-            if synapse_model == 'static_synapse':
-                reference_list += ['static_synapse']
+            if synapse_model == "static_synapse":
+                reference_list += ["static_synapse"]
 
             conns = nest.GetConnections(synapse_model=synapse_model)
             self.assertEqual(reference_list, conns.synapse_model)
@@ -154,15 +156,15 @@ class GetConnectionsTestCase(unittest.TestCase):
         for synapse_model in [s for s in nest.synapse_models if s.endswith("_lbl")]:
             nest.ResetKernel()
 
-            src = nest.Create('iaf_psc_alpha', num_src)
-            tgt = nest.Create('iaf_psc_alpha', num_tgt)
+            src = nest.Create("iaf_psc_alpha", num_src)
+            tgt = nest.Create("iaf_psc_alpha", num_tgt)
 
             # First create one connection with static_synapse
             nest.Connect(src[0], tgt[0])
 
             try:
                 # Connect with specified synapse
-                nest.Connect(src, tgt, syn_spec={'synapse_model': synapse_model, "synapse_label": label})
+                nest.Connect(src, tgt, syn_spec={"synapse_model": synapse_model, "synapse_label": label})
             except nest.NESTError:
                 # If we can't connect iaf_psc_alpha with the given synapse_model, we ignore it.
                 continue
@@ -189,8 +191,7 @@ class GetConnectionsTestCase(unittest.TestCase):
 
 
 def suite():
-
-    suite = unittest.makeSuite(GetConnectionsTestCase, 'test')
+    suite = unittest.makeSuite(GetConnectionsTestCase, "test")
     return suite
 
 

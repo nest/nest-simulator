@@ -106,8 +106,8 @@
 #include "stdp_nn_symm_synapse.h"
 #include "stdp_pl_synapse_hom.h"
 #include "stdp_synapse.h"
-#include "stdp_synapse_facetshw_hom.h"
-#include "stdp_synapse_facetshw_hom_impl.h"
+#include "stdp_facetshw_synapse_hom.h"
+#include "stdp_facetshw_synapse_hom_impl.h"
 #include "stdp_synapse_hom.h"
 #include "stdp_triplet_synapse.h"
 #include "tsodyks2_synapse.h"
@@ -224,10 +224,10 @@ init_nest( int* argc, char** argv[] )
   kernel().model_manager.register_connection_model< vogels_sprekeler_synapse >( "vogels_sprekeler_synapse" );
 
   // register secondary connection models
-  kernel().model_manager.register_connection_model< GapJunction >( "gap_junction" );
-  kernel().model_manager.register_connection_model< RateConnectionInstantaneous >( "rate_connection_instantaneous" );
-  kernel().model_manager.register_connection_model< RateConnectionDelayed >( "rate_connection_delayed" );
-  kernel().model_manager.register_connection_model< DiffusionConnection >( "diffusion_connection" );
+  kernel().model_manager.register_connection_model< gap_junction >( "gap_junction" );
+  kernel().model_manager.register_connection_model< rate_connection_instantaneous >( "rate_connection_instantaneous" );
+  kernel().model_manager.register_connection_model< rate_connection_delayed >( "rate_connection_delayed" );
+  kernel().model_manager.register_connection_model< diffusion_connection >( "diffusion_connection" );
 
   // Add connection rules
   kernel().connection_manager.register_conn_builder< OneToOneBuilder >( "one_to_one" );
@@ -297,7 +297,7 @@ set_verbosity( severity_t s )
 }
 
 void
-enable_dryrun_mode( const index n_procs )
+enable_dryrun_mode( const size_t n_procs )
 {
   kernel().mpi_manager.set_num_processes( n_procs );
 }
@@ -524,13 +524,13 @@ get_connection_status( const std::deque< ConnectionID >& conns )
 }
 
 void
-set_node_status( const index node_id, const dictionary& dict )
+set_node_status( const size_t node_id, const dictionary& dict )
 {
   kernel().node_manager.set_status( node_id, dict );
 }
 
 dictionary
-get_node_status( const index node_id )
+get_node_status( const size_t node_id )
 {
   return kernel().node_manager.get_status( node_id );
 }
@@ -579,14 +579,14 @@ slice_nc( const NodeCollectionPTR nc, long start, long stop, long step )
 }
 
 NodeCollectionPTR
-create( const std::string model_name, const index n_nodes )
+create( const std::string model_name, const size_t n_nodes )
 {
   if ( n_nodes == 0 )
   {
     throw RangeCheck();
   }
 
-  const index model_id = kernel().model_manager.get_node_model_id( model_name );
+  const size_t model_id = kernel().model_manager.get_node_model_id( model_name );
   return kernel().node_manager.add_node( model_id, n_nodes );
 }
 
@@ -604,7 +604,7 @@ create_spatial( const dictionary& layer_dict )
 
 
 NodeCollectionPTR
-make_nodecollection( const std::vector< index > node_ids )
+make_nodecollection( const std::vector< size_t > node_ids )
 {
   return NodeCollection::create( node_ids );
 }
@@ -630,7 +630,7 @@ contains( const NodeCollectionPTR nc, const size_t node_id )
 long
 find( const NodeCollectionPTR nc, size_t node_id )
 {
-  return nc->find( node_id );
+  return nc->get_lid( node_id );
 }
 
 dictionary
@@ -774,7 +774,7 @@ get_model_defaults( const std::string& component )
 {
   try
   {
-    const index model_id = kernel().model_manager.get_node_model_id( component );
+    const size_t model_id = kernel().model_manager.get_node_model_id( component );
     return kernel().model_manager.get_node_model( model_id )->get_status();
   }
   catch ( UnknownModelName& )
@@ -784,9 +784,8 @@ get_model_defaults( const std::string& component )
 
   try
   {
-    const index synapse_model_id = kernel().model_manager.get_synapse_model_id( component );
-    const auto ret = kernel().model_manager.get_connector_defaults( synapse_model_id );
-    return ret;
+    const size_t synapse_model_id = kernel().model_manager.get_synapse_model_id( component );
+    return kernel().model_manager.get_connector_defaults( synapse_model_id );
   }
   catch ( UnknownSynapseType& )
   {
@@ -928,7 +927,7 @@ NodeCollectionPTR
 node_collection_array_index( NodeCollectionPTR nc, const long* array, unsigned long n )
 {
   assert( nc->size() >= n );
-  std::vector< index > node_ids;
+  std::vector< size_t > node_ids;
   node_ids.reserve( n );
 
   for ( auto node_ptr = array; node_ptr != array + n; ++node_ptr )
@@ -942,7 +941,7 @@ NodeCollectionPTR
 node_collection_array_index( NodeCollectionPTR nc, const bool* array, unsigned long n )
 {
   assert( nc->size() == n );
-  std::vector< index > node_ids;
+  std::vector< size_t > node_ids;
   node_ids.reserve( n );
 
   auto nc_it = nc->begin();

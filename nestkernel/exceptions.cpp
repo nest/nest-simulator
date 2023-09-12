@@ -29,6 +29,11 @@
 #include "config.h"
 
 
+// Include MPI for MPI error string
+#ifdef HAVE_MPI
+#include <mpi.h>
+#endif
+
 std::string
 nest::UnknownModelName::compose_msg_( const std::string& model_name ) const
 {
@@ -289,6 +294,108 @@ nest::TimeMultipleRequired::what() const noexcept
   return msg.str().c_str();
 }
 
+#ifdef HAVE_MUSIC
+
+const char*
+nest::MUSICPortUnconnected::what() const noexcept
+{
+  std::ostringstream msg;
+  msg << "Cannot use instance of model " << model_ << " because the MUSIC port " << portname_ << " is unconnected.";
+  return msg.str().c_str();
+}
+
+const char*
+nest::MUSICPortHasNoWidth::what() const noexcept
+{
+  std::ostringstream msg;
+  msg << "Cannot use instance of model " << model_ << " because the MUSIC port " << portname_
+      << " has no width specified in configuration file.";
+  return msg.str().c_str();
+}
+
+const char*
+nest::MUSICPortAlreadyPublished::what() const noexcept
+{
+  std::ostringstream msg;
+  msg << "The instance of model " << model_ << " cannot change the MUSIC port / establish connections " << portname_
+      << " since it is already published.";
+  return msg.str().c_str();
+}
+
+const char*
+nest::MUSICSimulationHasRun::what() const noexcept
+{
+  std::ostringstream msg;
+  msg << "The instance of model " << model_ << " won't work, since the simulation has already been running";
+  return msg.str().c_str();
+}
+
+const char*
+nest::MUSICChannelUnknown::what() const noexcept
+{
+  std::ostringstream msg;
+  msg << "The port " << portname_ << " cannot be mapped in " << model_ << " because the channel " << channel_
+      << " does not exists.";
+  return msg.str().c_str();
+}
+
+const char*
+nest::MUSICPortUnknown::what() const noexcept
+{
+  std::ostringstream msg;
+  msg << "The port " << portname_ << " does not exist.";
+  return msg.str().c_str();
+}
+
+const char*
+nest::MUSICChannelAlreadyMapped::what() const noexcept
+{
+  std::ostringstream msg;
+  msg << "The channel " << channel_ << " of port " << portname_ << " has already be mapped to another proxy in "
+      << model_;
+  return msg.str().c_str();
+}
+
+#endif
+
+#ifdef HAVE_MPI
+
+const char*
+nest::MPIPortsFileUnknown::what() const noexcept
+{
+  std::ostringstream msg;
+  msg << "The node with ID " << node_id_ << " requires a label,"
+      << " which specifies the folder with files containing the MPI ports";
+  return msg.str().c_str();
+}
+
+const char*
+nest::MPIPortsFileMissing::what() const noexcept
+{
+  std::ostringstream msg;
+  msg << "The node with ID " << node_id_ << " expects a file with the MPI address at location " << path_
+      << ". The file does not seem to exist.";
+  return msg.str().c_str();
+}
+
+const char*
+nest::MPIErrorCode::what() const noexcept
+{
+
+  char errmsg[ 256 ];
+  int len;
+
+  MPI_Error_string( error_code_, errmsg, &len );
+  std::string error;
+  error.assign( errmsg, len );
+
+  std::ostringstream msg;
+  msg << "MPI Error: " << error;
+  return msg.str().c_str();
+}
+
+#endif
+
 const char*
 nest::GSLSolverFailure::what() const noexcept
 {
@@ -353,80 +460,6 @@ nest::InternalError::what() const noexcept
 {
   return msg_.c_str();
 }
-
-#ifdef HAVE_MUSIC
-const char*
-nest::MUSICPortUnconnected::what() const noexcept
-{
-  std::ostringstream msg;
-  msg << "Cannot use instance of model " << model_ << " because the MUSIC port " << portname_ << " is unconnected.";
-  return msg.str().c_str();
-}
-
-const char*
-nest::MUSICPortHasNoWidth::what() const noexcept
-{
-  std::ostringstream msg;
-  msg << "Cannot use instance of model " << model_ << " because the MUSIC port " << portname_
-      << " has no width specified in configuration file.";
-  return msg.str().c_str();
-}
-
-const char*
-nest::MUSICPortAlreadyPublished::what() const noexcept
-{
-  std::ostringstream msg;
-  msg << "The instance of model " << model_ << " cannot change the MUSIC port / establish connections " << portname_
-      << " since it is already published.";
-  return msg.str().c_str();
-}
-
-const char*
-nest::MUSICSimulationHasRun::what() const noexcept
-{
-  std::ostringstream msg;
-  msg << "The instance of model " << model_ << " won't work, since the simulation has already been running";
-  return msg.str().c_str();
-}
-
-const char*
-nest::MUSICChannelUnknown::what() const noexcept
-{
-  std::ostringstream msg;
-  msg << "The port " << portname_ << " cannot be mapped in " << model_ << " because the channel " << channel_
-      << " does not exists.";
-  return msg.str().c_str();
-}
-
-const char*
-nest::MUSICPortUnknown::what() const noexcept
-{
-  std::ostringstream msg;
-  msg << "The port " << portname_ << " does not exist.";
-  return msg.str().c_str();
-}
-
-
-const char*
-nest::MUSICChannelAlreadyMapped::what() const noexcept
-{
-  std::ostringstream msg;
-  msg << "The channel " << channel_ << " of port " << portname_ << " has already be mapped to another proxy in "
-      << model_;
-  return msg.str().c_str();
-}
-#endif
-
-#ifdef HAVE_MPI
-const char*
-nest::MPIPortsFileUnknown::what() const noexcept
-{
-  std::ostringstream msg;
-  msg << "The node with ID " << node_id_ << " requires a label,"
-      << " which specifies the folder with files containing the MPI ports";
-  return msg.str().c_str();
-}
-#endif
 
 const char*
 nest::UnmatchedSteps::what() const noexcept

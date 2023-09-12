@@ -39,7 +39,7 @@ class TestCopyModel:
 
         nest.ResetKernel()
 
-    @pytest.mark.parametrize('org_model', nest.node_models)
+    @pytest.mark.parametrize("org_model", nest.node_models)
     def test_copy_node_models(self, org_model):
         """
         Test that all built-in node models can be copied.
@@ -56,7 +56,7 @@ class TestCopyModel:
         assert new_node.model_id > org_node.model_id
         assert new_node.model == new_model
 
-    @pytest.mark.parametrize('org_model', nest.synapse_models)
+    @pytest.mark.parametrize("org_model", nest.synapse_models)
     def test_copy_synapse_models(self, org_model):
         """
         Test that all built-in synapse models can be copied.
@@ -68,52 +68,49 @@ class TestCopyModel:
         new_model = f"{org_model}_copy"
         nest.CopyModel(org_model, new_model)
 
-        assert (nest.GetDefaults(new_model)['synapse_modelid']
-                > nest.GetDefaults(org_model)['synapse_modelid'])
-        assert nest.GetDefaults(new_model)['synapse_model'] == new_model
+        assert nest.GetDefaults(new_model)["synapse_modelid"] > nest.GetDefaults(org_model)["synapse_modelid"]
+        assert nest.GetDefaults(new_model)["synapse_model"] == new_model
 
     def test_set_param_on_copy_neuron(self):
         """
         Test that parameter is correctly set when neuron model is copied.
         """
 
-        test_params = {'V_m': 10.0, 'tau_m': 100.0}
-        nest.CopyModel('iaf_psc_alpha', 'new_neuron', test_params)
-        n = nest.Create('new_neuron')
+        test_params = {"V_m": 10.0, "tau_m": 100.0}
+        nest.CopyModel("iaf_psc_alpha", "new_neuron", test_params)
+        n = nest.Create("new_neuron")
         for k, v in test_params.items():
             assert n.get(k) == pytest.approx(v)
 
     def test_set_param_on_copy_synapse(self):
         """
-        Test that parameter is correctly set when neuron model is copied.
+        Test that parameter is correctly set when synapse model is copied.
         """
 
-        test_params = {'weight': 10.0, 'delay': 2.0, 'alpha': 99.0}
-        nest.CopyModel('stdp_synapse', 'new_synapse', test_params)
-        n = nest.Create('iaf_psc_alpha')
-        nest.Connect(n, n, syn_spec='new_synapse')
+        test_params = {"weight": 10.0, "delay": 2.0, "alpha": 99.0}
+        nest.CopyModel("stdp_synapse", "new_synapse", test_params)
+        n = nest.Create("iaf_psc_alpha")
+        nest.Connect(n, n, syn_spec="new_synapse")
         conn = nest.GetConnections()
         for k, v in test_params.items():
             assert conn.get(k) == pytest.approx(v)
 
-    @pytest.mark.parametrize('org_model', [nest.node_models[0],
-                                           nest.synapse_models[0]])
+    @pytest.mark.parametrize("org_model", [nest.node_models[0], nest.synapse_models[0]])
     def test_cannot_copy_to_existing_model(self, org_model):
         """
         Test that we cannot copy to an existing model.
         """
 
         try:
-            org_name = nest.GetDefaults(org_model)['model']
+            org_name = nest.GetDefaults(org_model)["model"]
         except KeyError:
-            org_name = nest.GetDefaults(org_model)['synapse_model']
+            org_name = nest.GetDefaults(org_model)["synapse_model"]
 
         # TODO-PYNEST-NG
-        with pytest.raises(nest.NESTError, match='is the name of an existing model and cannot be'):
+        with pytest.raises(nest.NESTError, match="is the name of an existing model and cannot be"):
             nest.CopyModel(org_model, org_model)
 
-    @pytest.mark.parametrize('org_model', [nest.node_models[0],
-                                           nest.synapse_models[0]])
+    @pytest.mark.parametrize("org_model", [nest.node_models[0], nest.synapse_models[0]])
     def test_cannot_copy_twice(self, org_model):
         """
         Test that we cannot copy twice to the same name.
@@ -122,5 +119,5 @@ class TestCopyModel:
         new_model = f"{org_model}_copy"
         nest.CopyModel(org_model, new_model)
         # TODO-PYNEST-NG
-        with pytest.raises(nest.NESTError, match='is the name of an existing model and cannot be'):
+        with pytest.raises(nest.NESTError, match="is the name of an existing model and cannot be"):
             nest.CopyModel(org_model, new_model)

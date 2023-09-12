@@ -29,18 +29,18 @@ def reset():
     nest.ResetKernel()
 
 
-@pytest.mark.parametrize("model", [m for m in nest.node_models if 'V_m' in nest.GetDefaults(m)])
+@pytest.mark.parametrize("model", [m for m in nest.node_models if "V_m" in nest.GetDefaults(m)])
 def test_set_vm(model):
     nest.set_verbosity(nest.verbosity.M_FATAL)
-    warnings.simplefilter('ignore')  # Suppress warnings
+    warnings.simplefilter("ignore")  # Suppress warnings
     n = nest.Create(model)
 
     try:
         n.V_m = 0.5
     except nest.NESTError as e:
-        assert False, f'Setting a V_m with a constant raises {e}'
+        assert False, f"Setting a V_m with a constant raises {e}"
 
     try:
-        n.V_m = nest.random.uniform(0., 1.)
+        n.V_m = nest.random.uniform(0.0, 1.0)
     except nest.NESTError as e:
-        assert False, f'Setting a V_m with a parameter raises {e}'
+        assert False, f"Setting a V_m with a parameter raises {e}"

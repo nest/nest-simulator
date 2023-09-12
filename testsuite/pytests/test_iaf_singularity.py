@@ -39,7 +39,7 @@ class TestIAFSingularity:
 
     @pytest.mark.parametrize("model", ["iaf_psc_exp", "iaf_psc_alpha"])
     @pytest.mark.parametrize("h", [0.001, 0.1])
-    @pytest.mark.parametrize("tau_m", [1., 10., 100.])
+    @pytest.mark.parametrize("tau_m", [1.0, 10.0, 100.0])
     def test_smooth_response(self, model, h, tau_m):
         """
         Drive single neuron with single spike through excitatory and inhibitory synapse.
@@ -55,22 +55,20 @@ class TestIAFSingularity:
         nest.ResetKernel()
         nest.resolution = h
 
-        neurons = nest.Create(model, n=len(tau_syn),
-                              params={"tau_m": tau_m,
-                                      "tau_syn_ex": tau_syn,
-                                      "tau_syn_in": tau_syn,
-                                      "V_th": np.inf})
+        neurons = nest.Create(
+            model, n=len(tau_syn), params={"tau_m": tau_m, "tau_syn_ex": tau_syn, "tau_syn_in": tau_syn, "V_th": np.inf}
+        )
 
-        spike_gen = nest.Create('spike_generator', params={'spike_times': [1.]})
-        vm = nest.Create('voltmeter', params={'interval': h})
+        spike_gen = nest.Create("spike_generator", params={"spike_times": [1.0]})
+        vm = nest.Create("voltmeter", params={"interval": h})
 
-        nest.Connect(spike_gen, neurons, syn_spec={'weight':  1000., 'delay': 1.0})
-        nest.Connect(spike_gen, neurons, syn_spec={'weight': -1000., 'delay': 2.0})
+        nest.Connect(spike_gen, neurons, syn_spec={"weight": 1000.0, "delay": 1.0})
+        nest.Connect(spike_gen, neurons, syn_spec={"weight": -1000.0, "delay": 2.0})
         nest.Connect(vm, neurons)
 
         nest.Simulate(10 * tau_m)
 
-        d = pd.DataFrame.from_records(vm.events).set_index(['times', 'senders'])
+        d = pd.DataFrame.from_records(vm.events).set_index(["times", "senders"])
         assert not any(d.V_m.isnull()), "Voltmeter returned NaN"
 
         V_range = d.V_m.max() - d.V_m.min()

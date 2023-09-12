@@ -82,14 +82,14 @@ get_position( NodeCollectionPTR layer_nc )
 {
   AbstractLayerPTR layer = get_layer( layer_nc );
   NodeCollectionMetadataPTR meta = layer_nc->get_metadata();
-  index first_node_id = meta->get_first_node_id();
+  size_t first_node_id = meta->get_first_node_id();
 
   std::vector< std::vector< double > > result;
   result.reserve( layer_nc->size() );
 
   for ( NodeCollection::const_iterator it = layer_nc->begin(); it < layer_nc->end(); ++it )
   {
-    index node_id = ( *it ).node_id;
+    size_t node_id = ( *it ).node_id;
 
     if ( not kernel().node_manager.is_local_node_id( node_id ) )
     {
@@ -106,7 +106,7 @@ get_position( NodeCollectionPTR layer_nc )
 }
 
 std::vector< double >
-get_position( const index node_id )
+get_position( const size_t node_id )
 {
   Node* node = kernel().node_manager.get_node_or_proxy( node_id );
 
@@ -126,7 +126,7 @@ get_position( const index node_id )
   }
 
   AbstractLayerPTR spatial_nc = get_layer( nc );
-  index first_node_id = meta->get_first_node_id();
+  size_t first_node_id = meta->get_first_node_id();
 
   auto pos_vec = spatial_nc->get_position_vector( node_id - first_node_id );
 
@@ -140,17 +140,16 @@ displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
 
   AbstractLayerPTR layer_from = get_layer( layer_from_nc );
   NodeCollectionMetadataPTR meta = layer_from_nc->get_metadata();
-  index first_node_id = meta->get_first_node_id();
+  size_t first_node_id = meta->get_first_node_id();
 
   int counter = 0;
   std::vector< std::vector< double > > result;
 
-  // If layer_from has size equal to one, but layer_to do not, we want the
-  // displacement between every node in layer_to against the one in layer_from.
-  // Likewise if layer_to has size 1 and layer_from do not.
+  // If layer_from has size equal to one, but layer_to do not, we want the displacement between every node
+  // in layer_to against the one in layer_from. Likewise if layer_to has size 1 and layer_from do not.
   if ( layer_from_nc->size() == 1 )
   {
-    index node_id = layer_from_nc->operator[]( 0 );
+    size_t node_id = layer_from_nc->operator[]( 0 );
     if ( not kernel().node_manager.is_local_node_id( node_id ) )
     {
       throw KernelException( "Displacement is currently implemented for local nodes only." );
@@ -167,7 +166,7 @@ displacement( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
   {
     for ( NodeCollection::const_iterator it = layer_from_nc->begin(); it < layer_from_nc->end(); ++it )
     {
-      index node_id = ( *it ).node_id;
+      size_t node_id = ( *it ).node_id;
       if ( not kernel().node_manager.is_local_node_id( node_id ) )
       {
         throw KernelException( "Displacement is currently implemented for local nodes only." );
@@ -194,13 +193,13 @@ displacement( NodeCollectionPTR layer_nc, const std::vector< std::vector< double
 {
   AbstractLayerPTR layer = get_layer( layer_nc );
   NodeCollectionMetadataPTR meta = layer_nc->get_metadata();
-  index first_node_id = meta->get_first_node_id();
+  size_t first_node_id = meta->get_first_node_id();
 
   int counter = 0;
   std::vector< std::vector< double > > result;
   for ( NodeCollection::const_iterator it = layer_nc->begin(); it != layer_nc->end(); ++it )
   {
-    index node_id = ( *it ).node_id;
+    size_t node_id = ( *it ).node_id;
     if ( not kernel().node_manager.is_local_node_id( node_id ) )
     {
       throw KernelException( "Displacement is currently implemented for local nodes only." );
@@ -233,17 +232,16 @@ distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
 
   AbstractLayerPTR layer_from = get_layer( layer_from_nc );
   NodeCollectionMetadataPTR meta = layer_from_nc->get_metadata();
-  index first_node_id = meta->get_first_node_id();
+  size_t first_node_id = meta->get_first_node_id();
 
   int counter = 0;
   std::vector< double > result;
 
-  // If layer_from has size equal to one, but layer_to do not, we want the
-  // distance between every node in layer_to against the one in layer_from.
-  // Likewise if layer_to has size 1 and layer_from do not.
+  // If layer_from has size equal to one, but layer_to do not, we want the distance between every node
+  // in layer_to against the one in layer_from. Likewise if layer_to has size 1 and layer_from do not.
   if ( layer_from_nc->size() == 1 )
   {
-    index node_id = layer_from_nc->operator[]( 0 );
+    size_t node_id = layer_from_nc->operator[]( 0 );
     if ( not kernel().node_manager.is_local_node_id( node_id ) )
     {
       throw KernelException( "Distance is currently implemented for local nodes only." );
@@ -260,7 +258,7 @@ distance( NodeCollectionPTR layer_to_nc, NodeCollectionPTR layer_from_nc )
   {
     for ( NodeCollection::const_iterator it = layer_from_nc->begin(); it < layer_from_nc->end(); ++it )
     {
-      index node_id = ( *it ).node_id;
+      size_t node_id = ( *it ).node_id;
       if ( not kernel().node_manager.is_local_node_id( node_id ) )
       {
         throw KernelException( "Distance is currently implemented for local nodes only." );
@@ -289,13 +287,13 @@ distance( NodeCollectionPTR layer_nc, const std::vector< std::vector< double > >
 {
   AbstractLayerPTR layer = get_layer( layer_nc );
   NodeCollectionMetadataPTR meta = layer_nc->get_metadata();
-  index first_node_id = meta->get_first_node_id();
+  size_t first_node_id = meta->get_first_node_id();
 
   int counter = 0;
   std::vector< double > result;
   for ( NodeCollection::const_iterator it = layer_nc->begin(); it < layer_nc->end(); ++it )
   {
-    index node_id = ( *it ).node_id;
+    size_t node_id = ( *it ).node_id;
     if ( not kernel().node_manager.is_local_node_id( node_id ) )
     {
       throw KernelException( "Distance is currently implemented for local nodes only." );
@@ -327,10 +325,10 @@ distance( const std::vector< ConnectionID >& conns )
 
   for ( auto& conn_id : conns )
   {
-    index src = conn_id.get_source_node_id();
+    size_t src = conn_id.get_source_node_id();
     auto src_position = get_position( src );
 
-    index trgt = conn_id.get_target_node_id();
+    size_t trgt = conn_id.get_target_node_id();
 
     if ( not kernel().node_manager.is_local_node_id( trgt ) )
     {
@@ -349,7 +347,7 @@ distance( const std::vector< ConnectionID >& conns )
     {
       AbstractLayerPTR spatial_trgt_nc = get_layer( trgt_nc );
       NodeCollectionMetadataPTR meta = trgt_nc->get_metadata();
-      index first_trgt_node_id = meta->get_first_node_id();
+      size_t first_trgt_node_id = meta->get_first_node_id();
 
       dist = spatial_trgt_nc->compute_distance( src_position, trgt - first_trgt_node_id );
     }
@@ -452,7 +450,7 @@ create_mask( const dictionary& mask_dict )
 NodeCollectionPTR
 select_nodes_by_mask( const NodeCollectionPTR layer_nc, const std::vector< double >& anchor, const MaskPTR mask )
 {
-  std::vector< index > mask_node_ids;
+  std::vector< size_t > mask_node_ids;
 
   const auto dim = anchor.size();
 
@@ -473,7 +471,7 @@ select_nodes_by_mask( const NodeCollectionPTR layer_nc, const std::vector< doubl
 
     auto ml = MaskedLayer< 2 >( *layer, mask, false, layer_nc );
 
-    for ( Ntree< 2, index >::masked_iterator it = ml.begin( Position< 2 >( anchor[ 0 ], anchor[ 1 ] ) ); it != ml.end();
+    for ( Ntree< 2, size_t >::masked_iterator it = ml.begin( Position< 2 >( anchor[ 0 ], anchor[ 1 ] ) ); it != ml.end();
           ++it )
     {
       mask_node_ids.push_back( it->second );
@@ -489,7 +487,7 @@ select_nodes_by_mask( const NodeCollectionPTR layer_nc, const std::vector< doubl
 
     auto ml = MaskedLayer< 3 >( *layer, mask, false, layer_nc );
 
-    for ( Ntree< 3, index >::masked_iterator it = ml.begin( Position< 3 >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );
+    for ( Ntree< 3, size_t >::masked_iterator it = ml.begin( Position< 3 >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );
           it != ml.end();
           ++it )
     {

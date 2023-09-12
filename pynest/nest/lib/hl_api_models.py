@@ -29,11 +29,11 @@ from .hl_api_helper import deprecated, is_iterable, model_deprecation_warning
 from .hl_api_types import to_json
 
 __all__ = [
-    'ConnectionRules',
-    'CopyModel',
-    'GetDefaults',
-    'Models',
-    'SetDefaults',
+    "ConnectionRules",
+    "CopyModel",
+    "GetDefaults",
+    "Models",
+    "SetDefaults",
 ]
 
 
@@ -75,10 +75,10 @@ def Models(mtype="all", sel=None):
     models = []
 
     if mtype in ("all", "nodes"):
-        models += GetKernelStatus('node_models')
+        models += GetKernelStatus("node_models")
 
     if mtype in ("all", "synapses"):
-        models += GetKernelStatus('synapse_models')
+        models += GetKernelStatus("synapse_models")
 
     if sel is not None:
         models = [x for x in models if sel in x]
@@ -99,7 +99,7 @@ def ConnectionRules():
 
     """
 
-    return tuple(sorted(GetKernelStatus('connection_rules')))
+    return tuple(sorted(GetKernelStatus("connection_rules")))
 
 
 def SetDefaults(model, params, val=None):
@@ -126,7 +126,7 @@ def SetDefaults(model, params, val=None):
     nestkernel.llapi_set_defaults(model, params)
 
 
-def GetDefaults(model, keys=None, output=''):
+def GetDefaults(model, keys=None, output=""):
     """Return defaults of the given model or recording backend.
 
     Parameters
@@ -167,7 +167,7 @@ def GetDefaults(model, keys=None, output=''):
         else:
             result = result[keys]
 
-    if output == 'json':
+    if output == "json":
         result = to_json(result)
 
     return result

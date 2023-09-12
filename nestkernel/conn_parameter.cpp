@@ -70,7 +70,7 @@ nest::ParameterConnParameterWrapper::ParameterConnParameterWrapper( ParameterPTR
 }
 
 double
-nest::ParameterConnParameterWrapper::value_double( thread, RngPtr rng, index, Node* target ) const
+nest::ParameterConnParameterWrapper::value_double( size_t, RngPtr rng, size_t, Node* target ) const
 {
   return parameter_->value( rng, target );
 }

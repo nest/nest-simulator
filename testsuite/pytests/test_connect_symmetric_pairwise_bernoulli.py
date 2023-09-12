@@ -41,21 +41,13 @@ class TestSymmetricPairwiseBernoulli(connect_test_base.ConnectTestBase):
     # specify connection pattern and specific params
     rule = "symmetric_pairwise_bernoulli"
     p = 0.5
-    conn_dict = {
-        "rule": rule,
-        "p": p,
-        "allow_multapses": True,
-        "allow_autapses": False,
-        "make_symmetric": True,
-    }
+    conn_dict = {"rule": rule, "p": p, "allow_multapses": True, "allow_autapses": False, "make_symmetric": True}
     # Critical values and number of iterations of two level test
     stat_dict = {"alpha2": 0.05, "n_runs": 300}
 
     def testStatistics(self):
         for fan in ["in", "out"]:
-            expected = connect_test_base.get_expected_degrees_bernoulli(
-                self.p, fan, self.N_s, self.N_t
-            )
+            expected = connect_test_base.get_expected_degrees_bernoulli(self.p, fan, self.N_s, self.N_t)
 
             pvalues = []
             for i in range(self.stat_dict["n_runs"]):
@@ -66,9 +58,7 @@ class TestSymmetricPairwiseBernoulli(connect_test_base.ConnectTestBase):
                 # degrees = self.comm.gather(degrees, root=0)
                 # if self.rank == 0:
                 if degrees is not None:
-                    chi, p = connect_test_base.chi_squared_check(
-                        degrees, expected, self.rule
-                    )
+                    chi, p = connect_test_base.chi_squared_check(degrees, expected, self.rule)
                     pvalues.append(p)
                 connect_test_base.mpi_barrier()
             if degrees is not None:

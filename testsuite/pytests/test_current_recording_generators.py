@@ -42,7 +42,7 @@ class CurrentRecordingGeneratorTestCase(unittest.TestCase):
         nest.ResetKernel()
 
         # setting up the neuron and the generators
-        self.neuron = nest.Create('iaf_psc_alpha', params={'V_reset': -65.0})
+        self.neuron = nest.Create("iaf_psc_alpha", params={"V_reset": -65.0})
 
         self.t_origin = 5.0
         self.t_start = 2.5
@@ -51,80 +51,89 @@ class CurrentRecordingGeneratorTestCase(unittest.TestCase):
         self.i_amp = 500.0
         self.i_off = 50.0
 
-        self.ac = nest.Create('ac_generator', 1,
-                              params={'amplitude': self.i_amp,
-                                      'offset': self.i_off,
-                                      'frequency': 50.0, 'phase': 45.0,
-                                      'origin': self.t_origin,
-                                      'start': self.t_start,
-                                      'stop': self.t_stop})
+        self.ac = nest.Create(
+            "ac_generator",
+            1,
+            params={
+                "amplitude": self.i_amp,
+                "offset": self.i_off,
+                "frequency": 50.0,
+                "phase": 45.0,
+                "origin": self.t_origin,
+                "start": self.t_start,
+                "stop": self.t_stop,
+            },
+        )
         nest.Connect(self.ac, self.neuron)
 
-        self.dc = nest.Create('dc_generator', 1,
-                              params={'amplitude': self.i_amp,
-                                      'origin': self.t_origin,
-                                      'start': self.t_start,
-                                      'stop': self.t_stop})
+        self.dc = nest.Create(
+            "dc_generator",
+            1,
+            params={"amplitude": self.i_amp, "origin": self.t_origin, "start": self.t_start, "stop": self.t_stop},
+        )
         nest.Connect(self.dc, self.neuron)
 
         times = [self.t_start, self.t_next]
         currents = [self.i_amp / 4, self.i_amp / 2]
-        params = {'amplitude_times': times, 'amplitude_values': currents,
-                  'origin': self.t_origin, 'start': self.t_start,
-                  'stop': self.t_stop}
+        params = {
+            "amplitude_times": times,
+            "amplitude_values": currents,
+            "origin": self.t_origin,
+            "start": self.t_start,
+            "stop": self.t_stop,
+        }
         self.step = nest.Create("step_current_generator", 1, params)
         nest.Connect(self.step, self.neuron)
 
-        self.noise = nest.Create('noise_generator', 1,
-                                 params={'mean': self.i_amp, 'std': 0.0,
-                                         'dt': 0.1, 'std_mod': 0.0,
-                                         'phase': 45.0, 'frequency': 50.0,
-                                         'origin': self.t_origin,
-                                         'start': self.t_start,
-                                         'stop': self.t_stop})
+        self.noise = nest.Create(
+            "noise_generator",
+            1,
+            params={
+                "mean": self.i_amp,
+                "std": 0.0,
+                "dt": 0.1,
+                "std_mod": 0.0,
+                "phase": 45.0,
+                "frequency": 50.0,
+                "origin": self.t_origin,
+                "start": self.t_start,
+                "stop": self.t_stop,
+            },
+        )
         nest.Connect(self.noise, self.neuron)
 
     def test_GetRecordables(self):
         """Check get recordables"""
 
-        val = nest.GetDefaults('step_current_generator')['recordables'][0]
-        self.assertEqual(val, 'I', 'Incorrect recordables ({}) /'
-                         'for step current generator'.format(val))
+        val = nest.GetDefaults("step_current_generator")["recordables"][0]
+        self.assertEqual(val, "I", "Incorrect recordables ({}) /" "for step current generator".format(val))
 
-        val = nest.GetDefaults('ac_generator')['recordables'][0]
-        self.assertEqual(val, 'I', 'Incorrect recordables ({}) /'
-                         'for ac generator'.format(val))
+        val = nest.GetDefaults("ac_generator")["recordables"][0]
+        self.assertEqual(val, "I", "Incorrect recordables ({}) /" "for ac generator".format(val))
 
-        val = nest.GetDefaults('dc_generator')['recordables'][0]
-        self.assertEqual(val, 'I', 'Incorrect recordables ({}) /'
-                         'for dc generator'.format(val))
+        val = nest.GetDefaults("dc_generator")["recordables"][0]
+        self.assertEqual(val, "I", "Incorrect recordables ({}) /" "for dc generator".format(val))
 
-        val = nest.GetDefaults('noise_generator')['recordables'][0]
-        self.assertEqual(val, 'I', 'Incorrect recordables ({}) /'
-                         'for noise generator'.format(val))
+        val = nest.GetDefaults("noise_generator")["recordables"][0]
+        self.assertEqual(val, "I", "Incorrect recordables ({}) /" "for noise generator".format(val))
 
     def test_RecordedCurrentVectors(self):
         """Check the length and contents of recorded current vectors"""
 
         # setting up multimeters
-        m_Vm = nest.Create('multimeter',
-                           params={'record_from': ['V_m'], 'interval': 0.1})
+        m_Vm = nest.Create("multimeter", params={"record_from": ["V_m"], "interval": 0.1})
         nest.Connect(m_Vm, self.neuron)
 
-        m_ac = nest.Create('multimeter',
-                           params={'record_from': ['I'], 'interval': 0.1})
+        m_ac = nest.Create("multimeter", params={"record_from": ["I"], "interval": 0.1})
         nest.Connect(m_ac, self.ac)
 
-        m_dc = nest.Create('multimeter',
-                           params={'record_from': ['I'], 'interval': 0.1})
+        m_dc = nest.Create("multimeter", params={"record_from": ["I"], "interval": 0.1})
         nest.Connect(m_dc, self.dc)
 
-        m_step = nest.Create('multimeter',
-                             params={'record_from': ['I'], 'interval': 0.1})
+        m_step = nest.Create("multimeter", params={"record_from": ["I"], "interval": 0.1})
         nest.Connect(m_step, self.step)
 
-        m_noise = nest.Create('multimeter',
-                              params={'record_from': ['I'], 'interval': 0.1})
+        m_noise = nest.Create("multimeter", params={"record_from": ["I"], "interval": 0.1})
         nest.Connect(m_noise, self.noise)
 
         # run simulation
@@ -132,80 +141,74 @@ class CurrentRecordingGeneratorTestCase(unittest.TestCase):
 
         # retrieve vectors
         events_Vm = m_Vm.events
-        t_Vm = numpy.array(events_Vm['times'])
-        v_Vm = numpy.array(events_Vm['V_m'])
+        t_Vm = numpy.array(events_Vm["times"])
+        v_Vm = numpy.array(events_Vm["V_m"])
 
         events_ac = m_ac.events
-        t_ac = numpy.array(events_ac['times'])
-        i_ac = numpy.array(events_ac['I'])
+        t_ac = numpy.array(events_ac["times"])
+        i_ac = numpy.array(events_ac["I"])
 
         events_dc = m_dc.events
-        t_dc = numpy.array(events_dc['times'])
-        i_dc = numpy.array(events_dc['I'])
+        t_dc = numpy.array(events_dc["times"])
+        i_dc = numpy.array(events_dc["I"])
 
         events_step = m_step.events
-        t_step = numpy.array(events_step['times'])
-        i_step = numpy.array(events_step['I'])
+        t_step = numpy.array(events_step["times"])
+        i_step = numpy.array(events_step["I"])
 
         events_noise = m_noise.events
-        t_noise = numpy.array(events_noise['times'])
-        i_noise = numpy.array(events_noise['I'])
+        t_noise = numpy.array(events_noise["times"])
+        i_noise = numpy.array(events_noise["I"])
 
         # test the length of current vectors
-        assert len(i_ac) == len(v_Vm), \
-            "Incorrect current vector length for AC generator"
-        assert len(i_dc) == len(v_Vm), \
-            "Incorrect current vector length for DC generator"
-        assert len(i_step) == len(v_Vm), \
-            "Incorrect current vector length for step current generator"
-        assert len(i_noise) == len(v_Vm), \
-            "Incorrect current vector length for noise generator"
+        assert len(i_ac) == len(v_Vm), "Incorrect current vector length for AC generator"
+        assert len(i_dc) == len(v_Vm), "Incorrect current vector length for DC generator"
+        assert len(i_step) == len(v_Vm), "Incorrect current vector length for step current generator"
+        assert len(i_noise) == len(v_Vm), "Incorrect current vector length for noise generator"
 
         # test to ensure current = 0 when device is inactive
         # and also to check current recorded when device is active
         t_start_ind = numpy.where(t_ac == self.t_start + self.t_origin)[0][0]
         t_stop_ind = numpy.where(t_ac == self.t_stop + self.t_origin)[0][0]
-        assert (numpy.all(i_ac[:t_start_ind]) == 0 and
-                numpy.all(i_ac[t_stop_ind:]) == 0), \
-            "Current not zero when AC generator inactive"
-        self.assertAlmostEqual(numpy.amax(i_ac[t_start_ind:t_stop_ind]),
-                               self.i_amp + self.i_off,
-                               msg=("Current not correct "
-                                    "when AC generator active"))
-        self.assertAlmostEqual(numpy.amin(i_ac[t_start_ind:t_stop_ind]),
-                               -self.i_amp + self.i_off,
-                               msg=("Current not correct "
-                                    "when AC generator active"))
+        assert (
+            numpy.all(i_ac[:t_start_ind]) == 0 and numpy.all(i_ac[t_stop_ind:]) == 0
+        ), "Current not zero when AC generator inactive"
+        self.assertAlmostEqual(
+            numpy.amax(i_ac[t_start_ind:t_stop_ind]),
+            self.i_amp + self.i_off,
+            msg=("Current not correct " "when AC generator active"),
+        )
+        self.assertAlmostEqual(
+            numpy.amin(i_ac[t_start_ind:t_stop_ind]),
+            -self.i_amp + self.i_off,
+            msg=("Current not correct " "when AC generator active"),
+        )
 
         t_start_ind = numpy.where(t_dc == self.t_start + self.t_origin)[0][0]
         t_stop_ind = numpy.where(t_dc == self.t_stop + self.t_origin)[0][0]
-        assert (numpy.all(i_dc[:t_start_ind]) == 0 and
-                numpy.all(i_dc[t_stop_ind:]) == 0), \
-            "Current not zero when DC generator inactive"
-        assert (numpy.allclose(i_dc[t_start_ind:t_stop_ind], self.i_amp)), \
-            "Current not correct when DC generator active"
+        assert (
+            numpy.all(i_dc[:t_start_ind]) == 0 and numpy.all(i_dc[t_stop_ind:]) == 0
+        ), "Current not zero when DC generator inactive"
+        assert numpy.allclose(i_dc[t_start_ind:t_stop_ind], self.i_amp), "Current not correct when DC generator active"
 
         t_start_ind = numpy.where(t_step == self.t_start + self.t_origin)[0][0]
         t_stop_ind = numpy.where(t_step == self.t_stop + self.t_origin)[0][0]
         t_next_ind = numpy.where(t_step == self.t_next)[0][0]
-        assert (numpy.all(i_step[:t_start_ind]) == 0 and
-                numpy.all(i_step[t_stop_ind:]) == 0), \
-            "Current not zero when step current generator inactive"
-        assert (numpy.allclose(i_step[t_start_ind:t_next_ind],
-                               self.i_amp / 4) and
-                numpy.allclose(i_step[t_next_ind:t_stop_ind],
-                               self.i_amp / 2)), \
-            "Current not correct when step current generator active"
+        assert (
+            numpy.all(i_step[:t_start_ind]) == 0 and numpy.all(i_step[t_stop_ind:]) == 0
+        ), "Current not zero when step current generator inactive"
+        assert numpy.allclose(i_step[t_start_ind:t_next_ind], self.i_amp / 4) and numpy.allclose(
+            i_step[t_next_ind:t_stop_ind], self.i_amp / 2
+        ), "Current not correct when step current generator active"
 
-        t_start_ind = numpy.where(
-            t_noise == self.t_start + self.t_origin)[0][0]
+        t_start_ind = numpy.where(t_noise == self.t_start + self.t_origin)[0][0]
         t_stop_ind = numpy.where(t_noise == self.t_stop + self.t_origin)[0][0]
-        assert (numpy.all(i_noise[:t_start_ind]) == 0 and
-                numpy.all(i_noise[t_stop_ind:]) == 0), \
-            "Current not zero when noise generator inactive"
-        assert (numpy.allclose(i_noise[t_start_ind:t_stop_ind],
-                               self.i_amp)), \
-            "Current not correct when noise generator active"
+        assert (
+            numpy.all(i_noise[:t_start_ind]) == 0 and numpy.all(i_noise[t_stop_ind:]) == 0
+        ), "Current not zero when noise generator inactive"
+        assert numpy.allclose(
+            i_noise[t_start_ind:t_stop_ind], self.i_amp
+        ), "Current not correct when noise generator active"
 
 
 def suite():

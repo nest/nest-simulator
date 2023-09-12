@@ -231,7 +231,7 @@ public:
    * Set the new number of threads on all managers by calling
    * change_number_of_threads() on each of them.
    */
-  void change_number_of_threads( thread new_num_threads );
+  void change_number_of_threads( size_t new_num_threads );
 
   void set_status( const dictionary& );
   void get_status( dictionary& );
@@ -274,13 +274,13 @@ get_rank_synced_rng()
 }
 
 inline RngPtr
-get_vp_synced_rng( thread tid )
+get_vp_synced_rng( size_t tid )
 {
   return kernel().random_manager.get_vp_synced_rng( tid );
 }
 
 inline RngPtr
-get_vp_specific_rng( thread tid )
+get_vp_specific_rng( size_t tid )
 {
   return kernel().random_manager.get_vp_specific_rng( tid );
 }

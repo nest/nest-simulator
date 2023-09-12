@@ -23,7 +23,6 @@
 Functions to get information on NEST.
 """
 
-import sys
 import os
 import textwrap
 import webbrowser
@@ -34,32 +33,28 @@ from .. import nestkernel_api as nestkernel
 import nest
 
 __all__ = [
-    'authors',
-    'get_argv',
-    'get_verbosity',
-    'help',
-    'helpdesk',
-    'message',
-    'set_verbosity',
-    'sysinfo',
-    'verbosity',
+    "authors",
+    "get_argv",
+    "get_verbosity",
+    "help",
+    "helpdesk",
+    "message",
+    "set_verbosity",
+    "sysinfo",
+    "verbosity",
 ]
 
 verbosity = nestkernel.severity_t
 
 
 def sysinfo():
-    """Print information on the platform on which NEST was compiled.
-
-    """
+    """Print information on the platform on which NEST was compiled."""
 
     sr("sysinfo")
 
 
 def authors():
-    """Print the authors of NEST.
-
-    """
+    """Print the authors of NEST."""
 
     sr("authors")
 
@@ -77,7 +72,7 @@ def helpdesk():
     """
 
     docdir = sli_func("statusdict/prgdocdir ::")
-    help_fname = os.path.join(docdir, 'html', 'index.html')
+    help_fname = os.path.join(docdir, "html", "index.html")
 
     if not os.path.isfile(help_fname):
         msg = "Sorry, the help index cannot be opened. "
@@ -118,9 +113,13 @@ def help(obj=None, return_text=False):
             else:
                 show_help_with_pager(obj)
         except FileNotFoundError:
-            print(textwrap.dedent(f"""
+            print(
+                textwrap.dedent(
+                    f"""
                 Sorry, there is no help for model '{obj}'.
-                Use the Python help() function to obtain help on PyNEST functions."""))
+                Use the Python help() function to obtain help on PyNEST functions."""
+                )
+            )
     else:
         print(nest.__doc__)
 
@@ -138,9 +137,9 @@ def get_argv():
 
     """
 
-    sr('statusdict')
+    sr("statusdict")
     statusdict = spp()
-    return statusdict['argv']
+    return statusdict["argv"]
 
 
 def message(level, sender, text):
@@ -160,7 +159,7 @@ def message(level, sender, text):
     sps(level)
     sps(sender)
     sps(text)
-    sr('message')
+    sr("message")
 
 
 def get_verbosity():

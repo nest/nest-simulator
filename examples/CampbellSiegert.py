@@ -116,10 +116,7 @@ for rate, weight in zip(rates, weights):
             * (1 / (C_m * pF))
             * (np.exp(1) / (tau_syn * ms))
             * (
-                (
-                    (-x * np.exp(-x / (tau_syn * ms)))
-                    / (1 / (tau_syn * ms) - 1 / (tau_m * ms))
-                )
+                ((-x * np.exp(-x / (tau_syn * ms))) / (1 / (tau_syn * ms) - 1 / (tau_m * ms)))
                 + (np.exp(-x / (tau_m * ms)) - np.exp(-x / (tau_syn * ms)))
                 / ((1 / (tau_syn * ms) - 1 / (tau_m * ms)) ** 2)
             )
@@ -142,17 +139,7 @@ for rate, weight in zip(rates, weights):
     sigma2 += (
         rate
         * (2 * tau_m * ms + tau_syn * ms)
-        * (
-            J[-1]
-            * pA
-            * tau_syn
-            * ms
-            * np.exp(1)
-            * tau_m
-            * ms
-            / (2 * (C_m * pF) * (tau_m * ms + tau_syn * ms))
-        )
-        ** 2
+        * (J[-1] * pA * tau_syn * ms * np.exp(1) * tau_m * ms / (2 * (C_m * pF) * (tau_m * ms + tau_syn * ms))) ** 2
     )
 
 mu += E_L * mV
@@ -179,7 +166,7 @@ r = 1.0 / (t_ref * ms + tau_m * ms * tmpsum)
 
 nest.ResetKernel()
 
-nest.set_verbosity(nest.verbosity.M_WARNING)
+nest.set_verbosity("M_WARNING")
 neurondict = {
     "V_th": V_th,
     "tau_m": tau_m,
@@ -221,10 +208,6 @@ nest.Simulate(simtime)
 
 v_free = vm.events["V_m"]
 Nskip = 500
-print(
-    f"mean membrane potential (actual / calculated): {np.mean(v_free[Nskip:])} / {mu * 1000}"
-)
+print(f"mean membrane potential (actual / calculated): {np.mean(v_free[Nskip:])} / {mu * 1000}")
 print(f"variance (actual / calculated): {np.var(v_free[Nskip:])} / {sigma2 * 1e6}")
-print(
-    f"firing rate (actual / calculated): {sr.n_events / (n_neurons * simtime * ms)} / {r}"
-)
+print(f"firing rate (actual / calculated): {sr.n_events / (n_neurons * simtime * ms)} / {r}")

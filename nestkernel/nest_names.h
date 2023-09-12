@@ -304,6 +304,7 @@ const std::string min( "min" );
 const std::string min_delay( "min_delay" );
 const std::string min_update_time( "min_update_time" );
 const std::string minor_axis( "minor_axis" );
+const std::string mpi_address( "mpi_address");
 const std::string model( "model" );
 const std::string model_id( "model_id" );
 const std::string ms_per_tic( "ms_per_tic" );
@@ -595,7 +596,7 @@ const std::string voltage_clamp( "voltage_clamp" );
 const std::string voltage_reset_add( "voltage_reset_add" );
 const std::string voltage_reset_fraction( "voltage_reset_fraction" );
 const std::string vp( "vp" );
-const std::string vt( "vt" );
+const std::string volume_transmitter( "volume_transmitter" );
 
 const std::string Wmax( "Wmax" );
 const std::string Wmin( "Wmin" );

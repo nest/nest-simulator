@@ -43,8 +43,9 @@ class MaskedLayer;
 
 /**
  * This class is a representation of the dictionary of connection
- * properties given as an argument to the ConnectLayers function. The
- * connect method is responsible for generating the connection according
+ * properties given as an argument to the ConnectLayers function.
+ *
+ * The connect method is responsible for generating the connection according
  * to the given parameters. This method is templated with the dimension
  * of the layers, and is called via the Layer connect call using a
  * visitor pattern. The connect method relays to another method (e.g.,
@@ -71,7 +72,9 @@ public:
 
   /**
    * Construct a ConnectionCreator with the properties defined in the
-   * given dictionary. Parameters for a ConnectionCreator are:
+   * given dictionary.
+   *
+   * Parameters for a ConnectionCreator are:
    * - "connection_type": Either "convergent" or "divergent".
    * - "allow_autapses": Boolean, true if autapses are allowed.
    * - "allow_multapses": Boolean, true if multapses are allowed.
@@ -93,6 +96,7 @@ public:
 
   /**
    * Connect two layers.
+   *
    * @param source source layer.
    * @param source NodeCollection of the source.
    * @param target target layer.
@@ -115,17 +119,17 @@ private:
     PoolWrapper_();
     ~PoolWrapper_();
     void define( MaskedLayer< D >* );
-    void define( std::vector< std::pair< Position< D >, index > >* );
+    void define( std::vector< std::pair< Position< D >, size_t > >* );
 
-    typename Ntree< D, index >::masked_iterator masked_begin( const Position< D >& pos ) const;
-    typename Ntree< D, index >::masked_iterator masked_end() const;
+    typename Ntree< D, size_t >::masked_iterator masked_begin( const Position< D >& pos ) const;
+    typename Ntree< D, size_t >::masked_iterator masked_end() const;
 
-    typename std::vector< std::pair< Position< D >, index > >::iterator begin() const;
-    typename std::vector< std::pair< Position< D >, index > >::iterator end() const;
+    typename std::vector< std::pair< Position< D >, size_t > >::iterator begin() const;
+    typename std::vector< std::pair< Position< D >, size_t > >::iterator end() const;
 
   private:
     MaskedLayer< D >* masked_layer_;
-    std::vector< std::pair< Position< D >, index > >* positions_;
+    std::vector< std::pair< Position< D >, size_t > >* positions_;
   };
 
   void extract_params_( const dictionary&, std::vector< dictionary >& );
@@ -135,7 +139,7 @@ private:
     Iterator to,
     Node* tgt_ptr,
     const Position< D >& tgt_pos,
-    thread tgt_thread,
+    size_t tgt_thread,
     const Layer< D >& source );
 
   template < int D >
@@ -165,7 +169,7 @@ private:
   ParameterPTR number_of_connections_;
   MaskPTR mask_;
   ParameterPTR kernel_;
-  std::vector< index > synapse_model_;
+  std::vector< size_t > synapse_model_;
   std::vector< std::vector< dictionary > > param_dicts_;
   std::vector< ParameterPTR > weight_;
   std::vector< ParameterPTR > delay_;

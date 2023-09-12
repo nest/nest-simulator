@@ -46,9 +46,7 @@ def _calculate_distance(conns, s_nodes, t_nodes):
     dim = len(s_pos[0])
 
     ref_distance = [
-        np.linalg.norm(
-            np.array(t_pos[t_nodes.index(t)]) - np.array(s_pos[s_nodes.index(s)]), ord=2
-        )
+        np.linalg.norm(np.array(t_pos[t_nodes.index(t)]) - np.array(s_pos[s_nodes.index(s)]), ord=2)
         for s, t in zip(conns.source, conns.target)
     ]
 
@@ -146,9 +144,7 @@ def test_SynapseCollection_distance_mixed():
     dist = conns.distance
 
     # Check part that is spatial
-    ref_distance = _calculate_distance(
-        conns[num_conns_nonspatial:], s_nodes_spatial, t_nodes_spatial
-    )
+    ref_distance = _calculate_distance(conns[num_conns_nonspatial:], s_nodes_spatial, t_nodes_spatial)
     assert dist[num_conns_nonspatial:] == pytest.approx(ref_distance)
 
     # Check part that is non-spatial

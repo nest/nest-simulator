@@ -192,17 +192,17 @@ public:
   using Node::handles_test_event;
   using Node::sends_secondary_event;
 
-  port send_test_event( Node& target, rport receptor_type, synindex, bool ) override;
+  size_t send_test_event( Node& target, size_t receptor_type, synindex, bool ) override;
 
   void handle( SpikeEvent& ) override;
   void handle( CurrentEvent& ) override;
   void handle( DataLoggingRequest& ) override;
   void handle( GapJunctionEvent& ) override;
 
-  port handles_test_event( SpikeEvent&, rport ) override;
-  port handles_test_event( CurrentEvent&, rport ) override;
-  port handles_test_event( DataLoggingRequest&, rport ) override;
-  port handles_test_event( GapJunctionEvent&, rport ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
+  size_t handles_test_event( GapJunctionEvent&, size_t ) override;
 
   void
   sends_secondary_event( GapJunctionEvent& ) override
@@ -416,8 +416,8 @@ hh_cond_beta_gap_traub::wfr_update( Time const& origin, const long from, const l
   return not wfr_tol_exceeded;
 }
 
-inline port
-hh_cond_beta_gap_traub::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+hh_cond_beta_gap_traub::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -426,8 +426,8 @@ hh_cond_beta_gap_traub::send_test_event( Node& target, rport receptor_type, syni
 }
 
 
-inline port
-hh_cond_beta_gap_traub::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+hh_cond_beta_gap_traub::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -436,8 +436,8 @@ hh_cond_beta_gap_traub::handles_test_event( SpikeEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-hh_cond_beta_gap_traub::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+hh_cond_beta_gap_traub::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -446,8 +446,8 @@ hh_cond_beta_gap_traub::handles_test_event( CurrentEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-hh_cond_beta_gap_traub::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+hh_cond_beta_gap_traub::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -456,8 +456,8 @@ hh_cond_beta_gap_traub::handles_test_event( DataLoggingRequest& dlr, rport recep
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 
-inline port
-hh_cond_beta_gap_traub::handles_test_event( GapJunctionEvent&, rport receptor_type )
+inline size_t
+hh_cond_beta_gap_traub::handles_test_event( GapJunctionEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

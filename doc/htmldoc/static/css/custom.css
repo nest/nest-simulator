@@ -20,9 +20,10 @@
     --nest-green: #36B34F;
     --sd-color-primary: var(--nest-orange);
     --sd-color-primary-highlight: #e05a2d;
+    --sd-color-muted: #adadad;
     --sd-color-info: var(--nest-blue);
     --sd-color-success: var(--nest-green);
-    --sd-color-card-border-hover: var(--nest-blue);
+    --sd-color-card-border-hover: var(--nest-orange);
 }
 /* Define base font color and style */
 body{
@@ -53,37 +54,76 @@ a:active {color:var(--nest-orange);}
 a:hover{color:var(--nest-orange); text-decoration:underline;}
 
 /* set api function and class names style */
+
+.sig-prename.descclassname {
+ display:None;
+}
 .sig.sig-object.py {
    font-weight: bold;
 	 background-color: #ffd1c1;
    font-family: "Roboto Mono","Courier New",Courier,monospace;
  }
- /* set the kernelattributes in api  positioning to one line */
-dl.py.attribute dd  {
- display: flex;
- align-items: first baseline;
- flex-wrap: wrap;
- gap: 10px;
- margin-left: 0.4em;
-
-}
-section#kernel-attributes dl.py.class dd dl.py.attribute dd dl.field-list.simple {
-	display: flex;
-	align-items: baseline;
-}
-
-.sig-prename.descclassname{
+section#kernel-attributes-nest-nestmodule em.property{
   display: none;
 }
+dt:target {
+	margin-top: -0.55rem;
+	padding-top: 0.45rem;
+}
+section#kernel-attributes-nest-nestmodule dl.field-list.simple dt.field-odd{
+  position:absolute;
+  padding-left: 0.1rem;
+}
 
+section#kernel-attributes-nest-nestmodule dl.field-list.simple dd.field-odd{
+  padding-left: 4rem;
+}
+
+dt#nest\.NestModule {
+ display: none;
+}
+section#kernel-attributes-nest-nestmodule dd {
+  margin-left: 0em;
+}
 .sphx-glr-download-link-note {
 
  display: none;
 }
 
-.sphx-glr-download-jupyter {
-  display: none;
+
+.autosummary tr {
+        border: none;
+        border-bottom: 1px solid #ddd;
 }
+
+/*************************************************************
+ * Rules for  mermaid diagrams
+ *************************************************************/
+
+.mermaid .cluster rect {
+	fill: #47555B21 !important;
+	stroke: None !important;
+	stroke-width: None !important;
+}
+
+
+rect.basic.label-container {
+	fill: #e2e2e200; !important
+	stroke: #ff6633;
+	stroke-width: 1px;
+}
+
+figure, .align-default {
+	text-align: center;
+}
+.mermaid svg {
+	/* outline: auto; */
+	outline-color: #f0f0f069;
+	outline-width: medium;
+	outline-style: groove;
+}
+
+
 /**************************************************************************************
  Settings for overriding material design theme 
  Setting nest colors to override sphinx material "orange" and other default colors
@@ -162,15 +202,15 @@ div.sd-card-title.sd-font-weight-bold.sd-d-flex-row.docutils a.reference.interna
  
 }
 
-.md-typeset .admonition {
+.md-typeset .admonition, .md-typeset .admonition.tip {
   border-left: .2rem solid var(--nest-blue);
   border-radius: 5px;
 }
 
-.md-typeset .admonition > .admonition-title::before, .md-typeset .admonition.important > .admonition-title::before {
+.md-typeset .admonition > .admonition-title::before, .md-typeset .admonition.important > .admonition-title::before, .md-typeset .admonition.tip > .admonition-title::before {
   color: #fff;
 }
-.md-typeset .admonition > .admonition-title{
+.md-typeset .admonition > .admonition-title, .md-typeset .admonition.tip > .admonition-title {
   background-color: var(--nest-blue);
   color: #fff;
 }
@@ -828,7 +868,7 @@ ul.srt-menu li li li.sfHover ul {
 
 .grid_1 { width: 8.33333333%; }
 .grid_2 { width: 16.66666667%; }
-.grid_3 { width: 25%; }
+.grid_3 { width: 70%; }
 .grid_4 { width: 33.33333333%; }
 .grid_5 { width: 41.66666667%; }
 .grid_6 { width: 50%; }

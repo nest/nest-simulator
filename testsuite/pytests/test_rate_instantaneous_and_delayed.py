@@ -25,6 +25,7 @@ import numpy as np
 
 
 class RateInstantaneousAndDelayedTestCase(unittest.TestCase):
+
     """
     Test whether delayed rate connections have same properties as
     instantaneous connections but with the correct delay
@@ -48,39 +49,23 @@ class RateInstantaneousAndDelayedTestCase(unittest.TestCase):
         nest.print_time = False
 
         # set up rate neuron network
-        rate_neuron_drive = nest.Create(
-            "lin_rate_ipn", params={"mu": drive, "sigma": 0.0}
-        )
+        rate_neuron_drive = nest.Create("lin_rate_ipn", params={"mu": drive, "sigma": 0.0})
 
         rate_neuron_1 = nest.Create("lin_rate_ipn", params=neuron_params)
         rate_neuron_2 = nest.Create("lin_rate_ipn", params=neuron_params)
 
-        multimeter = nest.Create(
-            "multimeter", params={"record_from": ["rate"], "interval": dt}
-        )
+        multimeter = nest.Create("multimeter", params={"record_from": ["rate"], "interval": dt})
 
         # record rates and connect neurons
         neurons = rate_neuron_1 + rate_neuron_2
 
         nest.Connect(multimeter, neurons, "all_to_all", {"delay": 10.0})
 
-        nest.Connect(
-            rate_neuron_drive,
-            rate_neuron_1,
-            "all_to_all",
-            {"synapse_model": "rate_connection_instantaneous", "weight": weight},
-        )
+        syn_spec = {"synapse_model": "rate_connection_instantaneous", "weight": weight}
+        nest.Connect(rate_neuron_drive, rate_neuron_1, "all_to_all", syn_spec)
 
-        nest.Connect(
-            rate_neuron_drive,
-            rate_neuron_2,
-            "all_to_all",
-            {
-                "synapse_model": "rate_connection_delayed",
-                "delay": delay,
-                "weight": weight,
-            },
-        )
+        syn_spec = {"synapse_model": "rate_connection_delayed", "delay": delay, "weight": weight}
+        nest.Connect(rate_neuron_drive, rate_neuron_2, "all_to_all", syn_spec)
 
         # simulate
         nest.Simulate(simtime)
@@ -89,15 +74,9 @@ class RateInstantaneousAndDelayedTestCase(unittest.TestCase):
         events = multimeter.events
         senders = np.array(events["senders"])
 
-        rate_1 = np.array(events["rate"])[
-            np.where(senders == rate_neuron_1.get("global_id"))
-        ]
-        times_2 = np.array(events["times"])[
-            np.where(senders == rate_neuron_2.get("global_id"))
-        ]
-        rate_2 = np.array(events["rate"])[
-            np.where(senders == rate_neuron_2.get("global_id"))
-        ]
+        rate_1 = np.array(events["rate"])[np.where(senders == rate_neuron_1.get("global_id"))]
+        times_2 = np.array(events["times"])[np.where(senders == rate_neuron_2.get("global_id"))]
+        rate_2 = np.array(events["rate"])[np.where(senders == rate_neuron_2.get("global_id"))]
 
         # get shifted rate_2
         rate_2 = rate_2[times_2 > delay]
@@ -110,9 +89,7 @@ class RateInstantaneousAndDelayedTestCase(unittest.TestCase):
 def suite():
     # makeSuite is sort of obsolete http://bugs.python.org/issue2721
     # using loadTestsFromTestCase instead.
-    suite1 = unittest.TestLoader().loadTestsFromTestCase(
-        RateInstantaneousAndDelayedTestCase
-    )
+    suite1 = unittest.TestLoader().loadTestsFromTestCase(RateInstantaneousAndDelayedTestCase)
     return unittest.TestSuite([suite1])
 
 

@@ -136,6 +136,10 @@ PyNEST examples
 
            * :doc:`../auto_examples/CampbellSiegert`
 
+    .. grid-item-card:: SONATA network
+           :img-top: ../static/img/300_pointneurons.png
+
+           * :doc:`../auto_examples/sonata_example/sonata_network`
 
 
 .. grid:: 1 1 2 3
@@ -233,6 +237,7 @@ PyNEST examples
 .. toctree::
    :hidden:
 
+   running_notebooks
    ../auto_examples/sudoku/index
    ../auto_examples/pong/index
    ../auto_examples/spatial/index
@@ -280,6 +285,8 @@ PyNEST examples
    ../auto_examples/brunel_siegert_nest
    ../auto_examples/brunel_exp_multisynapse_nest
    ../auto_examples/brunel_alpha_evolution_strategies
+   ../auto_examples/sonata_example/index
+   ../auto_examples/sonata_example/sonata_network
    ../auto_examples/spatial/conncomp
    ../auto_examples/spatial/conncon_sources
    ../auto_examples/spatial/conncon_targets

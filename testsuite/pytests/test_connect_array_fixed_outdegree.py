@@ -26,13 +26,12 @@ and parameter arrays in syn_spec
 
 import unittest
 import nest
-import numpy
 
 
-HAVE_OPENMP = nest.build_info["threading"] == "openmp"
+HAVE_THREADS = nest.build_info["have_threads"]
 
 
-@unittest.skipIf(not HAVE_OPENMP, "NEST was compiled without multi-threading")
+@unittest.skipIf(not HAVE_THREADS, "NEST was compiled without multi-threading")
 class ConnectArrayFixedOutdegreeTestCase(unittest.TestCase):
     """Tests of connections with fixed outdegree and parameter arrays"""
 

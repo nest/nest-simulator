@@ -24,12 +24,11 @@
 
 import nest
 import unittest
-import math
 import numpy as np
 
 
 def H(x):
-    return 0.5 * (np.sign(x) + 1.)
+    return 0.5 * (np.sign(x) + 1.0)
 
 
 class RateNeuronCommunicationTestCase(unittest.TestCase):
@@ -40,17 +39,17 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
         self.rtol = 0.05
 
         # neuron parameters
-        self.neuron_params = {'tau': 5., 'sigma': 0.}
+        self.neuron_params = {"tau": 5.0, "sigma": 0.0}
         self.neuron_params2 = self.neuron_params.copy()
-        self.neuron_params2.update({'mult_coupling': True})
+        self.neuron_params2.update({"mult_coupling": True})
         self.neuron_params3 = self.neuron_params.copy()
-        self.neuron_params3.update({'rectify_output': True, 'rate': 1.})
+        self.neuron_params3.update({"rectify_output": True, "rate": 1.0})
         self.drive = 1.5
-        self.delay = 2.
+        self.delay = 2.0
         self.weight = 0.5
 
         # simulation parameters
-        self.simtime = 100.
+        self.simtime = 100.0
         self.dt = 0.1
 
         nest.set_verbosity(nest.verbosity.M_WARNING)
@@ -60,68 +59,70 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
 
         # set up rate neuron network
         self.rate_neuron_drive = nest.Create(
-            'lin_rate_ipn', params={'rate': self.drive,
-                                    'mu': self.drive, 'sigma': 0.})
+            "lin_rate_ipn", params={"rate": self.drive, "mu": self.drive, "sigma": 0.0}
+        )
         self.rate_neuron_negative_drive = nest.Create(
-            'lin_rate_ipn', params={'rate': -self.drive,
-                                    'mu': -self.drive, 'sigma': 0.})
+            "lin_rate_ipn", params={"rate": -self.drive, "mu": -self.drive, "sigma": 0.0}
+        )
 
-        self.rate_neuron_1 = nest.Create(
-            'lin_rate_ipn', params=self.neuron_params)
-        self.rate_neuron_2 = nest.Create(
-            'tanh_rate_ipn', params=self.neuron_params)
-        self.rate_neuron_3 = nest.Create(
-            'threshold_lin_rate_ipn', params=self.neuron_params)
-        self.rate_neuron_4 = nest.Create(
-            'lin_rate_ipn', params=self.neuron_params2)
-        self.rate_neuron_5 = nest.Create(
-            'lin_rate_ipn', params=self.neuron_params3)
-        self.parrot_neuron = nest.Create(
-            'rate_transformer_sigmoid_gg_1998')
+        self.rate_neuron_1 = nest.Create("lin_rate_ipn", params=self.neuron_params)
+        self.rate_neuron_2 = nest.Create("tanh_rate_ipn", params=self.neuron_params)
+        self.rate_neuron_3 = nest.Create("threshold_lin_rate_ipn", params=self.neuron_params)
+        self.rate_neuron_4 = nest.Create("lin_rate_ipn", params=self.neuron_params2)
+        self.rate_neuron_5 = nest.Create("lin_rate_ipn", params=self.neuron_params3)
+        self.parrot_neuron = nest.Create("rate_transformer_sigmoid_gg_1998")
 
-        self.multimeter = nest.Create("multimeter",
-                                      params={'record_from': ['rate'],
-                                              'interval': self.dt})
+        self.multimeter = nest.Create("multimeter", params={"record_from": ["rate"], "interval": self.dt})
 
         # record rates and connect neurons
-        self.neurons = self.rate_neuron_1 + \
-            self.rate_neuron_2 + self.rate_neuron_3 + self.rate_neuron_4 + \
-            self.rate_neuron_5
+        self.neurons = (
+            self.rate_neuron_1 + self.rate_neuron_2 + self.rate_neuron_3 + self.rate_neuron_4 + self.rate_neuron_5
+        )
+
+        nest.Connect(self.multimeter, self.neurons, "all_to_all", {"delay": 10.0})
+        nest.Connect(self.multimeter, self.parrot_neuron, "all_to_all", {"delay": 10.0})
 
         nest.Connect(
-            self.multimeter, self.neurons, 'all_to_all', {'delay': 10.})
+            self.rate_neuron_drive,
+            self.rate_neuron_1,
+            "all_to_all",
+            {"synapse_model": "rate_connection_delayed", "delay": self.delay, "weight": self.weight},
+        )
+
         nest.Connect(
-            self.multimeter, self.parrot_neuron, 'all_to_all', {'delay': 10.})
+            self.rate_neuron_drive,
+            self.rate_neuron_2,
+            "all_to_all",
+            {"synapse_model": "rate_connection_instantaneous", "weight": self.weight},
+        )
 
-        nest.Connect(self.rate_neuron_drive, self.rate_neuron_1,
-                     'all_to_all', {'synapse_model': 'rate_connection_delayed',
-                                    'delay': self.delay,
-                                    'weight': self.weight})
+        nest.Connect(
+            self.rate_neuron_drive,
+            self.rate_neuron_3,
+            "all_to_all",
+            {"synapse_model": "rate_connection_instantaneous", "weight": self.weight},
+        )
 
-        nest.Connect(self.rate_neuron_drive, self.rate_neuron_2,
-                     'all_to_all',
-                     {'synapse_model': 'rate_connection_instantaneous',
-                      'weight': self.weight})
+        nest.Connect(
+            self.rate_neuron_drive,
+            self.rate_neuron_4,
+            "all_to_all",
+            {"synapse_model": "rate_connection_instantaneous", "weight": self.weight},
+        )
 
-        nest.Connect(self.rate_neuron_drive, self.rate_neuron_3,
-                     'all_to_all',
-                     {'synapse_model': 'rate_connection_instantaneous',
-                      'weight': self.weight})
+        nest.Connect(
+            self.rate_neuron_negative_drive,
+            self.rate_neuron_5,
+            "all_to_all",
+            {"synapse_model": "rate_connection_instantaneous", "weight": self.weight},
+        )
 
-        nest.Connect(self.rate_neuron_drive, self.rate_neuron_4,
-                     'all_to_all',
-                     {'synapse_model': 'rate_connection_instantaneous',
-                      'weight': self.weight})
-
-        nest.Connect(self.rate_neuron_negative_drive, self.rate_neuron_5,
-                     'all_to_all',
-                     {'synapse_model': 'rate_connection_instantaneous',
-                      'weight': self.weight})
-
-        nest.Connect(self.rate_neuron_drive, self.parrot_neuron,
-                     'all_to_all',
-                     {'synapse_model': 'rate_connection_instantaneous',
-                      'weight': self.weight})
+        nest.Connect(
+            self.rate_neuron_drive,
+            self.parrot_neuron,
+            "all_to_all",
+            {"synapse_model": "rate_connection_instantaneous", "weight": self.weight},
+        )
 
     def test_RateNeuronDelay(self):
         """Check the delay of the connection"""
@@ -131,19 +132,19 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
 
         # get noise from rate neuron
         events = self.multimeter.events
-        senders = np.array(events['senders'])
+        senders = np.array(events["senders"])
 
-        rate_neuron_1_node_id = self.rate_neuron_1.get('global_id')
-        times = np.array(events['times'])[np.where(senders == rate_neuron_1_node_id)]
-        rate_1 = np.array(events['rate'])[np.where(senders == rate_neuron_1_node_id)]
+        rate_neuron_1_node_id = self.rate_neuron_1.get("global_id")
+        times = np.array(events["times"])[np.where(senders == rate_neuron_1_node_id)]
+        rate_1 = np.array(events["rate"])[np.where(senders == rate_neuron_1_node_id)]
 
-        rate_neuron_2_node_id = self.rate_neuron_2.get('global_id')
-        rate_2 = np.array(events['rate'])[np.where(senders == rate_neuron_2_node_id)]
+        rate_neuron_2_node_id = self.rate_neuron_2.get("global_id")
+        rate_2 = np.array(events["rate"])[np.where(senders == rate_neuron_2_node_id)]
 
         delay_rate_1 = times[np.where(rate_1 > 0)[0][0]]
         test_delay_1 = self.delay + self.dt
         self.assertTrue(np.isclose(delay_rate_1, test_delay_1))
-        self.assertTrue(rate_2[0] > 0.)
+        self.assertTrue(rate_2[0] > 0.0)
 
     def test_RateNeuronWeight(self):
         """Check the weight of the connection"""
@@ -153,10 +154,10 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
 
         # get noise from rate neuron
         events = self.multimeter.events
-        senders = np.array(events['senders'])
+        senders = np.array(events["senders"])
 
-        rate_neuron_1_node_id = self.rate_neuron_1.get('global_id')
-        rate_1 = np.array(events['rate'])[np.where(senders == rate_neuron_1_node_id)]
+        rate_neuron_1_node_id = self.rate_neuron_1.get("global_id")
+        rate_1 = np.array(events["rate"])[np.where(senders == rate_neuron_1_node_id)]
 
         value = rate_1[-1]
         value_test = self.drive * self.weight
@@ -165,31 +166,30 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
     def test_RateNeuronNL(self):
         """Check the non-linearity of the neuron"""
 
-        gs = [1., 2.]
+        gs = [1.0, 2.0]
         lin_sums = [True, False]
 
         for g, ls in zip(gs, lin_sums):
-
-            self.neurons.set({'g': g, 'linear_summation': ls})
+            self.neurons.set({"g": g, "linear_summation": ls})
 
             # simulate
             nest.Simulate(self.simtime)
 
             # get noise from rate neuron
             events = self.multimeter.events
-            senders = np.array(events['senders'])
+            senders = np.array(events["senders"])
 
-            rate_neuron_1_node_id = self.rate_neuron_1.get('global_id')
-            rate_1 = np.array(events['rate'])[np.where(senders == rate_neuron_1_node_id)][-1]
+            rate_neuron_1_node_id = self.rate_neuron_1.get("global_id")
+            rate_1 = np.array(events["rate"])[np.where(senders == rate_neuron_1_node_id)][-1]
 
-            rate_neuron_2_node_id = self.rate_neuron_2.get('global_id')
-            rate_2 = np.array(events['rate'])[np.where(senders == rate_neuron_2_node_id)][-1]
+            rate_neuron_2_node_id = self.rate_neuron_2.get("global_id")
+            rate_2 = np.array(events["rate"])[np.where(senders == rate_neuron_2_node_id)][-1]
 
-            rate_neuron_3_node_id = self.rate_neuron_3.get('global_id')
-            rate_3 = np.array(events['rate'])[np.where(senders == rate_neuron_3_node_id)][-1]
+            rate_neuron_3_node_id = self.rate_neuron_3.get("global_id")
+            rate_3 = np.array(events["rate"])[np.where(senders == rate_neuron_3_node_id)][-1]
 
-            rate_neuron_4_node_id = self.rate_neuron_4.get('global_id')
-            rate_4 = np.array(events['rate'])[np.where(senders == rate_neuron_4_node_id)][-1]
+            rate_neuron_4_node_id = self.rate_neuron_4.get("global_id")
+            rate_4 = np.array(events["rate"])[np.where(senders == rate_neuron_4_node_id)][-1]
 
             rates = np.array([rate_1, rate_2, rate_3, rate_4])
 
@@ -198,19 +198,23 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
             theta = self.rate_neuron_4.theta_ex
 
             if ls:
-
                 rates_test = np.array(
-                    [g * self.drive * self.weight,
-                     np.tanh(g * self.drive * self.weight),
-                     g * self.drive * self.weight * H(self.drive *
-                                                      self.weight),
-                     a * theta / (1 + a)])
+                    [
+                        g * self.drive * self.weight,
+                        np.tanh(g * self.drive * self.weight),
+                        g * self.drive * self.weight * H(self.drive * self.weight),
+                        a * theta / (1 + a),
+                    ]
+                )
             else:
                 rates_test = np.array(
-                    [g * self.drive * self.weight,
-                     self.weight * np.tanh(g * self.drive),
-                     self.weight * self.drive * g * H(self.drive),
-                     a * theta / (1 + a)])
+                    [
+                        g * self.drive * self.weight,
+                        self.weight * np.tanh(g * self.drive),
+                        self.weight * self.drive * g * H(self.drive),
+                        a * theta / (1 + a),
+                    ]
+                )
 
             self.assertTrue(np.allclose(rates, rates_test))
 
@@ -222,13 +226,13 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
 
         # get activity from rate neuron
         events = self.multimeter.events
-        senders = np.array(events['senders'])
+        senders = np.array(events["senders"])
 
-        rate_neuron_5_node_id = self.rate_neuron_5.get('global_id')
-        rate_5 = np.array(events['rate'])[np.where(senders == rate_neuron_5_node_id)]
+        rate_neuron_5_node_id = self.rate_neuron_5.get("global_id")
+        rate_5 = np.array(events["rate"])[np.where(senders == rate_neuron_5_node_id)]
 
         value = rate_5[-1]
-        value_test = 0.
+        value_test = 0.0
         self.assertTrue(np.isclose(value, value_test))
 
     def test_ParrotRateNeuron(self):
@@ -236,28 +240,25 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
 
         self.parrot_neuron.g = 0.1
 
-        # simulate
         nest.Simulate(self.simtime)
 
         # get activity from rate neuron
         events = self.multimeter.events
-        senders = np.array(events['senders'])
+        senders = np.array(events["senders"])
 
-        parrot_node_id = self.parrot_neuron.get('global_id')
-        parrot_rate = np.array(events['rate'])[np.where(senders == parrot_node_id)]
+        parrot_node_id = self.parrot_neuron.get("global_id")
+        parrot_rate = np.array(events["rate"])[np.where(senders == parrot_node_id)]
 
         value = parrot_rate[-1]
         g = self.parrot_neuron.g
-        value_test = (g * self.weight * self.drive)**4 / (0.1**4 + (g * self.weight * self.drive)**4)
+        value_test = (g * self.weight * self.drive) ** 4 / (0.1**4 + (g * self.weight * self.drive) ** 4)
         self.assertTrue(np.isclose(value, value_test))
 
 
 def suite():
-
     # makeSuite is sort of obsolete http://bugs.python.org/issue2721
     # using loadTestsFromTestCase instead.
-    suite1 = unittest.TestLoader().loadTestsFromTestCase(
-        RateNeuronCommunicationTestCase)
+    suite1 = unittest.TestLoader().loadTestsFromTestCase(RateNeuronCommunicationTestCase)
     return unittest.TestSuite([suite1])
 
 

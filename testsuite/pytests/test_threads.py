@@ -33,7 +33,7 @@ class ThreadTestCase(unittest.TestCase):
     def nest_multithreaded(self):
         """Return True, if we have a thread-enabled NEST, False otherwise"""
 
-        return nest.build_info["threading"] != "no"
+        return nest.build_info["have_threads"]
 
     def test_Threads(self):
         """Multiple threads"""
@@ -45,7 +45,7 @@ class ThreadTestCase(unittest.TestCase):
         self.assertEqual(nest.local_num_threads, 1)
 
         nest.local_num_threads = 8
-        n = nest.Create('iaf_psc_alpha', 8)
+        n = nest.Create("iaf_psc_alpha", 8)
         st = list(n.vp)
         st.sort()
         self.assertEqual(st, [0, 1, 2, 3, 4, 5, 6, 7])
@@ -72,7 +72,7 @@ class ThreadTestCase(unittest.TestCase):
         self.assertEqual(targets, post.tolist())
 
     def test_ThreadsGetEvents(self):
-        """ Gathering events across threads """
+        """Gathering events across threads"""
 
         if not self.nest_multithreaded():
             self.skipTest("NEST was compiled without multi-threading")
@@ -83,17 +83,16 @@ class ThreadTestCase(unittest.TestCase):
         n_events_vm = []
 
         N = 128
-        Simtime = 1000.
+        Simtime = 1000.0
 
         for t in threads:
-
             nest.ResetKernel()
             nest.local_num_threads = t
 
             # force a lot of spike events
-            n = nest.Create('iaf_psc_alpha', N, {'I_e': 2000.})
-            sr = nest.Create('spike_recorder')
-            vm = nest.Create('voltmeter')
+            n = nest.Create("iaf_psc_alpha", N, {"I_e": 2000.0})
+            sr = nest.Create("spike_recorder")
+            vm = nest.Create("voltmeter")
 
             nest.Connect(n, sr)
             nest.Connect(vm, n)
@@ -105,7 +104,7 @@ class ThreadTestCase(unittest.TestCase):
 
         ref_vm = N * (Simtime - 1)
         ref_sr = n_events_sr[0]
-        
+
         # could be done more elegantly with any(), ravel(),
         # but we dont want to be dependent on numpy et al
         [self.assertEqual(x, ref_vm) for x in n_events_vm]
@@ -113,8 +112,7 @@ class ThreadTestCase(unittest.TestCase):
 
 
 def suite():
-
-    suite = unittest.makeSuite(ThreadTestCase, 'test')
+    suite = unittest.makeSuite(ThreadTestCase, "test")
     return suite
 
 

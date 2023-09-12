@@ -148,11 +148,11 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node& tagret, rport receptor_type, synindex, bool ) override;
+  size_t send_test_event( Node& tagret, size_t receptor_type, synindex, bool ) override;
 
-  port handles_test_event( SpikeEvent&, rport ) override;
-  port handles_test_event( CurrentEvent&, rport ) override;
-  port handles_test_event( DataLoggingRequest&, rport ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
   void handle( SpikeEvent& ) override;
   void handle( CurrentEvent& ) override;
@@ -346,16 +346,16 @@ private:
 
 // Boilerplate inline function definitions ----------------------------------
 
-inline port
-iaf_cond_alpha::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+iaf_cond_alpha::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
   return target.handles_test_event( e, receptor_type );
 }
 
-inline port
-iaf_cond_alpha::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+iaf_cond_alpha::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -364,8 +364,8 @@ iaf_cond_alpha::handles_test_event( SpikeEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-iaf_cond_alpha::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+iaf_cond_alpha::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -374,8 +374,8 @@ iaf_cond_alpha::handles_test_event( CurrentEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-iaf_cond_alpha::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+iaf_cond_alpha::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

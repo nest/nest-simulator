@@ -146,7 +146,7 @@ gainfunction_mcculloch_pitts::operator()( RngPtr, double h )
   return h > theta_;
 }
 
-typedef nest::binary_neuron< nest::gainfunction_mcculloch_pitts > mcculloch_pitts_neuron;
+typedef binary_neuron< gainfunction_mcculloch_pitts > mcculloch_pitts_neuron;
 
 template <>
 void RecordablesMap< mcculloch_pitts_neuron >::create();

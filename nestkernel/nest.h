@@ -59,7 +59,7 @@ void reset_kernel();
 severity_t get_verbosity();
 void set_verbosity( severity_t s );
 
-void enable_dryrun_mode( const index n_procs );
+void enable_dryrun_mode( const size_t n_procs );
 
 void enable_structural_plasticity();
 void disable_structural_plasticity();
@@ -81,8 +81,8 @@ dictionary get_kernel_status();
 dictionary get_nc_status( NodeCollectionPTR node_collection );
 void set_nc_status( NodeCollectionPTR nc, std::vector< dictionary >& params );
 
-void set_node_status( const index node_id, const dictionary& dict );
-dictionary get_node_status( const index node_id );
+void set_node_status( const size_t node_id, const dictionary& dict );
+dictionary get_node_status( const size_t node_id );
 
 void set_connection_status( const std::deque< ConnectionID >& conns, const dictionary& dict );
 void set_connection_status( const std::deque< ConnectionID >& conns, const std::vector< dictionary >& dicts );
@@ -90,10 +90,10 @@ std::vector< dictionary > get_connection_status( const std::deque< ConnectionID 
 
 NodeCollectionPTR slice_nc( const NodeCollectionPTR nc, long start, long stop, long step );
 
-NodeCollectionPTR create( const std::string model_name, const index n );
+NodeCollectionPTR create( const std::string model_name, const size_t n );
 NodeCollectionPTR create_spatial( const dictionary& layer_dict );
 
-NodeCollectionPTR make_nodecollection( const std::vector< index > node_ids );
+NodeCollectionPTR make_nodecollection( const std::vector< size_t > node_ids );
 
 NodeCollectionPTR get_nodes( const dictionary& dict, const bool local_only );
 long find( const NodeCollectionPTR nc, size_t node_id );
@@ -105,16 +105,16 @@ bool contains( const NodeCollectionPTR nc, const size_t node_id );
 void print_nodes_to_stream( std::ostream& out = std::cout );
 
 RngPtr get_rank_synced_rng();
-RngPtr get_vp_synced_rng( thread tid );
-RngPtr get_vp_specific_rng( thread tid );
+RngPtr get_vp_synced_rng( size_t tid );
+RngPtr get_vp_specific_rng( size_t tid );
 
 void set_kernel_status( const dictionary& dict );
 dictionary get_kernel_status();
 
-NodeCollectionPTR create( const std::string model_name, const index n );
+NodeCollectionPTR create( const std::string model_name, const size_t n );
 NodeCollectionPTR create_spatial( const dictionary& layer_dict );
 
-NodeCollectionPTR make_nodecollection( const std::vector< index > node_ids );
+NodeCollectionPTR make_nodecollection( const std::vector< size_t > node_ids );
 
 NodeCollectionPTR get_nodes( const dictionary& dict, const bool local_only );
 long find( const NodeCollectionPTR nc, size_t node_id );

@@ -46,7 +46,7 @@ nest::KernelManager::get_build_info_()
 
   dictionary build_info;
 
-  build_info[ "version" ] = std::string( NEST_VERSION_STRING );
+  build_info[ "version" ] = std::string( NEST_VERSION );
   build_info[ "exitcode" ] = EXIT_SUCCESS;
   build_info[ "built" ] = std::string( String::compose( "%1 %2", __DATE__, __TIME__ ) );
   build_info[ "data_dir" ] = std::string( NEST_INSTALL_PREFIX "/" NEST_INSTALL_DATADIR );
@@ -58,9 +58,10 @@ nest::KernelManager::get_build_info_()
   build_info[ "hostcpu" ] = std::string( NEST_HOSTCPU );
 
 #ifdef _OPENMP
-  build_info[ "threading" ] = std::string( "openmp" );
+  build_info[ "have_threads" ] = true;
+  build_info[ "threads_model" ] = std::string( "openmp" );
 #else
-  build_info[ "threading" ] = std::string( "no" );
+  build_info[ "have_threads" ] = false;
 #endif
 
 #ifdef HAVE_MPI
@@ -230,7 +231,7 @@ nest::KernelManager::reset()
 }
 
 void
-nest::KernelManager::change_number_of_threads( thread new_num_threads )
+nest::KernelManager::change_number_of_threads( size_t new_num_threads )
 {
   // Inputs are checked in VPManager::set_status().
   // Just double check here that all values are legal.

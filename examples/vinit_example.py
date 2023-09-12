@@ -66,7 +66,6 @@ import matplotlib.pyplot as plt
 # the different initial values.
 
 for vinit in numpy.arange(-100, -50, 10, float):
-
     nest.ResetKernel()
 
     cbn = nest.Create("iaf_cond_exp_sfa_rr")

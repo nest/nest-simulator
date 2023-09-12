@@ -82,9 +82,7 @@ class TestFixedInDegree(connect_test_base.ConnectTestBase):
         conn_params["allow_autapses"] = True
         conn_params["allow_multapses"] = True
         conn_params["indegree"] = self.C
-        expected = connect_test_base.get_expected_degrees_fixedDegrees(
-            self.C, "in", self.N_s, self.N_t
-        )
+        expected = connect_test_base.get_expected_degrees_fixedDegrees(self.C, "in", self.N_s, self.N_t)
         pvalues = []
         for i in range(self.stat_dict["n_runs"]):
             connect_test_base.reset_seed(i + 1, self.nr_threads)

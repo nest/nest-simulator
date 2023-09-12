@@ -74,21 +74,21 @@ mc_models = [
 
 # Models that cannot be tested
 ignore_model = [
-    "gif_pop_psc_exp",           # This one commits spikes at same time
-    "hh_cond_exp_traub",         # This one does not support V_reset
-    "hh_cond_beta_gap_traub",    # This one does not support V_reset
-    "hh_psc_alpha",              # This one does not support V_reset
-    "hh_psc_alpha_clopath",      # This one does not support V_reset
-    "hh_psc_alpha_gap",          # This one does not support V_reset
+    "gif_pop_psc_exp",  # This one commits spikes at same time
+    "hh_cond_exp_traub",  # This one does not support V_reset
+    "hh_cond_beta_gap_traub",  # This one does not support V_reset
+    "hh_psc_alpha",  # This one does not support V_reset
+    "hh_psc_alpha_clopath",  # This one does not support V_reset
+    "hh_psc_alpha_gap",  # This one does not support V_reset
     "pp_cond_exp_mc_urbanczik",  # This one does not support V_reset
-    "iaf_psc_exp_ps_lossless",   # This one use presice times
-    "siegert_neuron",            # This one does not connect to voltmeter
-    "step_rate_generator"        # No regular neuron model
+    "iaf_psc_exp_ps_lossless",  # This one use presice times
+    "siegert_neuron",  # This one does not connect to voltmeter
+    "step_rate_generator",  # No regular neuron model
 ]
 
-tested_models = [m for m in nest.node_models
-                 if nest.GetDefaults(m, "element_type") == "neuron"
-                 and m not in ignore_model]
+tested_models = [
+    m for m in nest.node_models if nest.GetDefaults(m, "element_type") == "neuron" and m not in ignore_model
+]
 
 # Additional parameters for the connector
 add_connect_param = {
@@ -121,7 +121,7 @@ class TestRefractoryCase(unittest.TestCase):
         nest.rng_seed = 123456
 
     def compute_reftime(self, model, sr, vm, neuron):
-        '''
+        """
         Compute the refractory time of the neuron.
 
         Parameters
@@ -139,7 +139,8 @@ class TestRefractoryCase(unittest.TestCase):
         -------
         t_ref_sim : double
             Value of the simulated refractory period.
-        '''
+        """
+
         spike_times = sr.events["times"]
 
         if model in neurons_interspike:
@@ -160,16 +161,15 @@ class TestRefractoryCase(unittest.TestCase):
             idx_spike = np.argwhere(times == spike_times[0])[0][0]
 
             # Find end of refractory period between 1st and 2nd spike
-            idx_end = np.where(
-                np.isclose(Vs[idx_spike:idx_max], Vr, 1e-6))[0][-1]
+            idx_end = np.where(np.isclose(Vs[idx_spike:idx_max], Vr, 1e-6))[0][-1]
             t_ref_sim = idx_end * resolution
 
             return t_ref_sim
 
     def test_refractory_time(self):
-        '''
+        """
         Check that refractory time implementation is correct.
-        '''
+        """
         for model in tested_models:
             self.reset()
 
@@ -186,18 +186,18 @@ class TestRefractoryCase(unittest.TestCase):
             vm_params = {"interval": resolution, "record_from": [name_Vm]}
             vm = nest.Create("voltmeter", params=vm_params)
             sr = nest.Create("spike_recorder")
-            cg = nest.Create("dc_generator", params={"amplitude": 1200.})
+            cg = nest.Create("dc_generator", params={"amplitude": 1200.0})
 
             # For models that do not clamp V_m, use very large current to
             # trigger almost immediate spiking => t_ref almost equals
             # interspike
             if model in neurons_interspike_ps:
-                cg.amplitude = 10000000.
-            elif model == 'ht_neuron':
+                cg.amplitude = 10000000.0
+            elif model == "ht_neuron":
                 # ht_neuron use too long time with a very large amplitude
-                cg.amplitude = 2000.
+                cg.amplitude = 2000.0
             elif model in neurons_interspike:
-                cg.amplitude = 15000.
+                cg.amplitude = 15000.0
 
             # Connect them and simulate
             nest.Connect(vm, neuron)
@@ -214,20 +214,25 @@ class TestRefractoryCase(unittest.TestCase):
 
             # Approximate result for precise spikes (interpolation error)
             if model in neurons_interspike_ps:
-                self.assertAlmostEqual(t_ref, t_ref_sim, places=3,
-                                       msg='''Error in model {}:
-                                       {} != {}'''.format(
-                                           model, t_ref, t_ref_sim))
+                self.assertAlmostEqual(
+                    t_ref,
+                    t_ref_sim,
+                    places=3,
+                    msg="""Error in model {}:
+                                       {} != {}""".format(
+                        model, t_ref, t_ref_sim
+                    ),
+                )
             else:
-                self.assertAlmostEqual(t_ref, t_ref_sim,
-                                       msg='''Error in model {}:
-                                       {} != {}'''.format(
-                                           model, t_ref, t_ref_sim))
+                self.assertAlmostEqual(
+                    t_ref,
+                    t_ref_sim,
+                    msg="""Error in model {}:
+                                       {} != {}""".format(
+                        model, t_ref, t_ref_sim
+                    ),
+                )
 
-
-# --------------------------------------------------------------------------- #
-#  Run the comparisons
-# --------------------------------------------------------------------------- #
 
 def suite():
     return unittest.makeSuite(TestRefractoryCase, "test")
@@ -238,5 +243,5 @@ def run():
     runner.run(suite())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run()

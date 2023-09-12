@@ -53,7 +53,7 @@ class StatusTestCase(unittest.TestCase):
 
         self.assertRaises(KeyError, nest.GetKernelStatus, "nonexistent_status_key")
 
-        test_keys = ("resolution", ) * 3
+        test_keys = ("resolution",) * 3
         kernel_status = nest.GetKernelStatus(test_keys)
         self.assertEqual(len(kernel_status), len(test_keys))
 
@@ -64,11 +64,11 @@ class StatusTestCase(unittest.TestCase):
 
         nest.ResetKernel()
         nest.SetKernelStatus({})
-        nest.SetKernelStatus({'resolution': 0.2})
+        nest.SetKernelStatus({"resolution": 0.2})
 
-        self.assertRaises(ValueError, nest.SetKernelStatus, {'nonexistent_status_key': 0})
+        self.assertRaises(ValueError, nest.SetKernelStatus, {"nonexistent_status_key": 0})
         # Readonly check
-        self.assertRaises(ValueError, nest.SetKernelStatus, {'network_size': 120})
+        self.assertRaises(ValueError, nest.SetKernelStatus, {"network_size": 120})
 
     def test_GetDefaults(self):
         """GetDefaults"""
@@ -76,7 +76,6 @@ class StatusTestCase(unittest.TestCase):
         nest.ResetKernel()
 
         for model in nest.node_models + nest.synapse_models:
-
             model_status = nest.GetDefaults(model)
             self.assertIsInstance(model_status, dict)
             self.assertGreater(len(model_status), 1)
@@ -87,7 +86,7 @@ class StatusTestCase(unittest.TestCase):
                 test_value = nest.GetDefaults(model, "V_m")
                 self.assertIsInstance(test_value, float)
 
-                test_keys = ("V_m", ) * 3
+                test_keys = ("V_m",) * 3
                 model_status = nest.GetDefaults(model, test_keys)
                 self.assertEqual(len(model_status), len(test_keys))
 
@@ -97,22 +96,22 @@ class StatusTestCase(unittest.TestCase):
         nest.ResetKernel()
 
         for model in nest.node_models:
-            if 'V_m' in nest.GetDefaults(model):
-                v_m = nest.GetDefaults(model)['V_m']
+            if "V_m" in nest.GetDefaults(model):
+                v_m = nest.GetDefaults(model)["V_m"]
 
-                nest.SetDefaults(model, {'V_m': -1.})
-                self.assertEqual(nest.GetDefaults(model, 'V_m'), -1.)
+                nest.SetDefaults(model, {"V_m": -1.0})
+                self.assertEqual(nest.GetDefaults(model, "V_m"), -1.0)
 
-                nest.SetDefaults(model, 'V_m', v_m)
-                self.assertEqual(nest.GetDefaults(model, 'V_m'), v_m)
+                nest.SetDefaults(model, "V_m", v_m)
+                self.assertEqual(nest.GetDefaults(model, "V_m"), v_m)
 
                 self.assertRaisesRegex(
-                    nest.NESTError, "unaccessed",
-                    nest.SetDefaults, model, 'nonexistent_status_key', 0)
+                    nest.NESTError, "unaccessed", nest.SetDefaults, model, "nonexistent_status_key", 0
+                )
 
 
 def suite():
-    suite = unittest.makeSuite(StatusTestCase, 'test')
+    suite = unittest.makeSuite(StatusTestCase, "test")
     return suite
 
 

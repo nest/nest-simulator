@@ -45,21 +45,18 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   , make_symmetric_( false )
   , creates_symmetric_connections_( false )
   , exceptions_raised_( kernel().vp_manager.get_num_threads() )
-  , use_pre_synaptic_element_( false )
-  , use_post_synaptic_element_( false )
+  , use_structural_plasticity_( false )
   , parameters_requiring_skipping_()
   , param_dicts_()
 {
-  // read out rule-related parameters -------------------------
-  //  - /rule has been taken care of above
-  //  - rule-specific params are handled by subclass c'tor
+  // We only read a subset of rule-related parameters here. The property 'rule'
+  // has already been taken care of in ConnectionManager::get_conn_builder() and
+  // rule-specific parameters are handled by the subclass constructors.
   conn_spec.update_value< bool >( names::allow_autapses, allow_autapses_ );
   conn_spec.update_value< bool >( names::allow_multapses, allow_multapses_ );
   conn_spec.update_value< bool >( names::make_symmetric, make_symmetric_ );
 
-  // read out synapse-related parameters ----------------------
-
-  // synapse-specific parameters that should be skipped when we set default synapse parameters
+  // Synapse-specific parameters that should be skipped when we set default synapse parameters
   skip_syn_params_ = {
     names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model
   };
@@ -90,8 +87,7 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
     dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
 
 #ifdef HAVE_MUSIC
-    // We allow music_channel as alias for receptor_type during
-    // connection setup
+    // We allow music_channel as alias for receptor_type during connection setup
     syn_defaults[ names::music_channel ] = 0;
 #endif
 
@@ -100,7 +96,7 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
 
   set_structural_plasticity_parameters( syn_specs );
 
-  // If make_symmetric_ is requested call reset on all parameters in order
+  // If make_symmetric_ is requested, call reset on all parameters in order
   // to check if all parameters support symmetric connections
   if ( make_symmetric_ )
   {
@@ -143,28 +139,16 @@ nest::ConnBuilder::~ConnBuilder()
   }
 }
 
-/**
- * Updates the number of connected synaptic elements in the
- * target and the source.
- * Returns 0 if the target is either on another
- * MPI machine or another thread. Returns 1 otherwise.
- *
- * @param snode_id id of the source
- * @param tnode_id id of the target
- * @param tid thread id
- * @param update amount of connected synaptic elements to update
- * @return
- */
 bool
-nest::ConnBuilder::change_connected_synaptic_elements( index snode_id, index tnode_id, const thread tid, int update )
+nest::ConnBuilder::change_connected_synaptic_elements( size_t snode_id, size_t tnode_id, const size_t tid, int update )
 {
-
   int local = true;
+
   // check whether the source is on this mpi machine
   if ( kernel().node_manager.is_local_node_id( snode_id ) )
   {
     Node* const source = kernel().node_manager.get_node_or_proxy( snode_id, tid );
-    const thread source_thread = source->get_thread();
+    const size_t source_thread = source->get_thread();
 
     // check whether the source is on our thread
     if ( tid == source_thread )
@@ -182,7 +166,7 @@ nest::ConnBuilder::change_connected_synaptic_elements( index snode_id, index tno
   else
   {
     Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-    const thread target_thread = target->get_thread();
+    const size_t target_thread = target->get_thread();
     // check whether the target is on our thread
     if ( tid != target_thread )
     {
@@ -194,12 +178,10 @@ nest::ConnBuilder::change_connected_synaptic_elements( index snode_id, index tno
       target->connect_synaptic_element( post_synaptic_element_name_, update );
     }
   }
+
   return local;
 }
 
-/**
- * Now we can connect with or without structural plasticity
- */
 void
 nest::ConnBuilder::connect()
 {
@@ -225,7 +207,7 @@ nest::ConnBuilder::connect()
     throw NotImplemented( "This connection rule does not support symmetric connections." );
   }
 
-  if ( use_structural_plasticity_() )
+  if ( use_structural_plasticity_ )
   {
     if ( make_symmetric_ )
     {
@@ -256,7 +238,7 @@ nest::ConnBuilder::connect()
     }
   }
   // check if any exceptions have been raised
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
     if ( exceptions_raised_.at( tid ).get() )
     {
@@ -265,13 +247,10 @@ nest::ConnBuilder::connect()
   }
 }
 
-/**
- * Now we can delete synapses with or without structural plasticity
- */
 void
 nest::ConnBuilder::disconnect()
 {
-  if ( use_structural_plasticity_() )
+  if ( use_structural_plasticity_ )
   {
     sp_disconnect_();
   }
@@ -281,7 +260,7 @@ nest::ConnBuilder::disconnect()
   }
 
   // check if any exceptions have been raised
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
     if ( exceptions_raised_.at( tid ).get() )
     {
@@ -291,13 +270,13 @@ nest::ConnBuilder::disconnect()
 }
 
 void
-nest::ConnBuilder::update_param_dict_( index snode_id,
+nest::ConnBuilder::update_param_dict_( size_t snode_id,
   Node& target,
-  thread target_thread,
+  size_t target_thread,
   RngPtr rng,
-  index synapse_indx )
+  size_t synapse_indx )
 {
-  assert( kernel().vp_manager.get_num_threads() == static_cast< thread >( param_dicts_[ synapse_indx ].size() ) );
+  assert( kernel().vp_manager.get_num_threads() == static_cast< size_t >( param_dicts_[ synapse_indx ].size() ) );
 
   for ( auto synapse_parameter : synapse_params_[ synapse_indx ] )
   {
@@ -315,7 +294,7 @@ nest::ConnBuilder::update_param_dict_( index snode_id,
 }
 
 void
-nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_thread, RngPtr rng )
+nest::ConnBuilder::single_connect_( size_t snode_id, Node& target, size_t target_thread, RngPtr rng )
 {
   if ( this->requires_proxies() and not target.has_proxies() )
   {
@@ -369,27 +348,17 @@ nest::ConnBuilder::single_connect_( index snode_id, Node& target, thread target_
 }
 
 void
-nest::ConnBuilder::set_pre_synaptic_element_name( const std::string& name )
+nest::ConnBuilder::set_synaptic_element_names( const std::string& pre_name, const std::string& post_name )
 {
-  if ( name.empty() )
+  if ( pre_name.empty() or post_name.empty() )
   {
-    throw BadProperty( "pre_synaptic_element cannot be empty." );
+    throw BadProperty( "synaptic element names cannot be empty." );
   }
 
-  pre_synaptic_element_name_ = name;
-  use_pre_synaptic_element_ = not name.empty();
-}
+  pre_synaptic_element_name_ = pre_name;
+  post_synaptic_element_name_ = post_name;
 
-void
-nest::ConnBuilder::set_post_synaptic_element_name( const std::string& name )
-{
-  if ( name.empty() )
-  {
-    throw BadProperty( "post_synaptic_element cannot be empty." );
-  }
-
-  post_synaptic_element_name_ = name;
-  use_post_synaptic_element_ = not name.empty();
+  use_structural_plasticity_ = true;
 }
 
 bool
@@ -439,7 +408,7 @@ nest::ConnBuilder::set_synapse_model_( const dictionary& syn_params, const size_
     : std::string( "static_synapse" );
 
   // The following call will throw "UnknownSynapseType" if syn_name is not naming a known model
-  const index synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
+  const size_t synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
   synapse_model_id_[ synapse_indx ] = synapse_model_id;
 
   // We need to make sure that Connect can process all synapse parameters specified.
@@ -505,7 +474,7 @@ nest::ConnBuilder::set_synapse_params( const dictionary& syn_defaults,
 
   // Now create dictionary with dummy values that we will use to pass settings to the synapses created. We
   // create it here once to avoid re-creating the object over and over again.
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
     param_dicts_[ synapse_indx ].emplace_back();
 
@@ -526,40 +495,34 @@ nest::ConnBuilder::set_synapse_params( const dictionary& syn_defaults,
 void
 nest::ConnBuilder::set_structural_plasticity_parameters( const std::vector< dictionary >& syn_specs )
 {
-  // Check if both pre and postsynaptic element are provided. Currently only possible to have
-  // structural plasticity with single element syn_spec.
-  bool have_both_sp_keys = false;
-  bool have_one_sp_key = false;
-  for ( auto syn_params : syn_specs )
+  bool have_structural_plasticity_parameters = false;
+  for ( auto& syn_spec : syn_specs )
   {
-    if ( not have_both_sp_keys
-      and ( syn_params.known( names::pre_synaptic_element ) and syn_params.known( names::post_synaptic_element ) ) )
+    if ( syn_spec.known( names::pre_synaptic_element ) or syn_spec.known( names::post_synaptic_element ) )
     {
-      have_both_sp_keys = true;
-    }
-    if ( not have_one_sp_key
-      and ( syn_params.known( names::pre_synaptic_element ) or syn_params.known( names::post_synaptic_element ) ) )
-    {
-      have_one_sp_key = true;
+      have_structural_plasticity_parameters = true;
     }
   }
 
-  if ( have_both_sp_keys and syn_specs.size() > 1 )
+  if ( not have_structural_plasticity_parameters )
   {
-    throw KernelException( "Structural plasticity is only possible with single syn_spec" );
+    return;
   }
-  else if ( have_both_sp_keys )
-  {
-    pre_synaptic_element_name_ = syn_specs[ 0 ].get< std::string >( names::pre_synaptic_element );
-    post_synaptic_element_name_ = syn_specs[ 0 ].get< std::string >( names::post_synaptic_element );
 
-    use_pre_synaptic_element_ = true;
-    use_post_synaptic_element_ = true;
-  }
-  else if ( have_one_sp_key )
+  if ( syn_specs.size() > 1 )
   {
-    throw BadProperty( "Structural plasticity requires both a pre and postsynaptic element." );
+    throw KernelException( "Structural plasticity can only be used with a single syn_spec." );
   }
+
+  const dictionary syn_spec = syn_specs[ 0 ];
+  if ( syn_spec.known( names::pre_synaptic_element ) xor syn_spec.known( names::post_synaptic_element ) )
+  {
+    throw BadProperty( "Structural plasticity requires both a pre- and postsynaptic element." );
+  }
+
+  pre_synaptic_element_name_ = syn_spec.get< std::string >( names::pre_synaptic_element );
+  post_synaptic_element_name_ = syn_spec.get< std::string >( names::post_synaptic_element );
+  use_structural_plasticity_ = true;
 }
 
 void
@@ -606,7 +569,7 @@ nest::OneToOneBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -623,8 +586,8 @@ nest::OneToOneBuilder::connect_()
         {
           assert( source_it < sources_->end() );
 
-          const index snode_id = ( *source_it ).node_id;
-          const index tnode_id = ( *target_it ).node_id;
+          const size_t snode_id = ( *source_it ).node_id;
+          const size_t tnode_id = ( *target_it ).node_id;
 
           if ( snode_id == tnode_id and not allow_autapses_ )
           {
@@ -650,15 +613,15 @@ nest::OneToOneBuilder::connect_()
         {
           Node* target = n->get_node();
 
-          const index tnode_id = n->get_node_id();
-          const int idx = targets_->find( tnode_id );
-          if ( idx < 0 ) // Is local node in target list?
+          const size_t tnode_id = n->get_node_id();
+          const long lid = targets_->get_lid( tnode_id );
+          if ( lid < 0 ) // Is local node in target list?
           {
             continue;
           }
 
           // one-to-one, thus we can use target idx for source as well
-          const index snode_id = ( *sources_ )[ idx ];
+          const size_t snode_id = ( *sources_ )[ lid ];
           if ( not allow_autapses_ and snode_id == tnode_id )
           {
             // no skipping required / possible,
@@ -678,11 +641,6 @@ nest::OneToOneBuilder::connect_()
   }
 }
 
-/**
- * Solves the disconnection of two nodes on a OneToOne basis without
- * structural plasticity. This means this method can be manually called
- * by the user to delete existing synapses.
- */
 void
 nest::OneToOneBuilder::disconnect_()
 {
@@ -690,7 +648,7 @@ nest::OneToOneBuilder::disconnect_()
 #pragma omp parallel
   {
     // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -700,8 +658,8 @@ nest::OneToOneBuilder::disconnect_()
       {
         assert( source_it < sources_->end() );
 
-        const index tnode_id = ( *target_it ).node_id;
-        const index snode_id = ( *source_it ).node_id;
+        const size_t tnode_id = ( *target_it ).node_id;
+        const size_t snode_id = ( *source_it ).node_id;
 
         // check whether the target is on this mpi machine
         if ( not kernel().node_manager.is_local_node_id( tnode_id ) )
@@ -711,7 +669,7 @@ nest::OneToOneBuilder::disconnect_()
         }
 
         Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-        const thread target_thread = target->get_thread();
+        const size_t target_thread = target->get_thread();
 
         // check whether the target is a proxy
         if ( target->is_proxy() )
@@ -731,12 +689,6 @@ nest::OneToOneBuilder::disconnect_()
   }
 }
 
-/**
- * Solves the connection of two nodes on a OneToOne basis with
- * structural plasticity. This means this method is used by the
- * structural plasticity manager based on the homostatic rules defined
- * for the synaptic elements on each node.
- */
 void
 nest::OneToOneBuilder::sp_connect_()
 {
@@ -744,7 +696,7 @@ nest::OneToOneBuilder::sp_connect_()
 #pragma omp parallel
   {
     // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -756,8 +708,8 @@ nest::OneToOneBuilder::sp_connect_()
       {
         assert( source_it < sources_->end() );
 
-        const index snode_id = ( *source_it ).node_id;
-        const index tnode_id = ( *target_it ).node_id;
+        const size_t snode_id = ( *source_it ).node_id;
+        const size_t tnode_id = ( *target_it ).node_id;
 
         if ( snode_id == tnode_id and not allow_autapses_ )
         {
@@ -770,7 +722,7 @@ nest::OneToOneBuilder::sp_connect_()
           continue;
         }
         Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-        const thread target_thread = target->get_thread();
+        const size_t target_thread = target->get_thread();
 
         single_connect_( snode_id, *target, target_thread, rng );
       }
@@ -784,12 +736,6 @@ nest::OneToOneBuilder::sp_connect_()
   }
 }
 
-/**
- * Solves the disconnection of two nodes on a OneToOne basis with
- * structural plasticity. This means this method is used by the
- * structural plasticity manager based on the homostatic rules defined
- * for the synaptic elements on each node.
- */
 void
 nest::OneToOneBuilder::sp_disconnect_()
 {
@@ -797,7 +743,7 @@ nest::OneToOneBuilder::sp_disconnect_()
 #pragma omp parallel
   {
     // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -807,8 +753,8 @@ nest::OneToOneBuilder::sp_disconnect_()
       {
         assert( source_it < sources_->end() );
 
-        const index snode_id = ( *source_it ).node_id;
-        const index tnode_id = ( *target_it ).node_id;
+        const size_t snode_id = ( *source_it ).node_id;
+        const size_t tnode_id = ( *target_it ).node_id;
 
         if ( not change_connected_synaptic_elements( snode_id, tnode_id, tid, -1 ) )
         {
@@ -816,7 +762,7 @@ nest::OneToOneBuilder::sp_disconnect_()
         }
 
         Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-        const thread target_thread = target->get_thread();
+        const size_t target_thread = target->get_thread();
 
         single_disconnect_( snode_id, *target, target_thread );
       }
@@ -837,7 +783,7 @@ nest::AllToAllBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -848,7 +794,7 @@ nest::AllToAllBuilder::connect_()
         NodeCollection::const_iterator target_it = targets_->begin();
         for ( ; target_it < targets_->end(); ++target_it )
         {
-          const index tnode_id = ( *target_it ).node_id;
+          const size_t tnode_id = ( *target_it ).node_id;
           Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
           if ( target->is_proxy() )
           {
@@ -865,10 +811,10 @@ nest::AllToAllBuilder::connect_()
         SparseNodeArray::const_iterator n;
         for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
         {
-          const index tnode_id = n->get_node_id();
+          const size_t tnode_id = n->get_node_id();
 
           // Is the local node in the targets list?
-          if ( targets_->find( tnode_id ) < 0 )
+          if ( targets_->get_lid( tnode_id ) < 0 )
           {
             continue;
           }
@@ -887,12 +833,12 @@ nest::AllToAllBuilder::connect_()
 }
 
 void
-nest::AllToAllBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, index tnode_id, bool skip )
+nest::AllToAllBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, size_t tnode_id, bool skip )
 {
-  const thread target_thread = target->get_thread();
+  const size_t target_thread = target->get_thread();
 
   // check whether the target is on our thread
-  if ( tid != target_thread )
+  if ( static_cast< size_t >( tid ) != target_thread )
   {
     if ( skip )
     {
@@ -904,7 +850,7 @@ nest::AllToAllBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, 
   NodeCollection::const_iterator source_it = sources_->begin();
   for ( ; source_it < sources_->end(); ++source_it )
   {
-    const index snode_id = ( *source_it ).node_id;
+    const size_t snode_id = ( *source_it ).node_id;
 
     if ( not allow_autapses_ and snode_id == tnode_id )
     {
@@ -919,19 +865,13 @@ nest::AllToAllBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, 
   }
 }
 
-/**
- * Solves the connection of two nodes on a AllToAll basis with
- * structural plasticity. This means this method is used by the
- * structural plasticity manager based on the homostatic rules defined
- * for the synaptic elements on each node.
- */
 void
 nest::AllToAllBuilder::sp_connect_()
 {
 #pragma omp parallel
   {
     // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
     try
     {
       RngPtr rng = get_vp_specific_rng( tid );
@@ -939,12 +879,12 @@ nest::AllToAllBuilder::sp_connect_()
       NodeCollection::const_iterator target_it = targets_->begin();
       for ( ; target_it < targets_->end(); ++target_it )
       {
-        const index tnode_id = ( *target_it ).node_id;
+        const size_t tnode_id = ( *target_it ).node_id;
 
         NodeCollection::const_iterator source_it = sources_->begin();
         for ( ; source_it < sources_->end(); ++source_it )
         {
-          const index snode_id = ( *source_it ).node_id;
+          const size_t snode_id = ( *source_it ).node_id;
 
           if ( not allow_autapses_ and snode_id == tnode_id )
           {
@@ -957,7 +897,7 @@ nest::AllToAllBuilder::sp_connect_()
             continue;
           }
           Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-          const thread target_thread = target->get_thread();
+          const size_t target_thread = target->get_thread();
           single_connect_( snode_id, *target, target_thread, rng );
         }
       }
@@ -971,11 +911,6 @@ nest::AllToAllBuilder::sp_connect_()
   }
 }
 
-/**
- * Solves the disconnection of two nodes on a AllToAll basis without
- * structural plasticity. This means this method can be manually called
- * by the user to delete existing synapses.
- */
 void
 nest::AllToAllBuilder::disconnect_()
 {
@@ -983,14 +918,14 @@ nest::AllToAllBuilder::disconnect_()
 #pragma omp parallel
   {
     // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
     try
     {
       NodeCollection::const_iterator target_it = targets_->begin();
       for ( ; target_it < targets_->end(); ++target_it )
       {
-        const index tnode_id = ( *target_it ).node_id;
+        const size_t tnode_id = ( *target_it ).node_id;
 
         // check whether the target is on this mpi machine
         if ( not kernel().node_manager.is_local_node_id( tnode_id ) )
@@ -1000,7 +935,7 @@ nest::AllToAllBuilder::disconnect_()
         }
 
         Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-        const thread target_thread = target->get_thread();
+        const size_t target_thread = target->get_thread();
 
         // check whether the target is a proxy
         if ( target->is_proxy() )
@@ -1012,7 +947,7 @@ nest::AllToAllBuilder::disconnect_()
         NodeCollection::const_iterator source_it = sources_->begin();
         for ( ; source_it < sources_->end(); ++source_it )
         {
-          const index snode_id = ( *source_it ).node_id;
+          const size_t snode_id = ( *source_it ).node_id;
           single_disconnect_( snode_id, *target, target_thread );
         }
       }
@@ -1026,31 +961,25 @@ nest::AllToAllBuilder::disconnect_()
   }
 }
 
-/**
- * Solves the disconnection of two nodes on a AllToAll basis with
- * structural plasticity. This means this method is used by the
- * structural plasticity manager based on the homostatic rules defined
- * for the synaptic elements on each node.
- */
 void
 nest::AllToAllBuilder::sp_disconnect_()
 {
 #pragma omp parallel
   {
     // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
     try
     {
       NodeCollection::const_iterator target_it = targets_->begin();
       for ( ; target_it < targets_->end(); ++target_it )
       {
-        const index tnode_id = ( *target_it ).node_id;
+        const size_t tnode_id = ( *target_it ).node_id;
 
         NodeCollection::const_iterator source_it = sources_->begin();
         for ( ; source_it < sources_->end(); ++source_it )
         {
-          const index snode_id = ( *source_it ).node_id;
+          const size_t snode_id = ( *source_it ).node_id;
 
           if ( not change_connected_synaptic_elements( snode_id, tnode_id, tid, -1 ) )
           {
@@ -1058,7 +987,7 @@ nest::AllToAllBuilder::sp_disconnect_()
             continue;
           }
           Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-          const thread target_thread = target->get_thread();
+          const size_t target_thread = target->get_thread();
           single_disconnect_( snode_id, *target, target_thread );
         }
       }
@@ -1134,7 +1063,7 @@ nest::FixedInDegreeBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -1145,7 +1074,7 @@ nest::FixedInDegreeBuilder::connect_()
         NodeCollection::const_iterator target_it = targets_->begin();
         for ( ; target_it < targets_->end(); ++target_it )
         {
-          const index tnode_id = ( *target_it ).node_id;
+          const size_t tnode_id = ( *target_it ).node_id;
           Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
 
           const long indegree_value = std::round( indegree_->value( rng, target ) );
@@ -1165,10 +1094,10 @@ nest::FixedInDegreeBuilder::connect_()
         SparseNodeArray::const_iterator n;
         for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
         {
-          const index tnode_id = n->get_node_id();
+          const size_t tnode_id = n->get_node_id();
 
           // Is the local node in the targets list?
-          if ( targets_->find( tnode_id ) < 0 )
+          if ( targets_->get_lid( tnode_id ) < 0 )
           {
             continue;
           }
@@ -1192,14 +1121,14 @@ void
 nest::FixedInDegreeBuilder::inner_connect_( const int tid,
   RngPtr rng,
   Node* target,
-  index tnode_id,
+  size_t tnode_id,
   bool skip,
   long indegree_value )
 {
-  const thread target_thread = target->get_thread();
+  const size_t target_thread = target->get_thread();
 
   // check whether the target is on our thread
-  if ( tid != target_thread )
+  if ( static_cast< size_t >( tid ) != target_thread )
   {
     // skip array parameters handled in other virtual processes
     if ( skip )
@@ -1215,7 +1144,7 @@ nest::FixedInDegreeBuilder::inner_connect_( const int tid,
   for ( long j = 0; j < indegree_value; ++j )
   {
     unsigned long s_id;
-    index snode_id;
+    size_t snode_id;
     bool skip_autapse = false;
     bool skip_multapse = false;
 
@@ -1301,10 +1230,10 @@ nest::FixedOutDegreeBuilder::connect_()
   NodeCollection::const_iterator source_it = sources_->begin();
   for ( ; source_it < sources_->end(); ++source_it )
   {
-    const index snode_id = ( *source_it ).node_id;
+    const size_t snode_id = ( *source_it ).node_id;
 
     std::set< long > ch_ids;
-    std::vector< index > tgt_ids_;
+    std::vector< size_t > tgt_ids_;
     const long n_rnd = targets_->size();
 
     Node* source_node = kernel().node_manager.get_node_or_proxy( snode_id );
@@ -1312,7 +1241,7 @@ nest::FixedOutDegreeBuilder::connect_()
     for ( long j = 0; j < outdegree_value; ++j )
     {
       unsigned long t_id;
-      index tnode_id;
+      size_t tnode_id;
       bool skip_autapse = false;
       bool skip_multapse = false;
 
@@ -1335,13 +1264,13 @@ nest::FixedOutDegreeBuilder::connect_()
 #pragma omp parallel
     {
       // get thread id
-      const thread tid = kernel().vp_manager.get_thread_id();
+      const size_t tid = kernel().vp_manager.get_thread_id();
 
       try
       {
         RngPtr rng = get_vp_specific_rng( tid );
 
-        std::vector< index >::const_iterator tnode_id_it = tgt_ids_.begin();
+        std::vector< size_t >::const_iterator tnode_id_it = tgt_ids_.begin();
         for ( ; tnode_id_it != tgt_ids_.end(); ++tnode_id_it )
         {
           Node* const target = kernel().node_manager.get_node_or_proxy( *tnode_id_it, tid );
@@ -1412,7 +1341,7 @@ nest::FixedTotalNumberBuilder::connect_()
   // Compute the distribution of targets over processes using the modulo
   // function
   std::vector< size_t > number_of_targets_on_vp( M, 0 );
-  std::vector< index > local_targets;
+  std::vector< size_t > local_targets;
   local_targets.reserve( size_targets / kernel().mpi_manager.get_num_processes() );
   for ( size_t t = 0; t < targets_->size(); t++ )
   {
@@ -1474,21 +1403,21 @@ nest::FixedTotalNumberBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
     try
     {
-      const int vp_id = kernel().vp_manager.thread_to_vp( tid );
+      const size_t vp_id = kernel().vp_manager.thread_to_vp( tid );
 
       if ( kernel().vp_manager.is_local_vp( vp_id ) )
       {
         RngPtr rng = get_vp_specific_rng( tid );
 
         // gather local target node IDs
-        std::vector< index > thread_local_targets;
+        std::vector< size_t > thread_local_targets;
         thread_local_targets.reserve( number_of_targets_on_vp[ vp_id ] );
 
-        std::vector< index >::const_iterator tnode_id_it = local_targets.begin();
+        std::vector< size_t >::const_iterator tnode_id_it = local_targets.begin();
         for ( ; tnode_id_it != local_targets.end(); ++tnode_id_it )
         {
           if ( kernel().vp_manager.node_id_to_vp( *tnode_id_it ) == vp_id )
@@ -1515,7 +1444,7 @@ nest::FixedTotalNumberBuilder::connect_()
           const long tnode_id = thread_local_targets[ t_index ];
 
           Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-          const thread target_thread = target->get_thread();
+          const size_t target_thread = target->get_thread();
 
           if ( allow_autapses_ or snode_id != tnode_id )
           {
@@ -1566,7 +1495,7 @@ nest::BernoulliBuilder::connect_()
 #pragma omp parallel
   {
     // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
     try
     {
@@ -1577,7 +1506,7 @@ nest::BernoulliBuilder::connect_()
         NodeCollection::const_iterator target_it = targets_->begin();
         for ( ; target_it < targets_->end(); ++target_it )
         {
-          const index tnode_id = ( *target_it ).node_id;
+          const size_t tnode_id = ( *target_it ).node_id;
           Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
           if ( target->is_proxy() )
           {
@@ -1596,10 +1525,10 @@ nest::BernoulliBuilder::connect_()
         SparseNodeArray::const_iterator n;
         for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
         {
-          const index tnode_id = n->get_node_id();
+          const size_t tnode_id = n->get_node_id();
 
           // Is the local node in the targets list?
-          if ( targets_->find( tnode_id ) < 0 )
+          if ( targets_->get_lid( tnode_id ) < 0 )
           {
             continue;
           }
@@ -1618,12 +1547,12 @@ nest::BernoulliBuilder::connect_()
 }
 
 void
-nest::BernoulliBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, index tnode_id )
+nest::BernoulliBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, size_t tnode_id )
 {
-  const thread target_thread = target->get_thread();
+  const size_t target_thread = target->get_thread();
 
   // check whether the target is on our thread
-  if ( tid != target_thread )
+  if ( static_cast< size_t >( tid ) != target_thread )
   {
     return;
   }
@@ -1634,7 +1563,7 @@ nest::BernoulliBuilder::inner_connect_( const int tid, RngPtr rng, Node* target,
   NodeCollection::const_iterator source_it = sources_->begin();
   for ( ; source_it < sources_->end(); ++source_it )
   {
-    const index snode_id = ( *source_it ).node_id;
+    const size_t snode_id = ( *source_it ).node_id;
 
     if ( not allow_autapses_ and snode_id == tnode_id )
     {
@@ -1687,7 +1616,7 @@ nest::SymmetricBernoulliBuilder::connect_()
 {
 #pragma omp parallel
   {
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
     // Use RNG generating same number sequence on all threads
     RngPtr synced_rng = get_vp_synced_rng( tid );
@@ -1698,12 +1627,12 @@ nest::SymmetricBernoulliBuilder::connect_()
       binomial_distribution::param_type param( sources_->size(), p_ );
 
       unsigned long indegree;
-      index snode_id;
-      std::set< index > previous_snode_ids;
+      size_t snode_id;
+      std::set< size_t > previous_snode_ids;
       Node* target;
-      thread target_thread;
+      size_t target_thread;
       Node* source;
-      thread source_thread;
+      size_t source_thread;
 
       for ( NodeCollection::const_iterator tnode_id = targets_->begin(); tnode_id != targets_->end(); ++tnode_id )
       {
@@ -1777,30 +1706,21 @@ nest::SymmetricBernoulliBuilder::connect_()
 }
 
 
-/**
- * The SPBuilder is in charge of the creation of synapses during the simulation
- * under the control of the structural plasticity manager
- * @param net the network
- * @param sources the source nodes on which synapses can be created/deleted
- * @param targets the target nodes on which synapses can be created/deleted
- * @param conn_spec connectivity specs
- * @param syn_spec synapse specs
- */
 nest::SPBuilder::SPBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const dictionary& conn_spec,
-  const std::vector< dictionary >& syn_spec )
-  : ConnBuilder( sources, targets, conn_spec, syn_spec )
+  const std::vector< dictionary >& syn_specs )
+  : ConnBuilder( sources, targets, conn_spec, syn_specs )
 {
   // Check that both pre and postsynaptic element are provided
-  if ( not use_pre_synaptic_element_ or not use_post_synaptic_element_ )
+  if ( not use_structural_plasticity_ )
   {
     throw BadProperty( "pre_synaptic_element and/or post_synaptic_elements is missing." );
   }
 }
 
 void
-nest::SPBuilder::update_delay( delay& d ) const
+nest::SPBuilder::update_delay( long& d ) const
 {
   if ( get_default_delay() )
   {
@@ -1811,12 +1731,12 @@ nest::SPBuilder::update_delay( delay& d ) const
 }
 
 void
-nest::SPBuilder::sp_connect( const std::vector< index >& sources, const std::vector< index >& targets )
+nest::SPBuilder::sp_connect( const std::vector< size_t >& sources, const std::vector< size_t >& targets )
 {
   connect_( sources, targets );
 
   // check if any exceptions have been raised
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
     if ( exceptions_raised_.at( tid ).get() )
     {
@@ -1841,7 +1761,7 @@ nest::SPBuilder::connect_( NodeCollectionPTR, NodeCollectionPTR )
 }
 
 void
-nest::SPBuilder::connect_( const std::vector< index >& sources, const std::vector< index >& targets )
+nest::SPBuilder::connect_( const std::vector< size_t >& sources, const std::vector< size_t >& targets )
 {
   // Code copied and adapted from OneToOneBuilder::connect_()
   // make sure that target and source population have the same size
@@ -1853,14 +1773,14 @@ nest::SPBuilder::connect_( const std::vector< index >& sources, const std::vecto
 #pragma omp parallel
   {
     // get thread id
-    const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
     try
     {
       RngPtr rng = get_vp_specific_rng( tid );
 
-      std::vector< index >::const_iterator tnode_id_it = targets.begin();
-      std::vector< index >::const_iterator snode_id_it = sources.begin();
+      std::vector< size_t >::const_iterator tnode_id_it = targets.begin();
+      std::vector< size_t >::const_iterator snode_id_it = sources.begin();
       for ( ; tnode_id_it != targets.end(); ++tnode_id_it, ++snode_id_it )
       {
         assert( snode_id_it != sources.end() );

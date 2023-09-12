@@ -27,12 +27,12 @@ from ..ll_api import *
 from .. import nestkernel_api as nestkernel
 
 __all__ = [
-    'NumProcesses',
-    'Rank',
-    'GetLocalVPs',
-    'SetAcceptableLatency',
-    'SetMaxBuffered',
-    'SyncProcesses',
+    "NumProcesses",
+    "Rank",
+    "GetLocalVPs",
+    "SetAcceptableLatency",
+    "SetMaxBuffered",
+    "SyncProcesses",
 ]
 
 
@@ -107,8 +107,7 @@ def SetMaxBuffered(port_name, size):
 
 
 def SyncProcesses():
-    """Synchronize all MPI processes.
-    """
+    """Synchronize all MPI processes."""
 
     # PYNEST-NG
     # sr("SyncProcesses")
@@ -116,13 +115,12 @@ def SyncProcesses():
 
 
 def GetLocalVPs():
-    """Return iterable representing the VPs local to the MPI rank.
-    """
+    """Return iterable representing the VPs local to the MPI rank."""
 
     # Compute local VPs as range based on round-robin logic in
     # VPManager::get_vp(). mpitest_get_local_vps ensures this is in
     # sync with the kernel.
-    
+
     # PYNEST-NG
     # n_vp = sli_func("GetKernelStatus /total_num_virtual_procs get")
     n_vp = 1

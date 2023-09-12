@@ -40,6 +40,12 @@ r"""PyNEST - Python interface for the NEST Simulator
 For more information visit https://www.nest-simulator.org.
 """
 
+# WARINIG: Since this file uses a ton of trickery, linter warnings are mostly
+# disabled. This means that you need to make sure style is fine yourself!!!
+#
+# pylint: disable=wrong-import-position, no-name-in-module, undefined-variable
+# pylint: disable=invalid-name, protected-access
+
 # WARNING: This file is only used to create the `NestModule` below and then
 # ignored. If you'd like to make changes to the root `nest` module, they need to
 # be made to the `NestModule` class/instance instead.
@@ -57,14 +63,14 @@ import importlib  # noqa
 import builtins  # noqa
 
 try:
-    import versionchecker
+    import versionchecker  # noqa: F401
 except ImportError:
     pass
 
 
 class NestModule(types.ModuleType):
     """
-    A module class for the `nest` root module to control the dynamic generation
+    A module class for the ``nest`` root module to control the dynamic generation
     of module level attributes such as the KernelAttributes, lazy loading
     some submodules and importing the public APIs of the `lib` submodules.
     """
@@ -80,25 +86,26 @@ class NestModule(types.ModuleType):
         super().__init__(name)
         # Copy over the original module attributes to preserve all interpreter-given
         # magic attributes such as `__name__`, `__path__`, `__package__`, ...
-        self.__dict__.update(_original_module_attrs)
+        self.__dict__.update(_original_module_attrs)  # noqa
 
         # Import public APIs of submodules into the `nest.` namespace
-        _rel_import_star(self, ".lib.hl_api_connections")
-        _rel_import_star(self, ".lib.hl_api_exceptions")
-        _rel_import_star(self, ".lib.hl_api_info")
-        _rel_import_star(self, ".lib.hl_api_models")
-        _rel_import_star(self, ".lib.hl_api_nodes")
-        _rel_import_star(self, ".lib.hl_api_parallel_computing")
-        _rel_import_star(self, ".lib.hl_api_simulation")
-        _rel_import_star(self, ".lib.hl_api_spatial")
-        _rel_import_star(self, ".lib.hl_api_types")
+        _rel_import_star(self, ".lib.hl_api_connections")  # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_exceptions")  # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_info")  # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_models")  # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_nodes")  # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_parallel_computing")  # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_simulation")  # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_sonata")  # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_spatial")  # noqa: F821
+        _rel_import_star(self, ".lib.hl_api_types")  # noqa: F821
 
         # Lazy loaded modules. They are descriptors, so add them to the type object
-        type(self).raster_plot = _lazy_module_property("raster_plot")
-        type(self).server = _lazy_module_property("server")
-        type(self).spatial = _lazy_module_property("spatial")
-        type(self).visualization = _lazy_module_property("visualization")
-        type(self).voltage_trace = _lazy_module_property("voltage_trace")
+        type(self).raster_plot = _lazy_module_property("raster_plot")  # noqa: F821
+        type(self).server = _lazy_module_property("server")  # noqa: F821
+        type(self).spatial = _lazy_module_property("spatial")  # noqa: F821
+        type(self).visualization = _lazy_module_property("visualization")  # noqa: F821
+        type(self).voltage_trace = _lazy_module_property("voltage_trace")  # noqa: F821
 
         self.__version__ = "PYNEST-NG"
         # Finalize the nest module with a public API.
@@ -110,15 +117,16 @@ class NestModule(types.ModuleType):
         type(self).__setattr__ = _setattr_error
 
     def set(self, **kwargs):
+        "Forward kernel attribute setting to `SetKernelStatus()`."
         return self.SetKernelStatus(kwargs)
 
     def get(self, *args):
-        if len(args) == 0:
+        "Forward kernel attribute getting to `GetKernelStatus()`."
+        if not args:
             return self.GetKernelStatus()
         if len(args) == 1:
             return self.GetKernelStatus(args[0])
-        else:
-            return self.GetKernelStatus(args)
+        return self.GetKernelStatus(args)
 
     def __dir__(self):
         return list(set(vars(self).keys()) | set(self.__all__))
@@ -132,31 +140,15 @@ class NestModule(types.ModuleType):
     # * Do not end docstrings with punctuation. A `.` or `,` is added by the
     #   formatting logic.
 
-    kernel_status = KernelAttribute(
-        "dict", "Get the complete kernel status", readonly=True
-    )
-    resolution = KernelAttribute(
-        "float", "The resolution of the simulation (in ms)", default=0.1
-    )
+    kernel_status = KernelAttribute("dict", "Get the complete kernel status", readonly=True)
+    resolution = KernelAttribute("float", "The resolution of the simulation (in ms)", default=0.1)
     biological_time = KernelAttribute("float", "The current simulation time (in ms)")
-    build_info = KernelAttribute(
-        "dict", "Build and compile time information for NEST", readonly=True
-    )
-    to_do = KernelAttribute(
-        "int", "The number of steps yet to be simulated", readonly=True
-    )
-    max_delay = KernelAttribute(
-        "float", "The maximum delay in the network", default=0.1
-    )
-    min_delay = KernelAttribute(
-        "float", "The minimum delay in the network", default=0.1
-    )
+    to_do = KernelAttribute("int", "The number of steps yet to be simulated", readonly=True)
+    max_delay = KernelAttribute("float", "The maximum delay in the network", default=0.1)
+    min_delay = KernelAttribute("float", "The minimum delay in the network", default=0.1)
     ms_per_tic = KernelAttribute(
         "float",
-        (
-            "The number of milliseconds per tic. Calculated by "
-            + "ms_per_tic = 1 / tics_per_ms"
-        ),
+        ("The number of milliseconds per tic. Calculated by " + "ms_per_tic = 1 / tics_per_ms"),
         readonly=True,
     )
     tics_per_ms = KernelAttribute(
@@ -169,18 +161,11 @@ class NestModule(types.ModuleType):
     )
     tics_per_step = KernelAttribute(
         "int",
-        (
-            "The number of tics per simulation time step. Calculated by "
-            + "tics_per_step = resolution * tics_per_ms"
-        ),
+        "The number of tics per simulation time step. Calculated as tics_per_step = resolution * tics_per_ms",
         readonly=True,
     )
-    T_max = KernelAttribute(
-        "float", "The largest representable time value", readonly=True
-    )
-    T_min = KernelAttribute(
-        "float", "The smallest representable time value", readonly=True
-    )
+    T_max = KernelAttribute("float", "The largest representable time value", readonly=True)
+    T_min = KernelAttribute("float", "The smallest representable time value", readonly=True)
     rng_types = KernelAttribute(
         "list[str]",
         "List of available random number generator types",
@@ -193,15 +178,10 @@ class NestModule(types.ModuleType):
     )
     rng_seed = KernelAttribute(
         "int",
-        (
-            "Seed value used as base for seeding NEST random number generators "
-            + r"(:math:`1 \leq s\leq 2^{32}-1`)"
-        ),
+        ("Seed value used as base for seeding NEST random number generators " + r"(:math:`1 \leq s\leq 2^{32}-1`)"),
         default=143202461,
     )
-    total_num_virtual_procs = KernelAttribute(
-        "int", "The total number of virtual processes", default=1
-    )
+    total_num_virtual_procs = KernelAttribute("int", "The total number of virtual processes", default=1)
     local_num_threads = KernelAttribute("int", "The local number of threads", default=1)
     num_processes = KernelAttribute("int", "The number of MPI processes", readonly=True)
     off_grid_spiking = KernelAttribute(
@@ -221,18 +201,12 @@ class NestModule(types.ModuleType):
     )
     send_buffer_size_secondary_events = KernelAttribute(
         "int",
-        (
-            "Size of MPI send buffers for communicating secondary events "
-            + "(in bytes, per MPI rank, for developers)"
-        ),
+        ("Size of MPI send buffers for communicating secondary events " + "(in bytes, per MPI rank, for developers)"),
         readonly=True,
     )
     recv_buffer_size_secondary_events = KernelAttribute(
         "int",
-        (
-            "Size of MPI recv buffers for communicating secondary events "
-            + "(in bytes, per MPI rank, for developers)"
-        ),
+        ("Size of MPI recv buffers for communicating secondary events " + "(in bytes, per MPI rank, for developers)"),
         readonly=True,
     )
     buffer_size_spike_data = KernelAttribute(
@@ -247,18 +221,12 @@ class NestModule(types.ModuleType):
     )
     growth_factor_buffer_spike_data = KernelAttribute(
         "float",
-        (
-            "If MPI buffers for communication of spikes resize on the fly, "
-            + "grow them by this factor each round"
-        ),
+        ("If MPI buffers for communication of spikes resize on the fly, " + "grow them by this factor each round"),
         default=1.5,
     )
     growth_factor_buffer_target_data = KernelAttribute(
         "float",
-        (
-            "If MPI buffers for communication of connections resize on the "
-            + "fly, grow them by this factor each round"
-        ),
+        ("If MPI buffers for communication of connections resize on the " + "fly, grow them by this factor each round"),
         default=1.5,
     )
     max_buffer_size_spike_data = KernelAttribute(
@@ -271,9 +239,7 @@ class NestModule(types.ModuleType):
         "Maximal size of MPI buffers for communication of connections",
         default=16777216,
     )
-    use_wfr = KernelAttribute(
-        "bool", "Whether to use waveform relaxation method", default=True
-    )
+    use_wfr = KernelAttribute("bool", "Whether to use waveform relaxation method", default=True)
     wfr_comm_interval = KernelAttribute(
         "float",
         "Desired waveform relaxation communication interval",
@@ -292,9 +258,7 @@ class NestModule(types.ModuleType):
     wfr_interpolation_order = KernelAttribute(
         "int", "Interpolation order of polynomial used in wfr iterations", default=3
     )
-    max_num_syn_models = KernelAttribute(
-        "int", "Maximal number of synapse models supported", readonly=True
-    )
+    max_num_syn_models = KernelAttribute("int", "Maximal number of synapse models supported", readonly=True)
     sort_connections_by_source = KernelAttribute(
         "bool",
         (
@@ -344,17 +308,13 @@ class NestModule(types.ModuleType):
         "A path, where all data is written to, defaults to current directory",
     )
     data_prefix = KernelAttribute("str", "A common prefix for all data files")
-    overwrite_files = KernelAttribute(
-        "bool", "Whether to overwrite existing data files", default=False
-    )
+    overwrite_files = KernelAttribute("bool", "Whether to overwrite existing data files", default=False)
     print_time = KernelAttribute(
         "bool",
         "Whether to print progress information during the simulation",
         default=False,
     )
-    network_size = KernelAttribute(
-        "int", "The number of nodes in the network", readonly=True
-    )
+    network_size = KernelAttribute("int", "The number of nodes in the network", readonly=True)
     num_connections = KernelAttribute(
         "int",
         "The number of connections in the network",
@@ -428,9 +388,7 @@ class NestModule(types.ModuleType):
     )
 
     # Kernel attribute indices, used for fast lookup in `ll_api.py`
-    _kernel_attr_names = builtins.set(
-        k for k, v in vars().items() if isinstance(v, KernelAttribute)
-    )
+    _kernel_attr_names = builtins.set(k for k, v in vars().items() if isinstance(v, KernelAttribute))
     _readonly_kernel_attrs = builtins.set(
         k for k, v in vars().items() if isinstance(v, KernelAttribute) and v._readonly
     )
@@ -501,6 +459,7 @@ def _lazy_module_property(module_name, optional=False, optional_hint=""):
     """
 
     def lazy_loader(self):
+        "Wrap lazy loaded property."
         cls = type(self)
         delattr(cls, module_name)
         try:
@@ -508,10 +467,8 @@ def _lazy_module_property(module_name, optional=False, optional_hint=""):
         except ImportError as e:
             if optional:
                 raise ImportError(
-                    f"This functionality requires the optional module "
-                    + module_name
-                    + ". "
-                    + optional_hint
+                    f"This functionality requires the optional module \
+                    {module_name}.{optional_hint}"
                 ) from None
             else:
                 raise e from None
@@ -524,6 +481,8 @@ def _lazy_module_property(module_name, optional=False, optional_hint=""):
 # Instantiate a NestModule to replace the nest Python module. Based on
 # https://mail.python.org/pipermail/python-ideas/2012-May/014969.html
 _module = NestModule(__name__)
+# A reference to the class of the module is required for the documentation.
+_module.__dict__["NestModule"] = NestModule
 # Set the nest module object as the return value of `import nest` using sys
 sys.modules[__name__] = _module
 # Some compiled/binary components (`nestkernel_api.pyx` for example) of NEST
@@ -533,4 +492,7 @@ sys.modules[__name__] = _module
 globals().update(_module.__dict__)
 
 # Clean up obsolete references
+# Since these references are deleted, flake8 complains with an error
+# `F821 undefined name` where these variables are used. Hence we mark all those
+# lines with a `# noqa`
 del _rel_import_star, _lazy_module_property, _module, _original_module_attrs

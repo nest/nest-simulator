@@ -110,9 +110,7 @@ class AIPong:
         self.run = 0
         biological_time = 0
 
-        logging.info(
-            f"Starting simulation of {max_runs} iterations of " f"{POLL_TIME}ms each."
-        )
+        logging.info(f"Starting simulation of {max_runs} iterations of " f"{POLL_TIME}ms each.")
         while self.run < max_runs:
             logging.debug("")
             logging.debug(f"Iteration {self.run}:")
@@ -132,9 +130,7 @@ class AIPong:
             nest.Simulate(POLL_TIME)
             biological_time = nest.GetKernelStatus("biological_time")
 
-            for network, paddle in zip(
-                [self.player1, self.player2], [self.game.l_paddle, self.game.r_paddle]
-            ):
+            for network, paddle in zip([self.player1, self.player2], [self.game.l_paddle, self.game.r_paddle]):
                 network.apply_synaptic_plasticity(biological_time)
                 network.reset()
 
@@ -166,8 +162,7 @@ class AIPong:
 
         end_time = time.time()
         logging.info(
-            f"Simulation of {max_runs} runs complete after: "
-            f"{datetime.timedelta(seconds=end_time - start_time)}"
+            f"Simulation of {max_runs} runs complete after: " f"{datetime.timedelta(seconds=end_time - start_time)}"
         )
 
         self.game_data = np.array(self.game_data)
@@ -184,9 +179,7 @@ class AIPong:
 
         logging.info("saving network data...")
 
-        for net, filename in zip(
-            [self.player1, self.player2], ["data_left.pkl.gz", "data_right.pkl.gz"]
-        ):
+        for net, filename in zip([self.player1, self.player2], ["data_left.pkl.gz", "data_right.pkl.gz"]):
             with gzip.open(os.path.join(self.out_dir, filename), "w") as file:
                 output = {"network_type": repr(net), "with_noise": net.apply_noise}
                 performance_data = net.get_performance_data()
@@ -201,12 +194,8 @@ if __name__ == "__main__":
     nest.set_verbosity(nest.verbosity.M_WARNING)
 
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--runs", type=int, default=5000, help="Number of game steps to simulate."
-    )
-    parser.add_argument(
-        "--debug", action="store_true", help="Verbose debugging output."
-    )
+    parser.add_argument("--runs", type=int, default=5000, help="Number of game steps to simulate.")
+    parser.add_argument("--debug", action="store_true", help="Verbose debugging output.")
     parser.add_argument(
         "--out_dir",
         type=str,

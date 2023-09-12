@@ -26,7 +26,6 @@ HAVE_SIONLIB = nest.build_info["have_sionlib"]
 
 
 class TestRecordingBackends(unittest.TestCase):
-
     def testAAAResetKernel(self):
         """Test reset of recording backend defaults.
 
@@ -149,6 +148,6 @@ def suite():
     return suite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())

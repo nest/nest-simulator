@@ -43,17 +43,26 @@ dependencies:
   - gsl >= 1.11
   - libtool
   - readline
+  - hdf5
 
   # Testing NEST ------------
   - pytest
   - pytest-timeout
   - pytest-xdist
+  - pytest-pylint
+  - pytest-mypy
+  - pytest-cov
   - numpy
   - pandas
   - scipy
   - mpi4py
+  - data-science-types
+  - h5py
   - terminaltables
   - pycodestyle
+  - pydocstyle
+  - rstcheck
+  - mypy[version='>=0.8']
   - cppcheck
 
   # Working with NEST ------
@@ -97,7 +106,10 @@ dependencies:
     - example
     - Image
     - sphinx_autobuild
+    - sphinx-copybutton
     - sphinx_gallery
     - sphinx-tabs
     - sphinx_design
     - sphinx-material
+    - sphinx-notfound-page
+    - sphinxcontrib-mermaid

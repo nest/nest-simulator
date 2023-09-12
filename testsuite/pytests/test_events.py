@@ -35,39 +35,37 @@ class EventsTestCase(unittest.TestCase):
 
         nest.ResetKernel()
 
-        n = nest.Create('iaf_psc_alpha')
-        vm = nest.Create('voltmeter', params={'interval': 1.})
+        n = nest.Create("iaf_psc_alpha")
+        vm = nest.Create("voltmeter", params={"interval": 1.0})
 
         nest.Connect(vm, n)
         nest.Simulate(10)
 
         d = vm.events
 
-        self.assertEqual(len(d['V_m']), 9)
+        self.assertEqual(len(d["V_m"]), 9)
 
     def test_EventsSpikes(self):
         """Spike Events"""
 
         nest.ResetKernel()
 
-        n = nest.Create('iaf_psc_alpha', params={'I_e': 1000.})
-        sr = nest.Create('spike_recorder')
+        n = nest.Create("iaf_psc_alpha", params={"I_e": 1000.0})
+        sr = nest.Create("spike_recorder")
 
         nest.Connect(n, sr)
         nest.Simulate(1000)
 
         d = sr.events
 
-        self.assertGreater(len(d['times']), 0)
+        self.assertGreater(len(d["times"]), 0)
 
 
 def suite():
-
-    suite = unittest.makeSuite(EventsTestCase, 'test')
+    suite = unittest.makeSuite(EventsTestCase, "test")
     return suite
 
 
 if __name__ == "__main__":
-
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())

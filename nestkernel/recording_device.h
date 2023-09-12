@@ -180,4 +180,4 @@ private:
 
 } // namespace
 
-#endif // RECORDING_DEVICE_H
+#endif /* #ifndef RECORDING_DEVICE_H */

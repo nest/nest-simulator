@@ -28,17 +28,14 @@
 #include "nest_types.h"
 #include "node.h"
 
+// Includes from models:
+#include "weight_recorder.h"
 
 namespace nest
 {
 
-/**
- * Default implementation of an empty CommonSynapseProperties object.
- */
-
 CommonSynapseProperties::CommonSynapseProperties()
-  : weight_recorder_( new NodeCollectionPrimitive() )
-  , wr_node_id_( 0 )
+  : weight_recorder_()
 {
 }
 
@@ -49,35 +46,30 @@ CommonSynapseProperties::~CommonSynapseProperties()
 void
 CommonSynapseProperties::get_status( dictionary& d ) const
 {
-  if ( weight_recorder_.get() )
-  {
-    d[ names::weight_recorder ] = weight_recorder_;
-  }
-  else
-  {
-    const auto nc = NodeCollectionPTR( NodeCollection::create( std::vector< index >() ) );
-    d[ names::weight_recorder ] = nc;
-  }
+  d[ names::weight_recorder ] = NodeCollection::create( weight_recorder_ );
 }
 
 void
 CommonSynapseProperties::set_status( const dictionary& d, ConnectorModel& )
 {
-  const bool update_wr = d.update_value( names::weight_recorder, weight_recorder_ );
-  if ( update_wr and weight_recorder_->size() > 1 )
+  NodeCollectionPTR wr_nc;
+  if ( d.update_value( names::weight_recorder, wr_nc ) )
   {
-    throw BadProperty( "weight_recorder must be a single element NodeCollection" );
-  }
-  else if ( update_wr )
-  {
-    wr_node_id_ = ( *weight_recorder_ )[ 0 ];
-  }
-}
+    if ( wr_nc->size() != 1 )
+    {
+      throw BadProperty( "Property weight_recorder must be a single element NodeCollection" );
+    }
 
-Node*
-CommonSynapseProperties::get_node()
-{
-  return nullptr;
+    const size_t tid = kernel().vp_manager.get_thread_id();
+    Node* wr_node = kernel().node_manager.get_node_or_proxy( ( *wr_nc )[ 0 ], tid );
+    weight_recorder* wr = dynamic_cast< weight_recorder* >( wr_node );
+    if ( not wr )
+    {
+      throw BadProperty( "Property weight_recorder must be set to a node of type weight_recorder" );
+    }
+
+    weight_recorder_ = wr;
+  }
 }
 
 void

@@ -28,12 +28,14 @@ import nest
 
 try:
     import csa
+
     HAVE_CSA = True
 except ImportError:
     HAVE_CSA = False
 
 try:
     import numpy
+
     HAVE_NUMPY = True
 except ImportError:
     HAVE_NUMPY = False
@@ -41,11 +43,8 @@ except ImportError:
 HAVE_LIBNEUROSIM = nest.build_info["have_libneurosim"]
 
 
-@unittest.skipIf(not HAVE_CSA, 'Python CSA package is not available')
-@unittest.skipIf(
-    not HAVE_LIBNEUROSIM,
-    'NEST was built without support for libneurosim'
-)
+@unittest.skipIf(not HAVE_CSA, "Python CSA package is not available")
+@unittest.skipIf(not HAVE_LIBNEUROSIM, "NEST was built without support for libneurosim")
 class ConngenTestCase(unittest.TestCase):
     """Conngen tests"""
 
@@ -76,7 +75,7 @@ class ConngenTestCase(unittest.TestCase):
             # correct targets, weights and delays
             conns = nest.GetConnections(sources[i])
             self.assertEqual(len(conns), 1)
-            self.assertEqual(conns.target, targets[i].get('global_id'))
+            self.assertEqual(conns.target, targets[i].get("global_id"))
             self.assertEqual(conns.weight, weight)
             self.assertEqual(conns.delay, delay)
 
@@ -101,7 +100,7 @@ class ConngenTestCase(unittest.TestCase):
 
         # Connect with a non-standard synapse model
         connspec = {"rule": "conngen", "cg": cg}
-        synspec = {'synapse_model': synmodel, "tau_plus": tau_plus}
+        synspec = {"synapse_model": synmodel, "tau_plus": tau_plus}
         nest.Connect(sources, targets, connspec, synspec)
 
         for i in range(n_neurons):
@@ -109,7 +108,7 @@ class ConngenTestCase(unittest.TestCase):
             # and the non-standard synapse model set
             conns = nest.GetConnections(sources[i])
             self.assertEqual(len(conns), 1)
-            self.assertEqual(conns.target, targets[i].get('global_id'))
+            self.assertEqual(conns.target, targets[i].get("global_id"))
             self.assertEqual(conns.synapse_model, synmodel)
             self.assertEqual(conns.tau_plus, tau_plus)
 
@@ -127,14 +126,13 @@ class ConngenTestCase(unittest.TestCase):
         # Create a plain connection set
         cg = csa.cset(csa.oneToOne)
         connspec = {"rule": "conngen", "cg": cg}
-        synspec = {'synapse_model': "fantasy_synapse"}
+        synspec = {"synapse_model": "fantasy_synapse"}
 
         n_neurons = 4
 
         pop = nest.Create("iaf_psc_alpha", n_neurons)
 
-        self.assertRaisesRegex(nest.NESTError, "UnknownSynapseType",
-                               nest.Connect, pop, pop, connspec, synspec)
+        self.assertRaisesRegex(nest.NESTError, "UnknownSynapseType", nest.Connect, pop, pop, connspec, synspec)
 
     def test_Conngen_error_collocated_synapses(self):
         """
@@ -146,12 +144,11 @@ class ConngenTestCase(unittest.TestCase):
         # Create a plain connection set
         cg = csa.cset(csa.oneToOne)
         connspec = {"rule": "conngen", "cg": cg}
-        synspec = nest.CollocatedSynapses({'weight': -2.}, {'weight': 2.})
+        synspec = nest.CollocatedSynapses({"weight": -2.0}, {"weight": 2.0})
 
-        pop = nest.Create('iaf_psc_alpha', 3)
+        pop = nest.Create("iaf_psc_alpha", 3)
 
-        self.assertRaisesRegex(nest.NESTError, "BadProperty",
-                               nest.Connect, pop, pop, connspec, synspec)
+        self.assertRaisesRegex(nest.NESTError, "BadProperty", nest.Connect, pop, pop, connspec, synspec)
 
     def test_Conngen_error_weight_and_delay_in_synspec_and_conngen(self):
         """
@@ -164,27 +161,23 @@ class ConngenTestCase(unittest.TestCase):
         params_map = {"weight": 0, "delay": 1}
         connspec = {"rule": "conngen", "cg": cg, "params_map": params_map}
 
-        synspec_w = {'weight': 10.0}
-        synspec_d = {'delay': 10.0}
-        synspec_wd = {'weight': 10.0, 'delay': 10.0}
+        synspec_w = {"weight": 10.0}
+        synspec_d = {"delay": 10.0}
+        synspec_wd = {"weight": 10.0, "delay": 10.0}
 
         n_neurons = 4
 
         pop = nest.Create("iaf_psc_alpha", n_neurons)
 
-        self.assertRaisesRegex(nest.NESTError, "BadProperty",
-                               nest.Connect, pop, pop, connspec, synspec_w)
+        self.assertRaisesRegex(nest.NESTError, "BadProperty", nest.Connect, pop, pop, connspec, synspec_w)
 
-        self.assertRaisesRegex(nest.NESTError, "BadProperty",
-                               nest.Connect, pop, pop, connspec, synspec_d)
+        self.assertRaisesRegex(nest.NESTError, "BadProperty", nest.Connect, pop, pop, connspec, synspec_d)
 
-        self.assertRaisesRegex(nest.NESTError, "BadProperty",
-                               nest.Connect, pop, pop, connspec, synspec_wd)
+        self.assertRaisesRegex(nest.NESTError, "BadProperty", nest.Connect, pop, pop, connspec, synspec_wd)
 
 
 def suite():
-
-    suite = unittest.makeSuite(ConngenTestCase, 'test')
+    suite = unittest.makeSuite(ConngenTestCase, "test")
     return suite
 
 

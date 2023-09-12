@@ -26,7 +26,7 @@ import nest
 
 nest.set_verbosity(nest.verbosity.M_WARNING)
 
-HAVE_OPENMP = nest.build_info["threading"] != "no"
+HAVE_THREADS = nest.build_info["have_threads"]
 
 
 class TestConnectArrays(unittest.TestCase):
@@ -63,12 +63,7 @@ class TestConnectArrays(unittest.TestCase):
         weights = np.ones(n)
         delays = np.ones(n)
 
-        nest.Connect(
-            sources,
-            targets,
-            syn_spec={"weight": weights, "delay": delays},
-            conn_spec="one_to_one",
-        )
+        nest.Connect(sources, targets, syn_spec={"weight": weights, "delay": delays}, conn_spec="one_to_one")
 
         conns = nest.GetConnections()
 
@@ -87,12 +82,7 @@ class TestConnectArrays(unittest.TestCase):
         weights = 2 * np.ones(n)
         delays = 1.5 * np.ones(n)
 
-        nest.Connect(
-            sources,
-            targets,
-            syn_spec={"weight": weights, "delay": delays},
-            conn_spec={"rule": "one_to_one"},
-        )
+        nest.Connect(sources, targets, syn_spec={"weight": weights, "delay": delays}, conn_spec={"rule": "one_to_one"})
 
         conns = nest.GetConnections()
 
@@ -121,12 +111,7 @@ class TestConnectArrays(unittest.TestCase):
         weights = np.linspace(0.6, 1.5, n)
         delays = np.linspace(0.4, 1.3, n)
 
-        nest.Connect(
-            sources,
-            targets,
-            syn_spec={"weight": weights, "delay": delays},
-            conn_spec={"rule": "one_to_one"},
-        )
+        nest.Connect(sources, targets, syn_spec={"weight": weights, "delay": delays}, conn_spec={"rule": "one_to_one"})
 
         conns = nest.GetConnections()
 
@@ -135,7 +120,7 @@ class TestConnectArrays(unittest.TestCase):
         np.testing.assert_array_almost_equal(conns.weight, weights)
         np.testing.assert_array_almost_equal(conns.delay, delays)
 
-    @unittest.skipIf(not HAVE_OPENMP, "NEST was compiled without multi-threading")
+    @unittest.skipIf(not HAVE_THREADS, "NEST was compiled without multi-threading")
     def test_connect_arrays_threaded(self):
         """Connecting NumPy arrays, threaded"""
         nest.local_num_threads = 2
@@ -175,9 +160,7 @@ class TestConnectArrays(unittest.TestCase):
         targets = self.non_unique
         weights = np.ones(n)
 
-        nest.Connect(
-            sources, targets, conn_spec="one_to_one", syn_spec={"weight": weights}
-        )
+        nest.Connect(sources, targets, conn_spec="one_to_one", syn_spec={"weight": weights})
 
         conns = nest.GetConnections()
 
@@ -208,9 +191,7 @@ class TestConnectArrays(unittest.TestCase):
         targets = self.non_unique
         delays = np.ones(n)
 
-        nest.Connect(
-            neurons, targets, conn_spec="one_to_one", syn_spec={"delay": delays}
-        )
+        nest.Connect(neurons, targets, conn_spec="one_to_one", syn_spec={"delay": delays})
 
         conns = nest.GetConnections()
 
@@ -228,24 +209,17 @@ class TestConnectArrays(unittest.TestCase):
         weights = np.ones(len(sources))
         delays = np.ones(len(sources))
         receptor_type = np.ones(len(sources), dtype=np.uint64)
-        syn_model = "static_synapse"
 
         nest.Connect(
             sources,
             targets,
             conn_spec="one_to_one",
-            syn_spec={
-                "weight": weights,
-                "delay": delays,
-                "receptor_type": receptor_type,
-            },
+            syn_spec={"weight": weights, "delay": delays, "receptor_type": receptor_type},
         )
 
         conns = nest.GetConnections()
 
-        for s, t, w, d, r, c in zip(
-            sources, targets, weights, delays, receptor_type, conns
-        ):
+        for s, t, w, d, r, c in zip(sources, targets, weights, delays, receptor_type, conns):
             self.assertEqual(c.source, s)
             self.assertEqual(c.target, t)
             self.assertEqual(c.weight, w)
@@ -265,25 +239,19 @@ class TestConnectArrays(unittest.TestCase):
         alpha = 0.1 * np.ones(len(sources))
         tau = 20.0 * np.ones(len(sources))
 
-        nest.Connect(
-            sources,
-            targets,
-            conn_spec="one_to_one",
-            syn_spec={
-                "weight": weights,
-                "delay": delays,
-                "synapse_model": syn_model,
-                "receptor_type": receptor_type,
-                "alpha": alpha,
-                "tau": tau,
-            },
-        )
+        syn_spec = {
+            "weight": weights,
+            "delay": delays,
+            "synapse_model": syn_model,
+            "receptor_type": receptor_type,
+            "alpha": alpha,
+            "tau": tau,
+        }
+        nest.Connect(sources, targets, conn_spec="one_to_one", syn_spec=syn_spec)
 
         conns = nest.GetConnections()
 
-        for s, t, w, d, r, a, tau, c in zip(
-            sources, targets, weights, delays, receptor_type, alpha, tau, conns
-        ):
+        for s, t, w, d, r, a, tau, c in zip(sources, targets, weights, delays, receptor_type, alpha, tau, conns):
             self.assertEqual(c.source, s)
             self.assertEqual(c.target, t)
             self.assertEqual(c.weight, w)
@@ -303,23 +271,12 @@ class TestConnectArrays(unittest.TestCase):
         syn_model = "static_synapse_lbl"
         syn_label = 2
 
-        nest.Connect(
-            sources,
-            targets,
-            conn_spec="one_to_one",
-            syn_spec={
-                "weight": weights,
-                "delay": delays,
-                "synapse_model": syn_model,
-                "synapse_label": syn_label,
-            },
-        )
+        syn_spec = {"weight": weights, "delay": delays, "synapse_model": syn_model, "synapse_label": syn_label}
+        nest.Connect(sources, targets, conn_spec="one_to_one", syn_spec=syn_spec)
 
         conns = nest.GetConnections()
 
-        for s, t, w, d, lbl, c in zip(
-            sources, targets, weights, delays, len(conns) * [syn_label], conns
-        ):
+        for s, t, w, d, lbl, c in zip(sources, targets, weights, delays, len(conns) * [syn_label], conns):
             self.assertEqual(c.source, s)
             self.assertEqual(c.target, t)
             self.assertEqual(c.weight, w)
@@ -338,17 +295,13 @@ class TestConnectArrays(unittest.TestCase):
         receptor_type = 1.5 * np.ones(len(sources))
 
         with self.assertRaises(nest.NESTError):
-            nest.Connect(
-                sources,
-                targets,
-                conn_spec="one_to_one",
-                syn_spec={
-                    "weight": weights,
-                    "delay": delays,
-                    "synapse_model": syn_model,
-                    "receptor_type": receptor_type,
-                },
-            )
+            syn_spec = {
+                "weight": weights,
+                "delay": delays,
+                "synapse_model": syn_model,
+                "receptor_type": receptor_type,
+            }
+            nest.Connect(sources, targets, conn_spec="one_to_one", syn_spec=syn_spec)
 
     def test_connect_arrays_wrong_dtype(self):
         """Raises exception when connecting NumPy arrays with wrong dtype"""
@@ -389,7 +342,7 @@ class TestConnectArrays(unittest.TestCase):
                 },
             )
 
-    @unittest.skipIf(not HAVE_OPENMP, "NEST was compiled without multi-threading")
+    @unittest.skipIf(not HAVE_THREADS, "NEST was compiled without multi-threading")
     def test_connect_arrays_receptor_type(self):
         """Connecting NumPy arrays with receptor type specified, threaded"""
 
@@ -410,13 +363,13 @@ class TestConnectArrays(unittest.TestCase):
 
         self.assertEqual(len(sources) * [0], nest.GetConnections().receptor)
 
-    @unittest.skipIf(not HAVE_OPENMP, "NEST was compiled without multi-threading")
+    @unittest.skipIf(not HAVE_THREADS, "NEST was compiled without multi-threading")
     def test_connect_arrays_differnt_alpha(self):
         """Connecting NumPy arrays with different alpha values in a threaded environment"""
 
         nest.local_num_threads = 4
 
-        neurons = nest.Create("iaf_psc_exp", 10)
+        neurons = nest.Create("iaf_psc_exp", 10)  # noqa: F841
         # syn_spec parameters are dependent on source, so we test with source id's not starting with 1
         source = np.array([2, 5, 3, 10, 1, 9, 4, 6, 8, 7])
         target = 1 + np.random.choice(10, 10, replace=True)
@@ -427,17 +380,8 @@ class TestConnectArrays(unittest.TestCase):
         # Need to make sure the correct alpha value is used with the correct source
         src_alpha_ref = {key: val for key, val in zip(source, alpha)}
 
-        nest.Connect(
-            source,
-            target,
-            conn_spec="one_to_one",
-            syn_spec={
-                "alpha": alpha,
-                "receptor_type": 0,
-                "weight": weights,
-                "synapse_model": "stdp_synapse",
-            },
-        )
+        syn_spec = {"alpha": alpha, "receptor_type": 0, "weight": weights, "synapse_model": "stdp_synapse"}
+        nest.Connect(source, target, conn_spec="one_to_one", syn_spec=syn_spec)
 
         conns = nest.GetConnections()
         src = conns.source

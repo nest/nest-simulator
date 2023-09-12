@@ -56,8 +56,7 @@ class OneToOneConnectTestCase(unittest.TestCase):
         nest.ResetKernel()
         pre = nest.Create("iaf_psc_alpha", 2)
         post = nest.Create("iaf_psc_alpha", 2)
-        nest.Connect(pre, post, conn_spec={"rule": "one_to_one"},
-                     syn_spec={"weight": [2.0, 3.0]})
+        nest.Connect(pre, post, conn_spec={"rule": "one_to_one"}, syn_spec={"weight": [2.0, 3.0]})
         connections = nest.GetConnections(pre)
         weights = connections.get("weight")
         self.assertEqual(weights, [2.0, 3.0])
@@ -67,8 +66,7 @@ class OneToOneConnectTestCase(unittest.TestCase):
 
         pre = nest.Create("iaf_psc_alpha", 2)
         post = nest.Create("iaf_psc_alpha", 2)
-        nest.Connect(pre, post, conn_spec={"rule": "one_to_one"},
-                     syn_spec={"weight": 2.0, "delay": 2.0})
+        nest.Connect(pre, post, conn_spec={"rule": "one_to_one"}, syn_spec={"weight": 2.0, "delay": 2.0})
         connections = nest.GetConnections(pre)
         weights = connections.get("weight")
         delays = connections.get("delay")
@@ -78,8 +76,7 @@ class OneToOneConnectTestCase(unittest.TestCase):
         nest.ResetKernel()
         pre = nest.Create("iaf_psc_alpha", 2)
         post = nest.Create("iaf_psc_alpha", 2)
-        nest.Connect(pre, post, conn_spec={"rule": "one_to_one"},
-                     syn_spec={"weight": [2.0, 3.0], "delay": [2.0, 3.0]})
+        nest.Connect(pre, post, conn_spec={"rule": "one_to_one"}, syn_spec={"weight": [2.0, 3.0], "delay": [2.0, 3.0]})
         connections = nest.GetConnections(pre)
         weights = connections.get("weight")
         delays = connections.get("delay")
@@ -89,17 +86,16 @@ class OneToOneConnectTestCase(unittest.TestCase):
     def test_IllegalConnection(self):
         """Wrong Connections"""
 
-        n = nest.Create('iaf_psc_alpha')
-        vm = nest.Create('voltmeter')
-        sr = nest.Create('spike_recorder')
+        n = nest.Create("iaf_psc_alpha")
+        vm = nest.Create("voltmeter")
+        sr = nest.Create("spike_recorder")
 
         self.assertRaisesRegex(nest.NESTError, "Creation of connection is not possible", nest.Connect, n, vm)
         self.assertRaisesRegex(nest.NESTError, "Creation of connection is not possible", nest.Connect, sr, n)
 
 
 def suite():
-
-    suite = unittest.makeSuite(OneToOneConnectTestCase, 'test')
+    suite = unittest.makeSuite(OneToOneConnectTestCase, "test")
     return suite
 
 

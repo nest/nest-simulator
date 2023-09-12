@@ -148,7 +148,7 @@ private:
   typename ConnectionT::CommonPropertiesType cp_;
 
   ConnectionT default_connection_;
-  rport receptor_type_;
+  size_t receptor_type_;
 
 public:
   GenericConnectorModel( const std::string name )
@@ -214,7 +214,7 @@ private:
     std::vector< ConnectorBase* >& hetconn,
     const synindex syn_id,
     ConnectionT& c,
-    const rport receptor_type );
+    const size_t receptor_type );
 
 }; // GenericConnectorModel
 

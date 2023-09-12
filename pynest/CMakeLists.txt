@@ -27,9 +27,10 @@ if ( HAVE_PYTHON )
     message( FATAL_ERROR "Building PyNEST requires Cython." )
   endif ()
 
+  # TODO PYNEST NG: Add models, once the refacoring of the module system is done.
   target_link_libraries( nestkernel_api
       nestutil nestkernel
-      ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES}
+      ${EXTERNAL_MODULE_LIBRARIES}
       )
 
   target_include_directories( nestkernel_api PRIVATE
@@ -39,7 +40,7 @@ if ( HAVE_PYTHON )
       ${PROJECT_SOURCE_DIR}/nestkernel
       ${PROJECT_SOURCE_DIR}/nestkernel/spatial
       ${PROJECT_SOURCE_DIR}/thirdparty
-      ${SLI_MODULE_INCLUDE_DIRS}
+      ${PROJECT_SOURCE_DIR}/models
       ${Python_INCLUDE_DIRS}
       )
 
@@ -51,21 +52,7 @@ if ( HAVE_PYTHON )
       DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest
       PATTERN "versionchecker.py.in" EXCLUDE
   )
+
   install( TARGETS nestkernel_api DESTINATION ${PYEXECDIR}/nest/ )
-  install( CODE "
-      execute_process(
-          COMMAND ${PYTHON} ${CMAKE_CURRENT_BINARY_DIR}/setup.py install_egg_info
-            --install-dir=${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}
-          WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}\"
-      )
-      # Use Python's standard library `pkg_resources` module to find
-      # the install requirements of `nest` as specified in `setup.py`.
-      # Then feed them into the stdin pipe of `pip install`.
-      execute_process(
-          COMMAND ${PYTHON} -c \"import pkg_resources as pkg; print('\\\\n'.join(str(r) for r in pkg.get_distribution('nest-simulator').requires()))\"
-          COMMAND ${PYTHON} -m pip install -r /dev/stdin
-      )
-      "
-  )
 
 endif ()

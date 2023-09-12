@@ -60,8 +60,8 @@ nest::RecordingBackendASCII::finalize()
 void
 nest::RecordingBackendASCII::enroll( const RecordingDevice& device, const dictionary& params )
 {
-  const thread t = device.get_thread();
-  const index node_id = device.get_node_id();
+  const size_t t = device.get_thread();
+  const size_t node_id = device.get_node_id();
 
   data_map::value_type::iterator device_data = device_data_[ t ].find( node_id );
   if ( device_data == device_data_[ t ].end() )
@@ -78,8 +78,8 @@ nest::RecordingBackendASCII::enroll( const RecordingDevice& device, const dictio
 void
 nest::RecordingBackendASCII::disenroll( const RecordingDevice& device )
 {
-  const thread t = device.get_thread();
-  const thread node_id = device.get_node_id();
+  const size_t t = device.get_thread();
+  const size_t node_id = device.get_node_id();
 
   data_map::value_type::iterator device_data = device_data_[ t ].find( node_id );
   if ( device_data != device_data_[ t ].end() )
@@ -93,8 +93,8 @@ nest::RecordingBackendASCII::set_value_names( const RecordingDevice& device,
   const std::vector< std::string >& double_value_names,
   const std::vector< std::string >& long_value_names )
 {
-  const thread t = device.get_thread();
-  const thread node_id = device.get_node_id();
+  const size_t t = device.get_thread();
+  const size_t node_id = device.get_node_id();
 
   data_map::value_type::iterator device_data = device_data_[ t ].find( node_id );
   assert( device_data != device_data_[ t ].end() );
@@ -143,8 +143,8 @@ nest::RecordingBackendASCII::write( const RecordingDevice& device,
   const std::vector< double >& double_values,
   const std::vector< long >& long_values )
 {
-  const thread t = device.get_thread();
-  const index node_id = device.get_node_id();
+  const size_t t = device.get_thread();
+  const size_t node_id = device.get_node_id();
 
   data_map::value_type::iterator device_data = device_data_[ t ].find( node_id );
   if ( device_data == device_data_[ t ].end() )
@@ -211,8 +211,8 @@ nest::RecordingBackendASCII::get_device_defaults( dictionary& params ) const
 void
 nest::RecordingBackendASCII::get_device_status( const nest::RecordingDevice& device, dictionary& d ) const
 {
-  const thread t = device.get_thread();
-  const index node_id = device.get_node_id();
+  const size_t t = device.get_thread();
+  const size_t node_id = device.get_node_id();
 
   data_map::value_type::const_iterator device_data = device_data_[ t ].find( node_id );
   if ( device_data != device_data_[ t ].end() )
@@ -274,7 +274,7 @@ nest::RecordingBackendASCII::DeviceData::open_file()
     throw IOError();
   }
 
-  file_ << "# NEST version: " << NEST_VERSION_STRING << std::endl
+  file_ << "# NEST version: " << NEST_VERSION << std::endl
         << "# RecordingBackendASCII version: " << ASCII_REC_BACKEND_VERSION << std::endl;
 
   const std::string timehead = ( time_in_steps_ ) ? "\ttime_step\ttime_offset" : "\ttime_ms";

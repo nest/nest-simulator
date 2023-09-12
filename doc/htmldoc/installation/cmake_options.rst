@@ -101,7 +101,7 @@ Build documentation
 |                              |                                                             |
 +------------------------------+-------------------------------------------------------------+
 
-If either documentation build is toggled to `on`, you can then run ``make docs`` if you want to only
+If either documentation build is toggled to `ON`, you can then run ``make docs`` if you only want to
 build the docs.
 
 See also the :ref:`documentation workflow <doc_workflow>` for user and developer docs.

@@ -98,7 +98,10 @@ public:
    *  conn_spec disconnection specs. For now only all to all and one to one
    * rules are implemented.
    */
-  void disconnect( NodeCollectionPTR sources, NodeCollectionPTR targets, const dictionary& conn_spec, const dictionary& syn_spec );
+  void disconnect( NodeCollectionPTR sources,
+    NodeCollectionPTR targets,
+    const dictionary& conn_spec,
+    const dictionary& syn_spec );
 
   /**
    * Disconnect two nodes.

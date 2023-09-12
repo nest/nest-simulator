@@ -37,6 +37,7 @@
 #include "model.h"
 #include "model_manager_impl.h"
 #include "node.h"
+#include "node_collection_impl.h"
 #include "vp_manager.h"
 #include "vp_manager_impl.h"
 

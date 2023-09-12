@@ -37,7 +37,7 @@ set ( nestkernel_sources
       event.h event.cpp
       exceptions.h exceptions.cpp
       genericmodel.h genericmodel_impl.h
-      node_collection.h node_collection.cpp
+      node_collection.h node_collection_impl.h node_collection.cpp
       generic_factory.h
       histentry.h histentry.cpp
       model.h model.cpp
@@ -127,6 +127,7 @@ set ( nestkernel_sources
   ../models/dc_generator.h ../models/dc_generator.cpp
   ../models/spike_generator.h ../models/spike_generator.cpp
   ../models/spike_recorder.h ../models/spike_recorder.cpp
+  ../models/spike_train_injector.h ../models/spike_train_injector.cpp
   ../models/poisson_generator.h ../models/poisson_generator.cpp
   ../models/poisson_generator_ps.h ../models/poisson_generator_ps.cpp
   ../models/multimeter.h ../models/multimeter.cpp

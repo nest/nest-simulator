@@ -82,7 +82,7 @@ SPManager::get_status( dictionary& d )
     sp_synapse_params[ names::post_synaptic_element ] = ( *i )->get_post_synaptic_element_name();
     sp_synapse_params[ names::allow_autapses ] = ( *i )->allows_autapses();
     sp_synapse_params[ names::allow_multapses ] = ( *i )->allows_multapses();
-  
+
     sp_synapses[ ( *i )->get_name() ] = sp_synapse_params;
   }
 
@@ -121,7 +121,7 @@ SPManager::set_status( const dictionary& d )
   sp_conn_builders_.clear();
 
   d.update_value< dictionary >( names::structural_plasticity_synapses, syn_specs );
-  for ( auto& kv_pair: syn_specs )
+  for ( auto& kv_pair : syn_specs )
   {
     syn_spec = boost::any_cast< dictionary >( kv_pair.second );
     if ( syn_spec.known( names::allow_autapses ) )
@@ -132,7 +132,7 @@ SPManager::set_status( const dictionary& d )
     {
       conn_spec[ names::allow_multapses ] = d.get< bool >( names::allow_multapses );
     }
-      
+
     // We use a ConnBuilder with dummy values to check the synapse parameters
     SPBuilder* conn_builder = new SPBuilder( sources, targets, conn_spec, { syn_spec } );
     conn_builder->set_name( kv_pair.first );
@@ -261,7 +261,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
       {
         cb = kernel().connection_manager.get_conn_builder( rule_name, sources, targets, conn_spec, syn_specs );
         cb->set_synaptic_element_names(
-	  ( *i )->get_pre_synaptic_element_name(), ( *i )->get_post_synaptic_element_name() );
+          ( *i )->get_pre_synaptic_element_name(), ( *i )->get_post_synaptic_element_name() );
       }
     }
   }

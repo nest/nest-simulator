@@ -69,7 +69,7 @@ nest::RecordingBackendMPI::finalize()
 }
 
 void
-nest::RecordingBackendMPI::enroll( const RecordingDevice& device, const dictionary& params)
+nest::RecordingBackendMPI::enroll( const RecordingDevice& device, const dictionary& params )
 {
   if ( device.get_type() == RecordingDevice::SPIKE_RECORDER )
   {

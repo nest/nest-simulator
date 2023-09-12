@@ -57,7 +57,6 @@
 #include "vp_manager_impl.h"
 
 
-
 nest::ConnectionManager::ConnectionManager()
   : connruledict_()
   , connbuilder_factories_()

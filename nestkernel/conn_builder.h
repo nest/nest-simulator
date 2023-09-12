@@ -67,7 +67,10 @@ public:
   //! Delete synapses with or without structural plasticity
   virtual void disconnect();
 
-  ConnBuilder( NodeCollectionPTR sources, NodeCollectionPTR targets, const dictionary& conn_spec, const std::vector< dictionary >& syn_specs );
+  ConnBuilder( NodeCollectionPTR sources,
+    NodeCollectionPTR targets,
+    const dictionary& conn_spec,
+    const std::vector< dictionary >& syn_specs );
   virtual ~ConnBuilder();
 
   size_t

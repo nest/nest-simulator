@@ -365,11 +365,11 @@ GaborParameter::GaborParameter( const dictionary& d )
   const auto std = d.get< double >( "std" );
   if ( std <= 0 )
   {
-    throw BadProperty( String::compose("std > 0 required for gabor function parameter, got std=%1", std) );
+    throw BadProperty( String::compose( "std > 0 required for gabor function parameter, got std=%1", std ) );
   }
   if ( gamma <= 0 )
   {
-    throw BadProperty( String::compose("gamma > 0 required for gabor function parameter, got gamma=%1", gamma ) );
+    throw BadProperty( String::compose( "gamma > 0 required for gabor function parameter, got gamma=%1", gamma ) );
   }
 }
 

@@ -304,7 +304,7 @@ const std::string min( "min" );
 const std::string min_delay( "min_delay" );
 const std::string min_update_time( "min_update_time" );
 const std::string minor_axis( "minor_axis" );
-const std::string mpi_address( "mpi_address");
+const std::string mpi_address( "mpi_address" );
 const std::string model( "model" );
 const std::string model_id( "model_id" );
 const std::string ms_per_tic( "ms_per_tic" );

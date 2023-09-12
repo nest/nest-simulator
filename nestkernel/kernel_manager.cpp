@@ -99,6 +99,12 @@ nest::KernelManager::get_build_info_()
   build_info[ "have_sionlib" ] = false;
 #endif
 
+#ifdef HAVE_HDF5
+  build_info[ "have_hdf5" ] = true;
+#else
+  build_info[ "have_hdf5" ] = false;
+#endif
+
 #ifdef NDEBUG
   build_info[ "ndebug" ] = true;
 #else

@@ -31,11 +31,11 @@ from pathlib import Path, PurePath
 
 import numpy as np
 
-from .. import pynestkernel as kernel
-from ..ll_api import sli_func, sps, sr
+from .. import nestkernel_api as nestkernel
+
 from .hl_api_models import GetDefaults
 from .hl_api_nodes import Create
-from .hl_api_simulation import SetKernelStatus, Simulate
+from .hl_api_simulation import GetKernelStatus, SetKernelStatus, Simulate
 from .hl_api_types import NodeCollection
 
 try:
@@ -52,7 +52,7 @@ try:
 except ImportError:
     have_h5py = False
 
-have_hdf5 = sli_func("statusdict/have_hdf5 ::")
+have_hdf5 = GetKernelStatus("build_info")["have_hdf5"]
 
 __all__ = ["SonataNetwork"]
 
@@ -108,13 +108,13 @@ class SonataNetwork:
     def __init__(self, config, sim_config=None):
         if not have_hdf5:
             msg = "SonataNetwork unavailable because NEST was compiled without HDF5 support"
-            raise kernel.NESTError(msg)
+            raise nestkernel.NESTError(msg)
         if not have_h5py:
             msg = "SonataNetwork unavailable because h5py is not installed or could not be imported"
-            raise kernel.NESTError(msg)
+            raise nestkernel.NESTError(msg)
         if not have_pandas:
             msg = "SonataNetwork unavailable because pandas is not installed or could not be imported"
-            raise kernel.NESTError(msg)
+            raise nestkernel.NESTError(msg)
 
         self._node_collections = {}
         self._edges_maps = []
@@ -432,7 +432,7 @@ class SonataNetwork:
 
         if not self._are_nodes_created:
             msg = "The SONATA network nodes must be created before any connections can be made"
-            raise kernel.NESTError(msg)
+            raise nestkernel.NESTError(msg)
 
         if hdf5_hyperslab_size is None:
             hdf5_hyperslab_size = self._hyperslab_size_default
@@ -646,7 +646,7 @@ class SonataNetwork:
         # Verify that network is built
         if not self._is_network_built:
             msg = "The SONATA network must be built before a simulation can be done"
-            raise kernel.NESTError(msg)
+            raise nestkernel.NESTError(msg)
 
         if "tstop" in self._conf["run"]:
             T_sim = self._conf["run"]["tstop"]

@@ -500,9 +500,7 @@ Ntree< D, T, max_capacity, max_depth >::push_back( const value_type& val )
 }
 
 
-  
 } // namespace nest
-
 
 
 #endif

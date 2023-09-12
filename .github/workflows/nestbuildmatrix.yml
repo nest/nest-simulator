@@ -578,7 +578,7 @@ jobs:
         run: |
           cd "$NEST_VPATH"
           env
-          gcc-problem-matcher make VERBOSE=1
+          make VERBOSE=1
 
       - name: "Remove GCC problem matcher"
         run: |

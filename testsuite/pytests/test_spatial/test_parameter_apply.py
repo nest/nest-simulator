@@ -46,7 +46,7 @@ def test_parameter_apply_given_node_collection():
     assert param.apply(nc[::2]) == tuple(ref_positions[::2, 0])
 
     # raises for non-existing dimension
-    with pytest.raises(nest.kernel.NESTError):
+    with pytest.raises(nest.NESTError):
         nest.spatial.pos.z.apply(nc)
 
 
@@ -104,7 +104,7 @@ def test_parameter_apply_erroneous_position_specification():
     param = nest.spatial.distance
 
     # Too many dimensions
-    with pytest.raises(nest.kernel.NESTError):
+    with pytest.raises(nest.NESTError):
         param.apply(source, [[1.0, 2.0, 3.0]])
 
     # Not a list of lists

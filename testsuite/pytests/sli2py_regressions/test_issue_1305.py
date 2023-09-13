@@ -50,5 +50,5 @@ def test_resolution_rounding_invalid():
 
     target_resolution = 0.1002
 
-    with pytest.raises(nest.kernel.NESTError):
+    with pytest.raises(nest.NESTError):
         nest.set(resolution=target_resolution, tics_per_ms=1000.0)

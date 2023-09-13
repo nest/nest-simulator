@@ -88,7 +88,7 @@ def test_set_individual_spike_trains_on_instance():
 
     sspg = nest.Create("sinusoidal_poisson_generator")
 
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         sspg.individual_spike_trains = False
 
 
@@ -182,7 +182,7 @@ def test_sinusoidal_poisson_generator_with_multimeter(num_threads, individual_sp
 
     parrots = nest.Create("parrot_neuron", total_num_nrns)
     sspg = nest.Create("sinusoidal_poisson_generator")
-    mm = nest.Create("multimeter", {"record_from": ["rate"]})
+    mm = nest.Create("multimeter", params={"record_from": ["rate"]})
 
     nest.Connect(sspg, parrots)
     nest.Connect(mm, sspg)
@@ -218,7 +218,7 @@ def test_sinusoidal_poisson_generator_rate_profile():
 
     parrots = nest.Create("parrot_neuron")
     sspg = nest.Create("sinusoidal_poisson_generator")
-    mm = nest.Create("multimeter", {"record_from": ["rate"]})
+    mm = nest.Create("multimeter", params={"record_from": ["rate"]})
 
     nest.Connect(sspg, parrots)
     nest.Connect(mm, sspg)

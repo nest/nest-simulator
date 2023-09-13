@@ -56,7 +56,7 @@ def create_1dend_1comp(dt=0.1):
     n_neat.V_th = 100.0
     n_neat.compartments = [{"parent_idx": -1, "params": SP}, {"parent_idx": 0, "params": DP[0]}]
 
-    m_neat = nest.Create("multimeter", 1, {"record_from": ["v_comp0", "v_comp1"], "interval": 0.1})
+    m_neat = nest.Create("multimeter", params={"record_from": ["v_comp0", "v_comp1"], "interval": 0.1})
     nest.Connect(m_neat, n_neat)
 
     # create equivalent matrices for inversion test
@@ -104,7 +104,7 @@ def create_2dend_1comp(dt=0.1):
         {"parent_idx": 0, "params": DP[1]},
     ]
 
-    m_neat = nest.Create("multimeter", 1, {"record_from": ["v_comp0", "v_comp1", "v_comp2"], "interval": 0.1})
+    m_neat = nest.Create("multimeter", params={"record_from": ["v_comp0", "v_comp1", "v_comp2"], "interval": 0.1})
     nest.Connect(m_neat, n_neat)
 
     # create equivalent matrices for inversion test
@@ -174,7 +174,7 @@ def create_1dend_2comp(dt=0.1):
         {"parent_idx": 1, "params": DP[1]},
     ]
 
-    m_neat = nest.Create("multimeter", 1, {"record_from": ["v_comp0", "v_comp1", "v_comp2"], "interval": 0.1})
+    m_neat = nest.Create("multimeter", params={"record_from": ["v_comp0", "v_comp1", "v_comp2"], "interval": 0.1})
     nest.Connect(m_neat, n_neat)
 
     # create equivalent matrices for inversion test
@@ -244,7 +244,7 @@ def create_tdend_4comp(dt=0.1):
         {"parent_idx": 2, "params": DP[3]},
     ]
 
-    m_neat = nest.Create("multimeter", 1, {"record_from": ["v_comp%d" % ii for ii in range(5)], "interval": 0.1})
+    m_neat = nest.Create("multimeter", params={"record_from": ["v_comp%d" % ii for ii in range(5)], "interval": 0.1})
     nest.Connect(m_neat, n_neat)
 
     # create equivalent matrices for inversion test
@@ -350,7 +350,7 @@ def create_2tdend_4comp(dt=0.1):
         {"parent_idx": 6, "params": DP[7]},
     ]
 
-    m_neat = nest.Create("multimeter", 1, {"record_from": ["v_comp%d" % ii for ii in range(9)], "interval": 0.1})
+    m_neat = nest.Create("multimeter", params={"record_from": ["v_comp%d" % ii for ii in range(9)], "interval": 0.1})
     nest.Connect(m_neat, n_neat)
 
     # create equivalent matrices for inversion test
@@ -500,11 +500,8 @@ class CompartmentsTestCase(unittest.TestCase):
 
         for ii, i_amp in enumerate(i_in):
             # add current
-            nest.Connect(
-                nest.Create("dc_generator", {"amplitude": i_amp}),
-                n_neat,
-                syn_spec={"synapse_model": "static_synapse", "weight": 1.0, "delay": dt, "receptor_type": ii},
-            )
+            syn_spec = {"synapse_model": "static_synapse", "weight": 1.0, "delay": dt, "receptor_type": ii}
+            nest.Connect(nest.Create("dc_generator", params={"amplitude": i_amp}), n_neat, syn_spec=syn_spec)
 
             bb[ii] += i_amp
 
@@ -541,11 +538,8 @@ class CompartmentsTestCase(unittest.TestCase):
 
         for ii, i_amp in enumerate(i_in):
             # add current
-            nest.Connect(
-                nest.Create("dc_generator", {"amplitude": i_amp}),
-                n_neat,
-                syn_spec={"synapse_model": "static_synapse", "weight": 1.0, "delay": dt, "receptor_type": ii},
-            )
+            syn_spec = {"synapse_model": "static_synapse", "weight": 1.0, "delay": dt, "receptor_type": ii}
+            nest.Connect(nest.Create("dc_generator", params={"amplitude": i_amp}), n_neat, syn_spec=syn_spec)
 
             bb[ii] += i_amp
 
@@ -572,11 +566,8 @@ class CompartmentsTestCase(unittest.TestCase):
         for ii in range(n_comp):
             (n_neat, m_neat), _, gg = eval("create_%s(dt=dt)" % model_name)
             # add current
-            nest.Connect(
-                nest.Create("dc_generator", params={"amplitude": i_amp}),
-                n_neat,
-                syn_spec={"synapse_model": "static_synapse", "weight": 1.0, "delay": t_max / 2.0, "receptor_type": ii},
-            )
+            syn_spec = {"synapse_model": "static_synapse", "weight": 1.0, "delay": t_max / 2.0, "receptor_type": ii}
+            nest.Connect(nest.Create("dc_generator", params={"amplitude": i_amp}), n_neat, syn_spec=syn_spec)
 
             # run the NEST model
             nest.Simulate(t_max)
@@ -611,11 +602,8 @@ class CompartmentsTestCase(unittest.TestCase):
         el = np.array([SP["e_L"]] + [DP[ii]["e_L"] for ii in range(n_comp - 1)])
 
         # add current
-        nest.Connect(
-            nest.Create("dc_generator", params={"amplitude": 0.0}),
-            n_neat,
-            syn_spec={"synapse_model": "static_synapse", "weight": 1.0, "delay": 0.1, "receptor_type": 0},
-        )
+        syn_spec = {"synapse_model": "static_synapse", "weight": 1.0, "delay": 0.1, "receptor_type": 0}
+        nest.Connect(nest.Create("dc_generator", params={"amplitude": 0.0}), n_neat, syn_spec=syn_spec)
 
         # run the NEST model
         nest.Simulate(t_max)
@@ -658,12 +646,9 @@ class CompartmentsTestCase(unittest.TestCase):
         for ii, sw in enumerate(syn_weights):
             syn_idx = ii
             # connect spike generator to AMPA synapse
-            sg = nest.Create("spike_generator", 1, {"spike_times": np.arange(0.1, t_max, dt)})
-            nest.Connect(
-                sg,
-                n_neat,
-                syn_spec={"synapse_model": "static_synapse", "weight": sw * dt, "delay": 0.1, "receptor_type": syn_idx},
-            )
+            sg = nest.Create("spike_generator", params={"spike_times": np.arange(0.1, t_max, dt)})
+            syn_spec = {"synapse_model": "static_synapse", "weight": sw * dt, "delay": 0.1, "receptor_type": syn_idx}
+            nest.Connect(sg, n_neat, syn_spec=syn_spec)
 
         # run the NEST model
         nest.Simulate(t_max)
@@ -697,26 +682,23 @@ class CompartmentsTestCase(unittest.TestCase):
 
         n_neat_0 = nest.Create("cm_default", params={"compartments": {"parent_idx": -1, "params": soma_params}})
 
-        n_neat_1 = nest.Create(
-            "cm_default",
-            params={
-                "compartments": {"parent_idx": -1, "params": soma_params},
-                "receptors": {"comp_idx": 0, "receptor_type": "AMPA"},
-            },
-        )
+        neuron_params = {
+            "compartments": {"parent_idx": -1, "params": soma_params},
+            "receptors": {"comp_idx": 0, "receptor_type": "AMPA"},
+        }
+        n_neat_1 = nest.Create("cm_default", params=neuron_params)
         syn_idx = 0
 
-        nest.Connect(
-            n_neat_0, n_neat_1, syn_spec={"synapse_model": "static_synapse", "weight": 0.1, "receptor_type": syn_idx}
-        )
+        syn_spec = {"synapse_model": "static_synapse", "weight": 0.1, "receptor_type": syn_idx}
+        nest.Connect(n_neat_0, n_neat_1, syn_spec=syn_spec)
 
-        dc = nest.Create("dc_generator", {"amplitude": 2.0})
+        dc = nest.Create("dc_generator", params={"amplitude": 2.0})
         nest.Connect(dc, n_neat_0, syn_spec={"synapse_model": "static_synapse", "weight": 1.0, "receptor_type": 0})
 
-        m_neat_0 = nest.Create("multimeter", 1, {"record_from": ["v_comp0"], "interval": dt})
+        m_neat_0 = nest.Create("multimeter", params={"record_from": ["v_comp0"], "interval": dt})
         nest.Connect(m_neat_0, n_neat_0)
 
-        m_neat_1 = nest.Create("multimeter", 1, {"record_from": ["v_comp0"], "interval": dt})
+        m_neat_1 = nest.Create("multimeter", params={"record_from": ["v_comp0"], "interval": dt})
         nest.Connect(m_neat_1, n_neat_1)
 
         nest.Simulate(100.0)
@@ -728,8 +710,8 @@ class CompartmentsTestCase(unittest.TestCase):
         self.assertTrue(np.any(events_neat_1["v_comp0"] != soma_params["e_L"]))
 
     def test_set_combinations(self, dt=0.1):
-        sg_11 = nest.Create("spike_generator", 1, {"spike_times": [10.0]})
-        sg_12 = nest.Create("spike_generator", 1, {"spike_times": [15.0]})
+        sg_11 = nest.Create("spike_generator", params={"spike_times": [10.0]})
+        sg_12 = nest.Create("spike_generator", params={"spike_times": [15.0]})
 
         # set status with individual calls for each receptor and compartment
         n_neat_0 = nest.Create("cm_default")
@@ -751,10 +733,10 @@ class CompartmentsTestCase(unittest.TestCase):
         nest.Connect(sg_11, n_neat_1, syn_spec={"synapse_model": "static_synapse", "weight": 0.1, "receptor_type": 0})
         nest.Connect(sg_12, n_neat_1, syn_spec={"synapse_model": "static_synapse", "weight": 0.1, "receptor_type": 1})
 
-        m_neat_0 = nest.Create("multimeter", 1, {"record_from": ["v_comp0"], "interval": dt})
+        m_neat_0 = nest.Create("multimeter", params={"record_from": ["v_comp0"], "interval": dt})
         nest.Connect(m_neat_0, n_neat_0)
 
-        m_neat_1 = nest.Create("multimeter", 1, {"record_from": ["v_comp0"], "interval": dt})
+        m_neat_1 = nest.Create("multimeter", params={"record_from": ["v_comp0"], "interval": dt})
         nest.Connect(m_neat_1, n_neat_1)
 
         nest.Simulate(100.0)
@@ -806,7 +788,7 @@ class CompartmentsTestCase(unittest.TestCase):
         n_neat = nest.Create("cm_default")
 
         with self.assertRaisesRegex(
-            nest.NESTError, "in llapi_set_nc_status: " "Compartment 0 , the root, " "has already been instantiated."
+            nest.NESTError, "in llapi_set_nc_status: Compartment 0 , the root, has already been instantiated."
         ):
             n_neat.compartments = [{"parent_idx": -1, "params": SP}, {"parent_idx": -1, "params": SP}]
 
@@ -815,7 +797,7 @@ class CompartmentsTestCase(unittest.TestCase):
 
         with self.assertRaisesRegex(
             nest.NESTError,
-            "in llapi_set_nc_status: " "Compartment 15 does not exist in tree, " "but was specified as a parent.",
+            "in llapi_set_nc_status: Compartment 15 does not exist in tree, but was specified as a parent.",
         ):
             n_neat.compartments = [{"parent_idx": -1, "params": SP}, {"parent_idx": 15, "params": SP}]
 
@@ -823,9 +805,7 @@ class CompartmentsTestCase(unittest.TestCase):
         n_neat = nest.Create("cm_default")
         n_neat.compartments = {"parent_idx": -1, "params": SP}
 
-        with self.assertRaisesRegex(
-            nest.NESTError, "in llapi_set_nc_status: " "Compartment 12 does not exist in tree."
-        ):
+        with self.assertRaisesRegex(nest.NESTError, "in llapi_set_nc_status: Compartment 12 does not exist in tree."):
             n_neat.receptors = {"comp_idx": 12, "receptor_type": "GABA"}
 
         # test simulate without adding compartments
@@ -860,7 +840,7 @@ class CompartmentsTestCase(unittest.TestCase):
             {"comp_idx": 0, "receptor_type": "GABA"},
             {"comp_idx": 0, "receptor_type": "GABA"},
         ]
-        sg = nest.Create("spike_generator", 1, {"spike_times": [10.0]})
+        sg = nest.Create("spike_generator", params={"spike_times": [10.0]})
 
         with self.assertRaisesRegex(
             nest.NESTError,
@@ -873,12 +853,11 @@ class CompartmentsTestCase(unittest.TestCase):
         # test connection with unknown recordable
         n_neat = nest.Create("cm_default")
         n_neat.compartments = {"parent_idx": -1, "params": SP}
-        mm = nest.Create("multimeter", 1, {"record_from": ["v_comp1"], "interval": 1.0})
+        mm = nest.Create("multimeter", params={"record_from": ["v_comp1"], "interval": 1.0})
 
         with self.assertRaisesRegex(
             nest.NESTError,
-            "in llapi_connect: "
-            "Creation of connection is not possible because:\n"
+            "in llapi_connect: Creation of connection is not possible because:\n"
             "Cannot connect with unknown recordable v_comp1",
         ):
             nest.Connect(mm, n_neat)
@@ -914,13 +893,13 @@ class CompartmentsTestCase(unittest.TestCase):
             },
         )
 
-        sg_1 = nest.Create("spike_generator", 1, {"spike_times": [10.0]})
-        sg_2 = nest.Create("spike_generator", 1, {"spike_times": [15.0]})
+        sg_1 = nest.Create("spike_generator", params={"spike_times": [10.0]})
+        sg_2 = nest.Create("spike_generator", params={"spike_times": [15.0]})
 
         nest.Connect(sg_1, n_neat, syn_spec={"synapse_model": "static_synapse", "weight": 0.1, "receptor_type": 0})
         nest.Connect(sg_2, n_neat, syn_spec={"synapse_model": "static_synapse", "weight": 0.1, "receptor_type": 1})
 
-        m_neat = nest.Create("multimeter", 1, {"record_from": recordables, "interval": 1.0})
+        m_neat = nest.Create("multimeter", params={"record_from": recordables, "interval": 1.0})
         nest.Connect(m_neat, n_neat)
 
         nest.Simulate(100.0)
@@ -939,13 +918,13 @@ class CompartmentsTestCase(unittest.TestCase):
             },
         )
 
-        sg_1 = nest.Create("spike_generator", 1, {"spike_times": [10.0]})
-        sg_2 = nest.Create("spike_generator", 1, {"spike_times": [15.0]})
+        sg_1 = nest.Create("spike_generator", params={"spike_times": [10.0]})
+        sg_2 = nest.Create("spike_generator", params={"spike_times": [15.0]})
 
         nest.Connect(sg_1, n_neat, syn_spec={"synapse_model": "static_synapse", "weight": 0.1, "receptor_type": 0})
         nest.Connect(sg_2, n_neat, syn_spec={"synapse_model": "static_synapse", "weight": 0.1, "receptor_type": 1})
 
-        m_neat = nest.Create("multimeter", 1, {"record_from": recordables, "interval": 1.0})
+        m_neat = nest.Create("multimeter", params={"record_from": recordables, "interval": 1.0})
         nest.Connect(m_neat, n_neat)
 
         nest.Simulate(12.0)

@@ -77,9 +77,9 @@ def prepare_neuron(syn):
     nest.ResetKernel()
     nest.local_num_threads = 4
 
-    sg = nest.Create("spike_generator", {"spike_times": [5.0]})
+    sg = nest.Create("spike_generator", params={"spike_times": [5.0]})
     pn = nest.Create("parrot_neuron")
-    neuron = nest.Create("iaf_psc_alpha", {"V_th": 100000.0})
+    neuron = nest.Create("iaf_psc_alpha", params={"V_th": 100000.0})
 
     nest.Connect(sg, pn)
     nest.Connect(pn, neuron, syn_spec={"synapse_model": syn})
@@ -92,7 +92,7 @@ def prepare_neurons(syn):
     nest.ResetKernel()
     nest.local_num_threads = 4
 
-    sg = nest.Create("spike_generator", {"spike_times": [1.0]})
+    sg = nest.Create("spike_generator", params={"spike_times": [1.0]})
     pn = nest.Create("parrot_neuron")
     nest.Connect(sg, pn)
 
@@ -109,7 +109,7 @@ def prepare_frozen_neuron(syn, first_node_to_connect=1, freeze_before_connect=Tr
     nest.ResetKernel()
     nest.local_num_threads = 4
 
-    sg = nest.Create("spike_generator", {"spike_times": [1.0]})
+    sg = nest.Create("spike_generator", params={"spike_times": [1.0]})
     pn = nest.Create("parrot_neuron")
 
     nodes = nest.Create("iaf_psc_alpha", 4, {"V_th": 100000.0})

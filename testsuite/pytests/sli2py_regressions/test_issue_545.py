@@ -33,14 +33,14 @@ def test_setters_raise_error_on_bad_properties():
     nest.local_num_threads = 4
 
     # test defaults
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nest.SetDefaults("iaf_psc_alpha", {"tau_m": -10})
 
     # test neuron
     n = nest.Create("iaf_psc_alpha")
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         n.set({"tau_m": -10})
 
     # test synapse
-    with pytest.raises(nest.kernel.NESTErrors.BadDelay):
+    with pytest.raises(nest.NESTErrors.BadDelay):
         nest.Connect(n, n, syn_spec={"delay": -10})

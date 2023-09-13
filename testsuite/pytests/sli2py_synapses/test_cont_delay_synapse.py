@@ -62,5 +62,5 @@ def test_delay_compatible_with_resolution(prepare_kernel, expected_spike_times, 
 
 
 def test_delay_shorter_than_resolution(prepare_kernel):
-    with pytest.raises(nest.kernel.NESTErrors.BadDelay):
+    with pytest.raises(nest.NESTErrors.BadDelay):
         actual_spike_times = run_simulation(1.0, 0.7)

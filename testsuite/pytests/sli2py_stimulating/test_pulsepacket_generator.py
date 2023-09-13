@@ -63,7 +63,7 @@ def test_set_illegal_values(params):
     Test that an error is raised if `sdev` or `activity` is set to negative value.
     """
 
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         nest.SetDefaults("pulsepacket_generator", params)
 
 

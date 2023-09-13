@@ -102,7 +102,7 @@ def test_offset_cannot_be_changed_after_connect():
     mm = nest.Create("multimeter")
     nest.Connect(mm, nrn)
 
-    with pytest.raises(nest.kernel.NESTErrors.BadProperty):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         mm.offset = 5.0
 
 

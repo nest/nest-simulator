@@ -74,7 +74,7 @@ def set_communicator(comm):
 
     Raises
     ------
-    _kernel.NESTError
+    nestkernel.NESTError
     """
 
     if "mpi4py" not in sys.modules:
@@ -143,7 +143,7 @@ def init(argv):
 
     Raises
     ------
-    kernel.NESTError.PyNESTError
+    nestkernel.NESTError.PyNESTError
     """
 
     global initialized

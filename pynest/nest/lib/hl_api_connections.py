@@ -132,7 +132,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
 
     Raises
     ------
-    kernel.NESTError
+    nestkernel.NESTError
 
     Notes
     -----

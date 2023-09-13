@@ -103,7 +103,7 @@ class TestVisualization:
 
         nest.ResetKernel()
         nodes = nest.Create("iaf_psc_alpha", 2)
-        pg = nest.Create("poisson_generator", 1, {"rate": 1000.0})
+        pg = nest.Create("poisson_generator", params={"rate": 1000.0})
         device = nest.Create("voltmeter")
         nest.Connect(pg, nodes)
         nest.Connect(device, nodes)
@@ -130,7 +130,7 @@ class TestVisualization:
 
     def spike_recorder_data_setup(self, to_file=False):
         nest.ResetKernel()
-        pg = nest.Create("poisson_generator", {"rate": 1000.0})
+        pg = nest.Create("poisson_generator", params={"rate": 1000.0})
         sr = nest.Create("spike_recorder")
         if to_file:
             parrot = nest.Create("parrot_neuron")

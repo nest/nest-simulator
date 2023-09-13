@@ -85,7 +85,7 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, use_connect_ar
                     if rule == "one_to_one":
                         if value.shape[0] != prelength:
                             if use_connect_arrays:
-                                raise kernel.NESTError(
+                                raise nestkernel.NESTError(
                                     "'{}' has to be an array of dimension {}.".format(key, prelength)
                                 )
                             else:
@@ -98,7 +98,7 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, use_connect_ar
                             syn_spec[key] = value
                     elif rule == "fixed_total_number":
                         if "N" in conn_spec and value.shape[0] != conn_spec["N"]:
-                            raise kernel.NESTError(
+                            raise nestkernel.NESTError(
                                 "'{}' has to be an array of dimension {}, a scalar or a dictionary".format(
                                     key, conn_spec["N"]
                                 )
@@ -123,7 +123,7 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, use_connect_ar
                     elif rule == "fixed_indegree":
                         indegree = conn_spec["indegree"]
                         if value.shape[0] != postlength or value.shape[1] != indegree:
-                            raise kernel.NESTError(
+                            raise nestkernel.NESTError(
                                 "'{}' has to be an array of dimension {}x{} (n_target x indegree), a scalar "
                                 "or a dictionary.".format(key, postlength, indegree)
                             )
@@ -132,7 +132,7 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, use_connect_ar
                     elif rule == "fixed_outdegree":
                         outdegree = conn_spec["outdegree"]
                         if value.shape[0] != prelength or value.shape[1] != outdegree:
-                            raise kernel.NESTError(
+                            raise nestkernel.NESTError(
                                 "'{}' has to be an array of dimension {}x{} (n_sources x outdegree), a scalar "
                                 "or a dictionary.".format(key, prelength, outdegree)
                             )
@@ -212,7 +212,7 @@ def _process_spatial_projections(conn_spec, syn_spec):
             if "use_on_source" in projections:
                 projections.pop("use_on_source")
     else:
-        raise kernel.NESTError(
+        raise nestkernel.NESTError(
             "When using kernel or mask, the only possible connection rules are "
             "'pairwise_bernoulli', 'fixed_indegree', or 'fixed_outdegree'"
         )

@@ -157,9 +157,9 @@ class TestNodeCollectionGetSet(unittest.TestCase):
 
         nc = nest.Create("iaf_psc_exp", 5)  # noqa: F841
 
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.SetStatus(n, {"V_m": -40.0})
-        with self.assertRaises(nest.kernel.NESTError):
+        with self.assertRaises(nest.NESTError):
             nest.GetStatus(n)
 
         nest.ResetKernel()

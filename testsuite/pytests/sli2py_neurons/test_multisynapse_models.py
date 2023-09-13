@@ -43,7 +43,7 @@ def test_multisynapse_model_rport_zero(multisyn_model):
     """
 
     nrn = nest.Create(multisyn_model)
-    with pytest.raises(nest.kernel.NESTError):
+    with pytest.raises(nest.NESTError):
         nest.Connect(nrn, nrn)
 
 

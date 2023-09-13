@@ -111,10 +111,10 @@ template < typename ConnectionT >
 void
 GenericConnectorModel< ConnectionT >::set_status( const dictionary& d )
 {
-  d.update_value( names::receptor_type, receptor_type_ );
+  d.update_integer_value( names::receptor_type, receptor_type_ );
 #ifdef HAVE_MUSIC
   // We allow music_channel as alias for receptor_type during connection setup
-  d.update_value( names::music_channel, receptor_type_ );
+  d.update_integer_value( names::music_channel, receptor_type_ );
 #endif
 
   // If the parameter dict d contains /delay, this should set the delay
@@ -253,9 +253,9 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   size_t actual_receptor_type = receptor_type_;
 #ifdef HAVE_MUSIC
   // We allow music_channel as alias for receptor_type during connection setup
-  p.update_value( names::music_channel, actual_receptor_type );
+  p.update_integer_value( names::music_channel, actual_receptor_type );
 #endif
-  p.update_value( names::receptor_type, actual_receptor_type );
+  p.update_integer_value( names::receptor_type, actual_receptor_type );
 
   add_connection_( src, tgt, thread_local_connectors, syn_id, connection, actual_receptor_type );
 }

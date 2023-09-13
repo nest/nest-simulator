@@ -55,7 +55,7 @@ def test_nc_access_fail_without_node_creation(node_id):
     ``node_id=0``.
     """
 
-    with pytest.raises(nest.kernel.NESTErrors.UnknownNode):
+    with pytest.raises(nest.NESTErrors.UnknownNode):
         nest.NodeCollection([node_id])
 
 
@@ -69,5 +69,5 @@ def test_connection_fail_without_node_creation(node_id):
     ``node_id=0``.
     """
 
-    with pytest.raises(nest.kernel.NESTErrors.UnknownNode):
+    with pytest.raises(nest.NESTErrors.UnknownNode):
         nest.Connect([node_id], [node_id])

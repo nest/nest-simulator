@@ -89,10 +89,8 @@ def test_spike_multiplicity_parrot_neuron():
     nest.ResetKernel()
     multiplicities = [1, 3, 2]
     spikes = [1.0, 2.0, 3.0]
-    sg = nest.Create(
-        "spike_generator",
-        {"spike_times": spikes, "spike_multiplicities": multiplicities},
-    )
+    sg_params = {"spike_times": spikes, "spike_multiplicities": multiplicities}
+    sg = nest.Create("spike_generator", params=sg_params)
     pn = nest.Create("parrot_neuron")
     sr = nest.Create("spike_recorder")
 
@@ -133,9 +131,9 @@ def test_spike_multiplicity(model):
 
     # Two spike generators send one spike with default multiplicity of 1
     # A third spike generator sends one spike with multiplicity of 2
-    sg1 = nest.Create("spike_generator", {"spike_times": [5.0]})
-    sg2 = nest.Create("spike_generator", {"spike_times": [5.0]})
-    sg3 = nest.Create("spike_generator", {"spike_times": [5.0], "spike_multiplicities": [2]})
+    sg1 = nest.Create("spike_generator", params={"spike_times": [5.0]})
+    sg2 = nest.Create("spike_generator", params={"spike_times": [5.0]})
+    sg3 = nest.Create("spike_generator", params={"spike_times": [5.0], "spike_multiplicities": [2]})
 
     syn_spec = {
         "synapse_model": "static_synapse",

@@ -108,7 +108,7 @@ class EINetwork:
         self.i_neurons = nest.Create(self.neuron_model, n=self.nI, params=self.nrn_params)
         self.neurons = self.e_neurons + self.i_neurons
 
-        self.pg = nest.Create("poisson_generator", {"rate": self.poisson_rate})
+        self.pg = nest.Create("poisson_generator", params={"rate": self.poisson_rate})
         self.sr = nest.Create("spike_recorder")
 
         nest.Connect(
@@ -182,7 +182,7 @@ class EINetwork:
 
         ###############################################################################
         # Reconstruct instrumentation
-        self.pg = nest.Create("poisson_generator", {"rate": self.poisson_rate})
+        self.pg = nest.Create("poisson_generator", params={"rate": self.poisson_rate})
         self.sr = nest.Create("spike_recorder")
 
         ###############################################################################

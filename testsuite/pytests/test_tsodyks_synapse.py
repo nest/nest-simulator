@@ -57,7 +57,7 @@ class TestTsodyksSynapse:
         nest.ResetKernel()
         nest.resolution = h
 
-        sg = nest.Create("spike_generator", {"spike_times": input_train})
+        sg = nest.Create("spike_generator", params={"spike_times": input_train})
         pn = nest.Create("parrot_neuron")
 
         neuron = nest.Create(
@@ -185,7 +185,7 @@ class TestTsodyksSynapse:
         # limits must be set BEFORE connecting any elements
         nest.SetKernelStatus({"resolution": h})
 
-        sg = nest.Create("spike_generator", {"spike_times": input_train})
+        sg = nest.Create("spike_generator", params={"spike_times": input_train})
         pn = nest.Create("parrot_neuron")
 
         neuron = nest.Create("iaf_psc_exp_htum")

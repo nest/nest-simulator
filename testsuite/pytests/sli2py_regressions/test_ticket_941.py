@@ -52,7 +52,7 @@ def test_different_connections():
     nest.ResetKernel()
     nest.set_verbosity("M_ERROR")
 
-    spike_generator = nest.Create("spike_generator", {"spike_times": [1.0]})
+    spike_generator = nest.Create("spike_generator", params={"spike_times": [1.0]})
     spike_recorder = nest.Create("spike_recorder")
 
     pn1 = nest.Create("parrot_neuron")

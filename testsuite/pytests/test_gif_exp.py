@@ -76,13 +76,13 @@ class TestGifModels:
     def test_gif_exp_wrong_params(self, model):
         """Test for wrong parameters (negative lambda)"""
         params = {"lambda_0": -10.0}
-        with pytest.raises(nest.kernel.NESTError):
+        with pytest.raises(nest.NESTError):
             self.run_simulation(model, params)
 
     def test_gif_exp_wrong_params2(self, model):
         """Test for wrong parameters (unequal size of arrays)"""
         params = {"tau_sfa": 120.0, "q_sfa": [10.0, 25.0]}
-        with pytest.raises(nest.kernel.NESTError):
+        with pytest.raises(nest.NESTError):
             self.run_simulation(model, params)
 
     def test_gif_exp_default_params(self, model):

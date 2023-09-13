@@ -48,7 +48,7 @@ def simulator(num_threads):
 
     nrns = nest.Create("iaf_psc_alpha", 3)
     noise = nest.Create("noise_generator", 3, {"mean": 1000.0, "std": 1.0, "dt": 0.1})
-    mm = nest.Create("multimeter", {"record_from": ["I"], "interval": 0.1})
+    mm = nest.Create("multimeter", params={"record_from": ["I"], "interval": 0.1})
 
     nest.Connect(noise, nrns, "one_to_one", {"delay": 0.1})
     nest.Connect(mm, noise)
@@ -74,5 +74,5 @@ def test_allowed_multimeter_record_noise_generator_singlethreaded():
 def test_prohibited_multimeter_record_noise_generator_multithreaded():
     """Test that an error is thrown in multi-threaded mode."""
 
-    with pytest.raises(nest.kernel.NESTError):
+    with pytest.raises(nest.NESTError):
         simulator(num_threads=2)

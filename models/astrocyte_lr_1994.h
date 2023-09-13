@@ -411,6 +411,15 @@ public:
 
   // ----------------------------------------------------------------
 
+  /**
+   * Internal variables of the model.
+   */
+  struct Variables_
+  {
+    /** maximal value of cytosolic calcium concentration */
+    double max_Ca_;
+  };
+
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Read out state vector elements, used by UniversalDataLogger
@@ -426,6 +435,7 @@ public:
   Parameters_ P_;
   State_ S_;
   Buffers_ B_;
+  Variables_ V_;
 
   //! Mapping of recordables names to access functions
   static RecordablesMap< astrocyte_lr_1994 > recordablesMap_;

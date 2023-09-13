@@ -74,7 +74,7 @@ class SICConnectionTestCase(unittest.TestCase):
         astrocyte = nest.Create("astrocyte_lr_1994", {"Ca": 0.2})  # a calcium value which produces SIC
         neuron = nest.Create("aeif_cond_alpha_astro")
 
-        mm_neuron = nest.Create("multimeter", params={"record_from": ["SIC"], "interval": resol})
+        mm_neuron = nest.Create("multimeter", params={"record_from": ["I_SIC"], "interval": resol})
         mm_astro = nest.Create("multimeter", params={"record_from": ["Ca"], "interval": resol})
 
         nest.Connect(astrocyte, neuron, syn_spec={"synapse_model": "sic_connection"})
@@ -87,7 +87,7 @@ class SICConnectionTestCase(unittest.TestCase):
         # Evaluation
         # The expected SIC values are calculated based on the astrocyte dynamics
         # implemented in astrocyte_lr_1994.cpp.
-        actual_sic_values = mm_neuron.events["SIC"]
+        actual_sic_values = mm_neuron.events["I_SIC"]
         Ca = mm_astro.events["Ca"]
         f_v = np.vectorize(lambda x: np.log(x * 1000.0 - 196.69) if x * 1000.0 - 196.69 > 1.0 else 0.0)
         expected_sic_values = f_v(Ca)

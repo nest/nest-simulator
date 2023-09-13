@@ -37,7 +37,6 @@ if DEBUG_PLOTS:
         DEBUG_PLOTS = False
 
 
-@nest.ll_api.check_stack
 class TestSTDPPlSynapse:
     """
     Compare the STDP power-law synaptic plasticity model against a self-contained Python reference.

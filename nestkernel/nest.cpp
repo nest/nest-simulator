@@ -322,18 +322,6 @@ register_logger_client( const deliver_logging_event_ptr client_callback )
   kernel().logging_manager.register_logging_client( client_callback );
 }
 
-int
-get_rank()
-{
-  return kernel().mpi_manager.get_rank();
-}
-
-int
-get_num_mpi_processes()
-{
-  return kernel().mpi_manager.get_num_processes();
-}
-
 std::string
 print_nodes_to_string()
 {

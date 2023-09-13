@@ -243,6 +243,7 @@ void
 nest::MPIManager::get_status( dictionary& dict )
 {
   dict[ names::num_processes ] = num_processes_;
+  dict[ names::mpi_rank ] = rank_;
   dict[ names::adaptive_target_buffers ] = adaptive_target_buffers_;
   dict[ names::buffer_size_target_data ] = buffer_size_target_data_;
   dict[ names::buffer_size_spike_data ] = buffer_size_spike_data_;

@@ -30,13 +30,12 @@ import pytest
 # implement this switch. Then, one should also see if we can parametrize
 # the entire class instead of parametrizing each test in the class in the
 # same way.
-if nest.ll_api.sli_func("is_threaded"):
+if nest.build_info["have_threads"]:
     THREAD_NUMBERS = [1, 2, 3, 4]
 else:
     THREAD_NUMBERS = [1]
 
 
-@nest.ll_api.check_stack
 class TestSpikeTransmission:
     """
     Test that spikes are transmitted correctly for different numbers of spikes.

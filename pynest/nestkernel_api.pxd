@@ -136,8 +136,6 @@ cdef extern from "nest.h" namespace "nest":
                  const dictionary& connectivity,
                  const dictionary& synapse_params) except +
     void disconnect( const deque[ConnectionID]& conns ) except +
-    int get_rank() except +
-    int get_num_mpi_processes() except +
     string print_nodes_to_string()
     string pprint_to_string( NodeCollectionPTR nc ) except +
     size_t nc_size( NodeCollectionPTR nc ) except +

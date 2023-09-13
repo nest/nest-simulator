@@ -55,7 +55,7 @@ def Rank():
     may complete but generate nonsensical results.
     """
 
-    return nestkernel.llapi_get_rank()
+    return nestkernel.llapi_get_kernel_status()["mpi_rank"]
 
 
 def NumProcesses():
@@ -67,7 +67,7 @@ def NumProcesses():
         Number of overall MPI processes
     """
 
-    return nestkernel.llapi_get_num_mpi_processes()
+    return nestkernel.llapi_get_kernel_status()["num_processes"]
 
 
 def SetAcceptableLatency(port_name, latency):
@@ -121,7 +121,5 @@ def GetLocalVPs():
     # VPManager::get_vp(). mpitest_get_local_vps ensures this is in
     # sync with the kernel.
 
-    # PYNEST-NG
-    # n_vp = sli_func("GetKernelStatus /total_num_virtual_procs get")
-    n_vp = 1
+    n_vp = nestkernel.llapi_get_kernel_status()["total_num_virtual_procs"]
     return range(Rank(), n_vp, NumProcesses())

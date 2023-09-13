@@ -23,6 +23,7 @@
 #include "node_manager.h"
 
 // C++ includes:
+#include <algorithm>
 #include <set>
 
 // Includes from libnestutil:
@@ -47,6 +48,7 @@ namespace nest
 
 NodeManager::NodeManager()
   : local_nodes_( 1 )
+  , node_collection_container_()
   , wfr_nodes_vec_()
   , wfr_is_used_( false )
   , wfr_network_size_( 0 ) // zero to force update
@@ -61,6 +63,7 @@ NodeManager::~NodeManager()
 {
   // We must destruct nodes here, since devices may need to close files.
   destruct_nodes_();
+  clear_node_collection_container();
 }
 
 void
@@ -79,6 +82,7 @@ void
 NodeManager::finalize()
 {
   destruct_nodes_();
+  clear_node_collection_container();
 }
 
 void
@@ -135,18 +139,19 @@ NodeManager::add_node( size_t model_id, long n )
     .swap( exceptions_raised_ );
 
   auto nc_ptr = NodeCollectionPTR( new NodeCollectionPrimitive( min_node_id, max_node_id, model_id ) );
+  append_node_collection_( nc_ptr );
 
   if ( model->has_proxies() )
   {
-    add_neurons_( *model, min_node_id, max_node_id, nc_ptr );
+    add_neurons_( *model, min_node_id, max_node_id );
   }
   else if ( not model->one_node_per_process() )
   {
-    add_devices_( *model, min_node_id, max_node_id, nc_ptr );
+    add_devices_( *model, min_node_id, max_node_id );
   }
   else
   {
-    add_music_nodes_( *model, min_node_id, max_node_id, nc_ptr );
+    add_music_nodes_( *model, min_node_id, max_node_id );
   }
 
   // check if any exceptions have been raised
@@ -181,9 +186,8 @@ NodeManager::add_node( size_t model_id, long n )
   return nc_ptr;
 }
 
-
 void
-NodeManager::add_neurons_( Model& model, size_t min_node_id, size_t max_node_id, NodeCollectionPTR nc_ptr )
+NodeManager::add_neurons_( Model& model, size_t min_node_id, size_t max_node_id )
 {
   const size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
   // Upper limit for number of neurons per thread; in practice, either
@@ -210,7 +214,6 @@ NodeManager::add_neurons_( Model& model, size_t min_node_id, size_t max_node_id,
       {
         Node* node = model.create( t );
         node->set_node_id_( node_id );
-        node->set_nc_( nc_ptr );
         node->set_model_id( model.get_model_id() );
         node->set_thread( t );
         node->set_vp( vp );
@@ -231,7 +234,7 @@ NodeManager::add_neurons_( Model& model, size_t min_node_id, size_t max_node_id,
 }
 
 void
-NodeManager::add_devices_( Model& model, size_t min_node_id, size_t max_node_id, NodeCollectionPTR nc_ptr )
+NodeManager::add_devices_( Model& model, size_t min_node_id, size_t max_node_id )
 {
   const size_t n_per_thread = max_node_id - min_node_id + 1;
 
@@ -249,7 +252,6 @@ NodeManager::add_devices_( Model& model, size_t min_node_id, size_t max_node_id,
 
         Node* node = model.create( t );
         node->set_node_id_( node_id );
-        node->set_nc_( nc_ptr );
         node->set_model_id( model.get_model_id() );
         node->set_thread( t );
         node->set_vp( kernel().vp_manager.thread_to_vp( t ) );
@@ -270,7 +272,7 @@ NodeManager::add_devices_( Model& model, size_t min_node_id, size_t max_node_id,
 }
 
 void
-NodeManager::add_music_nodes_( Model& model, size_t min_node_id, size_t max_node_id, NodeCollectionPTR nc_ptr )
+NodeManager::add_music_nodes_( Model& model, size_t min_node_id, size_t max_node_id )
 {
 #pragma omp parallel
   {
@@ -286,7 +288,6 @@ NodeManager::add_music_nodes_( Model& model, size_t min_node_id, size_t max_node
 
           Node* node = model.create( 0 );
           node->set_node_id_( node_id );
-          node->set_nc_( nc_ptr );
           node->set_model_id( model.get_model_id() );
           node->set_thread( 0 );
           node->set_vp( kernel().vp_manager.thread_to_vp( 0 ) );
@@ -305,6 +306,37 @@ NodeManager::add_music_nodes_( Model& model, size_t min_node_id, size_t max_node
       exceptions_raised_.at( t ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   } // omp parallel
+}
+
+NodeCollectionPTR
+NodeManager::node_id_to_node_collection( const size_t node_id ) const
+{
+  // find the largest ID in node_collection_last_ that is still smaller than node_id
+  auto it = std::lower_bound( node_collection_last_.begin(), node_collection_last_.end(), node_id );
+
+  // compute the position of the nodeCollection based on the position of the ID found above
+  size_t pos = it - node_collection_last_.begin();
+  return node_collection_container_.at( pos );
+}
+
+NodeCollectionPTR
+NodeManager::node_id_to_node_collection( Node* node ) const
+{
+  return node_id_to_node_collection( node->get_node_id() );
+}
+
+void
+NodeManager::append_node_collection_( NodeCollectionPTR ncp )
+{
+  node_collection_container_.push_back( ncp );
+  node_collection_last_.push_back( ncp->get_last() );
+}
+
+void
+NodeManager::clear_node_collection_container()
+{
+  node_collection_container_.clear();
+  node_collection_last_.clear();
 }
 
 NodeCollectionPTR

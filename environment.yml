@@ -107,9 +107,9 @@ dependencies:
     - Image
     - sphinx_autobuild
     - sphinx-copybutton
-    - sphinx_gallery
-    - sphinx-tabs
     - sphinx_design
+    - sphinx_gallery
     - sphinx-material
+    - sphinx-tabs
     - sphinx-notfound-page
     - sphinxcontrib-mermaid

@@ -302,7 +302,7 @@ def _histogram(a, bins=10, bin_range=None, normed=False):
     ------
     ValueError
     """
-    from numpy import asarray, iterable, linspace, sort, concatenate
+    from numpy import asarray, concatenate, iterable, linspace, sort
 
     a = asarray(a).ravel()
 

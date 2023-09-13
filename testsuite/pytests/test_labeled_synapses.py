@@ -24,6 +24,7 @@ Test setting and getting labels on synapses.
 """
 
 import unittest
+
 import nest
 
 HAVE_GSL = nest.build_info["have_gsl"]

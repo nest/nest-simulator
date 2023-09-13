@@ -25,9 +25,8 @@ Test of events
 
 import unittest
 
-import numpy as np
-
 import nest
+import numpy as np
 
 HAVE_GSL = nest.build_info["have_gsl"]
 HAVE_THREADS = nest.build_info["have_threads"]

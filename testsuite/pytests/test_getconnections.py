@@ -24,6 +24,7 @@ GetConnections
 """
 
 import unittest
+
 import nest
 
 nest.set_verbosity(nest.verbosity.M_ERROR)

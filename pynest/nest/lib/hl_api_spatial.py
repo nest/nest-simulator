@@ -28,7 +28,6 @@ import os
 import numpy as np
 
 from .. import nestkernel_api as nestkernel
-from .hl_api_helper import is_iterable
 from .hl_api_connections import GetConnections
 from .hl_api_helper import is_iterable, stringify_path
 from .hl_api_parallel_computing import NumProcesses, Rank

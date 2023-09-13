@@ -22,7 +22,6 @@
 import nest
 import pytest
 
-
 pytestmark = pytest.mark.skipif_missing_threads
 
 

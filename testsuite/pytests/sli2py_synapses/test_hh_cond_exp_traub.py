@@ -21,9 +21,9 @@
 
 
 import nest
-import pytest
 import numpy as np
 import numpy.testing as nptest
+import pytest
 
 pytestmark = pytest.mark.skipif_missing_gsl
 

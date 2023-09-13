@@ -19,8 +19,8 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-from ..lib.hl_api_types import CreateParameter
 from .. import nestkernel_api as nestkernel
+from ..lib.hl_api_types import CreateParameter
 
 __all__ = [
     "conditional",

@@ -32,8 +32,9 @@ import textwrap
 import warnings
 from string import Template
 
-from .. import nestkernel_api as nestkernel
 import nest
+
+from .. import nestkernel_api as nestkernel
 
 __all__ = [
     "broadcast",

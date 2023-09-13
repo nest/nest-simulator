@@ -33,9 +33,8 @@ regimes, e.g., 1x10.0ms vs 100x0.1ms.
     only.
 """
 
-import numpy.testing as nptest
-
 import nest
+import numpy.testing as nptest
 
 
 def run_sim(interval, steppings):

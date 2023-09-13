@@ -22,8 +22,9 @@
 # This test checks interactions between rate neurons, i.e.
 # the delay, weight and nonlinearities of rate neurons.
 
-import nest
 import unittest
+
+import nest
 import numpy as np
 
 

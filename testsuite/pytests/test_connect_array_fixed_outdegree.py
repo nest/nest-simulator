@@ -25,8 +25,8 @@ and parameter arrays in syn_spec
 """
 
 import unittest
-import nest
 
+import nest
 
 HAVE_THREADS = nest.build_info["have_threads"]
 

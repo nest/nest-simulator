@@ -25,12 +25,13 @@ Connect function.
 """
 
 import copy
+
 import numpy as np
 
-from ..ll_api import *
 from .. import nestkernel_api as nestkernel
+from ..ll_api import *
+from .hl_api_exceptions import NESTError, NESTErrors
 from .hl_api_types import CollocatedSynapses, Mask, NodeCollection, Parameter
-from .hl_api_exceptions import NESTErrors, NESTError
 
 __all__ = [
     "_connect_layers_needed",

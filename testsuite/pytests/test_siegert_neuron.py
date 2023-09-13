@@ -21,8 +21,9 @@
 
 # This script tests the siegert_neuron in NEST.
 
-import nest
 import unittest
+
+import nest
 import numpy as np
 
 HAVE_GSL = nest.build_info["have_gsl"]

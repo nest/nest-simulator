@@ -52,13 +52,12 @@ References
 :Authors: J Gille, T Wunderlich, Electronic Vision(s)
 """
 
+import logging
 from abc import ABC, abstractmethod
 from copy import copy
-import logging
-
-import numpy as np
 
 import nest
+import numpy as np
 
 # Simulation time per iteration in milliseconds.
 POLL_TIME = 200

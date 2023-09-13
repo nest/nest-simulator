@@ -21,9 +21,10 @@
 
 # This script compares the two variants of the Tsodyks/Markram synapse in NEST.
 
+import unittest
+
 import nest
 import numpy
-import unittest
 
 
 class QuantalSTPSynapseTestCase(unittest.TestCase):

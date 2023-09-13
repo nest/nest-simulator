@@ -28,11 +28,10 @@ times should be exactly 0.0 between all resolutions. The test checks whether
 the spike times indeed are independent of the resolution.
 """
 
+import nest
 import numpy as np
 import numpy.testing as nptest
 import pytest
-
-import nest
 
 
 def simulator(resolution):

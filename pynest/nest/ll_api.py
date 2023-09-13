@@ -29,9 +29,8 @@ Low-level API of PyNEST Module
 import functools
 import inspect
 import keyword
-
-import sys
 import os
+import sys
 
 # This is a workaround for readline import errors encountered with Anaconda
 # Python running on Ubuntu, when invoked from the terminal
@@ -52,7 +51,6 @@ except ImportError:
 sys.setdlopenflags(os.RTLD_NOW | os.RTLD_GLOBAL)
 
 from . import nestkernel_api as nestkernel  # noqa
-
 from .lib.hl_api_exceptions import NESTError, NESTErrors
 
 __all__ = [

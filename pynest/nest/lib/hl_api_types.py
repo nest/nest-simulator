@@ -29,8 +29,8 @@ from math import floor, log
 
 import numpy
 
-from ..ll_api import *
 from .. import nestkernel_api as nestkernel
+from ..ll_api import *
 from .hl_api_helper import (
     get_parameters,
     get_parameters_hierarchical_addressing,

@@ -24,6 +24,7 @@ Tests for the SynapseCollection class
 """
 
 import unittest
+
 import nest
 
 try:

@@ -26,18 +26,17 @@ Functions for connection handling
 import numpy
 
 from .. import nestkernel_api as nestkernel
-
 from .hl_api_connection_helpers import (
-    _process_input_nodes,
     _connect_layers_needed,
     _connect_spatial,
     _process_conn_spec,
+    _process_input_nodes,
     _process_spatial_projections,
     _process_syn_spec,
 )
 from .hl_api_nodes import Create
 from .hl_api_parallel_computing import NumProcesses
-from .hl_api_types import NodeCollection, SynapseCollection, Mask, Parameter
+from .hl_api_types import Mask, NodeCollection, Parameter, SynapseCollection
 
 __all__ = [
     "Connect",

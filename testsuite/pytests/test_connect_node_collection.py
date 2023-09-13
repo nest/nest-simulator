@@ -23,9 +23,8 @@
 Test basic connection with ``NodeCollection``.
 """
 
-import pytest
-
 import nest
+import pytest
 
 
 @pytest.fixture(autouse=True)

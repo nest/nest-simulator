@@ -23,10 +23,9 @@
 Test ``Parameter`` ``apply`` method for spatial ``NodeCollection``.
 """
 
+import nest
 import numpy as np
 import pytest
-
-import nest
 
 
 @pytest.fixture(autouse=True)

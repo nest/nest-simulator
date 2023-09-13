@@ -23,11 +23,10 @@
 Functions for simulation control
 """
 
-from contextlib import contextmanager
 import warnings
+from contextlib import contextmanager
 
 from .. import nestkernel_api as nestkernel
-
 from ..ll_api import *
 from .hl_api_helper import is_iterable
 from .hl_api_parallel_computing import Rank

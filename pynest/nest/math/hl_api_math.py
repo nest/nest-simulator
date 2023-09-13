@@ -21,7 +21,6 @@
 
 from .. import nestkernel_api as nestkernel
 
-
 __all__ = [
     "exp",
     "sin",

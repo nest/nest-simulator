@@ -20,22 +20,20 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import sys
-import os
 import json
+import os
 import subprocess
-
-from urllib.request import urlretrieve
-
+import sys
 from pathlib import Path
 from shutil import copyfile
+from urllib.request import urlretrieve
 
 # Add the extension modules to the path
 extension_module_dir = os.path.abspath("./_ext")
 sys.path.append(extension_module_dir)
 
-from extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
 from extract_api_functions import ExtractPyNESTAPIS  # noqa
+from extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
 
 repo_root_dir = os.path.abspath("../..")
 pynest_dir = os.path.join(repo_root_dir, "pynest")

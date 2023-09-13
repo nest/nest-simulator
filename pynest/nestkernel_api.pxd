@@ -20,12 +20,11 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 from libcpp cimport bool as cbool
-
-from libcpp.string cimport string
-from libcpp.vector cimport vector
 from libcpp.deque cimport deque
-from libcpp.utility cimport pair
 from libcpp.memory cimport shared_ptr
+from libcpp.string cimport string
+from libcpp.utility cimport pair
+from libcpp.vector cimport vector
 
 
 cdef extern from "dictionary.h" namespace "boost":

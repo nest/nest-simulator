@@ -24,9 +24,9 @@ Test for correct handling of IAF neuron propagator singularity.
 """
 
 import nest
-import pytest
 import numpy as np
 import pandas as pd
+import pytest
 
 
 class TestIAFSingularity:

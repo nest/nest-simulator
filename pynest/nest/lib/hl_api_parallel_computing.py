@@ -23,8 +23,8 @@
 Functions for parallel computing
 """
 
-from ..ll_api import *
 from .. import nestkernel_api as nestkernel
+from ..ll_api import *
 
 __all__ = [
     "NumProcesses",

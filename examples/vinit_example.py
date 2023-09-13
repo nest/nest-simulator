@@ -37,9 +37,9 @@ References
 ###############################################################################
 # First, the necessary modules for simulation and plotting are imported.
 
+import matplotlib.pyplot as plt
 import nest
 import numpy
-import matplotlib.pyplot as plt
 
 ###############################################################################
 # A loop runs over a range of initial membrane voltages.

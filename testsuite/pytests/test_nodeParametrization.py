@@ -23,10 +23,11 @@
 Node Parametrization tests
 """
 
-import nest
-import numpy as np
 import unittest
 import warnings
+
+import nest
+import numpy as np
 
 
 class TestNodeParametrization(unittest.TestCase):

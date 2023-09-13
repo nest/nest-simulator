@@ -26,12 +26,13 @@ Functions for node handling
 import warnings
 
 import nest
-from ..ll_api import *
+
 from .. import nestkernel_api as nestkernel
-from .hl_api_helper import is_iterable, model_deprecation_warning
-from .hl_api_types import NodeCollection, Parameter
+from ..ll_api import *
 from .hl_api_exceptions import NESTErrors
-from .hl_api_parallel_computing import Rank, NumProcesses
+from .hl_api_helper import is_iterable, model_deprecation_warning
+from .hl_api_parallel_computing import NumProcesses, Rank
+from .hl_api_types import NodeCollection, Parameter
 
 __all__ = [
     "Create",

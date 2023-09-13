@@ -24,28 +24,25 @@
 
 # import cython
 
-from libc.stdlib cimport malloc, free
-# from libc.string cimport memcpy
-
-from libcpp.string cimport string
-from libcpp.vector cimport vector
-from libcpp.deque cimport deque
-
 from cython.operator cimport dereference as deref
 from cython.operator cimport preincrement as inc
+from libc.stdlib cimport free, malloc
+from libcpp.deque cimport deque
+from libcpp.string cimport string
+from libcpp.vector cimport vector
+
+# from libc.string cimport memcpy
 
 import nest
+import numpy
 from nest.lib.hl_api_exceptions import NESTErrors
 
-import numpy
 # cimport numpy
 
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 
-
-
-from libc.stdlib cimport malloc, free
-from libc.stdint cimport uint64_t, int64_t
+from libc.stdint cimport int64_t, uint64_t
+from libc.stdlib cimport free, malloc
 
 
 def init(args):

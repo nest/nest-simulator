@@ -23,9 +23,8 @@
 Test properties of multisynapse models.
 """
 
-import pytest
-
 import nest
+import pytest
 
 
 @pytest.fixture(autouse=True)

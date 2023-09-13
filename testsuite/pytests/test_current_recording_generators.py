@@ -23,9 +23,10 @@
 Test if currents from generators are being recorded properly
 """
 
-import numpy
 import unittest
+
 import nest
+import numpy
 
 
 class CurrentRecordingGeneratorTestCase(unittest.TestCase):

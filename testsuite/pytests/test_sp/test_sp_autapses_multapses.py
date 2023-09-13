@@ -19,10 +19,10 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import nest
 import unittest
-
 from pprint import pprint
+
+import nest
 
 
 class TestStructuralPlasticityAutapses(unittest.TestCase):

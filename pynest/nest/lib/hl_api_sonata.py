@@ -32,7 +32,6 @@ from pathlib import Path, PurePath
 import numpy as np
 
 from .. import nestkernel_api as nestkernel
-
 from .hl_api_models import GetDefaults
 from .hl_api_nodes import Create
 from .hl_api_simulation import GetKernelStatus, SetKernelStatus, Simulate

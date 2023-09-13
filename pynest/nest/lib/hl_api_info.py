@@ -27,10 +27,11 @@ import os
 import textwrap
 import webbrowser
 
+import nest
+
+from .. import nestkernel_api as nestkernel
 from .hl_api_helper import broadcast, is_iterable, load_help, show_help_with_pager
 from .hl_api_types import to_json
-from .. import nestkernel_api as nestkernel
-import nest
 
 __all__ = [
     "authors",

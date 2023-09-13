@@ -31,7 +31,6 @@ from pprint import pformat
 
 from tqdm import tqdm
 
-
 logging.basicConfig(level=logging.WARNING)
 log = logging.getLogger(__name__)
 

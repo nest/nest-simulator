@@ -82,6 +82,11 @@ Receives
 
 SpikeEvent
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: spin_detector
+
 EndUserDocs */
 
 /**

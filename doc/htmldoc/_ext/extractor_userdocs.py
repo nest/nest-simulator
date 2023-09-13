@@ -31,8 +31,9 @@ from itertools import chain, combinations
 import logging
 from collections import Counter
 
+
 logging.basicConfig(level=logging.WARNING)
-log = logging.getLogger()
+log = logging.getLogger(__name__)
 
 
 def relative_glob(*pattern, basedir=os.curdir, **kwargs):

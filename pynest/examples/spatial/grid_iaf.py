@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-4x3 grid
----------
+Spatial networks: 4x3 grid
+--------------------------
 
 Create a population of iaf_psc_alpha neurons on a 4x3 grid.
 

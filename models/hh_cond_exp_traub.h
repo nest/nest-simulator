@@ -144,6 +144,11 @@ See also
 
 hh_psc_alpha
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: hh_cond_exp_traub
+
 EndUserDocs */
 
 class hh_cond_exp_traub : public ArchivingNode

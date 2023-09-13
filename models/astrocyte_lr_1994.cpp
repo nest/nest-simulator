@@ -383,11 +383,11 @@ nest::astrocyte_lr_1994::init_buffers_()
 
   if ( not B_.c_ )
   {
-    B_.c_ = gsl_odeiv_control_y_new( 1e-6, 0.0 );
+    B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
   }
   else
   {
-    gsl_odeiv_control_init( B_.c_, 1e-6, 0.0, 1.0, 0.0 );
+    gsl_odeiv_control_init( B_.c_, 1e-3, 0.0, 1.0, 0.0 );
   }
 
   if ( not B_.e_ )

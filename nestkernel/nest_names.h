@@ -262,6 +262,7 @@ extern const Name I_T;
 extern const Name I_ahp;
 extern const Name I_e;
 extern const Name I_h;
+extern const Name I_SIC;
 extern const Name I_sp;
 extern const Name I_stc;
 extern const Name I_syn;
@@ -440,7 +441,6 @@ extern const Name rule;
 
 extern const Name S;
 extern const Name S_act_NMDA;
-extern const Name SIC;
 extern const Name SIC_scale;
 extern const Name SIC_th;
 extern const Name sdev;

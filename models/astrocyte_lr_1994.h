@@ -83,9 +83,12 @@ In this model, excitatory synaptic inputs to the astrocyte trigger IP3
 generation and change in calcium dynamics in the astrocyte. This might induce an
 astrocytic output in the form of a slow inward current (SIC), which is dependent
 on its calcium dynamics, to its target neurons. The input and output are based
-on the equations in [3]_ but with adaptations:
+on the equations in [3]_ but with adaptations, as described in the following.
 
-**Input:** The astrocyte receives inputs from excitatory (glutamatergic)
+Spike input
+-----------
+
+The astrocyte receives inputs from excitatory (glutamatergic)
 synapses. The synaptic inputs directly affect IP3 concentration according to the
 following equation:
 
@@ -103,7 +106,10 @@ sent from neurons or generators. The summed synaptic weight the astrocyte receiv
 :math:`\Delta_\mathrm{IP3}` scales the impact of synaptic inputs on the
 IP3 dynamics.
 
-In addition, in this implementation a current input to the astrocyte is directly
+Calcium current input
+---------------------
+
+In this implementation, a current input to the astrocyte is directly
 added to its cytosolic calcium concentration. Generators that send out currents
 can be connected to astrocytes to directly generate fluctuations in cytosolic
 calcium:
@@ -118,7 +124,10 @@ Here, :math:`\mathrm{[Ca^{2+}]}` is the cytosolic calcium concentration, and
 :math:`J_\mathrm{pump}`, :math:`J_\mathrm{leak}` are the calcium fluxes defined
 as in [3]_.
 
-**Output:** If the astrocyte receives excitatory synaptic inputs, it might
+Output
+------
+
+If the astrocyte receives excitatory synaptic inputs, it might
 output SIC to its target neurons. This current depends on the cytosolic
 calcium concentration. This dependency is modeled according to the expressions
 first proposed in [3]:
@@ -158,9 +167,9 @@ The following parameters can be set in the status dictionary.
 ======  ========= =============================================================
 **Dynamic state variables**
 -------------------------------------------------------------------------------
-IP3     uM        Inositol 1,4,5-trisphosphate concentration in the astrocytic
+IP3     µM        Inositol 1,4,5-trisphosphate concentration in the astrocytic
                   cytosol
-Ca      uM        Calcium concentration in the astrocytic cytosol
+Ca      µM        Calcium concentration in the astrocytic cytosol
 h_IP3R  unitless  Fraction of IP3 receptors on the astrocytic ER that are not
                   yet inactivated by calcium
 ======  ========= =============================================================
@@ -168,28 +177,28 @@ h_IP3R  unitless  Fraction of IP3 receptors on the astrocytic ER that are not
 =============== ========= =====================================================
 **Parameters**
 -------------------------------------------------------------------------------
-Ca_tot          uM        Total free astrocytic calcium concentration
-IP3_0           uM        Baseline value of astrocytic IP3 concentration
-Kd_IP3_1        uM        First astrocytic IP3R dissociation constant of IP3
-Kd_IP3_2        uM        Second astrocytic IP3R dissociation constant of IP3
-Kd_act          uM        Astrocytic IP3R dissociation constant of calcium
+Ca_tot          µM        Total free astrocytic calcium concentration
+IP3_0           µM        Baseline value of astrocytic IP3 concentration
+Kd_IP3_1        µM        First astrocytic IP3R dissociation constant of IP3
+Kd_IP3_2        µM        Second astrocytic IP3R dissociation constant of IP3
+Kd_act          µM        Astrocytic IP3R dissociation constant of calcium
                           (activation)
-Kd_inh          uM        Astrocytic IP3R dissociation constant of calcium
+Kd_inh          µM        Astrocytic IP3R dissociation constant of calcium
                           (inhibition)
-Km_SERCA        uM        Half-activation constant of astrocytic SERCA pump
+Km_SERCA        µM        Half-activation constant of astrocytic SERCA pump
 SIC_scale       unitless  Parameter determining the scale of astrocytic SIC
                           output
-SIC_th          uM        Threshold that determines the minimal level of
+SIC_th          µM        Threshold that determines the minimal level of
                           astrocytic cytosolic calcium sufficient to induce
                           SIC
-delta_IP3       uM        Parameter determining the increase in astrocytic IP3
+delta_IP3       µM        Parameter determining the increase in astrocytic IP3
                           concentration induced by synaptic input
-k_IP3R          1/(uM*ms) Astrocytic IP3R binding constant for calcium
+k_IP3R          1/(µM*ms) Astrocytic IP3R binding constant for calcium
                           inhibition
 rate_IP3R       1/ms      Maximum rate of calcium release via astrocytic IP3R
 rate_L          1/ms      Rate constant of calcium leak from astrocytic ER to
                           cytosol
-rate_SERCA      uM/ms     Maximum rate of calcium uptake by astrocytic SERCA
+rate_SERCA      µM/ms     Maximum rate of calcium uptake by astrocytic SERCA
                           pump
 ratio_ER_cyt    unitless  Ratio between astrocytic ER and cytosol volumes
 tau_IP3         ms        Time constant of the exponential decay of astrocytic
@@ -296,22 +305,22 @@ private:
   struct Parameters_
   {
     // parameters according to Nadkarni & Jung, 2003
-    double Ca_tot_;    //!< Total free astrocytic calcium concentration in uM
-    double IP3_0_;     //!< Baseline value of the astrocytic IP3 concentration in uM
-    double Kd_IP3_1_;  //!< First astrocytic IP3R dissociation constant of IP3 in uM
-    double Kd_IP3_2_;  //!< Second astrocytic IP3R dissociation constant of IP3 in uM
-    double Kd_act_;    //!< Astrocytic IP3R dissociation constant of calcium (activation) in uM
-    double Kd_inh_;    //!< Astrocytic IP3R dissociation constant of calcium (inhibition) in uM
-    double Km_SERCA_;  //!< Half-activation constant of astrocytic SERCA pump in uM
+    double Ca_tot_;    //!< Total free astrocytic calcium concentration in µM
+    double IP3_0_;     //!< Baseline value of the astrocytic IP3 concentration in µM
+    double Kd_IP3_1_;  //!< First astrocytic IP3R dissociation constant of IP3 in µM
+    double Kd_IP3_2_;  //!< Second astrocytic IP3R dissociation constant of IP3 in µM
+    double Kd_act_;    //!< Astrocytic IP3R dissociation constant of calcium (activation) in µM
+    double Kd_inh_;    //!< Astrocytic IP3R dissociation constant of calcium (inhibition) in µM
+    double Km_SERCA_;  //!< Half-activation constant of astrocytic SERCA pump in µM
     double SIC_scale_; //!< Parameter determining the scale of astrocytic SIC output
     double SIC_th_; //!< Threshold that determines the minimal level of intracellular astrocytic calcium sufficient to
-                    //!< induce SIC in uM
+                    //!< induce SIC in µM
     double delta_IP3_; //!< Parameter determining the increase in astrocytic IP3 concentration induced by synaptic input
-                       //!< in uM
-    double k_IP3R_;    //!< Astrocytic IP3R binding constant for calcium inhibition in 1/(uM*ms)
+                       //!< in µM
+    double k_IP3R_;    //!< Astrocytic IP3R binding constant for calcium inhibition in 1/(µM*ms)
     double rate_IP3R_; //!< Maximum rate of calcium release via astrocytic IP3R in 1/ms
     double rate_L_;    //!< Rate constant of calcium leak from astrocytic ER to cytosol in 1/ms
-    double rate_SERCA_;   //!< Maximum rate of calcium uptake by astrocytic SERCA pump in uM/ms
+    double rate_SERCA_;   //!< Maximum rate of calcium uptake by astrocytic SERCA pump in µM/ms
     double ratio_ER_cyt_; //!< Ratio between astrocytic ER and cytosol volumes
     double tau_IP3_;      //!< Time constant of the exponential decay of astrocytic IP3 in ms
 
@@ -394,7 +403,7 @@ public:
      * It must be a part of Buffers_, since it is initialized once before
      * the first simulation, but not modified before later Simulate calls.
      */
-    double I_stim_;
+    double J_noise_;
 
     // values to be sent by SIC event
     std::vector< double > sic_values;

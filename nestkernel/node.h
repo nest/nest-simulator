@@ -468,7 +468,8 @@ public:
   virtual void sends_secondary_event( DelayedRateConnectionEvent& re );
 
   /**
-   * Required to check, if source neuron may send a SecondaryEvent.
+   * Required to check, if source node may send a SICEvent.
+   *
    * This base class implementation throws IllegalConnection
    * and needs to be overwritten in the derived class.
    * @ingroup event_interface

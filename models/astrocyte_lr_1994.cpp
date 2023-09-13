@@ -92,7 +92,7 @@ astrocyte_lr_1994_dynamics( double time, const double y[], double f[], void* pno
     * std::pow( h_ip3r, 3 ) * ( calc_ER - calc );
 
   f[ S::IP3 ] = ( node.P_.IP3_0_ - ip3 ) / node.P_.tau_IP3_;
-  f[ S::Ca ] = J_channel - J_pump + J_leak + node.B_.I_stim_;
+  f[ S::Ca ] = J_channel - J_pump + J_leak + node.B_.J_noise_;
   f[ S::h_IP3R ] = alpha_h_ip3r * ( 1.0 - h_ip3r ) - beta_h_ip3r * h_ip3r;
 
   return GSL_SUCCESS;
@@ -105,20 +105,20 @@ astrocyte_lr_1994_dynamics( double time, const double y[], double f[], void* pno
 
 nest::astrocyte_lr_1994::Parameters_::Parameters_()
   // parameters following Nadkarni & Jung, 2003
-  : Ca_tot_( 2.0 )      // uM
-  , IP3_0_( 0.16 )      // uM
-  , Kd_IP3_1_( 0.13 )   // uM
-  , Kd_IP3_2_( 0.9434 ) // uM
-  , Kd_act_( 0.08234 )  // uM
-  , Kd_inh_( 1.049 )    // uM
-  , Km_SERCA_( 0.1 )    // uM
+  : Ca_tot_( 2.0 )      // µM
+  , IP3_0_( 0.16 )      // µM
+  , Kd_IP3_1_( 0.13 )   // µM
+  , Kd_IP3_2_( 0.9434 ) // µM
+  , Kd_act_( 0.08234 )  // µM
+  , Kd_inh_( 1.049 )    // µM
+  , Km_SERCA_( 0.1 )    // µM
   , SIC_scale_( 1.0 )
-  , SIC_th_( 0.19669 )    // uM
-  , delta_IP3_( 5.0 )     // uM
-  , k_IP3R_( 0.0002 )     // 1/(uM*ms)
+  , SIC_th_( 0.19669 )    // µM
+  , delta_IP3_( 5.0 )     // µM
+  , k_IP3R_( 0.0002 )     // 1/(µM*ms)
   , rate_IP3R_( 0.006 )   // 1/ms
   , rate_L_( 0.00011 )    // 1/ms
-  , rate_SERCA_( 0.0009 ) // uM/ms
+  , rate_SERCA_( 0.0009 ) // µM/ms
   , ratio_ER_cyt_( 0.185 )
   , tau_IP3_( 7142.0 ) // ms
 {
@@ -126,6 +126,7 @@ nest::astrocyte_lr_1994::Parameters_::Parameters_()
 
 nest::astrocyte_lr_1994::State_::State_( const Parameters_& p )
 {
+  // initial values following Nadkarni & Jung, 2003
   y_[ IP3 ] = p.IP3_0_;
   y_[ Ca ] = 0.073;
   y_[ h_IP3R ] = 0.793;
@@ -403,7 +404,7 @@ nest::astrocyte_lr_1994::init_buffers_()
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
 
-  B_.I_stim_ = 0.0;
+  B_.J_noise_ = 0.0;
 }
 
 void
@@ -489,7 +490,7 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
     B_.sic_values[ lag ] = sic_value;
 
     // set new input current
-    B_.I_stim_ = B_.currents_.get_value( lag );
+    B_.J_noise_ = B_.currents_.get_value( lag );
 
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );

@@ -59,7 +59,7 @@ ACCESS_TOKEN = os.environ.get("NEST_SERVER_ACCESS_TOKEN", "")
 AUTH_DISABLED = get_boolean_environ("NEST_SERVER_DISABLE_AUTH")
 CORS_ORIGINS = os.environ.get("NEST_SERVER_CORS_ORIGINS", _default_origins).split(",")
 EXEC_CALL_ENABLED = get_boolean_environ("NEST_SERVER_ENABLE_EXEC_CALL")
-MODULES = os.environ.get("NEST_SERVER_MODULES", "nest").split(",")
+MODULES = os.environ.get("NEST_SERVER_MODULES", "import nest")
 RESTRICTION_DISABLED = get_boolean_environ("NEST_SERVER_DISABLE_RESTRICTION")
 EXCEPTION_ERROR_STATUS = 400
 

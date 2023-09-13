@@ -419,7 +419,7 @@ nest::astrocyte_lr_1994::pre_run_hook()
   // volume (ratio_ER_cyt) is (V_tot - V_cyt)/V_cyt. Then, the cytosolic calcium
   // concentration should not be larger than Ca_tot*(V_tot/V_cyt), which is
   // equal to Ca_tot*(1 + ratio_ER_cyt).
-  V_.max_Ca_ = P_.Ca_tot_ * (1 + P_.ratio_ER_cyt_);
+  V_.max_Ca_ = P_.Ca_tot_ * ( 1 + P_.ratio_ER_cyt_ );
 }
 
 /* ----------------------------------------------------------------

@@ -412,41 +412,19 @@ jobs:
         os: ["ubuntu-22.04"]
     needs: [pydocstyle, rstcheck, vale]
     steps:
-      - name: Fetch recipe
-        shell: bash -el {0}
-        run: |
-          # mamba env update --name test-mambabuild --file environment.yml
-          mkdir -pv ../nest-simulator-feedstock
-          cd ../nest-simulator-feedstock        
-          git init 
-          git remote add upstream https://github.com/conda-forge/nest-simulator-feedstock.git
-          git fetch upstream pull/96/head:devel
-          git checkout devel
-      - name: Install Mambaforge
-        shell: bash -el {0}
-        run: |
-          wget -O Mambaforge3.sh "https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-$(uname)-$(uname -m).sh"
-          bash Mambaforge3.sh -b -p "../conda"           
-      - name: Test-build conda package
-        shell: bash -l {0}
-        run: |
-          sudo apt update
-          sudo apt install librhash-dev librhash0
-          source "../conda/etc/profile.d/conda.sh"
-          source "../conda/etc/profile.d/mamba.sh"
-          mamba activate
-          mamba info
-          printenv | sort
-          cd ../nest-simulator-feedstock 
-          mamba install --update-specs --yes --quiet --channel conda-forge conda-build pip boa conda-forge-ci-setup=3
-          conda mambabuild . -m ./.ci_support/linux_64_numpy1.22python3.10.____cpython.yaml --suppress-variables --clobber-file ./.ci_support/clobber_linux_64_numpy1.22python3.10.____cpython.yaml
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+      - name: checkout repo 
+        uses: actions/checkout@v3
+      - name: install python
+        uses: actions/setup-python@v4 
         with:
-          name: "nest_conda_Linux_x86_64"
-          path: |
-            /home/runner/work/nest-simulator/conda/conda-bld/
-            
+          python-version: '3.10' 
+      - name: install dependencies
+        run: |
+          python -m pip install --upgrade requests time os json
+          pip install -r requirements.txt
+      - name: execute python script # run main.py
+        run: python build_support/check_conda_package_build.py
+      
   build_linux:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}
     runs-on: ${{ matrix.os }}

@@ -112,3 +112,4 @@ dependencies:
     - sphinx-material
     - sphinx-tabs
     - sphinx-notfound-page
+    - sphinxcontrib-mermaid

@@ -1331,6 +1331,35 @@ public:
   };
 };
 
+class BackendAlreadyRegistered : public KernelException
+{
+private:
+  const std::string backend_;
+  std::string msg_;
+
+public:
+  BackendAlreadyRegistered( const std::string& backend )
+    : KernelException( "BackendPrepared" )
+    , backend_( backend )
+  {
+    msg_ = String::compose( "Backend %1 has already been registered.", backend_ );
+  }
+
+  BackendAlreadyRegistered( std::string&& backend )
+    : KernelException( "BackendPrepared" )
+    , backend_( std::move( backend ) )
+  {
+    msg_ = String::compose( "Backend %1 has already been registered.", backend_ );
+  }
+
+  const char*
+  what() const noexcept override
+  {
+    return msg_.data();
+  };
+};
+
+
 class BackendNotPrepared : public KernelException
 {
 private:

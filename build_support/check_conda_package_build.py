@@ -51,7 +51,7 @@ headers = {
 
 
 def findOID():
-    payload = "{\"query\":\"query findOID {  repository(owner: \\\"" + {CI_NAME}  + "\\\", name: \\\"" + {CI_REPO}  + "\\\") { refs(first: 1, refPrefix: \\\"refs/heads/\\\", query: \\\"dev\\\") {nodes {name \\n target {\\n ... on Commit {history(first: 1) {nodes {oid}}}}}}}}\",\"variables\":{}}"
+    payload = "{\"query\":\"query findOID {  repository(owner: \\\"" + str(CI_NAME)  + "\\\", name: \\\"" + str(CI_REPO)  + "\\\") { refs(first: 1, refPrefix: \\\"refs/heads/\\\", query: \\\"dev\\\") {nodes {name \\n target {\\n ... on Commit {history(first: 1) {nodes {oid}}}}}}}}\",\"variables\":{}}"
     response = requests.request("POST", url, headers=headers, data=payload)
     oid = json.loads(response.text)['data']['repository']['refs']['nodes'][0]['target']['history']['nodes'][0]['oid']
     return oid

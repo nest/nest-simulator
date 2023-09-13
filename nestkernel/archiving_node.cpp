@@ -196,8 +196,8 @@ nest::ArchivingNode::set_spiketime( Time const& t_sp, double offset )
     {
       const double next_t_sp = history_[ 1 ].t_;
       if ( history_.front().access_counter_ >= n_incoming_
-        and t_sp_ms - next_t_sp
-          > max_delay_ + kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_stdp_eps() )
+        and t_sp_ms - next_t_sp > max_delay_ + Time::delay_steps_to_ms( kernel().connection_manager.get_min_delay() )
+            + kernel().connection_manager.get_stdp_eps() )
       {
         history_.pop_front();
       }

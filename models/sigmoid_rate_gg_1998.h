@@ -122,6 +122,12 @@ See also
 
 rate_connection_instantaneous, rate_connection_delayed
 
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: sigmoid_rate_gg_1998
+
 EndUserDocs */
 
 class nonlinearities_sigmoid_rate_gg_1998

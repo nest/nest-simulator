@@ -119,6 +119,11 @@ See also
 ++++++++
 
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: mcculloch_pitts_neuron
+
 EndUserDocs */
 
 class gainfunction_mcculloch_pitts

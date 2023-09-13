@@ -143,6 +143,11 @@ See also
 
 aeif_cond_alpha, aeif_cond_exp, iaf_chxk_2008
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_cond_exp_sfa_rr
+
 EndUserDocs */
 
 class iaf_cond_exp_sfa_rr : public ArchivingNode

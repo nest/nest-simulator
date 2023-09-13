@@ -84,6 +84,11 @@ See also
 
 stdp_synapse, tsodyks_synapse, static_synapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: stdp_pl_synapse_hom
+
 EndUserDocs */
 
 /**

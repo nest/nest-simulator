@@ -130,6 +130,11 @@ See also
 
 correlation_detector, spike_recorder
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: correlomatrix_detector
+
 EndUserDocs */
 
 /**

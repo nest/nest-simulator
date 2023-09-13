@@ -86,6 +86,8 @@ set( with-defines OFF CACHE STRING "Additional defines, e.g. '-DXYZ=1' [default=
 set( with-userdoc OFF CACHE STRING "Build user documentation [default=OFF]")
 set( with-devdoc OFF CACHE STRING "Build developer documentation [default=OFF]")
 
+set( with-full-logging OFF CACHE STRING "Write debug output to 'dump_<num_ranks>_<rank>.log' file [default=OFF]")
+
 ################################################################################
 ##################      Project Directory variables           ##################
 ################################################################################
@@ -153,6 +155,7 @@ nest_process_with_hdf5()
 nest_process_target_bits_split()
 nest_process_userdoc()
 nest_process_devdoc()
+nest_process_full_logging()
 
 nest_process_models()
 

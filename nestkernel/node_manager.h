@@ -239,6 +239,20 @@ public:
   bool have_nodes_changed() const;
   void set_have_nodes_changed( const bool changed );
 
+  /**
+   * @brief Map the node ID to its original primitive NodeCollection object.
+   * @param node_id  The node ID
+   * @return The primitive NodeCollection object containing the node ID that falls in [first, last)
+   */
+  NodeCollectionPTR node_id_to_node_collection( const size_t node_id ) const;
+
+  /**
+   * @brief Map the node to its original primitive NodeCollection object.
+   * @param node  Node instance
+   * @return The primitive NodeCollection object containing the node with node ID  falls in [first, last)
+   */
+  NodeCollectionPTR node_id_to_node_collection( Node* node ) const;
+
 private:
   /**
    * Initialize the network data structures.
@@ -277,7 +291,7 @@ private:
    * @param min_node_id node ID of first neuron to create.
    * @param max_node_id node ID of last neuron to create (inclusive).
    */
-  void add_neurons_( Model& model, size_t min_node_id, size_t max_node_id, NodeCollectionPTR nc_ptr );
+  void add_neurons_( Model& model, size_t min_node_id, size_t max_node_id );
 
   /**
    * Add device nodes.
@@ -288,7 +302,7 @@ private:
    * @param min_node_id node ID of first neuron to create.
    * @param max_node_id node ID of last neuron to create (inclusive).
    */
-  void add_devices_( Model& model, size_t min_node_id, size_t max_node_id, NodeCollectionPTR nc_ptr );
+  void add_devices_( Model& model, size_t min_node_id, size_t max_node_id );
 
   /**
    * Add MUSIC nodes.
@@ -300,7 +314,15 @@ private:
    * @param min_node_id node ID of first neuron to create.
    * @param max_node_id node ID of last neuron to create (inclusive).
    */
-  void add_music_nodes_( Model& model, size_t min_node_id, size_t max_node_id, NodeCollectionPTR nc_ptr );
+  void add_music_nodes_( Model& model, size_t min_node_id, size_t max_node_id );
+
+  /**
+   * @brief Append the NodeCollection instance into the NodeManager::nodeCollection_container.
+   * @param ncp  The NodeCollection instance.
+   */
+  void append_node_collection_( NodeCollectionPTR ncp );
+
+  void clear_node_collection_container();
 
 private:
   /**
@@ -308,6 +330,14 @@ private:
    * which contains only the thread-local nodes.
    */
   std::vector< SparseNodeArray > local_nodes_;
+
+  std::vector< NodeCollectionPTR > node_collection_container_; //!< a vector of the original/primitive NodeCollection
+
+  std::vector< size_t >
+    node_collection_last_; //!< Store the ID of the last element in each NodeCollection instance.
+                           //!<  Mainly, the node_collection_last_ must be the same size as node_collection_container,
+                           //!< where each  element at position i in the nodeCollection_last_ is the last node ID
+                           //!< stored in the node_collection_container_ at position i.
 
   std::vector< std::vector< Node* > > wfr_nodes_vec_; //!< Nodelists for unfrozen nodes that
                                                       //!< use the waveform relaxation method

@@ -146,6 +146,11 @@ See also
 
 iaf_psc_alpha, iaf_psc_exp_ps
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_psc_alpha_ps
+
 EndUserDocs */
 
 class iaf_psc_alpha_ps : public ArchivingNode

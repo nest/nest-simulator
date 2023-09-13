@@ -130,6 +130,11 @@ See also
 
 volume_transmitter
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: stdp_dopamine_synapse
+
 EndUserDocs */
 
 /**

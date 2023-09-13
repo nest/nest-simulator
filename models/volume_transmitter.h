@@ -96,6 +96,12 @@ See also
 
 stdp_dopamine_synapse
 
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: volume_transmitter
+
 EndUserDocs */
 
 class ConnectorBase;

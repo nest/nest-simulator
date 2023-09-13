@@ -38,7 +38,6 @@
 #include "nest_names.h"
 #include "nest_time.h"
 #include "nest_types.h"
-#include "node_collection.h"
 #include "secondary_event.h"
 
 
@@ -199,10 +198,6 @@ public:
    */
   size_t get_node_id() const;
 
-  /**
-   * Return lockpointer to the NodeCollection that created this node.
-   */
-  NodeCollectionPTR get_nc() const;
 
   /**
    * Return model ID of the node.
@@ -875,11 +870,6 @@ public:
 private:
   void set_node_id_( size_t ); //!< Set global node id
 
-  /**
-   * Set the original NodeCollection of this node.
-   */
-  void set_nc_( NodeCollectionPTR );
-
   /** Return a new dictionary datum .
    *
    * This function is called by get_status_base() and returns a new
@@ -954,8 +944,6 @@ private:
   bool frozen_;        //!< node shall not be updated if true
   bool initialized_;   //!< state and buffers have been initialized
   bool node_uses_wfr_; //!< node uses waveform relaxation method
-
-  NodeCollectionPTR nc_ptr_; //!< Original NodeCollection of this node, used to extract node-specific metadata
 };
 
 inline bool
@@ -1024,11 +1012,6 @@ Node::get_node_id() const
   return node_id_;
 }
 
-inline NodeCollectionPTR
-Node::get_nc() const
-{
-  return nc_ptr_;
-}
 
 inline void
 Node::set_node_id_( size_t i )
@@ -1036,12 +1019,6 @@ Node::set_node_id_( size_t i )
   node_id_ = i;
 }
 
-
-inline void
-Node::set_nc_( NodeCollectionPTR nc_ptr )
-{
-  nc_ptr_ = nc_ptr;
-}
 
 inline int
 Node::get_model_id() const

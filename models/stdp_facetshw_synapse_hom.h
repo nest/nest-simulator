@@ -153,6 +153,11 @@ See also
 
 stdp_synapse, tsodyks_synapse, static_synapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: stdp_facetshw_synapse_hom
+
 EndUserDocs */
 
 // template class forward declaration required by common properties friend

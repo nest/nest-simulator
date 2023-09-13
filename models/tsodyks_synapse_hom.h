@@ -131,6 +131,11 @@ See also
 
 tsodyks_synapse, stdp_synapse_hom, static_synapse_hom_w
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: tsodyks_synapse_hom
+
 EndUserDocs */
 
 /**

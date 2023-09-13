@@ -21,6 +21,7 @@ set ( nestkernel_sources
       universal_data_logger.h universal_data_logger_impl.h
       recordables_map.h
       archiving_node.h archiving_node.cpp
+      buffer_resize_log.h buffer_resize_log.cpp
       clopath_archiving_node.h clopath_archiving_node.cpp
       urbanczik_archiving_node.h urbanczik_archiving_node_impl.h
       common_synapse_properties.h common_synapse_properties.cpp
@@ -96,7 +97,7 @@ set ( nestkernel_sources
       target.h
       target_data.h
       static_assert.h
-      send_buffer_position.h
+      send_buffer_position.h send_buffer_position.cpp
       source.h
       source_table.h source_table.cpp
       source_table_position.h

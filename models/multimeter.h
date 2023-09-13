@@ -120,6 +120,11 @@ interval
 See also
 ++++++++
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: multimeter
+
 EndUserDocs */
 
 namespace nest

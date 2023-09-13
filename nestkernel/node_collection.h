@@ -393,6 +393,17 @@ public:
    */
   virtual bool has_proxies() const = 0;
 
+  /**
+   * return the first stored ID (i.e, ID at index zero) inside the NodeCollection
+   */
+  size_t get_first() const;
+
+  /**
+   * return the last stored ID inside the NodeCollection
+   */
+  size_t get_last() const;
+
+
 private:
   unsigned long fingerprint_; //!< Unique identity of the kernel that created the NodeCollection
   static NodeCollectionPTR create_();
@@ -664,6 +675,20 @@ NodeCollection::set_metadata( NodeCollectionMetadataPTR )
 {
   throw KernelException( "Cannot set Metadata on this type of NodeCollection." );
 }
+
+inline size_t
+NodeCollection::get_first() const
+{
+  return ( *begin() ).node_id;
+}
+
+inline size_t
+NodeCollection::get_last() const
+{
+  size_t offset = size() - 1;
+  return ( *( begin() + offset ) ).node_id;
+}
+
 
 inline nc_const_iterator&
 nc_const_iterator::operator+=( const size_t n )

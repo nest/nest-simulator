@@ -69,6 +69,11 @@ reversed (i.e., connecting *sr* to *neurons*).
 See also
 ++++++++
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: spike_recorder
+
 EndUserDocs */
 
 namespace nest

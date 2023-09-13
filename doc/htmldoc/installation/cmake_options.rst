@@ -154,6 +154,11 @@ NEST properties
 |                                               | If running on more than 262144 MPI processes or more than 512  |
 |                                               | threads, change to 'hpc'.                                      |
 +-----------------------------------------------+----------------------------------------------------------------+
+| ``-Dwith-full-logging=[OFF|ON]``              | Write debug output to file ``dump_<num_ranks>_<rank>.log``     |
+|                                               | [default=OFF]. Developers should wrap debugging output in      |
+|                                               | macro ``FULL_LOGGING_ONLY()`` and call kernel().write_dump()`  |
+|                                               | from inside it. The macro can contain almost any valid code.   |
++-----------------------------------------------+----------------------------------------------------------------+
 
 Generic build configuration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~

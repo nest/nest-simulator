@@ -146,6 +146,11 @@ Receives
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_psc_exp_htum
+
 EndUserDocs */
 
 class iaf_psc_exp_htum : public ArchivingNode

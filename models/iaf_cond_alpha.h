@@ -127,6 +127,11 @@ See also
 
 iaf_cond_exp, iaf_cond_alpha_mc
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_cond_alpha
+
 EndUserDocs */
 
 class iaf_cond_alpha : public ArchivingNode

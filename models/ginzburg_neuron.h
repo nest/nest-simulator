@@ -128,6 +128,11 @@ See also
 ++++++++
 
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: ginzburg_neuron
+
 EndUserDocs */
 
 class gainfunction_ginzburg

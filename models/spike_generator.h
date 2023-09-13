@@ -225,6 +225,12 @@ See also
 
 poisson_generator, spike_train_injector
 
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: spike_generator
+
 EndUserDocs
 */
 class spike_generator : public StimulationDevice

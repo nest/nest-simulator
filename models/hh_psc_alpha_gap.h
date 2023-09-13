@@ -149,6 +149,11 @@ See also
 
 hh_psc_alpha, hh_cond_exp_traub, gap_junction
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: hh_psc_alpha_gap
+
 EndUserDocs */
 
 class hh_psc_alpha_gap : public ArchivingNode

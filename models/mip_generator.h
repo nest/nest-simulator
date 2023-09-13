@@ -98,6 +98,11 @@ See also
 
 poisson_generator
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: mip_generator
+
 EndUserDocs */
 
 /*! Class mip_generator generates spike trains as described

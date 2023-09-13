@@ -39,6 +39,11 @@ file that contains all possible packages needed for NEST development.
 
          If you want to install NEST without any environment, see the :ref:`instructions here <noenv>`.
 
+
+.. seealso::
+
+  :ref:`cmake options for NEST <cmake_options>`
+
 What gets installed where
 -------------------------
 

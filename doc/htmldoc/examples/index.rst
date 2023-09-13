@@ -67,7 +67,7 @@ PyNEST examples
 
 
     .. grid-item-card:: Cortical microcircuit (Potjans)
-           :img-top: ../static/img/pynest/raster_plot.png
+           :img-top: ../static/img/potjans_2014_raster_plot.png
 
            * :doc:`../auto_examples/Potjans_2014/index`
 

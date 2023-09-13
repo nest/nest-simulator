@@ -237,6 +237,7 @@ const Name I_T( "I_T" );
 const Name I_ahp( "I_ahp" );
 const Name I_e( "I_e" );
 const Name I_h( "I_h" );
+const Name I_SIC( "I_SIC" );
 const Name I_sp( "I_sp" );
 const Name I_stc( "I_stc" );
 const Name I_syn( "I_syn" );

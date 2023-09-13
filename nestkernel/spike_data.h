@@ -440,7 +440,7 @@ OffGridSpikeData::set( const size_t tid,
   const unsigned int lag,
   const double offset )
 {
-  assert( tid <= MAX_TID ); // MAX_TID is allowed since it is not use as invalid value
+  assert( tid <= MAX_TID ); // MAX_TID is allowed since it is not used as invalid value
   assert( syn_id < MAX_SYN_ID );
   assert( lcid < MAX_LCID );
   assert( lag < MAX_LAG );

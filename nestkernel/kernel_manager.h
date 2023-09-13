@@ -264,7 +264,7 @@ public:
   unsigned long get_fingerprint() const;
 
   DictionaryAccessFlagManager& get_dict_access_flag_manager();
-  
+
   /**
    * Write data to file per rank and thread. For use with FULL_LOGGING.
    *

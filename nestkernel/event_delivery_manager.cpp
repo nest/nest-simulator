@@ -191,7 +191,7 @@ EventDeliveryManager::get_status( dictionary& dict )
   dictionary log_events;
   dict[ names::spike_buffer_resize_log ] = log_events;
   send_recv_buffer_resize_log_.to_dict( log_events );
-  
+
 #ifdef TIMER_DETAILED
   dict[ names::time_collocate_spike_data ] = sw_collocate_spike_data_.elapsed();
   dict[ names::time_communicate_spike_data ] = sw_communicate_spike_data_.elapsed();

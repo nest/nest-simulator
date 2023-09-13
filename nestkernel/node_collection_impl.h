@@ -28,8 +28,9 @@
 namespace nest
 {
 
+template < typename T >
 NodeCollectionPTR
-NodeCollection::create( const std::vector< auto >& node_ids_vector )
+NodeCollection::create( const std::vector< T >& node_ids_vector )
 {
   if ( node_ids_vector.empty() )
   {
@@ -42,8 +43,9 @@ NodeCollection::create( const std::vector< auto >& node_ids_vector )
   return NodeCollection::create_( node_ids_vector );
 }
 
+template < typename T >
 NodeCollectionPTR
-NodeCollection::create_( const std::vector< auto >& node_ids )
+NodeCollection::create_( const std::vector< T >& node_ids )
 {
   size_t current_first = node_ids[ 0 ];
   size_t current_last = current_first;

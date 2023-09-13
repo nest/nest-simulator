@@ -237,7 +237,8 @@ public:
    * @param node_ids Array of node IDs from which to create the NodeCollection
    * @return a NodeCollection pointer to the created NodeCollection
    */
-  static NodeCollectionPTR create( const std::vector< auto >& node_ids );
+  template < typename T >
+  static NodeCollectionPTR create( const std::vector< T >& node_ids );
 
   /**
    * Check to see if the fingerprint of the NodeCollection matches that of the
@@ -407,7 +408,9 @@ public:
 private:
   unsigned long fingerprint_; //!< Unique identity of the kernel that created the NodeCollection
   static NodeCollectionPTR create_();
-  static NodeCollectionPTR create_( const std::vector< auto >& );
+
+  template < typename T >
+  static NodeCollectionPTR create_( const std::vector< T >& );
 };
 
 /**

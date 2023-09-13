@@ -151,6 +151,11 @@ See also
 
 iaf_psc_delta, iaf_psc_exp_ps
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_psc_delta_ps
+
 EndUserDocs */
 
 class iaf_psc_delta_ps : public ArchivingNode

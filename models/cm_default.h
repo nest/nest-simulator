@@ -223,6 +223,11 @@ See also
 
 NEURON simulator ;-D
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: cm_default
+
 EndUserDocs*/
 
 class cm_default : public ArchivingNode

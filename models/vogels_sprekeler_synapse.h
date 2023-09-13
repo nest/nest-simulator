@@ -77,6 +77,12 @@ References
        inhibition in sensory pathways and memory networks. Science,
        334(6062):1569-1573. DOI: https://doi.org/10.1126/science.1211095
 
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: vogels_sprekeler_synapse
+
 EndUserDocs */
 
 // connections are templates of target identifier type (used for pointer /

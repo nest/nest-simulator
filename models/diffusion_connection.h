@@ -82,6 +82,11 @@ See also
 
 siegert_neuron, rate_connection_instantaneous
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: diffusion_connection
+
 EndUserDocs */
 
 template < typename targetidentifierT >

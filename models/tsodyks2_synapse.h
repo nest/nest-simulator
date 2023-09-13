@@ -109,6 +109,11 @@ See also
 
 tsodyks_synapse, stdp_synapse, static_synapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: tsodyks2_synapse
+
 EndUserDocs */
 
 template < typename targetidentifierT >

@@ -46,6 +46,7 @@ source_suffix = ".rst"
 master_doc = "index"
 extensions = [
     "sphinx_gallery.gen_gallery",
+    "list_examples",
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
     "sphinx.ext.autosummary",

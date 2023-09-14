@@ -113,7 +113,7 @@ rect.basic.label-container {
 	stroke-width: 1px;
 }
 
-figure, .align-default {
+figure.align-default {
 	text-align: center;
 }
 .mermaid svg {

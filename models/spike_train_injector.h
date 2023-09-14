@@ -225,6 +225,11 @@ See also
 
 spike_generator
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: spike_train_injector
+
 EndUserDocs */
 
 /**

@@ -41,7 +41,6 @@ def build_network(layer_type):
     nest.ResetKernel()
     nest.resolution = 0.04
     nest.use_compressed_spikes = False
-    nest.sort_connections_by_source = False
 
     p1 = nest.CreateParameter("constant", {"value": 1.0})
     p2 = nest.CreateParameter("constant", {"value": -0.02})

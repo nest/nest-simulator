@@ -145,7 +145,8 @@ def _setup_auth():
                 hasher.update(str(time.perf_counter()).encode("utf-8"))
                 self._hash = hasher.hexdigest()[:48]
             if not AUTH_DISABLED:
-                print(f"   Access token to NEST server: {self._hash}\n")
+                print(f"   Access token to NEST Server: {self._hash}")
+                print("   Add this to the headers: {'NESTServerAuth': '<access_token>'}\n")
 
         if request.method == "OPTIONS":
             return

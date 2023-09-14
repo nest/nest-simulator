@@ -37,89 +37,6 @@
 
 #include "connector_model_impl.h"
 
-#include "ac_generator.h"
-#include "aeif_cond_alpha.h"
-#include "aeif_cond_alpha_multisynapse.h"
-#include "aeif_cond_beta_multisynapse.h"
-#include "aeif_psc_delta_clopath.h"
-#include "cm_default.h"
-#include "dc_generator.h"
-#include "erfc_neuron.h"
-#include "glif_cond.h"
-#include "glif_psc.h"
-#include "hh_psc_alpha_gap.h"
-#include "ht_neuron.h"
-#include "iaf_cond_alpha.h"
-#include "iaf_cond_alpha_mc.h"
-#include "lin_rate.h"
-#include "multimeter.h"
-#include "noise_generator.h"
-#include "poisson_generator.h"
-#include "poisson_generator_ps.h"
-#include "pp_psc_delta.h"
-#include "spike_generator.h"
-#include "spike_recorder.h"
-#include "spike_train_injector.h"
-#include "tanh_rate.h"
-
-#include "aeif_cond_exp.h"
-#include "hh_psc_alpha_clopath.h"
-#include "iaf_cond_exp.h"
-#include "parrot_neuron_ps.h"
-#include "siegert_neuron.h"
-#include "sigmoid_rate_gg_1998.h"
-#include "step_current_generator.h"
-#include "step_rate_generator.h"
-
-#include "aeif_psc_alpha.h"
-#include "aeif_psc_delta.h"
-#include "aeif_psc_exp.h"
-#include "threshold_lin_rate.h"
-
-#include "iaf_psc_alpha.h"
-#include "iaf_psc_delta.h"
-#include "iaf_psc_exp.h"
-#include "iaf_psc_exp_multisynapse.h"
-
-#include "pp_cond_exp_mc_urbanczik.h"
-#include "spin_detector.h"
-
-#include "parrot_neuron.h"
-
-#include "bernoulli_synapse.h"
-#include "clopath_synapse.h"
-#include "common_synapse_properties.h"
-#include "cont_delay_synapse.h"
-#include "cont_delay_synapse_impl.h"
-#include "diffusion_connection.h"
-#include "gap_junction.h"
-#include "ht_synapse.h"
-#include "jonke_synapse.h"
-#include "quantal_stp_synapse.h"
-#include "quantal_stp_synapse_impl.h"
-#include "rate_connection_delayed.h"
-#include "rate_connection_instantaneous.h"
-#include "static_synapse.h"
-#include "static_synapse_hom_w.h"
-#include "stdp_dopamine_synapse.h"
-#include "stdp_facetshw_synapse_hom.h"
-#include "stdp_facetshw_synapse_hom_impl.h"
-#include "stdp_nn_pre_centered_synapse.h"
-#include "stdp_nn_restr_synapse.h"
-#include "stdp_nn_symm_synapse.h"
-#include "stdp_pl_synapse_hom.h"
-#include "stdp_synapse.h"
-#include "stdp_synapse_hom.h"
-#include "stdp_triplet_synapse.h"
-#include "tsodyks2_synapse.h"
-#include "tsodyks_synapse.h"
-#include "tsodyks_synapse_hom.h"
-#include "urbanczik_synapse.h"
-#include "vogels_sprekeler_synapse.h"
-
-#include "volume_transmitter.h"
-#include "weight_recorder.h"
-
 #include "conn_builder_conngen.h"
 
 #include "grid_mask.h"
@@ -134,6 +51,8 @@
 #include "config.h"
 #include "dictionary.h"
 
+#include "modelsmodule.h"
+
 namespace nest
 {
 
@@ -147,88 +66,6 @@ init_nest( int* argc, char** argv[] )
   kernel().mpi_manager.init_mpi( argc, argv );
   kernel().initialize();
 
-
-  kernel().model_manager.register_node_model< ac_generator >( "ac_generator" );
-  kernel().model_manager.register_node_model< dc_generator >( "dc_generator" );
-  kernel().model_manager.register_node_model< spike_generator >( "spike_generator" );
-  kernel().model_manager.register_node_model< spike_train_injector >( "spike_train_injector" );
-  kernel().model_manager.register_node_model< spike_recorder >( "spike_recorder" );
-  kernel().model_manager.register_node_model< poisson_generator >( "poisson_generator" );
-  kernel().model_manager.register_node_model< poisson_generator_ps >( "poisson_generator_ps" );
-  kernel().model_manager.register_node_model< voltmeter >( "voltmeter" );
-  kernel().model_manager.register_node_model< multimeter >( "multimeter" );
-  kernel().model_manager.register_node_model< noise_generator >( "noise_generator" );
-  kernel().model_manager.register_node_model< aeif_cond_alpha >( "aeif_cond_alpha" );
-  kernel().model_manager.register_node_model< aeif_cond_alpha_multisynapse >( "aeif_cond_alpha_multisynapse" );
-  kernel().model_manager.register_node_model< aeif_cond_beta_multisynapse >( "aeif_cond_beta_multisynapse" );
-  kernel().model_manager.register_node_model< aeif_psc_delta_clopath >( "aeif_psc_delta_clopath" );
-  kernel().model_manager.register_node_model< cm_default >( "cm_default" );
-  kernel().model_manager.register_node_model< erfc_neuron >( "erfc_neuron" );
-  kernel().model_manager.register_node_model< glif_cond >( "glif_cond" );
-  kernel().model_manager.register_node_model< glif_psc >( "glif_psc" );
-  kernel().model_manager.register_node_model< hh_psc_alpha_gap >( "hh_psc_alpha_gap" );
-  kernel().model_manager.register_node_model< ht_neuron >( "ht_neuron" );
-  kernel().model_manager.register_node_model< iaf_cond_alpha_mc >( "iaf_cond_alpha_mc" );
-  kernel().model_manager.register_node_model< pp_psc_delta >( "pp_psc_delta" );
-  kernel().model_manager.register_node_model< lin_rate_ipn >( "lin_rate_ipn" );
-  kernel().model_manager.register_node_model< iaf_cond_alpha >( "iaf_cond_alpha" );
-  kernel().model_manager.register_node_model< rate_transformer_sigmoid_gg_1998 >( "rate_transformer_sigmoid_gg_1998" );
-
-  kernel().model_manager.register_node_model< tanh_rate_ipn >( "tanh_rate_ipn" );
-  kernel().model_manager.register_node_model< lin_rate_opn >( "lin_rate_opn" );
-  kernel().model_manager.register_node_model< parrot_neuron_ps >( "parrot_neuron_ps" );
-  kernel().model_manager.register_node_model< step_rate_generator >( "step_rate_generator" );
-  kernel().model_manager.register_node_model< step_current_generator >( "step_current_generator" );
-  kernel().model_manager.register_node_model< hh_psc_alpha_clopath >( "hh_psc_alpha_clopath" );
-  kernel().model_manager.register_node_model< iaf_cond_exp >( "iaf_cond_exp" );
-  kernel().model_manager.register_node_model< aeif_cond_exp >( "aeif_cond_exp" );
-  kernel().model_manager.register_node_model< siegert_neuron >( "siegert_neuron" );
-
-  kernel().model_manager.register_node_model< aeif_psc_alpha >( "aeif_psc_alpha" );
-  kernel().model_manager.register_node_model< aeif_psc_delta >( "aeif_psc_delta" );
-  kernel().model_manager.register_node_model< aeif_psc_exp >( "aeif_psc_exp" );
-  kernel().model_manager.register_node_model< threshold_lin_rate_ipn >( "threshold_lin_rate_ipn" );
-
-  kernel().model_manager.register_node_model< iaf_psc_alpha >( "iaf_psc_alpha" );
-  kernel().model_manager.register_node_model< iaf_psc_delta >( "iaf_psc_delta" );
-  kernel().model_manager.register_node_model< iaf_psc_exp >( "iaf_psc_exp" );
-  kernel().model_manager.register_node_model< iaf_psc_exp_multisynapse >( "iaf_psc_exp_multisynapse" );
-  kernel().model_manager.register_node_model< parrot_neuron >( "parrot_neuron" );
-
-  kernel().model_manager.register_node_model< spin_detector >( "spin_detector" );
-  kernel().model_manager.register_node_model< pp_cond_exp_mc_urbanczik >( "pp_cond_exp_mc_urbanczik" );
-
-  kernel().model_manager.register_node_model< weight_recorder >( "weight_recorder" );
-  kernel().model_manager.register_node_model< volume_transmitter >( "volume_transmitter" );
-
-  kernel().model_manager.register_connection_model< bernoulli_synapse >( "bernoulli_synapse" );
-  kernel().model_manager.register_connection_model< clopath_synapse >( "clopath_synapse" );
-  kernel().model_manager.register_connection_model< cont_delay_synapse >( "cont_delay_synapse" );
-  kernel().model_manager.register_connection_model< ht_synapse >( "ht_synapse" );
-  kernel().model_manager.register_connection_model< jonke_synapse >( "jonke_synapse" );
-  kernel().model_manager.register_connection_model< quantal_stp_synapse >( "quantal_stp_synapse" );
-  kernel().model_manager.register_connection_model< static_synapse >( "static_synapse" );
-  kernel().model_manager.register_connection_model< static_synapse_hom_w >( "static_synapse_hom_w" );
-  kernel().model_manager.register_connection_model< stdp_synapse >( "stdp_synapse" );
-  kernel().model_manager.register_connection_model< stdp_synapse_hom >( "stdp_synapse_hom" );
-  kernel().model_manager.register_connection_model< stdp_dopamine_synapse >( "stdp_dopamine_synapse" );
-  kernel().model_manager.register_connection_model< stdp_facetshw_synapse_hom >( "stdp_facetshw_synapse_hom" );
-  kernel().model_manager.register_connection_model< stdp_nn_restr_synapse >( "stdp_nn_restr_synapse" );
-  kernel().model_manager.register_connection_model< stdp_nn_symm_synapse >( "stdp_nn_symm_synapse" );
-  kernel().model_manager.register_connection_model< stdp_nn_pre_centered_synapse >( "stdp_nn_pre_centered_synapse" );
-  kernel().model_manager.register_connection_model< stdp_pl_synapse_hom >( "stdp_pl_synapse_hom" );
-  kernel().model_manager.register_connection_model< stdp_triplet_synapse >( "stdp_triplet_synapse" );
-  kernel().model_manager.register_connection_model< tsodyks_synapse >( "tsodyks_synapse" );
-  kernel().model_manager.register_connection_model< tsodyks_synapse_hom >( "tsodyks_synapse_hom" );
-  kernel().model_manager.register_connection_model< tsodyks2_synapse >( "tsodyks2_synapse" );
-  kernel().model_manager.register_connection_model< urbanczik_synapse >( "urbanczik_synapse" );
-  kernel().model_manager.register_connection_model< vogels_sprekeler_synapse >( "vogels_sprekeler_synapse" );
-
-  // register secondary connection models
-  kernel().model_manager.register_connection_model< gap_junction >( "gap_junction" );
-  kernel().model_manager.register_connection_model< rate_connection_instantaneous >( "rate_connection_instantaneous" );
-  kernel().model_manager.register_connection_model< rate_connection_delayed >( "rate_connection_delayed" );
-  kernel().model_manager.register_connection_model< diffusion_connection >( "diffusion_connection" );
 
   // Add connection rules
   kernel().connection_manager.register_conn_builder< OneToOneBuilder >( "one_to_one" );
@@ -267,6 +104,8 @@ init_nest( int* argc, char** argv[] )
   kernel().sp_manager.register_growth_curve< GrowthCurveSigmoid >( "sigmoid" );
   kernel().sp_manager.register_growth_curve< GrowthCurveGaussian >( "gaussian" );
   kernel().sp_manager.register_growth_curve< GrowthCurveLinear >( "linear" );
+
+  register_stuff();
 }
 
 void

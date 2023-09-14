@@ -164,7 +164,7 @@ def _setup_auth():
         # Things get more straightforward here: Every time a request is handled, compare
         # the NESTServerAuth header to the hash, with a constant-time algorithm to avoid
         # timing attacks.
-        if not (AUTH_DISABLED or hmac.compare_digest(NESTServerAuth, self._hash)):
+        if not (AUTH_DISABLED or hmac.compare_digest(auth, self._hash)):
             return ("Unauthorized", 403)
     # DON'T LINT! Intentional bare except clause! Even `KeyboardInterrupt` and
     # `SystemExit` exceptions should not bypass authentication!

@@ -37,7 +37,7 @@ import pytest
 @pytest.fixture(autouse=True)
 def set_resolution():
     nest.ResetKernel()
-    nest.set(resolution=1.0, tics_per_ms=1000.0)
+    nest.set(resolution=1.0, tics_per_ms=1000)
 
 
 def test_incommensurate_simulation_time():

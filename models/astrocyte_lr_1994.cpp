@@ -104,7 +104,7 @@ astrocyte_lr_1994_dynamics( double time, const double y[], double f[], void* pno
  * ---------------------------------------------------------------- */
 
 nest::astrocyte_lr_1994::Parameters_::Parameters_()
-  // parameters following Nadkarni & Jung, 2003
+  // parameters based on Nadkarni & Jung, 2003
   : Ca_tot_( 2.0 )      // µM
   , IP3_0_( 0.16 )      // µM
   , Kd_IP3_1_( 0.13 )   // µM
@@ -126,7 +126,7 @@ nest::astrocyte_lr_1994::Parameters_::Parameters_()
 
 nest::astrocyte_lr_1994::State_::State_( const Parameters_& p )
 {
-  // initial values following Nadkarni & Jung, 2003
+  // initial values based on Li & Rinzel, 1994 and Nadkarni & Jung, 2003
   y_[ IP3 ] = p.IP3_0_;
   y_[ Ca ] = 0.073;
   y_[ h_IP3R ] = 0.793;

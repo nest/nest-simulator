@@ -23,22 +23,21 @@
 Test functionality of the SIC connection
 """
 
-import unittest
+import pytest
 import nest
 import numpy as np
 
-HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
-
 
 @nest.ll_api.check_stack
-@unittest.skipIf(not HAVE_GSL, "GSL is not available")
-class SICConnectionTestCase(unittest.TestCase):
+@pytest.mark.skipif_missing_gsl
+class SICConnectionTestCase:
     """Test SIC connection"""
 
     def test_ConnectNeuronsWithSICConnection(self):
         """Ensures that the restriction to supported neuron models works."""
 
         nest.set_verbosity("M_WARNING")
+        nest.ResetKernel()
 
         supported_sources = [
             "astrocyte_lr_1994",
@@ -60,7 +59,7 @@ class SICConnectionTestCase(unittest.TestCase):
                     continue
 
                 # try to connect with sic_connection
-                with self.assertRaises(nest.kernel.NESTError):
+                with pytest.raises(nest.kernel.NESTError):
                     nest.Connect(source, target, syn_spec={"synapse_model": "sic_connection"})
 
     def test_SynapseFunctionWithAeifModel(self):
@@ -96,24 +95,4 @@ class SICConnectionTestCase(unittest.TestCase):
         # the number of steps of delay are compared with the expected values.
         sic_delay = nest.GetDefaults("sic_connection")["delay"]
         n_step_delay = int(sic_delay / test_resol)
-        self.assertTrue(
-            np.allclose(
-                actual_sic_values[n_step_delay:],
-                expected_sic_values[:-n_step_delay],
-                rtol=1e-5,
-            )
-        )
-
-
-def suite():
-    suite = unittest.makeSuite(SICConnectionTestCase, "test")
-    return suite
-
-
-def run():
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(suite())
-
-
-if __name__ == "__main__":
-    run()
+        assert np.allclose(actual_sic_values[n_step_delay:], expected_sic_values[:-n_step_delay], rtol=1e-5)

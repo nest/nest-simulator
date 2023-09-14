@@ -154,7 +154,7 @@ these parameters by fitting the equation for SIC to an experimental data set.
 The output is implemented as SICEvent sent from the astrocyte to its target
 neurons through the ``sic_connection``.
 
-For implementation details, see the
+For the reference implementation of this model, see the
 `astrocyte_model_implementation <../model_details/astrocyte_model_implementation.ipynb>`_ notebook.
 
 See also [1]_, [2]_, [3]_.

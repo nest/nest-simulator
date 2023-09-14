@@ -54,12 +54,14 @@ def findOID():
     payload = "{\"query\":\"query findOID {  repository(owner: \\\"" + str(CI_NAME)  + "\\\", name: \\\"" + str(CI_REPO)  + "\\\") { refs(first: 1, refPrefix: \\\"refs/heads/\\\", query: \\\"dev\\\") {nodes {name \\n target {\\n ... on Commit {history(first: 1) {nodes {oid}}}}}}}}\",\"variables\":{}}"
     response = requests.request("POST", url, headers=headers, data=payload)
     oid = json.loads(response.text)['data']['repository']['refs']['nodes'][0]['target']['history']['nodes'][0]['oid']
+    print(f"OID:\n{oid}")
     return oid
 
 
 def listWorkflowStatus():
     payload = "{\"query\":\"query listWorkflowsRun {\\n  repository(owner: \\\"" + CI_MAIN_NAME  + "\\\", name: \\\"" + CI_REPO  + "\\\") {\\n    pullRequest(number: " + CI_PR_NUM  + ") {\\n      commits(last: 1) {\\n edges {\\n node {\\n commit {\\n checkSuites(first: 1) {\\n nodes {\\n status\\n checkRuns(last: 16) {\\n nodes {\\n conclusion\\n completedAt\\n detailsUrl\\n status\\n }\\n }\\n }\\n }\\n }\\n }\\n }\\n }\\n }\\n }\\n}\",\"variables\":{}}"
     status = requests.request("POST", url, headers=headers, data=payload)
+    print(f"Status\n{status}")
     return status
 
 

@@ -434,7 +434,6 @@ public:
   Parameters_ P_;
   State_ S_;
   Buffers_ B_;
-  Variables_ V_;
 
   //! Mapping of recordables names to access functions
   static RecordablesMap< astrocyte_lr_1994 > recordablesMap_;

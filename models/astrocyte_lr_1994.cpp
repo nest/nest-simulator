@@ -76,7 +76,7 @@ astrocyte_lr_1994_dynamics( double time, const double y[], double f[], void* pno
 
   // shorthand for state variables
   const double& ip3 = y[ S::IP3 ];
-  const double& calc = std::max( 0.0, std::min( y[ S::Ca ], node.V_.max_Ca_ ) ); // keep calcium within limits
+  const double& calc = std::max( 0.0, std::min( y[ S::Ca ], node.P_.Ca_tot_ ) ); // keep calcium within limits
   const double& h_ip3r = y[ S::h_IP3R ];
 
   const double alpha_h_ip3r =
@@ -86,7 +86,7 @@ astrocyte_lr_1994_dynamics( double time, const double y[], double f[], void* pno
     node.P_.rate_SERCA_ * std::pow( calc, 2 ) / ( std::pow( node.P_.Km_SERCA_, 2 ) + std::pow( calc, 2 ) );
   const double m_inf = ip3 / ( ip3 + node.P_.Kd_IP3_1_ );
   const double n_inf = calc / ( calc + node.P_.Kd_act_ );
-  const double calc_ER = node.P_.Ca_tot_ + ( node.P_.Ca_tot_ - calc ) / node.P_.ratio_ER_cyt_;
+  const double calc_ER = ( node.P_.Ca_tot_ - calc ) / node.P_.ratio_ER_cyt_;
   const double J_leak = node.P_.ratio_ER_cyt_ * node.P_.rate_L_ * ( calc_ER - calc );
   const double J_channel = node.P_.ratio_ER_cyt_ * node.P_.rate_IP3R_ * std::pow( m_inf, 3 ) * std::pow( n_inf, 3 )
     * std::pow( h_ip3r, 3 ) * ( calc_ER - calc );
@@ -411,14 +411,6 @@ nest::astrocyte_lr_1994::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
-
-  // We set upper and lower limits for the cytosolic calcium concentration. The
-  // total volume of an astrocyte consists of the cytosol and the endoplasmic
-  // retimulum (ER): V_tot = V_cyt + V_ER. So, ratio of the cytosol volume to ER
-  // volume (ratio_ER_cyt) is (V_tot - V_cyt)/V_cyt. Then, the cytosolic calcium
-  // concentration should not be larger than Ca_tot*(V_tot/V_cyt), which is
-  // equal to Ca_tot*(1 + ratio_ER_cyt).
-  V_.max_Ca_ = P_.Ca_tot_ * ( 1 + P_.ratio_ER_cyt_ );
 }
 
 /* ----------------------------------------------------------------

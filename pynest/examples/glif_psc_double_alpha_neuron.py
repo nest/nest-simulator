@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Current-based generalized leaky integrate and fire (GLIF) neuron with double alpha
+Current-based generalized leaky integrate and fire (GLIF) neuron with double alpha \
 synaptic function example
 ------------------------------------------------------------------------
 

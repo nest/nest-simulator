@@ -51,7 +51,8 @@ def findOID():
         + str(CI_NAME)
         + '\\", name: \\"'
         + str(CI_REPO)
-        + '\\") { refs(first: 1, refPrefix: \\"refs/heads/\\", query: \\"dev\\") {nodes {name \\n target {\\n ... on Commit {history(first: 1) {nodes {oid}}}}}}}}","variables":{}}'
+        + '\\") { refs(first: 1, refPrefix: \\"refs/heads/\\", query: \\"dev\\") {nodes {name \\n target \
+            {\\n ... on Commit {history(first: 1) {nodes {oid}}}}}}}}","variables":{}}'
     )
     response = requests.request("POST", url, headers=headers, data=payload)
     oid = json.loads(response.text)["data"]["repository"]["refs"]["nodes"][0]["target"]["history"]["nodes"][0]["oid"]
@@ -66,7 +67,9 @@ def listWorkflowStatus():
         + CI_REPO
         + '\\") {\\n    pullRequest(number: '
         + CI_PR_NUM
-        + ') {\\n      commits(last: 1) {\\n edges {\\n node {\\n commit {\\n checkSuites(first: 1) {\\n nodes {\\n status\\n checkRuns(last: 16) {\\n nodes {\\n conclusion\\n completedAt\\n detailsUrl\\n status\\n }\\n }\\n }\\n }\\n }\\n }\\n }\\n }\\n }\\n }\\n}","variables":{}}'
+        + ') {\\n      commits(last: 1) {\\n edges {\\n node {\\n commit {\\n checkSuites(first: 1) {\\n nodes \
+            {\\n status\\n checkRuns(last: 16) {\\n nodes {\\n conclusion\\n completedAt\\n detailsUrl\\n status\\n }\
+            \\n }\\n }\\n }\\n }\\n }\\n }\\n }\\n }\\n }\\n}","variables":{}}'
     )
     status = requests.request("POST", url, headers=headers, data=payload)
     return status
@@ -75,7 +78,8 @@ def listWorkflowStatus():
 def createCommitOnBranch():
     oid = findOID()
     payload = (
-        '{"query":"mutation createCommit($input: CreateCommitOnBranchInput!) {  createCommitOnBranch(input: $input) {    commit {      url    }  }}","variables":{"input":{"branch":{"repositoryNameWithOwner":"'
+        '{"query":"mutation createCommit($input: CreateCommitOnBranchInput!) {  createCommitOnBranch(input: $input) \
+            {    commit {      url    }  }}","variables":{"input":{"branch":{"repositoryNameWithOwner":"'
         + CI_NAME
         + "/"
         + CI_REPO
@@ -107,10 +111,10 @@ def createCommitOnBranch():
                 or stat["conclusion"] == "STARTUP_FAILURE"
                 or stat["conclusion"] == "ACTION_REQUIRED"
             ):
-                print(f"SOMETHING WENT WRONG!\n")
+                print("SOMETHING WENT WRONG!\n")
                 print(f"{stat['conclusion']} - {(stat['status'])}")
     else:
-        print(f"\n COMPLETED! \n")
+        print("\n COMPLETED! \n")
     print(f"\n COMMIT RESPONSE \n -------------- \n{response.text}")
 
 

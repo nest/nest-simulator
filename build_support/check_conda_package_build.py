@@ -41,6 +41,10 @@ CI_MAIN_NAME = os.environ.get("CI_MAIN_NAME")
 CI_REPO = os.environ.get("CI_REPO")
 CI_PR_NUM = os.environ.get("CI_PR_NUM")
 
+for name, value in os.environ.items():
+    print("{0}: {1}".format(name, value))
+
+
 GITHUB_SHA = os.environ.get("GITHUB_SHA")
 
 url = "https://api.github.com/graphql"

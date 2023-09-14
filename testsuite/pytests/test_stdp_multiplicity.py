@@ -112,7 +112,7 @@ class TestStdpSpikeMultiplicity:
 
         multiplicity = 2**3
         resolution = 2.0**-4
-        tics_per_ms = 1.0 / resolution * multiplicity * 4
+        tics_per_ms = int(1.0 / resolution * multiplicity * 4)
         deltas = [resolution / multiplicity / 2**m for m in range(2, 10)]
 
         delay = 1.0

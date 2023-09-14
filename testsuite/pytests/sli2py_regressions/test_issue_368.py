@@ -51,7 +51,7 @@ def test_linear_summation_of_input_ps_models(model):
     * Both n3 and n4 must have same V_m after simulation
     """
 
-    nest.set(resolution=0.25, tics_per_ms=1024.0)
+    nest.set(resolution=0.25, tics_per_ms=1024)
 
     if model == "iaf_psc_exp_ps":
         nest.SetDefaults("iaf_psc_exp_ps", {"tau_syn_ex": 2.0, "tau_syn_in": 2.0})
@@ -107,7 +107,7 @@ def test_linear_summation_of_input_ps_models_with_two_time_constants(model):
         ( V_1 - V_0 ) + ( V_2 - V_0 ) = V_3 - V_0
     """
 
-    nest.set(resolution=0.25, tics_per_ms=1024.0)
+    nest.set(resolution=0.25, tics_per_ms=1024)
 
     nest.SetDefaults(model, {"tau_syn_ex": 5.0, "tau_syn_in": 1.0})
 

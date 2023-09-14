@@ -113,61 +113,6 @@ set ( nestkernel_sources
       position.h
       spatial.h spatial.cpp
       stimulation_backend.h
-  ../models/iaf_psc_alpha.h ../models/iaf_psc_alpha.cpp
-  ../models/iaf_psc_delta.h ../models/iaf_psc_delta.cpp
-  ../models/iaf_psc_exp.h ../models/iaf_psc_exp.cpp
-  ../models/iaf_psc_exp_multisynapse.h ../models/iaf_psc_exp_multisynapse.cpp
-  ../models/parrot_neuron.h ../models/parrot_neuron.cpp
-  ../models/weight_recorder.h ../models/weight_recorder.cpp
-  ../models/stdp_pl_synapse_hom.h ../models/stdp_pl_synapse_hom.cpp
-  ../models/stdp_dopamine_synapse.h ../models/stdp_dopamine_synapse.cpp
-  ../models/stdp_synapse_hom.h ../models/stdp_synapse_hom.cpp
-  ../models/volume_transmitter.h ../models/volume_transmitter.cpp
-  ../models/tsodyks_synapse_hom.h ../models/tsodyks_synapse_hom.cpp
-  ../models/ac_generator.h ../models/ac_generator.cpp
-  ../models/dc_generator.h ../models/dc_generator.cpp
-  ../models/spike_generator.h ../models/spike_generator.cpp
-  ../models/spike_recorder.h ../models/spike_recorder.cpp
-  ../models/spike_train_injector.h ../models/spike_train_injector.cpp
-  ../models/poisson_generator.h ../models/poisson_generator.cpp
-  ../models/poisson_generator_ps.h ../models/poisson_generator_ps.cpp
-  ../models/multimeter.h ../models/multimeter.cpp
-  ../models/noise_generator.h ../models/noise_generator.cpp
-  ../models/aeif_cond_alpha.h ../models/aeif_cond_alpha.cpp
-  ../models/aeif_cond_alpha_multisynapse.h ../models/aeif_cond_alpha_multisynapse.cpp
-  ../models/aeif_cond_beta_multisynapse.h ../models/aeif_cond_beta_multisynapse.cpp
-  ../models/aeif_psc_delta_clopath.h ../models/aeif_psc_delta_clopath.cpp
-  ../models/cm_default.h ../models/cm_default.cpp
-  ../models/cm_tree.h ../models/cm_tree.cpp
-  ../models/cm_compartmentcurrents.h ../models/cm_compartmentcurrents.cpp
-  ../models/erfc_neuron.h ../models/erfc_neuron.cpp
-  ../models/glif_cond.h ../models/glif_cond.cpp
-  ../models/glif_psc.h ../models/glif_psc.cpp
-  ../models/hh_psc_alpha_gap.h ../models/hh_psc_alpha_gap.cpp
-  ../models/ht_neuron.h ../models/ht_neuron.cpp
-  ../models/iaf_cond_alpha_mc.h ../models/iaf_cond_alpha_mc.cpp
-  ../models/pp_psc_delta.h ../models/pp_psc_delta.cpp
-  ../models/lin_rate.h ../models/lin_rate.cpp
-  ../models/tanh_rate.h ../models/tanh_rate.cpp
-  ../models/threshold_lin_rate.h ../models/threshold_lin_rate.cpp
-  ../models/iaf_cond_alpha.h ../models/iaf_cond_alpha.cpp
-  ../models/parrot_neuron_ps.h ../models/parrot_neuron_ps.cpp
-  ../models/step_rate_generator.h ../models/step_rate_generator.cpp
-  ../models/step_current_generator.h ../models/step_current_generator.cpp
-  ../models/hh_psc_alpha_clopath.h ../models/hh_psc_alpha_clopath.cpp
-  ../models/iaf_cond_exp.h ../models/iaf_cond_exp.cpp
-  ../models/aeif_cond_exp.h ../models/aeif_cond_exp.cpp
-  ../models/aeif_psc_alpha.h ../models/aeif_psc_alpha.cpp
-  ../models/aeif_psc_delta.h ../models/aeif_psc_delta.cpp
-  ../models/aeif_psc_exp.h ../models/aeif_psc_exp.cpp
-  ../models/spin_detector.h ../models/spin_detector.cpp
-  ../models/pp_cond_exp_mc_urbanczik.h ../models/pp_cond_exp_mc_urbanczik.cpp
-  ../models/siegert_neuron.h ../models/siegert_neuron.cpp
-  ../models/sigmoid_rate_gg_1998.h ../models/sigmoid_rate_gg_1998.cpp
-  ../models/gap_junction.h
-  ../models/rate_connection_instantaneous.h
-  ../models/rate_connection_delayed.h
-  ../models/diffusion_connection.h
 )
 
 
@@ -198,7 +143,7 @@ endif()
 set_target_properties(nestkernel PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 target_link_libraries( nestkernel
-  nestutil ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES} ${HDF5_LIBRARIES}
+  nestutil models ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES} ${HDF5_LIBRARIES}
 )
 
 target_include_directories( nestkernel PRIVATE

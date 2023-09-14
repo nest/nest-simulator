@@ -23,38 +23,9 @@
 #ifndef MODELSMODULE_H
 #define MODELSMODULE_H
 
-// C++ includes:
-#include <string>
-
-// Includes from nestkernel:
-#include "nest_impl.h"
-
-
 namespace nest
 {
-/**
- * Module supplying all models that are included in the NEST release.
- *
- * First Version: June 2006
- *
- * @todo Should this be a dynamic module?
- */
-class ModelsModule : public SLIModule
-{
-public:
-  ModelsModule();
-  ~ModelsModule() override;
-
-  /**
-   * Initialize module by registering models with the network.
-   * @param SLIInterpreter* SLI interpreter
-   */
-  void init( SLIInterpreter* ) override;
-
-  const std::string name() const override;
-};
-
-
+  void register_stuff();
 } // namespace
 
 #endif

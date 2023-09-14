@@ -49,8 +49,8 @@ nest::KernelManager::get_build_info_()
   build_info[ "version" ] = std::string( NEST_VERSION );
   build_info[ "exitcode" ] = EXIT_SUCCESS;
   build_info[ "built" ] = std::string( String::compose( "%1 %2", __DATE__, __TIME__ ) );
-  build_info[ "data_dir" ] = std::string( NEST_INSTALL_PREFIX "/" NEST_INSTALL_DATADIR );
-  build_info[ "doc_dir" ] = std::string( NEST_INSTALL_PREFIX "/" NEST_INSTALL_DOCDIR );
+  build_info[ "datadir" ] = std::string( NEST_INSTALL_PREFIX "/" NEST_INSTALL_DATADIR );
+  build_info[ "docdir" ] = std::string( NEST_INSTALL_PREFIX "/" NEST_INSTALL_DOCDIR );
   build_info[ "prefix" ] = std::string( NEST_INSTALL_PREFIX );
   build_info[ "host" ] = std::string( NEST_HOST );
   build_info[ "hostos" ] = std::string( NEST_HOSTOS );

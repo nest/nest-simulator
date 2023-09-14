@@ -66,9 +66,6 @@ void disable_structural_plasticity();
 
 void register_logger_client( const deliver_logging_event_ptr client_callback );
 
-int get_rank();
-int get_num_mpi_processes();
-
 std::string print_nodes_to_string();
 
 std::string pprint_to_string( NodeCollectionPTR nc );

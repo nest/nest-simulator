@@ -17,10 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-# TODO: PYNEST-NG
-#modelsmodule.h ${PROJECT_BINARY_DIR}/models/modelsmodule.cpp
-
 set(models_sources
+    modelsmodule.h ${PROJECT_BINARY_DIR}/models/modelsmodule.cpp
     binary_neuron.h
     cm_compartmentcurrents.h cm_compartmentcurrents.cpp
     cm_tree.h cm_tree.cpp

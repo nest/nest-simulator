@@ -284,7 +284,7 @@ def get_help_fname(obj):
         File name of the help text for obj
     """
 
-    docdir = sli_func("statusdict/prgdocdir ::")
+    docdir = nestkernel.ll_api_get_kernel_status()["docdir"]
     help_fname = os.path.join(docdir, "html", "models", f"{obj}.rst")
 
     if os.path.isfile(help_fname):
@@ -513,8 +513,7 @@ class SuppressedDeprecationWarning:
 
         self._no_dep_funcs = no_dep_funcs if not isinstance(no_dep_funcs, str) else (no_dep_funcs,)
         self._deprecation_status = {}
-        sr("verbosity")  # Use sli-version as we cannon import from info because of cirular inclusion problem
-        self._verbosity_level = spp()
+        self._verbosity_level = nestkernel.get_verbosity()
 
     def __enter__(self):
         for func_name in self._no_dep_funcs:
@@ -522,13 +521,12 @@ class SuppressedDeprecationWarning:
             _deprecation_warning[func_name]["deprecation_issued"] = True
 
             # Suppress only if verbosity level is deprecated or lower
-            if self._verbosity_level <= sli_func("M_DEPRECATED"):
-                # Use sli-version as we cannon import from info because of cirular inclusion problem
-                sr("{} setverbosity".format(sli_func("M_WARNING")))
+            if self._verbosity_level <= nestkernel.severity_t.M_DEPRECATED:
+                nestkernel.set_verbosity(nestkernel.severity_t.M_WARNING)
 
     def __exit__(self, *args):
         # Reset the verbosity level and deprecation warning status
-        # sr("{} setverbosity".format((self._verbosity_level)))
+        nestkernel.set_verbosity(self._verbosity_level)
 
         for func_name, deprec_dict in self._deprecation_status.items():
             _deprecation_warning[func_name]["deprecation_issued"] = deprec_dict["deprecation_issued"]

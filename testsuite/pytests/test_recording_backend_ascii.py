@@ -24,10 +24,10 @@ import unittest
 
 import nest
 
-HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
+HAVE_THREADS = nest.build_info["have_threads"]
 
 
-@unittest.skipIf(not HAVE_OPENMP, "NEST was compiled without multi-threading")
+@unittest.skipIf(not HAVE_THREADS, "NEST was compiled without multi-threading")
 class TestRecordingBackendASCII(unittest.TestCase):
     def testAAAOverwriteFiles(self):
         nest.ResetKernel()

@@ -65,7 +65,7 @@ class TestChangingTicBase(unittest.TestCase):
                 pass
 
         # Change the tic-base.
-        nest.set(resolution=0.5, tics_per_ms=1500.0)
+        nest.set(resolution=0.5, tics_per_ms=1500)
 
         # At this point, Time objects in models should have been updated to
         # account for the new tic-base. Values in model defaults should therefore
@@ -109,7 +109,7 @@ class TestChangingTicBase(unittest.TestCase):
         """Assert that changing tic-base raises a NESTError, and reset the kernel"""
         with self.assertRaises(nest.NESTError, msg=f'after calling "{after_call}"'):
             # For co-dependent properties, we use `set()` instead of kernel attributes
-            nest.set(resolution=0.5, tics_per_ms=1500.0)
+            nest.set(resolution=0.5, tics_per_ms=1500)
         nest.ResetKernel()
 
     def test_prohibit_change_tic_base(self):

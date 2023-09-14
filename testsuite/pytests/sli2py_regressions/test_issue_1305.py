@@ -39,7 +39,7 @@ def test_resolution_rounding_valid():
     """Test setting valid resolution."""
 
     target_resolution = 0.102
-    nest.set(resolution=target_resolution, tics_per_ms=1000.0)
+    nest.set(resolution=target_resolution, tics_per_ms=1000)
 
     assert nest.resolution == pytest.approx(target_resolution)
 
@@ -50,4 +50,4 @@ def test_resolution_rounding_invalid():
     target_resolution = 0.1002
 
     with pytest.raises(nest.NESTError):
-        nest.set(resolution=target_resolution, tics_per_ms=1000.0)
+        nest.set(resolution=target_resolution, tics_per_ms=1000)

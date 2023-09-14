@@ -254,6 +254,8 @@ def generate_modelsmodule():
             #include "config.h"
 
             // Includes from nestkernel
+            #include "nest_impl.h"
+            #include "nest.h"
             #include "common_synapse_properties.h"
             #include "connector_model_impl.h"
             #include "genericmodel.h"
@@ -274,26 +276,7 @@ def generate_modelsmodule():
                 file.write(end_guard(guards))
 
         file.write(
-            dedent(
-                """
-            nest::ModelsModule::ModelsModule()
-            {
-            }
-
-            nest::ModelsModule::~ModelsModule()
-            {
-            }
-
-            const std::string
-            nest::ModelsModule::name() const
-            {
-              return std::string( "NEST standard models module" );
-            }
-
-            void
-            nest::ModelsModule::init( SLIInterpreter* )
-            {"""
-            )
+            dedent("\nvoid\nnest::register_stuff()\n{\n")
         )
 
         conn_reg = '  register_connection_model< {model} >( "{model}" );\n'

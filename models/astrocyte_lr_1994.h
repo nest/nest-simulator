@@ -351,7 +351,6 @@ public:
       IP3 = 0,
       Ca,     // 1
       h_IP3R, // 2
-      SIC,    // 3
       STATE_VEC_SIZE
     };
 

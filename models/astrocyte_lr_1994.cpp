@@ -130,7 +130,6 @@ nest::astrocyte_lr_1994::State_::State_( const Parameters_& p )
   y_[ IP3 ] = p.IP3_0_;
   y_[ Ca ] = 0.073;
   y_[ h_IP3R ] = 0.793;
-  y_[ SIC ] = 0.0;
 }
 
 nest::astrocyte_lr_1994::State_::State_( const State_& s )
@@ -481,11 +480,11 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
     }
     B_.sic_values[ lag ] = sic_value;
 
-    // set new input current
-    B_.J_noise_ = B_.currents_.get_value( lag );
-
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );
+
+    // set new input current
+    B_.J_noise_ = B_.currents_.get_value( lag );
   }
 
   // send SIC event

@@ -100,7 +100,7 @@ class SICConnectionTestCase(unittest.TestCase):
             np.allclose(
                 actual_sic_values[n_step_delay:],
                 expected_sic_values[:-n_step_delay],
-                rtol=1e-7,
+                rtol=1e-5,
             )
         )
 

@@ -422,6 +422,12 @@ jobs:
         run: |
           python -m pip install --upgrade requests
       - name: execute python script # run main.py
+        env:
+          CI_NAME: ${{ CI_NAME }}
+          CI_MAIN_NAME: ${{ CI_MAIN_NAME }}
+          CI_REPO: ${{ CI_REPO }}
+          CI_PR_NUM: ${{ CI_PR_NUM }}
+          CI_PAT: ${{ CI_PAT }}
         run: python build_support/check_conda_package_build.py
       
   build_linux:

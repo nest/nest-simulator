@@ -197,7 +197,7 @@ nest::astrocyte_lr_1994::Parameters_::set( const DictionaryDatum& d, Node* node 
 
   if ( Ca_tot_ <= 0 )
   {
-    throw BadProperty( "Total free astrocytic calcium concentration must be positive." );
+    throw BadProperty( "Total free astrocytic calcium concentration in terms of cytosolic volume must be positive." );
   }
   if ( IP3_0_ < 0 )
   {

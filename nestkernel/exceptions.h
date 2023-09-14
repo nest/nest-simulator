@@ -34,6 +34,11 @@
 // Includes from thirdparty:
 #include "compose.hpp"
 
+// Include MPI for MPI error string
+#ifdef HAVE_MPI
+#include <mpi.h>
+#endif
+
 namespace nest
 {
 
@@ -1270,6 +1275,51 @@ public:
       "The node with ID %1 requires a label, which specifies the "
       "folder with files containing the MPI ports.",
       node_id );
+  }
+
+  const char*
+  what() const noexcept override
+  {
+    return msg_.data();
+  };
+};
+
+class MPIPortsFileMissing : public KernelException
+{
+private:
+  std::string msg_;
+
+public:
+  explicit MPIPortsFileMissing( const size_t node_id, const std::string path )
+  {
+    msg_ = String::compose(
+      "The node with ID %1 expects a file with the MPI address at location %2. "
+      "The file does not seem to exist.",
+      node_id,
+      path );
+  }
+
+  const char*
+  what() const noexcept override
+  {
+    return msg_.data();
+  };
+};
+
+class MPIErrorCode : public KernelException
+{
+private:
+  std::string msg_;
+  std::string error_;
+  char errmsg_[ 256 ];
+  int len_;
+
+public:
+  explicit MPIErrorCode( const int error_code )
+  {
+    MPI_Error_string( error_code, errmsg_, &len_ );
+    error_.assign( errmsg_, len_ );
+    msg_ = String::compose( "MPI Error: %1", error_ );
   }
 
   const char*

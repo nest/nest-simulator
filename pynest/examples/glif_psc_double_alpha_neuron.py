@@ -25,7 +25,7 @@ synaptic function example
 ------------------------------------------------------------------------
 
 Simple example of how to use the ``glif_psc_double_alpha`` neuron model that illustrates
-difference from the ``glif_psc`` neuron model.
+differences from the ``glif_psc`` neuron model.
 
 The behavior of the ``glif_psc_double_alpha`` neuron model is the same as the ``glif_psc``
 neuron model, except that the synaptic currents are modeled as a double alpha function.

@@ -105,6 +105,7 @@ const Name count_covariance( "count_covariance" );
 const Name count_histogram( "count_histogram" );
 const Name covariance( "covariance" );
 const Name compartments( "compartments" );
+const Name conc_Mg2( "conc_Mg2" );
 const Name comp_idx( "comp_idx" );
 
 const Name Delta_T( "Delta_T" );
@@ -182,6 +183,7 @@ const Name GABA_A( "GABA_A" );
 const Name GABA_B( "GABA_B" );
 const Name g( "g" );
 const Name g_AMPA( "g_AMPA" );
+const Name g_GABA( "g_GABA" );
 const Name g_GABA_A( "g_GABA_A" );
 const Name g_GABA_B( "g_GABA_B" );
 const Name g_K( "g_K" );
@@ -300,6 +302,7 @@ const Name music_channel( "music_channel" );
 
 const Name N( "N" );
 const Name NMDA( "NMDA" );
+const Name NMDA_sum( "NMDA_sum" );
 const Name N_channels( "N_channels" );
 const Name N_NaP( "N_NaP" );
 const Name N_T( "N_T" );

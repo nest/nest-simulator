@@ -63,6 +63,43 @@ RecordablesMap< iaf_wang_2002 >::create()
   insert_( names::NMDA_sum, &iaf_wang_2002::get_NMDA_sum_ );
 }
 }
+
+extern "C" inline int
+nest::iaf_wang_2002_dynamics( double, const double ode_state[], double f[], void* pnode )
+{
+  // a shorthand
+  typedef nest::iaf_wang_2002::State_ S;
+
+  // get access to node so we can almost work as in a member function
+  assert( pnode );
+  const nest::iaf_wang_2002& node = *( reinterpret_cast< nest::iaf_wang_2002* >( pnode ) );
+
+  // ode_state[] here is---and must be---the state vector supplied by the integrator,
+  // not the state vector in the node, node.S_.ode_state[].
+
+  const double I_AMPA = ( ode_state[ S::V_m ] - node.P_.E_ex ) * ode_state[ S::G_AMPA ];
+
+  const double I_rec_GABA = ( ode_state[ S::V_m ] - node.P_.E_in ) * ode_state[ S::G_GABA ];
+
+  const double I_rec_NMDA = ( ode_state[ S::V_m ] - node.P_.E_ex )
+    / ( 1 + node.P_.conc_Mg2 * std::exp( -0.062 * ode_state[ S::V_m ] ) / 3.57 ) * node.S_.sum_S_post_;
+
+  const double I_syn = I_AMPA + I_rec_GABA + I_rec_NMDA - node.B_.I_stim_;
+
+  f[ S::V_m ] = ( -node.P_.g_L * ( ode_state[ S::V_m ] - node.P_.E_L ) - I_syn ) / node.P_.C_m;
+
+  f[ S::G_AMPA ] = -ode_state[ S::G_AMPA ] / node.P_.tau_AMPA;
+  f[ S::G_GABA ] = -ode_state[ S::G_GABA ] / node.P_.tau_GABA;
+
+    f[ S::S_pre ] =
+      -ode_state[ S::S_pre ] / node.P_.tau_decay_NMDA + node.P_.alpha * ode_state[ S::X_pre ] * ( 1 - ode_state[ S::S_pre ] );
+    f[ S::X_pre ] = -ode_state[ S::X_pre ] / node.P_.tau_rise_NMDA;
+
+  return GSL_SUCCESS;
+}
+
+
+
 /* ---------------------------------------------------------------------------
  * Default constructors defining default parameters and state
  * --------------------------------------------------------------------------- */
@@ -359,51 +396,28 @@ nest::iaf_wang_2002::init_buffers_()
 }
 
 void
+nest::iaf_wang_2002::pre_run_hook()
+{
+  // ensures initialization in case mm connected after Simulate
+  B_.logger_.init();
+
+  V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref ) ).get_steps();
+  // since t_ref_ >= 0, this can only fail in error
+  assert( V_.RefractoryCounts_ >= 0 );
+}
+
+void
 nest::iaf_wang_2002::calibrate()
 {
   B_.logger_.init();
 
   // internals V_
-  V_.RefractoryCounts = Time( Time::ms( ( double ) ( P_.t_ref ) ) ).get_steps();
+  V_.RefractoryCounts_ = Time( Time::ms( ( double ) ( P_.t_ref ) ) ).get_steps();
 }
 
 /* ---------------------------------------------------------------------------
  * Update and spike handling functions
  * --------------------------------------------------------------------------- */
-
-extern "C" inline int
-nest::iaf_wang_2002_dynamics( double, const double ode_state[], double f[], void* pnode )
-{
-  // a shorthand
-  typedef nest::iaf_wang_2002::State_ S;
-
-  // get access to node so we can almost work as in a member function
-  assert( pnode );
-  const nest::iaf_wang_2002& node = *( reinterpret_cast< nest::iaf_wang_2002* >( pnode ) );
-
-  // ode_state[] here is---and must be---the state vector supplied by the integrator,
-  // not the state vector in the node, node.S_.ode_state[].
-
-  const double I_AMPA = ( ode_state[ S::V_m ] - node.P_.E_ex ) * ode_state[ S::G_AMPA ];
-
-  const double I_rec_GABA = ( ode_state[ S::V_m ] - node.P_.E_in ) * ode_state[ S::G_GABA ];
-
-  const double I_rec_NMDA = ( ode_state[ S::V_m ] - node.P_.E_ex )
-    / ( 1 + node.P_.conc_Mg2 * std::exp( -0.062 * ode_state[ S::V_m ] ) / 3.57 ) * node.S_.sum_S_post_;
-
-  const double I_syn = I_AMPA + I_rec_GABA + I_rec_NMDA - node.B_.I_stim_;
-
-  f[ S::V_m ] = ( -node.P_.g_L * ( ode_state[ S::V_m ] - node.P_.E_L ) - I_syn ) / node.P_.C_m;
-
-  f[ S::G_AMPA ] = -ode_state[ S::G_AMPA ] / node.P_.tau_AMPA;
-  f[ S::G_GABA ] = -ode_state[ S::G_GABA ] / node.P_.tau_GABA;
-
-    f[ S::S_pre ] =
-      -ode_state[ S::S_pre ] / node.P_.tau_decay_NMDA + node.P_.alpha * ode_state[ S::X_pre ] * ( 1 - ode_state[ S::S_pre ] );
-    f[ S::X_pre ] = -ode_state[ S::X_pre ] / node.P_.tau_rise_NMDA;
-
-  return GSL_SUCCESS;
-}
 
 void
 nest::iaf_wang_2002::update( Time const& origin, const long from, const long to )
@@ -466,7 +480,7 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
     else if ( S_.ode_state_[ State_::V_m ] >= P_.V_th )
     {
       // neuron is not absolute refractory
-      S_.r_ = V_.RefractoryCounts;
+      S_.r_ = V_.RefractoryCounts_;
       S_.ode_state_[ State_::V_m ] = P_.V_reset;
 
       S_.ode_state_[ State_::X_pre ] += 1;
@@ -488,9 +502,9 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
     B_.logger_.record_data( origin.get_steps() + lag );
   }
 
-  DelayedRateConnectionEvent drce;
-  drce.set_coeffarray( s_vals );
-  kernel().event_delivery_manager.send_secondary( *this, drce );
+//   DelayedRateConnectionEvent drce;
+//   drce.set_coeffarray( s_vals );
+//   kernel().event_delivery_manager.send_secondary( *this, drce );
 }
 
 // Do not move this function as inline to h-file. It depends on
@@ -513,21 +527,21 @@ nest::iaf_wang_2002::handle( SpikeEvent& e )
   B_.spikes_[ rport - 1 ].add_value( steps, e.get_weight() * e.get_multiplicity() );
 }
 
-void
-nest::iaf_wang_2002::handle( DelayedRateConnectionEvent& e )
-{
-  assert( e.get_delay_steps() > 0 );
-  assert( e.get_rport() == NMDA );
-
-  const double weight = e.get_weight();
-  long delay = e.get_delay_steps();
-
-  for ( auto it = e.begin(); it != e.end(); ++delay )
-  {
-    B_.NMDA_cond_.add_value( delay, weight * e.get_coeffvalue( it ) );
-  }
-
-}
+// void
+// nest::iaf_wang_2002::handle( DelayedRateConnectionEvent& e )
+// {
+//   assert( e.get_delay_steps() > 0 );
+//   assert( e.get_rport() == NMDA );
+// 
+//   const double weight = e.get_weight();
+//   long delay = e.get_delay_steps();
+// 
+//   for ( auto it = e.begin(); it != e.end(); ++delay )
+//   {
+//     B_.NMDA_cond_.add_value( delay, weight * e.get_coeffvalue( it ) );
+//   }
+// 
+// }
 
 void
 nest::iaf_wang_2002::handle( CurrentEvent& e )

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef IAF_WANG_2002
-#define IAF_WANG_2002
+#ifndef IAF_WANG_2002_H
+#define IAF_WANG_2002_H
 
 // Generated includes:
 #include "config.h"
@@ -53,7 +53,7 @@ namespace nest
  *       through a function pointer.
  * @param void* Pointer to model neuron instance.
  */
-extern "C" inline int iaf_wang_2002_dynamics( double, const double y[], double f[], void* pnode );
+extern "C" inline int iaf_wang_2002_dynamics( double, const double*, double*, void* );
 
 
 /* BeginUserDocs: neuron, integrate-and-fire, conductance-based
@@ -191,7 +191,7 @@ public:
   //! Used to validate that we can send SpikeEvent to desired target:port.
   size_t send_test_event( Node& target, size_t receptor_type, synindex, bool ) override;
 
-  void sends_secondary_event( DelayedRateConnectionEvent& ) override;
+//  void sends_secondary_event( DelayedRateConnectionEvent& ) override;
 
   /* -------------------------------------------------------------------------
    * Functions handling incoming events.
@@ -200,12 +200,12 @@ public:
    * ------------------------------------------------------------------------- */
 
   void handle( SpikeEvent& ) override;         //!< accept spikes
-  void handle( DelayedRateConnectionEvent& ) override;         //!< accept spikes
+//  void handle( DelayedRateConnectionEvent& ) override;         //!< accept spikes
   void handle( CurrentEvent& e ) override;     //!< accept current
   void handle( DataLoggingRequest& ) override; //!< allow recording with multimeter
 
   size_t handles_test_event( SpikeEvent&, size_t ) override;
-  size_t handles_test_event( DelayedRateConnectionEvent&,size_t ) override;
+//  size_t handles_test_event( DelayedRateConnectionEvent&,size_t ) override;
   size_t handles_test_event( CurrentEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
@@ -230,6 +230,7 @@ private:
   };
 
   void init_state_() override;
+  void pre_run_hook() override;
   void init_buffers_() override;
   void calibrate();
   void update( Time const&, const long, const long ) override;
@@ -274,6 +275,7 @@ private:
   };
 
 
+public:
   // State variables class --------------------------------------------
 
   /**
@@ -323,19 +325,9 @@ private:
     }
   };
 
-  // Variables class -------------------------------------------------------
 
-  /**
-   * Internal variables of the model.
-   * Variables are re-initialized upon each call to Simulate.
-   */
-  struct Variables_
-  {
-    //! refractory time in steps
-    long RefractoryCounts;
-  };
-
-  // Buffers class --------------------------------------------------------
+private:
+    // Buffers class --------------------------------------------------------
 
   /**
    * Buffers of the model.
@@ -386,6 +378,20 @@ private:
     double I_stim_;
   };
 
+// Variables class -------------------------------------------------------
+
+  /**
+   * Internal variables of the model.
+   * Variables are re-initialized upon each call to Simulate.
+   */
+  struct Variables_
+  {
+    //! refractory time in steps
+    long RefractoryCounts_;
+  };
+
+
+
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Read out state vector elements, used by UniversalDataLogger
@@ -413,24 +419,24 @@ private:
 
   //! Mapping of recordables names to access functions
   static RecordablesMap< iaf_wang_2002 > recordablesMap_;
-  friend int iaf_wang_2002_dynamics( double, const double y[], double f[], void* pnode );
+  friend int iaf_wang_2002_dynamics( double, const double*, double*, void* );
 
 }; /* neuron iaf_wang_2002 */
 
 inline size_t
 iaf_wang_2002::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
-  if ( receptor_type != NMDA )
+//   if ( receptor_type != NMDA )
+//   {
+  SpikeEvent e;
+  e.set_sender( *this );
+  return target.handles_test_event( e, receptor_type );
+//   }
+//   else
   {
-    SpikeEvent e;
-    e.set_sender( *this );
-    return target.handles_test_event( e, receptor_type );
-  }
-  else
-  {
-    DelayedRateConnectionEvent e;
-    e.set_sender( *this );
-    return target.handles_test_event( e, receptor_type );
+//     DelayedRateConnectionEvent e;
+//     e.set_sender( *this );
+//     return target.handles_test_event( e, receptor_type );
   }
 }
 
@@ -448,19 +454,19 @@ iaf_wang_2002::handles_test_event( SpikeEvent&, size_t receptor_type )
   }
 }
 
-inline size_t
-iaf_wang_2002::handles_test_event( DelayedRateConnectionEvent&, size_t receptor_type )
-{
-  if ( receptor_type != NMDA )
-  {
-    throw UnknownReceptorType( receptor_type, get_name() );
-    return 0;
-  }
-  else
-  {
-    return receptor_type;
-  }
-}
+// inline size_t
+// iaf_wang_2002::handles_test_event( DelayedRateConnectionEvent&, size_t receptor_type )
+// {
+//   if ( receptor_type != NMDA )
+//   {
+//     throw UnknownReceptorType( receptor_type, get_name() );
+//     return 0;
+//   }
+//   else
+//   {
+//     return receptor_type;
+//   }
+// }
 
 inline size_t
 iaf_wang_2002::handles_test_event( CurrentEvent&, size_t receptor_type )

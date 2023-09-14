@@ -50,7 +50,7 @@ def test_different_connections():
     via helper method.
     """
     nest.ResetKernel()
-    nest.set_verbosity("M_ERROR")
+    nest.set_verbosity(nest.verbosity.M_ERROR)
 
     spike_generator = nest.Create("spike_generator", params={"spike_times": [1.0]})
     spike_recorder = nest.Create("spike_recorder")

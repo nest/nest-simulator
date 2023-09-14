@@ -80,7 +80,7 @@ def createCommitOnBranch():
         checknodes = json.loads(fullstatus.text)['data']['repository']['pullRequest']['commits']['edges'][0]['node']['commit']['checkSuites']['nodes'][0]['checkRuns']
         # Frst give time to start the CI and then poll  
         print(f"\n WORKFLOW STATE \n ~~~~~~~~~~~~~~ \n ") 
-        time.sleep(40)    
+        time.sleep(60)  # time to start could be long  
         for stat in checknodes['nodes']: 
             print(f"{stat['conclusion']} - {(stat['status'])}")
             if stat['conclusion']=="FAILURE" or \

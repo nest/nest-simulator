@@ -404,7 +404,7 @@ jobs:
 
   conda-packaging:
     # as close as possible to the conda-forge build
-    runs-on: ubunti-22.04
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
     needs: [pydocstyle, rstcheck, vale, black, flake8]

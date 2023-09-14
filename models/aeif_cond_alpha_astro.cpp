@@ -62,7 +62,7 @@ RecordablesMap< aeif_cond_alpha_astro >::create()
   insert_( names::g_ex, &aeif_cond_alpha_astro::get_y_elem_< aeif_cond_alpha_astro::State_::G_EXC > );
   insert_( names::g_in, &aeif_cond_alpha_astro::get_y_elem_< aeif_cond_alpha_astro::State_::G_INH > );
   insert_( names::w, &aeif_cond_alpha_astro::get_y_elem_< aeif_cond_alpha_astro::State_::W > );
-  insert_( names::SIC, &aeif_cond_alpha_astro::get_I_sic_ );
+  insert_( names::I_SIC, &aeif_cond_alpha_astro::get_I_sic_ );
 }
 }
 

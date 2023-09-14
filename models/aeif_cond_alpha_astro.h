@@ -84,8 +84,7 @@ Description
 synaptic inputs from other neurons. It is adapted from the standard NEST
 implementation of AdEx neurons (``aeif_cond_alpha``). The connection with
 astrocytes is established through ``sic_connection``, which sends slow inward
-current (SIC) from an astrocyte to ``aeif_cond_alpha_astro``. This continuous
-slow inward current is implemented as a SICEvent in NEST.
+current (SIC) from an astrocyte to ``aeif_cond_alpha_astro``.
 
 The membrane potential is given by the following differential equation
 (adapted from ``aeif_cond_alpha``):
@@ -95,7 +94,7 @@ The membrane potential is given by the following differential equation
  C_m \frac{dV}{dt} =
  -g_L(V-E_L)+g_L\Delta_T\exp\left(\frac{V-V_{th}}{\Delta_T}\right) -
  g_e(t)(V-E_e) \\
-                                                     -g_i(t)(V-E_i)-w +I_e + I_{SIC}
+                                                     -g_i(t)(V-E_i)-w +I_e + I_{\text{SIC}}
 
 and
 
@@ -103,8 +102,8 @@ and
 
  \tau_w \frac{dw}{dt} = a(V-E_L) - w
 
-Here, :math:`I_{SIC}` is the sum of SIC inputs received from all
-astrocytes connected to the considered neuron. The other parameters and
+Here, :math:`I_{\text{SIC}}` is the sum of slow inward currents received from all
+astrocytes connected to the neuron. The other parameters and
 variables are the same as in ``aeif_cond_alpha``.
 
 For implementation details of the adaptive exponential integrate-and-fire neuron

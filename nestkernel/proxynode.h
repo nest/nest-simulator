@@ -97,7 +97,7 @@ public:
 
   void sends_secondary_event( DelayedRateConnectionEvent& ) override;
 
-  void sends_secondary_event( SICEvent& );
+  void sends_secondary_event( SICEvent& ) override;
 
   void
   handle( SpikeEvent& ) override

@@ -76,7 +76,7 @@ astrocyte_lr_1994_dynamics( double time, const double y[], double f[], void* pno
 
   // shorthand for state variables
   const double& ip3 = y[ S::IP3 ];
-  const double& calc = y[ S::Ca ];
+  const double& calc = std::max( 0.0, std::min( y[ S::Ca ], node.V_.max_Ca_ ) ); // keep calcium within limits
   const double& h_ip3r = y[ S::h_IP3R ];
 
   const double alpha_h_ip3r =
@@ -86,13 +86,13 @@ astrocyte_lr_1994_dynamics( double time, const double y[], double f[], void* pno
     node.P_.rate_SERCA_ * std::pow( calc, 2 ) / ( std::pow( node.P_.Km_SERCA_, 2 ) + std::pow( calc, 2 ) );
   const double m_inf = ip3 / ( ip3 + node.P_.Kd_IP3_1_ );
   const double n_inf = calc / ( calc + node.P_.Kd_act_ );
-  const double calc_ER = ( node.P_.Ca_tot_ - calc ) / node.P_.ratio_ER_cyt_;
+  const double calc_ER = node.P_.Ca_tot_ + ( node.P_.Ca_tot_ - calc ) / node.P_.ratio_ER_cyt_;
   const double J_leak = node.P_.ratio_ER_cyt_ * node.P_.rate_L_ * ( calc_ER - calc );
   const double J_channel = node.P_.ratio_ER_cyt_ * node.P_.rate_IP3R_ * std::pow( m_inf, 3 ) * std::pow( n_inf, 3 )
     * std::pow( h_ip3r, 3 ) * ( calc_ER - calc );
 
   f[ S::IP3 ] = ( node.P_.IP3_0_ - ip3 ) / node.P_.tau_IP3_;
-  f[ S::Ca ] = J_channel - J_pump + J_leak + node.B_.I_stim_;
+  f[ S::Ca ] = J_channel - J_pump + J_leak + node.B_.J_noise_;
   f[ S::h_IP3R ] = alpha_h_ip3r * ( 1.0 - h_ip3r ) - beta_h_ip3r * h_ip3r;
 
   return GSL_SUCCESS;
@@ -104,20 +104,21 @@ astrocyte_lr_1994_dynamics( double time, const double y[], double f[], void* pno
  * ---------------------------------------------------------------- */
 
 nest::astrocyte_lr_1994::Parameters_::Parameters_()
-  : Ca_tot_( 2.0 )      // uM
-  , IP3_0_( 0.16 )      // uM
-  , Kd_IP3_1_( 0.13 )   // uM
-  , Kd_IP3_2_( 0.9434 ) // uM
-  , Kd_act_( 0.08234 )  // uM
-  , Kd_inh_( 1.049 )    // uM
-  , Km_SERCA_( 0.1 )    // uM
+  // parameters following Nadkarni & Jung, 2003
+  : Ca_tot_( 2.0 )      // µM
+  , IP3_0_( 0.16 )      // µM
+  , Kd_IP3_1_( 0.13 )   // µM
+  , Kd_IP3_2_( 0.9434 ) // µM
+  , Kd_act_( 0.08234 )  // µM
+  , Kd_inh_( 1.049 )    // µM
+  , Km_SERCA_( 0.1 )    // µM
   , SIC_scale_( 1.0 )
-  , SIC_th_( 0.19669 )    // uM
-  , delta_IP3_( 5.0 )     // uM
-  , k_IP3R_( 0.0002 )     // 1/(uM*ms)
+  , SIC_th_( 0.19669 )    // µM
+  , delta_IP3_( 5.0 )     // µM
+  , k_IP3R_( 0.0002 )     // 1/(µM*ms)
   , rate_IP3R_( 0.006 )   // 1/ms
   , rate_L_( 0.00011 )    // 1/ms
-  , rate_SERCA_( 0.0009 ) // uM/ms
+  , rate_SERCA_( 0.0009 ) // µM/ms
   , ratio_ER_cyt_( 0.185 )
   , tau_IP3_( 7142.0 ) // ms
 {
@@ -125,11 +126,10 @@ nest::astrocyte_lr_1994::Parameters_::Parameters_()
 
 nest::astrocyte_lr_1994::State_::State_( const Parameters_& p )
 {
+  // initial values following Nadkarni & Jung, 2003
   y_[ IP3 ] = p.IP3_0_;
   y_[ Ca ] = 0.073;
   y_[ h_IP3R ] = 0.793;
-  y_[ SIC ] = 0.0;
-  y_[ DSIC ] = 0.0;
 }
 
 nest::astrocyte_lr_1994::State_::State_( const State_& s )
@@ -382,11 +382,11 @@ nest::astrocyte_lr_1994::init_buffers_()
 
   if ( not B_.c_ )
   {
-    B_.c_ = gsl_odeiv_control_y_new( 1e-6, 0.0 );
+    B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
   }
   else
   {
-    gsl_odeiv_control_init( B_.c_, 1e-6, 0.0, 1.0, 0.0 );
+    gsl_odeiv_control_init( B_.c_, 1e-3, 0.0, 1.0, 0.0 );
   }
 
   if ( not B_.e_ )
@@ -403,7 +403,7 @@ nest::astrocyte_lr_1994::init_buffers_()
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
 
-  B_.I_stim_ = 0.0;
+  B_.J_noise_ = 0.0;
 }
 
 void
@@ -411,6 +411,14 @@ nest::astrocyte_lr_1994::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
+
+  // We set upper and lower limits for the cytosolic calcium concentration. The
+  // total volume of an astrocyte consists of the cytosol and the endoplasmic
+  // retimulum (ER): V_tot = V_cyt + V_ER. So, ratio of the cytosol volume to ER
+  // volume (ratio_ER_cyt) is (V_tot - V_cyt)/V_cyt. Then, the cytosolic calcium
+  // concentration should not be larger than Ca_tot*(V_tot/V_cyt), which is
+  // equal to Ca_tot*(1 + ratio_ER_cyt).
+  V_.max_Ca_ = P_.Ca_tot_ * ( 1 + P_.ratio_ER_cyt_ );
 }
 
 /* ----------------------------------------------------------------
@@ -457,22 +465,6 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
       }
     }
 
-    // We limit cytosolic calcium concentration within boudnaries. Here, total
-    // volume of astrocyte consists of cytosol and endoplasmic retimulum (ER):
-    // V_tot = V_cyt + V_ER. So, ratio of cytosol vs. ER (ratio_ER_cyt) is
-    // (V_tot - V_cyt)/V_cyt. Then, cytosolic calcium concentration should not
-    // be larger than Ca_tot*(V_tot/V_cyt), which is equal to
-    // Ca_tot + Ca_tot*ratio_ER_cyt.
-    if ( S_.y_[ State_::Ca ] > P_.Ca_tot_ + P_.Ca_tot_ * P_.ratio_ER_cyt_ )
-    {
-      S_.y_[ State_::Ca ] = P_.Ca_tot_ + P_.Ca_tot_ * P_.ratio_ER_cyt_;
-    }
-    // Also, it should not be smaller than 0.
-    else if ( S_.y_[ State_::Ca ] < 0.0 )
-    {
-      S_.y_[ State_::Ca ] = 0.0;
-    }
-
     // this is to add the incoming spikes to IP3
     S_.y_[ State_::IP3 ] += P_.delta_IP3_ * B_.spike_exc_.get_value( lag );
 
@@ -488,11 +480,11 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
     }
     B_.sic_values[ lag ] = sic_value;
 
-    // set new input current
-    B_.I_stim_ = B_.currents_.get_value( lag );
-
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );
+
+    // set new input current
+    B_.J_noise_ = B_.currents_.get_value( lag );
   }
 
   // send SIC event
@@ -516,10 +508,14 @@ nest::astrocyte_lr_1994::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  if ( e.get_weight() > 0.0 )
+  if ( e.get_weight() >= 0.0 )
   {
     B_.spike_exc_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
+  else
+  {
+    throw KernelException( "astrocyte_lr_1994 cannot handle input spikes with negative weights." );
   }
 }
 

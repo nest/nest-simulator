@@ -24,11 +24,11 @@ A model using a single astrocyte with calcium dynamics
 -------------------------------------------------------
 
 This script simulates an astrocyte with the model ``astrocyte_lr_1994``, which
-implements the dynamics in the astrocyte based on the articles [1]_, [2]_, and
+implements the dynamics in the astrocyte based on [1]_, [2]_, and
 [3]_. Recordings are made for two variables in the astrocyte,
-inositol 1,4,5-trisphosphate (IP3) and cytosolic calcium. A Poisson input is
-created and connected to the astrocyte. This Poisson input induces the
-generation of IP3 in the astrocyte, which then changes the calcium dynamics in
+inositol 1,4,5-trisphosphate (IP3) and cytosolic calcium. The astrocyte is driven
+by a Poissonian spike train which induces the
+generation of IP3 in the astrocyte, which in turn influences the calcium dynamics in
 the astrocyte.
 
 See Also

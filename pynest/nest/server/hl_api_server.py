@@ -104,7 +104,7 @@ def _check_security():
 @app.before_request
 def _setup_auth():
     """
-    Authentication function that generates and validates the Authorization header with a
+    Authentication function that generates and validates the NESTServerAuth header with a
     bearer token.
 
     Cleans up references to itself and the running `app` from this module, as it may be
@@ -145,7 +145,7 @@ def _setup_auth():
                 hasher.update(str(time.perf_counter()).encode("utf-8"))
                 self._hash = hasher.hexdigest()[:48]
             if not AUTH_DISABLED:
-                print(f"   Bearer token to NEST server: {self._hash}\n")
+                print(f"   Access token to NEST server: {self._hash}\n")
 
         if request.method == "OPTIONS":
             return
@@ -153,7 +153,7 @@ def _setup_auth():
         # The first time we hit the line below is when below the function definition we
         # call `setup_auth` without any Flask request existing yet, so the function errors
         # and exits here after generating and storing the auth hash.
-        auth = request.headers.get("Authorization", None)
+        auth = request.headers.get("NESTServerAuth", None)
         # We continue here the next time this function is called, before the Flask app
         # handles the first request. At that point we also remove this module's reference
         # to the running app.
@@ -162,9 +162,9 @@ def _setup_auth():
         except KeyError:
             pass
         # Things get more straightforward here: Every time a request is handled, compare
-        # the Authorization header to the hash, with a constant-time algorithm to avoid
+        # the NESTServerAuth header to the hash, with a constant-time algorithm to avoid
         # timing attacks.
-        if not (AUTH_DISABLED or hmac.compare_digest(auth, f"Bearer {self._hash}")):
+        if not (AUTH_DISABLED or hmac.compare_digest(NESTServerAuth, self._hash)):
             return ("Unauthorized", 403)
     # DON'T LINT! Intentional bare except clause! Even `KeyboardInterrupt` and
     # `SystemExit` exceptions should not bypass authentication!

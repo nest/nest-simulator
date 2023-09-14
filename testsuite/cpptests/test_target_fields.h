@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE( test_target_object_type_constructor )
   for ( int i = 0; i < NUM_TEST_TRIALS; ++i )
   {
     // tid and rank can take on all values up to MAX_{TID,RANK}
-    // syn_id and lcid can only take values up to MAX_{SYN_ID,LCID}-1 
+    // syn_id and lcid can only take values up to MAX_{SYN_ID,LCID}-1
     const size_t tid = std::rand() % ( MAX_TID + 1 );
     const size_t rank = std::rand() % ( MAX_RANK + 1 );
     const synindex syn_id = std::rand() % MAX_SYN_ID;
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE( test_target_object_type_set_get )
   for ( int i = 0; i < NUM_TEST_TRIALS; ++i )
   {
     // tid and rank can take on all values up to MAX_{TID,RANK}
-    // syn_id and lcid can only take values up to MAX_{SYN_ID,LCID}-1 
+    // syn_id and lcid can only take values up to MAX_{SYN_ID,LCID}-1
     const size_t tid = std::rand() % ( MAX_TID + 1 );
     const size_t rank = std::rand() % ( MAX_RANK + 1 );
     const synindex syn_id = std::rand() % MAX_SYN_ID;

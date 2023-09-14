@@ -404,16 +404,11 @@ jobs:
 
   conda-packaging:
     # as close as possible to the conda-forge build
-    runs-on: ${{ matrix.os }}
+    runs-on: ubunti-22.04
     strategy:
       fail-fast: false
-      matrix:
-        # os: ["ubuntu-22.04", "macos-latest"]
-        os: ["ubuntu-22.04"]
-    needs: [pydocstyle, rstcheck, vale]
+    needs: [pydocstyle, rstcheck, vale, black, flake8]
     steps:
-      - name: checkout repo 
-        uses: actions/checkout@v3
       - name: install python
         uses: actions/setup-python@v4 
         with:

@@ -23,6 +23,10 @@ cmake_minimum_required( VERSION 3.19 )
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
 
 project( nest CXX C )
+
+set( CMAKE_CXX_STANDARD 20 )
+set( CMAKE_CXX_STANDARD_REQUIRED True )
+
 set( NEST_USER_EMAIL "users@nest-simulator.org" )
 
 include( ColorMessages )
@@ -76,7 +80,6 @@ option( static-libraries "Build static executable and libraries [default=OFF]" O
 set( with-optimize ON CACHE STRING "Enable user defined optimizations [default=ON (uses '-O2')]. When OFF, no '-O' flag is passed to the compiler. Explicit compiler flags can be given; separate multiple flags by ';'." )
 set( with-warning ON CACHE STRING "Enable user defined warnings [default=ON (uses '-Wall')]. Separate  multiple flags by ';'." )
 set( with-debug OFF CACHE STRING "Enable user defined debug flags [default=OFF]. When ON, '-g' is used. Separate  multiple flags by ';'." )
-set( with-cpp-std "c++20" CACHE STRING "C++ standard to use for compilation [default='c++20']." )
 set( with-intel-compiler-flags OFF CACHE STRING "User defined flags for the Intel compiler [default='-fp-model strict']. Separate multiple flags by ';'." )
 set( with-libraries OFF CACHE STRING "Link additional libraries [default=OFF]. Give full path. Separate multiple libraries by ';'." )
 set( with-includes OFF CACHE STRING "Add additional include paths [default=OFF]. Give full path without '-I'. Separate multiple include paths by ';'." )

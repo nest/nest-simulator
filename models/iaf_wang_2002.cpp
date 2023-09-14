@@ -375,7 +375,7 @@ extern "C" inline int
 nest::iaf_wang_2002_dynamics( double, const double ode_state[], double f[], void* pnode )
 {
   // a shorthand
-  typedef nest::iaf_wang_2002::State_ State_;
+  typedef nest::iaf_wang_2002::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
@@ -384,23 +384,23 @@ nest::iaf_wang_2002_dynamics( double, const double ode_state[], double f[], void
   // ode_state[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.ode_state[].
 
-  const double I_AMPA = ( ode_state[ State_::V_m ] - node.P_.E_ex ) * ode_state[ State_::G_AMPA ];
+  const double I_AMPA = ( ode_state[ S::V_m ] - node.P_.E_ex ) * ode_state[ S::G_AMPA ];
 
-  const double I_rec_GABA = ( ode_state[ State_::V_m ] - node.P_.E_in ) * ode_state[ State_::G_GABA ];
+  const double I_rec_GABA = ( ode_state[ S::V_m ] - node.P_.E_in ) * ode_state[ S::G_GABA ];
 
-  const double I_rec_NMDA = ( ode_state[ State_::V_m ] - node.P_.E_ex )
-    / ( 1 + node.P_.conc_Mg2 * std::exp( -0.062 * ode_state[ State_::V_m ] ) / 3.57 ) * node.S_.sum_S_post_;
+  const double I_rec_NMDA = ( ode_state[ S::V_m ] - node.P_.E_ex )
+    / ( 1 + node.P_.conc_Mg2 * std::exp( -0.062 * ode_state[ S::V_m ] ) / 3.57 ) * node.S_.sum_S_post_;
 
   const double I_syn = I_AMPA + I_rec_GABA + I_rec_NMDA - node.B_.I_stim_;
 
-  f[ State_::V_m ] = ( -node.P_.g_L * ( ode_state[ State_::V_m ] - node.P_.E_L ) - I_syn ) / node.P_.C_m;
+  f[ S::V_m ] = ( -node.P_.g_L * ( ode_state[ S::V_m ] - node.P_.E_L ) - I_syn ) / node.P_.C_m;
 
-  f[ State_::G_AMPA ] = -ode_state[ State_::G_AMPA ] / node.P_.tau_AMPA;
-  f[ State_::G_GABA ] = -ode_state[ State_::G_GABA ] / node.P_.tau_GABA;
+  f[ S::G_AMPA ] = -ode_state[ S::G_AMPA ] / node.P_.tau_AMPA;
+  f[ S::G_GABA ] = -ode_state[ S::G_GABA ] / node.P_.tau_GABA;
 
-    f[ State_::S_pre ] =
-      -ode_state[ State_::S_pre ] / node.P_.tau_decay_NMDA + node.P_.alpha * ode_state[ State_::X_pre ] * ( 1 - ode_state[ State_::S_pre ] );
-    f[ State_::X_pre ] = -ode_state[ State_::X_pre ] / node.P_.tau_rise_NMDA;
+    f[ S::S_pre ] =
+      -ode_state[ S::S_pre ] / node.P_.tau_decay_NMDA + node.P_.alpha * ode_state[ S::X_pre ] * ( 1 - ode_state[ S::S_pre ] );
+    f[ S::X_pre ] = -ode_state[ S::X_pre ] / node.P_.tau_rise_NMDA;
 
   return GSL_SUCCESS;
 }

@@ -86,7 +86,7 @@ nest::RecordingBackendMPI::enroll( const RecordingDevice& device, const dictiona
     devices_[ tid ].insert( std::make_pair( node_id, tuple ) );
     enrolled_ = true;
 
-    updateValue< std::string >( params, names::mpi_address, mpi_address_ );
+    params.update_value( names::mpi_address, mpi_address_ );
   }
   else
   {

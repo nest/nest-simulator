@@ -63,9 +63,8 @@ nest::VPManager::initialize()
 
   if ( get_OMP_NUM_THREADS() > 1 )
   {
-    std::string msg = "NEST ignores the OMP_NUM_THREADS environment variable.\n";
-    msg += "Set kernel attributes 'local_num_threads' or 'total_num_virtual_procs' to\n";
-    msg += "control the number of threads in your simulation.";
+    std::string msg = "OMP_NUM_THREADS is set in your environment, but NEST ignores it.\n";
+    msg += "For details, see the Guide to parallel computing in the NEST Documentation.";
 
     LOG( M_INFO, "VPManager::initialize()", msg );
   }
@@ -163,13 +162,8 @@ nest::VPManager::set_status( const DictionaryDatum& d )
 
     if ( get_OMP_NUM_THREADS() > 0 and get_OMP_NUM_THREADS() != n_threads )
     {
-      const std::string tstr = ( n_threads > 1 ) ? "threads" : "thread";
-      std::string msg = "NEST ignores the enviroment variable OMP_NUM_THREADS. The number of threads\n";
-      msg += "in a NEST simulation is controlled only by the kernel attributes 'local_num_threads'\n";
-      msg += "and 'total_num_virtual_procs'. ";
-      msg += String::compose(
-        "NEST will use %1 %2 and ignore OMP_NUM_THREADS (value %3).", n_threads, tstr, get_OMP_NUM_THREADS() );
-
+      std::string msg = "OMP_NUM_THREADS is set in your environment, but NEST ignores it.\n";
+      msg += "For details, see the Guide to parallel computing in the NEST Documentation.";
       LOG( M_WARNING, "VPManager::set_status()", msg );
     }
 

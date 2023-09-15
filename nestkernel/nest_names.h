@@ -649,6 +649,16 @@ extern const Name y_1;
 
 extern const Name z;
 extern const Name z_connected;
+
+extern const Name p_syn_astro_;
+extern const Name astro_pool_by_index_;
+extern const Name max_astro_per_target_;
+extern const Name weights_n2n_;
+extern const Name weights_n2a_;
+extern const Name delays_n2n_;
+extern const Name delays_n2a_;
+extern const Name weights_a2n_;
+extern const Name delays_a2n_;
 } // namespace names
 
 } // namespace nest

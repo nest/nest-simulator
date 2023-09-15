@@ -102,7 +102,7 @@ def createCommitOnBranch():
             "commit"
         ]["checkSuites"]["nodes"][0]["checkRuns"]
         # First give time to start the CI and then poll
-        time.sleep(60)  # time to start could be long
+        time.sleep(90)  # time to start could be long
         for stat in checknodes["nodes"]:
             if (
                 stat["conclusion"] == "FAILURE"

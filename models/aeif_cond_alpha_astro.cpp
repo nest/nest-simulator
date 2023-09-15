@@ -563,7 +563,7 @@ void
 nest::aeif_cond_alpha_astro::handle( SICEvent& e )
 {
   const double weight = e.get_weight();
-  const long delay = e.get_delay_steps();
+  const long delay = e.get_delay_steps() - kernel().connection_manager.get_min_delay();
 
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();

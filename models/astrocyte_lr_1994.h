@@ -305,7 +305,7 @@ private:
   //! Model parameters
   struct Parameters_
   {
-    // parameters according to Nadkarni & Jung, 2003
+    // parameters based on Nadkarni & Jung (2003)
     double Ca_tot_;    //!< Total free astrocytic calcium concentration in terms of cytosolic volume in µM
     double IP3_0_;     //!< Baseline value of the astrocytic IP3 concentration in µM
     double Kd_IP3_1_;  //!< First astrocytic IP3R dissociation constant of IP3 in µM

@@ -95,10 +95,13 @@ def _check_security():
             msg.append("RESTRICTION: Code scripts will be executed without a restricted environment.")
 
     if len(msg) > 0:
-        print("WARNING: The security of your system can not be ensured!")
+        print(
+            "WARNING: You chose to disable important access restrictions!\n"                                                    
+            " This allows other computers to execute code on this machine as the current user!\n"                               
+            " Be sure you understand the implications of these settings and take"                                                  
+            " appropriate measures to protect your runtime environment!"                                                        
+        ) 
         print("\n - ".join([" "] + msg) + "\n")
-    else:
-        print("INFO: The security of your system can be ensured!\n")
 
 
 @app.before_request

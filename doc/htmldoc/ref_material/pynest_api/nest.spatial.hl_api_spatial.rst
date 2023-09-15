@@ -1,3 +1,5 @@
+.. _pynest_spatial:
+
 Spatial positions functions
 ===========================
 

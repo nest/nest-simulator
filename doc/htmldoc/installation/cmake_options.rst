@@ -15,7 +15,7 @@ environment.
 
 .. note::
 
-  If you want to specify an alternative install location, use  
+  If you want to specify an alternative install location, use
   ``-DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir>``. It needs to be
   writable by the user running the install command.
 
@@ -89,6 +89,24 @@ Select parallelization scheme
 
 See also the section on :ref:`building with MPI <compile-with-mpi>` below.
 
+
+Build documentation
+~~~~~~~~~~~~~~~~~~~
+
++------------------------------+-------------------------------------------------------------+
+| ``-Dwith-devdoc=[OFF|ON]``   | Build the developer (doxygen) documentation [default=OFF]   |
+|                              |                                                             |
++------------------------------+-------------------------------------------------------------+
+| ``-Dwith-userdoc=[OFF|ON]``  | Build the user (Sphinx) documentation [default=OFF]         |
+|                              |                                                             |
++------------------------------+-------------------------------------------------------------+
+
+If either documentation build is toggled to `ON`, you can then run ``make docs`` if you only want to
+build the docs.
+
+See also the :ref:`documentation workflow <doc_workflow>` for user and developer docs.
+
+
 External libraries
 ~~~~~~~~~~~~~~~~~~
 
@@ -135,6 +153,11 @@ NEST properties
 |                                               | [default='standard']. 'standard' is recommended for most users.|
 |                                               | If running on more than 262144 MPI processes or more than 512  |
 |                                               | threads, change to 'hpc'.                                      |
++-----------------------------------------------+----------------------------------------------------------------+
+| ``-Dwith-full-logging=[OFF|ON]``              | Write debug output to file ``dump_<num_ranks>_<rank>.log``     |
+|                                               | [default=OFF]. Developers should wrap debugging output in      |
+|                                               | macro ``FULL_LOGGING_ONLY()`` and call kernel().write_dump()`  |
+|                                               | from inside it. The macro can contain almost any valid code.   |
 +-----------------------------------------------+----------------------------------------------------------------+
 
 Generic build configuration

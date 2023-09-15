@@ -154,7 +154,7 @@ these parameters by fitting the equation for SIC to an experimental data set.
 The output is implemented as SICEvent sent from the astrocyte to its target
 neurons through the ``sic_connection``.
 
-For implementation details, see the
+For the reference implementation of this model, see the
 `astrocyte_model_implementation <../model_details/astrocyte_model_implementation.ipynb>`_ notebook.
 
 See also [1]_, [2]_, [3]_.
@@ -177,7 +177,8 @@ h_IP3R  unitless  Fraction of IP3 receptors on the astrocytic ER that are not
 =============== ========= =====================================================
 **Parameters**
 -------------------------------------------------------------------------------
-Ca_tot          µM        Total free astrocytic calcium concentration
+Ca_tot          µM        Total free astrocytic calcium concentration in terms
+                          of cytosolic volume
 IP3_0           µM        Baseline value of astrocytic IP3 concentration
 Kd_IP3_1        µM        First astrocytic IP3R dissociation constant of IP3
 Kd_IP3_2        µM        Second astrocytic IP3R dissociation constant of IP3
@@ -305,7 +306,7 @@ private:
   struct Parameters_
   {
     // parameters according to Nadkarni & Jung, 2003
-    double Ca_tot_;    //!< Total free astrocytic calcium concentration in µM
+    double Ca_tot_;    //!< Total free astrocytic calcium concentration in terms of cytosolic volume in µM
     double IP3_0_;     //!< Baseline value of the astrocytic IP3 concentration in µM
     double Kd_IP3_1_;  //!< First astrocytic IP3R dissociation constant of IP3 in µM
     double Kd_IP3_2_;  //!< Second astrocytic IP3R dissociation constant of IP3 in µM
@@ -434,7 +435,6 @@ public:
   Parameters_ P_;
   State_ S_;
   Buffers_ B_;
-  Variables_ V_;
 
   //! Mapping of recordables names to access functions
   static RecordablesMap< astrocyte_lr_1994 > recordablesMap_;

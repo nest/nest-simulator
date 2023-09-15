@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Freely placed neurons
-----------------------
+Spatial networks: Freely placed neurons
+---------------------------------------
 
 Create 12 freely placed iaf_psc_alpha neurons.
 

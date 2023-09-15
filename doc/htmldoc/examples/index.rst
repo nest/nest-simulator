@@ -74,7 +74,7 @@ PyNEST examples
 
 
     .. grid-item-card:: Cortical microcircuit (Potjans)
-           :img-top: ../static/img/pynest/raster_plot.png
+           :img-top: ../static/img/potjans_2014_raster_plot.png
 
            * :doc:`../auto_examples/Potjans_2014/index`
 
@@ -83,6 +83,7 @@ PyNEST examples
 
            * :doc:`../auto_examples/glif_cond_neuron`
            * :doc:`../auto_examples/glif_psc_neuron`
+           * :doc:`../auto_examples/glif_psc_double_alpha_neuron`
 
 
 
@@ -267,6 +268,7 @@ PyNEST examples
    ../auto_examples/mc_neuron
    ../auto_examples/glif_cond_neuron
    ../auto_examples/glif_psc_neuron
+   ../auto_examples/glif_psc_double_alpha_neuron
    ../auto_examples/precise_spiking
    ../auto_examples/CampbellSiegert
    ../auto_examples/vinit_example

@@ -185,6 +185,11 @@ See also
 
 iaf_cond_alpha, aeif_cond_exp
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: aeif_cond_alpha
+
 EndUserDocs */
 
 class aeif_cond_alpha : public ArchivingNode

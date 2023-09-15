@@ -1,5 +1,5 @@
 /*
- *  glif_psc.h
+ *  glif_psc_double_alpha.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GLIF_PSC_H
-#define GLIF_PSC_H
+#ifndef GLIF_PSC_DOUBLE_ALPHA_H
+#define GLIF_PSC_DOUBLE_ALPHA_H
 
 #include "archiving_node.h"
 #include "connection.h"
@@ -37,20 +37,33 @@
 Short description
 +++++++++++++++++
 
-Current-based generalized leaky integrate-and-fire (GLIF) models (from the Allen Institute)
+Current-based generalized leaky integrate-and-fire (GLIF) models with double alpha-function
+(from the Allen Institute)
 
 Description
 +++++++++++
 
-``glif_psc`` provides five generalized leaky integrate-and-fire
-(GLIF) models [1]_ with alpha-function shaped synaptic currents.
+``glif_psc_double_alpha`` provides five generalized leaky integrate-and-fire
+(GLIF) models [1]_ with double alpha-function shaped synaptic currents.
 Incoming spike events induce a postsynaptic change of current modeled
-by an alpha function [2]_. The alpha function is normalized such that an event
-of weight 1.0 results in a peak current of 1 pA at :math:`t = \tau_\mathrm{syn}`.
-By default, ``glif_psc`` has a single synapse that is accessible through
-``receptor_port`` 1. An arbitrary number of synapses with different time constants
-can be configured by setting the desired time constants as ``tau_syn`` array.
-The resulting synapses are addressed through ``receptor_port`` 1, 2, 3, ....
+by the sum of two alpha functions (fast and slow components) for each receptor [2]_.
+This function is normalized such that an event of weight 1.0 results in a peak current
+of the fast component of the alpha function to be 1 pA at
+:math:`t = \tau_\text{syn, fast}`.
+The relative peak current of the slow component is given as ``amp_slow``, at
+:math:`t = \tau_\text{syn, slow}`. Namely,
+
+.. math::
+
+    I_\text{syn} = \text{alpha_function} \left( \tau_\text{syn} = \tau_\text{syn, fast} \right) + \text{amp_slow} \cdot
+\text{alpha_function} \left( \tau_\text{syn} = \tau_\text{syn, slow} \right).
+
+Therefore if ``amp_slow`` is not 0, the peak current of the total synaptic current is larger
+than the specified weight. By default, ``glif_psc_double_alpha`` has a single synapse that
+is accessible through ``receptor_port`` 1. An arbitrary number of synapses with different
+time constants and ``amp_slow`` can be configured by setting the desired parameters of
+``tau_syn_fast``, ``tau_syn_slow``, and ``amp_slow`` arrays. The resulting synapses are addressed
+through ``receptor_port`` 1, 2, 3, ....
 
 The five GLIF models are:
 
@@ -84,20 +97,20 @@ below. Other combinations of these parameters will not be supported.
 
 Typical parameter setting of different levels of GLIF models for different cells
 can be found and downloaded in the `Allen Cell Type Database
-<https://celltypes.brain-map.org>`_. For example, the default parameter setting of
-this ``glif_psc`` neuron model was from the parameter values of GLIF Model 5 of Cell
-490626718, which can be retrieved from the `Allen Brain Atlas
+<https://celltypes.brain-map.org>`_. For example, the default parameter setting of this
+``glif_psc_double_alpha`` neuron model was from the parameter values of GLIF Model 5 of
+Cell 490626718, which can be retrieved from the `Allen Brain Atlas
 <https://celltypes.brain-map.org/mouse/experiment/electrophysiology/
 490626718>`_, with units being converted from SI units (i.e., V, S (1/Ohm),
 F, s, A) to NEST used units (i.e., mV, nS (1/GOhm), pF, ms, pA) and values
 being rounded to appropriate digits for simplification.
 
 For models with spike dependent threshold (i.e., GLIF2, GLIF4 and GLIF5),
-parameter setting of ``voltage_reset_fraction`` and ``voltage_reset_add`` may lead
-to the situation that voltage is bigger than threshold after reset. In this case,
-the neuron will continue to spike until the end of the simulation regardless the
-stimulated inputs. We recommend the setting of the parameters of these three models
-to follow the condition of
+parameter setting of ``voltage_reset_fraction`` and ``voltage_reset_add`` may lead to the
+situation that voltage is bigger than threshold after reset. In this case, the neuron
+will continue to spike until the end of the simulation regardless the stimulated inputs.
+We recommend the setting of the parameters of these three models to follow the
+condition of
 
 .. math::
 
@@ -111,7 +124,7 @@ to follow the condition of
   ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
   For implementation details see the
-  `IAF Integration Singularity notebook <../model_details/IAF_Integration_Singularity.ipynb>`_.
+  `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
 
 Parameters
 ++++++++++
@@ -165,8 +178,12 @@ th_voltage_decay           double         Voltage-induced threshold time
                                           voltage-dependent component of the
                                           threshold in 1/ms (bv in Equation
                                           (4) in [1]_)
-tau_syn                    double vector  Time constants of the synaptic
-                                          alpha function in ms
+tau_syn_fast               double vector  Time constants of the faster
+                                          synaptic alpha function in ms
+tau_syn_slow               double vector  Time constants of the slower
+                                          synaptic alpha function in ms
+amp_slow                   double vector  Relative amplitude of the slower
+                                          synaptic alpha function
 E_rev                      double vector  Reversal potential in mV
 spike_dependent_threshold  bool           flag whether the neuron has
                                           biologically defined reset rules
@@ -193,24 +210,19 @@ See also
 ++++++++
 
 gif_psc_exp_multisynapse, gif_cond_exp, gif_cond_exp_multisynapse, gif_pop_psc_exp,
-glif_psc_double_alpha
-
-Examples using this model
-+++++++++++++++++++++++++
-
-.. listexamples:: glif_psc
+glif_psc
 
 EndUserDocs */
 
 namespace nest
 {
 
-class glif_psc : public ArchivingNode
+class glif_psc_double_alpha : public ArchivingNode
 {
 public:
-  glif_psc();
+  glif_psc_double_alpha();
 
-  glif_psc( const glif_psc& );
+  glif_psc_double_alpha( const glif_psc_double_alpha& );
 
   using nest::Node::handle;
   using nest::Node::handles_test_event;
@@ -239,30 +251,32 @@ private:
   void update( nest::Time const&, const long, const long ) override;
 
   // The next two classes need to be friends to access the State_ class/member
-  friend class nest::RecordablesMap< glif_psc >;
-  friend class nest::UniversalDataLogger< glif_psc >;
+  friend class nest::RecordablesMap< glif_psc_double_alpha >;
+  friend class nest::UniversalDataLogger< glif_psc_double_alpha >;
 
   struct Parameters_
   {
-    double G_;                        //!< membrane conductance in nS
-    double E_L_;                      //!< resting potential in mV
-    double th_inf_;                   //!< infinity threshold in mV
-    double C_m_;                      //!< capacitance in pF
-    double t_ref_;                    //!< refractory time in ms
-    double V_reset_;                  //!< Membrane voltage following spike in mV
-    double th_spike_add_;             //!< threshold additive constant following reset in mV
-    double th_spike_decay_;           //!< spike induced threshold in 1/ms
-    double voltage_reset_fraction_;   //!< voltage fraction following reset coefficient
-    double voltage_reset_add_;        //!< voltage additive constant following reset in mV
-    double th_voltage_index_;         //!< a 'leak-conductance' for the voltage-dependent
-                                      //!< component of the threshold in 1/ms
-    double th_voltage_decay_;         //!< inverse of which is the time constant of the
-                                      //!< voltage-dependent component of the threshold in 1/ms
-    std::vector< double > asc_init_;  //!< initial values of ASCurrents_ in pA
-    std::vector< double > asc_decay_; //!< predefined time scale in 1/ms
-    std::vector< double > asc_amps_;  //!< in pA
-    std::vector< double > asc_r_;     //!< coefficient
-    std::vector< double > tau_syn_;   //!< synaptic port time constants in ms
+    double G_;                           //!< membrane conductance in nS
+    double E_L_;                         //!< resting potential in mV
+    double th_inf_;                      //!< infinity threshold in mV
+    double C_m_;                         //!< capacitance in pF
+    double t_ref_;                       //!< refractory time in ms
+    double V_reset_;                     //!< Membrane voltage following spike in mV
+    double th_spike_add_;                //!< threshold additive constant following reset in mV
+    double th_spike_decay_;              //!< spike induced threshold in 1/ms
+    double voltage_reset_fraction_;      //!< voltage fraction following reset coefficient
+    double voltage_reset_add_;           //!< voltage additive constant following reset in mV
+    double th_voltage_index_;            //!< a 'leak-conductance' for the voltage-dependent
+                                         //!< component of the threshold in 1/ms
+    double th_voltage_decay_;            //!< inverse of which is the time constant of the
+                                         //!< voltage-dependent component of the threshold in 1/ms
+    std::vector< double > asc_init_;     //!< initial values of ASCurrents_ in pA
+    std::vector< double > asc_decay_;    //!< predefined time scale in 1/ms
+    std::vector< double > asc_amps_;     //!< in pA
+    std::vector< double > asc_r_;        //!< coefficient
+    std::vector< double > tau_syn_fast_; //!< synaptic port time constants in ms
+    std::vector< double > tau_syn_slow_; //!< synaptic port time constants in ms
+    std::vector< double > amp_slow_;     //!< synaptic port time constants in ms
 
     //! boolean flag which indicates whether the neuron has connections
     bool has_connections_;
@@ -276,7 +290,7 @@ private:
     //! boolean flag which indicates whether the neuron has voltage dependent threshold component
     bool has_theta_voltage_;
 
-    size_t n_receptors_() const; //!< Returns the size of tau_syn_
+    size_t n_receptors_() const; //!< Returns the size of tau_syn_fast_
 
     Parameters_();
 
@@ -292,11 +306,15 @@ private:
     double threshold_voltage_;         //!< voltage component of threshold in mV
     double I_;                         //!< external current in pA
     double I_syn_;                     //!< postsynaptic current in pA
+    double I_syn_fast_;                //!< postsynaptic current in pA
+    double I_syn_slow_;                //!< postsynaptic current in pA
     std::vector< double > ASCurrents_; //!< after-spike currents in pA
     double ASCurrents_sum_;            //!< in pA
     int refractory_steps_;             //!< Number of refractory steps remaining
-    std::vector< double > y1_;         //!< synapse current evolution state 1 in pA
-    std::vector< double > y2_;         //!< synapse current evolution state 2 in pA
+    std::vector< double > y1_fast_;    //!< synapse current evolution state 1 in pA
+    std::vector< double > y2_fast_;    //!< synapse current evolution state 2 in pA
+    std::vector< double > y1_slow_;    //!< synapse current evolution state 1 in pA
+    std::vector< double > y2_slow_;    //!< synapse current evolution state 2 in pA
 
     State_( const Parameters_& );
 
@@ -307,14 +325,14 @@ private:
 
   struct Buffers_
   {
-    Buffers_( glif_psc& );
-    Buffers_( const Buffers_&, glif_psc& );
+    Buffers_( glif_psc_double_alpha& );
+    Buffers_( const Buffers_&, glif_psc_double_alpha& );
 
     std::vector< nest::RingBuffer > spikes_; //!< Buffer incoming spikes through delay, as sum
     nest::RingBuffer currents_;              //!< Buffer incoming currents through delay,
 
     //! Logger for all analog data
-    nest::UniversalDataLogger< glif_psc > logger_;
+    nest::UniversalDataLogger< glif_psc_double_alpha > logger_;
   };
 
   struct Variables_
@@ -330,19 +348,28 @@ private:
     std::vector< double > asc_refractory_decay_rates_; //!< after spike current decay rates during refractory
     double phi;                                        //!< threshold voltage component coefficient
 
-    std::vector< double > P11_; //!< synaptic current evolution parameter
-    std::vector< double > P21_; //!< synaptic current evolution parameter
-    std::vector< double > P22_; //!< synaptic current evolution parameter
-    double P30_;                //!< membrane current/voltage evolution parameter
-    double P33_;                //!< membrane voltage evolution parameter
-    std::vector< double > P31_; //!< synaptic/membrane current evolution parameter
-    std::vector< double > P32_; //!< synaptic/membrane current evolution parameter
+    std::vector< double > P11_fast_; //!< synaptic current evolution parameter
+    std::vector< double > P21_fast_; //!< synaptic current evolution parameter
+    std::vector< double > P22_fast_; //!< synaptic current evolution parameter
+    double P30_;                     //!< membrane current/voltage evolution parameter
+    double P33_;                     //!< membrane voltage evolution parameter
+    std::vector< double > P31_fast_; //!< synaptic/membrane current evolution parameter
+    std::vector< double > P32_fast_; //!< synaptic/membrane current evolution parameter
+
+    // slow component
+    std::vector< double > P11_slow_; //!< synaptic current evolution parameter
+    std::vector< double > P21_slow_; //!< synaptic current evolution parameter
+    std::vector< double > P22_slow_; //!< synaptic current evolution parameter
+    std::vector< double > P31_slow_; //!< synaptic/membrane current evolution parameter
+    std::vector< double > P32_slow_; //!< synaptic/membrane current evolution parameter
+
 
     /** Amplitude of the synaptic current.
               This value is chosen such that a postsynaptic current with
               weight one has an amplitude of 1 pA.
     */
     std::vector< double > PSCInitialValues_;
+    std::vector< double > PSCInitialValues_slow_;
   };
 
   double
@@ -393,18 +420,18 @@ private:
   Buffers_ B_;
 
   //! Mapping of recordables names to access functions
-  static nest::RecordablesMap< glif_psc > recordablesMap_;
+  static nest::RecordablesMap< glif_psc_double_alpha > recordablesMap_;
 };
 
 
 inline size_t
-nest::glif_psc::Parameters_::n_receptors_() const
+nest::glif_psc_double_alpha::Parameters_::n_receptors_() const
 {
-  return tau_syn_.size();
+  return tau_syn_fast_.size();
 }
 
 inline size_t
-nest::glif_psc::send_test_event( nest::Node& target, size_t receptor_type, nest::synindex, bool )
+nest::glif_psc_double_alpha::send_test_event( nest::Node& target, size_t receptor_type, nest::synindex, bool )
 {
   nest::SpikeEvent e;
   e.set_sender( *this );
@@ -412,7 +439,7 @@ nest::glif_psc::send_test_event( nest::Node& target, size_t receptor_type, nest:
 }
 
 inline size_t
-nest::glif_psc::handles_test_event( nest::CurrentEvent&, size_t receptor_type )
+nest::glif_psc_double_alpha::handles_test_event( nest::CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -422,7 +449,7 @@ nest::glif_psc::handles_test_event( nest::CurrentEvent&, size_t receptor_type )
 }
 
 inline size_t
-nest::glif_psc::handles_test_event( nest::DataLoggingRequest& dlr, size_t receptor_type )
+nest::glif_psc_double_alpha::handles_test_event( nest::DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -432,7 +459,7 @@ nest::glif_psc::handles_test_event( nest::DataLoggingRequest& dlr, size_t recept
 }
 
 inline void
-glif_psc::get_status( DictionaryDatum& d ) const
+glif_psc_double_alpha::get_status( DictionaryDatum& d ) const
 {
   // get our own parameter and state data
   P_.get( d );
@@ -445,7 +472,7 @@ glif_psc::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-glif_psc::set_status( const DictionaryDatum& d )
+glif_psc_double_alpha::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_;                       // temporary copy in case of errors
   const double delta_EL = ptmp.set( d, this ); // throws if BadProperty

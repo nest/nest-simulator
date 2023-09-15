@@ -199,7 +199,7 @@ experimenting.
    NEST ignores ``OMP_NUM_THREADS`` environment
    variable, which may be set by mpi4py, Slurm or similar runtime
    environments. NEST will always start running on a single thread
-   until the number of threads is change by setting either the
+   until the number of threads is changed by setting either the
    ``local_num_threads`` or the ``total_num_virtual_procs``
    :ref:`kernel attribute<sec_kernel_attributes>`.
 

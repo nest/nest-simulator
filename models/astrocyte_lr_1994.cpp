@@ -459,19 +459,17 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
       }
     }
 
+    // keep calcium within limits
+    S_.y_[ S::Ca ] = std::max( 0.0, std::min( y[ S::Ca ], P_.Ca_tot_ ) );
+
     // this is to add the incoming spikes to IP3
     S_.y_[ State_::IP3 ] += P_.delta_IP3_ * B_.spike_exc_.get_value( lag );
 
-    // suprathreshold calcium concentration determines SIC generation
-    // 1000.0: change unit to nM as in the original paper
-    double calc_thr = ( S_.y_[ State_::Ca ] - P_.SIC_th_ ) * 1000.0;
-    double sic_value = 0.0;
     // SIC generation according to Nadkarni & Jung, 2003
-    // take the logarithmic of calcium concentration
-    if ( calc_thr > 1.0 )
-    {
-      sic_value = std::log( calc_thr ) * P_.SIC_scale_;
-    }
+    //   Suprathreshold log of calcium concentration determines SIC generation
+    //   1000.0: change unit to nM as in the original paper
+    const double calc_thr = ( S_.y_[ State_::Ca ] - P_.SIC_th_ ) * 1000.0;
+    const double sic_value = calc_thr > 1.0 ? std::log( calc_thr ) * P_.SIC_scale_ : 0.0;
     B_.sic_values[ lag ] = sic_value;
 
     // log state data

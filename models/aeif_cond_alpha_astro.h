@@ -1,5 +1,5 @@
 /*
- *  aeif_cond_alpha.h
+ *  aeif_cond_alpha_astro.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef AEIF_COND_ALPHA_H
-#define AEIF_COND_ALPHA_H
+#ifndef AEIF_COND_ALPHA_ASTRO_H
+#define AEIF_COND_ALPHA_ASTRO_H
 
 // Generated includes:
 #include "config.h"
@@ -54,7 +54,7 @@ namespace nest
  *       through a function pointer.
  * @param void* Pointer to model neuron instance.
  */
-extern "C" int aeif_cond_alpha_dynamics( double, const double*, double*, void* );
+extern "C" int aeif_cond_alpha_astro_dynamics( double, const double*, double*, void* );
 
 /**
  * Function computing right-hand side of ODE for GSL solver if Delta_T == 0.
@@ -66,33 +66,35 @@ extern "C" int aeif_cond_alpha_dynamics( double, const double*, double*, void* )
  *       through a function pointer.
  * @param void* Pointer to model neuron instance.
  */
-extern "C" int aeif_cond_alpha_dynamics_DT0( double, const double*, double*, void* );
+extern "C" int aeif_cond_alpha_astro_dynamics_DT0( double, const double*, double*, void* );
 
-/* BeginUserDocs: neuron, integrate-and-fire, adaptive threshold, conductance-based
+/* BeginUserDocs: neuron, integrate-and-fire, adaptive threshold, conductance-based, astrocyte
 
 Short description
 +++++++++++++++++
 
-Conductance based exponential integrate-and-fire neuron model
+Conductance based exponential integrate-and-fire neuron model with support for
+neuron-astrocyte interactions
 
 Description
 +++++++++++
 
-``aeif_cond_alpha`` is the adaptive exponential integrate and fire neuron according
-to Brette and Gerstner (2005).
-Synaptic conductances are modelled as alpha-functions.
+``aeif_cond_alpha_astro`` is an adaptive exponential integrate-and-fire neuron
+(AdEx) that can receive inputs from astrocytes, in addition to receiving
+synaptic inputs from other neurons. It is adapted from the standard NEST
+implementation of AdEx neurons (``aeif_cond_alpha``). The connection with
+astrocytes is established through ``sic_connection``, which sends slow inward
+current (SIC) from an astrocyte to ``aeif_cond_alpha_astro``.
 
-This implementation uses the embedded 4th order Runge-Kutta-Fehlberg solver with
-adaptive step size to integrate the differential equation.
-
-The membrane potential is given by the following differential equation:
+The membrane potential is given by the following differential equation
+(adapted from ``aeif_cond_alpha``):
 
 .. math::
 
  C_m \frac{dV}{dt} =
  -g_L(V-E_L)+g_L\Delta_T\exp\left(\frac{V-V_{th}}{\Delta_T}\right) -
  g_e(t)(V-E_e) \\
-                                                     -g_i(t)(V-E_i)-w +I_e
+                                                     -g_i(t)(V-E_i)-w +I_e + I_{\text{SIC}}
 
 and
 
@@ -100,7 +102,12 @@ and
 
  \tau_w \frac{dw}{dt} = a(V-E_L) - w
 
-For the reference implementation of this model, see
+Here, :math:`I_{\text{SIC}}` is the sum of slow inward currents received from all
+astrocytes connected to the neuron. The other parameters and
+variables are the same as in ``aeif_cond_alpha``.
+
+For implementation details of the adaptive exponential integrate-and-fire neuron
+model, see the
 `aeif_models_implementation <../model_details/aeif_models_implementation.ipynb>`_ notebook.
 
 See also [1]_.
@@ -111,7 +118,7 @@ Parameters
 The following parameters can be set in the status dictionary.
 
 ======== ======= =======================================
-**Dynamic state variables:**
+**Dynamic state variables**
 --------------------------------------------------------
  V_m     mV      Membrane potential
  g_ex    nS      Excitatory synaptic conductance
@@ -147,7 +154,7 @@ The following parameters can be set in the status dictionary.
 **Synaptic parameters**
 -------------------------------------------------------------------------------
  E_ex       mV      Excitatory reversal potential
- tau_syn_ex ms      Rise time of excitatory synaptic conductance (alpha
+ tau_syn_ex ms      Rise time of the excitatory synaptic conductance (alpha
                     function)
  E_in       mV      Inhibitory reversal potential
  tau_syn_in ms      Rise time of the inhibitory synaptic conductance
@@ -170,7 +177,7 @@ SpikeEvent
 Receives
 ++++++++
 
-SpikeEvent, CurrentEvent, DataLoggingRequest
+SpikeEvent, CurrentEvent, DataLoggingRequest, SICEvent
 
 References
 ++++++++++
@@ -183,22 +190,17 @@ References
 See also
 ++++++++
 
-iaf_cond_alpha, aeif_cond_exp
-
-Examples using this model
-+++++++++++++++++++++++++
-
-.. listexamples:: aeif_cond_alpha
+iaf_cond_alpha, aeif_cond_exp, astrocyte_lr_1994, sic_connection
 
 EndUserDocs */
 
-class aeif_cond_alpha : public ArchivingNode
+class aeif_cond_alpha_astro : public ArchivingNode
 {
 
 public:
-  aeif_cond_alpha();
-  aeif_cond_alpha( const aeif_cond_alpha& );
-  ~aeif_cond_alpha() override;
+  aeif_cond_alpha_astro();
+  aeif_cond_alpha_astro( const aeif_cond_alpha_astro& );
+  ~aeif_cond_alpha_astro() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -212,10 +214,12 @@ public:
 
   void handle( SpikeEvent& ) override;
   void handle( CurrentEvent& ) override;
+  void handle( SICEvent& ) override;
   void handle( DataLoggingRequest& ) override;
 
   size_t handles_test_event( SpikeEvent&, size_t ) override;
   size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( SICEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
   void get_status( DictionaryDatum& ) const override;
@@ -231,11 +235,11 @@ private:
   // Friends --------------------------------------------------------
 
   // make dynamics function quasi-member
-  friend int aeif_cond_alpha_dynamics( double, const double*, double*, void* );
+  friend int aeif_cond_alpha_astro_dynamics( double, const double*, double*, void* );
 
   // The next two classes need to be friends to access the State_ class/member
-  friend class RecordablesMap< aeif_cond_alpha >;
-  friend class UniversalDataLogger< aeif_cond_alpha >;
+  friend class RecordablesMap< aeif_cond_alpha_astro >;
+  friend class UniversalDataLogger< aeif_cond_alpha_astro >;
 
 private:
   // ----------------------------------------------------------------
@@ -301,7 +305,6 @@ public:
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
-
     State_& operator=( const State_& );
 
     void get( DictionaryDatum& ) const;
@@ -315,11 +318,11 @@ public:
    */
   struct Buffers_
   {
-    Buffers_( aeif_cond_alpha& );                  //!< Sets buffer pointers to 0
-    Buffers_( const Buffers_&, aeif_cond_alpha& ); //!< Sets buffer pointers to 0
+    Buffers_( aeif_cond_alpha_astro& );                  //!< Sets buffer pointers to 0
+    Buffers_( const Buffers_&, aeif_cond_alpha_astro& ); //!< Sets buffer pointers to 0
 
     //! Logger for all analog data
-    UniversalDataLogger< aeif_cond_alpha > logger_;
+    UniversalDataLogger< aeif_cond_alpha_astro > logger_;
 
     /** buffers and sums up incoming spikes/currents */
     RingBuffer spike_exc_;
@@ -332,11 +335,13 @@ public:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing the GSL system
 
-    // Since IntegrationStep_ is initialized with step_, and the resolution
+    // Since IntergrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
     double step_;            //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
+
+    RingBuffer sic_currents_;
 
     /**
      * Input current injected by CurrentEvent.
@@ -346,6 +351,7 @@ public:
      * the first simulation, but not modified before later Simulate calls.
      */
     double I_stim_;
+    double I_sic_;
   };
 
   // ----------------------------------------------------------------
@@ -380,6 +386,13 @@ public:
     return S_.y_[ elem ];
   }
 
+  // Read out SIC current
+  double
+  get_I_sic_() const
+  {
+    return B_.I_sic_;
+  }
+
   // ----------------------------------------------------------------
 
   Parameters_ P_;
@@ -388,11 +401,11 @@ public:
   Buffers_ B_;
 
   //! Mapping of recordables names to access functions
-  static RecordablesMap< aeif_cond_alpha > recordablesMap_;
+  static RecordablesMap< aeif_cond_alpha_astro > recordablesMap_;
 };
 
 inline size_t
-aeif_cond_alpha::send_test_event( Node& target, size_t receptor_type, synindex, bool )
+aeif_cond_alpha_astro::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -401,7 +414,7 @@ aeif_cond_alpha::send_test_event( Node& target, size_t receptor_type, synindex, 
 }
 
 inline size_t
-aeif_cond_alpha::handles_test_event( SpikeEvent&, size_t receptor_type )
+aeif_cond_alpha_astro::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -411,7 +424,7 @@ aeif_cond_alpha::handles_test_event( SpikeEvent&, size_t receptor_type )
 }
 
 inline size_t
-aeif_cond_alpha::handles_test_event( CurrentEvent&, size_t receptor_type )
+aeif_cond_alpha_astro::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -421,7 +434,17 @@ aeif_cond_alpha::handles_test_event( CurrentEvent&, size_t receptor_type )
 }
 
 inline size_t
-aeif_cond_alpha::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
+aeif_cond_alpha_astro::handles_test_event( SICEvent&, size_t receptor_type )
+{
+  if ( receptor_type != 0 )
+  {
+    throw UnknownReceptorType( receptor_type, get_name() );
+  }
+  return 0;
+}
+
+inline size_t
+aeif_cond_alpha_astro::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -431,7 +454,7 @@ aeif_cond_alpha::handles_test_event( DataLoggingRequest& dlr, size_t receptor_ty
 }
 
 inline void
-aeif_cond_alpha::get_status( DictionaryDatum& d ) const
+aeif_cond_alpha_astro::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
@@ -441,7 +464,7 @@ aeif_cond_alpha::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-aeif_cond_alpha::set_status( const DictionaryDatum& d )
+aeif_cond_alpha_astro::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_;     // temporary copy in case of errors
   ptmp.set( d, this );       // throws if BadProperty
@@ -462,4 +485,4 @@ aeif_cond_alpha::set_status( const DictionaryDatum& d )
 } // namespace
 
 #endif // HAVE_GSL
-#endif // AEIF_COND_ALPHA_H
+#endif // AEIF_COND_ALPHA_ASTRO_H

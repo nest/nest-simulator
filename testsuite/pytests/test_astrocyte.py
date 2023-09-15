@@ -32,12 +32,14 @@ We assess that the difference between the recorded variables and the reference
 is smaller than the default tolerance given by pytest.approx().
 """
 
+import os
 import numpy as np
 import pytest
 
 import nest
 
 pytestmark = pytest.mark.skipif_missing_gsl
+path = os.path.abspath(os.path.dirname(__file__))
 
 
 def test_closeness_nest_odeint():
@@ -49,7 +51,7 @@ def test_closeness_nest_odeint():
     spike_weights = [1.0]
 
     # get reference data
-    odeint = np.loadtxt("test_astrocyte.dat").T
+    odeint = np.loadtxt(os.path.join(path, "test_astrocyte.dat")).T
     ref_ip3 = odeint[1, :]
     ref_ca = odeint[2, :]
     ref_h_ip3r = odeint[3, :]

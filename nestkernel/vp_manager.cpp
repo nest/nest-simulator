@@ -165,8 +165,8 @@ nest::VPManager::set_status( const DictionaryDatum& d )
     {
       const std::string tstr = ( n_threads > 1 ) ? "threads" : "thread";
       std::string msg = "NEST ignores the enviroment variable OMP_NUM_THREADS. The number of threads\n";
-      msg += "in a NEST simulation is controlled only by the kernel attributes /local_num_threads\n";
-      msg += "and /total_num_virtual_procs. ";
+      msg += "in a NEST simulation is controlled only by the kernel attributes 'local_num_threads'\n";
+      msg += "and 'total_num_virtual_procs'. ";
       msg += String::compose(
         "NEST will use %1 %2 and ignore OMP_NUM_THREADS (value %3).", n_threads, tstr, get_OMP_NUM_THREADS() );
 

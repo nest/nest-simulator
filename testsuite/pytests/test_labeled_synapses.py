@@ -171,6 +171,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             if syn == "sic_connection":
                 # Skip sic_connection since it requires different pre- and post-synaptic neuron models
                 continue
+
             a, r_type = self.default_network(syn)
 
             # see if symmetric connections are required

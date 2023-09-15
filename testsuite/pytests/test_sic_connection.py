@@ -23,76 +23,72 @@
 Test functionality of the SIC connection
 """
 
-import pytest
-import nest
 import numpy as np
+import pytest
+
+import nest
 
 
-@nest.ll_api.check_stack
-@pytest.mark.skipif_missing_gsl
-class SICConnectionTestCase:
-    """Test SIC connection"""
+pytestmark = pytest.mark.skipif_missing_gsl
 
-    def test_ConnectNeuronsWithSICConnection(self):
-        """Ensures that the restriction to supported neuron models works."""
 
-        nest.set_verbosity("M_WARNING")
-        nest.ResetKernel()
+SUPPORTED_SOURCES = [
+    "astrocyte_lr_1994",
+]
+SUPPORTED_TARGETS = [
+    "aeif_cond_alpha_astro",
+]
+TEST_MODELS = SUPPORTED_SOURCES + SUPPORTED_TARGETS + ["iaf_psc_exp"]
 
-        supported_sources = [
-            "astrocyte_lr_1994",
-        ]
-        supported_targets = [
-            "aeif_cond_alpha_astro",
-        ]
 
-        # Ensure that connecting not supported models fails
-        for smodel in [x for x in nest.node_models]:
-            for tmodel in [y for y in nest.node_models]:
-                nest.ResetKernel()
+@pytest.mark.parametrize("source_model", TEST_MODELS)
+@pytest.mark.parametrize("target_model", TEST_MODELS)
+def test_ConnectNeuronsWithSICConnection(source_model, target_model):
+    """Ensures that the restriction to supported neuron models works."""
 
-                source = nest.Create(smodel)
-                target = nest.Create(tmodel)
+    source = nest.Create(source_model)
+    target = nest.Create(target_model)
 
-                if smodel in supported_sources and tmodel in supported_targets:
-                    nest.Connect(source, target, syn_spec={"synapse_model": "sic_connection"})
-                    continue
+    if source_model in SUPPORTED_SOURCES and target_model in SUPPORTED_TARGETS:
+        # Connection should work
+        nest.Connect(source, target, syn_spec={"synapse_model": "sic_connection"})
+    else:
+        # Connection should fail
+        with pytest.raises(nest.kernel.NESTError):
+            nest.Connect(source, target, syn_spec={"synapse_model": "sic_connection"})
 
-                # try to connect with sic_connection
-                with pytest.raises(nest.kernel.NESTError):
-                    nest.Connect(source, target, syn_spec={"synapse_model": "sic_connection"})
 
-    def test_SynapseFunctionWithAeifModel(self):
-        """Ensure that SICEvent is properly processed"""
+def test_SynapseFunctionWithAeifModel():
+    """Ensure that SICEvent is properly processed"""
 
-        nest.set_verbosity("M_WARNING")
-        nest.ResetKernel()
+    nest.ResetKernel()
+    resol = nest.resolution
 
-        # Create neurons and devices
-        astrocyte = nest.Create("astrocyte_lr_1994", {"Ca": 0.2})  # a calcium value which produces SIC
-        neuron = nest.Create("aeif_cond_alpha_astro")
+    # Create neurons and devices
+    astrocyte = nest.Create("astrocyte_lr_1994", {"Ca": 0.2})  # a calcium value which produces SIC
+    neuron = nest.Create("aeif_cond_alpha_astro")
 
-        test_resol = 1.0  # test resolution
-        mm_neuron = nest.Create("multimeter", params={"record_from": ["I_SIC"], "interval": test_resol})
-        mm_astro = nest.Create("multimeter", params={"record_from": ["Ca"], "interval": test_resol})
+    mm_neuron = nest.Create("multimeter", params={"record_from": ["I_SIC"], "interval": resol})
+    mm_astro = nest.Create("multimeter", params={"record_from": ["Ca"], "interval": resol})
 
-        nest.Connect(astrocyte, neuron, syn_spec={"synapse_model": "sic_connection"})
-        nest.Connect(mm_neuron, neuron)
-        nest.Connect(mm_astro, astrocyte)
+    nest.Connect(astrocyte, neuron, syn_spec={"synapse_model": "sic_connection"})
+    nest.Connect(mm_neuron, neuron)
+    nest.Connect(mm_astro, astrocyte)
 
-        # Simulation
-        nest.Simulate(100.0)
+    # Simulation
+    nest.Simulate(1000.0)
 
-        # Evaluation
-        # The expected SIC values are calculated based on the astrocyte dynamics
-        # implemented in astrocyte_lr_1994.cpp.
-        actual_sic_values = mm_neuron.events["I_SIC"]
-        Ca = mm_astro.events["Ca"]
-        f_v = np.vectorize(lambda x: np.log(x * 1000.0 - 196.69) if x * 1000.0 - 196.69 > 1.0 else 0.0)
-        expected_sic_values = f_v(Ca)
+    # Evaluation
+    # The expected SIC values are calculated based on the astrocyte dynamics
+    # implemented in astrocyte_lr_1994.cpp.
+    actual_sic_values = mm_neuron.events["I_SIC"]
+    Ca = mm_astro.events["Ca"]
+    f_v = np.vectorize(lambda x: np.log(x * 1000.0 - 196.69) if x * 1000.0 - 196.69 > 1.0 else 0.0)
+    expected_sic_values = f_v(Ca)
 
-        # The sic_connection has a default delay (1 ms), thus the values after
-        # the number of steps of delay are compared with the expected values.
-        sic_delay = nest.GetDefaults("sic_connection")["delay"]
-        n_step_delay = int(sic_delay / test_resol)
-        assert np.allclose(actual_sic_values[n_step_delay:], expected_sic_values[:-n_step_delay], rtol=1e-5)
+    # The sic_connection has a default delay (1 ms), thus the values after
+    # the number of steps of delay are compared with the expected values.
+    sic_delay = nest.GetDefaults("sic_connection")["delay"]
+    n_step_delay = int(sic_delay / resol)
+
+    assert actual_sic_values[n_step_delay:] == pytest.approx(expected_sic_values[:-n_step_delay])

@@ -180,6 +180,11 @@ See also
 
 ht_synapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: ht_neuron
+
 EndUserDocs */
 
 class ht_neuron : public ArchivingNode

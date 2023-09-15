@@ -179,6 +179,11 @@ See also
 
 hh_psc_alpha, clopath_synapse, aeif_psc_delta_clopath
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: hh_psc_alpha_clopath
+
 EndUserDocs */
 
 class hh_psc_alpha_clopath : public ClopathArchivingNode

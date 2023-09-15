@@ -74,6 +74,11 @@ See also
 
 hh_psc_alpha_gap
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: gap_junction
+
 EndUserDocs */
 
 template < typename targetidentifierT >

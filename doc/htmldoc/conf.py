@@ -48,6 +48,7 @@ source_suffix = ".rst"
 master_doc = "index"
 extensions = [
     "sphinx_gallery.gen_gallery",
+    "list_examples",
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
     "sphinx.ext.autosummary",
@@ -171,6 +172,7 @@ html_theme_options = {
     "globaltoc_collapse": True,
     # If True, show hidden TOC entries
     "globaltoc_includehidden": True,
+    "version_dropdown": False,
 }
 
 html_static_path = ["static"]

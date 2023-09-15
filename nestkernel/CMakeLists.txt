@@ -98,7 +98,7 @@ set ( nestkernel_sources
       target_table.h target_table.cpp
       target_table_devices.h target_table_devices.cpp target_table_devices_impl.h
       target.h target_data.h static_assert.h
-      send_buffer_position.h
+      send_buffer_position.h send_buffer_position.cpp
       source.h
       source_table.h source_table.cpp
       source_table_position.h
@@ -114,6 +114,7 @@ set ( nestkernel_sources
       position.h
       spatial.h spatial.cpp
       stimulation_backend.h
+      buffer_resize_log.h buffer_resize_log.cpp
       )
 
 

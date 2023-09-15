@@ -460,7 +460,7 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
     }
 
     // keep calcium within limits
-    S_.y_[ S::Ca ] = std::max( 0.0, std::min( y[ S::Ca ], P_.Ca_tot_ ) );
+    S_.y_[ State_::Ca ] = std::max( 0.0, std::min( S_.y_[ State_::Ca ], P_.Ca_tot_ ) );
 
     // this is to add the incoming spikes to IP3
     S_.y_[ State_::IP3 ] += P_.delta_IP3_ * B_.spike_exc_.get_value( lag );

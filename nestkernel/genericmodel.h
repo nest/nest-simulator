@@ -81,7 +81,7 @@ public:
 
   void sends_secondary_event( DelayedRateConnectionEvent& re ) override;
 
-  void sends_secondary_event( SICEvent& sic );
+  void sends_secondary_event( SICEvent& sic ) override;
 
   Node const& get_prototype() const override;
 

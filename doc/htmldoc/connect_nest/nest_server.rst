@@ -91,6 +91,25 @@ As an alternative to a native installation, NEST Server is available
 from the NEST Docker image. Please check out the corresponding
 :ref:`installation instructions <docker>` for more details.
 
+.. _sec_server_vars:
+
+Set environment variables for security options
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To use NEST Server, there are several environment variables users need to set in their environment.
+
+* Requests require NESTServerAuth tokens. By default, the authentication is on (``NEST_SERVER_DISABLE_AUTH=0``).
+* NEST Server generates a token automatically, but it can also take custom tokens (``NEST_SERVER_ACCESS_TOKEN='alongaccesstoken'``).
+* The `CORS <https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS>`_ origins are restricted. By default, the only allowed CORS origin is ``http://localhost``
+  (``NEST_SERVER_CORS_ORIGINS=http://localhost``).
+* Only API calls are enabled. By default, the exec call is disabled (``NEST_SERVER_ENABLE_EXEC_CALL=0``).
+* The code execution is restricted. By default, the restriction is activated (``NEST_SERVER_DISABLE_RESTRICTION=0``).
+* For security reasons the exec call in NEST Server accepts only modules from NEST_SERVER_MODULES.
+
+  For example:
+
+       ``NEST_SERVER_MODULES='import nest; import numpy as np; from numpy import random'``
+
 Run NEST Server
 ~~~~~~~~~~~~~~~
 

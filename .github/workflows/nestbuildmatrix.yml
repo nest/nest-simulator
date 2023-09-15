@@ -409,6 +409,8 @@ jobs:
       fail-fast: false
     needs: [pydocstyle, rstcheck, vale, black, flake8]
     steps:
+      - name: checkout repo 
+        uses: actions/checkout@v3
       - name: install python
         uses: actions/setup-python@v4 
         with:

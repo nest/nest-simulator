@@ -411,15 +411,6 @@ public:
 
   // ----------------------------------------------------------------
 
-  /**
-   * Internal variables of the model.
-   */
-  struct Variables_
-  {
-    /** maximal value of cytosolic calcium concentration */
-    double max_Ca_;
-  };
-
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Read out state vector elements, used by UniversalDataLogger

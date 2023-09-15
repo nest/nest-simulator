@@ -220,6 +220,9 @@ nest::eprop_iaf_psc_delta::update( Time const& origin, const long from, const lo
     bool is_time_to_update = step_in_current_interval == update_interval_steps - 1;
     bool is_time_to_reset = is_update_interval_reset && is_time_to_update;
 
+    if ( is_time_to_update )
+      erase_unneeded_eprop_history();
+
     if ( is_time_to_reset )
     {
       S_.y3_ = 0.0;

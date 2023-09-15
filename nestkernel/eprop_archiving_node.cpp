@@ -79,57 +79,11 @@ nest::EpropArchivingNode::init_eprop_buffers( double delay )
 }
 
 void
-nest::EpropArchivingNode::get_eprop_history( double t1,
-  double t2,
-  std::deque< histentry_eprop >::iterator* start,
-  std::deque< histentry_eprop >::iterator* finish )
+nest::EpropArchivingNode::get_eprop_history( double time_point, std::deque< histentry_eprop >::iterator* it )
 {
-  // set start and finish pointers to the eprop history entries corresponding to times t1 and t2
-  *finish = eprop_history_.end();
-  if ( eprop_history_.empty() )
-  {
-    *start = *finish;
-    return;
-  }
-  else
-  {
-    // compute the positions of the pointers pointing to entries at t1 and t2
-    // since no time steps are missing in eprop history, just ensure that *start
-    // points at least to begin() and *finish at most to end() of eprop_history_
-    double t_first = eprop_history_.begin()->t_;
-    double h = Time::get_resolution().get_ms();
-    int pos_t1 = std::max( 0, ( ( int ) std::round( ( t1 - t_first ) / h ) ) );
-    int pos_t2 = std::min( ( int ) ( eprop_history_.size() ), ( ( int ) std::round( ( t2 - t_first ) / h ) ) );
-
-    std::deque< histentry_eprop >::iterator it_first = eprop_history_.begin();
-    *start = it_first + std::max( 0, pos_t1 );
-    *finish = it_first + std::max( 0, pos_t2 );
-  }
+  
+  *it = std::lower_bound( eprop_history_.begin(), eprop_history_.end(), time_point - 1 + eps_ );
 }
-
-void
-nest::EpropArchivingNode::get_eprop_history( double t1, std::deque< histentry_eprop >::iterator* start )
-{
-  // set start pointer to the eprop history entry corresponding to time t1
-  if ( eprop_history_.empty() )
-  {
-    *start = eprop_history_.end();
-    return;
-  }
-  else
-  {
-    // compute the positions of the pointer pointing to the entry at t1
-    // since no time steps are missing in eprop history, just ensure that *start
-    // points at least to begin()
-    double t_first = eprop_history_.begin()->t_;
-    double h = Time::get_resolution().get_ms();
-    int pos_t1 = std::max( 0, ( ( int ) std::round( ( t1 - t_first ) / h ) ) );
-
-    std::deque< histentry_eprop >::iterator it_first = eprop_history_.begin();
-    *start = it_first + std::max( 0, pos_t1 );
-  }
-}
-
 
 void
 nest::EpropArchivingNode::register_update( double t_last_update, double t_current_update )
@@ -194,23 +148,39 @@ nest::EpropArchivingNode::get_spike_history( double t1,
 }
 
 void
-nest::EpropArchivingNode::tidy_eprop_history()
+nest::EpropArchivingNode::erase_unneeded_eprop_history()
 {
-  double earliest_time_to_keep = ( t_last_update_per_synapse_.begin() )->t_;
-  if ( !eprop_history_.empty() )
+  if ( eprop_history_.empty() )
+    return;
+
+  double update_interval = kernel().simulation_manager.get_eprop_update_interval();
+
+  std::deque< histentry_eprop >::iterator start;
+  std::deque< histentry_eprop >::iterator finish;
+
+  auto it = t_last_update_per_synapse_.begin();
+
+  for ( auto t = t_last_update_per_synapse_.begin()->t_; t <= ( t_last_update_per_synapse_.end() - 1 )->t_;
+        t += update_interval )
   {
-    std::deque< histentry_eprop >::iterator start;
-    std::deque< histentry_eprop >::iterator finish;
-
-    // find eprop history entries for times earlier than earliest last update time
-    nest::EpropArchivingNode::get_eprop_history( 0.0, earliest_time_to_keep, &start, &finish );
-
-    eprop_history_.erase( eprop_history_.begin(), finish ); // erase found entries since no longer used
+    if ( it->t_ == t )
+    {
+      it++;
+    }
+    else
+    {
+      get_eprop_history( t, &start );
+      get_eprop_history( t + update_interval, &finish );
+      eprop_history_.erase( start, finish ); // erase found entries since no longer used
+    }
   }
+  get_eprop_history( 0.0, &start );
+  get_eprop_history( t_last_update_per_synapse_.begin()->t_, &finish );
+  eprop_history_.erase( start, finish ); // erase found entries since no longer used
 }
 
 void
-nest::EpropArchivingNode::tidy_spike_history()
+nest::EpropArchivingNode::erase_unneeded_spike_history()
 {
   double earliest_time_to_keep = ( t_last_update_per_synapse_.begin() )->t_;
   while ( ( !spike_history_.empty() ) && ( spike_history_.front() + 1.0e-6 < earliest_time_to_keep ) )
@@ -272,8 +242,8 @@ nest::EpropArchivingNode::write_learning_signal_to_eprop_history( LearningSignal
   std::deque< histentry_eprop >::iterator finish;
 
   // get part of eprop history to which the learning signal is added
-  nest::EpropArchivingNode::get_eprop_history(
-    t_ms, t_ms + Time::delay_steps_to_ms( delay ), &start, &finish ); // implicitely increase access counter
+  get_eprop_history( t_ms, &start );
+  get_eprop_history( t_ms + Time::delay_steps_to_ms( delay ), &finish );
 
   std::vector< unsigned int >::iterator it = e.begin();
 

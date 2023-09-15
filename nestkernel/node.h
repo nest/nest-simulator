@@ -768,8 +768,8 @@ public:
     std::deque< double >::iterator* start,
     std::deque< double >::iterator* finish );
 
-  virtual void tidy_eprop_history();
-  virtual void tidy_spike_history();
+  virtual void erase_unneeded_eprop_history();
+  virtual void erase_unneeded_spike_history();
 
   /**
    * Modify Event object parameters during event delivery.

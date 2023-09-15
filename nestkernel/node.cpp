@@ -568,13 +568,13 @@ nest::Node::get_spike_history( double, double, std::deque< double >::iterator*, 
 }
 
 void
-Node::tidy_eprop_history()
+Node::erase_unneeded_eprop_history()
 {
   throw UnexpectedEvent();
 }
 
 void
-Node::tidy_spike_history()
+Node::erase_unneeded_spike_history()
 {
   throw UnexpectedEvent();
 }

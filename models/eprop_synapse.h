@@ -401,7 +401,7 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
         double sum_t_prime = 0.0;
         double sum_e_bar = 0.0;
         double epsilon = 0.0;
-        
+
         for ( auto presyn_isi : presyn_isis )
         {
           last_z_bar += alpha_complement;
@@ -453,8 +453,7 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
       presyn_spike_times_.clear();
       presyn_spike_times_.push_back( t_spike );
 
-      target->tidy_eprop_history();
-      target->tidy_spike_history();
+      target->erase_unneeded_spike_history();
     }
   }
 

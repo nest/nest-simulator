@@ -52,20 +52,15 @@ public:
 
   void register_update( double t_last_update, double t_current_update );
 
-  void get_eprop_history( double t1,
-    double t2,
-    std::deque< histentry_eprop >::iterator* start,
-    std::deque< histentry_eprop >::iterator* finish ) override;
-
-  void get_eprop_history( double t1, std::deque< histentry_eprop >::iterator* start ) override;
+  void get_eprop_history( double time_point, std::deque< histentry_eprop >::iterator* it ) override;
 
   void get_spike_history( double t1,
     double t2,
     std::deque< double >::iterator* start,
     std::deque< double >::iterator* finish ) override;
 
-  void tidy_eprop_history() override;
-  void tidy_spike_history() override;
+  void erase_unneeded_eprop_history() override;
+  void erase_unneeded_spike_history() override;
 
   void init_eprop_buffers( double delay ) override; // public to execute from synapse
 

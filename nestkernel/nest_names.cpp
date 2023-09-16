@@ -624,15 +624,17 @@ const Name y_1( "y_1" );
 const Name z( "z" );
 const Name z_connected( "z_connected" );
 
+const Name astrocyte( "astrocyte" );
+const Name astro2post( "astro2post" );
 const Name p_syn_astro( "p_syn_astro" );
 const Name astro_pool_by_index( "astro_pool_by_index" );
 const Name max_astro_per_target( "max_astro_per_target" );
-const Name weights_n2n( "weights_n2n" );
-const Name weights_n2a( "weights_n2a" );
-const Name delays_n2n( "delays_n2n" );
-const Name delays_n2a( "delays_n2a" );
-const Name weights_a2n( "weights_a2n" );
-const Name delays_a2n( "delays_a2n" );
+extern const Name weight_pre2post( "weight_pre2post" );
+extern const Name weight_pre2astro( "weight_pre2astro" );
+extern const Name delay_pre2post( "delay_pre2post" );
+extern const Name delay_pre2astro( "delay_pre2astro" );
+extern const Name weight_astro2post( "weight_astro2post");
+extern const Name delay_astro2post( "delay_astro2post");
 } // namespace names
 
 } // namespace nest

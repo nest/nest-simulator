@@ -109,7 +109,7 @@ nest.Connect(
 )
 
 mm_pre_neurons = nest.Create("multimeter", params={"record_from": ["V_m"]})
-mm_post_neurons = nest.Create("multimeter", params={"record_from": ["V_m", "SIC"]})
+mm_post_neurons = nest.Create("multimeter", params={"record_from": ["V_m", "I_SIC"]})
 mm_astrocytes = nest.Create("multimeter", params={"record_from": ["IP3", "Ca"]})
 nest.Connect(mm_pre_neurons, pre_neurons)
 nest.Connect(mm_post_neurons, post_neurons)
@@ -244,7 +244,7 @@ def plot_dynamics(astro_data, neuron_data, data_path, start, rank=0):
     # neuron data
     b = neuron_data
     b_mask = b["times"] > start
-    b_sic = b["SIC"][b_mask]
+    b_sic = b["I_SIC"][b_mask]
     b_t = b["times"][b_mask]
     t_neuro = list(set(b_t))
     m_sic = np.array([np.mean(b_sic[b_t == t]) for t in t_neuro])

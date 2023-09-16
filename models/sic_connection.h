@@ -44,7 +44,7 @@ induced by the astrocyte. The amplitude of the current is the product of the ast
 
 The source node of a ``sic_connection`` must be an astrocyte emitting a slow inward current, and the target node must be
 able to handle slow inward current input. Currently, :doc:`aeif_conda_alpha_astro` is the only neuron model that can
-receive ``sic_connection``s. The connection may have a delay.
+receive ``sic_connection``. The connection may have a delay.
 
 Sends
 +++++

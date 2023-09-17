@@ -115,6 +115,12 @@ nest::EpropArchivingNode::register_update( double t_last_update, double t_curren
 void
 nest::EpropArchivingNode::get_eprop_history( double time_point, std::deque< histentry_eprop >::iterator* it )
 {
+  if ( eprop_history_.empty() )
+  {
+    *it = eprop_history_.end();
+    return
+  }
+
   *it = std::lower_bound( eprop_history_.begin(), eprop_history_.end(), time_point - 1 + eps_ );
 }
 

@@ -79,13 +79,6 @@ nest::EpropArchivingNode::init_eprop_buffers( double delay )
 }
 
 void
-nest::EpropArchivingNode::get_eprop_history( double time_point, std::deque< histentry_eprop >::iterator* it )
-{
-  
-  *it = std::lower_bound( eprop_history_.begin(), eprop_history_.end(), time_point - 1 + eps_ );
-}
-
-void
 nest::EpropArchivingNode::register_update( double t_last_update, double t_current_update )
 {
   // register spike time if it is not in the list, otherwise increase access counter
@@ -119,6 +112,11 @@ nest::EpropArchivingNode::register_update( double t_last_update, double t_curren
   }
 }
 
+void
+nest::EpropArchivingNode::get_eprop_history( double time_point, std::deque< histentry_eprop >::iterator* it )
+{
+  *it = std::lower_bound( eprop_history_.begin(), eprop_history_.end(), time_point - 1 + eps_ );
+}
 
 void
 nest::EpropArchivingNode::get_spike_history( double t1,

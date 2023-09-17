@@ -181,7 +181,7 @@ void
 nest::EpropArchivingNode::erase_unneeded_spike_history()
 {
   double earliest_time_to_keep = ( t_last_update_per_synapse_.begin() )->t_;
-  while ( ( !spike_history_.empty() ) && ( spike_history_.front() + 1.0e-6 < earliest_time_to_keep ) )
+  while ( (  not spike_history_.empty() ) && ( spike_history_.front() + eps_ < earliest_time_to_keep ) )
   {
     spike_history_.pop_front();
   }
@@ -190,13 +190,12 @@ nest::EpropArchivingNode::erase_unneeded_spike_history()
 void
 nest::EpropArchivingNode::write_v_m_pseudo_deriv_to_eprop_history( long time_step, double v_m_pseudo_deriv )
 {
-  if ( n_incoming_ )
-  {
+  if ( not n_incoming_ ) return;
+
     const Time time_step_ = Time::step( time_step );
     const double time_ms = time_step_.get_ms();
     eprop_history_.push_back( histentry_eprop( time_ms, v_m_pseudo_deriv, 0.0 ) );
   }
-}
 
 void
 nest::EpropArchivingNode::write_error_signal_to_eprop_history( long time_step, double error_signal )
@@ -217,38 +216,28 @@ nest::EpropArchivingNode::write_spike_history( long time_step )
 double
 nest::EpropArchivingNode::get_learning_signal_from_eprop_history( long unsigned int shift )
 {
-  if ( eprop_history_.size() > shift )
-  {
-    return ( ( eprop_history_.rbegin() ) + shift )->learning_signal_;
-  }
-  else
-  {
-    return 0.0;
-  }
+  return eprop_history_.size() > shift ? ( eprop_history_.rbegin() + shift )->learning_signal_ : 0.0;
 }
 
 void
 nest::EpropArchivingNode::write_learning_signal_to_eprop_history( LearningSignalConnectionEvent& e )
 {
-  const double weight = e.get_weight();
-  const long delay = e.get_delay_steps();
-  const Time stamp = e.get_stamp();
-
-  double t_ms = stamp.get_ms() - 2.0 * Time::get_resolution().get_ms();
+  double shift = 2.0 * Time::get_resolution().get_ms();
+  double t_ms = e.get_stamp().get_ms() - shift;
 
   std::deque< histentry_eprop >::iterator start;
   std::deque< histentry_eprop >::iterator finish;
 
   // get part of eprop history to which the learning signal is added
   get_eprop_history( t_ms, &start );
-  get_eprop_history( t_ms + Time::delay_steps_to_ms( delay ), &finish );
+  get_eprop_history( t_ms + Time::delay_steps_to_ms( e.get_delay_steps() ), &finish );
 
   std::vector< unsigned int >::iterator it = e.begin();
 
   if ( start != finish && it != e.end() )
   {
-    double normalized_learning_signal = e.get_coeffvalue( it ); // implicitely decrease access counter
-    start->learning_signal_ += weight * normalized_learning_signal;
+    double error_signal = e.get_coeffvalue( it ); // implicitely decrease access counter
+    start->learning_signal_ += e.get_weight() * error_signal;
     ++start;
   }
 }
@@ -256,9 +245,8 @@ nest::EpropArchivingNode::write_learning_signal_to_eprop_history( LearningSignal
 double
 nest::EpropArchivingNode::calculate_v_m_pseudo_deriv( double V_m, double V_th, double V_th_const ) const
 {
-  // V_th: spiking threshold including adaptive part
-  // V_th_const: constant part of threshold
-  // in LIF neurons without adaptation: V_th = V_th_const
+  // V_th_const: constant part of spiking threshold
+  // V_th: spiking threshold including adaptive part - in LIF neurons without adaptation = V_th_const
   double v_scaled = ( V_m - V_th ) / V_th_const;
   double norm_diff_threshold = 1.0 - std::fabs( v_scaled );
   double vm_pseudo_deriv = gamma_ * ( norm_diff_threshold > 0.0 ? norm_diff_threshold : 0.0 ) / V_th_const;

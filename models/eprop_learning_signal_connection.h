@@ -44,11 +44,12 @@ Description
 neurons to ``eprop_iaf_psc_delta`` or ``eprop_iaf_psc_delta_adapt`` neurons and
 transmits the learning signals for e-prop plasticity [1]_.
 
-For more information on e-prop plasticity see the documentation on the other e-prop models,
-:doc:`eprop_iaf_psc_delta<../models/eprop_iaf_psc_delta/>`,
-:doc:`eprop_iaf_psc_delta_adapt<../models/eprop_iaf_psc_delta_adapt/>`.
-:doc:`eprop_readout<../models/eprop_readout/>`, and
-:doc:`eprop_synapse<../models/eprop_synapse/>`,
+For more information on e-prop plasticity, see the documentation on the other e-prop models:
+
+    * :doc:`eprop_iaf_psc_delta<../models/eprop_iaf_psc_delta/>`
+    * :doc:`eprop_iaf_psc_delta_adapt<../models/eprop_iaf_psc_delta_adapt/>`
+    * :doc:`eprop_readout<../models/eprop_readout/>`
+    * :doc:`eprop_synapse<../models/eprop_synapse/>`
 
 Details on the event-based NEST implementation of e-prop can be found in [2]_.
 

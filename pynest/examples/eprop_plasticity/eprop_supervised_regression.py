@@ -173,7 +173,7 @@ params_nrn_out = {
 
 ####################
 
-# intermediate parrot neurons required between input spike generators and recurrent neurons,
+# Intermediate parrot neurons required between input spike generators and recurrent neurons,
 # since devices cannot establish plastic synapses for technical reasons
 
 gen_spk_in = nest.Create("spike_generator", n_in)
@@ -369,8 +369,8 @@ nest.SetStatus(gen_rate_target, params_gen_rate_target)
 # %% ###########################################################################################################
 # Force final update
 # ~~~~~~~~~~~~~~~~~~
-# Synapses only get active, i.e., the correct weight update calculated and applied, when they transmit a spike.
-# To still be able to read out the correct weights at the end of the simulation, we force spiking of the
+# Synapses only get active, that is, the correct weight update calculated and applied, when they transmit a
+# spike. To still be able to read out the correct weights at the end of the simulation, we force spiking of the
 # presynaptic neuron and thus an update of all synapses, including those that have not transmitted a spike in
 # the last update interval, by sending a strong spike to all neurons that form the presynaptic side of an eprop
 # synapse. This step is required purely for technical reasons.

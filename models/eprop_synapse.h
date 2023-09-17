@@ -66,7 +66,7 @@ changes the eligibility trace:
 .. math::
   e_{ji}^t &= \psi_j^t \left(\bar{z}^{t-1} - \beta \epsilon_{ji,a}^{t-1}\right)\,, \\
   \epsilon^{t-1}_{ji,\text{a}} &= \psi_j^{t-1}\bar{z}_i^{t-2} + \left( \rho - \psi_j^{t-1} \beta \right)
-\epsilon^{t-2}_{ji,a}\,, \\ \rho &= \exp\left(-\frac{\delta t}{\tau_\text{a}}\right)\,.
+  \epsilon^{t-2}_{ji,a}\,, \\ \rho &= \exp\left(-\frac{\delta t}{\tau_\text{a}}\right)\,.
 
 Furthermore, a firing rate regularization mechanism keeps the average firing
 rate :math:`f^\text{av}_j` of the postsynaptic neuron close to a target firing rate
@@ -105,11 +105,12 @@ synapses can only be connected to neuron models that are capable of doing this
 archiving. So far, compatible models are ``eprop_iaf_psc_delta``,
 ``eprop_iaf_psc_delta_adapt``, and ``eprop_readout``.
 
-For more information on e-prop plasticity see the documentation on the other e-prop models,
-:doc:`eprop_iaf_psc_delta<../models/eprop_iaf_psc_delta/>`,
-:doc:`eprop_readout<../models/eprop_readout/>`, and
-:doc:`eprop_synapse<../models/eprop_synapse/>`,
-:doc:`eprop_learning_signal_connection<../models/eprop_learning_signal_connection/>`.
+For more information on e-prop plasticity, see the documentation on the other e-prop models:
+
+    * :doc:`eprop_iaf_psc_delta<../models/eprop_iaf_psc_delta/>`
+    * :doc:`eprop_readout<../models/eprop_readout/>`
+    * :doc:`eprop_synapse<../models/eprop_synapse/>`
+    * :doc:`eprop_learning_signal_connection<../models/eprop_learning_signal_connection/>`
 
 Details on the event-based NEST implementation of e-prop can be found in [3]_.
 
@@ -352,6 +353,9 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
   Node* target = get_target( thread );
   double dendritic_delay = get_delay();
   std::string target_node = target->get_eprop_node_type();
+  size_t tid = target->get_node_id();
+  size_t sid = e.retrieve_sender_node_id_from_source_table();
+  bool is_syn = (sid == 91) and (tid == 68);  
 
   double update_interval_ = kernel().simulation_manager.get_eprop_update_interval();
 
@@ -431,13 +435,22 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
         std::deque< double >::iterator start_spike;
         std::deque< double >::iterator finish_spike;
 
-        target->get_spike_history( t_last_update_, t_last_update_ + update_interval_, &start_spike, &finish_spike );
+        target->get_spike_history( t_last_update_, &start_spike );
+        target->get_spike_history( t_last_update_ + update_interval_, &finish_spike );
 
         int nspikes = std::distance( start_spike, finish_spike );
-        double f_av = nspikes / update_interval_;
+
+        double n_spikes = target->get_firing_rate_history(t_last_update_ + update_interval_);
+        
+        if ( nspikes != n_spikes){
+          std::cout << "SYN " << " tid: " << tid << " sid: " << sid << " t_current_update: " << t_current_update_ << " t_last_update: " << t_last_update_ << " n_spikes[old]: " << nspikes << " n_spikes[new]: " << n_spikes << std::endl;
+        }
+
+        double f_av = n_spikes / update_interval_;
         double f_target = f_target_ / 1000.; // convert to kHz
 
         grad += c_reg_ * dt * ( f_av - f_target ) * sum_e_bar / update_interval_;
+
       }
 
       grad *= dt;

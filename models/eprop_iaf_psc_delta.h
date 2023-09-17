@@ -81,11 +81,12 @@ plasticity is calculated:
 See the documentation on the ``iaf_psc_delta`` neuron model for more information
 on the integration of the subthreshold dynamics.
 
-For more information on e-prop plasticity see the documentation on the other e-prop models,
-:doc:`eprop_iaf_psc_delta_adapt<../models/eprop_iaf_psc_delta_adapt/>`,
-:doc:`eprop_readout<../models/eprop_readout/>`, and
-:doc:`eprop_synapse<../models/eprop_synapse/>`,
-:doc:`eprop_learning_signal_connection<../models/eprop_learning_signal_connection/>`.
+For more information on e-prop plasticity, see the documentation on the other e-prop models:
+
+    * :doc:`eprop_iaf_psc_delta_adapt<../models/eprop_iaf_psc_delta_adapt/>`
+    * :doc:`eprop_readout<../models/eprop_readout/>`
+    * :doc:`eprop_synapse<../models/eprop_synapse/>`
+    * :doc:`eprop_learning_signal_connection<../models/eprop_learning_signal_connection/>`
 
 Details on the event-based NEST implementation of e-prop can be found in [2]_.
 

@@ -1656,33 +1656,43 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
   }
 
   // weights and delays of connections
+  size_t num_threads = kernel().vp_manager.get_num_threads();
   for ( size_t synapse_indx = 0; synapse_indx < syn_specs.size(); ++synapse_indx )
   {
     // neuron=>neuron and neuron=>astrocyte
+    DictionaryDatum syn_params = syn_specs[ synapse_indx ];
     DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
-    weights_n2n_[ synapse_indx ] = syn_specs[ synapse_indx ]->known( names::weight_pre2post )
-      ? ConnParameter::create(
-        ( *syn_specs[ synapse_indx ] )[ names::weight_pre2post ], kernel().vp_manager.get_num_threads() )
-      : ConnParameter::create( ( *syn_defaults )[ names::weight ], kernel().vp_manager.get_num_threads() );
-    weights_n2a_[ synapse_indx ] = syn_specs[ synapse_indx ]->known( names::weight_pre2astro )
-      ? ConnParameter::create(
-        ( *syn_specs[ synapse_indx ] )[ names::weight_pre2astro ], kernel().vp_manager.get_num_threads() )
-      : ConnParameter::create( ( *syn_defaults )[ names::weight ], kernel().vp_manager.get_num_threads() );
-    delays_n2n_[ synapse_indx ] = syn_specs[ synapse_indx ]->known( names::delay_pre2post )
-      ? ConnParameter::create(
-        ( *syn_specs[ synapse_indx ] )[ names::delay_pre2post ], kernel().vp_manager.get_num_threads() )
-      : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
-    delays_n2a_[ synapse_indx ] = syn_specs[ synapse_indx ]->known( names::delay_pre2astro )
-      ? ConnParameter::create(
-        ( *syn_specs[ synapse_indx ] )[ names::delay_pre2astro ], kernel().vp_manager.get_num_threads() )
-      : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
+    weights_n2n_[ synapse_indx ] = syn_params->known( names::weight_pre2post )
+      ? ConnParameter::create( ( *syn_params )[ names::weight_pre2post ], num_threads )
+      : ConnParameter::create( ( *syn_defaults )[ names::weight ], num_threads );
+    weights_n2a_[ synapse_indx ] = syn_params->known( names::weight_pre2astro )
+      ? ConnParameter::create( ( *syn_params )[ names::weight_pre2astro ], num_threads )
+      : ConnParameter::create( ( *syn_defaults )[ names::weight ], num_threads );
+    delays_n2n_[ synapse_indx ] = syn_params->known( names::delay_pre2post )
+      ? ConnParameter::create( ( *syn_params )[ names::delay_pre2post ], num_threads )
+      : ConnParameter::create( ( *syn_defaults )[ names::delay ], num_threads );
+    delays_n2a_[ synapse_indx ] = syn_params->known( names::delay_pre2astro )
+      ? ConnParameter::create( ( *syn_params )[ names::delay_pre2astro ], num_threads )
+      : ConnParameter::create( ( *syn_defaults )[ names::delay ], num_threads );
 
     // astrocyte=>neuron
-    // currently, astro2post is useless; must be sic_connection anyway
     if ( syn_specs[ synapse_indx ]->known( names::astro2post ) )
     {
       std::string syn_name = ( *syn_specs[ synapse_indx ] )[ names::astro2post ];
-      synapse_model_id_a2n_[ synapse_indx ] = kernel().model_manager.get_synapse_model_id( syn_name );
+      // currently, it has to be sic_connection
+      // possibly in the future, examine if it is in a set of connection type
+      if ( syn_name == "sic_connection" )
+      {
+        synapse_model_id_a2n_[ synapse_indx ] = kernel().model_manager.get_synapse_model_id( syn_name );
+      }
+      else
+      {
+        LOG( M_WARNING,
+          "BernoulliAstroBuilder::connect",
+          "An incompatible model is requested for connections from astrocytes to neurons. "
+          "The compatible model is: sic_connection. Using sic_connection. " );
+        synapse_model_id_a2n_[ synapse_indx ] = kernel().model_manager.get_synapse_model_id( "sic_connection" );
+      }
     }
     else
     {
@@ -1690,14 +1700,12 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
     }
     DictionaryDatum syn_defaults_a2n =
       kernel().model_manager.get_connector_defaults( synapse_model_id_a2n_[ synapse_indx ] );
-    weights_a2n_[ synapse_indx ] = syn_specs[ synapse_indx ]->known( names::weight_astro2post )
-      ? ConnParameter::create(
-        ( *syn_specs[ synapse_indx ] )[ names::weight_astro2post ], kernel().vp_manager.get_num_threads() )
-      : ConnParameter::create( ( *syn_defaults_a2n )[ names::weight ], kernel().vp_manager.get_num_threads() );
-    delays_a2n_[ synapse_indx ] = syn_specs[ synapse_indx ]->known( names::delay_astro2post )
-      ? ConnParameter::create(
-        ( *syn_specs[ synapse_indx ] )[ names::delay_astro2post ], kernel().vp_manager.get_num_threads() )
-      : ConnParameter::create( ( *syn_defaults_a2n )[ names::delay ], kernel().vp_manager.get_num_threads() );
+    weights_a2n_[ synapse_indx ] = syn_params->known( names::weight_astro2post )
+      ? ConnParameter::create(( *syn_params )[ names::weight_astro2post ], num_threads )
+      : ConnParameter::create( ( *syn_defaults_a2n )[ names::weight ], num_threads );
+    delays_a2n_[ synapse_indx ] = syn_params->known( names::delay_astro2post )
+      ? ConnParameter::create(( *syn_params )[ names::delay_astro2post ], num_threads )
+      : ConnParameter::create( ( *syn_defaults_a2n )[ names::delay ], num_threads );
   }
 }
 

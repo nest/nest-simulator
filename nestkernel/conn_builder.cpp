@@ -1614,15 +1614,19 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
     p_syn_astro_ = ( *conn_spec )[ names::p_syn_astro ];
     if ( p_syn_astro_ < 0 or 1 < p_syn_astro_ )
     {
-      throw BadProperty( "Connection probability 0 <= p_syn_astro <= 1 required." );
+      throw BadProperty( "Probability of astrocyte pairing for each synapse 0 <= p_syn_astro <= 1 required." );
     }
   }
   else
   {
+    LOG( M_WARNING,
+      "BernoulliAstroBuilder::connect",
+      "Probability of astrocyte pairing for each synapse not given. "
+      "A default value of 1.0 is used. " );
     p_syn_astro_ = 1.0;
   }
 
-  // deterministic (by index) or probabilistic selection of astrocyte pool per target neuron
+  // deterministic (astro_pool_by_index = true) or probabilistic selection of astrocyte pool per target neuron
   if ( conn_spec->known( names::astro_pool_by_index ) )
   {
     astro_pool_by_index_ = ( *conn_spec )[ names::astro_pool_by_index ];
@@ -1645,7 +1649,9 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
   }
   else
   {
-    // when not given, put 0 and determine later according to numbers of astrocytes and target neurons
+    // when not given, put 0 and determine later by:
+    // numbers of astrocytes and target neurons, if astro_pool_by_index = true
+    // number of astrocytes, if astro_pool_by_index = false
     max_astro_per_target_ = 0;
   }
 
@@ -1653,15 +1659,6 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
   for ( size_t synapse_indx = 0; synapse_indx < syn_specs.size(); ++synapse_indx )
   {
     // neuron=>neuron and neuron=>astrocyte
-    if ( syn_specs[ synapse_indx ]->known( names::synapse_model ) )
-    {
-      std::string syn_name = ( *syn_specs[ synapse_indx ] )[ names::synapse_model ];
-      synapse_model_id_[ synapse_indx ] = kernel().model_manager.get_synapse_model_id( syn_name );
-    }
-    else
-    {
-      synapse_model_id_[ synapse_indx ] = kernel().model_manager.get_synapse_model_id( "tsodyks_synapse" );
-    }
     DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
     weights_n2n_[ synapse_indx ] = syn_specs[ synapse_indx ]->known( names::weight_pre2post )
       ? ConnParameter::create(
@@ -1681,6 +1678,7 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
       : ConnParameter::create( ( *syn_defaults )[ names::delay ], kernel().vp_manager.get_num_threads() );
 
     // astrocyte=>neuron
+    // currently, astro2post is useless; must be sic_connection anyway
     if ( syn_specs[ synapse_indx ]->known( names::astro2post ) )
     {
       std::string syn_name = ( *syn_specs[ synapse_indx ] )[ names::astro2post ];

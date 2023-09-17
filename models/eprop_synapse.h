@@ -353,9 +353,6 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
   Node* target = get_target( thread );
   double dendritic_delay = get_delay();
   std::string target_node = target->get_eprop_node_type();
-  size_t tid = target->get_node_id();
-  size_t sid = e.retrieve_sender_node_id_from_source_table();
-  bool is_syn = (sid == 91) and (tid == 68);  
 
   double update_interval_ = kernel().simulation_manager.get_eprop_update_interval();
 
@@ -435,22 +432,13 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
         std::deque< double >::iterator start_spike;
         std::deque< double >::iterator finish_spike;
 
-        target->get_spike_history( t_last_update_, &start_spike );
-        target->get_spike_history( t_last_update_ + update_interval_, &finish_spike );
+        target->get_spike_history( t_last_update_, t_last_update_ + update_interval_, &start_spike, &finish_spike );
 
         int nspikes = std::distance( start_spike, finish_spike );
-
-        double n_spikes = target->get_firing_rate_history(t_last_update_ + update_interval_);
-        
-        if ( nspikes != n_spikes){
-          std::cout << "SYN " << " tid: " << tid << " sid: " << sid << " t_current_update: " << t_current_update_ << " t_last_update: " << t_last_update_ << " n_spikes[old]: " << nspikes << " n_spikes[new]: " << n_spikes << std::endl;
-        }
-
-        double f_av = n_spikes / update_interval_;
+        double f_av = nspikes / update_interval_;
         double f_target = f_target_ / 1000.; // convert to kHz
 
         grad += c_reg_ * dt * ( f_av - f_target ) * sum_e_bar / update_interval_;
-
       }
 
       grad *= dt;

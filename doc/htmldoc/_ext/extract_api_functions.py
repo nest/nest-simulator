@@ -105,13 +105,27 @@ def process_directory(directory):
     return api_dict
 
 
-def ExtractPyNESTAPIS():
+def get_pynest_list(app, env, docname):
     directory = "../../pynest/nest/"
     all_variables_dict = process_directory(directory)
 
     with open("api_function_list.json", "w") as outfile:
         json.dump(all_variables_dict, outfile, indent=4)
 
+        env.env_attribute.append(all_variables_dict)
 
-if __name__ == "__main__":
-    ExtractPyNESTAPIS()
+
+def api_customizer(app, docname, source):
+    env = app.builder.env
+    if docname == "ref_material/pynest_api/index":
+        # list_apis = env.env_attribute
+        list_apis = json.load(open("api_function_list.json"))
+        html_context = {"api_dict": list_apis}
+        api_source = source[0]
+        rendered = app.builder.templates.render_string(api_source, html_context)
+        source[0] = rendered
+
+
+def setup(app):
+    app.connect("env-before-read-docs", get_pynest_list)
+    app.connect("source-read", api_customizer)

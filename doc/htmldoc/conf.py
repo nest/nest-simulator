@@ -57,6 +57,7 @@ extensions = [
     "add_button_notebook",
     "IPython.sphinxext.ipython_console_highlighting",
     "nbsphinx",
+    "extract_api_functions",
     "sphinx_design",
     "HoverXTooltip",
     "VersionSyncRole",
@@ -218,15 +219,6 @@ def get_pynest_list(app, env, docname):
     ExtractPyNESTAPIS()
 
 
-def api_customizer(app, docname, source):
-    if docname == "ref_material/pynest_api/index":
-        list_apis = json.load(open("api_function_list.json"))
-        html_context = {"api_dict": list_apis}
-        api_source = source[0]
-        rendered = app.builder.templates.render_string(api_source, html_context)
-        source[0] = rendered
-
-
 def toc_customizer(app, docname, source):
     if docname == "models/models-toc":
         models_toc = json.load(open("models/toc-tree.json"))
@@ -240,7 +232,6 @@ def setup(app):
     # for events see
     # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
     app.connect("source-read", toc_customizer)
-    app.connect("source-read", api_customizer)
     app.add_css_file("css/custom.css")
     app.add_css_file("css/pygments.css")
     app.add_js_file("js/custom.js")

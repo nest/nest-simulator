@@ -1709,6 +1709,42 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
   }
 }
 
+int
+nest::BernoulliAstroBuilder::get_start_astro_index( const int max_astro_per_target,
+  const int default_n_astro_per_target, const int targets_size, const int astrocytes_size, const int target_index )
+{
+  // this function determines the starting astrocyte for the astrocyte pool
+  // of a target neuron, in the deterministic (astro_pool_by_index = true) case
+  int start_astro_index = 0; // index of the starting astrocyte
+  // number of possible overlapping (with other neurons) astrocytes because of requested max_astro_per_target
+  int n_astro_overlap = max_astro_per_target - default_n_astro_per_target;
+  // shifting, for even pairings
+  int shift = std::ceil( n_astro_overlap / 2.0 );
+  if ( targets_size > astrocytes_size )
+  {
+    if ( max_astro_per_target % 2 == 0
+      and target_index % default_n_astro_per_target >= default_n_astro_per_target / 2.0 )
+    {
+      shift -= 1; // rule with even max_astro_per_target => reduce shifting in the latter half
+    }
+    start_astro_index = ( target_index / default_n_astro_per_target ) - shift;
+  }
+  else
+  {
+    start_astro_index = target_index * default_n_astro_per_target - shift;
+  }
+  // the starting index cannot be smaller than 0 or larger than ( astrocytes_size - max_astro_per_target )
+  if ( start_astro_index < 0 )
+  {
+    start_astro_index = 0;
+  }
+  else if ( start_astro_index > int( astrocytes_size - max_astro_per_target ) )
+  {
+    start_astro_index = astrocytes_size - max_astro_per_target;
+  }
+  return start_astro_index;
+}
+
 void
 nest::BernoulliAstroBuilder::connect_()
 {
@@ -1722,27 +1758,28 @@ nest::BernoulliAstroBuilder::connect_()
 
     try
     {
-      // for source neuron
+      // variables for source neurons
       size_t snode_id;
       std::set< size_t > connected_snode_ids;
-      // for target neuron
+      // variables for target neurons
       Node* target;
       size_t target_thread;
       unsigned long indegree;
-      // for astrocyte
+      // variables for astrocytes
       Node* astrocyte;
       size_t astrocyte_thread;
       size_t anode_id;
       std::set< size_t > connected_anode_ids;
-      // for astrocyte pool selection
+      // variables for astrocyte pool selection
+      // astro_pool_this_target is the astrocyte pool of a target neuron
+      // i.e. astrocytes that can (but not necessarily) be connected with this target neuron
       std::vector< size_t > astro_pool_this_target;
       size_t astrocytes_size = astrocytes_->size();
       size_t targets_size = targets_->size();
-      int default_n_astro_per_target_ = astrocytes_size / targets_size > 1 ? astrocytes_size / targets_size : 1;
+      int default_n_astro_per_target = astrocytes_size / targets_size > 1 ? astrocytes_size / targets_size : 1;
       int default_n_target_per_astro = targets_size / astrocytes_size > 1 ? targets_size / astrocytes_size : 1;
       int target_index = 0;
       int astro_index = 0;
-      int n_astro_overlap_per_target = 0;
       // for binomial distribution
       binomial_distribution bino_dist;
       binomial_distribution::param_type param( sources_->size(), p_ );
@@ -1781,18 +1818,13 @@ nest::BernoulliAstroBuilder::connect_()
         // }
       }
 
-      // when max_astro_per_target_ is not given, take defaults
+      // defaults when max_astro_per_target_ is not given
       if ( max_astro_per_target_ == 0 )
       {
-        if ( astro_pool_by_index_ == true )
-        {
-          max_astro_per_target_ = default_n_astro_per_target_;
-        }
-        else
-        {
-          max_astro_per_target_ = astrocytes_size;
-        }
+        max_astro_per_target_ = astro_pool_by_index_ == true ? default_n_astro_per_target : astrocytes_size;
       }
+      // check if max_astro_per_target_ is a positive number
+      assert ( max_astro_per_target_ > 0 )
 
       // iterate through targets
       for ( NodeCollection::const_iterator target_it = targets_->begin(); target_it != targets_->end(); ++target_it )
@@ -1828,68 +1860,38 @@ nest::BernoulliAstroBuilder::connect_()
         connected_snode_ids.clear();
         connected_anode_ids.clear();
 
-        // reset and select astrocyte pool for this target (astrocytes that can but not necessarily be paired with it)
+        // select astrocyte pool for this target
         astro_pool_this_target.clear();
-        // deterministic
+        // deterministic case
         if ( astro_pool_by_index_ == true )
         {
-          if ( max_astro_per_target_ > 0 )
+          // exclude neurons that are remainder
+          if ( astro_pool_by_index_ == true and target_index >= int( astrocytes_size * default_n_target_per_astro ) )
           {
-            // shifting, for even pairings
-            n_astro_overlap_per_target = max_astro_per_target_ - default_n_astro_per_target_;
-            int shift = std::ceil( n_astro_overlap_per_target / 2.0 );
-            if ( targets_size > astrocytes_size )
-            {
-              if ( max_astro_per_target_ % 2 == 0
-                and target_index % default_n_target_per_astro >= default_n_target_per_astro / 2.0 )
-              {
-                shift -= 1; // rule with even max_astro_per_target_ => reduce shifting in the latter half
-              }
-              // start from this astrocyte
-              astro_index = ( target_index / default_n_target_per_astro ) - shift;
-              // exclude remainder of neurons
-              if ( target_index >= int( astrocytes_size * default_n_target_per_astro ) )
-              {
-                break;
-              }
-            }
-            else
-            {
-              astro_index = target_index * default_n_astro_per_target_ - shift;
-            }
-            // the starting index cannot be smaller than 0 or larger than ( astrocytes_size - max_astro_per_target_ )
-            if ( astro_index < 0 )
-            {
-              astro_index = 0;
-            }
-            else if ( astro_index > int( astrocytes_size - max_astro_per_target_ ) )
-            {
-              astro_index = astrocytes_size - max_astro_per_target_;
-            }
-            // once the starting index is determined, iterate and add astrocytes to the pool until desired size
-            for ( size_t i = 0; i < max_astro_per_target_; i++ )
-            {
-              anode_id = ( *astrocytes_ )[ astro_index ];
-              astro_pool_this_target.push_back( anode_id );
-              astro_index++;
-            }
+            break;
+          }
+          // determine the starting astrocyte
+          astro_index = get_start_astro_index( max_astro_per_target_, default_n_astro_per_target, targets_size, astrocytes_size, target_index );
+          // iterate from starting astrocyte and add astrocytes until desired pool size reached
+          for ( size_t i = 0; i < max_astro_per_target_; i++ )
+          {
+            anode_id = ( *astrocytes_ )[ astro_index ];
+            astro_pool_this_target.push_back( anode_id );
+            astro_index++;
           }
         }
-        // probabilistic
+        // probabilistic case
         else
         {
-          if ( max_astro_per_target_ > 0 )
+          for ( size_t i = 0; i < max_astro_per_target_; i++ )
           {
-            for ( size_t i = 0; i < max_astro_per_target_; i++ )
+            // draw astrocytes without repetition until desired pool size reached
+            do
             {
-              // draw without repetition
-              do
-              {
-                anode_id = ( *astrocytes_ )[ synced_rng->ulrand( astrocytes_size ) ];
-              } while ( std::find( astro_pool_this_target.begin(), astro_pool_this_target.end(), anode_id )
-                != astro_pool_this_target.end() );
-              astro_pool_this_target.push_back( anode_id );
-            }
+              anode_id = ( *astrocytes_ )[ synced_rng->ulrand( astrocytes_size ) ];
+            } while ( std::find( astro_pool_this_target.begin(), astro_pool_this_target.end(), anode_id )
+              != astro_pool_this_target.end() );
+            astro_pool_this_target.push_back( anode_id );
           }
         }
 
@@ -1910,7 +1912,7 @@ nest::BernoulliAstroBuilder::connect_()
             continue;
           }
 
-          // determine the source
+          // add source to list
           connected_snode_ids.insert( snode_id );
 
           // increase i which counts the number of incoming connections

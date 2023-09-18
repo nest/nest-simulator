@@ -456,6 +456,7 @@ public:
     const std::vector< DictionaryDatum >& );
 
 protected:
+  int get_start_astro_index( const int, const int, const int, const int, const int );
   void connect_() override;
 
 private:

@@ -1824,7 +1824,7 @@ nest::BernoulliAstroBuilder::connect_()
         max_astro_per_target_ = astro_pool_by_index_ == true ? default_n_astro_per_target : astrocytes_size;
       }
       // check if max_astro_per_target_ is a positive number
-      assert ( max_astro_per_target_ > 0 )
+      assert ( max_astro_per_target_ > 0 );
 
       // iterate through targets
       for ( NodeCollection::const_iterator target_it = targets_->begin(); target_it != targets_->end(); ++target_it )

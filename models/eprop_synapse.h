@@ -303,17 +303,18 @@ public:
   check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
     double update_interval_ = kernel().simulation_manager.get_eprop_update_interval();
-    double transmission_shift = 2.0 * get_delay(); // correct for travel time of learning signal to synchronize signals
-    t_next_update_ = update_interval_ + transmission_shift;
-    t_last_update_ = transmission_shift;
+    double delay = get_delay();
+
+    double shift = 2.0 * delay; // correct for travel time of learning signal to synchronize signals
+
+    t_next_update_ = update_interval_ + shift;
+    t_last_update_ = shift;
 
     ConnTestDummyNode dummy_target;
-
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
-    int n_buffer_entries = t.get_eprop_node_type() == "readout" ? 3 : 2;
-    t.init_eprop_buffers( n_buffer_entries * get_delay() );
-    t.register_eprop_connection( t_last_spike_ - get_delay(), get_delay() );
+    t.init_update_history( ( t.get_eprop_node_type() == "readout" ? 3.0 : 2.0 ) * delay );
+    t.register_eprop_connection( t_last_spike_ - delay, delay );
   }
 
   void
@@ -375,8 +376,7 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
 
       std::deque< histentry_eprop_archive >::iterator start;
 
-      target->get_eprop_history( presyn_spike_times_[ 0 ] + dendritic_delay, &start );
-      target->register_update( t_last_update_ + shift, t_current_update_ + shift );
+      target->write_update_to_history( t_last_update_ + shift, t_current_update_ + shift );
 
       std::vector< double > presyn_isis( presyn_spike_times_.size() - 1 );
       std::adjacent_difference( presyn_spike_times_.begin(), --presyn_spike_times_.end(), presyn_isis.begin() );

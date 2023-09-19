@@ -24,23 +24,20 @@ import importlib
 import inspect
 import logging
 import io
+import os
 import sys
-
-import flask
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-from flask.logging import default_handler
-
-import nest
-
-import RestrictedPython
 import time
-
 import traceback
-
 from copy import deepcopy
 
-import os
+import nest
+import RestrictedPython
+import flask
+from flask import Flask, jsonify, request
+from flask_cors import CORS
+from flask.logging import default_handler
+from werkzeug.exceptions import abort
+from werkzeug.wrappers import Response
 
 
 # This ensures that the logging information shows up in the console running the server,

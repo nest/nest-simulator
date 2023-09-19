@@ -26,8 +26,9 @@ Functions for node handling
 import warnings
 
 import nest
-from ..ll_api import check_stack, sli_func, sps, sr, spp
+
 from .. import pynestkernel as kernel
+from ..ll_api import check_stack, sli_func, spp, sps, sr
 from .hl_api_helper import is_iterable, model_deprecation_warning
 from .hl_api_info import SetStatus
 from .hl_api_types import NodeCollection, Parameter

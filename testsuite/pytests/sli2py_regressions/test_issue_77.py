@@ -23,9 +23,8 @@
 Regression test for Issue #77 (GitHub).
 """
 
-import pytest
-
 import nest
+import pytest
 
 # The following models will not be tested:
 skip_models = [
@@ -57,6 +56,7 @@ skip_models = [
     "music_message_in_proxy",  # MUSIC device
     "music_rate_in_proxy",  # MUSIC device
     "music_rate_out_proxy",  # MUSIC device
+    "astrocyte_lr_1994",  # does not send spikes
 ]
 
 # The following models require connections to rport 1 or other specific parameters:
@@ -79,6 +79,10 @@ extra_params = {
     "gif_psc_exp_multisynapse": {"params": {"tau_syn": [1.0]}, "receptor_type": 1},
     "glif_cond": {"params": {"tau_syn": [0.2], "E_rev": [0.0]}, "receptor_type": 1},
     "glif_psc": {"params": {"tau_syn": [1.0]}, "receptor_type": 1},
+    "glif_psc_double_alpha": {
+        "params": {"tau_syn_fast": [1.0], "tau_syn_slow": [2.0], "amp_slow": [0.5]},
+        "receptor_type": 1,
+    },
     "ht_neuron": {"receptor_type": 1},
     "pp_cond_exp_mc_urbanczik": {"receptor_type": 1},
 }

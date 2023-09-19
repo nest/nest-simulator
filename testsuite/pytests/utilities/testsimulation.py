@@ -21,9 +21,8 @@
 
 import dataclasses
 
-import numpy as np
-
 import nest
+import numpy as np
 import testutil
 
 

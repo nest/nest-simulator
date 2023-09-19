@@ -1583,6 +1583,10 @@ nest::ConnectionManager::remove_disabled_connections( const size_t tid )
     {
       continue;
     }
+
+    // Source table and connectors are sorted synchronously. All invalid connections have
+    // been sorted to end of source_table_. We find them there, then remove corresponding
+    // elements from connectors.
     const size_t first_disabled_index = source_table_.remove_disabled_sources( tid, syn_id );
 
     if ( first_disabled_index != invalid_index )

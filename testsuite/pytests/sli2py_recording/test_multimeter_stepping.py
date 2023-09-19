@@ -23,13 +23,11 @@
 Test multimeter recording in stepwise simulation.
 """
 
+import nest
 import pandas as pd
 import pandas.testing as pdtest
 import pytest
 
-import nest
-
-# The following models will not be tested:
 skip_models = [
     "erfc_neuron",  # binary neuron
     "ginzburg_neuron",  # binary neuron
@@ -66,6 +64,7 @@ extra_params = {
     "gif_psc_exp_multisynapse": {"receptor_type": 1},
     "gif_cond_exp_multisynapse": {"receptor_type": 1},
     "glif_psc": {"receptor_type": 1},
+    "glif_psc_double_alpha": {"receptor_type": 1},
     "iaf_cond_alpha_mc": {"receptor_type": 1},
     "glif_cond": {"receptor_type": 1},
     "ht_neuron": {"receptor_type": 1},

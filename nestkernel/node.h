@@ -420,6 +420,7 @@ public:
   virtual size_t handles_test_event( InstantaneousRateConnectionEvent&, size_t receptor_type );
   virtual size_t handles_test_event( DiffusionConnectionEvent&, size_t receptor_type );
   virtual size_t handles_test_event( DelayedRateConnectionEvent&, size_t receptor_type );
+  virtual size_t handles_test_event( SICEvent&, size_t receptor_type );
 
   /**
    * Required to check, if source neuron may send a SecondaryEvent.
@@ -460,6 +461,16 @@ public:
    * @throws IllegalConnection
    */
   virtual void sends_secondary_event( DelayedRateConnectionEvent& re );
+
+  /**
+   * Required to check, if source node may send a SICEvent.
+   *
+   * This base class implementation throws IllegalConnection
+   * and needs to be overwritten in the derived class.
+   * @ingroup event_interface
+   * @throws IllegalConnection
+   */
+  virtual void sends_secondary_event( SICEvent& sic );
 
   /**
    * Register a STDP connection
@@ -586,6 +597,14 @@ public:
    * @throws UnexpectedEvent
    */
   virtual void handle( DelayedRateConnectionEvent& e );
+
+  /**
+   * Handler for slow inward current events (SICEvents).
+   * @see handle(thread,SICEvent&)
+   * @ingroup event_interface
+   * @throws UnexpectedEvent
+   */
+  virtual void handle( SICEvent& e );
 
   /**
    * @defgroup SP_functions Structural Plasticity in NEST.

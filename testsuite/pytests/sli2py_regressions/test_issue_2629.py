@@ -39,9 +39,8 @@ temporary directory unique to the test invocation. ``tmp_path`` is a
 is possible to pass a ``pathlib.Path`` object as filename.
 """
 
-import pytest
-
 import nest
+import pytest
 
 
 @pytest.fixture(scope="module")

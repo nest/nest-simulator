@@ -133,7 +133,6 @@ get_target_triple( NEST_TARGET_TRIPLE NEST_TARGET_ARCH NEST_TARGET_VENDOR NEST_T
 nest_process_with_python()
 include( GNUInstallDirs )
 nest_post_process_with_python()
-nest_process_with_std()
 nest_process_with_intel_compiler_flags()
 nest_process_with_warning()
 nest_process_with_libraries()

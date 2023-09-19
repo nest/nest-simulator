@@ -98,7 +98,7 @@ nest::EpropArchivingNode::get_eprop_history( double time_point, std::deque< hist
   if ( eprop_history_.empty() )
   {
     *it = eprop_history_.end();
-    return
+    return;
   }
 
   *it = std::lower_bound( eprop_history_.begin(), eprop_history_.end(), time_point - 1 + eps_ );

@@ -52,6 +52,7 @@ if ( HAVE_PYTHON )
 
   target_include_directories( nestkernel_api PRIVATE
     ${PROJECT_BINARY_DIR}/libnestutil
+    ${PROJECT_BINARY_DIR}/pynest
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_SOURCE_DIR}/pynest
     ${PROJECT_SOURCE_DIR}/nestkernel

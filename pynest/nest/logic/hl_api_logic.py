@@ -21,7 +21,6 @@
 
 from .. import nestkernel_api as nestkernel
 from ..lib.hl_api_types import CreateParameter
-from ..ll_api import sli_func
 
 __all__ = [
     "conditional",

@@ -88,6 +88,9 @@ Gap Junctions are implemented by a gap current of the form
 
 See also [1]_, [2]_, [3]_, [4]_.
 
+For details on asynchronicity in spike and firing events with Hodgkin Huxley models
+see :ref:`here <hh_details>`.
+
 Parameters
 ++++++++++
 

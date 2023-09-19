@@ -305,8 +305,6 @@ class DemoPlot:
 
 
 if __name__ == "__main__":
-    plt.ion()
-
     T_sim = 1000
 
     dplot = DemoPlot()
@@ -371,6 +369,4 @@ if __name__ == "__main__":
     nest.Simulate(T_sim)
     dplot.add_to_plot(ein2, lbl="Reloaded simulation (different seed)")
 
-    dplot.fig.savefig("store_restore_network.png")
-
-    input("Press ENTER to close figure!")
+    plt.show()

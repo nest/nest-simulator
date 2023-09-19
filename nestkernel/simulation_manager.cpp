@@ -168,7 +168,7 @@ nest::SimulationManager::set_status( const dictionary& d )
   // tics_per_ms and resolution must come after local_num_thread /
   // total_num_threads because they might reset the network and the time
   // representation
-  long tics_per_ms = 0;  //TODO: PYNEST-NG: Was double, but why???
+  long tics_per_ms = 0; // TODO: PYNEST-NG: Was double, but why???
   bool tics_per_ms_updated = d.update_value( names::tics_per_ms, tics_per_ms );
   double resd = 0.0;
   bool res_updated = d.update_value( names::resolution, resd );
@@ -811,40 +811,6 @@ nest::SimulationManager::update_()
           gettimeofday( &t_slice_begin_, nullptr );
         }
 
-        if ( kernel().sp_manager.is_structural_plasticity_enabled()
-          and ( std::fmod( Time( Time::step( clock_.get_steps() + from_step_ ) ).get_ms(),
-                  kernel().sp_manager.get_structural_plasticity_update_interval() )
-            == 0 ) )
-        {
-          for ( SparseNodeArray::const_iterator i = kernel().node_manager.get_local_nodes( tid ).begin();
-                i != kernel().node_manager.get_local_nodes( tid ).end();
-                ++i )
-          {
-            Node* node = i->get_node();
-            node->update_synaptic_elements( Time( Time::step( clock_.get_steps() + from_step_ ) ).get_ms() );
-          }
-#pragma omp barrier
-#pragma omp single
-          {
-            kernel().sp_manager.update_structural_plasticity();
-          }
-          // Remove 10% of the vacant elements
-          for ( SparseNodeArray::const_iterator i = kernel().node_manager.get_local_nodes( tid ).begin();
-                i != kernel().node_manager.get_local_nodes( tid ).end();
-                ++i )
-          {
-            Node* node = i->get_node();
-            node->decay_synaptic_elements_vacant();
-          }
-
-          // after structural plasticity has created and deleted
-          // connections, update the connection infrastructure; implies
-          // complete removal of presynaptic part and reconstruction
-          // from postsynaptic data
-          update_connection_infrastructure( tid );
-
-        } // of structural plasticity
-
         // Do not deliver events at beginning of first slice, nothing can be there yet
         // and invalid markers have not been properly set in send buffers.
         if ( slice_ > 0 and from_step_ == 0 )
@@ -988,6 +954,42 @@ nest::SimulationManager::update_()
 
         } // of if(wfr_is_used)
           // end of preliminary update
+
+        if ( kernel().sp_manager.is_structural_plasticity_enabled()
+          and ( std::fmod( Time( Time::step( clock_.get_steps() + from_step_ ) ).get_ms(),
+                  kernel().sp_manager.get_structural_plasticity_update_interval() )
+            == 0 ) )
+        {
+#pragma omp barrier
+          for ( SparseNodeArray::const_iterator i = kernel().node_manager.get_local_nodes( tid ).begin();
+                i != kernel().node_manager.get_local_nodes( tid ).end();
+                ++i )
+          {
+            Node* node = i->get_node();
+            node->update_synaptic_elements( Time( Time::step( clock_.get_steps() + from_step_ ) ).get_ms() );
+          }
+#pragma omp barrier
+#pragma omp single
+          {
+            kernel().sp_manager.update_structural_plasticity();
+          }
+          // Remove 10% of the vacant elements
+          for ( SparseNodeArray::const_iterator i = kernel().node_manager.get_local_nodes( tid ).begin();
+                i != kernel().node_manager.get_local_nodes( tid ).end();
+                ++i )
+          {
+            Node* node = i->get_node();
+            node->decay_synaptic_elements_vacant();
+          }
+
+          // after structural plasticity has created and deleted
+          // connections, update the connection infrastructure; implies
+          // complete removal of presynaptic part and reconstruction
+          // from postsynaptic data
+          update_connection_infrastructure( tid );
+
+        } // of structural plasticity
+
 
 #ifdef TIMER_DETAILED
 #pragma omp barrier

@@ -41,7 +41,7 @@ IFS=$' \n\t'
 declare -a EXAMPLES
 if [ "${#}" -eq 0 ]; then
     # Find all examples that have a line containing "autorun=true"
-    # The examples can be found in subdirectory nest and in the 
+    # The examples can be found in subdirectory nest and in the
     # examples installation path.
     if [ -d "nest/" ] ; then
         EXAMPLES="$(grep -rl --include=\*\.sli 'autorun=true' nest/)"
@@ -94,11 +94,13 @@ for i in $EXAMPLES; do
     echo "  output_dir: '$output_dir'" >>"$metafile"
     echo "  log: '$logfile'" >>"$metafile"
 
-    export NEST_DATA_PATH=""  # $output_dir"
+    export NEST_DATA_PATH="$output_dir"
     touch .start_example
     sleep 1
     set +e
+    # The following line will not work on macOS. There, `brew install gnu-time` and use the commented-out line below.
     /usr/bin/time -f "$time_format" --quiet sh -c "'$runner' '$example' >'$logfile' 2>&1" |& tee -a "$metafile"
+    # /usr/local/bin/gtime -f "$time_format" --quiet sh -c "'$runner' '$example' >'$logfile' 2>&1" | tee -a "$metafile" 2>&1
     ret=$?
     set -e
 

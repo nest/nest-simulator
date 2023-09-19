@@ -370,7 +370,8 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
 
       presyn_spike_times_.insert( --presyn_spike_times_.end(), t_next_update_ - ( dendritic_delay - shift ) );
 
-      std::deque< histentry_eprop_archive >::iterator start;
+      std::deque< histentry_eprop_archive >::iterator it_eprop_hist;
+      target->get_eprop_history( presyn_spike_times_[ 0 ] + dendritic_delay, &it_eprop_hist );
 
       target->write_update_to_history( t_last_update_ + shift, t_current_update_ + shift );
 
@@ -385,9 +386,9 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
           last_z_bar += 1.0 - kappa_;
           for ( int t = 0; t < presyn_isi; ++t )
           {
-            grad += start->learning_signal_ * last_z_bar;
+            grad += it_eprop_hist->learning_signal_ * last_z_bar;
             last_z_bar *= kappa_;
-            ++start;
+            ++it_eprop_hist;
           }
         }
       }
@@ -404,7 +405,7 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
           last_z_bar += alpha_complement;
           for ( int t = 0; t < presyn_isi; ++t )
           {
-            double psi = start->V_m_pseudo_deriv_;
+            double psi = it_eprop_hist->V_m_pseudo_deriv_;
             double e_bar = psi * last_z_bar;
 
             if ( target_node == "adaptive" )
@@ -415,10 +416,10 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
               epsilon = psi * last_z_bar + ( rho - psi * beta ) * epsilon;
             }
             sum_t_prime = kappa_ * sum_t_prime + ( 1.0 - kappa_ ) * e_bar;
-            grad += sum_t_prime * dt * start->learning_signal_;
+            grad += sum_t_prime * dt * it_eprop_hist->learning_signal_;
             sum_e_bar += e_bar;
             last_z_bar *= alpha;
-            ++start;
+            ++it_eprop_hist;
           }
         }
 

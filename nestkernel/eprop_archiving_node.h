@@ -52,7 +52,7 @@ public:
 
   void register_update( double t_last_update, double t_current_update );
 
-  void get_eprop_history( double time_point, std::deque< histentry_eprop >::iterator* it ) override;
+  void get_eprop_history( double time_point, std::deque< histentry_eprop_archive >::iterator* it ) override;
 
   void get_spike_history( double t1,
     double t2,
@@ -79,10 +79,10 @@ protected:
 private:
   double eps_ = 1e-6;
 
-  std::deque< histentry_eprop > eprop_history_;
+  std::deque< histentry_eprop_archive > eprop_history_;
   std::deque< double > spike_history_;
 
-  std::vector< histentry_extended > t_last_update_per_synapse_;
+  std::vector< histentry_eprop_update > t_last_update_per_synapse_;
 };
 
 } // namespace nest

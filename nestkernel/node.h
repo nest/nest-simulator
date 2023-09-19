@@ -755,10 +755,10 @@ public:
 
   virtual void get_eprop_history( double t1,
     double t2,
-    std::deque< histentry_eprop >::iterator* start,
-    std::deque< histentry_eprop >::iterator* finish );
+    std::deque< histentry_eprop_archive >::iterator* start,
+    std::deque< histentry_eprop_archive >::iterator* finish );
 
-  virtual void get_eprop_history( double t1, std::deque< histentry_eprop >::iterator* start );
+  virtual void get_eprop_history( double t1, std::deque< histentry_eprop_archive >::iterator* start );
 
 
   virtual void register_update( double t_lastupdate, double t_update );

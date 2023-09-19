@@ -373,7 +373,7 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
 
       presyn_spike_times_.insert( --presyn_spike_times_.end(), t_next_update_ - ( dendritic_delay - shift ) );
 
-      std::deque< histentry_eprop >::iterator start;
+      std::deque< histentry_eprop_archive >::iterator start;
 
       target->get_eprop_history( presyn_spike_times_[ 0 ] + dendritic_delay, &start );
       target->register_update( t_last_update_ + shift, t_current_update_ + shift );

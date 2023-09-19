@@ -58,17 +58,6 @@ public:
   friend bool operator<( const histentry_extended he, double t );
 };
 
-class histentry_eprop
-{
-public:
-  histentry_eprop( double t, double V_m_pseudo_deriv, double learning_signal );
-
-  double t_;                //!< spike time (ms)
-  double V_m_pseudo_deriv_; //!< pseudo derivative of membrane voltage
-  double learning_signal_;  //!< learning signal
-
-  friend bool operator<( const histentry_eprop he, double t );
-};
 
 inline bool
 operator<( const histentry_extended he, double t )
@@ -76,11 +65,49 @@ operator<( const histentry_extended he, double t )
   return ( he.t_ ) < t;
 }
 
+class histentry_eprop
+{
+public:
+  histentry_eprop( double t );
+
+  double t_;
+  virtual ~histentry_eprop()
+  {
+  }
+
+  friend bool operator<( const histentry_eprop he, double t );
+};
+
 inline bool
 operator<( const histentry_eprop he, double t )
 {
   return ( he.t_ ) < t;
 }
+
+class histentry_eprop_archive : public histentry_eprop
+{
+public:
+  histentry_eprop_archive( double t, double V_m_pseudo_deriv, double learning_signal );
+
+  double V_m_pseudo_deriv_;
+  double learning_signal_;
+};
+
+class histentry_eprop_update : public histentry_eprop
+{
+public:
+  histentry_eprop_update( double t, size_t access_counter );
+
+  size_t access_counter_;
+};
+
+class histentry_eprop_firing_rate_reg : public histentry_eprop
+{
+public:
+  histentry_eprop_firing_rate_reg( double t, double firing_rate_reg );
+
+  double firing_rate_reg_;
+};
 }
 
 #endif

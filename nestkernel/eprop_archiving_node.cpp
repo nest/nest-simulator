@@ -45,13 +45,10 @@ nest::EpropArchivingNode::init_eprop_buffers( double delay )
 {
   // register first entry for every synapse, increase access counter if entry already in list
 
-  std::vector< histentry_extended >::iterator it_reg =
+  std::vector< histentry_eprop_update >::iterator it_reg =
     std::lower_bound( t_last_update_per_synapse_.begin(), t_last_update_per_synapse_.end(), delay - eps_ );
 
-  if ( it_reg == t_last_update_per_synapse_.end() || fabs( delay - it_reg->t_ ) > eps_ )
-  {
-    t_last_update_per_synapse_.insert( it_reg, histentry_extended( delay, 0.0, 1 ) );
-  }
+    t_last_update_per_synapse_.insert( it_reg, histentry_eprop_update( delay, 1 ) );
   else
   {
     ++it_reg->access_counter_;
@@ -61,14 +58,9 @@ nest::EpropArchivingNode::init_eprop_buffers( double delay )
 void
 nest::EpropArchivingNode::register_update( double t_last_update, double t_current_update )
 {
-  // register spike time if it is not in the list, otherwise increase access counter
-  std::vector< histentry_extended >::iterator it_reg =
-    std::lower_bound( t_last_update_per_synapse_.begin(), t_last_update_per_synapse_.end(), t_current_update - eps_ );
+  std::vector< histentry_eprop_update >::iterator it_reg =
 
-  if ( it_reg == t_last_update_per_synapse_.end() || fabs( t_current_update - it_reg->t_ ) > eps_ )
-  {
-    t_last_update_per_synapse_.insert( it_reg, histentry_extended( t_current_update, 0.0, 1 ) );
-  }
+    t_last_update_per_synapse_.insert( it_reg, histentry_eprop_update( t_current_update, 1 ) );
   else
   {
     ++it_reg->access_counter_;
@@ -93,7 +85,7 @@ nest::EpropArchivingNode::register_update( double t_last_update, double t_curren
 }
 
 void
-nest::EpropArchivingNode::get_eprop_history( double time_point, std::deque< histentry_eprop >::iterator* it )
+nest::EpropArchivingNode::get_eprop_history( double time_point, std::deque< histentry_eprop_archive >::iterator* it )
 {
   if ( eprop_history_.empty() )
   {
@@ -139,8 +131,8 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
 
   double update_interval = kernel().simulation_manager.get_eprop_update_interval();
 
-  std::deque< histentry_eprop >::iterator start;
-  std::deque< histentry_eprop >::iterator finish;
+  std::deque< histentry_eprop_archive >::iterator start;
+  std::deque< histentry_eprop_archive >::iterator finish;
 
   auto it = t_last_update_per_synapse_.begin();
 
@@ -180,7 +172,7 @@ nest::EpropArchivingNode::write_v_m_pseudo_deriv_to_eprop_history( long time_ste
 
     const Time time_step_ = Time::step( time_step );
     const double time_ms = time_step_.get_ms();
-    eprop_history_.push_back( histentry_eprop( time_ms, v_m_pseudo_deriv, 0.0 ) );
+  eprop_history_.push_back( histentry_eprop_archive( time_ms, v_m_pseudo_deriv, 0.0 ) );
   }
 
 void
@@ -188,7 +180,7 @@ nest::EpropArchivingNode::write_error_signal_to_eprop_history( long time_step, d
 {
   const Time time_step_ = Time::step( time_step );
   const double time_ms = time_step_.get_ms();
-  eprop_history_.push_back( histentry_eprop( time_ms, 0.0, error_signal ) );
+  eprop_history_.push_back( histentry_eprop_archive( time_ms, 0.0, error_signal ) );
 }
 
 void
@@ -211,8 +203,8 @@ nest::EpropArchivingNode::write_learning_signal_to_eprop_history( LearningSignal
   double shift = 2.0 * Time::get_resolution().get_ms();
   double t_ms = e.get_stamp().get_ms() - shift;
 
-  std::deque< histentry_eprop >::iterator start;
-  std::deque< histentry_eprop >::iterator finish;
+  std::deque< histentry_eprop_archive >::iterator start;
+  std::deque< histentry_eprop_archive >::iterator finish;
 
   // get part of eprop history to which the learning signal is added
   get_eprop_history( t_ms, &start );

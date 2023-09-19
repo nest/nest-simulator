@@ -50,28 +50,16 @@ public:
   EpropArchivingNode();
   EpropArchivingNode( const EpropArchivingNode& );
 
-  void register_update( double t_last_update, double t_current_update );
-
-  void get_eprop_history( double time_point, std::deque< histentry_eprop_archive >::iterator* it ) override;
-
-  void get_spike_history( double t1,
-    double t2,
-    std::deque< double >::iterator* start,
-    std::deque< double >::iterator* finish ) override;
-
-  void erase_unneeded_eprop_history() override;
-  void erase_unneeded_spike_history() override;
-
-  void init_eprop_buffers( double delay ) override; // public to execute from synapse
+  void init_update_history( double delay );
 
 protected:
   double calculate_v_m_pseudo_deriv( double V_m, double V_th, double V_th_const ) const;
 
-  void write_v_m_pseudo_deriv_to_eprop_history( long time_step, double v_m_pseudo_deriv );
+  void erase_unneeded_update_history();
   void write_error_signal_to_eprop_history( long time_step, double error_signal );
   void write_learning_signal_to_eprop_history( LearningSignalConnectionEvent& e );
 
-  double get_learning_signal_from_eprop_history( long unsigned int shift );
+  void write_update_to_history( double t_last_update, double t_current_update );
 
   void write_spike_history( long time_step );
 
@@ -80,9 +68,7 @@ private:
   double eps_ = 1e-6;
 
   std::deque< histentry_eprop_archive > eprop_history_;
-  std::deque< double > spike_history_;
-
-  std::vector< histentry_eprop_update > t_last_update_per_synapse_;
+  std::vector< histentry_eprop_update > update_history_;
 };
 
 } // namespace nest

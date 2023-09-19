@@ -715,7 +715,7 @@ public:
   virtual double get_adapt_beta() const;
 
   virtual std::string get_eprop_node_type() const;
-  virtual void init_eprop_buffers( double delay );
+  virtual void init_update_history( double delay );
 
   /**
    * write the Kminus, nearest_neighbor_Kminus, and Kminus_triplet
@@ -761,7 +761,7 @@ public:
   virtual void get_eprop_history( double t1, std::deque< histentry_eprop_archive >::iterator* start );
 
 
-  virtual void register_update( double t_lastupdate, double t_update );
+  virtual void write_update_to_history double t_lastupdate, double t_current_update );
 
   virtual void get_spike_history( double t1,
     double t2,

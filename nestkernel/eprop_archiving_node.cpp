@@ -41,47 +41,35 @@ nest::EpropArchivingNode::EpropArchivingNode( const EpropArchivingNode& n )
 }
 
 void
-nest::EpropArchivingNode::init_eprop_buffers( double delay )
+nest::EpropArchivingNode::init_update_history( double delay )
 {
   // register first entry for every synapse, increase access counter if entry already in list
 
-  std::vector< histentry_eprop_update >::iterator it_reg =
-    std::lower_bound( t_last_update_per_synapse_.begin(), t_last_update_per_synapse_.end(), delay - eps_ );
+  std::vector< histentry_eprop_update >::iterator it =
+    std::lower_bound( update_history_.begin(), update_history_.end(), delay - eps_ );
 
-    t_last_update_per_synapse_.insert( it_reg, histentry_eprop_update( delay, 1 ) );
+  if ( it == update_history_.end() || fabs( delay - it->t_ ) > eps_ )
+    update_history_.insert( it, histentry_eprop_update( delay, 1 ) );
   else
-  {
-    ++it_reg->access_counter_;
-  }
+    ++it->access_counter_;
 }
 
 void
-nest::EpropArchivingNode::register_update( double t_last_update, double t_current_update )
+nest::EpropArchivingNode::write_update_to_history( double t_last_update, double t_current_update )
 {
-  std::vector< histentry_eprop_update >::iterator it_reg =
+  std::vector< histentry_eprop_update >::iterator it;
 
-    t_last_update_per_synapse_.insert( it_reg, histentry_eprop_update( t_current_update, 1 ) );
+  it = std::lower_bound( update_history_.begin(), update_history_.end(), t_current_update );
+
+  if ( it != update_history_.end() or t_current_update == it->t_ )
+    ++it->access_counter_;
   else
-  {
-    ++it_reg->access_counter_;
-  }
-  // search for old entry, decrease access counter, and delete entry if the access counter equals zero
-  it_reg =
-    std::lower_bound( t_last_update_per_synapse_.begin(), t_last_update_per_synapse_.end(), t_last_update - eps_ );
+    update_history_.insert( it, histentry_eprop_update( t_current_update, 1 ) );
 
-  if ( it_reg == t_last_update_per_synapse_.end() || fabs( t_last_update - it_reg->t_ ) > eps_ )
-  {
-    std::cout << "found no entry to register in scanned " + std::to_string( t_last_update ) + " ms interval \n";
-  }
-  else
-  {
-    it_reg->access_counter_--;
+  it = std::lower_bound( update_history_.begin(), update_history_.end(), t_last_update );
 
-    if ( it_reg->access_counter_ == 0 )
-    {
-      it_reg = t_last_update_per_synapse_.erase( it_reg ); // erase old entry
-    }
-  }
+  if ( it != update_history_.end() or t_last_update == it->t_ )
+    --it->access_counter_;
 }
 
 void
@@ -134,10 +122,9 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
   std::deque< histentry_eprop_archive >::iterator start;
   std::deque< histentry_eprop_archive >::iterator finish;
 
-  auto it = t_last_update_per_synapse_.begin();
+  auto it = update_history_.begin();
 
-  for ( auto t = t_last_update_per_synapse_.begin()->t_; t <= ( t_last_update_per_synapse_.end() - 1 )->t_;
-        t += update_interval )
+  for ( auto t = update_history_.begin()->t_; t <= ( update_history_.end() - 1 )->t_; t += update_interval )
   {
     if ( it->t_ == t )
     {
@@ -151,7 +138,7 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
     }
   }
   get_eprop_history( 0.0, &start );
-  get_eprop_history( t_last_update_per_synapse_.begin()->t_, &finish );
+  get_eprop_history( update_history_.begin()->t_, &finish );
   eprop_history_.erase( start, finish ); // erase found entries since no longer used
 }
 
@@ -220,4 +207,13 @@ nest::EpropArchivingNode::write_learning_signal_to_eprop_history( LearningSignal
   }
 }
 
+void
+nest::EpropArchivingNode::erase_unneeded_update_history()
+{
+  for ( auto it = update_history_.begin(); it < update_history_.end(); it++ )
+  {
+    if ( it->access_counter_ == 0 )
+      update_history_.erase( it );
+  }
+}
 } // namespace nest

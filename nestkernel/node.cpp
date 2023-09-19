@@ -468,7 +468,7 @@ Node::get_eprop_node_type() const
 }
 
 void
-Node::init_eprop_buffers( double )
+Node::init_update_history( double )
 {
   throw UnexpectedEvent();
 }
@@ -556,7 +556,7 @@ nest::Node::get_eprop_history( double, std::deque< histentry_eprop_archive >::it
 }
 
 void
-nest::Node::register_update( double, double )
+nest::Node::write_update_to_history( double, double )
 {
   throw UnexpectedEvent();
 }

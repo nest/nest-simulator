@@ -17,9 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>
 
-# Version range from minimum required (3.12 for macOS OpenMP)
-# up to newest version tested, see https://cliutils.gitlab.io/modern-cmake/chapters/basics.html
-cmake_minimum_required( VERSION 3.12...3.16 )
+cmake_minimum_required( VERSION 3.19 )
 
 # add cmake modules: for all `include(...)` first look here
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
@@ -88,6 +86,8 @@ set( with-defines OFF CACHE STRING "Additional defines, e.g. '-DXYZ=1' [default=
 set( with-userdoc OFF CACHE STRING "Build user documentation [default=OFF]")
 set( with-devdoc OFF CACHE STRING "Build developer documentation [default=OFF]")
 
+set( with-full-logging OFF CACHE STRING "Write debug output to 'dump_<num_ranks>_<rank>.log' file [default=OFF]")
+
 ################################################################################
 ##################      Project Directory variables           ##################
 ################################################################################
@@ -155,6 +155,7 @@ nest_process_with_hdf5()
 nest_process_target_bits_split()
 nest_process_userdoc()
 nest_process_devdoc()
+nest_process_full_logging()
 
 nest_process_models()
 

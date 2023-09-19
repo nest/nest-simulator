@@ -139,6 +139,11 @@ See also
 
 step_current_generator
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: noise_generator
+
 EndUserDocs */
 
 class noise_generator : public StimulationDevice

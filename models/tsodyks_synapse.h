@@ -129,6 +129,11 @@ See also
 
 stdp_synapse, static_synapse, iaf_psc_exp, iaf_tum_2000
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: tsodyks_synapse
+
 EndUserDocs */
 
 template < typename targetidentifierT >

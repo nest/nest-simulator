@@ -83,7 +83,8 @@ class NestModule(types.ModuleType):
     from . import spatial_distributions  # noqa
     from .ll_api import set_communicator
 
-    NESTError = ll_api.nestkernel.NESTError
+    NESTErrors = ll_api.nestkernel.NESTErrors
+    NESTError = ll_api.nestkernel.NESTErrors.KernelException
 
     def __init__(self, name):
         super().__init__(name)

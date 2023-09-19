@@ -35,8 +35,6 @@ from libcpp.vector cimport vector
 
 import nest
 import numpy
-from nest.lib.hl_api_exceptions import NESTErrors
-
 # cimport numpy
 
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
@@ -44,8 +42,10 @@ from nest.lib.hl_api_exceptions import NESTErrors
 from libc.stdint cimport int64_t, uint64_t
 from libc.stdlib cimport free, malloc
 
+NESTError = None
 
 def init(args):
+    global NESTError
     cdef int argc = len(args)
 
     cdef char** c_argv = <char**>malloc(sizeof(char*) * argc)
@@ -53,10 +53,11 @@ def init(args):
         for idx, s in enumerate([pystr_to_string(x) for x in args]):
             c_argv[idx] = s
         init_nest(&argc, &c_argv)
+        create_exceptions()  # requires fully initialized NEST kernel
+        NESTError = <object> nest_error_module
     finally:
         free(c_argv)
 
-    
 #
 #    cdef vector[char*] argv = pylist_to_stringvec(pyargs)
 ##    cdef const char* argv = argv_sv[0].c_str()
@@ -114,6 +115,7 @@ cdef object any_vector_to_list(vector[any] cvec):
         inc(it)
     return tmp
 
+
 cdef object dict_vector_to_list(vector[dictionary] cvec):
     cdef tmp = []
     cdef vector[dictionary].iterator it = cvec.begin()
@@ -121,6 +123,7 @@ cdef object dict_vector_to_list(vector[dictionary] cvec):
         tmp.append(dictionary_to_pydict(deref(it)))
         inc(it)
     return tmp
+
 
 cdef object any_to_pyobj(any operand):
     if is_type[int](operand):
@@ -166,6 +169,7 @@ cdef object any_to_pyobj(any operand):
         obj._set_nc(any_cast[NodeCollectionPTR](operand))
         return nest.NodeCollection(obj)
 
+
 cdef object dictionary_to_pydict(dictionary cdict):
     cdef tmp = {}
 
@@ -179,11 +183,13 @@ cdef object dictionary_to_pydict(dictionary cdict):
         inc(it)
     return tmp
 
+
 cdef is_list_tuple_ndarray_of_float(v):
     list_of_float = type(v) is list and type(v[0]) is float
     tuple_of_float = type(v) is tuple and type(v[0]) is float
     ndarray_of_float = isinstance(v, numpy.ndarray) and numpy.issubdtype(v.dtype, numpy.floating)
     return list_of_float or tuple_of_float or ndarray_of_float
+
 
 cdef is_list_tuple_ndarray_of_int(v):
     list_of_float = type(v) is list and type(v[0]) is int
@@ -232,6 +238,7 @@ cdef dictionary pydict_to_dictionary(object py_dict) except *:  # Adding "except
             raise AttributeError(f'when converting Python dictionary: value of key ({key}) is not a known type, got {type(value)}')
     return cdict
 
+
 cdef object vec_of_dict_to_list(vector[dictionary] cvec):
     cdef tmp = []
     cdef vector[dictionary].iterator it = cvec.begin()
@@ -239,6 +246,7 @@ cdef object vec_of_dict_to_list(vector[dictionary] cvec):
         tmp.append(dictionary_to_pydict(deref(it)))
         inc(it)
     return tmp
+
 
 cdef vector[dictionary] list_of_dict_to_vec(object pylist):
     cdef vector[dictionary] vec
@@ -248,11 +256,13 @@ cdef vector[dictionary] list_of_dict_to_vec(object pylist):
         vec.push_back(pydict_to_dictionary(pydict))
     return vec
 
+
 cdef vector[vector[double]] list_of_list_to_doublevec(object pylist):
     cdef vector[vector[double]] vec
     for val in pylist:
         vec.push_back(val)
     return vec
+
 
 cdef vector[long] pylist_to_intvec(object pylist):
     cdef vector[long] vec
@@ -260,10 +270,12 @@ cdef vector[long] pylist_to_intvec(object pylist):
         vec.push_back(val)
     return vec
 
+
 cdef vector[double] pylist_or_ndarray_to_doublevec(object pylist):
     cdef vector[double] vec
     vec = pylist
     return vec
+
 
 cdef vector[string] pylist_to_stringvec(object pylist):
     cdef vector[string] vec
@@ -271,36 +283,32 @@ cdef vector[string] pylist_to_stringvec(object pylist):
         vec.push_back(<string>pystr_to_string(val))
     return vec
 
+
 cdef vector[dictionary] pylist_to_dictvec(object pylist):
     cdef vector[dictionary] vec
     for val in pylist:
         vec.push_back(pydict_to_dictionary(val))
     return vec
 
+
 cdef object string_to_pystr(string s):
     return s.decode('utf-8')
+
 
 cdef string pystr_to_string(object s):
     return s.encode('utf-8')
 
-def catch_cpp_error(func):
-    def wrapper_catch_cpp_error(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except RuntimeError as e:
-            raise NESTErrors.NESTError(f'in {func.__name__}: {e}') from None
-    return wrapper_catch_cpp_error
 
 def llapi_init_nest(argv):
     cdef int argc = len(argv)
     if argc <= 0:
-        raise NESTErrors.PyNESTError("argv can't be empty")
+        raise NotImplementedError
 
 
     # Create c-style argv arguments from sys.argv
     cdef char** argv_chars = <char**> malloc((argc+1) * sizeof(char*))
     if argv_chars is NULL:
-        raise NESTErrors.PyNESTError("couldn't allocate argv_char")
+        raise NotImplementedError
     try:
         # argv must be null terminated. openmpi depends on this
         argv_chars[argc] = NULL
@@ -330,26 +338,27 @@ def llapi_init_nest(argv):
 
     return True
 
+
 def llapi_reset_kernel():
     reset_kernel()
 
-@catch_cpp_error
+
 def llapi_get_verbosity():
     return severity_t(get_verbosity())
 
-@catch_cpp_error
+
 def llapi_set_verbosity(severity_t s):
     set_verbosity(s)
 
-@catch_cpp_error
+
 def llapi_enable_structural_plasticity():
     enable_structural_plasticity()
 
-@catch_cpp_error
+
 def llapi_disable_structural_plasticity():
     disable_structural_plasticity()
 
-@catch_cpp_error
+
 def llapi_create(model, long n):
     cdef NodeCollectionPTR gids
     gids = create(pystr_to_string(model), n)
@@ -357,7 +366,7 @@ def llapi_create(model, long n):
     obj._set_nc(gids)
     return nest.NodeCollection(obj)
 
-@catch_cpp_error
+
 def llapi_create_spatial(object layer_params):
     cdef NodeCollectionPTR gids
     gids = create_spatial(pydict_to_dictionary(layer_params))
@@ -365,7 +374,7 @@ def llapi_create_spatial(object layer_params):
     obj._set_nc(gids)
     return nest.NodeCollection(obj)
 
-@catch_cpp_error
+
 def llapi_get_position(NodeCollectionObject layer):
     cdef vector[vector[double]] result = get_position(layer.thisptr)
     if nc_size(layer.thisptr) == 1:
@@ -373,7 +382,7 @@ def llapi_get_position(NodeCollectionObject layer):
     else:
         return result
 
-@catch_cpp_error
+
 def llapi_spatial_distance(object from_arg, to_arg):
     cdef vector[vector[double]] from_vec
     if isinstance(from_arg, nest.NodeCollection):
@@ -384,7 +393,7 @@ def llapi_spatial_distance(object from_arg, to_arg):
     else:
         raise TypeError("from_arg must be either a NodeCollection or a list/tuple of positions")
 
-@catch_cpp_error
+
 def llapi_displacement(object from_arg, to_arg):
     cdef vector[vector[double]] from_vec
     if isinstance(from_arg, nest.NodeCollection):
@@ -395,7 +404,7 @@ def llapi_displacement(object from_arg, to_arg):
     else:
         raise TypeError("from_arg must be either a NodeCollection or a list/tuple of positions")
 
-@catch_cpp_error
+
 def llapi_distance(object conn):  # PYNEST-NG: should there be a SynapseCollectionObject?
     cdef vector[ConnectionID] conn_vec
     for c in conn:
@@ -410,7 +419,6 @@ def llapi_distance(object conn):  # PYNEST-NG: should there be a SynapseCollecti
 # and (aka intersect_mask)
 # sub (aka minus_mask)
 
-@catch_cpp_error
 def llapi_make_nodecollection(object node_ids):
     cdef NodeCollectionPTR gids
     # node_ids list is automatically converted to an std::vector
@@ -419,7 +427,7 @@ def llapi_make_nodecollection(object node_ids):
     obj._set_nc(gids)
     return nest.NodeCollection(obj)
 
-@catch_cpp_error
+
 def llapi_connect(NodeCollectionObject pre, NodeCollectionObject post, object conn_params, object synapse_params):
     conn_params = conn_params if conn_params is not None else {}
     synapse_params = synapse_params if synapse_params is not None else {}
@@ -440,7 +448,7 @@ def llapi_connect(NodeCollectionObject pre, NodeCollectionObject post, object co
             pydict_to_dictionary(conn_params),
             syn_param_vec)
 
-@catch_cpp_error
+
 def llapi_disconnect(NodeCollectionObject pre, NodeCollectionObject post, object conn_params, object synapse_params):
     conn_params = conn_params if conn_params is not None else {}
     synapse_params = synapse_params if synapse_params is not None else {}
@@ -455,7 +463,7 @@ def llapi_disconnect(NodeCollectionObject pre, NodeCollectionObject post, object
             pydict_to_dictionary(conn_params),
             pydict_to_dictionary(synapse_params))
 
-@catch_cpp_error
+
 def llapi_disconnect_syncoll(object conns):
     cdef deque[ConnectionID] conn_deque
     cdef ConnectionObject conn_object
@@ -464,12 +472,12 @@ def llapi_disconnect_syncoll(object conns):
 
     disconnect(conn_deque)
 
-@catch_cpp_error
+
 def llapi_connect_layers(NodeCollectionObject pre, NodeCollectionObject post, object projections):
     print("### 9", projections)
     connect_layers(pre.thisptr, post.thisptr, pydict_to_dictionary(projections))
 
-@catch_cpp_error
+
 def llapi_create_mask(object specs):
     cdef dictionary specs_dictionary = pydict_to_dictionary(specs)
     cdef MaskPTR mask
@@ -478,26 +486,26 @@ def llapi_create_mask(object specs):
     obj._set_mask(mask)
     return nest.Mask(obj)
 
-@catch_cpp_error
+
 def llapi_select_nodes_by_mask(NodeCollectionObject layer, vector[double] anchor, MaskObject mask_datum):
     nodes = select_nodes_by_mask(layer.thisptr, anchor, mask_datum.thisptr)
     obj = NodeCollectionObject()
     obj._set_nc(nodes)
     return nest.NodeCollection(obj)
 
-@catch_cpp_error
+
 def llapi_inside_mask(vector[double] point, MaskObject mask):
     return inside(point, mask.thisptr)
 
-@catch_cpp_error
+
 def llapi_dump_layer_nodes(NodeCollectionObject layer, object filename):
     dump_layer_nodes(layer.thisptr, pystr_to_string(filename))
 
-@catch_cpp_error
+
 def llapi_dump_layer_connections(NodeCollectionObject source_layer, NodeCollectionObject target_layer, synapse_model, filename):
     dump_layer_connections(source_layer.thisptr, target_layer.thisptr, pystr_to_string(synapse_model), pystr_to_string(filename))
 
-@catch_cpp_error
+
 def llapi_slice(NodeCollectionObject nc, long start, long stop, long step):
     cdef NodeCollectionPTR nc_ptr
     nc_ptr = slice_nc(nc.thisptr, start, stop, step)
@@ -505,31 +513,32 @@ def llapi_slice(NodeCollectionObject nc, long start, long stop, long step):
     obj._set_nc(nc_ptr)
     return nest.NodeCollection(obj)
 
+
 def llapi_print_nodes():
     return string_to_pystr(print_nodes_to_string())
 
-@catch_cpp_error
+
 def llapi_nc_size(NodeCollectionObject nc):
     return nc_size(nc.thisptr)
 
-@catch_cpp_error
+
 def llapi_to_string(NodeCollectionObject nc):
     return string_to_pystr(pprint_to_string(nc.thisptr))
 
-@catch_cpp_error
+
 def llapi_get_kernel_status():
     cdef dictionary cdict = get_kernel_status()
     return dictionary_to_pydict(cdict)
 
-@catch_cpp_error
+
 def llapi_get_defaults(object model_name):
     return dictionary_to_pydict(get_model_defaults(pystr_to_string(model_name)))
 
-@catch_cpp_error
+
 def llapi_set_defaults(object model_name, object params):
     set_model_defaults(pystr_to_string(model_name), pydict_to_dictionary(params))
 
-@catch_cpp_error
+
 def llapi_get_nodes(object params, cbool local_only):
     cdef dictionary params_dict = pydict_to_dictionary(params)
     cdef NodeCollectionPTR nc_ptr = get_nodes(params_dict, local_only)
@@ -537,33 +546,33 @@ def llapi_get_nodes(object params, cbool local_only):
     obj._set_nc(nc_ptr)
     return nest.NodeCollection(obj)
 
-@catch_cpp_error
+
 def llapi_set_kernel_status(object params):
     cdef dictionary params_dict = pydict_to_dictionary(params)
     set_kernel_status(params_dict)
 
-@catch_cpp_error
+
 def llapi_simulate(float t):
     simulate(t)
 
-@catch_cpp_error
+
 def llapi_prepare():
     prepare()
 
-@catch_cpp_error
+
 def llapi_run(float t):
     run(t)
 
-@catch_cpp_error
+
 def llapi_cleanup():
     cleanup()
 
-@catch_cpp_error
+
 def llapi_copy_model(oldmodname, newmodname, object params):
     cdef dictionary params_dict = pydict_to_dictionary(params)
     copy_model(pystr_to_string(oldmodname), pystr_to_string(newmodname), params_dict)
 
-@catch_cpp_error
+
 def llapi_get_nc_status(NodeCollectionObject nc, object key=None):
     cdef dictionary statuses = get_nc_status(nc.thisptr)
     if key is None:
@@ -576,12 +585,12 @@ def llapi_get_nc_status(NodeCollectionObject nc, object key=None):
     else:
         raise TypeError(f'key must be a string, got {type(key)}')
 
-@catch_cpp_error
+
 def llapi_set_nc_status(NodeCollectionObject nc, object params_list):
     cdef vector[dictionary] params = list_of_dict_to_vec(params_list)
     set_nc_status(nc.thisptr, params)
 
-@catch_cpp_error
+
 def llapi_join_nc(NodeCollectionObject lhs, NodeCollectionObject rhs):
     cdef NodeCollectionPTR result
     # Using operator+() directly
@@ -590,23 +599,23 @@ def llapi_join_nc(NodeCollectionObject lhs, NodeCollectionObject rhs):
     obj._set_nc(result)
     return nest.NodeCollection(obj)
 
-@catch_cpp_error
+
 def llapi_eq_nc(NodeCollectionObject lhs, NodeCollectionObject rhs):
     return equal(lhs.thisptr, rhs.thisptr)
 
-@catch_cpp_error
+
 def llapi_nc_contains(NodeCollectionObject nc, long node_id):
     return contains(nc.thisptr, node_id)
 
-@catch_cpp_error
+
 def llapi_nc_find(NodeCollectionObject nc, long node_id):
     return find(nc.thisptr, node_id)
 
-@catch_cpp_error
+
 def llapi_get_nc_metadata(NodeCollectionObject nc):
     return dictionary_to_pydict(get_metadata(nc.thisptr))
 
-@catch_cpp_error
+
 def llapi_take_array_index(NodeCollectionObject node_collection, object array):
     if not isinstance(array, numpy.ndarray):
         raise TypeError('array must be a 1-dimensional NumPy array of ints or bools, got {}'.format(type(array)))
@@ -622,13 +631,13 @@ def llapi_take_array_index(NodeCollectionObject node_collection, object array):
 
     cdef NodeCollectionPTR new_nc_ptr
 
-    if array.dtype == numpy.bool:
+    if array.dtype == bool:
         # Boolean C-type arrays are not supported in NumPy, so we use an 8-bit integer array
         array_bool_mv = numpy.ascontiguousarray(array, dtype=numpy.uint8)
         array_bool_ptr = &array_bool_mv[0]
         new_nc_ptr = node_collection_array_index(node_collection.thisptr, array_bool_ptr, len(array))
     elif numpy.issubdtype(array.dtype, numpy.integer):
-        array_long_mv = numpy.ascontiguousarray(array, dtype=numpy.long)
+        array_long_mv = numpy.ascontiguousarray(array, dtype=int)
         array_long_ptr = &array_long_mv[0]
         new_nc_ptr = node_collection_array_index(node_collection.thisptr, array_long_ptr, len(array))
     else:
@@ -637,7 +646,7 @@ def llapi_take_array_index(NodeCollectionObject node_collection, object array):
     obj._set_nc(new_nc_ptr)
     return nest.NodeCollection(obj)
 
-@catch_cpp_error
+
 def llapi_create_parameter(object specs):
     cdef dictionary specs_dictionary = pydict_to_dictionary(specs)
     cdef ParameterPTR parameter
@@ -646,16 +655,15 @@ def llapi_create_parameter(object specs):
     obj._set_parameter(parameter)
     return nest.Parameter(obj)
 
-@catch_cpp_error
+
 def llapi_get_param_value(ParameterObject parameter):
     return get_value(parameter.thisptr)
 
-@catch_cpp_error
+
 def llapi_param_is_spatial(ParameterObject parameter):
     return is_spatial(parameter.thisptr)
 
 
-@catch_cpp_error
 def llapi_apply_parameter(ParameterObject parameter, object pos_or_nc):
     if type(pos_or_nc) is nest.NodeCollection:
         return tuple(apply(parameter.thisptr, (<NodeCollectionObject>(pos_or_nc._datum)).thisptr))
@@ -663,7 +671,6 @@ def llapi_apply_parameter(ParameterObject parameter, object pos_or_nc):
         return tuple(apply(parameter.thisptr, pydict_to_dictionary(pos_or_nc)))
 
 
-@catch_cpp_error
 def llapi_multiply_parameter(ParameterObject first, ParameterObject second):
     cdef ParameterPTR new_parameter
     new_parameter = multiply_parameter(first.thisptr, second.thisptr)
@@ -671,7 +678,7 @@ def llapi_multiply_parameter(ParameterObject first, ParameterObject second):
     obj._set_parameter(new_parameter)
     return nest.Parameter(obj)
 
-@catch_cpp_error
+
 def llapi_divide_parameter(ParameterObject first, ParameterObject second):
     cdef ParameterPTR new_parameter
     new_parameter = divide_parameter(first.thisptr, second.thisptr)
@@ -679,7 +686,7 @@ def llapi_divide_parameter(ParameterObject first, ParameterObject second):
     obj._set_parameter(new_parameter)
     return nest.Parameter(obj)
 
-@catch_cpp_error
+
 def llapi_add_parameter(ParameterObject first, ParameterObject second):
     cdef ParameterPTR new_parameter
     new_parameter = add_parameter(first.thisptr, second.thisptr)
@@ -687,7 +694,7 @@ def llapi_add_parameter(ParameterObject first, ParameterObject second):
     obj._set_parameter(new_parameter)
     return nest.Parameter(obj)
 
-@catch_cpp_error
+
 def llapi_subtract_parameter(ParameterObject first, ParameterObject second):
     cdef ParameterPTR new_parameter
     new_parameter = subtract_parameter(first.thisptr, second.thisptr)
@@ -695,7 +702,7 @@ def llapi_subtract_parameter(ParameterObject first, ParameterObject second):
     obj._set_parameter(new_parameter)
     return nest.Parameter(obj)
 
-@catch_cpp_error
+
 def llapi_compare_parameter(ParameterObject first, ParameterObject second, object pydict):
     cdef ParameterPTR new_parameter
     cdef dictionary cdict = pydict_to_dictionary(pydict)
@@ -704,7 +711,7 @@ def llapi_compare_parameter(ParameterObject first, ParameterObject second, objec
     obj._set_parameter(new_parameter)
     return nest.Parameter(obj)
 
-@catch_cpp_error
+
 def llapi_conditional_parameter(ParameterObject condition, ParameterObject if_true, ParameterObject if_false):
     cdef ParameterPTR new_parameter
     new_parameter = conditional_parameter(condition.thisptr, if_true.thisptr, if_false.thisptr)
@@ -712,7 +719,7 @@ def llapi_conditional_parameter(ParameterObject condition, ParameterObject if_tr
     obj._set_parameter(new_parameter)
     return nest.Parameter(obj)
 
-@catch_cpp_error
+
 def llapi_min_parameter(ParameterObject parameter, double other_value):
     cdef ParameterPTR new_parameter
     new_parameter = min_parameter(parameter.thisptr, other_value)
@@ -720,7 +727,7 @@ def llapi_min_parameter(ParameterObject parameter, double other_value):
     obj._set_parameter(new_parameter)
     return nest.Parameter(obj)
 
-@catch_cpp_error
+
 def llapi_max_parameter(ParameterObject parameter, double other_value):
     cdef ParameterPTR new_parameter
     new_parameter = max_parameter(parameter.thisptr, other_value)
@@ -728,7 +735,7 @@ def llapi_max_parameter(ParameterObject parameter, double other_value):
     obj._set_parameter(new_parameter)
     return nest.Parameter(obj)
 
-@catch_cpp_error
+
 def llapi_redraw_parameter(ParameterObject parameter, double min_value, double max_value):
     cdef ParameterPTR new_parameter
     new_parameter = redraw_parameter(parameter.thisptr, min_value, max_value)
@@ -736,7 +743,7 @@ def llapi_redraw_parameter(ParameterObject parameter, double min_value, double m
     obj._set_parameter(new_parameter)
     return nest.Parameter(obj)
 
-@catch_cpp_error
+
 def llapi_exp_parameter(ParameterObject parameter):
     cdef ParameterPTR new_parameter
     new_parameter = exp_parameter(parameter.thisptr)
@@ -744,7 +751,7 @@ def llapi_exp_parameter(ParameterObject parameter):
     obj._set_parameter(new_parameter)
     return nest.Parameter(obj)
 
-@catch_cpp_error
+
 def llapi_sin_parameter(ParameterObject parameter):
     cdef ParameterPTR new_parameter
     new_parameter = sin_parameter(parameter.thisptr)
@@ -752,7 +759,7 @@ def llapi_sin_parameter(ParameterObject parameter):
     obj._set_parameter(new_parameter)
     return nest.Parameter(obj)
 
-@catch_cpp_error
+
 def llapi_cos_parameter(ParameterObject parameter):
     cdef ParameterPTR new_parameter
     new_parameter = cos_parameter(parameter.thisptr)
@@ -760,7 +767,7 @@ def llapi_cos_parameter(ParameterObject parameter):
     obj._set_parameter(new_parameter)
     return nest.Parameter(obj)
 
-@catch_cpp_error
+
 def llapi_pow_parameter(ParameterObject parameter, double exponent):
     cdef ParameterPTR new_parameter
     new_parameter = pow_parameter(parameter.thisptr, exponent)
@@ -768,7 +775,7 @@ def llapi_pow_parameter(ParameterObject parameter, double exponent):
     obj._set_parameter(new_parameter)
     return nest.Parameter(obj)
 
-@catch_cpp_error
+
 def llapi_dimension_parameter(object list_of_pos_params):
     cdef ParameterPTR dim_parameter
     cdef ParameterObject x, y, z
@@ -782,7 +789,7 @@ def llapi_dimension_parameter(object list_of_pos_params):
     obj._set_parameter(dim_parameter)
     return nest.Parameter(obj)
 
-@catch_cpp_error
+
 def llapi_get_connections(object params):
     cdef dictionary params_dictionary = pydict_to_dictionary(params)
     cdef deque[ConnectionID] connections
@@ -799,7 +806,7 @@ def llapi_get_connections(object params):
 
     return nest.SynapseCollection(connections_list)
 
-@catch_cpp_error
+
 def llapi_get_connection_status(object conns):
     cdef vector[dictionary] connection_statuses
     # Convert the list of connections to a deque
@@ -813,7 +820,6 @@ def llapi_get_connection_status(object conns):
     return vec_of_dict_to_list(connection_statuses)
 
 
-@catch_cpp_error
 def llapi_set_connection_status(object conns, object params):
     # Convert the list of connections to a deque
     cdef deque[ConnectionID] conn_deque
@@ -832,7 +838,6 @@ def llapi_set_connection_status(object conns, object params):
         raise TypeError('params must be a dict or a list of dicts')
 
 
-@catch_cpp_error
 def ll_api_connect_arrays(sources, targets, weights, delays, synapse_model, syn_param_keys, syn_param_values):
     """Calls connect_arrays function, bypassing SLI to expose pointers to the NumPy arrays"""
 

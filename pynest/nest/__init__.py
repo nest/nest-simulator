@@ -83,6 +83,8 @@ class NestModule(types.ModuleType):
     from . import spatial_distributions  # noqa
     from .ll_api import set_communicator
 
+    NESTError = ll_api.nestkernel.NESTError
+
     def __init__(self, name):
         super().__init__(name)
         # Copy over the original module attributes to preserve all interpreter-given
@@ -91,7 +93,6 @@ class NestModule(types.ModuleType):
 
         # Import public APIs of submodules into the `nest.` namespace
         _rel_import_star(self, ".lib.hl_api_connections")  # noqa: F821
-        _rel_import_star(self, ".lib.hl_api_exceptions")  # noqa: F821
         _rel_import_star(self, ".lib.hl_api_info")  # noqa: F821
         _rel_import_star(self, ".lib.hl_api_models")  # noqa: F821
         _rel_import_star(self, ".lib.hl_api_nodes")  # noqa: F821

@@ -708,15 +708,6 @@ public:
 
   virtual double get_LTD_value( double t );
 
-  virtual double get_leak_propagator() const;
-  virtual double get_leak_propagator_complement() const;
-
-  virtual double get_adapt_propagator() const;
-  virtual double get_adapt_beta() const;
-
-  virtual std::string get_eprop_node_type() const;
-  virtual void init_update_history( double delay );
-
   /**
    * write the Kminus, nearest_neighbor_Kminus, and Kminus_triplet
    * values at t (in ms) to the provided locations.
@@ -752,6 +743,13 @@ public:
   virtual double get_tau_s( int comp );
   virtual double get_tau_syn_ex( int comp );
   virtual double get_tau_syn_in( int comp );
+  
+  virtual double get_leak_propagator() const;
+  virtual double get_leak_propagator_complement() const;
+  virtual double get_adapt_propagator() const;
+  virtual double get_adapt_beta() const;
+  virtual std::string get_eprop_node_type() const;
+  virtual void init_update_history( double delay );
 
   virtual void get_eprop_history( double t1,
     double t2,

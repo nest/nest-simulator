@@ -437,41 +437,6 @@ Node::get_K_value( double )
   throw UnexpectedEvent();
 }
 
-double
-Node::get_leak_propagator() const
-{
-  throw UnexpectedEvent();
-}
-
-double
-Node::get_leak_propagator_complement() const
-{
-  throw UnexpectedEvent();
-}
-
-double
-Node::get_adapt_propagator() const
-{
-  throw UnexpectedEvent();
-}
-
-double
-Node::get_adapt_beta() const
-{
-  throw UnexpectedEvent();
-}
-
-std::string
-Node::get_eprop_node_type() const
-{
-  throw UnexpectedEvent();
-}
-
-void
-Node::init_update_history( double )
-{
-  throw UnexpectedEvent();
-}
 
 void
 Node::get_K_values( double, double&, double&, double& )
@@ -536,6 +501,36 @@ nest::Node::get_tau_syn_ex( int )
 
 double
 nest::Node::get_tau_syn_in( int )
+{
+  throw UnexpectedEvent();
+}
+
+double
+Node::get_leak_propagator() const
+{
+  throw UnexpectedEvent();
+}
+
+double
+Node::get_leak_propagator_complement() const
+{
+  throw UnexpectedEvent();
+}
+
+double
+Node::get_adapt_propagator() const
+{
+  throw UnexpectedEvent();
+}
+
+double
+Node::get_adapt_beta() const
+{
+  throw UnexpectedEvent();
+}
+
+std::string
+Node::get_eprop_node_type() const
 {
   throw UnexpectedEvent();
 }

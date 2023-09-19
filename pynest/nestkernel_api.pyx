@@ -35,6 +35,7 @@ from libcpp.vector cimport vector
 
 import nest
 import numpy
+
 # cimport numpy
 
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION

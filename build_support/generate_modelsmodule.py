@@ -110,6 +110,7 @@ def get_models_from_file(model_file):
         "clopath": "public ClopathArchivingNode",
         "urbanczik": "public UrbanczikArchivingNode",
         "eprop": "public EpropArchivingNode",
+        "eprop_connection": "public eprop_synapse",
         "binary": "typedef binary_neuron",
         "rate": "typedef rate_",
     }
@@ -306,7 +307,7 @@ def generate_modelsmodule():
             for guards, mnames in guards_mnames.items():
                 file.write(start_guard(guards))
                 for mname in mnames:
-                    if model_type == "connection":
+                    if model_type == "connection" or model_type == "eprop_connection":
                         file.write(conn_reg.format(model=mname))
                     else:
                         file.write(node_reg.format(model=mname))

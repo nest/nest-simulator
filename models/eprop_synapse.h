@@ -278,18 +278,11 @@ public:
   void send( Event& e, size_t thread, const EpropCommonProperties& cp );
 
   void optimize( long current_optimization_step_, long& last_optimization_step_, const EpropCommonProperties& cp );
-  void update_gradient_readout( std::vector< double >& presyn_isis,
+
+  virtual void update_gradient( std::vector< double >& presyn_isis,
     Node* target,
     double& grad,
-    const EpropCommonProperties& cp ) const;
-  void update_gradient_iaf_psc_delta( std::vector< double >& presyn_isis,
-    Node* target,
-    double& grad,
-    const EpropCommonProperties& cp ) const;
-  void update_gradient_iaf_psc_delta_adapt( std::vector< double >& presyn_isis,
-    Node* target,
-    double& grad,
-    const EpropCommonProperties& cp ) const;
+    const EpropCommonProperties& cp ) const {};
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -333,7 +326,7 @@ public:
     weight_ = w;
   }
 
-private:
+protected:
   double weight_;
   double eta_;
   double Wmin_;
@@ -387,18 +380,7 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
       std::adjacent_difference( presyn_spike_times_.begin(), --presyn_spike_times_.end(), presyn_isis.begin() );
       presyn_isis.erase( presyn_isis.begin() );
 
-      if ( target_node == "readout" )
-      {
-        update_gradient_readout( presyn_isis, target, grad, cp );
-      }
-      else if ( target_node == "regular" )
-      {
-        update_gradient_iaf_psc_delta( presyn_isis, target, grad, cp );
-      }
-      else if ( target_node == "adaptive" )
-      {
-        update_gradient_iaf_psc_delta_adapt( presyn_isis, target, grad, cp );
-      }
+      update_gradient( presyn_isis, target, grad, cp );
 
       grad *= dt_;
 
@@ -466,109 +448,6 @@ eprop_synapse< targetidentifierT >::optimize( long current_optimization_step_,
 }
 
 template < typename targetidentifierT >
-void
-eprop_synapse< targetidentifierT >::update_gradient_readout( std::vector< double >& presyn_isis,
-  Node* target,
-  double& grad,
-  const EpropCommonProperties& cp ) const
-{
-  std::deque< histentry_eprop_archive >::iterator it_eprop_hist;
-  target->get_eprop_history( presyn_spike_times_[ 0 ] + get_delay(), &it_eprop_hist );
-
-  double last_z_bar = 0.0;
-  for ( auto presyn_isi : presyn_isis )
-  {
-    last_z_bar += 1.0 - kappa_;
-    for ( int t = 0; t < presyn_isi; ++t )
-    {
-      grad += it_eprop_hist->learning_signal_ * last_z_bar;
-      last_z_bar *= kappa_;
-      ++it_eprop_hist;
-    }
-  }
-}
-
-template < typename targetidentifierT >
-void
-eprop_synapse< targetidentifierT >::update_gradient_iaf_psc_delta( std::vector< double >& presyn_isis,
-  Node* target,
-  double& grad,
-  const EpropCommonProperties& cp ) const
-{
-  std::deque< histentry_eprop_archive >::iterator it_eprop_hist;
-  target->get_eprop_history( presyn_spike_times_[ 0 ] + get_delay(), &it_eprop_hist );
-
-  double alpha = target->get_leak_propagator();
-  double alpha_complement = target->get_leak_propagator_complement();
-  double sum_t_prime = 0.0;
-  double sum_e_bar = 0.0;
-  double last_z_bar = 0.0;
-
-  for ( auto presyn_isi : presyn_isis )
-  {
-    last_z_bar += alpha_complement;
-    for ( int t = 0; t < presyn_isi; ++t )
-    {
-      double psi = it_eprop_hist->V_m_pseudo_deriv_;
-      double e_bar = psi * last_z_bar;
-
-      sum_t_prime = kappa_ * sum_t_prime + ( 1.0 - kappa_ ) * e_bar;
-      grad += sum_t_prime * dt_ * it_eprop_hist->learning_signal_;
-      sum_e_bar += e_bar;
-      last_z_bar *= alpha;
-      ++it_eprop_hist;
-    }
-  }
-
-  grad /= Time( Time::ms( cp.recall_duration_ ) ).get_steps();
-
-  grad += target->get_firing_rate_reg( t_last_update_ ) * sum_e_bar;
-}
-
-template < typename targetidentifierT >
-void
-eprop_synapse< targetidentifierT >::update_gradient_iaf_psc_delta_adapt( std::vector< double >& presyn_isis,
-  Node* target,
-  double& grad,
-  const EpropCommonProperties& cp ) const
-{
-  std::deque< histentry_eprop_archive >::iterator it_eprop_hist;
-  target->get_eprop_history( presyn_spike_times_[ 0 ] + get_delay(), &it_eprop_hist );
-
-  double alpha = target->get_leak_propagator();
-  double alpha_complement = target->get_leak_propagator_complement();
-  double sum_t_prime = 0.0;
-  double sum_e_bar = 0.0;
-  double epsilon = 0.0;
-  double last_z_bar = 0.0;
-
-  for ( auto presyn_isi : presyn_isis )
-  {
-    last_z_bar += alpha_complement;
-    for ( int t = 0; t < presyn_isi; ++t )
-    {
-      double psi = it_eprop_hist->V_m_pseudo_deriv_;
-      double e_bar = psi * last_z_bar;
-      double beta = target->get_adapt_beta();
-      double rho = target->get_adapt_propagator();
-
-      e_bar -= psi * beta * epsilon;
-      epsilon = psi * last_z_bar + ( rho - psi * beta ) * epsilon;
-      sum_t_prime = kappa_ * sum_t_prime + ( 1.0 - kappa_ ) * e_bar;
-      grad += sum_t_prime * dt_ * it_eprop_hist->learning_signal_;
-      sum_e_bar += e_bar;
-      last_z_bar *= alpha;
-      ++it_eprop_hist;
-    }
-  }
-
-  grad /= Time( Time::ms( cp.recall_duration_ ) ).get_steps();
-
-  grad += target->get_firing_rate_reg( t_last_update_ ) * sum_e_bar;
-}
-
-
-template < typename targetidentifierT >
 eprop_synapse< targetidentifierT >::eprop_synapse()
   : ConnectionBase()
   , weight_( 1.0 )
@@ -619,7 +498,6 @@ eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
     throw BadProperty( "Membrane time of readout neuron constant must be > 0." );
 
   dt_ = Time::get_resolution().get_ms();
-
 
   kappa_ = exp( -dt_ / tau_m_out_ );
 

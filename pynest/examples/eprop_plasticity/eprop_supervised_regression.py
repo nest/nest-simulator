@@ -239,7 +239,7 @@ params_common_syn_eprop = {
 }
 
 params_syn_in = {
-    "synapse_model": "eprop_synapse",
+    "synapse_model": "eprop_synapse_iaf_psc_delta",
     "delay": duration["step"],  # ms, dendritic delay
     "eta": 1e-4,  # learning rate
     "tau_m_out": params_nrn_out["tau_m"],  # ms, for technical reasons pass readout neuron membrane time constant
@@ -249,7 +249,7 @@ params_syn_in = {
 }
 
 params_syn_rec = {
-    "synapse_model": "eprop_synapse",
+    "synapse_model": "eprop_synapse_iaf_psc_delta",
     "delay": duration["step"],
     "eta": 1e-4,
     "tau_m_out": params_nrn_out["tau_m"],
@@ -259,7 +259,7 @@ params_syn_rec = {
 }
 
 params_syn_out = {
-    "synapse_model": "eprop_synapse",
+    "synapse_model": "eprop_synapse_readout",
     "delay": duration["step"],
     "eta": 1e-4,
     "tau_m_out": params_nrn_out["tau_m"],
@@ -287,7 +287,8 @@ params_syn_static = {
 
 ####################
 
-nest.SetDefaults("eprop_synapse", params_common_syn_eprop)
+nest.SetDefaults("eprop_synapse_iaf_psc_delta", params_common_syn_eprop)
+nest.SetDefaults("eprop_synapse_readout", params_common_syn_eprop)
 
 nest.Connect(gen_spk_in, nrns_in, params_conn_one_to_one, params_syn_static)  # connection 1
 nest.Connect(nrns_in, nrns_rec, params_conn_all_to_all, params_syn_in)  # connection 2

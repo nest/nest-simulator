@@ -254,8 +254,9 @@ nest::eprop_iaf_psc_delta::update( Time const& origin, const long from, const lo
         S_.r_ = V_.RefractoryCounts_;
     }
 
-    long unsigned int transmission_shift = 3;
-    S_.learning_signal_ = get_learning_signal_from_eprop_history( transmission_shift );
+    std::deque< histentry_eprop_archive >::iterator it_eprop_hist;
+    get_eprop_history( t - shift, &it_eprop_hist );
+    S_.learning_signal_ = it_eprop_hist->learning_signal_;
 
     if ( S_.r_ > 0 )
       --S_.r_;

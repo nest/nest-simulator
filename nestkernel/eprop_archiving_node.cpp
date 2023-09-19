@@ -178,11 +178,6 @@ nest::EpropArchivingNode::write_spike_history( long time_step )
   spike_history_.push_back( time_ms );
 }
 
-double
-nest::EpropArchivingNode::get_learning_signal_from_eprop_history( long unsigned int shift )
-{
-  return eprop_history_.size() > shift ? ( eprop_history_.rbegin() + shift )->learning_signal_ : 0.0;
-}
 
 void
 nest::EpropArchivingNode::write_learning_signal_to_eprop_history( LearningSignalConnectionEvent& e )

@@ -51,23 +51,32 @@ public:
   EpropArchivingNode( const EpropArchivingNode& );
 
   void init_update_history( double delay );
+  double get_firing_rate_reg( double time_point );
 
 protected:
-  double calculate_v_m_pseudo_deriv( double V_m, double V_th, double V_th_const ) const;
 
   void erase_unneeded_update_history();
-  void write_error_signal_to_eprop_history( long time_step, double error_signal );
-  void write_learning_signal_to_eprop_history( LearningSignalConnectionEvent& e );
+  void erase_unneeded_eprop_history();
+  void erase_unneeded_firing_rate_reg_history();
 
+  void write_v_m_pseudo_deriv_to_history( long time_step, double v_m_pseudo_deriv );
+  void write_error_signal_to_history( long time_step, double error_signal );
+  void write_learning_signal_to_history( LearningSignalConnectionEvent& e );
   void write_update_to_history( double t_last_update, double t_current_update );
+  void write_firing_rate_reg_to_history( double t_current_update, double f_target, double c_reg );
 
-  void write_spike_history( long time_step );
+  void get_eprop_history( double time_point, std::deque< histentry_eprop_archive >::iterator* it );
+
+  void add_spike_to_counter();
+  void reset_spike_counter();
 
 
 private:
   double eps_ = 1e-6;
+  size_t n_spikes_ = 0;
 
   std::deque< histentry_eprop_archive > eprop_history_;
+  std::vector< histentry_eprop_firing_rate_reg > firing_rate_reg_history_;
   std::vector< histentry_eprop_update > update_history_;
 };
 

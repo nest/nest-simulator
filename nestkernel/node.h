@@ -750,24 +750,9 @@ public:
   virtual double get_adapt_beta() const;
   virtual std::string get_eprop_node_type() const;
   virtual void init_update_history( double delay );
-
-  virtual void get_eprop_history( double t1,
-    double t2,
-    std::deque< histentry_eprop_archive >::iterator* start,
-    std::deque< histentry_eprop_archive >::iterator* finish );
-
-  virtual void get_eprop_history( double t1, std::deque< histentry_eprop_archive >::iterator* start );
-
-
-  virtual void write_update_to_history double t_lastupdate, double t_current_update );
-
-  virtual void get_spike_history( double t1,
-    double t2,
-    std::deque< double >::iterator* start,
-    std::deque< double >::iterator* finish );
-
-  virtual void erase_unneeded_eprop_history();
-  virtual void erase_unneeded_spike_history();
+  virtual void get_eprop_history( double time_point, std::deque< histentry_eprop_archive >::iterator* it );
+  virtual void write_update_to_history( double t_last_update, double t_current_update );
+  virtual double get_firing_rate_reg( double t_last_update );
 
   /**
    * Modify Event object parameters during event delivery.

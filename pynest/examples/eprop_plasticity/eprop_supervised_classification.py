@@ -173,8 +173,10 @@ n_out = 2  # number of readout neurons
 
 params_nrn_reg = {
     "C_m": 1.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
-    "gamma": 0.3,  # scaling of the pseudo derivative
+    "c_reg": 2.0,  # firing rate regularization scaling - double the TF c_reg for technical reasons
     "E_L": 0.0,  # mV, leak reversal potential
+    "f_target": 10.0,  # Hz, target firing rate for firing rate regularization
+    "gamma": 0.3,  # scaling of the pseudo derivative
     "I_e": 0.0,  # pA, external current input
     "t_ref": 5.0,  # ms, duration of refractory period
     "tau_m": 20.0,  # ms, membrane time constant
@@ -186,7 +188,9 @@ params_nrn_ad = {
     "adapt_tau": 2000.0,  # ms, time constant of adaptive threshold
     "adaptation": 0.0,  # initial value of the spike threshold adaptation
     "C_m": 1.0,
+    "c_reg": 2.0,
     "E_L": 0.0,
+    "f_target": 10.0,
     "gamma": 0.3,
     "I_e": 0.0,
     "t_ref": 5.0,
@@ -293,10 +297,8 @@ params_syn_in = {
     "synapse_model": "eprop_synapse",
     "adam_m": 0.0,  # initial 1st moment estimate m of Adam optimizer
     "adam_v": 0.0,  # initial 2nd moment raw estimate v of Adam optimizer
-    "c_reg": 2.0,  # firing rate regularization scaling - double the TF c_reg for technical reasons
     "delay": duration["step"],  # ms, dendritic delay
     "eta": 5e-3,  # learning rate
-    "f_target": 10.0,  # Hz, target firing rate for firing rate regularization
     "tau_m_out": params_nrn_out["tau_m"],  # ms, for technical reasons pass readout neuron membrane time constant
     "weight": weights_in_rec,  # pA, initial values for the synaptic weights
     "Wmax": 100.0,  # pA, maximal limit of the synaptic weights
@@ -307,10 +309,8 @@ params_syn_rec = {
     "synapse_model": "eprop_synapse",
     "adam_m": 0.0,
     "adam_v": 0.0,
-    "c_reg": 2.0,
     "delay": duration["step"],
     "eta": 5e-3,
-    "f_target": 10.0,
     "tau_m_out": params_nrn_out["tau_m"],
     "weight": weights_rec_rec,
     "Wmax": 100.0,

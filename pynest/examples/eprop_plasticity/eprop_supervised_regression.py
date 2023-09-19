@@ -153,8 +153,10 @@ n_out = 1  # number of readout neurons
 
 params_nrn_rec = {
     "C_m": 1.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
+    "c_reg": 300.0,  # firing rate regularization scaling
     "gamma": 0.3,  # scaling of the pseudo derivative
     "E_L": 0.0,  # mV, leak reversal potential
+    "f_target": 10.0,  # Hz, target firing rate for firing rate regularization
     "I_e": 0.0,  # pA, external current input
     "t_ref": 0.0,  # ms, duration of refractory period
     "tau_m": 30.0,  # ms, membrane time constant
@@ -238,10 +240,8 @@ params_common_syn_eprop = {
 
 params_syn_in = {
     "synapse_model": "eprop_synapse",
-    "c_reg": 300.0,  # firing rate regularization scaling
     "delay": duration["step"],  # ms, dendritic delay
     "eta": 1e-4,  # learning rate
-    "f_target": 10.0,  # Hz, target firing rate for firing rate regularization
     "tau_m_out": params_nrn_out["tau_m"],  # ms, for technical reasons pass readout neuron membrane time constant
     "weight": weights_in_rec,  # pA, initial values for the synaptic weights
     "Wmax": 100.0,  # pA, maximal limit of the synaptic weights
@@ -250,10 +250,8 @@ params_syn_in = {
 
 params_syn_rec = {
     "synapse_model": "eprop_synapse",
-    "c_reg": 300.0,
     "delay": duration["step"],
     "eta": 1e-4,
-    "f_target": 10.0,
     "tau_m_out": params_nrn_out["tau_m"],
     "weight": weights_rec_rec,
     "Wmax": 100.0,

@@ -63,15 +63,17 @@ RecordablesMap< eprop_iaf_psc_delta_adapt >::create()
  * ---------------------------------------------------------------- */
 
 nest::eprop_iaf_psc_delta_adapt::Parameters_::Parameters_()
-  : tau_m_( 10.0 )                                  // ms
-  , C_m_( 250.0 )                                   // pF
-  , t_ref_( 2.0 )                                   // ms
-  , E_L_( -70.0 )                                   // mV
-  , I_e_( 0.0 )                                     // pA
-  , V_th_( -55.0 - E_L_ )                           // mV
-  , V_min_( -std::numeric_limits< double >::max() ) // mV
+  : tau_m_( 10.0 )
+  , C_m_( 250.0 )
+  , c_reg_( 0.0 )
+  , t_ref_( 2.0 )
+  , E_L_( -70.0 )
+  , f_target_( 10.0 )
+  , I_e_( 0.0 )
+  , V_th_( -55.0 - E_L_ )
+  , V_min_( -std::numeric_limits< double >::max() )
   , adapt_beta_( 1.0 )
-  , adapt_tau_( 10.0 ) // ms
+  , adapt_tau_( 10.0 )
   , gamma_( 0.3 )
 {
 }
@@ -108,8 +110,10 @@ nest::eprop_iaf_psc_delta_adapt::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::V_th, V_th_ + E_L_ );
   def< double >( d, names::V_min, V_min_ + E_L_ );
   def< double >( d, names::C_m, C_m_ );
+  def< double >( d, names::c_reg, c_reg_ );
   def< double >( d, names::tau_m, tau_m_ );
   def< double >( d, names::t_ref, t_ref_ );
+  def< double >( d, names::f_target, f_target_ );
   def< double >( d, names::adapt_beta, adapt_beta_ );
   def< double >( d, names::adapt_tau, adapt_tau_ );
   def< double >( d, names::gamma, gamma_ );
@@ -128,8 +132,10 @@ nest::eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Nod
 
   updateValueParam< double >( d, names::I_e, I_e_, node );
   updateValueParam< double >( d, names::C_m, C_m_, node );
+  updateValueParam< double >( d, names::c_reg, c_reg_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
   updateValueParam< double >( d, names::t_ref, t_ref_, node );
+  updateValueParam< double >( d, names::f_target, f_target_, node );
   updateValueParam< double >( d, names::adapt_beta, adapt_beta_, node );
   updateValueParam< double >( d, names::adapt_tau, adapt_tau_, node );
   updateValueParam< double >( d, names::gamma, gamma_, node );
@@ -240,6 +246,15 @@ nest::eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, co
     bool is_time_to_update = step_in_current_interval == update_interval_steps - 1;
     bool is_time_to_reset = is_update_interval_reset && is_time_to_update;
 
+    if ( is_time_to_update )
+    {
+      write_firing_rate_reg_to_history( t + 1, P_.f_target_, P_.c_reg_ );
+      erase_unneeded_update_history();
+      erase_unneeded_eprop_history();
+      erase_unneeded_firing_rate_reg_history();
+      reset_spike_counter();
+    }
+
     if ( is_time_to_reset )
     {
       S_.y3_ = 0.0;
@@ -270,7 +285,7 @@ nest::eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, co
     if ( S_.y3_ >= thr && S_.r_ == 0 )
     {
       set_spiketime( Time::step( t + 1 ) );
-      write_spike_history( t + 1 );
+      add_spike_to_counter();
 
       SpikeEvent se;
       kernel().event_delivery_manager.send( *this, se, lag );

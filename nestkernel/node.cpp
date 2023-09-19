@@ -536,10 +536,7 @@ Node::get_eprop_node_type() const
 }
 
 void
-nest::Node::get_eprop_history( double,
-  double,
-  std::deque< histentry_eprop_archive >::iterator*,
-  std::deque< histentry_eprop_archive >::iterator* )
+Node::init_update_history( double )
 {
   throw UnexpectedEvent();
 }
@@ -556,20 +553,8 @@ nest::Node::write_update_to_history( double, double )
   throw UnexpectedEvent();
 }
 
-void
-nest::Node::get_spike_history( double, double, std::deque< double >::iterator*, std::deque< double >::iterator* )
-{
-  throw UnexpectedEvent();
-}
-
-void
-Node::erase_unneeded_eprop_history()
-{
-  throw UnexpectedEvent();
-}
-
-void
-Node::erase_unneeded_spike_history()
+double
+nest::Node::get_firing_rate_reg( double )
 {
   throw UnexpectedEvent();
 }

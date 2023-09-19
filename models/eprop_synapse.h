@@ -147,10 +147,8 @@ Parameter  Unit  Math equivalent            Default  Description
 =========  ====  =========================  =======  ===============================================================
 adam_m           :math:`m`                      0.0  Initial value of first moment estimate m of Adam optimizer
 adam_v           :math:`v`                      0.0  Initial value of second moment raw estimate v of Adam optimizer
-c_reg            :math:`c_\text{reg}`           0.0  Prefactor of firing rate regularization
 delay      ms    :math:`d_{ji}`                 1.0  Dendritic delay
 eta              :math:`\eta`                  1e-4  Learning rate
-f_target   Hz    :math:`f^\text{target}`       10.0  Target firing rate of rate regularization
 tau_m_out  ms    :math:`\tau_\text{m,out}`      0.0  Time constant for low-pass filtering of eligibility trace
 weight     pA    :math:`W_{ji}`                 1.0  Synaptic weight
 Wmax       pA    :math:`W_{ji}^\text{max}`    100.0  Maximal value for synaptic weight
@@ -332,8 +330,6 @@ private:
   double t_last_spike_;
   double t_last_update_;
   double t_next_update_;
-  double c_reg_;
-  double f_target_;
   double tau_m_out_; // time constant for low pass filtering of eligibility trace
   double kappa_;     // exp( -dt / tau_m_out_ )
   double adam_m_;    // auxiliary variable for Adam optimizer
@@ -428,17 +424,7 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
 
         grad /= Time( Time::ms( cp.recall_duration_ ) ).get_steps();
 
-        // firing rate regularization
-        std::deque< double >::iterator start_spike;
-        std::deque< double >::iterator finish_spike;
-
-        target->get_spike_history( t_last_update_, t_last_update_ + update_interval_, &start_spike, &finish_spike );
-
-        int nspikes = std::distance( start_spike, finish_spike );
-        double f_av = nspikes / update_interval_;
-        double f_target = f_target_ / 1000.; // convert to kHz
-
-        grad += c_reg_ * dt * ( f_av - f_target ) * sum_e_bar / update_interval_;
+        grad += target->get_firing_rate_reg( t_last_update_ ) * sum_e_bar;
       }
 
       grad *= dt;
@@ -453,8 +439,6 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
 
       presyn_spike_times_.clear();
       presyn_spike_times_.push_back( t_spike );
-
-      target->erase_unneeded_spike_history();
     }
   }
 
@@ -519,8 +503,6 @@ eprop_synapse< targetidentifierT >::eprop_synapse()
   , t_last_spike_( 0.0 )
   , t_last_update_( 2.0 )
   , t_next_update_( 1002.0 )
-  , c_reg_( 0.0 )
-  , f_target_( 10.0 )
   , tau_m_out_( 10.0 )
   , kappa_( 0.0 )
   , adam_m_( 0.0 )
@@ -538,8 +520,6 @@ eprop_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
   def< double >( d, names::eta, eta_ );
   def< double >( d, names::Wmin, Wmin_ );
   def< double >( d, names::Wmax, Wmax_ );
-  def< double >( d, names::c_reg, c_reg_ );
-  def< double >( d, names::f_target, f_target_ );
   def< double >( d, names::tau_m_out, tau_m_out_ );
   def< long >( d, names::size_of, sizeof( *this ) );
   def< double >( d, names::adam_m, adam_m_ );
@@ -555,8 +535,6 @@ eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
   updateValue< double >( d, names::eta, eta_ );
   updateValue< double >( d, names::Wmin, Wmin_ );
   updateValue< double >( d, names::Wmax, Wmax_ );
-  updateValue< double >( d, names::c_reg, c_reg_ );
-  updateValue< double >( d, names::f_target, f_target_ );
   updateValue< double >( d, names::tau_m_out, tau_m_out_ );
   updateValue< double >( d, names::adam_m, adam_m_ );
   updateValue< double >( d, names::adam_v, adam_v_ );

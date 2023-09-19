@@ -258,7 +258,9 @@ class EpropPlasticityTestCase(unittest.TestCase):
 
         neuron_params_regular = {
             "C_m": 20.0,
+            "c_reg": 150.0,
             "E_L": 0.0,
+            "f_target": 10.0,
             "gamma": 0.3,
             "I_e": 0.0,
             "t_ref": 5.0 * resolution,
@@ -279,9 +281,7 @@ class EpropPlasticityTestCase(unittest.TestCase):
         params_syn_in = {
             "delay": resolution,
             "eta": 1e-3,
-            "c_reg": 150.0,
             "synapse_model": "eprop_synapse_rec",
-            "f_target": 10.0,
             "tau_m_out": 20.0,
             "weight": np.array([0.2149, -0.24120]).reshape(2, 1),
             "Wmax": 100.0,
@@ -291,9 +291,7 @@ class EpropPlasticityTestCase(unittest.TestCase):
         params_syn_rec = {
             "delay": resolution,
             "eta": 1e-3,
-            "c_reg": 150.0,
             "synapse_model": "eprop_synapse_rec",
-            "f_target": 10.0,
             "tau_m_out": 20.0,
             "weight": np.array([[0.0, 0.3193], [0.1466, 0.0]]),
             "Wmax": 100.0,
@@ -665,7 +663,9 @@ class EpropPlasticityTestCase(unittest.TestCase):
             "adapt_tau": 2000.0,
             "adaptation": 0.0,
             "C_m": 20.0,
+            "c_reg": 150.0,
             "E_L": 0.0,
+            "f_target": 10.0,
             "gamma": 0.3,
             "I_e": 0.0,
             "t_ref": 5.0 * resolution,
@@ -676,7 +676,9 @@ class EpropPlasticityTestCase(unittest.TestCase):
 
         neuron_params_regular = {
             "C_m": 20.0,
+            "c_reg": 150.0,
             "E_L": 0.0,
+            "f_target": 10.0,
             "gamma": 0.3,
             "I_e": 0.0,
             "t_ref": 5.0 * resolution,
@@ -697,9 +699,7 @@ class EpropPlasticityTestCase(unittest.TestCase):
         params_syn_in = {
             "delay": resolution,
             "eta": 1e-3,
-            "c_reg": 150.0,
             "synapse_model": "eprop_synapse_rec",
-            "f_target": 10.0,
             "tau_m_out": 20.0,
             "weight": np.array([0.2149, -0.24120]).reshape(2, 1),
             "Wmax": 100.0,
@@ -709,9 +709,7 @@ class EpropPlasticityTestCase(unittest.TestCase):
         params_syn_rec = {
             "delay": resolution,
             "eta": 1e-3,
-            "c_reg": 150.0,
             "synapse_model": "eprop_synapse_rec",
-            "f_target": 10.0,
             "tau_m_out": 20.0,
             "weight": np.array([[0.0, 0.3193], [0.1466, 0.0]]),
             "Wmax": 100.0,

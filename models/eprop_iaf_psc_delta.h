@@ -101,7 +101,9 @@ The following parameters can be set in the status dictionary.
 Parameter     Unit     Math equivalent       Default     Description
 ===========  =======  =====================  ==========  ================================================
  C_m         pF       :math:`C_\text{m}`          250.0  Capacity of the membrane
+ c_reg                :math:`c_\text{reg}`          0.0  Prefactor of firing rate regularization
  E_L         mV       :math:`E_\text{L}`          -70.0  Leak membrane potential
+ f_target    Hz       :math:`f^\text{target}`      10.0  Target firing rate of rate regularization
  gamma                :math:`\gamma`                0.3  Scaling of pseudo-derivative of membrane voltage
  I_e         pA       :math:`I_\text{e}`            0.0  Constant external input current
  t_ref       ms       :math:`t_\text{ref}`          2.0  Duration of the refractory period
@@ -201,7 +203,9 @@ private:
   {
     double tau_m_; //!< membrane time constant (ms)
     double C_m_;   //!< membrane capacitance (pF)
+    double c_reg_;    //!< prefactor of firing rate regularization
     double t_ref_; //!< refractory period (ms)
+    double f_target_; //!< target firing rate of rate regularization (Hz)
     double E_L_;   //!< leak potential (mV)
     double I_e_;   //!< external DC current (pA)
     double V_th_;  //!< spike treshold voltage relative to leak potential (mV)

@@ -85,33 +85,6 @@ nest::EpropArchivingNode::get_eprop_history( double time_point, std::deque< hist
 }
 
 void
-nest::EpropArchivingNode::get_spike_history( double t1,
-  double t2,
-  std::deque< double >::iterator* start,
-  std::deque< double >::iterator* finish )
-{
-  // set pointer to spike history entries corresponding to times t1 and t2
-  *finish = spike_history_.end();
-
-  if ( spike_history_.empty() )
-  {
-    *start = *finish;
-    return;
-  }
-  else
-  {
-    std::deque< double >::iterator runner1 =
-      std::lower_bound( spike_history_.begin(), spike_history_.end(), t1 + eps_ );
-
-    *start = runner1;
-
-    std::deque< double >::iterator runner2 = std::lower_bound( runner1, spike_history_.end(), t2 + eps_ );
-
-    *finish = runner2;
-  }
-}
-
-void
 nest::EpropArchivingNode::erase_unneeded_eprop_history()
 {
   if ( eprop_history_.empty() )
@@ -142,15 +115,6 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
   eprop_history_.erase( start, finish ); // erase found entries since no longer used
 }
 
-void
-nest::EpropArchivingNode::erase_unneeded_spike_history()
-{
-  double earliest_time_to_keep = ( t_last_update_per_synapse_.begin() )->t_;
-  while ( (  not spike_history_.empty() ) && ( spike_history_.front() + eps_ < earliest_time_to_keep ) )
-  {
-    spike_history_.pop_front();
-  }
-}
 
 void
 nest::EpropArchivingNode::write_v_m_pseudo_deriv_to_eprop_history( long time_step, double v_m_pseudo_deriv )
@@ -168,14 +132,6 @@ nest::EpropArchivingNode::write_error_signal_to_eprop_history( long time_step, d
   const Time time_step_ = Time::step( time_step );
   const double time_ms = time_step_.get_ms();
   eprop_history_.push_back( histentry_eprop_archive( time_ms, 0.0, error_signal ) );
-}
-
-void
-nest::EpropArchivingNode::write_spike_history( long time_step )
-{
-  const Time time_step_ = Time::step( time_step );
-  const double time_ms = time_step_.get_ms();
-  spike_history_.push_back( time_ms );
 }
 
 
@@ -211,4 +167,59 @@ nest::EpropArchivingNode::erase_unneeded_update_history()
       update_history_.erase( it );
   }
 }
+
+void
+nest::EpropArchivingNode::erase_unneeded_firing_rate_reg_history()
+{
+  for ( auto it_update_hist = update_history_.begin(), auto it_reg_hist = firing_rate_reg_history_.begin();
+        it_update_hist != update_history_.end() && it_reg_hist != firing_rate_reg_history_.end();
+        ++it_update_hist, ++it_reg_hist )
+  {
+    if ( it_update_hist->access_counter_ == 0 )
+      firing_rate_reg_history_.erase( it_reg_hist );
+  }
+}
+
+void
+nest::EpropArchivingNode::add_spike_to_counter()
+{
+  n_spikes_++;
+}
+
+void
+nest::EpropArchivingNode::reset_spike_counter()
+{
+  n_spikes_ = 0;
+}
+
+void
+nest::EpropArchivingNode::write_firing_rate_reg_to_history( double t_current_update, double f_target, double c_reg )
+{
+
+  double const update_interval = kernel().simulation_manager.get_eprop_update_interval();
+  double const dt = Time::get_resolution().get_ms();
+
+  double f_av = n_spikes_ / update_interval;
+  double f_target_ = f_target / 1000.0; // convert to kHz
+  double firing_rate_reg = c_reg * dt * ( f_av - f_target_ ) / update_interval;
+
+  firing_rate_reg_history_.push_back( histentry_eprop_firing_rate_reg( t_current_update, firing_rate_reg ) );
+}
+
+double
+nest::EpropArchivingNode::get_firing_rate_reg( double time_point )
+{
+  if ( firing_rate_reg_history_.empty() )
+    return 0;
+
+  double const update_interval = kernel().simulation_manager.get_eprop_update_interval();
+
+  std::vector< histentry_eprop_firing_rate_reg >::iterator it;
+
+  it = std::lower_bound(
+    firing_rate_reg_history_.begin(), firing_rate_reg_history_.end(), time_point + update_interval - 1 + eps_ );
+
+  return it->firing_rate_reg_;
+}
+
 } // namespace nest

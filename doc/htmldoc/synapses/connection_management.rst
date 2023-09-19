@@ -59,9 +59,9 @@ Connection Management
 		
 		
 
-We here provide formal definitions of connectivity concepts for neuronal network models. These concepts encompass the basic connectivity rules illustrated above which are already commonly used by the computational neuroscience community. Beyond that, we discuss concepts to reflect some of the richness of anatomical brain connectivity and complement in particular non-spatial connectivity rules with rules for spatially organized connectivity.
+We here provide formal definitions of connectivity concepts for neuronal network models. These concepts encompass the basic connectivity rules illustrated above which are already commonly used by the computational neuroscience community. Beyond that, we discuss concepts to reflect some of the richness of anatomical brain connectivity and complement in particular non-spatial connectivity rules with rules for spatially organized connectivity. Much of the information on this page is based on the paper "Connectivity concepts in neuronal network modeling" [1]_.
 
-For each high-level connectivity rule, we give both an algorithmic construction rule and the resulting connectivity distribution. Modelers can use these definitions to succinctly specify connection rules in their studies. However, if details differ from our standard definitions, these details should still be specified. Furthermore, we suggest symbols that can be used to indicate the corresponding connectivity types in network diagrams and add the corresponding CSA expressions from [1]_.
+For each high-level connectivity rule, we give both an algorithmic construction rule and the resulting connectivity distribution. Modelers can use these definitions to succinctly specify connection rules in their studies. However, if details differ from our standard definitions, these details should still be specified. Furthermore, we suggest symbols that can be used to indicate the corresponding connectivity types in network diagrams and add the corresponding CSA expressions from [2]_.
 
 In the specification of connectivity concepts we use the following notations and definitions. Let :math:`\mathcal{S}=\{s_1,\ldots, s_{N_s}\}` be the ordered set of sources of cardinality :math:`N_s` and :math:`\mathcal{T}=\{t_1,\ldots, t_{N_t}\}` the set of targets of cardinality :math:`N_t`. Then the set of all possible directed edges between members of :math:`\mathcal{S}` and :math:`\mathcal{T}` is given by the Cartesian product :math:`\mathcal{E}_{ST}=\mathcal{S \times T}` of cardinality :math:`N_s\cdot N_t`.
 
@@ -253,7 +253,7 @@ created with probability ``p``.
 	|		**Symbol:** :math:`p`
 	|		**CSA:** :math:`\rho(p)`
 	|		**Definition:** Each pair of nodes, with source in :math:`\mathcal{S}` and target in :math:`\mathcal{T}`, is connected with probability :math:`p`.
-	|		In its standard form this rule cannot produce multapses since each possible edge is visited only once. If :math:`\mathcal{S=T}`, this concept is similar to Erdős-Rényi-graphs of the *constant probability* :math:`p-ensemble\ G(N,p)`---also called *binomial ensemble* [2]_; the only difference being that we here consider directed graphs, whereas the Erdős-Rényi model is undirected. The distribution of both in- and out-degrees is binomial,
+	|		In its standard form this rule cannot produce multapses since each possible edge is visited only once. If :math:`\mathcal{S=T}`, this concept is similar to Erdős-Rényi-graphs of the *constant probability* :math:`p-ensemble\ G(N,p)`---also called *binomial ensemble* [3]_; the only difference being that we here consider directed graphs, whereas the Erdős-Rényi model is undirected. The distribution of both in- and out-degrees is binomial,
 
 	.. math::
 		P(K_\text{in}=K)=\mathcal{B}(K|N_s,p):=\begin{pmatrix}N_s\\K\end{pmatrix}p^{K}(1-p)^{N_s-K}
@@ -315,7 +315,7 @@ such that the total number of connections equals ``N``.
 	|		**Symbol:** :math:`N_\text{syn} \cancel{M}`
 	|		**CSA:** :math:`\mathbf{\rho_{N}}(N_\text{syn})(\mathbb{N}_S \times \mathbb{N}_T)`
 	|		**Definition:** :math:`N_\text{syn}\in\{0,\ldots,N_sN_t\}` edges are randomly drawn from the edge set :math:`\mathcal{E}_\mathcal{ST}` without replacement. 
-	|		For :math:`\mathcal{S}=\mathcal{T}` this is a directed graph generalization of Erdős-Rényi graphs of the *constant number of edges* :math:`N_\text{syn}`-ensemble :math:`G(N,N_\text{syn})` [3]_. There are :math:`\begin{pmatrix}N_s N_t\\N_\text{syn}\end{pmatrix}` possible networks for any given number :math:`N_\text{syn}\leq N_sN_t`, which all have the same probability. The resulting in- and out-degree distributions are multivariate hypergeometric distributions.
+	|		For :math:`\mathcal{S}=\mathcal{T}` this is a directed graph generalization of Erdős-Rényi graphs of the *constant number of edges* :math:`N_\text{syn}`-ensemble :math:`G(N,N_\text{syn})` [4]_. There are :math:`\begin{pmatrix}N_s N_t\\N_\text{syn}\end{pmatrix}` possible networks for any given number :math:`N_\text{syn}\leq N_sN_t`, which all have the same probability. The resulting in- and out-degree distributions are multivariate hypergeometric distributions.
 
 	.. math::
 		\begin{split}
@@ -425,7 +425,7 @@ that each node in ``T`` has a fixed :hxt_ref:`indegree` of ``N``.
 	| 		**Symbol:** :math:`K_{in}, M`
 	| 		**CSA:** :math:`\mathbf{\rho_1}(K)\mathbf{M}(\mathbb{N}_S \times \mathbb{N}_T)`
 	| 		**Definition:** Each target node in :math:`\mathcal{T}` is connected to :math:`K_\text{in}` nodes in :math:`\mathcal{S}` randomly chosen with replacement.
-	|		:math:`N_s` is the number of source nodes from which exactly :math:`K_\text{in}` connections are drawn with equal probability :math:`p=1/N_s` for each of the :math:`N_t` target nodes :math:`t_i\in\mathcal{T}`. The in-degree distribution is by definition :math:`P(K)=\delta_{K,K_\text{in}}`. To obtain the out-degree distribution, we observe that because multapses are allowed, drawing :math:`N_t` times :math:`K_{\text{in},i}=K_\text{in}` from :math:`\mathcal{S}` is equivalent to drawing :math:`N_t K_\text{in}` times with replacement from :math:`\mathcal{S}`. This procedure yields a multinomial distribution of the out-degrees :math:`K_{\text{out},j}` of source nodes :math:`s_j\in\mathcal{S}` [4]_, i.e.,
+	|		:math:`N_s` is the number of source nodes from which exactly :math:`K_\text{in}` connections are drawn with equal probability :math:`p=1/N_s` for each of the :math:`N_t` target nodes :math:`t_i\in\mathcal{T}`. The in-degree distribution is by definition :math:`P(K)=\delta_{K,K_\text{in}}`. To obtain the out-degree distribution, we observe that because multapses are allowed, drawing :math:`N_t` times :math:`K_{\text{in},i}=K_\text{in}` from :math:`\mathcal{S}` is equivalent to drawing :math:`N_t K_\text{in}` times with replacement from :math:`\mathcal{S}`. This procedure yields a multinomial distribution of the out-degrees :math:`K_{\text{out},j}` of source nodes :math:`s_j\in\mathcal{S}` [5]_, i.e.,
 
 	.. math::
 		\begin{equation}\label{eq:rfin}
@@ -483,7 +483,7 @@ that each node in ``S`` has a fixed :hxt_ref:`outdegree` of ``N``.
 	| 		**Symbol:** :math:`K_{out}, M`
 	| 		**CSA:** :math:`\mathbf{\rho_0}(K)\mathbf{M}(\mathbb{N}_S \times \mathbb{N}_T)`
 	| 		**Definition:** Each source node in :math:`\mathcal{S}` is connected to :math:`K_\text{out}` nodes in :math:`\mathcal{T}` randomly chosen with replacement. 
-	|		By definition, the out-degree distribution is a :math:`P(K)=\delta_{K,K_\text{out}}`. The respective in-degree distribution and marginal distributions are obtained by switching source and target indices, and replacing :math:`K_\text{out}` with :math:`K_\text{in}` in equation from :ref:`Random, fixed in-degree with multapses <fixed_indegree>` [4]_.
+	|		By definition, the out-degree distribution is a :math:`P(K)=\delta_{K,K_\text{out}}`. The respective in-degree distribution and marginal distributions are obtained by switching source and target indices, and replacing :math:`K_\text{out}` with :math:`K_\text{in}` in equation from :ref:`Random, fixed in-degree with multapses <fixed_indegree>` [5]_.
 
 .. _conn_rules:
 
@@ -516,7 +516,7 @@ Conngen
    :ref:`support for libneurosim <compile_with_libneurosim>`.
 
 To allow the generation of connectivity by means of an external
-library, NEST supports the Connection Generator Interface [5]_. For
+library, NEST supports the Connection Generator Interface [6]_. For
 more details on this interface, see the Git repository of `libneurosim
 <https://github.com/INCF/libneurosim>`_.
 
@@ -554,11 +554,13 @@ Generator Interface and randomly connects 10% of the neurons from
 
 References
 ----------
-.. [1] Djurfeldt M. The Connection-set Algebra—A Novel Formalism for the Representation of Connectivity Structure in Neuronal Network Models. Neuroinformatics. 2012; 10: 287–304. https://doi.org/10.1007/s12021-012-9146-1
-.. [2] Albert R, Barabási AL. Statistical mechanics of complex networks. Rev Mod Phys. 2002; 74: 47–97. https://doi.org/10.1103/RevModPhys.74.47
-.. [3] Erdős P, Rényi A. On random graphs. Publications Mathematicae. 1959; 6: 290–297.
-.. [4] Hjertholm D. Statistical tests for connection algorithms for structured neural networks [master’s thesis]. Norwegian University of Life Sciences. Ås, Norway; 2013. Available from: http://hdl.handle.net/11250/189117
-.. [5] Djurfeldt M, Davison AP and Eppler JM (2014). Efficient generation of
+.. [1] Senk J, Kriener B, Djurfeldt M, Voges N, Jiang HJ, et al. (2022) Connectivity concepts in neuronal network modeling. PLOS Computational Biology 18(9): e1010086. https://doi.org/10.1371/journal.pcbi.1010086
+.. [2] Djurfeldt M. The Connection-set Algebra—A Novel Formalism for the Representation of Connectivity Structure in Neuronal Network Models. Neuroinformatics. 2012; 10: 287–304. https://doi.org/10.1007/s12021-012-9146-1
+.. [3] Albert R, Barabási AL. Statistical mechanics of complex networks. Rev Mod Phys. 2002; 74: 47–97. https://doi.org/10.1103/RevModPhys.74.47
+.. [4] Erdős P, Rényi A. On random graphs. Publications Mathematicae. 1959; 6: 290–297.
+.. [5] Hjertholm D. Statistical tests for connection algorithms for structured neural networks [master’s thesis]. Norwegian University of Life Sciences. Ås, Norway; 2013. Available from: http://hdl.handle.net/11250/189117
+.. [6] Djurfeldt M, Davison AP and Eppler JM (2014). Efficient generation of
        connectivity in neuronal networks from simulator-independent
        descriptions. Front. Neuroinform.
        https://doi.org/10.3389/fninf.2014.00043
+

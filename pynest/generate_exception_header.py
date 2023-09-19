@@ -77,11 +77,10 @@ def generate_exception_header():
     fname = Path(srcdir) / "nestkernel" / "exceptions.h"
     with open(fname, "r") as file:
         for line in file:
-            print(line)
             if line.strip().endswith(": public KernelException"):
                 exceptions.append(line.split()[1])
 
-    fname = "nest_exception_list.h"
+    fname = "nest_exception_names.h"
     pynestdir = Path(blddir) / "pynest"
     pynestdir.mkdir(parents=True, exist_ok=True)
     with open(pynestdir / fname, "w") as file:

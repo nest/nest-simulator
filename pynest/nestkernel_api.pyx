@@ -43,10 +43,10 @@ import numpy
 from libc.stdint cimport int64_t, uint64_t
 from libc.stdlib cimport free, malloc
 
-NESTError = None
+NESTErrors = None
 
 def init(args):
-    global NESTError
+    global NESTErrors
     cdef int argc = len(args)
 
     cdef char** c_argv = <char**>malloc(sizeof(char*) * argc)
@@ -55,7 +55,7 @@ def init(args):
             c_argv[idx] = s
         init_nest(&argc, &c_argv)
         create_exceptions()  # requires fully initialized NEST kernel
-        NESTError = <object> nest_error_module
+        NESTErrors = <object> nest_error_module
     finally:
         free(c_argv)
 

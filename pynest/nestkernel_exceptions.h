@@ -25,23 +25,29 @@
 #include <stdexcept>
 
 #include "exceptions.h"
-//#include "exception_names.h // TODO: PyNEST-NG
+#include "nest_exception_names.h"
 
 static struct PyModuleDef
-  nest_module = { PyModuleDef_HEAD_INIT, "NESTError", nullptr, -1, nullptr, nullptr, nullptr, nullptr, nullptr };
+  nest_module = { PyModuleDef_HEAD_INIT, "NESTErrors", nullptr, -1, nullptr, nullptr, nullptr, nullptr, nullptr };
 PyObject* nest_error_module = PyModule_Create( &nest_module );
 
-std::map< std::string, PyObject* > nest_exceptions;
+std::map< std::string, PyObject* > nest_exceptions_map;
 
 void
 create_exceptions()
 {
+  std::string kernel_exn_name = "KernelException";
+  PyObject* base_class = nullptr; // will be nullptr for KernelException
+  nest_exceptions.insert( nest_exceptions.begin(), kernel_exn_name );
 
-  std::vector< std::string > exception_names = { "UnknownModelName" };
-  for ( auto name : exception_names )
+  for ( auto name : nest_exceptions )
   {
-    PyObject* exception = PyErr_NewException( ( "NESTError." + name ).c_str(), nullptr, nullptr );
-    nest_exceptions[ name ] = exception;
+    if ( name != kernel_exn_name )
+    {
+      base_class = nest_exceptions_map[ kernel_exn_name ];
+    }
+    PyObject* exception = PyErr_NewException( ( "NESTErrors." + name ).c_str(), base_class, nullptr );
+    nest_exceptions_map[ name ] = exception;
     Py_INCREF( exception );
     PyModule_AddObject( nest_error_module, name.c_str(), exception );
   }
@@ -63,7 +69,7 @@ custom_exception_handler()
   }
   catch ( nest::KernelException& exn )
   {
-    PyErr_SetString( nest_exceptions[ exn.exception_name() ], exn.what() );
+    PyErr_SetString( nest_exceptions_map[ exn.exception_name() ], exn.what() );
   }
   catch ( ... )
   {

@@ -20,7 +20,7 @@ Astrocytes, one of the main non-neuronal cell types in the brain,
 interact with neurons through versatile cellular mechanisms and modulate neuronal
 activity in a complex and not fully understood way.
 We developed new NEST models to bring astrocytes and
-neuron-astrocyte interactions to spiking neural networks in NEST.
+neuron-astrocyte interactions to spiking neural networks into NEST.
 Our new models support reproducible and collaborative large-scale modeling of
 neuron-astrocyte circuits.
 

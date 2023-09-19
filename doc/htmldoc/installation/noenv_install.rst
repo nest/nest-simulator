@@ -24,7 +24,6 @@ further adjust settings for your system.
     libgsl-dev \
     libboost-dev \
     cython3 \
-    libreadline-dev \
     python3-all-dev \
     python3-numpy \
     python3-scipy \
@@ -95,6 +94,3 @@ sourcing the script:
 .. code-block:: sh
 
    source <nest_install_dir>/bin/nest_vars.sh
-
-
-

@@ -62,7 +62,6 @@ set( with-music OFF CACHE STRING "Build with MUSIC [default=OFF]. Optionally giv
 set( with-sionlib OFF CACHE STRING "Build with SIONlib [default=OFF]. Optionally give the directory where sionlib is installed." )
 set( with-boost ON CACHE STRING "Build with Boost [default=ON]. To set a specific Boost installation, give the install path." )
 set( with-hdf5 OFF CACHE STRING "Find a HDF5 library. To set a specific HDF5 installation, set install path. [default=ON]" )
-set( with-readline ON CACHE STRING "Build with GNU Readline library [default=ON]. To set a specific library, give the install path." )
 set( with-ltdl ON CACHE STRING "Build with ltdl library [default=ON]. To set a specific ltdl, give the  install path. NEST uses ltdl for dynamic loading of external user modules." )
 set( with-gsl ON CACHE STRING "Build with the GSL library [default=ON]. To set a specific library, give the install path." )
 
@@ -143,7 +142,6 @@ nest_process_external_modules()
 nest_process_tics_per_ms()
 nest_process_tics_per_step()
 nest_process_with_libltdl()
-nest_process_with_readline()
 nest_process_with_gsl()
 nest_process_with_openmp()
 nest_process_with_mpi()
@@ -278,7 +276,6 @@ endforeach ()
 set( MODULE_LINK_LIBS
   "${OpenMP_CXX_FLAGS}"
   "${LTDL_LIBRARIES}"
-  "${READLINE_LIBRARIES}"
   "${GSL_LIBRARIES}"
   "${LIBNEUROSIM_LIBRARIES}"
   "${MUSIC_LIBRARIES}"
@@ -301,7 +298,6 @@ set( ALL_LIBS
 set( ALL_INCLUDES_tmp
   "${CMAKE_INSTALL_FULL_INCLUDEDIR}/nest"
   "${LTDL_INCLUDE_DIRS}"
-  "${READLINE_INCLUDE_DIRS}"
   "${GSL_INCLUDE_DIRS}"
   "${LIBNEUROSIM_INCLUDE_DIRS}"
   "${MUSIC_INCLUDE_DIRS}"

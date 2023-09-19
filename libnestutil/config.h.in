@@ -135,9 +135,6 @@
 /* define for ostream */
 #cmakedefine HAVE_OSTREAM 1
 
-/* Use GNU libreadline */
-#cmakedefine HAVE_READLINE 1
-
 /* define if the compiler ignores symbolic signal names in signal.h */
 #cmakedefine HAVE_SIGUSR_IGNORED 1
 

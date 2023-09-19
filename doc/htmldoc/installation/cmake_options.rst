@@ -123,8 +123,6 @@ External libraries
 +-------------------------------------------------------+------------------------------------------------------------------------------------------------+
 | ``-Dwith-boost=[OFF|ON|</path/to/boost>]``            | Build with Boost [default=ON]. To set a specific Boost installation, give the install path.    |
 +-------------------------------------------------------+------------------------------------------------------------------------------------------------+
-| ``-Dwith-readline=[OFF|ON|</path/to/readline>]``      | Build with GNU Readline library [default=ON]. To set a specific library, give the install path.|
-+-------------------------------------------------------+------------------------------------------------------------------------------------------------+
 | ``-Dwith-ltdl=[OFF|ON|</path/to/ltdl>]``              | Build with ltdl library [default=ON]. To set a specific ltdl, give the  install path. NEST uses|
 |                                                       | ltdl for dynamic loading of external user modules.                                             |
 +-------------------------------------------------------+------------------------------------------------------------------------------------------------+

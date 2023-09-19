@@ -139,10 +139,6 @@ function( NEST_PROCESS_STATIC_LIBRARIES )
   # build static or shared libraries
   if ( static-libraries )
 
-    if ( with-readline )
-      printError( "-Dstatic-libraries=ON requires -Dwith-readline=OFF" )
-    endif ()
-
     set( BUILD_SHARED_LIBS OFF PARENT_SCOPE )
     # set RPATH stuff
     set( CMAKE_SKIP_RPATH TRUE PARENT_SCOPE )
@@ -290,30 +286,6 @@ function( NEST_PROCESS_WITH_LIBLTDL )
 
       include_directories( ${LTDL_INCLUDE_DIRS} )
       # is linked in nestkernel/CMakeLists.txt
-    endif ()
-  endif ()
-endfunction()
-
-function( NEST_PROCESS_WITH_READLINE )
-  # Find readline
-  set( HAVE_READLINE OFF PARENT_SCOPE )
-  if ( with-readline )
-    if ( NOT ${with-readline} STREQUAL "ON" )
-      # a path is set
-      set( READLINE_ROOT_DIR "${with-readline}" )
-    endif ()
-
-    find_package( Readline )
-    if ( READLINE_FOUND )
-      set( HAVE_READLINE ON PARENT_SCOPE )
-      # export found variables to parent scope
-      set( READLINE_FOUND "${READLINE_FOUND}" PARENT_SCOPE )
-      set( READLINE_LIBRARIES "${READLINE_LIBRARIES}" PARENT_SCOPE )
-      set( READLINE_INCLUDE_DIRS "${READLINE_INCLUDE_DIRS}" PARENT_SCOPE )
-      set( READLINE_VERSION "${READLINE_VERSION}" PARENT_SCOPE )
-
-      include_directories( ${READLINE_INCLUDE_DIRS} )
-      # is linked in sli/CMakeLists.txt
     endif ()
   endif ()
 endfunction()

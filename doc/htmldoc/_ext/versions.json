@@ -1,9 +1,9 @@
 {
-	"python": 
+	"python":
 	{
 		"min": 3.8
 	},
-	"pip": 
+	"pip":
 	{
 		"min": "20.3.3"
 	},
@@ -12,11 +12,11 @@
 		"min": 3.12,
 		"max": 3.16
 	},
-	"cython": 
+	"cython":
 	{
 		"min": "0.28.3"
 	},
-	"openmpi": 
+	"openmpi":
 	{
 		"min": "4.0.3"
 	},
@@ -26,19 +26,15 @@
 	"gsl": {
 		"min": 1.11
 	},
-	"libtool": 
+	"libtool":
 	{
 		"min": "2.4.6"
-	},
-	"readline": 
-	{
-		"min": 8.0
 	},
 	"numpy":
 	{
 		"min": "1.19.4"
 	},
-	"scipy": 
+	"scipy":
 	{
 		"min": "1.5.4"
 	},
@@ -46,12 +42,8 @@
 	{
 		"min": 3.0
 	},
-	"ipython": 
+	"ipython":
 	{
 		"min": "5.8.0"
 	},
-	"libncurses": 
-	{
-		"min": 6.2
-	}
 }

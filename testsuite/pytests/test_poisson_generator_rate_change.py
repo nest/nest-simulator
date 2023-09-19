@@ -20,22 +20,21 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import nest
 import unittest
-import scipy.stats
+
+import nest
 import numpy as np
+import scipy.stats
 
 
 class TestPgRateChange(unittest.TestCase):
-
     def _kstest_first_spiketimes(self, sr, start_t, expon_scale, resolution, p_value_lim):
         events = sr.events
-        senders = np.array(events['senders'])
-        times = np.array(events['times'])
+        senders = np.array(events["senders"])
+        times = np.array(events["times"])
         min_times = [np.min(times[np.where(senders == s)]) for s in np.unique(senders)]
-        d, p_val = scipy.stats.kstest(
-            min_times, 'expon', args=(start_t + resolution, expon_scale))
-        print('p_value =', p_val)
+        d, p_val = scipy.stats.kstest(min_times, "expon", args=(start_t + resolution, expon_scale))
+        print("p_value =", p_val)
         self.assertGreater(p_val, p_value_lim)
 
     def test_statistical_rate_change(self):
@@ -48,34 +47,34 @@ class TestPgRateChange(unittest.TestCase):
 
         nest.ResetKernel()
         nest.resolution = resolution
-        rate = 100.
-        pg = nest.Create('poisson_generator_ps', params={'rate': rate})
-        parrots = nest.Create('parrot_neuron_ps', n_parrots)
-        sr = nest.Create('spike_recorder', params={'start': 0., 'stop': float(sim_time)})
-        nest.Connect(pg, parrots, syn_spec={'delay': resolution})
-        nest.Connect(parrots, sr, syn_spec={'delay': resolution})
+        rate = 100.0
+        pg = nest.Create("poisson_generator_ps", params={"rate": rate})
+        parrots = nest.Create("parrot_neuron_ps", n_parrots)
+        sr = nest.Create("spike_recorder", params={"start": 0.0, "stop": float(sim_time)})
+        nest.Connect(pg, parrots, syn_spec={"delay": resolution})
+        nest.Connect(parrots, sr, syn_spec={"delay": resolution})
 
         # First simulation
         nest.Simulate(sim_time)
-        expon_scale = 1000/rate  # Scale of expected exponential distribution
-        self._kstest_first_spiketimes(sr, 0., expon_scale, resolution, p_value_lim)
+        expon_scale = 1000 / rate  # Scale of expected exponential distribution
+        self._kstest_first_spiketimes(sr, 0.0, expon_scale, resolution, p_value_lim)
 
         # Second simulation, with rate = 0
-        rate = 0.
+        rate = 0.0
         pg.rate = rate
         # We need to skip a timestep to not receive the spikes from the
         # previous simulation run that were sent, but not received.
-        sr.set({'n_events': 0, 'start': float(sim_time) + resolution, 'stop': 2. * sim_time})
+        sr.set({"n_events": 0, "start": float(sim_time) + resolution, "stop": 2.0 * sim_time})
         nest.Simulate(sim_time)
         self.assertEqual(sr.n_events, 0)
 
         # Third simulation, with rate increased back up to 100
-        rate = 100.
+        rate = 100.0
         pg.rate = rate
-        sr.set({'n_events': 0, 'start': 2. * sim_time, 'stop': 3. * sim_time})
+        sr.set({"n_events": 0, "start": 2.0 * sim_time, "stop": 3.0 * sim_time})
         nest.Simulate(sim_time)
-        expon_scale = 1000/rate
-        self._kstest_first_spiketimes(sr, 2. * sim_time, expon_scale, resolution, p_value_lim)
+        expon_scale = 1000 / rate
+        self._kstest_first_spiketimes(sr, 2.0 * sim_time, expon_scale, resolution, p_value_lim)
 
 
 def suite():
@@ -88,5 +87,5 @@ def run():
     runner.run(suite())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run()

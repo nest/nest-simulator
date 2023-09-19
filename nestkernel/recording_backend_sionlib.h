@@ -302,7 +302,7 @@ private:
     {
     }
 
-    index node_id;
+    size_t node_id;
     unsigned int type;
     std::string name;
     std::string label;
@@ -332,10 +332,10 @@ private:
     SIONBuffer buffer;
   };
 
-  typedef std::vector< std::map< index, DeviceEntry > > device_map;
+  typedef std::vector< std::map< size_t, DeviceEntry > > device_map;
   device_map devices_;
 
-  typedef std::map< thread, FileEntry > file_map;
+  typedef std::map< size_t, FileEntry > file_map;
   file_map files_;
 
   std::string filename_;
@@ -365,4 +365,4 @@ private:
 
 } // namespace
 
-#endif // RECORDING_BACKEND_SIONLIB_H
+#endif /* #ifndef RECORDING_BACKEND_SIONLIB_H */

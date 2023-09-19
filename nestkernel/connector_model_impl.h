@@ -111,10 +111,10 @@ template < typename ConnectionT >
 void
 GenericConnectorModel< ConnectionT >::set_status( const dictionary& d )
 {
-  d.update_value( names::receptor_type, receptor_type_ );
+  d.update_integer_value( names::receptor_type, receptor_type_ );
 #ifdef HAVE_MUSIC
   // We allow music_channel as alias for receptor_type during connection setup
-  d.update_value( names::music_channel, receptor_type_ );
+  d.update_integer_value( names::music_channel, receptor_type_ );
 #endif
 
   // If the parameter dict d contains /delay, this should set the delay
@@ -250,12 +250,12 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   // We must use a local variable here to hold the actual value of the
   // receptor type. We must not change the receptor_type_ data member, because
   // that represents the *default* value. See #921.
-  rport actual_receptor_type = receptor_type_;
+  size_t actual_receptor_type = receptor_type_;
 #ifdef HAVE_MUSIC
   // We allow music_channel as alias for receptor_type during connection setup
-  p.update_value( names::music_channel, actual_receptor_type );
+  p.update_integer_value( names::music_channel, actual_receptor_type );
 #endif
-  p.update_value( names::receptor_type, actual_receptor_type );
+  p.update_integer_value( names::receptor_type, actual_receptor_type );
 
   add_connection_( src, tgt, thread_local_connectors, syn_id, connection, actual_receptor_type );
 }
@@ -268,7 +268,7 @@ GenericConnectorModel< ConnectionT >::add_connection_( Node& src,
   std::vector< ConnectorBase* >& thread_local_connectors,
   const synindex syn_id,
   ConnectionT& connection,
-  const rport receptor_type )
+  const size_t receptor_type )
 {
   assert( syn_id != invalid_synindex );
 

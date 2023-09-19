@@ -6,9 +6,9 @@ Developer space
 Here is all documentation pertaining to the development of NEST.
 It is documentation for anyone needing to touch the code or documentation.
 
-.. grid:: 3 
+.. grid:: 3
 
-  .. grid-item-card:: 
+  .. grid-item-card::
        :link-type: ref
        :link: dev_install
        :class-card: sd-bg-success sd-text-white
@@ -51,7 +51,7 @@ Please familiarize yourself with our guides and workflows:
        * Follow the :ref:`C++ coding style guidelines <code_style_cpp>`
        * Review the :ref:`naming conventions for NEST <naming_conventions>`
        * Writing an extension module? See :doc:`extmod:index`
-       * :ref:`check_code` to ensure correct formatting
+       * :ref:`required_dev_tools`
 
     .. grid-item-card:: Contribute documentation
 
@@ -100,10 +100,10 @@ Developer guides
 
         * see :ref:`devdoc_workflow`
 
-	 
+
 .. toctree::
    :maxdepth: 1
-   :hidden: 
+   :hidden:
    :glob:
 
    workflows/*
@@ -111,3 +111,4 @@ Developer guides
    guidelines/*
    guidelines/styleguide/styleguide
    templates/*
+   cppcomments

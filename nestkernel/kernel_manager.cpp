@@ -46,11 +46,11 @@ nest::KernelManager::get_build_info_()
 
   dictionary build_info;
 
-  build_info[ "version" ] = std::string( NEST_VERSION_STRING );
+  build_info[ "version" ] = std::string( NEST_VERSION );
   build_info[ "exitcode" ] = EXIT_SUCCESS;
   build_info[ "built" ] = std::string( String::compose( "%1 %2", __DATE__, __TIME__ ) );
-  build_info[ "data_dir" ] = std::string( NEST_INSTALL_PREFIX "/" NEST_INSTALL_DATADIR );
-  build_info[ "doc_dir" ] = std::string( NEST_INSTALL_PREFIX "/" NEST_INSTALL_DOCDIR );
+  build_info[ "datadir" ] = std::string( NEST_INSTALL_PREFIX "/" NEST_INSTALL_DATADIR );
+  build_info[ "docdir" ] = std::string( NEST_INSTALL_PREFIX "/" NEST_INSTALL_DOCDIR );
   build_info[ "prefix" ] = std::string( NEST_INSTALL_PREFIX );
   build_info[ "host" ] = std::string( NEST_HOST );
   build_info[ "hostos" ] = std::string( NEST_HOSTOS );
@@ -58,9 +58,10 @@ nest::KernelManager::get_build_info_()
   build_info[ "hostcpu" ] = std::string( NEST_HOSTCPU );
 
 #ifdef _OPENMP
-  build_info[ "threading" ] = std::string( "openmp" );
+  build_info[ "have_threads" ] = true;
+  build_info[ "threads_model" ] = std::string( "openmp" );
 #else
-  build_info[ "threading" ] = std::string( "no" );
+  build_info[ "have_threads" ] = false;
 #endif
 
 #ifdef HAVE_MPI
@@ -96,6 +97,12 @@ nest::KernelManager::get_build_info_()
   build_info[ "have_sionlib" ] = true;
 #else
   build_info[ "have_sionlib" ] = false;
+#endif
+
+#ifdef HAVE_HDF5
+  build_info[ "have_hdf5" ] = true;
+#else
+  build_info[ "have_hdf5" ] = false;
 #endif
 
 #ifdef NDEBUG
@@ -192,6 +199,8 @@ nest::KernelManager::initialize()
 
   ++fingerprint_;
   initialized_ = true;
+  FULL_LOGGING_ONLY( dump_.open(
+    String::compose( "dump_%1_%2.log", mpi_manager.get_num_processes(), mpi_manager.get_rank() ).c_str() ); )
 }
 
 void
@@ -215,6 +224,8 @@ nest::KernelManager::cleanup()
 void
 nest::KernelManager::finalize()
 {
+  FULL_LOGGING_ONLY( dump_.close(); )
+
   for ( auto&& m_it = managers.rbegin(); m_it != managers.rend(); ++m_it )
   {
     ( *m_it )->finalize();
@@ -230,7 +241,7 @@ nest::KernelManager::reset()
 }
 
 void
-nest::KernelManager::change_number_of_threads( thread new_num_threads )
+nest::KernelManager::change_number_of_threads( size_t new_num_threads )
 {
   // Inputs are checked in VPManager::set_status().
   // Just double check here that all values are legal.
@@ -268,4 +279,14 @@ nest::KernelManager::get_status( dictionary& dict )
   }
 
   dict[ "build_info" ] = get_build_info_();
+}
+
+void
+nest::KernelManager::write_to_dump( const std::string& msg )
+{
+#pragma omp critical
+  // In critical section to avoid any garbling of output.
+  {
+    dump_ << msg << std::endl << std::flush;
+  }
 }

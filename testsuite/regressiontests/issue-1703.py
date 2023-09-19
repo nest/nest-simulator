@@ -27,9 +27,9 @@ This is a regression test for GitHub issue 1703.
 """
 
 import os
-import sys
-import subprocess
 import shlex
+import subprocess
+import sys
 
 EXIT_CODE_SUCCESS = 0
 EXIT_CODE_ERROR = 1
@@ -44,7 +44,7 @@ EXIT_SEGFAULT = 139
 # If not, the test is skipped.
 try:
     import nest
-    from mpi4py import MPI
+    from mpi4py import MPI  # noqa: F401
 except ImportError:
     sys.exit(EXIT_SKIPPED)
 
@@ -54,7 +54,7 @@ cmd = shlex.split('python3 -c "from mpi4py import MPI; import nest; nest.Simulat
 my_env = os.environ.copy()
 exit_code = subprocess.call(cmd, env=my_env)
 
-if nest.ll_api.sli_func("statusdict/have_music ::"):
+if nest.build_info["have_music"]:
     # Expect error, not segfault
     if exit_code == EXIT_CODE_ERROR:
         sys.exit(EXIT_SUCCESS)

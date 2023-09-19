@@ -21,13 +21,15 @@
 
 import os
 import unittest
+
 import nest
 
+HAVE_THREADS = nest.build_info["have_threads"]
 
+
+@unittest.skipIf(not HAVE_THREADS, "NEST was compiled without multi-threading")
 class TestRecordingBackendASCII(unittest.TestCase):
-
     def testAAAOverwriteFiles(self):
-
         nest.ResetKernel()
 
         mm_params = {"record_to": "ascii", "record_from": ["V_m"]}
@@ -117,9 +119,9 @@ class TestRecordingBackendASCII(unittest.TestCase):
         with open(fname) as f:
             lines = f.readlines()
 
-            self.assertEqual(len(lines), mm.get("n_events")+3)
+            self.assertEqual(len(lines), mm.get("n_events") + 3)
 
-            version = nest.GetKernelStatus("build_info")["version"]
+            version = nest.build_info["version"]
             self.assertEqual(lines[0], "# NEST version: {}\n".format(version))
 
             header_2 = "# RecordingBackendASCII version:"
@@ -213,6 +215,6 @@ def suite():
     return suite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())

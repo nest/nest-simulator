@@ -39,8 +39,9 @@ namespace nest
 class AbstractGeneric;
 
 /**
- * Generic Factory class for objects deriving from a base class
- * BaseT. Keeps a register of subtypes which may be created
+ * Generic Factory class for objects deriving from a base class BaseT.
+ *
+ * Keeps a register of subtypes which may be created
  * dynamically. New subtypes may be added by registering either a class
  * (which must have a constructor taking as a parameter a dictionary
  * containing parameters for the mask) or a specialized factory function.
@@ -62,7 +63,9 @@ public:
   BaseT* create( const std::string& name, const dictionary& d ) const;
 
   /**
-   * Register a new subtype. The type name must not already exist. The
+   * Register a new subtype.
+   *
+   * The type name must not already exist. The
    * class for the subtype is supplied via the template argument. This
    * class should have a constructor taking a const dictionary& as
    * parameter.

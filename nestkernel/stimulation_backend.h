@@ -32,7 +32,7 @@ namespace nest
 {
 
 /**
- * Abstract bass class for all NESTio stimulation backends
+ * Abstract base class for all NESTio stimulation backends
  *
  * This class provides the interface for NESTio stimulation backends
  * with which StimulationDevices can be enrolled for receiving
@@ -160,7 +160,6 @@ public:
   // a very tight synchronization between incoming data and the simulation control itself. As the
   // requirements for this are currently not formally defined due to the lack of a suitable use-case,
   // we decided to omit the function from the interface until such a use-case arises.
-
   virtual void initialize() = 0;
   virtual void finalize() = 0;
 
@@ -194,4 +193,4 @@ public:
 
 } // namespace
 
-#endif // STIMULATION_BACKEND_H
+#endif /* #ifndef STIMULATION_BACKEND_H */

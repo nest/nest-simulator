@@ -28,11 +28,11 @@
   configuration process. Please make all changes in config.h.in.
 */
 
-#define NEST_VERSION_STRING "@NEST_VERSION_STRING@"
-#define NEST_VERSION_BRANCH "@NEST_VERSION_BRANCH@"
-#define NEST_VERSION_SUFFIX "@NEST_VERSION_SUFFIX@"
 #define NEST_VERSION "@NEST_VERSION@"
-#define NEST_VERSION_GITHASH "@NEST_VERSION_GITHASH@"
+#cmakedefine NEST_VERSION_GIT "@NEST_VERSION_GIT@"
+#cmakedefine NEST_VERSION_GIT_HASH "@NEST_VERSION_GIT_HASH@"
+#cmakedefine NEST_VERSION_GIT_BRANCH "@NEST_VERSION_GIT_BRANCH@"
+#cmakedefine NEST_VERSION_GIT_REMOTE "@NEST_VERSION_GIT_REMOTE@"
 
 // TODO NEST_HOST and NEST_HOSTVENDOR not available with cmake
 #define NEST_HOST "@NEST_TARGET_TRIPLE@"
@@ -181,5 +181,8 @@
 
 /* Whether to enable detailed NEST internal timers */
 #cmakedefine TIMER_DETAILED 1
+
+/* Whether to do full logging */
+#cmakedefine ENABLE_FULL_LOGGING 1
 
 #endif // #ifndef CONFIG_H

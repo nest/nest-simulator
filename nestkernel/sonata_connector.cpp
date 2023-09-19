@@ -46,9 +46,9 @@ extern "C" herr_t get_member_names_callback_( hid_t loc_id, const char* name, co
 namespace nest
 {
 
-SonataConnector::SonataConnector( const dictionary& graph_specs, const long chunk_size )
+SonataConnector::SonataConnector( const dictionary& graph_specs, const long hyperslab_size )
   : graph_specs_( graph_specs )
-  , chunk_size_( chunk_size )
+  , hyperslab_size_( hyperslab_size )
   , weight_dataset_exist_( false )
   , delay_dataset_exist_( false )
 {
@@ -147,6 +147,7 @@ SonataConnector::connect()
 
       open_required_dsets_( pop_grp );
       try_open_edge_group_dsets_( edge_grp );
+      check_dsets_consistency();
 
       // Retrieve source and target attributes to find which node population to map to
       get_attribute_( source_attribute_value_, src_node_id_dset_, "node_population" );
@@ -156,17 +157,16 @@ SonataConnector::connect()
       sequential_chunkwise_connector_();
 
       close_dsets_();
-      reset_params_();
 
     } // end iteration over population groups
 
-    // Close H5 objects in scope
+    // Reset and close H5 objects in scope
+    reset_params_();
     edges_top_level_grp->close();
     file->close();
 
   } // end iteration over edge files
 }
-
 
 H5::H5File*
 SonataConnector::open_file_( std::string& fname )
@@ -213,7 +213,6 @@ SonataConnector::open_group_( const H5::Group* group, const std::string& grp_nam
   return subgroup;
 }
 
-
 void
 SonataConnector::open_required_dsets_( const H5::Group* pop_grp )
 {
@@ -243,28 +242,12 @@ SonataConnector::open_required_dsets_( const H5::Group* pop_grp )
   {
     throw KernelException( "Could not open edge_type_id dataset in " + cur_fname_ + ": " + e.getDetailMsg() );
   }
-
-  // Consistency checks
-  const auto num_tgt_node_ids = get_nrows_( tgt_node_id_dset_ );
-
-  // Ensure that target and source population have the same size
-  if ( num_tgt_node_ids != get_nrows_( src_node_id_dset_ ) )
-  {
-    throw KernelException(
-      "target_node_id and source_node_id datasets in " + cur_fname_ + " must be of the same size" );
-  }
-
-  // Ensure that edge_type_id dataset size is consistent with the number of target node ids
-  if ( num_tgt_node_ids != get_nrows_( edge_type_id_dset_ ) )
-  {
-    throw KernelException( "target_node_id and edge_type_id datasets in " + cur_fname_ + " must be of the same size" );
-  }
 }
 
 void
 SonataConnector::try_open_edge_group_dsets_( const H5::Group* edge_grp )
 {
-  // TODO: Currently only works if the edge file has a single edge group
+  // NOTE: Currently only works if the edge file has a single edge group
 
   weight_dataset_exist_ = H5Lexists( edge_grp->getId(), "syn_weight", H5P_DEFAULT ) > 0;
   delay_dataset_exist_ = H5Lexists( edge_grp->getId(), "delay", H5P_DEFAULT ) > 0;
@@ -292,11 +275,47 @@ SonataConnector::try_open_edge_group_dsets_( const H5::Group* edge_grp )
       throw KernelException( "Could not open delay dataset in " + cur_fname_ + ": " + e.getDetailMsg() );
     }
   }
-
-  // TODO: If present, ensure correct size of syn_weight and delay dsets. This might not be straightforward if there
-  // are multiple edge id groups
 }
 
+void
+SonataConnector::check_dsets_consistency()
+{
+  // Consistency checks
+  const auto num_tgt_node_ids = get_nrows_( tgt_node_id_dset_ );
+
+  // Ensure that target and source population have the same size
+  if ( num_tgt_node_ids != get_nrows_( src_node_id_dset_ ) )
+  {
+    throw KernelException(
+      "target_node_id and source_node_id datasets in " + cur_fname_ + " must be of the same size" );
+  }
+
+  // Ensure that edge_type_id dataset size is consistent with the number of target node ids
+  if ( num_tgt_node_ids != get_nrows_( edge_type_id_dset_ ) )
+  {
+    throw KernelException( "target_node_id and edge_type_id datasets in " + cur_fname_ + " must be of the same size" );
+  }
+
+  // Ensure that, if provided, the syn_weight dataset size is consistent with the number of target node ids
+  // Note that this check assumes SONATA edge files with one edge group
+  if ( weight_dataset_exist_ )
+  {
+    if ( num_tgt_node_ids != get_nrows_( syn_weight_dset_ ) )
+    {
+      throw KernelException( "target_node_id and syn_weight datasets in " + cur_fname_ + " must be of the same size" );
+    }
+  }
+
+  // Ensure that, if provided, the delay dataset size is consistent with the number of target node ids
+  // Note that this check assumes SONATA edge files with one edge group
+  if ( delay_dataset_exist_ )
+  {
+    if ( num_tgt_node_ids != get_nrows_( delay_dset_ ) )
+    {
+      throw KernelException( "target_node_id and delay datasets in " + cur_fname_ + " must be of the same size" );
+    }
+  }
+}
 
 void
 SonataConnector::get_attribute_( std::string& attribute_value,
@@ -340,21 +359,21 @@ SonataConnector::sequential_chunkwise_connector_()
   // Retrieve number of connections described by datasets
   const auto num_conn = get_nrows_( tgt_node_id_dset_ );
 
-  //  Adjust if chunk_size is too large
-  if ( num_conn < chunk_size_ )
+  //  Adjust if hyperslab (chunk) size is too large
+  if ( num_conn < hyperslab_size_ )
   {
-    chunk_size_ = num_conn;
+    hyperslab_size_ = num_conn;
   }
 
   // organize chunks; dv.quot = integral quotient, dv.rem = reaminder
-  auto dv = std::div( static_cast< long long >( num_conn ), static_cast< long long >( chunk_size_ ) );
+  auto dv = std::div( static_cast< long long >( num_conn ), static_cast< long long >( hyperslab_size_ ) );
 
   // Iterate chunks
   hsize_t offset = 0; // start coordinates of data selection
   for ( long long i = 0; i < dv.quot; i++ )
   {
-    connect_chunk_( chunk_size_, offset );
-    offset += chunk_size_;
+    connect_chunk_( hyperslab_size_, offset );
+    offset += hyperslab_size_;
   }
 
   // Handle remainder
@@ -366,29 +385,29 @@ SonataConnector::sequential_chunkwise_connector_()
 
 ///*
 void
-SonataConnector::connect_chunk_( const hsize_t chunk_size, const hsize_t offset )
+SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t offset )
 {
 
   // Read subsets
-  std::vector< unsigned long > src_node_id_data_subset( chunk_size );
-  std::vector< unsigned long > tgt_node_id_data_subset( chunk_size );
-  std::vector< unsigned long > edge_type_id_data_subset( chunk_size );
+  std::vector< unsigned long > src_node_id_data_subset( hyperslab_size );
+  std::vector< unsigned long > tgt_node_id_data_subset( hyperslab_size );
+  std::vector< unsigned long > edge_type_id_data_subset( hyperslab_size );
   std::vector< double > syn_weight_data_subset;
   std::vector< double > delay_data_subset;
 
-  read_subset_( src_node_id_dset_, src_node_id_data_subset, H5::PredType::NATIVE_LONG, chunk_size, offset );
-  read_subset_( tgt_node_id_dset_, tgt_node_id_data_subset, H5::PredType::NATIVE_LONG, chunk_size, offset );
-  read_subset_( edge_type_id_dset_, edge_type_id_data_subset, H5::PredType::NATIVE_LONG, chunk_size, offset );
+  read_subset_( src_node_id_dset_, src_node_id_data_subset, H5::PredType::NATIVE_LONG, hyperslab_size, offset );
+  read_subset_( tgt_node_id_dset_, tgt_node_id_data_subset, H5::PredType::NATIVE_LONG, hyperslab_size, offset );
+  read_subset_( edge_type_id_dset_, edge_type_id_data_subset, H5::PredType::NATIVE_LONG, hyperslab_size, offset );
 
   if ( weight_dataset_exist_ )
   {
-    syn_weight_data_subset.resize( chunk_size );
-    read_subset_( syn_weight_dset_, syn_weight_data_subset, H5::PredType::NATIVE_DOUBLE, chunk_size, offset );
+    syn_weight_data_subset.resize( hyperslab_size );
+    read_subset_( syn_weight_dset_, syn_weight_data_subset, H5::PredType::NATIVE_DOUBLE, hyperslab_size, offset );
   }
   if ( delay_dataset_exist_ )
   {
-    delay_data_subset.resize( chunk_size );
-    read_subset_( delay_dset_, delay_data_subset, H5::PredType::NATIVE_DOUBLE, chunk_size, offset );
+    delay_data_subset.resize( hyperslab_size );
+    read_subset_( delay_dset_, delay_data_subset, H5::PredType::NATIVE_DOUBLE, hyperslab_size, offset );
   }
 
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
@@ -413,11 +432,11 @@ SonataConnector::connect_chunk_( const hsize_t chunk_size, const hsize_t offset 
     try
     {
       // Iterate the datasets and create the connections
-      for ( hsize_t i = 0; i < chunk_size; ++i )
+      for ( hsize_t i = 0; i < hyperslab_size; ++i )
       {
 
         const auto sonata_tgt_id = tgt_node_id_data_subset[ i ];
-        const index tnode_id = ( *( tnode_begin + sonata_tgt_id ) ).node_id;
+        const size_t tnode_id = ( *( tnode_begin + sonata_tgt_id ) ).node_id;
 
         if ( not kernel().vp_manager.is_node_id_vp_local( tnode_id ) )
         {
@@ -425,10 +444,10 @@ SonataConnector::connect_chunk_( const hsize_t chunk_size, const hsize_t offset 
         }
 
         const auto sonata_src_id = src_node_id_data_subset[ i ];
-        const index snode_id = ( *( snode_begin + sonata_src_id ) ).node_id;
+        const size_t snode_id = ( *( snode_begin + sonata_src_id ) ).node_id;
 
         Node* target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-        const thread target_thread = target->get_thread();
+        const size_t target_thread = target->get_thread();
 
         const auto edge_type_id = edge_type_id_data_subset[ i ];
         const auto syn_spec = boost::any_cast< dictionary >( cur_edge_params_.at( std::to_string( edge_type_id ) ) );
@@ -459,7 +478,7 @@ SonataConnector::connect_chunk_( const hsize_t chunk_size, const hsize_t offset 
   } // end parallel region
 
   // Check if any exceptions have been raised
-  for ( thread thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+  for ( size_t thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
   {
     if ( exceptions_raised_.at( thr ).get() )
     {
@@ -480,7 +499,6 @@ SonataConnector::get_nrows_( H5::DataSet dataset )
 
   return dims_out[ 0 ];
 }
-
 
 hsize_t
 SonataConnector::find_edge_groups_( H5::Group* pop_grp, std::vector< std::string >& edge_grp_names )
@@ -508,21 +526,20 @@ SonataConnector::find_edge_groups_( H5::Group* pop_grp, std::vector< std::string
   return num_edge_grps;
 }
 
-
 template < typename T >
 void
 SonataConnector::read_subset_( const H5::DataSet& dataset,
   std::vector< T >& data_buf,
   H5::PredType datatype,
-  hsize_t chunk_size,
+  hsize_t hyperslab_size,
   hsize_t offset )
 {
   try
   {
-    H5::DataSpace mspace( 1, &chunk_size, NULL );
+    H5::DataSpace mspace( 1, &hyperslab_size, NULL );
     H5::DataSpace dspace = dataset.getSpace();
     // Select hyperslab. H5S_SELECT_SET replaces any existing selection with this call
-    dspace.selectHyperslab( H5S_SELECT_SET, &chunk_size, &offset );
+    dspace.selectHyperslab( H5S_SELECT_SET, &hyperslab_size, &offset );
     dataset.read( data_buf.data(), datatype, mspace, dspace );
     mspace.close();
     dspace.close();
@@ -543,7 +560,7 @@ SonataConnector::create_edge_type_id_2_syn_spec_( dictionary edge_params )
     const auto syn_name = boost::any_cast< std::string >( d.at( "synapse_model" ) );
 
     // The following call will throw "UnknownSynapseType" if syn_name is not naming a known model
-    const index synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
+    const size_t synapse_model_id = kernel().model_manager.get_synapse_model_id( syn_name );
 
     set_synapse_params_( d, synapse_model_id, type_id );
     edge_type_id_2_syn_model_[ type_id ] = synapse_model_id;
@@ -551,7 +568,7 @@ SonataConnector::create_edge_type_id_2_syn_spec_( dictionary edge_params )
 }
 
 void
-SonataConnector::set_synapse_params_( dictionary syn_dict, index synapse_model_id, int type_id )
+SonataConnector::set_synapse_params_( dictionary syn_dict, size_t synapse_model_id, int type_id )
 {
   dictionary syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id );
   ConnParameterMap synapse_params;
@@ -590,7 +607,7 @@ SonataConnector::set_synapse_params_( dictionary syn_dict, index synapse_model_i
   // region. Currently, creation of NumericDatum objects is not thread-safe because sli::pool memory is a static
   // member variable; thus is also the new operator a static member function.
   // Note that this also applies to the equivalent loop in conn_builder.cpp
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
     // edge_type_id_2_param_dicts_[ type_id ][ tid ].emplace_back();
 
@@ -610,7 +627,11 @@ SonataConnector::set_synapse_params_( dictionary syn_dict, index synapse_model_i
 }
 
 void
-SonataConnector::get_synapse_params_( index snode_id, Node& target, thread target_thread, RngPtr rng, int edge_type_id )
+SonataConnector::get_synapse_params_( size_t snode_id,
+  Node& target,
+  size_t target_thread,
+  RngPtr rng,
+  int edge_type_id )
 {
   for ( auto const& syn_param : edge_type_id_2_syn_spec_.at( edge_type_id ) )
   {

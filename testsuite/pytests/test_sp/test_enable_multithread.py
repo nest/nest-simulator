@@ -19,29 +19,27 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import nest
 import unittest
 
+import nest
 
-__author__ = 'sdiaz'
+__author__ = "sdiaz"
 
 # Structural plasticity currently does not work with multiple threads.
 # An exception should be rised if structural plasticity is enabled
 # and multiple threads are set, or if multiple threads are set and
 # the enable_structural_plasticity function is called.
 
-HAVE_OPENMP = nest.GetKernelStatus("build_info")["threading"] != "no"
+HAVE_THREADS = nest.build_info["have_threads"]
 
 
-@unittest.skipIf(not HAVE_OPENMP, 'NEST was compiled without multi-threading')
+@unittest.skipIf(not HAVE_THREADS, "NEST was compiled without multi-threading")
 class TestEnableMultithread(unittest.TestCase):
-
     def setUp(self):
         nest.ResetKernel()
         nest.set_verbosity(nest.verbosity.M_ERROR)
 
     def test_enable_multithread(self):
-
         nest.ResetKernel()
         nest.EnableStructuralPlasticity()
         # Setting multiple threads when structural plasticity is enabled should
@@ -59,9 +57,9 @@ class TestEnableMultithread(unittest.TestCase):
 
 
 def suite():
-    test_suite = unittest.makeSuite(TestEnableMultithread, 'test')
+    test_suite = unittest.makeSuite(TestEnableMultithread, "test")
     return test_suite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

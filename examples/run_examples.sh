@@ -41,14 +41,14 @@ IFS=$' \n\t'
 declare -a EXAMPLES
 if [ "${#}" -eq 0 ]; then
     # Find all examples that have a line containing "autorun=true"
-    # The examples can be found in subdirectory nest and in the 
+    # The examples can be found in subdirectory nest and in the
     # examples installation path.
     if [ -d "nest/" ] ; then
         EXAMPLES="$(grep -rl --include=\*\.sli 'autorun=true' nest/)"
     else
         EXAMPLES="$(grep -rl --include=\*\.sli 'autorun=true' examples/)"
     fi
-    EXAMPLES+=" $(find ../pynest/examples -name '*.py')"
+    EXAMPLES+=" $(find . -name '*.py')"
 else
     EXAMPLES+=${@}
 fi
@@ -58,7 +58,8 @@ if [ ! -z "${SKIP_LIST+x}" ]; then
 fi
 
 # turn off plotting to the screen and waiting for input
-export MPLCONFIGDIR="$(pwd)/matplotlib/"
+export MPLCONFIGDIR=$(mktemp -d)
+echo "backend : svg" > $MPLCONFIGDIR/matplotlibrc
 
 time_format="  time: {real: %E, user: %U, system: %S}\n\
   memory: {total: %K, max_rss: %M}"
@@ -93,11 +94,13 @@ for i in $EXAMPLES; do
     echo "  output_dir: '$output_dir'" >>"$metafile"
     echo "  log: '$logfile'" >>"$metafile"
 
-    export NEST_DATA_PATH=""  # $output_dir"
+    export NEST_DATA_PATH="$output_dir"
     touch .start_example
     sleep 1
     set +e
+    # The following line will not work on macOS. There, `brew install gnu-time` and use the commented-out line below.
     /usr/bin/time -f "$time_format" --quiet sh -c "'$runner' '$example' >'$logfile' 2>&1" |& tee -a "$metafile"
+    # /usr/local/bin/gtime -f "$time_format" --quiet sh -c "'$runner' '$example' >'$logfile' 2>&1" | tee -a "$metafile" 2>&1
     ret=$?
     set -e
 

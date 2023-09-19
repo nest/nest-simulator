@@ -23,45 +23,25 @@
 Functions to get information on NEST.
 """
 
-import sys
 import os
 import textwrap
 import webbrowser
 
-from .hl_api_helper import broadcast, is_iterable, load_help, show_help_with_pager
-from .hl_api_types import to_json
-from .. import nestkernel_api as nestkernel
 import nest
 
+from .. import nestkernel_api as nestkernel
+from .hl_api_helper import broadcast, is_iterable, load_help, show_help_with_pager
+from .hl_api_types import to_json
+
 __all__ = [
-    'authors',
-    'get_argv',
-    'get_verbosity',
-    'help',
-    'helpdesk',
-    'message',
-    'set_verbosity',
-    'sysinfo',
-    'verbosity',
+    "get_verbosity",
+    "help",
+    "helpdesk",
+    "set_verbosity",
+    "verbosity",
 ]
 
 verbosity = nestkernel.severity_t
-
-
-def sysinfo():
-    """Print information on the platform on which NEST was compiled.
-
-    """
-
-    sr("sysinfo")
-
-
-def authors():
-    """Print the authors of NEST.
-
-    """
-
-    sr("authors")
 
 
 def helpdesk():
@@ -76,8 +56,8 @@ def helpdesk():
 
     """
 
-    docdir = sli_func("statusdict/prgdocdir ::")
-    help_fname = os.path.join(docdir, 'html', 'index.html')
+    docdir = nestkernel.ll_api_get_kernel_status()["docdir"]
+    help_fname = os.path.join(docdir, "html", "index.html")
 
     if not os.path.isfile(help_fname):
         msg = "Sorry, the help index cannot be opened. "
@@ -118,49 +98,15 @@ def help(obj=None, return_text=False):
             else:
                 show_help_with_pager(obj)
         except FileNotFoundError:
-            print(textwrap.dedent(f"""
+            print(
+                textwrap.dedent(
+                    f"""
                 Sorry, there is no help for model '{obj}'.
-                Use the Python help() function to obtain help on PyNEST functions."""))
+                Use the Python help() function to obtain help on PyNEST functions."""
+                )
+            )
     else:
         print(nest.__doc__)
-
-
-def get_argv():
-    """Return argv as seen by NEST.
-
-    This is similar to Python :code:`sys.argv` but might have changed after
-    MPI initialization.
-
-    Returns
-    -------
-    tuple
-        Argv, as seen by NEST
-
-    """
-
-    sr('statusdict')
-    statusdict = spp()
-    return statusdict['argv']
-
-
-def message(level, sender, text):
-    """Print a message using message system of NEST.
-
-    Parameters
-    ----------
-    level :
-        Level
-    sender :
-        Message sender
-    text : str
-        Text to be sent in the message
-
-    """
-
-    sps(level)
-    sps(sender)
-    sps(text)
-    sr('message')
 
 
 def get_verbosity():

@@ -30,12 +30,14 @@
 // Includes from libnestutil:
 #include "dict_util.h"
 
+namespace nest
+{
 
 /* ----------------------------------------------------------------
- * Default constructors defining default parameters and state
+ * Default constructor defining default parameters
  * ---------------------------------------------------------------- */
 
-nest::spike_generator::Parameters_::Parameters_()
+spike_generator::Parameters_::Parameters_()
   : spike_stamps_()
   , spike_offsets_()
   , spike_weights_()
@@ -46,25 +48,17 @@ nest::spike_generator::Parameters_::Parameters_()
 {
 }
 
-nest::spike_generator::State_::State_()
-  : position_( 0 )
-{
-}
-
 
 /* ----------------------------------------------------------------
  * Parameter extraction and manipulation functions
  * ---------------------------------------------------------------- */
 
 void
-nest::spike_generator::Parameters_::get( dictionary& d ) const
+spike_generator::Parameters_::get( dictionary& d ) const
 {
   const size_t n_spikes = spike_stamps_.size();
-  const size_t n_offsets = spike_offsets_.size();
-
-  assert( ( precise_times_ and n_offsets == n_spikes ) or ( not precise_times_ and n_offsets == 0 ) );
-
   std::vector< double > times_ms( n_spikes );
+
   for ( size_t n = 0; n < n_spikes; ++n )
   {
     times_ms[ n ] = spike_stamps_[ n ].get_ms();
@@ -83,7 +77,7 @@ nest::spike_generator::Parameters_::get( dictionary& d ) const
 }
 
 void
-nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_( double t, const Time& origin, const Time& now )
+spike_generator::Parameters_::assert_valid_spike_time_and_insert_( double t, const Time& origin, const Time& now )
 {
   if ( t == 0.0 and not shift_now_spikes_ )
   {
@@ -148,11 +142,7 @@ nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_( double 
 }
 
 void
-nest::spike_generator::Parameters_::set( const dictionary& d,
-  State_& s,
-  const Time& origin,
-  const Time& now,
-  Node* node )
+spike_generator::Parameters_::set( const dictionary& d, State_& s, const Time& origin, const Time& now, Node* node )
 {
   bool precise_times_changed = update_value_param( d, names::precise_times, precise_times_, node );
   bool shift_now_spikes_changed = update_value_param( d, names::shift_now_spikes, shift_now_spikes_, node );
@@ -264,17 +254,27 @@ nest::spike_generator::Parameters_::set( const dictionary& d,
 
 
 /* ----------------------------------------------------------------
+ * Default constructor defining default state
+ * ---------------------------------------------------------------- */
+
+spike_generator::State_::State_()
+  : position_( 0 )
+{
+}
+
+
+/* ----------------------------------------------------------------
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::spike_generator::spike_generator()
+spike_generator::spike_generator()
   : StimulationDevice()
   , P_()
   , S_()
 {
 }
 
-nest::spike_generator::spike_generator( const spike_generator& n )
+spike_generator::spike_generator( const spike_generator& n )
   : StimulationDevice( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -287,19 +287,19 @@ nest::spike_generator::spike_generator( const spike_generator& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::spike_generator::init_state_()
+spike_generator::init_state_()
 {
   StimulationDevice::init_state();
 }
 
 void
-nest::spike_generator::init_buffers_()
+spike_generator::init_buffers_()
 {
   StimulationDevice::init_buffers();
 }
 
 void
-nest::spike_generator::pre_run_hook()
+spike_generator::pre_run_hook()
 {
   StimulationDevice::pre_run_hook();
 }
@@ -309,7 +309,7 @@ nest::spike_generator::pre_run_hook()
  * Other functions
  * ---------------------------------------------------------------- */
 void
-nest::spike_generator::update( Time const& sliceT0, const long from, const long to )
+spike_generator::update( Time const& sliceT0, const long from, const long to )
 {
   if ( P_.spike_stamps_.empty() )
   {
@@ -379,18 +379,19 @@ nest::spike_generator::update( Time const& sliceT0, const long from, const long 
 }
 
 void
-nest::spike_generator::event_hook( DSSpikeEvent& e )
+spike_generator::event_hook( DSSpikeEvent& e )
 {
   e.set_weight( P_.spike_weights_[ S_.position_ ] * e.get_weight() );
   e.get_receiver().handle( e );
 }
+
 
 /* ----------------------------------------------------------------
  * Other functions
  * ---------------------------------------------------------------- */
 
 void
-nest::spike_generator::set_data_from_stimulation_backend( std::vector< double >& input_spikes )
+spike_generator::set_data_from_stimulation_backend( std::vector< double >& input_spikes )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 
@@ -421,3 +422,5 @@ nest::spike_generator::set_data_from_stimulation_backend( std::vector< double >&
   // if we get here, temporary contains consistent set of properties
   P_ = ptmp;
 }
+
+} // namespace nest

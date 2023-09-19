@@ -107,4 +107,4 @@ private:
 
 } // namespace nest
 
-#endif // ifndef LOGGING_MANAGER_H
+#endif /* ifndef LOGGING_MANAGER_H */

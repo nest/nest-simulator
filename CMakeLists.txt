@@ -17,15 +17,17 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>
 
-# Version range from minimum required (3.12 for macOS OpenMP)
-# up to newest version tested, see https://cliutils.gitlab.io/modern-cmake/chapters/basics.html
-cmake_minimum_required(VERSION 3.12...3.16)
+cmake_minimum_required( VERSION 3.19 )
 
 # add cmake modules: for all `include(...)` first look here
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-project(nest CXX C)
-set(NEST_USER_EMAIL "users@nest-simulator.org")
+project( nest CXX C )
+
+set( CMAKE_CXX_STANDARD 20 )
+set( CMAKE_CXX_STANDARD_REQUIRED True )
+
+set( NEST_USER_EMAIL "users@nest-simulator.org" )
 
 include(ColorMessages)
 
@@ -55,41 +57,43 @@ set(with-mpi OFF CACHE STRING "Build with MPI parallelization [default=OFF].")
 set(with-openmp ON CACHE BOOL "Build with OpenMP multi-threading [default=ON]. Optionally set OMP compiler flags.")
 
 # external libraries
-set(with-libneurosim OFF CACHE STRING "Build with libneurosim [default=OFF]. Optionally give the directory where libneurosim is installed.")
-set(with-music OFF CACHE STRING "Build with MUSIC [default=OFF]. Optionally give the directory where MUSIC is installed.")
-set(with-sionlib OFF CACHE STRING "Build with SIONlib [default=OFF]. Optionally give the directory where sionlib is installed.")
-set(with-boost ON CACHE STRING "Build with Boost [default=ON]. To set a specific Boost installation, give the install path.")
-set(with-sonata ON CACHE STRING "Find a HDF5 library. To set a specific HDF5 installation, set install path. [default=ON]")
-set(with-readline ON CACHE STRING "Build with GNU Readline library [default=ON]. To set a specific library, give the install path.")
-set(with-ltdl ON CACHE STRING "Build with ltdl library [default=ON]. To set a specific ltdl, give the  install path. NEST uses ltdl for dynamic loading of external user modules.")
-set(with-gsl ON CACHE STRING "Build with the GSL library [default=ON]. To set a specific library, give the install path.")
+set( with-libneurosim OFF CACHE STRING "Build with libneurosim [default=OFF]. Optionally give the directory where libneurosim is installed." )
+set( with-music OFF CACHE STRING "Build with MUSIC [default=OFF]. Optionally give the directory where MUSIC is installed." )
+set( with-sionlib OFF CACHE STRING "Build with SIONlib [default=OFF]. Optionally give the directory where sionlib is installed." )
+set( with-boost ON CACHE STRING "Build with Boost [default=ON]. To set a specific Boost installation, give the install path." )
+set( with-hdf5 OFF CACHE STRING "Find a HDF5 library. To set a specific HDF5 installation, set install path. [default=ON]" )
+set( with-readline ON CACHE STRING "Build with GNU Readline library [default=ON]. To set a specific library, give the install path." )
+set( with-ltdl ON CACHE STRING "Build with ltdl library [default=ON]. To set a specific ltdl, give the  install path. NEST uses ltdl for dynamic loading of external user modules." )
+set( with-gsl ON CACHE STRING "Build with the GSL library [default=ON]. To set a specific library, give the install path." )
 
 # NEST properties
-set(tics_per_ms "1000.0" CACHE STRING "Specify elementary unit of time [default=1000 tics per ms].")
-set(tics_per_step "100" CACHE STRING "Specify resolution [default=100 tics per step].")
-set(external-modules OFF CACHE STRING "External NEST modules to be linked in, separated by ';', [default=OFF].")
-set(with-detailed-timers OFF CACHE STRING "Build with detailed internal time measurements [default=OFF]. Detailed timers can affect the performance.")
-set(target-bits-split "standard" CACHE STRING "Split of the 64-bit target neuron identifier type [default='standard']. 'standard' is recommended for most users. If running on more than 262144 MPI processes or more than 512 threads, change to 'hpc'.")
+set( with-modelset "full" CACHE STRING "The modelset to include. Sample configurations are in the modelsets directory. This option is mutually exclusive with -Dwith-models. [default=full]." )
+set( with-models OFF CACHE STRING "The models to include as a semicolon-separated list of model headers (without the .h extension). This option is mutually exclusive with -Dwith-modelset. [default=OFF]." )
+set( tics_per_ms "1000.0" CACHE STRING "Specify elementary unit of time [default=1000 tics per ms]." )
+set( tics_per_step "100" CACHE STRING "Specify resolution [default=100 tics per step]." )
+set( external-modules OFF CACHE STRING "External NEST modules to be linked in, separated by ';', [default=OFF]." )
+set( with-detailed-timers OFF CACHE STRING "Build with detailed internal time measurements [default=OFF]. Detailed timers can affect the performance." )
+set( target-bits-split "standard" CACHE STRING "Split of the 64-bit target neuron identifier type [default='standard']. 'standard' is recommended for most users. If running on more than 262144 MPI processes or more than 512 threads, change to 'hpc'." )
 
 # generic build configuration
-option(static-libraries "Build static executable and libraries [default=OFF]" OFF)
-set(with-optimize ON CACHE STRING "Enable user defined optimizations [default=ON (uses '-O2')]. When OFF, no '-O' flag is passed to the compiler. Explicit compiler flags can be given; separate multiple flags by ';'.")
-set(with-warning ON CACHE STRING "Enable user defined warnings [default=ON (uses '-Wall')]. Separate  multiple flags by ';'.")
-set(with-debug OFF CACHE STRING "Enable user defined debug flags [default=OFF]. When ON, '-g' is used. Separate  multiple flags by ';'.")
-set(with-cpp-std "c++11" CACHE STRING "C++ standard to use for compilation [default='c++11'].")
-set(with-intel-compiler-flags OFF CACHE STRING "User defined flags for the Intel compiler [default='-fp-model strict']. Separate multiple flags by ';'.")
-set(with-libraries OFF CACHE STRING "Link additional libraries [default=OFF]. Give full path. Separate multiple libraries by ';'.")
-set(with-includes OFF CACHE STRING "Add additional include paths [default=OFF]. Give full path without '-I'. Separate multiple include paths by ';'.")
-set(with-defines OFF CACHE STRING "Additional defines, e.g. '-DXYZ=1' [default=OFF]. Separate multiple defines by ';'.")
-set(with-version-suffix "" CACHE STRING "Set a user defined version suffix [default=''].")
+option( static-libraries "Build static executable and libraries [default=OFF]" OFF )
+set( with-optimize ON CACHE STRING "Enable user defined optimizations [default=ON (uses '-O2')]. When OFF, no '-O' flag is passed to the compiler. Explicit compiler flags can be given; separate multiple flags by ';'." )
+set( with-warning ON CACHE STRING "Enable user defined warnings [default=ON (uses '-Wall')]. Separate  multiple flags by ';'." )
+set( with-debug OFF CACHE STRING "Enable user defined debug flags [default=OFF]. When ON, '-g' is used. Separate  multiple flags by ';'." )
+set( with-intel-compiler-flags OFF CACHE STRING "User defined flags for the Intel compiler [default='-fp-model strict']. Separate multiple flags by ';'." )
+set( with-libraries OFF CACHE STRING "Link additional libraries [default=OFF]. Give full path. Separate multiple libraries by ';'." )
+set( with-includes OFF CACHE STRING "Add additional include paths [default=OFF]. Give full path without '-I'. Separate multiple include paths by ';'." )
+set( with-defines OFF CACHE STRING "Additional defines, e.g. '-DXYZ=1' [default=OFF]. Separate multiple defines by ';'." )
 
 # documentation build configuration
 set(with-userdoc OFF CACHE STRING "Build user documentation [default=OFF]")
 set(with-devdoc OFF CACHE STRING "Build developer documentation [default=OFF]")
 
-# ###############################################################################
-# #################      Project Directory variables           ##################
-# ###############################################################################
+set( with-full-logging OFF CACHE STRING "Write debug output to 'dump_<num_ranks>_<rank>.log' file [default=OFF]")
+
+################################################################################
+##################      Project Directory variables           ##################
+################################################################################
 
 # In general use the CMAKE_INSTALL_<dir> and CMAKE_INSTALL_FULL_<dir> vars from
 # GNUInstallDirs (included after calling nest_process_with_python()), but the
@@ -128,7 +132,6 @@ get_target_triple(NEST_TARGET_TRIPLE NEST_TARGET_ARCH NEST_TARGET_VENDOR NEST_TA
 nest_process_with_python()
 include(GNUInstallDirs)
 nest_post_process_with_python()
-nest_process_with_std()
 nest_process_with_intel_compiler_flags()
 nest_process_with_warning()
 nest_process_with_libraries()
@@ -149,15 +152,18 @@ nest_process_with_music()
 nest_process_with_sionlib()
 nest_process_with_mpi4py()
 nest_process_with_boost()
-nest_process_with_sonata()
+nest_process_with_hdf5()
 nest_process_target_bits_split()
-nest_process_version_suffix()
 nest_process_userdoc()
 nest_process_devdoc()
+nest_process_full_logging()
+
+nest_process_models()
 
 # These two function calls must come last, as to prevent unwanted interactions of the newly set flags
 # with detection/compilation operations carried out in earlier functions. The optimize/debug flags set
-# using these functions should only apply to the compilation of NEST.
+# using these functions should only apply to the compilation of NEST, not to that of test programs
+# generated by CMake when it tries to detect compiler options or such.
 nest_process_with_optimize()
 nest_process_with_debug()
 
@@ -165,9 +171,7 @@ nest_get_color_flags()
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${NEST_C_COLOR_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${NEST_CXX_COLOR_FLAGS}")
 
-# requires HAVE_LIBNEUROSIM
-nest_default_modules()
-
+# TODO PYNEST-NG
 # nest_write_static_module_header( "${PROJECT_BINARY_DIR}/nest/static_modules.h" )
 
 # check additionals
@@ -184,16 +188,10 @@ nest_check_have_std_nan()
 nest_check_have_std_isnan()
 nest_check_random123()
 
-# ###############################################################################
-# #################           Create version string            ##################
-# ###############################################################################
-include(NestVersionInfo)
+include( NestVersionInfo )
 get_version_info()
-printInfo("-- NEST version: ${NEST_VERSION_STRING}")
+printInfo("Done configuring NEST version: ${NEST_VERSION}")
 
-# ###############################################################################
-# #################         Enable Testing Targets             ##################
-# ###############################################################################
 enable_testing()
 set(TEST_OPTS "")
 
@@ -207,10 +205,9 @@ endif()
 
 add_custom_target(installcheck
   COMMAND ${CMAKE_COMMAND} -E env
-  ${CMAKE_INSTALL_FULL_DATADIR}/testsuite/do_tests.sh
-  --prefix=${CMAKE_INSTALL_PREFIX}
-  --report-dir="${PROJECT_BINARY_DIR}/reports"
-  ${TEST_OPTS}
+    ${CMAKE_INSTALL_FULL_DATADIR}/testsuite/do_tests.sh
+	--prefix=${CMAKE_INSTALL_PREFIX}
+	${TEST_OPTS}
   WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
   COMMENT "Executing NEST's testsuite..."
 )
@@ -279,9 +276,7 @@ foreach(def ${SIONLIB_DEFINES})
 endforeach()
 
 # libraries required to link extension modules
-set(MODULE_LINK_LIBS
-  "-lnestutil"
-  "-lnestkernel"
+set( MODULE_LINK_LIBS
   "${OpenMP_CXX_FLAGS}"
   "${LTDL_LIBRARIES}"
   "${READLINE_LIBRARIES}"
@@ -362,6 +357,18 @@ configure_file(
 # ###############################################################################
 install(FILES LICENSE README.md
   DESTINATION ${CMAKE_INSTALL_DOCDIR}
+)
+
+################################################################################
+##################            Install Extra Files             ##################
+################################################################################
+
+install( FILES LICENSE README.md
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}
+)
+
+install( DIRECTORY examples/
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples
 )
 
 nest_print_config_summary()

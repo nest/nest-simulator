@@ -166,6 +166,11 @@ See also
 
 spike_recorder
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: correlation_detector
+
 EndUserDocs */
 
 /**
@@ -216,7 +221,7 @@ public:
 
   void handle( SpikeEvent& ) override;
 
-  port handles_test_event( SpikeEvent&, rport ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
 
   void get_status( dictionary& ) const override;
   void set_status( const dictionary& ) override;
@@ -333,10 +338,10 @@ private:
   State_ S_;
 };
 
-inline port
-correlation_detector::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+correlation_detector::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
-  if ( receptor_type < 0 or receptor_type > 1 )
+  if ( receptor_type > 1 )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }

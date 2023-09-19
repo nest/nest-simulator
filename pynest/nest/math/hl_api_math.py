@@ -21,14 +21,13 @@
 
 from .. import nestkernel_api as nestkernel
 
-
 __all__ = [
-    'exp',
-    'sin',
-    'cos',
-    'min',
-    'max',
-    'redraw',
+    "exp",
+    "sin",
+    "cos",
+    "min",
+    "max",
+    "redraw",
 ]
 
 # TODO: Special cases when argument is a number?

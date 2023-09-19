@@ -72,16 +72,11 @@ class SonataConnector
 public:
   /**
    * @brief Constructor
-   * @param graph_specs Dictionary with created NodeCollections and SONATA edge specifications.
-   * @param chunk_size Size of the chunk to read in one read operation.
    *
-   * See PyNEST `SonataNetwork._create_graph_specs` for an outline of the
-   * structure of `graph_specs`.
-   *
-   * The `chunk_size` applies to all HDF5 datasets that need to be read in
-   * each read operation to extract connectivity data.
+   * @param graph_specs Specification dictionary, see PyNEST `SonataNetwork._create_graph_specs` for details.
+   * @param hyperslab_size Size of the hyperslab to read in one read operation, applies to all HDF5 datasets.
    */
-  SonataConnector( const dictionary& graph_specs, const long chunk_size );
+  SonataConnector( const dictionary& graph_specs, const long hyperslab_size );
 
   ~SonataConnector();
 
@@ -136,6 +131,11 @@ private:
   void try_open_edge_group_dsets_( const H5::Group* edge_grp );
 
   /**
+   * @brief Check consistency of datasets.
+   */
+  void check_dsets_consistency();
+
+  /**
    * @brief Close all open datasets.
    */
   void close_dsets_();
@@ -170,7 +170,7 @@ private:
    * @param synapse_model_id Model id of synapse
    * @param type_id SONATA edge type id for mapping synapse parameters.
    */
-  void set_synapse_params_( dictionary syn_dict, index synapse_model_id, int type_id );
+  void set_synapse_params_( dictionary syn_dict, size_t synapse_model_id, int type_id );
 
   /**
    * @brief Get synapse parameters.
@@ -183,7 +183,7 @@ private:
    * @param rng rng pointer of target thread
    * @param edge_type_id type id of current edge to be connected
    */
-  void get_synapse_params_( index snode_id, Node& target, thread target_thread, RngPtr rng, int edge_type_id );
+  void get_synapse_params_( size_t snode_id, Node& target, size_t target_thread, RngPtr rng, int edge_type_id );
 
   /**
    * @brief Get synapse property.
@@ -211,10 +211,10 @@ private:
 
   /**
    * @brief Create connections in chunks.
-   * @param chunk_size Size of chunk to be read from datasets
+   * @param hyperslab_size Size of hyperslab (chunk) to be read from datasets
    * @param offset Offset from start coordinate of data selection
    */
-  void connect_chunk_( const hsize_t chunk_size, const hsize_t offset );
+  void connect_chunk_( const hsize_t hyperslab_size, const hsize_t offset );
 
   /**
    * @brief Read subset of dataset into memory.
@@ -222,14 +222,14 @@ private:
    * @param dataset HDF5 dataset to read.
    * @param data_buf Buffer to store data in memory.
    * @param datatype Type of data in dataset.
-   * @param chunk_size Size of chunk to be read from dataset.
+   * @param hyperslab_size Size of hyperslab to be read from dataset.
    * @param offset Offset from start coordinate of data selection.
    */
   template < typename T >
   void read_subset_( const H5::DataSet& dataset,
     std::vector< T >& data_buf,
     H5::PredType datatype,
-    hsize_t chunk_size,
+    hsize_t hyperslab_size,
     hsize_t offset );
 
   /**
@@ -273,8 +273,8 @@ private:
   //! Dictionary containing SONATA graph specifications
   dictionary graph_specs_;
 
-  //! Size of chunk that is read into memory in one read operation. Applies to all relevant HDF5 datasets.
-  hsize_t chunk_size_;
+  //! Size of hyperslab that is read into memory in one read operation. Applies to all relevant HDF5 datasets.
+  hsize_t hyperslab_size_;
 
   //! Indicates whether weights are given as HDF5 dataset
   bool weight_dataset_exist_;
@@ -292,7 +292,7 @@ private:
   dictionary cur_edge_params_;
 
   //! Map from edge type id (SONATA specification) to synapse model
-  std::map< int, index > edge_type_id_2_syn_model_;
+  std::map< int, size_t > edge_type_id_2_syn_model_;
 
   //! Map from edge type id (SONATA specification) to synapse dictionary with ConnParameter's
   std::map< int, ConnParameterMap > edge_type_id_2_syn_spec_;

@@ -34,6 +34,11 @@
 // Includes from thirdparty:
 #include "compose.hpp"
 
+// Include MPI for MPI error string
+#ifdef HAVE_MPI
+#include <mpi.h>
+#endif
+
 namespace nest
 {
 
@@ -75,6 +80,12 @@ public:
     : std::runtime_error( msg )
   {
   }
+
+  virtual std::string
+  exception_name()
+  {
+    return "KernelException";
+  }
 };
 
 /**
@@ -87,6 +98,12 @@ public:
   explicit NotImplemented( const std::string& msg )
     : KernelException( msg )
   {
+  }
+
+  std::string
+  exception_name() override
+  {
+    return "NotImplemented";
   }
 };
 
@@ -112,6 +129,12 @@ public:
     : KernelException( "Expected datatype: " + expected + ", provided datatype: " + provided )
   {
   }
+
+  std::string
+  exception_name() override
+  {
+    return "TypeMismatch";
+  }
 };
 
 /**
@@ -128,6 +151,12 @@ public:
   explicit WrappedThreadException( const std::exception& e )
     : KernelException( e.what() )
   {
+  }
+
+  std::string
+  exception_name() override
+  {
+    return "WrappedThreadException";
   }
 };
 
@@ -146,6 +175,12 @@ public:
     : KernelException( "Unaccessed elements in " + what + ", in function " + where + ": " + missed )
   {
   }
+
+  std::string
+  exception_name() override
+  {
+    return "UnaccessedDictionaryEntry";
+  }
 };
 
 /**
@@ -162,6 +197,12 @@ public:
   UnknownModelName( const std::string& model_name )
     : KernelException( compose_msg_( model_name ) )
   {
+  }
+
+  std::string
+  exception_name() override
+  {
+    return "UnknownModelName";
   }
 };
 
@@ -180,6 +221,12 @@ public:
     : KernelException( compose_msg_( component_name ) )
   {
   }
+
+  std::string
+  exception_name() override
+  {
+    return "UnknownComponent";
+  }
 };
 
 /**
@@ -195,6 +242,12 @@ public:
   NewModelNameExists( const std::string& model_name )
     : KernelException( compose_msg_( model_name ) )
   {
+  }
+
+  std::string
+  exception_name() override
+  {
+    return "NewModelNameExists";
   }
 };
 
@@ -213,6 +266,12 @@ public:
   ModelInUse( const std::string& model_name )
     : KernelException( compose_msg_( model_name ) )
   {
+  }
+
+  std::string
+  exception_name() override
+  {
+    return "ModelInUse";
   }
 };
 
@@ -235,6 +294,12 @@ public:
   UnknownSynapseType( std::string name )
     : KernelException( compose_msg_( name ) )
   {
+  }
+
+  std::string
+  exception_name() override
+  {
+    return "UnknownSynapseType";
   }
 };
 
@@ -260,6 +325,12 @@ public:
     : KernelException( compose_msg_( id ) )
   {
   }
+
+  std::string
+  exception_name() override
+  {
+    return "UnknownNode";
+  }
 };
 
 /**
@@ -284,6 +355,12 @@ public:
     : KernelException( compose_msg_( id ) )
   {
   }
+
+  std::string
+  exception_name() override
+  {
+    return "NoThreadSiblingsAvailable";
+  }
 };
 
 class LocalNodeExpected : public KernelException
@@ -295,6 +372,12 @@ public:
     : KernelException( compose_msg_( id ) )
   {
   }
+
+  std::string
+  exception_name() override
+  {
+    return "LocalNodeExpected";
+  }
 };
 
 class NodeWithProxiesExpected : public KernelException
@@ -305,6 +388,12 @@ public:
   NodeWithProxiesExpected( int id )
     : KernelException( compose_msg_( id ) )
   {
+  }
+
+  std::string
+  exception_name() override
+  {
+    return "NodeWithProxiesExpected";
   }
 };
 
@@ -321,6 +410,12 @@ public:
     : KernelException( compose_msg_( compartment_idx, info ) )
   {
   }
+
+  std::string
+  exception_name() override
+  {
+    return "UnknownCompartment";
+  }
 };
 
 /**
@@ -336,6 +431,12 @@ public:
     : KernelException( compose_msg_( receptor_type, name ) )
   {
   }
+
+  std::string
+  exception_name() override
+  {
+    return "UnknownReceptorType";
+  }
 };
 
 /**
@@ -350,6 +451,12 @@ public:
   IncompatibleReceptorType( long receptor_type, std::string name, std::string event_type )
     : KernelException( compose_msg( receptor_type, name, event_type ) )
   {
+  }
+
+  std::string
+  exception_name() override
+  {
+    return "IncompatibleReceptorType";
   }
 };
 
@@ -374,6 +481,12 @@ public:
     : KernelException( compose_msg_( id, msg ) )
   {
   }
+
+  std::string
+  exception_name() override
+  {
+    return "UnknownPort";
+  }
 };
 
 /**
@@ -393,6 +506,12 @@ public:
   IllegalConnection( std::string msg )
     : KernelException( "Creation of connection is not possible because:\n" + msg )
   {
+  }
+
+  std::string
+  exception_name() override
+  {
+    return "IllegalConnection";
   }
 };
 
@@ -427,6 +546,12 @@ public:
   {
     return msg_.data();
   };
+
+  std::string
+  exception_name() override
+  {
+    return "InexistentConnection";
+  }
 };
 
 /**
@@ -450,6 +575,12 @@ public:
   {
     return msg_.data();
   };
+
+  std::string
+  exception_name() override
+  {
+    return "UnknownThread";
+  }
 };
 
 /**
@@ -474,6 +605,12 @@ public:
   {
     return msg_.data();
   };
+
+  std::string
+  exception_name() override
+  {
+    return "BadDelay";
+  }
 };
 
 /**
@@ -510,6 +647,12 @@ public:
   {
     return msg_.data();
   };
+
+  std::string
+  exception_name() override
+  {
+    return "UnexpectedEvent";
+  }
 };
 
 
@@ -527,6 +670,12 @@ public:
   UnsupportedEvent()
     : KernelException( compose_msg_() )
   {
+  }
+
+  std::string
+  exception_name() override
+  {
+    return "UnsupportedEvent";
   }
 };
 
@@ -559,6 +708,12 @@ public:
   {
     return msg_.data();
   };
+
+  std::string
+  exception_name() override
+  {
+    return "BadProperty";
+  }
 };
 
 /**
@@ -590,6 +745,12 @@ public:
   {
     return msg_.data();
   };
+
+  std::string
+  exception_name() override
+  {
+    return "BadParameter";
+  }
 };
 
 /**
@@ -618,7 +779,11 @@ public:
   {
   }
 
-  std::string message() const;
+  std::string
+  exception_name() override
+  {
+    return "BadParameterValue";
+  }
 };
 
 /**
@@ -656,6 +821,12 @@ public:
   {
     return msg_.data();
   };
+
+  std::string
+  exception_name() override
+  {
+    return "DimensionMismatch";
+  }
 };
 
 /**
@@ -669,6 +840,12 @@ public:
   DistributionError()
     : KernelException( "DistributionError" )
   {
+  }
+
+  std::string
+  exception_name() override
+  {
+    return "DistributionError";
   }
 };
 
@@ -708,6 +885,12 @@ public:
   {
     return msg_.data();
   };
+
+  std::string
+  exception_name() override
+  {
+    return "InvalidDefaultResolution";
+  }
 };
 
 /**
@@ -746,6 +929,12 @@ public:
   {
     return msg_.data();
   };
+
+  std::string
+  exception_name() override
+  {
+    return "InvalidTimeInModel";
+  }
 };
 
 /**
@@ -781,6 +970,12 @@ public:
   {
     return msg_.data();
   };
+
+  std::string
+  exception_name() override
+  {
+    return "StepMultipleRequired";
+  }
 };
 
 /**
@@ -822,6 +1017,12 @@ public:
   {
     return msg_.data();
   };
+
+  std::string
+  exception_name() override
+  {
+    return "TimeMultipleRequired";
+  }
 };
 
 /**
@@ -855,6 +1056,12 @@ public:
   {
     return msg_.data();
   };
+
+  std::string
+  exception_name() override
+  {
+    return "GSLSolverFailure";
+  }
 };
 
 /**
@@ -883,6 +1090,12 @@ public:
   {
     return msg_.data();
   };
+
+  std::string
+  exception_name() override
+  {
+    return "NumericalInstability";
+  }
 };
 
 /**
@@ -908,6 +1121,12 @@ public:
   {
     return msg_.data();
   };
+
+  std::string
+  exception_name() override
+  {
+    return "NamingConflict";
+  }
 };
 
 /**
@@ -940,6 +1159,12 @@ public:
   {
     return msg_.data();
   };
+
+  std::string
+  exception_name() override
+  {
+    return "RangeCheck";
+  }
 };
 
 /**
@@ -963,6 +1188,12 @@ public:
   {
     return msg_.data();
   };
+
+  std::string
+  exception_name() override
+  {
+    return "IOError";
+  }
 };
 
 /**
@@ -991,6 +1222,12 @@ public:
   {
     return msg_.data();
   };
+
+  std::string
+  exception_name() override
+  {
+    return "KeyError";
+  }
 };
 
 /**
@@ -1020,6 +1257,12 @@ public:
   {
     return msg_.data();
   };
+
+  std::string
+  exception_name() override
+  {
+    return "InternalError";
+  }
 };
 
 #ifdef HAVE_MUSIC
@@ -1055,6 +1298,12 @@ public:
   {
     return msg_.data();
   };
+
+  std::string
+  exception_name() override
+  {
+    return "MUSICPortUnconnected";
+  }
 };
 
 /**
@@ -1089,6 +1338,12 @@ public:
   {
     return msg_.data();
   };
+
+  std::string
+  exception_name() override
+  {
+    return "MUSICPortHasNoWidth";
+  }
 };
 
 /**
@@ -1123,6 +1378,12 @@ public:
   {
     return msg_.data();
   };
+
+  std::string
+  exception_name() override
+  {
+    return "MUSICPortAlreadyPublished";
+  }
 };
 
 /**
@@ -1155,6 +1416,12 @@ public:
   {
     return msg_.data();
   };
+
+  std::string
+  exception_name() override
+  {
+    return "MUSICSimulationHasRun";
+  }
 };
 
 /**
@@ -1191,6 +1458,12 @@ public:
   {
     return msg_.data();
   };
+
+  std::string
+  exception_name() override
+  {
+    return "MUSICChannelUnknown";
+  }
 };
 
 /**
@@ -1218,6 +1491,12 @@ public:
   {
     return msg_.data();
   };
+
+  std::string
+  exception_name() override
+  {
+    return "MUSICPortUnknown";
+  }
 };
 
 /**
@@ -1254,6 +1533,12 @@ public:
   {
     return msg_.data();
   };
+
+  std::string
+  exception_name() override
+  {
+    return "MUSICChannelAlreadyMapped";
+  }
 };
 #endif // HAVE_MUSIC
 
@@ -1264,7 +1549,7 @@ private:
   std::string msg_;
 
 public:
-  explicit MPIPortsFileUnknown( const index node_id )
+  explicit MPIPortsFileUnknown( const size_t node_id )
   {
     msg_ = String::compose(
       "The node with ID %1 requires a label, which specifies the "
@@ -1277,6 +1562,69 @@ public:
   {
     return msg_.data();
   };
+
+  std::string
+  exception_name() override
+  {
+    return "MPIPortsUnknown";
+  }
+};
+
+class MPIPortsFileMissing : public KernelException
+{
+private:
+  std::string msg_;
+
+public:
+  explicit MPIPortsFileMissing( const size_t node_id, const std::string path )
+  {
+    msg_ = String::compose(
+      "The node with ID %1 expects a file with the MPI address at location %2. "
+      "The file does not seem to exist.",
+      node_id,
+      path );
+  }
+
+  const char*
+  what() const noexcept override
+  {
+    return msg_.data();
+  };
+
+  std::string
+  exception_name() override
+  {
+    return "MPIPortsFileMissing";
+  }
+};
+
+class MPIErrorCode : public KernelException
+{
+private:
+  std::string msg_;
+  std::string error_;
+  char errmsg_[ 256 ];
+  int len_;
+
+public:
+  explicit MPIErrorCode( const int error_code )
+  {
+    MPI_Error_string( error_code, errmsg_, &len_ );
+    error_.assign( errmsg_, len_ );
+    msg_ = String::compose( "MPI Error: %1", error_ );
+  }
+
+  const char*
+  what() const noexcept override
+  {
+    return msg_.data();
+  };
+
+  std::string
+  exception_name() override
+  {
+    return "MPIErrorCode";
+  }
 };
 #endif // HAVE_MPI
 
@@ -1301,6 +1649,12 @@ public:
   {
     return msg_.data();
   };
+
+  std::string
+  exception_name() override
+  {
+    return "UnmatchedSteps";
+  }
 };
 
 class BackendPrepared : public KernelException
@@ -1329,7 +1683,48 @@ public:
   {
     return msg_.data();
   };
+
+  std::string
+  exception_name() override
+  {
+    return "BackendPrepared";
+  }
 };
+
+class BackendAlreadyRegistered : public KernelException
+{
+private:
+  const std::string backend_;
+  std::string msg_;
+
+public:
+  BackendAlreadyRegistered( const std::string& backend )
+    : KernelException( "BackendPrepared" )
+    , backend_( backend )
+  {
+    msg_ = String::compose( "Backend %1 has already been registered.", backend_ );
+  }
+
+  BackendAlreadyRegistered( std::string&& backend )
+    : KernelException( "BackendPrepared" )
+    , backend_( std::move( backend ) )
+  {
+    msg_ = String::compose( "Backend %1 has already been registered.", backend_ );
+  }
+
+  const char*
+  what() const noexcept override
+  {
+    return msg_.data();
+  };
+
+  std::string
+  exception_name() override
+  {
+    return "BackendAlreadyRegistered";
+  }
+};
+
 
 class BackendNotPrepared : public KernelException
 {
@@ -1363,6 +1758,12 @@ public:
   {
     return msg_.data();
   };
+
+  std::string
+  exception_name() override
+  {
+    return "BackendNotPrepared";
+  }
 };
 
 class LayerExpected : public KernelException
@@ -1372,6 +1773,12 @@ public:
     : KernelException( "LayerExpected" )
   {
   }
+
+  std::string
+  exception_name() override
+  {
+    return "LayerExpected";
+  }
 };
 
 class LayerNodeExpected : public KernelException
@@ -1380,6 +1787,12 @@ public:
   LayerNodeExpected()
     : KernelException( "LayerNodeExpected" )
   {
+  }
+
+  std::string
+  exception_name() override
+  {
+    return "LayerNodeExpected";
   }
 };
 
@@ -1400,6 +1813,12 @@ public:
   {
     return msg_.data();
   };
+
+  std::string
+  exception_name() override
+  {
+    return "UndefinedName";
+  }
 };
 
 } // namespace nest

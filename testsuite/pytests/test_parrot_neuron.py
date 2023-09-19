@@ -22,10 +22,10 @@
 # This script tests the parrot_neuron in NEST.
 # See test_parrot_neuron_ps.py for an equivalent test of the precise parrot.
 
-import nest
-import unittest
 import math
-import numpy as np
+import unittest
+
+import nest
 
 
 class ParrotNeuronTestCase(unittest.TestCase):
@@ -39,7 +39,7 @@ class ParrotNeuronTestCase(unittest.TestCase):
         self.spike_time = 1.0
         self.delay = 0.2
         self.source = nest.Create("spike_generator", params={"spike_times": [self.spike_time]})
-        self.parrot = nest.Create('parrot_neuron')
+        self.parrot = nest.Create("parrot_neuron")
         self.spikes = nest.Create("spike_recorder")
 
         # record source and parrot spikes
@@ -55,30 +55,23 @@ class ParrotNeuronTestCase(unittest.TestCase):
 
         # get spike from parrot neuron
         events = self.spikes.events
-        times = np.array(events['times'])
-        senders = np.array(events['senders'])
-        post_time = times[senders == self.parrot.global_id]
+        post_time = events["times"][events["senders"] == self.parrot.global_id]
 
         # assert spike was repeated at correct time
         assert post_time, "Parrot neuron failed to repeat spike."
-        assert self.spike_time + self.delay == post_time, \
-            "Parrot neuron repeated spike at wrong delay"
+        assert self.spike_time + self.delay == post_time, "Parrot neuron repeated spike at wrong delay"
 
     def test_ParrotNeuronIgnoreSpike(self):
         """Check parrot_neuron ignores spikes on port 1"""
 
         # connect with arbitrary delay to port 1
-        nest.Connect(self.source, self.parrot,
-                     syn_spec={"receptor_type": 1, "delay": self.delay})
-        nest.Simulate(self.spike_time + 2. * self.delay)
+        nest.Connect(self.source, self.parrot, syn_spec={"receptor_type": 1, "delay": self.delay})
+        nest.Simulate(self.spike_time + 2.0 * self.delay)
 
         # get spike from parrot neuron, assert it was ignored
         events = self.spikes.events
-        times = np.array(events['times'])
-        senders = np.array(events['senders'])
-        post_time = times[senders == self.parrot.global_id]
-        assert len(post_time) == 0, \
-            "Parrot neuron failed to ignore spike arriving on port 1"
+        post_time = events["times"][events["senders"] == self.parrot.global_id]
+        assert len(post_time) == 0, "Parrot neuron failed to ignore spike arriving on port 1"
 
     def test_ParrotNeuronOutgoingMultiplicity(self):
         """
@@ -91,15 +84,14 @@ class ParrotNeuronTestCase(unittest.TestCase):
         # connect twice
         nest.Connect(self.source, self.parrot, syn_spec={"delay": self.delay})
         nest.Connect(self.source, self.parrot, syn_spec={"delay": self.delay})
-        nest.Simulate(self.spike_time + 2. * self.delay)
+        nest.Simulate(self.spike_time + 2.0 * self.delay)
 
         # get spikes from parrot neuron, assert two were transmitted
         events = self.spikes.events
-        times = np.array(events['times'])
-        senders = np.array(events['senders'])
-        post_times = times[senders == self.parrot.global_id]
-        assert len(post_times) == 2 and post_times[0] == post_times[1], \
-            "Parrot neuron failed to correctly repeat multiple spikes."
+        post_times = events["times"][events["senders"] == self.parrot.global_id]
+        assert (
+            len(post_times) == 2 and post_times[0] == post_times[1]
+        ), "Parrot neuron failed to correctly repeat multiple spikes."
 
 
 class ParrotNeuronPoissonTestCase(unittest.TestCase):
@@ -122,28 +114,27 @@ class ParrotNeuronPoissonTestCase(unittest.TestCase):
         # set up source spike generator, as well as parrot neurons
         resolution = 0.1  # ms
         rate = 1000000.0  # spikes / s
-        delay = 1.0       # ms
-        t_base = 1000.0   # ms
-        t_sim = t_base + 3 * delay   # after t_sim, spikes from t_base arrived
+        delay = 1.0  # ms
+        t_base = 1000.0  # ms
+        t_sim = t_base + 3 * delay  # after t_sim, spikes from t_base arrived
         spikes_expected = rate * t_base / 1000.0
         spikes_std = math.sqrt(spikes_expected)
 
         # if the test is to be meaningful we must expect signficantly more
         # spikes than time steps
-        assert spikes_expected - 3 * spikes_std > 10.0 * t_sim / resolution, \
-            "Internal inconsistency: too few spikes."
+        assert spikes_expected - 3 * spikes_std > 10.0 * t_sim / resolution, "Internal inconsistency: too few spikes."
 
         nest.set_verbosity(nest.verbosity.M_WARNING)
         nest.ResetKernel()
         nest.resolution = resolution
         nest.rng_seed = 123
 
-        source = nest.Create('poisson_generator', params={'rate': rate})
-        parrots = nest.Create('parrot_neuron', 2)
-        spike_rec = nest.Create('spike_recorder')
+        source = nest.Create("poisson_generator", params={"rate": rate})
+        parrots = nest.Create("parrot_neuron", 2)
+        spike_rec = nest.Create("spike_recorder")
 
-        nest.Connect(source, parrots[:1], syn_spec={'delay': delay})
-        nest.Connect(parrots[:1], parrots[1:], syn_spec={'delay': delay})
+        nest.Connect(source, parrots[:1], syn_spec={"delay": delay})
+        nest.Connect(parrots[:1], parrots[1:], syn_spec={"delay": delay})
         nest.Connect(parrots[1:], spike_rec)
 
         nest.Simulate(t_sim)
@@ -170,7 +161,7 @@ class ParrotNeuronSTDPTestCase(unittest.TestCase):
         nest.ResetKernel()
 
         # set pre and postsynaptic spike times
-        delay = 1.0     # delay for connections
+        delay = 1.0  # delay for connections
         dspike = 100.0  # ISI
 
         # set the correct real spike times for generators (correcting for
@@ -209,13 +200,13 @@ class ParrotNeuronSTDPTestCase(unittest.TestCase):
 
         # get STDP synapse and weight before protocol
         syn = nest.GetConnections(source=pre_parrot, synapse_model="stdp_synapse")
-        w_pre = syn.get('weight')
+        w_pre = syn.get("weight")
 
         last_time = max(pre_times[-1], post_times[-1])
         nest.Simulate(last_time + 2 * delay)
 
         # get weight post protocol
-        w_post = syn.get('weight')
+        w_post = syn.get("weight")
 
         return w_pre, w_post
 
@@ -225,7 +216,9 @@ class ParrotNeuronSTDPTestCase(unittest.TestCase):
 
         dt = 10.0
         w_pre, w_post = self.run_protocol(dt)
-        assert w_pre < w_post, "Parrot neuron STDP potentiation \
+        assert (
+            w_pre < w_post
+        ), "Parrot neuron STDP potentiation \
             protocol failed to elicit positive weight changes."
 
     def test_ParrotNeuronSTDPProtocolDepression(self):
@@ -234,20 +227,18 @@ class ParrotNeuronSTDPTestCase(unittest.TestCase):
 
         dt = -10.0
         w_pre, w_post = self.run_protocol(dt)
-        assert w_pre > w_post, "Parrot neuron STDP potentiation \
+        assert (
+            w_pre > w_post
+        ), "Parrot neuron STDP potentiation \
         protocol failed to elicit negative weight changes."
 
 
 def suite():
-
     # makeSuite is sort of obsolete http://bugs.python.org/issue2721
     # using loadTestsFromTestCase instead.
-    suite1 = unittest.TestLoader().loadTestsFromTestCase(
-        ParrotNeuronTestCase)
-    suite2 = unittest.TestLoader().loadTestsFromTestCase(
-        ParrotNeuronPoissonTestCase)
-    suite3 = unittest.TestLoader().loadTestsFromTestCase(
-        ParrotNeuronSTDPTestCase)
+    suite1 = unittest.TestLoader().loadTestsFromTestCase(ParrotNeuronTestCase)
+    suite2 = unittest.TestLoader().loadTestsFromTestCase(ParrotNeuronPoissonTestCase)
+    suite3 = unittest.TestLoader().loadTestsFromTestCase(ParrotNeuronSTDPTestCase)
     return unittest.TestSuite([suite1, suite2, suite3])
 
 

@@ -20,6 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
+
 import nest
 import numpy as np
 
@@ -33,7 +34,7 @@ class TestChangingTicBase(unittest.TestCase):
     # change in tic-base.  However, because the value in the defaults
     # is converted to ms, it will differ from the reference value.
     # The model is therefore ignored.
-    ignored_models = ['iaf_psc_exp_ps_lossless']
+    ignored_models = ["iaf_psc_exp_ps_lossless"]
 
     def setUp(self):
         nest.ResetKernel()
@@ -49,7 +50,7 @@ class TestChangingTicBase(unittest.TestCase):
             "correlation_detector": ["delta_tau"],
             "correlomatrix_detector": ["delta_tau"],
             "correlospinmatrix_detector": ["delta_tau"],
-            "noise_generator":  ["dt"],
+            "noise_generator": ["dt"],
         }
 
         # Generate a dictionary of reference values for each model.
@@ -64,7 +65,7 @@ class TestChangingTicBase(unittest.TestCase):
                 pass
 
         # Change the tic-base.
-        nest.set(resolution=0.5, tics_per_ms=1500.0)
+        nest.set(resolution=0.5, tics_per_ms=1500)
 
         # At this point, Time objects in models should have been updated to
         # account for the new tic-base. Values in model defaults should therefore
@@ -75,10 +76,10 @@ class TestChangingTicBase(unittest.TestCase):
             model_reference = reference[model]
             model_defaults = nest.GetDefaults(model)
 
-            # Remove entries where the item contains more than one
-            # value, as this causes issues when comparing.
-            array_keys = [key for key, value in model_defaults.items()
-                          if isinstance(value, (list, tuple, dict, np.ndarray))]
+            # Remove entries where the item contains more than one value, as this causes issues when comparing.
+            array_keys = [
+                key for key, value in model_defaults.items() if isinstance(value, (list, tuple, dict, np.ndarray))
+            ]
 
             for key in array_keys:
                 del model_defaults[key]
@@ -108,27 +109,27 @@ class TestChangingTicBase(unittest.TestCase):
         """Assert that changing tic-base raises a NESTError, and reset the kernel"""
         with self.assertRaises(nest.NESTError, msg=f'after calling "{after_call}"'):
             # For co-dependent properties, we use `set()` instead of kernel attributes
-            nest.set(resolution=0.5, tics_per_ms=1500.0)
+            nest.set(resolution=0.5, tics_per_ms=1500)
         nest.ResetKernel()
 
     def test_prohibit_change_tic_base(self):
         """Getting error when changing tic-base in prohibited conditions"""
 
-        nest.CopyModel('iaf_psc_alpha', 'alpha_copy')
-        self._assert_ticbase_change_raises_and_reset('CopyModel')
+        nest.CopyModel("iaf_psc_alpha", "alpha_copy")
+        self._assert_ticbase_change_raises_and_reset("CopyModel")
 
         nest.SetDefaults("multimeter", {"record_to": "ascii"})
-        self._assert_ticbase_change_raises_and_reset('SetDefaults')
+        self._assert_ticbase_change_raises_and_reset("SetDefaults")
 
-        nest.Create('multimeter')
-        self._assert_ticbase_change_raises_and_reset('Create')
+        nest.Create("multimeter")
+        self._assert_ticbase_change_raises_and_reset("Create")
 
-        nest.Simulate(10.)
-        self._assert_ticbase_change_raises_and_reset('Simulate')
+        nest.Simulate(10.0)
+        self._assert_ticbase_change_raises_and_reset("Simulate")
 
 
 def suite():
-    suite = unittest.makeSuite(TestChangingTicBase, 'test')
+    suite = unittest.makeSuite(TestChangingTicBase, "test")
     return suite
 
 

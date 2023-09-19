@@ -76,6 +76,11 @@ Sends
 
 SpikeEvent
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: parrot_neuron_ps
+
 EndUserDocs */
 
 class parrot_neuron_ps : public ArchivingNode
@@ -92,8 +97,8 @@ public:
   using Node::handles_test_event;
 
   void handle( SpikeEvent& ) override;
-  port send_test_event( Node&, rport, synindex, bool ) override;
-  port handles_test_event( SpikeEvent&, rport ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
 
   void get_status( dictionary& ) const override;
   void set_status( const dictionary& ) override;
@@ -123,8 +128,8 @@ private:
   Buffers_ B_;
 };
 
-inline port
-parrot_neuron_ps::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+parrot_neuron_ps::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -132,8 +137,8 @@ parrot_neuron_ps::send_test_event( Node& target, rport receptor_type, synindex, 
   return target.handles_test_event( e, receptor_type );
 }
 
-inline port
-parrot_neuron_ps::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+parrot_neuron_ps::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   // Allow connections to port 0 (spikes to be repeated)
   // and port 1 (spikes to be ignored).

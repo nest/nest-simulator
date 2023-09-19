@@ -33,14 +33,6 @@ function( NEST_PROCESS_WITH_OPTIMIZE )
   endif ()
 endfunction()
 
-function( NEST_PROCESS_VERSION_SUFFIX )
-  if ( with-version-suffix )
-    foreach ( flag ${with-version-suffix} )
-      set( NEST_VERSION_SUFFIX "${flag}" PARENT_SCOPE )
-    endforeach ()
-  endif ()
-endfunction()
-
 function( NEST_PROCESS_WITH_DEBUG )
   if ( with-debug )
     if ( with-debug STREQUAL "ON" )
@@ -51,10 +43,6 @@ function( NEST_PROCESS_WITH_DEBUG )
       set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}" PARENT_SCOPE )
     endforeach ()
   endif ()
-endfunction()
-
-function( NEST_PROCESS_WITH_STD )
-  set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=${with-cpp-std}" PARENT_SCOPE )
 endfunction()
 
 function( NEST_PROCESS_WITH_INTEL_COMPILER_FLAGS )
@@ -436,18 +424,21 @@ function( NEST_PROCESS_WITH_OPENMP )
       set( OPENMP_FOUND ON )
       set( OpenMP_C_FLAGS "${with-openmp}" )
       set( OpenMP_CXX_FLAGS "${with-openmp}" )
-    else ()
-      find_package( OpenMP )
-    endif ()
-    if ( OPENMP_FOUND )
+
       # export found variables to parent scope
       set( OPENMP_FOUND "${OPENMP_FOUND}" PARENT_SCOPE )
       set( OpenMP_C_FLAGS "${OpenMP_C_FLAGS}" PARENT_SCOPE )
       set( OpenMP_CXX_FLAGS "${OpenMP_CXX_FLAGS}" PARENT_SCOPE )
+      set( OpenMP_CXX_LINK_FLAGS "${OpenMP_CXX_LINK_FLAGS}" PARENT_SCOPE )
       # set flags
       set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" PARENT_SCOPE )
       set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}" PARENT_SCOPE )
-    else()
+      set( CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} ${OpenMP_CXX_LINK_FLAGS}" PARENT_SCOPE )
+    else ()
+      find_package( OpenMP REQUIRED )
+      set( AUTO_OPENMP_FOUND ON )
+    endif ()
+    if ( NOT OPENMP_FOUND )
       printError( "CMake can not find OpenMP." )
     endif ()
   endif ()
@@ -604,13 +595,13 @@ function( NEST_PROCESS_WITH_BOOST )
   endif ()
 endfunction()
 
-function( NEST_PROCESS_WITH_SONATA )
+function( NEST_PROCESS_WITH_HDF5 )
 
   set( HAVE_HDF5 OFF PARENT_SCOPE )
-  if ( with-sonata )
-    if ( NOT ${with-sonata} STREQUAL "ON" )
+  if ( with-hdf5 )
+    if ( NOT ${with-hdf5} STREQUAL "ON" )
       # a path is set
-      set( HDF5_ROOT "${with-sonata}" )
+      set( HDF5_ROOT "${with-hdf5}" )
     endif ()
 
     find_package( HDF5 REQUIRED COMPONENTS C CXX )
@@ -623,7 +614,6 @@ function( NEST_PROCESS_WITH_SONATA )
       set( HDF5_VERSION "${HDF5_VERSION}" PARENT_SCOPE )
       set( HDF5_HL_LIBRARIES "${HDF5_HL_LIBRARIES}" PARENT_SCOPE )
       set( HDF5_DEFINITIONS "${HDF5_DEFINITIONS}" PARENT_SCOPE )
-      
       include_directories( ${HDF5_INCLUDE_DIRS} )
 
     endif ()
@@ -643,17 +633,41 @@ function( NEST_PROCESS_TARGET_BITS_SPLIT )
   endif()
 endfunction()
 
-function( NEST_DEFAULT_MODULES )
-    # requires HAVE_LIBNEUROSIM set
-    # Static modules
-    set( SLI_MODULES models )
-    set( SLI_MODULES ${SLI_MODULES} PARENT_SCOPE )
+function( NEST_PROCESS_MODELS )
+  # check mutual exclusivity of -Dwith-models and -Dwith-modelset
+  if ( ( NOT with-modelset STREQUAL "full" ) AND  with-models )
+    printError( "Only one of -Dwith-modelset or -Dwith-models can be specified." )
+  endif ()
 
-    set( SLI_MODULE_INCLUDE_DIRS )
-    foreach ( mod ${SLI_MODULES} )
-      list( APPEND SLI_MODULE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/${mod}" )
-    endforeach ()
-    set( SLI_MODULE_INCLUDE_DIRS ${SLI_MODULE_INCLUDE_DIRS} PARENT_SCOPE )
+  # get the list of models to be built in either from the commandline
+  # argument directly or by reading the provided modelset file
+  if ( with-models )
+    set( BUILTIN_MODELS ${with-models} )
+  else()
+    if ( NOT EXISTS "${PROJECT_SOURCE_DIR}/modelsets/${with-modelset}" )
+      printError( "Cannot find modelset configuration 'modelsets/${with-modelset}'" )
+    endif ()
+    file(STRINGS "${PROJECT_SOURCE_DIR}/modelsets/${with-modelset}" BUILTIN_MODELS)
+  endif()
+
+  # We use python3 here directly, as some of the CI jobs don't seem to have PYTHON
+  # or Python_EXECUTABLE set properly.
+  execute_process(
+    COMMAND "python3" "${PROJECT_SOURCE_DIR}/build_support/generate_modelsmodule.py"
+    "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}" "${BUILTIN_MODELS}"
+    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+    OUTPUT_VARIABLE MODELS_SOURCES
+    ERROR_VARIABLE MODELS_SOURCES_ERROR
+    # Uncomment for debugging: ECHO_OUTPUT_VARIABLE ECHO_ERROR_VARIABLE COMMAND_ECHO STDOUT
+    COMMAND_ERROR_IS_FATAL ANY
+  )
+
+  if ( MODELS_SOURCES_ERROR )
+    printError( ${MODELS_SOURCES_ERROR} )
+  endif()
+
+  set( BUILTIN_MODELS ${BUILTIN_MODELS} PARENT_SCOPE )
+  set( MODELS_SOURCES_GENERATED ${MODELS_SOURCES} PARENT_SCOPE )
 endfunction()
 
 function( NEST_PROCESS_WITH_MPI4PY )
@@ -684,5 +698,12 @@ function( NEST_PROCESS_DEVDOC )
     find_package( Doxygen REQUIRED dot )
     set( BUILD_DOXYGEN_DOCS ON PARENT_SCOPE )
     set( BUILD_DOCS ON PARENT_SCOPE )
+  endif ()
+endfunction ()
+
+function( NEST_PROCESS_FULL_LOGGING )
+  if ( with-full-logging )
+    message( STATUS "Configuring full logging" )
+    set( ENABLE_FULL_LOGGING ON PARENT_SCOPE )
   endif ()
 endfunction ()

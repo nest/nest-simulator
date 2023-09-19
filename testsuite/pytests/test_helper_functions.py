@@ -20,11 +20,11 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
+
 import nest
 
 
 class TestHelperFunctions(unittest.TestCase):
-
     def test_get_verbosity(self):
         verbosity = nest.get_verbosity()
         self.assertTrue(isinstance(verbosity, nest.verbosity))
@@ -37,7 +37,7 @@ class TestHelperFunctions(unittest.TestCase):
 
 
 def suite():
-    suite = unittest.makeSuite(TestHelperFunctions, 'test')
+    suite = unittest.makeSuite(TestHelperFunctions, "test")
     return suite
 
 

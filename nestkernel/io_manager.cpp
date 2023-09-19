@@ -38,6 +38,7 @@
 #include "logging.h"
 
 // Includes from nestkernel:
+#include "io_manager_impl.h"
 #include "kernel_manager.h"
 #include "recording_backend_ascii.h"
 #include "recording_backend_memory.h"
@@ -58,8 +59,16 @@ namespace nest
 IOManager::IOManager()
   : overwrite_files_( false )
 {
-  register_recording_backends_();
-  register_stimulation_backends_();
+  register_recording_backend< RecordingBackendASCII >( "ascii" );
+  register_recording_backend< RecordingBackendMemory >( "memory" );
+  register_recording_backend< RecordingBackendScreen >( "screen" );
+#ifdef HAVE_MPI
+  register_recording_backend< RecordingBackendMPI >( "mpi" );
+  register_stimulation_backend< StimulationBackendMPI >( "mpi" );
+#endif
+#ifdef HAVE_SIONLIB
+  register_recording_backend< RecordingBackendSIONlib >( "sionlib" );
+#endif
 }
 
 IOManager::~IOManager()
@@ -287,16 +296,13 @@ IOManager::cleanup()
 bool
 IOManager::is_valid_recording_backend( const std::string& backend_name ) const
 {
-  std::map< std::string, RecordingBackend* >::const_iterator backend;
-  backend = recording_backends_.find( backend_name );
-  return backend != recording_backends_.end();
+  return recording_backends_.find( backend_name ) != recording_backends_.end();
 }
 
 bool
 IOManager::is_valid_stimulation_backend( const std::string& backend_name ) const
 {
-  auto backend = stimulation_backends_.find( backend_name );
-  return backend != stimulation_backends_.end();
+  return stimulation_backends_.find( backend_name ) != stimulation_backends_.end();
 }
 
 void
@@ -326,15 +332,13 @@ IOManager::enroll_recorder( const std::string& backend_name, const RecordingDevi
 }
 
 void
-nest::IOManager::enroll_stimulator( const std::string& backend_name,
-  StimulationDevice& device,
-  const dictionary& params )
+IOManager::enroll_stimulator( const std::string& backend_name, StimulationDevice& device, const dictionary& params )
 {
-
   if ( not is_valid_stimulation_backend( backend_name ) and not backend_name.empty() )
   {
     return;
   }
+
   if ( backend_name.empty() )
   {
     for ( auto& it : stimulation_backends_ )
@@ -385,28 +389,6 @@ IOManager::get_recording_backend_device_status( const std::string& backend_name,
   dictionary& d )
 {
   recording_backends_[ backend_name ]->get_device_status( device, d );
-}
-
-void
-IOManager::register_recording_backends_()
-{
-  recording_backends_.insert( std::make_pair( "ascii", new RecordingBackendASCII() ) );
-  recording_backends_.insert( std::make_pair( "memory", new RecordingBackendMemory() ) );
-  recording_backends_.insert( std::make_pair( "screen", new RecordingBackendScreen() ) );
-#ifdef HAVE_MPI
-  recording_backends_.insert( std::make_pair( "mpi", new RecordingBackendMPI() ) );
-#endif
-#ifdef HAVE_SIONLIB
-  recording_backends_.insert( std::make_pair( "sionlib", new RecordingBackendSIONlib() ) );
-#endif
-}
-
-void
-IOManager::register_stimulation_backends_()
-{
-#ifdef HAVE_MPI
-  stimulation_backends_.insert( std::make_pair( "mpi", new StimulationBackendMPI() ) );
-#endif
 }
 
 } // namespace nest

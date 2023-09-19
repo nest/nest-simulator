@@ -50,9 +50,6 @@ using MaskPTR = std::shared_ptr< AbstractMask >;
 class AbstractMask
 {
 public:
-  /**
-   * Virtual destructor
-   */
   virtual ~AbstractMask()
   {
   }
@@ -72,22 +69,25 @@ public:
   }
 
   /**
-   * Create the intersection of this mask with another. Masks must have
-   * the same dimension
+   * Create the intersection of this mask with another.
+   *
+   * Masks must have the same dimension
    * @returns a new dynamically allocated mask.
    */
   virtual AbstractMask* intersect_mask( const AbstractMask& other ) const = 0;
 
   /**
-   * Create the union of this mask with another. Masks must have the same
-   * dimension.
+   * Create the union of this mask with another.
+   *
+   * Masks must have the same dimension.
    * @returns a new dynamically allocated mask.
    */
   virtual AbstractMask* union_mask( const AbstractMask& other ) const = 0;
 
   /**
-   * Create the difference of this mask and another. Masks must have the
-   * same dimension.
+   * Create the difference of this mask and another.
+   *
+   * Masks must have the same dimension.
    * @returns a new dynamically allocated mask.
    */
   virtual AbstractMask* minus_mask( const AbstractMask& other ) const = 0;
@@ -264,7 +264,7 @@ protected:
   Position< D > lower_left_;
   Position< D > upper_right_;
 
-  /*
+  /**
    * The {min,max}_values_ correspond to the minimum and maximum x, y, z values
    * after the box has been rotated. That is, the lower_left and upper_right of
    * the bounding box of the rotated box. If the box is not rotated,
@@ -551,9 +551,6 @@ public:
   {
   }
 
-  /**
-   * Copy constructor
-   */
   UnionMask( const UnionMask& m )
     : Mask< D >( m )
     , mask1_( m.mask1_->clone() )
@@ -600,9 +597,6 @@ public:
   {
   }
 
-  /**
-   * Copy constructor
-   */
   DifferenceMask( const DifferenceMask& m )
     : Mask< D >( m )
     , mask1_( m.mask1_->clone() )
@@ -649,9 +643,6 @@ public:
   {
   }
 
-  /**
-   * Copy constructor
-   */
   ConverseMask( const ConverseMask& m )
     : Mask< D >( m )
     , m_( m.m_->clone() )
@@ -697,9 +688,6 @@ public:
   {
   }
 
-  /**
-   * Copy constructor
-   */
   AnchoredMask( const AnchoredMask& m )
     : Mask< D >( m )
     , m_( m.m_->clone() )

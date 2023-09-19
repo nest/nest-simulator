@@ -19,19 +19,12 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-""" Functions for raster plotting."""
+"""Functions for raster plotting."""
 
 import nest
 import numpy
 
-__all__ = [
-    'extract_events',
-    'from_data',
-    'from_device',
-    'from_file',
-    'from_file_numpy',
-    'from_file_pandas'
-]
+__all__ = ["extract_events", "from_data", "from_device", "from_file", "from_file_numpy", "from_file_pandas"]
 
 
 def extract_events(data, time=None, sel=None):
@@ -60,6 +53,7 @@ def extract_events(data, time=None, sel=None):
     numpy.array
         List of events as (node_id, t) tuples
     """
+
     val = []
 
     if time:
@@ -96,8 +90,10 @@ def from_data(data, sel=None, **kwargs):
     kwargs:
         Parameters passed to _make_plot
     """
+
     if len(data) == 0:
-        raise nest.NESTError("No data to plot.")
+        raise ValueError("No data to plot.")
+
     ts = data[:, 1]
     d = extract_events(data, sel=sel)
     ts1 = d[:, 1]
@@ -120,22 +116,24 @@ def from_file(fname, **kwargs):
     kwargs:
         Parameters passed to _make_plot
     """
+
     if isinstance(fname, str):
         fname = [fname]
 
     if isinstance(fname, (list, tuple)):
         try:
             global pandas
-            pandas = __import__('pandas')
+            pandas = __import__("pandas")
             from_file_pandas(fname, **kwargs)
         except ImportError:
             from_file_numpy(fname, **kwargs)
     else:
-        print('fname should be one of str/list(str)/tuple(str).')
+        print("fname should be one of str/list(str)/tuple(str).")
 
 
 def from_file_pandas(fname, **kwargs):
     """Use pandas."""
+
     data = None
     for f in fname:
         dataFrame = pandas.read_table(f, header=2, skipinitialspace=True)
@@ -151,6 +149,7 @@ def from_file_pandas(fname, **kwargs):
 
 def from_file_numpy(fname, **kwargs):
     """Use numpy."""
+
     data = None
     for f in fname:
         newdata = numpy.loadtxt(f, skiprows=3)
@@ -173,27 +172,22 @@ def from_device(detec, **kwargs):
         Description
     kwargs:
         Parameters passed to _make_plot
-
-    Raises
-    ------
-    nest.NESTError
     """
 
-    type_id = nest.GetDefaults(detec.get('model'), 'type_id')
+    type_id = nest.GetDefaults(detec.get("model"), "type_id")
     if not type_id == "spike_recorder":
-        raise nest.NESTError("Please provide a spike_recorder.")
+        raise TypeError("Please provide a 'spike_recorder'.")
 
-    if detec.get('record_to') == "memory":
-
+    if detec.get("record_to") == "memory":
         ts, node_ids = _from_memory(detec)
 
         if not len(ts):
-            raise nest.NESTError("No events recorded!")
+            raise ValueError("No events recorded by 'spike_recorder'.")
 
         if "title" not in kwargs:
-            kwargs["title"] = "Raster plot from device '%i'" % detec.get('global_id')
+            kwargs["title"] = "Raster plot from device '%i'" % detec.get("global_id")
 
-        if detec.get('time_in_steps'):
+        if detec.get("time_in_steps"):
             xlabel = "Steps"
         else:
             xlabel = "Time (ms)"
@@ -205,8 +199,7 @@ def from_device(detec, **kwargs):
         return from_file(fname, **kwargs)
 
     else:
-        raise nest.NESTError("No data to plot. Make sure that \
-            record_to is set to either 'ascii' or 'memory'.")
+        raise ValueError("No data to plot. Make sure that 'record_to' is set to either 'ascii' or 'memory'.")
 
 
 def _from_memory(detec):
@@ -214,8 +207,7 @@ def _from_memory(detec):
     return ev["times"], ev["senders"]
 
 
-def _make_plot(ts, ts1, node_ids, neurons, hist=True, hist_binwidth=5.0,
-               grayscale=False, title=None, xlabel=None):
+def _make_plot(ts, ts1, node_ids, neurons, hist=True, hist_binwidth=5.0, grayscale=False, title=None, xlabel=None):
     """Generic plotting routine.
 
     Constructs a raster plot along with an optional histogram (common part in
@@ -242,6 +234,7 @@ def _make_plot(ts, ts1, node_ids, neurons, hist=True, hist_binwidth=5.0,
     xlabel : str, optional
         Label for x-axis
     """
+
     import matplotlib.pyplot as plt
 
     plt.figure()
@@ -268,20 +261,13 @@ def _make_plot(ts, ts1, node_ids, neurons, hist=True, hist_binwidth=5.0,
         xlim = plt.xlim()
 
         plt.axes([0.1, 0.1, 0.85, 0.17])
-        t_bins = numpy.arange(
-            numpy.amin(ts), numpy.amax(ts),
-            float(hist_binwidth)
-        )
+        t_bins = numpy.arange(numpy.amin(ts), numpy.amax(ts), float(hist_binwidth))
         n, _ = _histogram(ts, bins=t_bins)
         num_neurons = len(numpy.unique(neurons))
         heights = 1000 * n / (hist_binwidth * num_neurons)
 
-        plt.bar(t_bins, heights, width=hist_binwidth, color=color_bar,
-                edgecolor=color_edge)
-        plt.yticks([
-            int(x) for x in
-            numpy.linspace(0.0, int(max(heights) * 1.1) + 5, 4)
-        ])
+        plt.bar(t_bins, heights, width=hist_binwidth, color=color_bar, edgecolor=color_edge)
+        plt.yticks([int(x) for x in numpy.linspace(0.0, int(max(heights) * 1.1) + 5, 4)])
         plt.ylabel("Rate (Hz)")
         plt.xlabel(xlabel)
         plt.xlim(xlim)
@@ -319,7 +305,8 @@ def _histogram(a, bins=10, bin_range=None, normed=False):
     ------
     ValueError
     """
-    from numpy import asarray, iterable, linspace, sort, concatenate
+
+    from numpy import asarray, concatenate, iterable, linspace, sort
 
     a = asarray(a).ravel()
 
@@ -344,7 +331,7 @@ def _histogram(a, bins=10, bin_range=None, normed=False):
     block = 65536
     n = sort(a[:block]).searchsorted(bins)
     for i in range(block, a.size, block):
-        n += sort(a[i:i + block]).searchsorted(bins)
+        n += sort(a[i : i + block]).searchsorted(bins)
     n = concatenate([n, [len(a)]])
     n = n[1:] - n[:-1]
 

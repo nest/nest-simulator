@@ -120,6 +120,11 @@ interval
 See also
 ++++++++
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: multimeter
+
 EndUserDocs */
 
 namespace nest
@@ -157,7 +162,7 @@ public:
   using Node::handles_test_event;
   using Node::sends_signal;
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
   void handle( DataLoggingReply& ) override;
 

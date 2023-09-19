@@ -21,21 +21,21 @@ set( TESTSUBDIRS
     regressiontests
     cpptests
     pytests
-    )
+)
 
 add_subdirectory( regressiontests )
 add_subdirectory( cpptests )
 
 install( DIRECTORY ${TESTSUBDIRS}
     DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
-    )
+)
 
 install( PROGRAMS
     do_tests.sh
     DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
-    )
+)
 
 install( FILES
     junit_xml.sh run_test.sh summarize_tests.py
     DESTINATION ${CMAKE_INSTALL_DATADIR}/testsuite
-    )
+)

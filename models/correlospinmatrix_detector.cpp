@@ -215,10 +215,10 @@ nest::correlospinmatrix_detector::State_::reset( const Parameters_& p )
   last_change_.clear();
   last_change_.resize( p.N_channels_ );
 
-  for ( long i = 0; i < p.N_channels_; ++i )
+  for ( size_t i = 0; i < p.N_channels_; ++i )
   {
     count_covariance_[ i ].resize( p.N_channels_ );
-    for ( long j = 0; j < p.N_channels_; ++j )
+    for ( size_t j = 0; j < p.N_channels_; ++j )
     {
       count_covariance_[ i ][ j ].resize( 1 + 2.0 * p.tau_max_.get_steps() / p.delta_tau_.get_steps(), 0 );
     }
@@ -284,11 +284,11 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
 {
   // The receiver port identifies the sending node in our
   // sender list.
-  const rport curr_i = e.get_rport();
+  const size_t curr_i = e.get_rport();
 
   // If this assertion breaks, the sender does not honor the
   // receiver port during connection or sending.
-  assert( 0 <= curr_i and curr_i <= P_.N_channels_ - 1 );
+  assert( curr_i <= P_.N_channels_ - 1 );
 
   // accept spikes only if detector was active when spike was emitted
   Time const stamp = e.get_stamp();
@@ -380,7 +380,7 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
       }
       const double tau_edge = P_.tau_max_.get_steps() + P_.delta_tau_.get_steps();
 
-      const delay min_delay = kernel().connection_manager.get_min_delay();
+      const long min_delay = kernel().connection_manager.get_min_delay();
       while ( not otherPulses.empty() and ( t_min_on - otherPulses.front().t_off_ ) >= tau_edge + min_delay )
       {
         otherPulses.pop_front();

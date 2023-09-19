@@ -109,4 +109,4 @@ PseudoRecordingDevice::is_active( Time const& T ) const
 
 } // namespace
 
-#endif // PSEUDO_RECORDING_DEVICE_H
+#endif /* #ifndef PSEUDO_RECORDING_DEVICE_H */

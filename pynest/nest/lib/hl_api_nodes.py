@@ -27,18 +27,19 @@ import warnings
 import nest
 import numpy as np
 
-from ..ll_api import *
+import nest
+
 from .. import nestkernel_api as nestkernel
+from ..ll_api import *
 from .hl_api_helper import is_iterable, model_deprecation_warning
+from .hl_api_parallel_computing import NumProcesses, Rank
 from .hl_api_types import NodeCollection, Parameter
-from .hl_api_exceptions import NESTErrors
-from .hl_api_parallel_computing import Rank, NumProcesses
 
 __all__ = [
-    'Create',
-    'GetLocalNodeCollection',
-    'GetNodes',
-    'PrintNodes',
+    "Create",
+    "GetLocalNodeCollection",
+    "GetNodes",
+    "PrintNodes",
 ]
 
 
@@ -69,6 +70,7 @@ def Create(model, n=1, params=None, positions=None):
           The single values will be applied to all nodes, while the lists will be distributed across
           the nodes. Both single values and lists can be given at the same time.
         - A list with n dictionaries, one dictionary for each node.
+
         Values may be :py:class:`.Parameter` objects. If omitted,
         the model's defaults are used.
     positions: :py:class:`.grid` or :py:class:`.free` object, optional
@@ -96,18 +98,19 @@ def Create(model, n=1, params=None, positions=None):
     iterable_or_parameter_in_params = True
 
     if not isinstance(n, (int, np.integer)):
-        raise TypeError('n must be an integer')
+        raise TypeError("n must be an integer")
 
     # PYNEST-NG: can we support the usecase above by passing the dict into ll_create?
     if isinstance(params, dict) and params:  # if params is a dict and not empty
         iterable_or_parameter_in_params = any(is_iterable(v) or isinstance(v, Parameter) for k, v in params.items())
 
     if isinstance(params, (list, tuple)) and len(params) != n:
-        raise TypeError('list of params must have one dictionary per node')
+        raise TypeError("list of params must have one dictionary per node")
 
-    if params is not None and not (isinstance(params, dict) or (isinstance(params, (list, tuple))
-                                                                and all(isinstance(e, dict) for e in params))):
-        raise TypeError('params must be either a dict of parameters or a list or tuple of dicts')
+    if params is not None and not (
+        isinstance(params, dict) or (isinstance(params, (list, tuple)) and all(isinstance(e, dict) for e in params))
+    ):
+        raise TypeError("params must be either a dict of parameters or a list or tuple of dicts")
 
     if positions is not None:
         # Explicitly retrieve lazy loaded spatial property from the module class.
@@ -115,23 +118,23 @@ def Create(model, n=1, params=None, positions=None):
         spatial = getattr(nest.NestModule, "spatial")
         # We only accept positions as either a free object or a grid object.
         if not isinstance(positions, (spatial.free, spatial.grid)):
-            raise TypeError('`positions` must be either a nest.spatial.free or a nest.spatial.grid object')
-        layer_specs = {'elements': model}
-        layer_specs['edge_wrap'] = positions.edge_wrap
+            raise TypeError("`positions` must be either a nest.spatial.free or a nest.spatial.grid object")
+        layer_specs = {"elements": model}
+        layer_specs["edge_wrap"] = positions.edge_wrap
         if isinstance(positions, spatial.free):
-            layer_specs['positions'] = positions.pos
+            layer_specs["positions"] = positions.pos
             # If the positions are based on a parameter object, the number of nodes must be specified.
             if isinstance(positions.pos, Parameter):
-                layer_specs['n'] = n
+                layer_specs["n"] = n
         else:
             # If positions is not a free object, it must be a grid object.
             if n > 1:
-                raise NESTErrors.NESTError('Cannot specify number of nodes with grid positions')
-            layer_specs['shape'] = positions.shape
+                raise ValueError("Cannot specify number of nodes with grid positions")
+            layer_specs["shape"] = positions.shape
             if positions.center is not None:
-                layer_specs['center'] = [float(v) for v in positions.center]
+                layer_specs["center"] = [float(v) for v in positions.center]
         if positions.extent is not None:
-            layer_specs['extent'] = [float(v) for v in positions.extent]
+            layer_specs["extent"] = [float(v) for v in positions.extent]
 
         layer = nestkernel.llapi_create_spatial(layer_specs)
         layer.set(params if params else {})
@@ -144,8 +147,10 @@ def Create(model, n=1, params=None, positions=None):
         try:
             node_ids.set(params)
         except Exception:
-            warnings.warn("Setting node parameters failed, but nodes have already been " +
-                          f"created! The node IDs of the new nodes are: {node_ids}.")
+            warnings.warn(
+                "Setting node parameters failed, but nodes have already been "
+                + f"created! The node IDs of the new nodes are: {node_ids}."
+            )
             raise
 
     return node_ids
@@ -208,6 +213,6 @@ def GetLocalNodeCollection(nc):
     first_in_nc = nc[0].global_id
     first_index = ((rank - first_in_nc % num_procs) + num_procs) % num_procs
     if first_index <= len(nc):
-        return nc[first_index:len(nc):num_procs]
+        return nc[first_index : len(nc) : num_procs]
     else:
         return NodeCollection([])

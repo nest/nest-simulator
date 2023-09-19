@@ -23,11 +23,9 @@
 Test functionality of the SIC connection
 """
 
+import nest
 import numpy as np
 import pytest
-
-import nest
-
 
 pytestmark = pytest.mark.skipif_missing_gsl
 

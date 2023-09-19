@@ -148,7 +148,7 @@ cdef extern from "nest.h" namespace "nest":
                  NodeCollectionPTR targets,
                  const dictionary& connectivity,
                  const vector[dictionary]& synapse_params ) except +custom_exception_handler
-    void connect_sonata( const dictionary& graph_specs, const long chunk_size ) except +custom_exception_handler
+    void connect_sonata( const dictionary& graph_specs, const long hyperslab_size ) except +custom_exception_handler
     void disconnect(NodeCollectionPTR sources,
                  NodeCollectionPTR targets,
                  const dictionary& connectivity,

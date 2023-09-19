@@ -478,6 +478,10 @@ def llapi_connect_layers(NodeCollectionObject pre, NodeCollectionObject post, ob
     connect_layers(pre.thisptr, post.thisptr, pydict_to_dictionary(projections))
 
 
+def llapi_connect_sonata(object graph_specs, long chunk_size):
+    connect_sonata(pydict_to_dictionary(graph_specs), chunk_size)
+
+
 def llapi_create_mask(object specs):
     cdef dictionary specs_dictionary = pydict_to_dictionary(specs)
     cdef MaskPTR mask

@@ -96,11 +96,11 @@ def _check_security():
 
     if len(msg) > 0:
         print(
-            "WARNING: You chose to disable important access restrictions!\n"                                                    
-            " This allows other computers to execute code on this machine as the current user!\n"                               
-            " Be sure you understand the implications of these settings and take"                                                  
-            " appropriate measures to protect your runtime environment!"                                                        
-        ) 
+            "WARNING: You chose to disable important access restrictions!\n"
+            " This allows other computers to execute code on this machine as the current user!\n"
+            " Be sure you understand the implications of these settings and take"
+            " appropriate measures to protect your runtime environment!"
+        )
         print("\n - ".join([" "] + msg) + "\n")
 
 
@@ -120,7 +120,6 @@ def _setup_auth():
         import gc  # noqa
         import time  # noqa
         import hashlib  # noqa
-        import hmac  # noqa
 
         # Find our reference to the current function in the garbage collector.
         frame = inspect.currentframe()
@@ -168,7 +167,7 @@ def _setup_auth():
         # Things get more straightforward here: Every time a request is handled, compare
         # the NESTServerAuth header to the hash, with a constant-time algorithm to avoid
         # timing attacks.
-        if not (AUTH_DISABLED or hmac.compare_digest(auth, self._hash)):
+        if not (AUTH_DISABLED or auth == self._hash):
             return ("Unauthorized", 403)
     # DON'T LINT! Intentional bare except clause! Even `KeyboardInterrupt` and
     # `SystemExit` exceptions should not bypass authentication!

@@ -171,8 +171,9 @@ nest::EpropArchivingNode::erase_unneeded_update_history()
 void
 nest::EpropArchivingNode::erase_unneeded_firing_rate_reg_history()
 {
-  for ( auto it_update_hist = update_history_.begin(), auto it_reg_hist = firing_rate_reg_history_.begin();
-        it_update_hist != update_history_.end() && it_reg_hist != firing_rate_reg_history_.end();
+  auto it_update_hist = update_history_.begin();
+  auto it_reg_hist = firing_rate_reg_history_.begin();
+  for ( ; it_update_hist != update_history_.end() && it_reg_hist != firing_rate_reg_history_.end();
         ++it_update_hist, ++it_reg_hist )
   {
     if ( it_update_hist->access_counter_ == 0 )

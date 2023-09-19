@@ -18,12 +18,11 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-import os
 import ast
-import json
-import re
 import glob
-
+import json
+import os
+import re
 
 """
 Generate a JSON dictionary that stores the module name as key and corresponding

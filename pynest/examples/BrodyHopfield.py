@@ -45,9 +45,9 @@ References
 #################################################################################
 # First, we import all necessary modules for simulation, analysis, and plotting.
 
+import matplotlib.pyplot as plt
 import nest
 import nest.raster_plot
-import matplotlib.pyplot as plt
 
 ###############################################################################
 # Second, the simulation parameters are assigned to variables.

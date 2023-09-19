@@ -70,8 +70,8 @@ References
 
 """
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 
 ################################################################################
 # On average, the ``quantal_stp_synapse`` converges to the ``tsodyks2_synapse``,

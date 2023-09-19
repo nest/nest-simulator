@@ -23,24 +23,18 @@ import ast
 import importlib
 import inspect
 import io
+import os
 import sys
-
-from flask import Flask, request, jsonify
-from flask_cors import CORS, cross_origin
-
-from werkzeug.exceptions import abort
-from werkzeug.wrappers import Response
-
-import nest
-
-import RestrictedPython
 import time
-
 import traceback
-
 from copy import deepcopy
 
-import os
+import nest
+import RestrictedPython
+from flask import Flask, jsonify, request
+from flask_cors import CORS, cross_origin
+from werkzeug.exceptions import abort
+from werkzeug.wrappers import Response
 
 MODULES = os.environ.get("NEST_SERVER_MODULES", "nest").split(",")
 RESTRICTION_OFF = bool(os.environ.get("NEST_SERVER_RESTRICTION_OFF", False))

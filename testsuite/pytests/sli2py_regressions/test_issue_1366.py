@@ -26,9 +26,8 @@ This test checks that we are able to connect with `fixed_total_number` equal
 to 1 when we have more than 1 virtual process and more than 1 node per process.
 """
 
-import pytest
-
 import nest
+import pytest
 
 
 @pytest.mark.skipif_missing_threads

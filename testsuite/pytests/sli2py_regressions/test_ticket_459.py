@@ -23,9 +23,8 @@
 Test that changing E_L in any neuron with this parameter leaves all other parameters unchanged.
 """
 
-import pytest
-
 import nest
+import pytest
 
 
 @pytest.fixture(autouse=True)

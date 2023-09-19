@@ -23,9 +23,8 @@
 Regression test for Issue #521 (GitHub).
 """
 
-import pytest
-
 import nest
+import pytest
 
 
 @pytest.mark.skipif_missing_threads

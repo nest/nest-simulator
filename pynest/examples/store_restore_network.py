@@ -18,6 +18,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+#
+# isort: skip_file
 
 """
 Store and restore a network simulation

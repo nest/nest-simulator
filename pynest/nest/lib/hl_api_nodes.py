@@ -29,7 +29,6 @@ import nest
 
 from .. import nestkernel_api as nestkernel
 from ..ll_api import *
-from .hl_api_exceptions import NESTErrors
 from .hl_api_helper import is_iterable, model_deprecation_warning
 from .hl_api_parallel_computing import NumProcesses, Rank
 from .hl_api_types import NodeCollection, Parameter
@@ -128,7 +127,7 @@ def Create(model, n=1, params=None, positions=None):
         else:
             # If positions is not a free object, it must be a grid object.
             if n > 1:
-                raise NESTErrors.NESTError("Cannot specify number of nodes with grid positions")
+                raise ValueError("Cannot specify number of nodes with grid positions")
             layer_specs["shape"] = positions.shape
             if positions.center is not None:
                 layer_specs["center"] = [float(v) for v in positions.center]

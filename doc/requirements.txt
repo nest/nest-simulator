@@ -1,6 +1,6 @@
 Image==1.5.30
 PyYAML>=4.2b1
-RestrictedPython==6.0
+RestrictedPython==6.2
 cmake==3.26.0
 csvkit==1.1.1
 cython>=0.29.14

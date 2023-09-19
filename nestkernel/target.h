@@ -193,11 +193,8 @@ Target::operator=( const Target& other )
 inline Target::Target( const size_t tid, const size_t rank, const synindex syn_id, const size_t lcid )
   : remote_target_id_( 0 )
 {
-  assert( tid <= MAX_TID );   // MAX_TID is allowed since it is not used as invalid value
-  assert( rank <= MAX_RANK ); // MAX_RANK is allowed since it is not used as invalid value
-  assert( syn_id < MAX_SYN_ID );
-  assert( lcid < MAX_LCID );
-
+  // We need to call set_*() methods to properly encode values in bitfield.
+  // Validity of arguments is asserted in set_*() methods.
   set_lcid( lcid );
   set_rank( rank );
   set_tid( tid );
@@ -234,7 +231,7 @@ Target::get_rank() const
 inline void
 Target::set_tid( const size_t tid )
 {
-  assert( tid <= MAX_TID );
+  assert( tid <= MAX_TID ); // MAX_TID is allowed since it is not used as invalid value
   remote_target_id_ = ( remote_target_id_ & ( ~MASK_TID ) ) | ( static_cast< uint64_t >( tid ) << BITPOS_TID );
 }
 
@@ -247,7 +244,7 @@ Target::get_tid() const
 inline void
 Target::set_syn_id( const synindex syn_id )
 {
-  assert( syn_id <= MAX_SYN_ID );
+  assert( syn_id < MAX_SYN_ID );
   remote_target_id_ = ( remote_target_id_ & ( ~MASK_SYN_ID ) ) | ( static_cast< uint64_t >( syn_id ) << BITPOS_SYN_ID );
 }
 

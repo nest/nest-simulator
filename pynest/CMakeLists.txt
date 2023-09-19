@@ -19,6 +19,16 @@
 
 if ( HAVE_PYTHON )
 
+  # We use python3 here directly, as some of the CI jobs don't seem to have PYTHON
+  # or Python_EXECUTABLE set properly.
+  execute_process(
+    COMMAND "python3" "${PROJECT_SOURCE_DIR}/pynest/generate_exception_header.py"
+    "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}"
+    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+    # Uncomment for debugging: ECHO_OUTPUT_VARIABLE ECHO_ERROR_VARIABLE COMMAND_ECHO STDOUT
+    COMMAND_ERROR_IS_FATAL ANY
+  )
+
   if ( CYTHON_FOUND )
     include( UseCython )
     set_source_files_properties( nestkernel_api.pyx PROPERTIES CYTHON_IS_CXX TRUE )

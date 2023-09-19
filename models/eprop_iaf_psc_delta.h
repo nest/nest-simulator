@@ -206,6 +206,7 @@ private:
     double I_e_;   //!< external DC current (pA)
     double V_th_;  //!< spike treshold voltage relative to leak potential (mV)
     double V_min_; //!< lower membrane voltage bound relative to leak potential (mV)
+    double gamma_; //!< scaling of pseudo-derivative of membrane voltage
 
     Parameters_();
 

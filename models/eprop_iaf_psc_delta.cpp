@@ -61,13 +61,7 @@ RecordablesMap< eprop_iaf_psc_delta >::create()
  * ---------------------------------------------------------------- */
 
 nest::eprop_iaf_psc_delta::Parameters_::Parameters_()
-  : tau_m_( 10.0 )                                  // ms
-  , C_m_( 250.0 )                                   // pF
-  , t_ref_( 2.0 )                                   // ms
-  , E_L_( -70.0 )                                   // mV
-  , I_e_( 0.0 )                                     // pA
-  , V_th_( -55.0 - E_L_ )                           // mV
-  , V_min_( -std::numeric_limits< double >::max() ) // mV
+  , gamma_( 0.3 )
 {
 }
 
@@ -104,6 +98,7 @@ nest::eprop_iaf_psc_delta::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::C_m, C_m_ );
   def< double >( d, names::tau_m, tau_m_ );
   def< double >( d, names::t_ref, t_ref_ );
+  def< double >( d, names::gamma, gamma_ );
 }
 
 double
@@ -121,6 +116,7 @@ nest::eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* nod
   updateValueParam< double >( d, names::C_m, C_m_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
   updateValueParam< double >( d, names::t_ref, t_ref_, node );
+  updateValueParam< double >( d, names::gamma, gamma_, node );
 
   if ( C_m_ <= 0 )
     throw BadProperty( "Capacitance must be > 0." );
@@ -239,9 +235,10 @@ nest::eprop_iaf_psc_delta::update( Time const& origin, const long from, const lo
     S_.y3_ = S_.y3_ < P_.V_min_ ? P_.V_min_ : S_.y3_;
 
     double v_m = S_.r_ > 0 ? 0.0 : S_.y3_;
-    double v_th = P_.V_th_;
-    S_.V_m_pseudo_deriv_ = calculate_v_m_pseudo_deriv( v_m, v_th, P_.V_th_ ); // psi
-    write_v_m_pseudo_deriv_to_eprop_history( t + 1, S_.V_m_pseudo_deriv_ );
+    double psi = P_.gamma_ * std::max( 0.0, 1.0 - std::fabs( ( v_m - P_.V_th_ ) / P_.V_th_ ) ) / P_.V_th_;
+
+    S_.V_m_pseudo_deriv_ = psi;
+    write_v_m_pseudo_deriv_to_history( t + 1, psi );
 
     if ( S_.y3_ >= P_.V_th_ && S_.r_ == 0 )
     {

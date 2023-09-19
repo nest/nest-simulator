@@ -75,11 +75,8 @@ protected:
 
   void write_spike_history( long time_step );
 
-  void get_status( DictionaryDatum& d ) const override;
-  void set_status( const DictionaryDatum& d ) override;
 
 private:
-  double gamma_;
   double eps_ = 1e-6;
 
   std::deque< histentry_eprop > eprop_history_;

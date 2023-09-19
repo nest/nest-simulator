@@ -32,32 +32,12 @@ namespace nest
 
 nest::EpropArchivingNode::EpropArchivingNode()
   : ArchivingNode()
-  , gamma_( 0.3 )
 {
 }
 
 nest::EpropArchivingNode::EpropArchivingNode( const EpropArchivingNode& n )
   : ArchivingNode( n )
-  , gamma_( n.gamma_ )
 {
-}
-
-void
-nest::EpropArchivingNode::get_status( DictionaryDatum& d ) const
-{
-  ArchivingNode::get_status( d );
-
-  def< double >( d, names::gamma, gamma_ );
-}
-
-void
-nest::EpropArchivingNode::set_status( const DictionaryDatum& d )
-{
-  ArchivingNode::set_status( d );
-
-  double new_gamma = gamma_; // preserve values for the case invalid values are set
-  updateValue< double >( d, names::gamma, new_gamma );
-  gamma_ = new_gamma;
 }
 
 void
@@ -246,17 +226,6 @@ nest::EpropArchivingNode::write_learning_signal_to_eprop_history( LearningSignal
     start->learning_signal_ += e.get_weight() * error_signal;
     ++start;
   }
-}
-
-double
-nest::EpropArchivingNode::calculate_v_m_pseudo_deriv( double V_m, double V_th, double V_th_const ) const
-{
-  // V_th_const: constant part of spiking threshold
-  // V_th: spiking threshold including adaptive part - in LIF neurons without adaptation = V_th_const
-  double v_scaled = ( V_m - V_th ) / V_th_const;
-  double norm_diff_threshold = 1.0 - std::fabs( v_scaled );
-  double vm_pseudo_deriv = gamma_ * ( norm_diff_threshold > 0.0 ? norm_diff_threshold : 0.0 ) / V_th_const;
-  return vm_pseudo_deriv;
 }
 
 } // namespace nest

@@ -72,6 +72,7 @@ nest::eprop_iaf_psc_delta_adapt::Parameters_::Parameters_()
   , V_min_( -std::numeric_limits< double >::max() ) // mV
   , adapt_beta_( 1.0 )
   , adapt_tau_( 10.0 ) // ms
+  , gamma_( 0.3 )
 {
 }
 
@@ -111,6 +112,7 @@ nest::eprop_iaf_psc_delta_adapt::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::t_ref, t_ref_ );
   def< double >( d, names::adapt_beta, adapt_beta_ );
   def< double >( d, names::adapt_tau, adapt_tau_ );
+  def< double >( d, names::gamma, gamma_ );
 }
 
 double
@@ -130,6 +132,7 @@ nest::eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Nod
   updateValueParam< double >( d, names::t_ref, t_ref_, node );
   updateValueParam< double >( d, names::adapt_beta, adapt_beta_, node );
   updateValueParam< double >( d, names::adapt_tau, adapt_tau_, node );
+  updateValueParam< double >( d, names::gamma, gamma_, node );
 
   if ( C_m_ <= 0 )
     throw BadProperty( "Capacitance must be > 0." );
@@ -259,8 +262,10 @@ nest::eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, co
 
     double v_m = S_.r_ > 0 ? 0.0 : S_.y3_;
     double v_th = S_.r_ > 0 ? P_.V_th_ : thr;
-    S_.V_m_pseudo_deriv_ = calculate_v_m_pseudo_deriv( v_m, v_th, P_.V_th_ ); // psi
-    write_v_m_pseudo_deriv_to_eprop_history( t + 1, S_.V_m_pseudo_deriv_ );
+    double psi = P_.gamma_ * std::max( 0.0, 1.0 - std::fabs( ( v_m - v_th ) / P_.V_th_ ) ) / P_.V_th_;
+
+    S_.V_m_pseudo_deriv_ = psi;
+    write_v_m_pseudo_deriv_to_history( t + 1, psi );
 
     if ( S_.y3_ >= thr && S_.r_ == 0 )
     {

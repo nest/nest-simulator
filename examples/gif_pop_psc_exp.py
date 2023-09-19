@@ -44,11 +44,11 @@ References
 
 """
 
+###############################################################################
+# Import necessary modules.
 
 import matplotlib.pyplot as plt
 import nest
-
-# Loading the necessary modules:
 import numpy as np
 
 ###############################################################################

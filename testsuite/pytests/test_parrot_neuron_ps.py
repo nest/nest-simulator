@@ -26,7 +26,6 @@ import math
 import unittest
 
 import nest
-import numpy as np
 
 
 def _round_up(simtime):

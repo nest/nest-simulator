@@ -28,7 +28,6 @@ import pandas as pd
 import pandas.testing as pdtest
 import pytest
 
-# The following models will not be tested:
 skip_models = [
     "erfc_neuron",  # binary neuron
     "ginzburg_neuron",  # binary neuron

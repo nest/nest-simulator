@@ -248,7 +248,7 @@ nest::eprop_readout::update_( Time const& origin, const long from, const long to
 
     error_signal_buffer[ lag ] = S_.error_signal_;
 
-    write_error_signal_to_eprop_history( t, S_.error_signal_ );
+    write_error_signal_to_history( t, S_.error_signal_ );
 
     V_.target_signal_ = B_.delayed_rates_.get_value( lag );
     S_.y0_ = B_.currents_.get_value( lag );

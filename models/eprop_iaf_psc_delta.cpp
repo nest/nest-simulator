@@ -333,7 +333,7 @@ nest::eprop_iaf_psc_delta::handle( CurrentEvent& e )
 void
 nest::eprop_iaf_psc_delta::handle( LearningSignalConnectionEvent& e )
 {
-  write_learning_signal_to_eprop_history( e );
+  write_learning_signal_to_history( e );
 }
 
 void

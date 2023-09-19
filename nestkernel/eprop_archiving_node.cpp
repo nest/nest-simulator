@@ -117,7 +117,7 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
 
 
 void
-nest::EpropArchivingNode::write_v_m_pseudo_deriv_to_eprop_history( long time_step, double v_m_pseudo_deriv )
+nest::EpropArchivingNode::write_v_m_pseudo_deriv_to_history( long time_step, double v_m_pseudo_deriv )
 {
   if ( not n_incoming_ ) return;
 
@@ -127,7 +127,7 @@ nest::EpropArchivingNode::write_v_m_pseudo_deriv_to_eprop_history( long time_ste
   }
 
 void
-nest::EpropArchivingNode::write_error_signal_to_eprop_history( long time_step, double error_signal )
+nest::EpropArchivingNode::write_error_signal_to_history( long time_step, double error_signal )
 {
   const Time time_step_ = Time::step( time_step );
   const double time_ms = time_step_.get_ms();
@@ -136,7 +136,7 @@ nest::EpropArchivingNode::write_error_signal_to_eprop_history( long time_step, d
 
 
 void
-nest::EpropArchivingNode::write_learning_signal_to_eprop_history( LearningSignalConnectionEvent& e )
+nest::EpropArchivingNode::write_learning_signal_to_history( LearningSignalConnectionEvent& e )
 {
   double shift = 2.0 * Time::get_resolution().get_ms();
   double t_ms = e.get_stamp().get_ms() - shift;

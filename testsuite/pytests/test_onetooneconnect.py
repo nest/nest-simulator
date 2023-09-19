@@ -87,22 +87,21 @@ class OneToOneConnectTestCase(unittest.TestCase):
     def test_IllegalConnection(self):
         """Wrong Connections"""
 
-        n = nest.Create('iaf_psc_alpha')
-        vm = nest.Create('voltmeter')
+        n = nest.Create("iaf_psc_alpha")
+        vm = nest.Create("voltmeter")
 
         nest.Connect(nest.OneToOne(n, vm))
         self.assertRaisesRegex(nest.kernel.NESTError, "IllegalConnection", nest.BuildNetwork)
 
         nest.ResetKernel()
-        n = nest.Create('iaf_psc_alpha')
-        sr = nest.Create('spike_recorder')
+        n = nest.Create("iaf_psc_alpha")
+        sr = nest.Create("spike_recorder")
         nest.Connect(nest.OneToOne(sr, n))
         self.assertRaisesRegex(nest.kernel.NESTError, "IllegalConnection", nest.BuildNetwork)
 
 
 def suite():
-
-    suite = unittest.makeSuite(OneToOneConnectTestCase, 'test')
+    suite = unittest.makeSuite(OneToOneConnectTestCase, "test")
     return suite
 
 

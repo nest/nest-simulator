@@ -20,18 +20,6 @@
  *
  */
 
-/*
-   This file is part of NEST.
-
-   dynamicloader.cpp -- Implements the class DynamicLoaderModule
-   to allow for dymanically loaded modules for extending the kernel.
-
-   Author(s):
-   Moritz Helias
-
-   First Version: November 2005
-*/
-
 #include "dynamicloader.h"
 
 #ifdef HAVE_LIBLTDL
@@ -87,13 +75,9 @@ DynamicLoaderModule::getLinkedModules()
 }
 
 
-/*! At the time when DynamicLoaderModule is constructed, the SLI Interpreter
-  and NestModule must be already constructed and initialized.
-  DynamicLoaderModule relies on the presence of
-  the following SLI datastructures: Name, Dictionary.
-*/
 DynamicLoaderModule::DynamicLoaderModule( SLIInterpreter& interpreter )
-  : loadmodule_function( dyn_modules )
+  : dyn_modules()
+  , loadmodule_function( dyn_modules )
 {
   interpreter.def( "moduledict", new DictionaryDatum( moduledict_ ) );
 }
@@ -103,10 +87,10 @@ DynamicLoaderModule::~DynamicLoaderModule()
   // unload all loaded modules
   for ( vecDynModules::iterator it = dyn_modules.begin(); it != dyn_modules.end(); ++it )
   {
-    if ( it->handle != NULL )
+    if ( it->handle )
     {
       lt_dlclose( it->handle );
-      it->handle = NULL;
+      it->handle = nullptr;
     }
   }
 
@@ -116,13 +100,13 @@ DynamicLoaderModule::~DynamicLoaderModule()
 // The following concerns the new module: -----------------------
 
 const std::string
-DynamicLoaderModule::name( void ) const
+DynamicLoaderModule::name() const
 {
   return std::string( "NEST-Dynamic Loader" ); // Return name of the module
 }
 
 const std::string
-DynamicLoaderModule::commandstring( void ) const
+DynamicLoaderModule::commandstring() const
 {
   return std::string( "" ); // Run associated SLI startup script
 }
@@ -138,13 +122,6 @@ has_name( SLIModule const* const m, const std::string n )
 }
 
 
-/** @BeginDocumentation
-  Name: Install - Load a dynamic module to extend the functionality.
-
-  Description:
-
-  Synopsis: (module_name) Install -> handle
-*/
 DynamicLoaderModule::LoadModuleFunction::LoadModuleFunction( vecDynModules& dyn_modules )
   : dyn_modules_( dyn_modules )
 {
@@ -226,7 +203,6 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
     // We should uninstall the partially installed module here, but
     // this must wait for #152.
     // For now, we just close the module file and rethrow the exception.
-
     lt_dlclose( hModule );
     lt_dlerror(); // remove any error caused by lt_dlclose()
     throw;        // no arg re-throws entire exception, see Stroustrup 14.3.1
@@ -284,7 +260,7 @@ DynamicLoaderModule::init( SLIInterpreter* i )
 int
 DynamicLoaderModule::registerLinkedModule( SLIModule* pModule )
 {
-  assert( pModule != 0 );
+  assert( pModule );
   getLinkedModules().push_back( pModule );
   return getLinkedModules().size();
 }
@@ -304,4 +280,4 @@ DynamicLoaderModule::initLinkedModules( SLIInterpreter& interpreter )
 
 } // namespace nest
 
-#endif // HAVE_LIBLTDL
+#endif /* HAVE_LIBLTDL */

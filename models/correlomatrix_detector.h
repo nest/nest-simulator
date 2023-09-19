@@ -130,6 +130,11 @@ See also
 
 correlation_detector, spike_recorder
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: correlomatrix_detector
+
 EndUserDocs */
 
 /**
@@ -159,13 +164,13 @@ public:
    * spikes also from sources which live on other threads.
    */
   bool
-  has_proxies() const
+  has_proxies() const override
   {
     return true;
   }
 
   Name
-  get_element_type() const
+  get_element_type() const override
   {
     return names::recorder;
   }
@@ -178,21 +183,21 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  void handle( SpikeEvent& );
+  void handle( SpikeEvent& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
-  void calibrate_time( const TimeConverter& tc );
+  void calibrate_time( const TimeConverter& tc ) override;
 
 private:
-  void init_state_();
-  void init_buffers_();
-  void pre_run_hook();
+  void init_state_() override;
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   // ------------------------------------------------------------
 
@@ -231,11 +236,11 @@ private:
 
   struct Parameters_
   {
-    Time delta_tau_;  //!< width of correlation histogram bins
-    Time tau_max_;    //!< maximum time difference of events to detect
-    Time Tstart_;     //!< start of recording
-    Time Tstop_;      //!< end of recording
-    long N_channels_; //!< number of channels
+    Time delta_tau_;    //!< width of correlation histogram bins
+    Time tau_max_;      //!< maximum time difference of events to detect
+    Time Tstart_;       //!< start of recording
+    Time Tstop_;        //!< end of recording      //!< end of recording
+    size_t N_channels_; //!< number of channels
 
     Parameters_();                     //!< Sets default parameter values
     Parameters_( const Parameters_& ); //!< Recalibrate all times
@@ -245,7 +250,7 @@ private:
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
 
     /**
-     * Set values from dicitonary.
+     * Set values from dictionary.
      * @returns true if the state needs to be reset after a change of
      *          binwidth or tau_max.
      */
@@ -270,7 +275,7 @@ private:
     std::vector< long > n_events_; //!< spike counters
     SpikelistType incoming_;       //!< incoming spikes, sorted
                                    /** Weighted covariance matrix.
-                                    *  @note Data type is double to accomodate weights.
+                                    *  @note Data type is double to accommodate weights.
                                     */
     std::vector< std::vector< std::vector< double > > > covariance_;
 
@@ -297,10 +302,10 @@ private:
   State_ S_;
 };
 
-inline port
-correlomatrix_detector::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+correlomatrix_detector::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
-  if ( receptor_type < 0 || receptor_type > P_.N_channels_ - 1 )
+  if ( receptor_type > P_.N_channels_ - 1 )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
@@ -323,7 +328,7 @@ correlomatrix_detector::set_status( const DictionaryDatum& d )
 
   device_.set_status( d );
   P_ = ptmp;
-  if ( reset_required == true )
+  if ( reset_required )
   {
     S_.reset( P_ );
   }

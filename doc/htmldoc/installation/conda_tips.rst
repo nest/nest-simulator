@@ -3,9 +3,15 @@
 Tips for installing NEST with conda
 ===================================
 
+.. note:: 
+
+   If you encounter problems installing the NEST conda package and 
+   environment, we recommend using Mamba (https://mamba.readthedocs.io). 
+   Mamba has the advantage of installing conda packages and 
+   environments more quickly and can be used as a complete drop-in replacement for conda.
+
 This page provides a series of recommendations for installing pre-built NEST with
 conda or to set up conda environments for building NEST and NEST documentation.
-
 
 Basic conda setup
 -----------------
@@ -53,7 +59,7 @@ To see which environments are installed on your system, use
 Installing NEST with Conda
 --------------------------
 
-We provide pre-built versions of NEST on `Conda Forge <https://anaconda.org/conda-forge/nest-simulator/files>`.
+We provide pre-built versions of NEST on `Conda Forge <https://anaconda.org/conda-forge/nest-simulator/files>`_.
 Follow :ref:`these instructions to install NEST from Conda Forge <conda_forge_install>`.
 
 
@@ -74,7 +80,7 @@ This will create an environment in the folder ``conda/``. If you would like to a
 
    conda activate conda/
 
-Note that the trailing slash is required for conda not to confuse the path with a named envionment (for example when
+Note that the trailing slash is required for conda not to confuse the path with a named environment (for example when
 using ``--name``).
 
 
@@ -85,10 +91,10 @@ Obtain a good overview of which packages are installed where. You can use
 ``conda env export -n base`` and ``conda env export -n yournestenv``
 (replacing the ``yournestenv`` name with whatever you chose). Make
 sure each environment contains all dependencies. One way to make
-this obvious would be to reduce conda stack to ``0`` (conda documentation
-`here <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#nested-activation>`_),
-and/or to a certain degree by not auto-activating the base environment (conda documentation
-`here <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#conda-init>`_).
+this obvious would be to reduce conda stack to ``0`` (see conda documentation on
+`nested activation <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#nested-activation>`_),
+and/or to a certain degree by not auto-activating the base environment (see conda documentation on
+`conda init <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#conda-init>`_).
 Then packages from base do not 'leak' into your new environments.
 
 .. note::

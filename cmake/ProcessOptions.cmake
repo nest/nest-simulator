@@ -22,21 +22,14 @@
 # add custom warnings and optimizations
 function( NEST_PROCESS_WITH_OPTIMIZE )
   if ( with-optimize )
-    if ( with-optimize STREQUAL "ON" )
+  string(TOUPPER "${with-optimize}" WITHOPTIMIZE)
+    if ( WITHOPTIMIZE STREQUAL "ON" )
       set( with-optimize "-O2" )
     endif ()
-    foreach ( flag ${with-optimize} )
-      set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${flag}" PARENT_SCOPE )
-      set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${flag}" PARENT_SCOPE )
-    endforeach ()
-  endif ()
-endfunction()
-
-function( NEST_PROCESS_VERSION_SUFFIX )
-  if ( with-version-suffix )
-    foreach ( flag ${with-version-suffix} )
-      set( NEST_VERSION_SUFFIX "${flag}" PARENT_SCOPE )
-    endforeach ()
+    set(OPTIMIZATION_FLAGS "")
+    string(JOIN " " OPTIMIZATION_FLAGS  ${with-optimize} )
+    set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OPTIMIZATION_FLAGS}" PARENT_SCOPE )
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OPTIMIZATION_FLAGS}" PARENT_SCOPE )
   endif ()
 endfunction()
 
@@ -87,13 +80,13 @@ endfunction()
 function( NEST_PROCESS_WITH_LIBRARIES )
   if ( with-libraries )
     if ( with-libraries STREQUAL "ON" )
-      message( FATAL_ERROR "-Dwith-libraries requires full library paths." )
+      printError( "-Dwith-libraries requires full library paths." )
     endif ()
     foreach ( lib ${with-libraries} )
       if ( EXISTS "${lib}" )
         link_libraries( "${lib}" )
       else ()
-        message( FATAL_ERROR "Library '${lib}' does not exist!" )
+        printError( "Library '${lib}' does not exist!" )
       endif ()
     endforeach ()
   endif ()
@@ -102,13 +95,13 @@ endfunction()
 function( NEST_PROCESS_WITH_INCLUDES )
   if ( with-includes )
     if ( with-includes STREQUAL "ON" )
-      message( FATAL_ERROR "-Dwith-includes requires full paths." )
+      printError( "-Dwith-includes requires full paths." )
     endif ()
     foreach ( inc ${with-includes} )
       if ( IS_DIRECTORY "${inc}" )
         include_directories( "${inc}" )
       else ()
-        message( FATAL_ERROR "Include path '${inc}' does not exist!" )
+        printError( "Include path '${inc}' does not exist!" )
       endif ()
     endforeach ()
   endif ()
@@ -117,13 +110,13 @@ endfunction()
 function( NEST_PROCESS_WITH_DEFINES )
   if ( with-defines )
     if ( with-defines STREQUAL "ON" )
-      message( FATAL_ERROR "-Dwith-defines requires compiler defines -DXYZ=... ." )
+      printError( "-Dwith-defines requires compiler defines -DXYZ=... ." )
     endif ()
     foreach ( def ${with-defines} )
       if ( "${def}" MATCHES "^-D.*" )
         add_definitions( "${def}" )
       else ()
-        message( FATAL_ERROR "Define '${def}' does not match '-D.*' !" )
+        printError( "Define '${def}' does not match '-D.*' !" )
       endif ()
     endforeach ()
   endif ()
@@ -151,7 +144,7 @@ function( NEST_PROCESS_STATIC_LIBRARIES )
   if ( static-libraries )
 
     if ( with-readline )
-      message( FATAL_ERROR "-Dstatic-libraries=ON requires -Dwith-readline=OFF" )
+      printError( "-Dstatic-libraries=ON requires -Dwith-readline=OFF" )
     endif ()
 
     set( BUILD_SHARED_LIBS OFF PARENT_SCOPE )
@@ -212,7 +205,8 @@ function( NEST_PROCESS_STATIC_LIBRARIES )
           "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}/nest"
           # for libraries (except pynestkernel)
           "\$ORIGIN/../../${CMAKE_INSTALL_LIBDIR}/nest"
-          # for pynestkernel: origin at <prefix>/lib/python3.x/site-packages/nest
+          # for pynestkernel: origin at <prefix>/lib(64)/python3.x/site-packages/nest
+          # while libs are at the root of that at <prefix>/lib(64)/nest
           "\$ORIGIN/../../../nest"
           PARENT_SCOPE )
     endif ()
@@ -244,7 +238,7 @@ function( NEST_PROCESS_EXTERNAL_MODULES )
           HINTS "${CMAKE_INSTALL_FULL_INCLUDEDIR}/${mod}module"
           )
       if ( ${mod}_EXT_MOD_INCLUDE STREQUAL "${mod}_EXT_MOD_INCLUDE-NOTFOUND" )
-        message( FATAL_ERROR "Cannot find header for external module '${mod}'. "
+         printError( "Cannot find header for external module '${mod}'. "
           "Should be '${CMAKE_INSTALL_FULL_INCLUDEDIR}/${mod}module/${mod}module.h' ." )
       endif ()
       list( APPEND EXTERNAL_MODULE_INCLUDES ${${mod}_EXT_MOD_INCLUDE} )
@@ -255,7 +249,7 @@ function( NEST_PROCESS_EXTERNAL_MODULES )
           HINTS "${CMAKE_INSTALL_FULL_LIBDIR}/nest"
           )
       if ( ${mod}_EXT_MOD_LIBRARY STREQUAL "${mod}_EXT_MOD_LIBRARY-NOTFOUND" )
-        message( FATAL_ERROR "Cannot find library for external module '${mod}'." )
+        printError( "Cannot find library for external module '${mod}'." )
       endif ()
       list( APPEND EXTERNAL_MODULE_LIBRARIES "${${mod}_EXT_MOD_LIBRARY}" )
     endforeach ()
@@ -358,7 +352,7 @@ endfunction()
 function( NEST_PROCESS_WITH_PYTHON )
   # Find Python
   set( HAVE_PYTHON OFF PARENT_SCOPE )
-  
+
   if ( ${with-python} STREQUAL "ON" )
 
     # Localize the Python interpreter and ABI
@@ -370,7 +364,7 @@ function( NEST_PROCESS_WITH_PYTHON )
         " Please clear your CMake cache and build folder and verify that CMake"
         " is up-to-date (3.18+)."
       )
-      message( WARNING "${PYABI_WARN}")
+      printWarning("${PYABI_WARN}")
     else()
       find_package( Python 3.8 REQUIRED Interpreter Development.Module )
     endif()
@@ -382,7 +376,7 @@ function( NEST_PROCESS_WITH_PYTHON )
           OUTPUT_VARIABLE Python_InVirtualEnv OUTPUT_STRIP_TRAILING_WHITESPACE )
 
         if ( NOT Python_InVirtualEnv AND CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
-          message( FATAL_ERROR "No virtual Python environment found and no installation prefix specified. "
+          printError( "No virtual Python environment found and no installation prefix specified. "
             "Please either build and install NEST in a virtual Python environment or specify CMake option -DCMAKE_INSTALL_PREFIX=<nest_install_dir>.")
         endif()
 
@@ -415,7 +409,7 @@ function( NEST_PROCESS_WITH_PYTHON )
     endif ()
   elseif ( ${with-python} STREQUAL "OFF" )
   else ()
-    message( FATAL_ERROR "Invalid option: -Dwith-python=" ${with-python} )
+    printError( "Invalid value -Dwith-python=${with-python}, please use 'ON' or 'OFF'" )
   endif ()
 endfunction()
 
@@ -429,7 +423,7 @@ function( NEST_PROCESS_WITH_OPENMP )
   # Find OPENMP
   if ( with-openmp )
     if ( NOT "${with-openmp}" STREQUAL "ON" )
-      message( STATUS "Set OpenMP argument: ${with-openmp}")
+      printInfo( "Set OpenMP argument: ${with-openmp}")
       # set variables in this scope
       set( OPENMP_FOUND ON )
       set( OpenMP_C_FLAGS "${with-openmp}" )
@@ -446,7 +440,7 @@ function( NEST_PROCESS_WITH_OPENMP )
       set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" PARENT_SCOPE )
       set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}" PARENT_SCOPE )
     else()
-      message( FATAL_ERROR "CMake can not find OpenMP." )
+      printError( "CMake can not find OpenMP." )
     endif ()
   endif ()
 
@@ -462,7 +456,7 @@ function( NEST_PROCESS_WITH_MPI )
   # Find MPI
   set( HAVE_MPI OFF PARENT_SCOPE )
   if ( with-mpi )
-    find_package( MPI )
+    find_package( MPI REQUIRED )
     if ( MPI_CXX_FOUND )
       set( HAVE_MPI ON PARENT_SCOPE )
 
@@ -535,7 +529,7 @@ function( NEST_PROCESS_WITH_MUSIC )
     endif ()
 
     if ( NOT HAVE_MPI )
-      message( FATAL_ERROR "MUSIC requires -Dwith-mpi=ON." )
+      printError( "MUSIC requires -Dwith-mpi=ON." )
     endif ()
 
     find_package( Music )
@@ -561,7 +555,7 @@ function( NEST_PROCESS_WITH_SIONLIB )
     endif()
 
     if ( NOT HAVE_MPI )
-      message( FATAL_ERROR "SIONlib requires -Dwith-mpi=ON." )
+      printError( "SIONlib requires -Dwith-mpi=ON." )
     endif ()
 
     find_package( SIONlib )
@@ -602,6 +596,31 @@ function( NEST_PROCESS_WITH_BOOST )
   endif ()
 endfunction()
 
+function( NEST_PROCESS_WITH_HDF5 )
+
+  set( HAVE_HDF5 OFF PARENT_SCOPE )
+  if ( with-hdf5 )
+    if ( NOT ${with-hdf5} STREQUAL "ON" )
+      # a path is set
+      set( HDF5_ROOT "${with-hdf5}" )
+    endif ()
+
+    find_package( HDF5 REQUIRED COMPONENTS C CXX )
+    if ( HDF5_FOUND )
+      # export found variables to parent scope
+      set( HAVE_HDF5 ON PARENT_SCOPE )
+      set( HDF5_FOUND "${HDF5_FOUND}" PARENT_SCOPE )
+      set( HDF5_LIBRARIES "${HDF5_LIBRARIES}" PARENT_SCOPE )
+      set( HDF5_INCLUDE_DIR "${HDF5_INCLUDE_DIRS}" PARENT_SCOPE )
+      set( HDF5_VERSION "${HDF5_VERSION}" PARENT_SCOPE )
+      set( HDF5_HL_LIBRARIES "${HDF5_HL_LIBRARIES}" PARENT_SCOPE )
+      set( HDF5_DEFINITIONS "${HDF5_DEFINITIONS}" PARENT_SCOPE )
+      include_directories( ${HDF5_INCLUDE_DIRS} )
+
+    endif ()
+  endif ()
+endfunction()
+
 function( NEST_PROCESS_TARGET_BITS_SPLIT )
   if ( target-bits-split )
     # set to value according to defines in config.h
@@ -610,22 +629,46 @@ function( NEST_PROCESS_TARGET_BITS_SPLIT )
     elseif ( ${target-bits-split} STREQUAL "hpc" )
       set( TARGET_BITS_SPLIT 1 PARENT_SCOPE )
     else()
-      message( FATAL_ERROR "Invalid target-bits-split selected." )
+      printError( "Invalid target-bits-split selected." )
     endif()
   endif()
 endfunction()
 
-function( NEST_DEFAULT_MODULES )
-    # requires HAVE_LIBNEUROSIM set
-    # Static modules
-    set( SLI_MODULES models )
-    set( SLI_MODULES ${SLI_MODULES} PARENT_SCOPE )
+function( NEST_PROCESS_MODELS )
+  # check mutual exclusivity of -Dwith-models and -Dwith-modelset
+  if ( ( NOT with-modelset STREQUAL "full" ) AND  with-models )
+    printError( "Only one of -Dwith-modelset or -Dwith-models can be specified." )
+  endif ()
 
-    set( SLI_MODULE_INCLUDE_DIRS )
-    foreach ( mod ${SLI_MODULES} )
-      list( APPEND SLI_MODULE_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/${mod}" )
-    endforeach ()
-    set( SLI_MODULE_INCLUDE_DIRS ${SLI_MODULE_INCLUDE_DIRS} PARENT_SCOPE )
+  # get the list of models to be built in either from the commandline
+  # argument directly or by reading the provided modelset file
+  if ( with-models )
+    set( BUILTIN_MODELS ${with-models} )
+  else()
+    if ( NOT EXISTS "${PROJECT_SOURCE_DIR}/modelsets/${with-modelset}" )
+      printError( "Cannot find modelset configuration 'modelsets/${with-modelset}'" )
+    endif ()
+    file(STRINGS "${PROJECT_SOURCE_DIR}/modelsets/${with-modelset}" BUILTIN_MODELS)
+  endif()
+
+  # We use python3 here directly, as some of the CI jobs don't seem to have PYTHON
+  # or Python_EXECUTABLE set properly.
+  execute_process(
+    COMMAND "python3" "${PROJECT_SOURCE_DIR}/build_support/generate_modelsmodule.py"
+    "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}" "${BUILTIN_MODELS}"
+    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+    OUTPUT_VARIABLE MODELS_SOURCES
+    ERROR_VARIABLE MODELS_SOURCES_ERROR
+    # Uncomment for debugging: ECHO_OUTPUT_VARIABLE ECHO_ERROR_VARIABLE COMMAND_ECHO STDOUT
+    COMMAND_ERROR_IS_FATAL ANY
+  )
+
+  if ( MODELS_SOURCES_ERROR )
+    printError( ${MODELS_SOURCES_ERROR} )
+  endif()
+
+  set( BUILTIN_MODELS ${BUILTIN_MODELS} PARENT_SCOPE )
+  set( MODELS_SOURCES_GENERATED ${MODELS_SOURCES} PARENT_SCOPE )
 endfunction()
 
 function( NEST_PROCESS_WITH_MPI4PY )
@@ -637,5 +680,32 @@ function( NEST_PROCESS_WITH_MPI4PY )
       include_directories( "${PY_MPI4PY}/include" )
     endif ()
 
+  endif ()
+endfunction ()
+
+function( NEST_PROCESS_USERDOC )
+  if ( with-userdoc )
+    message( STATUS "Configuring user documentation" )
+    find_package( Sphinx REQUIRED)
+    find_package( Pandoc REQUIRED)
+    set( BUILD_SLI_DOCS ON PARENT_SCOPE )
+    set( BUILD_SPHINX_DOCS ON PARENT_SCOPE )
+    set( BUILD_DOCS ON PARENT_SCOPE )
+  endif ()
+endfunction ()
+
+function( NEST_PROCESS_DEVDOC )
+  if ( with-devdoc )
+    message( STATUS "Configuring developer documentation" )
+    find_package( Doxygen REQUIRED dot )
+    set( BUILD_DOXYGEN_DOCS ON PARENT_SCOPE )
+    set( BUILD_DOCS ON PARENT_SCOPE )
+  endif ()
+endfunction ()
+
+function( NEST_PROCESS_FULL_LOGGING )
+  if ( with-full-logging )
+    message( STATUS "Configuring full logging" )
+    set( ENABLE_FULL_LOGGING ON PARENT_SCOPE )
   endif ()
 endfunction ()

@@ -68,7 +68,7 @@ private:
   TokenArrayObj* data;
 
   bool
-  clone( void )
+  clone()
   {
     if ( data->references() > 1 )
     {
@@ -83,7 +83,7 @@ private:
   }
 
   bool
-  detach( void )
+  detach()
   {
     if ( data->references() > 1 )
     {
@@ -106,7 +106,7 @@ protected:
   }
 
 public:
-  TokenArray( void )
+  TokenArray()
     : data( new TokenArrayObj() ) {};
 
   explicit TokenArray( size_t n, const Token& t = Token(), size_t alloc = 128 )
@@ -128,7 +128,6 @@ public:
   TokenArray( const std::vector< size_t >& );
   TokenArray( const std::vector< long >& );
   TokenArray( const std::vector< double >& );
-  TokenArray( const std::vector< float >& );
 
   virtual ~TokenArray()
   {
@@ -157,7 +156,7 @@ public:
    * Return number of elements in the array.
    */
   size_t
-  size( void ) const
+  size() const
   {
     return data->size();
   }
@@ -166,7 +165,7 @@ public:
    * Return maximal number of elements that fit into the container.
    */
   size_t
-  capacity( void ) const
+  capacity() const
   {
     return data->capacity();
   }
@@ -177,13 +176,15 @@ public:
   // Use the member function get(size_t) const to force
   // constness.
 
-  Token& operator[]( size_t i )
+  Token&
+  operator[]( size_t i )
   {
     clone();
     return ( *data )[ i ];
   }
 
-  const Token& operator[]( size_t i ) const
+  const Token&
+  operator[]( size_t i ) const
   {
     return ( *data )[ i ];
   }
@@ -226,7 +227,7 @@ public:
    * invalidated.
    */
   bool
-  shrink( void )
+  shrink()
   {
     return data->shrink();
   }
@@ -243,7 +244,7 @@ public:
   }
 
   unsigned int
-  references( void )
+  references()
   {
     return data->references();
   }
@@ -359,20 +360,20 @@ public:
   }
 
   void
-  pop_back( void )
+  pop_back()
   {
     clone();
     data->pop_back();
   }
 
   void
-  clear( void )
+  clear()
   {
     erase();
   }
 
   void
-  erase( void )
+  erase()
   {
     if ( not detach() )
     {
@@ -397,7 +398,7 @@ public:
   void
   erase( size_t i, size_t n )
   {
-    if ( i < size() && n > 0 )
+    if ( i < size() and n > 0 )
     {
       clone();
       data->erase( i, n );
@@ -408,7 +409,7 @@ public:
   void
   reduce( size_t i, size_t n )
   {
-    if ( i > 0 || n < size() )
+    if ( i > 0 or n < size() )
     {
       clone();
       data->reduce( i, n );
@@ -424,8 +425,6 @@ public:
   }
 
   const TokenArray& operator=( const TokenArray& );
-  const TokenArray& operator=( const std::vector< long >& );
-  const TokenArray& operator=( const std::vector< double >& );
 
   bool
   operator==( const TokenArray& a ) const
@@ -434,12 +433,10 @@ public:
   }
 
   bool
-  empty( void ) const
+  empty() const
   {
     return size() == 0;
   }
-
-  void info( std::ostream& ) const;
 
   /** Fill vectors with homogeneous integer and double arrays */
 
@@ -448,10 +445,9 @@ public:
   void toVector( std::vector< double >& ) const;
   void toVector( std::vector< std::string >& ) const;
 
-  bool valid( void ) const; // check integrity
+  bool valid() const; // check integrity
 
   /** Exception classes */
-  //  class TypeMismatch {};
   class OutOfRange
   {
   };
@@ -478,7 +474,7 @@ TokenArray::reverse()
 inline void
 TokenArray::rotate( long n = 1 )
 {
-  if ( size() == 0 || n == 0 )
+  if ( size() == 0 or n == 0 )
   {
     return;
   }

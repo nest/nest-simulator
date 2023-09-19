@@ -129,6 +129,11 @@ See also
 
 stdp_synapse, static_synapse, iaf_psc_exp, iaf_tum_2000
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: tsodyks_synapse
+
 EndUserDocs */
 
 template < typename targetidentifierT >
@@ -137,6 +142,10 @@ class tsodyks_synapse : public Connection< targetidentifierT >
 public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
+
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
 
   /**
    * Default Constructor.
@@ -182,7 +191,7 @@ public:
    * \param e The event to send
    * \param cp Common properties to all synapses (empty).
    */
-  void send( Event& e, thread t, const CommonSynapseProperties& cp );
+  void send( Event& e, size_t t, const CommonSynapseProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -190,15 +199,15 @@ public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
-    port
-    handles_test_event( SpikeEvent&, rport )
+    size_t
+    handles_test_event( SpikeEvent&, size_t ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -222,6 +231,8 @@ private:
   double t_lastspike_; //!< time point of last spike emitted
 };
 
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties tsodyks_synapse< targetidentifierT >::properties;
 
 /**
  * Send an event to the receiver of this connection.
@@ -230,7 +241,7 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-tsodyks_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
+tsodyks_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapseProperties& )
 {
   const double t_spike = e.get_stamp().get_ms();
   const double h = t_spike - t_lastspike_;
@@ -336,7 +347,7 @@ tsodyks_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Conn
   updateValue< double >( d, names::weight, weight_ );
 
   updateValue< double >( d, names::U, U_ );
-  if ( U_ > 1.0 || U_ < 0.0 )
+  if ( U_ > 1.0 or U_ < 0.0 )
   {
     throw BadProperty( "U must be in [0,1]." );
   }

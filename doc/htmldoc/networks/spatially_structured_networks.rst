@@ -33,7 +33,7 @@ particular,
    classes in an extension module.
 
 The Python scripts used throughout this manual are found in the NEST
-sources under ``doc/guides/spatially_structured_networks/scripts``.
+sources under ``doc/htmldoc/networks/scripts``.
 
 There may be a number of undocumented features, which you may discover
 by browsing the code. These features are highly experimental and
@@ -73,12 +73,12 @@ A very simple example
 We create a first, grid-based simple NodeCollection with the following command:
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ layer1 #}
-    :end-before: #{ end #}
+    :start-after: # { layer1 #}
+    :end-before: # { end #}
 
 .. _fig_layer1:
 
-.. figure:: spatially_structured_networks/figures/layer1.png
+.. figure:: figures/layer1.png
    :name: fig:layer1
 
    Simple grid-based NodeCollection centered about the origin. Blue circles mark
@@ -142,12 +142,12 @@ different extent of a layer, i.e., its size in :math:`x`- and
 :math:`y`-direction by passing the ``extent`` argument to ``nest.spatial.grid()``:
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ layer2 #}
-    :end-before: #{ end #}
+    :start-after: # { layer2 #}
+    :end-before: # { end #}
 
 .. _fig_layer2:
 
-.. figure:: spatially_structured_networks/figures/layer2.png
+.. figure:: figures/layer2.png
    :name: fig:layer2
 
    Same layer as in :numref:`fig_layer1`, but with different extent.
@@ -172,12 +172,12 @@ The following code creates layers centered about :math:`(0,0)`,
 :math:`(-1,1)`, and :math:`(1.5,0.5)`, respectively:
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ layer3 #}
-    :end-before: #{ end #}
+    :start-after: # { layer3 #}
+    :end-before: # { end #}
 
 .. _fig_layer3:
 
-.. figure:: spatially_structured_networks/figures/layer3.png
+.. figure:: figures/layer3.png
    :name: fig:layer3
 
    Three layers centered, respectively, about :math:`(0,0)` (blue),
@@ -185,7 +185,7 @@ The following code creates layers centered about :math:`(0,0)`,
 
 The center is given as a two-element list of floats. Changing the
 center does not affect grid indices: For each of the three layers in
- :numref:`fig_layer3`, grid indices run from 0 to 4 through columns and
+:numref:`fig_layer3`, grid indices run from 0 to 4 through columns and
 rows, respectively, even though elements in these three layers have
 different positions in the global coordinate system.
 
@@ -218,12 +218,12 @@ are :math:`(n_x d/2, 0)`. The layer is created with the following code
 and shown in :numref:`fig_layer3a`:
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ layer3a #}
-    :end-before: #{ end #}
+    :start-after: # { layer3a #}
+    :end-before: # { end #}
 
 .. _fig_layer3a:
 
-.. figure:: spatially_structured_networks/figures/layer3a.png
+.. figure:: figures/layer3a.png
    :name: fig:layer3a
 
    NodeCollection with :math:`n_x=5` columns and :math:`n_y=3` rows, spacing
@@ -244,12 +244,12 @@ extent :math:`1\times 1`, i.e., spanning the square
 :math:`[-0.5,0.5]\times[-0.5,0.5]`:
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ layer4 #}
-    :end-before: #{ end #}
+    :start-after: # { layer4 #}
+    :end-before: # { end #}
 
 .. _fig_layer4:
 
-.. figure:: spatially_structured_networks/figures/layer4.png
+.. figure:: figures/layer4.png
    :name: fig:layer4
 
    A free layer with 50 elements uniformly distributed in an extent of
@@ -274,19 +274,19 @@ Note the following points:
 -  The extent is automatically set when using ``nest.spatial.free``, however, it
    is still possible to set the extent yourself by passing the ``extent`` variable to the object.
 
--  All element positions must be *within* the layer’s extent. Elements
+-  All element positions must be *within* the layer's extent. Elements
    may be placed on the perimeter of the extent as long as no periodic
    boundary conditions are used; see the section :ref:`sec_periodic`.
 
 To create a spatially distributed NodeCollection from a list, do the following:
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ layer4b #}
-    :end-before: #{ end #}
+    :start-after: # { layer4b #}
+    :end-before: # { end #}
 
 .. _fig_layer4b:
 
-.. figure:: spatially_structured_networks/figures/layer4b.png
+.. figure:: figures/layer4b.png
    :name: fig:layer4b
 
    A free layer with 3 elements freely distributed space. The extent is given by the gray lines.
@@ -298,17 +298,17 @@ are specified. Furthermore, the extent is calculated from the node positions, an
 3D layers
 ~~~~~~~~~
 
-Although the term “layer” suggests a 2-dimensional structure, the layers
+Although the term "layer" suggests a 2-dimensional structure, the layers
 in NEST may in fact be 3-dimensional. The example from the previous
 section may be easily extended by updating number of dimensions for the positions:
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ layer4_3d #}
-    :end-before: #{ end #}
+    :start-after: # { layer4_3d #}
+    :end-before: # { end #}
 
 .. _fig_layer4_3d:
 
-.. figure:: spatially_structured_networks/figures/layer4_3d.png
+.. figure:: figures/layer4_3d.png
    :name: fig:layer4_3d
 
    A free 3D layer with 200 elements uniformly distributed in an extent
@@ -319,12 +319,12 @@ space. Another possibility is to create a 3D grid-layer, with 3 elements passed 
 the shape argument, ``shape=[nx, ny, nz]``:
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ layer4_3d_b #}
-    :end-before: #{ end #}
+    :start-after: # { layer4_3d_b #}
+    :end-before: # { end #}
 
 .. _fig_layer4_3d_b:
 
-.. figure:: spatially_structured_networks/figures/layer4_3d_b.png
+.. figure:: figures/layer4_3d_b.png
    :name: fig:layer4_3d_b
 
    A grid 3D NodeCollection with 120 elements distributed on a grid with 4 elements in the x-direction,
@@ -356,12 +356,12 @@ You specify periodic boundary conditions for a NodeCollection using
 the entry ``edge_wrap``:
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ player #}
-    :end-before: #{ end #}
+    :start-after: # { player #}
+    :end-before: # { end #}
 
 .. _fig_player:
 
-.. figure:: spatially_structured_networks/figures/player.png
+.. figure:: figures/player.png
    :name: fig:player
 
    Top left: Layer with single row and five columns without periodic
@@ -400,13 +400,8 @@ be of interest:
    of this guide):
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ layer1s #}
-    :end-before: #{ end #}
-
-.. literalinclude:: scripts/layers.log
-    :start-after: #{ layer1s.log #}
-    :end-before: #{ end.log #}
-
+    :start-after: # { layer1s #}
+    :end-before: # { end #}
 
 
 The ``spatial`` property is read-only; changing any value will
@@ -420,12 +415,8 @@ not change properties of the spatially distributed NodeCollection.
    only be used on NodeCollections created with spatial distribution.
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ layer1p #}
-    :end-before: #{ end #}
-
-.. literalinclude:: scripts/layers.log
-    :start-after: #{ layer1p.log #}
-    :end-before: #{ end.log #}
+    :start-after: # { layer1p #}
+    :end-before: # { end #}
 
 .. _sec_connections:
 
@@ -540,12 +531,12 @@ targets.
 Here is a simple example, cf. :numref:`fig_conn1`
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn1 #}
-    :end-before: #{ end #}
+    :start-after: # { conn1 #}
+    :end-before: # { end #}
 
 .. _fig_conn1:
 
-.. figure:: spatially_structured_networks/figures/conn1.png
+.. figure:: figures/conn1.png
    :name: fig:conn1
 
    Left: Minimal connection example from a layer onto itself using a
@@ -602,7 +593,7 @@ grid-based masks for grid-based NodeCollections. If no mask is specified, all
 nodes in the pool layer will be searched.
 
 Note that the mask size should not exceed the size of the layer when
-using periodic boundary conditions, since the mask would “wrap around”
+using periodic boundary conditions, since the mask would "wrap around"
 in that case and pool nodes would be considered multiple times as
 targets.
 
@@ -626,16 +617,16 @@ Rectangular
    same unit as element coordinates. Example:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn2r #}
-    :end-before: #{ end #}
+    :start-after: # { conn2r #}
+    :end-before: # { end #}
 
 Circular
    All nodes within a circle are connected. The area is specified by its
    radius.
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn2c #}
-    :end-before: #{ end #}
+    :start-after: # { conn2c #}
+    :end-before: # { end #}
 
 Doughnut
    All nodes between an inner and outer circle are connected. Note that
@@ -643,20 +634,20 @@ Doughnut
    by the radii of the inner and outer circles.
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn2d #}
-    :end-before: #{ end #}
+    :start-after: # { conn2d #}
+    :end-before: # { end #}
 
 Elliptical
    All nodes within an ellipsis are connected. The area is specified by
    its major and minor axis.
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn2e #}
-    :end-before: #{ end #}
+    :start-after: # { conn2e #}
+    :end-before: # { end #}
 
 .. _fig_conn2_a:
 
-.. figure:: spatially_structured_networks/figures/conn2_a.png
+.. figure:: figures/conn2_a.png
    :name: fig:conn2_a
 
    Masks for 2D layers. For all mask types, the driver node is marked by
@@ -673,24 +664,24 @@ of the mask center relative to the driver node, as in the following
 examples (cf.  :numref:`fig_conn2_b`).
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn2ro #}
-    :end-before: #{ end #}
+    :start-after: # { conn2ro #}
+    :end-before: # { end #}
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn2co #}
-    :end-before: #{ end #}
+    :start-after: # { conn2co #}
+    :end-before: # { end #}
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn2do #}
-    :end-before: #{ end #}
+    :start-after: # { conn2do #}
+    :end-before: # { end #}
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn2eo #}
-    :end-before: #{ end #}
+    :start-after: # { conn2eo #}
+    :end-before: # { end #}
 
 .. _fig_conn2_b:
 
-.. figure:: spatially_structured_networks/figures/conn2_b.png
+.. figure:: figures/conn2_b.png
    :name: fig:conn2_b
 
    The same masks as in :numref:`fig_conn2_a`, but centered about
@@ -704,22 +695,21 @@ add an ``'azimuth_angle'`` entry in the specific mask dictionary. The
 from the x-axis to the y-axis.
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn2rr #}
-    :end-before: #{ end #}
+    :start-after: # { conn2rr #}
+    :end-before: # { end #}
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn2er #}
-    :end-before: #{ end #}
+    :start-after: # { conn2er #}
+    :end-before: # { end #}
 
 .. _fig_conn2_c:
 
-.. figure:: spatially_structured_networks/figures/conn2_c.png
+.. figure:: figures/conn2_c.png
    :name: fig:conn2_c
 
    Rotated rectangular and elliptical mask from  :numref:`fig_conn2_a` and
-    :numref:`fig_conn2_b`, where the rectangular mask is rotated
-   :math:`120^\circ` and the elliptical mask is rotated
-   :math:`45^\circ`.
+   :numref:`fig_conn2_b`, where the rectangular mask is rotated
+   :math:`120^\circ` and the elliptical mask is rotated :math:`45^\circ`.
 
 .. _sec_3d_masks:
 
@@ -734,24 +724,24 @@ Box
    as element coordinates. Example:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn_3d_a #}
-    :end-before: #{ end #}
+    :start-after: # { conn_3d_a #}
+    :end-before: # { end #}
 
 Spherical
    All nodes within a sphere are connected. The area is specified by its
    radius.
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn_3d_b #}
-    :end-before: #{ end #}
+    :start-after: # { conn_3d_b #}
+    :end-before: # { end #}
 
 Ellipsoidal
    All nodes within an ellipsoid are connected. The area is specified by
    its major, minor, and polar axis.
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn_3d_c #}
-    :end-before: #{ end #}
+    :start-after: # { conn_3d_c #}
+    :end-before: # { end #}
 
 As in the 2D case, you can change the location of the mask relative to
 the driver node by specifying a 3D vector in the ``'anchor'`` entry in
@@ -768,7 +758,7 @@ the (possibly rotated) x-axis is missing.
 
 .. _fig_conn_3d:
 
-.. figure:: spatially_structured_networks/figures/conn_3d.png
+.. figure:: figures/conn_3d.png
    :name: fig:conn3d
 
    Masks for 3D NodeCollections. For all mask types, the driver node is marked by
@@ -785,8 +775,8 @@ right corner coordinates, but give their size in x and y direction, as in
 this example:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn3 #}
-    :end-before: #{ end #}
+    :start-after: # { conn3 #}
+    :end-before: # { end #}
 
 The resulting connections are shown in :numref:`fig_conn3`. By default
 the top-left corner of a grid mask, i.e., the grid mask element with
@@ -795,20 +785,20 @@ aligned with the driver node. You can change this alignment by
 specifying an *anchor* for the mask:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn3c #}
-    :end-before: #{ end #}
+    :start-after: # { conn3c #}
+    :end-before: # { end #}
 
 You can even place the anchor outside the mask:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn3x #}
-    :end-before: #{ end #}
+    :start-after: # { conn3x #}
+    :end-before: # { end #}
 
 The resulting connection patterns are shown in  :numref:`fig_conn3`.
 
 .. _fig_conn3:
 
-.. figure:: spatially_structured_networks/figures/conn3.png
+.. figure:: figures/conn3.png
    :name: fig:conn3
 
    Grid masks for connections between grid-based layers. Left:
@@ -924,6 +914,16 @@ parameters drawing values from random distributions.
   |                                              | | rho              |    {2(1-\rho^2)}}                                    |
   |                                              |                    |                                                      |
   +----------------------------------------------+--------------------+------------------------------------------------------+
+  |                                              |                    | .. math::                                            |
+  |                                              | | x,               |                                                      |
+  |                                              | | y,               |    p(x) = \big[\cos(360^{\circ}                      |
+  |                                              | | theta,           |    \frac{y^{\prime}}{\lambda}                        |
+  | ``nest.spatial_distributions.gabor()``       | | gamma,           |    + \psi)\big]^{+} e^{-\frac{                       |
+  |                                              | | std,             |    \gamma^{2}x^{\prime 2}+y^{\prime 2}}{             |
+  |                                              | | lam,             |    2\text{std}^{2}}}                                 |
+  |                                              | | psi              |    \\ x^{\prime} = x\cos\theta + y\sin\theta         |
+  |                                              |                    |    \\ y^{\prime} = -x\sin\theta + y\cos\theta        |
+  +----------------------------------------------+--------------------+------------------------------------------------------+
   |                                              |                    | .. math:: p(x) = \frac{x^{\kappa-1}e^{-\frac{x}      |
   | ``nest.spatial_distributions.gamma()``       | | x,               |     {\theta}}}{\theta^\kappa\Gamma(\kappa)}          |
   |                                              | | kappa            |                                                      |
@@ -947,7 +947,7 @@ parameters drawing values from random distributions.
 
 .. _fig_conn4:
 
-.. figure:: spatially_structured_networks/figures/conn4.png
+.. figure:: figures/conn4.png
    :name: fig:conn4
 
    Illustration of various connection probabilities. Top left: constant probability,
@@ -962,18 +962,18 @@ Constant
    Fixed connection probability:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn4cp #}
-    :end-before: #{ end #}
+    :start-after: # { conn4cp #}
+    :end-before: # { end #}
 
 Gaussian
    The connection probability is a Gaussian distribution based on the distance
    between neurons. In the example, connection
-   probability is 1 for :math:`d=0` and falls off with a “standard
-   deviation” of :math:`\sigma=1`:
+   probability is 1 for :math:`d=0` and falls off with a "standard
+   deviation" of :math:`\sigma=1`:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn4g #}
-    :end-before: #{ end #}
+    :start-after: # { conn4g #}
+    :end-before: # { end #}
 
 Cut-off Gaussian
    In this example we have a distance-dependent Gaussian distributon,
@@ -982,18 +982,27 @@ Cut-off Gaussian
 .. TODO: Reference to full Parameter table with nest.logic.conditional().
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn4cut #}
-    :end-before: #{ end #}
+    :start-after: # { conn4cut #}
+    :end-before: # { end #}
 
 2D Gaussian
-   We conclude with an example using a two-dimensional Gaussian
-   distribution, i.e., a Gaussian with different widths in :math:`x`- and
-   :math:`y`- directions. This probability depends on displacement, not
-   only on distance:
+   Here we use a two-dimensional Gaussian distribution, i.e., a Gaussian with
+   different widths in :math:`x`- and :math:`y`- directions. This probability
+   depends on displacement, not only on distance:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn42d #}
-    :end-before: #{ end #}
+    :start-after: # { conn42d #}
+    :end-before: # { end #}
+
+Rectified Gabor Function
+   We conclude with an example of a rectified Gabor distribution, i.e., a
+   two-dimensional Gaussian distribution modulated with a spatial oscillation
+   perpendicular to :math:`\theta`. This probability depends on the
+   displacement along the coordinates axes, not the distance:
+
+.. literalinclude:: scripts/connections.py
+    :start-after: # { conn4gab #}
+    :end-before: # { end #}
 
 Note that for pool layers with periodic boundary conditions, NEST
 always uses the shortest possible displacement vector from driver to
@@ -1013,7 +1022,7 @@ passed along in a synapse dictionary to the ``Connect()`` call.
 
 
 Figure :numref:`fig_conn5` illustrates weights and delays generated using these
-parameters. The code examples used to generate the spatially_structured_networks/figures are shown below.
+parameters. The code examples used to generate the figures are shown below.
 All examples use a spatially distributed NodeCollection
 of 51 nodes placed on a line; the line is centered about :math:`(25,0)`,
 so that the leftmost node has coordinates :math:`(0,0)`. The distance
@@ -1023,8 +1032,8 @@ entire NodeCollection and is centered about the driver node.
 
 Linear example
   .. literalinclude:: scripts/connections.py
-      :start-after: #{ conn5lin #}
-      :end-before: #{ end #}
+      :start-after: # { conn5lin #}
+      :end-before: # { end #}
 
   Results are shown in the top panel of  :numref:`fig_conn5`. Connection
   weights and delays are shown for the leftmost neuron as driver. Weights
@@ -1037,8 +1046,8 @@ Linear example
 
 Linear example with periodic boundary conditions
   .. literalinclude:: scripts/connections.py
-      :start-after: #{ conn5linpbc #}
-      :end-before: #{ end #}
+      :start-after: # { conn5linpbc #}
+      :end-before: # { end #}
 
   Results are shown in the middle panel of  :numref:`fig_conn5`. This example
   is identical to the previous, except that the (pool) layer has periodic
@@ -1049,12 +1058,12 @@ Linear example with periodic boundary conditions
 
 Various spatially dependent distributions
   .. literalinclude:: scripts/connections.py
-      :start-after: #{ conn5exp #}
-      :end-before: #{ end #}
+      :start-after: # { conn5exp #}
+      :end-before: # { end #}
 
   .. literalinclude:: scripts/connections.py
-      :start-after: #{ conn5gauss #}
-      :end-before: #{ end #}
+      :start-after: # { conn5gauss #}
+      :end-before: # { end #}
 
   Results are shown in the bottom panel of :numref:`fig_conn5`. It shows
   linear, exponential and Gaussian distributions of the distance between
@@ -1064,8 +1073,8 @@ Various spatially dependent distributions
 
 Randomized weights and delays
   .. literalinclude:: scripts/connections.py
-      :start-after: #{ conn5uniform #}
-      :end-before: #{ end #}
+      :start-after: # { conn5uniform #}
+      :end-before: # { end #}
 
   By using the ``nest.random.uniform()`` parameter for weights or delays, one can
   obtain randomized values for weights and delays, as shown by the red
@@ -1073,7 +1082,7 @@ Randomized weights and delays
 
 .. _fig_conn5:
 
-.. figure:: spatially_structured_networks/figures/conn5.png
+.. figure:: figures/conn5.png
    :name: fig:conn5
 
    Distance-dependent and randomized weights and delays. See text for
@@ -1097,14 +1106,14 @@ linear (actually affine) with respect to the displacement between the nodes, of 
 target neuron on the x and y axis, respectively. The parameter is then simply:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn_param_design #}
-    :end-before: #{ end #}
+    :start-after: # { conn_param_design #}
+    :end-before: # { end #}
 
 This can be directly plugged into the :py:func:`.Connect` function:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn_param_design_ex #}
-    :end-before: #{ end #}
+    :start-after: # { conn_param_design_ex #}
+    :end-before: # { end #}
 
 Periodic boundary conditions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1203,12 +1212,12 @@ The resulting distribution of distances between connected nodes is shown in
  :numref:`fig_conn6`.
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn6 #}
-    :end-before: #{ end #}
+    :start-after: # { conn6 #}
+    :end-before: # { end #}
 
 .. _fig_conn6:
 
-.. figure:: spatially_structured_networks/figures/conn6.png
+.. figure:: figures/conn6.png
    :name: fig:conn6
 
    Distribution of distances between source and target for a network of
@@ -1221,17 +1230,24 @@ Functions determining weight and delay as function of
 distance/displacement work in just the same way as before when the
 number of connections is prescribed.
 
+It is also possible to use a random parameter or spatially dependent parameter
+to set the number of incoming or outgoing connections.
+
+.. literalinclude:: scripts/connections.py
+    :start-after: # { conn7 #}
+    :end-before: # { end #}
+
 Synapse models and properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 By default, :py:func:`.Connect` creates connections using the default synapse
-model in NEST, ``static_synapse``. You can specify a different model by
+model in NEST, :hxt_ref:`static_synapse`. You can specify a different model by
 adding a ``'synapse_model'`` entry to the synapse specification
 dictionary, as in this example:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn8 #}
-    :end-before: #{ end #}
+    :start-after: # { conn8 #}
+    :end-before: # { end #}
 
 You have to use synapse models if you want to set, e.g., the receptor
 type of connections or parameters for plastic synapse models. These can
@@ -1251,15 +1267,15 @@ center of the mask. As demonstrated in the following example,
 stimulation devices have to be connected as the source layer.
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn9 #}
-    :end-before: #{ end #}
+    :start-after: # { conn9 #}
+    :end-before: # { end #}
 
 While recording devices, on the other hand, have to be connected as
 the target layer (see also the following section):
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn10 #}
-    :end-before: #{ end #}
+    :start-after: # { conn10 #}
+    :end-before: # { end #}
 
 Spatially distributed NodeCollections and recording devices
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1270,13 +1286,13 @@ create a single spike recorder and connect all neurons in the spatially
 distributed NodeCollection to that spike recorder:
 
 .. literalinclude:: scripts/connections.py
-    :start-after: #{ conn11 #}
-    :end-before: #{ end #}
+    :start-after: # { conn11 #}
+    :end-before: # { end #}
 
 Connecting a layer of neurons to a layer of recording devices as
 described in the section on :ref:`sec_dev_subregions`, is only
 possible using the ``pairwise_bernoulli`` rule. Note that voltmeter
-and multimeter do not suffer from this restriction, since they are
+and :hxt_ref:`multimeter` do not suffer from this restriction, since they are
 connected as sources, not as targets.
 
 .. _sec_inspection:
@@ -1308,8 +1324,14 @@ The following table presents some query functions provided by NEST.
 +---------------------------------+-----------------------------------------------------+
 | ``nest.GetPosition()``          | Return the spatial locations of nodes.              |
 +---------------------------------+-----------------------------------------------------+
+| ``nest.GetSourceNodes()``       | Obtain sources of targets in a                      |
+|                                 | given source layer.                                 |
++---------------------------------+-----------------------------------------------------+
 | ``nest.GetTargetNodes()``       | Obtain targets of sources in a                      |
 |                                 | given target layer.                                 |
++---------------------------------+-----------------------------------------------------+
+| ``nest.GetSourcePositions()``   | Obtain positions of sources of                      |
+|                                 | targets in a given source layer.                    |
 +---------------------------------+-----------------------------------------------------+
 | ``nest.GetTargetPositions()``   | Obtain positions of targets of                      |
 |                                 | sources in a given target layer.                    |
@@ -1350,6 +1372,9 @@ NEST provides three functions to visualize networks:
 | :py:func:`.PlotLayer`                | Plot nodes in a spatially distributed    |
 |                                      | NodeCollection.                          |
 +--------------------------------------+------------------------------------------+
+| :py:func:`.PlotSources`              | Plot all sources of a node in a given    |
+|                                      | NodeCollection.                          |
++--------------------------------------+------------------------------------------+
 | :py:func:`.PlotTargets`              | Plot all targets of a node in a given    |
 |                                      | NodeCollection.                          |
 +--------------------------------------+------------------------------------------+
@@ -1361,7 +1386,7 @@ NEST provides three functions to visualize networks:
 
 .. _fig_vislayer:
 
-.. figure:: spatially_structured_networks/figures/vislayer.png
+.. figure:: figures/vislayer.png
    :name: fig:vislayer
 
    :math:`21\times 21` grid with divergent Gaussian projections onto
@@ -1376,8 +1401,8 @@ is shown in :numref:`fig_vislayer`. All elements and the targets of the
 center neuron are shown, as well as mask and connection probability.
 
 .. literalinclude:: scripts/layers.py
-    :start-after: #{ vislayer #}
-    :end-before: #{ end #}
+    :start-after: # { vislayer #}
+    :end-before: # { end #}
 
 .. _sec_custom_masks:
 

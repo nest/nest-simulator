@@ -128,6 +128,11 @@ See also
 ++++++++
 
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: ginzburg_neuron
+
 EndUserDocs */
 
 class gainfunction_ginzburg
@@ -160,13 +165,13 @@ public:
   }
 
   void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-  void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+  void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
 
-  bool operator()( RngPtr rng, double h );
+  bool operator()( RngPtr rng, double h ) const;
 };
 
 inline bool
-gainfunction_ginzburg::operator()( RngPtr rng, double h )
+gainfunction_ginzburg::operator()( RngPtr rng, double h ) const
 {
   return rng->drand() < c1_ * h + c2_ * 0.5 * ( 1.0 + tanh( c3_ * ( h - theta_ ) ) );
 }

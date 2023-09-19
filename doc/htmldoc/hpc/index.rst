@@ -1,7 +1,7 @@
-.. _hpc_index:
+:orphan:
 
-All about high performance computing
-====================================
+High performance computing
+==========================
 
 .. toctree::
   :maxdepth: 1
@@ -9,6 +9,3 @@ All about high performance computing
 
   *
 
-.. todo::
-
-   Add pinning threads and benchmarking documentation here.

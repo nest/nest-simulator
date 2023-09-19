@@ -88,6 +88,11 @@ See also
 
 music_event_out_proxy, music_event_in_proxy, music_message_in_proxy
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: music_cont_in_proxy
+
 EndUserDocs */
 
 class music_cont_in_proxy : public DeviceNode
@@ -130,8 +135,8 @@ private:
 
     Parameters_(); //!< Sets default parameter values
 
-    void get( DictionaryDatum& ) const;          //!< Store current values in dictionary
-    void set( const DictionaryDatum&, State_& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const;                 //!< Store current values in dictionary
+    void set( const DictionaryDatum&, State_&, Node* ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------

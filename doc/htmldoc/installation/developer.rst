@@ -28,11 +28,21 @@ Install NEST from source
 
 We have provided an `environment.yml <https://github.com/nest/nest-simulator/blob/master/environment.yml>`_
 file that contains all possible packages needed for NEST development.
-See our instructions for installing NEST from source in a :ref:`conda environment <condaenv>`
 
-OR
+.. grid:: 2
 
-If you want to install NEST without any environment, see the :ref:`instructions here <noenv>`.
+   .. grid-item-card:: Install NEST with conda
+
+         See our instructions for installing NEST from source in a :ref:`conda environment <condaenv>`
+
+   .. grid-item-card:: Install NEST without environment
+
+         If you want to install NEST without any environment, see the :ref:`instructions here <noenv>`.
+
+
+.. seealso::
+
+  :ref:`cmake options for NEST <cmake_options>`
 
 What gets installed where
 -------------------------

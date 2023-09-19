@@ -3,8 +3,8 @@
 Connect two NEST simulations using MUSIC
 ========================================
 
-Let’s look at an example of two NEST simulations connected through
-MUSIC. We’ll implement the simple network in :numref:`neuronmusic3`
+Let's look at an example of two NEST simulations connected through
+MUSIC. We'll implement the simple network in :numref:`neuronmusic3`
 from :ref:`the introduction to this tutorial <music_tutorial_1>`.
 
 We need a sending process, a receiving process and a MUSIC
@@ -15,7 +15,6 @@ called *send.py*.
 
 
 .. code-block:: python
-    :linenos:
 
     #!/usr/bin/env python3
 
@@ -54,7 +53,7 @@ weight or delay settings here.
 
 Lastly, we create a spike recorder, set the parameters (which we could
 have done directly in the :py:func:`.Create` call) and connect the
-neurons to the spike recorder so we can see what we’re sending. Then we
+neurons to the spike recorder so we can see what we're sending. Then we
 simulate for one second.
 
 For the receiving process script, *receive.py* we do:
@@ -94,11 +93,11 @@ each input proxy.
 :ref:`The SetAcceptableLatency command <music_latency>` on line 10 sets the
 maximum time, in milliseconds, that MUSIC is allowed to delay delivery of spikes
 transmitted through the named port. This should never be more than the
-*minimum* of the delays from the input proxies to their targets; that’s
+*minimum* of the delays from the input proxies to their targets; that's
 the 2.0 ms we set on line 10 in our case.
 
 On line 12 we create a set of :ref:`parrot neurons <music_parrot>`.
-They simply repeat the input they’re given. On lines 14-15 we create and
+They simply repeat the input they're given. On lines 14-15 we create and
 configure a spike recorder to save our inputs. We connect the input proxies
 one-to-one with the parrot neurons on line 17, then the parrot neurons to
 the spike recorder on line 18. We will discuss the reasons for this in a moment.
@@ -159,7 +158,7 @@ Collate the data files:
       cat receive-*spikes | sort -k 2 -n  >receive.spikes
 
 We run the files together, and sort the output numerically
-(:math:`-n`) by the second column (:math:`-k`). Let’s
+(:math:`-n`) by the second column (:math:`-k`). Let's
 look at the beginning of the two files side by side:
 
 

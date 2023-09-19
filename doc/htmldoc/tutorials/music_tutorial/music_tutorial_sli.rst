@@ -11,16 +11,16 @@ with, is not extensively documented, and has quite a few corner cases,
 design issues and unintended behaviours. But it is small, already built
 into NEST and is much more memory efficient than using Python. If your
 models are very large and memory is tight, or you are using a system
-where Python isn’t available, then SLI is the way to go.
+where Python isn't available, then SLI is the way to go.
 
-We won’t discuss the code extensively as learning SLI is really outside
+We won't discuss the code extensively as learning SLI is really outside
 the scope of this tutorial. The code follows the same structure as the
 other examples, and should be straightforward to follow. But we will
 give a few pointers for how to connect things with MUSIC.
 
 The SLI version of the sending process file from
 :ref:`Part 2 of the MUSIC tutorial <music_tutorial_2>`, *sender.sli*, is outlined
-below. Comments are prefixed with a “%”.
+below. Comments are prefixed with a "%".
 
 ::
 
@@ -50,14 +50,14 @@ then the object.  Both are used extensively so you need to be aware
 of them.
 
 On line 6 we create a MUSIC output proxy with port name
-`p_out`. Dictionaries are bracketed with “<<” and “>>”,
+`p_out`. Dictionaries are bracketed with "<<" and ">>",
 and strings are bracketed with parenthesis.
 
 On lines 9-13 we iterate over the range of all neurons and store the index
 in `index`. Then we connect each neuron in the NodeCollection to the output
 proxy with its own music channel. To get the individual node we use ``Take``.
 Note that we use ``Set`` to assign the index on the stack
-to a variable. We’d have to rotate the top stack elements if we wanted to
+to a variable. We'd have to rotate the top stack elements if we wanted to
 use ``def``.
 
 For the receiving SLI file, *receiver.sli*, we have:

@@ -28,7 +28,7 @@ Synopsis: (ticket-537) run -> NEST exits if test fails
 
 Description:
 This test detects a memory allocation/freeing problem introduced with the SLI modernization per r9458. 
-This bug occured only on certain Linux platforms.
+This bug occurred only on certain Linux platforms.
  
 Author: Hans Ekkehard Plesser, 2012-01-12, based on reproduces by Marc-Oliver Gewaltig
  */

@@ -141,7 +141,7 @@ The following snippet produces :numref:`grid`:
 
 ::
 
-    positions = nest.spatial.grid(shape=[10, 10]  # the number of rows and column in this grid ...
+    positions = nest.spatial.grid(shape=[10, 10],  # the number of rows and column in this grid ...
                                   extent=[2., 2.]  # the size of the grid in mm
                                   )
     nest.Create('iaf_psc_alpha', positions=positions)
@@ -208,7 +208,7 @@ to connect.
 
 The *Connections* section in the
 :ref:`spatial_networks`
-deals comprehensively with all the different possibilities, and it’s suggested
+deals comprehensively with all the different possibilities, and it's suggested
 that you look there for learning about the different constraints, as well
 as reading through the different examples listed there. Here are some
 representative examples for setting up a connectivity profile, and the
@@ -374,6 +374,7 @@ was built correctly:
 
    -  ``nest.PlotLayer()``
    -  ``nest.PlotTargets()``
+   -  ``nest.PlotSources()``
    -  ``nest.PlotProbabilityParameter()``
 
    which allow us to generate the plots used with NUTM and this handout.

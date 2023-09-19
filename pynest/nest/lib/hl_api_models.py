@@ -32,11 +32,11 @@ from ..synapsemodels.hl_api_synapsemodels import _copy_synapse_class
 from .hl_api_simulation import GetKernelStatus
 
 __all__ = [
-    'ConnectionRules',
-    'CopyModel',
-    'GetDefaults',
-    'Models',
-    'SetDefaults',
+    "ConnectionRules",
+    "CopyModel",
+    "GetDefaults",
+    "Models",
+    "SetDefaults",
 ]
 
 
@@ -79,10 +79,10 @@ def Models(mtype="all", sel=None):
     models = []
 
     if mtype in ("all", "nodes"):
-        models += GetKernelStatus('node_models')
+        models += GetKernelStatus("node_models")
 
     if mtype in ("all", "synapses"):
-        models += GetKernelStatus('synapse_models')
+        models += GetKernelStatus("synapse_models")
 
     if sel is not None:
         models = [x for x in models if sel in x]
@@ -104,7 +104,7 @@ def ConnectionRules():
 
     """
 
-    return tuple(sorted(GetKernelStatus('connection_rules')))
+    return tuple(sorted(GetKernelStatus("connection_rules")))
 
 
 @check_stack
@@ -130,11 +130,11 @@ def SetDefaults(model, params, val=None):
             params = {params: val}
 
     sps(params)
-    sr('/{0} exch SetDefaults'.format(model))
+    sr("/{0} exch SetDefaults".format(model))
 
 
 @check_stack
-def GetDefaults(model, keys=None, output=''):
+def GetDefaults(model, keys=None, output=""):
     """Return defaults of the given model or recording backend.
 
     Parameters
@@ -170,18 +170,17 @@ def GetDefaults(model, keys=None, output=''):
     if keys is None:
         cmd = "/{0} GetDefaults".format(model)
     elif is_literal(keys):
-        cmd = '/{0} GetDefaults /{1} get'.format(model, keys)
+        cmd = "/{0} GetDefaults /{1} get".format(model, keys)
     elif is_iterable(keys):
         keys_str = " ".join("/{0}".format(x) for x in keys)
-        cmd = "/{0} GetDefaults  [ {1} ] {{ 1 index exch get }}"\
-              .format(model, keys_str) + " Map exch pop"
+        cmd = "/{0} GetDefaults  [ {1} ] {{ 1 index exch get }}".format(model, keys_str) + " Map exch pop"
     else:
         raise TypeError("keys should be either a string or an iterable")
 
     sr(cmd)
     result = spp()
 
-    if output == 'json':
+    if output == "json":
         result = to_json(result)
 
     return result

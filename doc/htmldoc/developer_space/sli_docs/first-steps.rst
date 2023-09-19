@@ -166,5 +166,5 @@ on the stack. ``patsck`` Display the stack in syntax form. ``stack``
 Display the stack. ``pop``, ``;`` Pop object from stack. ``npop`` Pop
 ``n`` objects from stack. ``dup`` Duplicate top object of stack.
 ``copy`` Copy the first n objects of the stack. ``index`` Copy the
-``n``\ ’th object of the stack. ``roll`` Roll a portion of ``n`` stack
+``n``\ 'th object of the stack. ``roll`` Roll a portion of ``n`` stack
 levels ``k`` times. ``exec`` Execute the top element on the stack.

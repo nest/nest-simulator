@@ -31,6 +31,7 @@
 #include "connection.h"
 #include "connector_model.h"
 #include "event.h"
+#include "nest.h"
 #include "ring_buffer.h"
 
 // Includes from sli:
@@ -79,7 +80,7 @@ Wmin     real    Minimum allowed weight
 =======  ======  ==========================================================
 
 Other parameters like the amplitudes for long-term potentiation (LTP) and
-depression (LTD) are stored in in the neuron models that are compatible with the
+depression (LTD) are stored in the neuron models that are compatible with the
 Clopath synapse.
 
 Transmits
@@ -104,6 +105,11 @@ See also
 
 stdp_synapse, aeif_psc_delta_clopath, hh_psc_alpha_clopath
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_psc_alpha
+
 EndUserDocs */
 
 // connections are templates of target identifier type (used for pointer /
@@ -115,6 +121,11 @@ class clopath_synapse : public Connection< targetidentifierT >
 public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
+
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::REQUIRES_CLOPATH_ARCHIVING
+    | ConnectionModelProperties::SUPPORTS_HPC | ConnectionModelProperties::SUPPORTS_LBL
+    | ConnectionModelProperties::SUPPORTS_WFR;
 
   /**
    * Default Constructor.
@@ -154,7 +165,7 @@ public:
    * \param e The event to send
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e, thread t, const CommonSynapseProperties& cp );
+  void send( Event& e, size_t t, const CommonSynapseProperties& cp );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -163,15 +174,15 @@ public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
-    port
-    handles_test_event( SpikeEvent&, rport )
+    size_t
+    handles_test_event( SpikeEvent&, size_t ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
 
@@ -211,6 +222,8 @@ private:
   double t_lastspike_;
 };
 
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties clopath_synapse< targetidentifierT >::properties;
 
 /**
  * Send an event to the receiver of this connection.
@@ -220,7 +233,7 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-clopath_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
+clopath_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapseProperties& )
 {
   double t_spike = e.get_stamp().get_ms();
   // use accessor functions (inherited from Connection< >) to obtain delay and

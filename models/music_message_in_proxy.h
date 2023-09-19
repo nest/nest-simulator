@@ -96,6 +96,11 @@ See also
 
 music_event_out_proxy, music_event_in_proxy, music_cont_in_proxy
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: music_message_in_proxy
+
 EndUserDocs */
 
 class MsgHandler : public MUSIC::MessageHandler
@@ -177,7 +182,7 @@ private:
     void get( DictionaryDatum& ) const;
 
     /**
-     * Set values from dicitonary.
+     * Set values from dictionary.
      */
     void set( const DictionaryDatum&, State_&, Node* );
   };

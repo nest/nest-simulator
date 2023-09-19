@@ -48,7 +48,7 @@ template < int D >
 class FreeLayer : public Layer< D >
 {
 public:
-  Position< D > get_position( index sind ) const;
+  Position< D > get_position( size_t sind ) const;
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;
 
@@ -61,27 +61,30 @@ protected:
   template < class Ins >
   void communicate_positions_( Ins iter, NodeCollectionPTR node_collection );
 
-  void insert_global_positions_ntree_( Ntree< D, index >& tree, NodeCollectionPTR node_collection );
-  void insert_global_positions_vector_( std::vector< std::pair< Position< D >, index > >& vec,
+  void insert_global_positions_ntree_( Ntree< D, size_t >& tree, NodeCollectionPTR node_collection );
+  void insert_global_positions_vector_( std::vector< std::pair< Position< D >, size_t > >& vec,
     NodeCollectionPTR node_collection );
 
   /**
    * Calculate the index in the position vector on this MPI process based on the local ID.
+   *
    * @param lid local ID of the node
    * @return index in the local position vector
    */
-  index lid_to_position_id_( index lid ) const;
+  size_t lid_to_position_id_( size_t lid ) const;
 
-  /// Vector of positions.
+  //! Vector of positions.
   std::vector< Position< D > > positions_;
 
   size_t num_local_nodes_ = 0;
 
-  /// This class is used when communicating positions across MPI procs.
+  /**
+   * Class to be used when communicating positions across MPI processes.
+   */
   class NodePositionData
   {
   public:
-    index
+    size_t
     get_node_id() const
     {
       return node_id_;
@@ -115,17 +118,18 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
   Layer< D >::set_status( d );
 
   Position< D > max_point; // for each dimension, the largest value of the positions, aka upper right
-  Position< D > epsilon;   // small value which may be added to layer size ensuring that single-point layers have a size
 
   for ( int d = 0; d < D; ++d )
   {
     this->lower_left_[ d ] = std::numeric_limits< double >::infinity();
     max_point[ d ] = -std::numeric_limits< double >::infinity();
-    epsilon[ d ] = 0.1;
   }
 
-  num_local_nodes_ =
-    std::accumulate( this->node_collection_->begin(), this->node_collection_->end(), 0, []( size_t a, NodeIDTriple b ) {
+  num_local_nodes_ = std::accumulate( this->node_collection_->begin(),
+    this->node_collection_->end(),
+    0,
+    []( size_t a, NodeIDTriple b )
+    {
       const auto node = kernel().node_manager.get_mpi_local_node_or_device_head( b.node_id );
       return node->is_proxy() ? a : a + 1;
     } );
@@ -230,9 +234,21 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
   }
   else
   {
-    this->extent_ = max_point - this->lower_left_;
-    this->extent_ += epsilon * 2;
-    this->lower_left_ -= epsilon;
+    if ( this->node_collection_->size() <= 1 )
+    {
+      throw KernelException( "If only one node is created, 'extent' must be specified." );
+    }
+
+    const auto positional_extent = max_point - this->lower_left_;
+    const auto center = ( max_point + this->lower_left_ ) / 2;
+    for ( int d = 0; d < D; ++d )
+    {
+      // Set extent to be extent of the points, rounded up in each dimension.
+      this->extent_[ d ] = std::ceil( positional_extent[ d ] );
+    }
+
+    // Adjust lower_left relative to the rounded center with the rounded up extent.
+    this->lower_left_ = center - this->extent_ / 2;
   }
 }
 
@@ -252,7 +268,7 @@ FreeLayer< D >::get_status( DictionaryDatum& d ) const
 
 template < int D >
 Position< D >
-FreeLayer< D >::get_position( index lid ) const
+FreeLayer< D >::get_position( size_t lid ) const
 {
   return positions_.at( lid_to_position_id_( lid ) );
 }
@@ -308,13 +324,13 @@ FreeLayer< D >::communicate_positions_( Ins iter, NodeCollectionPTR node_collect
   // Unpack node IDs and coordinates
   for ( ; pos_ptr < pos_end; pos_ptr++ )
   {
-    *iter++ = std::pair< Position< D >, index >( pos_ptr->get_position(), pos_ptr->get_node_id() );
+    *iter++ = std::pair< Position< D >, size_t >( pos_ptr->get_position(), pos_ptr->get_node_id() );
   }
 }
 
 template < int D >
 void
-FreeLayer< D >::insert_global_positions_ntree_( Ntree< D, index >& tree, NodeCollectionPTR node_collection )
+FreeLayer< D >::insert_global_positions_ntree_( Ntree< D, size_t >& tree, NodeCollectionPTR node_collection )
 {
 
   communicate_positions_( std::inserter( tree, tree.end() ), node_collection );
@@ -323,14 +339,14 @@ FreeLayer< D >::insert_global_positions_ntree_( Ntree< D, index >& tree, NodeCol
 // Helper function to compare node IDs used for sorting (Position,node ID) pairs
 template < int D >
 static bool
-node_id_less( const std::pair< Position< D >, index >& a, const std::pair< Position< D >, index >& b )
+node_id_less( const std::pair< Position< D >, size_t >& a, const std::pair< Position< D >, size_t >& b )
 {
   return a.second < b.second;
 }
 
 template < int D >
 void
-FreeLayer< D >::insert_global_positions_vector_( std::vector< std::pair< Position< D >, index > >& vec,
+FreeLayer< D >::insert_global_positions_vector_( std::vector< std::pair< Position< D >, size_t > >& vec,
   NodeCollectionPTR node_collection )
 {
 
@@ -341,8 +357,8 @@ FreeLayer< D >::insert_global_positions_vector_( std::vector< std::pair< Positio
 }
 
 template < int D >
-index
-FreeLayer< D >::lid_to_position_id_( index lid ) const
+size_t
+FreeLayer< D >::lid_to_position_id_( size_t lid ) const
 {
   // If the NodeCollection has proxies, nodes and positions are distributed over MPI processes,
   // and we must iterate only the local nodes. If not, all nodes and positions are on all MPI processes.

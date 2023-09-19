@@ -39,8 +39,8 @@ EventDeliveryManager::send_local_( Node& source, EventT& e, const long lag )
   assert( not source.has_proxies() );
   e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
   e.set_sender( source );
-  const thread t = source.get_thread();
-  const index ldid = source.get_local_device_id();
+  const size_t t = source.get_thread();
+  const size_t ldid = source.get_local_device_id();
   kernel().connection_manager.send_from_device( t, ldid, e );
 }
 
@@ -50,8 +50,8 @@ EventDeliveryManager::send_local_( Node& source, SecondaryEvent& e, const long )
   assert( not source.has_proxies() );
   e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( 1 ) );
   e.set_sender( source );
-  const thread t = source.get_thread();
-  const index ldid = source.get_local_device_id();
+  const size_t t = source.get_thread();
+  const size_t ldid = source.get_local_device_id();
   kernel().connection_manager.send_from_device( t, ldid, e );
 }
 
@@ -66,8 +66,8 @@ template <>
 inline void
 EventDeliveryManager::send< SpikeEvent >( Node& source, SpikeEvent& e, const long lag )
 {
-  const thread tid = source.get_thread();
-  const index source_node_id = source.get_node_id();
+  const size_t tid = source.get_thread();
+  const size_t source_node_id = source.get_node_id();
   e.set_sender_node_id( source_node_id );
   if ( source.has_proxies() )
   {
@@ -101,39 +101,35 @@ EventDeliveryManager::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const
 }
 
 inline void
-EventDeliveryManager::send_remote( thread tid, SpikeEvent& e, const long lag )
+EventDeliveryManager::send_remote( size_t tid, SpikeEvent& e, const long lag )
 {
   // Put the spike in a buffer for the remote machines
-  const index lid = kernel().vp_manager.node_id_to_lid( e.get_sender().get_node_id() );
-  const std::vector< Target >& targets = kernel().connection_manager.get_remote_targets_of_local_node( tid, lid );
+  const size_t lid = kernel().vp_manager.node_id_to_lid( e.get_sender().get_node_id() );
+  const auto& targets = kernel().connection_manager.get_remote_targets_of_local_node( tid, lid );
 
-  for ( std::vector< Target >::const_iterator it = targets.begin(); it != targets.end(); ++it )
+  for ( const auto& target : targets )
   {
-    const thread assigned_tid = ( *it ).get_rank() / kernel().vp_manager.get_num_assigned_ranks_per_thread();
-
     // Unroll spike multiplicity as plastic synapses only handle individual spikes.
-    for ( int i = 0; i < e.get_multiplicity(); ++i )
+    for ( size_t i = 0; i < e.get_multiplicity(); ++i )
     {
-      spike_register_[ tid ][ assigned_tid ][ lag ].push_back( *it );
+      ( *emitted_spikes_register_[ tid ] ).emplace_back( target, lag );
     }
   }
 }
 
 inline void
-EventDeliveryManager::send_off_grid_remote( thread tid, SpikeEvent& e, const long lag )
+EventDeliveryManager::send_off_grid_remote( size_t tid, SpikeEvent& e, const long lag )
 {
   // Put the spike in a buffer for the remote machines
-  const index lid = kernel().vp_manager.node_id_to_lid( e.get_sender().get_node_id() );
-  const std::vector< Target >& targets = kernel().connection_manager.get_remote_targets_of_local_node( tid, lid );
+  const size_t lid = kernel().vp_manager.node_id_to_lid( e.get_sender().get_node_id() );
+  const auto& targets = kernel().connection_manager.get_remote_targets_of_local_node( tid, lid );
 
-  for ( std::vector< Target >::const_iterator it = targets.begin(); it != targets.end(); ++it )
+  for ( const auto& target : targets )
   {
-    const thread assigned_tid = ( *it ).get_rank() / kernel().vp_manager.get_num_assigned_ranks_per_thread();
-
     // Unroll spike multiplicity as plastic synapses only handle individual spikes.
-    for ( int i = 0; i < e.get_multiplicity(); ++i )
+    for ( size_t i = 0; i < e.get_multiplicity(); ++i )
     {
-      off_grid_spike_register_[ tid ][ assigned_tid ][ lag ].push_back( OffGridTarget( *it, e.get_offset() ) );
+      ( *off_grid_emitted_spikes_register_[ tid ] ).emplace_back( target, lag, e.get_offset() );
     }
   }
 }
@@ -141,9 +137,9 @@ EventDeliveryManager::send_off_grid_remote( thread tid, SpikeEvent& e, const lon
 inline void
 EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e )
 {
-  const thread tid = kernel().vp_manager.get_thread_id();
-  const index source_node_id = source.get_node_id();
-  const index lid = kernel().vp_manager.node_id_to_lid( source_node_id );
+  const size_t tid = kernel().vp_manager.get_thread_id();
+  const size_t source_node_id = source.get_node_id();
+  const size_t lid = kernel().vp_manager.node_id_to_lid( source_node_id );
 
   if ( source.has_proxies() )
   {
@@ -151,12 +147,11 @@ EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e )
     // We need to consider every synapse type this event supports to
     // make sure also labeled and connection created by CopyModel are
     // considered.
-    const std::vector< synindex >& supported_syn_ids = e.get_supported_syn_ids();
-    for ( std::vector< synindex >::const_iterator cit = supported_syn_ids.begin(); cit != supported_syn_ids.end();
-          ++cit )
+    const std::set< synindex >& supported_syn_ids = e.get_supported_syn_ids();
+    for ( const auto& syn_id : supported_syn_ids )
     {
       const std::vector< size_t >& positions =
-        kernel().connection_manager.get_secondary_send_buffer_positions( tid, lid, *cit );
+        kernel().connection_manager.get_secondary_send_buffer_positions( tid, lid, syn_id );
 
       for ( size_t i = 0; i < positions.size(); ++i )
       {

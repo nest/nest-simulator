@@ -73,6 +73,11 @@ Sends
 
 SpikeEvent
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: parrot_neuron
+
 EndUserDocs */
 
 class parrot_neuron : public ArchivingNode
@@ -91,24 +96,24 @@ public:
   using Node::receives_signal;
   using Node::sends_signal;
 
-  port send_test_event( Node&, rport, synindex, bool );
-  SignalType sends_signal() const;
-  SignalType receives_signal() const;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
+  SignalType sends_signal() const override;
+  SignalType receives_signal() const override;
 
-  void handle( SpikeEvent& );
-  port handles_test_event( SpikeEvent&, rport );
+  void handle( SpikeEvent& ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_buffers_();
+  void init_buffers_() override;
   void
-  pre_run_hook()
+  pre_run_hook() override
   {
   } // no variables
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   /**
      Buffers and accumulates the number of incoming spikes per time step;
@@ -122,8 +127,8 @@ private:
   Buffers_ B_;
 };
 
-inline port
-parrot_neuron::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+parrot_neuron::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -131,8 +136,8 @@ parrot_neuron::send_test_event( Node& target, rport receptor_type, synindex, boo
   return target.handles_test_event( e, receptor_type );
 }
 
-inline port
-parrot_neuron::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+parrot_neuron::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   // Allow connections to port 0 (spikes to be repeated)
   // and port 1 (spikes to be ignored).

@@ -119,6 +119,11 @@ See also
 
 synapsedict, stdp_synapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: jonke_synapse
+
 EndUserDocs */
 
 
@@ -205,18 +210,22 @@ public:
   typedef JonkeCommonProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
+
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
   jonke_synapse();
 
-
   /**
    * Copy constructor.
    * Needs to be defined properly in order for GenericConnector to work.
    */
   jonke_synapse( const jonke_synapse& ) = default;
+
   jonke_synapse& operator=( const jonke_synapse& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
@@ -250,7 +259,7 @@ public:
    * \param e The event to send
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e, thread t, const JonkeCommonProperties& cp );
+  void send( Event& e, size_t t, const JonkeCommonProperties& cp );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -259,15 +268,15 @@ public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
-    port
-    handles_test_event( SpikeEvent&, rport )
+    size_t
+    handles_test_event( SpikeEvent&, size_t ) override
     {
-      return invalid_port_;
+      return invalid_port;
     }
   };
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
 
@@ -323,6 +332,8 @@ private:
   double t_lastspike_;
 };
 
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties jonke_synapse< targetidentifierT >::properties;
 
 /**
  * Send an event to the receiver of this connection.
@@ -332,7 +343,7 @@ private:
  */
 template < typename targetidentifierT >
 inline void
-jonke_synapse< targetidentifierT >::send( Event& e, thread t, const JonkeCommonProperties& cp )
+jonke_synapse< targetidentifierT >::send( Event& e, size_t t, const JonkeCommonProperties& cp )
 {
   // synapse STDP depressing/facilitation dynamics
   const double t_spike = e.get_stamp().get_ms();
@@ -399,6 +410,7 @@ jonke_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
+  def< double >( d, names::Kplus, Kplus_ );
   def< long >( d, names::size_of, sizeof( *this ) );
 }
 
@@ -408,6 +420,12 @@ jonke_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
+  updateValue< double >( d, names::Kplus, Kplus_ );
+
+  if ( Kplus_ < 0 )
+  {
+    throw BadProperty( "Kplus must be non-negative." );
+  }
 }
 
 template < typename targetidentifierT >

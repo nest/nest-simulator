@@ -65,16 +65,16 @@ nest.ResetKernel()
 
 
 t_sim = 25000.0  # how long we simulate
-n_ex = 16000     # size of the excitatory population
-n_in = 4000      # size of the inhibitory population
-r_ex = 5.0       # mean rate of the excitatory population
-r_in = 20.5      # initial rate of the inhibitory population
-epsc = 45.0      # peak amplitude of excitatory synaptic currents
-ipsc = -45.0     # peak amplitude of inhibitory synaptic currents
-d = 1.0          # synaptic delay
-lower = 15.0     # lower bound of the search interval
-upper = 25.0     # upper bound of the search interval
-prec = 0.01      # how close need the excitatory rates be
+n_ex = 16000  # size of the excitatory population
+n_in = 4000  # size of the inhibitory population
+r_ex = 5.0  # mean rate of the excitatory population
+r_in = 20.5  # initial rate of the inhibitory population
+epsc = 45.0  # peak amplitude of excitatory synaptic currents
+ipsc = -45.0  # peak amplitude of inhibitory synaptic currents
+d = 1.0  # synaptic delay
+lower = 15.0  # lower bound of the search interval
+upper = 25.0  # upper bound of the search interval
+prec = 0.01  # how close need the excitatory rates be
 
 ###############################################################################
 # Third, the nodes are created using ``Create``. We store the returned

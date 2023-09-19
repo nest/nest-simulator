@@ -28,11 +28,11 @@
   configuration process. Please make all changes in config.h.in.
 */
 
-#define NEST_VERSION_STRING "@NEST_VERSION_STRING@"
-#define NEST_VERSION_BRANCH "@NEST_VERSION_BRANCH@"
-#define NEST_VERSION_SUFFIX "@NEST_VERSION_SUFFIX@"
 #define NEST_VERSION "@NEST_VERSION@"
-#define NEST_VERSION_GITHASH "@NEST_VERSION_GITHASH@"
+#cmakedefine NEST_VERSION_GIT "@NEST_VERSION_GIT@"
+#cmakedefine NEST_VERSION_GIT_HASH "@NEST_VERSION_GIT_HASH@"
+#cmakedefine NEST_VERSION_GIT_BRANCH "@NEST_VERSION_GIT_BRANCH@"
+#cmakedefine NEST_VERSION_GIT_REMOTE "@NEST_VERSION_GIT_REMOTE@"
 
 // TODO NEST_HOST and NEST_HOSTVENDOR not available with cmake
 #define NEST_HOST "@NEST_TARGET_TRIPLE@"
@@ -44,6 +44,12 @@
 #define NEST_INSTALL_DATADIR "@CMAKE_INSTALL_DATADIR@"
 #define NEST_INSTALL_DOCDIR "@CMAKE_INSTALL_DOCDIR@"
 #define NEST_INSTALL_LIBDIR "@CMAKE_INSTALL_LIBDIR@/nest"
+
+#define MPIEXEC "@MPIEXEC@"
+#define MPIEXEC_NUMPROC_FLAG "@MPIEXEC_NUMPROC_FLAG@"
+#define MPIEXEC_MAX_NUMPROCS "@MPIEXEC_MAX_NUMPROCS@"
+#define MPIEXEC_PREFLAGS "@MPIEXEC_PREFLAGS@"
+#define MPIEXEC_POSTFLAGS "@MPIEXEC_POSTFLAGS@"
 
 #define NEST_EXITCODE_ABORT @NEST_EXITCODE_ABORT@
 #define NEST_EXITCODE_SEGFAULT @NEST_EXITCODE_SEGFAULT@
@@ -123,7 +129,7 @@
 /* "Define if NAN is available" */
 #cmakedefine HAVE_NAN 1
 
-/* "Define if std::nan(NULL) is available" */
+/* "Define if std::nan(nullptr) is available" */
 #cmakedefine HAVE_STD_NAN 1
 
 /* define for ostream */
@@ -159,6 +165,9 @@
 /* Is SIONlib available? */
 #cmakedefine HAVE_SIONLIB 1
 
+/* Is HDF5 available? */
+#cmakedefine HAVE_HDF5 1
+
 /* Is mpi4py available? */
 #cmakedefine HAVE_MPI4PY 1
 
@@ -172,5 +181,8 @@
 
 /* Whether to enable detailed NEST internal timers */
 #cmakedefine TIMER_DETAILED 1
+
+/* Whether to do full logging */
+#cmakedefine ENABLE_FULL_LOGGING 1
 
 #endif // #ifndef CONFIG_H

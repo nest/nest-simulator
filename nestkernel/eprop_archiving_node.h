@@ -54,7 +54,6 @@ public:
   double get_firing_rate_reg( double time_point );
 
 protected:
-
   void erase_unneeded_update_history();
   void erase_unneeded_eprop_history();
   void erase_unneeded_firing_rate_reg_history();

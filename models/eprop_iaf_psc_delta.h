@@ -201,16 +201,16 @@ private:
 
   struct Parameters_
   {
-    double tau_m_; //!< membrane time constant (ms)
-    double C_m_;   //!< membrane capacitance (pF)
+    double tau_m_;    //!< membrane time constant (ms)
+    double C_m_;      //!< membrane capacitance (pF)
     double c_reg_;    //!< prefactor of firing rate regularization
-    double t_ref_; //!< refractory period (ms)
+    double t_ref_;    //!< refractory period (ms)
     double f_target_; //!< target firing rate of rate regularization (Hz)
-    double E_L_;   //!< leak potential (mV)
-    double I_e_;   //!< external DC current (pA)
-    double V_th_;  //!< spike treshold voltage relative to leak potential (mV)
-    double V_min_; //!< lower membrane voltage bound relative to leak potential (mV)
-    double gamma_; //!< scaling of pseudo-derivative of membrane voltage
+    double E_L_;      //!< leak potential (mV)
+    double I_e_;      //!< external DC current (pA)
+    double V_th_;     //!< spike treshold voltage relative to leak potential (mV)
+    double V_min_;    //!< lower membrane voltage bound relative to leak potential (mV)
+    double gamma_;    //!< scaling of pseudo-derivative of membrane voltage
 
     Parameters_();
 

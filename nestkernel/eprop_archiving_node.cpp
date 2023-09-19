@@ -119,12 +119,13 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
 void
 nest::EpropArchivingNode::write_v_m_pseudo_deriv_to_history( long time_step, double v_m_pseudo_deriv )
 {
-  if ( not n_incoming_ ) return;
+  if ( not n_incoming_ )
+    return;
 
-    const Time time_step_ = Time::step( time_step );
-    const double time_ms = time_step_.get_ms();
+  const Time time_step_ = Time::step( time_step );
+  const double time_ms = time_step_.get_ms();
   eprop_history_.push_back( histentry_eprop_archive( time_ms, v_m_pseudo_deriv, 0.0 ) );
-  }
+}
 
 void
 nest::EpropArchivingNode::write_error_signal_to_history( long time_step, double error_signal )
@@ -144,7 +145,6 @@ nest::EpropArchivingNode::write_learning_signal_to_history( LearningSignalConnec
   std::deque< histentry_eprop_archive >::iterator start;
   std::deque< histentry_eprop_archive >::iterator finish;
 
-  // get part of eprop history to which the learning signal is added
   get_eprop_history( t_ms, &start );
   get_eprop_history( t_ms + Time::delay_steps_to_ms( e.get_delay_steps() ), &finish );
 

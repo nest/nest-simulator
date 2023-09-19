@@ -743,7 +743,7 @@ public:
   virtual double get_tau_s( int comp );
   virtual double get_tau_syn_ex( int comp );
   virtual double get_tau_syn_in( int comp );
-  
+
   virtual double get_leak_propagator() const;
   virtual double get_leak_propagator_complement() const;
   virtual double get_adapt_propagator() const;

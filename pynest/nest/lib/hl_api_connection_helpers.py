@@ -20,8 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-These are helper functions to ease the definition of the
-Connect function.
+These are helper functions to ease the definition of the ``Connect`` function.
 """
 
 import copy
@@ -30,7 +29,6 @@ import numpy as np
 
 from .. import nestkernel_api as nestkernel
 from ..ll_api import *
-from .hl_api_exceptions import NESTError, NESTErrors
 from .hl_api_types import CollocatedSynapses, Mask, NodeCollection, Parameter
 
 __all__ = [
@@ -75,7 +73,7 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, use_connect_ar
     rule = conn_spec["rule"]
     if isinstance(syn_spec, dict):
         if "synapse_model" in syn_spec and not isinstance(syn_spec["synapse_model"], str):
-            raise NESTErrors.NESTError("'synapse_model' must be a string")
+            raise TypeError("'synapse_model' must be specified by a 'str'.")
         for key, value in syn_spec.items():
             # if value is a list, it is converted to a numpy array
             if isinstance(value, (list, tuple)):
@@ -86,63 +84,57 @@ def _process_syn_spec(syn_spec, conn_spec, prelength, postlength, use_connect_ar
                     if rule == "one_to_one":
                         if value.shape[0] != prelength:
                             if use_connect_arrays:
-                                raise nestkernel.NESTError(
-                                    "'{}' has to be an array of dimension {}.".format(key, prelength)
-                                )
+                                raise ValueError(f"'{key}' has to be an array of dimension {prelength}.")
                             else:
-                                raise NESTErrors.NESTError(
-                                    "'{}' has to be an array of dimension {}, a scalar or a dictionary.".format(
-                                        key, prelength
-                                    )
+                                raise ValueError(
+                                    f"'{key}' has to be an array of dimension {prelength}, a scalar or a dictionary."
                                 )
                         else:
                             syn_spec[key] = value
                     elif rule == "fixed_total_number":
                         if "N" in conn_spec and value.shape[0] != conn_spec["N"]:
-                            raise nestkernel.NESTError(
-                                "'{}' has to be an array of dimension {}, a scalar or a dictionary".format(
-                                    key, conn_spec["N"]
-                                )
+                            raise ValueError(
+                                f"'{key}' has to be an array of dimension {conn_spec['N']}, a scalar or a dictionary"
                             )
                         else:
                             syn_spec[key] = value
                     else:
-                        raise NESTErrors.NESTError(
-                            "'{}' has the wrong type. One-dimensional parameter arrays can only be used in "
-                            "conjunction with rule 'one_to_one' or 'fixed_total_number'.".format(key)
+                        raise TypeError(
+                            f"'{key}' has the wrong type. One-dimensional parameter arrays can only be used in "
+                            "conjunction with rule 'one_to_one' or 'fixed_total_number'."
                         )
 
                 elif len(value.shape) == 2:
                     if rule == "all_to_all":
                         if value.shape[0] != postlength or value.shape[1] != prelength:
-                            raise NESTErrors.NESTError(
-                                "'{}' has to be an array of dimension {}x{} (n_target x n_sources), a scalar "
-                                "or a dictionary.".format(key, postlength, prelength)
+                            raise ValueError(
+                                f"'{key}' has to be an array of dimension {postlength}x{prelength} "
+                                "(n_target x n_sources), a scalar or a dictionary."
                             )
                         else:
                             syn_spec[key] = value.flatten()
                     elif rule == "fixed_indegree":
                         indegree = conn_spec["indegree"]
                         if value.shape[0] != postlength or value.shape[1] != indegree:
-                            raise nestkernel.NESTError(
-                                "'{}' has to be an array of dimension {}x{} (n_target x indegree), a scalar "
-                                "or a dictionary.".format(key, postlength, indegree)
+                            raise ValueError(
+                                f"'{key}' has to be an array of dimension {postlength}x{indegree} "
+                                "(n_target x indegree), a scalar or a dictionary."
                             )
                         else:
                             syn_spec[key] = value.flatten()
                     elif rule == "fixed_outdegree":
                         outdegree = conn_spec["outdegree"]
                         if value.shape[0] != prelength or value.shape[1] != outdegree:
-                            raise nestkernel.NESTError(
-                                "'{}' has to be an array of dimension {}x{} (n_sources x outdegree), a scalar "
-                                "or a dictionary.".format(key, prelength, outdegree)
+                            raise ValueError(
+                                f"'{key}' has to be an array of dimension {prelength}x{outdegree} "
+                                "(n_sources x outdegree), a scalar or a dictionary."
                             )
                         else:
                             syn_spec[key] = value.flatten()
                     else:
-                        raise NESTErrors.NESTError(
-                            "'{}' has the wrong type. Two-dimensional parameter arrays can only be used in "
-                            "conjunction with rules 'all_to_all', 'fixed_indegree' or fixed_outdegree'.".format(key)
+                        raise TypeError(
+                            f"'{key}' has the wrong type. Two-dimensional parameter arrays can only be used in "
+                            "conjunction with rules 'all_to_all', 'fixed_indegree' or fixed_outdegree'."
                         )
 
         # check that "synapse_model" is there for use_connect_arrays
@@ -174,7 +166,7 @@ def _process_spatial_projections(conn_spec, syn_spec):
     allowed_syn_spec_keys = ["weight", "delay", "synapse_model", "synapse_label", "receptor_type"]
     for key in conn_spec.keys():
         if key not in allowed_conn_spec_keys:
-            raise ValueError("'{}' is not allowed in conn_spec when connecting with mask or kernel".format(key))
+            raise ValueError(f"'{key}' is not allowed in conn_spec when connecting with mask or kernel")
 
     projections = {}
     projections.update(conn_spec)
@@ -213,7 +205,7 @@ def _process_spatial_projections(conn_spec, syn_spec):
             if "use_on_source" in projections:
                 projections.pop("use_on_source")
     else:
-        raise nestkernel.NESTError(
+        raise ValueError(
             "When using kernel or mask, the only possible connection rules are "
             "'pairwise_bernoulli', 'fixed_indegree', or 'fixed_outdegree'"
         )
@@ -298,9 +290,7 @@ def _process_input_nodes(pre, post, conn_spec):
 
     if not pre_is_nc or not post_is_nc:
         if len(pre) != len(post):
-            raise NESTErrors.ArgumentType(
-                "Connect", "If `pre` or `post` contain non-unique IDs, then they must have the same length."
-            )
+            raise ValueError("If 'pre' or 'post' contain non-unique IDs, then they must have the same length.")
 
         # convert to arrays
         pre = np.asarray(pre)
@@ -308,10 +298,10 @@ def _process_input_nodes(pre, post, conn_spec):
 
         # check array type
         if not issubclass(pre.dtype.type, (int, np.integer)):
-            raise NESTErrors.ArgumentType("Connect", " `pre` IDs should be integers.")
+            raise TypeError("'pre' node IDs must be integers.")
 
         if not issubclass(post.dtype.type, (int, np.integer)):
-            raise NESTErrors.ArgumentType("Connect", " `post` IDs should be integers.")
+            raise TypeError("'post' node IDs must be integers.")
 
         # check dimension
         if not (pre.ndim == 1 and post.ndim == 1):

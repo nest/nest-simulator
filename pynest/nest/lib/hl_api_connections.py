@@ -129,10 +129,6 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
     return_synapsecollection: bool
         Specifies whether or not we should return a :py:class:`.SynapseCollection` of pre and post connections
 
-    Raises
-    ------
-    nestkernel.NESTError
-
     Notes
     -----
     It is possible to connect NumPy arrays of node IDs one-to-one by passing the arrays as `pre` and `post`,

@@ -106,14 +106,11 @@ class SonataNetwork:
 
     def __init__(self, config, sim_config=None):
         if not have_hdf5:
-            msg = "SonataNetwork unavailable because NEST was compiled without HDF5 support"
-            raise nestkernel.NESTError(msg)
+            raise ModuleNotFoundError("'SonataNetwork' unavailable because NEST was compiled without 'HDF5' support")
         if not have_h5py:
-            msg = "SonataNetwork unavailable because h5py is not installed or could not be imported"
-            raise nestkernel.NESTError(msg)
+            raise ModuleNotFoundError("'SonataNetwork' unavailable because 'h5py' could not be loaded.")
         if not have_pandas:
-            msg = "SonataNetwork unavailable because pandas is not installed or could not be imported"
-            raise nestkernel.NESTError(msg)
+            raise ModuleNotFoundError("'SonataNetwork' unavailable because 'pandas' could not be loaded.")
 
         self._node_collections = {}
         self._edges_maps = []
@@ -127,12 +124,10 @@ class SonataNetwork:
             self._conf.update(self._parse_config(sim_config))
 
         if self._conf["target_simulator"] != "NEST":
-            msg = "'target_simulator' in configuration file must be 'NEST'."
-            raise ValueError(msg)
+            raise ValueError("'target_simulator' in configuration file must be 'NEST'.")
 
         if "dt" not in self._conf["run"]:
-            msg = "Time resolution 'dt' must be specified in configuration file"
-            raise ValueError(msg)
+            raise ValueError("Time resolution 'dt' must be specified in configuration file.")
 
         SetKernelStatus({"resolution": self._conf["run"]["dt"]})
 
@@ -155,8 +150,7 @@ class SonataNetwork:
         """
 
         if not isinstance(config, (str, PurePath, Path)):
-            msg = "Path to JSON configuration file must be passed as str, pathlib.PurePath or pathlib.Path"
-            raise TypeError(msg)
+            raise TypeError("Path to JSON configuration file must be passed as 'str' or 'pathlib.Path'.")
 
         # Get absolute path
         conf_path = Path(config).resolve(strict=True)
@@ -220,8 +214,9 @@ class SonataNetwork:
             is_one_model_type = (model_types_arr[0] == model_types_arr).all()
 
             if not is_one_model_type:
-                msg = f"Only one model type per node types CSV file is supported. {csv_fn} contains more than one."
-                raise ValueError(msg)
+                raise ValueError(
+                    f"Only one model type per node types CSV file is supported. {csv_fn} contains more than one."
+                )
 
             model_type = model_types_arr[0]
 
@@ -230,8 +225,7 @@ class SonataNetwork:
             elif model_type == "virtual":
                 self._create_spike_train_injectors(nodes_conf)
             else:
-                msg = f"Model type '{model_type}' in {csv_fn} is not supported by NEST."
-                raise ValueError(msg)
+                raise ValueError(f"Model type '{model_type}' in {csv_fn} is not supported by NEST.")
 
         self._are_nodes_created = True
 
@@ -321,27 +315,25 @@ class SonataNetwork:
                         break  # Break once we found the matching population
 
                 if input_file is None:
-                    msg = f"Could not find an input file for population {pop_name} in config file."
-                    raise ValueError(msg)
+                    raise ValueError(f"Could not find an input file for population {pop_name} in config file.")
 
                 with h5py.File(input_file, "r") as input_h5f:
                     # Deduce the HDF5 file structure
                     all_groups = all([isinstance(g, h5py.Group) for g in input_h5f["spikes"].values()])
                     any_groups = any([isinstance(g, h5py.Group) for g in input_h5f["spikes"].values()])
                     if (all_groups or any_groups) and not (all_groups and any_groups):
-                        msg = (
-                            "Unsupported HDF5 structure; groups and "
-                            "datasets cannot be on the same hierarchical "
-                            f"level in input spikes file {input_file}"
+                        raise ValueError(
+                            "Unsupported HDF5 structure; groups and datasets cannot be on the same hierarchical "
+                            f"level in input spikes file {input_file}."
                         )
-                        raise ValueError(msg)
 
                     if all_groups:
                         if pop_name in input_h5f["spikes"].keys():
                             spikes_grp = input_h5f["spikes"][pop_name]
                         else:
-                            msg = f"Did not find a matching HDF5 group name for population {pop_name} in {input_file}"
-                            raise ValueError(msg)
+                            raise ValueError(
+                                f"Did not find a matching HDF5 group name for population {pop_name} in {input_file}."
+                            )
                     else:
                         spikes_grp = input_h5f["spikes"]
 
@@ -350,8 +342,7 @@ class SonataNetwork:
                     elif "node_ids" in spikes_grp:
                         node_ids = spikes_grp["node_ids"][:]
                     else:
-                        msg = f"No dataset called 'gids' or 'node_ids' in {input_file}"
-                        raise ValueError(msg)
+                        raise ValueError(f"No dataset called 'gids' or 'node_ids' in {input_file}.")
 
                     timestamps = spikes_grp["timestamps"][:]
 
@@ -390,15 +381,12 @@ class SonataNetwork:
         """
 
         if "model_template" not in nodes_df.columns:
-            msg = f"Missing the required 'model_template' header specifying NEST neuron models in {csv_fn}."
-            raise ValueError(msg)
+            raise ValueError(f"Missing the required 'model_template' header specifying NEST neuron models in {csv_fn}.")
 
         if "dynamics_params" not in nodes_df.columns:
-            msg = (
-                "Missing the required 'dynamics_params' header specifying "
-                f".json files with model parameters in {csv_fn}"
+            raise ValueError(
+                f"Missing the required 'dynamics_params' header specifying .json files with model parameters in {csv_fn}."
             )
-            raise ValueError(msg)
 
         nodes_df["model_template"] = nodes_df["model_template"].str.replace("nest:", "")
 
@@ -430,8 +418,7 @@ class SonataNetwork:
         """
 
         if not self._are_nodes_created:
-            msg = "The SONATA network nodes must be created before any connections can be made"
-            raise nestkernel.NESTError(msg)
+            raise RuntimeError("The SONATA network nodes must be created before any connections can be made.")
 
         if hdf5_hyperslab_size is None:
             hdf5_hyperslab_size = self._hyperslab_size_default
@@ -448,9 +435,10 @@ class SonataNetwork:
             except BlockingIOError as err:
                 raise BlockingIOError(f"{err.strerror} for {os.path.realpath(d['edges_file'])}") from None
 
-        sps(graph_specs)
-        sps(hdf5_hyperslab_size)
-        sr("ConnectSonata")
+        # TODO: PYNEST-NG
+        # sps(graph_specs)
+        # sps(hdf5_hyperslab_size)
+        # sr("ConnectSonata")
 
         self._is_network_built = True
 
@@ -519,8 +507,9 @@ class SonataNetwork:
             edges_df = pd.read_csv(edges_csv_fn, sep=r"\s+")
 
             if "model_template" not in edges_df.columns:
-                msg = f"Missing the required 'model_template' header specifying NEST synapse models in {edges_csv_fn}."
-                raise ValueError(msg)
+                raise ValueError(
+                    f"Missing the required 'model_template' header specifying NEST synapse models in {edges_csv_fn}."
+                )
 
             # Rename column labels to names used by NEST. Note that rename
             # don't throw an error for extra labels (we want this behavior)
@@ -644,16 +633,14 @@ class SonataNetwork:
 
         # Verify that network is built
         if not self._is_network_built:
-            msg = "The SONATA network must be built before a simulation can be done"
-            raise nestkernel.NESTError(msg)
+            raise RuntimeError("The SONATA network must be built before a simulation can be done.")
 
         if "tstop" in self._conf["run"]:
             T_sim = self._conf["run"]["tstop"]
         elif "duration" in self._conf["run"]:
             T_sim = self._conf["run"]["duration"]
         else:
-            msg = "Simulation time 'tstop' or 'duration' must be specified in configuration file"
-            raise ValueError(msg)
+            raise ValueError("Simulation time 'tstop' or 'duration' must be specified in configuration file.")
 
         Simulate(T_sim)
 

@@ -51,7 +51,6 @@ except ImportError:
 sys.setdlopenflags(os.RTLD_NOW | os.RTLD_GLOBAL)
 
 from . import nestkernel_api as nestkernel  # noqa
-from .lib.hl_api_exceptions import NESTError, NESTErrors
 
 __all__ = [
     "set_communicator",
@@ -72,11 +71,11 @@ def set_communicator(comm):
 
     Raises
     ------
-    nestkernel.NESTError
+    ModuleNotFoundError
     """
 
     if "mpi4py" not in sys.modules:
-        raise NESTError("set_communicator: " "mpi4py not loaded.")
+        raise ModuleNotFoundError("No module named 'mpi4py'.")
 
     # TODO-PYNEST-NG: set_communicator
     # engine.set_communicator(comm)
@@ -141,13 +140,13 @@ def init(argv):
 
     Raises
     ------
-    nestkernel.NESTError.PyNESTError
+    RuntimeError
     """
 
     global initialized
 
     if initialized:
-        raise NESTErrors.PyNESTError("NEST already initialized.")
+        raise RuntimeError("NEST is already initialized.")
 
     # Some commandline arguments of NEST and Python have the same
     # name, but different meaning. To avoid unintended behavior, we

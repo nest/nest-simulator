@@ -39,30 +39,37 @@ if ( HAVE_PYTHON )
 
   # TODO PYNEST NG: Add models, once the refacoring of the module system is done.
   target_link_libraries( nestkernel_api
-      nestutil nestkernel
-      ${EXTERNAL_MODULE_LIBRARIES}
-      )
+    nestutil nestkernel
+    ${EXTERNAL_MODULE_LIBRARIES}
+  )
+
+  if ( APPLE )
+    set_target_properties( nestkernel_api PROPERTIES LINK_FLAGS "-undefined dynamic_lookup" )
+  else ()
+    set_target_properties( nestkernel_api PROPERTIES LINK_FLAGS "-Wl,--no-as-needed" )
+    target_link_libraries( nestkernel_api ${Python_LIBRARIES} )
+  endif ()
 
   target_include_directories( nestkernel_api PRIVATE
-      ${PROJECT_BINARY_DIR}/libnestutil
-      ${PROJECT_SOURCE_DIR}/libnestutil
-      ${PROJECT_SOURCE_DIR}/pynest
-      ${PROJECT_SOURCE_DIR}/nestkernel
-      ${PROJECT_SOURCE_DIR}/nestkernel/spatial
-      ${PROJECT_SOURCE_DIR}/thirdparty
-      ${PROJECT_SOURCE_DIR}/models
-      ${Python_INCLUDE_DIRS}
-      )
+    ${PROJECT_BINARY_DIR}/libnestutil
+    ${PROJECT_BINARY_DIR}/pynest
+    ${PROJECT_SOURCE_DIR}/libnestutil
+    ${PROJECT_SOURCE_DIR}/pynest
+    ${PROJECT_SOURCE_DIR}/nestkernel
+    ${PROJECT_SOURCE_DIR}/nestkernel/spatial
+    ${PROJECT_SOURCE_DIR}/thirdparty
+    ${PROJECT_SOURCE_DIR}/models
+    ${Python_INCLUDE_DIRS}
+  )
 
   target_compile_definitions( nestkernel_api PRIVATE
-      -D_IS_PYNEST
-      )
+    -D_IS_PYNEST
+  )
 
-  install(DIRECTORY  nest/ ${PROJECT_BINARY_DIR}/pynest/nest/
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest
-      PATTERN "versionchecker.py.in" EXCLUDE
+  install( DIRECTORY nest/ ${PROJECT_BINARY_DIR}/pynest/nest/
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest
+    PATTERN "versionchecker.py.in" EXCLUDE
   )
 
   install( TARGETS nestkernel_api DESTINATION ${PYEXECDIR}/nest/ )
-
 endif ()

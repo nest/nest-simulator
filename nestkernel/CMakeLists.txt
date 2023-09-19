@@ -116,35 +116,39 @@ set ( nestkernel_sources
 )
 
 
-if(HAVE_SIONLIB)
-  set(nestkernel_sources
+if ( HAVE_SIONLIB )
+  set( nestkernel_sources
     ${nestkernel_sources}
     recording_backend_sionlib.h recording_backend_sionlib.cpp
   )
-endif()
+endif ()
 
-if(HAVE_MPI)
+if ( HAVE_MPI )
   set(nestkernel_sources
     ${nestkernel_sources}
     recording_backend_mpi.h recording_backend_mpi.cpp
     stimulation_backend_mpi.h stimulation_backend_mpi.cpp
   )
-endif()
+endif ()
 
 # Prevent problems with Conda path substitution (see #2348)
-set_source_files_properties(dynamicloader.cpp PROPERTIES COMPILE_OPTIONS "-O0")
+set_source_files_properties( dynamicloader.cpp PROPERTIES COMPILE_OPTIONS "-O0" )
 
-add_library(nestkernel STATIC ${nestkernel_sources})
+add_library( nestkernel STATIC ${nestkernel_sources} )
 
-if(APPLE)
-  set_target_properties(nestkernel PROPERTIES LINK_FLAGS "-Wl,-undefined -Wl,dynamic_lookup")
-endif()
+if ( APPLE )
+  set_target_properties( nestkernel PROPERTIES LINK_FLAGS "-Wl,-undefined -Wl,dynamic_lookup" )
+endif ()
 
-set_target_properties(nestkernel PROPERTIES POSITION_INDEPENDENT_CODE ON)
+set_target_properties( nestkernel PROPERTIES POSITION_INDEPENDENT_CODE ON )
 
 target_link_libraries( nestkernel
   nestutil models ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES} ${HDF5_LIBRARIES}
 )
+
+if ( AUTO_OPENMP_FOUND )
+  target_link_libraries( nestkernel PUBLIC OpenMP::OpenMP_CXX )
+endif ()
 
 target_include_directories( nestkernel PRIVATE
   ${PROJECT_SOURCE_DIR}/thirdparty
@@ -155,11 +159,7 @@ target_include_directories( nestkernel PRIVATE
   ${PROJECT_SOURCE_DIR}/nestkernel/spatial
 )
 
-FILTER_HEADERS("${nestkernel_sources}" install_headers)
-install(FILES ${install_headers}
+FILTER_HEADERS( "${nestkernel_sources}" install_headers )
+install( FILES ${install_headers}
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest
 )
-
-
-
-

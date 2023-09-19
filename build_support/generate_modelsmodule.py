@@ -275,9 +275,7 @@ def generate_modelsmodule():
                     file.write(f'#include "{fname}"\n')
                 file.write(end_guard(guards))
 
-        file.write(
-            dedent("\nvoid\nnest::register_stuff()\n{\n")
-        )
+        file.write(dedent("\nvoid\nnest::register_stuff()\n{\n"))
 
         conn_reg = '  register_connection_model< {model} >( "{model}" );\n'
         node_reg = '  kernel().model_manager.register_node_model< {model} >( "{model}" );\n'

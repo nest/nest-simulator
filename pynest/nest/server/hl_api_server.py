@@ -22,23 +22,22 @@
 import ast
 import importlib
 import inspect
-import logging
 import io
+import logging
 import os
 import sys
 import time
 import traceback
 from copy import deepcopy
 
+import flask
 import nest
 import RestrictedPython
-import flask
 from flask import Flask, jsonify, request
-from flask_cors import CORS
 from flask.logging import default_handler
+from flask_cors import CORS
 from werkzeug.exceptions import abort
 from werkzeug.wrappers import Response
-
 
 # This ensures that the logging information shows up in the console running the server,
 # even when Flask's event loop is running.
@@ -113,10 +112,10 @@ def _setup_auth():
     try:
         # Import the modules inside of the auth function, so that if they fail the auth
         # returns a forbidden error.
-        import inspect  # noqa
         import gc  # noqa
-        import time  # noqa
         import hashlib  # noqa
+        import inspect  # noqa
+        import time  # noqa
 
         # Find our reference to the current function in the garbage collector.
         frame = inspect.currentframe()

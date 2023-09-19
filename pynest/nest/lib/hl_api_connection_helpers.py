@@ -166,7 +166,7 @@ def _process_spatial_projections(conn_spec, syn_spec):
     allowed_syn_spec_keys = ["weight", "delay", "synapse_model", "synapse_label", "receptor_type"]
     for key in conn_spec.keys():
         if key not in allowed_conn_spec_keys:
-            raise ValueError("'{}' is not allowed in conn_spec when connecting with mask or kernel".format(key))
+            raise ValueError(f"'{key}' is not allowed in conn_spec when connecting with mask or kernel")
 
     projections = {}
     projections.update(conn_spec)

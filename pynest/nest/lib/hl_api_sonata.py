@@ -515,6 +515,9 @@ class SonataNetwork:
                 inplace=True,
             )
 
+            # Cast edge type ids from int to str, needed for kernel dictionary
+            edges_df["edge_type_id"] = edges_df["edge_type_id"].astype("string")
+
             edges_df_cols = set(edges_df.columns)
 
             # If 'dynamics_params' is specified, additional synapse
@@ -558,7 +561,6 @@ class SonataNetwork:
                 # must iterate each row in the CSV table. For each row,
                 # we extract the syn_spec associated with the specified model
 
-                # TODO: new dictionary class requires cast edge_type_id key to str
                 syn_specs = {}
                 idx_map = {k: i for i, k in enumerate(list(edges_df), start=1)}
 

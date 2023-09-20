@@ -479,8 +479,7 @@ def llapi_connect_layers(NodeCollectionObject pre, NodeCollectionObject post, ob
 
 
 def llapi_connect_sonata(object graph_specs, long hyperslab_size):
-    dd = pydict_to_dictionary(graph_specs)
-    #connect_sonata(pydict_to_dictionary(graph_specs), hyperslab_size)
+    connect_sonata(pydict_to_dictionary(graph_specs), hyperslab_size)
 
 
 def llapi_create_mask(object specs):

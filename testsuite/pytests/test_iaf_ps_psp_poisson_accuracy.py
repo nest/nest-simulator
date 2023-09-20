@@ -96,7 +96,7 @@ def spiketrain_response(spiketrain):
 def test_poisson_spikes_different_stepsizes(h):
     nest.ResetKernel()
 
-    nest.set(tics_per_ms=2**10, resolution=2**h)
+    nest.set(tics_per_ms=2**10, resolution=float(2**h))
 
     pg = nest.Create("poisson_generator_ps", params={"rate": 16000.0})
 

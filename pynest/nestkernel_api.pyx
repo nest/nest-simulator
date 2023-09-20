@@ -219,7 +219,6 @@ cdef dictionary pydict_to_dictionary(object py_dict) except *:  # Adding "except
         elif type(value) is list and isinstance(value[0], (list, tuple)):
             cdict[pystr_to_string(key)] = list_of_list_to_doublevec(value)
         elif type(value) is list and isinstance(value[0], numpy.ndarray):
-            print("list of np arrays")
             cdict[pystr_to_string(key)] = list_of_list_to_doublevec(value)
         elif type(value) is list and type(value[0]) is str:
             cdict[pystr_to_string(key)] = pylist_to_stringvec(value)
@@ -475,7 +474,6 @@ def llapi_disconnect_syncoll(object conns):
 
 
 def llapi_connect_layers(NodeCollectionObject pre, NodeCollectionObject post, object projections):
-    print("### 9", projections)
     connect_layers(pre.thisptr, post.thisptr, pydict_to_dictionary(projections))
 
 

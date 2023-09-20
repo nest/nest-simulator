@@ -19,4 +19,4 @@ based on the ``stdp_dopamine_synapse`` and temporal difference learning
 is implemented, see ``networks.py`` for details.
 
 The learning progress and resulting game can be visualized with the
-``generate_gif.py`` script.
+``generate_gif.py`` script; this requires the ``imageio`` package.

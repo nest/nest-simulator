@@ -20,7 +20,7 @@
 cmake_minimum_required( VERSION 3.19 )
 
 # add cmake modules: for all `include(...)` first look here
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
 
 project( nest CXX C )
 
@@ -29,7 +29,7 @@ set( CMAKE_CXX_STANDARD_REQUIRED True )
 
 set( NEST_USER_EMAIL "users@nest-simulator.org" )
 
-include(ColorMessages)
+include( ColorMessages )
 
 # check if the given CMAKE_INSTALL_PREFIX is not empty
 if("${CMAKE_INSTALL_PREFIX}" STREQUAL "")
@@ -37,20 +37,20 @@ if("${CMAKE_INSTALL_PREFIX}" STREQUAL "")
 endif()
 
 # handle relative installation prefixes
-if(NOT IS_ABSOLUTE ${CMAKE_INSTALL_PREFIX})
-  # convert relative path to absolute path
-  get_filename_component(absPath ${CMAKE_INSTALL_PREFIX} ABSOLUTE BASE_DIR ${CMAKE_BINARY_DIR})
-  set(CMAKE_INSTALL_PREFIX ${absPath})
-  printInfo("Relative CMAKE_INSTALL_PREFIX has been converted to absolute path ${CMAKE_INSTALL_PREFIX}")
+if( NOT IS_ABSOLUTE ${CMAKE_INSTALL_PREFIX})
+    # convert relative path to absolute path
+    get_filename_component(absPath ${CMAKE_INSTALL_PREFIX} ABSOLUTE BASE_DIR ${CMAKE_BINARY_DIR})
+    set(CMAKE_INSTALL_PREFIX ${absPath})
+    printInfo("Relative CMAKE_INSTALL_PREFIX has been converted to absolute path ${CMAKE_INSTALL_PREFIX}")
 endif()
 
-# ###############################################################################
-# #################         All User Defined options           ##################
-# ###############################################################################
+################################################################################
+##################         All User Defined options           ##################
+################################################################################
 
 # use Python to build PyNEST
-set(with-python ON CACHE STRING "Build PyNEST [default=ON].")
-option(cythonize-pynest "Use Cython to cythonize pynestkernel.pyx [default=ON]. If OFF, PyNEST has to be build from a pre-cythonized pynestkernel.pyx." ON)
+set( with-python ON CACHE STRING "Build PyNEST [default=ON]." )
+option( cythonize-pynest "Use Cython to cythonize pynestkernel.pyx [default=ON]. If OFF, PyNEST has to be build from a pre-cythonized pynestkernel.pyx." ON )
 
 # select parallelization scheme
 set( with-mpi OFF CACHE STRING "Build with MPI parallelization [default=OFF]." )
@@ -85,8 +85,8 @@ set( with-includes OFF CACHE STRING "Add additional include paths [default=OFF].
 set( with-defines OFF CACHE STRING "Additional defines, e.g. '-DXYZ=1' [default=OFF]. Separate multiple defines by ';'." )
 
 # documentation build configuration
-set(with-userdoc OFF CACHE STRING "Build user documentation [default=OFF]")
-set(with-devdoc OFF CACHE STRING "Build developer documentation [default=OFF]")
+set( with-userdoc OFF CACHE STRING "Build user documentation [default=OFF]")
+set( with-devdoc OFF CACHE STRING "Build developer documentation [default=OFF]")
 
 set( with-full-logging OFF CACHE STRING "Write debug output to 'dump_<num_ranks>_<rank>.log' file [default=OFF]")
 
@@ -98,38 +98,39 @@ set( with-full-logging OFF CACHE STRING "Write debug output to 'dump_<num_ranks>
 # GNUInstallDirs (included after calling nest_process_with_python()), but the
 # CMAKE_INSTALL_DATADIR is usually just CMAKE_INSTALL_DATAROOTDIR
 # and we want it to be CMAKE_INSTALL_DATAROOTDIR/PROJECT_NAME
-set(CMAKE_INSTALL_DATADIR "share/${PROJECT_NAME}" CACHE STRING "Relative directory, where NEST installs its data (share/nest)")
+set( CMAKE_INSTALL_DATADIR "share/${PROJECT_NAME}" CACHE STRING "Relative directory, where NEST installs its data (share/nest)" )
 
-# ###############################################################################
-# #################           Find utility programs            ##################
-# ###############################################################################
-find_program(SED NAMES sed gsed)
+################################################################################
+##################           Find utility programs            ##################
+################################################################################
 
-# ###############################################################################
-# #################                Load includes               ##################
-# ###############################################################################
+find_program( SED NAMES sed gsed )
+
+################################################################################
+##################                Load includes               ##################
+################################################################################
 
 # This include checks the symbols, etc.
-include(CheckIncludesSymbols)
+include( CheckIncludesSymbols )
 
 # These includes publish function names.
-include(ProcessOptions)
-include(WriteStaticModules_h)
-include(CheckExtraCompilerFeatures)
-include(ConfigureSummary)
-include(GetTriple)
+include( ProcessOptions )
+include( WriteStaticModules_h )
+include( CheckExtraCompilerFeatures )
+include( ConfigureSummary )
+include( GetTriple )
 
 # get triples arch-vendor-os
-get_host_triple(NEST_HOST_TRIPLE NEST_HOST_ARCH NEST_HOST_VENDOR NEST_HOST_OS)
-get_target_triple(NEST_TARGET_TRIPLE NEST_TARGET_ARCH NEST_TARGET_VENDOR NEST_TARGET_OS)
+get_host_triple( NEST_HOST_TRIPLE NEST_HOST_ARCH NEST_HOST_VENDOR NEST_HOST_OS )
+get_target_triple( NEST_TARGET_TRIPLE NEST_TARGET_ARCH NEST_TARGET_VENDOR NEST_TARGET_OS )
 
 # Process the command line arguments
 # IMPORTANT: Do not change the order of nest_process_with_python() and include( GNUInstallDirs )!
-# If NEST is built with Python, nest_process_with_python() defaults CMAKE_INSTALL_PREFIX
-# to the active virtual Python environment. This effects the inclusion
-# of GNUInstallDirs defining CMAKE_INSTALL_<dir> and CMAKE_INSTALL_FULL_<dir>.
+#            If NEST is built with Python, nest_process_with_python() defaults CMAKE_INSTALL_PREFIX
+#            to the active virtual Python environment. This effects the inclusion
+#            of GNUInstallDirs defining CMAKE_INSTALL_<dir> and CMAKE_INSTALL_FULL_<dir>.
 nest_process_with_python()
-include(GNUInstallDirs)
+include( GNUInstallDirs )
 nest_post_process_with_python()
 nest_process_with_intel_compiler_flags()
 nest_process_with_warning()
@@ -166,8 +167,8 @@ nest_process_with_optimize()
 nest_process_with_debug()
 
 nest_get_color_flags()
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${NEST_C_COLOR_FLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${NEST_CXX_COLOR_FLAGS}")
+set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${NEST_C_COLOR_FLAGS}" )
+set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${NEST_CXX_COLOR_FLAGS}" )
 
 # TODO PYNEST-NG
 # nest_write_static_module_header( "${PROJECT_BINARY_DIR}/nest/static_modules.h" )
@@ -191,17 +192,17 @@ get_version_info()
 printInfo("Done configuring NEST version: ${NEST_VERSION}")
 
 enable_testing()
-set(TEST_OPTS "")
+set( TEST_OPTS "" )
 
-if(HAVE_PYTHON)
-  set(TEST_OPTS "${TEST_OPTS};--with-python=${PYTHON}")
-endif()
+if ( HAVE_PYTHON )
+  set( TEST_OPTS "${TEST_OPTS};--with-python=${PYTHON}" )
+endif ()
 
-if(HAVE_MUSIC)
-  set(TEST_OPTS "${TEST_OPTS};--with-music=${MUSIC_EXECUTABLE}")
-endif()
+if ( HAVE_MUSIC )
+  set( TEST_OPTS "${TEST_OPTS};--with-music=${MUSIC_EXECUTABLE}" )
+endif ()
 
-add_custom_target(installcheck
+add_custom_target( installcheck
   COMMAND ${CMAKE_COMMAND} -E env
     ${CMAKE_INSTALL_FULL_DATADIR}/testsuite/do_tests.sh
 	--prefix=${CMAKE_INSTALL_PREFIX}
@@ -212,66 +213,64 @@ add_custom_target(installcheck
 
 # N.B. to ensure "make install" is always run before "make installcheck", we
 # would ideally like to add:
-# add_dependencies( installcheck install )
+#   add_dependencies( installcheck install )
 # However, an issue in CMake at time of writing (May 2020, see
 # https://gitlab.kitware.com/cmake/cmake/-/issues/8438) precludes us from doing
 # so.
 
-# ###############################################################################
-# #################        Define Subdirectories here          ##################
-# ###############################################################################
-add_subdirectory(doc)
-add_subdirectory(bin)
-add_subdirectory(examples)
-add_subdirectory(build_support)
-add_subdirectory(libnestutil)
-add_subdirectory(models)
-add_subdirectory(nestkernel)
-add_subdirectory(thirdparty)
-add_subdirectory(testsuite)
+################################################################################
+##################        Define Subdirectories here          ##################
+################################################################################
 
-if(HAVE_PYTHON)
-  add_subdirectory(pynest)
-endif()
+add_subdirectory( doc )
+add_subdirectory( bin )
+add_subdirectory( examples )
+add_subdirectory( build_support )
+add_subdirectory( libnestutil )
+add_subdirectory( models )
+add_subdirectory( nestkernel )
+add_subdirectory( thirdparty )
+add_subdirectory( testsuite )
+if ( HAVE_PYTHON )
+  add_subdirectory( pynest )
+endif ()
 
-# ###############################################################################
-# #################           Summary of flags                 ##################
-# ###############################################################################
+################################################################################
+##################           Summary of flags                 ##################
+################################################################################
 
 # used in nest-config
 
 # all compiler flags
-if(NOT CMAKE_BUILD_TYPE OR "${CMAKE_BUILD_TYPE}" STREQUAL "None")
-  set(ALL_CFLAGS "${CMAKE_C_FLAGS}")
-  set(ALL_CXXFLAGS "${CMAKE_CXX_FLAGS}")
-elseif(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-  set(ALL_CFLAGS "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_DEBUG}")
-  set(ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}")
-elseif(${CMAKE_BUILD_TYPE} STREQUAL "Release")
-  set(ALL_CFLAGS "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_RELEASE}")
-  set(ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}")
-elseif(${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
-  set(ALL_CFLAGS "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_RELWITHDEBINFO}")
-  set(ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
-elseif(${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel")
-  set(ALL_CFLAGS "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_MINSIZEREL}")
-  set(ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_MINSIZEREL}")
-else()
-  printError("Unknown build type: '${CMAKE_BUILD_TYPE}'")
-endif()
-
-if(with-defines)
-  foreach(def ${with-defines})
-    set(ALL_CFLAGS "${def} ${ALL_CFLAGS}")
-    set(ALL_CXXFLAGS "${def} ${ALL_CXXFLAGS}")
-  endforeach()
-endif()
-
+if ( NOT CMAKE_BUILD_TYPE OR "${CMAKE_BUILD_TYPE}" STREQUAL "None" )
+  set( ALL_CFLAGS "${CMAKE_C_FLAGS}" )
+  set( ALL_CXXFLAGS "${CMAKE_CXX_FLAGS}" )
+elseif ( ${CMAKE_BUILD_TYPE} STREQUAL "Debug" )
+  set( ALL_CFLAGS "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_DEBUG}" )
+  set( ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}" )
+elseif ( ${CMAKE_BUILD_TYPE} STREQUAL "Release" )
+  set( ALL_CFLAGS "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_RELEASE}" )
+  set( ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}" )
+elseif ( ${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo" )
+  set( ALL_CFLAGS "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_RELWITHDEBINFO}" )
+  set( ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELWITHDEBINFO}" )
+elseif ( ${CMAKE_BUILD_TYPE} STREQUAL "MinSizeRel" )
+  set( ALL_CFLAGS "${CMAKE_C_FLAGS}   ${CMAKE_C_FLAGS_MINSIZEREL}" )
+  set( ALL_CXXFLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_MINSIZEREL}" )
+else ()
+  printError( "Unknown build type: '${CMAKE_BUILD_TYPE}'" )
+endif ()
+if ( with-defines )
+  foreach ( def ${with-defines} )
+    set( ALL_CFLAGS "${def} ${ALL_CFLAGS}" )
+    set( ALL_CXXFLAGS "${def} ${ALL_CXXFLAGS}" )
+  endforeach ()
+endif ()
 # add sionlib defines
-foreach(def ${SIONLIB_DEFINES})
-  set(ALL_CFLAGS "${ALL_CFLAGS} ${def}")
-  set(ALL_CXXFLAGS "${ALL_CXXFLAGS} ${def}")
-endforeach()
+foreach ( def ${SIONLIB_DEFINES} )
+    set( ALL_CFLAGS "${ALL_CFLAGS} ${def}" )
+    set( ALL_CXXFLAGS "${ALL_CXXFLAGS} ${def}" )
+endforeach ()
 
 # libraries required to link extension modules
 set( MODULE_LINK_LIBS
@@ -282,78 +281,70 @@ set( MODULE_LINK_LIBS
   "${MUSIC_LIBRARIES}"
   "${MPI_CXX_LIBRARIES}"
   "${SIONLIB_LIBRARIES}"
-  "${BOOST_LIBRARIES}"
-  "${HDF5_LIBRARIES}")
+  "${BOOST_LIBRARIES}" )
 
-if(with-libraries)
-  set(MODULE_LINK_LIBS "${MODULE_LINK_LIBS};${with-libraries}")
-endif()
-
-string(REPLACE ";" " " MODULE_LINK_LIBS "${MODULE_LINK_LIBS}")
+if ( with-libraries )
+  set( MODULE_LINK_LIBS "${MODULE_LINK_LIBS};${with-libraries}" )
+endif ()
+string( REPLACE ";" " " MODULE_LINK_LIBS "${MODULE_LINK_LIBS}" )
 
 # libraries requied to link NEST
-set(ALL_LIBS
+set( ALL_LIBS
   "-lnest"
-  ${MODULE_LINK_LIBS})
+  ${MODULE_LINK_LIBS} )
+
 
 # all includes
-set(ALL_INCLUDES_tmp
+set( ALL_INCLUDES_tmp
   "${CMAKE_INSTALL_FULL_INCLUDEDIR}/nest"
   "${LTDL_INCLUDE_DIRS}"
   "${GSL_INCLUDE_DIRS}"
   "${LIBNEUROSIM_INCLUDE_DIRS}"
   "${MUSIC_INCLUDE_DIRS}"
   "${MPI_CXX_INCLUDE_PATH}"
-  "${BOOST_INCLUDE_DIR}")
-set(ALL_INCLUDES "")
+  "${BOOST_INCLUDE_DIR}" )
+set( ALL_INCLUDES "" )
+foreach ( INC ${ALL_INCLUDES_tmp} ${with-includes} )
+  if ( INC AND NOT INC STREQUAL "" )
+    set( ALL_INCLUDES "${ALL_INCLUDES} -I${INC}" )
+  endif ()
+endforeach ()
+set( ALL_INCLUDES "${ALL_INCLUDES} ${SIONLIB_INCLUDE}" )
 
-foreach(INC ${ALL_INCLUDES_tmp} ${with-includes})
-  if(INC AND NOT INC STREQUAL "")
-    set(ALL_INCLUDES "${ALL_INCLUDES} -I${INC}")
-  endif()
-endforeach()
-
-set(ALL_INCLUDES "${ALL_INCLUDES} ${SIONLIB_INCLUDE}")
-
-# ###############################################################################
-# #################           File generation here             ##################
-# ###############################################################################
-configure_file(
-  "${PROJECT_SOURCE_DIR}/libnestutil/config.h.in"
-  "${PROJECT_BINARY_DIR}/libnestutil/config.h" @ONLY
-)
+################################################################################
+##################           File generation here             ##################
+################################################################################
 
 configure_file(
-  "${PROJECT_SOURCE_DIR}/pynest/setup.py.in"
-  "${PROJECT_BINARY_DIR}/pynest/setup.py" @ONLY
+    "${PROJECT_SOURCE_DIR}/libnestutil/config.h.in"
+    "${PROJECT_BINARY_DIR}/libnestutil/config.h" @ONLY
 )
 
 configure_file(
-  "${PROJECT_SOURCE_DIR}/bin/nest-config.in"
-  "${PROJECT_BINARY_DIR}/bin/nest-config" @ONLY
+    "${PROJECT_SOURCE_DIR}/pynest/setup.py.in"
+    "${PROJECT_BINARY_DIR}/pynest/setup.py" @ONLY
 )
 
 configure_file(
-  "${PROJECT_SOURCE_DIR}/bin/nest_vars.sh.in"
-  "${PROJECT_BINARY_DIR}/bin/nest_vars.sh" @ONLY
+    "${PROJECT_SOURCE_DIR}/bin/nest-config.in"
+    "${PROJECT_BINARY_DIR}/bin/nest-config" @ONLY
 )
 
 configure_file(
-  "${PROJECT_SOURCE_DIR}/doc/fulldoc.conf.in"
-  "${PROJECT_BINARY_DIR}/doc/fulldoc.conf" @ONLY
+    "${PROJECT_SOURCE_DIR}/bin/nest_vars.sh.in"
+    "${PROJECT_BINARY_DIR}/bin/nest_vars.sh" @ONLY
 )
 
 configure_file(
-  "${PROJECT_SOURCE_DIR}/pynest/nest/versionchecker.py.in"
-  "${PROJECT_BINARY_DIR}/pynest/nest/versionchecker.py" @ONLY
+    "${PROJECT_SOURCE_DIR}/doc/fulldoc.conf.in"
+    "${PROJECT_BINARY_DIR}/doc/fulldoc.conf" @ONLY
 )
 
-# ###############################################################################
-# #################            Install Extra Files             ##################
-# ###############################################################################
-install(FILES LICENSE README.md
-  DESTINATION ${CMAKE_INSTALL_DOCDIR}
+configure_file(
+    "${PROJECT_SOURCE_DIR}/pynest/nest/versionchecker.py.in"
+    "${PROJECT_BINARY_DIR}/pynest/nest/versionchecker.py" @ONLY
 )
+
 
 ################################################################################
 ##################            Install Extra Files             ##################

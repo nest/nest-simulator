@@ -292,7 +292,7 @@ class ConnectLayersTestCase(unittest.TestCase):
             "mask": {"rectangular": {"lower_left": [-5.0, -5.0], "upper_right": [0.1, 0.1]}},
         }
         for conn_spec in [conn_spec_kernel, conn_spec_mask]:
-            with self.assertRaises(nest.NESTError):
+            with self.assertRaises(ValueError):
                 nest.Connect(self.layer, self.layer, conn_spec)
 
     def test_connect_oversized_mask(self):

@@ -44,6 +44,9 @@ def test_connect_multimeter_twice():
     mm = nest.Create("multimeter")
     nest.Connect(mm, nrn)
 
+    # TODO: PyNEST-NG: This currently raises WrappedThreadException, so either
+    # make sure the correct exception is actually thrown, or catch NESTError and
+    # match by regex on "Each multimeter can only be connected once to a given node"
     with pytest.raises(nest.NESTErrors.IllegalConnection):
         nest.Connect(mm, nrn)
 
@@ -86,9 +89,9 @@ def test_recordables_are_recorded(model):
 
     nest.resolution = 2**-3  # Set to power of two to avoid rounding issues
 
-    recording_interval = 2
+    recording_interval = 2.0
     simtime = 10
-    num_data_expected = simtime / recording_interval - 1
+    num_data_expected = int(simtime / recording_interval - 1)
 
     nrn = nest.Create(model)
     recordables = nrn.recordables
@@ -98,7 +101,7 @@ def test_recordables_are_recorded(model):
 
     result = mm.events
 
-    for r in recordables + ("times", "senders"):
+    for r in recordables + ["times", "senders"]:
         assert r in result
         assert len(result[r]) == num_data_expected
 

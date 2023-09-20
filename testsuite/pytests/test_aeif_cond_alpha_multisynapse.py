@@ -117,7 +117,7 @@ class TestAeifCondAlphaMultisynapse:
 
         summed_V_m = np.zeros_like(multisynapse_neuron_vm.get("events")["V_m"], dtype=float)
         for i in range(4):
-            summed_V_m += singlesynapse_neuron_vm[i].get("events")["V_m"] - V_m_steadystate
+            summed_V_m += singlesynapse_neuron_vm[i].events["V_m"][0] - V_m_steadystate
 
         summed_V_m += V_m_steadystate
 
@@ -245,7 +245,7 @@ class TestAeifCondAlphaMultisynapse:
             tau = tau_syn[i]
             sim_g = sim_gs[i]
 
-            theo_g = alpha_function(t, W, tau, t0)
+            theo_g = alpha_function(np.array(t), W, tau, t0)
 
             if have_plotting:
                 # plot timeseries as a sanity check

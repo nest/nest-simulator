@@ -80,7 +80,7 @@ class MinDelaySimulation(IAFPSCAlphaSimulation):
 class TestIAFPSCAlpha:
     def test_iaf_psc_alpha(self, simulation):
         dc = simulation.dc_generator = nest.Create("dc_generator")
-        dc.amplitude = 1000
+        dc.amplitude = 1000.0
 
         simulation.setup()
 
@@ -99,7 +99,7 @@ class TestIAFPSCAlpha:
     def test_iaf_psc_alpha_fudge(self, simulation):
         simulation.setup()
 
-        tau_m = 20
+        tau_m = 20.0
         tau_syn = 0.5
         C_m = 250.0
         a = tau_m / tau_syn
@@ -129,7 +129,7 @@ class TestIAFPSCAlpha:
     def test_iaf_psc_alpha_i0(self, simulation):
         simulation.setup()
 
-        simulation.neuron.I_e = 1000
+        simulation.neuron.I_e = 1000.0
 
         results = simulation.simulate()
 
@@ -141,7 +141,7 @@ class TestIAFPSCAlpha:
     def test_iaf_psc_alpha_i0_refractory(self, simulation):
         simulation.setup()
 
-        simulation.neuron.I_e = 1450
+        simulation.neuron.I_e = 1450.0
 
         results = simulation.simulate()
 
@@ -194,7 +194,7 @@ class TestMinDelayUsingIAFPSCAlpha:
 
 def test_kernel_precision():
     nest.ResetKernel()
-    nest.set(tics_per_ms=2**14, resolution=2**0)
+    nest.set(tics_per_ms=2**14, resolution=float(2**0))
     assert math.frexp(nest.ms_per_tic) == (0.5, -13)
 
 
@@ -221,7 +221,7 @@ class DCAccuracySimulation(testsimulation.Simulation):
         "iaf_psc_exp_ps_lossless",
     ],
 )
-@pytest.mark.parametrize("resolution", [2**i for i in range(0, -14, -1)])
+@pytest.mark.parametrize("resolution", [float(2**i) for i in range(0, -14, -1)])
 class TestIAFPSDCAccuracy:
     @pytest.mark.parametrize(
         "params",

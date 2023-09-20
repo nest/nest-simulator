@@ -195,4 +195,4 @@ def test_recoding_device_status(recording_devices, reference_data_vm, reference_
     nptest.assert_allclose(actual_mm_data, reference_data_mm, rtol=1e-5)
 
     sr_events_times = sr.get("events")["times"]
-    assert sr_events_times == [2]
+    assert sr_events_times == 2

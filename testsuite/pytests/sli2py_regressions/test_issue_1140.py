@@ -59,7 +59,7 @@ def test_inhomogeneous_poisson_generator_params_set_implicitly():
     """
 
     params = {"rate_times": [10.0, 110.0, 210.0], "rate_values": [400.0, 1000.0, 200.0]}
-    ipg = nest.Create("inhomogeneous_poisson_generator", params)
+    ipg = nest.Create("inhomogeneous_poisson_generator", params=params)
 
     for key in params:
         actual = ipg.get(key)

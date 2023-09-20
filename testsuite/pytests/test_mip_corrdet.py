@@ -61,9 +61,9 @@ def test_correlation_detector_mip():
     nest.set(rng_seed=12345)
 
     mg = nest.Create("mip_generator")
-    mg.set(rate=100, p_copy=0.5)
+    mg.set(rate=100.0, p_copy=0.5)
     cd = nest.Create("correlation_detector")
-    cd.set(tau_max=100, delta_tau=10)
+    cd.set(tau_max=100.0, delta_tau=10.0)
 
     pn1 = nest.Create("parrot_neuron")
     pn2 = nest.Create("parrot_neuron")

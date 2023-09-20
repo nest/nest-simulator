@@ -110,7 +110,7 @@ def test_sinusoidal_poisson_generator_with_spike_recorder(num_threads, individua
     nest.SetDefaults(
         "sinusoidal_poisson_generator",
         {
-            "rate": 100,
+            "rate": 100.0,
             "amplitude": 50.0,
             "frequency": 10.0,
             "individual_spike_trains": individual_spike_trains,
@@ -169,7 +169,7 @@ def test_sinusoidal_poisson_generator_with_multimeter(num_threads, individual_sp
     nest.SetDefaults(
         "sinusoidal_poisson_generator",
         {
-            "rate": 100,
+            "rate": 100.0,
             "amplitude": 50.0,
             "frequency": 10.0,
             "individual_spike_trains": individual_spike_trains,

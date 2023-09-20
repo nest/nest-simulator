@@ -49,9 +49,8 @@ def test_simulation_completes():
     population_plain = nest.Create("iaf_psc_delta", params=neuron_params)
     population_canon = nest.Create("iaf_psc_delta_ps", params=neuron_params)
 
-    spike_generator = nest.Create(
-        "spike_generator", {"spike_times": [1.0, 2.0, 3.0, 4.0, 5.0, 10.5, 12.0], "precise_times": False}
-    )
+    sg_params = {"spike_times": [1.0, 2.0, 3.0, 4.0, 5.0, 10.5, 12.0], "precise_times": False}
+    spike_generator = nest.Create("spike_generator", params=sg_params)
     spike_recorder = nest.Create("spike_recorder")
     nest.SetDefaults("static_synapse", {"delay": 0.1, "weight": 2.5})
 

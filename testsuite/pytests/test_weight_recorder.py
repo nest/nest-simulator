@@ -217,23 +217,27 @@ class WeightRecorderTestCase(unittest.TestCase):
         pre = nest.Create("parrot_neuron", 5)
         post = nest.Create("parrot_neuron", 5)
 
-        # Senders and targets lists empty
-        self.assertFalse(nest.GetStatus(wr, "senders")[0])
-        self.assertFalse(nest.GetStatus(wr, "targets")[0])
+        # Senders and targets lists empty initially
+        assert wr.senders.tolist() == []
+        assert wr.targets.tolist() == []
 
-        nest.SetStatus(wr, {"senders": pre[1:3], "targets": post[3:]})
+        wr.senders = pre[1:3]
+        wr.targets = post[3:]
 
-        gss = nest.GetStatus(wr, "senders")[0]
-        gst = nest.GetStatus(wr, "targets")[0]
+        gss = wr.senders
+        gst = wr.targets
 
-        self.assertEqual(gss.tolist(), [3, 4])
-        self.assertEqual(gst.tolist(), [10, 11])
+        assert gss.tolist() == [3, 4]
+        assert gst.tolist() == [10, 11]
 
-        nest.SetStatus(wr, {"senders": [2, 6], "targets": [8, 9]})
-        gss = nest.GetStatus(wr, "senders")[0]
-        gst = nest.GetStatus(wr, "targets")[0]
-        self.assertEqual(gss.tolist(), [2, 6])
-        self.assertEqual(gst.tolist(), [8, 9])
+        wr.senders = nest.NodeCollection([2, 6])
+        wr.targets = nest.NodeCollection([8, 9])
+
+        gss = wr.senders
+        gst = wr.targets
+
+        assert gss.tolist() == [2, 6]
+        assert gst.tolist() == [8, 9]
 
     def testMultapses(self):
         """Weight Recorder Multapses"""

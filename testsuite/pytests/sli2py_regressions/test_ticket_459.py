@@ -41,7 +41,7 @@ models_with_EL.remove("gif_cond_exp_multisynapse")
 @pytest.mark.parametrize("model", models_with_EL)
 def test_clean_EL_change(model):
     nrn = nest.Create(model)
-    orig_params = nest.GetStatus(nrn)[0]
+    orig_params = nrn.get()
 
     EL_orig = orig_params["E_L"]
     EL_new = EL_orig + 0.7
@@ -51,7 +51,7 @@ def test_clean_EL_change(model):
     assert nrn.get("E_L") == EL_new
 
     # Confirm all other parameters are equal to original values.
-    new_params = nest.GetStatus(nrn)[0]
+    new_params = nrn.get()
     del orig_params["E_L"]
     del new_params["E_L"]
     assert new_params == orig_params

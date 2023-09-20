@@ -91,8 +91,9 @@ class TestSpikeTransmission:
         post_pop, spike_data = self._simulate_network(
             num_neurons, num_neurons, "one_to_one", num_threads, compressed_spikes
         )
+
         assert sorted(spike_data["senders"]) == sorted(post_pop.tolist())
-        assert all(spike_data["times"] == self.t_arrival)
+        assert all(t == self.t_arrival for t in spike_data["times"])  # PYNEST-NG
 
     @pytest.mark.parametrize("compressed_spikes", [False, True])
     @pytest.mark.parametrize("num_neurons", [4, 5])
@@ -107,8 +108,9 @@ class TestSpikeTransmission:
         """
 
         post_pop, spike_data = self._simulate_network(1, num_neurons, "all_to_all", num_threads, compressed_spikes)
+
         assert sorted(spike_data["senders"]) == sorted(post_pop.tolist())
-        assert all(spike_data["times"] == self.t_arrival)
+        assert all(t == self.t_arrival for t in spike_data["times"])  # PYNEST-NG
 
     @pytest.mark.parametrize("compressed_spikes", [False, True])
     @pytest.mark.parametrize("num_neurons", [4, 5])
@@ -124,8 +126,9 @@ class TestSpikeTransmission:
 
         post_pop, spike_data = self._simulate_network(num_neurons, 1, "all_to_all", num_threads, compressed_spikes)
         # post_pop is one neuron, which receives a spike from each pre neuron
-        assert all(spike_data["senders"] == num_neurons * post_pop.tolist())
-        assert all(spike_data["times"] == self.t_arrival)
+
+        assert spike_data["senders"] == num_neurons * post_pop.tolist()
+        assert all(t == self.t_arrival for t in spike_data["times"])  # PYNEST-NG
 
     @pytest.mark.parametrize("compressed_spikes", [False, True])
     @pytest.mark.parametrize("num_neurons", [4, 5])
@@ -143,4 +146,4 @@ class TestSpikeTransmission:
             num_neurons, num_neurons, "all_to_all", num_threads, compressed_spikes
         )
         assert sorted(spike_data["senders"]) == sorted(num_neurons * post_pop.tolist())
-        assert all(spike_data["times"] == self.t_arrival)
+        assert all(t == self.t_arrival for t in spike_data["times"])

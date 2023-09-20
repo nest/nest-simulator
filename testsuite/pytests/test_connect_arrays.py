@@ -313,7 +313,7 @@ class TestConnectArrays(unittest.TestCase):
         delays = np.ones(n)
         syn_model = "static_synapse"
 
-        with self.assertRaises(nest.NESTErrors.ArgumentType):
+        with self.assertRaises(TypeError):
             nest.Connect(
                 sources,
                 targets,

@@ -59,15 +59,14 @@ def test_closeness_nest_odeint():
     # create astrocyte and devices
     # initial values of the state variables as in the reference solution
     astrocyte = nest.Create("astrocyte_lr_1994", params={"IP3": 1.0, "Ca": 1.0, "h_IP3R": 1.0})
-    mm = nest.Create(
-        "multimeter",
-        {"interval": nest.resolution, "record_from": ["IP3", "Ca", "h_IP3R"]},
-    )
-    spk_ge = nest.Create("spike_generator", {"spike_times": spike_times, "spike_weights": spike_weights})
+    mm_params = {"interval": nest.resolution, "record_from": ["IP3", "Ca", "h_IP3R"]}
+    mm = nest.Create("multimeter", params=mm_params)
+    sg_params = {"spike_times": spike_times, "spike_weights": spike_weights}
+    sg = nest.Create("spike_generator", params=sg_params)
 
     # connect astrocyte to devices
     nest.Connect(mm, astrocyte)
-    nest.Connect(spk_ge, astrocyte, syn_spec={"delay": nest.resolution})
+    nest.Connect(sg, astrocyte, syn_spec={"delay": nest.resolution})
 
     # simulate
     nest.Simulate(simtime)

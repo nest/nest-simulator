@@ -532,7 +532,6 @@ connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const 
 
   // Set flag before calling source->connect() in case exception is thrown after some connections have been created.
   kernel().connection_manager.set_connections_have_changed();
-
   source->connect( source_nc, target, target_nc, connector );
 }
 

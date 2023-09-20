@@ -65,10 +65,9 @@ def test_offgrid_time_point(prepare_kernel):
 def test_allow_offgrid_time_point(prepare_kernel):
     inh_pg = nest.Create("inhomogeneous_poisson_generator", params={"allow_offgrid_times": True})
     inh_pg.set(rate_times=[1.23], rate_values=[10.0])
-    defaults = inh_pg.get()
 
     # assert that the rate time is rounded up to the next step
-    assert defaults["rate_times"] == 1.3
+    assert inh_pg.rate_times == [1.3]
 
 
 def test_no_allow_offgrid_times_after_rate_set(prepare_kernel):

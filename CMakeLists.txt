@@ -54,7 +54,7 @@ option( cythonize-pynest "Use Cython to cythonize pynestkernel.pyx [default=ON].
 
 # select parallelization scheme
 set( with-mpi OFF CACHE STRING "Build with MPI parallelization [default=OFF]." )
-set( with-openmp ON CACHE BOOL "Build with OpenMP multi-threading [default=ON]. Optionally set OMP compiler flags." )
+set( with-openmp ON CACHE BOOL "Build with OpenMP multi-threading [default=ON]." )
 
 # external libraries
 set( with-libneurosim OFF CACHE STRING "Build with libneurosim [default=OFF]. Optionally give the directory where libneurosim is installed." )

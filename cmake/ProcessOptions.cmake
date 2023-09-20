@@ -390,37 +390,18 @@ endfunction()
 function( NEST_PROCESS_WITH_OPENMP )
   # Find OPENMP
   if ( with-openmp )
-    if ( NOT "${with-openmp}" STREQUAL "ON" )
-      printInfo( "Set OpenMP argument: ${with-openmp}")
-      # set variables in this scope
-      set( OPENMP_FOUND ON )
-      set( OpenMP_C_FLAGS "${with-openmp}" )
-      set( OpenMP_CXX_FLAGS "${with-openmp}" )
-
-      # export found variables to parent scope
-      set( OPENMP_FOUND "${OPENMP_FOUND}" PARENT_SCOPE )
-      set( OpenMP_C_FLAGS "${OpenMP_C_FLAGS}" PARENT_SCOPE )
-      set( OpenMP_CXX_FLAGS "${OpenMP_CXX_FLAGS}" PARENT_SCOPE )
-      set( OpenMP_CXX_LINK_FLAGS "${OpenMP_CXX_LINK_FLAGS}" PARENT_SCOPE )
-      # set flags
-      set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}" PARENT_SCOPE )
-      set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}" PARENT_SCOPE )
-      set( CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} ${OpenMP_CXX_LINK_FLAGS}" PARENT_SCOPE )
-    else ()
-      find_package( OpenMP REQUIRED )
-      set( AUTO_OPENMP_FOUND ON )
-    endif ()
-    if ( NOT OPENMP_FOUND )
-      printError( "CMake can not find OpenMP." )
-    endif ()
+    find_package( OpenMP REQUIRED )
+    set( OpenMP_FOUND ON PARENT_SCOPE )
+    set( OpenMP_VERSION ${OpenMP_CXX_VERSION} PARENT_SCOPE )
+    set( OpenMP_CXX_FLAGS ${OpenMP_CXX_FLAGS} PARENT_SCOPE )
+    set( OpenMP_CXX_LIBRARIES ${OpenMP_CXX_LIBRARIES} PARENT_SCOPE )
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}" PARENT_SCOPE )
+    foreach ( lib ${OpenMP_CXX_LIBRARIES} )
+      link_libraries( "${lib}" )
+    endforeach ()
+  else ()
+    set( OpenMP_FOUND OFF PARENT_SCOPE )
   endif ()
-
-  # Provide a dummy OpenMP::OpenMP_CXX if no OpenMP or if flags explicitly
-  # given. Needed to avoid problems where OpenMP::OpenMP_CXX is used.
-  if ( NOT TARGET OpenMP::OpenMP_CXX )
-    add_library(OpenMP::OpenMP_CXX INTERFACE IMPORTED)
-  endif()
-
 endfunction()
 
 function( NEST_PROCESS_WITH_MPI )

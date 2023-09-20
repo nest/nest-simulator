@@ -96,8 +96,7 @@ nest::Device::Parameters_::update_( const dictionary& d, const std::string& name
     const Time t = Time::ms( val );
     if ( t.is_finite() and not t.is_grid_time() )
     {
-      throw BadProperty( name +  " must be a multiple "
-                                 "of the simulation resolution." );
+      throw BadProperty( name + " must be a multiple of the simulation resolution." );
     }
     value = t;
   }
@@ -106,23 +105,9 @@ nest::Device::Parameters_::update_( const dictionary& d, const std::string& name
 void
 nest::Device::Parameters_::set( const dictionary& d )
 {
-  double origin;
-  if ( d.update_value( names::origin, origin ) )
-  {
-    origin_ = Time::ms( origin );
-  }
-
-  double start;
-  if ( d.update_value( names::start, start ) )
-  {
-    start_ = Time::ms( start );
-  }
-
-  double stop;
-  if ( d.update_value( names::stop, stop ) )
-  {
-    stop_ = Time::ms( stop );
-  }
+  update_( d, names::origin, origin_ );
+  update_( d, names::start, start_ );
+  update_( d, names::stop, stop_ );
 
   if ( stop_ < start_ )
   {

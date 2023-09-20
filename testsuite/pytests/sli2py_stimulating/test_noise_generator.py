@@ -24,8 +24,8 @@ Tests parameter setting and statistical correctness for one application.
 """
 
 import nest
-import pytest
 import numpy as np
+import pytest
 
 
 @pytest.fixture

@@ -19,13 +19,12 @@ from mpi4py import MPI
 if __name__ == "__main__":
     opt = docopt(__doc__)
 
-import time
+import os
 import sys
+import time
 
 import nest
 import nest.server
-
-import os
 
 HOST = os.getenv("NEST_SERVER_HOST", "127.0.0.1")
 PORT = os.getenv("NEST_SERVER_PORT", "52425")

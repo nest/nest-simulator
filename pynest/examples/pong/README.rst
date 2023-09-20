@@ -5,7 +5,7 @@ the classic game of Pong.
 
 Requirements
 ------------
-- NEST 3.3
+- NEST 3.3 or later
 - NumPy
 - Matplotlib
 

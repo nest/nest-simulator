@@ -63,10 +63,11 @@ Author:  May 2005, February 2008, Diesmann
 SeeAlso: testsuite::test_iaf_psp, testsuite::test_iaf_ps_dc_accuracy
 """
 
-import nest
-import pytest
 import math
 from math import exp
+
+import nest
+import pytest
 
 # Global parameters
 T1 = 3.0

@@ -24,6 +24,7 @@ Test setting and getting labels on synapses.
 """
 
 import unittest
+
 import nest
 
 HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
@@ -168,6 +169,10 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         """Try set a label to an 'un-label-able' synapse."""
 
         for syn in [s for s in nest.synapse_models if not s.endswith("_lbl")]:
+            if syn == "sic_connection":
+                # Skip sic_connection since it requires different pre- and post-synaptic neuron models
+                continue
+
             a, r_type = self.default_network(syn)
 
             # see if symmetric connections are required

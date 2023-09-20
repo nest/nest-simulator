@@ -23,13 +23,11 @@
 Test multimeter recording in stepwise simulation.
 """
 
+import nest
 import pandas as pd
 import pandas.testing as pdtest
 import pytest
 
-import nest
-
-# The following models will not be tested:
 skip_models = [
     "erfc_neuron",  # binary neuron
     "ginzburg_neuron",  # binary neuron

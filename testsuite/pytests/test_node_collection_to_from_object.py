@@ -24,11 +24,10 @@ Test ``NodeCollection`` to and from object functionality.
 """
 
 
+import nest
 import numpy as np
 import numpy.testing as nptest
 import pytest
-
-import nest
 
 
 @pytest.fixture(autouse=True)

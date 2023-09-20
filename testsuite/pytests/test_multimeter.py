@@ -101,7 +101,7 @@ def test_recordables_are_recorded(model):
 
     result = mm.events
 
-    for r in recordables + ("times", "senders"):
+    for r in recordables + ["times", "senders"]:
         assert r in result
         assert len(result[r]) == num_data_expected
 

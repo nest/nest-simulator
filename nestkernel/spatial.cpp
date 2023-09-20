@@ -365,7 +365,6 @@ create_mask( const dictionary& mask_dict )
   //   // mask type, and optionally the key 'anchor'. To find the unknown
   //   // mask type key, we must loop through all keys. The value for the
   //   // anchor key will be stored in the anchor_token variable.
-  std::vector< long > anchor;
   bool has_anchor = false;
   MaskPTR mask;
 
@@ -373,7 +372,6 @@ create_mask( const dictionary& mask_dict )
   {
     if ( kv.first == names::anchor )
     {
-      anchor = mask_dict.get< std::vector< long > >( kv.first );
       has_anchor = true;
     }
     else
@@ -389,6 +387,7 @@ create_mask( const dictionary& mask_dict )
     // For grid layers only, it is also possible to provide an array of longs.
     try
     {
+      std::vector< long > anchor = mask_dict.get< std::vector< long > >( names::anchor );
       switch ( anchor.size() )
       {
       case 2:
@@ -422,7 +421,7 @@ create_mask( const dictionary& mask_dict )
       std::vector< double > double_anchor = mask_dict.get< std::vector< double > >( names::anchor );
       std::shared_ptr< AbstractMask > amask;
 
-      switch ( anchor.size() )
+      switch ( double_anchor.size() )
       {
       case 2:
         amask = std::shared_ptr< AbstractMask >(
@@ -533,10 +532,8 @@ connect_layers( NodeCollectionPTR source_nc, NodeCollectionPTR target_nc, const 
 
   // Set flag before calling source->connect() in case exception is thrown after some connections have been created.
   kernel().connection_manager.set_connections_have_changed();
-  std::cout << "### 10" << std::endl;
 
   source->connect( source_nc, target, target_nc, connector );
-  std::cout << "### 11" << std::endl;
 }
 
 void

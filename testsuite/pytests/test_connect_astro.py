@@ -1,3 +1,4 @@
+# To-do: test max_astro_per_target
 import numpy as np
 import scipy.stats
 import pytest
@@ -17,7 +18,6 @@ def setup_network(conn_dict, syn_dict, N1, N2, neuron_model="aeif_cond_alpha_ast
     pop2 = nest.Create(neuron_model, N2)
     pop_astro = nest.Create(astrocyte_model, N2)
     conn_dict["astrocyte"] = pop_astro
-    nest.set_verbosity("M_FATAL")
     nest.Connect(pop1, pop2, conn_dict, syn_dict)
     return pop1, pop2, pop_astro
 
@@ -186,40 +186,103 @@ def get_connectivity_matrix(pop1, pop2):
         M[index_dic[target]][index_dic[source]] += 1
     return M
 
+# adapted from connect_test_base.py
+def mpi_assert(data_original, data_test):
+    """
+    Compares data_original and data_test.
+    """
+
+    data_original = gather_data(data_original)
+    # only test if on rank 0
+    if data_original is not None:
+        if isinstance(data_original, (np.ndarray, np.generic)) and isinstance(data_test, (np.ndarray, np.generic)):
+            assert data_original == pytest.approx(data_test)
+        else:
+            TestCase.assertTrue(data_original == data_test)
+
 # adapted from test_connect_pairwise_bernoulli.py
-@pytest.mark.parametrize("p_n2n", [0.1, 0.2])
-@pytest.mark.parametrize("N1", [50, 60])
-@pytest.mark.parametrize("N2", [50, 60])
-def testStatistics(p_n2n, N1, N2):
+# test three levels of neuron-neuron connection probabilities
+@pytest.mark.parametrize("p_n2n", [0.1, 0.5, 0.9])
+def testStatistics(p_n2n):
     # set connection parameters
+    N1 = 50
+    N2 = 50
     conn_dict = {
         "rule": "pairwise_bernoulli_astro",
         "p": p_n2n,
-        "p_syn_astro": 1.0,
-        "max_astro_per_target": 1,
-        "astro_pool_by_index": True,
     }
+
     # set test parameters
     stat_dict = {"alpha2": 0.05, "n_runs": 20}
     nr_threads = 2
+
+    # set NEST verbosity
+    nest.set_verbosity("M_FATAL")
+
     # test indegree and outdegree separately
     for fan in ["in", "out"]:
         expected = get_expected_degrees_bernoulli(conn_dict["p"], fan, N1, N2)
         pvalues = []
         for i in range(stat_dict["n_runs"]):
+            # setup network and connect
             nest.ResetKernel()
             nest.local_num_threads = nr_threads
             nest.rng_seed = i + 1
             pop1, pop2, pop_astro = setup_network(conn_dict, None, N1, N2)
+            # get indegree or outdegree
             degrees = get_degrees(fan, pop1, pop2)
+            # gather data from MPI processes
             degrees = gather_data(degrees)
+            # do chi-square test for indegree or outdegree
             if degrees is not None:
                 chi, p = chi_squared_check(degrees, expected, "pairwise_bernoulli")
                 pvalues.append(p)
             mpi_barrier()
+        # test if the p-values are uniformly distributed
         if degrees is not None:
             ks, p = scipy.stats.kstest(pvalues, "uniform")
             assert p > stat_dict["alpha2"]
-            # print(f"{fan}degree test succeeded!")
 
-# testStatistics()
+# adapted from test_connect_pairwise_bernoulli
+def test_autapses_true():
+    # set connection parameters
+    N = 50
+    conn_dict = {
+        "rule": "pairwise_bernoulli_astro",
+        "p": 1.0,
+        "allow_autapses": True,
+    }
+
+    # set NEST verbosity
+    nest.set_verbosity("M_FATAL")
+
+    # test that autapses exist
+    pop = nest.Create("aeif_cond_alpha_astro", N)
+    pop_astro = nest.Create("astrocyte_lr_1994", N)
+    conn_dict["astrocyte"] = pop_astro
+    nest.Connect(pop, pop, conn_dict)
+    # make sure all connections do exist
+    M = get_connectivity_matrix(pop, pop)
+    mpi_assert(np.diag(M), np.ones(N))
+
+# adapted from test_connect_pairwise_bernoulli
+def test_autapses_false():
+    # set connection parameters
+    N = 50
+    conn_dict = {
+        "rule": "pairwise_bernoulli_astro",
+        "p": 1.0,
+        "allow_autapses": False,
+    }
+
+    # set NEST verbosity
+    nest.set_verbosity("M_FATAL")
+
+    # test that autapses were excluded
+    pop = nest.Create("aeif_cond_alpha_astro", N)
+    pop_astro = nest.Create("astrocyte_lr_1994", N)
+    conn_dict["astrocyte"] = pop_astro
+    nest.Connect(pop, pop, conn_dict)
+    # make sure all connections do exist
+    M = get_connectivity_matrix(pop, pop)
+    mpi_assert(np.diag(M), np.zeros(N))

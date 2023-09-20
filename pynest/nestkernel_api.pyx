@@ -155,6 +155,10 @@ cdef object any_to_pyobj(any operand):
         return any_cast[vector[double]](operand)
     if is_type[vector[vector[double]]](operand):
         return any_cast[vector[vector[double]]](operand)
+    if is_type[vector[vector[vector[double]]]](operand):
+        return any_cast[vector[vector[vector[double]]]](operand)
+    if is_type[vector[vector[vector[long]]]](operand):
+        return any_cast[vector[vector[vector[long]]]](operand)
     if is_type[vector[string]](operand):
         # PYNEST-NG: Do we want to have this or are bytestrings fine?
         # return any_cast[vector[string]](operand)
@@ -193,10 +197,10 @@ cdef is_list_tuple_ndarray_of_float(v):
 
 
 cdef is_list_tuple_ndarray_of_int(v):
-    list_of_float = type(v) is list and type(v[0]) is int
-    tuple_of_float = type(v) is tuple and type(v[0]) is int
-    ndarray_of_float = isinstance(v, numpy.ndarray) and numpy.issubdtype(v.dtype, numpy.integer)
-    return list_of_float or tuple_of_float or ndarray_of_float
+    list_of_int = type(v) is list and type(v[0]) is int
+    tuple_of_int = type(v) is tuple and type(v[0]) is int
+    ndarray_of_int = isinstance(v, numpy.ndarray) and numpy.issubdtype(v.dtype, numpy.integer)
+    return list_of_int or tuple_of_int or ndarray_of_int
 
 
 cdef dictionary pydict_to_dictionary(object py_dict) except *:  # Adding "except *" makes cython propagate the error if it is raised.

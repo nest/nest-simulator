@@ -710,6 +710,9 @@ class CompartmentsTestCase(unittest.TestCase):
         self.assertTrue(np.any(events_neat_1["v_comp0"] != soma_params["e_L"]))
 
     def test_set_combinations(self, dt=0.1):
+        sg_01 = nest.Create("spike_generator", params={"spike_times": [10.0]})
+        sg_02 = nest.Create("spike_generator", params={"spike_times": [15.0]})
+
         sg_11 = nest.Create("spike_generator", params={"spike_times": [10.0]})
         sg_12 = nest.Create("spike_generator", params={"spike_times": [15.0]})
 

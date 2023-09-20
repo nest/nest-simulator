@@ -110,7 +110,7 @@ def test_number_of_spikes():
         "activity": nspk,
         "sdev": stddev,
     }
-    ppg = nest.Create("pulsepacket_generator", params)
+    ppg = nest.Create("pulsepacket_generator", params=params)
     sr = nest.Create("spike_recorder")
 
     nest.Connect(ppg, sr)

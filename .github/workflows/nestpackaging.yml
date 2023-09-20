@@ -1,0 +1,29 @@
+name: "NEST Packaging"
+
+on: [push, pull_request]
+
+jobs:
+  conda-packaging:
+    # as close as possible to the conda-forge build
+    runs-on: ubuntu-22.04
+    strategy:
+        fail-fast: false
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v3
+      - name: install python
+        uses: actions/setup-python@v4
+        with:
+            python-version: '3.10'
+      - name: install dependencies
+        run: |
+            python -m pip install --upgrade requests
+      - name: execute python script # run main.py
+        env:
+            CI_NAME: ${{ secrets.CI_NAME }}
+            CI_MAIN_NAME: ${{ secrets.CI_MAIN_NAME }}
+            CI_REPO: ${{ secrets.CI_REPO }}
+            CI_PR_NUM: ${{ secrets.CI_PR_NUM }}
+            CI_PAT: ${{ secrets.CI_PAT }}
+        run: |
+            python build_support/check_conda_package_build.py

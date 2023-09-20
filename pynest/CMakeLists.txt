@@ -17,14 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-if(HAVE_PYTHON)
-  if(CYTHON_FOUND)
-    include(UseCython)
-    set_source_files_properties(nestkernel_api.pyx PROPERTIES CYTHON_IS_CXX TRUE)
-    cython_add_module(nestkernel_api nestkernel_api.pyx)
-  else()
-    message(FATAL_ERROR "Building PyNEST requires Cython.")
-  endif()
+if ( HAVE_PYTHON )
 
   # We use python3 here directly, as some of the CI jobs don't seem to have PYTHON
   # or Python_EXECUTABLE set properly.
@@ -77,7 +70,6 @@ if(HAVE_PYTHON)
     DESTINATION ${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}/nest
     PATTERN "versionchecker.py.in" EXCLUDE
   )
-endif()
 
   install( TARGETS nestkernel_api DESTINATION ${PYEXECDIR}/nest/ )
 endif ()

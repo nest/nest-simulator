@@ -36,8 +36,6 @@ from .hl_api_models import GetDefaults
 from .hl_api_nodes import Create
 from .hl_api_simulation import GetKernelStatus, SetKernelStatus, Simulate
 from .hl_api_types import NodeCollection
-from .hl_api_exceptions import NESTError
-
 
 try:
     import pandas as pd
@@ -437,7 +435,7 @@ class SonataNetwork:
             except BlockingIOError as err:
                 raise BlockingIOError(f"{err.strerror} for {os.path.realpath(d['edges_file'])}") from None
 
-        nestkernel.llapi_connect_sonata(graph_specs, chunk_size)
+        nestkernel.llapi_connect_sonata(graph_specs, hdf5_hyperslab_size)
 
         self._is_network_built = True
 
@@ -615,7 +613,7 @@ class SonataNetwork:
         """
 
         if hdf5_hyperslab_size is not None:
-            # Chunk size is verfified in Connect, but we also verify here
+            # hyperslab size is verfified in Connect, but we also verify here
             # to save computational resources in case of wrong input
             self._verify_hyperslab_size(hdf5_hyperslab_size)
 

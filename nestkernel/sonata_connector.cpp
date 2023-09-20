@@ -28,7 +28,6 @@
 // C++ includes:
 #include <boost/any.hpp> // TODO: probably not needed if boost::any_cast goes away
 #include <cstdlib>       // for div()
-#include <iostream>      // for debugging
 #include <string>
 #include <vector>
 
@@ -413,10 +412,6 @@ SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t off
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
 
   // Retrieve the correct NodeCollections
-  // const auto nest_nodes = graph_specs_[ "nodes" ];
-  // const auto src_nc = nest_nodes[ source_attribute_value_ ];
-  // const auto tgt_nc = nest_nodes[ target_attribute_value_ ];
-
   const auto nest_nodes = boost::any_cast< dictionary >( graph_specs_.at( "nodes" ) );
   const auto src_nc = boost::any_cast< NodeCollectionPTR >( nest_nodes.at( source_attribute_value_ ) );
   const auto tgt_nc = boost::any_cast< NodeCollectionPTR >( nest_nodes.at( target_attribute_value_ ) );
@@ -592,15 +587,9 @@ SonataConnector::set_synapse_params_( dictionary syn_dict, size_t synapse_model_
   // Now create dictionary with dummy values that we will use to pass settings to the synapses created. We
   // create it here once to avoid re-creating the object over and over again.
   // TODO: See if nullptr can be changed to dictionary
-  // edge_type_id_2_param_dicts_[ type_id ].resize( kernel().vp_manager.get_num_threads(), nullptr );
-
-  // std::to_string()
   edge_type_id_2_param_dicts_[ type_id ].resize( kernel().vp_manager.get_num_threads() );
-  // edge_type_id_2_param_dicts_.at( type_id ).resize( kernel().vp_manager.get_num_threads() );
-
   edge_type_id_2_syn_spec_[ type_id ] = synapse_params;
 
-  // const auto nest_nodes = boost::any_cast< dictionary >( graph_specs_.at( "nodes" ) );
 
   // TODO: Once NEST is SLIless, the below loop over threads should be parallelizable. In order to parallelize, the
   // change would be to replace the for loop with #pragma omp parallel and get the thread id (tid) inside the parallel
@@ -609,8 +598,6 @@ SonataConnector::set_synapse_params_( dictionary syn_dict, size_t synapse_model_
   // Note that this also applies to the equivalent loop in conn_builder.cpp
   for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    // edge_type_id_2_param_dicts_[ type_id ][ tid ].emplace_back();
-
     for ( auto param : synapse_params )
     {
       if ( param.second->provides_long() )
@@ -619,7 +606,6 @@ SonataConnector::set_synapse_params_( dictionary syn_dict, size_t synapse_model_
       }
       else
       {
-        std::cerr << param.first << " provides double\n";
         edge_type_id_2_param_dicts_.at( type_id ).at( tid )[ param.first ] = 0.0;
       }
     }

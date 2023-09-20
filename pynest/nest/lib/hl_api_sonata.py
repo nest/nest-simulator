@@ -129,7 +129,7 @@ class SonataNetwork:
         if "dt" not in self._conf["run"]:
             raise ValueError("Time resolution 'dt' must be specified in configuration file.")
 
-        # SetKernelStatus({"resolution": self._conf["run"]["dt"]})
+        SetKernelStatus({"resolution": self._conf["run"]["dt"]})
 
     def _parse_config(self, config):
         """Parse JSON configuration file.

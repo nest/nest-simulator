@@ -26,11 +26,10 @@ as two events with multiplicity one. The membrane potential after
 the spikes have arrived must be identical in both cases.
 """
 
+import nest
 import numpy as np
 import numpy.testing as nptest
 import pytest
-
-import nest
 
 # The following models will not be tested:
 skip_list = [
@@ -67,6 +66,7 @@ skip_list = [
     "music_message_out_proxy",  # music device
     "music_rate_in_proxy",  # music device
     "music_rate_out_proxy",  # music device
+    "astrocyte_lr_1994",  # does not have V_m
 ]
 
 extra_params = {

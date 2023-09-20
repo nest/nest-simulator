@@ -84,6 +84,9 @@ The key differences between the current model and the model in [1]_ are:
 - Incoming spikes induce an instantaneous conductance change followed by
   exponential decay instead of activation over time.
 
+For details on asynchronicity in spike and firing events with Hodgkin Huxley models
+see :ref:`here <hh_details>`.
+
 See also [2]_.
 
 Postsynaptic currents

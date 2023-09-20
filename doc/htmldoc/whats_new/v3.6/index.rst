@@ -72,7 +72,6 @@ the property `volume_transmitter` of the synapse's common properties:
 |                                                  |                                                  |
 +--------------------------------------------------+--------------------------------------------------+
 
-
 Changes to kernel attributes
 ----------------------------
 
@@ -91,3 +90,8 @@ New kernel attributes that control or report spike buffer resizing:
 
 For details, see our :ref:`docs on the new attributes <sec_kernel_attributes>`.
 
+Changes in NEST Server
+----------------------
+
+We improved the security in NEST Server. Now to use NEST Server, users can modify the security options.
+See :ref:`section on setting these varialbles <sec_server_vars>` in our NEST Server guide.

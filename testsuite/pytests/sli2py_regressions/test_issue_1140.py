@@ -26,10 +26,9 @@ Test if parameters for `inhomogeneous_poisson_generator` can be set with empty
 arrays for `rate_times` and `rate_values`.
 """
 
+import nest
 import numpy.testing as nptest
 import pytest
-
-import nest
 
 
 @pytest.fixture(autouse=True)

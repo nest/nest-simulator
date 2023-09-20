@@ -3,6 +3,7 @@
 
 ac_generator
 aeif_cond_alpha
+aeif_cond_alpha_astro
 aeif_cond_alpha_multisynapse
 aeif_cond_beta_multisynapse
 aeif_cond_exp
@@ -11,6 +12,7 @@ aeif_psc_exp
 aeif_psc_delta
 aeif_psc_delta_clopath
 amat2_psc_exp
+astrocyte_lr_1994
 bernoulli_synapse
 cm_default
 clopath_synapse
@@ -84,6 +86,7 @@ pulsepacket_generator
 quantal_stp_synapse
 rate_connection_delayed
 rate_connection_instantaneous
+sic_connection
 siegert_neuron
 sigmoid_rate
 sigmoid_rate_gg_1998

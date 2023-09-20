@@ -40,12 +40,13 @@ See Also
 """
 import os
 import pickle
-import imageio
-from glob import glob
-import numpy as np
 import sys
+from glob import glob
+
 import helpers_sudoku
+import imageio
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def get_progress(puzzle, solution):

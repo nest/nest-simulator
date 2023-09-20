@@ -124,4 +124,4 @@ def test_number_of_spikes():
     assert np.max(actual_spikes) <= tstop
 
     # Check number of spikes
-    assert actual_spikes.size == npsktot
+    assert len(actual_spikes) == npsktot

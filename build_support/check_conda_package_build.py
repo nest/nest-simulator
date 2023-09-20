@@ -27,8 +27,9 @@ This script is supposed to be run from CI.
 
 import json
 import os
-import requests
 import time
+
+import requests
 
 try:
     pat = os.environ.get("CI_PAT")

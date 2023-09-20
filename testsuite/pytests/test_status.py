@@ -109,7 +109,7 @@ class StatusTestCase(unittest.TestCase):
                 self.assertEqual(nest.GetDefaults(model, "V_m"), v_m)
 
                 self.assertRaisesRegex(
-                    nest.NESTError, "unaccessed", nest.SetDefaults, model, "nonexistent_status_key", 0
+                    nest.NESTError, "Unaccessed", nest.SetDefaults, model, "nonexistent_status_key", 0
                 )
 
 

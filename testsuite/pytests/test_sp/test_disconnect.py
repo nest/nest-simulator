@@ -100,7 +100,7 @@ class TestDisconnectSingle(unittest.TestCase):
                     conns1 = list(filter(None, conns1))
                 assert len(conns1) == 0
 
-                with self.assertRaises(nest.NESTErrors.NESTError):
+                with self.assertRaises(nest.NESTError):
                     nest.Disconnect(neurons[0], neurons[1], syn_spec=syn_dict)
 
     def test_disconnect_synapsecollection(self):

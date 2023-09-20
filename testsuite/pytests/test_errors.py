@@ -84,7 +84,7 @@ class ErrorTestCase(unittest.TestCase):
         nc = nest.Create("iaf_psc_alpha", 10)  # noqa: F841
         nest.ResetKernel()
 
-        msg = "99 doesn't exist"
+        msg = "Node with id 99 does not exist."
         self.assertRaisesRegex(nest.NESTError, msg, nest.NodeCollection, [99])
 
     def test_UnknownModel(self):

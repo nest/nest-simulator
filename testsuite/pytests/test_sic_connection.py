@@ -52,7 +52,7 @@ def test_ConnectNeuronsWithSICConnection(source_model, target_model):
         nest.Connect(source, target, syn_spec={"synapse_model": "sic_connection"})
     else:
         # Connection should fail
-        with pytest.raises(nest.kernel.NESTError):
+        with pytest.raises(nest.NESTError):
             nest.Connect(source, target, syn_spec={"synapse_model": "sic_connection"})
 
 

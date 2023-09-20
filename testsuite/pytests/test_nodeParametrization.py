@@ -254,7 +254,7 @@ class TestNodeParametrization(unittest.TestCase):
         with self.assertRaises(nest.NESTError):
             layer.set({"V_m": nest.spatial.pos.n(-1)})
 
-        with self.assertRaises(nest.NESTError):
+        with self.assertRaises(ValueError):
             layer.set({"V_m": nest.spatial.pos.z})
 
     def test_conn_distance_parameter(self):
@@ -307,7 +307,7 @@ class TestNodeParametrization(unittest.TestCase):
         positions = [[x, x] for x in np.linspace(0, 0.5, 5)]
         layer = nest.Create("iaf_psc_alpha", positions=nest.spatial.free(positions))
 
-        with self.assertRaises(nest.NESTError):
+        with self.assertRaises(ValueError):
             nest.Connect(layer, layer, syn_spec={"weight": nest.spatial.distance.z})
 
         with self.assertRaises(nest.NESTError):
@@ -346,13 +346,13 @@ class TestNodeParametrization(unittest.TestCase):
         positions = [[x, x] for x in np.linspace(0.1, 1.0, 5)]
         layer = nest.Create("iaf_psc_alpha", positions=nest.spatial.free(positions))
 
-        with self.assertRaises(nest.NESTError):
+        with self.assertRaises(ValueError):
             nest.Connect(layer, layer, syn_spec={"weight": nest.spatial.source_pos.z})
 
         with self.assertRaises(nest.NESTError):
             nest.Connect(layer, layer, syn_spec={"weight": nest.spatial.source_pos.n(-1)})
 
-        with self.assertRaises(nest.NESTError):
+        with self.assertRaises(ValueError):
             nest.Connect(layer, layer, syn_spec={"weight": nest.spatial.target_pos.z})
 
         with self.assertRaises(nest.NESTError):

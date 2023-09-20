@@ -198,12 +198,12 @@ class TestSTDPPlSynapse:
 
         nest.Simulate(self.simulation_duration)
 
-        all_spikes = nest.GetStatus(spike_recorder, keys="events")[0]
+        all_spikes = spike_recorder.events
         pre_spikes = all_spikes["times"][all_spikes["senders"] == presynaptic_neuron.tolist()[0]]
         post_spikes = all_spikes["times"][all_spikes["senders"] == postsynaptic_neuron.tolist()[0]]
 
-        t_hist = nest.GetStatus(wr, "events")[0]["times"]
-        weight = nest.GetStatus(wr, "events")[0]["weights"]
+        t_hist = wr.events["times"]
+        weight = wr.events["weights"]
 
         return pre_spikes, post_spikes, t_hist, weight
 

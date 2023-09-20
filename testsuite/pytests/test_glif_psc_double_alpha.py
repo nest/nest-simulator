@@ -93,9 +93,9 @@ class GLIFPSCTestCase(unittest.TestCase):
 
         nest.Simulate(1000.0)
 
-        times = nest.GetStatus(mm, "events")[0]["times"]
-        V_m = nest.GetStatus(mm, "events")[0]["V_m"]
-        spikes = nest.GetStatus(sr, "events")[0]["times"]
+        times = mm.events["times"]
+        V_m = mm.events["V_m"]
+        spikes = sr.events["times"]
 
         return times, V_m, spikes
 
@@ -279,8 +279,8 @@ class GLIFPSCTestCase(unittest.TestCase):
 
         # Do simulation.
         nest.Simulate(500.0)
-        times = nest.GetStatus(multimeter, "events")[0]["times"]
-        I_syn = nest.GetStatus(multimeter, "events")[0]["I_syn"]
+        times = multimeter.events["times"]
+        I_syn = multimeter.events["I_syn"]
 
         # Check the results.
         # the peak timing should be 13 ms (index 129), 213 ms (index 2129),

@@ -80,7 +80,7 @@ def test_connect_after_simulate(use_compressed_spikes):
     assert len(connections) == 1
     assert connections[0].get("port") == 0
     # One spike, one connection to parrot -> 1 event
-    assert nest.GetStatus(recorder)[0]["n_events"] == 1
+    assert recorder.n_events == 1
 
     nest.Connect(neuron, parrot)
 
@@ -106,4 +106,4 @@ def test_connect_after_simulate(use_compressed_spikes):
         nest.GetConnections(target=parrot)[0].get("port") == 101
     # One spike from before, additionally 1 more spike,
     # now 2 connections to parrot -> 3 events in total
-    assert nest.GetStatus(recorder)[0]["n_events"] == 3
+    assert recorder.n_events == 3

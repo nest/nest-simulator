@@ -66,7 +66,7 @@ def test_set_spike_times(reset_kernel, in_spike_times, expected_spike_times, pre
         },
     )
 
-    out_spike_times = nest.GetStatus(inj_nrn, "spike_times")[0]
+    out_spike_times = inj_nrn.spike_times
     assert out_spike_times == pytest.approx(expected_spike_times)
 
 

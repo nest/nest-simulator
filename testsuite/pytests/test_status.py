@@ -19,17 +19,13 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Test if Set/GetStatus work properly
-"""
-
 import unittest
 
 import nest
 
 
 class StatusTestCase(unittest.TestCase):
-    """Tests of Get/SetStatus, Get/SetDefaults, and Get/SetKernelStatus via get/set"""
+    """Tests of Get/SetDefaults, and Get/SetKernelStatus via get/set"""
 
     def test_kernel_attributes(self):
         """Test nest attribute access of kernel attributes"""

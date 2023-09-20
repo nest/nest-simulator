@@ -40,7 +40,7 @@ def run_simulation(resolution, delay, explicit=False):
     if explicit:
         nest.Connect(sg, n, syn_spec={"synapse_model": "cont_delay_synapse", "weight": 100.0, "delay": delay})
         for conn in nest.GetConnections(source=sg):
-            nest.SetStatus(conn, params={"delay": delay})
+            conn.set({"delay": delay})
     else:
         nest.SetDefaults("cont_delay_synapse", {"weight": 100.0, "delay": delay})
         nest.Connect(sg, n, syn_spec={"synapse_model": "cont_delay_synapse"})

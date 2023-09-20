@@ -138,6 +138,7 @@ if __name__ == "__main__":
         sys.exit(1)
 
     temp_dir = "temp"
+
     if os.path.exists(temp_dir):
         print(f"Output folder <{temp_dir}> already exists, aborting!")
         sys.exit(1)
@@ -271,7 +272,7 @@ if __name__ == "__main__":
 
     filenames = sorted(glob(os.path.join(temp_dir, "*.png")))
 
-    with imageio.get_writer(out_file, mode="I", fps=6) as writer:
+    with imageio.get_writer(out_file, mode="I", duration=150) as writer:
         for filename in filenames:
             image = imageio.imread(filename)
             writer.append_data(image)

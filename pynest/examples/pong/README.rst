@@ -12,7 +12,7 @@ Requirements
 Instructions
 ------------
 To start training between two networks with R-STDP plasticity, run
-the ``generate_gif.py`` script. By default, one of the networks will
+the ``run_simulations.py`` script. By default, one of the networks will
 be stimulated with Gaussian white noise, showing that this is necessary
 for learning under this paradigm. In addition to R-STDP, a learning rule
 based on the ``stdp_dopamine_synapse`` and temporal difference learning

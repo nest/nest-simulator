@@ -158,7 +158,7 @@ images = []
 for filename in filenames:
     images.append(imageio.imread(filename))
 
-imageio.mimsave(out_file, images, fps=4)
+imageio.mimsave(out_file, images, duration=250)
 print(f"gif created under: {out_file}")
 
 if not keep_temps:

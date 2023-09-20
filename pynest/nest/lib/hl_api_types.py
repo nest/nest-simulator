@@ -1219,11 +1219,11 @@ def serialize_data(data):
         return data.tolist()
     elif isinstance(data, SynapseCollection):
         # Get full information from SynapseCollection
-        return serializable(data.get())
+        return serialize_data(data.get())
     if isinstance(data, (list, tuple)):
-        return [serializable(d) for d in data]
+        return [serialize_data(d) for d in data]
     if isinstance(data, dict):
-        return dict([(key, serializable(value)) for key, value in data.items()])
+        return dict([(key, serialize_data(value)) for key, value in data.items()])
     return data
 
 

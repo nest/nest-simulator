@@ -1,8 +1,7 @@
 NEST Sudoku
 ===========
 
-A PyNEST implementation of Sudoku as a constraint satisfaction
-problem.
+A PyNEST implementation of Sudoku as a constraint satisfaction problem.
 
 You can run the solver using ``sudoku_solver.py``. It will display the
 solution in the end.

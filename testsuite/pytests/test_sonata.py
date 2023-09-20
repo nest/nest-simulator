@@ -46,7 +46,7 @@ else:
 
 EXPECTED_NUM_NODES = 400  # 300 'internal' + 100 'external'
 EXPECTED_NUM_CONNECTIONS = 48432
-EXPECTED_NUM_SPIKES = 18788  # PYNEST-NG: SLI-NEST expected 18828 spikes, PYNEST-NG gives different number of spikes
+EXPECTED_NUM_SPIKES = 18828
 
 # Meaning of hyperslab sizes for 300_pointneurons model:
 # 2**10=1024 : Edge HDF5 files will be read in hyperslabs (chunks)

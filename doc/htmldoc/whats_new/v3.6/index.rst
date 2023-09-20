@@ -38,3 +38,10 @@ the property `volume_transmitter` of the synapse's common properties:
 |     )                                            |     )                                            |
 |                                                  |                                                  |
 +--------------------------------------------------+--------------------------------------------------+
+
+
+Changes in NEST Server
+----------------------
+
+We improved the security in NEST Server. Now to use NEST Server, users can modify the security options.
+See :ref:`section on setting these varialbles <sec_server_vars>` in our NEST Server guide.

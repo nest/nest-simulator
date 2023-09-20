@@ -146,10 +146,6 @@ target_link_libraries( nestkernel
   nestutil models ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES} ${HDF5_LIBRARIES}
 )
 
-if ( AUTO_OPENMP_FOUND )
-  target_link_libraries( nestkernel PUBLIC OpenMP::OpenMP_CXX )
-endif ()
-
 target_include_directories( nestkernel PRIVATE
   ${PROJECT_SOURCE_DIR}/thirdparty
   ${PROJECT_SOURCE_DIR}/libnestutil

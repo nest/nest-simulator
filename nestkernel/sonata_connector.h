@@ -38,7 +38,6 @@
 // Includes from nestkernel:
 #include "conn_parameter.h"
 #include "kernel_manager.h"
-//#include "nest_datums.h"
 
 #include "H5Cpp.h"
 

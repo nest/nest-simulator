@@ -21,214 +21,304 @@
 
 
 import numpy as np
-import unittest
 import scipy.stats
-import connect_test_base
+import pytest
+
 import nest
 
+# copied from connect_test_base.py
+try:
+    from mpi4py import MPI
+    haveMPI4Py = True
+except ImportError:
+    haveMPI4Py = False
 
-class TestPairwiseBernoulliAstro(connect_test_base.ConnectTestBase):
-    # specify connection pattern and specific params
-    rule = "pairwise_bernoulli_astro"
-    astrocyte_model = "astrocyte_lr_1994"
-    p = 0.5
-    p_syn_astro = 1.0
-    max_astro_per_target = 1
-    astro_pool_by_index = True
+# adapted from connect_test_base.py
+def setup_network(conn_dict, syn_dict, N1, N2, neuron_model="aeif_cond_alpha_astro", astrocyte_model="astrocyte_lr_1994"):
+    pop1 = nest.Create(neuron_model, N1)
+    pop2 = nest.Create(neuron_model, N2)
+    pop_astro = nest.Create(astrocyte_model, N2)
+    conn_dict["astrocyte"] = pop_astro
+    nest.Connect(pop1, pop2, conn_dict, syn_dict)
+    return pop1, pop2, pop_astro
+
+# copied from connect_test_base.py
+def get_expected_degrees_bernoulli(p, fan, len_source_pop, len_target_pop):
+    """
+    Calculate expected degree distribution.
+
+    Degrees with expected number of observations below e_min are combined
+    into larger bins.
+
+    Return values
+    -------------
+        2D array. The four columns contain degree,
+        expected number of observation, actual number observations, and
+        the number of bins combined.
+    """
+
+    n = len_source_pop if fan == "in" else len_target_pop
+    n_p = len_target_pop if fan == "in" else len_source_pop
+    mid = int(round(n * p))
+    e_min = 5
+
+    # Combine from front.
+    data_front = []
+    cumexp = 0.0
+    bins_combined = 0
+    for degree in range(mid):
+        cumexp += scipy.stats.binom.pmf(degree, n, p) * n_p
+        bins_combined += 1
+        if cumexp < e_min:
+            if degree == mid - 1:
+                if len(data_front) == 0:
+                    raise RuntimeWarning("Not enough data")
+                deg, exp, obs, num = data_front[-1]
+                data_front[-1] = (deg, exp + cumexp, obs, num + bins_combined)
+            else:
+                continue
+        else:
+            data_front.append((degree - bins_combined + 1, cumexp, 0, bins_combined))
+            cumexp = 0.0
+            bins_combined = 0
+
+    # Combine from back.
+    data_back = []
+    cumexp = 0.0
+    bins_combined = 0
+    for degree in reversed(range(mid, n + 1)):
+        cumexp += scipy.stats.binom.pmf(degree, n, p) * n_p
+        bins_combined += 1
+        if cumexp < e_min:
+            if degree == mid:
+                if len(data_back) == 0:
+                    raise RuntimeWarning("Not enough data")
+                deg, exp, obs, num = data_back[-1]
+                data_back[-1] = (degree, exp + cumexp, obs, num + bins_combined)
+            else:
+                continue
+        else:
+            data_back.append((degree, cumexp, 0, bins_combined))
+            cumexp = 0.0
+            bins_combined = 0
+    data_back.reverse()
+
+    expected = np.array(data_front + data_back)
+    if fan == "out":
+        assert sum(expected[:, 3]) == len_target_pop + 1
+    else:  # , 'Something is wrong'
+        assert sum(expected[:, 3]) == len_source_pop + 1
+
+    # np.hstack((np.asarray(data_front)[0], np.asarray(data_back)[0]))
+    return expected
+
+# copied from connect_test_base.py
+def get_degrees(fan, pop1, pop2):
+    M = get_connectivity_matrix(pop1, pop2)
+    if fan == "in":
+        degrees = np.sum(M, axis=1)
+    elif fan == "out":
+        degrees = np.sum(M, axis=0)
+    return degrees
+
+# copied from connect_test_base.py
+def gather_data(data_array):
+    """
+    Gathers data from all mpi processes by collecting all element in a list if
+    data is a list and summing all elements to one numpy-array if data is one
+    numpy-array. Returns gathered data if rank of current mpi node is zero and
+    None otherwise.
+
+    """
+    if haveMPI4Py:
+        data_array_list = MPI.COMM_WORLD.gather(data_array, root=0)
+        if MPI.COMM_WORLD.Get_rank() == 0:
+            if isinstance(data_array, list):
+                gathered_data = [item for sublist in data_array_list for item in sublist]
+            else:
+                gathered_data = sum(data_array_list)
+            return gathered_data
+        else:
+            return None
+    else:
+        return data_array
+
+# copied from connect_test_base.py
+def chi_squared_check(degrees, expected, distribution=None):
+    """
+    Create a single network and compare the resulting degree distribution
+    with the expected distribution using Pearson's chi-squared GOF test.
+
+    Parameters
+    ----------
+        seed   : PRNG seed value.
+        control: Boolean value. If True, _generate_multinomial_degrees will
+                 be used instead of _get_degrees.
+
+    Return values
+    -------------
+        chi-squared statistic.
+        p-value from chi-squared test.
+    """
+
+    if distribution in ("pairwise_bernoulli", "symmetric_pairwise_bernoulli"):
+        observed = {}
+        for degree in degrees:
+            if degree not in observed:
+                observed[degree] = 1
+            else:
+                observed[degree] += 1
+        # Add observations to data structure, combining multiple observations
+        # where necessary.
+        expected[:, 2] = 0.0
+        for row in expected:
+            for i in range(int(row[3])):
+                deg = int(row[0]) + i
+                if deg in observed:
+                    row[2] += observed[deg]
+
+        # ddof: adjustment to the degrees of freedom. df = k-1-ddof
+        return scipy.stats.chisquare(np.array(expected[:, 2]), np.array(expected[:, 1]))
+    else:
+        # ddof: adjustment to the degrees of freedom. df = k-1-ddof
+        return scipy.stats.chisquare(np.array(degrees), np.array(expected))
+
+# copied from connect_test_base.py
+def mpi_barrier():
+    if haveMPI4Py:
+        MPI.COMM_WORLD.Barrier()
+
+# copied from connect_test_base.py
+def get_connectivity_matrix(pop1, pop2):
+    """
+    Returns a connectivity matrix describing all connections from pop1 to pop2
+    such that M_ij describes the connection between the jth neuron in pop1 to
+    the ith neuron in pop2.
+    """
+
+    M = np.zeros((len(pop2), len(pop1)))
+    connections = nest.GetConnections(pop1, pop2)
+    index_dic = {}
+    for count, node in enumerate(pop1):
+        index_dic[node.get("global_id")] = count
+    for count, node in enumerate(pop2):
+        index_dic[node.get("global_id")] = count
+    for source, target in zip(connections.sources(), connections.targets()):
+        M[index_dic[target]][index_dic[source]] += 1
+    return M
+
+# adapted from connect_test_base.py
+def mpi_assert(data_original, data_test):
+    """
+    Compares data_original and data_test.
+    """
+
+    data_original = gather_data(data_original)
+    # only test if on rank 0
+    if data_original is not None:
+        if isinstance(data_original, (np.ndarray, np.generic)) and isinstance(data_test, (np.ndarray, np.generic)):
+            assert data_original == pytest.approx(data_test)
+        else:
+            TestCase.assertTrue(data_original == data_test)
+
+# adapted from test_connect_pairwise_bernoulli.py
+# a test for parameters "p" and "max_astro_per_target"
+# run for three levels of neuron-neuron connection probabilities
+@pytest.mark.parametrize("p_n2n", [0.1, 0.3, 0.5])
+def test_statistics(p_n2n):
+    # set connection parameters
+    N1 = 50
+    N2 = 50
+    max_astro_per_target = 5
     conn_dict = {
-        "rule": rule,
-        "p": p,
-        "p_syn_astro": p_syn_astro,
-        "max_astro_per_target": max_astro_per_target,
-        "astro_pool_by_index": astro_pool_by_index,
+        "rule": "pairwise_bernoulli_astro",
+        "p": p_n2n,
+        "max_astro_per_target": max_astro_per_target
     }
-    # sizes of source-, target-population and connection probability for
-    # statistical test
-    N_s = 50
-    N_t = 50
-    # Critical values and number of iterations of two level test
+
+    # set test parameters
     stat_dict = {"alpha2": 0.05, "n_runs": 20}
+    nr_threads = 2
 
-    def setUpNetwork(self, conn_dict=None, syn_dict=None, N1=None, N2=None, neuron_model="aeif_cond_alpha_astro"):
-        if N1 is None:
-            N1 = self.N_s
-        if N2 is None:
-            N2 = self.N_t
-        self.pop1 = nest.Create(neuron_model, N1)
-        self.pop2 = nest.Create(neuron_model, N2)
-        self.pop_astro = nest.Create(self.astrocyte_model, N2)
-        conn_dict["astrocyte"] = self.pop_astro
-        nest.set_verbosity("M_FATAL")
-        nest.Connect(self.pop1, self.pop2, conn_dict, syn_dict)
+    # set NEST verbosity
+    nest.set_verbosity("M_FATAL")
 
-    def testWeightSetting(self):
-        # test if weights are set correctly
-
-        # 'weight_pre2post' is used in this connectivity rule to stand for the
-        # weight for neuron-to-neuron connections, to differentiate from
-        # the 'weight_pre2astro' for the neuron-to-astrocyte connections
-        w0 = 0.351
-        syn_params = {"weight_pre2post": w0}
-        connect_test_base.check_synapse(["weight"], [w0], syn_params, self)
-
-    def testStatistics(self):
-        for fan in ["in", "out"]:
-            expected = connect_test_base.get_expected_degrees_bernoulli(self.p, fan, self.N_s, self.N_t)
-
-            pvalues = []
-            for i in range(self.stat_dict["n_runs"]):
-                connect_test_base.reset_seed(i + 1, self.nr_threads)
-                self.setUpNetwork(conn_dict=self.conn_dict)
-                degrees = connect_test_base.get_degrees(fan, self.pop1, self.pop2)
-                degrees = connect_test_base.gather_data(degrees)
-                if degrees is not None:
-                    chi, p = connect_test_base.chi_squared_check(degrees, expected, "pairwise_bernoulli")
-                    pvalues.append(p)
-                connect_test_base.mpi_barrier()
+    # here we test
+    # 1. p yields the correct indegree and outdegree
+    # 2. max_astro_per_target limits the number of astrocytes connected to each target neuron
+    for fan in ["in", "out"]:
+        expected = get_expected_degrees_bernoulli(conn_dict["p"], fan, N1, N2)
+        pvalues = []
+        n_astrocytes = []
+        for i in range(stat_dict["n_runs"]):
+            # setup network and connect
+            nest.ResetKernel()
+            nest.local_num_threads = nr_threads
+            nest.rng_seed = i + 1
+            pop1, pop2, pop_astro = setup_network(conn_dict, None, N1, N2)
+            # get indegree or outdegree
+            degrees = get_degrees(fan, pop1, pop2)
+            # gather data from MPI processes
+            degrees = gather_data(degrees)
+            # do chi-square test for indegree or outdegree
             if degrees is not None:
-                ks, p = scipy.stats.kstest(pvalues, "uniform")
-                self.assertTrue(p > self.stat_dict["alpha2"])
+                chi, p_degrees = chi_squared_check(degrees, expected, "pairwise_bernoulli")
+                pvalues.append(p_degrees)
+            mpi_barrier()
+            # get number of astrocytes connected to each target neuron
+            conns_n2n = nest.GetConnections(pop1, pop2).get()
+            conns_a2n = nest.GetConnections(pop_astro, pop2).get()
+            for id in list(set(conns_n2n["target"])):
+                astrocytes = np.array(conns_a2n["source"])
+                targets = np.array(conns_a2n["target"])
+                n_astrocytes.append(len(set(astrocytes[targets == id])))
+        # assert that the p-values are uniformly distributed
+        if degrees is not None:
+            ks, p_uniform = scipy.stats.kstest(pvalues, "uniform")
+            assert p_uniform > stat_dict["alpha2"]
+        # assert that for each target neuron, number of astrocytes is smaller than max_astro_per_target
+        assert all(n <= max_astro_per_target for n in n_astrocytes)
 
-    def testAutapsesTrue(self):
-        conn_params = self.conn_dict.copy()
-        N = 10
-        conn_params["allow_multapses"] = False
+# adapted from test_connect_pairwise_bernoulli
+def test_autapses_true():
+    # set connection parameters
+    N = 50
+    conn_dict = {
+        "rule": "pairwise_bernoulli_astro",
+        "p": 1.0,
+        "allow_autapses": True,
+    }
 
-        # test that autapses exist
-        conn_params["p"] = 1.0
-        conn_params["allow_autapses"] = True
-        pop = nest.Create("aeif_cond_alpha_astro", N)
-        astro_pop = nest.Create(self.astrocyte_model, N)
-        conn_params["astrocyte"] = astro_pop
-        nest.Connect(pop, pop, conn_params)
-        # make sure all connections do exist
-        M = connect_test_base.get_connectivity_matrix(pop, pop)
-        connect_test_base.mpi_assert(np.diag(M), np.ones(N), self)
+    # set NEST verbosity
+    nest.set_verbosity("M_FATAL")
 
-    def testAutapsesFalse(self):
-        conn_params = self.conn_dict.copy()
-        N = 10
+    # test that autapses exist
+    pop = nest.Create("aeif_cond_alpha_astro", N)
+    pop_astro = nest.Create("astrocyte_lr_1994", N)
+    conn_dict["astrocyte"] = pop_astro
+    nest.Connect(pop, pop, conn_dict)
+    # make sure all connections do exist
+    M = get_connectivity_matrix(pop, pop)
+    mpi_assert(np.diag(M), np.ones(N))
 
-        # test that autapses were excluded
-        conn_params["p"] = 1.0
-        conn_params["allow_autapses"] = False
-        pop = nest.Create("aeif_cond_alpha_astro", N)
-        astro_pop = nest.Create(self.astrocyte_model, N)
-        conn_params["astrocyte"] = astro_pop
-        nest.Connect(pop, pop, conn_params)
-        # make sure all connections do exist
-        M = connect_test_base.get_connectivity_matrix(pop, pop)
-        connect_test_base.mpi_assert(np.diag(M), np.zeros(N), self)
+# adapted from test_connect_pairwise_bernoulli
+def test_autapses_false():
+    # set connection parameters
+    N = 50
+    conn_dict = {
+        "rule": "pairwise_bernoulli_astro",
+        "p": 1.0,
+        "allow_autapses": False,
+    }
 
-    def testRPortSetting(self):
-        neuron_model = "iaf_psc_exp_multisynapse"
-        neuron_dict = {"tau_syn": [0.5, 0.7]}
-        rtype = 2
-        syn_params = {"synapse_model": "static_synapse", "receptor_type": rtype}
-        self.pop1 = nest.Create(neuron_model, self.N_s, neuron_dict)
-        self.pop2 = nest.Create(neuron_model, self.N_t, neuron_dict)
-        self.pop_astro = nest.Create(self.astrocyte_model, self.N_t)
-        self.conn_dict["astrocyte"] = self.pop_astro
-        conn_spec = self.conn_dict.copy()
-        # astrocyte excluded because not compatible
-        conn_spec["p_syn_astro"] = 0.0
-        nest.Connect(self.pop1, self.pop2, conn_spec, syn_params)
-        conns = nest.GetConnections(self.pop1, self.pop2)
-        ports = conns.get("receptor")
-        self.assertTrue(connect_test_base.all_equal(ports))
-        self.assertTrue(ports[0] == rtype)
+    # set NEST verbosity
+    nest.set_verbosity("M_FATAL")
 
-    def testRPortAllSynapses(self):
-        # static_synapse_hom_w excluded because not compatible with astrocyte
-        syns = ["cont_delay_synapse", "ht_synapse", "quantal_stp_synapse", "tsodyks2_synapse", "tsodyks_synapse"]
-        syn_params = {"receptor_type": 1}
-
-        for i, syn in enumerate(syns):
-            if syn == "stdp_dopamine_synapse":
-                vol = nest.Create("volume_transmitter")
-                nest.SetDefaults("stdp_dopamine_synapse", {"vt": vol.get("global_id")})
-            syn_params["synapse_model"] = syn
-            self.pop1 = nest.Create("iaf_psc_exp_multisynapse", self.N_s, {"tau_syn": [0.2, 0.5]})
-            self.pop2 = nest.Create("iaf_psc_exp_multisynapse", self.N_t, {"tau_syn": [0.2, 0.5]})
-            self.pop_astro = nest.Create(self.astrocyte_model, self.N_t)
-            self.conn_dict["astrocyte"] = self.pop_astro
-            conn_spec = self.conn_dict.copy()
-            # astrocyte excluded because not compatible
-            conn_spec["p_syn_astro"] = 0.0
-            nest.Connect(self.pop1, self.pop2, conn_spec, syn_params)
-            conns = nest.GetConnections(self.pop1, self.pop2)
-            conn_params = conns.get("receptor")
-            self.assertTrue(connect_test_base.all_equal(conn_params))
-            self.assertTrue(conn_params[0] == syn_params["receptor_type"])
-            self.setUp()
-
-    def testWeightAllSynapses(self):
-        # test all synapses apart from static_synapse_hom_w where weight is not
-        # settable
-        syns = ["cont_delay_synapse", "ht_synapse", "quantal_stp_synapse", "tsodyks2_synapse", "tsodyks_synapse"]
-        syn_params = {"weight_pre2post": 0.372}
-
-        for syn in syns:
-            if syn == "stdp_dopamine_synapse":
-                vol = nest.Create("volume_transmitter")
-                nest.SetDefaults("stdp_dopamine_synapse", {"vt": vol.get("global_id")})
-            syn_params["synapse_model"] = syn
-            connect_test_base.check_synapse(["weight"], [syn_params["weight_pre2post"]], syn_params, self)
-            self.setUp()
-
-    def testDelayAllSynapses(self):
-        # static_synapse_hom_w excluded because not compatible
-        syns = ["cont_delay_synapse", "ht_synapse", "quantal_stp_synapse", "tsodyks2_synapse", "tsodyks_synapse"]
-        syn_params = {"delay_pre2post": 0.4}
-
-        for syn in syns:
-            if syn == "stdp_dopamine_synapse":
-                vol = nest.Create("volume_transmitter")
-                nest.SetDefaults("stdp_dopamine_synapse", {"vt": vol.get("global_id")})
-            syn_params["synapse_model"] = syn
-            connect_test_base.check_synapse(["delay"], [syn_params["delay_pre2post"]], syn_params, self)
-            self.setUp()
-
-    def testDelaySetting(self):
-        # test if delays are set correctly
-
-        # one delay for all connections
-        d0 = 0.275
-        syn_params = {"delay_pre2post": d0}
-        self.setUpNetwork(self.conn_dict, syn_params)
-        connections = nest.GetConnections(self.pop1, self.pop2)
-        nest_delays = connections.get("delay")
-        # all delays need to be equal
-        self.assertTrue(connect_test_base.all_equal(nest_delays))
-        # delay (rounded) needs to equal the delay that was put in
-        self.assertTrue(abs(d0 - nest_delays[0]) < self.dt)
-
-    # skip all STDP synapses
-    def testStdpFacetshwSynapseHom(self):
-        pass
-
-    def testStdpPlSynapseHom(self):
-        pass
-
-    def testStdpSynapse(self):
-        pass
-
-    def testStdpSynapseHom(self):
-        pass
-
-    def testStdpDopamineSynapse(self):
-        pass
-
-
-def suite():
-    suite = unittest.TestLoader().loadTestsFromTestCase(TestPairwiseBernoulliAstro)
-    return suite
-
-
-def run():
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(suite())
-
-
-if __name__ == "__main__":
-    run()
+    # test that autapses were excluded
+    pop = nest.Create("aeif_cond_alpha_astro", N)
+    pop_astro = nest.Create("astrocyte_lr_1994", N)
+    conn_dict["astrocyte"] = pop_astro
+    nest.Connect(pop, pop, conn_dict)
+    # make sure all connections do exist
+    M = get_connectivity_matrix(pop, pop)
+    mpi_assert(np.diag(M), np.zeros(N))

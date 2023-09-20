@@ -26,6 +26,7 @@ Functions for node handling
 import warnings
 
 import nest
+import numpy as np
 
 from .. import nestkernel_api as nestkernel
 from ..ll_api import *
@@ -95,7 +96,7 @@ def Create(model, n=1, params=None, positions=None):
     # we can pass the parameter specification to SLI when the nodes are created.
     iterable_or_parameter_in_params = True
 
-    if not isinstance(n, int):
+    if not isinstance(n, (int, np.integer)):
         raise TypeError("n must be an integer")
 
     # PYNEST-NG: can we support the usecase above by passing the dict into ll_create?

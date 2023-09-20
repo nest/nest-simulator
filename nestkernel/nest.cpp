@@ -508,6 +508,12 @@ connect_arrays( long* sources,
   kernel().connection_manager.connect_arrays( sources, targets, weights, delays, p_keys, p_values, n, syn_model );
 }
 
+void
+connect_sonata( const dictionary& graph_specs, const long hyperslab_size )
+{
+  kernel().connection_manager.connect_sonata( graph_specs, hyperslab_size );
+}
+
 std::deque< ConnectionID >
 get_connections( const dictionary& dict )
 {

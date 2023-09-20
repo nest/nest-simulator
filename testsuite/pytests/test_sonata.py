@@ -22,6 +22,7 @@
 from pathlib import Path
 
 import nest
+import numpy as np
 import pytest
 
 # Skip all tests in this module if no HDF5 or OpenMP threads
@@ -32,7 +33,7 @@ pytestmark = [pytest.mark.skipif_missing_hdf5, pytest.mark.skipif_missing_thread
 #   while the data is in $INSTALLDIR/share/doc/nest/examples/pynest/sonata_example.
 # - When running from the source dir, this file is in $SOURCEDIR/testsuite/pytests,
 #   while the data is in $SOURCEDIR/pynest/examples/sonata_example.
-for relpath in ["../../../doc/nest/examples/pynest", "../../pynest/examples"]:
+for relpath in ["../../../doc/nest/examples/pynest", "../../examples"]:
     sonata_path = Path(__file__).parent / relpath / "sonata_example" / "300_pointneurons"
     config = sonata_path / "circuit_config.json"
     sim_config = sonata_path / "simulation_config.json"
@@ -76,5 +77,5 @@ def test_SonataNetwork(num_threads, hyperslab_size):
     nest.Connect(node_collections["internal"], srec)
     sonata_net.Simulate()
     spike_data = srec.events
-    post_times = spike_data["times"]
+    post_times = np.array(spike_data["times"])
     assert post_times.size == EXPECTED_NUM_SPIKES

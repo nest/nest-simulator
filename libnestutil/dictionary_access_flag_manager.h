@@ -73,6 +73,7 @@ public:
 inline void
 DictionaryAccessFlagManager::init_access_flags( const dictionary& dict )
 {
+  // TODO PYNEST-NG: Possible performance bottleneck
 #pragma omp critical( init_access_flags )
   {
     access_flags_[ &dict ] = {};
@@ -82,6 +83,7 @@ DictionaryAccessFlagManager::init_access_flags( const dictionary& dict )
 inline void
 DictionaryAccessFlagManager::register_access( const dictionary& dict, const key_type_& key )
 {
+  // TODO PYNEST-NG: Possible performance bottleneck
 #pragma omp critical( register_access )
   {
     access_flags_[ &dict ].insert( key );

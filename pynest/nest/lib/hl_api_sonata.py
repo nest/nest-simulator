@@ -435,10 +435,7 @@ class SonataNetwork:
             except BlockingIOError as err:
                 raise BlockingIOError(f"{err.strerror} for {os.path.realpath(d['edges_file'])}") from None
 
-        # TODO: PYNEST-NG
-        # sps(graph_specs)
-        # sps(hdf5_hyperslab_size)
-        # sr("ConnectSonata")
+        nestkernel.llapi_connect_sonata(graph_specs, hdf5_hyperslab_size)
 
         self._is_network_built = True
 
@@ -517,6 +514,9 @@ class SonataNetwork:
                 columns={"model_template": "synapse_model", "syn_weight": "weight"},
                 inplace=True,
             )
+
+            # Cast edge type ids from int to str, needed for kernel dictionary
+            edges_df["edge_type_id"] = edges_df["edge_type_id"].astype("string")
 
             edges_df_cols = set(edges_df.columns)
 
@@ -615,7 +615,7 @@ class SonataNetwork:
         """
 
         if hdf5_hyperslab_size is not None:
-            # Chunk size is verfified in Connect, but we also verify here
+            # hyperslab size is verfified in Connect, but we also verify here
             # to save computational resources in case of wrong input
             self._verify_hyperslab_size(hdf5_hyperslab_size)
 

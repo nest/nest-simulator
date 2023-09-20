@@ -35,7 +35,6 @@ DictionaryAccessFlagManager::all_accessed( const dictionary& dict,
   const std::string where,
   const std::string what ) const
 {
-  /*
   // Vector of elements in the dictionary that are not accessed
   std::vector< dictionary::value_type > not_accessed_kv_pairs;
 
@@ -54,12 +53,10 @@ DictionaryAccessFlagManager::all_accessed( const dictionary& dict,
 
     throw nest::UnaccessedDictionaryEntry( what, where, missed );
   }
-  */
 }
 
 bool
 DictionaryAccessFlagManager::accessed( const dictionary& dict, const key_type_& key ) const
 {
-  // return access_flags_.at( &dict ).count( key ) > 0;
-  return true;
+  return access_flags_.at( &dict ).count( key ) > 0;
 }

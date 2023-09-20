@@ -24,10 +24,9 @@ Functions for node handling
 """
 
 import warnings
-import nest
-import numpy as np
 
 import nest
+import numpy as np
 
 from .. import nestkernel_api as nestkernel
 from ..ll_api import *

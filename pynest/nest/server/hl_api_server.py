@@ -82,13 +82,13 @@ def _check_security():
 
     msg = []
     if AUTH_DISABLED:
-        msg.append("AUTH:\tThe authorization is disabled.")
+        msg.append("AUTH:\tThe authorization settings are disabled.")
     if "*" in CORS_ORIGINS:
-        msg.append("CORS:\tAllowed origins is not restricted.")
+        msg.append("CORS:\tThe allowed origins are not restricted.")
     if EXEC_CALL_ENABLED:
-        msg.append("EXEC CALL:\tAny code scripts can be executed!")
+        msg.append("EXEC CALL:\tThe exec route is enables and scripts can be executed.")
         if RESTRICTION_DISABLED:
-            msg.append("RESTRICTION: Code scripts will be executed without a restricted environment.")
+            msg.append("RESTRICTION: The execution of scripts is not protected by RestrictedPython.")
 
     if len(msg) > 0:
         print(

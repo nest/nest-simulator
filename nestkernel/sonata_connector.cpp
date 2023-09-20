@@ -590,14 +590,10 @@ SonataConnector::set_synapse_params_( dictionary syn_dict, size_t synapse_model_
   edge_type_id_2_param_dicts_[ type_id ].resize( kernel().vp_manager.get_num_threads() );
   edge_type_id_2_syn_spec_[ type_id ] = synapse_params;
 
-
-  // TODO: Once NEST is SLIless, the below loop over threads should be parallelizable. In order to parallelize, the
-  // change would be to replace the for loop with #pragma omp parallel and get the thread id (tid) inside the parallel
-  // region. Currently, creation of NumericDatum objects is not thread-safe because sli::pool memory is a static
-  // member variable; thus is also the new operator a static member function.
-  // Note that this also applies to the equivalent loop in conn_builder.cpp
-  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+#pragma omp parallel
   {
+    const auto tid = kernel().vp_manager.get_thread_id();
+
     for ( auto param : synapse_params )
     {
       if ( param.second->provides_long() )
@@ -609,7 +605,7 @@ SonataConnector::set_synapse_params_( dictionary syn_dict, size_t synapse_model_
         edge_type_id_2_param_dicts_.at( type_id ).at( tid )[ param.first ] = 0.0;
       }
     }
-  }
+  } // end parallel region
 }
 
 void

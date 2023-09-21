@@ -305,19 +305,11 @@ public:
   void
   check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
-    double update_interval_ = kernel().simulation_manager.get_eprop_update_interval();
-    double delay = get_delay();
-
-    double shift = 2.0 * delay; // correct for travel time of learning signal to synchronize signals
-
-    t_next_update_ = update_interval_ + shift;
-    t_last_update_ = shift;
-
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
-    t.init_update_history( ( t.get_eprop_node_type() == "readout" ? 3.0 : 2.0 ) * delay );
-    t.register_eprop_connection( t_last_spike_ - delay, delay );
+    t.init_update_history( ( t.get_eprop_node_type() == "readout" ? 3.0 : 2.0 ) * delay_ );
+    t.register_eprop_connection( t_last_spike_ - delay_, delay_ );
   }
 
   void
@@ -341,6 +333,8 @@ protected:
   double adam_v_;    // auxiliary variable for Adam optimizer
   double sum_grads_; // sum of the gradients in one batch
   double dt_;
+  double update_interval_;
+  double delay_;
 
   std::vector< double > presyn_spike_times_;
 };
@@ -354,25 +348,22 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
 {
   double t_spike = e.get_stamp().get_ms();
   Node* target = get_target( thread );
-  double dendritic_delay = get_delay();
   std::string target_node = target->get_eprop_node_type();
 
-  double update_interval_ = kernel().simulation_manager.get_eprop_update_interval();
-
-  if ( ( ( std::fmod( t_spike, update_interval_ ) - dendritic_delay ) != 0.0 ) or ( target_node == "readout" ) )
+  if ( ( ( std::fmod( t_spike, update_interval_ ) - delay_ ) != 0.0 ) or ( target_node == "readout" ) )
   {
     presyn_spike_times_.push_back( t_spike );
 
     if ( t_spike >= t_next_update_ )
     {
       double idx_current_update = floor( ( t_spike - dt_ ) / update_interval_ );
-      double t_current_update_ = idx_current_update * update_interval_ + 2.0 * dendritic_delay;
+      double t_current_update_ = idx_current_update * update_interval_ + 2.0 * delay_;
       int current_optimization_step_ = 1 + ( int ) idx_current_update / cp.batch_size_;
       double grad = 0.0;
 
-      double shift = target_node == "readout" ? dendritic_delay : 0.0;
+      double shift = target_node == "readout" ? delay_ : 0.0;
 
-      presyn_spike_times_.insert( --presyn_spike_times_.end(), t_next_update_ - ( dendritic_delay - shift ) );
+      presyn_spike_times_.insert( --presyn_spike_times_.end(), t_next_update_ - ( delay_ - shift ) );
 
       target->write_update_to_history( t_last_update_ + shift, t_current_update_ + shift );
 
@@ -494,17 +485,23 @@ eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
   updateValue< double >( d, names::adam_m, adam_m_ );
   updateValue< double >( d, names::adam_v, adam_v_ );
 
+  if ( weight_ < Wmin_ or weight_ > Wmax_ )
+    throw BadProperty( "Wmax >= weight >= Wmin must be satisfied." );
+  
   if ( tau_m_out_ <= 0 )
-    throw BadProperty( "Membrane time of readout neuron constant must be > 0." );
+    throw BadProperty( "Membrane time constant of readout neuron constant must be > 0." );
 
   dt_ = Time::get_resolution().get_ms();
 
   kappa_ = exp( -dt_ / tau_m_out_ );
+  
+  update_interval_ = kernel().simulation_manager.get_eprop_update_interval();
+  delay_ = get_delay();
 
-  if ( not( ( Wmax_ >= weight_ ) && ( Wmin_ <= weight_ ) ) )
-  {
-    throw BadProperty( "Wmax, Wmin and the weight have to satisfy Wmax >= weight >= Wmin" );
-  }
+  double shift = 2.0 * delay_; // correct for travel time of learning signal to synchronize signals
+
+  t_next_update_ = update_interval_ + shift;
+  t_last_update_ = shift;
 }
 
 } // namespace nest

@@ -204,7 +204,7 @@ ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source,
 #pragma omp parallel // default(none) shared(source, target, masked_layer,
                      // target_begin, target_end)
   {
-    const int thread_id = kernel().vp_manager.get_thread_id();
+    const int tid = kernel().vp_manager.get_thread_id();
     try
     {
       NodeCollection::const_iterator target_begin = target_nc->begin();
@@ -212,7 +212,7 @@ ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source,
 
       for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
       {
-        Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id, thread_id );
+        Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id, tid );
 
         if ( not tgt->is_proxy() )
         {
@@ -220,12 +220,11 @@ ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source,
 
           if ( mask_.get() )
           {
-            connect_to_target_(
-              pool.masked_begin( target_pos ), pool.masked_end(), tgt, target_pos, thread_id, source );
+            connect_to_target_( pool.masked_begin( target_pos ), pool.masked_end(), tgt, target_pos, tid, source );
           }
           else
           {
-            connect_to_target_( pool.begin(), pool.end(), tgt, target_pos, thread_id, source );
+            connect_to_target_( pool.begin(), pool.end(), tgt, target_pos, tid, source );
           }
         }
       } // for target_begin
@@ -289,7 +288,7 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
 #pragma omp parallel // default(none) shared(source, target, masked_layer,
                      // target_begin, target_end)
   {
-    const int thread_id = kernel().vp_manager.get_thread_id();
+    const int tid = kernel().vp_manager.get_thread_id();
     try
     {
       NodeCollection::const_iterator target_begin = target_nc->local_begin();
@@ -297,7 +296,7 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
 
       for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
       {
-        Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id, thread_id );
+        Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id, tid );
 
         assert( not tgt->is_proxy() );
 
@@ -307,13 +306,13 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
         {
           // We do the same as in the target driven case, except that we calculate displacements in the target layer.
           // We therefore send in target as last parameter.
-          connect_to_target_( pool.masked_begin( target_pos ), pool.masked_end(), tgt, target_pos, thread_id, target );
+          connect_to_target_( pool.masked_begin( target_pos ), pool.masked_end(), tgt, target_pos, tid, target );
         }
         else
         {
           // We do the same as in the target driven case, except that we calculate displacements in the target layer.
           // We therefore send in target as last parameter.
-          connect_to_target_( pool.begin(), pool.end(), tgt, target_pos, thread_id, target );
+          connect_to_target_( pool.begin(), pool.end(), tgt, target_pos, tid, target );
         }
 
       } // end for

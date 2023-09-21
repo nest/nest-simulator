@@ -26,6 +26,7 @@ import math
 import unittest
 
 import nest
+import numpy as np
 
 
 class ParrotNeuronTestCase(unittest.TestCase):
@@ -55,7 +56,9 @@ class ParrotNeuronTestCase(unittest.TestCase):
 
         # get spike from parrot neuron
         events = self.spikes.events
-        post_time = events["times"][events["senders"] == self.parrot.global_id]
+        times = np.array(events["times"])
+        senders = np.array(events["senders"])
+        post_time = times[senders == self.parrot.global_id]
 
         # assert spike was repeated at correct time
         assert post_time, "Parrot neuron failed to repeat spike."
@@ -70,7 +73,9 @@ class ParrotNeuronTestCase(unittest.TestCase):
 
         # get spike from parrot neuron, assert it was ignored
         events = self.spikes.events
-        post_time = events["times"][events["senders"] == self.parrot.global_id]
+        times = np.array(events["times"])
+        senders = np.array(events["senders"])
+        post_time = times[senders == self.parrot.global_id]
         assert len(post_time) == 0, "Parrot neuron failed to ignore spike arriving on port 1"
 
     def test_ParrotNeuronOutgoingMultiplicity(self):
@@ -88,7 +93,9 @@ class ParrotNeuronTestCase(unittest.TestCase):
 
         # get spikes from parrot neuron, assert two were transmitted
         events = self.spikes.events
-        post_times = events["times"][events["senders"] == self.parrot.global_id]
+        times = np.array(events["times"])
+        senders = np.array(events["senders"])
+        post_times = times[senders == self.parrot.global_id]
         assert (
             len(post_times) == 2 and post_times[0] == post_times[1]
         ), "Parrot neuron failed to correctly repeat multiple spikes."

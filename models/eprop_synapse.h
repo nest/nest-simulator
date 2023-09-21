@@ -279,10 +279,7 @@ public:
 
   void optimize( long current_optimization_step_, long& last_optimization_step_, const EpropCommonProperties& cp );
 
-  virtual void update_gradient(
-    Node* target,
-    double& grad,
-    const EpropCommonProperties& cp ) const {};
+  virtual void update_gradient( Node* target, double& grad, const EpropCommonProperties& cp ) const {};
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -352,24 +349,23 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
   std::string target_node = target->get_eprop_node_type();
   double shift = target_node == "readout" ? delay_ : 0.0;
 
-  if ( ( ( std::fmod( t_spike, update_interval_ ) - delay_ ) != 0.0 ) or ( target_node == "readout" ) )
+  if ( std::fmod( t_spike - delay_, update_interval_ ) != 0.0 or target_node == "readout" )
   {
     if ( t_last_spike_ > 0.0 )
     {
-      if ( t_spike >= t_next_update_ )
-        presyn_isis_.push_back( t_next_update_ - delay_ + shift - t_last_spike_);
-      else
-        presyn_isis_.push_back(t_spike - t_last_spike_);
+      double isi = ( t_spike >= t_next_update_ ) ? ( t_next_update_ - delay_ + shift - t_last_spike_ )
+                                                 : ( t_spike - t_last_spike_ );
+      presyn_isis_.push_back( isi );
     }
 
     if ( t_spike >= t_next_update_ )
     {
-      double idx_current_update = floor( ( t_spike - dt_ ) / update_interval_ );
+      int idx_current_update = static_cast< int >( ( t_spike - dt_ ) / update_interval_ );
       double t_current_update_ = idx_current_update * update_interval_ + 2.0 * delay_;
-      int current_optimization_step_ = 1 + ( int ) idx_current_update / cp.batch_size_;
+      int current_optimization_step_ = 1 + idx_current_update / cp.batch_size_;
       double grad = 0.0;
 
-      if (t_last_trigger_spike_ == 0.0 )
+      if ( t_last_trigger_spike_ == 0.0 )
         t_last_trigger_spike_ = t_next_update_ - delay_ + shift;
 
       target->write_update_to_history( t_last_update_ + shift, t_current_update_ + shift );
@@ -384,19 +380,20 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
         optimize( current_optimization_step_, last_optimization_step_, cp );
 
       t_last_update_ = t_current_update_;
-      t_next_update_ += ( floor( ( t_spike - t_next_update_ ) / update_interval_ ) + 1 ) * update_interval_;
+      t_next_update_ +=
+        ( static_cast< int >( ( t_spike - t_next_update_ ) / update_interval_ ) + 1 ) * update_interval_;
 
       presyn_isis_.clear();
 
       t_last_trigger_spike_ = t_spike;
     }
-  
+
     t_last_spike_ = t_spike;
   }
 
   if ( t_last_trigger_spike_ == 0.0 )
-      t_last_trigger_spike_ = t_spike;
-  
+    t_last_trigger_spike_ = t_spike;
+
   e.set_receiver( *target );
   e.set_weight( weight_ );
   e.set_delay_steps( get_delay_steps() );
@@ -495,14 +492,14 @@ eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
 
   if ( weight_ < Wmin_ or weight_ > Wmax_ )
     throw BadProperty( "Wmax >= weight >= Wmin must be satisfied." );
-  
+
   if ( tau_m_out_ <= 0 )
     throw BadProperty( "Membrane time constant of readout neuron constant must be > 0." );
 
   dt_ = Time::get_resolution().get_ms();
 
   kappa_ = exp( -dt_ / tau_m_out_ );
-  
+
   update_interval_ = kernel().simulation_manager.get_eprop_update_interval();
   delay_ = get_delay();
 

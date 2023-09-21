@@ -1,5 +1,5 @@
 /*
- *  eprop_synapse.h
+ *  eprop_synapse_readout.h
  *
  *  This file is part of NEST.
  *
@@ -211,10 +211,7 @@ public:
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
-  void update_gradient(
-    Node* target,
-    double& grad,
-    const EpropCommonProperties& cp ) const override;
+  void update_gradient( Node* target, double& grad, const EpropCommonProperties& cp ) const override;
 
   void get_status( DictionaryDatum& d ) const;
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
@@ -236,8 +233,7 @@ eprop_synapse_readout< targetidentifierT >::set_status( const DictionaryDatum& d
 
 template < typename targetidentifierT >
 void
-eprop_synapse_readout< targetidentifierT >::update_gradient( 
-  Node* target,
+eprop_synapse_readout< targetidentifierT >::update_gradient( Node* target,
   double& grad,
   const EpropCommonProperties& cp ) const
 {

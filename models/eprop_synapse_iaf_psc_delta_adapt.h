@@ -211,7 +211,7 @@ public:
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
-  void update_gradient( std::vector< double >& presyn_isis,
+  void update_gradient( 
     Node* target,
     double& grad,
     const EpropCommonProperties& cp ) const override;
@@ -235,13 +235,13 @@ eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::set_status( const Dictio
 
 template < typename targetidentifierT >
 void
-eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::update_gradient( std::vector< double >& presyn_isis,
+eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::update_gradient( 
   Node* target,
   double& grad,
   const EpropCommonProperties& cp ) const
 {
   std::deque< histentry_eprop_archive >::iterator it_eprop_hist;
-  target->get_eprop_history( this->presyn_spike_times_[ 0 ] + get_delay(), &it_eprop_hist );
+  target->get_eprop_history( this->t_last_trigger_spike_ + get_delay(), &it_eprop_hist );
 
   double alpha = target->get_leak_propagator();
   double alpha_complement = target->get_leak_propagator_complement();
@@ -250,7 +250,7 @@ eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::update_gradient( std::ve
   double last_z_bar = 0.0;
   double epsilon = 0.0;
 
-  for ( auto presyn_isi : presyn_isis )
+  for ( auto presyn_isi : this->presyn_isis_ )
   {
     last_z_bar += alpha_complement;
     for ( int t = 0; t < presyn_isi; ++t )

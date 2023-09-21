@@ -279,7 +279,7 @@ public:
 
   void optimize( long current_optimization_step_, long& last_optimization_step_, const EpropCommonProperties& cp );
 
-  virtual void update_gradient( std::vector< double >& presyn_isis,
+  virtual void update_gradient(
     Node* target,
     double& grad,
     const EpropCommonProperties& cp ) const {};
@@ -327,6 +327,7 @@ protected:
   double t_last_spike_;
   double t_last_update_;
   double t_next_update_;
+  double t_last_trigger_spike_;
   double tau_m_out_; // time constant for low pass filtering of eligibility trace
   double kappa_;     // exp( -dt / tau_m_out_ )
   double adam_m_;    // auxiliary variable for Adam optimizer
@@ -336,7 +337,7 @@ protected:
   double update_interval_;
   double delay_;
 
-  std::vector< double > presyn_spike_times_;
+  std::vector< double > presyn_isis_;
 };
 
 template < typename targetidentifierT >
@@ -349,10 +350,17 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
   double t_spike = e.get_stamp().get_ms();
   Node* target = get_target( thread );
   std::string target_node = target->get_eprop_node_type();
+  double shift = target_node == "readout" ? delay_ : 0.0;
 
   if ( ( ( std::fmod( t_spike, update_interval_ ) - delay_ ) != 0.0 ) or ( target_node == "readout" ) )
   {
-    presyn_spike_times_.push_back( t_spike );
+    if ( t_last_spike_ > 0.0 )
+    {
+      if ( t_spike >= t_next_update_ )
+        presyn_isis_.push_back( t_next_update_ - delay_ + shift - t_last_spike_);
+      else
+        presyn_isis_.push_back(t_spike - t_last_spike_);
+    }
 
     if ( t_spike >= t_next_update_ )
     {
@@ -361,17 +369,12 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
       int current_optimization_step_ = 1 + ( int ) idx_current_update / cp.batch_size_;
       double grad = 0.0;
 
-      double shift = target_node == "readout" ? delay_ : 0.0;
-
-      presyn_spike_times_.insert( --presyn_spike_times_.end(), t_next_update_ - ( delay_ - shift ) );
+      if (t_last_trigger_spike_ == 0.0 )
+        t_last_trigger_spike_ = t_next_update_ - delay_ + shift;
 
       target->write_update_to_history( t_last_update_ + shift, t_current_update_ + shift );
 
-      std::vector< double > presyn_isis( presyn_spike_times_.size() - 1 );
-      std::adjacent_difference( presyn_spike_times_.begin(), --presyn_spike_times_.end(), presyn_isis.begin() );
-      presyn_isis.erase( presyn_isis.begin() );
-
-      update_gradient( presyn_isis, target, grad, cp );
+      update_gradient( target, grad, cp );
 
       grad *= dt_;
 
@@ -383,18 +386,22 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
       t_last_update_ = t_current_update_;
       t_next_update_ += ( floor( ( t_spike - t_next_update_ ) / update_interval_ ) + 1 ) * update_interval_;
 
-      presyn_spike_times_.clear();
-      presyn_spike_times_.push_back( t_spike );
+      presyn_isis_.clear();
+
+      t_last_trigger_spike_ = t_spike;
     }
+  
+    t_last_spike_ = t_spike;
   }
 
+  if ( t_last_trigger_spike_ == 0.0 )
+      t_last_trigger_spike_ = t_spike;
+  
   e.set_receiver( *target );
   e.set_weight( weight_ );
   e.set_delay_steps( get_delay_steps() );
   e.set_rport( get_rport() );
   e();
-
-  t_last_spike_ = t_spike;
 }
 
 
@@ -449,6 +456,7 @@ eprop_synapse< targetidentifierT >::eprop_synapse()
   , t_last_spike_( 0.0 )
   , t_last_update_( 2.0 )
   , t_next_update_( 1002.0 )
+  , t_last_trigger_spike_( 0.0 )
   , tau_m_out_( 10.0 )
   , kappa_( 0.0 )
   , adam_m_( 0.0 )

@@ -224,13 +224,12 @@ nest::eprop_iaf_psc_delta_adapt::pre_run_hook()
   B_.logger_.init(); // ensures initialization in case multimeter connected after Simulate
 
   const double h = Time::get_resolution().get_ms();
-  const bool is_regression = kernel().simulation_manager.get_eprop_regression();
 
   V_.P33_ = std::exp( -h / P_.tau_m_ ); // alpha
   V_.P30_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - V_.P33_ );
   V_.Pa_ = std::exp( -h / P_.adapt_tau_ );
 
-  double propagators[] = { 1.0, 1.0 - V_.P33_ };
+  double propagators[] = { 1.0 - V_.P33_, 1.0 };
   V_.P33_complement_ = propagators[ P_.propagator_idx_ ];
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();

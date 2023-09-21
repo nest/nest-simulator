@@ -254,6 +254,7 @@ class EpropPlasticityTestCase(unittest.TestCase):
             "gamma": 0.3,
             "t_ref": 5.0 * resolution,
             "tau_m": 20.0,
+            "propagator_idx": 0,
         }
 
         neuron_params_regular = {
@@ -267,6 +268,7 @@ class EpropPlasticityTestCase(unittest.TestCase):
             "tau_m": 20.0,
             "V_m": 0.0,
             "V_th": 0.6,
+            "propagator_idx": 0,
         }
 
         neuron_params_readout = {
@@ -672,6 +674,7 @@ class EpropPlasticityTestCase(unittest.TestCase):
             "tau_m": 20.0,
             "V_m": 0.0,
             "V_th": 0.6,
+            "propagator_idx": 1,
         }
 
         neuron_params_regular = {
@@ -685,6 +688,7 @@ class EpropPlasticityTestCase(unittest.TestCase):
             "tau_m": 20.0,
             "V_m": 0.0,
             "V_th": 0.6,
+            "propagator_idx": 1,
         }
 
         neuron_params_readout = {

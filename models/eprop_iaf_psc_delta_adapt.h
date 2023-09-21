@@ -121,7 +121,7 @@ Parameter           Unit     Math equivalent          Default     Description
  V_m                mV       :math:`v_j^0`                 -70.0  Initial value of the membrane voltage
  V_min              mV       :math:`v_\text{min}`     -1.79e+308  Absolute lower value of the membrane voltage
  V_th               mV       :math:`v_\text{th}`           -55.0  Spike threshold
- propagator_idx                                                0  Index of propagators 0 (:math:`1`) or 1 (:math:`1 - \exp(\Delta t/\tau_\text{m})`)
+ propagator_idx                                                0  Index of propagators 0 (:math:`1 - \exp(\Delta t/\tau_\text{m})`) or 1 (:math:`1`) 
 ==================  =======  =======================  ==========  ==================================================================================
 
 Recordables
@@ -229,7 +229,7 @@ private:
     double adapt_beta_;  //!< prefactor of the adaptive threshold voltage
     double adapt_tau_;   //!< time constant of the adaptive threshold (ms)
     double gamma_;       //!< scaling of pseudo-derivative of membrane voltage
-    int propagator_idx_; //!< index of propagators 0 (1.0) or 1 (1.0 - exp(dt/tau_m))
+    int propagator_idx_; //!< index of propagators 1 (1.0 - exp(dt/tau_m)) or 0 (1.0)
 
     Parameters_();
 

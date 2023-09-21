@@ -178,7 +178,7 @@ params_nrn_reg = {
     "f_target": 10.0,  # Hz, target firing rate for firing rate regularization
     "gamma": 0.3,  # scaling of the pseudo derivative
     "I_e": 0.0,  # pA, external current input
-    "propagator_idx": 0,  # index of the two available propagators 0 (1.0) or 1 (1.0 - exp(dt/tau_m))
+    "propagator_idx": 1,  # index of the two available propagators 0 (1 - exp(dt/tau_m)) or 1 (1)
     "t_ref": 5.0,  # ms, duration of refractory period
     "tau_m": 20.0,  # ms, membrane time constant
     "V_m": 0.0,  # mV, initial value of the membrane voltage
@@ -194,7 +194,7 @@ params_nrn_ad = {
     "f_target": 10.0,
     "gamma": 0.3,
     "I_e": 0.0,
-    "propagator_idx": 0,  # index of the two available propagators 0 (1.0) or 1 (1.0 - exp(dt/tau_m))
+    "propagator_idx": 1,  # index of the two available propagators 0 (1 - exp(dt/tau_m)) or 1 (1)
     "t_ref": 5.0,
     "tau_m": 20.0,
     "V_m": 0.0,

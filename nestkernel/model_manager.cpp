@@ -328,7 +328,7 @@ ModelManager::set_synapse_defaults_( size_t model_id, const dictionary& params )
 
   assert_valid_syn_id( model_id );
 
-  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
+  std::vector< std::exception_ptr > exceptions_raised_( kernel().vp_manager.get_num_threads() );
 
 // We have to run this in parallel to set the status on nodes that exist on each
 // thread, such as volume_transmitter.
@@ -340,19 +340,19 @@ ModelManager::set_synapse_defaults_( size_t model_id, const dictionary& params )
     {
       connection_models_[ tid ][ model_id ]->set_status( params );
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
-  }
+  } // omp parallel
 
-  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  // check if any exceptions have been raised
+  for ( auto eptr : exceptions_raised_ )
   {
-    if ( exceptions_raised_.at( tid ).get() )
+    if ( eptr )
     {
-      throw WrappedThreadException( *( exceptions_raised_.at( tid ) ) );
+      std::rethrow_exception( eptr );
     }
   }
 

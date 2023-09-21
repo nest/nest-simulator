@@ -624,7 +624,7 @@ nest::ConnectionManager::connect_arrays( long* sources,
   set_connections_have_changed();
 
   // Vector for storing exceptions raised by threads.
-  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
+  std::vector< std::exception_ptr > exceptions_raised( kernel().vp_manager.get_num_threads() );
 
 #pragma omp parallel
   {
@@ -707,18 +707,19 @@ nest::ConnectionManager::connect_arrays( long* sources,
         increment_wd( w, d );
       }
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at the end of the catch block.
-      exceptions_raised.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised.at( tid ) = std::current_exception();
     }
-  }
+  } // omp parallel
+
   // check if any exceptions have been raised
-  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( auto eptr : exceptions_raised )
   {
-    if ( exceptions_raised.at( tid ).get() )
+    if ( eptr )
     {
-      throw WrappedThreadException( *( exceptions_raised.at( tid ) ) );
+      std::rethrow_exception( eptr );
     }
   }
 

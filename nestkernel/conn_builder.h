@@ -33,6 +33,7 @@
 // C++ includes:
 #include <map>
 #include <set>
+#include <stdexcept>
 #include <vector>
 
 // Includes from nestkernel:
@@ -203,7 +204,7 @@ protected:
   bool creates_symmetric_connections_;
 
   //! buffer for exceptions raised in threads
-  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_;
+  std::vector< std::exception_ptr > exceptions_raised_;
 
   // Name of the pre synaptic and postsynaptic elements for this connection builder
   std::string pre_synaptic_element_name_;

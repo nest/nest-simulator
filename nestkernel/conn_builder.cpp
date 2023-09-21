@@ -238,11 +238,11 @@ nest::ConnBuilder::connect()
     }
   }
   // check if any exceptions have been raised
-  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( auto eptr : exceptions_raised_ )
   {
-    if ( exceptions_raised_.at( tid ).get() )
+    if ( eptr )
     {
-      throw WrappedThreadException( *( exceptions_raised_.at( tid ) ) );
+      std::rethrow_exception( eptr );
     }
   }
 }
@@ -260,11 +260,11 @@ nest::ConnBuilder::disconnect()
   }
 
   // check if any exceptions have been raised
-  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( auto eptr : exceptions_raised_ )
   {
-    if ( exceptions_raised_.at( tid ).get() )
+    if ( eptr )
     {
-      throw WrappedThreadException( *( exceptions_raised_.at( tid ) ) );
+      std::rethrow_exception( eptr );
     }
   }
 }
@@ -632,11 +632,10 @@ nest::OneToOneBuilder::connect_()
         }
       }
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   }
 }
@@ -680,11 +679,10 @@ nest::OneToOneBuilder::disconnect_()
         single_disconnect_( snode_id, *target, target_thread );
       }
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   }
 }
@@ -727,11 +725,10 @@ nest::OneToOneBuilder::sp_connect_()
         single_connect_( snode_id, *target, target_thread, rng );
       }
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   }
 }
@@ -767,11 +764,10 @@ nest::OneToOneBuilder::sp_disconnect_()
         single_disconnect_( snode_id, *target, target_thread );
       }
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   }
 }
@@ -823,11 +819,10 @@ nest::AllToAllBuilder::connect_()
         }
       }
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   }
 }
@@ -902,11 +897,10 @@ nest::AllToAllBuilder::sp_connect_()
         }
       }
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   }
 }
@@ -952,11 +946,10 @@ nest::AllToAllBuilder::disconnect_()
         }
       }
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   }
 }
@@ -992,11 +985,10 @@ nest::AllToAllBuilder::sp_disconnect_()
         }
       }
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   }
 }
@@ -1108,11 +1100,10 @@ nest::FixedInDegreeBuilder::connect_()
         }
       }
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   }
 }
@@ -1284,11 +1275,10 @@ nest::FixedOutDegreeBuilder::connect_()
           single_connect_( snode_id, *target, tid, rng );
         }
       }
-      catch ( std::exception& err )
+      catch ( ... )
       {
-        // We must create a new exception here, err's lifetime ends at
-        // the end of the catch block.
-        exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+        // Capture the current exception object and create an std::exception_ptr
+        exceptions_raised_.at( tid ) = std::current_exception();
       }
     }
   }
@@ -1454,11 +1444,10 @@ nest::FixedTotalNumberBuilder::connect_()
         }
       }
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   }
 }
@@ -1537,11 +1526,10 @@ nest::BernoulliBuilder::connect_()
         }
       }
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   } // of omp parallel
 }
@@ -1696,11 +1684,10 @@ nest::SymmetricBernoulliBuilder::connect_()
         }
       }
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   }
 }
@@ -1736,11 +1723,11 @@ nest::SPBuilder::sp_connect( const std::vector< size_t >& sources, const std::ve
   connect_( sources, targets );
 
   // check if any exceptions have been raised
-  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( auto eptr : exceptions_raised_ )
   {
-    if ( exceptions_raised_.at( tid ).get() )
+    if ( eptr )
     {
-      throw WrappedThreadException( *( exceptions_raised_.at( tid ) ) );
+      std::rethrow_exception( eptr );
     }
   }
 }
@@ -1800,11 +1787,10 @@ nest::SPBuilder::connect_( const std::vector< size_t >& sources, const std::vect
         single_connect_( *snode_id_it, *target, tid, rng );
       }
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   }
 }

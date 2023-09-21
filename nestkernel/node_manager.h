@@ -353,7 +353,7 @@ private:
                             //!< since startup or last call to simulate
 
   //! Store exceptions raised in thread-parallel sections for later handling
-  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_;
+  std::vector< std::exception_ptr > exceptions_raised_;
 
   // private stop watch for benchmarking purposes
   Stopwatch sw_construction_create_;

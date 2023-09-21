@@ -409,7 +409,7 @@ SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t off
     read_subset_( delay_dset_, delay_data_subset, H5::PredType::NATIVE_DOUBLE, hyperslab_size, offset );
   }
 
-  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
+  std::vector< std::exception_ptr > exceptions_raised_( kernel().vp_manager.get_num_threads() );
 
   // Retrieve the correct NodeCollections
   const auto nest_nodes = boost::any_cast< dictionary >( graph_specs_.at( "nodes" ) );
@@ -464,20 +464,20 @@ SonataConnector::connect_chunk_( const hsize_t hyperslab_size, const hsize_t off
       } // end for
     }   // end try
 
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at the end of the catch block.
-      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
 
   } // end parallel region
 
   // Check if any exceptions have been raised
-  for ( size_t thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+  for ( auto eptr : exceptions_raised_ )
   {
-    if ( exceptions_raised_.at( thr ).get() )
+    if ( eptr )
     {
-      throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
+      std::rethrow_exception( eptr );
     }
   }
 
@@ -666,7 +666,6 @@ SonataConnector::reset_params_()
   edge_type_id_2_syn_spec_.clear();
   edge_type_id_2_param_dicts_.clear();
 }
-//*/
 
 } // end namespace nest
 

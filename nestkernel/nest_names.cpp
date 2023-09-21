@@ -371,6 +371,7 @@ const Name precise_times( "precise_times" );
 const Name precision( "precision" );
 const Name prepared( "prepared" );
 const Name print_time( "print_time" );
+const Name propagator_idx( "propagator_idx" );
 const Name proximal_curr( "proximal_curr" );
 const Name proximal_exc( "proximal_exc" );
 const Name proximal_inh( "proximal_inh" );

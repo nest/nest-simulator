@@ -158,6 +158,7 @@ params_nrn_rec = {
     "E_L": 0.0,  # mV, leak reversal potential
     "f_target": 10.0,  # Hz, target firing rate for firing rate regularization
     "I_e": 0.0,  # pA, external current input
+    "propagator_idx": 1,  # index of the two available propagators 0 (1.0) or 1 (1.0 - exp(dt/tau_m))
     "t_ref": 0.0,  # ms, duration of refractory period
     "tau_m": 30.0,  # ms, membrane time constant
     "V_m": 0.0,  # mV, initial value of the membrane voltage

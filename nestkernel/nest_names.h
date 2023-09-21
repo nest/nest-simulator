@@ -398,6 +398,7 @@ extern const Name precise_times;
 extern const Name precision;
 extern const Name prepared;
 extern const Name print_time;
+extern const Name propagator_idx;
 extern const Name proximal_curr;
 extern const Name proximal_exc;
 extern const Name proximal_inh;

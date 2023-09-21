@@ -75,6 +75,7 @@ nest::eprop_iaf_psc_delta_adapt::Parameters_::Parameters_()
   , adapt_beta_( 1.0 )
   , adapt_tau_( 10.0 )
   , gamma_( 0.3 )
+  , propagator_idx_( 0 )
 {
 }
 
@@ -117,6 +118,7 @@ nest::eprop_iaf_psc_delta_adapt::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::adapt_beta, adapt_beta_ );
   def< double >( d, names::adapt_tau, adapt_tau_ );
   def< double >( d, names::gamma, gamma_ );
+  def< double >( d, names::propagator_idx, propagator_idx_ );
 }
 
 double
@@ -139,6 +141,7 @@ nest::eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Nod
   updateValueParam< double >( d, names::adapt_beta, adapt_beta_, node );
   updateValueParam< double >( d, names::adapt_tau, adapt_tau_, node );
   updateValueParam< double >( d, names::gamma, gamma_, node );
+  updateValueParam< double >( d, names::propagator_idx, propagator_idx_, node );
 
   if ( C_m_ <= 0 )
     throw BadProperty( "Capacitance must be > 0." );
@@ -148,6 +151,9 @@ nest::eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Nod
     throw BadProperty( "Membrane time constant must be > 0." );
   if ( adapt_tau_ <= 0 )
     throw BadProperty( "Time constant of threshold adaptation must be > 0." );
+
+  if ( propagator_idx_ != 0 and propagator_idx_ != 1 )
+    throw BadProperty( "One of two available propagators indexed by 0 and 1 must be selected." );
 
   return delta_EL;
 }
@@ -223,7 +229,10 @@ nest::eprop_iaf_psc_delta_adapt::pre_run_hook()
   V_.P33_ = std::exp( -h / P_.tau_m_ ); // alpha
   V_.P30_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - V_.P33_ );
   V_.Pa_ = std::exp( -h / P_.adapt_tau_ );
-  V_.P33_complement_ = is_regression ? 1.0 - V_.P33_ : 1.0;
+
+  double propagators[] = { 1.0, 1.0 - V_.P33_ };
+  V_.P33_complement_ = propagators[ P_.propagator_idx_ ];
+
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
 }
 

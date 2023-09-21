@@ -388,6 +388,7 @@ create_mask( const dictionary& mask_dict )
     try
     {
       std::vector< long > anchor = mask_dict.get< std::vector< long > >( names::anchor );
+
       switch ( anchor.size() )
       {
       case 2:

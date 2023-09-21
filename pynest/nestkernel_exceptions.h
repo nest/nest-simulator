@@ -21,6 +21,7 @@
  */
 
 #include <Python.h>
+#include <exception>
 #include <ios>
 #include <stdexcept>
 
@@ -70,6 +71,10 @@ custom_exception_handler()
   catch ( nest::KernelException& exn )
   {
     PyErr_SetString( nest_exceptions_map[ exn.exception_name() ], exn.what() );
+  }
+  catch ( std::exception& exc )
+  {
+    PyErr_SetString( PyExc_RuntimeError, ( std::string( "C++ exception: " ) + exc.what() ).c_str() );
   }
   catch ( ... )
   {

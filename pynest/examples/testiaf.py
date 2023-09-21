@@ -36,8 +36,8 @@ starts to recover.
 ###############################################################################
 # First, we import all necessary modules for simulation and plotting
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 
 ###############################################################################
 # Second the function ``build_network`` is defined to build the network and

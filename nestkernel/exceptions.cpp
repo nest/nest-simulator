@@ -31,6 +31,11 @@
 // Includes from sli:
 #include "interpret.h"
 
+// Include MPI for MPI error string
+#ifdef HAVE_MPI
+#include <mpi.h>
+#endif
+
 std::string
 nest::UnknownModelName::message() const
 {
@@ -396,6 +401,32 @@ nest::MPIPortsFileUnknown::message() const
   std::ostringstream msg;
   msg << "The node with ID " << node_id_ << " requires a label,"
       << " which specifies the folder with files containing the MPI ports";
+  return msg.str();
+}
+
+
+std::string
+nest::MPIPortsFileMissing::message() const
+{
+  std::ostringstream msg;
+  msg << "The node with ID " << node_id_ << " expects a file with the MPI address at location " << path_
+      << ". The file does not seem to exist.";
+  return msg.str();
+}
+
+std::string
+nest::MPIErrorCode::message() const
+{
+
+  char errmsg[ 256 ];
+  int len;
+
+  MPI_Error_string( error_code_, errmsg, &len );
+  std::string error;
+  error.assign( errmsg, len );
+
+  std::ostringstream msg;
+  msg << "MPI Error: " << error;
   return msg.str();
 }
 #endif

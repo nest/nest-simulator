@@ -1191,6 +1191,36 @@ public:
 private:
   const size_t node_id_;
 };
+
+class MPIErrorCode : public KernelException
+{
+public:
+  explicit MPIErrorCode( const int error_code )
+    : error_code_( error_code )
+  {
+  }
+
+  std::string message() const;
+
+private:
+  int error_code_;
+};
+
+class MPIPortsFileMissing : public KernelException
+{
+public:
+  explicit MPIPortsFileMissing( const size_t node_id, const std::string path )
+    : node_id_( node_id )
+    , path_( path )
+  {
+  }
+
+  std::string message() const;
+
+private:
+  const size_t node_id_;
+  const std::string path_;
+};
 #endif
 
 class UnmatchedSteps : public KernelException

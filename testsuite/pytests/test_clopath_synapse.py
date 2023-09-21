@@ -24,6 +24,7 @@ Test functionality of the Clopath stdp synapse
 """
 
 import unittest
+
 import nest
 import numpy as np
 

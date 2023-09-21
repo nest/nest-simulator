@@ -1,5 +1,8 @@
 on: [push]
 
+permissions:
+  contents: read
+
 jobs:
   trigger_externals:
     if: ${{ github.repository_owner == 'nest' && github.ref_name == 'master' }}

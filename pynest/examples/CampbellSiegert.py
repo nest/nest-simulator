@@ -51,12 +51,10 @@ S. Schrader, Siegert implementation by T. Tetzlaff
 # First, we import all necessary modules for simulation and analysis. Scipy
 # should be imported before nest.
 
-from scipy.special import erf
-from scipy.optimize import fmin
-
-import numpy as np
-
 import nest
+import numpy as np
+from scipy.optimize import fmin
+from scipy.special import erf
 
 ###############################################################################
 # We first set the parameters of neurons, noise and the simulation. First

@@ -51,7 +51,7 @@ Please familiarize yourself with our guides and workflows:
        * Follow the :ref:`C++ coding style guidelines <code_style_cpp>`
        * Review the :ref:`naming conventions for NEST <naming_conventions>`
        * Writing an extension module? See :doc:`extmod:index`
-       * :ref:`check_code` to ensure correct formatting
+       * :ref:`required_dev_tools`
 
     .. grid-item-card:: Contribute documentation
 
@@ -122,3 +122,4 @@ Developer guides
    guidelines/styleguide/vim_support_sli
    templates/*
    sli_docs/index
+   cppcomments

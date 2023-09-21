@@ -18,6 +18,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+#
+# isort: skip_file
 
 """
 Store and restore a network simulation
@@ -304,8 +306,6 @@ class DemoPlot:
 
 
 if __name__ == "__main__":
-    plt.ion()
-
     T_sim = 1000
 
     dplot = DemoPlot()
@@ -370,6 +370,4 @@ if __name__ == "__main__":
     nest.Simulate(T_sim)
     dplot.add_to_plot(ein2, lbl="Reloaded simulation (different seed)")
 
-    dplot.fig.savefig("store_restore_network.png")
-
-    input("Press ENTER to close figure!")
+    plt.show()

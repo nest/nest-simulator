@@ -96,6 +96,11 @@ See also
 
 ac_generator, dc_generator, noise_generator
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: step_current_generator
+
 EndUserDocs */
 
 class step_current_generator : public StimulationDevice

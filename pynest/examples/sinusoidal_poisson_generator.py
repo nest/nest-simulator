@@ -40,8 +40,8 @@ the ``individual_spike_trains`` switch.
 # We import the modules required to simulate, analyze and plot this example.
 
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 import numpy as np
 
 nest.ResetKernel()  # in case we run the script multiple times from iPython

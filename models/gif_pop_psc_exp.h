@@ -139,6 +139,11 @@ See also
 
 gif_psc_exp, bernoulli_synapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: gif_pop_psc_exp
+
 EndUserDocs */
 
 

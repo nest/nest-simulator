@@ -24,6 +24,7 @@ Test of events
 """
 
 import unittest
+
 import nest
 import numpy as np
 
@@ -200,6 +201,39 @@ class WeightRecorderTestCase(unittest.TestCase):
 
         self.addTypeEqualityFunc(type(wr_targets), self.is_subset)
         self.assertEqual(wr_targets, targets)
+
+    def test_senders_and_targets(self):
+        """
+        Senders and targets for weight recorder works as NodeCollection and list.
+
+        NOTE: This test was moved from test_NodeCollection.py and may overlap
+        with test already present in this test suite. If that is the case,
+        consider to just drop this test.
+        """
+
+        nest.ResetKernel()
+
+        wr = nest.Create("weight_recorder")
+        pre = nest.Create("parrot_neuron", 5)
+        post = nest.Create("parrot_neuron", 5)
+
+        # Senders and targets lists empty
+        self.assertFalse(nest.GetStatus(wr, "senders")[0])
+        self.assertFalse(nest.GetStatus(wr, "targets")[0])
+
+        nest.SetStatus(wr, {"senders": pre[1:3], "targets": post[3:]})
+
+        gss = nest.GetStatus(wr, "senders")[0]
+        gst = nest.GetStatus(wr, "targets")[0]
+
+        self.assertEqual(gss.tolist(), [3, 4])
+        self.assertEqual(gst.tolist(), [10, 11])
+
+        nest.SetStatus(wr, {"senders": [2, 6], "targets": [8, 9]})
+        gss = nest.GetStatus(wr, "senders")[0]
+        gst = nest.GetStatus(wr, "targets")[0]
+        self.assertEqual(gss.tolist(), [2, 6])
+        self.assertEqual(gst.tolist(), [8, 9])
 
     def testMultapses(self):
         """Weight Recorder Multapses"""

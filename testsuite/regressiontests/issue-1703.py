@@ -27,9 +27,9 @@ This is a regression test for GitHub issue 1703.
 """
 
 import os
-import sys
-import subprocess
 import shlex
+import subprocess
+import sys
 
 EXIT_CODE_SUCCESS = 0
 EXIT_CODE_ERROR = 1

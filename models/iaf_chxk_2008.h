@@ -126,6 +126,11 @@ See also
 
 iaf_cond_alpha
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_chxk_2008
+
 EndUserDocs */
 
 /**

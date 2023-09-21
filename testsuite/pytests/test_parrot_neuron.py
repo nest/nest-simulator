@@ -22,9 +22,10 @@
 # This script tests the parrot_neuron in NEST.
 # See test_parrot_neuron_ps.py for an equivalent test of the precise parrot.
 
-import nest
-import unittest
 import math
+import unittest
+
+import nest
 
 
 @nest.ll_api.check_stack

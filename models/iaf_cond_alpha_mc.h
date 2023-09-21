@@ -168,6 +168,11 @@ See also
 
 iaf_cond_alpha
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_cond_alpha_mc
+
 EndUserDocs */
 
 class iaf_cond_alpha_mc : public ArchivingNode

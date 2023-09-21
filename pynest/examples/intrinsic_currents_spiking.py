@@ -51,8 +51,8 @@ See Also
 ###############################################################################
 # We imported all necessary modules for simulation, analysis and plotting.
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 
 ###############################################################################
 # Additionally, we set the verbosity using ``set_verbosity`` to suppress info

@@ -55,11 +55,11 @@ set_target_properties( nest_lib
     )
 
 target_link_libraries( nest
-    nestutil nestkernel sli_lib sli_readline
-    ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES} OpenMP::OpenMP_CXX )
+    nestutil nestkernel sli_lib sli_readline models
+    ${EXTERNAL_MODULE_LIBRARIES} OpenMP::OpenMP_CXX )
 
 target_link_libraries( nest_lib
-    nestutil nestkernel sli_lib ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES}
+    nestutil nestkernel sli_lib models ${EXTERNAL_MODULE_LIBRARIES}
     OpenMP::OpenMP_CXX )
 
 target_include_directories( nest PRIVATE
@@ -69,7 +69,7 @@ target_include_directories( nest PRIVATE
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_SOURCE_DIR}/sli
     ${PROJECT_SOURCE_DIR}/nestkernel
-    ${SLI_MODULE_INCLUDE_DIRS}
+    ${PROJECT_SOURCE_DIR}/models
     )
 
 
@@ -84,7 +84,7 @@ target_include_directories( nest_lib PRIVATE
     ${PROJECT_BINARY_DIR}/libnestutil
     ${PROJECT_SOURCE_DIR}/sli
     ${PROJECT_SOURCE_DIR}/nestkernel
-    ${SLI_MODULE_INCLUDE_DIRS}
+    ${PROJECT_SOURCE_DIR}/models
     ${Python_INCLUDE_DIRS}
     )
 

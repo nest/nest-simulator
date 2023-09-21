@@ -43,8 +43,8 @@ different settings for rate, phase and frequency are demonstrated.
 # plot this example.
 
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 import numpy as np
 
 nest.ResetKernel()  # in case we run the script multiple times from iPython

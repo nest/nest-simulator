@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Gaussian probabilistic kernel
------------------------------
+Spatial networks: Gaussian probabilistic kernel
+-----------------------------------------------
 
 Create two populations on a 30x30 grid and connect them using a Gaussian probabilistic kernel
 BCCN Tutorial @ CNS*09
@@ -29,8 +29,8 @@ Hans Ekkehard Plesser, UMB
 """
 
 import matplotlib.pyplot as plt
-import numpy as np
 import nest
+import numpy as np
 
 nest.ResetKernel()
 

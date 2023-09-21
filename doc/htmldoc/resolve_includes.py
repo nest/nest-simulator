@@ -32,10 +32,10 @@ when viewed via PyNEST's help() command, we replace lines with
 
 """
 
+import glob
 import os
 import re
 import sys
-import glob
 from fileinput import FileInput
 
 pattern = re.compile("^.. include:: (.*)")

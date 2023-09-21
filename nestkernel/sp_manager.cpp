@@ -36,18 +36,6 @@
 namespace nest
 {
 
-template < typename T >
-void
-print_vector( const std::vector< T >& vec )
-{
-  std::cout << "#######BEGIN############################\n";
-  for ( typename std::vector< T >::const_iterator cit = vec.begin(); cit != vec.end(); ++cit )
-  {
-    std::cout << *cit << ", ";
-  }
-  std::cout << "########END############################\n";
-}
-
 SPManager::SPManager()
   : ManagerInterface()
   , structural_plasticity_update_interval_( 10000. )
@@ -91,12 +79,12 @@ SPManager::get_status( DictionaryDatum& d )
     sp_synapse = DictionaryDatum( new Dictionary() );
     def< std::string >( sp_synapse, names::pre_synaptic_element, ( *i )->get_pre_synaptic_element_name() );
     def< std::string >( sp_synapse, names::post_synaptic_element, ( *i )->get_post_synaptic_element_name() );
-    def< std::string >( sp_synapse,
-      names::synapse_model,
-      kernel().model_manager.get_connection_model( ( *i )->get_synapse_model(), 0 ).get_name() );
-    std::stringstream syn_name;
-    syn_name << "syn" << ( sp_conn_builders_.end() - i );
-    def< DictionaryDatum >( sp_synapses, syn_name.str(), sp_synapse );
+    const std::string model = kernel().model_manager.get_connection_model( ( *i )->get_synapse_model(), 0 ).get_name();
+    def< std::string >( sp_synapse, names::synapse_model, model );
+    def< bool >( sp_synapse, names::allow_autapses, ( *i )->allows_autapses() );
+    def< bool >( sp_synapse, names::allow_multapses, ( *i )->allows_multapses() );
+
+    def< DictionaryDatum >( sp_synapses, ( *i )->get_name(), sp_synapse );
   }
 
   def< double >( d, names::structural_plasticity_update_interval, structural_plasticity_update_interval_ );
@@ -112,10 +100,8 @@ SPManager::get_status( DictionaryDatum& d )
 void
 SPManager::set_status( const DictionaryDatum& d )
 {
-  if ( d->known( names::structural_plasticity_update_interval ) )
-  {
-    updateValue< double >( d, names::structural_plasticity_update_interval, structural_plasticity_update_interval_ );
-  }
+  updateValue< double >( d, names::structural_plasticity_update_interval, structural_plasticity_update_interval_ );
+
   if ( not d->known( names::structural_plasticity_synapses ) )
   {
     return;
@@ -123,17 +109,9 @@ SPManager::set_status( const DictionaryDatum& d )
 
   // Configure synapses model updated during the simulation.
   Token synmodel;
-  DictionaryDatum syn_specs, syn_spec;
+  DictionaryDatum syn_specs;
+  DictionaryDatum syn_spec;
   DictionaryDatum conn_spec = DictionaryDatum( new Dictionary() );
-
-  if ( d->known( names::allow_autapses ) )
-  {
-    def< bool >( conn_spec, names::allow_autapses, getValue< bool >( d, names::allow_autapses ) );
-  }
-  if ( d->known( names::allow_multapses ) )
-  {
-    def< bool >( conn_spec, names::allow_multapses, getValue< bool >( d, names::allow_multapses ) );
-  }
   NodeCollectionPTR sources( new NodeCollectionPrimitive() );
   NodeCollectionPTR targets( new NodeCollectionPrimitive() );
 
@@ -142,12 +120,23 @@ SPManager::set_status( const DictionaryDatum& d )
     delete ( *i );
   }
   sp_conn_builders_.clear();
+
   updateValue< DictionaryDatum >( d, names::structural_plasticity_synapses, syn_specs );
   for ( Dictionary::const_iterator i = syn_specs->begin(); i != syn_specs->end(); ++i )
   {
     syn_spec = getValue< DictionaryDatum >( syn_specs, i->first );
+    if ( syn_spec->known( names::allow_autapses ) )
+    {
+      def< bool >( conn_spec, names::allow_autapses, getValue< bool >( syn_spec, names::allow_autapses ) );
+    }
+    if ( syn_spec->known( names::allow_multapses ) )
+    {
+      def< bool >( conn_spec, names::allow_multapses, getValue< bool >( syn_spec, names::allow_multapses ) );
+    }
+
     // We use a ConnBuilder with dummy values to check the synapse parameters
     SPBuilder* conn_builder = new SPBuilder( sources, targets, conn_spec, { syn_spec } );
+    conn_builder->set_name( i->first.toString() );
 
     // check that the user defined the min and max delay properly, if the
     // default delay is not used.
@@ -268,8 +257,8 @@ SPManager::disconnect( NodeCollectionPTR sources,
       if ( ( *i )->get_synapse_model() == kernel().model_manager.get_synapse_model_id( synModel ) )
       {
         cb = kernel().connection_manager.get_conn_builder( rule_name, sources, targets, conn_spec, { syn_spec } );
-        cb->set_post_synaptic_element_name( ( *i )->get_post_synaptic_element_name() );
-        cb->set_pre_synaptic_element_name( ( *i )->get_pre_synaptic_element_name() );
+        cb->set_synaptic_element_names(
+          ( *i )->get_pre_synaptic_element_name(), ( *i )->get_post_synaptic_element_name() );
       }
     }
   }
@@ -661,10 +650,10 @@ nest::SPManager::enable_structural_plasticity()
       "Structural plasticity can not be enabled if keep_source_table has been "
       "set to false." );
   }
-  if ( not kernel().connection_manager.get_sort_connections_by_source() )
+  if ( not kernel().connection_manager.use_compressed_spikes() )
   {
     throw KernelException(
-      "Structural plasticity can not be enabled if sort_connections_by_source "
+      "Structural plasticity can not be enabled if use_compressed_spikes "
       "has been set to false." );
   }
   structural_plasticity_enabled_ = true;

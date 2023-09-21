@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import nest
 import unittest
+
+import nest
 
 try:
     from mpi4py import MPI
@@ -61,6 +62,7 @@ class TestDisconnectSingle(unittest.TestCase):
             "urbanczik_synapse",
             "urbanczik_synapse_lbl",
             "urbanczik_synapse_hpc",
+            "sic_connection",
         ]
 
     def test_synapse_deletion_one_to_one_no_sp(self):

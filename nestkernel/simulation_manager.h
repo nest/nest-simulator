@@ -231,6 +231,7 @@ private:
   Stopwatch sw_gather_spike_data_;
   Stopwatch sw_update_;
   Stopwatch sw_gather_target_data_;
+  Stopwatch sw_deliver_spike_data_;
 #endif
 };
 

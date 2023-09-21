@@ -25,8 +25,9 @@
 # standard deviation of the output noise, which already determines the variance
 # of the rate.
 
-import nest
 import unittest
+
+import nest
 import numpy as np
 
 

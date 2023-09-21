@@ -43,9 +43,9 @@ See Also
 # including connections between nodes, status of neurons, devices and
 # intrinsic time clocks, is kept and influences the next simulations.
 
+import matplotlib.pyplot as plt
 import nest
 import nest.voltage_trace
-import matplotlib.pyplot as plt
 
 nest.set_verbosity("M_WARNING")
 nest.ResetKernel()

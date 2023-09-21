@@ -28,8 +28,8 @@ not support 64-bit generators, tests of Philox_64 and Threefry_64 are skipped.
 """
 
 import unittest
-import nest
 
+import nest
 
 try:
     import scipy.stats

@@ -23,9 +23,9 @@ Tests of Connect with layers.
 """
 
 import unittest
+
 import nest
 import numpy as np
-
 
 try:
     import scipy.stats

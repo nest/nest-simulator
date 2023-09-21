@@ -66,6 +66,11 @@ See also
 
 rate_connection_delayed, rate_neuron_ipn, rate_neuron_opn
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: rate_connection_instantaneous
+
 EndUserDocs */
 
 /**
@@ -73,7 +78,7 @@ EndUserDocs */
  * has the properties weight and receiver port.
  */
 template < typename targetidentifierT >
-class RateConnectionInstantaneous : public Connection< targetidentifierT >
+class rate_connection_instantaneous : public Connection< targetidentifierT >
 {
 
 public:
@@ -87,7 +92,7 @@ public:
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  RateConnectionInstantaneous()
+  rate_connection_instantaneous()
     : ConnectionBase()
     , weight_( 1.0 )
   {
@@ -153,11 +158,11 @@ private:
 };
 
 template < typename targetidentifierT >
-constexpr ConnectionModelProperties RateConnectionInstantaneous< targetidentifierT >::properties;
+constexpr ConnectionModelProperties rate_connection_instantaneous< targetidentifierT >::properties;
 
 template < typename targetidentifierT >
 void
-RateConnectionInstantaneous< targetidentifierT >::get_status( DictionaryDatum& d ) const
+rate_connection_instantaneous< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
@@ -166,7 +171,7 @@ RateConnectionInstantaneous< targetidentifierT >::get_status( DictionaryDatum& d
 
 template < typename targetidentifierT >
 void
-RateConnectionInstantaneous< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+rate_connection_instantaneous< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   // If the delay is set, we throw a BadProperty
   if ( d->known( names::delay ) )
@@ -182,7 +187,7 @@ RateConnectionInstantaneous< targetidentifierT >::set_status( const DictionaryDa
 
 template < typename targetidentifierT >
 SecondaryEvent*
-RateConnectionInstantaneous< targetidentifierT >::get_secondary_event()
+rate_connection_instantaneous< targetidentifierT >::get_secondary_event()
 {
   return new InstantaneousRateConnectionEvent();
 }

@@ -73,8 +73,8 @@ BOOST_AUTO_TEST_CASE( test_size )
     block_vector_b.push_back( i );
   }
 
-  BOOST_REQUIRE( block_vector_a.size() == ( size_t ) N_a );
-  BOOST_REQUIRE( block_vector_b.size() == ( size_t ) N_b );
+  BOOST_REQUIRE( block_vector_a.size() == static_cast< size_t >( N_a ) );
+  BOOST_REQUIRE( block_vector_b.size() == static_cast< size_t >( N_b ) );
 }
 
 BOOST_AUTO_TEST_CASE( test_random_access )

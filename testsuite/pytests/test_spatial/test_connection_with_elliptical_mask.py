@@ -24,6 +24,7 @@ Tests ConnectLayer with elliptical mask.
 """
 
 import unittest
+
 import nest
 
 

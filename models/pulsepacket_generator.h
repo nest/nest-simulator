@@ -93,6 +93,11 @@ See also
 
 spike_generator
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: pulsepacket_generator
+
 EndUserDocs */
 
 class pulsepacket_generator : public StimulationDevice

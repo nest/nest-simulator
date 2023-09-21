@@ -22,13 +22,12 @@
 import dataclasses
 import math
 
+import nest
 import numpy as np
 import pytest
-import nest
 import testsimulation
 import testutil
 from scipy.special import lambertw
-
 
 # Notes:
 # * copy docs

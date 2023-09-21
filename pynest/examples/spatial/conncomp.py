@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Pyramidal cells and interneurons
---------------------------------
+Spatial networks: Pyramidal cells and interneurons
+--------------------------------------------------
 
 Create two populations of pyramidal cells and two populations of interneurons
 on a 30x30 grid. Connect with two projections, one pyr->pyr, one pyr->in, and
@@ -31,8 +31,8 @@ BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
 """
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 import numpy as np
 
 nest.ResetKernel()

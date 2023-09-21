@@ -28,17 +28,16 @@ times during the simulation. These are subsequently aggregated into a GIF.
 :Authors: J Gille, T Wunderlich, Electronic Vision(s)
 """
 
-from copy import copy
 import gzip
 import os
-import sys
-
-import numpy as np
 import pickle
-import matplotlib.pyplot as plt
-import imageio.v2 as imageio
+import sys
+from copy import copy
 from glob import glob
 
+import imageio.v2 as imageio
+import matplotlib.pyplot as plt
+import numpy as np
 from pong import GameOfPong as Pong
 
 px = 1 / plt.rcParams["figure.dpi"]

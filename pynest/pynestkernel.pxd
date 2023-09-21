@@ -19,12 +19,11 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+from cpython.ref cimport PyObject
 from libcpp cimport bool as cbool
-
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 
-from cpython.ref cimport PyObject
 
 cdef extern from "name.h":
     cppclass Name:

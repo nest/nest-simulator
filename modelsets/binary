@@ -1,0 +1,11 @@
+# Modelset for binary neurons for NEST
+
+corellospinmatrix_detector
+erfc_neuron
+ginzburg_neuron
+mcculloch_pitts_neuron
+spin_detector
+spike_generator
+spike_recorder
+static_synapse
+multimeter

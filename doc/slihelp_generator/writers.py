@@ -31,8 +31,9 @@ import io
 import os
 import re
 import textwrap
-from helpers_sli import cut_it
 from string import Template
+
+from helpers_sli import cut_it
 
 
 def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):

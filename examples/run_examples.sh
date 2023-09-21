@@ -93,11 +93,13 @@ for i in $EXAMPLES; do
     echo "  output_dir: '$output_dir'" >>"$metafile"
     echo "  log: '$logfile'" >>"$metafile"
 
-    export NEST_DATA_PATH=""  # $output_dir"
+    export NEST_DATA_PATH="$output_dir"
     touch .start_example
     sleep 1
     set +e
+    # The following line will not work on macOS. There, `brew install gnu-time` and use the commented-out line below.
     /usr/bin/time -f "$time_format" --quiet sh -c "'$runner' '$example' >'$logfile' 2>&1" |& tee -a "$metafile"
+    # /usr/local/bin/gtime -f "$time_format" --quiet sh -c "'$runner' '$example' >'$logfile' 2>&1" | tee -a "$metafile" 2>&1
     ret=$?
     set -e
 

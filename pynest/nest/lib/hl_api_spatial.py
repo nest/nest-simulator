@@ -23,19 +23,20 @@
 Functions relating to spatial properties of nodes
 """
 
+import os
 
 import numpy as np
 
 from ..ll_api import sli_func
-from .hl_api_helper import is_iterable
 from .hl_api_connections import GetConnections
+from .hl_api_helper import is_iterable, stringify_path
 from .hl_api_parallel_computing import NumProcesses, Rank
 from .hl_api_types import NodeCollection
 
 try:
     import matplotlib as mpl
-    import matplotlib.path as mpath
     import matplotlib.patches as mpatches
+    import matplotlib.path as mpath
 
     HAVE_MPL = True
 except ImportError:
@@ -530,8 +531,11 @@ def DumpLayerNodes(layer, outname):
             nest.DumpLayerNodes(s_nodes, 'positions.txt')
 
     """
+
     if not isinstance(layer, NodeCollection):
         raise TypeError("layer must be a NodeCollection")
+
+    outname = stringify_path(outname)
 
     sli_func(
         """
@@ -599,10 +603,14 @@ def DumpLayerConnections(source_layer, target_layer, synapse_model, outname):
             # write connectivity information to file
             nest.DumpLayerConnections(s_nodes, s_nodes, 'static_synapse', 'conns.txt')
     """
+
     if not isinstance(source_layer, NodeCollection):
         raise TypeError("source_layer must be a NodeCollection")
+
     if not isinstance(target_layer, NodeCollection):
         raise TypeError("target_layer must be a NodeCollection")
+
+    outname = stringify_path(outname)
 
     sli_func(
         """
@@ -1467,8 +1475,8 @@ def _create_mask_patches(mask, periodic, extent, source_pos, face_color="yellow"
 
     # import pyplot here and not at toplevel to avoid preventing users
     # from changing matplotlib backend after importing nest
-    import matplotlib.pyplot as plt
     import matplotlib as mtpl
+    import matplotlib.pyplot as plt
 
     edge_color = "black"
     alpha = 0.2

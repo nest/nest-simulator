@@ -28,10 +28,10 @@ correctly. The following things are tested:
   * Does default node distribution (modulo) work as expected?
   * Are spikes transmitted between threads as expected?
 """
-import pytest
 import nest
 import numpy as np
 import numpy.testing as nptest
+import pytest
 
 pytestmark = pytest.mark.skipif_missing_threads
 

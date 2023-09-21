@@ -173,6 +173,11 @@ See also
 
 iaf_psc_exp, aeif_cond_exp
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: aeif_psc_exp
+
 EndUserDocs */
 
 class aeif_psc_exp : public ArchivingNode

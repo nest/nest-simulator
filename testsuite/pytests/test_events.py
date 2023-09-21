@@ -24,6 +24,7 @@ Test of events
 """
 
 import unittest
+
 import nest
 
 

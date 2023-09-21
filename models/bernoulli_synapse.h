@@ -86,6 +86,11 @@ See also
 
 static_synapse, static_synapse_hom_w
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: bernoulli_synapse
+
 EndUserDocs */
 
 template < typename targetidentifierT >

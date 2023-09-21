@@ -27,10 +27,11 @@ microcircuit.
 
 """
 
-from matplotlib.patches import Polygon
-import matplotlib.pyplot as plt
 import os
+
+import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.patches import Polygon
 
 if "DISPLAY" not in os.environ:
     import matplotlib

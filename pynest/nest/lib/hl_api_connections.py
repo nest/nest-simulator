@@ -25,14 +25,13 @@ Functions for connection handling
 
 import numpy
 
-from ..ll_api import check_stack, connect_arrays, sps, sr, spp
 from .. import pynestkernel as kernel
-
+from ..ll_api import check_stack, connect_arrays, spp, sps, sr
 from .hl_api_connection_helpers import (
-    _process_input_nodes,
     _connect_layers_needed,
     _connect_spatial,
     _process_conn_spec,
+    _process_input_nodes,
     _process_spatial_projections,
     _process_syn_spec,
 )

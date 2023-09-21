@@ -40,8 +40,8 @@ errors occurred.
 """
 
 import os
-import sys
 import re
+import sys
 from subprocess import check_output
 
 

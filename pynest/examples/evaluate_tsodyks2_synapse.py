@@ -70,9 +70,9 @@ References
        http://dx.doi.org/10.1016/S0893-6080(01)00144-7
 """
 
+import matplotlib.pyplot as plt
 import nest
 import nest.voltage_trace
-import matplotlib.pyplot as plt
 
 nest.ResetKernel()
 

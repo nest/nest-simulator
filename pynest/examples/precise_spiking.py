@@ -58,9 +58,8 @@ References
 # plotting.
 
 
-import nest
 import matplotlib.pyplot as plt
-
+import nest
 
 ###############################################################################
 # Second, we assign the simulation parameters to variables.

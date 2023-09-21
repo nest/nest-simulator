@@ -24,22 +24,18 @@
 
 import cython
 
-from libc.stdlib cimport malloc, free
+from cpython cimport array
+from cpython.object cimport Py_EQ, Py_GE, Py_GT, Py_LE, Py_LT, Py_NE
+from cpython.ref cimport PyObject
+from cython.operator cimport dereference as deref
+from cython.operator cimport preincrement as inc
+from libc.stdlib cimport free, malloc
 from libc.string cimport memcpy
-
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 
-from cython.operator cimport dereference as deref
-from cython.operator cimport preincrement as inc
-
-from cpython cimport array
-
-from cpython.ref cimport PyObject
-from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
-
 import nest
-from nest.lib.hl_api_exceptions import NESTMappedException, NESTErrors, NESTError
+from nest.lib.hl_api_exceptions import NESTError, NESTErrors, NESTMappedException
 
 
 cdef string SLI_TYPE_BOOL = b"booltype"

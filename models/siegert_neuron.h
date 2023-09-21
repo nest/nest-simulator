@@ -131,6 +131,12 @@ See also
 
 diffusion_connection
 
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: siegert_neuron
+
 EndUserDocs */
 
 class siegert_neuron : public ArchivingNode

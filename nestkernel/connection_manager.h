@@ -39,6 +39,7 @@
 #include "nest_types.h"
 #include "node_collection.h"
 #include "per_thread_bool_indicator.h"
+#include "send_buffer_position.h"
 #include "source_table.h"
 #include "spike_data.h"
 #include "target_table.h"
@@ -86,7 +87,7 @@ public:
   void compute_target_data_buffer_size();
   void compute_compressed_secondary_recv_buffer_positions( const size_t tid );
   void collect_compressed_spike_data( const size_t tid );
-  void clear_compressed_spike_data_map( const size_t tid );
+  void clear_compressed_spike_data_map();
 
   /**
    * Add a connectivity rule, i.e. the respective ConnBuilderFactory.
@@ -288,7 +289,6 @@ public:
    */
   void send_from_device( const size_t tid, const size_t ldid, Event& e );
 
-
   /**
    * Send event e to all targets of node source on thread t
    */
@@ -332,6 +332,12 @@ public:
     size_t& target_rank,
     TargetData& next_target_data );
 
+  bool fill_target_buffer( const size_t tid,
+    const size_t rank_start,
+    const size_t rank_end,
+    std::vector< TargetData >& send_buffer_target_data,
+    TargetSendBufferPosition& send_buffer_position );
+
   void reject_last_target_data( const size_t tid );
 
   void save_source_table_entry_point( const size_t tid );
@@ -343,12 +349,10 @@ public:
   void add_target( const size_t tid, const size_t target_rank, const TargetData& target_data );
 
   /**
-   * Return sort_connections_by_source_, which indicates whether
-   * connections_ and source_table_ should be sorted according to
-   * source node ID.
+   * Returns whether spikes should be compressed.
+   *
+   * Implies that connections will be sorted by source.
    */
-  bool get_sort_connections_by_source() const;
-
   bool use_compressed_spikes() const;
 
   /**
@@ -431,6 +435,9 @@ public:
   Stopwatch sw_construction_connect;
 
   const std::vector< SpikeData >& get_compressed_spike_data( const synindex syn_id, const size_t idx );
+
+  //! Set iteration_state_ entries for all threads to beginning of compressed_spike_data_map_.
+  void initialize_iteration_state();
 
 private:
   size_t get_num_target_data( const size_t tid ) const;
@@ -580,7 +587,7 @@ private:
   /**
    * A structure to hold "unpacked" spikes on the postsynaptic side if
    * spike compression is enabled. Internally arranged in a 3d
-   * structure: synapses|sources|spike data
+   * structure: synapses|sources|target_threads
    */
   std::vector< std::vector< std::vector< SpikeData > > > compressed_spike_data_;
 
@@ -628,14 +635,11 @@ private:
   //! true if GetConnections has been called.
   bool get_connections_has_been_called_;
 
-  //! Whether to sort connections by source node ID.
-  bool sort_connections_by_source_;
-
   /**
    *  Whether to use spike compression; if a neuron has targets on
    *  multiple threads of a process, this switch makes sure that only
    *  a single packet is sent to the process instead of one packet per
-   *  target thread; requires sort_connections_by_source_ = true; for
+   *  target thread; implies sort_connections_by_source_ = true; for
    *  more details see the discussion and sketch in
    *  https://github.com/nest/nest-simulator/pull/1338
    */
@@ -656,6 +660,10 @@ private:
   //! Maximum distance between (double) spike times in STDP that is
   //! still considered 0. See issue #894
   double stdp_eps_;
+
+  //! For each thread, store (syn_id, compressed_spike_data_map_::iterator) pair for next iteration while filling target
+  //! buffers
+  std::vector< std::pair< size_t, std::map< size_t, CSDMapEntry >::const_iterator > > iteration_state_;
 };
 
 inline bool
@@ -823,12 +831,6 @@ ConnectionManager::secondary_connections_exist() const
 }
 
 inline bool
-ConnectionManager::get_sort_connections_by_source() const
-{
-  return sort_connections_by_source_;
-}
-
-inline bool
 ConnectionManager::use_compressed_spikes() const
 {
   return use_compressed_spikes_;
@@ -882,13 +884,13 @@ ConnectionManager::set_source_has_more_targets( const size_t tid,
 inline const std::vector< SpikeData >&
 ConnectionManager::get_compressed_spike_data( const synindex syn_id, const size_t idx )
 {
-  return compressed_spike_data_.at( syn_id ).at( idx );
+  return compressed_spike_data_[ syn_id ][ idx ];
 }
 
 inline void
-ConnectionManager::clear_compressed_spike_data_map( const size_t tid )
+ConnectionManager::clear_compressed_spike_data_map()
 {
-  source_table_.clear_compressed_spike_data_map( tid );
+  source_table_.clear_compressed_spike_data_map();
 }
 
 } // namespace nest

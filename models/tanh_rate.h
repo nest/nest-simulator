@@ -117,6 +117,11 @@ See also
 
 rate_connection_instantaneous, rate_connection_delayed
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: tanh_rate
+
 EndUserDocs */
 
 class nonlinearities_tanh_rate

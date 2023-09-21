@@ -64,7 +64,7 @@ a different time constant. The port number has to match the respective
    ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
    For implementation details see the
-   `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+   `IAF Integration Singularity notebook <../model_details/IAF_Integration_Singularity.ipynb>`_.
 
 Sends
 +++++
@@ -80,6 +80,11 @@ See also
 ++++++++
 
 iaf_psc_alpha, iaf_psc_delta, iaf_psc_exp, iaf_cond_exp, iaf_psc_exp_multisynapse
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_psc_alpha_multisynapse
 
 EndUserDocs */
 

@@ -24,6 +24,7 @@ Weights given as lists with the different connection rules
 """
 
 import unittest
+
 import nest
 
 

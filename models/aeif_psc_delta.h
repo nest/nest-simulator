@@ -165,6 +165,11 @@ See also
 
 iaf_psc_delta, aeif_cond_exp, aeif_psc_exp
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: aeif_psc_delta
+
 EndUserDocs */
 
 class aeif_psc_delta : public ArchivingNode

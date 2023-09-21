@@ -25,10 +25,11 @@ current by comparing with a neuron driven by a step-current input
 corresponding to the current expected from the ac_generator.
 """
 
-import nest
-import pytest
 import math
+
+import nest
 import numpy as np
+import pytest
 
 
 def test_ac_generaor():

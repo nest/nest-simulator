@@ -29,8 +29,8 @@ a better understanding of the connections, we plot the weights between the
 source and targets.
 """
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 import numpy as np
 
 

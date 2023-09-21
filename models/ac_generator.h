@@ -105,6 +105,11 @@ See also
 dc_generator, noise_generator, step_current_generator, StimulationDevice,
 Device
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: ac_generator
+
 EndUserDocs */
 
 namespace nest

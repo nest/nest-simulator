@@ -195,6 +195,11 @@ See also
 
 gif_psc_exp_multisynapse, gif_cond_exp, gif_cond_exp_multisynapse, gif_pop_psc_exp
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: glif_cond
+
 EndUserDocs */
 
 namespace nest
@@ -202,7 +207,7 @@ namespace nest
 
 extern "C" int glif_cond_dynamics( double, const double*, double*, void* );
 
-class glif_cond : public nest::ArchivingNode
+class glif_cond : public ArchivingNode
 {
 public:
   glif_cond();

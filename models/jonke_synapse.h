@@ -112,6 +112,11 @@ See also
 
 synapsedict, stdp_synapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: jonke_synapse
+
 EndUserDocs */
 
 

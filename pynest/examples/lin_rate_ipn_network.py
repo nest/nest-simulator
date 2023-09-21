@@ -31,9 +31,9 @@ inhibitory neuron is plotted.
 
 """
 
+import matplotlib.pyplot as plt
 import nest
 import numpy
-import matplotlib.pyplot as plt
 
 ###############################################################################
 # Assigning the simulation parameters to variables.

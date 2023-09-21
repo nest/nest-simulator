@@ -23,11 +23,10 @@
 Test basic properties of `sinusoidal_poisson_generator`.
 """
 
+import nest
 import numpy as np
 import numpy.testing as nptest
 import pytest
-
-import nest
 
 
 @pytest.fixture(autouse=True)

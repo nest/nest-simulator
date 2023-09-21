@@ -32,9 +32,9 @@ multimeter and writing data to file.
 # First, we import the necessary modules to simulate and plot this example.
 # The simulation kernel is put back to its initial state using ``ResetKernel``.
 
+import matplotlib.pyplot as plt
 import nest
 import numpy
-import matplotlib.pyplot as plt
 
 nest.ResetKernel()
 

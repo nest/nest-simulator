@@ -41,8 +41,8 @@ Voltage and synaptic conductance traces are shown for all compartments.
 # example.
 
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 
 nest.ResetKernel()
 

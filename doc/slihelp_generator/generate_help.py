@@ -28,17 +28,21 @@ Scan all source files for documentation and build the help files.
 The helpindex is built during installation in a separate step.
 """
 
-import os
 import html
 import io
+import os
 import re
 import sys
 import textwrap
 
+from helpers_sli import (
+    check_ifdef,
+    create_helpdirs,
+    cut_it,
+    delete_helpdir,
+    help_generation_required,
+)
 from writers import coll_data
-from helpers_sli import check_ifdef, create_helpdirs, cut_it
-from helpers_sli import delete_helpdir
-from helpers_sli import help_generation_required
 
 if len(sys.argv) != 3:
     print("Usage: python3 generate_help.py <source_dir> <build_dir>")

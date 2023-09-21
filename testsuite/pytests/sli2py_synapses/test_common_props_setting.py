@@ -41,8 +41,8 @@ import pytest
 @pytest.fixture(autouse=True)
 def prepare():
     nest.ResetKernel()
-    volt = nest.Create("volume_transmitter")
-    nest.SetDefaults("stdp_dopamine_synapse", {"vt": volt.tolist()[0]})
+    vt = nest.Create("volume_transmitter")
+    nest.SetDefaults("stdp_dopamine_synapse", {"volume_transmitter": vt})
 
 
 @pytest.mark.parametrize(

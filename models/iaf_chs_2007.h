@@ -108,6 +108,11 @@ Receives
 
 SpikeEvent, DataLoggingRequest
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_chs_2007
+
 EndUserDocs */
 
 class iaf_chs_2007 : public ArchivingNode

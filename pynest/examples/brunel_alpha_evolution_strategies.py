@@ -77,10 +77,10 @@ Jakob Jordan
 """
 
 import matplotlib.pyplot as plt
-from matplotlib.patches import Ellipse
+import nest
 import numpy as np
 import scipy.special as sp
-import nest
+from matplotlib.patches import Ellipse
 
 ###############################################################################
 # Analysis

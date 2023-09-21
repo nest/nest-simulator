@@ -23,9 +23,10 @@
 NodeCollection get/set tests
 """
 
-import unittest
-import nest
 import json
+import unittest
+
+import nest
 
 try:
     import numpy as np
@@ -130,6 +131,55 @@ class TestNodeCollectionGetSet(unittest.TestCase):
             "vp": (0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
         }
         self.assertEqual(g, g_reference)
+
+    def test_SetStatus_and_GetStatus(self):
+        """
+        Test that SetStatus and GetStatus works as expected with
+        NodeCollection
+
+        NOTE: This test was moved from test_NodeCollection.py and may overlap
+        with test already present in this test suite. If that is the case,
+        consider to just drop this test.
+        """
+
+        num_nodes = 10
+        n = nest.Create("iaf_psc_alpha", num_nodes)
+        nest.SetStatus(n, {"V_m": 3.5})
+        self.assertEqual(nest.GetStatus(n, "V_m")[0], 3.5)
+
+        V_m = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
+        nest.SetStatus(n, "V_m", V_m)
+        for i in range(num_nodes):
+            self.assertEqual(nest.GetStatus(n, "V_m")[i], V_m[i])
+
+        with self.assertRaises(TypeError):
+            nest.SetStatus(n, [{"V_m": 34.0}, {"V_m": -5.0}])
+
+        nest.ResetKernel()
+
+        nc = nest.Create("iaf_psc_exp", 5)  # noqa: F841
+
+        with self.assertRaises(nest.kernel.NESTError):
+            nest.SetStatus(n, {"V_m": -40.0})
+        with self.assertRaises(nest.kernel.NESTError):
+            nest.GetStatus(n)
+
+        nest.ResetKernel()
+        n = nest.Create("iaf_psc_alpha", 3)
+        nest.SetStatus(n, [{"V_m": 10.0}, {"V_m": -10.0}, {"V_m": -20.0}])
+        self.assertEqual(nest.GetStatus(n, "V_m"), (10.0, -10.0, -20.0))
+
+    def test_set_on_empty_node_collection(self):
+        """
+        Checks that setting on empty NC does not raise an error.
+
+        NOTE: This test was moved from test_NodeCollection.py and may overlap
+        with test already present in this test suite. If that is the case,
+        consider to just drop this test.
+        """
+
+        for empty_nc in [nest.NodeCollection(), nest.NodeCollection([])]:
+            self.assertIsNone(empty_nc.set())
 
     def test_get_sliced(self):
         """

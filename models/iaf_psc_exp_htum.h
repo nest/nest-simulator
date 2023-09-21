@@ -93,7 +93,7 @@ neuron like dynamics interacting by point events is described in
    ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
     For implementation details see the
-    `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+    `IAF Integration Singularity notebook <../model_details/IAF_Integration_Singularity.ipynb>`_.
 
 
 See also [4]_.
@@ -145,6 +145,11 @@ Receives
 ++++++++
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_psc_exp_htum
 
 EndUserDocs */
 
@@ -209,7 +214,7 @@ private:
     /** External current in pA */
     double I_e_;
 
-    /** Threshold, RELATIVE TO RESTING POTENTAIL(!).
+    /** Threshold, RELATIVE TO RESTING POTENTIAL(!).
         I.e. the real threshold is (E_L_+Theta_). */
     double Theta_;
 

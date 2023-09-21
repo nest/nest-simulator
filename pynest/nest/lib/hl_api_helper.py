@@ -24,17 +24,16 @@ These are helper functions to ease the definition of the high-level
 API of the PyNEST wrapper.
 """
 
-import warnings
-import json
 import functools
-import textwrap
+import json
 import os
 import pydoc
-
+import textwrap
+import warnings
 from string import Template
 
-from ..ll_api import sli_func, sps, sr, spp
 from .. import pynestkernel as kernel
+from ..ll_api import sli_func, spp, sps, sr
 
 __all__ = [
     "broadcast",
@@ -52,6 +51,7 @@ __all__ = [
     "restructure_data",
     "show_deprecation_warning",
     "show_help_with_pager",
+    "stringify_path",
     "SuppressedDeprecationWarning",
 ]
 
@@ -146,6 +146,31 @@ def deprecated(alt_func_name, text=None):
         return new_func
 
     return deprecated_decorator
+
+
+def stringify_path(filepath):
+    """
+    Convert path-like object to string form.
+
+    Attempt to convert path-like object to a string by coercing objects
+    supporting the fspath protocol to its ``__fspath__`` method. Anything that
+    is not path-like, which includes bytes and strings, is passed through
+    unchanged.
+
+    Parameters
+    ----------
+    filepath : object
+        Object representing file system path.
+
+    Returns
+    -------
+    filepath : str
+        Stringified filepath.
+    """
+
+    if isinstance(filepath, os.PathLike):
+        filepath = filepath.__fspath__()  # should return str or bytes object
+    return filepath
 
 
 def is_literal(obj):
@@ -538,7 +563,7 @@ def get_parameters_hierarchical_addressing(nc, params):
     # or list of strings.
     if is_literal(params[0]):
         value_list = nc.get(params[0])
-        if type(value_list) != tuple:
+        if not isinstance(value_list, tuple):
             value_list = (value_list,)
     else:
         raise TypeError("First argument must be a string, specifying path into hierarchical dictionary")

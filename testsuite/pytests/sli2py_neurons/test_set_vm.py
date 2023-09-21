@@ -35,9 +35,10 @@ the potential to be set to subthreshold values, but in pathological
 cases it may lead to the exclusion of a model that should be tested.
 """
 
+import random
+
 import nest
 import pytest
-import random
 
 
 @pytest.fixture(autouse=True)

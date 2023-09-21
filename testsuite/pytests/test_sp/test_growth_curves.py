@@ -19,12 +19,13 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-from scipy.integrate import quad
 import math
+import unittest
+
+import nest
 import numpy
 from numpy import testing
-import unittest
-import nest
+from scipy.integrate import quad
 
 HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
 

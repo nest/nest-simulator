@@ -48,8 +48,8 @@ def
 
 % prepare stdp_dopamine_synapse, which needs a
 % volume transmitter assigned to it before connecting
-/vol /volume_transmitter Create 0 get def
-/stdp_dopamine_synapse << /vt vol >> pstack SetDefaults
+/vt /volume_transmitter Create def
+/stdp_dopamine_synapse << /volume_transmitter vt >> pstack SetDefaults
 
 % first test: do everything correctly
 {
@@ -74,8 +74,8 @@ ResetKernel
 
 % prepare stdp_dopamine_synapse, which needs a
 % volume transmitter assigned to it before connecting
-/vol /volume_transmitter Create 0 get def
-/stdp_dopamine_synapse << /vt vol >> SetDefaults
+/vt /volume_transmitter Create def
+/stdp_dopamine_synapse << /volume_transmitter vt >> SetDefaults
 
 % second test: set common prop on synapse
 synmodels

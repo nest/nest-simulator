@@ -46,10 +46,10 @@ References
 # First, we import all necessary modules for simulation, analysis and
 # plotting.
 
-import scipy.special as sp
+import matplotlib.pyplot as plt
 import nest
 import numpy
-import matplotlib.pyplot as plt
+import scipy.special as sp
 
 # Properties of pulse packet:
 

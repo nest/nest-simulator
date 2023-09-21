@@ -101,6 +101,11 @@ See also
 
 lin_rate, tanh_rate, threshold_lin_rate
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: rate_neuron_ipn
+
 EndUserDocs  */
 
 template < class TNonlinearities >

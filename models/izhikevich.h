@@ -122,6 +122,11 @@ See also
 
 iaf_psc_delta, mat2_psc_exp
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: izhikevich
+
 EndUserDocs */
 
 class izhikevich : public ArchivingNode

@@ -84,6 +84,13 @@ public:
   size_t get_num_threads() const;
 
   /**
+   * Get OMP_NUM_THREADS environment variable.
+   *
+   * @note Returns 0 if OMP_NUM_THREADS is not set.
+   */
+  size_t get_OMP_NUM_THREADS() const;
+
+  /**
    * Returns true if the given global node exists on this vp.
    */
   bool is_node_id_vp_local( const size_t node_id ) const;

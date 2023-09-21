@@ -24,8 +24,8 @@ This set of tests checks the consistency of ``spike_generator``.
 """
 
 import nest
-import pytest
 import numpy.testing as nptest
+import pytest
 
 
 @pytest.fixture

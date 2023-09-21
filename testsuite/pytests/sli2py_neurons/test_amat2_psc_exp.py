@@ -35,13 +35,12 @@ reference data.
 
 from collections import namedtuple
 
+import nest
 import numpy as np
 import numpy.testing as nptest
 import pandas as pd
 import pandas.testing as pdtest
 import pytest
-
-import nest
 
 
 @pytest.fixture(scope="module")

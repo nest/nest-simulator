@@ -139,6 +139,12 @@ See also
 
 sinusoidal_poisson_generator, gamma_sup_generator
 
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: sinusoidal_gamma_generator
+
 EndUserDocs */
 
 /**

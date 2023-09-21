@@ -25,6 +25,7 @@ and parameter arrays in syn_spec
 """
 
 import unittest
+
 import nest
 
 

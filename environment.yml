@@ -46,6 +46,7 @@ dependencies:
   - hdf5
 
   # Testing NEST ------------
+  - attrs
   - pytest
   - pytest-timeout
   - pytest-xdist
@@ -106,9 +107,10 @@ dependencies:
     - example
     - Image
     - sphinx_autobuild
-    - sphinx_gallery
-    - sphinx-tabs
-    - sphinx_design
-    - sphinx-material
     - sphinx-copybutton
+    - sphinx_design
+    - sphinx_gallery
+    - sphinx-material
+    - sphinx-tabs
     - sphinx-notfound-page
+    - sphinxcontrib-mermaid

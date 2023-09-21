@@ -182,4 +182,7 @@
 /* Whether to enable detailed NEST internal timers */
 #cmakedefine TIMER_DETAILED 1
 
+/* Whether to do full logging */
+#cmakedefine ENABLE_FULL_LOGGING 1
+
 #endif // #ifndef CONFIG_H

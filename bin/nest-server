@@ -56,7 +56,7 @@ start() {
     if [ "${DAEMON}" -eq 0 ]; then
       echo "Use CTRL + C to stop this service."
       if [ "${STDOUT}" -eq 1 ]; then
-        echo "-------------------------------------------------"
+        echo "-----------------------------------------------------"
       fi
     fi
 

@@ -38,10 +38,9 @@ This script tests whether the NEST kernel accepts a modification of the
 parameters and whether the corresponding conversions are correct.
 """
 
+import nest
 import numpy as np
 import pytest
-
-import nest
 
 
 @pytest.fixture(autouse=True)

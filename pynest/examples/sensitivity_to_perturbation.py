@@ -45,10 +45,9 @@ reset appropriately between the trials, we do the following steps:
 # Importing all necessary modules for simulation, analysis and plotting.
 
 
-import numpy
 import matplotlib.pyplot as plt
 import nest
-
+import numpy
 
 ###############################################################################
 # Here we define all parameters necessary for building and simulating the

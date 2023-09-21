@@ -31,9 +31,9 @@ Since a DC input affects only the neuron's channel dynamics, this routine
 does not yet check correctness of synaptic response.
 """
 
+import matplotlib.pyplot as plt
 import nest
 import numpy as np
-import matplotlib.pyplot as plt
 
 nest.set_verbosity("M_WARNING")
 nest.ResetKernel()

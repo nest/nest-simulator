@@ -76,6 +76,12 @@ See also
 
 mip_generator
 
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: spike_dilutor
+
 EndUserDocs */
 
 class spike_dilutor : public DeviceNode

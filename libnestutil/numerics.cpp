@@ -92,7 +92,7 @@ const double numerics::nan = 0.0 / 0.0;
 long
 ld_round( double x )
 {
-  return ( long ) std::floor( x + 0.5 );
+  return static_cast< long >( std::floor( x + 0.5 ) );
 }
 
 double

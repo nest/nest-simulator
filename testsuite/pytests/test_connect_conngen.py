@@ -24,6 +24,7 @@ Conngen tests
 """
 
 import unittest
+
 import nest
 
 try:

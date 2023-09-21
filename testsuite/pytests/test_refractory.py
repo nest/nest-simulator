@@ -21,9 +21,8 @@
 
 import unittest
 
-import numpy as np
-
 import nest
+import numpy as np
 
 """
 Assert that all neuronal models that have a refractory period implement it

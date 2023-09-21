@@ -59,6 +59,11 @@ See also
 
 static_synapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: static_synpase_hom_w
+
 EndUserDocs */
 
 template < typename targetidentifierT >

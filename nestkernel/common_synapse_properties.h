@@ -37,6 +37,7 @@ namespace nest
 {
 
 // forward declarations
+class weight_recorder;
 class ConnectorModel;
 class TimeConverter;
 
@@ -77,29 +78,18 @@ public:
   void calibrate( const TimeConverter& );
 
   /**
-   * Get reference to registering node
-   */
-  Node* get_node();
-
-  /**
    * Get node ID of volume transmitter
    */
   long get_vt_node_id() const;
 
   /**
-   * Get node ID of weight_recorder
-   */
-  size_t get_wr_node_id() const;
-
-  /**
    * Get weight_recorder
    */
-  NodeCollectionDatum get_weight_recorder() const;
+  weight_recorder* get_weight_recorder() const;
 
 
 private:
-  NodeCollectionDatum weight_recorder_;
-  long wr_node_id_;
+  weight_recorder* weight_recorder_;
 };
 
 inline long
@@ -108,13 +98,7 @@ CommonSynapseProperties::get_vt_node_id() const
   return -1;
 }
 
-inline size_t
-CommonSynapseProperties::get_wr_node_id() const
-{
-  return wr_node_id_;
-}
-
-inline NodeCollectionDatum
+inline weight_recorder*
 CommonSynapseProperties::get_weight_recorder() const
 {
   return weight_recorder_;

@@ -76,6 +76,11 @@ Sends
 
 SpikeEvent
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: parrot_neuron_ps
+
 EndUserDocs */
 
 class parrot_neuron_ps : public ArchivingNode

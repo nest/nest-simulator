@@ -24,9 +24,9 @@ Stack tests
 """
 
 import unittest
-import nest
-
 from array import array
+
+import nest
 
 try:
     import numpy

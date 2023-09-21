@@ -54,8 +54,7 @@ if ( HAVE_PYTHON )
   endif ()
 
   target_link_libraries( pynestkernel
-      nest_lib nestutil nestkernel sli_lib
-      ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES}
+      nest_lib nestutil nestkernel sli_lib models ${EXTERNAL_MODULE_LIBRARIES}
       )
 
   target_include_directories( pynestkernel PRIVATE
@@ -66,7 +65,7 @@ if ( HAVE_PYTHON )
       ${PROJECT_SOURCE_DIR}/nestkernel/spatial
       ${PROJECT_SOURCE_DIR}/sli
       ${PROJECT_SOURCE_DIR}/thirdparty
-      ${SLI_MODULE_INCLUDE_DIRS}
+      ${PROJECT_SOURCE_DIR}/models
       ${Python_INCLUDE_DIRS}
       )
 

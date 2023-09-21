@@ -47,10 +47,10 @@ configuration, thus solving the puzzle.
 
 :Authors: J Gille, S Furber, A Rowley
 """
-import nest
-import numpy as np
 import logging
 
+import nest
+import numpy as np
 
 inter_neuron_weight = -0.2  # inhibitory weight for synapses between neurons
 weight_stim = 1.3  # weight from stimulation sources to neurons

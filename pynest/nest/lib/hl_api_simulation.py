@@ -23,10 +23,10 @@
 Functions for simulation control
 """
 
-from contextlib import contextmanager
 import warnings
+from contextlib import contextmanager
 
-from ..ll_api import check_stack, sps, sr, spp
+from ..ll_api import check_stack, spp, sps, sr
 from .hl_api_helper import is_iterable, is_literal
 
 __all__ = [

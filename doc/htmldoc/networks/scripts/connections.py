@@ -21,8 +21,8 @@
 
 # create connectivity figures for spatial manual
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 import numpy as np
 
 # seed NumPy RNG to ensure identical results for runs with random placement
@@ -407,6 +407,26 @@ conndict = {
 }
 # { end #}
 kernel_fig(fig, 235, conndict)
+
+# { conn42d #}
+conndict = {
+    "rule": "pairwise_bernoulli",
+    "p": nest.spatial_distributions.gaussian2D(nest.spatial.distance.x, nest.spatial.distance.y, std_x=1.0, std_y=3.0),
+    "mask": {"circular": {"radius": 4.0}},
+}
+# { end #}
+# { conn4gab #}
+conndict = {
+    "rule": "pairwise_bernoulli",
+    "p": nest.spatial_distributions.gabor(
+        nest.spatial.target_pos.x - nest.spatial.source_pos.x,
+        nest.spatial.target_pos.y - nest.spatial.source_pos.y,
+        theta=np.pi / 4,
+        gamma=0.7,
+    ),
+}
+# { end #}
+kernel_fig(fig, 236, conndict)
 
 plt.savefig("../user_manual_figures/conn4.png", bbox_inches="tight")
 

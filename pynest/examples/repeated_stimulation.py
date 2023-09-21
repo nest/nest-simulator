@@ -44,9 +44,9 @@ relative to the ``origin``.
 # First, the modules needed for simulation and analysis are imported.
 
 
+import matplotlib.pyplot as plt
 import nest
 import nest.raster_plot
-import matplotlib.pyplot as plt
 
 ###############################################################################
 # Second, we set the parameters so the ``poisson_generator`` generates 1000

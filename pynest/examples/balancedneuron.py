@@ -46,11 +46,10 @@ References
 # First, we import all necessary modules for simulation, analysis and
 # plotting. Scipy should be imported before nest.
 
-from scipy.optimize import bisect
-
+import matplotlib.pyplot as plt
 import nest
 import nest.voltage_trace
-import matplotlib.pyplot as plt
+from scipy.optimize import bisect
 
 ###############################################################################
 # Additionally, we set the verbosity using ``set_verbosity`` to

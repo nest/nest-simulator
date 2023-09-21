@@ -21,9 +21,8 @@
 
 
 import nest
-import pytest
 import numpy as np
-
+import pytest
 
 """
 Name: testsuite::test_poisson_ps_intervals - checks coefficient of variation

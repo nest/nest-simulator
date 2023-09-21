@@ -30,8 +30,8 @@ synchronize over time due to the gap-junction connection.
 
 """
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 import numpy
 
 nest.ResetKernel()

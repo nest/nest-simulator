@@ -99,6 +99,11 @@ See also
 
 step_current_generator
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: step_rate_generator
+
 EndUserDocs */
 
 class step_rate_generator : public StimulationDevice

@@ -176,6 +176,11 @@ See also
 
 iaf_psc_alpha, aeif_cond_exp
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: aeif_psc_alpha
+
 EndUserDocs */
 
 class aeif_psc_alpha : public ArchivingNode

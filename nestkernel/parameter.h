@@ -1366,6 +1366,58 @@ protected:
   const double xy_term_const_;
 };
 
+class GaborParameter : public Parameter
+{
+public:
+  using Parameter::value;
+
+  /**
+   * Construct the parameter from a dictionary of arguments.
+   */
+  GaborParameter( const DictionaryDatum& d );
+
+  /**
+   * Copy constructor.
+   */
+  GaborParameter( const GaborParameter& p )
+    : Parameter( p )
+    , px_( p.px_ )
+    , py_( p.py_ )
+    , cos_( p.cos_ )
+    , sin_( p.sin_ )
+    , gamma_( p.gamma_ )
+    , inv_two_std2_( p.inv_two_std2_ )
+    , lambda_( p.lambda_ )
+    , psi_( p.psi_ )
+  {
+  }
+
+  /**
+   * @returns the value of the parameter.
+   */
+  double
+  value( RngPtr, Node* ) override
+  {
+    throw BadParameterValue( "Gabor parameter can only be used when connecting." );
+  }
+
+  double value( RngPtr rng,
+    const std::vector< double >& source_pos,
+    const std::vector< double >& target_pos,
+    const AbstractLayer& layer,
+    Node* node ) override;
+
+protected:
+  std::shared_ptr< Parameter > const px_;
+  std::shared_ptr< Parameter > const py_;
+  const double cos_;
+  const double sin_;
+  const double gamma_;
+  const double inv_two_std2_;
+  const double lambda_;
+  const double psi_;
+};
+
 
 /**
  * Parameter class representing a gamma distribution applied on a parameter.

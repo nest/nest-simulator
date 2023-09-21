@@ -20,9 +20,9 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-import numpy as np
 
 import nest
+import numpy as np
 
 nest.set_verbosity("M_WARNING")
 

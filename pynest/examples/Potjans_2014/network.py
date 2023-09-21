@@ -28,10 +28,11 @@ build and simulate the network.
 """
 
 import os
-import numpy as np
-import nest
-import helpers
 import warnings
+
+import helpers
+import nest
+import numpy as np
 
 
 class Network:

@@ -160,6 +160,11 @@ See also
 
 aeif_cond_alpha_multisynapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: aeif_cond_alpha_multisynapse
+
 EndUserDocs */
 
 namespace nest

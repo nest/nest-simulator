@@ -70,8 +70,8 @@ References
 
 """
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 
 ################################################################################
 # On average, the ``quantal_stp_synapse`` converges to the ``tsodyks2_synapse``,
@@ -84,7 +84,7 @@ seed = 12345
 
 # We define the number of trials as well as the number of release sites.
 
-n_sites = 10.0  # number of synaptic release sites
+n_sites = 10  # number of synaptic release sites
 n_trials = 500  # number of measurement trials
 
 # The pre-synaptic neuron is driven by an injected current for a part of each

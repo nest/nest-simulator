@@ -39,8 +39,8 @@ M_ERROR setverbosity
 
 ResetKernel
 
-/vol /volume_transmitter Create def
-/stdp_dopamine_synapse << /vt vol 0 get >> SetDefaults
+/vt /volume_transmitter Create def
+/stdp_dopamine_synapse << /volume_transmitter vt >> SetDefaults
 
 /n_pre /parrot_neuron Create def % does not fire
 /n_post /parrot_neuron Create def
@@ -51,7 +51,7 @@ ResetKernel
 
 n_pre n_post << >> /stdp_dopamine_synapse Connect
 sg_dopa n_dopa Connect
-n_dopa vol Connect
+n_dopa vt Connect
 sg_post n_post Connect
 
 /w0 << /synapse_model /stdp_dopamine_synapse >> GetConnections 0 get GetStatus /weight get def

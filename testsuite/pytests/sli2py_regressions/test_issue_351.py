@@ -25,9 +25,8 @@ Regression test for Issue #351 (GitHub).
 This test ensures `Connect` raises exception if connecting to recording device with probabilistic connection rule.
 """
 
-import pytest
-
 import nest
+import pytest
 
 
 @pytest.fixture(autouse=True)

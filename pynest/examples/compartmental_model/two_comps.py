@@ -31,8 +31,8 @@ The output shows the evolution of the state variables present in the model.
 :Authors: WAM Wybo
 """
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 
 nest.ResetKernel()
 

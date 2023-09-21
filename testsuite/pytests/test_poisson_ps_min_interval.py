@@ -21,9 +21,8 @@
 
 
 import nest
-import pytest
 import numpy as np
-
+import pytest
 
 """
 Name: testsuite::test_poisson_ps_min_interval - checks that intervals are independent of tic size

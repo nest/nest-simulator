@@ -76,6 +76,12 @@ synapses that fulfill the given criteria.
 See also
 ++++++++
 
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: weight_recorder
+
 EndUserDocs */
 
 namespace nest

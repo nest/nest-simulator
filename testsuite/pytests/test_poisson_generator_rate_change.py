@@ -20,10 +20,11 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import nest
 import unittest
-import scipy.stats
+
+import nest
 import numpy as np
+import scipy.stats
 
 
 class TestPgRateChange(unittest.TestCase):

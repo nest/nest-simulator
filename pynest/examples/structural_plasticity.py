@@ -26,30 +26,33 @@ Structural Plasticity example
 This example shows a simple network of two populations where structural
 plasticity is used. The network has 1000 neurons, 80% excitatory and
 20% inhibitory. The simulation starts without any connectivity. A set of
-homeostatic rules are defined, according to which structural plasticity will
+homeostatic rules is defined, according to which structural plasticity will
 create and delete synapses dynamically during the simulation until a desired
-level of electrical activity is reached. The model of structural plasticity
-used here corresponds to the formulation presented in [1]_.
+level of activity is reached. The model of structural plasticity used here
+corresponds to the formulation presented in [1]_.
 
 At the end of the simulation, a plot of the evolution of the connectivity
-in the network and the average calcium concentration in the neurons is created.
+in the network and the average calcium concentration in the neurons is
+created.
 
 References
 ~~~~~~~~~~
 
-.. [1] Butz, M., and van Ooyen, A. (2013). A simple rule for dendritic spine and axonal bouton formation can
-       account for cortical reorganization after focal retinal lesions. PLoS Comput. Biol. 9 (10), e1003259.
+.. [1] Butz, M., and van Ooyen, A. (2013). A simple rule for dendritic
+       spine and axonal bouton formation can account for cortical
+       reorganization after focal retinal lesions. PLoS
+       Comput. Biol. 9 (10), e1003259.
 
 """
 
 ####################################################################################
-# First, we have import all necessary modules.
+# First, we import all necessary modules.
 
-import nest
-import numpy
-import matplotlib.pyplot as plt
 import sys
 
+import matplotlib.pyplot as plt
+import nest
+import numpy
 
 ####################################################################################
 # We define general simulation parameters

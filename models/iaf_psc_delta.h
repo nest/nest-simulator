@@ -124,6 +124,11 @@ See also
 
 iaf_psc_alpha, iaf_psc_exp, iaf_psc_delta_ps
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_psc_delta
+
 EndUserDocs */
 
 /**
@@ -201,11 +206,11 @@ private:
     /** External DC current */
     double I_e_;
 
-    /** Threshold, RELATIVE TO RESTING POTENTAIL(!).
+    /** Threshold, RELATIVE TO RESTING POTENTIAL(!).
         I.e. the real threshold is (E_L_+V_th_). */
     double V_th_;
 
-    /** Lower bound, RELATIVE TO RESTING POTENTAIL(!).
+    /** Lower bound, RELATIVE TO RESTING POTENTIAL(!).
         I.e. the real lower bound is (V_min_+V_th_). */
     double V_min_;
 

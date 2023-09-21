@@ -20,14 +20,14 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-A spatial network in 3D with exponential connection probabilities
------------------------------------------------------------------
+Spatial networks: A spatial network in 3D with exponential connection probabilities
+-----------------------------------------------------------------------------------
 
 Hans Ekkehard Plesser, UMB
 """
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 
 nest.ResetKernel()
 

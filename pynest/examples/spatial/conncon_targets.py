@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Convergent projection and rectangular mask, from source perspective
---------------------------------------------------------------------
+Spatial networks: Convergent projection and rectangular mask, from source perspective
+-------------------------------------------------------------------------------------
 
 Create two populations of iaf_psc_alpha neurons on a 30x30 grid
 Connect the two populations with convergent projection and rectangular mask, and
@@ -31,8 +31,8 @@ BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
 """
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 import numpy as np
 
 nest.ResetKernel()

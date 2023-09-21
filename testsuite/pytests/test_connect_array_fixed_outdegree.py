@@ -25,8 +25,8 @@ and parameter arrays in syn_spec
 """
 
 import unittest
-import nest
 
+import nest
 
 HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
 

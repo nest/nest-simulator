@@ -230,10 +230,10 @@ nest::correlospinmatrix_detector::State_::reset( const Parameters_& p )
   last_change_.clear();
   last_change_.resize( p.N_channels_ );
 
-  for ( long i = 0; i < p.N_channels_; ++i )
+  for ( size_t i = 0; i < p.N_channels_; ++i )
   {
     count_covariance_[ i ].resize( p.N_channels_ );
-    for ( long j = 0; j < p.N_channels_; ++j )
+    for ( size_t j = 0; j < p.N_channels_; ++j )
     {
       count_covariance_[ i ][ j ].resize( 1 + 2.0 * p.tau_max_.get_steps() / p.delta_tau_.get_steps(), 0 );
     }

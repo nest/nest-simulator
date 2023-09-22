@@ -21,7 +21,6 @@
  */
 
 #include <Python.h>
-#include <exception>
 #include <ios>
 #include <stdexcept>
 
@@ -72,9 +71,49 @@ custom_exception_handler()
   {
     PyErr_SetString( nest_exceptions_map[ exn.exception_name() ], exn.what() );
   }
-  catch ( std::exception& exc )
+  catch ( const std::bad_alloc& exn )
   {
-    PyErr_SetString( PyExc_RuntimeError, ( std::string( "C++ exception: " ) + exc.what() ).c_str() );
+    PyErr_SetString( PyExc_MemoryError, exn.what() );
+  }
+  catch ( const std::bad_cast& exn )
+  {
+    PyErr_SetString( PyExc_TypeError, exn.what() );
+  }
+  catch ( const std::bad_typeid& exn )
+  {
+    PyErr_SetString( PyExc_TypeError, exn.what() );
+  }
+  catch ( const std::domain_error& exn )
+  {
+    PyErr_SetString( PyExc_ValueError, exn.what() );
+  }
+  catch ( const std::invalid_argument& exn )
+  {
+    PyErr_SetString( PyExc_ValueError, exn.what() );
+  }
+  catch ( const std::ios_base::failure& exn )
+  {
+    PyErr_SetString( PyExc_IOError, exn.what() );
+  }
+  catch ( const std::out_of_range& exn )
+  {
+    PyErr_SetString( PyExc_IndexError, exn.what() );
+  }
+  catch ( const std::overflow_error& exn )
+  {
+    PyErr_SetString( PyExc_OverflowError, exn.what() );
+  }
+  catch ( const std::range_error& exn )
+  {
+    PyErr_SetString( PyExc_ArithmeticError, exn.what() );
+  }
+  catch ( const std::underflow_error& exn )
+  {
+    PyErr_SetString( PyExc_ArithmeticError, exn.what() );
+  }
+  catch ( const std::exception& exn )
+  {
+    PyErr_SetString( PyExc_RuntimeError, exn.what() );
   }
   catch ( ... )
   {

@@ -1,28 +1,174 @@
-Tutorials and examples
-======================
+Tutorials and Guides
+====================
 
 .. toctree::
    :maxdepth: 1
    :hidden:
 
    tutorials/index
-   PyNEST example scripts <examples/index>
+
 
 
 .. grid:: 1 1 2 2
-    :gutter: 1
+   :gutter: 1
 
-    .. grid-item-card:: |nav| Tutorials
-       :class-title: sd-d-flex-row sd-align-minor-center
-       :link: tutorials
-       :link-type: ref
+   .. grid-item-card::
+          :class-header: sd-d-flex-item sd-align-minor-center sd-bg-primary sd-text-white
 
-    .. grid-item-card:: |example| PyNEST example scripts
-       :class-title: sd-d-flex-row sd-align-minor-center
-       :link: pynest_examples
-       :link-type: ref
+          |start| Get started
+          ^^^
+
+          * :ref:`Installation instructions <install>`
+          * :ref:`pynest_index`: A step-by-step introduction to creating your first scripts with NEST.
+          * :doc:`A simple example <../auto_examples/one_neuron>`: A breakdown of a PyNEST script using one neuron.
+          * A :doc:`video tutorial <../tutorials/videos/index>` showcasing how to create a simple neural network.
+
+
+   .. grid-item-card::
+          :class-header: sd-d-flex-item sd-align-minor-center sd-bg-primary sd-text-white
+
+          |script| Pointers for writing your PyNEST script
+          ^^^
+
+          * :ref:`Basic functionality for manipulating nodes (neurons and devices) <node_handles>`
+          * :ref:`Basic functionality for manipulating connections (synapses) <handling_connections>`
+          * :ref:`param_ex`: explore how to use parameter objects in NEST
+
+.. grid:: 1 1 2 3
+   :gutter: 1
+
+   .. grid-item-card::
+       :class-header: sd-d-flex-row sd-align-minor-center sd-bg-success sd-text-white
+
+       |neuron| More about neurons
+       ^^^
+
+       * :ref:`sim_precise_spike_times`
+       * :ref:`exact_integration`
+
+   .. grid-item-card::
+       :class-header: sd-d-flex-row sd-align-minor-center sd-bg-success sd-text-white
+
+       |synapse|  More about synapses
+       ^^^
+
+
+       * :ref:`connection_management`: A guide to building connections in NEST
+       * :ref:`sim_gap_junctions`
+       * :ref:`weight_normalization`
+
+
+   .. grid-item-card::
+       :class-header: sd-d-flex-row sd-align-minor-center sd-bg-success sd-text-white
+
+       |device| More about devices
+       ^^^
+
+       * :ref:`record_simulations`: A guide describing how to collect data from neurons
+         and synapses.
+       * :ref:`stimulate_network`: An overview of various stimulation devices.
+
+.. grid:: 1 1 2 3
+   :gutter: 1
+
+   .. grid-item-card::
+       :class-header: sd-d-flex-row sd-align-minor-center sd-bg-info sd-text-white
+
+       |math| Models in NEST
+       ^^^
+
+       * An overview of :ref:`modelsmain`
+
+   .. grid-item-card::
+       :class-header: sd-d-flex-row sd-align-minor-center sd-bg-info sd-text-white
+
+       |network| Networks
+       ^^^
+
+       * A deep dive into creating :ref:`spatial_networks`
+       * :doc:`The microcircuit model <../auto_examples/Potjans_2014/index>`: A network model example based on Potjans and Diesman 2014.
+       * The `multi-area model <https://inm-6.github.io/multi-area-model/>`_: A network model of the visual cortex of the macaque monkey.
+
+
+   .. grid-item-card::
+       :class-header: sd-d-flex-row sd-align-minor-center sd-bg-info sd-text-white
+
+       |random| NEST behavior
+       ^^^
+
+       * :ref:`built_in_timers` describes the various timers available.
+       * :ref:`random_numbers`: A guide to how random number are used in network simulations.
+       * :ref:`run_simulations`: A guide describing various factors in running simulations.
+
+
+.. grid:: 1 1 2 3
+   :gutter: 1
+
+   .. grid-item-card::
+       :class-header: sd-d-flex-row sd-align-minor-center sd-bg-dark sd-text-white
+
+       |hpc| High performance computers (HPC)
+       ^^^
+
+       * :ref:`parallel_computing`: How NEST handles thread parallel and distributed computing
+       * :ref:`optimize_performance`: Guides to optimize NEST performance in large scale simulations
+       * :ref:`benchmark`: How to use the beNNch framework.
+
+   .. grid-item-card::
+       :class-header: sd-d-flex-row sd-align-minor-center sd-bg-dark sd-text-white
+
+       |sonata| NEST SONATA guide
+       ^^^
+
+       * How to use the :ref:`SONATA format<nest_sonata>`
+
+   .. grid-item-card::
+       :class-header: sd-d-flex-row sd-align-minor-center sd-bg-dark sd-text-white
+
+       |connect| Connect to other tools
+       ^^^
+
+       * :ref:`nest_server`: A guide showcasing how to interact with NEST via a RESTful API.
+       * :ref:`MUSIC Tutorial <music_tutorial_1>`: how to transmit data between applications
+         with the MUSIC interface, step-by-step.
+       * :ref:`nest_music`
 
 
 
-.. |nav| image:: static/img/GPS-Settings-256_nest.svg 
-.. |example| image::  static/img/Documents-02-256_nest.svg
+.. grid:: 1 1 2 3
+   :gutter: 1
+
+   .. grid-item-card::
+       :class-header: sd-d-flex-row sd-align-minor-center sd-text-black
+
+       |refresh| Get the latest changes
+       ^^^
+
+       * :ref:`Update 2.X scripts to 3.X <refguide_2_3>`
+       * :ref:`See the latest changes <whats_new>`
+
+
+
+
+
+.. |nav| image:: static/img/GPS-Settings-256_nest.svg
+.. |script| image:: static/img/script_white.svg
+.. |start| image:: static/img/start_white.svg
+.. |user| image:: static/img/020-user.svg
+.. |teacher| image:: static/img/014-teacher.svg
+.. |admin| image:: static/img/001-shuttle.svg
+.. |dev| image:: static/img/dev_orange.svg
+.. |nestml| image:: static/img/nestml-logo.png
+      :scale: 15%
+.. |synapse| image:: static/img/synapse_white.svg
+.. |neuron|  image:: static/img/neuron_white.svg
+.. |glossary|  image:: static/img/glossary_white.svg
+.. |git|  image:: static/img/git_white.svg
+.. |refresh|  image:: static/img/refresh_black.svg
+.. |hpc|  image:: static/img/hpc_white.svg
+.. |random|  image:: static/img/random_white.svg
+.. |math|  image:: static/img/math_white.svg
+.. |network|  image:: static/img/network_brain_white.svg
+.. |device|  image:: static/img/device_white.svg
+.. |connect|  image:: static/img/connect_white.svg
+.. |sonata|  image:: static/img/sonata_white.svg

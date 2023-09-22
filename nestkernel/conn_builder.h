@@ -458,8 +458,13 @@ public:
 protected:
   int get_start_astro_index( const int, const int, const int, const int, const int );
   void single_connect_astro_( const size_t,
-    Node*, const size_t, RngPtr, RngPtr,
-    const std::vector< ConnParameter* >&, const std::vector< ConnParameter* >&, const std::vector< size_t >& );
+    Node*,
+    const size_t,
+    RngPtr,
+    RngPtr,
+    const std::vector< ConnParameter* >&,
+    const std::vector< ConnParameter* >&,
+    const std::vector< size_t >& );
   void connect_() override;
 
 private:

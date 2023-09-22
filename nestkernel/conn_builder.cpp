@@ -1612,7 +1612,8 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
     p_syn_astro_ = ( *conn_spec )[ names::p_syn_astro ];
     if ( p_syn_astro_ < 0 or 1 < p_syn_astro_ )
     {
-      throw BadProperty( "Probability of astrocyte pairing per neuron-neuron connection 0 <= p_syn_astro <= 1 required." );
+      throw BadProperty(
+        "Probability of astrocyte pairing per neuron-neuron connection 0 <= p_syn_astro <= 1 required." );
     }
   }
   else
@@ -1702,17 +1703,20 @@ nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
     DictionaryDatum syn_defaults_a2n =
       kernel().model_manager.get_connector_defaults( synapse_model_id_a2n_[ synapse_indx ] );
     weights_a2n_[ synapse_indx ] = syn_params->known( names::weight_astro2post )
-      ? ConnParameter::create(( *syn_params )[ names::weight_astro2post ], num_threads )
+      ? ConnParameter::create( ( *syn_params )[ names::weight_astro2post ], num_threads )
       : ConnParameter::create( ( *syn_defaults_a2n )[ names::weight ], num_threads );
     delays_a2n_[ synapse_indx ] = syn_params->known( names::delay_astro2post )
-      ? ConnParameter::create(( *syn_params )[ names::delay_astro2post ], num_threads )
+      ? ConnParameter::create( ( *syn_params )[ names::delay_astro2post ], num_threads )
       : ConnParameter::create( ( *syn_defaults_a2n )[ names::delay ], num_threads );
   }
 }
 
 int
 nest::BernoulliAstroBuilder::get_start_astro_index( const int max_astro_per_target,
-  const int default_n_astro_per_target, const int targets_size, const int astrocytes_size, const int target_index )
+  const int default_n_astro_per_target,
+  const int targets_size,
+  const int astrocytes_size,
+  const int target_index )
 {
   // helper function to determine the starting astrocyte for the astrocyte pool
   // of a target neuron, in the deterministic (astro_pool_by_index = true) case
@@ -1748,8 +1752,12 @@ nest::BernoulliAstroBuilder::get_start_astro_index( const int max_astro_per_targ
 
 void
 nest::BernoulliAstroBuilder::single_connect_astro_( const size_t snode_id,
-  Node* target, const size_t target_thread, RngPtr synced_rng, RngPtr rng,
-  const std::vector< ConnParameter* >& weights, const std::vector< ConnParameter* >& delays,
+  Node* target,
+  const size_t target_thread,
+  RngPtr synced_rng,
+  RngPtr rng,
+  const std::vector< ConnParameter* >& weights,
+  const std::vector< ConnParameter* >& delays,
   const std::vector< size_t >& synapse_model_id )
 {
   // function to make single connections
@@ -1847,8 +1855,8 @@ nest::BernoulliAstroBuilder::connect_()
         max_astro_per_target_ = astro_pool_by_index_ == true ? default_n_astro_per_target : astrocytes_size;
       }
       // assert max_astro_per_target_ > 0 and <= astrocytes_size
-      assert ( max_astro_per_target_ > 0 );
-      assert ( max_astro_per_target_ <= astrocytes_size );
+      assert( max_astro_per_target_ > 0 );
+      assert( max_astro_per_target_ <= astrocytes_size );
 
       // Iterate through target neurons. For each, three steps are done:
       // 1. draw indegree 2. select astrocyte pool 3. make connections
@@ -1897,7 +1905,8 @@ nest::BernoulliAstroBuilder::connect_()
               break;
             }
             // determine the starting astrocyte
-            astro_index = get_start_astro_index( max_astro_per_target_, default_n_astro_per_target, targets_size, astrocytes_size, target_index );
+            astro_index = get_start_astro_index(
+              max_astro_per_target_, default_n_astro_per_target, targets_size, astrocytes_size, target_index );
             // iterate from the starting astrocyte and add astrocytes until desired pool size reached
             for ( size_t i = 0; i < max_astro_per_target_; i++ )
             {
@@ -1950,8 +1959,8 @@ nest::BernoulliAstroBuilder::connect_()
           // if the target is local, connect the source to the target
           if ( target_thread == tid )
           {
-            single_connect_astro_( snode_id,
-              target, target_thread, synced_rng, rng, weights_n2n_, delays_n2n_, synapse_model_id_ );
+            single_connect_astro_(
+              snode_id, target, target_thread, synced_rng, rng, weights_n2n_, delays_n2n_, synapse_model_id_ );
           }
 
           // Bernoulli trial to determine if the considered neuron-neuron connection should be paired with an astrocyte
@@ -1972,15 +1981,15 @@ nest::BernoulliAstroBuilder::connect_()
           if ( !astrocyte->is_proxy() )
           {
             astrocyte_thread = tid;
-            single_connect_astro_( snode_id,
-              astrocyte, astrocyte_thread, synced_rng, rng, weights_n2a_, delays_n2a_, synapse_model_id_ );
+            single_connect_astro_(
+              snode_id, astrocyte, astrocyte_thread, synced_rng, rng, weights_n2a_, delays_n2a_, synapse_model_id_ );
           }
 
           // if the target is local, connect the astrocyte to the target
           if ( target_thread == tid )
           {
-            single_connect_astro_( anode_id,
-              target, target_thread, synced_rng, rng, weights_a2n_, delays_a2n_, synapse_model_id_a2n_ );
+            single_connect_astro_(
+              anode_id, target, target_thread, synced_rng, rng, weights_a2n_, delays_a2n_, synapse_model_id_a2n_ );
           }
         }
       }

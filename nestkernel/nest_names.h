@@ -96,6 +96,9 @@ extern const Name asc_amps;
 extern const Name asc_decay;
 extern const Name asc_init;
 extern const Name asc_r;
+extern const Name astro_pool_by_index;
+extern const Name astro2post;
+extern const Name astrocyte;
 extern const Name available;
 extern const Name azimuth_angle;
 
@@ -143,6 +146,9 @@ extern const Name dead_time;
 extern const Name dead_time_random;
 extern const Name dead_time_shape;
 extern const Name delay;
+extern const Name delay_astro2post;
+extern const Name delay_pre2astro;
+extern const Name delay_pre2post;
 extern const Name delay_u_bars;
 extern const Name deliver_interval;
 extern const Name delta;
@@ -311,6 +317,7 @@ extern const Name major_axis;
 extern const Name make_symmetric;
 extern const Name mask;
 extern const Name max;
+extern const Name max_astro_per_target;
 extern const Name max_buffer_size_target_data;
 extern const Name max_delay;
 extern const Name max_num_syn_models;
@@ -370,6 +377,7 @@ extern const Name overwrite_files;
 extern const Name P;
 extern const Name p;
 extern const Name p_copy;
+extern const Name p_syn_astro;
 extern const Name p_transmit;
 extern const Name pairwise_bernoulli_on_source;
 extern const Name pairwise_bernoulli_on_target;
@@ -631,7 +639,10 @@ extern const Name Wmax;
 extern const Name Wmin;
 extern const Name w;
 extern const Name weight;
+extern const Name weight_astro2post;
 extern const Name weight_per_lut_entry;
+extern const Name weight_pre2astro;
+extern const Name weight_pre2post;
 extern const Name weight_recorder;
 extern const Name weights;
 extern const Name wfr_comm_interval;
@@ -649,18 +660,6 @@ extern const Name y_1;
 
 extern const Name z;
 extern const Name z_connected;
-
-extern const Name astrocyte;
-extern const Name astro2post;
-extern const Name p_syn_astro;
-extern const Name astro_pool_by_index;
-extern const Name max_astro_per_target;
-extern const Name weight_pre2post;
-extern const Name weight_pre2astro;
-extern const Name delay_pre2post;
-extern const Name delay_pre2astro;
-extern const Name weight_astro2post;
-extern const Name delay_astro2post;
 } // namespace names
 
 } // namespace nest

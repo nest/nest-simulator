@@ -41,7 +41,6 @@ import numpy as np
 from pong import GameOfPong as Pong
 
 
-
 gridsize = (12, 16)  # Shape of the grid used for positioning subplots
 
 left_color = np.array((204, 0, 153))  # purple

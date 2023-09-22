@@ -29,18 +29,23 @@ import nest
 # copied from connect_test_base.py
 try:
     from mpi4py import MPI
+
     haveMPI4Py = True
 except ImportError:
     haveMPI4Py = False
 
+
 # adapted from connect_test_base.py
-def setup_network(conn_dict, syn_dict, N1, N2, neuron_model="aeif_cond_alpha_astro", astrocyte_model="astrocyte_lr_1994"):
+def setup_network(
+    conn_dict, syn_dict, N1, N2, neuron_model="aeif_cond_alpha_astro", astrocyte_model="astrocyte_lr_1994"
+):
     pop1 = nest.Create(neuron_model, N1)
     pop2 = nest.Create(neuron_model, N2)
     pop_astro = nest.Create(astrocyte_model, N2)
     conn_dict["astrocyte"] = pop_astro
     nest.Connect(pop1, pop2, conn_dict, syn_dict)
     return pop1, pop2, pop_astro
+
 
 # copied from connect_test_base.py
 def get_expected_degrees_bernoulli(p, fan, len_source_pop, len_target_pop):
@@ -112,6 +117,7 @@ def get_expected_degrees_bernoulli(p, fan, len_source_pop, len_target_pop):
     # np.hstack((np.asarray(data_front)[0], np.asarray(data_back)[0]))
     return expected
 
+
 # copied from connect_test_base.py
 def get_degrees(fan, pop1, pop2):
     M = get_connectivity_matrix(pop1, pop2)
@@ -120,6 +126,7 @@ def get_degrees(fan, pop1, pop2):
     elif fan == "out":
         degrees = np.sum(M, axis=0)
     return degrees
+
 
 # copied from connect_test_base.py
 def gather_data(data_array):
@@ -142,6 +149,7 @@ def gather_data(data_array):
             return None
     else:
         return data_array
+
 
 # copied from connect_test_base.py
 def chi_squared_check(degrees, expected, distribution=None):
@@ -183,10 +191,12 @@ def chi_squared_check(degrees, expected, distribution=None):
         # ddof: adjustment to the degrees of freedom. df = k-1-ddof
         return scipy.stats.chisquare(np.array(degrees), np.array(expected))
 
+
 # copied from connect_test_base.py
 def mpi_barrier():
     if haveMPI4Py:
         MPI.COMM_WORLD.Barrier()
+
 
 # copied from connect_test_base.py
 def get_connectivity_matrix(pop1, pop2):
@@ -207,6 +217,7 @@ def get_connectivity_matrix(pop1, pop2):
         M[index_dic[target]][index_dic[source]] += 1
     return M
 
+
 # adapted from connect_test_base.py
 def mpi_assert(data_original, data_test):
     """
@@ -221,6 +232,7 @@ def mpi_assert(data_original, data_test):
         else:
             TestCase.assertTrue(data_original == data_test)
 
+
 # adapted from test_connect_pairwise_bernoulli.py
 # a test for parameters "p" and "max_astro_per_target"
 # run for three levels of neuron-neuron connection probabilities
@@ -230,11 +242,7 @@ def test_statistics(p_n2n):
     N1 = 50
     N2 = 50
     max_astro_per_target = 5
-    conn_dict = {
-        "rule": "pairwise_bernoulli_astro",
-        "p": p_n2n,
-        "max_astro_per_target": max_astro_per_target
-    }
+    conn_dict = {"rule": "pairwise_bernoulli_astro", "p": p_n2n, "max_astro_per_target": max_astro_per_target}
 
     # set test parameters
     stat_dict = {"alpha2": 0.05, "n_runs": 20}
@@ -279,6 +287,7 @@ def test_statistics(p_n2n):
         # assert that for each target neuron, number of astrocytes is smaller than max_astro_per_target
         assert all(n <= max_astro_per_target for n in n_astrocytes)
 
+
 # adapted from test_connect_pairwise_bernoulli
 def test_autapses_true():
     # set connection parameters
@@ -300,6 +309,7 @@ def test_autapses_true():
     # make sure all connections do exist
     M = get_connectivity_matrix(pop, pop)
     mpi_assert(np.diag(M), np.ones(N))
+
 
 # adapted from test_connect_pairwise_bernoulli
 def test_autapses_false():

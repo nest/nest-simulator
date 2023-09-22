@@ -131,6 +131,12 @@ See also
 
 diffusion_connection
 
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: siegert_neuron
+
 EndUserDocs */
 
 class siegert_neuron : public ArchivingNode
@@ -156,8 +162,8 @@ public:
   void handle( DiffusionConnectionEvent& ) override;
   void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( DiffusionConnectionEvent&, rport ) override;
-  port handles_test_event( DataLoggingRequest&, rport ) override;
+  size_t handles_test_event( DiffusionConnectionEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
   void
   sends_secondary_event( DiffusionConnectionEvent& ) override
@@ -302,8 +308,8 @@ siegert_neuron::wfr_update( Time const& origin, const long from, const long to )
   return not wfr_tol_exceeded;
 }
 
-inline port
-siegert_neuron::handles_test_event( DiffusionConnectionEvent&, rport receptor_type )
+inline size_t
+siegert_neuron::handles_test_event( DiffusionConnectionEvent&, size_t receptor_type )
 {
   if ( receptor_type == 0 )
   {
@@ -319,8 +325,8 @@ siegert_neuron::handles_test_event( DiffusionConnectionEvent&, rport receptor_ty
   }
 }
 
-inline port
-siegert_neuron::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+siegert_neuron::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

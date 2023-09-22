@@ -28,21 +28,23 @@ not support 64-bit generators, tests of Philox_64 and Threefry_64 are skipped.
 """
 
 import unittest
-import nest
 
+import nest
 
 try:
     import scipy.stats
+
     HAVE_SCIPY = True
 except ImportError:
     HAVE_SCIPY = False
 
-nest.set_verbosity('M_WARNING')
+nest.set_verbosity("M_WARNING")
 
 
 class BaseTestCases:
     """Wrapper for the base test class. Wrapping is done so that the base class is not run."""
-    @unittest.skipIf(not HAVE_SCIPY, 'SciPy package is not available')
+
+    @unittest.skipIf(not HAVE_SCIPY, "SciPy package is not available")
     class Random123TestCase(unittest.TestCase):
         def ks_assert(self, param, cdf, cdf_args):
             """
@@ -64,7 +66,7 @@ class BaseTestCases:
             This is done to be able to tell the difference between tests
             of the different RNG types.
             """
-            doc = '{} ({})'.format(self._testMethodDoc, self.rng_type)
+            doc = "{} ({})".format(self._testMethodDoc, self.rng_type)
             return doc.split("\n")[0].strip()
 
         def test_uniform(self):
@@ -72,7 +74,7 @@ class BaseTestCases:
             w_min = -1.3
             w_max = 2.7
 
-            cdf = 'uniform'
+            cdf = "uniform"
             cdf_args = (w_min, w_max - w_min)  # Uniform limits in SciPy are given as (loc, loc + scale)
             param = nest.random.uniform(min=w_min, max=w_max)
 
@@ -83,7 +85,7 @@ class BaseTestCases:
             w_min = 0
             w_max = 100
 
-            cdf = 'randint'
+            cdf = "randint"
             cdf_args = (w_min, w_max)
             # Parameter distribution is in the range [0, max)
             param = nest.random.uniform_int(w_max)
@@ -95,7 +97,7 @@ class BaseTestCases:
             mean = 2.3
             std = 1.7
 
-            cdf = 'norm'
+            cdf = "norm"
             cdf_args = (mean, std)
             param = nest.random.normal(mean=mean, std=std)
 
@@ -103,15 +105,15 @@ class BaseTestCases:
 
         def test_node_param_parameter(self):
             """Test uniformly distributed V_m"""
-            w_min = -60.
-            w_max = -50.
+            w_min = -60.0
+            w_max = -50.0
             p_val_lim = 0.05
 
-            cdf = 'uniform'
+            cdf = "uniform"
             cdf_args = (w_min, w_max - w_min)  # Uniform limits in SciPy are given as (loc, loc + scale)
             param = nest.random.uniform(min=w_min, max=w_max)
 
-            nodes = nest.Create('iaf_psc_alpha', 10)
+            nodes = nest.Create("iaf_psc_alpha", 10)
             nodes.V_m = param
             vm = nodes.V_m
 
@@ -121,27 +123,27 @@ class BaseTestCases:
 
 
 def not_supported_msg(what):
-    return f'{what} is not supported on the current system'
+    return f"{what} is not supported on the current system"
 
 
-@unittest.skipIf('Philox_32' not in nest.rng_types, not_supported_msg('Random123'))
+@unittest.skipIf("Philox_32" not in nest.rng_types, not_supported_msg("Random123"))
 class Philox32TestCase(BaseTestCases.Random123TestCase):
-    rng_type = 'Philox_32'
+    rng_type = "Philox_32"
 
 
-@unittest.skipIf('Philox_64' not in nest.rng_types, not_supported_msg('Philox_64'))
+@unittest.skipIf("Philox_64" not in nest.rng_types, not_supported_msg("Philox_64"))
 class Philox64TestCase(BaseTestCases.Random123TestCase):
-    rng_type = 'Philox_64'
+    rng_type = "Philox_64"
 
 
-@unittest.skipIf('Threefry_32' not in nest.rng_types, not_supported_msg('Random123'))
+@unittest.skipIf("Threefry_32" not in nest.rng_types, not_supported_msg("Random123"))
 class Threefry32TestCase(BaseTestCases.Random123TestCase):
-    rng_type = 'Threefry_32'
+    rng_type = "Threefry_32"
 
 
-@unittest.skipIf('Threefry_64' not in nest.rng_types, not_supported_msg('Threefry_64'))
+@unittest.skipIf("Threefry_64" not in nest.rng_types, not_supported_msg("Threefry_64"))
 class Threefry64TestCase(BaseTestCases.Random123TestCase):
-    rng_type = 'Threefry_64'
+    rng_type = "Threefry_64"
 
 
 def suite():

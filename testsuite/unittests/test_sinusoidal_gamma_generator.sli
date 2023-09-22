@@ -206,6 +206,8 @@ M_ERROR setverbosity
 } assert_or_die
 (passed 4b) ==
 
+skip_if_not_threaded
+
 % test 4c: two threads, one spike train for all targets
 {
   false 2 4 test4_function

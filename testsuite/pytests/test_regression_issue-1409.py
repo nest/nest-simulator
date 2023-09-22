@@ -19,16 +19,16 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+import unittest
+
 import nest
 import numpy as np
-import unittest
 
 HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
 
 
-@unittest.skipIf(not HAVE_OPENMP, 'NEST was compiled without multi-threading')
+@unittest.skipIf(not HAVE_OPENMP, "NEST was compiled without multi-threading")
 class MultiplePoissonGeneratorsTestCase(unittest.TestCase):
-
     def test_multiple_poisson_generators(self):
         """Invariable number of spikes with multiple poisson generators"""
         local_num_threads = 4
@@ -41,14 +41,14 @@ class MultiplePoissonGeneratorsTestCase(unittest.TestCase):
         for i in range(num_iterations):
             nest.ResetKernel()
             nest.local_num_threads = local_num_threads
-            nest.set_verbosity('M_WARNING')
-            print('num iter {:>5d}/{}'.format(i+1, num_iterations), end='\r')
+            nest.set_verbosity("M_WARNING")
+            print("num iter {:>5d}/{}".format(i + 1, num_iterations), end="\r")
 
-            parrots = nest.Create('parrot_neuron', num_neurons)
-            poisson_generator = nest.Create('poisson_generator', num_pg)
-            poisson_generator.rate = 2000.
+            parrots = nest.Create("parrot_neuron", num_neurons)
+            poisson_generator = nest.Create("poisson_generator", num_pg)
+            poisson_generator.rate = 2000.0
 
-            nest.Connect(poisson_generator, parrots, 'all_to_all')
+            nest.Connect(poisson_generator, parrots, "all_to_all")
 
             nest.Simulate(time_simulation)
             num_spikes.append(nest.local_spike_counter)

@@ -23,19 +23,6 @@
 #ifndef COMMON_PROPERTIES_HOM_W_H
 #define COMMON_PROPERTIES_HOM_W_H
 
-/** @BeginDocumentation
-
-   Name: static_synapse_hom_w - Static synapse type
-         using homogeneous weight, i.e. all synapses
-         feature the same w.
-
-   FirstVersion: April 2008
-
-   Author: Moritz Helias, Susanne Kunkel
-
-   SeeAlso: static_synapse
-*/
-
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
 
@@ -48,19 +35,12 @@ namespace nest
 class CommonPropertiesHomW : public CommonSynapseProperties
 {
 public:
-  /**
-   * Default constructor.
-   * Sets all property values to defaults.
-   */
   CommonPropertiesHomW()
     : CommonSynapseProperties()
     , weight_( 1.0 )
   {
   }
 
-  /**
-   * Get all properties and put them into a dictionary.
-   */
   void
   get_status( DictionaryDatum& d ) const
   {
@@ -91,4 +71,4 @@ private:
 
 } // namespace nest
 
-#endif // COMMON_PROPERTIES_HOM_W_H
+#endif /* #ifndef COMMON_PROPERTIES_HOM_W_H */

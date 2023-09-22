@@ -92,6 +92,11 @@ Parameters
 Only the parameter ``linear_summation`` and the parameters from the class ``Nonlinearities`` can be set in the
 status dictionary.
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: rate_transformer_node
+
 EndUserDocs */
 
 template < class TNonlinearities >
@@ -121,9 +126,9 @@ public:
   void handle( DelayedRateConnectionEvent& ) override;
   void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( InstantaneousRateConnectionEvent&, rport ) override;
-  port handles_test_event( DelayedRateConnectionEvent&, rport ) override;
-  port handles_test_event( DataLoggingRequest&, rport ) override;
+  size_t handles_test_event( InstantaneousRateConnectionEvent&, size_t ) override;
+  size_t handles_test_event( DelayedRateConnectionEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
   void
   sends_secondary_event( InstantaneousRateConnectionEvent& ) override
@@ -256,8 +261,8 @@ rate_transformer_node< TNonlinearities >::wfr_update( Time const& origin, const 
 }
 
 template < class TNonlinearities >
-inline port
-rate_transformer_node< TNonlinearities >::handles_test_event( InstantaneousRateConnectionEvent&, rport receptor_type )
+inline size_t
+rate_transformer_node< TNonlinearities >::handles_test_event( InstantaneousRateConnectionEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -267,8 +272,8 @@ rate_transformer_node< TNonlinearities >::handles_test_event( InstantaneousRateC
 }
 
 template < class TNonlinearities >
-inline port
-rate_transformer_node< TNonlinearities >::handles_test_event( DelayedRateConnectionEvent&, rport receptor_type )
+inline size_t
+rate_transformer_node< TNonlinearities >::handles_test_event( DelayedRateConnectionEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -278,8 +283,8 @@ rate_transformer_node< TNonlinearities >::handles_test_event( DelayedRateConnect
 }
 
 template < class TNonlinearities >
-inline port
-rate_transformer_node< TNonlinearities >::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+rate_transformer_node< TNonlinearities >::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

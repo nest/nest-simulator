@@ -40,12 +40,13 @@ See Also
 """
 import os
 import pickle
-import imageio
-from glob import glob
-import numpy as np
 import sys
+from glob import glob
+
 import helpers_sudoku
+import imageio
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def get_progress(puzzle, solution):
@@ -100,8 +101,8 @@ for file in in_files:
         ax.set_axis_off()
         current_state = solution_states[i]
 
-        lines[-1][0] = x_data[:i + 1]
-        lines[-1][1] = solution_progress[:i + 1]
+        lines[-1][0] = x_data[: i + 1]
+        lines[-1][1] = solution_progress[: i + 1]
         progress = plt.subplot2grid((3, 3), (1, 0), rowspan=2, colspan=1)
         progress.set_ylim(0, 1)
         progress.set_xlim(0, 10000)
@@ -113,19 +114,31 @@ for file in in_files:
 
         stats = plt.subplot2grid((3, 3), (0, 0), 1, 1)
         stats.axis("off")
-        stats.text(0, 1, 'Time progressed:',
-                   horizontalalignment='left', verticalalignment='center', fontsize=16)
-        stats.text(0, 0.7, f'{i * sim_data["sim_time"]}ms\n', horizontalalignment='left', verticalalignment='center',
-                   fontsize=12, color='gray')
-        stats.text(0, 0.5, 'Noise rate:', horizontalalignment='left',
-                   verticalalignment='center', fontsize=16)
-        stats.text(0, 0.2, f'{sim_data["noise_rate"]}Hz\n', horizontalalignment='left', verticalalignment='center',
-                   fontsize=12, color='gray')
+        stats.text(0, 1, "Time progressed:", horizontalalignment="left", verticalalignment="center", fontsize=16)
+        stats.text(
+            0,
+            0.7,
+            f'{i * sim_data["sim_time"]}ms\n',
+            horizontalalignment="left",
+            verticalalignment="center",
+            fontsize=12,
+            color="gray",
+        )
+        stats.text(0, 0.5, "Noise rate:", horizontalalignment="left", verticalalignment="center", fontsize=16)
+        stats.text(
+            0,
+            0.2,
+            f'{sim_data["noise_rate"]}Hz\n',
+            horizontalalignment="left",
+            verticalalignment="center",
+            fontsize=12,
+            color="gray",
+        )
 
         ax = plt.subplot2grid((3, 3), (0, 1), rowspan=3, colspan=2)
         if i == 0:
             # repeat the (colorless) starting configuration several times
-            helpers_sudoku.plot_field(puzzle, puzzle, ax, True)
+            helpers_sudoku.plot_field(puzzle, puzzle, ax, False)
             image_repeat = 8
         else:
             helpers_sudoku.plot_field(puzzle, current_state, ax, True)

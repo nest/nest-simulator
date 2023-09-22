@@ -32,22 +32,22 @@ when viewed via PyNEST's help() command, we replace lines with
 
 """
 
+import glob
 import os
 import re
 import sys
-import glob
 from fileinput import FileInput
 
-pattern = re.compile('^.. include:: (.*)')
+pattern = re.compile("^.. include:: (.*)")
 path = sys.argv[1]
 
-for rst_fname in glob.glob(os.path.join(path, 'spike_recorder.rst')):
-    with FileInput(rst_fname, inplace=True, backup='.bak') as rst_file:
+for rst_fname in glob.glob(os.path.join(path, "spike_recorder.rst")):
+    with FileInput(rst_fname, inplace=True, backup=".bak") as rst_file:
         for line in rst_file:
             match = pattern.match(line)
             if match:
                 include_fname = os.path.join(path, match.group(1))
                 with open(include_fname) as include_file:
-                    print(include_file.read(), end='')
+                    print(include_file.read(), end="")
             else:
-                print(line, end='')
+                print(line, end="")

@@ -32,9 +32,9 @@ multimeter and writing data to file.
 # First, we import the necessary modules to simulate and plot this example.
 # The simulation kernel is put back to its initial state using ``ResetKernel``.
 
+import matplotlib.pyplot as plt
 import nest
 import numpy
-import matplotlib.pyplot as plt
 
 nest.ResetKernel()
 
@@ -58,8 +58,7 @@ nest.data_prefix = ""
 # events induce a postsynaptic change of conductance modeled by an alpha
 # function.
 
-print("iaf_cond_alpha recordables: {0}".format(
-      nest.GetDefaults("iaf_cond_alpha")["recordables"]))
+print("iaf_cond_alpha recordables: {0}".format(nest.GetDefaults("iaf_cond_alpha")["recordables"]))
 
 ###############################################################################
 # A neuron, a multimeter as recording device, and two spike generators for
@@ -86,19 +85,15 @@ print("iaf_cond_alpha recordables: {0}".format(
 #  * For the spike generators, the spike times in ms (`spike_times`) are given
 #    explicitly.
 
-n = nest.Create("iaf_cond_alpha",
-                params={"tau_syn_ex": 1.0, "V_reset": -70.0})
+n = nest.Create("iaf_cond_alpha", params={"tau_syn_ex": 1.0, "V_reset": -70.0})
 
-m = nest.Create("multimeter",
-                params={"interval": 0.1,
-                        "record_from": ["V_m", "g_ex", "g_in"],
-                        "record_to": "ascii",
-                        "label": "my_multimeter"})
+m = nest.Create(
+    "multimeter",
+    params={"interval": 0.1, "record_from": ["V_m", "g_ex", "g_in"], "record_to": "ascii", "label": "my_multimeter"},
+)
 
-s_ex = nest.Create("spike_generator",
-                   params={"spike_times": numpy.array([10.0, 20.0, 50.0])})
-s_in = nest.Create("spike_generator",
-                   params={"spike_times": numpy.array([15.0, 25.0, 55.0])})
+s_ex = nest.Create("spike_generator", params={"spike_times": numpy.array([10.0, 20.0, 50.0])})
+s_in = nest.Create("spike_generator", params={"spike_times": numpy.array([15.0, 25.0, 55.0])})
 
 ###############################################################################
 # Next, we connect the spike generators to the neuron with ``Connect``. Synapse
@@ -114,7 +109,7 @@ nest.Connect(m, n)
 ###############################################################################
 # A network simulation with a duration of 100 ms is started with ``Simulate``.
 
-nest.Simulate(100.)
+nest.Simulate(100.0)
 
 ###############################################################################
 # After the simulation, the recordings are obtained from the file the

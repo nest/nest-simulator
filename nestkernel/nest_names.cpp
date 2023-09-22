@@ -351,6 +351,7 @@ const Name params( "params" );
 const Name parent_idx( "parent_idx" );
 const Name phase( "phase" );
 const Name phi_max( "phi_max" );
+const Name pairwise_poisson( "pairwise_poisson" );
 const Name polar_angle( "polar_angle" );
 const Name polar_axis( "polar_axis" );
 const Name port( "port" );

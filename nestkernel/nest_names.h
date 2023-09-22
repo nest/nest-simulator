@@ -377,6 +377,7 @@ extern const Name params;
 extern const Name parent_idx;
 extern const Name phase;
 extern const Name phi_max;
+extern const Name pairwise_poisson;
 extern const Name polar_angle;
 extern const Name polar_axis;
 extern const Name port;

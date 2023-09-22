@@ -265,11 +265,19 @@ public:
     std::uniform_int_distribution< unsigned long >::param_type param( 0, N - 1 );
     return uniform_ulong_dist_( rng_, param );
   }
+  
+  inline unsigned long
+  prand( double lam ) override
+  {
+    std::poisson_distribution< unsigned long >::param_type param( lam );
+    return poisson_ulong_dist_( rng_, param );
+  }
 
 private:
   RandomEngineT rng_; //!< Wrapped RNG engine.
   std::uniform_int_distribution< unsigned long > uniform_ulong_dist_;
   std::uniform_real_distribution<> uniform_double_dist_0_1_;
+  std::poisson_distribution< unsigned long > poisson_ulong_dist_;
 };
 
 /**

@@ -84,6 +84,9 @@ it is considered a spike.
 
 See also [1]_, [2]_, [3]_, [4]_, [5]_, [6]_.
 
+For details on asynchronicity in spike and firing events with Hodgkin Huxley models
+see :ref:`here <hh_details>`.
+
 Parameters
 ++++++++++
 
@@ -178,6 +181,11 @@ See also
 ++++++++
 
 hh_psc_alpha, clopath_synapse, aeif_psc_delta_clopath
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: hh_psc_alpha_clopath
 
 EndUserDocs */
 

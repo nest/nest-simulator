@@ -1,4 +1,4 @@
-/* 
+/*
  * Customize css to define NEST specific colors, style and format
  *
    primary styles, for custom index.html and layout.html pages (see templates/ folder)
@@ -8,7 +8,7 @@
 
    Sphinx theme: sphinx-material
    https://bashtage.github.io/sphinx-material/index.html
-   Sphinx material theme properties use 'md' in variable names 
+   Sphinx material theme properties use 'md' in variable names
    Extesion for grid / cards in reStructured Text see sphinx-design
    https://sphinx-design.readthedocs.io/
    Sphinx design properties use the sd in variable names
@@ -92,18 +92,42 @@ section#kernel-attributes-nest-nestmodule dd {
  display: none;
 }
 
-.sphx-glr-download-jupyter {
-  display: none;
-}
 
 .autosummary tr {
         border: none;
         border-bottom: 1px solid #ddd;
 }
 
+/*************************************************************
+ * Rules for  mermaid diagrams
+ *************************************************************/
+
+.mermaid .cluster rect {
+	fill: #47555B21 !important;
+	stroke: None !important;
+	stroke-width: None !important;
+}
+
+
+rect.basic.label-container {
+	fill: #e2e2e200; !important
+	stroke: #ff6633;
+	stroke-width: 1px;
+}
+
+figure.align-default {
+	text-align: center;
+}
+.mermaid svg {
+	/* outline: auto; */
+	outline-color: #f0f0f069;
+	outline-width: medium;
+	outline-style: groove;
+}
+
 
 /**************************************************************************************
- Settings for overriding material design theme 
+ Settings for overriding material design theme
  Setting nest colors to override sphinx material "orange" and other default colors
 
 **************************************************************************************/
@@ -118,7 +142,7 @@ section#kernel-attributes-nest-nestmodule dd {
    font-weight: 600;
 }
 .md-typeset h1[id]:before,
-.md-typeset h2[id]:before, 
+.md-typeset h2[id]:before,
 .md-typeset h3[id]:before,
 .md-typeset h4[id]:before {
    margin-top: -3.4rem;
@@ -191,15 +215,15 @@ div[role="main"] .md-source {
  margin-bottom: 0.5em;
 }
 
-.md-typeset .admonition {
+.md-typeset .admonition, .md-typeset .admonition.tip {
   border-left: .2rem solid var(--nest-blue);
   border-radius: 5px;
 }
 
-.md-typeset .admonition > .admonition-title::before, .md-typeset .admonition.important > .admonition-title::before {
+.md-typeset .admonition > .admonition-title::before, .md-typeset .admonition.important > .admonition-title::before, .md-typeset .admonition.tip > .admonition-title::before {
   color: #fff;
 }
-.md-typeset .admonition > .admonition-title{
+.md-typeset .admonition > .admonition-title, .md-typeset .admonition.tip > .admonition-title {
   background-color: var(--nest-blue);
   color: #fff;
 }

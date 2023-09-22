@@ -1,6 +1,6 @@
 Image==1.5.30
 PyYAML>=4.2b1
-RestrictedPython==6.0
+RestrictedPython==6.2
 cmake==3.26.0
 csvkit==1.1.1
 cython>=0.29.14
@@ -32,6 +32,7 @@ sphinx-notfound-page>=0.8.3
 sphinx-design==0.4.1
 sphinx-gallery==0.13.0
 sphinx-material==0.0.35
+sphinxcontrib-mermaid
 statsmodels==0.13.5
 tqdm==4.65.0
 yamllint==1.31.0

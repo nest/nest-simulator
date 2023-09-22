@@ -48,9 +48,9 @@ See Also
 ###############################################################################
 # First, we import all necessary modules for simulation and plotting.
 
+import matplotlib.pyplot as plt
 import nest
 import nest.voltage_trace
-import matplotlib.pyplot as plt
 from numpy import exp
 
 ###############################################################################

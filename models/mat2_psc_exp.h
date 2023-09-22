@@ -130,6 +130,11 @@ Receives
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: mat2_psc_exp
+
 EndUserDocs */
 
 /**

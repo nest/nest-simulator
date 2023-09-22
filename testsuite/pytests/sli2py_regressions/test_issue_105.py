@@ -23,9 +23,8 @@
 Regression test for Issue #105 (GitHub).
 """
 
-import pytest
-
 import nest
+import pytest
 
 
 @pytest.fixture(autouse=True)

@@ -30,7 +30,7 @@ from math import floor, log
 import numpy
 
 from .. import nestkernel_api as nestkernel
-from ..ll_api import *
+from ..ll_api import *  # noqa
 from .hl_api_helper import (
     get_parameters,
     get_parameters_hierarchical_addressing,

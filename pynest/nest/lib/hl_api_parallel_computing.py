@@ -24,7 +24,7 @@ Functions for parallel computing
 """
 
 from .. import nestkernel_api as nestkernel
-from ..ll_api import *
+from ..ll_api import *  # noqa
 
 __all__ = [
     "NumProcesses",

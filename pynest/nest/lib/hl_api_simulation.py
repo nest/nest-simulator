@@ -27,7 +27,7 @@ import warnings
 from contextlib import contextmanager
 
 from .. import nestkernel_api as nestkernel
-from ..ll_api import *
+from ..ll_api import *  # noqa
 from .hl_api_helper import is_iterable
 from .hl_api_parallel_computing import Rank
 
@@ -312,7 +312,7 @@ def Install(module_name):
 
     """
 
-    return sr("(%s) Install" % module_name)
+    raise NotImplementedError
 
 
 def EnableStructuralPlasticity():

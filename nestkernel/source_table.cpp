@@ -166,14 +166,14 @@ nest::SourceTable::remove_disabled_sources( const size_t tid, const synindex syn
 {
   if ( sources_[ tid ].size() <= syn_id )
   {
-    return invalid_index;
+    return invalid_index; // no source table entry for this synapse model
   }
 
   BlockVector< Source >& mysources = sources_[ tid ][ syn_id ];
   const size_t max_size = mysources.size();
   if ( max_size == 0 )
   {
-    return invalid_index;
+    return invalid_index; // no connections for this synapse model
   }
 
   // lcid needs to be signed, to allow lcid >= 0 check in while loop
@@ -184,15 +184,14 @@ nest::SourceTable::remove_disabled_sources( const size_t tid, const synindex syn
   {
     --lcid;
   }
-  ++lcid; // lcid marks first disabled source, but the while loop only
-          // exits if lcid points at a not disabled element, hence we
-          // need to increase it by one again
-  mysources.erase( mysources.begin() + lcid, mysources.end() );
-  if ( static_cast< size_t >( lcid ) == max_size )
+  const size_t first_invalid_lcid = static_cast< size_t >( lcid + 1 ); // loop stopped on first valid entry or -1
+  if ( first_invalid_lcid == max_size )
   {
-    return invalid_index;
+    return invalid_index; // all lcids are valid, nothing to remove
   }
-  return static_cast< size_t >( lcid );
+
+  mysources.erase( mysources.begin() + first_invalid_lcid, mysources.end() );
+  return first_invalid_lcid;
 }
 
 void
@@ -458,6 +457,10 @@ nest::SourceTable::collect_compressible_sources( const size_t tid )
         kernel().connection_manager.set_source_has_more_targets( tid, syn_id, lcid - 1, true );
         ++lcid;
       }
+      // Mark last connection in sequence as not having successor. This is essential if connections are
+      // delete, e.g., by structural plasticity, because we do not globally reset the more_targets flag.
+      assert( lcid - 1 < syn_sources.size() );
+      kernel().connection_manager.set_source_has_more_targets( tid, syn_id, lcid - 1, false );
     }
   }
 }

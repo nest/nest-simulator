@@ -45,9 +45,10 @@ References
 # Import all necessary modules for simulation, analysis and plotting.
 
 import time
+
+import matplotlib.pyplot as plt
 import nest
 import nest.raster_plot
-import matplotlib.pyplot as plt
 
 nest.ResetKernel()
 

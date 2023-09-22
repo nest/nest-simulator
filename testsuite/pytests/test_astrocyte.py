@@ -33,10 +33,10 @@ is smaller than the default tolerance given by pytest.approx().
 """
 
 import os
-import numpy as np
-import pytest
 
 import nest
+import numpy as np
+import pytest
 
 pytestmark = pytest.mark.skipif_missing_gsl
 path = os.path.abspath(os.path.dirname(__file__))

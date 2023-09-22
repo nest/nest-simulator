@@ -23,10 +23,9 @@
 Test basic operations with ``NodeCollection``.
 """
 
+import nest
 import numpy as np
 import pytest
-
-import nest
 
 
 @pytest.fixture(autouse=True)

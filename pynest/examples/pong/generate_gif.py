@@ -28,17 +28,16 @@ times during the simulation. These are subsequently aggregated into a GIF.
 :Authors: J Gille, T Wunderlich, Electronic Vision(s)
 """
 
-from copy import copy
 import gzip
 import os
-import sys
-
-import numpy as np
 import pickle
-import matplotlib.pyplot as plt
-import imageio.v2 as imageio
+import sys
+from copy import copy
 from glob import glob
 
+import imageio.v2 as imageio
+import matplotlib.pyplot as plt
+import numpy as np
 from pong import GameOfPong as Pong
 
 px = 1 / plt.rcParams["figure.dpi"]
@@ -138,6 +137,7 @@ if __name__ == "__main__":
         sys.exit(1)
 
     temp_dir = "temp"
+
     if os.path.exists(temp_dir):
         print(f"Output folder <{temp_dir}> already exists, aborting!")
         sys.exit(1)
@@ -271,7 +271,7 @@ if __name__ == "__main__":
 
     filenames = sorted(glob(os.path.join(temp_dir, "*.png")))
 
-    with imageio.get_writer(out_file, mode="I", fps=6) as writer:
+    with imageio.get_writer(out_file, mode="I", duration=150) as writer:
         for filename in filenames:
             image = imageio.imread(filename)
             writer.append_data(image)

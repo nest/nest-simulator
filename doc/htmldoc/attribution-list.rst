@@ -26,3 +26,5 @@ Icons provided by Flaticon
 <a href="https://www.flaticon.com/free-icons/quote" title="quote icons">Quote icons created by DinosoftLabs - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/mail" title="mail icons">Mail icons created by Freepik - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/external-link" title="external link icons">External link icons created by Bharat Icons - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/start-icon" title="start icon icons">Start icon icons created by Creative Squad - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/source-code" title="source code icons">Source code icons created by Pixel perfect - Flaticon</a>

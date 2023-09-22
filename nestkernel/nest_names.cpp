@@ -171,7 +171,7 @@ const Name E_rr( "E_rr" );
 const Name E_sfa( "E_sfa" );
 const Name eprop_regression( "eprop_regression" );
 const Name eprop_update_interval( "eprop_update_interval" );
-const Name eprop_update_interval_reset( "eprop_update_interval_reset" );
+const Name eprop_reset_neurons_on_update( "eprop_reset_neurons_on_update" );
 const Name error_signal( "error_signal" );
 const Name edge_wrap( "edge_wrap" );
 const Name element_type( "element_type" );

@@ -187,7 +187,7 @@ public:
 
   double get_eprop_update_interval() const;
   long get_eprop_update_interval_steps() const;
-  bool get_eprop_update_interval_reset() const;
+  bool get_eprop_reset_neurons_on_update() const;
   bool get_eprop_regression() const;
 
 private:
@@ -240,7 +240,7 @@ private:
 
   double eprop_update_interval_;
   long eprop_update_interval_steps_;
-  bool eprop_update_interval_reset_;
+  bool eprop_reset_neurons_on_update_;
   bool eprop_regression_;
 };
 
@@ -350,9 +350,9 @@ SimulationManager::get_eprop_update_interval_steps() const
 }
 
 inline bool
-SimulationManager::get_eprop_update_interval_reset() const
+SimulationManager::get_eprop_reset_neurons_on_update() const
 {
-  return eprop_update_interval_reset_;
+  return eprop_reset_neurons_on_update_;
 }
 
 inline bool

@@ -197,7 +197,7 @@ extern const Name E_rr;
 extern const Name E_sfa;
 extern const Name eprop_regression;
 extern const Name eprop_update_interval;
-extern const Name eprop_update_interval_reset;
+extern const Name eprop_reset_neurons_on_update;
 extern const Name error_signal;
 extern const Name edge_wrap;
 extern const Name element_type;

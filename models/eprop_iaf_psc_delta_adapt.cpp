@@ -243,7 +243,7 @@ void
 nest::eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, const long to )
 {
   long update_interval_steps = kernel().simulation_manager.get_eprop_update_interval_steps();
-  bool is_update_interval_reset = kernel().simulation_manager.get_eprop_update_interval_reset();
+  bool is_reset = kernel().simulation_manager.get_eprop_reset_neurons_on_update();
   long steps = origin.get_steps();
   const int shift = 2; // shift to synchronize factors of weight update
 
@@ -252,7 +252,7 @@ nest::eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, co
     long t = steps + lag;
     int step_in_current_interval = ( t - shift ) % update_interval_steps;
     bool is_time_to_update = step_in_current_interval == update_interval_steps - 1;
-    bool is_time_to_reset = is_update_interval_reset && is_time_to_update;
+    bool is_time_to_reset = is_reset && is_time_to_update;
 
     if ( is_time_to_update )
     {

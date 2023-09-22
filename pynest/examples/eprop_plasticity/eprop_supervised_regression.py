@@ -126,11 +126,11 @@ duration.update({key: value * duration["step"] for key, value in steps.items()})
 # As last step of the setup, we reset the NEST kernel to remove all existing NEST simulation settings and
 # objects and set some NEST kernel parameters, some of which are e-prop-related.
 
-params_kernel = {
+params_setup = {
     "eprop_regression": True,  # if True, regression; if False, classification
-    "eprop_update_interval_reset": True,  # if True, reset dynamic variables at start of each update interval
+    "eprop_reset_neurons_on_update": True,  # if True, reset dynamic variables at start of each update interval
     "eprop_update_interval": duration["sequence"],  # ms, time interval for updating the synaptic weights
-    "print_time": True,  # if True, print time progress bar during simulation, set False if run as code cell
+    "print_time": False, # True,  # if True, print time progress bar during simulation, set False if run as code cell
     "resolution": duration["step"],
     "total_num_virtual_procs": 1,  # number of virtual processes, set in case of distributed computing
 }

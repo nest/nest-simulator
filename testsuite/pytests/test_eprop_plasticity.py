@@ -65,7 +65,10 @@ class EpropPlasticityTestCase(unittest.TestCase):
                 nest.Connect(n, n, {"rule": "all_to_all"}, {"synapse_model": "eprop_synapse"})
 
     def test_EpropRegression(self):
-        """Test correct computation of weights for regression case"""
+        """
+        Test correct computation of weights for a regresion task  by comparing the simulated weights with
+        weights obtained in a simulation with the original, verified NEST implementation.
+        """
 
         update_interval = 20.0
         resolution = 1.0
@@ -483,7 +486,10 @@ class EpropPlasticityTestCase(unittest.TestCase):
         self.assertTrue(np.allclose(syn_weights, correct_weights, rtol=1e-7))
 
     def test_EpropClassification(self):
-        """Test correct computation of weights for classification case"""
+        """
+        Test correct computation of weights for a classification task by comparing the simulated weights with
+        weights obtained in a simulation with the original, verified NEST implementation. 
+        """
 
         update_interval = 20.0
         resolution = 1.0

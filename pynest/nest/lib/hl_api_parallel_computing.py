@@ -24,7 +24,6 @@ Functions for parallel computing
 """
 
 from .. import nestkernel_api as nestkernel
-from ..ll_api import *  # noqa
 
 __all__ = [
     "NumProcesses",
@@ -85,7 +84,7 @@ def SetAcceptableLatency(port_name, latency):
     # sps(kernel.SLILiteral(port_name))
     # sps(latency)
     # sr("SetAcceptableLatency")
-    pass
+    raise NotImplementedError
 
 
 def SetMaxBuffered(port_name, size):
@@ -103,7 +102,7 @@ def SetMaxBuffered(port_name, size):
     # sps(kernel.SLILiteral(port_name))
     # sps(size)
     # sr("SetMaxBuffered")
-    pass
+    raise NotImplementedError
 
 
 def SyncProcesses():
@@ -111,7 +110,7 @@ def SyncProcesses():
 
     # PYNEST-NG
     # sr("SyncProcesses")
-    pass
+    raise NotImplementedError
 
 
 def GetLocalVPs():

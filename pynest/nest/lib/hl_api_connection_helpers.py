@@ -28,7 +28,6 @@ import copy
 import numpy as np
 
 from .. import nestkernel_api as nestkernel
-from ..ll_api import *  # noqa
 from .hl_api_types import CollocatedSynapses, Mask, NodeCollection, Parameter
 
 __all__ = [

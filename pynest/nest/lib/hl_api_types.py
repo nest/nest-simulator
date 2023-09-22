@@ -30,7 +30,6 @@ from math import floor, log
 import numpy
 
 from .. import nestkernel_api as nestkernel
-from ..ll_api import *  # noqa
 from .hl_api_helper import (
     get_parameters,
     get_parameters_hierarchical_addressing,
@@ -1021,7 +1020,7 @@ class Parameter:
         """Parameters must be created using the CreateParameter command."""
         if not isinstance(datum, nestkernel.ParameterObject):
             raise TypeError(
-                "expected low-level parameter object;" " use the CreateParameter() function to create a Parameter"
+                "expected low-level parameter object; use the 'CreateParameter()' function to create a 'Parameter'."
             )
         self._datum = datum
 
@@ -1180,7 +1179,6 @@ class CmBase:
                 f" or other {self.__class__.__name__}, got {type(other)}"
             )
         self._node_collection.set({f"add_{self.__class__.__name__.lower()}": new_elements})
-        return None  # Flagging elements as added by returning None
 
     def __getitem__(self, key):
         return self._elements[key]

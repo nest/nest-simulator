@@ -683,7 +683,7 @@ nest::ConnectionManager::connect_arrays( long* sources,
             if ( *param > 1L << 31 or std::abs( *param - rtype_as_long ) > 0 ) // To avoid rounding errors
             {
               const std::string msg =
-                String::compose( "Expected integer value for %1, but got double.", param_pointer_pair.first);
+                String::compose( "Expected integer value for %1, but got double.", param_pointer_pair.first );
               throw BadParameter( msg );
             }
 

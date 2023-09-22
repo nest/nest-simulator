@@ -146,6 +146,8 @@ nest::RecordingBackendSIONlib::open_files_()
     return;
   }
 
+  std::vector< std::exception_ptr > exceptions_raised( kernel().vp_manager.get_num_threads() );
+
 #pragma omp parallel
   {
     local_comm_ = MPI_COMM_NULL;
@@ -162,12 +164,8 @@ nest::RecordingBackendSIONlib::open_files_()
     // avoid problems when calling sion_paropen_ompi(..)
     MPI_Comm local_comm = local_comm_;
 
-    // we need to delay the throwing of exceptions to the end of the parallel
-    // section
-    WrappedThreadException* we = nullptr;
-
     // This code is executed in a parallel region (opened above)!
-    const size_t t = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
     const size_t task = kernel().vp_manager.thread_to_vp( t );
     if ( not task )
     {
@@ -176,7 +174,7 @@ nest::RecordingBackendSIONlib::open_files_()
 
     // set n_rec counters to zero in every device on every thread
     device_map::value_type::iterator it;
-    for ( it = devices_[ t ].begin(); it != devices_[ t ].end(); ++it )
+    for ( it = devices_[ tid ].begin(); it != devices_[ tid ].end(); ++it )
     {
       it->second.info.n_rec = 0;
     }
@@ -233,24 +231,20 @@ nest::RecordingBackendSIONlib::open_files_()
 
       filename_ = filename;
     }
-    catch ( std::exception& e )
+    catch ( ... )
     {
-#pragma omp critical
-      if ( not we )
-      {
-        we = new WrappedThreadException( e );
-      }
-    }
-
-    // check if any exceptions have been raised
-    if ( we )
-    {
-      WrappedThreadException wec( *we );
-      delete we;
-      throw wec;
+      exceptions_raised.at( tid ) = std::current_exception;
     }
   } // parallel region
 
+  // check if any exceptions have been raised
+  for ( eptr : exceptions_raised )
+  {
+    if ( eptr )
+    {
+      std::rethrow_exception( eptr );
+    }
+  }
   files_opened_ = true;
 }
 

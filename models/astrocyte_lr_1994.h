@@ -241,7 +241,7 @@ aeif_cond_alpha_astro, sic_connection
 
 EndUserDocs */
 
-class astrocyte_lr_1994 : public ArchivingNode
+class astrocyte_lr_1994 : public StructuralPlasticityNode
 {
 
 public:
@@ -271,9 +271,6 @@ public:
   sends_secondary_event( SICEvent& ) override
   {
   }
-
-  // disable the use of STDP connections in this model
-  void register_stdp_connection( double t_first_read, double delay ) override;
 
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
@@ -467,7 +464,7 @@ astrocyte_lr_1994::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
-  ArchivingNode::get_status( d );
+  StructuralPlasticityNode::get_status( d );
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
@@ -484,7 +481,7 @@ astrocyte_lr_1994::set_status( const DictionaryDatum& d )
   // write them back to (P_, S_) before we are also sure that
   // the properties to be set in the parent class are internally
   // consistent.
-  ArchivingNode::set_status( d );
+  StructuralPlasticityNode::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

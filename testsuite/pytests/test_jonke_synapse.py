@@ -151,10 +151,10 @@ class TestJonkeSynapse:
 
         nest.Simulate(self.simulation_duration)
 
-        all_spikes = spike_recorder.events
-        senders = all_spikes["senders"]
-        pre_spikes = all_spikes["times"][senders == presynaptic_neuron.tolist()[0]]
-        post_spikes = all_spikes["times"][senders == postsynaptic_neuron.tolist()[0]]
+        all_spikes = np.array(spike_recorder.events["times"])
+        senders = np.array(spike_recorder.events["senders"])
+        pre_spikes = all_spikes[senders == presynaptic_neuron.tolist()[0]]
+        post_spikes = all_spikes[senders == postsynaptic_neuron.tolist()[0]]
 
         weight = plastic_synapse_of_interest.weight
         return (pre_spikes, post_spikes, weight)

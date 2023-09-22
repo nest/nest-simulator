@@ -91,30 +91,6 @@ public:
   }
 };
 
-
-/**
- * Class for packaging exceptions thrown in threads.
- *
- * This class is used to wrap exceptions thrown in threads.
- * It essentially packages the message of the wrapped exception,
- * avoiding the need of a clone() operation for each exception type.
- * @ingroup KernelExceptions
- */
-class WrappedThreadException : public KernelException
-{
-public:
-  explicit WrappedThreadException( const std::exception& e )
-    : KernelException( e.what() )
-  {
-  }
-
-  std::string
-  exception_name() override
-  {
-    return "WrappedThreadException";
-  }
-};
-
 /**
  * Exception to be thrown if a feature is unavailable.
  * @ingroup KernelExceptions

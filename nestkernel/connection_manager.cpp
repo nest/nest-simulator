@@ -570,8 +570,9 @@ nest::ConnectionManager::connect_arrays( long* sources,
     size_t i = 0;
     for ( auto& key : p_keys )
     {
+      bool is_int = key == names::receptor_type or key == names::music_channel;
       // Shifting the pointer to the first value of the parameter.
-      param_pointers[ key ] = std::make_pair( p_values + i * n, false );
+      param_pointers[ key ] = std::make_pair( p_values + i * n, is_int );
       ++i;
     }
   }
@@ -675,19 +676,14 @@ nest::ConnectionManager::connect_arrays( long* sources,
           const auto is_int = param_pointer_pair.second.second;
           auto* param = param_pointer + index_counter;
 
-          // PyNEST-NG had
-          // Receptor type must be an integer.
-          // if ( param_pointer_pair.first == names::receptor_type )
-
-          // Integer parameters are stored as IntegerDatums.
           if ( is_int )
           {
             const auto rtype_as_long = static_cast< long >( *param );
 
             if ( *param > 1L << 31 or std::abs( *param - rtype_as_long ) > 0 ) // To avoid rounding errors
             {
-              const auto msg =
-                std::string( "Expected integer value for " ) + param_pointer_pair.first + ", but got double.";
+              const std::string msg =
+                String::compose( "Expected integer value for %1, but got double.", param_pointer_pair.first);
               throw BadParameter( msg );
             }
 

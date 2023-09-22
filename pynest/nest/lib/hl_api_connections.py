@@ -236,6 +236,9 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
             for k in set(processed_syn_spec.keys()).difference(set(("weight", "delay", "synapse_model")))
         }
 
+        # This converts the values to a 2-dim matrix of doubles regardless of what type the
+        # parameters actually should be. This is to keep the interface generic. If needed,
+        # values are converted back to int around ConnectionManager:679 (checks for is_int).
         if len(reduced_processed_syn_spec) > 0:
             syn_param_keys = numpy.array(list(reduced_processed_syn_spec.keys()), dtype=numpy.string_)
             syn_param_values = numpy.zeros([len(reduced_processed_syn_spec), len(pre)])

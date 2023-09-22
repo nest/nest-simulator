@@ -173,13 +173,13 @@ div[role="main"] .md-source {
   margin-bottom: 0px !important;
 }
 /* settings for icons */
-.md-typeset .sd-card-title img {
+.md-typeset .sd-card-title img, .md-typeset .sd-card-header img{
   border: none;
   opacity: 0.9;
   width: 64px;
-  height: auto;
- margin-right: 2em;
- margin-bottom: 0.5em;
+  height: 60px;
+  margin-right: 2em;
+  margin-bottom: 0.5em;
 
 }
 .md-typeset .sd-summary-title img {
@@ -276,6 +276,9 @@ span.md-nav__link.caption {
 .sd-card-header .sd-card-text {
   color: white;
   text-align: center;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
 }
 
 #pynest-examples img.sd-card-img-top {

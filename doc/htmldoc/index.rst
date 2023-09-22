@@ -79,179 +79,6 @@ Conceptual approach
          </a>
          </div>
 
-Learn and explore NEST
-----------------------
-
-
-
-.. grid:: 1 1 2 3
-
-   .. grid-item::
-      :margin: 0
-      :padding: 0
-
-      .. dropdown:: Get started
-          :class-title: sd-d-flex-item sd-align-minor-center sd-bg-primary sd-text-white
-
-          * :ref:`install`
-          * :ref:`pynest_tutorial`
-
-
-
-   .. grid-item::
-      :margin: 0
-      :padding: 0
-
-      .. dropdown:: Explore example use cases
-          :class-title: sd-d-flex-item sd-align-minor-center sd-bg-primary sd-text-white
-
-          * :ref:`connection_management`
-
-          * :ref:`handling_connections`
-
-
-   .. grid-item::
-      :margin: 0
-      :padding: 0
-
-      .. dropdown:: PyNEST API
-          :class-title: sd-d-flex-item sd-align-minor-center sd-bg-primary sd-text-white
-
-          * :ref:`pynest_api`
-
-          * :ref:`stimulate_network`
-
-
-.. grid:: 1 1 2 3
-
-   .. grid-item::
-      :margin: 0
-      :padding: 0
-
-      .. dropdown:: |neuron| All about neurons
-          :class-title: sd-d-flex-row sd-align-minor-center sd-bg-success sd-text-white
-
-          * :ref:`node_handles`
-
-          * :ref:`param_ex`
-
-          * :ref:`sim_precise_spike_times`
-
-          * :ref:`exact_integration`
-
-   .. grid-item::
-      :margin: 0
-      :padding: 0
-
-      .. dropdown:: |synapse|  All about synapses and connections
-          :class-title: sd-d-flex-row sd-align-minor-center sd-bg-success sd-text-white
-
-          * :ref:`connection_management`
-
-          * :ref:`handling_connections`
-
-          * :ref:`sim_gap_junctions`
-
-          * :ref:`weight_normalization`
-
-
-   .. grid-item::
-      :margin: 0
-      :padding: 0
-
-      .. dropdown:: |device| All about devices
-          :class-title: sd-d-flex-row sd-align-minor-center sd-bg-success sd-text-white
-
-          * :ref:`record_simulations`
-
-          * :ref:`stimulate_network`
-
-.. grid:: 1 1 2 3
-
-   .. grid-item::
-      :margin: 0
-      :padding: 0
-
-      .. dropdown:: |network| Spatially-structured networks
-          :class-title: sd-d-flex-row sd-align-minor-center sd-bg-info sd-text-white
-
-          :ref:`spatial_networks`
-
-
-   .. grid-item::
-      :margin: 0
-      :padding: 0
-
-      .. dropdown:: |math| Models in NEST
-          :class-title: sd-d-flex-row sd-align-minor-center sd-bg-info sd-text-white
-
-          :ref:`modelsmain`
-
-
-   .. grid-item::
-      :margin: 0
-      :padding: 0
-
-      .. dropdown:: |sonata| NEST SONATA guide
-          :class-title: sd-d-flex-row sd-align-minor-center sd-bg-info sd-text-white
-
-          :ref:`nest_sonata`
-
-
-.. grid:: 1 1 2 3
-
-   .. grid-item::
-      :margin: 0
-      :padding: 0
-
-      .. dropdown:: |random| NEST behavior
-          :class-title: sd-d-flex-row sd-align-minor-center sd-bg-dark sd-text-white
-
-          * :ref:`built_in_timers`
-
-          * :ref:`random_numbers`
-
-          * :ref:`run_simulations`
-
-   .. grid-item::
-      :margin: 0
-      :padding: 0
-
-      .. dropdown:: |connect| Connect to other tools
-          :class-title: sd-d-flex-row sd-align-minor-center sd-bg-dark sd-text-white
-
-          * :ref:`nest_server`
-
-          * :ref:`nest_music`
-
-   .. grid-item::
-      :margin: 0
-      :padding: 0
-
-      .. dropdown:: |hpc| High performance computers (HPC)
-          :class-title: sd-d-flex-row sd-align-minor-center sd-bg-dark sd-text-white
-
-          * :ref:`optimize_performance`
-          * :ref:`parallel_computing`
-          * :ref:`benchmark`
-
-.. grid:: 1 1 2 3
-
-   .. grid-item-card:: |refresh| Convert NEST 2.X scripts to 3.X
-       :class-title: sd-d-flex-row sd-align-minor-center
-       :link: refguide_2_3
-       :link-type: ref
-
-   .. grid-item-card:: |git| What's new?
-       :class-title: sd-d-flex-row sd-align-minor-center
-       :link: whats_new
-       :link-type: ref
-
-   .. grid-item-card::  |glossary| Glossary
-       :class-title: sd-d-flex-row sd-align-minor-center
-       :link: glossary
-       :link-type: ref
-
 
 Example script
 --------------
@@ -260,10 +87,6 @@ Here is an example of how a script is constructed . . .
 
 this works - TODO add text into image
 
-
-.. seealso::
-
-   :doc:`tutorials` for  other tests of example script
 
 
 
@@ -349,31 +172,19 @@ this works - TODO add text into image
 
 
 .. toctree::
-   :caption: BASIC USAGE
+   :caption: USAGE
    :hidden:
    :glob:
 
    Install <installation/index>
-   Tutorials <get-started_index>
+   Tutorials and Guides <get-started_index>
    Examples <examples/index>
    PyNEST API <ref_material/pynest_api/index>
    Available models <models/index>
-   Neurons in NEST <neurons/index>
-   Synapses in NEST <synapses/index>
-   Devices in NEST <devices/index>
-   Spatially structured networks <networks/spatially_structured_networks>
    ref_material/glossary
 
-.. toctree::
-   :caption: TECHNICAL DETAILS
-   :hidden:
-
-   NEST on HPC <hpc/optimizing_nest>
-   nest_sonata/nest_sonata_guide
-   connect_nest/nest_server
-   model implementation <model_details>
-   NEST behavior <nest_behavior/index>
-   Developer Docs <developer_space/index>
+   Model implementations <model_details/index>
+   Technical docs <developer_space/index>
 
 
 .. toctree::
@@ -383,7 +194,7 @@ this works - TODO add text into image
 
    Cite NEST <citing-nest>
    Contact us <community>
-   Contribute <developer_space/index>
+   Contribute <contribute>
    What's new? <whats_new/index>
    NEST Homepage <https://nest-simulator.org>
 

@@ -40,7 +40,7 @@ Please familiarize yourself with our guides and workflows:
        * Follow the :ref:`C++ coding style guidelines <code_style_cpp>`
        * Review the :ref:`naming conventions for NEST <naming_conventions>`
        * Writing an extension to NEST? See :doc:`extmod:index`
-       * :ref:`check_code` to ensure correct formatting
+       * :ref:`required_dev_tools` to ensure correct formatting
 
     .. grid-item-card:: Contribute documentation
 
@@ -53,5 +53,3 @@ Please familiarize yourself with our guides and workflows:
 
     If you are looking at creating a new model, please consider :doc:`NESTML <nestml:index>`:
     a modeling language supporting neuron and synapse specification, based on the syntax of Python.
-
-

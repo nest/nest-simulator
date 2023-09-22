@@ -71,7 +71,7 @@ protected:
 
 
 private:
-  double eps_ = 1e-6;
+  double eps_ = 1e-6; // small constant to prevent numerical errors when comparing time points
   size_t n_spikes_ = 0;
 
   std::deque< histentry_eprop_archive > eprop_history_;

@@ -221,10 +221,10 @@ nest::eprop_readout::update_( Time const& origin, const long from, const long to
     long t = steps + lag;
     int step_in_current_interval = ( t - shift ) % update_interval_steps;
     bool is_time_to_update = step_in_current_interval == 0;
-    bool is_time_to_reset = is_reset && is_time_to_update;
+    bool is_time_to_reset = is_reset and is_time_to_update;
     bool is_learning_window =
-      V_.start_learning_step_ <= step_in_current_interval && step_in_current_interval <= update_interval_steps - 1;
-    bool is_extended_learning_window = step_in_current_interval == V_.start_learning_step_ - 1 || is_learning_window;
+      V_.start_learning_step_ <= step_in_current_interval and step_in_current_interval <= update_interval_steps - 1;
+    bool is_extended_learning_window = step_in_current_interval == V_.start_learning_step_ - 1 or is_learning_window;
 
     if ( is_time_to_reset )
     {
@@ -243,7 +243,7 @@ nest::eprop_readout::update_( Time const& origin, const long from, const long to
     S_.target_signal_ = is_extended_learning_window ? V_.target_signal_ : 0.0;
 
     V_.readout_signal_unnorm_ = is_extended_learning_window ? ( is_regression ? v_m : std::exp( v_m ) ) : 0.0;
-    if ( !is_regression )
+    if ( not is_regression )
       readout_signal_unnorm_buffer[ lag ] = V_.readout_signal_unnorm_;
 
     error_signal_buffer[ lag ] = S_.error_signal_;
@@ -260,7 +260,7 @@ nest::eprop_readout::update_( Time const& origin, const long from, const long to
   error_signal_event.set_coeffarray( error_signal_buffer );
   kernel().event_delivery_manager.send_secondary( *this, error_signal_event );
 
-  if ( !is_regression )
+  if ( not is_regression )
   {
     // time is one time step longer than the final step_in_current_interval to enable sending the
     // unnormalized readout signal one time step in advance so that it is available

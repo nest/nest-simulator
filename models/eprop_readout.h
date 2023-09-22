@@ -327,10 +327,10 @@ eprop_readout::handles_test_event( DelayedRateConnectionEvent& e, size_t recepto
   size_t step_rate_model_id = kernel().model_manager.get_node_model_id( "step_rate_generator" );
   size_t model_id = e.get_sender().get_model_id();
 
-  if ( step_rate_model_id == model_id && receptor_type != TARGET_SIG )
+  if ( step_rate_model_id == model_id and receptor_type != TARGET_SIG )
     throw StepRateGeneratorExpected();
 
-  if ( receptor_type < MIN_RATE_RECEPTOR || receptor_type >= SUP_RATE_RECEPTOR )
+  if ( receptor_type < MIN_RATE_RECEPTOR or receptor_type >= SUP_RATE_RECEPTOR )
     throw UnknownReceptorType( receptor_type, get_name() );
 
   return receptor_type - MIN_RATE_RECEPTOR;

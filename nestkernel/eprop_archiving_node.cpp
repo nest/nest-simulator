@@ -48,7 +48,7 @@ nest::EpropArchivingNode::init_update_history( double delay )
   std::vector< histentry_eprop_update >::iterator it =
     std::lower_bound( update_history_.begin(), update_history_.end(), delay - eps_ );
 
-  if ( it == update_history_.end() || fabs( delay - it->t_ ) > eps_ )
+  if ( it == update_history_.end() or fabs( delay - it->t_ ) > eps_ )
     update_history_.insert( it, histentry_eprop_update( delay, 1 ) );
   else
     ++it->access_counter_;
@@ -147,7 +147,7 @@ nest::EpropArchivingNode::write_learning_signal_to_history( LearningSignalConnec
 
   std::vector< unsigned int >::iterator it = e.begin();
 
-  if ( start != finish && it != e.end() )
+  if ( start != finish and it != e.end() )
   {
     double error_signal = e.get_coeffvalue( it ); // implicitely decrease access counter
     start->learning_signal_ += e.get_weight() * error_signal;
@@ -170,7 +170,7 @@ nest::EpropArchivingNode::erase_unneeded_firing_rate_reg_history()
 {
   auto it_update_hist = update_history_.begin();
   auto it_reg_hist = firing_rate_reg_history_.begin();
-  for ( ; it_update_hist != update_history_.end() && it_reg_hist != firing_rate_reg_history_.end();
+  for ( ; it_update_hist != update_history_.end() and it_reg_hist != firing_rate_reg_history_.end();
         ++it_update_hist, ++it_reg_hist )
   {
     if ( it_update_hist->access_counter_ == 0 )

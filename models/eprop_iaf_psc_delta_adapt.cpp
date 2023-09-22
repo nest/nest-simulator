@@ -252,7 +252,7 @@ nest::eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, co
     long t = steps + lag;
     int step_in_current_interval = ( t - shift ) % update_interval_steps;
     bool is_time_to_update = step_in_current_interval == update_interval_steps - 1;
-    bool is_time_to_reset = is_reset && is_time_to_update;
+    bool is_time_to_reset = is_reset and is_time_to_update;
 
     if ( is_time_to_update )
     {
@@ -290,7 +290,7 @@ nest::eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, co
     S_.V_m_pseudo_deriv_ = psi;
     write_v_m_pseudo_deriv_to_history( t + 1, psi );
 
-    if ( S_.y3_ >= thr && S_.r_ == 0 )
+    if ( S_.y3_ >= thr and S_.r_ == 0 )
     {
       set_spiketime( Time::step( t + 1 ) );
       add_spike_to_counter();

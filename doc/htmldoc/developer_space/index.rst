@@ -1,7 +1,7 @@
 .. _developer_space:
 
-Developer space
-===============
+Technical documentation
+=======================
 
 Here is all documentation pertaining to the development of NEST.
 It is documentation for anyone needing to touch the code or documentation.
@@ -16,77 +16,30 @@ It is documentation for anyone needing to touch the code or documentation.
        Install NEST from source
 
 
-
-.. _contribute:
-
 Contribute to NEST
 ------------------
 
-NEST draws its strength from the many people that use and improve it. We
-are happy to consider your contributions (e.g., new models, bug or
-documentation fixes) for addition to the official version of NEST.
+For information on how to contribute to NEST whether creating issues, writing to the mailing list
+or making changes to code or documentation, see our :ref:`contribute` guide.
 
-Please familiarize yourself with our guides and workflows:
-
-
+Workflows and Guidelines
+-------------------------
 
 .. grid:: 1 1 2 2
 
-    .. grid-item-card:: Mailing list
-
-      Have a question or problem about NEST? Get help from the NEST community:
-      use our :ref:`mailing list <mail_guidelines>`.
-
-    .. grid-item-card:: Create a GitHub issue
-
-      If you have a feature request, bug report or other issue, create
-      an issue on GitHub using `the templates <https://github.com/nest/nest-simulator/issues/new/choose>`_
-
-
-.. grid:: 1 1 2 2
-
-    .. grid-item-card:: Contribute code
+   .. grid-item-card:: Workflows
 
        * New to git or need a refresher? See our :ref:`NEST git workflow <git_workflow>`
+       * Check that documentation renders properly: See the :ref:`build documentation <doc_workflow>` guide for developer and user documentation
+       * Here you can find details on our :ref:`CI workflow <cont_integration>`
+
+   .. grid-item-card:: Guidelines
+
        * Follow the :ref:`C++ coding style guidelines <code_style_cpp>`
        * Review the :ref:`naming conventions for NEST <naming_conventions>`
-       * Writing an extension module? See :doc:`extmod:index`
        * :ref:`check_code` to ensure correct formatting
-
-    .. grid-item-card:: Contribute documentation
-
        * Review the :ref:`documentation style guide <doc_styleguide>`
-       * For making changes to the PyNEST APIs, see our :ref:`pyapi_template`
-       * If you have a Python example network to contribute, please refer to our
-         :ref:`pyexample_template`
-       * Check that documentation renders properly: See the :ref:`build documentation <doc_workflow>` guide for developer and user documentation
-
-.. note:: Adding models to NEST
-
-    If you are looking at creating a new model, please check out :doc:`NESTML <nestml:index>`:
-    a modeling language supporting neuron and synapse specification, based on the syntax of Python.
-
-In order to make sure that the NEST Initiative can manage the NEST code base in the long term,
-you need to send us a completed and signed
-:download:`NEST Contributor Agreement <static/NEST_Contributor_Agreement.pdf>` to transfer your
-copyright to the NEST Initiative before we can merge your pull request.
-
-----
-
-Developer guides
-----------------
-
-.. grid:: 1 1 2 2
-
-    .. grid-item-card:: Reviewer guidelines
-
-        If you are requested to review a pull request, please
-        check our :ref:`code_guidelines`
-
-
-    .. grid-item-card::  Continuous integration
-
-        * Here you can find details on our :ref:`CI workflow <cont_integration>`
+       * If you are requested to review a pull request, please check our :ref:`code_guidelines`
 
 .. grid:: 1 1 2 2
 

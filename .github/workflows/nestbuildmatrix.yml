@@ -651,7 +651,7 @@ jobs:
 
       - name: "Install MacOS system dependencies"
         run: |
-          brew install coreutils gsl open-mpi libomp automake autoconf libtool boost hdf5
+          brew install llvm coreutils gsl open-mpi libomp automake autoconf libtool boost hdf5
 
       - name: "Restore pip cache"
         env:

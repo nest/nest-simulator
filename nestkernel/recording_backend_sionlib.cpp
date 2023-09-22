@@ -233,7 +233,7 @@ nest::RecordingBackendSIONlib::open_files_()
     }
     catch ( ... )
     {
-      exceptions_raised.at( tid ) = std::current_exception;
+      exceptions_raised.at( tid ) = std::current_exception();
     }
   } // parallel region
 

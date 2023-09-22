@@ -238,7 +238,7 @@ nest::RecordingBackendSIONlib::open_files_()
   } // parallel region
 
   // check if any exceptions have been raised
-  for ( eptr : exceptions_raised )
+  for ( auto eptr : exceptions_raised )
   {
     if ( eptr )
     {

@@ -793,7 +793,7 @@ nest::SimulationManager::update_()
   double start_current_update = sw_simulate_.elapsed();
   bool update_time_limit_exceeded = false;
 
-  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
+  std::vector< std::exception_ptr > exceptions_raised( kernel().vp_manager.get_num_threads() );
 
 // parallel section begins
 #pragma omp parallel
@@ -1089,10 +1089,10 @@ nest::SimulationManager::update_()
         node->update_synaptic_elements( Time( Time::step( clock_.get_steps() + to_step_ ) ).get_ms() );
       }
     }
-    catch ( std::exception& e )
+    catch ( ... )
     {
-      // so throw the exception after parallel region
-      exceptions_raised.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( e ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised.at( tid ) = std::current_exception();
     }
   } // of omp parallel
 
@@ -1103,13 +1103,13 @@ nest::SimulationManager::update_()
   }
 
   // check if any exceptions have been raised
-  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( auto eptr : exceptions_raised )
   {
-    if ( exceptions_raised.at( tid ).get() )
+    if ( eptr )
     {
       simulating_ = false; // must mark this here, see #311
       inconsistent_state_ = true;
-      throw WrappedThreadException( *( exceptions_raised.at( tid ) ) );
+      std::rethrow_exception( eptr );
     }
   }
 }

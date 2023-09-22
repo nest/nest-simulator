@@ -135,8 +135,7 @@ NodeManager::add_node( size_t model_id, long n )
   kernel().modelrange_manager.add_range( model_id, min_node_id, max_node_id );
 
   // clear any exceptions from previous call
-  std::vector< std::shared_ptr< WrappedThreadException > >( kernel().vp_manager.get_num_threads() )
-    .swap( exceptions_raised_ );
+  std::vector< std::exception_ptr >( kernel().vp_manager.get_num_threads() ).swap( exceptions_raised_ );
 
   auto nc_ptr = NodeCollectionPTR( new NodeCollectionPrimitive( min_node_id, max_node_id, model_id ) );
   append_node_collection_( nc_ptr );
@@ -155,11 +154,11 @@ NodeManager::add_node( size_t model_id, long n )
   }
 
   // check if any exceptions have been raised
-  for ( size_t t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  for ( auto eptr : exceptions_raised_ )
   {
-    if ( exceptions_raised_.at( t ).get() )
+    if ( eptr )
     {
-      throw WrappedThreadException( *( exceptions_raised_.at( t ) ) );
+      std::rethrow_exception( eptr );
     }
   }
 
@@ -197,38 +196,37 @@ NodeManager::add_neurons_( Model& model, size_t min_node_id, size_t max_node_id 
 
 #pragma omp parallel
   {
-    const size_t t = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
     try
     {
-      model.reserve_additional( t, max_new_per_thread );
+      model.reserve_additional( tid, max_new_per_thread );
       // Need to find smallest node ID with:
       //   - node ID local to this vp
       //   - node_id >= min_node_id
-      const size_t vp = kernel().vp_manager.thread_to_vp( t );
+      const size_t vp = kernel().vp_manager.thread_to_vp( tid );
       const size_t min_node_id_vp = kernel().vp_manager.node_id_to_vp( min_node_id );
 
       size_t node_id = min_node_id + ( num_vps + vp - min_node_id_vp ) % num_vps;
 
       while ( node_id <= max_node_id )
       {
-        Node* node = model.create( t );
+        Node* node = model.create( tid );
         node->set_node_id_( node_id );
         node->set_model_id( model.get_model_id() );
-        node->set_thread( t );
+        node->set_thread( tid );
         node->set_vp( vp );
         node->set_initialized();
 
-        local_nodes_[ t ].add_local_node( *node );
+        local_nodes_[ tid ].add_local_node( *node );
         node_id += num_vps;
       }
-      local_nodes_[ t ].set_max_node_id( max_node_id );
+      local_nodes_[ tid ].set_max_node_id( max_node_id );
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( t ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   } // omp parallel
 }
@@ -240,33 +238,32 @@ NodeManager::add_devices_( Model& model, size_t min_node_id, size_t max_node_id 
 
 #pragma omp parallel
   {
-    const size_t t = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
     try
     {
-      model.reserve_additional( t, n_per_thread );
+      model.reserve_additional( tid, n_per_thread );
 
       for ( size_t node_id = min_node_id; node_id <= max_node_id; ++node_id )
       {
         // keep track of number of thread local devices
-        ++num_thread_local_devices_[ t ];
+        ++num_thread_local_devices_[ tid ];
 
-        Node* node = model.create( t );
+        Node* node = model.create( tid );
         node->set_node_id_( node_id );
         node->set_model_id( model.get_model_id() );
-        node->set_thread( t );
-        node->set_vp( kernel().vp_manager.thread_to_vp( t ) );
-        node->set_local_device_id( num_thread_local_devices_[ t ] - 1 );
+        node->set_thread( tid );
+        node->set_vp( kernel().vp_manager.thread_to_vp( tid ) );
+        node->set_local_device_id( num_thread_local_devices_[ tid ] - 1 );
         node->set_initialized();
 
-        local_nodes_[ t ].add_local_node( *node );
+        local_nodes_[ tid ].add_local_node( *node );
       }
-      local_nodes_[ t ].set_max_node_id( max_node_id );
+      local_nodes_[ tid ].set_max_node_id( max_node_id );
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( t ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   } // omp parallel
 }
@@ -276,34 +273,33 @@ NodeManager::add_music_nodes_( Model& model, size_t min_node_id, size_t max_node
 {
 #pragma omp parallel
   {
-    const size_t t = kernel().vp_manager.get_thread_id();
+    const size_t tid = kernel().vp_manager.get_thread_id();
     try
     {
-      if ( t == 0 )
+      if ( tid == 0 )
       {
         for ( size_t node_id = min_node_id; node_id <= max_node_id; ++node_id )
         {
           // keep track of number of thread local devices
-          ++num_thread_local_devices_[ t ];
+          ++num_thread_local_devices_[ tid ];
 
           Node* node = model.create( 0 );
           node->set_node_id_( node_id );
           node->set_model_id( model.get_model_id() );
           node->set_thread( 0 );
           node->set_vp( kernel().vp_manager.thread_to_vp( 0 ) );
-          node->set_local_device_id( num_thread_local_devices_[ t ] - 1 );
+          node->set_local_device_id( num_thread_local_devices_[ tid ] - 1 );
           node->set_initialized();
 
           local_nodes_[ 0 ].add_local_node( *node );
         }
       }
-      local_nodes_.at( t ).set_max_node_id( max_node_id );
+      local_nodes_.at( tid ).set_max_node_id( max_node_id );
     }
-    catch ( std::exception& err )
+    catch ( ... )
     {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( t ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised_.at( tid ) = std::current_exception();
     }
   } // omp parallel
 }
@@ -643,17 +639,17 @@ NodeManager::prepare_nodes()
   size_t num_active_nodes = 0;     // counts nodes that will be updated
   size_t num_active_wfr_nodes = 0; // counts nodes that use waveform relaxation
 
-  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
+  std::vector< std::exception_ptr > exceptions_raised( kernel().vp_manager.get_num_threads() );
 
 #pragma omp parallel reduction( + : num_active_nodes, num_active_wfr_nodes )
   {
-    size_t t = kernel().vp_manager.get_thread_id();
+    size_t tid = kernel().vp_manager.get_thread_id();
 
     // We prepare nodes in a parallel region. Therefore, we need to catch
     // exceptions here and then handle them after the parallel region.
     try
     {
-      for ( SparseNodeArray::const_iterator it = local_nodes_[ t ].begin(); it != local_nodes_[ t ].end(); ++it )
+      for ( SparseNodeArray::const_iterator it = local_nodes_[ tid ].begin(); it != local_nodes_[ tid ].end(); ++it )
       {
         prepare_node_( ( it )->get_node() );
         if ( not( it->get_node() )->is_frozen() )
@@ -666,19 +662,19 @@ NodeManager::prepare_nodes()
         }
       }
     }
-    catch ( std::exception& e )
+    catch ( ... )
     {
-      // so throw the exception after parallel region
-      exceptions_raised.at( t ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( e ) );
+      // Capture the current exception object and create an std::exception_ptr
+      exceptions_raised.at( tid ) = std::current_exception();
     }
   } // omp parallel
 
   // check if any exceptions have been raised
-  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  for ( auto eptr : exceptions_raised )
   {
-    if ( exceptions_raised.at( tid ).get() )
+    if ( eptr )
     {
-      throw WrappedThreadException( *( exceptions_raised.at( tid ) ) );
+      std::rethrow_exception( eptr );
     }
   }
 

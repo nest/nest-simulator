@@ -29,6 +29,16 @@
 
 #include "dictionary.h"
 
+// TODO: PYNEST-NG: Here's an idea to improve the performance and
+// address the possible bottlenecks mentioned below: Instead of
+// performing access checks on node instances, they could be performed
+// on the model prototypes (or clones thereof) just once prior to
+// actually calling instance.set_status() or
+// kernel_manager::set_status(). This would, however, require that all
+// inter-dependent properties in such a call would be forced to be set
+// together. In other words all calls to set_status() must be
+// independent of the current state of the node instance.
+
 /**
  * @brief Access flag manager for the dictionary class
  *

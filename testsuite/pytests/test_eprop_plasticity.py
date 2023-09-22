@@ -80,7 +80,7 @@ class EpropPlasticityTestCase(unittest.TestCase):
             {
                 "eprop_regression": True,
                 "eprop_update_interval": update_interval,
-                "eprop_update_interval_reset": True,
+                "eprop_reset_neurons_on_update": True,
                 "resolution": resolution,
             }
         )
@@ -499,12 +499,13 @@ class EpropPlasticityTestCase(unittest.TestCase):
         nest.ResetKernel()
         nest.SetKernelStatus(
             {
-                "eprop_regression": False,
-                "eprop_update_interval": update_interval,
-                "eprop_update_interval_reset": True,
                 "resolution": resolution,
             }
         )
+        
+        nest.eprop_regression = False
+        nest.eprop_update_interval = update_interval
+        nest.eprop_reset_neurons_on_update = True
 
         params_common_syn_eprop = {
             "adam": True,

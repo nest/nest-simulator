@@ -88,7 +88,8 @@ def build_net(model):
 
     nest.ResetKernel()
     if "eprop" in model:
-        nest.SetKernelStatus({"eprop_update_interval": 1.0, "eprop_update_interval_reset": True})
+        nest.eprop_update_interval = 1.0
+        nest.eprop_reset_neurons_on_update = True
     nrn = nest.Create(model)
     pg = nest.Create("poisson_generator", params={"rate": 1e4})
     mm = nest.Create("multimeter", {"interval": 0.1, "record_from": nrn.recordables})

@@ -570,7 +570,7 @@ nest::ConnectionManager::connect_arrays( long* sources,
     size_t i = 0;
     for ( auto& key : p_keys )
     {
-      bool is_int = key == names::receptor_type or key == names::music_channel;
+      const bool is_int = key == names::receptor_type or key == names::music_channel;
       // Shifting the pointer to the first value of the parameter.
       param_pointers[ key ] = std::make_pair( p_values + i * n, is_int );
       ++i;

@@ -70,6 +70,9 @@ class dictionary : public std::map< std::string, boost::any >
   //                   * Whether value is writable
   //                   * Docstring for each entry
 private:
+  // TODO: PYNEST-NG: maybe change to unordered map, as that provides
+  // automatic hashing of keys (currently strings) which might make
+  // lookups more efficient
   using maptype_ = std::map< std::string, boost::any >;
   using maptype_::maptype_; // Inherit constructors
 

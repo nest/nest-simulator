@@ -86,6 +86,8 @@ class poisson_generator : public StimulationDevice
 {
 
 public:
+  static void register_model();
+
   /**
    * The generator is threaded, so the RNG to use is determined
    * at run-time, depending on thread.

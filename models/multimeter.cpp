@@ -24,12 +24,26 @@
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
+#include "genericmodel_impl.h"
+#include "model_manager_impl.h"
 
 // Includes from libnestutil:
 #include "dict_util.h"
 
 namespace nest
 {
+void
+multimeter::register_model()
+{
+  kernel().model_manager.register_node_model< multimeter >( "multimeter" );
+}
+
+void
+voltmeter::register_model()
+{
+  kernel().model_manager.register_node_model< voltmeter >( "voltmeter" );
+}
+
 
 multimeter::multimeter()
   : RecordingDevice()

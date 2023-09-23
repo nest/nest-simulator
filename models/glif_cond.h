@@ -210,6 +210,8 @@ extern "C" int glif_cond_dynamics( double, const double*, double*, void* );
 class glif_cond : public ArchivingNode
 {
 public:
+  static void register_model();
+
   glif_cond();
 
   glif_cond( const glif_cond& );

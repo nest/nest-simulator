@@ -214,6 +214,8 @@ class gif_psc_exp_multisynapse : public ArchivingNode
 {
 
 public:
+  static void register_model();
+
   gif_psc_exp_multisynapse();
   gif_psc_exp_multisynapse( const gif_psc_exp_multisynapse& );
 

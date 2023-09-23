@@ -234,6 +234,8 @@ class cm_default : public ArchivingNode
 {
 
 public:
+  static void register_model();
+
   cm_default();
   cm_default( const cm_default& );
 

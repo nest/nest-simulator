@@ -137,6 +137,8 @@ class correlospinmatrix_detector : public Node
 {
 
 public:
+  static void register_model();
+
   correlospinmatrix_detector();
   correlospinmatrix_detector( const correlospinmatrix_detector& );
 

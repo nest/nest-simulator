@@ -208,6 +208,8 @@ namespace nest
 class glif_psc : public ArchivingNode
 {
 public:
+  static void register_model();
+
   glif_psc();
 
   glif_psc( const glif_psc& );

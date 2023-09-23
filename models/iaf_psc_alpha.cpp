@@ -28,8 +28,10 @@
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "iaf_propagator.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
 #include "numerics.h"
 #include "ring_buffer_impl.h"
 #include "universal_data_logger_impl.h"
@@ -41,6 +43,12 @@ nest::RecordablesMap< nest::iaf_psc_alpha > nest::iaf_psc_alpha::recordablesMap_
 
 namespace nest
 {
+void
+iaf_psc_alpha::register_model()
+{
+  kernel().model_manager.register_node_model< iaf_psc_alpha >( "iaf_psc_alpha" );
+}
+
 
 /*
  * Override the create() method with one call to RecordablesMap::insert_()

@@ -110,6 +110,8 @@ class ppd_sup_generator : public StimulationDevice
 {
 
 public:
+  static void register_model();
+
   ppd_sup_generator();
   ppd_sup_generator( const ppd_sup_generator& );
 

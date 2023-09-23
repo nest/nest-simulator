@@ -32,12 +32,21 @@
 #include "logging.h"
 
 // Includes from nestkernel:
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
 
 // Includes from sli:
 #include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
+
+void
+nest::correlomatrix_detector::register_model()
+{
+  kernel().model_manager.register_node_model< correlomatrix_detector >( "correlomatrix_detector" );
+}
+
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state

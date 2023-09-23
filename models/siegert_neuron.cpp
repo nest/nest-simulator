@@ -35,7 +35,9 @@
 
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -61,6 +63,12 @@ erfcx( double x, void* p )
 
 namespace nest
 {
+void
+siegert_neuron::register_model()
+{
+  kernel().model_manager.register_node_model< siegert_neuron >( "siegert_neuron" );
+}
+
 
 /* ----------------------------------------------------------------
  * Recordables map

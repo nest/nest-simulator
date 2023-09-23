@@ -208,6 +208,8 @@ class gif_psc_exp : public ArchivingNode
 {
 
 public:
+  static void register_model();
+
   gif_psc_exp();
   gif_psc_exp( const gif_psc_exp& );
 

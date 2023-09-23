@@ -150,6 +150,8 @@ EndUserDocs */
 class iaf_psc_exp_ps : public ArchivingNode
 {
 public:
+  static void register_model();
+
   /** Basic constructor.
       This constructor should only be used by GenericModel to create
       model prototype instances.

@@ -26,7 +26,9 @@
 // Includes from nestkernel:
 #include "connector_base.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
 #include "spikecounter.h"
 
 // Includes from libnestutil:
@@ -34,6 +36,13 @@
 
 // Includes from sli:
 #include "dictutils.h"
+
+void
+nest::volume_transmitter::register_model()
+{
+  kernel().model_manager.register_node_model< volume_transmitter >( "volume_transmitter" );
+}
+
 
 /* ----------------------------------------------------------------
  * Default constructor defining default parameters

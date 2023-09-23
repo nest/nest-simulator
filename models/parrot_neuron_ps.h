@@ -86,6 +86,8 @@ EndUserDocs */
 class parrot_neuron_ps : public ArchivingNode
 {
 public:
+  static void register_model();
+
   parrot_neuron_ps();
 
   /**

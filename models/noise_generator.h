@@ -150,6 +150,8 @@ class noise_generator : public StimulationDevice
 {
 
 public:
+  static void register_model();
+
   noise_generator();
   noise_generator( const noise_generator& );
 

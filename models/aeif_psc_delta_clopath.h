@@ -207,6 +207,8 @@ class aeif_psc_delta_clopath : public ClopathArchivingNode
 {
 
 public:
+  static void register_model();
+
   aeif_psc_delta_clopath();
   aeif_psc_delta_clopath( const aeif_psc_delta_clopath& );
   ~aeif_psc_delta_clopath() override;

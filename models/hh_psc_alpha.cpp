@@ -35,7 +35,9 @@
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -46,6 +48,12 @@ nest::RecordablesMap< nest::hh_psc_alpha > nest::hh_psc_alpha::recordablesMap_;
 
 namespace nest
 {
+void
+hh_psc_alpha::register_model()
+{
+  kernel().model_manager.register_node_model< hh_psc_alpha >( "hh_psc_alpha" );
+}
+
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>

@@ -164,6 +164,8 @@ class amat2_psc_exp : public ArchivingNode
 {
 
 public:
+  static void register_model();
+
   amat2_psc_exp();
   amat2_psc_exp( const amat2_psc_exp& );
 

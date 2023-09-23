@@ -28,7 +28,9 @@
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
 #include "nest_datums.h"
 #include "node_collection.h"
 
@@ -36,6 +38,13 @@
 #include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
+
+void
+nest::weight_recorder::register_model()
+{
+  kernel().model_manager.register_node_model< weight_recorder >( "weight_recorder" );
+}
+
 
 // record time, node ID, weight and receiver node ID
 nest::weight_recorder::weight_recorder()

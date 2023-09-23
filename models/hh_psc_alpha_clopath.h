@@ -193,6 +193,8 @@ class hh_psc_alpha_clopath : public ClopathArchivingNode
 {
 
 public:
+  static void register_model();
+
   hh_psc_alpha_clopath();
   hh_psc_alpha_clopath( const hh_psc_alpha_clopath& );
   ~hh_psc_alpha_clopath() override;

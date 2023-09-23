@@ -25,7 +25,9 @@
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -34,6 +36,13 @@
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
+
+void
+nest::poisson_generator::register_model()
+{
+  kernel().model_manager.register_node_model< poisson_generator >( "poisson_generator" );
+}
+
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter

@@ -185,6 +185,8 @@ class aeif_cond_alpha_multisynapse : public ArchivingNode
 {
 
 public:
+  static void register_model();
+
   aeif_cond_alpha_multisynapse();
   aeif_cond_alpha_multisynapse( const aeif_cond_alpha_multisynapse& );
   ~aeif_cond_alpha_multisynapse() override;

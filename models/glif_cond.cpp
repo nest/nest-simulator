@@ -34,7 +34,9 @@
 
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
 #include "name.h"
 #include "universal_data_logger_impl.h"
 
@@ -46,6 +48,12 @@ using namespace nest;
 
 namespace nest
 {
+void
+glif_cond::register_model()
+{
+  kernel().model_manager.register_node_model< glif_cond >( "glif_cond" );
+}
+
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>

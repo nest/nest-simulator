@@ -245,6 +245,8 @@ class astrocyte_lr_1994 : public ArchivingNode
 {
 
 public:
+  static void register_model();
+
   astrocyte_lr_1994();
   astrocyte_lr_1994( const astrocyte_lr_1994& );
   ~astrocyte_lr_1994() override;

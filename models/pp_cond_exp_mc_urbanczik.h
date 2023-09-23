@@ -255,6 +255,8 @@ class pp_cond_exp_mc_urbanczik : public UrbanczikArchivingNode< pp_cond_exp_mc_u
   // Boilerplate function declarations --------------------------------
 
 public:
+  static void register_model();
+
   pp_cond_exp_mc_urbanczik();
   pp_cond_exp_mc_urbanczik( const pp_cond_exp_mc_urbanczik& );
   ~pp_cond_exp_mc_urbanczik() override;

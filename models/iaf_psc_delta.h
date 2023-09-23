@@ -150,6 +150,8 @@ class iaf_psc_delta : public ArchivingNode
 {
 
 public:
+  static void register_model();
+
   iaf_psc_delta();
   iaf_psc_delta( const iaf_psc_delta& );
 

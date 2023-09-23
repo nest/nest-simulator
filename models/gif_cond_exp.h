@@ -224,6 +224,8 @@ class gif_cond_exp : public ArchivingNode
 {
 
 public:
+  static void register_model();
+
   gif_cond_exp();
   gif_cond_exp( const gif_cond_exp& );
   ~gif_cond_exp() override;

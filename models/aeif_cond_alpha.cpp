@@ -36,7 +36,9 @@
 
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
 #include "nest_names.h"
 #include "universal_data_logger_impl.h"
 
@@ -51,6 +53,12 @@ nest::RecordablesMap< nest::aeif_cond_alpha > nest::aeif_cond_alpha::recordables
 
 namespace nest // template specialization must be placed in namespace
 {
+void
+aeif_cond_alpha::register_model()
+{
+  kernel().model_manager.register_node_model< aeif_cond_alpha >( "aeif_cond_alpha" );
+}
+
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>

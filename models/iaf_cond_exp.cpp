@@ -35,7 +35,9 @@
 // Includes from nestkernel:
 #include "event.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -49,6 +51,12 @@ nest::RecordablesMap< nest::iaf_cond_exp > nest::iaf_cond_exp::recordablesMap_;
 
 namespace nest // template specialization must be placed in namespace
 {
+void
+iaf_cond_exp::register_model()
+{
+  kernel().model_manager.register_node_model< iaf_cond_exp >( "iaf_cond_exp" );
+}
+
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>

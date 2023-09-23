@@ -196,6 +196,8 @@ class aeif_cond_alpha : public ArchivingNode
 {
 
 public:
+  static void register_model();
+
   aeif_cond_alpha();
   aeif_cond_alpha( const aeif_cond_alpha& );
   ~aeif_cond_alpha() override;

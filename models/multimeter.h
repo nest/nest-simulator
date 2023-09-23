@@ -138,6 +138,8 @@ class multimeter : public RecordingDevice
 {
 
 public:
+  static void register_model();
+
   multimeter();
   multimeter( const multimeter& );
 
@@ -290,6 +292,8 @@ nest::multimeter::calibrate_time( const TimeConverter& tc )
 class voltmeter : public multimeter
 {
 public:
+  static void register_model();
+
   voltmeter();
   voltmeter( const voltmeter& );
 };

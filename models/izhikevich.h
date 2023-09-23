@@ -133,6 +133,8 @@ class izhikevich : public ArchivingNode
 {
 
 public:
+  static void register_model();
+
   izhikevich();
   izhikevich( const izhikevich& );
 

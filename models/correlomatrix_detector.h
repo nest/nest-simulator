@@ -156,6 +156,8 @@ class correlomatrix_detector : public Node
 {
 
 public:
+  static void register_model();
+
   correlomatrix_detector();
   correlomatrix_detector( const correlomatrix_detector& );
 

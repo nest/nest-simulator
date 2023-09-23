@@ -28,11 +28,20 @@
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
 
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
+
+void
+nest::spin_detector::register_model()
+{
+  kernel().model_manager.register_node_model< spin_detector >( "spin_detector" );
+}
+
 
 nest::spin_detector::spin_detector()
   : last_in_node_id_( 0 )

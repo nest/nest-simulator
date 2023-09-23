@@ -181,6 +181,8 @@ class iaf_cond_alpha_mc : public ArchivingNode
   // Boilerplate function declarations --------------------------------
 
 public:
+  static void register_model();
+
   iaf_cond_alpha_mc();
   iaf_cond_alpha_mc( const iaf_cond_alpha_mc& );
   ~iaf_cond_alpha_mc() override;

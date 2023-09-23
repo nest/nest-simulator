@@ -198,6 +198,8 @@ class aeif_cond_alpha_astro : public ArchivingNode
 {
 
 public:
+  static void register_model();
+
   aeif_cond_alpha_astro();
   aeif_cond_alpha_astro( const aeif_cond_alpha_astro& );
   ~aeif_cond_alpha_astro() override;

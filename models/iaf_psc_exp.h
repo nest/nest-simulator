@@ -183,6 +183,8 @@ class iaf_psc_exp : public ArchivingNode
 {
 
 public:
+  static void register_model();
+
   iaf_psc_exp();
   iaf_psc_exp( const iaf_psc_exp& );
 

@@ -131,6 +131,8 @@ class iaf_cond_exp : public ArchivingNode
 {
 
 public:
+  static void register_model();
+
   iaf_cond_exp();
   iaf_cond_exp( const iaf_cond_exp& );
   ~iaf_cond_exp() override;

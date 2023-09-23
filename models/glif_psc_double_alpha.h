@@ -220,6 +220,8 @@ namespace nest
 class glif_psc_double_alpha : public ArchivingNode
 {
 public:
+  static void register_model();
+
   glif_psc_double_alpha();
 
   glif_psc_double_alpha( const glif_psc_double_alpha& );

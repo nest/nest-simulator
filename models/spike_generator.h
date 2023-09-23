@@ -237,6 +237,8 @@ class spike_generator : public StimulationDevice
 {
 
 public:
+  static void register_model();
+
   spike_generator();
   spike_generator( const spike_generator& );
 

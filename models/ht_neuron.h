@@ -190,6 +190,8 @@ EndUserDocs */
 class ht_neuron : public ArchivingNode
 {
 public:
+  static void register_model();
+
   ht_neuron();
   ht_neuron( const ht_neuron& );
   ~ht_neuron() override;

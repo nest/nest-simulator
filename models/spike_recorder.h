@@ -87,6 +87,8 @@ class spike_recorder : public RecordingDevice
 {
 
 public:
+  static void register_model();
+
   spike_recorder();
   spike_recorder( const spike_recorder& );
 

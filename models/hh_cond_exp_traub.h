@@ -159,6 +159,8 @@ class hh_cond_exp_traub : public ArchivingNode
 {
 
 public:
+  static void register_model();
+
   hh_cond_exp_traub();
   hh_cond_exp_traub( const hh_cond_exp_traub& );
   ~hh_cond_exp_traub() override;

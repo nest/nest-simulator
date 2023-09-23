@@ -29,7 +29,16 @@
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
+
+void
+nest::mip_generator::register_model()
+{
+  kernel().model_manager.register_node_model< mip_generator >( "mip_generator" );
+}
+
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter

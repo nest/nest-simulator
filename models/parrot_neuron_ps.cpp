@@ -28,13 +28,21 @@
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
 
 // Includes from sli:
 #include "dictutils.h"
 
 namespace nest
 {
+void
+parrot_neuron_ps::register_model()
+{
+  kernel().model_manager.register_node_model< parrot_neuron_ps >( "parrot_neuron_ps" );
+}
+
 
 parrot_neuron_ps::parrot_neuron_ps()
   : ArchivingNode()

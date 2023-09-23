@@ -36,7 +36,9 @@
 
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -46,6 +48,12 @@ nest::RecordablesMap< nest::astrocyte_lr_1994 > nest::astrocyte_lr_1994::recorda
 
 namespace nest
 {
+void
+astrocyte_lr_1994::register_model()
+{
+  kernel().model_manager.register_node_model< astrocyte_lr_1994 >( "astrocyte_lr_1994" );
+}
+
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>

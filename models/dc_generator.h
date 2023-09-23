@@ -93,6 +93,8 @@ class dc_generator : public StimulationDevice
 {
 
 public:
+  static void register_model();
+
   dc_generator();
   dc_generator( const dc_generator& );
 

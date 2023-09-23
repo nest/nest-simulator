@@ -197,6 +197,8 @@ class aeif_cond_exp : public ArchivingNode
 {
 
 public:
+  static void register_model();
+
   aeif_cond_exp();
   aeif_cond_exp( const aeif_cond_exp& );
   ~aeif_cond_exp() override;

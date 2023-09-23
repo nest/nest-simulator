@@ -118,6 +118,8 @@ class ac_generator : public StimulationDevice
 {
 
 public:
+  static void register_model();
+
   ac_generator();
   ac_generator( const ac_generator& );
 

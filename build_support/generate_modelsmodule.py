@@ -297,7 +297,8 @@ def generate_modelsmodule():
         )
 
         conn_reg = '  register_connection_model< {model} >( "{model}" );\n'
-        node_reg = '  kernel().model_manager.register_node_model< {model} >( "{model}" );\n'
+        node_reg_plain = "  {model}::register_model();\n"
+        node_reg_nocpp = '  kernel().model_manager.register_node_model< {model} >( "{model}" );\n'
 
         for model_type, guards_mnames in models.items():
             file.write(f"\n  // {model_type.capitalize()} models\n")
@@ -306,8 +307,10 @@ def generate_modelsmodule():
                 for mname in mnames:
                     if model_type == "connection":
                         file.write(conn_reg.format(model=mname))
+                    elif model_type in ["rate", "binary"]:
+                        file.write(node_reg_nocpp.format(model=mname))
                     else:
-                        file.write(node_reg.format(model=mname))
+                        file.write(node_reg_plain.format(model=mname))
                 file.write(end_guard(guards))
 
         file.write("}")

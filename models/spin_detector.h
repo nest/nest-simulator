@@ -101,6 +101,8 @@ class spin_detector : public RecordingDevice
 {
 
 public:
+  static void register_model();
+
   spin_detector();
   spin_detector( const spin_detector& );
 

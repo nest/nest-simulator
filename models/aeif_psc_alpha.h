@@ -187,6 +187,8 @@ class aeif_psc_alpha : public ArchivingNode
 {
 
 public:
+  static void register_model();
+
   aeif_psc_alpha();
   aeif_psc_alpha( const aeif_psc_alpha& );
   ~aeif_psc_alpha() override;

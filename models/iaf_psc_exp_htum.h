@@ -157,6 +157,8 @@ class iaf_psc_exp_htum : public ArchivingNode
 {
 
 public:
+  static void register_model();
+
   iaf_psc_exp_htum();
   iaf_psc_exp_htum( const iaf_psc_exp_htum& );
 

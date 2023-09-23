@@ -143,6 +143,8 @@ class siegert_neuron : public ArchivingNode
 {
 
 public:
+  static void register_model();
+
   typedef Node base;
 
   siegert_neuron();

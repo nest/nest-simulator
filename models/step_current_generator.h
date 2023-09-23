@@ -107,6 +107,8 @@ class step_current_generator : public StimulationDevice
 {
 
 public:
+  static void register_model();
+
   step_current_generator();
   step_current_generator( const step_current_generator& );
 

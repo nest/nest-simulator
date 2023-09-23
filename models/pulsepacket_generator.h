@@ -104,6 +104,8 @@ class pulsepacket_generator : public StimulationDevice
 {
 
 public:
+  static void register_model();
+
   pulsepacket_generator();
   pulsepacket_generator( pulsepacket_generator const& );
 

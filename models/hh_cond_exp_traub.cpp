@@ -37,7 +37,9 @@
 
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -47,6 +49,12 @@ nest::RecordablesMap< nest::hh_cond_exp_traub > nest::hh_cond_exp_traub::recorda
 
 namespace nest
 {
+void
+hh_cond_exp_traub::register_model()
+{
+  kernel().model_manager.register_node_model< hh_cond_exp_traub >( "hh_cond_exp_traub" );
+}
+
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>

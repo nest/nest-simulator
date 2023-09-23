@@ -91,6 +91,8 @@ class weight_recorder : public RecordingDevice
 {
 
 public:
+  static void register_model();
+
   weight_recorder();
   weight_recorder( const weight_recorder& );
 

@@ -198,6 +198,8 @@ class sinusoidal_gamma_generator : public StimulationDevice
 {
 
 public:
+  static void register_model();
+
   sinusoidal_gamma_generator();
   sinusoidal_gamma_generator( const sinusoidal_gamma_generator& );
 

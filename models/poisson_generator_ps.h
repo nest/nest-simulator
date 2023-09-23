@@ -99,6 +99,8 @@ class poisson_generator_ps : public StimulationDevice
 {
 
 public:
+  static void register_model();
+
   poisson_generator_ps();
   poisson_generator_ps( const poisson_generator_ps& );
 

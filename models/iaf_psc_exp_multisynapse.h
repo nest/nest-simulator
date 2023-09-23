@@ -91,6 +91,8 @@ class iaf_psc_exp_multisynapse : public ArchivingNode
 {
 
 public:
+  static void register_model();
+
   iaf_psc_exp_multisynapse();
   iaf_psc_exp_multisynapse( const iaf_psc_exp_multisynapse& );
 

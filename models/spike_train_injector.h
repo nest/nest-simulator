@@ -244,6 +244,8 @@ class spike_train_injector : public Node, public Device
 {
 
 public:
+  static void register_model();
+
   spike_train_injector();
   spike_train_injector( const spike_train_injector& );
 

@@ -19,11 +19,21 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 #include "cm_default.h"
 
+// Includes from nestkernel:
+#include "genericmodel_impl.h"
+#include "model_manager_impl.h"
 
 namespace nest
 {
+void
+cm_default::register_model()
+{
+  kernel().model_manager.register_node_model< cm_default >( "cm_default" );
+}
+
 
 /*
  * For some reason this code block is needed. However, I have found no

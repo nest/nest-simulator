@@ -30,8 +30,10 @@
 
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "iaf_propagator.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
 #include "numerics.h"
 #include "ring_buffer_impl.h"
 #include "universal_data_logger_impl.h"
@@ -47,6 +49,12 @@ nest::RecordablesMap< nest::iaf_psc_exp > nest::iaf_psc_exp::recordablesMap_;
 
 namespace nest
 {
+void
+iaf_psc_exp::register_model()
+{
+  kernel().model_manager.register_node_model< iaf_psc_exp >( "iaf_psc_exp" );
+}
+
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>

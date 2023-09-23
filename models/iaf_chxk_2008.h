@@ -151,6 +151,8 @@ class iaf_chxk_2008 : public ArchivingNode
   // Boilerplate function declarations --------------------------------
 
 public:
+  static void register_model();
+
   iaf_chxk_2008();
   iaf_chxk_2008( const iaf_chxk_2008& );
   ~iaf_chxk_2008() override;

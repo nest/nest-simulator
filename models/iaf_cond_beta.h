@@ -159,6 +159,8 @@ class iaf_cond_beta : public ArchivingNode
   // Boilerplate function declarations --------------------------------
 
 public:
+  static void register_model();
+
   iaf_cond_beta();
   iaf_cond_beta( const iaf_cond_beta& );
   ~iaf_cond_beta() override;

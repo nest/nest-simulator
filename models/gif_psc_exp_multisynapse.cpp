@@ -29,7 +29,9 @@
 
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -40,6 +42,12 @@
 
 namespace nest
 {
+void
+gif_psc_exp_multisynapse::register_model()
+{
+  kernel().model_manager.register_node_model< gif_psc_exp_multisynapse >( "gif_psc_exp_multisynapse" );
+}
+
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */

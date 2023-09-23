@@ -196,6 +196,8 @@ class iaf_psc_alpha : public ArchivingNode
 {
 
 public:
+  static void register_model();
+
   iaf_psc_alpha();
   iaf_psc_alpha( const iaf_psc_alpha& );
 

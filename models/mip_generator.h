@@ -112,6 +112,8 @@ class mip_generator : public StimulationDevice
 {
 
 public:
+  static void register_model();
+
   mip_generator();
   mip_generator( const mip_generator& rhs );
 

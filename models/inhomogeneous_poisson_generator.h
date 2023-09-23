@@ -106,6 +106,8 @@ class inhomogeneous_poisson_generator : public StimulationDevice
 {
 
 public:
+  static void register_model();
+
   inhomogeneous_poisson_generator();
   inhomogeneous_poisson_generator( const inhomogeneous_poisson_generator& );
 

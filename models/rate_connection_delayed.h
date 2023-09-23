@@ -71,6 +71,8 @@ EndUserDocs */
  * Class representing a delayed rate connection. A rate_connection_delayed
  * has the properties weight, delay and receiver port.
  */
+void register_rate_connection_delayed();
+
 template < typename targetidentifierT >
 class rate_connection_delayed : public Connection< targetidentifierT >
 {

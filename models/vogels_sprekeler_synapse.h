@@ -89,6 +89,8 @@ EndUserDocs */
 // target index addressing)
 // derived from generic connection template
 
+void register_vogels_sprekeler_synapse();
+
 template < typename targetidentifierT >
 class vogels_sprekeler_synapse : public Connection< targetidentifierT >
 {

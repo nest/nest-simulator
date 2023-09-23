@@ -60,6 +60,8 @@ Examples using this model
 
 EndUserDocs */
 
+void register_static_synapse();
+
 template < typename targetidentifierT >
 class static_synapse : public Connection< targetidentifierT >
 {

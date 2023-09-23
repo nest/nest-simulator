@@ -296,7 +296,7 @@ def generate_modelsmodule():
             )
         )
 
-        conn_reg = '  register_connection_model< {model} >( "{model}" );\n'
+        conn_reg = "  register_{model}();\n"
         node_reg_plain = "  {model}::register_model();\n"
         node_reg_nocpp = '  kernel().model_manager.register_node_model< {model} >( "{model}" );\n'
 

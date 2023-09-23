@@ -136,6 +136,8 @@ Examples using this model
 
 EndUserDocs */
 
+void register_tsodyks_synapse();
+
 template < typename targetidentifierT >
 class tsodyks_synapse : public Connection< targetidentifierT >
 {

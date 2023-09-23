@@ -97,6 +97,8 @@ Examples using this model
 
 EndUserDocs */
 
+void register_ht_synapse();
+
 template < typename targetidentifierT >
 class ht_synapse : public Connection< targetidentifierT >
 {

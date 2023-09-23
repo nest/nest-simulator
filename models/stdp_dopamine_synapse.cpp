@@ -25,11 +25,20 @@
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
 #include "connector_model.h"
+#include "connector_model_impl.h"
 #include "event.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
+#include "nest_impl.h"
 
 // Includes from sli:
 #include "dictdatum.h"
+
+void
+nest::register_stdp_dopamine_synapse()
+{
+  register_connection_model< stdp_dopamine_synapse >( "stdp_dopamine_synapse" );
+}
 
 namespace nest
 {

@@ -42,7 +42,7 @@
 #include "dictutils.h"
 
 void
-nest::correlomatrix_detector::register_model()
+nest::register_correlomatrix_detector()
 {
   kernel().model_manager.register_node_model< correlomatrix_detector >( "correlomatrix_detector" );
 }

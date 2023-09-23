@@ -48,7 +48,7 @@
 namespace nest
 {
 void
-gif_pop_psc_exp::register_model()
+register_gif_pop_psc_exp()
 {
   kernel().model_manager.register_node_model< gif_pop_psc_exp >( "gif_pop_psc_exp" );
 }

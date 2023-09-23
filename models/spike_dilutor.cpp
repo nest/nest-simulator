@@ -37,7 +37,7 @@
 #include "dictutils.h"
 
 void
-nest::spike_dilutor::register_model()
+nest::register_spike_dilutor()
 {
   kernel().model_manager.register_node_model< spike_dilutor >( "spike_dilutor" );
 }

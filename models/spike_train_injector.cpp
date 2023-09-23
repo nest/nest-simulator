@@ -41,7 +41,7 @@
 namespace nest
 {
 void
-spike_train_injector::register_model()
+register_spike_train_injector()
 {
   kernel().model_manager.register_node_model< spike_train_injector >( "spike_train_injector" );
 }

@@ -54,7 +54,7 @@ nest::RecordablesMap< nest::aeif_psc_delta_clopath > nest::aeif_psc_delta_clopat
 namespace nest
 {
 void
-aeif_psc_delta_clopath::register_model()
+register_aeif_psc_delta_clopath()
 {
   kernel().model_manager.register_node_model< aeif_psc_delta_clopath >( "aeif_psc_delta_clopath" );
 }

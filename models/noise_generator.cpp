@@ -43,7 +43,7 @@
 namespace nest
 {
 void
-noise_generator::register_model()
+register_noise_generator()
 {
   kernel().model_manager.register_node_model< noise_generator >( "noise_generator" );
 }

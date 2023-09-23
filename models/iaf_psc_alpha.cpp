@@ -44,7 +44,7 @@ nest::RecordablesMap< nest::iaf_psc_alpha > nest::iaf_psc_alpha::recordablesMap_
 namespace nest
 {
 void
-iaf_psc_alpha::register_model()
+register_iaf_psc_alpha()
 {
   kernel().model_manager.register_node_model< iaf_psc_alpha >( "iaf_psc_alpha" );
 }

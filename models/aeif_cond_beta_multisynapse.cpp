@@ -46,7 +46,7 @@
 namespace nest // template specialization must be placed in namespace
 {
 void
-aeif_cond_beta_multisynapse::register_model()
+register_aeif_cond_beta_multisynapse()
 {
   kernel().model_manager.register_node_model< aeif_cond_beta_multisynapse >( "aeif_cond_beta_multisynapse" );
 }

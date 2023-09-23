@@ -54,7 +54,7 @@ nest::RecordablesMap< nest::hh_cond_beta_gap_traub > nest::hh_cond_beta_gap_trau
 namespace nest
 {
 void
-hh_cond_beta_gap_traub::register_model()
+register_hh_cond_beta_gap_traub()
 {
   kernel().model_manager.register_node_model< hh_cond_beta_gap_traub >( "hh_cond_beta_gap_traub" );
 }

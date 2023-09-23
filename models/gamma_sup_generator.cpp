@@ -40,7 +40,7 @@
 #include "doubledatum.h"
 
 void
-nest::gamma_sup_generator::register_model()
+nest::register_gamma_sup_generator()
 {
   kernel().model_manager.register_node_model< gamma_sup_generator >( "gamma_sup_generator" );
 }

@@ -50,7 +50,7 @@ nest::RecordablesMap< nest::iaf_chxk_2008 > nest::iaf_chxk_2008::recordablesMap_
 namespace nest // template specialization must be placed in namespace
 {
 void
-iaf_chxk_2008::register_model()
+register_iaf_chxk_2008()
 {
   kernel().model_manager.register_node_model< iaf_chxk_2008 >( "iaf_chxk_2008" );
 }

@@ -52,7 +52,7 @@ nest::RecordablesMap< nest::iaf_cond_alpha > nest::iaf_cond_alpha::recordablesMa
 namespace nest // template specialization must be placed in namespace
 {
 void
-iaf_cond_alpha::register_model()
+register_iaf_cond_alpha()
 {
   kernel().model_manager.register_node_model< iaf_cond_alpha >( "iaf_cond_alpha" );
 }

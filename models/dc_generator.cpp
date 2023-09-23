@@ -40,7 +40,7 @@
 namespace nest
 {
 void
-dc_generator::register_model()
+register_dc_generator()
 {
   kernel().model_manager.register_node_model< dc_generator >( "dc_generator" );
 }

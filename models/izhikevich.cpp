@@ -49,7 +49,7 @@ nest::RecordablesMap< nest::izhikevich > nest::izhikevich::recordablesMap_;
 namespace nest
 {
 void
-izhikevich::register_model()
+register_izhikevich()
 {
   kernel().model_manager.register_node_model< izhikevich >( "izhikevich" );
 }

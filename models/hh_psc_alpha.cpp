@@ -49,7 +49,7 @@ nest::RecordablesMap< nest::hh_psc_alpha > nest::hh_psc_alpha::recordablesMap_;
 namespace nest
 {
 void
-hh_psc_alpha::register_model()
+register_hh_psc_alpha()
 {
   kernel().model_manager.register_node_model< hh_psc_alpha >( "hh_psc_alpha" );
 }

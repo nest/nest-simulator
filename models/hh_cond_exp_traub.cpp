@@ -50,7 +50,7 @@ nest::RecordablesMap< nest::hh_cond_exp_traub > nest::hh_cond_exp_traub::recorda
 namespace nest
 {
 void
-hh_cond_exp_traub::register_model()
+register_hh_cond_exp_traub()
 {
   kernel().model_manager.register_node_model< hh_cond_exp_traub >( "hh_cond_exp_traub" );
 }

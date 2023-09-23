@@ -44,7 +44,7 @@
 namespace nest
 {
 void
-iaf_psc_delta::register_model()
+register_iaf_psc_delta()
 {
   kernel().model_manager.register_node_model< iaf_psc_delta >( "iaf_psc_delta" );
 }

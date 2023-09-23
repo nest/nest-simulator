@@ -39,7 +39,7 @@
 #include "dictutils.h"
 
 void
-nest::spike_generator::register_model()
+nest::register_spike_generator()
 {
   kernel().model_manager.register_node_model< spike_generator >( "spike_generator" );
 }

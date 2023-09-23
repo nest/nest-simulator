@@ -46,7 +46,7 @@
 namespace nest
 {
 void
-iaf_psc_alpha_multisynapse::register_model()
+register_iaf_psc_alpha_multisynapse()
 {
   kernel().model_manager.register_node_model< iaf_psc_alpha_multisynapse >( "iaf_psc_alpha_multisynapse" );
 }

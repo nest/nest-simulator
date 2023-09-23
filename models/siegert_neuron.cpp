@@ -64,7 +64,7 @@ erfcx( double x, void* p )
 namespace nest
 {
 void
-siegert_neuron::register_model()
+register_siegert_neuron()
 {
   kernel().model_manager.register_node_model< siegert_neuron >( "siegert_neuron" );
 }

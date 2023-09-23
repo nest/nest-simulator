@@ -70,7 +70,7 @@ nest::RecordablesMap< nest::iaf_cond_alpha_mc > nest::iaf_cond_alpha_mc::recorda
 namespace nest
 {
 void
-iaf_cond_alpha_mc::register_model()
+register_iaf_cond_alpha_mc()
 {
   kernel().model_manager.register_node_model< iaf_cond_alpha_mc >( "iaf_cond_alpha_mc" );
 }

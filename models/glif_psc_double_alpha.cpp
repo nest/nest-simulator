@@ -46,7 +46,7 @@ nest::RecordablesMap< nest::glif_psc_double_alpha > nest::glif_psc_double_alpha:
 namespace nest
 {
 void
-glif_psc_double_alpha::register_model()
+register_glif_psc_double_alpha()
 {
   kernel().model_manager.register_node_model< glif_psc_double_alpha >( "glif_psc_double_alpha" );
 }

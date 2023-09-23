@@ -54,7 +54,7 @@ nest::RecordablesMap< nest::aeif_psc_delta > nest::aeif_psc_delta::recordablesMa
 namespace nest
 {
 void
-aeif_psc_delta::register_model()
+register_aeif_psc_delta()
 {
   kernel().model_manager.register_node_model< aeif_psc_delta >( "aeif_psc_delta" );
 }

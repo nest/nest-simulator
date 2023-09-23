@@ -37,7 +37,7 @@
 #include "dictutils.h"
 
 void
-nest::spike_recorder::register_model()
+nest::register_spike_recorder()
 {
   kernel().model_manager.register_node_model< spike_recorder >( "spike_recorder" );
 }

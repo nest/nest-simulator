@@ -42,7 +42,7 @@
 #include "doubledatum.h"
 
 void
-nest::pulsepacket_generator::register_model()
+nest::register_pulsepacket_generator()
 {
   kernel().model_manager.register_node_model< pulsepacket_generator >( "pulsepacket_generator" );
 }

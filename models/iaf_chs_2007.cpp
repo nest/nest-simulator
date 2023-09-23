@@ -46,7 +46,7 @@ nest::RecordablesMap< nest::iaf_chs_2007 > nest::iaf_chs_2007::recordablesMap_;
 namespace nest
 {
 void
-iaf_chs_2007::register_model()
+register_iaf_chs_2007()
 {
   kernel().model_manager.register_node_model< iaf_chs_2007 >( "iaf_chs_2007" );
 }

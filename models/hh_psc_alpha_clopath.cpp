@@ -49,7 +49,7 @@ nest::RecordablesMap< nest::hh_psc_alpha_clopath > nest::hh_psc_alpha_clopath::r
 namespace nest
 {
 void
-hh_psc_alpha_clopath::register_model()
+register_hh_psc_alpha_clopath()
 {
   kernel().model_manager.register_node_model< hh_psc_alpha_clopath >( "hh_psc_alpha_clopath" );
 }

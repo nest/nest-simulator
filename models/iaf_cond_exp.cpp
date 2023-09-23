@@ -52,7 +52,7 @@ nest::RecordablesMap< nest::iaf_cond_exp > nest::iaf_cond_exp::recordablesMap_;
 namespace nest // template specialization must be placed in namespace
 {
 void
-iaf_cond_exp::register_model()
+register_iaf_cond_exp()
 {
   kernel().model_manager.register_node_model< iaf_cond_exp >( "iaf_cond_exp" );
 }

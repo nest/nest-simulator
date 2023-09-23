@@ -46,7 +46,7 @@ nest::RecordablesMap< nest::glif_psc > nest::glif_psc::recordablesMap_;
 namespace nest
 {
 void
-glif_psc::register_model()
+register_glif_psc()
 {
   kernel().model_manager.register_node_model< glif_psc >( "glif_psc" );
 }

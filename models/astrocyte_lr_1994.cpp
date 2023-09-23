@@ -49,7 +49,7 @@ nest::RecordablesMap< nest::astrocyte_lr_1994 > nest::astrocyte_lr_1994::recorda
 namespace nest
 {
 void
-astrocyte_lr_1994::register_model()
+register_astrocyte_lr_1994()
 {
   kernel().model_manager.register_node_model< astrocyte_lr_1994 >( "astrocyte_lr_1994" );
 }

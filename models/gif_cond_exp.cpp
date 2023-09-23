@@ -47,7 +47,7 @@
 namespace nest
 {
 void
-gif_cond_exp::register_model()
+register_gif_cond_exp()
 {
   kernel().model_manager.register_node_model< gif_cond_exp >( "gif_cond_exp" );
 }

@@ -70,7 +70,7 @@ nest::RecordablesMap< nest::pp_cond_exp_mc_urbanczik > nest::pp_cond_exp_mc_urba
 namespace nest
 {
 void
-pp_cond_exp_mc_urbanczik::register_model()
+register_pp_cond_exp_mc_urbanczik()
 {
   kernel().model_manager.register_node_model< pp_cond_exp_mc_urbanczik >( "pp_cond_exp_mc_urbanczik" );
 }

@@ -48,7 +48,7 @@
 namespace nest
 {
 void
-gif_cond_exp_multisynapse::register_model()
+register_gif_cond_exp_multisynapse()
 {
   kernel().model_manager.register_node_model< gif_cond_exp_multisynapse >( "gif_cond_exp_multisynapse" );
 }

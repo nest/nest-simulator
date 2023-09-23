@@ -38,7 +38,7 @@
 namespace nest
 {
 void
-parrot_neuron_ps::register_model()
+register_parrot_neuron_ps()
 {
   kernel().model_manager.register_node_model< parrot_neuron_ps >( "parrot_neuron_ps" );
 }

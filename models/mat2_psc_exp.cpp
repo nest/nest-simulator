@@ -46,7 +46,7 @@ nest::RecordablesMap< nest::mat2_psc_exp > nest::mat2_psc_exp::recordablesMap_;
 namespace nest // template specialization must be placed in namespace
 {
 void
-mat2_psc_exp::register_model()
+register_mat2_psc_exp()
 {
   kernel().model_manager.register_node_model< mat2_psc_exp >( "mat2_psc_exp" );
 }

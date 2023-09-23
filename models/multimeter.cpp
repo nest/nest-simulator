@@ -33,13 +33,13 @@
 namespace nest
 {
 void
-multimeter::register_model()
+register_multimeter()
 {
   kernel().model_manager.register_node_model< multimeter >( "multimeter" );
 }
 
 void
-voltmeter::register_model()
+register_voltmeter()
 {
   kernel().model_manager.register_node_model< voltmeter >( "voltmeter" );
 }

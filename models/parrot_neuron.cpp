@@ -39,7 +39,7 @@
 namespace nest
 {
 void
-parrot_neuron::register_model()
+register_parrot_neuron()
 {
   kernel().model_manager.register_node_model< parrot_neuron >( "parrot_neuron" );
 }

@@ -50,7 +50,7 @@ nest::RecordablesMap< nest::iaf_psc_exp > nest::iaf_psc_exp::recordablesMap_;
 namespace nest
 {
 void
-iaf_psc_exp::register_model()
+register_iaf_psc_exp()
 {
   kernel().model_manager.register_node_model< iaf_psc_exp >( "iaf_psc_exp" );
 }

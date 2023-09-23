@@ -38,7 +38,7 @@
 #include "dictutils.h"
 
 void
-nest::volume_transmitter::register_model()
+nest::register_volume_transmitter()
 {
   kernel().model_manager.register_node_model< volume_transmitter >( "volume_transmitter" );
 }

@@ -40,7 +40,7 @@
 #include "dictutils.h"
 
 void
-nest::weight_recorder::register_model()
+nest::register_weight_recorder()
 {
   kernel().model_manager.register_node_model< weight_recorder >( "weight_recorder" );
 }

@@ -38,7 +38,7 @@
 #include "doubledatum.h"
 
 void
-nest::poisson_generator::register_model()
+nest::register_poisson_generator()
 {
   kernel().model_manager.register_node_model< poisson_generator >( "poisson_generator" );
 }

@@ -50,7 +50,7 @@ nest::RecordablesMap< nest::hh_psc_alpha_gap > nest::hh_psc_alpha_gap::recordabl
 namespace nest
 {
 void
-hh_psc_alpha_gap::register_model()
+register_hh_psc_alpha_gap()
 {
   kernel().model_manager.register_node_model< hh_psc_alpha_gap >( "hh_psc_alpha_gap" );
 }

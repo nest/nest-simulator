@@ -37,7 +37,7 @@
 namespace nest
 {
 void
-step_rate_generator::register_model()
+register_step_rate_generator()
 {
   kernel().model_manager.register_node_model< step_rate_generator >( "step_rate_generator" );
 }

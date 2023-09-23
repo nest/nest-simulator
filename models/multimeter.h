@@ -135,6 +135,7 @@ namespace nest
 {
 
 void register_multimeter();
+void register_voltmeter();
 
 class multimeter : public RecordingDevice
 {

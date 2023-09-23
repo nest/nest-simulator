@@ -49,7 +49,7 @@ using namespace nest;
 namespace nest
 {
 void
-glif_cond::register_model()
+register_glif_cond()
 {
   kernel().model_manager.register_node_model< glif_cond >( "glif_cond" );
 }

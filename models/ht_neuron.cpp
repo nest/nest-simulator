@@ -40,7 +40,7 @@
 namespace nest
 {
 void
-ht_neuron::register_model()
+register_ht_neuron()
 {
   kernel().model_manager.register_node_model< ht_neuron >( "ht_neuron" );
 }

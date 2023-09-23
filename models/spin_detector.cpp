@@ -37,7 +37,7 @@
 #include "dictutils.h"
 
 void
-nest::spin_detector::register_model()
+nest::register_spin_detector()
 {
   kernel().model_manager.register_node_model< spin_detector >( "spin_detector" );
 }

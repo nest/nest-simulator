@@ -41,7 +41,7 @@
 #include "dictutils.h"
 
 void
-nest::correlation_detector::register_model()
+nest::register_correlation_detector()
 {
   kernel().model_manager.register_node_model< correlation_detector >( "correlation_detector" );
 }

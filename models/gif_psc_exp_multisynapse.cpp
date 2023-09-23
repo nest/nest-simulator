@@ -43,7 +43,7 @@
 namespace nest
 {
 void
-gif_psc_exp_multisynapse::register_model()
+register_gif_psc_exp_multisynapse()
 {
   kernel().model_manager.register_node_model< gif_psc_exp_multisynapse >( "gif_psc_exp_multisynapse" );
 }

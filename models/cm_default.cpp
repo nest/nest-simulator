@@ -29,7 +29,7 @@
 namespace nest
 {
 void
-cm_default::register_model()
+register_cm_default()
 {
   kernel().model_manager.register_node_model< cm_default >( "cm_default" );
 }

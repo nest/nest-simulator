@@ -45,7 +45,7 @@ nest::RecordablesMap< nest::iaf_psc_exp_htum > nest::iaf_psc_exp_htum::recordabl
 namespace nest
 {
 void
-iaf_psc_exp_htum::register_model()
+register_iaf_psc_exp_htum()
 {
   kernel().model_manager.register_node_model< iaf_psc_exp_htum >( "iaf_psc_exp_htum" );
 }

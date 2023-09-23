@@ -34,7 +34,7 @@
 #include "model_manager_impl.h"
 
 void
-nest::mip_generator::register_model()
+nest::register_mip_generator()
 {
   kernel().model_manager.register_node_model< mip_generator >( "mip_generator" );
 }

@@ -54,7 +54,7 @@ nest::RecordablesMap< nest::aeif_cond_exp > nest::aeif_cond_exp::recordablesMap_
 namespace nest
 {
 void
-aeif_cond_exp::register_model()
+register_aeif_cond_exp()
 {
   kernel().model_manager.register_node_model< aeif_cond_exp >( "aeif_cond_exp" );
 }

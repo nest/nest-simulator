@@ -44,7 +44,7 @@
 namespace nest
 {
 void
-ac_generator::register_model()
+register_ac_generator()
 {
   kernel().model_manager.register_node_model< ac_generator >( "ac_generator" );
 }

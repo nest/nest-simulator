@@ -54,7 +54,7 @@ nest::RecordablesMap< nest::aeif_psc_alpha > nest::aeif_psc_alpha::recordablesMa
 namespace nest // template specialization must be placed in namespace
 {
 void
-aeif_psc_alpha::register_model()
+register_aeif_psc_alpha()
 {
   kernel().model_manager.register_node_model< aeif_psc_alpha >( "aeif_psc_alpha" );
 }

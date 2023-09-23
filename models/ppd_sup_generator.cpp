@@ -40,7 +40,7 @@
 #include "doubledatum.h"
 
 void
-nest::ppd_sup_generator::register_model()
+nest::register_ppd_sup_generator()
 {
   kernel().model_manager.register_node_model< ppd_sup_generator >( "ppd_sup_generator" );
 }

@@ -47,7 +47,7 @@
 namespace nest
 {
 void
-sinusoidal_poisson_generator::register_model()
+register_sinusoidal_poisson_generator()
 {
   kernel().model_manager.register_node_model< sinusoidal_poisson_generator >( "sinusoidal_poisson_generator" );
 }

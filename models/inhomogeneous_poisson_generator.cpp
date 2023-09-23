@@ -43,7 +43,7 @@
 #include "dictutils.h"
 
 void
-nest::inhomogeneous_poisson_generator::register_model()
+nest::register_inhomogeneous_poisson_generator()
 {
   kernel().model_manager.register_node_model< inhomogeneous_poisson_generator >( "inhomogeneous_poisson_generator" );
 }

@@ -50,7 +50,7 @@ nest::RecordablesMap< nest::iaf_psc_exp_ps_lossless > nest::iaf_psc_exp_ps_lossl
 namespace nest
 {
 void
-iaf_psc_exp_ps_lossless::register_model()
+register_iaf_psc_exp_ps_lossless()
 {
   kernel().model_manager.register_node_model< iaf_psc_exp_ps_lossless >( "iaf_psc_exp_ps_lossless" );
 }

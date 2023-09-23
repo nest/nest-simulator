@@ -47,7 +47,7 @@
 namespace nest
 {
 void
-pp_psc_delta::register_model()
+register_pp_psc_delta()
 {
   kernel().model_manager.register_node_model< pp_psc_delta >( "pp_psc_delta" );
 }

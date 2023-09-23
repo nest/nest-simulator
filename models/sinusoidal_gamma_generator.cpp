@@ -51,7 +51,7 @@
 namespace nest
 {
 void
-sinusoidal_gamma_generator::register_model()
+register_sinusoidal_gamma_generator()
 {
   kernel().model_manager.register_node_model< sinusoidal_gamma_generator >( "sinusoidal_gamma_generator" );
 }

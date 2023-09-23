@@ -287,21 +287,12 @@ def generate_modelsmodule():
             )
         )
 
-        conn_reg = "  register_{model}();\n"
-        node_reg_plain = "  {model}::register_model();\n"
-        node_reg_nocpp = "  register_{model}();\n"
-
         for model_type, guards_mnames in models.items():
             file.write(f"\n  // {model_type.capitalize()} models\n")
             for guards, mnames in guards_mnames.items():
                 file.write(start_guard(guards))
                 for mname in mnames:
-                    if model_type == "connection":
-                        file.write(conn_reg.format(model=mname))
-                    elif model_type in ["rate", "binary"]:
-                        file.write(node_reg_nocpp.format(model=mname))
-                    else:
-                        file.write(node_reg_plain.format(model=mname))
+                    file.write(f"  register_{mname}();\n")
                 file.write(end_guard(guards))
 
         file.write("}")

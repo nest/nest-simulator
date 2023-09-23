@@ -22,8 +22,31 @@
 
 #include "threshold_lin_rate.h"
 
+// Includes from nestkernel
+#include "genericmodel_impl.h"
+#include "kernel_manager.h"
+#include "model_manager_impl.h"
+
 namespace nest
 {
+void
+register_threshold_lin_rate_ipn()
+{
+  kernel().model_manager.register_node_model< threshold_lin_rate_ipn >( "threshold_lin_rate_ipn" );
+}
+
+void
+register_threshold_lin_rate_opn()
+{
+  kernel().model_manager.register_node_model< threshold_lin_rate_opn >( "threshold_lin_rate_opn" );
+}
+
+void
+register_rate_transformer_threshold_lin()
+{
+  kernel().model_manager.register_node_model< rate_transformer_threshold_lin >( "rate_transformer_threshold_lin" );
+}
+
 
 void
 nonlinearities_threshold_lin_rate::get( DictionaryDatum& d ) const

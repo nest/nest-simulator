@@ -252,15 +252,6 @@ def generate_modelsmodule():
 
             // Generated includes
             #include "config.h"
-
-            // Includes from nestkernel
-            #include "common_synapse_properties.h"
-            #include "connector_model_impl.h"
-            #include "genericmodel.h"
-            #include "genericmodel_impl.h"
-            #include "kernel_manager.h"
-            #include "model_manager_impl.h"
-            #include "target_identifier.h"
         """
             )
         )
@@ -298,7 +289,7 @@ def generate_modelsmodule():
 
         conn_reg = "  register_{model}();\n"
         node_reg_plain = "  {model}::register_model();\n"
-        node_reg_nocpp = '  kernel().model_manager.register_node_model< {model} >( "{model}" );\n'
+        node_reg_nocpp = "  register_{model}();\n"
 
         for model_type, guards_mnames in models.items():
             file.write(f"\n  // {model_type.capitalize()} models\n")

@@ -162,6 +162,8 @@ gainfunction_erfc::operator()( RngPtr rng, double h )
 }
 
 typedef binary_neuron< nest::gainfunction_erfc > erfc_neuron;
+void register_erfc_neuron();
+
 
 template <>
 void RecordablesMap< erfc_neuron >::create();

@@ -22,8 +22,20 @@
 
 #include "erfc_neuron.h"
 
+// Includes from nestkernel
+#include "genericmodel_impl.h"
+#include "kernel_manager.h"
+#include "model_manager_impl.h"
+#include "universal_data_logger_impl.h"
+
 namespace nest
 {
+void
+register_erfc_neuron()
+{
+  kernel().model_manager.register_node_model< erfc_neuron >( "erfc_neuron" );
+}
+
 
 void
 gainfunction_erfc::get( DictionaryDatum& d ) const

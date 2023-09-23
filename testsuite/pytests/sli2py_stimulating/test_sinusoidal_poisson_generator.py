@@ -224,8 +224,8 @@ def test_sinusoidal_poisson_generator_rate_profile():
 
     nest.Simulate(100.0)
 
-    times = mm.get("events")["times"]
-    actual_rates = mm.get("events")["rate"]
+    times = np.array(mm.events["times"])
+    actual_rates = np.array(mm.events["rate"])
 
     scaled_times = times * 2 * np.pi * freq / 1000
     shifted_times = scaled_times + phi

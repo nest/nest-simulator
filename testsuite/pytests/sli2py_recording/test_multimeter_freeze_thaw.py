@@ -83,7 +83,7 @@ def test_freeze_thaw_simulation_against_only_thawed_simulation():
     mm = simulate_freeze_thaw(num_neurons=1)
     Vm_with_freeze = mm.events["V_m"]
 
-    nrn, mm = build_net(num_neurons=1)
+    _, mm = build_net(num_neurons=1)
     nest.Simulate(10.0)
     Vm_thawed_only = mm.events["V_m"]
 
@@ -101,8 +101,10 @@ def test_freeze_thaw_neuron_against_only_thawed_neuron():
     """
 
     mm = simulate_freeze_thaw(num_neurons=2)
-    Vm_with_freeze = mm.events["V_m"][mm.events["senders"] == 1]
-    Vm_thawed_only = mm.events["V_m"][mm.events["senders"] == 2]
+    Vm = np.array(mm.events["V_m"])
+    senders = np.array(mm.events["senders"])
+    Vm_with_freeze = Vm[senders == 1]
+    Vm_thawed_only = Vm[senders == 2]
 
     n_frozen = Vm_with_freeze.size
     nptest.assert_array_equal(Vm_with_freeze, Vm_thawed_only[:n_frozen])

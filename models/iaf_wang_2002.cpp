@@ -127,34 +127,22 @@ nest::iaf_wang_2002::State_::State_( const Parameters_& p )
   : r_( 0 )
   , sum_S_post_( 0 )
 {
-  ode_state_[ V_m ] = p.E_L; // initialize to reversal potential
-  ode_state_[ G_AMPA ] = 0.0;
-  ode_state_[ G_GABA ] = 0.0;
-  ode_state_[ S_pre ] = 0.0;
-  ode_state_[ X_pre ] = 0.0;
-
-  dy_[ V_m ] = 0.0;
-  dy_[ G_AMPA ] = 0.0;
-  dy_[ G_GABA ] = 0.0;
-  dy_[ S_pre ] = 0.0;
-  dy_[ X_pre ] = 0.0;
+  y_[ V_m ] = p.E_L; // initialize to reversal potential
+  y_[ G_AMPA ] = 0.0;
+  y_[ G_GABA ] = 0.0;
+  y_[ S_pre ] = 0.0;
+  y_[ X_pre ] = 0.0;
 }
 
 nest::iaf_wang_2002::State_::State_( const State_& s )
   : r_( s.r_ )
   , sum_S_post_( s.sum_S_post_ )
 {
-  ode_state_[ V_m ] = s.ode_state_[ V_m ];
-  ode_state_[ G_AMPA ] = s.ode_state_[ G_AMPA ];
-  ode_state_[ G_GABA ] = s.ode_state_[ G_GABA ];
-  ode_state_[ S_pre ] = s.ode_state_[ S_pre ];
-  ode_state_[ X_pre ] = s.ode_state_[ X_pre ];
-
-  dy_[ V_m ] = s.dy_[ V_m ];
-  dy_[ G_AMPA ] = s.dy_[ G_AMPA ];
-  dy_[ G_GABA ] = s.dy_[ G_GABA ];
-  dy_[ S_pre ] = s.dy_[ S_pre ];
-  dy_[ X_pre ] = s.dy_[ X_pre ];
+  y_[ V_m ] = s.y_[ V_m ];
+  y_[ G_AMPA ] = s.y_[ G_AMPA ];
+  y_[ G_GABA ] = s.y_[ G_GABA ];
+  y_[ S_pre ] = s.y_[ S_pre ];
+  y_[ X_pre ] = s.y_[ X_pre ];
 }
 
 nest::iaf_wang_2002::Buffers_::Buffers_( iaf_wang_2002& n )
@@ -265,9 +253,9 @@ nest::iaf_wang_2002::Parameters_::set( const DictionaryDatum& d, Node* node )
 void
 nest::iaf_wang_2002::State_::get( DictionaryDatum& d ) const
 {
-  def< double >( d, names::V_m, ode_state_[ V_m ] ); // Membrane potential
-  def< double >( d, names::g_AMPA, ode_state_[ G_AMPA ] );
-  def< double >( d, names::g_GABA, ode_state_[ G_GABA ] );
+  def< double >( d, names::V_m, y_[ V_m ] ); // Membrane potential
+  def< double >( d, names::g_AMPA, y_[ G_AMPA ] );
+  def< double >( d, names::g_GABA, y_[ G_GABA ] );
 
   // total NMDA sum
   double NMDA_sum = get_NMDA_sum();
@@ -277,9 +265,9 @@ nest::iaf_wang_2002::State_::get( DictionaryDatum& d ) const
 void
 nest::iaf_wang_2002::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
 {
-  updateValueParam< double >( d, names::V_m, ode_state_[ V_m ], node );
-  updateValueParam< double >( d, names::g_AMPA, ode_state_[ G_AMPA ], node );
-  updateValueParam< double >( d, names::g_GABA, ode_state_[ G_GABA ], node );
+  updateValueParam< double >( d, names::V_m, y_[ V_m ], node );
+  updateValueParam< double >( d, names::g_AMPA, y_[ G_AMPA ], node );
+  updateValueParam< double >( d, names::g_GABA, y_[ G_GABA ], node );
 }
 
 /* ---------------------------------------------------------------------------
@@ -426,7 +414,7 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
 
   for ( long lag = from; lag < to; ++lag )
   {
-    /*double t = 0.0;
+    double t = 0.0;
 
     // numerical integration with adaptive step size control:
     // ------------------------------------------------------
@@ -450,23 +438,18 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
         &t,                    // from t
         B_.step_,              // to t <= step
         &B_.integration_step_, // integration step size
-        S_.ode_state_ );       // neuronal state
+        S_.y_ );       // neuronal state
 
       if ( status != GSL_SUCCESS )
       {
         throw GSLSolverFailure( get_name(), status );
       }
-    }*/
-
-    iaf_wang_2002_dynamics( 0, S_.ode_state_, S_.dy_, reinterpret_cast< void* >( this ) );
-    for ( auto i = 0; i < State_::STATE_VEC_SIZE; ++i )
-    {
-      S_.ode_state_[ i ] += B_.step_ * S_.dy_[ i ];
     }
 
+
     // add incoming spikes
-    S_.ode_state_[ State_::G_AMPA ] += B_.spikes_[ AMPA - 1 ].get_value( lag );
-    S_.ode_state_[ State_::G_GABA ] += B_.spikes_[ GABA - 1 ].get_value( lag );
+    S_.y_[ State_::G_AMPA ] += B_.spikes_[ AMPA - 1 ].get_value( lag );
+    S_.y_[ State_::G_GABA ] += B_.spikes_[ GABA - 1 ].get_value( lag );
     S_.sum_S_post_ = B_.NMDA_cond_.get_value( lag );
     B_.NMDA_cond_.set_value( lag, 0.0 );
 
@@ -475,15 +458,15 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
     {
       // neuron is absolute refractory
       --S_.r_;
-      S_.ode_state_[ State_::V_m ] = P_.V_reset; // clamp potential
+      S_.y_[ State_::V_m ] = P_.V_reset; // clamp potential
     }
-    else if ( S_.ode_state_[ State_::V_m ] >= P_.V_th )
+    else if ( S_.y_[ State_::V_m ] >= P_.V_th )
     {
       // neuron is not absolute refractory
       S_.r_ = V_.RefractoryCounts_;
-      S_.ode_state_[ State_::V_m ] = P_.V_reset;
+      S_.y_[ State_::V_m ] = P_.V_reset;
 
-      S_.ode_state_[ State_::X_pre ] += 1;
+      S_.y_[ State_::X_pre ] += 1;
 
       // log spike with ArchivingNode
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
@@ -493,7 +476,7 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
     }
 
     // send NMDA update
-    s_vals[ lag ] = S_.ode_state_[ State_::S_pre ];
+    s_vals[ lag ] = S_.y_[ State_::S_pre ];
 
     // set new input current
     B_.I_stim_ = B_.currents_.get_value( lag );

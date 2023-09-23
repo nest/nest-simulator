@@ -110,7 +110,6 @@ The following parameters can be set in the status dictionary.
  gsl_error_tol  -       GSL error tolerance
 =============== ======= ===========================================================
 
-
 Recordables
 +++++++++++
 
@@ -163,19 +162,8 @@ EndUserDocs */
 class iaf_wang_2002 : public ArchivingNode
 {
 public:
-  /**
-   * The constructor is only used to create the model prototype in the model manager.
-   */
   iaf_wang_2002();
-
-  /**
-   * The copy constructor is used to create model copies and instances of the model.
-   * @note The copy constructor needs to initialize the parameters and part of the state.
-   *       Initialization of rest of state, buffers and internal variables is deferred to
-   *       @c init_state_(), @c init_buffers_() and @c calibrate().
-   */
   iaf_wang_2002( const iaf_wang_2002& );
-
   ~iaf_wang_2002() override;
 
   /**
@@ -185,23 +173,17 @@ public:
    */
 
   using Node::handles_test_event;
-  using Node::sends_secondary_event;
+//  using Node::sends_secondary_event;
   using Node::handle;
 
   //! Used to validate that we can send SpikeEvent to desired target:port.
-  size_t send_test_event( Node& target, size_t receptor_type, synindex, bool ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
 //  void sends_secondary_event( DelayedRateConnectionEvent& ) override;
 
-  /* -------------------------------------------------------------------------
-   * Functions handling incoming events.
-   * We tell NEST that we can handle incoming events of various types by
-   * defining handle() for the given event.
-   * ------------------------------------------------------------------------- */
-
   void handle( SpikeEvent& ) override;         //!< accept spikes
 //  void handle( DelayedRateConnectionEvent& ) override;         //!< accept spikes
-  void handle( CurrentEvent& e ) override;     //!< accept current
+  void handle( CurrentEvent& ) override;     //!< accept current
   void handle( DataLoggingRequest& ) override; //!< allow recording with multimeter
 
   size_t handles_test_event( SpikeEvent&, size_t ) override;
@@ -223,6 +205,7 @@ private:
   enum SynapseTypes
   {
     INF_SPIKE_RECEPTOR = 0,
+    AMPA_EXT,
     AMPA,
     GABA,
     NMDA,
@@ -235,19 +218,17 @@ private:
   void calibrate();
   void update( Time const&, const long, const long ) override;
 
+
+  // make dynamics function quasi-member
+  friend int iaf_wang_2002_dynamics( double, const double*, double*, void* );
+
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< iaf_wang_2002 >;
   friend class UniversalDataLogger< iaf_wang_2002 >;
 
-  // Parameters class --------------------------------------------------------------
-
-  /**
-   * Parameters of the neuron.
-   *
-   * These are the parameters that can be set by the user through @c `node.set()`.
-   * They are initialized from the model prototype when the node is created.
-   * Parameters do not change during calls to @c update().
-   */
+private:
+  //
+  // Model parameters 
   struct Parameters_
   {
     double E_L;            //!< Resting Potential in mV
@@ -300,8 +281,7 @@ public:
       STATE_VEC_SIZE
     };
 
-    double ode_state_[ STATE_VEC_SIZE ]; //!< state vector, must be C-array for GSL solver
-    double dy_[ STATE_VEC_SIZE ];
+    double y_[ STATE_VEC_SIZE ]; //!< state vector, must be C-array for GSL solver
     int r_;             //!< number of refractory steps remaining
     double sum_S_post_;
 
@@ -399,7 +379,7 @@ private:
   double
   get_ode_state_elem_() const
   {
-    return S_.ode_state_[ elem ];
+    return S_.y_[ elem ];
   }
 
   //! Get the sum of NMDA from state, used by UniversalDataLogger
@@ -419,32 +399,41 @@ private:
 
   //! Mapping of recordables names to access functions
   static RecordablesMap< iaf_wang_2002 > recordablesMap_;
-  friend int iaf_wang_2002_dynamics( double, const double*, double*, void* );
 
 }; /* neuron iaf_wang_2002 */
 
 inline size_t
 iaf_wang_2002::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
-//   if ( receptor_type != NMDA )
-//   {
-  SpikeEvent e;
-  e.set_sender( *this );
-  return target.handles_test_event( e, receptor_type );
-//   }
-//   else
+  std::cout << "RECEPTOR TYPE " << receptor_type << std::endl;
+  if ( receptor_type != NMDA )
   {
-//     DelayedRateConnectionEvent e;
-//     e.set_sender( *this );
-//     return target.handles_test_event( e, receptor_type );
+    SpikeEvent e;
+    e.set_sender( *this );
+    return target.handles_test_event( e, receptor_type );
+  }
+  else
+  {
+    DelayedRateConnectionEvent e;
+    e.set_sender( *this );
+    return target.handles_test_event( e, receptor_type );
   }
 }
 
 inline size_t
 iaf_wang_2002::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
-  if ( not( INF_SPIKE_RECEPTOR < receptor_type and receptor_type < SUP_SPIKE_RECEPTOR ) or receptor_type == NMDA )
+  std::cout << "====================" << std::endl;
+  std::cout << "RECEPTOR TYPE " << receptor_type << std::endl;
+  std::cout << "INF RECEPTOR " << INF_SPIKE_RECEPTOR << std::endl;
+  std::cout << "SUP RECEPTOR " << SUP_SPIKE_RECEPTOR << std::endl;
+  std::cout << "====================" << std::endl;
+  if ( not( INF_SPIKE_RECEPTOR < receptor_type and receptor_type < SUP_SPIKE_RECEPTOR ) ) //or receptor_type == NMDA )
   {
+    std::cout << "====================" << std::endl;
+    std::cout << "THROWING ERROR" << receptor_type << std::endl;
+    std::cout << "====================" << std::endl;
+
     throw UnknownReceptorType( receptor_type, get_name() );
     return 0;
   }

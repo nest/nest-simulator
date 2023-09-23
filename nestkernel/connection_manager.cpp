@@ -695,10 +695,12 @@ nest::ConnectionManager::connect_arrays( long* sources,
           }
         }
 
-        param_dicts[ tid ].init_access_flags();
+        param_dicts[ tid ].init_access_flags(); // PYNEST-NG: Possible performance bottleneck
+
         connect( *s, target_node, tid, synapse_model_id, param_dicts[ tid ], delay_buffer, weight_buffer );
 
-        param_dicts[ tid ].all_entries_accessed( "connect_arrays", "params" );
+        param_dicts[ tid ].all_entries_accessed(
+          "connect_arrays", "params" ); // PYNEST-NG: Possible performance bottleneck
 
         increment_wd( w, d );
       }

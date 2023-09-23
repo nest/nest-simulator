@@ -88,12 +88,12 @@ Examples using this model
 
 EndUserDocs */
 
+void register_iaf_psc_alpha_multisynapse();
+
 class iaf_psc_alpha_multisynapse : public ArchivingNode
 {
 
 public:
-  static void register_model();
-
   iaf_psc_alpha_multisynapse();
   iaf_psc_alpha_multisynapse( const iaf_psc_alpha_multisynapse& );
 

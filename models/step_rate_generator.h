@@ -106,12 +106,12 @@ Examples using this model
 
 EndUserDocs */
 
+void register_step_rate_generator();
+
 class step_rate_generator : public StimulationDevice
 {
 
 public:
-  static void register_model();
-
   step_rate_generator();
   step_rate_generator( const step_rate_generator& );
 

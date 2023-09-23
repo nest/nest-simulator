@@ -249,14 +249,14 @@ Examples using this model
 
 EndUserDocs */
 
+void register_pp_cond_exp_mc_urbanczik();
+
 class pp_cond_exp_mc_urbanczik : public UrbanczikArchivingNode< pp_cond_exp_mc_urbanczik_parameters >
 {
 
   // Boilerplate function declarations --------------------------------
 
 public:
-  static void register_model();
-
   pp_cond_exp_mc_urbanczik();
   pp_cond_exp_mc_urbanczik( const pp_cond_exp_mc_urbanczik& );
   ~pp_cond_exp_mc_urbanczik() override;

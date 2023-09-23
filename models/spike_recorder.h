@@ -83,12 +83,12 @@ namespace nest
  * Class spike_recorder
  */
 
+void register_spike_recorder();
+
 class spike_recorder : public RecordingDevice
 {
 
 public:
-  static void register_model();
-
   spike_recorder();
   spike_recorder( const spike_recorder& );
 

@@ -151,12 +151,12 @@ Examples using this model
 
 EndUserDocs */
 
+void register_hh_psc_alpha();
+
 class hh_psc_alpha : public ArchivingNode
 {
 
 public:
-  static void register_model();
-
   hh_psc_alpha();
   hh_psc_alpha( const hh_psc_alpha& );
   ~hh_psc_alpha() override;

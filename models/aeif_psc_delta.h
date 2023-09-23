@@ -172,12 +172,12 @@ Examples using this model
 
 EndUserDocs */
 
+void register_aeif_psc_delta();
+
 class aeif_psc_delta : public ArchivingNode
 {
 
 public:
-  static void register_model();
-
   aeif_psc_delta();
   aeif_psc_delta( const aeif_psc_delta& );
   ~aeif_psc_delta() override;

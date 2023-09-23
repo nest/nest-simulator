@@ -187,11 +187,11 @@ Examples using this model
 
 EndUserDocs */
 
+void register_ht_neuron();
+
 class ht_neuron : public ArchivingNode
 {
 public:
-  static void register_model();
-
   ht_neuron();
   ht_neuron( const ht_neuron& );
   ~ht_neuron() override;

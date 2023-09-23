@@ -84,12 +84,12 @@ Examples using this model
 
 EndUserDocs */
 
+void register_spike_dilutor();
+
 class spike_dilutor : public DeviceNode
 {
 
 public:
-  static void register_model();
-
   spike_dilutor();
   spike_dilutor( const spike_dilutor& rhs );
 

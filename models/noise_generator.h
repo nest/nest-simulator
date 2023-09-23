@@ -146,12 +146,12 @@ Examples using this model
 
 EndUserDocs */
 
+void register_noise_generator();
+
 class noise_generator : public StimulationDevice
 {
 
 public:
-  static void register_model();
-
   noise_generator();
   noise_generator( const noise_generator& );
 

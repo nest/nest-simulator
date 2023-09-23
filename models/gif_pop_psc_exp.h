@@ -160,12 +160,12 @@ EndUserDocs */
  * representing each single neuron. The computational cost is largely
  * independent of the number N of neurons represented.
  */
+void register_gif_pop_psc_exp();
+
 class gif_pop_psc_exp : public Node
 {
 
 public:
-  static void register_model();
-
   gif_pop_psc_exp();
   gif_pop_psc_exp( const gif_pop_psc_exp& );
 

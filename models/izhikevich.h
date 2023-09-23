@@ -129,12 +129,12 @@ Examples using this model
 
 EndUserDocs */
 
+void register_izhikevich();
+
 class izhikevich : public ArchivingNode
 {
 
 public:
-  static void register_model();
-
   izhikevich();
   izhikevich( const izhikevich& );
 

@@ -217,11 +217,11 @@ EndUserDocs */
 namespace nest
 {
 
+void register_glif_psc_double_alpha();
+
 class glif_psc_double_alpha : public ArchivingNode
 {
 public:
-  static void register_model();
-
   glif_psc_double_alpha();
 
   glif_psc_double_alpha( const glif_psc_double_alpha& );

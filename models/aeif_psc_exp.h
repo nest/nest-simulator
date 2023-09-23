@@ -180,12 +180,12 @@ Examples using this model
 
 EndUserDocs */
 
+void register_aeif_psc_exp();
+
 class aeif_psc_exp : public ArchivingNode
 {
 
 public:
-  static void register_model();
-
   aeif_psc_exp();
   aeif_psc_exp( const aeif_psc_exp& );
   ~aeif_psc_exp() override;

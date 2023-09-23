@@ -158,12 +158,12 @@ Examples using this model
 
 EndUserDocs */
 
+void register_iaf_psc_delta_ps();
+
 class iaf_psc_delta_ps : public ArchivingNode
 {
 
 public:
-  static void register_model();
-
   /** Basic constructor.
       This constructor should only be used by GenericModel to create
       model prototype instances.

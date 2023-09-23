@@ -162,12 +162,12 @@ EndUserDocs */
  *   entries, then registers new entries in histogram
  */
 
+void register_correlation_detector();
+
 class correlation_detector : public Node
 {
 
 public:
-  static void register_model();
-
   correlation_detector();
   correlation_detector( const correlation_detector& );
 

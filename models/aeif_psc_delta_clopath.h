@@ -203,12 +203,12 @@ Examples using this model
 
 EndUserDocs */
 
+void register_aeif_psc_delta_clopath();
+
 class aeif_psc_delta_clopath : public ClopathArchivingNode
 {
 
 public:
-  static void register_model();
-
   aeif_psc_delta_clopath();
   aeif_psc_delta_clopath( const aeif_psc_delta_clopath& );
   ~aeif_psc_delta_clopath() override;

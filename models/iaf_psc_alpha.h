@@ -192,12 +192,12 @@ Examples using this model
 EndUserDocs */
 // clang-format on
 
+void register_iaf_psc_alpha();
+
 class iaf_psc_alpha : public ArchivingNode
 {
 
 public:
-  static void register_model();
-
   iaf_psc_alpha();
   iaf_psc_alpha( const iaf_psc_alpha& );
 

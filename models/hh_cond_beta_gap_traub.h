@@ -182,12 +182,12 @@ Examples using this model
 
 EndUserDocs */
 
+void register_hh_cond_beta_gap_traub();
+
 class hh_cond_beta_gap_traub : public ArchivingNode
 {
 
 public:
-  static void register_model();
-
   typedef Node base;
 
   hh_cond_beta_gap_traub();

@@ -181,12 +181,12 @@ namespace nest
  */
 extern "C" int aeif_cond_alpha_multisynapse_dynamics( double, const double*, double*, void* );
 
+void register_aeif_cond_alpha_multisynapse();
+
 class aeif_cond_alpha_multisynapse : public ArchivingNode
 {
 
 public:
-  static void register_model();
-
   aeif_cond_alpha_multisynapse();
   aeif_cond_alpha_multisynapse( const aeif_cond_alpha_multisynapse& );
   ~aeif_cond_alpha_multisynapse() override;

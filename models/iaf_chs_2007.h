@@ -115,12 +115,12 @@ Examples using this model
 
 EndUserDocs */
 
+void register_iaf_chs_2007();
+
 class iaf_chs_2007 : public ArchivingNode
 {
 
 public:
-  static void register_model();
-
   iaf_chs_2007();
   iaf_chs_2007( const iaf_chs_2007& );
 

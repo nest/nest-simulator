@@ -133,12 +133,12 @@ EndUserDocs */
  * State_, but are initialized by init_buffers_().
  */
 
+void register_correlospinmatrix_detector();
+
 class correlospinmatrix_detector : public Node
 {
 
 public:
-  static void register_model();
-
   correlospinmatrix_detector();
   correlospinmatrix_detector( const correlospinmatrix_detector& );
 

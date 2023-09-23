@@ -150,12 +150,12 @@ Examples using this model
 
 EndUserDocs */
 
+void register_iaf_cond_exp_sfa_rr();
+
 class iaf_cond_exp_sfa_rr : public ArchivingNode
 {
 
 public:
-  static void register_model();
-
   iaf_cond_exp_sfa_rr();
   iaf_cond_exp_sfa_rr( const iaf_cond_exp_sfa_rr& );
   ~iaf_cond_exp_sfa_rr() override;

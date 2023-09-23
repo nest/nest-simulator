@@ -194,12 +194,12 @@ iaf_cond_alpha, aeif_cond_exp, astrocyte_lr_1994, sic_connection
 
 EndUserDocs */
 
+void register_aeif_cond_alpha_astro();
+
 class aeif_cond_alpha_astro : public ArchivingNode
 {
 
 public:
-  static void register_model();
-
   aeif_cond_alpha_astro();
   aeif_cond_alpha_astro( const aeif_cond_alpha_astro& );
   ~aeif_cond_alpha_astro() override;

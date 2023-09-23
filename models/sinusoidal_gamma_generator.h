@@ -194,12 +194,12 @@ EndUserDocs */
  *    the same synapse type, see #737. Once #681 is fixed, we need to add a
  *    check that his assumption holds.
  */
+void register_sinusoidal_gamma_generator();
+
 class sinusoidal_gamma_generator : public StimulationDevice
 {
 
 public:
-  static void register_model();
-
   sinusoidal_gamma_generator();
   sinusoidal_gamma_generator( const sinusoidal_gamma_generator& );
 

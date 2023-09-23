@@ -220,12 +220,12 @@ Examples using this model
 
 EndUserDocs  */
 
+void register_gif_cond_exp();
+
 class gif_cond_exp : public ArchivingNode
 {
 
 public:
-  static void register_model();
-
   gif_cond_exp();
   gif_cond_exp( const gif_cond_exp& );
   ~gif_cond_exp() override;

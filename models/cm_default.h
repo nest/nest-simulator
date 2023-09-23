@@ -230,12 +230,12 @@ Examples using this model
 
 EndUserDocs*/
 
+void register_cm_default();
+
 class cm_default : public ArchivingNode
 {
 
 public:
-  static void register_model();
-
   cm_default();
   cm_default( const cm_default& );
 

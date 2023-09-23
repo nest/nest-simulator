@@ -108,12 +108,12 @@ EndUserDocs */
 /*! Class mip_generator generates spike trains as described
     in the MIP model.
 */
+void register_mip_generator();
+
 class mip_generator : public StimulationDevice
 {
 
 public:
-  static void register_model();
-
   mip_generator();
   mip_generator( const mip_generator& rhs );
 

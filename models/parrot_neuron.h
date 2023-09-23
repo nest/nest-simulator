@@ -80,12 +80,12 @@ Examples using this model
 
 EndUserDocs */
 
+void register_parrot_neuron();
+
 class parrot_neuron : public ArchivingNode
 {
 
 public:
-  static void register_model();
-
   parrot_neuron();
 
   /**

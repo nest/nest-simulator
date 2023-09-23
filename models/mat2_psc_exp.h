@@ -146,12 +146,12 @@ EndUserDocs */
  * object is required.
  */
 
+void register_mat2_psc_exp();
+
 class mat2_psc_exp : public ArchivingNode
 {
 
 public:
-  static void register_model();
-
   mat2_psc_exp();
   mat2_psc_exp( const mat2_psc_exp& );
 

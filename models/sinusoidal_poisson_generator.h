@@ -127,12 +127,12 @@ Examples using this model
 
 EndUserDocs */
 
+void register_sinusoidal_poisson_generator();
+
 class sinusoidal_poisson_generator : public StimulationDevice
 {
 
 public:
-  static void register_model();
-
   sinusoidal_poisson_generator();
   sinusoidal_poisson_generator( const sinusoidal_poisson_generator& );
 

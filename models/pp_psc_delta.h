@@ -197,12 +197,12 @@ Examples using this model
 
 EndUserDocs */
 
+void register_pp_psc_delta();
+
 class pp_psc_delta : public ArchivingNode
 {
 
 public:
-  static void register_model();
-
   pp_psc_delta();
   pp_psc_delta( const pp_psc_delta& );
 

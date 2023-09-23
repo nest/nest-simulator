@@ -159,12 +159,12 @@ Examples using this model
 
 EndUserDocs */
 
+void register_hh_psc_alpha_gap();
+
 class hh_psc_alpha_gap : public ArchivingNode
 {
 
 public:
-  static void register_model();
-
   typedef Node base;
 
   hh_psc_alpha_gap();

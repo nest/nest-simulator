@@ -97,12 +97,12 @@ EndUserDocs */
  * stores them via its RecordingDevice.
  *
  */
+void register_spin_detector();
+
 class spin_detector : public RecordingDevice
 {
 
 public:
-  static void register_model();
-
   spin_detector();
   spin_detector( const spin_detector& );
 

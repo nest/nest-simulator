@@ -83,11 +83,11 @@ Examples using this model
 
 EndUserDocs */
 
+void register_parrot_neuron_ps();
+
 class parrot_neuron_ps : public ArchivingNode
 {
 public:
-  static void register_model();
-
   parrot_neuron_ps();
 
   /**

@@ -109,12 +109,12 @@ EndUserDocs */
 
 class ConnectorBase;
 
+void register_volume_transmitter();
+
 class volume_transmitter : public Node
 {
 
 public:
-  static void register_model();
-
   volume_transmitter();
   volume_transmitter( const volume_transmitter& );
 

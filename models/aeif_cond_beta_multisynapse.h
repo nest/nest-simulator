@@ -184,12 +184,12 @@ Examples using this model
 
 EndUserDocs */
 
+void register_aeif_cond_beta_multisynapse();
+
 class aeif_cond_beta_multisynapse : public ArchivingNode
 {
 
 public:
-  static void register_model();
-
   aeif_cond_beta_multisynapse();
   aeif_cond_beta_multisynapse( const aeif_cond_beta_multisynapse& );
   ~aeif_cond_beta_multisynapse() override;

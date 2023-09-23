@@ -134,14 +134,14 @@ Examples using this model
 
 EndUserDocs */
 
+void register_iaf_cond_alpha();
+
 class iaf_cond_alpha : public ArchivingNode
 {
 
   // Boilerplate function declarations --------------------------------
 
 public:
-  static void register_model();
-
   iaf_cond_alpha();
   iaf_cond_alpha( const iaf_cond_alpha& );
   ~iaf_cond_alpha() override;

@@ -145,14 +145,14 @@ EndUserDocs */
  */
 extern "C" int iaf_chxk_2008_dynamics( double, const double*, double*, void* );
 
+void register_iaf_chxk_2008();
+
 class iaf_chxk_2008 : public ArchivingNode
 {
 
   // Boilerplate function declarations --------------------------------
 
 public:
-  static void register_model();
-
   iaf_chxk_2008();
   iaf_chxk_2008( const iaf_chxk_2008& );
   ~iaf_chxk_2008() override;

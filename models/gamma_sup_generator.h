@@ -95,12 +95,12 @@ Examples using this model
 
 EndUserDocs */
 
+void register_gamma_sup_generator();
+
 class gamma_sup_generator : public StimulationDevice
 {
 
 public:
-  static void register_model();
-
   gamma_sup_generator();
   gamma_sup_generator( const gamma_sup_generator& );
 

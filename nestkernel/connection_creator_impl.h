@@ -115,55 +115,55 @@ ConnectionCreator::connect_to_target_( Iterator from,
   }
 }
 
-//template < typename Iterator, int D >
-//void
-//ConnectionCreator::connect_to_target_poisson_( Iterator from,
-//  Iterator to,
-//  Node* tgt_ptr,
-//  const Position< D >& tgt_pos,
-//  size_t tgt_thread,
-//  const Layer< D >& source )
-//{
-//  RngPtr rng = get_vp_specific_rng( tgt_thread );
-//
-//  // We create a source pos vector here that can be updated with the
-//  // source position. This is done to avoid creating and destroying
-//  // unnecessarily many vectors.
-//  std::vector< double > source_pos( D );
-//  const std::vector< double > target_pos = tgt_pos.get_vector();
-//
-//  // Declare number of connections variable
-//  unsigned long num_conns;
-//
-//  const bool without_kernel = not kernel_.get();
-//  for ( Iterator iter = from; iter != to; ++iter )
-//  {
-//    if ( not allow_autapses_ and ( iter->second == tgt_ptr->get_node_id() ) )
-//    {
-//      continue;
-//    }
-//    iter->first.get_vector( source_pos );
-//
-//    num_conns = rng->prand( );
-//    //if ( without_kernel or rng->drand() < kernel_->value( rng, source_pos, target_pos, source, tgt_ptr ) )
-//    if ( without_kernel)
-//    {
-//      for ( unsigned long conn_counter = 1: conn_counter <= num_conns; ++conn_counter)
-//      {
-//         for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
-//         {
-//           kernel().connection_manager.connect( iter->second,
-//             tgt_ptr,
-//             tgt_thread,
-//             synapse_model_[ indx ],
-//             param_dicts_[ indx ][ tgt_thread ],
-//             delay_[ indx ]->value( rng, source_pos, target_pos, source, tgt_ptr ),
-//             weight_[ indx ]->value( rng, source_pos, target_pos, source, tgt_ptr ) );
-//         }
-//      }
-//    }
-//  }
-//}
+template < typename Iterator, int D >
+void
+ConnectionCreator::connect_to_target_poisson_( Iterator from,
+  Iterator to,
+  Node* tgt_ptr,
+  const Position< D >& tgt_pos,
+  size_t tgt_thread,
+  const Layer< D >& source )
+{
+  RngPtr rng = get_vp_specific_rng( tgt_thread );
+
+  // We create a source pos vector here that can be updated with the
+  // source position. This is done to avoid creating and destroying
+  // unnecessarily many vectors.
+  std::vector< double > source_pos( D );
+  const std::vector< double > target_pos = tgt_pos.get_vector();
+
+  // Declare number of connections variable
+  unsigned long num_conns;
+
+  const bool without_kernel = not kernel_.get();
+  for ( Iterator iter = from; iter != to; ++iter )
+  {
+    if ( not allow_autapses_ and ( iter->second == tgt_ptr->get_node_id() ) )
+    {
+      continue;
+    }
+    iter->first.get_vector( source_pos );
+
+    // Sample number of connections that are to be established
+    num_conns = rng->prand( kernel_->value( rng, source_pos, target_pos, source, tgt_ptr ) );
+    if ( without_kernel)
+    {
+      for ( unsigned long conn_counter = 1; conn_counter <= num_conns; ++conn_counter)
+      {
+         for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
+         {
+           kernel().connection_manager.connect( iter->second,
+             tgt_ptr,
+             tgt_thread,
+             synapse_model_[ indx ],
+             param_dicts_[ indx ][ tgt_thread ],
+             delay_[ indx ]->value( rng, source_pos, target_pos, source, tgt_ptr ),
+             weight_[ indx ]->value( rng, source_pos, target_pos, source, tgt_ptr ) );
+         }
+      }
+    }
+  }
+}
 
 template < int D >
 ConnectionCreator::PoolWrapper_< D >::PoolWrapper_()

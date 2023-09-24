@@ -115,6 +115,13 @@ public:
    * @param N Maximum value that can be drawn.
    */
   virtual unsigned long ulrand( unsigned long N ) = 0;
+
+  /**
+   * @brief Uses the wrapped RNG engine to draw an unsigned long from a Poisson distribution with mean lam.
+   *
+   * @param lam Mean value of Poisson distribution.
+   */
+  virtual unsigned long prand( double lam ) = 0;
 };
 
 /**

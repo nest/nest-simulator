@@ -145,6 +145,7 @@ private:
     size_t tgt_thread,
     const Layer< D >& source );
   
+  template < typename Iterator, int D >
   void connect_to_target_poisson_( Iterator from,
     Iterator to,
     Node* tgt_ptr,

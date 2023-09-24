@@ -213,6 +213,10 @@ def _process_spatial_projections(conn_spec, syn_spec):
             projections["connection_type"] = "pairwise_bernoulli_on_target"
             if "use_on_source" in projections:
                 projections.pop("use_on_source")
+    elif conn_spec["rule"] == "pairwise_poisson":
+        if "use_on_source" in conn_spec:
+            raise ValueError("'use_on_source' can only be set when using pairwise_bernoulli")
+        projections["connection_type"] = "pairwise_poisson"
     else:
         raise kernel.NESTError(
             "When using kernel or mask, the only possible connection rules are "
@@ -230,8 +234,8 @@ def _connect_layers_needed(conn_spec, syn_spec):
             if isinstance(item, Parameter) and item.is_spatial():
                 return True
         # We must use ConnectLayers in some additional cases.
-        rule_is_bernoulli = "pairwise_bernoulli" in str(conn_spec["rule"])
-        if "mask" in conn_spec or ("p" in conn_spec and not rule_is_bernoulli) or "use_on_source" in conn_spec:
+        rule_is_bernoulli_poisson = str(conn_spec["rule"]) in ["pairwise_bernoulli", "pairwise_poisson"]
+        if "mask" in conn_spec or ("p" in conn_spec and not rule_is_bernoulli_poisson) or "use_on_source" in conn_spec:
             return True
     # If a syn_spec entry is based on spatial properties, we must use ConnectLayers.
     if isinstance(syn_spec, dict):

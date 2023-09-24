@@ -1585,6 +1585,130 @@ nest::BernoulliBuilder::inner_connect_( const int tid, RngPtr rng, Node* target,
 }
 
 
+nest::PoissonBuilder::PoissonBuilder( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  const DictionaryDatum& conn_spec,
+  const std::vector< DictionaryDatum >& syn_specs )
+  : ConnBuilder( sources, targets, conn_spec, syn_specs )
+{
+  ParameterDatum* pd = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::p ].datum() );
+  if ( pd )
+  {
+    p_ = *pd;
+    // TODO: Checks of parameter range
+  }
+  else
+  {
+    // Assume p is a scalar
+    const double value = ( *conn_spec )[ names::p];
+    if ( value < 0 )
+    {
+      throw BadProperty( "Connection parameter 0 <= lam required." );
+    }
+    if ( not allow_multapses_ )
+    {
+      throw BadProperty( "Multapses must be allowed for this connection rule." );
+    }
+    p_ = std::shared_ptr< Parameter >( new ConstantParameter( value ) );
+  }
+}
+
+void
+nest::PoissonBuilder::connect_()
+{
+#pragma omp parallel
+  {
+    // get thread id
+    const size_t tid = kernel().vp_manager.get_thread_id();
+
+    try
+    {
+      RngPtr rng = get_vp_specific_rng( tid );
+
+      if ( loop_over_targets_() )
+      {
+        NodeCollection::const_iterator target_it = targets_->begin();
+        for ( ; target_it < targets_->end(); ++target_it )
+        {
+          const size_t tnode_id = ( *target_it ).node_id;
+          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+          if ( target->is_proxy() )
+          {
+            // skip array parameters handled in other virtual processes
+            skip_conn_parameter_( tid );
+            continue;
+          }
+
+          inner_connect_( tid, rng, target, tnode_id );
+        }
+      }
+
+      else
+      {
+        const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
+        SparseNodeArray::const_iterator n;
+        for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
+        {
+          const size_t tnode_id = n->get_node_id();
+
+          // Is the local node in the targets list?
+          if ( targets_->get_lid( tnode_id ) < 0 )
+          {
+            continue;
+          }
+
+          inner_connect_( tid, rng, n->get_node(), tnode_id );
+        }
+      }
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  } // of omp parallel
+}
+
+void
+nest::PoissonBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, size_t tnode_id )
+{
+  const size_t target_thread = target->get_thread();
+
+  unsigned long num_conns;
+
+  // check whether the target is on our thread
+  if ( static_cast< size_t >( tid ) != target_thread )
+  {
+    return;
+  }
+
+  // It is not possible to disable multapses with the PoissonBuilder, already checked
+
+  NodeCollection::const_iterator source_it = sources_->begin();
+  for ( ; source_it < sources_->end(); ++source_it )
+  {
+    const size_t snode_id = ( *source_it ).node_id;
+
+    if ( not allow_autapses_ and snode_id == tnode_id )
+    {
+      continue;
+    }
+
+    // Sample to number of connections that are to be established
+    num_conns = rng->prand( p_->value( rng, target ) );
+
+    if ( num_conns == 0)
+    {
+      continue;
+    }
+    for ( unsigned long conn_counter = 1; conn_counter <= num_conns; ++conn_counter)
+    {
+      single_connect_( snode_id, *target, target_thread, rng );
+    }
+  }
+}
+
 nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,

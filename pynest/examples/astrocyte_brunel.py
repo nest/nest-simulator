@@ -112,8 +112,7 @@ network_params = {
 }
 
 syn_params = {
-    "synapse_model": "tsodyks_synapse",  # model of neuron-to-neuron and neuron-to-astrocyte connections
-    "astro2post": "sic_connection",  # model of astrocyte-to-neuron connection
+    "synapse_model": "tsodyks_synapse",
     "w_a2n": 0.01,  # weight of astrocyte-to-neuron connection
     "w_e": 1.0,  # weight of excitatory connection in nS
     "w_i": -4.0,  # weight of inhibitory connection in nS
@@ -172,22 +171,23 @@ def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise, scale=1.
     nest.Connect(nodes_noise, nodes_ex + nodes_in, syn_spec=syn_params_noise)
     print("Connecting neurons and astrocytes ...")
     conn_params_e = {
-        "rule": "pairwise_bernoulli_astro",
-        "astrocyte": nodes_astro,
-        "p": network_params["p"] / scale,
-        "p_syn_astro": network_params["p_syn_astro"],
-        "max_astro_per_target": network_params["max_astro_per_target"],
-        "astro_pool_by_index": network_params["astro_pool_by_index"],
+        "rule": "tripartite_bernoulli_with_pool",
+        "p_primary": network_params["p"] / scale,
+        "p_cond_third": network_params["p_syn_astro"],
+        "pool_size": network_params["max_astro_per_target"],
+        "random_pool": not network_params["astro_pool_by_index"],
     }
     syn_params_e = {
-        "synapse_model": syn_params["synapse_model"],
-        "weight_pre2post": syn_params["w_e"],
-        "tau_psc": tau_syn_ex,
-        "astro2post": syn_params["astro2post"],
-        "weight_astro2post": syn_params["w_a2n"],
-        "delay_pre2post": syn_params["d_e"],
-        "delay_pre2astro": syn_params["d_e"],
+        "primary": {
+            "synapse_model": syn_params["synapse_model"],
+            "weight": syn_params["w_e"],
+            "tau_psc": tau_syn_ex,
+            "delay": syn_params["d_e"],
+        },
+        "third_in": {"delay": syn_params["d_e"]},
+        "third_out": {"synapse_model": "sic_connection", "weight": syn_params["w_a2n"]},
     }
+
     conn_params_i = {"rule": "pairwise_bernoulli", "p": network_params["p"] / scale}
     syn_params_i = {
         "synapse_model": syn_params["synapse_model"],
@@ -195,7 +195,7 @@ def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise, scale=1.
         "tau_psc": tau_syn_in,
         "delay": syn_params["d_i"],
     }
-    nest.Connect(nodes_ex, nodes_ex + nodes_in, conn_params_e, syn_params_e)
+    nest.Connect(nodes_ex, nodes_ex + nodes_in, third=nodes_astro, conn_spec=conn_params_e, syn_spec=syn_params_e)
     nest.Connect(nodes_in, nodes_ex + nodes_in, conn_params_i, syn_params_i)
 
     return nodes_ex, nodes_in, nodes_astro, nodes_noise

@@ -112,23 +112,21 @@ astrocytes = nest.Create(astrocyte_model, 10, params=astrocyte_params)
 nest.Connect(
     pre_neurons,
     post_neurons,
+    third=astrocytes,
     conn_spec={
-        "rule": "pairwise_bernoulli_astro",
-        "astrocyte": astrocytes,
-        "p": 1.0,
-        "p_syn_astro": 1.0,
-        "max_astro_per_target": 3,
-        "astro_pool_by_index": True,
+        "rule": "tripartite_bernoulli_with_pool",
+        "p_primary": 1.0,
+        "p_cond_third": 1.0,
+        "pool_size": 3,
+        "random_pool": False,
     },
     syn_spec={
-        "weight_pre2post": 1.0,
-        "weight_pre2astro": 1.0,
-        "weight_astro2post": 1.0,
-        "delay_pre2post": 1.0,
-        "delay_pre2astro": 1.0,
-        "delay_astro2post": 1.0,
+        "primary": {"model": "tsodyks_synapse", "weight": 1.0, "delay": 1.0},
+        "third_in": {"model": "tsodyks_synapse", "weight": 1.0, "delay": 1.0},
+        "third_out": {"model": "sic_connection", "weight": 1.0, "delay": 1.0},
     },
 )
+
 
 mm_pre_neurons = nest.Create("multimeter", params={"record_from": ["V_m"]})
 mm_post_neurons = nest.Create("multimeter", params={"record_from": ["V_m", "I_SIC"]})

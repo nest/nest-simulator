@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_stepped_simulation.py
+# test_wfr_settings.py
 #
 # This file is part of NEST.
 #

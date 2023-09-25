@@ -146,19 +146,19 @@ cdef object any_to_pyobj(any operand):
     if is_type[string](operand):
         return string_to_pystr(any_cast[string](operand))
     if is_type[vector[int]](operand):
-        return any_cast[vector[int]](operand)
+        return numpy.array(any_cast[vector[int]](operand))
     if is_type[vector[long]](operand):
-        return any_cast[vector[long]](operand)
+        return numpy.array(any_cast[vector[long]](operand))
     if is_type[vector[size_t]](operand):
-        return any_cast[vector[size_t]](operand)
+        return numpy.array(any_cast[vector[size_t]](operand))
     if is_type[vector[double]](operand):
-        return any_cast[vector[double]](operand)
+        return numpy.array(any_cast[vector[double]](operand))
     if is_type[vector[vector[double]]](operand):
-        return any_cast[vector[vector[double]]](operand)
+        return numpy.array(any_cast[vector[vector[double]]](operand))
     if is_type[vector[vector[vector[double]]]](operand):
-        return any_cast[vector[vector[vector[double]]]](operand)
+        return numpy.array(any_cast[vector[vector[vector[double]]]](operand))
     if is_type[vector[vector[vector[long]]]](operand):
-        return any_cast[vector[vector[vector[long]]]](operand)
+        return numpy.array(any_cast[vector[vector[vector[long]]]](operand))
     if is_type[vector[string]](operand):
         # PYNEST-NG: Do we want to have this or are bytestrings fine?
         # return any_cast[vector[string]](operand)

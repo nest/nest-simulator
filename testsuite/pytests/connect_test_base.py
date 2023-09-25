@@ -553,6 +553,15 @@ def get_expected_degrees_bernoulli(p, fan, len_source_pop, len_target_pop):
 # adapted from Masterthesis, Daniel Hjertholm
 
 
+def get_expected_degrees_poisson(lam, fan, len_source_pop, len_target_pop):
+    expected_indegree = lam  * len_source_pop
+    expected_outdegree = lam * len_target_pop
+    if fan == "in":
+        return expected_indegree
+    elif fan == "out":
+        return expected_outdegree
+
+
 def reset_seed(seed, nr_threads):
     """
     Reset the simulator and seed the PRNGs.

@@ -25,7 +25,6 @@ Test that multiple calls to ``Simulate`` give the same result as a single one.
 """
 
 import nest
-import pytest
 
 
 def build_net():

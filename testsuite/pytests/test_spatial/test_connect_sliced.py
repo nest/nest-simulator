@@ -23,6 +23,7 @@ Tests of Connect with sliced spatial populations.
 """
 
 import unittest
+
 import nest
 import numpy as np
 import numpy.testing as np_testing

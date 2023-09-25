@@ -22,9 +22,10 @@
 # This script tests the parrot_neuron_ps in NEST.
 # It is very similar to test_parrot_neuron.py, but uses precise spike times.
 
-import nest
-import unittest
 import math
+import unittest
+
+import nest
 
 
 def _round_up(simtime):

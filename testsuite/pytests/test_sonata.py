@@ -21,9 +21,8 @@
 
 from pathlib import Path
 
-import pytest
-
 import nest
+import pytest
 
 # Skip all tests in this module if no HDF5 or OpenMP threads
 pytestmark = [pytest.mark.skipif_missing_hdf5, pytest.mark.skipif_missing_threads]

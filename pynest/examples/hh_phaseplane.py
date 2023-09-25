@@ -42,7 +42,6 @@ import nest
 import numpy as np
 from matplotlib import pyplot as plt
 
-
 amplitude = 100.0  # Set externally applied current amplitude in pA
 dt = 0.1  # simulation step length [ms]
 

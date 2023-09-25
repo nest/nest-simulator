@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Freely placed neurons
-----------------------
+Spatial networks: Freely placed neurons
+---------------------------------------
 
 Create 12 freely placed iaf_psc_alpha neurons.
 
@@ -29,8 +29,8 @@ BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
 """
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 
 nest.ResetKernel()
 

@@ -26,10 +26,9 @@ This set of tests ensures that a ``NodeCollection`` can be sliced with
 a Python ``list`` of NumPy integers.
 """
 
+import nest
 import numpy as np
 import pytest
-
-import nest
 
 
 @pytest.mark.parametrize("dtype", [int, np.int32, np.int64])

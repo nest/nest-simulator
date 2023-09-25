@@ -218,15 +218,15 @@ nest::EpropArchivingNode::get_firing_rate_reg( double time_point )
 }
 
 void
-nest::EpropArchivingNode::write_eprop_parameter_to_map(std::string parameter_name, double parameter_value)
+nest::EpropArchivingNode::write_eprop_parameter_to_map( std::string parameter_name, double parameter_value )
 {
-    eprop_parameter_map_[parameter_name] = parameter_value;
+  eprop_parameter_map_[ parameter_name ] = parameter_value;
 }
 
-std::map<std::string, double>&
+std::map< std::string, double >&
 nest::EpropArchivingNode::get_eprop_parameter_map()
 {
-    return eprop_parameter_map_;
+  return eprop_parameter_map_;
 }
 
 std::string

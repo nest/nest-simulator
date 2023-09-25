@@ -235,12 +235,15 @@ eprop_synapse_readout< targetidentifierT >::set_status( const DictionaryDatum& d
 
 template < typename targetidentifierT >
 void
-eprop_synapse_readout< targetidentifierT >::check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
+eprop_synapse_readout< targetidentifierT >::check_connection( Node& s,
+  Node& t,
+  size_t receptor_type,
+  const CommonPropertiesType& )
 {
   typename eprop_synapse< targetidentifierT >::ConnTestDummyNode dummy_target;
   ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
-  EpropArchivingNode& t_arch = dynamic_cast<EpropArchivingNode&>(t);
+  EpropArchivingNode& t_arch = dynamic_cast< EpropArchivingNode& >( t );
   t_arch.init_update_history( 3.0 * get_delay() );
 }
 

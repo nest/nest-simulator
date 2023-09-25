@@ -234,12 +234,15 @@ eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::set_status( const Dictio
 
 template < typename targetidentifierT >
 void
-eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
+eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::check_connection( Node& s,
+  Node& t,
+  size_t receptor_type,
+  const CommonPropertiesType& )
 {
   typename eprop_synapse< targetidentifierT >::ConnTestDummyNode dummy_target;
   ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
-  EpropArchivingNode& t_arch = dynamic_cast<EpropArchivingNode&>(t);
+  EpropArchivingNode& t_arch = dynamic_cast< EpropArchivingNode& >( t );
   t_arch.init_update_history( 2.0 * get_delay() );
 }
 
@@ -253,11 +256,11 @@ eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::update_gradient( EpropAr
   std::deque< histentry_eprop_archive >::iterator it_eprop_hist;
   target->get_eprop_history( this->t_last_trigger_spike_ + get_delay(), &it_eprop_hist );
 
-  std::map<std::string, double>& eprop_parameter_map = target->get_eprop_parameter_map();
-  double alpha = eprop_parameter_map["leak_propagator"];
-  double alpha_complement = eprop_parameter_map["leak_propagator_complement"];
-  double beta = eprop_parameter_map["adapt_beta"];
-  double rho  = eprop_parameter_map["adapt_propagator"];
+  std::map< std::string, double >& eprop_parameter_map = target->get_eprop_parameter_map();
+  double alpha = eprop_parameter_map[ "leak_propagator" ];
+  double alpha_complement = eprop_parameter_map[ "leak_propagator_complement" ];
+  double beta = eprop_parameter_map[ "adapt_beta" ];
+  double rho = eprop_parameter_map[ "adapt_propagator" ];
 
   double sum_t_prime = 0.0;
   double sum_e_bar = 0.0;

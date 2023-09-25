@@ -216,8 +216,8 @@ nest::eprop_iaf_psc_delta::pre_run_hook()
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
 
-  write_eprop_parameter_to_map("leak_propagator", V_.P33_);
-  write_eprop_parameter_to_map("leak_propagator_complement", V_.P33_complement_);
+  write_eprop_parameter_to_map( "leak_propagator", V_.P33_ );
+  write_eprop_parameter_to_map( "leak_propagator_complement", V_.P33_complement_ );
 }
 
 /* ----------------------------------------------------------------

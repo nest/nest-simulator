@@ -294,6 +294,7 @@ extern const Name keep_source_table;
 extern const Name kernel;
 
 extern const Name label;
+extern const Name lam;
 extern const Name lambda;
 extern const Name lambda_0;
 extern const Name len_kernel;

@@ -1591,16 +1591,16 @@ nest::PoissonBuilder::PoissonBuilder( NodeCollectionPTR sources,
   const std::vector< DictionaryDatum >& syn_specs )
   : ConnBuilder( sources, targets, conn_spec, syn_specs )
 {
-  ParameterDatum* pd = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::p ].datum() );
+  ParameterDatum* pd = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::lam ].datum() );
   if ( pd )
   {
-    p_ = *pd;
+    lam_ = *pd;
     // TODO: Checks of parameter range
   }
   else
   {
-    // Assume p is a scalar
-    const double value = ( *conn_spec )[ names::p];
+    // Assume lam is a scalar
+    const double value = ( *conn_spec )[ names::lam];
     if ( value < 0 )
     {
       throw BadProperty( "Connection parameter 0 <= lam required." );
@@ -1609,7 +1609,7 @@ nest::PoissonBuilder::PoissonBuilder( NodeCollectionPTR sources,
     {
       throw BadProperty( "Multapses must be allowed for this connection rule." );
     }
-    p_ = std::shared_ptr< Parameter >( new ConstantParameter( value ) );
+    lam_ = std::shared_ptr< Parameter >( new ConstantParameter( value ) );
   }
 }
 
@@ -1696,7 +1696,7 @@ nest::PoissonBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, s
     }
 
     // Sample to number of connections that are to be established
-    num_conns = rng->prand( p_->value( rng, target ) );
+    num_conns = rng->prand( lam_->value( rng, target ) );
 
     if ( num_conns == 0)
     {

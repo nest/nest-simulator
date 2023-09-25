@@ -268,6 +268,7 @@ const Name keep_source_table( "keep_source_table" );
 const Name kernel( "kernel" );
 
 const Name label( "label" );
+const Name lam( "lam" );
 const Name lambda( "lambda" );
 const Name lambda_0( "lambda_0" );
 const Name len_kernel( "len_kernel" );

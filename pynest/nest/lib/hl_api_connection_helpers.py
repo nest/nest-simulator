@@ -169,6 +169,7 @@ def _process_spatial_projections(conn_spec, syn_spec):
         "indegree",
         "outdegree",
         "p",
+        "lam",
         "use_on_source",
         "allow_oversized_mask",
     ]
@@ -181,6 +182,8 @@ def _process_spatial_projections(conn_spec, syn_spec):
     projections.update(conn_spec)
     if "p" in conn_spec:
         projections["kernel"] = projections.pop("p")
+    elif "lam" in conn_spec:
+        projections["kernel"] = projections.pop("lam")
     if syn_spec is not None:
         if isinstance(syn_spec, CollocatedSynapses):
             for syn_list in syn_spec.syn_specs:
@@ -234,8 +237,11 @@ def _connect_layers_needed(conn_spec, syn_spec):
             if isinstance(item, Parameter) and item.is_spatial():
                 return True
         # We must use ConnectLayers in some additional cases.
-        rule_is_bernoulli_poisson = str(conn_spec["rule"]) in ["pairwise_bernoulli", "pairwise_poisson"]
-        if "mask" in conn_spec or ("p" in conn_spec and not rule_is_bernoulli_poisson) or "use_on_source" in conn_spec:
+        rule_is_bernoulli= "pairwise_bernoulli" in str(conn_spec["rule"])
+        if "mask" in conn_spec or ("p" in conn_spec and not rule_is_bernoulli) or "use_on_source" in conn_spec:
+            return True
+        rule_is_poisson= "pairwise_poisson" in str(conn_spec["rule"])
+        if "mask" in conn_spec or ("lam" in conn_spec and not rule_is_poisson) or "use_on_source" in conn_spec:
             return True
     # If a syn_spec entry is based on spatial properties, we must use ConnectLayers.
     if isinstance(syn_spec, dict):

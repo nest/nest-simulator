@@ -31,7 +31,7 @@ See examples using astrocyte models:
 
 See model docs:
 
-* doc:`../../../models/index_astrocyte`
+* :doc:`../../../models/index_astrocyte`
 
 New model: glif_psc_double_alpha
 --------------------------------

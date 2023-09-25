@@ -25,6 +25,7 @@
 
 // nestkernel
 #include "connection.h"
+#include "eprop_archiving_node.h"
 
 namespace nest
 {
@@ -279,7 +280,7 @@ public:
 
   void optimize( long current_optimization_step_, long& last_optimization_step_, const EpropCommonProperties& cp );
 
-  virtual void update_gradient( Node* target, double& grad, const EpropCommonProperties& cp ) const {};
+  virtual void update_gradient( EpropArchivingNode* target, double& grad, const EpropCommonProperties& cp ) const {};
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -305,7 +306,8 @@ public:
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
-    t.init_update_history( ( t.get_eprop_node_type() == "readout" ? 3.0 : 2.0 ) * delay_ );
+    EpropArchivingNode& t_arch = dynamic_cast<EpropArchivingNode&>(t);
+    t_arch.init_update_history( ( t_arch.get_eprop_node_type() == "readout" ? 3.0 : 2.0 ) * delay_ );
   }
 
   void
@@ -344,7 +346,10 @@ inline void
 eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCommonProperties& cp )
 {
   double t_spike = e.get_stamp().get_ms();
-  Node* target = get_target( thread );
+
+  EpropArchivingNode* target = dynamic_cast< EpropArchivingNode* >( get_target( thread ) );
+  assert( target );
+
   std::string target_node = target->get_eprop_node_type();
   double shift = target_node == "readout" ? delay_ : 0.0;
 

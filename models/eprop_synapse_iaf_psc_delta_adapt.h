@@ -211,7 +211,7 @@ public:
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
-  void update_gradient( Node* target, double& grad, const EpropCommonProperties& cp ) const override;
+  void update_gradient( EpropArchivingNode* target, double& grad, const EpropCommonProperties& cp ) const override;
   void get_status( DictionaryDatum& d ) const;
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 };
@@ -232,7 +232,7 @@ eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::set_status( const Dictio
 
 template < typename targetidentifierT >
 void
-eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::update_gradient( Node* target,
+eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::update_gradient( EpropArchivingNode* target,
   double& grad,
   const EpropCommonProperties& cp ) const
 {

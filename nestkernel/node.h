@@ -742,15 +742,6 @@ public:
   virtual double get_tau_syn_ex( int comp );
   virtual double get_tau_syn_in( int comp );
 
-  virtual double get_leak_propagator() const;
-  virtual double get_leak_propagator_complement() const;
-  virtual double get_adapt_propagator() const;
-  virtual double get_adapt_beta() const;
-  virtual std::string get_eprop_node_type() const;
-  virtual void init_update_history( double delay );
-  virtual void get_eprop_history( double time_point, std::deque< histentry_eprop_archive >::iterator* it );
-  virtual void write_update_to_history( double t_last_update, double t_current_update );
-  virtual double get_firing_rate_reg( double t_last_update );
 
   /**
    * Modify Event object parameters during event delivery.

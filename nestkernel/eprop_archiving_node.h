@@ -51,9 +51,7 @@ public:
   EpropArchivingNode( const EpropArchivingNode& );
 
   void init_update_history( double delay );
-  double get_firing_rate_reg( double time_point );
 
-protected:
   void erase_unneeded_update_history();
   void erase_unneeded_eprop_history();
   void erase_unneeded_firing_rate_reg_history();
@@ -64,11 +62,17 @@ protected:
   void write_update_to_history( double t_last_update, double t_current_update );
   void write_firing_rate_reg_to_history( double t_current_update, double f_target, double c_reg );
 
+  double get_firing_rate_reg( double time_point );
   void get_eprop_history( double time_point, std::deque< histentry_eprop_archive >::iterator* it );
 
   void add_spike_to_counter();
   void reset_spike_counter();
 
+  virtual double get_leak_propagator() const;
+  virtual double get_leak_propagator_complement() const;
+  virtual double get_adapt_propagator() const;
+  virtual double get_adapt_beta() const;
+  virtual std::string get_eprop_node_type() const;
 
 private:
   double eps_ = 1e-6; // small constant to prevent numerical errors when comparing time points

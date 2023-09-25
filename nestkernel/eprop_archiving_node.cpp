@@ -217,4 +217,34 @@ nest::EpropArchivingNode::get_firing_rate_reg( double time_point )
   return it->firing_rate_reg_;
 }
 
+double
+nest::EpropArchivingNode::get_leak_propagator() const
+{
+  throw UnexpectedEvent();
+}
+
+double
+nest::EpropArchivingNode::get_leak_propagator_complement() const
+{
+  throw UnexpectedEvent();
+}
+
+double
+nest::EpropArchivingNode::get_adapt_propagator() const
+{
+  throw UnexpectedEvent();
+}
+
+double
+nest::EpropArchivingNode::get_adapt_beta() const
+{
+  throw UnexpectedEvent();
+}
+
+std::string
+nest::EpropArchivingNode::get_eprop_node_type() const
+{
+  throw UnexpectedEvent();
+}
+
 } // namespace nest

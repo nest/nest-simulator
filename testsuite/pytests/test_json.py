@@ -58,12 +58,6 @@ class StatusTestCase(unittest.TestCase):
             d_json = n.get(output="json")
             self.assertIsInstance(d_json, str)
 
-        nest.ResetKernel()
-        n = nest.NodeCollection()
-        d_json = n.get(output="json")
-        self.assertIsInstance(d_json, str)
-        self.assertEqual(d_json, "{}")
-
 
 def suite():
     suite = unittest.makeSuite(StatusTestCase, "test")

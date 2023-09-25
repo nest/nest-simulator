@@ -88,7 +88,6 @@ class TestSTDPNNSynapses:
         np.testing.assert_almost_equal(
             weight_reproduced_independently,
             weight_by_nest,
-            err_msg=f"{synapse_model} test: Resulting synaptic weight {weight_by_nest} differs from expected {weight_reproduced_independently}",
         )
 
     def do_the_nest_simulation(self):

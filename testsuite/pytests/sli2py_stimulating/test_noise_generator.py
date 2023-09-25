@@ -46,7 +46,7 @@ def test_noise_generator_set_parameters(prepare_kernel):
 
 
 def test_noise_generator_incorrect_noise_dt(prepare_kernel):
-    with pytest.raises(nest.NESTError, match="StepMultipleRequired"):
+    with pytest.raises(nest.NESTErrors.StepMultipleRequired):
         nest.Create("noise_generator", params={"dt": 0.25})
 
 

@@ -70,11 +70,11 @@ nest::RecordingBackendSIONlib::finalize()
 void
 nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device, const dictionary& )
 {
-  const size_t t = device.get_thread();
+  const size_t tid = device.get_thread();
   const size_t node_id = device.get_node_id();
 
-  device_map::value_type::iterator device_it = devices_[ t ].find( node_id );
-  if ( device_it == devices_[ t ].end() )
+  device_map::value_type::iterator device_it = devices_[ tid ].find( node_id );
+  if ( device_it == devices_[ tid ].end() )
   {
     DeviceEntry entry( device );
     DeviceInfo& info = entry.info;
@@ -88,7 +88,7 @@ nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device, const dict
     info.t_start = device.get_start().get_steps();
     info.t_stop = device.get_stop().get_steps();
 
-    devices_[ t ].insert( std::make_pair( node_id, entry ) );
+    devices_[ tid ].insert( std::make_pair( node_id, entry ) );
 
     ++num_enrolled_devices_;
   }
@@ -97,13 +97,13 @@ nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device, const dict
 void
 nest::RecordingBackendSIONlib::disenroll( const RecordingDevice& device )
 {
-  const size_t t = device.get_thread();
+  const size_t tid = device.get_thread();
   const size_t node_id = device.get_node_id();
 
-  device_map::value_type::iterator device_it = devices_[ t ].find( node_id );
-  if ( device_it != devices_[ t ].end() )
+  device_map::value_type::iterator device_it = devices_[ tid ].find( node_id );
+  if ( device_it != devices_[ tid ].end() )
   {
-    devices_[ t ].erase( device_it );
+    devices_[ tid ].erase( device_it );
   }
 }
 
@@ -112,11 +112,11 @@ nest::RecordingBackendSIONlib::set_value_names( const RecordingDevice& device,
   const std::vector< std::string >& double_value_names,
   const std::vector< std::string >& long_value_names )
 {
-  const size_t t = device.get_thread();
+  const size_t tid = device.get_thread();
   const size_t node_id = device.get_node_id();
 
-  device_map::value_type::iterator device_it = devices_[ t ].find( node_id );
-  if ( device_it != devices_[ t ].end() )
+  device_map::value_type::iterator device_it = devices_[ tid ].find( node_id );
+  if ( device_it != devices_[ tid ].end() )
   {
     DeviceInfo& info = device_it->second.info;
 
@@ -166,7 +166,7 @@ nest::RecordingBackendSIONlib::open_files_()
 
     // This code is executed in a parallel region (opened above)!
     const size_t tid = kernel().vp_manager.get_thread_id();
-    const size_t task = kernel().vp_manager.thread_to_vp( t );
+    const size_t task = kernel().vp_manager.thread_to_vp( tid );
     if ( not task )
     {
       t_start_ = kernel().simulation_manager.get_time().get_ms();
@@ -233,12 +233,12 @@ nest::RecordingBackendSIONlib::open_files_()
     }
     catch ( ... )
     {
-      exceptions_raised.at( tid ) = std::current_exception;
+      exceptions_raised.at( tid ) = std::current_exception();
     }
   } // parallel region
 
   // check if any exceptions have been raised
-  for ( eptr : exceptions_raised )
+  for ( auto eptr : exceptions_raised )
   {
     if ( eptr )
     {
@@ -264,8 +264,8 @@ nest::RecordingBackendSIONlib::close_files_()
 
 #pragma omp parallel
   {
-    const size_t t = kernel().vp_manager.get_thread_id();
-    const size_t task = kernel().vp_manager.thread_to_vp( t );
+    const size_t tid = kernel().vp_manager.get_thread_id();
+    const size_t task = kernel().vp_manager.thread_to_vp( tid );
 
     assert( ( files_.find( task ) != files_.end() ) and "initialize() was not called before calling cleanup()" );
 
@@ -283,7 +283,7 @@ nest::RecordingBackendSIONlib::close_files_()
       // loop over devices and determine number of recorded data points per
       // device
       device_map::value_type::iterator it;
-      for ( it = devices_[ t ].begin(); it != devices_[ t ].end(); ++it )
+      for ( it = devices_[ tid ].begin(); it != devices_[ tid ].end(); ++it )
       {
         const size_t node_id = it->first;
         sion_uint64 n_rec = 0;
@@ -337,7 +337,7 @@ nest::RecordingBackendSIONlib::close_files_()
       sion_fwrite( version_buffer, sizeof( char ), NEST_VERSION_BUFFERSIZE, file.sid );
 
       // write device info
-      const sion_uint64 n_dev = static_cast< sion_uint64 >( devices_[ t ].size() );
+      const sion_uint64 n_dev = static_cast< sion_uint64 >( devices_[ tid ].size() );
       sion_fwrite( &n_dev, sizeof( sion_uint64 ), 1, file.sid );
 
       sion_uint64 node_id;
@@ -350,7 +350,7 @@ nest::RecordingBackendSIONlib::close_files_()
       sion_uint32 long_n_val;
 
       device_map::value_type::iterator it;
-      for ( it = devices_[ t ].begin(); it != devices_[ t ].end(); ++it )
+      for ( it = devices_[ tid ].begin(); it != devices_[ tid ].end(); ++it )
       {
         DeviceInfo& dev_info = it->second.info;
 
@@ -420,17 +420,17 @@ nest::RecordingBackendSIONlib::write( const RecordingDevice& device,
   const std::vector< double >& double_values,
   const std::vector< long >& long_values )
 {
-  const size_t t = device.get_thread();
+  const size_t tid = device.get_thread();
   const sion_uint64 device_node_id = static_cast< sion_uint64 >( device.get_node_id() );
 
-  if ( devices_[ t ].find( device_node_id ) == devices_[ t ].end() )
+  if ( devices_[ tid ].find( device_node_id ) == devices_[ tid ].end() )
   {
     return;
   }
 
   FileEntry& file = files_[ device.get_vp() ];
   SIONBuffer& buffer = file.buffer;
-  DeviceInfo& device_info = devices_[ t ].find( device_node_id )->second.info;
+  DeviceInfo& device_info = devices_[ tid ].find( device_node_id )->second.info;
 
   assert( device_info.double_value_names.size() == double_values.size() );
   const sion_uint32 double_n_values = static_cast< sion_uint32 >( double_values.size() );
@@ -667,8 +667,8 @@ nest::RecordingBackendSIONlib::post_step_hook()
     return;
   }
 
-  const size_t t = kernel().vp_manager.get_thread_id();
-  const size_t task = kernel().vp_manager.thread_to_vp( t );
+  const size_t tid = kernel().vp_manager.get_thread_id();
+  const size_t task = kernel().vp_manager.thread_to_vp( tid );
 
   FileEntry& file = files_[ task ];
   SIONBuffer& buffer = file.buffer;

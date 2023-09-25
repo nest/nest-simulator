@@ -25,9 +25,6 @@ Low-level API of PyNEST Module
 
 # Since this is a low level module, we need some more trickery, thus:
 # pylint: disable=wrong-import-position
-
-import functools
-import inspect
 import keyword
 import os
 import sys
@@ -163,6 +160,7 @@ def init(argv):
 
     path = os.path.dirname(__file__)
     nestkernel.init(nest_argv)
+    initialized = True
 
     if not quiet:
         print("NEST initialized successfully!")

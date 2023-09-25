@@ -21,12 +21,15 @@
 
 
 """
-Feeds correlation detector with two hand-crafted spike trains with
-known correlation. Correlation detector parameters are set in model.
+Minimal test of ``correlomatrix_detector``.
 
-Remarks:
-  The test does not test weighted correlations.
+In this test, we feed ``correlomatrix_detector`` with two hand-crafted spike
+trains with known correlation. The ``correlomatrix_detector`` parameters are
+set on the model instance.
 
+.. note::
+
+    The test does not test weighted correlations.
 """
 import nest
 import numpy as np
@@ -128,19 +131,18 @@ def diff_at_edge():
     return (spikes_times, histogram)
 
 
-@pytest.mark.parametrize("spikes_times, histogram", [diff_at_center(), diff_at_edge()])
-def test_histogram_correlation(spikes_times, histogram):
+@pytest.mark.parametrize("spikes_times, expected_histogram", [diff_at_center(), diff_at_edge()])
+def test_histogram_correlation(spikes_times, expected_histogram):
     nest.resolution = 0.1
     nest.SetDefaults("correlation_detector", {"delta_tau": 1.0, "tau_max": 5.0})
 
     detector = prepare_correlation_detector(spikes_times)
 
-    n_events = detector.get("n_events")
+    n_events = detector.n_events
     spikes_times_size = list(map(lambda x: len(x), spikes_times))
-    assert (n_events == spikes_times_size).all()
+    assert n_events == spikes_times_size
 
-    detector_histogram = detector.get("histogram")
-    assert (detector_histogram == histogram).all()
+    assert detector.histogram == expected_histogram
 
 
 def test_setting_invalid_n_events():
@@ -159,11 +161,11 @@ def test_reset():
     spikes_times = [[1.0, 2.0, 6.0], [2.0, 4.0]]
     detector = prepare_correlation_detector(spikes_times)
 
-    n_events = detector.get("n_events")
+    # n_events = detector.get("n_events")
 
-    has_zero_entries = np.any(n_events == 0)
+    has_zero_entries = detector.n_events == 0
 
     if not has_zero_entries:
         detector.set(n_events=[0, 0])
-        assert np.all(detector.get("n_events") == 0)
-        assert np.all(detector.get("histogram") == 0)
+        assert np.all(np.array(detector.n_events) == 0)
+        assert np.all(np.array(detector.histogram) == 0)

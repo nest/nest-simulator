@@ -23,6 +23,7 @@
 import unittest
 
 import connect_test_base
+from connect_test_base import get_connectivity_matrix
 import nest
 import numpy as np
 import scipy.stats
@@ -52,6 +53,18 @@ class TestPairwisePoisson(connect_test_base.ConnectTestBase):
         except nest.kernel.NESTError:
             got_error = True
         self.assertTrue(got_error)
+    
+    def testAutapsesTrue(self):
+        conn_params = self.conn_dict.copy()
+
+        # test that autapses exist
+        conn_params["allow_autapses"] = True
+        pop1 = nest.Create("iaf_psc_alpha", self.N1)
+        nest.Connect(pop1, pop1, conn_params)
+        # make sure all connections do exist
+        M = connect_test_base.get_connectivity_matrix(pop1, pop1)
+        np.testing.assert_allclose(np.diag(M).sum(), self.N1 * self.lam, atol=2)
+
     
     def testExpInOutdegree(self):
         connect_test_base.reset_seed(1, self.nr_threads)

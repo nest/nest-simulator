@@ -58,9 +58,9 @@ def get_progress(puzzle, solution):
 
 # Name of the .pkl files to read from.
 in_files = ["350Hz_puzzle_4.pkl"]
-temp_dir = "tmp"                # Name of directory for temporary files
-out_file = "sudoku.gif"         # Name of the output GIF
-keep_temps = False              # If True, temporary files will not be deleted
+temp_dir = "tmp"  # Name of directory for temporary files
+out_file = "sudoku.gif"  # Name of the output GIF
+keep_temps = False  # If True, temporary files will not be deleted
 
 
 if os.path.exists(out_file):
@@ -78,7 +78,6 @@ image_count = 0
 # store datapoints for multiple files in a single list
 lines = []
 for file in in_files:
-
     with open(file, "rb") as f:
         sim_data = pickle.load(f)
 
@@ -96,7 +95,7 @@ for file in in_files:
         solution_progress.append(get_progress(puzzle, solution_states[i]))
 
     for i in range(n_iterations):
-        px = 1 / plt.rcParams['figure.dpi']
+        px = 1 / plt.rcParams["figure.dpi"]
         fig, ax = plt.subplots(figsize=(600 * px, 400 * px))
         ax.set_axis_off()
         current_state = solution_states[i]

@@ -43,7 +43,7 @@
 namespace nest
 {
 
-class EpropArchivingNode : public ArchivingNode
+class EpropArchivingNode : public Node
 {
 
 public:

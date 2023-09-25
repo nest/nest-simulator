@@ -197,7 +197,6 @@ nest::eprop_iaf_psc_delta::init_buffers_()
   B_.spikes_.clear();   // includes resize
   B_.currents_.clear(); // includes resize
   B_.logger_.reset();   // includes resize
-  EpropArchivingNode::clear_history();
 
   V_.z_ = 0.0;
 }
@@ -269,7 +268,6 @@ nest::eprop_iaf_psc_delta::update( Time const& origin, const long from, const lo
 
     if ( S_.y3_ >= P_.V_th_ and S_.r_ == 0 )
     {
-      set_spiketime( Time::step( t + 1 ) );
       add_spike_to_counter();
 
       SpikeEvent se;

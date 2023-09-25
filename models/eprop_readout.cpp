@@ -180,7 +180,6 @@ nest::eprop_readout::init_buffers_()
   B_.spikes_.clear();              // includes resize
   B_.currents_.clear();            // includes resize
   B_.logger_.reset();              // includes resize
-  ArchivingNode::clear_history();
 }
 
 void

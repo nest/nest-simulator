@@ -477,8 +477,6 @@ public:
    */
   virtual void register_stdp_connection( double, double );
 
-  virtual void register_eprop_connection( double, double );
-
   /**
    * Handle incoming spike events.
    *

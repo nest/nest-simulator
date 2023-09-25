@@ -216,12 +216,6 @@ Node::register_stdp_connection( double, double )
   throw IllegalConnection( "The target node does not support STDP synapses." );
 }
 
-void
-Node::register_eprop_connection( double, double )
-{
-  throw IllegalConnection( "The target node does not support e-prop synapses." );
-}
-
 /**
  * Default implementation of event handlers just throws
  * an UnexpectedEvent exception.

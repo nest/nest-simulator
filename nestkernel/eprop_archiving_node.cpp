@@ -31,12 +31,12 @@ namespace nest
 {
 
 nest::EpropArchivingNode::EpropArchivingNode()
-  : ArchivingNode()
+  : Node()
 {
 }
 
 nest::EpropArchivingNode::EpropArchivingNode( const EpropArchivingNode& n )
-  : ArchivingNode( n )
+  : Node( n )
 {
 }
 
@@ -119,9 +119,6 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
 void
 nest::EpropArchivingNode::write_v_m_pseudo_deriv_to_history( long time_step, double v_m_pseudo_deriv )
 {
-  if ( not n_incoming_ )
-    return;
-
   eprop_history_.push_back(
     histentry_eprop_archive( Time( Time::step( time_step ) ).get_ms(), v_m_pseudo_deriv, 0.0 ) );
 }

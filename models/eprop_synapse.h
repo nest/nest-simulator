@@ -306,7 +306,6 @@ public:
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
     t.init_update_history( ( t.get_eprop_node_type() == "readout" ? 3.0 : 2.0 ) * delay_ );
-    t.register_eprop_connection( t_last_spike_ - delay_, delay_ );
   }
 
   void

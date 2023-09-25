@@ -350,7 +350,6 @@ eprop_readout::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
-  EpropArchivingNode::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 
   DictionaryDatum receptor_dict_ = new Dictionary();
@@ -370,9 +369,6 @@ eprop_readout::set_status( const DictionaryDatum& d )
   // make sure that ptmp and stmp consistent - throw BadProperty if not
   const double delta_EL = ptmp.set( d, this );
   stmp.set( d, ptmp, delta_EL, this );
-
-  // make sure that properties to be set in parent class consistent
-  EpropArchivingNode::set_status( d );
 
   P_ = ptmp;
   S_ = stmp;

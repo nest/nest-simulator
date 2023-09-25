@@ -281,6 +281,7 @@ public:
   void optimize( long current_optimization_step_, long& last_optimization_step_, const EpropCommonProperties& cp );
 
   virtual void update_gradient( EpropArchivingNode* target, double& grad, const EpropCommonProperties& cp ) const {};
+  virtual void check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& ){};
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -299,16 +300,6 @@ public:
       return invalid_port;
     }
   };
-
-  void
-  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
-  {
-    ConnTestDummyNode dummy_target;
-    ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
-
-    EpropArchivingNode& t_arch = dynamic_cast<EpropArchivingNode&>(t);
-    t_arch.init_update_history( ( t_arch.get_eprop_node_type() == "readout" ? 3.0 : 2.0 ) * delay_ );
-  }
 
   void
   set_weight( double w )

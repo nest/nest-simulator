@@ -204,6 +204,7 @@ class eprop_synapse_iaf_psc_delta_adapt : public eprop_synapse< targetidentifier
 {
 
 public:
+  typedef EpropCommonProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
   using ConnectionBase::get_delay;
@@ -214,6 +215,7 @@ public:
   void update_gradient( EpropArchivingNode* target, double& grad, const EpropCommonProperties& cp ) const override;
   void get_status( DictionaryDatum& d ) const;
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+  void check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& ) override;
 };
 
 template < typename targetidentifierT >
@@ -229,6 +231,18 @@ eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::set_status( const Dictio
 {
   eprop_synapse< targetidentifierT >::set_status( d, cm );
 }
+
+template < typename targetidentifierT >
+void
+eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
+{
+  typename eprop_synapse< targetidentifierT >::ConnTestDummyNode dummy_target;
+  ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
+
+  EpropArchivingNode& t_arch = dynamic_cast<EpropArchivingNode&>(t);
+  t_arch.init_update_history( 2.0 * get_delay() );
+}
+
 
 template < typename targetidentifierT >
 void

@@ -217,28 +217,16 @@ nest::EpropArchivingNode::get_firing_rate_reg( double time_point )
   return it->firing_rate_reg_;
 }
 
-double
-nest::EpropArchivingNode::get_leak_propagator() const
+void
+nest::EpropArchivingNode::write_eprop_parameter_to_map(std::string parameter_name, double parameter_value)
 {
-  throw UnexpectedEvent();
+    eprop_parameter_map_[parameter_name] = parameter_value;
 }
 
-double
-nest::EpropArchivingNode::get_leak_propagator_complement() const
+std::map<std::string, double>&
+nest::EpropArchivingNode::get_eprop_parameter_map()
 {
-  throw UnexpectedEvent();
-}
-
-double
-nest::EpropArchivingNode::get_adapt_propagator() const
-{
-  throw UnexpectedEvent();
-}
-
-double
-nest::EpropArchivingNode::get_adapt_beta() const
-{
-  throw UnexpectedEvent();
+    return eprop_parameter_map_;
 }
 
 std::string

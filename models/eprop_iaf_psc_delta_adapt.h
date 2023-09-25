@@ -197,11 +197,6 @@ public:
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
-  double get_leak_propagator() const;
-  double get_leak_propagator_complement() const;
-  double get_adapt_propagator() const;
-  double get_adapt_beta() const;
-
   std::string get_eprop_node_type() const;
 
 private:

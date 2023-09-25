@@ -215,6 +215,9 @@ nest::eprop_iaf_psc_delta::pre_run_hook()
   V_.P33_complement_ = propagators[ P_.propagator_idx_ ];
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
+
+  write_eprop_parameter_to_map("leak_propagator", V_.P33_);
+  write_eprop_parameter_to_map("leak_propagator_complement", V_.P33_complement_);
 }
 
 /* ----------------------------------------------------------------
@@ -295,18 +298,6 @@ nest::eprop_iaf_psc_delta::update( Time const& origin, const long from, const lo
 /* ----------------------------------------------------------------
  * Getter functions for private variables and parameters
  *----------------------------------------------------------------- */
-
-double
-nest::eprop_iaf_psc_delta::get_leak_propagator() const
-{
-  return V_.P33_;
-}
-
-double
-nest::eprop_iaf_psc_delta::get_leak_propagator_complement() const
-{
-  return V_.P33_complement_;
-}
 
 std::string
 nest::eprop_iaf_psc_delta::get_eprop_node_type() const

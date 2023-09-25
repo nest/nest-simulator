@@ -61,17 +61,15 @@ public:
   void write_learning_signal_to_history( LearningSignalConnectionEvent& e );
   void write_update_to_history( double t_last_update, double t_current_update );
   void write_firing_rate_reg_to_history( double t_current_update, double f_target, double c_reg );
+  void write_eprop_parameter_to_map(std::string parameter_name, double parameter_value );
 
   double get_firing_rate_reg( double time_point );
   void get_eprop_history( double time_point, std::deque< histentry_eprop_archive >::iterator* it );
+  std::map<std::string, double>& get_eprop_parameter_map();
 
   void add_spike_to_counter();
   void reset_spike_counter();
 
-  virtual double get_leak_propagator() const;
-  virtual double get_leak_propagator_complement() const;
-  virtual double get_adapt_propagator() const;
-  virtual double get_adapt_beta() const;
   virtual std::string get_eprop_node_type() const;
 
 private:
@@ -81,6 +79,8 @@ private:
   std::deque< histentry_eprop_archive > eprop_history_;
   std::vector< histentry_eprop_firing_rate_reg > firing_rate_reg_history_;
   std::vector< histentry_eprop_update > update_history_;
+
+  std::map<std::string, double> eprop_parameter_map_;
 };
 
 } // namespace nest

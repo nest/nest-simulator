@@ -239,8 +239,12 @@ eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::update_gradient( EpropAr
   std::deque< histentry_eprop_archive >::iterator it_eprop_hist;
   target->get_eprop_history( this->t_last_trigger_spike_ + get_delay(), &it_eprop_hist );
 
-  double alpha = target->get_leak_propagator();
-  double alpha_complement = target->get_leak_propagator_complement();
+  std::map<std::string, double>& eprop_parameter_map = target->get_eprop_parameter_map();
+  double alpha = eprop_parameter_map["leak_propagator"];
+  double alpha_complement = eprop_parameter_map["leak_propagator_complement"];
+  double beta = eprop_parameter_map["adapt_beta"];
+  double rho  = eprop_parameter_map["adapt_propagator"];
+
   double sum_t_prime = 0.0;
   double sum_e_bar = 0.0;
   double last_z_bar = 0.0;
@@ -253,8 +257,6 @@ eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::update_gradient( EpropAr
     {
       double psi = it_eprop_hist->V_m_pseudo_deriv_;
       double e_bar = psi * last_z_bar;
-      double beta = target->get_adapt_beta();
-      double rho = target->get_adapt_propagator();
 
       e_bar -= psi * beta * epsilon;
       epsilon = psi * last_z_bar + ( rho - psi * beta ) * epsilon;

@@ -86,7 +86,7 @@ def _check_security():
     if "*" in CORS_ORIGINS:
         msg.append("CORS:\tThe allowed origins are not restricted.")
     if EXEC_CALL_ENABLED:
-        msg.append("EXEC CALL:\tThe exec route is enables and scripts can be executed.")
+        msg.append("EXEC CALL:\tThe exec route is enabled and scripts can be executed.")
         if RESTRICTION_DISABLED:
             msg.append("RESTRICTION: The execution of scripts is not protected by RestrictedPython.")
 

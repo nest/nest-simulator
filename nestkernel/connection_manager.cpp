@@ -683,7 +683,7 @@ nest::ConnectionManager::connect_arrays( long* sources,
             if ( *param > 1L << 31 or std::abs( *param - rtype_as_long ) > 0 ) // To avoid rounding errors
             {
               const std::string msg =
-                String::compose( "Expected integer value for %1, but got double.", param_pointer_pair.first);
+                String::compose( "Expected integer value for %1, but got double.", param_pointer_pair.first );
               throw BadParameter( msg );
             }
 
@@ -695,10 +695,12 @@ nest::ConnectionManager::connect_arrays( long* sources,
           }
         }
 
-        param_dicts[ tid ].init_access_flags();
+        param_dicts[ tid ].init_access_flags(); // PYNEST-NG: Possible performance bottleneck
+
         connect( *s, target_node, tid, synapse_model_id, param_dicts[ tid ], delay_buffer, weight_buffer );
 
-        param_dicts[ tid ].all_entries_accessed( "connect_arrays", "params" );
+        param_dicts[ tid ].all_entries_accessed(
+          "connect_arrays", "params" ); // PYNEST-NG: Possible performance bottleneck
 
         increment_wd( w, d );
       }

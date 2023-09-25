@@ -22,6 +22,7 @@
 """
 Test that spike timings of plain and canon iaf_psc populations match empirical data given preconfigured settings.
 """
+
 import nest
 import numpy as np
 import pytest
@@ -60,7 +61,8 @@ def test_simulation_completes():
 
     nest.Simulate(200.0)
 
-    spike_recs = spike_recorder.get("events", ["senders", "times"])
+    times = np.array(spike_recorder.events["times"])
+    senders = np.array(spike_recorder.events["senders"])
 
-    assert np.all(np.in1d(np.array([1, 2]), spike_recs["senders"].T[:2]))
-    assert np.all(spike_recs["times"].T[:2] == pytest.approx(4.1))
+    assert np.all(np.in1d(np.array([1, 2]), senders.T[:2]))
+    assert np.all(times.T[:2] == pytest.approx(4.1))

@@ -24,8 +24,8 @@ Functions for model handling
 """
 
 from .. import nestkernel_api as nestkernel
-from ..ll_api import *
 from .hl_api_helper import deprecated, is_iterable, model_deprecation_warning
+from .hl_api_simulation import GetKernelStatus
 from .hl_api_types import to_json
 
 __all__ = [

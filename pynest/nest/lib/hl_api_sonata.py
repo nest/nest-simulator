@@ -385,7 +385,8 @@ class SonataNetwork:
 
         if "dynamics_params" not in nodes_df.columns:
             raise ValueError(
-                f"Missing the required 'dynamics_params' header specifying .json files with model parameters in {csv_fn}."
+                "Missing the required 'dynamics_params' header specifying .json "
+                f"files with model parameters in {csv_fn}."
             )
 
         nodes_df["model_template"] = nodes_df["model_template"].str.replace("nest:", "")

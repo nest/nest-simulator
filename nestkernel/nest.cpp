@@ -560,9 +560,7 @@ run( const double& time )
   }
   if ( not t_sim.is_grid_time() )
   {
-    throw BadParameter(
-      "The simulation time must be a multiple "
-      "of the simulation resolution." );
+    throw BadParameter( "The simulation time must be a multiple of the simulation resolution." );
   }
 
   kernel().simulation_manager.run( t_sim );
@@ -692,7 +690,6 @@ create_parameter( const dictionary& param_dict )
   {
     throw BadProperty( "Parameter definition dictionary must contain one single key only." );
   }
-
   const auto n = param_dict.begin()->first;
   const auto pdict = param_dict.get< dictionary >( n );
   pdict.init_access_flags();

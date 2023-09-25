@@ -21,11 +21,15 @@
 
 
 """
-minimal test of correlomatrix detector
-Feeds correlomatrix detector with hand-crafted spike trains with
-known correlation. Correlomatrix detector parameters are set in model.
-Remarks:
-  The test does not test weighted correlations.
+Minimal test of ``correlomatrix_detector``.
+
+In this test, we feed ``correlomatrix_detector`` with hand-crafted spike
+trains with known correlation. The ``correlomatrix_detector`` parameters are
+set on the model instance.
+
+.. note::
+
+    The test does not test weighted correlations.
 """
 
 import nest
@@ -136,12 +140,12 @@ def prepare_correlomatrix_detector(spike_times_array):
 
 def diff_at_center():
     spikes_times = [[1.5, 2.5, 4.5], [0.5, 2.5]]
-    covariance = [1, 0, 1, 0, 2]
+    covariance = [1.0, 0.0, 1.0, 0.0, 2.0]
     return (spikes_times, covariance)
 
 
-@pytest.mark.parametrize("spikes_times, covariance", [diff_at_center()])
-def test_histogram_correlation(spikes_times, covariance):
+@pytest.mark.parametrize("spikes_times, expected_covariance", [diff_at_center()])
+def test_histogram_correlation(spikes_times, expected_covariance):
     nest.ResetKernel()
 
     nest.resolution = 0.1
@@ -149,12 +153,12 @@ def test_histogram_correlation(spikes_times, covariance):
 
     detector = prepare_correlomatrix_detector(spikes_times)
 
-    n_events = detector.get("n_events")
+    n_events = detector.n_events
     spikes_times_size = list(map(lambda x: len(x), spikes_times))
-    assert (n_events == spikes_times_size).all()
+    assert n_events == spikes_times_size
 
-    covariance = detector.get("covariance")[0][1]
-    assert (covariance == covariance).all()
+    actual_covariance = detector.get("covariance")[0][1]
+    assert actual_covariance == expected_covariance
 
 
 def test_reset():
@@ -166,11 +170,11 @@ def test_reset():
     spikes_times = [[1.0, 2.0, 6.0], [2.0, 4.0]]
     detector = prepare_correlomatrix_detector(spikes_times)
 
-    covariance = detector.get("covariance")
+    covariance = np.array(detector.get("covariance"))
 
     has_zero_entries = np.any(covariance == 0)
 
     if not has_zero_entries:
         detector.set(N_channels=8)
-        assert np.all(detector.get("n_events") == 0)
-        assert np.all(detector.get("covariance")[0][0] == 0.0)
+        covariance = np.array(detector.get("covariance"))
+        assert np.all(covariance[0][0] == 0.0)

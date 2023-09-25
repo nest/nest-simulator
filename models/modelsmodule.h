@@ -25,7 +25,7 @@
 
 namespace nest
 {
-  void register_stuff();
+void register_stuff();
 } // namespace
 
 #endif

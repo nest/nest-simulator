@@ -32,7 +32,7 @@ class GetSetTestCase(unittest.TestCase):
     def setUp(self):
         nest.ResetKernel()
 
-    def test_LayerSet(self):
+    def test_LayerSetOnInstance(self):
         """Test Set on layer NodeCollection."""
 
         layer_shape = [3, 3]

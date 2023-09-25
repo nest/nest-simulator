@@ -21,15 +21,16 @@
 
 
 """
-   Makeshift test to see if setting model params and then creating a neuron
-   and creating a neuron and then setting node params lead to the same
-   results.
+Makeshift test to see if setting model params and then creating a neuron
+and creating a neuron and then setting node params lead to the same
+results.
 
-   Works by connecting device to iaf_psc_alpha, measuring voltage trace over 1s
-   and comparing traces.
+Works by connecting device to iaf_psc_alpha, measuring voltage trace over 1s
+and comparing traces.
 """
 
 import nest
+import numpy as np
 import pytest
 
 
@@ -39,8 +40,8 @@ def _get_network_state(nc):
 
     nest.Connect(nc, neuron)
     nest.Connect(voltmeter, neuron)
-    nest.Simulate(1000)
-    volts = voltmeter.get("events")["V_m"]
+    nest.Simulate(1000.0)
+    volts = np.array(voltmeter.events["V_m"])
 
     return (volts, nc.get())
 

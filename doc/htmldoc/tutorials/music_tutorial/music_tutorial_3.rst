@@ -398,7 +398,7 @@ channel on the receiving side. And of course NEST deals in milliseconds
 while MUSIC uses seconds.
 
 This section has covered most things you need in order to use it for
-straightforward user-level input and output applications. But there is a
+straightforward user facing input and output applications. But there is a
 lot more to the MUSIC API, especially if you intend to implement it as a
 simulator interface, so you should consult the documentation for more
 details.

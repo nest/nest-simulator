@@ -67,7 +67,6 @@ extensions = [
 
 autodoc_mock_imports = ["nest.pynestkernel", "nest.ll_api"]
 mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-panels_add_bootstrap_css = False
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["templates"]
 
@@ -81,7 +80,7 @@ sphinx_gallery_conf = {
 }
 
 carousel_show_captions_below = True
-carousel_show_controls = True
+# carousel_show_controls = True
 
 # General information about the project.
 project = "NEST Simulator user documentation"

@@ -27,9 +27,10 @@ Please familiarize yourself with our guides and workflows:
 .. admonition:: First time contributors
 
    In order to make sure that the NEST Initiative can manage the NEST code base in the long term,
-   you need to send us a completed and signed
-   :download:`NEST Contributor Agreement <static/NEST_Contributor_Agreement.pdf>` to transfer your
-   copyright to the NEST Initiative before we can merge your pull request.
+   we ask that you fill in the :download:`NEST Contributor Agreement <https://nest-simulator.readthedocs.io/en/latest/_downloads/9b65adbdacba6bfed66e68c62af4e308/NEST_Contributor_Agreement.pdf>`
+   form to transfer your copyright to the NEST initiative and send it to *info [at] nest-initiative.org*.
+
+
 
 
 .. grid:: 1 1 2 2
@@ -53,3 +54,8 @@ Please familiarize yourself with our guides and workflows:
 
     If you are looking at creating a new model, please consider :doc:`NESTML <nestml:index>`:
     a modeling language supporting neuron and synapse specification, based on the syntax of Python.
+
+
+.. seealso::
+
+   You can find additional guides for technical documentation :ref:`here <developer_space>`

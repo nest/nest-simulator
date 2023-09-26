@@ -23,3 +23,4 @@ Model implementation details
        * :doc:`noise_generator`
        * :doc:`post_trace_computation`
        * :doc:`siegert_neuron_integration`
+       * :doc:`astrocyte_model_implementation`

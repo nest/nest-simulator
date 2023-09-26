@@ -328,7 +328,8 @@ eprop_readout::handles_test_event( DelayedRateConnectionEvent& e, size_t recepto
   size_t model_id = e.get_sender().get_model_id();
 
   if ( step_rate_model_id == model_id and receptor_type != TARGET_SIG )
-    throw StepRateGeneratorExpected();
+    throw IllegalConnection(
+      "eprop_readout neurons expect a connection with a step_rate_generator node through receptor_type 2." );
 
   if ( receptor_type < MIN_RATE_RECEPTOR or receptor_type >= SUP_RATE_RECEPTOR )
     throw UnknownReceptorType( receptor_type, get_name() );

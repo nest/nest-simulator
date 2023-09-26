@@ -1326,20 +1326,6 @@ public:
   std::string message() const override;
 };
 
-class StepRateGeneratorExpected : public KernelException
-{
-public:
-  StepRateGeneratorExpected()
-    : KernelException( "StepRateGeneratorExpected" )
-  {
-  }
-  ~StepRateGeneratorExpected() throw()
-  {
-  }
-
-  std::string message() const;
-};
-
 } // namespace nest
 
 #endif

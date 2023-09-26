@@ -130,7 +130,7 @@ def test_sinusoidal_poisson_generator_with_spike_recorder(num_threads, individua
     nest.Simulate(500.0)
 
     # Nested list of recorded spike times from each sender
-    spikes_all_nrns = srecs.events["times"]
+    spikes_all_nrns = [event["times"] for event in srecs.events]
 
     # Check that we actually obtained a spike times array for each neuron
     assert len(spikes_all_nrns) == total_num_nrns

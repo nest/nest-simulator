@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_nest_get_set.py
+# test_nest_set_get.py
 #
 # This file is part of NEST.
 #

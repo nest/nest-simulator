@@ -312,9 +312,9 @@ span.md-nav__link.caption {
 .sd-card-body {
    padding: 0.6rem;
 }
-.sd-btn {
+#welcome .sd-btn {
 	font-size: 1em;
-	padding: .375em .75em;
+	padding: .75em .75em;
 }
 .sd-container-fluid {
   padding-left: 0;
@@ -323,6 +323,12 @@ span.md-nav__link.caption {
 .sd-container, .sd-container-fluid, .sd-container-lg, .sd-container-md, .sd-container-sm, .sd-container-xl {
 	padding-left: 0;
 	padding-right: 0;
+}
+.scbs-carousel-control-next-icon{
+  background-image: url('../img/arrow_right.svg')
+}
+.scbs-carousel-control-prev-icon{
+  background-image: url('../img/arrow_left.svg')
 }
 
 /* ************************************

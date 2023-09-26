@@ -144,6 +144,33 @@ PyNEST examples
 
 .. grid:: 1 1 2 3
 
+    .. grid-item-card:: e-prop plasticity
+           :img-top: ../static/img/pynest/eprop_supervised_classification_infrastructure.png
+
+           * :doc:`../auto_examples/eprop_plasticity/eprop_supervised_classification`
+           * :doc:`../auto_examples/eprop_plasticity/eprop_supervised_regression`
+
+
+    .. grid-item-card:: Urbanczik and Clopath
+           :img-top: ../static/img/pynest/urbanczik_syn.png
+
+           * :doc:`../auto_examples/urbanczik_synapse_example`
+           * :doc:`../auto_examples/clopath_synapse_spike_pairing`
+           * :doc:`../auto_examples/clopath_synapse_small_network`
+
+
+
+    .. grid-item-card:: Tsodyks
+           :img-top: ../static/img/pynest/tsodyks_dep.png
+
+           * :doc:`../auto_examples/tsodyks_depressing`
+           * :doc:`../auto_examples/tsodyks_facilitating`
+           * :doc:`../auto_examples/evaluate_tsodyks2_synapse`
+
+
+
+.. grid:: 1 1 2 3
+
     .. grid-item-card:: Gap junctions
            :img-top: ../static/img/pynest/gap_junctioninhib.png
 
@@ -161,33 +188,6 @@ PyNEST examples
            :img-top: ../static/img/pynest/synapsecollection.png
 
            * :doc:`../auto_examples/synapsecollection`
-
-.. grid:: 1 1 2 3
-
-    .. grid-item-card:: Urbanczik
-           :img-top: ../static/img/pynest/urbanczik_syn.png
-
-           * :doc:`../auto_examples/urbanczik_synapse_example`
-
-
-
-    .. grid-item-card:: Clopath
-           :img-top: ../static/img/pynest/clopath.png
-
-
-           * :doc:`../auto_examples/clopath_synapse_spike_pairing`
-           * :doc:`../auto_examples/clopath_synapse_small_network`
-
-
-
-    .. grid-item-card:: Tsodyks
-           :img-top: ../static/img/pynest/tsodyks_dep.png
-
-           * :doc:`../auto_examples/tsodyks_depressing`
-           * :doc:`../auto_examples/tsodyks_facilitating`
-           * :doc:`../auto_examples/evaluate_tsodyks2_synapse`
-
-
 
 .. grid:: 1 1 2 3
 
@@ -316,6 +316,8 @@ PyNEST examples
    ../auto_examples/csa_example
    ../auto_examples/csa_spatial_example
    ../auto_examples/hpc_benchmark
+   ../auto_examples/eprop_plasticity/eprop_supervised_classification
+   ../auto_examples/eprop_plasticity/eprop_supervised_regression
    ../auto_examples/eprop_plasticity/index
 
 .. toctree::

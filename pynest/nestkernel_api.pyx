@@ -33,9 +33,10 @@ from libcpp.vector cimport vector
 
 # from libc.string cimport memcpy
 
+import numbers
+
 import nest
 import numpy
-import numbers
 
 # cimport numpy
 

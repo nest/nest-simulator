@@ -213,19 +213,19 @@ private:
 
   struct Parameters_
   {
-    double tau_m_;       //!< membrane time constant (ms)
-    double C_m_;         //!< membrane capacitance (pF)
-    double c_reg_;       //!< prefactor of firing rate regularization
-    double t_ref_;       //!< refractory period (ms)
-    double E_L_;         //!< leak potential (mV)
-    double f_target_;    //!< target firing rate of rate regularization (Hz)
-    double I_e_;         //!< external DC current (pA)
-    double V_th_;        //!< spike treshold voltage relative to leak potential (mV)
-    double V_min_;       //!< lower membrane voltage bound relative to leak potential (mV)
-    double adapt_beta_;  //!< prefactor of the adaptive threshold voltage
-    double adapt_tau_;   //!< time constant of the adaptive threshold (ms)
-    double gamma_;       //!< scaling of pseudo-derivative of membrane voltage
-    int propagator_idx_; //!< index of propagators 1 (1.0 - exp(dt/tau_m)) or 0 (1.0)
+    double tau_m_;        //!< membrane time constant (ms)
+    double C_m_;          //!< membrane capacitance (pF)
+    double c_reg_;        //!< prefactor of firing rate regularization
+    double t_ref_;        //!< refractory period (ms)
+    double E_L_;          //!< leak potential (mV)
+    double f_target_;     //!< target firing rate of rate regularization (Hz)
+    double I_e_;          //!< external DC current (pA)
+    double V_th_;         //!< spike treshold voltage relative to leak potential (mV)
+    double V_min_;        //!< lower membrane voltage bound relative to leak potential (mV)
+    double adapt_beta_;   //!< prefactor of the adaptive threshold voltage
+    double adapt_tau_;    //!< time constant of the adaptive threshold (ms)
+    double gamma_;        //!< scaling of pseudo-derivative of membrane voltage
+    long propagator_idx_; //!< index of propagators 1 (1.0 - exp(dt/tau_m)) or 0 (1.0)
 
     Parameters_();
 

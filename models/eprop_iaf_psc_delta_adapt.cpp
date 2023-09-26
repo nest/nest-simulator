@@ -118,7 +118,7 @@ nest::eprop_iaf_psc_delta_adapt::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::adapt_beta, adapt_beta_ );
   def< double >( d, names::adapt_tau, adapt_tau_ );
   def< double >( d, names::gamma, gamma_ );
-  def< double >( d, names::propagator_idx, propagator_idx_ );
+  def< long >( d, names::propagator_idx, propagator_idx_ );
 }
 
 double
@@ -141,7 +141,7 @@ nest::eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Nod
   updateValueParam< double >( d, names::adapt_beta, adapt_beta_, node );
   updateValueParam< double >( d, names::adapt_tau, adapt_tau_, node );
   updateValueParam< double >( d, names::gamma, gamma_, node );
-  updateValueParam< double >( d, names::propagator_idx, propagator_idx_, node );
+  updateValueParam< long >( d, names::propagator_idx, propagator_idx_, node );
 
   if ( C_m_ <= 0 )
     throw BadProperty( "Capacitance must be > 0." );

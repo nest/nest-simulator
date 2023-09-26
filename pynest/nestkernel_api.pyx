@@ -245,9 +245,13 @@ cdef dictionary pydict_to_dictionary(object py_dict) except *:  # Adding "except
         elif type(value) is ParameterObject:
             cdict[pystr_to_string(key)] = (<ParameterObject>value).thisptr
         else:
+            typename = type(value)
             if type(value) is list:
-                print("list of ", type(value[0]))
-            raise AttributeError(f'when converting Python dictionary: value of key ({key}) is not a known type, got {type(value)}')
+                if len(value) > 0:
+                    typename = f"list of {type(value[0])}"
+                else:
+                    typename = f"empty list (for which the element type cannot be determined)"
+            raise AttributeError(f'when converting Python dictionary: value of key ({key}) is not a known type, got {typename}')
     return cdict
 
 

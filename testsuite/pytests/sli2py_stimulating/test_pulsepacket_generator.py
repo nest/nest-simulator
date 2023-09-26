@@ -71,7 +71,7 @@ def test_valid_to_pass_empty_pulse_times():
     Assure that a `pulsepacket_generator` with empty `pulse_times` can be simulated.
     """
 
-    params = {"pulse_times": [], "activity": 0, "sdev": 0.0}
+    params = {"pulse_times": np.array([]), "activity": 0, "sdev": 0.0}
     ppg = nest.Create("pulsepacket_generator")
     ppg.set(params)
     nest.Simulate(1.0)

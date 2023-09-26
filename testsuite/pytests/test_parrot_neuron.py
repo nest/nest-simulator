@@ -206,13 +206,13 @@ class ParrotNeuronSTDPTestCase(unittest.TestCase):
 
         # get STDP synapse and weight before protocol
         syn = nest.GetConnections(source=pre_parrot, synapse_model="stdp_synapse")
-        w_pre = syn.get("weight")
+        w_pre = syn.weight
 
         last_time = max(pre_times[-1], post_times[-1])
         nest.Simulate(last_time + 2 * delay)
 
         # get weight post protocol
-        w_post = syn.get("weight")
+        w_post = syn.weight
 
         return w_pre, w_post
 

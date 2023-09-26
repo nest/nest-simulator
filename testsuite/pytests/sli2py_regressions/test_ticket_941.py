@@ -38,10 +38,10 @@ def check_connection(source, n_expected, expected):
 
     assert len(conns) == n_expected
 
-    for node in conns:
-        assert node.get("source") == source.tolist()[0]
-        assert node.get("target") == target_expected.tolist()[0]
-        assert node.get("synapse_model") == syn_type_expected
+    for conn in conns:
+        assert conn.source == source.tolist()[0]
+        assert conn.target == target_expected.tolist()[0]
+        assert conn.synapse_model == syn_type_expected
 
 
 def test_different_connections():
@@ -93,6 +93,6 @@ def test_different_connections():
         )
     )
 
-    synapses = nest.GetConnections(source=pn1, target=pn2).get("synapse_model")
+    synapses = nest.GetConnections(source=pn1, target=pn2).synapse_model
     expected_synapses = ["static_synapse", "static_synapse", "static_synapse_hom_w"]
     assert np.all(np.in1d(expected_synapses, synapses))

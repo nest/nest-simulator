@@ -317,7 +317,7 @@ class ConnectLayersTestCase(unittest.TestCase):
         syn_spec = {"weight": nest.random.uniform(min=0.5)}
         nest.Connect(self.layer, self.layer, conn_spec, syn_spec)
         conns = nest.GetConnections()
-        conn_weights = np.array(conns.get("weight"))
+        conn_weights = conns.weight
         self.assertTrue(len(np.unique(conn_weights)) > 1)
         self.assertTrue((conn_weights >= 0.5).all())
         self.assertTrue((conn_weights <= 1.0).all())
@@ -331,7 +331,7 @@ class ConnectLayersTestCase(unittest.TestCase):
         syn_spec = {"delay": nest.random.uniform(min=0.5)}
         nest.Connect(self.layer, self.layer, conn_spec, syn_spec)
         conns = nest.GetConnections()
-        conn_delays = np.array(conns.get("delay"))
+        conn_delays = conns.delay
         self.assertTrue(len(np.unique(conn_delays)) > 1)
         self.assertTrue((conn_delays >= 0.5).all())
         self.assertTrue((conn_delays <= 1.0).all())

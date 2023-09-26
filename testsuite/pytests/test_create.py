@@ -20,111 +20,101 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Creation tests
+Basic tests of the ``Create`` function.
 """
 
-import unittest
 import warnings
 
 import nest
+import numpy.testing as nptest
+import pytest
 
 
-class CreateTestCase(unittest.TestCase):
-    """Creation tests"""
-
-    def setUp(self):
-        nest.ResetKernel()
-
-    def test_ModelCreate(self):
-        """Model Creation"""
-
-        for model in nest.node_models:
-            node = nest.Create(model)
-            self.assertGreater(node.get("global_id"), 0)
-
-    def test_ModelCreateN(self):
-        """Model Creation with N"""
-
-        num_nodes = 10
-        for model in nest.node_models:
-            nodes = nest.Create(model, num_nodes)
-            self.assertEqual(len(nodes), num_nodes)
-
-    def test_correct_node_collection_model_created(self):
-        """
-        Ensure that the correct model is created for node in ``NodeCollection``.
-
-        NOTE: This test was moved from test_NodeCollection.py and may overlap
-        with test already present in this test suite. If that is the case,
-        consider to just drop this test.
-        """
-
-        models = nest.node_models
-        nc = nest.NodeCollection()
-
-        for model in models:
-            nc += nest.Create(model)
-
-        self.assertTrue(len(nc) > 0)
-
-        for i, node in enumerate(nc):
-            self.assertEqual(node.model, models[i])
-
-    def test_ModelCreateNdict(self):
-        """Model Creation with N and dict"""
-
-        num_nodes = 10
-        voltage = 12.0
-        n = nest.Create("iaf_psc_alpha", num_nodes, {"V_m": voltage})
-
-        self.assertEqual(n.V_m, (voltage,) * num_nodes)
-
-    def test_Create_accepts_empty_params_dict(self):
-        """
-        Create with empty parameter dictionary
-
-        NOTE: This test was moved from test_NodeCollection.py and may overlap
-        with test already present in this test suite. If that is the case,
-        consider to just drop this test.
-        """
-        nest.Create("iaf_psc_delta", params={})
-
-    def test_erroneous_param_to_create(self):
-        """Erroneous param to Create raises exception"""
-        num_nodes = 3
-        params = [
-            (tuple(), TypeError, False),
-            ({"V_m": [-50]}, IndexError, True),
-            ({"V_mm": num_nodes * [-50.0]}, nest.NESTError, True),
-        ]
-
-        for p, err, expects_warning in params:
-            with warnings.catch_warnings(record=True) as w:
-                warnings.simplefilter("always")
-                self.assertRaises(err, nest.Create, "iaf_psc_alpha", num_nodes, p)
-                if expects_warning:
-                    self.assertEqual(len(w), 1, "warning was not issued")
-                    self.assertTrue(issubclass(w[0].category, UserWarning))
-
-    def test_ModelDicts(self):
-        """IAF Creation with N and dicts"""
-
-        num_nodes = 10
-        V_m = (0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0)
-        n = nest.Create("iaf_psc_alpha", num_nodes, [{"V_m": v} for v in V_m])
-
-        self.assertEqual(n.V_m, V_m)
+@pytest.fixture(autouse=True)
+def reset():
+    nest.ResetKernel()
 
 
-def suite():
-    suite = unittest.makeSuite(CreateTestCase, "test")
-    return suite
+@pytest.mark.parametrize("model", nest.node_models)
+def test_create_model(model):
+    """Test basic model creation."""
+
+    node = nest.Create(model)
+    assert node.global_id > 0
 
 
-def run():
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(suite())
+@pytest.mark.parametrize("model", nest.node_models)
+def test_create_model_n_nodes(model):
+    """Test creation of multiple nodes with the same model."""
+
+    num_nodes = 10
+    nodes = nest.Create(model, num_nodes)
+    assert len(nodes) == num_nodes
 
 
-if __name__ == "__main__":
-    run()
+def test_correct_node_collection_model_created():
+    """
+    Ensure that the correct model is created for node in ``NodeCollection``.
+    """
+
+    models = nest.node_models
+    nc = nest.NodeCollection()
+
+    for model in models:
+        nc += nest.Create(model)
+
+    assert len(nc) > 0
+
+    for i, node in enumerate(nc):
+        assert node.model == models[i]
+
+
+def test_create_with_params_dict():
+    """Test model creation with parameter dictionary."""
+
+    num_nodes = 10
+    voltage = 12.0
+    nodes = nest.Create("iaf_psc_alpha", num_nodes, {"V_m": voltage})
+
+    nptest.assert_equal(nodes.V_m, voltage)
+
+
+def test_create_accepts_empty_params_dict():
+    """
+    Test creation with empty parameter dictionary.
+    """
+
+    nest.Create("iaf_psc_delta", params={})
+
+
+def test_create_with_params_dicts():
+    """Test model creation with multiple parameter dictionaries."""
+
+    num_nodes = 10
+    V_m = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
+    nodes = nest.Create("iaf_psc_alpha", num_nodes, [{"V_m": v} for v in V_m])
+
+    nptest.assert_equal(nodes.V_m, V_m)
+
+
+@pytest.mark.parametrize(
+    "params, expected_error, expects_warning",
+    [
+        [tuple(), TypeError, False],
+        [{"V_m": [-50]}, IndexError, True],
+        [{"V_mm": 3 * [-50.0]}, nest.NESTErrors.UnaccessedDictionaryEntry, True],
+    ],
+)
+def test_erroneous_param_to_create_raises(params, expected_error, expects_warning):
+    """Ensure passing an erroneous parameter dictionary to ``Create`` raises exception."""
+
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+
+        with pytest.raises(expected_error):
+            nest.Create("iaf_psc_alpha", 3, params)
+
+            if expects_warning:
+                # verify that user warning was issued
+                assert len(w) == 1
+                assert issubclass(w[0].category, UserWarning)

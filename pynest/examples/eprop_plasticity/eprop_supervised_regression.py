@@ -138,7 +138,7 @@ params_setup = {
 ####################
 
 nest.ResetKernel()
-nest.SetKernelStatus(params_setup)
+nest.set(**params_setup)
 
 # %% ###########################################################################################################
 # Create neurons

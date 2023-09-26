@@ -76,8 +76,8 @@ class EpropPlasticityTestCase(unittest.TestCase):
 
         nest.set_verbosity("M_WARNING")
         nest.ResetKernel()
-        nest.SetKernelStatus(
-            {
+        nest.set(
+            **{
                 "eprop_regression": True,
                 "eprop_update_interval": update_interval,
                 "eprop_reset_neurons_on_update": True,
@@ -497,8 +497,8 @@ class EpropPlasticityTestCase(unittest.TestCase):
 
         nest.set_verbosity("M_WARNING")
         nest.ResetKernel()
-        nest.SetKernelStatus(
-            {
+        nest.set(
+            **{
                 "resolution": resolution,
             }
         )

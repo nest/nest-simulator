@@ -84,7 +84,7 @@ def test_setting_num_of_histogram_bins():
 
     nest.Simulate(1)
 
-    histogram_size = len(detector.get("histogram"))
+    histogram_size = len(detector.histogram)
 
     assert histogram_size == 11
 
@@ -142,7 +142,7 @@ def test_histogram_correlation(spikes_times, expected_histogram):
     spikes_times_size = list(map(lambda x: len(x), spikes_times))
     assert n_events == spikes_times_size
 
-    assert detector.histogram == expected_histogram
+    assert (detector.histogram == expected_histogram).all()
 
 
 def test_setting_invalid_n_events():
@@ -161,11 +161,9 @@ def test_reset():
     spikes_times = [[1.0, 2.0, 6.0], [2.0, 4.0]]
     detector = prepare_correlation_detector(spikes_times)
 
-    # n_events = detector.get("n_events")
-
-    has_zero_entries = detector.n_events == 0
+    has_zero_entries = np.any(detector.n_events == 0)
 
     if not has_zero_entries:
         detector.set(n_events=[0, 0])
-        assert np.all(np.array(detector.n_events) == 0)
-        assert np.all(np.array(detector.histogram) == 0)
+        assert np.all(detector.n_events == 0)
+        assert np.all(detector.histogram == 0)

@@ -110,9 +110,9 @@ class SiegertNeuronTestCase(unittest.TestCase):
 
         # get rate prediction from Siegert neuron
         events = self.multimeter.events
-        senders = np.array(events["senders"])
-        rate_mask = np.where(senders == self.siegert_neuron.get("global_id"))
-        rate_prediction = np.array(events["rate"])[rate_mask][-1]
+        senders = events["senders"]
+        rate_mask = np.where(senders == self.siegert_neuron.global_id)
+        rate_prediction = events["rate"][rate_mask][-1]
 
         # get rate of integrate-and-fire neuron
         n_spikes = self.spike_recorder.n_events

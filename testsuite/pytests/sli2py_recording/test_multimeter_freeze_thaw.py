@@ -101,8 +101,8 @@ def test_freeze_thaw_neuron_against_only_thawed_neuron():
     """
 
     mm = simulate_freeze_thaw(num_neurons=2)
-    Vm = np.array(mm.events["V_m"])
-    senders = np.array(mm.events["senders"])
+    Vm = mm.events["V_m"]
+    senders = mm.events["senders"]
     Vm_with_freeze = Vm[senders == 1]
     Vm_thawed_only = Vm[senders == 2]
 

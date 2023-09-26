@@ -149,7 +149,7 @@ class TestRefractoryCase(unittest.TestCase):
             return spike_times[1] - spike_times[0]
         else:
             Vr = neuron.V_reset
-            times = np.array(vm.events["times"])
+            times = vm.events["times"]
 
             # Index of the 2nd spike
             idx_max = np.argwhere(times == spike_times[1])[0][0]

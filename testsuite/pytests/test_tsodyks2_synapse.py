@@ -94,11 +94,11 @@ class Tsodyks2SynapseTest(unittest.TestCase):
 
         nest.Simulate(self.simulation_duration)
 
-        senders = np.array(spike_recorder.events["senders"])
-        times = np.array(spike_recorder.events["times"])
-        pre_spikes = times[senders == presynaptic_neuron.get("global_id")]
+        senders = spike_recorder.events["senders"]
+        times = spike_recorder.events["times"]
+        pre_spikes = times[senders == presynaptic_neuron.global_id]
 
-        weights = wr.get("events", "weights")
+        weights = wr.events["weights"]
 
         return (pre_spikes, weights)
 

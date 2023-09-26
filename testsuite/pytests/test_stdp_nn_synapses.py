@@ -153,8 +153,8 @@ class TestSTDPNNSynapses:
         nest.Simulate(self.simulation_duration)
 
         all_spikes = spike_recorder.events
-        times = np.array(all_spikes["times"])
-        senders = np.array(all_spikes["senders"])
+        times = all_spikes["times"]
+        senders = all_spikes["senders"]
         pre_spikes = times[senders == presynaptic_neuron.tolist()[0]]
         post_spikes = times[senders == postsynaptic_neuron.tolist()[0]]
         weight = plastic_synapse_of_interest.weight

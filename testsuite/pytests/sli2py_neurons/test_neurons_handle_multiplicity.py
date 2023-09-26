@@ -103,7 +103,7 @@ def test_spike_multiplicity_parrot_neuron():
 
     nest.Simulate(10.0)
 
-    spike_times = sr.get("events")["times"]
+    spike_times = sr.events["times"]
     expected_spike_times = []
     for t, m in zip(spikes, multiplicities):
         expected_spike_times.extend([t + nest.min_delay] * m)
@@ -152,16 +152,16 @@ def test_spike_multiplicity(model):
     nest.Connect(sg3, n2, "all_to_all", syn_spec)
 
     # Get v_m before simulation
-    v1_0 = n1.get("V_m")
-    v2_0 = n2.get("V_m")
+    v1_0 = n1.V_m
+    v2_0 = n2.V_m
 
     assert v1_0 == pytest.approx(v2_0)
 
     # Simulate
     nest.Simulate(8.0)
 
-    v1 = n1.get("V_m")
-    v2 = n2.get("V_m")
+    v1 = n1.V_m
+    v2 = n2.V_m
 
     assert v1 == pytest.approx(v2)
     assert v1_0 != v1

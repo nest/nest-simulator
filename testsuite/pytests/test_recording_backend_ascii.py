@@ -36,7 +36,7 @@ class TestRecordingBackendASCII(unittest.TestCase):
         mm = nest.Create("multimeter", params=mm_params)
 
         try:
-            os.remove(mm.get("filenames")[0])
+            os.remove(mm.filenames[0])
         except FileNotFoundError:
             pass
 
@@ -79,7 +79,7 @@ class TestRecordingBackendASCII(unittest.TestCase):
             "file_extension": file_extension,
         }
         mm = nest.Create("multimeter", params=mm_params)
-        fname = mm.get("filenames")[0]
+        fname = mm.filenames[0]
 
         self.assertTrue(data_path in fname)
         self.assertTrue(data_prefix in fname)
@@ -98,10 +98,10 @@ class TestRecordingBackendASCII(unittest.TestCase):
             "label": label,
         }
         mm = nest.Create("multimeter", params=mm_params)
-        fname = mm.get("filenames")[0]
+        fname = mm.filenames[0]
 
         self.assertTrue(label in fname)
-        self.assertTrue(mm.get("model") not in fname)
+        self.assertTrue(mm.model not in fname)
 
     def testFileContent(self):
         """Test if the file contains correct headers and expected content"""
@@ -115,11 +115,11 @@ class TestRecordingBackendASCII(unittest.TestCase):
 
         nest.Simulate(15)
 
-        fname = mm.get("filenames")[0]
+        fname = mm.filenames[0]
         with open(fname) as f:
             lines = f.readlines()
 
-            self.assertEqual(len(lines), mm.get("n_events") + 3)
+            self.assertEqual(len(lines), mm.n_events + 3)
 
             version = nest.build_info["version"]
             self.assertEqual(lines[0], "# NEST version: {}\n".format(version))
@@ -142,10 +142,10 @@ class TestRecordingBackendASCII(unittest.TestCase):
         nest.Connect(mm, nest.Create("iaf_psc_alpha"))
 
         nest.Simulate(15)
-        self.assertEqual(mm.get("n_events"), 140)
+        self.assertEqual(mm.n_events, 140)
 
         nest.Simulate(1)
-        self.assertEqual(mm.get("n_events"), 150)
+        self.assertEqual(mm.n_events, 150)
 
         # Now with multithreading
 
@@ -158,10 +158,10 @@ class TestRecordingBackendASCII(unittest.TestCase):
         nest.Connect(mm, nest.Create("iaf_psc_alpha", 2))
 
         nest.Simulate(15)
-        self.assertEqual(mm.get("n_events"), 280)
+        self.assertEqual(mm.n_events, 280)
 
         nest.Simulate(1)
-        self.assertEqual(mm.get("n_events"), 300)
+        self.assertEqual(mm.n_events, 300)
 
     def testResetEventCounter(self):
         """"""
@@ -180,11 +180,11 @@ class TestRecordingBackendASCII(unittest.TestCase):
             mm.n_events = 10
 
         # Check that the event counter was indeed not changed
-        self.assertEqual(mm.get("n_events"), 140)
+        self.assertEqual(mm.n_events, 140)
 
         # Check that the events dict is cleared when setting n_events to 0
         mm.n_events = 0
-        self.assertEqual(mm.get("n_events"), 0)
+        self.assertEqual(mm.n_events, 0)
 
     def testTimeInSteps(self):
         """Check if time_in_steps works properly."""
@@ -195,14 +195,14 @@ class TestRecordingBackendASCII(unittest.TestCase):
         mm = nest.Create("multimeter", params={"record_to": "ascii"})
 
         # Check that time_in_steps is set False by default
-        self.assertFalse(mm.get("time_in_steps"))
+        self.assertFalse(mm.time_in_steps)
 
         mm.set({"record_from": ["V_m"], "time_in_steps": True})
         nest.Connect(mm, nest.Create("iaf_psc_alpha"))
 
         nest.Simulate(15)
 
-        fname = mm.get("filenames")[0]
+        fname = mm.filenames[0]
         with open(fname) as f:
             lines = f.readlines()
             h3_expected = "sender\ttime_step\ttime_offset\tV_m\n"

@@ -104,7 +104,7 @@ def test_number_of_histogram_bins():
 
     nest.Simulate(1)
 
-    covariance_size = len(cd.get("covariance")[0][0])
+    covariance_size = len(cd.covariance[0][0])
     assert covariance_size == 6
 
 
@@ -157,8 +157,7 @@ def test_histogram_correlation(spikes_times, expected_covariance):
     spikes_times_size = list(map(lambda x: len(x), spikes_times))
     assert n_events == spikes_times_size
 
-    actual_covariance = detector.get("covariance")[0][1]
-    assert actual_covariance == expected_covariance
+    assert (detector.covariance[0][1] == expected_covariance).all()
 
 
 def test_reset():
@@ -170,11 +169,8 @@ def test_reset():
     spikes_times = [[1.0, 2.0, 6.0], [2.0, 4.0]]
     detector = prepare_correlomatrix_detector(spikes_times)
 
-    covariance = np.array(detector.get("covariance"))
-
-    has_zero_entries = np.any(covariance == 0)
+    has_zero_entries = np.any(detector.covariance == 0)
 
     if not has_zero_entries:
         detector.set(N_channels=8)
-        covariance = np.array(detector.get("covariance"))
-        assert np.all(covariance[0][0] == 0.0)
+        assert np.all(detector.covariance[0][0] == 0.0)

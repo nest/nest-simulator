@@ -210,8 +210,8 @@ class ClopathSynapseTestCase(unittest.TestCase):
 
         # Evaluation
         data = mm.events
-        senders = np.array(data["senders"])
-        voltages = np.array(data["V_m"])
+        senders = data["senders"]
+        voltages = data["V_m"]
 
         vm1 = voltages[np.where(senders == 1)]
         vm2 = voltages[np.where(senders == 2)]

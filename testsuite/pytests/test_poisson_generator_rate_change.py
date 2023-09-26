@@ -30,8 +30,8 @@ import scipy.stats
 class TestPgRateChange(unittest.TestCase):
     def _kstest_first_spiketimes(self, sr, start_t, expon_scale, resolution, p_value_lim):
         events = sr.events
-        senders = np.array(events["senders"])
-        times = np.array(events["times"])
+        senders = events["senders"]
+        times = events["times"]
         min_times = [np.min(times[np.where(senders == s)]) for s in np.unique(senders)]
         d, p_val = scipy.stats.kstest(min_times, "expon", args=(start_t + resolution, expon_scale))
         print("p_value =", p_val)

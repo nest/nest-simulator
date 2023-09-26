@@ -41,7 +41,7 @@ def record_spikes(sim_time, repeats):
 
     for w in range(0, repeats):
         nest.Simulate(sim_time)
-    events = spike_recorder.get("events")
+    events = spike_recorder.events
     return np.vstack((events["senders"], events["times"]))
 
 

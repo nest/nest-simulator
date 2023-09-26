@@ -56,8 +56,8 @@ def test_poisson_generator_ps():
 
     nest.Simulate(1000.0)
 
-    times1 = np.array(sr1.events["times"])
-    times2 = np.array(sr2.events["times"])
+    times1 = sr1.events["times"]
+    times2 = sr2.events["times"]
     assert not np.array_equal(times1, times2)
 
     # check there are no spikes between stop and start time

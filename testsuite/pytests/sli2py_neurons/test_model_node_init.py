@@ -41,7 +41,7 @@ def _get_network_state(nc):
     nest.Connect(nc, neuron)
     nest.Connect(voltmeter, neuron)
     nest.Simulate(1000.0)
-    volts = np.array(voltmeter.events["V_m"])
+    volts = voltmeter.events["V_m"]
 
     return (volts, nc.get())
 

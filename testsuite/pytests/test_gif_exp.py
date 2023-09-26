@@ -71,7 +71,7 @@ class TestGifModels:
 
         nest.Simulate(150.0)
 
-        return sr.get("events")["times"]
+        return sr.events["times"]
 
     def test_gif_exp_wrong_params(self, model):
         """Test for wrong parameters (negative lambda)"""

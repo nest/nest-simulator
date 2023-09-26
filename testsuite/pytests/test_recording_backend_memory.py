@@ -35,7 +35,7 @@ class TestRecordingBackendMemory(unittest.TestCase):
         nest.ResetKernel()
 
         mm = nest.Create("multimeter", params={"record_to": "memory"})
-        events = mm.get("events")  # noqa: F841
+        events = mm.events  # noqa: F841
 
     def testEventCounter(self):
         """Test that n_events counts the number of events correctly."""
@@ -47,12 +47,12 @@ class TestRecordingBackendMemory(unittest.TestCase):
         nest.Connect(mm, nest.Create("iaf_psc_alpha"))
 
         nest.Simulate(15)
-        self.assertEqual(mm.get("n_events"), 140)
-        self.assertEqual(len(mm.get("events")["times"]), 140)
+        self.assertEqual(mm.n_events, 140)
+        self.assertEqual(len(mm.events["times"]), 140)
 
         nest.Simulate(1)
-        self.assertEqual(mm.get("n_events"), 150)
-        self.assertEqual(len(mm.get("events")["times"]), 150)
+        self.assertEqual(mm.n_events, 150)
+        self.assertEqual(len(mm.events["times"]), 150)
 
         # Now with multithreading
 
@@ -64,12 +64,12 @@ class TestRecordingBackendMemory(unittest.TestCase):
         nest.Connect(mm, nest.Create("iaf_psc_alpha", 2))
 
         nest.Simulate(15)
-        self.assertEqual(mm.get("n_events"), 280)
-        self.assertEqual(len(mm.get("events")["times"]), 280)
+        self.assertEqual(mm.n_events, 280)
+        self.assertEqual(len(mm.events["times"]), 280)
 
         nest.Simulate(1)
-        self.assertEqual(mm.get("n_events"), 300)
-        self.assertEqual(len(mm.get("events")["times"]), 300)
+        self.assertEqual(mm.n_events, 300)
+        self.assertEqual(len(mm.events["times"]), 300)
 
     def testResetEventCounter(self):
         """"""
@@ -88,12 +88,12 @@ class TestRecordingBackendMemory(unittest.TestCase):
 
         # Check that the event counter was indeed not changed and the
         # events dictionary is still intact
-        self.assertEqual(mm.get("n_events"), 140)
-        self.assertEqual(len(mm.get("events")["times"]), 140)
+        self.assertEqual(mm.n_events, 140)
+        self.assertEqual(len(mm.events["times"]), 140)
 
         # Check that the events dict is cleared when setting n_events to 0
         mm.n_events = 0
-        self.assertEqual(len(mm.get("events")["times"]), 0)
+        self.assertEqual(len(mm.events["times"]), 0)
 
     def testTimeInSteps(self):
         """"""
@@ -103,17 +103,17 @@ class TestRecordingBackendMemory(unittest.TestCase):
         mm = nest.Create("multimeter", params={"record_to": "memory"})
 
         # Check that time_in_steps is set False by default
-        self.assertFalse(mm.get("time_in_steps"))
+        self.assertFalse(mm.time_in_steps)
 
         # Check times are in float (i.e. ms) and offsets are not there
         # if time_in_steps == False
-        self.assertEqual(np.array(mm.get("events")["times"]).dtype, "float64")
-        self.assertFalse("offsets" in mm.get("events"))
+        self.assertEqual(mm.events["times"].dtype, "float64")
+        self.assertFalse("offsets" in mm.events)
 
         # Check times are in int (i.e.steps) and offsets are there and of
         # type float if time_in_steps == True
         mm.time_in_steps = True
-        self.assertTrue(all(isinstance(e, int) for e in mm.get("events")["times"]))
+        self.assertTrue(all(isinstance(e, int) for e in mm.events["times"]))
 
         # Check that time_in_steps cannot be set after Simulate has
         # been called.

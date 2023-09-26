@@ -110,8 +110,8 @@ def reference_run():
 
     srs, vms = build_net()
     nest.Simulate(total_sim_time)
-    srs_reference = srs.get("events", "times")
-    vms_reference = vms.get("events", "V_m")
+    srs_reference = srs.events["times"]
+    vms_reference = vms.events["V_m"]
 
     return srs_reference, vms_reference
 
@@ -141,8 +141,8 @@ def test_vm_and_sr_produce_same_output(t_block, reference_run):
         while nest.biological_time < total_sim_time:
             nest.Run(t_block)
 
-    srs_times = srs.get("events", "times")
-    vms_recs = vms.get("events", "V_m")
+    srs_times = srs.events["times"]
+    vms_recs = vms.events["V_m"]
 
     srs_reference, vms_reference = reference_run
 

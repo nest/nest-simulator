@@ -67,7 +67,7 @@ def test_transmitted_spikes_btw_threads():
     t_sim = 1.0 + 3 * 1.0
     nest.Simulate(t_sim)
 
-    sr_times = sr.get("events")["times"]
+    sr_times = sr.events["times"]
 
     excepted = [3] * (num_threads**2)
 

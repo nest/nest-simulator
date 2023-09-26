@@ -81,7 +81,7 @@ def test_different_connections():
     assert nest.num_connections == 5
 
     nest.Simulate(10.0)
-    spike_recs = spike_recorder.get("events", ["times"])
+    spike_recs = spike_recorder.events["times"]
     assert np.all(
         spike_recs["times"]
         == pytest.approx(

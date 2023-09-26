@@ -133,14 +133,11 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
 
         # get noise from rate neuron
         events = self.multimeter.events
-        senders = np.array(events["senders"])
+        senders = events["senders"]
 
-        rate_neuron_1_node_id = self.rate_neuron_1.get("global_id")
-        times = np.array(events["times"])[np.where(senders == rate_neuron_1_node_id)]
-        rate_1 = np.array(events["rate"])[np.where(senders == rate_neuron_1_node_id)]
-
-        rate_neuron_2_node_id = self.rate_neuron_2.get("global_id")
-        rate_2 = np.array(events["rate"])[np.where(senders == rate_neuron_2_node_id)]
+        times = events["times"][np.where(senders == self.rate_neuron_1.global_id)]
+        rate_1 = events["rate"][np.where(senders == self.rate_neuron_1.global_id)]
+        rate_2 = events["rate"][np.where(senders == self.rate_neuron_2.global_id)]
 
         delay_rate_1 = times[np.where(rate_1 > 0)[0][0]]
         test_delay_1 = self.delay + self.dt
@@ -155,10 +152,9 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
 
         # get noise from rate neuron
         events = self.multimeter.events
-        senders = np.array(events["senders"])
+        senders = events["senders"]
 
-        rate_neuron_1_node_id = self.rate_neuron_1.get("global_id")
-        rate_1 = np.array(events["rate"])[np.where(senders == rate_neuron_1_node_id)]
+        rate_1 = events["rate"][np.where(senders == self.rate_neuron_1.global_id)]
 
         value = rate_1[-1]
         value_test = self.drive * self.weight
@@ -178,19 +174,12 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
 
             # get noise from rate neuron
             events = self.multimeter.events
-            senders = np.array(events["senders"])
+            senders = events["senders"]
 
-            rate_neuron_1_node_id = self.rate_neuron_1.get("global_id")
-            rate_1 = np.array(events["rate"])[np.where(senders == rate_neuron_1_node_id)][-1]
-
-            rate_neuron_2_node_id = self.rate_neuron_2.get("global_id")
-            rate_2 = np.array(events["rate"])[np.where(senders == rate_neuron_2_node_id)][-1]
-
-            rate_neuron_3_node_id = self.rate_neuron_3.get("global_id")
-            rate_3 = np.array(events["rate"])[np.where(senders == rate_neuron_3_node_id)][-1]
-
-            rate_neuron_4_node_id = self.rate_neuron_4.get("global_id")
-            rate_4 = np.array(events["rate"])[np.where(senders == rate_neuron_4_node_id)][-1]
+            rate_1 = events["rate"][np.where(senders == self.rate_neuron_1.global_id)][-1]
+            rate_2 = events["rate"][np.where(senders == self.rate_neuron_2.global_id)][-1]
+            rate_3 = events["rate"][np.where(senders == self.rate_neuron_3.global_id)][-1]
+            rate_4 = events["rate"][np.where(senders == self.rate_neuron_4.global_id)][-1]
 
             rates = np.array([rate_1, rate_2, rate_3, rate_4])
 
@@ -227,10 +216,9 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
 
         # get activity from rate neuron
         events = self.multimeter.events
-        senders = np.array(events["senders"])
+        senders = events["senders"]
 
-        rate_neuron_5_node_id = self.rate_neuron_5.get("global_id")
-        rate_5 = np.array(events["rate"])[np.where(senders == rate_neuron_5_node_id)]
+        rate_5 = events["rate"][np.where(senders == self.rate_neuron_5.global_id)]
 
         value = rate_5[-1]
         value_test = 0.0
@@ -245,10 +233,9 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
 
         # get activity from rate neuron
         events = self.multimeter.events
-        senders = np.array(events["senders"])
+        senders = events["senders"]
 
-        parrot_node_id = self.parrot_neuron.get("global_id")
-        parrot_rate = np.array(events["rate"])[np.where(senders == parrot_node_id)]
+        parrot_rate = events["rate"][np.where(senders == self.parrot_neuron.global_id)]
 
         value = parrot_rate[-1]
         g = self.parrot_neuron.g

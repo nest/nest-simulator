@@ -166,8 +166,8 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
 
         # multimeter
         rec = mm.events
-        t = np.array(rec["times"])
-        V_w = np.array(rec["V_m.p"])
+        t = rec["times"]
+        V_w = rec["V_m.p"]
 
         # compute dendritic prediction of somatic membrane potential
         g_D = nrn_params["g_sp"]
@@ -176,15 +176,15 @@ class UrbanczikSynapseTestCase(unittest.TestCase):
         V_w_star = (g_L * E_L + g_D * V_w) / (g_L + g_D)
 
         # weight recorder
-        data = wr.get()
-        senders = data["events"]["senders"]
-        targets = data["events"]["targets"]
-        weights = data["events"]["weights"]
-        times = data["events"]["times"]
+        data = wr.events
+        senders = data["senders"]
+        targets = data["targets"]
+        weights = data["weights"]
+        times = data["times"]
 
         # spike recorder
         data = sr_soma.events
-        spike_times_soma = np.array(data["times"])
+        spike_times_soma = data["times"]
 
         # compute predicted rate
         phi_max = nrn_params["phi_max"]

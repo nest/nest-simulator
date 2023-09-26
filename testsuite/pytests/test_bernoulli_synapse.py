@@ -73,7 +73,7 @@ class TestBernoulliSynapse:
         nest.Simulate(2.0 + N_spikes)
 
         # get number of spikes transmitted
-        N_spikes_transmitted = len(sr.get("events")["times"])
+        N_spikes_transmitted = len(sr.events["times"])
 
         # mean value of spikes to be received with transmission probability p
         mean = N_spikes * p

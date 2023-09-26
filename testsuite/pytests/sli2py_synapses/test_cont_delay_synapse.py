@@ -48,7 +48,7 @@ def run_simulation(resolution, delay, explicit=False):
     nest.Connect(n, sr)
 
     nest.Simulate(10.0)
-    actual_spike_times = sr.get("events")["times"]
+    actual_spike_times = sr.events["times"]
     return actual_spike_times
 
 

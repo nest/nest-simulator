@@ -183,16 +183,16 @@ def test_setting_params(neuron, reference_params):
 def test_recoding_device_status(recording_devices, reference_data_vm, reference_data_mm):
     vm, mm, sr = recording_devices
     reference_data_vm = np.array(reference_data_vm)
-    vm_events = vm.get("events")
+    vm_events = vm.events
     actual_vm_data = np.array(list(zip(vm_events["times"], vm_events["V_m"])))
 
     nptest.assert_allclose(actual_vm_data, reference_data_vm, rtol=1e-5)
 
     reference_data_mm = np.array(reference_data_mm)
-    mm_events = mm.get("events")
+    mm_events = mm.events
     actual_mm_data = np.array(list(zip(mm_events["times"], mm_events["g_ex"], mm_events["g_in"])))
 
     nptest.assert_allclose(actual_mm_data, reference_data_mm, rtol=1e-5)
 
-    sr_events_times = sr.get("events")["times"]
+    sr_events_times = sr.events["times"]
     assert sr_events_times == 2

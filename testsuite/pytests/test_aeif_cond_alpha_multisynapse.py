@@ -115,13 +115,13 @@ class TestAeifCondAlphaMultisynapse:
 
         nest.Simulate(simulation_t)
 
-        summed_V_m = np.zeros_like(multisynapse_neuron_vm.get("events")["V_m"], dtype=float)
+        summed_V_m = np.zeros_like(multisynapse_neuron_vm.events["V_m"], dtype=float)
         for i in range(4):
             summed_V_m += singlesynapse_neuron_vm[i].events["V_m"][0] - V_m_steadystate
 
         summed_V_m += V_m_steadystate
 
-        error = np.abs(summed_V_m - multisynapse_neuron_vm.get("events")["V_m"])
+        error = np.abs(summed_V_m - multisynapse_neuron_vm.events["V_m"])
 
         if have_plotting:
             # plot timeseries as a sanity check
@@ -129,24 +129,24 @@ class TestAeifCondAlphaMultisynapse:
 
             fig, ax = plt.subplots(nrows=6)
             ax[0].plot(
-                multisynapse_neuron_vm.get("events")["times"],
-                multisynapse_neuron_vm.get("events")["V_m"],
+                multisynapse_neuron_vm.events["times"],
+                multisynapse_neuron_vm.events["V_m"],
                 label="V_m multisyn",
                 alpha=0.5,
             )
-            ax[0].plot(multisynapse_neuron_vm.get("events")["times"], summed_V_m, label="V_m summed", alpha=0.5)
+            ax[0].plot(multisynapse_neuron_vm.events["times"], summed_V_m, label="V_m summed", alpha=0.5)
 
             for i in range(4):
                 ax[i + 1].plot(
-                    singlesynapse_neuron_vm[i].get("events")["times"],
-                    singlesynapse_neuron_vm[i].get("events")["V_m"],
+                    singlesynapse_neuron_vm[i].events["times"],
+                    singlesynapse_neuron_vm[i].events["V_m"],
                     label="V_m single (" + str(i) + ")",
                 )
 
             for _ax in ax:
                 _ax.legend()
 
-            ax[-1].semilogy(multisynapse_neuron_vm.get("events")["times"], error, label="errror")
+            ax[-1].semilogy(multisynapse_neuron_vm.events["times"], error, label="errror")
             fig.savefig("test_aeif_cond_alpha_multisynapse.png")
 
         # compare with a large tolerance because previous PSPs affect subsequent PSPs in the multisynapse neuron

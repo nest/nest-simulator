@@ -122,7 +122,7 @@ def test_hh_cond_beta_gap_traub(prepare_voltmeter, reference_data):
     vm = prepare_voltmeter
     reference_data = dict(reference_data)
 
-    events = vm.get("events")
+    events = vm.events
     recorded_times = events["times"]
     recorded_vm = events["V_m"]
 

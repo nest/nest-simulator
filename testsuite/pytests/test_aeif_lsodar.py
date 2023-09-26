@@ -232,7 +232,7 @@ class AEIFTestCase(unittest.TestCase):
             dmm = mm.events
             for record in recordables:
                 reference_record = np.array(reference[record])
-                dmm_record = np.array(dmm[record])
+                dmm_record = dmm[record]
                 # ignore places where a divide by zero would occur
                 rds = np.abs(reference_record - dmm_record)
                 nonzero = np.where(~np.isclose(reference_record, 0.0))[0]

@@ -75,12 +75,12 @@ class WeightRecorderTestCase(unittest.TestCase):
         weights = np.array([])
         for i in range(100):
             nest.Simulate(1)
-            weights = np.append(weights, connections.get("weight"))
+            weights = np.append(weights, connections.weight)
 
         wr_weights = wr.events["weights"]
 
         self.addTypeEqualityFunc(type(wr_weights), self.is_subset)
-        self.assertEqual(wr_weights, list(weights))
+        self.assertEqual(wr_weights, weights)
 
     @unittest.skipIf(not HAVE_THREADS, "NEST was compiled without multi-threading")
     def testMultipleThreads(self):
@@ -104,12 +104,12 @@ class WeightRecorderTestCase(unittest.TestCase):
         weights = np.array([])
         for i in range(100):
             nest.Simulate(1)
-            weights = np.append(weights, connections.get("weight"))
+            weights = np.append(weights, connections.weight)
 
         wr_weights = wr.events["weights"]
 
         self.addTypeEqualityFunc(type(wr_weights), self.is_subset)
-        self.assertEqual(wr_weights, list(weights))
+        self.assertEqual(wr_weights, weights)
 
     def testDefinedSenders(self):
         """Weight Recorder Defined Subset Of Senders"""
@@ -133,12 +133,12 @@ class WeightRecorderTestCase(unittest.TestCase):
         senders = np.array([])
         for i in range(100):
             nest.Simulate(1)
-            senders = np.append(senders, connections.get("source"))
+            senders = np.append(senders, connections.source)
 
         wr_senders = wr.events["senders"]
 
         self.addTypeEqualityFunc(type(wr_senders), self.is_subset)
-        self.assertEqual(wr_senders, list(senders))
+        self.assertEqual(wr_senders, senders)
 
     def testDefinedTargets(self):
         """Weight Recorder Defined Subset Of Targets"""
@@ -162,12 +162,12 @@ class WeightRecorderTestCase(unittest.TestCase):
         targets = np.array([])
         for i in range(100):
             nest.Simulate(1)
-            targets = np.append(targets, connections.get("target"))
+            targets = np.append(targets, connections.target)
 
         wr_targets = wr.events["targets"]
 
         self.addTypeEqualityFunc(type(wr_targets), self.is_subset)
-        self.assertEqual(wr_targets, list(targets))
+        self.assertEqual(wr_targets, targets)
 
     def testDefinedTargetsAndSenders(self):
         """Weight Recorder Defined Subset Of Targets and Senders"""
@@ -195,12 +195,12 @@ class WeightRecorderTestCase(unittest.TestCase):
         targets = np.array([])
         for i in range(1):
             nest.Simulate(1)
-            targets = np.append(targets, connections.get("target"))
+            targets = np.append(targets, connections.target)
 
         wr_targets = wr.events["targets"]
 
         self.addTypeEqualityFunc(type(wr_targets), self.is_subset)
-        self.assertEqual(wr_targets, list(targets))
+        self.assertEqual(wr_targets, targets)
 
     def test_senders_and_targets(self):
         """
@@ -307,9 +307,9 @@ class WeightRecorderTestCase(unittest.TestCase):
         nest.Connect(sg, pre)
 
         connections = nest.GetConnections(pre, post)
-        receptors = connections.get("receptor")
-        sources = connections.get("source")
-        targets = connections.get("target")
+        receptors = connections.receptor
+        sources = connections.source
+        targets = connections.target
         connections = [(sources[i], targets[i], receptors[i]) for i in range(len(connections))]
 
         nest.Simulate(100)

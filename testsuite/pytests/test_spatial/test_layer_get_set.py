@@ -40,7 +40,7 @@ class GetSetTestCase(unittest.TestCase):
             "iaf_psc_alpha", positions=nest.spatial.grid(shape=layer_shape, extent=[2.0, 2.0], edge_wrap=True)
         )
 
-        with self.assertRaises(nest.NESTErrors.DictError):
+        with self.assertRaises(nest.NESTErrors.UnaccessedDictionaryEntry):
             layer.center = [1.0, 1.0]
 
         layer.V_m = -50.0
@@ -107,7 +107,7 @@ class GetSetTestCase(unittest.TestCase):
             "iaf_psc_alpha", positions=nest.spatial.grid(shape=[3, 3], extent=[2.0, 2.0], edge_wrap=True)
         )
 
-        with self.assertRaises(nest.NESTErrors.DictError):
+        with self.assertRaises(nest.NESTErrors.UnaccessedDictionaryEntry):
             layer.set({"center": [1.0, 1.0]})
 
         layer.set(V_m=-50.0)

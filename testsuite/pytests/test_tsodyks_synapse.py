@@ -152,7 +152,8 @@ class TestTsodyksSynapse:
             ]
         )
 
-        times_vm_sim = np.vstack([vm.get("events")["times"], vm.get("events")["V_m"]]).T
+        events = vm.events
+        times_vm_sim = np.vstack([events["times"], events["V_m"]]).T
 
         # test uses large atol due to finite precision of reference timeseries
         np.testing.assert_allclose(times_vm_sim, times_vm_expected, atol=1e-5)
@@ -276,7 +277,8 @@ class TestTsodyksSynapse:
             ]
         )
 
-        times_vm_sim = np.vstack([vm.get("events")["times"], vm.get("events")["V_m"]]).T
+        events = vm.events
+        times_vm_sim = np.vstack([events["times"], events["V_m"]]).T
 
         # test uses large atol due to finite precision of reference timeseries
         np.testing.assert_allclose(times_vm_sim, times_vm_expected, atol=1e-5)

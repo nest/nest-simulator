@@ -67,11 +67,11 @@ class RateNeuronTestCase(unittest.TestCase):
 
         # get noise from rate neurons
         events = self.multimeter.events
-        senders = np.array(events["senders"])
+        senders = events["senders"]
         senders_ipn = np.where(senders == self.rate_neuron_ipn.global_id)[0]
         senders_opn = np.where(senders == self.rate_neuron_opn.global_id)[0]
 
-        rate = np.array(events["rate"])
+        rate = events["rate"]
         mean_rate_ipn = np.mean(rate[senders_ipn])
         mean_rate_opn = np.mean(rate[senders_opn])
 
@@ -85,11 +85,11 @@ class RateNeuronTestCase(unittest.TestCase):
 
         # get noise from rate neurons
         events = self.multimeter.events
-        senders = np.array(events["senders"])
+        senders = events["senders"]
         senders_ipn = np.where(senders == self.rate_neuron_ipn.global_id)[0]
         senders_opn = np.where(senders == self.rate_neuron_opn.global_id)[0]
 
-        noise = np.array(events["noise"])
+        noise = events["noise"]
         noise_ipn = noise[senders_ipn]
         std_noise_ipn = np.std(noise_ipn)
         noise_opn = noise[senders_opn]
@@ -105,10 +105,10 @@ class RateNeuronTestCase(unittest.TestCase):
 
         # get variance of the rate
         events = self.multimeter.events
-        senders = np.array(events["senders"])
+        senders = events["senders"]
         senders_ipn = np.where(senders == self.rate_neuron_ipn.global_id)[0]
 
-        rate = np.array(events["rate"])[senders_ipn]
+        rate = events["rate"][senders_ipn]
         var_rate = np.var(rate)
 
         # expected variance

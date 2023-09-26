@@ -220,13 +220,13 @@ class TestSTDPSynapse:
         nest.Simulate(self.simulation_duration)
 
         all_spikes = spike_recorder.events
-        times = np.array(all_spikes["times"])
-        senders = np.array(all_spikes["senders"])
+        times = all_spikes["times"]
+        senders = all_spikes["senders"]
         pre_spikes = times[senders == presynaptic_neuron.tolist()[0]]
         post_spikes = times[senders == postsynaptic_neuron.tolist()[0]]
 
-        t_hist = np.array(wr.events["times"])
-        weight = np.array(wr.events["weights"])
+        t_hist = wr.events["times"]
+        weight = wr.events["weights"]
 
         return pre_spikes, post_spikes, t_hist, weight
 

@@ -76,6 +76,5 @@ def test_SonataNetwork(num_threads, hyperslab_size):
     srec = nest.Create("spike_recorder")
     nest.Connect(node_collections["internal"], srec)
     sonata_net.Simulate()
-    spike_data = srec.events
-    post_times = np.array(spike_data["times"])
+    post_times = srec.events["times"]
     assert post_times.size == EXPECTED_NUM_SPIKES

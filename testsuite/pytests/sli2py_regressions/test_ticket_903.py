@@ -23,7 +23,6 @@
 """This test ensures that delays drawn from continuous distribution are not rounded up strictly."""
 
 import nest
-import numpy as np
 import pytest
 import scipy.stats
 
@@ -46,4 +45,4 @@ def test_correct_rounding_distributions():
     delays = nest.GetConnections().delay
 
     assert set(delays) == {1, 2}
-    assert scipy.stats.binom_test(sum(np.array(delays) == 2.0), indegree) > significance
+    assert scipy.stats.binom_test(sum(delays == 2.0), indegree) > significance

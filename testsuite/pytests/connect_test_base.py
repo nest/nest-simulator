@@ -103,7 +103,7 @@ class ConnectTestBase(unittest.TestCase):
         syn_params = {"delay": d0}
         self.setUpNetwork(self.conn_dict, syn_params)
         connections = nest.GetConnections(self.pop1, self.pop2)
-        nest_delays = connections.get("delay")
+        nest_delays = connections.delay
         # all delays need to be equal
         self.assertTrue(all_equal(nest_delays))
         # delay (rounded) needs to equal the delay that was put in
@@ -118,7 +118,7 @@ class ConnectTestBase(unittest.TestCase):
         syn_params = {"synapse_model": "static_synapse", "receptor_type": rtype}
         nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
         conns = nest.GetConnections(self.pop1, self.pop2)
-        ports = conns.get("receptor")
+        ports = conns.receptor
         self.assertTrue(all_equal(ports))
         self.assertTrue(ports[0] == rtype)
 
@@ -127,7 +127,7 @@ class ConnectTestBase(unittest.TestCase):
         syn_params = {"synapse_model": "test_syn"}
         self.setUpNetwork(self.conn_dict, syn_params)
         conns = nest.GetConnections(self.pop1, self.pop2)
-        syns = conns.get("synapse_model")
+        syns = conns.synapse_model
         self.assertTrue(all_equal(syns))
         self.assertTrue(syns[0] == syn_params["synapse_model"])
 
@@ -135,10 +135,10 @@ class ConnectTestBase(unittest.TestCase):
     def testDefaultParams(self):
         self.setUpNetwork(self.conn_dict)
         conns = nest.GetConnections(self.pop1, self.pop2)
-        self.assertTrue(all(x == self.w0 for x in conns.get("weight")))
-        self.assertTrue(all(x == self.d0 for x in conns.get("delay")))
-        self.assertTrue(all(x == self.r0 for x in conns.get("receptor")))
-        self.assertTrue(all(x == self.syn0 for x in conns.get("synapse_model")))
+        self.assertTrue(all(x == self.w0 for x in conns.weight))
+        self.assertTrue(all(x == self.d0 for x in conns.delay))
+        self.assertTrue(all(x == self.r0 for x in conns.receptor))
+        self.assertTrue(all(x == self.syn0 for x in conns.synapse_model))
 
     def testAutapsesTrue(self):
         conn_params = self.conn_dict.copy()
@@ -246,7 +246,7 @@ class ConnectTestBase(unittest.TestCase):
             self.pop2 = nest.Create("iaf_psc_exp_multisynapse", self.N2, {"tau_syn": [0.2, 0.5]})
             nest.Connect(self.pop1, self.pop2, self.conn_dict, syn_params)
             conns = nest.GetConnections(self.pop1, self.pop2)
-            conn_params = conns.get("receptor")
+            conn_params = conns.receptor
             self.assertTrue(all_equal(conn_params))
             self.assertTrue(conn_params[0] == syn_params["receptor_type"])
             self.setUp()
@@ -377,9 +377,9 @@ def get_connectivity_matrix(pop1, pop2):
     connections = nest.GetConnections(pop1, pop2)
     index_dic = {}
     for count, node in enumerate(pop1):
-        index_dic[node.get("global_id")] = count
+        index_dic[node.global_id] = count
     for count, node in enumerate(pop2):
-        index_dic[node.get("global_id")] = count
+        index_dic[node.global_id] = count
     for source, target in zip(connections.sources(), connections.targets()):
         M[index_dic[target]][index_dic[source]] += 1
     return M
@@ -394,14 +394,14 @@ def get_weighted_connectivity_matrix(pop1, pop2, label):
 
     M = np.zeros((len(pop2), len(pop1)))
     connections = nest.GetConnections(pop1, pop2)
-    sources = connections.get("source")
-    targets = connections.get("target")
+    sources = connections.source
+    targets = connections.target
     weights = connections.get(label)
     index_dic = {}
     for count, node in enumerate(pop1):
-        index_dic[node.get("global_id")] = count
+        index_dic[node.global_id] = count
     for count, node in enumerate(pop2):
-        index_dic[node.get("global_id")] = count
+        index_dic[node.global_id] = count
     for counter, weight in enumerate(weights):
         source_id = sources[counter]
         target_id = targets[counter]

@@ -54,7 +54,7 @@ def simulator(num_threads):
 
     nest.Simulate(2.0)
 
-    recording = np.array(mm.events.get("I"))
+    recording = mm.events["I"]
 
     return recording
 

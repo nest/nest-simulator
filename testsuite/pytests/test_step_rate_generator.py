@@ -59,9 +59,9 @@ class StepRateGeneratorTestCase(unittest.TestCase):
 
         # read data from multimeter
         data = mm.events
-        senders = np.array(data["senders"])
-        rates_neuron = np.array(data["rate"])[senders == neuron.get("global_id")]
-        rates_srg = np.array(data["rate"])[np.where(senders == srg.get("global_id"))]
+        senders = data["senders"]
+        rates_neuron = data["rate"][senders == neuron.get("global_id")]
+        rates_srg = data["rate"][np.where(senders == srg.get("global_id"))]
 
         # make sure that srg produces the desired rates
         assert np.array_equal(rates, rates_srg)

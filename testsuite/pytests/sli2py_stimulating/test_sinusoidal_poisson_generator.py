@@ -40,7 +40,7 @@ def test_individual_spike_trains_true_by_default():
     """
 
     sspg = nest.Create("sinusoidal_poisson_generator")
-    individual_spike_trains = sspg.get("individual_spike_trains")
+    individual_spike_trains = sspg.individual_spike_trains
     assert individual_spike_trains
 
 
@@ -51,7 +51,7 @@ def test_set_individual_spike_trains_on_set_defaults():
 
     nest.SetDefaults("sinusoidal_poisson_generator", {"individual_spike_trains": False})
     sspg = nest.Create("sinusoidal_poisson_generator")
-    individual_spike_trains = sspg.get("individual_spike_trains")
+    individual_spike_trains = sspg.individual_spike_trains
     assert not individual_spike_trains
 
 
@@ -61,7 +61,7 @@ def test_set_individual_spike_trains_on_creation():
     """
 
     sspg = nest.Create("sinusoidal_poisson_generator", params={"individual_spike_trains": False})
-    individual_spike_trains = sspg.get("individual_spike_trains")
+    individual_spike_trains = sspg.individual_spike_trains
     assert not individual_spike_trains
 
 
@@ -76,7 +76,7 @@ def test_set_individual_spike_trains_on_copy_model():
         params={"individual_spike_trains": False},
     )
     sspg = nest.Create("sinusoidal_poisson_generator_copy")
-    individual_spike_trains = sspg.get("individual_spike_trains")
+    individual_spike_trains = sspg.individual_spike_trains
     assert not individual_spike_trains
 
 
@@ -130,7 +130,7 @@ def test_sinusoidal_poisson_generator_with_spike_recorder(num_threads, individua
     nest.Simulate(500.0)
 
     # Nested list of recorded spike times from each sender
-    spikes_all_nrns = srecs.get("events", "times")
+    spikes_all_nrns = [event["times"] for event in srecs.events]
 
     # Check that we actually obtained a spike times array for each neuron
     assert len(spikes_all_nrns) == total_num_nrns
@@ -188,8 +188,8 @@ def test_sinusoidal_poisson_generator_with_multimeter(num_threads, individual_sp
 
     nest.Simulate(T_sim)
 
-    times = mm.get("events")["times"]
-    rates = mm.get("events")["rate"]
+    times = mm.events["times"]
+    rates = mm.events["rate"]
 
     # Check that times and rates contain ndata points
     expected_ndata = T_sim - 1
@@ -224,11 +224,8 @@ def test_sinusoidal_poisson_generator_rate_profile():
 
     nest.Simulate(100.0)
 
-    times = np.array(mm.events["times"])
-    actual_rates = np.array(mm.events["rate"])
-
-    scaled_times = times * 2 * np.pi * freq / 1000
+    scaled_times = mm.events["times"] * 2 * np.pi * freq / 1000
     shifted_times = scaled_times + phi
     expected_rates = np.sin(shifted_times) * ac + dc
 
-    nptest.assert_allclose(actual_rates, expected_rates)
+    nptest.assert_allclose(mm.events["rate"], expected_rates)

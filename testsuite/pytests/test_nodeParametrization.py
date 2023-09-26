@@ -66,10 +66,10 @@ class TestNodeParametrization(unittest.TestCase):
 
     def test_create_with_numpy(self):
         """Test Create with numpy array as parameter"""
-        Vm_ref = [-80.0, -90.0, -100.0]
-        nodes = nest.Create("iaf_psc_alpha", 3, {"V_m": np.array(Vm_ref)})
+        Vm_ref = np.array([-80.0, -90.0, -100.0])
+        nodes = nest.Create("iaf_psc_alpha", 3, {"V_m": Vm_ref})
 
-        self.assertAlmostEqual(list(nodes.V_m), Vm_ref)
+        self.assertAlmostEqual(nodes.V_m, Vm_ref)
 
     def test_create_uniform(self):
         """Test Create with random.uniform as parameter"""

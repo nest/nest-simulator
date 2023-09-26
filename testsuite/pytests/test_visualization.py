@@ -88,11 +88,11 @@ class TestVisualization:
     def voltage_trace_verify(self, device):
         assert plt._pylab_helpers.Gcf.get_active() is not None, "No active figure"
         ax = plt.gca()
-        vm = device.get("events", "V_m")
+        vm = device.events["V_m"]
         for ref_vm, line in zip((vm[::2], vm[1::2]), ax.lines):
             x_data, y_data = line.get_data()
             # Check that times are correct
-            assert list(x_data) == list(np.unique(device.get("events", "times")))
+            assert list(x_data) == list(np.unique(device.events["times"]))
             # Check that voltmeter data corresponds to the lines in the plot
             assert all(np.isclose(ref_vm, y_data))
         plt.close(ax.get_figure())
@@ -116,7 +116,7 @@ class TestVisualization:
         self.voltage_trace_verify(device)
 
         # Test with data from file
-        vm = device.get("events")
+        vm = device.events
         data = np.zeros([len(vm["senders"]), 3])
         data[:, 0] = vm["senders"]
         data[:, 1] = vm["times"]
@@ -163,8 +163,8 @@ class TestVisualization:
         import nest.raster_plot
 
         sr, sr_to_file = self.spike_recorder_data_setup(to_file=True)
-        spikes = np.array(sr.events["times"])
-        senders = np.array(sr.events["senders"])
+        spikes = sr.events["times"]
+        senders = sr.events["senders"]
 
         # Test from_device
         nest.raster_plot.from_device(sr)

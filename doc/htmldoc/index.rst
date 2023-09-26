@@ -121,22 +121,3 @@ Conceptual approach
    :hidden:
 
    license
-
-.. |user| image:: static/img/020-user.svg
-.. |teacher| image:: static/img/014-teacher.svg
-.. |admin| image:: static/img/001-shuttle.svg
-.. |dev| image:: static/img/dev_orange.svg
-.. |nestml| image:: static/img/nestml-logo.png
-      :scale: 15%
-.. |synapse| image:: static/img/synapse_white.svg
-.. |neuron|  image:: static/img/neuron_white.svg
-.. |glossary|  image:: static/img/glossary_white.svg
-.. |git|  image:: static/img/git_white.svg
-.. |refresh|  image:: static/img/refresh_white.svg
-.. |hpc|  image:: static/img/hpc_white.svg
-.. |random|  image:: static/img/random_white.svg
-.. |math|  image:: static/img/math_white.svg
-.. |network|  image:: static/img/network_brain_white.svg
-.. |device|  image:: static/img/device_white.svg
-.. |connect|  image:: static/img/connect_white.svg
-.. |sonata|  image:: static/img/sonata_white.svg

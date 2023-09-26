@@ -7,15 +7,16 @@ Tutorials and Guides
 
    tutorials/index
 
+Start here
+----------
 
-
-.. grid:: 1 1 2 2
+.. grid:: 1 1 2 3
    :gutter: 1
 
    .. grid-item-card::
           :class-header: sd-d-flex-item sd-align-minor-center sd-bg-primary sd-text-white
 
-          |start| Get started
+          |start| First steps
           ^^^
 
           * :ref:`Installation instructions <install>`
@@ -33,6 +34,20 @@ Tutorials and Guides
           * :ref:`Basic functionality for manipulating nodes (neurons and devices) <node_handles>`
           * :ref:`Basic functionality for manipulating connections (synapses) <handling_connections>`
           * :ref:`param_ex`: explore how to use parameter objects in NEST
+
+   .. grid-item-card::
+       :class-header: sd-d-flex-row sd-align-minor-center sd-bg-primary sd-text-white
+
+       |math| Create, connect and simulate
+       ^^^
+
+       * An overview of :ref:`modelsmain`
+       * :ref:`connection_management`: A guide to building connections in NEST
+       * :ref:`record_simulations`: A guide describing how to collect data from neurons
+         and synapses.
+       * :ref:`run_simulations`: A guide describing various factors in running simulations.
+
+----
 
 .. grid:: 1 1 2 3
    :gutter: 1
@@ -53,7 +68,6 @@ Tutorials and Guides
        ^^^
 
 
-       * :ref:`connection_management`: A guide to building connections in NEST
        * :ref:`sim_gap_junctions`
        * :ref:`weight_normalization`
 
@@ -64,20 +78,11 @@ Tutorials and Guides
        |device| More about devices
        ^^^
 
-       * :ref:`record_simulations`: A guide describing how to collect data from neurons
-         and synapses.
        * :ref:`stimulate_network`: An overview of various stimulation devices.
 
 .. grid:: 1 1 2 3
    :gutter: 1
 
-   .. grid-item-card::
-       :class-header: sd-d-flex-row sd-align-minor-center sd-bg-info sd-text-white
-
-       |math| Models in NEST
-       ^^^
-
-       * An overview of :ref:`modelsmain`
 
    .. grid-item-card::
        :class-header: sd-d-flex-row sd-align-minor-center sd-bg-info sd-text-white
@@ -89,6 +94,15 @@ Tutorials and Guides
        * :doc:`The microcircuit model <../auto_examples/Potjans_2014/index>`: A network model example based on Potjans and Diesman 2014.
        * The `multi-area model <https://inm-6.github.io/multi-area-model/>`_: A network model of the visual cortex of the macaque monkey.
 
+   .. grid-item-card::
+       :class-header: sd-d-flex-row sd-align-minor-center sd-bg-info sd-text-white
+
+       |hpc| High performance computers (HPC)
+       ^^^
+
+       * :ref:`parallel_computing`: How NEST handles thread parallel and distributed computing
+       * :ref:`optimize_performance`: Guides to optimize NEST performance in large scale simulations
+       * :ref:`benchmark`: How to use the beNNch framework.
 
    .. grid-item-card::
        :class-header: sd-d-flex-row sd-align-minor-center sd-bg-info sd-text-white
@@ -98,21 +112,11 @@ Tutorials and Guides
 
        * :ref:`built_in_timers` describes the various timers available.
        * :ref:`random_numbers`: A guide to how random number are used in network simulations.
-       * :ref:`run_simulations`: A guide describing various factors in running simulations.
 
 
 .. grid:: 1 1 2 3
    :gutter: 1
 
-   .. grid-item-card::
-       :class-header: sd-d-flex-row sd-align-minor-center sd-bg-dark sd-text-white
-
-       |hpc| High performance computers (HPC)
-       ^^^
-
-       * :ref:`parallel_computing`: How NEST handles thread parallel and distributed computing
-       * :ref:`optimize_performance`: Guides to optimize NEST performance in large scale simulations
-       * :ref:`benchmark`: How to use the beNNch framework.
 
    .. grid-item-card::
        :class-header: sd-d-flex-row sd-align-minor-center sd-bg-dark sd-text-white
@@ -134,18 +138,18 @@ Tutorials and Guides
        * :ref:`nest_music`
 
 
-
-.. grid:: 1 1 2 3
-   :gutter: 1
-
    .. grid-item-card::
-       :class-header: sd-d-flex-row sd-align-minor-center sd-text-black
+       :class-header: sd-d-flex-row sd-align-minor-center sd-bg-dark sd-text-white
+
 
        |refresh| Get the latest changes
        ^^^
 
        * :ref:`Update 2.X scripts to 3.X <refguide_2_3>`
        * :ref:`See the latest changes <whats_new>`
+
+
+
 
 
 
@@ -164,7 +168,7 @@ Tutorials and Guides
 .. |neuron|  image:: static/img/neuron_white.svg
 .. |glossary|  image:: static/img/glossary_white.svg
 .. |git|  image:: static/img/git_white.svg
-.. |refresh|  image:: static/img/refresh_black.svg
+.. |refresh|  image:: static/img/refresh_white.svg
 .. |hpc|  image:: static/img/hpc_white.svg
 .. |random|  image:: static/img/random_white.svg
 .. |math|  image:: static/img/math_white.svg

@@ -20,31 +20,41 @@ Welcome!
     ranging from algorithmically determined connections to data-driven connectivity.
     Create connections between neurons using numerous synapse models from STDP to gap junctions.
 
+    .. button-ref:: tutorials_guides
+       :ref-type: ref
+       :shadow:
+       :color: primary
+
+       Get started with NEST
 
   .. grid-item-card::
 
       .. carousel::
           :show_controls:
+          :show_fade:
           :data-bs-ride: carousel
 
             .. figure:: static/img/pong_sim.gif
 
-              PLAY PONG with NEST
-
-
-            .. figure:: static/img/sudoku_solution.gif
-
-              OR SUDOKU
+              Play PONG with NEST
 
             .. figure:: static/img/pynest/spatial_test3d.png
 
               Create 3D spatially structured networks
 
 
-            .. figure:: static/img/pynest/structuralplasticity.png
+            .. figure:: static/img/astrocyte_tripartite.png
 
-              Showcase cool examples
+              Investigate neuron and astrocyte interactions
 
+
+      .. button-ref:: pynest_examples
+          :ref-type: ref
+          :color: info
+          :shadow:
+          :align: center
+
+          Click here to discover all our examples!
 
 ----
 

@@ -1,14 +1,13 @@
+.. _tutorials_guides:
+
 Tutorials and Guides
 ====================
 
-.. toctree::
-   :maxdepth: 1
-   :hidden:
-
-   tutorials/index
-
 Start here
-----------
+-----------
+
+
+Here are topics that provide an introduction to various aspects of NEST to help you develop your PyNEST script.
 
 .. grid:: 1 1 2 3
    :gutter: 1
@@ -26,28 +25,33 @@ Start here
 
 
    .. grid-item-card::
+          :class-header: sd-d-flex-row sd-align-minor-center sd-bg-primary sd-text-white
+
+          |write| Create, connect, simulate, and record
+          ^^^
+
+          * An overview of :ref:`modelsmain`
+          * :ref:`connection_management`: A guide to building connections in NEST
+          * :ref:`run_simulations`: A guide describing various factors in running simulations.
+          * :ref:`record_simulations`: How to collect data from neurons
+            and synapses.
+
+   .. grid-item-card::
           :class-header: sd-d-flex-item sd-align-minor-center sd-bg-primary sd-text-white
 
           |script| Pointers for writing your PyNEST script
           ^^^
 
-          * :ref:`Basic functionality for manipulating nodes (neurons and devices) <node_handles>`
-          * :ref:`Basic functionality for manipulating connections (synapses) <handling_connections>`
+          * Basic functionality for :ref:`manipulating nodes (neurons and devices) <node_handles>`
+          * Basic functionality for :ref:`manipulating connections (synapses) <handling_connections>`
           * :ref:`param_ex`: explore how to use parameter objects in NEST
 
-   .. grid-item-card::
-       :class-header: sd-d-flex-row sd-align-minor-center sd-bg-primary sd-text-white
-
-       |math| Create, connect and simulate
-       ^^^
-
-       * An overview of :ref:`modelsmain`
-       * :ref:`connection_management`: A guide to building connections in NEST
-       * :ref:`record_simulations`: A guide describing how to collect data from neurons
-         and synapses.
-       * :ref:`run_simulations`: A guide describing various factors in running simulations.
 
 ----
+
+Additional topics
+------------------
+
 
 .. grid:: 1 1 2 3
    :gutter: 1
@@ -150,6 +154,12 @@ Start here
 
 
 
+.. toctree::
+   :maxdepth: 1
+   :hidden:
+
+   tutorials/index
+
 
 
 
@@ -176,3 +186,4 @@ Start here
 .. |device|  image:: static/img/device_white.svg
 .. |connect|  image:: static/img/connect_white.svg
 .. |sonata|  image:: static/img/sonata_white.svg
+.. |write|  image:: static/img/write_nest_white.svg

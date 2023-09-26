@@ -301,7 +301,7 @@ params_syn_in_reg = {
     "adam_v": 0.0,  # initial 2nd moment raw estimate v of Adam optimizer
     "delay": duration["step"],  # ms, dendritic delay
     "eta": 5e-3,  # learning rate
-    "tau_m_out": params_nrn_out["tau_m"],  # ms, for technical reasons pass readout neuron membrane time constant
+    "tau_m_readout": params_nrn_out["tau_m"],  # ms, for technical reasons pass readout neuron membrane time constant
     "weight": weights_in_rec[:n_reg, :],  # pA, initial values for the synaptic weights
     "Wmax": 100.0,  # pA, maximal limit of the synaptic weights
     "Wmin": -100.0,  # pA, minimal limit of the synaptic weights
@@ -313,7 +313,7 @@ params_syn_in_adapt = {
     "adam_v": 0.0,  # initial 2nd moment raw estimate v of Adam optimizer
     "delay": duration["step"],  # ms, dendritic delay
     "eta": 5e-3,  # learning rate
-    "tau_m_out": params_nrn_out["tau_m"],  # ms, for technical reasons pass readout neuron membrane time constant
+    "tau_m_readout": params_nrn_out["tau_m"],  # ms, for technical reasons pass readout neuron membrane time constant
     "weight": weights_in_rec[n_reg:, :],  # pA, initial values for the synaptic weights
     "Wmax": 100.0,  # pA, maximal limit of the synaptic weights
     "Wmin": -100.0,  # pA, minimal limit of the synaptic weights
@@ -325,7 +325,7 @@ params_syn_rec_reg = {
     "adam_v": 0.0,
     "delay": duration["step"],
     "eta": 5e-3,
-    "tau_m_out": params_nrn_out["tau_m"],
+    "tau_m_readout": params_nrn_out["tau_m"],
     "weight": weights_rec_rec[:n_reg, :],
     "Wmax": 100.0,
     "Wmin": -100.0,
@@ -337,7 +337,7 @@ params_syn_rec_adapt = {
     "adam_v": 0.0,
     "delay": duration["step"],
     "eta": 5e-3,
-    "tau_m_out": params_nrn_out["tau_m"],
+    "tau_m_readout": params_nrn_out["tau_m"],
     "weight": weights_rec_rec[n_reg:, :],
     "Wmax": 100.0,
     "Wmin": -100.0,
@@ -348,7 +348,7 @@ params_syn_out = {
     "adam_v": 0.0,
     "delay": duration["step"],
     "eta": 5e-3,
-    "tau_m_out": params_nrn_out["tau_m"],
+    "tau_m_readout": params_nrn_out["tau_m"],
     "weight": weights_rec_out,
     "Wmax": 100.0,
     "Wmin": -100.0,

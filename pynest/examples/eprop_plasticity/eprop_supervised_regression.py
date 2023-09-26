@@ -243,7 +243,7 @@ params_syn_in = {
     "synapse_model": "eprop_synapse_iaf_psc_delta",
     "delay": duration["step"],  # ms, dendritic delay
     "eta": 1e-4,  # learning rate
-    "tau_m_out": params_nrn_out["tau_m"],  # ms, for technical reasons pass readout neuron membrane time constant
+    "tau_m_readout": params_nrn_out["tau_m"],  # ms, for technical reasons pass readout neuron membrane time constant
     "weight": weights_in_rec,  # pA, initial values for the synaptic weights
     "Wmax": 100.0,  # pA, maximal limit of the synaptic weights
     "Wmin": -100.0,  # pA, minimal limit of the synaptic weights
@@ -253,7 +253,7 @@ params_syn_rec = {
     "synapse_model": "eprop_synapse_iaf_psc_delta",
     "delay": duration["step"],
     "eta": 1e-4,
-    "tau_m_out": params_nrn_out["tau_m"],
+    "tau_m_readout": params_nrn_out["tau_m"],
     "weight": weights_rec_rec,
     "Wmax": 100.0,
     "Wmin": -100.0,
@@ -263,7 +263,7 @@ params_syn_out = {
     "synapse_model": "eprop_synapse_readout",
     "delay": duration["step"],
     "eta": 1e-4,
-    "tau_m_out": params_nrn_out["tau_m"],
+    "tau_m_readout": params_nrn_out["tau_m"],
     "weight": weights_rec_out,
     "Wmax": 100.0,
     "Wmin": -100.0,

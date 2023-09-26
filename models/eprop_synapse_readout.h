@@ -141,20 +141,20 @@ recall_duration  ms                          1.0      Duration over which gradie
 ===============  ========  ================  =======  =======================================================
 
 
-=========  ====  =========================  =======  ===============================================================
+=============  ====  =========================  =======  ===============================================================
 **Individual synapse properties**
---------------------------------------------------------------------------------------------------------------------
-Parameter  Unit  Math equivalent            Default  Description
-=========  ====  =========================  =======  ===============================================================
-adam_m           :math:`m`                      0.0  Initial value of first moment estimate m of Adam optimizer
-adam_v           :math:`v`                      0.0  Initial value of second moment raw estimate v of Adam optimizer
-delay      ms    :math:`d_{ji}`                 1.0  Dendritic delay
-eta              :math:`\eta`                  1e-4  Learning rate
-tau_m_out  ms    :math:`\tau_\text{m,out}`      0.0  Time constant for low-pass filtering of eligibility trace
-weight     pA    :math:`W_{ji}`                 1.0  Synaptic weight
-Wmax       pA    :math:`W_{ji}^\text{max}`    100.0  Maximal value for synaptic weight
-Wmin       pA    :math:`W_{ji}^\text{min}`      0.0  Minimal value for synaptic weight
-=========  ====  =========================  =======  ===============================================================
+------------------------------------------------------------------------------------------------------------------------
+Parameter      Unit  Math equivalent            Default  Description
+=============  ====  =========================  =======  ===============================================================
+adam_m               :math:`m`                      0.0  Initial value of first moment estimate m of Adam optimizer
+adam_v               :math:`v`                      0.0  Initial value of second moment raw estimate v of Adam optimizer
+delay          ms    :math:`d_{ji}`                 1.0  Dendritic delay
+eta                  :math:`\eta`                  1e-4  Learning rate
+tau_m_readout  ms    :math:`\tau_\text{m,out}`      0.0  Time constant for low-pass filtering of eligibility trace
+weight         pA    :math:`W_{ji}`                 1.0  Synaptic weight
+Wmax           pA    :math:`W_{ji}^\text{max}`    100.0  Maximal value for synaptic weight
+Wmin           pA    :math:`W_{ji}^\text{min}`      0.0  Minimal value for synaptic weight
+=============  ====  =========================  =======  ===============================================================
 
 Recordables
 +++++++++++

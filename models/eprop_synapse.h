@@ -141,20 +141,20 @@ recall_duration  ms                          1.0      Duration over which gradie
 ===============  ========  ================  =======  =======================================================
 
 
-=========  ====  =========================  =======  ===============================================================
+=============  ====  =========================  =======  ===============================================================
 **Individual synapse properties**
---------------------------------------------------------------------------------------------------------------------
-Parameter  Unit  Math equivalent            Default  Description
-=========  ====  =========================  =======  ===============================================================
-adam_m           :math:`m`                      0.0  Initial value of first moment estimate m of Adam optimizer
-adam_v           :math:`v`                      0.0  Initial value of second moment raw estimate v of Adam optimizer
-delay      ms    :math:`d_{ji}`                 1.0  Dendritic delay
-eta              :math:`\eta`                  1e-4  Learning rate
-tau_m_out  ms    :math:`\tau_\text{m,out}`      0.0  Time constant for low-pass filtering of eligibility trace
-weight     pA    :math:`W_{ji}`                 1.0  Synaptic weight
-Wmax       pA    :math:`W_{ji}^\text{max}`    100.0  Maximal value for synaptic weight
-Wmin       pA    :math:`W_{ji}^\text{min}`      0.0  Minimal value for synaptic weight
-=========  ====  =========================  =======  ===============================================================
+------------------------------------------------------------------------------------------------------------------------
+Parameter      Unit  Math equivalent            Default  Description
+=============  ====  =========================  =======  ===============================================================
+adam_m               :math:`m`                      0.0  Initial value of first moment estimate m of Adam optimizer
+adam_v               :math:`v`                      0.0  Initial value of second moment raw estimate v of Adam optimizer
+delay          ms    :math:`d_{ji}`                 1.0  Dendritic delay
+eta                  :math:`\eta`                  1e-4  Learning rate
+tau_m_readout  ms    :math:`\tau_\text{m,out}`      0.0  Time constant for low-pass filtering of eligibility trace
+weight         pA    :math:`W_{ji}`                 1.0  Synaptic weight
+Wmax           pA    :math:`W_{ji}^\text{max}`    100.0  Maximal value for synaptic weight
+Wmin           pA    :math:`W_{ji}^\text{min}`      0.0  Minimal value for synaptic weight
+=============  ====  =========================  =======  ===============================================================
 
 Recordables
 +++++++++++
@@ -317,11 +317,11 @@ protected:
   double t_last_update_;
   double t_next_update_;
   double t_last_trigger_spike_;
-  double tau_m_out_; // time constant for low pass filtering of eligibility trace
-  double kappa_;     // exp( -dt / tau_m_out_ )
-  double adam_m_;    // auxiliary variable for Adam optimizer
-  double adam_v_;    // auxiliary variable for Adam optimizer
-  double sum_grads_; // sum of the gradients in one batch
+  double tau_m_readout_; // time constant for low pass filtering of eligibility trace
+  double kappa_;         // exp( -dt / tau_m_readout_ )
+  double adam_m_;        // auxiliary variable for Adam optimizer
+  double adam_v_;        // auxiliary variable for Adam optimizer
+  double sum_grads_;     // sum of the gradients in one batch
   double dt_;
   double update_interval_;
   double delay_;
@@ -449,7 +449,7 @@ eprop_synapse< targetidentifierT >::eprop_synapse()
   , t_last_update_( 2.0 )
   , t_next_update_( 1002.0 )
   , t_last_trigger_spike_( 0.0 )
-  , tau_m_out_( 10.0 )
+  , tau_m_readout_( 10.0 )
   , kappa_( 0.0 )
   , adam_m_( 0.0 )
   , adam_v_( 0.0 )
@@ -466,7 +466,7 @@ eprop_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
   def< double >( d, names::eta, eta_ );
   def< double >( d, names::Wmin, Wmin_ );
   def< double >( d, names::Wmax, Wmax_ );
-  def< double >( d, names::tau_m_out, tau_m_out_ );
+  def< double >( d, names::tau_m_readout, tau_m_readout_ );
   def< long >( d, names::size_of, sizeof( *this ) );
   def< double >( d, names::adam_m, adam_m_ );
   def< double >( d, names::adam_v, adam_v_ );
@@ -481,19 +481,19 @@ eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
   updateValue< double >( d, names::eta, eta_ );
   updateValue< double >( d, names::Wmin, Wmin_ );
   updateValue< double >( d, names::Wmax, Wmax_ );
-  updateValue< double >( d, names::tau_m_out, tau_m_out_ );
+  updateValue< double >( d, names::tau_m_readout, tau_m_readout_ );
   updateValue< double >( d, names::adam_m, adam_m_ );
   updateValue< double >( d, names::adam_v, adam_v_ );
 
   if ( weight_ < Wmin_ or weight_ > Wmax_ )
     throw BadProperty( "Wmax >= weight >= Wmin must be satisfied." );
 
-  if ( tau_m_out_ <= 0 )
+  if ( tau_m_readout_ <= 0 )
     throw BadProperty( "Membrane time constant of readout neuron constant must be > 0." );
 
   dt_ = Time::get_resolution().get_ms();
 
-  kappa_ = exp( -dt_ / tau_m_out_ );
+  kappa_ = exp( -dt_ / tau_m_readout_ );
 
   update_interval_ = kernel().simulation_manager.get_eprop_update_interval();
   delay_ = get_delay();

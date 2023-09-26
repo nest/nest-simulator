@@ -199,15 +199,15 @@ cdef object dictionary_to_pydict(dictionary cdict):
 
 
 cdef is_list_tuple_ndarray_of_float(v):
-    list_of_float = type(v) is list and type(v[0]) is float
-    tuple_of_float = type(v) is tuple and type(v[0]) is float
+    list_of_float = type(v) is list and len(v) > 0 and type(v[0]) is float
+    tuple_of_float = type(v) is tuple and len(v) > 0 and type(v[0]) is float
     ndarray_of_float = isinstance(v, numpy.ndarray) and numpy.issubdtype(v.dtype, numpy.floating)
     return list_of_float or tuple_of_float or ndarray_of_float
 
 
 cdef is_list_tuple_ndarray_of_int(v):
-    list_of_int = type(v) is list and type(v[0]) is int
-    tuple_of_int = type(v) is tuple and type(v[0]) is int
+    list_of_int = type(v) is list and len(v) > 0 and type(v[0]) is int
+    tuple_of_int = type(v) is tuple and len(v) > 0 and type(v[0]) is int
     ndarray_of_int = isinstance(v, numpy.ndarray) and numpy.issubdtype(v.dtype, numpy.integer)
     return list_of_int or tuple_of_int or ndarray_of_int
 
@@ -229,13 +229,13 @@ cdef dictionary pydict_to_dictionary(object py_dict) except *:  # Adding "except
             cdict[pystr_to_string(key)] = pylist_or_ndarray_to_doublevec(value)
         elif is_list_tuple_ndarray_of_int(value):
             cdict[pystr_to_string(key)] = pylist_to_intvec(value)
-        elif type(value) is list and isinstance(value[0], (list, tuple)):
+        elif type(value) is list and len(value) > 0 and isinstance(value[0], (list, tuple)):
             cdict[pystr_to_string(key)] = list_of_list_to_doublevec(value)
-        elif type(value) is list and isinstance(value[0], numpy.ndarray):
+        elif type(value) is list and len(value) > 0 and isinstance(value[0], numpy.ndarray):
             cdict[pystr_to_string(key)] = list_of_list_to_doublevec(value)
-        elif type(value) is list and type(value[0]) is str:
+        elif type(value) is list and len(value) > 0 and type(value[0]) is str:
             cdict[pystr_to_string(key)] = pylist_to_stringvec(value)
-        elif type(value) is list and type(value[0]) is dict:
+        elif type(value) is list and len(value) > 0 and type(value[0]) is dict:
             cdict[pystr_to_string(key)] = pylist_to_dictvec(value)
         elif type(value) is dict:
             cdict[pystr_to_string(key)] = pydict_to_dictionary(value)
@@ -246,9 +246,13 @@ cdef dictionary pydict_to_dictionary(object py_dict) except *:  # Adding "except
         elif type(value) is ParameterObject:
             cdict[pystr_to_string(key)] = (<ParameterObject>value).thisptr
         else:
+            typename = type(value)
             if type(value) is list:
-                print("list of ", type(value[0]))
-            raise AttributeError(f'when converting Python dictionary: value of key ({key}) is not a known type, got {type(value)}')
+                if len(value) > 0:
+                    typename = f"list of {type(value[0])}"
+                else:
+                    typename = f"empty list (for which the element type cannot be determined)"
+            raise AttributeError(f'when converting Python dictionary: value of key ({key}) is not a known type, got {typename}')
     return cdict
 
 

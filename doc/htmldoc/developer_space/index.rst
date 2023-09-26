@@ -16,34 +16,28 @@ It is documentation for anyone needing to touch the code or documentation.
        Install NEST from source
 
 
-Contribute to NEST
-------------------
 
-For information on how to contribute to NEST whether creating issues, writing to the mailing list
-or making changes to code or documentation, see our :ref:`contribute` guide.
+Guidelines and workflows for developing NEST
+---------------------------------------------
 
-Workflows and Guidelines
--------------------------
+
+
+.. note::
+
+   Most of the guides and workflows for contributing to NEST can be found in our :ref:`contribute` guide.
+
+
 
 .. grid:: 1 1 2 2
 
-   .. grid-item-card:: Workflows
+   .. grid-item-card:: Reviewer guidelines
 
-       * New to git or need a refresher? See our :ref:`NEST git workflow <git_workflow>`
-       * Check that documentation renders properly: See the :ref:`build documentation <doc_workflow>` guide for developer and user documentation
+       * If you are requested to review a pull request, please check our :ref:`code_guidelines`
+
+   .. grid-item-card:: CI Workflow
+
        * Here you can find details on our :ref:`CI workflow <cont_integration>`
 
-   .. grid-item-card:: Guidelines
-
-       * Follow the :ref:`C++ coding style guidelines <code_style_cpp>`
-       * Review the :ref:`naming conventions for NEST <naming_conventions>`
-       * Writing an extension module? See :doc:`extmod:index`
-       * :ref:`required_dev_tools`
-
-    .. grid-item-card:: Contribute documentation
-
-       * Review the :ref:`documentation style guide <doc_styleguide>`
-       * If you are requested to review a pull request, please check our :ref:`code_guidelines`
 
 .. grid:: 1 1 2 2
 

@@ -7,7 +7,7 @@ Why do we have a style guide?
 -----------------------------
 
 This style guide was created to provide a single reference point for content
-creation in NEST. This helps ensure the NEST user-level documentation remains
+creation in NEST. This helps ensure the NEST user facing documentation remains
 clear and consistent. The style choices we make here are meant to follow the
 major trends in technical writing for software.
 

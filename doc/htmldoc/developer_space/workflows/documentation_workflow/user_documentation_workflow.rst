@@ -1,7 +1,7 @@
 .. _userdoc_workflow:
 
-User-level documentation workflow
-=================================
+User facing documentation workflow
+==================================
 
 Overview of workflow
 --------------------
@@ -215,9 +215,9 @@ form to transfer your copyright to the NEST initiative and send it to *info [at]
 
 .. seealso::
 
-   This workflow shows you how to create **user-level documentation**
-   for NEST. For the **developer documentation**, please refer to our
-   :ref:`Developer documentation workflow
+   This workflow shows you how to create **user facing documentation**
+   for NEST. For the **technical documentation**, please refer to our
+   :ref:`Technical documentation workflow
    <devdoc_workflow>`.
 
 

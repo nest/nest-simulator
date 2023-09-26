@@ -1,10 +1,10 @@
 .. _devdoc_workflow:
 
-Developer documentation workflow
-################################
+Techincal documentation workflow
+================================
 
 What you need to know
-+++++++++++++++++++++
+---------------------
 
 For developer documentation, we use `Doxygen <http://doxygen.org/>`__
 comments extensively throughout NEST.
@@ -15,12 +15,12 @@ generated in the ``doc`` folder in your source directory.
 
 .. note::
 
-   This workflow shows you how to create **developer documentation**
-   for NEST. For the **user documentation**, please refer to our
-   :ref:`User documentation workflow <userdoc_workflow>`.
+   This workflow shows you how to create **technical documentation**
+   for NEST. For the **user facing documentation**, please refer to our
+   :ref:`User facing documentation workflow <userdoc_workflow>`.
 
 Instructions
-++++++++++++
+------------
 
 1. Install Doxygen and graphviz.
 

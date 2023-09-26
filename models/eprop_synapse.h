@@ -280,7 +280,10 @@ public:
 
   void optimize( long current_optimization_step_, long& last_optimization_step_, const EpropCommonProperties& cp );
 
-  virtual void update_gradient( EpropArchivingNode* target, double& grad, const EpropCommonProperties& cp ) const {};
+  virtual void update_gradient( EpropArchivingNode* target,
+    double& sum_grads,
+    std::vector< double >& presyn_isis,
+    const EpropCommonProperties& cp ) const {};
   virtual void check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& ) {};
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -342,43 +345,36 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
   assert( target );
 
   std::string target_node = target->get_eprop_node_type();
-  double shift = target_node == "readout" ? delay_ : 0.0;
+  double shift = 2.0 * delay_;
+  double shift_t_update = target_node == "readout" ? delay_ : 0.0;
+
+  if ( t_last_trigger_spike_ == 0.0 )
+    t_last_trigger_spike_ = t_spike;
 
   if ( std::fmod( t_spike - delay_, update_interval_ ) != 0.0 or target_node == "readout" )
   {
     if ( t_last_spike_ > 0.0 )
     {
-      double isi = ( t_spike >= t_next_update_ ) ? ( t_next_update_ - delay_ + shift - t_last_spike_ )
-                                                 : ( t_spike - t_last_spike_ );
-      presyn_isis_.push_back( isi );
+      double t = t_spike >= t_next_update_ ? t_next_update_ - delay_ + shift_t_update : t_spike;
+      presyn_isis_.push_back( t - t_last_spike_ );
     }
 
     if ( t_spike >= t_next_update_ )
     {
       int idx_current_update = static_cast< int >( ( t_spike - dt_ ) / update_interval_ );
-      double t_current_update_ = idx_current_update * update_interval_ + 2.0 * delay_;
+      double t_current_update_ = idx_current_update * update_interval_ + shift;
       int current_optimization_step_ = 1 + idx_current_update / cp.batch_size_;
-      double grad = 0.0;
 
-      if ( t_last_trigger_spike_ == 0.0 )
-        t_last_trigger_spike_ = t_next_update_ - delay_ + shift;
+      target->write_update_to_history( t_last_update_ + shift_t_update, t_current_update_ + shift_t_update );
 
-      target->write_update_to_history( t_last_update_ + shift, t_current_update_ + shift );
-
-      update_gradient( target, grad, cp );
-
-      grad *= dt_;
-
-      sum_grads_ += grad;
+      update_gradient( target, sum_grads_, presyn_isis_, cp );
 
       if ( last_optimization_step_ < current_optimization_step_ )
         optimize( current_optimization_step_, last_optimization_step_, cp );
 
       t_last_update_ = t_current_update_;
-      t_next_update_ +=
-        ( static_cast< int >( ( t_spike - t_next_update_ ) / update_interval_ ) + 1 ) * update_interval_;
+      t_next_update_ = t_current_update_ + update_interval_;
 
-      presyn_isis_.clear();
 
       t_last_trigger_spike_ = t_spike;
     }
@@ -386,16 +382,12 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
     t_last_spike_ = t_spike;
   }
 
-  if ( t_last_trigger_spike_ == 0.0 )
-    t_last_trigger_spike_ = t_spike;
-
   e.set_receiver( *target );
   e.set_weight( weight_ );
   e.set_delay_steps( get_delay_steps() );
   e.set_rport( get_rport() );
   e();
 }
-
 
 template < typename targetidentifierT >
 inline void

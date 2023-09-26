@@ -35,6 +35,7 @@ from libcpp.vector cimport vector
 
 import nest
 import numpy
+import numbers
 
 # cimport numpy
 
@@ -125,6 +126,11 @@ cdef object dict_vector_to_list(vector[dictionary] cvec):
         inc(it)
     return tmp
 
+def make_tuple_or_ndarray(operand):
+        if len(operand) > 0 and isinstance(operand[0], numbers.Number):
+            return numpy.array(operand)
+        else:
+            return tuple(operand)
 
 cdef object any_to_pyobj(any operand):
     if is_type[int](operand):
@@ -166,7 +172,9 @@ cdef object any_to_pyobj(any operand):
     if is_type[vector[dictionary]](operand):
         return dict_vector_to_list(any_cast[vector[dictionary]](operand))
     if is_type[vector[any]](operand):
-        return tuple(any_vector_to_list(any_cast[vector[any]](operand)))
+        # PYNEST-NG: This will create a Python list first and then convert to
+        # either tuple or numpy array, which will copy the data element-wise.
+        return make_tuple_or_ndarray(any_vector_to_list(any_cast[vector[any]](operand)))
     if is_type[dictionary](operand):
         return dictionary_to_pydict(any_cast[dictionary](operand))
     if is_type[NodeCollectionPTR](operand):
@@ -588,6 +596,8 @@ def llapi_get_nc_status(NodeCollectionObject nc, object key=None):
         if not statuses.known(pystr_to_string(key)):
             raise KeyError(key)
         value = any_to_pyobj(statuses[pystr_to_string(key)])
+        # PYNEST-NG: This is backwards-compatible, but makes it harder
+        # to write scalable code. Maybe just return value as is?
         return value[0] if len(value) == 1 else value
     else:
         raise TypeError(f'key must be a string, got {type(key)}')

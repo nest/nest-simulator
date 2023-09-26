@@ -228,10 +228,4 @@ nest::EpropArchivingNode::get_eprop_parameter_map()
   return eprop_parameter_map_;
 }
 
-std::string
-nest::EpropArchivingNode::get_eprop_node_type() const
-{
-  throw UnexpectedEvent();
-}
-
 } // namespace nest

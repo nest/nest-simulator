@@ -347,7 +347,6 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
   EpropArchivingNode* target = dynamic_cast< EpropArchivingNode* >( get_target( thread ) );
   assert( target );
 
-  std::string target_node = target->get_eprop_node_type();
   double shift_t_update = get_shift();
 
   if ( t_last_trigger_spike_ == 0.0 )
@@ -493,8 +492,8 @@ eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
 
   shift_ = 2.0 * delay_; // correct for travel time of learning signal to synchronize signals
 
-  t_next_update_ = update_interval_ + shift;
-  t_last_update_ = shift;
+  t_next_update_ = update_interval_ + shift_;
+  t_last_update_ = shift_;
 }
 
 } // namespace nest

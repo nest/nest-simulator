@@ -321,16 +321,6 @@ nest::eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, co
 }
 
 /* ----------------------------------------------------------------
- * Getter functions for private variables and parameters
- *----------------------------------------------------------------- */
-
-std::string
-nest::eprop_iaf_psc_delta_adapt::get_eprop_node_type() const
-{
-  return eprop_node_type_;
-}
-
-/* ----------------------------------------------------------------
  * Event handling functions
  * ---------------------------------------------------------------- */
 

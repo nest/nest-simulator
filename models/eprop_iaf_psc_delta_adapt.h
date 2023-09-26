@@ -197,11 +197,7 @@ public:
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
-  std::string get_eprop_node_type() const;
-
 private:
-  std::string eprop_node_type_ = "adaptive";
-
   void init_state_( const Node& proto );
   void init_buffers_();
   void pre_run_hook();

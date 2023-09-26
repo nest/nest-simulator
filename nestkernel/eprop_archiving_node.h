@@ -70,8 +70,6 @@ public:
   void add_spike_to_counter();
   void reset_spike_counter();
 
-  virtual std::string get_eprop_node_type() const;
-
 private:
   double eps_ = 1e-6; // small constant to prevent numerical errors when comparing time points
   size_t n_spikes_ = 0;

@@ -272,16 +272,6 @@ nest::eprop_readout::update_( Time const& origin, const long from, const long to
 }
 
 /* ----------------------------------------------------------------
- * Getter functions for private variables and parameters
- *----------------------------------------------------------------- */
-
-std::string
-nest::eprop_readout::get_eprop_node_type() const
-{
-  return eprop_node_type_;
-}
-
-/* ----------------------------------------------------------------
  * Event handling functions
  * ---------------------------------------------------------------- */
 

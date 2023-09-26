@@ -75,11 +75,11 @@ public:
   {
   }
 
-  friend bool operator<( const histentry_eprop he, double t );
+  friend bool operator<( const histentry_eprop& he, double t );
 };
 
 inline bool
-operator<( const histentry_eprop he, double t )
+operator<( const histentry_eprop& he, double t )
 {
   return ( he.t_ ) < t;
 }

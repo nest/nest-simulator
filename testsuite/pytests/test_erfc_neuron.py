@@ -36,7 +36,7 @@ def get_mean_activity(detector, T):
     detector.
     """
     states = detector.events["state"]
-    states = [states] if isinstance(states, int) else states
+    states = [states] if isinstance(states, (int, np.integer)) else states
     times = detector.events["times"]
     # add total duration at the end, since we need to take into account
     # the time between the last state change and end of simulation

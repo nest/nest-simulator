@@ -285,6 +285,8 @@ public:
     std::vector< double >& presyn_isis,
     const EpropCommonProperties& cp ) const {};
   virtual void check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& ) {};
+  virtual double get_shift() const {};
+  virtual bool do_update( const double& t_spike ) const {};
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -328,6 +330,7 @@ protected:
   double dt_;
   double update_interval_;
   double delay_;
+  double shift_;
 
   std::vector< double > presyn_isis_;
 };
@@ -345,13 +348,12 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
   assert( target );
 
   std::string target_node = target->get_eprop_node_type();
-  double shift = 2.0 * delay_;
-  double shift_t_update = target_node == "readout" ? delay_ : 0.0;
+  double shift_t_update = get_shift();
 
   if ( t_last_trigger_spike_ == 0.0 )
     t_last_trigger_spike_ = t_spike;
 
-  if ( std::fmod( t_spike - delay_, update_interval_ ) != 0.0 or target_node == "readout" )
+  if ( do_update( t_spike ) )
   {
     if ( t_last_spike_ > 0.0 )
     {
@@ -362,7 +364,7 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
     if ( t_spike >= t_next_update_ )
     {
       int idx_current_update = static_cast< int >( ( t_spike - dt_ ) / update_interval_ );
-      double t_current_update_ = idx_current_update * update_interval_ + shift;
+      double t_current_update_ = idx_current_update * update_interval_ + shift_;
       int current_optimization_step_ = 1 + idx_current_update / cp.batch_size_;
 
       target->write_update_to_history( t_last_update_ + shift_t_update, t_current_update_ + shift_t_update );
@@ -374,7 +376,6 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
 
       t_last_update_ = t_current_update_;
       t_next_update_ = t_current_update_ + update_interval_;
-
 
       t_last_trigger_spike_ = t_spike;
     }
@@ -490,7 +491,7 @@ eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
   update_interval_ = kernel().simulation_manager.get_eprop_update_interval();
   delay_ = get_delay();
 
-  double shift = 2.0 * delay_; // correct for travel time of learning signal to synchronize signals
+  shift_ = 2.0 * delay_; // correct for travel time of learning signal to synchronize signals
 
   t_next_update_ = update_interval_ + shift;
   t_last_update_ = shift;

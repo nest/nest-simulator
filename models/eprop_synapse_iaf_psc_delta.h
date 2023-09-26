@@ -219,6 +219,8 @@ public:
   void get_status( DictionaryDatum& d ) const;
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
   void check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& ) override;
+  double get_shift() const override;
+  bool do_update( const double& t_spike ) const override;
 };
 
 template < typename targetidentifierT >
@@ -293,6 +295,21 @@ eprop_synapse_iaf_psc_delta< targetidentifierT >::update_gradient( EpropArchivin
   grad *= this->dt_;
 
   sum_grads += grad;
+}
+
+template < typename targetidentifierT >
+double
+eprop_synapse_iaf_psc_delta< targetidentifierT >::get_shift() const
+{
+  return 0.0;
+}
+
+template < typename targetidentifierT >
+bool
+eprop_synapse_iaf_psc_delta< targetidentifierT >::do_update( const double& t_spike ) const
+{
+  bool is_update = std::fmod( t_spike - this->delay_, this->update_interval_ ) != 0.0;
+  return is_update;
 }
 
 } // namespace nest

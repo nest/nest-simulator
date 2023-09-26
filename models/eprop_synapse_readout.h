@@ -220,6 +220,8 @@ public:
   void get_status( DictionaryDatum& d ) const;
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
   void check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& ) override;
+  double get_shift() const override;
+  bool do_update( const double& t_spike ) const override;
 };
 
 template < typename targetidentifierT >
@@ -278,6 +280,20 @@ eprop_synapse_readout< targetidentifierT >::update_gradient( EpropArchivingNode*
   grad *= this->dt_;
 
   sum_grads += grad;
+}
+
+template < typename targetidentifierT >
+double
+eprop_synapse_readout< targetidentifierT >::get_shift() const
+{
+  return this->delay_;
+}
+
+template < typename targetidentifierT >
+bool
+eprop_synapse_readout< targetidentifierT >::do_update( const double& t_spike ) const
+{
+  return true;
 }
 
 } // namespace nest

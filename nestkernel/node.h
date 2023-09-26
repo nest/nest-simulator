@@ -467,6 +467,14 @@ public:
    */
   virtual void sends_secondary_event( DelayedRateConnectionEvent& re );
 
+  /**
+   * Required to check, if source neuron may send a SecondaryEvent.
+   *
+   * This base class implementation throws IllegalConnection
+   * and needs to be overwritten in the derived class.
+   * @ingroup event_interface
+   * @throws IllegalConnection
+   */
   virtual void sends_secondary_event( LearningSignalConnectionEvent& re );
 
   /**
@@ -595,6 +603,13 @@ public:
    */
   virtual void handle( DelayedRateConnectionEvent& e );
 
+  /**
+   * Handler for learning signal connection events.
+   *
+   * @see handle(thread, LearningSignalConnectionEvent&)
+   * @ingroup event_interface
+   * @throws UnexpectedEvent
+   */
   virtual void handle( LearningSignalConnectionEvent& e );
 
   /**

@@ -145,13 +145,13 @@ DelayedRateConnectionEvent::operator()()
 }
 
 void
-LearningSignalConnectionEvent::operator()()
+DiffusionConnectionEvent::operator()()
 {
   receiver_->handle( *this );
 }
 
 void
-DiffusionConnectionEvent::operator()()
+LearningSignalConnectionEvent::operator()()
 {
   receiver_->handle( *this );
 }

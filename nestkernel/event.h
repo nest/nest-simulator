@@ -94,10 +94,10 @@ class Node;
  * @see DoubleDataEvent
  * @see SecondaryEvent
  * @see DelayedRateConnectionEvent
- * @see LearningSignalConnectionEvent
  * @see DiffusionConnectionEvent
  * @see GapJunctionEvent
  * @see InstantaneousRateConnectionEvent
+ * @see LearningSignalConnectionEvent
 
  * @ingroup event_interface
  */

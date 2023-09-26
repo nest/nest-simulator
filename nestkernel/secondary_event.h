@@ -347,22 +347,6 @@ public:
   DelayedRateConnectionEvent* clone() const override;
 };
 
-/**
- * Event for rate model connections with delay. The event transmits
- * the rate to the connected neurons.
- */
-class LearningSignalConnectionEvent : public DataSecondaryEvent< double, LearningSignalConnectionEvent >
-{
-
-public:
-  LearningSignalConnectionEvent()
-  {
-  }
-
-  void operator()() override;
-  LearningSignalConnectionEvent* clone() const override;
-};
-
 
 /**
  * Event for diffusion connections (rate model connections for the
@@ -400,6 +384,22 @@ public:
   double get_diffusion_factor() const;
 };
 
+/**
+ * Event for learning signal connections. The event transmits
+ * the learning signal to the connected neurons.
+ */
+class LearningSignalConnectionEvent : public DataSecondaryEvent< double, LearningSignalConnectionEvent >
+{
+
+public:
+  LearningSignalConnectionEvent()
+  {
+  }
+
+  void operator()() override;
+  LearningSignalConnectionEvent* clone() const override;
+};
+
 template < typename DataType, typename Subclass >
 inline DataType
 DataSecondaryEvent< DataType, Subclass >::get_coeffvalue( std::vector< unsigned int >::iterator& pos )
@@ -433,12 +433,6 @@ DelayedRateConnectionEvent::clone() const
   return new DelayedRateConnectionEvent( *this );
 }
 
-inline LearningSignalConnectionEvent*
-LearningSignalConnectionEvent::clone() const
-{
-  return new LearningSignalConnectionEvent( *this );
-}
-
 inline DiffusionConnectionEvent*
 DiffusionConnectionEvent::clone() const
 {
@@ -455,6 +449,12 @@ inline double
 DiffusionConnectionEvent::get_diffusion_factor() const
 {
   return diffusion_factor_;
+}
+
+inline LearningSignalConnectionEvent*
+LearningSignalConnectionEvent::clone() const
+{
+  return new LearningSignalConnectionEvent( *this );
 }
 
 } // namespace nest

@@ -253,7 +253,7 @@ eprop_synapse_iaf_psc_delta< targetidentifierT >::update_gradient( EpropArchivin
   double& grad,
   const EpropCommonProperties& cp ) const
 {
-  std::deque< histentry_eprop_archive >::iterator it_eprop_hist;
+  std::deque< HistEntryEpropArchive >::iterator it_eprop_hist;
   target->get_eprop_history( this->t_last_trigger_spike_ + get_delay(), &it_eprop_hist );
 
   std::map< std::string, double >& eprop_parameter_map = target->get_eprop_parameter_map();

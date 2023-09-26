@@ -45,11 +45,11 @@ nest::EpropArchivingNode::init_update_history( double delay )
 {
   // register first entry for every synapse, increase access counter if entry already in list
 
-  std::vector< histentry_eprop_update >::iterator it =
+  std::vector< HistEntryEpropUpdate >::iterator it =
     std::lower_bound( update_history_.begin(), update_history_.end(), delay - eps_ );
 
   if ( it == update_history_.end() or fabs( delay - it->t_ ) > eps_ )
-    update_history_.insert( it, histentry_eprop_update( delay, 1 ) );
+    update_history_.insert( it, HistEntryEpropUpdate( delay, 1 ) );
   else
     ++it->access_counter_;
 }
@@ -57,14 +57,14 @@ nest::EpropArchivingNode::init_update_history( double delay )
 void
 nest::EpropArchivingNode::write_update_to_history( double t_last_update, double t_current_update )
 {
-  std::vector< histentry_eprop_update >::iterator it;
+  std::vector< HistEntryEpropUpdate >::iterator it;
 
   it = std::lower_bound( update_history_.begin(), update_history_.end(), t_current_update );
 
   if ( it != update_history_.end() or t_current_update == it->t_ )
     ++it->access_counter_;
   else
-    update_history_.insert( it, histentry_eprop_update( t_current_update, 1 ) );
+    update_history_.insert( it, HistEntryEpropUpdate( t_current_update, 1 ) );
 
   it = std::lower_bound( update_history_.begin(), update_history_.end(), t_last_update );
 
@@ -73,7 +73,7 @@ nest::EpropArchivingNode::write_update_to_history( double t_last_update, double 
 }
 
 void
-nest::EpropArchivingNode::get_eprop_history( double time_point, std::deque< histentry_eprop_archive >::iterator* it )
+nest::EpropArchivingNode::get_eprop_history( double time_point, std::deque< HistEntryEpropArchive >::iterator* it )
 {
   if ( eprop_history_.empty() )
   {
@@ -92,8 +92,8 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
 
   double update_interval = kernel().simulation_manager.get_eprop_update_interval();
 
-  std::deque< histentry_eprop_archive >::iterator start;
-  std::deque< histentry_eprop_archive >::iterator finish;
+  std::deque< HistEntryEpropArchive >::iterator start;
+  std::deque< HistEntryEpropArchive >::iterator finish;
 
   auto it = update_history_.begin();
 
@@ -119,14 +119,13 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
 void
 nest::EpropArchivingNode::write_v_m_pseudo_deriv_to_history( long time_step, double v_m_pseudo_deriv )
 {
-  eprop_history_.push_back(
-    histentry_eprop_archive( Time( Time::step( time_step ) ).get_ms(), v_m_pseudo_deriv, 0.0 ) );
+  eprop_history_.push_back( HistEntryEpropArchive( Time( Time::step( time_step ) ).get_ms(), v_m_pseudo_deriv, 0.0 ) );
 }
 
 void
 nest::EpropArchivingNode::write_error_signal_to_history( long time_step, double error_signal )
 {
-  eprop_history_.push_back( histentry_eprop_archive( Time( Time::step( time_step ) ).get_ms(), 0.0, error_signal ) );
+  eprop_history_.push_back( HistEntryEpropArchive( Time( Time::step( time_step ) ).get_ms(), 0.0, error_signal ) );
 }
 
 
@@ -136,8 +135,8 @@ nest::EpropArchivingNode::write_learning_signal_to_history( LearningSignalConnec
   double shift = 2.0 * Time::get_resolution().get_ms();
   double t_ms = e.get_stamp().get_ms() - shift;
 
-  std::deque< histentry_eprop_archive >::iterator start;
-  std::deque< histentry_eprop_archive >::iterator finish;
+  std::deque< HistEntryEpropArchive >::iterator start;
+  std::deque< HistEntryEpropArchive >::iterator finish;
 
   get_eprop_history( t_ms, &start );
   get_eprop_history( t_ms + Time::delay_steps_to_ms( e.get_delay_steps() ), &finish );
@@ -198,7 +197,7 @@ nest::EpropArchivingNode::write_firing_rate_reg_to_history( double t_current_upd
   double f_target_ = f_target / 1000.0; // convert to kHz
   double firing_rate_reg = c_reg * dt * ( f_av - f_target_ ) / update_interval;
 
-  firing_rate_reg_history_.push_back( histentry_eprop_firing_rate_reg( t_current_update, firing_rate_reg ) );
+  firing_rate_reg_history_.push_back( HistEntryEpropFiringRateReg( t_current_update, firing_rate_reg ) );
 }
 
 double
@@ -209,7 +208,7 @@ nest::EpropArchivingNode::get_firing_rate_reg( double time_point )
 
   double const update_interval = kernel().simulation_manager.get_eprop_update_interval();
 
-  std::vector< histentry_eprop_firing_rate_reg >::iterator it;
+  std::vector< HistEntryEpropFiringRateReg >::iterator it;
 
   it = std::lower_bound(
     firing_rate_reg_history_.begin(), firing_rate_reg_history_.end(), time_point + update_interval - 1 + eps_ );

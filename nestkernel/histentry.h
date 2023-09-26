@@ -65,46 +65,46 @@ operator<( const histentry_extended he, double t )
   return ( he.t_ ) < t;
 }
 
-class histentry_eprop
+class HistEntryEprop
 {
 public:
-  histentry_eprop( double t );
+  HistEntryEprop( double t );
 
   double t_;
-  virtual ~histentry_eprop()
+  virtual ~HistEntryEprop()
   {
   }
 
-  friend bool operator<( const histentry_eprop& he, double t );
+  friend bool operator<( const HistEntryEprop& he, double t );
 };
 
 inline bool
-operator<( const histentry_eprop& he, double t )
+operator<( const HistEntryEprop& he, double t )
 {
   return ( he.t_ ) < t;
 }
 
-class histentry_eprop_archive : public histentry_eprop
+class HistEntryEpropArchive : public HistEntryEprop
 {
 public:
-  histentry_eprop_archive( double t, double V_m_pseudo_deriv, double learning_signal );
+  HistEntryEpropArchive( double t, double V_m_pseudo_deriv, double learning_signal );
 
   double V_m_pseudo_deriv_;
   double learning_signal_;
 };
 
-class histentry_eprop_update : public histentry_eprop
+class HistEntryEpropUpdate : public HistEntryEprop
 {
 public:
-  histentry_eprop_update( double t, size_t access_counter );
+  HistEntryEpropUpdate( double t, size_t access_counter );
 
   size_t access_counter_;
 };
 
-class histentry_eprop_firing_rate_reg : public histentry_eprop
+class HistEntryEpropFiringRateReg : public HistEntryEprop
 {
 public:
-  histentry_eprop_firing_rate_reg( double t, double firing_rate_reg );
+  HistEntryEpropFiringRateReg( double t, double firing_rate_reg );
 
   double firing_rate_reg_;
 };

@@ -64,7 +64,7 @@ public:
   void write_eprop_parameter_to_map( std::string parameter_name, double parameter_value );
 
   double get_firing_rate_reg( double time_point );
-  void get_eprop_history( double time_point, std::deque< histentry_eprop_archive >::iterator* it );
+  void get_eprop_history( double time_point, std::deque< HistEntryEpropArchive >::iterator* it );
   std::map< std::string, double >& get_eprop_parameter_map();
 
   void add_spike_to_counter();
@@ -76,9 +76,9 @@ private:
   double eps_ = 1e-6; // small constant to prevent numerical errors when comparing time points
   size_t n_spikes_ = 0;
 
-  std::deque< histentry_eprop_archive > eprop_history_;
-  std::vector< histentry_eprop_firing_rate_reg > firing_rate_reg_history_;
-  std::vector< histentry_eprop_update > update_history_;
+  std::deque< HistEntryEpropArchive > eprop_history_;
+  std::vector< HistEntryEpropFiringRateReg > firing_rate_reg_history_;
+  std::vector< HistEntryEpropUpdate > update_history_;
 
   std::map< std::string, double > eprop_parameter_map_;
 };

@@ -282,7 +282,7 @@ nest::eprop_iaf_psc_delta::update( Time const& origin, const long from, const lo
         S_.r_ = V_.RefractoryCounts_;
     }
 
-    std::deque< histentry_eprop_archive >::iterator it_eprop_hist;
+    std::deque< HistEntryEpropArchive >::iterator it_eprop_hist;
     get_eprop_history( t - shift, &it_eprop_hist );
     S_.learning_signal_ = it_eprop_hist->learning_signal_;
 

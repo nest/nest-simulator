@@ -107,6 +107,12 @@ See also
 
 stdp_triplet_synapse_hpc, stdp_synapse, static_synapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: stdp_triplet_synapse
+
+
 EndUserDocs */
 
 // connections are templates of target identifier type

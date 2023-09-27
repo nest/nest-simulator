@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import nest
-import pytest
 import numpy as np
+import pytest
 
 
 @pytest.fixture

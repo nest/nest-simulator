@@ -83,6 +83,8 @@ public:
 
   void sends_secondary_event( LearningSignalConnectionEvent& re ) override;
 
+  void sends_secondary_event( SICEvent& sic ) override;
+
   Node const& get_prototype() const override;
 
   void set_model_id( int ) override;
@@ -220,6 +222,13 @@ inline void
 GenericModel< ElementT >::sends_secondary_event( LearningSignalConnectionEvent& re )
 {
   return proto_.sends_secondary_event( re );
+}
+
+template < typename ElementT >
+inline void
+GenericModel< ElementT >::sends_secondary_event( SICEvent& sic )
+{
+  return proto_.sends_secondary_event( sic );
 }
 
 template < typename ElementT >

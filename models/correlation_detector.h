@@ -140,6 +140,11 @@ See also
 
 spike_recorder
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: correlation_detector
+
 EndUserDocs */
 
 /**

@@ -306,8 +306,9 @@ Layer< D >::dump_connections( std::ostream& out,
   std::vector< std::pair< Position< D >, size_t > >* src_vec = get_global_positions_vector( node_collection );
 
   // Dictionary with parameters for get_connections()
-  DictionaryDatum ncdict( new Dictionary );
-  def( ncdict, names::synapse_model, syn_model );
+  DictionaryDatum conn_filter( new Dictionary );
+  def( conn_filter, names::synapse_model, syn_model );
+  def( conn_filter, names::target, NodeCollectionDatum( target_layer->get_node_collection() ) );
 
   // Avoid setting up new array for each iteration of the loop
   std::vector< size_t > source_array( 1 );
@@ -321,8 +322,8 @@ Layer< D >::dump_connections( std::ostream& out,
     const Position< D > source_pos = src_iter->first;
 
     source_array[ 0 ] = source_node_id;
-    def( ncdict, names::source, NodeCollectionDatum( NodeCollection::create( source_array ) ) );
-    ArrayDatum connectome = kernel().connection_manager.get_connections( ncdict );
+    def( conn_filter, names::source, NodeCollectionDatum( NodeCollection::create( source_array ) ) );
+    ArrayDatum connectome = kernel().connection_manager.get_connections( conn_filter );
 
     // Print information about all local connections for current source
     for ( size_t i = 0; i < connectome.size(); ++i )
@@ -344,8 +345,9 @@ Layer< D >::dump_connections( std::ostream& out,
       Layer< D >* tgt_layer = dynamic_cast< Layer< D >* >( target_layer.get() );
 
       out << ' ';
-      const size_t tnode_id = tgt_layer->node_collection_->find( target_node_id );
-      tgt_layer->compute_displacement( source_pos, tnode_id ).print( out );
+      const long tnode_lid = tgt_layer->node_collection_->get_lid( target_node_id );
+      assert( tnode_lid >= 0 );
+      tgt_layer->compute_displacement( source_pos, tnode_lid ).print( out );
       out << '\n';
     }
   }

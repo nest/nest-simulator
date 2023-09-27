@@ -157,6 +157,11 @@ See also
 
 iaf_cond_exp, iaf_psc_exp_ps
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_psc_exp
+
 EndUserDocs */
 
 /**
@@ -237,7 +242,7 @@ private:
     /** External current in pA */
     double I_e_;
 
-    /** Threshold, RELATIVE TO RESTING POTENTAIL(!).
+    /** Threshold, RELATIVE TO RESTING POTENTIAL(!).
         I.e. the real threshold is (E_L_+Theta_). */
     double Theta_;
 

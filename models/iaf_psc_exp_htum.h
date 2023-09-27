@@ -146,6 +146,11 @@ Receives
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_psc_exp_htum
+
 EndUserDocs */
 
 class iaf_psc_exp_htum : public ArchivingNode
@@ -209,7 +214,7 @@ private:
     /** External current in pA */
     double I_e_;
 
-    /** Threshold, RELATIVE TO RESTING POTENTAIL(!).
+    /** Threshold, RELATIVE TO RESTING POTENTIAL(!).
         I.e. the real threshold is (E_L_+Theta_). */
     double Theta_;
 

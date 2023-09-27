@@ -488,7 +488,7 @@ class EpropPlasticityTestCase(unittest.TestCase):
     def test_EpropClassification(self):
         """
         Test correct computation of weights for a classification task by comparing the simulated weights with
-        weights obtained in a simulation with the original, verified NEST implementation. 
+        weights obtained in a simulation with the original, verified NEST implementation.
         """
 
         update_interval = 20.0
@@ -502,7 +502,7 @@ class EpropPlasticityTestCase(unittest.TestCase):
                 "resolution": resolution,
             }
         )
-        
+
         nest.eprop_regression = False
         nest.eprop_update_interval = update_interval
         nest.eprop_reset_neurons_on_update = True

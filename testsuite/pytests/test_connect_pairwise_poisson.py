@@ -30,6 +30,7 @@ import scipy.stats
 
 HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
 
+
 @unittest.skipIf(not HAVE_OPENMP, "NEST was compiled without multi-threading")
 @nest.ll_api.check_stack
 class TestPairwisePoisson(connect_test_base.ConnectTestBase):
@@ -43,7 +44,7 @@ class TestPairwisePoisson(connect_test_base.ConnectTestBase):
     N_t = 50
     # Critical values and number of iterations of two level test
     stat_dict = {"alpha2": 0.8, "n_runs": 20}
-    
+
     def testErrorMessages(self):
         got_error = False
         conn_params = self.conn_dict.copy()
@@ -53,7 +54,7 @@ class TestPairwisePoisson(connect_test_base.ConnectTestBase):
         except nest.kernel.NESTError:
             got_error = True
         self.assertTrue(got_error)
-    
+
     def testAutapsesTrue(self):
         conn_params = self.conn_dict.copy()
 
@@ -65,7 +66,6 @@ class TestPairwisePoisson(connect_test_base.ConnectTestBase):
         M = connect_test_base.get_connectivity_matrix(pop1, pop1)
         np.testing.assert_allclose(np.diag(M).sum(), self.N1 * self.lam, atol=2)
 
-    
     def testExpInOutdegree(self):
         connect_test_base.reset_seed(1, self.nr_threads)
         self.setUpNetwork(conn_dict=self.conn_dict, N1=self.N_s, N2=self.N_t)
@@ -88,15 +88,13 @@ class TestPairwisePoisson(connect_test_base.ConnectTestBase):
         x = np.arange(0, 10, 1) - 0.5
         multapse_distribution, auto_bins = np.histogram(multapses, bins=x, density=True)
         bins = (auto_bins[:-1] + auto_bins[1:]) / 2
-        
+
         expected_distribution = scipy.stats.poisson.pmf(bins, self.lam)
-        _, p = connect_test_base.chi_squared_check(multapse_distribution,
-                                                     expected_distribution,
-                                                     self.rule)
+        _, p = connect_test_base.chi_squared_check(multapse_distribution, expected_distribution, self.rule)
 
         self.assertTrue(p > self.stat_dict["alpha2"])
 
-    
+
 def suite():
     suite = unittest.TestLoader().loadTestsFromTestCase(TestPairwisePoisson)
     return suite
@@ -107,5 +105,5 @@ def run():
     runner.run(suite())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

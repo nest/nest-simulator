@@ -554,7 +554,7 @@ def get_expected_degrees_bernoulli(p, fan, len_source_pop, len_target_pop):
 
 
 def get_expected_degrees_poisson(lam, fan, len_source_pop, len_target_pop):
-    expected_indegree = lam  * len_source_pop
+    expected_indegree = lam * len_source_pop
     expected_outdegree = lam * len_target_pop
     if fan == "in":
         return expected_indegree

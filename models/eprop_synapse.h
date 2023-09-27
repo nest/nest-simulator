@@ -127,19 +127,18 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-===============  ========  ================  =======  =======================================================
+===============  ========  ================  ================ ====================================================
 **Common synapse properties**
--------------------------------------------------------------------------------------------------------------
-Parameter        Unit      Math equivalent   Default  Description
-===============  ========  ================  =======  =======================================================
-adam             boolean                     False    If True, use Adam optimizer, if False, gradient descent
-adam_beta1                 :math:`\beta_1`   0.9      Beta1 parameter of Adam optimizer
-adam_beta2                 :math:`\beta_2`   0.999    Beta2 parameter of Adam optimizer
-adam_epsilon               :math:`\epsilon`  1e-8     Epsilon parameter of Adam optimizer
-batch_size                                   1        Size of batch
-recall_duration  ms                          1.0      Duration over which gradients are averaged
-===============  ========  ================  =======  =======================================================
-
+------------------------------------------------------------------------------------------------------------------
+Parameter        Unit      Math equivalent   Default          Description
+===============  ========  ================  ================ ====================================================
+adam_beta1                 :math:`\beta_1`   0.9              Beta1 parameter of Adam optimizer
+adam_beta2                 :math:`\beta_2`   0.999            Beta2 parameter of Adam optimizer
+adam_epsilon               :math:`\epsilon`  1e-8             Epsilon parameter of Adam optimizer
+batch_size                                   1                Size of batch
+optimizer                                    gradient_descent If adam, use Adam optimizer, if gd, gradient descent
+recall_duration  ms                          1.0              Duration over which gradients are averaged
+===============  ========  ================  ================ ====================================================
 
 =============  ====  =========================  =======  ===============================================================
 **Individual synapse properties**
@@ -207,21 +206,21 @@ public:
   void get_status( DictionaryDatum& d ) const;
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
-  bool adam_;
   double adam_beta1_;
   double adam_beta2_;
   double adam_epsilon_;
   long batch_size_;
+  std::string optimizer_;
   double recall_duration_;
 };
 
 EpropCommonProperties::EpropCommonProperties()
   : CommonSynapseProperties()
-  , adam_( false )
   , adam_beta1_( 0.9 )
   , adam_beta2_( 0.999 )
   , adam_epsilon_( 1e-8 )
   , batch_size_( 1 )
+  , optimizer_( "gradient_descent" )
   , recall_duration_( 1.0 )
 {
 }
@@ -230,11 +229,11 @@ void
 EpropCommonProperties::get_status( DictionaryDatum& d ) const
 {
   CommonSynapseProperties::get_status( d );
-  def< bool >( d, names::adam, adam_ );
   def< double >( d, names::adam_beta1, adam_beta1_ );
   def< double >( d, names::adam_beta2, adam_beta2_ );
   def< double >( d, names::adam_epsilon, adam_epsilon_ );
   def< long >( d, names::batch_size, batch_size_ );
+  def< std::string >( d, names::optimizer, optimizer_ );
   def< double >( d, names::recall_duration, recall_duration_ );
 }
 
@@ -242,11 +241,11 @@ void
 EpropCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   CommonSynapseProperties::set_status( d, cm );
-  updateValue< bool >( d, names::adam, adam_ );
   updateValue< double >( d, names::adam_beta1, adam_beta1_ );
   updateValue< double >( d, names::adam_beta2, adam_beta2_ );
   updateValue< double >( d, names::adam_epsilon, adam_epsilon_ );
   updateValue< long >( d, names::batch_size, batch_size_ );
+  updateValue< std::string >( d, names::optimizer, optimizer_ );
   updateValue< double >( d, names::recall_duration, recall_duration_ );
 }
 
@@ -397,7 +396,7 @@ eprop_synapse< targetidentifierT >::optimize( long current_optimization_step_,
 {
   sum_grads_ /= cp.batch_size_; // mean over batches
 
-  if ( cp.adam_ ) // adam optimizer, see Kingma and Lai Ba (2015)
+  if ( cp.optimizer_ == "adam" )
   {
     for ( ; last_optimization_step_ < current_optimization_step_; ++last_optimization_step_ )
     {
@@ -415,7 +414,7 @@ eprop_synapse< targetidentifierT >::optimize( long current_optimization_step_,
       // since more than 1 cycle through loop indicates past learning periods with vanishing gradients
     }
   }
-  else // gradient descent
+  else if ( cp.optimizer_ == "gradient_descent" )
   {
     weight_ -= eta_ * sum_grads_;
     last_optimization_step_ = current_optimization_step_;

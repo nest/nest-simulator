@@ -86,10 +86,10 @@ class EpropPlasticityTestCase(unittest.TestCase):
         )
 
         params_common_syn_eprop = {
-            "adam": True,
             "adam_beta1": 0.9,
             "adam_beta2": 0.999,
             "adam_epsilon": 1e-8,
+            "optimizer": "adam",
             "batch_size": 2,
             "recall_duration": 1.0,
         }
@@ -508,10 +508,10 @@ class EpropPlasticityTestCase(unittest.TestCase):
         nest.eprop_reset_neurons_on_update = True
 
         params_common_syn_eprop = {
-            "adam": True,
             "adam_beta1": 0.9,
             "adam_beta2": 0.999,
             "adam_epsilon": 1e-8,
+            "optimizer": "adam",
             "batch_size": 2,
             "recall_duration": 1.0,
         }

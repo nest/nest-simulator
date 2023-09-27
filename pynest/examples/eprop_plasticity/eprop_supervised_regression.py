@@ -233,9 +233,9 @@ weights_rec_out = np.array(np.random.randn(n_rec, n_out).T / np.sqrt(n_rec), dty
 weights_out_rec = np.array(np.random.randn(n_rec, n_out) / np.sqrt(n_rec), dtype=dtype_weights)
 
 params_common_syn_eprop = {
-    "adam": False,  # if True, use Adam optimizer, if False gradient descent
     "batch_size": n_batch,
     "recall_duration": duration["recall"],
+    "optimizer": "gradient_descent",  # algorithm to optimize the weights; either "adam" or "gradient_descent"
     "weight_recorder": wr,
 }
 

@@ -127,18 +127,18 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-===============  ========  ================  =======  =======================================================
+===============  ========  ================  ================ ====================================================
 **Common synapse properties**
--------------------------------------------------------------------------------------------------------------
-Parameter        Unit      Math equivalent   Default  Description
-===============  ========  ================  =======  =======================================================
-adam             boolean                     False    If True, use Adam optimizer, if False, gradient descent
-adam_beta1                 :math:`\beta_1`   0.9      Beta1 parameter of Adam optimizer
-adam_beta2                 :math:`\beta_2`   0.999    Beta2 parameter of Adam optimizer
-adam_epsilon               :math:`\epsilon`  1e-8     Epsilon parameter of Adam optimizer
-batch_size                                   1        Size of batch
-recall_duration  ms                          1.0      Duration over which gradients are averaged
-===============  ========  ================  =======  =======================================================
+------------------------------------------------------------------------------------------------------------------
+Parameter        Unit      Math equivalent   Default          Description
+===============  ========  ================  ================ ====================================================
+adam_beta1                 :math:`\beta_1`   0.9              Beta1 parameter of Adam optimizer
+adam_beta2                 :math:`\beta_2`   0.999            Beta2 parameter of Adam optimizer
+adam_epsilon               :math:`\epsilon`  1e-8             Epsilon parameter of Adam optimizer
+batch_size                                   1                Size of batch
+optimizer                                    gradient_descent If adam, use Adam optimizer, if gd, gradient descent
+recall_duration  ms                          1.0              Duration over which gradients are averaged
+===============  ========  ================  ================ ====================================================
 
 
 =============  ====  =========================  =======  ===============================================================

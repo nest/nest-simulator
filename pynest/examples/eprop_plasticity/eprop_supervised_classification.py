@@ -287,10 +287,10 @@ weights_rec_out = np.array(calculate_glorot_dist(n_rec, n_out).T, dtype=dtype_we
 weights_out_rec = np.array(np.random.randn(n_rec, n_out), dtype=dtype_weights)
 
 params_common_syn_eprop = {
-    "adam": True,  # if True, use Adam optimizer, if False gradient descent
     "adam_beta1": 0.9,  # exponential decay rate for 1st moment estimate of Adam optimizeradam_beta1,
     "adam_beta2": 0.999,  # exponential decay rate for 2nd moment raw estimate of Adam optimizer
     "adam_epsilon": 1e-8,  # small numerical stabilization constant of Adam optimizer
+    "optimizer": "adam",  # algorithm to optimize the weights; either "adam" or "gradient_descent"
     "batch_size": n_batch,
     "recall_duration": duration["recall"],
     "weight_recorder": wr,

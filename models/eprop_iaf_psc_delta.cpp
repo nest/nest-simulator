@@ -320,7 +320,18 @@ nest::eprop_iaf_psc_delta::handle( CurrentEvent& e )
 void
 nest::eprop_iaf_psc_delta::handle( LearningSignalConnectionEvent& e )
 {
-  write_learning_signal_to_history( e );
+  std::vector< unsigned int >::iterator it_event = e.begin();
+  std::vector< unsigned int >::iterator it_event_end = e.end();
+
+  if ( it_event != it_event_end )
+  {
+    double time_point = e.get_stamp().get_ms();
+    double delay = Time::delay_steps_to_ms( e.get_delay_steps());
+    double weight = e.get_weight();
+    double error_signal = e.get_coeffvalue( it_event ); // implicitely decrease access counter
+
+    write_learning_signal_to_history( time_point, delay, weight, error_signal );
+  }
 }
 
 void

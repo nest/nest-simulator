@@ -130,24 +130,20 @@ nest::EpropArchivingNode::write_error_signal_to_history( long time_step, double 
 
 
 void
-nest::EpropArchivingNode::write_learning_signal_to_history( LearningSignalConnectionEvent& e )
+nest::EpropArchivingNode::write_learning_signal_to_history( double& time_point, double& delay, double& weight, double& error_signal )
 {
   double shift = 2.0 * Time::get_resolution().get_ms();
-  double t_ms = e.get_stamp().get_ms() - shift;
 
-  std::deque< HistEntryEpropArchive >::iterator start;
-  std::deque< HistEntryEpropArchive >::iterator finish;
+  std::deque< HistEntryEpropArchive >::iterator it_hist;
+  std::deque< HistEntryEpropArchive >::iterator it_hist_end;
 
-  get_eprop_history( t_ms, &start );
-  get_eprop_history( t_ms + Time::delay_steps_to_ms( e.get_delay_steps() ), &finish );
+  get_eprop_history( time_point - shift, &it_hist );
+  get_eprop_history( time_point - shift + delay, &it_hist_end );
 
-  std::vector< unsigned int >::iterator it = e.begin();
-
-  if ( start != finish and it != e.end() )
+  if ( it_hist != it_hist_end )
   {
-    double error_signal = e.get_coeffvalue( it ); // implicitely decrease access counter
-    start->learning_signal_ += e.get_weight() * error_signal;
-    ++start;
+    it_hist->learning_signal_ += weight * error_signal;
+    ++it_hist;
   }
 }
 

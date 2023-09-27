@@ -87,7 +87,7 @@ class ConnectLayersTestCase(unittest.TestCase):
         self.assertGreater(mean_p_val, p_val_lim)
         self.assertLess(mean_ks_stat, ks_stat_lim)
 
-    def _check_connections_statistical_poisson(self, conn_spec, lam, num_pairs):
+    def _check_connections_statistical_poisson(self, conn_spec, pairwise_avg_num_conns, num_pairs):
         """Helper function which asserts that the number of connections created are based on a poisson distribution.
         The connection function is iterated N times, then the distribution of number of created connections are tested
         against a bernoulli distribution using a Kolmogorov-Smirnov test. This is done ks_N times, to get statistical
@@ -108,7 +108,7 @@ class ConnectLayersTestCase(unittest.TestCase):
             for i in range(N):
                 nest.Connect(self.layer, self.layer, conn_spec)
                 n_conns[i] = nest.num_connections - np.sum(n_conns)
-                ref[i] = np.sum(scipy.stats.poisson.rvs(lam, size=num_pairs))
+                ref[i] = np.sum(scipy.stats.poisson.rvs(pairwise_avg_num_conns, size=num_pairs))
             ks_stats[ks_i], p_vals[ks_i] = scipy.stats.ks_2samp(n_conns, ref)
             print(f"ks_stat={ks_stats[ks_i]}, p_val={p_vals[ks_i]}")
 
@@ -201,7 +201,7 @@ class ConnectLayersTestCase(unittest.TestCase):
 
     def test_connect_layers_poisson(self):
         """Connecting layers with pairwise_poisson."""
-        conn_spec = {"rule": "pairwise_poisson", "lam": 0.5}
+        conn_spec = {"rule": "pairwise_poisson", "pairwise_avg_num_conns": 0.5}
         conns = self._check_connections(conn_spec, None, return_conns=True)
         np.testing.assert_allclose(200, len(conns), atol=5)
 
@@ -282,7 +282,7 @@ class ConnectLayersTestCase(unittest.TestCase):
         """Connecting layers with pairwise_poisson and mask"""
         conn_spec = {
             "rule": "pairwise_poisson",
-            "lam": 0.5,
+            "pairwise_avg_num_conns": 0.5,
             "mask": {"rectangular": {"lower_left": [-5.0, -5.0], "upper_right": [0.1, 0.1]}},
         }
         conns = self._check_connections(conn_spec, None, return_conns=True)
@@ -302,13 +302,13 @@ class ConnectLayersTestCase(unittest.TestCase):
     @unittest.skipIf(not HAVE_SCIPY, "SciPy package is not available")
     def test_connect_layers_poisson_kernel_mask(self):
         """Connecting layers with pairwise_poisson, kernel and mask"""
-        lam = 0.5
+        pairwise_avg_num_conns = 0.5
         conn_spec = {
             "rule": "pairwise_poisson",
-            "lam": lam,
+            "pairwise_avg_num_conns": pairwise_avg_num_conns,
             "mask": {"rectangular": {"lower_left": [-5.0, -5.0], "upper_right": [0.1, 0.1]}},
         }
-        self._check_connections_statistical_poisson(conn_spec, lam, 108)
+        self._check_connections_statistical_poisson(conn_spec, pairwise_avg_num_conns, 108)
 
     @unittest.skipIf(not HAVE_SCIPY, "SciPy package is not available")
     def test_connect_layers_bernoulli_kernel_mask_source(self):

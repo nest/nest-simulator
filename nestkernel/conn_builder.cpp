@@ -1591,25 +1591,25 @@ nest::PoissonBuilder::PoissonBuilder( NodeCollectionPTR sources,
   const std::vector< DictionaryDatum >& syn_specs )
   : ConnBuilder( sources, targets, conn_spec, syn_specs )
 {
-  ParameterDatum* pd = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::lam ].datum() );
+  ParameterDatum* pd = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::pairwise_avg_num_conns ].datum() );
   if ( pd )
   {
-    lam_ = *pd;
+    pairwise_avg_num_conns_ = *pd;
     // TODO: Checks of parameter range
   }
   else
   {
-    // Assume lam is a scalar
-    const double value = ( *conn_spec )[ names::lam ];
+    // Assume pairwise_avg_num_conns is a scalar
+    const double value = ( *conn_spec )[ names::pairwise_avg_num_conns ];
     if ( value < 0 )
     {
-      throw BadProperty( "Connection parameter 0 <= lam required." );
+      throw BadProperty( "Connection parameter 0 <= pairwise_avg_num_conns required." );
     }
     if ( not allow_multapses_ )
     {
       throw BadProperty( "Multapses must be allowed for this connection rule." );
     }
-    lam_ = std::shared_ptr< Parameter >( new ConstantParameter( value ) );
+    pairwise_avg_num_conns_ = std::shared_ptr< Parameter >( new ConstantParameter( value ) );
   }
 }
 
@@ -1696,7 +1696,7 @@ nest::PoissonBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, s
     }
 
     // Sample to number of connections that are to be established
-    num_conns = rng->prand( lam_->value( rng, target ) );
+    num_conns = rng->prand( pairwise_avg_num_conns_->value( rng, target ) );
 
     if ( num_conns == 0 )
     {

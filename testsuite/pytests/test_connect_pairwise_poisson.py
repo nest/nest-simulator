@@ -36,8 +36,8 @@ HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
 class TestPairwisePoisson(connect_test_base.ConnectTestBase):
     # specify connection pattern and specific params
     rule = "pairwise_poisson"
-    lam = 0.5
-    conn_dict = {"rule": rule, "lam": lam}
+    pairwise_avg_num_conns = 0.5
+    conn_dict = {"rule": rule, "pairwise_avg_num_conns": pairwise_avg_num_conns}
     # sizes of source-, target-population and connection probability for
     # statistical test
     N_s = 50
@@ -64,13 +64,15 @@ class TestPairwisePoisson(connect_test_base.ConnectTestBase):
         nest.Connect(pop1, pop1, conn_params)
         # make sure all connections do exist
         M = connect_test_base.get_connectivity_matrix(pop1, pop1)
-        np.testing.assert_allclose(np.diag(M).sum(), self.N1 * self.lam, atol=2)
+        np.testing.assert_allclose(np.diag(M).sum(), self.N1 * self.pairwise_avg_num_conns, atol=2)
 
     def testExpInOutdegree(self):
         connect_test_base.reset_seed(1, self.nr_threads)
         self.setUpNetwork(conn_dict=self.conn_dict, N1=self.N_s, N2=self.N_t)
         for fan in ["in", "out"]:
-            expected = connect_test_base.get_expected_degrees_poisson(self.lam, fan, self.N_s, self.N_t)
+            expected = connect_test_base.get_expected_degrees_poisson(
+                self.pairwise_avg_num_conns, fan, self.N_s, self.N_t
+            )
 
             mean_degrees = connect_test_base.get_degrees(fan, self.pop1, self.pop2).mean()
 
@@ -89,7 +91,7 @@ class TestPairwisePoisson(connect_test_base.ConnectTestBase):
         multapse_distribution, auto_bins = np.histogram(multapses, bins=x, density=True)
         bins = (auto_bins[:-1] + auto_bins[1:]) / 2
 
-        expected_distribution = scipy.stats.poisson.pmf(bins, self.lam)
+        expected_distribution = scipy.stats.poisson.pmf(bins, self.pairwise_avg_num_conns)
         _, p = connect_test_base.chi_squared_check(multapse_distribution, expected_distribution, self.rule)
 
         self.assertTrue(p > self.stat_dict["alpha2"])

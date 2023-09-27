@@ -268,7 +268,6 @@ const Name keep_source_table( "keep_source_table" );
 const Name kernel( "kernel" );
 
 const Name label( "label" );
-const Name lam( "lam" );
 const Name lambda( "lambda" );
 const Name lambda_0( "lambda_0" );
 const Name len_kernel( "len_kernel" );
@@ -348,6 +347,7 @@ const Name p_copy( "p_copy" );
 const Name p_transmit( "p_transmit" );
 const Name pairwise_bernoulli_on_source( "pairwise_bernoulli_on_source" );
 const Name pairwise_bernoulli_on_target( "pairwise_bernoulli_on_target" );
+const Name pairwise_avg_num_conns( "pairwise_avg_num_conns" );
 const Name params( "params" );
 const Name parent_idx( "parent_idx" );
 const Name phase( "phase" );

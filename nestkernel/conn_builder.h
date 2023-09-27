@@ -457,7 +457,7 @@ protected:
 
 private:
   void inner_connect_( const int, RngPtr, Node*, size_t );
-  ParameterDatum lam_; //!< Mean number of connections
+  ParameterDatum pairwise_avg_num_conns_; //!< Mean number of connections
 };
 
 class SymmetricBernoulliBuilder : public ConnBuilder

@@ -294,7 +294,6 @@ extern const Name keep_source_table;
 extern const Name kernel;
 
 extern const Name label;
-extern const Name lam;
 extern const Name lambda;
 extern const Name lambda_0;
 extern const Name len_kernel;
@@ -374,6 +373,7 @@ extern const Name p_copy;
 extern const Name p_transmit;
 extern const Name pairwise_bernoulli_on_source;
 extern const Name pairwise_bernoulli_on_target;
+extern const Name pairwise_avg_num_conns;
 extern const Name params;
 extern const Name parent_idx;
 extern const Name phase;

@@ -62,7 +62,7 @@ ConnectionCreator::connect( Layer< D >& source,
 
     pairwise_bernoulli_on_target_( source, source_nc, target, target_nc );
     break;
-  
+
   case Pairwise_poisson:
 
     pairwise_poisson_( source, source_nc, target, target_nc );
@@ -146,20 +146,20 @@ ConnectionCreator::connect_to_target_poisson_( Iterator from,
 
     // Sample number of connections that are to be established
     num_conns = rng->prand( kernel_->value( rng, source_pos, target_pos, source, tgt_ptr ) );
-    if ( without_kernel or num_conns)
+    if ( without_kernel or num_conns )
     {
-      for ( unsigned long conn_counter = 1; conn_counter <= num_conns; ++conn_counter)
+      for ( unsigned long conn_counter = 1; conn_counter <= num_conns; ++conn_counter )
       {
-         for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
-         {
-           kernel().connection_manager.connect( iter->second,
-             tgt_ptr,
-             tgt_thread,
-             synapse_model_[ indx ],
-             param_dicts_[ indx ][ tgt_thread ],
-             delay_[ indx ]->value( rng, source_pos, target_pos, source, tgt_ptr ),
-             weight_[ indx ]->value( rng, source_pos, target_pos, source, tgt_ptr ) );
-         }
+        for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
+        {
+          kernel().connection_manager.connect( iter->second,
+            tgt_ptr,
+            tgt_thread,
+            synapse_model_[ indx ],
+            param_dicts_[ indx ][ tgt_thread ],
+            delay_[ indx ]->value( rng, source_pos, target_pos, source, tgt_ptr ),
+            weight_[ indx ]->value( rng, source_pos, target_pos, source, tgt_ptr ) );
+        }
       }
     }
   }

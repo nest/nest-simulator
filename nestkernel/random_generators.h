@@ -272,7 +272,7 @@ public:
     std::uniform_int_distribution< unsigned long >::param_type param( 0, N - 1 );
     return uniform_ulong_dist_( rng_, param );
   }
-  
+
   inline unsigned long
   prand( double lam ) override
   {

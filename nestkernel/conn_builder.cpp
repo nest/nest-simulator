@@ -1600,7 +1600,7 @@ nest::PoissonBuilder::PoissonBuilder( NodeCollectionPTR sources,
   else
   {
     // Assume lam is a scalar
-    const double value = ( *conn_spec )[ names::lam];
+    const double value = ( *conn_spec )[ names::lam ];
     if ( value < 0 )
     {
       throw BadProperty( "Connection parameter 0 <= lam required." );
@@ -1698,11 +1698,11 @@ nest::PoissonBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, s
     // Sample to number of connections that are to be established
     num_conns = rng->prand( lam_->value( rng, target ) );
 
-    if ( num_conns == 0)
+    if ( num_conns == 0 )
     {
       continue;
     }
-    for ( unsigned long conn_counter = 1; conn_counter <= num_conns; ++conn_counter)
+    for ( unsigned long conn_counter = 1; conn_counter <= num_conns; ++conn_counter )
     {
       single_connect_( snode_id, *target, target_thread, rng );
     }

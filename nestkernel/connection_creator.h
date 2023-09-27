@@ -144,7 +144,7 @@ private:
     const Position< D >& tgt_pos,
     size_t tgt_thread,
     const Layer< D >& source );
-  
+
   template < typename Iterator, int D >
   void connect_to_target_poisson_( Iterator from,
     Iterator to,
@@ -164,11 +164,11 @@ private:
     NodeCollectionPTR source_nc,
     Layer< D >& target,
     NodeCollectionPTR target_nc );
-  
+
   template < int D >
   void
   pairwise_poisson_( Layer< D >& source, NodeCollectionPTR source_nc, Layer< D >& target, NodeCollectionPTR target_nc );
-  
+
   template < int D >
   void
   fixed_indegree_( Layer< D >& source, NodeCollectionPTR source_nc, Layer< D >& target, NodeCollectionPTR target_nc );

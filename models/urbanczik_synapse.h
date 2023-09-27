@@ -98,6 +98,11 @@ See also
 
 stdp_synapse, clopath_synapse, pp_cond_exp_mc_urbanczik
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: urbanczik_synapse
+
 EndUserDocs */
 
 // connections are templates of target identifier type (used for pointer /

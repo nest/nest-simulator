@@ -60,9 +60,7 @@ nest::MPIManager::MPIManager()
   , buffer_size_target_data_( 1 )
   , buffer_size_spike_data_( 1 )
   , max_buffer_size_target_data_( 16777216 )
-  , max_buffer_size_spike_data_( 8388608 )
   , adaptive_target_buffers_( true )
-  , adaptive_spike_buffers_( true )
   , growth_factor_buffer_spike_data_( 1.5 )
   , growth_factor_buffer_target_data_( 1.5 )
   , shrink_factor_buffer_spike_data_( 1.1 )
@@ -221,7 +219,6 @@ void
 nest::MPIManager::set_status( const DictionaryDatum& dict )
 {
   updateValue< bool >( dict, names::adaptive_target_buffers, adaptive_target_buffers_ );
-  updateValue< bool >( dict, names::adaptive_spike_buffers, adaptive_spike_buffers_ );
 
   long new_buffer_size_target_data = buffer_size_target_data_;
   updateValue< long >( dict, names::buffer_size_target_data, new_buffer_size_target_data );
@@ -233,8 +230,7 @@ nest::MPIManager::set_status( const DictionaryDatum& dict )
 
   long new_buffer_size_spike_data = buffer_size_spike_data_;
   updateValue< long >( dict, names::buffer_size_spike_data, new_buffer_size_spike_data );
-  if ( new_buffer_size_spike_data != static_cast< long >( buffer_size_spike_data_ )
-    and new_buffer_size_spike_data < static_cast< long >( max_buffer_size_spike_data_ ) )
+  if ( new_buffer_size_spike_data != static_cast< long >( buffer_size_spike_data_ ) )
   {
     set_buffer_size_spike_data( new_buffer_size_spike_data );
   }
@@ -243,7 +239,6 @@ nest::MPIManager::set_status( const DictionaryDatum& dict )
   updateValue< double >( dict, names::growth_factor_buffer_target_data, growth_factor_buffer_target_data_ );
 
   updateValue< long >( dict, names::max_buffer_size_target_data, max_buffer_size_target_data_ );
-  updateValue< long >( dict, names::max_buffer_size_spike_data, max_buffer_size_spike_data_ );
 
   updateValue< double >( dict, names::shrink_factor_buffer_spike_data, shrink_factor_buffer_spike_data_ );
 }
@@ -252,13 +247,11 @@ void
 nest::MPIManager::get_status( DictionaryDatum& dict )
 {
   def< long >( dict, names::num_processes, num_processes_ );
-  def< bool >( dict, names::adaptive_spike_buffers, adaptive_spike_buffers_ );
   def< bool >( dict, names::adaptive_target_buffers, adaptive_target_buffers_ );
   def< size_t >( dict, names::buffer_size_target_data, buffer_size_target_data_ );
   def< size_t >( dict, names::buffer_size_spike_data, buffer_size_spike_data_ );
   def< size_t >( dict, names::send_buffer_size_secondary_events, get_send_buffer_size_secondary_events_in_int() );
   def< size_t >( dict, names::recv_buffer_size_secondary_events, get_recv_buffer_size_secondary_events_in_int() );
-  def< size_t >( dict, names::max_buffer_size_spike_data, max_buffer_size_spike_data_ );
   def< size_t >( dict, names::max_buffer_size_target_data, max_buffer_size_target_data_ );
   def< double >( dict, names::growth_factor_buffer_spike_data, growth_factor_buffer_spike_data_ );
   def< double >( dict, names::growth_factor_buffer_target_data, growth_factor_buffer_target_data_ );

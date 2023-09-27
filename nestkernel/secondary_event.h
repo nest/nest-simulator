@@ -457,6 +457,29 @@ LearningSignalConnectionEvent::clone() const
   return new LearningSignalConnectionEvent( *this );
 }
 
+/**
+ * Event for slow inward current (SIC) connections between astrocytes and neurons.
+ *
+ * The event transmits the slow inward current to the connected neurons.
+ */
+class SICEvent : public DataSecondaryEvent< double, SICEvent >
+{
+
+public:
+  SICEvent()
+  {
+  }
+
+  void operator()();
+  SICEvent* clone() const;
+};
+
+inline SICEvent*
+SICEvent::clone() const
+{
+  return new SICEvent( *this );
+}
+
 } // namespace nest
 
 #endif /* #ifndef SECONDARY_EVENT_H */

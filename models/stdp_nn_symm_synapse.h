@@ -114,6 +114,11 @@ See also
 
 stdp_synapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: stdp_nn_symm_synapse
+
 EndUserDocs */
 
 // connections are templates of target identifier type (used for pointer /

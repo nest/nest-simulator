@@ -50,8 +50,7 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   , make_symmetric_( false )
   , creates_symmetric_connections_( false )
   , exceptions_raised_( kernel().vp_manager.get_num_threads() )
-  , use_pre_synaptic_element_( false )
-  , use_post_synaptic_element_( false )
+  , use_structural_plasticity_( false )
   , parameters_requiring_skipping_()
   , param_dicts_()
 {
@@ -208,7 +207,7 @@ nest::ConnBuilder::connect()
     throw NotImplemented( "This connection rule does not support symmetric connections." );
   }
 
-  if ( use_structural_plasticity_() )
+  if ( use_structural_plasticity_ )
   {
     if ( make_symmetric_ )
     {
@@ -251,7 +250,7 @@ nest::ConnBuilder::connect()
 void
 nest::ConnBuilder::disconnect()
 {
-  if ( use_structural_plasticity_() )
+  if ( use_structural_plasticity_ )
   {
     sp_disconnect_();
   }
@@ -353,27 +352,17 @@ nest::ConnBuilder::single_connect_( size_t snode_id, Node& target, size_t target
 }
 
 void
-nest::ConnBuilder::set_pre_synaptic_element_name( const std::string& name )
+nest::ConnBuilder::set_synaptic_element_names( const std::string& pre_name, const std::string& post_name )
 {
-  if ( name.empty() )
+  if ( pre_name.empty() or post_name.empty() )
   {
-    throw BadProperty( "pre_synaptic_element cannot be empty." );
+    throw BadProperty( "synaptic element names cannot be empty." );
   }
 
-  pre_synaptic_element_name_ = Name( name );
-  use_pre_synaptic_element_ = not name.empty();
-}
+  pre_synaptic_element_name_ = pre_name;
+  post_synaptic_element_name_ = post_name;
 
-void
-nest::ConnBuilder::set_post_synaptic_element_name( const std::string& name )
-{
-  if ( name.empty() )
-  {
-    throw BadProperty( "post_synaptic_element cannot be empty." );
-  }
-
-  post_synaptic_element_name_ = Name( name );
-  use_post_synaptic_element_ = not name.empty();
+  use_structural_plasticity_ = true;
 }
 
 bool
@@ -511,40 +500,34 @@ nest::ConnBuilder::set_synapse_params( DictionaryDatum syn_defaults, DictionaryD
 void
 nest::ConnBuilder::set_structural_plasticity_parameters( std::vector< DictionaryDatum > syn_specs )
 {
-  // Check if both pre and postsynaptic element are provided. Currently only possible to have
-  // structural plasticity with single element syn_spec.
-  bool have_both_sp_keys = false;
-  bool have_one_sp_key = false;
-  for ( auto syn_params : syn_specs )
+  bool have_structural_plasticity_parameters = false;
+  for ( auto& syn_spec : syn_specs )
   {
-    if ( not have_both_sp_keys
-      and ( syn_params->known( names::pre_synaptic_element ) and syn_params->known( names::post_synaptic_element ) ) )
+    if ( syn_spec->known( names::pre_synaptic_element ) or syn_spec->known( names::post_synaptic_element ) )
     {
-      have_both_sp_keys = true;
-    }
-    if ( not have_one_sp_key
-      and ( syn_params->known( names::pre_synaptic_element ) or syn_params->known( names::post_synaptic_element ) ) )
-    {
-      have_one_sp_key = true;
+      have_structural_plasticity_parameters = true;
     }
   }
 
-  if ( have_both_sp_keys and syn_specs.size() > 1 )
+  if ( not have_structural_plasticity_parameters )
   {
-    throw KernelException( "Structural plasticity is only possible with single syn_spec" );
+    return;
   }
-  else if ( have_both_sp_keys )
-  {
-    pre_synaptic_element_name_ = getValue< std::string >( syn_specs[ 0 ], names::pre_synaptic_element );
-    post_synaptic_element_name_ = getValue< std::string >( syn_specs[ 0 ], names::post_synaptic_element );
 
-    use_pre_synaptic_element_ = true;
-    use_post_synaptic_element_ = true;
-  }
-  else if ( have_one_sp_key )
+  if ( syn_specs.size() > 1 )
   {
-    throw BadProperty( "Structural plasticity requires both a pre and postsynaptic element." );
+    throw KernelException( "Structural plasticity can only be used with a single syn_spec." );
   }
+
+  const DictionaryDatum syn_spec = syn_specs[ 0 ];
+  if ( syn_spec->known( names::pre_synaptic_element ) xor syn_spec->known( names::post_synaptic_element ) )
+  {
+    throw BadProperty( "Structural plasticity requires both a pre- and postsynaptic element." );
+  }
+
+  pre_synaptic_element_name_ = getValue< std::string >( syn_spec, names::pre_synaptic_element );
+  post_synaptic_element_name_ = getValue< std::string >( syn_spec, names::post_synaptic_element );
+  use_structural_plasticity_ = true;
 }
 
 void
@@ -636,14 +619,14 @@ nest::OneToOneBuilder::connect_()
           Node* target = n->get_node();
 
           const size_t tnode_id = n->get_node_id();
-          const int idx = targets_->find( tnode_id );
-          if ( idx < 0 ) // Is local node in target list?
+          const long lid = targets_->get_lid( tnode_id );
+          if ( lid < 0 ) // Is local node in target list?
           {
             continue;
           }
 
           // one-to-one, thus we can use target idx for source as well
-          const size_t snode_id = ( *sources_ )[ idx ];
+          const size_t snode_id = ( *sources_ )[ lid ];
           if ( not allow_autapses_ and snode_id == tnode_id )
           {
             // no skipping required / possible,
@@ -836,7 +819,7 @@ nest::AllToAllBuilder::connect_()
           const size_t tnode_id = n->get_node_id();
 
           // Is the local node in the targets list?
-          if ( targets_->find( tnode_id ) < 0 )
+          if ( targets_->get_lid( tnode_id ) < 0 )
           {
             continue;
           }
@@ -1119,7 +1102,7 @@ nest::FixedInDegreeBuilder::connect_()
           const size_t tnode_id = n->get_node_id();
 
           // Is the local node in the targets list?
-          if ( targets_->find( tnode_id ) < 0 )
+          if ( targets_->get_lid( tnode_id ) < 0 )
           {
             continue;
           }
@@ -1430,7 +1413,7 @@ nest::FixedTotalNumberBuilder::connect_()
 
     try
     {
-      const int vp_id = kernel().vp_manager.thread_to_vp( tid );
+      const size_t vp_id = kernel().vp_manager.thread_to_vp( tid );
 
       if ( kernel().vp_manager.is_local_vp( vp_id ) )
       {
@@ -1551,7 +1534,7 @@ nest::BernoulliBuilder::connect_()
           const size_t tnode_id = n->get_node_id();
 
           // Is the local node in the targets list?
-          if ( targets_->find( tnode_id ) < 0 )
+          if ( targets_->get_lid( tnode_id ) < 0 )
           {
             continue;
           }
@@ -1732,11 +1715,11 @@ nest::SymmetricBernoulliBuilder::connect_()
 nest::SPBuilder::SPBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const std::vector< DictionaryDatum >& syn_spec )
-  : ConnBuilder( sources, targets, conn_spec, syn_spec )
+  const std::vector< DictionaryDatum >& syn_specs )
+  : ConnBuilder( sources, targets, conn_spec, syn_specs )
 {
   // Check that both pre and postsynaptic element are provided
-  if ( not use_pre_synaptic_element_ or not use_post_synaptic_element_ )
+  if ( not use_structural_plasticity_ )
   {
     throw BadProperty( "pre_synaptic_element and/or post_synaptic_elements is missing." );
   }

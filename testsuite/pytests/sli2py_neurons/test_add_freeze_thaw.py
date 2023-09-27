@@ -23,9 +23,9 @@
 Test that per-thread nodes vectors are updated.
 """
 
+import nest
 import numpy as np
 import pytest
-import nest
 
 
 @pytest.mark.skipif_missing_threads

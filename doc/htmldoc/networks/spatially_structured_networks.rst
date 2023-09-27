@@ -914,6 +914,16 @@ parameters drawing values from random distributions.
   |                                              | | rho              |    {2(1-\rho^2)}}                                    |
   |                                              |                    |                                                      |
   +----------------------------------------------+--------------------+------------------------------------------------------+
+  |                                              |                    | .. math::                                            |
+  |                                              | | x,               |                                                      |
+  |                                              | | y,               |    p(x) = \big[\cos(360^{\circ}                      |
+  |                                              | | theta,           |    \frac{y^{\prime}}{\lambda}                        |
+  | ``nest.spatial_distributions.gabor()``       | | gamma,           |    + \psi)\big]^{+} e^{-\frac{                       |
+  |                                              | | std,             |    \gamma^{2}x^{\prime 2}+y^{\prime 2}}{             |
+  |                                              | | lam,             |    2\text{std}^{2}}}                                 |
+  |                                              | | psi              |    \\ x^{\prime} = x\cos\theta + y\sin\theta         |
+  |                                              |                    |    \\ y^{\prime} = -x\sin\theta + y\cos\theta        |
+  +----------------------------------------------+--------------------+------------------------------------------------------+
   |                                              |                    | .. math:: p(x) = \frac{x^{\kappa-1}e^{-\frac{x}      |
   | ``nest.spatial_distributions.gamma()``       | | x,               |     {\theta}}}{\theta^\kappa\Gamma(\kappa)}          |
   |                                              | | kappa            |                                                      |
@@ -976,13 +986,22 @@ Cut-off Gaussian
     :end-before: # { end #}
 
 2D Gaussian
-   We conclude with an example using a two-dimensional Gaussian
-   distribution, i.e., a Gaussian with different widths in :math:`x`- and
-   :math:`y`- directions. This probability depends on displacement, not
-   only on distance:
+   Here we use a two-dimensional Gaussian distribution, i.e., a Gaussian with
+   different widths in :math:`x`- and :math:`y`- directions. This probability
+   depends on displacement, not only on distance:
 
 .. literalinclude:: scripts/connections.py
     :start-after: # { conn42d #}
+    :end-before: # { end #}
+
+Rectified Gabor Function
+   We conclude with an example of a rectified Gabor distribution, i.e., a
+   two-dimensional Gaussian distribution modulated with a spatial oscillation
+   perpendicular to :math:`\theta`. This probability depends on the
+   displacement along the coordinates axes, not the distance:
+
+.. literalinclude:: scripts/connections.py
+    :start-after: # { conn4gab #}
     :end-before: # { end #}
 
 Note that for pool layers with periodic boundary conditions, NEST

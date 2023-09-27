@@ -117,6 +117,11 @@ See also
 
 stdp_synapse, stdp_nn_symm_synapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: stdp_nn_pre_centered_synapse
+
 EndUserDocs */
 
 // connections are templates of target identifier type (used for pointer /

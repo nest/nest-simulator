@@ -99,6 +99,8 @@ public:
 
   void sends_secondary_event( LearningSignalConnectionEvent& ) override;
 
+  void sends_secondary_event( SICEvent& ) override;
+
   void
   handle( SpikeEvent& ) override
   {

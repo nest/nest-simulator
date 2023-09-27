@@ -26,10 +26,9 @@ models/modelsmodule.cpp as well as the list of source files to be
 compiled by CMake.
 """
 
+import argparse
 import os
 import sys
-import argparse
-
 from pathlib import Path
 from textwrap import dedent
 

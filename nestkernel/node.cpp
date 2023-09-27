@@ -404,6 +404,12 @@ Node::handle( LearningSignalConnectionEvent& )
   throw UnexpectedEvent();
 }
 
+void
+Node::handle( SICEvent& )
+{
+  throw UnexpectedEvent();
+}
+
 size_t
 Node::handles_test_event( LearningSignalConnectionEvent&, size_t )
 {
@@ -415,6 +421,18 @@ Node::handles_test_event( LearningSignalConnectionEvent&, size_t )
 
 void
 Node::sends_secondary_event( LearningSignalConnectionEvent& )
+{
+  throw IllegalConnection();
+}
+
+size_t
+Node::handles_test_event( SICEvent&, size_t )
+{
+  throw IllegalConnection();
+}
+
+void
+Node::sends_secondary_event( SICEvent& )
 {
   throw IllegalConnection();
 }

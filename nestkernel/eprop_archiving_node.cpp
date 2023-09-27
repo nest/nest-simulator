@@ -130,7 +130,10 @@ nest::EpropArchivingNode::write_error_signal_to_history( long time_step, double 
 
 
 void
-nest::EpropArchivingNode::write_learning_signal_to_history( double& time_point, double& delay, double& weight, double& error_signal )
+nest::EpropArchivingNode::write_learning_signal_to_history( double& time_point,
+  double& delay,
+  double& weight,
+  double& error_signal )
 {
   double shift = 2.0 * Time::get_resolution().get_ms();
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_connect_pairwise_bernoulli.py
+# test_connect_pairwise_poisson.py
 #
 # This file is part of NEST.
 #

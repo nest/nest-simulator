@@ -324,7 +324,7 @@ class ConnectLayersTestCase(unittest.TestCase):
         }
         self._check_connections_statistical_bernoulli(conn_spec, p, 108)
 
-    def test_connect_nonlayers_mask(self):
+    def test_connect_nonlayers_mask_bernoulli(self):
         """Throw when connecting non-layer NodeCollections with mask."""
         neurons = nest.Create("iaf_psc_alpha", 20)
         conn_spec = {
@@ -335,7 +335,7 @@ class ConnectLayersTestCase(unittest.TestCase):
         with self.assertRaises(TypeError):
             nest.Connect(neurons, neurons, conn_spec)
 
-    def test_connect_nonlayers_mask(self):
+    def test_connect_nonlayers_mask_poisson(self):
         """Throw when connecting non-layer NodeCollections with mask."""
         neurons = nest.Create("iaf_psc_alpha", 20)
         conn_spec = {

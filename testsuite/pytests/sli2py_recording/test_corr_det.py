@@ -31,8 +31,10 @@ set on the model instance.
 
     The test does not test weighted correlations.
 """
+
 import nest
 import numpy as np
+import numpy.testing as nptest
 import pytest
 
 
@@ -137,12 +139,10 @@ def test_histogram_correlation(spikes_times, expected_histogram):
     nest.SetDefaults("correlation_detector", {"delta_tau": 1.0, "tau_max": 5.0})
 
     detector = prepare_correlation_detector(spikes_times)
-
-    n_events = detector.n_events
     spikes_times_size = list(map(lambda x: len(x), spikes_times))
-    assert n_events == spikes_times_size
 
-    assert (detector.histogram == expected_histogram).all()
+    nptest.assert_array_equal(detector.n_events, spikes_times_size)
+    nptest.assert_array_equal(detector.histogram, expected_histogram)
 
 
 def test_setting_invalid_n_events():
@@ -150,7 +150,7 @@ def test_setting_invalid_n_events():
     test to ensure [1 1] not allowed for /n_events
     """
     detector = nest.Create("correlation_detector")
-    with pytest.raises(Exception):
+    with pytest.raises(nest.NESTErrors.BadProperty):
         detector.set(n_events=[1, 1])
 
 
@@ -165,5 +165,5 @@ def test_reset():
 
     if not has_zero_entries:
         detector.set(n_events=[0, 0])
-        assert np.all(detector.n_events == 0)
-        assert np.all(detector.histogram == 0)
+        nptest.assert_equal(detector.n_events, 0)
+        nptest.assert_equal(detector.histogram, 0)

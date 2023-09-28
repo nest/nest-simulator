@@ -34,6 +34,7 @@ set on the model instance.
 
 import nest
 import numpy as np
+import numpy.testing as nptest
 import pytest
 
 
@@ -152,12 +153,11 @@ def test_histogram_correlation(spikes_times, expected_covariance):
     nest.SetDefaults("correlomatrix_detector", {"delta_tau": 0.5, "tau_max": 2.0, "N_channels": 2})
 
     detector = prepare_correlomatrix_detector(spikes_times)
-
-    n_events = detector.n_events
     spikes_times_size = list(map(lambda x: len(x), spikes_times))
-    assert n_events == spikes_times_size
 
-    assert (detector.covariance[0][1] == expected_covariance).all()
+    nptest.assert_array_equal(detector.n_events, spikes_times_size)
+
+    nptest.assert_array_equal(detector.covariance[0][1], expected_covariance)
 
 
 def test_reset():
@@ -173,4 +173,4 @@ def test_reset():
 
     if not has_zero_entries:
         detector.set(N_channels=8)
-        assert np.all(detector.covariance[0][0] == 0.0)
+        nptest.assert_equal(detector.covariance[0][0], 0.0)

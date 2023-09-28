@@ -26,13 +26,8 @@ Tests for basic hl_api_spatial functions.
 import unittest
 
 import nest
-
-try:
-    import numpy as np
-
-    HAVE_NUMPY = True
-except ImportError:
-    HAVE_NUMPY = False
+import numpy as np
+import numpy.testing as nptest
 
 
 class BasicsTestCase(unittest.TestCase):
@@ -80,7 +75,6 @@ class BasicsTestCase(unittest.TestCase):
         nodepos_exp = nest.GetPosition(layer[:2])
         self.assertEqual(nodepos_exp, [pos[0], pos[1]])
 
-    @unittest.skipIf(not HAVE_NUMPY, "NumPy package is not available")
     def test_Displacement(self):
         """Interface check on displacement calculations."""
         lshape = [5, 4]
@@ -153,7 +147,6 @@ class BasicsTestCase(unittest.TestCase):
         self.assertEqual(len(d), len(layer))
         self.assertTrue(all(len(dd) == 2 for dd in d))
 
-    @unittest.skipIf(not HAVE_NUMPY, "NumPy package is not available")
     def test_Distance(self):
         """Interface check on distance calculations."""
         lshape = [5, 4]
@@ -242,7 +235,6 @@ class BasicsTestCase(unittest.TestCase):
         self.assertTrue(all([isinstance(dd, float) for dd in d]))
         self.assertTrue(all([dd >= 0.0 for dd in d]))
 
-    @unittest.skipIf(not HAVE_NUMPY, "NumPy package is not available")
     def test_FindElements(self):
         """Interface and result check for finding nearest element.
         This function is Py only, so we also need to check results."""
@@ -276,7 +268,6 @@ class BasicsTestCase(unittest.TestCase):
         self.assertEqual(n[0], [layer[4]])
         self.assertEqual(n[1], [layer[3], layer[4], layer[6], layer[7]])
 
-    @unittest.skipIf(not HAVE_NUMPY, "NumPy package is not available")
     def test_GetCenterElement(self):
         """Interface and result check for finding center element.
         This function is Py only, so we also need to check results."""
@@ -379,7 +370,6 @@ class BasicsTestCase(unittest.TestCase):
         self.assertEqual(len(s), 1)
         self.assertEqual(s[0], nest.NodeCollection([5, 6, 8, 9]))
 
-    @unittest.skipIf(not HAVE_NUMPY, "NumPy package is not available")
     def test_GetTargetPositions(self):
         """Test that GetTargetPosition works as expected"""
 
@@ -446,7 +436,6 @@ class BasicsTestCase(unittest.TestCase):
             self.assertAlmostEqual(positions[indx][0], p[0][indx][0])
             self.assertAlmostEqual(positions[indx][1], p[0][indx][1])
 
-    @unittest.skipIf(not HAVE_NUMPY, "NumPy package is not available")
     def test_GetSourcePositions(self):
         """Test that GetSourcePosition works as expected"""
 
@@ -519,8 +508,8 @@ class BasicsTestCase(unittest.TestCase):
         positions = nest.spatial.free(nest.random.uniform(min=-1, max=1), num_dimensions=2)
         nodes = nest.Create("iaf_psc_alpha", 10, positions=positions)
         all_positions = sum([list(nodes[i].spatial["positions"]) for i in range(len(nodes))], start=[])
-        self.assertEqual(all_positions, nodes.spatial["positions"])
-        self.assertEqual(nodes[::2].spatial["positions"], nodes.spatial["positions"][::2])
+        nptest.assert_array_equal(all_positions, nodes.spatial["positions"])
+        nptest.assert_array_equal(nodes[::2].spatial["positions"], nodes.spatial["positions"][::2])
 
 
 def suite():

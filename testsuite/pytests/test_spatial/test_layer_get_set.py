@@ -20,106 +20,134 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Tests for get and set calls for layer NodeCollections.
+Tests for ``get`` and ``set`` functions for spatial ``NodeCollection``.
 """
 
-import unittest
-
 import nest
+import numpy.testing as nptest
+import pytest
 
 
-class GetSetTestCase(unittest.TestCase):
-    def setUp(self):
-        nest.ResetKernel()
-
-    def test_LayerSetOnInstance(self):
-        """Test Set on layer NodeCollection."""
-
-        layer_shape = [3, 3]
-        layer = nest.Create(
-            "iaf_psc_alpha", positions=nest.spatial.grid(shape=layer_shape, extent=[2.0, 2.0], edge_wrap=True)
-        )
-
-        with self.assertRaises(nest.NESTErrors.UnaccessedDictionaryEntry):
-            layer.center = [1.0, 1.0]
-
-        layer.V_m = -50.0
-        self.assertEqual(layer.V_m, (-50.0,) * layer_shape[0] * layer_shape[1])
-
-    def test_LayerSpatial(self):
-        """Test spatial parameter on layer NodeCollection."""
-
-        layer = nest.Create(
-            "iaf_psc_alpha", positions=nest.spatial.grid(shape=[3, 3], extent=[2.0, 2.0], edge_wrap=True)
-        )
-
-        center = layer.spatial["center"]
-        shape_x = layer.spatial["shape"][0]
-        edge_wrap = layer.spatial["edge_wrap"]
-        extent = layer.spatial["extent"]
-        network_size = layer.spatial["network_size"]
-        shape_y = layer.spatial["shape"][1]
-
-        self.assertEqual(center, [0.0, 0.0])
-        self.assertEqual(shape_x, 3)
-        self.assertTrue(edge_wrap)
-        self.assertEqual(extent, (2.0, 2.0))
-        self.assertEqual(network_size, 9)
-        self.assertEqual(shape_y, 3)
-
-        self.assertEqual(layer.get("V_m"), (-70.0, -70.0, -70.0, -70.0, -70.0, -70.0, -70.0, -70.0, -70.0))
-
-        # Test get all values
-        all_values = layer.spatial
-        self.assertEqual(len(all_values.keys()), 5)
-        self.assertEqual(all_values["center"], (0.0, 0.0))
-        self.assertEqual(all_values["shape"][0], 3)
-        self.assertTrue(all_values["edge_wrap"])
-        self.assertEqual(all_values["extent"], (2.0, 2.0))
-        self.assertEqual(all_values["network_size"], 9)
-        self.assertEqual(all_values["shape"][1], 3)
-
-    def test_SingleElementLayerSpatial(self):
-        """Test spatial parameter on single element layer."""
-
-        layer = nest.Create("iaf_psc_alpha", positions=nest.spatial.grid(shape=[1, 1]))
-
-        self.assertEqual(len(layer), 1)
-        center = layer.spatial["center"]
-        columns = layer.spatial["shape"][0]
-        all_values = layer.spatial
-
-        self.assertEqual(center, (0.0, 0.0))
-        self.assertEqual(columns, 1)
-        self.assertEqual(all_values["center"], (0.0, 0.0))
-
-    def test_LayerGet(self):
-        """Test get function on layer NodeCollection"""
-
-        layer = nest.Create("iaf_psc_alpha", positions=nest.spatial.grid(shape=[2, 2]))
-
-        self.assertEqual(layer.get("V_m"), (-70.0, -70.0, -70.0, -70.0))
-
-    def test_LayerSet(self):
-        """Test set function on layer NodeCollection."""
-
-        layer = nest.Create(
-            "iaf_psc_alpha", positions=nest.spatial.grid(shape=[3, 3], extent=[2.0, 2.0], edge_wrap=True)
-        )
-
-        with self.assertRaises(nest.NESTErrors.UnaccessedDictionaryEntry):
-            layer.set({"center": [1.0, 1.0]})
-
-        layer.set(V_m=-50.0)
-
-        self.assertEqual(layer.get("V_m"), (-50.0, -50.0, -50.0, -50.0, -50.0, -50.0, -50.0, -50.0, -50.0))
+@pytest.fixture(autouse=True)
+def reset():
+    nest.ResetKernel()
 
 
-def suite():
-    suite = unittest.makeSuite(GetSetTestCase, "test")
-    return suite
+def test_layer_set_on_instance():
+    """Test ``set`` on spatial ``NodeCollection`` instance."""
+
+    layer_shape = [3, 3]
+    layer = nest.Create(
+        "iaf_psc_alpha",
+        positions=nest.spatial.grid(
+            shape=layer_shape,
+            extent=[2.0, 2.0],
+            edge_wrap=True,
+        ),
+    )
+
+    layer.set(V_m=-50.0)
+    expected_V_m = [-50.0] * layer_shape[0] * layer_shape[1]
+    nptest.assert_array_equal(layer.V_m, expected_V_m)
 
 
-if __name__ == "__main__":
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(suite())
+def test_layer_set_attribute_on_instance():
+    """Test ``set`` on spatial ``NodeCollection`` instance."""
+
+    layer_shape = [3, 3]
+    layer = nest.Create(
+        "iaf_psc_alpha",
+        positions=nest.spatial.grid(
+            shape=layer_shape,
+            extent=[2.0, 2.0],
+            edge_wrap=True,
+        ),
+    )
+
+    layer.V_m = -50.0
+    expected_V_m = [-50.0] * layer_shape[0] * layer_shape[1]
+    nptest.assert_array_equal(layer.V_m, expected_V_m)
+
+
+def test_layer_set_nonexistent_param_raises():
+    """Test that ``set`` with non-existent parameter raises exception."""
+
+    layer = nest.Create(
+        "iaf_psc_alpha",
+        positions=nest.spatial.grid(
+            shape=[3, 3],
+            extent=[2.0, 2.0],
+            edge_wrap=True,
+        ),
+    )
+
+    with pytest.raises(nest.NESTErrors.UnaccessedDictionaryEntry):
+        layer.set(center=[1.0, 1.0])
+
+    with pytest.raises(nest.NESTErrors.UnaccessedDictionaryEntry):
+        layer.center = [1.0, 1.0]
+
+
+def test_layer_get_node_param():
+    """Test ``get`` on layered ``NodeCollection`` node parameter."""
+    layer = nest.Create("iaf_psc_alpha", positions=nest.spatial.grid(shape=[2, 2]))
+
+    nptest.assert_equal(layer.get("V_m"), -70.0)
+
+
+@pytest.mark.parametrize(
+    "spatial_param, expected_value",
+    [
+        ("center", [0.0, 0.0]),
+        ("shape", [3, 3]),
+        ("edge_wrap", True),
+        ("extent", [2.0, 2.0]),
+        ("network_size", 9),
+    ],
+)
+def test_layer_get_spatial_params(spatial_param, expected_value):
+    """Test getter on layered ``NodeCollection`` spatial parameters."""
+
+    layer = nest.Create(
+        "iaf_psc_alpha",
+        positions=nest.spatial.grid(
+            shape=[3, 3],
+            extent=[2.0, 2.0],
+            edge_wrap=True,
+        ),
+    )
+    nptest.assert_equal(layer.spatial[spatial_param], expected_value)
+
+
+def test_layer_get_all_spatial_params_at_once():
+    """Test getting all spatial parameters on layered ``NodeCollection`` at once."""
+
+    layer = nest.Create(
+        "iaf_psc_alpha",
+        positions=nest.spatial.grid(
+            shape=[3, 3],
+            extent=[2.0, 2.0],
+            edge_wrap=True,
+        ),
+    )
+
+    all_spatial_params_dict = layer.spatial
+    expected_keys = ["center", "edge_wrap", "extent", "network_size", "shape"]
+
+    assert set(all_spatial_params_dict.keys()) == set(expected_keys)
+
+
+def test_spatial_param_on_single_element_layer():
+    """Test spatial parameter on single element layer."""
+
+    layer = nest.Create("iaf_psc_alpha", positions=nest.spatial.grid(shape=[1, 1]))
+
+    assert len(layer) == 1
+
+    center = layer.spatial["center"]
+    columns = layer.spatial["shape"][0]
+    all_spatial_params = layer.spatial
+
+    nptest.assert_equal(center, [0.0, 0.0])
+    assert columns == 1
+    nptest.assert_equal(all_spatial_params["center"], [0.0, 0.0])

@@ -24,6 +24,7 @@ Test that changing E_L in any neuron with this parameter leaves all other parame
 """
 
 import nest
+import numpy.testing as nptest
 import pytest
 
 
@@ -48,10 +49,10 @@ def test_clean_EL_change(model):
     nrn.E_L = EL_new
 
     # Confirm E_L has been changed.
-    assert nrn.get("E_L") == EL_new
+    assert nrn.E_L == EL_new
 
     # Confirm all other parameters are equal to original values.
     new_params = nrn.get()
     del orig_params["E_L"]
     del new_params["E_L"]
-    assert new_params == orig_params
+    nptest.assert_equal(new_params, orig_params)

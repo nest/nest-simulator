@@ -26,6 +26,7 @@ Basic tests of the ``Create`` function.
 import warnings
 
 import nest
+import numpy as np
 import numpy.testing as nptest
 import pytest
 
@@ -94,7 +95,52 @@ def test_create_with_params_dicts():
     V_m = [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]
     nodes = nest.Create("iaf_psc_alpha", num_nodes, [{"V_m": v} for v in V_m])
 
-    nptest.assert_equal(nodes.V_m, V_m)
+    nptest.assert_array_equal(nodes.V_m, V_m)
+
+
+def test_create_with_single_params_list():
+    """Test ``Create`` with single parameter list."""
+
+    Vm_ref = [-11.0, -12.0, -13.0]
+    nodes = nest.Create("iaf_psc_alpha", 3, {"V_m": Vm_ref})
+
+    nptest.assert_array_equal(nodes.V_m, Vm_ref)
+
+
+def test_create_with_multiple_params_lists():
+    """Test ``Create`` with multiple parameter lists."""
+
+    Vm_ref = [-22.0, -33.0, -44.0]
+    Cm_ref = 124.0
+    Vmin_ref = [-1.0, -2.0, -3.0]
+    params = {"V_m": Vm_ref, "C_m": Cm_ref, "V_min": Vmin_ref}
+    nodes = nest.Create("iaf_psc_alpha", 3, params)
+
+    nptest.assert_array_equal(nodes.V_m, Vm_ref)
+    nptest.assert_array_equal(nodes.C_m, Cm_ref)
+    nptest.assert_array_equal(nodes.V_min, Vmin_ref)
+
+
+def test_create_with_params_numpy():
+    """Test ``Create`` with NumPy array as parameter."""
+
+    Vm_ref = np.array([-80.0, -90.0, -100.0])
+    nodes = nest.Create("iaf_psc_alpha", 3, {"V_m": Vm_ref})
+
+    nptest.assert_array_equal(nodes.V_m, Vm_ref)
+
+
+def test_create_with_params_list_that_should_not_be_split():
+    """Test ``Create`` with list that should not be split."""
+
+    spikes_ref = [10.0, 20.0, 30.0]
+    sgens = nest.Create("spike_generator", 2, {"spike_times": spikes_ref})
+
+    spikes_sg1 = sgens[0].spike_times
+    spikes_sg2 = sgens[1].spike_times
+
+    nptest.assert_array_equal(spikes_sg1, spikes_ref)
+    nptest.assert_array_equal(spikes_sg2, spikes_ref)
 
 
 @pytest.mark.parametrize(

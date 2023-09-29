@@ -40,16 +40,27 @@ nest::EpropArchivingNode::EpropArchivingNode( const EpropArchivingNode& n )
 {
 }
 
+const double
+nest::EpropArchivingNode::get_shift() const
+{
+  double delay_rec = delay_norm + delay_out_rec;
+  double delay_out = delay_rec_out + delay_norm + delay_out_rec;
+
+  return get_name() == "eprop_readout" ? delay_out : delay_rec;
+}
+
 void
-nest::EpropArchivingNode::init_update_history( double delay )
+nest::EpropArchivingNode::init_update_history()
 {
   // register first entry for every synapse, increase access counter if entry already in list
 
-  std::vector< HistEntryEpropUpdate >::iterator it =
-    std::lower_bound( update_history_.begin(), update_history_.end(), delay - eps_ );
+  double shift = get_shift();
 
-  if ( it == update_history_.end() or fabs( delay - it->t_ ) > eps_ )
-    update_history_.insert( it, HistEntryEpropUpdate( delay, 1 ) );
+  std::vector< HistEntryEpropUpdate >::iterator it =
+    std::lower_bound( update_history_.begin(), update_history_.end(), shift - eps_ );
+
+  if ( it == update_history_.end() or fabs( shift - it->t_ ) > eps_ )
+    update_history_.insert( it, HistEntryEpropUpdate( shift, 1 ) );
   else
     ++it->access_counter_;
 }
@@ -57,18 +68,20 @@ nest::EpropArchivingNode::init_update_history( double delay )
 void
 nest::EpropArchivingNode::write_update_to_history( double t_last_update, double t_current_update )
 {
+  double shift = get_shift();
+
   std::vector< HistEntryEpropUpdate >::iterator it;
 
-  it = std::lower_bound( update_history_.begin(), update_history_.end(), t_current_update );
+  it = std::lower_bound( update_history_.begin(), update_history_.end(), t_current_update + shift );
 
-  if ( it != update_history_.end() or t_current_update == it->t_ )
+  if ( it != update_history_.end() or ( t_current_update + shift ) == it->t_ )
     ++it->access_counter_;
   else
-    update_history_.insert( it, HistEntryEpropUpdate( t_current_update, 1 ) );
+    update_history_.insert( it, HistEntryEpropUpdate( t_current_update + shift, 1 ) );
 
-  it = std::lower_bound( update_history_.begin(), update_history_.end(), t_last_update );
+  it = std::lower_bound( update_history_.begin(), update_history_.end(), t_last_update + shift );
 
-  if ( it != update_history_.end() or t_last_update == it->t_ )
+  if ( it != update_history_.end() or ( t_last_update + shift ) == it->t_ )
     --it->access_counter_;
 }
 
@@ -135,7 +148,7 @@ nest::EpropArchivingNode::write_learning_signal_to_history( double& time_point,
   double& weight,
   double& error_signal )
 {
-  double shift = 2.0 * Time::get_resolution().get_ms();
+  double shift = delay_norm + delay_out_rec;
 
   std::deque< HistEntryEpropArchive >::iterator it_hist;
   std::deque< HistEntryEpropArchive >::iterator it_hist_end;

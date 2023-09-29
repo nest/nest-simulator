@@ -283,8 +283,6 @@ public:
     double& sum_grads,
     std::vector< double >& presyn_isis,
     const EpropCommonProperties& cp ) const {};
-  virtual void check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& ) {};
-  virtual double get_shift() const {};
   virtual bool do_update( const double& t_spike ) const {};
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -304,6 +302,16 @@ public:
       return invalid_port;
     }
   };
+
+  void
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
+  {
+    ConnTestDummyNode dummy_target;
+    ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
+
+    EpropArchivingNode& t_arch = dynamic_cast< EpropArchivingNode& >( t );
+    t_arch.init_update_history();
+  }
 
   void
   set_weight( double w )
@@ -326,10 +334,6 @@ protected:
   double adam_m_;        // auxiliary variable for Adam optimizer
   double adam_v_;        // auxiliary variable for Adam optimizer
   double sum_grads_;     // sum of the gradients in one batch
-  double dt_;
-  double update_interval_;
-  double delay_;
-  double shift_;
 
   std::vector< double > presyn_isis_;
 };
@@ -346,7 +350,10 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
   EpropArchivingNode* target = dynamic_cast< EpropArchivingNode* >( get_target( thread ) );
   assert( target );
 
-  double shift_t_update = get_shift();
+  double update_interval = kernel().simulation_manager.get_eprop_update_interval();
+  double dt = Time::get_resolution().get_ms();
+
+  const double shift = target->get_shift();
 
   if ( t_last_trigger_spike_ == 0.0 )
     t_last_trigger_spike_ = t_spike;
@@ -355,17 +362,17 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
   {
     if ( t_last_spike_ > 0.0 )
     {
-      double t = t_spike >= t_next_update_ ? t_next_update_ - delay_ + shift_t_update : t_spike;
+      double t = t_spike >= t_next_update_ + shift ? t_next_update_ + shift - get_delay() : t_spike;
       presyn_isis_.push_back( t - t_last_spike_ );
     }
 
-    if ( t_spike >= t_next_update_ )
+    if ( t_spike >= t_next_update_ + shift )
     {
-      int idx_current_update = static_cast< int >( ( t_spike - dt_ ) / update_interval_ );
-      double t_current_update_ = idx_current_update * update_interval_ + shift_;
+      int idx_current_update = static_cast< int >( ( t_spike - dt ) / update_interval );
+      double t_current_update_ = idx_current_update * update_interval;
       int current_optimization_step_ = 1 + idx_current_update / cp.batch_size_;
 
-      target->write_update_to_history( t_last_update_ + shift_t_update, t_current_update_ + shift_t_update );
+      target->write_update_to_history( t_last_update_, t_current_update_ );
 
       update_gradient( target, sum_grads_, presyn_isis_, cp );
 
@@ -373,7 +380,7 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
         optimize( current_optimization_step_, last_optimization_step_, cp );
 
       t_last_update_ = t_current_update_;
-      t_next_update_ = t_current_update_ + update_interval_;
+      t_next_update_ = t_current_update_ + update_interval;
 
       t_last_trigger_spike_ = t_spike;
     }
@@ -437,8 +444,8 @@ eprop_synapse< targetidentifierT >::eprop_synapse()
   , Wmax_( 100.0 )
   , last_optimization_step_( 1 )
   , t_last_spike_( 0.0 )
-  , t_last_update_( 2.0 )
-  , t_next_update_( 1002.0 )
+  , t_last_update_( 0.0 )
+  , t_next_update_( 1000.0 )
   , t_last_trigger_spike_( 0.0 )
   , tau_m_readout_( 10.0 )
   , kappa_( 0.0 )
@@ -482,17 +489,11 @@ eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
   if ( tau_m_readout_ <= 0 )
     throw BadProperty( "Membrane time constant of readout neuron constant must be > 0." );
 
-  dt_ = Time::get_resolution().get_ms();
+  double dt = Time::get_resolution().get_ms();
+  kappa_ = exp( -dt / tau_m_readout_ );
 
-  kappa_ = exp( -dt_ / tau_m_readout_ );
-
-  update_interval_ = kernel().simulation_manager.get_eprop_update_interval();
-  delay_ = get_delay();
-
-  shift_ = 2.0 * delay_; // correct for travel time of learning signal to synchronize signals
-
-  t_next_update_ = update_interval_ + shift_;
-  t_last_update_ = shift_;
+  double update_interval = kernel().simulation_manager.get_eprop_update_interval();
+  t_next_update_ = update_interval;
 }
 
 } // namespace nest

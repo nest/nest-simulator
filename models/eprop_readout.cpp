@@ -208,7 +208,7 @@ nest::eprop_readout::update_( Time const& origin, const long from, const long to
   long update_interval_steps = kernel().simulation_manager.get_eprop_update_interval_steps();
   bool is_reset = kernel().simulation_manager.get_eprop_reset_neurons_on_update();
   long steps = origin.get_steps();
-  const int shift = 3; // shift to synchronize factors of weight update
+  const int shift = static_cast< int >( get_shift() );
 
   const size_t buffer_size = kernel().connection_manager.get_min_delay();
 

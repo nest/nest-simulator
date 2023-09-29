@@ -218,8 +218,6 @@ public:
     const EpropCommonProperties& cp ) const override;
   void get_status( DictionaryDatum& d ) const;
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
-  void check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& ) override;
-  double get_shift() const override;
   bool do_update( const double& t_spike ) const override;
 };
 
@@ -239,26 +237,13 @@ eprop_synapse_iaf_psc_delta< targetidentifierT >::set_status( const DictionaryDa
 
 template < typename targetidentifierT >
 void
-eprop_synapse_iaf_psc_delta< targetidentifierT >::check_connection( Node& s,
-  Node& t,
-  size_t receptor_type,
-  const CommonPropertiesType& )
-{
-  typename eprop_synapse< targetidentifierT >::ConnTestDummyNode dummy_target;
-  ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
-
-  EpropArchivingNode& t_arch = dynamic_cast< EpropArchivingNode& >( t );
-  t_arch.init_update_history( 2.0 * get_delay() );
-}
-
-
-template < typename targetidentifierT >
-void
 eprop_synapse_iaf_psc_delta< targetidentifierT >::update_gradient( EpropArchivingNode* target,
   double& sum_grads,
   std::vector< double >& presyn_isis,
   const EpropCommonProperties& cp ) const
 {
+  double dt = Time::get_resolution().get_ms();
+
   std::deque< HistEntryEpropArchive >::iterator it_eprop_hist;
   target->get_eprop_history( this->t_last_trigger_spike_ + get_delay(), &it_eprop_hist );
 
@@ -280,7 +265,7 @@ eprop_synapse_iaf_psc_delta< targetidentifierT >::update_gradient( EpropArchivin
       double e_bar = psi * last_z_bar;
 
       sum_t_prime = this->kappa_ * sum_t_prime + ( 1.0 - this->kappa_ ) * e_bar;
-      grad += sum_t_prime * this->dt_ * it_eprop_hist->learning_signal_;
+      grad += sum_t_prime * dt * it_eprop_hist->learning_signal_;
       sum_e_bar += e_bar;
       last_z_bar *= alpha;
       ++it_eprop_hist;
@@ -290,25 +275,19 @@ eprop_synapse_iaf_psc_delta< targetidentifierT >::update_gradient( EpropArchivin
 
   grad /= Time( Time::ms( cp.recall_duration_ ) ).get_steps();
 
-  grad += target->get_firing_rate_reg( this->t_last_update_ ) * sum_e_bar;
+  grad += target->get_firing_rate_reg( this->t_last_update_ + target->get_shift() ) * sum_e_bar;
 
-  grad *= this->dt_;
+  grad *= dt;
 
   sum_grads += grad;
-}
-
-template < typename targetidentifierT >
-double
-eprop_synapse_iaf_psc_delta< targetidentifierT >::get_shift() const
-{
-  return 0.0;
 }
 
 template < typename targetidentifierT >
 bool
 eprop_synapse_iaf_psc_delta< targetidentifierT >::do_update( const double& t_spike ) const
 {
-  bool is_update = std::fmod( t_spike - this->delay_, this->update_interval_ ) != 0.0;
+  double update_interval = kernel().simulation_manager.get_eprop_update_interval();
+  bool is_update = std::fmod( t_spike - get_delay(), update_interval ) != 0.0;
   return is_update;
 }
 

@@ -400,7 +400,7 @@ ConnectionCreator::pairwise_poisson_( Layer< D >& source,
   Layer< D >& target,
   NodeCollectionPTR target_nc )
 {
-  // Connect using pairwise Bernoulli drawing source nodes (target driven)
+  // Connect using pairwise Poisson drawing source nodes (target driven)
   // For each local target node:
   //  1. Apply Mask to source layer
   //  2. For each source node: Compute probability, draw random number, make

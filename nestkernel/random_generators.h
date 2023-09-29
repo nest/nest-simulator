@@ -119,7 +119,7 @@ public:
   /**
    * @brief Uses the wrapped RNG engine to draw an unsigned long from a Poisson distribution with mean mu.
    *
-   * @param lam Mean value of Poisson distribution.
+   * @param mu Mean value of Poisson distribution.
    */
   virtual unsigned long prand( double lam ) = 0;
 };

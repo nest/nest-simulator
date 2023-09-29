@@ -27,44 +27,52 @@ Welcome!
 
        Get started with NEST
 
-  .. grid-item-card::
+  .. grid-item::
 
-      .. carousel::
-          :show_controls:
-          :show_fade:
-          :data-bs-ride: carousel
+     .. grid:: 1 1 1 1
+       :gutter: 2
 
-            .. figure:: static/img/pong_sim.gif
+       .. grid-item-card::
 
-              Play PONG with NEST
+          .. carousel::
+              :show_controls:
+              :show_fade:
+              :data-bs-ride: carousel
 
-            .. figure:: static/img/pynest/spatial_test3d.png
+                .. figure:: static/img/pong_sim.gif
 
-              Create 3D spatially structured networks
+                  Play PONG with NEST
+
+                .. figure:: static/img/pynest/spatial_test3d.png
+
+                  Create 3D spatially structured networks
 
 
-            .. figure:: static/img/astrocyte_tripartite.png
+                .. figure:: static/img/astrocyte_tripartite.png
 
-              Investigate neuron and astrocyte interactions
+                  Investigate neuron and astrocyte interactions
 
 
-      .. button-ref:: pynest_examples
-          :ref-type: ref
-          :color: info
-          :shadow:
-          :align: center
+       .. grid-item::
 
-          Click here to discover all our examples!
+          .. button-ref:: pynest_examples
+             :ref-type: ref
+             :color: info
+             :align: center
+             :shadow:
+
+             Click here to discover all our examples!
 
 ----
 
 Conceptual approach
 -------------------
 
-.. grid::
-   :outline:
+Description of this diagram. Click the image below to discover more!
 
-   .. grid-item::
+.. grid::
+
+   .. grid-item-card::
       :columns: 8
 
       .. raw:: html

@@ -274,9 +274,9 @@ public:
   }
 
   inline unsigned long
-  prand( double lam ) override
+  prand( double mu ) override
   {
-    std::poisson_distribution< unsigned long >::param_type param( lam );
+    std::poisson_distribution< unsigned long >::param_type param( mu );
     return poisson_ulong_dist_( rng_, param );
   }
 

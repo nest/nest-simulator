@@ -22,8 +22,8 @@ import ast
 import glob
 import os
 import re
-from sphinx.application import Sphinx
 
+from sphinx.application import Sphinx
 
 """
 Generate a JSON dictionary that stores the module name as key and corresponding

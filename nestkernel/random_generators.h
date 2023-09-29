@@ -121,7 +121,7 @@ public:
    *
    * @param mu Mean value of Poisson distribution.
    */
-  virtual unsigned long prand( double lam ) = 0;
+  virtual unsigned long prand( double mu ) = 0;
 };
 
 /**

@@ -572,7 +572,7 @@ def llapi_set_kernel_status(object params):
     set_kernel_status(params_dict)
 
 
-def llapi_simulate(float t):
+def llapi_simulate(double t):
     simulate(t)
 
 
@@ -580,7 +580,7 @@ def llapi_prepare():
     prepare()
 
 
-def llapi_run(float t):
+def llapi_run(double t):
     run(t)
 
 

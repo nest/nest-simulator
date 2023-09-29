@@ -218,7 +218,7 @@ def _process_spatial_projections(conn_spec, syn_spec):
                 projections.pop("use_on_source")
     elif conn_spec["rule"] == "pairwise_poisson":
         if "use_on_source" in conn_spec:
-            raise ValueError("'use_on_source' can only be set when using pairwise_bernoulli")
+            raise ValueError("'use_on_source' can only be set when using 'pairwise_bernoulli'.")
         projections["connection_type"] = "pairwise_poisson"
     else:
         raise kernel.NESTError(

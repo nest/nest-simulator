@@ -32,7 +32,6 @@ from urllib.request import urlretrieve
 extension_module_dir = os.path.abspath("./_ext")
 sys.path.append(extension_module_dir)
 
-from extract_api_functions import ExtractPyNESTAPIS  # noqa
 from extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
 
 repo_root_dir = os.path.abspath("../..")
@@ -215,10 +214,6 @@ def config_inited_handler(app, config):
     )
 
 
-def get_pynest_list(app, env, docname):
-    ExtractPyNESTAPIS()
-
-
 def toc_customizer(app, docname, source):
     if docname == "models/models-toc":
         models_toc = json.load(open("models/toc-tree.json"))
@@ -235,7 +230,6 @@ def setup(app):
     app.add_css_file("css/custom.css")
     app.add_css_file("css/pygments.css")
     app.add_js_file("js/custom.js")
-    app.connect("env-before-read-docs", get_pynest_list)
     app.connect("config-inited", config_inited_handler)
 
 

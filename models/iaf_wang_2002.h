@@ -239,6 +239,7 @@ private:
     double C_m;            //!< Membrane Capacitance in pF
     double g_L;            //!< Leak Conductance in nS
     double t_ref;          //!< Refractory period in ms
+    double tau_AMPA_ext;       //!< Synaptic Time Constant AMPA Synapse in ms
     double tau_AMPA;       //!< Synaptic Time Constant AMPA Synapse in ms
     double tau_GABA;       //!< Synaptic Time Constant GABA Synapse in ms
     double tau_rise_NMDA;  //!< Synaptic Rise Time Constant NMDA Synapse in ms
@@ -274,6 +275,7 @@ public:
     enum StateVecElems
     {
       V_m = 0,
+      G_AMPA_ext,
       G_AMPA,
       G_GABA,
       S_pre,
@@ -423,17 +425,8 @@ iaf_wang_2002::send_test_event( Node& target, size_t receptor_type, synindex, bo
 inline size_t
 iaf_wang_2002::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
-  std::cout << "====================" << std::endl;
-  std::cout << "RECEPTOR TYPE " << receptor_type << std::endl;
-  std::cout << "INF RECEPTOR " << INF_SPIKE_RECEPTOR << std::endl;
-  std::cout << "SUP RECEPTOR " << SUP_SPIKE_RECEPTOR << std::endl;
-  std::cout << "====================" << std::endl;
   if ( not( INF_SPIKE_RECEPTOR < receptor_type and receptor_type < SUP_SPIKE_RECEPTOR ) ) //or receptor_type == NMDA )
   {
-    std::cout << "====================" << std::endl;
-    std::cout << "THROWING ERROR" << receptor_type << std::endl;
-    std::cout << "====================" << std::endl;
-
     throw UnknownReceptorType( receptor_type, get_name() );
     return 0;
   }

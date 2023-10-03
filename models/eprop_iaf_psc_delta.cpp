@@ -227,7 +227,7 @@ nest::eprop_iaf_psc_delta::pre_run_hook()
 void
 nest::eprop_iaf_psc_delta::update( Time const& origin, const long from, const long to )
 {
-  long update_interval_steps = kernel().simulation_manager.get_eprop_update_interval_steps();
+  long update_interval_steps = kernel().simulation_manager.get_eprop_update_interval().get_steps();
   bool is_reset = kernel().simulation_manager.get_eprop_reset_neurons_on_update();
   long steps = origin.get_steps();
   const int shift = static_cast< int >( get_shift() );

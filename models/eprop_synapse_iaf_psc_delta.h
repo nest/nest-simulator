@@ -286,7 +286,7 @@ template < typename targetidentifierT >
 bool
 eprop_synapse_iaf_psc_delta< targetidentifierT >::do_update( const double& t_spike ) const
 {
-  double update_interval = kernel().simulation_manager.get_eprop_update_interval();
+  double update_interval = kernel().simulation_manager.get_eprop_update_interval().get_ms();
   bool is_update = std::fmod( t_spike - get_delay(), update_interval ) != 0.0;
   return is_update;
 }

@@ -63,7 +63,6 @@ nest::SimulationManager::SimulationManager()
   , min_update_time_( std::numeric_limits< double >::infinity() )
   , max_update_time_( -std::numeric_limits< double >::infinity() )
   , eprop_update_interval_( 1000. )
-  , eprop_update_interval_steps_( 1000. )
   , eprop_reset_neurons_on_update_( true )
 {
 }
@@ -409,8 +408,21 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
     update_time_limit_ = t_new;
   }
 
+  // eprop update interval
+  double eprop_update_interval_new = 0.0;
+  if ( updateValue< double >( d, names::eprop_update_interval, eprop_update_interval_new ) )
+  {
+    if ( eprop_update_interval_new <= 0 )
+    {
+      LOG( M_ERROR, "SimulationManager::set_status", "eprop_update_interval > 0 required." );
+      throw KernelException();
+    }
+
+    eprop_update_interval_ = eprop_update_interval_new;
+  }
+
+
   updateValue< double >( d, names::eprop_update_interval, eprop_update_interval_ );
-  eprop_update_interval_steps_ = Time( Time::ms( eprop_update_interval_ ) ).get_steps();
 
   updateValue< bool >( d, names::eprop_reset_neurons_on_update, eprop_reset_neurons_on_update_ );
 }

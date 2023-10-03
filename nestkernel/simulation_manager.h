@@ -185,8 +185,7 @@ public:
    */
   virtual void reset_timers_for_dynamics();
 
-  double get_eprop_update_interval() const;
-  long get_eprop_update_interval_steps() const;
+  Time get_eprop_update_interval() const;
   bool get_eprop_reset_neurons_on_update() const;
 
 private:
@@ -239,7 +238,6 @@ private:
 #endif
 
   double eprop_update_interval_;
-  long eprop_update_interval_steps_;
   bool eprop_reset_neurons_on_update_;
 };
 
@@ -336,16 +334,10 @@ SimulationManager::get_wfr_interpolation_order() const
   return wfr_interpolation_order_;
 }
 
-inline double
+inline Time
 SimulationManager::get_eprop_update_interval() const
 {
-  return eprop_update_interval_;
-}
-
-inline long
-SimulationManager::get_eprop_update_interval_steps() const
-{
-  return eprop_update_interval_steps_;
+  return Time::ms( eprop_update_interval_ );
 }
 
 inline bool

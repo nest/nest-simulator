@@ -350,7 +350,7 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
   EpropArchivingNode* target = dynamic_cast< EpropArchivingNode* >( get_target( thread ) );
   assert( target );
 
-  double update_interval = kernel().simulation_manager.get_eprop_update_interval();
+  double update_interval = kernel().simulation_manager.get_eprop_update_interval().get_ms();
   double dt = Time::get_resolution().get_ms();
 
   const double shift = target->get_shift();
@@ -492,7 +492,7 @@ eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
   double dt = Time::get_resolution().get_ms();
   kappa_ = exp( -dt / tau_m_readout_ );
 
-  double update_interval = kernel().simulation_manager.get_eprop_update_interval();
+  double update_interval = kernel().simulation_manager.get_eprop_update_interval().get_ms();
   t_next_update_ = update_interval;
 }
 

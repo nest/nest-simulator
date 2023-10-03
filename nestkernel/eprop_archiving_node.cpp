@@ -103,7 +103,7 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
   if ( eprop_history_.empty() )
     return;
 
-  double update_interval = kernel().simulation_manager.get_eprop_update_interval();
+  double update_interval = kernel().simulation_manager.get_eprop_update_interval().get_ms();
 
   std::deque< HistEntryEpropArchive >::iterator start;
   std::deque< HistEntryEpropArchive >::iterator finish;
@@ -202,7 +202,7 @@ void
 nest::EpropArchivingNode::write_firing_rate_reg_to_history( double t_current_update, double f_target, double c_reg )
 {
 
-  double const update_interval = kernel().simulation_manager.get_eprop_update_interval();
+  double const update_interval = kernel().simulation_manager.get_eprop_update_interval().get_ms();
   double const dt = Time::get_resolution().get_ms();
 
   double f_av = n_spikes_ / update_interval;
@@ -218,7 +218,7 @@ nest::EpropArchivingNode::get_firing_rate_reg( double time_point )
   if ( firing_rate_reg_history_.empty() )
     return 0;
 
-  double const update_interval = kernel().simulation_manager.get_eprop_update_interval();
+  double const update_interval = kernel().simulation_manager.get_eprop_update_interval().get_ms();
 
   std::vector< HistEntryEpropFiringRateReg >::iterator it;
 

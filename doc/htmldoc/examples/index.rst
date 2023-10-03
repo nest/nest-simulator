@@ -152,12 +152,10 @@ PyNEST examples
 
 .. grid:: 1 1 2 3
 
-    .. grid-item-card:: e-prop plasticity
+    .. grid-item-card:: E-prop plasticity
            :img-top: ../static/img/pynest/eprop_supervised_classification_infrastructure.png
 
-           * :doc:`../auto_examples/eprop_plasticity/eprop_supervised_classification`
-           * :doc:`../auto_examples/eprop_plasticity/eprop_supervised_regression`
-
+           * :doc:`../auto_examples/eprop_plasticity/index`
 
     .. grid-item-card:: Urbanczik and Clopath
            :img-top: ../static/img/pynest/urbanczik_syn.png

@@ -78,7 +78,6 @@ class EpropPlasticityTestCase(unittest.TestCase):
         nest.ResetKernel()
         nest.set(
             **{
-                "eprop_regression": True,
                 "eprop_update_interval": update_interval,
                 "eprop_reset_neurons_on_update": True,
                 "resolution": resolution,
@@ -278,6 +277,7 @@ class EpropPlasticityTestCase(unittest.TestCase):
             "C_m": 20.0,
             "E_L": 0.0,
             "I_e": 0.0,
+            "loss": "mean_squared_error",
             "start_learning": start,
             "tau_m": 20.0,
             "V_m": 0.0,
@@ -503,7 +503,6 @@ class EpropPlasticityTestCase(unittest.TestCase):
             }
         )
 
-        nest.eprop_regression = False
         nest.eprop_update_interval = update_interval
         nest.eprop_reset_neurons_on_update = True
 
@@ -702,6 +701,7 @@ class EpropPlasticityTestCase(unittest.TestCase):
             "C_m": 20.0,
             "E_L": 0.0,
             "I_e": 0.0,
+            "loss": "softmax",
             "start_learning": start,
             "tau_m": 20.0,
             "V_m": 0.0,

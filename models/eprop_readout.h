@@ -177,6 +177,10 @@ private:
 
   void update( Time const&, const long, const long );
 
+  void loss_mse();
+  void loss_softmax( const long& lag );
+
+
   friend class RecordablesMap< eprop_readout >;
   friend class UniversalDataLogger< eprop_readout >;
 
@@ -188,6 +192,7 @@ private:
     double I_e_;            //!< external DC current (pA)
     double V_min_;          //!< lower membrane voltage bound relative to leak potential (mV)
     double start_learning_; //!< time point to start sending learning signals
+    std::string loss_;
 
     Parameters_();
 
@@ -232,6 +237,9 @@ private:
     double readout_signal_;
     double target_signal_;
     double readout_signal_unnorm_;
+    bool in_learning_window_;
+    bool in_extended_learning_window_;
+    bool requires_buffer_;
   };
 
   /**

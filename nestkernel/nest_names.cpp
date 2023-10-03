@@ -176,7 +176,6 @@ const Name elements( "elements" );
 const Name elementsize( "elementsize" );
 const Name ellipsoidal( "ellipsoidal" );
 const Name elliptical( "elliptical" );
-const Name eprop_regression( "eprop_regression" );
 const Name eprop_update_interval( "eprop_update_interval" );
 const Name eprop_reset_neurons_on_update( "eprop_reset_neurons_on_update" );
 const Name eps( "eps" );
@@ -297,6 +296,7 @@ const Name lookuptable_0( "lookuptable_0" );
 const Name lookuptable_1( "lookuptable_1" );
 const Name lookuptable_2( "lookuptable_2" );
 const Name lower_left( "lower_left" );
+const Name loss( "loss" );
 
 const Name major_axis( "major_axis" );
 const Name make_symmetric( "make_symmetric" );

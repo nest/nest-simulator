@@ -65,7 +65,6 @@ nest::SimulationManager::SimulationManager()
   , eprop_update_interval_( 1000. )
   , eprop_update_interval_steps_( 1000. )
   , eprop_reset_neurons_on_update_( true )
-  , eprop_regression_( true )
 {
 }
 
@@ -414,7 +413,6 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   eprop_update_interval_steps_ = Time( Time::ms( eprop_update_interval_ ) ).get_steps();
 
   updateValue< bool >( d, names::eprop_reset_neurons_on_update, eprop_reset_neurons_on_update_ );
-  updateValue< bool >( d, names::eprop_regression, eprop_regression_ );
 }
 
 void
@@ -454,7 +452,6 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
 #endif
   def< double >( d, names::eprop_update_interval, eprop_update_interval_ );
   def< bool >( d, names::eprop_reset_neurons_on_update, eprop_reset_neurons_on_update_ );
-  def< bool >( d, names::eprop_regression, eprop_regression_ );
 }
 
 void

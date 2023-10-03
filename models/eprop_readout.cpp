@@ -68,6 +68,7 @@ nest::eprop_readout::Parameters_::Parameters_()
   , I_e_( 0.0 )                                     // pA
   , V_min_( -std::numeric_limits< double >::max() ) // mV
   , start_learning_( 0.0 )                          // ms
+  , loss_( "mean_squared_error" )
 {
 }
 
@@ -103,6 +104,7 @@ nest::eprop_readout::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::C_m, C_m_ );
   def< double >( d, names::tau_m, tau_m_ );
   def< double >( d, names::start_learning, start_learning_ );
+  def< std::string >( d, names::loss, loss_ );
 }
 
 double
@@ -119,6 +121,7 @@ nest::eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::C_m, C_m_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
   updateValueParam< double >( d, names::start_learning, start_learning_, node );
+  updateValueParam< std::string >( d, names::loss, loss_, node );
 
   if ( C_m_ <= 0 )
     throw BadProperty( "Capacitance must be > 0." );
@@ -195,6 +198,9 @@ nest::eprop_readout::pre_run_hook()
   V_.start_learning_step_ = Time( Time::ms( std::max( P_.start_learning_, 0.0 ) ) ).get_steps();
   V_.target_signal_ = 0.0;
   V_.readout_signal_unnorm_ = 0.0;
+  V_.in_learning_window_ = false;
+  V_.in_extended_learning_window_ = false;
+  V_.requires_buffer_ = false;
 }
 
 /* ----------------------------------------------------------------
@@ -204,11 +210,9 @@ nest::eprop_readout::pre_run_hook()
 void
 nest::eprop_readout::update_( Time const& origin, const long from, const long to )
 {
-  bool is_regression = kernel().simulation_manager.get_eprop_regression();
   long update_interval_steps = kernel().simulation_manager.get_eprop_update_interval_steps();
-  bool is_reset = kernel().simulation_manager.get_eprop_reset_neurons_on_update();
-  long steps = origin.get_steps();
-  const int shift = static_cast< int >( get_shift() );
+  bool with_reset = kernel().simulation_manager.get_eprop_reset_neurons_on_update();
+  const long shift = static_cast< long >( get_shift() );
 
   const size_t buffer_size = kernel().connection_manager.get_min_delay();
 
@@ -217,13 +221,14 @@ nest::eprop_readout::update_( Time const& origin, const long from, const long to
 
   for ( long lag = from; lag < to; ++lag )
   {
-    long t = steps + lag;
-    int step_in_current_interval = ( t - shift ) % update_interval_steps;
-    bool is_time_to_update = step_in_current_interval == 0;
-    bool is_time_to_reset = is_reset and is_time_to_update;
-    bool is_learning_window =
-      V_.start_learning_step_ <= step_in_current_interval and step_in_current_interval <= update_interval_steps - 1;
-    bool is_extended_learning_window = step_in_current_interval == V_.start_learning_step_ - 1 or is_learning_window;
+    long t = origin.get_steps() + lag;
+    long interval_step = ( t - shift ) % update_interval_steps;
+
+    bool is_time_to_eprop_update = interval_step == 0;
+    bool is_time_to_reset = with_reset and is_time_to_eprop_update;
+
+    V_.in_learning_window_ = V_.start_learning_step_ <= interval_step and interval_step <= update_interval_steps - 1;
+    V_.in_extended_learning_window_ = interval_step == V_.start_learning_step_ - 1 or V_.in_learning_window_;
 
     if ( is_time_to_reset )
     {
@@ -234,15 +239,15 @@ nest::eprop_readout::update_( Time const& origin, const long from, const long to
     S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P33_ * S_.y3_ + V_.P33_complement_ * B_.spikes_.get_value( lag );
     S_.y3_ = S_.y3_ < P_.V_min_ ? P_.V_min_ : S_.y3_;
 
-    double v_m = S_.y3_ + P_.E_L_;
+    if ( P_.loss_ == "mean_squared_error" )
+      loss_mse();
+    else if ( P_.loss_ == "softmax" )
+      loss_softmax( lag );
 
-    double norm_rate = is_regression ? 1.0 : B_.normalization_rates_.get_value( lag ) + V_.readout_signal_unnorm_;
-    S_.readout_signal_ = is_learning_window ? V_.readout_signal_unnorm_ / norm_rate : 0.0;
-    S_.error_signal_ = is_learning_window ? S_.readout_signal_ - S_.target_signal_ : 0.0;
-    S_.target_signal_ = is_extended_learning_window ? V_.target_signal_ : 0.0;
+    S_.error_signal_ = V_.in_learning_window_ ? S_.readout_signal_ - S_.target_signal_ : 0.0;
+    S_.target_signal_ = V_.in_extended_learning_window_ ? V_.target_signal_ : 0.0;
 
-    V_.readout_signal_unnorm_ = is_extended_learning_window ? ( is_regression ? v_m : std::exp( v_m ) ) : 0.0;
-    if ( not is_regression )
+    if ( V_.requires_buffer_ )
       readout_signal_unnorm_buffer[ lag ] = V_.readout_signal_unnorm_;
 
     error_signal_buffer[ lag ] = S_.error_signal_;
@@ -259,9 +264,9 @@ nest::eprop_readout::update_( Time const& origin, const long from, const long to
   error_signal_event.set_coeffarray( error_signal_buffer );
   kernel().event_delivery_manager.send_secondary( *this, error_signal_event );
 
-  if ( not is_regression )
+  if ( V_.requires_buffer_ )
   {
-    // time is one time step longer than the final step_in_current_interval to enable sending the
+    // time is one time step longer than the final interval_step to enable sending the
     // unnormalized readout signal one time step in advance so that it is available
     // in the next times step for computing the normalized readout signal
     DelayedRateConnectionEvent readout_signal_unnorm_event;
@@ -269,6 +274,26 @@ nest::eprop_readout::update_( Time const& origin, const long from, const long to
     kernel().event_delivery_manager.send_secondary( *this, readout_signal_unnorm_event );
   }
   return;
+}
+
+/* ----------------------------------------------------------------
+ * Loss functions
+ * ---------------------------------------------------------------- */
+
+void
+nest::eprop_readout::loss_mse()
+{
+  S_.readout_signal_ = V_.in_learning_window_ ? V_.readout_signal_unnorm_ : 0.0;
+  V_.readout_signal_unnorm_ = V_.in_extended_learning_window_ ? S_.y3_ + P_.E_L_ : 0.0;
+}
+
+void
+nest::eprop_readout::loss_softmax( const long& lag )
+{
+  double norm_rate = B_.normalization_rates_.get_value( lag ) + V_.readout_signal_unnorm_;
+  S_.readout_signal_ = V_.in_learning_window_ ? V_.readout_signal_unnorm_ / norm_rate : 0.0;
+  V_.readout_signal_unnorm_ = V_.in_extended_learning_window_ ? std::exp( S_.y3_ + P_.E_L_ ) : 0.0;
+  V_.requires_buffer_ = true;
 }
 
 /* ----------------------------------------------------------------

@@ -202,7 +202,6 @@ extern const Name elements;
 extern const Name elementsize;
 extern const Name ellipsoidal;
 extern const Name elliptical;
-extern const Name eprop_regression;
 extern const Name eprop_update_interval;
 extern const Name eprop_reset_neurons_on_update;
 extern const Name eps;
@@ -323,6 +322,7 @@ extern const Name lookuptable_0;
 extern const Name lookuptable_1;
 extern const Name lookuptable_2;
 extern const Name lower_left;
+extern const Name loss;
 
 extern const Name major_axis;
 extern const Name make_symmetric;

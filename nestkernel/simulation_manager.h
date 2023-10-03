@@ -188,7 +188,6 @@ public:
   double get_eprop_update_interval() const;
   long get_eprop_update_interval_steps() const;
   bool get_eprop_reset_neurons_on_update() const;
-  bool get_eprop_regression() const;
 
 private:
   void call_update_(); //!< actually run simulation, aka wrap update_
@@ -242,7 +241,6 @@ private:
   double eprop_update_interval_;
   long eprop_update_interval_steps_;
   bool eprop_reset_neurons_on_update_;
-  bool eprop_regression_;
 };
 
 inline Time const&
@@ -356,11 +354,6 @@ SimulationManager::get_eprop_reset_neurons_on_update() const
   return eprop_reset_neurons_on_update_;
 }
 
-inline bool
-SimulationManager::get_eprop_regression() const
-{
-  return eprop_regression_;
-}
 }
 
 

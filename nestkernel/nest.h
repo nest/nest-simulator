@@ -84,6 +84,17 @@ void connect( NodeCollectionPTR sources,
   const std::vector< DictionaryDatum >& synapse_params );
 
 /**
+ * @brief Create tripartite connections
+ *
+ * @note `synapse_specs` is dictionary `{"primary": <syn_spec>, "third_in": <syn_spec>, "third_out": <syn_spec>}`
+ */
+void connect_tripartite( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  NodeCollectionPTR third,
+  const DictionaryDatum& connectivity,
+  const DictionaryDatum& synapse_specs );
+
+/**
  * @brief Connect arrays of node IDs one-to-one
  *
  * Connects an array of sources to an array of targets, with weights and

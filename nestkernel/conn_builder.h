@@ -76,6 +76,8 @@ public:
     const std::vector< DictionaryDatum >& syn_specs );
   virtual ~ConnBuilder();
 
+  static constexpr bool is_tripartite = false;
+
   size_t
   get_synapse_model() const
   {
@@ -447,39 +449,55 @@ private:
   ParameterDatum p_; //!< connection probability
 };
 
-class BernoulliAstroBuilder : public ConnBuilder
+/**
+ * Helper class to support parameter handlig for tripartite builders.
+ */
+class AuxiliaryBuilder : public ConnBuilder
 {
 public:
-  BernoulliAstroBuilder( NodeCollectionPTR,
+  AuxiliaryBuilder( NodeCollectionPTR,
     NodeCollectionPTR,
     const DictionaryDatum&,
     const std::vector< DictionaryDatum >& );
 
+  //! forwards to single_connect_() in underlying ConnBuilder
+  void single_connect( size_t, Node&, size_t, RngPtr );
+
 protected:
-  int get_start_astro_index( const int, const int, const int, const int, const int );
-  void single_connect_astro_( const size_t,
-    Node*,
-    const size_t,
-    RngPtr,
-    RngPtr,
-    const std::vector< ConnParameter* >&,
-    const std::vector< ConnParameter* >&,
-    const std::vector< size_t >& );
+  void
+  connect_() override
+  {
+    assert( false );
+  }
+};
+
+class TripartiteBernoulliWithPoolBuilder : public ConnBuilder
+{
+public:
+  TripartiteBernoulliWithPoolBuilder( NodeCollectionPTR,
+    NodeCollectionPTR,
+    NodeCollectionPTR,
+    const DictionaryDatum&,
+    const DictionaryDatum& );
+
+  static constexpr bool is_tripartite = true;
+
+protected:
   void connect_() override;
 
 private:
-  NodeCollectionPTR astrocytes_;
-  double p_;                                   //!< connection probability for neuron-neuron connections
-  double p_syn_astro_;                         //!< probability of astrocyte pairing per neuron-neuron connection
-  bool astro_pool_by_index_;                   //!< if true, select astrocyte pool per target by index
-  size_t max_astro_per_target_;                //!< maximal number of astrocytes per tartget neuron
-  std::vector< ConnParameter* > weights_n2n_;  //!< synaptic weights for neuron-neuron connections
-  std::vector< ConnParameter* > weights_n2a_;  //!< synaptic weights for neuron-astrocyte connections
-  std::vector< ConnParameter* > delays_n2n_;   //!< synaptic delays for neuron-neuron and neuron-astrocyte connections
-  std::vector< ConnParameter* > delays_n2a_;   //!< synaptic delays for neuron-neuron and neuron-astrocyte connections
-  std::vector< size_t > synapse_model_id_a2n_; //!< synapse models for astrocyte-neuron connections
-  std::vector< ConnParameter* > weights_a2n_;  //!< synaptic weights for astrocyte-neuron connections
-  std::vector< ConnParameter* > delays_a2n_;   //!< synaptic weights for astrocyte-neuron connections
+  size_t get_first_pool_index_( const size_t ) const;
+
+  NodeCollectionPTR third_;
+
+  AuxiliaryBuilder third_in_builder_;
+  AuxiliaryBuilder third_out_builder_;
+
+  double p_primary_;         //!< connection probability for pre-post connections
+  double p_cond_third_;      //!< probability third-factor connection if primary connection created
+  bool random_pool_;         //!< if true, select astrocyte pool at random
+  size_t pool_size_;         //!< size of third-factor pool
+  size_t targets_per_third_; //!< target nodes per third-factor node
 };
 
 class SymmetricBernoulliBuilder : public ConnBuilder

@@ -195,7 +195,7 @@ def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise, scale=1.
         "tau_psc": tau_syn_in,
         "delay": syn_params["d_i"],
     }
-    nest.Connect(nodes_ex, nodes_ex + nodes_in, third=nodes_astro, conn_spec=conn_params_e, syn_spec=syn_params_e)
+    nest.Connect(nodes_ex, nodes_ex + nodes_in, nodes_astro, conn_spec=conn_params_e, syn_spec=syn_params_e)
     nest.Connect(nodes_in, nodes_ex + nodes_in, conn_params_i, syn_params_i)
 
     return nodes_ex, nodes_in, nodes_astro, nodes_noise

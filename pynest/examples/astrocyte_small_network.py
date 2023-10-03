@@ -112,7 +112,7 @@ astrocytes = nest.Create(astrocyte_model, 10, params=astrocyte_params)
 nest.Connect(
     pre_neurons,
     post_neurons,
-    third=astrocytes,
+    astrocytes,
     conn_spec={
         "rule": "tripartite_bernoulli_with_pool",
         "p_primary": 1.0,

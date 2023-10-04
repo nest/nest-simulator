@@ -42,7 +42,7 @@ def setup_network(
     pop1 = nest.Create(neuron_model, N1)
     pop2 = nest.Create(neuron_model, N2)
     pop_astro = nest.Create(astrocyte_model, N2)
-    nest.Connect(pop1, pop2, third=pop_astro, conn_spec=conn_dict, syn_spec=syn_dict)
+    nest.TripartiteConnect(pop1, pop2, pop_astro, conn_spec=conn_dict, syn_specs=syn_dict)
     return pop1, pop2, pop_astro
 
 
@@ -304,8 +304,8 @@ def test_autapses_true(autapses):
     # test that autapses exist
     pop = nest.Create("aeif_cond_alpha_astro", N)
     pop_astro = nest.Create("astrocyte_lr_1994", N)
-    nest.Connect(
-        pop, pop, third=pop_astro, conn_spec=conn_dict, syn_spec={"third_out": {"synapse_model": "sic_connection"}}
+    nest.TripartiteConnect(
+        pop, pop, pop_astro, conn_spec=conn_dict, syn_specs={"third_out": {"synapse_model": "sic_connection"}}
     )
     # make sure all connections do exist
     M = get_connectivity_matrix(pop, pop)

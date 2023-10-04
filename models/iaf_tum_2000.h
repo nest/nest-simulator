@@ -88,9 +88,18 @@ In order for the additional synapse dynamics to take effect, the pre-synaptic
 neuron must be of type ``iaf_tum_2000``. The post-synaptic neurons should either
 be of type ``iaf_tum_2000`` or of type ``iaf_psc_exp`` since an exponential
 post-synaptic current is assumed in this model. 
-Due to the nature of the model implementation, using neurons with precise spike
-timing will produce nonsensical results and must be avoided.
 
+.. note::
+
+  ``iaf_tum_2000`` neurons must be connected via ``receptor_type`` 1.
+
+.. warning::
+
+   This synaptic plasticity rule does not take
+   :ref:`precise spike timing <sim_precise_spike_times>` into
+   account. Moreover, due to the model implementation, which hijacks the precise
+   spiking offset field, precise spike timing will produce nonsensical results
+   and must be avoided.
 
 Parameters
 ++++++++++
@@ -223,10 +232,10 @@ private:
     /** Time constant of inhibitory synaptic current in ms. */
     double tau_in_;
 
-    /** Stochastic firing intensity at threshold in 1/s. **/
+    /** Stochastic firing intensity at threshold in 1/s. */
     double rho_;
 
-    /** Width of threshold region in mV. **/
+    /** Width of threshold region in mV. */
     double delta_;
 
     double tau_fac_;

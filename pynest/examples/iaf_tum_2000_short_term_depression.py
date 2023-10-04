@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
+r"""
 Short-term depression example
 -----------------------------
 
@@ -48,7 +48,7 @@ For an example on *short-term facilitation*, see
     `iaf_psc_exp <../models/iaf_psc_exp>` on the pre-synaptic side, which
     makes ``iaf_tum_2000`` more computationally efficient, see
     :doc:`../auto_examples/iaf_tum_2000_benchmark`.
-    
+
 References
 ~~~~~~~~~~
 

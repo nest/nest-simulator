@@ -186,6 +186,7 @@ PyNEST examples
            * :doc:`../auto_examples/iaf_tum_2000_short_term_depression`
            * :doc:`../auto_examples/tsodyks_facilitating`
            * :doc:`../auto_examples/evaluate_tsodyks2_synapse`
+           * :doc:`../auto_examples/iaf_tum_2000_benchmark`
 
 
 

@@ -57,7 +57,7 @@ nest::EpropArchivingNode::init_update_history()
   double shift = get_shift();
 
   std::vector< HistEntryEpropUpdate >::iterator it =
-    std::lower_bound( update_history_.begin(), update_history_.end(), shift - eps_ );
+    std::lower_bound( update_history_.begin(), update_history_.end(), shift);
 
   if ( it == update_history_.end() or fabs( shift - it->t_ ) > eps_ )
     update_history_.insert( it, HistEntryEpropUpdate( shift, 1 ) );
@@ -94,7 +94,7 @@ nest::EpropArchivingNode::get_eprop_history( double time_point, std::deque< Hist
     return;
   }
 
-  *it = std::lower_bound( eprop_history_.begin(), eprop_history_.end(), time_point - 1 + eps_ );
+  *it = std::lower_bound( eprop_history_.begin(), eprop_history_.end(), time_point );
 }
 
 void
@@ -148,7 +148,7 @@ nest::EpropArchivingNode::write_learning_signal_to_history( double& time_point,
   double& weight,
   double& error_signal )
 {
-  double shift = delay_norm + delay_out_rec;
+  double shift = delay_rec_out + delay_norm + delay_out_rec;
 
   std::deque< HistEntryEpropArchive >::iterator it_hist;
   std::deque< HistEntryEpropArchive >::iterator it_hist_end;
@@ -223,7 +223,7 @@ nest::EpropArchivingNode::get_firing_rate_reg( double time_point )
   std::vector< HistEntryEpropFiringRateReg >::iterator it;
 
   it = std::lower_bound(
-    firing_rate_reg_history_.begin(), firing_rate_reg_history_.end(), time_point + update_interval - 1 + eps_ );
+    firing_rate_reg_history_.begin(), firing_rate_reg_history_.end(), time_point + update_interval );
 
   return it->firing_rate_reg_;
 }

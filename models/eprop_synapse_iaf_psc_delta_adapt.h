@@ -244,7 +244,7 @@ eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::update_gradient( EpropAr
   double dt = Time::get_resolution().get_ms();
 
   std::deque< HistEntryEpropArchive >::iterator it_eprop_hist;
-  target->get_eprop_history( this->t_last_trigger_spike_ + get_delay(), &it_eprop_hist );
+  target->get_eprop_history( this->t_last_trigger_spike_, &it_eprop_hist );
 
   std::map< std::string, double >& eprop_parameter_map = target->get_eprop_parameter_map();
   double alpha = eprop_parameter_map[ "leak_propagator" ];

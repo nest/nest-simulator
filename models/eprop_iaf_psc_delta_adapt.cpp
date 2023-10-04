@@ -292,7 +292,7 @@ nest::eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, co
     double psi = P_.gamma_ * std::max( 0.0, 1.0 - std::fabs( ( v_m - v_th ) / P_.V_th_ ) ) / P_.V_th_;
 
     S_.V_m_pseudo_deriv_ = psi;
-    write_v_m_pseudo_deriv_to_history( t + 1, psi );
+    write_v_m_pseudo_deriv_to_history( t, psi );
 
     if ( S_.y3_ >= thr and S_.r_ == 0 )
     {

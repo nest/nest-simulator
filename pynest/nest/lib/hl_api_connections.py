@@ -40,6 +40,7 @@ from .hl_api_types import NodeCollection, SynapseCollection
 
 __all__ = [
     "Connect",
+    "TripartiteConnect",
     "Disconnect",
     "GetConnections",
 ]
@@ -294,7 +295,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
 
 
 @check_stack
-def TripartiteConnect(pre, post, third, conn_spec, syn_specs=None, return_synapsecollection=False):
+def TripartiteConnect(pre, post, third, conn_spec, syn_specs=None):
     """
     Connect `pre` nodes to `post` nodes and a `third` population.
 
@@ -318,8 +319,6 @@ def TripartiteConnect(pre, post, third, conn_spec, syn_specs=None, return_synaps
         Specifies connectivity rule, which must support tripartite connections, see below
     syn_spec : dict, optional
         Specifies synapse models to be used, see below
-    return_synapsecollection: bool
-        Specifies whether or not we should return a :py:class:`.SynapseCollection` of pre and post connections
 
     Raises
     ------
@@ -390,7 +389,7 @@ def TripartiteConnect(pre, post, third, conn_spec, syn_specs=None, return_synaps
             syn_specs[key] = {"synapse_model": syn_specs[key]}
         else:
             for entry, value in syn_specs[key].items():
-                if isinstance(value, (list, tuple, np.ndarray)):
+                if isinstance(value, (list, tuple, numpy.ndarray)):
                     raise ValueError(
                         f"Tripartite connections do not accept parameter lists, but 'syn_specs[{key}][{entry}]' is a list or similar."
                     )
@@ -401,9 +400,6 @@ def TripartiteConnect(pre, post, third, conn_spec, syn_specs=None, return_synaps
     sps(conn_spec)
     sps(syn_specs)
     sr("ConnectTripartite_g_g_g_D_D")
-
-    if return_synapsecollection:
-        return GetConnections(pre, post)
 
 
 @check_stack

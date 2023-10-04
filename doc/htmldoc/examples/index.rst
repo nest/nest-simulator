@@ -180,10 +180,10 @@ PyNEST examples
 
 
 
-    .. grid-item-card:: Tsodyks
+    .. grid-item-card:: Short-term plasticity
            :img-top: ../static/img/pynest/tsodyks_dep.png
 
-           * :doc:`../auto_examples/tsodyks_depressing`
+           * :doc:`../auto_examples/iaf_tum_2000_short_term_depression`
            * :doc:`../auto_examples/tsodyks_facilitating`
            * :doc:`../auto_examples/evaluate_tsodyks2_synapse`
 
@@ -274,7 +274,7 @@ PyNEST examples
    ../auto_examples/clopath_synapse_spike_pairing
    ../auto_examples/clopath_synapse_small_network
    ../auto_examples/urbanczik_synapse_example
-   ../auto_examples/tsodyks_depressing
+   ../auto_examples/iaf_tum_2000_short_term_depression
    ../auto_examples/tsodyks_facilitating
    ../auto_examples/compartmental_model/receptors_and_current
    ../auto_examples/compartmental_model/two_comps

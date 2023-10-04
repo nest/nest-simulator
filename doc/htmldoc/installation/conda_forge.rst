@@ -3,6 +3,13 @@
 Conda forge install
 ===================
 
+.. note:: 
+   
+   If you encounter problems installing the NEST conda package and 
+   environment, we recommend using Mamba (https://mamba.readthedocs.io). 
+   Mamba has the advantage of installing conda packages and 
+   environments more quickly and can be used as a complete drop-in replacement for conda.
+
 1. To keep your conda setup tidy, we recommend that you install NEST into
    a separate `conda environment <https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html>`_
    together with Python packages that you will use when working with NEST;

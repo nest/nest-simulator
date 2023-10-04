@@ -39,10 +39,9 @@ vm_stop = 100.0
 total_sim_time = vm_stop + 2.0
 
 
-@pytest.fixture
-def setup():
+def build_net():
     """
-    Fixture for setting up and simulating the system.
+    Function for setting up the system.
 
     The system is set up and simulated according to the following protocol:
 
@@ -52,9 +51,11 @@ def setup():
         3. Neurons driven by internal DC current.
         4. Resolution fixed, but simulation time subdivided in different ways.
 
-    The fixture returns the ``spike_recorder`` and ``voltmeter``
-    devices used for retrieval of recording data in subsequent comparisons.
+    The function returns the ``spike_recorder`` and ``voltmeter`` devices.
     """
+
+    nest.ResetKernel()
+    nest.resolution = 0.1
 
     vm_params = {
         "origin": 0.0,
@@ -84,9 +85,6 @@ def setup():
     }
     iaf_params = {"I_e": 1000.0}
 
-    nest.ResetKernel()
-    nest.resolution = 0.1
-
     sg_pre = nest.Create("spike_generator", 1, sg_params)
     nrn_pre = nest.Create("iaf_psc_alpha", 1, iaf_params)
     srs = nest.Create("spike_recorder", 4, sr_params)
@@ -104,35 +102,50 @@ def setup():
     return srs, vms
 
 
-@pytest.fixture
-def reference_run(setup):
+@pytest.fixture(scope="module")
+def reference_run():
     """
     Fixture for running the reference simulation, full simulation time in one go.
     """
-    srs, vms = setup
+
+    srs, vms = build_net()
     nest.Simulate(total_sim_time)
     srs_reference = srs.get("events", "times")
     vms_reference = vms.get("events", "V_m")
+
     return srs_reference, vms_reference
 
 
-@pytest.mark.parametrize("block", [0.1, 0.3, 0.5, 0.7, 1.0, 1.3, 1.5, 1.7, 110.0])
-def test_vm_and_sr_produce_same_output(block, setup, reference_run):
+def test_reference_recordings_identical(reference_run):
+    """
+    Consistency test to ensure that the reference recordings are identical.
+    """
+
+    srs_reference, vms_reference = reference_run
+
+    for srec in srs_reference[1:]:
+        nptest.assert_array_equal(srs_reference[0], srec)
+
+    nptest.assert_array_equal(vms_reference[0], vms_reference[1])
+
+
+@pytest.mark.parametrize("t_block", [0.1, 0.3, 0.5, 0.7, 1.0, 1.3, 1.5, 1.7, 110.0])
+def test_vm_and_sr_produce_same_output(t_block, reference_run):
     """
     Test that the ``voltmeter`` and ``spike_recorder`` yield identical results independent simulation time blocking.
     """
+
+    srs, vms = build_net()
+
     with nest.RunManager():
         while nest.biological_time < total_sim_time:
-            nest.Run(block)
-
-    srs, vms = setup
-    srs_reference, vms_reference = reference_run
+            nest.Run(t_block)
 
     srs_times = srs.get("events", "times")
     vms_recs = vms.get("events", "V_m")
 
-    nptest.assert_array_equal(srs_reference[0], srs_times[1])
-    nptest.assert_array_equal(srs_reference[0], srs_times[2])
-    nptest.assert_array_equal(srs_reference[0], srs_times[3])
+    srs_reference, vms_reference = reference_run
 
-    nptest.assert_array_equal(vms_reference[0], vms_recs[1])
+    # Test that recorders give identical results independent of simulation time blocking
+    nptest.assert_array_equal(srs_reference, srs_times)
+    nptest.assert_array_equal(vms_reference, vms_recs)

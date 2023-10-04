@@ -23,8 +23,14 @@
 Classes defining the different PyNEST types
 """
 
-from ..ll_api import sli_func, sps, sr, spp, take_array_index
+import json
+import numbers
+from math import floor, log
+
+import numpy
+
 from .. import pynestkernel as kernel
+from ..ll_api import sli_func, spp, sps, sr, take_array_index
 from .hl_api_helper import (
     broadcast,
     get_parameters,
@@ -34,10 +40,6 @@ from .hl_api_helper import (
     restructure_data,
 )
 from .hl_api_simulation import GetKernelStatus
-
-import numpy
-import json
-from math import floor, log
 
 try:
     import pandas
@@ -54,7 +56,7 @@ __all__ = [
     "NodeCollection",
     "Parameter",
     "Receptors",
-    "serializable",
+    "serialize_data",
     "SynapseCollection",
     "to_json",
 ]
@@ -216,9 +218,15 @@ class NodeCollection:
 
     def __add__(self, other):
         if not isinstance(other, NodeCollection):
-            raise NotImplementedError()
+            if isinstance(other, numbers.Number) and other == 0:
+                other = NodeCollection()
+            else:
+                raise TypeError(f"Cannot add object of type '{type(other).__name__}' to 'NodeCollection'")
 
         return sli_func("join", self._datum, other._datum)
+
+    def __radd__(self, other):
+        return self + other
 
     def __getitem__(self, key):
         if isinstance(key, slice):
@@ -317,7 +325,7 @@ class NodeCollection:
               This is for hierarchical addressing.
         output : str, ['pandas','json'], optional
              If the returned data should be in a Pandas DataFrame or in a
-             JSON serializable format.
+             JSON string format.
 
         Returns
         -------
@@ -768,7 +776,7 @@ class SynapseCollection:
             belonging to the given `keys`.
         output : str, ['pandas','json'], optional
             If the returned data should be in a Pandas DataFrame or in a
-            JSON serializable format.
+            JSON string format.
 
         Returns
         -------
@@ -1212,8 +1220,8 @@ class Receptors(CmBase):
     pass
 
 
-def serializable(data):
-    """Make data serializable for JSON.
+def serialize_data(data):
+    """Serialize data for JSON.
 
     Parameters
     ----------
@@ -1227,21 +1235,21 @@ def serializable(data):
 
     if isinstance(data, (numpy.ndarray, NodeCollection)):
         return data.tolist()
-    if isinstance(data, SynapseCollection):
+    elif isinstance(data, SynapseCollection):
         # Get full information from SynapseCollection
-        return serializable(data.get())
-    if isinstance(data, kernel.SLILiteral):
+        return serialize_data(data.get())
+    elif isinstance(data, kernel.SLILiteral):
         # Get name of SLILiteral.
         return data.name
-    if isinstance(data, (list, tuple)):
-        return [serializable(d) for d in data]
-    if isinstance(data, dict):
-        return dict([(key, serializable(value)) for key, value in data.items()])
+    elif isinstance(data, (list, tuple)):
+        return [serialize_data(d) for d in data]
+    elif isinstance(data, dict):
+        return dict([(key, serialize_data(value)) for key, value in data.items()])
     return data
 
 
 def to_json(data, **kwargs):
-    """Serialize data to JSON.
+    """Convert the object to a JSON string.
 
     Parameters
     ----------
@@ -1252,9 +1260,9 @@ def to_json(data, **kwargs):
     Returns
     -------
     data_json : str
-        JSON format of the data
+        JSON string format of the data
     """
 
-    data_serialized = serializable(data)
+    data_serialized = serialize_data(data)
     data_json = json.dumps(data_serialized, **kwargs)
     return data_json

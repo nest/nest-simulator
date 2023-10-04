@@ -65,6 +65,13 @@ delay        ms       :math:`d_{jk}`               1.0  Dendritic delay
 weight       pA       :math:`B_{jk}`               1.0  Initial synaptic weight of the connection
 ===========  =======  =======================  =======  =========================================
 
+Recordables
++++++++++++
+
+The following variables can be recorded:
+
+  - synaptic weight ``weight``
+
 Usage
 +++++
 

@@ -92,10 +92,10 @@ Recordables
 
 The following variables can be recorded.
 
-  - ``error_signal``
-  - ``readout_signal``
-  - ``target_signal``
-  - ``V_m``
+  - error signal ``error_signal``
+  - readout signal ``readout_signal``
+  - target signal ``target_signal``
+  - membrane potential ``V_m``
 
 Usage
 +++++

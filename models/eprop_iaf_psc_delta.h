@@ -120,9 +120,9 @@ Recordables
 
 The following variables can be recorded:
 
-  - ``learning_signal``
-  - ``V_m``
-  - ``V_m_pseudo_deriv``
+  - learning signal ``learning_signal``
+  - membrane potential ``V_m``
+  - pseudo-derivative of membrane potential ``V_m_pseudo_deriv``
 
 Usage
 +++++

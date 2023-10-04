@@ -161,7 +161,7 @@ Recordables
 
 The following variables can be recorded.
 
-  - ``weight``
+  - synaptic weight ``weight``
 
 Usage
 +++++

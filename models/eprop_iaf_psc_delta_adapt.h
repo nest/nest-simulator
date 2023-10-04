@@ -130,11 +130,11 @@ Recordables
 
 The following variables can be recorded.
 
-  - ``adaptation``
-  - ``adapting_threshold``
-  - ``learning_signal``
-  - ``V_m``
-  - ``V_m_pseudo_deriv``
+  - adaptation variable ``adaptation``
+  - adapting spike threshold ``adapting_threshold``
+  - learning signal ``learning_signal``
+  - membrane potential ``V_m``
+  - pseudo-derivative of membrane potential ``V_m_pseudo_deriv``
 
 Usage
 +++++

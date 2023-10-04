@@ -301,7 +301,11 @@ public:
     double& sum_grads,
     std::vector< double >& presyn_isis,
     const EpropCommonProperties& cp ) const {};
-  virtual bool do_update( const double& t_spike ) const { return false; }
+  virtual bool
+  do_update( const double& t_spike ) const
+  {
+    return false;
+  }
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {

@@ -57,7 +57,7 @@ nest::EpropArchivingNode::init_update_history()
   double shift = get_shift();
 
   std::vector< HistEntryEpropUpdate >::iterator it =
-    std::lower_bound( update_history_.begin(), update_history_.end(), shift);
+    std::lower_bound( update_history_.begin(), update_history_.end(), shift );
 
   if ( it == update_history_.end() or fabs( shift - it->t_ ) > eps_ )
     update_history_.insert( it, HistEntryEpropUpdate( shift, 1 ) );
@@ -222,8 +222,8 @@ nest::EpropArchivingNode::get_firing_rate_reg( double time_point )
 
   std::vector< HistEntryEpropFiringRateReg >::iterator it;
 
-  it = std::lower_bound(
-    firing_rate_reg_history_.begin(), firing_rate_reg_history_.end(), time_point + update_interval );
+  it =
+    std::lower_bound( firing_rate_reg_history_.begin(), firing_rate_reg_history_.end(), time_point + update_interval );
 
   return it->firing_rate_reg_;
 }

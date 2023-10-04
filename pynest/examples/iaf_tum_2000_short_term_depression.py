@@ -27,16 +27,20 @@ The ``iaf_tum_2000`` neuron [1]_ is a model with *short-term synaptic plasticity
 Short-term plasticity can either strengthen or weaken a synapse and acts
 on a timescale of milliseconds to seconds. This example illustrates
 *short-term depression*, which is caused by depletion of the pool of readily
-releasable neurotransmitters at the axon terminal of a pre-synaptic neuron.
-During synaptic depression, the efficacy of synaptic transmission decreases
-until this pool can be replenished.
+releasable neurotransmitters at the axon terminal of a presynaptic neuron when
+many presynaptic spikes occur in rapid succession. During synaptic depression,
+the strength of the synapse declines until this pool can be replenished.
+
+In the ``iaf_tum_2000`` model, a fraction :math:`u` of the available synaptic
+resources :math:`x` is used by each presynaptic spike (see Eq. 3 and 4 or
+Eq. 2.1 and 2.2 in [1]_ or [2]_, respectively). A parameter :math:`U \in [0, 1]`
+determines the increase in :math:`u` with each spike.
 
 In this example, we reproduce Figure 1A in [2]_. We connect two
-``iaf_tum_2000`` neurons. The pre-synaptic neuron is driven by DC input and
-we record the voltage trace of the post-synaptic neuron. Short-term depression
-is enabled by setting the facilitation parameter, :math:`U \in [0, 1]`, to a large
-value, which causes a fast saturation of the synaptic efficacy (see Eq. 4 or
-Eq. 2.2 in [1]_ or [2]_, respectively).
+``iaf_tum_2000`` neurons. The presynaptic neuron is driven by DC input and
+we record the voltage trace of the postsynaptic neuron. Short-term depression
+is enabled by setting :math:`U` to a large value, which causes a fast saturation
+of the synaptic efficacy.
 
 For an example on *short-term facilitation*, see
 :doc:`../auto_examples/iaf_tum_2000_short_term_facilitation`.
@@ -45,7 +49,7 @@ For an example on *short-term facilitation*, see
 
     The ``iaf_tum_2000`` neuron model incorporates the
     `tsodyks_synapse <../models/tsodyks_synapse>` computations directly in
-    `iaf_psc_exp <../models/iaf_psc_exp>` on the pre-synaptic side, which
+    `iaf_psc_exp <../models/iaf_psc_exp>` on the presynaptic side, which
     makes ``iaf_tum_2000`` more computationally efficient, see
     :doc:`../auto_examples/iaf_tum_2000_benchmark`.
 
@@ -90,7 +94,7 @@ t_ref = 2.0  # refractory period [ms]
 
 ###############################################################################
 # We create one current generator and configure a stimulus that will drive
-# the pre-synaptic neuron. Configuration of the current generator includes the
+# the presynaptic neuron. Configuration of the current generator includes the
 # definition of the start and stop times and the amplitude of the injected
 # current.
 
@@ -112,16 +116,16 @@ dc_gen = nest.Create(
 # respectively). With NEST's implementation, we can safely set
 # :math:`\tau_\mathrm{fac} = 0` to turn facilitation off.
 
-U = 0.5  # facilitation parameter (fraction determining utilization of synaptic efficacy)
+x = 1.0  # initial fraction of synaptic vesicles in the readily releasable pool
+u = 0.0  # initial release probability of synaptic vesicles
+U = 0.5  # fraction determining the increase in u with each spike
 tau_psc = 3.0  # decay constant of PSCs (tau_inact in [2]) [ms]
 tau_rec = 800.0  # recovery time from synaptic depression [ms]
 tau_fac = 0.0  # time constant for facilitation (off) [ms]
-x = 1.0  # initial fraction of synaptic vesicles in the readily releasable pool
-u = 0.0  # initial release probability of synaptic vesicles
 
 ###############################################################################
 # We create two ``iaf_tum_2000`` neurons. Since this model integrates the
-# synaptic dynamics in the pre-synaptic neuron, the synaptic parameters, except
+# synaptic dynamics in the presynaptic neuron, the synaptic parameters, except
 # for ``weight`` and ``delay``, are provided together with the neuron parameters
 # to the model.
 
@@ -149,12 +153,12 @@ nrns = nest.Create(
 
 
 ###############################################################################
-# We connect the DC generator to the pre-synaptic neuron.
+# We connect the DC generator to the presynaptic neuron.
 nest.Connect(dc_gen, nrns[0])
 
 ###############################################################################
-# We then connect the pre- and post-synaptic neurons. We use a ``static_synapse``
-# to transfer the synaptic current computed in the pre-synaptic neuron. The
+# We then connect the pre- and postsynaptic neurons. We use a ``static_synapse``
+# to transfer the synaptic current computed in the presynaptic neuron. The
 # synaptic weight and delay are passed with the static synapse's ``syn_spec``.
 # Note that ``iaf_tum_2000`` neurons must be connected via ``receptor_type`` 1.
 
@@ -173,7 +177,7 @@ nest.Connect(
 )
 
 ###############################################################################
-# We add a ``voltmeter`` to sample the membrane potentials from the post-synaptic
+# We add a ``voltmeter`` to sample the membrane potentials from the postsynaptic
 # neuron in intervals of 1.0 ms. Note that the connection direction for the
 # ``voltmeter`` reflects the signal flow in the simulation kernel; a ``voltmeter``
 # observes the neuron instead of receiving events from it.

@@ -252,8 +252,8 @@ eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::update_gradient( EpropAr
   double beta = eprop_parameter_map[ "adapt_beta" ];
   double rho = eprop_parameter_map[ "adapt_propagator" ];
 
-  double sum_t_prime = 0.0;
-  double sum_e_bar = 0.0;
+  double e_bar = 0.0;
+  double sum_e = 0.0;
   double last_z_bar = 0.0;
   double epsilon = 0.0;
   double grad = 0.0;
@@ -264,13 +264,13 @@ eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::update_gradient( EpropAr
     for ( int t = 0; t < presyn_isi; ++t )
     {
       double psi = it_eprop_hist->V_m_pseudo_deriv_;
-      double e_bar = psi * last_z_bar;
+      double e = psi * last_z_bar;
 
-      e_bar -= psi * beta * epsilon;
+      e -= psi * beta * epsilon;
       epsilon = psi * last_z_bar + ( rho - psi * beta ) * epsilon;
-      sum_t_prime = this->kappa_ * sum_t_prime + ( 1.0 - this->kappa_ ) * e_bar;
-      grad += sum_t_prime * dt * it_eprop_hist->learning_signal_;
-      sum_e_bar += e_bar;
+      e_bar = this->kappa_ * e_bar + ( 1.0 - this->kappa_ ) * e;
+      grad += e_bar * dt * it_eprop_hist->learning_signal_;
+      sum_e += e;
       last_z_bar *= alpha;
       ++it_eprop_hist;
     }
@@ -279,7 +279,7 @@ eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::update_gradient( EpropAr
 
   grad /= Time( Time::ms( cp.recall_duration_ ) ).get_steps();
 
-  grad += target->get_firing_rate_reg( this->t_last_update_ + target->get_shift() ) * sum_e_bar;
+  grad += target->get_firing_rate_reg( this->t_last_update_ + target->get_shift() ) * sum_e;
 
   grad *= dt;
 

@@ -248,16 +248,16 @@ eprop_synapse_readout< targetidentifierT >::update_gradient( EpropArchivingNode*
   std::deque< HistEntryEpropArchive >::iterator it_eprop_hist;
   target->get_eprop_history( this->t_last_trigger_spike_ + get_delay(), &it_eprop_hist );
 
-  double last_z_bar = 0.0;
+  double z_bar = 0.0;
   double grad = 0.0;
 
   for ( auto presyn_isi : presyn_isis )
   {
-    last_z_bar += 1.0 - this->kappa_;
+    z_bar += 1.0 - this->kappa_;
     for ( int t = 0; t < presyn_isi; ++t )
     {
-      grad += it_eprop_hist->learning_signal_ * last_z_bar;
-      last_z_bar *= this->kappa_;
+      grad += it_eprop_hist->learning_signal_ * z_bar;
+      z_bar *= this->kappa_;
       ++it_eprop_hist;
     }
   }

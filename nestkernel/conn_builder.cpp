@@ -1608,11 +1608,13 @@ nest::TripartiteBernoulliWithPoolBuilder::TripartiteBernoulliWithPoolBuilder( No
   NodeCollectionPTR third,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_specs )
-  : ConnBuilder( sources, targets, conn_spec, { ( *syn_specs )[ names::primary ] } )
-  ,
+  : ConnBuilder( sources, targets, conn_spec, { getValue< DictionaryDatum >( ( *syn_specs )[ names::primary ] ) } )
   , third_( third )
-  , third_in_builder_( sources, third, conn_spec, { ( *syn_specs )[ names::third_in ] } )
-  , third_out_builder_( third, targets, conn_spec, { ( *syn_specs )[ names::third_out ] } )
+  , third_in_builder_( sources, third, conn_spec, { getValue< DictionaryDatum >( ( *syn_specs )[ names::third_in ] ) } )
+  , third_out_builder_( third,
+      targets,
+      conn_spec,
+      { getValue< DictionaryDatum >( ( *syn_specs )[ names::third_out ] ) } )
   , p_primary_( 1.0 )
   , p_cond_third_( 1.0 )
   , random_pool_( true )
@@ -1694,20 +1696,15 @@ nest::TripartiteBernoulliWithPoolBuilder::connect_()
         }
 
         // step 2, build pool for target
-        std::vector< size_t > pool;
+        std::vector< NodeIDTriple > pool;
         pool.reserve( pool_size_ );
         if ( random_pool_ )
         {
-          // std::sample( third_->begin(), third_->end(), std::back_inserter( pool ), pool_size_,
-          //             synced_rng );
+          synced_rng->sample( third_->begin(), third_->end(), std::back_inserter( pool ), pool_size_ );
         }
         else
         {
-          auto first_index = get_first_pool_index_( targets_->get_lid( tnode_id ) );
-          for ( size_t i = 0; i < pool_size_; ++i )
-          {
-            pool.push_back( ( *third_ )[ first_index + i ] );
-          }
+          std::copy_n( third_->begin() + get_first_pool_index_( target.lid ), pool_size_, std::back_inserter( pool ) );
         }
 
         // step 3, iterate through indegree to make connections for this target
@@ -1716,10 +1713,9 @@ nest::TripartiteBernoulliWithPoolBuilder::connect_()
         //     we ignore it then connecting if no autapses are wanted
         std::vector< NodeIDTriple > sources_to_connect_;
         sources_to_connect_.reserve( indegree );
-        // std::sample( sources_->begin(), sources_->end(), std::back_inserter( sources_to_connect_ ),
-        //              indegree, synced_rng );
+        synced_rng->sample( sources_->begin(), sources_->end(), std::back_inserter( sources_to_connect_ ), indegree );
 
-        for ( const auto source : *sources_ )
+        for ( const auto source : sources_to_connect_ )
         {
           const auto snode_id = source.node_id;
           if ( not allow_autapses_ and snode_id == tnode_id )
@@ -1741,7 +1737,7 @@ nest::TripartiteBernoulliWithPoolBuilder::connect_()
 
           // select third-factor neuron randomly from pool for this target
           const auto third_index = pool_size_ == 1 ? 0 : synced_rng->ulrand( pool_size_ );
-          const auto third_node_id = pool[ third_index ];
+          const auto third_node_id = pool[ third_index ].node_id;
           Node* third_node = kernel().node_manager.get_node_or_proxy( third_node_id, tid );
           const bool local_third_node = not third_node->is_proxy();
 

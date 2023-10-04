@@ -1730,7 +1730,7 @@ nest::TripartiteBernoulliWithPoolBuilder::connect_()
           }
 
           // conditionally connect third factor
-          if ( not( p_cond_third_ < synced_rng->drand() ) )
+          if ( not( synced_rng->drand() < p_cond_third_ ) )
           {
             continue;
           }

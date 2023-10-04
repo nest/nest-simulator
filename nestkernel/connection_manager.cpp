@@ -372,7 +372,7 @@ nest::ConnectionManager::get_conn_builder( const std::string& name,
   const DictionaryDatum& syn_specs )
 {
   const size_t rule_id = connruledict_->lookup( name );
-  ConnBuilder* cb = connbuilder_factories_.at( rule_id )->create( sources, targets, targets, conn_spec, syn_specs );
+  ConnBuilder* cb = connbuilder_factories_.at( rule_id )->create( sources, targets, third, conn_spec, syn_specs );
   assert( cb );
   return cb;
 }

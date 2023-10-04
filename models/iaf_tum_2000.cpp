@@ -164,9 +164,13 @@ nest::iaf_tum_2000::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Capacitance must be strictly positive." );
   }
-  if ( Tau_ <= 0 or tau_ex_ <= 0 or tau_in_ <= 0 or tau_fac_ <= 0 or tau_psc_ <= 0 or tau_rec_ <= 0 )
+  if ( Tau_ <= 0 or tau_ex_ <= 0 or tau_in_ <= 0 or tau_psc_ <= 0 or tau_rec_ <= 0 )
   {
     throw BadProperty( "Membrane and synapse time constants must be strictly positive." );
+  }
+  if ( tau_fac_ < 0.0 )
+  {
+    throw BadProperty( "'tau_fac' must be >= 0." );
   }
   if ( t_ref_ < 0 )
   {
@@ -174,7 +178,7 @@ nest::iaf_tum_2000::Parameters_::set( const DictionaryDatum& d, Node* node )
   }
   if ( U_ > 1.0 or U_ < 0.0 )
   {
-    throw BadProperty( "U must be in [0,1]." );
+    throw BadProperty( "'U' must be in [0,1]." );
   }
 
   updateValue< double >( d, "rho", rho_ );
@@ -219,6 +223,10 @@ nest::iaf_tum_2000::State_::set( const DictionaryDatum& d, const Parameters_& p,
   y_ = y;
 
   updateValueParam< double >( d, names::u, u_, node );
+  if ( u_ > 1.0 or u_ < 0.0 )
+  {
+    throw BadProperty( "'u' must be in [0,1]." );
+  }
 
 
   if ( updateValueParam< double >( d, names::V_m, V_m_, node ) )

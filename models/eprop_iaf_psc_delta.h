@@ -66,7 +66,7 @@ The spike state variable is given by:
 If the membrane voltage crosses the threshold voltage :math:`v_\text{th}`, a spike is
 emitted and the membrane voltage is reduced by :math:`v_\text{th}` in the next time step.
 Counted from the time step of the spike emission, the neuron is not able to
-spike for an absolute refractory period :math:`t_\text{ref}``.
+spike for an absolute refractory period :math:`t_\text{ref}`.
 
 An additional state variable and the corresponding differential equation
 represents a piecewise constant external current.

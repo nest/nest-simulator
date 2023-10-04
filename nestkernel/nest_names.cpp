@@ -343,7 +343,7 @@ const Name overwrite_files( "overwrite_files" );
 
 const Name P( "P" );
 const Name p( "p" );
-const Name p_cond_third( "p_cond_third " );
+const Name p_cond_third( "p_cond_third" );
 const Name p_copy( "p_copy" );
 const Name p_primary( "p_primary" );
 const Name p_transmit( "p_transmit" );

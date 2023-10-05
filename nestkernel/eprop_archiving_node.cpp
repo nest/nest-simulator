@@ -139,7 +139,8 @@ void
 nest::EpropArchivingNode::write_error_signal_to_history( long time_step, double error_signal )
 {
   double shift = delay_norm;
-  eprop_history_.push_back( HistEntryEpropArchive( Time( Time::step( time_step - shift ) ).get_ms(), 0.0, error_signal ) );
+  eprop_history_.push_back(
+    HistEntryEpropArchive( Time( Time::step( time_step - shift ) ).get_ms(), 0.0, error_signal ) );
 }
 
 

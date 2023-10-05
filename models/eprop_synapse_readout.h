@@ -246,7 +246,7 @@ eprop_synapse_readout< targetidentifierT >::update_gradient( EpropArchivingNode*
   double dt = Time::get_resolution().get_ms();
 
   std::deque< HistEntryEpropArchive >::iterator it_eprop_hist;
-  target->get_eprop_history( this->t_last_trigger_spike_ + get_delay(), &it_eprop_hist );
+  target->get_eprop_history( this->t_last_trigger_spike_, &it_eprop_hist );
 
   double z_bar = 0.0;
   double grad = 0.0;

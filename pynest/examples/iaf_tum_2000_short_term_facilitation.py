@@ -150,7 +150,6 @@ nrns = nest.Create(
     },
 )
 
-
 ###############################################################################
 # We connect the DC generator to the presynaptic neuron.
 nest.Connect(dc_gen, nrns[0])

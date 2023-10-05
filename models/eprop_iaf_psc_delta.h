@@ -95,25 +95,26 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-============== ==== ======================= ========== =============================================================
+================== ==== ======================= ================= =====================================================
 **Neuron parameters**
---------------------------------------------------------------------------------------------------------------------
-arameter       Unit Math equivalent         Default    Description
-============== ==== ======================= ========== =============================================================
-C_m              pF :math:`C_\text{m}`           250.0 Capacity of the membrane
-c_reg               :math:`c_\text{reg}`           0.0 Prefactor of firing rate regularization
-E_L              mV :math:`E_\text{L}`           -70.0 Leak membrane potential
-f_target         Hz :math:`f^\text{target}`       10.0 Target firing rate of rate regularization
-gamma               :math:`\gamma`                 0.3 Scaling of pseudo-derivative of membrane voltage
-I_e              pA :math:`I_\text{e}`             0.0 Constant external input current
-t_ref            ms :math:`t_\text{ref}`           2.0 Duration of the refractory period
-tau_m            ms :math:`\tau_\text{m}`         10.0 Time constant of the membrane
-V_m              mV :math:`v_j^0`                -70.0 Initial value of the membrane voltage
-V_min            mV :math:`v_\text{min}`    -1.79e+308 Absolute lower value of the membrane voltage
-V_th             mV :math:`v_\text{th}`          -55.0 Spike threshold
-propagator_idx                                       0 Index of propagators
-                                                       0 (:math:`1 - \exp(\Delta t/\tau_\text{m})`) or 1 (:math:`1`)
-============== ==== ======================= ========== =============================================================
+-----------------------------------------------------------------------------------------------------------------------
+Parameter          Unit Math equivalent         Default           Description
+================== ==== ======================= ================= =====================================================
+C_m                  pF :math:`C_\text{m}`                  250.0 Capacity of the membrane
+c_reg                   :math:`c_\text{reg}`                  0.0 Prefactor of firing rate regularization
+E_L                  mV :math:`E_\text{L}`                  -70.0 Leak membrane potential
+f_target             Hz :math:`f^\text{target}`              10.0 Target firing rate of rate regularization
+gamma                   :math:`\gamma`                        0.3 Scaling of pseudo-derivative of membrane voltage
+I_e                  pA :math:`I_\text{e}`                    0.0 Constant external input current
+propagator_idx                                                  0 Index of propagators [0, 1] corresponding to
+                                                                  [:math:`1 - \exp(\Delta t/\tau_\text{m})`, :math:`1`]
+surrogate_gradient      :math:`\psi`            pseudo_derivative Surrogate gradient method
+t_ref                ms :math:`t_\text{ref}`                  2.0 Duration of the refractory period
+tau_m                ms :math:`\tau_\text{m}`                10.0 Time constant of the membrane
+V_m                  mV :math:`v_j^0`                       -70.0 Initial value of the membrane voltage
+V_min                mV :math:`v_\text{min}`           -1.79e+308 Absolute lower value of the membrane voltage
+V_th                 mV :math:`v_\text{th}`                 -55.0 Spike threshold
+================== ==== ======================= ================= =====================================================
 
 Recordables
 +++++++++++

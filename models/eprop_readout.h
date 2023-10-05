@@ -72,20 +72,22 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-==================  =======  =======================  ==========  ================================================
+==================  =======  =======================  ================== ===============================================
 **Neuron parameters**
-------------------------------------------------------------------------------------------------------------------
-Parameter           Unit     Math equivalent          Default     Description
-==================  =======  =======================  ==========  ================================================
- C_m                pF       :math:`C_\text{m}`            250.0  Capacity of the membrane
- E_L                mV       :math:`E_\text{L}`              0.0  Leak membrane potential
- gamma                       :math:`\gamma`                  0.3  Scaling of pseudo-derivative of membrane voltage
- I_e                pA       :math:`I_\text{e}`              0.0  Constant external input current
- start_learning     ms                                       0.0  Time point to start sending learning signals
- tau_m              ms       :math:`\tau_\text{m}`          10.0  Time constant of the membrane
- V_m                mV       :math:`v_j^0`                   0.0  Initial value of the membrane voltage
- V_min              mV       :math:`v_\text{min}`     -1.79e+308  Absolute lower value of the membrane voltage
-==================  =======  =======================  ==========  ================================================
+------------------------------------------------------------------------------------------------------------------------
+Parameter           Unit     Math equivalent          Default            Description
+==================  =======  =======================  ================== ===============================================
+ C_m                pF       :math:`C_\text{m}`                    250.0 Capacity of the membrane
+ E_L                mV       :math:`E_\text{L}`                      0.0 Leak membrane potential
+ gamma                       :math:`\gamma`                          0.3 Scaling of membrane voltage pseudo-derivative
+ I_e                pA       :math:`I_\text{e}`                      0.0 Constant external input current
+ loss                        :math:`E`                mean_squared_error Loss function
+                                                                         ["mean_squared_error", "cross_entropy_loss"]
+ start_learning     ms                                               0.0 Time point to start sending learning signals
+ tau_m              ms       :math:`\tau_\text{m}`                  10.0 Time constant of the membrane
+ V_m                mV       :math:`v_j^0`                           0.0 Initial value of the membrane voltage
+ V_min              mV       :math:`v_\text{min}`             -1.79e+308 Absolute lower value of the membrane voltage
+==================  =======  =======================  ================== ===============================================
 
 Recordables
 +++++++++++
@@ -241,6 +243,7 @@ private:
     bool in_learning_window_;
     bool in_extended_learning_window_;
     bool requires_buffer_;
+    double norm_rate_;
   };
 
   /**

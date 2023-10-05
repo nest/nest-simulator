@@ -12,7 +12,7 @@ Welcome!
 
     NEST is used in computational neuroscience to model and study behavior of large networks of neurons.
 
-    The models describe single :ref:`neuron` and :ref:`synapse` behavior and their connections.
+    The models describe single neuron and synapse behavior and their connections.
     Different mechanisms of plasticity can be used to investigate artificial learning
     and help to shed light on the fundamental principles of how the brain works.
 
@@ -85,15 +85,15 @@ Description of this diagram. Click the image below to discover more!
       .. raw:: html
 
          <div class="popuptext" id="neuron">
-         <a href="neurons_nest.html"> <img src="_static/img/neuron_text.svg" alt="neuron triangle graphic">
+         <a href="neurons/index.html"> <img src="_static/img/neuron_text.svg" alt="Neuron graphic">
          </a>
          </div>
          <div class="popuptext" id="synapse">
-         <a href="neurons_nest.html"> <img src="_static/img/synapse_text.svg" alt="neuron circle graphic">
+         <a href="synapses/index.html"> <img src="_static/img/synapse_text.svg" alt="Synapse graphic">
          </a>
          </div>
          <div class="popuptext" id="device">
-         <a href="neurons_nest.html"> <img src="_static/img/device_af.svg" alt="neuron circle graphic">
+         <a href="devices/index.html"> <img src="_static/img/device_text.svg" alt="Device graphic">
          </a>
          </div>
 

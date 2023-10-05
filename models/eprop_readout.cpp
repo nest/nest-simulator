@@ -201,6 +201,11 @@ nest::eprop_readout::pre_run_hook()
   V_.in_learning_window_ = false;
   V_.in_extended_learning_window_ = false;
   V_.requires_buffer_ = false;
+
+  if ( P_.loss_ == "mean_squared_error" )
+    compute_error_signal = &eprop_readout::compute_error_signal_mean_squared_error;
+  else if ( P_.loss_ == "cross_entropy_loss" )
+    compute_error_signal = &eprop_readout::compute_error_signal_cross_entropy_loss;
 }
 
 /* ----------------------------------------------------------------
@@ -239,12 +244,8 @@ nest::eprop_readout::update_( Time const& origin, const long from, const long to
     S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P33_ * S_.y3_ + V_.P33_complement_ * B_.spikes_.get_value( lag );
     S_.y3_ = S_.y3_ < P_.V_min_ ? P_.V_min_ : S_.y3_;
 
-    if ( P_.loss_ == "mean_squared_error" )
-      loss_mse();
-    else if ( P_.loss_ == "softmax" )
-      loss_softmax( lag );
+    ( this->*compute_error_signal )( lag );
 
-    S_.error_signal_ = V_.in_learning_window_ ? S_.readout_signal_ - S_.target_signal_ : 0.0;
     S_.target_signal_ = V_.in_extended_learning_window_ ? V_.target_signal_ : 0.0;
 
     if ( V_.requires_buffer_ )
@@ -277,23 +278,25 @@ nest::eprop_readout::update_( Time const& origin, const long from, const long to
 }
 
 /* ----------------------------------------------------------------
- * Loss functions
+ * Error signal functions
  * ---------------------------------------------------------------- */
 
 void
-nest::eprop_readout::loss_mse()
+nest::eprop_readout::compute_error_signal_mean_squared_error( const long& lag )
 {
   S_.readout_signal_ = V_.in_learning_window_ ? V_.readout_signal_unnorm_ : 0.0;
   V_.readout_signal_unnorm_ = V_.in_extended_learning_window_ ? S_.y3_ + P_.E_L_ : 0.0;
+  S_.error_signal_ = V_.in_learning_window_ ? S_.readout_signal_ - S_.target_signal_ : 0.0;
 }
 
 void
-nest::eprop_readout::loss_softmax( const long& lag )
+nest::eprop_readout::compute_error_signal_cross_entropy_loss( const long& lag )
 {
-  double norm_rate = B_.normalization_rates_.get_value( lag ) + V_.readout_signal_unnorm_;
+  double norm_rate = V_.norm_rate_ + V_.readout_signal_unnorm_;
   S_.readout_signal_ = V_.in_learning_window_ ? V_.readout_signal_unnorm_ / norm_rate : 0.0;
   V_.readout_signal_unnorm_ = V_.in_extended_learning_window_ ? std::exp( S_.y3_ + P_.E_L_ ) : 0.0;
   V_.requires_buffer_ = true;
+  S_.error_signal_ = V_.in_learning_window_ ? S_.readout_signal_ - S_.target_signal_ : 0.0;
 }
 
 /* ----------------------------------------------------------------

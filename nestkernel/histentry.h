@@ -87,9 +87,9 @@ operator<( const HistEntryEprop& he, double t )
 class HistEntryEpropArchive : public HistEntryEprop
 {
 public:
-  HistEntryEpropArchive( double t, double V_m_pseudo_deriv, double learning_signal );
+  HistEntryEpropArchive( double t, double surrogate_gradient, double learning_signal );
 
-  double V_m_pseudo_deriv_;
+  double surrogate_gradient_;
   double learning_signal_;
 };
 

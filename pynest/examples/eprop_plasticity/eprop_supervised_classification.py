@@ -195,6 +195,7 @@ params_nrn_ad = {
     "gamma": 0.3,
     "I_e": 0.0,
     "propagator_idx": 1,  # index of the two available propagators 0 (1 - exp(dt/tau_m)) or 1 (1)
+    "surrogate_gradient": "pseudo_derivative",
     "t_ref": 5.0,
     "tau_m": 20.0,
     "V_m": 0.0,
@@ -241,7 +242,7 @@ nrns_rec = nrns_reg + nrns_ad
 n_record = 1  # number of adaptive and regular neurons each to record recordables from
 n_record_w = 3  # number of senders and targets to record weights from
 
-params_mm_reg = {"record_from": ["V_m", "V_m_pseudo_deriv", "learning_signal"]}  # recordables
+params_mm_reg = {"record_from": ["V_m", "surrogate_gradient", "learning_signal"]}  # recordables
 params_mm_ad = {"record_from": params_mm_reg["record_from"] + ["adapting_threshold", "adaptation"]}
 params_mm_out = {"record_from": ["V_m", "readout_signal", "target_signal", "error_signal"]}
 
@@ -677,13 +678,13 @@ for xlims in [(0, steps["sequence"]), (steps["task"] - steps["sequence"], steps[
     plot_spikes(axs[1], events_sr, nrns_reg, r"$z_j$" + "\n", xlims)
 
     plot_recordable(axs[2], events_mm_reg, "V_m", r"$v_j$" + "\n(mV)", xlims)
-    plot_recordable(axs[3], events_mm_reg, "V_m_pseudo_deriv", r"$\psi_j$" + "\n", xlims)
+    plot_recordable(axs[3], events_mm_reg, "surrogate_gradient", r"$\psi_j$" + "\n", xlims)
     plot_recordable(axs[4], events_mm_reg, "learning_signal", r"$L_j$" + "\n(pA)", xlims)
 
     plot_spikes(axs[5], events_sr, nrns_ad, r"$z_j$" "\n", xlims)
 
     plot_recordable(axs[6], events_mm_ad, "V_m", r"$v_j$" + "\n(mV)", xlims)
-    plot_recordable(axs[7], events_mm_ad, "V_m_pseudo_deriv", r"$\psi_j$" + "\n", xlims)
+    plot_recordable(axs[7], events_mm_ad, "surrogate_gradient", r"$\psi_j$" + "\n", xlims)
     plot_recordable(axs[8], events_mm_ad, "adapting_threshold", r"$A_j$" + "\n(mV)", xlims)
     plot_recordable(axs[9], events_mm_ad, "learning_signal", r"$L_j$" + "\n(pA)", xlims)
 

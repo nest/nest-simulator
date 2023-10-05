@@ -263,7 +263,7 @@ eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::update_gradient( EpropAr
     last_z_bar += alpha_complement;
     for ( int t = 0; t < presyn_isi; ++t )
     {
-      double psi = it_eprop_hist->V_m_pseudo_deriv_;
+      double psi = it_eprop_hist->surrogate_gradient_;
       double e = psi * last_z_bar;
 
       e -= psi * beta * epsilon;

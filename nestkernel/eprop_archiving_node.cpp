@@ -130,9 +130,10 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
 
 
 void
-nest::EpropArchivingNode::write_v_m_pseudo_deriv_to_history( long time_step, double v_m_pseudo_deriv )
+nest::EpropArchivingNode::write_surrogate_gradient_to_history( long time_step, double surrogate_gradient )
 {
-  eprop_history_.push_back( HistEntryEpropArchive( Time( Time::step( time_step ) ).get_ms(), v_m_pseudo_deriv, 0.0 ) );
+  eprop_history_.push_back(
+    HistEntryEpropArchive( Time( Time::step( time_step ) ).get_ms(), surrogate_gradient, 0.0 ) );
 }
 
 void

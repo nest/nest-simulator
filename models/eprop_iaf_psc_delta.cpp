@@ -52,7 +52,7 @@ void
 RecordablesMap< eprop_iaf_psc_delta >::create()
 {
   insert_( names::V_m, &eprop_iaf_psc_delta::get_V_m_ );
-  insert_( names::V_m_pseudo_deriv, &eprop_iaf_psc_delta::get_V_m_pseudo_deriv_ );
+  insert_( names::surrogate_gradient, &eprop_iaf_psc_delta::get_surrogate_gradient_ );
   insert_( names::learning_signal, &eprop_iaf_psc_delta::get_learning_signal_ );
 }
 
@@ -72,6 +72,7 @@ nest::eprop_iaf_psc_delta::Parameters_::Parameters_()
   , V_min_( -std::numeric_limits< double >::max() )
   , gamma_( 0.3 )
   , propagator_idx_( 0 )
+  , surrogate_gradient_( "pseudo_derivative" )
 {
 }
 
@@ -79,7 +80,7 @@ nest::eprop_iaf_psc_delta::State_::State_()
   : y0_( 0.0 )
   , y3_( 0.0 )
   , r_( 0 )
-  , V_m_pseudo_deriv_( 0.0 )
+  , surrogate_gradient_( 0.0 )
   , learning_signal_( 0.0 )
 {
 }
@@ -112,6 +113,7 @@ nest::eprop_iaf_psc_delta::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::f_target, f_target_ );
   def< double >( d, names::gamma, gamma_ );
   def< long >( d, names::propagator_idx, propagator_idx_ );
+  def< std::string >( d, names::surrogate_gradient, surrogate_gradient_ );
 }
 
 double
@@ -133,6 +135,7 @@ nest::eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* nod
   updateValueParam< double >( d, names::f_target, f_target_, node );
   updateValueParam< double >( d, names::gamma, gamma_, node );
   updateValueParam< long >( d, names::propagator_idx, propagator_idx_, node );
+  updateValueParam< std::string >( d, names::surrogate_gradient, surrogate_gradient_, node );
 
   if ( C_m_ <= 0 )
     throw BadProperty( "Capacitance must be > 0." );
@@ -143,6 +146,10 @@ nest::eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* nod
 
   if ( propagator_idx_ != 0 and propagator_idx_ != 1 )
     throw BadProperty( "One of two available propagators indexed by 0 and 1 must be selected." );
+
+  if ( surrogate_gradient_ != "pseudo_derivative" )
+    throw BadProperty( "One of the available surrogate gradients \"pseudo_derivative\" needs to be selected." );
+
 
   return delta_EL;
 }
@@ -198,7 +205,7 @@ nest::eprop_iaf_psc_delta::init_buffers_()
   B_.currents_.clear(); // includes resize
   B_.logger_.reset();   // includes resize
 
-  V_.z_ = 0.0;
+  S_.z_ = 0.0;
 }
 
 void
@@ -218,6 +225,9 @@ nest::eprop_iaf_psc_delta::pre_run_hook()
 
   write_eprop_parameter_to_map( "leak_propagator", V_.P33_ );
   write_eprop_parameter_to_map( "leak_propagator_complement", V_.P33_complement_ );
+
+  if ( P_.surrogate_gradient_ == "pseudo_derivative" )
+    compute_surrogate_gradient = &eprop_iaf_psc_delta::compute_pseudo_derivative;
 }
 
 /* ----------------------------------------------------------------
@@ -253,21 +263,19 @@ nest::eprop_iaf_psc_delta::update( Time const& origin, const long from, const lo
       S_.y3_ = 0.0;
       S_.r_ = 0;
       B_.spikes_.clear(); // includes resize
-      V_.z_ = 0.0;
+      S_.z_ = 0.0;
     }
 
     S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P33_ * S_.y3_ + V_.P33_complement_ * B_.spikes_.get_value( lag );
 
-    S_.y3_ -= V_.z_ * P_.V_th_;
-    V_.z_ = 0.0;
+    S_.y3_ -= S_.z_ * P_.V_th_;
+    S_.z_ = 0.0;
 
     S_.y3_ = S_.y3_ < P_.V_min_ ? P_.V_min_ : S_.y3_;
 
-    double v_m = S_.r_ > 0 ? 0.0 : S_.y3_;
-    double psi = P_.gamma_ * std::max( 0.0, 1.0 - std::fabs( ( v_m - P_.V_th_ ) / P_.V_th_ ) ) / P_.V_th_;
+    S_.surrogate_gradient_ = ( this->*compute_surrogate_gradient )();
 
-    S_.V_m_pseudo_deriv_ = psi;
-    write_v_m_pseudo_deriv_to_history( t, psi );
+    write_surrogate_gradient_to_history( t, S_.surrogate_gradient_ );
 
     if ( S_.y3_ >= P_.V_th_ and S_.r_ == 0 )
     {
@@ -276,7 +284,7 @@ nest::eprop_iaf_psc_delta::update( Time const& origin, const long from, const lo
       SpikeEvent se;
       kernel().event_delivery_manager.send( *this, se, lag );
 
-      V_.z_ = 1.0;
+      S_.z_ = 1.0;
 
       if ( V_.RefractoryCounts_ > 0 )
         S_.r_ = V_.RefractoryCounts_;
@@ -294,6 +302,19 @@ nest::eprop_iaf_psc_delta::update( Time const& origin, const long from, const lo
     B_.logger_.record_data( t );
   }
 }
+
+/* ----------------------------------------------------------------
+ * Surrogate gradient functions
+ * ---------------------------------------------------------------- */
+
+double
+nest::eprop_iaf_psc_delta::compute_pseudo_derivative()
+{
+  double v_m = S_.r_ > 0 ? 0.0 : S_.y3_;
+  double psi = P_.gamma_ * std::max( 0.0, 1.0 - std::fabs( ( v_m - P_.V_th_ ) / P_.V_th_ ) ) / P_.V_th_;
+  return psi;
+}
+
 
 /* ----------------------------------------------------------------
  * Event handling functions

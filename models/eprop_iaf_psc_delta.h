@@ -122,7 +122,7 @@ The following variables can be recorded:
 
   - learning signal ``learning_signal``
   - membrane potential ``V_m``
-  - pseudo-derivative of membrane potential ``V_m_pseudo_deriv``
+  - surrogate gradient ``surrogate_gradient``
 
 Usage
 +++++
@@ -195,19 +195,24 @@ private:
   friend class RecordablesMap< eprop_iaf_psc_delta >;
   friend class UniversalDataLogger< eprop_iaf_psc_delta >;
 
+  double compute_pseudo_derivative();
+
+  double ( eprop_iaf_psc_delta::*compute_surrogate_gradient )();
+
   struct Parameters_
   {
-    double tau_m_;       //!< membrane time constant (ms)
-    double C_m_;         //!< membrane capacitance (pF)
-    double c_reg_;       //!< prefactor of firing rate regularization
-    double t_ref_;       //!< refractory period (ms)
-    double f_target_;    //!< target firing rate of rate regularization (Hz)
-    double E_L_;         //!< leak potential (mV)
-    double I_e_;         //!< external DC current (pA)
-    double V_th_;        //!< spike treshold voltage relative to leak potential (mV)
-    double V_min_;       //!< lower membrane voltage bound relative to leak potential (mV)
-    double gamma_;       //!< scaling of pseudo-derivative of membrane voltage
-    int propagator_idx_; //!< index of propagators 0 (1.0 - exp(dt/tau_m) or 1 (1.0)
+    double tau_m_;                   //!< membrane time constant (ms)
+    double C_m_;                     //!< membrane capacitance (pF)
+    double c_reg_;                   //!< prefactor of firing rate regularization
+    double t_ref_;                   //!< refractory period (ms)
+    double f_target_;                //!< target firing rate of rate regularization (Hz)
+    double E_L_;                     //!< leak potential (mV)
+    double I_e_;                     //!< external DC current (pA)
+    double V_th_;                    //!< spike treshold voltage relative to leak potential (mV)
+    double V_min_;                   //!< lower membrane voltage bound relative to leak potential (mV)
+    double gamma_;                   //!< scaling of pseudo-derivative of membrane voltage
+    int propagator_idx_;             //!< index of propagators 0 (1.0 - exp(dt/tau_m) or 1 (1.0)
+    std::string surrogate_gradient_; //!< surrogate gradient method, "pseudo_derivative"
 
 
     Parameters_();
@@ -218,11 +223,12 @@ private:
 
   struct State_
   {
-    double y0_;               //!< current (pA)
-    double y3_;               //!< membrane voltage relative to leak potential (mV)
-    int r_;                   //!< number of remaining refractory steps
-    double V_m_pseudo_deriv_; //!< pseudo derivative of the membrane voltage
-    double learning_signal_;  //!< weighted error signal
+    double y0_;                 //!< current (pA)
+    double y3_;                 //!< membrane voltage relative to leak potential (mV)
+    int r_;                     //!< number of remaining refractory steps
+    double surrogate_gradient_; //!< pseudo derivative of the membrane voltage
+    double learning_signal_;    //!< weighted error signal
+    bool z_;
 
     State_();
 
@@ -246,7 +252,6 @@ private:
     double P30_;
     double P33_;
     double P33_complement_;
-    bool z_;
     int RefractoryCounts_;
   };
 
@@ -257,9 +262,9 @@ private:
   }
 
   double
-  get_V_m_pseudo_deriv_() const
+  get_surrogate_gradient_() const
   {
-    return S_.V_m_pseudo_deriv_;
+    return S_.surrogate_gradient_;
   }
 
   double

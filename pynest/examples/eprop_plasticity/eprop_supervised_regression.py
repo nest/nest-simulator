@@ -158,6 +158,7 @@ params_nrn_rec = {
     "f_target": 10.0,  # Hz, target firing rate for firing rate regularization
     "I_e": 0.0,  # pA, external current input
     "propagator_idx": 0,  # index of the two available propagators 0 (1-exp(dt/tau_m)) or 1 (1)
+    "surrogate_gradient": "pseudo_derivative",  # surrogate gradient method; "pseudo_derivative" available
     "t_ref": 0.0,  # ms, duration of refractory period
     "tau_m": 30.0,  # ms, membrane time constant
     "V_m": 0.0,  # mV, initial value of the membrane voltage
@@ -198,7 +199,7 @@ gen_rate_target = nest.Create("step_rate_generator", n_out)
 n_record = 1  # number of neurons to record recordables from
 n_record_w = 3  # number of senders and targets to record weights from
 
-params_mm_rec = {"record_from": ["V_m", "V_m_pseudo_deriv", "learning_signal"]}  # recordables
+params_mm_rec = {"record_from": ["V_m", "surrogate_gradient", "learning_signal"]}  # recordables
 params_mm_out = {"record_from": ["V_m", "readout_signal", "target_signal", "error_signal"]}
 
 params_wr = {
@@ -537,7 +538,7 @@ for xlims in [(0, steps["sequence"]), (steps["task"] - steps["sequence"], steps[
     plot_spikes(axs[1], events_sr, nrns_rec, r"$z_j$" + "\n", xlims)
 
     plot_recordable(axs[2], events_mm_rec, "V_m", r"$v_j$" + "\n(mV)", xlims)
-    plot_recordable(axs[3], events_mm_rec, "V_m_pseudo_deriv", r"$\psi_j$" + "\n", xlims)
+    plot_recordable(axs[3], events_mm_rec, "surrogate_gradient", r"$\psi_j$" + "\n", xlims)
     plot_recordable(axs[4], events_mm_rec, "learning_signal", r"$L_j$" + "\n(pA)", xlims)
 
     plot_recordable(axs[5], events_mm_out, "V_m", r"$v_k$" + "\n(mV)", xlims)

@@ -42,9 +42,9 @@ nest::HistEntryEprop::HistEntryEprop( double t )
 {
 }
 
-nest::HistEntryEpropArchive::HistEntryEpropArchive( double t, double V_m_pseudo_deriv, double learning_signal )
+nest::HistEntryEpropArchive::HistEntryEpropArchive( double t, double surrogate_gradient, double learning_signal )
   : HistEntryEprop( t )
-  , V_m_pseudo_deriv_( V_m_pseudo_deriv )
+  , surrogate_gradient_( surrogate_gradient )
   , learning_signal_( learning_signal )
 {
 }

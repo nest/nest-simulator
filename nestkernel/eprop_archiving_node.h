@@ -56,7 +56,7 @@ public:
   void erase_unneeded_eprop_history();
   void erase_unneeded_firing_rate_reg_history();
 
-  void write_v_m_pseudo_deriv_to_history( long time_step, double v_m_pseudo_deriv );
+  void write_surrogate_gradient_to_history( long time_step, double surrogate_gradient );
   void write_error_signal_to_history( long time_step, double error_signal );
   void write_learning_signal_to_history( double& time_point, double& delay, double& weight, double& error_signal );
   void write_update_to_history( double t_last_update, double t_current_update );

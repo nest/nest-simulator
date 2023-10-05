@@ -109,8 +109,6 @@ Description of this diagram. Click the image below to discover more!
    PyNEST API <ref_material/pynest_api/index>
    Available models <models/index>
    ref_material/glossary
-
-   Model implementations <model_details/index>
    Technical docs <developer_space/index>
 
 

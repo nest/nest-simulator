@@ -23,13 +23,13 @@ r"""
 Short-term facilitation example
 -------------------------------
 
-The ``iaf_tum_2000`` neuron [1]_ is a model with *short-term synaptic plasticity*.
-Short-term plasticity can either strengthen or weaken a synapse and acts
-on a timescale of milliseconds to seconds. This example illustrates
-*short-term facilitation*, which is a transient increase in synaptic strength
-caused by influx of calcium into the axon terminal after spike generation.
-Facilitation results in an increase of neurotransmitters being released by each
-succeeding presynaptic spike.
+The `iaf_tum_2000 <../models/iaf_tum_2000>` neuron [1]_ is a model with
+*short-term synaptic plasticity*. Short-term plasticity can either strengthen
+or weaken a synapse and acts on a timescale of milliseconds to seconds. This
+example illustrates *short-term facilitation*, which is a transient increase
+in synaptic strength caused by influx of calcium into the axon terminal after
+spike generation. Facilitation results in an increase of neurotransmitters
+being released by each succeeding presynaptic spike.
 
 In the ``iaf_tum_2000`` model, a fraction :math:`u` of the available synaptic
 resources :math:`x` is used by each presynaptic spike (see Eq. 3 and 4 or
@@ -50,7 +50,7 @@ For an example on *short-term depression*, see
 
 .. note::
 
-    The ``iaf_tum_2000`` neuron model incorporates the
+    The `iaf_tum_2000 <../models/iaf_tum_2000>` neuron model incorporates the
     `tsodyks_synapse <../models/tsodyks_synapse>` computations directly in
     `iaf_psc_exp <../models/iaf_psc_exp>` on the presynaptic side, which
     makes ``iaf_tum_2000`` more computationally efficient, see

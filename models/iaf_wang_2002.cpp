@@ -58,9 +58,9 @@ RecordablesMap< iaf_wang_2002 >::create()
 {
   // add state variables to recordables map
   insert_( names::V_m, &iaf_wang_2002::get_ode_state_elem_< iaf_wang_2002::State_::V_m > );
-  insert_( names::g_AMPA, &iaf_wang_2002::get_ode_state_elem_< iaf_wang_2002::State_::G_AMPA > );
-  insert_( names::g_GABA, &iaf_wang_2002::get_ode_state_elem_< iaf_wang_2002::State_::G_GABA > );
-  insert_( names::NMDA_sum, &iaf_wang_2002::get_NMDA_sum_ );
+  insert_( names::s_AMPA, &iaf_wang_2002::get_ode_state_elem_< iaf_wang_2002::State_::s_AMPA > );
+  insert_( names::s_GABA, &iaf_wang_2002::get_ode_state_elem_< iaf_wang_2002::State_::s_GABA > );
+  insert_( names::s_NMDA, &iaf_wang_2002::get_ode_state_elem_< iaf_wang_2002::State_::s_NMDA > );
 }
 }
 
@@ -77,23 +77,20 @@ nest::iaf_wang_2002_dynamics( double, const double y[], double f[], void* pnode 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
 
-  const double I_AMPA = ( y[ S::V_m ] - node.P_.E_ex ) * y[ S::G_AMPA ];
+  const double I_AMPA = ( y[ S::V_m ] - node.P_.E_ex ) * y[ S::s_AMPA ];
 
-  const double I_rec_GABA = ( y[ S::V_m ] - node.P_.E_in ) * y[ S::G_GABA ];
+  const double I_rec_GABA = ( y[ S::V_m ] - node.P_.E_in ) * y[ S::s_GABA ];
 
   const double I_rec_NMDA = ( y[ S::V_m ] - node.P_.E_ex )
-    / ( 1 + node.P_.conc_Mg2 * std::exp( -0.062 * y[ S::V_m ] ) / 3.57 ) * node.S_.sum_S_post_;
+    / ( 1 + node.P_.conc_Mg2 * std::exp( -0.062 * y[ S::V_m ] ) / 3.57 ) * y[ S::s_NMDA ]; 
 
   const double I_syn = I_AMPA + I_rec_GABA + I_rec_NMDA - node.B_.I_stim_;
 
   f[ S::V_m ] = ( -node.P_.g_L * ( y[ S::V_m ] - node.P_.E_L ) - I_syn ) / node.P_.C_m;
 
-  f[ S::G_AMPA ] = -y[ S::G_AMPA ] / node.P_.tau_AMPA;
-  f[ S::G_GABA ] = -y[ S::G_GABA ] / node.P_.tau_GABA;
-
-    f[ S::S_pre ] =
-      -y[ S::S_pre ] / node.P_.tau_decay_NMDA + node.P_.alpha * y[ S::X_pre ] * ( 1 - y[ S::S_pre ] );
-    f[ S::X_pre ] = -y[ S::X_pre ] / node.P_.tau_rise_NMDA;
+  f[ S::s_AMPA ] = -y[ S::s_AMPA ] / node.P_.tau_AMPA;
+  f[ S::s_NMDA ] = -y[ S::s_AMPA ] / node.P_.tau_decay_NMDA;
+  f[ S::s_GABA ] = -y[ S::s_GABA ] / node.P_.tau_GABA;
 
   return GSL_SUCCESS;
 }
@@ -115,7 +112,6 @@ nest::iaf_wang_2002::Parameters_::Parameters_()
   , t_ref( 2.0 )          // ms
   , tau_AMPA( 2.0 )       // ms
   , tau_GABA( 5.0 )       // ms
-  , tau_rise_NMDA( 2.0 )  // ms
   , tau_decay_NMDA( 100 ) // ms
   , alpha( 0.5 )          // 1 / ms
   , conc_Mg2( 1 )         // mM
@@ -125,30 +121,27 @@ nest::iaf_wang_2002::Parameters_::Parameters_()
 
 nest::iaf_wang_2002::State_::State_( const Parameters_& p )
   : r_( 0 )
-  , sum_S_post_( 0 )
 {
   y_[ V_m ] = p.E_L; // initialize to reversal potential
-  y_[ G_AMPA ] = 0.0;
-  y_[ G_GABA ] = 0.0;
-  y_[ S_pre ] = 0.0;
-  y_[ X_pre ] = 0.0;
+  y_[ s_AMPA ] = 0.0;
+  y_[ s_GABA ] = 0.0;
+  y_[ s_NMDA ] = 0.0;
 }
 
 nest::iaf_wang_2002::State_::State_( const State_& s )
   : r_( s.r_ )
-  , sum_S_post_( s.sum_S_post_ )
 {
   y_[ V_m ] = s.y_[ V_m ];
-  y_[ G_AMPA ] = s.y_[ G_AMPA ];
-  y_[ G_GABA ] = s.y_[ G_GABA ];
-  y_[ S_pre ] = s.y_[ S_pre ];
-  y_[ X_pre ] = s.y_[ X_pre ];
+  y_[ s_AMPA ] = s.y_[ s_AMPA ];
+  y_[ s_GABA ] = s.y_[ s_GABA ];
+  y_[ s_NMDA ] = s.y_[ s_NMDA ];
 }
 
 nest::iaf_wang_2002::Buffers_::Buffers_( iaf_wang_2002& n )
   : logger_( n )
-  , spikes_()
-  , NMDA_cond_()
+  , spike_AMPA()
+  , spike_GABA()
+  , spike_NMDA()
   , s_( nullptr )
   , c_( nullptr )
   , e_( nullptr )
@@ -160,13 +153,9 @@ nest::iaf_wang_2002::Buffers_::Buffers_( iaf_wang_2002& n )
 
 nest::iaf_wang_2002::Buffers_::Buffers_( const Buffers_&, iaf_wang_2002& n )
   : logger_( n )
-  , spikes_()
-  , NMDA_cond_()
   , s_( nullptr )
   , c_( nullptr )
   , e_( nullptr )
-  , step_( Time::get_resolution().get_ms() )
-  , integration_step_( step_ )
 {
   // Initialization of the remaining members is deferred to init_buffers_().
 }
@@ -254,8 +243,9 @@ void
 nest::iaf_wang_2002::State_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::V_m, y_[ V_m ] ); // Membrane potential
-  def< double >( d, names::g_AMPA, y_[ G_AMPA ] );
-  def< double >( d, names::g_GABA, y_[ G_GABA ] );
+  def< double >( d, names::s_AMPA, y_[ s_AMPA ] );
+  def< double >( d, names::s_GABA, y_[ s_GABA ] );
+  def< double >( d, names::s_NMDA, y_[ s_NMDA] );
 
   // total NMDA sum
   double NMDA_sum = get_NMDA_sum();
@@ -266,8 +256,9 @@ void
 nest::iaf_wang_2002::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
 {
   updateValueParam< double >( d, names::V_m, y_[ V_m ], node );
-  updateValueParam< double >( d, names::g_AMPA, y_[ G_AMPA ], node );
-  updateValueParam< double >( d, names::g_GABA, y_[ G_GABA ], node );
+  updateValueParam< double >( d, names::s_AMPA, y_[ s_AMPA ], node );
+  updateValueParam< double >( d, names::s_GABA, y_[ s_GABA ], node );
+  updateValueParam< double >( d, names::s_NMDA, y_[ s_NMDA ], node );
 }
 
 /* ---------------------------------------------------------------------------
@@ -333,14 +324,9 @@ nest::iaf_wang_2002::init_state_()
 void
 nest::iaf_wang_2002::init_buffers_()
 {
-  B_.spikes_.resize( 3 );
-
-  for ( auto& sb : B_.spikes_ )
-  {
-    sb.clear(); // includes resize
-  }
-
-  B_.NMDA_cond_.clear();
+  B_.spike_AMPA.clear();
+  B_.spike_GABA.clear();
+  B_.spike_NMDA.clear();
   B_.currents_.clear(); // includes resize
 
   B_.logger_.reset(); // includes resize
@@ -446,23 +432,12 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
       }
     }
 
-    
 
-//     std::cout << "B_.spikes_[ AMPA - 1 ].get_value( lag ): " << B_.spikes_[ AMPA - 1 ].get_value( lag ) << std::endl;
-//     std::cout << "B_.spikes_[ GABA - 1 ].get_value( lag ): " << B_.spikes_[ GABA - 1 ].get_value( lag ) << std::endl;
-//     std::cout << "S_.y_[ State_::G_AMPA ]: " << S_.y_[ State_::G_AMPA ] << std::endl;
-//     std::cout << "S_.y_[ State_::G_GABA ]: " << S_.y_[ State_::G_GABA ] << std::endl;
+    // add incoming spikes
+    S_.y_[ State_::s_AMPA ] += B_.spike_AMPA.get_value( lag );
+    S_.y_[ State_::s_GABA ] += B_.spike_GABA.get_value( lag );
+    S_.y_[ State_::s_NMDA ] += B_.spike_NMDA.get_value( lag );
 
-    S_.y_[ State_::G_AMPA ] += B_.spikes_[ AMPA - 1 ].get_value( lag );
-    S_.y_[ State_::G_GABA ] += B_.spikes_[ GABA - 1 ].get_value( lag );
-
- // add incoming spikes
-    S_.y_[ State_::G_AMPA ] += B_.spikes_[ AMPA - 1 ].get_value( lag );
-    S_.y_[ State_::G_GABA ] += B_.spikes_[ GABA - 1 ].get_value( lag );
-    S_.sum_S_post_ = B_.NMDA_cond_.get_value( lag );
-    B_.NMDA_cond_.set_value( lag, 0.0 );
-
- // absolute refractory period
     if ( S_.r_ )
     {
       // neuron is absolute refractory
@@ -475,17 +450,21 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
       S_.r_ = V_.RefractoryCounts_;
       S_.y_[ State_::V_m ] = P_.V_reset;
 
-      S_.y_[ State_::X_pre ] += 1;
+      // get previous spike time
+      double t_lastspike = get_spiketime_ms();               
+
 
       // log spike with ArchivingNode
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
+      double t_spike = get_spiketime_ms();
+
+      // compute current value of s_NMDA and add NMDA update to spike offset
+      S_.s_NMDA_pre = S_.s_NMDA_pre * exp( -( t_spike - t_lastspike ) / P_.tau_decay_NMDA );
       SpikeEvent se;
+      se.set_offset( P_.alpha * ( 1 - S_.s_NMDA_pre ));
       kernel().event_delivery_manager.send( *this, se, lag );
     }
-
-    // send NMDA update
-    s_vals[ lag ] = S_.y_[ State_::S_pre ];
 
     // set new input current
     B_.I_stim_ = B_.currents_.get_value( lag );
@@ -508,12 +487,20 @@ void
 nest::iaf_wang_2002::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
-  assert( e.get_rport() < NMDA );
 
-  const double steps = e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() );
+  if ( e.get_weight() > 0.0 )
+  {
+    B_.spike_AMPA.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+      e.get_weight() * e.get_multiplicity() );
 
-  const auto rport = e.get_rport();
-  B_.spikes_[ rport - 1 ].add_value( steps, e.get_weight() * e.get_multiplicity() );
+    B_.spike_NMDA.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+      e.get_weight() * e.get_multiplicity() * e.get_offset() );
+  }
+  else
+  {
+    B_.spike_GABA.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+      -e.get_weight() * e.get_multiplicity() );
+  }
 }
 
 void

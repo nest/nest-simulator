@@ -429,6 +429,9 @@ extern const Name rule;
 
 extern const Name S;
 extern const Name S_act_NMDA;
+extern const Name s_GABA;
+extern const Name s_AMPA;
+extern const Name s_NMDA;
 extern const Name sdev;
 extern const Name senders;
 extern const Name send_buffer_size_secondary_events;

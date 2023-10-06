@@ -59,14 +59,14 @@ See Also
 ###############################################################################
 # Import all necessary modules.
 
-import os
 import hashlib as hl
+import os
 
-from mpi4py import MPI
+import matplotlib.pyplot as plt
 import nest
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+from mpi4py import MPI
 
 plt.rcParams.update({"font.size": 13})
 pd.set_option("display.max_rows", None)

@@ -72,17 +72,17 @@ See Also
 # Import all necessary modules for simulation, analysis and plotting. Scipy
 # should be imported before nest.
 
-import os
-import sys
-import time
-import numpy as np
-import random
 import hashlib
 import json
+import os
+import random
+import sys
+import time
 
+import matplotlib.pyplot as plt
 import nest
 import nest.raster_plot
-import matplotlib.pyplot as plt
+import numpy as np
 
 plt.rcParams.update({"font.size": 13})
 

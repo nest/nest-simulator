@@ -574,7 +574,6 @@ extern const Name theta_ex;
 extern const Name theta_in;
 extern const Name theta_minus;
 extern const Name theta_plus;
-extern const Name third;
 extern const Name third_in;
 extern const Name third_out;
 extern const Name thread;

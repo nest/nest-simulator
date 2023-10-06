@@ -548,7 +548,6 @@ const Name theta_ex( "theta_ex" );
 const Name theta_in( "theta_in" );
 const Name theta_minus( "theta_minus" );
 const Name theta_plus( "theta_plus" );
-const Name third( "third" );
 const Name third_in( "third_in" );
 const Name third_out( "third_out" );
 const Name thread( "thread" );

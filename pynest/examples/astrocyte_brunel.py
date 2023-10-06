@@ -125,8 +125,8 @@ syn_params = {
 
 astrocyte_model = "astrocyte_lr_1994"
 astrocyte_params = {
-    "IP3": 0.4,  # IP3 initial value in uM
-    "delta_IP3": 0.5,  # Step increase in IP3 concentration with each unit synaptic weight received by the astrocyte in uM
+    "IP3": 0.4,  # IP3 initial value in µM
+    "delta_IP3": 0.5,  # Step increase in IP3 concentration per unit synaptic weight received by the astrocyte in µM
     "tau_IP3": 2.0,  # Time constant of astrocytic IP3 degradation in ms
 }
 
@@ -257,7 +257,7 @@ def plot_synchrony(neuron_spikes, data_path, start, end, N=100, bw=10):
     plt.hist(coefs)
     title = (
         f"Firing rate={rate:.2f} spikes/s (n={len(set(senders))}) \n"
-        + f"Local sync.={lsync_mu:.3f}$\pm${np.std(coefs):.3f}, Global sync.={gsync:.3f}\n"
+        + f"Local sync.={lsync_mu:.3f}$\\pm${np.std(coefs):.3f}, Global sync.={gsync:.3f}\n"
         + f"(n={n_sample}, total n of pairs={n_pass_})\n"
     )
     plt.title(title)
@@ -340,7 +340,7 @@ def run_simulation(data_path):
     nest.overwrite_files = True
     try:
         nest.local_num_threads = int(sys.argv[1])
-    except:
+    except Exception:
         nest.local_num_threads = 4
 
     # Simulation settings

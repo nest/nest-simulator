@@ -391,7 +391,8 @@ def TripartiteConnect(pre, post, third, conn_spec, syn_specs=None):
             for entry, value in syn_specs[key].items():
                 if isinstance(value, (list, tuple, numpy.ndarray)):
                     raise ValueError(
-                        f"Tripartite connections do not accept parameter lists, but 'syn_specs[{key}][{entry}]' is a list or similar."
+                        f"Tripartite connections do not accept parameter lists,"
+                        f"but 'syn_specs[{key}][{entry}]' is a list or similar."
                     )
 
     sps(pre)

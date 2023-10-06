@@ -89,8 +89,8 @@ os.system(f"mkdir -p {spath}")
 
 astrocyte_model = "astrocyte_lr_1994"
 astrocyte_params = {
-    "IP3": 0.4,  # IP3 initial value in uM
-    "delta_IP3": 0.5,  # Step increase in IP3 concentration with each unit synaptic weight received by the astrocyte in uM
+    "IP3": 0.4,  # IP3 initial value in µM
+    "delta_IP3": 0.5,  # Step increase in IP3 concentration per unit synaptic weight received by the astrocyte in µM
     "tau_IP3": 10.0,  # Time constant of astrocytic IP3 degradation in ms
 }
 

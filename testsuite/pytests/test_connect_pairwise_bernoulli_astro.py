@@ -20,11 +20,10 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import numpy as np
-import scipy.stats
-import pytest
-
 import nest
+import numpy as np
+import pytest
+import scipy.stats
 
 # copied from connect_test_base.py
 try:

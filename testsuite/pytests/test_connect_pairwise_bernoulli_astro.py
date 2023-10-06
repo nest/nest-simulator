@@ -229,7 +229,7 @@ def mpi_assert(data_original, data_test):
         if isinstance(data_original, (np.ndarray, np.generic)) and isinstance(data_test, (np.ndarray, np.generic)):
             assert data_original == pytest.approx(data_test)
         else:
-            TestCase.assertTrue(data_original == data_test)
+            assert data_original == data_test
 
 
 # adapted from test_connect_pairwise_bernoulli.py
@@ -262,7 +262,7 @@ def test_statistics(p_n2n):
             nest.ResetKernel()
             nest.local_num_threads = nr_threads
             nest.rng_seed = i + 1
-            pop1, pop2, pop_astro = setup_network(conn_dict, None, N1, N2)
+            pop1, pop2, pop_astro = setup_network(conn_dict, {"third_out": {"synapse_model": "sic_connection"}}, N1, N2)
             # get indegree or outdegree
             degrees = get_degrees(fan, pop1, pop2)
             # gather data from MPI processes
@@ -309,4 +309,5 @@ def test_autapses_true(autapses):
     )
     # make sure all connections do exist
     M = get_connectivity_matrix(pop, pop)
-    mpi_assert(np.diag(M), np.ones(N))
+    mpi_assert(np.diag(M), autapses * np.ones(N))
+    mpi_assert(np.sum(M), N**2 - (1 - autapses) * N)

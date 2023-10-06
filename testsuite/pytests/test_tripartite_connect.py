@@ -36,3 +36,23 @@ def test_connect_all():
     assert len(nest.GetConnections(pre, post)) == n_primary
     assert len(nest.GetConnections(pre, third)) == n_primary
     assert len(nest.GetConnections(third, post)) == n_primary
+
+
+def test_connect_astro():
+    n_pre, n_post, n_third = 4, 2, 3
+    pre = nest.Create("aeif_cond_alpha_astro", n_pre)
+    post = nest.Create("aeif_cond_alpha_astro", n_post)
+    third = nest.Create("astrocyte_lr_1994", n_third)
+
+    nest.TripartiteConnect(
+        pre,
+        post,
+        third,
+        {"rule": "tripartite_bernoulli_with_pool", "p_primary": 1.0, "p_cond_third": 1},
+        {"third_out": {"synapse_model": "sic_connection"}},
+    )
+
+    n_primary = n_pre * n_post
+    assert len(nest.GetConnections(pre, post)) == n_primary
+    assert len(nest.GetConnections(pre, third)) == n_primary
+    assert len(nest.GetConnections(third, post)) == n_primary

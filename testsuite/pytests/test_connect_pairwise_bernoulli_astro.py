@@ -234,6 +234,7 @@ def mpi_assert(data_original, data_test):
 # adapted from test_connect_pairwise_bernoulli.py
 # a test for parameters "p" and "max_astro_per_target"
 # run for three levels of neuron-neuron connection probabilities
+@pytest.mark.skipif_missing_threads
 @pytest.mark.parametrize("p_n2n", [0.1, 0.3, 0.5])
 def test_statistics(p_n2n):
     # set connection parameters

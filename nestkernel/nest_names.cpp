@@ -356,6 +356,7 @@ const Name phi_max( "phi_max" );
 const Name polar_angle( "polar_angle" );
 const Name polar_axis( "polar_axis" );
 const Name pool_size( "pool_size" );
+const Name pool_type( "pool_type" );
 const Name port( "port" );
 const Name port_name( "port_name" );
 const Name port_width( "port_width" );
@@ -381,7 +382,6 @@ const Name q_sfa( "q_sfa" );
 const Name q_stc( "q_stc" );
 
 const Name radius( "radius" );
-const Name random_pool( "random_pool" );
 const Name rate( "rate" );
 const Name rate_IP3R( "rate_IP3R" );
 const Name rate_L( "rate_L" );

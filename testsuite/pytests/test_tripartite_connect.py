@@ -56,3 +56,51 @@ def test_connect_astro():
     assert len(nest.GetConnections(pre, post)) == n_primary
     assert len(nest.GetConnections(pre, third)) == n_primary
     assert len(nest.GetConnections(third, post)) == n_primary
+
+
+def test_explicit_random_pool():
+    n_pre, n_post, n_third = 4, 2, 3
+    pre = nest.Create("parrot_neuron", n_pre)
+    post = nest.Create("parrot_neuron", n_post)
+    third = nest.Create("parrot_neuron", n_third)
+
+    nest.TripartiteConnect(
+        pre, post, third, {"rule": "tripartite_bernoulli_with_pool", "pool_type": "random", "pool_size": 2}
+    )
+
+    n_primary = n_pre * n_post
+    assert len(nest.GetConnections(pre, post)) == n_primary
+    assert len(nest.GetConnections(pre, third)) == n_primary
+    assert len(nest.GetConnections(third, post)) == n_primary
+
+
+def test_block_pool_single():
+    n_pre, n_post, n_third = 4, 4, 2
+    pre = nest.Create("parrot_neuron", n_pre)
+    post = nest.Create("parrot_neuron", n_post)
+    third = nest.Create("parrot_neuron", n_third)
+
+    nest.TripartiteConnect(
+        pre, post, third, {"rule": "tripartite_bernoulli_with_pool", "pool_type": "block", "pool_size": 1}
+    )
+
+    n_primary = n_pre * n_post
+    assert len(nest.GetConnections(pre, post)) == n_primary
+    assert len(nest.GetConnections(pre, third)) == n_primary
+    assert len(nest.GetConnections(third, post)) == n_primary
+
+
+def test_block_pool_wide():
+    n_pre, n_post, n_third = 4, 2, 8
+    pre = nest.Create("parrot_neuron", n_pre)
+    post = nest.Create("parrot_neuron", n_post)
+    third = nest.Create("parrot_neuron", n_third)
+
+    nest.TripartiteConnect(
+        pre, post, third, {"rule": "tripartite_bernoulli_with_pool", "pool_type": "block", "pool_size": 4}
+    )
+
+    n_primary = n_pre * n_post
+    assert len(nest.GetConnections(pre, post)) == n_primary
+    assert len(nest.GetConnections(pre, third)) == n_primary
+    assert len(nest.GetConnections(third, post)) == n_primary

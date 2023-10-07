@@ -382,6 +382,7 @@ extern const Name phi_max;
 extern const Name polar_angle;
 extern const Name polar_axis;
 extern const Name pool_size;
+extern const Name pool_type;
 extern const Name port;
 extern const Name port_name;
 extern const Name port_width;
@@ -407,7 +408,6 @@ extern const Name q_sfa;
 extern const Name q_stc;
 
 extern const Name radius;
-extern const Name random_pool;
 extern const Name rate;
 extern const Name rate_IP3R;
 extern const Name rate_L;

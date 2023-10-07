@@ -1623,8 +1623,23 @@ nest::TripartiteBernoulliWithPoolBuilder::TripartiteBernoulliWithPoolBuilder( No
 {
   updateValue< double >( conn_spec, names::p_primary, p_primary_ );
   updateValue< double >( conn_spec, names::p_cond_third, p_cond_third_ );
-  updateValue< bool >( conn_spec, names::random_pool, random_pool_ );
   updateValue< long >( conn_spec, names::pool_size, pool_size_ );
+  std::string pool_type;
+  if ( updateValue< std::string >( conn_spec, names::pool_type, pool_type ) )
+  {
+    if ( pool_type == "random" )
+    {
+      random_pool_ = true;
+    }
+    else if ( pool_type == "block" )
+    {
+      random_pool_ = false;
+    }
+    else
+    {
+      throw BadProperty( "pool_type must be 'random' or 'block'" );
+    }
+  }
 
   if ( p_primary_ < 0 or 1 < p_primary_ )
   {
@@ -1641,9 +1656,8 @@ nest::TripartiteBernoulliWithPoolBuilder::TripartiteBernoulliWithPoolBuilder( No
     throw BadProperty( "Pool size 1 ≤ pool_size ≤ size of third-factor population required" );
   }
 
-  if ( not random_pool_
-    and ( ( targets->size() * pool_size_ != third->size() )
-      or ( pool_size_ == 1 and targets->size() % third->size() == 0 ) ) )
+  if ( not( random_pool_ or ( targets->size() * pool_size_ == third->size() )
+         or ( pool_size_ == 1 and targets->size() % third->size() == 0 ) ) )
   {
     throw BadProperty(
       "The sizes of target and third-factor populations and the chosen pool size do not fit."

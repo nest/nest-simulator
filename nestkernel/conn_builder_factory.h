@@ -110,8 +110,8 @@ class ConnBuilderFactory< ConnBuilderType, false > : public GenericConnBuilderFa
     const DictionaryDatum& conn_spec,
     const DictionaryDatum& syn_specs ) const override
   {
-    throw BadProperty(
-      String::compose( "Connection rule %1 does not support tripartite connections.", ( *conn_spec )[ names::rule ] ) );
+    throw IllegalConnection( String::compose(
+      "Connection rule '%1' does not support tripartite connections.", ( *conn_spec )[ names::rule ] ) );
   }
 };
 

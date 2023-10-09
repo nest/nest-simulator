@@ -20,6 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import nest
+import pytest
 
 
 def test_connect_all():
@@ -104,3 +105,13 @@ def test_block_pool_wide():
     assert len(nest.GetConnections(pre, post)) == n_primary
     assert len(nest.GetConnections(pre, third)) == n_primary
     assert len(nest.GetConnections(third, post)) == n_primary
+
+
+def test_bipartitet_raises():
+    n_pre, n_post, n_third = 4, 2, 8
+    pre = nest.Create("parrot_neuron", n_pre)
+    post = nest.Create("parrot_neuron", n_post)
+    third = nest.Create("parrot_neuron", n_third)
+
+    with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):
+        nest.TripartiteConnect(pre, post, third, {"rule": "one_to_one"})

@@ -187,13 +187,13 @@ private:
 
   struct Parameters_
   {
-    double tau_m_;          //!< membrane time constant (ms)
     double C_m_;            //!< membrane capacitance (pF)
     double E_L_;            //!< leak potential (mV)
     double I_e_;            //!< external DC current (pA)
-    double V_min_;          //!< lower membrane voltage bound relative to leak potential (mV)
+    std::string loss_;      //!< loss function
     double start_learning_; //!< time point to start sending learning signals
-    std::string loss_;
+    double tau_m_;          //!< membrane time constant (ms)
+    double V_min_;          //!< lower membrane voltage bound relative to leak potential (mV)
 
     Parameters_();
 
@@ -203,11 +203,11 @@ private:
 
   struct State_
   {
-    double y0_;             //!< current (pA)
-    double y3_;             //!< membrane voltage relative to leak potential (mV)
+    double error_signal_;   //!< deviation between the readout and target signal
     double readout_signal_; //!< integrated signal read out from the recurrent network
     double target_signal_;  //!< signal the network should learn
-    double error_signal_;   //!< deviation between the readout and target signal
+    double y0_;             //!< current (pA)
+    double y3_;             //!< membrane voltage relative to leak potential (mV)
 
     State_();
 
@@ -231,17 +231,16 @@ private:
 
   struct Variables_
   {
+    bool in_extended_learning_window_;
+    bool in_learning_window_;
     double P30_;
     double P33_; //!< corresponds to kappa in eprop_synapse
     double P33_complement_;
-    int start_learning_step_; //!< time step to start sending learning signals
     double readout_signal_;
-    double target_signal_;
     double readout_signal_unnorm_;
-    bool in_learning_window_;
-    bool in_extended_learning_window_;
     bool requires_buffer_;
-    double norm_rate_;
+    int start_learning_step_; //!< time step to start sending learning signals
+    double target_signal_;
   };
 
   /**

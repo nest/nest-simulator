@@ -51,10 +51,10 @@ template <>
 void
 RecordablesMap< eprop_readout >::create()
 {
-  insert_( names::V_m, &eprop_readout::get_V_m_ );
+  insert_( names::error_signal, &eprop_readout::get_error_signal_ );
   insert_( names::readout_signal, &eprop_readout::get_readout_signal_ );
   insert_( names::target_signal, &eprop_readout::get_target_signal_ );
-  insert_( names::error_signal, &eprop_readout::get_error_signal_ );
+  insert_( names::V_m, &eprop_readout::get_V_m_ );
 }
 
 /* ----------------------------------------------------------------
@@ -62,22 +62,22 @@ RecordablesMap< eprop_readout >::create()
  * ---------------------------------------------------------------- */
 
 nest::eprop_readout::Parameters_::Parameters_()
-  : tau_m_( 10.0 )                                  // ms
-  , C_m_( 250.0 )                                   // pF
-  , E_L_( 0.0 )                                     // mV
-  , I_e_( 0.0 )                                     // pA
-  , V_min_( -std::numeric_limits< double >::max() ) // mV
-  , start_learning_( 0.0 )                          // ms
+  : C_m_( 250.0 )
+  , E_L_( 0.0 )
+  , I_e_( 0.0 )
   , loss_( "mean_squared_error" )
+  , start_learning_( 0.0 )
+  , tau_m_( 10.0 )
+  , V_min_( -std::numeric_limits< double >::max() )
 {
 }
 
 nest::eprop_readout::State_::State_()
-  : y0_( 0.0 )
-  , y3_( 0.0 )
+  : error_signal_( 0.0 )
   , readout_signal_( 0.0 )
   , target_signal_( 0.0 )
-  , error_signal_( 0.0 )
+  , y0_( 0.0 )
+  , y3_( 0.0 )
 {
 }
 
@@ -98,13 +98,13 @@ nest::eprop_readout::Buffers_::Buffers_( const Buffers_&, eprop_readout& n )
 void
 nest::eprop_readout::Parameters_::get( DictionaryDatum& d ) const
 {
+  def< double >( d, names::C_m, C_m_ );
   def< double >( d, names::E_L, E_L_ );
   def< double >( d, names::I_e, I_e_ );
-  def< double >( d, names::V_min, V_min_ + E_L_ );
-  def< double >( d, names::C_m, C_m_ );
-  def< double >( d, names::tau_m, tau_m_ );
-  def< double >( d, names::start_learning, start_learning_ );
   def< std::string >( d, names::loss, loss_ );
+  def< double >( d, names::start_learning, start_learning_ );
+  def< double >( d, names::tau_m, tau_m_ );
+  def< double >( d, names::V_min, V_min_ + E_L_ );
 }
 
 double
@@ -117,14 +117,15 @@ nest::eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
 
   V_min_ -= updateValueParam< double >( d, names::V_min, V_min_, node ) ? E_L_ : delta_EL;
 
-  updateValueParam< double >( d, names::I_e, I_e_, node );
   updateValueParam< double >( d, names::C_m, C_m_, node );
-  updateValueParam< double >( d, names::tau_m, tau_m_, node );
-  updateValueParam< double >( d, names::start_learning, start_learning_, node );
+  updateValueParam< double >( d, names::I_e, I_e_, node );
   updateValueParam< std::string >( d, names::loss, loss_, node );
+  updateValueParam< double >( d, names::start_learning, start_learning_, node );
+  updateValueParam< double >( d, names::tau_m, tau_m_, node );
 
   if ( C_m_ <= 0 )
     throw BadProperty( "Capacitance must be > 0." );
+
   if ( tau_m_ <= 0 )
     throw BadProperty( "Membrane time constant must be > 0." );
 
@@ -190,10 +191,10 @@ nest::eprop_readout::pre_run_hook()
 {
   B_.logger_.init(); // ensures initialization in case multimeter connected after Simulate
 
-  const double h = Time::get_resolution().get_ms();
+  const double dt = Time::get_resolution().get_ms();
 
-  V_.P33_ = std::exp( -h / P_.tau_m_ );
-  V_.P30_ = 1.0 / P_.C_m_ * ( 1.0 - V_.P33_ ) * P_.tau_m_;
+  V_.P33_ = std::exp( -dt / P_.tau_m_ );
+  V_.P30_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - V_.P33_ );
   V_.P33_complement_ = 1.0 - V_.P33_;
   V_.start_learning_step_ = Time( Time::ms( std::max( P_.start_learning_, 0.0 ) ) ).get_steps();
   V_.target_signal_ = 0.0;
@@ -235,7 +236,7 @@ nest::eprop_readout::update( Time const& origin, const long from, const long to 
     V_.in_learning_window_ = V_.start_learning_step_ <= interval_step and interval_step <= update_interval_steps - 1;
     V_.in_extended_learning_window_ = interval_step == V_.start_learning_step_ - 1 or V_.in_learning_window_;
 
-    if ( is_time_to_reset )
+    if ( with_reset and is_time_to_eprop_update )
     {
       S_.y3_ = 0.0;
       B_.spikes_.clear(); // includes resize
@@ -292,7 +293,7 @@ nest::eprop_readout::compute_error_signal_mean_squared_error( const long& lag )
 void
 nest::eprop_readout::compute_error_signal_cross_entropy_loss( const long& lag )
 {
-  double norm_rate = V_.norm_rate_ + V_.readout_signal_unnorm_;
+  double norm_rate = B_.normalization_rates_.get_value() + V_.readout_signal_unnorm_;
   S_.readout_signal_ = V_.in_learning_window_ ? V_.readout_signal_unnorm_ / norm_rate : 0.0;
   V_.readout_signal_unnorm_ = V_.in_extended_learning_window_ ? std::exp( S_.y3_ + P_.E_L_ ) : 0.0;
   V_.requires_buffer_ = true;

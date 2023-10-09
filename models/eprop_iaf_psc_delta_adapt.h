@@ -88,7 +88,7 @@ plasticity is calculated:
 See the documentation on the ``iaf_psc_delta`` neuron model for more information
 on the integration of the subthreshold dynamics.
 
-For more information on e-prop plasticity see the documentation on the other e-prop models:
+For more information on e-prop plasticity, see the documentation on the other e-prop models:
 
     * :doc:`eprop_iaf_psc_delta<../models/eprop_iaf_psc_delta/>`
     * :doc:`eprop_readout<../models/eprop_readout/>`
@@ -116,20 +116,20 @@ E_L                mV   :math:`E_\text{L}`                  -70.0 Leak membrane 
 f_target           Hz   :math:`f^\text{target}`              10.0 Target firing rate of rate regularization
 gamma                   :math:`\gamma`                        0.3 Scaling of pseudo-derivative of membrane voltage
 I_e                pA   :math:`I_\text{e}`                    0.0 Constant external input current
+propagator_idx                                                  0 Index of propagators [0, 1] corresponding to
+                                                                  [:math:`1 - \exp(\Delta t/\tau_\text{m})`, :math:`1`]
 surrogate_gradient      :math:`\psi`            pseudo_derivative Surrogate gradient method
 t_ref              ms   :math:`t_\text{ref}`                  2.0 Duration of the refractory period
-tau_m              ms   :math:`\tau_\text{m}`                20.0 Time constant of the membrane
+tau_m              ms   :math:`\tau_\text{m}`                10.0 Time constant of the membrane
 V_m                mV   :math:`v_j^0`                       -70.0 Initial value of the membrane voltage
 V_min              mV   :math:`v_\text{min}`           -1.79e+308 Absolute lower value of the membrane voltage
 V_th               mV   :math:`v_\text{th}`                 -55.0 Spike threshold
-propagator_idx                                                  0 Index of propagators [0, 1] corresponding to
-                                                                  [:math:`1 - \exp(\Delta t/\tau_\text{m})`, :math:`1`]
 ================== ==== ======================= ================= =====================================================
 
 Recordables
 +++++++++++
 
-The following variables can be recorded.
+The following variables can be recorded:
 
   - adaptation variable ``adaptation``
   - adapting spike threshold ``adapting_threshold``
@@ -212,23 +212,22 @@ private:
 
   double ( eprop_iaf_psc_delta_adapt::*compute_surrogate_gradient )();
 
-
   struct Parameters_
   {
-    double tau_m_;                   //!< membrane time constant (ms)
-    double C_m_;                     //!< membrane capacitance (pF)
-    double c_reg_;                   //!< prefactor of firing rate regularization
-    double t_ref_;                   //!< refractory period (ms)
-    double E_L_;                     //!< leak potential (mV)
-    double f_target_;                //!< target firing rate of rate regularization (Hz)
-    double I_e_;                     //!< external DC current (pA)
-    double V_th_;                    //!< spike treshold voltage relative to leak potential (mV)
-    double V_min_;                   //!< lower membrane voltage bound relative to leak potential (mV)
     double adapt_beta_;              //!< prefactor of the adaptive threshold voltage
     double adapt_tau_;               //!< time constant of the adaptive threshold (ms)
+    double C_m_;                     //!< membrane capacitance (pF)
+    double c_reg_;                   //!< prefactor of firing rate regularization
+    double E_L_;                     //!< leak potential (mV)
+    double f_target_;                //!< target firing rate of rate regularization (Hz)
     double gamma_;                   //!< scaling of pseudo-derivative of membrane voltage
+    double I_e_;                     //!< external DC current (pA)
     long propagator_idx_;            //!< index of propagators 1 (1.0 - exp(dt/tau_m)) or 0 (1.0)
     std::string surrogate_gradient_; //!< surrogate gradient method, "pseudo_derivative"
+    double t_ref_;                   //!< refractory period (ms)
+    double tau_m_;                   //!< membrane time constant (ms)
+    double V_min_;                   //!< lower membrane voltage bound relative to leak potential (mV)
+    double V_th_;                    //!< spike treshold voltage relative to leak potential (mV)
 
     Parameters_();
 
@@ -238,13 +237,13 @@ private:
 
   struct State_
   {
+    double adaptation_;         //!< adaptation variable
+    double adapting_threshold_; //!< adapting spike threshold
+    double learning_signal_;    //!< weighted error signal
+    int r_;                     //!< number of remaining refractory steps
+    double surrogate_gradient_; //!< pseudo derivative of the membrane voltage
     double y0_;                 //!< current (pA)
     double y3_;                 //!< membrane voltage relative to leak potential (mV)
-    int r_;                     //!< number of remaining refractory steps
-    double adaptation_;         //!< adaptation variable
-    double surrogate_gradient_; //!< pseudo derivative of membrane voltage
-    double learning_signal_;    //!< weighted error signal
-    double adapting_threshold_;
     bool z_;
 
     State_();
@@ -268,8 +267,8 @@ private:
   {
     double P30_;
     double P33_;
-    double Pa_;
     double P33_complement_;
+    double Pa_;
     int RefractoryCounts_;
   };
 

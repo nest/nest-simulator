@@ -51,11 +51,11 @@ template <>
 void
 RecordablesMap< eprop_iaf_psc_delta_adapt >::create()
 {
-  insert_( names::V_m, &eprop_iaf_psc_delta_adapt::get_V_m_ );
-  insert_( names::surrogate_gradient, &eprop_iaf_psc_delta_adapt::get_surrogate_gradient_ );
-  insert_( names::learning_signal, &eprop_iaf_psc_delta_adapt::get_learning_signal_ );
-  insert_( names::adapting_threshold, &eprop_iaf_psc_delta_adapt::get_adapting_threshold_ );
   insert_( names::adaptation, &eprop_iaf_psc_delta_adapt::get_adaptation_ );
+  insert_( names::adapting_threshold, &eprop_iaf_psc_delta_adapt::get_adapting_threshold_ );
+  insert_( names::learning_signal, &eprop_iaf_psc_delta_adapt::get_learning_signal_ );
+  insert_( names::surrogate_gradient, &eprop_iaf_psc_delta_adapt::get_surrogate_gradient_ );
+  insert_( names::V_m, &eprop_iaf_psc_delta_adapt::get_V_m_ );
 }
 
 /* ----------------------------------------------------------------
@@ -63,30 +63,30 @@ RecordablesMap< eprop_iaf_psc_delta_adapt >::create()
  * ---------------------------------------------------------------- */
 
 nest::eprop_iaf_psc_delta_adapt::Parameters_::Parameters_()
-  : tau_m_( 10.0 )
+  : adapt_beta_( 1.0 )
+  , adapt_tau_( 10.0 )
   , C_m_( 250.0 )
   , c_reg_( 0.0 )
-  , t_ref_( 2.0 )
   , E_L_( -70.0 )
   , f_target_( 10.0 )
-  , I_e_( 0.0 )
-  , V_th_( -55.0 - E_L_ )
-  , V_min_( -std::numeric_limits< double >::max() )
-  , adapt_beta_( 1.0 )
-  , adapt_tau_( 10.0 )
   , gamma_( 0.3 )
+  , I_e_( 0.0 )
   , propagator_idx_( 0 )
   , surrogate_gradient_( "pseudo_derivative" )
+  , t_ref_( 2.0 )
+  , tau_m_( 10.0 )
+  , V_min_( -std::numeric_limits< double >::max() )
+  , V_th_( -55.0 - E_L_ )
 {
 }
 
 nest::eprop_iaf_psc_delta_adapt::State_::State_()
-  : y0_( 0.0 )
-  , y3_( 0.0 )
-  , r_( 0 )
-  , adaptation_( 0.0 )
-  , surrogate_gradient_( 0.0 )
+  : adaptation_( 0.0 )
   , learning_signal_( 0.0 )
+  , r_( 0 )
+  , surrogate_gradient_( 0.0 )
+  , y0_( 0.0 )
+  , y3_( 0.0 )
 {
 }
 
@@ -107,20 +107,20 @@ nest::eprop_iaf_psc_delta_adapt::Buffers_::Buffers_( const Buffers_&, eprop_iaf_
 void
 nest::eprop_iaf_psc_delta_adapt::Parameters_::get( DictionaryDatum& d ) const
 {
-  def< double >( d, names::E_L, E_L_ );
-  def< double >( d, names::I_e, I_e_ );
-  def< double >( d, names::V_th, V_th_ + E_L_ );
-  def< double >( d, names::V_min, V_min_ + E_L_ );
-  def< double >( d, names::C_m, C_m_ );
-  def< double >( d, names::c_reg, c_reg_ );
-  def< double >( d, names::tau_m, tau_m_ );
-  def< double >( d, names::t_ref, t_ref_ );
-  def< double >( d, names::f_target, f_target_ );
   def< double >( d, names::adapt_beta, adapt_beta_ );
   def< double >( d, names::adapt_tau, adapt_tau_ );
+  def< double >( d, names::C_m, C_m_ );
+  def< double >( d, names::c_reg, c_reg_ );
+  def< double >( d, names::E_L, E_L_ );
+  def< double >( d, names::f_target, f_target_ );
   def< double >( d, names::gamma, gamma_ );
+  def< double >( d, names::I_e, I_e_ );
   def< long >( d, names::propagator_idx, propagator_idx_ );
   def< std::string >( d, names::surrogate_gradient, surrogate_gradient_ );
+  def< double >( d, names::t_ref, t_ref_ );
+  def< double >( d, names::tau_m, tau_m_ );
+  def< double >( d, names::V_min, V_min_ + E_L_ );
+  def< double >( d, names::V_th, V_th_ + E_L_ );
 }
 
 double
@@ -134,26 +134,23 @@ nest::eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Nod
   V_th_ -= updateValueParam< double >( d, names::V_th, V_th_, node ) ? E_L_ : delta_EL;
   V_min_ -= updateValueParam< double >( d, names::V_min, V_min_, node ) ? E_L_ : delta_EL;
 
-  updateValueParam< double >( d, names::I_e, I_e_, node );
-  updateValueParam< double >( d, names::C_m, C_m_, node );
-  updateValueParam< double >( d, names::c_reg, c_reg_, node );
-  updateValueParam< double >( d, names::tau_m, tau_m_, node );
-  updateValueParam< double >( d, names::t_ref, t_ref_, node );
-  updateValueParam< double >( d, names::f_target, f_target_, node );
   updateValueParam< double >( d, names::adapt_beta, adapt_beta_, node );
   updateValueParam< double >( d, names::adapt_tau, adapt_tau_, node );
+  updateValueParam< double >( d, names::C_m, C_m_, node );
+  updateValueParam< double >( d, names::c_reg, c_reg_, node );
+  updateValueParam< double >( d, names::f_target, f_target_, node );
   updateValueParam< double >( d, names::gamma, gamma_, node );
+  updateValueParam< double >( d, names::I_e, I_e_, node );
   updateValueParam< long >( d, names::propagator_idx, propagator_idx_, node );
   updateValueParam< std::string >( d, names::surrogate_gradient, surrogate_gradient_, node );
+  updateValueParam< double >( d, names::t_ref, t_ref_, node );
+  updateValueParam< double >( d, names::tau_m, tau_m_, node );
+
+  if ( adapt_tau_ <= 0 )
+    throw BadProperty( "Time constant of threshold adaptation must be > 0." );
 
   if ( C_m_ <= 0 )
     throw BadProperty( "Capacitance must be > 0." );
-  if ( t_ref_ < 0 )
-    throw BadProperty( "Refractory time must not be negative." );
-  if ( tau_m_ <= 0 )
-    throw BadProperty( "Membrane time constant must be > 0." );
-  if ( adapt_tau_ <= 0 )
-    throw BadProperty( "Time constant of threshold adaptation must be > 0." );
 
   if ( propagator_idx_ != 0 and propagator_idx_ != 1 )
     throw BadProperty( "One of two available propagators indexed by 0 and 1 must be selected." );
@@ -161,14 +158,20 @@ nest::eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Nod
   if ( surrogate_gradient_ != "pseudo_derivative" )
     throw BadProperty( "One of the available surrogate gradients \"pseudo_derivative\" needs to be selected." );
 
+  if ( tau_m_ <= 0 )
+    throw BadProperty( "Membrane time constant must be > 0." );
+
+  if ( t_ref_ < 0 )
+    throw BadProperty( "Refractory time must not be negative." );
+
   return delta_EL;
 }
 
 void
 nest::eprop_iaf_psc_delta_adapt::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, y3_ + p.E_L_ );
   def< double >( d, names::adaptation, adaptation_ );
+  def< double >( d, names::V_m, y3_ + p.E_L_ );
 }
 
 void
@@ -177,9 +180,9 @@ nest::eprop_iaf_psc_delta_adapt::State_::set( const DictionaryDatum& d,
   double delta_EL,
   Node* node )
 {
-  y3_ -= updateValueParam< double >( d, names::V_m, y3_, node ) ? p.E_L_ : delta_EL;
-
   updateValueParam< double >( d, names::adaptation, adaptation_, node );
+
+  y3_ -= updateValueParam< double >( d, names::V_m, y3_, node ) ? p.E_L_ : delta_EL;
 }
 
 /* ----------------------------------------------------------------
@@ -220,6 +223,7 @@ nest::eprop_iaf_psc_delta_adapt::init_buffers_()
   B_.spikes_.clear();   // includes resize
   B_.currents_.clear(); // includes resize
   B_.logger_.reset();   // includes resize
+
   S_.z_ = 0.0;
 }
 
@@ -228,14 +232,15 @@ nest::eprop_iaf_psc_delta_adapt::pre_run_hook()
 {
   B_.logger_.init(); // ensures initialization in case multimeter connected after Simulate
 
-  const double h = Time::get_resolution().get_ms();
+  const double dt = Time::get_resolution().get_ms();
 
-  V_.P33_ = std::exp( -h / P_.tau_m_ ); // alpha
+  V_.P33_ = std::exp( -dt / P_.tau_m_ ); // alpha
   V_.P30_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - V_.P33_ );
-  V_.Pa_ = std::exp( -h / P_.adapt_tau_ );
 
   double propagators[] = { 1.0 - V_.P33_, 1.0 };
   V_.P33_complement_ = propagators[ P_.propagator_idx_ ];
+
+  V_.Pa_ = std::exp( -dt / P_.adapt_tau_ );
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
 
@@ -256,33 +261,31 @@ void
 nest::eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, const long to )
 {
   long update_interval_steps = kernel().simulation_manager.get_eprop_update_interval().get_steps();
-  bool is_reset = kernel().simulation_manager.get_eprop_reset_neurons_on_update();
-  long steps = origin.get_steps();
-  const int shift = static_cast< int >( get_shift() );
+  bool with_reset = kernel().simulation_manager.get_eprop_reset_neurons_on_update();
+  const long shift = static_cast< long >( get_shift() );
 
   for ( long lag = from; lag < to; ++lag )
   {
-    long t = steps + lag;
-    int step_in_current_interval = ( t - shift ) % update_interval_steps;
-    bool is_time_to_update = step_in_current_interval == update_interval_steps - 1;
-    bool is_time_to_reset = is_reset and is_time_to_update;
+    long t = origin.get_steps() + lag;
+    long interval_step = ( t - shift ) % update_interval_steps;
+    bool is_time_to_eprop_update = interval_step == update_interval_steps - 1;
 
-    if ( is_time_to_update )
+    if ( is_time_to_eprop_update )
     {
       write_firing_rate_reg_to_history( t + 1, P_.f_target_, P_.c_reg_ );
+      erase_unneeded_firing_rate_reg_history();
       erase_unneeded_update_history();
       erase_unneeded_eprop_history();
-      erase_unneeded_firing_rate_reg_history();
       reset_spike_counter();
-    }
 
-    if ( is_time_to_reset )
-    {
-      S_.y3_ = 0.0;
-      S_.adaptation_ = 0.0;
-      S_.r_ = 0;
-      B_.spikes_.clear(); // includes resize
-      S_.z_ = 0.0;
+      if ( with_reset )
+      {
+        S_.y3_ = 0.0;
+        S_.adaptation_ = 0.0;
+        S_.r_ = 0;
+        B_.spikes_.clear(); // includes resize
+        S_.z_ = 0.0;
+      }
     }
 
     S_.adaptation_ *= V_.Pa_;

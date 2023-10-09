@@ -100,20 +100,20 @@ The following parameters can be set in the status dictionary.
 -----------------------------------------------------------------------------------------------------------------------
 Parameter          Unit Math equivalent         Default           Description
 ================== ==== ======================= ================= =====================================================
-C_m                  pF :math:`C_\text{m}`                  250.0 Capacity of the membrane
+C_m                pF   :math:`C_\text{m}`                  250.0 Capacity of the membrane
 c_reg                   :math:`c_\text{reg}`                  0.0 Prefactor of firing rate regularization
-E_L                  mV :math:`E_\text{L}`                  -70.0 Leak membrane potential
-f_target             Hz :math:`f^\text{target}`              10.0 Target firing rate of rate regularization
+E_L                mV   :math:`E_\text{L}`                  -70.0 Leak membrane potential
+f_target           Hz   :math:`f^\text{target}`              10.0 Target firing rate of rate regularization
 gamma                   :math:`\gamma`                        0.3 Scaling of pseudo-derivative of membrane voltage
-I_e                  pA :math:`I_\text{e}`                    0.0 Constant external input current
+I_e                pA   :math:`I_\text{e}`                    0.0 Constant external input current
 propagator_idx                                                  0 Index of propagators [0, 1] corresponding to
                                                                   [:math:`1 - \exp(\Delta t/\tau_\text{m})`, :math:`1`]
 surrogate_gradient      :math:`\psi`            pseudo_derivative Surrogate gradient method
-t_ref                ms :math:`t_\text{ref}`                  2.0 Duration of the refractory period
-tau_m                ms :math:`\tau_\text{m}`                10.0 Time constant of the membrane
-V_m                  mV :math:`v_j^0`                       -70.0 Initial value of the membrane voltage
-V_min                mV :math:`v_\text{min}`           -1.79e+308 Absolute lower value of the membrane voltage
-V_th                 mV :math:`v_\text{th}`                 -55.0 Spike threshold
+t_ref              ms   :math:`t_\text{ref}`                  2.0 Duration of the refractory period
+tau_m              ms   :math:`\tau_\text{m}`                10.0 Time constant of the membrane
+V_m                mV   :math:`v_j^0`                       -70.0 Initial value of the membrane voltage
+V_min              mV   :math:`v_\text{min}`           -1.79e+308 Absolute lower value of the membrane voltage
+V_th               mV   :math:`v_\text{th}`                 -55.0 Spike threshold
 ================== ==== ======================= ================= =====================================================
 
 Recordables
@@ -202,19 +202,18 @@ private:
 
   struct Parameters_
   {
-    double tau_m_;                   //!< membrane time constant (ms)
     double C_m_;                     //!< membrane capacitance (pF)
     double c_reg_;                   //!< prefactor of firing rate regularization
-    double t_ref_;                   //!< refractory period (ms)
-    double f_target_;                //!< target firing rate of rate regularization (Hz)
     double E_L_;                     //!< leak potential (mV)
-    double I_e_;                     //!< external DC current (pA)
-    double V_th_;                    //!< spike treshold voltage relative to leak potential (mV)
-    double V_min_;                   //!< lower membrane voltage bound relative to leak potential (mV)
+    double f_target_;                //!< target firing rate of rate regularization (Hz)
     double gamma_;                   //!< scaling of pseudo-derivative of membrane voltage
-    int propagator_idx_;             //!< index of propagators 0 (1.0 - exp(dt/tau_m) or 1 (1.0)
+    double I_e_;                     //!< external DC current (pA)
+    long propagator_idx_;            //!< index of propagators 1 (1.0 - exp(dt/tau_m)) or 0 (1.0)
     std::string surrogate_gradient_; //!< surrogate gradient method, "pseudo_derivative"
-
+    double t_ref_;                   //!< refractory period (ms)
+    double tau_m_;                   //!< membrane time constant (ms)
+    double V_min_;                   //!< lower membrane voltage bound relative to leak potential (mV)
+    double V_th_;                    //!< spike treshold voltage relative to leak potential (mV)
 
     Parameters_();
 
@@ -224,11 +223,11 @@ private:
 
   struct State_
   {
-    double y0_;                 //!< current (pA)
-    double y3_;                 //!< membrane voltage relative to leak potential (mV)
+    double learning_signal_;    //!< weighted error signal
     int r_;                     //!< number of remaining refractory steps
     double surrogate_gradient_; //!< pseudo derivative of the membrane voltage
-    double learning_signal_;    //!< weighted error signal
+    double y0_;                 //!< current (pA)
+    double y3_;                 //!< membrane voltage relative to leak potential (mV)
     bool z_;
 
     State_();
@@ -289,7 +288,6 @@ private:
 
   static RecordablesMap< eprop_iaf_psc_delta > recordablesMap_;
 };
-
 
 inline size_t
 nest::eprop_iaf_psc_delta::send_test_event( Node& target, size_t receptor_type, synindex, bool )

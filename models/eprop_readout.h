@@ -175,8 +175,6 @@ private:
   void init_buffers_();
   void pre_run_hook();
 
-  void update_( Time const&, const long, const long );
-
   void update( Time const&, const long, const long );
 
   void compute_error_signal_mean_squared_error( const long& lag );
@@ -304,12 +302,6 @@ private:
 
   static RecordablesMap< eprop_readout > recordablesMap_;
 };
-
-inline void
-eprop_readout::update( Time const& origin, const long from, const long to )
-{
-  update_( origin, from, to );
-}
 
 inline size_t
 eprop_readout::handles_test_event( SpikeEvent&, size_t receptor_type )

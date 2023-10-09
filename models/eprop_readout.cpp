@@ -213,7 +213,7 @@ nest::eprop_readout::pre_run_hook()
  * ---------------------------------------------------------------- */
 
 void
-nest::eprop_readout::update_( Time const& origin, const long from, const long to )
+nest::eprop_readout::update( Time const& origin, const long from, const long to )
 {
   long update_interval_steps = kernel().simulation_manager.get_eprop_update_interval().get_steps();
   bool with_reset = kernel().simulation_manager.get_eprop_reset_neurons_on_update();

@@ -21,23 +21,13 @@
 
 from math import exp
 
+import matplotlib.pyplot as plt
 import nest
 import numpy as np
-import pytest
 
 DEBUG_PLOTS = False
 
-if DEBUG_PLOTS:
-    try:
-        import matplotlib as mpl  # noqa: F401
-        import matplotlib.pyplot as plt
 
-        DEBUG_PLOTS = True
-    except Exception:
-        DEBUG_PLOTS = False
-
-
-@nest.ll_api.check_stack
 class TestSTDPPlSynapse:
     """
     Compare the STDP power-law synaptic plasticity model against a self-contained Python reference.

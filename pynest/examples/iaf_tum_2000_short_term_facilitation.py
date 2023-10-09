@@ -53,8 +53,7 @@ For an example on *short-term depression*, see
     The `iaf_tum_2000 <../models/iaf_tum_2000>` neuron model incorporates the
     `tsodyks_synapse <../models/tsodyks_synapse>` computations directly in
     `iaf_psc_exp <../models/iaf_psc_exp>` on the presynaptic side, which
-    makes ``iaf_tum_2000`` more computationally efficient, see
-    :doc:`../auto_examples/iaf_tum_2000_benchmark`.
+    makes ``iaf_tum_2000`` more computationally efficient.
 
 References
 ~~~~~~~~~~
@@ -69,7 +68,7 @@ References
 See Also
 ~~~~~~~~
 
-:doc:`../models/iaf_tum_2000`, :doc:`iaf_tum_2000_short_term_depression`, doc:`iaf_tum_2000_benchmark`
+:doc:`../models/iaf_tum_2000`, :doc:`iaf_tum_2000_short_term_depression`
 """
 
 import matplotlib.pyplot as plt

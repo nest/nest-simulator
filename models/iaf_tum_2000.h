@@ -41,17 +41,18 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Leaky integrate-and-fire neuron model with exponential PSCs and integrated synapse type with short term plasticity
+Leaky integrate-and-fire neuron model with exponential PSCs and integrated short-term plasticity synapse
 
 Description
 +++++++++++
 
-This neuron model implements synaptic short-term depression and short-term
-facilitation according to [1]_. In particular it solves Eqs (3) and (4) from
-this paper in an exact manner.
+``iaf_tum_2000`` is a leaky integrate-and-fire neuron model with short-term synaptic
+plasticity and exponential shaped postsynaptic currents (PSCs). In particular,
+``iaf_tum_2000`` implements short-term depression and short-term facilitation
+according to [1]_ by solving Eqs. (3) and (4) from this paper in an exact manner.
 
-This model differs from the ``iaf_psc_exp`` model by the addition of synaptic
-state variables :math:`x`, :math:`z` and :math:`u`, which together
+``iaf_tum_2000`` differs from `iaf_psc_exp <../models/iaf_psc_exp>` by the addition
+of synaptic state variables :math:`x`, :math:`z` and :math:`u`, which together
 with the membrane potential :math:`V_\text{m}` and synaptic current :math:`I_\text{syn}`
 obey the following dynamics:
 
@@ -66,8 +67,8 @@ obey the following dynamics:
    \frac{dx_j}{dt} &= \frac{z_j}{\tau_{\text{rec}}} - u_j x_j \delta(t - t_j)
 
    \frac{dy_j}{dt} &= -\frac{y_j}{\tau_{\text{syn}}} + u_j x_j \delta(t - t_j)
- 
-   \frac{dz_j}{dt} &= \frac{y_j}{\tau_{\text{syn}}} - \frac{y_j}{\tau_{\text{rec}}} 
+
+   \frac{dz_j}{dt} &= \frac{y_j}{\tau_{\text{syn}}} - \frac{y_j}{\tau_{\text{rec}}}
 
    \frac{du_j}{dt} &= -\frac{u}{\tau_{\text{fac}}} + U(1 - u) \delta(t - t_j)
 
@@ -77,21 +78,24 @@ or inhibitory (:math:`\text{X} = \text{in}`) presynaptic neurons,
 :math:`k` indexes the spike times of neuron :math:`j`, and :math:`d_j`
 is the delay from neuron :math:`j`.
 
-This model differs from the synapse model ``tsodyks_synapse`` in that this
-model integrates synaptic variables :math:`x,y,z,u` in the pre-synaptic neuron instead
-of the synapse model. This leads to more efficient simulations.
-Since the equations are linear, the post-synaptic current can be found as
-the sum of all pre-synaptic synaptic currents computed in the pre-synaptic
-neurons.
+``iaf_tum_2000`` incorporates the `tsodyks_synapse <../models/tsodyks_synapse>`
+computations directly in the presynaptic neuron, that is, the  synaptic state
+variables :math:`x,y,z,u` are integrated in the presynaptic neuron instead of
+the synapse model. For a presynaptic neuron with :math:`K` outgoing connections
+following the ``tsodyks_synapse`` dynamics, ``iaf_tum_2000`` saves :math:`K-1`
+integrations of the synaptic ODEs. This makes ``iaf_tum_2000`` very computationally
+efficient in network simulations. Since the synaptic ODEs are linear, the
+postsynaptic current can be found as the sum of all presynaptic synaptic
+currents computed in the presynaptic neurons.
 
-In order for the additional synapse dynamics to take effect, the pre-synaptic
-neuron must be of type ``iaf_tum_2000``. The post-synaptic neurons should either
+In order for the additional synapse dynamics to take effect, the presynaptic
+neuron must be of type ``iaf_tum_2000``. The postsynaptic neurons should either
 be of type ``iaf_tum_2000`` or of type ``iaf_psc_exp`` since an exponential
-post-synaptic current is assumed in this model. 
+postsynaptic current is assumed in this model.
 
 .. note::
 
-  ``iaf_tum_2000`` neurons must be connected via ``receptor_type`` 1.
+  Connections between ``iaf_tum_2000`` neurons must be through ``receptor_type`` 1.
 
 .. warning::
 

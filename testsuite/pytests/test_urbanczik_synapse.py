@@ -25,9 +25,8 @@ Test functionality of the Urbanczik synapse
 
 import unittest
 
-import numpy as np
-
 import nest
+import numpy as np
 
 HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
 

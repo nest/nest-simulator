@@ -20,6 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
+
 import nest
 
 HAVE_SIONLIB = nest.ll_api.sli_func("statusdict/have_sionlib ::")

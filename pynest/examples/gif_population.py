@@ -50,9 +50,9 @@ References
 ###############################################################################
 # Import all necessary modules for simulation and plotting.
 
+import matplotlib.pyplot as plt
 import nest
 import nest.raster_plot
-import matplotlib.pyplot as plt
 
 nest.ResetKernel()
 

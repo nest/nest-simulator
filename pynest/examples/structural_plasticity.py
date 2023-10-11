@@ -48,11 +48,11 @@ References
 ####################################################################################
 # First, we import all necessary modules.
 
-import nest
-import numpy
-import matplotlib.pyplot as plt
 import sys
 
+import matplotlib.pyplot as plt
+import nest
+import numpy
 
 ####################################################################################
 # We define general simulation parameters

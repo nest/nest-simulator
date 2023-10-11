@@ -25,11 +25,16 @@ Functions for model handling
 
 import numpy
 
-from ..ll_api import check_stack, sps, sr, spp
-from .hl_api_helper import deprecated, is_iterable, is_literal, model_deprecation_warning
-from .hl_api_types import to_json
-from ..synapsemodels.hl_api_synapsemodels import _copy_synapse_class
+from .hl_api_helper import (
+    deprecated,
+    is_iterable,
+    is_literal,
+    model_deprecation_warning,
+)
 from .hl_api_simulation import GetKernelStatus
+from .hl_api_types import to_json
+from ..ll_api import check_stack, spp, sps, sr
+from ..synapsemodels.hl_api_synapsemodels import _copy_synapse_class
 
 __all__ = [
     "ConnectionRules",

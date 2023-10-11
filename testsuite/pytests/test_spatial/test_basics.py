@@ -24,6 +24,7 @@ Tests for basic hl_api_spatial functions.
 """
 
 import unittest
+
 import nest
 
 try:

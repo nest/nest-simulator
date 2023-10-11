@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import nest
 from math import exp
+
+import nest
 import numpy as np
 import pytest
 
@@ -364,6 +365,7 @@ class TestSTDPSynapse:
         fname_snip="",
         title_snip="",
     ):
+        # pylint: disable=E0601
         fig, ax = plt.subplots(nrows=3)
 
         n_spikes = len(pre_spikes)

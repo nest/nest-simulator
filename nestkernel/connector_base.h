@@ -392,6 +392,7 @@ public:
 
     while ( true )
     {
+      assert( lcid + lcid_offset < C_.size() );
       ConnectionT& conn = C_[ lcid + lcid_offset ];
       const bool is_disabled = conn.is_disabled();
       const bool source_has_more_targets = conn.source_has_more_targets();

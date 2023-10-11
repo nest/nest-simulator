@@ -26,8 +26,8 @@ Spatial networks: A spatial network in 3D with Gaussian connection probabilities
 Hans Ekkehard Plesser, UMB
 """
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 
 nest.ResetKernel()
 

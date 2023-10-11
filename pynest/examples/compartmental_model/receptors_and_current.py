@@ -29,8 +29,8 @@ The output shows the voltage in each of the three compartments.
 :Authors: WAM Wybo
 """
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 
 nest.ResetKernel()
 

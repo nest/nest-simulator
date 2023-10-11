@@ -25,10 +25,9 @@ Tests distance between sources and targets of SynapseCollection
 
 import math
 
+import nest
 import numpy as np
 import pytest
-
-import nest
 
 
 @pytest.fixture(autouse=True)

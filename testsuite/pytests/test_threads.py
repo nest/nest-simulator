@@ -24,6 +24,7 @@ UnitTests for multithreaded pynest
 """
 
 import unittest
+
 import nest
 
 

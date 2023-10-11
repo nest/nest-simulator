@@ -20,9 +20,10 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import dataclasses
+import sys
+
 import numpy as np
 import pytest
-import sys
 
 
 def parameter_fixture(name, default_factory=lambda: None):

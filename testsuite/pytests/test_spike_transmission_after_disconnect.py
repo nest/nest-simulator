@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_regression_issue-2480.py
+# test_spike_transmission_after_disconnect.py
 #
 # This file is part of NEST.
 #
@@ -19,29 +19,26 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import warnings
-
 import nest
-import pytest
 
 
-@pytest.fixture(autouse=True)
-def reset():
-    nest.ResetKernel()
+def test_spike_transmission_after_disconnect():
+    """
+    Confirm that spikes can be transmitted after connections have been removed.
+    """
 
+    n = nest.Create("parrot_neuron", 10)
+    nest.Connect(n, n)
 
-@pytest.mark.parametrize("model", [m for m in nest.node_models if "V_m" in nest.GetDefaults(m)])
-def test_set_vm(model):
-    nest.set_verbosity("M_FATAL")
-    warnings.simplefilter("ignore")  # Suppress warnings
-    n = nest.Create(model)
+    # Delete 1/3 of connections
+    c = nest.GetConnections()
+    c[::3].disconnect()
 
-    try:
-        n.V_m = 0.5
-    except nest.NESTError as e:
-        assert False, f"Setting a V_m with a constant raises {e}"
+    # Add spike generator to drive
+    g = nest.Create("spike_generator", params={"spike_times": [1]})
+    nest.Connect(g, n)
 
-    try:
-        n.V_m = nest.random.uniform(0.0, 1.0)
-    except nest.NESTError as e:
-        assert False, f"Setting a V_m with a parameter raises {e}"
+    # Simulate long enough for spikes to be delivered, but not too long
+    # since we otherwise will be buried by exponential growth in number
+    # of spikes.
+    nest.Simulate(3)

@@ -21,9 +21,10 @@
 
 # This script tests the stdp_triplet_synapse in NEST.
 
-import nest
 import unittest
 from math import exp
+
+import nest
 import numpy as np
 
 

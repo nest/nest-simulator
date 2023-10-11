@@ -26,7 +26,6 @@ Test correct spike transmission for multiple threads.
 import nest
 import pytest
 
-
 # This is a hack until I find out how to use the have_threads fixture to
 # implement this switch. Then, one should also see if we can parametrize
 # the entire class instead of parametrizing each test in the class in the

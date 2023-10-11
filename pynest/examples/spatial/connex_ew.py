@@ -32,8 +32,8 @@ Hans Ekkehard Plesser, UMB
 """
 
 import matplotlib.pyplot as plt
-import numpy as np
 import nest
+import numpy as np
 
 nest.ResetKernel()
 

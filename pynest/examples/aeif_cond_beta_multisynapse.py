@@ -26,9 +26,8 @@ Example of an AEIF neuron with multiple synaptic rise and decay time constants
 """
 
 import matplotlib.pyplot as plt
-import numpy as np
-
 import nest
+import numpy as np
 
 neuron = nest.Create("aeif_cond_beta_multisynapse")
 nest.SetStatus(neuron, {"V_peak": 0.0, "a": 4.0, "b": 80.5})

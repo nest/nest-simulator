@@ -24,6 +24,7 @@ Test if json output work properly
 """
 
 import unittest
+
 import nest
 
 

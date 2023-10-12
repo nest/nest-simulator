@@ -293,7 +293,7 @@ nest::eprop_readout::compute_error_signal_mean_squared_error( const long& lag )
 void
 nest::eprop_readout::compute_error_signal_cross_entropy_loss( const long& lag )
 {
-  double norm_rate = B_.normalization_rates_.get_value() + V_.readout_signal_unnorm_;
+  double norm_rate = B_.normalization_rates_.get_value( lag ) + V_.readout_signal_unnorm_;
   S_.readout_signal_ = V_.in_learning_window_ ? V_.readout_signal_unnorm_ / norm_rate : 0.0;
   V_.readout_signal_unnorm_ = V_.in_extended_learning_window_ ? std::exp( S_.y3_ + P_.E_L_ ) : 0.0;
   V_.requires_buffer_ = true;

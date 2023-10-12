@@ -44,6 +44,7 @@ sys.path.append(pynest_dir)
 source_suffix = ".rst"
 master_doc = "index"
 extensions = [
+    "hoverxref.extension",
     "sphinx_gallery.gen_gallery",
     "list_examples",
     "sphinx.ext.autodoc",
@@ -59,7 +60,6 @@ extensions = [
     "nbsphinx",
     "extract_api_functions",
     "sphinx_design",
-    "hoverxref.extension",
     "HoverXTooltip",
     "VersionSyncRole",
     "sphinx_copybutton",
@@ -94,7 +94,7 @@ hoverxref_auto_ref = True
 
 hoverxref_role_types = {
     "hoverxref": "tooltip",
-    "ref": "modal",
+    "ref": "tooltip",
 }
 hoverxref_sphinxtabs = True
 hoverxref_mathjax = True

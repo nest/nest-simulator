@@ -18,9 +18,9 @@ Here are topics that provide an introduction to various aspects of NEST to help 
           |start| First steps
           ^^^
 
-          * :hoverxref:`Installation instructions <hoverxref:install_nest>`
-          * :ref:`pynest_index`  :hxt:`[?] <hxt:A step-by-step introduction to creating your first scripts with NEST>`
-          * :doc:`A simple example <../auto_examples/one_neuron>`  :abbr:`[?] (A breakdown of a PyNEST script using one neuron)`
+          * :ref:`Installation instructions <install_nest>`
+          * :ref:`pynest_index`  :abbr:`ℹ️  (A step-by-step introduction to creating your first scripts with NEST)`
+          * :doc:`A simple example <../auto_examples/one_neuron>`  :abbr:`🦖 (A breakdown of a PyNEST script using one neuron)`
           * A :doc:`video tutorial <../tutorials/videos/index>` showcasing how to create a simple neural network.
 
 

@@ -333,6 +333,12 @@ public:
 
     EpropArchivingNode& t_arch = dynamic_cast< EpropArchivingNode& >( t );
     t_arch.init_update_history();
+
+    double dt = Time::get_resolution().get_ms();
+    kappa_ = exp( -dt / tau_m_readout_ );
+
+    double update_interval = kernel().simulation_manager.get_eprop_update_interval().get_ms();
+    t_next_update_ = update_interval;
   }
 
   void
@@ -510,12 +516,6 @@ eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
 
   if ( tau_m_readout_ <= 0 )
     throw BadProperty( "Membrane time constant of readout neuron constant must be > 0." );
-
-  double dt = Time::get_resolution().get_ms();
-  kappa_ = exp( -dt / tau_m_readout_ );
-
-  double update_interval = kernel().simulation_manager.get_eprop_update_interval().get_ms();
-  t_next_update_ = update_interval;
 }
 
 } // namespace nest

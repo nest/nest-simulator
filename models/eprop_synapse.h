@@ -396,7 +396,7 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
 
     if ( t_spike >= t_next_update_ + shift )
     {
-      int idx_current_update = static_cast< int >( ( t_spike - dt ) / update_interval );
+      int idx_current_update = static_cast< int >( std::floor( ( t_spike - dt ) / update_interval ) );
       double t_current_update_ = idx_current_update * update_interval;
       int current_optimization_step_ = 1 + idx_current_update / cp.batch_size_;
 

@@ -72,17 +72,17 @@ See Also
 # Import all necessary modules for simulation, analysis and plotting. Scipy
 # should be imported before nest.
 
-import os
-import sys
-import time
-import numpy as np
-import random
 import hashlib
 import json
+import os
+import random
+import sys
+import time
 
+import matplotlib.pyplot as plt
 import nest
 import nest.raster_plot
-import matplotlib.pyplot as plt
+import numpy as np
 
 plt.rcParams.update({"font.size": 13})
 
@@ -112,8 +112,7 @@ network_params = {
 }
 
 syn_params = {
-    "synapse_model": "tsodyks_synapse",  # model of neuron-to-neuron and neuron-to-astrocyte connections
-    "astro2post": "sic_connection",  # model of astrocyte-to-neuron connection
+    "synapse_model": "tsodyks_synapse",
     "w_a2n": 0.01,  # weight of astrocyte-to-neuron connection
     "w_e": 1.0,  # weight of excitatory connection in nS
     "w_i": -4.0,  # weight of inhibitory connection in nS
@@ -126,8 +125,8 @@ syn_params = {
 
 astrocyte_model = "astrocyte_lr_1994"
 astrocyte_params = {
-    "IP3": 0.4,  # IP3 initial value in uM
-    "delta_IP3": 0.5,  # Step increase in IP3 concentration with each unit synaptic weight received by the astrocyte in uM
+    "IP3": 0.4,  # IP3 initial value in µM
+    "delta_IP3": 0.5,  # Step increase in IP3 concentration per unit synaptic weight received by the astrocyte in µM
     "tau_IP3": 2.0,  # Time constant of astrocytic IP3 degradation in ms
 }
 
@@ -172,22 +171,23 @@ def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise, scale=1.
     nest.Connect(nodes_noise, nodes_ex + nodes_in, syn_spec=syn_params_noise)
     print("Connecting neurons and astrocytes ...")
     conn_params_e = {
-        "rule": "pairwise_bernoulli_astro",
-        "astrocyte": nodes_astro,
-        "p": network_params["p"] / scale,
-        "p_syn_astro": network_params["p_syn_astro"],
-        "max_astro_per_target": network_params["max_astro_per_target"],
-        "astro_pool_by_index": network_params["astro_pool_by_index"],
+        "rule": "tripartite_bernoulli_with_pool",
+        "p_primary": network_params["p"] / scale,
+        "p_cond_third": network_params["p_syn_astro"],
+        "pool_size": network_params["max_astro_per_target"],
+        "random_pool": not network_params["astro_pool_by_index"],
     }
     syn_params_e = {
-        "synapse_model": syn_params["synapse_model"],
-        "weight_pre2post": syn_params["w_e"],
-        "tau_psc": tau_syn_ex,
-        "astro2post": syn_params["astro2post"],
-        "weight_astro2post": syn_params["w_a2n"],
-        "delay_pre2post": syn_params["d_e"],
-        "delay_pre2astro": syn_params["d_e"],
+        "primary": {
+            "synapse_model": syn_params["synapse_model"],
+            "weight": syn_params["w_e"],
+            "tau_psc": tau_syn_ex,
+            "delay": syn_params["d_e"],
+        },
+        "third_in": {"delay": syn_params["d_e"]},
+        "third_out": {"synapse_model": "sic_connection", "weight": syn_params["w_a2n"]},
     }
+
     conn_params_i = {"rule": "pairwise_bernoulli", "p": network_params["p"] / scale}
     syn_params_i = {
         "synapse_model": syn_params["synapse_model"],
@@ -195,7 +195,7 @@ def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise, scale=1.
         "tau_psc": tau_syn_in,
         "delay": syn_params["d_i"],
     }
-    nest.Connect(nodes_ex, nodes_ex + nodes_in, conn_params_e, syn_params_e)
+    nest.Connect(nodes_ex, nodes_ex + nodes_in, nodes_astro, conn_spec=conn_params_e, syn_spec=syn_params_e)
     nest.Connect(nodes_in, nodes_ex + nodes_in, conn_params_i, syn_params_i)
 
     return nodes_ex, nodes_in, nodes_astro, nodes_noise
@@ -257,7 +257,7 @@ def plot_synchrony(neuron_spikes, data_path, start, end, N=100, bw=10):
     plt.hist(coefs)
     title = (
         f"Firing rate={rate:.2f} spikes/s (n={len(set(senders))}) \n"
-        + f"Local sync.={lsync_mu:.3f}$\pm${np.std(coefs):.3f}, Global sync.={gsync:.3f}\n"
+        + f"Local sync.={lsync_mu:.3f}$\\pm${np.std(coefs):.3f}, Global sync.={gsync:.3f}\n"
         + f"(n={n_sample}, total n of pairs={n_pass_})\n"
     )
     plt.title(title)
@@ -340,7 +340,7 @@ def run_simulation(data_path):
     nest.overwrite_files = True
     try:
         nest.local_num_threads = int(sys.argv[1])
-    except:
+    except Exception:
         nest.local_num_threads = 4
 
     # Simulation settings

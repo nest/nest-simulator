@@ -59,14 +59,14 @@ See Also
 ###############################################################################
 # Import all necessary modules.
 
-import os
 import hashlib as hl
+import os
 
-from mpi4py import MPI
+import matplotlib.pyplot as plt
 import nest
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+from mpi4py import MPI
 
 plt.rcParams.update({"font.size": 13})
 pd.set_option("display.max_rows", None)
@@ -89,8 +89,8 @@ os.system(f"mkdir -p {spath}")
 
 astrocyte_model = "astrocyte_lr_1994"
 astrocyte_params = {
-    "IP3": 0.4,  # IP3 initial value in uM
-    "delta_IP3": 0.5,  # Step increase in IP3 concentration with each unit synaptic weight received by the astrocyte in uM
+    "IP3": 0.4,  # IP3 initial value in µM
+    "delta_IP3": 0.5,  # Step increase in IP3 concentration per unit synaptic weight received by the astrocyte in µM
     "tau_IP3": 10.0,  # Time constant of astrocytic IP3 degradation in ms
 }
 
@@ -112,23 +112,21 @@ astrocytes = nest.Create(astrocyte_model, 10, params=astrocyte_params)
 nest.Connect(
     pre_neurons,
     post_neurons,
+    astrocytes,
     conn_spec={
-        "rule": "pairwise_bernoulli_astro",
-        "astrocyte": astrocytes,
-        "p": 1.0,
-        "p_syn_astro": 1.0,
-        "max_astro_per_target": 3,
-        "astro_pool_by_index": True,
+        "rule": "tripartite_bernoulli_with_pool",
+        "p_primary": 1.0,
+        "p_cond_third": 1.0,
+        "pool_size": 3,
+        "random_pool": False,
     },
     syn_spec={
-        "weight_pre2post": 1.0,
-        "weight_pre2astro": 1.0,
-        "weight_astro2post": 1.0,
-        "delay_pre2post": 1.0,
-        "delay_pre2astro": 1.0,
-        "delay_astro2post": 1.0,
+        "primary": {"model": "tsodyks_synapse", "weight": 1.0, "delay": 1.0},
+        "third_in": {"model": "tsodyks_synapse", "weight": 1.0, "delay": 1.0},
+        "third_out": {"model": "sic_connection", "weight": 1.0, "delay": 1.0},
     },
 )
+
 
 mm_pre_neurons = nest.Create("multimeter", params={"record_from": ["V_m"]})
 mm_post_neurons = nest.Create("multimeter", params={"record_from": ["V_m", "I_SIC"]})

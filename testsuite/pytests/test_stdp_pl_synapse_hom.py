@@ -332,6 +332,10 @@ class TestSTDPPlSynapse:
         fname_snip="",
         title_snip="",
     ):
+        if not DEBUG_PLOTS:  # make pylint happy if no matplotlib
+            return
+
+        # pylint: disable=E0601
         fig, ax = plt.subplots(nrows=3)
 
         n_spikes = len(pre_spikes)

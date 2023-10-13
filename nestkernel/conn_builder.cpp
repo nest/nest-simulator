@@ -39,6 +39,9 @@
 #include "fdstream.h"
 #include "name.h"
 
+// Includes from C++:
+#include <algorithm>
+
 nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
@@ -1585,411 +1588,184 @@ nest::BernoulliBuilder::inner_connect_( const int tid, RngPtr rng, Node* target,
 }
 
 
-nest::BernoulliAstroBuilder::BernoulliAstroBuilder( NodeCollectionPTR sources,
+nest::AuxiliaryBuilder::AuxiliaryBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const std::vector< DictionaryDatum >& syn_specs )
-  : ConnBuilder( sources, targets, conn_spec, syn_specs )
+  const std::vector< DictionaryDatum >& syn_spec )
+  : ConnBuilder( sources, targets, conn_spec, syn_spec )
 {
-  // Initialize parameters for astrocyte connectivity
-  astrocytes_ = getValue< NodeCollectionDatum >( conn_spec, names::astrocyte );
-  weights_n2n_.resize( syn_specs.size() );
-  weights_n2a_.resize( syn_specs.size() );
-  delays_n2n_.resize( syn_specs.size() );
-  delays_n2a_.resize( syn_specs.size() );
-  synapse_model_id_a2n_.resize( syn_specs.size() );
-  weights_a2n_.resize( syn_specs.size() );
-  delays_a2n_.resize( syn_specs.size() );
+}
 
-  p_ = ( *conn_spec )[ names::p ];
-  if ( p_ < 0 or 1 < p_ )
-  {
-    throw BadProperty( "Probability of neuron-neuron connections 0 <= p <= 1 required." );
-  }
+void
+nest::AuxiliaryBuilder::single_connect( size_t snode_id, Node& tgt, size_t tid, RngPtr rng )
+{
+  single_connect_( snode_id, tgt, tid, rng );
+}
 
-  if ( conn_spec->known( names::p_syn_astro ) )
+
+nest::TripartiteBernoulliWithPoolBuilder::TripartiteBernoulliWithPoolBuilder( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  NodeCollectionPTR third,
+  const DictionaryDatum& conn_spec,
+  const DictionaryDatum& syn_specs )
+  : ConnBuilder( sources, targets, conn_spec, { getValue< DictionaryDatum >( ( *syn_specs )[ names::primary ] ) } )
+  , third_( third )
+  , third_in_builder_( sources, third, conn_spec, { getValue< DictionaryDatum >( ( *syn_specs )[ names::third_in ] ) } )
+  , third_out_builder_( third,
+      targets,
+      conn_spec,
+      { getValue< DictionaryDatum >( ( *syn_specs )[ names::third_out ] ) } )
+  , p_primary_( 1.0 )
+  , p_cond_third_( 1.0 )
+  , random_pool_( true )
+  , pool_size_( third->size() )
+  , targets_per_third_( targets->size() / third->size() )
+{
+  updateValue< double >( conn_spec, names::p_primary, p_primary_ );
+  updateValue< double >( conn_spec, names::p_cond_third, p_cond_third_ );
+  updateValue< long >( conn_spec, names::pool_size, pool_size_ );
+  std::string pool_type;
+  if ( updateValue< std::string >( conn_spec, names::pool_type, pool_type ) )
   {
-    p_syn_astro_ = ( *conn_spec )[ names::p_syn_astro ];
-    if ( p_syn_astro_ < 0 or 1 < p_syn_astro_ )
+    if ( pool_type == "random" )
     {
-      throw BadProperty(
-        "Probability of astrocyte pairing per neuron-neuron connection 0 <= p_syn_astro <= 1 required." );
+      random_pool_ = true;
     }
-  }
-  else
-  {
-    LOG( M_WARNING,
-      "BernoulliAstroBuilder::connect",
-      "Probability of astrocyte pairing per neuron-neuron connection not given. "
-      "A default value of 1.0 is used. " );
-    p_syn_astro_ = 1.0;
-  }
-
-  // deterministic (astro_pool_by_index = true) or probabilistic selection of astrocyte pool per target neuron
-  if ( conn_spec->known( names::astro_pool_by_index ) )
-  {
-    astro_pool_by_index_ = ( *conn_spec )[ names::astro_pool_by_index ];
-  }
-  else
-  {
-    astro_pool_by_index_ = false;
-  }
-
-  // maximal number of astrocytes per target neuron
-  if ( conn_spec->known( names::max_astro_per_target ) )
-  {
-    max_astro_per_target_ = ( *conn_spec )[ names::max_astro_per_target ];
-    if ( max_astro_per_target_ < 1 or max_astro_per_target_ > astrocytes_->size() )
+    else if ( pool_type == "block" )
     {
-      throw BadProperty(
-        "Maximal number of astrocytes per target neuron cannot be smaller than 1 or larger than the number of "
-        "astrocytes." );
-    }
-  }
-  else
-  {
-    // when not given, put 0 and determine later by:
-    // numbers of astrocytes and target neurons, if astro_pool_by_index = true
-    // number of astrocytes, if astro_pool_by_index = false
-    max_astro_per_target_ = 0;
-  }
-
-  // determine parameters for individual connections
-  size_t num_threads = kernel().vp_manager.get_num_threads();
-  for ( size_t synapse_indx = 0; synapse_indx < syn_specs.size(); ++synapse_indx )
-  {
-    // neuron to neuron, neuron to astrocyte
-    // weights and delays
-    DictionaryDatum syn_params = syn_specs[ synapse_indx ];
-    DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
-    weights_n2n_[ synapse_indx ] = syn_params->known( names::weight_pre2post )
-      ? ConnParameter::create( ( *syn_params )[ names::weight_pre2post ], num_threads )
-      : ConnParameter::create( ( *syn_defaults )[ names::weight ], num_threads );
-    weights_n2a_[ synapse_indx ] = syn_params->known( names::weight_pre2astro )
-      ? ConnParameter::create( ( *syn_params )[ names::weight_pre2astro ], num_threads )
-      : ConnParameter::create( ( *syn_defaults )[ names::weight ], num_threads );
-    delays_n2n_[ synapse_indx ] = syn_params->known( names::delay_pre2post )
-      ? ConnParameter::create( ( *syn_params )[ names::delay_pre2post ], num_threads )
-      : ConnParameter::create( ( *syn_defaults )[ names::delay ], num_threads );
-    delays_n2a_[ synapse_indx ] = syn_params->known( names::delay_pre2astro )
-      ? ConnParameter::create( ( *syn_params )[ names::delay_pre2astro ], num_threads )
-      : ConnParameter::create( ( *syn_defaults )[ names::delay ], num_threads );
-
-    // astrocyte to neuron
-    // connection model(s)
-    if ( syn_specs[ synapse_indx ]->known( names::astro2post ) )
-    {
-      std::string syn_name = ( *syn_specs[ synapse_indx ] )[ names::astro2post ];
-      // currently, it has to be sic_connection
-      // in the future, examine if it belongs to a set of connection type
-      if ( syn_name == "sic_connection" )
-      {
-        synapse_model_id_a2n_[ synapse_indx ] = kernel().model_manager.get_synapse_model_id( syn_name );
-      }
-      else
-      {
-        LOG( M_WARNING,
-          "BernoulliAstroBuilder::connect",
-          "An incompatible model is requested for connections from astrocytes to neurons. "
-          "The compatible model is: sic_connection. Using sic_connection. " );
-        synapse_model_id_a2n_[ synapse_indx ] = kernel().model_manager.get_synapse_model_id( "sic_connection" );
-      }
+      random_pool_ = false;
     }
     else
     {
-      synapse_model_id_a2n_[ synapse_indx ] = kernel().model_manager.get_synapse_model_id( "sic_connection" );
+      throw BadProperty( "pool_type must be 'random' or 'block'" );
     }
-    // weights and delays
-    DictionaryDatum syn_defaults_a2n =
-      kernel().model_manager.get_connector_defaults( synapse_model_id_a2n_[ synapse_indx ] );
-    weights_a2n_[ synapse_indx ] = syn_params->known( names::weight_astro2post )
-      ? ConnParameter::create( ( *syn_params )[ names::weight_astro2post ], num_threads )
-      : ConnParameter::create( ( *syn_defaults_a2n )[ names::weight ], num_threads );
-    delays_a2n_[ synapse_indx ] = syn_params->known( names::delay_astro2post )
-      ? ConnParameter::create( ( *syn_params )[ names::delay_astro2post ], num_threads )
-      : ConnParameter::create( ( *syn_defaults_a2n )[ names::delay ], num_threads );
+  }
+
+  if ( p_primary_ < 0 or 1 < p_primary_ )
+  {
+    throw BadProperty( "Probability of neuron-neuron connections 0 ≤ p ≤ 1 required" );
+  }
+
+  if ( p_cond_third_ < 0 or 1 < p_cond_third_ )
+  {
+    throw BadProperty( "Conditional probability of third-factor connection 0 ≤ p_cond_third ≤ 1 required" );
+  }
+
+  if ( pool_size_ < 1 or third->size() < pool_size_ )
+  {
+    throw BadProperty( "Pool size 1 ≤ pool_size ≤ size of third-factor population required" );
+  }
+
+  if ( not( random_pool_ or ( targets->size() * pool_size_ == third->size() )
+         or ( pool_size_ == 1 and targets->size() % third->size() == 0 ) ) )
+  {
+    throw BadProperty(
+      "The sizes of target and third-factor populations and the chosen pool size do not fit."
+      " If pool_size == 1, the target population size must be a multiple of the third-factor"
+      " population size. For pool_size > 1, size(targets) * pool_size == size(third factor)"
+      " is required. For all other cases, use random pools." );
   }
 }
 
-int
-nest::BernoulliAstroBuilder::get_start_astro_index( const int max_astro_per_target,
-  const int default_n_astro_per_target,
-  const int targets_size,
-  const int astrocytes_size,
-  const int target_index )
+size_t
+nest::TripartiteBernoulliWithPoolBuilder::get_first_pool_index_( const size_t target_index ) const
 {
-  // helper function to determine the starting astrocyte for the astrocyte pool
-  // of a target neuron, in the deterministic (astro_pool_by_index = true) case
-  int start_astro_index = 0; // index of the starting astrocyte
-  // number of possible overlapping (with other neurons) astrocytes because of requested max_astro_per_target
-  int n_astro_overlap = max_astro_per_target - default_n_astro_per_target;
-  // shifting, for even pairings
-  int shift = std::ceil( n_astro_overlap / 2.0 );
-  if ( targets_size > astrocytes_size )
+  if ( pool_size_ > 1 )
   {
-    if ( max_astro_per_target % 2 == 0
-      and target_index % default_n_astro_per_target >= default_n_astro_per_target / 2.0 )
-    {
-      shift -= 1; // rule with even max_astro_per_target (reduce shifting in the latter half)
-    }
-    start_astro_index = ( target_index / default_n_astro_per_target ) - shift;
+    return target_index * pool_size_;
   }
-  else
-  {
-    start_astro_index = target_index * default_n_astro_per_target - shift;
-  }
-  // the starting index cannot be smaller than 0 or larger than ( astrocytes_size - max_astro_per_target )
-  if ( start_astro_index < 0 )
-  {
-    start_astro_index = 0;
-  }
-  else if ( start_astro_index > int( astrocytes_size - max_astro_per_target ) )
-  {
-    start_astro_index = astrocytes_size - max_astro_per_target;
-  }
-  return start_astro_index;
+
+  return target_index / targets_per_third_; // intentional integer division
 }
 
 void
-nest::BernoulliAstroBuilder::single_connect_astro_( const size_t snode_id,
-  Node* target,
-  const size_t target_thread,
-  RngPtr synced_rng,
-  RngPtr rng,
-  const std::vector< ConnParameter* >& weights,
-  const std::vector< ConnParameter* >& delays,
-  const std::vector< size_t >& synapse_model_id )
-{
-  // function to make single connections
-  assert( target != NULL );
-  for ( size_t synapse_indx = 0; synapse_indx < synapse_model_id.size(); ++synapse_indx )
-  {
-    update_param_dict_( snode_id, *target, target_thread, synced_rng, synapse_indx );
-    double weight = weights[ synapse_indx ]->value_double( target_thread, rng, snode_id, target );
-    double delay = delays[ synapse_indx ]->value_double( target_thread, rng, snode_id, target );
-    kernel().connection_manager.connect( snode_id,
-      target,
-      target_thread,
-      synapse_model_id[ synapse_indx ],
-      param_dicts_[ synapse_indx ][ target_thread ],
-      delay,
-      weight );
-  }
-}
-
-void
-nest::BernoulliAstroBuilder::connect_()
+nest::TripartiteBernoulliWithPoolBuilder::connect_()
 {
 #pragma omp parallel
   {
     const size_t tid = kernel().vp_manager.get_thread_id();
 
-    // use RNG generating same number sequence on all threads
-    RngPtr synced_rng = get_vp_synced_rng( tid );
-    RngPtr rng = get_vp_specific_rng( tid );
-
     try
     {
-      // variables for source neurons
-      size_t snode_id;
-      std::set< size_t > connected_snode_ids;
-      // variables for target neurons
-      Node* target;
-      size_t target_thread;
-      unsigned long indegree;
-      // variables for astrocytes
-      Node* astrocyte;
-      size_t astrocyte_thread;
-      size_t anode_id;
-      // variables for astrocyte pool selection
-      // astro_pool_this_target is the astrocyte pool of a target neuron
-      // i.e. astrocytes that can (but not necessarily) be connected with this target neuron
-      std::vector< size_t > astro_pool_this_target;
-      size_t astrocytes_size = astrocytes_->size();
-      size_t targets_size = targets_->size();
-      int default_n_astro_per_target = astrocytes_size / targets_size > 1 ? astrocytes_size / targets_size : 1;
-      int default_n_target_per_astro = targets_size / astrocytes_size > 1 ? targets_size / astrocytes_size : 1;
-      int target_index = 0;
-      int astro_index = 0;
-      // for binomial distribution
+      // use RNG generating same number sequence on all threads
+      RngPtr synced_rng = get_vp_synced_rng( tid );
+      RngPtr rng = get_vp_specific_rng( tid );
+
       binomial_distribution bino_dist;
-      binomial_distribution::param_type param( sources_->size(), p_ );
-
-      // user warnings in the case of astro_pool_by_index = true
-      if ( astro_pool_by_index_ == true )
-      {
-        // when number of target neurons are larger than but cannot be exactly divided by number of astrocytes
-        if ( targets_size > astrocytes_size )
-        {
-          if ( targets_size % astrocytes_size != 0 )
-          {
-            LOG( M_WARNING,
-              "BernoulliAstroBuilder::connect",
-              "Number of target neurons cannot be exactly divided by number of astrocytes. "
-              "Some neurons will be excluded from neuron-astrocyte pairings. " );
-          }
-        }
-        // when number of astrocytes are larger than but cannot be exactly divided by number of target neurons
-        else
-        {
-          if ( astrocytes_size % targets_size != 0 )
-          {
-            LOG( M_WARNING,
-              "BernoulliAstroBuilder::connect",
-              "Number of astrocytes cannot be exactly divided by number of target neurons. "
-              "Some astrocytes will be excluded from neuron-astrocyte pairings. " );
-          }
-        }
-        // // uneven pairings in a special case
-        // if ( max_astro_per_target_ > 0 and max_astro_per_target_ % 2 == 0 and default_n_target_per_astro % 2 == 1)
-        // {
-        //   LOG( M_WARNING,
-        //     "BernoulliAstroBuilder::connect",
-        //     "Uneven pairings could exist with the assigned neuron and astrocyte numbers. ");
-        // }
-      }
-
-      // defaults for max_astro_per_target_ when not given
-      if ( max_astro_per_target_ == 0 )
-      {
-        max_astro_per_target_ = astro_pool_by_index_ == true ? default_n_astro_per_target : astrocytes_size;
-      }
-      // assert max_astro_per_target_ > 0 and <= astrocytes_size
-      assert( max_astro_per_target_ > 0 );
-      assert( max_astro_per_target_ <= astrocytes_size );
+      binomial_distribution::param_type bino_param( sources_->size(), p_primary_ );
 
       // Iterate through target neurons. For each, three steps are done:
       // 1. draw indegree 2. select astrocyte pool 3. make connections
-      for ( NodeCollection::const_iterator target_it = targets_->begin(); target_it != targets_->end(); ++target_it )
+      for ( const auto& target : *targets_ )
       {
-        // get target node
-        const size_t tnode_id = ( *target_it ).node_id;
-        target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-        target_index = targets_->get_lid( tnode_id );
+        const size_t tnode_id = target.node_id;
+        Node* target_node = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+        const bool local_target = not target_node->is_proxy();
 
-        // check if the target is on the current thread
-        if ( target->is_proxy() )
+        // step 1, draw indegree for this target
+        const auto indegree = bino_dist( synced_rng, bino_param );
+        if ( indegree == 0 )
         {
-          target_thread = invalid_thread;
+          continue; // no connections for this target
+        }
+
+        // step 2, build pool for target
+        std::vector< NodeIDTriple > pool;
+        pool.reserve( pool_size_ );
+        if ( random_pool_ )
+        {
+          synced_rng->sample( third_->begin(), third_->end(), std::back_inserter( pool ), pool_size_ );
         }
         else
         {
-          target_thread = tid;
-        }
-
-        // step 1, draw indegree for this target
-        indegree = bino_dist( synced_rng, param );
-        // if targets overlap with sources and p=1 and autapses are not allowed, indegree cannot be reached
-        // in this case, indegree should be forced to reduced by 1
-        if ( not allow_autapses_ and indegree == sources_->size() and sources_->get_lid( tnode_id ) >= 0 )
-        {
-          LOG( M_WARNING,
-            "BernoulliAstroBuilder::connect",
-            "The indegree equals source size and targets overlap with sources, but autapses are not allowed. "
-            "The indegree has to be decreased by 1 (source size - 1). " );
-          indegree -= 1;
-        }
-
-        // step 2, select astrocyte pool for this target
-        // not required if max_astro_per_target_ = astrocytes_size
-        if ( max_astro_per_target_ < astrocytes_size )
-        {
-          // reset the list of astrocyte pool
-          astro_pool_this_target.clear();
-          // deterministic case
-          if ( astro_pool_by_index_ == true )
-          {
-            // exclude neurons that are remainder
-            if ( astro_pool_by_index_ == true and target_index >= int( astrocytes_size * default_n_target_per_astro ) )
-            {
-              break;
-            }
-            // determine the starting astrocyte
-            astro_index = get_start_astro_index(
-              max_astro_per_target_, default_n_astro_per_target, targets_size, astrocytes_size, target_index );
-            // iterate from the starting astrocyte and add astrocytes until desired pool size reached
-            for ( size_t i = 0; i < max_astro_per_target_; i++ )
-            {
-              anode_id = ( *astrocytes_ )[ astro_index ];
-              astro_pool_this_target.push_back( anode_id );
-              astro_index++;
-            }
-          }
-          // probabilistic case
-          else
-          {
-            for ( size_t i = 0; i < max_astro_per_target_; i++ )
-            {
-              // randomly draw astrocytes without repetition until desired pool size reached
-              do
-              {
-                anode_id = ( *astrocytes_ )[ synced_rng->ulrand( astrocytes_size ) ];
-              } while ( std::find( astro_pool_this_target.begin(), astro_pool_this_target.end(), anode_id )
-                != astro_pool_this_target.end() );
-              astro_pool_this_target.push_back( anode_id );
-            }
-          }
+          std::copy_n( third_->begin() + get_first_pool_index_( target.lid ), pool_size_, std::back_inserter( pool ) );
         }
 
         // step 3, iterate through indegree to make connections for this target
-        // reset the lists of connected sources
-        connected_snode_ids.clear();
-        size_t i = 0;
-        while ( i < indegree )
-        {
-          // choose source node randomly
-          snode_id = ( *sources_ )[ synced_rng->ulrand( sources_->size() ) ];
+        //   - by construction, we cannot get multapses
+        //   - if the target is also among sources, it can be drawn at most once;
+        //     we ignore it then connecting if no autapses are wanted
+        std::vector< NodeIDTriple > sources_to_connect_;
+        sources_to_connect_.reserve( indegree );
+        synced_rng->sample( sources_->begin(), sources_->end(), std::back_inserter( sources_to_connect_ ), indegree );
 
-          // block multapses and autapses (if autapses not allowed)
-          if ( connected_snode_ids.find( snode_id ) != connected_snode_ids.end() )
-          {
-            continue;
-          }
+        for ( const auto source : sources_to_connect_ )
+        {
+          const auto snode_id = source.node_id;
           if ( not allow_autapses_ and snode_id == tnode_id )
           {
             continue;
           }
 
-          // add source node to list
-          connected_snode_ids.insert( snode_id );
-
-          // increase i which counts the number of incoming connections
-          ++i;
-
-          // if the target is local, connect the source to the target
-          if ( target_thread == tid )
+          if ( local_target )
           {
-            single_connect_astro_(
-              snode_id, target, target_thread, synced_rng, rng, weights_n2n_, delays_n2n_, synapse_model_id_ );
+            // plain connect now with thread-local rng for randomized parameters
+            single_connect_( snode_id, *target_node, tid, rng );
           }
 
-          // Bernoulli trial to determine if the considered neuron-neuron connection should be paired with an astrocyte
-          if ( synced_rng->drand() >= p_syn_astro_ )
+          // conditionally connect third factor
+          if ( not( synced_rng->drand() < p_cond_third_ ) )
           {
             continue;
           }
 
-          // if a pairing should be done, select an astrocyte
-          // select from all the astrocytes, if max_astro_per_target_ = astrocytes_size
-          // otherwise, select from the astrocyte pool
-          anode_id = max_astro_per_target_ == astrocytes_size
-            ? ( *astrocytes_ )[ synced_rng->ulrand( astrocytes_size ) ]
-            : astro_pool_this_target.at( synced_rng->ulrand( astro_pool_this_target.size() ) );
+          // select third-factor neuron randomly from pool for this target
+          const auto third_index = pool_size_ == 1 ? 0 : synced_rng->ulrand( pool_size_ );
+          const auto third_node_id = pool[ third_index ].node_id;
+          Node* third_node = kernel().node_manager.get_node_or_proxy( third_node_id, tid );
+          const bool local_third_node = not third_node->is_proxy();
 
-          // if the astrocyte is local, connect the source to the astrocyte
-          astrocyte = kernel().node_manager.get_node_or_proxy( anode_id, tid );
-          if ( !astrocyte->is_proxy() )
+          if ( local_third_node )
           {
-            astrocyte_thread = tid;
-            single_connect_astro_(
-              snode_id, astrocyte, astrocyte_thread, synced_rng, rng, weights_n2a_, delays_n2a_, synapse_model_id_ );
+            // route via auxiliary builder who handles parameters
+            third_in_builder_.single_connect( snode_id, *third_node, tid, rng );
           }
 
-          // if the target is local, connect the astrocyte to the target
-          if ( target_thread == tid )
+          // connection third-factor node to target if local
+          if ( local_target )
           {
-            single_connect_astro_(
-              anode_id, target, target_thread, synced_rng, rng, weights_a2n_, delays_a2n_, synapse_model_id_a2n_ );
+            // route via auxiliary builder who handles parameters
+            third_out_builder_.single_connect( third_node_id, *target_node, tid, rng );
           }
         }
       }

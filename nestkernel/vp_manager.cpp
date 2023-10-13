@@ -147,7 +147,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
     }
     if ( force_singlethreading_ and n_threads > 1 )
     {
-      errors.push_back( "This installation of NEST does not support for multiple threads" );
+      errors.push_back( "This installation of NEST does not support multiple threads" );
     }
 
     if ( not errors.empty() )

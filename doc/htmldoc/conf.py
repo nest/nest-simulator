@@ -70,6 +70,7 @@ panels_add_bootstrap_css = False
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["templates"]
 
+# To run plantuml locally see the user documentation workflow
 plantuml = "java -jar /tmp/plantuml.jar"
 sphinx_gallery_conf = {
     # path to your examples scripts

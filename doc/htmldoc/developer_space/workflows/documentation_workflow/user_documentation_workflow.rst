@@ -118,6 +118,18 @@ If you use pip, install ``pandoc`` from your platform's package manager (e.g. ap
 
     sudo apt-get install pandoc
 
+.. admonition::  Building plantuml diagrams locally
+
+   The plantuml diagrams require additional requirements
+   to make them work in a local build.
+
+   You will need to
+
+   - check if you have Java installed. The minimum version needed is Java 8.
+     (e.g., to install the latest available version on Ubuntu: ``apt install jre-default``)
+   - Download the `plantuml jar file <https://plantuml.com/download>`_ (Minimum version is 1-2023-10)
+   - Move the jar file to ``/tmp/plantuml.jar``
+
 
 Edit and create pages
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -175,6 +187,7 @@ you will need to build the documentation locally with Sphinx.
 .. code-block:: bash
 
    sphinx-build . ../_build/html -b html
+
 
 #. Preview files. They are located in ``doc/_build/html``
 

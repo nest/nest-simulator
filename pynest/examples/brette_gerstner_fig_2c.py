@@ -38,9 +38,9 @@ References
 """
 
 
+import matplotlib.pyplot as plt
 import nest
 import nest.voltage_trace
-import matplotlib.pyplot as plt
 
 nest.ResetKernel()
 
@@ -67,13 +67,13 @@ dc.set(amplitude=[500.0, 800.0], start=[0.0, 500.0], stop=[200.0, 1000.0])
 ###############################################################################
 # We connect the DC generators.
 
-nest.Connect(dc, neuron, 'all_to_all')
+nest.Connect(dc, neuron, "all_to_all")
 
 ###############################################################################
 # And add a ``voltmeter`` to sample the membrane potentials from the neuron
 # in intervals of 0.1 ms.
 
-voltmeter = nest.Create("voltmeter", params={'interval': 0.1})
+voltmeter = nest.Create("voltmeter", params={"interval": 0.1})
 nest.Connect(voltmeter, neuron)
 
 ###############################################################################

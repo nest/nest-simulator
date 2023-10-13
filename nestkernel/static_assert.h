@@ -56,4 +56,4 @@ struct StaticAssert< true >
 };
 }
 
-#endif // STATIC_ASSERT
+#endif /* #ifndef STATIC_ASSERT */

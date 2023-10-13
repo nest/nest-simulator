@@ -605,7 +605,7 @@ SLIInterpreter::raiseerror( std::exception& err )
   {
     // plain std::exception: turn what() output into message
     errordict->insert( Name( "message" ), std::string( err.what() ) );
-    raiseerror( caller, "C++Exception" );
+    raiseerror( caller, "CppException" );
   }
 }
 
@@ -987,7 +987,7 @@ SLIInterpreter::stack_backtrace( int n )
 {
   for ( int p = n - 1; p >= 0; --p )
   {
-    if ( ( size_t ) p > EStack.load() )
+    if ( static_cast< size_t >( p ) > EStack.load() )
     {
       continue;
     }

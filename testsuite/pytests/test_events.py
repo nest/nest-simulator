@@ -24,6 +24,7 @@ Test of events
 """
 
 import unittest
+
 import nest
 
 
@@ -36,42 +37,40 @@ class EventsTestCase(unittest.TestCase):
 
         nest.ResetKernel()
 
-        nest.ll_api.sr('20 setverbosity')
-        n = nest.Create('iaf_psc_alpha')
-        vm = nest.Create('voltmeter', params={'interval': 1.})
+        nest.ll_api.sr("20 setverbosity")
+        n = nest.Create("iaf_psc_alpha")
+        vm = nest.Create("voltmeter", params={"interval": 1.0})
 
         nest.Connect(vm, n)
         nest.Simulate(10)
 
-        d = nest.GetStatus(vm, 'events')[0]
+        d = nest.GetStatus(vm, "events")[0]
 
-        self.assertEqual(len(d['V_m']), 9)
+        self.assertEqual(len(d["V_m"]), 9)
 
     def test_EventsSpikes(self):
         """Spike Events"""
 
         nest.ResetKernel()
 
-        nest.ll_api.sr('20 setverbosity')
+        nest.ll_api.sr("20 setverbosity")
 
-        n = nest.Create('iaf_psc_alpha', params={'I_e': 1000.})
-        sr = nest.Create('spike_recorder')
+        n = nest.Create("iaf_psc_alpha", params={"I_e": 1000.0})
+        sr = nest.Create("spike_recorder")
 
         nest.Connect(n, sr)
         nest.Simulate(1000)
 
-        d = nest.GetStatus(sr, 'events')[0]
+        d = nest.GetStatus(sr, "events")[0]
 
-        self.assertGreater(len(d['times']), 0)
+        self.assertGreater(len(d["times"]), 0)
 
 
 def suite():
-
-    suite = unittest.makeSuite(EventsTestCase, 'test')
+    suite = unittest.makeSuite(EventsTestCase, "test")
     return suite
 
 
 if __name__ == "__main__":
-
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())

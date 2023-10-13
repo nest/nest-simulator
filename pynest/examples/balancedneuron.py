@@ -46,11 +46,10 @@ References
 # First, we import all necessary modules for simulation, analysis and
 # plotting. Scipy should be imported before nest.
 
-from scipy.optimize import bisect
-
+import matplotlib.pyplot as plt
 import nest
 import nest.voltage_trace
-import matplotlib.pyplot as plt
+from scipy.optimize import bisect
 
 ###############################################################################
 # Additionally, we set the verbosity using ``set_verbosity`` to
@@ -65,16 +64,16 @@ nest.ResetKernel()
 
 
 t_sim = 25000.0  # how long we simulate
-n_ex = 16000     # size of the excitatory population
-n_in = 4000      # size of the inhibitory population
-r_ex = 5.0       # mean rate of the excitatory population
-r_in = 20.5      # initial rate of the inhibitory population
-epsc = 45.0      # peak amplitude of excitatory synaptic currents
-ipsc = -45.0     # peak amplitude of inhibitory synaptic currents
-d = 1.0          # synaptic delay
-lower = 15.0     # lower bound of the search interval
-upper = 25.0     # upper bound of the search interval
-prec = 0.01      # how close need the excitatory rates be
+n_ex = 16000  # size of the excitatory population
+n_in = 4000  # size of the inhibitory population
+r_ex = 5.0  # mean rate of the excitatory population
+r_in = 20.5  # initial rate of the inhibitory population
+epsc = 45.0  # peak amplitude of excitatory synaptic currents
+ipsc = -45.0  # peak amplitude of inhibitory synaptic currents
+d = 1.0  # synaptic delay
+lower = 15.0  # lower bound of the search interval
+upper = 25.0  # upper bound of the search interval
+prec = 0.01  # how close need the excitatory rates be
 
 ###############################################################################
 # Third, the nodes are created using ``Create``. We store the returned
@@ -109,7 +108,7 @@ noise.rate = [n_ex * r_ex, n_in * r_in]
 
 nest.Connect(neuron, spikerecorder)
 nest.Connect(voltmeter, neuron)
-nest.Connect(noise, neuron, syn_spec={'weight': [[epsc, ipsc]], 'delay': 1.0})
+nest.Connect(noise, neuron, syn_spec={"weight": [[epsc, ipsc]], "delay": 1.0})
 
 ###############################################################################
 # To determine the optimal rate of the neurons in the inhibitory population,

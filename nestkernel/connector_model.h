@@ -151,9 +151,9 @@ private:
   typename ConnectionT::CommonPropertiesType cp_;
 
   ConnectionT default_connection_;
-  delay default_delay_;
-  delay default_axonal_delay_;
-  rport receptor_type_;
+  long default_delay_;
+  long default_axonal_delay_;
+  size_t receptor_type_;
 
 public:
   GenericConnectorModel( const std::string name )

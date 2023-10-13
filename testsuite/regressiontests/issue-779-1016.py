@@ -26,10 +26,9 @@ and makes all of them available in the argv array in the statusdict.
 This is a regression test for GitHub issues 779 and 1016.
 """
 
-from subprocess import check_output, STDOUT
-from os.path import join
-from tempfile import mktemp
 import sys
+from subprocess import STDOUT, check_output
+from tempfile import mktemp
 
 EXIT_SUCCESS = 0
 EXIT_FAILURE = 126

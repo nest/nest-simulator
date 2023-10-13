@@ -3,9 +3,15 @@
 Guide to parallel computing
 ===========================
 
+This guide is to explain how NEST utilizes thread parallel and distributed computing in simulations.
+We explain how neurons, devices, and synapses in NEST intersect with threads and processes in parallel setups.
 
-.. contents::
-   :local:
+.. admonition:: Speed up parallel simulations
+
+    During network construction, create all nodes of one type (e.g., neurons) followed by all nodes of another type (e.g., devices).
+    See :py:func:`.Create`.
+    For comparison tests, see `this GitHub thread <https://github.com/nest/nest-simulator/pull/2290>`_.
+
 
 What is parallelization?
 ------------------------
@@ -33,6 +39,8 @@ for more information on NEST parallelization and be sure to check the
 documentation on :ref:`Random numbers in NEST <random_numbers>`
 
 
+
+.. _sec_virt_proc:
 
 Virtual processes
 -----------------
@@ -180,20 +188,33 @@ command for this is
 Usually, a good choice for `T` is the number of processor cores available
 on your machine.
 
-.. note::
+In some situations, `oversubscribing` (i.e., to specify a
+``local_num_threads`` that is higher than available cores on your
+machine) can yield 20–30% improvement in simulation speed. Finding the
+optimal thread number for a specific situation might require a bit of
+experimenting.
 
- In some situations, `oversubscribing` (i.e., to specify a ``local_num_threads`` that is higher than available cores on your machine)
- can yield 20-30% improvement in simulation speed. Finding the optimal thread number for a
- specific situation might require a bit of experimenting.
+.. admonition:: NEST ignores OMP_NUM_THREADS
 
+   NEST ignores ``OMP_NUM_THREADS`` environment
+   variable, which may be set by mpi4py, Slurm or similar runtime
+   environments. NEST will always start running on a single thread
+   until the number of threads is changed by setting either the
+   ``local_num_threads`` or the ``total_num_virtual_procs``
+   :ref:`kernel attribute<sec_kernel_attributes>`.
+
+   
 Multiprocessing
 ---------------
 
-**Using Python's ``multiprocessing`` module with NEST may lead to unpredictable results!**
 
 NEST internally parallelizes network construction [1]_ and maintains internal data structures in this process. For
 example, running several :py:func:`.Connect` calls simultaneously can interfere with the internal parallelization and will
 likely lead to unpredictable/wrong results.
+
+.. warning::
+
+   Using Python's ``multiprocessing`` module with NEST may lead to unpredictable results!
 
 .. _distributed_computing:
 
@@ -228,7 +249,7 @@ Run distributed simulations
 
 Distributed simulations **cannot be run interactively**, which means that
 the simulation has to be provided as a script. However, the script can be the same
-as a script for any simulation. No changes are necessary for distibuted simulation scripts:
+as a script for any simulation. No changes are necessary for distributed simulation scripts:
 inter-process communication and node distribution is managed transparently inside of NEST.
 
 To distribute a simulation onto 128 processes of a computer cluster, the
@@ -240,6 +261,7 @@ command should look like this
 
 Please refer to the documentation of your MPI implementation to learn
 more about the usage of ``mpirun``.
+
 
 MPI related commands
 ~~~~~~~~~~~~~~~~~~~~
@@ -264,6 +286,32 @@ commands are available:
 
  :py:func:`.SyncProcesses`
       Synchronize all MPI processes.
+
+.. important::
+
+    One should never call any ``nest.*`` function inside a block that will only be executed on a subset of MPI ranks.
+
+    Trying to access kernel information with a subset of MPI processes causes a deadlock.
+
+    For example:
+
+    **Don't do this**
+
+    .. code-block::
+
+      if nest.Rank() == 0:
+            rng_seed = nest.rng_seed
+            print(f"RNG seed: {rng_seed}")
+
+
+    **Do this**
+
+    .. code-block::
+
+     rng_seed = nest.rng_seed
+     if nest.Rank() == 0:
+        print(f"RNG seed: {rng_seed}")
+
 
 
 Reproducibility

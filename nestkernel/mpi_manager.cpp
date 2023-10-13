@@ -60,9 +60,7 @@ nest::MPIManager::MPIManager()
   , buffer_size_target_data_( 1 )
   , buffer_size_spike_data_( 1 )
   , max_buffer_size_target_data_( 16777216 )
-  , max_buffer_size_spike_data_( 8388608 )
   , adaptive_target_buffers_( true )
-  , adaptive_spike_buffers_( true )
   , growth_factor_buffer_spike_data_( 1.5 )
   , growth_factor_buffer_target_data_( 1.5 )
   , shrink_factor_buffer_spike_data_( 1.1 )
@@ -185,7 +183,22 @@ nest::MPIManager::initialize()
 #ifndef HAVE_MPI
   char* pmix_rank_set = std::getenv( "PMIX_RANK" ); // set by OpenMPI's launcher
   char* pmi_rank_set = std::getenv( "PMI_RANK" );   // set by MPICH's launcher
-  if ( pmix_rank_set or pmi_rank_set )
+  const bool mpi_launcher_or_mpi4py_used = pmix_rank_set or pmi_rank_set;
+
+  long mpi_num_procs = 0;
+  char* mpi_localnranks = std::getenv( "MPI_LOCALNRANKS" );
+  if ( mpi_localnranks )
+  {
+    mpi_num_procs = std::atoi( mpi_localnranks );
+  }
+
+  char* ompi_comm_world_size = std::getenv( "OMPI_COMM_WORLD_SIZE" );
+  if ( ompi_comm_world_size )
+  {
+    mpi_num_procs = std::atoi( ompi_comm_world_size );
+  }
+
+  if ( mpi_launcher_or_mpi4py_used and mpi_num_procs > 1 )
   {
     LOG( M_FATAL,
       "MPIManager::initialize()",
@@ -206,7 +219,6 @@ void
 nest::MPIManager::set_status( const DictionaryDatum& dict )
 {
   updateValue< bool >( dict, names::adaptive_target_buffers, adaptive_target_buffers_ );
-  updateValue< bool >( dict, names::adaptive_spike_buffers, adaptive_spike_buffers_ );
 
   long new_buffer_size_target_data = buffer_size_target_data_;
   updateValue< long >( dict, names::buffer_size_target_data, new_buffer_size_target_data );
@@ -218,8 +230,7 @@ nest::MPIManager::set_status( const DictionaryDatum& dict )
 
   long new_buffer_size_spike_data = buffer_size_spike_data_;
   updateValue< long >( dict, names::buffer_size_spike_data, new_buffer_size_spike_data );
-  if ( new_buffer_size_spike_data != static_cast< long >( buffer_size_spike_data_ )
-    and new_buffer_size_spike_data < static_cast< long >( max_buffer_size_spike_data_ ) )
+  if ( new_buffer_size_spike_data != static_cast< long >( buffer_size_spike_data_ ) )
   {
     set_buffer_size_spike_data( new_buffer_size_spike_data );
   }
@@ -228,7 +239,6 @@ nest::MPIManager::set_status( const DictionaryDatum& dict )
   updateValue< double >( dict, names::growth_factor_buffer_target_data, growth_factor_buffer_target_data_ );
 
   updateValue< long >( dict, names::max_buffer_size_target_data, max_buffer_size_target_data_ );
-  updateValue< long >( dict, names::max_buffer_size_spike_data, max_buffer_size_spike_data_ );
 
   updateValue< double >( dict, names::shrink_factor_buffer_spike_data, shrink_factor_buffer_spike_data_ );
 }
@@ -237,13 +247,11 @@ void
 nest::MPIManager::get_status( DictionaryDatum& dict )
 {
   def< long >( dict, names::num_processes, num_processes_ );
-  def< bool >( dict, names::adaptive_spike_buffers, adaptive_spike_buffers_ );
   def< bool >( dict, names::adaptive_target_buffers, adaptive_target_buffers_ );
   def< size_t >( dict, names::buffer_size_target_data, buffer_size_target_data_ );
   def< size_t >( dict, names::buffer_size_spike_data, buffer_size_spike_data_ );
   def< size_t >( dict, names::send_buffer_size_secondary_events, get_send_buffer_size_secondary_events_in_int() );
   def< size_t >( dict, names::recv_buffer_size_secondary_events, get_recv_buffer_size_secondary_events_in_int() );
-  def< size_t >( dict, names::max_buffer_size_spike_data, max_buffer_size_spike_data_ );
   def< size_t >( dict, names::max_buffer_size_target_data, max_buffer_size_target_data_ );
   def< double >( dict, names::growth_factor_buffer_spike_data, growth_factor_buffer_spike_data_ );
   def< double >( dict, names::growth_factor_buffer_target_data, growth_factor_buffer_target_data_ );
@@ -701,9 +709,6 @@ nest::MPIManager::communicate_Allgather( std::vector< int >& buffer )
   MPI_Allgather( &my_val, 1, MPI_INT, &buffer[ 0 ], 1, MPI_INT, comm );
 }
 
-/*
- * Sum across all rank
- */
 void
 nest::MPIManager::communicate_Allreduce_sum_in_place( double buffer )
 {
@@ -785,10 +790,6 @@ nest::MPIManager::communicate_recv_counts_secondary_events()
     send_displacements_secondary_events_in_int_per_rank_.begin() + 1 );
 }
 
-/**
- * Ensure all processes have reached the same stage by waiting until all
- * processes have sent a dummy message to process 0.
- */
 void
 nest::MPIManager::synchronize()
 {
@@ -984,9 +985,7 @@ nest::MPIManager::time_communicate_alltoallv( int num_bytes, int samples )
 
 #else /* #ifdef HAVE_MPI */
 
-/**
- * communicate (on-grid) if compiled without MPI
- */
+// communicate (on-grid) if compiled without MPI
 void
 nest::MPIManager::communicate( std::vector< unsigned int >& send_buffer,
   std::vector< unsigned int >& recv_buffer,
@@ -1002,9 +1001,7 @@ nest::MPIManager::communicate( std::vector< unsigned int >& send_buffer,
   recv_buffer.swap( send_buffer );
 }
 
-/**
- * communicate (off-grid) if compiled without MPI
- */
+// communicate (off-grid) if compiled without MPI
 void
 nest::MPIManager::communicate( std::vector< OffGridSpike >& send_buffer,
   std::vector< OffGridSpike >& recv_buffer,
@@ -1100,4 +1097,4 @@ nest::MPIManager::communicate_recv_counts_secondary_events()
   send_displacements_secondary_events_in_int_per_rank_[ 0 ] = 0;
 }
 
-#endif /* #ifdef HAVE_MPI */
+#endif /* #ifdef HAVE_MPI  */

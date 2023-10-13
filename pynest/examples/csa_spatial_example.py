@@ -48,8 +48,8 @@ References
 ###############################################################################
 # First, we import all necessary modules.
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 
 ###############################################################################
 # Next, we check for the availability of the CSA Python module. If it does
@@ -57,13 +57,17 @@ import matplotlib.pyplot as plt
 
 try:
     import csa
+
     haveCSA = True
 except ImportError:
-    print("This example requires CSA to be installed in order to run.\n" +
-          "Please make sure you compiled NEST using\n" +
-          "  -Dwith-libneurosim=[OFF|ON|</path/to/libneurosim>]\n" +
-          "and CSA and libneurosim are available.")
+    print(
+        "This example requires CSA to be installed in order to run.\n"
+        + "Please make sure you compiled NEST using\n"
+        + "  -Dwith-libneurosim=[OFF|ON|</path/to/libneurosim>]\n"
+        + "and CSA and libneurosim are available."
+    )
     import sys
+
     sys.exit(1)
 
 ###############################################################################
@@ -76,7 +80,6 @@ except ImportError:
 
 
 def geometryFunction(population):
-
     positions = nest.GetPosition(population)
 
     def geometry_function(idx):
@@ -89,8 +92,8 @@ def geometryFunction(population):
 # We create two spatial populations that have 20x20 neurons of type
 # ``iaf_psc_alpha``.
 
-pop1 = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid([20, 20]))
-pop2 = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid([20, 20]))
+pop1 = nest.Create("iaf_psc_alpha", positions=nest.spatial.grid([20, 20]))
+pop2 = nest.Create("iaf_psc_alpha", positions=nest.spatial.grid([20, 20]))
 
 ###############################################################################
 # For each population, we create a CSA-style geometry function and a CSA metric

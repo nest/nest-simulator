@@ -112,6 +112,11 @@ See also
 
 stdp_synapse, stdp_nn_symm_synapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: stdp_nn_restr_synapse
+
 EndUserDocs */
 
 // connections are templates of target identifier type (used for pointer /
@@ -167,7 +172,7 @@ public:
    * \param e The event to send
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e, thread t, const CommonSynapseProperties& cp );
+  void send( Event& e, size_t t, const CommonSynapseProperties& cp );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -176,15 +181,15 @@ public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
-    port
-    handles_test_event( SpikeEvent&, rport ) override
+    size_t
+    handles_test_event( SpikeEvent&, size_t ) override
     {
       return invalid_port;
     }
   };
 
   void
-  check_connection( Node& s, Node& t, const rport receptor_type, const delay dendritic_delay, const delay axonal_delay, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, const size_t receptor_type, const long dendritic_delay, const long axonal_delay, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
 
@@ -237,7 +242,7 @@ constexpr ConnectionModelProperties stdp_nn_restr_synapse< targetidentifierT >::
  */
 template < typename targetidentifierT >
 inline void
-stdp_nn_restr_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
+stdp_nn_restr_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapseProperties& )
 {
   // synapse STDP depressing/facilitation dynamics
   double t_spike = e.get_stamp().get_ms();

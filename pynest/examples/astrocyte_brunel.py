@@ -77,8 +77,6 @@ import hashlib
 import json
 import os
 import random
-import sys
-import time
 
 import matplotlib.pyplot as plt
 import nest
@@ -96,6 +94,8 @@ sim_params = {
     "sim_time": 100.0,  # simulation time in ms
     "N_rec_spk": 100,  # number of samples (neuron) for spike detector
     "N_rec_mm": 50,  # number of samples (neuron, astrocyte) for multimeter
+    "n_threads": 4,  # number of threads for NEST
+    "seed": 100,  # seed for the "random" module (not NEST)
 }
 
 ###############################################################################
@@ -252,13 +252,9 @@ def calc_synchrony(neuron_spikes, n_neuron_rec_spk, start, end, data_path, N=100
     senders = senders[np.isin(senders, sampled)]
     # make spiking histograms of individual neurons
     bins = np.arange(start, end + 0.1, bw)  # time bins
-    hists = [
-        np.histogram(times[senders == x], bins)[0].tolist() for x in set(senders)
-    ]
+    hists = [np.histogram(times[senders == x], bins)[0].tolist() for x in set(senders)]
     # make spiking histogram of all sampled neurons
-    hist_global = (
-        np.histogram(times, bins)[0] / len(set(senders))
-    ).tolist()
+    hist_global = (np.histogram(times, bins)[0] / len(set(senders))).tolist()
     # calculate local and global synchrony
     print("Calculating neuronal local and global synchrony ...")
     coefs, n_pair_pass, n_pair_fail = get_corr(hists)  # local (spike count correlation)
@@ -342,12 +338,9 @@ def run_simulation(data_path):
     # NEST configuration
     nest.ResetKernel()
     nest.resolution = sim_params["dt"]
+    nest.local_num_threads = sim_params["n_threads"]
     nest.print_time = True
     nest.overwrite_files = True
-    try:
-        nest.local_num_threads = int(sys.argv[1])
-    except Exception:
-        nest.local_num_threads = 4
 
     # Simulation settings
     pre_sim_time = sim_params["pre_sim_time"]
@@ -362,16 +355,25 @@ def run_simulation(data_path):
     mm_neuron = nest.Create("multimeter", params={"record_from": ["I_SIC"]})
     mm_astro = nest.Create("multimeter", params={"record_from": ["IP3", "Ca"]})
 
-    # Run pre-simulation and simulation
+    # Run pre-simulation
     print("Running pre-simulation ...")
     nest.Simulate(pre_sim_time)
+
+    # Sample and connect nodes with recorders
     print("Connecting recorders ...")
-    n_neuron_rec_spk = min(len(exc + inh), sim_params["N_rec_spk"])
-    n_neuron_rec_mm = min(len(exc + inh), sim_params["N_rec_mm"])
-    n_astrocyte_rec = min(len(astro), sim_params["N_rec_mm"])
-    nest.Connect((exc + inh)[:n_neuron_rec_spk], sr_neuron)
-    nest.Connect(mm_neuron, (exc + inh)[:n_neuron_rec_mm])
-    nest.Connect(mm_astro, astro[:n_astrocyte_rec])
+    neuron_list = (exc + inh).tolist()
+    astro_list = astro.tolist()
+    n_neuron_rec_spk = min(len(neuron_list), sim_params["N_rec_spk"])
+    n_neuron_rec_mm = min(len(neuron_list), sim_params["N_rec_mm"])
+    n_astro_rec = min(len(astro), sim_params["N_rec_mm"])
+    neuron_list_for_sr = sorted(random.sample(neuron_list, n_neuron_rec_spk))
+    neuron_list_for_mm = sorted(random.sample(neuron_list, n_neuron_rec_mm))
+    astro_list_for_mm = sorted(random.sample(astro_list, n_astro_rec))
+    nest.Connect(neuron_list_for_sr, sr_neuron)
+    nest.Connect(mm_neuron, neuron_list_for_mm)
+    nest.Connect(mm_astro, astro_list_for_mm)
+
+    # Run simulation
     print("Running simulation ...")
     nest.Simulate(sim_time)
 
@@ -410,7 +412,6 @@ def run_simulation(data_path):
         + f"(n for synchrony analysis={n_for_sync})\n"
     )
     plot_synchrony(coefs, title, data_path)
-    # print results
     print(f"Local synchrony = {lsync_mu:.3f}+-{lsync_sd:.3f}")
     print(f"Global synchrony = {gsync:.3f}")
 
@@ -423,5 +424,7 @@ def run_simulation(data_path):
 ###############################################################################
 # Run simulation.
 
+random.seed(sim_params["seed"])
 hash = hashlib.md5(os.urandom(16)).hexdigest()
-run_simulation(os.path.join("astrocyte_brunel", hash))
+run_simulation("astrocyte_brunel")
+# run_simulation(os.path.join("astrocyte_brunel", hash))

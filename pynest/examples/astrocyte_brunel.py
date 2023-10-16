@@ -28,11 +28,6 @@ neurons and astrocytes. The ``astrocyte_lr_1994`` model is implemented according
 to [1]_, [2]_, and [3]_. The ``aeif_cond_alpha_astro`` model is an adaptive
 exponential integrate and fire neuron supporting neuron-astrocyte interactions.
 
-The network is created using the ``tripartite_bernoulli_with_pool`` rule, with
-the ``tsodyks_synapse`` as the connections from neurons to neruons and
-astrocytes, and the ``sic_connection`` as the connections from astrocytes to
-neurons.
-
 This network is an example of an astrocytic effect on neuronal excitabitlity.
 With the slow inward current (SIC) delivered from the astrocytes through the
 ``sic_connection``, the neurons show higher firing rates and more synchronized
@@ -40,6 +35,36 @@ bursting actitivity. The degrees of local and global synchrony are quantified
 by pairwise spike count correlations and a measure of global synchrony in [4]_
 respectively, as shown in a plot made in this script (neuron_synchrony.png).
 Plots of astrocytic dynamics and SIC in neurons are also made in this script.
+
+The network is created with the ``tripartite_bernoulli_with_pool`` rule. This
+rule creates a tripartite connectivity with the following steps:
+
+1. Connections are made between each pair of neurons with a certain probability
+(p).
+
+2. For each neuron-neuron connection created, another probability (p_syn_astro)
+determines if it is paired with one astrocyte. The selection of this astrocyte
+is confined by two parameters, astro_pool_size and astro_pool_type (see below).
+
+3. If paired, connections are made from the presynaptic (source) neurons to the
+astrocyte, with the ``tsodyks_synapse``, and from the astrocyte to the
+postsynaptic (target) neuron, with the ``sic_connection``.
+
+The parameter definitions are as follows:
+
+p: connection probability between pairs of neurons.
+
+p_syn_astro: probability of each created neuron-neuron connection to be paired
+with one astrocyte.
+
+astro_pool_size: The size of the astrocyte pool for each target neuron. The
+astrocytes to be connected with this target neuron can only be selected from its
+pool (repetition is allowed).
+
+astro_pool_type: Defines the way to determine the astrocyte pool for each target
+neuron. If "random", a number of astrocytes (=astro_pool_size) are randomly
+chosen and assigned as the pool. If "block", the same number of astrocytes are
+assigned as the pool but according to their relative indices.
 
 References
 ~~~~~~~~~~
@@ -106,7 +131,7 @@ network_params = {
     "N_astro": 10000,  # number of astrocytes
     "p": 0.1,  # neuron-neuron connection probability.
     "p_syn_astro": 0.5,  # The probability of each neuron-neuron connection to be paired with an astrocyte
-    "max_astro_per_target": 10,  # The maximal number of astrocytes (pool size) that can be connected with each target neuron
+    "astro_pool_size": 10,  # The maximal number of astrocytes (pool size) that can be connected with each target neuron
     "astro_pool_type": "random",  # "random": astrocyte pool will be chosen randomly for each target neuron
     "poisson_rate": 2000,  # Poisson input rate for neurons
 }
@@ -180,7 +205,7 @@ def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise, scale=1.
         "rule": "tripartite_bernoulli_with_pool",
         "p_primary": network_params["p"] / scale,
         "p_cond_third": network_params["p_syn_astro"],
-        "pool_size": network_params["max_astro_per_target"],
+        "pool_size": network_params["astro_pool_size"],
         "pool_type": network_params["astro_pool_type"],
     }
     syn_params_e = {

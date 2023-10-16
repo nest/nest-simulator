@@ -38,48 +38,6 @@ global synchrony in [4]_ respectively, as shown in a plot made in this script
 (neuron_synchrony.png). Plots of astrocytic dynamics and SIC in neurons are also
 made in this script.
 
-The network is created with the TripartiteConnect() function and the
-``tripartite_bernoulli_with_pool`` rule. This rule creates a tripartite
-Bernoulli connectivity with the following steps:
-
-1. ``tsodyks_synapse`` connections between pair of neurons are created with a
-probability defined by the parameter ``p_primary``.
-
-2. For each neuron-neuron connection created, a probability defined by another
-parameter ``p_cond_third`` determines if it is paired with one astrocyte. The
-selection of this astrocyte is confined by two parameters, ``pool_size`` and
-``pool_type``.
-
-3. If paired, a ``tsodyks_synapse`` connection from the presynaptic (source)
-neuron to the astrocyte is created, and a ``sic_connection`` from the astrocyte
-to the postsynaptic (target) neuron is created.
-
-The connectivity parameters are as follows:
-
-* ``conn_spec`` parameters
-
-  * ``p_primary``: Connection probability between neurons.
-
-  * ``p_cond_third``: Probability of each created neuron-neuron connection to be
-    paired with one astrocyte.
-
-  * ``pool_size``: The size of astrocyte pool for each target neuron. The
-    astrocytes to be connected with a target neuron can only be selected from
-    its pool. If not specified, the pool includes all astrocytes.
-
-  * ``pool_type``: The way to determine the astrocyte pool for each target
-    neuron. If "random", a number of astrocytes (=pool_size) are randomly chosen
-    and assigned as the pool. If "block", the same number of astrocytes are
-    assigned as the pool, but they are chosen based on their relative indices.
-
-* ``syn_specs`` parameters
-
-  * ``primary``: specifications of the connections between neurons.
-
-  * ``third_in``: specifications of the connections from neurons to astrocytes.
-
-  * ``third_out``: specifications of the connections from astrocytes to neurons.
-
 References
 ~~~~~~~~~~
 
@@ -143,10 +101,10 @@ network_params = {
     "N_ex": 8000,  # number of excitatory neurons
     "N_in": 2000,  # number of inhibitory neurons
     "N_astro": 10000,  # number of astrocytes
-    "p": 0.1,  # neuron-neuron connection probability.
-    "p_syn_astro": 0.5,  # The probability of each neuron-neuron connection to be paired with an astrocyte
-    "astro_pool_size": 10,  # The maximal number of astrocytes (pool size) that can be connected with each target neuron
-    "astro_pool_type": "random",  # "random": astrocyte pool will be chosen randomly for each target neuron
+    "p": 0.1,  # connection probability between neurons
+    "p_syn_astro": 0.5,  # probability of each created neuron-neuron connection to be paired with one astrocyte
+    "astro_pool_size": 10,  # astrocyte pool size for each target neuron
+    "astro_pool_type": "random",  # astrocyte pool will be chosen randomly for each target neuron
     "poisson_rate": 2000,  # Poisson input rate for neurons
 }
 
@@ -462,8 +420,6 @@ def run_simulation(data_path):
 
     # Plot dynamics in astrocytes and neurons
     plot_dynamics(astro_data, neuron_data, data_path, pre_sim_time)
-
-    print("Done!")
 
 ###############################################################################
 # Run simulation.

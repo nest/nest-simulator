@@ -23,13 +23,72 @@
 A small neuron-astrocyte network
 ------------------------------------------------------------
 
-This script demonstrates how to use the NEST connection builder and the
-"pairwise_bernoulli_astro" rule to create a small neuron-astrocyte network with
-20 neurons and 10 astrocytes. This connection rule creates the tripartite
-connectivity between neurons and astrocytes. The ``astrocyte_lr_1994`` model is
-implemented according to [1]_, [2]_, and [3]_. The ``aeif_cond_alpha_astro``
-model is an adaptive exponential integrate and fire neuron supporting
-neuron-astrocyte interactions.
+This script demonstrates an aproach with NEST to create a neuron-astrocyte
+network. The network in this script includes 20 neurons and 5 astrocytes. The
+astrocyte is modeled with ``astrocyte_lr_1994``, implemented according to [1]_,
+[2]_, and [3]_. The neuron is modeled with ``aeif_cond_alpha_astro``, an
+adaptive exponential integrate and fire neuron supporting neuron-astrocyte
+interactions.
+
+The network is created with the TripartiteConnect() function and the
+``tripartite_bernoulli_with_pool`` rule. This rule creates a tripartite
+Bernoulli connectivity with the following principles:
+
+1. For each pair of neurons, a Bernoulli trial with a probability ``p_primary``
+determines if they will be connected.
+
+2. For each neuron-neuron connection created, a Bernoulli trial with a probability
+``p_cond_third`` determines if it will be paired with one astrocyte. The
+selection of this particular astrocyte is confined by ``pool_size`` and
+``pool_type`` (see below).
+
+3. If a neuron-neuron connection is to be paired with an astrocyte, a connection
+from the presynaptic (source) neuron to the astrocyte is created, and a
+connection (``sic_connection``) from the astrocyte to the postsynaptic (target)
+neuron is created.
+
+The available connectivity parameters are as follows:
+
+* ``conn_spec`` parameters
+
+  * ``p_primary``: Connection probability between neurons.
+
+  * ``p_cond_third``: Probability of each created neuron-neuron connection to be
+    paired with one astrocyte.
+
+  * ``pool_size``: The size of astrocyte pool for each target neuron. The
+    target neuron can only be connected to astrocytes selected from its pool.
+
+  * ``pool_type``: The way to determine the astrocyte pool for each target
+    neuron. If "random", a number of astrocytes (``pool_size``) are randomly
+    chosen from all astrocytes and assigned as the pool. If "block", the
+    astrocytes pool is evenly distributed to the neurons in blocks without
+    overlapping, and the ``pool_size`` has to be compatible with this arrangement.
+
+* ``syn_specs`` parameters
+
+  * ``primary``: specifications for the connections between neurons.
+
+  * ``third_in``: specifications for the connections from neurons to astrocytes.
+
+  * ``third_out``: specifications for the connections from astrocytes to neurons.
+
+In this script, the network is created with the ``pool_type`` being "block". It
+can be seen from the plot "connections.png" that this approach distributes the
+astrocytes evenly to the postsynaptic neurons in blocks without overlapping. The
+``pool_size`` should be compatible with this arrangement. In the case here, a
+``pool_size`` of one is required.
+
+With the created network, neuron-astrocyte interactions can be observed. The
+presynaptic spikes induce the generation of IP3, which then changes the calcium
+concentration in the astrocytes. This change in calcium then induces the slow
+inward current (SIC) in the neurons through the ``sic_connection``. These
+dynamics are shown in the plot "dynamics.png". The changes in membrane potential
+in the presynaptic and postsynaptic neurons are shown in the plot "V_m.png".
+
+The ``pool_type`` can be changed to "random" to see the results with random
+astrocyte pools. In that case, the ``pool_size`` can be any from one to the
+number of all astrocytes.
 
 References
 ~~~~~~~~~~
@@ -65,24 +124,27 @@ import os
 import matplotlib.pyplot as plt
 import nest
 import numpy as np
-import pandas as pd
-from mpi4py import MPI
 
 plt.rcParams.update({"font.size": 13})
-pd.set_option("display.max_rows", None)
 
 ###############################################################################
-# Initialize kernel.
+# Initialize NEST kernel and create folder to save data.
 
 nest.ResetKernel()
-comm = MPI.COMM_WORLD
-rank = comm.Get_rank()
+spath = "astrocyte_small_network"
+# spath = os.path.join("astrocyte_small_network", hl.md5(os.urandom(16)).hexdigest())
+os.system(f"mkdir -p {spath}")
+os.system(f"cp astrocyte_small_network.py {spath}") # (debug)
 
 ###############################################################################
-# Create save path.
+# Network parameters.
 
-spath = os.path.join("astrocyte_small_network", hl.md5(os.urandom(16)).hexdigest())
-os.system(f"mkdir -p {spath}")
+n_neurons = 10  # number of source and target neurons
+n_astrocytes = 5  # number of astrocytes
+p_primary = 1.0  # connection probability between neurons
+p_cond_third = 1.0  # probability of each created neuron-neuron connection to be paired with one astrocyte
+pool_size = 1  # astrocyte pool size for each target neuron
+pool_type = "block"  # the way to determine the astrocyte pool for each target neuron (change to "random" to see different results)
 
 ###############################################################################
 # Astrocyte parameters.
@@ -90,8 +152,8 @@ os.system(f"mkdir -p {spath}")
 astrocyte_model = "astrocyte_lr_1994"
 astrocyte_params = {
     "IP3": 0.4,  # IP3 initial value in µM
-    "delta_IP3": 0.5,  # Step increase in IP3 concentration per unit synaptic weight received by the astrocyte in µM
-    "tau_IP3": 10.0,  # Time constant of astrocytic IP3 degradation in ms
+    "delta_IP3": 2.0, # parameter determining the increase in astrocytic IP3 concentration induced by synaptic input
+    "tau_IP3": 10.0,  # time constant of the exponential decay of astrocytic IP3
 }
 
 ###############################################################################
@@ -104,30 +166,29 @@ neuron_params = {
 }
 
 ###############################################################################
-# Create and connect populations and devices.
+# Create and connect populations and devices. The neurons and astrocytes are
+# connected with multimeters to record their dynamics.
 
-pre_neurons = nest.Create(neuron_model, 10, params=neuron_params)
-post_neurons = nest.Create(neuron_model, 10, params=neuron_params)
-astrocytes = nest.Create(astrocyte_model, 10, params=astrocyte_params)
-nest.Connect(
+pre_neurons = nest.Create(neuron_model, n_neurons, params=neuron_params)
+post_neurons = nest.Create(neuron_model, n_neurons, params=neuron_params)
+astrocytes = nest.Create(astrocyte_model, n_astrocytes, params=astrocyte_params)
+nest.TripartiteConnect(
     pre_neurons,
     post_neurons,
     astrocytes,
     conn_spec={
         "rule": "tripartite_bernoulli_with_pool",
-        "p_primary": 1.0,
-        "p_cond_third": 1.0,
-        "pool_size": 3,
-        "random_pool": False,
+        "p_primary": p_primary,
+        "p_cond_third": p_cond_third,
+        "pool_size": pool_size,
+        "pool_type": pool_type,
     },
-    syn_spec={
-        "primary": {"model": "tsodyks_synapse", "weight": 1.0, "delay": 1.0},
-        "third_in": {"model": "tsodyks_synapse", "weight": 1.0, "delay": 1.0},
-        "third_out": {"model": "sic_connection", "weight": 1.0, "delay": 1.0},
+    syn_specs={
+        "primary": {"synapse_model": "tsodyks_synapse", "weight": 1.0, "delay": 1.0},
+        "third_in": {"synapse_model": "tsodyks_synapse", "weight": 1.0, "delay": 1.0},
+        "third_out": {"synapse_model": "sic_connection", "weight": 1.0, "delay": 1.0},
     },
 )
-
-
 mm_pre_neurons = nest.Create("multimeter", params={"record_from": ["V_m"]})
 mm_post_neurons = nest.Create("multimeter", params={"record_from": ["V_m", "I_SIC"]})
 mm_astrocytes = nest.Create("multimeter", params={"record_from": ["IP3", "Ca"]})
@@ -136,28 +197,16 @@ nest.Connect(mm_post_neurons, post_neurons)
 nest.Connect(mm_astrocytes, astrocytes)
 
 ###############################################################################
-# Print and save population and connection data.
-
-pre_loc = np.array(nest.GetLocalNodeCollection(pre_neurons))
-print(f"pre_neurons on rank {rank}:\n{pre_loc}")
-post_loc = np.array(nest.GetLocalNodeCollection(post_neurons))
-print(f"post_neurons on rank {rank}:\n{post_loc}")
-astrocytes_loc = np.array(nest.GetLocalNodeCollection(astrocytes))
-print(f"astrocytes on rank {rank}:\n{astrocytes_loc}")
+# Get connection data. The data are used to plot the network connectivity.
 
 conns_a2n = nest.GetConnections(astrocytes, post_neurons)
 conns_n2n = nest.GetConnections(pre_neurons, post_neurons)
 conns_n2a = nest.GetConnections(pre_neurons, astrocytes)
-print_list = ["source", "target", "weight", "delay", "synapse_model"]
-pd.DataFrame(conns_n2n.get())[print_list].to_csv(os.path.join(spath, f"connections_n2n_rank={rank}.csv"), index=False)
-pd.DataFrame(conns_n2a.get())[print_list].to_csv(os.path.join(spath, f"connections_n2a_rank={rank}.csv"), index=False)
-pd.DataFrame(conns_a2n.get())[print_list].to_csv(os.path.join(spath, f"connections_a2n_rank={rank}.csv"), index=False)
 
 ###############################################################################
 # Functions for plotting.
 
-
-def plot_connections(conn_n2n, conn_n2a, conn_a2n, rank=0):  # Doesn't work with MPI yet
+def plot_connections(conn_n2n, conn_n2a, conn_a2n):
     print("Plotting connections ...")
     # Get data
     dict_n2n = conns_n2n.get()
@@ -204,11 +253,9 @@ def plot_connections(conn_n2n, conn_n2a, conn_a2n, rank=0):  # Doesn't work with
     axs.legend(bbox_to_anchor=(0.5, 1.1), loc="upper center", ncol=3)
     set_frame_invisible(axs)
     plt.tight_layout()
-    plt.savefig(os.path.join(spath, f"connections_rank={rank}.png"))
+    plt.savefig(os.path.join(spath, f"connections.png"))
 
-
-def plot_vm(pre_data, post_data, data_path, start, rank=0):
-    # plot dynamics
+def plot_vm(pre_data, post_data, data_path, start):
     print("Plotting V_m ...")
     # presynaptic data
     a = pre_data
@@ -243,12 +290,10 @@ def plot_vm(pre_data, post_data, data_path, start, rank=0):
     axes[1].plot(t_b, m_post_vm, linewidth=2, color=color_post)
     # save
     plt.tight_layout()
-    plt.savefig(os.path.join(data_path, f"Vm_rank={rank}.png"))
+    plt.savefig(os.path.join(data_path, f"V_m.png"))
     plt.close()
 
-
-def plot_dynamics(astro_data, neuron_data, data_path, start, rank=0):
-    # plot dynamics
+def plot_dynamics(astro_data, neuron_data, data_path, start):
     print("Plotting dynamics ...")
     # astrocyte data
     a = astro_data
@@ -295,15 +340,13 @@ def plot_dynamics(astro_data, neuron_data, data_path, start, rank=0):
     axes[1].plot(t_neuro, m_sic, linewidth=2, color=color_sic)
     # save
     plt.tight_layout()
-    plt.savefig(os.path.join(data_path, f"dynamics_rank={rank}.png"))
+    plt.savefig(os.path.join(data_path, f"dynamics.png"))
     plt.close()
-
 
 ###############################################################################
 # Run simulation and save results.
 
 nest.Simulate(1000.0)
-os.system(f"cp astrocyte_small_network.py {spath}")
-plot_connections(conns_n2n, conns_n2a, conns_a2n, rank)
-plot_vm(mm_pre_neurons.events, mm_post_neurons.events, spath, 0.0, rank)
-plot_dynamics(mm_astrocytes.events, mm_post_neurons.events, spath, 0.0, rank)
+plot_connections(conns_n2n, conns_n2a, conns_a2n)
+plot_vm(mm_pre_neurons.events, mm_post_neurons.events, spath, 0.0)
+plot_dynamics(mm_astrocytes.events, mm_post_neurons.events, spath, 0.0)

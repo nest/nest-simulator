@@ -238,25 +238,6 @@ created with probability ``p``.
     conn_spec_dict = {'rule': 'pairwise_bernoulli', 'p': p}
     nest.Connect(A, B, conn_spec_dict)
 
-pairwise bernoulli astro
-~~~~~~~~~~~~~~~~~~
-
-A pairwise Bernoulli rule for neuron-astrocyte networks. For each possible pair
-of nodes from ``A`` and ``B``, a connection is created with probability ``p``.
-For each connection created between neurons, an astrocyte is paired with it with
-probability ``p_syn_astro``. A connection from the presynaptic neuron and a
-connection to the postsynaptic neuron are made for the paired astrocyte.
-
-.. code-block:: python
-
-    n, m, x, p, p_syn_astro = 10, 12, 5, 0.2, 0.5
-    A = nest.Create('aeif_cond_alpha_astro', n)
-    B = nest.Create('aeif_cond_alpha_astro', m)
-    C = nest.Create('astrocyte_lr_1994', x)
-    conn_spec_dict = {'rule': 'pairwise_bernoulli_astro', 'astrocyte': C,
-                      'p': p, 'p_syn_astro': p_syn_astro}
-    nest.Connect(A, B, conn_spec_dict)
-
 symmetric pairwise bernoulli
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

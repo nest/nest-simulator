@@ -74,14 +74,14 @@ nest::EpropArchivingNode::write_update_to_history( double t_last_update, double 
 
   it = std::lower_bound( update_history_.begin(), update_history_.end(), t_current_update + shift );
 
-  if ( it != update_history_.end() or ( t_current_update + shift ) == it->t_ )
+  if ( it != update_history_.end() or fabs( t_current_update + shift - it->t_ ) < eps_ )
     ++it->access_counter_;
   else
     update_history_.insert( it, HistEntryEpropUpdate( t_current_update + shift, 1 ) );
 
   it = std::lower_bound( update_history_.begin(), update_history_.end(), t_last_update + shift );
 
-  if ( it != update_history_.end() or ( t_last_update + shift ) == it->t_ )
+  if ( it != update_history_.end() or fabs( t_last_update + shift - it->t_ ) < eps_ )
     --it->access_counter_;
 }
 
@@ -112,7 +112,7 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
 
   for ( auto t = update_history_.begin()->t_; t <= ( update_history_.end() - 1 )->t_; t += update_interval )
   {
-    if ( it->t_ == t )
+    if ( fabs( it->t_ - t ) < eps_ )
     {
       it++;
     }

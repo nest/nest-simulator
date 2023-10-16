@@ -383,7 +383,7 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
 
   const double shift = target->get_shift();
 
-  if ( t_last_trigger_spike_ == 0.0 )
+  if ( fabs( t_last_trigger_spike_ ) < 1e-6 )
     t_last_trigger_spike_ = t_spike;
 
   if ( do_update( t_spike ) )

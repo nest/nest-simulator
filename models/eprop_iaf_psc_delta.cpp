@@ -245,8 +245,7 @@ nest::eprop_iaf_psc_delta::update( Time const& origin, const long from, const lo
   for ( long lag = from; lag < to; ++lag )
   {
     long t = origin.get_steps() + lag;
-    int interval_step = ( t - shift ) % update_interval_steps;
-    bool is_time_to_eprop_update = interval_step == update_interval_steps - 1;
+    bool is_time_to_eprop_update = t % update_interval_steps == shift - 1;
 
     if ( is_time_to_eprop_update )
     {

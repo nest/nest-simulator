@@ -230,8 +230,7 @@ nest::eprop_readout::update( Time const& origin, const long from, const long to 
     long t = origin.get_steps() + lag;
     long interval_step = ( t - shift ) % update_interval_steps;
 
-    bool is_time_to_eprop_update = interval_step == 0;
-    bool is_time_to_reset = with_reset and is_time_to_eprop_update;
+    bool is_time_to_eprop_update = t % update_interval_steps == shift - 1;
 
     V_.in_learning_window_ = V_.start_learning_step_ <= interval_step and interval_step <= update_interval_steps - 1;
     V_.in_extended_learning_window_ = interval_step == V_.start_learning_step_ - 1 or V_.in_learning_window_;

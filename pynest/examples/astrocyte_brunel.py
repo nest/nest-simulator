@@ -87,7 +87,7 @@ plt.rcParams.update({"font.size": 13})
 sim_params = {
     "dt": 0.1,  # simulation resolution in ms
     "pre_sim_time": 100.0,  # pre-simulation time in ms (excluded from analysis)
-    "sim_time": 100.0,  # simulation time in ms
+    "sim_time": 1000.0,  # simulation time in ms
     "N_rec_spk": 100,  # number of samples (neuron) for spike detector
     "N_rec_mm": 50,  # number of samples (neuron, astrocyte) for multimeter
     "n_threads": 4,  # number of threads for NEST
@@ -400,8 +400,7 @@ def run_simulation(data_path):
     neuron_data = mm_neuron.events
     astro_data = mm_astro.events
 
-    # Save script and parameters (debug)
-    os.system(f"cp astrocyte_brunel.py {data_path}")
+    # Save parameters (debug)
     params = {
         "sim_params": sim_params,
         "network_params": network_params,
@@ -441,6 +440,4 @@ def run_simulation(data_path):
 # Run simulation.
 
 random.seed(sim_params["seed"])
-hash = hashlib.md5(os.urandom(16)).hexdigest()
 run_simulation("astrocyte_brunel")
-# run_simulation(os.path.join("astrocyte_brunel", hash))

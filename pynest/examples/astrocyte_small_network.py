@@ -133,10 +133,8 @@ plt.rcParams.update({"font.size": 13})
 # Initialize NEST kernel and create folder to save data.
 
 nest.ResetKernel()
-spath = "astrocyte_small_network"
-# spath = os.path.join("astrocyte_small_network", hl.md5(os.urandom(16)).hexdigest())
-os.system(f"mkdir -p {spath}")
-os.system(f"cp astrocyte_small_network.py {spath}")  # (debug)
+save_path = "astrocyte_small_network"
+os.system(f"mkdir -p {save_path}")
 
 ###############################################################################
 # Network parameters.
@@ -212,7 +210,7 @@ conns_n2a = nest.GetConnections(pre_neurons, astrocytes)
 
 
 # Plot all connections between neurons and astrocytes
-def plot_connections(conn_n2n, conn_n2a, conn_a2n):
+def plot_connections(conn_n2n, conn_n2a, conn_a2n, data_path):
     # helper function to create lists of positions for source and target nodes, for plotting
     def get_node_positions(dict_in):
         source_list = dict_in["source"] - np.unique(dict_in["source"]).mean()
@@ -256,7 +254,7 @@ def plot_connections(conn_n2n, conn_n2a, conn_a2n):
     axs.legend(bbox_to_anchor=(0.5, 1.1), loc="upper center", ncol=3)
     set_frame_invisible(axs)
     plt.tight_layout()
-    plt.savefig(os.path.join(spath, "connections.png"))
+    plt.savefig(os.path.join(data_path, "connections.png"))
 
 
 # Helper function to mask data by start time
@@ -371,6 +369,6 @@ def plot_dynamics(astro_data, neuron_data, data_path, start):
 # Run simulation and save results.
 
 nest.Simulate(1000.0)
-plot_connections(conns_n2n, conns_n2a, conns_a2n)
-plot_vm(mm_pre_neurons.events, mm_post_neurons.events, spath, 0.0)
-plot_dynamics(mm_astrocytes.events, mm_post_neurons.events, spath, 0.0)
+plot_connections(conns_n2n, conns_n2a, conns_a2n, save_path)
+plot_vm(mm_pre_neurons.events, mm_post_neurons.events, save_path, 0.0)
+plot_dynamics(mm_astrocytes.events, mm_post_neurons.events, save_path, 0.0)

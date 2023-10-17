@@ -23,9 +23,8 @@
 Regression test for Issue #410 (GitHub).
 """
 
-import pytest
-
 import nest
+import pytest
 
 pytestmark = [pytest.mark.skipif_missing_gsl, pytest.mark.skipif_missing_threads]
 
@@ -60,7 +59,7 @@ def simulator(num_threads):
             "b": 45.45,
             "tau_c": 1.0,
             "tau_n": 100.0,
-            "vt": vt.get("global_id"),
+            "volume_transmitter": vt,
         },
     )
 

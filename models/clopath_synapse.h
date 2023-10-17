@@ -105,6 +105,11 @@ See also
 
 stdp_synapse, aeif_psc_delta_clopath, hh_psc_alpha_clopath
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_psc_alpha
+
 EndUserDocs */
 
 // connections are templates of target identifier type (used for pointer /

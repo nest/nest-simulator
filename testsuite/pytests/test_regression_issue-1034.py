@@ -19,11 +19,12 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+import unittest
+
 import nest
 import numpy as np
 import scipy as sp
 import scipy.stats
-import unittest
 
 
 class PostTraceTester:
@@ -98,7 +99,8 @@ class PostTraceTester:
         for step in range(n_steps):
             print("\n[py] simulating for " + str(self.delay_) + " ms")
             nest.Simulate(self.delay_)
-            t = nest.biological_time
+            # need to subtract min_delay because delivery happened before time was advanced
+            t = nest.biological_time - nest.min_delay
             nearby_pre_spike = np.any(
                 np.abs(t - np.array(self.pre_spike_times_) - self.delay_) < self.resolution_ / 2.0
             )

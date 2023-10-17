@@ -24,6 +24,7 @@ Test setting and getting labels on synapses.
 """
 
 import unittest
+
 import nest
 
 HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
@@ -37,10 +38,10 @@ class LabeledSynapsesTestCase(unittest.TestCase):
     def default_network(self, syn_model):
         nest.ResetKernel()
         # set volume transmitter for stdp_dopamine_synapse_lbl
-        vol = nest.Create("volume_transmitter", 3)
-        nest.SetDefaults("stdp_dopamine_synapse", {"vt": vol.get("global_id")[0]})
-        nest.SetDefaults("stdp_dopamine_synapse_lbl", {"vt": vol.get("global_id")[1]})
-        nest.SetDefaults("stdp_dopamine_synapse_hpc", {"vt": vol.get("global_id")[2]})
+        vt = nest.Create("volume_transmitter", 3)
+        nest.SetDefaults("stdp_dopamine_synapse", {"volume_transmitter": vt[0]})
+        nest.SetDefaults("stdp_dopamine_synapse_lbl", {"volume_transmitter": vt[1]})
+        nest.SetDefaults("stdp_dopamine_synapse_hpc", {"volume_transmitter": vt[2]})
 
         self.rate_model_connections = [
             "rate_connection_instantaneous",
@@ -168,6 +169,10 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         """Try set a label to an 'un-label-able' synapse."""
 
         for syn in [s for s in nest.synapse_models if not s.endswith("_lbl")]:
+            if syn == "sic_connection":
+                # Skip sic_connection since it requires different pre- and post-synaptic neuron models
+                continue
+
             a, r_type = self.default_network(syn)
 
             # see if symmetric connections are required

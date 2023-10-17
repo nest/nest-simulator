@@ -19,20 +19,20 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import re
-from tqdm import tqdm
-from pprint import pformat
-from math import comb
-
-import os
 import glob
 import json
-from itertools import chain, combinations
 import logging
+import os
+import re
 from collections import Counter
+from itertools import chain, combinations
+from math import comb
+from pprint import pformat
+
+from tqdm import tqdm
 
 logging.basicConfig(level=logging.WARNING)
-log = logging.getLogger()
+log = logging.getLogger(__name__)
 
 
 def relative_glob(*pattern, basedir=os.curdir, **kwargs):

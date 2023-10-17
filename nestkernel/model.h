@@ -159,6 +159,7 @@ public:
   virtual void sends_secondary_event( InstantaneousRateConnectionEvent& re ) = 0;
   virtual void sends_secondary_event( DiffusionConnectionEvent& de ) = 0;
   virtual void sends_secondary_event( DelayedRateConnectionEvent& re ) = 0;
+  virtual void sends_secondary_event( SICEvent& sic ) = 0;
 
   /**
    * Check what type of signal this model is sending.
@@ -255,7 +256,7 @@ private:
 inline Node*
 Model::create( size_t t )
 {
-  assert( ( size_t ) t < memory_.size() );
+  assert( t < memory_.size() );
   Node* n = create_();
   memory_[ t ].emplace_back( n );
   return n;

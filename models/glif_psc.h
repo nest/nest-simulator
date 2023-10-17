@@ -111,7 +111,7 @@ to follow the condition of
   ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
   For implementation details see the
-  `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+  `IAF Integration Singularity notebook <../model_details/IAF_Integration_Singularity.ipynb>`_.
 
 Parameters
 ++++++++++
@@ -165,7 +165,7 @@ th_voltage_decay           double         Voltage-induced threshold time
                                           voltage-dependent component of the
                                           threshold in 1/ms (bv in Equation
                                           (4) in [1]_)
-tau_syn                    double vector  Rise time constants of the synaptic
+tau_syn                    double vector  Time constants of the synaptic
                                           alpha function in ms
 E_rev                      double vector  Reversal potential in mV
 spike_dependent_threshold  bool           flag whether the neuron has
@@ -192,14 +192,20 @@ References
 See also
 ++++++++
 
-gif_psc_exp_multisynapse, gif_cond_exp, gif_cond_exp_multisynapse, gif_pop_psc_exp
+gif_psc_exp_multisynapse, gif_cond_exp, gif_cond_exp_multisynapse, gif_pop_psc_exp,
+glif_psc_double_alpha
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: glif_psc
 
 EndUserDocs */
 
 namespace nest
 {
 
-class glif_psc : public nest::ArchivingNode
+class glif_psc : public ArchivingNode
 {
 public:
   glif_psc();

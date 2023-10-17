@@ -43,6 +43,7 @@
 
 namespace nest
 {
+class Node;
 class NodeCollection;
 class NodeCollectionPrimitive;
 class NodeCollectionComposite;
@@ -201,8 +202,8 @@ public:
   /**
    * Create a NodeCollection from an array of node IDs.
    *
-   * Results in a primitive if the
-   * node IDs are homogeneous and contiguous, or a composite otherwise.
+   * Results in a primitive if the node IDs are homogeneous and
+   * contiguous, or a composite otherwise.
    *
    * @param node_ids Array of node IDs from which to create the NodeCollection
    * @return a NodeCollection pointer to the created NodeCollection
@@ -210,7 +211,9 @@ public:
   static NodeCollectionPTR create( const TokenArray& node_ids );
 
   /**
-   * Create a NodeCollection from a single node ID. Results in a primitive.
+   * Create a NodeCollection from a single node ID.
+   *
+   * Results in a primitive unconditionally.
    *
    * @param node_id Node ID from which to create the NodeCollection
    * @return a NodeCollection pointer to the created NodeCollection
@@ -218,10 +221,20 @@ public:
   static NodeCollectionPTR create( const size_t node_id );
 
   /**
+   * Create a NodeCollection from a single node pointer.
+   *
+   * Results in a primitive unconditionally.
+   *
+   * @param node Node pointer from which to create the NodeCollection
+   * @return a NodeCollection pointer to the created NodeCollection
+   */
+  static NodeCollectionPTR create( const Node* node );
+
+  /**
    * Create a NodeCollection from an array of node IDs.
    *
-   * Results in a primitive if the
-   * node IDs are homogeneous and contiguous, or a composite otherwise.
+   * Results in a primitive if the node IDs are homogeneous and
+   * contiguous, or a composite otherwise.
    *
    * @param node_ids Array of node IDs from which to create the NodeCollection
    * @return a NodeCollection pointer to the created NodeCollection
@@ -373,7 +386,7 @@ public:
    *
    * @return Index of node with given node ID; -1 if node not in NodeCollection.
    */
-  virtual long find( const size_t ) const = 0;
+  virtual long get_lid( const size_t ) const = 0;
 
   /**
    * Returns whether the NodeCollection contains any nodes with proxies or not.
@@ -381,6 +394,17 @@ public:
    * @return true if any nodes in the NodeCollection has proxies, false otherwise.
    */
   virtual bool has_proxies() const = 0;
+
+  /**
+   * return the first stored ID (i.e, ID at index zero) inside the NodeCollection
+   */
+  size_t get_first() const;
+
+  /**
+   * return the last stored ID inside the NodeCollection
+   */
+  size_t get_last() const;
+
 
 private:
   unsigned long fingerprint_; //!< Unique identity of the kernel that created the NodeCollection
@@ -499,7 +523,7 @@ public:
   bool is_range() const override;
   bool empty() const override;
 
-  long find( const size_t ) const override;
+  long get_lid( const size_t ) const override;
 
   bool has_proxies() const override;
 
@@ -637,7 +661,7 @@ public:
   bool is_range() const override;
   bool empty() const override;
 
-  long find( const size_t ) const override;
+  long get_lid( const size_t ) const override;
 
   bool has_proxies() const override;
 };
@@ -653,6 +677,20 @@ NodeCollection::set_metadata( NodeCollectionMetadataPTR )
 {
   throw KernelException( "Cannot set Metadata on this type of NodeCollection." );
 }
+
+inline size_t
+NodeCollection::get_first() const
+{
+  return ( *begin() ).node_id;
+}
+
+inline size_t
+NodeCollection::get_last() const
+{
+  size_t offset = size() - 1;
+  return ( *( begin() + offset ) ).node_id;
+}
+
 
 inline nc_const_iterator&
 nc_const_iterator::operator+=( const size_t n )
@@ -794,7 +832,7 @@ NodeCollectionPrimitive::empty() const
 }
 
 inline long
-NodeCollectionPrimitive::find( const size_t neuron_id ) const
+NodeCollectionPrimitive::get_lid( const size_t neuron_id ) const
 {
   if ( neuron_id > last_ )
   {

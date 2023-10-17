@@ -19,36 +19,45 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+import ast
 import importlib
 import inspect
 import io
+import logging
+import os
 import sys
+import time
+import traceback
+from copy import deepcopy
 
-from flask import Flask, request, jsonify
-from flask_cors import CORS, cross_origin
-
+import flask
+import nest
+import RestrictedPython
+from flask import Flask, jsonify, request
+from flask.logging import default_handler
+from flask_cors import CORS
 from werkzeug.exceptions import abort
 from werkzeug.wrappers import Response
 
-import nest
+# This ensures that the logging information shows up in the console running the server,
+# even when Flask's event loop is running.
+root = logging.getLogger()
+root.addHandler(default_handler)
 
-import RestrictedPython
-import time
 
-import traceback
+def get_boolean_environ(env_key, default_value="false"):
+    env_value = os.environ.get(env_key, default_value)
+    return env_value.lower() in ["yes", "true", "t", "1"]
 
-from copy import deepcopy
 
-import os
-
-MODULES = os.environ.get("NEST_SERVER_MODULES", "nest").split(",")
-RESTRICTION_OFF = bool(os.environ.get("NEST_SERVER_RESTRICTION_OFF", False))
+_default_origins = "http://localhost:*"
+ACCESS_TOKEN = os.environ.get("NEST_SERVER_ACCESS_TOKEN", "")
+AUTH_DISABLED = get_boolean_environ("NEST_SERVER_DISABLE_AUTH")
+CORS_ORIGINS = os.environ.get("NEST_SERVER_CORS_ORIGINS", _default_origins).split(",")
+EXEC_CALL_ENABLED = get_boolean_environ("NEST_SERVER_ENABLE_EXEC_CALL")
+MODULES = os.environ.get("NEST_SERVER_MODULES", "import nest")
+RESTRICTION_DISABLED = get_boolean_environ("NEST_SERVER_DISABLE_RESTRICTION")
 EXCEPTION_ERROR_STATUS = 400
-
-if RESTRICTION_OFF:
-    msg = "NEST Server runs without a RestrictedPython trusted environment."
-    print(f"***\n*** WARNING: {msg}\n***")
-
 
 __all__ = [
     "app",
@@ -59,9 +68,114 @@ __all__ = [
 ]
 
 app = Flask(__name__)
-CORS(app)
+# Inform client-side user agents that they should not attempt to call our server from any
+# non-whitelisted domain.
+CORS(app, origins=CORS_ORIGINS, methods=["GET", "POST"])
 
 mpi_comm = None
+
+
+def _check_security():
+    """
+    Checks the security level of the NEST Server instance.
+    """
+
+    msg = []
+    if AUTH_DISABLED:
+        msg.append("AUTH:\tThe authorization settings are disabled.")
+    if "*" in CORS_ORIGINS:
+        msg.append("CORS:\tThe allowed origins are not restricted.")
+    if EXEC_CALL_ENABLED:
+        msg.append("EXEC CALL:\tThe exec route is enabled and scripts can be executed.")
+        if RESTRICTION_DISABLED:
+            msg.append("RESTRICTION: The execution of scripts is not protected by RestrictedPython.")
+
+    if len(msg) > 0:
+        print(
+            "WARNING: You chose to disable important access restrictions!\n"
+            " This allows other computers to execute code on this machine as the current user!\n"
+            " Be sure you understand the implications of these settings and take"
+            " appropriate measures to protect your runtime environment!"
+        )
+        print("\n - ".join([" "] + msg) + "\n")
+
+
+@app.before_request
+def _setup_auth():
+    """
+    Authentication function that generates and validates the NESTServerAuth header with a
+    bearer token.
+
+    Cleans up references to itself and the running `app` from this module, as it may be
+    accessible when the code execution sandbox fails.
+    """
+    try:
+        # Import the modules inside of the auth function, so that if they fail the auth
+        # returns a forbidden error.
+        import gc  # noqa
+        import hashlib  # noqa
+        import inspect  # noqa
+        import time  # noqa
+
+        # Find our reference to the current function in the garbage collector.
+        frame = inspect.currentframe()
+        code = frame.f_code
+        globs = frame.f_globals
+        functype = type(lambda: 0)
+        funcs = []
+        for func in gc.get_referrers(code):
+            if type(func) is functype:
+                if getattr(func, "__code__", None) is code:
+                    if getattr(func, "__globals__", None) is globs:
+                        funcs.append(func)
+                        if len(funcs) > 1:
+                            return ("Unauthorized", 403)
+        self = funcs[0]
+
+        # Use the salted hash (unless `PYTHONHASHSEED` is fixed) of the location of this
+        # function in the Python heap and the current timestamp to create a SHA512 hash.
+        if not hasattr(self, "_hash"):
+            if ACCESS_TOKEN:
+                self._hash = ACCESS_TOKEN
+            else:
+                hasher = hashlib.sha512()
+                hasher.update(str(hash(id(self))).encode("utf-8"))
+                hasher.update(str(time.perf_counter()).encode("utf-8"))
+                self._hash = hasher.hexdigest()[:48]
+            if not AUTH_DISABLED:
+                print(f"   Access token to NEST Server: {self._hash}")
+                print("   Add this to the headers: {'NESTServerAuth': '<access_token>'}\n")
+
+        if request.method == "OPTIONS":
+            return
+
+        # The first time we hit the line below is when below the function definition we
+        # call `setup_auth` without any Flask request existing yet, so the function errors
+        # and exits here after generating and storing the auth hash.
+        auth = request.headers.get("NESTServerAuth", None)
+        # We continue here the next time this function is called, before the Flask app
+        # handles the first request. At that point we also remove this module's reference
+        # to the running app.
+        try:
+            del globals()["app"]
+        except KeyError:
+            pass
+        # Things get more straightforward here: Every time a request is handled, compare
+        # the NESTServerAuth header to the hash, with a constant-time algorithm to avoid
+        # timing attacks.
+        if not (AUTH_DISABLED or auth == self._hash):
+            return ("Unauthorized", 403)
+    # DON'T LINT! Intentional bare except clause! Even `KeyboardInterrupt` and
+    # `SystemExit` exceptions should not bypass authentication!
+    except Exception:  # noqa
+        return ("Unauthorized", 403)
+
+
+print(80 * "*")
+_check_security()
+_setup_auth()
+del _setup_auth
+print(80 * "*")
 
 
 @app.route("/", methods=["GET"])
@@ -81,14 +195,18 @@ def do_exec(args, kwargs):
 
         locals_ = dict()
         response = dict()
-        if RESTRICTION_OFF:
+        if RESTRICTION_DISABLED:
             with Capturing() as stdout:
-                exec(source_cleaned, get_globals(), locals_)
+                globals_ = globals().copy()
+                globals_.update(get_modules_from_env())
+                exec(source_cleaned, globals_, locals_)
             if len(stdout) > 0:
                 response["stdout"] = "\n".join(stdout)
         else:
             code = RestrictedPython.compile_restricted(source_cleaned, "<inline>", "exec")  # noqa
-            exec(code, get_restricted_globals(), locals_)
+            globals_ = get_restricted_globals()
+            globals_.update(get_modules_from_env())
+            exec(code, globals_, locals_)
             if "_print" in locals_:
                 response["stdout"] = "".join(locals_["_print"].txt)
 
@@ -99,13 +217,13 @@ def do_exec(args, kwargs):
                     data[variable] = locals_.get(variable, None)
             else:
                 data = locals_.get(kwargs["return"], None)
-            response["data"] = nest.serializable(data)
+            response["data"] = nest.serialize_data(data)
         return response
 
     except Exception as e:
         for line in traceback.format_exception(*sys.exc_info()):
             print(line, flush=True)
-        abort(Response(str(e), EXCEPTION_ERROR_STATUS))
+        flask.abort(EXCEPTION_ERROR_STATUS, str(e))
 
 
 def log(call_name, msg):
@@ -150,7 +268,7 @@ def do_call(call_name, args=[], kwargs={}):
         log(call_name, f"local call, args={args}, kwargs={kwargs}")
         master_response = call(*args, **kwargs)
 
-    response = [nest.serializable(master_response)]
+    response = [master_response]
     if mpi_comm is not None:
         log(call_name, "waiting for response gather")
         response = mpi_comm.gather(response[0], root=0)
@@ -160,13 +278,18 @@ def do_call(call_name, args=[], kwargs={}):
 
 
 @app.route("/exec", methods=["GET", "POST"])
-@cross_origin()
 def route_exec():
     """Route to execute script in Python."""
 
-    args, kwargs = get_arguments(request)
-    response = do_call("exec", args, kwargs)
-    return jsonify(response)
+    if EXEC_CALL_ENABLED:
+        args, kwargs = get_arguments(request)
+        response = do_call("exec", args, kwargs)
+        return jsonify(response)
+    else:
+        flask.abort(
+            403,
+            "The route `/exec` has been disabled. Please contact the server administrator.",
+        )
 
 
 # --------------------------
@@ -179,14 +302,12 @@ nest_calls.sort()
 
 
 @app.route("/api", methods=["GET"])
-@cross_origin()
 def route_api():
     """Route to list call functions in NEST."""
     return jsonify(nest_calls)
 
 
 @app.route("/api/<call>", methods=["GET", "POST"])
-@cross_origin()
 def route_api_call(call):
     """Route to call function in NEST."""
     print(f"\n{'='*40}\n", flush=True)
@@ -247,16 +368,30 @@ def get_arguments(request):
     return list(args), kwargs
 
 
-def get_globals():
-    """Get globals for exec function."""
-    copied_globals = globals().copy()
+def get_modules_from_env():
+    """Get modules from environment variable NEST_SERVER_MODULES.
 
-    # Add modules to copied globals
-    modlist = [(module, importlib.import_module(module)) for module in MODULES]
-    modules = dict(modlist)
-    copied_globals.update(modules)
+    This function converts the content of the environment variable NEST_SERVER_MODULES:
+    to a formatted dictionary for updating the Python `globals`.
 
-    return copied_globals
+    Here is an example:
+        `NEST_SERVER_MODULES="import nest; import numpy as np; from numpy import random"`
+    is converted to the following dictionary:
+        `{'nest': <module 'nest'> 'np': <module 'numpy'>, 'random': <module 'numpy.random'>}`
+    """
+    modules = {}
+    try:
+        parsed = ast.iter_child_nodes(ast.parse(MODULES))
+    except (SyntaxError, ValueError):
+        raise SyntaxError("The NEST server module environment variables contains syntax errors.")
+    for node in parsed:
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                modules[alias.asname or alias.name] = importlib.import_module(alias.name)
+        elif isinstance(node, ast.ImportFrom):
+            for alias in node.names:
+                modules[alias.asname or alias.name] = importlib.import_module(f"{node.module}.{alias.name}")
+    return modules
 
 
 def get_or_error(func):
@@ -268,7 +403,7 @@ def get_or_error(func):
         except Exception as e:
             for line in traceback.format_exception(*sys.exc_info()):
                 print(line, flush=True)
-            abort(Response(str(e), EXCEPTION_ERROR_STATUS))
+            flask.abort(EXCEPTION_ERROR_STATUS, str(e))
 
     return func_wrapper
 
@@ -305,11 +440,6 @@ def get_restricted_globals():
         _write_=RestrictedPython.Guards.full_write_guard,
     )
 
-    # Add modules to restricted globals
-    modlist = [(module, importlib.import_module(module)) for module in MODULES]
-    modules = dict(modlist)
-    restricted_globals.update(modules)
-
     return restricted_globals
 
 
@@ -341,7 +471,7 @@ def api_client(call_name, args, kwargs):
     else:
         response = call
 
-    return response
+    return nest.serialize_data(response)
 
 
 def set_mpi_comm(comm):

@@ -278,7 +278,7 @@ public:
   size() override
   {
     size_t s = number_of_uints_covered< synindex >();
-    s += number_of_uints_covered< index >();
+    s += number_of_uints_covered< size_t >();
     s += number_of_uints_covered< DataType >() * coeff_length_;
 
     return s;
@@ -355,9 +355,9 @@ class DiffusionConnectionEvent : public DataSecondaryEvent< double, DiffusionCon
 {
 private:
   // drift factor of the corresponding connection
-  weight drift_factor_;
+  double drift_factor_;
   // diffusion factor of the corresponding connection
-  weight diffusion_factor_;
+  double diffusion_factor_;
 
 public:
   DiffusionConnectionEvent()
@@ -368,19 +368,19 @@ public:
   DiffusionConnectionEvent* clone() const override;
 
   void
-  set_diffusion_factor( weight t ) override
+  set_diffusion_factor( double t ) override
   {
     diffusion_factor_ = t;
   };
 
   void
-  set_drift_factor( weight t ) override
+  set_drift_factor( double t ) override
   {
     drift_factor_ = t;
   };
 
-  weight get_drift_factor() const;
-  weight get_diffusion_factor() const;
+  double get_drift_factor() const;
+  double get_diffusion_factor() const;
 };
 
 template < typename DataType, typename Subclass >
@@ -422,16 +422,39 @@ DiffusionConnectionEvent::clone() const
   return new DiffusionConnectionEvent( *this );
 }
 
-inline weight
+inline double
 DiffusionConnectionEvent::get_drift_factor() const
 {
   return drift_factor_;
 }
 
-inline weight
+inline double
 DiffusionConnectionEvent::get_diffusion_factor() const
 {
   return diffusion_factor_;
+}
+
+/**
+ * Event for slow inward current (SIC) connections between astrocytes and neurons.
+ *
+ * The event transmits the slow inward current to the connected neurons.
+ */
+class SICEvent : public DataSecondaryEvent< double, SICEvent >
+{
+
+public:
+  SICEvent()
+  {
+  }
+
+  void operator()();
+  SICEvent* clone() const;
+};
+
+inline SICEvent*
+SICEvent::clone() const
+{
+  return new SICEvent( *this );
 }
 
 } // namespace nest

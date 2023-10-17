@@ -112,14 +112,14 @@ public:
      * @param Node to be represented
      * @param Index of node to be represented
      */
-    NodeEntry( Node&, index );
+    NodeEntry( Node&, size_t );
 
-    Node* get_node() const;    //!< return pointer to represented node
-    index get_node_id() const; //!< return ID of represented node
+    Node* get_node() const;     //!< return pointer to represented node
+    size_t get_node_id() const; //!< return ID of represented node
 
   private:
-    Node* node_;    //!< @note pointer to allow zero-entries for BlockVector compatibility
-    index node_id_; //!< store node ID locally for faster searching
+    Node* node_;     //!< @note pointer to allow zero-entries for BlockVector compatibility
+    size_t node_id_; //!< store node ID locally for faster searching
   };
 
   //! Iterator inherited from BlockVector
@@ -154,12 +154,12 @@ public:
    * Must be called by any method adding nodes to the network at end of
    * each batch of nodes added.
    */
-  void set_max_node_id( index );
+  void set_max_node_id( size_t );
 
   /**
    * Globally largest node ID.
    */
-  index get_max_node_id() const;
+  size_t get_max_node_id() const;
 
   /**
    *  Return pointer to node or nullptr if node is not local.
@@ -168,7 +168,7 @@ public:
    *  The caller is responsible for providing proper
    *  proxy-node pointers for non-local nodes.
    */
-  Node* get_node_by_node_id( index ) const;
+  Node* get_node_by_node_id( size_t ) const;
 
   /**
    * Lookup node based on index into container.
@@ -187,9 +187,9 @@ private:
   bool is_consistent_() const;
 
   BlockVector< NodeEntry > nodes_; //!< stores local node information
-  index global_max_node_id_;       //!< globally largest node ID
-  index local_min_node_id_;        //!< smallest local node ID
-  index local_max_node_id_;        //!< largest local node ID
+  size_t global_max_node_id_;      //!< globally largest node ID
+  size_t local_min_node_id_;       //!< smallest local node ID
+  size_t local_max_node_id_;       //!< largest local node ID
 
   double left_scale_;  //!< scale factor for left side of array
   double right_scale_; //!< scale factor for right side of array
@@ -200,7 +200,7 @@ private:
    * - Is updated by set_max_node_id()
    * - Is global_max_node_id_ + 1 as long as right side is empty.
    */
-  index split_node_id_;
+  size_t split_node_id_;
 
   /**
    * Array index of first element in right side of array.
@@ -248,7 +248,7 @@ nest::SparseNodeArray::get_node_by_index( size_t idx ) const
   return nodes_[ idx ].node_;
 }
 
-inline nest::index
+inline size_t
 nest::SparseNodeArray::get_max_node_id() const
 {
   return global_max_node_id_;
@@ -267,7 +267,7 @@ nest::SparseNodeArray::NodeEntry::get_node() const
   return node_;
 }
 
-inline nest::index
+inline size_t
 nest::SparseNodeArray::NodeEntry::get_node_id() const
 {
   assert( node_id_ > 0 );

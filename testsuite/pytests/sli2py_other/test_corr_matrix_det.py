@@ -28,9 +28,9 @@ Remarks:
   The test does not test weighted correlations.
 """
 
-import pytest
 import nest
 import numpy as np
+import pytest
 
 
 @pytest.fixture()
@@ -59,14 +59,14 @@ def test_setting_params_on_model_vs_instance(model_params):
     assert create_set_param_instance == set_defaults_param_create_instance
 
 
-@pytest.mark.parametrize('value', [0, -1])
+@pytest.mark.parametrize("value", [0, -1])
 def test_setting_invalid_channel(value):
     nest.ResetKernel()
     with pytest.raises(Exception):
         nest.SetDefaults("correlomatrix_detector", {"N_channels": value})
 
 
-@pytest.mark.parametrize('value', [0.25, 1.0])
+@pytest.mark.parametrize("value", [0.25, 1.0])
 def test_setting_invalid_delta_tau(value):
     nest.ResetKernel()
     nest.resolution = 0.1
@@ -105,16 +105,16 @@ def test_number_of_histogram_bins():
 
 
 def prepare_correlomatrix_detector(spike_times_array):
-    detector = nest.Create('correlomatrix_detector')
+    detector = nest.Create("correlomatrix_detector")
 
-    sg1 = nest.Create('spike_generator')
+    sg1 = nest.Create("spike_generator")
     sg1.set(precise_times=False, spike_times=spike_times_array[0])
 
     nest.SetDefaults("static_synapse", {"receptor_type": 0})
 
     nest.Connect(sg1, detector)
 
-    sg2 = nest.Create('spike_generator')
+    sg2 = nest.Create("spike_generator")
     sg2.set(precise_times=False, spike_times=spike_times_array[1])
 
     nest.SetDefaults("static_synapse", {"receptor_type": 1})

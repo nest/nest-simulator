@@ -20,41 +20,38 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import numpy as np
 import unittest
-import scipy.stats
+
 import connect_test_base
 import nest
-
+import numpy as np
+import scipy.stats
 
 HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
 
 
-@unittest.skipIf(not HAVE_OPENMP, 'NEST was compiled without multi-threading')
+@unittest.skipIf(not HAVE_OPENMP, "NEST was compiled without multi-threading")
 @nest.ll_api.check_stack
 class TestPairwiseBernoulli(connect_test_base.ConnectTestBase):
-
     # specify connection pattern and specific params
-    rule = 'pairwise_bernoulli'
+    rule = "pairwise_bernoulli"
     p = 0.5
-    conn_dict = {'rule': rule, 'p': p}
+    conn_dict = {"rule": rule, "p": p}
     # sizes of source-, target-population and connection probability for
     # statistical test
     N_s = 50
     N_t = 50
     # Critical values and number of iterations of two level test
-    stat_dict = {'alpha2': 0.05, 'n_runs': 20}
+    stat_dict = {"alpha2": 0.05, "n_runs": 20}
 
     def testStatistics(self):
-        for fan in ['in', 'out']:
-            expected = connect_test_base.get_expected_degrees_bernoulli(
-                self.p, fan, self.N_s, self.N_t)
+        for fan in ["in", "out"]:
+            expected = connect_test_base.get_expected_degrees_bernoulli(self.p, fan, self.N_s, self.N_t)
 
             pvalues = []
-            for i in range(self.stat_dict['n_runs']):
-                connect_test_base.reset_seed(i+1, self.nr_threads)
-                self.setUpNetwork(conn_dict=self.conn_dict,
-                                  N1=self.N_s, N2=self.N_t)
+            for i in range(self.stat_dict["n_runs"]):
+                connect_test_base.reset_seed(i + 1, self.nr_threads)
+                self.setUpNetwork(conn_dict=self.conn_dict, N1=self.N_s, N2=self.N_t)
                 degrees = connect_test_base.get_degrees(fan, self.pop1, self.pop2)
                 degrees = connect_test_base.gather_data(degrees)
                 # degrees = self.comm.gather(degrees, root=0)
@@ -64,18 +61,18 @@ class TestPairwiseBernoulli(connect_test_base.ConnectTestBase):
                     pvalues.append(p)
                 connect_test_base.mpi_barrier()
             if degrees is not None:
-                ks, p = scipy.stats.kstest(pvalues, 'uniform')
-                self.assertTrue(p > self.stat_dict['alpha2'])
+                ks, p = scipy.stats.kstest(pvalues, "uniform")
+                self.assertTrue(p > self.stat_dict["alpha2"])
 
     def testAutapsesTrue(self):
         conn_params = self.conn_dict.copy()
         N = 10
-        conn_params['allow_multapses'] = False
+        conn_params["allow_multapses"] = False
 
         # test that autapses exist
-        conn_params['p'] = 1.
-        conn_params['allow_autapses'] = True
-        pop = nest.Create('iaf_psc_alpha', N)
+        conn_params["p"] = 1.0
+        conn_params["allow_autapses"] = True
+        pop = nest.Create("iaf_psc_alpha", N)
         nest.Connect(pop, pop, conn_params)
         # make sure all connections do exist
         M = connect_test_base.get_connectivity_matrix(pop, pop)
@@ -84,12 +81,12 @@ class TestPairwiseBernoulli(connect_test_base.ConnectTestBase):
     def testAutapsesFalse(self):
         conn_params = self.conn_dict.copy()
         N = 10
-        conn_params['allow_multapses'] = False
+        conn_params["allow_multapses"] = False
 
         # test that autapses were excluded
-        conn_params['p'] = 1.
-        conn_params['allow_autapses'] = False
-        pop = nest.Create('iaf_psc_alpha', N)
+        conn_params["p"] = 1.0
+        conn_params["allow_autapses"] = False
+        pop = nest.Create("iaf_psc_alpha", N)
         nest.Connect(pop, pop, conn_params)
         # make sure all connections do exist
         M = connect_test_base.get_connectivity_matrix(pop, pop)
@@ -106,5 +103,5 @@ def run():
     runner.run(suite())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run()

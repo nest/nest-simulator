@@ -29,8 +29,8 @@ Remarks:
 
 """
 import nest
-import pytest
 import numpy as np
+import pytest
 
 
 @pytest.fixture(autouse=True)
@@ -70,14 +70,14 @@ def test_setting_invalid_resolution():
     nest.SetDefaults("correlation_detector", {"delta_tau": 0.1})
     with pytest.raises(Exception):
         nest.resolution = 1.0
-        detector = nest.Create('correlation_detector')
+        detector = nest.Create("correlation_detector")
 
 
 def test_setting_num_of_histogram_bins():
     nest.resolution = 0.2
     nest.SetDefaults("correlation_detector", {"delta_tau": 1.0, "tau_max": 5.0})
 
-    detector = nest.Create('correlation_detector')
+    detector = nest.Create("correlation_detector")
 
     nest.Simulate(1)
 
@@ -87,16 +87,16 @@ def test_setting_num_of_histogram_bins():
 
 
 def prepare_correlation_detector(spike_times_array):
-    detector = nest.Create('correlation_detector')
+    detector = nest.Create("correlation_detector")
 
-    sg1 = nest.Create('spike_generator')
+    sg1 = nest.Create("spike_generator")
     sg1.set(precise_times=False, spike_times=spike_times_array[0])
 
     nest.SetDefaults("static_synapse", {"receptor_type": 0})
 
     nest.Connect(sg1, detector)
 
-    sg2 = nest.Create('spike_generator')
+    sg2 = nest.Create("spike_generator")
     sg2.set(precise_times=False, spike_times=spike_times_array[1])
 
     nest.SetDefaults("static_synapse", {"receptor_type": 1})
@@ -117,8 +117,8 @@ def prepare_correlation_detector(spike_times_array):
 
 
 def diff_at_center():
-    spikes_times = [[1.0, 2.0,  6.0], [2.0, 4.0]]
-    histogram = [0, 1, 0, 1, 0, 1,  1, 1, 1, 0, 0]
+    spikes_times = [[1.0, 2.0, 6.0], [2.0, 4.0]]
+    histogram = [0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0]
     return (spikes_times, histogram)
 
 
@@ -130,7 +130,6 @@ def diff_at_edge():
 
 @pytest.mark.parametrize("spikes_times, histogram", [diff_at_center(), diff_at_edge()])
 def test_histogram_correlation(spikes_times, histogram):
-
     nest.resolution = 0.1
     nest.SetDefaults("correlation_detector", {"delta_tau": 1.0, "tau_max": 5.0})
 
@@ -154,7 +153,6 @@ def test_setting_invalid_n_events():
 
 
 def test_reset():
-
     nest.resolution = 0.1
     nest.SetDefaults("correlation_detector", {"delta_tau": 1.0, "tau_max": 5.0})
 

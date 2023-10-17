@@ -40,12 +40,13 @@ See Also
 """
 import os
 import pickle
-import imageio
-from glob import glob
-import numpy as np
 import sys
+from glob import glob
+
 import helpers_sudoku
+import imageio
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def get_progress(puzzle, solution):
@@ -57,12 +58,9 @@ def get_progress(puzzle, solution):
 
 # Name of the .pkl files to read from.
 in_files = ["350Hz_puzzle_4.pkl"]
-temp_dir = "tmp"                # Name of directory for temporary files
-out_file = "sudoku.gif"         # Name of the output GIF
-keep_temps = False              # If True, temporary files will not be deleted
-
-px = 1 / plt.rcParams['figure.dpi']
-plt.subplots(figsize=(600 * px, 400 * px))
+temp_dir = "tmp"  # Name of directory for temporary files
+out_file = "sudoku.gif"  # Name of the output GIF
+keep_temps = False  # If True, temporary files will not be deleted
 
 
 if os.path.exists(out_file):
@@ -97,10 +95,13 @@ for file in in_files:
         solution_progress.append(get_progress(puzzle, solution_states[i]))
 
     for i in range(n_iterations):
+        px = 1 / plt.rcParams["figure.dpi"]
+        fig, ax = plt.subplots(figsize=(600 * px, 400 * px))
+        ax.set_axis_off()
         current_state = solution_states[i]
 
-        lines[-1][0] = x_data[:i + 1]
-        lines[-1][1] = solution_progress[:i + 1]
+        lines[-1][0] = x_data[: i + 1]
+        lines[-1][1] = solution_progress[: i + 1]
         progress = plt.subplot2grid((3, 3), (1, 0), rowspan=2, colspan=1)
         progress.set_ylim(0, 1)
         progress.set_xlim(0, 10000)
@@ -112,19 +113,31 @@ for file in in_files:
 
         stats = plt.subplot2grid((3, 3), (0, 0), 1, 1)
         stats.axis("off")
-        stats.text(0, 1, 'Time progressed:',
-                   horizontalalignment='left', verticalalignment='center', fontsize=16)
-        stats.text(0, 0.7, f'{i * sim_data["sim_time"]}ms\n', horizontalalignment='left', verticalalignment='center',
-                   fontsize=12, color='gray')
-        stats.text(0, 0.5, 'Noise rate:', horizontalalignment='left',
-                   verticalalignment='center', fontsize=16)
-        stats.text(0, 0.2, f'{sim_data["noise_rate"]}Hz\n', horizontalalignment='left', verticalalignment='center',
-                   fontsize=12, color='gray')
+        stats.text(0, 1, "Time progressed:", horizontalalignment="left", verticalalignment="center", fontsize=16)
+        stats.text(
+            0,
+            0.7,
+            f'{i * sim_data["sim_time"]}ms\n',
+            horizontalalignment="left",
+            verticalalignment="center",
+            fontsize=12,
+            color="gray",
+        )
+        stats.text(0, 0.5, "Noise rate:", horizontalalignment="left", verticalalignment="center", fontsize=16)
+        stats.text(
+            0,
+            0.2,
+            f'{sim_data["noise_rate"]}Hz\n',
+            horizontalalignment="left",
+            verticalalignment="center",
+            fontsize=12,
+            color="gray",
+        )
 
         ax = plt.subplot2grid((3, 3), (0, 1), rowspan=3, colspan=2)
         if i == 0:
             # repeat the (colorless) starting configuration several times
-            helpers_sudoku.plot_field(sim_data['puzzle'], sim_data['puzzle'], ax, False)
+            helpers_sudoku.plot_field(puzzle, puzzle, ax, False)
             image_repeat = 8
         else:
             helpers_sudoku.plot_field(puzzle, current_state, ax, True)
@@ -139,6 +152,7 @@ for file in in_files:
         for j in range(image_repeat):
             plt.savefig(os.path.join(temp_dir, f"{str(image_count).zfill(4)}.png"))
             image_count += 1
+        plt.close()
 
 filenames = sorted(glob(os.path.join(temp_dir, "*.png")))
 
@@ -146,7 +160,7 @@ images = []
 for filename in filenames:
     images.append(imageio.imread(filename))
 
-imageio.mimsave(out_file, images, fps=4)
+imageio.mimsave(out_file, images, duration=250)
 print(f"gif created under: {out_file}")
 
 if not keep_temps:

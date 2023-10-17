@@ -60,10 +60,11 @@ The available connectivity parameters are as follows:
     target neuron can only be connected to astrocytes selected from its pool.
 
   * ``pool_type``: The way to determine the astrocyte pool for each target
-    neuron. If "random", a number of astrocytes (``pool_size``) are randomly
+    neuron. If "random", a number (=``pool_size``) of astrocytes are randomly
     chosen from all astrocytes and assigned as the pool. If "block", the
     astrocytes pool is evenly distributed to the neurons in blocks without
-    overlapping, and the ``pool_size`` has to be compatible with this arrangement.
+    overlapping, and the defined ``pool_size`` has to be compatible with this
+    arrangement.
 
 * ``syn_specs`` parameters
 
@@ -73,11 +74,12 @@ The available connectivity parameters are as follows:
 
   * ``third_out``: specifications for the connections from astrocytes to neurons.
 
-In this script, the network is created with the ``pool_type`` being "block". It
-can be seen from the plot "connections.png" that this approach distributes the
-astrocytes evenly to the postsynaptic neurons in blocks without overlapping. The
-``pool_size`` should be compatible with this arrangement. In the case here, a
-``pool_size`` of one is required.
+In this script, the network is created with the ``pool_type`` being "block".
+``p_primary`` and ``p_cond_third`` are both chosen to be 1, so that all possible
+connections are made. It can be seen from the result plot "connections.png" that
+"block" distributes the astrocytes evenly to the postsynaptic neurons in blocks
+without overlapping. The ``pool_size`` should be compatible with this
+arrangement. In the case here, a ``pool_size`` of one is required.
 
 With the created network, neuron-astrocyte interactions can be observed. The
 presynaptic spikes induce the generation of IP3, which then changes the calcium
@@ -207,31 +209,13 @@ conns_n2a = nest.GetConnections(pre_neurons, astrocytes)
 # Functions for plotting.
 
 def plot_connections(conn_n2n, conn_n2a, conn_a2n):
-    print("Plotting connections ...")
-    # Get data
-    dict_n2n = conns_n2n.get()
-    dict_n2a = conns_n2a.get()
-    dict_a2n = conns_a2n.get()
-    # Set of cells
-    sset_n2n = np.unique(dict_n2n["source"])
-    tset_n2n = np.unique(dict_n2n["target"])
-    sset_n2a = np.unique(dict_n2a["source"])
-    aset_n2a = np.unique(dict_n2a["target"])
-    aset_a2n = np.unique(dict_a2n["source"])
-    tset_a2n = np.unique(dict_a2n["target"])
-    # List of cells in connections
-    slist_n2n = dict_n2n["source"] - sset_n2n.mean()
-    tlist_n2n = dict_n2n["target"] - tset_n2n.mean()
-    slist_n2a = dict_n2a["source"] - sset_n2a.mean()
-    alist_n2a = dict_n2a["target"] - aset_n2a.mean()
-    alist_a2n = dict_a2n["source"] - aset_a2n.mean()
-    tlist_a2n = dict_a2n["target"] - tset_a2n.mean()
-    # Shift sets
-    sset_n2a = sset_n2a - sset_n2a.mean()
-    aset_n2a = aset_n2a - aset_n2a.mean()
-    aset_a2n = aset_a2n - aset_a2n.mean()
-    tset_a2n = tset_a2n - tset_a2n.mean()
+    # helper function to create lists of positions for source and target nodes, for plotting
+    def get_set_and_list(dict_in):
+        source_list = dict_in["source"] - np.unique(dict_in["source"]).mean()
+        target_list = dict_in["target"] - np.unique(dict_in["target"]).mean()
+        return source_list, target_list
 
+    # helper function to set plot frames invisible
     def set_frame_invisible(ax):
         ax.get_xaxis().set_visible(False)
         ax.get_yaxis().set_visible(False)
@@ -240,20 +224,29 @@ def plot_connections(conn_n2n, conn_n2a, conn_a2n):
         ax.spines["left"].set_visible(False)
         ax.spines["right"].set_visible(False)
 
+    print("Plotting connections ...")
+    # prepare data (lists of node positions)
+    slist_n2n, tlist_n2n = get_set_and_list(conns_n2n.get())
+    slist_n2a, alist_n2a = get_set_and_list(conns_n2a.get())
+    alist_a2n, tlist_a2n = get_set_and_list(conns_a2n.get())
+    # make plot
     fig, axs = plt.subplots(1, 1, figsize=(10, 8))
-    axs.scatter(sset_n2a, [2] * len(sset_n2a), s=400, color="gray", marker="^", label="pre_neurons", zorder=3)
-    axs.scatter(aset_a2n, [1] * len(aset_a2n), s=400, color="g", marker="o", label="astrocyte", zorder=3)
-    axs.scatter(tset_a2n, [0] * len(tset_a2n), s=400, color="k", marker="^", label="post_neurons", zorder=3)
+    # plot nodes (need the sets of node positions)
+    axs.scatter(list(set(slist_n2a)), [2] * len(set(slist_n2a)), s=400, color="gray", marker="^", label="pre_neurons", zorder=3)
+    axs.scatter(list(set(alist_a2n)), [1] * len(set(alist_a2n)), s=400, color="g", marker="o", label="astrocytes", zorder=3)
+    axs.scatter(list(set(tlist_a2n)), [0] * len(set(tlist_a2n)), s=400, color="k", marker="^", label="post_neurons", zorder=3)
+    # plot connections
     for sx, tx in zip(slist_n2n, tlist_n2n):
         axs.plot([sx, tx], [2, 0], linestyle=":", color="b", alpha=0.5, linewidth=1)
     for sx, tx in zip(slist_n2a, alist_n2a):
         axs.plot([sx, tx], [2, 1], linestyle="-", color="orange", alpha=0.5, linewidth=2)
     for sx, tx in zip(alist_a2n, tlist_a2n):
         axs.plot([sx, tx], [1, 0], linestyle="-", color="g", alpha=0.8, linewidth=4)
+    # tweak and save
     axs.legend(bbox_to_anchor=(0.5, 1.1), loc="upper center", ncol=3)
     set_frame_invisible(axs)
     plt.tight_layout()
-    plt.savefig(os.path.join(spath, f"connections.png"))
+    plt.savefig(os.path.join(spath, "connections.png"))
 
 def plot_vm(pre_data, post_data, data_path, start):
     print("Plotting V_m ...")
@@ -290,7 +283,7 @@ def plot_vm(pre_data, post_data, data_path, start):
     axes[1].plot(t_b, m_post_vm, linewidth=2, color=color_post)
     # save
     plt.tight_layout()
-    plt.savefig(os.path.join(data_path, f"V_m.png"))
+    plt.savefig(os.path.join(data_path, "V_m.png"))
     plt.close()
 
 def plot_dynamics(astro_data, neuron_data, data_path, start):
@@ -340,7 +333,7 @@ def plot_dynamics(astro_data, neuron_data, data_path, start):
     axes[1].plot(t_neuro, m_sic, linewidth=2, color=color_sic)
     # save
     plt.tight_layout()
-    plt.savefig(os.path.join(data_path, f"dynamics.png"))
+    plt.savefig(os.path.join(data_path, "dynamics.png"))
     plt.close()
 
 ###############################################################################

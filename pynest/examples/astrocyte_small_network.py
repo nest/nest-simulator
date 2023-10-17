@@ -210,7 +210,7 @@ conns_n2a = nest.GetConnections(pre_neurons, astrocytes)
 
 def plot_connections(conn_n2n, conn_n2a, conn_a2n):
     # helper function to create lists of positions for source and target nodes, for plotting
-    def get_set_and_list(dict_in):
+    def get_node_positions(dict_in):
         source_list = dict_in["source"] - np.unique(dict_in["source"]).mean()
         target_list = dict_in["target"] - np.unique(dict_in["target"]).mean()
         return source_list, target_list
@@ -226,9 +226,9 @@ def plot_connections(conn_n2n, conn_n2a, conn_a2n):
 
     print("Plotting connections ...")
     # prepare data (lists of node positions)
-    slist_n2n, tlist_n2n = get_set_and_list(conns_n2n.get())
-    slist_n2a, alist_n2a = get_set_and_list(conns_n2a.get())
-    alist_a2n, tlist_a2n = get_set_and_list(conns_a2n.get())
+    slist_n2n, tlist_n2n = get_node_positions(conns_n2n.get())
+    slist_n2a, alist_n2a = get_node_positions(conns_n2a.get())
+    alist_a2n, tlist_a2n = get_node_positions(conns_a2n.get())
     # make plot
     fig, axs = plt.subplots(1, 1, figsize=(10, 8))
     # plot nodes (need the sets of node positions)
@@ -248,39 +248,43 @@ def plot_connections(conn_n2n, conn_n2a, conn_a2n):
     plt.tight_layout()
     plt.savefig(os.path.join(spath, "connections.png"))
 
+def mask_data_by_start(data_in, start):
+    data_out = {}
+    times = data_in["times"]
+    for key, value in data_in.items():
+        data = data_in[key]
+        data_out[key] = data[times>start]
+    return data_out
+
+def get_plot_data(data_in, variable):
+    times_all = data_in["times"]
+    ts = list(set(data_in["times"]))
+    means = np.array([np.mean(data_in[variable][times_all == t]) for t in ts])
+    sds = np.array([np.std(data_in[variable][times_all == t]) for t in ts])
+    return ts, means, sds
+
 def plot_vm(pre_data, post_data, data_path, start):
     print("Plotting V_m ...")
-    # presynaptic data
-    a = pre_data
-    a_mask = a["times"] > start
-    a_vm = a["V_m"][a_mask]
-    a_t = a["times"][a_mask]
-    t_a = list(set(a_t))
-    m_pre_vm = np.array([np.mean(a_vm[a_t == t]) for t in t_a])
-    s_pre_vm = np.array([np.std(a_vm[a_t == t]) for t in t_a])
-    # postsynaptic data
-    b = post_data
-    b_mask = b["times"] > start
-    b_vm = b["V_m"][b_mask]
-    b_t = b["times"][b_mask]
-    t_b = list(set(b_t))
-    m_post_vm = np.array([np.mean(b_vm[b_t == t]) for t in t_b])
-    s_post_vm = np.array([np.std(b_vm[b_t == t]) for t in t_b])
-    # plots
-    color_pre = "tab:blue"
-    color_post = "tab:blue"
+    # get presynaptic data
+    pre_data_masked = mask_data_by_start(pre_data, start)
+    pre_times, pre_vm_mean, pre_vm_sd = get_plot_data(pre_data_masked, "V_m")
+    # get postsynaptic data
+    post_data_masked = mask_data_by_start(post_data, start)
+    post_times, post_vm_mean, post_vm_sd = get_plot_data(post_data_masked, "V_m")
+    # set plots
     fig, axes = plt.subplots(2, 1, sharex=True)
-    # presynaptic
-    axes[0].set_title(f"presynaptic neurons (n={len(set(a['senders']))})")
+    color_pre = color_post = "tab:blue"
+    # plot presynaptic membrane potential
+    axes[0].set_title(f"presynaptic neurons (n={len(set(pre_data['senders']))})")
     axes[0].set_ylabel(r"$V_{m}$ (mV)")
-    axes[0].fill_between(t_a, m_pre_vm + s_pre_vm, m_pre_vm - s_pre_vm, alpha=0.3, linewidth=0.0, color=color_pre)
-    axes[0].plot(t_a, m_pre_vm, linewidth=2, color=color_pre)
-    # postsynaptic
-    axes[1].set_title(f"postsynaptic neurons (n={len(set(b['senders']))})")
+    axes[0].fill_between(pre_times, pre_vm_mean + pre_vm_sd, pre_vm_mean - pre_vm_sd, alpha=0.3, linewidth=0.0, color=color_pre)
+    axes[0].plot(pre_times, pre_vm_mean, linewidth=2, color=color_pre)
+    # plot postsynaptic  membrane potential
+    axes[1].set_title(f"postsynaptic neurons (n={len(set(post_data['senders']))})")
     axes[1].set_ylabel(r"$V_{m}$ (mV)")
     axes[1].set_xlabel("Time (ms)")
-    axes[1].fill_between(t_b, m_post_vm + s_post_vm, m_post_vm - s_post_vm, alpha=0.3, linewidth=0.0, color=color_post)
-    axes[1].plot(t_b, m_post_vm, linewidth=2, color=color_post)
+    axes[1].fill_between(post_times, post_vm_mean + post_vm_sd, post_vm_mean - post_vm_sd, alpha=0.3, linewidth=0.0, color=color_post)
+    axes[1].plot(post_times, post_vm_mean, linewidth=2, color=color_post)
     # save
     plt.tight_layout()
     plt.savefig(os.path.join(data_path, "V_m.png"))
@@ -288,49 +292,37 @@ def plot_vm(pre_data, post_data, data_path, start):
 
 def plot_dynamics(astro_data, neuron_data, data_path, start):
     print("Plotting dynamics ...")
-    # astrocyte data
-    a = astro_data
-    a_mask = a["times"] > start
-    a_ip3 = a["IP3"][a_mask]
-    a_cal = a["Ca"][a_mask]
-    a_t = a["times"][a_mask]
-    t_astro = list(set(a_t))
-    m_ip3 = np.array([np.mean(a_ip3[a_t == t]) for t in t_astro])
-    s_ip3 = np.array([np.std(a_ip3[a_t == t]) for t in t_astro])
-    m_cal = np.array([np.mean(a_cal[a_t == t]) for t in t_astro])
-    s_cal = np.array([np.std(a_cal[a_t == t]) for t in t_astro])
-    # neuron data
-    b = neuron_data
-    b_mask = b["times"] > start
-    b_sic = b["I_SIC"][b_mask]
-    b_t = b["times"][b_mask]
-    t_neuro = list(set(b_t))
-    m_sic = np.array([np.mean(b_sic[b_t == t]) for t in t_neuro])
-    s_sic = np.array([np.std(b_sic[b_t == t]) for t in t_neuro])
-    # plots
-    str_ip3 = r"IP$_{3}$"
-    str_cal = r"Ca$^{2+}$"
+    # get astrocyte data
+    astro_data_masked = mask_data_by_start(astro_data, start)
+    astro_times, astro_ip3_mean, astro_ip3_sd = get_plot_data(astro_data_masked, "IP3")
+    astro_times, astro_ca_mean, astro_ca_sd = get_plot_data(astro_data_masked, "Ca")
+    # get neuron data
+    neuron_data_masked = mask_data_by_start(neuron_data, start)
+    neuron_times, neuron_sic_mean, neuron_sic_sd = get_plot_data(neuron_data_masked, "I_SIC")
+    # set plots
+    fig, axes = plt.subplots(2, 1, sharex=True)
     color_ip3 = "tab:blue"
     color_cal = "tab:green"
     color_sic = "tab:purple"
-    fig, axes = plt.subplots(2, 1, sharex=True)
-    # astrocyte plot
-    axes[0].set_title(f"{str_ip3} and {str_cal} in astrocytes (n={len(set(a['senders']))})")
+    # plot astrocyte data
+    n_astro = len(set(astro_data_masked['senders']))
+    axes[0].set_title(f"IP$_{{3}}$ and Ca$^{{2+}}$ in astrocytes (n={n_astro})")
     axes[0].set_ylabel(r"IP$_{3}$ ($\mu$M)")
     axes[0].tick_params(axis="y", labelcolor=color_ip3)
-    axes[0].fill_between(t_astro, m_ip3 + s_ip3, m_ip3 - s_ip3, alpha=0.3, linewidth=0.0, color=color_ip3)
-    axes[0].plot(t_astro, m_ip3, linewidth=2, color=color_ip3)
+    axes[0].fill_between(astro_times, astro_ip3_mean + astro_ip3_sd, astro_ip3_mean - astro_ip3_sd, alpha=0.3, linewidth=0.0, color=color_ip3)
+    axes[0].plot(astro_times, astro_ip3_mean, linewidth=2, color=color_ip3)
     ax = axes[0].twinx()
     ax.set_ylabel(r"Ca$^{2+}$ ($\mu$M)")
     ax.tick_params(axis="y", labelcolor=color_cal)
-    ax.fill_between(t_astro, m_cal + s_cal, m_cal - s_cal, alpha=0.3, linewidth=0.0, color=color_cal)
-    ax.plot(t_astro, m_cal, linewidth=2, color=color_cal)
-    # neuron plot
-    axes[1].set_title(f"SIC in postsynaptic neurons (n={len(set(a['senders']))})")
+    ax.fill_between(astro_times, astro_ca_mean + astro_ca_sd, astro_ca_mean - astro_ca_sd, alpha=0.3, linewidth=0.0, color=color_cal)
+    ax.plot(astro_times, astro_ca_mean, linewidth=2, color=color_cal)
+    # plot neuron data
+    n_neuron = len(set(neuron_data_masked['senders']))
+    axes[1].set_title(f"SIC in postsynaptic neurons (n={n_neuron})")
     axes[1].set_ylabel("SIC (pA)")
     axes[1].set_xlabel("Time (ms)")
-    axes[1].fill_between(t_neuro, m_sic + s_sic, m_sic - s_sic, alpha=0.3, linewidth=0.0, color=color_sic)
-    axes[1].plot(t_neuro, m_sic, linewidth=2, color=color_sic)
+    axes[1].fill_between(neuron_times, neuron_sic_mean + neuron_sic_sd, neuron_sic_mean - neuron_sic_sd, alpha=0.3, linewidth=0.0, color=color_sic)
+    axes[1].plot(neuron_times, neuron_sic_mean, linewidth=2, color=color_sic)
     # save
     plt.tight_layout()
     plt.savefig(os.path.join(data_path, "dynamics.png"))

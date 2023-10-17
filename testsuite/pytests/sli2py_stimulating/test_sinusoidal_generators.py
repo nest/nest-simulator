@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_sinusoidal_poisson_generator.py
+# test_sinusoidal_generators.py
 #
 # This file is part of NEST.
 #
@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Test basic properties of `sinusoidal_poisson_generator`.
+Test basic properties of sinusoidal generators.
 """
 
 import nest
@@ -28,87 +28,94 @@ import numpy as np
 import numpy.testing as nptest
 import pytest
 
+# List of sinusoidal generator models
+gen_models = ["sinusoidal_poisson_generator", "sinusoidal_gamma_generator"]
+
 
 @pytest.fixture(autouse=True)
 def reset():
     nest.ResetKernel()
 
 
-def test_individual_spike_trains_true_by_default():
+@pytest.mark.parametrize("gen_model", gen_models)
+def test_individual_spike_trains_true_by_default(gen_model):
     """
-    Test that `individual_spike_trains` is true by default.
-    """
-
-    sspg = nest.Create("sinusoidal_poisson_generator")
-    individual_spike_trains = sspg.get("individual_spike_trains")
-    assert individual_spike_trains
-
-
-def test_set_individual_spike_trains_on_set_defaults():
-    """
-    Test whether `individual_spike_trains` can be set on `SetDefaults`.
+    Test that ``individual_spike_trains`` is true by default.
     """
 
-    nest.SetDefaults("sinusoidal_poisson_generator", {"individual_spike_trains": False})
-    sspg = nest.Create("sinusoidal_poisson_generator")
-    individual_spike_trains = sspg.get("individual_spike_trains")
-    assert not individual_spike_trains
+    gen = nest.Create(gen_model)
+    assert gen.individual_spike_trains
 
 
-def test_set_individual_spike_trains_on_creation():
+@pytest.mark.parametrize("gen_model", gen_models)
+def test_set_individual_spike_trains_on_set_defaults(gen_model):
     """
-    Test whether `individual_spike_trains` can be set on model creation.
+    Test whether ``individual_spike_trains`` can be set on ``SetDefaults``.
     """
 
-    sspg = nest.Create("sinusoidal_poisson_generator", params={"individual_spike_trains": False})
-    individual_spike_trains = sspg.get("individual_spike_trains")
-    assert not individual_spike_trains
+    nest.SetDefaults(gen_model, {"individual_spike_trains": False})
+    gen = nest.Create(gen_model)
+    assert not gen.individual_spike_trains
 
 
-def test_set_individual_spike_trains_on_copy_model():
+@pytest.mark.parametrize("gen_model", gen_models)
+def test_set_individual_spike_trains_on_creation(gen_model):
     """
-    Test whether the set `individual_spike_trains` is inherited on `CopyModel`.
+    Test whether ``individual_spike_trains`` can be set on model creation.
+    """
+
+    gen = nest.Create(gen_model, params={"individual_spike_trains": False})
+    assert not gen.individual_spike_trains
+
+
+@pytest.mark.parametrize("gen_model", gen_models)
+def test_set_individual_spike_trains_on_copy_model(gen_model):
+    """
+    Test whether the set ``individual_spike_trains`` is inherited on ``CopyModel``.
     """
 
     nest.CopyModel(
-        "sinusoidal_poisson_generator",
-        "sinusoidal_poisson_generator_copy",
+        gen_model,
+        "sinusoidal_generator_copy",
         params={"individual_spike_trains": False},
     )
-    sspg = nest.Create("sinusoidal_poisson_generator_copy")
-    individual_spike_trains = sspg.get("individual_spike_trains")
-    assert not individual_spike_trains
+    gen = nest.Create("sinusoidal_generator_copy")
+    assert not gen.individual_spike_trains
 
 
-def test_set_individual_spike_trains_on_instance():
+@pytest.mark.parametrize("gen_model", gen_models)
+def test_set_individual_spike_trains_on_instance(gen_model):
     """
-    Test that `individual_spike_trains` cannot be set on an instance.
+    Test that ``individual_spike_trains`` cannot be set on an instance.
     """
 
-    sspg = nest.Create("sinusoidal_poisson_generator")
+    gen = nest.Create(gen_model)
 
     with pytest.raises(nest.kernel.NESTErrors.BadProperty):
-        sspg.individual_spike_trains = False
+        gen.individual_spike_trains = False
 
 
 @pytest.mark.skipif_missing_threads()
+@pytest.mark.parametrize("gen_model", gen_models)
 @pytest.mark.parametrize("individual_spike_trains", [False, True])
 @pytest.mark.parametrize("num_threads", [1, 2])
-def test_sinusoidal_poisson_generator_with_spike_recorder(num_threads, individual_spike_trains):
+def test_sinusoidal_generator_with_spike_recorder(gen_model, num_threads, individual_spike_trains):
     """
-    Test spike recording with both `False` and `True` `individual_spike_trains`.
+    Test spike recording with both true and false ``individual_spike_trains``.
 
-    The test builds a network with `num_threads x 4` parrot neurons that
-    receives spikes from a `sinusoidal_poisson_generator`. A spike recorder is
-    connected to each parrot neuron. The test ensures that different targets
+    The test builds a network with ``num_threads x 4`` parrot neurons that
+    receives spikes from the specified sinusoidal generator. A ``spike_recorder``
+    is connected to each parrot neuron. The test ensures that different targets
     (on the same or different threads) receives identical spike trains if
-    `individual_spike_trains` is false and different spike trains otherwise.
+    ``individual_spike_trains`` is false and different spike trains otherwise.
     """
 
     nest.local_num_threads = num_threads
+    nrns_per_thread = 4
+    total_num_nrns = num_threads * nrns_per_thread
 
     nest.SetDefaults(
-        "sinusoidal_poisson_generator",
+        gen_model,
         {
             "rate": 100,
             "amplitude": 50.0,
@@ -117,14 +124,11 @@ def test_sinusoidal_poisson_generator_with_spike_recorder(num_threads, individua
         },
     )
 
-    nrns_per_thread = 4
-    total_num_nrns = num_threads * nrns_per_thread
-
     parrots = nest.Create("parrot_neuron", total_num_nrns)
-    sspg = nest.Create("sinusoidal_poisson_generator")
+    gen = nest.Create(gen_model)
     srecs = nest.Create("spike_recorder", total_num_nrns)
 
-    nest.Connect(sspg, parrots)
+    nest.Connect(gen, parrots)
     nest.Connect(parrots, srecs, "one_to_one")
 
     nest.Simulate(500.0)
@@ -148,17 +152,18 @@ def test_sinusoidal_poisson_generator_with_spike_recorder(num_threads, individua
 
 
 @pytest.mark.skipif_missing_threads()
+@pytest.mark.parametrize("gen_model", gen_models)
 @pytest.mark.parametrize("individual_spike_trains", [False, True])
 @pytest.mark.parametrize("num_threads", [1, 2])
-def test_sinusoidal_poisson_generator_with_multimeter(num_threads, individual_spike_trains):
+def test_sinusoidal_generator_with_multimeter(gen_model, num_threads, individual_spike_trains):
     """
-    Test multimeter recording with both `False` and `True` `individual_spike_trains`.
+    Test multimeter recording with both true and false ``individual_spike_trains``.
 
-    The test builds a network with `num_threads x 4` parrot neurons that
-    receives spikes from a `sinusoidal_poisson_generator`. A `multimeter` is
-    then connected to the generator and the system simulated. The test ensures
-    that a `multimeter` can be connected to record the rate, independent of
-    `individual_spike_tains`. Since only a single trace should be returned,
+    The test builds a network with ``num_threads x 4`` parrot neurons that
+    receives spikes from the specified sinusoidal generator. A ``multimeter`` is
+    then connected to the generator and the system is simulated. The test ensures
+    that a ``multimeter`` can be connected to record the rate, independent of
+    ``individual_spike_tains``. Since only a single trace should be returned,
     the test checks that the multimeter recording contains the expected number
     of data points.
     """
@@ -167,7 +172,7 @@ def test_sinusoidal_poisson_generator_with_multimeter(num_threads, individual_sp
     T_sim = 100.0
 
     nest.SetDefaults(
-        "sinusoidal_poisson_generator",
+        gen_model,
         {
             "rate": 100,
             "amplitude": 50.0,
@@ -180,7 +185,7 @@ def test_sinusoidal_poisson_generator_with_multimeter(num_threads, individual_sp
     total_num_nrns = num_threads * nrns_per_thread
 
     parrots = nest.Create("parrot_neuron", total_num_nrns)
-    sspg = nest.Create("sinusoidal_poisson_generator")
+    sspg = nest.Create(gen_model)
     mm = nest.Create("multimeter", {"record_from": ["rate"]})
 
     nest.Connect(sspg, parrots)
@@ -188,20 +193,18 @@ def test_sinusoidal_poisson_generator_with_multimeter(num_threads, individual_sp
 
     nest.Simulate(T_sim)
 
-    times = mm.get("events")["times"]
-    rates = mm.get("events")["rate"]
-
     # Check that times and rates contain ndata points
     expected_ndata = T_sim - 1
-    assert len(times) == expected_ndata
-    assert len(rates) == expected_ndata
+    assert len(mm.events["times"]) == expected_ndata
+    assert len(mm.events["rate"]) == expected_ndata
 
 
-def test_sinusoidal_poisson_generator_rate_profile():
+@pytest.mark.parametrize("gen_model", gen_models)
+def test_sinusoidal_generator_rate_profile(gen_model):
     """
-    Test recorded rate of `sinusoidal_poisson_generator` against expectation.
+    Test recorded rate of provided sinusoidal generator against expectation.
 
-    The test checks that the recorded rate profile with `multimeter` is the
+    The test checks that the recorded rate profile with ``multimeter`` is the
     same as the analytical expectation.
     """
 
@@ -211,12 +214,12 @@ def test_sinusoidal_poisson_generator_rate_profile():
     phi = 2.0
 
     nest.SetDefaults(
-        "sinusoidal_poisson_generator",
+        gen_model,
         {"rate": dc, "amplitude": ac, "frequency": freq, "phase": phi / np.pi * 180},
     )
 
     parrots = nest.Create("parrot_neuron")
-    sspg = nest.Create("sinusoidal_poisson_generator")
+    sspg = nest.Create(gen_model)
     mm = nest.Create("multimeter", {"record_from": ["rate"]})
 
     nest.Connect(sspg, parrots)
@@ -224,11 +227,11 @@ def test_sinusoidal_poisson_generator_rate_profile():
 
     nest.Simulate(100.0)
 
-    times = mm.get("events")["times"]
-    actual_rates = mm.get("events")["rate"]
-
+    times = mm.events["times"]
     scaled_times = times * 2 * np.pi * freq / 1000
     shifted_times = scaled_times + phi
     expected_rates = np.sin(shifted_times) * ac + dc
+
+    actual_rates = mm.events["rate"]
 
     nptest.assert_allclose(actual_rates, expected_rates)

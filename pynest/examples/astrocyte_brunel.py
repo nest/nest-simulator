@@ -30,13 +30,13 @@ implemented according to [1]_, [2]_, and [3]_. The neuron is modeled with
 supporting neuron-astrocyte interactions.
 
 The simulation results of this network demonstrate an astrocytic effect on
-neuronal excitabitlity. With the slow inward current (SIC) delivered from the
+neuronal excitability. With the slow inward current (SIC) induced by the
 astrocytes through the ``sic_connection``, the neurons show higher firing rates
-and more synchronized bursting actitivity. The degrees of local and global
-synchrony are quantified by pairwise spike count correlations and a measure of
-global synchrony in [4]_ respectively, as shown in a plot made in this script
-(neuron_synchrony.png). Plots of astrocytic dynamics and SIC in neurons are also
-made in this script.
+and more synchronized actitivity. Here, the local synchrony is quantified by
+pairwise spike count correlations, and the global synchrony by an approach
+suggested in [4]_. The result of this synchrony analysis is shown in the plot
+"neuron_synchrony.png". The dynamics in the astrocytes and the SIC in the
+neurons are shown in the plot "dynamics.png".
 
 References
 ~~~~~~~~~~
@@ -101,10 +101,10 @@ network_params = {
     "N_ex": 8000,  # number of excitatory neurons
     "N_in": 2000,  # number of inhibitory neurons
     "N_astro": 10000,  # number of astrocytes
-    "p": 0.1,  # connection probability between neurons
-    "p_syn_astro": 0.5,  # probability of each created neuron-neuron connection to be paired with one astrocyte
-    "astro_pool_size": 10,  # astrocyte pool size for each target neuron
-    "astro_pool_type": "random",  # astrocyte pool will be chosen randomly for each target neuron
+    "p_primary": 0.1,  # connection probability between neurons
+    "p_cond_third": 0.5,  # probability of each created neuron-neuron connection to be paired with one astrocyte
+    "pool_size": 10,  # astrocyte pool size for each target neuron
+    "pool_type": "random",  # astrocyte pool will be chosen randomly for each target neuron
     "poisson_rate": 2000,  # Poisson input rate for neurons
 }
 
@@ -151,6 +151,7 @@ neuron_params_in = {
 # TripartiteConnect() function and the "tripartite_bernoulli_with_pool" rule are
 # used to create the connectivity of the network.
 
+
 def create_astro_network(scale=1.0):
     """Create nodes for a neuron-astrocyte network."""
     print("Creating nodes ...")
@@ -161,6 +162,7 @@ def create_astro_network(scale=1.0):
     nodes_noise = nest.Create("poisson_generator", params={"rate": network_params["poisson_rate"]})
     return nodes_ex, nodes_in, nodes_astro, nodes_noise
 
+
 def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise, scale=1.0):
     """Connect the nodes in a neuron-astrocyte network.
     The astrocytes are paired with excitatory connections only.
@@ -168,17 +170,17 @@ def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise, scale=1.
     print("Connecting Poisson generator ...")
     assert scale >= 1.0, "scale must be >= 1.0"
     nest.Connect(
-        nodes_noise, nodes_ex + nodes_in, syn_spec={"synapse_model": "static_synapse", "weight": syn_params["w_e"]})
-
+        nodes_noise, nodes_ex + nodes_in, syn_spec={"synapse_model": "static_synapse", "weight": syn_params["w_e"]}
+    )
     print("Connecting neurons and astrocytes ...")
     # excitatory connections are paired with astrocytes
     # conn_spec and syn_spec according to the "tripartite_bernoulli_with_pool" rule
     conn_params_e = {
         "rule": "tripartite_bernoulli_with_pool",
-        "p_primary": network_params["p"] / scale,
-        "p_cond_third": network_params["p_syn_astro"],
-        "pool_size": network_params["astro_pool_size"],
-        "pool_type": network_params["astro_pool_type"],
+        "p_primary": network_params["p_primary"] / scale,
+        "p_cond_third": network_params["p_cond_third"],
+        "pool_size": network_params["pool_size"],
+        "pool_type": network_params["pool_type"],
     }
     syn_params_e = {
         "primary": {
@@ -193,14 +195,11 @@ def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise, scale=1.
             "tau_psc": tau_syn_ex,
             "delay": syn_params["d_e"],
         },
-        "third_out": {
-            "synapse_model": "sic_connection",
-            "weight": syn_params["w_a2n"]
-        },
+        "third_out": {"synapse_model": "sic_connection", "weight": syn_params["w_a2n"]},
     }
     nest.TripartiteConnect(nodes_ex, nodes_ex + nodes_in, nodes_astro, conn_spec=conn_params_e, syn_specs=syn_params_e)
     # inhibitory connections are not paired with astrocytes
-    conn_params_i = {"rule": "pairwise_bernoulli", "p": network_params["p"] / scale}
+    conn_params_i = {"rule": "pairwise_bernoulli", "p": network_params["p_primary"] / scale}
     syn_params_i = {
         "synapse_model": syn_params["synapse_model"],
         "weight": syn_params["w_i"],
@@ -209,10 +208,12 @@ def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise, scale=1.
     }
     nest.Connect(nodes_in, nodes_ex + nodes_in, conn_params_i, syn_params_i)
 
+
 ###############################################################################
 # This function calculates the pairwise spike count correlations. For each pair
 # of neurons, the correlation coefficient (Pearson's r) of their spike count
 # histograms is calculated. The result of all pairs are returned.
+
 
 def get_corr(hlist):
     """Calculate pairwise correlations for a list of histograms."""
@@ -234,12 +235,14 @@ def get_corr(hlist):
 
     return coef_list, n_pair_pass, n_pair_fail
 
+
 ###############################################################################
 # These two functions calculate and plot the synchrony of neuronal firings.
 # Histograms of spike counts of all neurons are obtained to evaluate local and
 # global synchrony. The local synchrony is evaluated with average pairwise spike
 # count correlation, and the global synchrony is evaluated with the variance of
 # average spike count/average of variance of individual spike count.
+
 
 def calc_synchrony(neuron_spikes, n_neuron_rec_spk, start, end, data_path, N=100, bw=10):
     # get data
@@ -266,6 +269,7 @@ def calc_synchrony(neuron_spikes, n_neuron_rec_spk, start, end, data_path, N=100
     gsync = np.var(hist_global) / np.mean(np.var(hists, axis=1))  # global
     return rate, coefs, lsync_mu, lsync_sd, gsync, n_for_sync
 
+
 def plot_synchrony(coefs, title, data_path):
     print("Plotting pairwise spike count correlations ...")
     plt.hist(coefs)
@@ -276,32 +280,34 @@ def plot_synchrony(coefs, title, data_path):
     plt.savefig(os.path.join(data_path, "neuron_synchrony.png"))
     plt.close()
 
+
 ###############################################################################
 # This function plots the dynamics in the astrocytes and their resultant output
-# to the neurons.The IP3 and calcium in the astrocytes and the SIC in neurons
+# to the neurons. The IP3 and calcium in the astrocytes and the SIC in neurons
 # are plotted. Means and standard deviations across sampled nodes are indicated
 # by lines and shaded areas, respectively.
+
 
 def plot_dynamics(astro_data, neuron_data, data_path, start):
     # plot dynamics
     print("Plotting dynamics ...")
     # astrocyte data
-    a_mask = astro_data["times"] > start
-    a_ip3 = astro_data["IP3"][a_mask]
-    a_cal = astro_data["Ca"][a_mask]
-    a_t = astro_data["times"][a_mask]
-    t_astro = list(set(a_t))
-    m_ip3 = np.array([np.mean(a_ip3[a_t == t]) for t in t_astro])
-    s_ip3 = np.array([np.std(a_ip3[a_t == t]) for t in t_astro])
-    m_cal = np.array([np.mean(a_cal[a_t == t]) for t in t_astro])
-    s_cal = np.array([np.std(a_cal[a_t == t]) for t in t_astro])
+    astro_mask = astro_data["times"] > start
+    astro_ip3 = astro_data["IP3"][astro_mask]
+    astro_cal = astro_data["Ca"][astro_mask]
+    astro_times = astro_data["times"][astro_mask]
+    astro_times_set = list(set(astro_times))
+    ip3_means = np.array([np.mean(astro_ip3[astro_times == t]) for t in astro_times_set])
+    ip3_sds = np.array([np.std(astro_ip3[astro_times == t]) for t in astro_times_set])
+    cal_means = np.array([np.mean(astro_cal[astro_times == t]) for t in astro_times_set])
+    cal_sds = np.array([np.std(astro_cal[astro_times == t]) for t in astro_times_set])
     # neuron data
-    b_mask = neuron_data["times"] > start
-    b_sic = neuron_data["I_SIC"][neuron_data["times"] > start]
-    b_t = neuron_data["times"][neuron_data["times"] > start]
-    t_neuro = list(set(b_t))
-    m_sic = np.array([np.mean(b_sic[b_t == t]) for t in t_neuro])
-    s_sic = np.array([np.std(b_sic[b_t == t]) for t in t_neuro])
+    neuron_mask = neuron_data["times"] > start
+    neuron_sic = neuron_data["I_SIC"][neuron_mask]
+    neuron_times = neuron_data["times"][neuron_mask]
+    neuron_times_set = list(set(neuron_times))
+    sic_means = np.array([np.mean(neuron_sic[neuron_times == t]) for t in neuron_times_set])
+    sic_sds = np.array([np.std(neuron_sic[neuron_times == t]) for t in neuron_times_set])
     # plots
     fig, axes = plt.subplots(2, 1, sharex=True)
     color_ip3 = "tab:blue"
@@ -311,29 +317,37 @@ def plot_dynamics(astro_data, neuron_data, data_path, start):
     axes[0].set_title(f"{r'IP$_{3}$'} and {r'Ca$^{2+}$'} in astrocytes (n={len(set(astro_data['senders']))})")
     axes[0].set_ylabel(r"IP$_{3}$ ($\mu$M)")
     axes[0].tick_params(axis="y", labelcolor=color_ip3)
-    axes[0].fill_between(t_astro, m_ip3 + s_ip3, m_ip3 - s_ip3, alpha=0.3, linewidth=0.0, color=color_ip3)
-    axes[0].plot(t_astro, m_ip3, linewidth=2, color=color_ip3)
+    axes[0].fill_between(
+        astro_times_set, ip3_means + ip3_sds, ip3_means - ip3_sds, alpha=0.3, linewidth=0.0, color=color_ip3
+    )
+    axes[0].plot(astro_times_set, ip3_means, linewidth=2, color=color_ip3)
     ax = axes[0].twinx()
     ax.set_ylabel(r"Ca$^{2+}$ ($\mu$M)")
     ax.tick_params(axis="y", labelcolor=color_cal)
-    ax.fill_between(t_astro, m_cal + s_cal, m_cal - s_cal, alpha=0.3, linewidth=0.0, color=color_cal)
-    ax.plot(t_astro, m_cal, linewidth=2, color=color_cal)
+    ax.fill_between(
+        astro_times_set, cal_means + cal_sds, cal_means - cal_sds, alpha=0.3, linewidth=0.0, color=color_cal
+    )
+    ax.plot(astro_times_set, cal_means, linewidth=2, color=color_cal)
     # neuron plot
     axes[1].set_title(f"SIC in neurons (n={len(set(neuron_data['senders']))})")
     axes[1].set_ylabel("SIC (pA)")
     axes[1].set_xlabel("Time (ms)")
-    axes[1].fill_between(t_neuro, m_sic + s_sic, m_sic - s_sic, alpha=0.3, linewidth=0.0, color=color_sic)
-    axes[1].plot(t_neuro, m_sic, linewidth=2, color=color_sic)
+    axes[1].fill_between(
+        neuron_times_set, sic_means + sic_sds, sic_means - sic_sds, alpha=0.3, linewidth=0.0, color=color_sic
+    )
+    axes[1].plot(neuron_times_set, sic_means, linewidth=2, color=color_sic)
     # save
     plt.tight_layout()
     plt.savefig(os.path.join(data_path, "dynamics.png"))
     plt.close()
+
 
 ###############################################################################
 # This is the main function for simulation. Here, the network is created and the
 # neurons and astrocytes are randomly chosen to be connected with the recording
 # devices. The sample numbers are determined by sim_params. After simulation,
 # neuron and astrocyte data are analyzed and plotted.
+
 
 def run_simulation(data_path):
     # NEST configuration
@@ -407,8 +421,9 @@ def run_simulation(data_path):
     plt.close()
 
     # Calculate and plot synchrony
-    rate, coefs, lsync_mu, lsync_sd, gsync, n_for_sync = \
-        calc_synchrony(neuron_spikes, n_neuron_rec_spk, pre_sim_time, pre_sim_time + sim_time, data_path)
+    rate, coefs, lsync_mu, lsync_sd, gsync, n_for_sync = calc_synchrony(
+        neuron_spikes, n_neuron_rec_spk, pre_sim_time, pre_sim_time + sim_time, data_path
+    )
     title = (
         f"Firing rate={rate:.2f} spikes/s (n={n_neuron_rec_spk}) \n"
         + f"Local sync.={lsync_mu:.3f}$\\pm${lsync_sd:.3f}, Global sync.={gsync:.3f}\n"
@@ -420,6 +435,7 @@ def run_simulation(data_path):
 
     # Plot dynamics in astrocytes and neurons
     plot_dynamics(astro_data, neuron_data, data_path, pre_sim_time)
+
 
 ###############################################################################
 # Run simulation.

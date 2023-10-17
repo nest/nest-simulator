@@ -24,7 +24,7 @@ A small neuron-astrocyte network
 ------------------------------------------------------------
 
 This script demonstrates an aproach with NEST to create a neuron-astrocyte
-network. The network in this script includes 20 neurons and 5 astrocytes. The
+network. The network in this script includes 20 neurons and five astrocytes. The
 astrocyte is modeled with ``astrocyte_lr_1994``, implemented according to [1]_,
 [2]_, and [3]_. The neuron is modeled with ``aeif_cond_alpha_astro``, an
 adaptive exponential integrate and fire neuron supporting neuron-astrocyte
@@ -37,9 +37,9 @@ Bernoulli connectivity with the following principles:
 1. For each pair of neurons, a Bernoulli trial with a probability ``p_primary``
 determines if they will be connected.
 
-2. For each neuron-neuron connection created, a Bernoulli trial with a probability
-``p_cond_third`` determines if it will be paired with one astrocyte. The
-selection of this particular astrocyte is confined by ``pool_size`` and
+2. For each neuron-neuron connection created, a Bernoulli trial with a
+probability ``p_cond_third`` determines if it will be paired with one astrocyte.
+The selection of this particular astrocyte is confined by ``pool_size`` and
 ``pool_type`` (see below).
 
 3. If a neuron-neuron connection is to be paired with an astrocyte, a connection
@@ -60,11 +60,11 @@ The available connectivity parameters are as follows:
     target neuron can only be connected to astrocytes selected from its pool.
 
   * ``pool_type``: The way to determine the astrocyte pool for each target
-    neuron. If "random", a number (=``pool_size``) of astrocytes are randomly
-    chosen from all astrocytes and assigned as the pool. If "block", the
-    astrocytes pool is evenly distributed to the neurons in blocks without
-    overlapping, and the defined ``pool_size`` has to be compatible with this
-    arrangement.
+    neuron. If specified "random", a number (``pool_size``) of astrocytes are
+    randomly chosen from all astrocytes and assigned as the pool. If specified
+    "block", the astrocytes are evenly distributed to the neurons in blocks
+    without overlapping, and the specified ``pool_size`` has to be compatible
+    with this arrangement.
 
 * ``syn_specs`` parameters
 
@@ -75,7 +75,7 @@ The available connectivity parameters are as follows:
   * ``third_out``: specifications for the connections from astrocytes to neurons.
 
 In this script, the network is created with the ``pool_type`` being "block".
-``p_primary`` and ``p_cond_third`` are both chosen to be 1, so that all possible
+``p_primary`` and ``p_cond_third`` are both set to one, so that all possible
 connections are made. It can be seen from the result plot "connections.png" that
 "block" distributes the astrocytes evenly to the postsynaptic neurons in blocks
 without overlapping. The ``pool_size`` should be compatible with this
@@ -90,7 +90,7 @@ in the presynaptic and postsynaptic neurons are shown in the plot "V_m.png".
 
 The ``pool_type`` can be changed to "random" to see the results with random
 astrocyte pools. In that case, the ``pool_size`` can be any from one to the
-number of all astrocytes.
+total number of astrocytes.
 
 References
 ~~~~~~~~~~
@@ -136,7 +136,7 @@ nest.ResetKernel()
 spath = "astrocyte_small_network"
 # spath = os.path.join("astrocyte_small_network", hl.md5(os.urandom(16)).hexdigest())
 os.system(f"mkdir -p {spath}")
-os.system(f"cp astrocyte_small_network.py {spath}") # (debug)
+os.system(f"cp astrocyte_small_network.py {spath}")  # (debug)
 
 ###############################################################################
 # Network parameters.
@@ -154,7 +154,7 @@ pool_type = "block"  # the way to determine the astrocyte pool for each target n
 astrocyte_model = "astrocyte_lr_1994"
 astrocyte_params = {
     "IP3": 0.4,  # IP3 initial value in µM
-    "delta_IP3": 2.0, # parameter determining the increase in astrocytic IP3 concentration induced by synaptic input
+    "delta_IP3": 2.0,  # parameter determining the increase in astrocytic IP3 concentration induced by synaptic input
     "tau_IP3": 10.0,  # time constant of the exponential decay of astrocytic IP3
 }
 
@@ -206,8 +206,12 @@ conns_n2n = nest.GetConnections(pre_neurons, post_neurons)
 conns_n2a = nest.GetConnections(pre_neurons, astrocytes)
 
 ###############################################################################
-# Functions for plotting.
+# Functions for plotting. For neuron and astrocyte data, means and standard
+# deviations across sampled nodes are indicated by lines and shaded areas,
+# respectively.
 
+
+# Plot all connections between neurons and astrocytes
 def plot_connections(conn_n2n, conn_n2a, conn_a2n):
     # helper function to create lists of positions for source and target nodes, for plotting
     def get_node_positions(dict_in):
@@ -232,9 +236,15 @@ def plot_connections(conn_n2n, conn_n2a, conn_a2n):
     # make plot
     fig, axs = plt.subplots(1, 1, figsize=(10, 8))
     # plot nodes (need the sets of node positions)
-    axs.scatter(list(set(slist_n2a)), [2] * len(set(slist_n2a)), s=400, color="gray", marker="^", label="pre_neurons", zorder=3)
-    axs.scatter(list(set(alist_a2n)), [1] * len(set(alist_a2n)), s=400, color="g", marker="o", label="astrocytes", zorder=3)
-    axs.scatter(list(set(tlist_a2n)), [0] * len(set(tlist_a2n)), s=400, color="k", marker="^", label="post_neurons", zorder=3)
+    axs.scatter(
+        list(set(slist_n2a)), [2] * len(set(slist_n2a)), s=400, color="gray", marker="^", label="pre_neurons", zorder=3
+    )
+    axs.scatter(
+        list(set(alist_a2n)), [1] * len(set(alist_a2n)), s=400, color="g", marker="o", label="astrocytes", zorder=3
+    )
+    axs.scatter(
+        list(set(tlist_a2n)), [0] * len(set(tlist_a2n)), s=400, color="k", marker="^", label="post_neurons", zorder=3
+    )
     # plot connections
     for sx, tx in zip(slist_n2n, tlist_n2n):
         axs.plot([sx, tx], [2, 0], linestyle=":", color="b", alpha=0.5, linewidth=1)
@@ -248,14 +258,18 @@ def plot_connections(conn_n2n, conn_n2a, conn_a2n):
     plt.tight_layout()
     plt.savefig(os.path.join(spath, "connections.png"))
 
+
+# Helper function to mask data by start time
 def mask_data_by_start(data_in, start):
     data_out = {}
     times = data_in["times"]
     for key, value in data_in.items():
         data = data_in[key]
-        data_out[key] = data[times>start]
+        data_out[key] = data[times > start]
     return data_out
 
+
+# Helper function to get times, means, and standard deviation of data for plotting
 def get_plot_data(data_in, variable):
     times_all = data_in["times"]
     ts = list(set(data_in["times"]))
@@ -263,6 +277,8 @@ def get_plot_data(data_in, variable):
     sds = np.array([np.std(data_in[variable][times_all == t]) for t in ts])
     return ts, means, sds
 
+
+# Plot membrane potentials of presynaptic and postsynaptic neurons
 def plot_vm(pre_data, post_data, data_path, start):
     print("Plotting V_m ...")
     # get presynaptic data
@@ -277,19 +293,25 @@ def plot_vm(pre_data, post_data, data_path, start):
     # plot presynaptic membrane potential
     axes[0].set_title(f"presynaptic neurons (n={len(set(pre_data['senders']))})")
     axes[0].set_ylabel(r"$V_{m}$ (mV)")
-    axes[0].fill_between(pre_times, pre_vm_mean + pre_vm_sd, pre_vm_mean - pre_vm_sd, alpha=0.3, linewidth=0.0, color=color_pre)
+    axes[0].fill_between(
+        pre_times, pre_vm_mean + pre_vm_sd, pre_vm_mean - pre_vm_sd, alpha=0.3, linewidth=0.0, color=color_pre
+    )
     axes[0].plot(pre_times, pre_vm_mean, linewidth=2, color=color_pre)
     # plot postsynaptic  membrane potential
     axes[1].set_title(f"postsynaptic neurons (n={len(set(post_data['senders']))})")
     axes[1].set_ylabel(r"$V_{m}$ (mV)")
     axes[1].set_xlabel("Time (ms)")
-    axes[1].fill_between(post_times, post_vm_mean + post_vm_sd, post_vm_mean - post_vm_sd, alpha=0.3, linewidth=0.0, color=color_post)
+    axes[1].fill_between(
+        post_times, post_vm_mean + post_vm_sd, post_vm_mean - post_vm_sd, alpha=0.3, linewidth=0.0, color=color_post
+    )
     axes[1].plot(post_times, post_vm_mean, linewidth=2, color=color_post)
     # save
     plt.tight_layout()
     plt.savefig(os.path.join(data_path, "V_m.png"))
     plt.close()
 
+
+# Plot dynamics in astrocytes and SIC in neurons
 def plot_dynamics(astro_data, neuron_data, data_path, start):
     print("Plotting dynamics ...")
     # get astrocyte data
@@ -305,28 +327,45 @@ def plot_dynamics(astro_data, neuron_data, data_path, start):
     color_cal = "tab:green"
     color_sic = "tab:purple"
     # plot astrocyte data
-    n_astro = len(set(astro_data_masked['senders']))
+    n_astro = len(set(astro_data_masked["senders"]))
     axes[0].set_title(f"IP$_{{3}}$ and Ca$^{{2+}}$ in astrocytes (n={n_astro})")
     axes[0].set_ylabel(r"IP$_{3}$ ($\mu$M)")
     axes[0].tick_params(axis="y", labelcolor=color_ip3)
-    axes[0].fill_between(astro_times, astro_ip3_mean + astro_ip3_sd, astro_ip3_mean - astro_ip3_sd, alpha=0.3, linewidth=0.0, color=color_ip3)
+    axes[0].fill_between(
+        astro_times,
+        astro_ip3_mean + astro_ip3_sd,
+        astro_ip3_mean - astro_ip3_sd,
+        alpha=0.3,
+        linewidth=0.0,
+        color=color_ip3,
+    )
     axes[0].plot(astro_times, astro_ip3_mean, linewidth=2, color=color_ip3)
     ax = axes[0].twinx()
     ax.set_ylabel(r"Ca$^{2+}$ ($\mu$M)")
     ax.tick_params(axis="y", labelcolor=color_cal)
-    ax.fill_between(astro_times, astro_ca_mean + astro_ca_sd, astro_ca_mean - astro_ca_sd, alpha=0.3, linewidth=0.0, color=color_cal)
+    ax.fill_between(
+        astro_times, astro_ca_mean + astro_ca_sd, astro_ca_mean - astro_ca_sd, alpha=0.3, linewidth=0.0, color=color_cal
+    )
     ax.plot(astro_times, astro_ca_mean, linewidth=2, color=color_cal)
     # plot neuron data
-    n_neuron = len(set(neuron_data_masked['senders']))
+    n_neuron = len(set(neuron_data_masked["senders"]))
     axes[1].set_title(f"SIC in postsynaptic neurons (n={n_neuron})")
     axes[1].set_ylabel("SIC (pA)")
     axes[1].set_xlabel("Time (ms)")
-    axes[1].fill_between(neuron_times, neuron_sic_mean + neuron_sic_sd, neuron_sic_mean - neuron_sic_sd, alpha=0.3, linewidth=0.0, color=color_sic)
+    axes[1].fill_between(
+        neuron_times,
+        neuron_sic_mean + neuron_sic_sd,
+        neuron_sic_mean - neuron_sic_sd,
+        alpha=0.3,
+        linewidth=0.0,
+        color=color_sic,
+    )
     axes[1].plot(neuron_times, neuron_sic_mean, linewidth=2, color=color_sic)
     # save
     plt.tight_layout()
     plt.savefig(os.path.join(data_path, "dynamics.png"))
     plt.close()
+
 
 ###############################################################################
 # Run simulation and save results.

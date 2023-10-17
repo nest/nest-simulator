@@ -20,15 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Test that iaf_psc_alpha_multisynapse recordables work correctly, and compare integration to analytical solution
-
-This module contains three tests.
-The first tests that I_syn_1 is in the list of recordables.
-The second tests that the recordables are updated correctly when the number
-of synaptic ports are changed.
-The third tests that the integration of the alpha-shaped currents of inputs
-from multiple different synaptic ports gives the correct solution, computed
-analytically.
+Test ``iaf_psc_alpha_multisynapse`` recordables and simulated PSCs against expectation.
 """
 
 
@@ -38,41 +30,9 @@ import numpy.testing as nptest
 import pytest
 
 
-tau_syn = [2.0, 20.0, 60.0, 100.0]
-delays = [100.0, 200.0, 500.0, 1200.0]
-spike_time = 100.0
-weight = 1.0
-dt = 0.1
-C_m = 250.0
-tau_m = 15.0
-spike_time = 10.0
-simtime = 2500.0
-
-neuron_params = {"E_L": 0.0, "V_m": 0.0, "V_th": 1500.0, "I_e": 0.0, "tau_m": tau_m, "tau_syn": tau_syn, "C_m": C_m}
-
-
-def test_I_syn_1_in_recordables():
-    nrn = nest.Create("iaf_psc_alpha_multisynapse")
-    assert "I_syn_1" in nrn.get("recordables")
-
-
-def test_resize_recordables():
-    tau_syn1 = [5.0, 1.0, 25.0]
-    tau_syn2 = [5.0, 1.0]
-    tau_syn3 = [5.0, 1.0, 25.0, 50.0]
-
-    nrn = nest.Create("iaf_psc_alpha_multisynapse", params={"tau_syn": tau_syn1})
-    recordables1 = nrn.get("recordables")
-
-    nrn.set(tau_syn=tau_syn2)
-    recordables2 = nrn.get("recordables")
-
-    nrn.set(tau_syn=tau_syn3)
-    recordables3 = nrn.get("recordables")
-
-    assert len(recordables1) == 5
-    assert len(recordables2) == 4
-    assert len(recordables3) == 6
+@pytest.fixture(autouse=True)
+def reset():
+    nest.ResetKernel()
 
 
 def alpha_fn(t, tau_syn):
@@ -83,15 +43,67 @@ def alpha_fn(t, tau_syn):
     return vals
 
 
+def test_I_syn_1_in_recordables():
+    """Test that ``I_syn_1`` is in the list of recordables."""
+
+    nrn = nest.Create("iaf_psc_alpha_multisynapse")
+    assert "I_syn_1" in nrn.get("recordables")
+
+
+def test_resize_recordables():
+    """
+    Test resizing of recordables.
+
+    This test ensures that recordables are updated correctly when the number
+    of synaptic ports are changed.
+    """
+
+    tau_syn1 = [5.0, 1.0, 25.0]
+    tau_syn2 = [5.0, 1.0]
+    tau_syn3 = [5.0, 1.0, 25.0, 50.0]
+
+    nrn = nest.Create("iaf_psc_alpha_multisynapse", params={"tau_syn": tau_syn1})
+    assert len(nrn.recordables) == 5
+
+    nrn.set(tau_syn=tau_syn2)
+    assert len(nrn.recordables) == 4
+
+    nrn.set(tau_syn=tau_syn3)
+    assert len(nrn.recordables) == 6
+
+
 def test_simulation_against_analytical_soln():
-    nest.ResetKernel()
-    nrn = nest.Create("iaf_psc_alpha_multisynapse", params=neuron_params)
+    """
+    Ensure simulated PSCs against analytical expectation.
+
+    This test checks that the integration of the alpha-shaped currents of inputs
+    from multiple different synaptic ports are the same as the analytical solution.
+    """
+
+    tau_syn = [2.0, 20.0, 60.0, 100.0]
+    delays = [100.0, 200.0, 500.0, 1200.0]
+    weight = 1.0
+    spike_time = 10.0
+    simtime = 2500.0
+
+    nrn = nest.Create(
+        "iaf_psc_alpha_multisynapse",
+        params={
+            "C_m": 250.0,
+            "E_L": 0.0,
+            "V_m": 0.0,
+            "V_th": 1500.0,
+            "I_e": 0.0,
+            "tau_m": 15.0,
+            "tau_syn": tau_syn,
+        },
+    )
     sg = nest.Create("spike_generator", params={"spike_times": [spike_time]})
-    conn_spec = "one_to_one"
+
     for i, syn_id in enumerate(range(1, 5)):
         syn_spec = {"synapse_model": "static_synapse", "delay": delays[i], "weight": weight, "receptor_type": syn_id}
 
-        nest.Connect(sg, nrn, conn_spec=conn_spec, syn_spec=syn_spec)
+        nest.Connect(sg, nrn, conn_spec="one_to_one", syn_spec=syn_spec)
 
     mm = nest.Create("multimeter", params={"record_from": ["I_syn_1", "I_syn_2", "I_syn_3", "I_syn_4"]})
 

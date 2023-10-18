@@ -3,14 +3,14 @@
 Tutorials and Guides
 ====================
 
-Start here
------------
+
+Start here to develop your first simulation scripts with NEST
+--------------------------------------------------------------
 
 
-Here are topics that provide an introduction to various aspects of NEST to help you develop your PyNEST script.
-
-.. grid:: 1 1 2 3
+.. grid:: 3
    :gutter: 1
+
 
    .. grid-item-card::
           :class-header: sd-d-flex-item sd-align-minor-center sd-bg-primary sd-text-white
@@ -19,9 +19,10 @@ Here are topics that provide an introduction to various aspects of NEST to help 
           ^^^
 
           * :ref:`Installation instructions <install_nest>`
-          * :ref:`pynest_index`  :abbr:`ℹ️  (A step-by-step introduction to creating your first scripts with NEST)`
-          * :doc:`A simple example <../auto_examples/one_neuron>`  :abbr:`🦖 (A breakdown of a PyNEST script using one neuron)`
-          * A :doc:`video tutorial <../tutorials/videos/index>` showcasing how to create a simple neural network.
+          * :ref:`pynest_index`:  A step-by-step introduction to creating your first scripts with NEST
+          * :doc:`A simple example <../auto_examples/one_neuron>`:  A breakdown of a PyNEST script using one neuron
+          * A :doc:`video tutorial <../tutorials/videos/index>`: Showcasing how to create a simple neural network.
+
 
 
    .. grid-item-card::
@@ -30,11 +31,12 @@ Here are topics that provide an introduction to various aspects of NEST to help 
           |write| Create, connect, simulate, and record
           ^^^
 
-          * An overview of :ref:`modelsmain`
+          * :ref:`modelsmain`: Discover the available models to choose from
           * :ref:`connection_management`: A guide to building connections in NEST
-          * :ref:`run_simulations`: A guide describing various factors in running simulations.
+          * :ref:`run_simulations`: A guide describing various factors in running simulations
           * :ref:`record_simulations`: How to collect data from neurons
             and synapses.
+
 
    .. grid-item-card::
           :class-header: sd-d-flex-item sd-align-minor-center sd-bg-primary sd-text-white
@@ -42,9 +44,14 @@ Here are topics that provide an introduction to various aspects of NEST to help 
           |script| Pointers for writing your PyNEST script
           ^^^
 
-          * Basic functionality for :ref:`manipulating nodes (neurons and devices) <node_handles>`
-          * Basic functionality for :ref:`manipulating connections (synapses) <handling_connections>`
+          * :ref:`Manipulating nodes (neurons and devices) <node_handles>`: understand basic functionality of nodes
+          * :ref:`Manipulating connections (synapses) <handling_connections>`: understand basic fucntionality of connections
           * :ref:`param_ex`: explore how to use parameter objects in NEST
+
+.. seealso::
+
+
+   Check out our :ref:`numerous example PyNEST scripts <pynest_examples>`
 
 
 ----
@@ -94,7 +101,7 @@ Additional topics
        |network| Networks
        ^^^
 
-       * A deep dive into creating :ref:`spatial_networks`
+       * :ref:`spatial_networks`: A deep dive into building 2D and 3D networks
        * :doc:`The microcircuit model <../auto_examples/Potjans_2014/index>`: A network model example based on Potjans and Diesman 2014.
        * The `multi-area model <https://inm-6.github.io/multi-area-model/>`_: A network model of the visual cortex of the macaque monkey.
 
@@ -114,7 +121,7 @@ Additional topics
        |random| NEST behavior
        ^^^
 
-       * :ref:`built_in_timers` describes the various timers available.
+       * :ref:`built_in_timers`: A guide to the various timers available in NEST.
        * :ref:`random_numbers`: A guide to how random number are used in network simulations.
 
 
@@ -128,7 +135,7 @@ Additional topics
        |sonata| NEST SONATA guide
        ^^^
 
-       * How to use the :ref:`SONATA format<nest_sonata>`
+       * :ref:`SONATA with NEST <nest_sonata>`: Guide to using the SONATA format
 
    .. grid-item-card::
        :class-header: sd-d-flex-row sd-align-minor-center sd-bg-dark sd-text-white
@@ -139,7 +146,7 @@ Additional topics
        * :ref:`nest_server`: A guide showcasing how to interact with NEST via a RESTful API.
        * :ref:`MUSIC Tutorial <music_tutorial_1>`: how to transmit data between applications
          with the MUSIC interface, step-by-step.
-       * :ref:`nest_music`
+       * :ref:`nest_music`: Additional guide for building scripts with MUSIC
 
 
    .. grid-item-card::

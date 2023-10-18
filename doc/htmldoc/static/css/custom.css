@@ -200,7 +200,7 @@ div[role="main"] .md-source {
 .md-typeset .sd-card-title img, .md-typeset .sd-card-header img{
   border: none;
   opacity: 0.9;
-  width: 64px;
+  /*width: 64px;*/
   height: 60px;
   margin-right: 2em;
   margin-bottom: 0.5em;
@@ -686,8 +686,8 @@ MEDIAQUERIES
 @media only screen and (min-width: 2048px) {
 
 .md-typeset .sd-card-title img {
- width: 128px;
- height: auto;
+ width: auto;
+ height: 60px;
   }
 }
 @media only screen and (min-width: 1024px) {

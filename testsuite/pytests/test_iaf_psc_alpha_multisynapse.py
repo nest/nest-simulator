@@ -74,7 +74,7 @@ def test_resize_recordables():
 
 def test_simulation_against_analytical_soln():
     """
-    Ensure simulated PSCs against analytical expectation.
+    Test simulated PSCs against analytical expectation.
 
     This test checks that the integration of the alpha-shaped currents of inputs
     from multiple different synaptic ports are the same as the analytical solution.

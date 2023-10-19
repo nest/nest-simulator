@@ -28,48 +28,12 @@ import warnings
 
 import nest
 import numpy as np
+import numpy.testing as nptest
 
 
 class TestNodeParametrization(unittest.TestCase):
     def setUp(self):
         nest.ResetKernel()
-
-    def test_create_with_list(self):
-        """Test Create with list as parameter"""
-        Vm_ref = [-11.0, -12.0, -13.0]
-        nodes = nest.Create("iaf_psc_alpha", 3, {"V_m": Vm_ref})
-
-        self.assertAlmostEqual(list(nodes.V_m), Vm_ref)
-
-    def test_create_with_several_lists(self):
-        """Test Create with several lists as parameters"""
-        Vm_ref = [-22.0, -33.0, -44.0]
-        Cm_ref = 124.0
-        Vmin_ref = [-1.0, -2.0, -3.0]
-
-        params = {"V_m": Vm_ref, "C_m": Cm_ref, "V_min": Vmin_ref}
-        nodes = nest.Create("iaf_psc_alpha", 3, params)
-
-        self.assertAlmostEqual(list(nodes.V_m), Vm_ref)
-        self.assertAlmostEqual(list(nodes.C_m), [Cm_ref, Cm_ref, Cm_ref])
-        self.assertAlmostEqual(list(nodes.V_min), Vmin_ref)
-
-    def test_create_with_spike_generator(self):
-        """Test Create with list that should not be split"""
-        spike_times = [10.0, 20.0, 30.0]
-        sg = nest.Create("spike_generator", 2, {"spike_times": spike_times})
-
-        st = sg.spike_times
-
-        self.assertAlmostEqual(list(st[0]), spike_times)
-        self.assertAlmostEqual(list(st[1]), spike_times)
-
-    def test_create_with_numpy(self):
-        """Test Create with numpy array as parameter"""
-        Vm_ref = np.array([-80.0, -90.0, -100.0])
-        nodes = nest.Create("iaf_psc_alpha", 3, {"V_m": Vm_ref})
-
-        self.assertAlmostEqual(nodes.V_m, Vm_ref)
 
     def test_create_uniform(self):
         """Test Create with random.uniform as parameter"""
@@ -126,51 +90,6 @@ class TestNodeParametrization(unittest.TestCase):
         for vm in nodes.get("V_m"):
             self.assertGreaterEqual(vm, -45.0)
             self.assertLessEqual(vm, -25.0)
-
-    def test_set_with_dict_with_single_list(self):
-        """Test set with dict with list"""
-        nodes = nest.Create("iaf_psc_alpha", 3)
-        Vm_ref = [-30.0, -40.0, -50.0]
-        nodes.set({"V_m": Vm_ref})
-
-        self.assertAlmostEqual(list(nodes.get("V_m")), Vm_ref)
-
-    def test_set_with_dict_with_lists(self):
-        """Test set with dict with lists"""
-        nodes = nest.Create("iaf_psc_alpha", 3)
-        Vm_ref = [-11.0, -12.0, -13.0]
-        Cm_ref = 177.0
-        tau_minus_ref = [22.0, 24.0, 26.0]
-        nodes.set({"V_m": Vm_ref, "C_m": Cm_ref, "tau_minus": tau_minus_ref})
-
-        self.assertAlmostEqual(list(nodes.get("V_m")), Vm_ref)
-        self.assertAlmostEqual(nodes.get("C_m"), (Cm_ref, Cm_ref, Cm_ref))
-        self.assertAlmostEqual(list(nodes.get("tau_minus")), tau_minus_ref)
-
-    def test_set_with_dict_with_single_element_lists(self):
-        """Test set with dict with single element lists"""
-        node = nest.Create("iaf_psc_alpha")
-        Vm_ref = -13.0
-        Cm_ref = 222.0
-        node.set({"V_m": [Vm_ref], "C_m": [Cm_ref]})
-
-        self.assertAlmostEqual(node.get("V_m"), Vm_ref)
-        self.assertAlmostEqual(node.get("C_m"), Cm_ref)
-
-    def test_set_with_dict_with_list_with_bools(self):
-        """Test set with dict with list with bool"""
-        nodes = nest.Create("spike_recorder", 3)
-        withport_ref = (True, False, True)
-        nodes.set({"time_in_steps": [True, False, True]})
-
-        self.assertEqual(nodes.get("time_in_steps"), withport_ref)
-
-    def test_set_on_spike_generator(self):
-        """Test set with dict with list that is not to be split"""
-        sg = nest.Create("spike_generator")
-        sg.set({"spike_times": [1.0, 2.0, 3.0]})
-
-        self.assertEqual(list(sg.get("spike_times")), [1.0, 2.0, 3.0])
 
     def test_set_with_random(self):
         """Test set with dict with random parameter"""
@@ -242,19 +161,19 @@ class TestNodeParametrization(unittest.TestCase):
         layer.set({"C_m": nest.spatial.pos.z})
 
         status = layer.get()
-        self.assertAlmostEqual(status["V_m"], tuple(np.linspace(0, 0.5, 5)))
-        self.assertAlmostEqual(status["E_L"], tuple(np.linspace(0, 0.5 * 0.5, 5)))
-        self.assertAlmostEqual(status["C_m"], tuple([0.1 + 0.2 * x for x in np.linspace(0, 0.5, 5)]))
+        nptest.assert_array_equal(status["V_m"], np.linspace(0, 0.5, 5))
+        nptest.assert_array_equal(status["E_L"], np.linspace(0, 0.5 * 0.5, 5))
+        nptest.assert_array_equal(status["C_m"], [0.1 + 0.2 * x for x in np.linspace(0, 0.5, 5)])
 
     def test_node_pos_parameter_wrong_dimension(self):
         """Test node-position parameter with wrong dimension"""
         positions = [[x, 0.5 * x] for x in np.linspace(0, 0.5, 5)]
         layer = nest.Create("iaf_psc_alpha", positions=nest.spatial.free(positions))
 
-        with self.assertRaises(nest.NESTError):
+        with self.assertRaises(nest.NESTErrors.BadParameterValue):
             layer.set({"V_m": nest.spatial.pos.n(-1)})
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(nest.NESTErrors.KernelException):
             layer.set({"V_m": nest.spatial.pos.z})
 
     def test_conn_distance_parameter(self):

@@ -27,6 +27,7 @@ import unittest
 
 import nest
 import numpy as np
+import numpy.testing as nptest
 
 
 class TestLayerNodeCollection(unittest.TestCase):
@@ -84,9 +85,7 @@ class TestLayerNodeCollection(unittest.TestCase):
                 density = num_nodes / (2 * r) ** num_dimensions
                 expected_conns_per_node = density * n_dim_volume
                 expected_total_conns = expected_conns_per_node * num_nodes
-                print(f"Expecting {expected_total_conns:.0f} connections")
                 nest.Connect(nodes, nodes, {"rule": "pairwise_bernoulli", "p": 1.0, "mask": mask})
-                print(f'Num. connections: {nest.GetKernelStatus("num_connections")}')
                 rel_diff = abs(nest.GetKernelStatus("num_connections") - expected_total_conns) / expected_total_conns
                 self.assertLess(rel_diff, rel_limit)
 
@@ -104,8 +103,8 @@ class TestLayerNodeCollection(unittest.TestCase):
         nodes = nest.Create("iaf_psc_alpha", positions=free_positions_extent)
 
         spatial = nodes.spatial  # Extract spatial information
-        self.assertEqual(spatial["center"], spatial["positions"][0])  # Center will be at the position of the only node
-        self.assertEqual(spatial["extent"], extent)
+        nptest.assert_array_equal(spatial["center"], spatial["positions"][0])
+        nptest.assert_array_equal(spatial["extent"], extent)
 
 
 def suite():

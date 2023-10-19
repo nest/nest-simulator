@@ -91,6 +91,7 @@ init_nest( int* argc, char** argv[] )
   register_parameter< Gaussian2DParameter >( "gaussian2d" );
   register_parameter< GammaParameter >( "gamma" );
   register_parameter< ExpDistParameter >( "exp_distribution" );
+  register_parameter< GaborParameter >( "gabor" );
 
   register_mask< BallMask< 2 > >();
   register_mask< BallMask< 3 > >();

@@ -1218,6 +1218,12 @@ def serialize_data(data):
     elif isinstance(data, SynapseCollection):
         # Get full information from SynapseCollection
         return serialize_data(data.get())
+    elif isinstance(data, numpy.floating):
+        return float(data)
+    elif isinstance(data, numpy.integer):
+        return int(data)
+    elif isinstance(data, numpy.bool_):
+        return bool(data)
     if isinstance(data, (list, tuple)):
         return [serialize_data(d) for d in data]
     if isinstance(data, dict):

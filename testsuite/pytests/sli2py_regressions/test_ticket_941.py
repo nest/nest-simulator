@@ -24,8 +24,7 @@
 with different synapse models."""
 
 import nest
-import numpy as np
-import pytest
+import numpy.testing as nptest
 
 
 def check_connection(source, n_expected, expected):
@@ -81,18 +80,11 @@ def test_different_connections():
     assert nest.num_connections == 5
 
     nest.Simulate(10.0)
-    spike_recs = spike_recorder.events["times"]
-    assert np.all(
-        spike_recs["times"]
-        == pytest.approx(
-            [
-                3.0,
-                4.0,
-                5.0,
-            ]
-        )
-    )
 
-    synapses = nest.GetConnections(source=pn1, target=pn2).synapse_model
+    actual_spikes = spike_recorder.events["times"]
+    expected_spikes = [3.0, 4.0, 5.0]
+    nptest.assert_array_equal(actual_spikes, expected_spikes)
+
+    actual_synapses = nest.GetConnections(source=pn1, target=pn2).synapse_model
     expected_synapses = ["static_synapse", "static_synapse", "static_synapse_hom_w"]
-    assert np.all(np.in1d(expected_synapses, synapses))
+    assert actual_synapses == expected_synapses

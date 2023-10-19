@@ -55,14 +55,13 @@ def test_set_individual_spike_trains_on_set_defaults():
     assert not individual_spike_trains
 
 
-def test_set_individual_spike_trains_on_creation():
+def test_set_individual_spike_trains_on_creation_raises():
     """
-    Test whether `individual_spike_trains` can be set on model creation.
+    Test that `individual_spike_trains` set on model creation raises exception.
     """
 
-    sspg = nest.Create("sinusoidal_poisson_generator", params={"individual_spike_trains": False})
-    individual_spike_trains = sspg.individual_spike_trains
-    assert not individual_spike_trains
+    with pytest.raises(nest.NESTErrors.BadProperty):
+        nest.Create("sinusoidal_poisson_generator", params={"individual_spike_trains": False})
 
 
 def test_set_individual_spike_trains_on_copy_model():

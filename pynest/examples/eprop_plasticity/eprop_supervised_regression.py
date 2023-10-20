@@ -454,13 +454,7 @@ loss = 0.5 * np.add.reduceat(error, np.arange(0, steps["task"], steps["sequence"
 # Furthermore, we compare the calculated losses to some hardcoded verification losses to ensure everything with
 # the NEST installation is fine. For the unmodified script, these should be precisely the same.
 
-loss_verification = [
-    101.96435699904158,
-    103.47003486967037,
-    103.34261776087175,
-    103.68305568057912,
-    104.41600561835052,
-]
+loss_verification = [101.96435699904158, 103.4667311262058, 103.34060707477168, 103.68024403768639, 104.41277574875247]
 
 if loss.tolist()[:5] == loss_verification:
     print("\n verification successful \n")

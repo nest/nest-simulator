@@ -54,5 +54,12 @@ def test_stepped_simulation():
         nest.Simulate(1.0)
     spikes_stepped = srec_stepped.events["times"]
 
+    # Stepped simulation with RunManager
+    srec_stepped_rm = build_net()
+    with nest.RunManager():
+        for _ in range(3):
+            nest.Run(1.0)
+    spikes_stepped_rm = srec_stepped_rm.events["times"]
+
     # Compare
     assert spikes_single == spikes_stepped

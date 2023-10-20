@@ -56,20 +56,6 @@ Connection Management
 		:link-type: ref
 
 		.. image:: ../static/img/Multapse_H.png
-		
-		
-
-We here provide formal definitions of connectivity concepts for neuronal network models. These concepts encompass the basic connectivity rules illustrated above which are already commonly used by the computational neuroscience community. Beyond that, we discuss concepts to reflect some of the richness of anatomical brain connectivity and complement in particular non-spatial connectivity rules with rules for spatially organized connectivity. Much of the information on this page is based on the paper "Connectivity concepts in neuronal network modeling" [1]_.
-
-For each high-level connectivity rule, we give both an algorithmic construction rule and the resulting connectivity distribution. Modelers can use these definitions to succinctly specify connection rules in their studies. However, if details differ from our standard definitions, these details should still be specified. Furthermore, we suggest symbols that can be used to indicate the corresponding connectivity types in network diagrams and add the corresponding CSA expressions from [2]_.
-
-In the specification of connectivity concepts we use the following notations and definitions. Let :math:`\mathcal{S}=\{s_1,\ldots, s_{N_s}\}` be the ordered set of sources of cardinality :math:`N_s` and :math:`\mathcal{T}=\{t_1,\ldots, t_{N_t}\}` the set of targets of cardinality :math:`N_t`. Then the set of all possible directed edges between members of :math:`\mathcal{S}` and :math:`\mathcal{T}` is given by the Cartesian product :math:`\mathcal{E}_{ST}=\mathcal{S \times T}` of cardinality :math:`N_s\cdot N_t`.
-
-If the source and target populations are identical (:math:`\mathcal{S= T}`) a source can be its own target. We call such a self-connection an :ref:`autapse <multapse_autapse>`.
-If autapses are not allowed, the target set for any node :math:`i \in \mathcal{S}` is :math:`\mathcal{T=S} \setminus i`, with cardinality :math:`N_t=N_s-1`.
-If there is more than one edge between a source and target (or from a node to itself), we call this a :ref:`multapse <multapse_autapse>`.
-
-The :math:`{degree\ distribution}\ P(k)` is the distribution across nodes of the number of edges per node. In a directed network, the distribution of the number of edges going out of (into) a node is called the :math:`{out\!-\!degree} (in\!-\!degree)` distribution. The distributions given below describe the effect of applying a connection rule once to a given :math:`\mathcal{S}-\mathcal{T}` pair.
 
 Connections between populations of neurons and between neurons and
 devices for stimulation and recording in NEST are created with the
@@ -131,6 +117,17 @@ Have a look at the :ref:`inspecting_connections` section further down
 to get more tips on how to examine the connections in greater detail.
 
 
+We here provide formal definitions of connectivity concepts for neuronal network models. These concepts encompass the basic connectivity rules illustrated above which are already commonly used by the computational neuroscience community. Beyond that, we discuss concepts to reflect some of the richness of anatomical brain connectivity and complement in particular non-spatial connectivity rules with rules for spatially organized connectivity. Much of the information on this page is based on the paper "Connectivity concepts in neuronal network modeling" [1]_.
+
+For each high-level connectivity rule, we give both an algorithmic construction rule and the resulting connectivity distribution. Modelers can use these definitions to succinctly specify connection rules in their studies. However, if details differ from our standard definitions, these details should still be specified. Furthermore, we suggest symbols that can be used to indicate the corresponding connectivity types in network diagrams and add the corresponding CSA expressions from [2]_.
+
+In the specification of connectivity concepts we use the following notations and definitions. Let :math:`\mathcal{S}=\{s_1,\ldots, s_{N_s}\}` be the ordered set of sources of cardinality :math:`N_s` and :math:`\mathcal{T}=\{t_1,\ldots, t_{N_t}\}` the set of targets of cardinality :math:`N_t`. Then the set of all possible directed edges between members of :math:`\mathcal{S}` and :math:`\mathcal{T}` is given by the Cartesian product :math:`\mathcal{E}_{ST}=\mathcal{S \times T}` of cardinality :math:`N_s\cdot N_t`.
+
+If the source and target populations are identical (:math:`\mathcal{S= T}`) a source can be its own target. We call such a self-connection an :ref:`autapse <multapse_autapse>`.
+If autapses are not allowed, the target set for any node :math:`i \in \mathcal{S}` is :math:`\mathcal{T=S} \setminus i`, with cardinality :math:`N_t=N_s-1`.
+If there is more than one edge between a source and target (or from a node to itself), we call this a :ref:`multapse <multapse_autapse>`.
+
+The :math:`{degree\ distribution}\ P(k)` is the distribution across nodes of the number of edges per node. In a directed network, the distribution of the number of edges going out of (into) a node is called the :math:`{out\!-\!degree} (in\!-\!degree)` distribution. The distributions given below describe the effect of applying a connection rule once to a given :math:`\mathcal{S}-\mathcal{T}` pair.
 
 
 .. _multapse_autapse:

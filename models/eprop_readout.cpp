@@ -308,7 +308,7 @@ nest::eprop_readout::handle( DelayedRateConnectionEvent& e )
 {
   size_t rport = e.get_rport();
   const long delay = e.get_delay_steps();
-  size_t i = 0;
+  long i = 0;
 
   assert( rport < 3 );
 
@@ -317,7 +317,7 @@ nest::eprop_readout::handle( DelayedRateConnectionEvent& e )
   while ( it != e.end() )
   {
     double signal = e.get_weight() * e.get_coeffvalue( it ); // get_coeffvalue advances iterator
-    size_t t = delay + i;
+    long t = delay + i;
 
     if ( rport == READOUT_SIG - MIN_RATE_RECEPTOR )
     {

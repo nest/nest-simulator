@@ -254,7 +254,7 @@ eprop_synapse_readout< targetidentifierT >::update_gradient( EpropArchivingNode*
   for ( auto presyn_isi : presyn_isis )
   {
     z_bar += 1.0 - this->kappa_;
-    for ( int t = 0; t < presyn_isi; ++t )
+    for ( long t = 0; t < presyn_isi; ++t )
     {
       grad += it_eprop_hist->learning_signal_ * z_bar;
       z_bar *= this->kappa_;

@@ -239,7 +239,7 @@ private:
     double readout_signal_;
     double readout_signal_unnorm_;
     bool requires_buffer_;
-    int start_learning_step_; //!< time step to start sending learning signals
+    long start_learning_step_; //!< time step to start sending learning signals
     double target_signal_;
   };
 

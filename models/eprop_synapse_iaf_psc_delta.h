@@ -218,7 +218,6 @@ public:
     const EpropCommonProperties& cp ) const override;
   void get_status( DictionaryDatum& d ) const;
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
-  bool do_update( const double& t_spike ) const override;
 };
 
 template < typename targetidentifierT >
@@ -280,15 +279,6 @@ eprop_synapse_iaf_psc_delta< targetidentifierT >::update_gradient( EpropArchivin
   grad *= dt;
 
   sum_grads += grad;
-}
-
-template < typename targetidentifierT >
-bool
-eprop_synapse_iaf_psc_delta< targetidentifierT >::do_update( const double& t_spike ) const
-{
-  double update_interval = kernel().simulation_manager.get_eprop_update_interval().get_ms();
-  bool is_update = std::fmod( t_spike - get_delay(), update_interval ) != 0.0;
-  return is_update;
 }
 
 } // namespace nest

@@ -267,22 +267,19 @@ nest::eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, co
   for ( long lag = from; lag < to; ++lag )
   {
     long t = origin.get_steps() + lag;
-    bool is_time_to_eprop_update = t % update_interval_steps == shift - 1;
+    long interval_step = ( t - shift ) % update_interval_steps;
 
-    if ( is_time_to_eprop_update )
+    if ( interval_step == 0 )
     {
-      write_firing_rate_reg_to_history( t + 1, P_.f_target_, P_.c_reg_ );
       erase_unneeded_firing_rate_reg_history();
       erase_unneeded_update_history();
       erase_unneeded_eprop_history();
-      reset_spike_counter();
 
       if ( with_reset )
       {
         S_.y3_ = 0.0;
         S_.adaptation_ = 0.0;
         S_.r_ = 0;
-        B_.spikes_.clear(); // includes resize
         S_.z_ = 0.0;
       }
     }
@@ -313,6 +310,12 @@ nest::eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, co
 
       if ( V_.RefractoryCounts_ > 0 )
         S_.r_ = V_.RefractoryCounts_;
+    }
+
+    if ( interval_step == update_interval_steps - 1 )
+    {
+      write_firing_rate_reg_to_history( t, P_.f_target_, P_.c_reg_ );
+      reset_spike_counter();
     }
 
     std::deque< HistEntryEpropArchive >::iterator it_eprop_hist;

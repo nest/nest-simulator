@@ -219,7 +219,6 @@ public:
 
   void get_status( DictionaryDatum& d ) const;
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
-  bool do_update( const double& t_spike ) const override;
 };
 
 template < typename targetidentifierT >
@@ -266,14 +265,6 @@ eprop_synapse_readout< targetidentifierT >::update_gradient( EpropArchivingNode*
   grad *= dt;
 
   sum_grads += grad;
-}
-
-
-template < typename targetidentifierT >
-bool
-eprop_synapse_readout< targetidentifierT >::do_update( const double& t_spike ) const
-{
-  return true;
 }
 
 } // namespace nest

@@ -110,7 +110,7 @@ steps = {
     "recall": 1,  # time steps of recall
     "recall_onset": 0,  # time steps until recall onset
     "sequence": 1000,  # time steps of one full sequence
-    "shift": 4,  # time steps of shift - as generators & multimeter act on timesteps > 0 + signal travel time
+    "shift": 5,  # time steps of shift - as generators & multimeter act on timesteps > 0 + signal travel time
 }
 
 steps["task"] = n_iter * n_batch * steps["sequence"]  # time steps of task
@@ -319,7 +319,7 @@ input_spike_bools = np.random.rand(n_batch, steps["sequence"], n_in) < spike_pro
 input_spike_bools = np.hstack(input_spike_bools.swapaxes(1, 2))
 input_spike_bools[:, 0] = 0  # suppress spikes since NEST does not allow spike emission in 0th time step
 
-sequence_starts = np.arange(0.0, duration["task"], duration["sequence"])
+sequence_starts = np.arange(0.0, duration["task"], duration["sequence"]) + duration["step"]
 params_gen_spk_in = []
 for input_spike_bool in input_spike_bools:
     input_spike_times = np.arange(duration["sequence"] * n_batch)[input_spike_bool]
@@ -359,7 +359,7 @@ target_signal = generate_superimposed_sines(steps["sequence"], [1000.0, 500.0, 3
 
 params_gen_rate_target = {
     # shift by one time step since NEST does not allow rate generation in 0th time step
-    "amplitude_times": (np.arange(0, duration["task"], duration["step"]) + duration["step"]).tolist(),
+    "amplitude_times": (np.arange(0, duration["task"], duration["step"]) + 2 * duration["step"]).tolist(),
     "amplitude_values": np.tile(target_signal, n_iter * n_batch).tolist(),
 }
 
@@ -376,7 +376,7 @@ nest.SetStatus(gen_rate_target, params_gen_rate_target)
 # the last update interval, by sending a strong spike to all neurons that form the presynaptic side of an eprop
 # synapse. This step is required purely for technical reasons.
 
-gen_spk_final_update = nest.Create("spike_generator", 1, {"spike_times": [duration["task"] + 2]})
+gen_spk_final_update = nest.Create("spike_generator", 1, {"spike_times": [duration["task"] + 3]})
 
 nest.Connect(gen_spk_final_update, nrns_in + nrns_rec, "all_to_all", {"weight": 1000.0})
 

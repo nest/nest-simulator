@@ -301,11 +301,6 @@ public:
     double& sum_grads,
     std::vector< double >& presyn_isis,
     const EpropCommonProperties& cp ) const {};
-  virtual bool
-  do_update( const double& t_spike ) const
-  {
-    return false;
-  }
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -328,6 +323,8 @@ public:
   void
   check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
+    is_source_recurrent_neuron = s.get_name() == "eprop_iaf_psc_delta" or s.get_name() == "eprop_iaf_psc_delta_adapt";
+
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
@@ -362,6 +359,7 @@ protected:
   double adam_m_;        // auxiliary variable for Adam optimizer
   double adam_v_;        // auxiliary variable for Adam optimizer
   double sum_grads_;     // sum of the gradients in one batch
+  bool is_source_recurrent_neuron;
 
   std::vector< double > presyn_isis_;
 };
@@ -373,48 +371,49 @@ template < typename targetidentifierT >
 inline void
 eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCommonProperties& cp )
 {
-  double t_spike = e.get_stamp().get_ms();
-
   EpropArchivingNode* target = dynamic_cast< EpropArchivingNode* >( get_target( thread ) );
   assert( target );
 
+  double t_spike = e.get_stamp().get_ms();
   double update_interval = kernel().simulation_manager.get_eprop_update_interval().get_ms();
   double dt = Time::get_resolution().get_ms();
-
   const double shift = target->get_shift();
+
+  long interval_step = std::fmod( t_spike - shift, update_interval );
+  bool is_first_interval_step = fabs( interval_step ) < 1e-6;
+
+  if ( is_source_recurrent_neuron and is_first_interval_step )
+    return;
 
   if ( fabs( t_last_trigger_spike_ ) < 1e-6 )
     t_last_trigger_spike_ = t_spike;
 
-  if ( do_update( t_spike ) )
+  if ( t_last_spike_ > 0.0 )
   {
-    if ( t_last_spike_ > 0.0 )
-    {
-      double t = t_spike >= t_next_update_ + shift ? t_next_update_ + shift - get_delay() : t_spike;
-      presyn_isis_.push_back( t - t_last_spike_ );
-    }
-
-    if ( t_spike >= t_next_update_ + shift )
-    {
-      long idx_current_update = static_cast< long >( std::floor( ( t_spike - dt ) / update_interval ) );
-      double t_current_update_ = idx_current_update * update_interval;
-      long current_optimization_step_ = 1 + idx_current_update / cp.batch_size_;
-
-      target->write_update_to_history( t_last_update_, t_current_update_ );
-
-      update_gradient( target, sum_grads_, presyn_isis_, cp );
-
-      if ( last_optimization_step_ < current_optimization_step_ )
-        optimize( current_optimization_step_, last_optimization_step_, cp );
-
-      t_last_update_ = t_current_update_;
-      t_next_update_ = t_current_update_ + update_interval;
-
-      t_last_trigger_spike_ = t_spike;
-    }
-
-    t_last_spike_ = t_spike;
+    double t = t_spike >= t_next_update_ + shift ? t_next_update_ + shift : t_spike;
+    presyn_isis_.push_back( t - t_last_spike_ );
   }
+
+  if ( t_spike >= t_next_update_ + shift )
+  {
+    long idx_current_update = static_cast< long >( std::floor( ( t_spike - dt ) / update_interval ) );
+    double t_current_update_ = idx_current_update * update_interval;
+    long current_optimization_step_ = 1 + idx_current_update / cp.batch_size_;
+
+    target->write_update_to_history( t_last_update_, t_current_update_ );
+
+    update_gradient( target, sum_grads_, presyn_isis_, cp );
+
+    if ( last_optimization_step_ < current_optimization_step_ )
+      optimize( current_optimization_step_, last_optimization_step_, cp );
+
+    t_last_update_ = t_current_update_;
+    t_next_update_ = t_current_update_ + update_interval;
+
+    t_last_trigger_spike_ = t_spike;
+  }
+
+  t_last_spike_ = t_spike;
 
   e.set_receiver( *target );
   e.set_weight( weight_ );

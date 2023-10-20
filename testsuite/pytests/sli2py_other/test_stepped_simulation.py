@@ -63,3 +63,4 @@ def test_stepped_simulation():
 
     # Compare
     assert spikes_single == spikes_stepped
+    assert spikes_single == spikes_stepped_rm

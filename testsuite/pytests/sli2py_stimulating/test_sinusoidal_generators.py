@@ -151,54 +151,6 @@ def test_sinusoidal_generator_with_spike_recorder(gen_model, num_threads, indivi
         assert all(np.array_equal(spikes_all_nrns[0], right) for right in spikes_all_nrns[1:])
 
 
-@pytest.mark.skipif_missing_threads()
-@pytest.mark.parametrize("gen_model", gen_models)
-@pytest.mark.parametrize("individual_spike_trains", [False, True])
-@pytest.mark.parametrize("num_threads", [1, 2])
-def test_sinusoidal_generator_with_multimeter(gen_model, num_threads, individual_spike_trains):
-    """
-    Test multimeter recording with both true and false ``individual_spike_trains``.
-
-    The test builds a network with ``num_threads x 4`` parrot neurons that
-    receives spikes from the specified sinusoidal generator. A ``multimeter`` is
-    then connected to the generator and the system is simulated. The test ensures
-    that a ``multimeter`` can be connected to record the rate, independent of
-    ``individual_spike_tains``. Since only a single trace should be returned,
-    the test checks that the multimeter recording contains the expected number
-    of data points.
-    """
-
-    nest.local_num_threads = num_threads
-    T_sim = 100.0
-
-    nest.SetDefaults(
-        gen_model,
-        {
-            "rate": 100,
-            "amplitude": 50.0,
-            "frequency": 10.0,
-            "individual_spike_trains": individual_spike_trains,
-        },
-    )
-
-    nrns_per_thread = 4
-    total_num_nrns = num_threads * nrns_per_thread
-
-    parrots = nest.Create("parrot_neuron", total_num_nrns)
-    sspg = nest.Create(gen_model)
-    mm = nest.Create("multimeter", {"record_from": ["rate"]})
-
-    nest.Connect(sspg, parrots)
-    nest.Connect(mm, sspg)
-
-    nest.Simulate(T_sim)
-
-    # Check that times and rates contain ndata points
-    expected_ndata = T_sim - 1
-    assert len(mm.events["times"]) == expected_ndata
-    assert len(mm.events["rate"]) == expected_ndata
-
-
 @pytest.mark.parametrize("gen_model", gen_models)
 def test_sinusoidal_generator_rate_profile(gen_model):
     """

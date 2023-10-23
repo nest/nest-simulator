@@ -26,7 +26,7 @@ Random balanced network with astrocytes
 This script simulates a random balanced network with excitatory and inhibitory
 neurons and astrocytes. The astrocyte is modeled with ``astrocyte_lr_1994``,
 implemented according to [1]_, [2]_, and [3]_. The neuron is modeled with
-``aeif_cond_alpha_astro``, an adaptive exponential integrate and fire neuron
+``aeif_cond_alpha_astro``, an adaptive exponential integrate-and-fire neuron
 supporting neuron-astrocyte interactions.
 
 The simulation results of this network demonstrate an astrocytic effect on

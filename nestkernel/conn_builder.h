@@ -493,11 +493,11 @@ private:
   AuxiliaryBuilder third_in_builder_;
   AuxiliaryBuilder third_out_builder_;
 
-  double p_primary_;         //!< connection probability for pre-post connections
-  double p_third_if_primary_;      //!< probability third-factor connection if primary connection created
-  bool random_pool_;         //!< if true, select astrocyte pool at random
-  size_t pool_size_;         //!< size of third-factor pool
-  size_t targets_per_third_; //!< target nodes per third-factor node
+  double p_primary_;          //!< connection probability for pre-post connections
+  double p_third_if_primary_; //!< probability third-factor connection if primary connection created
+  bool random_pool_;          //!< if true, select astrocyte pool at random
+  size_t pool_size_;          //!< size of third-factor pool
+  size_t targets_per_third_;  //!< target nodes per third-factor node
 };
 
 class SymmetricBernoulliBuilder : public ConnBuilder

@@ -38,7 +38,7 @@ Bernoulli connectivity with the following principles:
 determines if they will be connected.
 
 2. For each neuron-neuron connection created, a Bernoulli trial with a
-probability ``p_cond_third`` determines if it will be paired with one astrocyte.
+probability ``p_third_if_primary`` determines if it will be paired with one astrocyte.
 The selection of this particular astrocyte is confined by ``pool_size`` and
 ``pool_type`` (see below).
 
@@ -53,7 +53,7 @@ The available connectivity parameters are as follows:
 
   * ``p_primary``: Connection probability between neurons.
 
-  * ``p_cond_third``: Probability of each created neuron-neuron connection to be
+  * ``p_third_if_primary``: Probability of each created neuron-neuron connection to be
     paired with one astrocyte.
 
   * ``pool_size``: The size of astrocyte pool for each target neuron. The
@@ -75,7 +75,7 @@ The available connectivity parameters are as follows:
   * ``third_out``: specifications for the connections from astrocytes to neurons.
 
 In this script, the network is created with the ``pool_type`` being "block".
-``p_primary`` and ``p_cond_third`` are both set to one, so that all possible
+``p_primary`` and ``p_third_if_primary`` are both set to one, so that all possible
 connections are made. It can be seen from the result plot "connections.png" that
 "block" distributes the astrocytes evenly to the postsynaptic neurons in blocks
 without overlapping. The ``pool_size`` should be compatible with this
@@ -142,7 +142,7 @@ os.system(f"mkdir -p {save_path}")
 n_neurons = 10  # number of source and target neurons
 n_astrocytes = 5  # number of astrocytes
 p_primary = 1.0  # connection probability between neurons
-p_cond_third = 1.0  # probability of each created neuron-neuron connection to be paired with one astrocyte
+p_third_if_primary = 1.0  # probability of each created neuron-neuron connection to be paired with one astrocyte
 pool_size = 1  # astrocyte pool size for each target neuron
 pool_type = "block"  # the way to determine the astrocyte pool for each target neuron
 
@@ -179,7 +179,7 @@ nest.TripartiteConnect(
     conn_spec={
         "rule": "tripartite_bernoulli_with_pool",
         "p_primary": p_primary,
-        "p_cond_third": p_cond_third,
+        "p_third_if_primary": p_third_if_primary,
         "pool_size": pool_size,
         "pool_type": pool_type,
     },

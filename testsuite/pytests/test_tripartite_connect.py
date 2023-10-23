@@ -30,7 +30,7 @@ def test_connect_all():
     third = nest.Create("parrot_neuron", n_third)
 
     nest.TripartiteConnect(
-        pre, post, third, {"rule": "tripartite_bernoulli_with_pool", "p_primary": 1.0, "p_cond_third": 1}
+        pre, post, third, {"rule": "tripartite_bernoulli_with_pool", "p_primary": 1.0, "p_third_if_primary": 1}
     )
 
     n_primary = n_pre * n_post
@@ -49,7 +49,7 @@ def test_connect_astro():
         pre,
         post,
         third,
-        {"rule": "tripartite_bernoulli_with_pool", "p_primary": 1.0, "p_cond_third": 1},
+        {"rule": "tripartite_bernoulli_with_pool", "p_primary": 1.0, "p_third_if_primary": 1},
         {"third_out": {"synapse_model": "sic_connection"}},
     )
 

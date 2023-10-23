@@ -1616,13 +1616,13 @@ nest::TripartiteBernoulliWithPoolBuilder::TripartiteBernoulliWithPoolBuilder( No
       conn_spec,
       { getValue< DictionaryDatum >( ( *syn_specs )[ names::third_out ] ) } )
   , p_primary_( 1.0 )
-  , p_cond_third_( 1.0 )
+  , p_third_if_primary_( 1.0 )
   , random_pool_( true )
   , pool_size_( third->size() )
   , targets_per_third_( targets->size() / third->size() )
 {
   updateValue< double >( conn_spec, names::p_primary, p_primary_ );
-  updateValue< double >( conn_spec, names::p_cond_third, p_cond_third_ );
+  updateValue< double >( conn_spec, names::p_third_if_primary, p_third_if_primary_ );
   updateValue< long >( conn_spec, names::pool_size, pool_size_ );
   std::string pool_type;
   if ( updateValue< std::string >( conn_spec, names::pool_type, pool_type ) )
@@ -1646,9 +1646,9 @@ nest::TripartiteBernoulliWithPoolBuilder::TripartiteBernoulliWithPoolBuilder( No
     throw BadProperty( "Probability of neuron-neuron connections 0 ≤ p ≤ 1 required" );
   }
 
-  if ( p_cond_third_ < 0 or 1 < p_cond_third_ )
+  if ( p_third_if_primary_ < 0 or 1 < p_third_if_primary_ )
   {
-    throw BadProperty( "Conditional probability of third-factor connection 0 ≤ p_cond_third ≤ 1 required" );
+    throw BadProperty( "Conditional probability of third-factor connection 0 ≤ p_third_if_primary ≤ 1 required" );
   }
 
   if ( pool_size_ < 1 or third->size() < pool_size_ )
@@ -1744,7 +1744,7 @@ nest::TripartiteBernoulliWithPoolBuilder::connect_()
           }
 
           // conditionally connect third factor
-          if ( not( synced_rng->drand() < p_cond_third_ ) )
+          if ( not( synced_rng->drand() < p_third_if_primary_ ) )
           {
             continue;
           }

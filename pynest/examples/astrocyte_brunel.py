@@ -102,7 +102,7 @@ network_params = {
     "N_in": 2000,  # number of inhibitory neurons
     "N_astro": 10000,  # number of astrocytes
     "p_primary": 0.1,  # connection probability between neurons
-    "p_cond_third": 0.5,  # probability of each created neuron-neuron connection to be paired with one astrocyte
+    "p_third_if_primary": 0.5,  # probability of each created neuron-neuron connection to be paired with one astrocyte
     "pool_size": 10,  # astrocyte pool size for each target neuron
     "pool_type": "random",  # astrocyte pool will be chosen randomly for each target neuron
     "poisson_rate": 2000,  # Poisson input rate for neurons
@@ -178,7 +178,7 @@ def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise, scale=1.
     conn_params_e = {
         "rule": "tripartite_bernoulli_with_pool",
         "p_primary": network_params["p_primary"] / scale,
-        "p_cond_third": network_params["p_cond_third"],
+        "p_third_if_primary": network_params["p_third_if_primary"],
         "pool_size": network_params["pool_size"],
         "pool_type": network_params["pool_type"],
     }

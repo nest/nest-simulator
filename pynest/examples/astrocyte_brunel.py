@@ -29,14 +29,9 @@ implemented according to [1]_, [2]_, and [3]_. The neuron is modeled with
 ``aeif_cond_alpha_astro``, an adaptive exponential integrate-and-fire neuron
 supporting neuron-astrocyte interactions.
 
-The simulation results of this network demonstrate an astrocytic effect on
-neuronal excitability. With the slow inward current (SIC) induced by the
-astrocytes through the ``sic_connection``, the neurons show higher firing rates
-and more synchronized actitivity. Here, the local synchrony is quantified by
-pairwise spike count correlations, and the global synchrony by an approach
-suggested in [4]_. The result of this synchrony analysis is shown in the plot
-"neuron_synchrony.png". The dynamics in the astrocytes and the SIC in the
-neurons are shown in the plot "dynamics.png".
+The simulation results show how astrocytes affect neuronal excitability. The
+dynamics in the astrocytes and the SIC in the neurons are shown in the plot
+"dynamics.png".
 
 References
 ~~~~~~~~~~
@@ -55,9 +50,6 @@ References
 .. [3] Nadkarni, S., & Jung, P. (2003). Spontaneous oscillations of dressed
        neurons: a new mechanism for epilepsy?. Physical review letters, 91(26),
        268101. DOI: https://doi.org/10.1103/PhysRevLett.91.268101
-
-.. [4] Golomb, D. (2007). Neuronal synchrony measures. Scholarpedia, 2(1), 1347.
-       DOI: http://dx.doi.org/10.4249/scholarpedia.1347
 
 See Also
 ~~~~~~~~
@@ -210,78 +202,6 @@ def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise, scale=1.
 
 
 ###############################################################################
-# This function calculates the pairwise spike count correlations. For each pair
-# of neurons, the correlation coefficient (Pearson's r) of their spike count
-# histograms is calculated. The result of all pairs are returned.
-
-
-def get_corr(hlist):
-    """Calculate pairwise correlations for a list of histograms."""
-    coef_list = []
-    n_pair_pass = 0
-    n_pair_fail = 0
-    for i, hist1 in enumerate(hlist):
-        idxs = list(range(i + 1, len(hlist)))
-        for j in idxs:
-            hist2 = hlist[j]
-            if np.sum(hist1) != 0 and np.sum(hist2) != 0:
-                coef = np.corrcoef(hist1, hist2)[0, 1]
-                coef_list.append(coef)
-                n_pair_pass += 1
-            else:
-                n_pair_fail += 1
-    if n_pair_fail > 0:
-        print(f"n_pair_fail = {n_pair_fail}!")
-
-    return coef_list, n_pair_pass, n_pair_fail
-
-
-###############################################################################
-# These two functions calculate and plot the synchrony of neuronal firings.
-# Histograms of spike counts of all neurons are obtained to evaluate local and
-# global synchrony. The local synchrony is evaluated with average pairwise spike
-# count correlation, and the global synchrony is evaluated with the variance of
-# average spike count/average of variance of individual spike count.
-
-
-def calc_synchrony(neuron_spikes, n_neuron_rec_spk, start, end, data_path, N=100, bw=10):
-    # get data
-    senders = neuron_spikes["senders"][neuron_spikes["times"] > start]
-    times = neuron_spikes["times"][neuron_spikes["times"] > start]
-    rate = len(senders) / (end - start) * 1000.0 / n_neuron_rec_spk
-    print(f"Mean neuronal firing rate = {rate:.2f} spikes/s (n = {n_neuron_rec_spk})")
-    # sample neurons
-    set_senders = list(set(senders))
-    n_for_sync = min(len(set_senders), N)
-    print(f"n of neurons for synchrony analysis = {n_for_sync}")
-    sampled = random.sample(set_senders, n_for_sync)
-    times = times[np.isin(senders, sampled)]
-    senders = senders[np.isin(senders, sampled)]
-    # make spike count histograms of individual neurons
-    bins = np.arange(start, end + 0.1, bw)  # time bins
-    hists = [np.histogram(times[senders == x], bins)[0].tolist() for x in set(senders)]
-    # make spiking histogram of all sampled neurons
-    hist_global = (np.histogram(times, bins)[0] / len(set(senders))).tolist()
-    # calculate local and global synchrony
-    print("Calculating neuronal local and global synchrony ...")
-    coefs, n_pair_pass, n_pair_fail = get_corr(hists)  # local
-    lsync_mu, lsync_sd = np.mean(coefs), np.std(coefs)
-    gsync = np.var(hist_global) / np.mean(np.var(hists, axis=1))  # global
-    return rate, coefs, lsync_mu, lsync_sd, gsync, n_for_sync
-
-
-def plot_synchrony(coefs, title, data_path):
-    print("Plotting pairwise spike count correlations ...")
-    plt.hist(coefs)
-    plt.title(title)
-    plt.xlabel("Pairwise spike count correlation (Pearson's r)")
-    plt.ylabel("n of pairs")
-    plt.tight_layout()
-    plt.savefig(os.path.join(data_path, "neuron_synchrony.png"))
-    plt.close()
-
-
-###############################################################################
 # This function plots the dynamics in the astrocytes and their resultant output
 # to the neurons. The IP3 and calcium in the astrocytes and the SIC in neurons
 # are plotted. Means and standard deviations across sampled nodes are indicated
@@ -418,19 +338,6 @@ def run_simulation(data_path):
     nest.raster_plot.from_device(sr_neuron, hist=True, title="")
     plt.savefig(os.path.join(data_path, "neuron_raster.png"), bbox_inches="tight")
     plt.close()
-
-    # Calculate and plot synchrony
-    rate, coefs, lsync_mu, lsync_sd, gsync, n_for_sync = calc_synchrony(
-        neuron_spikes, n_neuron_rec_spk, pre_sim_time, pre_sim_time + sim_time, data_path
-    )
-    title = (
-        f"Firing rate={rate:.2f} spikes/s (n={n_neuron_rec_spk}) \n"
-        + f"Local sync.={lsync_mu:.3f}$\\pm${lsync_sd:.3f}, Global sync.={gsync:.3f}\n"
-        + f"(n for synchrony analysis={n_for_sync})\n"
-    )
-    plot_synchrony(coefs, title, data_path)
-    print(f"Local synchrony = {lsync_mu:.3f}+-{lsync_sd:.3f}")
-    print(f"Global synchrony = {gsync:.3f}")
 
     # Plot dynamics in astrocytes and neurons
     plot_dynamics(astro_data, neuron_data, data_path, pre_sim_time)

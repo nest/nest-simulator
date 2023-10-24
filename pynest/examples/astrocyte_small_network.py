@@ -23,12 +23,11 @@
 A small neuron-astrocyte network
 ------------------------------------------------------------
 
-This script demonstrates an aproach with NEST to create a neuron-astrocyte
-network. The network in this script includes 20 neurons and five astrocytes. The
-astrocyte is modeled with ``astrocyte_lr_1994``, implemented according to [1]_,
-[2]_, and [3]_. The neuron is modeled with ``aeif_cond_alpha_astro``, an
-adaptive exponential integrate-and-fire neuron supporting neuron-astrocyte
-interactions.
+This script shows how to create an astrocyte-neuron network in NEST. The network
+in this script includes 20 neurons and five astrocytes. The astrocyte is modeled
+with ``astrocyte_lr_1994``, implemented according to [1]_, [2]_, and [3]_. The
+neuron is modeled with ``aeif_cond_alpha_astro``, an adaptive exponential
+integrate-and-fire neuron supporting neuron-astrocyte interactions.
 
 The network is created with the TripartiteConnect() function and the
 ``tripartite_bernoulli_with_pool`` rule. This rule creates a tripartite

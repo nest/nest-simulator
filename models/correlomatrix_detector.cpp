@@ -37,7 +37,6 @@
 // Includes from sli:
 #include "arraydatum.h"
 #include "dict.h"
-#include "dictutils.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -219,11 +218,11 @@ nest::correlomatrix_detector::State_::reset( const Parameters_& p )
   count_covariance_.clear();
   count_covariance_.resize( p.N_channels_ );
 
-  for ( long i = 0; i < p.N_channels_; ++i )
+  for ( size_t i = 0; i < p.N_channels_; ++i )
   {
     covariance_[ i ].resize( p.N_channels_ );
     count_covariance_[ i ].resize( p.N_channels_ );
-    for ( long j = 0; j < p.N_channels_; ++j )
+    for ( size_t j = 0; j < p.N_channels_; ++j )
     {
       covariance_[ i ][ j ].resize( 1 + p.tau_max_.get_steps() / p.delta_tau_.get_steps(), 0 );
       count_covariance_[ i ][ j ].resize( 1 + p.tau_max_.get_steps() / p.delta_tau_.get_steps(), 0 );
@@ -370,14 +369,14 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
         {
           // weighted histogram
           S_.covariance_[ sender_ind ][ other_ind ][ bin ] += e.get_multiplicity() * e.get_weight() * spike_j->weight_;
-          if ( bin == 0 and ( spike_i - spike_j->timestep_ != 0 or other != sender ) )
+          if ( bin == 0 and ( spike_i - spike_j->timestep_ != 0 or static_cast<size_t>( other ) != sender ) )
           {
             S_.covariance_[ other_ind ][ sender_ind ][ bin ] +=
               e.get_multiplicity() * e.get_weight() * spike_j->weight_;
           }
           // pure (unweighted) count histogram
           S_.count_covariance_[ sender_ind ][ other_ind ][ bin ] += e.get_multiplicity();
-          if ( bin == 0 and ( spike_i - spike_j->timestep_ != 0 or other != sender ) )
+          if ( bin == 0 and ( spike_i - spike_j->timestep_ != 0 or static_cast<size_t>( other ) != sender ) )
           {
             S_.count_covariance_[ other_ind ][ sender_ind ][ bin ] += e.get_multiplicity();
           }

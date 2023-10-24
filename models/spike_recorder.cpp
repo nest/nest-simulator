@@ -34,36 +34,39 @@
 #include "dict.h"
 #include "dictutils.h"
 
-nest::spike_recorder::spike_recorder()
+namespace nest
+{
+
+spike_recorder::spike_recorder()
   : RecordingDevice()
 {
 }
 
-nest::spike_recorder::spike_recorder( const spike_recorder& n )
+spike_recorder::spike_recorder( const spike_recorder& n )
   : RecordingDevice( n )
 {
 }
 
 void
-nest::spike_recorder::pre_run_hook()
+spike_recorder::pre_run_hook()
 {
   RecordingDevice::pre_run_hook( RecordingBackend::NO_DOUBLE_VALUE_NAMES, RecordingBackend::NO_LONG_VALUE_NAMES );
 }
 
 void
-nest::spike_recorder::update( Time const&, const long, const long )
+spike_recorder::update( Time const&, const long, const long )
 {
   // Nothing to do. Writing to the backend happens in handle().
 }
 
-nest::RecordingDevice::Type
-nest::spike_recorder::get_type() const
+RecordingDevice::Type
+spike_recorder::get_type() const
 {
   return RecordingDevice::SPIKE_RECORDER;
 }
 
 void
-nest::spike_recorder::get_status( DictionaryDatum& d ) const
+spike_recorder::get_status( DictionaryDatum& d ) const
 {
   RecordingDevice::get_status( d );
 
@@ -85,13 +88,13 @@ nest::spike_recorder::get_status( DictionaryDatum& d ) const
 }
 
 void
-nest::spike_recorder::set_status( const DictionaryDatum& d )
+spike_recorder::set_status( const DictionaryDatum& d )
 {
   RecordingDevice::set_status( d );
 }
 
 void
-nest::spike_recorder::handle( SpikeEvent& e )
+spike_recorder::handle( SpikeEvent& e )
 {
   // accept spikes only if detector was active when spike was emitted
   if ( is_active( e.get_stamp() ) )
@@ -104,3 +107,5 @@ nest::spike_recorder::handle( SpikeEvent& e )
     }
   }
 }
+
+}  // namespace nest

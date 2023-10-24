@@ -223,6 +223,8 @@ template < class TNonlinearities >
 void
 nest::rate_neuron_opn< TNonlinearities >::pre_run_hook()
 {
+  ArchivingNode::pre_run_hook_();
+
   B_.logger_.init(); // ensures initialization in case mm connected after Simulate
 
   const double h = Time::get_resolution().get_ms();

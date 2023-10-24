@@ -171,7 +171,7 @@ public:
    * Correct this synapse and the corresponding previously sent spike
    * taking into account a new post-synaptic spike.
    */
-  void correct_synapse_stdp_ax_delay( const thread tid,
+  void correct_synapse_stdp_ax_delay( const size_t tid,
     const double t_last_pre_spike,
     double* weight_revert,
     const double t_post_spike,
@@ -387,11 +387,11 @@ template < typename targetidentifierT >
 inline void
 Connection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& )
 {
-  double delay;
-  if ( updateValue< double >( d, names::delay, delay ) )
+  double dendritic_delay;
+  if ( updateValue< double >( d, names::delay, dendritic_delay ) )
   {
-    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
-    syn_id_delay_.set_delay_ms( delay );
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( dendritic_delay );
+    syn_id_delay_.set_delay_ms( dendritic_delay );
   }
   // no call to target_.set_status() because target and rport cannot be changed
 }
@@ -417,7 +417,7 @@ Connection< targetidentifierT >::calibrate( const TimeConverter& tc )
 
 template < typename targetidentifierT >
 inline void
-Connection< targetidentifierT >::correct_synapse_stdp_ax_delay( const thread,
+Connection< targetidentifierT >::correct_synapse_stdp_ax_delay( const size_t,
   const double,
   double*,
   const double,

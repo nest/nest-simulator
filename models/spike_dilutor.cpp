@@ -34,11 +34,14 @@
 #include "dict.h"
 #include "dictutils.h"
 
+namespace nest
+{
+
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
  * ---------------------------------------------------------------- */
 
-nest::spike_dilutor::Parameters_::Parameters_()
+spike_dilutor::Parameters_::Parameters_()
   : p_copy_( 1.0 )
 {
 }
@@ -48,13 +51,13 @@ nest::spike_dilutor::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-nest::spike_dilutor::Parameters_::get( DictionaryDatum& d ) const
+spike_dilutor::Parameters_::get( DictionaryDatum& d ) const
 {
   ( *d )[ names::p_copy ] = p_copy_;
 }
 
 void
-nest::spike_dilutor::Parameters_::set( const DictionaryDatum& d, Node* node )
+spike_dilutor::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   updateValueParam< double >( d, names::p_copy, p_copy_, node );
   if ( p_copy_ < 0 or p_copy_ > 1 )
@@ -67,14 +70,14 @@ nest::spike_dilutor::Parameters_::set( const DictionaryDatum& d, Node* node )
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::spike_dilutor::spike_dilutor()
+spike_dilutor::spike_dilutor()
   : DeviceNode()
   , device_()
   , P_()
 {
 }
 
-nest::spike_dilutor::spike_dilutor( const spike_dilutor& n )
+spike_dilutor::spike_dilutor( const spike_dilutor& n )
   : DeviceNode( n )
   , device_( n.device_ )
   , P_( n.P_ )
@@ -86,7 +89,7 @@ nest::spike_dilutor::spike_dilutor( const spike_dilutor& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::spike_dilutor::init_state_()
+spike_dilutor::init_state_()
 {
   // This check cannot be done in the copy constructor because that is also used to
   // create model prototypes. Since spike_dilutor is deprecated anyways, we put this
@@ -100,14 +103,14 @@ nest::spike_dilutor::init_state_()
 }
 
 void
-nest::spike_dilutor::init_buffers_()
+spike_dilutor::init_buffers_()
 {
   B_.n_spikes_.clear(); // includes resize
   device_.init_buffers();
 }
 
 void
-nest::spike_dilutor::pre_run_hook()
+spike_dilutor::pre_run_hook()
 {
   device_.pre_run_hook();
 }
@@ -117,7 +120,7 @@ nest::spike_dilutor::pre_run_hook()
  * ---------------------------------------------------------------- */
 
 void
-nest::spike_dilutor::update( Time const& T, const long from, const long to )
+spike_dilutor::update( Time const& T, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
@@ -140,7 +143,7 @@ nest::spike_dilutor::update( Time const& T, const long from, const long to )
 }
 
 void
-nest::spike_dilutor::event_hook( DSSpikeEvent& e )
+spike_dilutor::event_hook( DSSpikeEvent& e )
 {
   // Note: event_hook() receives a reference of the spike event that
   // was originally created in the update function. There we set
@@ -173,8 +176,10 @@ nest::spike_dilutor::event_hook( DSSpikeEvent& e )
 }
 
 void
-nest::spike_dilutor::handle( SpikeEvent& e )
+spike_dilutor::handle( SpikeEvent& e )
 {
   B_.n_spikes_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     static_cast< double >( e.get_multiplicity() ) );
 }
+
+}  // namespace nest

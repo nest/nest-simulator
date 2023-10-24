@@ -35,11 +35,15 @@
 #include "dictutils.h"
 #include "doubledatum.h"
 
+
+namespace nest
+{
+
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
  * ---------------------------------------------------------------- */
 
-nest::poisson_generator::Parameters_::Parameters_()
+poisson_generator::Parameters_::Parameters_()
   : rate_( 0.0 ) // Hz
 {
 }
@@ -50,13 +54,13 @@ nest::poisson_generator::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-nest::poisson_generator::Parameters_::get( DictionaryDatum& d ) const
+poisson_generator::Parameters_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::rate, rate_ );
 }
 
 void
-nest::poisson_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
+poisson_generator::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   updateValueParam< double >( d, names::rate, rate_, node );
   if ( rate_ < 0 )
@@ -70,13 +74,13 @@ nest::poisson_generator::Parameters_::set( const DictionaryDatum& d, Node* node 
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::poisson_generator::poisson_generator()
+poisson_generator::poisson_generator()
   : StimulationDevice()
   , P_()
 {
 }
 
-nest::poisson_generator::poisson_generator( const poisson_generator& n )
+poisson_generator::poisson_generator( const poisson_generator& n )
   : StimulationDevice( n )
   , P_( n.P_ )
 {
@@ -88,19 +92,19 @@ nest::poisson_generator::poisson_generator( const poisson_generator& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::poisson_generator::init_state_()
+poisson_generator::init_state_()
 {
   StimulationDevice::init_state();
 }
 
 void
-nest::poisson_generator::init_buffers_()
+poisson_generator::init_buffers_()
 {
   StimulationDevice::init_buffers();
 }
 
 void
-nest::poisson_generator::pre_run_hook()
+poisson_generator::pre_run_hook()
 {
   StimulationDevice::pre_run_hook();
 
@@ -115,7 +119,7 @@ nest::poisson_generator::pre_run_hook()
  * ---------------------------------------------------------------- */
 
 void
-nest::poisson_generator::update( Time const& T, const long from, const long to )
+poisson_generator::update( Time const& T, const long from, const long to )
 {
   if ( P_.rate_ <= 0 )
   {
@@ -135,7 +139,7 @@ nest::poisson_generator::update( Time const& T, const long from, const long to )
 }
 
 void
-nest::poisson_generator::event_hook( DSSpikeEvent& e )
+poisson_generator::event_hook( DSSpikeEvent& e )
 {
   long n_spikes = V_.poisson_dist_( get_vp_specific_rng( get_thread() ) );
 
@@ -151,7 +155,7 @@ nest::poisson_generator::event_hook( DSSpikeEvent& e )
  * ---------------------------------------------------------------- */
 
 void
-nest::poisson_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
+poisson_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 
@@ -169,4 +173,6 @@ nest::poisson_generator::set_data_from_stimulation_backend( std::vector< double 
 
   // if we get here, temporary contains consistent set of properties
   P_ = ptmp;
+}
+
 }

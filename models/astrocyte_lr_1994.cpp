@@ -78,7 +78,7 @@ astrocyte_lr_1994_dynamics( double time, const double y[], double f[], void* pno
   const double& ip3 = y[ S::IP3 ];
   // Ca_tot_ corresponds to the c_0 (total [Ca++] in terms of cytosolic vol)
   // in De Young & Keizer (1992) and Li & Rinzel (1994)
-  const double& calc = std::max( 0.0, std::min( y[ S::Ca ], node.P_.Ca_tot_ ) ); // keep calcium within limits
+  const double calc = std::max( 0.0, std::min( y[ S::Ca ], node.P_.Ca_tot_ ) ); // keep calcium within limits
   const double& h_ip3r = y[ S::h_IP3R ];
 
   const double alpha_h_ip3r =
@@ -411,6 +411,8 @@ nest::astrocyte_lr_1994::init_buffers_()
 void
 nest::astrocyte_lr_1994::pre_run_hook()
 {
+  ArchivingNode::pre_run_hook_();
+
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 }

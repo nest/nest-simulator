@@ -35,14 +35,13 @@
 namespace nest
 {
 
-/**
- * TODO JV
- */
 template < typename targetidentifierT >
 class AxonalDelayConnection : public Connection< targetidentifierT >
 {
   using Connection< targetidentifierT >::get_status;
   using Connection< targetidentifierT >::set_status;
+  using Connection< targetidentifierT >::get_dendritic_delay;
+  using Connection< targetidentifierT >::set_dendritic_delay;
 
   double axonal_delay_; //!< Axonal delay in ms
 public:
@@ -97,8 +96,14 @@ template < typename targetidentifierT >
 inline void
 AxonalDelayConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
-   Connection< targetidentifierT >::set_status( d, cm );
-   // TODO JV (pt): Make it possible to set axonal delay after connection creation
+   double axonal_delay = get_axonal_delay();
+   double dendritic_delay = get_dendritic_delay();
+   if ( updateValue< double >( d, names::delay, dendritic_delay ) or updateValue< double >( d, names::axonal_delay, axonal_delay ) )
+   {
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( axonal_delay + dendritic_delay );
+    set_dendritic_delay( dendritic_delay );
+    set_axonal_delay( axonal_delay );
+   }
 }
 
 }

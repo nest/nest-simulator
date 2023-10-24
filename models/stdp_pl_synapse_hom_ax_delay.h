@@ -173,14 +173,14 @@ public:
    * Send an event to the receiver of this connection.
    * \param e The event to send
    */
-  void send( Event& e, thread t, const STDPPLHomAxDelayCommonProperties& );
+  void send( Event& e, size_t t, const STDPPLHomAxDelayCommonProperties& );
 
   /**
    * Framework for STDP with predominantly axonal delays:
    * Correct this synapse and the corresponding previously sent spike
    * taking into account a new post-synaptic spike.
    */
-  void correct_synapse_stdp_ax_delay( const thread tid,
+  void correct_synapse_stdp_ax_delay( const size_t tid,
     const double t_last_spike,
     double* weight_revert,
     const double t_post_spike,
@@ -192,8 +192,8 @@ public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
-    port
-    handles_test_event( SpikeEvent&, rport ) override
+    size_t
+    handles_test_event( SpikeEvent&, size_t ) override
     {
       return invalid_port;
     }
@@ -215,9 +215,9 @@ public:
   void
   check_connection( Node& s,
     Node& t,
-    const rport receptor_type,
-    const delay dendritic_delay,
-    const delay axonal_delay,
+    const size_t receptor_type,
+    const long dendritic_delay,
+    const long axonal_delay,
     const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
@@ -227,7 +227,7 @@ public:
     if ( axonal_delay + dendritic_delay < kernel().connection_manager.get_stdp_eps() )
     {
       throw BadProperty(
-        "Combination of axonal and dendritic delay has to be more than 0." ); // TODO JV (pt): Or does it actually?
+        "Combination of axonal and dendritic delay has to be more than 0." ); // TODO: Or does it actually?
     }
     t.register_stdp_connection( t_lastspike_ - dendritic_delay + axonal_delay, dendritic_delay + axonal_delay );
   }
@@ -273,7 +273,7 @@ constexpr ConnectionModelProperties stdp_pl_synapse_hom_ax_delay< targetidentifi
 template < typename targetidentifierT >
 inline void
 stdp_pl_synapse_hom_ax_delay< targetidentifierT >::send( Event& e,
-  thread tid,
+  size_t tid,
   const STDPPLHomAxDelayCommonProperties& cp )
 {
 #ifdef TIMER_DETAILED
@@ -391,9 +391,7 @@ template < typename targetidentifierT >
 void
 stdp_pl_synapse_hom_ax_delay< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
-  // base class properties
-  // TODO JV (pt): This should be uncommented again, but should not handle delays
-  // ConnectionBase::set_status( d, cm );
+  ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
 
   updateValue< double >( d, names::Kplus, Kplus_ );
@@ -401,7 +399,7 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::set_status( const DictionaryD
 
 template < typename targetidentifierT >
 inline void
-stdp_pl_synapse_hom_ax_delay< targetidentifierT >::correct_synapse_stdp_ax_delay( const thread tid,
+stdp_pl_synapse_hom_ax_delay< targetidentifierT >::correct_synapse_stdp_ax_delay( const size_t tid,
   const double t_last_spike,
   double* weight_revert,
   const double t_post_spike,

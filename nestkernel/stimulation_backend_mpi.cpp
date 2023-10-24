@@ -207,6 +207,8 @@ nest::StimulationBackendMPI::prepare()
 void
 nest::StimulationBackendMPI::pre_run_hook()
 {
+  ArchivingNode::pre_run_hook_();
+
   // create the variable which will contain the receiving data from the communication
   std::vector< std::pair< int*, double* > > data( commMap_.size() );
   int index = 0;

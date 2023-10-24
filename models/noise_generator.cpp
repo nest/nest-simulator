@@ -48,13 +48,12 @@ RecordablesMap< noise_generator >::create()
 {
   insert_( Name( names::I ), &noise_generator::get_I_avg_ );
 }
-}
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
  * ---------------------------------------------------------------- */
 
-nest::noise_generator::Parameters_::Parameters_()
+noise_generator::Parameters_::Parameters_()
   : mean_( 0.0 )    // pA
   , std_( 0.0 )     // pA / sqrt(s)
   , std_mod_( 0.0 ) // pA / sqrt(s)
@@ -65,7 +64,7 @@ nest::noise_generator::Parameters_::Parameters_()
 {
 }
 
-nest::noise_generator::Parameters_::Parameters_( const Parameters_& p )
+noise_generator::Parameters_::Parameters_( const Parameters_& p )
   : mean_( p.mean_ )
   , std_( p.std_ )
   , std_mod_( p.std_mod_ )
@@ -84,8 +83,8 @@ nest::noise_generator::Parameters_::Parameters_( const Parameters_& p )
   }
 }
 
-nest::noise_generator::Parameters_&
-nest::noise_generator::Parameters_::operator=( const Parameters_& p )
+noise_generator::Parameters_&
+noise_generator::Parameters_::operator=( const Parameters_& p )
 {
   if ( this == &p )
   {
@@ -102,20 +101,20 @@ nest::noise_generator::Parameters_::operator=( const Parameters_& p )
   return *this;
 }
 
-nest::noise_generator::State_::State_()
+noise_generator::State_::State_()
   : y_0_( 0.0 )
   , y_1_( 0.0 )   // pA
   , I_avg_( 0.0 ) // pA
 {
 }
 
-nest::noise_generator::Buffers_::Buffers_( noise_generator& n )
+noise_generator::Buffers_::Buffers_( noise_generator& n )
   : next_step_( 0 )
   , logger_( n )
 {
 }
 
-nest::noise_generator::Buffers_::Buffers_( const Buffers_& b, noise_generator& n )
+noise_generator::Buffers_::Buffers_( const Buffers_& b, noise_generator& n )
   : next_step_( b.next_step_ )
   , logger_( n )
 {
@@ -126,7 +125,7 @@ nest::noise_generator::Buffers_::Buffers_( const Buffers_& b, noise_generator& n
  * ---------------------------------------------------------------- */
 
 void
-nest::noise_generator::Parameters_::get( DictionaryDatum& d ) const
+noise_generator::Parameters_::get( DictionaryDatum& d ) const
 {
   ( *d )[ names::mean ] = mean_;
   ( *d )[ names::std ] = std_;
@@ -137,14 +136,14 @@ nest::noise_generator::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::noise_generator::State_::get( DictionaryDatum& d ) const
+noise_generator::State_::get( DictionaryDatum& d ) const
 {
   ( *d )[ names::y_0 ] = y_0_;
   ( *d )[ names::y_1 ] = y_1_;
 }
 
 void
-nest::noise_generator::Parameters_::set( const DictionaryDatum& d, const noise_generator& n, Node* node )
+noise_generator::Parameters_::set( const DictionaryDatum& d, const noise_generator& n, Node* node )
 {
   updateValueParam< double >( d, names::mean, mean_, node );
   updateValueParam< double >( d, names::std, std_, node );
@@ -182,7 +181,7 @@ nest::noise_generator::Parameters_::set( const DictionaryDatum& d, const noise_g
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::noise_generator::noise_generator()
+noise_generator::noise_generator()
   : StimulationDevice()
   , P_()
   , S_()
@@ -191,7 +190,7 @@ nest::noise_generator::noise_generator()
   recordablesMap_.create();
 }
 
-nest::noise_generator::noise_generator( const noise_generator& n )
+noise_generator::noise_generator( const noise_generator& n )
   : StimulationDevice( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -205,13 +204,13 @@ nest::noise_generator::noise_generator( const noise_generator& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::noise_generator::init_state_()
+noise_generator::init_state_()
 {
   StimulationDevice::init_state();
 }
 
 void
-nest::noise_generator::init_buffers_()
+noise_generator::init_buffers_()
 {
   StimulationDevice::init_buffers();
   B_.logger_.reset();
@@ -222,7 +221,7 @@ nest::noise_generator::init_buffers_()
 }
 
 void
-nest::noise_generator::pre_run_hook()
+noise_generator::pre_run_hook()
 {
   B_.logger_.init();
 
@@ -259,7 +258,7 @@ nest::noise_generator::pre_run_hook()
  * ---------------------------------------------------------------- */
 
 size_t
-nest::noise_generator::send_test_event( Node& target, size_t receptor_type, synindex syn_id, bool dummy_target )
+noise_generator::send_test_event( Node& target, size_t receptor_type, synindex syn_id, bool dummy_target )
 {
   StimulationDevice::enforce_single_syn_type( syn_id );
 
@@ -286,7 +285,7 @@ nest::noise_generator::send_test_event( Node& target, size_t receptor_type, syni
 // Time Evolution Operator
 //
 void
-nest::noise_generator::update( Time const& origin, const long from, const long to )
+noise_generator::update( Time const& origin, const long from, const long to )
 {
   const long start = origin.get_steps();
 
@@ -337,7 +336,7 @@ nest::noise_generator::update( Time const& origin, const long from, const long t
 }
 
 void
-nest::noise_generator::event_hook( DSCurrentEvent& e )
+noise_generator::event_hook( DSCurrentEvent& e )
 {
   // get port number
   const size_t prt = e.get_port();
@@ -350,7 +349,7 @@ nest::noise_generator::event_hook( DSCurrentEvent& e )
 }
 
 void
-nest::noise_generator::handle( DataLoggingRequest& e )
+noise_generator::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
@@ -360,7 +359,7 @@ nest::noise_generator::handle( DataLoggingRequest& e )
  * ---------------------------------------------------------------- */
 
 void
-nest::noise_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
+noise_generator::set_data_from_stimulation_backend( std::vector< double >& input_param )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.num_targets_ = P_.num_targets_;
@@ -388,7 +387,7 @@ nest::noise_generator::set_data_from_stimulation_backend( std::vector< double >&
 }
 
 void
-nest::noise_generator::calibrate_time( const TimeConverter& tc )
+noise_generator::calibrate_time( const TimeConverter& tc )
 {
   if ( P_.dt_.is_step() )
   {
@@ -402,3 +401,5 @@ nest::noise_generator::calibrate_time( const TimeConverter& tc )
     LOG( M_INFO, get_name(), msg );
   }
 }
+
+}  // namespace nest

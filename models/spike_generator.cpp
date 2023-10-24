@@ -37,11 +37,14 @@
 #include "dictutils.h"
 
 
+namespace nest
+{
+
 /* ----------------------------------------------------------------
  * Default constructor defining default parameters
  * ---------------------------------------------------------------- */
 
-nest::spike_generator::Parameters_::Parameters_()
+spike_generator::Parameters_::Parameters_()
   : spike_stamps_()
   , spike_offsets_()
   , spike_weights_()
@@ -58,7 +61,7 @@ nest::spike_generator::Parameters_::Parameters_()
  * ---------------------------------------------------------------- */
 
 void
-nest::spike_generator::Parameters_::get( DictionaryDatum& d ) const
+spike_generator::Parameters_::get( DictionaryDatum& d ) const
 {
   const size_t n_spikes = spike_stamps_.size();
   auto* times_ms = new std::vector< double >();
@@ -82,7 +85,7 @@ nest::spike_generator::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_( double t, const Time& origin, const Time& now )
+spike_generator::Parameters_::assert_valid_spike_time_and_insert_( double t, const Time& origin, const Time& now )
 {
   if ( t == 0.0 and not shift_now_spikes_ )
   {
@@ -147,7 +150,7 @@ nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_( double 
 }
 
 void
-nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
+spike_generator::Parameters_::set( const DictionaryDatum& d,
   State_& s,
   const Time& origin,
   const Time& now,
@@ -268,7 +271,7 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
  * Default constructor defining default state
  * ---------------------------------------------------------------- */
 
-nest::spike_generator::State_::State_()
+spike_generator::State_::State_()
   : position_( 0 )
 {
 }
@@ -278,14 +281,14 @@ nest::spike_generator::State_::State_()
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::spike_generator::spike_generator()
+spike_generator::spike_generator()
   : StimulationDevice()
   , P_()
   , S_()
 {
 }
 
-nest::spike_generator::spike_generator( const spike_generator& n )
+spike_generator::spike_generator( const spike_generator& n )
   : StimulationDevice( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -298,19 +301,19 @@ nest::spike_generator::spike_generator( const spike_generator& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::spike_generator::init_state_()
+spike_generator::init_state_()
 {
   StimulationDevice::init_state();
 }
 
 void
-nest::spike_generator::init_buffers_()
+spike_generator::init_buffers_()
 {
   StimulationDevice::init_buffers();
 }
 
 void
-nest::spike_generator::pre_run_hook()
+spike_generator::pre_run_hook()
 {
   StimulationDevice::pre_run_hook();
 }
@@ -320,7 +323,7 @@ nest::spike_generator::pre_run_hook()
  * Other functions
  * ---------------------------------------------------------------- */
 void
-nest::spike_generator::update( Time const& sliceT0, const long from, const long to )
+spike_generator::update( Time const& sliceT0, const long from, const long to )
 {
   if ( P_.spike_stamps_.empty() )
   {
@@ -390,7 +393,7 @@ nest::spike_generator::update( Time const& sliceT0, const long from, const long 
 }
 
 void
-nest::spike_generator::event_hook( DSSpikeEvent& e )
+spike_generator::event_hook( DSSpikeEvent& e )
 {
   e.set_weight( P_.spike_weights_[ S_.position_ ] * e.get_weight() );
   e.get_receiver().handle( e );
@@ -402,7 +405,7 @@ nest::spike_generator::event_hook( DSSpikeEvent& e )
  * ---------------------------------------------------------------- */
 
 void
-nest::spike_generator::set_data_from_stimulation_backend( std::vector< double >& input_spikes )
+spike_generator::set_data_from_stimulation_backend( std::vector< double >& input_spikes )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 
@@ -433,3 +436,5 @@ nest::spike_generator::set_data_from_stimulation_backend( std::vector< double >&
   // if we get here, temporary contains consistent set of properties
   P_ = ptmp;
 }
+
+}  // namespace nest

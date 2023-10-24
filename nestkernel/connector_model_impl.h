@@ -221,7 +221,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   const double axonal_delay,
   const double weight )
 {
-  nest::delay actual_dendritic_delay;
+  long actual_dendritic_delay;
   // check if dendritic delay was not provided explicitly
   if ( numerics::is_nan( delay ) )
   {
@@ -232,7 +232,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     }
     else
     {
-      used_default_delay(); // TODO JV (pt): This might now not be correct anymore after introducing axonal delays
+      used_default_delay(); // TODO: This might now not be correct anymore after introducing axonal delays
       actual_dendritic_delay = default_delay_;
     }
   }
@@ -244,7 +244,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
       throw BadParameter( "Parameter dictionary must not contain delay if delay is given explicitly." );
     }
   }
-  nest::delay actual_axonal_delay;
+  long actual_axonal_delay;
   // check if axonal delay was not provided explicitly
   if ( numerics::is_nan( axonal_delay ) )
   {
@@ -255,7 +255,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     }
     else
     {
-      used_default_delay(); // TODO JV (pt): This might now not be correct anymore after introducing axonal delays
+      used_default_delay(); // TODO: This might now not be correct anymore after introducing axonal delays
       actual_axonal_delay = default_axonal_delay_;
     }
   }

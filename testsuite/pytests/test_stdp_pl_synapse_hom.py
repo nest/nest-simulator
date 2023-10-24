@@ -49,7 +49,7 @@ class TestSTDPPlSynapse:
     def init_params(self):
         self.resolution = 0.1  # [ms]
         self.simulation_duration = 1e3  # [ms]
-        self.synapse_model = "stdp_pl_synapse_hom"
+        self.synapse_model = "stdp_pl_synapse_hom_ax_delay"
         self.presynaptic_firing_rate = 100.0  # [ms^-1]
         self.postsynaptic_firing_rate = 100.0  # [ms^-1]
         self.tau_pre = 20.0
@@ -235,20 +235,11 @@ class TestSTDPPlSynapse:
         Kplus_log = []
         Kminus_log = []
 
-        pre_spikes_delayed = pre_spikes + self.axonal_delay
-        post_spikes_delayed = post_spikes + self.dendritic_delay
         # Make sure only spikes that were relevant for simulation are actually considered in the test
         # For pre-spikes that will be all spikes with: t_pre < sim_duration
         pre_spikes = pre_spikes[pre_spikes + eps < self.simulation_duration]
         # For post-spikes that will be all spikes with: t_post + d_dend <= latest_pre_spike
         post_spikes = post_spikes[post_spikes + self.dendritic_delay <= pre_spikes[-1] + eps]
-        post_spikes_delayed = post_spikes + self.dendritic_delay
-
-        while idx_next_pre_spike < len(pre_spikes) or idx_next_post_spike < len(post_spikes_delayed):
-            if idx_next_pre_spike >= pre_spikes.size:
-                t_next_pre_spike = -1
-            else:
-                t_next_pre_spike = pre_spikes[idx_next_pre_spike]
         pre_spikes_delayed = pre_spikes + self.axonal_delay
         post_spikes_delayed = post_spikes + self.dendritic_delay
         # Make sure only spikes that were relevant for simulation are actually considered in the test
@@ -391,9 +382,12 @@ class TestSTDPPlSynapse:
                 for self.max_delay in (3.0, 1.0):
                     self.min_delay = min(self.min_delay, self.max_delay)
                     self.max_delay = max(self.min_delay, self.max_delay)
-                    for self.nest_neuron_model in ("iaf_psc_exp", "iaf_cond_exp"):
+                    for self.nest_neuron_model in ("iaf_psc_alpha",):
                         for self.neuron_parameters["t_ref"] in (self.resolution, 0.5, 1.0, 1.1, 2.5):
+                            print(self.dendritic_delay, self.axonal_delay, self.min_delay, self.max_delay, self.nest_neuron_model)
                             fname_snip = "_[nest_neuron_mdl=" + self.nest_neuron_model + "]"
                             fname_snip += "_[dend_delay=" + str(self.dendritic_delay) + "]"
                             fname_snip += "_[t_ref=" + str(self.neuron_parameters["t_ref"]) + "]"
                             self.do_nest_simulation_and_compare_to_reproduced_weight(fname_snip=fname_snip)
+
+TestSTDPPlSynapse().test_stdp_synapse()

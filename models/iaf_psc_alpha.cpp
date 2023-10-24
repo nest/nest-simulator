@@ -242,6 +242,8 @@ iaf_psc_alpha::init_buffers_()
 void
 iaf_psc_alpha::pre_run_hook()
 {
+  ArchivingNode::pre_run_hook_();
+
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
@@ -376,6 +378,20 @@ iaf_psc_alpha::handle( SpikeEvent& e )
 
   // separate buffer channels for excitatory and inhibitory inputs
   B_.input_buffer_.add_value( input_buffer_slot, s > 0 ? Buffers_::SYN_EX : Buffers_::SYN_IN, s );
+}
+
+void
+iaf_psc_alpha::handle( CorrectionSpikeEvent& e )
+{
+  assert( e.get_delay_steps() > 0 );
+
+  const size_t input_buffer_slot = kernel().event_delivery_manager.get_modulo(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
+
+  const double s = ( e.get_new_weight() - e.get_weight() ) * e.get_multiplicity();
+
+  // separate buffer channels for excitatory and inhibitory inputs
+  B_.input_buffer_.add_value( input_buffer_slot, e.get_weight() > 0 ? Buffers_::SYN_EX : Buffers_::SYN_IN, s );
 }
 
 void

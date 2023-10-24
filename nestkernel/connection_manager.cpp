@@ -1514,7 +1514,7 @@ ConnectionManager::connection_required( Node*& source, Node*& target, size_t tid
 void
 ConnectionManager::set_stdp_eps( const double stdp_eps )
 {
-  if ( not( stdp_eps < Time::get_resolution().get_ms() ) )
+  if ( stdp_eps >= Time::get_resolution().get_ms() )
   {
     throw KernelException(
       "The epsilon used for spike-time comparison in STDP must be less "
@@ -1691,7 +1691,6 @@ ConnectionManager::collect_compressed_spike_data( const size_t tid )
   }
 }
 
-}
 bool
 nest::ConnectionManager::fill_target_buffer( const size_t tid,
   const size_t rank_start,

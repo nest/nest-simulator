@@ -79,7 +79,6 @@ Parameter           Unit     Math equivalent          Default            Descrip
 ==================  =======  =======================  ================== ===============================================
  C_m                pF       :math:`C_\text{m}`                    250.0 Capacity of the membrane
  E_L                mV       :math:`E_\text{L}`                      0.0 Leak membrane potential
- gamma                       :math:`\gamma`                          0.3 Scaling of membrane voltage pseudo-derivative
  I_e                pA       :math:`I_\text{e}`                      0.0 Constant external input current
  loss                        :math:`E`                mean_squared_error Loss function
                                                                          ["mean_squared_error", "cross_entropy_loss"]

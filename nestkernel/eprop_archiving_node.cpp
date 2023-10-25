@@ -100,7 +100,7 @@ nest::EpropArchivingNode::get_eprop_history( double time_point, std::deque< Hist
 void
 nest::EpropArchivingNode::erase_unneeded_eprop_history()
 {
-  if ( eprop_history_.empty() )
+  if ( eprop_history_.empty() or update_history_.empty() )
     return;
 
   double update_interval = kernel().simulation_manager.get_eprop_update_interval().get_ms();
@@ -169,6 +169,9 @@ nest::EpropArchivingNode::write_learning_signal_to_history( double& time_point,
 void
 nest::EpropArchivingNode::erase_unneeded_update_history()
 {
+  if ( update_history_.empty() )
+    return;
+
   for ( auto it = update_history_.begin(); it < update_history_.end(); it++ )
   {
     if ( it->access_counter_ == 0 )
@@ -179,6 +182,9 @@ nest::EpropArchivingNode::erase_unneeded_update_history()
 void
 nest::EpropArchivingNode::erase_unneeded_firing_rate_reg_history()
 {
+  if ( update_history_.empty() or firing_rate_reg_history_.empty() )
+    return;
+
   auto it_update_hist = update_history_.begin();
   auto it_reg_hist = firing_rate_reg_history_.begin();
   for ( ; it_update_hist != update_history_.end() and it_reg_hist != firing_rate_reg_history_.end();
@@ -219,7 +225,7 @@ double
 nest::EpropArchivingNode::get_firing_rate_reg( double time_point )
 {
   if ( firing_rate_reg_history_.empty() )
-    return 0;
+    return 0.0;
 
   double const update_interval = kernel().simulation_manager.get_eprop_update_interval().get_ms();
 

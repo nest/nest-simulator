@@ -444,7 +444,7 @@ def generate_evidence_accumulation_input_output(
     input_spike_prob[:, -steps["recall"] :, 2 * n_pop_nrn : 3 * n_pop_nrn] = input_spike_rate
     input_spike_prob[:, :, 3 * n_pop_nrn :] = input_spike_rate / 4.0
     input_spike_bools = input_spike_prob > np.random.rand(input_spike_prob.size).reshape(input_spike_prob.shape)
-    input_spike_bools[:, [0, -1], :] = 0  # remove spikes in first and last time step due to technical reasons
+    input_spike_bools[:, 0, :] = 0  # remove spikes in first time step due to technical reasons
 
     target_cues = np.zeros(n_batch, dtype=int)
     target_cues[:] = np.sum(batched_cues, axis=1) > int(n_cues / 2)

@@ -31,9 +31,9 @@
 namespace nest
 {
 void
-register_erfc_neuron()
+register_erfc_neuron( const std::string& name )
 {
-  kernel().model_manager.register_node_model< erfc_neuron >( "erfc_neuron" );
+  register_node_model< erfc_neuron >( name );
 }
 
 

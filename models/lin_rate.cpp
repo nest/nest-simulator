@@ -30,21 +30,21 @@
 namespace nest
 {
 void
-register_lin_rate_ipn()
+register_lin_rate_ipn( const std::string& name )
 {
-  kernel().model_manager.register_node_model< lin_rate_ipn >( "lin_rate_ipn" );
+  register_node_model< lin_rate_ipn >( name );
 }
 
 void
-register_lin_rate_opn()
+register_lin_rate_opn( const std::string& name )
 {
-  kernel().model_manager.register_node_model< lin_rate_opn >( "lin_rate_opn" );
+  register_node_model< lin_rate_opn >( name );
 }
 
 void
-register_rate_transformer_lin()
+register_rate_transformer_lin( const std::string& name )
 {
-  kernel().model_manager.register_node_model< rate_transformer_lin >( "rate_transformer_lin" );
+  register_node_model< rate_transformer_lin >( name );
 }
 
 

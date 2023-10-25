@@ -32,7 +32,6 @@
 #include "event_delivery_manager_impl.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -43,9 +42,9 @@
 namespace nest
 {
 void
-register_noise_generator()
+register_noise_generator( const std::string& name )
 {
-  kernel().model_manager.register_node_model< noise_generator >( "noise_generator" );
+  register_node_model< noise_generator >( name );
 }
 
 RecordablesMap< noise_generator > noise_generator::recordablesMap_;

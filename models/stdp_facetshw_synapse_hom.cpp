@@ -24,12 +24,10 @@
 #include "stdp_facetshw_synapse_hom_impl.h"
 
 // Includes from nestkernel:
-#include "connector_model_impl.h"
-#include "model_manager_impl.h"
 #include "nest_impl.h"
 
 void
-nest::register_stdp_facetshw_synapse_hom()
+nest::register_stdp_facetshw_synapse_hom( const std::string& name )
 {
-  register_connection_model< stdp_facetshw_synapse_hom >( "stdp_facetshw_synapse_hom" );
+  register_connection_model< stdp_facetshw_synapse_hom >( name );
 }

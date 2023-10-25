@@ -26,7 +26,6 @@
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from libnestutil:
@@ -43,9 +42,9 @@
 namespace nest
 {
 void
-register_gif_psc_exp()
+register_gif_psc_exp( const std::string& name )
 {
-  kernel().model_manager.register_node_model< gif_psc_exp >( "gif_psc_exp" );
+  register_node_model< gif_psc_exp >( name );
 }
 
 /* ----------------------------------------------------------------

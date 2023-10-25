@@ -30,7 +30,6 @@
 #include "event_delivery_manager_impl.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -41,9 +40,9 @@
 #include "doubledatum.h"
 
 void
-nest::register_poisson_generator_ps()
+nest::register_poisson_generator_ps( const std::string& name )
 {
-  kernel().model_manager.register_node_model< poisson_generator_ps >( "poisson_generator_ps" );
+  register_node_model< poisson_generator_ps >( name );
 }
 
 

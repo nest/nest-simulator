@@ -23,12 +23,10 @@
 #include "tsodyks_synapse.h"
 
 // Includes from nestkernel:
-#include "connector_model_impl.h"
-#include "model_manager_impl.h"
 #include "nest_impl.h"
 
 void
-nest::register_tsodyks_synapse()
+nest::register_tsodyks_synapse( const std::string& name )
 {
-  register_connection_model< tsodyks_synapse >( "tsodyks_synapse" );
+  register_connection_model< tsodyks_synapse >( name );
 }

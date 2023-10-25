@@ -29,7 +29,6 @@
 #include "genericmodel_impl.h"
 #include "iaf_propagator.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
 
@@ -45,9 +44,9 @@ nest::RecordablesMap< nest::iaf_psc_exp_htum > nest::iaf_psc_exp_htum::recordabl
 namespace nest
 {
 void
-register_iaf_psc_exp_htum()
+register_iaf_psc_exp_htum( const std::string& name )
 {
-  kernel().model_manager.register_node_model< iaf_psc_exp_htum >( "iaf_psc_exp_htum" );
+  register_node_model< iaf_psc_exp_htum >( name );
 }
 
 // Override the create() method with one call to RecordablesMap::insert_()

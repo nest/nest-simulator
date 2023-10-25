@@ -30,15 +30,15 @@
 namespace nest
 {
 void
-register_sigmoid_rate_ipn()
+register_sigmoid_rate_ipn( const std::string& name )
 {
-  kernel().model_manager.register_node_model< sigmoid_rate_ipn >( "sigmoid_rate_ipn" );
+  register_node_model< sigmoid_rate_ipn >( name );
 }
 
 void
-register_rate_transformer_sigmoid()
+register_rate_transformer_sigmoid( const std::string& name )
 {
-  kernel().model_manager.register_node_model< rate_transformer_sigmoid >( "rate_transformer_sigmoid" );
+  register_node_model< rate_transformer_sigmoid >( name );
 }
 
 

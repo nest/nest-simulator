@@ -23,14 +23,12 @@
 #include "jonke_synapse.h"
 
 // Includes from nestkernel:
-#include "connector_model_impl.h"
-#include "model_manager_impl.h"
 #include "nest_impl.h"
 
 void
-nest::register_jonke_synapse()
+nest::register_jonke_synapse( const std::string& name )
 {
-  register_connection_model< jonke_synapse >( "jonke_synapse" );
+  register_connection_model< jonke_synapse >( name );
 }
 
 namespace nest

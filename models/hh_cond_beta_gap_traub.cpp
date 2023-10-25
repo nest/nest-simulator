@@ -42,7 +42,6 @@
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -54,9 +53,9 @@ nest::RecordablesMap< nest::hh_cond_beta_gap_traub > nest::hh_cond_beta_gap_trau
 namespace nest
 {
 void
-register_hh_cond_beta_gap_traub()
+register_hh_cond_beta_gap_traub( const std::string& name )
 {
-  kernel().model_manager.register_node_model< hh_cond_beta_gap_traub >( "hh_cond_beta_gap_traub" );
+  register_node_model< hh_cond_beta_gap_traub >( name );
 }
 
 // Override the create() method with one call to RecordablesMap::insert_()

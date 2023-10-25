@@ -23,12 +23,10 @@
 #include "vogels_sprekeler_synapse.h"
 
 // Includes from nestkernel:
-#include "connector_model_impl.h"
-#include "model_manager_impl.h"
 #include "nest_impl.h"
 
 void
-nest::register_vogels_sprekeler_synapse()
+nest::register_vogels_sprekeler_synapse( const std::string& name )
 {
-  register_connection_model< vogels_sprekeler_synapse >( "vogels_sprekeler_synapse" );
+  register_connection_model< vogels_sprekeler_synapse >( name );
 }

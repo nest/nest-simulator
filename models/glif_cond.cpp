@@ -36,7 +36,6 @@
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
 #include "name.h"
 #include "universal_data_logger_impl.h"
 
@@ -49,9 +48,9 @@ using namespace nest;
 namespace nest
 {
 void
-register_glif_cond()
+register_glif_cond( const std::string& name )
 {
-  kernel().model_manager.register_node_model< glif_cond >( "glif_cond" );
+  register_node_model< glif_cond >( name );
 }
 
 // Override the create() method with one call to RecordablesMap::insert_()

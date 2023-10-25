@@ -24,14 +24,13 @@
 
 // Includes from nestkernel:
 #include "genericmodel_impl.h"
-#include "model_manager_impl.h"
 
 namespace nest
 {
 void
-register_cm_default()
+register_cm_default( const std::string& name )
 {
-  kernel().model_manager.register_node_model< cm_default >( "cm_default" );
+  register_node_model< cm_default >( name );
 }
 
 

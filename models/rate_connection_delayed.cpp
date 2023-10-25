@@ -23,12 +23,10 @@
 #include "rate_connection_delayed.h"
 
 // Includes from nestkernel:
-#include "connector_model_impl.h"
-#include "model_manager_impl.h"
 #include "nest_impl.h"
 
 void
-nest::register_rate_connection_delayed()
+nest::register_rate_connection_delayed( const std::string& name )
 {
-  register_connection_model< rate_connection_delayed >( "rate_connection_delayed" );
+  register_connection_model< rate_connection_delayed >( name );
 }

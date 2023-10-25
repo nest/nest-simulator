@@ -30,15 +30,15 @@
 namespace nest
 {
 void
-register_gauss_rate_ipn()
+register_gauss_rate_ipn( const std::string& name )
 {
-  kernel().model_manager.register_node_model< gauss_rate_ipn >( "gauss_rate_ipn" );
+  register_node_model< gauss_rate_ipn >( name );
 }
 
 void
-register_rate_transformer_gauss()
+register_rate_transformer_gauss( const std::string& name )
 {
-  kernel().model_manager.register_node_model< rate_transformer_gauss >( "rate_transformer_gauss" );
+  register_node_model< rate_transformer_gauss >( name );
 }
 
 

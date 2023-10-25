@@ -24,12 +24,10 @@
 #include "cont_delay_synapse_impl.h"
 
 // Includes from nestkernel:
-#include "connector_model_impl.h"
-#include "model_manager_impl.h"
 #include "nest_impl.h"
 
 void
-nest::register_cont_delay_synapse()
+nest::register_cont_delay_synapse( const std::string& name )
 {
-  register_connection_model< cont_delay_synapse >( "cont_delay_synapse" );
+  register_connection_model< cont_delay_synapse >( name );
 }

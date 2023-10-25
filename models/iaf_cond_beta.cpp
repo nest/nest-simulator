@@ -38,7 +38,6 @@
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -53,9 +52,9 @@ nest::RecordablesMap< nest::iaf_cond_beta > nest::iaf_cond_beta::recordablesMap_
 namespace nest // template specialization must be placed in namespace
 {
 void
-register_iaf_cond_beta()
+register_iaf_cond_beta( const std::string& name )
 {
-  kernel().model_manager.register_node_model< iaf_cond_beta >( "iaf_cond_beta" );
+  register_node_model< iaf_cond_beta >( name );
 }
 
 /*

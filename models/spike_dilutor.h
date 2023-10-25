@@ -84,7 +84,7 @@ Examples using this model
 
 EndUserDocs */
 
-void register_spike_dilutor();
+void register_spike_dilutor( const std::string& name );
 
 class spike_dilutor : public DeviceNode
 {

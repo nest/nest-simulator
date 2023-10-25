@@ -23,12 +23,10 @@
 #include "urbanczik_synapse.h"
 
 // Includes from nestkernel:
-#include "connector_model_impl.h"
-#include "model_manager_impl.h"
 #include "nest_impl.h"
 
 void
-nest::register_urbanczik_synapse()
+nest::register_urbanczik_synapse( const std::string& name )
 {
-  register_connection_model< urbanczik_synapse >( "urbanczik_synapse" );
+  register_connection_model< urbanczik_synapse >( name );
 }

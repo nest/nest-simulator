@@ -44,7 +44,7 @@
 namespace nest
 {
 void
-register_ac_generator()
+register_ac_generator( const std::string& name )
 {
   register_node_model< ac_generator >( "ac_generator" );
 }

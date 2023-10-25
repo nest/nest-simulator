@@ -33,15 +33,15 @@
 namespace nest
 {
 void
-register_multimeter()
+register_multimeter( const std::string& name )
 {
-  kernel().model_manager.register_node_model< multimeter >( "multimeter" );
+  register_node_model< multimeter >( name );
 }
 
 void
-register_voltmeter()
+register_voltmeter( const std::string& name )
 {
-  kernel().model_manager.register_node_model< voltmeter >( "voltmeter" );
+  register_node_model< voltmeter >( name );
 }
 
 

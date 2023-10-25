@@ -42,9 +42,9 @@
 #include "dictutils.h"
 
 void
-nest::register_correlomatrix_detector()
+nest::register_correlomatrix_detector( const std::string& name )
 {
-  kernel().model_manager.register_node_model< correlomatrix_detector >( "correlomatrix_detector" );
+  register_node_model< correlomatrix_detector >( name );
 }
 
 

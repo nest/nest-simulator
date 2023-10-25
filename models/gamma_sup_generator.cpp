@@ -33,16 +33,15 @@
 #include "event_delivery_manager_impl.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
 
 // Includes from sli:
 #include "dict.h"
 #include "doubledatum.h"
 
 void
-nest::register_gamma_sup_generator()
+nest::register_gamma_sup_generator( const std::string& name )
 {
-  kernel().model_manager.register_node_model< gamma_sup_generator >( "gamma_sup_generator" );
+  register_node_model< gamma_sup_generator >( name );
 }
 
 

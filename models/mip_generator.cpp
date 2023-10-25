@@ -31,12 +31,11 @@
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
 
 void
-nest::register_mip_generator()
+nest::register_mip_generator( const std::string& name )
 {
-  kernel().model_manager.register_node_model< mip_generator >( "mip_generator" );
+  register_node_model< mip_generator >( name );
 }
 
 

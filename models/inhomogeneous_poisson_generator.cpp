@@ -33,7 +33,6 @@
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -43,9 +42,9 @@
 #include "dictutils.h"
 
 void
-nest::register_inhomogeneous_poisson_generator()
+nest::register_inhomogeneous_poisson_generator( const std::string& name )
 {
-  kernel().model_manager.register_node_model< inhomogeneous_poisson_generator >( "inhomogeneous_poisson_generator" );
+  register_node_model< inhomogeneous_poisson_generator >( name );
 }
 
 

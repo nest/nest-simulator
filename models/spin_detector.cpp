@@ -37,9 +37,9 @@
 #include "dictutils.h"
 
 void
-nest::register_spin_detector()
+nest::register_spin_detector( const std::string& name )
 {
-  kernel().model_manager.register_node_model< spin_detector >( "spin_detector" );
+  register_node_model< spin_detector >( name );
 }
 
 

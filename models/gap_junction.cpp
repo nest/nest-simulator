@@ -23,12 +23,10 @@
 #include "gap_junction.h"
 
 // Includes from nestkernel:
-#include "connector_model_impl.h"
-#include "model_manager_impl.h"
 #include "nest_impl.h"
 
 void
-nest::register_gap_junction()
+nest::register_gap_junction( const std::string& name )
 {
-  register_connection_model< gap_junction >( "gap_junction" );
+  register_connection_model< gap_junction >( name );
 }

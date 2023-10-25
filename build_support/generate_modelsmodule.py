@@ -292,7 +292,7 @@ def generate_modelsmodule():
             for guards, mnames in guards_mnames.items():
                 file.write(start_guard(guards))
                 for mname in mnames:
-                    file.write(f"  register_{mname}();\n")
+                    file.write(f'  register_{mname}( "{mname}" );\n')
                 file.write(end_guard(guards))
 
         file.write("}")

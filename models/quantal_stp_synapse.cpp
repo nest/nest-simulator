@@ -24,12 +24,10 @@
 #include "quantal_stp_synapse_impl.h"
 
 // Includes from nestkernel:
-#include "connector_model_impl.h"
-#include "model_manager_impl.h"
 #include "nest_impl.h"
 
 void
-nest::register_quantal_stp_synapse()
+nest::register_quantal_stp_synapse( const std::string& name )
 {
-  register_connection_model< quantal_stp_synapse >( "quantal_stp_synapse" );
+  register_connection_model< quantal_stp_synapse >( name );
 }

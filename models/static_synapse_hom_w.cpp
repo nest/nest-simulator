@@ -23,12 +23,10 @@
 #include "static_synapse_hom_w.h"
 
 // Includes from nestkernel:
-#include "connector_model_impl.h"
-#include "model_manager_impl.h"
 #include "nest_impl.h"
 
 void
-nest::register_static_synapse_hom_w()
+nest::register_static_synapse_hom_w( const std::string& name )
 {
-  register_connection_model< static_synapse_hom_w >( "static_synapse_hom_w" );
+  register_connection_model< static_synapse_hom_w >( name );
 }

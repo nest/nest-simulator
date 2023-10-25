@@ -23,12 +23,10 @@
 #include "rate_connection_instantaneous.h"
 
 // Includes from nestkernel:
-#include "connector_model_impl.h"
-#include "model_manager_impl.h"
 #include "nest_impl.h"
 
 void
-nest::register_rate_connection_instantaneous()
+nest::register_rate_connection_instantaneous( const std::string& name )
 {
-  register_connection_model< rate_connection_instantaneous >( "rate_connection_instantaneous" );
+  register_connection_model< rate_connection_instantaneous >( name );
 }

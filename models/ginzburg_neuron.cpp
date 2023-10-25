@@ -31,9 +31,9 @@
 namespace nest
 {
 void
-register_ginzburg_neuron()
+register_ginzburg_neuron( const std::string& name )
 {
-  kernel().model_manager.register_node_model< ginzburg_neuron >( "ginzburg_neuron" );
+  register_node_model< ginzburg_neuron >( name );
 }
 
 

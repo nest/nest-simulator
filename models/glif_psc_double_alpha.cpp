@@ -32,7 +32,6 @@
 #include "genericmodel_impl.h"
 #include "iaf_propagator.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -46,9 +45,9 @@ nest::RecordablesMap< nest::glif_psc_double_alpha > nest::glif_psc_double_alpha:
 namespace nest
 {
 void
-register_glif_psc_double_alpha()
+register_glif_psc_double_alpha( const std::string& name )
 {
-  kernel().model_manager.register_node_model< glif_psc_double_alpha >( "glif_psc_double_alpha" );
+  register_node_model< glif_psc_double_alpha >( name );
 }
 
 // Override the create() method with one call to RecordablesMap::insert_()

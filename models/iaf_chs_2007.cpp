@@ -30,7 +30,6 @@
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -46,9 +45,9 @@ nest::RecordablesMap< nest::iaf_chs_2007 > nest::iaf_chs_2007::recordablesMap_;
 namespace nest
 {
 void
-register_iaf_chs_2007()
+register_iaf_chs_2007( const std::string& name )
 {
-  kernel().model_manager.register_node_model< iaf_chs_2007 >( "iaf_chs_2007" );
+  register_node_model< iaf_chs_2007 >( name );
 }
 
 // Override the create() method with one call to RecordablesMap::insert_()

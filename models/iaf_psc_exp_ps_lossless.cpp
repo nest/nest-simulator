@@ -28,7 +28,6 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "genericmodel_impl.h"
-#include "model_manager_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from libnestutil:
@@ -50,9 +49,9 @@ nest::RecordablesMap< nest::iaf_psc_exp_ps_lossless > nest::iaf_psc_exp_ps_lossl
 namespace nest
 {
 void
-register_iaf_psc_exp_ps_lossless()
+register_iaf_psc_exp_ps_lossless( const std::string& name )
 {
-  kernel().model_manager.register_node_model< iaf_psc_exp_ps_lossless >( "iaf_psc_exp_ps_lossless" );
+  register_node_model< iaf_psc_exp_ps_lossless >( name );
 }
 
 // Override the create() method with one call to RecordablesMap::insert_()

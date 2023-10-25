@@ -23,12 +23,10 @@
 #include "ht_synapse.h"
 
 // Includes from nestkernel:
-#include "connector_model_impl.h"
-#include "model_manager_impl.h"
 #include "nest_impl.h"
 
 void
-nest::register_ht_synapse()
+nest::register_ht_synapse( const std::string& name )
 {
-  register_connection_model< ht_synapse >( "ht_synapse" );
+  register_connection_model< ht_synapse >( name );
 }

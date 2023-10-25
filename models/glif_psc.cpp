@@ -32,7 +32,6 @@
 #include "genericmodel_impl.h"
 #include "iaf_propagator.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -46,9 +45,9 @@ nest::RecordablesMap< nest::glif_psc > nest::glif_psc::recordablesMap_;
 namespace nest
 {
 void
-register_glif_psc()
+register_glif_psc( const std::string& name )
 {
-  kernel().model_manager.register_node_model< glif_psc >( "glif_psc" );
+  register_node_model< glif_psc >( name );
 }
 
 // Override the create() method with one call to RecordablesMap::insert_()

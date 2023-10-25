@@ -70,9 +70,9 @@ nest::RecordablesMap< nest::pp_cond_exp_mc_urbanczik > nest::pp_cond_exp_mc_urba
 namespace nest
 {
 void
-register_pp_cond_exp_mc_urbanczik()
+register_pp_cond_exp_mc_urbanczik( const std::string& name )
 {
-  kernel().model_manager.register_node_model< pp_cond_exp_mc_urbanczik >( "pp_cond_exp_mc_urbanczik" );
+  register_node_model< pp_cond_exp_mc_urbanczik >( name );
 }
 
 // specialization must be place in namespace

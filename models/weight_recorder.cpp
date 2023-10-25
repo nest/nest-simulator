@@ -40,9 +40,9 @@
 #include "dictutils.h"
 
 void
-nest::register_weight_recorder()
+nest::register_weight_recorder( const std::string& name )
 {
-  kernel().model_manager.register_node_model< weight_recorder >( "weight_recorder" );
+  register_node_model< weight_recorder >( name );
 }
 
 

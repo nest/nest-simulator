@@ -152,7 +152,7 @@ EndUserDocs */
  *    entries, then registers new entries in histogram
  */
 
-void register_correlomatrix_detector();
+void register_correlomatrix_detector( const std::string& name );
 
 class correlomatrix_detector : public Node
 {

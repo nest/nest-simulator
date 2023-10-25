@@ -30,21 +30,21 @@
 namespace nest
 {
 void
-register_tanh_rate_ipn()
+register_tanh_rate_ipn( const std::string& name )
 {
-  kernel().model_manager.register_node_model< tanh_rate_ipn >( "tanh_rate_ipn" );
+  register_node_model< tanh_rate_ipn >( name );
 }
 
 void
-register_tanh_rate_opn()
+register_tanh_rate_opn( const std::string& name )
 {
-  kernel().model_manager.register_node_model< tanh_rate_opn >( "tanh_rate_opn" );
+  register_node_model< tanh_rate_opn >( name );
 }
 
 void
-register_rate_transformer_tanh()
+register_rate_transformer_tanh( const std::string& name )
 {
-  kernel().model_manager.register_node_model< rate_transformer_tanh >( "rate_transformer_tanh" );
+  register_node_model< rate_transformer_tanh >( name );
 }
 
 

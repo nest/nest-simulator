@@ -42,9 +42,9 @@
 #include "dictutils.h"
 
 void
-nest::register_correlospinmatrix_detector()
+nest::register_correlospinmatrix_detector( const std::string& name )
 {
-  kernel().model_manager.register_node_model< correlospinmatrix_detector >( "correlospinmatrix_detector" );
+  register_node_model< correlospinmatrix_detector >( name );
 }
 
 

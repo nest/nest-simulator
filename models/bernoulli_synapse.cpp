@@ -23,12 +23,10 @@
 #include "bernoulli_synapse.h"
 
 // Includes from nestkernel:
-#include "connector_model_impl.h"
-#include "model_manager_impl.h"
 #include "nest_impl.h"
 
 void
-nest::register_bernoulli_synapse()
+nest::register_bernoulli_synapse( const std::string& name )
 {
-  register_connection_model< bernoulli_synapse >( "bernoulli_synapse" );
+  register_connection_model< bernoulli_synapse >( name );
 }

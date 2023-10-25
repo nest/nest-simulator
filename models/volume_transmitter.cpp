@@ -38,9 +38,9 @@
 #include "dictutils.h"
 
 void
-nest::register_volume_transmitter()
+nest::register_volume_transmitter( const std::string& name )
 {
-  kernel().model_manager.register_node_model< volume_transmitter >( "volume_transmitter" );
+  register_node_model< volume_transmitter >( name );
 }
 
 

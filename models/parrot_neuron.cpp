@@ -31,7 +31,6 @@
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -39,9 +38,9 @@
 namespace nest
 {
 void
-register_parrot_neuron()
+register_parrot_neuron( const std::string& name )
 {
-  kernel().model_manager.register_node_model< parrot_neuron >( "parrot_neuron" );
+  register_node_model< parrot_neuron >( name );
 }
 
 

@@ -23,12 +23,10 @@
 #include "diffusion_connection.h"
 
 // Includes from nestkernel:
-#include "connector_model_impl.h"
-#include "model_manager_impl.h"
 #include "nest_impl.h"
 
 void
-nest::register_diffusion_connection()
+nest::register_diffusion_connection( const std::string& name )
 {
-  register_connection_model< diffusion_connection >( "diffusion_connection" );
+  register_connection_model< diffusion_connection >( name );
 }

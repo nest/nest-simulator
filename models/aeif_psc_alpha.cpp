@@ -38,7 +38,6 @@
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
 #include "nest_names.h"
 #include "universal_data_logger_impl.h"
 
@@ -54,9 +53,9 @@ nest::RecordablesMap< nest::aeif_psc_alpha > nest::aeif_psc_alpha::recordablesMa
 namespace nest // template specialization must be placed in namespace
 {
 void
-register_aeif_psc_alpha()
+register_aeif_psc_alpha( const std::string& name )
 {
-  kernel().model_manager.register_node_model< aeif_psc_alpha >( "aeif_psc_alpha" );
+  register_node_model< aeif_psc_alpha >( name );
 }
 
 // Override the create() method with one call to RecordablesMap::insert_()

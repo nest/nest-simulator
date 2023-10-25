@@ -23,12 +23,10 @@
 #include "sic_connection.h"
 
 // Includes from nestkernel:
-#include "connector_model_impl.h"
-#include "model_manager_impl.h"
 #include "nest_impl.h"
 
 void
-nest::register_sic_connection()
+nest::register_sic_connection( const std::string& name )
 {
-  register_connection_model< sic_connection >( "sic_connection" );
+  register_connection_model< sic_connection >( name );
 }

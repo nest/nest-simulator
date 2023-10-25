@@ -41,9 +41,9 @@
 #include "dictutils.h"
 
 void
-nest::register_correlation_detector()
+nest::register_correlation_detector( const std::string& name )
 {
-  kernel().model_manager.register_node_model< correlation_detector >( "correlation_detector" );
+  register_node_model< correlation_detector >( name );
 }
 
 

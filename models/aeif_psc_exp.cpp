@@ -38,7 +38,6 @@
 #include "exceptions.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
 #include "nest_names.h"
 #include "universal_data_logger_impl.h"
 
@@ -54,9 +53,9 @@ nest::RecordablesMap< nest::aeif_psc_exp > nest::aeif_psc_exp::recordablesMap_;
 namespace nest
 {
 void
-register_aeif_psc_exp()
+register_aeif_psc_exp( const std::string& name )
 {
-  kernel().model_manager.register_node_model< aeif_psc_exp >( "aeif_psc_exp" );
+  register_node_model< aeif_psc_exp >( name );
 }
 
 /*

@@ -574,8 +574,8 @@ target_signal = np.array([target_signal[senders == i] for i in np.unique(senders
 readout_signal = readout_signal[:, steps["shift"] - 1 :]  # -1 since multimeter starts recording from 1
 target_signal = target_signal[:, steps["shift"] - 2 : -1]  # extra -1 since target has shorter travel time
 
-readout_signal = readout_signal.reshape(n_out, n_iter, n_batch, steps["sequence"])[:, :, :, -steps["recall"] :]
-target_signal = target_signal.reshape(n_out, n_iter, n_batch, steps["sequence"])[:, :, :, -steps["recall"] :]
+readout_signal = readout_signal.reshape(n_out, n_iter, n_batch, steps["sequence"])[:, :, :, steps["recall_onset"] :]
+target_signal = target_signal.reshape(n_out, n_iter, n_batch, steps["sequence"])[:, :, :, steps["recall_onset"] :]
 
 loss = -np.mean(np.sum(target_signal * np.log(readout_signal), axis=0), axis=(1, 2))
 

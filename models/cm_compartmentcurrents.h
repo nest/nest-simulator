@@ -73,8 +73,8 @@ public:
   void append_recordables( std::map< Name, double* >* recordables, const long compartment_idx );
 
   //!< compute state variable time scale and asymptotic values
-  void compute_statevar_m( double v_comp, double &tau_m_Na, double &m_inf_Na );
-  void compute_statevar_h( double v_comp, double &tau_h_Na, double &h_inf_Na );
+  void compute_statevar_m( double v_comp, double& tau_m_Na, double& m_inf_Na );
+  void compute_statevar_h( double v_comp, double& tau_h_Na, double& h_inf_Na );
 
   //!< advance channel by one numerical integration step
   std::pair< double, double > f_numstep( const double v_comp );
@@ -119,7 +119,7 @@ public:
   void append_recordables( std::map< Name, double* >* recordables, const long compartment_idx );
 
   //!< compute state variable time scale and asymptotic values
-  void compute_statevar_n( double v_comp, double &tau_n_Na, double &n_inf_Na );
+  void compute_statevar_n( double v_comp, double& tau_n_Na, double& n_inf_Na );
 
   //!< advance channel by one numerical integration step
   std::pair< double, double > f_numstep( const double v_comp );

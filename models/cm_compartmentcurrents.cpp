@@ -60,8 +60,8 @@ void
 nest::Na::pre_run_hook()
 {
   double tau_dummy; // not required for initialization
-  compute_statevar_m( v_init_, tau_dummy, m_Na_);
-  compute_statevar_h( v_init_, tau_dummy, h_Na_);
+  compute_statevar_m( v_init_, tau_dummy, m_Na_ );
+  compute_statevar_h( v_init_, tau_dummy, h_Na_ );
 }
 
 void
@@ -72,7 +72,7 @@ nest::Na::append_recordables( std::map< Name, double* >* recordables, const long
 }
 
 void
-nest::Na::compute_statevar_m( const double v_comp, double &tau_m_Na, double &m_inf_Na )
+nest::Na::compute_statevar_m( const double v_comp, double& tau_m_Na, double& m_inf_Na )
 {
   /**
    * Channel rate equations from the following .mod file:
@@ -105,7 +105,7 @@ nest::Na::compute_statevar_m( const double v_comp, double &tau_m_Na, double &m_i
 }
 
 void
-nest::Na::compute_statevar_h( const double v_comp, double &tau_h_Na, double &h_inf_Na )
+nest::Na::compute_statevar_h( const double v_comp, double& tau_h_Na, double& h_inf_Na )
 {
   /**
    * Channel rate equations from the following .mod file:
@@ -221,7 +221,7 @@ nest::K::append_recordables( std::map< Name, double* >* recordables, const long 
 }
 
 void
-nest::K::compute_statevar_n( const double v_comp, double &tau_n_K, double &n_inf_K )
+nest::K::compute_statevar_n( const double v_comp, double& tau_n_K, double& n_inf_K )
 {
   /**
    * Channel rate equations from the following .mod file:

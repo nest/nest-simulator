@@ -12,20 +12,21 @@ tau_GABA = 5.0
 tau_NMDA = 100.0
 nrn1 = nest.Create("iaf_wang_2002", {"tau_AMPA": tau_AMPA,
                                      "tau_GABA": tau_GABA,
-                                     "tau_rise_NMDA": tau_NMDA})
+                                     "tau_decay_NMDA": tau_NMDA})
 
 pg = nest.Create("poisson_generator", {"rate": 50.})
 sr = nest.Create("spike_recorder")
 nrn2 = nest.Create("iaf_wang_2002", {"tau_AMPA": tau_AMPA,
                                      "tau_GABA": tau_GABA,
-                                     "tau_rise_NMDA": tau_NMDA,
+                                     "tau_decay_NMDA": tau_NMDA,
                                      "t_ref": 0.})
 
 mm1 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_NMDA", "s_GABA"], "interval": 0.1})
 mm2 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_NMDA", "s_GABA"], "interval": 0.1})
 
 ex_syn_spec = {"synapse_model": "static_synapse",
-                "weight": w_ex}
+                "weight": w_ex,
+               "receptor_type": 0}
 
 in_syn_spec = {"synapse_model": "static_synapse",
                 "weight": w_in}

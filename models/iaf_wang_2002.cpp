@@ -89,7 +89,7 @@ nest::iaf_wang_2002_dynamics( double, const double y[], double f[], void* pnode 
   f[ S::V_m ] = ( -node.P_.g_L * ( y[ S::V_m ] - node.P_.E_L ) - I_syn ) / node.P_.C_m;
 
   f[ S::s_AMPA ] = -y[ S::s_AMPA ] / node.P_.tau_AMPA;
-  f[ S::s_NMDA ] = -y[ S::s_AMPA ] / node.P_.tau_decay_NMDA;
+  f[ S::s_NMDA ] = -y[ S::s_NMDA ] / node.P_.tau_decay_NMDA;
   f[ S::s_GABA ] = -y[ S::s_GABA ] / node.P_.tau_GABA;
 
   return GSL_SUCCESS;
@@ -437,7 +437,10 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
     S_.y_[ State_::s_AMPA ] += B_.spike_AMPA.get_value( lag );
     S_.y_[ State_::s_GABA ] += B_.spike_GABA.get_value( lag );
     S_.y_[ State_::s_NMDA ] += B_.spike_NMDA.get_value( lag );
-
+    if ( S_.y_[ State_::s_NMDA ] > 1 )
+    {
+      S_.y_[ State_::s_NMDA ] = 1;
+    }
     if ( S_.r_ )
     {
       // neuron is absolute refractory
@@ -453,7 +456,6 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
       // get previous spike time
       double t_lastspike = get_spiketime_ms();               
 
-
       // log spike with ArchivingNode
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
@@ -461,8 +463,11 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
 
       // compute current value of s_NMDA and add NMDA update to spike offset
       S_.s_NMDA_pre = S_.s_NMDA_pre * exp( -( t_spike - t_lastspike ) / P_.tau_decay_NMDA );
+      double s_NMDA_delta = P_.alpha * (1 - S_.s_NMDA_pre);
+      S_.s_NMDA_pre += s_NMDA_delta;
+
       SpikeEvent se;
-      se.set_offset( P_.alpha * ( 1 - S_.s_NMDA_pre ));
+      se.set_offset( s_NMDA_delta );
       kernel().event_delivery_manager.send( *this, se, lag );
     }
 
@@ -471,7 +476,6 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
 
     // voltage logging
     B_.logger_.record_data( origin.get_steps() + lag );
-    std::cout << "Inside update" << std::endl;
   }
 }
 
@@ -487,14 +491,17 @@ void
 nest::iaf_wang_2002::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
+  std::cout << "rport: " << e.get_rport() << std::endl;
 
   if ( e.get_weight() > 0.0 )
   {
     B_.spike_AMPA.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
-
-    B_.spike_NMDA.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    
+    if ( e.get_rport() == 0 ) {
+        B_.spike_NMDA.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() * e.get_offset() );
+    }
   }
   else
   {

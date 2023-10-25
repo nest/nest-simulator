@@ -205,6 +205,12 @@ public:
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
 
+  bool
+    is_off_grid() const override
+    {
+      return true;
+    }
+
 private:
   /**
    * Synapse types to connect to
@@ -295,7 +301,7 @@ public:
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
 
-    double s_NMDA_pre;
+    double s_NMDA_pre = 0;
 
     void get( DictionaryDatum& ) const;
     void set( const DictionaryDatum&, const Parameters_&, Node* );
@@ -424,11 +430,18 @@ iaf_wang_2002::send_test_event( Node& target, size_t receptor_type, synindex, bo
 inline size_t
 iaf_wang_2002::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
-  if ( receptor_type != 0 )
+  if ( receptor_type == 0 )
+  {
+    return 0;
+  }
+  else if ( receptor_type == 1 )
+  {
+    return 1;
+  }
+  else
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
-  return 0;
 }
 
 inline size_t
@@ -468,7 +481,7 @@ iaf_wang_2002::get_status( DictionaryDatum& d ) const
 
   DictionaryDatum receptor_type = new Dictionary();
 
-  ( *d )[ names::receptor_types ] = receptor_type;
+//  ( *d )[ names::receptor_types ] = receptor_type;
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }

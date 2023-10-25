@@ -151,7 +151,7 @@ nest::Na::f_numstep( const double v_comp )
     compute_statevar_m( v_comp, tau_m_Na, m_inf_Na );
 
     double tau_h_Na, h_inf_Na;
-    compute_statevar_m( v_comp, tau_h_Na, h_inf_Na );
+    compute_statevar_h( v_comp, tau_h_Na, h_inf_Na );
 
     // advance state variable 'm' one timestep
     double p_m_Na = std::exp( -dt / tau_m_Na );

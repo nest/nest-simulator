@@ -23,21 +23,23 @@
 
 
 nest::Na::Na()
-  // initialization state state variables
+  // state variables
   : m_Na_( 0.0 )
   , h_Na_( 0.0 )
-  // initialization parameters
+  // parameters
   , gbar_Na_( 0.0 )
   , e_Na_( 50. )
+  , v_init_( -75. )
 {
 }
 nest::Na::Na( const DictionaryDatum& channel_params )
-  // initialization state state variables
+  // state variables
   : m_Na_( 0.0 )
   , h_Na_( 0.0 )
-  // initialization parameters
+  // parameters
   , gbar_Na_( 0.0 )
   , e_Na_( 50. )
+  , v_init_( -75. )
 {
   // update sodium channel parameters
   if ( channel_params->known( "gbar_Na" ) )
@@ -48,29 +50,47 @@ nest::Na::Na( const DictionaryDatum& channel_params )
   {
     e_Na_ = getValue< double >( channel_params, "e_Na" );
   }
+  if ( channel_params->known( "V_init" ) )
+  {
+    v_init_ = getValue< double >( channel_params, "V_init" );
+  }
 }
 
 void
-nest::Na::pre_run_hook( const double v_init )
+nest::Na::pre_run_hook()
 {
-  // compute limiting values for m and h given v_init as the initial state
+  double tau_dummy; // not required for initialization
+  compute_statevar_m( v_init_, tau_dummy, m_Na_);
+  compute_statevar_h( v_init_, tau_dummy, h_Na_);
+}
+
+void
+nest::Na::append_recordables( std::map< Name, double* >* recordables, const long compartment_idx )
+{
+  ( *recordables )[ Name( "m_Na_" + std::to_string( compartment_idx ) ) ] = &m_Na_;
+  ( *recordables )[ Name( "h_Na_" + std::to_string( compartment_idx ) ) ] = &h_Na_;
+}
+
+void
+nest::Na::compute_statevar_m( const double v_comp, double &tau_m_Na, double &m_inf_Na )
+{
   /**
    * Channel rate equations from the following .mod file:
    * https://senselab.med.yale.edu/ModelDB/ShowModel?model=140828&file=/Branco_2010/mod.files/na.mod#tabs-2
    */
   // auxiliary variables
-  double v_init_plus_35 = v_init + 35.013;
+  double v_comp_plus_35 = v_comp + 35.013;
 
   // trap the case where alpha_m and beta_m are 0/0 by substituting explicitly
   // precomputed limiting values
   double alpha_m, frac_alpha_plus_beta_m;
-  if ( std::abs( v_init_plus_35 ) > 1e-5 )
+  if ( std::abs( v_comp_plus_35 ) > 1e-5 )
   {
-    double exp_vcp35_div_9 = std::exp( 0.111111111111111 * v_init_plus_35 );
+    double exp_vcp35_div_9 = std::exp( 0.111111111111111 * v_comp_plus_35 );
     double frac_evcp35d9 = 1. / ( exp_vcp35_div_9 - 1. );
 
-    alpha_m = 0.182 * v_init_plus_35 * exp_vcp35_div_9 * frac_evcp35d9;
-    double beta_m = 0.124 * v_init_plus_35 * frac_evcp35d9;
+    alpha_m = 0.182 * v_comp_plus_35 * exp_vcp35_div_9 * frac_evcp35d9;
+    double beta_m = 0.124 * v_comp_plus_35 * frac_evcp35d9;
     frac_alpha_plus_beta_m = 1. / ( alpha_m + beta_m );
   }
   else
@@ -79,16 +99,44 @@ nest::Na::pre_run_hook( const double v_init )
     frac_alpha_plus_beta_m = 1. / ( alpha_m + 1.116 );
   }
 
-  // initialization of m_Na_ and h_Na_
-  m_Na_ = alpha_m * frac_alpha_plus_beta_m;
-  h_Na_ = 1. / ( 1. + std::exp( ( v_init + 65. ) / 6.2 ) );
+  // activation and timescale for state variable 'm'
+  tau_m_Na = q10_ * frac_alpha_plus_beta_m;
+  m_inf_Na = alpha_m * frac_alpha_plus_beta_m;
 }
 
 void
-nest::Na::append_recordables( std::map< Name, double* >* recordables, const long compartment_idx )
+nest::Na::compute_statevar_h( const double v_comp, double &tau_h_Na, double &h_inf_Na )
 {
-  ( *recordables )[ Name( "m_Na_" + std::to_string( compartment_idx ) ) ] = &m_Na_;
-  ( *recordables )[ Name( "h_Na_" + std::to_string( compartment_idx ) ) ] = &h_Na_;
+  /**
+   * Channel rate equations from the following .mod file:
+   * https://senselab.med.yale.edu/ModelDB/ShowModel?model=140828&file=/Branco_2010/mod.files/na.mod#tabs-2
+   */
+  double v_comp_plus_50 = v_comp + 50.013;
+  double v_comp_plus_75 = v_comp + 75.013;
+
+  // trap the case where alpha_h or beta_h are 0/0 by substituting
+  // precomputed limiting values
+  double alpha_h, beta_h;
+  if ( std::abs( v_comp_plus_50 ) > 1e-5 )
+  {
+    alpha_h = 0.024 * v_comp_plus_50 / ( 1.0 - std::exp( -0.2 * v_comp_plus_50 ) );
+  }
+  else
+  {
+    alpha_h = 0.12;
+  }
+  if ( std::abs( v_comp_plus_75 ) > 1e-9 )
+  {
+    beta_h = -0.0091 * v_comp_plus_75 / ( 1.0 - std::exp( 0.2 * v_comp_plus_75 ) );
+  }
+  else
+  {
+    beta_h = 0.0455;
+  }
+
+  // activation and timescale for state variable 'h'
+  tau_h_Na = q10_ / ( alpha_h + beta_h );
+  h_inf_Na = 1. / ( 1. + std::exp( ( v_comp + 65. ) / 6.2 ) );
 }
 
 std::pair< double, double >
@@ -99,61 +147,11 @@ nest::Na::f_numstep( const double v_comp )
 
   if ( gbar_Na_ > 1e-9 )
   {
-    /**
-     * Channel rate equations from the following .mod file:
-     * https://senselab.med.yale.edu/ModelDB/ShowModel?model=140828&file=/Branco_2010/mod.files/na.mod#tabs-2
-     */
-    // auxiliary variables
-    double v_comp_plus_35 = v_comp + 35.013;
+    double tau_m_Na, m_inf_Na;
+    compute_statevar_m( v_comp, tau_m_Na, m_inf_Na );
 
-    // trap the case where alpha_m and beta_m are 0/0 by substituting explicitly
-    // precomputed limiting values
-    double alpha_m, frac_alpha_plus_beta_m;
-    if ( std::abs( v_comp_plus_35 ) > 1e-5 )
-    {
-      double exp_vcp35_div_9 = std::exp( 0.111111111111111 * v_comp_plus_35 );
-      double frac_evcp35d9 = 1. / ( exp_vcp35_div_9 - 1. );
-
-      alpha_m = 0.182 * v_comp_plus_35 * exp_vcp35_div_9 * frac_evcp35d9;
-      double beta_m = 0.124 * v_comp_plus_35 * frac_evcp35d9;
-      frac_alpha_plus_beta_m = 1. / ( alpha_m + beta_m );
-    }
-    else
-    {
-      alpha_m = 1.638;
-      frac_alpha_plus_beta_m = 1. / ( alpha_m + 1.116 );
-    }
-
-    double v_comp_plus_50 = v_comp + 50.013;
-    double v_comp_plus_75 = v_comp + 75.013;
-
-    // trap the case where alpha_h or beta_h are 0/0 by substituting
-    // precomputed limiting values
-    double alpha_h, beta_h;
-    if ( std::abs( v_comp_plus_50 ) > 1e-5 )
-    {
-      alpha_h = 0.024 * v_comp_plus_50 / ( 1.0 - std::exp( -0.2 * v_comp_plus_50 ) );
-    }
-    else
-    {
-      alpha_h = 0.12;
-    }
-    if ( std::abs( v_comp_plus_75 ) > 1e-9 )
-    {
-      beta_h = -0.0091 * v_comp_plus_75 / ( 1.0 - std::exp( 0.2 * v_comp_plus_75 ) );
-    }
-    else
-    {
-      beta_h = 0.0455;
-    }
-
-    // activation and timescale for state variable 'm'
-    double tau_m_Na = q10_ * frac_alpha_plus_beta_m;
-    double m_inf_Na = alpha_m * frac_alpha_plus_beta_m;
-
-    // activation and timescale for state variable 'h'
-    double tau_h_Na = q10_ / ( alpha_h + beta_h );
-    double h_inf_Na = 1. / ( 1. + std::exp( ( v_comp + 65. ) / 6.2 ) );
+    double tau_h_Na, h_inf_Na;
+    compute_statevar_m( v_comp, tau_h_Na, h_inf_Na );
 
     // advance state variable 'm' one timestep
     double p_m_Na = std::exp( -dt / tau_m_Na );
@@ -178,19 +176,21 @@ nest::Na::f_numstep( const double v_comp )
 
 
 nest::K::K()
-  // initialization state variables
+  // state variables
   : n_K_( 0.0 )
-  // initialization parameters
+  // parameters
   , gbar_K_( 0.0 )
   , e_K_( -85. )
+  , v_init_( -75. )
 {
 }
 nest::K::K( const DictionaryDatum& channel_params )
-  // initialization state variables
+  // state variables
   : n_K_( 0.0 )
-  // initialization parameters
+  // parameters
   , gbar_K_( 0.0 )
   , e_K_( -85. )
+  , v_init_( -75. )
 {
   // update potassium channel parameters
   if ( channel_params->known( "gbar_K" ) )
@@ -201,29 +201,45 @@ nest::K::K( const DictionaryDatum& channel_params )
   {
     e_K_ = getValue< double >( channel_params, "e_K" );
   }
+  if ( channel_params->known( "V_init" ) )
+  {
+    v_init_ = getValue< double >( channel_params, "V_init" );
+  }
 }
 
 void
-nest::K::pre_run_hook( const double v_init )
+nest::K::pre_run_hook()
 {
-  // compute limiting value for n given v_init as the initial state
+  double tau_dummy;
+  compute_statevar_n( v_init_, tau_dummy, n_K_ );
+}
+
+void
+nest::K::append_recordables( std::map< Name, double* >* recordables, const long compartment_idx )
+{
+  ( *recordables )[ Name( "n_K_" + std::to_string( compartment_idx ) ) ] = &n_K_;
+}
+
+void
+nest::K::compute_statevar_n( const double v_comp, double &tau_n_K, double &n_inf_K )
+{
   /**
    * Channel rate equations from the following .mod file:
    * https://senselab.med.yale.edu/ModelDB/ShowModel?model=140828&file=/Branco_2010/mod.files/kv.mod#tabs-2
    */
   // auxiliary variables
-  double v_init_minus_25 = v_init - 25.;
+  double v_comp_minus_25 = v_comp - 25.;
 
   // trap the case where alpha_n and beta_n are 0/0 by substituting explicitly
   // precomputed limiting values
   double alpha_n, frac_alpha_plus_beta_n;
-  if ( std::abs( v_init_minus_25 ) > 1e-5 )
+  if ( std::abs( v_comp_minus_25 ) > 1e-5 )
   {
-    double exp_vm25_div_9 = std::exp( 0.111111111111111 * v_init_minus_25 );
+    double exp_vm25_div_9 = std::exp( 0.111111111111111 * v_comp_minus_25 );
     double frac_evm25d9 = 1. / ( exp_vm25_div_9 - 1. );
 
-    alpha_n = 0.02 * v_init_minus_25 * exp_vm25_div_9 * frac_evm25d9;
-    double beta_n = 0.002 * v_init_minus_25 * frac_evm25d9;
+    alpha_n = 0.02 * v_comp_minus_25 * exp_vm25_div_9 * frac_evm25d9;
+    double beta_n = 0.002 * v_comp_minus_25 * frac_evm25d9;
     frac_alpha_plus_beta_n = 1. / ( alpha_n + beta_n );
   }
   else
@@ -233,14 +249,9 @@ nest::K::pre_run_hook( const double v_init )
     frac_alpha_plus_beta_n = 1. / ( alpha_n + beta_n );
   }
 
-  // initialization of n_K_
-  n_K_ = alpha_n * frac_alpha_plus_beta_n;
-}
-
-void
-nest::K::append_recordables( std::map< Name, double* >* recordables, const long compartment_idx )
-{
-  ( *recordables )[ Name( "n_K_" + std::to_string( compartment_idx ) ) ] = &n_K_;
+  // activation and timescale of state variable 'n'
+  tau_n_K = q10_ * frac_alpha_plus_beta_n;
+  n_inf_K = alpha_n * frac_alpha_plus_beta_n;
 }
 
 std::pair< double, double >
@@ -251,35 +262,8 @@ nest::K::f_numstep( const double v_comp )
 
   if ( gbar_K_ > 1e-9 )
   {
-    /**
-     * Channel rate equations from the following .mod file:
-     * https://senselab.med.yale.edu/ModelDB/ShowModel?model=140828&file=/Branco_2010/mod.files/kv.mod#tabs-2
-     */
-    // auxiliary variables
-    double v_comp_minus_25 = v_comp - 25.;
-
-    // trap the case where alpha_n and beta_n are 0/0 by substituting explicitly
-    // precomputed limiting values
-    double alpha_n, frac_alpha_plus_beta_n;
-    if ( std::abs( v_comp_minus_25 ) > 1e-5 )
-    {
-      double exp_vm25_div_9 = std::exp( 0.111111111111111 * v_comp_minus_25 );
-      double frac_evm25d9 = 1. / ( exp_vm25_div_9 - 1. );
-
-      alpha_n = 0.02 * v_comp_minus_25 * exp_vm25_div_9 * frac_evm25d9;
-      double beta_n = 0.002 * v_comp_minus_25 * frac_evm25d9;
-      frac_alpha_plus_beta_n = 1. / ( alpha_n + beta_n );
-    }
-    else
-    {
-      alpha_n = 0.18;
-      double beta_n = 0.018;
-      frac_alpha_plus_beta_n = 1. / ( alpha_n + beta_n );
-    }
-
-    // activation and timescale of state variable 'n'
-    double tau_n_K = q10_ * frac_alpha_plus_beta_n;
-    double n_inf_K = alpha_n * frac_alpha_plus_beta_n;
+    double tau_n_K, n_inf_K;
+    compute_statevar_n( v_comp, tau_n_K, n_inf_K );
 
     // advance state variable 'm' one timestep
     double p_n_K = std::exp( -dt / tau_n_K );

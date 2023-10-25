@@ -28,17 +28,17 @@ import unittest
 import nest
 import numpy as np
 
-SP = {"C_m": 1.00, "g_C": 0.00, "g_L": 0.100, "e_L": -70.0}
+SP = {"C_m": 1.00, "g_C": 0.00, "g_L": 0.100, "e_L": -70.0, "V_init": -70.}
 DP = [
-    {"C_m": 0.10, "g_C": 0.10, "g_L": 0.010, "e_L": -70.0},
-    {"C_m": 0.08, "g_C": 0.11, "g_L": 0.007, "e_L": -70.0},
-    {"C_m": 0.09, "g_C": 0.07, "g_L": 0.011, "e_L": -70.0},
-    {"C_m": 0.15, "g_C": 0.12, "g_L": 0.014, "e_L": -70.0},
-    {"C_m": 0.20, "g_C": 0.32, "g_L": 0.022, "e_L": -55.0},
-    {"C_m": 0.12, "g_C": 0.12, "g_L": 0.010, "e_L": -23.0},
-    {"C_m": 0.32, "g_C": 0.09, "g_L": 0.032, "e_L": -32.0},
-    {"C_m": 0.01, "g_C": 0.05, "g_L": 0.001, "e_L": -88.0},
-    {"C_m": 0.02, "g_C": 0.03, "g_L": 0.002, "e_L": -90.0},
+    {"C_m": 0.10, "g_C": 0.10, "g_L": 0.010, "e_L": -70.0, "V_init": -70.},
+    {"C_m": 0.08, "g_C": 0.11, "g_L": 0.007, "e_L": -70.0, "V_init": -70.},
+    {"C_m": 0.09, "g_C": 0.07, "g_L": 0.011, "e_L": -70.0, "V_init": -70.},
+    {"C_m": 0.15, "g_C": 0.12, "g_L": 0.014, "e_L": -70.0, "V_init": -70.},
+    {"C_m": 0.20, "g_C": 0.32, "g_L": 0.022, "e_L": -55.0, "V_init": -55.},
+    {"C_m": 0.12, "g_C": 0.12, "g_L": 0.010, "e_L": -23.0, "V_init": -23.},
+    {"C_m": 0.32, "g_C": 0.09, "g_L": 0.032, "e_L": -32.0, "V_init": -32.},
+    {"C_m": 0.01, "g_C": 0.05, "g_L": 0.001, "e_L": -88.0, "V_init": -88.},
+    {"C_m": 0.02, "g_C": 0.03, "g_L": 0.002, "e_L": -90.0, "V_init": -90.},
 ]
 
 
@@ -959,8 +959,12 @@ class CompartmentsTestCase(unittest.TestCase):
         m_neat = nest.Create("multimeter", 1, {"record_from": recordables, "interval": 1.0})
         nest.Connect(m_neat, n_neat)
 
-        nest.Simulate(12.0)
-        nest.Simulate(88.0)
+        # test the case where we continue a run without resetting the neural state
+        nest.Prepare()
+        nest.Run(12.)
+        nest.Run(88.)
+        nest.Cleanup()
+
         events_neat_1 = nest.GetStatus(m_neat, "events")[0]
 
         for key in recordables:
@@ -1019,13 +1023,14 @@ class CompartmentsTestCase(unittest.TestCase):
         self.assertEqual(len(list(cm2.receptors)), 3)
 
     def test_custom_v_init(self):
-        sp0 = {'C_m': 1.00, 'g_C': 0.00, 'g_L': 0.100, 'e_L': -60.0}
-        dp0 = {'C_m': 0.10, 'g_C': 0.10, 'g_L': 0.010, 'e_L': -60.0}
-        sp1 = {'C_m': 1.00, 'g_C': 0.00, 'g_L': 0.100, 'e_L': -75.0}
-        dp1 = {'C_m': 0.10, 'g_C': 0.10, 'g_L': 0.010, 'e_L': -80.0}
-        sp2 = {'C_m': 1.00, 'g_C': 0.00, 'g_L': 0.100, 'e_L': -70.0}
-        dp2 = {'C_m': 0.10, 'g_C': 0.10, 'g_L': 0.010, 'e_L': -70.0}
-        v_init = -60.
+        sp0 = {'C_m': 1.00, 'g_C': 0.00, 'g_L': 0.100, 'e_L': -60.0, 'V_init': -60.}
+        dp0 = {'C_m': 0.10, 'g_C': 0.10, 'g_L': 0.010, 'e_L': -60.0, 'V_init': -60.}
+
+        sp1 = {'C_m': 1.00, 'g_C': 0.00, 'g_L': 0.100, 'e_L': -75.0, 'V_init': -60.}
+        dp1 = {'C_m': 0.10, 'g_C': 0.10, 'g_L': 0.010, 'e_L': -80.0, 'V_init': -60.}
+
+        sp2 = {'C_m': 1.00, 'g_C': 0.00, 'g_L': 0.100, 'e_L': -70.0, 'V_init': -70.}
+        dp2 = {'C_m': 0.10, 'g_C': 0.10, 'g_L': 0.010, 'e_L': -70.0, 'V_init': -70.}
 
         # test initialization equal to leak
         cm = nest.Create('cm_default')
@@ -1033,9 +1038,6 @@ class CompartmentsTestCase(unittest.TestCase):
             {"parent_idx": -1, "params": sp0},
             {"parent_idx": 0, "params": dp0},
         ]
-        nest.SetStatus(cm, {"V_init": v_init})
-        cm.V_init = v_init
-        # cm.V_bla = v_init
 
         mm = nest.Create('multimeter', 1, {'record_from': ["v_comp0", "v_comp1"], 'interval': 1.})
         nest.Connect(mm, cm)
@@ -1046,15 +1048,11 @@ class CompartmentsTestCase(unittest.TestCase):
         self.assertTrue(np.allclose(mm.events["v_comp1"], -60.0))
 
         # test initialization different from leak
-        SP = {'C_m': 1.00, 'g_C': 0.00, 'g_L': 0.100, 'e_L': -90.0}
-        DP = {'C_m': 0.10, 'g_C': 0.10, 'g_L': 0.010, 'e_L': -80.0}
-
         cm = nest.Create('cm_default')
         cm.compartments = [
             {"parent_idx": -1, "params": sp1},
             {"parent_idx": 0, "params": dp1},
         ]
-        cm.V_init = v_init
 
         mm = nest.Create('multimeter', 1, {'record_from': ["v_comp0", "v_comp1"], 'interval': .1})
         nest.Connect(mm, cm)
@@ -1066,7 +1064,7 @@ class CompartmentsTestCase(unittest.TestCase):
         self.assertFalse(np.allclose(mm.events["v_comp0"][-1], -60.0, atol=2e-1))
         self.assertFalse(np.allclose(mm.events["v_comp1"][-1], -60.0, atol=2e-1))
 
-        # test default initialization at -70.
+        # test channel initialization at -70.
         cm = nest.Create('cm_default')
         cm.compartments = [
             {"parent_idx": -1, "params": sp2},
@@ -1082,13 +1080,7 @@ class CompartmentsTestCase(unittest.TestCase):
             }
         )
         nest.Connect(mm, cm)
-
         nest.Simulate(10.)
-
-        self.assertTrue(np.allclose(mm.events["v_comp0"][0], -70.0))
-        self.assertTrue(np.allclose(mm.events["v_comp1"][0], -70.0))
-
-        # test whether activation functions are initialized correctly
 
         def vfun(v_, th, r, q):
             return r * (v_ - th) / (1. - np.exp(-(v_ - th) / q))

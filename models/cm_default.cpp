@@ -47,7 +47,6 @@ nest::cm_default::cm_default()
   , syn_buffers_( 0 )
   , logger_( *this )
   , V_th_( -55.0 )
-  , V_init_( -70.0 )
 {
   recordablesMap_.create( *this );
   recordables_values.resize( 0 );
@@ -59,7 +58,6 @@ nest::cm_default::cm_default( const cm_default& n )
   , syn_buffers_( n.syn_buffers_ )
   , logger_( *this )
   , V_th_( n.V_th_ )
-  , V_init_( n.V_init_ )
 {
   recordables_values.resize( 0 );
 }
@@ -72,7 +70,6 @@ void
 cm_default::get_status( DictionaryDatum& statusdict ) const
 {
   def< double >( statusdict, names::V_th, V_th_ );
-  def< double >( statusdict, "V_init", V_init_ );
   ArchivingNode::get_status( statusdict );
 
   // add all recordables to the status dictionary
@@ -104,7 +101,6 @@ void
 nest::cm_default::set_status( const DictionaryDatum& statusdict )
 {
   updateValue< double >( statusdict, names::V_th, V_th_ );
-  updateValue< double >( statusdict, "V_init", V_init_ );
   ArchivingNode::set_status( statusdict );
 
   /**
@@ -307,7 +303,7 @@ nest::cm_default::pre_run_hook()
   // initialize the recordables pointers
   init_recordables_pointers_();
 
-  c_tree_.pre_run_hook( V_init_ );
+  c_tree_.pre_run_hook();
 }
 
 /**

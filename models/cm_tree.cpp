@@ -28,7 +28,8 @@ nest::Compartment::Compartment( const long compartment_index, const long parent_
   , comp_index( compartment_index )
   , p_index( parent_index )
   , parent( nullptr )
-  , v_comp( 0.0 )
+  , v_comp( -75. )
+  , v_init( -75. )
   , ca( 1.0 )
   , gc( 0.01 )
   , gl( 0.1 )
@@ -55,7 +56,8 @@ nest::Compartment::Compartment( const long compartment_index,
   , comp_index( compartment_index )
   , p_index( parent_index )
   , parent( nullptr )
-  , v_comp( 0.0 )
+  , v_comp( -75. )
+  , v_init( -75. )
   , ca( 1.0 )
   , gc( 0.01 )
   , gl( 0.1 )
@@ -76,8 +78,7 @@ nest::Compartment::Compartment( const long compartment_index,
   updateValue< double >( compartment_params, names::g_C, gc );
   updateValue< double >( compartment_params, names::g_L, gl );
   updateValue< double >( compartment_params, names::e_L, el );
-
-  v_comp = el;
+  updateValue< double >( compartment_params, names::V_init, v_init );
 
   compartment_currents = CompartmentCurrents( compartment_params );
 
@@ -85,9 +86,9 @@ nest::Compartment::Compartment( const long compartment_index,
 }
 
 void
-nest::Compartment::pre_run_hook( const double v_init )
+nest::Compartment::pre_run_hook()
 {
-  compartment_currents.pre_run_hook( v_init );
+  compartment_currents.pre_run_hook();
 
   // initialize voltage
   v_comp = v_init;
@@ -370,7 +371,7 @@ nest::CompTree::get_recordables()
  * Initialize state variables
  */
 void
-nest::CompTree::pre_run_hook( const double v_init )
+nest::CompTree::pre_run_hook()
 {
   if ( root_.comp_index < 0 )
   {
@@ -381,7 +382,7 @@ nest::CompTree::pre_run_hook( const double v_init )
   // initialize the compartments
   for ( auto compartment_it = compartments_.begin(); compartment_it != compartments_.end(); ++compartment_it )
   {
-    ( *compartment_it )->pre_run_hook( v_init );
+    ( *compartment_it )->pre_run_hook();
   }
 }
 

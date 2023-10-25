@@ -26,6 +26,7 @@
 #include "event_delivery_manager_impl.h"
 #include "genericmodel_impl.h"
 #include "model_manager_impl.h"
+#include "nest_impl.h"
 
 // Includes from libnestutil:
 #include "dict_util.h"

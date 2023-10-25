@@ -26,14 +26,15 @@
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "model_manager_impl.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 namespace nest
 {
 void
-register_mcculloch_pitts_neuron()
+register_mcculloch_pitts_neuron( const std::string& name )
 {
-  kernel().model_manager.register_node_model< mcculloch_pitts_neuron >( "mcculloch_pitts_neuron" );
+  register_node_model< mcculloch_pitts_neuron >( name );
 }
 
 

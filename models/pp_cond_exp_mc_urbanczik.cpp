@@ -37,6 +37,7 @@
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "model_manager_impl.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:

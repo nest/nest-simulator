@@ -32,25 +32,25 @@ It also confirms that operations on Parameter objects and plain numbers work.
    we can use constant parameters for simplicity.
 """
 
+import operator as ops
+
 import nest
 import pytest
-import operator as ops
 
 
 def _const_param(val):
-    return nest.CreateParameter('constant', {'value': val})
+    return nest.CreateParameter("constant", {"value": val})
 
 
 def _to_numeric(item):
-    return item.GetValue() if hasattr(item, 'GetValue') else item
+    return item.GetValue() if hasattr(item, "GetValue") else item
 
 
 @pytest.mark.xfail(raises=TypeError, strict=True)
-@pytest.mark.parametrize('op, a, b', [
-    [ops.mod, _const_param(31), _const_param(5)],
-    [ops.mod, _const_param(31), 5],
-    [ops.mod, 31, _const_param(5)]
-])
+@pytest.mark.parametrize(
+    "op, a, b",
+    [[ops.mod, _const_param(31), _const_param(5)], [ops.mod, _const_param(31), 5], [ops.mod, 31, _const_param(5)]],
+)
 def test_unsupported_operators(op, a, b):
     """
     Test that unsupported operator-operand combinations raise a TypeError.
@@ -61,10 +61,7 @@ def test_unsupported_operators(op, a, b):
     op(a, b)
 
 
-@pytest.mark.parametrize('op', [
-    ops.neg,
-    ops.pos
-])
+@pytest.mark.parametrize("op", [ops.neg, ops.pos])
 def test_unary_operators(op):
     """
     Perform tests for unary operators.
@@ -78,17 +75,8 @@ def test_unary_operators(op):
     assert op(a).GetValue() == op(val_a)
 
 
-@pytest.mark.parametrize('op', [
-    ops.add,
-    ops.sub,
-    ops.mul,
-    ops.truediv
-])
-@pytest.mark.parametrize('a, b', [
-    [_const_param(31), _const_param(5)],
-    [31, _const_param(5)],
-    [_const_param(31), 5]
-])
+@pytest.mark.parametrize("op", [ops.add, ops.sub, ops.mul, ops.truediv])
+@pytest.mark.parametrize("a, b", [[_const_param(31), _const_param(5)], [31, _const_param(5)], [_const_param(31), 5]])
 def test_binary_operators(op, a, b):
     """
     Perform tests for binary operators.
@@ -115,11 +103,14 @@ def _unsupported_binary_op(op, a, b):
     return pytest.param(op, a, b, marks=pytest.mark.xfail(raises=TypeError, strict=True))
 
 
-@pytest.mark.parametrize('op, a, b', [
-    [ops.pow, _const_param(31), 5],
-    _unsupported_binary_op(ops.pow, _const_param(31), _const_param(5)),
-    _unsupported_binary_op(ops.pow, 31, _const_param(5))
-    ])
+@pytest.mark.parametrize(
+    "op, a, b",
+    [
+        [ops.pow, _const_param(31), 5],
+        _unsupported_binary_op(ops.pow, _const_param(31), _const_param(5)),
+        _unsupported_binary_op(ops.pow, 31, _const_param(5)),
+    ],
+)
 def test_incomplete_binary_operators(op, a, b):
     """
     Perform tests for binary operators that do not support parameters as all operands.
@@ -131,21 +122,17 @@ def test_incomplete_binary_operators(op, a, b):
     assert op(a, b).GetValue() == op(val_a, val_b)
 
 
-@pytest.mark.parametrize('op', [
-    ops.eq,
-    ops.ne,
-    ops.lt,
-    ops.le,
-    ops.gt,
-    ops.ge
-])
-@pytest.mark.parametrize('a, b', [
-    [_const_param(31), _const_param(31)],
-    [_const_param(31), 31],
-    [31, _const_param(31)],
-    [_const_param(31), _const_param(5)],
-    [_const_param(5), _const_param(31)],
-])
+@pytest.mark.parametrize("op", [ops.eq, ops.ne, ops.lt, ops.le, ops.gt, ops.ge])
+@pytest.mark.parametrize(
+    "a, b",
+    [
+        [_const_param(31), _const_param(31)],
+        [_const_param(31), 31],
+        [31, _const_param(31)],
+        [_const_param(31), _const_param(5)],
+        [_const_param(5), _const_param(31)],
+    ],
+)
 def test_comparison_operators(op, a, b):
     """
     Perform tests for comparison operators.

@@ -20,21 +20,21 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
+
 import nest
 
 HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
 
 
-@unittest.skipIf(not HAVE_OPENMP, 'NEST was compiled without multi-threading')
+@unittest.skipIf(not HAVE_OPENMP, "NEST was compiled without multi-threading")
 class TestRecordingBackendMemory(unittest.TestCase):
-
     def testEventsDict(self):
         """Test if the event dict is there from the start."""
 
         nest.ResetKernel()
 
         mm = nest.Create("multimeter", params={"record_to": "memory"})
-        events = mm.get("events")   # noqa: F841
+        events = mm.get("events")  # noqa: F841
 
     def testEventCounter(self):
         """Test that n_events counts the number of events correctly."""
@@ -129,6 +129,6 @@ def suite():
     return suite
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())

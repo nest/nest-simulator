@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import nest
-import pytest
 import numpy as np
+import pytest
 
 
 @pytest.fixture
@@ -38,24 +38,24 @@ def run_simulation(resolution, delay, explicit=False):
 
     # Set the delay explicitly to each connection
     if explicit:
-        nest.Connect(sg, n, syn_spec={"synapse_model": "cont_delay_synapse", "weight": 100., "delay": delay})
+        nest.Connect(sg, n, syn_spec={"synapse_model": "cont_delay_synapse", "weight": 100.0, "delay": delay})
         for conn in nest.GetConnections(source=sg):
             nest.SetStatus(conn, params={"delay": delay})
     else:
-        nest.SetDefaults("cont_delay_synapse", {"weight": 100., "delay": delay})
+        nest.SetDefaults("cont_delay_synapse", {"weight": 100.0, "delay": delay})
         nest.Connect(sg, n, syn_spec={"synapse_model": "cont_delay_synapse"})
 
     nest.Connect(n, sr)
 
-    nest.Simulate(10.)
+    nest.Simulate(10.0)
     actual_spike_times = sr.get("events")["times"]
     return actual_spike_times
 
 
-@pytest.mark.parametrize("expected_spike_times, resolution, delay, explicit",
-                         [[[3.0, 6.5], 1.0, 1.0, False],
-                          [[3.7, 7.2], 1.0, 1.7, False],
-                          [[3.7, 7.2], 1.0, 1.7, True]])
+@pytest.mark.parametrize(
+    "expected_spike_times, resolution, delay, explicit",
+    [[[3.0, 6.5], 1.0, 1.0, False], [[3.7, 7.2], 1.0, 1.7, False], [[3.7, 7.2], 1.0, 1.7, True]],
+)
 def test_delay_compatible_with_resolution(prepare_kernel, expected_spike_times, resolution, delay, explicit):
     actual_spike_times = run_simulation(resolution, delay, explicit)
     np.testing.assert_array_equal(actual_spike_times, expected_spike_times)

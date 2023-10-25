@@ -35,9 +35,10 @@ the potential to be set to subthreshold values, but in pathological
 cases it may lead to the exclusion of a model that should be tested.
 """
 
+import random
+
 import nest
 import pytest
-import random
 
 
 @pytest.fixture(autouse=True)
@@ -62,7 +63,7 @@ def set_defaults_create(model, new_vm_value):
     return n
 
 
-@pytest.mark.parametrize('model', get_models())
+@pytest.mark.parametrize("model", get_models())
 def test_set_vm(model):
     new_vm_value = random.uniform(0, 1)
 

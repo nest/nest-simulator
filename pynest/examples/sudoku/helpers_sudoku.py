@@ -24,8 +24,8 @@ r"""Helper functions for the Sudoku solver
 
 :Authors: J Gille, S Furber, A Rowley
 """
-import numpy as np
 import matplotlib.patches as patch
+import numpy as np
 
 
 def get_puzzle(puzzle_index):
@@ -51,97 +51,97 @@ def get_puzzle(puzzle_index):
         init_config = np.zeros((9, 9), dtype=np.uint8)
     elif puzzle_index == 1:
         # Diabolical problem:
-        init_config = [[0, 0, 1,  0, 0, 8,  0, 7, 3],
-                       [0, 0, 5,  6, 0, 0,  0, 0, 1],
-                       [7, 0, 0,  0, 0, 1,  0, 0, 0],
-
-                       [0, 9, 0,  8, 1, 0,  0, 0, 0],
-                       [5, 3, 0,  0, 0, 0,  0, 4, 6],
-                       [0, 0, 0,  0, 6, 5,  0, 3, 0],
-
-                       [0, 0, 0,  1, 0, 0,  0, 0, 4],
-                       [8, 0, 0,  0, 0, 9,  3, 0, 0],
-                       [9, 4, 0,  5, 0, 0,  7, 0, 0]]
+        init_config = [
+            [0, 0, 1, 0, 0, 8, 0, 7, 3],
+            [0, 0, 5, 6, 0, 0, 0, 0, 1],
+            [7, 0, 0, 0, 0, 1, 0, 0, 0],
+            [0, 9, 0, 8, 1, 0, 0, 0, 0],
+            [5, 3, 0, 0, 0, 0, 0, 4, 6],
+            [0, 0, 0, 0, 6, 5, 0, 3, 0],
+            [0, 0, 0, 1, 0, 0, 0, 0, 4],
+            [8, 0, 0, 0, 0, 9, 3, 0, 0],
+            [9, 4, 0, 5, 0, 0, 7, 0, 0],
+        ]
 
     elif puzzle_index == 2:
-        init_config = [[2, 0, 0,  0, 0, 6,  0, 3, 0],
-                       [4, 8, 0,  0, 1, 9,  0, 0, 0],
-                       [0, 0, 7,  0, 2, 0,  9, 0, 0],
-
-                       [0, 0, 0,  3, 0, 0,  0, 9, 0],
-                       [7, 0, 8,  0, 0, 0,  1, 0, 5],
-                       [0, 4, 0,  0, 0, 7,  0, 0, 0],
-
-                       [0, 0, 4,  0, 9, 0,  6, 0, 0],
-                       [0, 0, 0,  6, 4, 0,  0, 1, 9],
-                       [0, 5, 0,  1, 0, 0,  0, 0, 8]]
+        init_config = [
+            [2, 0, 0, 0, 0, 6, 0, 3, 0],
+            [4, 8, 0, 0, 1, 9, 0, 0, 0],
+            [0, 0, 7, 0, 2, 0, 9, 0, 0],
+            [0, 0, 0, 3, 0, 0, 0, 9, 0],
+            [7, 0, 8, 0, 0, 0, 1, 0, 5],
+            [0, 4, 0, 0, 0, 7, 0, 0, 0],
+            [0, 0, 4, 0, 9, 0, 6, 0, 0],
+            [0, 0, 0, 6, 4, 0, 0, 1, 9],
+            [0, 5, 0, 1, 0, 0, 0, 0, 8],
+        ]
 
     elif puzzle_index == 3:
-        init_config = [[0, 0, 3,  2, 0, 0,  0, 7, 0],
-                       [0, 0, 5,  0, 0, 0,  3, 0, 0],
-                       [0, 0, 8,  9, 7, 0,  0, 5, 0],
-
-                       [0, 0, 0,  8, 9, 0,  0, 0, 0],
-                       [0, 5, 0,  0, 0, 0,  0, 2, 0],
-                       [0, 0, 0,  0, 6, 1,  0, 0, 0],
-
-                       [0, 1, 0,  0, 2, 5,  6, 0, 0],
-                       [0, 0, 4,  0, 0, 0,  8, 0, 0],
-                       [0, 9, 0,  0, 0, 7,  5, 0, 0]]
+        init_config = [
+            [0, 0, 3, 2, 0, 0, 0, 7, 0],
+            [0, 0, 5, 0, 0, 0, 3, 0, 0],
+            [0, 0, 8, 9, 7, 0, 0, 5, 0],
+            [0, 0, 0, 8, 9, 0, 0, 0, 0],
+            [0, 5, 0, 0, 0, 0, 0, 2, 0],
+            [0, 0, 0, 0, 6, 1, 0, 0, 0],
+            [0, 1, 0, 0, 2, 5, 6, 0, 0],
+            [0, 0, 4, 0, 0, 0, 8, 0, 0],
+            [0, 9, 0, 0, 0, 7, 5, 0, 0],
+        ]
 
     elif puzzle_index == 4:
-        init_config = [[0, 1, 0,  0, 0, 0,  0, 0, 2],
-                       [8, 7, 0,  0, 0, 0,  5, 0, 4],
-                       [5, 0, 2,  0, 0, 0,  0, 9, 0],
-
-                       [0, 5, 0,  4, 0, 9,  0, 0, 1],
-                       [0, 0, 0,  7, 3, 2,  0, 0, 0],
-                       [9, 0, 0,  5, 0, 1,  0, 4, 0],
-
-                       [0, 2, 0,  0, 0, 0,  4, 0, 8],
-                       [4, 0, 6,  0, 0, 0,  0, 1, 3],
-                       [1, 0, 0,  0, 0, 0,  0, 2, 0]]
+        init_config = [
+            [0, 1, 0, 0, 0, 0, 0, 0, 2],
+            [8, 7, 0, 0, 0, 0, 5, 0, 4],
+            [5, 0, 2, 0, 0, 0, 0, 9, 0],
+            [0, 5, 0, 4, 0, 9, 0, 0, 1],
+            [0, 0, 0, 7, 3, 2, 0, 0, 0],
+            [9, 0, 0, 5, 0, 1, 0, 4, 0],
+            [0, 2, 0, 0, 0, 0, 4, 0, 8],
+            [4, 0, 6, 0, 0, 0, 0, 1, 3],
+            [1, 0, 0, 0, 0, 0, 0, 2, 0],
+        ]
 
     elif puzzle_index == 5:
-        init_config = [[8, 9, 0,  2, 0, 0,  0, 7, 0],
-                       [0, 0, 0,  0, 8, 0,  0, 0, 0],
-                       [0, 4, 1,  0, 3, 0,  5, 0, 0],
-
-                       [2, 5, 8,  0, 0, 0,  0, 0, 6],
-                       [0, 0, 0,  0, 0, 0,  0, 0, 0],
-                       [6, 0, 0,  0, 0, 0,  1, 4, 7],
-
-                       [0, 0, 7,  0, 1, 0,  4, 3, 0],
-                       [0, 0, 0,  0, 2, 0,  0, 0, 0],
-                       [0, 2, 0,  0, 0, 7,  0, 5, 1]]
+        init_config = [
+            [8, 9, 0, 2, 0, 0, 0, 7, 0],
+            [0, 0, 0, 0, 8, 0, 0, 0, 0],
+            [0, 4, 1, 0, 3, 0, 5, 0, 0],
+            [2, 5, 8, 0, 0, 0, 0, 0, 6],
+            [0, 0, 0, 0, 0, 0, 0, 0, 0],
+            [6, 0, 0, 0, 0, 0, 1, 4, 7],
+            [0, 0, 7, 0, 1, 0, 4, 3, 0],
+            [0, 0, 0, 0, 2, 0, 0, 0, 0],
+            [0, 2, 0, 0, 0, 7, 0, 5, 1],
+        ]
 
     elif puzzle_index == 6:
         # "World's hardest sudoku":
         # http://www.telegraph.co.uk/news/science/science-news/9359579/Worlds-hardest-sudoku-can-you-crack-it.html
-        init_config = [[8, 0, 0,  0, 0, 0,  0, 0, 0],
-                       [0, 0, 3,  6, 0, 0,  0, 0, 0],
-                       [0, 7, 0,  0, 9, 0,  2, 0, 0],
-
-                       [0, 5, 0,  0, 0, 7,  0, 0, 0],
-                       [0, 0, 0,  0, 4, 5,  7, 0, 0],
-                       [0, 0, 0,  1, 0, 0,  0, 3, 0],
-
-                       [0, 0, 1,  0, 0, 0,  0, 6, 8],
-                       [0, 0, 8,  5, 0, 0,  0, 1, 0],
-                       [0, 9, 0,  0, 0, 0,  4, 0, 0]]
+        init_config = [
+            [8, 0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 3, 6, 0, 0, 0, 0, 0],
+            [0, 7, 0, 0, 9, 0, 2, 0, 0],
+            [0, 5, 0, 0, 0, 7, 0, 0, 0],
+            [0, 0, 0, 0, 4, 5, 7, 0, 0],
+            [0, 0, 0, 1, 0, 0, 0, 3, 0],
+            [0, 0, 1, 0, 0, 0, 0, 6, 8],
+            [0, 0, 8, 5, 0, 0, 0, 1, 0],
+            [0, 9, 0, 0, 0, 0, 4, 0, 0],
+        ]
 
     elif puzzle_index == 7:
-        init_config = [[1, 0, 0,  4, 0, 0,  0, 0, 0],
-                       [7, 0, 0,  5, 0, 0,  6, 0, 3],
-                       [0, 0, 0,  0, 3, 0,  4, 2, 0],
-
-                       [0, 0, 9,  0, 0, 0,  0, 3, 5],
-                       [0, 0, 0,  3, 0, 5,  0, 0, 0],
-                       [6, 3, 0,  0, 0, 0,  1, 0, 0],
-
-                       [0, 2, 6,  0, 5, 0,  0, 0, 0],
-                       [9, 0, 4,  0, 0, 6,  0, 0, 7],
-                       [0, 0, 0,  0, 0, 8,  0, 0, 2]]
+        init_config = [
+            [1, 0, 0, 4, 0, 0, 0, 0, 0],
+            [7, 0, 0, 5, 0, 0, 6, 0, 3],
+            [0, 0, 0, 0, 3, 0, 4, 2, 0],
+            [0, 0, 9, 0, 0, 0, 0, 3, 5],
+            [0, 0, 0, 3, 0, 5, 0, 0, 0],
+            [6, 3, 0, 0, 0, 0, 1, 0, 0],
+            [0, 2, 6, 0, 5, 0, 0, 0, 0],
+            [9, 0, 4, 0, 0, 6, 0, 0, 7],
+            [0, 0, 0, 0, 0, 8, 0, 0, 2],
+        ]
 
     else:
         raise ValueError(f"No puzzle for index {puzzle_index} found.")
@@ -181,7 +181,7 @@ def validate_solution(puzzle, solution):
     # validate boxes
     for i in range(3):
         for j in range(3):
-            box = solution[3*i:3*i+3, 3*j:3*j+3]
+            box = solution[3 * i : 3 * i + 3, 3 * j : 3 * j + 3]
             if expected_numbers != set(box.flatten()):
                 boxes[i, j] = False
 
@@ -230,7 +230,7 @@ def plot_field(puzzle, solution, ax, with_color=False):
     # color every other box in light grey
     for i in range(0, 9, 3):
         for j in range(0, 9, 3):
-            if (i+j) % 2 == 0:
+            if (i + j) % 2 == 0:
                 ax.add_patch(patch.Rectangle((j, i), 3, 3, facecolor="grey", alpha=0.5))
 
     # Plotting invisible lines ensures a consistent scaling of the padding around
@@ -251,8 +251,7 @@ def plot_field(puzzle, solution, ax, with_color=False):
         for i in range(3):
             for j in range(3):
                 if not boxes[i, j]:
-                    ax.add_patch(patch.Rectangle((3*j, 3*j), 3, 3,
-                                                 color="red", fill=False, linewidth=3.5))
+                    ax.add_patch(patch.Rectangle((3 * j, 3 * j), 3, 3, color="red", fill=False, linewidth=3.5))
 
 
 def fill_numbers(ax, puzzle, solution):
@@ -274,20 +273,28 @@ def fill_numbers(ax, puzzle, solution):
             if solution[i][j] == 0:
                 continue
             if puzzle[i][j] != 0:
-                text_style = 'normal'
+                text_style = "normal"
                 if puzzle[i][j] == solution[i][j]:
-                    text_col = 'black'
+                    text_col = "black"
                 else:
                     # If the network proposes a solution where a digit
                     # from the input configuration is altered, that
                     # digit is colored in red.
-                    text_col = 'red'
+                    text_col = "red"
             else:
-                text_style = 'italic'
-                text_col = 'gray'
+                text_style = "italic"
+                text_col = "gray"
 
-            ax.text(j + 0.5, i + 0.5, solution[i][j], horizontalalignment='center',
-                    verticalalignment='center', color=text_col, fontsize=15, style=text_style)
+            ax.text(
+                j + 0.5,
+                i + 0.5,
+                solution[i][j],
+                horizontalalignment="center",
+                verticalalignment="center",
+                color=text_col,
+                fontsize=15,
+                style=text_style,
+            )
 
 
 def decorate_sudoku_box(ax):
@@ -299,11 +306,11 @@ def decorate_sudoku_box(ax):
         Axes to be decorated
     """
     [x, y, xr, yr] = generate_sudoku_box_lines()
-    ax.plot(x, y, color='gray')
-    ax.plot(y, x, color='gray')
+    ax.plot(x, y, color="gray")
+    ax.plot(y, x, color="gray")
 
-    ax.plot(xr, yr, color='black', linewidth=2)
-    ax.plot(yr, xr, color='black', linewidth=2)
+    ax.plot(xr, yr, color="black", linewidth=2)
+    ax.plot(yr, xr, color="black", linewidth=2)
 
     ax.axis("off")
     ax.set_aspect("equal")

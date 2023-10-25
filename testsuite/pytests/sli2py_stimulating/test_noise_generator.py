@@ -24,8 +24,8 @@ Tests parameter setting and statistical correctness for one application.
 """
 
 import nest
-import pytest
 import numpy as np
+import pytest
 
 
 @pytest.fixture
@@ -59,7 +59,7 @@ def test_noise_generator_(prepare_kernel):
     neuron = nest.Create("iaf_psc_alpha")
     nest.Connect(ng, neuron)
 
-    ng.set({"mean": 0., "std": 1.0, "dt": 0.1})
+    ng.set({"mean": 0.0, "std": 1.0, "dt": 0.1})
 
     # no spiking, all parameters 1, 0 leak potential
     neuron.set({"V_th": 1e10, "C_m": 1.0, "tau_m": 1.0, "E_L": 0.0})
@@ -68,7 +68,7 @@ def test_noise_generator_(prepare_kernel):
     n_sims = 100
     v_m_arr = np.empty(n_sims)
     for i in range(n_sims):
-        nest.Simulate(1000.)
+        nest.Simulate(1000.0)
         v_m_arr[i] = neuron.get("V_m")
 
     # Mean and std of membrane potentials

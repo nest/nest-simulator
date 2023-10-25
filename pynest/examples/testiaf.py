@@ -36,8 +36,8 @@ starts to recover.
 ###############################################################################
 # First, we import all necessary modules for simulation and plotting
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 
 ###############################################################################
 # Second the function ``build_network`` is defined to build the network and
@@ -58,16 +58,15 @@ import matplotlib.pyplot as plt
 
 
 def build_network(dt):
-
     nest.ResetKernel()
     nest.local_num_threads = 1
     nest.resolution = dt
 
-    neuron = nest.Create('iaf_psc_alpha')
+    neuron = nest.Create("iaf_psc_alpha")
     neuron.I_e = 376.0
 
-    vm = nest.Create('voltmeter')
-    sr = nest.Create('spike_recorder')
+    vm = nest.Create("voltmeter")
+    sr = nest.Create("spike_recorder")
 
     nest.Connect(vm, neuron)
     nest.Connect(neuron, sr)
@@ -85,28 +84,28 @@ for dt in [0.1, 0.5, 1.0]:
 
     nest.Simulate(1000.0)
 
-###########################################################################
-# The network is simulated using ``Simulate``, which takes the desired
-# simulation time in milliseconds and advances the network state by this
-# amount of time. During simulation, the ``spike_recorder`` counts the
-# spikes of the target neuron and the total number is read out at the
-# end of the simulation period.
-#
-# The values of the voltage recorded by the voltmeter are read out and
-# the values for the membrane potential are stored in potential and the
-# corresponding times in the times array
+    ###########################################################################
+    # The network is simulated using ``Simulate``, which takes the desired
+    # simulation time in milliseconds and advances the network state by this
+    # amount of time. During simulation, the ``spike_recorder`` counts the
+    # spikes of the target neuron and the total number is read out at the
+    # end of the simulation period.
+    #
+    # The values of the voltage recorded by the voltmeter are read out and
+    # the values for the membrane potential are stored in potential and the
+    # corresponding times in the times array
 
-    potentials = vm.get('events', 'V_m')
-    times = vm.get('events', 'times')
+    potentials = vm.get("events", "V_m")
+    times = vm.get("events", "times")
 
-###########################################################################
-# Using the matplotlib library the voltage trace is plotted over time
+    ###########################################################################
+    # Using the matplotlib library the voltage trace is plotted over time
 
     plt.plot(times, potentials, label=f"dt={dt:.2f}")
     print(f"  Number of spikes: {sr.n_events}")
 
-###########################################################################
-# Finally the axis are labelled and a legend is generated
+    ###########################################################################
+    # Finally the axis are labelled and a legend is generated
 
     plt.legend(loc=3)
     plt.xlabel("time (ms)")

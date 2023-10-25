@@ -33,8 +33,8 @@ portable.
 
 
 import nest
-import pytest
 import numpy as np
+import pytest
 
 
 def test_poisson_generator_ps():
@@ -45,21 +45,21 @@ def test_poisson_generator_ps():
     sr1 = nest.Create("spike_recorder")
     sr2 = nest.Create("spike_recorder")
 
-    pg.set(rate=100., start=200., stop=500.)
+    pg.set(rate=100.0, start=200.0, stop=500.0)
 
     nest.Connect(pg, sr1)
     nest.Connect(pg, sr2)
 
-    nest.Simulate(1000.)
+    nest.Simulate(1000.0)
 
-    pg.set(start=1200., stop=1800.)
+    pg.set(start=1200.0, stop=1800.0)
 
-    nest.Simulate(1000.)
+    nest.Simulate(1000.0)
 
     times1 = sr1.events["times"]
     times2 = sr2.events["times"]
     assert not np.array_equal(times1, times2)
 
     # check there are no spikes between stop and start time
-    assert not ((times1 > 500.) & (times1 < 1200.)).any()
-    assert not ((times2 > 500.) & (times2 < 1200.)).any()
+    assert not ((times1 > 500.0) & (times1 < 1200.0)).any()
+    assert not ((times2 > 500.0) & (times2 < 1200.0)).any()

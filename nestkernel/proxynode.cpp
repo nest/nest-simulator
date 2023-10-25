@@ -33,7 +33,7 @@
 namespace nest
 {
 
-proxynode::proxynode( index node_id, index model_id, index vp )
+proxynode::proxynode( size_t node_id, size_t model_id, size_t vp )
   : Node()
 {
   set_node_id_( node_id );
@@ -42,8 +42,8 @@ proxynode::proxynode( index node_id, index model_id, index vp )
   set_frozen_( true );
 }
 
-port
-proxynode::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool dummy_target )
+size_t
+proxynode::send_test_event( Node& target, size_t receptor_type, synindex syn_id, bool dummy_target )
 {
   Model* model = kernel().model_manager.get_node_model( get_model_id() );
   return model->send_test_event( target, receptor_type, syn_id, dummy_target );
@@ -73,12 +73,12 @@ proxynode::sends_secondary_event( DelayedRateConnectionEvent& re )
   kernel().model_manager.get_node_model( get_model_id() )->sends_secondary_event( re );
 }
 
-/**
- * @returns type of signal this node produces
- * used in check_connection to only connect neurons which send / receive
- * compatible information
- * delgates to underlying model
- */
+void
+proxynode::sends_secondary_event( SICEvent& sic )
+{
+  kernel().model_manager.get_node_model( get_model_id() )->sends_secondary_event( sic );
+}
+
 nest::SignalType
 proxynode::sends_signal() const
 {

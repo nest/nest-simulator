@@ -28,10 +28,10 @@ correctly. The following things are tested:
   * Does default node distribution (modulo) work as expected?
   * Are spikes transmitted between threads as expected?
 """
-import pytest
 import nest
 import numpy as np
 import numpy.testing as nptest
+import pytest
 
 pytestmark = pytest.mark.skipif_missing_threads
 
@@ -60,8 +60,8 @@ def test_transmitted_spikes_btw_threads():
     pB = nest.Create("parrot_neuron", num_threads)
     sr = nest.Create("spike_recorder")
 
-    nest.Connect(sg, pA, "all_to_all", syn_spec={"delay": 1.})
-    nest.Connect(pA, pB, "all_to_all", syn_spec={"delay": 1.})
+    nest.Connect(sg, pA, "all_to_all", syn_spec={"delay": 1.0})
+    nest.Connect(pA, pB, "all_to_all", syn_spec={"delay": 1.0})
     nest.Connect(pB, sr)
 
     t_sim = 1.0 + 3 * 1.0
@@ -69,6 +69,6 @@ def test_transmitted_spikes_btw_threads():
 
     sr_times = sr.get("events")["times"]
 
-    excepted = [3] * (num_threads ** 2)
+    excepted = [3] * (num_threads**2)
 
     nptest.assert_array_equal(sr_times, excepted)

@@ -49,13 +49,12 @@ References
 # should be imported before nest.
 
 import time
-import numpy as np
-import scipy.special as sp
 
+import matplotlib.pyplot as plt
 import nest
 import nest.raster_plot
-import matplotlib.pyplot as plt
-
+import numpy as np
+import scipy.special as sp
 
 ###############################################################################
 # Definition of functions used in this example. First, define the `Lambert W`
@@ -71,16 +70,18 @@ def LambertWm1(x):
 
 
 def ComputePSPnorm(tauMem, CMem, tauSyn):
-    a = (tauMem / tauSyn)
-    b = (1.0 / tauSyn - 1.0 / tauMem)
+    a = tauMem / tauSyn
+    b = 1.0 / tauSyn - 1.0 / tauMem
 
     # time of maximum
     t_max = 1.0 / b * (-LambertWm1(-np.exp(-1.0 / a) / a) - 1.0 / a)
 
     # maximum of PSP for current of unit amplitude
-    return (np.exp(1.0) / (tauSyn * CMem * b) *
-            ((np.exp(-t_max / tauMem) - np.exp(-t_max / tauSyn)) / b -
-             t_max * np.exp(-t_max / tauSyn)))
+    return (
+        np.exp(1.0)
+        / (tauSyn * CMem * b)
+        * ((np.exp(-t_max / tauMem) - np.exp(-t_max / tauSyn)) / b - t_max * np.exp(-t_max / tauSyn))
+    )
 
 
 nest.ResetKernel()
@@ -95,9 +96,9 @@ startbuild = time.time()
 ###############################################################################
 # Assigning the simulation parameters to variables.
 
-dt = 0.1    # the resolution in ms
+dt = 0.1  # the resolution in ms
 simtime = 1000.0  # Simulation time in ms
-delay = 1.5    # synaptic delay in ms
+delay = 1.5  # synaptic delay in ms
 
 ###############################################################################
 # Definition of the parameters crucial for asynchronous irregular firing of
@@ -114,15 +115,15 @@ epsilon = 0.1  # connection probability
 order = 2500
 NE = 4 * order  # number of excitatory neurons
 NI = 1 * order  # number of inhibitory neurons
-N_neurons = NE + NI   # number of neurons in total
-N_rec = 50      # record from 50 neurons
+N_neurons = NE + NI  # number of neurons in total
+N_rec = 50  # record from 50 neurons
 
 ###############################################################################
 # Definition of connectivity parameters
 
 CE = int(epsilon * NE)  # number of excitatory synapses per neuron
 CI = int(epsilon * NI)  # number of inhibitory synapses per neuron
-C_tot = int(CI + CE)      # total number of synapses per neuron
+C_tot = int(CI + CE)  # total number of synapses per neuron
 
 ###############################################################################
 # Initialization of the parameters of the integrate and fire neuron and the
@@ -133,19 +134,21 @@ tauSyn = 0.5  # synaptic time constant in ms
 tauMem = 20.0  # time constant of membrane potential in ms
 CMem = 250.0  # capacitance of membrane in in pF
 theta = 20.0  # membrane threshold potential in mV
-neuron_params = {"C_m": CMem,
-                 "tau_m": tauMem,
-                 "tau_syn_ex": tauSyn,
-                 "tau_syn_in": tauSyn,
-                 "t_ref": 2.0,
-                 "E_L": 0.0,
-                 "V_reset": 0.0,
-                 "V_m": 0.0,
-                 "V_th": theta}
-J = 0.1        # postsynaptic amplitude in mV
+neuron_params = {
+    "C_m": CMem,
+    "tau_m": tauMem,
+    "tau_syn_ex": tauSyn,
+    "tau_syn_in": tauSyn,
+    "t_ref": 2.0,
+    "E_L": 0.0,
+    "V_reset": 0.0,
+    "V_m": 0.0,
+    "V_th": theta,
+}
+J = 0.1  # postsynaptic amplitude in mV
 J_unit = ComputePSPnorm(tauMem, CMem, tauSyn)
 J_ex = J / J_unit  # amplitude of excitatory postsynaptic current
-J_in = -g * J_ex    # amplitude of inhibitory postsynaptic current
+J_in = -g * J_ex  # amplitude of inhibitory postsynaptic current
 
 ###############################################################################
 # Definition of threshold rate, which is the external rate needed to fix the
@@ -201,10 +204,8 @@ print("Connecting devices")
 # the excitatory and one for the inhibitory connections giving the
 # previously defined weights and equal delays.
 
-nest.CopyModel("static_synapse", "excitatory",
-               {"weight": J_ex, "delay": delay})
-nest.CopyModel("static_synapse", "inhibitory",
-               {"weight": J_in, "delay": delay})
+nest.CopyModel("static_synapse", "excitatory", {"weight": J_ex, "delay": delay})
+nest.CopyModel("static_synapse", "inhibitory", {"weight": J_in, "delay": delay})
 
 #################################################################################
 # Connecting the previously defined poisson generator to the excitatory and
@@ -238,7 +239,7 @@ print("Excitatory connections")
 # specification is reduced to assigning the pre-defined excitatory synapse it
 # suffices to insert a string.
 
-conn_params_ex = {'rule': 'fixed_indegree', 'indegree': CE}
+conn_params_ex = {"rule": "fixed_indegree", "indegree": CE}
 nest.Connect(nodes_ex, nodes_ex + nodes_in, conn_params_ex, "excitatory")
 
 print("Inhibitory connections")
@@ -249,7 +250,7 @@ print("Inhibitory connections")
 # parameter are defined analogously to the connection from the excitatory
 # population defined above.
 
-conn_params_in = {'rule': 'fixed_indegree', 'indegree': CI}
+conn_params_in = {"rule": "fixed_indegree", "indegree": CI}
 nest.Connect(nodes_in, nodes_ex + nodes_in, conn_params_in, "inhibitory")
 
 ###############################################################################

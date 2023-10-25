@@ -116,7 +116,7 @@ trying to increase the speed of the simulation.
    How many nodes do you need for your simulations?
    This depends on how much memory is available for each node.
 
-   For example: The :ref:`microcircuit model <toc_microcircuit>` requires around 16 GB of memory and the `multi-area-model <https://github.com/INM-6/multi-area-model>`_ requires 1.4 TB.
+   For example: The :doc:`microcircuit model <../auto_examples/Potjans_2014/index>` requires around 16 GB of memory and the `multi-area-model <https://github.com/INM-6/multi-area-model>`_ requires 1.4 TB.
    If a node has 128 GB of memory then one node is more than sufficient for the microcircuit model but the multi-area model
    will need 12 nodes to run.
 

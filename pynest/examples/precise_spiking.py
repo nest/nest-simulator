@@ -58,16 +58,15 @@ References
 # plotting.
 
 
-import nest
 import matplotlib.pyplot as plt
-
+import nest
 
 ###############################################################################
 # Second, we assign the simulation parameters to variables.
 
 
-simtime = 100.0                # ms
-stim_current = 700.0           # pA
+simtime = 100.0  # ms
+stim_current = 700.0  # pA
 resolutions = [0.1, 0.5, 1.0]  # ms
 
 
@@ -103,10 +102,10 @@ for resolution in resolutions:
         vm_status = voltmeter.events
         sr_status = sr.events
         data[resolution][model] = {
-            "vm_times": vm_status['times'],
-            "vm_values": vm_status['V_m'],
-            "spikes": sr_status['times'],
-            "V_th": neuron.V_th
+            "vm_times": vm_status["times"],
+            "vm_values": vm_status["V_m"],
+            "spikes": sr_status["times"],
+            "V_th": neuron.V_th,
         }
 
 
@@ -139,6 +138,6 @@ for v, resolution in enumerate(sorted(data)):
     if v == 2:
         plot.legend(loc=4)
     else:
-        plot.set_xticklabels('')
+        plot.set_xticklabels("")
 
 plt.show()

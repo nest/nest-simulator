@@ -20,6 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
+
 import nest
 import numpy as np
 
@@ -38,32 +39,33 @@ class PpPscDeltaTestCase(unittest.TestCase):
         T = 10000.0
 
         nest.ResetKernel()
-        nrn = nest.Create('pp_psc_delta')
+        nrn = nest.Create("pp_psc_delta")
 
-        params = {'tau_m': 10.0,
-                  'C_m': 250.0,
-                  'dead_time': d,
-                  'dead_time_random': False,
-                  'dead_time_shape': 1,
-                  'with_reset': False,
-                  'tau_sfa': 34.0,
-                  'q_sfa': 0.0,  # // mV, reasonable default is 7 mV
-                  'c_1': 0.0,
-                  'c_2': lam,
-                  'c_3': 0.25,
-                  'I_e': 0.0,
-                  't_ref_remaining': 0.0
-                  }
+        params = {
+            "tau_m": 10.0,
+            "C_m": 250.0,
+            "dead_time": d,
+            "dead_time_random": False,
+            "dead_time_shape": 1,
+            "with_reset": False,
+            "tau_sfa": 34.0,
+            "q_sfa": 0.0,  # // mV, reasonable default is 7 mV
+            "c_1": 0.0,
+            "c_2": lam,
+            "c_3": 0.25,
+            "I_e": 0.0,
+            "t_ref_remaining": 0.0,
+        }
 
         nest.SetStatus(nrn, params)
 
-        sr = nest.Create('spike_recorder')
+        sr = nest.Create("spike_recorder")
         nest.Connect(nrn, sr)
         nest.Simulate(T)
 
-        spikes = nest.GetStatus(sr)[0]['events']['times']
+        spikes = nest.GetStatus(sr)[0]["events"]["times"]
         rate_sim = len(spikes) / (T * 1e-3)
-        rate_ana = 1. / (1. / lam + d * 1e-3)
+        rate_ana = 1.0 / (1.0 / lam + d * 1e-3)
         ratio = rate_sim / rate_ana
 
         # This could fail due to bad luck. However, if it passes once,
@@ -86,32 +88,33 @@ class PpPscDeltaTestCase(unittest.TestCase):
         T = 10000.0
 
         nest.ResetKernel()
-        nrn = nest.Create('pp_psc_delta')
+        nrn = nest.Create("pp_psc_delta")
 
-        params = {'tau_m': 10.0,
-                  'C_m': 250.0,
-                  'dead_time': d,
-                  'dead_time_random': True,
-                  'dead_time_shape': 10,
-                  'with_reset': False,
-                  'tau_sfa': 34.0,
-                  'q_sfa': 0.0,  # // mV, reasonable default is 7 mV
-                  'c_1': 0.0,
-                  'c_2': lam,
-                  'c_3': 0.25,
-                  'I_e': 0.0,
-                  't_ref_remaining': 0.0
-                  }
+        params = {
+            "tau_m": 10.0,
+            "C_m": 250.0,
+            "dead_time": d,
+            "dead_time_random": True,
+            "dead_time_shape": 10,
+            "with_reset": False,
+            "tau_sfa": 34.0,
+            "q_sfa": 0.0,  # // mV, reasonable default is 7 mV
+            "c_1": 0.0,
+            "c_2": lam,
+            "c_3": 0.25,
+            "I_e": 0.0,
+            "t_ref_remaining": 0.0,
+        }
 
         nest.SetStatus(nrn, params)
 
-        sr = nest.Create('spike_recorder')
+        sr = nest.Create("spike_recorder")
         nest.Connect(nrn, sr)
         nest.Simulate(T)
 
-        spikes = nest.GetStatus(sr)[0]['events']['times']
+        spikes = nest.GetStatus(sr)[0]["events"]["times"]
         rate_sim = len(spikes) / (T * 1e-3)
-        rate_ana = 1. / (1. / lam + d * 1e-3)
+        rate_ana = 1.0 / (1.0 / lam + d * 1e-3)
         ratio = rate_sim / rate_ana
 
         # This could fail due to bad luck. However, if it passes once,
@@ -145,30 +148,31 @@ class PpPscDeltaTestCase(unittest.TestCase):
         T = 10000.0
 
         nest.ResetKernel()
-        nrn = nest.Create('pp_psc_delta')
+        nrn = nest.Create("pp_psc_delta")
 
-        params = {'tau_m': 10.0,
-                  'C_m': 250.0,
-                  'dead_time': d,
-                  'dead_time_random': False,
-                  'dead_time_shape': 1,
-                  'with_reset': False,
-                  'tau_sfa': 34.0,
-                  'q_sfa': 7.0,  # // mV, reasonable default is 7 mV
-                  'c_1': 0.0,
-                  'c_2': lam,
-                  'c_3': 0.25,
-                  'I_e': 0.0,
-                  't_ref_remaining': 0.0
-                  }
+        params = {
+            "tau_m": 10.0,
+            "C_m": 250.0,
+            "dead_time": d,
+            "dead_time_random": False,
+            "dead_time_shape": 1,
+            "with_reset": False,
+            "tau_sfa": 34.0,
+            "q_sfa": 7.0,  # // mV, reasonable default is 7 mV
+            "c_1": 0.0,
+            "c_2": lam,
+            "c_3": 0.25,
+            "I_e": 0.0,
+            "t_ref_remaining": 0.0,
+        }
 
         nest.SetStatus(nrn, params)
 
-        sr = nest.Create('spike_recorder')
+        sr = nest.Create("spike_recorder")
         nest.Connect(nrn, sr)
         nest.Simulate(T)
 
-        spikes = nest.GetStatus(sr)[0]['events']['times']
+        spikes = nest.GetStatus(sr)[0]["events"]["times"]
 
         # This could fail due to bad luck. However, if it passes once,
         # then it should always do so, since the random numbers are
@@ -179,14 +183,14 @@ class PpPscDeltaTestCase(unittest.TestCase):
         isi_mean = np.mean(isi)
         isi_var = np.var(isi)
         isi_12 = np.sum(isi[:-1] * isi[1:])
-        isi_corr = (isi_12 / (len(isi) - 1) - isi_mean ** 2) / isi_var
+        isi_corr = (isi_12 / (len(isi) - 1) - isi_mean**2) / isi_var
 
         self.assertLessEqual(-1.0, isi_corr)
         self.assertLessEqual(isi_corr, 0.0)
 
 
 def suite():
-    suite = unittest.makeSuite(PpPscDeltaTestCase, 'test')
+    suite = unittest.makeSuite(PpPscDeltaTestCase, "test")
     return suite
 
 

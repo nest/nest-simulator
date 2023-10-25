@@ -72,7 +72,7 @@ EndUserDocs */
  * has the properties weight, delay and receiver port.
  */
 template < typename targetidentifierT >
-class RateConnectionDelayed : public Connection< targetidentifierT >
+class rate_connection_delayed : public Connection< targetidentifierT >
 {
 
 public:
@@ -86,7 +86,7 @@ public:
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  RateConnectionDelayed()
+  rate_connection_delayed()
     : ConnectionBase()
     , weight_( 1.0 )
   {
@@ -105,7 +105,7 @@ public:
   using ConnectionBase::get_target;
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
     DelayedRateConnectionEvent ge;
 
@@ -121,7 +121,7 @@ public:
    * \param p The port under which this connection is stored in the Connector.
    */
   void
-  send( Event& e, thread t, const CommonSynapseProperties& )
+  send( Event& e, size_t t, const CommonSynapseProperties& )
   {
     e.set_weight( weight_ );
     e.set_delay_steps( get_delay_steps() );
@@ -145,11 +145,11 @@ private:
 };
 
 template < typename targetidentifierT >
-constexpr ConnectionModelProperties RateConnectionDelayed< targetidentifierT >::properties;
+constexpr ConnectionModelProperties rate_connection_delayed< targetidentifierT >::properties;
 
 template < typename targetidentifierT >
 void
-RateConnectionDelayed< targetidentifierT >::get_status( DictionaryDatum& d ) const
+rate_connection_delayed< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
@@ -158,7 +158,7 @@ RateConnectionDelayed< targetidentifierT >::get_status( DictionaryDatum& d ) con
 
 template < typename targetidentifierT >
 void
-RateConnectionDelayed< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+rate_connection_delayed< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
@@ -166,7 +166,7 @@ RateConnectionDelayed< targetidentifierT >::set_status( const DictionaryDatum& d
 
 template < typename targetidentifierT >
 SecondaryEvent*
-RateConnectionDelayed< targetidentifierT >::get_secondary_event()
+rate_connection_delayed< targetidentifierT >::get_secondary_event()
 {
   return new DelayedRateConnectionEvent();
 }

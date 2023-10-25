@@ -22,13 +22,12 @@
 import dataclasses
 import math
 
+import nest
 import numpy as np
 import pytest
-import nest
 import testsimulation
 import testutil
 from scipy.special import lambertw
-
 
 # Notes:
 # * copy docs
@@ -93,9 +92,7 @@ class TestIAFPSCAlpha:
 
         results = simulation.simulate()
 
-        actual, expected = testutil.get_comparable_timesamples(
-            results, expected_default
-        )
+        actual, expected = testutil.get_comparable_timesamples(results, expected_default)
         assert actual == expected
 
     @pytest.mark.parametrize("duration", [20.0])
@@ -111,14 +108,9 @@ class TestIAFPSCAlpha:
         V_max = (
             math.exp(1)
             / (tau_syn * C_m * b)
-            * (
-                (math.exp(-t_max / tau_m) - math.exp(-t_max / tau_syn)) / b
-                - t_max * math.exp(-t_max / tau_syn)
-            )
+            * ((math.exp(-t_max / tau_m) - math.exp(-t_max / tau_syn)) / b - t_max * math.exp(-t_max / tau_syn))
         )
-        simulation.neuron.set(
-            tau_m=tau_m, tau_syn_ex=tau_syn, tau_syn_in=tau_syn, C_m=C_m
-        )
+        simulation.neuron.set(tau_m=tau_m, tau_syn_ex=tau_syn, tau_syn_in=tau_syn, C_m=C_m)
         sg = nest.Create(
             "spike_generator",
             params={"precise_times": False, "spike_times": [simulation.resolution]},
@@ -153,9 +145,7 @@ class TestIAFPSCAlpha:
 
         results = simulation.simulate()
 
-        actual, expected = testutil.get_comparable_timesamples(
-            results, expected_i0_refr
-        )
+        actual, expected = testutil.get_comparable_timesamples(results, expected_i0_refr)
         assert actual == expected
 
 
@@ -167,16 +157,11 @@ class TestMinDelayUsingIAFPSCAlpha:
         simulation.setup()
 
         # Connect 2 throwaway neurons with `min_delay` to force `min_delay`
-        nest.Connect(
-            *nest.Create("iaf_psc_alpha", 2),
-            syn_spec={"delay": min_delay, "weight": 1.0}
-        )
+        nest.Connect(*nest.Create("iaf_psc_alpha", 2), syn_spec={"delay": min_delay, "weight": 1.0})
 
         results = simulation.simulate()
 
-        actual, expected = testutil.get_comparable_timesamples(
-            results, expected_mindelay
-        )
+        actual, expected = testutil.get_comparable_timesamples(results, expected_mindelay)
         assert actual == expected
 
     def test_iaf_psc_alpha_mindelay_set(self, simulation, min_delay, delay):
@@ -187,9 +172,7 @@ class TestMinDelayUsingIAFPSCAlpha:
 
         results = simulation.simulate()
 
-        actual, expected = testutil.get_comparable_timesamples(
-            results, expected_mindelay
-        )
+        actual, expected = testutil.get_comparable_timesamples(results, expected_mindelay)
         assert actual == expected
 
     def test_iaf_psc_alpha_mindelay_simblocks(self, simulation, min_delay, delay):
@@ -205,9 +188,7 @@ class TestMinDelayUsingIAFPSCAlpha:
         simulation.duration = 0
         results = simulation.simulate()
 
-        actual, expected = testutil.get_comparable_timesamples(
-            results, expected_mindelay
-        )
+        actual, expected = testutil.get_comparable_timesamples(results, expected_mindelay)
         assert actual == expected
 
 
@@ -259,12 +240,7 @@ class TestIAFPSDCAccuracy:
     def test_iaf_ps_dc_accuracy(self, simulation, duration, tolerance, params):
         simulation.run()
         # Analytical solution
-        V = (
-            params["I_e"]
-            * params["tau_m"]
-            / params["C_m"]
-            * (1.0 - math.exp(-duration / params["tau_m"]))
-        )
+        V = params["I_e"] * params["tau_m"] / params["C_m"] * (1.0 - math.exp(-duration / params["tau_m"]))
         # Check that membrane potential is within tolerance of analytical solution.
         assert math.fabs(simulation.neuron.V_m - V) < tolerance
 
@@ -284,9 +260,7 @@ class TestIAFPSDCAccuracy:
     @pytest.mark.parametrize("duration, tolerance", [(5, 1e-13)])
     def test_iaf_ps_dc_t_accuracy(self, simulation, params, tolerance):
         simulation.run()
-        t = -params["tau_m"] * math.log(
-            1.0 - (params["C_m"] * params["V_th"]) / (params["tau_m"] * params["I_e"])
-        )
+        t = -params["tau_m"] * math.log(1.0 - (params["C_m"] * params["V_th"]) / (params["tau_m"] * params["I_e"]))
         assert math.fabs(simulation.neuron.t_spike - t) < tolerance
 
 

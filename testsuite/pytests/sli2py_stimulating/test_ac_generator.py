@@ -25,10 +25,11 @@ current by comparing with a neuron driven by a step-current input
 corresponding to the current expected from the ac_generator.
 """
 
-import nest
-import pytest
 import math
+
+import nest
 import numpy as np
+import pytest
 
 
 def test_ac_generaor():
@@ -36,7 +37,7 @@ def test_ac_generaor():
     dc = 1000.0
     ac = 550.0
     freq = 100.0
-    phi = 0.
+    phi = 0.0
     start = 5.0
     stop = 6.0
     dt = 0.1
@@ -55,28 +56,24 @@ def test_ac_generaor():
     n_sc = nest.Create("iaf_psc_alpha")
 
     # ac generator
-    ac_gen = nest.Create("ac_generator", params={"amplitude": ac,
-                                                 "offset": dc,
-                                                 "frequency": freq,
-                                                 "phase": phi,
-                                                 "start": start,
-                                                 "stop": stop})
+    ac_gen = nest.Create(
+        "ac_generator",
+        params={"amplitude": ac, "offset": dc, "frequency": freq, "phase": phi, "start": start, "stop": stop},
+    )
 
     # step current generator
-    sc_gen = nest.Create("step_current_generator", params={"amplitude_times": step_curr_times,
-                                                           "amplitude_values": step_curr_amps,
-                                                           "start": start,
-                                                           "stop": stop})
+    sc_gen = nest.Create(
+        "step_current_generator",
+        params={"amplitude_times": step_curr_times, "amplitude_values": step_curr_amps, "start": start, "stop": stop},
+    )
 
     # voltmeter
     vm_ac = nest.Create("voltmeter", params={"interval": 0.1})
     vm_sc = nest.Create("voltmeter", params={"interval": 0.1})
 
     # multimeter
-    mm_ac = nest.Create("multimeter", params={"record_from": ["I"],
-                                              "interval": 0.1})
-    mm_sc = nest.Create("multimeter", params={"record_from": ["I"],
-                                              "interval": 0.1})
+    mm_ac = nest.Create("multimeter", params={"record_from": ["I"], "interval": 0.1})
+    mm_sc = nest.Create("multimeter", params={"record_from": ["I"], "interval": 0.1})
 
     # Connect everything
     nest.Connect(ac_gen, n_ac)
@@ -88,7 +85,7 @@ def test_ac_generaor():
     nest.Connect(mm_sc, sc_gen)
 
     # Simulate
-    nest.Simulate(10.)
+    nest.Simulate(10.0)
 
     # Assert that the v_m of the neuron with the ac_generator
     # is equal to that with the step-current generator

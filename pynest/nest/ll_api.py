@@ -29,14 +29,13 @@ Low-level API of PyNEST Module
 import functools
 import inspect
 import keyword
-
-import sys
 import os
+import sys
 
 # This is a workaround for readline import errors encountered with Anaconda
 # Python running on Ubuntu, when invoked from the terminal
 # "python -c 'import nest'"
-if 'linux' in sys.platform and 'Anaconda' in sys.version:
+if "linux" in sys.platform and "Anaconda" in sys.version:
     import readline  # noqa: F401
 
 # This is a workaround to avoid segmentation faults when importing
@@ -51,23 +50,23 @@ except ImportError:
 # yet other libraries.
 sys.setdlopenflags(os.RTLD_NOW | os.RTLD_GLOBAL)
 
-from . import pynestkernel as kernel      # noqa pylint: disable=no-name-in-module
+from . import pynestkernel as kernel  # noqa pylint: disable=no-name-in-module
 
 __all__ = [
-    'check_stack',
-    'connect_arrays',
-    'set_communicator',
-    'get_debug',
-    'set_debug',
-    'sli_func',
-    'sli_pop',
-    'sli_push',
-    'sli_run',
-    'spp',
-    'sps',
-    'sr',
-    'stack_checker',
-    'take_array_index',
+    "check_stack",
+    "connect_arrays",
+    "set_communicator",
+    "get_debug",
+    "set_debug",
+    "sli_func",
+    "sli_pop",
+    "sli_push",
+    "sli_run",
+    "spp",
+    "sps",
+    "sr",
+    "stack_checker",
+    "take_array_index",
 ]
 
 
@@ -93,12 +92,12 @@ def catching_sli_run(cmd):
         SLI errors are bubbled to the Python API as NESTErrors.
     """
 
-    engine.run('{%s} runprotected' % cmd)
+    engine.run("{%s} runprotected" % cmd)
     if not sli_pop():
         errorname = sli_pop()
         message = sli_pop()
         commandname = sli_pop()
-        engine.run('clear')
+        engine.run("clear")
 
         exceptionCls = getattr(kernel.NESTErrors, errorname)
         raise exceptionCls(commandname, message)
@@ -139,24 +138,23 @@ def sli_func(func, *args, **kwargs):
     """
 
     # check for namespace
-    slifun = 'sli_func'  # version not converting to literals
-    if 'namespace' in kwargs:
+    slifun = "sli_func"  # version not converting to literals
+    if "namespace" in kwargs:
         func = f'{kwargs["namespace"]} using {func} endusing'
-    elif 'litconv' in kwargs:
-        if kwargs['litconv']:
-            slifun = 'sli_func_litconv'
+    elif "litconv" in kwargs:
+        if kwargs["litconv"]:
+            slifun = "sli_func_litconv"
     elif kwargs:
-        raise kernel.NESTErrors.PyNESTError(
-            "'namespace' and 'litconv' are the only valid keyword arguments.")
+        raise kernel.NESTErrors.PyNESTError("'namespace' and 'litconv' are the only valid keyword arguments.")
 
-    sli_push(args)       # push array of arguments on SLI stack
-    sli_push(func)       # push command string
-    sli_run(slifun)      # SLI support code to execute func on args
-    result = sli_pop()        # return value is an array
+    sli_push(args)  # push array of arguments on SLI stack
+    sli_push(func)  # push command string
+    sli_run(slifun)  # SLI support code to execute func on args
+    result = sli_pop()  # return value is an array
 
     if not result:
         return None
-    if len(result) == 1:      # 1 return value is no tuple
+    if len(result) == 1:  # 1 return value is no tuple
         return result[0]
     return result
 
@@ -217,10 +215,10 @@ def stack_checker(f):
         if not get_debug():
             return f(*args, **kwargs)
         else:
-            sr('count')
+            sr("count")
             stackload_before = spp()
             result = f(*args, **kwargs)
-            sr('count')
+            sr("count")
             num_leftover_elements = spp() - stackload_before
             if num_leftover_elements != 0:
                 eargs = (f.__name__, num_leftover_elements)
@@ -279,8 +277,7 @@ def set_communicator(comm):
     """
 
     if "mpi4py" not in sys.modules:
-        raise kernel.NESTError("set_communicator: "
-                               "mpi4py not loaded.")
+        raise kernel.NESTError("set_communicator: mpi4py not loaded.")
 
     engine.set_communicator(comm)
 
@@ -316,7 +313,7 @@ def init(argv):
     # or other modules.
     nest_argv = argv[:]
 
-    quiet = "--quiet" in nest_argv or 'PYNEST_QUIET' in os.environ
+    quiet = "--quiet" in nest_argv or "PYNEST_QUIET" in os.environ
     if "--quiet" in nest_argv:
         nest_argv.remove("--quiet")
     if "--debug" in nest_argv:
@@ -325,7 +322,7 @@ def init(argv):
         nest_argv.remove("--sli-debug")
         nest_argv.append("--debug")
 
-    if 'PYNEST_DEBUG' in os.environ and '--debug' not in nest_argv:
+    if "PYNEST_DEBUG" in os.environ and "--debug" not in nest_argv:
         nest_argv.append("--debug")
 
     path = os.path.dirname(__file__)
@@ -342,6 +339,7 @@ def init(argv):
             pass
         else:
             from .lib.hl_api_simulation import GetKernelStatus  # noqa
+
             keyword_lists = (
                 "connection_rules",
                 "node_models",

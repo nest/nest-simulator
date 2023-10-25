@@ -19,42 +19,41 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import numpy as np
 import unittest
-import scipy.stats
+
 import connect_test_base
 import nest
-
+import numpy as np
+import scipy.stats
 
 HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
 
 
-@unittest.skipIf(not HAVE_OPENMP, 'NEST was compiled without multi-threading')
+@unittest.skipIf(not HAVE_OPENMP, "NEST was compiled without multi-threading")
 @nest.ll_api.check_stack
 class TestFixedOutDegree(connect_test_base.ConnectTestBase):
-
     # specify connection pattern and specific params
-    rule = 'fixed_outdegree'
-    conn_dict = {'rule': rule}
+    rule = "fixed_outdegree"
+    conn_dict = {"rule": rule}
     # sizes of source-, target-population and outdegree for connection test
     N1 = 50
     N2 = 70
     Nout = 10
-    conn_dict['outdegree'] = Nout
+    conn_dict["outdegree"] = Nout
     # sizes of source-, target-population and outdegree for statistical test
     N_s = 10
     N_t = 10
     C = 10
     # Critical values and number of iterations of two level test
-    stat_dict = {'alpha2': 0.05, 'n_runs': 400}
+    stat_dict = {"alpha2": 0.05, "n_runs": 400}
 
     # tested on each mpi process separately
     def testErrorMessages(self):
         got_error = False
         conn_params = self.conn_dict.copy()
-        conn_params['allow_autapses'] = True
-        conn_params['allow_multapses'] = False
-        conn_params['outdegree'] = self.N2 + 1
+        conn_params["allow_autapses"] = True
+        conn_params["allow_multapses"] = False
+        conn_params["outdegree"] = self.N2 + 1
         try:
             self.setUpNetwork(conn_params)
         except nest.kernel.NESTError:
@@ -63,8 +62,8 @@ class TestFixedOutDegree(connect_test_base.ConnectTestBase):
 
     def testOutDegree(self):
         conn_params = self.conn_dict.copy()
-        conn_params['allow_autapses'] = False
-        conn_params['allow_multapses'] = False
+        conn_params["allow_autapses"] = False
+        conn_params["allow_multapses"] = False
         self.setUpNetwork(conn_params)
         # make sure the outdegree is right
         M = connect_test_base.get_connectivity_matrix(self.pop1, self.pop2)
@@ -78,34 +77,33 @@ class TestFixedOutDegree(connect_test_base.ConnectTestBase):
 
     def testStatistics(self):
         conn_params = self.conn_dict.copy()
-        conn_params['allow_autapses'] = True
-        conn_params['allow_multapses'] = True
-        conn_params['outdegree'] = self.C
-        expected = connect_test_base.get_expected_degrees_fixedDegrees(
-            self.C, 'out', self.N_s, self.N_t)
+        conn_params["allow_autapses"] = True
+        conn_params["allow_multapses"] = True
+        conn_params["outdegree"] = self.C
+        expected = connect_test_base.get_expected_degrees_fixedDegrees(self.C, "out", self.N_s, self.N_t)
         pvalues = []
-        for i in range(self.stat_dict['n_runs']):
-            connect_test_base.reset_seed(i+1, self.nr_threads)
+        for i in range(self.stat_dict["n_runs"]):
+            connect_test_base.reset_seed(i + 1, self.nr_threads)
             self.setUpNetwork(conn_dict=conn_params, N1=self.N_s, N2=self.N_t)
-            degrees = connect_test_base.get_degrees('in', self.pop1, self.pop2)
+            degrees = connect_test_base.get_degrees("in", self.pop1, self.pop2)
             degrees = connect_test_base.gather_data(degrees)
             if degrees is not None:
                 chi, p = connect_test_base.chi_squared_check(degrees, expected)
                 pvalues.append(p)
             connect_test_base.mpi_barrier()
         if degrees is not None:
-            ks, p = scipy.stats.kstest(pvalues, 'uniform')
-            self.assertGreater(p, self.stat_dict['alpha2'])
+            ks, p = scipy.stats.kstest(pvalues, "uniform")
+            self.assertGreater(p, self.stat_dict["alpha2"])
 
     def testAutapsesTrue(self):
         conn_params = self.conn_dict.copy()
         N = 10
-        conn_params['allow_multapses'] = False
+        conn_params["allow_multapses"] = False
 
         # test that autapses exist
-        conn_params['outdegree'] = N
-        conn_params['allow_autapses'] = True
-        pop = nest.Create('iaf_psc_alpha', N)
+        conn_params["outdegree"] = N
+        conn_params["allow_autapses"] = True
+        pop = nest.Create("iaf_psc_alpha", N)
         nest.Connect(pop, pop, conn_params)
         # make sure all connections do exist
         M = connect_test_base.get_connectivity_matrix(pop, pop)
@@ -114,12 +112,12 @@ class TestFixedOutDegree(connect_test_base.ConnectTestBase):
     def testAutapsesFalse(self):
         conn_params = self.conn_dict.copy()
         N = 10
-        conn_params['allow_multapses'] = False
+        conn_params["allow_multapses"] = False
 
         # test that autapses were excluded
-        conn_params['outdegree'] = N - 1
-        conn_params['allow_autapses'] = False
-        pop = nest.Create('iaf_psc_alpha', N)
+        conn_params["outdegree"] = N - 1
+        conn_params["allow_autapses"] = False
+        pop = nest.Create("iaf_psc_alpha", N)
         nest.Connect(pop, pop, conn_params)
         # make sure all connections do exist
         M = connect_test_base.get_connectivity_matrix(pop, pop)
@@ -128,25 +126,25 @@ class TestFixedOutDegree(connect_test_base.ConnectTestBase):
     def testMultapsesTrue(self):
         conn_params = self.conn_dict.copy()
         N = 3
-        conn_params['allow_autapses'] = True
+        conn_params["allow_autapses"] = True
 
         # test that multapses were drawn
-        conn_params['outdegree'] = N + 1
-        conn_params['allow_multapses'] = True
-        pop = nest.Create('iaf_psc_alpha', N)
+        conn_params["outdegree"] = N + 1
+        conn_params["allow_multapses"] = True
+        pop = nest.Create("iaf_psc_alpha", N)
         nest.Connect(pop, pop, conn_params)
         nr_conns = len(nest.GetConnections(pop, pop))
-        connect_test_base.mpi_assert(nr_conns, conn_params['outdegree'] * N, self)
+        connect_test_base.mpi_assert(nr_conns, conn_params["outdegree"] * N, self)
 
     def testMultapsesFalse(self):
         conn_params = self.conn_dict.copy()
         N = 3
-        conn_params['allow_autapses'] = True
+        conn_params["allow_autapses"] = True
 
         # test that no multapses exist
-        conn_params['outdegree'] = N
-        conn_params['allow_multapses'] = False
-        pop = nest.Create('iaf_psc_alpha', N)
+        conn_params["outdegree"] = N
+        conn_params["allow_multapses"] = False
+        pop = nest.Create("iaf_psc_alpha", N)
         nest.Connect(pop, pop, conn_params)
         M = connect_test_base.get_connectivity_matrix(pop, pop)
         M = connect_test_base.gather_data(M)
@@ -164,5 +162,5 @@ def run():
     runner.run(suite())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run()

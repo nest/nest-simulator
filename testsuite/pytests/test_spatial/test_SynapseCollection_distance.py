@@ -23,10 +23,11 @@
 Tests distance between sources and targets of SynapseCollection
 """
 
-import pytest
 import math
-import numpy as np
+
 import nest
+import numpy as np
+import pytest
 
 
 @pytest.fixture(autouse=True)
@@ -45,8 +46,10 @@ def _calculate_distance(conns, s_nodes, t_nodes):
 
     dim = len(s_pos[0])
 
-    ref_distance = [np.linalg.norm(np.array(t_pos[t_nodes.index(t)]) - np.array(s_pos[s_nodes.index(s)]), ord=2)
-                    for s, t in zip(conns.source, conns.target)]
+    ref_distance = [
+        np.linalg.norm(np.array(t_pos[t_nodes.index(t)]) - np.array(s_pos[s_nodes.index(s)]), ord=2)
+        for s, t in zip(conns.source, conns.target)
+    ]
 
     return ref_distance
 
@@ -54,9 +57,9 @@ def _calculate_distance(conns, s_nodes, t_nodes):
 def test_SynapseCollection_distance_simple():
     """Test distance on SynapseCollection where source and target are equal"""
 
-    s_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[3, 3]))
+    s_nodes = nest.Create("iaf_psc_alpha", positions=nest.spatial.grid(shape=[3, 3]))
 
-    nest.Connect(s_nodes, s_nodes, {'rule': 'one_to_one'})
+    nest.Connect(s_nodes, s_nodes, {"rule": "one_to_one"})
     conns = nest.GetConnections()
     dist = conns.distance
 
@@ -66,8 +69,8 @@ def test_SynapseCollection_distance_simple():
 def test_SynapseCollection_distance():
     """Test SynapseCollection distance function for grid positions"""
 
-    s_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[3, 1]))
-    t_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[1, 3]))
+    s_nodes = nest.Create("iaf_psc_alpha", positions=nest.spatial.grid(shape=[3, 1]))
+    t_nodes = nest.Create("iaf_psc_alpha", positions=nest.spatial.grid(shape=[1, 3]))
 
     nest.Connect(s_nodes, t_nodes)
     conns = nest.GetConnections()
@@ -82,10 +85,10 @@ def test_SynapseCollection_distance_free():
     """Test SynapseCollection distance function for positions placed freely in space"""
 
     positions = nest.spatial.free(nest.random.uniform(), num_dimensions=2)
-    s_nodes = nest.Create('iaf_psc_alpha', n=5, positions=positions)
-    t_nodes = nest.Create('iaf_psc_alpha', n=7, positions=positions)
+    s_nodes = nest.Create("iaf_psc_alpha", n=5, positions=positions)
+    t_nodes = nest.Create("iaf_psc_alpha", n=7, positions=positions)
 
-    nest.Connect(s_nodes, t_nodes, {'rule': 'pairwise_bernoulli', 'p': 0.7})
+    nest.Connect(s_nodes, t_nodes, {"rule": "pairwise_bernoulli", "p": 0.7})
     conns = nest.GetConnections()
     dist = conns.distance
 
@@ -98,8 +101,8 @@ def test_SynapseCollection_distance_3D():
     """Test SynapseCollection distance function for spatial nodes in 3D"""
 
     positions = nest.spatial.free(nest.random.uniform(), num_dimensions=3)
-    s_nodes = nest.Create('iaf_psc_alpha', n=8, positions=positions)
-    t_nodes = nest.Create('iaf_psc_alpha', n=11, positions=positions)
+    s_nodes = nest.Create("iaf_psc_alpha", n=8, positions=positions)
+    t_nodes = nest.Create("iaf_psc_alpha", n=11, positions=positions)
 
     nest.Connect(s_nodes, t_nodes)
     conns = nest.GetConnections()
@@ -113,8 +116,8 @@ def test_SynapseCollection_distance_3D():
 def test_SynapseCollection_distance_non_spatial():
     """Test SynapseCollection distance function on non-spatial nodes"""
 
-    s_nodes = nest.Create('iaf_psc_alpha', 3)
-    t_nodes = nest.Create('iaf_psc_alpha', 2)
+    s_nodes = nest.Create("iaf_psc_alpha", 3)
+    t_nodes = nest.Create("iaf_psc_alpha", 2)
 
     nest.Connect(s_nodes, t_nodes)
     conns = nest.GetConnections()
@@ -129,12 +132,12 @@ def test_SynapseCollection_distance_mixed():
     num_snodes_nonspatial = 3
     num_tnodes_nonspatial = 2
     num_conns_nonspatial = num_snodes_nonspatial * num_tnodes_nonspatial
-    s_nodes_nonspatial = nest.Create('iaf_psc_alpha', num_snodes_nonspatial)
-    t_nodes_nonspatial = nest.Create('iaf_psc_alpha', num_tnodes_nonspatial)
+    s_nodes_nonspatial = nest.Create("iaf_psc_alpha", num_snodes_nonspatial)
+    t_nodes_nonspatial = nest.Create("iaf_psc_alpha", num_tnodes_nonspatial)
 
     positions = nest.spatial.free(nest.random.uniform(), num_dimensions=2)
-    s_nodes_spatial = nest.Create('iaf_psc_alpha', n=6, positions=positions)
-    t_nodes_spatial = nest.Create('iaf_psc_alpha', n=7, positions=positions)
+    s_nodes_spatial = nest.Create("iaf_psc_alpha", n=6, positions=positions)
+    t_nodes_spatial = nest.Create("iaf_psc_alpha", n=7, positions=positions)
 
     nest.Connect(s_nodes_nonspatial, t_nodes_nonspatial)
     nest.Connect(s_nodes_spatial, t_nodes_spatial)
@@ -154,10 +157,10 @@ def test_SynapseCollection_distance_spatial_nonspatial_connected():
 
     num_snodes = 5
     num_tnodes = 11
-    s_nodes_nonspatial = nest.Create('iaf_psc_alpha', num_snodes)
+    s_nodes_nonspatial = nest.Create("iaf_psc_alpha", num_snodes)
 
     positions = nest.spatial.free(nest.random.uniform(), num_dimensions=2)
-    t_nodes_spatial = nest.Create('iaf_psc_alpha', n=num_tnodes, positions=positions)
+    t_nodes_spatial = nest.Create("iaf_psc_alpha", n=num_tnodes, positions=positions)
 
     nest.Connect(s_nodes_nonspatial, t_nodes_spatial)
     conns = nest.GetConnections()

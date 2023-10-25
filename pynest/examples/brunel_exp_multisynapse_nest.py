@@ -57,9 +57,10 @@ See Also
 # Import all necessary modules for simulation, analysis and plotting.
 
 import time
+
+import matplotlib.pyplot as plt
 import nest
 import nest.raster_plot
-import matplotlib.pyplot as plt
 
 nest.ResetKernel()
 
@@ -72,9 +73,9 @@ startbuild = time.time()
 ###############################################################################
 # Assigning the simulation parameters to variables.
 
-dt = 0.1    # the resolution in ms
+dt = 0.1  # the resolution in ms
 simtime = 1000.0  # Simulation time in ms
-delay = 1.5    # synaptic delay in ms
+delay = 1.5  # synaptic delay in ms
 
 ###############################################################################
 # Definition of the parameters crucial for asynchronous irregular firing of
@@ -91,15 +92,15 @@ epsilon = 0.1  # connection probability
 order = 2500
 NE = 4 * order  # number of excitatory neurons
 NI = 1 * order  # number of inhibitory neurons
-N_neurons = NE + NI   # number of neurons in total
-N_rec = 50      # record from 50 neurons
+N_neurons = NE + NI  # number of neurons in total
+N_rec = 50  # record from 50 neurons
 
 ###############################################################################
 # Definition of connectivity parameters
 
 CE = int(epsilon * NE)  # number of excitatory synapses per neuron
 CI = int(epsilon * NI)  # number of inhibitory synapses per neuron
-C_tot = int(CI + CE)      # total number of synapses per neuron
+C_tot = int(CI + CE)  # total number of synapses per neuron
 
 ###############################################################################
 # Initialization of the parameters of the integrate and fire neuron and the
@@ -107,20 +108,22 @@ C_tot = int(CI + CE)      # total number of synapses per neuron
 
 tauMem = 20.0  # time constant of membrane potential in ms
 theta = 20.0  # membrane threshold potential in mV
-J = 0.1   # postsynaptic amplitude in mV
+J = 0.1  # postsynaptic amplitude in mV
 nr_ports = 100  # number of receptor types
 # Create array of synaptic time constants for each neuron,
 # ranging from 0.1 to 1.09 ms.
 tau_syn = [0.1 + 0.01 * i for i in range(nr_ports)]
-neuron_params = {"C_m": 1.0,
-                 "tau_m": tauMem,
-                 "t_ref": 2.0,
-                 "E_L": 0.0,
-                 "V_reset": 0.0,
-                 "V_m": 0.0,
-                 "V_th": theta,
-                 "tau_syn": tau_syn}
-J_ex = J       # amplitude of excitatory postsynaptic current
+neuron_params = {
+    "C_m": 1.0,
+    "tau_m": tauMem,
+    "t_ref": 2.0,
+    "E_L": 0.0,
+    "V_reset": 0.0,
+    "V_m": 0.0,
+    "V_th": theta,
+    "tau_syn": tau_syn,
+}
+J_ex = J  # amplitude of excitatory postsynaptic current
 J_in = -g * J_ex  # amplitude of inhibitory postsynaptic current
 
 ###############################################################################
@@ -178,10 +181,8 @@ print("Connecting devices")
 # the excitatory and one for the inhibitory connections giving the
 # previously defined weights and equal delays.
 
-nest.CopyModel("static_synapse", "excitatory",
-               {"weight": J_ex, "delay": delay})
-nest.CopyModel("static_synapse", "inhibitory",
-               {"weight": J_in, "delay": delay})
+nest.CopyModel("static_synapse", "excitatory", {"weight": J_ex, "delay": delay})
+nest.CopyModel("static_synapse", "inhibitory", {"weight": J_in, "delay": delay})
 
 ###################################################################################
 # Connecting the previously defined poisson generator to the excitatory and
@@ -196,12 +197,8 @@ nest.CopyModel("static_synapse", "inhibitory",
 # which includes the specification of the distribution and the associated
 # parameter.
 
-syn_params_ex = {"synapse_model": "excitatory",
-                 "receptor_type": nest.random.uniform_int(max=nr_ports - 1) + 1
-                 }
-syn_params_in = {"synapse_model": "inhibitory",
-                 "receptor_type": nest.random.uniform_int(max=nr_ports - 1) + 1
-                 }
+syn_params_ex = {"synapse_model": "excitatory", "receptor_type": nest.random.uniform_int(max=nr_ports - 1) + 1}
+syn_params_in = {"synapse_model": "inhibitory", "receptor_type": nest.random.uniform_int(max=nr_ports - 1) + 1}
 
 nest.Connect(noise, nodes_ex, syn_spec=syn_params_ex)
 nest.Connect(noise, nodes_in, syn_spec=syn_params_ex)
@@ -226,7 +223,7 @@ print("Excitatory connections")
 # dictionary. Here we use the connection rule ``fixed_indegree``,
 # which requires the definition of the indegree.
 
-conn_params_ex = {'rule': 'fixed_indegree', 'indegree': CE}
+conn_params_ex = {"rule": "fixed_indegree", "indegree": CE}
 nest.Connect(nodes_ex, nodes_ex + nodes_in, conn_params_ex, syn_params_ex)
 
 print("Inhibitory connections")
@@ -237,7 +234,7 @@ print("Inhibitory connections")
 # ``syn_params_in``.The connection parameter are defined analogously to the
 # connection from the excitatory population defined above.
 
-conn_params_in = {'rule': 'fixed_indegree', 'indegree': CI}
+conn_params_in = {"rule": "fixed_indegree", "indegree": CI}
 nest.Connect(nodes_in, nodes_ex + nodes_in, conn_params_in, syn_params_in)
 
 ###############################################################################

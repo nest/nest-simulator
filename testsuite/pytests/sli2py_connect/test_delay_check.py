@@ -27,8 +27,8 @@ are set as expected. It will report for each test separately, whether it was pas
 
 """
 
-import pytest
 import nest
+import pytest
 
 
 @pytest.fixture(autouse=True)
@@ -37,8 +37,8 @@ def base_setup():
     Reset kernel and create two neurons, connected by a static synapse with delay 2.0ms.
     """
     nest.ResetKernel()
-    pytest.n1, pytest.n2 = nest.Create('iaf_psc_alpha', 2)
-    nest.SetDefaults('static_synapse', {'delay': 2.0})
+    pytest.n1, pytest.n2 = nest.Create("iaf_psc_alpha", 2)
+    nest.SetDefaults("static_synapse", {"delay": 2.0})
     nest.Connect(pytest.n1, pytest.n2)
 
 
@@ -53,7 +53,7 @@ def test_candidate_not_reported():
     """
     Test that max_delay is not changed without connecting.
     """
-    nest.SetDefaults('static_synapse', {'delay': 10.0})
+    nest.SetDefaults("static_synapse", {"delay": 10.0})
     assert nest.min_delay == 2.0 and nest.max_delay == 2.0
 
 
@@ -61,7 +61,7 @@ def test_min_delay():
     """
     Test that min_delay is changed after connecting with static synapse of delay 1.0ms.
     """
-    nest.SetDefaults('static_synapse', {'delay': 1.0})
+    nest.SetDefaults("static_synapse", {"delay": 1.0})
     nest.Connect(pytest.n2, pytest.n1)
     assert nest.min_delay == 1.0 and nest.max_delay == 2.0
 
@@ -70,7 +70,7 @@ def test_connect():
     """
     Test that max_delay is changed when connecting and providing the delay in the synapse specification dictionary.
     """
-    nest.Connect(pytest.n2, pytest.n1, syn_spec={'weight': 1.0, 'delay': 6.0})
+    nest.Connect(pytest.n2, pytest.n1, syn_spec={"weight": 1.0, "delay": 6.0})
     assert nest.min_delay == 2.0 and nest.max_delay == 6.0
 
 
@@ -78,6 +78,6 @@ def test_setstatus_min_delay():
     """
     Test that min_delay is changed after setting the status of the synapse.
     """
-    conn = nest.GetConnections(source=pytest.n1, target=pytest.n2, synapse_model='static_synapse')
-    nest.SetStatus(conn, {'delay': 0.1})
+    conn = nest.GetConnections(source=pytest.n1, target=pytest.n2, synapse_model="static_synapse")
+    nest.SetStatus(conn, {"delay": 0.1})
     assert nest.min_delay == 0.1 and nest.max_delay == 2.0

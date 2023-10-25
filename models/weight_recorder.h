@@ -76,6 +76,12 @@ synapses that fulfill the given criteria.
 See also
 ++++++++
 
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: weight_recorder
+
 EndUserDocs */
 
 namespace nest
@@ -117,7 +123,7 @@ public:
 
   void handle( WeightRecorderEvent& ) override;
 
-  port handles_test_event( WeightRecorderEvent&, rport ) override;
+  size_t handles_test_event( WeightRecorderEvent&, size_t ) override;
 
   Type get_type() const override;
   SignalType receives_signal() const override;
@@ -144,8 +150,8 @@ private:
   Parameters_ P_;
 };
 
-inline port
-weight_recorder::handles_test_event( WeightRecorderEvent&, rport receptor_type )
+inline size_t
+weight_recorder::handles_test_event( WeightRecorderEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

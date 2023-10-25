@@ -29,8 +29,8 @@
    and comparing traces.
 """
 
-import pytest
 import nest
+import pytest
 
 
 def _get_network_state(nc):
@@ -47,7 +47,7 @@ def _get_network_state(nc):
 
 @pytest.fixture()
 def model_data():
-    return {"model": "mip_generator",  "params":  {"rate": 100.0, "p_copy": 0.5}}
+    return {"model": "mip_generator", "params": {"rate": 100.0, "p_copy": 0.5}}
 
 
 @pytest.fixture()

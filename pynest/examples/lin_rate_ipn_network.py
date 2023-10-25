@@ -31,9 +31,9 @@ inhibitory neuron is plotted.
 
 """
 
+import matplotlib.pyplot as plt
 import nest
 import numpy
-import matplotlib.pyplot as plt
 
 ###############################################################################
 # Assigning the simulation parameters to variables.
@@ -45,15 +45,15 @@ T = 100.0  # Simulation time in ms
 # Definition of the number of neurons
 
 order = 50
-NE = int(4 * order)    # number of excitatory neurons
-NI = int(1 * order)    # number of inhibitory neurons
-N = int(NE + NI)       # total number of neurons
+NE = int(4 * order)  # number of excitatory neurons
+NI = int(1 * order)  # number of inhibitory neurons
+N = int(NE + NI)  # total number of neurons
 
 ###############################################################################
 # Definition of the connections
 
 
-d_e = 5.   # delay of excitatory connections in ms
+d_e = 5.0  # delay of excitatory connections in ms
 g = 5.0  # ratio inhibitory weight/excitatory weight
 epsilon = 0.1  # connection probability
 w = 0.1 / numpy.sqrt(N)  # excitatory connection strength
@@ -61,21 +61,22 @@ w = 0.1 / numpy.sqrt(N)  # excitatory connection strength
 KE = int(epsilon * NE)  # number of excitatory synapses per neuron (outdegree)
 KI = int(epsilon * NI)  # number of inhibitory synapses per neuron (outdegree)
 K_tot = int(KI + KE)  # total number of synapses per neuron
-connection_rule = 'fixed_outdegree'  # connection rule
+connection_rule = "fixed_outdegree"  # connection rule
 
 ###############################################################################
 # Definition of the neuron model and its neuron parameters
 
-neuron_model = 'lin_rate_ipn'  # neuron model
-neuron_params = {'linear_summation': True,
-                 # type of non-linearity (not affecting linear rate models)
-                 'tau': 10.0,
-                 # time constant of neuronal dynamics in ms
-                 'mu': 2.0,
-                 # mean input
-                 'sigma': 5.
-                 # noise parameter
-                 }
+neuron_model = "lin_rate_ipn"  # neuron model
+neuron_params = {
+    "linear_summation": True,
+    # type of non-linearity (not affecting linear rate models)
+    "tau": 10.0,
+    # time constant of neuronal dynamics in ms
+    "mu": 2.0,
+    # mean input
+    "sigma": 5.0
+    # noise parameter
+}
 
 
 ###############################################################################
@@ -103,8 +104,7 @@ n_i = nest.Create(neuron_model, NI, neuron_params)
 # To record from the rate neurons a ``multimeter`` is created and the parameter
 # ``record_from`` is set to `rate` as well as the recording interval to `dt`
 
-mm = nest.Create('multimeter', params={'record_from': ['rate'],
-                                       'interval': dt})
+mm = nest.Create("multimeter", params={"record_from": ["rate"], "interval": dt})
 
 ###############################################################################
 # Specify synapse and connection dictionaries:
@@ -113,10 +113,10 @@ mm = nest.Create('multimeter', params={'record_from': ['rate'],
 # Connections originating from inhibitory neurons are not associated
 # with a delay (``rate_connection_instantaneous``).
 
-syn_e = {'weight': w, 'delay': d_e, 'synapse_model': 'rate_connection_delayed'}
-syn_i = {'weight': -g * w, 'synapse_model': 'rate_connection_instantaneous'}
-conn_e = {'rule': connection_rule, 'outdegree': KE}
-conn_i = {'rule': connection_rule, 'outdegree': KI}
+syn_e = {"weight": w, "delay": d_e, "synapse_model": "rate_connection_delayed"}
+syn_i = {"weight": -g * w, "synapse_model": "rate_connection_instantaneous"}
+conn_e = {"rule": connection_rule, "outdegree": KE}
+conn_i = {"rule": connection_rule, "outdegree": KI}
 
 ###############################################################################
 # Connect rate units
@@ -140,9 +140,9 @@ nest.Simulate(T)
 # Plot rates of one excitatory and one inhibitory neuron
 
 data = mm.events
-senders = data['senders']
-rate = data['rate']
-times = data['times']
+senders = data["senders"]
+rate = data["rate"]
+times = data["times"]
 
 ne_0_id = n_e[0].global_id
 ni_0_id = n_i[0].global_id
@@ -154,8 +154,8 @@ rate_in = rate[where_sender_is_ni_0]
 times = times[where_sender_is_ne_0]
 
 plt.figure()
-plt.plot(times, rate_ex, label='excitatory')
-plt.plot(times, rate_in, label='inhibitory')
-plt.xlabel('time (ms)')
-plt.ylabel('rate (a.u.)')
+plt.plot(times, rate_ex, label="excitatory")
+plt.plot(times, rate_in, label="inhibitory")
+plt.xlabel("time (ms)")
+plt.ylabel("rate (a.u.)")
 plt.show()

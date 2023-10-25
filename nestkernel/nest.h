@@ -59,6 +59,12 @@ void register_logger_client( const deliver_logging_event_ptr client_callback );
 template < template < typename > class ConnectorModelT >
 void register_connection_model( const std::string& name );
 
+/**
+ * Register node model (i.e. an instance of a class inheriting from `Node`).
+ */
+template < typename NodeModelT >
+void register_node_model( const std::string& name );
+
 void print_nodes_to_stream( std::ostream& out = std::cout );
 
 RngPtr get_rank_synced_rng();

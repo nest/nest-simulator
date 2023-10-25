@@ -22,8 +22,9 @@
 
 
 // Includes from nestkernel:
+#include "connector_model_impl.h"
 #include "kernel_manager.h"
-
+#include "model_manager_impl.h"
 
 namespace nest
 {
@@ -35,4 +36,10 @@ register_connection_model( const std::string& name )
   kernel().model_manager.register_connection_model< ConnectorModelT >( name );
 }
 
+template < typename NodeModelT >
+void
+register_node_model( const std::string& name )
+{
+  kernel().model_manager.register_node_model< NodeModelT >( name );
+}
 }

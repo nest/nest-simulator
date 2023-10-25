@@ -379,7 +379,7 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
   double dt = Time::get_resolution().get_ms();
   const double shift = target->get_shift();
 
-  long interval_step = std::fmod( t_spike - shift, update_interval );
+  double interval_step = std::fmod( t_spike - shift, update_interval );
   bool is_first_interval_step = fabs( interval_step ) < 1e-6;
 
   if ( is_source_recurrent_neuron and is_first_interval_step )

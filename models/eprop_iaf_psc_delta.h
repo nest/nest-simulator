@@ -108,7 +108,8 @@ gamma                   :math:`\gamma`                        0.3 Scaling of pse
 I_e                pA   :math:`I_\text{e}`                    0.0 Constant external input current
 propagator_idx                                                  0 Index of propagators [0, 1] corresponding to
                                                                   [:math:`1 - \exp(\Delta t/\tau_\text{m})`, :math:`1`]
-surrogate_gradient      :math:`\psi`            pseudo_derivative Surrogate gradient method
+surrogate_gradient      :math:`\psi`             piecewise_linear Surrogate gradient method / pseudo-derivative
+                                                                  ["piecewise_linear"]
 t_ref              ms   :math:`t_\text{ref}`                  2.0 Duration of the refractory period
 tau_m              ms   :math:`\tau_\text{m}`                10.0 Time constant of the membrane
 V_m                mV   :math:`v_j^0`                       -70.0 Initial value of the membrane voltage
@@ -196,7 +197,7 @@ private:
   friend class RecordablesMap< eprop_iaf_psc_delta >;
   friend class UniversalDataLogger< eprop_iaf_psc_delta >;
 
-  double compute_pseudo_derivative();
+  double compute_piecewise_linear_derivative();
 
   double ( eprop_iaf_psc_delta::*compute_surrogate_gradient )();
 
@@ -209,7 +210,7 @@ private:
     double gamma_;                   //!< scaling of pseudo-derivative of membrane voltage
     double I_e_;                     //!< external DC current (pA)
     long propagator_idx_;            //!< index of propagators 1 (1.0 - exp(dt/tau_m)) or 0 (1.0)
-    std::string surrogate_gradient_; //!< surrogate gradient method, "pseudo_derivative"
+    std::string surrogate_gradient_; //!< surrogate gradient method / pseudo-derivative
     double t_ref_;                   //!< refractory period (ms)
     double tau_m_;                   //!< membrane time constant (ms)
     double V_min_;                   //!< lower membrane voltage bound relative to leak potential (mV)

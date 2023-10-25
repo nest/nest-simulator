@@ -68,7 +68,7 @@ nest::eprop_iaf_psc_delta::Parameters_::Parameters_()
   , gamma_( 0.3 )
   , I_e_( 0.0 )
   , propagator_idx_( 0 )
-  , surrogate_gradient_( "pseudo_derivative" )
+  , surrogate_gradient_( "piecewise_linear" )
   , t_ref_( 2.0 )
   , tau_m_( 10.0 )
   , V_min_( -std::numeric_limits< double >::max() )
@@ -143,8 +143,8 @@ nest::eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* nod
   if ( propagator_idx_ != 0 and propagator_idx_ != 1 )
     throw BadProperty( "One of two available propagators indexed by 0 and 1 must be selected." );
 
-  if ( surrogate_gradient_ != "pseudo_derivative" )
-    throw BadProperty( "One of the available surrogate gradients \"pseudo_derivative\" needs to be selected." );
+  if ( surrogate_gradient_ != "piecewise_linear" )
+    throw BadProperty( "One of the available surrogate gradients \"piecewise_linear\" needs to be selected." );
 
   if ( tau_m_ <= 0 )
     throw BadProperty( "Membrane time constant must be > 0." );
@@ -227,8 +227,8 @@ nest::eprop_iaf_psc_delta::pre_run_hook()
   write_eprop_parameter_to_map( "leak_propagator", V_.P33_ );
   write_eprop_parameter_to_map( "leak_propagator_complement", V_.P33_complement_ );
 
-  if ( P_.surrogate_gradient_ == "pseudo_derivative" )
-    compute_surrogate_gradient = &eprop_iaf_psc_delta::compute_pseudo_derivative;
+  if ( P_.surrogate_gradient_ == "piecewise_linear" )
+    compute_surrogate_gradient = &eprop_iaf_psc_delta::compute_piecewise_linear_derivative;
 }
 
 /* ----------------------------------------------------------------
@@ -309,7 +309,7 @@ nest::eprop_iaf_psc_delta::update( Time const& origin, const long from, const lo
  * ---------------------------------------------------------------- */
 
 double
-nest::eprop_iaf_psc_delta::compute_pseudo_derivative()
+nest::eprop_iaf_psc_delta::compute_piecewise_linear_derivative()
 {
   double v_m = S_.r_ > 0 ? 0.0 : S_.y3_;
   double psi = P_.gamma_ * std::max( 0.0, 1.0 - std::fabs( ( v_m - P_.V_th_ ) / P_.V_th_ ) ) / P_.V_th_;

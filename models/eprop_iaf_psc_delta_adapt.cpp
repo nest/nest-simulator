@@ -164,6 +164,9 @@ nest::eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Nod
   if ( t_ref_ < 0 )
     throw BadProperty( "Refractory time must not be negative." );
 
+  if ( surrogate_gradient_ == "piecewise_linear" and fabs( V_th_ ) < 1e-6 )
+    throw BadProperty( "V_th-E_L must be != 0 if surrogate_gradient is \"piecewise_linear\"." );
+
   return delta_EL;
 }
 

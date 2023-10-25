@@ -87,7 +87,7 @@ iaf_psc_alpha, iaf_psc_delta, iaf_psc_exp, iaf_cond_exp, iaf_psc_alpha_multisyna
 
 EndUserDocs */
 
-void register_iaf_psc_exp_multisynapse();
+void register_iaf_psc_exp_multisynapse( const std::string& name );
 
 class iaf_psc_exp_multisynapse : public ArchivingNode
 {

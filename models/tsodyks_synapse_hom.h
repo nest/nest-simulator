@@ -170,7 +170,7 @@ public:
 };
 
 
-void register_tsodyks_synapse_hom();
+void register_tsodyks_synapse_hom( const std::string& name );
 
 template < typename targetidentifierT >
 class tsodyks_synapse_hom : public Connection< targetidentifierT >

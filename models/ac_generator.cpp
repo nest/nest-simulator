@@ -33,7 +33,7 @@
 #include "event_delivery_manager_impl.h"
 #include "genericmodel_impl.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -46,7 +46,7 @@ namespace nest
 void
 register_ac_generator()
 {
-  kernel().model_manager.register_node_model< ac_generator >( "ac_generator" );
+  register_node_model< ac_generator >( "ac_generator" );
 }
 
 RecordablesMap< ac_generator > ac_generator::recordablesMap_;

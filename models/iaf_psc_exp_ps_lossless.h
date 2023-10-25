@@ -143,7 +143,7 @@ Examples using this model
 
 EndUserDocs */
 
-void register_iaf_psc_exp_ps_lossless();
+void register_iaf_psc_exp_ps_lossless( const std::string& name );
 
 class iaf_psc_exp_ps_lossless : public ArchivingNode
 {

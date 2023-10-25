@@ -114,7 +114,7 @@ EndUserDocs */
 
 namespace nest
 {
-void register_ac_generator();
+void register_ac_generator( const std::string& name );
 
 class ac_generator : public StimulationDevice
 {

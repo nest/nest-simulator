@@ -93,7 +93,7 @@ Examples using this model
 
 EndUserDocs */
 
-void register_bernoulli_synapse();
+void register_bernoulli_synapse( const std::string& name );
 
 template < typename targetidentifierT >
 class bernoulli_synapse : public Connection< targetidentifierT >

@@ -205,7 +205,7 @@ EndUserDocs */
 namespace nest
 {
 
-void register_glif_psc();
+void register_glif_psc( const std::string& name );
 
 class glif_psc : public ArchivingNode
 {

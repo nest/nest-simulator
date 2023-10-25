@@ -162,7 +162,7 @@ public:
 
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
-void register_jonke_synapse();
+void register_jonke_synapse( const std::string& name );
 
 template < typename targetidentifierT >
 class jonke_synapse : public Connection< targetidentifierT >

@@ -115,7 +115,7 @@ Examples using this model
 
 EndUserDocs */
 
-void register_iaf_chs_2007();
+void register_iaf_chs_2007( const std::string& name );
 
 class iaf_chs_2007 : public ArchivingNode
 {

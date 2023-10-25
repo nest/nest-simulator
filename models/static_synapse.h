@@ -60,7 +60,7 @@ Examples using this model
 
 EndUserDocs */
 
-void register_static_synapse();
+void register_static_synapse( const std::string& name );
 
 template < typename targetidentifierT >
 class static_synapse : public Connection< targetidentifierT >

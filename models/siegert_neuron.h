@@ -139,7 +139,7 @@ Examples using this model
 
 EndUserDocs */
 
-void register_siegert_neuron();
+void register_siegert_neuron( const std::string& name );
 
 class siegert_neuron : public ArchivingNode
 {

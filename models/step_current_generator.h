@@ -103,7 +103,7 @@ Examples using this model
 
 EndUserDocs */
 
-void register_step_current_generator();
+void register_step_current_generator( const std::string& name );
 
 class step_current_generator : public StimulationDevice
 {

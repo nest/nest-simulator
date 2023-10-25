@@ -155,7 +155,7 @@ Examples using this model
 
 EndUserDocs */
 
-void register_hh_cond_exp_traub();
+void register_hh_cond_exp_traub( const std::string& name );
 
 class hh_cond_exp_traub : public ArchivingNode
 {

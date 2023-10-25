@@ -220,7 +220,7 @@ Examples using this model
 
 EndUserDocs  */
 
-void register_gif_cond_exp();
+void register_gif_cond_exp( const std::string& name );
 
 class gif_cond_exp : public ArchivingNode
 {

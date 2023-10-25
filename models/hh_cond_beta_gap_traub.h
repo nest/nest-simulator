@@ -182,7 +182,7 @@ Examples using this model
 
 EndUserDocs */
 
-void register_hh_cond_beta_gap_traub();
+void register_hh_cond_beta_gap_traub( const std::string& name );
 
 class hh_cond_beta_gap_traub : public ArchivingNode
 {

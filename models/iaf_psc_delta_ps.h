@@ -158,7 +158,7 @@ Examples using this model
 
 EndUserDocs */
 
-void register_iaf_psc_delta_ps();
+void register_iaf_psc_delta_ps( const std::string& name );
 
 class iaf_psc_delta_ps : public ArchivingNode
 {

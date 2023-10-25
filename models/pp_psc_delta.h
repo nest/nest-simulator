@@ -197,7 +197,7 @@ Examples using this model
 
 EndUserDocs */
 
-void register_pp_psc_delta();
+void register_pp_psc_delta( const std::string& name );
 
 class pp_psc_delta : public ArchivingNode
 {

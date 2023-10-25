@@ -134,7 +134,7 @@ Examples using this model
 
 EndUserDocs */
 
-void register_iaf_cond_alpha();
+void register_iaf_cond_alpha( const std::string& name );
 
 class iaf_cond_alpha : public ArchivingNode
 {

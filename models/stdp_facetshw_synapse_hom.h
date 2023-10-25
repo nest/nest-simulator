@@ -163,7 +163,7 @@ EndUserDocs */
 // template class forward declaration required by common properties friend
 // definition
 
-void register_stdp_facetshw_synapse_hom();
+void register_stdp_facetshw_synapse_hom( const std::string& name );
 
 template < typename targetidentifierT >
 class stdp_facetshw_synapse_hom;

@@ -89,7 +89,7 @@ Examples using this model
 
 EndUserDocs */
 
-void register_dc_generator();
+void register_dc_generator( const std::string& name );
 
 class dc_generator : public StimulationDevice
 {

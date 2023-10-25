@@ -190,7 +190,7 @@ STDPDopaCommonProperties::get_vt_node_id() const
  * Class representing an stdp_dopamine_synapse with homogeneous parameters,
  * i.e. parameters are the same for all synapses.
  */
-void register_stdp_dopamine_synapse();
+void register_stdp_dopamine_synapse( const std::string& name );
 
 template < typename targetidentifierT >
 class stdp_dopamine_synapse : public Connection< targetidentifierT >

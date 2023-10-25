@@ -83,7 +83,7 @@ Examples using this model
 
 EndUserDocs */
 
-void register_parrot_neuron_ps();
+void register_parrot_neuron_ps( const std::string& name );
 
 class parrot_neuron_ps : public ArchivingNode
 {

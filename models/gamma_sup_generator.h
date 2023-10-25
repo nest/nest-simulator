@@ -95,7 +95,7 @@ Examples using this model
 
 EndUserDocs */
 
-void register_gamma_sup_generator();
+void register_gamma_sup_generator( const std::string& name );
 
 class gamma_sup_generator : public StimulationDevice
 {

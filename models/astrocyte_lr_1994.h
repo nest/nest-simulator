@@ -241,7 +241,7 @@ aeif_cond_alpha_astro, sic_connection
 
 EndUserDocs */
 
-void register_astrocyte_lr_1994();
+void register_astrocyte_lr_1994( const std::string& name );
 
 class astrocyte_lr_1994 : public ArchivingNode
 {

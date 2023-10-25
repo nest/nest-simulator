@@ -189,7 +189,7 @@ Examples using this model
 
 EndUserDocs */
 
-void register_hh_psc_alpha_clopath();
+void register_hh_psc_alpha_clopath( const std::string& name );
 
 class hh_psc_alpha_clopath : public ClopathArchivingNode
 {

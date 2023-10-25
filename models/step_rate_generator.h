@@ -106,7 +106,7 @@ Examples using this model
 
 EndUserDocs */
 
-void register_step_rate_generator();
+void register_step_rate_generator( const std::string& name );
 
 class step_rate_generator : public StimulationDevice
 {

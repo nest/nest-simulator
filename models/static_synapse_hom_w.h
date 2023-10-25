@@ -66,7 +66,7 @@ Examples using this model
 
 EndUserDocs */
 
-void register_static_synapse_hom_w();
+void register_static_synapse_hom_w( const std::string& name );
 
 template < typename targetidentifierT >
 class static_synapse_hom_w : public Connection< targetidentifierT >

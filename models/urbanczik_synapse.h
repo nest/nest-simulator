@@ -108,7 +108,7 @@ EndUserDocs */
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
 
-void register_urbanczik_synapse();
+void register_urbanczik_synapse( const std::string& name );
 
 template < typename targetidentifierT >
 class urbanczik_synapse : public Connection< targetidentifierT >

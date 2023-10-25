@@ -233,7 +233,7 @@ Examples using this model
 
 EndUserDocs
 */
-void register_spike_generator();
+void register_spike_generator( const std::string& name );
 
 class spike_generator : public StimulationDevice
 {

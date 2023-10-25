@@ -58,7 +58,7 @@ astrocyte_lr_1994, aeif_cond_alpha_astro
 
 EndUserDocs */
 
-void register_sic_connection();
+void register_sic_connection( const std::string& name );
 
 template < typename targetidentifierT >
 class sic_connection : public Connection< targetidentifierT >

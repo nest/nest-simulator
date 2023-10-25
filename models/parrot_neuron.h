@@ -80,7 +80,7 @@ Examples using this model
 
 EndUserDocs */
 
-void register_parrot_neuron();
+void register_parrot_neuron( const std::string& name );
 
 class parrot_neuron : public ArchivingNode
 {

@@ -102,7 +102,7 @@ Examples using this model
 
 EndUserDocs */
 
-void register_inhomogeneous_poisson_generator();
+void register_inhomogeneous_poisson_generator( const std::string& name );
 
 class inhomogeneous_poisson_generator : public StimulationDevice
 {

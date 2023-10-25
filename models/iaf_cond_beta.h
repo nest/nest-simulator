@@ -153,7 +153,7 @@ Examples using this model
 
 EndUserDocs */
 
-void register_iaf_cond_beta();
+void register_iaf_cond_beta( const std::string& name );
 
 class iaf_cond_beta : public ArchivingNode
 {

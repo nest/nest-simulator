@@ -81,7 +81,7 @@ Examples using this model
 
 EndUserDocs */
 
-void register_gap_junction();
+void register_gap_junction( const std::string& name );
 
 template < typename targetidentifierT >
 class gap_junction : public Connection< targetidentifierT >

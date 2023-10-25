@@ -221,7 +221,7 @@ Examples using this model
 
 EndUserDocs */
 
-void register_gif_cond_exp_multisynapse();
+void register_gif_cond_exp_multisynapse( const std::string& name );
 
 class gif_cond_exp_multisynapse : public ArchivingNode
 {

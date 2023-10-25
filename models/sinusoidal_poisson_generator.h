@@ -127,7 +127,7 @@ Examples using this model
 
 EndUserDocs */
 
-void register_sinusoidal_poisson_generator();
+void register_sinusoidal_poisson_generator( const std::string& name );
 
 class sinusoidal_poisson_generator : public StimulationDevice
 {

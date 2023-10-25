@@ -151,7 +151,7 @@ Examples using this model
 
 EndUserDocs */
 
-void register_hh_psc_alpha();
+void register_hh_psc_alpha( const std::string& name );
 
 class hh_psc_alpha : public ArchivingNode
 {

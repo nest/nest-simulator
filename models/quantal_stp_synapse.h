@@ -102,7 +102,7 @@ tsodyks2_synapse, stdp_synapse, static_synapse
 
 EndUserDocs */
 
-void register_quantal_stp_synapse();
+void register_quantal_stp_synapse( const std::string& name );
 
 template < typename targetidentifierT >
 class quantal_stp_synapse : public Connection< targetidentifierT >

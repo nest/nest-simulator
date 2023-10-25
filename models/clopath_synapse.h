@@ -114,7 +114,7 @@ EndUserDocs */
 
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
-void register_clopath_synapse();
+void register_clopath_synapse( const std::string& name );
 
 template < typename targetidentifierT >
 class clopath_synapse : public Connection< targetidentifierT >

@@ -187,7 +187,7 @@ Examples using this model
 
 EndUserDocs */
 
-void register_ht_neuron();
+void register_ht_neuron( const std::string& name );
 
 class ht_neuron : public ArchivingNode
 {

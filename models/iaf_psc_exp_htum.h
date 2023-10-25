@@ -153,7 +153,7 @@ Examples using this model
 
 EndUserDocs */
 
-void register_iaf_psc_exp_htum();
+void register_iaf_psc_exp_htum( const std::string& name );
 
 class iaf_psc_exp_htum : public ArchivingNode
 {

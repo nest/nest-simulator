@@ -199,12 +199,17 @@ nest::eprop_readout::pre_run_hook()
   V_.start_learning_step_ = Time( Time::ms( std::max( P_.start_learning_, 0.0 ) ) ).get_steps();
   S_.readout_signal_unnorm_ = 0.0;
   V_.in_learning_window_ = false;
-  V_.requires_buffer_ = false;
 
   if ( P_.loss_ == "mean_squared_error" )
+  {
     compute_error_signal = &eprop_readout::compute_error_signal_mean_squared_error;
+    V_.requires_buffer_ = false;
+  }
   else if ( P_.loss_ == "cross_entropy_loss" )
+  {
     compute_error_signal = &eprop_readout::compute_error_signal_cross_entropy_loss;
+    V_.requires_buffer_ = true;
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -287,7 +292,6 @@ nest::eprop_readout::compute_error_signal_cross_entropy_loss( const long& lag )
   double norm_rate = B_.normalization_rates_.get_value( lag ) + S_.readout_signal_unnorm_;
   S_.readout_signal_ = V_.in_learning_window_ ? S_.readout_signal_unnorm_ / norm_rate : 0.0;
   S_.readout_signal_unnorm_ = std::exp( S_.y3_ + P_.E_L_ );
-  V_.requires_buffer_ = true;
   S_.error_signal_ = V_.in_learning_window_ ? S_.readout_signal_ - S_.target_signal_ : 0.0;
 }
 

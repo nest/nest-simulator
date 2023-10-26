@@ -43,10 +43,10 @@ nest::EpropArchivingNode::EpropArchivingNode( const EpropArchivingNode& n )
 const double
 nest::EpropArchivingNode::get_shift() const
 {
-  double delay_rec = delay_norm + delay_out_rec;
-  double delay_out = delay_rec_out + delay_norm + delay_out_rec;
+  double shift_rec = offset_gen + delay_in_rec;
+  double shift_out = offset_gen + delay_in_rec + delay_rec_out;
 
-  return get_name() == "eprop_readout" ? delay_out : delay_rec;
+  return get_name() == "eprop_readout" ? shift_out : shift_rec;
 }
 
 void
@@ -139,7 +139,7 @@ nest::EpropArchivingNode::write_surrogate_gradient_to_history( long time_step, d
 void
 nest::EpropArchivingNode::write_error_signal_to_history( long time_step, double error_signal )
 {
-  double shift = delay_norm;
+  double shift = delay_out_norm;
   eprop_history_.push_back(
     HistEntryEpropArchive( Time( Time::step( time_step - shift ) ).get_ms(), 0.0, error_signal ) );
 }
@@ -147,17 +147,17 @@ nest::EpropArchivingNode::write_error_signal_to_history( long time_step, double 
 
 void
 nest::EpropArchivingNode::write_learning_signal_to_history( double& time_point,
-  double& delay,
+  double& delay_out_rec,
   double& weight,
   double& error_signal )
 {
-  double shift = delay_rec_out + delay_norm + delay_out_rec;
+  double shift = delay_rec_out + delay_out_norm + delay_out_rec;
 
   std::deque< HistEntryEpropArchive >::iterator it_hist;
   std::deque< HistEntryEpropArchive >::iterator it_hist_end;
 
   get_eprop_history( time_point - shift, &it_hist );
-  get_eprop_history( time_point - shift + delay, &it_hist_end );
+  get_eprop_history( time_point - shift + delay_out_rec, &it_hist_end );
 
   if ( it_hist != it_hist_end )
   {

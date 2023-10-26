@@ -379,11 +379,11 @@ nest::eprop_iaf_psc_delta_adapt::handle( LearningSignalConnectionEvent& e )
   if ( it_event != it_event_end )
   {
     double time_point = e.get_stamp().get_ms();
-    double delay = Time::delay_steps_to_ms( e.get_delay_steps() );
+    double delay_out_rec = Time::delay_steps_to_ms( e.get_delay_steps() );
     double weight = e.get_weight();
     double error_signal = e.get_coeffvalue( it_event ); // implicitely decrease access counter
 
-    write_learning_signal_to_history( time_point, delay, weight, error_signal );
+    write_learning_signal_to_history( time_point, delay_out_rec, weight, error_signal );
   }
 }
 

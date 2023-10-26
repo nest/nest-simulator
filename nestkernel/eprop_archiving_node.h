@@ -58,7 +58,8 @@ public:
 
   void write_surrogate_gradient_to_history( long time_step, double surrogate_gradient );
   void write_error_signal_to_history( long time_step, double error_signal );
-  void write_learning_signal_to_history( double& time_point, double& delay, double& weight, double& error_signal );
+  void
+  write_learning_signal_to_history( double& time_point, double& delay_out_rec, double& weight, double& error_signal );
   void write_update_to_history( double t_last_update, double t_current_update );
   void write_firing_rate_reg_to_history( double t_current_update, double f_target, double c_reg );
   void write_eprop_parameter_to_map( std::string parameter_name, double parameter_value );
@@ -75,13 +76,14 @@ private:
   double eps_ = 1e-6; // small constant to prevent numerical errors when comparing time points
   size_t n_spikes_ = 0;
 
-  // these delays are for now hardcoded to 1 ms since the current implementaton works only
+  // these shifts are for now hardcoded to 1 ms since the current implementaton works only
   // if all the delays are equal to the resolution of the simulation which has to be equal to 1 ms
-  // [TODO] initialize them with the correct delays
+  // [TODO] initialize them with the real delays
 
-  double delay_norm = 1.0;    // transmission delay of communicating normalization between readout neurons
-  double delay_rec_out = 1.0; // transmission delay from recurrent neuron to output neurons
-  double delay_out_rec = 1.0; // transmission delay from output neuron to recurrent neuron
+  double offset_gen = 1.0;     // offset since generator signals start from time step 1
+  double delay_in_rec = 1.0;   // connection delay from input to recurrent neurons
+  double delay_rec_out = 1.0;  // connection delay from recurrent to output neurons
+  double delay_out_norm = 1.0; // connection delay between output neurons for normalization
 
   std::deque< HistEntryEpropArchive > eprop_history_;
   std::vector< HistEntryEpropFiringRateReg > firing_rate_reg_history_;

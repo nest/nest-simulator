@@ -124,14 +124,26 @@ steps = {
     "spacing": 50,  # time steps of break between two cues
     "bg_noise": 1050,  # time steps of background noise
     "recall": 150,  # time steps of recall
-    "shift": 4,  # time steps of shift - as generators & multimeter act on timesteps > 0 + signal travel time
 }
 
 steps["cues"] = n_cues * (steps["cue"] + steps["spacing"])  # time steps of all cues
 steps["recall_onset"] = steps["cues"] + steps["bg_noise"]  # time steps until recall onset
 steps["sequence"] = steps["recall_onset"] + steps["recall"]  # time steps of one full sequence
 steps["task"] = n_iter * n_batch * steps["sequence"]  # time steps of task
-steps["sim"] = steps["task"] + steps["shift"]  # time steps of sim
+
+steps.update(
+    {
+        "offset_gen": 1,  # offset since generator signals start from time step 1
+        "delay_in_rec": 1,  # connection delay between input and recurrent neurons
+        "delay_rec_out": 1,  # connection delay between recurrent and output neurons
+        "delay_out_norm": 1,  # connection delay between output neurons for normalization
+        "extension_sim": 1,  # extra time step to close right-open simulation time interval in Simulate()
+    }
+)
+
+steps["total_offset"] = steps["offset_gen"] + steps["delay_in_rec"] + steps["delay_rec_out"] + steps["delay_out_norm"]
+
+steps["sim"] = steps["task"] + steps["total_offset"] + steps["extension_sim"]  # time steps of sim
 
 duration = {"step": 1.0}  # ms, temporal resolution of the simulation, only tested for 1 ms
 
@@ -245,7 +257,10 @@ n_record_w = 3  # number of senders and targets to record weights from
 
 params_mm_reg = {"record_from": ["V_m", "surrogate_gradient", "learning_signal"]}  # recordables
 params_mm_ad = {"record_from": params_mm_reg["record_from"] + ["adapting_threshold", "adaptation"]}
-params_mm_out = {"record_from": ["V_m", "readout_signal", "target_signal", "error_signal"]}
+params_mm_out = {
+    "record_from": ["V_m", "readout_signal", "target_signal", "error_signal"],
+    "start": duration["total_offset"],
+}
 
 params_wr = {
     "senders": nrns_in[:n_record_w] + nrns_rec[:n_record_w],  # limit senders to subsample weights to record
@@ -466,7 +481,7 @@ for iteration in range(n_iter):
     target_cues_list.extend(target_cues.tolist())
 
 input_spike_bools_arr = np.array(input_spike_bools_list).reshape(steps["task"], n_in)
-timeline_task = np.arange(0, duration["task"], duration["step"])
+timeline_task = np.arange(0, duration["task"], duration["step"]) + duration["offset_gen"]
 
 params_gen_spk_in = [
     {"spike_times": timeline_task[input_spike_bools_arr[:, nrn_in_idx]].astype(dtype_in_spks).tolist()}
@@ -478,8 +493,7 @@ target_rate_changes[np.array(target_cues_list), np.arange(n_batch * n_iter)] = 1
 
 params_gen_rate_target = [
     {
-        # shift by one time step since NEST does not allow rate generation in 0th time step
-        "amplitude_times": (np.arange(0.0, duration["task"], duration["sequence"]) + duration["step"]).tolist(),
+        "amplitude_times": (np.arange(0.0, duration["task"], duration["sequence"]) + duration["total_offset"]).tolist(),
         "amplitude_values": target_rate_changes[nrn_out_idx].tolist(),
     }
     for nrn_out_idx in range(n_out)
@@ -500,7 +514,7 @@ nest.SetStatus(gen_rate_target, params_gen_rate_target)
 # the last update interval, by sending a strong spike to all neurons that form the presynaptic side of an eprop
 # synapse. This step is required purely for technical reasons.
 
-gen_spk_final_update = nest.Create("spike_generator", 1, {"spike_times": [duration["task"] + 2]})
+gen_spk_final_update = nest.Create("spike_generator", 1, {"spike_times": [duration["task"] + duration["total_offset"]]})
 
 nest.Connect(gen_spk_final_update, nrns_in + nrns_rec, "all_to_all", {"weight": 1000.0})
 
@@ -569,10 +583,6 @@ senders = events_mm_out["senders"]
 
 readout_signal = np.array([readout_signal[senders == i] for i in np.unique(senders)])
 target_signal = np.array([target_signal[senders == i] for i in np.unique(senders)])
-
-# align the signals for technical reasons
-readout_signal = readout_signal[:, steps["shift"] - 1 :]  # -1 since multimeter starts recording from 1
-target_signal = target_signal[:, steps["shift"] - 2 : -1]  # extra -1 since target has shorter travel time
 
 readout_signal = readout_signal.reshape(n_out, n_iter, n_batch, steps["sequence"])[:, :, :, steps["recall_onset"] :]
 target_signal = target_signal.reshape(n_out, n_iter, n_batch, steps["sequence"])[:, :, :, steps["recall_onset"] :]

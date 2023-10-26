@@ -110,11 +110,23 @@ steps = {
     "recall": 1,  # time steps of recall
     "recall_onset": 0,  # time steps until recall onset
     "sequence": 1000,  # time steps of one full sequence
-    "shift": 5,  # time steps of shift - as generators & multimeter act on timesteps > 0 + signal travel time
 }
 
 steps["task"] = n_iter * n_batch * steps["sequence"]  # time steps of task
-steps["sim"] = steps["task"] + steps["shift"]  # time steps of sim
+
+steps.update(
+    {
+        "offset_gen": 1,  # offset since generator signals start from time step 1
+        "delay_in_rec": 1,  # connection delay between input and recurrent neurons
+        "delay_rec_out": 1,  # connection delay between recurrent and output neurons
+        "delay_out_norm": 1,  # connection delay between output neurons for normalization
+        "extension_sim": 1,  # extra time step to close right-open simulation time interval in Simulate()
+    }
+)
+
+steps["total_offset"] = steps["offset_gen"] + steps["delay_in_rec"] + steps["delay_rec_out"] + steps["delay_out_norm"]
+
+steps["sim"] = steps["task"] + steps["total_offset"] + steps["extension_sim"]  # time steps of sim
 
 duration = {"step": 1.0}  # ms, temporal resolution of the simulation, only tested for 1 ms
 
@@ -200,7 +212,10 @@ n_record = 1  # number of neurons to record recordables from
 n_record_w = 3  # number of senders and targets to record weights from
 
 params_mm_rec = {"record_from": ["V_m", "surrogate_gradient", "learning_signal"]}  # recordables
-params_mm_out = {"record_from": ["V_m", "readout_signal", "target_signal", "error_signal"]}
+params_mm_out = {
+    "record_from": ["V_m", "readout_signal", "target_signal", "error_signal"],
+    "start": duration["total_offset"],
+}
 
 params_wr = {
     "senders": nrns_in[:n_record_w] + nrns_rec[:n_record_w],  # limit senders to subsample weights to record
@@ -319,7 +334,7 @@ input_spike_bools = np.random.rand(n_batch, steps["sequence"], n_in) < spike_pro
 input_spike_bools = np.hstack(input_spike_bools.swapaxes(1, 2))
 input_spike_bools[:, 0] = 0  # suppress spikes since NEST does not allow spike emission in 0th time step
 
-sequence_starts = np.arange(0.0, duration["task"], duration["sequence"]) + duration["step"]
+sequence_starts = np.arange(0.0, duration["task"], duration["sequence"]) + duration["offset_gen"]
 params_gen_spk_in = []
 for input_spike_bool in input_spike_bools:
     input_spike_times = np.arange(duration["sequence"] * n_batch)[input_spike_bool]
@@ -358,8 +373,7 @@ def generate_superimposed_sines(steps_sequence, periods):
 target_signal = generate_superimposed_sines(steps["sequence"], [1000.0, 500.0, 333.0, 200.0])  # periods in ms
 
 params_gen_rate_target = {
-    # shift by one time step since NEST does not allow rate generation in 0th time step
-    "amplitude_times": (np.arange(0, duration["task"], duration["step"]) + 2 * duration["step"]).tolist(),
+    "amplitude_times": (np.arange(0, duration["task"], duration["step"]) + duration["total_offset"]).tolist(),
     "amplitude_values": np.tile(target_signal, n_iter * n_batch).tolist(),
 }
 
@@ -376,7 +390,7 @@ nest.SetStatus(gen_rate_target, params_gen_rate_target)
 # the last update interval, by sending a strong spike to all neurons that form the presynaptic side of an eprop
 # synapse. This step is required purely for technical reasons.
 
-gen_spk_final_update = nest.Create("spike_generator", 1, {"spike_times": [duration["task"] + 3]})
+gen_spk_final_update = nest.Create("spike_generator", 1, {"spike_times": [duration["task"] + duration["total_offset"]]})
 
 nest.Connect(gen_spk_final_update, nrns_in + nrns_rec, "all_to_all", {"weight": 1000.0})
 
@@ -440,10 +454,6 @@ events_wr = wr.get("events")
 
 readout_signal = events_mm_out["readout_signal"]
 target_signal = events_mm_out["target_signal"]
-
-# align the signals for technical reasons
-readout_signal = readout_signal[steps["shift"] - 1 :]  # -1 since multimeter starts recording from 1
-target_signal = target_signal[steps["shift"] - 2 : -1]  # extra -1 since target has shorter travel time
 
 error = (readout_signal - target_signal) ** 2
 loss = 0.5 * np.add.reduceat(error, np.arange(0, steps["task"], steps["sequence"]))

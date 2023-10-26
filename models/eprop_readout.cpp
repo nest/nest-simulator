@@ -197,7 +197,7 @@ nest::eprop_readout::pre_run_hook()
   V_.P30_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - V_.P33_ );
   V_.P33_complement_ = 1.0 - V_.P33_;
   V_.start_learning_step_ = Time( Time::ms( std::max( P_.start_learning_, 0.0 ) ) ).get_steps();
-  V_.readout_signal_unnorm_ = 0.0;
+  S_.readout_signal_unnorm_ = 0.0;
   V_.in_learning_window_ = false;
   V_.requires_buffer_ = false;
 
@@ -243,7 +243,7 @@ nest::eprop_readout::update( Time const& origin, const long from, const long to 
     ( this->*compute_error_signal )( lag );
 
     if ( V_.requires_buffer_ )
-      readout_signal_unnorm_buffer[ lag ] = V_.readout_signal_unnorm_;
+      readout_signal_unnorm_buffer[ lag ] = S_.readout_signal_unnorm_;
 
     error_signal_buffer[ lag ] = S_.error_signal_;
 
@@ -277,17 +277,17 @@ nest::eprop_readout::update( Time const& origin, const long from, const long to 
 void
 nest::eprop_readout::compute_error_signal_mean_squared_error( const long& lag )
 {
-  S_.readout_signal_ = V_.in_learning_window_ ? V_.readout_signal_unnorm_ : 0.0;
-  V_.readout_signal_unnorm_ = S_.y3_ + P_.E_L_;
+  S_.readout_signal_ = V_.in_learning_window_ ? S_.readout_signal_unnorm_ : 0.0;
+  S_.readout_signal_unnorm_ = S_.y3_ + P_.E_L_;
   S_.error_signal_ = V_.in_learning_window_ ? S_.readout_signal_ - S_.target_signal_ : 0.0;
 }
 
 void
 nest::eprop_readout::compute_error_signal_cross_entropy_loss( const long& lag )
 {
-  double norm_rate = B_.normalization_rates_.get_value( lag ) + V_.readout_signal_unnorm_;
-  S_.readout_signal_ = V_.in_learning_window_ ? V_.readout_signal_unnorm_ / norm_rate : 0.0;
-  V_.readout_signal_unnorm_ = std::exp( S_.y3_ + P_.E_L_ );
+  double norm_rate = B_.normalization_rates_.get_value( lag ) + S_.readout_signal_unnorm_;
+  S_.readout_signal_ = V_.in_learning_window_ ? S_.readout_signal_unnorm_ / norm_rate : 0.0;
+  S_.readout_signal_unnorm_ = std::exp( S_.y3_ + P_.E_L_ );
   V_.requires_buffer_ = true;
   S_.error_signal_ = V_.in_learning_window_ ? S_.readout_signal_ - S_.target_signal_ : 0.0;
 }

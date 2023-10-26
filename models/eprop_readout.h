@@ -202,11 +202,12 @@ private:
 
   struct State_
   {
-    double error_signal_;   //!< deviation between the readout and target signal
-    double readout_signal_; //!< integrated signal read out from the recurrent network
-    double target_signal_;  //!< signal the network should learn
-    double y0_;             //!< current (pA)
-    double y3_;             //!< membrane voltage relative to leak potential (mV)
+    double error_signal_;          //!< deviation between the readout and target signal
+    double readout_signal_;        //!< integrated signal read out from the recurrent network
+    double readout_signal_unnorm_; //!< unnormalized readout signal
+    double target_signal_;         //!< signal the network should learn
+    double y0_;                    //!< current (pA)
+    double y3_;                    //!< membrane voltage relative to leak potential (mV)
 
     State_();
 
@@ -234,8 +235,6 @@ private:
     double P30_;
     double P33_; //!< corresponds to kappa in eprop_synapse
     double P33_complement_;
-    double readout_signal_;
-    double readout_signal_unnorm_;
     bool requires_buffer_;
     long start_learning_step_; //!< time step to start sending learning signals
   };

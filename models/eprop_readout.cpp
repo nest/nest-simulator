@@ -200,7 +200,6 @@ nest::eprop_readout::pre_run_hook()
   V_.target_signal_ = 0.0;
   V_.readout_signal_unnorm_ = 0.0;
   V_.in_learning_window_ = false;
-  V_.in_extended_learning_window_ = false;
   V_.requires_buffer_ = false;
 
   if ( P_.loss_ == "mean_squared_error" )
@@ -231,7 +230,6 @@ nest::eprop_readout::update( Time const& origin, const long from, const long to 
     long interval_step = ( t - shift ) % update_interval_steps;
 
     V_.in_learning_window_ = V_.start_learning_step_ <= interval_step and interval_step <= update_interval_steps - 1;
-    V_.in_extended_learning_window_ = interval_step == V_.start_learning_step_ - 1 or V_.in_learning_window_;
 
     if ( with_reset and interval_step == 0 )
     {
@@ -243,7 +241,7 @@ nest::eprop_readout::update( Time const& origin, const long from, const long to 
 
     ( this->*compute_error_signal )( lag );
 
-    S_.target_signal_ = V_.in_extended_learning_window_ ? V_.target_signal_ : 0.0;
+    S_.target_signal_ = V_.target_signal_;
 
     if ( V_.requires_buffer_ )
       readout_signal_unnorm_buffer[ lag ] = V_.readout_signal_unnorm_;
@@ -282,7 +280,7 @@ void
 nest::eprop_readout::compute_error_signal_mean_squared_error( const long& lag )
 {
   S_.readout_signal_ = V_.in_learning_window_ ? V_.readout_signal_unnorm_ : 0.0;
-  V_.readout_signal_unnorm_ = V_.in_extended_learning_window_ ? S_.y3_ + P_.E_L_ : 0.0;
+  V_.readout_signal_unnorm_ = S_.y3_ + P_.E_L_;
   S_.error_signal_ = V_.in_learning_window_ ? S_.readout_signal_ - S_.target_signal_ : 0.0;
 }
 
@@ -291,7 +289,7 @@ nest::eprop_readout::compute_error_signal_cross_entropy_loss( const long& lag )
 {
   double norm_rate = B_.normalization_rates_.get_value( lag ) + V_.readout_signal_unnorm_;
   S_.readout_signal_ = V_.in_learning_window_ ? V_.readout_signal_unnorm_ / norm_rate : 0.0;
-  V_.readout_signal_unnorm_ = V_.in_extended_learning_window_ ? std::exp( S_.y3_ + P_.E_L_ ) : 0.0;
+  V_.readout_signal_unnorm_ = std::exp( S_.y3_ + P_.E_L_ );
   V_.requires_buffer_ = true;
   S_.error_signal_ = V_.in_learning_window_ ? S_.readout_signal_ - S_.target_signal_ : 0.0;
 }

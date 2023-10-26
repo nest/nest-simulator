@@ -74,7 +74,6 @@ dependencies:
 
   # Building NEST documentation
   - PyYAML>=4.2b1
-  - assimulo
   - breathe
   - csvkit
   - docutils

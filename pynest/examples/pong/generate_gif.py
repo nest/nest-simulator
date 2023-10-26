@@ -40,10 +40,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pong import GameOfPong as Pong
 
-px = 1 / plt.rcParams["figure.dpi"]
-plt.subplots(figsize=(400 * px, 300 * px))
-plt.rcParams.update({"font.size": 6})
-
 gridsize = (12, 16)  # Shape of the grid used for positioning subplots
 
 left_color = np.array((204, 0, 153))  # purple
@@ -182,6 +178,10 @@ if __name__ == "__main__":
     output_speed = DEFAULT_SPEED
 
     while i < n_iterations:
+        px = 1 / plt.rcParams["figure.dpi"]
+        fig, ax = plt.subplots(figsize=(400 * px, 300 * px))
+        ax.set_axis_off()
+        plt.rcParams.update({"font.size": 6})
         # Set up the grid containing all components of the output image
         title = plt.subplot2grid(gridsize, (0, 0), 1, 16)
         l_info = plt.subplot2grid(gridsize, (1, 0), 7, 2)
@@ -266,6 +266,7 @@ if __name__ == "__main__":
             output_speed = DEFAULT_SPEED
 
         i += output_speed
+        plt.close()
 
     print("Image creation complete, collecting them into a GIF...")
 

@@ -231,9 +231,7 @@ nest::eprop_readout::update( Time const& origin, const long from, const long to 
     V_.in_learning_window_ = V_.start_learning_step_ <= interval_step and interval_step <= update_interval_steps - 1;
 
     if ( with_reset and interval_step == 0 )
-    {
       S_.y3_ = 0.0;
-    }
 
     S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P33_ * S_.y3_ + V_.P33_complement_ * B_.spikes_.get_value( lag );
     S_.y3_ = S_.y3_ < P_.V_min_ ? P_.V_min_ : S_.y3_;
@@ -313,13 +311,9 @@ nest::eprop_readout::handle( DelayedRateConnectionEvent& e )
     long t = delay + i;
 
     if ( rport == READOUT_SIG - MIN_RATE_RECEPTOR )
-    {
       B_.normalization_rates_.add_value( t, signal );
-    }
     else if ( rport == TARGET_SIG - MIN_RATE_RECEPTOR )
-    {
       B_.delayed_rates_.add_value( t, signal );
-    }
 
     ++i;
   }

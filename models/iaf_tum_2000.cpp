@@ -441,7 +441,7 @@ nest::iaf_tum_2000::handle( SpikeEvent& e )
   const size_t input_buffer_slot = kernel().event_delivery_manager.get_modulo(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
 
-  // Multiply with datafield from SpikeEvent
+  // Multiply with datafield from SpikeEvent to apply depression/facilitation computed by presynaptic neuron
   double s = e.get_weight() * e.get_multiplicity();
 
   if ( e.get_rport() == 1 )

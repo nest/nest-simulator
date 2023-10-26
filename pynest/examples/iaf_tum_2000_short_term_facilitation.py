@@ -50,10 +50,11 @@ For an example on *short-term depression*, see
 
 .. note::
 
-    The `iaf_tum_2000 <../models/iaf_tum_2000>` neuron model incorporates the
-    `tsodyks_synapse <../models/tsodyks_synapse>` computations directly in
-    `iaf_psc_exp <../models/iaf_psc_exp>` on the presynaptic side, which
-    makes ``iaf_tum_2000`` more computationally efficient.
+    The `iaf_tum_2000 <../models/iaf_tum_2000>` neuron model combined with 
+    `static_synapse` provides a more efficient implementation of the model studied
+    in [1]_ and [2]_ than the combination of `iaf_psc_exp <../models/iaf_psc_exp>` 
+    with `tsodyks_synapse <../models/tsodyks_synapse>`. For details, see
+    :doc:`iaf_tum_2000_short_term_facilitation`.
 
 References
 ~~~~~~~~~~

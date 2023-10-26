@@ -52,7 +52,7 @@ M_ERROR setverbosity
   [ /correlation_detector
     /correlomatrix_detector
     /correlospinmatrix_detector
-    /iaf_tum_2000
+    /iaf_tum_2000   % tau_fac == 0 is permitted
     /siegert_neuron ]
 def
 

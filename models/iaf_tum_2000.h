@@ -49,7 +49,7 @@ Description
 ``iaf_tum_2000`` is a leaky integrate-and-fire neuron model with short-term synaptic
 plasticity and exponential shaped postsynaptic currents (PSCs). In particular,
 ``iaf_tum_2000`` implements short-term depression and short-term facilitation
-according to [1]_ by solving Eqs. (3) and (4) from this paper in an exact manner.
+according to [1]_ by solving Eqs. (3) and (4) from that paper in an exact manner.
 
 ``iaf_tum_2000`` differs from `iaf_psc_exp <../models/iaf_psc_exp>` by the addition
 of synaptic state variables :math:`x`, :math:`z` and :math:`u`, which together

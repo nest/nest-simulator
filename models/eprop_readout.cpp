@@ -197,7 +197,6 @@ nest::eprop_readout::pre_run_hook()
   V_.P30_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - V_.P33_ );
   V_.P33_complement_ = 1.0 - V_.P33_;
   V_.start_learning_step_ = Time( Time::ms( std::max( P_.start_learning_, 0.0 ) ) ).get_steps();
-  V_.target_signal_ = 0.0;
   V_.readout_signal_unnorm_ = 0.0;
   V_.in_learning_window_ = false;
   V_.requires_buffer_ = false;
@@ -239,9 +238,9 @@ nest::eprop_readout::update( Time const& origin, const long from, const long to 
     S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P33_ * S_.y3_ + V_.P33_complement_ * B_.spikes_.get_value( lag );
     S_.y3_ = S_.y3_ < P_.V_min_ ? P_.V_min_ : S_.y3_;
 
-    ( this->*compute_error_signal )( lag );
+    S_.target_signal_ = V_.in_learning_window_ ? B_.delayed_rates_.get_value( lag ) : 0.0;
 
-    S_.target_signal_ = V_.target_signal_;
+    ( this->*compute_error_signal )( lag );
 
     if ( V_.requires_buffer_ )
       readout_signal_unnorm_buffer[ lag ] = V_.readout_signal_unnorm_;
@@ -250,7 +249,6 @@ nest::eprop_readout::update( Time const& origin, const long from, const long to 
 
     write_error_signal_to_history( t, S_.error_signal_ );
 
-    V_.target_signal_ = B_.delayed_rates_.get_value( lag );
     S_.y0_ = B_.currents_.get_value( lag );
 
     B_.logger_.record_data( t );

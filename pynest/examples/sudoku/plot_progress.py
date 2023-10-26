@@ -62,9 +62,6 @@ temp_dir = "tmp"  # Name of directory for temporary files
 out_file = "sudoku.gif"  # Name of the output GIF
 keep_temps = False  # If True, temporary files will not be deleted
 
-px = 1 / plt.rcParams["figure.dpi"]
-plt.subplots(figsize=(600 * px, 400 * px))
-
 
 if os.path.exists(out_file):
     print(f"Target file ({out_file}) already exists! Aborting.")
@@ -98,6 +95,9 @@ for file in in_files:
         solution_progress.append(get_progress(puzzle, solution_states[i]))
 
     for i in range(n_iterations):
+        px = 1 / plt.rcParams["figure.dpi"]
+        fig, ax = plt.subplots(figsize=(600 * px, 400 * px))
+        ax.set_axis_off()
         current_state = solution_states[i]
 
         lines[-1][0] = x_data[: i + 1]
@@ -137,7 +137,7 @@ for file in in_files:
         ax = plt.subplot2grid((3, 3), (0, 1), rowspan=3, colspan=2)
         if i == 0:
             # repeat the (colorless) starting configuration several times
-            helpers_sudoku.plot_field(sim_data["puzzle"], sim_data["puzzle"], ax, False)
+            helpers_sudoku.plot_field(puzzle, puzzle, ax, False)
             image_repeat = 8
         else:
             helpers_sudoku.plot_field(puzzle, current_state, ax, True)
@@ -152,6 +152,7 @@ for file in in_files:
         for j in range(image_repeat):
             plt.savefig(os.path.join(temp_dir, f"{str(image_count).zfill(4)}.png"))
             image_count += 1
+        plt.close()
 
 filenames = sorted(glob(os.path.join(temp_dir, "*.png")))
 
@@ -159,7 +160,7 @@ images = []
 for filename in filenames:
     images.append(imageio.imread(filename))
 
-imageio.mimsave(out_file, images, fps=4)
+imageio.mimsave(out_file, images, duration=250)
 print(f"gif created under: {out_file}")
 
 if not keep_temps:

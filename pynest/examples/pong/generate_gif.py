@@ -40,10 +40,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pong import GameOfPong as Pong
 
-px = 1 / plt.rcParams["figure.dpi"]
-plt.subplots(figsize=(400 * px, 300 * px))
-plt.rcParams.update({"font.size": 6})
-
 gridsize = (12, 16)  # Shape of the grid used for positioning subplots
 
 left_color = np.array((204, 0, 153))  # purple
@@ -137,6 +133,7 @@ if __name__ == "__main__":
         sys.exit(1)
 
     temp_dir = "temp"
+
     if os.path.exists(temp_dir):
         print(f"Output folder <{temp_dir}> already exists, aborting!")
         sys.exit(1)
@@ -181,6 +178,10 @@ if __name__ == "__main__":
     output_speed = DEFAULT_SPEED
 
     while i < n_iterations:
+        px = 1 / plt.rcParams["figure.dpi"]
+        fig, ax = plt.subplots(figsize=(400 * px, 300 * px))
+        ax.set_axis_off()
+        plt.rcParams.update({"font.size": 6})
         # Set up the grid containing all components of the output image
         title = plt.subplot2grid(gridsize, (0, 0), 1, 16)
         l_info = plt.subplot2grid(gridsize, (1, 0), 7, 2)
@@ -265,12 +266,13 @@ if __name__ == "__main__":
             output_speed = DEFAULT_SPEED
 
         i += output_speed
+        plt.close()
 
     print("Image creation complete, collecting them into a GIF...")
 
     filenames = sorted(glob(os.path.join(temp_dir, "*.png")))
 
-    with imageio.get_writer(out_file, mode="I", fps=6) as writer:
+    with imageio.get_writer(out_file, mode="I", duration=150) as writer:
         for filename in filenames:
             image = imageio.imread(filename)
             writer.append_data(image)

@@ -59,7 +59,7 @@ nest::EpropArchivingNode::init_update_history()
   std::vector< HistEntryEpropUpdate >::iterator it =
     std::lower_bound( update_history_.begin(), update_history_.end(), shift );
 
-  if ( it == update_history_.end() or it->t_ == shift )
+  if ( it == update_history_.end() or it->t_ != shift )
     update_history_.insert( it, HistEntryEpropUpdate( shift, 1 ) );
   else
     ++it->access_counter_;

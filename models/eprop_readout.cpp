@@ -129,6 +129,9 @@ nest::eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
   if ( tau_m_ <= 0 )
     throw BadProperty( "Membrane time constant must be > 0." );
 
+  if ( start_learning_ < 0.0 )
+    throw BadProperty( "start_learning must be > 0 " );
+
   return delta_EL;
 }
 
@@ -196,7 +199,7 @@ nest::eprop_readout::pre_run_hook()
   V_.P33_ = std::exp( -dt / P_.tau_m_ );
   V_.P30_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - V_.P33_ );
   V_.P33_complement_ = 1.0 - V_.P33_;
-  V_.start_learning_step_ = Time( Time::ms( std::max( P_.start_learning_, 0.0 ) ) ).get_steps();
+  V_.start_learning_step_ = Time( Time::ms( P_.start_learning_ ) ).get_steps();
   S_.readout_signal_unnorm_ = 0.0;
   V_.in_learning_window_ = false;
 

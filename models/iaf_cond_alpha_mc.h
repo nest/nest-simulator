@@ -175,6 +175,8 @@ Examples using this model
 
 EndUserDocs */
 
+void register_iaf_cond_alpha_mc( const std::string& name );
+
 class iaf_cond_alpha_mc : public ArchivingNode
 {
 

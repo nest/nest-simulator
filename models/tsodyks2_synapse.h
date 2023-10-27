@@ -116,6 +116,8 @@ Examples using this model
 
 EndUserDocs */
 
+void register_tsodyks2_synapse( const std::string& name );
+
 template < typename targetidentifierT >
 class tsodyks2_synapse : public Connection< targetidentifierT >
 {

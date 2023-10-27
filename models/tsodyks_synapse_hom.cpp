@@ -24,6 +24,14 @@
 
 // Includes from nestkernel:
 #include "connector_model.h"
+#include "nest_impl.h"
+
+void
+nest::register_tsodyks_synapse_hom( const std::string& name )
+{
+  register_connection_model< tsodyks_synapse_hom >( name );
+}
+
 
 namespace nest
 {

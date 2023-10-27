@@ -193,6 +193,8 @@ Examples using this model
 
 EndUserDocs */
 
+void register_aeif_cond_exp( const std::string& name );
+
 class aeif_cond_exp : public ArchivingNode
 {
 

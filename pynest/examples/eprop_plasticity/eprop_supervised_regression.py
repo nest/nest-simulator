@@ -211,10 +211,15 @@ gen_rate_target = nest.Create("step_rate_generator", n_out)
 n_record = 1  # number of neurons to record recordables from
 n_record_w = 3  # number of senders and targets to record weights from
 
-params_mm_rec = {"record_from": ["V_m", "surrogate_gradient", "learning_signal"]}  # recordables
+params_mm_rec = {
+    "record_from": ["V_m", "surrogate_gradient", "learning_signal"],  # recordables
+    "interval": duration["step"],
+}
+
 params_mm_out = {
     "record_from": ["V_m", "readout_signal", "target_signal", "error_signal"],
     "start": duration["total_offset"],
+    "interval": duration["step"],
 }
 
 params_wr = {
@@ -337,7 +342,7 @@ input_spike_bools[:, 0] = 0  # suppress spikes since NEST does not allow spike e
 sequence_starts = np.arange(0.0, duration["task"], duration["sequence"]) + duration["offset_gen"]
 params_gen_spk_in = []
 for input_spike_bool in input_spike_bools:
-    input_spike_times = np.arange(duration["sequence"] * n_batch)[input_spike_bool]
+    input_spike_times = np.arange(0.0, duration["sequence"] * n_batch, duration["step"])[input_spike_bool]
     input_spike_times_all = [input_spike_times + start for start in sequence_starts]
     params_gen_spk_in.append({"spike_times": np.hstack(input_spike_times_all).astype(dtype_in_spks).tolist()})
 
@@ -373,7 +378,7 @@ def generate_superimposed_sines(steps_sequence, periods):
 target_signal = generate_superimposed_sines(steps["sequence"], [1000.0, 500.0, 333.0, 200.0])  # periods in ms
 
 params_gen_rate_target = {
-    "amplitude_times": (np.arange(0, duration["task"], duration["step"]) + duration["total_offset"]).tolist(),
+    "amplitude_times": (np.arange(0.0, duration["task"], duration["step"]) + duration["total_offset"]).tolist(),
     "amplitude_values": np.tile(target_signal, n_iter * n_batch).tolist(),
 }
 

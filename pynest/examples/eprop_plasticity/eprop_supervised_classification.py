@@ -255,11 +255,20 @@ nrns_rec = nrns_reg + nrns_ad
 n_record = 1  # number of adaptive and regular neurons each to record recordables from
 n_record_w = 3  # number of senders and targets to record weights from
 
-params_mm_reg = {"record_from": ["V_m", "surrogate_gradient", "learning_signal"]}  # recordables
-params_mm_ad = {"record_from": params_mm_reg["record_from"] + ["adapting_threshold", "adaptation"]}
+params_mm_reg = {
+    "record_from": ["V_m", "surrogate_gradient", "learning_signal"],  # recordables
+    "interval": duration["step"],
+}
+
+params_mm_ad = {
+    "record_from": params_mm_reg["record_from"] + ["adapting_threshold", "adaptation"],
+    "interval": duration["step"],
+}
+
 params_mm_out = {
     "record_from": ["V_m", "readout_signal", "target_signal", "error_signal"],
     "start": duration["total_offset"],
+    "interval": duration["step"],
 }
 
 params_wr = {

@@ -263,14 +263,14 @@ nest::eprop_iaf_psc_delta_adapt::pre_run_hook()
 void
 nest::eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, const long to )
 {
-  long update_interval_steps = kernel().simulation_manager.get_eprop_update_interval().get_steps();
+  long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
   bool with_reset = kernel().simulation_manager.get_eprop_reset_neurons_on_update();
-  const long shift = static_cast< long >( get_shift() );
+  const long shift = get_shift();
 
   for ( long lag = from; lag < to; ++lag )
   {
     long t = origin.get_steps() + lag;
-    long interval_step = ( t - shift ) % update_interval_steps;
+    long interval_step = ( t - shift ) % update_interval;
 
     if ( interval_step == 0 )
     {
@@ -315,7 +315,7 @@ nest::eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, co
         S_.r_ = V_.RefractoryCounts_;
     }
 
-    if ( interval_step == update_interval_steps - 1 )
+    if ( interval_step == update_interval - 1 )
     {
       write_firing_rate_reg_to_history( t, P_.f_target_, P_.c_reg_ );
       reset_spike_counter();
@@ -378,12 +378,12 @@ nest::eprop_iaf_psc_delta_adapt::handle( LearningSignalConnectionEvent& e )
 
   if ( it_event != it_event_end )
   {
-    double time_point = e.get_stamp().get_ms();
-    double delay_out_rec = Time::delay_steps_to_ms( e.get_delay_steps() );
+    long time_step = e.get_stamp().get_steps();
+    long delay_out_rec = e.get_delay_steps();
     double weight = e.get_weight();
-    double error_signal = e.get_coeffvalue( it_event ); // implicitely decrease access counter
+    double error_signal = e.get_coeffvalue( it_event ); // get_coeffvalue advances iterator
 
-    write_learning_signal_to_history( time_point, delay_out_rec, weight, error_signal );
+    write_learning_signal_to_history( time_step, delay_out_rec, weight, error_signal );
   }
 }
 

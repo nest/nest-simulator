@@ -40,11 +40,11 @@ nest::EpropArchivingNode::EpropArchivingNode( const EpropArchivingNode& n )
 {
 }
 
-const double
+const long
 nest::EpropArchivingNode::get_shift() const
 {
-  double shift_rec = offset_gen + delay_in_rec;
-  double shift_out = offset_gen + delay_in_rec + delay_rec_out;
+  long shift_rec = offset_gen + delay_in_rec;
+  long shift_out = offset_gen + delay_in_rec + delay_rec_out;
 
   return get_name() == "eprop_readout" ? shift_out : shift_rec;
 }
@@ -54,39 +54,39 @@ nest::EpropArchivingNode::init_update_history()
 {
   // register first entry for every synapse, increase access counter if entry already in list
 
-  double shift = get_shift();
+  long shift = get_shift();
 
   std::vector< HistEntryEpropUpdate >::iterator it =
     std::lower_bound( update_history_.begin(), update_history_.end(), shift );
 
-  if ( it == update_history_.end() or fabs( shift - it->t_ ) > eps_ )
+  if ( it == update_history_.end() or it->t_ == shift )
     update_history_.insert( it, HistEntryEpropUpdate( shift, 1 ) );
   else
     ++it->access_counter_;
 }
 
 void
-nest::EpropArchivingNode::write_update_to_history( double t_last_update, double t_current_update )
+nest::EpropArchivingNode::write_update_to_history( long t_last_update, long t_current_update )
 {
-  double shift = get_shift();
+  long shift = get_shift();
 
   std::vector< HistEntryEpropUpdate >::iterator it;
 
   it = std::lower_bound( update_history_.begin(), update_history_.end(), t_current_update + shift );
 
-  if ( it != update_history_.end() or fabs( t_current_update + shift - it->t_ ) < eps_ )
+  if ( it != update_history_.end() or it->t_ == ( t_current_update + shift ) )
     ++it->access_counter_;
   else
     update_history_.insert( it, HistEntryEpropUpdate( t_current_update + shift, 1 ) );
 
   it = std::lower_bound( update_history_.begin(), update_history_.end(), t_last_update + shift );
 
-  if ( it != update_history_.end() or fabs( t_last_update + shift - it->t_ ) < eps_ )
+  if ( it != update_history_.end() or it->t_ == ( t_last_update + shift ) )
     --it->access_counter_;
 }
 
 void
-nest::EpropArchivingNode::get_eprop_history( double time_point, std::deque< HistEntryEpropArchive >::iterator* it )
+nest::EpropArchivingNode::get_eprop_history( long time_step, std::deque< HistEntryEpropArchive >::iterator* it )
 {
   if ( eprop_history_.empty() )
   {
@@ -94,7 +94,7 @@ nest::EpropArchivingNode::get_eprop_history( double time_point, std::deque< Hist
     return;
   }
 
-  *it = std::lower_bound( eprop_history_.begin(), eprop_history_.end(), time_point );
+  *it = std::lower_bound( eprop_history_.begin(), eprop_history_.end(), time_step );
 }
 
 void
@@ -103,16 +103,16 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
   if ( eprop_history_.empty() or update_history_.empty() )
     return;
 
-  double update_interval = kernel().simulation_manager.get_eprop_update_interval().get_ms();
+  long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
 
   std::deque< HistEntryEpropArchive >::iterator start;
   std::deque< HistEntryEpropArchive >::iterator finish;
 
   auto it = update_history_.begin();
 
-  for ( auto t = update_history_.begin()->t_; t <= ( update_history_.end() - 1 )->t_; t += update_interval )
+  for ( long t = update_history_.begin()->t_; t <= ( update_history_.end() - 1 )->t_; t += update_interval )
   {
-    if ( fabs( it->t_ - t ) < eps_ )
+    if ( it->t_ == t )
     {
       it++;
     }
@@ -123,7 +123,7 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
       eprop_history_.erase( start, finish ); // erase found entries since no longer used
     }
   }
-  get_eprop_history( 0.0, &start );
+  get_eprop_history( 0, &start );
   get_eprop_history( update_history_.begin()->t_, &finish );
   eprop_history_.erase( start, finish ); // erase found entries since no longer used
 }
@@ -132,32 +132,30 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
 void
 nest::EpropArchivingNode::write_surrogate_gradient_to_history( long time_step, double surrogate_gradient )
 {
-  eprop_history_.push_back(
-    HistEntryEpropArchive( Time( Time::step( time_step ) ).get_ms(), surrogate_gradient, 0.0 ) );
+  eprop_history_.push_back( HistEntryEpropArchive( time_step, surrogate_gradient, 0.0 ) );
 }
 
 void
 nest::EpropArchivingNode::write_error_signal_to_history( long time_step, double error_signal )
 {
-  double shift = delay_out_norm;
-  eprop_history_.push_back(
-    HistEntryEpropArchive( Time( Time::step( time_step - shift ) ).get_ms(), 0.0, error_signal ) );
+  long shift = delay_out_norm;
+  eprop_history_.push_back( HistEntryEpropArchive( time_step - shift, 0.0, error_signal ) );
 }
 
 
 void
-nest::EpropArchivingNode::write_learning_signal_to_history( double& time_point,
-  double& delay_out_rec,
+nest::EpropArchivingNode::write_learning_signal_to_history( long& time_step,
+  long& delay_out_rec,
   double& weight,
   double& error_signal )
 {
-  double shift = delay_rec_out + delay_out_norm + delay_out_rec;
+  long shift = delay_rec_out + delay_out_norm + delay_out_rec;
 
   std::deque< HistEntryEpropArchive >::iterator it_hist;
   std::deque< HistEntryEpropArchive >::iterator it_hist_end;
 
-  get_eprop_history( time_point - shift, &it_hist );
-  get_eprop_history( time_point - shift + delay_out_rec, &it_hist_end );
+  get_eprop_history( time_step - shift, &it_hist );
+  get_eprop_history( time_step - shift + delay_out_rec, &it_hist_end );
 
   if ( it_hist != it_hist_end )
   {
@@ -208,11 +206,11 @@ nest::EpropArchivingNode::reset_spike_counter()
 }
 
 void
-nest::EpropArchivingNode::write_firing_rate_reg_to_history( double t_current_update, double f_target, double c_reg )
+nest::EpropArchivingNode::write_firing_rate_reg_to_history( long t_current_update, double f_target, double c_reg )
 {
   double const update_interval = kernel().simulation_manager.get_eprop_update_interval().get_ms();
   double const dt = Time::get_resolution().get_ms();
-  double shift = dt;
+  long shift = Time::get_resolution().get_steps();
 
   double f_av = n_spikes_ / update_interval;
   double f_target_ = f_target / 1000.0; // convert to kHz
@@ -222,17 +220,17 @@ nest::EpropArchivingNode::write_firing_rate_reg_to_history( double t_current_upd
 }
 
 double
-nest::EpropArchivingNode::get_firing_rate_reg( double time_point )
+nest::EpropArchivingNode::get_firing_rate_reg( long time_step )
 {
   if ( firing_rate_reg_history_.empty() )
     return 0.0;
 
-  double const update_interval = kernel().simulation_manager.get_eprop_update_interval().get_ms();
+  long const update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
 
   std::vector< HistEntryEpropFiringRateReg >::iterator it;
 
   it =
-    std::lower_bound( firing_rate_reg_history_.begin(), firing_rate_reg_history_.end(), time_point + update_interval );
+    std::lower_bound( firing_rate_reg_history_.begin(), firing_rate_reg_history_.end(), time_step + update_interval );
 
   return it->firing_rate_reg_;
 }

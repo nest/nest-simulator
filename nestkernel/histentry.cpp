@@ -37,25 +37,25 @@ nest::histentry_extended::histentry_extended( double t, double dw, size_t access
 {
 }
 
-nest::HistEntryEprop::HistEntryEprop( double t )
+nest::HistEntryEprop::HistEntryEprop( long t )
   : t_( t )
 {
 }
 
-nest::HistEntryEpropArchive::HistEntryEpropArchive( double t, double surrogate_gradient, double learning_signal )
+nest::HistEntryEpropArchive::HistEntryEpropArchive( long t, double surrogate_gradient, double learning_signal )
   : HistEntryEprop( t )
   , surrogate_gradient_( surrogate_gradient )
   , learning_signal_( learning_signal )
 {
 }
 
-nest::HistEntryEpropUpdate::HistEntryEpropUpdate( double t, size_t access_counter )
+nest::HistEntryEpropUpdate::HistEntryEpropUpdate( long t, size_t access_counter )
   : HistEntryEprop( t )
   , access_counter_( access_counter )
 {
 }
 
-nest::HistEntryEpropFiringRateReg::HistEntryEpropFiringRateReg( double t, double firing_rate_reg )
+nest::HistEntryEpropFiringRateReg::HistEntryEpropFiringRateReg( long t, double firing_rate_reg )
   : HistEntryEprop( t )
   , firing_rate_reg_( firing_rate_reg )
 {

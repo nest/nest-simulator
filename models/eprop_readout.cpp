@@ -219,9 +219,9 @@ nest::eprop_readout::pre_run_hook()
 void
 nest::eprop_readout::update( Time const& origin, const long from, const long to )
 {
-  long update_interval_steps = kernel().simulation_manager.get_eprop_update_interval().get_steps();
+  long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
   bool with_reset = kernel().simulation_manager.get_eprop_reset_neurons_on_update();
-  const long shift = static_cast< long >( get_shift() );
+  const long shift = get_shift();
 
   const size_t buffer_size = kernel().connection_manager.get_min_delay();
 
@@ -231,8 +231,8 @@ nest::eprop_readout::update( Time const& origin, const long from, const long to 
   for ( long lag = from; lag < to; ++lag )
   {
     long t = origin.get_steps() + lag;
-    long interval_step = ( t - shift ) % update_interval_steps;
-    long interval_step_signals = ( t - shift - 1 ) % update_interval_steps;
+    long interval_step = ( t - shift ) % update_interval;
+    long interval_step_signals = ( t - shift - 1 ) % update_interval;
 
     V_.in_learning_window_ = V_.start_learning_step_ <= interval_step_signals;
 

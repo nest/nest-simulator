@@ -213,7 +213,7 @@ public:
 
   void update_gradient( EpropArchivingNode* target,
     double& sum_grads,
-    std::vector< double >& presyn_isis,
+    std::vector< long >& presyn_isis,
     const EpropCommonProperties& cp ) const override;
   void get_status( DictionaryDatum& d ) const;
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
@@ -237,7 +237,7 @@ template < typename targetidentifierT >
 void
 eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::update_gradient( EpropArchivingNode* target,
   double& sum_grads,
-  std::vector< double >& presyn_isis,
+  std::vector< long >& presyn_isis,
   const EpropCommonProperties& cp ) const
 {
   double dt = Time::get_resolution().get_ms();
@@ -257,7 +257,7 @@ eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::update_gradient( EpropAr
   double epsilon = 0.0;
   double grad = 0.0;
 
-  for ( auto presyn_isi : presyn_isis )
+  for ( long presyn_isi : presyn_isis )
   {
     last_z_bar += alpha_complement;
     for ( long t = 0; t < presyn_isi; ++t )

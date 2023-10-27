@@ -68,18 +68,18 @@ operator<( const histentry_extended he, double t )
 class HistEntryEprop
 {
 public:
-  HistEntryEprop( double t );
+  HistEntryEprop( long t );
 
-  double t_;
+  long t_;
   virtual ~HistEntryEprop()
   {
   }
 
-  friend bool operator<( const HistEntryEprop& he, double t );
+  friend bool operator<( const HistEntryEprop& he, long t );
 };
 
 inline bool
-operator<( const HistEntryEprop& he, double t )
+operator<( const HistEntryEprop& he, long t )
 {
   return ( he.t_ ) < t;
 }
@@ -87,7 +87,7 @@ operator<( const HistEntryEprop& he, double t )
 class HistEntryEpropArchive : public HistEntryEprop
 {
 public:
-  HistEntryEpropArchive( double t, double surrogate_gradient, double learning_signal );
+  HistEntryEpropArchive( long t, double surrogate_gradient, double learning_signal );
 
   double surrogate_gradient_;
   double learning_signal_;
@@ -96,7 +96,7 @@ public:
 class HistEntryEpropUpdate : public HistEntryEprop
 {
 public:
-  HistEntryEpropUpdate( double t, size_t access_counter );
+  HistEntryEpropUpdate( long t, size_t access_counter );
 
   size_t access_counter_;
 };
@@ -104,7 +104,7 @@ public:
 class HistEntryEpropFiringRateReg : public HistEntryEprop
 {
 public:
-  HistEntryEpropFiringRateReg( double t, double firing_rate_reg );
+  HistEntryEpropFiringRateReg( long t, double firing_rate_reg );
 
   double firing_rate_reg_;
 };

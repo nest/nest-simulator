@@ -299,7 +299,7 @@ public:
 
   virtual void update_gradient( EpropArchivingNode* target,
     double& sum_grads,
-    std::vector< double >& presyn_isis,
+    std::vector< long >& presyn_isis,
     const EpropCommonProperties& cp ) const {};
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -334,7 +334,7 @@ public:
     double dt = Time::get_resolution().get_ms();
     kappa_ = exp( -dt / tau_m_readout_ );
 
-    double update_interval = kernel().simulation_manager.get_eprop_update_interval().get_ms();
+    long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
     t_next_update_ = update_interval;
   }
 
@@ -350,10 +350,10 @@ protected:
   double Wmin_;
   double Wmax_;
   long last_optimization_step_;
-  double t_last_spike_;
-  double t_last_update_;
-  double t_next_update_;
-  double t_last_trigger_spike_;
+  long t_last_spike_;
+  long t_last_update_;
+  long t_next_update_;
+  long t_last_trigger_spike_;
   double tau_m_readout_; // time constant for low pass filtering of eligibility trace
   double kappa_;         // exp( -dt / tau_m_readout_ )
   double adam_m_;        // auxiliary variable for Adam optimizer
@@ -361,7 +361,7 @@ protected:
   double sum_grads_;     // sum of the gradients in one batch
   bool is_source_recurrent_neuron;
 
-  std::vector< double > presyn_isis_;
+  std::vector< long > presyn_isis_;
 };
 
 template < typename targetidentifierT >
@@ -374,30 +374,28 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
   EpropArchivingNode* target = dynamic_cast< EpropArchivingNode* >( get_target( thread ) );
   assert( target );
 
-  double t_spike = e.get_stamp().get_ms();
-  double update_interval = kernel().simulation_manager.get_eprop_update_interval().get_ms();
-  double dt = Time::get_resolution().get_ms();
-  const double shift = target->get_shift();
+  long t_spike = e.get_stamp().get_steps();
+  long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
+  const long shift = target->get_shift();
 
-  double interval_step = std::fmod( t_spike - shift, update_interval );
-  bool is_first_interval_step = fabs( interval_step ) < 1e-6;
+  long interval_step = ( t_spike - shift ) % update_interval;
 
-  if ( is_source_recurrent_neuron and is_first_interval_step )
+  if ( is_source_recurrent_neuron and interval_step == 0 )
     return;
 
-  if ( fabs( t_last_trigger_spike_ ) < 1e-6 )
+  if ( t_last_trigger_spike_ == 0 )
     t_last_trigger_spike_ = t_spike;
 
-  if ( t_last_spike_ > 0.0 )
+  if ( t_last_spike_ > 0 )
   {
-    double t = t_spike >= t_next_update_ + shift ? t_next_update_ + shift : t_spike;
+    long t = t_spike >= t_next_update_ + shift ? t_next_update_ + shift : t_spike;
     presyn_isis_.push_back( t - t_last_spike_ );
   }
 
   if ( t_spike >= t_next_update_ + shift )
   {
-    long idx_current_update = static_cast< long >( std::floor( ( t_spike - dt ) / update_interval ) );
-    double t_current_update_ = idx_current_update * update_interval;
+    long idx_current_update = ( t_spike - shift ) / update_interval;
+    long t_current_update_ = idx_current_update * update_interval;
     long current_optimization_step_ = 1 + idx_current_update / cp.batch_size_;
 
     target->write_update_to_history( t_last_update_, t_current_update_ );
@@ -470,10 +468,10 @@ eprop_synapse< targetidentifierT >::eprop_synapse()
   , Wmin_( 0.0 )
   , Wmax_( 100.0 )
   , last_optimization_step_( 1 )
-  , t_last_spike_( 0.0 )
-  , t_last_update_( 0.0 )
-  , t_next_update_( 1000.0 )
-  , t_last_trigger_spike_( 0.0 )
+  , t_last_spike_( 0 )
+  , t_last_update_( 0 )
+  , t_next_update_( 1000 )
+  , t_last_trigger_spike_( 0 )
   , tau_m_readout_( 10.0 )
   , kappa_( 0.0 )
   , adam_m_( 0.0 )

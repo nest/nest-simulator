@@ -214,7 +214,7 @@ public:
 
   void update_gradient( EpropArchivingNode* target,
     double& sum_grads,
-    std::vector< double >& presyn_isis,
+    std::vector< long >& presyn_isis,
     const EpropCommonProperties& cp ) const override;
 
   void get_status( DictionaryDatum& d ) const;
@@ -239,7 +239,7 @@ template < typename targetidentifierT >
 void
 eprop_synapse_readout< targetidentifierT >::update_gradient( EpropArchivingNode* target,
   double& sum_grads,
-  std::vector< double >& presyn_isis,
+  std::vector< long >& presyn_isis,
   const EpropCommonProperties& cp ) const
 {
   double dt = Time::get_resolution().get_ms();
@@ -250,7 +250,7 @@ eprop_synapse_readout< targetidentifierT >::update_gradient( EpropArchivingNode*
   double z_bar = 0.0;
   double grad = 0.0;
 
-  for ( auto presyn_isi : presyn_isis )
+  for ( long presyn_isi : presyn_isis )
   {
     z_bar += 1.0 - this->kappa_;
     for ( long t = 0; t < presyn_isi; ++t )
@@ -260,6 +260,7 @@ eprop_synapse_readout< targetidentifierT >::update_gradient( EpropArchivingNode*
       ++it_eprop_hist;
     }
   }
+
   presyn_isis.clear();
 
   grad /= Time( Time::ms( cp.recall_duration_ ) ).get_steps();

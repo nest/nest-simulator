@@ -58,32 +58,29 @@ public:
 
   void write_surrogate_gradient_to_history( long time_step, double surrogate_gradient );
   void write_error_signal_to_history( long time_step, double error_signal );
-  void
-  write_learning_signal_to_history( double& time_point, double& delay_out_rec, double& weight, double& error_signal );
-  void write_update_to_history( double t_last_update, double t_current_update );
-  void write_firing_rate_reg_to_history( double t_current_update, double f_target, double c_reg );
+  void write_learning_signal_to_history( long& time_step, long& delay_out_rec, double& weight, double& error_signal );
+  void write_update_to_history( long t_last_update, long t_current_update );
+  void write_firing_rate_reg_to_history( long t_current_update, double f_target, double c_reg );
   void write_eprop_parameter_to_map( std::string parameter_name, double parameter_value );
 
-  const double get_shift() const;
-  double get_firing_rate_reg( double time_point );
-  void get_eprop_history( double time_point, std::deque< HistEntryEpropArchive >::iterator* it );
+  const long get_shift() const;
+  double get_firing_rate_reg( long time_step );
+  void get_eprop_history( long time_step, std::deque< HistEntryEpropArchive >::iterator* it );
   std::map< std::string, double >& get_eprop_parameter_map();
 
   void add_spike_to_counter();
   void reset_spike_counter();
 
 private:
-  double eps_ = 1e-6; // small constant to prevent numerical errors when comparing time points
   size_t n_spikes_ = 0;
 
-  // these shifts are for now hardcoded to 1 ms since the current implementaton works only
-  // if all the delays are equal to the resolution of the simulation which has to be equal to 1 ms
-  // [TODO] initialize them with the real delays
+  // These shifts are, for now, hardcoded to 1 time step / 1 ms since the current implementation only works if all the
+  // delays are equal to the resolution of the simulation, i.e., 1 ms.
 
-  double offset_gen = 1.0;     // offset since generator signals start from time step 1
-  double delay_in_rec = 1.0;   // connection delay from input to recurrent neurons
-  double delay_rec_out = 1.0;  // connection delay from recurrent to output neurons
-  double delay_out_norm = 1.0; // connection delay between output neurons for normalization
+  long offset_gen = 1;     // offset since generator signals start from time step 1
+  long delay_in_rec = 1;   // connection delay from input to recurrent neurons
+  long delay_rec_out = 1;  // connection delay from recurrent to output neurons
+  long delay_out_norm = 1; // connection delay between output neurons for normalization
 
   std::deque< HistEntryEpropArchive > eprop_history_;
   std::vector< HistEntryEpropFiringRateReg > firing_rate_reg_history_;

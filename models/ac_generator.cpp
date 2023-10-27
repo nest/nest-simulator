@@ -42,9 +42,6 @@
 
 namespace nest
 {
-
-GenericModel< ac_generator >;
-
 void
 register_ac_generator( const std::string& name )
 {

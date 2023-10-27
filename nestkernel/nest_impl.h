@@ -39,8 +39,8 @@ register_connection_model( const std::string& name )
 
 template < typename NodeModelT >
 void
-register_node_model( const std::string& name )
+register_node_model( const std::string& name, std::string deprecation_info )
 {
-  kernel().model_manager.register_node_model< NodeModelT >( name );
+  kernel().model_manager.register_node_model< NodeModelT >( name, deprecation_info );
 }
 }

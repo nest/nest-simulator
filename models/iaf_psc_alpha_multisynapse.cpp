@@ -28,7 +28,6 @@
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "exceptions.h"
-#include "genericmodel_impl.h"
 #include "iaf_propagator.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"

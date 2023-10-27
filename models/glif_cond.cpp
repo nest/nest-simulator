@@ -34,7 +34,6 @@
 
 // Includes from nestkernel:
 #include "exceptions.h"
-#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "name.h"
 #include "nest_impl.h"

@@ -30,7 +30,6 @@
 
 // Includes from nestkernel:
 #include "exceptions.h"
-#include "genericmodel_impl.h"
 #include "iaf_propagator.h"
 #include "kernel_manager.h"
 #include "nest_impl.h"

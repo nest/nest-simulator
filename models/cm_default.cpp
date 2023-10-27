@@ -23,7 +23,6 @@
 #include "cm_default.h"
 
 // Includes from nestkernel:
-#include "genericmodel_impl.h"
 #include "nest_impl.h"
 
 namespace nest

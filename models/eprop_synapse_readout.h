@@ -262,7 +262,7 @@ eprop_synapse_readout< targetidentifierT >::update_gradient( EpropArchivingNode*
   }
   presyn_isis.clear();
 
-  grad *= dt;
+  grad /= Time( Time::ms( cp.recall_duration_ ) ).get_steps();
 
   sum_grads += grad;
 }

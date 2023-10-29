@@ -149,7 +149,8 @@ iaf_psc_exp, tsodyks_synapse, stdp_synapse, static_synapse
 EndUserDocs */
 // clang-format on
 
-// iaf_tum_2000
+void register_iaf_tum_2000( const std::string& name );
+
 class iaf_tum_2000 : public ArchivingNode
 {
 

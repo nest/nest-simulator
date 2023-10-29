@@ -31,6 +31,7 @@
 #include "exceptions.h"
 #include "iaf_propagator.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "numerics.h"
 #include "ring_buffer_impl.h"
 #include "universal_data_logger_impl.h"
@@ -46,6 +47,13 @@ nest::RecordablesMap< nest::iaf_tum_2000 > nest::iaf_tum_2000::recordablesMap_;
 
 namespace nest
 {
+
+void
+register_iaf_tum_2000( const std::string& name )
+{
+  register_node_model< iaf_tum_2000 >( name );
+}
+
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>

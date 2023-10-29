@@ -267,7 +267,7 @@ tsodyks_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSyna
   // don't change the order !
 
   u_ *= Puu;
-  x_ += Pxy * y_ - Pxz * z;
+  x_ += Pxy * y_ - Pzz * z;
   y_ *= Pyy;
 
   // delta function u

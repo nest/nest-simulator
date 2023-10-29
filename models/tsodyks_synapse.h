@@ -254,13 +254,10 @@ tsodyks_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSyna
   // !!! x != 1.0 -> z != 0.0 -> t_lastspike_=0 has influence on dynamics
 
   // propagator
-  // TODO: use expm1 here instead, where applicable
   double Puu = ( tau_fac_ == 0.0 ) ? 0.0 : std::exp( -h / tau_fac_ );
   double Pyy = std::exp( -h / tau_psc_ );
-  double Pzz = std::exp( -h / tau_rec_ );
-
-  double Pxy = ( ( Pzz - 1.0 ) * tau_rec_ - ( Pyy - 1.0 ) * tau_psc_ ) / ( tau_psc_ - tau_rec_ );
-  double Pxz = 1.0 - Pzz;
+  double Pzz = std::expm1( -h / tau_rec_ );
+  double Pxy = ( Pzz * tau_rec_ - ( Pyy - 1.0 ) * tau_psc_ ) / ( tau_psc_ - tau_rec_ );
 
   double z = 1.0 - x_ - y_;
 
@@ -268,7 +265,7 @@ tsodyks_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSyna
   // don't change the order !
 
   u_ *= Puu;
-  x_ += Pxy * y_ + Pxz * z;
+  x_ += Pxy * y_ - Pxz * z;
   y_ *= Pyy;
 
   // delta function u

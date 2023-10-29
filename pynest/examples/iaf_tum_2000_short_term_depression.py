@@ -48,10 +48,11 @@ For an example on *short-term facilitation*, see
 
 .. note::
 
-    The `iaf_tum_2000 <../models/iaf_tum_2000>` neuron model combined with 
-    `static_synapse` provides a more efficient implementation of the model studied
-    in [1]_ and [2]_ than the combination of `iaf_psc_exp <../models/iaf_psc_exp>` 
-    with `tsodyks_synapse <../models/tsodyks_synapse>`.
+    The `iaf_tum_2000 <../models/iaf_tum_2000>` neuron model combined with
+    `static_synapse <../models/static_synapse>` provides a more efficient
+    implementation of the model studied in [1]_ and [2]_ than the combination
+    of `iaf_psc_exp <../models/iaf_psc_exp>` with
+    `tsodyks_synapse <../models/tsodyks_synapse>`.
 
 References
 ~~~~~~~~~~

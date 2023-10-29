@@ -88,10 +88,8 @@ efficient in network simulations. Since the synaptic ODEs are linear, the
 postsynaptic current can be found as the sum of all presynaptic synaptic
 currents computed in the presynaptic neurons.
 
-In order for the additional synapse dynamics to take effect, the presynaptic
-neuron must be of type ``iaf_tum_2000``. The postsynaptic neurons should either
-be of type ``iaf_tum_2000`` or of type ``iaf_psc_exp`` since an exponential
-postsynaptic current is assumed in this model.
+In order for synaptic depression or facilitation to take effect, both the
+presynaptic and postsynaptic neuron must be of type ``iaf_tum_2000``.
 
 .. note::
 
@@ -99,11 +97,9 @@ postsynaptic current is assumed in this model.
 
 .. warning::
 
-   This synaptic plasticity rule does not take
-   :ref:`precise spike timing <sim_precise_spike_times>` into
-   account. Moreover, due to the model implementation, which hijacks the precise
-   spiking offset field, precise spike timing will produce nonsensical results
-   and must be avoided.
+  ``iaf_tum_2000`` does not support :ref:`precise spike timing <sim_precise_spike_times>`.
+  Using precise spike timing will result in incorrect dynamics and must therefore
+  be avoided.
 
 Parameters
 ++++++++++
@@ -468,13 +464,6 @@ iaf_tum_2000::set_status( const DictionaryDatum& d )
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
   S_ = stmp;
-}
-
-inline double
-iaf_tum_2000::phi_() const
-{
-  assert( P_.delta_ > 0. );
-  return P_.rho_ * std::exp( 1. / P_.delta_ * ( S_.V_m_ - P_.Theta_ ) );
 }
 
 } // namespace

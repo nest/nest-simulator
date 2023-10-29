@@ -249,6 +249,13 @@ nest::iaf_tum_2000::Buffers_::Buffers_( const Buffers_&, iaf_tum_2000& n )
 {
 }
 
+inline double
+nest::iaf_tum_2000::phi_() const
+{
+  assert( P_.delta_ > 0. );
+  return P_.rho_ * std::exp( 1. / P_.delta_ * ( S_.V_m_ - P_.Theta_ ) );
+}
+
 /* ----------------------------------------------------------------
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
@@ -389,20 +396,17 @@ nest::iaf_tum_2000::update( const Time& origin, const long from, const long to )
       const double h_tsodyks = t_spike - t_lastspike;
 
       // propagator
-      // TODO: use expm1 here instead, where applicable
-      double Puu = ( P_.tau_fac_ == 0.0 ) ? 0.0 : std::exp( -h_tsodyks / P_.tau_fac_ );
-      double Pyy = std::exp( -h_tsodyks / P_.tau_psc_ );
-      double Pzz = std::exp( -h_tsodyks / P_.tau_rec_ );
-
-      double Pxy = ( ( Pzz - 1.0 ) * P_.tau_rec_ - ( Pyy - 1.0 ) * P_.tau_psc_ ) / ( P_.tau_psc_ - P_.tau_rec_ );
-      double Pxz = 1.0 - Pzz;
+      const double Puu = ( P_.tau_fac_ == 0.0 ) ? 0.0 : std::exp( -h_tsodyks / P_.tau_fac_ );
+      const double Pyy = std::exp( -h_tsodyks / P_.tau_psc_ );
+      const double Pzz = std::expm1( -h_tsodyks / P_.tau_rec_ );
+      const double Pxy = ( Pzz * P_.tau_rec_ - ( Pyy - 1.0 ) * P_.tau_psc_ ) / ( P_.tau_psc_ - P_.tau_rec_ );
 
       const double z = 1.0 - S_.x_ - S_.y_;
 
       // propagation t_lastspike_ -> t_spike
       // don't change the order !
       S_.u_ *= Puu;
-      S_.x_ += Pxy * S_.y_ + Pxz * z;
+      S_.x_ += Pxy * S_.y_ - Pzz * z;
       S_.y_ *= Pyy;
 
       // delta function u

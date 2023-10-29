@@ -70,8 +70,8 @@ The following parameters can be set in the status dictionary:
  u          real    Available fraction of resources [0,1], default = U
  n          integer Total number of release sites, default = 1
  a          integer Number of available release sites, default = n
- tau_rec    ms      Time constant for depression, default = 800
  tau_fac    ms      Time constant for facilitation, default = 0 (off)
+ tau_rec    ms      Time constant for depression, default = 800
 ==========  ======= =========================================================
 
 References

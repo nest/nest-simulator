@@ -29,7 +29,7 @@ nest::Na::Na()
   // parameters
   , gbar_Na_( 0.0 )
   , e_Na_( 50. )
-  , v_init_( -75. )
+  , v_init_( -70. )
 {
 }
 nest::Na::Na( const DictionaryDatum& channel_params )
@@ -39,7 +39,7 @@ nest::Na::Na( const DictionaryDatum& channel_params )
   // parameters
   , gbar_Na_( 0.0 )
   , e_Na_( 50. )
-  , v_init_( -75. )
+  , v_init_( -70. )
 {
   // update sodium channel parameters
   if ( channel_params->known( "gbar_Na" ) )
@@ -181,7 +181,7 @@ nest::K::K()
   // parameters
   , gbar_K_( 0.0 )
   , e_K_( -85. )
-  , v_init_( -75. )
+  , v_init_( -70. )
 {
 }
 nest::K::K( const DictionaryDatum& channel_params )
@@ -190,7 +190,7 @@ nest::K::K( const DictionaryDatum& channel_params )
   // parameters
   , gbar_K_( 0.0 )
   , e_K_( -85. )
-  , v_init_( -75. )
+  , v_init_( -70. )
 {
   // update potassium channel parameters
   if ( channel_params->known( "gbar_K" ) )

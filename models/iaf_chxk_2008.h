@@ -126,6 +126,11 @@ See also
 
 iaf_cond_alpha
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_chxk_2008
+
 EndUserDocs */
 
 /**
@@ -139,6 +144,8 @@ EndUserDocs */
  * @param void* Pointer to model neuron instance.
  */
 extern "C" int iaf_chxk_2008_dynamics( double, const double*, double*, void* );
+
+void register_iaf_chxk_2008( const std::string& name );
 
 class iaf_chxk_2008 : public ArchivingNode
 {

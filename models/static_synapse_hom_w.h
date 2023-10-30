@@ -59,7 +59,14 @@ See also
 
 static_synapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: static_synpase_hom_w
+
 EndUserDocs */
+
+void register_static_synapse_hom_w( const std::string& name );
 
 template < typename targetidentifierT >
 class static_synapse_hom_w : public Connection< targetidentifierT >

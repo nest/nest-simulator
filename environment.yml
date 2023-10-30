@@ -10,7 +10,7 @@
 # parallelization, GSL-dependent models, NumPy and Pandas-dependent
 # features of PyNEST and examples requiring Matplotlib, and to run
 # the NEST testsuite. It also comprises all tools required to build
-# NEST documentation and to run NEST Server. The required Python 
+# NEST documentation and to run NEST Server. The required Python
 # packages are divided in separate requirements files and marked in
 # separate sections below so you can remove them if you would like a
 # leaner environment.
@@ -48,11 +48,6 @@ dependencies:
   # without conda. When this conda environment is built, the pip installation
   # of mpi4py will be skipped since it is already installed by conda.
   - mpi4py
-  
-  # assimulo is required to run doc/htmldoc/model_details/aeif_models_impementation.ipynb.
-  # The most convenient installation is via conda. This is, however, not a
-  # required package outside of the notebook detailing the aeif model implementation.
-  - assimulo
 
   - pip:
 

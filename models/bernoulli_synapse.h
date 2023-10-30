@@ -86,7 +86,14 @@ See also
 
 static_synapse, static_synapse_hom_w
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: bernoulli_synapse
+
 EndUserDocs */
+
+void register_bernoulli_synapse( const std::string& name );
 
 template < typename targetidentifierT >
 class bernoulli_synapse : public Connection< targetidentifierT >

@@ -225,8 +225,16 @@ See also
 
 poisson_generator, spike_train_injector
 
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: spike_generator
+
 EndUserDocs
 */
+void register_spike_generator( const std::string& name );
+
 class spike_generator : public StimulationDevice
 {
 

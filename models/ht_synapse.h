@@ -90,7 +90,14 @@ See also
 
 ht_neuron, tsodyks_synapse, stdp_synapse, static_synapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: ht_synapse
+
 EndUserDocs */
+
+void register_ht_synapse( const std::string& name );
 
 template < typename targetidentifierT >
 class ht_synapse : public Connection< targetidentifierT >

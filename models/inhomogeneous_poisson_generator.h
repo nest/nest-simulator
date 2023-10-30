@@ -95,7 +95,14 @@ See also
 
 sinusoidal_poisson_generator, step_current_generator
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: inhomogeneous_poisson_generator
+
 EndUserDocs */
+
+void register_inhomogeneous_poisson_generator( const std::string& name );
 
 class inhomogeneous_poisson_generator : public StimulationDevice
 {

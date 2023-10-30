@@ -398,6 +398,23 @@ Node::sends_secondary_event( DelayedRateConnectionEvent& )
   throw IllegalConnection( "The source node does not support delayed rate output." );
 }
 
+void
+Node::handle( SICEvent& )
+{
+  throw UnexpectedEvent();
+}
+
+size_t
+Node::handles_test_event( SICEvent&, size_t )
+{
+  throw IllegalConnection();
+}
+
+void
+Node::sends_secondary_event( SICEvent& )
+{
+  throw IllegalConnection();
+}
 
 double
 Node::get_LTD_value( double )

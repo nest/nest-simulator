@@ -180,7 +180,14 @@ See also
 
 ht_synapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: ht_neuron
+
 EndUserDocs */
+
+void register_ht_neuron( const std::string& name );
 
 class ht_neuron : public ArchivingNode
 {

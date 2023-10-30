@@ -190,7 +190,14 @@ See also
 
 iaf_psc_delta, iaf_psc_alpha, iaf_psc_exp, iaf_psc_delta_ps
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: pp_psc_delta
+
 EndUserDocs */
+
+void register_pp_psc_delta( const std::string& name );
 
 class pp_psc_delta : public ArchivingNode
 {

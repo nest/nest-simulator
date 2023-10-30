@@ -196,7 +196,14 @@ See also
 
 aeif_psc_delta, clopath_synapse, hh_psc_alpha_clopath
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: aeif_psc_delta_clopath
+
 EndUserDocs */
+
+void register_aeif_psc_delta_clopath( const std::string& name );
 
 class aeif_psc_delta_clopath : public ClopathArchivingNode
 {

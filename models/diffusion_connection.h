@@ -82,7 +82,14 @@ See also
 
 siegert_neuron, rate_connection_instantaneous
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: diffusion_connection
+
 EndUserDocs */
+
+void register_diffusion_connection( const std::string& name );
 
 template < typename targetidentifierT >
 class diffusion_connection : public Connection< targetidentifierT >

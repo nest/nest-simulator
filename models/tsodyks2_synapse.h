@@ -109,7 +109,14 @@ See also
 
 tsodyks_synapse, stdp_synapse, static_synapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: tsodyks2_synapse
+
 EndUserDocs */
+
+void register_tsodyks2_synapse( const std::string& name );
 
 template < typename targetidentifierT >
 class tsodyks2_synapse : public Connection< targetidentifierT >

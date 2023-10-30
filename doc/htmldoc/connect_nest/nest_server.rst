@@ -91,6 +91,20 @@ As an alternative to a native installation, NEST Server is available
 from the NEST Docker image. Please check out the corresponding
 :ref:`installation instructions <docker>` for more details.
 
+.. _sec_server_vars:
+
+Set environment variables for security options
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+NEST Server comes with a number of access restrictions that are meant to protect your
+computer. After careful consideration, each of the restrictions can be disabled by setting
+a corresponding environment variable.
+
+* ``NEST_SERVER_DISABLE_AUTH``: By default, the NEST Server requires a NESTServerAuth tokens. Setting this variable to ``1`` disables this restriction. A token is automatically created and printed to the console by NEST Server upon start-up. If needed, a custom token can be set using the environment variable  ``NEST_SERVER_ACCESS_TOKEN``
+* ``NEST_SERVER_CORS_ORIGINS``: By default, the NEST Server only allows requests from localhost (see `CORS <https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS>`_). Other hosts can be explicitly allowed by supplying them in the form `http://host_or_ip`` to this variable.
+* ``NEST_SERVER_ENABLE_EXEC_CALL``: By default, NEST Server only allows calls to its PyNEST-like API. If the use-case requires the execution of scripts via the ``/exec`` route, this variable can be set to ``1``. PLEASE BE AWARE THAT THIS OPENS YOUR COMPUTER TO REMOTE CODE EXECUTION.
+* ``NEST_SERVER_DISABLE_RESTRICTION``: By default, NEST Server runs all code passed to the ``/exec`` route through RestrictedPython to sanitize it. To disable this mechanism, this variable can be set to ``1``. For increased security, code passed in this way only allows explictly whitelisted modules to be imported. To import modules, the variable ``NEST_SERVER_MODULES`` can be set to a standard Python import line like this:
+       ``NEST_SERVER_MODULES='import nest; import scipy as sp; from numpy import random'``
 Run NEST Server
 ~~~~~~~~~~~~~~~
 

@@ -223,7 +223,14 @@ See also
 
 NEURON simulator ;-D
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: cm_default
+
 EndUserDocs*/
+
+void register_cm_default( const std::string& name );
 
 class cm_default : public ArchivingNode
 {

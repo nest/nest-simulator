@@ -88,7 +88,14 @@ See also
 
 ppd_sup_generator, poisson_generator_ps, spike_generator
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: gamma_sup_generator
+
 EndUserDocs */
+
+void register_gamma_sup_generator( const std::string& name );
 
 class gamma_sup_generator : public StimulationDevice
 {

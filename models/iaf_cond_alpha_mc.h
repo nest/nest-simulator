@@ -168,7 +168,14 @@ See also
 
 iaf_cond_alpha
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_cond_alpha_mc
+
 EndUserDocs */
+
+void register_iaf_cond_alpha_mc( const std::string& name );
 
 class iaf_cond_alpha_mc : public ArchivingNode
 {

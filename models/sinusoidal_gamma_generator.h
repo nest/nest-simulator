@@ -139,6 +139,12 @@ See also
 
 sinusoidal_poisson_generator, gamma_sup_generator
 
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: sinusoidal_gamma_generator
+
 EndUserDocs */
 
 /**
@@ -188,6 +194,8 @@ EndUserDocs */
  *    the same synapse type, see #737. Once #681 is fixed, we need to add a
  *    check that his assumption holds.
  */
+void register_sinusoidal_gamma_generator( const std::string& name );
+
 class sinusoidal_gamma_generator : public StimulationDevice
 {
 

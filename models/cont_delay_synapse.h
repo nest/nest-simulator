@@ -71,7 +71,14 @@ See also
 
 static_synapse, iaf_psc_alpha_ps
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: cont_delay_synapse
+
 EndUserDocs */
+
+void register_cont_delay_synapse( const std::string& name );
 
 template < typename targetidentifierT >
 class cont_delay_synapse : public Connection< targetidentifierT >

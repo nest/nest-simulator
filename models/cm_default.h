@@ -138,7 +138,7 @@ Parameters
 ++++++++++
 
 Note that the compartmental model does not explicitly ensure that units are consistent.
-Therefor, it is on the user to ensure that units are consistent throughout the model.
+Therefore, it is on the user to ensure that units are consistent throughout the model.
 The quantities that have fixed units are membrane voltage [mV] and time [ms].
 Other units need to be consistent: if e.g. conductances are in uS, that means
 that the associated currents will be uS*mV = nA. By consequence, the capacitance needs to

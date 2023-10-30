@@ -37,6 +37,7 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -47,6 +48,12 @@ nest::RecordablesMap< nest::hh_psc_alpha_gap > nest::hh_psc_alpha_gap::recordabl
 
 namespace nest
 {
+void
+register_hh_psc_alpha_gap( const std::string& name )
+{
+  register_node_model< hh_psc_alpha_gap >( name );
+}
+
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>

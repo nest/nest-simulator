@@ -23,9 +23,8 @@
 Test that rng_seed and rng_type is handled correctly also in connection with changing VP numbers.
 """
 
-import pytest
-
 import nest
+import pytest
 
 
 @pytest.fixture(autouse=True)

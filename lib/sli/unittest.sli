@@ -1289,6 +1289,10 @@ FirstVersion: 2012-05-22
 
 SeeAlso: unittest::distributed_assert_or_die, unittest::distributed_collect_assert_or_die, nest_indirect, unittest::mpirun_self, unittest::assert_or_die
 */
+
+/distributed_process_invariant_events_assert_or_die << /show_results false >> Options
+
+
 /distributed_process_invariant_events_assert_or_die
 [/arraytype /proceduretype]
 {
@@ -1312,6 +1316,13 @@ SeeAlso: unittest::distributed_assert_or_die, unittest::distributed_collect_asse
             } Map
 
     % we now have array of arrays, should be identical
+    /distributed_process_invariant_events_assert_or_die /show_results GetOption
+    {
+      dup
+      { == } forall
+    }
+    if
+
     dup First /reference Set
     Rest true exch { reference eq and } Fold
   }    

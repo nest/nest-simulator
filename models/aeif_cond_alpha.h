@@ -108,21 +108,14 @@ See also [1]_.
 Numerical stability
 -------------------
 
-Under some conditions, the exponential function inside the numeric solver
-routine for this model can cause a numerical instability. The total somatic
-current will be evaluated at each solver timestep and its absolute value
-limited to the value given by the parameter ``I_soma_max``. By default the
-value is set to positive infinity, which means somatic current is unbounded.
-Setting ``I_soma_max`` to any other value changes the dynamics of the model.
-
-As a guideline to choose a plausible maximum current, Brette and Gerstner [2]_
-use forward Euler integration with a fixed time step. Now assume that at the
-beginning of a timestep the membrane potential is immediately below the
-threshold for calling a spike, which is
-:math:`V_T + 5\Delta_T` in their example. Then, `I_spike` in their
-implementation can never exceed
-:math:`g_L\Delta_T e^5=30~\text{nS}\times2~\text{mV}\times e^5\approx 8900~\text{pA}$`.
-
+Under some conditions, the exponential function inside this model can cause a
+numerical instability in the solver due to its tendency to divergence to
+positive infinity. The rate of change of the membrane voltage will be evaluated
+at each solver timestep and its absolute value limited to the value given by
+the parameter ``max_V_m_rate_of_change``. By default the value is set to
+positive infinity, which means that the rate is unbounded. Setting
+``max_V_m_rate_of_change`` to any other value changes the dynamics of
+the model.
 
 Parameters
 ++++++++++
@@ -143,15 +136,14 @@ The following parameters can be set in the status dictionary.
 =========== ======= =======================================
 **Membrane Parameters**
 -----------------------------------------------------------
-``
- C_m        pF      Capacity of the membrane
- t_ref      ms      Duration of refractory period
- V_reset    mV      Reset value for V_m after a spike
- E_L        mV      Leak reversal potential
- g_L        nS      Leak conductance
- I_soma_max pA      Maximum absolute somatic current
- I_e        pA      Constant external input current
-=========== ======= =======================================
+ C_m                    pF      Capacity of the membrane
+ t_ref                  ms      Duration of refractory period
+ V_reset                mV      Reset value for V_m after a spike
+ E_L                    mV      Leak reversal potential
+ g_L                    nS      Leak conductance
+ max_V_m_rate_of_change mV/s    Maximum membrane potential rate of change
+ I_e                    pA      Constant external input current
+======================= ======= =======================================
 
 ======== ======= ==================================
 **Spike adaptation parameters**
@@ -282,7 +274,7 @@ private:
     double V_th;       //!< Spike threshold in mV
     double tau_syn_ex; //!< Excitatory synaptic rise time
     double tau_syn_in; //!< Excitatory synaptic rise time
-    double I_soma_max; //!< Maximum absolute somatic current in pA
+    double max_V_m_rate_of_change; //!< Maximum V_m rate of change in mV/s
     double I_e;        //!< Intrinsic current in pA
 
     double gsl_error_tol; //!< Error bound for GSL integrator

@@ -62,19 +62,18 @@ obey the following dynamics:
 
    I_{\text{syn}} &= I_\text{syn,ex} + I_\text{syn,in}
 
-   I_\text{syn,X} &= \sum_{j \in X} w_j y_j
+   I_\text{syn,X} &= \sum_{j \in \Gamma_X} w_j y_j
 
    \frac{dx_j}{dt} &= \frac{z_j}{\tau_{\text{rec}}} - u_j x_j \delta(t - t_j)
 
-   \frac{dy_j}{dt} &= -\frac{y_j}{\tau_{\text{syn}}} + u_j x_j \delta(t - t_j)
+   \frac{dy_j}{dt} &= -\frac{y_j}{\tau_{\text{syn},X}} + u_j x_j \delta(t - t_j)
 
-   \frac{dz_j}{dt} &= \frac{y_j}{\tau_{\text{syn}}} - \frac{y_j}{\tau_{\text{rec}}}
+   \frac{dz_j}{dt} &= \frac{y_j}{\tau_{\text{syn},X}} - \frac{y_j}{\tau_{\text{rec}}}
 
    \frac{du_j}{dt} &= -\frac{u}{\tau_{\text{fac}}} + U(1 - u) \delta(t - t_j)
 
 
-where :math:`j` indexes either excitatory (:math:`\text{X} = \text{ex}`)
-or inhibitory (:math:`\text{X} = \text{in}`) presynaptic neurons,
+where :math:`\Gamma_X` is an index set over either excitatory (:math:`\text{X} = \text{ex}`) or inhibitory (:math:`\text{X} = \text{in}`) presynaptic neurons,
 :math:`k` indexes the spike times of neuron :math:`j`, and :math:`d_j`
 is the delay from neuron :math:`j`.
 

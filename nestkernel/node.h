@@ -105,7 +105,6 @@ class Node
   friend class NodeManager;
   friend class ModelManager;
   friend class proxynode;
-  friend class Synapse;
   friend class Model;
   friend class SimulationManager;
 

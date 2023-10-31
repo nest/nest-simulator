@@ -53,11 +53,14 @@ void enable_dryrun_mode( const size_t n_procs );
 
 void register_logger_client( const deliver_logging_event_ptr client_callback );
 
-template < class ModelT >
-void register_node_model( const std::string& name, std::string deprecation_info = std::string() );
-
 template < template < typename > class ConnectorModelT >
 void register_connection_model( const std::string& name );
+
+/**
+ * Register node model (i.e. an instance of a class inheriting from `Node`).
+ */
+template < typename NodeModelT >
+void register_node_model( const std::string& name, std::string deprecation_info = std::string() );
 
 void print_nodes_to_stream( std::ostream& out = std::cout );
 

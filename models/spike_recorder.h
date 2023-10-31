@@ -83,6 +83,8 @@ namespace nest
  * Class spike_recorder
  */
 
+void register_spike_recorder( const std::string& name );
+
 class spike_recorder : public RecordingDevice
 {
 

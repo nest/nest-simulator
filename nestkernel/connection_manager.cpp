@@ -1601,6 +1601,9 @@ nest::ConnectionManager::resize_connections()
 {
   kernel().vp_manager.assert_single_threaded();
 
+  // TODO: Shouldn't this be done thread-parallel, so the memory belongs to the right thread?
+  // TODO: Also, num_connection_models can probably be obtained once outside the loop.
+
   // Resize data structures for connections between neurons
   for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {

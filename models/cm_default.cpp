@@ -19,11 +19,20 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 #include "cm_default.h"
 
+// Includes from nestkernel:
+#include "nest_impl.h"
 
 namespace nest
 {
+void
+register_cm_default( const std::string& name )
+{
+  register_node_model< cm_default >( name );
+}
+
 
 /*
  * For some reason this code block is needed. However, I have found no

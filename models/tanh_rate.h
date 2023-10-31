@@ -168,8 +168,14 @@ nonlinearities_tanh_rate::mult_coupling_in( double )
 }
 
 typedef rate_neuron_ipn< nest::nonlinearities_tanh_rate > tanh_rate_ipn;
+void register_tanh_rate_ipn( const std::string& name );
+
 typedef rate_neuron_opn< nest::nonlinearities_tanh_rate > tanh_rate_opn;
+void register_tanh_rate_opn( const std::string& name );
+
 typedef rate_transformer_node< nest::nonlinearities_tanh_rate > rate_transformer_tanh;
+void register_rate_transformer_tanh( const std::string& name );
+
 
 template <>
 void RecordablesMap< tanh_rate_ipn >::create();

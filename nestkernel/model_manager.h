@@ -179,7 +179,6 @@ public:
   SecondaryEvent& get_secondary_event_prototype( const synindex syn_id, const size_t tid );
 
 private:
-
   /**
    * Delete all models and clear the modeldict
    *

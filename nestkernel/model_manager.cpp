@@ -75,8 +75,6 @@ ModelManager::initialize()
   const size_t num_threads = kernel().vp_manager.get_num_threads();
 
   // Make space for one vector of connection models per thread
-  //JME std::vector< std::vector< ConnectorModel* > > tmp_proto( num_threads );
-  //JME connection_models_.swap( tmp_proto );
   connection_models_.resize( num_threads );
 
   // Make space for one vector of proxynodes for each thread
@@ -161,7 +159,7 @@ ModelManager::copy_model( Name old_name, Name new_name, DictionaryDatum params )
 size_t
 ModelManager::register_node_model_( Model* model )
 {
-  assert(model);
+  assert( model );
 
   const size_t id = node_models_.size();
   const std::string name = model->get_name();

@@ -1,5 +1,5 @@
 /*
- *  test_setconnections_threads.sli
+ *  tsodyks2_synapse.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,32 +20,13 @@
  *
  */
 
+#include "tsodyks2_synapse.h"
 
-% test SetStatus for connections
-%
-% we interpret node ID as the node_id of the source (pre-synaptic) neuron
-%
-% 090406, Morrison Diesmann
+// Includes from nestkernel:
+#include "nest_impl.h"
 
-
-(unittest) run
-/unittest using
-
-/num_threads is_threaded { 2 } { 1 } ifelse def
-
-ResetKernel
-
-<< /local_num_threads num_threads >> SetKernelStatus
-
-/iaf_psc_alpha Create /source Set
-/iaf_psc_alpha Create /target Set
-
-source target << >> /stdp_synapse Connect
-
-<< /source source /synapse_model /stdp_synapse >> GetConnections 0 get /conn Set
-
-{ conn /weight get 1.0 eq} assert_or_die
-{ conn /synapse_model get /stdp_synapse eq} assert_or_die
-conn << /weight 2.0 >> SetStatus
-
-{ conn /weight get 2.0 eq} assert_or_die
+void
+nest::register_tsodyks2_synapse( const std::string& name )
+{
+  register_connection_model< tsodyks2_synapse >( name );
+}

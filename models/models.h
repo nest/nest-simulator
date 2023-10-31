@@ -27,14 +27,14 @@
 #include "nest.h"
 
 namespace nest
-{ 
-  /**
-   * Function to register all node and connection models that were
-   * selected for compilation either by using the cmake switch
-   * -Dwith-models=<model;list> or as specified in the modelset given to
-   * the option -Dwith-modelset=<modelset>
-   */
-  void register_models();
+{
+/**
+ * Function to register all node and connection models that were
+ * selected for compilation either by using the cmake switch
+ * -Dwith-models=<model;list> or as specified in the modelset given to
+ * the option -Dwith-modelset=<modelset>
+ */
+void register_models();
 }
 
 #endif

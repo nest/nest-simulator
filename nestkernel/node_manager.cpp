@@ -793,4 +793,5 @@ void
 NodeManager::set_status( const DictionaryDatum& )
 {
 }
-}
+
+} // namespace nest

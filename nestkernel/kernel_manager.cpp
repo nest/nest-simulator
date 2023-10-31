@@ -65,13 +65,13 @@ nest::KernelManager::KernelManager()
       &random_manager,
       &simulation_manager,
       &modelrange_manager,
-      &model_manager,
       &connection_manager,
       &sp_manager,
       &event_delivery_manager,
       &music_manager,
       &io_manager,
-      &node_manager } )
+      &node_manager,
+      &model_manager } )
   , initialized_( false )
 {
 }

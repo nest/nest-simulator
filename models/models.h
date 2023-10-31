@@ -1,5 +1,5 @@
 /*
- *  modelsmodule.h
+ *  models.h
  *
  *  This file is part of NEST.
  *
@@ -20,44 +20,21 @@
  *
  */
 
-#ifndef MODELSMODULE_H
-#define MODELSMODULE_H
-
-// C++ includes:
-#include <string>
+#ifndef MODELS_H
+#define MODELS_H
 
 // Includes from nestkernel:
 #include "nest.h"
-#include "nest_impl.h"
-
-// Includes from sli:
-#include "slimodule.h"
 
 namespace nest
-{
-/**
- * Module supplying all models that are included in the NEST release.
- *
- * First Version: June 2006
- *
- * @todo Should this be a dynamic module?
- */
-class ModelsModule : public SLIModule
-{
-public:
-  ModelsModule();
-  ~ModelsModule() override;
-
+{ 
   /**
-   * Initialize module by registering models with the network.
-   * @param SLIInterpreter* SLI interpreter
+   * Function to register all node and connection models that were
+   * selected for compilation either by using the cmake switch
+   * -Dwith-models=<model;list> or as specified in the modelset given to
+   * the option -Dwith-modelset=<modelset>
    */
-  void init( SLIInterpreter* ) override;
-
-  const std::string name() const override;
-};
-
-
-} // namespace
+  void register_models();
+}
 
 #endif

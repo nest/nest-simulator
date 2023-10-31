@@ -18,8 +18,9 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 set(models_sources
-    modelsmodule.h ${PROJECT_BINARY_DIR}/models/modelsmodule.cpp
+    models.h ${PROJECT_BINARY_DIR}/models/models.cpp
     binary_neuron.h
+    weight_recorder.h weight_recorder.cpp # Required by CommonSynapseProperties
     cm_compartmentcurrents.h cm_compartmentcurrents.cpp
     cm_tree.h cm_tree.cpp
     rate_neuron_ipn.h rate_neuron_ipn_impl.h

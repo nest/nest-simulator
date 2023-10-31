@@ -145,7 +145,7 @@ set_target_properties( nestkernel
     )
 
 target_link_libraries( nestkernel
-    nestutil sli_lib
+    nestutil sli_lib models
     ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES} ${HDF5_LIBRARIES}
     )
 

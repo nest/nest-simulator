@@ -38,14 +38,15 @@
 #include "proxynode.h"
 #include "vp_manager_impl.h"
 
+// Includes from models:
+#include "models.h"
+
 
 namespace nest
 {
 
 ModelManager::ModelManager()
-  : builtin_node_models_()
-  , node_models_()
-  , builtin_connection_models_()
+  : node_models_()
   , connection_models_()
   , modeldict_( new Dictionary )
   , synapsedict_( new Dictionary )
@@ -58,22 +59,7 @@ ModelManager::ModelManager()
 ModelManager::~ModelManager()
 {
   clear_connection_models_();
-  for ( auto&& connection_model : builtin_connection_models_ )
-  {
-    if ( connection_model )
-    {
-      delete connection_model;
-    }
-  }
-
   clear_node_models_();
-  for ( auto&& node_model : builtin_node_models_ )
-  {
-    if ( node_model )
-    {
-      delete node_model;
-    }
-  }
 }
 
 void
@@ -86,53 +72,17 @@ ModelManager::initialize()
     proxynode_model_->set_threads();
   }
 
-  // Re-create the node model list from the clean prototypes
-  for ( size_t i = 0; i < builtin_node_models_.size(); ++i )
-  {
-    // set the number of threads for the number of sli pools
-    builtin_node_models_[ i ]->set_threads();
-    std::string name = builtin_node_models_[ i ]->get_name();
-    node_models_.push_back( builtin_node_models_[ i ]->clone( name ) );
-    modeldict_->insert( name, i );
-  }
+  const size_t num_threads = kernel().vp_manager.get_num_threads();
 
-  // Create proxy nodes, one for each thread and model
-  proxy_nodes_.resize( kernel().vp_manager.get_num_threads() );
+  // Make space for one vector of connection models per thread
+  //JME std::vector< std::vector< ConnectorModel* > > tmp_proto( num_threads );
+  //JME connection_models_.swap( tmp_proto );
+  connection_models_.resize( num_threads );
 
-#pragma omp parallel
-  {
-    const size_t t = kernel().vp_manager.get_thread_id();
-    proxy_nodes_[ t ].clear();
+  // Make space for one vector of proxynodes for each thread
+  proxy_nodes_.resize( num_threads );
 
-    for ( auto&& builtin_node_model : builtin_node_models_ )
-    {
-      const int model_id = builtin_node_model->get_model_id();
-      proxy_nodes_[ t ].push_back( create_proxynode_( t, model_id ) );
-    }
-  }
-
-  synapsedict_->clear();
-
-  // one list of prototypes per thread
-  std::vector< std::vector< ConnectorModel* > > tmp_proto( kernel().vp_manager.get_num_threads() );
-  connection_models_.swap( tmp_proto );
-
-  // (re-)append all synapse prototypes
-  for ( auto&& connection_model : builtin_connection_models_ )
-  {
-    if ( connection_model )
-    {
-      std::string name = connection_model->get_name();
-      const synindex syn_id = connection_models_[ 0 ].size();
-
-      for ( size_t t = 0; t < static_cast< size_t >( kernel().vp_manager.get_num_threads() ); ++t )
-      {
-        connection_models_[ t ].push_back( connection_model->clone( name, syn_id ) );
-      }
-
-      synapsedict_->insert( name, syn_id );
-    }
-  }
+  register_models();
 }
 
 void
@@ -140,13 +90,7 @@ ModelManager::finalize()
 {
   clear_node_models_();
   clear_connection_models_();
-
-  // We free all Node memory
-  for ( auto& node_model : builtin_node_models_ )
-  {
-    // delete all nodes, because cloning the model may have created instances.
-    node_model->clear();
-  }
+  std::cout << "final end size " << connection_models_.size() << std::endl;
 }
 
 void
@@ -217,17 +161,16 @@ ModelManager::copy_model( Name old_name, Name new_name, DictionaryDatum params )
 size_t
 ModelManager::register_node_model_( Model* model )
 {
+  assert(model);
+
   const size_t id = node_models_.size();
   const std::string name = model->get_name();
 
   model->set_model_id( id );
   model->set_type_id( id );
-  builtin_node_models_.push_back( model );
+  model->set_threads();
 
-  Model* cloned_model = model->clone( name );
-  cloned_model->set_model_id( id );
-  node_models_.push_back( cloned_model );
-
+  node_models_.push_back( model );
   modeldict_->insert( name, id );
 
 #pragma omp parallel
@@ -412,13 +355,11 @@ ModelManager::get_connector_defaults( synindex syn_id ) const
 void
 ModelManager::clear_node_models_()
 {
-  // We delete all models, which will also delete all nodes. The
-  // built-in models will be recovered from the builtin_node_models_ in
-  // init()
   for ( auto&& node_model : node_models_ )
   {
     if ( node_model )
     {
+      node_model->clear(); // Make sure all node memory is gone
       delete node_model;
     }
   }
@@ -455,6 +396,7 @@ ModelManager::clear_connection_models_()
     connection_models_[ t ].clear();
   }
   connection_models_.clear();
+  synapsedict_->clear();
 }
 
 void
@@ -531,12 +473,12 @@ ModelManager::register_connection_model_( ConnectorModel* cf )
     throw NamingConflict( msg );
   }
 
-  builtin_connection_models_.push_back( cf );
-
   const synindex syn_id = connection_models_[ 0 ].size();
+  cf->set_syn_id( syn_id );
+
   for ( size_t t = 0; t < static_cast< size_t >( kernel().vp_manager.get_num_threads() ); ++t )
   {
-    connection_models_[ t ].push_back( cf->clone( cf->get_name(), syn_id ) );
+    connection_models_[ t ].push_back( cf );
   }
 
   synapsedict_->insert( cf->get_name(), syn_id );

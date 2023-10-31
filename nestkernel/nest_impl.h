@@ -28,6 +28,13 @@
 namespace nest
 {
 
+template <class ModelT >
+void
+register_node_model( const std::string& name , std::string deprecation_info )
+{
+  kernel().model_manager.register_node_model< ModelT >( name, deprecation_info );
+}
+
 template < template < typename > class ConnectorModelT >
 void
 register_connection_model( const std::string& name )

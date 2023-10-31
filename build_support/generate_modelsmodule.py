@@ -240,7 +240,7 @@ def generate_modelsmodule():
     with open(fname, "r") as file:
         copyright_header = file.read()
 
-    fname = "modelsmodule.cpp"
+    fname = "models.cpp"
     modeldir = Path(blddir) / "models"
     modeldir.mkdir(parents=True, exist_ok=True)
     with open(modeldir / fname, "w") as file:
@@ -248,7 +248,7 @@ def generate_modelsmodule():
         file.write(
             dedent(
                 """
-            #include "modelsmodule.h"
+            #include "models.h"
 
             // Generated includes
             #include "config.h"
@@ -258,8 +258,8 @@ def generate_modelsmodule():
             #include "connector_model_impl.h"
             #include "genericmodel.h"
             #include "genericmodel_impl.h"
-            #include "kernel_manager.h"
             #include "model_manager_impl.h"
+            #include "nest_impl.h"
             #include "target_identifier.h"
         """
             )
@@ -273,31 +273,10 @@ def generate_modelsmodule():
                     file.write(f'#include "{fname}"\n')
                 file.write(end_guard(guards))
 
-        file.write(
-            dedent(
-                """
-            nest::ModelsModule::ModelsModule()
-            {
-            }
-
-            nest::ModelsModule::~ModelsModule()
-            {
-            }
-
-            const std::string
-            nest::ModelsModule::name() const
-            {
-              return std::string( "NEST standard models module" );
-            }
-
-            void
-            nest::ModelsModule::init( SLIInterpreter* )
-            {"""
-            )
-        )
+        file.write("\nvoid nest::register_models()\n{")
 
         conn_reg = '  register_connection_model< {model} >( "{model}" );\n'
-        node_reg = '  kernel().model_manager.register_node_model< {model} >( "{model}" );\n'
+        node_reg = '  register_node_model< {model} >( "{model}" );\n'
 
         for model_type, guards_mnames in models.items():
             file.write(f"\n  // {model_type.capitalize()} models\n")

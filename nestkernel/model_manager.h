@@ -96,10 +96,27 @@ public:
    * @param deprecation_info  If non-empty string, deprecation warning will
    *                          be issued for model with this info to user.
    * @return ID of the new model object.
-   * @see register_prototype_connection
+   * @see register_connection_model
    */
   template < class ModelT >
   size_t register_node_model( const Name& name, std::string deprecation_info = std::string() );
+
+  /**
+   * Register a synape model with a custom Connector model and without any
+   * common properties.
+   *
+   * "hpc synapses" use `TargetIdentifierIndex` for `ConnectionT` and store
+   * the target neuron in form of a 2 Byte index instead of an 8 Byte pointer.
+   * This limits the number of thread local neurons to 65,536. No support for
+   * different receptor types. Otherwise identical to non-hpc version.
+   *
+   * When called, this function should be specialised by a class template,
+   * e.g. `bernoulli_synapse< targetidentifierT >`
+   *
+   * @param name The name under which the ConnectorModel will be registered.
+   */
+  template < template < typename targetidentifierT > class ConnectionT >
+  void register_connection_model( const std::string& name );
 
   /**
    * Copy an existing model and register it as a new model.
@@ -122,23 +139,6 @@ public:
    * @see set_node_defaults_, set_synapse_defaults_
    */
   bool set_model_defaults( Name name, DictionaryDatum params );
-
-  /**
-   * Register a synape model with a custom Connector model and without any
-   * common properties.
-   *
-   * "hpc synapses" use `TargetIdentifierIndex` for `ConnectionT` and store
-   * the target neuron in form of a 2 Byte index instead of an 8 Byte pointer.
-   * This limits the number of thread local neurons to 65,536. No support for
-   * different receptor types. Otherwise identical to non-hpc version.
-   *
-   * When called, this function should be specialised by a class template,
-   * e.g. `bernoulli_synapse< targetidentifierT >`
-   *
-   * @param name The name under which the ConnectorModel will be registered.
-   */
-  template < template < typename targetidentifierT > class ConnectionT >
-  void register_connection_model( const std::string& name );
 
   /**
    * @return The model ID for a Model with a given name
@@ -179,6 +179,14 @@ public:
   SecondaryEvent& get_secondary_event_prototype( const synindex syn_id, const size_t tid );
 
 private:
+
+  /**
+   * Delete all models and clear the modeldict
+   *
+   * This function delete all models, which will as a side-effect also
+   * delete all nodes. The built-in models will be re-registered in
+   * initialize()
+   */
   void clear_node_models_();
 
   void clear_connection_models_();
@@ -229,34 +237,40 @@ private:
   static bool compare_model_by_id_( const int a, const int b );
 
   /**
-   * List of clean built-in node models.
-   */
-  std::vector< Model* > builtin_node_models_;
-
-  /**
-   * List of usable node models. This list is cleared and repopulated
-   * upon application startup and calls to ResetKernel.
+   * List of node models.
    *
-   * It contains copies of the built-in models, models registered from extension
-   * modules, and models created by calls to CopyModel(). The elements
-   * of this list also keep the user-modified defaults.
+   * The list contains all built-in node models requested for
+   * compilation using -Dwith-models or -Dwith-modelset, models
+   * registered from within extension modules, and models created by
+   * calls to CopyModel().
+   *
+   * This list is cleared and built-in models are re-registered upon
+   * calls to ResetKernel, while those registered from user-modules
+   * and copies are not.
+   *
+   * The elements of this list are used to create instances and are
+   * responsible for the storage of model defaults.
    */
   std::vector< Model* > node_models_;
 
   /**
-   * List of built-in clean connection models.
-   */
-  std::vector< ConnectorModel* > builtin_connection_models_;
-
-  /**
-   * The list of usable connection models.
+   * The list of connection models.
    *
-   * The first dimension keeps one entry per thread, the second dimension has the actual models.
-   * This list is cleared and repopulated upon application startup and
-   * calls to ResetKernel. The inner list contains copies of the
-   * built-in models, models registered from extension modules, and
-   * models created by calls to CopyModel(). The elements of the list
-   * also keep the user-modified defaults.
+   * This list contains all built-in connection models requested for
+   * compilation using -Dwith-models or -Dwith-modelset, models
+   * registered from within extension modules, and models created by
+   * calls to CopyModel().
+   *
+   * The first dimension is thread-optimitzed by containing one vector
+   * with all models per thread, as to avoid colliding memory accesses
+   * during connection creation.
+   *
+   * This list is cleared and built-in models are re-registered upon
+   * calls to ResetKernel, while those registered from user-modules
+   * and copies are not.
+   *
+   * The elements of this list are used to create instances and are
+   * responsible for the storage of model defaults.
    */
   std::vector< std::vector< ConnectorModel* > > connection_models_;
 
@@ -303,7 +317,12 @@ ModelManager::get_connection_models( size_t tid )
 inline size_t
 ModelManager::get_num_connection_models() const
 {
-  assert( connection_models_[ 0 ].size() <= invalid_synindex );
+  // For the case when the ModelManager is not yet fully initialized
+  if ( connection_models_.size() == 0 )
+  {
+    return 0;
+  }
+
   return connection_models_[ 0 ].size();
 }
 

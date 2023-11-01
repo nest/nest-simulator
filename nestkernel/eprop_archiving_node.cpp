@@ -91,7 +91,7 @@ nest::EpropArchivingNode::write_surrogate_gradient_to_history( long time_step, d
 void
 nest::EpropArchivingNode::write_error_signal_to_history( long time_step, double error_signal )
 {
-  long shift = delay_out_norm;
+  long shift = delay_out_norm_;
   eprop_history_.push_back( HistEntryEpropArchive( time_step - shift, 0.0, error_signal ) );
 }
 
@@ -101,7 +101,7 @@ nest::EpropArchivingNode::write_learning_signal_to_history( long& time_step,
   double& weight,
   double& error_signal )
 {
-  long shift = delay_rec_out + delay_out_norm + delay_out_rec;
+  long shift = delay_rec_out_ + delay_out_norm_ + delay_out_rec;
 
   std::deque< HistEntryEpropArchive >::iterator it_hist;
   std::deque< HistEntryEpropArchive >::iterator it_hist_end;
@@ -132,10 +132,16 @@ nest::EpropArchivingNode::write_firing_rate_reg_to_history( long t_current_updat
 const long
 nest::EpropArchivingNode::get_shift() const
 {
-  long shift_rec = offset_gen + delay_in_rec;
-  long shift_out = offset_gen + delay_in_rec + delay_rec_out;
+  long shift_rec = offset_gen_ + delay_in_rec_;
+  long shift_out = offset_gen_ + delay_in_rec_ + delay_rec_out_;
 
   return get_name() == "eprop_readout" ? shift_out : shift_rec;
+}
+
+const long
+nest::EpropArchivingNode::get_delay_out_norm() const
+{
+  return delay_out_norm_;
 }
 
 std::map< std::string, double >&

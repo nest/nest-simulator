@@ -218,6 +218,7 @@ nest::eprop_readout::update( Time const& origin, const long from, const long to 
   const double learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
   bool with_reset = kernel().simulation_manager.get_eprop_reset_neurons_on_update();
   const long shift = get_shift();
+  const long delay_out_norm = get_delay_out_norm();
 
   const size_t buffer_size = kernel().connection_manager.get_min_delay();
 
@@ -228,7 +229,7 @@ nest::eprop_readout::update( Time const& origin, const long from, const long to 
   {
     long t = origin.get_steps() + lag;
     long interval_step = ( t - shift ) % update_interval;
-    long interval_step_signals = ( t - shift - 1 ) % update_interval;
+    long interval_step_signals = ( t - shift - delay_out_norm ) % update_interval;
 
 
     if ( with_reset and interval_step == 0 )

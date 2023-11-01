@@ -60,6 +60,7 @@ public:
   void write_firing_rate_reg_to_history( long t_current_update, double f_target, double c_reg );
 
   const long get_shift() const;
+  const long get_delay_out_norm() const;
   std::map< std::string, double >& get_eprop_parameter_map();
   void get_eprop_history( long time_step, std::deque< HistEntryEpropArchive >::iterator* it );
   double get_firing_rate_reg( long time_step );
@@ -77,10 +78,10 @@ private:
   // These shifts are, for now, hardcoded to 1 time step / 1 ms since the current implementation only works if all the
   // delays are equal to the resolution of the simulation, i.e., 1 ms.
 
-  long offset_gen = 1;     // offset since generator signals start from time step 1
-  long delay_in_rec = 1;   // connection delay from input to recurrent neurons
-  long delay_rec_out = 1;  // connection delay from recurrent to output neurons
-  long delay_out_norm = 1; // connection delay between output neurons for normalization
+  long offset_gen_ = 1;     // offset since generator signals start from time step 1
+  long delay_in_rec_ = 1;   // connection delay from input to recurrent neurons
+  long delay_rec_out_ = 1;  // connection delay from recurrent to output neurons
+  long delay_out_norm_ = 1; // connection delay between output neurons for normalization
 
   std::deque< HistEntryEpropArchive > eprop_history_;
   std::vector< HistEntryEpropFiringRateReg > firing_rate_reg_history_;

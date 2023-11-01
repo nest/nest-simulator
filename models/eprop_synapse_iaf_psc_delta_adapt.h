@@ -211,10 +211,7 @@ public:
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
-  void update_gradient( EpropArchivingNode* target,
-    double& sum_grads,
-    std::vector< long >& presyn_isis,
-    const EpropCommonProperties& cp ) const override;
+  void update_gradient( EpropArchivingNode* target, const EpropCommonProperties& cp ) override;
   void get_status( DictionaryDatum& d ) const;
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 };
@@ -236,9 +233,7 @@ eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::set_status( const Dictio
 template < typename targetidentifierT >
 void
 eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::update_gradient( EpropArchivingNode* target,
-  double& sum_grads,
-  std::vector< long >& presyn_isis,
-  const EpropCommonProperties& cp ) const
+  const EpropCommonProperties& cp )
 {
   std::deque< HistEntryEpropArchive >::iterator it_eprop_hist;
   target->get_eprop_history( this->t_last_trigger_spike_, &it_eprop_hist );
@@ -255,7 +250,7 @@ eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::update_gradient( EpropAr
   double epsilon = 0.0;
   double grad = 0.0;
 
-  for ( long presyn_isi : presyn_isis )
+  for ( long presyn_isi : this->presyn_isis_ )
   {
     last_z_bar += alpha_complement;
     for ( long t = 0; t < presyn_isi; ++t )
@@ -272,13 +267,13 @@ eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::update_gradient( EpropAr
       ++it_eprop_hist;
     }
   }
-  presyn_isis.clear();
+  this->presyn_isis_.clear();
 
   grad /= Time( Time::ms( cp.recall_duration_ ) ).get_steps();
 
   grad += target->get_firing_rate_reg( this->t_last_update_ + target->get_shift() ) * sum_e;
 
-  sum_grads += grad;
+  this->sum_grads_ += grad;
 }
 
 } // namespace nest

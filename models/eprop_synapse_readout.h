@@ -212,10 +212,7 @@ public:
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
-  void update_gradient( EpropArchivingNode* target,
-    double& sum_grads,
-    std::vector< long >& presyn_isis,
-    const EpropCommonProperties& cp ) const override;
+  void update_gradient( EpropArchivingNode* target, const EpropCommonProperties& cp ) override;
 
   void get_status( DictionaryDatum& d ) const;
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
@@ -238,9 +235,7 @@ eprop_synapse_readout< targetidentifierT >::set_status( const DictionaryDatum& d
 template < typename targetidentifierT >
 void
 eprop_synapse_readout< targetidentifierT >::update_gradient( EpropArchivingNode* target,
-  double& sum_grads,
-  std::vector< long >& presyn_isis,
-  const EpropCommonProperties& cp ) const
+  const EpropCommonProperties& cp )
 {
   std::deque< HistEntryEpropArchive >::iterator it_eprop_hist;
   target->get_eprop_history( this->t_last_trigger_spike_, &it_eprop_hist );
@@ -248,7 +243,7 @@ eprop_synapse_readout< targetidentifierT >::update_gradient( EpropArchivingNode*
   double z_bar = 0.0;
   double grad = 0.0;
 
-  for ( long presyn_isi : presyn_isis )
+  for ( long presyn_isi : this->presyn_isis_ )
   {
     z_bar += 1.0 - this->kappa_;
     for ( long t = 0; t < presyn_isi; ++t )
@@ -259,11 +254,11 @@ eprop_synapse_readout< targetidentifierT >::update_gradient( EpropArchivingNode*
     }
   }
 
-  presyn_isis.clear();
+  this->presyn_isis_.clear();
 
   grad /= Time( Time::ms( cp.recall_duration_ ) ).get_steps();
 
-  sum_grads += grad;
+  this->sum_grads_ += grad;
 }
 
 } // namespace nest

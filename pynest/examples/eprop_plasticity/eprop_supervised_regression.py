@@ -112,6 +112,7 @@ steps = {
     "sequence": 1000,  # time steps of one full sequence
 }
 
+steps["learning_window"] = steps["sequence"]  # time steps of learning window
 steps["task"] = n_iter * n_batch * steps["sequence"]  # time steps of task
 
 steps.update(
@@ -139,6 +140,7 @@ duration.update({key: value * duration["step"] for key, value in steps.items()})
 # objects and set some NEST kernel parameters, some of which are e-prop-related.
 
 params_setup = {
+    "eprop_learning_window": duration["learning_window"],  # ms, window with non-zero learning signals
     "eprop_reset_neurons_on_update": True,  # if True, reset dynamic variables at start of each update interval
     "eprop_update_interval": duration["sequence"],  # ms, time interval for updating the synaptic weights
     "print_time": False,  # True,  # if True, print time progress bar during simulation, set False if run as code cell
@@ -182,7 +184,6 @@ params_nrn_out = {
     "E_L": 0.0,
     "I_e": 0.0,
     "loss": "mean_squared_error",
-    "start_learning": duration["recall_onset"],
     "tau_m": 30.0,
     "V_m": 0.0,
 }
@@ -255,7 +256,6 @@ weights_out_rec = np.array(np.random.randn(n_rec, n_out) / np.sqrt(n_rec), dtype
 
 params_common_syn_eprop = {
     "batch_size": n_batch,
-    "recall_duration": duration["recall"],
     "optimizer": "gradient_descent",  # algorithm to optimize the weights; either "adam" or "gradient_descent"
     "weight_recorder": wr,
 }

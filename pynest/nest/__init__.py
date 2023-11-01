@@ -400,7 +400,12 @@ class NestModule(types.ModuleType):
     )
     eprop_update_interval = KernelAttribute(
         "float",
-        ("Task-specific update interval with the e-prop plasticity mechanism."),
+        ("Task-specific update interval of the e-prop plasticity mechanism."),
+        default=1000.0,
+    )
+    eprop_learning_window = KernelAttribute(
+        "float",
+        ("Task-specific learning window of the e-prop plasticity mechanism."),
         default=1000.0,
     )
     eprop_reset_neurons_on_update = KernelAttribute(

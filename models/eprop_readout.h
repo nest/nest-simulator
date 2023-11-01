@@ -82,7 +82,6 @@ Parameter           Unit     Math equivalent          Default            Descrip
  I_e                pA       :math:`I_\text{e}`                      0.0 Constant external input current
  loss                        :math:`E`                mean_squared_error Loss function
                                                                          ["mean_squared_error", "cross_entropy_loss"]
- start_learning     ms                                               0.0 Time point to start sending learning signals
  tau_m              ms       :math:`\tau_\text{m}`                  10.0 Time constant of the membrane
  V_m                mV       :math:`v_j^0`                           0.0 Initial value of the membrane voltage
  V_min              mV       :math:`v_\text{min}`             -1.79e+308 Absolute lower value of the membrane voltage
@@ -186,13 +185,12 @@ private:
 
   struct Parameters_
   {
-    double C_m_;            //!< membrane capacitance (pF)
-    double E_L_;            //!< leak potential (mV)
-    double I_e_;            //!< external DC current (pA)
-    std::string loss_;      //!< loss function
-    double start_learning_; //!< time point to start sending learning signals
-    double tau_m_;          //!< membrane time constant (ms)
-    double V_min_;          //!< lower membrane voltage bound relative to leak potential (mV)
+    double C_m_;       //!< membrane capacitance (pF)
+    double E_L_;       //!< leak potential (mV)
+    double I_e_;       //!< external DC current (pA)
+    std::string loss_; //!< loss function
+    double tau_m_;     //!< membrane time constant (ms)
+    double V_min_;     //!< lower membrane voltage bound relative to leak potential (mV)
 
     Parameters_();
 
@@ -236,7 +234,6 @@ private:
     double P33_; //!< corresponds to kappa in eprop_synapse
     double P33_complement_;
     bool requires_buffer_;
-    long start_learning_step_; //!< time step to start sending learning signals
   };
 
   /**

@@ -137,7 +137,6 @@ adam_beta2                 :math:`\beta_2`   0.999            Beta2 parameter of
 adam_epsilon               :math:`\epsilon`  1e-8             Epsilon parameter of Adam optimizer
 batch_size                                   1                Size of batch
 optimizer                                    gradient_descent If adam, use Adam optimizer, if gd, gradient descent
-recall_duration  ms                          1.0              Duration over which gradients are averaged
 ===============  ========  ================  ================ ====================================================
 
 =============  ====  =========================  =======  ===============================================================
@@ -211,7 +210,6 @@ public:
   double adam_epsilon_;
   long batch_size_;
   std::string optimizer_;
-  double recall_duration_;
 };
 
 EpropCommonProperties::EpropCommonProperties()
@@ -221,7 +219,6 @@ EpropCommonProperties::EpropCommonProperties()
   , adam_epsilon_( 1e-8 )
   , batch_size_( 1 )
   , optimizer_( "gradient_descent" )
-  , recall_duration_( 1.0 )
 {
 }
 
@@ -234,7 +231,6 @@ EpropCommonProperties::get_status( DictionaryDatum& d ) const
   def< double >( d, names::adam_epsilon, adam_epsilon_ );
   def< long >( d, names::batch_size, batch_size_ );
   def< std::string >( d, names::optimizer, optimizer_ );
-  def< double >( d, names::recall_duration, recall_duration_ );
 }
 
 void
@@ -246,7 +242,6 @@ EpropCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm 
   updateValue< double >( d, names::adam_epsilon, adam_epsilon_ );
   updateValue< long >( d, names::batch_size, batch_size_ );
   updateValue< std::string >( d, names::optimizer, optimizer_ );
-  updateValue< double >( d, names::recall_duration, recall_duration_ );
 
   if ( adam_beta1_ < 0.0 or 1.0 <= adam_beta1_ )
     throw BadProperty( "adam_beta1 must be in [0,1)" );
@@ -262,9 +257,6 @@ EpropCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm 
 
   if ( optimizer_ != "gradient_descent" and optimizer_ != "adam" )
     throw BadProperty( "optimizer must be either \"gradient_descent\" or \"adam\"" );
-
-  if ( recall_duration_ < 0.0 )
-    throw BadProperty( "recall_duration must be >= 0" );
 }
 
 template < typename targetidentifierT >

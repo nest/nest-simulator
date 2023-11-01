@@ -186,6 +186,7 @@ public:
   virtual void reset_timers_for_dynamics();
 
   Time get_eprop_update_interval() const;
+  Time get_eprop_learning_window() const;
   bool get_eprop_reset_neurons_on_update() const;
 
 private:
@@ -238,6 +239,7 @@ private:
 #endif
 
   double eprop_update_interval_;
+  double eprop_learning_window_;
   bool eprop_reset_neurons_on_update_;
 };
 
@@ -338,6 +340,12 @@ inline Time
 SimulationManager::get_eprop_update_interval() const
 {
   return Time::ms( eprop_update_interval_ );
+}
+
+inline Time
+SimulationManager::get_eprop_learning_window() const
+{
+  return Time::ms( eprop_learning_window_ );
 }
 
 inline bool

@@ -137,7 +137,6 @@ adam_beta2                 :math:`\beta_2`   0.999            Beta2 parameter of
 adam_epsilon               :math:`\epsilon`  1e-8             Epsilon parameter of Adam optimizer
 batch_size                                   1                Size of batch
 optimizer                                    gradient_descent If adam, use Adam optimizer, if gd, gradient descent
-recall_duration  ms                          1.0              Duration over which gradients are averaged
 ===============  ========  ================  ================ ====================================================
 
 =============  ====  =========================  =======  ===============================================================
@@ -269,7 +268,11 @@ eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::update_gradient( EpropAr
   }
   this->presyn_isis_.clear();
 
-  grad /= Time( Time::ms( cp.recall_duration_ ) ).get_steps();
+  long learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
+  long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
+
+  if ( learning_window != update_interval )
+    grad /= learning_window;
 
   grad += target->get_firing_rate_reg( this->t_previous_update_ + target->get_shift() ) * sum_e;
 

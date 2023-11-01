@@ -66,7 +66,6 @@ nest::eprop_readout::Parameters_::Parameters_()
   , E_L_( 0.0 )
   , I_e_( 0.0 )
   , loss_( "mean_squared_error" )
-  , start_learning_( 0.0 )
   , tau_m_( 10.0 )
   , V_min_( -std::numeric_limits< double >::max() )
 {
@@ -102,7 +101,6 @@ nest::eprop_readout::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::E_L, E_L_ );
   def< double >( d, names::I_e, I_e_ );
   def< std::string >( d, names::loss, loss_ );
-  def< double >( d, names::start_learning, start_learning_ );
   def< double >( d, names::tau_m, tau_m_ );
   def< double >( d, names::V_min, V_min_ + E_L_ );
 }
@@ -120,7 +118,6 @@ nest::eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::C_m, C_m_, node );
   updateValueParam< double >( d, names::I_e, I_e_, node );
   updateValueParam< std::string >( d, names::loss, loss_, node );
-  updateValueParam< double >( d, names::start_learning, start_learning_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
 
   if ( C_m_ <= 0 )
@@ -128,9 +125,6 @@ nest::eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
 
   if ( tau_m_ <= 0 )
     throw BadProperty( "Membrane time constant must be > 0." );
-
-  if ( start_learning_ < 0.0 )
-    throw BadProperty( "start_learning must be > 0 " );
 
   return delta_EL;
 }
@@ -199,7 +193,6 @@ nest::eprop_readout::pre_run_hook()
   V_.P33_ = std::exp( -dt / P_.tau_m_ );
   V_.P30_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - V_.P33_ );
   V_.P33_complement_ = 1.0 - V_.P33_;
-  V_.start_learning_step_ = Time( Time::ms( P_.start_learning_ ) ).get_steps();
   S_.readout_signal_unnorm_ = 0.0;
   V_.in_learning_window_ = false;
 

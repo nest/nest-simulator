@@ -127,8 +127,8 @@ steps = {
 }
 
 steps["cues"] = n_cues * (steps["cue"] + steps["spacing"])  # time steps of all cues
-steps["recall_onset"] = steps["cues"] + steps["bg_noise"]  # time steps until recall onset
-steps["sequence"] = steps["recall_onset"] + steps["recall"]  # time steps of one full sequence
+steps["sequence"] = steps["cues"] + steps["bg_noise"] + steps["recall"]  # time steps of one full sequence
+steps["learning_window"] = steps["recall"]
 steps["task"] = n_iter * n_batch * steps["sequence"]  # time steps of task
 
 steps.update(
@@ -156,6 +156,7 @@ duration.update({key: value * duration["step"] for key, value in steps.items()})
 # objects and set some NEST kernel parameters, some of which are e-prop-related.
 
 params_setup = {
+    "eprop_learning_window": duration["learning_window"],  # ms, window with non-zero learning signals
     "eprop_reset_neurons_on_update": True,  # if True, reset dynamic variables at start of each update interval
     "eprop_update_interval": duration["sequence"],  # ms, time interval for updating the synaptic weights
     "print_time": True,  # if True, print time progress bar during simulation, set False if run as code cell
@@ -224,7 +225,6 @@ params_nrn_out = {
     "E_L": 0.0,
     "I_e": 0.0,
     "loss": "cross_entropy_loss",
-    "start_learning": duration["recall_onset"],
     "tau_m": 20.0,
     "V_m": 0.0,
 }
@@ -318,7 +318,6 @@ params_common_syn_eprop = {
     "adam_epsilon": 1e-8,  # small numerical stabilization constant of Adam optimizer
     "optimizer": "adam",  # algorithm to optimize the weights; either "adam" or "gradient_descent"
     "batch_size": n_batch,
-    "recall_duration": duration["recall"],
     "weight_recorder": wr,
 }
 
@@ -593,8 +592,8 @@ senders = events_mm_out["senders"]
 readout_signal = np.array([readout_signal[senders == i] for i in np.unique(senders)])
 target_signal = np.array([target_signal[senders == i] for i in np.unique(senders)])
 
-readout_signal = readout_signal.reshape(n_out, n_iter, n_batch, steps["sequence"])[:, :, :, steps["recall_onset"] :]
-target_signal = target_signal.reshape(n_out, n_iter, n_batch, steps["sequence"])[:, :, :, steps["recall_onset"] :]
+readout_signal = readout_signal.reshape(n_out, n_iter, n_batch, steps["sequence"])[:, :, :, -steps["learning_window"] :]
+target_signal = target_signal.reshape(n_out, n_iter, n_batch, steps["sequence"])[:, :, :, -steps["learning_window"] :]
 
 loss = -np.mean(np.sum(target_signal * np.log(readout_signal), axis=0), axis=(1, 2))
 

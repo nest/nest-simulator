@@ -63,6 +63,7 @@ nest::SimulationManager::SimulationManager()
   , min_update_time_( std::numeric_limits< double >::infinity() )
   , max_update_time_( -std::numeric_limits< double >::infinity() )
   , eprop_update_interval_( 1000. )
+  , eprop_learning_window_( 1000. )
   , eprop_reset_neurons_on_update_( true )
 {
 }
@@ -421,8 +422,18 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
     eprop_update_interval_ = eprop_update_interval_new;
   }
 
+  // eprop learning window
+  double eprop_learning_window_new = 0.0;
+  if ( updateValue< double >( d, names::eprop_learning_window, eprop_learning_window_new ) )
+  {
+    if ( eprop_learning_window_new <= 0 )
+    {
+      LOG( M_ERROR, "SimulationManager::set_status", "eprop_learning_window > 0 required." );
+      throw KernelException();
+    }
 
-  updateValue< double >( d, names::eprop_update_interval, eprop_update_interval_ );
+    eprop_learning_window_ = eprop_learning_window_new;
+  }
 
   updateValue< bool >( d, names::eprop_reset_neurons_on_update, eprop_reset_neurons_on_update_ );
 }
@@ -463,6 +474,7 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
   def< double >( d, names::time_deliver_spike_data, sw_deliver_spike_data_.elapsed() );
 #endif
   def< double >( d, names::eprop_update_interval, eprop_update_interval_ );
+  def< double >( d, names::eprop_learning_window, eprop_learning_window_ );
   def< bool >( d, names::eprop_reset_neurons_on_update, eprop_reset_neurons_on_update_ );
 }
 

@@ -242,8 +242,6 @@ eprop_synapse_readout< targetidentifierT >::update_gradient( EpropArchivingNode*
   std::vector< long >& presyn_isis,
   const EpropCommonProperties& cp ) const
 {
-  double dt = Time::get_resolution().get_ms();
-
   std::deque< HistEntryEpropArchive >::iterator it_eprop_hist;
   target->get_eprop_history( this->t_last_trigger_spike_, &it_eprop_hist );
 

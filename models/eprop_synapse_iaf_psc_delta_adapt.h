@@ -240,8 +240,6 @@ eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::update_gradient( EpropAr
   std::vector< long >& presyn_isis,
   const EpropCommonProperties& cp ) const
 {
-  double dt = Time::get_resolution().get_ms();
-
   std::deque< HistEntryEpropArchive >::iterator it_eprop_hist;
   target->get_eprop_history( this->t_last_trigger_spike_, &it_eprop_hist );
 
@@ -268,7 +266,7 @@ eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::update_gradient( EpropAr
       e -= psi * beta * epsilon;
       epsilon = psi * last_z_bar + ( rho - psi * beta ) * epsilon;
       e_bar = this->kappa_ * e_bar + ( 1.0 - this->kappa_ ) * e;
-      grad += e_bar * dt * it_eprop_hist->learning_signal_;
+      grad += e_bar * it_eprop_hist->learning_signal_;
       sum_e += e;
       last_z_bar *= alpha;
       ++it_eprop_hist;
@@ -279,8 +277,6 @@ eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::update_gradient( EpropAr
   grad /= Time( Time::ms( cp.recall_duration_ ) ).get_steps();
 
   grad += target->get_firing_rate_reg( this->t_last_update_ + target->get_shift() ) * sum_e;
-
-  grad *= dt;
 
   sum_grads += grad;
 }

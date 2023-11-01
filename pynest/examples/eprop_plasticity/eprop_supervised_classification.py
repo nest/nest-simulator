@@ -437,7 +437,7 @@ nest.Connect(mm_out, nrns_out, params_conn_all_to_all, params_syn_static)
 
 
 def generate_evidence_accumulation_input_output(
-    n_batch, n_in, prob_group, input_spike_rate, n_cues, n_input_symbols, steps
+    n_batch, n_in, prob_group, input_spike_prob, n_cues, n_input_symbols, steps
 ):
     n_pop_nrn = n_in // n_input_symbols
 
@@ -451,7 +451,7 @@ def generate_evidence_accumulation_input_output(
     for b_idx in range(n_batch):
         batched_cues[b_idx, :] = np.random.choice([0, 1], n_cues, p=probs[b_idx])
 
-    input_spike_prob = np.zeros((n_batch, steps["sequence"], n_in))
+    input_spike_probs = np.zeros((n_batch, steps["sequence"], n_in))
 
     for b_idx in range(n_batch):
         for c_idx in range(n_cues):
@@ -463,11 +463,11 @@ def generate_evidence_accumulation_input_output(
             pop_nrn_start = cue * n_pop_nrn
             pop_nrn_stop = pop_nrn_start + n_pop_nrn
 
-            input_spike_prob[b_idx, step_start:step_stop, pop_nrn_start:pop_nrn_stop] = input_spike_rate
+            input_spike_probs[b_idx, step_start:step_stop, pop_nrn_start:pop_nrn_stop] = input_spike_prob
 
-    input_spike_prob[:, -steps["recall"] :, 2 * n_pop_nrn : 3 * n_pop_nrn] = input_spike_rate
-    input_spike_prob[:, :, 3 * n_pop_nrn :] = input_spike_rate / 4.0
-    input_spike_bools = input_spike_prob > np.random.rand(input_spike_prob.size).reshape(input_spike_prob.shape)
+    input_spike_probs[:, -steps["recall"] :, 2 * n_pop_nrn : 3 * n_pop_nrn] = input_spike_prob
+    input_spike_probs[:, :, 3 * n_pop_nrn :] = input_spike_prob / 4.0
+    input_spike_bools = input_spike_probs > np.random.rand(input_spike_probs.size).reshape(input_spike_probs.shape)
     input_spike_bools[:, 0, :] = 0  # remove spikes in first time step due to technical reasons
 
     target_cues = np.zeros(n_batch, dtype=int)
@@ -476,7 +476,7 @@ def generate_evidence_accumulation_input_output(
     return input_spike_bools, target_cues
 
 
-input_spike_rate = 0.04  # kHz, firing rate of frozen input noise
+input_spike_prob = 0.04  # kHz, firing rate of frozen input noise
 dtype_in_spks = np.float32  # data type of input spikes - for reproducing TF results set to np.float32
 
 input_spike_bools_list = []
@@ -484,13 +484,13 @@ target_cues_list = []
 
 for iteration in range(n_iter):
     input_spike_bools, target_cues = generate_evidence_accumulation_input_output(
-        n_batch, n_in, prob_group, input_spike_rate, n_cues, n_input_symbols, steps
+        n_batch, n_in, prob_group, input_spike_prob, n_cues, n_input_symbols, steps
     )
     input_spike_bools_list.append(input_spike_bools)
     target_cues_list.extend(target_cues.tolist())
 
 input_spike_bools_arr = np.array(input_spike_bools_list).reshape(steps["task"], n_in)
-timeline_task = np.arange(0, duration["task"], duration["step"]) + duration["offset_gen"]
+timeline_task = np.arange(0.0, duration["task"], duration["step"]) + duration["offset_gen"]
 
 params_gen_spk_in = [
     {"spike_times": timeline_task[input_spike_bools_arr[:, nrn_in_idx]].astype(dtype_in_spks).tolist()}

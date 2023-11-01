@@ -331,11 +331,10 @@ nest.Connect(mm_out, nrns_out, params_conn_all_to_all, params_syn_static)
 # spike times to the previously created input spike generator. The network will use these spike times as a
 # temporal backbone for encoding the target signal into its recurrent spiking activity.
 
-input_spike_rate = 0.05  # kHz, firing rate of frozen input noise
-spike_probability = duration["step"] * input_spike_rate  # spike probability of frozen input noise
+input_spike_prob = 0.05  # spike probability of frozen input noise
 dtype_in_spks = np.float32  # data type of input spikes - for reproducing TF results set to np.float32
 
-input_spike_bools = np.random.rand(n_batch, steps["sequence"], n_in) < spike_probability
+input_spike_bools = np.random.rand(n_batch, steps["sequence"], n_in) < input_spike_prob
 input_spike_bools = np.hstack(input_spike_bools.swapaxes(1, 2))
 input_spike_bools[:, 0] = 0  # suppress spikes since NEST does not allow spike emission in 0th time step
 
@@ -375,7 +374,7 @@ def generate_superimposed_sines(steps_sequence, periods):
     return superposition
 
 
-target_signal = generate_superimposed_sines(steps["sequence"], [1000.0, 500.0, 333.0, 200.0])  # periods in ms
+target_signal = generate_superimposed_sines(steps["sequence"], [1000, 500, 333, 200])  # periods in steps
 
 params_gen_rate_target = {
     "amplitude_times": (np.arange(0.0, duration["task"], duration["step"]) + duration["total_offset"]).tolist(),

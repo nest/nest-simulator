@@ -59,7 +59,7 @@ public:
   void write_surrogate_gradient_to_history( long time_step, double surrogate_gradient );
   void write_error_signal_to_history( long time_step, double error_signal );
   void write_learning_signal_to_history( long& time_step, long& delay_out_rec, double& weight, double& error_signal );
-  void write_update_to_history( long t_last_update, long t_current_update );
+  void write_update_to_history( long t_previous_update, long t_current_update );
   void write_firing_rate_reg_to_history( long t_current_update, double f_target, double c_reg );
   void write_eprop_parameter_to_map( std::string parameter_name, double parameter_value );
 

@@ -66,7 +66,7 @@ nest::EpropArchivingNode::init_update_history()
 }
 
 void
-nest::EpropArchivingNode::write_update_to_history( long t_last_update, long t_current_update )
+nest::EpropArchivingNode::write_update_to_history( long t_previous_update, long t_current_update )
 {
   long shift = get_shift();
 
@@ -79,9 +79,9 @@ nest::EpropArchivingNode::write_update_to_history( long t_last_update, long t_cu
   else
     update_history_.insert( it, HistEntryEpropUpdate( t_current_update + shift, 1 ) );
 
-  it = std::lower_bound( update_history_.begin(), update_history_.end(), t_last_update + shift );
+  it = std::lower_bound( update_history_.begin(), update_history_.end(), t_previous_update + shift );
 
-  if ( it != update_history_.end() or it->t_ == ( t_last_update + shift ) )
+  if ( it != update_history_.end() or it->t_ == ( t_previous_update + shift ) )
     --it->access_counter_;
 }
 

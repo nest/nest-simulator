@@ -78,7 +78,7 @@ rate :math:`f^\text{av}_j` of the postsynaptic neuron close to a target firing r
   \sum_t \frac{1}{Tn_\text{trial}} \left( f^\text{target}-f^\text{av}_j\right)e_{ji}^t,
 
 whereby :math:`c_\text{reg}` scales the overall regularization and the average
-is taken over the time that passed since the last update, that is, the number of
+is taken over the time that passed since the previous update, that is, the number of
 trials :math:`n_\text{trials}` times the duration of an update interval :math:`T`.
 
 The overall recurrent weight update is given by adding :math:`\Delta W_{ji}^\text{rec}`
@@ -236,7 +236,7 @@ eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::update_gradient( EpropAr
   const EpropCommonProperties& cp )
 {
   std::deque< HistEntryEpropArchive >::iterator it_eprop_hist;
-  target->get_eprop_history( this->t_last_trigger_spike_, &it_eprop_hist );
+  target->get_eprop_history( this->t_previous_trigger_spike_, &it_eprop_hist );
 
   std::map< std::string, double >& eprop_parameter_map = target->get_eprop_parameter_map();
   double alpha = eprop_parameter_map[ "leak_propagator" ];
@@ -246,24 +246,24 @@ eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::update_gradient( EpropAr
 
   double e_bar = 0.0;
   double sum_e = 0.0;
-  double last_z_bar = 0.0;
+  double previous_z_bar = 0.0;
   double epsilon = 0.0;
   double grad = 0.0;
 
   for ( long presyn_isi : this->presyn_isis_ )
   {
-    last_z_bar += alpha_complement;
+    previous_z_bar += alpha_complement;
     for ( long t = 0; t < presyn_isi; ++t )
     {
       double psi = it_eprop_hist->surrogate_gradient_;
-      double e = psi * last_z_bar;
+      double e = psi * previous_z_bar;
 
       e -= psi * beta * epsilon;
-      epsilon = psi * last_z_bar + ( rho - psi * beta ) * epsilon;
+      epsilon = psi * previous_z_bar + ( rho - psi * beta ) * epsilon;
       e_bar = this->kappa_ * e_bar + ( 1.0 - this->kappa_ ) * e;
       grad += e_bar * it_eprop_hist->learning_signal_;
       sum_e += e;
-      last_z_bar *= alpha;
+      previous_z_bar *= alpha;
       ++it_eprop_hist;
     }
   }
@@ -271,7 +271,7 @@ eprop_synapse_iaf_psc_delta_adapt< targetidentifierT >::update_gradient( EpropAr
 
   grad /= Time( Time::ms( cp.recall_duration_ ) ).get_steps();
 
-  grad += target->get_firing_rate_reg( this->t_last_update_ + target->get_shift() ) * sum_e;
+  grad += target->get_firing_rate_reg( this->t_previous_update_ + target->get_shift() ) * sum_e;
 
   this->sum_grads_ += grad;
 }

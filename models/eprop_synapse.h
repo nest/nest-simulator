@@ -78,7 +78,7 @@ rate :math:`f^\text{av}_j` of the postsynaptic neuron close to a target firing r
   \sum_t \frac{1}{Tn_\text{trial}} \left( f^\text{target}-f^\text{av}_j\right)e_{ji}^t,
 
 whereby :math:`c_\text{reg}` scales the overall regularization and the average
-is taken over the time that passed since the last update, that is, the number of
+is taken over the time that passed since the previous update, that is, the number of
 trials :math:`n_\text{trials}` times the duration of an update interval :math:`T`.
 
 The overall recurrent weight update is given by adding :math:`\Delta W_{ji}^\text{rec}`
@@ -295,7 +295,7 @@ public:
 
   void send( Event& e, size_t thread, const EpropCommonProperties& cp );
 
-  void optimize( long current_optimization_step_, long& last_optimization_step_, const EpropCommonProperties& cp );
+  void optimize( long current_optimization_step_, long& optimization_step_, const EpropCommonProperties& cp );
 
   virtual void update_gradient( EpropArchivingNode* target, const EpropCommonProperties& cp ) {};
 
@@ -351,11 +351,11 @@ protected:
   double eta_;
   double Wmin_;
   double Wmax_;
-  long last_optimization_step_;
-  long t_last_spike_;
-  long t_last_update_;
+  long optimization_step_;
+  long t_previous_spike_;
+  long t_previous_update_;
   long t_next_update_;
-  long t_last_trigger_spike_;
+  long t_previous_trigger_spike_;
   double tau_m_readout_; // time constant for low pass filtering of eligibility trace
   double kappa_;         // exp( -dt / tau_m_readout_ )
   double adam_m_;        // auxiliary variable for Adam optimizer
@@ -385,13 +385,13 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
   if ( is_recurrent_to_recurrent_conn_ and interval_step == 0 )
     return;
 
-  if ( t_last_trigger_spike_ == 0 )
-    t_last_trigger_spike_ = t_spike;
+  if ( t_previous_trigger_spike_ == 0 )
+    t_previous_trigger_spike_ = t_spike;
 
-  if ( t_last_spike_ > 0 )
+  if ( t_previous_spike_ > 0 )
   {
     long t = t_spike >= t_next_update_ + shift ? t_next_update_ + shift : t_spike;
-    presyn_isis_.push_back( t - t_last_spike_ );
+    presyn_isis_.push_back( t - t_previous_spike_ );
   }
 
   if ( t_spike >= t_next_update_ + shift )
@@ -400,20 +400,20 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
     long t_current_update_ = idx_current_update * update_interval;
     long current_optimization_step_ = 1 + idx_current_update / cp.batch_size_;
 
-    target->write_update_to_history( t_last_update_, t_current_update_ );
+    target->write_update_to_history( t_previous_update_, t_current_update_ );
 
     update_gradient( target, cp );
 
-    if ( last_optimization_step_ < current_optimization_step_ )
-      optimize( current_optimization_step_, last_optimization_step_, cp );
+    if ( optimization_step_ < current_optimization_step_ )
+      optimize( current_optimization_step_, optimization_step_, cp );
 
-    t_last_update_ = t_current_update_;
+    t_previous_update_ = t_current_update_;
     t_next_update_ = t_current_update_ + update_interval;
 
-    t_last_trigger_spike_ = t_spike;
+    t_previous_trigger_spike_ = t_spike;
   }
 
-  t_last_spike_ = t_spike;
+  t_previous_spike_ = t_spike;
 
   e.set_receiver( *target );
   e.set_weight( weight_ );
@@ -425,17 +425,17 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
 template < typename targetidentifierT >
 inline void
 eprop_synapse< targetidentifierT >::optimize( long current_optimization_step_,
-  long& last_optimization_step_,
+  long& optimization_step_,
   const EpropCommonProperties& cp )
 {
   sum_grads_ /= cp.batch_size_; // mean over batches
 
   if ( cp.optimizer_ == "adam" )
   {
-    for ( ; last_optimization_step_ < current_optimization_step_; ++last_optimization_step_ )
+    for ( ; optimization_step_ < current_optimization_step_; ++optimization_step_ )
     {
-      double adam_beta1_factor = 1.0 - std::pow( cp.adam_beta1_, last_optimization_step_ );
-      double adam_beta2_factor = 1.0 - std::pow( cp.adam_beta2_, last_optimization_step_ );
+      double adam_beta1_factor = 1.0 - std::pow( cp.adam_beta1_, optimization_step_ );
+      double adam_beta2_factor = 1.0 - std::pow( cp.adam_beta2_, optimization_step_ );
 
       double alpha_t = eta_ * std::sqrt( adam_beta2_factor ) / adam_beta1_factor;
 
@@ -451,7 +451,7 @@ eprop_synapse< targetidentifierT >::optimize( long current_optimization_step_,
   else if ( cp.optimizer_ == "gradient_descent" )
   {
     weight_ -= eta_ * sum_grads_;
-    last_optimization_step_ = current_optimization_step_;
+    optimization_step_ = current_optimization_step_;
   }
 
   if ( weight_ > Wmax_ )
@@ -469,11 +469,11 @@ eprop_synapse< targetidentifierT >::eprop_synapse()
   , eta_( 0.0001 )
   , Wmin_( 0.0 )
   , Wmax_( 100.0 )
-  , last_optimization_step_( 1 )
-  , t_last_spike_( 0 )
-  , t_last_update_( 0 )
+  , optimization_step_( 1 )
+  , t_previous_spike_( 0 )
+  , t_previous_update_( 0 )
   , t_next_update_( 1000 )
-  , t_last_trigger_spike_( 0 )
+  , t_previous_trigger_spike_( 0 )
   , tau_m_readout_( 10.0 )
   , kappa_( 0.0 )
   , adam_m_( 0.0 )

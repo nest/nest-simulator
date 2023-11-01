@@ -78,7 +78,7 @@ rate :math:`f^\text{av}_j` of the postsynaptic neuron close to a target firing r
   \sum_t \frac{1}{Tn_\text{trial}} \left( f^\text{target}-f^\text{av}_j\right)e_{ji}^t,
 
 whereby :math:`c_\text{reg}` scales the overall regularization and the average
-is taken over the time that passed since the last update, that is, the number of
+is taken over the time that passed since the previous update, that is, the number of
 trials :math:`n_\text{trials}` times the duration of an update interval :math:`T`.
 
 The overall recurrent weight update is given by adding :math:`\Delta W_{ji}^\text{rec}`
@@ -238,7 +238,7 @@ eprop_synapse_readout< targetidentifierT >::update_gradient( EpropArchivingNode*
   const EpropCommonProperties& cp )
 {
   std::deque< HistEntryEpropArchive >::iterator it_eprop_hist;
-  target->get_eprop_history( this->t_last_trigger_spike_, &it_eprop_hist );
+  target->get_eprop_history( this->t_previous_trigger_spike_, &it_eprop_hist );
 
   double z_bar = 0.0;
   double grad = 0.0;

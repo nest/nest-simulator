@@ -52,21 +52,21 @@ public:
 
   void init_update_history();
 
-  void erase_unneeded_update_history();
-  void erase_unneeded_eprop_history();
-  void erase_unneeded_firing_rate_reg_history();
-
+  void write_update_to_history( long t_previous_update, long t_current_update );
+  void write_eprop_parameter_to_map( std::string parameter_name, double parameter_value );
   void write_surrogate_gradient_to_history( long time_step, double surrogate_gradient );
   void write_error_signal_to_history( long time_step, double error_signal );
   void write_learning_signal_to_history( long& time_step, long& delay_out_rec, double& weight, double& error_signal );
-  void write_update_to_history( long t_previous_update, long t_current_update );
   void write_firing_rate_reg_to_history( long t_current_update, double f_target, double c_reg );
-  void write_eprop_parameter_to_map( std::string parameter_name, double parameter_value );
 
   const long get_shift() const;
-  double get_firing_rate_reg( long time_step );
-  void get_eprop_history( long time_step, std::deque< HistEntryEpropArchive >::iterator* it );
   std::map< std::string, double >& get_eprop_parameter_map();
+  void get_eprop_history( long time_step, std::deque< HistEntryEpropArchive >::iterator* it );
+  double get_firing_rate_reg( long time_step );
+
+  void erase_unneeded_update_history();
+  void erase_unneeded_eprop_history();
+  void erase_unneeded_firing_rate_reg_history();
 
   void add_spike_to_counter();
   void reset_spike_counter();

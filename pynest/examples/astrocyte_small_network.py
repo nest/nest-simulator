@@ -21,12 +21,12 @@
 
 """
 A small neuron-astrocyte network
-------------------------------------------------------------
+--------------------------------
 
 This script shows how to create an astrocyte-neuron network in NEST. The network
-in this script includes 20 neurons and five astrocytes. The astrocyte is modeled
+in this script includes 20 neurons and five astrocytes. The astrocytes are modeled
 with ``astrocyte_lr_1994``, implemented according to [1]_, [2]_, and [3]_. The
-neuron is modeled with ``aeif_cond_alpha_astro``, an adaptive exponential
+neurons are modeled with ``aeif_cond_alpha_astro``, an adaptive exponential
 integrate-and-fire neuron supporting neuron-astrocyte interactions.
 
 The network is created with the TripartiteConnect() function and the
@@ -59,9 +59,9 @@ The available connectivity parameters are as follows:
     target neuron can only be connected to astrocytes selected from its pool.
 
   * ``pool_type``: The way to determine the astrocyte pool for each target
-    neuron. If specified "random", a number (``pool_size``) of astrocytes are
-    randomly chosen from all astrocytes and assigned as the pool. If specified
-    "block", the astrocytes are evenly distributed to the neurons in blocks
+    neuron. If ``"random"``, a number (``pool_size``) of astrocytes are
+    randomly chosen from all astrocytes (without replacement) and assigned as the pool. If
+    ``"block"``, the astrocytes are evenly distributed to the neurons in blocks
     without overlapping, and the specified ``pool_size`` has to be compatible
     with this arrangement.
 
@@ -73,11 +73,11 @@ The available connectivity parameters are as follows:
 
   * ``third_out``: specifications for the connections from astrocytes to neurons.
 
-In this script, the network is created with the ``pool_type`` being "block".
+In this script, the network is created with the ``pool_type`` being ``"block"``.
 ``p_primary`` and ``p_third_if_primary`` are both set to one, so that all possible
 connections are made. It can be seen from the result plot "connections.png" that
-"block" distributes the astrocytes evenly to the postsynaptic neurons in blocks
-without overlapping. The ``pool_size`` should be compatible with this
+``"block"`` distributes the astrocytes evenly to the postsynaptic neurons in blocks
+without overlapping. The ``pool_size`` must be compatible with this
 arrangement. In the case here, a ``pool_size`` of one is required.
 
 With the created network, neuron-astrocyte interactions can be observed. The

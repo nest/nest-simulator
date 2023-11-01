@@ -332,7 +332,7 @@ def TripartiteConnect(pre, post, third, conn_spec, syn_specs=None):
 
      - 'tripartite_bernoulli_with_pool'
 
-    See :ref:`tripartite_conn_rules` for more details, including example usage.
+    See :ref:`tripartite_connectivity` for more details and :doc:`astrocyte_small_network` and :doc:`astrocyte_brunel` for examples.
 
     **Synapse specifications (syn_specs)**
 

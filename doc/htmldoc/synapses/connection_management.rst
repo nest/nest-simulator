@@ -256,6 +256,86 @@ must be ``True``.
                       'allow_autapses': False, 'make_symmetric': True}
     nest.Connect(A, B, conn_spec_dict)
 
+.. _tripartite_connectivity:
+
+Tripartite connectivity
+-----------------------
+
+NEST supports creating connections of three node populations using the
+:py:func:`.TripartiteConnect` function:
+
+.. code-block:: python
+
+    TripartiteConnect(pre, post, third, conn_spec)
+    TripartiteConnect(pre, post, third, conn_spec, syn_specs)
+
+``pre``, ``post``, and ``third`` are ``NodeCollections``, defining the nodes of
+origin (`sources`) and termination (`targets`) as well as the third
+factor to be included. Details of the connections created depend on
+the connection rule used.
+
+``conn_spec`` must be provided and must specify a tripartite
+connection rule.
+
+``syn_specs`` is a dictionary of the form
+
+.. code-block:: python
+
+    {"primary": <syn_spec>,
+     "third_in": <syn_spec>,
+     "third_out": <syn_spec>}
+
+where the individual ``syn_spec`` elements follow the same rules as
+for the :py:func:`.Connect` function. Any of the three elements can be
+left out, in which case the synapse specification defaults to
+``"static_synapse"``. The ``"primary"`` synapse specification applies
+to connections between ``pre`` and ``post`` nodes, the ``"third_in"``
+specification to connections between ``pre`` and ``third`` nodes and
+the ``"third_out"`` specification to connections between ``third`` and
+``post`` nodes.
+
+tripartite_bernoulli_with_pool
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For each possible pair of nodes from ``A`` and ``B``, a connection is
+created with probability ``p_primary``, and these connections are
+called "primary" connections. For each primary connection, a
+third-party connection to a node from ``T`` is created with the
+conditional probability ``p_third_if_primary``. The node from ``T`` to
+connect to is chosen at random from a pool, a subset of the nodes in
+``T``. By default, this pool is all of ``T``.
+
+Pool formation is controlled by parameters ``pool_type``, which can be ``"random"``
+(default) or ``"block"``, and ``pool_size`` which must be between 1
+and the size of ``T`` (default). For random pools, for each node from
+``B``, ``pool_size`` nodes from ``T`` are chosen randomly without
+replacement.
+
+For block pools, two variants exist. Let ``n(B)`` and ``n(T)`` be the number of
+nodes in ``B`` and ``T``, respectively. If ``pool_size == 1``, the
+first ``n(B)/n(T)`` nodes in ``B`` get are assigned the first node in
+``T`` as their pool, the second ``n(B)/n(T)`` nodes in ``B`` the
+second node in ``T`` and so forth. In this case, ``n(B)`` must be a
+multiple of ``n(T)``. If ``pool_size > 1``, the first ``pool_size``
+elements of ``T`` are the pool for the first node in ``B``, the
+second ``pool_size`` elements of ``T`` are the pool for the second
+node in ``B`` and so forth. In this case, ``n(B) * pool_size == n(T)``
+is required.
+
+.. code-block:: python
+
+    A = nest.Create('aeif_cond_alpha_astro', 10)
+    B = nest.Create('aeif_cond_alpha_astro', 20)
+    T = nest.Create('astrocyte_lr_1994', 5)
+    conn_spec_dict = {'rule': 'tripartite_bernoulli_with_pool',
+                      'p_primary': 0.8,
+		      'p_third_if_primary': 0.5,
+                      'pool_type': 'random',
+		      'pool_size': 3}
+    syn_specs_dict = {'third_out': 'sic_connection'}
+    nest.TripartiteConnect(A, B, T, conn_spec_dict, syn_specs_dict)
+
+
 .. _synapse_spec:
 
 Synapse Specification

@@ -287,7 +287,14 @@ public:
 
   void send( Event& e, size_t thread, const EpropCommonProperties& cp );
 
-  void optimize( long current_optimization_step_, long& optimization_step_, const EpropCommonProperties& cp );
+  void optimize_via_gradient_descent( long current_optimization_step_,
+    long& optimization_step_,
+    const EpropCommonProperties& cp );
+  void optimize_via_adam( long current_optimization_step_, long& optimization_step_, const EpropCommonProperties& cp );
+
+  void ( eprop_synapse::*optimize )( long current_optimization_step_,
+    long& optimization_step_,
+    const EpropCommonProperties& cp );
 
   virtual void update_gradient( EpropArchivingNode* target, const EpropCommonProperties& cp ) {};
 
@@ -310,7 +317,7 @@ public:
   };
 
   void
-  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& cp )
   {
     bool is_source_recurrent_neuron =
       s.get_name() == "eprop_iaf_psc_delta" or s.get_name() == "eprop_iaf_psc_delta_adapt";
@@ -330,6 +337,15 @@ public:
 
     long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
     t_next_update_ = update_interval;
+
+    if ( cp.optimizer_ == "adam" )
+    {
+      optimize = &eprop_synapse::optimize_via_adam;
+    }
+    else if ( cp.optimizer_ == "gradient_descent" )
+    {
+      optimize = &eprop_synapse::optimize_via_gradient_descent;
+    }
   }
 
   void
@@ -397,7 +413,13 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
     update_gradient( target, cp );
 
     if ( optimization_step_ < current_optimization_step_ )
-      optimize( current_optimization_step_, optimization_step_, cp );
+    {
+      sum_grads_ /= cp.batch_size_; // mean over batches
+
+      ( this->*optimize )( current_optimization_step_, optimization_step_, cp );
+
+      weight_ = std::max( Wmin_, std::min( weight_, Wmax_ ) );
+    }
 
     t_previous_update_ = t_current_update_;
     t_next_update_ = t_current_update_ + update_interval;
@@ -416,42 +438,36 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
 
 template < typename targetidentifierT >
 inline void
-eprop_synapse< targetidentifierT >::optimize( long current_optimization_step_,
+eprop_synapse< targetidentifierT >::optimize_via_gradient_descent( long current_optimization_step_,
   long& optimization_step_,
   const EpropCommonProperties& cp )
 {
-  sum_grads_ /= cp.batch_size_; // mean over batches
-
-  if ( cp.optimizer_ == "adam" )
-  {
-    for ( ; optimization_step_ < current_optimization_step_; ++optimization_step_ )
-    {
-      double adam_beta1_factor = 1.0 - std::pow( cp.adam_beta1_, optimization_step_ );
-      double adam_beta2_factor = 1.0 - std::pow( cp.adam_beta2_, optimization_step_ );
-
-      double alpha_t = eta_ * std::sqrt( adam_beta2_factor ) / adam_beta1_factor;
-
-      adam_m_ = cp.adam_beta1_ * adam_m_ + ( 1.0 - cp.adam_beta1_ ) * sum_grads_;
-      adam_v_ = cp.adam_beta2_ * adam_v_ + ( 1.0 - cp.adam_beta2_ ) * sum_grads_ * sum_grads_;
-
-      weight_ -= alpha_t * adam_m_ / ( std::sqrt( adam_v_ ) + cp.adam_epsilon_ );
-
-      sum_grads_ = 0.0; // reset for following iterations
-      // since more than 1 cycle through loop indicates past learning periods with vanishing gradients
-    }
-  }
-  else if ( cp.optimizer_ == "gradient_descent" )
-  {
-    weight_ -= eta_ * sum_grads_;
-    optimization_step_ = current_optimization_step_;
-  }
-
-  if ( weight_ > Wmax_ )
-    weight_ = Wmax_;
-  if ( weight_ < Wmin_ )
-    weight_ = Wmin_;
-
+  weight_ -= eta_ * sum_grads_;
+  optimization_step_ = current_optimization_step_;
   sum_grads_ = 0.0;
+}
+
+template < typename targetidentifierT >
+inline void
+eprop_synapse< targetidentifierT >::optimize_via_adam( long current_optimization_step_,
+  long& optimization_step_,
+  const EpropCommonProperties& cp )
+{
+  for ( ; optimization_step_ < current_optimization_step_; ++optimization_step_ )
+  {
+    double adam_beta1_factor = 1.0 - std::pow( cp.adam_beta1_, optimization_step_ );
+    double adam_beta2_factor = 1.0 - std::pow( cp.adam_beta2_, optimization_step_ );
+
+    double alpha_t = eta_ * std::sqrt( adam_beta2_factor ) / adam_beta1_factor;
+
+    adam_m_ = cp.adam_beta1_ * adam_m_ + ( 1.0 - cp.adam_beta1_ ) * sum_grads_;
+    adam_v_ = cp.adam_beta2_ * adam_v_ + ( 1.0 - cp.adam_beta2_ ) * sum_grads_ * sum_grads_;
+
+    weight_ -= alpha_t * adam_m_ / ( std::sqrt( adam_v_ ) + cp.adam_epsilon_ );
+
+    sum_grads_ = 0.0; // reset for following iterations
+    // since more than 1 cycle through loop indicates past learning periods with vanishing gradients
+  }
 }
 
 template < typename targetidentifierT >

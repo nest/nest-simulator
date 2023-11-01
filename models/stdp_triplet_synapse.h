@@ -119,6 +119,8 @@ EndUserDocs */
 // (used for pointer / target index addressing)
 // derived from generic connection template
 
+void register_stdp_triplet_synapse( const std::string& name );
+
 template < typename targetidentifierT >
 class stdp_triplet_synapse : public Connection< targetidentifierT >
 {

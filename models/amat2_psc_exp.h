@@ -160,6 +160,8 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 
 EndUserDocs */
 
+void register_amat2_psc_exp( const std::string& name );
+
 class amat2_psc_exp : public ArchivingNode
 {
 

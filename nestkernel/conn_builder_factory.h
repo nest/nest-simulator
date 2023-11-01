@@ -49,10 +49,18 @@ public:
   virtual ~GenericConnBuilderFactory()
   {
   }
+
+  /**
+   * Factory method for builders for bi-partite connection rules (the default).
+   */
   virtual ConnBuilder* create( NodeCollectionPTR,
     NodeCollectionPTR,
     const DictionaryDatum&,
     const std::vector< DictionaryDatum >& ) const = 0;
+
+  /**
+   * Factory method for builders for tri-partite connection rules.
+   */
   virtual ConnBuilder* create( NodeCollectionPTR,
     NodeCollectionPTR,
     NodeCollectionPTR,
@@ -61,7 +69,12 @@ public:
 };
 
 /**
- * Factory class for normal ConnBuilders
+ * Factory class for ConnBuilders
+ *
+ * This template class provides an interface with bipartite and tripartite `create()` methods.
+ * Implementation is delegated to explicit template specialisations below, which only implement
+ * the `create()` method with the proper arity depending on the `is_tripartite` flag of
+ * the pertaining conn builder.
  */
 template < typename ConnBuilderType, bool is_tripartite = ConnBuilderType::is_tripartite >
 class ConnBuilderFactory : public GenericConnBuilderFactory
@@ -89,7 +102,7 @@ public:
 };
 
 
-// Specialisation for normal ConnBuilders
+// Specialisation for bipartite ConnBuilders
 template < typename ConnBuilderType >
 class ConnBuilderFactory< ConnBuilderType, false > : public GenericConnBuilderFactory
 {
@@ -102,7 +115,6 @@ class ConnBuilderFactory< ConnBuilderType, false > : public GenericConnBuilderFa
     return new ConnBuilderType( sources, targets, conn_spec, syn_specs );
   }
 
-  //! create tripartite builder
   ConnBuilder*
   create( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
@@ -129,7 +141,6 @@ class ConnBuilderFactory< ConnBuilderType, true > : public GenericConnBuilderFac
       String::compose( "Connection rule %1 only supports tripartite connections.", ( *conn_spec )[ names::rule ] ) );
   }
 
-  //! create tripartite builder
   ConnBuilder*
   create( NodeCollectionPTR sources,
     NodeCollectionPTR targets,

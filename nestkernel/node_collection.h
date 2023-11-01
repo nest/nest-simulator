@@ -164,7 +164,7 @@ public:
   bool operator<=( const nc_const_iterator& rhs ) const;
 
   nc_const_iterator& operator++();
-  nc_const_iterator operator++( int ); // post-fix
+  nc_const_iterator operator++( int ); // postfix
   nc_const_iterator& operator+=( const size_t );
   nc_const_iterator operator+( const size_t ) const;
 

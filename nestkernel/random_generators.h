@@ -123,6 +123,8 @@ public:
 
   /**
    * @brief Wrap std::sample for selection from NodeCollection
+   *
+   * Inserts random sample without replacement of size n from range `[first, last)`into `dest`.
    */
   virtual void sample( NodeCollection::const_iterator first,
     NodeCollection::const_iterator last,
@@ -279,7 +281,6 @@ public:
     return uniform_ulong_dist_( rng_, param );
   }
 
-  //! Wrapper for std::sample() from C++17
   inline void
   sample( NodeCollection::const_iterator first,
     NodeCollection::const_iterator last,

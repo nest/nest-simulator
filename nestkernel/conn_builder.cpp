@@ -1643,7 +1643,7 @@ nest::TripartiteBernoulliWithPoolBuilder::TripartiteBernoulliWithPoolBuilder( No
 
   if ( p_primary_ < 0 or 1 < p_primary_ )
   {
-    throw BadProperty( "Probability of neuron-neuron connections 0 ≤ p ≤ 1 required" );
+    throw BadProperty( "Probability of primary connection 0 ≤ p_primary ≤ 1 required" );
   }
 
   if ( p_third_if_primary_ < 0 or 1 < p_third_if_primary_ )
@@ -1687,7 +1687,10 @@ nest::TripartiteBernoulliWithPoolBuilder::connect_()
 
     try
     {
-      // use RNG generating same number sequence on all threads
+      /* Random number generators:
+       * - Use RNG generating same number sequence on all threads to decide which connections to create
+       * - Use per-thread random number generator to randomize connection properties
+       */
       RngPtr synced_rng = get_vp_synced_rng( tid );
       RngPtr rng = get_vp_specific_rng( tid );
 

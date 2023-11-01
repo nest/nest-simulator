@@ -95,12 +95,14 @@ public:
   template < typename ConnBuilder >
   void register_conn_builder( const std::string& name );
 
+  //! Obtain builder for bipartite connections
   ConnBuilder* get_conn_builder( const std::string& name,
     NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
     const std::vector< DictionaryDatum >& syn_specs );
 
+  //! Obtain builder for tripartite connections
   ConnBuilder* get_conn_builder( const std::string& name,
     NodeCollectionPTR sources,
     NodeCollectionPTR targets,
@@ -184,7 +186,8 @@ public:
   /**
    * @brief Create tripartite connections
    *
-   * @note `synapse_specs` is dictionary `{"primary": <syn_spec>, "third_in": <syn_spec>, "third_out": <syn_spec>}`
+   * @note `synapse_specs` is dictionary `{"primary": <syn_spec>, "third_in": <syn_spec>, "third_out": <syn_spec>}`; all
+   * keys are optional
    */
   void connect_tripartite( NodeCollectionPTR sources,
     NodeCollectionPTR targets,

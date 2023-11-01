@@ -229,7 +229,6 @@ private:
 
   struct Variables_
   {
-    bool in_learning_window_;
     double P30_;
     double P33_; //!< corresponds to kappa in eprop_synapse
     double P33_complement_;

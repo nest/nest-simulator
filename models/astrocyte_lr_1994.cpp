@@ -490,16 +490,6 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
   kernel().event_delivery_manager.send_secondary( *this, sic );
 }
 
-/**
- * Default implementation of register_stdp_connection( const std::string& name )
- * throws IllegalConnection
- */
-void
-nest::astrocyte_lr_1994::register_stdp_connection( double, double )
-{
-  throw IllegalConnection( "The target node does not support STDP synapses." );
-}
-
 void
 nest::astrocyte_lr_1994::handle( SpikeEvent& e )
 {

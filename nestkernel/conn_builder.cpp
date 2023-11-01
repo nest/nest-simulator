@@ -1611,6 +1611,7 @@ nest::TripartiteBernoulliWithPoolBuilder::TripartiteBernoulliWithPoolBuilder( No
   : ConnBuilder( sources,
     targets,
     conn_spec,
+    // const_cast here seems required, clang complains otherwise; try to clean up when Datums disappear
     const_cast< std::map< Name, std::vector< DictionaryDatum > >& >( syn_specs )[ names::primary ] )
   , third_( third )
   , third_in_builder_( sources,

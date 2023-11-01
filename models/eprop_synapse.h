@@ -323,7 +323,12 @@ public:
   void
   check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
-    is_source_recurrent_neuron = s.get_name() == "eprop_iaf_psc_delta" or s.get_name() == "eprop_iaf_psc_delta_adapt";
+    bool is_source_recurrent_neuron =
+      s.get_name() == "eprop_iaf_psc_delta" or s.get_name() == "eprop_iaf_psc_delta_adapt";
+    bool is_target_recurrent_neuron =
+      t.get_name() == "eprop_iaf_psc_delta" or t.get_name() == "eprop_iaf_psc_delta_adapt";
+
+    is_recurrent_to_recurrent_conn_ = is_source_recurrent_neuron and is_target_recurrent_neuron;
 
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -359,7 +364,7 @@ protected:
   double adam_m_;        // auxiliary variable for Adam optimizer
   double adam_v_;        // auxiliary variable for Adam optimizer
   double sum_grads_;     // sum of the gradients in one batch
-  bool is_source_recurrent_neuron;
+  bool is_recurrent_to_recurrent_conn_;
 
   std::vector< long > presyn_isis_;
 };
@@ -380,7 +385,7 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
 
   long interval_step = ( t_spike - shift ) % update_interval;
 
-  if ( is_source_recurrent_neuron and interval_step == 0 )
+  if ( is_recurrent_to_recurrent_conn_ and interval_step == 0 )
     return;
 
   if ( t_last_trigger_spike_ == 0 )

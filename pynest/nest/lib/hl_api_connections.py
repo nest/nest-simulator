@@ -36,7 +36,7 @@ from .hl_api_connection_helpers import (
     _process_syn_spec,
 )
 from .hl_api_helper import is_string
-from .hl_api_types import NodeCollection, SynapseCollection
+from .hl_api_types import CollocatedSynapses, NodeCollection, SynapseCollection
 
 __all__ = [
     "Connect",
@@ -379,7 +379,7 @@ def TripartiteConnect(pre, post, third, conn_spec, syn_specs=None):
     if not isinstance(third, NodeCollection):
         raise TypeError("Third-factor nodes must be a NodeCollection")
 
-    # Normalize syn_specs: ensure all three entries are in place and do not contain lists
+    # Normalize syn_specs: ensure all three entries are in place, are collocated synapses and do not contain lists
     syn_specs = syn_specs if syn_specs is not None else dict()
     SYN_KEYS = {"primary", "third_in", "third_out"}
     for key in SYN_KEYS:
@@ -387,8 +387,12 @@ def TripartiteConnect(pre, post, third, conn_spec, syn_specs=None):
             syn_specs[key] = {"synapse_model": "static_synapse"}
         elif isinstance(syn_specs[key], str):
             syn_specs[key] = {"synapse_model": syn_specs[key]}
-        else:
-            for entry, value in syn_specs[key].items():
+
+        if not isinstance(syn_specs[key], CollocatedSynapses):
+            syn_specs[key] = CollocatedSynapses(syn_specs[key])
+
+        for synspec in syn_specs[key].syn_specs:
+            for entry, value in synspec.items():
                 if isinstance(value, (list, tuple, numpy.ndarray)):
                     raise ValueError(
                         f"Tripartite connections do not accept parameter lists,"

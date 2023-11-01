@@ -1607,14 +1607,20 @@ nest::TripartiteBernoulliWithPoolBuilder::TripartiteBernoulliWithPoolBuilder( No
   NodeCollectionPTR targets,
   NodeCollectionPTR third,
   const DictionaryDatum& conn_spec,
-  const DictionaryDatum& syn_specs )
-  : ConnBuilder( sources, targets, conn_spec, { getValue< DictionaryDatum >( ( *syn_specs )[ names::primary ] ) } )
+  const std::map< Name, std::vector< DictionaryDatum > >& syn_specs )
+  : ConnBuilder( sources,
+    targets,
+    conn_spec,
+    const_cast< std::map< Name, std::vector< DictionaryDatum > >& >( syn_specs )[ names::primary ] )
   , third_( third )
-  , third_in_builder_( sources, third, conn_spec, { getValue< DictionaryDatum >( ( *syn_specs )[ names::third_in ] ) } )
+  , third_in_builder_( sources,
+      third,
+      conn_spec,
+      const_cast< std::map< Name, std::vector< DictionaryDatum > >& >( syn_specs )[ names::third_in ] )
   , third_out_builder_( third,
       targets,
       conn_spec,
-      { getValue< DictionaryDatum >( ( *syn_specs )[ names::third_out ] ) } )
+      const_cast< std::map< Name, std::vector< DictionaryDatum > >& >( syn_specs )[ names::third_out ] )
   , p_primary_( 1.0 )
   , p_third_if_primary_( 1.0 )
   , random_pool_( true )

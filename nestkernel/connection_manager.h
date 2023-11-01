@@ -108,7 +108,7 @@ public:
     NodeCollectionPTR targets,
     NodeCollectionPTR third,
     const DictionaryDatum& conn_spec,
-    const DictionaryDatum& syn_specs );
+    const std::map< Name, std::vector< DictionaryDatum > >& syn_specs );
 
   /**
    * Create connections.
@@ -193,7 +193,7 @@ public:
     NodeCollectionPTR targets,
     NodeCollectionPTR third,
     const DictionaryDatum& connectivity,
-    const DictionaryDatum& synapse_specs );
+    const std::map< Name, std::vector< DictionaryDatum > >& synapse_specs );
 
   size_t find_connection( const size_t tid, const synindex syn_id, const size_t snode_id, const size_t tnode_id );
 

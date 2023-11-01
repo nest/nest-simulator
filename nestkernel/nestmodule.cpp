@@ -779,7 +779,21 @@ NestModule::ConnectTripartite_g_g_g_D_DFunction::execute( SLIInterpreter* i ) co
   NodeCollectionDatum targets = getValue< NodeCollectionDatum >( i->OStack.pick( 3 ) );
   NodeCollectionDatum third = getValue< NodeCollectionDatum >( i->OStack.pick( 2 ) );
   DictionaryDatum connectivity = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
-  DictionaryDatum synapse_specs = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+  DictionaryDatum synapse_specs_dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+
+  std::map< Name, std::vector< DictionaryDatum > > synapse_specs {
+    { names::primary, {} }, { names::third_in, {} }, { names::third_out, {} }
+  };
+
+  for ( auto& [ key, syn_spec_array ] : synapse_specs )
+  {
+    ArrayDatum spec = getValue< ArrayDatum >( ( *synapse_specs_dict )[ key ] );
+
+    for ( auto syn_param : spec )
+    {
+      syn_spec_array.push_back( getValue< DictionaryDatum >( syn_param ) );
+    }
+  }
 
   // dictionary access checking is handled by connect
   connect_tripartite( sources, targets, third, connectivity, synapse_specs );

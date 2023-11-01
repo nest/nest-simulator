@@ -369,7 +369,7 @@ nest::ConnectionManager::get_conn_builder( const std::string& name,
   NodeCollectionPTR targets,
   NodeCollectionPTR third,
   const DictionaryDatum& conn_spec,
-  const DictionaryDatum& syn_specs )
+  const std::map< Name, std::vector< DictionaryDatum > >& syn_specs )
 {
   const size_t rule_id = connruledict_->lookup( name );
   ConnBuilder* cb = connbuilder_factories_.at( rule_id )->create( sources, targets, third, conn_spec, syn_specs );
@@ -764,7 +764,7 @@ nest::ConnectionManager::connect_tripartite( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   NodeCollectionPTR third,
   const DictionaryDatum& conn_spec,
-  const DictionaryDatum& syn_specs )
+  const std::map< Name, std::vector< DictionaryDatum > >& syn_specs )
 {
   if ( sources->empty() )
   {
@@ -780,7 +780,13 @@ nest::ConnectionManager::connect_tripartite( NodeCollectionPTR sources,
   }
 
   conn_spec->clear_access_flags();
-  syn_specs->clear_access_flags();
+  for ( auto& [ key, syn_spec_array ] : syn_specs )
+  {
+    for ( auto& syn_spec : syn_spec_array )
+    {
+      syn_spec->clear_access_flags();
+    }
+  }
 
   if ( not conn_spec->known( names::rule ) )
   {
@@ -797,7 +803,13 @@ nest::ConnectionManager::connect_tripartite( NodeCollectionPTR sources,
 
   // at this point, all entries in conn_spec and syn_spec have been checked
   ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries in conn_spec: " );
-  ALL_ENTRIES_ACCESSED( *syn_specs, "Connect", "Unread dictionary entries in syn_specs: " );
+  for ( auto& [ key, syn_spec_array ] : syn_specs )
+  {
+    for ( auto& syn_spec : syn_spec_array )
+    {
+      ALL_ENTRIES_ACCESSED( *syn_spec, "Connect", "Unread dictionary entries in syn_specs: " );
+    }
+  }
 
   // Set flag before calling cb->connect() in case exception is thrown after some connections have been created.
   set_connections_have_changed();

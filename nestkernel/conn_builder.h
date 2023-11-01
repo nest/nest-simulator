@@ -507,7 +507,7 @@ public:
     NodeCollectionPTR targets,
     NodeCollectionPTR third,
     const DictionaryDatum& conn_spec,
-    const DictionaryDatum& syn_specs );
+    const std::map< Name, std::vector< DictionaryDatum > >& syn_specs );
 
   static constexpr bool is_tripartite = true;
 

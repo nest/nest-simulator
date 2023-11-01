@@ -102,7 +102,7 @@ void connect_tripartite( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   NodeCollectionPTR third,
   const DictionaryDatum& connectivity,
-  const DictionaryDatum& synapse_specs );
+  const std::map< Name, std::vector< DictionaryDatum > >& synapse_specs );
 
 /**
  * @brief Connect arrays of node IDs one-to-one

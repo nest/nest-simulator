@@ -192,7 +192,7 @@ connect_tripartite( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   NodeCollectionPTR third,
   const DictionaryDatum& connectivity,
-  const DictionaryDatum& synapse_specs )
+  const std::map< Name, std::vector< DictionaryDatum > >& synapse_specs )
 {
   kernel().connection_manager.connect_tripartite( sources, targets, third, connectivity, synapse_specs );
 }

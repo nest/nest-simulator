@@ -65,7 +65,7 @@ public:
     NodeCollectionPTR,
     NodeCollectionPTR,
     const DictionaryDatum&,
-    const DictionaryDatum& ) const = 0;
+    const std::map< Name, std::vector< DictionaryDatum > >& ) const = 0;
 };
 
 /**
@@ -95,7 +95,7 @@ public:
     NodeCollectionPTR targets,
     NodeCollectionPTR third,
     const DictionaryDatum& conn_spec,
-    const DictionaryDatum& syn_specs ) const override
+    const std::map< Name, std::vector< DictionaryDatum > >& syn_specs ) const override
   {
     assert( false ); // only specialisations should be called
   }
@@ -120,7 +120,7 @@ class ConnBuilderFactory< ConnBuilderType, false > : public GenericConnBuilderFa
     NodeCollectionPTR targets,
     NodeCollectionPTR third,
     const DictionaryDatum& conn_spec,
-    const DictionaryDatum& syn_specs ) const override
+    const std::map< Name, std::vector< DictionaryDatum > >& syn_specs ) const override
   {
     throw IllegalConnection( String::compose(
       "Connection rule '%1' does not support tripartite connections.", ( *conn_spec )[ names::rule ] ) );
@@ -146,7 +146,7 @@ class ConnBuilderFactory< ConnBuilderType, true > : public GenericConnBuilderFac
     NodeCollectionPTR targets,
     NodeCollectionPTR third,
     const DictionaryDatum& conn_spec,
-    const DictionaryDatum& syn_specs ) const override
+    const std::map< Name, std::vector< DictionaryDatum > >& syn_specs ) const override
   {
     return new ConnBuilderType( sources, targets, third, conn_spec, syn_specs );
   }

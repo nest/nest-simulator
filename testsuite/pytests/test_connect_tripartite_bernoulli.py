@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_connect_pairwise_bernoulli_astro.py
+# test_connect_tripartite_bernoulli.py
 #
 # This file is part of NEST.
 #

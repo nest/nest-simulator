@@ -27,41 +27,35 @@ import nest
 import numpy as np
 import pytest
 
+nest.set_verbosity("M_WARNING")
 
-def test_ConnectNeuronsWithEpropSynapse():
+supported_source_models = ["eprop_iaf_psc_delta", "eprop_iaf_psc_delta_adapt"]
+supported_target_models = supported_source_models + ["eprop_readout"]
+
+
+@pytest.mark.parametrize("source_model", supported_source_models)
+@pytest.mark.parametrize("target_model", supported_target_models)
+def test_connect_with_eprop_synapse(source_model, target_model):
     """Ensures that the restriction to supported neuron models works."""
 
-    nest.set_verbosity("M_WARNING")
-
-    supported_source_models = [
-        "eprop_iaf_psc_delta",
-        "eprop_iaf_psc_delta_adapt",
-    ]
-    supported_target_models = supported_source_models + ["eprop_readout"]
-
     # Connect supported models with e-prop synapse
-
-    for nms in supported_source_models:
-        for nmt in supported_target_models:
-            nest.ResetKernel()
-
-            ns = nest.Create(nms, 1)
-            nt = nest.Create(nmt, 1)
-
-            nest.Connect(ns, nt, {"rule": "all_to_all"}, {"synapse_model": "eprop_synapse"})
-
-    # Ensure that connecting not supported models fails
-
-    for nm in [n for n in nest.node_models if n not in supported_target_models]:
-        nest.ResetKernel()
-
-        n = nest.Create(nm, 2)
-
-        with pytest.raises(nest.kernel.NESTError):
-            nest.Connect(n, n, {"rule": "all_to_all"}, {"synapse_model": "eprop_synapse"})
+    src = nest.Create(source_model)
+    tgt = nest.Create(target_model)
+    nest.Connect(src, tgt, "all_to_all", {"synapse_model": "eprop_synapse"})
 
 
-def test_EpropRegression():
+@pytest.mark.parametrize("target_model", set(nest.node_models) - set(supported_target_models))
+def test_unsupported_model_raises(target_model):
+    """Confirm that connecting a non-eprop neuron as target via an eprop_synapse raises an error."""
+
+    src_nrn = nest.Create(supported_source_models[0])
+    tgt_nrn = nest.Create(target_model)
+
+    with pytest.raises(nest.kernel.NESTError):
+        nest.Connect(src_nrn, tgt_nrn, "all_to_all", {"synapse_model": "eprop_synapse"})
+
+
+def test_eprop_regression():
     """
     Test correct computation of weights for a regresion task  by comparing the simulated losses with
     losses obtained in a simulation with the original, verified NEST implementation and with the original
@@ -69,7 +63,6 @@ def test_EpropRegression():
     """
 
     # Initialize random generator
-
     rng_seed = 1
     np.random.seed(rng_seed)
 
@@ -340,7 +333,7 @@ def test_EpropRegression():
     assert np.all(loss - loss_TF_verification < 1e-6)
 
 
-def test_EpropClassification():
+def test_eprop_classification():
     """
     Test correct computation of weights for a classification task by comparing the simulated losses with
     losses obtained in a simulation with the original, verified NEST implementation and with the original

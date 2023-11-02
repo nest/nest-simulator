@@ -74,8 +74,8 @@ public:
 private:
   size_t n_spikes_ = 0;
 
-  // These shifts are, for now, hardcoded to 1 time step / 1 ms since the current implementation only works if all the
-  // delays are equal to the resolution of the simulation, i.e., 1 ms.
+  // These shifts are, for now, hardcoded to 1 time step since the current implementation only works if all the
+  // delays are equal to the resolution of the simulation.
 
   long offset_gen_ = 1;     //!< offset since generator signals start from time step 1
   long delay_in_rec_ = 1;   //!< connection delay from input to recurrent neurons

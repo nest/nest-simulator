@@ -60,7 +60,7 @@ recurrent neurons are thus given by:
    &= -\eta \sum_t L_j^t \mathcal{F}_\kappa \left( \psi^t_j \bar{z}_i^{t-1}\right) \\
    &= -\eta \sum_t L_j^t \sum_{t'\leq t} \kappa^{t-t'} \psi^t_j \mathcal{F}_\alpha\left( z_i^{t-1}\right)\,.
 
-If the postsynaptic neuron is a adaptive neuron, next to the membrane voltage, a
+If the postsynaptic neuron is an adaptive neuron, next to the membrane voltage, a
 second hidden state variable, the threshold adaptation, is present, which
 changes the eligibility trace:
 
@@ -212,52 +212,7 @@ public:
   std::string optimizer_;
 };
 
-EpropCommonProperties::EpropCommonProperties()
-  : CommonSynapseProperties()
-  , adam_beta1_( 0.9 )
-  , adam_beta2_( 0.999 )
-  , adam_epsilon_( 1e-8 )
-  , batch_size_( 1 )
-  , optimizer_( "gradient_descent" )
-{
-}
-
-void
-EpropCommonProperties::get_status( DictionaryDatum& d ) const
-{
-  CommonSynapseProperties::get_status( d );
-  def< double >( d, names::adam_beta1, adam_beta1_ );
-  def< double >( d, names::adam_beta2, adam_beta2_ );
-  def< double >( d, names::adam_epsilon, adam_epsilon_ );
-  def< long >( d, names::batch_size, batch_size_ );
-  def< std::string >( d, names::optimizer, optimizer_ );
-}
-
-void
-EpropCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm )
-{
-  CommonSynapseProperties::set_status( d, cm );
-  updateValue< double >( d, names::adam_beta1, adam_beta1_ );
-  updateValue< double >( d, names::adam_beta2, adam_beta2_ );
-  updateValue< double >( d, names::adam_epsilon, adam_epsilon_ );
-  updateValue< long >( d, names::batch_size, batch_size_ );
-  updateValue< std::string >( d, names::optimizer, optimizer_ );
-
-  if ( adam_beta1_ < 0.0 or 1.0 <= adam_beta1_ )
-    throw BadProperty( "adam_beta1 must be in [0,1)" );
-
-  if ( adam_beta2_ < 0.0 or 1.0 <= adam_beta2_ )
-    throw BadProperty( "adam_beta2 must be in [0,1)" );
-
-  if ( adam_epsilon_ < 0.0 )
-    throw BadProperty( "adam_epsilon must be >= 0" );
-
-  if ( batch_size_ <= 0 )
-    throw BadProperty( "batch_size must be > 0" );
-
-  if ( optimizer_ != "gradient_descent" and optimizer_ != "adam" )
-    throw BadProperty( "optimizer must be either \"gradient_descent\" or \"adam\"" );
-}
+void register_eprop_synapse( const std::string& name );
 
 template < typename targetidentifierT >
 class eprop_synapse : public Connection< targetidentifierT >

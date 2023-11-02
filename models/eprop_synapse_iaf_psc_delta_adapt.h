@@ -197,6 +197,8 @@ See also
 
 EndUserDocs */
 
+void register_eprop_synapse_iaf_psc_delta_adapt( const std::string& name );
+
 template < typename targetidentifierT >
 class eprop_synapse_iaf_psc_delta_adapt : public eprop_synapse< targetidentifierT >
 {

@@ -103,6 +103,8 @@ See also
 
 EndUserDocs */
 
+void register_eprop_learning_signal_connection( const std::string& name );
+
 template < typename targetidentifierT >
 class eprop_learning_signal_connection : public Connection< targetidentifierT >
 {

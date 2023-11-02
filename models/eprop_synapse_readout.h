@@ -198,6 +198,8 @@ See also
 
 EndUserDocs */
 
+void register_eprop_synapse_readout( const std::string& name );
+
 template < typename targetidentifierT >
 class eprop_synapse_readout : public eprop_synapse< targetidentifierT >
 {

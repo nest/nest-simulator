@@ -332,6 +332,7 @@ class TestSTDPPlSynapse:
         fname_snip="",
         title_snip="",
     ):
+        # pylint: disable=E0601
         fig, ax = plt.subplots(nrows=3)
 
         n_spikes = len(pre_spikes)

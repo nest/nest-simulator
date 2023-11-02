@@ -31,10 +31,20 @@
 #include "dict_util.h"
 #include "logging.h"
 
+// Includes from nestkernel:
+#include "model_manager_impl.h"
+#include "nest_impl.h"
+
 // Includes from sli:
 #include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
+
+void
+nest::register_correlation_detector( const std::string& name )
+{
+  register_node_model< correlation_detector >( name );
+}
 
 
 /* ----------------------------------------------------------------

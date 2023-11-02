@@ -26,6 +26,7 @@
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -34,6 +35,13 @@
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
+
+void
+nest::register_poisson_generator( const std::string& name )
+{
+  register_node_model< poisson_generator >( name );
+}
+
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter

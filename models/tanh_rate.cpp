@@ -22,8 +22,31 @@
 
 #include "tanh_rate.h"
 
+// Includes from nestkernel
+#include "kernel_manager.h"
+#include "model_manager_impl.h"
+#include "nest_impl.h"
+
 namespace nest
 {
+void
+register_tanh_rate_ipn( const std::string& name )
+{
+  register_node_model< tanh_rate_ipn >( name );
+}
+
+void
+register_tanh_rate_opn( const std::string& name )
+{
+  register_node_model< tanh_rate_opn >( name );
+}
+
+void
+register_rate_transformer_tanh( const std::string& name )
+{
+  register_node_model< rate_transformer_tanh >( name );
+}
+
 
 void
 nonlinearities_tanh_rate::get( DictionaryDatum& d ) const

@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
+r"""
 Supervised learning of a classification task with e-prop plasticity
 -------------------------------------------------------------------
 
@@ -76,10 +76,10 @@ Figure_3_and_S7_e_prop_tutorials/tutorial_evidence_accumulation_with_alif.py
 # ~~~~~~~~~~~~~~~~
 # We begin by importing all libraries required for the simulation, analysis, and visualization.
 
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 import nest
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib as mpl
 from cycler import cycler
 from IPython.display import Image
 

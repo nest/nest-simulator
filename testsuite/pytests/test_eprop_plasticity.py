@@ -23,9 +23,9 @@
 Test functionality of e-prop plasticity.
 """
 
-import pytest
 import nest
 import numpy as np
+import pytest
 
 
 def test_ConnectNeuronsWithEpropSynapse():

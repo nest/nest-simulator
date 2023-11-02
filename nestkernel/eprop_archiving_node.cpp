@@ -239,9 +239,9 @@ nest::EpropArchivingNode::erase_unneeded_firing_rate_reg_history()
 }
 
 void
-nest::EpropArchivingNode::add_spike_to_counter()
+nest::EpropArchivingNode::count_spike()
 {
-  n_spikes_++;
+  ++n_spikes_;
 }
 
 void

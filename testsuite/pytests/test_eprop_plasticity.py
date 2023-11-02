@@ -61,6 +61,7 @@ def test_eprop_regression():
     losses obtained in a simulation with the original, verified NEST implementation and with the original
     TensorFlow implementation.
     """
+    scale = 0.1
 
     # Initialize random generator
     rng_seed = 1
@@ -72,14 +73,27 @@ def test_eprop_regression():
     n_iter = 5
 
     steps = {
-        "recall": 1,
-        "recall_onset": 0,
-        "sequence": 100,
-        "shift": 4,
+        "sequence": int(1000 * scale),
     }
 
+    steps["learning_window"] = steps["sequence"]
     steps["task"] = n_iter * n_batch * steps["sequence"]
-    steps["sim"] = steps["task"] + steps["shift"]
+
+    steps.update(
+        {
+            "offset_gen": 1,
+            "delay_in_rec": 1,
+            "delay_rec_out": 1,
+            "delay_out_norm": 1,
+            "extension_sim": 1,
+        }
+    )
+
+    steps["total_offset"] = (
+        steps["offset_gen"] + steps["delay_in_rec"] + steps["delay_rec_out"] + steps["delay_out_norm"]
+    )
+
+    steps["sim"] = steps["task"] + steps["total_offset"] + steps["extension_sim"]
 
     duration = {"step": 1.0}
 
@@ -88,6 +102,7 @@ def test_eprop_regression():
     # Set up simulation
 
     params_setup = {
+        "eprop_learning_window": duration["learning_window"],
         "eprop_reset_neurons_on_update": True,
         "eprop_update_interval": duration["sequence"],
         "print_time": False,
@@ -100,8 +115,8 @@ def test_eprop_regression():
 
     # Create neurons
 
-    n_in = 10
-    n_rec = 10
+    n_in = int(100 * scale)
+    n_rec = int(100 * scale)
     n_out = 1
 
     params_nrn_rec = {
@@ -124,7 +139,6 @@ def test_eprop_regression():
         "E_L": 0.0,
         "I_e": 0.0,
         "loss": "mean_squared_error",
-        "start_learning": duration["recall_onset"],
         "tau_m": 30.0,
         "V_m": 0.0,
     }
@@ -141,9 +155,11 @@ def test_eprop_regression():
     n_record_w = 1
 
     params_mm_rec = {"record_from": ["V_m", "surrogate_gradient", "learning_signal"], "interval": duration["sequence"]}
+
     params_mm_out = {
         "record_from": ["V_m", "readout_signal", "target_signal", "error_signal"],
-        "interval": duration["sequence"],
+        "start": duration["total_offset"],
+        "interval": duration["step"],
     }
 
     params_wr = {
@@ -151,15 +167,12 @@ def test_eprop_regression():
         "targets": nrns_rec[:n_record_w] + nrns_out,
     }
 
-    nrns_rec_record = nrns_rec[:n_record]
-
     mm_rec = nest.Create("multimeter", params_mm_rec)
     mm_out = nest.Create("multimeter", params_mm_out)
     sr = nest.Create("spike_recorder")
     wr = nest.Create("weight_recorder", params_wr)
 
-    params_mm_out = {"record_from": ["V_m", "readout_signal", "target_signal", "error_signal"]}
-    mm_out = nest.Create("multimeter", params_mm_out)
+    nrns_rec_record = nrns_rec[:n_record]
 
     # Create connections
 
@@ -175,7 +188,6 @@ def test_eprop_regression():
 
     params_common_syn_eprop = {
         "batch_size": n_batch,
-        "recall_duration": duration["recall"],
         "optimizer": "gradient_descent",
         "weight_recorder": wr,
     }
@@ -244,18 +256,17 @@ def test_eprop_regression():
 
     # Create input
 
-    input_spike_rate = 0.05
-    spike_probability = duration["step"] * input_spike_rate
+    input_spike_prob = 0.05
     dtype_in_spks = np.float32
 
-    input_spike_bools = np.random.rand(n_batch, steps["sequence"], n_in) < spike_probability
+    input_spike_bools = np.random.rand(n_batch, steps["sequence"], n_in) < input_spike_prob
     input_spike_bools = np.hstack(input_spike_bools.swapaxes(1, 2))
     input_spike_bools[:, 0] = 0
 
-    sequence_starts = np.arange(0.0, duration["task"], duration["sequence"])
+    sequence_starts = np.arange(0.0, duration["task"], duration["sequence"]) + duration["offset_gen"]
     params_gen_spk_in = []
     for input_spike_bool in input_spike_bools:
-        input_spike_times = np.arange(duration["sequence"] * n_batch)[input_spike_bool]
+        input_spike_times = np.arange(0.0, duration["sequence"] * n_batch, duration["step"])[input_spike_bool]
         input_spike_times_all = [input_spike_times + start for start in sequence_starts]
         params_gen_spk_in.append({"spike_times": np.hstack(input_spike_times_all).astype(dtype_in_spks).tolist()})
 
@@ -279,10 +290,10 @@ def test_eprop_regression():
         superposition /= max(np.abs(superposition).max(), 1e-6)
         return superposition
 
-    target_signal = generate_superimposed_sines(steps["sequence"], [1000.0, 500.0, 333.0, 200.0])
+    target_signal = generate_superimposed_sines(steps["sequence"], [1000, 500, 333, 200])
 
     params_gen_rate_target = {
-        "amplitude_times": (np.arange(0, duration["task"], duration["step"]) + duration["step"]).tolist(),
+        "amplitude_times": (np.arange(0.0, duration["task"], duration["step"]) + duration["total_offset"]).tolist(),
         "amplitude_values": np.tile(target_signal, n_iter * n_batch).tolist(),
     }
 
@@ -300,9 +311,6 @@ def test_eprop_regression():
 
     readout_signal = events_mm_out["readout_signal"]
     target_signal = events_mm_out["target_signal"]
-
-    readout_signal = readout_signal[steps["shift"] - 1 :]
-    target_signal = target_signal[steps["shift"] - 2 : -1]
 
     error = (readout_signal - target_signal) ** 2
     loss = 0.5 * np.add.reduceat(error, np.arange(0, steps["task"], steps["sequence"]))
@@ -340,6 +348,8 @@ def test_eprop_classification():
     TensorFlow implementation.
     """
 
+    scale = 0.1
+
     # Initialize random generator
 
     rng_seed = 1
@@ -355,18 +365,32 @@ def test_eprop_classification():
     prob_group = 0.3
 
     steps = {
-        "cue": 10,
-        "spacing": 5,
-        "bg_noise": 105,
-        "recall": 15,
-        "shift": 4,
+        "cue": int(100 * scale),
+        "spacing": int(50 * scale),
+        "bg_noise": int(1050 * scale),
+        "recall": int(150 * scale),
     }
 
     steps["cues"] = n_cues * (steps["cue"] + steps["spacing"])
-    steps["recall_onset"] = steps["cues"] + steps["bg_noise"]
-    steps["sequence"] = steps["recall_onset"] + steps["recall"]
+    steps["sequence"] = steps["cues"] + steps["bg_noise"] + steps["recall"]
+    steps["learning_window"] = steps["recall"]
     steps["task"] = n_iter * n_batch * steps["sequence"]
-    steps["sim"] = steps["task"] + steps["shift"]
+
+    steps.update(
+        {
+            "offset_gen": 1,
+            "delay_in_rec": 1,
+            "delay_rec_out": 1,
+            "delay_out_norm": 1,
+            "extension_sim": 1,
+        }
+    )
+
+    steps["total_offset"] = (
+        steps["offset_gen"] + steps["delay_in_rec"] + steps["delay_rec_out"] + steps["delay_out_norm"]
+    )
+
+    steps["sim"] = steps["task"] + steps["total_offset"] + steps["extension_sim"]
 
     duration = {"step": 1.0}
 
@@ -375,6 +399,7 @@ def test_eprop_classification():
     # Set up simulation
 
     params_setup = {
+        "eprop_learning_window": duration["learning_window"],
         "eprop_reset_neurons_on_update": True,
         "eprop_update_interval": duration["sequence"],
         "print_time": False,
@@ -387,9 +412,9 @@ def test_eprop_classification():
 
     # Create neurons
 
-    n_in = 4
-    n_ad = 5
-    n_reg = 5
+    n_in = int(40 * scale)
+    n_ad = int(50 * scale)
+    n_reg = int(50 * scale)
     n_rec = n_ad + n_reg
     n_out = 2
 
@@ -434,7 +459,6 @@ def test_eprop_classification():
         "E_L": 0.0,
         "I_e": 0.0,
         "loss": "cross_entropy_loss",
-        "start_learning": duration["recall_onset"],
         "tau_m": 20.0,
         "V_m": 0.0,
     }
@@ -454,9 +478,11 @@ def test_eprop_classification():
     n_record_w = 1
 
     params_mm_rec = {"record_from": ["V_m", "surrogate_gradient", "learning_signal"], "interval": duration["sequence"]}
+
     params_mm_out = {
         "record_from": ["V_m", "readout_signal", "target_signal", "error_signal"],
-        "interval": duration["sequence"],
+        "start": duration["total_offset"],
+        "interval": duration["step"],
     }
 
     params_wr = {
@@ -464,15 +490,12 @@ def test_eprop_classification():
         "targets": nrns_rec[:n_record_w] + nrns_out,
     }
 
-    nrns_rec_record = nrns_rec[:n_record]
-
     mm_rec = nest.Create("multimeter", params_mm_rec)
     mm_out = nest.Create("multimeter", params_mm_out)
     sr = nest.Create("spike_recorder")
     wr = nest.Create("weight_recorder", params_wr)
 
-    params_mm_out = {"record_from": ["V_m", "readout_signal", "target_signal", "error_signal"]}
-    mm_out = nest.Create("multimeter", params_mm_out)
+    nrns_rec_record = nrns_rec[:n_record]
 
     # Create connections
 
@@ -498,7 +521,6 @@ def test_eprop_classification():
         "adam_epsilon": 1e-8,
         "optimizer": "adam",
         "batch_size": n_batch,
-        "recall_duration": duration["recall"],
         "weight_recorder": wr,
     }
 
@@ -607,7 +629,7 @@ def test_eprop_classification():
     # Create input and output
 
     def generate_evidence_accumulation_input_output(
-        n_batch, n_in, prob_group, input_spike_rate, n_cues, n_input_symbols, steps
+        n_batch, n_in, prob_group, input_spike_prob, n_cues, n_input_symbols, steps
     ):
         n_pop_nrn = n_in // n_input_symbols
 
@@ -621,7 +643,7 @@ def test_eprop_classification():
         for b_idx in range(n_batch):
             batched_cues[b_idx, :] = np.random.choice([0, 1], n_cues, p=probs[b_idx])
 
-        input_spike_prob = np.zeros((n_batch, steps["sequence"], n_in))
+        input_spike_probs = np.zeros((n_batch, steps["sequence"], n_in))
 
         for b_idx in range(n_batch):
             for c_idx in range(n_cues):
@@ -633,19 +655,19 @@ def test_eprop_classification():
                 pop_nrn_start = cue * n_pop_nrn
                 pop_nrn_stop = pop_nrn_start + n_pop_nrn
 
-                input_spike_prob[b_idx, step_start:step_stop, pop_nrn_start:pop_nrn_stop] = input_spike_rate
+                input_spike_probs[b_idx, step_start:step_stop, pop_nrn_start:pop_nrn_stop] = input_spike_prob
 
-        input_spike_prob[:, -steps["recall"] :, 2 * n_pop_nrn : 3 * n_pop_nrn] = input_spike_rate
-        input_spike_prob[:, :, 3 * n_pop_nrn :] = input_spike_rate / 4.0
-        input_spike_bools = input_spike_prob > np.random.rand(input_spike_prob.size).reshape(input_spike_prob.shape)
-        input_spike_bools[:, [0, -1], :] = 0
+        input_spike_probs[:, -steps["recall"] :, 2 * n_pop_nrn : 3 * n_pop_nrn] = input_spike_prob
+        input_spike_probs[:, :, 3 * n_pop_nrn :] = input_spike_prob / 4.0
+        input_spike_bools = input_spike_probs > np.random.rand(input_spike_probs.size).reshape(input_spike_probs.shape)
+        input_spike_bools[:, 0, :] = 0
 
         target_cues = np.zeros(n_batch, dtype=int)
         target_cues[:] = np.sum(batched_cues, axis=1) > int(n_cues / 2)
 
         return input_spike_bools, target_cues
 
-    input_spike_rate = 0.04
+    input_spike_prob = 0.04
     dtype_in_spks = np.float32
 
     input_spike_bools_list = []
@@ -653,13 +675,13 @@ def test_eprop_classification():
 
     for iteration in range(n_iter):
         input_spike_bools, target_cues = generate_evidence_accumulation_input_output(
-            n_batch, n_in, prob_group, input_spike_rate, n_cues, n_input_symbols, steps
+            n_batch, n_in, prob_group, input_spike_prob, n_cues, n_input_symbols, steps
         )
         input_spike_bools_list.append(input_spike_bools)
         target_cues_list.extend(target_cues.tolist())
 
     input_spike_bools_arr = np.array(input_spike_bools_list).reshape(steps["task"], n_in)
-    timeline_task = np.arange(0, duration["task"], duration["step"])
+    timeline_task = np.arange(0.0, duration["task"], duration["step"]) + duration["offset_gen"]
 
     params_gen_spk_in = [
         {"spike_times": timeline_task[input_spike_bools_arr[:, nrn_in_idx]].astype(dtype_in_spks).tolist()}
@@ -671,7 +693,9 @@ def test_eprop_classification():
 
     params_gen_rate_target = [
         {
-            "amplitude_times": (np.arange(0.0, duration["task"], duration["sequence"]) + duration["step"]).tolist(),
+            "amplitude_times": (
+                np.arange(0.0, duration["task"], duration["sequence"]) + duration["total_offset"]
+            ).tolist(),
             "amplitude_values": target_rate_changes[nrn_out_idx].tolist(),
         }
         for nrn_out_idx in range(n_out)
@@ -697,23 +721,22 @@ def test_eprop_classification():
     readout_signal = np.array([readout_signal[senders == i] for i in np.unique(senders)])
     target_signal = np.array([target_signal[senders == i] for i in np.unique(senders)])
 
-    readout_signal = readout_signal[:, steps["shift"] - 1 :]
-    target_signal = target_signal[:, steps["shift"] - 2 : -1]
+    readout_signal = readout_signal.reshape(n_out, n_iter, n_batch, steps["sequence"])
+    readout_signal = readout_signal[:, :, :, -steps["learning_window"] :]
 
-    readout_signal = readout_signal.reshape(n_out, n_iter, n_batch, steps["sequence"])[:, :, :, -steps["recall"] :]
-    target_signal = target_signal.reshape(n_out, n_iter, n_batch, steps["sequence"])[:, :, :, -steps["recall"] :]
+    target_signal = target_signal.reshape(n_out, n_iter, n_batch, steps["sequence"])
+    target_signal = target_signal[:, :, :, -steps["learning_window"] :]
 
     loss = -np.mean(np.sum(target_signal * np.log(readout_signal), axis=0), axis=(1, 2))
 
     # Verify results
-
     loss_NEST_verification = np.array(
         [
             0.693414902818640488,
-            0.693127416632571935,
-            0.693126013248211215,
-            0.693134668073821847,
-            0.691480338113467763,
+            0.693127422418977068,
+            0.693126011001533038,
+            0.693134668631192441,
+            0.691481004721114956,
         ]
     )
 

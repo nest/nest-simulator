@@ -174,6 +174,8 @@ See also
 
 EndUserDocs */
 
+void register_eprop_iaf_psc_delta_adapt( const std::string& name );
+
 class eprop_iaf_psc_delta_adapt : public EpropArchivingNode
 {
 
@@ -184,7 +186,7 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  size_t send_test_event( Node&, size_t, synindex, bool );
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
   void handle( SpikeEvent& ) override;
   void handle( CurrentEvent& ) override;
@@ -196,15 +198,15 @@ public:
   size_t handles_test_event( LearningSignalConnectionEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
   void init_state_( const Node& proto );
-  void init_buffers_();
-  void pre_run_hook();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   friend class RecordablesMap< eprop_iaf_psc_delta_adapt >;
   friend class UniversalDataLogger< eprop_iaf_psc_delta_adapt >;

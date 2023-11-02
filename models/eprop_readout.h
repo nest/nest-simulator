@@ -133,6 +133,8 @@ See also
 
 EndUserDocs */
 
+void register_eprop_readout( const std::string& name );
+
 class eprop_readout : public EpropArchivingNode
 {
 
@@ -146,12 +148,12 @@ public:
   using Node::sends_secondary_event;
 
   void
-  sends_secondary_event( LearningSignalConnectionEvent& )
+  sends_secondary_event( LearningSignalConnectionEvent& ) override
   {
   }
 
   void
-  sends_secondary_event( DelayedRateConnectionEvent& )
+  sends_secondary_event( DelayedRateConnectionEvent& ) override
   {
   }
 
@@ -165,15 +167,15 @@ public:
   size_t handles_test_event( DelayedRateConnectionEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
   void init_state_( const Node& proto );
-  void init_buffers_();
-  void pre_run_hook();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   void compute_error_signal_mean_squared_error( const long& lag );
   void compute_error_signal_cross_entropy_loss( const long& lag );

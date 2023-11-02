@@ -152,31 +152,6 @@ PyNEST examples
 
 .. grid:: 1 1 2 3
 
-    .. grid-item-card:: E-prop plasticity
-           :img-top: ../static/img/pynest/eprop_supervised_classification_infrastructure.png
-
-           * :doc:`../auto_examples/eprop_plasticity/index`
-
-    .. grid-item-card:: Urbanczik and Clopath
-           :img-top: ../static/img/pynest/urbanczik_syn.png
-
-           * :doc:`../auto_examples/urbanczik_synapse_example`
-           * :doc:`../auto_examples/clopath_synapse_spike_pairing`
-           * :doc:`../auto_examples/clopath_synapse_small_network`
-
-
-
-    .. grid-item-card:: Tsodyks
-           :img-top: ../static/img/pynest/tsodyks_dep.png
-
-           * :doc:`../auto_examples/tsodyks_depressing`
-           * :doc:`../auto_examples/tsodyks_facilitating`
-           * :doc:`../auto_examples/evaluate_tsodyks2_synapse`
-
-
-
-.. grid:: 1 1 2 3
-
     .. grid-item-card:: Gap junctions
            :img-top: ../static/img/pynest/gap_junctioninhib.png
 
@@ -194,6 +169,40 @@ PyNEST examples
            :img-top: ../static/img/pynest/synapsecollection.png
 
            * :doc:`../auto_examples/synapsecollection`
+
+.. grid:: 1 1 2 3
+
+    .. grid-item-card:: Urbanczik
+           :img-top: ../static/img/pynest/urbanczik_syn.png
+
+           * :doc:`../auto_examples/urbanczik_synapse_example`
+
+
+
+    .. grid-item-card:: Clopath
+           :img-top: ../static/img/pynest/clopath.png
+
+
+           * :doc:`../auto_examples/clopath_synapse_spike_pairing`
+           * :doc:`../auto_examples/clopath_synapse_small_network`
+
+
+
+    .. grid-item-card:: Short-term plasticity
+           :img-top: ../static/img/pynest/tsodyks_dep.png
+
+           * :doc:`../auto_examples/iaf_tum_2000_short_term_depression`
+           * :doc:`../auto_examples/iaf_tum_2000_short_term_facilitation`
+           * :doc:`../auto_examples/evaluate_tsodyks2_synapse`
+
+
+.. grid:: 1 1 2 3
+
+    .. grid-item-card:: E-prop plasticity
+           :img-top: ../static/img/pynest/eprop_supervised_classification_infrastructure.png
+
+           * :doc:`../auto_examples/eprop_plasticity/index`
+
 
 .. grid:: 1 1 2 3
 
@@ -281,8 +290,8 @@ PyNEST examples
    ../auto_examples/clopath_synapse_spike_pairing
    ../auto_examples/clopath_synapse_small_network
    ../auto_examples/urbanczik_synapse_example
-   ../auto_examples/tsodyks_depressing
-   ../auto_examples/tsodyks_facilitating
+   ../auto_examples/iaf_tum_2000_short_term_depression
+   ../auto_examples/iaf_tum_2000_short_term_facilitation
    ../auto_examples/compartmental_model/receptors_and_current
    ../auto_examples/compartmental_model/two_comps
    ../auto_examples/lin_rate_ipn_network

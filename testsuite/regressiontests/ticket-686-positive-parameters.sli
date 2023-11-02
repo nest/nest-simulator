@@ -41,12 +41,18 @@ Author: Hans Ekkehard Plesser, 2013-04-18
 
 M_ERROR setverbosity
 
+% SLI2PY TODO: iaf_tum_2000 should be removed from skipped_models when porting
+% this test. The reason it is skipped in the SLI version of the test, is that
+% tau_fac can be set to 0.0 to turn facilitation off. The logic of the test
+% needs to be updated to accommodate for this possibility.
+
 % Add models that have C_m or tau_* and that should not be checked
 % This should be devices only.
 /skipped_models
   [ /correlation_detector
     /correlomatrix_detector
     /correlospinmatrix_detector
+    /iaf_tum_2000   % tau_fac == 0 is permitted
     /siegert_neuron ]
 def
 

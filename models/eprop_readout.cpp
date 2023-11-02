@@ -33,6 +33,7 @@
 // nestkernel
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // sli
@@ -40,6 +41,12 @@
 
 namespace nest
 {
+void
+register_eprop_readout( const std::string& name )
+{
+  register_node_model< eprop_readout >( name );
+}
+
 
 /* ----------------------------------------------------------------
  * Recordables map

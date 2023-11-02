@@ -19,6 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+
+# pylint: disable=line-too-long   (problem with very long link in docstring)
+
 """
 Supervised learning of a regression task with e-prop plasticity
 ---------------------------------------------------------------
@@ -58,7 +61,7 @@ References
        learning dilemma for recurrent networks of spiking neurons. Nature Communications, 11:3625.
        https://doi.org/10.1038/s41467-020-17236-y
 
-.. [2] https://github.com/IGITUGraz/eligibility_propagation/blob/master/Figure_3_and_S7_e_prop_tutorials/tutorial_pattern_generation.py
+.. [2] https://github.com/IGITUGraz/eligibility_propagation/blob/master/Figure_3_and_S7_e_prop_tutorials/tutorial_pattern_generation.py  # noqa: E501
 
 .. [3] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D, van Albada SJ, Bolten M, Diesmann M.
        Event-based implementation of eligibility propagation (in preparation)
@@ -69,10 +72,10 @@ References
 # ~~~~~~~~~~~~~~~~
 # We begin by importing all libraries required for the simulation, analysis, and visualization.
 
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 import nest
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib as mpl
 from cycler import cycler
 from IPython.display import Image
 

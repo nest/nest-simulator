@@ -168,7 +168,7 @@ nest::EpropArchivingNode::get_firing_rate_reg( long time_step )
   if ( firing_rate_reg_history_.empty() )
     return 0.0;
 
-  long const update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
+  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
 
   std::vector< HistEntryEpropFiringRateReg >::iterator it;
 

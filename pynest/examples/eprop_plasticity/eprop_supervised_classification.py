@@ -592,7 +592,9 @@ senders = events_mm_out["senders"]
 readout_signal = np.array([readout_signal[senders == i] for i in np.unique(senders)])
 target_signal = np.array([target_signal[senders == i] for i in np.unique(senders)])
 
+# pylint: disable-next=E1121,C0301
 readout_signal = readout_signal.reshape(n_out, n_iter, n_batch, steps["sequence"])[:, :, :, -steps["learning_window"] :]
+# pylint: disable-next=E1121,C0301
 target_signal = target_signal.reshape(n_out, n_iter, n_batch, steps["sequence"])[:, :, :, -steps["learning_window"] :]
 
 loss = -np.mean(np.sum(target_signal * np.log(readout_signal), axis=0), axis=(1, 2))
@@ -700,7 +702,7 @@ for xlims in [(0, steps["sequence"]), (steps["task"] - steps["sequence"], steps[
     plot_recordable(axs[3], events_mm_reg, "surrogate_gradient", r"$\psi_j$" + "\n", xlims)
     plot_recordable(axs[4], events_mm_reg, "learning_signal", r"$L_j$" + "\n(pA)", xlims)
 
-    plot_spikes(axs[5], events_sr, nrns_ad, r"$z_j$" "\n", xlims)
+    plot_spikes(axs[5], events_sr, nrns_ad, r"$z_j$" + "\n", xlims)
 
     plot_recordable(axs[6], events_mm_ad, "V_m", r"$v_j$" + "\n(mV)", xlims)
     plot_recordable(axs[7], events_mm_ad, "surrogate_gradient", r"$\psi_j$" + "\n", xlims)

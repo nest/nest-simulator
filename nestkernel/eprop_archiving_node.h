@@ -27,11 +27,10 @@
 #include <deque>
 
 // nestkernel
-#include "archiving_node.h"
 #include "histentry.h"
 #include "nest_time.h"
 #include "nest_types.h"
-#include "synaptic_element.h"
+#include "node.h"
 
 // sli
 #include "dictdatum.h"

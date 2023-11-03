@@ -328,9 +328,9 @@ def TripartiteConnect(pre, post, third, conn_spec, syn_specs=None):
     -----
     **Connectivity specification (conn_spec)**
 
-    Available tripartite rules:
+    Available tripartite rules::
 
-- ``tripartite_bernoulli_with_pool``
+     - ``tripartite_bernoulli_with_pool``
 
     See :ref:`tripartite_connectivity` for more details and :doc:`/auto_examples/astrocyte_small_network`
     and :doc:`/auto_examples/astrocyte_brunel` for examples.
@@ -340,7 +340,7 @@ def TripartiteConnect(pre, post, third, conn_spec, syn_specs=None):
     Synapse specifications for tripartite connections are given as a dictionary with specifications
     for each of the three connections to be created::
 
-    {"primary": <syn_spec>,
+     {"primary": <syn_spec>,
      "third_in": <syn_spec>,
      "third_out": <syn_spec>}
 

@@ -328,9 +328,9 @@ def TripartiteConnect(pre, post, third, conn_spec, syn_specs=None):
     -----
     **Connectivity specification (conn_spec)**
 
-    Available tripartite rules::
+    Available tripartite rules:
 
-     - 'tripartite_bernoulli_with_pool'
+- ``tripartite_bernoulli_with_pool``
 
     See :ref:`tripartite_connectivity` for more details and :doc:`astrocyte_small_network`
     and :doc:`astrocyte_brunel` for examples.
@@ -338,21 +338,19 @@ def TripartiteConnect(pre, post, third, conn_spec, syn_specs=None):
     **Synapse specifications (syn_specs)**
 
     Synapse specifications for tripartite connections are given as a dictionary with specifications
-    for each of the three connections to be created
+    for each of the three connections to be created::
 
-    ```
     {"primary": <syn_spec>,
      "third_in": <syn_spec>,
      "third_out": <syn_spec>}
-    ```
 
-    Here, `"primary"` marks the synapse specification for the connections between `pre` and `post` neurons,
-    `"third_in"` for connections between `pre` and `third` neurons and `"third_out"` for connections between
-    `third` and `post` neurons.
+    Here, ``"primary"`` marks the synapse specification for the connections between ``pre`` and ``post`` neurons,
+    ``"third_in"`` for connections between ``pre`` and ``third`` neurons and ``"third_out"`` for connections between
+    ``third`` and ``post`` neurons.
 
-    Each `<syn_spec>` entry can be any entry that would be possible as synapse specification
-    in a normal `Connect()` call. Any missing entries default to `static_synapse`. If no `syn_specs` argument
-    is given at all, all three entries default to `static_synapse`.
+    Each ``<syn_spec>`` entry can be any entry that would be possible as synapse specification
+    in a normal ``Connect()`` call. Any missing entries default to ``static_synapse``. If no ``<syn_spec>`` argument
+    is given at all, all three entries default to ``static_synapse``.
 
     The synapse model and its properties can be given either as a string
     identifying a specific synapse model (default: :cpp:class:`static_synapse <nest::static_synapse>`) or

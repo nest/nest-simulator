@@ -34,8 +34,8 @@ populations.
 
 See examples using astrocyte models:
 
-* :doc:`../../../auto_examples/astrocyte_small_network`
-* :doc:`../../../auto_examples/astrocyte_brunel`
+* :doc:`../../../auto_examples/astrocytes/astrocyte_small_network`
+* :doc:`../../../auto_examples/astrocytes/astrocyte_brunel`
 
 See connectivity documentation:
 

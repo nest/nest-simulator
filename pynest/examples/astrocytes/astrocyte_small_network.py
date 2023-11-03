@@ -138,12 +138,12 @@ os.system(f"mkdir -p {save_path}")
 ###############################################################################
 # Network parameters.
 
-n_neurons = 10  # number of source and target neurons
-n_astrocytes = 5  # number of astrocytes
+n_neurons = 8  # number of source and target neurons
+n_astrocytes = 4  # number of astrocytes
 p_primary = 1.0  # connection probability between neurons
 p_third_if_primary = 1.0  # probability of each created neuron-neuron connection to be paired with one astrocyte
-pool_size = 1  # astrocyte pool size for each target neuron
-pool_type = "block"  # the way to determine the astrocyte pool for each target neuron
+pool_size = 2  # astrocyte pool size for each target neuron
+pool_type = "random"  # the way to determine the astrocyte pool for each target neuron
 
 ###############################################################################
 # Astrocyte parameters.

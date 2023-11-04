@@ -152,7 +152,7 @@ RegexpModule::RegerrorFunction::execute( SLIInterpreter* i ) const
   char* error_buffer = new char[ 256 ];
   regerror( id->get(), rd->get()->get(), error_buffer, 256 );
   Token sd( new StringDatum( error_buffer ) );
-  delete[]( error_buffer );
+  delete[] ( error_buffer );
 
   // The lockPTR rd gets locked when calling the get() function.
   // In order to be able to use (delete) this object we need to
@@ -208,7 +208,7 @@ RegexpModule::RegexecFunction::execute( SLIInterpreter* i ) const
     Token array_token( PushArray );
     i->OStack.push_move( array_token );
   };
-  delete[]( pm );
+  delete[] ( pm );
   i->OStack.push_move( id );
   i->EStack.pop();
 }

@@ -23,7 +23,7 @@
 A small neuron-astrocyte network
 --------------------------------
 
-This script shows how to create an neuron-astrocyte network in NEST. The network
+This script shows how to create a neuron-astrocyte network in NEST. The network
 in this script includes 20 neurons and five astrocytes. The astrocytes are modeled
 with ``astrocyte_lr_1994``, implemented according to [1]_, [2]_, and [3]_. The
 neurons are modeled with ``aeif_cond_alpha_astro``, an adaptive exponential
@@ -75,15 +75,15 @@ The available connectivity parameters are as follows:
   * ``third_out``: ``syn_spec`` specifications for the connections from astrocytes to neurons.
 
 In this script, the network is created with the ``pool_type`` being ``"block"``.
-``p_primary`` and ``p_third_if_primary`` are both set to one, so that all possible
-connections are made. It can be seen from the result plot "connections.png" that
-``"block"`` distributes the astrocytes evenly to the postsynaptic neurons in blocks
-without overlapping. The ``pool_size`` must be compatible with this arrangement.
-In the case here, a ``pool_size`` of one is required. One of the created figures
-shows the connections actually made between neurons and astrocytes as a result
-(note that multiple connections may exist between nodes; this cannot be seen
-from the figure because of overlapping). Users can try different parameters
-(e.g. ``p_primary``=0.5 and ``p_third_if_primary``=0.5) to see changes in the
+``p_primary`` and ``p_third_if_primary`` are both set to one to include as many
+connections as possible. One of the created figures shows the connections between
+neurons and astrocytes as a result (note that multiple connections may exist
+between a pair of nodes; this is not obvious in the figure since connections
+drawn later cover previous ones). It can be seen from the figure that ``"block"``
+results in astrocytes being connected to postsynaptic neurons in non-overlapping
+blocks. The ``pool_size`` should be compatible with this arrangement; in the case
+here, a ``pool_size`` of one is required. Users can try different parameters
+(e.g. ``p_primary`` = 0.5 and ``p_third_if_primary`` = 0.5) to see changes in
 connections.
 
 With the created network, neuron-astrocyte interactions can be observed. The
@@ -91,7 +91,7 @@ presynaptic spikes induce the generation of IP3, which then changes the calcium
 concentration in the astrocytes. This change in calcium then induces the slow
 inward current (SIC) in the neurons through the ``sic_connection``. The changes
 in membrane potential of the presynaptic and postsynaptic neurons are also
-recorded. These data are shown in the created figures.
+recorded. These data are also shown in the created figures.
 
 The ``pool_type`` can be changed to "random" to see the results with random
 astrocyte pools. In that case, the ``pool_size`` can be any from one to the
@@ -168,53 +168,15 @@ neuron_params = {
 }
 
 ###############################################################################
-# Create and connect populations and devices. The neurons and astrocytes are
-# connected with multimeters to record their dynamics.
-
-pre_neurons = nest.Create(neuron_model, n_neurons, params=neuron_params)
-post_neurons = nest.Create(neuron_model, n_neurons, params=neuron_params)
-astrocytes = nest.Create(astrocyte_model, n_astrocytes, params=astrocyte_params)
-nest.TripartiteConnect(
-    pre_neurons,
-    post_neurons,
-    astrocytes,
-    conn_spec={
-        "rule": "tripartite_bernoulli_with_pool",
-        "p_primary": p_primary,
-        "p_third_if_primary": p_third_if_primary,
-        "pool_size": pool_size,
-        "pool_type": pool_type,
-    },
-    syn_specs={
-        "primary": {"synapse_model": "tsodyks_synapse", "weight": 1.0, "delay": 1.0},
-        "third_in": {"synapse_model": "tsodyks_synapse", "weight": 1.0, "delay": 1.0},
-        "third_out": {"synapse_model": "sic_connection", "weight": 1.0, "delay": 1.0},
-    },
-)
-mm_pre_neurons = nest.Create("multimeter", params={"record_from": ["V_m"]})
-mm_post_neurons = nest.Create("multimeter", params={"record_from": ["V_m", "I_SIC"]})
-mm_astrocytes = nest.Create("multimeter", params={"record_from": ["IP3", "Ca"]})
-nest.Connect(mm_pre_neurons, pre_neurons)
-nest.Connect(mm_post_neurons, post_neurons)
-nest.Connect(mm_astrocytes, astrocytes)
-
-###############################################################################
-# Get connection data. The data are used to plot the network connectivity.
-
-conns_a2n = nest.GetConnections(astrocytes, post_neurons)
-conns_n2n = nest.GetConnections(pre_neurons, post_neurons)
-conns_n2a = nest.GetConnections(pre_neurons, astrocytes)
-
-###############################################################################
 # Functions for plotting.
 
 
 # Plot all connections between neurons and astrocytes
-def plot_connections(conn_n2n, conn_n2a, conn_a2n):
+def plot_connections(conn_n2n, conn_n2a, conn_a2n, pre_id_list, post_id_list, astro_id_list):
     # helper function to create lists of positions for source and target nodes
-    def get_node_positions(dict_in, pre_1st_id, pre_last_id, post_1st_id, post_last_id):
-        source_list = np.array(dict_in["source"]) - (pre_1st_id + pre_last_id)/2
-        target_list = np.array(dict_in["target"]) - (post_1st_id + post_last_id)/2
+    def get_node_positions(dict_in, source_center, target_center):
+        source_list = np.array(dict_in["source"]) - source_center
+        target_list = np.array(dict_in["target"]) - target_center
         return source_list, target_list
 
     # helper function to set plot frames invisible
@@ -228,31 +190,31 @@ def plot_connections(conn_n2n, conn_n2a, conn_a2n):
 
     print("Plotting connections ...")
     # prepare data (lists of node positions)
-    pre_id_list = pre_neurons.tolist()
-    post_id_list = post_neurons.tolist()
-    astro_id_list = astrocytes.tolist()
-    slist_n2n, tlist_n2n = get_node_positions(conns_n2n.get(), pre_id_list[0], pre_id_list[-1], post_id_list[0], post_id_list[-1])
-    slist_n2a, alist_n2a = get_node_positions(conns_n2a.get(), pre_id_list[0], pre_id_list[-1], astro_id_list[0], astro_id_list[-1])
-    alist_a2n, tlist_a2n = get_node_positions(conns_a2n.get(), astro_id_list[0], astro_id_list[-1], post_id_list[0], post_id_list[-1])
+    pre_id_center = (pre_id_list[0] + pre_id_list[-1])/2
+    post_id_center = (post_id_list[0] + post_id_list[-1])/2
+    astro_id_center = (astro_id_list[0] + astro_id_list[-1])/2
+    slist_n2n, tlist_n2n = get_node_positions(conns_n2n.get(), pre_id_center, post_id_center)
+    slist_n2a, alist_n2a = get_node_positions(conns_n2a.get(), pre_id_center, astro_id_center)
+    alist_a2n, tlist_a2n = get_node_positions(conns_a2n.get(), astro_id_center, post_id_center)
     # make plot
     fig, axs = plt.subplots(1, 1, figsize=(10, 8))
     # plot nodes and connections
     axs.scatter(
-        np.array(pre_id_list) - (pre_id_list[0] + pre_id_list[-1])/2,
+        np.array(pre_id_list) - pre_id_center,
         [2] * len(pre_id_list), s=300, color="gray", marker="^", label="pre_neurons", zorder=3
     )
     for i, (sx, tx) in enumerate(zip(slist_n2n, tlist_n2n)):
         label = "neuron-to-neuron" if i == 0 else None
         axs.plot([sx, tx], [2, 0], linestyle=":", color="b", alpha=0.3, linewidth=2, label=label)
     axs.scatter(
-        np.array(post_id_list) - (post_id_list[0] + post_id_list[-1])/2,
+        np.array(post_id_list) - post_id_center,
         [0] * len(post_id_list), s=300, color="k", marker="^", label="post_neurons", zorder=3
     )
     for i, (sx, tx) in enumerate(zip(slist_n2a, alist_n2a)):
         label = "neuron-to-astrocyte" if i == 0 else None
         axs.plot([sx, tx], [2, 1], linestyle="-", color="orange", alpha=0.5, linewidth=2, label=label)
     axs.scatter(
-        np.array(astro_id_list) - (astro_id_list[0] + astro_id_list[-1])/2,
+        np.array(astro_id_list) - astro_id_center,
         [1] * len(astro_id_list), s=300, color="g", marker="o", label="astrocytes", zorder=3
     )
     for i, (sx, tx) in enumerate(zip(alist_a2n, tlist_a2n)):
@@ -365,10 +327,48 @@ def plot_dynamics(astro_data, neuron_data, start):
 
 
 ###############################################################################
+# Create and connect populations and devices. The neurons and astrocytes are
+# connected with multimeters to record their dynamics.
+
+pre_neurons = nest.Create(neuron_model, n_neurons, params=neuron_params)
+post_neurons = nest.Create(neuron_model, n_neurons, params=neuron_params)
+astrocytes = nest.Create(astrocyte_model, n_astrocytes, params=astrocyte_params)
+nest.TripartiteConnect(
+    pre_neurons,
+    post_neurons,
+    astrocytes,
+    conn_spec={
+        "rule": "tripartite_bernoulli_with_pool",
+        "p_primary": p_primary,
+        "p_third_if_primary": p_third_if_primary,
+        "pool_size": pool_size,
+        "pool_type": pool_type,
+    },
+    syn_specs={
+        "primary": {"synapse_model": "tsodyks_synapse", "weight": 1.0, "delay": 1.0},
+        "third_in": {"synapse_model": "tsodyks_synapse", "weight": 1.0, "delay": 1.0},
+        "third_out": {"synapse_model": "sic_connection", "weight": 1.0, "delay": 1.0},
+    },
+)
+mm_pre_neurons = nest.Create("multimeter", params={"record_from": ["V_m"]})
+mm_post_neurons = nest.Create("multimeter", params={"record_from": ["V_m", "I_SIC"]})
+mm_astrocytes = nest.Create("multimeter", params={"record_from": ["IP3", "Ca"]})
+nest.Connect(mm_pre_neurons, pre_neurons)
+nest.Connect(mm_post_neurons, post_neurons)
+nest.Connect(mm_astrocytes, astrocytes)
+
+###############################################################################
+# Get connection data. The data are used to plot the network connectivity.
+
+conns_a2n = nest.GetConnections(astrocytes, post_neurons)
+conns_n2n = nest.GetConnections(pre_neurons, post_neurons)
+conns_n2a = nest.GetConnections(pre_neurons, astrocytes)
+
+###############################################################################
 # Run simulation.
 
 nest.Simulate(1000.0)
-plot_connections(conns_n2n, conns_n2a, conns_a2n)
+plot_connections(conns_n2n, conns_n2a, conns_a2n, pre_neurons.tolist(), post_neurons.tolist(), astrocytes.tolist())
 plot_vm(mm_pre_neurons.events, mm_post_neurons.events, 0.0)
 plot_dynamics(mm_astrocytes.events, mm_post_neurons.events, 0.0)
 plt.show()

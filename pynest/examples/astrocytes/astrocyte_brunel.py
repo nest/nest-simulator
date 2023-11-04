@@ -30,8 +30,9 @@ implemented according to [1]_, [2]_, and [3]_. The neurons are modeled with
 supporting neuron-astrocyte interactions.
 
 The simulation results show how astrocytes affect neuronal excitability. The
-dynamics in the astrocytes and the slow inward current in the neurons are
-shown in the plot "dynamics.png".
+astrocytic dynamics, the slow inward current in the neurons induced by the
+astrocytes, and the raster plot of neuronal firings are shown in the created
+figures.
 
 References
 ~~~~~~~~~~
@@ -59,35 +60,29 @@ See Also
 """
 
 ###############################################################################
-# Import all necessary modules for simulation, analysis and plotting.
+# Import all necessary modules for simulation and plotting.
 
-import hashlib
-import json
-import os
 import random
 
 import matplotlib.pyplot as plt
 import nest
-import nest.raster_plot
 import numpy as np
 
-plt.rcParams.update({"font.size": 13})
-
 ###############################################################################
-# Simulation parameters.
+# Set simulation parameters.
 
 sim_params = {
     "dt": 0.1,  # simulation resolution in ms
-    "pre_sim_time": 100.0,  # pre-simulation time in ms (excluded from analysis)
+    "pre_sim_time": 100.0,  # pre-simulation time in ms (data not recorded)
     "sim_time": 1000.0,  # simulation time in ms
     "N_rec_spk": 100,  # number of samples (neuron) for spike detector
     "N_rec_mm": 50,  # number of samples (neuron, astrocyte) for multimeter
     "n_threads": 4,  # number of threads for NEST
-    "seed": 100,  # seed for the "random" module (not NEST)
+    "seed": 100,  # seed for the random module
 }
 
 ###############################################################################
-# Network parameters.
+# Set network parameters.
 
 network_params = {
     "N_ex": 8000,  # number of excitatory neurons
@@ -101,7 +96,6 @@ network_params = {
 }
 
 syn_params = {
-    "synapse_model": "tsodyks_synapse",
     "w_a2n": 0.01,  # weight of astrocyte-to-neuron connection
     "w_e": 1.0,  # weight of excitatory connection in nS
     "w_i": -4.0,  # weight of inhibitory connection in nS
@@ -110,7 +104,7 @@ syn_params = {
 }
 
 ###############################################################################
-# Astrocyte parameters.
+# Set astrocyte parameters.
 
 astrocyte_model = "astrocyte_lr_1994"
 astrocyte_params = {
@@ -120,7 +114,7 @@ astrocyte_params = {
 }
 
 ###############################################################################
-# Neuron parameters.
+# Set neuron parameters.
 
 neuron_model = "aeif_cond_alpha_astro"
 tau_syn_ex = 2.0
@@ -140,8 +134,8 @@ neuron_params_in = {
 # This function creates the nodes and build the network. The astrocytes only
 # respond to excitatory synaptic inputs; therefore, only the excitatory
 # neuron-neuron connections are paired with the astrocytes. The
-# TripartiteConnect() function and the "tripartite_bernoulli_with_pool" rule are
-# used to create the connectivity of the network.
+# TripartiteConnect() function and the "tripartite_bernoulli_with_pool" rule
+# are used to create the connectivity of the network.
 
 
 def create_astro_network(scale=1.0):
@@ -161,9 +155,7 @@ def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise, scale=1.
     """
     print("Connecting Poisson generator ...")
     assert scale >= 1.0, "scale must be >= 1.0"
-    nest.Connect(
-        nodes_noise, nodes_ex + nodes_in, syn_spec={"synapse_model": "static_synapse", "weight": syn_params["w_e"]}
-    )
+    nest.Connect(nodes_noise, nodes_ex + nodes_in, syn_spec={"weight": syn_params["w_e"]})
     print("Connecting neurons and astrocytes ...")
     # excitatory connections are paired with astrocytes
     # conn_spec and syn_spec according to the "tripartite_bernoulli_with_pool" rule
@@ -176,13 +168,13 @@ def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise, scale=1.
     }
     syn_params_e = {
         "primary": {
-            "synapse_model": syn_params["synapse_model"],
+            "synapse_model": "tsodyks_synapse",
             "weight": syn_params["w_e"],
             "tau_psc": tau_syn_ex,
             "delay": syn_params["d_e"],
         },
         "third_in": {
-            "synapse_model": syn_params["synapse_model"],
+            "synapse_model": "tsodyks_synapse",
             "weight": syn_params["w_e"],
             "tau_psc": tau_syn_ex,
             "delay": syn_params["d_e"],
@@ -193,7 +185,7 @@ def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise, scale=1.
     # inhibitory connections are not paired with astrocytes
     conn_params_i = {"rule": "pairwise_bernoulli", "p": network_params["p_primary"] / scale}
     syn_params_i = {
-        "synapse_model": syn_params["synapse_model"],
+        "synapse_model": "tsodyks_synapse",
         "weight": syn_params["w_i"],
         "tau_psc": tau_syn_in,
         "delay": syn_params["d_i"],
@@ -208,8 +200,7 @@ def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise, scale=1.
 # by lines and shaded areas, respectively.
 
 
-def plot_dynamics(astro_data, neuron_data, data_path, start):
-    # plot dynamics
+def plot_dynamics(astro_data, neuron_data, start):
     print("Plotting dynamics ...")
     # astrocyte data
     astro_mask = astro_data["times"] > start
@@ -228,7 +219,7 @@ def plot_dynamics(astro_data, neuron_data, data_path, start):
     neuron_times_set = list(set(neuron_times))
     sic_means = np.array([np.mean(neuron_sic[neuron_times == t]) for t in neuron_times_set])
     sic_sds = np.array([np.std(neuron_sic[neuron_times == t]) for t in neuron_times_set])
-    # plots
+    # set plots
     fig, axes = plt.subplots(2, 1, sharex=True)
     color_ip3 = "tab:blue"
     color_cal = "tab:green"
@@ -256,20 +247,15 @@ def plot_dynamics(astro_data, neuron_data, data_path, start):
         neuron_times_set, sic_means + sic_sds, sic_means - sic_sds, alpha=0.3, linewidth=0.0, color=color_sic
     )
     axes[1].plot(neuron_times_set, sic_means, linewidth=2, color=color_sic)
-    # save
-    plt.tight_layout()
-    plt.savefig(os.path.join(data_path, "dynamics.png"))
-    plt.close()
 
 
 ###############################################################################
-# This is the main function for simulation. Here, the network is created and the
-# neurons and astrocytes are randomly chosen to be connected with the recording
-# devices. The sample numbers are determined by sim_params. After simulation,
-# neuron and astrocyte data are analyzed and plotted.
+# This is the main function for simulation. The network is created and the
+# neurons and astrocytes are randomly chosen for recording. After simulation,
+# recorded data of neurons and astrocytes are plotted.
 
 
-def run_simulation(data_path):
+def run_simulation():
     # NEST configuration
     nest.ResetKernel()
     nest.resolution = sim_params["dt"]
@@ -277,8 +263,8 @@ def run_simulation(data_path):
     nest.print_time = True
     nest.overwrite_files = True
 
-    # Create data folder
-    os.system(f"mkdir -p {data_path}")
+    # Use random seed for reproducible sampling
+    random.seed(sim_params["seed"])
 
     # Simulation settings
     pre_sim_time = sim_params["pre_sim_time"]
@@ -304,7 +290,7 @@ def run_simulation(data_path):
     n_neuron_rec_spk = min(len(neuron_list), sim_params["N_rec_spk"])
     n_neuron_rec_mm = min(len(neuron_list), sim_params["N_rec_mm"])
     n_astro_rec = min(len(astro), sim_params["N_rec_mm"])
-    neuron_list_for_sr = sorted(random.sample(neuron_list, n_neuron_rec_spk))
+    neuron_list_for_sr = neuron_list[: min(len(neuron_list), n_neuron_rec_spk)]
     neuron_list_for_mm = sorted(random.sample(neuron_list, n_neuron_rec_mm))
     astro_list_for_mm = sorted(random.sample(astro_list, n_astro_rec))
     nest.Connect(neuron_list_for_sr, sr_neuron)
@@ -320,31 +306,19 @@ def run_simulation(data_path):
     neuron_data = mm_neuron.events
     astro_data = mm_astro.events
 
-    # Save parameters (debug)
-    params = {
-        "sim_params": sim_params,
-        "network_params": network_params,
-        "syn_params": syn_params,
-        "neuron_model": neuron_model,
-        "neuron_params_ex": neuron_params_ex,
-        "neuron_params_in": neuron_params_in,
-        "astrocyte_model": astrocyte_model,
-        "astrocyte_params": astrocyte_params,
-    }
-    with open(os.path.join(data_path, "params.json"), "w") as f:
-        json.dump(params, f, indent=4)
-
-    # Make raster plot and histogram
-    nest.raster_plot.from_device(sr_neuron, hist=True, title="")
-    plt.savefig(os.path.join(data_path, "neuron_raster.png"), bbox_inches="tight")
-    plt.close()
+    # Make raster plot
+    nest.raster_plot.from_device(
+        sr_neuron, hist=True, title=f"Raster plot of neuron {neuron_list_for_sr[0]} to {neuron_list_for_sr[-1]}"
+    )
 
     # Plot dynamics in astrocytes and neurons
-    plot_dynamics(astro_data, neuron_data, data_path, pre_sim_time)
+    plot_dynamics(astro_data, neuron_data, pre_sim_time)
+
+    # Show plots
+    plt.show()
 
 
 ###############################################################################
 # Run simulation.
 
-random.seed(sim_params["seed"])
-run_simulation("astrocyte_brunel")
+run_simulation()

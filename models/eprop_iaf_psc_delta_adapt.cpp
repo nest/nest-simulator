@@ -63,6 +63,7 @@ RecordablesMap< eprop_iaf_psc_delta_adapt >::create()
   insert_( names::surrogate_gradient, &eprop_iaf_psc_delta_adapt::get_surrogate_gradient_ );
   insert_( names::V_m, &eprop_iaf_psc_delta_adapt::get_V_m_ );
 }
+} // namespace nest
 
 /* ----------------------------------------------------------------
  * Default constructors for parameters, state, and buffers
@@ -220,13 +221,6 @@ nest::eprop_iaf_psc_delta_adapt::eprop_iaf_psc_delta_adapt( const eprop_iaf_psc_
  * ---------------------------------------------------------------- */
 
 void
-nest::eprop_iaf_psc_delta_adapt::init_state_( const Node& proto )
-{
-  const eprop_iaf_psc_delta_adapt& pr = downcast< eprop_iaf_psc_delta_adapt >( proto );
-  S_ = pr.S_;
-}
-
-void
 nest::eprop_iaf_psc_delta_adapt::init_buffers_()
 {
   B_.spikes_.clear();   // includes resize
@@ -252,11 +246,6 @@ nest::eprop_iaf_psc_delta_adapt::pre_run_hook()
   V_.Pa_ = std::exp( -dt / P_.adapt_tau_ );
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-
-  write_eprop_parameter_to_map( "leak_propagator", V_.P33_ );
-  write_eprop_parameter_to_map( "leak_propagator_complement", V_.P33_complement_ );
-  write_eprop_parameter_to_map( "adapt_propagator", V_.Pa_ );
-  write_eprop_parameter_to_map( "adapt_beta", P_.adapt_beta_ );
 
   if ( P_.surrogate_gradient_ == "piecewise_linear" )
     compute_surrogate_gradient = &eprop_iaf_psc_delta_adapt::compute_piecewise_linear_derivative;
@@ -327,8 +316,7 @@ nest::eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, co
       reset_spike_count();
     }
 
-    std::deque< HistEntryEpropArchive >::iterator it_eprop_hist;
-    get_eprop_history( t - shift, &it_eprop_hist );
+    auto it_eprop_hist = get_eprop_history( t - shift );
     S_.learning_signal_ = it_eprop_hist->learning_signal_;
 
     if ( S_.r_ > 0 )
@@ -399,4 +387,50 @@ nest::eprop_iaf_psc_delta_adapt::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-} // namespace nest
+double
+nest::eprop_iaf_psc_delta_adapt::gradient_change( std::vector< long >& presyn_isis,
+  const long t_previous_update,
+  const long t_previous_trigger_spike,
+  const double kappa )
+{
+  auto eprop_hist_it = get_eprop_history( t_previous_trigger_spike );
+
+  double e_bar = 0.0;
+  double sum_e = 0.0;
+  double previous_z_bar = 0.0;
+  double epsilon = 0.0;
+  double grad = 0.0;
+
+  for ( long presyn_isi : presyn_isis )
+  {
+    previous_z_bar += V_.P33_complement_;
+    for ( long t = 0; t < presyn_isi; ++t )
+    {
+      assert( eprop_hist_it != eprop_history_.end() );
+      const double psi = eprop_hist_it->surrogate_gradient_;
+      const double e = psi * ( previous_z_bar - P_.adapt_beta_ * epsilon );
+      epsilon = psi * previous_z_bar + ( V_.Pa_ - psi * P_.adapt_beta_ ) * epsilon;
+
+      previous_z_bar *= V_.P33_;
+      sum_e += e;
+
+      e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
+      grad += e_bar * eprop_hist_it->learning_signal_;
+
+      ++eprop_hist_it;
+    }
+  }
+  presyn_isis.clear();
+
+  const long learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
+  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
+
+  if ( learning_window != update_interval )
+  {
+    grad /= learning_window;
+  }
+
+  grad += get_firing_rate_reg( t_previous_update + get_shift() ) * sum_e;
+
+  return grad;
+}

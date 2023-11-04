@@ -64,6 +64,8 @@ RecordablesMap< eprop_readout >::create()
   insert_( names::V_m, &eprop_readout::get_V_m_ );
 }
 
+} // namespace nest
+
 /* ----------------------------------------------------------------
  * Default constructors for parameters, state, and buffers
  * ---------------------------------------------------------------- */
@@ -172,13 +174,6 @@ nest::eprop_readout::eprop_readout( const eprop_readout& n )
 /* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
-
-void
-nest::eprop_readout::init_state_( const Node& proto )
-{
-  const eprop_readout& pr = downcast< eprop_readout >( proto );
-  S_ = pr.S_;
-}
 
 void
 nest::eprop_readout::init_buffers_()
@@ -358,4 +353,38 @@ nest::eprop_readout::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-} // namespace nest
+double
+nest::eprop_readout::gradient_change( std::vector< long >& presyn_isis,
+  const long,
+  const long t_previous_trigger_spike,
+  const double kappa )
+{
+  auto eprop_hist_it = get_eprop_history( t_previous_trigger_spike );
+
+  double z_bar = 0.0;
+  double grad = 0.0;
+
+  for ( long presyn_isi : presyn_isis )
+  {
+    z_bar += 1.0 - kappa;
+    for ( long t = 0; t < presyn_isi; ++t )
+    {
+      assert( eprop_hist_it != eprop_history_.end() );
+      grad += z_bar * eprop_hist_it->learning_signal_;
+      z_bar *= kappa;
+
+      ++eprop_hist_it;
+    }
+  }
+  presyn_isis.clear();
+
+  const long learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
+  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
+
+  if ( learning_window != update_interval )
+  {
+    grad /= learning_window;
+  }
+
+  return grad;
+}

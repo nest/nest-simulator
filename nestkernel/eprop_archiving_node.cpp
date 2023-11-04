@@ -77,12 +77,6 @@ nest::EpropArchivingNode::write_update_to_history( long t_previous_update, long 
 }
 
 void
-nest::EpropArchivingNode::write_eprop_parameter_to_map( std::string parameter_name, double parameter_value )
-{
-  eprop_parameter_map_[ parameter_name ] = parameter_value;
-}
-
-void
 nest::EpropArchivingNode::write_surrogate_gradient_to_history( long time_step, double surrogate_gradient )
 {
   eprop_history_.push_back( HistEntryEpropArchive( time_step, surrogate_gradient, 0.0 ) );
@@ -103,11 +97,8 @@ nest::EpropArchivingNode::write_learning_signal_to_history( long& time_step,
 {
   long shift = delay_rec_out_ + delay_out_norm_ + delay_out_rec;
 
-  std::deque< HistEntryEpropArchive >::iterator it_hist;
-  std::deque< HistEntryEpropArchive >::iterator it_hist_end;
-
-  get_eprop_history( time_step - shift, &it_hist );
-  get_eprop_history( time_step - shift + delay_out_rec, &it_hist_end );
+  auto it_hist = get_eprop_history( time_step - shift );
+  auto it_hist_end = get_eprop_history( time_step - shift + delay_out_rec );
 
   if ( it_hist != it_hist_end )
   {
@@ -144,22 +135,10 @@ nest::EpropArchivingNode::get_delay_out_norm() const
   return delay_out_norm_;
 }
 
-std::map< std::string, double >&
-nest::EpropArchivingNode::get_eprop_parameter_map()
+std::deque< HistEntryEpropArchive >::iterator
+nest::EpropArchivingNode::get_eprop_history( long time_step )
 {
-  return eprop_parameter_map_;
-}
-
-void
-nest::EpropArchivingNode::get_eprop_history( long time_step, std::deque< HistEntryEpropArchive >::iterator* it )
-{
-  if ( eprop_history_.empty() )
-  {
-    *it = eprop_history_.end();
-    return;
-  }
-
-  *it = std::lower_bound( eprop_history_.begin(), eprop_history_.end(), time_step );
+  return std::lower_bound( eprop_history_.begin(), eprop_history_.end(), time_step );
 }
 
 double
@@ -212,13 +191,13 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
     }
     else
     {
-      get_eprop_history( t, &start );
-      get_eprop_history( t + update_interval, &finish );
+      start = get_eprop_history( t );
+      finish = get_eprop_history( t + update_interval );
       eprop_history_.erase( start, finish ); // erase found entries since no longer used
     }
   }
-  get_eprop_history( 0, &start );
-  get_eprop_history( update_history_.begin()->t_, &finish );
+  start = get_eprop_history( 0 );
+  finish = get_eprop_history( update_history_.begin()->t_ );
   eprop_history_.erase( start, finish ); // erase found entries since no longer used
 }
 

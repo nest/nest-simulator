@@ -251,8 +251,6 @@ public:
     long& optimization_step_,
     const EpropCommonProperties& cp );
 
-  virtual void update_gradient( EpropArchivingNode* target, const EpropCommonProperties& cp ) {};
-
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
   public:
@@ -365,7 +363,7 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
 
     target->write_update_to_history( t_previous_update_, t_current_update_ );
 
-    update_gradient( target, cp );
+    sum_grads_ += target->gradient_change( presyn_isis_, t_previous_update_, t_previous_trigger_spike_, kappa_ );
 
     if ( optimization_step_ < current_optimization_step_ )
     {

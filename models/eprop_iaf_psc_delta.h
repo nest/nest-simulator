@@ -189,8 +189,12 @@ public:
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
 
+  double gradient_change( std::vector< long >& presyn_isis,
+    const long t_previous_update,
+    const long t_previous_trigger_spike,
+    const double kappa ) override;
+
 private:
-  void init_state_( const Node& proto );
   void init_buffers_() override;
   void pre_run_hook() override;
 

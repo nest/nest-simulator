@@ -762,6 +762,17 @@ public:
   virtual double get_tau_syn_ex( int comp );
   virtual double get_tau_syn_in( int comp );
 
+  /**
+   * Compute gradient change for eprop synapses.
+   *
+   * This method is called from an eprop synapse on the eprop target neuron and returns the change in gradient.
+   *
+   * @params presyn_isis  is cleared during call
+   */
+  virtual double gradient_change( std::vector< long >& presyn_isis,
+    const long t_previous_update,
+    const long t_previous_trigger_spike,
+    const double kappa );
 
   /**
    * Modify Event object parameters during event delivery.

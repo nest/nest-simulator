@@ -52,7 +52,6 @@ public:
   void init_update_history();
 
   void write_update_to_history( long t_previous_update, long t_current_update );
-  void write_eprop_parameter_to_map( std::string parameter_name, double parameter_value );
   void write_surrogate_gradient_to_history( long time_step, double surrogate_gradient );
   void write_error_signal_to_history( long time_step, double error_signal );
   void write_learning_signal_to_history( long& time_step, long& delay_out_rec, double& weight, double& error_signal );
@@ -60,8 +59,7 @@ public:
 
   const long get_shift() const;
   const long get_delay_out_norm() const;
-  std::map< std::string, double >& get_eprop_parameter_map();
-  void get_eprop_history( long time_step, std::deque< HistEntryEpropArchive >::iterator* it );
+  std::deque< HistEntryEpropArchive >::iterator get_eprop_history( long time_step );
   double get_firing_rate_reg( long time_step );
 
   void erase_unneeded_update_history();
@@ -82,11 +80,11 @@ private:
   long delay_rec_out_ = 1;  //!< connection delay from recurrent to output neurons
   long delay_out_norm_ = 1; //!< connection delay between output neurons for normalization
 
-  std::deque< HistEntryEpropArchive > eprop_history_;
   std::vector< HistEntryEpropFiringRateReg > firing_rate_reg_history_;
   std::vector< HistEntryEpropUpdate > update_history_;
 
-  std::map< std::string, double > eprop_parameter_map_;
+protected:
+  std::deque< HistEntryEpropArchive > eprop_history_;
 };
 
 } // namespace nest

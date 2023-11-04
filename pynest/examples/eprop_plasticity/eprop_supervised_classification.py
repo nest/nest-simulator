@@ -322,7 +322,7 @@ params_common_syn_eprop = {
 }
 
 params_syn_in_reg = {
-    "synapse_model": "eprop_synapse_iaf_psc_delta",
+    "synapse_model": "eprop_synapse",
     "adam_m": 0.0,  # initial 1st moment estimate m of Adam optimizer
     "adam_v": 0.0,  # initial 2nd moment raw estimate v of Adam optimizer
     "delay": duration["step"],  # ms, dendritic delay
@@ -334,7 +334,7 @@ params_syn_in_reg = {
 }
 
 params_syn_in_adapt = {
-    "synapse_model": "eprop_synapse_iaf_psc_delta_adapt",
+    "synapse_model": "eprop_synapse",
     "adam_m": 0.0,  # initial 1st moment estimate m of Adam optimizer
     "adam_v": 0.0,  # initial 2nd moment raw estimate v of Adam optimizer
     "delay": duration["step"],  # ms, dendritic delay
@@ -346,7 +346,7 @@ params_syn_in_adapt = {
 }
 
 params_syn_rec_reg = {
-    "synapse_model": "eprop_synapse_iaf_psc_delta",
+    "synapse_model": "eprop_synapse",
     "adam_m": 0.0,
     "adam_v": 0.0,
     "delay": duration["step"],
@@ -358,7 +358,7 @@ params_syn_rec_reg = {
 }
 
 params_syn_rec_adapt = {
-    "synapse_model": "eprop_synapse_iaf_psc_delta_adapt",
+    "synapse_model": "eprop_synapse",
     "adam_m": 0.0,
     "adam_v": 0.0,
     "delay": duration["step"],
@@ -369,7 +369,7 @@ params_syn_rec_adapt = {
     "Wmin": -100.0,
 }
 params_syn_out = {
-    "synapse_model": "eprop_synapse_readout",
+    "synapse_model": "eprop_synapse",
     "adam_m": 0.0,
     "adam_v": 0.0,
     "delay": duration["step"],
@@ -406,9 +406,7 @@ params_syn_static = {
 
 ####################
 
-nest.SetDefaults("eprop_synapse_iaf_psc_delta", params_common_syn_eprop)
-nest.SetDefaults("eprop_synapse_iaf_psc_delta_adapt", params_common_syn_eprop)
-nest.SetDefaults("eprop_synapse_readout", params_common_syn_eprop)
+nest.SetDefaults("eprop_synapse", params_common_syn_eprop)
 
 nest.Connect(gen_spk_in, nrns_in, params_conn_one_to_one, params_syn_static)  # connection 1
 nest.Connect(nrns_in, nrns_reg, params_conn_all_to_all, params_syn_in_reg)  # connection 2
@@ -594,7 +592,7 @@ target_signal = np.array([target_signal[senders == i] for i in np.unique(senders
 
 # pylint: disable-next=E1121,C0301
 readout_signal = readout_signal.reshape(n_out, n_iter, n_batch, steps["sequence"])[:, :, :, -steps["learning_window"] :]
-# pylint: disable-next=E1121,C0301
+# pylint: disable-next-=E1121,C0301
 target_signal = target_signal.reshape(n_out, n_iter, n_batch, steps["sequence"])[:, :, :, -steps["learning_window"] :]
 
 loss = -np.mean(np.sum(target_signal * np.log(readout_signal), axis=0), axis=(1, 2))

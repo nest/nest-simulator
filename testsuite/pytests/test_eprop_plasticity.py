@@ -193,7 +193,7 @@ def test_eprop_regression():
     }
 
     params_syn_in = {
-        "synapse_model": "eprop_synapse_iaf_psc_delta",
+        "synapse_model": "eprop_synapse",
         "delay": duration["step"],
         "eta": 1e-4,
         "tau_m_readout": params_nrn_out["tau_m"],
@@ -203,7 +203,7 @@ def test_eprop_regression():
     }
 
     params_syn_rec = {
-        "synapse_model": "eprop_synapse_iaf_psc_delta",
+        "synapse_model": "eprop_synapse",
         "delay": duration["step"],
         "eta": 1e-4,
         "tau_m_readout": params_nrn_out["tau_m"],
@@ -213,7 +213,7 @@ def test_eprop_regression():
     }
 
     params_syn_out = {
-        "synapse_model": "eprop_synapse_readout",
+        "synapse_model": "eprop_synapse",
         "delay": duration["step"],
         "eta": 1e-4,
         "tau_m_readout": params_nrn_out["tau_m"],
@@ -239,8 +239,7 @@ def test_eprop_regression():
         "delay": duration["step"],
     }
 
-    nest.SetDefaults("eprop_synapse_iaf_psc_delta", params_common_syn_eprop)
-    nest.SetDefaults("eprop_synapse_readout", params_common_syn_eprop)
+    nest.SetDefaults("eprop_synapse", params_common_syn_eprop)
 
     nest.Connect(gen_spk_in, nrns_in, params_conn_one_to_one, params_syn_static)
     nest.Connect(nrns_in, nrns_rec, params_conn_all_to_all, params_syn_in)
@@ -525,7 +524,7 @@ def test_eprop_classification():
     }
 
     params_syn_in_reg = {
-        "synapse_model": "eprop_synapse_iaf_psc_delta",
+        "synapse_model": "eprop_synapse",
         "adam_m": 0.0,
         "adam_v": 0.0,
         "delay": duration["step"],
@@ -537,7 +536,7 @@ def test_eprop_classification():
     }
 
     params_syn_in_adapt = {
-        "synapse_model": "eprop_synapse_iaf_psc_delta_adapt",
+        "synapse_model": "eprop_synapse",
         "adam_m": 0.0,
         "adam_v": 0.0,
         "delay": duration["step"],
@@ -549,7 +548,7 @@ def test_eprop_classification():
     }
 
     params_syn_rec_reg = {
-        "synapse_model": "eprop_synapse_iaf_psc_delta",
+        "synapse_model": "eprop_synapse",
         "adam_m": 0.0,
         "adam_v": 0.0,
         "delay": duration["step"],
@@ -561,7 +560,7 @@ def test_eprop_classification():
     }
 
     params_syn_rec_adapt = {
-        "synapse_model": "eprop_synapse_iaf_psc_delta_adapt",
+        "synapse_model": "eprop_synapse",
         "adam_m": 0.0,
         "adam_v": 0.0,
         "delay": duration["step"],
@@ -572,7 +571,7 @@ def test_eprop_classification():
         "Wmin": -100.0,
     }
     params_syn_out = {
-        "synapse_model": "eprop_synapse_readout",
+        "synapse_model": "eprop_synapse",
         "adam_m": 0.0,
         "adam_v": 0.0,
         "delay": duration["step"],
@@ -607,9 +606,7 @@ def test_eprop_classification():
         "delay": duration["step"],
     }
 
-    nest.SetDefaults("eprop_synapse_iaf_psc_delta", params_common_syn_eprop)
-    nest.SetDefaults("eprop_synapse_iaf_psc_delta_adapt", params_common_syn_eprop)
-    nest.SetDefaults("eprop_synapse_readout", params_common_syn_eprop)
+    nest.SetDefaults("eprop_synapse", params_common_syn_eprop)
 
     nest.Connect(gen_spk_in, nrns_in, params_conn_one_to_one, params_syn_static)
     nest.Connect(nrns_in, nrns_reg, params_conn_all_to_all, params_syn_in_reg)

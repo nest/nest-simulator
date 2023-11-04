@@ -1,6 +1,5 @@
 # Full modelset for NEST including spiking, binary and rate models
 
-
 ac_generator
 aeif_cond_alpha
 aeif_cond_alpha_astro
@@ -26,9 +25,6 @@ eprop_iaf_psc_delta
 eprop_iaf_psc_delta_adapt
 eprop_readout
 eprop_synapse
-eprop_synapse_iaf_psc_delta
-eprop_synapse_iaf_psc_delta_adapt
-eprop_synapse_readout
 eprop_learning_signal_connection
 erfc_neuron
 gamma_sup_generator

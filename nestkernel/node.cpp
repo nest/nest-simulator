@@ -517,6 +517,12 @@ nest::Node::get_tau_syn_in( int )
   throw UnexpectedEvent();
 }
 
+double
+nest::Node::gradient_change( std::vector< long >&, const long, const long, const double )
+{
+  throw KernelException( "gradient_change() not supported." );
+}
+
 void
 Node::event_hook( DSSpikeEvent& e )
 {

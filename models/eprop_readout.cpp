@@ -313,23 +313,22 @@ nest::eprop_readout::compute_error_signal_cross_entropy_loss( const long& lag )
 void
 nest::eprop_readout::handle( DelayedRateConnectionEvent& e )
 {
-  size_t rport = e.get_rport();
-  const long delay = e.get_delay_steps();
+  const size_t rport = e.get_rport();
+  assert( rport < SUP_RATE_RECEPTOR );
+
   long i = 0;
-
-  assert( rport < 3 );
-
-  std::vector< unsigned int >::iterator it = e.begin();
-
+  auto it = e.begin();
   while ( it != e.end() )
   {
-    double signal = e.get_weight() * e.get_coeffvalue( it ); // get_coeffvalue advances iterator
-    long t = delay + i;
-
-    if ( rport == READOUT_SIG - MIN_RATE_RECEPTOR )
-      B_.normalization_rates_.add_value( t, signal );
-    else if ( rport == TARGET_SIG - MIN_RATE_RECEPTOR )
-      B_.delayed_rates_.add_value( t, signal );
+    const double signal = e.get_weight() * e.get_coeffvalue( it ); // get_coeffvalue advances iterator
+    if ( rport == READOUT_SIG )
+    {
+      B_.normalization_rates_.add_value( i, signal );
+    }
+    else if ( rport == TARGET_SIG )
+    {
+      B_.delayed_rates_.add_value( i, signal );
+    }
 
     ++i;
   }

@@ -254,8 +254,6 @@ private:
     SUP_RATE_RECEPTOR
   };
 
-  static const size_t NUM_RATE_RECEPTORS = SUP_RATE_RECEPTOR - MIN_RATE_RECEPTOR;
-
   double
   get_V_m_() const
   {
@@ -327,7 +325,7 @@ eprop_readout::handles_test_event( DelayedRateConnectionEvent& e, size_t recepto
   if ( receptor_type < MIN_RATE_RECEPTOR or receptor_type >= SUP_RATE_RECEPTOR )
     throw UnknownReceptorType( receptor_type, get_name() );
 
-  return receptor_type - MIN_RATE_RECEPTOR;
+  return receptor_type;
 }
 
 inline size_t

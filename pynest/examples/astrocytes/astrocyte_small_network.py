@@ -30,21 +30,22 @@ neurons are modeled with ``aeif_cond_alpha_astro``, an adaptive exponential
 integrate-and-fire neuron supporting neuron-astrocyte interactions.
 
 The network is created with the ``TripartiteConnect()`` function and the
-``tripartite_bernoulli_with_pool`` rule. This rule creates a tripartite
-Bernoulli connectivity with the following principles:
+``tripartite_bernoulli_with_pool`` rule (see :ref:`tripartite_connectivity` for
+detailed descriptions). This rule creates a tripartite Bernoulli connectivity
+with the following principles:
 
 1. For each pair of neurons, a Bernoulli trial with a probability ``p_primary``
-determines if they will be connected.
+determines if a ``tsodyks_synapse`` will be created between them.
 
 2. For each neuron-neuron connection created, a Bernoulli trial with a
 probability ``p_third_if_primary`` determines if it will be paired with one astrocyte.
 The selection of this particular astrocyte is confined by ``pool_size`` and
 ``pool_type`` (see below).
 
-3. If a neuron-neuron connection is to be paired with an astrocyte, a connection
-from the presynaptic (source) neuron to the astrocyte is created, and a
-connection (``sic_connection``) from the astrocyte to the postsynaptic (target)
-neuron is created.
+3. If a neuron-neuron connection is to be paired with an astrocyte, a
+``tsodyks_synapse`` from the presynaptic (source) neuron to the astrocyte
+is created, and a ``sic_connection`` from the astrocyte to the postsynaptic
+(target) neuron is created.
 
 The available connectivity parameters are as follows:
 
@@ -56,7 +57,9 @@ The available connectivity parameters are as follows:
     paired with one astrocyte.
 
   * ``pool_size``: The size of astrocyte pool for each target neuron. The
-    target neuron can only be connected to astrocytes selected from its pool.
+    astrocyte pool of each target neuron is determined before making
+    connections. Each target neuron can only be connected to astrocytes
+    in its pool.
 
   * ``pool_type``: The way to determine the astrocyte pool for each target
     neuron. If ``"random"``, a number (``pool_size``) of astrocytes are
@@ -91,7 +94,7 @@ presynaptic spikes induce the generation of IP3, which then changes the calcium
 concentration in the astrocytes. This change in calcium then induces the slow
 inward current (SIC) in the neurons through the ``sic_connection``. The changes
 in membrane potential of the presynaptic and postsynaptic neurons are also
-recorded. These data are also shown in the created figures.
+recorded. These data are shown in the created figures.
 
 The ``pool_type`` can be changed to "random" to see the results with random
 astrocyte pools. In that case, the ``pool_size`` can be any from one to the
@@ -143,8 +146,8 @@ nest.ResetKernel()
 
 n_neurons = 10  # number of source and target neurons
 n_astrocytes = 5  # number of astrocytes
-p_primary = 0.5 #1.0  # connection probability between neurons
-p_third_if_primary = 0.5 #1.0  # probability of each created neuron-neuron connection to be paired with one astrocyte
+p_primary = 0.5  # 1.0  # connection probability between neurons
+p_third_if_primary = 0.5  # 1.0  # probability of each created neuron-neuron connection to be paired with one astrocyte
 pool_size = 1  # astrocyte pool size for each target neuron
 pool_type = "block"  # the way to determine the astrocyte pool for each target neuron
 
@@ -173,67 +176,76 @@ neuron_params = {
 
 # Plot all connections between neurons and astrocytes
 def plot_connections(conn_n2n, conn_n2a, conn_a2n, pre_id_list, post_id_list, astro_id_list):
-    # helper function to create lists of positions for source and target nodes
-    def get_node_positions(dict_in, source_center, target_center):
+    print("Plotting connections ...")
+
+    # helper function to create lists of connection positions
+    def get_conn_positions(dict_in, source_center, target_center):
         source_list = np.array(dict_in["source"]) - source_center
         target_list = np.array(dict_in["target"]) - target_center
-        return source_list, target_list
+        return source_list.tolist(), target_list.tolist()
 
-    # helper function to set plot frames invisible
-    def set_frame_invisible(ax):
-        ax.get_xaxis().set_visible(False)
-        ax.get_yaxis().set_visible(False)
-        ax.spines["top"].set_visible(False)
-        ax.spines["bottom"].set_visible(False)
-        ax.spines["left"].set_visible(False)
-        ax.spines["right"].set_visible(False)
-
-    print("Plotting connections ...")
-    # prepare data (lists of node positions)
-    pre_id_center = (pre_id_list[0] + pre_id_list[-1])/2
-    post_id_center = (post_id_list[0] + post_id_list[-1])/2
-    astro_id_center = (astro_id_list[0] + astro_id_list[-1])/2
-    slist_n2n, tlist_n2n = get_node_positions(conns_n2n.get(), pre_id_center, post_id_center)
-    slist_n2a, alist_n2a = get_node_positions(conns_n2a.get(), pre_id_center, astro_id_center)
-    alist_a2n, tlist_a2n = get_node_positions(conns_a2n.get(), astro_id_center, post_id_center)
-    # make plot
+    # prepare data (lists of node positions, list of connection positions)
+    pre_id_center = (pre_id_list[0] + pre_id_list[-1]) / 2
+    post_id_center = (post_id_list[0] + post_id_list[-1]) / 2
+    astro_id_center = (astro_id_list[0] + astro_id_list[-1]) / 2
+    slist_n2n, tlist_n2n = get_conn_positions(conns_n2n.get(), pre_id_center, post_id_center)
+    slist_n2a, tlist_n2a = get_conn_positions(conns_n2a.get(), pre_id_center, astro_id_center)
+    slist_a2n, tlist_a2n = get_conn_positions(conns_a2n.get(), astro_id_center, post_id_center)
+    # initialize figure
     fig, axs = plt.subplots(1, 1, figsize=(10, 8))
     # plot nodes and connections
+    # source neuron nodes
     axs.scatter(
         np.array(pre_id_list) - pre_id_center,
-        [2] * len(pre_id_list), s=300, color="gray", marker="^", label="pre_neurons", zorder=3
+        [2] * len(pre_id_list),
+        s=300,
+        color="gray",
+        marker="^",
+        label="pre_neurons",
+        zorder=3,
     )
+    # neuron-to-neuron connections
     for i, (sx, tx) in enumerate(zip(slist_n2n, tlist_n2n)):
         label = "neuron-to-neuron" if i == 0 else None
         axs.plot([sx, tx], [2, 0], linestyle=":", color="b", alpha=0.3, linewidth=2, label=label)
+    # target neuron nodes
     axs.scatter(
         np.array(post_id_list) - post_id_center,
-        [0] * len(post_id_list), s=300, color="k", marker="^", label="post_neurons", zorder=3
+        [0] * len(post_id_list),
+        s=300,
+        color="k",
+        marker="^",
+        label="post_neurons",
+        zorder=3,
     )
-    for i, (sx, tx) in enumerate(zip(slist_n2a, alist_n2a)):
+    # neuron-to-astrocyte connections
+    for i, (sx, tx) in enumerate(zip(slist_n2a, tlist_n2a)):
         label = "neuron-to-astrocyte" if i == 0 else None
         axs.plot([sx, tx], [2, 1], linestyle="-", color="orange", alpha=0.5, linewidth=2, label=label)
+    # astrocyte nodes
     axs.scatter(
         np.array(astro_id_list) - astro_id_center,
-        [1] * len(astro_id_list), s=300, color="g", marker="o", label="astrocytes", zorder=3
+        [1] * len(astro_id_list),
+        s=300,
+        color="g",
+        marker="o",
+        label="astrocytes",
+        zorder=3,
     )
-    for i, (sx, tx) in enumerate(zip(alist_a2n, tlist_a2n)):
+    # astrocyte-to-neuron connections
+    for i, (sx, tx) in enumerate(zip(slist_a2n, tlist_a2n)):
         label = "astrocyte-to-neuron" if i == 0 else None
-        axs.plot([sx, tx], [1, 0], linestyle="-", color="g", alpha=0.8, linewidth=4, label=label)
-    # tweak legends and frames
+        axs.plot([sx, tx], [1, 0], linestyle="-", color="g", linewidth=4, label=label)
+    # set legends
     legend = axs.legend(bbox_to_anchor=(0.5, 1.15), loc="upper center", ncol=3, labelspacing=1.5)
     legend.set_frame_on(False)
-    set_frame_invisible(axs)
-
-
-# Helper function to mask data by start time
-def mask_data_by_start(data_in, start):
-    data_out = {}
-    times = data_in["times"]
-    for key, value in data_in.items():
-        data = data_in[key]
-        data_out[key] = data[times > start]
-    return data_out
+    # set axes and frames invisible
+    axs.get_xaxis().set_visible(False)
+    axs.get_yaxis().set_visible(False)
+    axs.spines["top"].set_visible(False)
+    axs.spines["bottom"].set_visible(False)
+    axs.spines["left"].set_visible(False)
+    axs.spines["right"].set_visible(False)
 
 
 # Helper function to get times, means, and standard deviation of data for plotting
@@ -249,11 +261,9 @@ def get_plot_data(data_in, variable):
 def plot_vm(pre_data, post_data, start):
     print("Plotting V_m ...")
     # get presynaptic data
-    pre_data_masked = mask_data_by_start(pre_data, start)
-    pre_times, pre_vm_mean, pre_vm_sd = get_plot_data(pre_data_masked, "V_m")
+    pre_times, pre_vm_mean, pre_vm_sd = get_plot_data(pre_data, "V_m")
     # get postsynaptic data
-    post_data_masked = mask_data_by_start(post_data, start)
-    post_times, post_vm_mean, post_vm_sd = get_plot_data(post_data_masked, "V_m")
+    post_times, post_vm_mean, post_vm_sd = get_plot_data(post_data, "V_m")
     # set plots
     fig, axes = plt.subplots(2, 1, sharex=True)
     color_pre = color_post = "tab:blue"
@@ -278,19 +288,17 @@ def plot_vm(pre_data, post_data, start):
 def plot_dynamics(astro_data, neuron_data, start):
     print("Plotting dynamics ...")
     # get astrocyte data
-    astro_data_masked = mask_data_by_start(astro_data, start)
-    astro_times, astro_ip3_mean, astro_ip3_sd = get_plot_data(astro_data_masked, "IP3")
-    astro_times, astro_ca_mean, astro_ca_sd = get_plot_data(astro_data_masked, "Ca")
+    astro_times, astro_ip3_mean, astro_ip3_sd = get_plot_data(astro_data, "IP3")
+    astro_times, astro_ca_mean, astro_ca_sd = get_plot_data(astro_data, "Ca")
     # get neuron data
-    neuron_data_masked = mask_data_by_start(neuron_data, start)
-    neuron_times, neuron_sic_mean, neuron_sic_sd = get_plot_data(neuron_data_masked, "I_SIC")
+    neuron_times, neuron_sic_mean, neuron_sic_sd = get_plot_data(neuron_data, "I_SIC")
     # set plots
     fig, axes = plt.subplots(2, 1, sharex=True)
     color_ip3 = "tab:blue"
     color_cal = "tab:green"
     color_sic = "tab:purple"
     # plot astrocyte data
-    n_astro = len(set(astro_data_masked["senders"]))
+    n_astro = len(set(astro_data["senders"]))
     axes[0].set_title(f"IP$_{{3}}$ and Ca$^{{2+}}$ in astrocytes (n={n_astro})")
     axes[0].set_ylabel(r"IP$_{3}$ ($\mu$M)")
     axes[0].tick_params(axis="y", labelcolor=color_ip3)
@@ -311,7 +319,7 @@ def plot_dynamics(astro_data, neuron_data, start):
     )
     ax.plot(astro_times, astro_ca_mean, linewidth=2, color=color_cal)
     # plot neuron data
-    n_neuron = len(set(neuron_data_masked["senders"]))
+    n_neuron = len(set(neuron_data["senders"]))
     axes[1].set_title(f"SIC in postsynaptic neurons (n={n_neuron})")
     axes[1].set_ylabel("SIC (pA)")
     axes[1].set_xlabel("Time (ms)")
@@ -345,9 +353,9 @@ nest.TripartiteConnect(
         "pool_type": pool_type,
     },
     syn_specs={
-        "primary": {"synapse_model": "tsodyks_synapse", "weight": 1.0, "delay": 1.0},
-        "third_in": {"synapse_model": "tsodyks_synapse", "weight": 1.0, "delay": 1.0},
-        "third_out": {"synapse_model": "sic_connection", "weight": 1.0, "delay": 1.0},
+        "primary": {"synapse_model": "tsodyks_synapse"},
+        "third_in": {"synapse_model": "tsodyks_synapse"},
+        "third_out": {"synapse_model": "sic_connection"},
     },
 )
 mm_pre_neurons = nest.Create("multimeter", params={"record_from": ["V_m"]})

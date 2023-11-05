@@ -849,6 +849,15 @@ nest::SimulationManager::update_()
         // and invalid markers have not been properly set in send buffers.
         if ( slice_ > 0 and from_step_ == 0 )
         {
+          // Deliver secondary events before primary events
+          //
+          // Delivering secondary events first provides LearningSignalConnectionEvents
+          // to target neurons before spikes are transmitted through eprop synapses
+          // targeting the neurons, reducing the need for buffering of information.
+          if ( kernel().connection_manager.secondary_connections_exist() )
+          {
+            kernel().event_delivery_manager.deliver_secondary_events( tid, false );
+          }
 
           if ( kernel().connection_manager.has_primary_connections() )
           {
@@ -867,10 +876,6 @@ nest::SimulationManager::update_()
               sw_deliver_spike_data_.stop();
             }
 #endif
-          }
-          if ( kernel().connection_manager.secondary_connections_exist() )
-          {
-            kernel().event_delivery_manager.deliver_secondary_events( tid, false );
           }
 
 

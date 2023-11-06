@@ -724,9 +724,11 @@ def test_eprop_classification():
     readout_signal = np.array([readout_signal[senders == i] for i in np.unique(senders)])
     target_signal = np.array([target_signal[senders == i] for i in np.unique(senders)])
 
+    # pylint: disable-next=too-many-function-args
     readout_signal = readout_signal.reshape(n_out, n_iter, n_batch, steps["sequence"])
     readout_signal = readout_signal[:, :, :, -steps["learning_window"] :]
 
+    # pylint: disable-next=too-many-function-args
     target_signal = target_signal.reshape(n_out, n_iter, n_batch, steps["sequence"])
     target_signal = target_signal[:, :, :, -steps["learning_window"] :]
 

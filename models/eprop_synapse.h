@@ -272,9 +272,15 @@ public:
   void
   check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& cp )
   {
-    bool is_source_recurrent_neuron =
+    // When we get here, delay has been set so we can check it.
+    if ( get_delay_steps() != 1 )
+    {
+      throw KernelException( "eprop synapses currently require a delay of one simulation step" );
+    }
+
+    const bool is_source_recurrent_neuron =
       s.get_name() == "eprop_iaf_psc_delta" or s.get_name() == "eprop_iaf_psc_delta_adapt";
-    bool is_target_recurrent_neuron =
+    const bool is_target_recurrent_neuron =
       t.get_name() == "eprop_iaf_psc_delta" or t.get_name() == "eprop_iaf_psc_delta_adapt";
 
     is_recurrent_to_recurrent_conn_ = is_source_recurrent_neuron and is_target_recurrent_neuron;
@@ -337,11 +343,11 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
   EpropArchivingNode* target = dynamic_cast< EpropArchivingNode* >( get_target( thread ) );
   assert( target );
 
-  long t_spike = e.get_stamp().get_steps();
-  long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
+  const long t_spike = e.get_stamp().get_steps();
+  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
   const long shift = target->get_shift();
 
-  long interval_step = ( t_spike - shift ) % update_interval;
+  const long interval_step = ( t_spike - shift ) % update_interval;
 
   if ( is_recurrent_to_recurrent_conn_ and interval_step == 0 )
     return;

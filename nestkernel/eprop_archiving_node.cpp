@@ -38,6 +38,10 @@ nest::EpropArchivingNode::EpropArchivingNode()
 nest::EpropArchivingNode::EpropArchivingNode( const EpropArchivingNode& n )
   : Node( n )
 {
+  if ( Time::get_resolution().get_ms() != 1.0 )
+  {
+    throw KernelException( "eprop nodes currently require resolution == 1.0 ms" );
+  }
 }
 
 void

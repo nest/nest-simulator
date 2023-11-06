@@ -224,8 +224,7 @@ private:
     Buffers_( eprop_readout& );
     Buffers_( const Buffers_&, eprop_readout& );
 
-    RingBuffer delayed_rates_;
-    RingBuffer normalization_rates_;
+    double normalization_rate_;
 
     RingBuffer spikes_;
     RingBuffer currents_;

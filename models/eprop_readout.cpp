@@ -83,6 +83,7 @@ nest::eprop_readout::Parameters_::Parameters_()
 nest::eprop_readout::State_::State_()
   : error_signal_( 0.0 )
   , readout_signal_( 0.0 )
+  , readout_signal_unnorm_( 0.0 )
   , target_signal_( 0.0 )
   , y0_( 0.0 )
   , y3_( 0.0 )
@@ -142,6 +143,9 @@ void
 nest::eprop_readout::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
   def< double >( d, names::V_m, y3_ + p.E_L_ );
+  def< double >( d, names::error_signal, error_signal_ );
+  def< double >( d, names::readout_signal, readout_signal_ );
+  def< double >( d, names::target_signal, target_signal_ );
 }
 
 void
@@ -178,11 +182,10 @@ nest::eprop_readout::eprop_readout( const eprop_readout& n )
 void
 nest::eprop_readout::init_buffers_()
 {
-  B_.delayed_rates_.clear();       // includes resize
-  B_.normalization_rates_.clear(); // includes resize
-  B_.spikes_.clear();              // includes resize
-  B_.currents_.clear();            // includes resize
-  B_.logger_.reset();              // includes resize
+  B_.normalization_rate_ = 0;
+  B_.spikes_.clear();   // includes resize
+  B_.currents_.clear(); // includes resize
+  B_.logger_.reset();   // includes resize
 }
 
 void
@@ -195,7 +198,6 @@ nest::eprop_readout::pre_run_hook()
   V_.P33_ = std::exp( -dt / P_.tau_m_ );
   V_.P30_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - V_.P33_ );
   V_.P33_complement_ = 1.0 - V_.P33_;
-  S_.readout_signal_unnorm_ = 0.0;
 
   if ( P_.loss_ == "mean_squared_error" )
   {
@@ -216,9 +218,9 @@ nest::eprop_readout::pre_run_hook()
 void
 nest::eprop_readout::update( Time const& origin, const long from, const long to )
 {
-  long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
+  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
   const double learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
-  bool with_reset = kernel().simulation_manager.get_eprop_reset_neurons_on_update();
+  const bool with_reset = kernel().simulation_manager.get_eprop_reset_neurons_on_update();
   const long shift = get_shift();
   const long delay_out_norm = get_delay_out_norm();
 
@@ -233,14 +235,11 @@ nest::eprop_readout::update( Time const& origin, const long from, const long to 
     long interval_step = ( t - shift ) % update_interval;
     long interval_step_signals = ( t - shift - delay_out_norm ) % update_interval;
 
-
     if ( with_reset and interval_step == 0 )
       S_.y3_ = 0.0;
 
     S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P33_ * S_.y3_ + V_.P33_complement_ * B_.spikes_.get_value( lag );
     S_.y3_ = S_.y3_ < P_.V_min_ ? P_.V_min_ : S_.y3_;
-
-    S_.target_signal_ = B_.delayed_rates_.get_value( lag );
 
     ( this->*compute_error_signal )( lag );
 
@@ -251,6 +250,7 @@ nest::eprop_readout::update( Time const& origin, const long from, const long to 
       S_.error_signal_ = 0.0;
     }
 
+    B_.normalization_rate_ = 0.0;
 
     if ( V_.requires_buffer_ )
       readout_signal_unnorm_buffer[ lag ] = S_.readout_signal_unnorm_;
@@ -295,7 +295,7 @@ nest::eprop_readout::compute_error_signal_mean_squared_error( const long& lag )
 void
 nest::eprop_readout::compute_error_signal_cross_entropy_loss( const long& lag )
 {
-  double norm_rate = B_.normalization_rates_.get_value( lag ) + S_.readout_signal_unnorm_;
+  const double norm_rate = B_.normalization_rate_ + S_.readout_signal_unnorm_;
   S_.readout_signal_ = S_.readout_signal_unnorm_ / norm_rate;
   S_.readout_signal_unnorm_ = std::exp( S_.y3_ + P_.E_L_ );
   S_.error_signal_ = S_.readout_signal_ - S_.target_signal_;
@@ -311,22 +311,20 @@ nest::eprop_readout::handle( DelayedRateConnectionEvent& e )
   const size_t rport = e.get_rport();
   assert( rport < SUP_RATE_RECEPTOR );
 
-  long i = 0;
   auto it = e.begin();
-  while ( it != e.end() )
-  {
-    const double signal = e.get_weight() * e.get_coeffvalue( it ); // get_coeffvalue advances iterator
-    if ( rport == READOUT_SIG )
-    {
-      B_.normalization_rates_.add_value( i, signal );
-    }
-    else if ( rport == TARGET_SIG )
-    {
-      B_.delayed_rates_.add_value( i, signal );
-    }
+  assert( it != e.end() );
 
-    ++i;
+  const double signal = e.get_weight() * e.get_coeffvalue( it );
+  if ( rport == READOUT_SIG )
+  {
+    B_.normalization_rate_ += signal;
   }
+  else if ( rport == TARGET_SIG )
+  {
+    S_.target_signal_ = signal;
+  }
+
+  assert( it == e.end() );
 }
 
 void

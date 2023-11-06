@@ -29,6 +29,7 @@ import pandas.testing as pdtest
 import pytest
 
 skip_models = [
+    "eprop_readout",  # extra timestep added to some recordables in update function
     "erfc_neuron",  # binary neuron
     "ginzburg_neuron",  # binary neuron
     "mcculloch_pitts_neuron",  # binary neuron
@@ -90,6 +91,7 @@ def build_net(model):
     nest.ResetKernel()
     if "eprop" in model:
         nest.eprop_update_interval = 1.0
+        nest.eprop_learning_window = 1.0
         nest.eprop_reset_neurons_on_update = True
     nrn = nest.Create(model)
     pg = nest.Create("poisson_generator", params={"rate": 1e4})

@@ -48,6 +48,11 @@ nest::RecordablesMap< nest::iaf_wang_2002 > nest::iaf_wang_2002::recordablesMap_
 
 namespace nest
 {
+void
+register_iaf_wang_2002( const std::string& name )
+{
+  register_node_model< iaf_wang_2002 >( name );
+}
 /*
  * Override the create() method with one call to RecordablesMap::insert_()
  * for each quantity to be recorded.
@@ -109,6 +114,10 @@ nest::iaf_wang_2002::Parameters_::Parameters_()
   , V_reset( -60.0 )      // mV
   , C_m( 500.0 )          // pF
   , g_L( 25.0 )           // nS
+  , g_GABA ( 1.3 )        //
+  , g_NMDA ( 0.165 )        //
+  , g_AMPA ( 0.05 )        //
+  , g_AMPA_ext ( 1.3 )        //
   , t_ref( 2.0 )          // ms
   , tau_AMPA( 2.0 )       // ms
   , tau_GABA( 5.0 )       // ms
@@ -174,10 +183,13 @@ nest::iaf_wang_2002::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::V_reset, V_reset );
   def< double >( d, names::C_m, C_m );
   def< double >( d, names::g_L, g_L );
+  def< double >( d, names::g_GABA, g_GABA );
+  def< double >( d, names::g_NMDA, g_NMDA );
+  def< double >( d, names::g_AMPA, g_AMPA );
+  def< double >( d, names::g_AMPA_ext, g_AMPA_ext );
   def< double >( d, names::t_ref, t_ref );
   def< double >( d, names::tau_AMPA, tau_AMPA );
   def< double >( d, names::tau_GABA, tau_GABA );
-  def< double >( d, names::tau_rise_NMDA, tau_rise_NMDA );
   def< double >( d, names::tau_decay_NMDA, tau_decay_NMDA );
   def< double >( d, names::alpha, alpha );
   def< double >( d, names::conc_Mg2, conc_Mg2 );
@@ -188,25 +200,23 @@ void
 nest::iaf_wang_2002::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   // allow setting the membrane potential
-  updateValueParam< double >( d, names::V_th, V_th, node );
-  updateValueParam< double >( d, names::V_reset, V_reset, node );
-  updateValueParam< double >( d, names::t_ref, t_ref, node );
   updateValueParam< double >( d, names::E_L, E_L, node );
-
   updateValueParam< double >( d, names::E_ex, E_ex, node );
   updateValueParam< double >( d, names::E_in, E_in, node );
-
+  updateValueParam< double >( d, names::V_th, V_th, node );
+  updateValueParam< double >( d, names::V_reset, V_reset, node );
   updateValueParam< double >( d, names::C_m, C_m, node );
   updateValueParam< double >( d, names::g_L, g_L, node );
-
+  updateValueParam< double >( d, names::g_GABA, g_GABA, node );
+  updateValueParam< double >( d, names::g_NMDA, g_NMDA, node );
+  updateValueParam< double >( d, names::g_AMPA, g_AMPA, node );
+  updateValueParam< double >( d, names::g_AMPA_ext, g_AMPA_ext, node );
+  updateValueParam< double >( d, names::t_ref, t_ref, node );
   updateValueParam< double >( d, names::tau_AMPA, tau_AMPA, node );
   updateValueParam< double >( d, names::tau_GABA, tau_GABA, node );
-  updateValueParam< double >( d, names::tau_rise_NMDA, tau_rise_NMDA, node );
   updateValueParam< double >( d, names::tau_decay_NMDA, tau_decay_NMDA, node );
-
   updateValueParam< double >( d, names::alpha, alpha, node );
   updateValueParam< double >( d, names::conc_Mg2, conc_Mg2, node );
-
   updateValueParam< double >( d, names::gsl_error_tol, gsl_error_tol, node );
 
   if ( V_reset >= V_th )
@@ -221,7 +231,7 @@ nest::iaf_wang_2002::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Refractory time cannot be negative." );
   }
-  if ( tau_AMPA <= 0 or tau_GABA <= 0 or tau_rise_NMDA <= 0 or tau_decay_NMDA <= 0 )
+  if ( tau_AMPA <= 0 or tau_GABA <= 0 or tau_decay_NMDA <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
@@ -246,10 +256,6 @@ nest::iaf_wang_2002::State_::get( DictionaryDatum& d ) const
   def< double >( d, names::s_AMPA, y_[ s_AMPA ] );
   def< double >( d, names::s_GABA, y_[ s_GABA ] );
   def< double >( d, names::s_NMDA, y_[ s_NMDA] );
-
-  // total NMDA sum
-  double NMDA_sum = get_NMDA_sum();
-  def< double >( d, names::NMDA_sum, NMDA_sum );
 }
 
 void

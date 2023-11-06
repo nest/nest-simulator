@@ -59,8 +59,8 @@ iaf_psc_exp_htum
 iaf_psc_exp_multisynapse
 iaf_psc_exp_ps
 iaf_psc_exp_ps_lossless
-iaf_wang_2002
 iaf_tum_2000
+iaf_wang_2002
 izhikevich
 jonke_synapse
 lin_rate

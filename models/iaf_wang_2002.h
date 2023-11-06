@@ -106,10 +106,8 @@ The following parameters can be set in the status dictionary.
  g_GABA         nS      Peak recurrent GABA conductance 
  g_L            nS      Leak conductance
  t_ref          ms      Refractory period
- tau_AMPA_ext   ms      Synaptic time constant for external AMPA synapse
  tau_AMPA       ms      Synaptic time constant for AMPA synapse
  tau_GABA       ms      Synaptic time constant for GABA synapse
- tau_rise_NMDA  ms      Synaptic rise time constant for NMDA synapse
  tau_decay_NMDA ms      Synaptic decay time constant for NMDA synapse
  alpha          1/ms    Scaling factor for NMDA synapse
  conc_Mg2       mM      Extracellular magnesium concentration
@@ -162,10 +160,8 @@ iaf_cond_alpha, ht_neuron
 
 EndUserDocs */
 
+void register_iaf_wang_2002( const std::string& name );
 
-/**
- * Leaky integrate-and-fire-neuron model with dynamic NMDA receptors.
- */
 class iaf_wang_2002 : public ArchivingNode
 {
 public:
@@ -253,10 +249,8 @@ private:
     double g_AMPA;         //!< Peak conductance AMPA
     double g_AMPA_ext;     //!< Peak conductance external AMPA
     double t_ref;          //!< Refractory period in ms
-    double tau_AMPA_ext;   //!< Synaptic Time Constant external AMPA Synapse in ms
     double tau_AMPA;       //!< Synaptic Time Constant AMPA Synapse in ms
     double tau_GABA;       //!< Synaptic Time Constant GABA Synapse in ms
-    double tau_rise_NMDA;  //!< Synaptic Rise Time Constant NMDA Synapse in ms
     double tau_decay_NMDA; //!< Synaptic Decay Time Constant NMDA Synapse in ms
     double alpha;          //!< Scaling factor for NMDA synapse in 1/ms
     double conc_Mg2;       //!< Extracellular Magnesium Concentration in mM

@@ -184,6 +184,7 @@ const Name GABA_A( "GABA_A" );
 const Name GABA_B( "GABA_B" );
 const Name g( "g" );
 const Name g_AMPA( "g_AMPA" );
+const Name g_AMPA_ext( "g_AMPA_ext" );
 const Name g_GABA( "g_GABA" );
 const Name g_ahp( "g_ahp" );
 const Name g_C( "g_C" );

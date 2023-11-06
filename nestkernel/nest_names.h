@@ -210,6 +210,7 @@ extern const Name GABA_A;
 extern const Name GABA_B;
 extern const Name g;
 extern const Name g_AMPA;
+extern const Name g_AMPA_ext;
 extern const Name g_ahp;
 extern const Name g_C;
 extern const Name g_GABA;

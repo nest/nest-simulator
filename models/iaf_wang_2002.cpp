@@ -491,7 +491,6 @@ void
 nest::iaf_wang_2002::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
-  std::cout << "rport: " << e.get_rport() << std::endl;
 
   if ( e.get_weight() > 0.0 )
   {

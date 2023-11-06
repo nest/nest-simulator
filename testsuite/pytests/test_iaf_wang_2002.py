@@ -27,7 +27,6 @@ we use). The integration of the membrane potential is not tested here.
 """
 
 
-
 import nest
 import numpy as np
 import numpy.testing as nptest
@@ -94,7 +93,6 @@ def test_wang():
                     "weight": w_in}
     
     conn_spec = {"rule": "all_to_all"}
-    
    
     nest.Connect(pg, nrn1, syn_spec=ex_syn_spec, conn_spec=conn_spec)
     nest.Connect(nrn1, sr)

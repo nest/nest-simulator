@@ -55,8 +55,9 @@ namespace nest
  */
 extern "C" inline int iaf_wang_2002_dynamics( double, const double*, double*, void* );
 
-
 /* BeginUserDocs: neuron, integrate-and-fire, conductance-based
+
+DOCUMENTATION WILL BE UPDATED
 
 Short description
 +++++++++++++++++
@@ -90,7 +91,6 @@ Parameters
 ++++++++++
 
 The following parameters can be set in the status dictionary.
-
 
 =============== ======= ===========================================================
  E_L            mV      Resting potential
@@ -306,18 +306,6 @@ public:
     void get( DictionaryDatum& ) const;
     void set( const DictionaryDatum&, const Parameters_&, Node* );
 
-    //! Get the sum of NMDA over all presynaptic neurons
-    double
-    get_NMDA_sum() const
-    {
-      /*double NMDA_sum = 0.0;
-      for ( size_t i = G_NMDA_base; i < state_vec_size; i += 2 )
-      {
-        NMDA_sum += ode_state_[ i + 1 ];
-      }
-      return NMDA_sum;*/
-      return -1;
-    }
   };
 
 
@@ -398,13 +386,6 @@ private:
     return S_.y_[ elem ];
   }
 
-  //! Get the sum of NMDA from state, used by UniversalDataLogger
-  double
-  get_NMDA_sum_() const
-  {
-    return S_.get_NMDA_sum();
-  }
-
   // Data members -----------------------------------------------------------
 
   // keep the order of these lines, seems to give best performance
@@ -421,7 +402,6 @@ private:
 inline size_t
 iaf_wang_2002::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
-  std::cout << "RECEPTOR TYPE " << receptor_type << std::endl;
   SpikeEvent e;
   e.set_sender( *this );
   return target.handles_test_event( e, receptor_type );

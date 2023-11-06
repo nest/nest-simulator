@@ -851,9 +851,10 @@ nest::SimulationManager::update_()
         {
           // Deliver secondary events before primary events
           //
-          // Delivering secondary events first provides LearningSignalConnectionEvents
-          // to target neurons before spikes are transmitted through eprop synapses
-          // targeting the neurons, reducing the need for buffering of information.
+          // Delivering secondary events ahead of primary events ensures that LearningSignalConnectionEvents
+          // reach target neurons before spikes are propagated through eprop synapses.
+          // This sequence safeguards the gradient computation from missing critical information
+          // from the time step preceding the arrival of the spike triggering the weight update.
           if ( kernel().connection_manager.secondary_connections_exist() )
           {
             kernel().event_delivery_manager.deliver_secondary_events( tid, false );

@@ -245,7 +245,7 @@ nest::EpropArchivingNode::count_spike()
 }
 
 void
-nest::EpropArchivingNode::reset_spike_counter()
+nest::EpropArchivingNode::reset_spike_count()
 {
   n_spikes_ = 0;
 }

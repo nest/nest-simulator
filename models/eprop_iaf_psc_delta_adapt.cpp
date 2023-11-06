@@ -310,7 +310,7 @@ nest::eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, co
 
     if ( S_.y3_ >= S_.adapting_threshold_ and S_.r_ == 0 )
     {
-      add_spike_to_counter();
+      count_spike();
 
       SpikeEvent se;
       kernel().event_delivery_manager.send( *this, se, lag );
@@ -324,7 +324,7 @@ nest::eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, co
     if ( interval_step == update_interval - 1 )
     {
       write_firing_rate_reg_to_history( t, P_.f_target_, P_.c_reg_ );
-      reset_spike_counter();
+      reset_spike_count();
     }
 
     std::deque< HistEntryEpropArchive >::iterator it_eprop_hist;

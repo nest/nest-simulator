@@ -68,8 +68,8 @@ public:
   void erase_unneeded_eprop_history();
   void erase_unneeded_firing_rate_reg_history();
 
-  void add_spike_to_counter();
-  void reset_spike_counter();
+  void count_spike();
+  void reset_spike_count();
 
 private:
   size_t n_spikes_ = 0;

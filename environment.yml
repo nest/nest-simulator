@@ -36,7 +36,7 @@ dependencies:
   - pip
 
   # Building NEST -----------
-  - cmake >= 3.12
+  - cmake >= 3.19
   - cython
   - openmpi
   - boost >= 1.69
@@ -101,7 +101,7 @@ dependencies:
   - pip:
     # For testsuite
     - junitparser >= 2
-    - clang-format == 13.0
+    - clang-format == 17.0.4
     # For documentation
     - example
     - Image

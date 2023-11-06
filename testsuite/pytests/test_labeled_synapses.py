@@ -37,6 +37,8 @@ class LabeledSynapsesTestCase(unittest.TestCase):
 
     def default_network(self, syn_model):
         nest.ResetKernel()
+        nest.resolution = 1.0  # for eprop synapses
+
         # set volume transmitter for stdp_dopamine_synapse_lbl
         vt = nest.Create("volume_transmitter", 3)
         nest.SetDefaults("stdp_dopamine_synapse", {"volume_transmitter": vt[0]})
@@ -56,7 +58,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
 
         self.urbanczik_synapses = ["urbanczik_synapse", "urbanczik_synapse_lbl", "urbanczik_synapse_hpc"]
 
-        self.eprop_synapses = ["eprop_synapse"]
+        self.eprop_synapses = ["eprop_synapse", "eprop_synapse_hpc", "eprop_synapse_lbl"]
         self.eprop_connections = [
             "eprop_learning_signal_connection",
             "eprop_learning_signal_connection_lbl",

@@ -89,8 +89,12 @@ extra_params = {
 }
 
 
-def test_spike_multiplicity_parrot_neuron():
+@pytest.fixture(autouse=True)
+def reset():
     nest.ResetKernel()
+
+
+def test_spike_multiplicity_parrot_neuron():
     multiplicities = [1, 3, 2]
     spikes = [1.0, 2.0, 3.0]
     sg = nest.Create(
@@ -121,7 +125,8 @@ def test_spike_multiplicity_parrot_neuron():
     ],
 )
 def test_spike_multiplicity(model):
-    nest.ResetKernel()
+    if model.startswith("eprop_"):
+        nest.resolution = 1.0
 
     n1 = nest.Create(model)
     n2 = nest.Create(model)

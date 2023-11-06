@@ -41,9 +41,10 @@ def test_dcgen_vs_I_e(model):
     # Models requiring special parameters
     if model in ["gif_psc_exp", "gif_cond_exp", "gif_psc_exp_multisynapse", "gif_cond_exp_multisynapse"]:
         nest.SetDefaults(model, params={"lambda_0": 0.0})
-
-    if model == "pp_psc_delta":
+    elif model == "pp_psc_delta":
         nest.SetDefaults(model, params={"c_2": 0.0})
+    elif model.startswith("eprop_"):
+        nest.resolution = 1.0
 
     # Create two neurons
     n1 = nest.Create(model)

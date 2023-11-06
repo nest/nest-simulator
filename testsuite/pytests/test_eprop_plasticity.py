@@ -33,6 +33,12 @@ supported_source_models = ["eprop_iaf_psc_delta", "eprop_iaf_psc_delta_adapt"]
 supported_target_models = supported_source_models + ["eprop_readout"]
 
 
+@pytest.fixture(autouse=True)
+def fix_resolution():
+    nest.ResetKernel()
+    nest.resolution = 1.0
+
+
 @pytest.mark.parametrize("source_model", supported_source_models)
 @pytest.mark.parametrize("target_model", supported_target_models)
 def test_connect_with_eprop_synapse(source_model, target_model):

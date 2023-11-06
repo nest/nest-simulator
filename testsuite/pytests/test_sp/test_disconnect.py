@@ -69,7 +69,7 @@ class TestDisconnectSingle(unittest.TestCase):
         for syn_model in nest.synapse_models:
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
-                nest.resolution = 0.1
+                nest.resolution = 1.0
                 nest.total_num_virtual_procs = nest.num_processes
 
                 if "eprop_synapse" in syn_model:

@@ -30,6 +30,7 @@ all_models_with_rec = [model for model in nest.node_models if nest.GetDefaults(m
 @pytest.fixture(autouse=True)
 def reset_kernel():
     nest.ResetKernel()
+    nest.resolution = 1.0  # for eprop
 
 
 def test_connect_multimeter_twice():
@@ -83,8 +84,6 @@ def test_recordables_are_recorded(model):
     .. note::
        This test does not check if the data is meaningful.
     """
-
-    nest.resolution = 2**-3  # Set to power of two to avoid rounding issues
 
     recording_interval = 2
     simtime = 10

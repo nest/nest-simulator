@@ -40,7 +40,7 @@ FirstVersion: 2010-10-03
 
 M_ERROR setverbosity
 
-/resolution 0.1 def
+/resolution 1.0 def
 
 % Execute test for one model
 % Argument: model name
@@ -81,4 +81,3 @@ def
   GetKernelStatus /node_models get { run_test } forall
 }
 pass_or_die
-

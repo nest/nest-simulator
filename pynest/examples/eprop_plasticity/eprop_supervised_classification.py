@@ -321,53 +321,30 @@ params_common_syn_eprop = {
     "weight_recorder": wr,
 }
 
-params_syn_in_reg = {
+params_syn_in = {
     "synapse_model": "eprop_synapse",
     "adam_m": 0.0,  # initial 1st moment estimate m of Adam optimizer
     "adam_v": 0.0,  # initial 2nd moment raw estimate v of Adam optimizer
     "delay": duration["step"],  # ms, dendritic delay
     "eta": 5e-3,  # learning rate
     "tau_m_readout": params_nrn_out["tau_m"],  # ms, for technical reasons pass readout neuron membrane time constant
-    "weight": weights_in_rec[:n_reg, :],  # pA, initial values for the synaptic weights
+    "weight": weights_in_rec,  # pA, initial values for the synaptic weights
     "Wmax": 100.0,  # pA, maximal limit of the synaptic weights
     "Wmin": -100.0,  # pA, minimal limit of the synaptic weights
 }
 
-params_syn_in_adapt = {
-    "synapse_model": "eprop_synapse",
-    "adam_m": 0.0,  # initial 1st moment estimate m of Adam optimizer
-    "adam_v": 0.0,  # initial 2nd moment raw estimate v of Adam optimizer
-    "delay": duration["step"],  # ms, dendritic delay
-    "eta": 5e-3,  # learning rate
-    "tau_m_readout": params_nrn_out["tau_m"],  # ms, for technical reasons pass readout neuron membrane time constant
-    "weight": weights_in_rec[n_reg:, :],  # pA, initial values for the synaptic weights
-    "Wmax": 100.0,  # pA, maximal limit of the synaptic weights
-    "Wmin": -100.0,  # pA, minimal limit of the synaptic weights
-}
-
-params_syn_rec_reg = {
+params_syn_rec = {
     "synapse_model": "eprop_synapse",
     "adam_m": 0.0,
     "adam_v": 0.0,
     "delay": duration["step"],
     "eta": 5e-3,
     "tau_m_readout": params_nrn_out["tau_m"],
-    "weight": weights_rec_rec[:n_reg, :],
+    "weight": weights_rec_rec,
     "Wmax": 100.0,
     "Wmin": -100.0,
 }
 
-params_syn_rec_adapt = {
-    "synapse_model": "eprop_synapse",
-    "adam_m": 0.0,
-    "adam_v": 0.0,
-    "delay": duration["step"],
-    "eta": 5e-3,
-    "tau_m_readout": params_nrn_out["tau_m"],
-    "weight": weights_rec_rec[n_reg:, :],
-    "Wmax": 100.0,
-    "Wmin": -100.0,
-}
 params_syn_out = {
     "synapse_model": "eprop_synapse",
     "adam_m": 0.0,
@@ -409,10 +386,8 @@ params_syn_static = {
 nest.SetDefaults("eprop_synapse", params_common_syn_eprop)
 
 nest.Connect(gen_spk_in, nrns_in, params_conn_one_to_one, params_syn_static)  # connection 1
-nest.Connect(nrns_in, nrns_reg, params_conn_all_to_all, params_syn_in_reg)  # connection 2
-nest.Connect(nrns_in, nrns_ad, params_conn_all_to_all, params_syn_in_adapt)  # connection 2
-nest.Connect(nrns_rec, nrns_reg, params_conn_all_to_all, params_syn_rec_reg)  # connection 3
-nest.Connect(nrns_rec, nrns_ad, params_conn_all_to_all, params_syn_rec_adapt)  # connection 3
+nest.Connect(nrns_in, nrns_rec, params_conn_all_to_all, params_syn_in)  # connection 2
+nest.Connect(nrns_rec, nrns_rec, params_conn_all_to_all, params_syn_rec)  # connection 3
 nest.Connect(nrns_rec, nrns_out, params_conn_all_to_all, params_syn_out)  # connection 4
 nest.Connect(nrns_out, nrns_rec, params_conn_all_to_all, params_syn_feedback)  # connection 5
 nest.Connect(gen_rate_target, nrns_out, params_conn_one_to_one, params_syn_rate_target)  # connection 6

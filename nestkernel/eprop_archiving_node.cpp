@@ -62,12 +62,12 @@ nest::EpropArchivingNode::init_update_history()
 
   long shift = get_shift();
 
-  auto it = std::lower_bound( update_history_.begin(), update_history_.end(), shift );
+  auto it_hist = std::lower_bound( update_history_.begin(), update_history_.end(), shift );
 
-  if ( it == update_history_.end() or it->t_ != shift )
-    update_history_.insert( it, HistEntryEpropUpdate( shift, 1 ) );
+  if ( it_hist == update_history_.end() or it_hist->t_ != shift )
+    update_history_.insert( it_hist, HistEntryEpropUpdate( shift, 1 ) );
   else
-    ++it->access_counter_;
+    ++it_hist->access_counter_;
 }
 
 void
@@ -75,17 +75,17 @@ nest::EpropArchivingNode::write_update_to_history( long t_previous_update, long 
 {
   long shift = get_shift();
 
-  auto it = std::lower_bound( update_history_.begin(), update_history_.end(), t_current_update + shift );
+  auto it_hist_curr = std::lower_bound( update_history_.begin(), update_history_.end(), t_current_update + shift );
 
-  if ( it != update_history_.end() or it->t_ == ( t_current_update + shift ) )
-    ++it->access_counter_;
+  if ( it_hist_curr != update_history_.end() or it_hist_curr->t_ == ( t_current_update + shift ) )
+    ++it_hist_curr->access_counter_;
   else
-    update_history_.insert( it, HistEntryEpropUpdate( t_current_update + shift, 1 ) );
+    update_history_.insert( it_hist_curr, HistEntryEpropUpdate( t_current_update + shift, 1 ) );
 
-  it = std::lower_bound( update_history_.begin(), update_history_.end(), t_previous_update + shift );
+  auto it_hist_prev = std::lower_bound( update_history_.begin(), update_history_.end(), t_previous_update + shift );
 
-  if ( it != update_history_.end() or it->t_ == ( t_previous_update + shift ) )
-    --it->access_counter_;
+  if ( it_hist_prev != update_history_.end() or it_hist_prev->t_ == ( t_previous_update + shift ) )
+    --it_hist_prev->access_counter_;
 }
 
 void
@@ -161,10 +161,10 @@ nest::EpropArchivingNode::get_firing_rate_reg( long time_step )
 
   const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
 
-  auto it =
+  auto it_hist =
     std::lower_bound( firing_rate_reg_history_.begin(), firing_rate_reg_history_.end(), time_step + update_interval );
 
-  return it->firing_rate_reg_;
+  return it_hist->firing_rate_reg_;
 }
 
 void
@@ -173,10 +173,10 @@ nest::EpropArchivingNode::erase_unneeded_update_history()
   if ( update_history_.empty() )
     return;
 
-  for ( auto it = update_history_.begin(); it < update_history_.end(); ++it )
+  for ( auto it_hist = update_history_.begin(); it_hist < update_history_.end(); ++it_hist )
   {
-    if ( it->access_counter_ == 0 )
-      update_history_.erase( it );
+    if ( it_hist->access_counter_ == 0 )
+      update_history_.erase( it_hist );
   }
 }
 
@@ -188,24 +188,24 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
 
   long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
 
-  auto it = update_history_.begin();
+  auto it_update_hist = update_history_.begin();
 
   for ( long t = update_history_.begin()->t_; t <= ( update_history_.end() - 1 )->t_; t += update_interval )
   {
-    if ( it->t_ == t )
+    if ( it_update_hist->t_ == t )
     {
-      ++it;
+      ++it_update_hist;
     }
     else
     {
-      auto start = get_eprop_history( t );
-      auto finish = get_eprop_history( t + update_interval );
-      eprop_history_.erase( start, finish ); // erase found entries since no longer used
+      auto it_eprop_hist_from = get_eprop_history( t );
+      auto it_eprop_hist_to = get_eprop_history( t + update_interval );
+      eprop_history_.erase( it_eprop_hist_from, it_eprop_hist_to ); // erase found entries since no longer used
     }
   }
-  auto start = get_eprop_history( 0 );
-  auto finish = get_eprop_history( update_history_.begin()->t_ );
-  eprop_history_.erase( start, finish ); // erase found entries since no longer used
+  auto it_eprop_hist_from = get_eprop_history( 0 );
+  auto it_eprop_hist_to = get_eprop_history( update_history_.begin()->t_ );
+  eprop_history_.erase( it_eprop_hist_from, it_eprop_hist_to ); // erase found entries since no longer used
 }
 
 void

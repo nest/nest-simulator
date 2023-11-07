@@ -131,10 +131,14 @@ nest::eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
 
   if ( C_m_ <= 0 )
+  {
     throw BadProperty( "Capacitance must be > 0." );
+  }
 
   if ( tau_m_ <= 0 )
+  {
     throw BadProperty( "Membrane time constant must be > 0." );
+  }
 
   return delta_EL;
 }
@@ -236,7 +240,9 @@ nest::eprop_readout::update( Time const& origin, const long from, const long to 
     long interval_step_signals = ( t - shift - delay_out_norm ) % update_interval;
 
     if ( with_reset and interval_step == 0 )
+    {
       S_.y3_ = 0.0;
+    }
 
     S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P33_ * S_.y3_ + V_.P33_complement_ * B_.spikes_.get_value( lag );
 
@@ -254,7 +260,9 @@ nest::eprop_readout::update( Time const& origin, const long from, const long to 
     B_.normalization_rate_ = 0.0;
 
     if ( V_.requires_buffer_ )
+    {
       readout_signal_unnorm_buffer[ lag ] = S_.readout_signal_unnorm_;
+    }
 
     error_signal_buffer[ lag ] = S_.error_signal_;
 

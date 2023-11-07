@@ -337,7 +337,9 @@ inline size_t
 eprop_iaf_psc_delta_adapt::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
 
   return 0;
 }
@@ -346,7 +348,9 @@ inline size_t
 eprop_iaf_psc_delta_adapt::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
 
   return 0;
 }
@@ -355,7 +359,9 @@ inline size_t
 eprop_iaf_psc_delta_adapt::handles_test_event( LearningSignalConnectionEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
 
   return 0;
 }
@@ -364,7 +370,9 @@ inline size_t
 eprop_iaf_psc_delta_adapt::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
 
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }

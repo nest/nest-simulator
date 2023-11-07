@@ -350,10 +350,14 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
   const long interval_step = ( t_spike - shift ) % update_interval;
 
   if ( is_recurrent_to_recurrent_conn_ and interval_step == 0 )
+  {
     return;
+  }
 
   if ( t_previous_trigger_spike_ == 0 )
+  {
     t_previous_trigger_spike_ = t_spike;
+  }
 
   if ( t_previous_spike_ > 0 )
   {
@@ -478,10 +482,14 @@ eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
   updateValue< double >( d, names::adam_v, adam_v_ );
 
   if ( weight_ < Wmin_ or weight_ > Wmax_ )
+  {
     throw BadProperty( "Wmax >= weight >= Wmin must be satisfied." );
+  }
 
   if ( tau_m_readout_ <= 0 )
+  {
     throw BadProperty( "Membrane time constant of readout neuron constant must be > 0." );
+  }
 }
 
 } // namespace nest

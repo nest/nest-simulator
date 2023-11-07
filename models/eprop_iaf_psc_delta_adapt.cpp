@@ -154,25 +154,39 @@ nest::eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Nod
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
 
   if ( adapt_tau_ <= 0 )
+  {
     throw BadProperty( "Time constant of threshold adaptation must be > 0." );
+  }
 
   if ( C_m_ <= 0 )
+  {
     throw BadProperty( "Capacitance must be > 0." );
+  }
 
   if ( propagator_idx_ != 0 and propagator_idx_ != 1 )
+  {
     throw BadProperty( "One of two available propagators indexed by 0 and 1 must be selected." );
+  }
 
   if ( surrogate_gradient_ != "piecewise_linear" )
+  {
     throw BadProperty( "One of the available surrogate gradients [\"piecewise_linear\"] needs to be selected." );
+  }
 
   if ( tau_m_ <= 0 )
+  {
     throw BadProperty( "Membrane time constant must be > 0." );
+  }
 
   if ( t_ref_ < 0 )
+  {
     throw BadProperty( "Refractory time must not be negative." );
+  }
 
   if ( surrogate_gradient_ == "piecewise_linear" and fabs( V_th_ ) < 1e-6 )
+  {
     throw BadProperty( "V_th-E_L must be != 0 if surrogate_gradient is \"piecewise_linear\"." );
+  }
 
   return delta_EL;
 }
@@ -248,7 +262,9 @@ nest::eprop_iaf_psc_delta_adapt::pre_run_hook()
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
 
   if ( P_.surrogate_gradient_ == "piecewise_linear" )
+  {
     compute_surrogate_gradient = &eprop_iaf_psc_delta_adapt::compute_piecewise_linear_derivative;
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -307,7 +323,9 @@ nest::eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, co
       S_.z_ = 1.0;
 
       if ( V_.RefractoryCounts_ > 0 )
+      {
         S_.r_ = V_.RefractoryCounts_;
+      }
     }
 
     if ( interval_step == update_interval - 1 )
@@ -320,7 +338,9 @@ nest::eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, co
     S_.learning_signal_ = it_eprop_hist->learning_signal_;
 
     if ( S_.r_ > 0 )
+    {
       --S_.r_;
+    }
 
     S_.y0_ = B_.currents_.get_value( lag );
 

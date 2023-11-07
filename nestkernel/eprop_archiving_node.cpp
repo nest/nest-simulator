@@ -65,9 +65,13 @@ nest::EpropArchivingNode::init_update_history()
   auto it_hist = get_update_history( shift );
 
   if ( it_hist == update_history_.end() or it_hist->t_ != shift )
+  {
     update_history_.insert( it_hist, HistEntryEpropUpdate( shift, 1 ) );
+  }
   else
+  {
     ++it_hist->access_counter_;
+  }
 }
 
 void
@@ -78,14 +82,20 @@ nest::EpropArchivingNode::write_update_to_history( long t_previous_update, long 
   auto it_hist_curr = get_update_history( t_current_update + shift );
 
   if ( it_hist_curr != update_history_.end() or it_hist_curr->t_ == ( t_current_update + shift ) )
+  {
     ++it_hist_curr->access_counter_;
+  }
   else
+  {
     update_history_.insert( it_hist_curr, HistEntryEpropUpdate( t_current_update + shift, 1 ) );
+  }
 
   auto it_hist_prev = get_update_history( t_previous_update + shift );
 
   if ( it_hist_prev != update_history_.end() or it_hist_prev->t_ == ( t_previous_update + shift ) )
+  {
     --it_hist_prev->access_counter_;
+  }
 }
 
 void
@@ -171,7 +181,9 @@ nest::EpropArchivingNode::erase_unneeded_update_history()
   for ( auto it_hist = update_history_.begin(); it_hist != update_history_.end(); ++it_hist )
   {
     if ( it_hist->access_counter_ == 0 )
+    {
       update_history_.erase( it_hist );
+    }
   }
 }
 
@@ -210,7 +222,9 @@ nest::EpropArchivingNode::erase_unneeded_firing_rate_reg_history()
         ++it_update_hist, ++it_reg_hist )
   {
     if ( it_update_hist->access_counter_ == 0 )
+    {
       firing_rate_reg_history_.erase( it_reg_hist );
+    }
   }
 }
 

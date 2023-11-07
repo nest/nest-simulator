@@ -176,7 +176,7 @@ nest::EpropArchivingNode::erase_unneeded_update_history()
   if ( update_history_.empty() )
     return;
 
-  for ( auto it = update_history_.begin(); it < update_history_.end(); it++ )
+  for ( auto it = update_history_.begin(); it < update_history_.end(); ++it )
   {
     if ( it->access_counter_ == 0 )
       update_history_.erase( it );
@@ -200,7 +200,7 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
   {
     if ( it->t_ == t )
     {
-      it++;
+      ++it;
     }
     else
     {

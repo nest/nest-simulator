@@ -58,7 +58,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
 
         self.urbanczik_synapses = ["urbanczik_synapse", "urbanczik_synapse_lbl", "urbanczik_synapse_hpc"]
 
-        self.eprop_synapses = ["eprop_synapse", "eprop_synapse_hpc", "eprop_synapse_lbl"]
+        self.eprop_synapses = ["eprop_synapse", "eprop_synapse_lbl", "eprop_synapse_hpc"]
         self.eprop_connections = [
             "eprop_learning_signal_connection",
             "eprop_learning_signal_connection_lbl",

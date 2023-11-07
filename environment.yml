@@ -28,10 +28,10 @@ channels:
 
 dependencies:
 
-  - python >= 3.8
+  - python >= 3.10
   - pip
 
-  - cmake >= 3.12
+  - cmake >= 3.19
   - openmpi
   - boost >= 1.69
   - gsl >= 1.11

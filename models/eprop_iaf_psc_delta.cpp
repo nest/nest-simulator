@@ -268,7 +268,7 @@ nest::eprop_iaf_psc_delta::update( Time const& origin, const long from, const lo
     S_.y3_ -= S_.z_ * P_.V_th_;
     S_.z_ = 0.0;
 
-    S_.y3_ = S_.y3_ < P_.V_min_ ? P_.V_min_ : S_.y3_;
+    S_.y3_ = std::max( S_.y3_, P_.V_min_ );
 
     S_.surrogate_gradient_ = ( this->*compute_surrogate_gradient )();
 

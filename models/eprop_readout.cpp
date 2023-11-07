@@ -239,7 +239,8 @@ nest::eprop_readout::update( Time const& origin, const long from, const long to 
       S_.y3_ = 0.0;
 
     S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P33_ * S_.y3_ + V_.P33_complement_ * B_.spikes_.get_value( lag );
-    S_.y3_ = S_.y3_ < P_.V_min_ ? P_.V_min_ : S_.y3_;
+
+    S_.y3_ = std::max( S_.y3_, P_.V_min_ );
 
     ( this->*compute_error_signal )( lag );
 

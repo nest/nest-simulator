@@ -69,7 +69,7 @@ public:
   void reset_spike_count();
 
 private:
-  size_t n_spikes_ = 0;
+  size_t n_spikes_;
 
   // These shifts are, for now, hardcoded to 1 time step since the current implementation only works if all the
   // delays are equal to the resolution of the simulation.

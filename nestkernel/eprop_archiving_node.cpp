@@ -32,11 +32,13 @@ namespace nest
 
 nest::EpropArchivingNode::EpropArchivingNode()
   : Node()
+  , n_spikes_( 0 )
 {
 }
 
 nest::EpropArchivingNode::EpropArchivingNode( const EpropArchivingNode& n )
   : Node( n )
+  , n_spikes_( n.n_spikes_ )
 {
 }
 

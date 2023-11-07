@@ -112,8 +112,8 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # Using a batch size larger than one aids the network in generalization, facilitating the solution to this task.
 # The original number of iterations requires distributed computing.
 
-n_batch = 32  # batch size, 64 in reference [2], 32 in the README to reference [2]
-n_iter = 50  # number of iterations, 2000 in reference [2]
+n_batch = 1  # batch size, 64 in reference [2], 32 in the README to reference [2]
+n_iter = 5  # number of iterations, 2000 in reference [2], 50 with n_batch 32 converges
 
 n_input_symbols = 4  # number of input populations, e.g. 4 = left, right, recall, noise
 n_cues = 7  # number of cues given before decision
@@ -159,7 +159,7 @@ params_setup = {
     "eprop_learning_window": duration["learning_window"],  # ms, window with non-zero learning signals
     "eprop_reset_neurons_on_update": True,  # if True, reset dynamic variables at start of each update interval
     "eprop_update_interval": duration["sequence"],  # ms, time interval for updating the synaptic weights
-    "print_time": True,  # if True, print time progress bar during simulation, set False if run as code cell
+    "print_time": False,  # if True, print time progress bar during simulation, set False if run as code cell
     "resolution": duration["step"],
     "total_num_virtual_procs": 1,  # number of virtual processes, set in case of distributed computing
 }
@@ -625,6 +625,11 @@ else:
 # Plot results
 # ~~~~~~~~~~~~
 # Then, we plot a series of plots.
+
+do_plotting = False  # if True, plot the results
+
+if not do_plotting:
+    exit()
 
 colors = {
     "blue": "#2854c5ff",

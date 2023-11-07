@@ -342,8 +342,8 @@ def test_eprop_regression():
         ]
     )
 
-    assert np.all(loss == loss_NEST_verification)
-    assert np.all(loss - loss_TF_verification < 1e-6)
+    assert np.allclose(loss, loss_NEST_verification, rtol=0.0, atol=1e-18)
+    assert np.allclose(loss, loss_TF_verification, rtol=0.0, atol=1e-6)
 
 
 def test_eprop_classification():
@@ -730,5 +730,5 @@ def test_eprop_classification():
         ]
     )
 
-    assert np.all(loss == loss_NEST_verification)
-    assert np.all(loss - loss_TF_verification < 1e-7)
+    assert np.allclose(loss, loss_NEST_verification, rtol=0.0, atol=1e-18)
+    assert np.allclose(loss, loss_TF_verification, rtol=0.0, atol=1e-7)

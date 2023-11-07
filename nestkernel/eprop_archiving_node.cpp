@@ -62,7 +62,7 @@ nest::EpropArchivingNode::init_update_history()
 
   long shift = get_shift();
 
-  auto it_hist = std::lower_bound( update_history_.begin(), update_history_.end(), shift );
+  auto it_hist = get_update_history( shift );
 
   if ( it_hist == update_history_.end() or it_hist->t_ != shift )
     update_history_.insert( it_hist, HistEntryEpropUpdate( shift, 1 ) );
@@ -75,14 +75,14 @@ nest::EpropArchivingNode::write_update_to_history( long t_previous_update, long 
 {
   long shift = get_shift();
 
-  auto it_hist_curr = std::lower_bound( update_history_.begin(), update_history_.end(), t_current_update + shift );
+  auto it_hist_curr = get_update_history( t_current_update + shift );
 
   if ( it_hist_curr != update_history_.end() or it_hist_curr->t_ == ( t_current_update + shift ) )
     ++it_hist_curr->access_counter_;
   else
     update_history_.insert( it_hist_curr, HistEntryEpropUpdate( t_current_update + shift, 1 ) );
 
-  auto it_hist_prev = std::lower_bound( update_history_.begin(), update_history_.end(), t_previous_update + shift );
+  auto it_hist_prev = get_update_history( t_previous_update + shift );
 
   if ( it_hist_prev != update_history_.end() or it_hist_prev->t_ == ( t_previous_update + shift ) )
     --it_hist_prev->access_counter_;
@@ -147,24 +147,22 @@ nest::EpropArchivingNode::get_delay_out_norm() const
   return delay_out_norm_;
 }
 
+std::vector< HistEntryEpropUpdate >::iterator
+nest::EpropArchivingNode::get_update_history( long time_step )
+{
+  return std::lower_bound( update_history_.begin(), update_history_.end(), time_step );
+}
+
 std::vector< HistEntryEpropArchive >::iterator
 nest::EpropArchivingNode::get_eprop_history( long time_step )
 {
   return std::lower_bound( eprop_history_.begin(), eprop_history_.end(), time_step );
 }
 
-double
-nest::EpropArchivingNode::get_firing_rate_reg( long time_step )
+std::vector< HistEntryEpropFiringRateReg >::iterator
+nest::EpropArchivingNode::get_firing_rate_reg_history( long time_step )
 {
-  if ( firing_rate_reg_history_.empty() )
-    return 0.0;
-
-  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
-
-  auto it_hist =
-    std::lower_bound( firing_rate_reg_history_.begin(), firing_rate_reg_history_.end(), time_step + update_interval );
-
-  return it_hist->firing_rate_reg_;
+  return std::lower_bound( firing_rate_reg_history_.begin(), firing_rate_reg_history_.end(), time_step );
 }
 
 void

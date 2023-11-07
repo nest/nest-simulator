@@ -58,8 +58,10 @@ public:
 
   const long get_shift() const;
   const long get_delay_out_norm() const;
+
+  std::vector< HistEntryEpropUpdate >::iterator get_update_history( long time_step );
   std::vector< HistEntryEpropArchive >::iterator get_eprop_history( long time_step );
-  double get_firing_rate_reg( long time_step );
+  std::vector< HistEntryEpropFiringRateReg >::iterator get_firing_rate_reg_history( long time_step );
 
   void erase_unneeded_update_history();
   void erase_unneeded_eprop_history();

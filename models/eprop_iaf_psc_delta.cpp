@@ -402,7 +402,8 @@ nest::eprop_iaf_psc_delta::gradient_change( std::vector< long >& presyn_isis,
     grad /= learning_window;
   }
 
-  grad += get_firing_rate_reg( t_previous_update + get_shift() ) * sum_e;
+  auto it_reg_hist = get_firing_rate_reg_history( t_previous_update + get_shift() + update_interval );
+  grad += it_reg_hist->firing_rate_reg_ * sum_e;
 
   return grad;
 }

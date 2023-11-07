@@ -81,8 +81,8 @@ private:
   long delay_rec_out_ = 1;  //!< connection delay from recurrent to output neurons
   long delay_out_norm_ = 1; //!< connection delay between output neurons for normalization
 
-  std::vector< HistEntryEpropFiringRateReg > firing_rate_reg_history_;
   std::vector< HistEntryEpropUpdate > update_history_;
+  std::vector< HistEntryEpropFiringRateReg > firing_rate_reg_history_;
 
 protected:
   std::vector< HistEntryEpropArchive > eprop_history_;

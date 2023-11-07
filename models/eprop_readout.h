@@ -181,10 +181,10 @@ private:
 
   void update( Time const&, const long, const long ) override;
 
-  void compute_error_signal_mean_squared_error( const long& lag );
-  void compute_error_signal_cross_entropy_loss( const long& lag );
+  void compute_error_signal_mean_squared_error( const long lag );
+  void compute_error_signal_cross_entropy_loss( const long lag );
 
-  void ( eprop_readout::*compute_error_signal )( const long& lag );
+  void ( eprop_readout::*compute_error_signal )( const long lag );
 
   friend class RecordablesMap< eprop_readout >;
   friend class UniversalDataLogger< eprop_readout >;

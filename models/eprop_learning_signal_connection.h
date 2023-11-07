@@ -153,7 +153,7 @@ public:
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
   void
-  set_weight( double w )
+  set_weight( const double w )
   {
     weight_ = w;
   }

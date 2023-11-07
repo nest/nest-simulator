@@ -236,7 +236,7 @@ nest::eprop_iaf_psc_delta::pre_run_hook()
   V_.P33_ = std::exp( -dt / P_.tau_m_ ); // alpha
   V_.P30_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - V_.P33_ );
 
-  double propagators[] = { 1.0 - V_.P33_, 1.0 };
+  const double propagators[] = { 1.0 - V_.P33_, 1.0 };
   V_.P33_complement_ = propagators[ P_.propagator_idx_ ];
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
@@ -254,14 +254,14 @@ nest::eprop_iaf_psc_delta::pre_run_hook()
 void
 nest::eprop_iaf_psc_delta::update( Time const& origin, const long from, const long to )
 {
-  long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
-  bool with_reset = kernel().simulation_manager.get_eprop_reset_neurons_on_update();
+  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
+  const bool with_reset = kernel().simulation_manager.get_eprop_reset_neurons_on_update();
   const long shift = get_shift();
 
   for ( long lag = from; lag < to; ++lag )
   {
-    long t = origin.get_steps() + lag;
-    long interval_step = ( t - shift ) % update_interval;
+    const long t = origin.get_steps() + lag;
+    const long interval_step = ( t - shift ) % update_interval;
 
     if ( interval_step == 0 )
     {
@@ -309,7 +309,7 @@ nest::eprop_iaf_psc_delta::update( Time const& origin, const long from, const lo
       reset_spike_count();
     }
 
-    auto it_eprop_hist = get_eprop_history( t - shift );
+    const auto it_eprop_hist = get_eprop_history( t - shift );
     S_.learning_signal_ = it_eprop_hist->learning_signal_;
 
     if ( S_.r_ > 0 )
@@ -330,8 +330,8 @@ nest::eprop_iaf_psc_delta::update( Time const& origin, const long from, const lo
 double
 nest::eprop_iaf_psc_delta::compute_piecewise_linear_derivative()
 {
-  double v_m = S_.r_ > 0 ? 0.0 : S_.y3_;
-  double psi = P_.gamma_ * std::max( 0.0, 1.0 - std::fabs( ( v_m - P_.V_th_ ) / P_.V_th_ ) ) / P_.V_th_;
+  const double v_m = S_.r_ > 0 ? 0.0 : S_.y3_;
+  const double psi = P_.gamma_ * std::max( 0.0, 1.0 - std::fabs( ( v_m - P_.V_th_ ) / P_.V_th_ ) ) / P_.V_th_;
   return psi;
 }
 
@@ -366,10 +366,10 @@ nest::eprop_iaf_psc_delta::handle( LearningSignalConnectionEvent& e )
 
   if ( it_event != it_event_end )
   {
-    long time_step = e.get_stamp().get_steps();
-    long delay_out_rec = e.get_delay_steps();
-    double weight = e.get_weight();
-    double error_signal = e.get_coeffvalue( it_event ); // get_coeffvalue advances iterator
+    const long time_step = e.get_stamp().get_steps();
+    const long delay_out_rec = e.get_delay_steps();
+    const double weight = e.get_weight();
+    const double error_signal = e.get_coeffvalue( it_event ); // get_coeffvalue advances iterator
 
     write_learning_signal_to_history( time_step, delay_out_rec, weight, error_signal );
   }
@@ -420,7 +420,7 @@ nest::eprop_iaf_psc_delta::gradient_change( std::vector< long >& presyn_isis,
     grad /= learning_window;
   }
 
-  auto it_reg_hist = get_firing_rate_reg_history( t_previous_update + get_shift() + update_interval );
+  const auto it_reg_hist = get_firing_rate_reg_history( t_previous_update + get_shift() + update_interval );
   grad += it_reg_hist->firing_rate_reg_ * sum_e;
 
   return grad;

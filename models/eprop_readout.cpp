@@ -235,9 +235,9 @@ nest::eprop_readout::update( Time const& origin, const long from, const long to 
 
   for ( long lag = from; lag < to; ++lag )
   {
-    long t = origin.get_steps() + lag;
-    long interval_step = ( t - shift ) % update_interval;
-    long interval_step_signals = ( t - shift - delay_out_norm ) % update_interval;
+    const long t = origin.get_steps() + lag;
+    const long interval_step = ( t - shift ) % update_interval;
+    const long interval_step_signals = ( t - shift - delay_out_norm ) % update_interval;
 
     if ( with_reset and interval_step == 0 )
     {
@@ -294,7 +294,7 @@ nest::eprop_readout::update( Time const& origin, const long from, const long to 
  * ---------------------------------------------------------------- */
 
 void
-nest::eprop_readout::compute_error_signal_mean_squared_error( const long& lag )
+nest::eprop_readout::compute_error_signal_mean_squared_error( const long lag )
 {
   S_.readout_signal_ = S_.readout_signal_unnorm_;
   S_.readout_signal_unnorm_ = S_.y3_ + P_.E_L_;
@@ -302,7 +302,7 @@ nest::eprop_readout::compute_error_signal_mean_squared_error( const long& lag )
 }
 
 void
-nest::eprop_readout::compute_error_signal_cross_entropy_loss( const long& lag )
+nest::eprop_readout::compute_error_signal_cross_entropy_loss( const long lag )
 {
   const double norm_rate = B_.normalization_rate_ + S_.readout_signal_unnorm_;
   S_.readout_signal_ = S_.readout_signal_unnorm_ / norm_rate;

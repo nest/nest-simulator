@@ -60,9 +60,9 @@ nest::EpropArchivingNode::init_update_history()
 {
   // register first entry for every synapse, increase access counter if entry already in list
 
-  long shift = get_shift();
+  const long shift = get_shift();
 
-  auto it_hist = get_update_history( shift );
+  const auto it_hist = get_update_history( shift );
 
   if ( it_hist == update_history_.end() or it_hist->t_ != shift )
   {
@@ -75,11 +75,11 @@ nest::EpropArchivingNode::init_update_history()
 }
 
 void
-nest::EpropArchivingNode::write_update_to_history( long t_previous_update, long t_current_update )
+nest::EpropArchivingNode::write_update_to_history( const long t_previous_update, const long t_current_update )
 {
-  long shift = get_shift();
+  const long shift = get_shift();
 
-  auto it_hist_curr = get_update_history( t_current_update + shift );
+  const auto it_hist_curr = get_update_history( t_current_update + shift );
 
   if ( it_hist_curr != update_history_.end() or it_hist_curr->t_ == ( t_current_update + shift ) )
   {
@@ -90,7 +90,7 @@ nest::EpropArchivingNode::write_update_to_history( long t_previous_update, long 
     update_history_.insert( it_hist_curr, HistEntryEpropUpdate( t_current_update + shift, 1 ) );
   }
 
-  auto it_hist_prev = get_update_history( t_previous_update + shift );
+  const auto it_hist_prev = get_update_history( t_previous_update + shift );
 
   if ( it_hist_prev != update_history_.end() or it_hist_prev->t_ == ( t_previous_update + shift ) )
   {
@@ -99,28 +99,28 @@ nest::EpropArchivingNode::write_update_to_history( long t_previous_update, long 
 }
 
 void
-nest::EpropArchivingNode::write_surrogate_gradient_to_history( long time_step, double surrogate_gradient )
+nest::EpropArchivingNode::write_surrogate_gradient_to_history( const long time_step, const double surrogate_gradient )
 {
   eprop_history_.push_back( HistEntryEpropArchive( time_step, surrogate_gradient, 0.0 ) );
 }
 
 void
-nest::EpropArchivingNode::write_error_signal_to_history( long time_step, double error_signal )
+nest::EpropArchivingNode::write_error_signal_to_history( const long time_step, const double error_signal )
 {
-  long shift = delay_out_norm_;
+  const long shift = delay_out_norm_;
   eprop_history_.push_back( HistEntryEpropArchive( time_step - shift, 0.0, error_signal ) );
 }
 
 void
-nest::EpropArchivingNode::write_learning_signal_to_history( long& time_step,
-  long& delay_out_rec,
-  double& weight,
-  double& error_signal )
+nest::EpropArchivingNode::write_learning_signal_to_history( const long time_step,
+  const long delay_out_rec,
+  const double weight,
+  const double error_signal )
 {
-  long shift = delay_rec_out_ + delay_out_norm_ + delay_out_rec;
+  const long shift = delay_rec_out_ + delay_out_norm_ + delay_out_rec;
 
   auto it_hist = get_eprop_history( time_step - shift );
-  auto it_hist_end = get_eprop_history( time_step - shift + delay_out_rec );
+  const auto it_hist_end = get_eprop_history( time_step - shift + delay_out_rec );
 
   if ( it_hist != it_hist_end )
   {
@@ -130,47 +130,47 @@ nest::EpropArchivingNode::write_learning_signal_to_history( long& time_step,
 }
 
 void
-nest::EpropArchivingNode::write_firing_rate_reg_to_history( long t_current_update, double f_target, double c_reg )
+nest::EpropArchivingNode::write_firing_rate_reg_to_history( const long t_current_update, const double f_target, const double c_reg )
 {
-  long const update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
-  long shift = Time::get_resolution().get_steps();
+  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
+  const long shift = Time::get_resolution().get_steps();
 
-  double f_av = n_spikes_ / static_cast< double >( update_interval );
-  double f_target_ = f_target / 1000.0; // convert to kHz
-  double firing_rate_reg = c_reg * ( f_av - f_target_ ) / static_cast< double >( update_interval );
+  const double f_av = n_spikes_ / static_cast< double >( update_interval );
+  const double f_target_ = f_target / 1000.0; // convert to kHz
+  const double firing_rate_reg = c_reg * ( f_av - f_target_ ) / static_cast< double >( update_interval );
 
   firing_rate_reg_history_.push_back( HistEntryEpropFiringRateReg( t_current_update + shift, firing_rate_reg ) );
 }
 
-const long
+long
 nest::EpropArchivingNode::get_shift() const
 {
-  long shift_rec = offset_gen_ + delay_in_rec_;
-  long shift_out = offset_gen_ + delay_in_rec_ + delay_rec_out_;
+  const long shift_rec = offset_gen_ + delay_in_rec_;
+  const long shift_out = offset_gen_ + delay_in_rec_ + delay_rec_out_;
 
   return get_name() == "eprop_readout" ? shift_out : shift_rec;
 }
 
-const long
+long
 nest::EpropArchivingNode::get_delay_out_norm() const
 {
   return delay_out_norm_;
 }
 
 std::vector< HistEntryEpropUpdate >::iterator
-nest::EpropArchivingNode::get_update_history( long time_step )
+nest::EpropArchivingNode::get_update_history( const long time_step )
 {
   return std::lower_bound( update_history_.begin(), update_history_.end(), time_step );
 }
 
 std::vector< HistEntryEpropArchive >::iterator
-nest::EpropArchivingNode::get_eprop_history( long time_step )
+nest::EpropArchivingNode::get_eprop_history( const long time_step )
 {
   return std::lower_bound( eprop_history_.begin(), eprop_history_.end(), time_step );
 }
 
 std::vector< HistEntryEpropFiringRateReg >::iterator
-nest::EpropArchivingNode::get_firing_rate_reg_history( long time_step )
+nest::EpropArchivingNode::get_firing_rate_reg_history( const long time_step )
 {
   return std::lower_bound( firing_rate_reg_history_.begin(), firing_rate_reg_history_.end(), time_step );
 }
@@ -190,7 +190,7 @@ nest::EpropArchivingNode::erase_unneeded_update_history()
 void
 nest::EpropArchivingNode::erase_unneeded_eprop_history()
 {
-  long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
+  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
 
   auto it_update_hist = update_history_.begin();
   long t = update_history_.begin()->t_;
@@ -203,13 +203,13 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
     }
     else
     {
-      auto it_eprop_hist_from = get_eprop_history( t );
-      auto it_eprop_hist_to = get_eprop_history( t + update_interval );
+      const auto it_eprop_hist_from = get_eprop_history( t );
+      const auto it_eprop_hist_to = get_eprop_history( t + update_interval );
       eprop_history_.erase( it_eprop_hist_from, it_eprop_hist_to ); // erase found entries since no longer used
     }
   }
-  auto it_eprop_hist_from = get_eprop_history( 0 );
-  auto it_eprop_hist_to = get_eprop_history( update_history_.begin()->t_ );
+  const auto it_eprop_hist_from = get_eprop_history( 0 );
+  const auto it_eprop_hist_to = get_eprop_history( update_history_.begin()->t_ );
   eprop_history_.erase( it_eprop_hist_from, it_eprop_hist_to ); // erase found entries since no longer used
 }
 

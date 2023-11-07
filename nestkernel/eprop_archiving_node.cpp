@@ -190,12 +190,21 @@ nest::EpropArchivingNode::erase_unneeded_update_history()
 void
 nest::EpropArchivingNode::erase_unneeded_eprop_history()
 {
-  long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
+  if ( eprop_history_.empty()  // nothing to remove
+    or update_history_.empty() // no time markers to check
+  )
+  {
+    return;
+  }
+
+  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
 
   auto it_update_hist = update_history_.begin();
-  long t = update_history_.begin()->t_;
 
-  for ( ; t <= ( update_history_.end() - 1 )->t_ and it_update_hist != update_history_.end(); t += update_interval )
+
+  for ( long t = update_history_.begin()->t_;
+        t <= ( update_history_.end() - 1 )->t_ and it_update_hist != update_history_.end();
+        t += update_interval )
   {
     if ( it_update_hist->t_ == t )
     {
@@ -203,13 +212,13 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
     }
     else
     {
-      auto it_eprop_hist_from = get_eprop_history( t );
-      auto it_eprop_hist_to = get_eprop_history( t + update_interval );
+      const auto it_eprop_hist_from = get_eprop_history( t );
+      const auto it_eprop_hist_to = get_eprop_history( t + update_interval );
       eprop_history_.erase( it_eprop_hist_from, it_eprop_hist_to ); // erase found entries since no longer used
     }
   }
-  auto it_eprop_hist_from = get_eprop_history( 0 );
-  auto it_eprop_hist_to = get_eprop_history( update_history_.begin()->t_ );
+  const auto it_eprop_hist_from = get_eprop_history( 0 );
+  const auto it_eprop_hist_to = get_eprop_history( update_history_.begin()->t_ );
   eprop_history_.erase( it_eprop_hist_from, it_eprop_hist_to ); // erase found entries since no longer used
 }
 

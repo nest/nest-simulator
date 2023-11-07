@@ -60,8 +60,7 @@ nest::EpropArchivingNode::init_update_history()
 
   long shift = get_shift();
 
-  std::vector< HistEntryEpropUpdate >::iterator it =
-    std::lower_bound( update_history_.begin(), update_history_.end(), shift );
+  auto it = std::lower_bound( update_history_.begin(), update_history_.end(), shift );
 
   if ( it == update_history_.end() or it->t_ != shift )
     update_history_.insert( it, HistEntryEpropUpdate( shift, 1 ) );
@@ -74,9 +73,7 @@ nest::EpropArchivingNode::write_update_to_history( long t_previous_update, long 
 {
   long shift = get_shift();
 
-  std::vector< HistEntryEpropUpdate >::iterator it;
-
-  it = std::lower_bound( update_history_.begin(), update_history_.end(), t_current_update + shift );
+  auto it = std::lower_bound( update_history_.begin(), update_history_.end(), t_current_update + shift );
 
   if ( it != update_history_.end() or it->t_ == ( t_current_update + shift ) )
     ++it->access_counter_;
@@ -162,9 +159,7 @@ nest::EpropArchivingNode::get_firing_rate_reg( long time_step )
 
   const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
 
-  std::vector< HistEntryEpropFiringRateReg >::iterator it;
-
-  it =
+  auto it =
     std::lower_bound( firing_rate_reg_history_.begin(), firing_rate_reg_history_.end(), time_step + update_interval );
 
   return it->firing_rate_reg_;
@@ -191,9 +186,6 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
 
   long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
 
-  std::vector< HistEntryEpropArchive >::iterator start;
-  std::vector< HistEntryEpropArchive >::iterator finish;
-
   auto it = update_history_.begin();
 
   for ( long t = update_history_.begin()->t_; t <= ( update_history_.end() - 1 )->t_; t += update_interval )
@@ -204,13 +196,13 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
     }
     else
     {
-      start = get_eprop_history( t );
-      finish = get_eprop_history( t + update_interval );
+      auto start = get_eprop_history( t );
+      auto finish = get_eprop_history( t + update_interval );
       eprop_history_.erase( start, finish ); // erase found entries since no longer used
     }
   }
-  start = get_eprop_history( 0 );
-  finish = get_eprop_history( update_history_.begin()->t_ );
+  auto start = get_eprop_history( 0 );
+  auto finish = get_eprop_history( update_history_.begin()->t_ );
   eprop_history_.erase( start, finish ); // erase found entries since no longer used
 }
 

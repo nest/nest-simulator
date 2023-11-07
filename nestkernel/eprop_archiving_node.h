@@ -23,9 +23,6 @@
 #ifndef EPROP_ARCHIVING_NODE_H
 #define EPROP_ARCHIVING_NODE_H
 
-// C++
-#include <deque>
-
 // nestkernel
 #include "histentry.h"
 #include "nest_time.h"
@@ -61,7 +58,7 @@ public:
 
   const long get_shift() const;
   const long get_delay_out_norm() const;
-  std::deque< HistEntryEpropArchive >::iterator get_eprop_history( long time_step );
+  std::vector< HistEntryEpropArchive >::iterator get_eprop_history( long time_step );
   double get_firing_rate_reg( long time_step );
 
   void erase_unneeded_update_history();
@@ -86,7 +83,7 @@ private:
   std::vector< HistEntryEpropUpdate > update_history_;
 
 protected:
-  std::deque< HistEntryEpropArchive > eprop_history_;
+  std::vector< HistEntryEpropArchive > eprop_history_;
 };
 
 } // namespace nest

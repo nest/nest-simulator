@@ -148,7 +148,7 @@ nest::EpropArchivingNode::get_delay_out_norm() const
   return delay_out_norm_;
 }
 
-std::deque< HistEntryEpropArchive >::iterator
+std::vector< HistEntryEpropArchive >::iterator
 nest::EpropArchivingNode::get_eprop_history( long time_step )
 {
   return std::lower_bound( eprop_history_.begin(), eprop_history_.end(), time_step );
@@ -191,8 +191,8 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
 
   long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
 
-  std::deque< HistEntryEpropArchive >::iterator start;
-  std::deque< HistEntryEpropArchive >::iterator finish;
+  std::vector< HistEntryEpropArchive >::iterator start;
+  std::vector< HistEntryEpropArchive >::iterator finish;
 
   auto it = update_history_.begin();
 

@@ -110,12 +110,10 @@ n_batch = 1  # batch size, 1 in reference [2]
 n_iter = 5  # number of iterations, 2000 in reference [2]
 
 steps = {
-    "recall": 1,  # time steps of recall
-    "recall_onset": 0,  # time steps until recall onset
     "sequence": 1000,  # time steps of one full sequence
 }
 
-steps["learning_window"] = steps["sequence"]  # time steps of learning window
+steps["learning_window"] = steps["sequence"]  # time steps of window with non-zero learning signals
 steps["task"] = n_iter * n_batch * steps["sequence"]  # time steps of task
 
 steps.update(
@@ -143,7 +141,7 @@ duration.update({key: value * duration["step"] for key, value in steps.items()})
 # objects and set some NEST kernel parameters, some of which are e-prop-related.
 
 params_setup = {
-    "eprop_learning_window": duration["learning_window"],  # ms, window with non-zero learning signals
+    "eprop_learning_window": duration["learning_window"],
     "eprop_reset_neurons_on_update": True,  # if True, reset dynamic variables at start of each update interval
     "eprop_update_interval": duration["sequence"],  # ms, time interval for updating the synaptic weights
     "print_time": False,  # True,  # if True, print time progress bar during simulation, set False if run as code cell

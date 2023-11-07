@@ -128,7 +128,7 @@ steps = {
 
 steps["cues"] = n_cues * (steps["cue"] + steps["spacing"])  # time steps of all cues
 steps["sequence"] = steps["cues"] + steps["bg_noise"] + steps["recall"]  # time steps of one full sequence
-steps["learning_window"] = steps["recall"]
+steps["learning_window"] = steps["recall"]  # time steps of window with non-zero learning signals
 steps["task"] = n_iter * n_batch * steps["sequence"]  # time steps of task
 
 steps.update(
@@ -156,7 +156,7 @@ duration.update({key: value * duration["step"] for key, value in steps.items()})
 # objects and set some NEST kernel parameters, some of which are e-prop-related.
 
 params_setup = {
-    "eprop_learning_window": duration["learning_window"],  # ms, window with non-zero learning signals
+    "eprop_learning_window": duration["learning_window"],
     "eprop_reset_neurons_on_update": True,  # if True, reset dynamic variables at start of each update interval
     "eprop_update_interval": duration["sequence"],  # ms, time interval for updating the synaptic weights
     "print_time": False,  # if True, print time progress bar during simulation, set False if run as code cell
@@ -448,7 +448,7 @@ def generate_evidence_accumulation_input_output(
     return input_spike_bools, target_cues
 
 
-input_spike_prob = 0.04  # kHz, firing rate of frozen input noise
+input_spike_prob = 0.04  # input spike probability of frozen input noise
 dtype_in_spks = np.float32  # data type of input spikes - for reproducing TF results set to np.float32
 
 input_spike_bools_list = []
@@ -565,10 +565,11 @@ senders = events_mm_out["senders"]
 readout_signal = np.array([readout_signal[senders == i] for i in np.unique(senders)])
 target_signal = np.array([target_signal[senders == i] for i in np.unique(senders)])
 
-# pylint: disable-next=E1121,C0301
-readout_signal = readout_signal.reshape(n_out, n_iter, n_batch, steps["sequence"])[:, :, :, -steps["learning_window"] :]
-# pylint: disable-next=E1121,C0301
-target_signal = target_signal.reshape(n_out, n_iter, n_batch, steps["sequence"])[:, :, :, -steps["learning_window"] :]
+readout_signal = readout_signal.reshape((n_out, n_iter, n_batch, steps["sequence"]))
+readout_signal = readout_signal[:, :, :, -steps["learning_window"] :]
+
+target_signal = target_signal.reshape((n_out, n_iter, n_batch, steps["sequence"]))
+target_signal = target_signal[:, :, :, -steps["learning_window"] :]
 
 loss = -np.mean(np.sum(target_signal * np.log(readout_signal), axis=0), axis=(1, 2))
 

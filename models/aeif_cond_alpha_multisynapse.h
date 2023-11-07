@@ -181,6 +181,8 @@ namespace nest
  */
 extern "C" int aeif_cond_alpha_multisynapse_dynamics( double, const double*, double*, void* );
 
+void register_aeif_cond_alpha_multisynapse( const std::string& name );
+
 class aeif_cond_alpha_multisynapse : public ArchivingNode
 {
 

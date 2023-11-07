@@ -32,17 +32,27 @@
         https://doi.org/10.1371/journal.pcbi.1005507 */
 
 #include "gif_pop_psc_exp.h"
-#include "compose.hpp"
-#include "universal_data_logger_impl.h"
 
 // Includes from libnestutil:
+#include "compose.hpp"
 #include "dict_util.h"
+
+// Includes from nestkernel:
+#include "model_manager_impl.h"
+#include "nest_impl.h"
+#include "universal_data_logger_impl.h"
 
 
 #ifdef HAVE_GSL
 
 namespace nest
 {
+void
+register_gif_pop_psc_exp( const std::string& name )
+{
+  register_node_model< gif_pop_psc_exp >( name );
+}
+
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */

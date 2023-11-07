@@ -1,5 +1,0 @@
-    | install.share.nest.testsuite.pytests.sli2py_recording.test_multimeter_stepping.test_multimeter_stepping[eprop_iaf_psc_delta]
-    | install.share.nest.testsuite.pytests.sli2py_recording.test_multimeter_stepping.test_multimeter_stepping[eprop_iaf_psc_delta_adapt]
-    | install.share.nest.testsuite.pytests.sli2py_stimulating.test_dcgen_versus_I_e.test_dcgen_vs_I_e[eprop_iaf_psc_delta]
-    | install.share.nest.testsuite.pytests.sli2py_stimulating.test_dcgen_versus_I_e.test_dcgen_vs_I_e[eprop_iaf_psc_delta_adapt]
-    | install.share.nest.testsuite.pytests.sli2py_stimulating.test_dcgen_versus_I_e.test_dcgen_vs_I_e[eprop_readout]

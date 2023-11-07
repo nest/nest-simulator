@@ -592,7 +592,7 @@ target_signal = np.array([target_signal[senders == i] for i in np.unique(senders
 
 # pylint: disable-next=E1121,C0301
 readout_signal = readout_signal.reshape(n_out, n_iter, n_batch, steps["sequence"])[:, :, :, -steps["learning_window"] :]
-# pylint: disable-next-=E1121,C0301
+# pylint: disable-next=E1121,C0301
 target_signal = target_signal.reshape(n_out, n_iter, n_batch, steps["sequence"])[:, :, :, -steps["learning_window"] :]
 
 loss = -np.mean(np.sum(target_signal * np.log(readout_signal), axis=0), axis=(1, 2))

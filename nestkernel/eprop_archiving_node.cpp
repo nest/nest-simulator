@@ -130,7 +130,9 @@ nest::EpropArchivingNode::write_learning_signal_to_history( const long time_step
 }
 
 void
-nest::EpropArchivingNode::write_firing_rate_reg_to_history( const long t_current_update, const double f_target, const double c_reg )
+nest::EpropArchivingNode::write_firing_rate_reg_to_history( const long t_current_update,
+  const double f_target,
+  const double c_reg )
 {
   const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
   const long shift = Time::get_resolution().get_steps();
@@ -190,12 +192,21 @@ nest::EpropArchivingNode::erase_unneeded_update_history()
 void
 nest::EpropArchivingNode::erase_unneeded_eprop_history()
 {
+  if ( eprop_history_.empty()  // nothing to remove
+    or update_history_.empty() // no time markers to check
+  )
+  {
+    return;
+  }
+
   const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
 
   auto it_update_hist = update_history_.begin();
-  long t = update_history_.begin()->t_;
 
-  for ( ; t <= ( update_history_.end() - 1 )->t_ and it_update_hist != update_history_.end(); t += update_interval )
+
+  for ( long t = update_history_.begin()->t_;
+        t <= ( update_history_.end() - 1 )->t_ and it_update_hist != update_history_.end();
+        t += update_interval )
   {
     if ( it_update_hist->t_ == t )
     {

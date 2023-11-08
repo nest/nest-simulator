@@ -261,7 +261,7 @@ must be ``True``.
 Tripartite connectivity
 -----------------------
 
-NEST supports creating connections of three node populations using the
+NEST supports creating connections of three-node populations using the
 :py:func:`.TripartiteConnect` function:
 
 .. code-block:: python
@@ -289,9 +289,9 @@ where the individual ``syn_spec`` elements follow the same rules as
 for the :py:func:`.Connect` function. Any of the three elements can be
 left out, in which case the synapse specification defaults to
 ``"static_synapse"``. The ``"primary"`` synapse specification applies
-to connections between ``pre`` and ``post`` nodes, the ``"third_in"``
-specification to connections between ``pre`` and ``third`` nodes and
-the ``"third_out"`` specification to connections between ``third`` and
+to connections from ``pre`` to ``post`` nodes, the ``"third_in"``
+specification to connections from ``pre`` to ``third`` nodes and
+the ``"third_out"`` specification to connections from ``third`` to
 ``post`` nodes.
 
 tripartite_bernoulli_with_pool
@@ -313,7 +313,7 @@ replacement.
 
 For block pools, two variants exist. Let ``n(B)`` and ``n(T)`` be the number of
 nodes in ``B`` and ``T``, respectively. If ``pool_size == 1``, the
-first ``n(B)/n(T)`` nodes in ``B`` get are assigned the first node in
+first ``n(B)/n(T)`` nodes in ``B`` are assigned the first node in
 ``T`` as their pool, the second ``n(B)/n(T)`` nodes in ``B`` the
 second node in ``T`` and so forth. In this case, ``n(B)`` must be a
 multiple of ``n(T)``. If ``pool_size > 1``, the first ``pool_size``
@@ -334,6 +334,21 @@ is required.
 		      'pool_size': 3}
     syn_specs_dict = {'third_out': 'sic_connection'}
     nest.TripartiteConnect(A, B, T, conn_spec_dict, syn_specs_dict)
+
+
+.. figure:: ../static/img/astrocyte_pool_type.svg
+    :align: center
+    :alt: Astrocyte pool type.
+
+    This figure illustrates possible outcomes of connectivity with the two
+    pool types. In the example of ``"random"`` pool type (left), each node in
+    ``B`` can be connected with up to two randomly selected nodes in ``T``
+    (given ``pool_size == 2``). In the example of ``"block"`` pool type (right),
+    let ``n(B)/n(T)`` = 2, then each node in ``B`` can be connected with one
+    node in ``T`` (``pool_size == 1`` is required because ``n(T) < n(B)``), and
+    each node in ``T`` can be connected with up to two nodes in ``B``. Colors
+    of nodes in ``B`` and ``T`` indicate which node(s) in ``T`` a node in ``B``
+    is connected with.
 
 
 .. _synapse_spec:

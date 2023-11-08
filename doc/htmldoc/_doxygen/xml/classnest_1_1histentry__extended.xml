@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="nestkernel/histentry.h" line="59" column="10" bodyfile="nestkernel/histentry.h" bodystart="59" bodyend="-1"/>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/histentry.h" line="59" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/histentry.h" bodystart="59" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classnest_1_1histentry__extended_1aa31f4efd29490e8353611e9e34535dc9" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -30,7 +30,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="nestkernel/histentry.h" line="60" column="10" bodyfile="nestkernel/histentry.h" bodystart="60" bodyend="-1"/>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/histentry.h" line="60" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/histentry.h" bodystart="60" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classnest_1_1histentry__extended_1ae2317df4f55e957126250eb542a095ee" prot="public" static="no" mutable="no">
         <type>size_t</type>
@@ -44,7 +44,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="nestkernel/histentry.h" line="61" column="10" bodyfile="nestkernel/histentry.h" bodystart="61" bodyend="-1"/>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/histentry.h" line="61" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/histentry.h" bodystart="61" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -71,7 +71,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="nestkernel/histentry.h" line="57" column="3" bodyfile="nestkernel/histentry.cpp" bodystart="41" bodyend="46"/>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/histentry.h" line="57" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/histentry.cpp" bodystart="41" bodyend="46"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -84,7 +84,7 @@
         <link refid="classnest_1_1histentry__extended"/>
       </node>
     </collaborationgraph>
-    <location file="nestkernel/histentry.h" line="54" column="1" bodyfile="nestkernel/histentry.h" bodystart="55" bodyend="62"/>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/histentry.h" line="54" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/histentry.h" bodystart="55" bodyend="62"/>
     <listofallmembers>
       <member refid="classnest_1_1histentry__extended_1ae2317df4f55e957126250eb542a095ee" prot="public" virt="non-virtual"><scope>nest::histentry_extended</scope><name>access_counter_</name></member>
       <member refid="classnest_1_1histentry__extended_1aa31f4efd29490e8353611e9e34535dc9" prot="public" virt="non-virtual"><scope>nest::histentry_extended</scope><name>dw_</name></member>

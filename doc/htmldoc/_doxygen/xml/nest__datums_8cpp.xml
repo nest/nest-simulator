@@ -43,20 +43,20 @@
       <node id="4">
         <label>arraydatum.h</label>
       </node>
-      <node id="21">
+      <node id="22">
         <label>nest_types.h</label>
         <link refid="nest__types_8h"/>
         <childnode refid="14" relation="include">
         </childnode>
-        <childnode refid="22" relation="include">
-        </childnode>
         <childnode refid="23" relation="include">
-        </childnode>
-        <childnode refid="18" relation="include">
         </childnode>
         <childnode refid="24" relation="include">
         </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
         <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
         </childnode>
         <childnode refid="26" relation="include">
         </childnode>
@@ -64,13 +64,13 @@
       <node id="26">
         <label>cstdint</label>
       </node>
-      <node id="24">
+      <node id="25">
         <label>stdint.h</label>
       </node>
       <node id="47">
         <label>nest_names.h</label>
         <link refid="nest__names_8h"/>
-        <childnode refid="25" relation="include">
+        <childnode refid="21" relation="include">
         </childnode>
         <childnode refid="27" relation="include">
         </childnode>
@@ -93,7 +93,7 @@
         </childnode>
         <childnode refid="13" relation="include">
         </childnode>
-        <childnode refid="21" relation="include">
+        <childnode refid="22" relation="include">
         </childnode>
         <childnode refid="29" relation="include">
         </childnode>
@@ -107,7 +107,7 @@
         <link refid="vp__manager_8h"/>
         <childnode refid="33" relation="include">
         </childnode>
-        <childnode refid="21" relation="include">
+        <childnode refid="22" relation="include">
         </childnode>
         <childnode refid="34" relation="include">
         </childnode>
@@ -143,7 +143,7 @@
         </childnode>
         <childnode refid="12" relation="include">
         </childnode>
-        <childnode refid="21" relation="include">
+        <childnode refid="22" relation="include">
         </childnode>
         <childnode refid="45" relation="include">
         </childnode>
@@ -172,7 +172,7 @@
         <link refid="generic__factory_8h"/>
         <childnode refid="36" relation="include">
         </childnode>
-        <childnode refid="21" relation="include">
+        <childnode refid="22" relation="include">
         </childnode>
         <childnode refid="34" relation="include">
         </childnode>
@@ -196,7 +196,7 @@
         </childnode>
         <childnode refid="20" relation="include">
         </childnode>
-        <childnode refid="21" relation="include">
+        <childnode refid="22" relation="include">
         </childnode>
       </node>
       <node id="64">
@@ -223,7 +223,7 @@
         </childnode>
         <childnode refid="12" relation="include">
         </childnode>
-        <childnode refid="21" relation="include">
+        <childnode refid="22" relation="include">
         </childnode>
         <childnode refid="31" relation="include">
         </childnode>
@@ -264,6 +264,16 @@
       <node id="63">
         <label>slitype.h</label>
       </node>
+      <node id="53">
+        <label>lockptr.h</label>
+        <link refid="lockptr_8h"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="50" relation="include">
+        </childnode>
+      </node>
       <node id="2">
         <label>nest_datums.h</label>
         <link refid="nest__datums_8h"/>
@@ -295,7 +305,7 @@
         </childnode>
         <childnode refid="47" relation="include">
         </childnode>
-        <childnode refid="21" relation="include">
+        <childnode refid="22" relation="include">
         </childnode>
         <childnode refid="6" relation="include">
         </childnode>
@@ -309,9 +319,6 @@
       <node id="38">
         <label>bitset</label>
       </node>
-      <node id="53">
-        <label>lockptr.h</label>
-      </node>
       <node id="49">
         <label>ctime</label>
       </node>
@@ -323,7 +330,7 @@
         <link refid="spike__data_8h"/>
         <childnode refid="9" relation="include">
         </childnode>
-        <childnode refid="21" relation="include">
+        <childnode refid="22" relation="include">
         </childnode>
         <childnode refid="30" relation="include">
         </childnode>
@@ -358,7 +365,7 @@
       <node id="33">
         <label>manager_interface.h</label>
         <link refid="manager__interface_8h"/>
-        <childnode refid="21" relation="include">
+        <childnode refid="22" relation="include">
         </childnode>
         <childnode refid="34" relation="include">
         </childnode>
@@ -368,9 +375,6 @@
       </node>
       <node id="27">
         <label>name.h</label>
-      </node>
-      <node id="20">
-        <label>numerics.h</label>
       </node>
       <node id="48">
         <label>node_collection.h</label>
@@ -389,17 +393,17 @@
         </childnode>
         <childnode refid="12" relation="include">
         </childnode>
-        <childnode refid="21" relation="include">
+        <childnode refid="22" relation="include">
         </childnode>
         <childnode refid="4" relation="include">
         </childnode>
         <childnode refid="34" relation="include">
         </childnode>
       </node>
-      <node id="23">
+      <node id="24">
         <label>cstddef</label>
       </node>
-      <node id="22">
+      <node id="23">
         <label>climits</label>
       </node>
       <node id="28">
@@ -408,7 +412,7 @@
       <node id="57">
         <label>type_traits</label>
       </node>
-      <node id="25">
+      <node id="21">
         <label>config.h</label>
       </node>
       <node id="8">
@@ -428,6 +432,18 @@
       </node>
       <node id="55">
         <label>initializer_list</label>
+      </node>
+      <node id="20">
+        <label>numerics.h</label>
+        <link refid="numerics_8h"/>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
       </node>
       <node id="44">
         <label>compose.hpp</label>
@@ -464,7 +480,7 @@
 <codeline lineno="24"><highlight class="normal"></highlight></codeline>
 <codeline lineno="25"><highlight class="normal"></highlight><highlight class="comment">//<sp/>instantiate<sp/>memory<sp/>management<sp/>pool</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="26"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
-<codeline lineno="27"><highlight class="normal">sli::pool<sp/><ref refid="namespacenest_1_1names_1a938cb47d5666c2bf314f78f7d8287d8a" kindref="member">ConnectionDatum::memory</ref>(<sp/></highlight><highlight class="keyword">sizeof</highlight><highlight class="normal">(<sp/><ref refid="classnest_1_1_connection_i_d" kindref="compound">nest::ConnectionID</ref><sp/>),<sp/>10000,<sp/>1<sp/>);</highlight></codeline>
+<codeline lineno="27"><highlight class="normal">sli::pool<sp/><ref refid="namespacenest_1_1names_1a938cb47d5666c2bf314f78f7d8287d8a" kindref="member">ConnectionDatum::memory</ref>(<sp/></highlight><highlight class="keyword">sizeof</highlight><highlight class="normal">(<sp/><ref refid="classnest_1_1ConnectionID" kindref="compound">nest::ConnectionID</ref><sp/>),<sp/>10000,<sp/>1<sp/>);</highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
 <codeline lineno="29"><highlight class="normal"></highlight><highlight class="comment">//<sp/>simple<sp/>type<sp/>printing</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
@@ -496,6 +512,6 @@
 <codeline lineno="56"><highlight class="normal"><sp/><sp/>this-&gt;operator-&gt;()-&gt;print_me(<sp/>out<sp/>);</highlight></codeline>
 <codeline lineno="57"><highlight class="normal">}</highlight></codeline>
     </programlisting>
-    <location file="nestkernel/nest_datums.cpp"/>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/nest_datums.cpp"/>
   </compounddef>
 </doxygen>

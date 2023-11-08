@@ -52,7 +52,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="nest/neststartup.h" line="35" column="10" bodyfile="nest/neststartup.h" bodystart="35" bodyend="-1"/>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nest/neststartup.h" line="35" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/nest/neststartup.h" bodystart="35" bodyend="-1"/>
       </memberdef>
       <memberdef kind="define" id="neststartup_8h_1a550c43cf466149de5c1d72712e7a4b40" prot="public" static="no">
         <name>CYTHON_unpackConnectionGeneratorDatum</name>
@@ -64,7 +64,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="nest/neststartup.h" line="36" column="9" bodyfile="nest/neststartup.h" bodystart="36" bodyend="-1"/>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nest/neststartup.h" line="36" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/nest/neststartup.h" bodystart="36" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="func">
@@ -91,7 +91,12 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="nest/neststartup.h" line="47" column="5" bodyfile="nest/neststartup.cpp" bodystart="71" bodyend="149" declfile="nest/neststartup.h" declline="47" declcolumn="5"/>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nest/neststartup.h" line="47" column="5" bodyfile="/home/mitchell/Work/repo/nest-simulator/nest/neststartup.cpp" bodystart="71" bodyend="149" declfile="/home/mitchell/Work/repo/nest-simulator/nest/neststartup.h" declline="47" declcolumn="5"/>
+        <references refid="namespacenest_1a4effb3b01c598aff32da450323a7bc98" compoundref="nest_8cpp" startline="42" endline="47">nest::init_nest</references>
+        <references refid="namespacenest_1a2790d3c6c87c60627f8cfd1fc4fac771" compoundref="nest_8cpp" startline="72" endline="75">nest::register_logger_client</references>
+        <references refid="neststartup_8cpp_1a453e7dae45614606a13334f5a7a8469b" compoundref="neststartup_8cpp" startline="54">sli_engine</references>
+        <references refid="neststartup_8cpp_1a78f1d00fa0ad0ecf041edd6130354e63" compoundref="neststartup_8cpp" startline="64" endline="67">sli_logging</references>
+        <referencedby refid="main_8cpp_1a0ddf1224851353fc92bfbff6f499fa97" compoundref="main_8cpp" startline="31" endline="48">main</referencedby>
       </memberdef>
       <memberdef kind="function" id="neststartup_8h_1aa3f6f2cd046e243124ba1919d60d7006" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -108,7 +113,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="nest/neststartup.h" line="50" column="6" bodyfile="nest/neststartup.cpp" bodystart="152" bodyend="157" declfile="nest/neststartup.h" declline="50" declcolumn="6"/>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nest/neststartup.h" line="50" column="6" bodyfile="/home/mitchell/Work/repo/nest-simulator/nest/neststartup.cpp" bodystart="152" bodyend="157" declfile="/home/mitchell/Work/repo/nest-simulator/nest/neststartup.h" declline="50" declcolumn="6"/>
+        <references refid="classnest_1_1KernelManager_1a1ee251f866b72233335ebc51be88b3db" compoundref="kernel__manager_8cpp" startline="41" endline="45">nest::KernelManager::destroy_kernel_manager</references>
+        <references refid="classnest_1_1KernelManager_1a9e1cccd4670b1da1f68208afb5e6622f" compoundref="kernel__manager_8cpp" startline="114" endline="121">nest::KernelManager::finalize</references>
+        <references refid="namespacenest_1a235f64c89ddf8992424ea32a13149a3e" compoundref="kernel__manager_8h" startline="274" endline="277">nest::kernel</references>
+        <references refid="classnest_1_1MPIManager_1a52182d4b13ae15f937d8f1a9d844b8ee" compoundref="mpi__manager_8cpp" startline="282" endline="284">nest::MPIManager::mpi_finalize</references>
+        <references refid="classnest_1_1KernelManager_1acb6c54ef758858ed478c76415e081de7" compoundref="kernel__manager_8h" startline="244">nest::KernelManager::mpi_manager</references>
+        <referencedby refid="main_8cpp_1a0ddf1224851353fc92bfbff6f499fa97" compoundref="main_8cpp" startline="31" endline="48">main</referencedby>
       </memberdef>
       <memberdef kind="function" id="neststartup_8h_1a566c78342730be8d8d9569d7764ca2ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>SLIInterpreter &amp;</type>
@@ -121,7 +132,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="nest/neststartup.h" line="52" column="16" bodyfile="nest/neststartup.cpp" bodystart="57" bodyend="61" declfile="nest/neststartup.h" declline="52" declcolumn="16"/>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nest/neststartup.h" line="52" column="16" bodyfile="/home/mitchell/Work/repo/nest-simulator/nest/neststartup.cpp" bodystart="57" bodyend="61" declfile="/home/mitchell/Work/repo/nest-simulator/nest/neststartup.h" declline="52" declcolumn="16"/>
+        <references refid="neststartup_8cpp_1a453e7dae45614606a13334f5a7a8469b" compoundref="neststartup_8cpp" startline="54">sli_engine</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -201,6 +213,6 @@
 <codeline lineno="70"><highlight class="normal"></highlight></codeline>
 <codeline lineno="71"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//<sp/>#ifndef<sp/>NEST_STARTUP_H</highlight><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="nest/neststartup.h"/>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nest/neststartup.h"/>
   </compounddef>
 </doxygen>

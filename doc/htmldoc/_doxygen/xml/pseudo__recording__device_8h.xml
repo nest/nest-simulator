@@ -8,6 +8,9 @@
     <includes refid="nest__types_8h" local="yes">nest_types.h</includes>
     <includes local="yes">dictdatum.h</includes>
     <includes local="yes">dictutils.h</includes>
+    <includedby refid="correlation__detector_8h" local="yes">correlation_detector.h</includedby>
+    <includedby refid="correlomatrix__detector_8h" local="yes">correlomatrix_detector.h</includedby>
+    <includedby refid="correlospinmatrix__detector_8h" local="yes">correlospinmatrix_detector.h</includedby>
     <incdepgraph>
       <node id="11">
         <label>limits</label>
@@ -15,20 +18,20 @@
       <node id="47">
         <label>arraydatum.h</label>
       </node>
-      <node id="14">
+      <node id="15">
         <label>nest_types.h</label>
         <link refid="nest__types_8h"/>
         <childnode refid="7" relation="include">
         </childnode>
-        <childnode refid="15" relation="include">
-        </childnode>
         <childnode refid="16" relation="include">
-        </childnode>
-        <childnode refid="11" relation="include">
         </childnode>
         <childnode refid="17" relation="include">
         </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
         <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="19" relation="include">
         </childnode>
@@ -36,13 +39,13 @@
       <node id="19">
         <label>cstdint</label>
       </node>
-      <node id="17">
+      <node id="18">
         <label>stdint.h</label>
       </node>
       <node id="40">
         <label>nest_names.h</label>
         <link refid="nest__names_8h"/>
-        <childnode refid="18" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="31" relation="include">
         </childnode>
@@ -75,7 +78,7 @@
         </childnode>
         <childnode refid="5" relation="include">
         </childnode>
-        <childnode refid="14" relation="include">
+        <childnode refid="15" relation="include">
         </childnode>
         <childnode refid="33" relation="include">
         </childnode>
@@ -89,7 +92,7 @@
         <link refid="vp__manager_8h"/>
         <childnode refid="37" relation="include">
         </childnode>
-        <childnode refid="14" relation="include">
+        <childnode refid="15" relation="include">
         </childnode>
         <childnode refid="38" relation="include">
         </childnode>
@@ -138,7 +141,7 @@
         </childnode>
         <childnode refid="13" relation="include">
         </childnode>
-        <childnode refid="14" relation="include">
+        <childnode refid="15" relation="include">
         </childnode>
       </node>
       <node id="7">
@@ -151,7 +154,7 @@
         </childnode>
         <childnode refid="30" relation="include">
         </childnode>
-        <childnode refid="14" relation="include">
+        <childnode refid="15" relation="include">
         </childnode>
         <childnode refid="35" relation="include">
         </childnode>
@@ -165,6 +168,16 @@
       <node id="35">
         <label>static_assert.h</label>
         <link refid="static__assert_8h"/>
+      </node>
+      <node id="46">
+        <label>lockptr.h</label>
+        <link refid="lockptr_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
       </node>
       <node id="20">
         <label>node.h</label>
@@ -191,7 +204,7 @@
         </childnode>
         <childnode refid="5" relation="include">
         </childnode>
-        <childnode refid="14" relation="include">
+        <childnode refid="15" relation="include">
         </childnode>
         <childnode refid="41" relation="include">
         </childnode>
@@ -203,7 +216,7 @@
       <node id="39">
         <label>histentry.h</label>
         <link refid="histentry_8h"/>
-        <childnode refid="14" relation="include">
+        <childnode refid="15" relation="include">
         </childnode>
       </node>
       <node id="48">
@@ -215,9 +228,6 @@
       <node id="21">
         <label>bitset</label>
       </node>
-      <node id="46">
-        <label>lockptr.h</label>
-      </node>
       <node id="42">
         <label>ctime</label>
       </node>
@@ -226,7 +236,7 @@
         <link refid="spike__data_8h"/>
         <childnode refid="6" relation="include">
         </childnode>
-        <childnode refid="14" relation="include">
+        <childnode refid="15" relation="include">
         </childnode>
         <childnode refid="34" relation="include">
         </childnode>
@@ -245,7 +255,7 @@
         <link refid="device_8h"/>
         <childnode refid="5" relation="include">
         </childnode>
-        <childnode refid="14" relation="include">
+        <childnode refid="15" relation="include">
         </childnode>
         <childnode refid="20" relation="include">
         </childnode>
@@ -261,7 +271,7 @@
       <node id="37">
         <label>manager_interface.h</label>
         <link refid="manager__interface_8h"/>
-        <childnode refid="14" relation="include">
+        <childnode refid="15" relation="include">
         </childnode>
         <childnode refid="38" relation="include">
         </childnode>
@@ -271,9 +281,6 @@
       </node>
       <node id="31">
         <label>name.h</label>
-      </node>
-      <node id="13">
-        <label>numerics.h</label>
       </node>
       <node id="41">
         <label>node_collection.h</label>
@@ -292,20 +299,20 @@
         </childnode>
         <childnode refid="30" relation="include">
         </childnode>
-        <childnode refid="14" relation="include">
+        <childnode refid="15" relation="include">
         </childnode>
         <childnode refid="47" relation="include">
         </childnode>
         <childnode refid="38" relation="include">
         </childnode>
       </node>
-      <node id="16">
+      <node id="17">
         <label>cstddef</label>
       </node>
       <node id="22">
         <label>deque</label>
       </node>
-      <node id="15">
+      <node id="16">
         <label>climits</label>
       </node>
       <node id="1">
@@ -317,7 +324,7 @@
         </childnode>
         <childnode refid="4" relation="include">
         </childnode>
-        <childnode refid="14" relation="include">
+        <childnode refid="15" relation="include">
         </childnode>
         <childnode refid="38" relation="include">
         </childnode>
@@ -330,7 +337,7 @@
       <node id="49">
         <label>set</label>
       </node>
-      <node id="18">
+      <node id="14">
         <label>config.h</label>
       </node>
       <node id="28">
@@ -342,8 +349,72 @@
       <node id="43">
         <label>memory</label>
       </node>
+      <node id="13">
+        <label>numerics.h</label>
+        <link refid="numerics_8h"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+      </node>
     </incdepgraph>
-    <innerclass refid="classnest_1_1_pseudo_recording_device" prot="public">nest::PseudoRecordingDevice</innerclass>
+    <invincdepgraph>
+      <node id="6">
+        <label>correlomatrix_detector.cpp</label>
+        <link refid="correlomatrix__detector_8cpp"/>
+      </node>
+      <node id="7">
+        <label>correlospinmatrix_detector.h</label>
+        <link refid="correlospinmatrix__detector_8h"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>correlation_detector.cpp</label>
+        <link refid="correlation__detector_8cpp"/>
+      </node>
+      <node id="8">
+        <label>correlospinmatrix_detector.cpp</label>
+        <link refid="correlospinmatrix__detector_8cpp"/>
+      </node>
+      <node id="5">
+        <label>correlomatrix_detector.h</label>
+        <link refid="correlomatrix__detector_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>modelsmodule.cpp</label>
+        <link refid="modelsmodule_8cpp"/>
+      </node>
+      <node id="1">
+        <label>pseudo_recording_device.h</label>
+        <link refid="pseudo__recording__device_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>correlation_detector.h</label>
+        <link refid="correlation__detector_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classnest_1_1PseudoRecordingDevice" prot="public">nest::PseudoRecordingDevice</innerclass>
     <innernamespace refid="namespacenest">nest</innernamespace>
     <briefdescription>
     </briefdescription>
@@ -390,41 +461,41 @@
 <codeline lineno="38"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacenest" kindref="compound">nest</ref></highlight></codeline>
 <codeline lineno="39"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="40"><highlight class="normal"></highlight></codeline>
-<codeline lineno="78" refid="classnest_1_1_pseudo_recording_device" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classnest_1_1_pseudo_recording_device" kindref="compound">PseudoRecordingDevice</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_device" kindref="compound">Device</ref></highlight></codeline>
+<codeline lineno="78" refid="classnest_1_1PseudoRecordingDevice" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classnest_1_1PseudoRecordingDevice" kindref="compound">PseudoRecordingDevice</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1Device" kindref="compound">Device</ref></highlight></codeline>
 <codeline lineno="79"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="80"><highlight class="normal"></highlight></codeline>
 <codeline lineno="81"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
-<codeline lineno="82"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1_pseudo_recording_device_1ae448589c23fd103bb057ee716877b8af" kindref="member">PseudoRecordingDevice</ref>();</highlight></codeline>
-<codeline lineno="83"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1_pseudo_recording_device_1ae448589c23fd103bb057ee716877b8af" kindref="member">PseudoRecordingDevice</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_pseudo_recording_device" kindref="compound">PseudoRecordingDevice</ref>&amp;<sp/>);</highlight></codeline>
-<codeline lineno="84" refid="classnest_1_1_pseudo_recording_device_1a1b00678357a6ae9168a05a047453b288" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1_pseudo_recording_device_1a1b00678357a6ae9168a05a047453b288" kindref="member">~PseudoRecordingDevice</ref>()</highlight><highlight class="keyword"><sp/>override</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1PseudoRecordingDevice_1ae448589c23fd103bb057ee716877b8af" kindref="member">PseudoRecordingDevice</ref>();</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1PseudoRecordingDevice_1ae448589c23fd103bb057ee716877b8af" kindref="member">PseudoRecordingDevice</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1PseudoRecordingDevice" kindref="compound">PseudoRecordingDevice</ref>&amp;<sp/>);</highlight></codeline>
+<codeline lineno="84" refid="classnest_1_1PseudoRecordingDevice_1a1b00678357a6ae9168a05a047453b288" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1PseudoRecordingDevice_1a1b00678357a6ae9168a05a047453b288" kindref="member">~PseudoRecordingDevice</ref>()</highlight><highlight class="keyword"><sp/>override</highlight></codeline>
 <codeline lineno="85"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
 <codeline lineno="86"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
 <codeline lineno="87"><highlight class="normal"></highlight></codeline>
-<codeline lineno="92"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_pseudo_recording_device_1ab3d8f1b91428aec4ef45b35f21ed0d99" kindref="member">is_active</ref>(<sp/><ref refid="classnest_1_1_time" kindref="compound">Time</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>T<sp/>)<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1PseudoRecordingDevice_1ab3d8f1b91428aec4ef45b35f21ed0d99" kindref="member">is_active</ref>(<sp/><ref refid="classnest_1_1Time" kindref="compound">Time</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>T<sp/>)<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="93"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="94"><highlight class="normal"></highlight></codeline>
-<codeline lineno="95" refid="classnest_1_1_pseudo_recording_device_1ae448589c23fd103bb057ee716877b8af" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_pseudo_recording_device_1ae448589c23fd103bb057ee716877b8af" kindref="member">PseudoRecordingDevice::PseudoRecordingDevice</ref>()</highlight></codeline>
-<codeline lineno="96"><highlight class="normal"><sp/><sp/>:<sp/><ref refid="classnest_1_1_device" kindref="compound">Device</ref>()</highlight></codeline>
+<codeline lineno="95" refid="classnest_1_1PseudoRecordingDevice_1ae448589c23fd103bb057ee716877b8af" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1PseudoRecordingDevice_1ae448589c23fd103bb057ee716877b8af" kindref="member">PseudoRecordingDevice::PseudoRecordingDevice</ref>()</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/>:<sp/><ref refid="classnest_1_1Device" kindref="compound">Device</ref>()</highlight></codeline>
 <codeline lineno="97"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="98"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="99"><highlight class="normal"></highlight></codeline>
-<codeline lineno="100" refid="classnest_1_1_pseudo_recording_device_1a42c83c0336aac1c62b77c07fd8fb0010" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_pseudo_recording_device_1ae448589c23fd103bb057ee716877b8af" kindref="member">PseudoRecordingDevice::PseudoRecordingDevice</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_pseudo_recording_device" kindref="compound">PseudoRecordingDevice</ref>&amp;<sp/>prd<sp/>)</highlight></codeline>
-<codeline lineno="101"><highlight class="normal"><sp/><sp/>:<sp/><ref refid="classnest_1_1_device" kindref="compound">Device</ref>(<sp/>prd<sp/>)</highlight></codeline>
+<codeline lineno="100" refid="classnest_1_1PseudoRecordingDevice_1a42c83c0336aac1c62b77c07fd8fb0010" refkind="member"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1PseudoRecordingDevice_1ae448589c23fd103bb057ee716877b8af" kindref="member">PseudoRecordingDevice::PseudoRecordingDevice</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1PseudoRecordingDevice" kindref="compound">PseudoRecordingDevice</ref>&amp;<sp/>prd<sp/>)</highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/>:<sp/><ref refid="classnest_1_1Device" kindref="compound">Device</ref>(<sp/>prd<sp/>)</highlight></codeline>
 <codeline lineno="102"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="103"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="104"><highlight class="normal"></highlight></codeline>
 <codeline lineno="105"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="106" refid="classnest_1_1_pseudo_recording_device_1ab3d8f1b91428aec4ef45b35f21ed0d99" refkind="member"><highlight class="normal"><ref refid="classnest_1_1_pseudo_recording_device_1ab3d8f1b91428aec4ef45b35f21ed0d99" kindref="member">PseudoRecordingDevice::is_active</ref>(<sp/><ref refid="classnest_1_1_time" kindref="compound">Time</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>T<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="106" refid="classnest_1_1PseudoRecordingDevice_1ab3d8f1b91428aec4ef45b35f21ed0d99" refkind="member"><highlight class="normal"><ref refid="classnest_1_1PseudoRecordingDevice_1ab3d8f1b91428aec4ef45b35f21ed0d99" kindref="member">PseudoRecordingDevice::is_active</ref>(<sp/><ref refid="classnest_1_1Time" kindref="compound">Time</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>T<sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
 <codeline lineno="107"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="108"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>stamp<sp/>=<sp/>T.<ref refid="classnest_1_1_time_1afedb0e4fbf5d521e50573f2180016568" kindref="member">get_steps</ref>();</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>stamp<sp/>=<sp/>T.<ref refid="classnest_1_1Time_1afedb0e4fbf5d521e50573f2180016568" kindref="member">get_steps</ref>();</highlight></codeline>
 <codeline lineno="109"><highlight class="normal"></highlight></codeline>
-<codeline lineno="110"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_device_1a84e4ade576e165a46597963ae943b829" kindref="member">get_t_min_</ref>()<sp/>&lt;<sp/>stamp<sp/>and<sp/>stamp<sp/>&lt;=<sp/><ref refid="classnest_1_1_device_1ab78b2c8c5dd25d5328790c3d2d77bc02" kindref="member">get_t_max_</ref>();</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1Device_1a84e4ade576e165a46597963ae943b829" kindref="member">get_t_min_</ref>()<sp/>&lt;<sp/>stamp<sp/>and<sp/>stamp<sp/>&lt;=<sp/><ref refid="classnest_1_1Device_1ab78b2c8c5dd25d5328790c3d2d77bc02" kindref="member">get_t_max_</ref>();</highlight></codeline>
 <codeline lineno="111"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="112"><highlight class="normal"></highlight></codeline>
 <codeline lineno="113"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="114"><highlight class="normal"></highlight></codeline>
 <codeline lineno="115"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//<sp/>PSEUDO_RECORDING_DEVICE_H</highlight><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="nestkernel/pseudo_recording_device.h"/>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/pseudo_recording_device.h"/>
   </compounddef>
 </doxygen>

@@ -134,6 +134,6 @@
 <codeline lineno="117"><highlight class="normal"></highlight></codeline>
 <codeline lineno="118"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
     </programlisting>
-    <location file="nestkernel/dynamicloader.h"/>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/dynamicloader.h"/>
   </compounddef>
 </doxygen>

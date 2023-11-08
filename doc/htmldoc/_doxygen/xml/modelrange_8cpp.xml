@@ -85,7 +85,7 @@
 <codeline lineno="22"><highlight class="normal"></highlight></codeline>
 <codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="modelrange_8h" kindref="compound">modelrange.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="24"><highlight class="normal"></highlight></codeline>
-<codeline lineno="25"><highlight class="normal"><ref refid="classnest_1_1modelrange_1ac8ef12eb9fe0127fe0ee229519f59c51" kindref="member">nest::modelrange::modelrange</ref>(<sp/><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref><sp/><ref refid="namespacenest_1_1names_1ab13a9c81386468eaede1c9c5c189cdd3" kindref="member">model</ref>,<sp/><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref><sp/>first_node_id,<sp/><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref><sp/>last_node_id<sp/>)</highlight></codeline>
+<codeline lineno="25" refid="classnest_1_1modelrange_1ac8ef12eb9fe0127fe0ee229519f59c51" refkind="member"><highlight class="normal"><ref refid="classnest_1_1modelrange_1ac8ef12eb9fe0127fe0ee229519f59c51" kindref="member">nest::modelrange::modelrange</ref>(<sp/><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref><sp/><ref refid="namespacenest_1_1names_1ab13a9c81386468eaede1c9c5c189cdd3" kindref="member">model</ref>,<sp/><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref><sp/>first_node_id,<sp/><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref><sp/>last_node_id<sp/>)</highlight></codeline>
 <codeline lineno="26"><highlight class="normal"><sp/><sp/>:<sp/>model_(<sp/><ref refid="namespacenest_1_1names_1ab13a9c81386468eaede1c9c5c189cdd3" kindref="member">model</ref><sp/>)</highlight></codeline>
 <codeline lineno="27"><highlight class="normal"><sp/><sp/>,<sp/>first_node_id_(<sp/>first_node_id<sp/>)</highlight></codeline>
 <codeline lineno="28"><highlight class="normal"><sp/><sp/>,<sp/>last_node_id_(<sp/>last_node_id<sp/>)</highlight></codeline>
@@ -93,11 +93,11 @@
 <codeline lineno="30"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="31"><highlight class="normal"></highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="33"><highlight class="normal"><ref refid="classnest_1_1modelrange_1a28958584107719fc1623ffcb31e0d7eb" kindref="member">nest::modelrange::extend_range</ref>(<sp/><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref><sp/>new_last_node_id<sp/>)</highlight></codeline>
+<codeline lineno="33" refid="classnest_1_1modelrange_1a28958584107719fc1623ffcb31e0d7eb" refkind="member"><highlight class="normal"><ref refid="classnest_1_1modelrange_1a28958584107719fc1623ffcb31e0d7eb" kindref="member">nest::modelrange::extend_range</ref>(<sp/><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref><sp/>new_last_node_id<sp/>)</highlight></codeline>
 <codeline lineno="34"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="35"><highlight class="normal"><sp/><sp/>last_node_id_<sp/>=<sp/>new_last_node_id;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal">}</highlight></codeline>
     </programlisting>
-    <location file="nestkernel/modelrange.cpp"/>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/modelrange.cpp"/>
   </compounddef>
 </doxygen>

@@ -106,6 +106,6 @@
 <codeline lineno="65"><highlight class="normal"></highlight></codeline>
 <codeline lineno="66"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>ifdef<sp/>CONN_BUILDER_CONNGEN_H<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
     </programlisting>
-    <location file="nestkernel/conn_builder_conngen.h"/>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/conn_builder_conngen.h"/>
   </compounddef>
 </doxygen>

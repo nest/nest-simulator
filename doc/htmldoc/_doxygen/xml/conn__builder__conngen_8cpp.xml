@@ -159,7 +159,7 @@
 <codeline lineno="132"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
 <codeline lineno="133"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="134"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
-<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/>LOG(<sp/>M_ERROR,<sp/></highlight><highlight class="stringliteral">&quot;Connect&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;Either<sp/>two<sp/>or<sp/>no<sp/>parameters<sp/>in<sp/>the<sp/>ConnectionGenerator<sp/>expected.&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="logging_8h_1a4fb9f400c7eade44c47bea4b934d580f" kindref="member">LOG</ref>(<sp/><ref refid="namespacenest_1a17a14d5aa7e8d94ec67eefc2b148eb72adaf8dec0ca154ba4dd8045accef88b46" kindref="member">M_ERROR</ref>,<sp/></highlight><highlight class="stringliteral">&quot;Connect&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;Either<sp/>two<sp/>or<sp/>no<sp/>parameters<sp/>in<sp/>the<sp/>ConnectionGenerator<sp/>expected.&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
 <codeline lineno="136"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>DimensionMismatch();</highlight></codeline>
 <codeline lineno="137"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
 <codeline lineno="138"><highlight class="normal">}</highlight></codeline>
@@ -324,6 +324,6 @@
 <codeline lineno="351"><highlight class="normal"></highlight></codeline>
 <codeline lineno="352"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>ifdef<sp/>HAVE_LIBNEUROSIM<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
     </programlisting>
-    <location file="nestkernel/conn_builder_conngen.cpp"/>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/conn_builder_conngen.cpp"/>
   </compounddef>
 </doxygen>

@@ -15,7 +15,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="nestkernel/modelrange.h" line="59" column="9" bodyfile="nestkernel/modelrange.h" bodystart="59" bodyend="-1"/>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/modelrange.h" line="59" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/modelrange.h" bodystart="59" bodyend="-1"/>
+        <referencedby refid="classnest_1_1modelrange_1a9431919c11147d24034c3d027ab5ac3e" compoundref="modelrange_8h" startline="42" endline="45">get_model_id</referencedby>
       </memberdef>
       <memberdef kind="variable" id="classnest_1_1modelrange_1a5ae0b8f9b93d87ed46441a5bd2a9bf1b" prot="private" static="no" mutable="no">
         <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
@@ -28,7 +29,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="nestkernel/modelrange.h" line="60" column="9" bodyfile="nestkernel/modelrange.h" bodystart="60" bodyend="-1"/>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/modelrange.h" line="60" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/modelrange.h" bodystart="60" bodyend="-1"/>
+        <referencedby refid="classnest_1_1modelrange_1a8b045ef7db17cd0a7a6ce9ddecbf6962" compoundref="modelrange_8h" startline="47" endline="50">get_first_node_id</referencedby>
+        <referencedby refid="classnest_1_1modelrange_1a0aed9c7c8545d4ae8223fba20d55e4c7" compoundref="modelrange_8h" startline="37" endline="40">is_in_range</referencedby>
       </memberdef>
       <memberdef kind="variable" id="classnest_1_1modelrange_1aecc601bb94e1d7d4418cd00f0d850a76" prot="private" static="no" mutable="no">
         <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
@@ -41,7 +44,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="nestkernel/modelrange.h" line="61" column="9" bodyfile="nestkernel/modelrange.h" bodystart="61" bodyend="-1"/>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/modelrange.h" line="61" column="9" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/modelrange.h" bodystart="61" bodyend="-1"/>
+        <referencedby refid="classnest_1_1modelrange_1a846eba843503be94497732d5a06713a0" compoundref="modelrange_8h" startline="52" endline="55">get_last_node_id</referencedby>
+        <referencedby refid="classnest_1_1modelrange_1a0aed9c7c8545d4ae8223fba20d55e4c7" compoundref="modelrange_8h" startline="37" endline="40">is_in_range</referencedby>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -68,7 +73,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="nestkernel/modelrange.h" line="35" column="3" bodyfile="nestkernel/modelrange.cpp" bodystart="25" bodyend="30"/>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/modelrange.h" line="35" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/modelrange.cpp" bodystart="25" bodyend="30"/>
       </memberdef>
       <memberdef kind="function" id="classnest_1_1modelrange_1a0aed9c7c8545d4ae8223fba20d55e4c7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -85,7 +90,9 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="nestkernel/modelrange.h" line="37" column="3" bodyfile="nestkernel/modelrange.h" bodystart="37" bodyend="40"/>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/modelrange.h" line="37" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/modelrange.h" bodystart="37" bodyend="40"/>
+        <references refid="classnest_1_1modelrange_1a5ae0b8f9b93d87ed46441a5bd2a9bf1b" compoundref="modelrange_8h" startline="60">first_node_id_</references>
+        <references refid="classnest_1_1modelrange_1aecc601bb94e1d7d4418cd00f0d850a76" compoundref="modelrange_8h" startline="61">last_node_id_</references>
       </memberdef>
       <memberdef kind="function" id="classnest_1_1modelrange_1a9431919c11147d24034c3d027ab5ac3e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
@@ -98,7 +105,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="nestkernel/modelrange.h" line="42" column="3" bodyfile="nestkernel/modelrange.h" bodystart="42" bodyend="45"/>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/modelrange.h" line="42" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/modelrange.h" bodystart="42" bodyend="45"/>
+        <references refid="classnest_1_1modelrange_1af39a4b9ab09bdcec40cc4aa800152964" compoundref="modelrange_8h" startline="59">model_</references>
       </memberdef>
       <memberdef kind="function" id="classnest_1_1modelrange_1a8b045ef7db17cd0a7a6ce9ddecbf6962" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
@@ -111,7 +119,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="nestkernel/modelrange.h" line="47" column="3" bodyfile="nestkernel/modelrange.h" bodystart="47" bodyend="50"/>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/modelrange.h" line="47" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/modelrange.h" bodystart="47" bodyend="50"/>
+        <references refid="classnest_1_1modelrange_1a5ae0b8f9b93d87ed46441a5bd2a9bf1b" compoundref="modelrange_8h" startline="60">first_node_id_</references>
       </memberdef>
       <memberdef kind="function" id="classnest_1_1modelrange_1a846eba843503be94497732d5a06713a0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></type>
@@ -124,7 +133,8 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="nestkernel/modelrange.h" line="52" column="3" bodyfile="nestkernel/modelrange.h" bodystart="52" bodyend="55"/>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/modelrange.h" line="52" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/modelrange.h" bodystart="52" bodyend="55"/>
+        <references refid="classnest_1_1modelrange_1aecc601bb94e1d7d4418cd00f0d850a76" compoundref="modelrange_8h" startline="61">last_node_id_</references>
       </memberdef>
       <memberdef kind="function" id="classnest_1_1modelrange_1a28958584107719fc1623ffcb31e0d7eb" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -141,7 +151,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="nestkernel/modelrange.h" line="56" column="8" bodyfile="nestkernel/modelrange.cpp" bodystart="33" bodyend="36"/>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/modelrange.h" line="56" column="8" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/modelrange.cpp" bodystart="33" bodyend="36"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -154,7 +164,7 @@
         <link refid="classnest_1_1modelrange"/>
       </node>
     </collaborationgraph>
-    <location file="nestkernel/modelrange.h" line="32" column="1" bodyfile="nestkernel/modelrange.h" bodystart="33" bodyend="62"/>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/modelrange.h" line="32" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/modelrange.h" bodystart="33" bodyend="62"/>
     <listofallmembers>
       <member refid="classnest_1_1modelrange_1a28958584107719fc1623ffcb31e0d7eb" prot="public" virt="non-virtual"><scope>nest::modelrange</scope><name>extend_range</name></member>
       <member refid="classnest_1_1modelrange_1a5ae0b8f9b93d87ed46441a5bd2a9bf1b" prot="private" virt="non-virtual"><scope>nest::modelrange</scope><name>first_node_id_</name></member>

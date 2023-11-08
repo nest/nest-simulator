@@ -59,11 +59,11 @@
 <codeline lineno="22"><highlight class="normal"></highlight></codeline>
 <codeline lineno="23"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="recording__backend_8h" kindref="compound">recording_backend.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="24"><highlight class="normal"></highlight></codeline>
-<codeline lineno="25"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;<sp/>Name<sp/>&gt;<sp/><ref refid="classnest_1_1_recording_backend_1aeff21cf2021e4bbca3bb97bdbf105b42" kindref="member">nest::RecordingBackend::NO_DOUBLE_VALUE_NAMES</ref>;</highlight></codeline>
-<codeline lineno="26"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;<sp/>Name<sp/>&gt;<sp/><ref refid="classnest_1_1_recording_backend_1aff668c3a4fbfca1219efbe740d69a8d4" kindref="member">nest::RecordingBackend::NO_LONG_VALUE_NAMES</ref>;</highlight></codeline>
-<codeline lineno="27"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;<sp/>double<sp/>&gt;<sp/><ref refid="classnest_1_1_recording_backend_1a5e2d33fff60f794c9bf4b78a66d544bc" kindref="member">nest::RecordingBackend::NO_DOUBLE_VALUES</ref>;</highlight></codeline>
-<codeline lineno="28"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;<sp/>long<sp/>&gt;<sp/><ref refid="classnest_1_1_recording_backend_1a6881478b0e2f8b699f6af4457459c571" kindref="member">nest::RecordingBackend::NO_LONG_VALUES</ref>;</highlight></codeline>
+<codeline lineno="25"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;<sp/>Name<sp/>&gt;<sp/><ref refid="classnest_1_1RecordingBackend_1aeff21cf2021e4bbca3bb97bdbf105b42" kindref="member">nest::RecordingBackend::NO_DOUBLE_VALUE_NAMES</ref>;</highlight></codeline>
+<codeline lineno="26"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;<sp/>Name<sp/>&gt;<sp/><ref refid="classnest_1_1RecordingBackend_1aff668c3a4fbfca1219efbe740d69a8d4" kindref="member">nest::RecordingBackend::NO_LONG_VALUE_NAMES</ref>;</highlight></codeline>
+<codeline lineno="27"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;<sp/>double<sp/>&gt;<sp/><ref refid="classnest_1_1RecordingBackend_1a5e2d33fff60f794c9bf4b78a66d544bc" kindref="member">nest::RecordingBackend::NO_DOUBLE_VALUES</ref>;</highlight></codeline>
+<codeline lineno="28"><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;<sp/>long<sp/>&gt;<sp/><ref refid="classnest_1_1RecordingBackend_1a6881478b0e2f8b699f6af4457459c571" kindref="member">nest::RecordingBackend::NO_LONG_VALUES</ref>;</highlight></codeline>
     </programlisting>
-    <location file="nestkernel/recording_backend.cpp"/>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/recording_backend.cpp"/>
   </compounddef>
 </doxygen>

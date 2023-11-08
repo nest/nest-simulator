@@ -53,7 +53,7 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Includes<sp/>from<sp/>libnestutil:</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;compose.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;logging.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="logging_8h" kindref="compound">logging.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
 <codeline lineno="31"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Includes<sp/>from<sp/>nestkernel:</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="event_8h" kindref="compound">event.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
@@ -98,7 +98,7 @@
 <codeline lineno="71"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="72"><highlight class="normal"></highlight></codeline>
 <codeline lineno="73"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="74"><highlight class="normal">MusicEventHandler::register_channel(<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>channel,<sp/><ref refid="classnest_1_1_node" kindref="compound">nest::Node</ref>*<sp/>mp<sp/>)</highlight></codeline>
+<codeline lineno="74"><highlight class="normal">MusicEventHandler::register_channel(<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>channel,<sp/><ref refid="classnest_1_1Node" kindref="compound">nest::Node</ref>*<sp/>mp<sp/>)</highlight></codeline>
 <codeline lineno="75"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="76"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>channel<sp/>)<sp/>&gt;=<sp/>channelmap_.size()<sp/>)</highlight></codeline>
 <codeline lineno="77"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
@@ -165,7 +165,7 @@
 <codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>msg<sp/>+=<sp/>String::compose(<sp/></highlight><highlight class="stringliteral">&quot;<sp/>and<sp/>max<sp/>buffered=%1<sp/>ticks&quot;</highlight><highlight class="normal">,<sp/>max_buffered_<sp/>);</highlight></codeline>
 <codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/>msg<sp/>+=<sp/></highlight><highlight class="stringliteral">&quot;.&quot;</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/>LOG(<sp/>M_INFO,<sp/></highlight><highlight class="stringliteral">&quot;MusicEventHandler::publish_port()&quot;</highlight><highlight class="normal">,<sp/>msg.c_str()<sp/>);</highlight></codeline>
+<codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="logging_8h_1a4fb9f400c7eade44c47bea4b934d580f" kindref="member">LOG</ref>(<sp/><ref refid="namespacenest_1a17a14d5aa7e8d94ec67eefc2b148eb72ac918263c6420db964adbf3a3375cf9ee" kindref="member">M_INFO</ref>,<sp/></highlight><highlight class="stringliteral">&quot;MusicEventHandler::publish_port()&quot;</highlight><highlight class="normal">,<sp/>msg.c_str()<sp/>);</highlight></codeline>
 <codeline lineno="142"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
 <codeline lineno="143"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="144"><highlight class="normal"></highlight></codeline>
@@ -190,9 +190,9 @@
 <codeline lineno="163"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>T<sp/>&gt;<sp/><ref refid="namespacenest_1_1names_1af7c5ec484317563ecbd2133c7a59043e" kindref="member">origin</ref><sp/>+<sp/>Time::step(<sp/>from<sp/>)<sp/>-<sp/>Time::ms(<sp/>acceptable_latency_<sp/>)</highlight></codeline>
 <codeline lineno="164"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>and<sp/>T<sp/>&lt;=<sp/><ref refid="namespacenest_1_1names_1af7c5ec484317563ecbd2133c7a59043e" kindref="member">origin</ref><sp/>+<sp/>Time::step(<sp/>from<sp/>+<sp/>to<sp/>)<sp/>)</highlight></codeline>
 <codeline lineno="165"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
-<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classnest_1_1_spike_event" kindref="compound">nest::SpikeEvent</ref><sp/>se;</highlight></codeline>
-<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>se.<ref refid="classnest_1_1_event_1a950cfc88c56d3098f1445dcc2b6f4805" kindref="member">set_offset</ref>(<sp/>Time(<sp/>Time::step(<sp/>T.get_steps()<sp/>)<sp/>).get_ms()<sp/>-<sp/>T.get_ms()<sp/>);</highlight></codeline>
-<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>se.<ref refid="classnest_1_1_event_1a47c5bdb5473b5b8971b2a077aec754e0" kindref="member">set_stamp</ref>(<sp/>T<sp/>);</highlight></codeline>
+<codeline lineno="166"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classnest_1_1SpikeEvent" kindref="compound">nest::SpikeEvent</ref><sp/>se;</highlight></codeline>
+<codeline lineno="167"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>se.<ref refid="classnest_1_1Event_1a950cfc88c56d3098f1445dcc2b6f4805" kindref="member">set_offset</ref>(<sp/>Time(<sp/>Time::step(<sp/>T.get_steps()<sp/>)<sp/>).get_ms()<sp/>-<sp/>T.get_ms()<sp/>);</highlight></codeline>
+<codeline lineno="168"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>se.<ref refid="classnest_1_1Event_1a47c5bdb5473b5b8971b2a077aec754e0" kindref="member">set_stamp</ref>(<sp/>T<sp/>);</highlight></codeline>
 <codeline lineno="169"><highlight class="normal"></highlight></codeline>
 <codeline lineno="170"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>deliver<sp/>to<sp/>the<sp/>proxy<sp/>for<sp/>this<sp/>channel</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="171"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>channelmap_[<sp/>channel<sp/>]-&gt;handle(<sp/>se<sp/>);</highlight></codeline>
@@ -211,6 +211,6 @@
 <codeline lineno="184"><highlight class="normal"></highlight></codeline>
 <codeline lineno="185"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//<sp/>#ifdef<sp/>HAVE_MUSIC</highlight><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="nestkernel/music_event_handler.cpp"/>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/music_event_handler.cpp"/>
   </compounddef>
 </doxygen>

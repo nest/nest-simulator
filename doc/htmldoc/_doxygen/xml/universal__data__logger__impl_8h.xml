@@ -3,6 +3,36 @@
   <compounddef id="universal__data__logger__impl_8h" kind="file" language="C++">
     <compoundname>universal_data_logger_impl.h</compoundname>
     <includes refid="universal__data__logger_8h" local="yes">universal_data_logger.h</includes>
+    <includedby refid="ac__generator_8cpp" local="yes">ac_generator.cpp</includedby>
+    <includedby refid="amat2__psc__exp_8cpp" local="yes">amat2_psc_exp.cpp</includedby>
+    <includedby refid="cm__tree_8h" local="yes">cm_tree.h</includedby>
+    <includedby refid="dc__generator_8cpp" local="yes">dc_generator.cpp</includedby>
+    <includedby refid="gif__pop__psc__exp_8cpp" local="yes">gif_pop_psc_exp.cpp</includedby>
+    <includedby refid="gif__psc__exp_8cpp" local="yes">gif_psc_exp.cpp</includedby>
+    <includedby refid="gif__psc__exp__multisynapse_8cpp" local="yes">gif_psc_exp_multisynapse.cpp</includedby>
+    <includedby refid="glif__psc_8cpp" local="yes">glif_psc.cpp</includedby>
+    <includedby refid="iaf__chs__2007_8cpp" local="yes">iaf_chs_2007.cpp</includedby>
+    <includedby refid="iaf__psc__alpha_8cpp" local="yes">iaf_psc_alpha.cpp</includedby>
+    <includedby refid="iaf__psc__alpha__multisynapse_8cpp" local="yes">iaf_psc_alpha_multisynapse.cpp</includedby>
+    <includedby refid="iaf__psc__alpha__ps_8cpp" local="yes">iaf_psc_alpha_ps.cpp</includedby>
+    <includedby refid="iaf__psc__delta_8cpp" local="yes">iaf_psc_delta.cpp</includedby>
+    <includedby refid="iaf__psc__delta__ps_8cpp" local="yes">iaf_psc_delta_ps.cpp</includedby>
+    <includedby refid="iaf__psc__exp_8cpp" local="yes">iaf_psc_exp.cpp</includedby>
+    <includedby refid="iaf__psc__exp__htum_8cpp" local="yes">iaf_psc_exp_htum.cpp</includedby>
+    <includedby refid="iaf__psc__exp__multisynapse_8cpp" local="yes">iaf_psc_exp_multisynapse.cpp</includedby>
+    <includedby refid="iaf__psc__exp__ps_8cpp" local="yes">iaf_psc_exp_ps.cpp</includedby>
+    <includedby refid="iaf__psc__exp__ps__lossless_8cpp" local="yes">iaf_psc_exp_ps_lossless.cpp</includedby>
+    <includedby refid="inhomogeneous__poisson__generator_8cpp" local="yes">inhomogeneous_poisson_generator.cpp</includedby>
+    <includedby refid="izhikevich_8cpp" local="yes">izhikevich.cpp</includedby>
+    <includedby refid="mat2__psc__exp_8cpp" local="yes">mat2_psc_exp.cpp</includedby>
+    <includedby refid="noise__generator_8cpp" local="yes">noise_generator.cpp</includedby>
+    <includedby refid="pp__psc__delta_8cpp" local="yes">pp_psc_delta.cpp</includedby>
+    <includedby refid="rate__neuron__ipn__impl_8h" local="yes">rate_neuron_ipn_impl.h</includedby>
+    <includedby refid="rate__neuron__opn__impl_8h" local="yes">rate_neuron_opn_impl.h</includedby>
+    <includedby refid="rate__transformer__node__impl_8h" local="yes">rate_transformer_node_impl.h</includedby>
+    <includedby refid="sinusoidal__poisson__generator_8cpp" local="yes">sinusoidal_poisson_generator.cpp</includedby>
+    <includedby refid="step__current__generator_8cpp" local="yes">step_current_generator.cpp</includedby>
+    <includedby refid="step__rate__generator_8cpp" local="yes">step_rate_generator.cpp</includedby>
     <incdepgraph>
       <node id="35">
         <label>namedatum.h</label>
@@ -13,20 +43,20 @@
       <node id="34">
         <label>arraydatum.h</label>
       </node>
-      <node id="17">
+      <node id="18">
         <label>nest_types.h</label>
         <link refid="nest__types_8h"/>
         <childnode refid="10" relation="include">
         </childnode>
-        <childnode refid="18" relation="include">
-        </childnode>
         <childnode refid="19" relation="include">
-        </childnode>
-        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="20" relation="include">
         </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
         <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
         </childnode>
         <childnode refid="22" relation="include">
         </childnode>
@@ -45,12 +75,12 @@
         </childnode>
         <childnode refid="9" relation="include">
         </childnode>
-        <childnode refid="17" relation="include">
+        <childnode refid="18" relation="include">
         </childnode>
         <childnode refid="31" relation="include">
         </childnode>
       </node>
-      <node id="20">
+      <node id="21">
         <label>stdint.h</label>
       </node>
       <node id="5">
@@ -68,7 +98,7 @@
         </childnode>
         <childnode refid="9" relation="include">
         </childnode>
-        <childnode refid="17" relation="include">
+        <childnode refid="18" relation="include">
         </childnode>
         <childnode refid="25" relation="include">
         </childnode>
@@ -82,7 +112,7 @@
         <link refid="vp__manager_8h"/>
         <childnode refid="29" relation="include">
         </childnode>
-        <childnode refid="17" relation="include">
+        <childnode refid="18" relation="include">
         </childnode>
         <childnode refid="30" relation="include">
         </childnode>
@@ -128,7 +158,7 @@
         </childnode>
         <childnode refid="16" relation="include">
         </childnode>
-        <childnode refid="17" relation="include">
+        <childnode refid="18" relation="include">
         </childnode>
       </node>
       <node id="10">
@@ -141,7 +171,7 @@
         </childnode>
         <childnode refid="8" relation="include">
         </childnode>
-        <childnode refid="17" relation="include">
+        <childnode refid="18" relation="include">
         </childnode>
         <childnode refid="27" relation="include">
         </childnode>
@@ -155,7 +185,7 @@
         <link refid="spike__data_8h"/>
         <childnode refid="6" relation="include">
         </childnode>
-        <childnode refid="17" relation="include">
+        <childnode refid="18" relation="include">
         </childnode>
         <childnode refid="26" relation="include">
         </childnode>
@@ -181,7 +211,7 @@
       <node id="29">
         <label>manager_interface.h</label>
         <link refid="manager__interface_8h"/>
-        <childnode refid="17" relation="include">
+        <childnode refid="18" relation="include">
         </childnode>
         <childnode refid="30" relation="include">
         </childnode>
@@ -192,19 +222,16 @@
       <node id="23">
         <label>name.h</label>
       </node>
-      <node id="16">
-        <label>numerics.h</label>
-      </node>
-      <node id="19">
+      <node id="20">
         <label>cstddef</label>
       </node>
-      <node id="18">
+      <node id="19">
         <label>climits</label>
       </node>
       <node id="24">
         <label>sliexceptions.h</label>
       </node>
-      <node id="21">
+      <node id="17">
         <label>config.h</label>
       </node>
       <node id="3">
@@ -221,7 +248,7 @@
         </childnode>
         <childnode refid="33" relation="include">
         </childnode>
-        <childnode refid="17" relation="include">
+        <childnode refid="18" relation="include">
         </childnode>
         <childnode refid="34" relation="include">
         </childnode>
@@ -233,7 +260,331 @@
       <node id="7">
         <label>cstring</label>
       </node>
+      <node id="16">
+        <label>numerics.h</label>
+        <link refid="numerics_8h"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
     </incdepgraph>
+    <invincdepgraph>
+      <node id="6">
+        <label>cm_default.cpp</label>
+        <link refid="cm__default_8cpp"/>
+      </node>
+      <node id="43">
+        <label>rate_neuron_opn_impl.h</label>
+        <link refid="rate__neuron__opn__impl_8h"/>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>cm_default.h</label>
+        <link refid="cm__default_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>iaf_chs_2007.cpp</label>
+        <link refid="iaf__chs__2007_8cpp"/>
+      </node>
+      <node id="45">
+        <label>sinusoidal_poisson_generator.cpp</label>
+        <link refid="sinusoidal__poisson__generator_8cpp"/>
+      </node>
+      <node id="42">
+        <label>threshold_lin_rate.cpp</label>
+        <link refid="threshold__lin__rate_8cpp"/>
+      </node>
+      <node id="10">
+        <label>gif_pop_psc_exp.cpp</label>
+        <link refid="gif__pop__psc__exp_8cpp"/>
+      </node>
+      <node id="30">
+        <label>rate_neuron_ipn_impl.h</label>
+        <link refid="rate__neuron__ipn__impl_8h"/>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>iaf_psc_alpha_ps.cpp</label>
+        <link refid="iaf__psc__alpha__ps_8cpp"/>
+      </node>
+      <node id="8">
+        <label>cm_tree.cpp</label>
+        <link refid="cm__tree_8cpp"/>
+      </node>
+      <node id="4">
+        <label>cm_tree.h</label>
+        <link refid="cm__tree_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>izhikevich.cpp</label>
+        <link refid="izhikevich_8cpp"/>
+      </node>
+      <node id="41">
+        <label>threshold_lin_rate.h</label>
+        <link refid="threshold__lin__rate_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>glif_psc.cpp</label>
+        <link refid="glif__psc_8cpp"/>
+      </node>
+      <node id="9">
+        <label>dc_generator.cpp</label>
+        <link refid="dc__generator_8cpp"/>
+      </node>
+      <node id="40">
+        <label>tanh_rate.cpp</label>
+        <link refid="tanh__rate_8cpp"/>
+      </node>
+      <node id="33">
+        <label>lin_rate.h</label>
+        <link refid="lin__rate_8h"/>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>iaf_psc_alpha.cpp</label>
+        <link refid="iaf__psc__alpha_8cpp"/>
+      </node>
+      <node id="34">
+        <label>lin_rate.cpp</label>
+        <link refid="lin__rate_8cpp"/>
+      </node>
+      <node id="31">
+        <label>gauss_rate.h</label>
+        <link refid="gauss__rate_8h"/>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>sigmoid_rate.h</label>
+        <link refid="sigmoid__rate_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
+      </node>
+      <node id="47">
+        <label>step_rate_generator.cpp</label>
+        <link refid="step__rate__generator_8cpp"/>
+      </node>
+      <node id="3">
+        <label>amat2_psc_exp.cpp</label>
+        <link refid="amat2__psc__exp_8cpp"/>
+      </node>
+      <node id="36">
+        <label>sigmoid_rate.cpp</label>
+        <link refid="sigmoid__rate_8cpp"/>
+      </node>
+      <node id="28">
+        <label>noise_generator.cpp</label>
+        <link refid="noise__generator_8cpp"/>
+      </node>
+      <node id="20">
+        <label>iaf_psc_exp.cpp</label>
+        <link refid="iaf__psc__exp_8cpp"/>
+      </node>
+      <node id="2">
+        <label>ac_generator.cpp</label>
+        <link refid="ac__generator_8cpp"/>
+      </node>
+      <node id="21">
+        <label>iaf_psc_exp_htum.cpp</label>
+        <link refid="iaf__psc__exp__htum_8cpp"/>
+      </node>
+      <node id="12">
+        <label>gif_psc_exp_multisynapse.cpp</label>
+        <link refid="gif__psc__exp__multisynapse_8cpp"/>
+      </node>
+      <node id="18">
+        <label>iaf_psc_delta.cpp</label>
+        <link refid="iaf__psc__delta_8cpp"/>
+      </node>
+      <node id="46">
+        <label>step_current_generator.cpp</label>
+        <link refid="step__current__generator_8cpp"/>
+      </node>
+      <node id="23">
+        <label>iaf_psc_exp_ps.cpp</label>
+        <link refid="iaf__psc__exp__ps_8cpp"/>
+      </node>
+      <node id="1">
+        <label>universal_data_logger_impl.h</label>
+        <link refid="universal__data__logger__impl_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="43" relation="include">
+        </childnode>
+        <childnode refid="44" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
+        <childnode refid="46" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>gauss_rate.cpp</label>
+        <link refid="gauss__rate_8cpp"/>
+      </node>
+      <node id="39">
+        <label>tanh_rate.h</label>
+        <link refid="tanh__rate_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="40" relation="include">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>inhomogeneous_poisson_generator.cpp</label>
+        <link refid="inhomogeneous__poisson__generator_8cpp"/>
+      </node>
+      <node id="37">
+        <label>sigmoid_rate_gg_1998.h</label>
+        <link refid="sigmoid__rate__gg__1998_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="38" relation="include">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>iaf_psc_exp_multisynapse.cpp</label>
+        <link refid="iaf__psc__exp__multisynapse_8cpp"/>
+      </node>
+      <node id="44">
+        <label>rate_transformer_node_impl.h</label>
+        <link refid="rate__transformer__node__impl_8h"/>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="37" relation="include">
+        </childnode>
+        <childnode refid="39" relation="include">
+        </childnode>
+        <childnode refid="41" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>iaf_psc_alpha_multisynapse.cpp</label>
+        <link refid="iaf__psc__alpha__multisynapse_8cpp"/>
+      </node>
+      <node id="7">
+        <label>modelsmodule.cpp</label>
+        <link refid="modelsmodule_8cpp"/>
+      </node>
+      <node id="19">
+        <label>iaf_psc_delta_ps.cpp</label>
+        <link refid="iaf__psc__delta__ps_8cpp"/>
+      </node>
+      <node id="11">
+        <label>gif_psc_exp.cpp</label>
+        <link refid="gif__psc__exp_8cpp"/>
+      </node>
+      <node id="38">
+        <label>sigmoid_rate_gg_1998.cpp</label>
+        <link refid="sigmoid__rate__gg__1998_8cpp"/>
+      </node>
+      <node id="27">
+        <label>mat2_psc_exp.cpp</label>
+        <link refid="mat2__psc__exp_8cpp"/>
+      </node>
+      <node id="24">
+        <label>iaf_psc_exp_ps_lossless.cpp</label>
+        <link refid="iaf__psc__exp__ps__lossless_8cpp"/>
+      </node>
+      <node id="29">
+        <label>pp_psc_delta.cpp</label>
+        <link refid="pp__psc__delta_8cpp"/>
+      </node>
+    </invincdepgraph>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
@@ -686,6 +1037,6 @@
 <codeline lineno="445"><highlight class="normal"></highlight></codeline>
 <codeline lineno="446"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//<sp/>#ifndef<sp/>UNIVERSAL_DATA_LOGGER_IMPL_H</highlight><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="nestkernel/universal_data_logger_impl.h"/>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/universal_data_logger_impl.h"/>
   </compounddef>
 </doxygen>

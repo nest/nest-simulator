@@ -4,23 +4,23 @@
     <compoundname>connector_model.cpp</compoundname>
     <includes refid="connector__model_8h" local="yes">connector_model.h</includes>
     <incdepgraph>
-      <node id="17">
+      <node id="8">
         <label>limits</label>
       </node>
-      <node id="18">
+      <node id="19">
         <label>nest_types.h</label>
         <link refid="nest__types_8h"/>
-        <childnode refid="14" relation="include">
-        </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="16" relation="include">
         </childnode>
         <childnode refid="20" relation="include">
         </childnode>
-        <childnode refid="17" relation="include">
-        </childnode>
         <childnode refid="21" relation="include">
         </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
         <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
         </childnode>
         <childnode refid="23" relation="include">
         </childnode>
@@ -28,28 +28,28 @@
       <node id="23">
         <label>cstdint</label>
       </node>
-      <node id="21">
+      <node id="22">
         <label>stdint.h</label>
       </node>
       <node id="34">
         <label>dictutils.h</label>
       </node>
-      <node id="7">
+      <node id="10">
         <label>event.h</label>
         <link refid="event_8h"/>
-        <childnode refid="8" relation="include">
-        </childnode>
-        <childnode refid="9" relation="include">
-        </childnode>
-        <childnode refid="10" relation="include">
-        </childnode>
         <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
         </childnode>
         <childnode refid="12" relation="include">
         </childnode>
         <childnode refid="13" relation="include">
         </childnode>
-        <childnode refid="18" relation="include">
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
         </childnode>
         <childnode refid="26" relation="include">
         </childnode>
@@ -63,7 +63,7 @@
         <link refid="vp__manager_8h"/>
         <childnode refid="30" relation="include">
         </childnode>
-        <childnode refid="18" relation="include">
+        <childnode refid="19" relation="include">
         </childnode>
         <childnode refid="31" relation="include">
         </childnode>
@@ -71,13 +71,13 @@
       <node id="3">
         <label>cmath</label>
       </node>
-      <node id="9">
+      <node id="7">
         <label>cassert</label>
       </node>
-      <node id="12">
+      <node id="14">
         <label>exceptions.h</label>
         <link refid="exceptions_8h"/>
-        <childnode refid="13" relation="include">
+        <childnode refid="15" relation="include">
         </childnode>
         <childnode refid="24" relation="include">
         </childnode>
@@ -87,39 +87,39 @@
       <node id="4">
         <label>string</label>
       </node>
-      <node id="13">
+      <node id="15">
         <label>nest_time.h</label>
         <link refid="nest__time_8h"/>
-        <childnode refid="9" relation="include">
-        </childnode>
-        <childnode refid="14" relation="include">
-        </childnode>
-        <childnode refid="3" relation="include">
-        </childnode>
-        <childnode refid="15" relation="include">
+        <childnode refid="7" relation="include">
         </childnode>
         <childnode refid="16" relation="include">
         </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
         <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
         </childnode>
         <childnode refid="4" relation="include">
         </childnode>
         <childnode refid="5" relation="include">
         </childnode>
-        <childnode refid="18" relation="include">
+        <childnode refid="19" relation="include">
         </childnode>
       </node>
-      <node id="14">
+      <node id="16">
         <label>cfloat</label>
       </node>
       <node id="27">
         <label>target.h</label>
         <link refid="target_8h"/>
-        <childnode refid="9" relation="include">
+        <childnode refid="7" relation="include">
         </childnode>
-        <childnode refid="12" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
-        <childnode refid="18" relation="include">
+        <childnode refid="19" relation="include">
         </childnode>
         <childnode refid="28" relation="include">
         </childnode>
@@ -127,6 +127,10 @@
       <node id="28">
         <label>static_assert.h</label>
         <link refid="static__assert_8h"/>
+      </node>
+      <node id="9">
+        <label>enum_bitfield.h</label>
+        <link refid="enum__bitfield_8h"/>
       </node>
       <node id="32">
         <label>secondary_event.h</label>
@@ -137,20 +141,17 @@
       <node id="26">
         <label>spike_data.h</label>
         <link refid="spike__data_8h"/>
-        <childnode refid="9" relation="include">
+        <childnode refid="7" relation="include">
         </childnode>
-        <childnode refid="18" relation="include">
+        <childnode refid="19" relation="include">
         </childnode>
         <childnode refid="27" relation="include">
         </childnode>
       </node>
-      <node id="11">
+      <node id="13">
         <label>vector</label>
       </node>
-      <node id="6">
-        <label>enum_bitfield.h</label>
-      </node>
-      <node id="15">
+      <node id="17">
         <label>cstdlib</label>
       </node>
       <node id="31">
@@ -159,24 +160,21 @@
       <node id="30">
         <label>manager_interface.h</label>
         <link refid="manager__interface_8h"/>
-        <childnode refid="18" relation="include">
+        <childnode refid="19" relation="include">
         </childnode>
         <childnode refid="31" relation="include">
         </childnode>
       </node>
-      <node id="16">
+      <node id="18">
         <label>iostream</label>
       </node>
       <node id="24">
         <label>name.h</label>
       </node>
-      <node id="5">
-        <label>numerics.h</label>
-      </node>
-      <node id="20">
+      <node id="21">
         <label>cstddef</label>
       </node>
-      <node id="19">
+      <node id="20">
         <label>climits</label>
       </node>
       <node id="25">
@@ -185,7 +183,7 @@
       <node id="33">
         <label>set</label>
       </node>
-      <node id="22">
+      <node id="6">
         <label>config.h</label>
       </node>
       <node id="1">
@@ -194,10 +192,10 @@
         <childnode refid="2" relation="include">
         </childnode>
       </node>
-      <node id="8">
+      <node id="11">
         <label>algorithm</label>
       </node>
-      <node id="10">
+      <node id="12">
         <label>cstring</label>
       </node>
       <node id="2">
@@ -209,17 +207,29 @@
         </childnode>
         <childnode refid="5" relation="include">
         </childnode>
-        <childnode refid="6" relation="include">
+        <childnode refid="9" relation="include">
         </childnode>
-        <childnode refid="7" relation="include">
+        <childnode refid="10" relation="include">
         </childnode>
-        <childnode refid="13" relation="include">
+        <childnode refid="15" relation="include">
         </childnode>
-        <childnode refid="18" relation="include">
+        <childnode refid="19" relation="include">
         </childnode>
         <childnode refid="32" relation="include">
         </childnode>
         <childnode refid="34" relation="include">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>numerics.h</label>
+        <link refid="numerics_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
         </childnode>
       </node>
     </incdepgraph>
@@ -256,14 +266,14 @@
 <codeline lineno="25"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacenest" kindref="compound">nest</ref></highlight></codeline>
 <codeline lineno="26"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight></codeline>
-<codeline lineno="28"><highlight class="normal"><ref refid="classnest_1_1_connector_model_1a7667961923287c9ca330c6ca32ee0f89" kindref="member">ConnectorModel::ConnectorModel</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/>name,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespacenest_1ada520c3662d2209c7209c5cc7dfae9a4" kindref="member">ConnectionModelProperties</ref>&amp;<sp/>properties<sp/>)</highlight></codeline>
+<codeline lineno="28" refid="classnest_1_1ConnectorModel_1a7667961923287c9ca330c6ca32ee0f89" refkind="member"><highlight class="normal"><ref refid="classnest_1_1ConnectorModel_1a7667961923287c9ca330c6ca32ee0f89" kindref="member">ConnectorModel::ConnectorModel</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/>name,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespacenest_1ada520c3662d2209c7209c5cc7dfae9a4" kindref="member">ConnectionModelProperties</ref>&amp;<sp/>properties<sp/>)</highlight></codeline>
 <codeline lineno="29"><highlight class="normal"><sp/><sp/>:<sp/>name_(<sp/>name<sp/>)</highlight></codeline>
 <codeline lineno="30"><highlight class="normal"><sp/><sp/>,<sp/>default_delay_needs_check_(<sp/>true<sp/>)</highlight></codeline>
 <codeline lineno="31"><highlight class="normal"><sp/><sp/>,<sp/>properties_(<sp/>properties<sp/>)</highlight></codeline>
 <codeline lineno="32"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="33"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="35"><highlight class="normal">ConnectorModel::ConnectorModel(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>ConnectorModel&amp;<sp/>cm,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/>name<sp/>)</highlight></codeline>
+<codeline lineno="35" refid="classnest_1_1ConnectorModel_1a35e5eb9a749494f77250cfe1bf370fc3" refkind="member"><highlight class="normal"><ref refid="classnest_1_1ConnectorModel_1a7667961923287c9ca330c6ca32ee0f89" kindref="member">ConnectorModel::ConnectorModel</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1ConnectorModel" kindref="compound">ConnectorModel</ref>&amp;<sp/>cm,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/>name<sp/>)</highlight></codeline>
 <codeline lineno="36"><highlight class="normal"><sp/><sp/>:<sp/>name_(<sp/>name<sp/>)</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"><sp/><sp/>,<sp/>default_delay_needs_check_(<sp/>true<sp/>)</highlight></codeline>
 <codeline lineno="38"><highlight class="normal"><sp/><sp/>,<sp/>properties_(<sp/>cm.properties_<sp/>)</highlight></codeline>
@@ -272,6 +282,6 @@
 <codeline lineno="41"><highlight class="normal"></highlight></codeline>
 <codeline lineno="42"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>nest</highlight><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="nestkernel/connector_model.cpp"/>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/connector_model.cpp"/>
   </compounddef>
 </doxygen>

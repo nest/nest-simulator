@@ -25,20 +25,20 @@
       <node id="49">
         <label>arraydatum.h</label>
       </node>
-      <node id="11">
+      <node id="12">
         <label>nest_types.h</label>
         <link refid="nest__types_8h"/>
         <childnode refid="4" relation="include">
         </childnode>
-        <childnode refid="12" relation="include">
-        </childnode>
         <childnode refid="13" relation="include">
-        </childnode>
-        <childnode refid="8" relation="include">
         </childnode>
         <childnode refid="14" relation="include">
         </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
         <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
         </childnode>
         <childnode refid="16" relation="include">
         </childnode>
@@ -46,13 +46,13 @@
       <node id="16">
         <label>cstdint</label>
       </node>
-      <node id="14">
+      <node id="15">
         <label>stdint.h</label>
       </node>
       <node id="42">
         <label>nest_names.h</label>
         <link refid="nest__names_8h"/>
-        <childnode refid="15" relation="include">
+        <childnode refid="11" relation="include">
         </childnode>
         <childnode refid="21" relation="include">
         </childnode>
@@ -99,7 +99,7 @@
         </childnode>
         <childnode refid="2" relation="include">
         </childnode>
-        <childnode refid="11" relation="include">
+        <childnode refid="12" relation="include">
         </childnode>
         <childnode refid="36" relation="include">
         </childnode>
@@ -113,7 +113,7 @@
         <link refid="vp__manager_8h"/>
         <childnode refid="40" relation="include">
         </childnode>
-        <childnode refid="11" relation="include">
+        <childnode refid="12" relation="include">
         </childnode>
         <childnode refid="19" relation="include">
         </childnode>
@@ -132,7 +132,7 @@
         <link refid="stimulation__backend__mpi_8h"/>
         <childnode refid="2" relation="include">
         </childnode>
-        <childnode refid="11" relation="include">
+        <childnode refid="12" relation="include">
         </childnode>
         <childnode refid="17" relation="include">
         </childnode>
@@ -184,7 +184,7 @@
         </childnode>
         <childnode refid="10" relation="include">
         </childnode>
-        <childnode refid="11" relation="include">
+        <childnode refid="12" relation="include">
         </childnode>
       </node>
       <node id="4">
@@ -197,7 +197,7 @@
         </childnode>
         <childnode refid="34" relation="include">
         </childnode>
-        <childnode refid="11" relation="include">
+        <childnode refid="12" relation="include">
         </childnode>
         <childnode refid="38" relation="include">
         </childnode>
@@ -214,6 +214,16 @@
       <node id="38">
         <label>static_assert.h</label>
         <link refid="static__assert_8h"/>
+      </node>
+      <node id="48">
+        <label>lockptr.h</label>
+        <link refid="lockptr_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="45" relation="include">
+        </childnode>
       </node>
       <node id="24">
         <label>node.h</label>
@@ -240,7 +250,7 @@
         </childnode>
         <childnode refid="2" relation="include">
         </childnode>
-        <childnode refid="11" relation="include">
+        <childnode refid="12" relation="include">
         </childnode>
         <childnode refid="43" relation="include">
         </childnode>
@@ -252,7 +262,7 @@
       <node id="41">
         <label>histentry.h</label>
         <link refid="histentry_8h"/>
-        <childnode refid="11" relation="include">
+        <childnode refid="12" relation="include">
         </childnode>
       </node>
       <node id="50">
@@ -263,9 +273,6 @@
       </node>
       <node id="25">
         <label>bitset</label>
-      </node>
-      <node id="48">
-        <label>lockptr.h</label>
       </node>
       <node id="44">
         <label>ctime</label>
@@ -278,7 +285,7 @@
         <link refid="spike__data_8h"/>
         <childnode refid="3" relation="include">
         </childnode>
-        <childnode refid="11" relation="include">
+        <childnode refid="12" relation="include">
         </childnode>
         <childnode refid="37" relation="include">
         </childnode>
@@ -297,7 +304,7 @@
         <link refid="device_8h"/>
         <childnode refid="2" relation="include">
         </childnode>
-        <childnode refid="11" relation="include">
+        <childnode refid="12" relation="include">
         </childnode>
         <childnode refid="24" relation="include">
         </childnode>
@@ -313,7 +320,7 @@
       <node id="40">
         <label>manager_interface.h</label>
         <link refid="manager__interface_8h"/>
-        <childnode refid="11" relation="include">
+        <childnode refid="12" relation="include">
         </childnode>
         <childnode refid="19" relation="include">
         </childnode>
@@ -323,9 +330,6 @@
       </node>
       <node id="21">
         <label>name.h</label>
-      </node>
-      <node id="10">
-        <label>numerics.h</label>
       </node>
       <node id="43">
         <label>node_collection.h</label>
@@ -344,14 +348,14 @@
         </childnode>
         <childnode refid="34" relation="include">
         </childnode>
-        <childnode refid="11" relation="include">
+        <childnode refid="12" relation="include">
         </childnode>
         <childnode refid="49" relation="include">
         </childnode>
         <childnode refid="19" relation="include">
         </childnode>
       </node>
-      <node id="13">
+      <node id="14">
         <label>cstddef</label>
       </node>
       <node id="26">
@@ -364,7 +368,7 @@
         </childnode>
         <childnode refid="52" relation="include">
         </childnode>
-        <childnode refid="11" relation="include">
+        <childnode refid="12" relation="include">
         </childnode>
         <childnode refid="20" relation="include">
         </childnode>
@@ -373,7 +377,7 @@
         <childnode refid="9" relation="include">
         </childnode>
       </node>
-      <node id="12">
+      <node id="13">
         <label>climits</label>
       </node>
       <node id="57">
@@ -388,7 +392,7 @@
       <node id="51">
         <label>set</label>
       </node>
-      <node id="15">
+      <node id="11">
         <label>config.h</label>
       </node>
       <node id="32">
@@ -399,6 +403,18 @@
       </node>
       <node id="45">
         <label>memory</label>
+      </node>
+      <node id="10">
+        <label>numerics.h</label>
+        <link refid="numerics_8h"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
       </node>
       <node id="53">
         <label>compose.hpp</label>
@@ -416,7 +432,7 @@
         <link refid="stimulation__backend__mpi_8cpp"/>
       </node>
     </invincdepgraph>
-    <innerclass refid="classnest_1_1_stimulation_backend_m_p_i" prot="public">nest::StimulationBackendMPI</innerclass>
+    <innerclass refid="classnest_1_1StimulationBackendMPI" prot="public">nest::StimulationBackendMPI</innerclass>
     <innernamespace refid="namespacenest">nest</innernamespace>
     <briefdescription>
     </briefdescription>
@@ -512,48 +528,48 @@
 <codeline lineno="87"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacenest" kindref="compound">nest</ref></highlight></codeline>
 <codeline lineno="88"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="89"><highlight class="normal"></highlight></codeline>
-<codeline lineno="100" refid="classnest_1_1_stimulation_backend_m_p_i" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classnest_1_1_stimulation_backend_m_p_i" kindref="compound">StimulationBackendMPI</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_stimulation_backend" kindref="compound">StimulationBackend</ref></highlight></codeline>
+<codeline lineno="100" refid="classnest_1_1StimulationBackendMPI" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classnest_1_1StimulationBackendMPI" kindref="compound">StimulationBackendMPI</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1StimulationBackend" kindref="compound">StimulationBackend</ref></highlight></codeline>
 <codeline lineno="101"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="102"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
-<codeline lineno="107"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1_stimulation_backend_m_p_i_1aca51f8dce4035466449ffb54b1509a07" kindref="member">StimulationBackendMPI</ref>();</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1StimulationBackendMPI_1aca51f8dce4035466449ffb54b1509a07" kindref="member">StimulationBackendMPI</ref>();</highlight></codeline>
 <codeline lineno="108"><highlight class="normal"></highlight></codeline>
-<codeline lineno="113"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1_stimulation_backend_m_p_i_1a506a4a4d1210deab5121f2b59fa4388b" kindref="member">~StimulationBackendMPI</ref>()<sp/>noexcept<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="113"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1StimulationBackendMPI_1a506a4a4d1210deab5121f2b59fa4388b" kindref="member">~StimulationBackendMPI</ref>()<sp/>noexcept<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="114"><highlight class="normal"></highlight></codeline>
-<codeline lineno="115"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_stimulation_backend_m_p_i_1aa58ceaab209d05794d8d073c90df9260" kindref="member">initialize</ref>()<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="115"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1StimulationBackendMPI_1aa58ceaab209d05794d8d073c90df9260" kindref="member">initialize</ref>()<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="116"><highlight class="normal"></highlight></codeline>
-<codeline lineno="117"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_stimulation_backend_m_p_i_1a2dd500cfc39496adee2500586a9b7851" kindref="member">finalize</ref>()<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1StimulationBackendMPI_1a2dd500cfc39496adee2500586a9b7851" kindref="member">finalize</ref>()<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="118"><highlight class="normal"></highlight></codeline>
-<codeline lineno="119"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_stimulation_backend_m_p_i_1ac3af465f99360719a66c93e44a40a4bd" kindref="member">enroll</ref>(<sp/><ref refid="classnest_1_1_stimulation_device" kindref="compound">StimulationDevice</ref>&amp;<sp/>device,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>DictionaryDatum&amp;<sp/><ref refid="namespacenest_1_1names_1ab153cba7971a1ce0c755195c4096266a" kindref="member">params</ref><sp/>)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1StimulationBackendMPI_1ac3af465f99360719a66c93e44a40a4bd" kindref="member">enroll</ref>(<sp/><ref refid="classnest_1_1StimulationDevice" kindref="compound">StimulationDevice</ref>&amp;<sp/>device,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>DictionaryDatum&amp;<sp/><ref refid="namespacenest_1_1names_1ab153cba7971a1ce0c755195c4096266a" kindref="member">params</ref><sp/>)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="120"><highlight class="normal"></highlight></codeline>
-<codeline lineno="121"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_stimulation_backend_m_p_i_1a56c15b58587a99e1bcc813b97bed72b9" kindref="member">disenroll</ref>(<sp/><ref refid="classnest_1_1_stimulation_device" kindref="compound">StimulationDevice</ref>&amp;<sp/>device<sp/>)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1StimulationBackendMPI_1a56c15b58587a99e1bcc813b97bed72b9" kindref="member">disenroll</ref>(<sp/><ref refid="classnest_1_1StimulationDevice" kindref="compound">StimulationDevice</ref>&amp;<sp/>device<sp/>)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="122"><highlight class="normal"></highlight></codeline>
-<codeline lineno="123"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_stimulation_backend_m_p_i_1a16f875498206f2315670fb6b68f62add" kindref="member">cleanup</ref>()<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1StimulationBackendMPI_1a16f875498206f2315670fb6b68f62add" kindref="member">cleanup</ref>()<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="124"><highlight class="normal"></highlight></codeline>
-<codeline lineno="125"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_stimulation_backend_m_p_i_1ac083c50fc8f38d7b7dbb0ccb9fea04bd" kindref="member">prepare</ref>()<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1StimulationBackendMPI_1ac083c50fc8f38d7b7dbb0ccb9fea04bd" kindref="member">prepare</ref>()<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="126"><highlight class="normal"></highlight></codeline>
-<codeline lineno="127"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_stimulation_backend_m_p_i_1ab749a6c23d67d844c35d65754c1612bf" kindref="member">pre_run_hook</ref>()<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="127"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1StimulationBackendMPI_1ab749a6c23d67d844c35d65754c1612bf" kindref="member">pre_run_hook</ref>()<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="128"><highlight class="normal"></highlight></codeline>
-<codeline lineno="129"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_stimulation_backend_m_p_i_1a091f0160a127210605a58a686dff754a" kindref="member">post_run_hook</ref>()<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1StimulationBackendMPI_1a091f0160a127210605a58a686dff754a" kindref="member">post_run_hook</ref>()<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="130"><highlight class="normal"></highlight></codeline>
 <codeline lineno="131"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
-<codeline lineno="132"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>enrolled_;</highlight></codeline>
-<codeline lineno="133"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>prepared_;</highlight></codeline>
-<codeline lineno="139"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/>device_map<sp/>=<sp/>std::vector&lt;<sp/>std::map&lt;<sp/>index,<sp/>std::pair&lt;<sp/>const<sp/>MPI_Comm*,<sp/>StimulationDevice*<sp/>&gt;<sp/>&gt;<sp/>&gt;;</highlight></codeline>
-<codeline lineno="140"><highlight class="normal"><sp/><sp/>device_map<sp/>devices_;</highlight></codeline>
-<codeline lineno="145"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>std::map&lt;<sp/>std::string,<sp/>std::tuple&lt;<sp/>MPI_Comm*,<sp/>std::vector&lt;<sp/>int<sp/>&gt;*,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>&gt;<sp/>&gt;<sp/>comm_map;</highlight></codeline>
-<codeline lineno="146"><highlight class="normal"><sp/><sp/>comm_map<sp/>commMap_;</highlight></codeline>
+<codeline lineno="132" refid="classnest_1_1StimulationBackendMPI_1a5ff1a357f603a09bb89cb03f067c3d49" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1StimulationBackendMPI_1a5ff1a357f603a09bb89cb03f067c3d49" kindref="member">enrolled_</ref>;</highlight></codeline>
+<codeline lineno="133" refid="classnest_1_1StimulationBackendMPI_1a121a9b8c97ee0d3ba2b23148f76f2008" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1StimulationBackendMPI_1a121a9b8c97ee0d3ba2b23148f76f2008" kindref="member">prepared_</ref>;</highlight></codeline>
+<codeline lineno="139" refid="classnest_1_1StimulationBackendMPI_1a5c92cb6ef0f99ffd33b56095bb3c98ac" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">using</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1StimulationBackendMPI_1a5c92cb6ef0f99ffd33b56095bb3c98ac" kindref="member">device_map</ref><sp/>=<sp/>std::vector&lt;<sp/>std::map&lt;<sp/>index,<sp/>std::pair&lt;<sp/>const<sp/>MPI_Comm*,<sp/>StimulationDevice*<sp/>&gt;<sp/>&gt;<sp/>&gt;;</highlight></codeline>
+<codeline lineno="140" refid="classnest_1_1StimulationBackendMPI_1af2b76ce6edfcc52ac86eb3e1e048d273" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1StimulationBackendMPI_1a5c92cb6ef0f99ffd33b56095bb3c98ac" kindref="member">device_map</ref><sp/><ref refid="classnest_1_1StimulationBackendMPI_1af2b76ce6edfcc52ac86eb3e1e048d273" kindref="member">devices_</ref>;</highlight></codeline>
+<codeline lineno="145" refid="classnest_1_1StimulationBackendMPI_1aaa0ae693e0f048042edae8c729d1e66a" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">typedef</highlight><highlight class="normal"><sp/>std::map&lt;<sp/>std::string,<sp/>std::tuple&lt;<sp/>MPI_Comm*,<sp/>std::vector&lt;<sp/>int<sp/>&gt;*,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>&gt;<sp/>&gt;<sp/><ref refid="classnest_1_1StimulationBackendMPI_1aaa0ae693e0f048042edae8c729d1e66a" kindref="member">comm_map</ref>;</highlight></codeline>
+<codeline lineno="146" refid="classnest_1_1StimulationBackendMPI_1abc4d718df6d1f94c0cbdb736218c4abb" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1StimulationBackendMPI_1aaa0ae693e0f048042edae8c729d1e66a" kindref="member">comm_map</ref><sp/><ref refid="classnest_1_1StimulationBackendMPI_1abc4d718df6d1f94c0cbdb736218c4abb" kindref="member">commMap_</ref>;</highlight></codeline>
 <codeline lineno="147"><highlight class="normal"></highlight></codeline>
-<codeline lineno="153"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>get_port(<sp/><ref refid="classnest_1_1_stimulation_device" kindref="compound">StimulationDevice</ref>*<sp/>device,<sp/>std::string*<sp/><ref refid="namespacenest_1_1names_1a9955ac68258526384f84dba6828ca402" kindref="member">port_name</ref><sp/>);</highlight></codeline>
-<codeline lineno="154"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>get_port(<sp/><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref><sp/>index_node,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/><ref refid="namespacenest_1_1names_1a841558ae50522d9976fc231279505b40" kindref="member">label</ref>,<sp/>std::string*<sp/><ref refid="namespacenest_1_1names_1a9955ac68258526384f84dba6828ca402" kindref="member">port_name</ref><sp/>);</highlight></codeline>
-<codeline lineno="162"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>std::pair&lt;<sp/>int*,<sp/>double*<sp/>&gt;<sp/>receive_spike_train(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MPI_Comm&amp;<sp/>comm,<sp/>std::vector&lt;<sp/>int<sp/>&gt;&amp;<sp/>device_id<sp/>);</highlight></codeline>
-<codeline lineno="169"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>update_device(<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>array_index,<sp/>std::vector&lt;<sp/>int<sp/>&gt;&amp;<sp/>devices_id,<sp/>std::pair&lt;<sp/>int*,<sp/>double*<sp/>&gt;<sp/><ref refid="namespacenest_1_1names_1a30b3f9cb3c24869421dea79ceee584fb" kindref="member">data</ref><sp/>);</highlight></codeline>
-<codeline lineno="174"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>clean_memory_input_data(<sp/>std::vector&lt;<sp/>std::pair&lt;<sp/>int*,<sp/>double*<sp/>&gt;<sp/>&gt;&amp;<sp/><ref refid="namespacenest_1_1names_1a30b3f9cb3c24869421dea79ceee584fb" kindref="member">data</ref><sp/>);</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1StimulationBackendMPI_1a8bd04117ec9d75fc4b6e10192848c039" kindref="member">get_port</ref>(<sp/><ref refid="classnest_1_1StimulationDevice" kindref="compound">StimulationDevice</ref>*<sp/>device,<sp/>std::string*<sp/><ref refid="namespacenest_1_1names_1a9955ac68258526384f84dba6828ca402" kindref="member">port_name</ref><sp/>);</highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1StimulationBackendMPI_1a8bd04117ec9d75fc4b6e10192848c039" kindref="member">get_port</ref>(<sp/><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref><sp/>index_node,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/><ref refid="namespacenest_1_1names_1a841558ae50522d9976fc231279505b40" kindref="member">label</ref>,<sp/>std::string*<sp/><ref refid="namespacenest_1_1names_1a9955ac68258526384f84dba6828ca402" kindref="member">port_name</ref><sp/>);</highlight></codeline>
+<codeline lineno="162"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/>std::pair&lt;<sp/>int*,<sp/>double*<sp/>&gt;<sp/><ref refid="classnest_1_1StimulationBackendMPI_1a1b20186c9b0321c6dc1b2dbbc68f8fba" kindref="member">receive_spike_train</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MPI_Comm&amp;<sp/>comm,<sp/>std::vector&lt;<sp/>int<sp/>&gt;&amp;<sp/>device_id<sp/>);</highlight></codeline>
+<codeline lineno="169"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1StimulationBackendMPI_1a9871ce874b65ddefe64a766efe5cd26c" kindref="member">update_device</ref>(<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>array_index,<sp/>std::vector&lt;<sp/>int<sp/>&gt;&amp;<sp/>devices_id,<sp/>std::pair&lt;<sp/>int*,<sp/>double*<sp/>&gt;<sp/><ref refid="namespacenest_1_1names_1a30b3f9cb3c24869421dea79ceee584fb" kindref="member">data</ref><sp/>);</highlight></codeline>
+<codeline lineno="174"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1StimulationBackendMPI_1a912cf7a6ba905d1ff97ea1ee7a511e2a" kindref="member">clean_memory_input_data</ref>(<sp/>std::vector&lt;<sp/>std::pair&lt;<sp/>int*,<sp/>double*<sp/>&gt;<sp/>&gt;&amp;<sp/><ref refid="namespacenest_1_1names_1a30b3f9cb3c24869421dea79ceee584fb" kindref="member">data</ref><sp/>);</highlight></codeline>
 <codeline lineno="175"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="176"><highlight class="normal"></highlight></codeline>
 <codeline lineno="177"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="178"><highlight class="normal"></highlight></codeline>
 <codeline lineno="179"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//<sp/>STIMULATION_BACKEND_MPI_H</highlight><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="nestkernel/stimulation_backend_mpi.h"/>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/stimulation_backend_mpi.h"/>
   </compounddef>
 </doxygen>

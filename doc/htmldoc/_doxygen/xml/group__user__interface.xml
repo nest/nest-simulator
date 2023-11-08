@@ -3,13 +3,13 @@
   <compounddef id="group__user__interface" kind="group">
     <compoundname>user_interface</compoundname>
     <title>Model developer interface.</title>
-    <innerclass refid="classnest_1_1_generic_model" prot="public">nest::GenericModel</innerclass>
-    <innerclass refid="classnest_1_1_model" prot="public">nest::Model</innerclass>
-    <innerclass refid="classnest_1_1_node" prot="public">nest::Node</innerclass>
+    <innerclass refid="classnest_1_1GenericModel" prot="public">nest::GenericModel</innerclass>
+    <innerclass refid="classnest_1_1Model" prot="public">nest::Model</innerclass>
+    <innerclass refid="classnest_1_1Node" prot="public">nest::Node</innerclass>
     <briefdescription>
+<para>Functions and classes important for implementing new <ref refid="classnest_1_1Node" kindref="compound">Node</ref> and <ref refid="classnest_1_1Model" kindref="compound">Model</ref> classes. </para>
     </briefdescription>
     <detaileddescription>
-<para>Functions and classes important for implementing new <ref refid="classnest_1_1_node" kindref="compound">Node</ref> and <ref refid="classnest_1_1_model" kindref="compound">Model</ref> classes. </para>
     </detaileddescription>
   </compounddef>
 </doxygen>

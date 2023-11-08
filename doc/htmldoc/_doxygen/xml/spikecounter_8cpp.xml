@@ -57,9 +57,10 @@
       </node>
     </incdepgraph>
     <briefdescription>
+<para>Implementation of volume_transmitter to record and manage spike times and multiplicity of neurons releasing a neuromodulator (volume_transmitter is not included in the current release version of NEST) </para>
     </briefdescription>
     <detaileddescription>
-<para>Implementation of volume_transmitter to record and manage spike times and multiplicity of neurons releasing a neuromodulator (volume_transmitter is not included in the current release version of NEST) <simplesect kind="author"><para>Wiebke Potjans </para>
+<para><simplesect kind="author"><para>Wiebke Potjans </para>
 </simplesect>
 <simplesect kind="date"><para>december 2008 </para>
 </simplesect>
@@ -92,12 +93,12 @@
 <codeline lineno="22"><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="spikecounter_8h" kindref="compound">spikecounter.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="35"><highlight class="normal"><ref refid="classnest_1_1spikecounter_1acf4c9532cb98b2bdbec73617e2f5a215" kindref="member">nest::spikecounter::spikecounter</ref>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>spike_time,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>multiplicity<sp/>)</highlight></codeline>
+<codeline lineno="35" refid="classnest_1_1spikecounter_1acf4c9532cb98b2bdbec73617e2f5a215" refkind="member"><highlight class="normal"><ref refid="classnest_1_1spikecounter_1acf4c9532cb98b2bdbec73617e2f5a215" kindref="member">nest::spikecounter::spikecounter</ref>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>spike_time,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>multiplicity<sp/>)</highlight></codeline>
 <codeline lineno="36"><highlight class="normal"><sp/><sp/>:<sp/>spike_time_(<sp/>spike_time<sp/>)</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"><sp/><sp/>,<sp/>multiplicity_(<sp/>multiplicity<sp/>)</highlight></codeline>
 <codeline lineno="38"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="39"><highlight class="normal">}</highlight></codeline>
     </programlisting>
-    <location file="nestkernel/spikecounter.cpp"/>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/spikecounter.cpp"/>
   </compounddef>
 </doxygen>

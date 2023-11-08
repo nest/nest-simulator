@@ -103,6 +103,13 @@
       </node>
       <node id="31">
         <label>lockptr.h</label>
+        <link refid="lockptr_8h"/>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
       </node>
       <node id="27">
         <label>ctime</label>
@@ -129,9 +136,6 @@
       </node>
       <node id="24">
         <label>name.h</label>
-      </node>
-      <node id="23">
-        <label>numerics.h</label>
       </node>
       <node id="26">
         <label>node_collection.h</label>
@@ -212,6 +216,18 @@
       <node id="28">
         <label>memory</label>
       </node>
+      <node id="23">
+        <label>numerics.h</label>
+        <link refid="numerics_8h"/>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
     </incdepgraph>
     <invincdepgraph>
       <node id="2">
@@ -270,20 +286,20 @@
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
 <codeline lineno="38"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>GrowthCurve<sp/>&gt;</highlight></codeline>
 <codeline lineno="39"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="40" refid="classnest_1_1_s_p_manager_1a34c0919b05dcf42548d2f3cc9f36a058" refkind="member"><highlight class="normal"><ref refid="classnest_1_1_s_p_manager_1a34c0919b05dcf42548d2f3cc9f36a058" kindref="member">SPManager::register_growth_curve</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>name<sp/>)</highlight></codeline>
+<codeline lineno="40" refid="classnest_1_1SPManager_1a34c0919b05dcf42548d2f3cc9f36a058" refkind="member"><highlight class="normal"><ref refid="classnest_1_1SPManager_1a34c0919b05dcf42548d2f3cc9f36a058" kindref="member">SPManager::register_growth_curve</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>name<sp/>)</highlight></codeline>
 <codeline lineno="41"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="42"><highlight class="normal"><sp/><sp/>assert(<sp/>not<sp/>growthcurvedict_-&gt;known(<sp/>name<sp/>)<sp/>);</highlight></codeline>
-<codeline lineno="43"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1_generic_growth_curve_factory" kindref="compound">GenericGrowthCurveFactory</ref>*<sp/>nc<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_growth_curve_factory" kindref="compound">GrowthCurveFactory&lt; GrowthCurve &gt;</ref>();</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"><sp/><sp/>assert(<sp/>not<sp/><ref refid="classnest_1_1SPManager_1a9abde5b9b0883a14cf58709312b91828" kindref="member">growthcurvedict_</ref>-&gt;known(<sp/>name<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1GenericGrowthCurveFactory" kindref="compound">GenericGrowthCurveFactory</ref>*<sp/>nc<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1GrowthCurveFactory" kindref="compound">GrowthCurveFactory&lt; GrowthCurve &gt;</ref>();</highlight></codeline>
 <codeline lineno="44"><highlight class="normal"><sp/><sp/>assert(<sp/>nc<sp/>);</highlight></codeline>
-<codeline lineno="45"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal"><sp/>=<sp/>growthcurve_factories_.size();</highlight></codeline>
-<codeline lineno="46"><highlight class="normal"><sp/><sp/>growthcurve_factories_.push_back(<sp/>nc<sp/>);</highlight></codeline>
-<codeline lineno="47"><highlight class="normal"><sp/><sp/>growthcurvedict_-&gt;insert(<sp/>name,<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="45"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal"><sp/>=<sp/><ref refid="classnest_1_1SPManager_1a998c3bc309bf7c354df9b6876c6e77c0" kindref="member">growthcurve_factories_</ref>.size();</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1SPManager_1a998c3bc309bf7c354df9b6876c6e77c0" kindref="member">growthcurve_factories_</ref>.push_back(<sp/>nc<sp/>);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1SPManager_1a9abde5b9b0883a14cf58709312b91828" kindref="member">growthcurvedict_</ref>-&gt;insert(<sp/>name,<sp/></highlight><highlight class="keywordtype">id</highlight><highlight class="normal"><sp/>);</highlight></codeline>
 <codeline lineno="48"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="49"><highlight class="normal"></highlight></codeline>
 <codeline lineno="50"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>nest</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="51"><highlight class="normal"></highlight></codeline>
 <codeline lineno="52"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>SP_MANAGER_IMPL_H<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
     </programlisting>
-    <location file="nestkernel/sp_manager_impl.h"/>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/sp_manager_impl.h"/>
   </compounddef>
 </doxygen>

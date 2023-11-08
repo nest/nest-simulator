@@ -4,7 +4,7 @@
     <compoundname>mask.cpp</compoundname>
     <includes refid="mask_8h" local="yes">mask.h</includes>
     <incdepgraph>
-      <node id="11">
+      <node id="7">
         <label>limits</label>
       </node>
       <node id="35">
@@ -43,20 +43,20 @@
       <node id="51">
         <label>arraydatum.h</label>
       </node>
-      <node id="13">
+      <node id="14">
         <label>nest_types.h</label>
         <link refid="nest__types_8h"/>
-        <childnode refid="7" relation="include">
-        </childnode>
-        <childnode refid="14" relation="include">
+        <childnode refid="10" relation="include">
         </childnode>
         <childnode refid="15" relation="include">
         </childnode>
-        <childnode refid="11" relation="include">
-        </childnode>
         <childnode refid="16" relation="include">
         </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
         <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
         </childnode>
         <childnode refid="18" relation="include">
         </childnode>
@@ -64,13 +64,13 @@
       <node id="18">
         <label>cstdint</label>
       </node>
-      <node id="16">
+      <node id="17">
         <label>stdint.h</label>
       </node>
       <node id="21">
         <label>nest_names.h</label>
         <link refid="nest__names_8h"/>
-        <childnode refid="17" relation="include">
+        <childnode refid="4" relation="include">
         </childnode>
         <childnode refid="19" relation="include">
         </childnode>
@@ -83,17 +83,17 @@
         <link refid="event_8h"/>
         <childnode refid="24" relation="include">
         </childnode>
-        <childnode refid="6" relation="include">
+        <childnode refid="5" relation="include">
         </childnode>
         <childnode refid="25" relation="include">
         </childnode>
         <childnode refid="26" relation="include">
         </childnode>
-        <childnode refid="4" relation="include">
+        <childnode refid="8" relation="include">
         </childnode>
-        <childnode refid="5" relation="include">
+        <childnode refid="9" relation="include">
         </childnode>
-        <childnode refid="13" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="27" relation="include">
         </childnode>
@@ -107,15 +107,15 @@
         <link refid="vp__manager_8h"/>
         <childnode refid="31" relation="include">
         </childnode>
-        <childnode refid="13" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="32" relation="include">
         </childnode>
       </node>
-      <node id="8">
+      <node id="6">
         <label>cmath</label>
       </node>
-      <node id="6">
+      <node id="5">
         <label>cassert</label>
       </node>
       <node id="39">
@@ -125,15 +125,15 @@
         </childnode>
         <childnode refid="40" relation="include">
         </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
         <childnode refid="6" relation="include">
         </childnode>
-        <childnode refid="8" relation="include">
-        </childnode>
-        <childnode refid="10" relation="include">
+        <childnode refid="12" relation="include">
         </childnode>
         <childnode refid="41" relation="include">
         </childnode>
-        <childnode refid="12" relation="include">
+        <childnode refid="13" relation="include">
         </childnode>
         <childnode refid="38" relation="include">
         </childnode>
@@ -141,9 +141,9 @@
         </childnode>
         <childnode refid="42" relation="include">
         </childnode>
-        <childnode refid="4" relation="include">
+        <childnode refid="8" relation="include">
         </childnode>
-        <childnode refid="13" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="43" relation="include">
         </childnode>
@@ -151,17 +151,17 @@
       <node id="49">
         <label>stdexcept</label>
       </node>
-      <node id="4">
+      <node id="8">
         <label>exceptions.h</label>
         <link refid="exceptions_8h"/>
-        <childnode refid="5" relation="include">
+        <childnode refid="9" relation="include">
         </childnode>
         <childnode refid="19" relation="include">
         </childnode>
         <childnode refid="20" relation="include">
         </childnode>
       </node>
-      <node id="12">
+      <node id="13">
         <label>string</label>
       </node>
       <node id="34">
@@ -172,47 +172,47 @@
         <link refid="generic__factory_8h"/>
         <childnode refid="34" relation="include">
         </childnode>
-        <childnode refid="13" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="32" relation="include">
         </childnode>
       </node>
-      <node id="5">
+      <node id="9">
         <label>nest_time.h</label>
         <link refid="nest__time_8h"/>
-        <childnode refid="6" relation="include">
-        </childnode>
-        <childnode refid="7" relation="include">
-        </childnode>
-        <childnode refid="8" relation="include">
-        </childnode>
-        <childnode refid="9" relation="include">
+        <childnode refid="5" relation="include">
         </childnode>
         <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
         </childnode>
         <childnode refid="11" relation="include">
         </childnode>
         <childnode refid="12" relation="include">
         </childnode>
-        <childnode refid="3" relation="include">
+        <childnode refid="7" relation="include">
         </childnode>
         <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
         </childnode>
       </node>
       <node id="58">
         <label>dict.h</label>
       </node>
-      <node id="7">
+      <node id="10">
         <label>cfloat</label>
       </node>
       <node id="28">
         <label>target.h</label>
         <link refid="target_8h"/>
-        <childnode refid="6" relation="include">
+        <childnode refid="5" relation="include">
         </childnode>
-        <childnode refid="4" relation="include">
+        <childnode refid="8" relation="include">
         </childnode>
-        <childnode refid="13" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="29" relation="include">
         </childnode>
@@ -225,7 +225,7 @@
         <link refid="nestmodule_8h"/>
         <childnode refid="23" relation="include">
         </childnode>
-        <childnode refid="4" relation="include">
+        <childnode refid="8" relation="include">
         </childnode>
         <childnode refid="33" relation="include">
         </childnode>
@@ -253,6 +253,16 @@
       <node id="62">
         <label>slitype.h</label>
       </node>
+      <node id="50">
+        <label>lockptr.h</label>
+        <link refid="lockptr_8h"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="47" relation="include">
+        </childnode>
+      </node>
       <node id="54">
         <label>random</label>
       </node>
@@ -262,13 +272,13 @@
       <node id="44">
         <label>parameter.h</label>
         <link refid="parameter_8h"/>
-        <childnode refid="8" relation="include">
+        <childnode refid="6" relation="include">
         </childnode>
-        <childnode refid="11" relation="include">
+        <childnode refid="7" relation="include">
         </childnode>
         <childnode refid="21" relation="include">
         </childnode>
-        <childnode refid="13" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="22" relation="include">
         </childnode>
@@ -282,9 +292,6 @@
       <node id="36">
         <label>bitset</label>
       </node>
-      <node id="50">
-        <label>lockptr.h</label>
-      </node>
       <node id="46">
         <label>ctime</label>
       </node>
@@ -294,9 +301,9 @@
       <node id="27">
         <label>spike_data.h</label>
         <link refid="spike__data_8h"/>
-        <childnode refid="6" relation="include">
+        <childnode refid="5" relation="include">
         </childnode>
-        <childnode refid="13" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="28" relation="include">
         </childnode>
@@ -322,7 +329,7 @@
       <node id="56">
         <label>randutils.hpp</label>
       </node>
-      <node id="9">
+      <node id="11">
         <label>cstdlib</label>
       </node>
       <node id="32">
@@ -331,19 +338,16 @@
       <node id="31">
         <label>manager_interface.h</label>
         <link refid="manager__interface_8h"/>
-        <childnode refid="13" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="32" relation="include">
         </childnode>
       </node>
-      <node id="10">
+      <node id="12">
         <label>iostream</label>
       </node>
       <node id="19">
         <label>name.h</label>
-      </node>
-      <node id="3">
-        <label>numerics.h</label>
       </node>
       <node id="45">
         <label>node_collection.h</label>
@@ -360,19 +364,19 @@
         </childnode>
         <childnode refid="50" relation="include">
         </childnode>
-        <childnode refid="4" relation="include">
+        <childnode refid="8" relation="include">
         </childnode>
-        <childnode refid="13" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="51" relation="include">
         </childnode>
         <childnode refid="32" relation="include">
         </childnode>
       </node>
-      <node id="15">
+      <node id="16">
         <label>cstddef</label>
       </node>
-      <node id="14">
+      <node id="15">
         <label>climits</label>
       </node>
       <node id="20">
@@ -383,11 +387,11 @@
         <link refid="mask_8h"/>
         <childnode refid="3" relation="include">
         </childnode>
-        <childnode refid="4" relation="include">
+        <childnode refid="8" relation="include">
         </childnode>
         <childnode refid="21" relation="include">
         </childnode>
-        <childnode refid="13" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="22" relation="include">
         </childnode>
@@ -407,7 +411,7 @@
       <node id="55">
         <label>type_traits</label>
       </node>
-      <node id="17">
+      <node id="4">
         <label>config.h</label>
       </node>
       <node id="24">
@@ -421,6 +425,18 @@
       </node>
       <node id="53">
         <label>initializer_list</label>
+      </node>
+      <node id="3">
+        <label>numerics.h</label>
+        <link refid="numerics_8h"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
       </node>
       <node id="42">
         <label>compose.hpp</label>
@@ -464,9 +480,9 @@
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
 <codeline lineno="31"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="33"><highlight class="normal"><ref refid="classnest_1_1_mask_1a20df18bae0e8e78e06c68b6654f1ca8c" kindref="member">BallMask&lt; 2 &gt;::inside</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Box&lt;<sp/>2<sp/>&gt;&amp;<sp/><ref refid="namespacenest_1_1names_1aa06f71460d73472a90e5d08ac1e5c68e" kindref="member">b</ref><sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="33" refid="classnest_1_1BallMask_1a72a9ce76a66aa5b8f5db46f76da8a148" refkind="member"><highlight class="normal"><ref refid="classnest_1_1Mask_1a20df18bae0e8e78e06c68b6654f1ca8c" kindref="member">BallMask&lt; 2 &gt;::inside</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structnest_1_1Box" kindref="compound">Box&lt; 2 &gt;</ref>&amp;<sp/><ref refid="namespacenest_1_1names_1aa06f71460d73472a90e5d08ac1e5c68e" kindref="member">b</ref><sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
 <codeline lineno="34"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="35"><highlight class="normal"><sp/><sp/>Position&lt;<sp/>2<sp/>&gt;<sp/><ref refid="namespacenest_1_1names_1a4c815121a452a876dd0976c42ab58f1d" kindref="member">p</ref><sp/>=<sp/><ref refid="namespacenest_1_1names_1aa06f71460d73472a90e5d08ac1e5c68e" kindref="member">b</ref>.lower_left;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1Position" kindref="compound">Position&lt; 2 &gt;</ref><sp/><ref refid="namespacenest_1_1names_1a4c815121a452a876dd0976c42ab58f1d" kindref="member">p</ref><sp/>=<sp/><ref refid="namespacenest_1_1names_1aa06f71460d73472a90e5d08ac1e5c68e" kindref="member">b</ref>.lower_left;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal"></highlight></codeline>
 <codeline lineno="37"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Test<sp/>if<sp/>all<sp/>corners<sp/>are<sp/>inside<sp/>circle</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="38"><highlight class="normal"></highlight></codeline>
@@ -495,9 +511,9 @@
 <codeline lineno="61"><highlight class="normal"></highlight></codeline>
 <codeline lineno="62"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
 <codeline lineno="63"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="64"><highlight class="normal"><ref refid="classnest_1_1_mask_1a20df18bae0e8e78e06c68b6654f1ca8c" kindref="member">BallMask&lt; 3 &gt;::inside</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Box&lt;<sp/>3<sp/>&gt;&amp;<sp/><ref refid="namespacenest_1_1names_1aa06f71460d73472a90e5d08ac1e5c68e" kindref="member">b</ref><sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="64" refid="classnest_1_1BallMask_1a44167f436580ab911540a13253d34c9d" refkind="member"><highlight class="normal"><ref refid="classnest_1_1Mask_1a20df18bae0e8e78e06c68b6654f1ca8c" kindref="member">BallMask&lt; 3 &gt;::inside</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structnest_1_1Box" kindref="compound">Box&lt; 3 &gt;</ref>&amp;<sp/><ref refid="namespacenest_1_1names_1aa06f71460d73472a90e5d08ac1e5c68e" kindref="member">b</ref><sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
 <codeline lineno="65"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="66"><highlight class="normal"><sp/><sp/>Position&lt;<sp/>3<sp/>&gt;<sp/><ref refid="namespacenest_1_1names_1a4c815121a452a876dd0976c42ab58f1d" kindref="member">p</ref><sp/>=<sp/><ref refid="namespacenest_1_1names_1aa06f71460d73472a90e5d08ac1e5c68e" kindref="member">b</ref>.lower_left;</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1Position" kindref="compound">Position&lt; 3 &gt;</ref><sp/><ref refid="namespacenest_1_1names_1a4c815121a452a876dd0976c42ab58f1d" kindref="member">p</ref><sp/>=<sp/><ref refid="namespacenest_1_1names_1aa06f71460d73472a90e5d08ac1e5c68e" kindref="member">b</ref>.lower_left;</highlight></codeline>
 <codeline lineno="67"><highlight class="normal"></highlight></codeline>
 <codeline lineno="68"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Test<sp/>if<sp/>all<sp/>corners<sp/>are<sp/>inside<sp/>sphere</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="69"><highlight class="normal"></highlight></codeline>
@@ -546,7 +562,7 @@
 <codeline lineno="112"><highlight class="normal"></highlight></codeline>
 <codeline lineno="113"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
 <codeline lineno="114"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="115"><highlight class="normal"><ref refid="classnest_1_1_box_mask_1aaa25df149001648ccac085b261f5c7c9" kindref="member">BoxMask&lt; 2 &gt;::calculate_min_max_values_</ref>()</highlight></codeline>
+<codeline lineno="115" refid="classnest_1_1BoxMask_1a87dceb69e63a14f37fb99914de3a990d" refkind="member"><highlight class="normal"><ref refid="classnest_1_1BoxMask_1aaa25df149001648ccac085b261f5c7c9" kindref="member">BoxMask&lt; 2 &gt;::calculate_min_max_values_</ref>()</highlight></codeline>
 <codeline lineno="116"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="117"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Rotate<sp/>the<sp/>corners<sp/>of<sp/>the<sp/>box<sp/>to<sp/>find<sp/>the<sp/>new<sp/>minimum<sp/>and<sp/>maximum<sp/>x<sp/>and<sp/>y</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="118"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>values<sp/>to<sp/>define<sp/>the<sp/>bounding<sp/>box<sp/>of<sp/>the<sp/>rotated<sp/>box.<sp/>If<sp/>the<sp/>box<sp/>is<sp/>not</highlight><highlight class="normal"></highlight></codeline>
@@ -560,10 +576,10 @@
 <codeline lineno="126"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
 <codeline lineno="127"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="128"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
-<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Position&lt;<sp/>2<sp/>&gt;<sp/>lower_left_cos<sp/>=<sp/>(<sp/>lower_left_<sp/>-<sp/>cntr_<sp/>)<sp/>*<sp/>azimuth_cos_;</highlight></codeline>
-<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Position&lt;<sp/>2<sp/>&gt;<sp/>lower_left_sin<sp/>=<sp/>(<sp/>lower_left_<sp/>-<sp/>cntr_<sp/>)<sp/>*<sp/>azimuth_sin_;</highlight></codeline>
-<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Position&lt;<sp/>2<sp/>&gt;<sp/>upper_right_cos<sp/>=<sp/>(<sp/>upper_right_<sp/>-<sp/>cntr_<sp/>)<sp/>*<sp/>azimuth_cos_;</highlight></codeline>
-<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Position&lt;<sp/>2<sp/>&gt;<sp/>upper_right_sin<sp/>=<sp/>(<sp/>upper_right_<sp/>-<sp/>cntr_<sp/>)<sp/>*<sp/>azimuth_sin_;</highlight></codeline>
+<codeline lineno="129"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1Position" kindref="compound">Position&lt; 2 &gt;</ref><sp/>lower_left_cos<sp/>=<sp/>(<sp/>lower_left_<sp/>-<sp/>cntr_<sp/>)<sp/>*<sp/>azimuth_cos_;</highlight></codeline>
+<codeline lineno="130"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1Position" kindref="compound">Position&lt; 2 &gt;</ref><sp/>lower_left_sin<sp/>=<sp/>(<sp/>lower_left_<sp/>-<sp/>cntr_<sp/>)<sp/>*<sp/>azimuth_sin_;</highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1Position" kindref="compound">Position&lt; 2 &gt;</ref><sp/>upper_right_cos<sp/>=<sp/>(<sp/>upper_right_<sp/>-<sp/>cntr_<sp/>)<sp/>*<sp/>azimuth_cos_;</highlight></codeline>
+<codeline lineno="132"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1Position" kindref="compound">Position&lt; 2 &gt;</ref><sp/>upper_right_sin<sp/>=<sp/>(<sp/>upper_right_<sp/>-<sp/>cntr_<sp/>)<sp/>*<sp/>azimuth_sin_;</highlight></codeline>
 <codeline lineno="133"><highlight class="normal"></highlight></codeline>
 <codeline lineno="134"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>rotatedLLx<sp/>=<sp/>lower_left_cos[<sp/>0<sp/>]<sp/>-<sp/>lower_left_sin[<sp/>1<sp/>]<sp/>+<sp/>cntr_[<sp/>0<sp/>];</highlight></codeline>
 <codeline lineno="135"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>rotatedLLy<sp/>=<sp/>lower_left_sin[<sp/>0<sp/>]<sp/>+<sp/>lower_left_cos[<sp/>1<sp/>]<sp/>+<sp/>cntr_[<sp/>1<sp/>];</highlight></codeline>
@@ -589,7 +605,7 @@
 <codeline lineno="155"><highlight class="normal"></highlight></codeline>
 <codeline lineno="156"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
 <codeline lineno="157"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="158"><highlight class="normal"><ref refid="classnest_1_1_box_mask_1aaa25df149001648ccac085b261f5c7c9" kindref="member">BoxMask&lt; 3 &gt;::calculate_min_max_values_</ref>()</highlight></codeline>
+<codeline lineno="158" refid="classnest_1_1BoxMask_1ab9ae756087734d0f537358982f3c8534" refkind="member"><highlight class="normal"><ref refid="classnest_1_1BoxMask_1aaa25df149001648ccac085b261f5c7c9" kindref="member">BoxMask&lt; 3 &gt;::calculate_min_max_values_</ref>()</highlight></codeline>
 <codeline lineno="159"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="160"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
 <codeline lineno="161"><highlight class="comment"><sp/><sp/><sp/>*<sp/>Rotate<sp/>the<sp/>corners<sp/>of<sp/>the<sp/>box<sp/>to<sp/>find<sp/>the<sp/>new<sp/>minimum<sp/>and<sp/>maximum<sp/>x,<sp/>y<sp/>and</highlight></codeline>
@@ -630,10 +646,10 @@
 <codeline lineno="196"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
 <codeline lineno="197"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="198"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
-<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Position&lt;<sp/>3<sp/>&gt;<sp/>lower_left_cos<sp/>=<sp/>(<sp/>lower_left_<sp/>-<sp/>cntr_<sp/>)<sp/>*<sp/>azimuth_cos_;</highlight></codeline>
-<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Position&lt;<sp/>3<sp/>&gt;<sp/>lower_left_sin<sp/>=<sp/>(<sp/>lower_left_<sp/>-<sp/>cntr_<sp/>)<sp/>*<sp/>azimuth_sin_;</highlight></codeline>
-<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Position&lt;<sp/>3<sp/>&gt;<sp/>upper_right_cos<sp/>=<sp/>(<sp/>upper_right_<sp/>-<sp/>cntr_<sp/>)<sp/>*<sp/>azimuth_cos_;</highlight></codeline>
-<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Position&lt;<sp/>3<sp/>&gt;<sp/>upper_right_sin<sp/>=<sp/>(<sp/>upper_right_<sp/>-<sp/>cntr_<sp/>)<sp/>*<sp/>azimuth_sin_;</highlight></codeline>
+<codeline lineno="199"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1Position" kindref="compound">Position&lt; 3 &gt;</ref><sp/>lower_left_cos<sp/>=<sp/>(<sp/>lower_left_<sp/>-<sp/>cntr_<sp/>)<sp/>*<sp/>azimuth_cos_;</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1Position" kindref="compound">Position&lt; 3 &gt;</ref><sp/>lower_left_sin<sp/>=<sp/>(<sp/>lower_left_<sp/>-<sp/>cntr_<sp/>)<sp/>*<sp/>azimuth_sin_;</highlight></codeline>
+<codeline lineno="201"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1Position" kindref="compound">Position&lt; 3 &gt;</ref><sp/>upper_right_cos<sp/>=<sp/>(<sp/>upper_right_<sp/>-<sp/>cntr_<sp/>)<sp/>*<sp/>azimuth_cos_;</highlight></codeline>
+<codeline lineno="202"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1Position" kindref="compound">Position&lt; 3 &gt;</ref><sp/>upper_right_sin<sp/>=<sp/>(<sp/>upper_right_<sp/>-<sp/>cntr_<sp/>)<sp/>*<sp/>azimuth_sin_;</highlight></codeline>
 <codeline lineno="203"><highlight class="normal"></highlight></codeline>
 <codeline lineno="204"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lower_left_polar_cos<sp/>=<sp/>(<sp/>lower_left_[<sp/>2<sp/>]<sp/>-<sp/>cntr_[<sp/>2<sp/>]<sp/>)<sp/>*<sp/>polar_cos_;</highlight></codeline>
 <codeline lineno="205"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>lower_left_polar_sin<sp/>=<sp/>(<sp/>lower_left_[<sp/>2<sp/>]<sp/>-<sp/>cntr_[<sp/>2<sp/>]<sp/>)<sp/>*<sp/>polar_sin_;</highlight></codeline>
@@ -709,7 +725,7 @@
 <codeline lineno="275"><highlight class="normal"></highlight></codeline>
 <codeline lineno="276"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
 <codeline lineno="277"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="278"><highlight class="normal"><ref refid="classnest_1_1_mask_1a20df18bae0e8e78e06c68b6654f1ca8c" kindref="member">BoxMask&lt; 2 &gt;::inside</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Position&lt;<sp/>2<sp/>&gt;&amp;<sp/><ref refid="namespacenest_1_1names_1a4c815121a452a876dd0976c42ab58f1d" kindref="member">p</ref><sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="278" refid="classnest_1_1BoxMask_1aa3e147ab1315f2e4740b98266ab1faf8" refkind="member"><highlight class="normal"><ref refid="classnest_1_1Mask_1a20df18bae0e8e78e06c68b6654f1ca8c" kindref="member">BoxMask&lt; 2 &gt;::inside</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1Position" kindref="compound">Position&lt; 2 &gt;</ref>&amp;<sp/><ref refid="namespacenest_1_1names_1a4c815121a452a876dd0976c42ab58f1d" kindref="member">p</ref><sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
 <codeline lineno="279"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
 <codeline lineno="280"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>the<sp/>box<sp/>is<sp/>not<sp/>rotated<sp/>we<sp/>just<sp/>check<sp/>if<sp/>the<sp/>point<sp/>is<sp/>inside<sp/>the<sp/>box.</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="281"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>not<sp/>is_rotated_<sp/>)</highlight></codeline>
@@ -728,7 +744,7 @@
 <codeline lineno="294"><highlight class="normal"></highlight></codeline>
 <codeline lineno="295"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>new_x<sp/>=<sp/><ref refid="namespacenest_1_1names_1a4c815121a452a876dd0976c42ab58f1d" kindref="member">p</ref>[<sp/>0<sp/>]<sp/>*<sp/>azimuth_cos_<sp/>-<sp/>cntr_x_az_cos_<sp/>+<sp/><ref refid="namespacenest_1_1names_1a4c815121a452a876dd0976c42ab58f1d" kindref="member">p</ref>[<sp/>1<sp/>]<sp/>*<sp/>azimuth_sin_<sp/>-<sp/>cntr_y_az_sin_<sp/>+<sp/>cntr_[<sp/>0<sp/>];</highlight></codeline>
 <codeline lineno="296"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>new_y<sp/>=<sp/>-<ref refid="namespacenest_1_1names_1a4c815121a452a876dd0976c42ab58f1d" kindref="member">p</ref>[<sp/>0<sp/>]<sp/>*<sp/>azimuth_sin_<sp/>+<sp/>cntr_x_az_sin_<sp/>+<sp/><ref refid="namespacenest_1_1names_1a4c815121a452a876dd0976c42ab58f1d" kindref="member">p</ref>[<sp/>1<sp/>]<sp/>*<sp/>azimuth_cos_<sp/>-<sp/>cntr_y_az_cos_<sp/>+<sp/>cntr_[<sp/>1<sp/>];</highlight></codeline>
-<codeline lineno="297"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Position&lt;<sp/>2<sp/>&gt;<sp/>new_p(<sp/>new_x,<sp/>new_y<sp/>);</highlight></codeline>
+<codeline lineno="297"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1Position" kindref="compound">Position&lt; 2 &gt;</ref><sp/>new_p(<sp/>new_x,<sp/>new_y<sp/>);</highlight></codeline>
 <codeline lineno="298"><highlight class="normal"></highlight></codeline>
 <codeline lineno="299"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>We<sp/>need<sp/>to<sp/>add<sp/>a<sp/>small<sp/>epsilon<sp/>in<sp/>case<sp/>of<sp/>rounding<sp/>errors.</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="300"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lower_left_<sp/>-<sp/>eps_<sp/>&lt;=<sp/>new_p<sp/>and<sp/>(<sp/>new_p<sp/>&lt;=<sp/>upper_right_<sp/>+<sp/>eps_<sp/>);</highlight></codeline>
@@ -736,7 +752,7 @@
 <codeline lineno="302"><highlight class="normal"></highlight></codeline>
 <codeline lineno="303"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
 <codeline lineno="304"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="305"><highlight class="normal"><ref refid="classnest_1_1_mask_1a20df18bae0e8e78e06c68b6654f1ca8c" kindref="member">BoxMask&lt; 3 &gt;::inside</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Position&lt;<sp/>3<sp/>&gt;&amp;<sp/><ref refid="namespacenest_1_1names_1a4c815121a452a876dd0976c42ab58f1d" kindref="member">p</ref><sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="305" refid="classnest_1_1BoxMask_1aa45bec2bcaa8f0f53b3e4229c2b32e4e" refkind="member"><highlight class="normal"><ref refid="classnest_1_1Mask_1a20df18bae0e8e78e06c68b6654f1ca8c" kindref="member">BoxMask&lt; 3 &gt;::inside</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1Position" kindref="compound">Position&lt; 3 &gt;</ref>&amp;<sp/><ref refid="namespacenest_1_1names_1a4c815121a452a876dd0976c42ab58f1d" kindref="member">p</ref><sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
 <codeline lineno="306"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
 <codeline lineno="307"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>If<sp/>the<sp/>box<sp/>is<sp/>not<sp/>rotated<sp/>we<sp/>just<sp/>check<sp/>if<sp/>the<sp/>point<sp/>is<sp/>inside<sp/>the<sp/>box.</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="308"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>not<sp/>is_rotated_<sp/>)</highlight></codeline>
@@ -761,7 +777,7 @@
 <codeline lineno="327"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>new_z<sp/>=<sp/><ref refid="namespacenest_1_1names_1a4c815121a452a876dd0976c42ab58f1d" kindref="member">p</ref>[<sp/>0<sp/>]<sp/>*<sp/>az_cos_pol_sin_<sp/>-<sp/>cntr_x_az_cos_pol_sin_<sp/>+<sp/><ref refid="namespacenest_1_1names_1a4c815121a452a876dd0976c42ab58f1d" kindref="member">p</ref>[<sp/>1<sp/>]<sp/>*<sp/>az_sin_pol_sin_</highlight></codeline>
 <codeline lineno="328"><highlight class="normal"><sp/><sp/><sp/><sp/>-<sp/>cntr_y_az_sin_pol_sin_<sp/>+<sp/><ref refid="namespacenest_1_1names_1a4c815121a452a876dd0976c42ab58f1d" kindref="member">p</ref>[<sp/>2<sp/>]<sp/>*<sp/>polar_cos_<sp/>-<sp/>cntr_z_pol_cos_<sp/>+<sp/>cntr_[<sp/>2<sp/>];</highlight></codeline>
 <codeline lineno="329"><highlight class="normal"></highlight></codeline>
-<codeline lineno="330"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Position&lt;<sp/>3<sp/>&gt;<sp/>new_p(<sp/>new_x,<sp/>new_y,<sp/>new_z<sp/>);</highlight></codeline>
+<codeline lineno="330"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1Position" kindref="compound">Position&lt; 3 &gt;</ref><sp/>new_p(<sp/>new_x,<sp/>new_y,<sp/>new_z<sp/>);</highlight></codeline>
 <codeline lineno="331"><highlight class="normal"></highlight></codeline>
 <codeline lineno="332"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>We<sp/>need<sp/>to<sp/>add<sp/>a<sp/>small<sp/>epsilon<sp/>in<sp/>case<sp/>of<sp/>rounding<sp/>errors.</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="333"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>lower_left_<sp/>-<sp/>eps_<sp/>&lt;=<sp/>new_p<sp/>and<sp/>(<sp/>new_p<sp/>&lt;=<sp/>upper_right_<sp/>+<sp/>eps_<sp/>);</highlight></codeline>
@@ -769,7 +785,7 @@
 <codeline lineno="335"><highlight class="normal"></highlight></codeline>
 <codeline lineno="336"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
 <codeline lineno="337"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="338"><highlight class="normal"><ref refid="classnest_1_1_mask_1a20df18bae0e8e78e06c68b6654f1ca8c" kindref="member">EllipseMask&lt; 2 &gt;::inside</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Position&lt;<sp/>2<sp/>&gt;&amp;<sp/><ref refid="namespacenest_1_1names_1a4c815121a452a876dd0976c42ab58f1d" kindref="member">p</ref><sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="338" refid="classnest_1_1EllipseMask_1a7b6e852fe12827ac6bd2418ec1ba6920" refkind="member"><highlight class="normal"><ref refid="classnest_1_1Mask_1a20df18bae0e8e78e06c68b6654f1ca8c" kindref="member">EllipseMask&lt; 2 &gt;::inside</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1Position" kindref="compound">Position&lt; 2 &gt;</ref>&amp;<sp/><ref refid="namespacenest_1_1names_1a4c815121a452a876dd0976c42ab58f1d" kindref="member">p</ref><sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
 <codeline lineno="339"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
 <codeline lineno="340"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>new_x<sp/>=<sp/>(<sp/><ref refid="namespacenest_1_1names_1a4c815121a452a876dd0976c42ab58f1d" kindref="member">p</ref>[<sp/>0<sp/>]<sp/>-<sp/>center_[<sp/>0<sp/>]<sp/>)<sp/>*<sp/>azimuth_cos_<sp/>+<sp/>(<sp/><ref refid="namespacenest_1_1names_1a4c815121a452a876dd0976c42ab58f1d" kindref="member">p</ref>[<sp/>1<sp/>]<sp/>-<sp/>center_[<sp/>1<sp/>]<sp/>)<sp/>*<sp/>azimuth_sin_;</highlight></codeline>
 <codeline lineno="341"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>new_y<sp/>=<sp/>(<sp/><ref refid="namespacenest_1_1names_1a4c815121a452a876dd0976c42ab58f1d" kindref="member">p</ref>[<sp/>0<sp/>]<sp/>-<sp/>center_[<sp/>0<sp/>]<sp/>)<sp/>*<sp/>azimuth_sin_<sp/>-<sp/>(<sp/><ref refid="namespacenest_1_1names_1a4c815121a452a876dd0976c42ab58f1d" kindref="member">p</ref>[<sp/>1<sp/>]<sp/>-<sp/>center_[<sp/>1<sp/>]<sp/>)<sp/>*<sp/>azimuth_cos_;</highlight></codeline>
@@ -779,7 +795,7 @@
 <codeline lineno="345"><highlight class="normal"></highlight></codeline>
 <codeline lineno="346"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
 <codeline lineno="347"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="348"><highlight class="normal"><ref refid="classnest_1_1_mask_1a20df18bae0e8e78e06c68b6654f1ca8c" kindref="member">EllipseMask&lt; 3 &gt;::inside</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Position&lt;<sp/>3<sp/>&gt;&amp;<sp/><ref refid="namespacenest_1_1names_1a4c815121a452a876dd0976c42ab58f1d" kindref="member">p</ref><sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="348" refid="classnest_1_1EllipseMask_1aff26d9ce429c3ff6c18d63db04ddb2ca" refkind="member"><highlight class="normal"><ref refid="classnest_1_1Mask_1a20df18bae0e8e78e06c68b6654f1ca8c" kindref="member">EllipseMask&lt; 3 &gt;::inside</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1Position" kindref="compound">Position&lt; 3 &gt;</ref>&amp;<sp/><ref refid="namespacenest_1_1names_1a4c815121a452a876dd0976c42ab58f1d" kindref="member">p</ref><sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
 <codeline lineno="349"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
 <codeline lineno="350"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>The<sp/>new<sp/>x,<sp/>y,<sp/>z<sp/>values<sp/>are<sp/>calculated<sp/>using<sp/>rotation<sp/>matrices:</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="351"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>[new_x,<sp/>new_y,<sp/>new_z]<sp/>=</highlight><highlight class="normal"></highlight></codeline>
@@ -804,9 +820,9 @@
 <codeline lineno="370"><highlight class="normal"></highlight></codeline>
 <codeline lineno="371"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
 <codeline lineno="372"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="373"><highlight class="normal"><ref refid="classnest_1_1_mask_1a20df18bae0e8e78e06c68b6654f1ca8c" kindref="member">EllipseMask&lt; 2 &gt;::inside</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Box&lt;<sp/>2<sp/>&gt;&amp;<sp/><ref refid="namespacenest_1_1names_1aa06f71460d73472a90e5d08ac1e5c68e" kindref="member">b</ref><sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="373" refid="classnest_1_1EllipseMask_1a101cfc6613e908b6f47ea5b9613b47fe" refkind="member"><highlight class="normal"><ref refid="classnest_1_1Mask_1a20df18bae0e8e78e06c68b6654f1ca8c" kindref="member">EllipseMask&lt; 2 &gt;::inside</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structnest_1_1Box" kindref="compound">Box&lt; 2 &gt;</ref>&amp;<sp/><ref refid="namespacenest_1_1names_1aa06f71460d73472a90e5d08ac1e5c68e" kindref="member">b</ref><sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
 <codeline lineno="374"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="375"><highlight class="normal"><sp/><sp/>Position&lt;<sp/>2<sp/>&gt;<sp/><ref refid="namespacenest_1_1names_1a4c815121a452a876dd0976c42ab58f1d" kindref="member">p</ref><sp/>=<sp/><ref refid="namespacenest_1_1names_1aa06f71460d73472a90e5d08ac1e5c68e" kindref="member">b</ref>.lower_left;</highlight></codeline>
+<codeline lineno="375"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1Position" kindref="compound">Position&lt; 2 &gt;</ref><sp/><ref refid="namespacenest_1_1names_1a4c815121a452a876dd0976c42ab58f1d" kindref="member">p</ref><sp/>=<sp/><ref refid="namespacenest_1_1names_1aa06f71460d73472a90e5d08ac1e5c68e" kindref="member">b</ref>.lower_left;</highlight></codeline>
 <codeline lineno="376"><highlight class="normal"></highlight></codeline>
 <codeline lineno="377"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Test<sp/>if<sp/>all<sp/>corners<sp/>are<sp/>inside<sp/>ellipse</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="378"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>not<sp/><ref refid="namespacenest_1af83e7e1d4ba3689610d5e9d44b60337b" kindref="member">inside</ref>(<sp/><ref refid="namespacenest_1_1names_1a4c815121a452a876dd0976c42ab58f1d" kindref="member">p</ref><sp/>)<sp/>)</highlight></codeline>
@@ -837,9 +853,9 @@
 <codeline lineno="403"><highlight class="normal"></highlight></codeline>
 <codeline lineno="404"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;&gt;</highlight></codeline>
 <codeline lineno="405"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="406"><highlight class="normal"><ref refid="classnest_1_1_mask_1a20df18bae0e8e78e06c68b6654f1ca8c" kindref="member">EllipseMask&lt; 3 &gt;::inside</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Box&lt;<sp/>3<sp/>&gt;&amp;<sp/><ref refid="namespacenest_1_1names_1aa06f71460d73472a90e5d08ac1e5c68e" kindref="member">b</ref><sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="406" refid="classnest_1_1EllipseMask_1a71131205dc70b5ff25b55d2fb3133f9a" refkind="member"><highlight class="normal"><ref refid="classnest_1_1Mask_1a20df18bae0e8e78e06c68b6654f1ca8c" kindref="member">EllipseMask&lt; 3 &gt;::inside</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structnest_1_1Box" kindref="compound">Box&lt; 3 &gt;</ref>&amp;<sp/><ref refid="namespacenest_1_1names_1aa06f71460d73472a90e5d08ac1e5c68e" kindref="member">b</ref><sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
 <codeline lineno="407"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="408"><highlight class="normal"><sp/><sp/>Position&lt;<sp/>3<sp/>&gt;<sp/><ref refid="namespacenest_1_1names_1a4c815121a452a876dd0976c42ab58f1d" kindref="member">p</ref><sp/>=<sp/><ref refid="namespacenest_1_1names_1aa06f71460d73472a90e5d08ac1e5c68e" kindref="member">b</ref>.lower_left;</highlight></codeline>
+<codeline lineno="408"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1Position" kindref="compound">Position&lt; 3 &gt;</ref><sp/><ref refid="namespacenest_1_1names_1a4c815121a452a876dd0976c42ab58f1d" kindref="member">p</ref><sp/>=<sp/><ref refid="namespacenest_1_1names_1aa06f71460d73472a90e5d08ac1e5c68e" kindref="member">b</ref>.lower_left;</highlight></codeline>
 <codeline lineno="409"><highlight class="normal"></highlight></codeline>
 <codeline lineno="410"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>Test<sp/>if<sp/>all<sp/>corners<sp/>are<sp/>inside<sp/>ellipsoid</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="411"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>not<sp/><ref refid="namespacenest_1af83e7e1d4ba3689610d5e9d44b60337b" kindref="member">inside</ref>(<sp/><ref refid="namespacenest_1_1names_1a4c815121a452a876dd0976c42ab58f1d" kindref="member">p</ref><sp/>)<sp/>)</highlight></codeline>
@@ -893,6 +909,6 @@
 <codeline lineno="459"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="460"><highlight class="normal">}</highlight></codeline>
     </programlisting>
-    <location file="nestkernel/mask.cpp"/>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/mask.cpp"/>
   </compounddef>
 </doxygen>

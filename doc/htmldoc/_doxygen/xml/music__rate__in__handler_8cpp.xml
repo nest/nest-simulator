@@ -53,7 +53,7 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Includes<sp/>from<sp/>libnestutil:</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;compose.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;logging.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="logging_8h" kindref="compound">logging.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
 <codeline lineno="31"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Includes<sp/>from<sp/>nestkernel:</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="event_8h" kindref="compound">event.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
@@ -88,7 +88,7 @@
 <codeline lineno="61"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="62"><highlight class="normal"></highlight></codeline>
 <codeline lineno="63"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="64"><highlight class="normal">MusicRateInHandler::register_channel(<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>channel,<sp/><ref refid="classnest_1_1_node" kindref="compound">nest::Node</ref>*<sp/>mp<sp/>)</highlight></codeline>
+<codeline lineno="64"><highlight class="normal">MusicRateInHandler::register_channel(<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>channel,<sp/><ref refid="classnest_1_1Node" kindref="compound">nest::Node</ref>*<sp/>mp<sp/>)</highlight></codeline>
 <codeline lineno="65"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="66"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(<sp/>channel<sp/>)<sp/>&gt;=<sp/>channelmap_.size()<sp/>)</highlight></codeline>
 <codeline lineno="67"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
@@ -143,7 +143,7 @@
 <codeline lineno="116"><highlight class="normal"><sp/><sp/><sp/><sp/>published_<sp/>=<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="117"><highlight class="normal"></highlight></codeline>
 <codeline lineno="118"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>msg<sp/>=<sp/>String::compose(<sp/></highlight><highlight class="stringliteral">&quot;Mapping<sp/>MUSIC<sp/>input<sp/>port<sp/>&apos;%1&apos;<sp/>with<sp/>width=%2.&quot;</highlight><highlight class="normal">,<sp/>port_name_,<sp/>port_width_<sp/>);</highlight></codeline>
-<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/>LOG(<sp/>M_INFO,<sp/></highlight><highlight class="stringliteral">&quot;music_rate_in_handler::publish_port()&quot;</highlight><highlight class="normal">,<sp/>msg.c_str()<sp/>);</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="logging_8h_1a4fb9f400c7eade44c47bea4b934d580f" kindref="member">LOG</ref>(<sp/><ref refid="namespacenest_1a17a14d5aa7e8d94ec67eefc2b148eb72ac918263c6420db964adbf3a3375cf9ee" kindref="member">M_INFO</ref>,<sp/></highlight><highlight class="stringliteral">&quot;music_rate_in_handler::publish_port()&quot;</highlight><highlight class="normal">,<sp/>msg.c_str()<sp/>);</highlight></codeline>
 <codeline lineno="120"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
 <codeline lineno="121"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="122"><highlight class="normal"></highlight></codeline>
@@ -171,6 +171,6 @@
 <codeline lineno="144"><highlight class="normal"></highlight></codeline>
 <codeline lineno="145"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//<sp/>#ifdef<sp/>HAVE_MUSIC</highlight><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="nestkernel/music_rate_in_handler.cpp"/>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/music_rate_in_handler.cpp"/>
   </compounddef>
 </doxygen>

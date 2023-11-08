@@ -209,6 +209,16 @@
         <label>static_assert.h</label>
         <link refid="static__assert_8h"/>
       </node>
+      <node id="45">
+        <label>lockptr.h</label>
+        <link refid="lockptr_8h"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+      </node>
       <node id="21">
         <label>node.h</label>
         <link refid="node_8h"/>
@@ -268,9 +278,6 @@
       <node id="22">
         <label>bitset</label>
       </node>
-      <node id="45">
-        <label>lockptr.h</label>
-      </node>
       <node id="41">
         <label>ctime</label>
       </node>
@@ -312,9 +319,6 @@
       </node>
       <node id="31">
         <label>name.h</label>
-      </node>
-      <node id="20">
-        <label>numerics.h</label>
       </node>
       <node id="40">
         <label>node_collection.h</label>
@@ -387,6 +391,18 @@
       <node id="42">
         <label>memory</label>
       </node>
+      <node id="20">
+        <label>numerics.h</label>
+        <link refid="numerics_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
     </incdepgraph>
     <invincdepgraph>
       <node id="1">
@@ -406,7 +422,7 @@
         <link refid="clopath__archiving__node_8cpp"/>
       </node>
     </invincdepgraph>
-    <innerclass refid="classnest_1_1_clopath_archiving_node" prot="public">nest::ClopathArchivingNode</innerclass>
+    <innerclass refid="classnest_1_1ClopathArchivingNode" prot="public">nest::ClopathArchivingNode</innerclass>
     <innernamespace refid="namespacenest">nest</innernamespace>
     <briefdescription>
     </briefdescription>
@@ -454,78 +470,78 @@
 <codeline lineno="39"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacenest" kindref="compound">nest</ref></highlight></codeline>
 <codeline lineno="40"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="41"><highlight class="normal"></highlight></codeline>
-<codeline lineno="47" refid="classnest_1_1_clopath_archiving_node" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classnest_1_1_clopath_archiving_node" kindref="compound">ClopathArchivingNode</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_archiving_node" kindref="compound">ArchivingNode</ref></highlight></codeline>
+<codeline lineno="47" refid="classnest_1_1ClopathArchivingNode" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classnest_1_1ClopathArchivingNode" kindref="compound">ClopathArchivingNode</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1ArchivingNode" kindref="compound">ArchivingNode</ref></highlight></codeline>
 <codeline lineno="48"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="49"><highlight class="normal"></highlight></codeline>
 <codeline lineno="50"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
-<codeline lineno="55"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1_clopath_archiving_node_1a83384b35c0060ad818455dcc2a4340c4" kindref="member">ClopathArchivingNode</ref>();</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1ClopathArchivingNode_1a83384b35c0060ad818455dcc2a4340c4" kindref="member">ClopathArchivingNode</ref>();</highlight></codeline>
 <codeline lineno="56"><highlight class="normal"></highlight></codeline>
-<codeline lineno="61"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1_clopath_archiving_node_1a83384b35c0060ad818455dcc2a4340c4" kindref="member">ClopathArchivingNode</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_clopath_archiving_node" kindref="compound">ClopathArchivingNode</ref>&amp;<sp/>);</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1ClopathArchivingNode_1a83384b35c0060ad818455dcc2a4340c4" kindref="member">ClopathArchivingNode</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1ClopathArchivingNode" kindref="compound">ClopathArchivingNode</ref>&amp;<sp/>);</highlight></codeline>
 <codeline lineno="62"><highlight class="normal"></highlight></codeline>
-<codeline lineno="67"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_clopath_archiving_node_1a919f8a8c44b248c67c8ec7422f59cddb" kindref="member">get_LTD_value</ref>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>t<sp/>)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1ClopathArchivingNode_1a919f8a8c44b248c67c8ec7422f59cddb" kindref="member">get_LTD_value</ref>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>t<sp/>)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="68"><highlight class="normal"></highlight></codeline>
-<codeline lineno="76"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_clopath_archiving_node_1ac8d8ff55a5ff9eda5e25d67a98685950" kindref="member">get_LTP_history</ref>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>t1,</highlight></codeline>
+<codeline lineno="76"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1ClopathArchivingNode_1ac8d8ff55a5ff9eda5e25d67a98685950" kindref="member">get_LTP_history</ref>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>t1,</highlight></codeline>
 <codeline lineno="77"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>t2,</highlight></codeline>
 <codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/>std::deque&lt;<sp/>histentry_extended<sp/>&gt;::iterator*<sp/><ref refid="namespacenest_1_1names_1aa93a7f7f8ccafde2e02d7e1cf97e8882" kindref="member">start</ref>,</highlight></codeline>
 <codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>std::deque&lt;<sp/>histentry_extended<sp/>&gt;::iterator*<sp/>finish<sp/>)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="80"><highlight class="normal"></highlight></codeline>
-<codeline lineno="85"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_clopath_archiving_node_1a2f2b7e027c8ca541e89b01699ef6342f" kindref="member">get_theta_plus</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1ClopathArchivingNode_1a2f2b7e027c8ca541e89b01699ef6342f" kindref="member">get_theta_plus</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="86"><highlight class="normal"></highlight></codeline>
-<codeline lineno="91"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_clopath_archiving_node_1ae76ad13cb83f6220bfd6dd27997d56e1" kindref="member">get_theta_minus</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1ClopathArchivingNode_1ae76ad13cb83f6220bfd6dd27997d56e1" kindref="member">get_theta_minus</ref>()<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="92"><highlight class="normal"></highlight></codeline>
 <codeline lineno="93"><highlight class="normal"></highlight><highlight class="keyword">protected</highlight><highlight class="normal">:</highlight></codeline>
-<codeline lineno="100"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_clopath_archiving_node_1adb32ba5c3629b8b106d8d3cad1a16698" kindref="member">write_LTD_history</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>t_ltd_ms,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacenest_1_1names_1a29549ac181b5ea328918ad8af2f85128" kindref="member">u_bar_minus</ref>,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacenest_1_1names_1ac7db2afc62cb4c585d3b13997c83cdb8" kindref="member">u_bar_bar</ref><sp/>);</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1ClopathArchivingNode_1adb32ba5c3629b8b106d8d3cad1a16698" kindref="member">write_LTD_history</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>t_ltd_ms,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacenest_1_1names_1a29549ac181b5ea328918ad8af2f85128" kindref="member">u_bar_minus</ref>,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacenest_1_1names_1ac7db2afc62cb4c585d3b13997c83cdb8" kindref="member">u_bar_bar</ref><sp/>);</highlight></codeline>
 <codeline lineno="101"><highlight class="normal"></highlight></codeline>
-<codeline lineno="108"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_clopath_archiving_node_1ada1dc9681fae3ed432525b9426859a49" kindref="member">write_LTP_history</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>t_ltp_ms,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacenest_1_1names_1a05b1c5c343d3981b36f15dd6aeb95cd2" kindref="member">u</ref>,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacenest_1_1names_1add03644df3840575f2e72e6c47dfce4b" kindref="member">u_bar_plus</ref><sp/>);</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1ClopathArchivingNode_1ada1dc9681fae3ed432525b9426859a49" kindref="member">write_LTP_history</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>t_ltp_ms,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacenest_1_1names_1a05b1c5c343d3981b36f15dd6aeb95cd2" kindref="member">u</ref>,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacenest_1_1names_1add03644df3840575f2e72e6c47dfce4b" kindref="member">u_bar_plus</ref><sp/>);</highlight></codeline>
 <codeline lineno="109"><highlight class="normal"></highlight></codeline>
-<codeline lineno="117"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_clopath_archiving_node_1ac08c4a412c073021fed3743576004a07" kindref="member">write_clopath_history</ref>(<sp/><ref refid="classnest_1_1_time" kindref="compound">Time</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>t_sp,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacenest_1_1names_1a05b1c5c343d3981b36f15dd6aeb95cd2" kindref="member">u</ref>,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacenest_1_1names_1add03644df3840575f2e72e6c47dfce4b" kindref="member">u_bar_plus</ref>,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacenest_1_1names_1a29549ac181b5ea328918ad8af2f85128" kindref="member">u_bar_minus</ref>,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacenest_1_1names_1ac7db2afc62cb4c585d3b13997c83cdb8" kindref="member">u_bar_bar</ref><sp/>);</highlight></codeline>
+<codeline lineno="117"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1ClopathArchivingNode_1ac08c4a412c073021fed3743576004a07" kindref="member">write_clopath_history</ref>(<sp/><ref refid="classnest_1_1Time" kindref="compound">Time</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>t_sp,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacenest_1_1names_1a05b1c5c343d3981b36f15dd6aeb95cd2" kindref="member">u</ref>,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacenest_1_1names_1add03644df3840575f2e72e6c47dfce4b" kindref="member">u_bar_plus</ref>,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacenest_1_1names_1a29549ac181b5ea328918ad8af2f85128" kindref="member">u_bar_minus</ref>,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="namespacenest_1_1names_1ac7db2afc62cb4c585d3b13997c83cdb8" kindref="member">u_bar_bar</ref><sp/>);</highlight></codeline>
 <codeline lineno="118"><highlight class="normal"></highlight></codeline>
-<codeline lineno="119"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_clopath_archiving_node_1ab23d55dd18a84bf26d975ddcea62fca9" kindref="member">init_clopath_buffers</ref>();</highlight></codeline>
-<codeline lineno="120"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_clopath_archiving_node_1a5323ca3c863862b223b1c264b5a8d1a9" kindref="member">get_status</ref>(<sp/>DictionaryDatum&amp;<sp/><ref refid="namespacenest_1_1names_1a8881fb5c6cc400d4eb90a2035d9a2df5" kindref="member">d</ref><sp/>)<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="121"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_clopath_archiving_node_1a7ba4e2728b3bcbccf08c78944fee033d" kindref="member">set_status</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>DictionaryDatum&amp;<sp/><ref refid="namespacenest_1_1names_1a8881fb5c6cc400d4eb90a2035d9a2df5" kindref="member">d</ref><sp/>)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1ClopathArchivingNode_1ab23d55dd18a84bf26d975ddcea62fca9" kindref="member">init_clopath_buffers</ref>();</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1ClopathArchivingNode_1a5323ca3c863862b223b1c264b5a8d1a9" kindref="member">get_status</ref>(<sp/>DictionaryDatum&amp;<sp/><ref refid="namespacenest_1_1names_1a8881fb5c6cc400d4eb90a2035d9a2df5" kindref="member">d</ref><sp/>)<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="121"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1ClopathArchivingNode_1a7ba4e2728b3bcbccf08c78944fee033d" kindref="member">set_status</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>DictionaryDatum&amp;<sp/><ref refid="namespacenest_1_1names_1a8881fb5c6cc400d4eb90a2035d9a2df5" kindref="member">d</ref><sp/>)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="122"><highlight class="normal"></highlight></codeline>
 <codeline lineno="123"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
-<codeline lineno="124"><highlight class="normal"><sp/><sp/>std::vector&lt;<sp/>histentry_extended<sp/>&gt;<sp/>ltd_history_;</highlight></codeline>
-<codeline lineno="125"><highlight class="normal"><sp/><sp/>std::deque&lt;<sp/>histentry_extended<sp/>&gt;<sp/>ltp_history_;</highlight></codeline>
+<codeline lineno="124" refid="classnest_1_1ClopathArchivingNode_1a36bd333fd21aa9d7f1f9f8ca5bf59340" refkind="member"><highlight class="normal"><sp/><sp/>std::vector&lt;<sp/>histentry_extended<sp/>&gt;<sp/><ref refid="classnest_1_1ClopathArchivingNode_1a36bd333fd21aa9d7f1f9f8ca5bf59340" kindref="member">ltd_history_</ref>;</highlight></codeline>
+<codeline lineno="125" refid="classnest_1_1ClopathArchivingNode_1aea1fa2bd0760a0d0acb8487b09382977" refkind="member"><highlight class="normal"><sp/><sp/>std::deque&lt;<sp/>histentry_extended<sp/>&gt;<sp/><ref refid="classnest_1_1ClopathArchivingNode_1aea1fa2bd0760a0d0acb8487b09382977" kindref="member">ltp_history_</ref>;</highlight></codeline>
 <codeline lineno="126"><highlight class="normal"></highlight></codeline>
-<codeline lineno="127"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>A_LTD_;</highlight></codeline>
+<codeline lineno="127" refid="classnest_1_1ClopathArchivingNode_1aa6eedc5006134f9575d00712512e7948" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1ClopathArchivingNode_1aa6eedc5006134f9575d00712512e7948" kindref="member">A_LTD_</ref>;</highlight></codeline>
 <codeline lineno="128"><highlight class="normal"></highlight></codeline>
-<codeline lineno="129"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>A_LTP_;</highlight></codeline>
+<codeline lineno="129" refid="classnest_1_1ClopathArchivingNode_1aa0b7691d88bc388b5fe3d5c7b0909d8b" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1ClopathArchivingNode_1aa0b7691d88bc388b5fe3d5c7b0909d8b" kindref="member">A_LTP_</ref>;</highlight></codeline>
 <codeline lineno="130"><highlight class="normal"></highlight></codeline>
-<codeline lineno="131"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>u_ref_squared_;</highlight></codeline>
+<codeline lineno="131" refid="classnest_1_1ClopathArchivingNode_1a0da0374aa748954b351344feb9e7e645" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1ClopathArchivingNode_1a0da0374aa748954b351344feb9e7e645" kindref="member">u_ref_squared_</ref>;</highlight></codeline>
 <codeline lineno="132"><highlight class="normal"></highlight></codeline>
-<codeline lineno="133"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>theta_plus_;</highlight></codeline>
+<codeline lineno="133" refid="classnest_1_1ClopathArchivingNode_1a071df8a8b82d0d4ce4cbc43e23f892e8" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1ClopathArchivingNode_1a071df8a8b82d0d4ce4cbc43e23f892e8" kindref="member">theta_plus_</ref>;</highlight></codeline>
 <codeline lineno="134"><highlight class="normal"></highlight></codeline>
-<codeline lineno="135"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>theta_minus_;</highlight></codeline>
+<codeline lineno="135" refid="classnest_1_1ClopathArchivingNode_1a92c815e1230996d0607895fa80430d3c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1ClopathArchivingNode_1a92c815e1230996d0607895fa80430d3c" kindref="member">theta_minus_</ref>;</highlight></codeline>
 <codeline lineno="136"><highlight class="normal"></highlight></codeline>
-<codeline lineno="137"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>A_LTD_const_;</highlight></codeline>
+<codeline lineno="137" refid="classnest_1_1ClopathArchivingNode_1a5be7221eee706b0ae392e72183b79882" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1ClopathArchivingNode_1a5be7221eee706b0ae392e72183b79882" kindref="member">A_LTD_const_</ref>;</highlight></codeline>
 <codeline lineno="138"><highlight class="normal"></highlight></codeline>
-<codeline lineno="139"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>delay_u_bars_;</highlight></codeline>
-<codeline lineno="140"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>delay_u_bars_steps_;</highlight></codeline>
-<codeline lineno="141"><highlight class="normal"><sp/><sp/>std::vector&lt;<sp/>double<sp/>&gt;<sp/>delayed_u_bar_plus_;</highlight></codeline>
-<codeline lineno="142"><highlight class="normal"><sp/><sp/>std::vector&lt;<sp/>double<sp/>&gt;<sp/>delayed_u_bar_minus_;</highlight></codeline>
-<codeline lineno="143"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>delayed_u_bars_idx_;</highlight></codeline>
+<codeline lineno="139" refid="classnest_1_1ClopathArchivingNode_1a084747fce3eff62e340c99940aa916c5" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1ClopathArchivingNode_1a084747fce3eff62e340c99940aa916c5" kindref="member">delay_u_bars_</ref>;</highlight></codeline>
+<codeline lineno="140" refid="classnest_1_1ClopathArchivingNode_1ae59e98362d1ea091d7dbdd93e9e30b39" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1ClopathArchivingNode_1ae59e98362d1ea091d7dbdd93e9e30b39" kindref="member">delay_u_bars_steps_</ref>;</highlight></codeline>
+<codeline lineno="141" refid="classnest_1_1ClopathArchivingNode_1a0870f6ab4e3436f151fb2c15b7a1b10c" refkind="member"><highlight class="normal"><sp/><sp/>std::vector&lt;<sp/>double<sp/>&gt;<sp/><ref refid="classnest_1_1ClopathArchivingNode_1a0870f6ab4e3436f151fb2c15b7a1b10c" kindref="member">delayed_u_bar_plus_</ref>;</highlight></codeline>
+<codeline lineno="142" refid="classnest_1_1ClopathArchivingNode_1a0496eafc9e97aefadcc2209acf5a552a" refkind="member"><highlight class="normal"><sp/><sp/>std::vector&lt;<sp/>double<sp/>&gt;<sp/><ref refid="classnest_1_1ClopathArchivingNode_1a0496eafc9e97aefadcc2209acf5a552a" kindref="member">delayed_u_bar_minus_</ref>;</highlight></codeline>
+<codeline lineno="143" refid="classnest_1_1ClopathArchivingNode_1a8350b6fc5ac0e14430ed4ce9374ac6fd" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1ClopathArchivingNode_1a8350b6fc5ac0e14430ed4ce9374ac6fd" kindref="member">delayed_u_bars_idx_</ref>;</highlight></codeline>
 <codeline lineno="144"><highlight class="normal"></highlight></codeline>
-<codeline lineno="145"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>ltd_hist_len_;</highlight></codeline>
+<codeline lineno="145" refid="classnest_1_1ClopathArchivingNode_1ac4e839b3c28ba3bc6da8c1629c9ee4dd" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1ClopathArchivingNode_1ac4e839b3c28ba3bc6da8c1629c9ee4dd" kindref="member">ltd_hist_len_</ref>;</highlight></codeline>
 <codeline lineno="146"><highlight class="normal"></highlight></codeline>
-<codeline lineno="147"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>ltd_hist_current_;</highlight></codeline>
+<codeline lineno="147" refid="classnest_1_1ClopathArchivingNode_1a179fd84c00c9e0d26df9f6a5bdddcd33" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1ClopathArchivingNode_1a179fd84c00c9e0d26df9f6a5bdddcd33" kindref="member">ltd_hist_current_</ref>;</highlight></codeline>
 <codeline lineno="148"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="149"><highlight class="normal"></highlight></codeline>
 <codeline lineno="150"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="151" refid="classnest_1_1_clopath_archiving_node_1a2f2b7e027c8ca541e89b01699ef6342f" refkind="member"><highlight class="normal"><ref refid="classnest_1_1_clopath_archiving_node_1a2f2b7e027c8ca541e89b01699ef6342f" kindref="member">ClopathArchivingNode::get_theta_plus</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="151" refid="classnest_1_1ClopathArchivingNode_1a2f2b7e027c8ca541e89b01699ef6342f" refkind="member"><highlight class="normal"><ref refid="classnest_1_1ClopathArchivingNode_1a2f2b7e027c8ca541e89b01699ef6342f" kindref="member">ClopathArchivingNode::get_theta_plus</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
 <codeline lineno="152"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="153"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>theta_plus_;</highlight></codeline>
+<codeline lineno="153"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1ClopathArchivingNode_1a071df8a8b82d0d4ce4cbc43e23f892e8" kindref="member">theta_plus_</ref>;</highlight></codeline>
 <codeline lineno="154"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="155"><highlight class="normal"></highlight></codeline>
 <codeline lineno="156"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="157" refid="classnest_1_1_clopath_archiving_node_1ae76ad13cb83f6220bfd6dd27997d56e1" refkind="member"><highlight class="normal"><ref refid="classnest_1_1_clopath_archiving_node_1ae76ad13cb83f6220bfd6dd27997d56e1" kindref="member">ClopathArchivingNode::get_theta_minus</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="157" refid="classnest_1_1ClopathArchivingNode_1ae76ad13cb83f6220bfd6dd27997d56e1" refkind="member"><highlight class="normal"><ref refid="classnest_1_1ClopathArchivingNode_1ae76ad13cb83f6220bfd6dd27997d56e1" kindref="member">ClopathArchivingNode::get_theta_minus</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
 <codeline lineno="158"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="159"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>theta_minus_;</highlight></codeline>
+<codeline lineno="159"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1ClopathArchivingNode_1a92c815e1230996d0607895fa80430d3c" kindref="member">theta_minus_</ref>;</highlight></codeline>
 <codeline lineno="160"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="161"><highlight class="normal"></highlight></codeline>
 <codeline lineno="162"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>of<sp/>namespace</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="163"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
     </programlisting>
-    <location file="nestkernel/clopath_archiving_node.h"/>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/clopath_archiving_node.h"/>
   </compounddef>
 </doxygen>

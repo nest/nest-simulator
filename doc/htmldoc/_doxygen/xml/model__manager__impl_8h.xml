@@ -4,11 +4,12 @@
     <compoundname>model_manager_impl.h</compoundname>
     <includes refid="model__manager_8h" local="yes">model_manager.h</includes>
     <includes local="yes">compose.hpp</includes>
-    <includes local="yes">string_utils.h</includes>
+    <includes refid="string__utils_8h" local="yes">string_utils.h</includes>
     <includes refid="connection__label_8h" local="yes">connection_label.h</includes>
     <includes refid="kernel__manager_8h" local="yes">kernel_manager.h</includes>
     <includes refid="nest_8h" local="yes">nest.h</includes>
     <includes refid="target__identifier_8h" local="yes">target_identifier.h</includes>
+    <includedby refid="modelsmodule_8cpp" local="yes">modelsmodule.cpp</includedby>
     <includedby refid="model__manager_8cpp" local="yes">model_manager.cpp</includedby>
     <includedby refid="nestmodule_8cpp" local="yes">nestmodule.cpp</includedby>
     <includedby refid="node__manager_8cpp" local="yes">node_manager.cpp</includedby>
@@ -21,29 +22,29 @@
         <childnode refid="38" relation="include">
         </childnode>
       </node>
-      <node id="103">
+      <node id="104">
         <label>target_table_devices.h</label>
         <link refid="target__table__devices_8h"/>
-        <childnode refid="10" relation="include">
+        <childnode refid="8" relation="include">
         </childnode>
         <childnode refid="46" relation="include">
         </childnode>
-        <childnode refid="12" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="59" relation="include">
         </childnode>
-        <childnode refid="88" relation="include">
+        <childnode refid="89" relation="include">
         </childnode>
-        <childnode refid="8" relation="include">
+        <childnode refid="11" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="55" relation="include">
         </childnode>
         <childnode refid="32" relation="include">
         </childnode>
       </node>
-      <node id="18">
+      <node id="9">
         <label>limits</label>
       </node>
       <node id="62">
@@ -55,7 +56,7 @@
         </childnode>
         <childnode refid="44" relation="include">
         </childnode>
-        <childnode refid="12" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="64" relation="include">
         </childnode>
@@ -90,20 +91,20 @@
       <node id="55">
         <label>arraydatum.h</label>
       </node>
-      <node id="19">
+      <node id="20">
         <label>nest_types.h</label>
         <link refid="nest__types_8h"/>
-        <childnode refid="15" relation="include">
-        </childnode>
-        <childnode refid="20" relation="include">
+        <childnode refid="17" relation="include">
         </childnode>
         <childnode refid="21" relation="include">
         </childnode>
-        <childnode refid="18" relation="include">
-        </childnode>
         <childnode refid="22" relation="include">
         </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
         <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
         </childnode>
         <childnode refid="24" relation="include">
         </childnode>
@@ -123,11 +124,11 @@
         </childnode>
         <childnode refid="56" relation="include">
         </childnode>
-        <childnode refid="14" relation="include">
+        <childnode refid="16" relation="include">
         </childnode>
         <childnode refid="80" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="40" relation="include">
         </childnode>
@@ -143,29 +144,29 @@
         </childnode>
         <childnode refid="85" relation="include">
         </childnode>
-        <childnode refid="86" relation="include">
+        <childnode refid="87" relation="include">
         </childnode>
         <childnode refid="59" relation="include">
         </childnode>
-        <childnode refid="88" relation="include">
+        <childnode refid="89" relation="include">
         </childnode>
-        <childnode refid="14" relation="include">
+        <childnode refid="16" relation="include">
         </childnode>
         <childnode refid="80" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="49" relation="include">
         </childnode>
-        <childnode refid="94" relation="include">
+        <childnode refid="96" relation="include">
         </childnode>
-        <childnode refid="95" relation="include">
+        <childnode refid="97" relation="include">
         </childnode>
         <childnode refid="27" relation="include">
         </childnode>
-        <childnode refid="102" relation="include">
-        </childnode>
         <childnode refid="103" relation="include">
+        </childnode>
+        <childnode refid="104" relation="include">
         </childnode>
         <childnode refid="55" relation="include">
         </childnode>
@@ -177,61 +178,61 @@
       <node id="24">
         <label>cstdint</label>
       </node>
-      <node id="94">
+      <node id="96">
         <label>per_thread_bool_indicator.h</label>
         <link refid="per__thread__bool__indicator_8h"/>
-        <childnode refid="10" relation="include">
+        <childnode refid="8" relation="include">
         </childnode>
-        <childnode refid="21" relation="include">
+        <childnode refid="22" relation="include">
         </childnode>
         <childnode refid="24" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="30" relation="include">
         </childnode>
         <childnode refid="32" relation="include">
         </childnode>
       </node>
-      <node id="95">
+      <node id="97">
         <label>source_table.h</label>
         <link refid="source__table_8h"/>
-        <childnode refid="9" relation="include">
+        <childnode refid="12" relation="include">
         </childnode>
-        <childnode refid="10" relation="include">
+        <childnode refid="8" relation="include">
         </childnode>
-        <childnode refid="17" relation="include">
+        <childnode refid="19" relation="include">
         </childnode>
         <childnode refid="46" relation="include">
         </childnode>
         <childnode refid="34" relation="include">
         </childnode>
-        <childnode refid="12" relation="include">
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="98" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="96" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
-        </childnode>
         <childnode refid="94" relation="include">
         </childnode>
-        <childnode refid="92" relation="include">
-        </childnode>
-        <childnode refid="100" relation="include">
+        <childnode refid="102" relation="include">
         </childnode>
         <childnode refid="27" relation="include">
         </childnode>
-        <childnode refid="101" relation="include">
+        <childnode refid="91" relation="include">
         </childnode>
-        <childnode refid="90" relation="include">
+        <childnode refid="92" relation="include">
         </childnode>
       </node>
-      <node id="22">
+      <node id="23">
         <label>stdint.h</label>
       </node>
       <node id="48">
         <label>nest_names.h</label>
         <link refid="nest__names_8h"/>
-        <childnode refid="23" relation="include">
+        <childnode refid="7" relation="include">
         </childnode>
         <childnode refid="25" relation="include">
         </childnode>
@@ -239,17 +240,17 @@
       <node id="45">
         <label>deprecation_warning.h</label>
         <link refid="deprecation__warning_8h"/>
-        <childnode refid="17" relation="include">
+        <childnode refid="19" relation="include">
         </childnode>
         <childnode refid="46" relation="include">
         </childnode>
         <childnode refid="3" relation="include">
         </childnode>
       </node>
-      <node id="107">
+      <node id="108">
         <label>stimulation_backend.h</label>
         <link refid="stimulation__backend_8h"/>
-        <childnode refid="12" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="32" relation="include">
         </childnode>
@@ -257,57 +258,62 @@
         </childnode>
         <childnode refid="25" relation="include">
         </childnode>
-        <childnode refid="108" relation="include">
+        <childnode refid="109" relation="include">
         </childnode>
       </node>
-      <node id="114">
+      <node id="81">
+        <label>string_utils.h</label>
+        <link refid="string__utils_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="115">
         <label>music_manager.h</label>
         <link refid="music__manager_8h"/>
-        <childnode refid="23" relation="include">
+        <childnode refid="7" relation="include">
         </childnode>
         <childnode refid="3" relation="include">
         </childnode>
         <childnode refid="31" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="74" relation="include">
         </childnode>
       </node>
-      <node id="85">
-        <label>stopwatch.h</label>
-      </node>
-      <node id="100">
+      <node id="102">
         <label>source_table_position.h</label>
         <link refid="source__table__position_8h"/>
-        <childnode refid="10" relation="include">
+        <childnode refid="8" relation="include">
         </childnode>
-        <childnode refid="17" relation="include">
+        <childnode refid="19" relation="include">
         </childnode>
-        <childnode refid="12" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
-        <childnode refid="101" relation="include">
+        <childnode refid="91" relation="include">
         </childnode>
       </node>
       <node id="35">
         <label>dictutils.h</label>
       </node>
-      <node id="8">
+      <node id="11">
         <label>event.h</label>
         <link refid="event_8h"/>
-        <childnode refid="9" relation="include">
-        </childnode>
-        <childnode refid="10" relation="include">
-        </childnode>
-        <childnode refid="11" relation="include">
-        </childnode>
         <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
         </childnode>
         <childnode refid="13" relation="include">
         </childnode>
         <childnode refid="14" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="27" relation="include">
         </childnode>
@@ -321,7 +327,7 @@
         <link refid="vp__manager_8h"/>
         <childnode refid="31" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="32" relation="include">
         </childnode>
@@ -329,21 +335,21 @@
       <node id="5">
         <label>cmath</label>
       </node>
-      <node id="10">
+      <node id="8">
         <label>cassert</label>
       </node>
       <node id="64">
         <label>position.h</label>
         <link refid="position_8h"/>
-        <childnode refid="9" relation="include">
+        <childnode refid="12" relation="include">
         </childnode>
         <childnode refid="65" relation="include">
         </childnode>
-        <childnode refid="10" relation="include">
+        <childnode refid="8" relation="include">
         </childnode>
         <childnode refid="5" relation="include">
         </childnode>
-        <childnode refid="17" relation="include">
+        <childnode refid="19" relation="include">
         </childnode>
         <childnode refid="43" relation="include">
         </childnode>
@@ -351,13 +357,13 @@
         </childnode>
         <childnode refid="44" relation="include">
         </childnode>
-        <childnode refid="12" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="66" relation="include">
         </childnode>
-        <childnode refid="13" relation="include">
+        <childnode refid="15" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="67" relation="include">
         </childnode>
@@ -365,7 +371,7 @@
       <node id="53">
         <label>stdexcept</label>
       </node>
-      <node id="98">
+      <node id="100">
         <label>numeric</label>
       </node>
       <node id="1">
@@ -386,10 +392,10 @@
         <childnode refid="123" relation="include">
         </childnode>
       </node>
-      <node id="13">
+      <node id="15">
         <label>exceptions.h</label>
         <link refid="exceptions_8h"/>
-        <childnode refid="14" relation="include">
+        <childnode refid="16" relation="include">
         </childnode>
         <childnode refid="25" relation="include">
         </childnode>
@@ -399,18 +405,15 @@
       <node id="3">
         <label>string</label>
       </node>
-      <node id="89">
-        <label>sort.h</label>
-      </node>
       <node id="46">
         <label>map</label>
       </node>
       <node id="122">
         <label>growth_curve.h</label>
         <link refid="growth__curve_8h"/>
-        <childnode refid="13" relation="include">
+        <childnode refid="15" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="32" relation="include">
         </childnode>
@@ -420,31 +423,31 @@
         <link refid="generic__factory_8h"/>
         <childnode refid="46" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="32" relation="include">
         </childnode>
       </node>
-      <node id="14">
+      <node id="16">
         <label>nest_time.h</label>
         <link refid="nest__time_8h"/>
-        <childnode refid="10" relation="include">
-        </childnode>
-        <childnode refid="15" relation="include">
-        </childnode>
-        <childnode refid="5" relation="include">
-        </childnode>
-        <childnode refid="16" relation="include">
+        <childnode refid="8" relation="include">
         </childnode>
         <childnode refid="17" relation="include">
         </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
         <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
         </childnode>
         <childnode refid="3" relation="include">
         </childnode>
         <childnode refid="6" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
       </node>
       <node id="79">
@@ -461,25 +464,25 @@
         <childnode refid="35" relation="include">
         </childnode>
       </node>
-      <node id="92">
+      <node id="94">
         <label>source.h</label>
         <link refid="source_8h"/>
-        <childnode refid="10" relation="include">
+        <childnode refid="8" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
       </node>
-      <node id="15">
+      <node id="17">
         <label>cfloat</label>
       </node>
       <node id="28">
         <label>target.h</label>
         <link refid="target_8h"/>
-        <childnode refid="10" relation="include">
+        <childnode refid="8" relation="include">
         </childnode>
-        <childnode refid="13" relation="include">
+        <childnode refid="15" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="29" relation="include">
         </childnode>
@@ -487,9 +490,9 @@
       <node id="60">
         <label>nestmodule.h</label>
         <link refid="nestmodule_8h"/>
-        <childnode refid="8" relation="include">
+        <childnode refid="11" relation="include">
         </childnode>
-        <childnode refid="13" relation="include">
+        <childnode refid="15" relation="include">
         </childnode>
         <childnode refid="61" relation="include">
         </childnode>
@@ -513,7 +516,7 @@
       <node id="52">
         <label>ostream</label>
       </node>
-      <node id="110">
+      <node id="111">
         <label>device_node.h</label>
         <link refid="device__node_8h"/>
         <childnode refid="40" relation="include">
@@ -523,28 +526,28 @@
         <label>static_assert.h</label>
         <link refid="static__assert_8h"/>
       </node>
-      <node id="88">
+      <node id="89">
         <label>connector_base.h</label>
         <link refid="connector__base_8h"/>
-        <childnode refid="23" relation="include">
+        <childnode refid="7" relation="include">
         </childnode>
-        <childnode refid="16" relation="include">
+        <childnode refid="18" relation="include">
         </childnode>
-        <childnode refid="12" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="66" relation="include">
         </childnode>
-        <childnode refid="89" relation="include">
-        </childnode>
         <childnode refid="90" relation="include">
         </childnode>
-        <childnode refid="91" relation="include">
+        <childnode refid="92" relation="include">
+        </childnode>
+        <childnode refid="93" relation="include">
         </childnode>
         <childnode refid="82" relation="include">
         </childnode>
         <childnode refid="4" relation="include">
         </childnode>
-        <childnode refid="8" relation="include">
+        <childnode refid="11" relation="include">
         </childnode>
         <childnode refid="58" relation="include">
         </childnode>
@@ -552,9 +555,9 @@
         </childnode>
         <childnode refid="40" relation="include">
         </childnode>
-        <childnode refid="92" relation="include">
+        <childnode refid="94" relation="include">
         </childnode>
-        <childnode refid="93" relation="include">
+        <childnode refid="95" relation="include">
         </childnode>
         <childnode refid="55" relation="include">
         </childnode>
@@ -564,30 +567,40 @@
       <node id="78">
         <label>slitype.h</label>
       </node>
-      <node id="105">
+      <node id="106">
         <label>io_manager.h</label>
         <link refid="io__manager_8h"/>
         <childnode refid="3" relation="include">
         </childnode>
         <childnode refid="31" relation="include">
         </childnode>
-        <childnode refid="106" relation="include">
-        </childnode>
         <childnode refid="107" relation="include">
         </childnode>
+        <childnode refid="108" relation="include">
+        </childnode>
       </node>
-      <node id="91">
+      <node id="93">
         <label>common_synapse_properties.h</label>
         <link refid="common__synapse__properties_8h"/>
         <childnode refid="4" relation="include">
         </childnode>
         <childnode refid="58" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="40" relation="include">
         </childnode>
         <childnode refid="32" relation="include">
+        </childnode>
+      </node>
+      <node id="54">
+        <label>lockptr.h</label>
+        <link refid="lockptr_8h"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="51" relation="include">
         </childnode>
       </node>
       <node id="58">
@@ -634,19 +647,19 @@
         </childnode>
         <childnode refid="44" relation="include">
         </childnode>
-        <childnode refid="12" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="45" relation="include">
         </childnode>
-        <childnode refid="8" relation="include">
+        <childnode refid="11" relation="include">
         </childnode>
         <childnode refid="47" relation="include">
         </childnode>
         <childnode refid="48" relation="include">
         </childnode>
-        <childnode refid="14" relation="include">
+        <childnode refid="16" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="49" relation="include">
         </childnode>
@@ -655,35 +668,36 @@
         <childnode refid="32" relation="include">
         </childnode>
       </node>
-      <node id="117">
+      <node id="118">
         <label>random_manager.h</label>
         <link refid="random__manager_8h"/>
-        <childnode refid="23" relation="include">
+        <childnode refid="7" relation="include">
         </childnode>
         <childnode refid="3" relation="include">
         </childnode>
-        <childnode refid="12" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="31" relation="include">
         </childnode>
         <childnode refid="32" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="69" relation="include">
         </childnode>
       </node>
+      <node id="10">
+        <label>enum_bitfield.h</label>
+        <link refid="enum__bitfield_8h"/>
+      </node>
       <node id="47">
         <label>histentry.h</label>
         <link refid="histentry_8h"/>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
       </node>
       <node id="71">
         <label>random</label>
-      </node>
-      <node id="57">
-        <label>logging.h</label>
       </node>
       <node id="77">
         <label>slimodule.h</label>
@@ -693,11 +707,11 @@
         <link refid="parameter_8h"/>
         <childnode refid="5" relation="include">
         </childnode>
-        <childnode refid="18" relation="include">
+        <childnode refid="9" relation="include">
         </childnode>
         <childnode refid="48" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="60" relation="include">
         </childnode>
@@ -717,12 +731,6 @@
       <node id="41">
         <label>bitset</label>
       </node>
-      <node id="101">
-        <label>block_vector.h</label>
-      </node>
-      <node id="54">
-        <label>lockptr.h</label>
-      </node>
       <node id="67">
         <label>token.h</label>
       </node>
@@ -732,37 +740,53 @@
       <node id="80">
         <label>nest_timeconverter.h</label>
         <link refid="nest__timeconverter_8h"/>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
       </node>
-      <node id="97">
+      <node id="99">
         <label>unistd.h</label>
       </node>
       <node id="27">
         <label>spike_data.h</label>
         <link refid="spike__data_8h"/>
-        <childnode refid="10" relation="include">
+        <childnode refid="8" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="28" relation="include">
         </childnode>
       </node>
-      <node id="12">
+      <node id="14">
         <label>vector</label>
       </node>
       <node id="75">
         <label>sharedptrdatum.h</label>
       </node>
+      <node id="91">
+        <label>block_vector.h</label>
+        <link refid="block__vector_8h"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="63" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+      </node>
       <node id="37">
         <label>new</label>
       </node>
-      <node id="99">
+      <node id="101">
         <label>target_data.h</label>
         <link refid="target__data_8h"/>
-        <childnode refid="18" relation="include">
+        <childnode refid="9" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="29" relation="include">
         </childnode>
@@ -774,25 +798,25 @@
         <link refid="kernel__manager_8h"/>
         <childnode refid="84" relation="include">
         </childnode>
-        <childnode refid="104" relation="include">
-        </childnode>
         <childnode refid="105" relation="include">
         </childnode>
-        <childnode refid="111" relation="include">
-        </childnode>
-        <childnode refid="2" relation="include">
+        <childnode refid="106" relation="include">
         </childnode>
         <childnode refid="112" relation="include">
         </childnode>
-        <childnode refid="96" relation="include">
+        <childnode refid="2" relation="include">
         </childnode>
-        <childnode refid="114" relation="include">
+        <childnode refid="113" relation="include">
+        </childnode>
+        <childnode refid="98" relation="include">
         </childnode>
         <childnode refid="115" relation="include">
         </childnode>
-        <childnode refid="117" relation="include">
+        <childnode refid="116" relation="include">
         </childnode>
         <childnode refid="118" relation="include">
+        </childnode>
+        <childnode refid="119" relation="include">
         </childnode>
         <childnode refid="120" relation="include">
         </childnode>
@@ -813,61 +837,58 @@
       <node id="76">
         <label>slifunction.h</label>
       </node>
-      <node id="109">
+      <node id="110">
         <label>device.h</label>
         <link refid="device_8h"/>
-        <childnode refid="14" relation="include">
+        <childnode refid="16" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="40" relation="include">
         </childnode>
         <childnode refid="32" relation="include">
         </childnode>
       </node>
-      <node id="7">
-        <label>enum_bitfield.h</label>
-      </node>
       <node id="73">
         <label>randutils.hpp</label>
       </node>
-      <node id="16">
+      <node id="18">
         <label>cstdlib</label>
       </node>
-      <node id="118">
+      <node id="119">
         <label>simulation_manager.h</label>
         <link refid="simulation__manager_8h"/>
-        <childnode refid="119" relation="include">
+        <childnode refid="86" relation="include">
         </childnode>
-        <childnode refid="12" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="31" relation="include">
         </childnode>
         <childnode refid="85" relation="include">
         </childnode>
-        <childnode refid="14" relation="include">
+        <childnode refid="16" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="32" relation="include">
         </childnode>
       </node>
-      <node id="115">
+      <node id="116">
         <label>node_manager.h</label>
         <link refid="node__manager_8h"/>
-        <childnode refid="12" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="31" relation="include">
         </childnode>
         <childnode refid="85" relation="include">
         </childnode>
-        <childnode refid="86" relation="include">
+        <childnode refid="87" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="49" relation="include">
         </childnode>
-        <childnode refid="116" relation="include">
+        <childnode refid="117" relation="include">
         </childnode>
         <childnode refid="55" relation="include">
         </childnode>
@@ -877,25 +898,22 @@
       <node id="32">
         <label>dictdatum.h</label>
       </node>
-      <node id="119">
+      <node id="86">
         <label>sys/time.h</label>
       </node>
       <node id="31">
         <label>manager_interface.h</label>
         <link refid="manager__interface_8h"/>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="32" relation="include">
         </childnode>
       </node>
-      <node id="17">
+      <node id="19">
         <label>iostream</label>
       </node>
       <node id="25">
         <label>name.h</label>
-      </node>
-      <node id="6">
-        <label>numerics.h</label>
       </node>
       <node id="49">
         <label>node_collection.h</label>
@@ -908,33 +926,33 @@
         </childnode>
         <childnode refid="53" relation="include">
         </childnode>
-        <childnode refid="12" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="54" relation="include">
         </childnode>
-        <childnode refid="13" relation="include">
+        <childnode refid="15" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="55" relation="include">
         </childnode>
         <childnode refid="32" relation="include">
         </childnode>
       </node>
-      <node id="21">
+      <node id="22">
         <label>cstddef</label>
       </node>
       <node id="42">
         <label>deque</label>
       </node>
-      <node id="108">
+      <node id="109">
         <label>stimulation_device.h</label>
         <link refid="stimulation__device_8h"/>
-        <childnode refid="109" relation="include">
-        </childnode>
         <childnode refid="110" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="111" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="35" relation="include">
         </childnode>
@@ -943,39 +961,39 @@
         <childnode refid="3" relation="include">
         </childnode>
       </node>
-      <node id="102">
+      <node id="103">
         <label>target_table.h</label>
         <link refid="target__table_8h"/>
-        <childnode refid="10" relation="include">
+        <childnode refid="8" relation="include">
         </childnode>
-        <childnode refid="17" relation="include">
+        <childnode refid="19" relation="include">
         </childnode>
         <childnode refid="46" relation="include">
         </childnode>
-        <childnode refid="12" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="27" relation="include">
         </childnode>
         <childnode refid="28" relation="include">
         </childnode>
-        <childnode refid="99" relation="include">
+        <childnode refid="101" relation="include">
         </childnode>
       </node>
-      <node id="20">
+      <node id="21">
         <label>climits</label>
       </node>
-      <node id="112">
+      <node id="113">
         <label>modelrange_manager.h</label>
         <link refid="modelrange__manager_8h"/>
-        <childnode refid="12" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="31" relation="include">
         </childnode>
-        <childnode refid="113" relation="include">
+        <childnode refid="114" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
       </node>
       <node id="56">
@@ -983,15 +1001,15 @@
         <link refid="nest_8h"/>
         <childnode refid="52" relation="include">
         </childnode>
-        <childnode refid="7" relation="include">
+        <childnode refid="10" relation="include">
         </childnode>
         <childnode refid="57" relation="include">
         </childnode>
         <childnode refid="58" relation="include">
         </childnode>
-        <childnode refid="14" relation="include">
+        <childnode refid="16" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="55" relation="include">
         </childnode>
@@ -1005,7 +1023,7 @@
         </childnode>
         <childnode refid="3" relation="include">
         </childnode>
-        <childnode refid="12" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="39" relation="include">
         </childnode>
@@ -1017,12 +1035,12 @@
       <node id="26">
         <label>sliexceptions.h</label>
       </node>
-      <node id="111">
+      <node id="112">
         <label>logging_manager.h</label>
         <link refid="logging__manager_8h"/>
         <childnode refid="3" relation="include">
         </childnode>
-        <childnode refid="12" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="57" relation="include">
         </childnode>
@@ -1033,14 +1051,14 @@
         <childnode refid="48" relation="include">
         </childnode>
       </node>
-      <node id="87">
+      <node id="88">
         <label>conn_parameter.h</label>
         <link refid="conn__parameter_8h"/>
-        <childnode refid="18" relation="include">
+        <childnode refid="9" relation="include">
         </childnode>
-        <childnode refid="12" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
-        <childnode refid="13" relation="include">
+        <childnode refid="15" relation="include">
         </childnode>
         <childnode refid="58" relation="include">
         </childnode>
@@ -1049,55 +1067,52 @@
         <childnode refid="67" relation="include">
         </childnode>
       </node>
-      <node id="90">
-        <label>vector_util.h</label>
-      </node>
-      <node id="104">
+      <node id="105">
         <label>event_delivery_manager.h</label>
         <link refid="event__delivery__manager_8h"/>
-        <childnode refid="10" relation="include">
+        <childnode refid="8" relation="include">
         </childnode>
-        <childnode refid="18" relation="include">
+        <childnode refid="9" relation="include">
         </childnode>
-        <childnode refid="12" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="31" relation="include">
         </childnode>
         <childnode refid="85" relation="include">
         </childnode>
-        <childnode refid="8" relation="include">
+        <childnode refid="11" relation="include">
         </childnode>
-        <childnode refid="96" relation="include">
+        <childnode refid="98" relation="include">
         </childnode>
-        <childnode refid="14" relation="include">
+        <childnode refid="16" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="40" relation="include">
         </childnode>
-        <childnode refid="94" relation="include">
+        <childnode refid="96" relation="include">
         </childnode>
         <childnode refid="33" relation="include">
         </childnode>
         <childnode refid="27" relation="include">
         </childnode>
-        <childnode refid="102" relation="include">
+        <childnode refid="103" relation="include">
         </childnode>
         <childnode refid="30" relation="include">
         </childnode>
         <childnode refid="32" relation="include">
         </childnode>
       </node>
-      <node id="116">
+      <node id="117">
         <label>sparse_node_array.h</label>
         <link refid="sparse__node__array_8h"/>
-        <childnode refid="10" relation="include">
+        <childnode refid="8" relation="include">
         </childnode>
         <childnode refid="46" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
-        <childnode refid="101" relation="include">
+        <childnode refid="91" relation="include">
         </childnode>
       </node>
       <node id="121">
@@ -1106,10 +1121,18 @@
         <childnode refid="122" relation="include">
         </childnode>
       </node>
-      <node id="113">
+      <node id="114">
         <label>modelrange.h</label>
         <link refid="modelrange_8h"/>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
+        </childnode>
+      </node>
+      <node id="92">
+        <label>vector_util.h</label>
+        <link refid="vector__util_8h"/>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
         </childnode>
       </node>
       <node id="72">
@@ -1118,15 +1141,15 @@
       <node id="120">
         <label>sp_manager.h</label>
         <link refid="sp__manager_8h"/>
-        <childnode refid="12" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="31" relation="include">
         </childnode>
         <childnode refid="121" relation="include">
         </childnode>
-        <childnode refid="14" relation="include">
+        <childnode refid="16" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="49" relation="include">
         </childnode>
@@ -1140,21 +1163,21 @@
       <node id="34">
         <label>set</label>
       </node>
-      <node id="23">
+      <node id="7">
         <label>config.h</label>
       </node>
-      <node id="86">
+      <node id="87">
         <label>conn_builder.h</label>
         <link refid="conn__builder_8h"/>
         <childnode refid="46" relation="include">
         </childnode>
         <childnode refid="34" relation="include">
         </childnode>
-        <childnode refid="12" relation="include">
-        </childnode>
-        <childnode refid="87" relation="include">
-        </childnode>
         <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="88" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
         </childnode>
         <childnode refid="49" relation="include">
         </childnode>
@@ -1165,44 +1188,41 @@
         <childnode refid="26" relation="include">
         </childnode>
       </node>
-      <node id="9">
+      <node id="12">
         <label>algorithm</label>
       </node>
-      <node id="96">
+      <node id="98">
         <label>mpi_manager.h</label>
         <link refid="mpi__manager_8h"/>
-        <childnode refid="23" relation="include">
+        <childnode refid="7" relation="include">
         </childnode>
-        <childnode refid="97" relation="include">
+        <childnode refid="99" relation="include">
         </childnode>
-        <childnode refid="10" relation="include">
+        <childnode refid="8" relation="include">
         </childnode>
         <childnode refid="5" relation="include">
         </childnode>
-        <childnode refid="17" relation="include">
+        <childnode refid="19" relation="include">
         </childnode>
-        <childnode refid="18" relation="include">
+        <childnode refid="9" relation="include">
         </childnode>
-        <childnode refid="98" relation="include">
+        <childnode refid="100" relation="include">
         </childnode>
-        <childnode refid="12" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="31" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="27" relation="include">
         </childnode>
-        <childnode refid="99" relation="include">
+        <childnode refid="101" relation="include">
         </childnode>
         <childnode refid="32" relation="include">
         </childnode>
       </node>
-      <node id="11">
+      <node id="13">
         <label>cstring</label>
-      </node>
-      <node id="81">
-        <label>string_utils.h</label>
       </node>
       <node id="4">
         <label>connector_model.h</label>
@@ -1213,23 +1233,23 @@
         </childnode>
         <childnode refid="6" relation="include">
         </childnode>
-        <childnode refid="7" relation="include">
+        <childnode refid="10" relation="include">
         </childnode>
-        <childnode refid="8" relation="include">
+        <childnode refid="11" relation="include">
         </childnode>
-        <childnode refid="14" relation="include">
+        <childnode refid="16" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="33" relation="include">
         </childnode>
         <childnode refid="35" relation="include">
         </childnode>
       </node>
-      <node id="106">
+      <node id="107">
         <label>recording_backend.h</label>
         <link refid="recording__backend_8h"/>
-        <childnode refid="12" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="32" relation="include">
         </childnode>
@@ -1239,21 +1259,61 @@
       <node id="51">
         <label>memory</label>
       </node>
-      <node id="93">
+      <node id="95">
         <label>spikecounter.h</label>
         <link refid="spikecounter_8h"/>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
       </node>
       <node id="70">
         <label>initializer_list</label>
       </node>
+      <node id="57">
+        <label>logging.h</label>
+        <link refid="logging_8h"/>
+      </node>
+      <node id="6">
+        <label>numerics.h</label>
+        <link refid="numerics_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
       <node id="66">
         <label>compose.hpp</label>
       </node>
+      <node id="90">
+        <label>sort.h</label>
+        <link refid="sort_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="91" relation="include">
+        </childnode>
+      </node>
+      <node id="85">
+        <label>stopwatch.h</label>
+        <link refid="stopwatch_8h"/>
+        <childnode refid="86" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+      </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="2">
+      <node id="3">
         <label>model_manager.cpp</label>
         <link refid="model__manager_8cpp"/>
       </node>
@@ -1266,12 +1326,18 @@
         </childnode>
         <childnode refid="4" relation="include">
         </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
       </node>
-      <node id="4">
+      <node id="5">
         <label>node_manager.cpp</label>
         <link refid="node__manager_8cpp"/>
       </node>
-      <node id="3">
+      <node id="2">
+        <label>modelsmodule.cpp</label>
+        <link refid="modelsmodule_8cpp"/>
+      </node>
+      <node id="4">
         <label>nestmodule.cpp</label>
         <link refid="nestmodule_8cpp"/>
       </node>
@@ -1311,7 +1377,7 @@
 <codeline lineno="27"><highlight class="normal"></highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Includes<sp/>from<sp/>libnestutil:</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="29"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;compose.hpp&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="30"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;string_utils.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="string__utils_8h" kindref="compound">string_utils.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="31"><highlight class="normal"></highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Includes<sp/>from<sp/>nestkernel:</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="connection__label_8h" kindref="compound">connection_label.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
@@ -1325,48 +1391,48 @@
 <codeline lineno="41"><highlight class="normal"></highlight></codeline>
 <codeline lineno="42"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;<sp/></highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>ModelT<sp/>&gt;</highlight></codeline>
 <codeline lineno="43"><highlight class="normal"><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref></highlight></codeline>
-<codeline lineno="44" refid="classnest_1_1_model_manager_1aed100533c2c7f259d03d9d10e10308cb" refkind="member"><highlight class="normal"><ref refid="classnest_1_1_model_manager_1aed100533c2c7f259d03d9d10e10308cb" kindref="member">ModelManager::register_node_model</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Name&amp;<sp/>name,<sp/>std::string<sp/>deprecation_info<sp/>)</highlight></codeline>
+<codeline lineno="44" refid="classnest_1_1ModelManager_1aed100533c2c7f259d03d9d10e10308cb" refkind="member"><highlight class="normal"><ref refid="classnest_1_1ModelManager_1aed100533c2c7f259d03d9d10e10308cb" kindref="member">ModelManager::register_node_model</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Name&amp;<sp/>name,<sp/>std::string<sp/>deprecation_info<sp/>)</highlight></codeline>
 <codeline lineno="45"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="46"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>modeldict_-&gt;known(<sp/>name<sp/>)<sp/>)</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/><ref refid="classnest_1_1ModelManager_1a0f4652a7c93f5e8b9c36c05d54aa1be1" kindref="member">modeldict_</ref>-&gt;known(<sp/>name<sp/>)<sp/>)</highlight></codeline>
 <codeline lineno="47"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
 <codeline lineno="48"><highlight class="normal"><sp/><sp/><sp/><sp/>std::string<sp/>msg<sp/>=<sp/>String::compose(<sp/></highlight><highlight class="stringliteral">&quot;A<sp/>model<sp/>called<sp/>&apos;%1&apos;<sp/>already<sp/>exists.<sp/>Please<sp/>choose<sp/>a<sp/>different<sp/>name!&quot;</highlight><highlight class="normal">,<sp/>name<sp/>);</highlight></codeline>
 <codeline lineno="49"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>NamingConflict(<sp/>msg<sp/>);</highlight></codeline>
 <codeline lineno="50"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
 <codeline lineno="51"><highlight class="normal"></highlight></codeline>
-<codeline lineno="52"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1_model" kindref="compound">Model</ref>*<sp/><ref refid="namespacenest_1_1names_1ab13a9c81386468eaede1c9c5c189cdd3" kindref="member">model</ref><sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_generic_model" kindref="compound">GenericModel&lt; ModelT &gt;</ref>(<sp/>name.toString(),<sp/>deprecation_info<sp/>);</highlight></codeline>
-<codeline lineno="53"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>register_node_model_(<sp/><ref refid="namespacenest_1_1names_1ab13a9c81386468eaede1c9c5c189cdd3" kindref="member">model</ref><sp/>);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1Model" kindref="compound">Model</ref>*<sp/><ref refid="namespacenest_1_1names_1ab13a9c81386468eaede1c9c5c189cdd3" kindref="member">model</ref><sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1GenericModel" kindref="compound">GenericModel&lt; ModelT &gt;</ref>(<sp/>name.toString(),<sp/>deprecation_info<sp/>);</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1ModelManager_1aa9dd5b9db696ebef3355e4e31e184735" kindref="member">register_node_model_</ref>(<sp/><ref refid="namespacenest_1_1names_1ab13a9c81386468eaede1c9c5c189cdd3" kindref="member">model</ref><sp/>);</highlight></codeline>
 <codeline lineno="54"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="55"><highlight class="normal"></highlight></codeline>
 <codeline lineno="56"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;<sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>target</highlight><highlight class="keywordtype">id</highlight><highlight class="normal">entifierT<sp/>&gt;<sp/></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal">ConnectionT<sp/>&gt;</highlight></codeline>
 <codeline lineno="57"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="58" refid="classnest_1_1_model_manager_1a865e88345ba93ab2e578d4a315aaf2ad" refkind="member"><highlight class="normal"><ref refid="classnest_1_1_model_manager_1a865e88345ba93ab2e578d4a315aaf2ad" kindref="member">ModelManager::register_connection_model</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>name<sp/>)</highlight></codeline>
+<codeline lineno="58" refid="classnest_1_1ModelManager_1a865e88345ba93ab2e578d4a315aaf2ad" refkind="member"><highlight class="normal"><ref refid="classnest_1_1ModelManager_1a865e88345ba93ab2e578d4a315aaf2ad" kindref="member">ModelManager::register_connection_model</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string&amp;<sp/>name<sp/>)</highlight></codeline>
 <codeline lineno="59"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="60"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>register<sp/>normal<sp/>version<sp/>of<sp/>the<sp/>synapse</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="61"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1_connector_model" kindref="compound">ConnectorModel</ref>*<sp/>cf<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_generic_connector_model" kindref="compound">GenericConnectorModel&lt; ConnectionT&lt; TargetIdentifierPtrRport &gt;</ref><sp/>&gt;(<sp/>name<sp/>);</highlight></codeline>
-<codeline lineno="62"><highlight class="normal"><sp/><sp/>register_connection_model_(<sp/>cf<sp/>);</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1ConnectorModel" kindref="compound">ConnectorModel</ref>*<sp/>cf<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1GenericConnectorModel" kindref="compound">GenericConnectorModel&lt; ConnectionT&lt; TargetIdentifierPtrRport &gt;</ref><sp/>&gt;(<sp/>name<sp/>);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1ModelManager_1aa8a2fe6be154cbb0768bf71942387520" kindref="member">register_connection_model_</ref>(<sp/>cf<sp/>);</highlight></codeline>
 <codeline lineno="63"><highlight class="normal"></highlight></codeline>
 <codeline lineno="64"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>register<sp/>the<sp/>&quot;hpc&quot;<sp/>version<sp/>with<sp/>the<sp/>same<sp/>parameters<sp/>but<sp/>a<sp/>different<sp/>target<sp/>identifier</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="65"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>cf-&gt;<ref refid="classnest_1_1_connector_model_1a2ff68f3ae1070d6ea7970693fca7c511" kindref="member">has_property</ref>(<sp/><ref refid="namespacenest_1ada520c3662d2209c7209c5cc7dfae9a4a2cef5e26942eae3db952a091588257be" kindref="member">ConnectionModelProperties::SUPPORTS_HPC</ref><sp/>)<sp/>)</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>cf-&gt;<ref refid="classnest_1_1ConnectorModel_1a2ff68f3ae1070d6ea7970693fca7c511" kindref="member">has_property</ref>(<sp/><ref refid="namespacenest_1ada520c3662d2209c7209c5cc7dfae9a4a2cef5e26942eae3db952a091588257be" kindref="member">ConnectionModelProperties::SUPPORTS_HPC</ref><sp/>)<sp/>)</highlight></codeline>
 <codeline lineno="66"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
-<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/>cf<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_generic_connector_model" kindref="compound">GenericConnectorModel&lt; ConnectionT&lt; TargetIdentifierIndex &gt;</ref><sp/>&gt;(<sp/>name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;_hpc&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
-<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/>register_connection_model_(<sp/>cf<sp/>);</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/>cf<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1GenericConnectorModel" kindref="compound">GenericConnectorModel&lt; ConnectionT&lt; TargetIdentifierIndex &gt;</ref><sp/>&gt;(<sp/>name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;_hpc&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classnest_1_1ModelManager_1aa8a2fe6be154cbb0768bf71942387520" kindref="member">register_connection_model_</ref>(<sp/>cf<sp/>);</highlight></codeline>
 <codeline lineno="69"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
 <codeline lineno="70"><highlight class="normal"></highlight></codeline>
 <codeline lineno="71"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>register<sp/>the<sp/>&quot;lbl&quot;<sp/>(labeled)<sp/>version<sp/>with<sp/>the<sp/>same<sp/>parameters<sp/>but<sp/>a<sp/>different<sp/>connection<sp/>type</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="72"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>cf-&gt;<ref refid="classnest_1_1_connector_model_1a2ff68f3ae1070d6ea7970693fca7c511" kindref="member">has_property</ref>(<sp/><ref refid="namespacenest_1ada520c3662d2209c7209c5cc7dfae9a4a1a187e7f68d67927bf19b8ec3cb409de" kindref="member">ConnectionModelProperties::SUPPORTS_LBL</ref><sp/>)<sp/>)</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>cf-&gt;<ref refid="classnest_1_1ConnectorModel_1a2ff68f3ae1070d6ea7970693fca7c511" kindref="member">has_property</ref>(<sp/><ref refid="namespacenest_1ada520c3662d2209c7209c5cc7dfae9a4a1a187e7f68d67927bf19b8ec3cb409de" kindref="member">ConnectionModelProperties::SUPPORTS_LBL</ref><sp/>)<sp/>)</highlight></codeline>
 <codeline lineno="73"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
-<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/>cf<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_generic_connector_model" kindref="compound">GenericConnectorModel&lt; ConnectionLabel&lt; ConnectionT&lt; TargetIdentifierPtrRport &gt;</ref><sp/>&gt;<sp/>&gt;(<sp/>name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;_lbl&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
-<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/>register_connection_model_(<sp/>cf<sp/>);</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/>cf<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1GenericConnectorModel" kindref="compound">GenericConnectorModel&lt; ConnectionLabel&lt; ConnectionT&lt; TargetIdentifierPtrRport &gt;</ref><sp/>&gt;<sp/>&gt;(<sp/>name<sp/>+<sp/></highlight><highlight class="stringliteral">&quot;_lbl&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classnest_1_1ModelManager_1aa8a2fe6be154cbb0768bf71942387520" kindref="member">register_connection_model_</ref>(<sp/>cf<sp/>);</highlight></codeline>
 <codeline lineno="76"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
 <codeline lineno="77"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="78"><highlight class="normal"></highlight></codeline>
-<codeline lineno="79"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_node" kindref="compound">Node</ref>*</highlight></codeline>
-<codeline lineno="80" refid="classnest_1_1_model_manager_1acc955f7172e28dd05d2d0496ecdf2423" refkind="member"><highlight class="normal"><ref refid="classnest_1_1_model_manager_1acc955f7172e28dd05d2d0496ecdf2423" kindref="member">ModelManager::get_proxy_node</ref>(<sp/><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref><sp/>tid,<sp/><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref><sp/>node_id<sp/>)</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1Node" kindref="compound">Node</ref>*</highlight></codeline>
+<codeline lineno="80" refid="classnest_1_1ModelManager_1acc955f7172e28dd05d2d0496ecdf2423" refkind="member"><highlight class="normal"><ref refid="classnest_1_1ModelManager_1acc955f7172e28dd05d2d0496ecdf2423" kindref="member">ModelManager::get_proxy_node</ref>(<sp/><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref><sp/>tid,<sp/><ref refid="namespacenest_1a48ce49a10a37dfb7f5243583ff1d4b85" kindref="member">index</ref><sp/>node_id<sp/>)</highlight></codeline>
 <codeline lineno="81"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="82"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="namespacenest_1_1names_1ab7414ebe7026db2392fb2cc8e6d0e885" kindref="member">model_id</ref><sp/>=<sp/><ref refid="namespacenest_1a235f64c89ddf8992424ea32a13149a3e" kindref="member">kernel</ref>().<ref refid="classnest_1_1_kernel_manager_1a81f62008f5752675d486a9d91ef05831" kindref="member">modelrange_manager</ref>.<ref refid="classnest_1_1_model_range_manager_1ad5380cf3321b38433a364b9dc87daaf7" kindref="member">get_model_id</ref>(<sp/>node_id<sp/>);</highlight></codeline>
-<codeline lineno="83"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1_node" kindref="compound">Node</ref>*<sp/>proxy<sp/>=<sp/>proxy_nodes_[<sp/>tid<sp/>].at(<sp/><ref refid="namespacenest_1_1names_1ab7414ebe7026db2392fb2cc8e6d0e885" kindref="member">model_id</ref><sp/>);</highlight></codeline>
-<codeline lineno="84"><highlight class="normal"><sp/><sp/>proxy-&gt;set_node_id_(<sp/>node_id<sp/>);</highlight></codeline>
-<codeline lineno="85"><highlight class="normal"><sp/><sp/>proxy-&gt;<ref refid="classnest_1_1_node_1a219e882ed608cca39c88b4863b037fbe" kindref="member">set_vp</ref>(<sp/><ref refid="namespacenest_1a235f64c89ddf8992424ea32a13149a3e" kindref="member">kernel</ref>().vp_manager.node_id_to_vp(<sp/>node_id<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/><ref refid="namespacenest_1_1names_1ab7414ebe7026db2392fb2cc8e6d0e885" kindref="member">model_id</ref><sp/>=<sp/><ref refid="namespacenest_1a235f64c89ddf8992424ea32a13149a3e" kindref="member">kernel</ref>().<ref refid="classnest_1_1KernelManager_1a81f62008f5752675d486a9d91ef05831" kindref="member">modelrange_manager</ref>.<ref refid="classnest_1_1ModelRangeManager_1ad5380cf3321b38433a364b9dc87daaf7" kindref="member">get_model_id</ref>(<sp/>node_id<sp/>);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1Node" kindref="compound">Node</ref>*<sp/>proxy<sp/>=<sp/><ref refid="classnest_1_1ModelManager_1aa255aec6ce5e727f30ad863c0a6854cf" kindref="member">proxy_nodes_</ref>[<sp/>tid<sp/>].at(<sp/><ref refid="namespacenest_1_1names_1ab7414ebe7026db2392fb2cc8e6d0e885" kindref="member">model_id</ref><sp/>);</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/>proxy-&gt;<ref refid="classnest_1_1Node_1a07451d06b3d812eae961d61397f5826c" kindref="member">set_node_id_</ref>(<sp/>node_id<sp/>);</highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/>proxy-&gt;<ref refid="classnest_1_1Node_1a219e882ed608cca39c88b4863b037fbe" kindref="member">set_vp</ref>(<sp/><ref refid="namespacenest_1a235f64c89ddf8992424ea32a13149a3e" kindref="member">kernel</ref>().vp_manager.node_id_to_vp(<sp/>node_id<sp/>)<sp/>);</highlight></codeline>
 <codeline lineno="86"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>proxy;</highlight></codeline>
 <codeline lineno="87"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="88"><highlight class="normal"></highlight></codeline>
@@ -1374,6 +1440,6 @@
 <codeline lineno="90"><highlight class="normal"></highlight></codeline>
 <codeline lineno="91"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>#ifndef<sp/>MODEL_MANAGER_IMPL_H<sp/>*/</highlight><highlight class="preprocessor"></highlight></codeline>
     </programlisting>
-    <location file="nestkernel/model_manager_impl.h"/>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/model_manager_impl.h"/>
   </compounddef>
 </doxygen>

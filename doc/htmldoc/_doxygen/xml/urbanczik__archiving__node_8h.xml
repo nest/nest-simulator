@@ -208,6 +208,16 @@
         <label>static_assert.h</label>
         <link refid="static__assert_8h"/>
       </node>
+      <node id="45">
+        <label>lockptr.h</label>
+        <link refid="lockptr_8h"/>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="42" relation="include">
+        </childnode>
+      </node>
       <node id="21">
         <label>node.h</label>
         <link refid="node_8h"/>
@@ -267,9 +277,6 @@
       <node id="22">
         <label>bitset</label>
       </node>
-      <node id="45">
-        <label>lockptr.h</label>
-      </node>
       <node id="41">
         <label>ctime</label>
       </node>
@@ -311,9 +318,6 @@
       </node>
       <node id="31">
         <label>name.h</label>
-      </node>
-      <node id="20">
-        <label>numerics.h</label>
       </node>
       <node id="40">
         <label>node_collection.h</label>
@@ -386,6 +390,18 @@
       <node id="42">
         <label>memory</label>
       </node>
+      <node id="20">
+        <label>numerics.h</label>
+        <link refid="numerics_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
     </incdepgraph>
     <invincdepgraph>
       <node id="1">
@@ -399,7 +415,7 @@
         <link refid="urbanczik__archiving__node__impl_8h"/>
       </node>
     </invincdepgraph>
-    <innerclass refid="classnest_1_1_urbanczik_archiving_node" prot="public">nest::UrbanczikArchivingNode</innerclass>
+    <innerclass refid="classnest_1_1UrbanczikArchivingNode" prot="public">nest::UrbanczikArchivingNode</innerclass>
     <innernamespace refid="namespacenest">nest</innernamespace>
     <briefdescription>
     </briefdescription>
@@ -448,79 +464,79 @@
 <codeline lineno="40"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="41"><highlight class="normal"></highlight></codeline>
 <codeline lineno="47"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;<sp/></highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>urbanczik_parameters<sp/>&gt;</highlight></codeline>
-<codeline lineno="48" refid="classnest_1_1_urbanczik_archiving_node" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classnest_1_1_urbanczik_archiving_node" kindref="compound">UrbanczikArchivingNode</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_archiving_node" kindref="compound">ArchivingNode</ref></highlight></codeline>
+<codeline lineno="48" refid="classnest_1_1UrbanczikArchivingNode" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classnest_1_1UrbanczikArchivingNode" kindref="compound">UrbanczikArchivingNode</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1ArchivingNode" kindref="compound">ArchivingNode</ref></highlight></codeline>
 <codeline lineno="49"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="50"><highlight class="normal"></highlight></codeline>
 <codeline lineno="51"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
-<codeline lineno="56"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1_urbanczik_archiving_node_1ab6dc28c65cf1735eb4f65e6e320c3e87" kindref="member">UrbanczikArchivingNode</ref>();</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1UrbanczikArchivingNode_1ab6dc28c65cf1735eb4f65e6e320c3e87" kindref="member">UrbanczikArchivingNode</ref>();</highlight></codeline>
 <codeline lineno="57"><highlight class="normal"></highlight></codeline>
-<codeline lineno="62"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1_urbanczik_archiving_node_1ab6dc28c65cf1735eb4f65e6e320c3e87" kindref="member">UrbanczikArchivingNode</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_urbanczik_archiving_node" kindref="compound">UrbanczikArchivingNode</ref>&amp;<sp/>);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1UrbanczikArchivingNode_1ab6dc28c65cf1735eb4f65e6e320c3e87" kindref="member">UrbanczikArchivingNode</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1UrbanczikArchivingNode" kindref="compound">UrbanczikArchivingNode</ref>&amp;<sp/>);</highlight></codeline>
 <codeline lineno="63"><highlight class="normal"></highlight></codeline>
 <codeline lineno="64"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="65" refid="classnest_1_1_urbanczik_archiving_node_1a8a0be565a145216772b9ff61e127a994" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1_urbanczik_archiving_node_1a8a0be565a145216772b9ff61e127a994" kindref="member">supports_urbanczik_archiving</ref>()</highlight><highlight class="keyword"><sp/>const<sp/>override</highlight></codeline>
+<codeline lineno="65" refid="classnest_1_1UrbanczikArchivingNode_1a8a0be565a145216772b9ff61e127a994" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1UrbanczikArchivingNode_1a8a0be565a145216772b9ff61e127a994" kindref="member">supports_urbanczik_archiving</ref>()</highlight><highlight class="keyword"><sp/>const<sp/>override</highlight></codeline>
 <codeline lineno="66"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
 <codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="68"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
 <codeline lineno="69"><highlight class="normal"></highlight></codeline>
-<codeline lineno="77"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_urbanczik_archiving_node_1ab72d9cc564354859a35ae98f30e2cd34" kindref="member">get_urbanczik_history</ref>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>t1,</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1UrbanczikArchivingNode_1ab72d9cc564354859a35ae98f30e2cd34" kindref="member">get_urbanczik_history</ref>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>t1,</highlight></codeline>
 <codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>t2,</highlight></codeline>
 <codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>std::deque&lt;<sp/>histentry_extended<sp/>&gt;::iterator*<sp/><ref refid="namespacenest_1_1names_1aa93a7f7f8ccafde2e02d7e1cf97e8882" kindref="member">start</ref>,</highlight></codeline>
 <codeline lineno="80"><highlight class="normal"><sp/><sp/><sp/><sp/>std::deque&lt;<sp/>histentry_extended<sp/>&gt;::iterator*<sp/>finish,</highlight></codeline>
 <codeline lineno="81"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>comp<sp/>)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="82"><highlight class="normal"></highlight></codeline>
-<codeline lineno="87"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_urbanczik_archiving_node_1a7618181ca45950065860e955e7b6ac31" kindref="member">get_C_m</ref>(<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>comp<sp/>)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1UrbanczikArchivingNode_1a7618181ca45950065860e955e7b6ac31" kindref="member">get_C_m</ref>(<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>comp<sp/>)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="88"><highlight class="normal"></highlight></codeline>
-<codeline lineno="93"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_urbanczik_archiving_node_1af41824545b22c03f316faa364f4dfd92" kindref="member">get_g_L</ref>(<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>comp<sp/>)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1UrbanczikArchivingNode_1af41824545b22c03f316faa364f4dfd92" kindref="member">get_g_L</ref>(<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>comp<sp/>)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="94"><highlight class="normal"></highlight></codeline>
-<codeline lineno="99"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_urbanczik_archiving_node_1a39f4f0955f070e6f831d60c63b2ef705" kindref="member">get_tau_L</ref>(<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>comp<sp/>)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1UrbanczikArchivingNode_1a39f4f0955f070e6f831d60c63b2ef705" kindref="member">get_tau_L</ref>(<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>comp<sp/>)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="100"><highlight class="normal"></highlight></codeline>
-<codeline lineno="105"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_urbanczik_archiving_node_1a11e5cdcec6cfeaf5580e404b851149df" kindref="member">get_tau_syn_ex</ref>(<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>comp<sp/>)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="105"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1UrbanczikArchivingNode_1a11e5cdcec6cfeaf5580e404b851149df" kindref="member">get_tau_syn_ex</ref>(<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>comp<sp/>)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="106"><highlight class="normal"></highlight></codeline>
-<codeline lineno="111"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_urbanczik_archiving_node_1a4fcf80407a6f7514f2b249fe800d274f" kindref="member">get_tau_syn_in</ref>(<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>comp<sp/>)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="111"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1UrbanczikArchivingNode_1a4fcf80407a6f7514f2b249fe800d274f" kindref="member">get_tau_syn_in</ref>(<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>comp<sp/>)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="112"><highlight class="normal"></highlight></codeline>
 <codeline lineno="113"><highlight class="normal"></highlight><highlight class="keyword">protected</highlight><highlight class="normal">:</highlight></codeline>
-<codeline lineno="118"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_urbanczik_archiving_node_1ad2fed632f5c245f9f4b509738256e1a2" kindref="member">write_urbanczik_history</ref>(<sp/><ref refid="classnest_1_1_time" kindref="compound">Time</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>t_sp,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>V_W,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n_spikes,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>comp<sp/>);</highlight></codeline>
+<codeline lineno="118"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1UrbanczikArchivingNode_1ad2fed632f5c245f9f4b509738256e1a2" kindref="member">write_urbanczik_history</ref>(<sp/><ref refid="classnest_1_1Time" kindref="compound">Time</ref><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal">&amp;<sp/>t_sp,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>V_W,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>n_spikes,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>comp<sp/>);</highlight></codeline>
 <codeline lineno="119"><highlight class="normal"></highlight></codeline>
-<codeline lineno="120" refid="classnest_1_1_urbanczik_archiving_node_1ac090f24ccecb1789ddfd3ef6842ebb5e" refkind="member"><highlight class="normal"><sp/><sp/>urbanczik_parameters*<sp/><ref refid="classnest_1_1_urbanczik_archiving_node_1ac090f24ccecb1789ddfd3ef6842ebb5e" kindref="member">urbanczik_params</ref>;</highlight></codeline>
+<codeline lineno="120" refid="classnest_1_1UrbanczikArchivingNode_1ac090f24ccecb1789ddfd3ef6842ebb5e" refkind="member"><highlight class="normal"><sp/><sp/>urbanczik_parameters*<sp/><ref refid="classnest_1_1UrbanczikArchivingNode_1ac090f24ccecb1789ddfd3ef6842ebb5e" kindref="member">urbanczik_params</ref>;</highlight></codeline>
 <codeline lineno="121"><highlight class="normal"></highlight></codeline>
-<codeline lineno="122"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_urbanczik_archiving_node_1a54cac2900fc5fc3d7b66568de52d8fda" kindref="member">get_status</ref>(<sp/>DictionaryDatum&amp;<sp/><ref refid="namespacenest_1_1names_1a8881fb5c6cc400d4eb90a2035d9a2df5" kindref="member">d</ref><sp/>)<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="123"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_urbanczik_archiving_node_1a1b118e0208155781e44cbb9ccdb91a87" kindref="member">set_status</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>DictionaryDatum&amp;<sp/><ref refid="namespacenest_1_1names_1a8881fb5c6cc400d4eb90a2035d9a2df5" kindref="member">d</ref><sp/>)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="122"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1UrbanczikArchivingNode_1a54cac2900fc5fc3d7b66568de52d8fda" kindref="member">get_status</ref>(<sp/>DictionaryDatum&amp;<sp/><ref refid="namespacenest_1_1names_1a8881fb5c6cc400d4eb90a2035d9a2df5" kindref="member">d</ref><sp/>)<sp/></highlight><highlight class="keyword">const<sp/>override</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1UrbanczikArchivingNode_1a1b118e0208155781e44cbb9ccdb91a87" kindref="member">set_status</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>DictionaryDatum&amp;<sp/><ref refid="namespacenest_1_1names_1a8881fb5c6cc400d4eb90a2035d9a2df5" kindref="member">d</ref><sp/>)<sp/></highlight><highlight class="keyword">override</highlight><highlight class="normal">;</highlight></codeline>
 <codeline lineno="124"><highlight class="normal"></highlight></codeline>
 <codeline lineno="125"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
-<codeline lineno="126"><highlight class="normal"><sp/><sp/>std::deque&lt;<sp/>histentry_extended<sp/>&gt;<sp/>urbanczik_history_[<sp/>urbanczik_parameters::NCOMP<sp/>-<sp/>1<sp/>];</highlight></codeline>
+<codeline lineno="126" refid="classnest_1_1UrbanczikArchivingNode_1a296c250e3a4aa74b6f17eab91bb83ad0" refkind="member"><highlight class="normal"><sp/><sp/>std::deque&lt;<sp/>histentry_extended<sp/>&gt;<sp/><ref refid="classnest_1_1UrbanczikArchivingNode_1a296c250e3a4aa74b6f17eab91bb83ad0" kindref="member">urbanczik_history_</ref>[<sp/>urbanczik_parameters::NCOMP<sp/>-<sp/>1<sp/>];</highlight></codeline>
 <codeline lineno="127"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="128"><highlight class="normal"></highlight></codeline>
 <codeline lineno="129"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;<sp/></highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>urbanczik_parameters<sp/>&gt;</highlight></codeline>
 <codeline lineno="130"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="131" refid="classnest_1_1_urbanczik_archiving_node_1a7618181ca45950065860e955e7b6ac31" refkind="member"><highlight class="normal"><ref refid="classnest_1_1_urbanczik_archiving_node_1a7618181ca45950065860e955e7b6ac31" kindref="member">UrbanczikArchivingNode&lt; urbanczik_parameters &gt;::get_C_m</ref>(<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>comp<sp/>)</highlight></codeline>
+<codeline lineno="131" refid="classnest_1_1UrbanczikArchivingNode_1a7618181ca45950065860e955e7b6ac31" refkind="member"><highlight class="normal"><ref refid="classnest_1_1UrbanczikArchivingNode_1a7618181ca45950065860e955e7b6ac31" kindref="member">UrbanczikArchivingNode&lt; urbanczik_parameters &gt;::get_C_m</ref>(<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>comp<sp/>)</highlight></codeline>
 <codeline lineno="132"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="133"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>urbanczik_params-&gt;C_m[<sp/>comp<sp/>];</highlight></codeline>
 <codeline lineno="134"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="135"><highlight class="normal"></highlight></codeline>
 <codeline lineno="136"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;<sp/></highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>urbanczik_parameters<sp/>&gt;</highlight></codeline>
 <codeline lineno="137"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="138" refid="classnest_1_1_urbanczik_archiving_node_1af41824545b22c03f316faa364f4dfd92" refkind="member"><highlight class="normal"><ref refid="classnest_1_1_urbanczik_archiving_node_1af41824545b22c03f316faa364f4dfd92" kindref="member">UrbanczikArchivingNode&lt; urbanczik_parameters &gt;::get_g_L</ref>(<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>comp<sp/>)</highlight></codeline>
+<codeline lineno="138" refid="classnest_1_1UrbanczikArchivingNode_1af41824545b22c03f316faa364f4dfd92" refkind="member"><highlight class="normal"><ref refid="classnest_1_1UrbanczikArchivingNode_1af41824545b22c03f316faa364f4dfd92" kindref="member">UrbanczikArchivingNode&lt; urbanczik_parameters &gt;::get_g_L</ref>(<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>comp<sp/>)</highlight></codeline>
 <codeline lineno="139"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="140"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>urbanczik_params-&gt;g_L[<sp/>comp<sp/>];</highlight></codeline>
 <codeline lineno="141"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="142"><highlight class="normal"></highlight></codeline>
 <codeline lineno="143"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;<sp/></highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>urbanczik_parameters<sp/>&gt;</highlight></codeline>
 <codeline lineno="144"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="145" refid="classnest_1_1_urbanczik_archiving_node_1a39f4f0955f070e6f831d60c63b2ef705" refkind="member"><highlight class="normal"><ref refid="classnest_1_1_urbanczik_archiving_node_1a39f4f0955f070e6f831d60c63b2ef705" kindref="member">UrbanczikArchivingNode&lt; urbanczik_parameters &gt;::get_tau_L</ref>(<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>comp<sp/>)</highlight></codeline>
+<codeline lineno="145" refid="classnest_1_1UrbanczikArchivingNode_1a39f4f0955f070e6f831d60c63b2ef705" refkind="member"><highlight class="normal"><ref refid="classnest_1_1UrbanczikArchivingNode_1a39f4f0955f070e6f831d60c63b2ef705" kindref="member">UrbanczikArchivingNode&lt; urbanczik_parameters &gt;::get_tau_L</ref>(<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>comp<sp/>)</highlight></codeline>
 <codeline lineno="146"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="147"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>urbanczik_params-&gt;C_m[<sp/>comp<sp/>]<sp/>/<sp/>urbanczik_params-&gt;g_L[<sp/>comp<sp/>];</highlight></codeline>
 <codeline lineno="148"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="149"><highlight class="normal"></highlight></codeline>
 <codeline lineno="150"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;<sp/></highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>urbanczik_parameters<sp/>&gt;</highlight></codeline>
 <codeline lineno="151"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="152" refid="classnest_1_1_urbanczik_archiving_node_1a11e5cdcec6cfeaf5580e404b851149df" refkind="member"><highlight class="normal"><ref refid="classnest_1_1_urbanczik_archiving_node_1a11e5cdcec6cfeaf5580e404b851149df" kindref="member">UrbanczikArchivingNode&lt; urbanczik_parameters &gt;::get_tau_syn_ex</ref>(<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>comp<sp/>)</highlight></codeline>
+<codeline lineno="152" refid="classnest_1_1UrbanczikArchivingNode_1a11e5cdcec6cfeaf5580e404b851149df" refkind="member"><highlight class="normal"><ref refid="classnest_1_1UrbanczikArchivingNode_1a11e5cdcec6cfeaf5580e404b851149df" kindref="member">UrbanczikArchivingNode&lt; urbanczik_parameters &gt;::get_tau_syn_ex</ref>(<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>comp<sp/>)</highlight></codeline>
 <codeline lineno="153"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="154"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>urbanczik_params-&gt;tau_syn_ex[<sp/>comp<sp/>];</highlight></codeline>
 <codeline lineno="155"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="156"><highlight class="normal"></highlight></codeline>
 <codeline lineno="157"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;<sp/></highlight><highlight class="keyword">class</highlight><highlight class="normal"><sp/>urbanczik_parameters<sp/>&gt;</highlight></codeline>
 <codeline lineno="158"><highlight class="normal"></highlight><highlight class="keyword">inline</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="159" refid="classnest_1_1_urbanczik_archiving_node_1a4fcf80407a6f7514f2b249fe800d274f" refkind="member"><highlight class="normal"><ref refid="classnest_1_1_urbanczik_archiving_node_1a4fcf80407a6f7514f2b249fe800d274f" kindref="member">UrbanczikArchivingNode&lt; urbanczik_parameters &gt;::get_tau_syn_in</ref>(<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>comp<sp/>)</highlight></codeline>
+<codeline lineno="159" refid="classnest_1_1UrbanczikArchivingNode_1a4fcf80407a6f7514f2b249fe800d274f" refkind="member"><highlight class="normal"><ref refid="classnest_1_1UrbanczikArchivingNode_1a4fcf80407a6f7514f2b249fe800d274f" kindref="member">UrbanczikArchivingNode&lt; urbanczik_parameters &gt;::get_tau_syn_in</ref>(<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>comp<sp/>)</highlight></codeline>
 <codeline lineno="160"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="161"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>urbanczik_params-&gt;tau_syn_in[<sp/>comp<sp/>];</highlight></codeline>
 <codeline lineno="162"><highlight class="normal">}</highlight></codeline>
@@ -528,6 +544,6 @@
 <codeline lineno="164"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>of<sp/>namespace</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="165"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
     </programlisting>
-    <location file="nestkernel/urbanczik_archiving_node.h"/>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/urbanczik_archiving_node.h"/>
   </compounddef>
 </doxygen>

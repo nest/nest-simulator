@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="nestkernel/spikecounter.h" line="50" column="10" bodyfile="nestkernel/spikecounter.h" bodystart="50" bodyend="-1"/>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/spikecounter.h" line="50" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/spikecounter.h" bodystart="50" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classnest_1_1spikecounter_1af5f959c635d24403b07f2a32e3d9b76e" prot="public" static="no" mutable="no">
         <type>double</type>
@@ -28,7 +28,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="nestkernel/spikecounter.h" line="51" column="10" bodyfile="nestkernel/spikecounter.h" bodystart="51" bodyend="-1"/>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/spikecounter.h" line="51" column="10" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/spikecounter.h" bodystart="51" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -51,7 +51,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="nestkernel/spikecounter.h" line="48" column="3" bodyfile="nestkernel/spikecounter.cpp" bodystart="35" bodyend="39"/>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/spikecounter.h" line="48" column="3" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/spikecounter.cpp" bodystart="35" bodyend="39"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -64,7 +64,7 @@
         <link refid="classnest_1_1spikecounter"/>
       </node>
     </collaborationgraph>
-    <location file="nestkernel/spikecounter.h" line="45" column="1" bodyfile="nestkernel/spikecounter.h" bodystart="46" bodyend="52"/>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/spikecounter.h" line="45" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/nestkernel/spikecounter.h" bodystart="46" bodyend="52"/>
     <listofallmembers>
       <member refid="classnest_1_1spikecounter_1af5f959c635d24403b07f2a32e3d9b76e" prot="public" virt="non-virtual"><scope>nest::spikecounter</scope><name>multiplicity_</name></member>
       <member refid="classnest_1_1spikecounter_1a20bf785de1423521f000f42549c714df" prot="public" virt="non-virtual"><scope>nest::spikecounter</scope><name>spike_time_</name></member>

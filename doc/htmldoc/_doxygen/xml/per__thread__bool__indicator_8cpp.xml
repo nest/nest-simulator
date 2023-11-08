@@ -123,35 +123,35 @@
 <codeline lineno="25"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacenest" kindref="compound">nest</ref></highlight></codeline>
 <codeline lineno="26"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight></codeline>
-<codeline lineno="28"><highlight class="normal"><ref refid="classnest_1_1_bool_indicator_u_int64_1ab18d470534499b820155a9e2c25c74fd" kindref="member">BoolIndicatorUInt64::BoolIndicatorUInt64</ref>()</highlight></codeline>
+<codeline lineno="28" refid="classnest_1_1BoolIndicatorUInt64_1ab18d470534499b820155a9e2c25c74fd" refkind="member"><highlight class="normal"><ref refid="classnest_1_1BoolIndicatorUInt64_1ab18d470534499b820155a9e2c25c74fd" kindref="member">BoolIndicatorUInt64::BoolIndicatorUInt64</ref>()</highlight></codeline>
 <codeline lineno="29"><highlight class="normal"><sp/><sp/>:<sp/>status_(<sp/>false_uint64<sp/>)</highlight></codeline>
 <codeline lineno="30"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="31"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight></codeline>
-<codeline lineno="33"><highlight class="normal">BoolIndicatorUInt64::BoolIndicatorUInt64(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>status<sp/>)</highlight></codeline>
+<codeline lineno="33" refid="classnest_1_1BoolIndicatorUInt64_1acfb2ce9dcf97aa0d96ef2e9f391b639b" refkind="member"><highlight class="normal"><ref refid="classnest_1_1BoolIndicatorUInt64_1ab18d470534499b820155a9e2c25c74fd" kindref="member">BoolIndicatorUInt64::BoolIndicatorUInt64</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>status<sp/>)</highlight></codeline>
 <codeline lineno="34"><highlight class="normal"><sp/><sp/>:<sp/>status_(<sp/>status<sp/>)</highlight></codeline>
 <codeline lineno="35"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="36"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
-<codeline lineno="38"><highlight class="normal">BoolIndicatorUInt64&amp;</highlight></codeline>
-<codeline lineno="39"><highlight class="normal">PerThreadBoolIndicator::operator[](<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref><sp/>tid<sp/>)</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"><ref refid="classnest_1_1BoolIndicatorUInt64" kindref="compound">BoolIndicatorUInt64</ref>&amp;</highlight></codeline>
+<codeline lineno="39" refid="classnest_1_1PerThreadBoolIndicator_1ae386c728d606f3042d954cdfdbf7f95a" refkind="member"><highlight class="normal"><ref refid="classnest_1_1PerThreadBoolIndicator_1ae386c728d606f3042d954cdfdbf7f95a" kindref="member">PerThreadBoolIndicator::operator[]</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref><sp/>tid<sp/>)</highlight></codeline>
 <codeline lineno="40"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="41"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>per_thread_status_[<sp/>tid<sp/>];</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1PerThreadBoolIndicator_1a204aad3ab75954658aead2f9a1b0d365" kindref="member">per_thread_status_</ref>[<sp/>tid<sp/>];</highlight></codeline>
 <codeline lineno="42"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="43"><highlight class="normal"></highlight></codeline>
 <codeline lineno="44"><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="45"><highlight class="normal">PerThreadBoolIndicator::initialize(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref><sp/>num_threads,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>status<sp/>)</highlight></codeline>
+<codeline lineno="45" refid="classnest_1_1PerThreadBoolIndicator_1af3248add18f6f2bf30ed61999b7df6e4" refkind="member"><highlight class="normal"><ref refid="classnest_1_1PerThreadBoolIndicator_1af3248add18f6f2bf30ed61999b7df6e4" kindref="member">PerThreadBoolIndicator::initialize</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="namespacenest_1ab32ecb34347794894e38197ccec56813" kindref="member">thread</ref><sp/>num_threads,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>status<sp/>)</highlight></codeline>
 <codeline lineno="46"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="47"><highlight class="normal"><sp/><sp/>VPManager::assert_single_threaded();</highlight></codeline>
-<codeline lineno="48"><highlight class="normal"><sp/><sp/>per_thread_status_.clear();</highlight></codeline>
-<codeline lineno="49"><highlight class="normal"><sp/><sp/>per_thread_status_.resize(<sp/>num_threads,<sp/>BoolIndicatorUInt64(<sp/>status<sp/>)<sp/>);</highlight></codeline>
+<codeline lineno="47"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1VPManager_1afbe0b686ed8bd6ee420e58cb17fa8272" kindref="member">VPManager::assert_single_threaded</ref>();</highlight></codeline>
+<codeline lineno="48"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1PerThreadBoolIndicator_1a204aad3ab75954658aead2f9a1b0d365" kindref="member">per_thread_status_</ref>.clear();</highlight></codeline>
+<codeline lineno="49"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1PerThreadBoolIndicator_1a204aad3ab75954658aead2f9a1b0d365" kindref="member">per_thread_status_</ref>.resize(<sp/>num_threads,<sp/><ref refid="classnest_1_1BoolIndicatorUInt64" kindref="compound">BoolIndicatorUInt64</ref>(<sp/>status<sp/>)<sp/>);</highlight></codeline>
 <codeline lineno="50"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="51"><highlight class="normal"></highlight></codeline>
 <codeline lineno="52"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="53"><highlight class="normal">PerThreadBoolIndicator::all_false()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="53" refid="classnest_1_1PerThreadBoolIndicator_1a0e975f123d63eb9c8e174b7b41ebc68f" refkind="member"><highlight class="normal"><ref refid="classnest_1_1PerThreadBoolIndicator_1a0e975f123d63eb9c8e174b7b41ebc68f" kindref="member">PerThreadBoolIndicator::all_false</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
 <codeline lineno="54"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
 <codeline lineno="55"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>omp<sp/>barrier</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="56"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(<sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>it<sp/>=<sp/>per_thread_status_.begin();<sp/>it<sp/>&lt;<sp/>per_thread_status_.end();<sp/>++it<sp/>)</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(<sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>it<sp/>=<sp/><ref refid="classnest_1_1PerThreadBoolIndicator_1a204aad3ab75954658aead2f9a1b0d365" kindref="member">per_thread_status_</ref>.begin();<sp/>it<sp/>&lt;<sp/><ref refid="classnest_1_1PerThreadBoolIndicator_1a204aad3ab75954658aead2f9a1b0d365" kindref="member">per_thread_status_</ref>.end();<sp/>++it<sp/>)</highlight></codeline>
 <codeline lineno="57"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
 <codeline lineno="58"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>it-&gt;is_true()<sp/>)</highlight></codeline>
 <codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
@@ -162,10 +162,10 @@
 <codeline lineno="64"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="65"><highlight class="normal"></highlight></codeline>
 <codeline lineno="66"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="67"><highlight class="normal">PerThreadBoolIndicator::all_true()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="67" refid="classnest_1_1PerThreadBoolIndicator_1a51720790d232c4b113e553d36186738b" refkind="member"><highlight class="normal"><ref refid="classnest_1_1PerThreadBoolIndicator_1a51720790d232c4b113e553d36186738b" kindref="member">PerThreadBoolIndicator::all_true</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
 <codeline lineno="68"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
 <codeline lineno="69"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>omp<sp/>barrier</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="70"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(<sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>it<sp/>=<sp/>per_thread_status_.begin();<sp/>it<sp/>&lt;<sp/>per_thread_status_.end();<sp/>++it<sp/>)</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(<sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>it<sp/>=<sp/><ref refid="classnest_1_1PerThreadBoolIndicator_1a204aad3ab75954658aead2f9a1b0d365" kindref="member">per_thread_status_</ref>.begin();<sp/>it<sp/>&lt;<sp/><ref refid="classnest_1_1PerThreadBoolIndicator_1a204aad3ab75954658aead2f9a1b0d365" kindref="member">per_thread_status_</ref>.end();<sp/>++it<sp/>)</highlight></codeline>
 <codeline lineno="71"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
 <codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>it-&gt;is_false()<sp/>)</highlight></codeline>
 <codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
@@ -176,10 +176,10 @@
 <codeline lineno="78"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="79"><highlight class="normal"></highlight></codeline>
 <codeline lineno="80"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="81"><highlight class="normal">PerThreadBoolIndicator::any_false()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="81" refid="classnest_1_1PerThreadBoolIndicator_1af0caf6edf9e59e7e93ad0447d0366cf2" refkind="member"><highlight class="normal"><ref refid="classnest_1_1PerThreadBoolIndicator_1af0caf6edf9e59e7e93ad0447d0366cf2" kindref="member">PerThreadBoolIndicator::any_false</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
 <codeline lineno="82"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
 <codeline lineno="83"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>omp<sp/>barrier</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="84"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(<sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>it<sp/>=<sp/>per_thread_status_.begin();<sp/>it<sp/>&lt;<sp/>per_thread_status_.end();<sp/>++it<sp/>)</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(<sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>it<sp/>=<sp/><ref refid="classnest_1_1PerThreadBoolIndicator_1a204aad3ab75954658aead2f9a1b0d365" kindref="member">per_thread_status_</ref>.begin();<sp/>it<sp/>&lt;<sp/><ref refid="classnest_1_1PerThreadBoolIndicator_1a204aad3ab75954658aead2f9a1b0d365" kindref="member">per_thread_status_</ref>.end();<sp/>++it<sp/>)</highlight></codeline>
 <codeline lineno="85"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
 <codeline lineno="86"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>it-&gt;is_false()<sp/>)</highlight></codeline>
 <codeline lineno="87"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
@@ -190,10 +190,10 @@
 <codeline lineno="92"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="93"><highlight class="normal"></highlight></codeline>
 <codeline lineno="94"><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="95"><highlight class="normal">PerThreadBoolIndicator::any_true()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="95" refid="classnest_1_1PerThreadBoolIndicator_1a8b6a0dd8c2787811ad8f721064d25f14" refkind="member"><highlight class="normal"><ref refid="classnest_1_1PerThreadBoolIndicator_1a8b6a0dd8c2787811ad8f721064d25f14" kindref="member">PerThreadBoolIndicator::any_true</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
 <codeline lineno="96"><highlight class="keyword"></highlight><highlight class="normal">{</highlight></codeline>
 <codeline lineno="97"><highlight class="normal"></highlight><highlight class="preprocessor">#pragma<sp/>omp<sp/>barrier</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="98"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(<sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>it<sp/>=<sp/>per_thread_status_.begin();<sp/>it<sp/>&lt;<sp/>per_thread_status_.end();<sp/>++it<sp/>)</highlight></codeline>
+<codeline lineno="98"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(<sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>it<sp/>=<sp/><ref refid="classnest_1_1PerThreadBoolIndicator_1a204aad3ab75954658aead2f9a1b0d365" kindref="member">per_thread_status_</ref>.begin();<sp/>it<sp/>&lt;<sp/><ref refid="classnest_1_1PerThreadBoolIndicator_1a204aad3ab75954658aead2f9a1b0d365" kindref="member">per_thread_status_</ref>.end();<sp/>++it<sp/>)</highlight></codeline>
 <codeline lineno="99"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
 <codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>it-&gt;is_true()<sp/>)</highlight></codeline>
 <codeline lineno="101"><highlight class="normal"><sp/><sp/><sp/><sp/>{</highlight></codeline>
@@ -205,6 +205,6 @@
 <codeline lineno="107"><highlight class="normal"></highlight></codeline>
 <codeline lineno="108"><highlight class="normal">}<sp/></highlight><highlight class="comment">/*<sp/>namespace<sp/>nest<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="nestkernel/per_thread_bool_indicator.cpp"/>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/per_thread_bool_indicator.cpp"/>
   </compounddef>
 </doxygen>

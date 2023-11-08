@@ -3,8 +3,10 @@
   <compounddef id="common__properties__hom__w_8h" kind="file" language="C++">
     <compoundname>common_properties_hom_w.h</compoundname>
     <includes refid="common__synapse__properties_8h" local="yes">common_synapse_properties.h</includes>
+    <includedby refid="static__synapse__hom__w_8h" local="yes">static_synapse_hom_w.h</includedby>
+    <includedby refid="tsodyks__synapse__hom_8h" local="yes">tsodyks_synapse_hom.h</includedby>
     <incdepgraph>
-      <node id="18">
+      <node id="9">
         <label>limits</label>
       </node>
       <node id="42">
@@ -16,7 +18,7 @@
         </childnode>
         <childnode refid="45" relation="include">
         </childnode>
-        <childnode refid="12" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="46" relation="include">
         </childnode>
@@ -43,20 +45,20 @@
       <node id="38">
         <label>arraydatum.h</label>
       </node>
-      <node id="19">
+      <node id="20">
         <label>nest_types.h</label>
         <link refid="nest__types_8h"/>
-        <childnode refid="15" relation="include">
-        </childnode>
-        <childnode refid="20" relation="include">
+        <childnode refid="17" relation="include">
         </childnode>
         <childnode refid="21" relation="include">
         </childnode>
-        <childnode refid="18" relation="include">
-        </childnode>
         <childnode refid="22" relation="include">
         </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
         <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
         </childnode>
         <childnode refid="24" relation="include">
         </childnode>
@@ -64,13 +66,13 @@
       <node id="24">
         <label>cstdint</label>
       </node>
-      <node id="22">
+      <node id="23">
         <label>stdint.h</label>
       </node>
       <node id="52">
         <label>nest_names.h</label>
         <link refid="nest__names_8h"/>
-        <childnode refid="23" relation="include">
+        <childnode refid="7" relation="include">
         </childnode>
         <childnode refid="25" relation="include">
         </childnode>
@@ -78,7 +80,7 @@
       <node id="72">
         <label>deprecation_warning.h</label>
         <link refid="deprecation__warning_8h"/>
-        <childnode refid="17" relation="include">
+        <childnode refid="19" relation="include">
         </childnode>
         <childnode refid="41" relation="include">
         </childnode>
@@ -88,22 +90,22 @@
       <node id="35">
         <label>dictutils.h</label>
       </node>
-      <node id="8">
+      <node id="11">
         <label>event.h</label>
         <link refid="event_8h"/>
-        <childnode refid="9" relation="include">
-        </childnode>
-        <childnode refid="10" relation="include">
-        </childnode>
-        <childnode refid="11" relation="include">
-        </childnode>
         <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
         </childnode>
         <childnode refid="13" relation="include">
         </childnode>
         <childnode refid="14" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="27" relation="include">
         </childnode>
@@ -117,7 +119,7 @@
         <link refid="vp__manager_8h"/>
         <childnode refid="31" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="32" relation="include">
         </childnode>
@@ -125,21 +127,21 @@
       <node id="4">
         <label>cmath</label>
       </node>
-      <node id="10">
+      <node id="8">
         <label>cassert</label>
       </node>
       <node id="46">
         <label>position.h</label>
         <link refid="position_8h"/>
-        <childnode refid="9" relation="include">
+        <childnode refid="12" relation="include">
         </childnode>
         <childnode refid="47" relation="include">
         </childnode>
-        <childnode refid="10" relation="include">
+        <childnode refid="8" relation="include">
         </childnode>
         <childnode refid="4" relation="include">
         </childnode>
-        <childnode refid="17" relation="include">
+        <childnode refid="19" relation="include">
         </childnode>
         <childnode refid="48" relation="include">
         </childnode>
@@ -147,13 +149,13 @@
         </childnode>
         <childnode refid="45" relation="include">
         </childnode>
-        <childnode refid="12" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="49" relation="include">
         </childnode>
-        <childnode refid="13" relation="include">
+        <childnode refid="15" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="50" relation="include">
         </childnode>
@@ -161,10 +163,10 @@
       <node id="57">
         <label>stdexcept</label>
       </node>
-      <node id="13">
+      <node id="15">
         <label>exceptions.h</label>
         <link refid="exceptions_8h"/>
-        <childnode refid="14" relation="include">
+        <childnode refid="16" relation="include">
         </childnode>
         <childnode refid="25" relation="include">
         </childnode>
@@ -182,31 +184,31 @@
         <link refid="generic__factory_8h"/>
         <childnode refid="41" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="32" relation="include">
         </childnode>
       </node>
-      <node id="14">
+      <node id="16">
         <label>nest_time.h</label>
         <link refid="nest__time_8h"/>
-        <childnode refid="10" relation="include">
-        </childnode>
-        <childnode refid="15" relation="include">
-        </childnode>
-        <childnode refid="4" relation="include">
-        </childnode>
-        <childnode refid="16" relation="include">
+        <childnode refid="8" relation="include">
         </childnode>
         <childnode refid="17" relation="include">
         </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
         <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
         </childnode>
         <childnode refid="5" relation="include">
         </childnode>
         <childnode refid="6" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
       </node>
       <node id="69">
@@ -223,17 +225,17 @@
         <childnode refid="35" relation="include">
         </childnode>
       </node>
-      <node id="15">
+      <node id="17">
         <label>cfloat</label>
       </node>
       <node id="28">
         <label>target.h</label>
         <link refid="target_8h"/>
-        <childnode refid="10" relation="include">
+        <childnode refid="8" relation="include">
         </childnode>
-        <childnode refid="13" relation="include">
+        <childnode refid="15" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="29" relation="include">
         </childnode>
@@ -244,9 +246,9 @@
       <node id="39">
         <label>nestmodule.h</label>
         <link refid="nestmodule_8h"/>
-        <childnode refid="8" relation="include">
+        <childnode refid="11" relation="include">
         </childnode>
-        <childnode refid="13" relation="include">
+        <childnode refid="15" relation="include">
         </childnode>
         <childnode refid="40" relation="include">
         </childnode>
@@ -274,6 +276,16 @@
       <node id="68">
         <label>slitype.h</label>
       </node>
+      <node id="58">
+        <label>lockptr.h</label>
+        <link refid="lockptr_8h"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+      </node>
       <node id="2">
         <label>common_synapse_properties.h</label>
         <link refid="common__synapse__properties_8h"/>
@@ -281,7 +293,7 @@
         </childnode>
         <childnode refid="36" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="70" relation="include">
         </childnode>
@@ -317,19 +329,19 @@
         </childnode>
         <childnode refid="45" relation="include">
         </childnode>
-        <childnode refid="12" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="72" relation="include">
         </childnode>
-        <childnode refid="8" relation="include">
+        <childnode refid="11" relation="include">
         </childnode>
         <childnode refid="73" relation="include">
         </childnode>
         <childnode refid="52" relation="include">
         </childnode>
-        <childnode refid="14" relation="include">
+        <childnode refid="16" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="53" relation="include">
         </childnode>
@@ -338,10 +350,14 @@
         <childnode refid="32" relation="include">
         </childnode>
       </node>
+      <node id="10">
+        <label>enum_bitfield.h</label>
+        <link refid="enum__bitfield_8h"/>
+      </node>
       <node id="73">
         <label>histentry.h</label>
         <link refid="histentry_8h"/>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
       </node>
       <node id="61">
@@ -355,11 +371,11 @@
         <link refid="parameter_8h"/>
         <childnode refid="4" relation="include">
         </childnode>
-        <childnode refid="18" relation="include">
+        <childnode refid="9" relation="include">
         </childnode>
         <childnode refid="52" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="39" relation="include">
         </childnode>
@@ -379,9 +395,6 @@
       <node id="43">
         <label>bitset</label>
       </node>
-      <node id="58">
-        <label>lockptr.h</label>
-      </node>
       <node id="54">
         <label>ctime</label>
       </node>
@@ -391,14 +404,14 @@
       <node id="27">
         <label>spike_data.h</label>
         <link refid="spike__data_8h"/>
-        <childnode refid="10" relation="include">
+        <childnode refid="8" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="28" relation="include">
         </childnode>
       </node>
-      <node id="12">
+      <node id="14">
         <label>vector</label>
       </node>
       <node id="65">
@@ -422,13 +435,10 @@
       <node id="66">
         <label>slifunction.h</label>
       </node>
-      <node id="7">
-        <label>enum_bitfield.h</label>
-      </node>
       <node id="63">
         <label>randutils.hpp</label>
       </node>
-      <node id="16">
+      <node id="18">
         <label>cstdlib</label>
       </node>
       <node id="32">
@@ -437,19 +447,16 @@
       <node id="31">
         <label>manager_interface.h</label>
         <link refid="manager__interface_8h"/>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="32" relation="include">
         </childnode>
       </node>
-      <node id="17">
+      <node id="19">
         <label>iostream</label>
       </node>
       <node id="25">
         <label>name.h</label>
-      </node>
-      <node id="6">
-        <label>numerics.h</label>
       </node>
       <node id="53">
         <label>node_collection.h</label>
@@ -462,26 +469,26 @@
         </childnode>
         <childnode refid="57" relation="include">
         </childnode>
-        <childnode refid="12" relation="include">
+        <childnode refid="14" relation="include">
         </childnode>
         <childnode refid="58" relation="include">
         </childnode>
-        <childnode refid="13" relation="include">
+        <childnode refid="15" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="38" relation="include">
         </childnode>
         <childnode refid="32" relation="include">
         </childnode>
       </node>
-      <node id="21">
+      <node id="22">
         <label>cstddef</label>
       </node>
       <node id="71">
         <label>deque</label>
       </node>
-      <node id="20">
+      <node id="21">
         <label>climits</label>
       </node>
       <node id="26">
@@ -493,13 +500,13 @@
       <node id="34">
         <label>set</label>
       </node>
-      <node id="23">
+      <node id="7">
         <label>config.h</label>
       </node>
-      <node id="9">
+      <node id="12">
         <label>algorithm</label>
       </node>
-      <node id="11">
+      <node id="13">
         <label>cstring</label>
       </node>
       <node id="3">
@@ -511,13 +518,13 @@
         </childnode>
         <childnode refid="6" relation="include">
         </childnode>
-        <childnode refid="7" relation="include">
+        <childnode refid="10" relation="include">
         </childnode>
-        <childnode refid="8" relation="include">
+        <childnode refid="11" relation="include">
         </childnode>
-        <childnode refid="14" relation="include">
+        <childnode refid="16" relation="include">
         </childnode>
-        <childnode refid="19" relation="include">
+        <childnode refid="20" relation="include">
         </childnode>
         <childnode refid="33" relation="include">
         </childnode>
@@ -530,11 +537,55 @@
       <node id="60">
         <label>initializer_list</label>
       </node>
+      <node id="6">
+        <label>numerics.h</label>
+        <link refid="numerics_8h"/>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+      </node>
       <node id="49">
         <label>compose.hpp</label>
       </node>
     </incdepgraph>
-    <innerclass refid="classnest_1_1_common_properties_hom_w" prot="public">nest::CommonPropertiesHomW</innerclass>
+    <invincdepgraph>
+      <node id="5">
+        <label>tsodyks_synapse_hom.cpp</label>
+        <link refid="tsodyks__synapse__hom_8cpp"/>
+      </node>
+      <node id="2">
+        <label>static_synapse_hom_w.h</label>
+        <link refid="static__synapse__hom__w_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>tsodyks_synapse_hom.h</label>
+        <link refid="tsodyks__synapse__hom_8h"/>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>common_properties_hom_w.h</label>
+        <link refid="common__properties__hom__w_8h"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>modelsmodule.cpp</label>
+        <link refid="modelsmodule_8cpp"/>
+      </node>
+    </invincdepgraph>
+    <innerclass refid="classnest_1_1CommonPropertiesHomW" prot="public">nest::CommonPropertiesHomW</innerclass>
     <innernamespace refid="namespacenest">nest</innernamespace>
     <briefdescription>
     </briefdescription>
@@ -572,44 +623,44 @@
 <codeline lineno="42"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacenest" kindref="compound">nest</ref></highlight></codeline>
 <codeline lineno="43"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="44"><highlight class="normal"></highlight></codeline>
-<codeline lineno="48" refid="classnest_1_1_common_properties_hom_w" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classnest_1_1_common_properties_hom_w" kindref="compound">CommonPropertiesHomW</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_common_synapse_properties" kindref="compound">CommonSynapseProperties</ref></highlight></codeline>
+<codeline lineno="48" refid="classnest_1_1CommonPropertiesHomW" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classnest_1_1CommonPropertiesHomW" kindref="compound">CommonPropertiesHomW</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1CommonSynapseProperties" kindref="compound">CommonSynapseProperties</ref></highlight></codeline>
 <codeline lineno="49"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="50"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
-<codeline lineno="55" refid="classnest_1_1_common_properties_hom_w_1a6e9b46eaf3177de6de3510c080e11aa4" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1_common_properties_hom_w_1a6e9b46eaf3177de6de3510c080e11aa4" kindref="member">CommonPropertiesHomW</ref>()</highlight></codeline>
-<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>:<sp/><ref refid="classnest_1_1_common_synapse_properties" kindref="compound">CommonSynapseProperties</ref>()</highlight></codeline>
-<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/>weight_(<sp/>1.0<sp/>)</highlight></codeline>
+<codeline lineno="55" refid="classnest_1_1CommonPropertiesHomW_1a6e9b46eaf3177de6de3510c080e11aa4" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1CommonPropertiesHomW_1a6e9b46eaf3177de6de3510c080e11aa4" kindref="member">CommonPropertiesHomW</ref>()</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/>:<sp/><ref refid="classnest_1_1CommonSynapseProperties" kindref="compound">CommonSynapseProperties</ref>()</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/><sp/><sp/>,<sp/><ref refid="classnest_1_1CommonPropertiesHomW_1a73a2767ca0d3aa68adac899c9834cf5c" kindref="member">weight_</ref>(<sp/>1.0<sp/>)</highlight></codeline>
 <codeline lineno="58"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
 <codeline lineno="59"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
 <codeline lineno="60"><highlight class="normal"></highlight></codeline>
 <codeline lineno="64"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="65" refid="classnest_1_1_common_properties_hom_w_1a75f9173f8537ef00c7f4f4c82fd3ff9d" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1_common_properties_hom_w_1a75f9173f8537ef00c7f4f4c82fd3ff9d" kindref="member">get_status</ref>(<sp/>DictionaryDatum&amp;<sp/><ref refid="namespacenest_1_1names_1a8881fb5c6cc400d4eb90a2035d9a2df5" kindref="member">d</ref><sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="65" refid="classnest_1_1CommonPropertiesHomW_1a75f9173f8537ef00c7f4f4c82fd3ff9d" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1CommonPropertiesHomW_1a75f9173f8537ef00c7f4f4c82fd3ff9d" kindref="member">get_status</ref>(<sp/>DictionaryDatum&amp;<sp/><ref refid="namespacenest_1_1names_1a8881fb5c6cc400d4eb90a2035d9a2df5" kindref="member">d</ref><sp/>)</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
 <codeline lineno="66"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classnest_1_1_common_synapse_properties_1abc283cd8b96c9fa1b3ba5f640a5d460e" kindref="member">CommonSynapseProperties::get_status</ref>(<sp/><ref refid="namespacenest_1_1names_1a8881fb5c6cc400d4eb90a2035d9a2df5" kindref="member">d</ref><sp/>);</highlight></codeline>
-<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/>def&lt;<sp/>double<sp/>&gt;(<sp/><ref refid="namespacenest_1_1names_1a8881fb5c6cc400d4eb90a2035d9a2df5" kindref="member">d</ref>,<sp/><ref refid="namespacenest_1_1names_1a89371cf52bd3967922c650c11858cf7d" kindref="member">names::weight</ref>,<sp/>weight_<sp/>);</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classnest_1_1CommonSynapseProperties_1abc283cd8b96c9fa1b3ba5f640a5d460e" kindref="member">CommonSynapseProperties::get_status</ref>(<sp/><ref refid="namespacenest_1_1names_1a8881fb5c6cc400d4eb90a2035d9a2df5" kindref="member">d</ref><sp/>);</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><sp/><sp/>def&lt;<sp/>double<sp/>&gt;(<sp/><ref refid="namespacenest_1_1names_1a8881fb5c6cc400d4eb90a2035d9a2df5" kindref="member">d</ref>,<sp/><ref refid="namespacenest_1_1names_1a89371cf52bd3967922c650c11858cf7d" kindref="member">names::weight</ref>,<sp/><ref refid="classnest_1_1CommonPropertiesHomW_1a73a2767ca0d3aa68adac899c9834cf5c" kindref="member">weight_</ref><sp/>);</highlight></codeline>
 <codeline lineno="69"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
 <codeline lineno="70"><highlight class="normal"></highlight></codeline>
 <codeline lineno="71"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="72" refid="classnest_1_1_common_properties_hom_w_1ade08eff55218001b37dd9d373ee37a62" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1_common_properties_hom_w_1ade08eff55218001b37dd9d373ee37a62" kindref="member">get_weight</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
+<codeline lineno="72" refid="classnest_1_1CommonPropertiesHomW_1ade08eff55218001b37dd9d373ee37a62" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1CommonPropertiesHomW_1ade08eff55218001b37dd9d373ee37a62" kindref="member">get_weight</ref>()</highlight><highlight class="keyword"><sp/>const</highlight></codeline>
 <codeline lineno="73"><highlight class="keyword"><sp/><sp/></highlight><highlight class="normal">{</highlight></codeline>
-<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>weight_;</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1CommonPropertiesHomW_1a73a2767ca0d3aa68adac899c9834cf5c" kindref="member">weight_</ref>;</highlight></codeline>
 <codeline lineno="75"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
 <codeline lineno="76"><highlight class="normal"></highlight></codeline>
 <codeline lineno="80"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="81" refid="classnest_1_1_common_properties_hom_w_1a3502a9a4e49fdcbb96c03e90145279a7" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1_common_properties_hom_w_1a3502a9a4e49fdcbb96c03e90145279a7" kindref="member">set_status</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>DictionaryDatum&amp;<sp/><ref refid="namespacenest_1_1names_1a8881fb5c6cc400d4eb90a2035d9a2df5" kindref="member">d</ref>,<sp/><ref refid="classnest_1_1_connector_model" kindref="compound">ConnectorModel</ref>&amp;<sp/>cm<sp/>)</highlight></codeline>
+<codeline lineno="81" refid="classnest_1_1CommonPropertiesHomW_1a3502a9a4e49fdcbb96c03e90145279a7" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1CommonPropertiesHomW_1a3502a9a4e49fdcbb96c03e90145279a7" kindref="member">set_status</ref>(<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>DictionaryDatum&amp;<sp/><ref refid="namespacenest_1_1names_1a8881fb5c6cc400d4eb90a2035d9a2df5" kindref="member">d</ref>,<sp/><ref refid="classnest_1_1ConnectorModel" kindref="compound">ConnectorModel</ref>&amp;<sp/>cm<sp/>)</highlight></codeline>
 <codeline lineno="82"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
-<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classnest_1_1_common_synapse_properties_1ad174f19b11d6751cd2dcb145b451db78" kindref="member">CommonSynapseProperties::set_status</ref>(<sp/><ref refid="namespacenest_1_1names_1a8881fb5c6cc400d4eb90a2035d9a2df5" kindref="member">d</ref>,<sp/>cm<sp/>);</highlight></codeline>
-<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/>updateValue&lt;<sp/>double<sp/>&gt;(<sp/><ref refid="namespacenest_1_1names_1a8881fb5c6cc400d4eb90a2035d9a2df5" kindref="member">d</ref>,<sp/><ref refid="namespacenest_1_1names_1a89371cf52bd3967922c650c11858cf7d" kindref="member">names::weight</ref>,<sp/>weight_<sp/>);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classnest_1_1CommonSynapseProperties_1ad174f19b11d6751cd2dcb145b451db78" kindref="member">CommonSynapseProperties::set_status</ref>(<sp/><ref refid="namespacenest_1_1names_1a8881fb5c6cc400d4eb90a2035d9a2df5" kindref="member">d</ref>,<sp/>cm<sp/>);</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/><sp/><sp/>updateValue&lt;<sp/>double<sp/>&gt;(<sp/><ref refid="namespacenest_1_1names_1a8881fb5c6cc400d4eb90a2035d9a2df5" kindref="member">d</ref>,<sp/><ref refid="namespacenest_1_1names_1a89371cf52bd3967922c650c11858cf7d" kindref="member">names::weight</ref>,<sp/><ref refid="classnest_1_1CommonPropertiesHomW_1a73a2767ca0d3aa68adac899c9834cf5c" kindref="member">weight_</ref><sp/>);</highlight></codeline>
 <codeline lineno="85"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
 <codeline lineno="86"><highlight class="normal"></highlight></codeline>
 <codeline lineno="87"><highlight class="normal"></highlight><highlight class="keyword">private</highlight><highlight class="normal">:</highlight></codeline>
 <codeline lineno="88"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>data<sp/>members<sp/>common<sp/>to<sp/>all<sp/>connections</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="89"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>weight_;</highlight></codeline>
+<codeline lineno="89" refid="classnest_1_1CommonPropertiesHomW_1a73a2767ca0d3aa68adac899c9834cf5c" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1CommonPropertiesHomW_1a73a2767ca0d3aa68adac899c9834cf5c" kindref="member">weight_</ref>;</highlight></codeline>
 <codeline lineno="90"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="91"><highlight class="normal"></highlight></codeline>
 <codeline lineno="92"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>nest</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="93"><highlight class="normal"></highlight></codeline>
 <codeline lineno="94"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//<sp/>COMMON_PROPERTIES_HOM_W_H</highlight><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="nestkernel/common_properties_hom_w.h"/>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/common_properties_hom_w.h"/>
   </compounddef>
 </doxygen>

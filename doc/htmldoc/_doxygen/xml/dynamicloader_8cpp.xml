@@ -67,7 +67,7 @@
 <codeline lineno="40"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;ltdl.h&gt;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="41"><highlight class="normal"></highlight></codeline>
 <codeline lineno="42"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Includes<sp/>from<sp/>libnestutil:</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="43"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;logging.h&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="logging_8h" kindref="compound">logging.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="44"><highlight class="normal"></highlight></codeline>
 <codeline lineno="45"><highlight class="normal"></highlight><highlight class="comment">//<sp/>Includes<sp/>from<sp/>nestkernel:</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="46"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="kernel__manager_8h" kindref="compound">kernel_manager.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
@@ -237,7 +237,7 @@
 <codeline lineno="222"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
 <codeline lineno="223"><highlight class="normal"><sp/><sp/><sp/><sp/>pModule-&gt;install(<sp/>std::cerr,<sp/>i<sp/>);</highlight></codeline>
 <codeline lineno="224"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
-<codeline lineno="225"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">catch</highlight><highlight class="normal"><sp/>(<sp/>std::exception&amp;<sp/>e<sp/>)</highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">catch</highlight><highlight class="normal"><sp/>(<sp/>std::exception&amp;<sp/><ref refid="namespacenumerics_1acd42d3be907c55f5a5eabeb4c595b976" kindref="member">e</ref><sp/>)</highlight></codeline>
 <codeline lineno="226"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
 <codeline lineno="227"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>We<sp/>should<sp/>uninstall<sp/>the<sp/>partially<sp/>installed<sp/>module<sp/>here,<sp/>but</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="228"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>this<sp/>must<sp/>wait<sp/>for<sp/>#152.</highlight><highlight class="normal"></highlight></codeline>
@@ -253,7 +253,7 @@
 <codeline lineno="238"><highlight class="normal"><sp/><sp/>new_module.pModule<sp/>=<sp/>pModule;</highlight></codeline>
 <codeline lineno="239"><highlight class="normal"><sp/><sp/>dyn_modules_.push_back(<sp/>new_module<sp/>);</highlight></codeline>
 <codeline lineno="240"><highlight class="normal"></highlight></codeline>
-<codeline lineno="241"><highlight class="normal"><sp/><sp/>LOG(<sp/>M_INFO,<sp/></highlight><highlight class="stringliteral">&quot;Install&quot;</highlight><highlight class="normal">,<sp/>(<sp/></highlight><highlight class="stringliteral">&quot;loaded<sp/>module<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>pModule-&gt;name()<sp/>).c_str()<sp/>);</highlight></codeline>
+<codeline lineno="241"><highlight class="normal"><sp/><sp/><ref refid="logging_8h_1a4fb9f400c7eade44c47bea4b934d580f" kindref="member">LOG</ref>(<sp/><ref refid="namespacenest_1a17a14d5aa7e8d94ec67eefc2b148eb72ac918263c6420db964adbf3a3375cf9ee" kindref="member">M_INFO</ref>,<sp/></highlight><highlight class="stringliteral">&quot;Install&quot;</highlight><highlight class="normal">,<sp/>(<sp/></highlight><highlight class="stringliteral">&quot;loaded<sp/>module<sp/>&quot;</highlight><highlight class="normal"><sp/>+<sp/>pModule-&gt;name()<sp/>).c_str()<sp/>);</highlight></codeline>
 <codeline lineno="242"><highlight class="normal"></highlight></codeline>
 <codeline lineno="243"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>remove<sp/>operand<sp/>and<sp/>operator<sp/>from<sp/>stack</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="244"><highlight class="normal"><sp/><sp/>i-&gt;OStack.pop();</highlight></codeline>
@@ -283,7 +283,7 @@
 <codeline lineno="268"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>the<sp/>ld_*<sp/>functions<sp/>return<sp/>0<sp/>on<sp/>success<sp/>and<sp/>an<sp/>int<sp/>&gt;<sp/>0<sp/>on<sp/>failure</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="269"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>lt_dlinit()<sp/>)</highlight></codeline>
 <codeline lineno="270"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
-<codeline lineno="271"><highlight class="normal"><sp/><sp/><sp/><sp/>LOG(<sp/>M_ERROR,<sp/></highlight><highlight class="stringliteral">&quot;DynamicLoaderModule::init&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;Could<sp/>not<sp/>initialize<sp/>libltdl.<sp/>No<sp/>dynamic<sp/>modules<sp/>will<sp/>be<sp/>available.&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="271"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="logging_8h_1a4fb9f400c7eade44c47bea4b934d580f" kindref="member">LOG</ref>(<sp/><ref refid="namespacenest_1a17a14d5aa7e8d94ec67eefc2b148eb72adaf8dec0ca154ba4dd8045accef88b46" kindref="member">M_ERROR</ref>,<sp/></highlight><highlight class="stringliteral">&quot;DynamicLoaderModule::init&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;Could<sp/>not<sp/>initialize<sp/>libltdl.<sp/>No<sp/>dynamic<sp/>modules<sp/>will<sp/>be<sp/>available.&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
 <codeline lineno="272"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
 <codeline lineno="273"><highlight class="normal"></highlight></codeline>
 <codeline lineno="274"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>To<sp/>avoid<sp/>problems<sp/>due<sp/>to<sp/>string<sp/>substitution<sp/>in<sp/>NEST<sp/>binaries<sp/>during</highlight><highlight class="normal"></highlight></codeline>
@@ -292,7 +292,7 @@
 <codeline lineno="277"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::string<sp/>module_dir<sp/>=<sp/>std::string(<sp/>NEST_INSTALL_PREFIX<sp/>).c_str()<sp/>+<sp/>std::string(<sp/></highlight><highlight class="stringliteral">&quot;/&quot;</highlight><highlight class="normal"><sp/>NEST_INSTALL_LIBDIR<sp/>);</highlight></codeline>
 <codeline lineno="278"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<sp/>lt_dladdsearchdir(<sp/>module_dir.c_str()<sp/>)<sp/>)</highlight></codeline>
 <codeline lineno="279"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
-<codeline lineno="280"><highlight class="normal"><sp/><sp/><sp/><sp/>LOG(<sp/>M_ERROR,<sp/></highlight><highlight class="stringliteral">&quot;DynamicLoaderModule::init&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;Could<sp/>not<sp/>add<sp/>dynamic<sp/>module<sp/>search<sp/>directory.&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="280"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="logging_8h_1a4fb9f400c7eade44c47bea4b934d580f" kindref="member">LOG</ref>(<sp/><ref refid="namespacenest_1a17a14d5aa7e8d94ec67eefc2b148eb72adaf8dec0ca154ba4dd8045accef88b46" kindref="member">M_ERROR</ref>,<sp/></highlight><highlight class="stringliteral">&quot;DynamicLoaderModule::init&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;Could<sp/>not<sp/>add<sp/>dynamic<sp/>module<sp/>search<sp/>directory.&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
 <codeline lineno="281"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
 <codeline lineno="282"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="283"><highlight class="normal"></highlight></codeline>
@@ -311,8 +311,8 @@
 <codeline lineno="296"><highlight class="normal"></highlight></codeline>
 <codeline lineno="297"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(<sp/>vecLinkedModules::iterator<sp/>it<sp/>=<sp/>getLinkedModules().begin();<sp/>it<sp/>!=<sp/>getLinkedModules().end();<sp/>++it<sp/>)</highlight></codeline>
 <codeline lineno="298"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
-<codeline lineno="299"><highlight class="normal"><sp/><sp/><sp/><sp/>interpreter.message(<sp/>SLIInterpreter::M_STATUS,<sp/></highlight><highlight class="stringliteral">&quot;DynamicLoaderModule::initLinkedModules&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;adding<sp/>linked<sp/>module&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
-<codeline lineno="300"><highlight class="normal"><sp/><sp/><sp/><sp/>interpreter.message(<sp/>SLIInterpreter::M_STATUS,<sp/></highlight><highlight class="stringliteral">&quot;DynamicLoaderModule::initLinkedModules&quot;</highlight><highlight class="normal">,<sp/>(<sp/>*it<sp/>)-&gt;name().c_str()<sp/>);</highlight></codeline>
+<codeline lineno="299"><highlight class="normal"><sp/><sp/><sp/><sp/>interpreter.message(<sp/><ref refid="namespacenest_1a17a14d5aa7e8d94ec67eefc2b148eb72a4cc59d5e2432a871aa447fd29f22d7eb" kindref="member">SLIInterpreter::M_STATUS</ref>,<sp/></highlight><highlight class="stringliteral">&quot;DynamicLoaderModule::initLinkedModules&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;adding<sp/>linked<sp/>module&quot;</highlight><highlight class="normal"><sp/>);</highlight></codeline>
+<codeline lineno="300"><highlight class="normal"><sp/><sp/><sp/><sp/>interpreter.message(<sp/><ref refid="namespacenest_1a17a14d5aa7e8d94ec67eefc2b148eb72a4cc59d5e2432a871aa447fd29f22d7eb" kindref="member">SLIInterpreter::M_STATUS</ref>,<sp/></highlight><highlight class="stringliteral">&quot;DynamicLoaderModule::initLinkedModules&quot;</highlight><highlight class="normal">,<sp/>(<sp/>*it<sp/>)-&gt;name().c_str()<sp/>);</highlight></codeline>
 <codeline lineno="301"><highlight class="normal"><sp/><sp/><sp/><sp/>interpreter.addlinkedusermodule(<sp/>*it<sp/>);</highlight></codeline>
 <codeline lineno="302"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
 <codeline lineno="303"><highlight class="normal">}</highlight></codeline>
@@ -322,6 +322,6 @@
 <codeline lineno="307"><highlight class="normal"></highlight></codeline>
 <codeline lineno="308"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">//<sp/>HAVE_LIBLTDL</highlight><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="nestkernel/dynamicloader.cpp"/>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/dynamicloader.cpp"/>
   </compounddef>
 </doxygen>

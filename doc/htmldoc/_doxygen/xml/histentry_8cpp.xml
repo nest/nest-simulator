@@ -57,9 +57,10 @@
       </node>
     </incdepgraph>
     <briefdescription>
+<para>Implementation of archiving_node to record and manage spike history. </para>
     </briefdescription>
     <detaileddescription>
-<para>Implementation of archiving_node to record and manage spike history <simplesect kind="author"><para>Moritz Helias, Abigail Morrison </para>
+<para><simplesect kind="author"><para>Moritz Helias, Abigail Morrison </para>
 </simplesect>
 <simplesect kind="date"><para>april 2006 </para>
 </simplesect>
@@ -92,7 +93,7 @@
 <codeline lineno="22"><highlight class="normal"></highlight></codeline>
 <codeline lineno="31"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;<ref refid="histentry_8h" kindref="compound">histentry.h</ref>&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight></codeline>
-<codeline lineno="33"><highlight class="normal"><ref refid="classnest_1_1histentry_1af8b64802f991a9fceb1af4cc5adaa23c" kindref="member">nest::histentry::histentry</ref>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>t,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>Kminus,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>Kminus_triplet,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>access_counter<sp/>)</highlight></codeline>
+<codeline lineno="33" refid="classnest_1_1histentry_1af8b64802f991a9fceb1af4cc5adaa23c" refkind="member"><highlight class="normal"><ref refid="classnest_1_1histentry_1af8b64802f991a9fceb1af4cc5adaa23c" kindref="member">nest::histentry::histentry</ref>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>t,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>Kminus,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>Kminus_triplet,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>access_counter<sp/>)</highlight></codeline>
 <codeline lineno="34"><highlight class="normal"><sp/><sp/>:<sp/>t_(<sp/>t<sp/>)</highlight></codeline>
 <codeline lineno="35"><highlight class="normal"><sp/><sp/>,<sp/>Kminus_(<sp/>Kminus<sp/>)</highlight></codeline>
 <codeline lineno="36"><highlight class="normal"><sp/><sp/>,<sp/>Kminus_triplet_(<sp/>Kminus_triplet<sp/>)</highlight></codeline>
@@ -100,13 +101,13 @@
 <codeline lineno="38"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="39"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="40"><highlight class="normal"></highlight></codeline>
-<codeline lineno="41"><highlight class="normal"><ref refid="classnest_1_1histentry__extended_1a7a44cf7783417aef0811288086249dda" kindref="member">nest::histentry_extended::histentry_extended</ref>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>t,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>dw,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>access_counter<sp/>)</highlight></codeline>
+<codeline lineno="41" refid="classnest_1_1histentry__extended_1a7a44cf7783417aef0811288086249dda" refkind="member"><highlight class="normal"><ref refid="classnest_1_1histentry__extended_1a7a44cf7783417aef0811288086249dda" kindref="member">nest::histentry_extended::histentry_extended</ref>(<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>t,<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>dw,<sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>access_counter<sp/>)</highlight></codeline>
 <codeline lineno="42"><highlight class="normal"><sp/><sp/>:<sp/>t_(<sp/>t<sp/>)</highlight></codeline>
 <codeline lineno="43"><highlight class="normal"><sp/><sp/>,<sp/>dw_(<sp/>dw<sp/>)</highlight></codeline>
 <codeline lineno="44"><highlight class="normal"><sp/><sp/>,<sp/>access_counter_(<sp/>access_counter<sp/>)</highlight></codeline>
 <codeline lineno="45"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="46"><highlight class="normal">}</highlight></codeline>
     </programlisting>
-    <location file="nestkernel/histentry.cpp"/>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/histentry.cpp"/>
   </compounddef>
 </doxygen>

@@ -48,7 +48,9 @@
         <inbodydescription>
 <para>Create the interpreter object. Due to its dependence on various static objects (e.g. of class Name), the interpreter engine MUST NOT be global.</para>
         </inbodydescription>
-        <location file="nest/main.cpp" line="31" column="1" bodyfile="nest/main.cpp" bodystart="31" bodyend="48"/>
+        <location file="/home/mitchell/Work/repo/nest-simulator/nest/main.cpp" line="31" column="1" bodyfile="/home/mitchell/Work/repo/nest-simulator/nest/main.cpp" bodystart="31" bodyend="48"/>
+        <references refid="neststartup_8cpp_1aa3f6f2cd046e243124ba1919d60d7006" compoundref="neststartup_8cpp" startline="152" endline="157">nestshutdown</references>
+        <references refid="neststartup_8cpp_1ad3935984e6911e711b0a40aa27670e75" compoundref="neststartup_8cpp" startline="71" endline="149">neststartup</references>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -86,7 +88,7 @@
 <codeline lineno="28"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;interpret.h&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="29"><highlight class="normal"></highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="31"><highlight class="normal"><ref refid="main_8cpp_1a0ddf1224851353fc92bfbff6f499fa97" kindref="member">main</ref>(<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>argc,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>argv[]<sp/>)</highlight></codeline>
+<codeline lineno="31" refid="main_8cpp_1a0ddf1224851353fc92bfbff6f499fa97" refkind="member"><highlight class="normal"><ref refid="main_8cpp_1a0ddf1224851353fc92bfbff6f499fa97" kindref="member">main</ref>(<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>argc,<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal">*<sp/>argv[]<sp/>)</highlight></codeline>
 <codeline lineno="32"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="38"><highlight class="normal"><sp/><sp/>SLIInterpreter<sp/>engine;</highlight></codeline>
 <codeline lineno="39"><highlight class="normal"></highlight></codeline>
@@ -100,6 +102,6 @@
 <codeline lineno="47"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>exitcode;</highlight></codeline>
 <codeline lineno="48"><highlight class="normal">}</highlight></codeline>
     </programlisting>
-    <location file="nest/main.cpp"/>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nest/main.cpp"/>
   </compounddef>
 </doxygen>

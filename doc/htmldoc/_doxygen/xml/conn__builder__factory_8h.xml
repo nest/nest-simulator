@@ -49,20 +49,20 @@
       <node id="27">
         <label>arraydatum.h</label>
       </node>
-      <node id="17">
+      <node id="18">
         <label>nest_types.h</label>
         <link refid="nest__types_8h"/>
         <childnode refid="11" relation="include">
         </childnode>
-        <childnode refid="18" relation="include">
-        </childnode>
         <childnode refid="19" relation="include">
-        </childnode>
-        <childnode refid="7" relation="include">
         </childnode>
         <childnode refid="20" relation="include">
         </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
         <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
         </childnode>
         <childnode refid="22" relation="include">
         </childnode>
@@ -70,13 +70,13 @@
       <node id="22">
         <label>cstdint</label>
       </node>
-      <node id="20">
+      <node id="21">
         <label>stdint.h</label>
       </node>
       <node id="50">
         <label>nest_names.h</label>
         <link refid="nest__names_8h"/>
-        <childnode refid="21" relation="include">
+        <childnode refid="17" relation="include">
         </childnode>
         <childnode refid="23" relation="include">
         </childnode>
@@ -99,7 +99,7 @@
         </childnode>
         <childnode refid="9" relation="include">
         </childnode>
-        <childnode refid="17" relation="include">
+        <childnode refid="18" relation="include">
         </childnode>
         <childnode refid="33" relation="include">
         </childnode>
@@ -113,7 +113,7 @@
         <link refid="vp__manager_8h"/>
         <childnode refid="37" relation="include">
         </childnode>
-        <childnode refid="17" relation="include">
+        <childnode refid="18" relation="include">
         </childnode>
         <childnode refid="38" relation="include">
         </childnode>
@@ -149,7 +149,7 @@
         </childnode>
         <childnode refid="8" relation="include">
         </childnode>
-        <childnode refid="17" relation="include">
+        <childnode refid="18" relation="include">
         </childnode>
         <childnode refid="48" relation="include">
         </childnode>
@@ -178,7 +178,7 @@
         <link refid="generic__factory_8h"/>
         <childnode refid="2" relation="include">
         </childnode>
-        <childnode refid="17" relation="include">
+        <childnode refid="18" relation="include">
         </childnode>
         <childnode refid="38" relation="include">
         </childnode>
@@ -202,7 +202,7 @@
         </childnode>
         <childnode refid="16" relation="include">
         </childnode>
-        <childnode refid="17" relation="include">
+        <childnode refid="18" relation="include">
         </childnode>
       </node>
       <node id="67">
@@ -229,7 +229,7 @@
         </childnode>
         <childnode refid="8" relation="include">
         </childnode>
-        <childnode refid="17" relation="include">
+        <childnode refid="18" relation="include">
         </childnode>
         <childnode refid="35" relation="include">
         </childnode>
@@ -269,6 +269,16 @@
       </node>
       <node id="66">
         <label>slitype.h</label>
+      </node>
+      <node id="56">
+        <label>lockptr.h</label>
+        <link refid="lockptr_8h"/>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="53" relation="include">
+        </childnode>
       </node>
       <node id="25">
         <label>nest_datums.h</label>
@@ -315,7 +325,7 @@
         </childnode>
         <childnode refid="50" relation="include">
         </childnode>
-        <childnode refid="17" relation="include">
+        <childnode refid="18" relation="include">
         </childnode>
         <childnode refid="29" relation="include">
         </childnode>
@@ -329,9 +339,6 @@
       <node id="41">
         <label>bitset</label>
       </node>
-      <node id="56">
-        <label>lockptr.h</label>
-      </node>
       <node id="52">
         <label>ctime</label>
       </node>
@@ -343,7 +350,7 @@
         <link refid="spike__data_8h"/>
         <childnode refid="10" relation="include">
         </childnode>
-        <childnode refid="17" relation="include">
+        <childnode refid="18" relation="include">
         </childnode>
         <childnode refid="34" relation="include">
         </childnode>
@@ -378,7 +385,7 @@
       <node id="37">
         <label>manager_interface.h</label>
         <link refid="manager__interface_8h"/>
-        <childnode refid="17" relation="include">
+        <childnode refid="18" relation="include">
         </childnode>
         <childnode refid="38" relation="include">
         </childnode>
@@ -388,9 +395,6 @@
       </node>
       <node id="23">
         <label>name.h</label>
-      </node>
-      <node id="16">
-        <label>numerics.h</label>
       </node>
       <node id="51">
         <label>node_collection.h</label>
@@ -409,17 +413,17 @@
         </childnode>
         <childnode refid="8" relation="include">
         </childnode>
-        <childnode refid="17" relation="include">
+        <childnode refid="18" relation="include">
         </childnode>
         <childnode refid="27" relation="include">
         </childnode>
         <childnode refid="38" relation="include">
         </childnode>
       </node>
-      <node id="19">
+      <node id="20">
         <label>cstddef</label>
       </node>
-      <node id="18">
+      <node id="19">
         <label>climits</label>
       </node>
       <node id="24">
@@ -447,7 +451,7 @@
       <node id="4">
         <label>set</label>
       </node>
-      <node id="21">
+      <node id="17">
         <label>config.h</label>
       </node>
       <node id="3">
@@ -484,11 +488,27 @@
       <node id="58">
         <label>initializer_list</label>
       </node>
+      <node id="16">
+        <label>numerics.h</label>
+        <link refid="numerics_8h"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
       <node id="47">
         <label>compose.hpp</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
+      <node id="30">
+        <label>spike_generator.cpp</label>
+        <link refid="spike__generator_8cpp"/>
+      </node>
       <node id="3">
         <label>connection_manager_impl.h</label>
         <link refid="connection__manager__impl_8h"/>
@@ -496,30 +516,126 @@
         </childnode>
         <childnode refid="5" relation="include">
         </childnode>
-        <childnode refid="6" relation="include">
+        <childnode refid="37" relation="include">
         </childnode>
-        <childnode refid="7" relation="include">
+        <childnode refid="38" relation="include">
         </childnode>
-        <childnode refid="8" relation="include">
+        <childnode refid="39" relation="include">
         </childnode>
       </node>
       <node id="4">
         <label>event_delivery_manager.cpp</label>
         <link refid="event__delivery__manager_8cpp"/>
       </node>
+      <node id="28">
+        <label>sinusoidal_poisson_generator.cpp</label>
+        <link refid="sinusoidal__poisson__generator_8cpp"/>
+      </node>
+      <node id="25">
+        <label>poisson_generator_ps.cpp</label>
+        <link refid="poisson__generator__ps_8cpp"/>
+      </node>
+      <node id="20">
+        <label>multimeter.cpp</label>
+        <link refid="multimeter_8cpp"/>
+      </node>
       <node id="5">
         <label>event_delivery_manager_impl.h</label>
         <link refid="event__delivery__manager__impl_8h"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="15" relation="include">
+        </childnode>
+        <childnode refid="16" relation="include">
+        </childnode>
+        <childnode refid="17" relation="include">
+        </childnode>
+        <childnode refid="18" relation="include">
+        </childnode>
+        <childnode refid="19" relation="include">
+        </childnode>
+        <childnode refid="20" relation="include">
+        </childnode>
+        <childnode refid="21" relation="include">
+        </childnode>
+        <childnode refid="22" relation="include">
+        </childnode>
+        <childnode refid="23" relation="include">
+        </childnode>
+        <childnode refid="24" relation="include">
+        </childnode>
+        <childnode refid="25" relation="include">
+        </childnode>
+        <childnode refid="26" relation="include">
+        </childnode>
+        <childnode refid="27" relation="include">
+        </childnode>
+        <childnode refid="28" relation="include">
+        </childnode>
+        <childnode refid="29" relation="include">
+        </childnode>
+        <childnode refid="30" relation="include">
+        </childnode>
+        <childnode refid="31" relation="include">
+        </childnode>
+        <childnode refid="32" relation="include">
+        </childnode>
+        <childnode refid="33" relation="include">
+        </childnode>
+        <childnode refid="34" relation="include">
+        </childnode>
+        <childnode refid="35" relation="include">
+        </childnode>
+        <childnode refid="36" relation="include">
+        </childnode>
         <childnode refid="4" relation="include">
         </childnode>
       </node>
-      <node id="7">
+      <node id="38">
         <label>simulation_manager.cpp</label>
         <link refid="simulation__manager_8cpp"/>
       </node>
-      <node id="8">
+      <node id="19">
+        <label>mip_generator.cpp</label>
+        <link refid="mip__generator_8cpp"/>
+      </node>
+      <node id="39">
         <label>source_table.cpp</label>
         <link refid="source__table_8cpp"/>
+      </node>
+      <node id="24">
+        <label>poisson_generator.cpp</label>
+        <link refid="poisson__generator_8cpp"/>
+      </node>
+      <node id="18">
+        <label>izhikevich.cpp</label>
+        <link refid="izhikevich_8cpp"/>
+      </node>
+      <node id="14">
+        <label>mcculloch_pitts_neuron.cpp</label>
+        <link refid="mcculloch__pitts__neuron_8cpp"/>
+      </node>
+      <node id="31">
+        <label>spike_recorder.cpp</label>
+        <link refid="spike__recorder_8cpp"/>
+      </node>
+      <node id="33">
+        <label>spin_detector.cpp</label>
+        <link refid="spin__detector_8cpp"/>
+      </node>
+      <node id="13">
+        <label>mcculloch_pitts_neuron.h</label>
+        <link refid="mcculloch__pitts__neuron_8h"/>
+        <childnode refid="14" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>dc_generator.cpp</label>
+        <link refid="dc__generator_8cpp"/>
       </node>
       <node id="1">
         <label>conn_builder_factory.h</label>
@@ -529,17 +645,107 @@
         <childnode refid="3" relation="include">
         </childnode>
       </node>
+      <node id="35">
+        <label>step_rate_generator.cpp</label>
+        <link refid="step__rate__generator_8cpp"/>
+      </node>
+      <node id="26">
+        <label>ppd_sup_generator.cpp</label>
+        <link refid="ppd__sup__generator_8cpp"/>
+      </node>
+      <node id="22">
+        <label>parrot_neuron.cpp</label>
+        <link refid="parrot__neuron_8cpp"/>
+      </node>
       <node id="2">
         <label>connection_manager.cpp</label>
         <link refid="connection__manager_8cpp"/>
       </node>
+      <node id="36">
+        <label>weight_recorder.cpp</label>
+        <link refid="weight__recorder_8cpp"/>
+      </node>
+      <node id="27">
+        <label>pulsepacket_generator.cpp</label>
+        <link refid="pulsepacket__generator_8cpp"/>
+      </node>
+      <node id="21">
+        <label>noise_generator.cpp</label>
+        <link refid="noise__generator_8cpp"/>
+      </node>
+      <node id="32">
+        <label>spike_train_injector.cpp</label>
+        <link refid="spike__train__injector_8cpp"/>
+      </node>
       <node id="6">
+        <label>ac_generator.cpp</label>
+        <link refid="ac__generator_8cpp"/>
+      </node>
+      <node id="8">
+        <label>erfc_neuron.h</label>
+        <link refid="erfc__neuron_8h"/>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>parrot_neuron_ps.cpp</label>
+        <link refid="parrot__neuron__ps_8cpp"/>
+      </node>
+      <node id="34">
+        <label>step_current_generator.cpp</label>
+        <link refid="step__current__generator_8cpp"/>
+      </node>
+      <node id="17">
+        <label>inhomogeneous_poisson_generator.cpp</label>
+        <link refid="inhomogeneous__poisson__generator_8cpp"/>
+      </node>
+      <node id="12">
+        <label>ginzburg_neuron.cpp</label>
+        <link refid="ginzburg__neuron_8cpp"/>
+      </node>
+      <node id="29">
+        <label>spike_dilutor.cpp</label>
+        <link refid="spike__dilutor_8cpp"/>
+      </node>
+      <node id="10">
+        <label>modelsmodule.cpp</label>
+        <link refid="modelsmodule_8cpp"/>
+      </node>
+      <node id="7">
+        <label>binary_neuron.h</label>
+        <link refid="binary__neuron_8h"/>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+      </node>
+      <node id="37">
         <label>nestmodule.cpp</label>
         <link refid="nestmodule_8cpp"/>
       </node>
+      <node id="9">
+        <label>erfc_neuron.cpp</label>
+        <link refid="erfc__neuron_8cpp"/>
+      </node>
+      <node id="11">
+        <label>ginzburg_neuron.h</label>
+        <link refid="ginzburg__neuron_8h"/>
+        <childnode refid="12" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>gamma_sup_generator.cpp</label>
+        <link refid="gamma__sup__generator_8cpp"/>
+      </node>
     </invincdepgraph>
-    <innerclass refid="classnest_1_1_generic_conn_builder_factory" prot="public">nest::GenericConnBuilderFactory</innerclass>
-    <innerclass refid="classnest_1_1_conn_builder_factory" prot="public">nest::ConnBuilderFactory</innerclass>
+    <innerclass refid="classnest_1_1GenericConnBuilderFactory" prot="public">nest::GenericConnBuilderFactory</innerclass>
+    <innerclass refid="classnest_1_1ConnBuilderFactory" prot="public">nest::ConnBuilderFactory</innerclass>
     <innernamespace refid="namespacenest">nest</innernamespace>
     <briefdescription>
     </briefdescription>
@@ -584,25 +790,25 @@
 <codeline lineno="36"><highlight class="normal"></highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight><highlight class="keyword">namespace<sp/></highlight><highlight class="normal"><ref refid="namespacenest" kindref="compound">nest</ref></highlight></codeline>
 <codeline lineno="38"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="46" refid="classnest_1_1_generic_conn_builder_factory" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classnest_1_1_generic_conn_builder_factory" kindref="compound">GenericConnBuilderFactory</ref></highlight></codeline>
+<codeline lineno="46" refid="classnest_1_1GenericConnBuilderFactory" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classnest_1_1GenericConnBuilderFactory" kindref="compound">GenericConnBuilderFactory</ref></highlight></codeline>
 <codeline lineno="47"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="48"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
-<codeline lineno="49" refid="classnest_1_1_generic_conn_builder_factory_1a2560a795ec6938b2dd7b8555b95bc860" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_generic_conn_builder_factory_1a2560a795ec6938b2dd7b8555b95bc860" kindref="member">~GenericConnBuilderFactory</ref>()</highlight></codeline>
+<codeline lineno="49" refid="classnest_1_1GenericConnBuilderFactory_1a2560a795ec6938b2dd7b8555b95bc860" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1GenericConnBuilderFactory_1a2560a795ec6938b2dd7b8555b95bc860" kindref="member">~GenericConnBuilderFactory</ref>()</highlight></codeline>
 <codeline lineno="50"><highlight class="normal"><sp/><sp/>{</highlight></codeline>
 <codeline lineno="51"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
-<codeline lineno="52" refid="classnest_1_1_generic_conn_builder_factory_1a96b5fd03e8fd960456efef96d5e3e86d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_conn_builder" kindref="compound">ConnBuilder</ref>*<sp/><ref refid="classnest_1_1_generic_conn_builder_factory_1a96b5fd03e8fd960456efef96d5e3e86d" kindref="member">create</ref>(<sp/><ref refid="namespacenest_1accbbbd2c49375cc6c2edd964cccda54e" kindref="member">NodeCollectionPTR</ref>,</highlight></codeline>
+<codeline lineno="52" refid="classnest_1_1GenericConnBuilderFactory_1a96b5fd03e8fd960456efef96d5e3e86d" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">virtual</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1ConnBuilder" kindref="compound">ConnBuilder</ref>*<sp/><ref refid="classnest_1_1GenericConnBuilderFactory_1a96b5fd03e8fd960456efef96d5e3e86d" kindref="member">create</ref>(<sp/><ref refid="namespacenest_1accbbbd2c49375cc6c2edd964cccda54e" kindref="member">NodeCollectionPTR</ref>,</highlight></codeline>
 <codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacenest_1accbbbd2c49375cc6c2edd964cccda54e" kindref="member">NodeCollectionPTR</ref>,</highlight></codeline>
 <codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>DictionaryDatum&amp;,</highlight></codeline>
 <codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;<sp/>DictionaryDatum<sp/>&gt;&amp;<sp/>)<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>=<sp/>0;</highlight></codeline>
 <codeline lineno="56"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="57"><highlight class="normal"></highlight></codeline>
 <codeline lineno="62"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal"><sp/>&lt;<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>ConnBuilderType<sp/>&gt;</highlight></codeline>
-<codeline lineno="63" refid="classnest_1_1_conn_builder_factory" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classnest_1_1_conn_builder_factory" kindref="compound">ConnBuilderFactory</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1_generic_conn_builder_factory" kindref="compound">GenericConnBuilderFactory</ref></highlight></codeline>
+<codeline lineno="63" refid="classnest_1_1ConnBuilderFactory" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">class<sp/></highlight><highlight class="normal"><ref refid="classnest_1_1ConnBuilderFactory" kindref="compound">ConnBuilderFactory</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/><ref refid="classnest_1_1GenericConnBuilderFactory" kindref="compound">GenericConnBuilderFactory</ref></highlight></codeline>
 <codeline lineno="64"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="65"><highlight class="normal"></highlight></codeline>
 <codeline lineno="66"><highlight class="normal"></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
-<codeline lineno="68"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1_conn_builder" kindref="compound">ConnBuilder</ref>*</highlight></codeline>
-<codeline lineno="69" refid="classnest_1_1_conn_builder_factory_1acc79e2e8e2e124691c5d18e2ed0222e9" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1_conn_builder_factory_1acc79e2e8e2e124691c5d18e2ed0222e9" kindref="member">create</ref>(<sp/><ref refid="namespacenest_1accbbbd2c49375cc6c2edd964cccda54e" kindref="member">NodeCollectionPTR</ref><sp/>sources,</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1ConnBuilder" kindref="compound">ConnBuilder</ref>*</highlight></codeline>
+<codeline lineno="69" refid="classnest_1_1ConnBuilderFactory_1acc79e2e8e2e124691c5d18e2ed0222e9" refkind="member"><highlight class="normal"><sp/><sp/><ref refid="classnest_1_1ConnBuilderFactory_1acc79e2e8e2e124691c5d18e2ed0222e9" kindref="member">create</ref>(<sp/><ref refid="namespacenest_1accbbbd2c49375cc6c2edd964cccda54e" kindref="member">NodeCollectionPTR</ref><sp/>sources,</highlight></codeline>
 <codeline lineno="70"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="namespacenest_1accbbbd2c49375cc6c2edd964cccda54e" kindref="member">NodeCollectionPTR</ref><sp/><ref refid="namespacenest_1_1names_1a8d0e9103ea1f8b13f4cd02e143186b8d" kindref="member">targets</ref>,</highlight></codeline>
 <codeline lineno="71"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>DictionaryDatum&amp;<sp/>conn_spec,</highlight></codeline>
 <codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;<sp/>DictionaryDatum<sp/>&gt;&amp;<sp/>syn_specs<sp/>)</highlight><highlight class="keyword"><sp/>const<sp/>override</highlight></codeline>
@@ -615,6 +821,6 @@
 <codeline lineno="79"><highlight class="normal"></highlight></codeline>
 <codeline lineno="80"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight></codeline>
     </programlisting>
-    <location file="nestkernel/conn_builder_factory.h"/>
+    <location file="/home/mitchell/Work/repo/nest-simulator/nestkernel/conn_builder_factory.h"/>
   </compounddef>
 </doxygen>

@@ -50,18 +50,18 @@ public:
 
   void init_update_history();
 
-  void write_update_to_history( long t_previous_update, long t_current_update );
-  void write_surrogate_gradient_to_history( long time_step, double surrogate_gradient );
-  void write_error_signal_to_history( long time_step, double error_signal );
-  void write_learning_signal_to_history( long& time_step, long& delay_out_rec, double& weight, double& error_signal );
-  void write_firing_rate_reg_to_history( long t_current_update, double f_target, double c_reg );
+  void write_update_to_history( const long t_previous_update, const long t_current_update );
+  void write_surrogate_gradient_to_history( const long time_step, const double surrogate_gradient );
+  void write_error_signal_to_history( const long time_step, const double error_signal );
+  void write_learning_signal_to_history( const long time_step, const long delay_out_rec, const double weight, const double error_signal );
+  void write_firing_rate_reg_to_history( const long t_current_update, const double f_target, const double c_reg );
 
-  const long get_shift() const;
-  const long get_delay_out_norm() const;
+  long get_shift() const;
+  long get_delay_out_norm() const;
 
-  std::vector< HistEntryEpropUpdate >::iterator get_update_history( long time_step );
-  std::vector< HistEntryEpropArchive >::iterator get_eprop_history( long time_step );
-  std::vector< HistEntryEpropFiringRateReg >::iterator get_firing_rate_reg_history( long time_step );
+  std::vector< HistEntryEpropUpdate >::iterator get_update_history( const long time_step ) ;
+  std::vector< HistEntryEpropArchive >::iterator get_eprop_history( const long time_step );
+  std::vector< HistEntryEpropFiringRateReg >::iterator get_firing_rate_reg_history( const long time_step );
 
   void erase_unneeded_update_history();
   void erase_unneeded_eprop_history();
@@ -76,10 +76,10 @@ private:
   // These shifts are, for now, hardcoded to 1 time step since the current implementation only works if all the
   // delays are equal to the resolution of the simulation.
 
-  long offset_gen_ = 1;     //!< offset since generator signals start from time step 1
-  long delay_in_rec_ = 1;   //!< connection delay from input to recurrent neurons
-  long delay_rec_out_ = 1;  //!< connection delay from recurrent to output neurons
-  long delay_out_norm_ = 1; //!< connection delay between output neurons for normalization
+  const long offset_gen_ = 1;     //!< offset since generator signals start from time step 1
+  const long delay_in_rec_ = 1;   //!< connection delay from input to recurrent neurons
+  const long delay_rec_out_ = 1;  //!< connection delay from recurrent to output neurons
+  const long delay_out_norm_ = 1; //!< connection delay between output neurons for normalization
 
   std::vector< HistEntryEpropUpdate > update_history_;
   std::vector< HistEntryEpropFiringRateReg > firing_rate_reg_history_;

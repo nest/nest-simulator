@@ -242,12 +242,12 @@ public:
 
   void send( Event& e, size_t thread, const EpropCommonProperties& cp );
 
-  void optimize_via_gradient_descent( long current_optimization_step_,
+  void optimize_via_gradient_descent( const long current_optimization_step_,
     long& optimization_step_,
     const EpropCommonProperties& cp );
-  void optimize_via_adam( long current_optimization_step_, long& optimization_step_, const EpropCommonProperties& cp );
+  void optimize_via_adam( const long current_optimization_step_, long& optimization_step_, const EpropCommonProperties& cp );
 
-  void ( eprop_synapse::*optimize )( long current_optimization_step_,
+  void ( eprop_synapse::*optimize )(const long current_optimization_step_,
     long& optimization_step_,
     const EpropCommonProperties& cp );
 
@@ -291,10 +291,10 @@ public:
     EpropArchivingNode& t_arch = dynamic_cast< EpropArchivingNode& >( t );
     t_arch.init_update_history();
 
-    double dt = Time::get_resolution().get_ms();
+    const double dt = Time::get_resolution().get_ms();
     kappa_ = exp( -dt / tau_m_readout_ );
 
-    long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
+    const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
     t_next_update_ = update_interval;
 
     if ( cp.optimizer_ == "adam" )
@@ -308,7 +308,7 @@ public:
   }
 
   void
-  set_weight( double w )
+  set_weight( const double w )
   {
     weight_ = w;
   }
@@ -361,15 +361,15 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
 
   if ( t_previous_spike_ > 0 )
   {
-    long t = t_spike >= t_next_update_ + shift ? t_next_update_ + shift : t_spike;
+    const long t = t_spike >= t_next_update_ + shift ? t_next_update_ + shift : t_spike;
     presyn_isis_.push_back( t - t_previous_spike_ );
   }
 
   if ( t_spike >= t_next_update_ + shift )
   {
-    long idx_current_update = ( t_spike - shift ) / update_interval;
-    long t_current_update_ = idx_current_update * update_interval;
-    long current_optimization_step_ = 1 + idx_current_update / cp.batch_size_;
+    const long idx_current_update = ( t_spike - shift ) / update_interval;
+    const long t_current_update_ = idx_current_update * update_interval;
+    const long current_optimization_step_ = 1 + idx_current_update / cp.batch_size_;
 
     target->write_update_to_history( t_previous_update_, t_current_update_ );
 
@@ -401,7 +401,7 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
 
 template < typename targetidentifierT >
 inline void
-eprop_synapse< targetidentifierT >::optimize_via_gradient_descent( long current_optimization_step_,
+eprop_synapse< targetidentifierT >::optimize_via_gradient_descent( const long current_optimization_step_,
   long& optimization_step_,
   const EpropCommonProperties& cp )
 {
@@ -412,16 +412,16 @@ eprop_synapse< targetidentifierT >::optimize_via_gradient_descent( long current_
 
 template < typename targetidentifierT >
 inline void
-eprop_synapse< targetidentifierT >::optimize_via_adam( long current_optimization_step_,
+eprop_synapse< targetidentifierT >::optimize_via_adam( const long current_optimization_step_,
   long& optimization_step_,
   const EpropCommonProperties& cp )
 {
   for ( ; optimization_step_ < current_optimization_step_; ++optimization_step_ )
   {
-    double adam_beta1_factor = 1.0 - std::pow( cp.adam_beta1_, optimization_step_ );
-    double adam_beta2_factor = 1.0 - std::pow( cp.adam_beta2_, optimization_step_ );
+    const double adam_beta1_factor = 1.0 - std::pow( cp.adam_beta1_, optimization_step_ );
+    const double adam_beta2_factor = 1.0 - std::pow( cp.adam_beta2_, optimization_step_ );
 
-    double alpha_t = eta_ * std::sqrt( adam_beta2_factor ) / adam_beta1_factor;
+    const double alpha_t = eta_ * std::sqrt( adam_beta2_factor ) / adam_beta1_factor;
 
     adam_m_ = cp.adam_beta1_ * adam_m_ + ( 1.0 - cp.adam_beta1_ ) * sum_grads_;
     adam_v_ = cp.adam_beta2_ * adam_v_ + ( 1.0 - cp.adam_beta2_ ) * sum_grads_ * sum_grads_;

@@ -245,9 +245,10 @@ public:
   void optimize_via_gradient_descent( const long current_optimization_step_,
     long& optimization_step_,
     const EpropCommonProperties& cp );
-  void optimize_via_adam( const long current_optimization_step_, long& optimization_step_, const EpropCommonProperties& cp );
+  void
+  optimize_via_adam( const long current_optimization_step_, long& optimization_step_, const EpropCommonProperties& cp );
 
-  void ( eprop_synapse::*optimize )(const long current_optimization_step_,
+  void ( eprop_synapse::*optimize )( const long current_optimization_step_,
     long& optimization_step_,
     const EpropCommonProperties& cp );
 

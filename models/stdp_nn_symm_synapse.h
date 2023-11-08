@@ -73,13 +73,6 @@ occurrence. The postsynaptic trace (implemented on the postsynaptic neuron
 side) decays with the time constant ``tau_minus`` and increases to 1 on a
 post-spike occurrence.
 
-.. warning::
-
-   This synaptic plasticity rule does not take
-   :ref:`precise spike timing <sim_precise_spike_times>` into
-   account. When calculating the weight update, the precise spike time part
-   of the timestamp is ignored.
-
 Parameters
 ++++++++++
 

@@ -262,7 +262,7 @@ nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
   while ( nextspk.first <= V_.t_max_active_ )
   {
     e.set_stamp( nextspk.first );
-    e.set_offset( nextspk.second );
+    e.get_stamp().set_offset( nextspk.second );
     e.get_receiver().handle( e );
 
     // Draw time of next spike

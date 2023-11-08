@@ -425,7 +425,7 @@ nest::iaf_chxk_2008::update( Time const& origin, const long from, const long to 
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;
-      se.set_offset( dt );
+      se.get_stamp().set_offset( dt );
       kernel().event_delivery_manager.send( *this, se, lag );
     }
 

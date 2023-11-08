@@ -74,13 +74,6 @@ and
 This makes it possible to implement update rules which approximate the
 rule stated in [1]_, and for examples, the rules given in [2]_ and [3]_.
 
-.. warning::
-
-   This synaptic plasticity rule does not take
-   :ref:`precise spike timing <sim_precise_spike_times>` into
-   account. When calculating the weight update, the precise spike time part
-   of the timestamp is ignored.
-
 Parameters
 ++++++++++
 

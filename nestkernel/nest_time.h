@@ -170,11 +170,50 @@ public:
   static tic_t compute_max();
 
   /////////////////////////////////////////////////////////////
-  // The data: longest integer for tics
+  // Offset
+  /////////////////////////////////////////////////////////////
+
+  /**
+   * Return the creation time offset of the Event.
+   * Each Event carries the exact time of creation. This
+   * time need not coincide with an integral multiple of the
+   * temporal resolution. Rather, Events may be created at any point
+   * in time.
+   */
+  double get_offset() const;
+
+  /**
+   * Set the creation time of the Event.
+   * Each Event carries the exact time of creation in realtime. This
+   * time need not coincide with an integral multiple of the
+   * temporal resolution. Rather, Events may be created at any point
+   * in time.
+   * @param t Creation time in realtime. t has to be in [0, h).
+   */
+  void set_offset( double t );
+
+  /////////////////////////////////////////////////////////////
+  // The data
   /////////////////////////////////////////////////////////////
 
 protected:
+  /**
+   * Longest integer for tics.
+   * The resolution of tic_t is limited by the time base of the
+   * simulation kernel.
+   * If this resolution is not fine enough, the creation time
+   * can be corrected by using the offset_ attribute.
+   */
   tic_t tics;
+
+  /**
+   * Offset for precise spike times.
+   * offset_ specifies a correction to the creation time.
+   * If the resolution of stamp is not sufficiently precise,
+   * this attribute can be used to correct the creation time.
+   * offset_ has to be in [0, h).
+   */
+  double offset_;
 
   /////////////////////////////////////////////////////////////
   // Friend declaration for units and binary operators
@@ -293,12 +332,14 @@ protected:
 
 public:
   Time()
-    : tics( 0 ) {};
+    : tics( 0 )
+    , offset_( 0. ) {};
 
   Time( tic t )
     : tics( ( time_abs( t.t ) < LIM_MAX.tics ) ? t.t
         : ( t.t < 0 )                          ? LIM_NEG_INF.tics
                                                : LIM_POS_INF.tics )
+    , offset_( 0. )
   {
   }
 
@@ -306,6 +347,7 @@ public:
     : tics( ( time_abs( t.t ) < LIM_MAX.steps ) ? t.t * Range::TICS_PER_STEP
         : ( t.t < 0 )                           ? LIM_NEG_INF.tics
                                                 : LIM_POS_INF.tics )
+    , offset_( 0. )
   {
   }
 
@@ -313,12 +355,14 @@ public:
     : tics( ( time_abs( t.t ) < LIM_MAX.ms ) ? static_cast< tic_t >( t.t * Range::TICS_PER_MS + 0.5 )
         : ( t.t < 0 )                        ? LIM_NEG_INF.tics
                                              : LIM_POS_INF.tics )
+    , offset_( 0. )
   {
   }
 
   static tic_t fromstamp( ms_stamp );
   Time( ms_stamp t )
     : tics( fromstamp( t ) )
+    , offset_( 0. )
   {
   }
 
@@ -507,7 +551,7 @@ public:
     {
       return LIM_NEG_INF_ms;
     }
-    return Range::MS_PER_TIC * tics;
+    return Range::MS_PER_TIC * tics - offset_;
   }
 
   long
@@ -631,6 +675,18 @@ inline Time
 operator*( const Time& t, long factor )
 {
   return factor * t;
+}
+
+inline double
+Time::get_offset() const
+{
+  return offset_;
+}
+
+inline void
+Time::set_offset( double t )
+{
+  offset_ = t;
 }
 } // namespace
 

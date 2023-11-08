@@ -264,8 +264,7 @@ nest::StructuralPlasticityNode::connect_synaptic_element( Name name, int n )
 void
 nest::StructuralPlasticityNode::set_spiketime( Time const& t_sp, double offset )
 {
-  const double t_sp_ms = t_sp.get_ms() - offset;
-  update_synaptic_elements( t_sp_ms );
+  update_synaptic_elements( t_sp.get_ms() );
   Ca_minus_ += beta_Ca_;
 }
 

@@ -300,10 +300,13 @@ tripartite_bernoulli_with_pool
 For each possible pair of nodes from ``A`` and ``B``, a connection is
 created with probability ``p_primary``, and these connections are
 called "primary" connections. For each primary connection, a
-third-party connection to a node from ``T`` is created with the
-conditional probability ``p_third_if_primary``. The node from ``T`` to
-connect to is chosen at random from a pool, a subset of the nodes in
-``T``. By default, this pool is all of ``T``.
+third-party connection pair to a node from ``T`` is created with the
+conditional probability ``p_third_if_primary``. This connection pair
+includes a connection from the node from ``A`` (i.e. the source) to the
+node from ``T`` in question, and a connection from this node from ``T``
+to the node from ``B`` (i.e. the target). The node from ``T`` to connect
+to is chosen at random from a pool, a subset of the nodes in ``T``. By
+default, this pool is all of ``T``.
 
 Pool formation is controlled by parameters ``pool_type``, which can be ``"random"``
 (default) or ``"block"``, and ``pool_size`` which must be between 1

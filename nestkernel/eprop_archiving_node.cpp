@@ -194,7 +194,6 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
 
   auto it_update_hist = update_history_.begin();
 
-
   for ( long t = update_history_.begin()->t_;
         t <= ( update_history_.end() - 1 )->t_ and it_update_hist != update_history_.end();
         t += update_interval )

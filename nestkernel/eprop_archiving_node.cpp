@@ -122,10 +122,9 @@ nest::EpropArchivingNode::write_learning_signal_to_history( const long time_step
   auto it_hist = get_eprop_history( time_step - shift );
   const auto it_hist_end = get_eprop_history( time_step - shift + delay_out_rec );
 
-  if ( it_hist != it_hist_end )
+  for ( ; it_hist != it_hist_end; ++it_hist )
   {
     it_hist->learning_signal_ += weight * error_signal;
-    ++it_hist;
   }
 }
 

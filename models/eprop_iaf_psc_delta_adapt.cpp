@@ -387,10 +387,7 @@ nest::eprop_iaf_psc_delta_adapt::handle( CurrentEvent& e )
 void
 nest::eprop_iaf_psc_delta_adapt::handle( LearningSignalConnectionEvent& e )
 {
-  std::vector< unsigned int >::iterator it_event = e.begin();
-  std::vector< unsigned int >::iterator it_event_end = e.end();
-
-  if ( it_event != it_event_end )
+  for ( auto it_event = e.begin(); it_event != e.end(); )
   {
     const long time_step = e.get_stamp().get_steps();
     const long delay_out_rec = e.get_delay_steps();

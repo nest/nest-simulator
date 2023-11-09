@@ -43,19 +43,6 @@ nest::EpropArchivingNode::EpropArchivingNode( const EpropArchivingNode& n )
 }
 
 void
-nest::EpropArchivingNode::init_state_()
-{
-  // This should really be in the node constructor, but that does not work
-  // because prototype models can then not be constructed. We need to set
-  // the non-standard resolution first, and then this is the earlierst
-  // opportunity for a check.
-  if ( Time::get_resolution().get_ms() != 1.0 )
-  {
-    throw KernelException( "eprop nodes currently require resolution == 1.0 ms" );
-  }
-}
-
-void
 nest::EpropArchivingNode::init_update_history()
 {
   // register first entry for every synapse, increase access counter if entry already in list

@@ -46,8 +46,6 @@ public:
   EpropArchivingNode();
   EpropArchivingNode( const EpropArchivingNode& );
 
-  void init_state_() override;
-
   void init_update_history();
 
   void write_update_to_history( const long t_previous_update, const long t_current_update );

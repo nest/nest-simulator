@@ -146,16 +146,7 @@ nest::EpropArchivingNode::write_firing_rate_reg_to_history( const long t_current
 long
 nest::EpropArchivingNode::get_shift() const
 {
-  const long shift_rec = offset_gen_ + delay_in_rec_;
-  const long shift_out = offset_gen_ + delay_in_rec_ + delay_rec_out_;
-
-  return get_name() == "eprop_readout" ? shift_out : shift_rec;
-}
-
-long
-nest::EpropArchivingNode::get_delay_out_norm() const
-{
-  return delay_out_norm_;
+  return 0;
 }
 
 std::vector< HistEntryEpropUpdate >::iterator

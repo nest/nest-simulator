@@ -59,8 +59,7 @@ public:
     const double error_signal );
   void write_firing_rate_reg_to_history( const long t_current_update, const double f_target, const double c_reg );
 
-  long get_shift() const;
-  long get_delay_out_norm() const;
+  virtual long get_shift() const;
 
   std::vector< HistEntryEpropUpdate >::iterator get_update_history( const long time_step );
   std::vector< HistEntryEpropArchive >::iterator get_eprop_history( const long time_step );
@@ -76,6 +75,13 @@ public:
 private:
   size_t n_spikes_;
 
+
+  std::vector< HistEntryEpropUpdate > update_history_;
+  std::vector< HistEntryEpropFiringRateReg > firing_rate_reg_history_;
+
+protected:
+  std::vector< HistEntryEpropArchive > eprop_history_;
+
   // These shifts are, for now, hardcoded to 1 time step since the current implementation only works if all the
   // delays are equal to the resolution of the simulation.
 
@@ -83,12 +89,6 @@ private:
   const long delay_in_rec_ = 1;   //!< connection delay from input to recurrent neurons
   const long delay_rec_out_ = 1;  //!< connection delay from recurrent to output neurons
   const long delay_out_norm_ = 1; //!< connection delay between output neurons for normalization
-
-  std::vector< HistEntryEpropUpdate > update_history_;
-  std::vector< HistEntryEpropFiringRateReg > firing_rate_reg_history_;
-
-protected:
-  std::vector< HistEntryEpropArchive > eprop_history_;
 };
 
 } // namespace nest

@@ -247,6 +247,12 @@ nest::eprop_iaf_psc_delta::pre_run_hook()
   }
 }
 
+long
+nest::eprop_iaf_psc_delta::get_shift() const
+{
+  return offset_gen_ + delay_in_rec_;
+}
+
 /* ----------------------------------------------------------------
  * Update function
  * ---------------------------------------------------------------- */

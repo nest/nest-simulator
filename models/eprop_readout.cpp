@@ -215,6 +215,12 @@ nest::eprop_readout::pre_run_hook()
   }
 }
 
+long
+nest::eprop_readout::get_shift() const
+{
+  return offset_gen_ + delay_in_rec_ + delay_rec_out_;
+}
+
 /* ----------------------------------------------------------------
  * Update function
  * ---------------------------------------------------------------- */
@@ -226,7 +232,6 @@ nest::eprop_readout::update( Time const& origin, const long from, const long to 
   const double learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
   const bool with_reset = kernel().simulation_manager.get_eprop_reset_neurons_on_update();
   const long shift = get_shift();
-  const long delay_out_norm = get_delay_out_norm();
 
   const size_t buffer_size = kernel().connection_manager.get_min_delay();
 
@@ -237,7 +242,7 @@ nest::eprop_readout::update( Time const& origin, const long from, const long to 
   {
     const long t = origin.get_steps() + lag;
     const long interval_step = ( t - shift ) % update_interval;
-    const long interval_step_signals = ( t - shift - delay_out_norm ) % update_interval;
+    const long interval_step_signals = ( t - shift - delay_out_norm_ ) % update_interval;
 
     if ( with_reset and interval_step == 0 )
     {

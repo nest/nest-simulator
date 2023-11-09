@@ -210,6 +210,7 @@ public:
 private:
   void init_buffers_() override;
   void pre_run_hook() override;
+  long get_shift() const override;
 
   void update( Time const&, const long, const long ) override;
 

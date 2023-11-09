@@ -253,7 +253,8 @@ private:
     double surrogate_gradient_; //!< pseudo derivative of the membrane voltage
     double y0_;                 //!< current (pA)
     double y3_;                 //!< membrane voltage relative to leak potential (mV)
-    bool z_;
+    double z_; //!< binary variable indicating by the value 1.0 that the neuron has spiked in the previous time step and
+               //!< 0.0 otherwise
 
     State_();
 

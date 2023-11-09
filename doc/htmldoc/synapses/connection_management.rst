@@ -340,19 +340,21 @@ is required.
     nest.TripartiteConnect(A, B, C, conn_spec_dict, syn_specs_dict)
 
 
-.. figure:: ../static/img/tripartite_pool_type.svg
+.. image:: ../static/img/tripartite_pool_type.svg
     :align: center
-    :alt: Astrocyte pool type.
 
-    This figure illustrates possible outcomes of connectivity with the two
-    pool types. In the example of ``"random"`` pool type (left), each node in
-    ``B`` can be connected with up to two randomly selected nodes in ``C``
-    (given ``pool_size == 2``). In the example of ``"block"`` pool type (right),
-    let ``n(B)/n(C)`` = 2, then each node in ``B`` can be connected with one
-    node in ``C`` (``pool_size == 1`` is required because ``n(C) < n(B)``), and
-    each node in ``C`` can be connected with up to two nodes in ``B``. Colors
-    of nodes in ``B`` and ``C`` indicate which node(s) in ``C`` a node in ``B``
-    is connected with.
+Possible outcomes of connectivity with the two pool types. In the example
+of ``"random"`` pool type (left), each node in ``B`` can be connected with
+up to two randomly selected nodes in ``C`` (given ``pool_size == 2``). In
+the first example of ``"block"`` pool type (middle), let ``n(B)/n(C)`` = 2,
+then each node in ``B`` can be connected with one node in ``C``
+(``pool_size == 1`` is required because ``n(C) < n(B)``), and each node in
+``C`` can be connected with up to two nodes in ``B``. In the second example
+of ``"block"`` pool type (right), let ``n(C)/n(B)`` = 2, then each node in
+``B`` can be connected with up to two nodes in ``C`` (``pool_size == 2`` is
+required because ``n(C)/n(B)`` = 2), and each node in ``C`` can be
+connected to one node in ``B``. Colors of nodes in ``B`` and ``C`` indicate
+which node(s) in ``C`` a node in ``B`` is connected with.
 
 
 .. _synapse_spec:

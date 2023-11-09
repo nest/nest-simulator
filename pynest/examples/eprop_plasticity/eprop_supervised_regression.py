@@ -259,6 +259,7 @@ params_common_syn_eprop = {
     "batch_size": n_batch,
     "optimizer": "gradient_descent",  # algorithm to optimize the weights; either "adam" or "gradient_descent"
     "weight_recorder": wr,
+    "average_gradient": False,
 }
 
 params_syn_in = {

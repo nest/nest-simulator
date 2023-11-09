@@ -382,7 +382,8 @@ double
 nest::eprop_iaf_psc_delta::gradient_change( std::vector< long >& presyn_isis,
   const long t_previous_update,
   const long t_previous_trigger_spike,
-  const double kappa )
+  const double kappa,
+  const bool average_gradient )
 {
   auto eprop_hist_it = get_eprop_history( t_previous_trigger_spike );
 
@@ -410,13 +411,12 @@ nest::eprop_iaf_psc_delta::gradient_change( std::vector< long >& presyn_isis,
   presyn_isis.clear();
 
   const long learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
-  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
-
-  if ( learning_window != update_interval )
+  if ( average_gradient )
   {
     grad /= learning_window;
   }
 
+  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
   const auto it_reg_hist = get_firing_rate_reg_history( t_previous_update + get_shift() + update_interval );
   grad += it_reg_hist->firing_rate_reg_ * sum_e;
 

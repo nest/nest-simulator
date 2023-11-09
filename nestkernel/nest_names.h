@@ -105,6 +105,7 @@ extern const Name asc_decay;
 extern const Name asc_init;
 extern const Name asc_r;
 extern const Name available;
+extern const Name average_gradient;
 extern const Name azimuth_angle;
 
 extern const Name b;

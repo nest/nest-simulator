@@ -210,6 +210,7 @@ public:
   double adam_epsilon_;
   long batch_size_;
   std::string optimizer_;
+  bool average_gradient_;
 };
 
 void register_eprop_synapse( const std::string& name );
@@ -369,7 +370,8 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
 
     target->write_update_to_history( t_previous_update_, t_current_update );
 
-    sum_grads_ += target->gradient_change( presyn_isis_, t_previous_update_, t_previous_trigger_spike_, kappa_ );
+    sum_grads_ += target->gradient_change(
+      presyn_isis_, t_previous_update_, t_previous_trigger_spike_, kappa_, cp.average_gradient_ );
 
     if ( optimization_step_ < current_optimization_step )
     {

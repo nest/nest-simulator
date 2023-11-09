@@ -364,7 +364,8 @@ double
 nest::eprop_readout::gradient_change( std::vector< long >& presyn_isis,
   const long,
   const long t_previous_trigger_spike,
-  const double kappa )
+  const double kappa,
+  const bool average_gradient )
 {
   auto eprop_hist_it = get_eprop_history( t_previous_trigger_spike );
 
@@ -386,9 +387,7 @@ nest::eprop_readout::gradient_change( std::vector< long >& presyn_isis,
   presyn_isis.clear();
 
   const long learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
-  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
-
-  if ( learning_window != update_interval )
+  if ( average_gradient )
   {
     grad /= learning_window;
   }

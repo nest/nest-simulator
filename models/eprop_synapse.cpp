@@ -42,6 +42,7 @@ EpropCommonProperties::EpropCommonProperties()
   , adam_epsilon_( 1e-8 )
   , batch_size_( 1 )
   , optimizer_( "gradient_descent" )
+  , average_gradient_( false )
 {
 }
 
@@ -54,6 +55,7 @@ EpropCommonProperties::get_status( DictionaryDatum& d ) const
   def< double >( d, names::adam_epsilon, adam_epsilon_ );
   def< long >( d, names::batch_size, batch_size_ );
   def< std::string >( d, names::optimizer, optimizer_ );
+  def< bool >( d, names::average_gradient, average_gradient_ );
 }
 
 void
@@ -65,6 +67,7 @@ EpropCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm 
   updateValue< double >( d, names::adam_epsilon, adam_epsilon_ );
   updateValue< long >( d, names::batch_size, batch_size_ );
   updateValue< std::string >( d, names::optimizer, optimizer_ );
+  updateValue< bool >( d, names::average_gradient, average_gradient_ );
 
   if ( adam_beta1_ < 0.0 or 1.0 <= adam_beta1_ )
   {

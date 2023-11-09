@@ -173,7 +173,8 @@ public:
   double gradient_change( std::vector< long >& presyn_isis,
     const long t_previous_update,
     const long t_previous_trigger_spike,
-    const double kappa ) override;
+    const double kappa,
+    const bool average_gradient ) override;
 
 private:
   void init_buffers_() override;

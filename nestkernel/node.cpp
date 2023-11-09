@@ -518,7 +518,7 @@ nest::Node::get_tau_syn_in( int )
 }
 
 double
-nest::Node::gradient_change( std::vector< long >&, const long, const long, const double )
+nest::Node::gradient_change( std::vector< long >&, const long, const long, const double, const bool )
 {
   throw KernelException( "gradient_change() not supported." );
 }

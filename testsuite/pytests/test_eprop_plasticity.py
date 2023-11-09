@@ -196,6 +196,7 @@ def test_eprop_regression():
         "batch_size": n_batch,
         "optimizer": "gradient_descent",
         "weight_recorder": wr,
+        "average_gradient": False,
     }
 
     params_syn_in = {
@@ -527,6 +528,7 @@ def test_eprop_classification():
         "optimizer": "adam",
         "batch_size": n_batch,
         "weight_recorder": wr,
+        "average_gradient": True,
     }
 
     params_syn_in = {

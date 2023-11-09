@@ -67,7 +67,6 @@ def test_eprop_regression():
     losses obtained in a simulation with the original, verified NEST implementation and with the original
     TensorFlow implementation.
     """
-    scale = 0.1
 
     # Initialize random generator
     rng_seed = 1
@@ -79,7 +78,7 @@ def test_eprop_regression():
     n_iter = 5
 
     steps = {
-        "sequence": int(1000 * scale),
+        "sequence": 1000,
     }
 
     steps["learning_window"] = steps["sequence"]
@@ -121,8 +120,8 @@ def test_eprop_regression():
 
     # Create neurons
 
-    n_in = int(100 * scale)
-    n_rec = int(100 * scale)
+    n_in = 100
+    n_rec = 100
     n_out = 1
 
     params_nrn_rec = {
@@ -325,26 +324,26 @@ def test_eprop_regression():
 
     loss_NEST_verification = np.array(
         [
-            0.301624405492225800,
-            0.300969013603013313,
-            0.295005356673212760,
-            0.299270730552683328,
-            0.320109501410700492,
+            101.964356999041,
+            103.466731126205,
+            103.340607074771,
+            103.680244037686,
+            104.412775748752,
         ]
     )
 
     loss_TF_verification = np.array(
         [
-            0.301624119281768799,
-            0.300968766212463379,
-            0.295005142688751221,
-            0.299270510673522949,
-            0.320109188556671143,
+            101.96436,
+            103.46673,
+            103.34060,
+            103.68024,
+            104.41278,
         ]
     )
 
-    assert np.allclose(loss, loss_NEST_verification, rtol=0.0, atol=1e-18)
-    assert np.allclose(loss, loss_TF_verification, rtol=0.0, atol=1e-6)
+    assert np.allclose(loss, loss_NEST_verification, rtol=0.0, atol=1e-12)
+    assert np.allclose(loss, loss_TF_verification, rtol=0.0, atol=1e-5)
 
 
 def test_eprop_classification():
@@ -353,8 +352,6 @@ def test_eprop_classification():
     losses obtained in a simulation with the original, verified NEST implementation and with the original
     TensorFlow implementation.
     """
-
-    scale = 0.1
 
     # Initialize random generator
 
@@ -371,10 +368,10 @@ def test_eprop_classification():
     prob_group = 0.3
 
     steps = {
-        "cue": int(100 * scale),
-        "spacing": int(50 * scale),
-        "bg_noise": int(1050 * scale),
-        "recall": int(150 * scale),
+        "cue": 100,
+        "spacing": 50,
+        "bg_noise": 1050,
+        "recall": 150,
     }
 
     steps["cues"] = n_cues * (steps["cue"] + steps["spacing"])
@@ -418,9 +415,9 @@ def test_eprop_classification():
 
     # Create neurons
 
-    n_in = int(40 * scale)
-    n_ad = int(50 * scale)
-    n_reg = int(50 * scale)
+    n_in = 40
+    n_ad = 50
+    n_reg = 50
     n_rec = n_ad + n_reg
     n_out = 2
 
@@ -710,25 +707,26 @@ def test_eprop_classification():
     loss = -np.mean(np.sum(target_signal * np.log(readout_signal), axis=0), axis=(1, 2))
 
     # Verify results
+
     loss_NEST_verification = np.array(
         [
-            0.693414902818640488,
-            0.693127422418977068,
-            0.693126011001533038,
-            0.693134668631192441,
-            0.691481004721114956,
+            0.741152550006,
+            0.740388187700,
+            0.665785233177,
+            0.663644193322,
+            0.729428962844,
         ]
     )
 
     loss_TF_verification = np.array(
         [
-            0.693414807319641113,
-            0.693127453327178955,
-            0.693125963211059570,
-            0.693134665489196777,
-            0.691480994224548340,
+            0.741152,
+            0.740388,
+            0.665785,
+            0.663644,
+            0.729429,
         ]
     )
 
-    assert np.allclose(loss, loss_NEST_verification, rtol=0.0, atol=1e-18)
-    assert np.allclose(loss, loss_TF_verification, rtol=0.0, atol=1e-7)
+    assert np.allclose(loss, loss_NEST_verification, rtol=0.0, atol=1e-12)
+    assert np.allclose(loss, loss_TF_verification, rtol=0.0, atol=1e-6)

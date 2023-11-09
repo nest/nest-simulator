@@ -250,7 +250,7 @@ nest::eprop_readout::update( Time const& origin, const long from, const long to 
 
     ( this->*compute_error_signal )( lag );
 
-    if ( interval_step_signals < ( update_interval - learning_window ) )
+    if ( interval_step_signals < update_interval - learning_window )
     {
       S_.target_signal_ = 0.0;
       S_.readout_signal_ = 0.0;

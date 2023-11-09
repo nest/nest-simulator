@@ -303,7 +303,7 @@ nest::eprop_iaf_psc_delta::update( Time const& origin, const long from, const lo
       }
     }
 
-    if ( interval_step == ( update_interval - 1 ) )
+    if ( interval_step == update_interval - 1 )
     {
       write_firing_rate_reg_to_history( t, P_.f_target_, P_.c_reg_ );
       reset_spike_count();

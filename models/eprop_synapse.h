@@ -242,15 +242,10 @@ public:
 
   void send( Event& e, size_t thread, const EpropCommonProperties& cp );
 
-  void optimize_via_gradient_descent( const long current_optimization_step_,
-    long& optimization_step_,
-    const EpropCommonProperties& cp );
-  void
-  optimize_via_adam( const long current_optimization_step_, long& optimization_step_, const EpropCommonProperties& cp );
+  void optimize_via_gradient_descent( const long current_optimization_step, const EpropCommonProperties& cp );
+  void optimize_via_adam( const long current_optimization_step, const EpropCommonProperties& cp );
 
-  void ( eprop_synapse::*optimize )( const long current_optimization_step_,
-    long& optimization_step_,
-    const EpropCommonProperties& cp );
+  void ( eprop_synapse::*optimize )( const long current_optimization_step, const EpropCommonProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -369,24 +364,24 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
   if ( t_spike >= t_next_update_ + shift )
   {
     const long idx_current_update = ( t_spike - shift ) / update_interval;
-    const long t_current_update_ = idx_current_update * update_interval;
-    const long current_optimization_step_ = 1 + idx_current_update / cp.batch_size_;
+    const long t_current_update = idx_current_update * update_interval;
+    const long current_optimization_step = 1 + idx_current_update / cp.batch_size_;
 
-    target->write_update_to_history( t_previous_update_, t_current_update_ );
+    target->write_update_to_history( t_previous_update_, t_current_update );
 
     sum_grads_ += target->gradient_change( presyn_isis_, t_previous_update_, t_previous_trigger_spike_, kappa_ );
 
-    if ( optimization_step_ < current_optimization_step_ )
+    if ( optimization_step_ < current_optimization_step )
     {
       sum_grads_ /= cp.batch_size_; // mean over batches
 
-      ( this->*optimize )( current_optimization_step_, optimization_step_, cp );
+      ( this->*optimize )( current_optimization_step, cp );
 
       weight_ = std::max( Wmin_, std::min( weight_, Wmax_ ) );
     }
 
-    t_previous_update_ = t_current_update_;
-    t_next_update_ = t_current_update_ + update_interval;
+    t_previous_update_ = t_current_update;
+    t_next_update_ = t_current_update + update_interval;
 
     t_previous_trigger_spike_ = t_spike;
   }
@@ -402,22 +397,20 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
 
 template < typename targetidentifierT >
 inline void
-eprop_synapse< targetidentifierT >::optimize_via_gradient_descent( const long current_optimization_step_,
-  long& optimization_step_,
+eprop_synapse< targetidentifierT >::optimize_via_gradient_descent( const long current_optimization_step,
   const EpropCommonProperties& cp )
 {
   weight_ -= eta_ * sum_grads_;
-  optimization_step_ = current_optimization_step_;
+  optimization_step_ = current_optimization_step;
   sum_grads_ = 0.0;
 }
 
 template < typename targetidentifierT >
 inline void
-eprop_synapse< targetidentifierT >::optimize_via_adam( const long current_optimization_step_,
-  long& optimization_step_,
+eprop_synapse< targetidentifierT >::optimize_via_adam( const long current_optimization_step,
   const EpropCommonProperties& cp )
 {
-  for ( ; optimization_step_ < current_optimization_step_; ++optimization_step_ )
+  for ( ; optimization_step_ < current_optimization_step; ++optimization_step_ )
   {
     const double adam_beta1_factor = 1.0 - std::pow( cp.adam_beta1_, optimization_step_ );
     const double adam_beta2_factor = 1.0 - std::pow( cp.adam_beta2_, optimization_step_ );

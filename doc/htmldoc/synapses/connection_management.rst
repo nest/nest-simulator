@@ -340,7 +340,7 @@ is required.
     nest.TripartiteConnect(A, B, C, conn_spec_dict, syn_specs_dict)
 
 
-.. figure:: ../static/img/astrocyte_pool_type.svg
+.. figure:: ../static/img/tripartite_pool_type.svg
     :align: center
     :alt: Astrocyte pool type.
 

@@ -33,20 +33,23 @@ namespace nest
 nest::EpropArchivingNode::EpropArchivingNode()
   : Node()
   , n_spikes_( 0 )
+  , eprop_indegree_( 0 )
 {
 }
 
 nest::EpropArchivingNode::EpropArchivingNode( const EpropArchivingNode& n )
   : Node( n )
   , n_spikes_( n.n_spikes_ )
+  , eprop_indegree_( n.eprop_indegree_ )
 {
 }
 
 void
-nest::EpropArchivingNode::init_update_history()
+nest::EpropArchivingNode::register_eprop_connection()
 {
-  // register first entry for every synapse, increase access counter if entry already in list
+  ++eprop_indegree_;
 
+  // register first entry for every synapse, increase access counter if entry already in list
   const long shift = get_shift();
 
   const auto it_hist = get_update_history( shift );
@@ -64,6 +67,11 @@ nest::EpropArchivingNode::init_update_history()
 void
 nest::EpropArchivingNode::write_update_to_history( const long t_previous_update, const long t_current_update )
 {
+  if ( eprop_indegree_ == 0 )
+  {
+    return;
+  }
+
   const long shift = get_shift();
 
   const auto it_hist_curr = get_update_history( t_current_update + shift );
@@ -88,12 +96,22 @@ nest::EpropArchivingNode::write_update_to_history( const long t_previous_update,
 void
 nest::EpropArchivingNode::write_surrogate_gradient_to_history( const long time_step, const double surrogate_gradient )
 {
+  if ( eprop_indegree_ == 0 )
+  {
+    return;
+  }
+
   eprop_history_.push_back( HistEntryEpropArchive( time_step, surrogate_gradient, 0.0 ) );
 }
 
 void
 nest::EpropArchivingNode::write_error_signal_to_history( const long time_step, const double error_signal )
 {
+  if ( eprop_indegree_ == 0 )
+  {
+    return;
+  }
+
   const long shift = delay_out_norm_;
   eprop_history_.push_back( HistEntryEpropArchive( time_step - shift, 0.0, error_signal ) );
 }
@@ -104,6 +122,11 @@ nest::EpropArchivingNode::write_learning_signal_to_history( const long time_step
   const double weight,
   const double error_signal )
 {
+  if ( eprop_indegree_ == 0 )
+  {
+    return;
+  }
+
   const long shift = delay_rec_out_ + delay_out_norm_ + delay_out_rec;
 
   auto it_hist = get_eprop_history( time_step - shift );
@@ -120,6 +143,11 @@ nest::EpropArchivingNode::write_firing_rate_reg_to_history( const long t_current
   const double f_target,
   const double c_reg )
 {
+  if ( eprop_indegree_ == 0 )
+  {
+    return;
+  }
+
   const double update_interval = kernel().simulation_manager.get_eprop_update_interval().get_ms();
   const double dt = Time::get_resolution().get_ms();
   const long shift = Time::get_resolution().get_steps();
@@ -214,18 +242,6 @@ nest::EpropArchivingNode::erase_unneeded_firing_rate_reg_history()
       firing_rate_reg_history_.erase( it_reg_hist );
     }
   }
-}
-
-void
-nest::EpropArchivingNode::count_spike()
-{
-  ++n_spikes_;
-}
-
-void
-nest::EpropArchivingNode::reset_spike_count()
-{
-  n_spikes_ = 0;
 }
 
 } // namespace nest

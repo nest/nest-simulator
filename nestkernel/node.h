@@ -482,6 +482,13 @@ public:
   virtual void register_stdp_connection( double, double );
 
   /**
+   * Register eprop connection
+   *
+   * @throws IllegalConnection
+   */
+  virtual void register_eprop_connection();
+
+  /**
    * Handle incoming spike events.
    *
    * @param thrd Id of the calling thread.

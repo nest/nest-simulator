@@ -285,8 +285,7 @@ public:
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
-    EpropArchivingNode& t_arch = dynamic_cast< EpropArchivingNode& >( t );
-    t_arch.init_update_history();
+    t.register_eprop_connection();
 
     const double dt = Time::get_resolution().get_ms();
     kappa_ = exp( -dt / tau_m_readout_ );

@@ -46,7 +46,7 @@ public:
   EpropArchivingNode();
   EpropArchivingNode( const EpropArchivingNode& );
 
-  void init_update_history();
+  void register_eprop_connection() override;
 
   void write_update_to_history( const long t_previous_update, const long t_current_update );
   void write_surrogate_gradient_to_history( const long time_step, const double surrogate_gradient );
@@ -73,6 +73,7 @@ public:
 private:
   size_t n_spikes_;
 
+  size_t eprop_indegree_; //!< number of incoming eprop synapses
 
   std::vector< HistEntryEpropUpdate > update_history_;
   std::vector< HistEntryEpropFiringRateReg > firing_rate_reg_history_;
@@ -88,6 +89,18 @@ protected:
   const long delay_rec_out_ = 1;  //!< connection delay from recurrent to output neurons
   const long delay_out_norm_ = 1; //!< connection delay between output neurons for normalization
 };
+
+inline void
+EpropArchivingNode::count_spike()
+{
+  ++n_spikes_;
+}
+
+inline void
+EpropArchivingNode::reset_spike_count()
+{
+  n_spikes_ = 0;
+}
 
 } // namespace nest
 #endif // EPROP_ARCHIVING_NODE_H

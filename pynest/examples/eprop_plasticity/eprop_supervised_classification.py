@@ -94,7 +94,7 @@ try:
     from IPython.display import Image
 
     Image(filename="./eprop_supervised_regression_infrastructure.png")
-except:
+except Exception:
     pass
 
 # %% ###########################################################################################################

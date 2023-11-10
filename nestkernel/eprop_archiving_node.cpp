@@ -81,7 +81,7 @@ nest::EpropArchivingNode::write_update_to_history( const long t_previous_update,
 
   if ( it_hist_prev != update_history_.end() and it_hist_prev->t_ == t_previous_update + shift )
   {
-    --it_hist_prev->access_counter_;
+    --it_hist_prev->access_counter_; // decrease access counter since entry no longer needed
   }
 }
 

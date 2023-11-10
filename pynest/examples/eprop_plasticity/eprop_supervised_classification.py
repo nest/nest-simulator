@@ -81,7 +81,6 @@ import matplotlib.pyplot as plt
 import nest
 import numpy as np
 from cycler import cycler
-from IPython.display import Image
 
 # %% ###########################################################################################################
 # Schematic of network architecture
@@ -90,7 +89,13 @@ from IPython.display import Image
 # the input and output of the pattern generation task above, and lists of the required NEST device, neuron, and
 # synapse models below. The connections that must be established are numbered 1 to 7.
 
-Image(filename="./eprop_supervised_classification_infrastructure.png")
+try:
+    # Display image in IPython or notebook if available
+    from IPython.display import Image
+
+    Image(filename="./eprop_supervised_regression_infrastructure.png")
+except:
+    pass
 
 # %% ###########################################################################################################
 # Setup
@@ -585,7 +590,7 @@ recall_errors = 1.0 - accuracy
 # Furthermore, we compare the calculated losses to some hardcoded verification losses to ensure everything with
 # the NEST installation is fine. For the unmodified script, these should be precisely the same.
 
-loss_verification = [
+loss_reference = [
     0.7411525500061912,
     0.7403881877007442,
     0.6657852331777671,
@@ -593,10 +598,18 @@ loss_verification = [
     0.7294289628449472,
 ]
 
-if loss.tolist()[:5] == loss_verification:
-    print("\n verification successful \n")
+if np.allclose(loss[:5], loss_reference, rtol=1e-8):
+    print()
+    print("Verification successful.")
+    print()
 else:
-    print("\n verification FAILED ! \n")
+    print()
+    print("Verification FAILED!")
+    print(f"    Expected  : {loss_reference}")
+    print(f"    Observed  : {loss[:5]}")
+    print(f"    Difference: {loss_reference-loss[:5]}")
+    print()
+    exit(1)
 
 # %% ###########################################################################################################
 # Plot results

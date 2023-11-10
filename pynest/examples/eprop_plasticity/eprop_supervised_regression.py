@@ -77,7 +77,6 @@ import matplotlib.pyplot as plt
 import nest
 import numpy as np
 from cycler import cycler
-from IPython.display import Image
 
 # %% ###########################################################################################################
 # Schematic of network architecture
@@ -86,7 +85,13 @@ from IPython.display import Image
 # the input and output of the pattern generation task above, and lists of the required NEST device, neuron, and
 # synapse models below. The connections that must be established are numbered 1 to 6.
 
-Image(filename="./eprop_supervised_regression_infrastructure.png")
+try:
+    # Display image in IPython or notebook if available
+    from IPython.display import Image
+
+    Image(filename="./eprop_supervised_regression_infrastructure.png")
+except:
+    pass
 
 # %% ###########################################################################################################
 # Setup
@@ -469,12 +474,20 @@ loss = 0.5 * np.add.reduceat(error, np.arange(0, steps["task"], steps["sequence"
 # Furthermore, we compare the calculated losses to some hardcoded verification losses to ensure everything with
 # the NEST installation is fine. For the unmodified script, these should be precisely the same.
 
-loss_verification = [101.96435699904158, 103.4667311262058, 103.34060707477168, 103.68024403768639, 104.41277574875247]
+loss_reference = [101.96435699904158, 103.46673112620580, 103.34060707477168, 103.68024403768639, 104.41277574875247]
 
-if loss.tolist()[:5] == loss_verification:
-    print("\n verification successful \n")
+if np.allclose(loss[:5], loss_reference, rtol=1e-8):
+    print()
+    print("Verification successful.")
+    print()
 else:
-    print("\n verification FAILED ! \n")
+    print()
+    print("Verification FAILED!")
+    print(f"    Expected  : {loss_reference}")
+    print(f"    Observed  : {loss[:5]}")
+    print(f"    Difference: {loss_reference-loss[:5]}")
+    print()
+    exit(1)
 
 # %% ###########################################################################################################
 # Plot results

@@ -101,8 +101,7 @@ nest::EpropArchivingNode::write_error_signal_to_history( const long time_step, c
 void
 nest::EpropArchivingNode::write_learning_signal_to_history( const long time_step,
   const long delay_out_rec,
-  const double weight,
-  const double error_signal )
+  const double learning_signal )
 {
   const long shift = delay_rec_out_ + delay_out_norm_ + delay_out_rec;
 
@@ -111,7 +110,7 @@ nest::EpropArchivingNode::write_learning_signal_to_history( const long time_step
 
   for ( ; it_hist != it_hist_end; ++it_hist )
   {
-    it_hist->learning_signal_ += weight * error_signal;
+    it_hist->learning_signal_ += learning_signal;
   }
 }
 

@@ -51,10 +51,7 @@ public:
   void write_update_to_history( const long t_previous_update, const long t_current_update );
   void write_surrogate_gradient_to_history( const long time_step, const double surrogate_gradient );
   void write_error_signal_to_history( const long time_step, const double error_signal );
-  void write_learning_signal_to_history( const long time_step,
-    const long delay_out_rec,
-    const double weight,
-    const double error_signal );
+  void write_learning_signal_to_history( const long time_step, const long delay_out_rec, const double learning_signal );
   void write_firing_rate_reg_to_history( const long t_current_update, const double f_target, const double c_reg );
 
   virtual long get_shift() const;

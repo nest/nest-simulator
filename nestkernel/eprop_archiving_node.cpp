@@ -183,6 +183,20 @@ nest::EpropArchivingNode::get_firing_rate_reg_history( const long time_step )
   return std::lower_bound( firing_rate_reg_history_.begin(), firing_rate_reg_history_.end(), time_step );
 }
 
+double
+nest::EpropArchivingNode::get_learning_signal( const long time_step )
+{
+  const auto it = get_eprop_history( time_step );
+  if ( it != eprop_history_.end() )
+  {
+    return it->learning_signal_;
+  }
+  else
+  {
+    return 0;
+  }
+}
+
 void
 nest::EpropArchivingNode::erase_unneeded_update_history()
 {

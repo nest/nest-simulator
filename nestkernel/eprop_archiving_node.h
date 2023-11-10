@@ -62,6 +62,8 @@ public:
   std::vector< HistEntryEpropUpdate >::iterator get_update_history( const long time_step );
   std::vector< HistEntryEpropArchive >::iterator get_eprop_history( const long time_step );
   std::vector< HistEntryEpropFiringRateReg >::iterator get_firing_rate_reg_history( const long time_step );
+  //! Return learning signal from history for given time step or zero if time step not in history
+  double get_learning_signal( const long time_step );
 
   void erase_unneeded_update_history();
   void erase_unneeded_eprop_history();

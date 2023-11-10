@@ -340,8 +340,7 @@ nest::eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, co
       reset_spike_count();
     }
 
-    const auto it_eprop_hist = get_eprop_history( t - shift );
-    S_.learning_signal_ = it_eprop_hist->learning_signal_;
+    S_.learning_signal_ = get_learning_signal( t - shift );
 
     if ( S_.r_ > 0 )
     {

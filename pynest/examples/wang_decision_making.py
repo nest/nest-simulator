@@ -102,6 +102,22 @@ nest.Connect(nonselective_pop,
              conn_spec="all_to_all",
              syn_spec=syn_spec_nonselective)
 
+nest.Connect(selective_pop1,
+             selective_pop2,
+             conn_spec="all_to_all",
+             syn_spec=syn_spec_selective)
+
+nest.Connect(selective_pop2,
+             selective_pop1,
+             conn_spec="all_to_all",
+             syn_spec=syn_spec_selective)
+
+nest.Connect(inhibitory_pop,
+             selective_pop1 + selective_pop2 + nonselective_pop,
+             conn_spec="all_to_all",
+             syn_spec=syn_spec_inhibitory)
+
+nest.Simulate(4000.)
 
 
 

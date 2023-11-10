@@ -67,7 +67,7 @@ def test_eprop_regression():
     losses obtained in a simulation with the verified NEST implementation
     (for details, see nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_regression.py)
     and with the slightly modified original TensorFlow implementation
-    (https://github.com/INM-6/eligibility_propagation/blob/eprop_in_nest/Figure_3_and_S7_e_prop_tutorials/tutorial_pattern_generation.py)
+    (https://github.com/INM-6/eligibility_propagation/blob/eprop_in_nest/Figure_3_and_S7_e_prop_tutorials/tutorial_pattern_generation.py)  # noqa: E501
     """
 
     # Initialize random generator
@@ -354,7 +354,7 @@ def test_eprop_classification():
     losses obtained in a simulation with the verified NEST implementation
     (for details, see nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_classification.py)
     and with the slightly modified original TensorFlow implementation
-    (https://github.com/INM-6/eligibility_propagation/blob/eprop_in_nest/Figure_3_and_S7_e_prop_tutorials/tutorial_evidence_accumulation_with_alif.py)
+    (https://github.com/INM-6/eligibility_propagation/blob/eprop_in_nest/Figure_3_and_S7_e_prop_tutorials/tutorial_evidence_accumulation_with_alif.py)  # noqa: E501
     """
 
     # Initialize random generator

@@ -68,7 +68,7 @@ nest::EpropArchivingNode::write_update_to_history( const long t_previous_update,
 
   const auto it_hist_curr = get_update_history( t_current_update + shift );
 
-  if ( it_hist_curr != update_history_.end() or it_hist_curr->t_ == ( t_current_update + shift ) )
+  if ( it_hist_curr != update_history_.end() and it_hist_curr->t_ == t_current_update + shift )
   {
     ++it_hist_curr->access_counter_;
   }
@@ -79,7 +79,7 @@ nest::EpropArchivingNode::write_update_to_history( const long t_previous_update,
 
   const auto it_hist_prev = get_update_history( t_previous_update + shift );
 
-  if ( it_hist_prev != update_history_.end() or it_hist_prev->t_ == ( t_previous_update + shift ) )
+  if ( it_hist_prev != update_history_.end() and it_hist_prev->t_ == t_previous_update + shift )
   {
     --it_hist_prev->access_counter_;
   }

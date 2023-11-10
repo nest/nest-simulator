@@ -134,7 +134,7 @@ neuron_params_in = {
 # This function creates the nodes and build the network. The astrocytes only
 # respond to excitatory synaptic inputs; therefore, only the excitatory
 # neuron-neuron connections are paired with the astrocytes. The
-# TripartiteConnect() function and the "tripartite_bernoulli_with_pool" rule
+# ``TripartiteConnect()`` function and the ``tripartite_bernoulli_with_pool`` rule
 # are used to create the connectivity of the network.
 
 

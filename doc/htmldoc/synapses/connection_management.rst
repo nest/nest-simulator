@@ -301,11 +301,11 @@ For each possible pair of nodes from ``A`` and ``B``, a connection is
 created with probability ``p_primary``, and these connections are
 called "primary" connections. For each primary connection, a
 third-party connection pair involving a node from ``C`` (a third
-``NodeCollections``) is created with the conditional probability
+``NodeCollection``) is created with the conditional probability
 ``p_third_if_primary``. This connection pair includes a connection
-from the node from ``A`` (i.e. the source) to the node from ``C`` in
+from the node from ``A`` (i.e., the source) to the node from ``C`` in
 question, and a connection from this node from ``C`` to the node from
-``B`` (i.e. the target). The node from ``C`` to connect to is chosen
+``B`` (i.e., the target). The node from ``C`` to connect to is chosen
 at random from a pool, a subset of the nodes in ``C``. By default,
 this pool is all of ``C``.
 

@@ -197,49 +197,6 @@ ModelManager::copy_node_model_( size_t old_id, Name new_name, DictionaryDatum pa
 }
 
 void
-ModelManager::register_connection_model_( ConnectorModel* cf )
-{
-  synindex syn_id = invalid_synindex; // will be set by master below
-
-#pragma omp master
-  {
-    // All operations related to the synapsedict must be performed only once.
-    // Because the synapsedict is managed by the master thread, we do it there.
-    // Model registration is not performance-critical, so sync'ing here is no issue.
-    if ( synapsedict_->known( cf->get_name() ) )
-    {
-      std::string msg = String::compose(
-        "A synapse type called '%1' already exists.\nPlease choose a different name!", cf->get_name() );
-      delete cf;
-      throw NamingConflict( msg );
-    }
-
-    syn_id = connection_models_[ 0 ].size();
-    if ( syn_id == invalid_synindex )
-    {
-      const std::string msg = String::compose(
-        "CopyModel cannot generate another synapse. Maximal synapse model count of %1 exceeded.", MAX_SYN_ID );
-      LOG( M_ERROR, "ModelManager::copy_connection_model_", msg );
-      throw KernelException( "Synapse model count exceeded" );
-    }
-
-    synapsedict_->insert( cf->get_name(), syn_id );
-  }
-#pragma omp barrier
-
-  std::cerr << "Past barrier, thread " << kernel().vp_manager.get_thread_id() << ", syn_id " << syn_id << ", cf: " << cf
-            << std::endl;
-
-
-  cf->set_syn_id( syn_id );
-  connection_models_[ kernel().vp_manager.get_thread_id() ].push_back( cf );
-
-  // Need to resize Connector vectors in case connection model is added after
-  // ConnectionManager is initialised.
-  kernel().connection_manager.resize_connections();
-}
-
-void
 ModelManager::copy_connection_model_( const size_t old_id, Name new_name, DictionaryDatum params )
 {
   kernel().vp_manager.assert_single_threaded();

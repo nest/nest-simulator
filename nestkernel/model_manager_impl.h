@@ -57,27 +57,54 @@ template < template < typename targetidentifierT > class ConnectionT >
 void
 ModelManager::register_connection_model( const std::string& name )
 {
-  // Every thread needs its own copy of each ConnectorModel so that CommonProperties are stored
-  // locally. Thus they need to be created in a parallel context.
+  // We only check the main synapse name for conflicts.
+  if ( synapsedict_->known( name ) )
+  {
+    std::string msg =
+      String::compose( "A synapse type called '%1' already exists.\nPlease choose a different name!", name );
+    throw NamingConflict( msg );
+  }
+
+  // Only required to check properties below
+  ConnectorModel const* const dummy_connector =
+    new GenericConnectorModel< ConnectionT< TargetIdentifierPtrRport > >( "dummy" );
+
+  register_specific_connection_model_< ConnectionT< TargetIdentifierPtrRport > >( name );
+  if ( dummy_connector->has_property( ConnectionModelProperties::SUPPORTS_HPC ) )
+  {
+    register_specific_connection_model_< ConnectionT< TargetIdentifierIndex > >( name + "_hpc" );
+  }
+  if ( dummy_connector->has_property( ConnectionModelProperties::SUPPORTS_LBL ) )
+  {
+    register_specific_connection_model_< ConnectionT< TargetIdentifierPtrRport > >( name + "_lbl" );
+  }
+
+  delete dummy_connector;
+}
+
+template < typename CompleteConnectionT >
+void
+ModelManager::register_specific_connection_model_( const std::string& name )
+{
+  kernel().vp_manager.assert_single_threaded();
+
+  const auto new_syn_id = connection_models_[ 0 ].size();
+  if ( new_syn_id >= invalid_synindex )
+  {
+    const std::string msg = String::compose(
+      "CopyModel cannot generate another synapse. Maximal synapse model count of %1 exceeded.", MAX_SYN_ID );
+    LOG( M_ERROR, "ModelManager::copy_connection_model_", msg );
+    throw KernelException( "Synapse model count exceeded" );
+  }
+
+  synapsedict_->insert( name, new_syn_id );
+
 #pragma omp parallel
   {
-    // register normal version of the synapse
-    ConnectorModel* cf = new GenericConnectorModel< ConnectionT< TargetIdentifierPtrRport > >( name );
-    register_connection_model_( cf );
-
-    // register the "hpc" version with the same parameters but a different target identifier
-    if ( cf->has_property( ConnectionModelProperties::SUPPORTS_HPC ) )
-    {
-      cf = new GenericConnectorModel< ConnectionT< TargetIdentifierIndex > >( name + "_hpc" );
-      register_connection_model_( cf );
-    }
-
-    // register the "lbl" (labeled) version with the same parameters but a different connection type
-    if ( cf->has_property( ConnectionModelProperties::SUPPORTS_LBL ) )
-    {
-      cf = new GenericConnectorModel< ConnectionLabel< ConnectionT< TargetIdentifierPtrRport > > >( name + "_lbl" );
-      register_connection_model_( cf );
-    }
+    ConnectorModel* conn_model = new GenericConnectorModel< CompleteConnectionT >( name );
+    conn_model->set_syn_id( new_syn_id );
+    connection_models_[ kernel().vp_manager.get_thread_id() ].push_back( conn_model );
+    kernel().connection_manager.resize_connections();
   }
 }
 

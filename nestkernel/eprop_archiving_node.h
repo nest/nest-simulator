@@ -33,8 +33,11 @@
 #include "dictdatum.h"
 
 /**
- * A node which archives the spike history and the history of the
- * dynamic variables associated with e-prop plasticity.
+ * A node which archives the history of dynamic variables, the firing rate
+ * regularization, and update times needed to calculate the weight updates for
+ * e-prop plasticity. It further provides a set of get, write, and set functions
+ * for these histories and the hardcoded shifts to synchronize the factors of
+ * the plasticity rule.
  */
 namespace nest
 {
@@ -46,44 +49,83 @@ public:
   EpropArchivingNode();
   EpropArchivingNode( const EpropArchivingNode& );
 
+  //! Initialize the update history and register the eprop synapse.
   void init_update_history();
 
+
+  //! Register current update in the update history and deregister previous update.
   void write_update_to_history( const long t_previous_update, const long t_current_update );
+
+  //! Create an entry in the eprop history for the given time step and surrogate gradient.
   void write_surrogate_gradient_to_history( const long time_step, const double surrogate_gradient );
+
+  //! Create an entry in the eprop history for the given time step and error signal.
   void write_error_signal_to_history( const long time_step, const double error_signal );
+
+  //! Add learning signal to the eprop history entry of the given time step.
   void write_learning_signal_to_history( const long time_step, const long delay_out_rec, const double learning_signal );
+
+  //! Create an entry in the firing rate regularization history for the current update.
   void write_firing_rate_reg_to_history( const long t_current_update, const double f_target, const double c_reg );
 
+
+  //! Get the number of time steps by which the eprop history is shifted to synchronize its factors.
   virtual long get_shift() const;
 
+  //! Get an iterator pointing to the update history entry of the given time step.
   std::vector< HistEntryEpropUpdate >::iterator get_update_history( const long time_step );
+
+  //! Get an iterator pointing to the eprop history entry of the given time step.
   std::vector< HistEntryEpropArchive >::iterator get_eprop_history( const long time_step );
+
+  //! Get an iterator pointing to the firing rate regularization history of the given time step.
   std::vector< HistEntryEpropFiringRateReg >::iterator get_firing_rate_reg_history( const long time_step );
 
+
+  //! Erase no longer needed parts of the update history.
   void erase_unneeded_update_history();
+
+  //! Erase no longer needed parts of the eprop history.
   void erase_unneeded_eprop_history();
+
+  //! Erase no longer needed parts of the firing rate regularization history.
   void erase_unneeded_firing_rate_reg_history();
 
+
+  //! Count emitted spike for the firing rate regularization.
   void count_spike();
+
+  //! Reset spike count for the firing rate regularization.
   void reset_spike_count();
 
 private:
+  //! Count of the emitted spikes for the firing rate regularization.
   size_t n_spikes_;
 
-
+  //! History of updates still needed by at least one synapse.
   std::vector< HistEntryEpropUpdate > update_history_;
+
+  //! History of the firing rate regularization.
   std::vector< HistEntryEpropFiringRateReg > firing_rate_reg_history_;
 
 protected:
+  //! History of dynamic variables needed for e-prop plasticity.
   std::vector< HistEntryEpropArchive > eprop_history_;
 
-  // These shifts are, for now, hardcoded to 1 time step since the current implementation only works if all the
-  // delays are equal to the resolution of the simulation.
+  // The following shifts are, for now, hardcoded to 1 time step since the current
+  // implementation only works if all the delays are equal to the simulation resolution.
 
-  const long offset_gen_ = 1;     //!< offset since generator signals start from time step 1
-  const long delay_in_rec_ = 1;   //!< connection delay from input to recurrent neurons
-  const long delay_rec_out_ = 1;  //!< connection delay from recurrent to output neurons
-  const long delay_out_norm_ = 1; //!< connection delay between output neurons for normalization
+  //! Offset since generator signals start from time step 1.
+  const long offset_gen_ = 1;
+
+  //! Connection delay from input to recurrent neurons.
+  const long delay_in_rec_ = 1;
+
+  //! Connection delay from recurrent to output neurons.
+  const long delay_rec_out_ = 1;
+
+  //! Connection delay between output neurons for normalization.
+  const long delay_out_norm_ = 1;
 };
 
 } // namespace nest

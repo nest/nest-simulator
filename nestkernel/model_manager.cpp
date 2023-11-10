@@ -88,7 +88,6 @@ ModelManager::finalize()
 {
   clear_node_models_();
   clear_connection_models_();
-  std::cout << "final end size " << connection_models_.size() << std::endl;
 }
 
 void
@@ -124,7 +123,7 @@ ModelManager::get_status( DictionaryDatum& dict )
   def< int >( dict, names::max_num_syn_models, MAX_SYN_ID + 1 );
 }
 
-size_t
+void
 ModelManager::copy_model( Name old_name, Name new_name, DictionaryDatum params )
 {
   if ( modeldict_->known( new_name ) or synapsedict_->known( new_name ) )
@@ -135,25 +134,20 @@ ModelManager::copy_model( Name old_name, Name new_name, DictionaryDatum params )
   const Token oldnodemodel = modeldict_->lookup( old_name );
   const Token oldsynmodel = synapsedict_->lookup( old_name );
 
-  size_t new_id;
   if ( not oldnodemodel.empty() )
   {
-    size_t old_id = static_cast< size_t >( oldnodemodel );
-    new_id = copy_node_model_( old_id, new_name );
-    set_node_defaults_( new_id, params );
+    const size_t old_id = static_cast< size_t >( oldnodemodel );
+    copy_node_model_( old_id, new_name, params );
   }
   else if ( not oldsynmodel.empty() )
   {
-    size_t old_id = static_cast< size_t >( oldsynmodel );
-    new_id = copy_connection_model_( old_id, new_name );
-    set_synapse_defaults_( new_id, params );
+    const size_t old_id = static_cast< size_t >( oldsynmodel );
+    copy_connection_model_( old_id, new_name, params );
   }
   else
   {
     throw UnknownModelName( old_name );
   }
-
-  return new_id;
 }
 
 size_t
@@ -180,8 +174,8 @@ ModelManager::register_node_model_( Model* model )
   return id;
 }
 
-size_t
-ModelManager::copy_node_model_( size_t old_id, Name new_name )
+void
+ModelManager::copy_node_model_( size_t old_id, Name new_name, DictionaryDatum params )
 {
   Model* old_model = get_node_model( old_id );
   old_model->deprecation_warning( "CopyModel" );
@@ -193,19 +187,64 @@ ModelManager::copy_node_model_( size_t old_id, Name new_name )
   node_models_.push_back( new_model );
   modeldict_->insert( new_name, new_id );
 
+  set_node_defaults_( new_id, params );
+
 #pragma omp parallel
   {
     const size_t t = kernel().vp_manager.get_thread_id();
     proxy_nodes_[ t ].push_back( create_proxynode_( t, new_id ) );
   }
-
-  return new_id;
 }
 
-size_t
-ModelManager::copy_connection_model_( size_t old_id, Name new_name )
+void
+ModelManager::register_connection_model_( ConnectorModel* cf )
 {
-  size_t new_id = connection_models_[ 0 ].size();
+  synindex syn_id = invalid_synindex; // will be set by master below
+
+#pragma omp master
+  {
+    // All operations related to the synapsedict must be performed only once.
+    // Because the synapsedict is managed by the master thread, we do it there.
+    // Model registration is not performance-critical, so sync'ing here is no issue.
+    if ( synapsedict_->known( cf->get_name() ) )
+    {
+      std::string msg = String::compose(
+        "A synapse type called '%1' already exists.\nPlease choose a different name!", cf->get_name() );
+      delete cf;
+      throw NamingConflict( msg );
+    }
+
+    syn_id = connection_models_[ 0 ].size();
+    if ( syn_id == invalid_synindex )
+    {
+      const std::string msg = String::compose(
+        "CopyModel cannot generate another synapse. Maximal synapse model count of %1 exceeded.", MAX_SYN_ID );
+      LOG( M_ERROR, "ModelManager::copy_connection_model_", msg );
+      throw KernelException( "Synapse model count exceeded" );
+    }
+
+    synapsedict_->insert( cf->get_name(), syn_id );
+  }
+#pragma omp barrier
+
+  std::cerr << "Past barrier, thread " << kernel().vp_manager.get_thread_id() << ", syn_id " << syn_id << ", cf: " << cf
+            << std::endl;
+
+
+  cf->set_syn_id( syn_id );
+  connection_models_[ kernel().vp_manager.get_thread_id() ].push_back( cf );
+
+  // Need to resize Connector vectors in case connection model is added after
+  // ConnectionManager is initialised.
+  kernel().connection_manager.resize_connections();
+}
+
+void
+ModelManager::copy_connection_model_( const size_t old_id, Name new_name, DictionaryDatum params )
+{
+  kernel().vp_manager.assert_single_threaded();
+
+  const size_t new_id = connection_models_[ 0 ].size();
 
   if ( new_id == invalid_synindex )
   {
@@ -214,17 +253,19 @@ ModelManager::copy_connection_model_( size_t old_id, Name new_name )
     LOG( M_ERROR, "ModelManager::copy_connection_model_", msg );
     throw KernelException( "Synapse model count exceeded" );
   }
-  assert( new_id != invalid_synindex );
-
-  for ( size_t t = 0; t < static_cast< size_t >( kernel().vp_manager.get_num_threads() ); ++t )
-  {
-    connection_models_[ t ].push_back( get_connection_model( old_id ).clone( new_name.toString(), new_id ) );
-  }
-
   synapsedict_->insert( new_name, new_id );
 
-  kernel().connection_manager.resize_connections();
-  return new_id;
+
+#pragma omp parallel
+  {
+    const size_t thread_id = kernel().vp_manager.get_thread_id();
+    connection_models_[ thread_id ].push_back(
+      get_connection_model( old_id, thread_id ).clone( new_name.toString(), new_id ) );
+
+    kernel().connection_manager.resize_connections();
+  }
+
+  set_synapse_defaults_( new_id, params ); // handles parallelism internally
 }
 
 
@@ -458,34 +499,6 @@ ModelManager::memory_info() const
 
   std::cout << sep << std::endl;
   std::cout.unsetf( std::ios::left );
-}
-
-synindex
-ModelManager::register_connection_model_( ConnectorModel* cf )
-{
-  if ( synapsedict_->known( cf->get_name() ) )
-  {
-    std::string msg =
-      String::compose( "A synapse type called '%1' already exists.\nPlease choose a different name!", cf->get_name() );
-    delete cf;
-    throw NamingConflict( msg );
-  }
-
-  const synindex syn_id = connection_models_[ 0 ].size();
-  cf->set_syn_id( syn_id );
-
-  for ( size_t t = 0; t < static_cast< size_t >( kernel().vp_manager.get_num_threads() ); ++t )
-  {
-    connection_models_[ t ].push_back( cf );
-  }
-
-  synapsedict_->insert( cf->get_name(), syn_id );
-
-  // Need to resize Connector vectors in case connection model is added after
-  // ConnectionManager is initialised.
-  kernel().connection_manager.resize_connections();
-
-  return syn_id;
 }
 
 Node*

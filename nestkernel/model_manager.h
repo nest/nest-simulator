@@ -82,7 +82,7 @@ public:
    *        num_connections and the min_ and max_delay setting in
    *        ConnectorBase was moved out to the ConnectionManager
    */
-  ConnectorModel& get_connection_model( synindex syn_id, size_t t = 0 );
+  ConnectorModel& get_connection_model( synindex syn_id, size_t thread_id );
 
   const std::vector< ConnectorModel* >& get_connection_models( size_t tid );
 
@@ -125,10 +125,9 @@ public:
    * @param old_name name of existing model.
    * @param new_name name of new model.
    * @param params default parameters of new model.
-   * @return model ID of new Model object.
    * @see copy_node_model_, copy_connection_model_
    */
-  size_t copy_model( Name old_name, Name new_name, DictionaryDatum params );
+  void copy_model( Name old_name, Name new_name, DictionaryDatum params );
 
   /**
    * Set the default parameters of a model.
@@ -192,27 +191,25 @@ private:
 
   size_t register_node_model_( Model* model );
 
-  synindex register_connection_model_( ConnectorModel* );
+  void register_connection_model_( ConnectorModel* );
 
   /**
    * Copy an existing node model and register it as a new model.
    *
    * @param old_id ID of existing model.
    * @param new_name name of new model.
-   * @return model ID of new Model object.
    * @see copy_model(), copy_connection_model_()
    */
-  size_t copy_node_model_( size_t old_id, Name new_name );
+  void copy_node_model_( size_t old_id, Name new_name, DictionaryDatum params );
 
   /**
    * Copy an existing synapse model and register it as a new model.
    *
    * @param old_id ID of existing model.
    * @param new_name name of new model.
-   * @return model ID of new Model object.
    * @see copy_model(), copy_node_model_()
    */
-  size_t copy_connection_model_( size_t old_id, Name new_name );
+  void copy_connection_model_( const size_t old_id, Name new_name, DictionaryDatum params );
 
   /**
    * Set the default parameters of a model.
@@ -301,10 +298,10 @@ ModelManager::are_model_defaults_modified() const
 }
 
 inline ConnectorModel&
-ModelManager::get_connection_model( synindex syn_id, size_t t )
+ModelManager::get_connection_model( synindex syn_id, size_t thread_id )
 {
   assert_valid_syn_id( syn_id );
-  return *( connection_models_[ t ][ syn_id ] );
+  return *( connection_models_[ thread_id ][ syn_id ] );
 }
 
 inline const std::vector< ConnectorModel* >&

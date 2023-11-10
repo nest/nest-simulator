@@ -23,8 +23,10 @@
 #ifndef SECONDARY_EVENT_H
 #define SECONDARY_EVENT_H
 
-// c++ includes
-// C++ includes:
+// Includes from nestkernel
+#include "event.h"
+
+// C++ includes
 #include <set>
 
 namespace nest
@@ -195,12 +197,7 @@ public:
    *
    * See also:
    */
-  void
-  add_syn_id( const synindex synid ) override
-  {
-    VPManager::assert_single_threaded();
-    supported_syn_ids_.insert( synid );
-  }
+  void add_syn_id( const synindex synid ) override;
 
   const std::set< synindex >&
   get_supported_syn_ids() const override
@@ -221,12 +218,7 @@ public:
     supported_syn_ids_.clear();
   }
 
-  static void
-  set_coeff_length( const size_t coeff_length )
-  {
-    VPManager::assert_single_threaded();
-    coeff_length_ = coeff_length;
-  }
+  static void set_coeff_length( const size_t coeff_length );
 
   void
   set_coeffarray( std::vector< DataType >& ca )

@@ -57,22 +57,27 @@ template < template < typename targetidentifierT > class ConnectionT >
 void
 ModelManager::register_connection_model( const std::string& name )
 {
-  // register normal version of the synapse
-  ConnectorModel* cf = new GenericConnectorModel< ConnectionT< TargetIdentifierPtrRport > >( name );
-  register_connection_model_( cf );
-
-  // register the "hpc" version with the same parameters but a different target identifier
-  if ( cf->has_property( ConnectionModelProperties::SUPPORTS_HPC ) )
+  // Every thread needs its own copy of each ConnectorModel so that CommonProperties are stored
+  // locally. Thus they need to be created in a parallel context.
+#pragma omp parallel
   {
-    cf = new GenericConnectorModel< ConnectionT< TargetIdentifierIndex > >( name + "_hpc" );
+    // register normal version of the synapse
+    ConnectorModel* cf = new GenericConnectorModel< ConnectionT< TargetIdentifierPtrRport > >( name );
     register_connection_model_( cf );
-  }
 
-  // register the "lbl" (labeled) version with the same parameters but a different connection type
-  if ( cf->has_property( ConnectionModelProperties::SUPPORTS_LBL ) )
-  {
-    cf = new GenericConnectorModel< ConnectionLabel< ConnectionT< TargetIdentifierPtrRport > > >( name + "_lbl" );
-    register_connection_model_( cf );
+    // register the "hpc" version with the same parameters but a different target identifier
+    if ( cf->has_property( ConnectionModelProperties::SUPPORTS_HPC ) )
+    {
+      cf = new GenericConnectorModel< ConnectionT< TargetIdentifierIndex > >( name + "_hpc" );
+      register_connection_model_( cf );
+    }
+
+    // register the "lbl" (labeled) version with the same parameters but a different connection type
+    if ( cf->has_property( ConnectionModelProperties::SUPPORTS_LBL ) )
+    {
+      cf = new GenericConnectorModel< ConnectionLabel< ConnectionT< TargetIdentifierPtrRport > > >( name + "_lbl" );
+      register_connection_model_( cf );
+    }
   }
 }
 

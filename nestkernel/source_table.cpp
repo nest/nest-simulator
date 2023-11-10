@@ -55,7 +55,7 @@ nest::SourceTable::initialize()
   {
     const size_t tid = kernel().vp_manager.get_thread_id();
     sources_[ tid ].resize( 0 );
-    resize_sources( tid );
+    resize_sources();
     compressible_sources_[ tid ].resize( 0 );
   } // of omp parallel
 }
@@ -266,9 +266,10 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const size_t
 }
 
 void
-nest::SourceTable::resize_sources( const size_t tid )
+nest::SourceTable::resize_sources()
 {
-  sources_[ tid ].resize( kernel().model_manager.get_num_connection_models() );
+  kernel().vp_manager.assert_thread_parallel();
+  sources_[ kernel().vp_manager.get_thread_id() ].resize( kernel().model_manager.get_num_connection_models() );
 }
 
 bool

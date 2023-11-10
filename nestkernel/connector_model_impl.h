@@ -38,6 +38,7 @@
 #include "kernel_manager.h"
 #include "nest_time.h"
 #include "nest_timeconverter.h"
+#include "secondary_event_impl.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -184,6 +185,8 @@ template < typename ConnectionT >
 void
 GenericConnectorModel< ConnectionT >::set_syn_id( synindex syn_id )
 {
+  std::cerr << "ssi thread " << kernel().vp_manager.get_thread_id() << ", syn_id " << syn_id << ", this: " << this
+            << ", dcaddr" << &default_connection_ << std::endl;
   default_connection_.set_syn_id( syn_id );
 }
 
@@ -231,6 +234,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 
   // create a new instance of the default connection
   ConnectionT connection = ConnectionT( default_connection_ );
+  std::cerr << kernel().vp_manager.get_thread_id() << " syn_id " << connection.get_syn_id() << std::endl;
 
   if ( not numerics::is_nan( weight ) )
   {

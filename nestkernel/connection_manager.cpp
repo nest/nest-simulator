@@ -213,7 +213,8 @@ nest::ConnectionManager::get_synapse_status( const size_t source_node_id,
 
   DictionaryDatum dict( new Dictionary );
   ( *dict )[ names::source ] = source_node_id;
-  ( *dict )[ names::synapse_model ] = LiteralDatum( kernel().model_manager.get_connection_model( syn_id ).get_name() );
+  ( *dict )[ names::synapse_model ] =
+    LiteralDatum( kernel().model_manager.get_connection_model( syn_id, /* thread */ 0 ).get_name() );
   ( *dict )[ names::target_thread ] = tid;
   ( *dict )[ names::synapse_id ] = syn_id;
   ( *dict )[ names::port ] = lcid;
@@ -1531,7 +1532,7 @@ nest::ConnectionManager::deliver_secondary_events( const size_t tid,
   const synindex syn_id_end = positions_tid.size();
   for ( synindex syn_id = 0; syn_id < syn_id_end; ++syn_id )
   {
-    const ConnectorModel& conn_model = kernel().model_manager.get_connection_model( syn_id );
+    const ConnectorModel& conn_model = kernel().model_manager.get_connection_model( syn_id, tid );
     const bool supports_wfr = conn_model.has_property( ConnectionModelProperties::SUPPORTS_WFR );
     if ( not called_from_wfr_update or supports_wfr )
     {
@@ -1599,20 +1600,11 @@ nest::ConnectionManager::remove_disabled_connections( const size_t tid )
 void
 nest::ConnectionManager::resize_connections()
 {
-  kernel().vp_manager.assert_single_threaded();
+  kernel().vp_manager.assert_thread_parallel();
 
-  // TODO: Shouldn't this be done thread-parallel, so the memory belongs to the right thread?
-  // TODO: Also, num_connection_models can probably be obtained once outside the loop.
+  connections_[ kernel().vp_manager.get_thread_id() ].resize( kernel().model_manager.get_num_connection_models() );
 
-  // Resize data structures for connections between neurons
-  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-  {
-    connections_[ tid ].resize( kernel().model_manager.get_num_connection_models() );
-    source_table_.resize_sources( tid );
-  }
-
-  // Resize data structures for connections between neurons and
-  // devices
+  source_table_.resize_sources();
   target_table_devices_.resize_to_number_of_synapse_types();
 }
 

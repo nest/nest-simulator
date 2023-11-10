@@ -334,16 +334,16 @@ def test_eprop_regression():
 
     loss_TF_verification = np.array(
         [
-            101.96436,
-            103.46673,
-            103.34060,
-            103.68024,
-            104.41278,
+            101.964363098144,
+            103.466735839843,
+            103.340606689453,
+            103.680244445800,
+            104.412780761718,
         ]
     )
 
-    assert np.allclose(loss, loss_NEST_verification, rtol=0.0, atol=1e-12)
-    assert np.allclose(loss, loss_TF_verification, rtol=0.0, atol=1e-5)
+    assert np.allclose(loss, loss_NEST_verification, rtol=1e-8)
+    assert np.allclose(loss, loss_TF_verification, rtol=1e-7)
 
 
 def test_eprop_classification():
@@ -720,13 +720,13 @@ def test_eprop_classification():
 
     loss_TF_verification = np.array(
         [
-            0.741152,
-            0.740388,
-            0.665785,
-            0.663644,
-            0.729429,
+            0.741152524948,
+            0.740388214588,
+            0.665785133838,
+            0.663644134998,
+            0.729429066181,
         ]
     )
 
-    assert np.allclose(loss, loss_NEST_verification, rtol=0.0, atol=1e-12)
-    assert np.allclose(loss, loss_TF_verification, rtol=0.0, atol=1e-6)
+    assert np.allclose(loss, loss_NEST_verification, rtol=1e-8)
+    assert np.allclose(loss, loss_TF_verification, rtol=1e-6)

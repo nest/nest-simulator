@@ -64,8 +64,10 @@ def test_unsupported_model_raises(target_model):
 def test_eprop_regression():
     """
     Test correct computation of weights for a regresion task  by comparing the simulated losses with
-    losses obtained in a simulation with the original, verified NEST implementation and with the original
-    TensorFlow implementation.
+    losses obtained in a simulation with the verified NEST implementation
+    (for details, see nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_regression.py)
+    and with the slightly modified original TensorFlow implementation
+    (https://github.com/INM-6/eligibility_propagation/blob/eprop_in_nest/Figure_3_and_S7_e_prop_tutorials/tutorial_pattern_generation.py)
     """
 
     # Initialize random generator
@@ -322,7 +324,7 @@ def test_eprop_regression():
 
     # Verify results
 
-    loss_NEST_verification = np.array(
+    loss_NEST_reference = np.array(
         [
             101.964356999041,
             103.466731126205,
@@ -332,7 +334,7 @@ def test_eprop_regression():
         ]
     )
 
-    loss_TF_verification = np.array(
+    loss_TF_reference = np.array(
         [
             101.964363098144,
             103.466735839843,
@@ -342,15 +344,17 @@ def test_eprop_regression():
         ]
     )
 
-    assert np.allclose(loss, loss_NEST_verification, rtol=1e-8)
-    assert np.allclose(loss, loss_TF_verification, rtol=1e-7)
+    assert np.allclose(loss, loss_NEST_reference, rtol=1e-8)
+    assert np.allclose(loss, loss_TF_reference, rtol=1e-7)
 
 
 def test_eprop_classification():
     """
     Test correct computation of weights for a classification task by comparing the simulated losses with
-    losses obtained in a simulation with the original, verified NEST implementation and with the original
-    TensorFlow implementation.
+    losses obtained in a simulation with the verified NEST implementation
+    (for details, see nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_classification.py)
+    and with the slightly modified original TensorFlow implementation
+    (https://github.com/INM-6/eligibility_propagation/blob/eprop_in_nest/Figure_3_and_S7_e_prop_tutorials/tutorial_evidence_accumulation_with_alif.py)
     """
 
     # Initialize random generator
@@ -708,7 +712,7 @@ def test_eprop_classification():
 
     # Verify results
 
-    loss_NEST_verification = np.array(
+    loss_NEST_reference = np.array(
         [
             0.741152550006,
             0.740388187700,
@@ -718,7 +722,7 @@ def test_eprop_classification():
         ]
     )
 
-    loss_TF_verification = np.array(
+    loss_TF_reference = np.array(
         [
             0.741152524948,
             0.740388214588,
@@ -728,5 +732,5 @@ def test_eprop_classification():
         ]
     )
 
-    assert np.allclose(loss, loss_NEST_verification, rtol=1e-8)
-    assert np.allclose(loss, loss_TF_verification, rtol=1e-6)
+    assert np.allclose(loss, loss_NEST_reference, rtol=1e-8)
+    assert np.allclose(loss, loss_TF_reference, rtol=1e-6)

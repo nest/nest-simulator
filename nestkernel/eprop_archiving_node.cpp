@@ -66,22 +66,27 @@ nest::EpropArchivingNode::write_update_to_history( const long t_previous_update,
 {
   const long shift = get_shift();
 
+  // Obtain an iterator to the history entry corresponding to the current update time
   const auto it_hist_curr = get_update_history( t_current_update + shift );
 
   if ( it_hist_curr != update_history_.end() and it_hist_curr->t_ == t_current_update + shift )
   {
-    ++it_hist_curr->access_counter_;
+    // If an entry already exists for the current update time, increment its access counter
+    ++it_hist_curr->access_counter_; 
   }
   else
   {
+    // If no entry exists for the current update time, create a new entry with a counter initialized to 1
     update_history_.insert( it_hist_curr, HistEntryEpropUpdate( t_current_update + shift, 1 ) );
   }
 
+  // Obtain an iterator to the history entry corresponding to the previous update time
   const auto it_hist_prev = get_update_history( t_previous_update + shift );
 
   if ( it_hist_prev != update_history_.end() and it_hist_prev->t_ == t_previous_update + shift )
   {
-    --it_hist_prev->access_counter_; // decrease access counter since entry no longer needed
+    // If an entry exists for the previous update time, decrement its access counter
+    --it_hist_prev->access_counter_; 
   }
 }
 

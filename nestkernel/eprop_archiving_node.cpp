@@ -179,24 +179,32 @@ nest::EpropArchivingNode::write_firing_rate_reg_to_history( const long t_current
 long
 nest::EpropArchivingNode::get_shift() const
 {
+  // Returns the offset for the start of the e-prop history timeline. This is overridden
+  // in derived classes based on neuron type (readout or recurrent)
   return 0;
 }
 
 std::vector< HistEntryEpropUpdate >::iterator
 nest::EpropArchivingNode::get_update_history( const long time_step )
 {
+  // This function returns an iterator to the position in the update history that corresponds
+  // to or is immediately after the specified time_step.
   return std::lower_bound( update_history_.begin(), update_history_.end(), time_step );
 }
 
 std::vector< HistEntryEpropArchive >::iterator
 nest::EpropArchivingNode::get_eprop_history( const long time_step )
 {
+  // This function returns an iterator to the position in the e-prop history that corresponds
+  // to or is immediately after the given time_step.
   return std::lower_bound( eprop_history_.begin(), eprop_history_.end(), time_step );
 }
 
 std::vector< HistEntryEpropFiringRateReg >::iterator
 nest::EpropArchivingNode::get_firing_rate_reg_history( const long time_step )
 {
+  // This function returns an iterator to the position in the firing rate regularization history
+  // that corresponds to or is immediately after the given time_step.
   return std::lower_bound( firing_rate_reg_history_.begin(), firing_rate_reg_history_.end(), time_step );
 }
 

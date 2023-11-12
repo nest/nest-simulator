@@ -162,10 +162,18 @@ nest::EpropArchivingNode::get_firing_rate_reg_history( const long time_step )
 void
 nest::EpropArchivingNode::erase_unneeded_update_history()
 {
+  // Iterate over the update history
   for ( auto it_hist = update_history_.begin(); it_hist != update_history_.end(); ++it_hist )
   {
+    // The access_counter_ for each entry in update_history_ represents the number
+    // of synapses that require information from that particular update time
+
     if ( it_hist->access_counter_ == 0 )
     {
+      // If access_counter_ is 0, it implies that no synapses need information from this update time,
+      // therefore the corresponding update history entry is no longer needed and can be removed
+      // from the update history. This ensures update history only contains only
+      // entries that are needed by at least one synapse
       update_history_.erase( it_hist );
     }
   }
@@ -216,13 +224,19 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
 void
 nest::EpropArchivingNode::erase_unneeded_firing_rate_reg_history()
 {
+  // Iterators for navigating through the update history and firing rate regularization history
   auto it_update_hist = update_history_.begin();
   auto it_reg_hist = firing_rate_reg_history_.begin();
+
+  // Iterate simultaneously through update history and firing rate regularization history
   for ( ; it_update_hist != update_history_.end() and it_reg_hist != firing_rate_reg_history_.end();
         ++it_update_hist, ++it_reg_hist )
   {
     if ( it_update_hist->access_counter_ == 0 )
     {
+      // If no synapses require updates for this time period (indicated by access_counter_ being 0),
+      // the corresponding entry in the firing rate regularization history is no longer needed
+      // and can be safely remove
       firing_rate_reg_history_.erase( it_reg_hist );
     }
   }

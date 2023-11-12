@@ -50,9 +50,9 @@ nest::EpropArchivingNode::init_update_history()
   // the starting point of this timeline, which varies based on whether the neuron is a readout
   // neuron or a recurrent neuron.
   // Important:
-  // The total sum of 'access_counter_' values across all entries in 'update_history_' for a neuron 
-  // remains constant and is equal to the total number of incoming synapses to that neuron. 
-  // This constancy assumes that the network structure is static during the simulation, 
+  // The total sum of 'access_counter_' values across all entries in 'update_history_' for a neuron
+  // remains constant and is equal to the total number of incoming synapses to that neuron.
+  // This constancy assumes that the network structure is static during the simulation,
   // meaning no synapses are added or removed after the initial setup.
 
 
@@ -72,7 +72,7 @@ nest::EpropArchivingNode::init_update_history()
   else
   {
     // If an entry already exists, increment its access counter. This increment
-    // implies that a different synapse is registering this initial time point in the update history.      
+    // implies that a different synapse is registering this initial time point in the update history.
     ++it_hist->access_counter_;
   }
 }
@@ -124,13 +124,25 @@ nest::EpropArchivingNode::write_learning_signal_to_history( const long time_step
   const long delay_out_rec,
   const double learning_signal )
 {
+  // Calculate the total shift to adjust  'time_step'. This shift accounts for:
+  // - delay_rec_out: The relative offset between the timelines of readout and recurrent neurons.
+  // - delay_out_norm: The time corresponding to the transmission of normalization signals.
+  // - delay_out_rec: The transmission time of the learning signal.
+  // These 3 delays must be taken into account to place the learning signal in the correct place
+  // in the e-prop history
   const long shift = delay_rec_out_ + delay_out_norm_ + delay_out_rec;
 
+  // Obtain iterators to define a range in the e-prop history. This range corresponds to
+  // the adjusted time step (time_step - shift) and spans over the transmission time of the learning signal
   auto it_hist = get_eprop_history( time_step - shift );
   const auto it_hist_end = get_eprop_history( time_step - shift + delay_out_rec );
 
+  // Iterate over the e-prop history entries within this range
   for ( ; it_hist != it_hist_end; ++it_hist )
   {
+    // Update the learning signal for each history entry within the range. In cases where multiple readout neurons
+    // contribute to the learning signal, each neuron's contribution is added to the existing value. Hence,
+    // the use of the '+=' operator to incrementally accumulate the learning signal
     it_hist->learning_signal_ += learning_signal;
   }
 }

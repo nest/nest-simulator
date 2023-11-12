@@ -246,7 +246,7 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
   for ( long t = update_history_.begin()->t_; t <= ( update_history_.end() - 1 )->t_; t += update_interval )
   {
     // Use std::find_if to check if an update history entry exists for the current time period
-    // The lambda expression comperes each entry's time against the current time t
+    // The lambda expression compares each entry's time against the current time t
     auto it = std::find_if( update_history_.begin(),
       update_history_.end(),
       [ t ]( const HistEntryEpropUpdate& entry ) { return entry.t_ == t; } );

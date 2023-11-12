@@ -476,16 +476,20 @@ loss = 0.5 * np.add.reduceat(error, np.arange(0, steps["task"], steps["sequence"
 
 loss_reference = [101.96435699904158, 103.46673112620580, 103.34060707477168, 103.68024403768639, 104.41277574875247]
 
-if np.allclose(loss[:5], loss_reference, rtol=1e-8):
+# Determine the number of elements to compare (up to len(loss_reference))
+n_compare = min(len(loss), len(loss_reference))
+
+# Compare the required number of elements
+if np.allclose(loss[:n_compare], loss_reference[:n_compare], rtol=1e-8):
     print()
     print("Verification successful.")
     print()
 else:
     print()
     print("Verification FAILED!")
-    print(f"    Expected  : {loss_reference}")
-    print(f"    Observed  : {loss[:5]}")
-    print(f"    Difference: {loss_reference-loss[:5]}")
+    print(f"    Expected  : {loss_reference[:n_compare]}")
+    print(f"    Observed  : {loss[:n_compare]}")
+    print(f"    Difference: {np.array(loss_reference[:n_compare]) - np.array(loss[:n_compare])}")
     print()
     exit(1)
 

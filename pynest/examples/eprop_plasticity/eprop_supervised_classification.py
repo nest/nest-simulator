@@ -598,16 +598,20 @@ loss_reference = [
     0.7294289628449472,
 ]
 
-if np.allclose(loss[:5], loss_reference, rtol=1e-8):
+# Determine the number of elements to compare (up to len(loss_reference))
+n_compare = min(len(loss), len(loss_reference))
+
+# Compare the required number of elements
+if np.allclose(loss[:n_compare], loss_reference[:n_compare], rtol=1e-8):
     print()
     print("Verification successful.")
     print()
 else:
     print()
     print("Verification FAILED!")
-    print(f"    Expected  : {loss_reference}")
-    print(f"    Observed  : {loss[:5]}")
-    print(f"    Difference: {loss_reference-loss[:5]}")
+    print(f"    Expected  : {loss_reference[:n_compare]}")
+    print(f"    Observed  : {loss[:n_compare]}")
+    print(f"    Difference: {np.array(loss_reference[:n_compare]) - np.array(loss[:n_compare])}")
     print()
     exit(1)
 

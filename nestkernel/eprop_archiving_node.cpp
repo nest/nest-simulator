@@ -174,6 +174,7 @@ nest::EpropArchivingNode::erase_unneeded_update_history()
 void
 nest::EpropArchivingNode::erase_unneeded_eprop_history()
 {
+  // Early exit if there is nothing to remove
   if ( eprop_history_.empty()  // nothing to remove
     or update_history_.empty() // no time markers to check
   )
@@ -181,29 +182,36 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
     return;
   }
 
+  // Retrieve the update interval
   const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
 
-  auto it_update_hist = update_history_.begin();
-
-  for ( long t = update_history_.begin()->t_;
-        t <= ( update_history_.end() - 1 )->t_ and it_update_hist != update_history_.end();
-        t += update_interval )
+  // Iterate over time periods defined by the update interval in the update history
+  for ( long t = update_history_.begin()->t_; t <= ( update_history_.end() - 1 )->t_; t += update_interval )
   {
-    if ( it_update_hist->t_ == t )
+    // Use std::find_if to check if an update history entry exists for the current time period
+    // The lambda expression comperes each entry's time against the current time t
+    auto it = std::find_if( update_history_.begin(),
+      update_history_.end(),
+      [ t ]( const HistEntryEpropUpdate& entry ) { return entry.t_ == t; } );
+
+    // If no corresponding entry is found in the update histry for the current time,
+    // it implies that the e-prop history entries for this time period are no longer needed
+    if ( it == update_history_.end() )
     {
-      ++it_update_hist;
-    }
-    else
-    {
-      const auto it_eprop_hist_from = get_eprop_history( t );
-      const auto it_eprop_hist_to = get_eprop_history( t + update_interval );
-      eprop_history_.erase( it_eprop_hist_from, it_eprop_hist_to ); // erase found entries since no longer used
+      // Get iterators difining the range of e-prop history entries to be removed
+      auto it_eprop_hist_from = get_eprop_history( t );
+      auto it_eprop_hist_to = get_eprop_history( t + update_interval );
+
+      // Erase the e-prop history entries within the determined range
+      eprop_history_.erase( it_eprop_hist_from, it_eprop_hist_to );
     }
   }
-  const auto it_eprop_hist_from = get_eprop_history( 0 );
-  const auto it_eprop_hist_to = get_eprop_history( update_history_.begin()->t_ );
-  eprop_history_.erase( it_eprop_hist_from, it_eprop_hist_to ); // erase found entries since no longer used
+
+  // Additionally, clear e-prop history entries preceding the earliest entry in the update history,
+  // which further cleans up any old entries that are longer relevant
+  eprop_history_.erase( get_eprop_history( 0 ), get_eprop_history( update_history_.begin()->t_ ) );
 }
+
 
 void
 nest::EpropArchivingNode::erase_unneeded_firing_rate_reg_history()

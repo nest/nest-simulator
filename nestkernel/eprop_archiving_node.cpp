@@ -45,18 +45,34 @@ nest::EpropArchivingNode::EpropArchivingNode( const EpropArchivingNode& n )
 void
 nest::EpropArchivingNode::init_update_history()
 {
-  // register first entry for every synapse, increase access counter if entry already in list
+  // This function initializes the update history for synapses by ensuring there is an entry
+  // at the start of the e-prop history timeline for each neuron. The 'shift' value determines
+  // the starting point of this timeline, which varies based on whether the neuron is a readout
+  // neuron or a recurrent neuron.
+  // Important:
+  // The total sum of 'access_counter_' values across all entries in 'update_history_' for a neuron 
+  // remains constant and is equal to the total number of incoming synapses to that neuron. 
+  // This constancy assumes that the network structure is static during the simulation, 
+  // meaning no synapses are added or removed after the initial setup.
 
+
+  // Get 'shift' to determine the starting point of the e-prop history timeline.
   const long shift = get_shift();
 
+  // Find the corresonding update history entry
   const auto it_hist = get_update_history( shift );
 
+  // Check if there is an entry in the update history at the start of the timeline
   if ( it_hist == update_history_.end() or it_hist->t_ != shift )
   {
+    // If no entry exists, create a new entry. Initialize the access counter
+    // of this new entry to 1, indicating its first access.
     update_history_.insert( it_hist, HistEntryEpropUpdate( shift, 1 ) );
   }
   else
   {
+    // If an entry already exists, increment its access counter. This increment
+    // implies that a different synapse is registering this initial time point in the update history.      
     ++it_hist->access_counter_;
   }
 }

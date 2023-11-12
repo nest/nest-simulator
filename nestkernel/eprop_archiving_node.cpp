@@ -301,7 +301,7 @@ nest::EpropArchivingNode::count_spike()
 void
 nest::EpropArchivingNode::reset_spike_count()
 {
-  // Resets the spike count to zero. This is called at the start of a new update interval and/or
+  // Resets the spike count to zero. This is called at the start of a new update period and/or
   // when the neuron's state is reset
   n_spikes_ = 0;
 }

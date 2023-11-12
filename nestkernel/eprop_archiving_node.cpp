@@ -264,8 +264,7 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
     }
   }
 
-  // Additionally, clear e-prop history entries preceding the earliest entry in the update history,
-  // which further cleans up any old entries that are longer relevant
+  // Additionally, clear e-prop history entries preceding the earliest entry in the update history
   eprop_history_.erase( get_eprop_history( 0 ), get_eprop_history( update_history_.begin()->t_ ) );
 }
 

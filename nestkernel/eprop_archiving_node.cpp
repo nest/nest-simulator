@@ -141,7 +141,7 @@ nest::EpropArchivingNode::write_learning_signal_to_history( const long time_step
   // - delay_rec_out: The relative offset between the timelines of readout and recurrent neurons.
   // - delay_out_norm: The time corresponding to the transmission of normalization signals.
   // - delay_out_rec: The transmission time of the learning signal.
-  // These 3 delays must be taken into account to place the learning signal in the correct place
+  // These 3 delays must be taken into account to place the learning signal in the correct location
   // in the e-prop history
   const long shift = delay_rec_out_ + delay_out_norm_ + delay_out_rec;
 

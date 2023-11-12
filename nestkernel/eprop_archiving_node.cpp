@@ -294,12 +294,16 @@ nest::EpropArchivingNode::erase_unneeded_firing_rate_reg_history()
 void
 nest::EpropArchivingNode::count_spike()
 {
+  // Increments the count of spikes. This spike count is used in the calculation of the firing rate,
+  // which is a component for firing rate regularization
   ++n_spikes_;
 }
 
 void
 nest::EpropArchivingNode::reset_spike_count()
 {
+  // Resets the spike count to zero. This is called at the start of a new update interval and/or
+  // when the neuron's state is reset
   n_spikes_ = 0;
 }
 

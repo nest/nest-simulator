@@ -72,7 +72,7 @@ nest::EpropArchivingNode::write_update_to_history( const long t_previous_update,
   if ( it_hist_curr != update_history_.end() and it_hist_curr->t_ == t_current_update + shift )
   {
     // If an entry already exists for the current update time, increment its access counter
-    ++it_hist_curr->access_counter_; 
+    ++it_hist_curr->access_counter_;
   }
   else
   {
@@ -86,7 +86,7 @@ nest::EpropArchivingNode::write_update_to_history( const long t_previous_update,
   if ( it_hist_prev != update_history_.end() and it_hist_prev->t_ == t_previous_update + shift )
   {
     // If an entry exists for the previous update time, decrement its access counter
-    --it_hist_prev->access_counter_; 
+    --it_hist_prev->access_counter_;
   }
 }
 

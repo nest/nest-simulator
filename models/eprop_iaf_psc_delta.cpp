@@ -151,6 +151,11 @@ nest::eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* nod
     throw BadProperty( "Capacitance must be > 0." );
   }
 
+  if ( f_target_ < 0 )
+  {
+    throw BadProperty( "Target firing rate must be >= 0." );
+  }
+
   if ( propagator_idx_ != 0 and propagator_idx_ != 1 )
   {
     throw BadProperty( "One of two available propagators indexed by 0 and 1 must be selected." );

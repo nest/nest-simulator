@@ -109,13 +109,26 @@ nest::EpropArchivingNode::write_update_to_history( const long t_previous_update,
 void
 nest::EpropArchivingNode::write_surrogate_gradient_to_history( const long time_step, const double surrogate_gradient )
 {
+  // This function records the surrogate gradient into the e-prop history
+  // This function is only called by recurrent neurons
+
+  // Add a new entry to the e-prop history with the given time step and surrogate gradient,
+  // learning signal is initialized to 0.0, as it will be updated separately
   eprop_history_.push_back( HistEntryEpropArchive( time_step, surrogate_gradient, 0.0 ) );
 }
 
 void
 nest::EpropArchivingNode::write_error_signal_to_history( const long time_step, const double error_signal )
 {
+  // This function records the error signal into the e-prop history
+  // This function is only called by readout neurons
+
+  // Calculate the adjusted time step by subtracting the delay_out_norm_,
+  // which accounts for the transmission time of the normalization signals
   const long shift = delay_out_norm_;
+
+  // Add a new entry to the e-prop history with the adjusted time step and error signal
+  // The surrogate gradient is initialized to 0.0 in this entry, as it is not needed
   eprop_history_.push_back( HistEntryEpropArchive( time_step - shift, 0.0, error_signal ) );
 }
 

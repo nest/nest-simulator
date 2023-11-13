@@ -148,7 +148,7 @@ nest::eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Nod
 
   if ( updateValueParam< double >( d, names::f_target, f_target_, node ) )
   {
-    f_target_ /= 1000.0; // scale to ms^-1
+    f_target_ /= 1000.0; // convert from spikes/s to spikes/ms
   }
 
   updateValueParam< double >( d, names::gamma, gamma_, node );

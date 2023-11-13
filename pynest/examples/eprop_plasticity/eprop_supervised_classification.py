@@ -195,7 +195,7 @@ params_nrn_reg = {
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
     "gamma": 0.3,  # scaling of the pseudo derivative
     "I_e": 0.0,  # pA, external current input
-    "psc_scale_factor": "identity",  # index of the two available propagators
+    "psc_scale_factor": "identity",  # postsynaptic current scale factor
     "surrogate_gradient": "piecewise_linear",  # pseudo-derivative
     "t_ref": 5.0,  # ms, duration of refractory period
     "tau_m": 20.0,  # ms, membrane time constant
@@ -212,7 +212,7 @@ params_nrn_ad = {
     "f_target": 10.0,
     "gamma": 0.3,
     "I_e": 0.0,
-    "psc_scale_factor": "identity",  # index of the two available propagators
+    "psc_scale_factor": "identity",  # postsynaptic current scale factor
     "surrogate_gradient": "piecewise_linear",
     "t_ref": 5.0,
     "tau_m": 20.0,

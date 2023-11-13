@@ -76,7 +76,7 @@ nest::eprop_iaf_psc_delta::Parameters_::Parameters_()
   , f_target_( 0.01 )
   , gamma_( 0.3 )
   , I_e_( 0.0 )
-  , psc_scale_factor_( "leak_constant_complement" )
+  , psc_scale_factor_( "leak_propagator_complement" )
   , surrogate_gradient_( "piecewise_linear" )
   , t_ref_( 2.0 )
   , tau_m_( 10.0 )
@@ -161,10 +161,10 @@ nest::eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* nod
     throw BadProperty( "Target firing rate must be >= 0." );
   }
 
-  if ( psc_scale_factor_ != "identity" and psc_scale_factor_ != "leak_constant_complement" )
+  if ( psc_scale_factor_ != "identity" and psc_scale_factor_ != "leak_propagator_complement" )
   {
     throw BadProperty(
-      "Available presynaptic current scale factors are \"identity\" and \"leak_constant_complement\"." );
+      "Available presynaptic current scale factors are \"identity\" and \"leak_propagator_complement\"." );
   }
 
   if ( surrogate_gradient_ != "piecewise_linear" )
@@ -249,7 +249,7 @@ nest::eprop_iaf_psc_delta::pre_run_hook()
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
 
-  if ( P_.psc_scale_factor_ == "leak_constant_complement" )
+  if ( P_.psc_scale_factor_ == "leak_propagator_complement" )
   {
     V_.P33_complement_ = 1.0 - V_.P33_;
   }

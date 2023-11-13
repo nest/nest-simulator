@@ -116,8 +116,8 @@ E_L                mV   :math:`E_\text{L}`                  -70.0 Leak membrane 
 f_target           Hz   :math:`f^\text{target}`              10.0 Target firing rate of rate regularization
 gamma                   :math:`\gamma`                        0.3 Scaling of pseudo-derivative of membrane voltage
 I_e                pA   :math:`I_\text{e}`                    0.0 Constant external input current
-psc_scale_factor                         leak_constant_complement Scale factor type for presynaptic current, either
-identify or leak_constant_complement, correspondinly
+psc_scale_factor                         leak_propagator_complement Scale factor type for presynaptic current, either
+identify or leak_propagator_complement, correspondinly
                                                                   [:math:`1 - \exp(\Delta t/\tau_\text{m})`, :math:`1`]
 surrogate_gradient      :math:`\psi`             piecewise_linear Surrogate gradient method / pseudo-derivative
                                                                   ["piecewise_linear"]

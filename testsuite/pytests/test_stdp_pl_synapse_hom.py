@@ -163,6 +163,7 @@ class TestSTDPPlSynapse:
         wr = nest.Create("weight_recorder")
         nest.CopyModel(self.synapse_model, self.synapse_model + "_rec", {"weight_recorder": wr})
 
+        print("test1")
         spike_senders = nest.Create(
             "spike_generator",
             2,
@@ -173,7 +174,7 @@ class TestSTDPPlSynapse:
         )
         pre_spike_generator = spike_senders[0]
         post_spike_generator = spike_senders[1]
-
+        print("test2")
         # The recorder is to save the randomly generated spike trains.
         spike_recorder = nest.Create("spike_recorder")
 

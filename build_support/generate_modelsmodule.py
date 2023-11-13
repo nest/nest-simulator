@@ -105,6 +105,7 @@ def get_models_from_file(model_file):
         "recorder": "public RecordingDevice",
         "devicelike": "public DeviceNode",
         "connection": "public Connection",
+        "axonal_delay_connection": "public AxonalDelayConnection",
         "node": "public Node",
         "clopath": "public ClopathArchivingNode",
         "urbanczik": "public UrbanczikArchivingNode",
@@ -304,7 +305,7 @@ def generate_modelsmodule():
             for guards, mnames in guards_mnames.items():
                 file.write(start_guard(guards))
                 for mname in mnames:
-                    if model_type == "connection":
+                    if model_type == "connection" or model_type == "axonal_delay_connection":
                         file.write(conn_reg.format(model=mname))
                     else:
                         file.write(node_reg.format(model=mname))

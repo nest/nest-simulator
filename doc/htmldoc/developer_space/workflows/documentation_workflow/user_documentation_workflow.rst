@@ -130,6 +130,9 @@ If you use pip, install ``pandoc`` from your platform's package manager (e.g. ap
    - Download the `plantuml jar file <https://plantuml.com/download>`_ (Minimum version is 1-2023-10)
    - Move the jar file to ``/tmp/plantuml.jar``
 
+   - To see if plantuml diagrams render correctly after building the documentation you can take a look
+     at our :ref:`test_uml`.
+
 
 Edit and create pages
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -242,3 +245,8 @@ on Read the Docs, you can set up your own account and link it with your Github a
 
 See `this guide <https://docs.readthedocs.io/en/stable/intro/import-guide.htmli>`_
 for more information.
+
+.. toctree::
+   :hidden:
+
+   /testuml

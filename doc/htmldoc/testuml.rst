@@ -1,12 +1,20 @@
-:orphan:
+.. _test_uml:
 
-Test page
----------
+Test uml page
+-------------
+
+Two diagrams should render on this page.
+
+**Basic example:**
+
 
 .. uml::
 
    Alice -> Bob: Hi!
    Alice <- Bob: How are you?
+
+
+**C4 example:**
 
 
 .. uml::

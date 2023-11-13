@@ -45,34 +45,16 @@ nest::EpropArchivingNode::EpropArchivingNode( const EpropArchivingNode& n )
 void
 nest::EpropArchivingNode::init_update_history()
 {
-  // This function initializes the update history for synapses by ensuring there is an entry
-  // at the start of the e-prop history timeline for each neuron. The 'shift' value determines
-  // the starting point of this timeline, which varies based on whether the neuron is a readout
-  // neuron or a recurrent neuron.
-  // Important:
-  // The total sum of 'access_counter_' values across all entries in 'update_history_' for a neuron
-  // remains constant and is equal to the total number of incoming synapses to that neuron.
-  // This constancy assumes that the network structure is static during the simulation,
-  // meaning no synapses are added or removed after the initial setup.
-
-
-  // Get 'shift' to determine the starting point of the e-prop history timeline.
   const long shift = get_shift();
 
-  // Find the corresonding update history entry
   const auto it_hist = get_update_history( shift );
 
-  // Check if there is an entry in the update history at the start of the timeline
   if ( it_hist == update_history_.end() or it_hist->t_ != shift )
   {
-    // If no entry exists, create a new entry. Initialize the access counter
-    // of this new entry to 1, indicating its first access.
     update_history_.insert( it_hist, HistEntryEpropUpdate( shift, 1 ) );
   }
   else
   {
-    // If an entry already exists, increment its access counter. This increment
-    // implies that a different synapse is registering this initial time point in the update history.
     ++it_hist->access_counter_;
   }
 }
@@ -82,21 +64,17 @@ nest::EpropArchivingNode::write_update_to_history( const long t_previous_update,
 {
   const long shift = get_shift();
 
-  // Obtain an iterator to the history entry corresponding to the current update time
   const auto it_hist_curr = get_update_history( t_current_update + shift );
 
   if ( it_hist_curr != update_history_.end() and it_hist_curr->t_ == t_current_update + shift )
   {
-    // If an entry already exists for the current update time, increment its access counter
     ++it_hist_curr->access_counter_;
   }
   else
   {
-    // If no entry exists for the current update time, create a new entry with a counter initialized to 1
     update_history_.insert( it_hist_curr, HistEntryEpropUpdate( t_current_update + shift, 1 ) );
   }
 
-  // Obtain an iterator to the history entry corresponding to the previous update time
   const auto it_hist_prev = get_update_history( t_previous_update + shift );
 
   if ( it_hist_prev != update_history_.end() and it_hist_prev->t_ == t_previous_update + shift )
@@ -109,26 +87,14 @@ nest::EpropArchivingNode::write_update_to_history( const long t_previous_update,
 void
 nest::EpropArchivingNode::write_surrogate_gradient_to_history( const long time_step, const double surrogate_gradient )
 {
-  // This function records the surrogate gradient into the e-prop history
-  // This function is only called by recurrent neurons
-
-  // Add a new entry to the e-prop history with the given time step and surrogate gradient,
-  // learning signal is initialized to 0.0, as it will be updated separately
   eprop_history_.push_back( HistEntryEpropArchive( time_step, surrogate_gradient, 0.0 ) );
 }
 
 void
 nest::EpropArchivingNode::write_error_signal_to_history( const long time_step, const double error_signal )
 {
-  // This function records the error signal into the e-prop history
-  // This function is only called by readout neurons
-
-  // Calculate the adjusted time step by subtracting the delay_out_norm_,
-  // which accounts for the transmission time of the normalization signals
   const long shift = delay_out_norm_;
 
-  // Add a new entry to the e-prop history with the adjusted time step and error signal
-  // The surrogate gradient is initialized to 0.0 in this entry, as it is not needed
   eprop_history_.push_back( HistEntryEpropArchive( time_step - shift, 0.0, error_signal ) );
 }
 
@@ -137,20 +103,13 @@ nest::EpropArchivingNode::write_learning_signal_to_history( const long time_step
   const long delay_out_rec,
   const double learning_signal )
 {
-  // Calculate the total shift to adjust  'time_step'. This shift accounts for:
-  // - delay_rec_out: The relative offset between the timelines of readout and recurrent neurons.
-  // - delay_out_norm: The time corresponding to the transmission of normalization signals.
-  // - delay_out_rec: The transmission time of the learning signal.
   // These 3 delays must be taken into account to place the learning signal in the correct location
   // in the e-prop history
   const long shift = delay_rec_out_ + delay_out_norm_ + delay_out_rec;
 
-  // Obtain iterators to define a range in the e-prop history. This range corresponds to
-  // the adjusted time step (time_step - shift) and spans over the transmission time of the learning signal
   auto it_hist = get_eprop_history( time_step - shift );
   const auto it_hist_end = get_eprop_history( time_step - shift + delay_out_rec );
 
-  // Iterate over the e-prop history entries within this range
   for ( ; it_hist != it_hist_end; ++it_hist )
   {
     // Update the learning signal for each history entry within the range. In cases where multiple readout neurons
@@ -179,39 +138,30 @@ nest::EpropArchivingNode::write_firing_rate_reg_to_history( const long t_current
 long
 nest::EpropArchivingNode::get_shift() const
 {
-  // Returns the offset for the start of the e-prop history timeline. This is overridden
-  // in derived classes based on neuron type (readout or recurrent)
   return 0;
 }
 
 std::vector< HistEntryEpropUpdate >::iterator
 nest::EpropArchivingNode::get_update_history( const long time_step )
 {
-  // This function returns an iterator to the position in the update history that corresponds
-  // to or is immediately after the specified time_step.
   return std::lower_bound( update_history_.begin(), update_history_.end(), time_step );
 }
 
 std::vector< HistEntryEpropArchive >::iterator
 nest::EpropArchivingNode::get_eprop_history( const long time_step )
 {
-  // This function returns an iterator to the position in the e-prop history that corresponds
-  // to or is immediately after the given time_step.
   return std::lower_bound( eprop_history_.begin(), eprop_history_.end(), time_step );
 }
 
 std::vector< HistEntryEpropFiringRateReg >::iterator
 nest::EpropArchivingNode::get_firing_rate_reg_history( const long time_step )
 {
-  // This function returns an iterator to the position in the firing rate regularization history
-  // that corresponds to or is immediately after the given time_step.
   return std::lower_bound( firing_rate_reg_history_.begin(), firing_rate_reg_history_.end(), time_step );
 }
 
 void
 nest::EpropArchivingNode::erase_unneeded_update_history()
 {
-  // Iterate over the update history
   for ( auto it_hist = update_history_.begin(); it_hist != update_history_.end(); ++it_hist )
   {
     // The access_counter_ for each entry in update_history_ represents the number
@@ -231,7 +181,6 @@ nest::EpropArchivingNode::erase_unneeded_update_history()
 void
 nest::EpropArchivingNode::erase_unneeded_eprop_history()
 {
-  // Early exit if there is nothing to remove
   if ( eprop_history_.empty()  // nothing to remove
     or update_history_.empty() // no time markers to check
   )
@@ -239,10 +188,8 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
     return;
   }
 
-  // Retrieve the update interval
   const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
 
-  // Iterate over time periods defined by the update interval in the update history
   for ( long t = update_history_.begin()->t_; t <= ( update_history_.end() - 1 )->t_; t += update_interval )
   {
     // Use std::find_if to check if an update history entry exists for the current time period
@@ -255,16 +202,14 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
     // it implies that the e-prop history entries for this time period are no longer needed
     if ( it == update_history_.end() )
     {
-      // Get iterators difining the range of e-prop history entries to be removed
       auto it_eprop_hist_from = get_eprop_history( t );
       auto it_eprop_hist_to = get_eprop_history( t + update_interval );
 
-      // Erase the e-prop history entries within the determined range
       eprop_history_.erase( it_eprop_hist_from, it_eprop_hist_to );
     }
   }
 
-  // Additionally, clear e-prop history entries preceding the earliest entry in the update history
+  // clear up e-prop history entries preceding the earliest entry in the update history
   eprop_history_.erase( get_eprop_history( 0 ), get_eprop_history( update_history_.begin()->t_ ) );
 }
 
@@ -272,11 +217,9 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
 void
 nest::EpropArchivingNode::erase_unneeded_firing_rate_reg_history()
 {
-  // Iterators for navigating through the update history and firing rate regularization history
   auto it_update_hist = update_history_.begin();
   auto it_reg_hist = firing_rate_reg_history_.begin();
 
-  // Iterate simultaneously through update history and firing rate regularization history
   for ( ; it_update_hist != update_history_.end() and it_reg_hist != firing_rate_reg_history_.end();
         ++it_update_hist, ++it_reg_hist )
   {
@@ -293,16 +236,12 @@ nest::EpropArchivingNode::erase_unneeded_firing_rate_reg_history()
 void
 nest::EpropArchivingNode::count_spike()
 {
-  // Increments the count of spikes. This spike count is used in the calculation of the firing rate,
-  // which is a component for firing rate regularization
   ++n_spikes_;
 }
 
 void
 nest::EpropArchivingNode::reset_spike_count()
 {
-  // Resets the spike count to zero. This is called at the start of a new update period and/or
-  // when the neuron's state is reset
   n_spikes_ = 0;
 }
 

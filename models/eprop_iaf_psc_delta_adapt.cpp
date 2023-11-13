@@ -452,7 +452,7 @@ nest::eprop_iaf_psc_delta_adapt::gradient_change( std::vector< long >& presyn_is
       sum_e += e;
       z = 0.0; //  Set spiking variable to 0 between spikes
 
-      ++eprop_hist_it; 
+      ++eprop_hist_it;
     }
   }
   presyn_isis.clear();

@@ -384,15 +384,15 @@ nest::eprop_readout::gradient_change( std::vector< long >& presyn_isis,
 
     for ( long t = 0; t < presyn_isi; ++t )
     {
-      assert( eprop_hist_it != eprop_history_.end() ); 
+      assert( eprop_hist_it != eprop_history_.end() );
       const double L = eprop_hist_it->learning_signal_;
       z_bar = V_.P33_ * z_bar + V_.P33_complement_ * z;
       grad += L * z_bar;
       z = 0.0; //  Set spiking variable to 0 between spikes
-      ++eprop_hist_it; 
+      ++eprop_hist_it;
     }
   }
-  presyn_isis.clear(); 
+  presyn_isis.clear();
 
   const long learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
   if ( average_gradient )

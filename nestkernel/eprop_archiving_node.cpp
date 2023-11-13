@@ -210,7 +210,9 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
   }
 
   // clear up e-prop history entries preceding the earliest entry in the update history
-  eprop_history_.erase( get_eprop_history( 0 ), get_eprop_history( update_history_.begin()->t_ ) );
+  const auto it_eprop_hist_from = get_eprop_history( 0 );
+  const auto it_eprop_hist_to = get_eprop_history( update_history_.begin()->t_ );
+  eprop_history_.erase( it_eprop_hist_from, it_eprop_hist_to );
 }
 
 

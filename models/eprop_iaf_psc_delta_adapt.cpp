@@ -75,7 +75,7 @@ nest::eprop_iaf_psc_delta_adapt::Parameters_::Parameters_()
   , C_m_( 250.0 )
   , c_reg_( 0.0 )
   , E_L_( -70.0 )
-  , f_target_( 10.0 )
+  , f_target_( 0.01 )
   , gamma_( 0.3 )
   , I_e_( 0.0 )
   , propagator_idx_( 0 )
@@ -145,7 +145,12 @@ nest::eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Nod
   updateValueParam< double >( d, names::adapt_tau, adapt_tau_, node );
   updateValueParam< double >( d, names::C_m, C_m_, node );
   updateValueParam< double >( d, names::c_reg, c_reg_, node );
-  updateValueParam< double >( d, names::f_target, f_target_, node );
+
+  if ( updateValueParam< double >( d, names::f_target, f_target_, node ) )
+  {
+    f_target_ /= 1000.0; // scale to ms^-1
+  }
+
   updateValueParam< double >( d, names::gamma, gamma_, node );
   updateValueParam< double >( d, names::I_e, I_e_, node );
   updateValueParam< long >( d, names::propagator_idx, propagator_idx_, node );

@@ -149,7 +149,7 @@ steps["total_offset"] = steps["offset_gen"] + steps["delay_in_rec"] + steps["del
 
 steps["sim"] = steps["task"] + steps["total_offset"] + steps["extension_sim"]  # time steps of sim
 
-duration = {"step": 1.0}  # ms, temporal resolution of the simulation, only tested for 1 ms
+duration = {"step": 1.0}  # ms, temporal resolution of the simulation
 
 duration.update({key: value * duration["step"] for key, value in steps.items()})  # ms, durations
 
@@ -192,7 +192,7 @@ params_nrn_reg = {
     "C_m": 1.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
     "c_reg": 2.0,  # firing rate regularization scaling - double the TF c_reg for technical reasons
     "E_L": 0.0,  # mV, leak reversal potential
-    "f_target": 10.0,  # Hz, target firing rate for firing rate regularization
+    "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
     "gamma": 0.3,  # scaling of the pseudo derivative
     "I_e": 0.0,  # pA, external current input
     "propagator_idx": 1,  # index of the two available propagators 0 (1 - exp(dt/tau_m)) or 1 (1)
@@ -220,8 +220,9 @@ params_nrn_ad = {
     "V_th": 0.6,
 }
 
-params_nrn_ad["adapt_beta"] = (
-    1.7 * (1.0 - np.exp(-1.0 / params_nrn_ad["adapt_tau"])) / (1.0 - np.exp(-1.0 / params_nrn_ad["tau_m"]))
+params_nrn_ad["adapt_beta"] = 1.7 * (
+    (1.0 - np.exp(-duration["step"] / params_nrn_ad["adapt_tau"]))
+    / (1.0 - np.exp(-duration["step"] / params_nrn_ad["tau_m"]))
 )  # prefactor of adaptive threshold
 
 params_nrn_out = {

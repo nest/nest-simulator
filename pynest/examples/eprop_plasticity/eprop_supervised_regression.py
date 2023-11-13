@@ -135,7 +135,7 @@ steps["total_offset"] = steps["offset_gen"] + steps["delay_in_rec"] + steps["del
 
 steps["sim"] = steps["task"] + steps["total_offset"] + steps["extension_sim"]  # time steps of sim
 
-duration = {"step": 1.0}  # ms, temporal resolution of the simulation, only tested for 1 ms
+duration = {"step": 1.0}  # ms, temporal resolution of the simulation
 
 duration.update({key: value * duration["step"] for key, value in steps.items()})  # ms, durations
 
@@ -175,7 +175,7 @@ params_nrn_rec = {
     "c_reg": 300.0,  # firing rate regularization scaling
     "gamma": 0.3,  # scaling of the pseudo derivative
     "E_L": 0.0,  # mV, leak reversal potential
-    "f_target": 10.0,  # Hz, target firing rate for firing rate regularization
+    "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
     "I_e": 0.0,  # pA, external current input
     "propagator_idx": 0,  # index of the two available propagators 0 (1-exp(dt/tau_m)) or 1 (1)
     "surrogate_gradient": "piecewise_linear",  # pseudo-derivative

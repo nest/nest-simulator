@@ -124,13 +124,13 @@ nest::EpropArchivingNode::write_firing_rate_reg_to_history( const long t_current
   const double f_target,
   const double c_reg )
 {
-  const double update_interval = kernel().simulation_manager.get_eprop_update_interval().get_ms();
+  const double update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
   const double dt = Time::get_resolution().get_ms();
   const long shift = Time::get_resolution().get_steps();
 
-  const double f_av = n_spikes_ / update_interval * dt;
-  const double f_target_ = f_target / 1000.0; // convert to kHz
-  const double firing_rate_reg = c_reg * ( f_av - f_target_ ) / update_interval * dt;
+  const double f_av = n_spikes_ / update_interval;
+  const double f_target_ = f_target * dt; // convert from spikes/ms to spikes/step
+  const double firing_rate_reg = c_reg * ( f_av - f_target_ ) / update_interval;
 
   firing_rate_reg_history_.push_back( HistEntryEpropFiringRateReg( t_current_update + shift, firing_rate_reg ) );
 }

@@ -57,53 +57,36 @@ Connection Management
 
 		.. image:: ../static/img/Multapse_H.png
 
-Connections between populations of neurons and between neurons and
-devices for stimulation and recording in NEST are created with the
-:py:func:`.Connect` function. Although each connection is internally
-represented individually, you can use a single call to ``Connect()``
-to create many connections at the same time. In the simplest case, the
-function just takes two NodeCollections containing the source and
-target nodes that will be connected in an all-to-all fashion.
+We use the term `connection` to mean a single, atomic edge between network nodes (i.e., neurons or devices).
+A `projection` is a group of edges that connects groups of nodes with similar properties (i.e., populations).
+We specify network connectivity by providing, for each projection between any pair of populations, a *connection rule* which defines how to create atomic edges (connections) between individual nodes.
+A projection is thus defined by a triplet of source population, target population and `connection rule` and represents a collection of atomic connections.
 
-Each call to the function will establish the connectivity between pre-
-and post-synaptic populations according to a certain pattern or
-rule. The desired pattern is specified by simply stating the rule name
-as third argument to ``Connect()``, or by setting the key ``rule`` in
-the connectivity specification dictionary ``conn_spec`` alongside
-additional rule-specific parameters. All available patterns are
-described in the section :ref:`Connection Rules <conn_rules>` below.
+This documentation not only describes how to define projections in NEST, but also represents a living reference for the connection rules defined in the article "Connectivity concepts in neuronal network modeling" [1]_.
+The same article also introduces a graphical notation for neuronal network diagrams which are curated in the documentation of NEST Desktop. TODO ADD LINK
 
-To specify the properties for the individual connections, a synapse
-specification ``syn_spec`` can be given to ``Connect()``. This can
-also just be the name of the synapse model to be used, an object
-defining :ref:`collocated synapses <collocated_synapses>`, or a
-dictionary, with optional parameters for the connections.
-
-The ``syn_spec`` is given as the fourth argument to the ``Connect()``
-function. Parameters like the synaptic weight or delay can be either
-set values or drawn and combined flexibly from random distributions.
-More information about synapse models and their parameters can
-be found in the section :ref:`Synapse Specification <synapse_spec>`.
-
-The :py:func:`.Connect` function can be called in any of the following ways:
+Projections are created with the :py:func:`.Connect` function:
 
 .. code-block:: python
 
-    Connect(pre, post)
-    Connect(pre, post, conn_spec)
-    Connect(pre, post, conn_spec, syn_spec)
+    nest.Connect(pre, post)
+    nest.Connect(pre, post, conn_spec)
+    nest.Connect(pre, post, conn_spec, syn_spec)
 
-``pre`` and ``post`` are ``NodeCollections``, defining the nodes of
-origin (`sources`) and termination (`targets`) for the connections to
-be established.
+In the simplest case, the function just takes the ``NodeCollections`` ``pre`` and ``post``, defining the nodes of
+origin (`sources`) and termination (`targets`) for the connections to be established with the default rule ``all-to-all`` and the synapse model :hxt_ref:`static_synapse`.
 
-If ``conn_spec`` is not specified, the default connection rule
-``all_to_all`` will be used.
+Other connectivity patterns can be achieved by passing a connectivity specification dictionary ``conn_spec`` specifying a ``rule`` alongside additional rule-specific parameters.
+Rules that do not require parameters can be directly provided as string instead of the dictionary (for example, ``nest.Connect(pre, post, 'one_to_one')``).
+Examples of parameters might be in- and out-degrees, or the probability for establishing a connection.
+All available rules are described in the section :ref:`Connection Rules <conn_rules>` below.
 
-The synapse specification ``syn_spec`` defaults to the synapse model
-:hxt_ref:`static_synapse`. By using the keyword variant (``Connect(pre, post,
-syn_spec=syn_spec_dict)``), ``conn_spec`` can be omitted in the call
-to :py:func:`.Connect` and will just take on the default value.
+Properties of individual connections (i.e., synapses) can be set via the synapse specification dictionary ``syn_spec``.
+Parameters like the synaptic weight or delay can be either set values or drawn and combined flexibly from random distributions.
+It is also possible to define multiple projections with different synapse properties in the same :py:func:`.Connect` call (see :ref:`collocated synapses <collocated_synapses>`).
+For details on synapse models and their parameters refer to :ref:`Synapse Specification <synapse_spec>`.
+
+By using the keyword variant (``nest.Connect(pre, post, syn_spec=syn_spec_dict)``), ``conn_spec`` can be omitted in the call to :py:func:`.Connect` and will just take on the default value.
 
 After your connections are established, a quick sanity check is to
 look up the number of connections in the network, which can be easily
@@ -113,9 +96,12 @@ done using the corresponding kernel attribute:
 
     print(nest.num_connections)
 
-Have a look at the :ref:`inspecting_connections` section further down
-to get more tips on how to examine the connections in greater detail.
+Have a look at the section :ref:`inspecting_connections` to get more tips on how to examine the connections in greater detail.
 
+.. _conn_rules:
+
+Connection Rules
+----------------
 
 We here provide formal definitions of connectivity concepts for neuronal network models. These concepts encompass the basic connectivity rules illustrated above which are already commonly used by the computational neuroscience community. Beyond that, we discuss concepts to reflect some of the richness of anatomical brain connectivity and complement in particular non-spatial connectivity rules with rules for spatially organized connectivity. Much of the information on this page is based on the paper "Connectivity concepts in neuronal network modeling" [1]_.
 
@@ -128,6 +114,9 @@ If autapses are not allowed, the target set for any node :math:`i \in \mathcal{S
 If there is more than one edge between a source and target (or from a node to itself), we call this a :ref:`multapse <multapse_autapse>`.
 
 The :math:`{degree\ distribution}\ P(k)` is the distribution across nodes of the number of edges per node. In a directed network, the distribution of the number of edges going out of (into) a node is called the :math:`{out\!-\!degree} (in\!-\!degree)` distribution. The distributions given below describe the effect of applying a connection rule once to a given :math:`\mathcal{S}-\mathcal{T}` pair.
+
+
+TODO EXPLAIN DEVIATIONS FROM CC
 
 
 .. _multapse_autapse:
@@ -482,19 +471,8 @@ that each node in ``S`` has a fixed :hxt_ref:`outdegree` of ``N``.
 	| 		**Definition:** Each source node in :math:`\mathcal{S}` is connected to :math:`K_\text{out}` nodes in :math:`\mathcal{T}` randomly chosen with replacement. 
 	|		By definition, the out-degree distribution is a :math:`P(K)=\delta_{K,K_\text{out}}`. The respective in-degree distribution and marginal distributions are obtained by switching source and target indices, and replacing :math:`K_\text{out}` with :math:`K_\text{in}` in equation from :ref:`Random, fixed in-degree with multapses <fixed_indegree>` [5]_.
 
-.. _conn_rules:
 
-Connection Rules
-----------------
 
-Connection rules are specified using the ``conn_spec`` parameter of
-:py:func:`.Connect`, which can be either just a string naming a connection
-rule, or a dictionary containing a rule specification. Only connection
-rules requiring no parameters can be given as strings, for all other
-rules, a dictionary specifying the rule and its parameters is
-required. Examples for such parameters might be in- and out-degrees,
-or the probability for establishing a connection. A description of
-all connection rules available in NEST is available below.
 
 
 

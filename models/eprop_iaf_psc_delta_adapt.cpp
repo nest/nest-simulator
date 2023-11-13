@@ -423,10 +423,8 @@ nest::eprop_iaf_psc_delta_adapt::gradient_change( std::vector< long >& presyn_is
   const double kappa,
   const bool average_gradient )
 {
-  // Iterator to access the eprop history
   auto eprop_hist_it = get_eprop_history( t_previous_trigger_spike );
 
-  // Initialize variables for calculations
   double e = 0.0;       // Eligibility trace
   double e_bar = 0.0;   // Low-pass filtered eligibility trace
   double epsilon = 0.0; // Adaptative component of eligibility vector
@@ -435,52 +433,36 @@ nest::eprop_iaf_psc_delta_adapt::gradient_change( std::vector< long >& presyn_is
   double z_bar = 0.0;   // Low-pass filtered spiking variable
   double grad = 0.0;    // Gradient value to be calculated
 
-  // Iterate over pre-synaptic inter-spike intervals (ISIs)
   for ( long presyn_isi : presyn_isis )
   {
     z = 1.0; // Set spiking variable to 1 for each incoming spike
 
     for ( long t = 0; t < presyn_isi; ++t )
     {
-      assert( eprop_hist_it != eprop_history_.end() ); // Ensure the history entry exists
+      assert( eprop_hist_it != eprop_history_.end() );
 
-      // Retrieve surrogate gradient and learning signal from the history
       const double psi = eprop_hist_it->surrogate_gradient_;
       const double L = eprop_hist_it->learning_signal_;
 
-      // Update low-pass filtered spiking variable z_bar
       z_bar = V_.P33_ * z_bar + V_.P33_complement_ * z;
-
-      // Calculate eligibility trace for the current time step
       e = psi * ( z_bar - P_.adapt_beta_ * epsilon );
-
-      // Update adaptative component of eligibility vector
       epsilon = psi * z_bar + ( V_.Pa_ - psi * P_.adapt_beta_ ) * epsilon;
-
-      // Update low-pass filtered eligibility trace e_bar
       e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
-
-      // Increment the gradient by the product of the learning signal and filtered eligibility trace
       grad += L * e_bar;
-
-      // Accumulate the eligibility trace for firing rate regularization
       sum_e += e;
-
       z = 0.0; //  Set spiking variable to 0 between spikes
 
-      ++eprop_hist_it; // Move to the next time step in the history
+      ++eprop_hist_it; 
     }
   }
-  presyn_isis.clear(); // Clear the vector of pre-synaptic ISIs after processing
+  presyn_isis.clear();
 
-  // Normalize the gradient if averaging is enabled
   const long learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
   if ( average_gradient )
   {
     grad /= learning_window;
   }
 
-  // Add the contribution from firing rate regularization to the gradient
   const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
   const auto it_reg_hist = get_firing_rate_reg_history( t_previous_update + get_shift() + update_interval );
   grad += it_reg_hist->firing_rate_reg_ * sum_e;

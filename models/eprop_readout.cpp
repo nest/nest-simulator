@@ -372,39 +372,28 @@ nest::eprop_readout::gradient_change( std::vector< long >& presyn_isis,
   const double kappa,
   const bool average_gradient )
 {
-  // Iterator to access the eprop history
   auto eprop_hist_it = get_eprop_history( t_previous_trigger_spike );
 
   double z = 0.0;     // Spiking variable
   double z_bar = 0.0; // Low-pass filtered spiking variable
   double grad = 0.0;  // Gradient value to be calculated
 
-  // Iterate over pre-synaptic inter-spike intervals (ISIs)
   for ( long presyn_isi : presyn_isis )
   {
     z = 1.0; // Set spiking variable to 1 for each incoming spike
 
     for ( long t = 0; t < presyn_isi; ++t )
     {
-      assert( eprop_hist_it != eprop_history_.end() ); // Ensure the history entry exists
-
-      // Retrieve learning signal from the history
+      assert( eprop_hist_it != eprop_history_.end() ); 
       const double L = eprop_hist_it->learning_signal_;
-
-      // Update low-pass filtered spiking variable z_bar
       z_bar = V_.P33_ * z_bar + V_.P33_complement_ * z;
-
-      // Increment the gradient by the product of the learning signal and spiking trace
       grad += L * z_bar;
-
       z = 0.0; //  Set spiking variable to 0 between spikes
-
-      ++eprop_hist_it; // Move to the next time step in the history
+      ++eprop_hist_it; 
     }
   }
-  presyn_isis.clear(); // Clear the vector of pre-synaptic ISIs after processing
+  presyn_isis.clear(); 
 
-  // Normalize the gradient if averaging is enabled
   const long learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
   if ( average_gradient )
   {

@@ -43,7 +43,7 @@ quantal_stp_synapse< targetidentifierT >::quantal_stp_synapse()
   , U_( 0.5 )
   , u_( U_ )
   , tau_rec_( 800.0 )
-  , tau_fac_( 10.0 )
+  , tau_fac_( 0.0 )
   , n_( 1 )
   , a_( n_ )
   , t_lastspike_( 0.0 )
@@ -73,9 +73,29 @@ quantal_stp_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, 
   updateValue< double >( d, names::weight, weight_ );
 
   updateValue< double >( d, names::dU, U_ );
+  if ( U_ > 1.0 or U_ < 0.0 )
+  {
+    throw BadProperty( "'U' must be in [0,1]." );
+  }
+
   updateValue< double >( d, names::u, u_ );
+  if ( u_ > 1.0 or u_ < 0.0 )
+  {
+    throw BadProperty( "'u' must be in [0,1]." );
+  }
+
   updateValue< double >( d, names::tau_rec, tau_rec_ );
+  if ( tau_rec_ <= 0.0 )
+  {
+    throw BadProperty( "'tau_rec' must be > 0." );
+  }
+
   updateValue< double >( d, names::tau_fac, tau_fac_ );
+  if ( tau_fac_ < 0.0 )
+  {
+    throw BadProperty( "'tau_fac' must be >= 0." );
+  }
+
   updateValue< long >( d, names::n, n_ );
   updateValue< long >( d, names::a, a_ );
 }

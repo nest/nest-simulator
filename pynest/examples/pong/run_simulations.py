@@ -59,14 +59,13 @@ import argparse
 import datetime
 import gzip
 import logging
-import nest
 import os
+import pickle
 import sys
 import time
 
+import nest
 import numpy as np
-import pickle
-
 import pong
 from networks import POLL_TIME, PongNetDopa, PongNetRSTDP
 

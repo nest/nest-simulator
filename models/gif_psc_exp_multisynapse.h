@@ -210,6 +210,8 @@ Examples using this model
 
 EndUserDocs */
 
+void register_gif_psc_exp_multisynapse( const std::string& name );
+
 class gif_psc_exp_multisynapse : public ArchivingNode
 {
 

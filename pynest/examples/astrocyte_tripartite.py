@@ -73,7 +73,6 @@ References
 # Import all necessary modules for simulation and plotting.
 
 import matplotlib.pyplot as plt
-
 import nest
 
 ###############################################################################

@@ -27,11 +27,10 @@ synapse models. A subset of the neurons have one of the synapse models,
 and some also have both.
 """
 
+import nest
 import numpy.testing as nptest
 import pandas as pd
 import pytest
-
-import nest
 
 
 def build_net(num_threads=1):

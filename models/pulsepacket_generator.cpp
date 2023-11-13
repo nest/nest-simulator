@@ -33,11 +33,18 @@
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
+
+void
+nest::register_pulsepacket_generator( const std::string& name )
+{
+  register_node_model< pulsepacket_generator >( name );
+}
 
 
 /* ----------------------------------------------------------------

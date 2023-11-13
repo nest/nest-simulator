@@ -133,6 +133,8 @@ EndUserDocs */
  * State_, but are initialized by init_buffers_().
  */
 
+void register_correlospinmatrix_detector( const std::string& name );
+
 class correlospinmatrix_detector : public Node
 {
 

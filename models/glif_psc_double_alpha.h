@@ -217,6 +217,8 @@ EndUserDocs */
 namespace nest
 {
 
+void register_glif_psc_double_alpha( const std::string& name );
+
 class glif_psc_double_alpha : public ArchivingNode
 {
 public:

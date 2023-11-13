@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-from .ll_api import sr, stack_checker, sps, spp
+from .ll_api import spp, sps, sr, stack_checker
 
 
 class KernelAttribute:

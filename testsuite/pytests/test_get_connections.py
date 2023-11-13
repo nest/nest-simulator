@@ -27,11 +27,10 @@ test_getconnections.py and other GetConnections tests that may be placed
 elsewhere.
 """
 
+import nest
 import pandas as pd
 import pandas.testing as pdtest
 import pytest
-
-import nest
 
 
 @pytest.fixture(autouse=True)

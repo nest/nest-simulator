@@ -207,6 +207,8 @@ namespace nest
 
 extern "C" int glif_cond_dynamics( double, const double*, double*, void* );
 
+void register_glif_cond( const std::string& name );
+
 class glif_cond : public ArchivingNode
 {
 public:

@@ -45,21 +45,23 @@ def exp_psc_fn(t, tau_syn):
     vals[nonzero_inds] = np.exp(-t[nonzero_inds] / tau_syn)
     return vals
 
+
 def exp_psc_voltage_response(t, tau_syn, tau_m, C_m, w):
     vals = np.zeros_like(t)
     zero_inds = t <= 0.0
     nonzero_inds = ~zero_inds
-    delta_e = np.exp(-t[nonzero_inds] / tau_m) - np.exp(-t[nonzero_inds] / tau_syn) 
-    vals[nonzero_inds] = w / (C_m * (1. / tau_syn - 1. / tau_m)) * delta_e
+    delta_e = np.exp(-t[nonzero_inds] / tau_m) - np.exp(-t[nonzero_inds] / tau_syn)
+    vals[nonzero_inds] = w / (C_m * (1.0 / tau_syn - 1.0 / tau_m)) * delta_e
     return vals
+
 
 def test_set_synaptic_time_constants():
     """Tests that synaptic time constants can be set correctly"""
-    taus = [2., 20., 60., 100.]
+    taus = [2.0, 20.0, 60.0, 100.0]
     nrn = nest.Create("iaf_psc_exp_multisynapse")
     nrn.set(tau_syn=taus)
     nptest.assert_array_almost_equal(nrn.get("tau_syn"), taus)
-    
+
 
 def test_simulation_against_analytical_soln():
     """
@@ -71,11 +73,11 @@ def test_simulation_against_analytical_soln():
 
     tau_syn = [2.0, 20.0, 60.0, 100.0]
     delays = [7.0, 5.0, 2.0, 1.0]
-    weights = [30., 50., 20., 10.]
+    weights = [30.0, 50.0, 20.0, 10.0]
     C_m = 250.0
     tau_m = 15.0
     spike_time = 0.1
-    simtime = 8.
+    simtime = 8.0
     dt = 0.1
 
     nest.set(resolution=dt)
@@ -86,7 +88,7 @@ def test_simulation_against_analytical_soln():
             "C_m": C_m,
             "E_L": 0.0,
             "V_m": 0.0,
-            "V_th": 1500.,
+            "V_th": 1500.0,
             "I_e": 0.0,
             "tau_m": tau_m,
             "tau_syn": tau_syn,
@@ -96,15 +98,18 @@ def test_simulation_against_analytical_soln():
     sg = nest.Create("spike_generator", params={"spike_times": [spike_time]})
 
     for i, syn_id in enumerate(range(1, 5)):
-        syn_spec = {"synapse_model": "static_synapse", "delay": delays[i], "weight": weights[i], "receptor_type": syn_id}
+        syn_spec = {
+            "synapse_model": "static_synapse",
+            "delay": delays[i],
+            "weight": weights[i],
+            "receptor_type": syn_id,
+        }
 
         nest.Connect(sg, nrn, conn_spec="one_to_one", syn_spec=syn_spec)
 
-    mm = nest.Create("multimeter",
-                     params={
-                         "record_from": ["I_syn_1", "I_syn_2", "I_syn_3", "I_syn_4", "V_m", "I_syn"],
-                         "interval": dt
-                     }
+    mm = nest.Create(
+        "multimeter",
+        params={"record_from": ["I_syn_1", "I_syn_2", "I_syn_3", "I_syn_4", "V_m", "I_syn"], "interval": dt},
     )
 
     nest.Connect(mm, nrn)
@@ -112,19 +117,24 @@ def test_simulation_against_analytical_soln():
     times = mm.get("events", "times")
     I_syn = np.sum([mm.get("events", f"I_syn_{i}") for i in range(1, 5)], axis=0)
 
-    I_syn_analytical = np.zeros_like(times, dtype=np.float64)
+    I_syns_analytical = []
     V_m_analytical = np.zeros_like(times, dtype=np.float64)
     for i in range(4):
-        I_syn_analytical += exp_psc_fn(times - delays[i] - spike_time, tau_syn[i]) * weights[i]
+        I_syns_analytical.append(exp_psc_fn(times - delays[i] - spike_time, tau_syn[i]) * weights[i])
         V_m_analytical += exp_psc_voltage_response(times - delays[i] - spike_time, tau_syn[i], tau_m, C_m, weights[i])
 
-    nptest.assert_array_almost_equal(mm.get("events", "I_syn"), I_syn_analytical)
+    nptest.assert_array_almost_equal(mm.get("events", "I_syn"), np.sum(I_syns_analytical, axis=0))
+    nptest.assert_array_almost_equal(mm.get("events", "I_syn_1"), I_syns_analytical[0])
+    nptest.assert_array_almost_equal(mm.get("events", "I_syn_2"), I_syns_analytical[1])
+    nptest.assert_array_almost_equal(mm.get("events", "I_syn_3"), I_syns_analytical[2])
+    nptest.assert_array_almost_equal(mm.get("events", "I_syn_4"), I_syns_analytical[3])
     nptest.assert_array_almost_equal(mm.get("events", "V_m"), V_m_analytical)
 
 
 # The following tests address #800
 # - Test that the default recordables are V_m, w and I_syn_1
 # - Test that the recordable I_syn's change when changing the number of receptor ports
+
 
 def test_default_recordables():
     nrn = nest.Create("iaf_psc_exp_multisynapse")
@@ -133,6 +143,7 @@ def test_default_recordables():
     assert "I_syn" in recordables
     assert "I_syn_1" in recordables
     assert "V_m" in recordables
+
 
 def test_resize_recordables():
     """
@@ -154,4 +165,3 @@ def test_resize_recordables():
 
     nrn.set(tau_syn=tau_syn3)
     assert len(nrn.recordables) == 6
-

@@ -77,20 +77,20 @@ The following parameters can be set in the status dictionary.
 ------------------------------------------------------------------------------------------------------------------------
 Parameter           Unit     Math equivalent          Default            Description
 ==================  =======  =======================  ================== ===============================================
- C_m                pF       :math:`C_\text{m}`                    250.0 Capacity of the membrane
+ C_m                pF       :math:`C_\text{m}`                    250.0 Capacitance of the membrane
  E_L                mV       :math:`E_\text{L}`                      0.0 Leak membrane potential
  I_e                pA       :math:`I_\text{e}`                      0.0 Constant external input current
  loss                        :math:`E`                mean_squared_error Loss function
                                                                          ["mean_squared_error", "cross_entropy_loss"]
  tau_m              ms       :math:`\tau_\text{m}`                  10.0 Time constant of the membrane
  V_m                mV       :math:`v_j^0`                           0.0 Initial value of the membrane voltage
- V_min              mV       :math:`v_\text{min}`             -1.79e+308 Absolute lower value of the membrane voltage
+ V_min              mV       :math:`v_\text{min}`             -1.79e+308 Absolute lower bound of the membrane voltage
 ==================  =======  =======================  ================== ===============================================
 
 Recordables
 +++++++++++
 
-The following variables can be recorded.
+The following variables can be recorded:
 
   - error signal ``error_signal``
   - readout signal ``readout_signal``
@@ -139,7 +139,10 @@ class eprop_readout : public EpropArchivingNode
 {
 
 public:
+  //! Constructor.
   eprop_readout();
+
+  //! Copy constructor.
   eprop_readout( const eprop_readout& );
 
   using Node::handle;
@@ -183,62 +186,117 @@ private:
 
   void update( Time const&, const long, const long ) override;
 
+  //! Compute the error signal based on the mean-squared error.
   void compute_error_signal_mean_squared_error( const long lag );
+
+  //! Compute the error signal based on the cross-entropy loss.
   void compute_error_signal_cross_entropy_loss( const long lag );
 
+  //! Compute the error signal.
   void ( eprop_readout::*compute_error_signal )( const long lag );
 
+  //! Recordables map.
   friend class RecordablesMap< eprop_readout >;
+
+  //! Universal data logger.
   friend class UniversalDataLogger< eprop_readout >;
 
+  //! Parameters.
   struct Parameters_
   {
-    double C_m_;       //!< membrane capacitance (pF)
-    double E_L_;       //!< leak potential (mV)
-    double I_e_;       //!< external DC current (pA)
-    std::string loss_; //!< loss function
-    double tau_m_;     //!< membrane time constant (ms)
-    double V_min_;     //!< lower membrane voltage bound relative to leak potential (mV)
+    //! Capacitance of the membrane (pF).
+    double C_m_;
 
+    //! Leak membrane potential (mV).
+    double E_L_;
+
+    //! Constant external input current (pA).
+    double I_e_;
+
+    //! Loss function ["mean_squared_error", "cross_entropy_loss"].
+    std::string loss_;
+
+    //! Time constant of the membrane (ms).
+    double tau_m_;
+
+    //! Absolute lower bound of the membrane voltage relative to the leak membrane potential (mV).
+    double V_min_;
+
+    //! Constructor.
     Parameters_();
 
+    //! Get parameters.
     void get( DictionaryDatum& ) const;
+
+    //! Set parameters.
     double set( const DictionaryDatum&, Node* );
   };
 
+  //! State variables.
   struct State_
   {
-    double error_signal_;          //!< deviation between the readout and target signal
-    double readout_signal_;        //!< integrated signal read out from the recurrent network
-    double readout_signal_unnorm_; //!< unnormalized readout signal
-    double target_signal_;         //!< signal the network should learn
-    double y0_;                    //!< current (pA)
-    double y3_;                    //!< membrane voltage relative to leak potential (mV)
+    //! Deviation between the readout and the target signal.
+    double error_signal_;
 
+    //! Readout signal. Leaky integrated spikes emitted by the recurrent network.
+    double readout_signal_;
+
+    //! Unnormalized readout signal.
+    double readout_signal_unnorm_;
+
+    //! Target signal. The signal the network is supposed to learn.
+    double target_signal_;
+
+    //! Input current (pA).
+    double y0_;
+
+    //! Membrane voltage relative to the leak membrane potential (mV).
+    double y3_;
+
+    //! Constructor.
     State_();
 
+    //! Get the value of the provided parameter from the dictionary.
     void get( DictionaryDatum&, const Parameters_& ) const;
+
+    //! Set the provided parameter in the dictionary to the provided value.
     void set( const DictionaryDatum&, const Parameters_&, double, Node* );
   };
 
+  //! Buffers.
   struct Buffers_
   {
+    //! Constructor.
     Buffers_( eprop_readout& );
+
+    //! Copy constructor.
     Buffers_( const Buffers_&, eprop_readout& );
 
+    //! Normalization rate of the readout signal.
     double normalization_rate_;
 
+    //! Buffer for incoming spikes.
     RingBuffer spikes_;
+
+    //! Buffer for incoming currents.
     RingBuffer currents_;
 
+    //! Universal data logger.
     UniversalDataLogger< eprop_readout > logger_;
   };
 
   struct Variables_
   {
-    double P30_;
-    double P33_; //!< corresponds to kappa in eprop_synapse
+    //! Propagator entry 33.
+    double P33_;
+
+    //! Complement of propagator entry 33.
     double P33_complement_;
+
+    //! Propagator entry 30.
+    double P30_;
+
+    //! If the loss function requires a buffer for the normalization rates.
     bool requires_buffer_;
   };
 
@@ -249,9 +307,7 @@ private:
    */
   static const size_t MIN_RATE_RECEPTOR = 1;
 
-  /**
-   * Spike receptors.
-   */
+  //! Spike receptors.
   enum RateSynapseTypes
   {
     READOUT_SIG = MIN_RATE_RECEPTOR,
@@ -259,24 +315,28 @@ private:
     SUP_RATE_RECEPTOR
   };
 
+  //! Get the membrane voltage.
   double
   get_V_m_() const
   {
     return S_.y3_ + P_.E_L_;
   }
 
+  //! Get the readout signal.
   double
   get_readout_signal_() const
   {
     return S_.readout_signal_;
   }
 
+  //! Get the target signal.
   double
   get_target_signal_() const
   {
     return S_.target_signal_;
   }
 
+  //! Get the error signal.
   double
   get_error_signal_() const
   {
@@ -290,12 +350,13 @@ private:
    * @note The order of definitions is important for speed.
    * @{
    */
-  Parameters_ P_;
-  State_ S_;
-  Variables_ V_;
-  Buffers_ B_;
+  Parameters_ P_; //!< Parameters.
+  State_ S_;      //!< State variables.
+  Variables_ V_;  //!< General variables.
+  Buffers_ B_;    //!< Buffers.
   /** @} */
 
+  //! Recordables map.
   static RecordablesMap< eprop_readout > recordablesMap_;
 };
 

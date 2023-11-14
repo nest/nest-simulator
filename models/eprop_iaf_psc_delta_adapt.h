@@ -110,7 +110,7 @@ Parameter          Unit Math equivalent         Default                    Descr
 adapt_beta              :math:`\beta`                                  1.0 Prefactor of the threshold adaptation
 adapt_tau          ms   :math:`\tau_\text{a}`                         10.0 Time constant of the threshold adaptation
 adaptation              :math:`a_j^0`                                  0.0 Initial value of the adaptation variable
-C_m                pF   :math:`C_\text{m}`                           250.0 Capacity of the membrane
+C_m                pF   :math:`C_\text{m}`                           250.0 Capacitance of the membrane
 c_reg                   :math:`c_\text{reg}`                           0.0 Prefactor of firing rate regularization
 E_L                mV   :math:`E_\text{L}`                           -70.0 Leak membrane potential
 f_target           Hz   :math:`f^\text{target}`                       10.0 Target firing rate of rate regularization
@@ -126,8 +126,8 @@ surrogate_gradient      :math:`\psi`                      piecewise_linear Surro
 t_ref              ms   :math:`t_\text{ref}`                           2.0 Duration of the refractory period
 tau_m              ms   :math:`\tau_\text{m}`                         10.0 Time constant of the membrane
 V_m                mV   :math:`v_j^0`                                -70.0 Initial value of the membrane voltage
-V_min              mV   :math:`v_\text{min}`                    -1.79e+308 Absolute lower value of the membrane voltage
-V_th               mV   :math:`v_\text{th}`                          -55.0 Spike threshold
+V_min              mV   :math:`v_\text{min}`                    -1.79e+308 Absolute lower bound of the membrane voltage
+V_th               mV   :math:`v_\text{th}`                          -55.0 Spike threshold voltage
 ================== ==== ======================= ========================== =============================================
 
 Recordables
@@ -183,7 +183,10 @@ class eprop_iaf_psc_delta_adapt : public EpropArchivingNode
 {
 
 public:
+  //! Constructor.
   eprop_iaf_psc_delta_adapt();
+
+  //! Copy constructor.
   eprop_iaf_psc_delta_adapt( const eprop_iaf_psc_delta_adapt& );
 
   using Node::handle;
@@ -217,99 +220,177 @@ private:
 
   void update( Time const&, const long, const long ) override;
 
-  friend class RecordablesMap< eprop_iaf_psc_delta_adapt >;
-  friend class UniversalDataLogger< eprop_iaf_psc_delta_adapt >;
-
+  //! Compute the piecewise linear surrogate gradient.
   double compute_piecewise_linear_derivative();
 
+  //! Compute the surrogate gradient.
   double ( eprop_iaf_psc_delta_adapt::*compute_surrogate_gradient )();
 
+  //! Recordables map.
+  friend class RecordablesMap< eprop_iaf_psc_delta_adapt >;
+
+  //! Universal data logger.
+  friend class UniversalDataLogger< eprop_iaf_psc_delta_adapt >;
+
+  //! Parameters.
   struct Parameters_
   {
-    double adapt_beta_;              //!< prefactor of the adaptive threshold voltage
-    double adapt_tau_;               //!< time constant of the adaptive threshold (ms)
-    double C_m_;                     //!< membrane capacitance (pF)
-    double c_reg_;                   //!< prefactor of firing rate regularization
-    double E_L_;                     //!< leak potential (mV)
-    double f_target_;                //!< target firing rate of rate regularization (spikes/s)
-    double gamma_;                   //!< scaling of pseudo-derivative of membrane voltage
-    double I_e_;                     //!< external DC current (pA)
-    std::string psc_scale_factor_;   //!< scale factor of presynaptic current "identity" (1.0)
-                                     //!< or "leak constant complement" (1.0 - exp(dt/tau_m))
-    std::string surrogate_gradient_; //!< surrogate gradient method / pseudo-derivative
-    double t_ref_;                   //!< refractory period (ms)
-    double tau_m_;                   //!< membrane time constant (ms)
-    double V_min_;                   //!< lower membrane voltage bound relative to leak potential (mV)
-    double V_th_;                    //!< spike treshold voltage relative to leak potential (mV)
+    //! Prefactor of the threshold adaptation.
+    double adapt_beta_;
 
+    //! Time constant of the threshold adaptation (ms).
+    double adapt_tau_;
+
+    //! Capacitance of the membrane (pF).
+    double C_m_;
+
+    //! Prefactor of firing rate regularization.
+    double c_reg_;
+
+    //! Leak membrane potential (mV).
+    double E_L_;
+
+    //! Target firing rate of rate regularization (spikes/s).
+    double f_target_;
+
+    //! Scaling of pseudo-derivative of membrane voltage.
+    double gamma_;
+
+    //! Constant external input current (pA).
+    double I_e_;
+
+    //! Scale factor for presynaptic current ["identity": 1.0, "leak_propagator_complement": (1.0 - exp(dt/tau_m)]
+    std::string psc_scale_factor_;
+
+    //! Surrogate gradient method / pseudo-derivative ["piecewise_linear"].
+    std::string surrogate_gradient_;
+
+    //! Duration of the refractory period (ms).
+    double t_ref_;
+
+    //! Time constant of the membrane (ms).
+    double tau_m_;
+
+    //! Absolute lower bound of the membrane voltage relative to the leak membrane potential (mV).
+    double V_min_;
+
+    //! Spike threshold voltage relative to the leak membrane potential (mV).
+    double V_th_;
+
+    //! Constructor.
     Parameters_();
 
+    //! Get parameters.
     void get( DictionaryDatum& ) const;
+
+    //! Set parameters.
     double set( const DictionaryDatum&, Node* );
   };
 
+  //! State variables.
   struct State_
   {
-    double adaptation_;         //!< adaptation variable
-    double adapting_threshold_; //!< adapting spike threshold
-    double learning_signal_;    //!< weighted error signal
-    int r_;                     //!< number of remaining refractory steps
-    double surrogate_gradient_; //!< pseudo derivative of the membrane voltage
-    double y0_;                 //!< current (pA)
-    double y3_;                 //!< membrane voltage relative to leak potential (mV)
-    double z_; //!< binary variable indicating by the value 1.0 that the neuron has spiked in the previous time step and
-               //!< 0.0 otherwise
+    //! Adaptation variable.
+    double adaptation_;
 
+    //! Adapting spike threshold voltage.
+    double adapting_threshold_;
+
+    //! Learning signal.
+    double learning_signal_;
+
+    //! Number of remaining refractory steps.
+    int r_;
+
+    //! Surrogate gradient / pseudo-derivative of the membrane voltage.
+    double surrogate_gradient_;
+
+    //! Input current (pA).
+    double y0_;
+
+    //! Membrane voltage relative to the leak membrane potential (mV).
+    double y3_;
+
+    //! Binary spike variable. Takes on value 1.0 if the neuron has spiked in the previous time step and is 0.0
+    //! otherwise.
+    double z_;
+
+    //! Constructor.
     State_();
 
+    //! Get the value of the provided parameter from the dictionary.
     void get( DictionaryDatum&, const Parameters_& ) const;
+
+    //! Set the provided parameter in the dictionary to the provided value.
     void set( const DictionaryDatum&, const Parameters_&, double, Node* );
   };
 
+  //! Buffers.
   struct Buffers_
   {
+    //! Constructor.
     Buffers_( eprop_iaf_psc_delta_adapt& );
+
+    //! Copy constructor.
     Buffers_( const Buffers_&, eprop_iaf_psc_delta_adapt& );
 
+    //! Buffer for incoming spikes.
     RingBuffer spikes_;
+
+    //! Buffer for incoming currents.
     RingBuffer currents_;
 
+    //! Universal data logger.
     UniversalDataLogger< eprop_iaf_psc_delta_adapt > logger_;
   };
 
   struct Variables_
   {
-    double P30_;
+    //! Propagator entry 33.
     double P33_;
+
+    //! Complement of propagator entry 33.
     double P33_complement_;
+
+    //! Propagator entry 30.
+    double P30_;
+
+    //! Adaptation propagator.
     double Pa_;
+
+    //! Total refractory steps.
     int RefractoryCounts_;
   };
 
+  //! Get the membrane voltage.
   double
   get_V_m_() const
   {
     return S_.y3_ + P_.E_L_;
   }
 
+  //! Get the surrogate gradient.
   double
   get_surrogate_gradient_() const
   {
     return S_.surrogate_gradient_;
   }
 
+  //! Get the learning signal.
   double
   get_learning_signal_() const
   {
     return S_.learning_signal_;
   }
 
+  //! Get the adapting threshold.
   double
   get_adapting_threshold_() const
   {
     return S_.adapting_threshold_ + P_.E_L_;
   }
 
+  //! Get the adaptation variable.
   double
   get_adaptation_() const
   {
@@ -323,12 +404,13 @@ private:
    * @note The order of definitions is important for speed.
    * @{
    */
-  Parameters_ P_;
-  State_ S_;
-  Variables_ V_;
-  Buffers_ B_;
+  Parameters_ P_; //!< Parameters.
+  State_ S_;      //!< State variables.
+  Variables_ V_;  //!< General variables.
+  Buffers_ B_;    //!< Buffers.
   /** @} */
 
+  //! Recordables map.
   static RecordablesMap< eprop_iaf_psc_delta_adapt > recordablesMap_;
 };
 

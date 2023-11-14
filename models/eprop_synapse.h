@@ -127,17 +127,21 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-===============  ========  ================  ================ ====================================================
+===============  ========  ================  ================ ==========================================================
 **Common synapse properties**
-------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------
 Parameter        Unit      Math equivalent   Default          Description
-===============  ========  ================  ================ ====================================================
-adam_beta1                 :math:`\beta_1`   0.9              Beta1 parameter of Adam optimizer
-adam_beta2                 :math:`\beta_2`   0.999            Beta2 parameter of Adam optimizer
-adam_epsilon               :math:`\epsilon`  1e-8             Epsilon parameter of Adam optimizer
+===============  ========  ================  ================ ==========================================================
+adam_beta1                 :math:`\beta_1`   0.9              Exponential decay rate for first moment estimate of Adam
+                                                              optimizer
+adam_beta2                 :math:`\beta_2`   0.999            Exponential decay rate for second moment estimate of Adam
+                                                              optimizer
+adam_epsilon               :math:`\epsilon`  1e-8             Small constant for numerical stability of Adam optimizer
 batch_size                                   1                Size of batch
-optimizer                                    gradient_descent If adam, use Adam optimizer, if gd, gradient descent
-===============  ========  ================  ================ ====================================================
+optimizer                                    gradient_descent Optimizer. If adam, use Adam optimizer, if gd,
+                                                              gradient descent
+average_gradient                             False            If True, average the gradient over the learning window
+===============  ========  ================  ================ ==========================================================
 
 =============  ====  =========================  =======  ===============================================================
 **Individual synapse properties**
@@ -202,17 +206,32 @@ class EpropCommonProperties : public CommonSynapseProperties
 public:
   EpropCommonProperties();
 
+  //! Get parameter dictionary.
   void get_status( DictionaryDatum& d ) const;
+
+  //! Update values in parameter dictionary.
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
+  //! Exponential decay rate for first moment estimate of Adam optimizer.
   double adam_beta1_;
+
+  //! Exponential decay rate for second moment estimate of Adam optimizer.
   double adam_beta2_;
+
+  //! Small constant for numerical stability of Adam optimizer.
   double adam_epsilon_;
+
+  //! Size of batch.
   long batch_size_;
+
+  //! Optimizer. If adam, use Adam optimizer, if gd, gradient descent.
   std::string optimizer_;
+
+  //! If True, average the gradient over the learning window.
   bool average_gradient_;
 };
 
+//! Register the eprop synapse model.
 void register_eprop_synapse( const std::string& name );
 
 template < typename targetidentifierT >
@@ -220,16 +239,23 @@ class eprop_synapse : public Connection< targetidentifierT >
 {
 
 public:
+  //! Common synapse properties type.
   typedef EpropCommonProperties CommonPropertiesType;
+
+  //! Connection base type.
   typedef Connection< targetidentifierT > ConnectionBase;
 
   static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
     | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::REQUIRES_EPROP_ARCHIVING
     | ConnectionModelProperties::SUPPORTS_HPC | ConnectionModelProperties::SUPPORTS_LBL;
 
+  //! Constructor.
   eprop_synapse();
 
+  //! Copy constructor.
   eprop_synapse( const eprop_synapse& ) = default;
+
+  //! Equal operator
   eprop_synapse& operator=( const eprop_synapse& ) = default;
 
   using ConnectionBase::get_delay;
@@ -237,17 +263,25 @@ public:
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
+  //! Get parameter dictionary.
   void get_status( DictionaryDatum& d ) const;
 
+  //! Update values in parameter dictionary.
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
+  //! Send the spike event.
   void send( Event& e, size_t thread, const EpropCommonProperties& cp );
 
+  //! Update the synaptic weight via gradient descent.
   void optimize_via_gradient_descent( const long current_optimization_step, const EpropCommonProperties& cp );
+
+  //! Update the synaptic weight via the Adam optimizer.
   void optimize_via_adam( const long current_optimization_step, const EpropCommonProperties& cp );
 
+  //! Optimize.
   void ( eprop_synapse::*optimize )( const long current_optimization_step, const EpropCommonProperties& cp );
 
+  //! Connection test dummy node.
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
   public:
@@ -266,6 +300,8 @@ public:
     }
   };
 
+  //! Check if the target accepts the event type and receptor type requested by the sender and set variables that stay
+  //! constant throughout the simulation.
   void
   check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& cp )
   {
@@ -304,6 +340,7 @@ public:
     }
   }
 
+  //! Set the synaptic weight to the provided value.
   void
   set_weight( const double w )
   {
@@ -311,22 +348,52 @@ public:
   }
 
 protected:
+  //! Synaptic weight.
   double weight_;
+
+  //! Learning rate.
   double eta_;
+
+  //! Minimal synaptic weight.
   double Wmin_;
+
+  //! Maximal synaptic weight.
   double Wmax_;
+
+  //! Optimization step.
   long optimization_step_;
+
+  //! The time step when the previous spike arrived.
   long t_previous_spike_;
+
+  //! The time step when the previous e-prop update was.
   long t_previous_update_;
+
+  //! The time step when the next e-prop update will be.
   long t_next_update_;
+
+  //! The time step when the spike arrived that triggered the previous e-prop update.
   long t_previous_trigger_spike_;
-  double tau_m_readout_; // time constant for low pass filtering of eligibility trace
-  double kappa_;         // exp( -dt / tau_m_readout_ )
-  double adam_m_;        // auxiliary variable for Adam optimizer
-  double adam_v_;        // auxiliary variable for Adam optimizer
-  double sum_grads_;     // sum of the gradients in one batch
+
+  //! Time constant for low-pass filtering the eligibility trace.
+  double tau_m_readout_;
+
+  //! Low-pass filter of the eligibility trace.
+  double kappa_;
+
+  //! First moment estimate of Adam optimizer.
+  double adam_m_;
+
+  //! Second moment raw estimate of Adam optimizer.
+  double adam_v_;
+
+  //! Sum over all gradients in one batch.
+  double sum_grads_;
+
+  //! If this connection is between two recurrent neurons.
   bool is_recurrent_to_recurrent_conn_;
 
+  //! Vector of presynaptic inter-spike-intervals.
   std::vector< long > presyn_isis_;
 };
 

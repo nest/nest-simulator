@@ -110,23 +110,30 @@ class eprop_learning_signal_connection : public Connection< targetidentifierT >
 {
 
 public:
+  //! Type of common synapse properties.
   typedef CommonSynapseProperties CommonPropertiesType;
+
+  //! Type of connection base.
   typedef Connection< targetidentifierT > ConnectionBase;
 
+  //! Has delay.
   static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY;
 
+  //! Constructor.
   eprop_learning_signal_connection()
     : ConnectionBase()
     , weight_( 1.0 )
   {
   }
 
+  //! Get secondary event.
   SecondaryEvent* get_secondary_event();
 
   using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
+  //! Check if the target accepts the event type and receptor type requested by the sender.
   void
   check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
@@ -138,6 +145,7 @@ public:
     Connection< targetidentifierT >::target_.set_target( &t );
   }
 
+  //! Send event.
   void
   send( Event& e, size_t t, const CommonSynapseProperties& )
   {
@@ -148,10 +156,13 @@ public:
     e();
   }
 
+  //! Get status.
   void get_status( DictionaryDatum& d ) const;
 
+  //! Set status.
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
+  //! Set the synaptic weight to the provided value.
   void
   set_weight( const double w )
   {
@@ -159,6 +170,7 @@ public:
   }
 
 private:
+  //! Synaptic weight.
   double weight_;
 };
 

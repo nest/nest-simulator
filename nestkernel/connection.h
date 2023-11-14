@@ -402,7 +402,8 @@ template < typename targetidentifierT >
 SecondaryEvent*
 Connection< targetidentifierT >::get_secondary_event()
 {
-  assert( false );
+  assert( false && "non-primary connections have to provide get_secondary_event()");
+  return nullptr;
 }
 
 } // namespace nest

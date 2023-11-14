@@ -100,6 +100,8 @@ Examples using this model
 
 EndUserDocs */
 
+void register_pulsepacket_generator( const std::string& name );
+
 class pulsepacket_generator : public StimulationDevice
 {
 

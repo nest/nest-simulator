@@ -129,6 +129,8 @@ Examples using this model
 
 EndUserDocs */
 
+void register_izhikevich( const std::string& name );
+
 class izhikevich : public ArchivingNode
 {
 

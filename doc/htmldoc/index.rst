@@ -70,32 +70,41 @@ Conceptual approach
 
 Description of this diagram. Click the image below to discover more!
 
-.. grid::
+.. mermaid::
 
-   .. grid-item-card::
-      :columns: 8
+   flowchart LR
 
-      .. raw:: html
-         :file: static/img/network-brain_1.1comp.svg
+     classDef nodeStyle color:#fff, stroke:#fff0, fill:#015491;
+     classDef nodeStyle2 color:#fff, stroke:#fff0, fill:#532B01;
 
-   .. grid-item::
-      :columns: 4
-      :child-align: center
+     subgraph Built-in or user provided models
+        neuron_models:::nodeStyle --> network
+        synapse_models:::nodeStyle --> network
 
-      .. raw:: html
+     end
+     subgraph nest-simulator
+       direction TB
+       stimulating_devices:::nodeStyle --> simulate
+       simulate:::nodeStyle --> recording_devices:::nodeStyle
+     end
+     network:::nodeStyle -->nest-simulator
 
-         <div class="popuptext" id="neuron">
-         <a href="neurons/index.html"> <img src="_static/img/neuron_text.svg" alt="Neuron graphic">
-         </a>
-         </div>
-         <div class="popuptext" id="synapse">
-         <a href="synapses/index.html"> <img src="_static/img/synapse_text.svg" alt="Synapse graphic">
-         </a>
-         </div>
-         <div class="popuptext" id="device">
-         <a href="devices/index.html"> <img src="_static/img/device_text.svg" alt="Device graphic">
-         </a>
-         </div>
+
+     nest-simulator -->|output| act(Activity data):::nodeStyle2
+     exp(Experimental protocols):::nodeStyle2 -->|input| nest-simulator
+
+   simulate[<img src='_static/img//nest_logo.png' /> \n Simulation ]
+   neuron_models[<img src='_static/img/neuron.svg' /> \n Neuron Models]
+   synapse_models[<img src='_static/img/synapse.svg' /> \n Synapse Models]
+   stimulating_devices[<img src='_static/img/stimulate.svg' /> \n Stimulating Devices]
+   recording_devices[<img src='_static/img/recording.svg' /> \n Recording \nDevices]
+   network[<img src='_static/img/networkbrain.svg' /> \n Network Models]
+   click network href "https://nest-simulator.org"
+   click neuron_models href "/models/index.html"
+   click synapse_models href "file:///home/mitchell/Work/build-repo/doc/_build/html/understand_index.html"
+   click stimulating_devices href "https://nest-simulator.org"
+   click recording_devices href "https://nest-simulator.org"
+   click stimulate href "https://nest-simulator.org"
 
 
 .. toctree::

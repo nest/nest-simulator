@@ -1,4 +1,4 @@
-_.
+/* 
  *  iaf_psc_exp_multisynapse.cpp
  *
  *  This file is part of NEST.
@@ -21,7 +21,6 @@ _.
  */
 
 #include "iaf_psc_exp_multisynapse.h"
-
 
 // Includes from libnestutil:
 #include "dict_util.h"

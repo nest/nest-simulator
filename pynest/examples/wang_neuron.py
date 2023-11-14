@@ -4,7 +4,7 @@ import numpy as np
 
 nest.rng_seed = 12345
 
-w_ex = 40.
+w_ex = 400.
 w_in = -15.
 alpha = 0.5
 tau_AMPA = 2.0
@@ -21,8 +21,8 @@ nrn2 = nest.Create("iaf_wang_2002", {"tau_AMPA": tau_AMPA,
                                      "tau_decay_NMDA": tau_NMDA,
                                      "t_ref": 0.})
 
-mm1 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_NMDA", "s_GABA"], "interval": 0.1})
-mm2 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_NMDA", "s_GABA"], "interval": 0.1})
+mm1 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_AMPA_ext", "s_NMDA", "s_GABA"], "interval": 0.1})
+mm2 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_AMPA_ext", "s_NMDA", "s_GABA"], "interval": 0.1})
 
 ex_syn_spec = {"synapse_model": "static_synapse",
                 "weight": w_ex,

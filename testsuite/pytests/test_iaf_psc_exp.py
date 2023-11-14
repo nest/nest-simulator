@@ -47,11 +47,9 @@ Author:  July 2004, Diesmann
 """
 
 import nest
-import pytest
 import numpy as np
 import numpy.testing as nptest
-
-import matplotlib.pyplot as plt
+import pytest
 
 
 def test_iaf_psc_exp_dc_input():
@@ -99,7 +97,5 @@ def test_iaf_psc_exp_dc_input():
     # rise after refractory period
     num_inds = len(times) - crossing_ind - num_ref
     V_m_analytical[crossing_ind + num_ref :] = vm_soln[:num_inds]
-    plt.plot(times, vm.get("events", "V_m"))
-    plt.show()
 
     nptest.assert_array_almost_equal(V_m_analytical, vm.get("events", "V_m"))

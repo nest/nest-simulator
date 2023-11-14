@@ -478,7 +478,7 @@ eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
 
   if ( weight_ < Wmin_ or weight_ > Wmax_ )
   {
-    throw BadProperty( "Wmax >= weight >= Wmin must be satisfied." );
+    throw BadProperty( "Wmin <= weight <= Wmax must be satisfied." );
   }
 
   if ( tau_m_readout_ <= 0 )

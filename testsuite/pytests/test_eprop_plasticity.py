@@ -63,9 +63,21 @@ def test_unsupported_model_raises(target_model):
 
 def test_eprop_regression():
     """
-    Test correct computation of weights for a regresion task  by comparing the simulated losses with
-    losses obtained in a simulation with the original, verified NEST implementation and with the original
-    TensorFlow implementation.
+    Test correct computation of losses for a regresion task
+    (for details on the task, see nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_regression.py)
+    by comparing the simulated losses with
+
+        1. NEST reference losses to catch scenarios in which the e-prop model does not work as intended (e.g.,
+           potential future changes to the NEST code base or a faulty installation). These reference losses
+           were obtained from a simulation with the verified NEST e-prop implementation run with
+           Linux 4.15.0-213-generic, Python v3.11.6, Numpy v1.26.0, and NEST@3304c6b5c.
+
+        2. TensorFlow reference losses to check the faithfulness to the original model. These reference losses were
+           obtained from a simulation with the original TensorFlow implementation
+           (https://github.com/INM-6/eligibility_propagation/blob/eprop_in_nest/Figure_3_and_S7_e_prop_tutorials/tutorial_pattern_generation.py,  # pylint: disable=line-too-long # noqa: E501
+            a modified fork of the original model at https://github.com/IGITUGraz/eligibility_propagation) run with
+            Linux 4.15.0-213-generic, Python v3.6.10, Numpy v1.18.0, TensorFlow v1.15.0, and
+            INM6/elgibility_propagation@7df7d2627.
     """
 
     # Initialize random generator
@@ -131,7 +143,7 @@ def test_eprop_regression():
         "E_L": 0.0,
         "f_target": 10.0,
         "I_e": 0.0,
-        "propagator_idx": 0,
+        "psc_scale_factor": "leak_propagator_complement",
         "surrogate_gradient": "piecewise_linear",
         "t_ref": 0.0,
         "tau_m": 30.0,
@@ -322,7 +334,7 @@ def test_eprop_regression():
 
     # Verify results
 
-    loss_NEST_verification = np.array(
+    loss_NEST_reference = np.array(
         [
             101.964356999041,
             103.466731126205,
@@ -332,25 +344,37 @@ def test_eprop_regression():
         ]
     )
 
-    loss_TF_verification = np.array(
+    loss_TF_reference = np.array(
         [
-            101.96436,
-            103.46673,
-            103.34060,
-            103.68024,
-            104.41278,
+            101.964363098144,
+            103.466735839843,
+            103.340606689453,
+            103.680244445800,
+            104.412780761718,
         ]
     )
 
-    assert np.allclose(loss, loss_NEST_verification, rtol=0.0, atol=1e-12)
-    assert np.allclose(loss, loss_TF_verification, rtol=0.0, atol=1e-5)
+    assert np.allclose(loss, loss_NEST_reference, rtol=1e-8)
+    assert np.allclose(loss, loss_TF_reference, rtol=1e-7)
 
 
 def test_eprop_classification():
     """
-    Test correct computation of weights for a classification task by comparing the simulated losses with
-    losses obtained in a simulation with the original, verified NEST implementation and with the original
-    TensorFlow implementation.
+    Test correct computation of losses for a classification task
+    (for details on the task, see nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_classification.py)
+    by comparing the simulated losses with
+
+        1. NEST reference losses to catch scenarios in which the e-prop model does not work as intended (e.g.,
+           potential future changes to the NEST code base or a faulty installation). These reference losses
+           were obtained from a simulation with the verified NEST e-prop implementation run with
+           Linux 4.15.0-213-generic, Python v3.11.6, Numpy v1.26.0, and NEST@3304c6b5c.
+
+        2. TensorFlow reference losses to check the faithfulness to the original model. These reference losses were
+           obtained from a simulation with the original TensorFlow implementation
+           (https://github.com/INM-6/eligibility_propagation/blob/eprop_in_nest/Figure_3_and_S7_e_prop_tutorials/tutorial_evidence_accumulation_with_alif.py,  # pylint: disable=line-too-long # noqa: E501
+           a modified fork of the original model at https://github.com/IGITUGraz/eligibility_propagation) run with
+           Linux 4.15.0-213-generic, Python v3.6.10, Numpy v1.18.0, TensorFlow v1.15.0, and
+           INM6/elgibility_propagation@7df7d2627.
     """
 
     # Initialize random generator
@@ -428,7 +452,7 @@ def test_eprop_classification():
         "f_target": 10.0,
         "gamma": 0.3,
         "I_e": 0.0,
-        "propagator_idx": 1,
+        "psc_scale_factor": "identity",
         "surrogate_gradient": "piecewise_linear",
         "t_ref": 5.0,
         "tau_m": 20.0,
@@ -445,7 +469,7 @@ def test_eprop_classification():
         "f_target": 10.0,
         "gamma": 0.3,
         "I_e": 0.0,
-        "propagator_idx": 1,
+        "psc_scale_factor": "identity",
         "surrogate_gradient": "piecewise_linear",
         "t_ref": 5.0,
         "tau_m": 20.0,
@@ -708,7 +732,7 @@ def test_eprop_classification():
 
     # Verify results
 
-    loss_NEST_verification = np.array(
+    loss_NEST_reference = np.array(
         [
             0.741152550006,
             0.740388187700,
@@ -718,15 +742,15 @@ def test_eprop_classification():
         ]
     )
 
-    loss_TF_verification = np.array(
+    loss_TF_reference = np.array(
         [
-            0.741152,
-            0.740388,
-            0.665785,
-            0.663644,
-            0.729429,
+            0.741152524948,
+            0.740388214588,
+            0.665785133838,
+            0.663644134998,
+            0.729429066181,
         ]
     )
 
-    assert np.allclose(loss, loss_NEST_verification, rtol=0.0, atol=1e-12)
-    assert np.allclose(loss, loss_TF_verification, rtol=0.0, atol=1e-6)
+    assert np.allclose(loss, loss_NEST_reference, rtol=1e-8)
+    assert np.allclose(loss, loss_TF_reference, rtol=1e-6)

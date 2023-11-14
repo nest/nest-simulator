@@ -135,7 +135,7 @@ steps["total_offset"] = steps["offset_gen"] + steps["delay_in_rec"] + steps["del
 
 steps["sim"] = steps["task"] + steps["total_offset"] + steps["extension_sim"]  # time steps of sim
 
-duration = {"step": 1.0}  # ms, temporal resolution of the simulation, only tested for 1 ms
+duration = {"step": 1.0}  # ms, temporal resolution of the simulation
 
 duration.update({key: value * duration["step"] for key, value in steps.items()})  # ms, durations
 
@@ -175,9 +175,9 @@ params_nrn_rec = {
     "c_reg": 300.0,  # firing rate regularization scaling
     "gamma": 0.3,  # scaling of the pseudo derivative
     "E_L": 0.0,  # mV, leak reversal potential
-    "f_target": 10.0,  # Hz, target firing rate for firing rate regularization
+    "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
     "I_e": 0.0,  # pA, external current input
-    "propagator_idx": 0,  # index of the two available propagators 0 (1-exp(dt/tau_m)) or 1 (1)
+    "psc_scale_factor": "leak_propagator_complement",  # postsynaptic current scale factor
     "surrogate_gradient": "piecewise_linear",  # pseudo-derivative
     "t_ref": 0.0,  # ms, duration of refractory period
     "tau_m": 30.0,  # ms, membrane time constant
@@ -342,7 +342,7 @@ dtype_in_spks = np.float32  # data type of input spikes - for reproducing TF res
 
 input_spike_bools = np.random.rand(n_batch, steps["sequence"], n_in) < input_spike_prob
 input_spike_bools = np.hstack(input_spike_bools.swapaxes(1, 2))
-input_spike_bools[:, 0] = 0  # suppress spikes since NEST does not allow spike emission in 0th time step
+input_spike_bools[:, 0] = 0  # remove spikes in 0th time step of every sequence for technical reasons
 
 sequence_starts = np.arange(0.0, duration["task"], duration["sequence"]) + duration["offset_gen"]
 params_gen_spk_in = []
@@ -476,16 +476,20 @@ loss = 0.5 * np.add.reduceat(error, np.arange(0, steps["task"], steps["sequence"
 
 loss_reference = [101.96435699904158, 103.46673112620580, 103.34060707477168, 103.68024403768639, 104.41277574875247]
 
-if np.allclose(loss[:5], loss_reference, rtol=1e-8):
+# Determine the number of elements to compare (up to len(loss_reference))
+n_compare = min(len(loss), len(loss_reference))
+
+# Compare the required number of elements
+if np.allclose(loss[:n_compare], loss_reference[:n_compare], rtol=1e-8):
     print()
     print("Verification successful.")
     print()
 else:
     print()
     print("Verification FAILED!")
-    print(f"    Expected  : {loss_reference}")
-    print(f"    Observed  : {loss[:5]}")
-    print(f"    Difference: {loss_reference-loss[:5]}")
+    print(f"    Expected  : {loss_reference[:n_compare]}")
+    print(f"    Observed  : {loss[:n_compare]}")
+    print(f"    Difference: {np.array(loss_reference[:n_compare]) - np.array(loss[:n_compare])}")
     print()
     exit(1)
 

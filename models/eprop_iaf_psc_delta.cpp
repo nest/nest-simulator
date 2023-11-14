@@ -73,10 +73,10 @@ nest::eprop_iaf_psc_delta::Parameters_::Parameters_()
   : C_m_( 250.0 )
   , c_reg_( 0.0 )
   , E_L_( -70.0 )
-  , f_target_( 10.0 )
+  , f_target_( 0.01 )
   , gamma_( 0.3 )
   , I_e_( 0.0 )
-  , propagator_idx_( 0 )
+  , psc_scale_factor_( "leak_propagator_complement" )
   , surrogate_gradient_( "piecewise_linear" )
   , t_ref_( 2.0 )
   , tau_m_( 10.0 )
@@ -117,7 +117,7 @@ nest::eprop_iaf_psc_delta::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::f_target, f_target_ );
   def< double >( d, names::gamma, gamma_ );
   def< double >( d, names::I_e, I_e_ );
-  def< long >( d, names::propagator_idx, propagator_idx_ );
+  def< std::string >( d, names::psc_scale_factor, psc_scale_factor_ );
   def< std::string >( d, names::surrogate_gradient, surrogate_gradient_ );
   def< double >( d, names::t_ref, t_ref_ );
   def< double >( d, names::tau_m, tau_m_ );
@@ -138,10 +138,15 @@ nest::eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* nod
 
   updateValueParam< double >( d, names::C_m, C_m_, node );
   updateValueParam< double >( d, names::c_reg, c_reg_, node );
-  updateValueParam< double >( d, names::f_target, f_target_, node );
+
+  if ( updateValueParam< double >( d, names::f_target, f_target_, node ) )
+  {
+    f_target_ /= 1000.0; // convert from spikes/s to spikes/ms
+  }
+
   updateValueParam< double >( d, names::gamma, gamma_, node );
   updateValueParam< double >( d, names::I_e, I_e_, node );
-  updateValueParam< long >( d, names::propagator_idx, propagator_idx_, node );
+  updateValueParam< std::string >( d, names::psc_scale_factor, psc_scale_factor_, node );
   updateValueParam< std::string >( d, names::surrogate_gradient, surrogate_gradient_, node );
   updateValueParam< double >( d, names::t_ref, t_ref_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
@@ -151,9 +156,15 @@ nest::eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* nod
     throw BadProperty( "Capacitance must be > 0." );
   }
 
-  if ( propagator_idx_ != 0 and propagator_idx_ != 1 )
+  if ( f_target_ < 0 )
   {
-    throw BadProperty( "One of two available propagators indexed by 0 and 1 must be selected." );
+    throw BadProperty( "Target firing rate must be >= 0." );
+  }
+
+  if ( psc_scale_factor_ != "identity" and psc_scale_factor_ != "leak_propagator_complement" )
+  {
+    throw BadProperty(
+      "Available presynaptic current scale factors are \"identity\" and \"leak_propagator_complement\"." );
   }
 
   if ( surrogate_gradient_ != "piecewise_linear" )
@@ -236,10 +247,16 @@ nest::eprop_iaf_psc_delta::pre_run_hook()
   V_.P33_ = std::exp( -dt / P_.tau_m_ ); // alpha
   V_.P30_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - V_.P33_ );
 
-  const double propagators[] = { 1.0 - V_.P33_, 1.0 };
-  V_.P33_complement_ = propagators[ P_.propagator_idx_ ];
-
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
+
+  if ( P_.psc_scale_factor_ == "leak_propagator_complement" )
+  {
+    V_.P33_complement_ = 1.0 - V_.P33_;
+  }
+  else
+  {
+    V_.P33_complement_ = 1.0;
+  }
 
   if ( P_.surrogate_gradient_ == "piecewise_linear" )
   {
@@ -372,8 +389,9 @@ nest::eprop_iaf_psc_delta::handle( LearningSignalConnectionEvent& e )
     const long delay_out_rec = e.get_delay_steps();
     const double weight = e.get_weight();
     const double error_signal = e.get_coeffvalue( it_event ); // get_coeffvalue advances iterator
+    const double learning_signal = weight * error_signal;
 
-    write_learning_signal_to_history( time_step, delay_out_rec, weight, error_signal );
+    write_learning_signal_to_history( time_step, delay_out_rec, learning_signal );
   }
 }
 
@@ -392,23 +410,30 @@ nest::eprop_iaf_psc_delta::gradient_change( std::vector< long >& presyn_isis,
 {
   auto eprop_hist_it = get_eprop_history( t_previous_trigger_spike );
 
-  double e_bar = 0.0;
-  double sum_e = 0.0;
-  double previous_z_bar = 0.0;
-  double grad = 0.0;
+  double e = 0.0;     // Eligibility trace
+  double e_bar = 0.0; // Low-pass filtered eligibility trace
+  double sum_e = 0.0; // Sum of eligibility traces
+  double z = 0.0;     // Spiking variable
+  double z_bar = 0.0; // Low-pass filtered spiking variable
+  double grad = 0.0;  // Gradient value to be calculated
 
   for ( long presyn_isi : presyn_isis )
   {
-    previous_z_bar += V_.P33_complement_;
+    z = 1.0; // Set spiking variable to 1 for each incoming spike
+
     for ( long t = 0; t < presyn_isi; ++t )
     {
       assert( eprop_hist_it != eprop_history_.end() );
+
       const double psi = eprop_hist_it->surrogate_gradient_;
-      const double e = psi * previous_z_bar;
-      previous_z_bar *= V_.P33_;
-      sum_e += e;
+      const double L = eprop_hist_it->learning_signal_;
+
+      z_bar = V_.P33_ * z_bar + V_.P33_complement_ * z;
+      e = psi * z_bar;
       e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
-      grad += e_bar * eprop_hist_it->learning_signal_;
+      grad += L * e_bar;
+      sum_e += e;
+      z = 0.0; //  Set spiking variable to 0 between spikes
 
       ++eprop_hist_it;
     }

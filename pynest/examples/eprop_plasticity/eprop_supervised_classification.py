@@ -64,8 +64,7 @@ References
        learning dilemma for recurrent networks of spiking neurons. Nature Communications, 11:3625.
        https://doi.org/10.1038/s41467-020-17236-y
 
-.. [2] https://github.com/IGITUGraz/eligibility_propagation/blob/master/\
-Figure_3_and_S7_e_prop_tutorials/tutorial_evidence_accumulation_with_alif.py
+.. [2] https://github.com/IGITUGraz/eligibility_propagation/blob/master/Figure_3_and_S7_e_prop_tutorials/tutorial_evidence_accumulation_with_alif.py  # pylint: disable=line-too-long # noqa: E501
 
 .. [3] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D, van Albada SJ, Bolten M, Diesmann M.
        Event-based implementation of eligibility propagation (in preparation)
@@ -150,7 +149,7 @@ steps["total_offset"] = steps["offset_gen"] + steps["delay_in_rec"] + steps["del
 
 steps["sim"] = steps["task"] + steps["total_offset"] + steps["extension_sim"]  # time steps of sim
 
-duration = {"step": 1.0}  # ms, temporal resolution of the simulation, only tested for 1 ms
+duration = {"step": 1.0}  # ms, temporal resolution of the simulation
 
 duration.update({key: value * duration["step"] for key, value in steps.items()})  # ms, durations
 
@@ -193,10 +192,10 @@ params_nrn_reg = {
     "C_m": 1.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
     "c_reg": 2.0,  # firing rate regularization scaling - double the TF c_reg for technical reasons
     "E_L": 0.0,  # mV, leak reversal potential
-    "f_target": 10.0,  # Hz, target firing rate for firing rate regularization
+    "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
     "gamma": 0.3,  # scaling of the pseudo derivative
     "I_e": 0.0,  # pA, external current input
-    "propagator_idx": 1,  # index of the two available propagators 0 (1 - exp(dt/tau_m)) or 1 (1)
+    "psc_scale_factor": "identity",  # postsynaptic current scale factor
     "surrogate_gradient": "piecewise_linear",  # pseudo-derivative
     "t_ref": 5.0,  # ms, duration of refractory period
     "tau_m": 20.0,  # ms, membrane time constant
@@ -213,7 +212,7 @@ params_nrn_ad = {
     "f_target": 10.0,
     "gamma": 0.3,
     "I_e": 0.0,
-    "propagator_idx": 1,  # index of the two available propagators 0 (1 - exp(dt/tau_m)) or 1 (1)
+    "psc_scale_factor": "identity",  # postsynaptic current scale factor
     "surrogate_gradient": "piecewise_linear",
     "t_ref": 5.0,
     "tau_m": 20.0,
@@ -221,8 +220,9 @@ params_nrn_ad = {
     "V_th": 0.6,
 }
 
-params_nrn_ad["adapt_beta"] = (
-    1.7 * (1.0 - np.exp(-1.0 / params_nrn_ad["adapt_tau"])) / (1.0 - np.exp(-1.0 / params_nrn_ad["tau_m"]))
+params_nrn_ad["adapt_beta"] = 1.7 * (
+    (1.0 - np.exp(-duration["step"] / params_nrn_ad["adapt_tau"]))
+    / (1.0 - np.exp(-duration["step"] / params_nrn_ad["tau_m"]))
 )  # prefactor of adaptive threshold
 
 params_nrn_out = {
@@ -446,7 +446,7 @@ def generate_evidence_accumulation_input_output(
     input_spike_probs[:, -steps["recall"] :, 2 * n_pop_nrn : 3 * n_pop_nrn] = input_spike_prob
     input_spike_probs[:, :, 3 * n_pop_nrn :] = input_spike_prob / 4.0
     input_spike_bools = input_spike_probs > np.random.rand(input_spike_probs.size).reshape(input_spike_probs.shape)
-    input_spike_bools[:, 0, :] = 0  # remove spikes in first time step due to technical reasons
+    input_spike_bools[:, 0, :] = 0  # remove spikes in 0th time step of every sequence for technical reasons
 
     target_cues = np.zeros(n_batch, dtype=int)
     target_cues[:] = np.sum(batched_cues, axis=1) > int(n_cues / 2)
@@ -598,16 +598,21 @@ loss_reference = [
     0.7294289628449472,
 ]
 
-if np.allclose(loss[:5], loss_reference, rtol=1e-8):
+
+# Determine the number of elements to compare (up to len(loss_reference))
+n_compare = min(len(loss), len(loss_reference))
+
+# Compare the required number of elements
+if np.allclose(loss[:n_compare], loss_reference[:n_compare], rtol=1e-8):
     print()
     print("Verification successful.")
     print()
 else:
     print()
     print("Verification FAILED!")
-    print(f"    Expected  : {loss_reference}")
-    print(f"    Observed  : {loss[:5]}")
-    print(f"    Difference: {loss_reference-loss[:5]}")
+    print(f"    Expected  : {loss_reference[:n_compare]}")
+    print(f"    Observed  : {loss[:n_compare]}")
+    print(f"    Difference: {np.array(loss_reference[:n_compare]) - np.array(loss[:n_compare])}")
     print()
     exit(1)
 

@@ -57,29 +57,21 @@ template < template < typename targetidentifierT > class ConnectionT >
 void
 ModelManager::register_connection_model( const std::string& name )
 {
-  // We only check the main synapse name for conflicts.
-  if ( synapsedict_->known( name ) )
-  {
-    std::string msg =
-      String::compose( "A synapse type called '%1' already exists.\nPlease choose a different name!", name );
-    throw NamingConflict( msg );
-  }
-
-  // Only required to check properties below
-  ConnectorModel const* const dummy_connector =
+  // Required to check which variants to create
+  ConnectorModel const* const dummy_model =
     new GenericConnectorModel< ConnectionT< TargetIdentifierPtrRport > >( "dummy" );
 
   register_specific_connection_model_< ConnectionT< TargetIdentifierPtrRport > >( name );
-  if ( dummy_connector->has_property( ConnectionModelProperties::SUPPORTS_HPC ) )
+  if ( dummy_model->has_property( ConnectionModelProperties::SUPPORTS_HPC ) )
   {
     register_specific_connection_model_< ConnectionT< TargetIdentifierIndex > >( name + "_hpc" );
   }
-  if ( dummy_connector->has_property( ConnectionModelProperties::SUPPORTS_LBL ) )
+  if ( dummy_model->has_property( ConnectionModelProperties::SUPPORTS_LBL ) )
   {
-    register_specific_connection_model_< ConnectionT< TargetIdentifierPtrRport > >( name + "_lbl" );
+    register_specific_connection_model_< ConnectionLabel< ConnectionT< TargetIdentifierPtrRport > > >( name + "_lbl" );
   }
 
-  delete dummy_connector;
+  delete dummy_model;
 }
 
 template < typename CompleteConnectionT >
@@ -87,6 +79,13 @@ void
 ModelManager::register_specific_connection_model_( const std::string& name )
 {
   kernel().vp_manager.assert_single_threaded();
+
+  if ( synapsedict_->known( name ) )
+  {
+    std::string msg =
+      String::compose( "A synapse type called '%1' already exists.\nPlease choose a different name!", name );
+    throw NamingConflict( msg );
+  }
 
   const auto new_syn_id = connection_models_[ 0 ].size();
   if ( new_syn_id >= invalid_synindex )
@@ -103,6 +102,10 @@ ModelManager::register_specific_connection_model_( const std::string& name )
   {
     ConnectorModel* conn_model = new GenericConnectorModel< CompleteConnectionT >( name );
     conn_model->set_syn_id( new_syn_id );
+    if ( not conn_model->has_property( ConnectionModelProperties::IS_PRIMARY ) )
+    {
+      conn_model->get_secondary_event()->add_syn_id( new_syn_id );
+    }
     connection_models_[ kernel().vp_manager.get_thread_id() ].push_back( conn_model );
     kernel().connection_manager.resize_connections();
   }

@@ -44,8 +44,9 @@ Author: Hans Ekkehard Plesser, 2010-10-22
 M_ERROR setverbosity
 
 
-% Gap junctions not relevant for spiking devices as senders
-/excluded_synapses [ /gap_junction ] def
+% Gap junctions and sic_connections not relevant for spiking devices as senders
+/excluded_synapses [ /gap_junction /sic_connection /rate_connection_delayed
+                     /rate_connection_instantaneous ] def
 
 % find all static and plastic synapses
 % we identify as static all synapses that have the same default parameter names
@@ -84,7 +85,7 @@ ResetKernel
   { /st Set
     % create new nodes for each connection to avoid any issues with prohibited multiple connections
     ds_models
-    { Create /iaf_psc_alpha Create st Connect } forall
+    { Create /iaf_psc_alpha Create /one_to_one st Connect } forall
   } forall
 } pass_or_die
 
@@ -95,7 +96,7 @@ plastic_syn_models
     ds_models
     {
       /d Set
-      { d Create /iaf_psc_alpha Create st Connect } fail_or_die
+      { d Create /iaf_psc_alpha Create /one_to_one st Connect } fail_or_die
     } forall
 } forall
 
@@ -109,7 +110,7 @@ ResetKernel
   static_non_hpc_models
   { /st Set
     % create new nodes for each connection to avoid any issues with prohibited multiple connections
-    /multimeter Create /iaf_psc_alpha Create st Connect
+    /multimeter Create /iaf_psc_alpha Create /one_to_one st Connect
   } forall
 } pass_or_die
 
@@ -117,7 +118,7 @@ ResetKernel
 models_to_fail
 {
     /st Set
-    /multimeter Create /iaf_psc_alpha Create { st Connect } fail_or_die
+    /multimeter Create /iaf_psc_alpha Create /one_to_one { st Connect } fail_or_die
 } forall
 
 endusing

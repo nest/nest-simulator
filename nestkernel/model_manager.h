@@ -192,7 +192,7 @@ private:
   size_t register_node_model_( Model* model );
 
   template < typename CompleteConnecionT >
-  void register_specific_connection_model_( const std::string& );
+  void register_specific_connection_model_( const std::string& name );
 
   /**
    * Copy an existing node model and register it as a new model.

@@ -29,8 +29,17 @@ template < typename DataType, typename Subclass >
 void
 nest::DataSecondaryEvent< DataType, Subclass >::add_syn_id( const nest::synindex synid )
 {
-  kernel().vp_manager.assert_single_threaded();
-  supported_syn_ids_.insert( synid );
+  kernel().vp_manager.assert_thread_parallel();
+
+  // This is done during connection model cloning, which happens thread-parallel.
+  // To not risk trashing the set data structure, we let only master register the
+  // new synid. This is not performance critical and avoiding collisions elsewhere
+  // would be more difficult, so we do it here in a master section.
+#pragma omp master
+  {
+    supported_syn_ids_.insert( synid );
+  }
+#pragma omp barrier
 }
 
 template < typename DataType, typename Subclass >

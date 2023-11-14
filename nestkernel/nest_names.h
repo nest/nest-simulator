@@ -448,6 +448,7 @@ extern const Name S;
 extern const Name S_act_NMDA;
 extern const Name s_GABA;
 extern const Name s_AMPA;
+extern const Name s_AMPA_ext;
 extern const Name s_NMDA;
 extern const Name SIC_scale;
 extern const Name SIC_th;

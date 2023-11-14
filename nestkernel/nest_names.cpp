@@ -420,6 +420,7 @@ const Name S( "S" );
 const Name S_act_NMDA( "S_act_NMDA" );
 const Name s_NMDA( "s_NMDA" );
 const Name s_AMPA( "s_AMPA" );
+const Name s_AMPA_ext( "s_AMPA_ext" );
 const Name s_GABA( "s_GABA" );
 const Name SIC_scale( "SIC_scale" );
 const Name SIC_th( "SIC_th" );

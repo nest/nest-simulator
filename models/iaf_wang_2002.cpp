@@ -65,6 +65,7 @@ RecordablesMap< iaf_wang_2002 >::create()
   // add state variables to recordables map
   insert_( names::V_m, &iaf_wang_2002::get_ode_state_elem_< iaf_wang_2002::State_::V_m > );
   insert_( names::s_AMPA, &iaf_wang_2002::get_ode_state_elem_< iaf_wang_2002::State_::s_AMPA > );
+  insert_( names::s_AMPA_ext, &iaf_wang_2002::get_ode_state_elem_< iaf_wang_2002::State_::s_AMPA_ext > );
   insert_( names::s_GABA, &iaf_wang_2002::get_ode_state_elem_< iaf_wang_2002::State_::s_GABA > );
   insert_( names::s_NMDA, &iaf_wang_2002::get_ode_state_elem_< iaf_wang_2002::State_::s_NMDA > );
 }
@@ -83,18 +84,20 @@ nest::iaf_wang_2002_dynamics( double, const double y[], double f[], void* pnode 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
 
-  const double I_AMPA = ( y[ S::V_m ] - node.P_.E_ex ) * y[ S::s_AMPA ];
+  const double I_AMPA = node.P_.g_AMPA * ( y[ S::V_m ] - node.P_.E_ex ) * y[ S::s_AMPA ] 
+      + node.P_.g_AMPA_ext * ( y[ S::V_m ] - node.P_.E_ex ) * y[ S::s_AMPA_ext ];
 
-  const double I_rec_GABA = ( y[ S::V_m ] - node.P_.E_in ) * y[ S::s_GABA ];
+  const double I_rec_GABA = node.P_.g_GABA * ( y[ S::V_m ] - node.P_.E_in ) * y[ S::s_GABA ];
 
-  const double I_rec_NMDA = ( y[ S::V_m ] - node.P_.E_ex )
+  const double I_rec_NMDA = node.P_.g_NMDA * ( y[ S::V_m ] - node.P_.E_ex )
     / ( 1 + node.P_.conc_Mg2 * std::exp( -0.062 * y[ S::V_m ] ) / 3.57 ) * y[ S::s_NMDA ]; 
 
-  const double I_syn = I_AMPA + I_rec_GABA + I_rec_NMDA - node.B_.I_stim_;
+  const double I_syn = I_AMPA + I_rec_GABA + I_rec_NMDA + node.B_.I_stim_;
 
   f[ S::V_m ] = ( -node.P_.g_L * ( y[ S::V_m ] - node.P_.E_L ) - I_syn ) / node.P_.C_m;
 
   f[ S::s_AMPA ] = -y[ S::s_AMPA ] / node.P_.tau_AMPA;
+  f[ S::s_AMPA_ext ] = -y[ S::s_AMPA_ext ] / node.P_.tau_AMPA;
   f[ S::s_NMDA ] = -y[ S::s_NMDA ] / node.P_.tau_decay_NMDA;
   f[ S::s_GABA ] = -y[ S::s_GABA ] / node.P_.tau_GABA;
 
@@ -134,6 +137,7 @@ nest::iaf_wang_2002::State_::State_( const Parameters_& p )
 {
   y_[ V_m ] = p.E_L; // initialize to reversal potential
   y_[ s_AMPA ] = 0.0;
+  y_[ s_AMPA_ext ] = 0.0;
   y_[ s_GABA ] = 0.0;
   y_[ s_NMDA ] = 0.0;
 }
@@ -143,6 +147,7 @@ nest::iaf_wang_2002::State_::State_( const State_& s )
 {
   y_[ V_m ] = s.y_[ V_m ];
   y_[ s_AMPA ] = s.y_[ s_AMPA ];
+  y_[ s_AMPA_ext ] = s.y_[ s_AMPA_ext ];
   y_[ s_GABA ] = s.y_[ s_GABA ];
   y_[ s_NMDA ] = s.y_[ s_NMDA ];
 }
@@ -150,6 +155,7 @@ nest::iaf_wang_2002::State_::State_( const State_& s )
 nest::iaf_wang_2002::Buffers_::Buffers_( iaf_wang_2002& n )
   : logger_( n )
   , spike_AMPA()
+  , spike_AMPA_ext()
   , spike_GABA()
   , spike_NMDA()
   , s_( nullptr )
@@ -255,6 +261,7 @@ nest::iaf_wang_2002::State_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::V_m, y_[ V_m ] ); // Membrane potential
   def< double >( d, names::s_AMPA, y_[ s_AMPA ] );
+  def< double >( d, names::s_AMPA_ext, y_[ s_AMPA_ext ] );
   def< double >( d, names::s_GABA, y_[ s_GABA ] );
   def< double >( d, names::s_NMDA, y_[ s_NMDA] );
 }
@@ -264,6 +271,7 @@ nest::iaf_wang_2002::State_::set( const DictionaryDatum& d, const Parameters_&, 
 {
   updateValueParam< double >( d, names::V_m, y_[ V_m ], node );
   updateValueParam< double >( d, names::s_AMPA, y_[ s_AMPA ], node );
+  updateValueParam< double >( d, names::s_AMPA_ext, y_[ s_AMPA_ext ], node );
   updateValueParam< double >( d, names::s_GABA, y_[ s_GABA ], node );
   updateValueParam< double >( d, names::s_NMDA, y_[ s_NMDA ], node );
 }
@@ -332,6 +340,7 @@ void
 nest::iaf_wang_2002::init_buffers_()
 {
   B_.spike_AMPA.clear();
+  B_.spike_AMPA_ext.clear();
   B_.spike_GABA.clear();
   B_.spike_NMDA.clear();
   B_.currents_.clear(); // includes resize
@@ -442,6 +451,7 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
 
     // add incoming spikes
     S_.y_[ State_::s_AMPA ] += B_.spike_AMPA.get_value( lag );
+    S_.y_[ State_::s_AMPA_ext ] += B_.spike_AMPA_ext.get_value( lag );
     S_.y_[ State_::s_GABA ] += B_.spike_GABA.get_value( lag );
     S_.y_[ State_::s_NMDA ] += B_.spike_NMDA.get_value( lag );
     if ( S_.y_[ State_::s_NMDA ] > 1 )
@@ -501,12 +511,15 @@ nest::iaf_wang_2002::handle( SpikeEvent& e )
 
   if ( e.get_weight() > 0.0 )
   {
-    B_.spike_AMPA.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-      e.get_weight() * e.get_multiplicity() );
-    
-    if ( e.get_rport() == 0 ) {
-        B_.spike_NMDA.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-      e.get_weight() * e.get_multiplicity() * e.get_offset() );
+    if ( e.get_rport() == 0 ) { // recurrent spike
+      B_.spike_AMPA.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+        e.get_weight() * e.get_multiplicity() );
+      B_.spike_NMDA.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+        e.get_weight() * e.get_multiplicity() * e.get_offset() );
+    }
+    else if ( e.get_rport() == 1 ) { // external spike
+      B_.spike_AMPA_ext.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+        e.get_weight() * e.get_multiplicity() );
     }
   }
   else

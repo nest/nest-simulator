@@ -284,6 +284,7 @@ public:
     {
       V_m = 0,
       s_AMPA,
+      s_AMPA_ext,
       s_NMDA,
       s_GABA,
       STATE_VEC_SIZE
@@ -324,6 +325,7 @@ private:
     //   Buffers and sums of incoming spikes and currents per timestep
     // -----------------------------------------------------------------------
     RingBuffer spike_AMPA;
+    RingBuffer spike_AMPA_ext;
     RingBuffer spike_GABA;
     RingBuffer spike_NMDA;
     RingBuffer currents_;

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_iaf_psc_alpha_multisynapse.py
+# test_iaf_psc_exp_multisynapse.py
 #
 # This file is part of NEST.
 #
@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Test ``iaf_psc_alpha_multisynapse`` recordables and simulated PSCs against expectation.
+Test ``iaf_psc_exp_multisynapse`` recordables and simulated PSCs against expectation.
 """
 
 
@@ -28,9 +28,6 @@ import nest
 import numpy as np
 import numpy.testing as nptest
 import pytest
-
-
-import matplotlib.pyplot as plt
 
 
 @pytest.fixture(autouse=True)

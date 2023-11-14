@@ -1,4 +1,4 @@
-/*
+_.
  *  iaf_psc_exp_multisynapse.cpp
  *
  *  This file is part of NEST.
@@ -316,7 +316,8 @@ iaf_psc_exp_multisynapse::update( const Time& origin, const long from, const lon
       for ( size_t i = 0; i < P_.n_receptors_(); i++ )
       {
         S_.V_m_ += V_.P21_syn_[ i ] * S_.i_syn_[ i ];
-      } }
+      }
+    }
     else
     {
       --S_.refractory_steps_; // neuron is absolute refractory

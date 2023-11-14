@@ -68,7 +68,7 @@ NodeManager::~NodeManager()
 }
 
 void
-NodeManager::initialize()
+NodeManager::initialize( const bool reset_kernel )
 {
   // explicitly force construction of wfr_nodes_vec_ to ensure consistent state
   wfr_network_size_ = 0;
@@ -76,22 +76,17 @@ NodeManager::initialize()
   num_thread_local_devices_.resize( kernel().vp_manager.get_num_threads(), 0 );
   ensure_valid_thread_local_ids();
 
-  sw_construction_create_.reset();
+  if ( reset_kernel )
+  {
+    sw_construction_create_.reset();
+  }
 }
 
 void
-NodeManager::finalize()
+NodeManager::finalize( const bool )
 {
   destruct_nodes_();
   clear_node_collection_container();
-}
-
-void
-NodeManager::change_number_of_threads()
-{
-  // No nodes exist at this point, so nothing to tear down. See
-  // checks for node_manager.size() in VPManager::set_status()
-  initialize();
 }
 
 DictionaryDatum

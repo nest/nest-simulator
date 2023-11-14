@@ -132,24 +132,27 @@ IOManager::set_data_path_prefix_( const DictionaryDatum& dict )
 }
 
 void
-IOManager::initialize()
+IOManager::initialize( const bool reset_kernel )
 {
-  DictionaryDatum dict( new Dictionary );
-  // The properties data_path and data_prefix can be set via environment variables
-  char* data_path = std::getenv( "NEST_DATA_PATH" );
-  if ( data_path )
+  if ( reset_kernel )
   {
-    ( *dict )[ names::data_path ] = std::string( data_path );
-  }
-  char* data_prefix = std::getenv( "NEST_DATA_PREFIX" );
-  if ( data_prefix )
-  {
-    ( *dict )[ names::data_prefix ] = std::string( data_prefix );
-  }
+    DictionaryDatum dict( new Dictionary );
+    // The properties data_path and data_prefix can be set via environment variables
+    char* data_path = std::getenv( "NEST_DATA_PATH" );
+    if ( data_path )
+    {
+      ( *dict )[ names::data_path ] = std::string( data_path );
+    }
+    char* data_prefix = std::getenv( "NEST_DATA_PREFIX" );
+    if ( data_prefix )
+    {
+      ( *dict )[ names::data_prefix ] = std::string( data_prefix );
+    }
 
-  set_data_path_prefix_( dict );
+    set_data_path_prefix_( dict );
 
-  overwrite_files_ = false;
+    overwrite_files_ = false;
+  }
 
   for ( const auto& it : recording_backends_ )
   {
@@ -162,7 +165,7 @@ IOManager::initialize()
 }
 
 void
-IOManager::finalize()
+IOManager::finalize( const bool )
 {
   for ( const auto& it : recording_backends_ )
   {
@@ -171,21 +174,6 @@ IOManager::finalize()
   for ( const auto& it : stimulation_backends_ )
   {
     it.second->finalize();
-  }
-}
-
-void
-IOManager::change_number_of_threads()
-{
-  for ( const auto& it : recording_backends_ )
-  {
-    it.second->finalize();
-    it.second->initialize();
-  }
-  for ( const auto& it : stimulation_backends_ )
-  {
-    it.second->finalize();
-    it.second->initialize();
   }
 }
 

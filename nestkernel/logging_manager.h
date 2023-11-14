@@ -49,8 +49,8 @@ class LoggingManager : public ManagerInterface
 public:
   LoggingManager();
 
-  void initialize() override;
-  void finalize() override;
+  void initialize( const bool ) override;
+  void finalize( const bool ) override;
   void set_status( const DictionaryDatum& ) override;
   void get_status( DictionaryDatum& ) override;
 

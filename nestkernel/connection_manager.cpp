@@ -90,27 +90,38 @@ nest::ConnectionManager::~ConnectionManager()
 }
 
 void
-nest::ConnectionManager::initialize()
+nest::ConnectionManager::initialize( const bool reset_kernel )
 {
+  if ( reset_kernel )
+  {
+    keep_source_table_ = true;
+    connections_have_changed_ = false;
+    get_connections_has_been_called_ = false;
+    use_compressed_spikes_ = true;
+    stdp_eps_ = 1.0e-6;
+    min_delay_ = max_delay_ = 1;
+    sw_construction_connect.reset();
+  }
+
   const size_t num_threads = kernel().vp_manager.get_num_threads();
   connections_.resize( num_threads );
   secondary_recv_buffer_pos_.resize( num_threads );
-  keep_source_table_ = true;
-  connections_have_changed_ = false;
-  get_connections_has_been_called_ = false;
-  use_compressed_spikes_ = true;
   compressed_spike_data_.resize( 0 );
+
   has_primary_connections_ = false;
   check_primary_connections_.initialize( num_threads, false );
   secondary_connections_exist_ = false;
   check_secondary_connections_.initialize( num_threads, false );
-  stdp_eps_ = 1.0e-6;
+
+  // We need to obtain this while in serial context to avoid problems when
+  // increasing the number of threads.
+  const size_t num_conn_models = kernel().model_manager.get_num_connection_models();
 
 #pragma omp parallel
   {
     const size_t tid = kernel().vp_manager.get_thread_id();
-    connections_[ tid ] = std::vector< ConnectorBase* >( kernel().model_manager.get_num_connection_models() );
-    secondary_recv_buffer_pos_[ tid ] = std::vector< std::vector< size_t > >();
+    connections_.at( tid ) = std::vector< ConnectorBase* >( num_conn_models );
+    secondary_recv_buffer_pos_.at( tid ) = std::vector< std::vector< size_t > >();
   } // of omp parallel
 
   source_table_.initialize();
@@ -122,16 +133,10 @@ nest::ConnectionManager::initialize()
 
   std::vector< std::vector< size_t > > tmp2( kernel().vp_manager.get_num_threads(), std::vector< size_t >() );
   num_connections_.swap( tmp2 );
-
-  // The following line is executed by all processes, no need to communicate
-  // this change in delays.
-  min_delay_ = max_delay_ = 1;
-
-  sw_construction_connect.reset();
 }
 
 void
-nest::ConnectionManager::finalize()
+nest::ConnectionManager::finalize( const bool )
 {
   source_table_.finalize();
   target_table_.finalize();
@@ -140,13 +145,6 @@ nest::ConnectionManager::finalize()
   std::vector< std::vector< ConnectorBase* > >().swap( connections_ );
   std::vector< std::vector< std::vector< size_t > > >().swap( secondary_recv_buffer_pos_ );
   compressed_spike_data_.clear();
-}
-
-void
-nest::ConnectionManager::change_number_of_threads()
-{
-  finalize();
-  initialize();
 }
 
 void
@@ -1602,7 +1600,7 @@ nest::ConnectionManager::resize_connections()
 {
   kernel().vp_manager.assert_thread_parallel();
 
-  connections_[ kernel().vp_manager.get_thread_id() ].resize( kernel().model_manager.get_num_connection_models() );
+  connections_.at( kernel().vp_manager.get_thread_id() ).resize( kernel().model_manager.get_num_connection_models() );
 
   source_table_.resize_sources();
   target_table_devices_.resize_to_number_of_synapse_types();

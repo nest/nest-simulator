@@ -42,13 +42,16 @@ nest::LoggingManager::LoggingManager()
 }
 
 void
-nest::LoggingManager::initialize()
+nest::LoggingManager::initialize( const bool reset_kernel )
 {
-  dict_miss_is_error_ = true;
+  if ( reset_kernel )
+  {
+    dict_miss_is_error_ = true;
+  }
 }
 
 void
-nest::LoggingManager::finalize()
+nest::LoggingManager::finalize( const bool )
 {
 }
 

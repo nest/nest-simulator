@@ -54,9 +54,9 @@ nest::SourceTable::initialize()
 #pragma omp parallel
   {
     const size_t tid = kernel().vp_manager.get_thread_id();
-    sources_[ tid ].resize( 0 );
+    sources_.at( tid ).resize( 0 );
     resize_sources();
-    compressible_sources_[ tid ].resize( 0 );
+    compressible_sources_.at( tid ).resize( 0 );
   } // of omp parallel
 }
 
@@ -269,7 +269,7 @@ void
 nest::SourceTable::resize_sources()
 {
   kernel().vp_manager.assert_thread_parallel();
-  sources_[ kernel().vp_manager.get_thread_id() ].resize( kernel().model_manager.get_num_connection_models() );
+  sources_.at( kernel().vp_manager.get_thread_id() ).resize( kernel().model_manager.get_num_connection_models() );
 }
 
 bool

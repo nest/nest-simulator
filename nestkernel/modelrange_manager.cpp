@@ -41,12 +41,12 @@ ModelRangeManager::ModelRangeManager()
 }
 
 void
-ModelRangeManager::initialize()
+ModelRangeManager::initialize( const bool )
 {
 }
 
 void
-ModelRangeManager::finalize()
+ModelRangeManager::finalize( const bool )
 {
   modelranges_.clear();
   first_node_id_ = 0;

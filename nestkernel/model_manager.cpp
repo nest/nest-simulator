@@ -63,7 +63,7 @@ ModelManager::~ModelManager()
 }
 
 void
-ModelManager::initialize()
+ModelManager::initialize( const bool )
 {
   if ( not proxynode_model_ )
   {
@@ -84,17 +84,22 @@ ModelManager::initialize()
 }
 
 void
-ModelManager::finalize()
+ModelManager::finalize( const bool )
 {
   clear_node_models_();
   clear_connection_models_();
 }
 
-void
-ModelManager::change_number_of_threads()
+size_t
+ModelManager::get_num_connection_models() const
 {
-  finalize();
-  initialize();
+  // For the case when the ModelManager is not yet fully initialized
+  if ( connection_models_.empty() )
+  {
+    return 0;
+  }
+
+  return connection_models_.at( kernel().vp_manager.get_thread_id() ).size();
 }
 
 void
@@ -201,7 +206,7 @@ ModelManager::copy_connection_model_( const size_t old_id, Name new_name, Dictio
 {
   kernel().vp_manager.assert_single_threaded();
 
-  const size_t new_id = connection_models_[ 0 ].size();
+  const size_t new_id = connection_models_.at( kernel().vp_manager.get_thread_id() ).size();
 
   if ( new_id == invalid_synindex )
   {
@@ -216,8 +221,8 @@ ModelManager::copy_connection_model_( const size_t old_id, Name new_name, Dictio
 #pragma omp parallel
   {
     const size_t thread_id = kernel().vp_manager.get_thread_id();
-    connection_models_[ thread_id ].push_back(
-      get_connection_model( old_id, thread_id ).clone( new_name.toString(), new_id ) );
+    connection_models_.at( thread_id )
+      .push_back( get_connection_model( old_id, thread_id ).clone( new_name.toString(), new_id ) );
 
     kernel().connection_manager.resize_connections();
   }

@@ -49,9 +49,8 @@ public:
   ModelManager();
   ~ModelManager() override;
 
-  void initialize() override;
-  void finalize() override;
-  void change_number_of_threads() override;
+  void initialize( const bool ) override;
+  void finalize( const bool ) override;
   void set_status( const DictionaryDatum& ) override;
   void get_status( DictionaryDatum& ) override;
 
@@ -309,18 +308,6 @@ inline const std::vector< ConnectorModel* >&
 ModelManager::get_connection_models( size_t tid )
 {
   return connection_models_[ tid ];
-}
-
-inline size_t
-ModelManager::get_num_connection_models() const
-{
-  // For the case when the ModelManager is not yet fully initialized
-  if ( connection_models_.size() == 0 )
-  {
-    return 0;
-  }
-
-  return connection_models_[ 0 ].size();
 }
 
 inline void

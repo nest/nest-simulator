@@ -48,8 +48,13 @@ nest::VPManager::VPManager()
 }
 
 void
-nest::VPManager::initialize()
+nest::VPManager::initialize( const bool reset_kernel )
 {
+  if ( not reset_kernel )
+  {
+    return;
+  }
+
 // When the VPManager is initialized, you will have 1 thread again.
 // Setting more threads will be done via nest::set_kernel_status
 #ifdef _OPENMP
@@ -73,7 +78,7 @@ nest::VPManager::initialize()
 }
 
 void
-nest::VPManager::finalize()
+nest::VPManager::finalize( const bool )
 {
 }
 

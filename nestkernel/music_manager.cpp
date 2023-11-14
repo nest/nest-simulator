@@ -48,8 +48,13 @@ MUSICManager::MUSICManager()
 }
 
 void
-MUSICManager::initialize()
+MUSICManager::initialize( const bool reset_kernel )
 {
+  if ( not reset_kernel )
+  {
+    return;
+  }
+
 #ifdef HAVE_MUSIC
   // Reset music_in_portlist_ to its pristine state.
   // See comment above pristine_music_in_portlist_ in the header.
@@ -58,7 +63,7 @@ MUSICManager::initialize()
 }
 
 void
-MUSICManager::finalize()
+MUSICManager::finalize( const bool )
 {
 }
 

@@ -87,7 +87,7 @@ ModelManager::register_specific_connection_model_( const std::string& name )
     throw NamingConflict( msg );
   }
 
-  const auto new_syn_id = connection_models_[ 0 ].size();
+  const auto new_syn_id = connection_models_.at( kernel().vp_manager.get_thread_id() ).size();
   if ( new_syn_id >= invalid_synindex )
   {
     const std::string msg = String::compose(
@@ -106,9 +106,9 @@ ModelManager::register_specific_connection_model_( const std::string& name )
     {
       conn_model->get_secondary_event()->add_syn_id( new_syn_id );
     }
-    connection_models_[ kernel().vp_manager.get_thread_id() ].push_back( conn_model );
+    connection_models_.at( kernel().vp_manager.get_thread_id() ).push_back( conn_model );
     kernel().connection_manager.resize_connections();
-  }
+  } // end of parallel section
 }
 
 inline Node*

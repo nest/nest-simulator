@@ -102,9 +102,9 @@ public:
 private:
   //! Count of the emitted spikes for the firing rate regularization.
   size_t n_spikes_;
-  
+
   //!< number of incoming eprop synapses
-  size_t eprop_indegree_; 
+  size_t eprop_indegree_;
 
   //! History of updates still needed by at least one synapse.
   std::vector< HistEntryEpropUpdate > update_history_;

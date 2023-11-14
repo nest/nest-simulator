@@ -7,7 +7,7 @@ rng = np.random.default_rng()
 
 # Parameters from paper
 epop_params = {"g_AMPA_ext": 2.1,
-               "g_AMPA_rec": 0.05,
+               "g_AMPA": 0.05,
                "g_NMDA": 0.165,
                "g_GABA": 1.3,
                "tau_GABA": 5.0,
@@ -20,13 +20,14 @@ epop_params = {"g_AMPA_ext": 2.1,
                "E_ex": 0.0,             # excitatory reversal potential
                "E_in": -70.0,           # inhibitory reversal potential
                "V_reset": -55.0,        # reset potential
+               "V_th": -50.0,           # threshold
                "C_m": 500.0,            # membrane capacitance
                "t_ref": 2.0             # refreactory period
                }
 
 
 ipop_params = {"g_AMPA_ext": 1.62,
-               "g_AMPA_rec": 0.04,
+               "g_AMPA": 0.04,
                "g_NMDA": 0.13,
                "g_GABA": 1.0,
                "tau_GABA": 5.0,
@@ -39,6 +40,7 @@ ipop_params = {"g_AMPA_ext": 1.62,
                "E_ex": 0.0,             # excitatory reversal potential
                "E_in": -70.0,           # inhibitory reversal potential
                "V_reset": -55.0,        # reset potential
+               "V_th": -50.0,           # threshold
                "C_m": 200.0,            # membrane capacitance
                "t_ref": 1.0             # refreactory period
                }
@@ -91,11 +93,25 @@ poisson_b = nest.Create("inhomogeneous_poisson_generator",
 
 poisson_0 = nest.Create("poisson_generator", params={"rate": 2400.})
 
+syn_spec_selective = {"synapse_model": "static_synapse", "weight":w_plus, "delay":0.1, 'receptor_type': 0}
+syn_spec_nonselective = {"synapse_model": "static_synapse", "weight":w_minus, "delay":0.1, 'receptor_type': 0}
+syn_spec_inhibitory = {"synapse_model": "static_synapse", "weight":-1., "delay":0.1, 'receptor_type': 0}
+syn_spec_ext = {"synapse_model": "static_synapse", "weight":1., "delay":0.1, 'receptor_type': 1}
 
-syn_spec_selective = {"model": "static_synapse", "weight":w_plus, "delay":0.1, 'receptor_type': 0}
-syn_spec_nonselective = {"model": "static_synapse", "weight":w_minus, "delay":0.1, 'receptor_type': 0}
-syn_spec_inhibitory = {"model": "static_synapse", "weight":-1., "delay":0.1, 'receptor_type': 0}
-syn_spec_bg = {"model": "static_synapse", "weight":1., "delay":0.1, 'receptor_type': 1}
+sr_nonselective = nest.Create("spike_recorder")
+sr_selective1 = nest.Create("spike_recorder")
+sr_selective2 = nest.Create("spike_recorder")
+sr_inhibitory = nest.Create("spike_recorder")
+
+mm_selective1 = nest.Create("multimeter", {"record_from": ["V_m", "s_NMDA", "s_AMPA", "s_AMPA_ext", "s_GABA"]})
+mm_inhibitory = nest.Create("multimeter", {"record_from": ["V_m", "s_NMDA", "s_AMPA", "s_GABA"]})
+
+
+
+nest.Connect(poisson_0,
+             nonselective_pop + selective_pop1 + selective_pop2 + inhibitory_pop,
+             conn_spec="all_to_all",
+             syn_spec=syn_spec_ext)
 
 nest.Connect(nonselective_pop,
              selective_pop1 + selective_pop2 + nonselective_pop,
@@ -117,12 +133,38 @@ nest.Connect(inhibitory_pop,
              conn_spec="all_to_all",
              syn_spec=syn_spec_inhibitory)
 
+nest.Connect(poisson_a,
+             selective_pop1,
+             conn_spec="all_to_all",
+             syn_spec=syn_spec_ext)
+
+nest.Connect(poisson_b,
+             selective_pop2,
+             conn_spec="all_to_all",
+             syn_spec=syn_spec_ext)
+
+
+nest.Connect(nonselective_pop, sr_nonselective)
+nest.Connect(selective_pop1, sr_selective1)
+nest.Connect(selective_pop2, sr_selective2)
+nest.Connect(inhibitory_pop, sr_inhibitory)
+
+
+nest.Connect(mm_selective1, selective_pop1)
+nest.Connect(mm_inhibitory, inhibitory_pop)
+
 nest.Simulate(4000.)
 
+spikes_nonselective = sr_nonselective.get("events", "times")
+spikes_selective1 = sr_selective1.get("events", "times")
+spikes_selective2 = sr_selective2.get("events", "times")
+spikes_inhibitory = sr_inhibitory.get("events", "times")
 
-
-
-
-
-
+senders = mm_selective1.get("events", "senders")
+inds = senders == 1
+vm = mm_selective1.get("events", "V_m")[inds]
+s_AMPA = mm_selective1.get("events", "s_AMPA")[inds]
+s_AMPA_ext = mm_selective1.get("events", "s_AMPA_ext")[inds]
+s_GABA = mm_selective1.get("events", "s_GABA")[inds]
+s_NMDA = mm_selective1.get("events", "s_NMDA")[inds]
 

@@ -44,9 +44,17 @@ Neuron generating spikes at fixed intervals irrespective of inputs.
 Description
 +++++++++++
 
-The ``ignore_and_fire`` neuron is a neuron model generating spikes with a fixed predefined inter-spike interval, irrespective of its inputs ("ignore"). In this simplest version of the ignore_and_fire neuron, the inputs from other neurons or devices are not processed at all (*). The ``ignore_and_fire`` neuron is primarily used for neuronal-network model validation and benchmarking purposes, in particular to evaluate the correctness and performance of connectivity generation and inter-neuron communication. It permits an easy scaling of the network size and/or connectivity without affecting the output spike statistics. The amount of network traffic is predefined by the user, and therefore fully controllable and predictable, irrespective of the network size and structure. 
+The ``ignore_and_fire`` neuron is a neuron model generating spikes with a fixed predefined inter-spike interval,
+irrespective of its inputs ("ignore"). In this simplest version of the ignore_and_fire neuron, the inputs from other
+neurons or devices are not processed at all (*). The ``ignore_and_fire`` neuron is primarily used for neuronal-network
+model validation and benchmarking purposes, in particular to evaluate the correctness and performance of connectivity
+generation and inter-neuron communication. It permits an easy scaling of the network size and/or connectivity without
+affecting the output spike statistics. The amount of network traffic is predefined by the user, and therefore fully
+controllable and predictable, irrespective of the network size and structure.
 
-(*) The model can easily be extended and equipped with any arbitrary input processing or (after-) spike generation dynamics to make it more similar and comparable to other non-ignorant neuron models. In such extended ignore_and_fire models, the spike emission process would still be decoupled from the intrinsic neuron dynamics.
+(*) The model can easily be extended and equipped with any arbitrary input processing or (after-) spike generation
+dynamics to make it more similar and comparable to other non-ignorant neuron models. In such extended ignore_and_fire
+models, the spike emission process would still be decoupled from the intrinsic neuron dynamics.
 
 Parameters
 ++++++++++
@@ -242,7 +250,6 @@ private:
     V_.firing_period_steps_ = Time( Time::ms( 1. / P_.rate_ * 1000. ) ).get_steps();
     V_.phase_steps_ = Time( Time::ms( P_.phase_ / P_.rate_ * 1000. ) ).get_steps();
   }
-
 };
 
 inline size_t
@@ -295,10 +302,10 @@ ignore_and_fire::get_status( DictionaryDatum& d ) const
 inline void
 ignore_and_fire::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_;                // temporary copy in case of errors
-  ptmp.set( d, this );                  // throws if BadProperty
-  State_ stmp = S_;                     // temporary copy in case of errors
-  stmp.set( d, ptmp, this );            // throws if BadProperty
+  Parameters_ ptmp = P_;     // temporary copy in case of errors
+  ptmp.set( d, this );       // throws if BadProperty
+  State_ stmp = S_;          // temporary copy in case of errors
+  stmp.set( d, ptmp, this ); // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -311,7 +318,6 @@ ignore_and_fire::set_status( const DictionaryDatum& d )
   S_ = stmp;
 
   ignore_and_fire::calc_initial_variables_();
-
 }
 
 } // namespace

@@ -95,7 +95,7 @@ ignore_and_fire::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Phase must be > 0 and <= 1." );
   }
-  
+
   if ( rate_ <= 0.0 )
   {
     throw BadProperty( "Firing rate must be > 0." );
@@ -166,7 +166,7 @@ void
 ignore_and_fire::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
-  B_.logger_.init();  
+  B_.logger_.init();
 }
 
 /* ----------------------------------------------------------------
@@ -182,15 +182,15 @@ ignore_and_fire::update( Time const& origin, const long from, const long to )
     if ( V_.phase_steps_ == 0 )
     {
       V_.phase_steps_ = V_.firing_period_steps_ - 1;
-      
+
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
       SpikeEvent se;
       kernel().event_delivery_manager.send( *this, se, lag );
     }
     else
-    { 
+    {
       --V_.phase_steps_;
-    }    
+    }
 
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );
@@ -201,7 +201,7 @@ void
 ignore_and_fire::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
-  
+
   const size_t input_buffer_slot = kernel().event_delivery_manager.get_modulo(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
   const double s = e.get_weight() * e.get_multiplicity();
@@ -214,7 +214,7 @@ void
 ignore_and_fire::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
-  
+
   const size_t input_buffer_slot = kernel().event_delivery_manager.get_modulo(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) );
 

@@ -1,4 +1,4 @@
-/* 
+/*
  *  iaf_psc_exp_multisynapse.cpp
  *
  *  This file is part of NEST.

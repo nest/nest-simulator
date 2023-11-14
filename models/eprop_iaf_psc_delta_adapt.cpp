@@ -78,7 +78,7 @@ nest::eprop_iaf_psc_delta_adapt::Parameters_::Parameters_()
   , f_target_( 0.01 )
   , gamma_( 0.3 )
   , I_e_( 0.0 )
-  , propagator_idx_( 0 )
+  , psc_scale_factor_( "leak_propagator_complement" )
   , surrogate_gradient_( "piecewise_linear" )
   , t_ref_( 2.0 )
   , tau_m_( 10.0 )
@@ -122,7 +122,7 @@ nest::eprop_iaf_psc_delta_adapt::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::f_target, f_target_ );
   def< double >( d, names::gamma, gamma_ );
   def< double >( d, names::I_e, I_e_ );
-  def< long >( d, names::propagator_idx, propagator_idx_ );
+  def< std::string >( d, names::psc_scale_factor, psc_scale_factor_ );
   def< std::string >( d, names::surrogate_gradient, surrogate_gradient_ );
   def< double >( d, names::t_ref, t_ref_ );
   def< double >( d, names::tau_m, tau_m_ );
@@ -153,7 +153,7 @@ nest::eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Nod
 
   updateValueParam< double >( d, names::gamma, gamma_, node );
   updateValueParam< double >( d, names::I_e, I_e_, node );
-  updateValueParam< long >( d, names::propagator_idx, propagator_idx_, node );
+  updateValueParam< std::string >( d, names::psc_scale_factor, psc_scale_factor_, node );
   updateValueParam< std::string >( d, names::surrogate_gradient, surrogate_gradient_, node );
   updateValueParam< double >( d, names::t_ref, t_ref_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
@@ -173,9 +173,10 @@ nest::eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Nod
     throw BadProperty( "Target firing rate must be >= 0." );
   }
 
-  if ( propagator_idx_ != 0 and propagator_idx_ != 1 )
+  if ( psc_scale_factor_ != "identity" and psc_scale_factor_ != "leak_propagator_complement" )
   {
-    throw BadProperty( "One of two available propagators indexed by 0 and 1 must be selected." );
+    throw BadProperty(
+      "Available presynaptic current scale factors are \"identity\" and \"leak_propagator_complement\"." );
   }
 
   if ( surrogate_gradient_ != "piecewise_linear" )
@@ -264,12 +265,18 @@ nest::eprop_iaf_psc_delta_adapt::pre_run_hook()
   V_.P33_ = std::exp( -dt / P_.tau_m_ ); // alpha
   V_.P30_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - V_.P33_ );
 
-  const double propagators[] = { 1.0 - V_.P33_, 1.0 };
-  V_.P33_complement_ = propagators[ P_.propagator_idx_ ];
-
   V_.Pa_ = std::exp( -dt / P_.adapt_tau_ );
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
+
+  if ( P_.psc_scale_factor_ == "leak_propagator_complement" )
+  {
+    V_.P33_complement_ = 1.0 - V_.P33_;
+  }
+  else
+  {
+    V_.P33_complement_ = 1.0;
+  }
 
   if ( P_.surrogate_gradient_ == "piecewise_linear" )
   {

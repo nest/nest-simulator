@@ -34,6 +34,12 @@
 namespace nest
 {
 
+void
+nest::register_stdp_pl_synapse_hom_ax_delay( const std::string& name )
+{
+  register_connection_model< stdp_pl_synapse_hom_ax_delay >( name );
+}
+
 //
 // Implementation of class STDPPLHomAxDelayCommonProperties.
 //

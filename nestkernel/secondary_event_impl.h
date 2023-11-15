@@ -1,5 +1,5 @@
 /*
- *  secondary_event.cpp
+ *  secondary_event_impl.h
  *
  *  This file is part of NEST.
  *

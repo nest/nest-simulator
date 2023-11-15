@@ -377,12 +377,13 @@ nest::eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, co
 double
 nest::eprop_iaf_psc_delta_adapt::compute_piecewise_linear_derivative()
 {
-  const double v_m = S_.r_ > 0 ? 0.0 : S_.y3_;
-  const double v_th = S_.r_ > 0 ? P_.V_th_ : S_.adapting_threshold_;
-  const double psi = P_.gamma_ * std::max( 0.0, 1.0 - std::fabs( ( v_m - v_th ) / P_.V_th_ ) ) / P_.V_th_;
-  return psi;
-}
+  if ( S_.r_ > 0 )
+  {
+    return 0.0;
+  }
 
+  return P_.gamma_ * std::max( 0.0, 1.0 - std::fabs( ( S_.y3_ - S_.adapting_threshold_ ) / P_.V_th_ ) ) / P_.V_th_;
+}
 
 /* ----------------------------------------------------------------
  * Event handling functions

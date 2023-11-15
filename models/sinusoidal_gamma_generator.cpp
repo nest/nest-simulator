@@ -47,13 +47,15 @@
 #include "dictutils.h"
 #include "doubledatum.h"
 
-namespace nest
-{
+
 void
-register_sinusoidal_gamma_generator( const std::string& name )
+nest::register_sinusoidal_gamma_generator( const std::string& name )
 {
   register_node_model< sinusoidal_gamma_generator >( name );
 }
+
+namespace nest
+{
 
 RecordablesMap< sinusoidal_gamma_generator > sinusoidal_gamma_generator::recordablesMap_;
 
@@ -397,5 +399,7 @@ sinusoidal_gamma_generator::set_data_from_stimulation_backend( std::vector< doub
   // if we get here, temporary contains consistent set of properties
   P_ = ptmp;
 }
-#endif // HAVE_GSL
+
 } // namespace nest
+
+#endif // HAVE_GSL

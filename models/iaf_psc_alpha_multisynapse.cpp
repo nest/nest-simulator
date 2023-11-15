@@ -30,6 +30,7 @@
 #include "exceptions.h"
 #include "iaf_propagator.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
 
@@ -43,6 +44,12 @@
 
 namespace nest
 {
+void
+register_iaf_psc_alpha_multisynapse( const std::string& name )
+{
+  register_node_model< iaf_psc_alpha_multisynapse >( name );
+}
+
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>

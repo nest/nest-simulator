@@ -22,8 +22,31 @@
 
 #include "lin_rate.h"
 
+// Includes from nestkernel
+#include "kernel_manager.h"
+#include "model_manager_impl.h"
+#include "nest_impl.h"
+
 namespace nest
 {
+void
+register_lin_rate_ipn( const std::string& name )
+{
+  register_node_model< lin_rate_ipn >( name );
+}
+
+void
+register_lin_rate_opn( const std::string& name )
+{
+  register_node_model< lin_rate_opn >( name );
+}
+
+void
+register_rate_transformer_lin( const std::string& name )
+{
+  register_node_model< rate_transformer_lin >( name );
+}
+
 
 void
 nonlinearities_lin_rate::get( DictionaryDatum& d ) const

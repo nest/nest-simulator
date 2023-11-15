@@ -33,10 +33,17 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 namespace nest
 {
+void
+register_ht_neuron( const std::string& name )
+{
+  register_node_model< ht_neuron >( name );
+}
+
 
 RecordablesMap< ht_neuron > ht_neuron::recordablesMap_;
 

@@ -36,6 +36,7 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "name.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -46,6 +47,12 @@ using namespace nest;
 
 namespace nest
 {
+void
+register_glif_cond( const std::string& name )
+{
+  register_node_model< glif_cond >( name );
+}
+
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>

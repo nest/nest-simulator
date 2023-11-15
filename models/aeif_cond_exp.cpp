@@ -37,6 +37,7 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "nest_names.h"
 #include "universal_data_logger_impl.h"
 
@@ -51,6 +52,12 @@ nest::RecordablesMap< nest::aeif_cond_exp > nest::aeif_cond_exp::recordablesMap_
 
 namespace nest
 {
+void
+register_aeif_cond_exp( const std::string& name )
+{
+  register_node_model< aeif_cond_exp >( name );
+}
+
 /*
  * template specialization must be placed in namespace
  *

@@ -29,15 +29,26 @@
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
+#include "nest_impl.h"
 
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
 
+
 namespace nest
 {
 
-spike_recorder::spike_recorder()
+}
+void
+register_spike_recorder( const std::string& name )
+{
+  register_node_model< spike_recorder >( name );
+}
+
+
+nest::spike_recorder::spike_recorder()
   : RecordingDevice()
 {
 }

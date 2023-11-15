@@ -35,6 +35,7 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -43,6 +44,12 @@
 
 namespace nest // template specialization must be placed in namespace
 {
+void
+register_aeif_cond_beta_multisynapse( const std::string& name )
+{
+  register_node_model< aeif_cond_beta_multisynapse >( name );
+}
+
 
 /* ----------------------------------------------------------------
  * Recordables map

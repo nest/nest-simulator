@@ -35,6 +35,7 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -42,6 +43,12 @@
 
 namespace nest
 {
+void
+register_iaf_psc_delta_ps( const std::string& name )
+{
+  register_node_model< iaf_psc_delta_ps >( name );
+}
+
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */

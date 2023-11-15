@@ -567,7 +567,6 @@ const Name times( "times" );
 const Name to_do( "to_do" );
 const Name total_num_virtual_procs( "total_num_virtual_procs" );
 const Name type_id( "type_id" );
-const Name num_corrections( "num_corrections" );
 
 const Name U( "U" );
 const Name U_m( "U_m" );

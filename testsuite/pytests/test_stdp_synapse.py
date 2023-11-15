@@ -71,9 +71,7 @@ class TestSTDPSynapse:
             "Wmax": 15.0,
             "weight": self.init_weight,
         }
-        self.neuron_parameters = {
-            "tau_minus": self.tau_post
-        }
+        self.neuron_parameters = {"tau_minus": self.tau_post}
 
         # While the random sequences, fairly long, would supposedly reveal small differences in the weight change
         # between NEST and ours, some low-probability events (say, coinciding spikes) can well not have occurred.

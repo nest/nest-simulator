@@ -111,7 +111,7 @@ public:
   using ConnectionBase::get_target;
 
   void
-  check_connection( Node& s, Node& t, const size_t receptor_type, const long dendritic_delay, const long axonal_delay, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, const size_t receptor_type, const long, const long, const CommonPropertiesType& )
   {
     InstantaneousRateConnectionEvent ge;
 
@@ -149,8 +149,14 @@ public:
   set_dendritic_delay( double )
   {
     throw BadProperty(
-      "rate_connection_instantaneous has no delay. Please use "
-      "rate_connection_delayed." );
+      "rate_connection_instantaneous has no delay. Please use rate_connection_delayed." );
+  }
+
+  void
+  set_dendritic_delay_steps( long )
+  {
+    throw BadProperty(
+      "rate_connection_instantaneous has no delay. Please use rate_connection_delayed." );
   }
 
 private:
@@ -177,8 +183,7 @@ rate_connection_instantaneous< targetidentifierT >::set_status( const Dictionary
   if ( d->known( names::delay ) )
   {
     throw BadProperty(
-      "rate_connection_instantaneous has no delay. Please use "
-      "rate_connection_delayed." );
+      "rate_connection_instantaneous has no delay. Please use rate_connection_delayed." );
   }
 
   ConnectionBase::set_status( d, cm );

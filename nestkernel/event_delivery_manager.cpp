@@ -199,12 +199,6 @@ EventDeliveryManager::get_status( DictionaryDatum& dict )
   def< double >( dict, names::time_collocate_spike_data, sw_collocate_spike_data_.elapsed() );
   def< double >( dict, names::time_communicate_spike_data, sw_communicate_spike_data_.elapsed() );
   def< double >( dict, names::time_communicate_target_data, sw_communicate_target_data_.elapsed() );
-  def< double >( dict, names::time_deliver_node, sw_deliver_node_.elapsed() );
-  def< double >( dict, names::time_deliver_conn, sw_deliver_conn_.elapsed() );
-  def< double >( dict, names::time_stdp_delivery, sw_stdp_delivery_.elapsed() );
-  def< double >( dict, names::time_static_delivery, sw_static_delivery_.elapsed() );
-  def< double >( dict, names::time_node_archive, sw_node_archive_.elapsed() );
-  def< double >( dict, names::time_correction, sw_correction_.elapsed() );
 #endif
 }
 

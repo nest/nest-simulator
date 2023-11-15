@@ -38,10 +38,7 @@ namespace nest
 template < typename targetidentifierT >
 class AxonalDelayConnection : public Connection< targetidentifierT >
 {
-  using Connection< targetidentifierT >::get_status;
-  using Connection< targetidentifierT >::set_status;
-  using Connection< targetidentifierT >::get_dendritic_delay;
-  using Connection< targetidentifierT >::set_dendritic_delay;
+  typedef Connection< targetidentifierT > ConnectionBase;
 
   double axonal_delay_; //!< Axonal delay in ms
 public:
@@ -53,6 +50,16 @@ public:
 
   void get_status( DictionaryDatum& d ) const;
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+
+  /**
+   * Set the proportion of the transmission delay attributed to the axon.
+   */
+  void set_dendritic_delay( const double dendritic_delay ) { ConnectionBase::set_dendritic_delay( dendritic_delay ); }
+
+  /**
+   * Get the proportion of the transmission delay attributed to the axon.
+   */
+  double get_dendritic_delay() const { return ConnectionBase::get_dendritic_delay(); }
 
   /**
    * Set the proportion of the transmission delay attributed to the axon.
@@ -87,7 +94,7 @@ template < typename targetidentifierT >
 inline void
 AxonalDelayConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
-  Connection< targetidentifierT >::get_status( d );
+  ConnectionBase::get_status( d );
 
   def< double >( d, names::axonal_delay, axonal_delay_ );
 }
@@ -96,6 +103,7 @@ template < typename targetidentifierT >
 inline void
 AxonalDelayConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
+  // no call to ConnectionBase::set_status, as it assumes purely dendritic delay when checking the validity of the delay
    double axonal_delay = get_axonal_delay();
    double dendritic_delay = get_dendritic_delay();
    if ( updateValue< double >( d, names::delay, dendritic_delay ) or updateValue< double >( d, names::axonal_delay, axonal_delay ) )

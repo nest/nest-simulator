@@ -154,6 +154,12 @@ public:
     throw BadProperty( "gap_junction connection has no delay" );
   }
 
+  void
+  set_dendritic_delay_steps( long )
+  {
+    throw BadProperty( "gap_junction connection has no delay" );
+  }
+
 private:
   double weight_; //!< connection weight
 };

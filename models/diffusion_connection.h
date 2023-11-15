@@ -166,6 +166,12 @@ public:
     throw BadProperty( "diffusion_connection has no delay." );
   }
 
+  void
+  set_dendritic_delay_steps( long )
+  {
+    throw BadProperty( "diffusion_connection has no delay." );
+  }
+
 private:
   double weight_;
   double drift_factor_;

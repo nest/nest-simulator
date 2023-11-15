@@ -159,7 +159,7 @@ nest::StimulationBackendMPI::prepare()
   }
 
   // Add the id of device of the other thread in the vector_id_device and update the count of all device
-  for ( int id_thread = 0; id_thread < kernel().vp_manager.get_num_threads(); id_thread++ )
+  for ( size_t id_thread = 0; id_thread < kernel().vp_manager.get_num_threads(); id_thread++ )
   {
     // don't do it again for the master thread
     if ( id_thread != thread_id_master )

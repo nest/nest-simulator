@@ -158,8 +158,8 @@ GenericConnectorModel< ConnectionT >::set_status( const DictionaryDatum& d )
   kernel().connection_manager.get_delay_checker().enable_delay_update();
 
   // we've possibly just got a new default delay. So enforce checking next time
-  // it is used
-  default_delay_needs_check_ = true;
+  //  // it is used
+  //  default_delay_needs_check_ = true;
 }
 
 template < typename ConnectionT >
@@ -175,13 +175,18 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
   {
     try
     {
+      if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
+      {
+        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
+          Time::delay_steps_to_ms( default_delay_ + default_axonal_delay_ ) );
+      }
       // Let connections without delay contribute to the delay extrema with
       // wfr_comm_interval. For those connections the min_delay is important
       // as it determines the length of the global communication interval.
       // The call to assert_valid_delay_ms needs to happen only once
       // (either here or in add_connection()) when the first connection
       // without delay is created.
-      if ( not has_property( ConnectionModelProperties::HAS_DELAY ) )
+      else
       {
         const double wfr_comm_interval = kernel().simulation_manager.get_wfr_comm_interval();
         kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( wfr_comm_interval );
@@ -221,6 +226,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   const double axonal_delay,
   const double weight )
 {
+  bool user_defined_delay = false;
   long actual_dendritic_delay;
   // check if dendritic delay was not provided explicitly
   if ( numerics::is_nan( delay ) )
@@ -228,16 +234,17 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     double delay_temp;
     if ( updateValue< double >( p, names::delay, delay_temp ) )
     {
+      user_defined_delay = true;
       actual_dendritic_delay = Time::delay_ms_to_steps( delay_temp );
     }
     else
     {
-      used_default_delay(); // TODO: This might now not be correct anymore after introducing axonal delays
       actual_dendritic_delay = default_delay_;
     }
   }
   else // dendritic delay provided
   {
+    user_defined_delay = true;
     actual_dendritic_delay = Time::delay_ms_to_steps( delay );
     if ( p->known( names::delay ) )
     {
@@ -251,26 +258,22 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     double delay_temp;
     if ( updateValue< double >( p, names::axonal_delay, delay_temp ) )
     {
+      user_defined_delay = true;
       actual_axonal_delay = Time::delay_ms_to_steps( delay_temp );
     }
     else
     {
-      used_default_delay(); // TODO: This might now not be correct anymore after introducing axonal delays
       actual_axonal_delay = default_axonal_delay_;
     }
   }
   else // axonal delay provided
   {
+    user_defined_delay = true;
     actual_axonal_delay = Time::delay_ms_to_steps( axonal_delay );
     if ( p->known( names::axonal_delay ) )
     {
       throw BadParameter( "Parameter dictionary must not contain axonal delay if axonal delay is given explicitly." );
     }
-  }
-  if ( has_property( ConnectionModelProperties::HAS_DELAY ) )
-  {
-    KernelManager::get_kernel_manager().connection_manager.get_delay_checker().assert_valid_delay_ms(
-      Time::delay_steps_to_ms( actual_dendritic_delay + actual_axonal_delay ) );
   }
 
   // create a new instance of the default connection
@@ -288,10 +291,20 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     connection.set_status( p, *this );
   }
 
-  connection.set_dendritic_delay_steps( actual_dendritic_delay );
-  if ( actual_axonal_delay != 0 )
+  if ( not user_defined_delay )
   {
-    connection.set_axonal_delay( Time::delay_steps_to_ms( actual_axonal_delay ) );
+    used_default_delay();
+  }
+
+  if ( user_defined_delay or has_property( ConnectionModelProperties::HAS_DELAY ) )
+  {
+    KernelManager::get_kernel_manager().connection_manager.get_delay_checker().assert_valid_delay_ms(
+      Time::delay_steps_to_ms( actual_dendritic_delay + actual_axonal_delay ) );
+    connection.set_dendritic_delay_steps( actual_dendritic_delay );
+    if ( actual_axonal_delay != 0 )
+    {
+      connection.set_axonal_delay( Time::delay_steps_to_ms( actual_axonal_delay ) );
+    }
   }
 
   // We must use a local variable here to hold the actual value of the

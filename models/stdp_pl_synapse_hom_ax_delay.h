@@ -276,26 +276,12 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::send( Event& e,
   size_t tid,
   const STDPPLHomAxDelayCommonProperties& cp )
 {
-#ifdef TIMER_DETAILED
-  if ( tid == 0 )
-  {
-    kernel().event_delivery_manager.sw_stdp_delivery_.start();
-  }
-#endif
   // synapse STDP depressing/facilitation dynamics
   const double axonal_delay_ms = get_axonal_delay();
   const double dendritic_delay_ms = get_dendritic_delay();
   const double t_spike = e.get_stamp().get_ms();
 
   // t_lastspike_ = 0 initially
-
-#ifdef TIMER_DETAILED
-  if ( tid == 0 )
-  {
-    kernel().event_delivery_manager.sw_stdp_delivery_.stop();
-    kernel().event_delivery_manager.sw_deliver_node_.start();
-  }
-#endif
   Node* target = get_target( tid );
 
   // get spike history in relevant range (t1, t2] from postsynaptic neuron
@@ -330,21 +316,7 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::send( Event& e,
   e.set_weight( weight_ );
   e.set_delay_steps( get_dendritic_delay_steps() + Time::delay_ms_to_steps( axonal_delay_ms ) );
   e.set_rport( get_rport() );
-#ifdef TIMER_DETAILED
-  if ( tid == 0 )
-  {
-    kernel().event_delivery_manager.sw_stdp_delivery_.stop();
-    kernel().event_delivery_manager.sw_deliver_node_.start();
-  }
-#endif
   e();
-#ifdef TIMER_DETAILED
-if ( tid == 0 )
-  {
-    kernel().event_delivery_manager.sw_deliver_node_.stop();
-    kernel().event_delivery_manager.sw_stdp_delivery_.start();
-  }
-#endif
 
   if ( ( axonal_delay_ms - dendritic_delay_ms ) > kernel().connection_manager.get_stdp_eps() )
   {
@@ -355,13 +327,6 @@ if ( tid == 0 )
   Kplus_ = Kplus_ * std::exp( ( t_lastspike_ - t_spike ) * cp.tau_plus_inv_ ) + 1.0;
 
   t_lastspike_ = t_spike;
-
-#ifdef TIMER_DETAILED
-  if ( tid == 0 )
-  {
-    kernel().event_delivery_manager.sw_stdp_delivery_.stop();
-  }
-#endif
 }
 
 template < typename targetidentifierT >
@@ -405,12 +370,6 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::correct_synapse_stdp_ax_delay
   const double t_post_spike,
   const STDPPLHomAxDelayCommonProperties& cp )
 {
-#ifdef TIMER_DETAILED
-  if ( tid == 0 )
-  {
-    kernel().event_delivery_manager.sw_stdp_delivery_.start();
-  }
-#endif
   const double t_spike = t_lastspike_; // no new pre-synaptic spike since last send()
   const double wrong_weight = weight_; // incorrectly transmitted weight
   weight_ = *weight_revert;            // removes the last depressive step
@@ -447,12 +406,6 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::correct_synapse_stdp_ax_delay
   e.set_rport( get_rport() );
   e.set_stamp( Time::ms_stamp( t_spike ) );
   e();
-#ifdef TIMER_DETAILED
-  if ( tid == 0 )
-  {
-    kernel().event_delivery_manager.sw_stdp_delivery_.stop();
-  }
-#endif
 }
 
 } // of namespace nest

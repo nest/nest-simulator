@@ -577,8 +577,6 @@ private:
    */
   void increase_connection_count( const size_t tid, const synindex syn_id );
 
-  std::vector< size_t > correction_counter_;
-
   /**
    * A structure to hold the Connector objects which in turn hold the
    * connection information. Corresponds to a three dimensional
@@ -880,7 +878,6 @@ ConnectionManager::correct_synapse_stdp_ax_delay( const SpikeData& spike_data,
   double* weight_revert,
   const double t_post_spike )
 {
-  ++correction_counter_[ spike_data.get_tid() ];
   connections_[ spike_data.get_tid() ][ spike_data.get_syn_id() ]->correct_synapse_stdp_ax_delay(
     spike_data, t_last_pre_spike, weight_revert, t_post_spike );
 }

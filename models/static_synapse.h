@@ -158,31 +158,11 @@ public:
   void
   send( Event& e, const size_t tid, const CommonSynapseProperties& )
   {
-#ifdef TIMER_DETAILED
-    if ( tid == 0 )
-    {
-      kernel().event_delivery_manager.sw_deliver_conn_.stop();
-      kernel().event_delivery_manager.sw_static_delivery_.start();
-    }
-#endif
     e.set_weight( weight_ );
     e.set_delay_steps( get_dendritic_delay_steps() );
     e.set_receiver( *get_target( tid ) );
     e.set_rport( get_rport() );
-#ifdef TIMER_DETAILED
-    if ( tid == 0 )
-    {
-      kernel().event_delivery_manager.sw_static_delivery_.stop();
-      kernel().event_delivery_manager.sw_deliver_node_.start();
-    }
-#endif
     e();
-#ifdef TIMER_DETAILED
-    if ( tid == 0 )
-    {
-      kernel().event_delivery_manager.sw_deliver_node_.stop();
-    }
-#endif
   }
 
   void get_status( DictionaryDatum& d ) const;

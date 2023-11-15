@@ -214,4 +214,4 @@ weight_recorder::handle( WeightRecorderEvent& e )
   }
 }
 
-}  // namespace nest
+} // namespace nest

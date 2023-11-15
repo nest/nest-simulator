@@ -884,10 +884,7 @@ ConnectionManager::find_connection( const size_t tid,
 }
 
 void
-ConnectionManager::disconnect( const size_t tid,
-  const synindex syn_id,
-  const size_t snode_id,
-  const size_t tnode_id )
+ConnectionManager::disconnect( const size_t tid, const synindex syn_id, const size_t snode_id, const size_t tnode_id )
 {
   assert( syn_id != invalid_synindex );
 

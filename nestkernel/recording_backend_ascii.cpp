@@ -376,4 +376,4 @@ RecordingBackendASCII::DeviceData::compute_filename_() const
   return data_path + data_prefix + label + vp_node_id_string_ + "." + file_extension_;
 }
 
-}  // namespace nest
+} // namespace nest

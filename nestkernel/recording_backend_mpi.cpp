@@ -427,4 +427,4 @@ nest::RecordingBackendMPI::send_data( const MPI_Comm* comm, const double data[],
   MPI_Send( data, shape, MPI_DOUBLE, 0, 0, *comm );
 }
 
-}  // namespace nest
+} // namespace nest

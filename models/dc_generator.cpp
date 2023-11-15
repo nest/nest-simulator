@@ -210,4 +210,4 @@ dc_generator::set_data_from_stimulation_backend( std::vector< double >& input_pa
   P_ = ptmp;
 }
 
-}  // namespace nest
+} // namespace nest

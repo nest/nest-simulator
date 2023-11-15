@@ -313,7 +313,9 @@ ArchivingNode::add_correction_entry_stdp_ax_delay( SpikeEvent& spike_event,
       kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay() ) );
 
   // axonal_delay-dendritic_delay = total_delay-2*dendritic_delay
-  const long time_until_uncritical = spike_event.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) - 2 * Time::delay_ms_to_steps( dendritic_delay ) + 1;
+  const long time_until_uncritical =
+    spike_event.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() )
+    - 2 * Time::delay_ms_to_steps( dendritic_delay ) + 1;
   // Only add correction entry if there could potentially be any post-synaptic spike that occurs before the
   // pre-synaptic one arrives at the synapse. Has to be strictly greater than min_delay, because a post-synaptic spike
   // at time slice_origin+min_delay corresponds to the last update step in the current slice (before delivery) and was

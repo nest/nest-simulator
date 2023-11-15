@@ -444,4 +444,4 @@ spike_generator::set_data_from_stimulation_backend( std::vector< double >& input
   P_ = ptmp;
 }
 
-}  // namespace nest
+} // namespace nest

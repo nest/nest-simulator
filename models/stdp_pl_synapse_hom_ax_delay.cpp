@@ -76,7 +76,6 @@ STDPPLHomAxDelayCommonProperties::set_status( const DictionaryDatum& d, Connecto
   updateValue< double >( d, names::lambda, lambda_ );
   updateValue< double >( d, names::alpha, alpha_ );
   updateValue< double >( d, names::mu, mu_ );
-
 }
 
 } // of namespace nest

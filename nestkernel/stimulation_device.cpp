@@ -183,4 +183,4 @@ StimulationDevice::get_status( DictionaryDatum& d ) const
   }
 }
 
-}  // namespace nest
+} // namespace nest

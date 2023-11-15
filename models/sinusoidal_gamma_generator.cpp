@@ -398,4 +398,4 @@ sinusoidal_gamma_generator::set_data_from_stimulation_backend( std::vector< doub
   P_ = ptmp;
 }
 #endif // HAVE_GSL
-}  // namespace nest
+} // namespace nest

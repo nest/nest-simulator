@@ -65,7 +65,8 @@ volume_transmitter::Parameters_::get( DictionaryDatum& d ) const
   def< long >( d, names::deliver_interval, deliver_interval_ );
 }
 
-void volume_transmitter::Parameters_::set( const DictionaryDatum& d, Node* node )
+void
+volume_transmitter::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   updateValueParam< long >( d, names::deliver_interval, deliver_interval_, node );
 }

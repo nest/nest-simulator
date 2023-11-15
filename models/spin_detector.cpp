@@ -173,4 +173,4 @@ spin_detector::handle( SpikeEvent& e )
   }
 }
 
-}  // namespace nest
+} // namespace nest

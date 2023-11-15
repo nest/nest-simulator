@@ -302,4 +302,4 @@ RecordingBackendMemory::DeviceData::clear()
   }
 }
 
-}  // namespace nest
+} // namespace nest

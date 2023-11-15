@@ -208,7 +208,12 @@ public:
    * \param receptor_type The ID of the requested receptor type
    */
   void
-  check_connection( Node& s, Node& t, const size_t receptor_type, const long dendritic_delay, const long axonal_delay, const CommonPropertiesType& cp )
+  check_connection( Node& s,
+    Node& t,
+    const size_t receptor_type,
+    const long dendritic_delay,
+    const long axonal_delay,
+    const CommonPropertiesType& cp )
   {
     ConnTestDummyNode dummy_target;
 

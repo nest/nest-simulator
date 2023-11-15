@@ -380,4 +380,4 @@ step_rate_generator::set_data_from_stimulation_backend( std::vector< double >& t
   P_ = ptmp;
 }
 
-}  // namespace nest
+} // namespace nest

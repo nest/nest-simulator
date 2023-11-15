@@ -409,4 +409,4 @@ noise_generator::calibrate_time( const TimeConverter& tc )
   }
 }
 
-}  // namespace nest
+} // namespace nest

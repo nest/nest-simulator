@@ -335,4 +335,4 @@ sinusoidal_poisson_generator::set_data_from_stimulation_backend( std::vector< do
   P_ = ptmp;
 }
 
-}  // namespace nest
+} // namespace nest

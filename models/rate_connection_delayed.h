@@ -107,7 +107,12 @@ public:
   using ConnectionBase::get_target;
 
   void
-  check_connection( Node& s, Node& t, const size_t receptor_type, const long dendritic_delay, const long axonal_delay, const CommonPropertiesType& )
+  check_connection( Node& s,
+    Node& t,
+    const size_t receptor_type,
+    const long dendritic_delay,
+    const long axonal_delay,
+    const CommonPropertiesType& )
   {
     DelayedRateConnectionEvent ge;
 

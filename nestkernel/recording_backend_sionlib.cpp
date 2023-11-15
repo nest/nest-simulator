@@ -707,4 +707,4 @@ nest::RecordingBackendSIONlib::get_device_status( const nest::RecordingDevice&, 
   // nothing to do
 }
 
-}  // namespace nest
+} // namespace nest

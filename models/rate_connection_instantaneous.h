@@ -150,15 +150,13 @@ public:
   void
   set_dendritic_delay( double )
   {
-    throw BadProperty(
-      "rate_connection_instantaneous has no delay. Please use rate_connection_delayed." );
+    throw BadProperty( "rate_connection_instantaneous has no delay. Please use rate_connection_delayed." );
   }
 
   void
   set_dendritic_delay_steps( long )
   {
-    throw BadProperty(
-      "rate_connection_instantaneous has no delay. Please use rate_connection_delayed." );
+    throw BadProperty( "rate_connection_instantaneous has no delay. Please use rate_connection_delayed." );
   }
 
 private:
@@ -184,8 +182,7 @@ rate_connection_instantaneous< targetidentifierT >::set_status( const Dictionary
   // If the delay is set, we throw a BadProperty
   if ( d->known( names::delay ) )
   {
-    throw BadProperty(
-      "rate_connection_instantaneous has no delay. Please use rate_connection_delayed." );
+    throw BadProperty( "rate_connection_instantaneous has no delay. Please use rate_connection_delayed." );
   }
 
   ConnectionBase::set_status( d, cm );

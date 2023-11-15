@@ -54,12 +54,20 @@ public:
   /**
    * Set the proportion of the transmission delay attributed to the axon.
    */
-  void set_dendritic_delay( const double dendritic_delay ) { ConnectionBase::set_dendritic_delay( dendritic_delay ); }
+  void
+  set_dendritic_delay( const double dendritic_delay )
+  {
+    ConnectionBase::set_dendritic_delay( dendritic_delay );
+  }
 
   /**
    * Get the proportion of the transmission delay attributed to the axon.
    */
-  double get_dendritic_delay() const { return ConnectionBase::get_dendritic_delay(); }
+  double
+  get_dendritic_delay() const
+  {
+    return ConnectionBase::get_dendritic_delay();
+  }
 
   /**
    * Set the proportion of the transmission delay attributed to the axon.
@@ -104,14 +112,15 @@ inline void
 AxonalDelayConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   // no call to ConnectionBase::set_status, as it assumes purely dendritic delay when checking the validity of the delay
-   double axonal_delay = get_axonal_delay();
-   double dendritic_delay = get_dendritic_delay();
-   if ( updateValue< double >( d, names::delay, dendritic_delay ) or updateValue< double >( d, names::axonal_delay, axonal_delay ) )
-   {
+  double axonal_delay = get_axonal_delay();
+  double dendritic_delay = get_dendritic_delay();
+  if ( updateValue< double >( d, names::delay, dendritic_delay )
+    or updateValue< double >( d, names::axonal_delay, axonal_delay ) )
+  {
     kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( axonal_delay + dendritic_delay );
     set_dendritic_delay( dendritic_delay );
     set_axonal_delay( axonal_delay );
-   }
+  }
 }
 
 }

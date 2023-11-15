@@ -190,4 +190,4 @@ spike_dilutor::handle( SpikeEvent& e )
     static_cast< double >( e.get_multiplicity() ) );
 }
 
-}  // namespace nest
+} // namespace nest

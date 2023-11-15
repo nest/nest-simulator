@@ -378,14 +378,14 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
         {
           // weighted histogram
           S_.covariance_[ sender_ind ][ other_ind ][ bin ] += e.get_multiplicity() * e.get_weight() * spike_j->weight_;
-          if ( bin == 0 and ( spike_i - spike_j->timestep_ != 0 or static_cast<size_t>( other ) != sender ) )
+          if ( bin == 0 and ( spike_i - spike_j->timestep_ != 0 or static_cast< size_t >( other ) != sender ) )
           {
             S_.covariance_[ other_ind ][ sender_ind ][ bin ] +=
               e.get_multiplicity() * e.get_weight() * spike_j->weight_;
           }
           // pure (unweighted) count histogram
           S_.count_covariance_[ sender_ind ][ other_ind ][ bin ] += e.get_multiplicity();
-          if ( bin == 0 and ( spike_i - spike_j->timestep_ != 0 or static_cast<size_t>( other ) != sender ) )
+          if ( bin == 0 and ( spike_i - spike_j->timestep_ != 0 or static_cast< size_t >( other ) != sender ) )
           {
             S_.count_covariance_[ other_ind ][ sender_ind ][ bin ] += e.get_multiplicity();
           }

@@ -40,7 +40,6 @@
 namespace nest
 {
 
-}
 void
 register_spike_recorder( const std::string& name )
 {
@@ -48,7 +47,7 @@ register_spike_recorder( const std::string& name )
 }
 
 
-nest::spike_recorder::spike_recorder()
+spike_recorder::spike_recorder()
   : RecordingDevice()
 {
 }

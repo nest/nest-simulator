@@ -50,7 +50,9 @@ neurons or devices are not processed at all (*). The ``ignore_and_fire`` neuron 
 model validation and benchmarking purposes, in particular to evaluate the correctness and performance of connectivity
 generation and inter-neuron communication. It permits an easy scaling of the network size and/or connectivity without
 affecting the output spike statistics. The amount of network traffic is predefined by the user, and therefore fully
-controllable and predictable, irrespective of the network size and structure.
+controllable and predictable, irrespective of the network size and structure. To generate asynchronous activity for a
+population of ignore_and_fire neurons, the firing phases can be randomly initialized. Note that the firing phase is a
+real number, defined as the time to the next spike relative to the firing period.
 
 (*) The model can easily be extended and equipped with any arbitrary input processing or (after-) spike generation
 dynamics to make it more similar and comparable to other non-ignorant neuron models. In such extended ignore_and_fire
@@ -62,21 +64,9 @@ Parameters
 The following parameters can be set in the status dictionary.
 
 ================= ======= ======================================================
- phase                     Phase
+ phase                     Phase (relative time to next spike; 0<phase<=1)
  rate               1/s    Firing rate
 ================= ======= ======================================================
-
-References
-++++++++++
-
-.. [1] Rotter S,  Diesmann M (1999). Exact simulation of
-       time-invariant linear systems with applications to neuronal
-       modeling. Biologial Cybernetics 81:381-402.
-       DOI: https://doi.org/10.1007/s004220050570
-.. [2] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001). State
-       space analysis of synchronous spiking in cortical neural
-       networks. Neurocomputing 38-40:565-571.
-       DOI: https://doi.org/10.1016/S0925-2312(01)00409-X
 
 Sends
 +++++
@@ -90,20 +80,6 @@ SpikeEvent, CurrentEvent, DataLoggingRequest
 
 EndUserDocs */
 
-/**
- * The present implementation uses individual variables for the
- * components of the state vector and the non-zero matrix elements of
- * the propagator. Because the propagator is a lower triangular matrix,
- * no full matrix multiplication needs to be carried out and the
- * computation can be done "in place", i.e. no temporary state vector
- * object is required.
- *
- * The template support of recent C++ compilers enables a more succinct
- * formulation without loss of runtime performance already at minimal
- * optimization levels. A future version of ignore_and_fire will probably
- * address the problem of efficient usage of appropriate vector and
- * matrix objects.
- */
 
 void register_ignore_and_fire( const std::string& name );
 

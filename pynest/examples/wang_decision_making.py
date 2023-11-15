@@ -53,7 +53,6 @@ f = 0.15 # proportion of neurons receiving signal inputs
 w_plus = 1.7
 w_minus = 1 - f * (w_plus - 1) / (1 - f)
 
-
 NE = 1600
 NI = 400
 
@@ -65,7 +64,7 @@ inhibitory_pop = nest.Create("iaf_wang_2002", NI, params=ipop_params)
 mu_0 = 40.
 rho_a = mu_0 / 100
 rho_b = rho_a
-c = 20.
+c = 80.
 sigma = 4.
 mu_a = mu_0 + rho_a * c
 mu_b = mu_0 - rho_b * c
@@ -74,7 +73,7 @@ num_updates = int(signal_duration / signal_update_interval)
 update_times = np.arange(0, signal_duration, signal_update_interval)
 update_times[0] = 0.1
 rates_a = np.random.normal(mu_a, sigma, size=num_updates)
-rates_b = np.random.normal(mu_a, sigma, size=num_updates)
+rates_b = np.random.normal(mu_b, sigma, size=num_updates)
 
 poisson_a = nest.Create("inhomogeneous_poisson_generator",
                         params={"origin": signal_start-0.1,
@@ -90,12 +89,12 @@ poisson_b = nest.Create("inhomogeneous_poisson_generator",
                                 "rate_times": update_times,
                                 "rate_values": rates_b})
 
-
 poisson_0 = nest.Create("poisson_generator", params={"rate": 2400.})
 
-syn_spec_selective = {"synapse_model": "static_synapse", "weight":w_plus, "delay":0.1, 'receptor_type': 0}
-syn_spec_nonselective = {"synapse_model": "static_synapse", "weight":w_minus, "delay":0.1, 'receptor_type': 0}
-syn_spec_inhibitory = {"synapse_model": "static_synapse", "weight":-1., "delay":0.1, 'receptor_type': 0}
+syn_spec_pot = {"synapse_model": "static_synapse", "weight":w_plus, "delay":0.1, 'receptor_type': 0}
+syn_spec_default = {"synapse_model": "static_synapse", "weight":1.0, "delay":0.1, 'receptor_type': 0}
+syn_spec_dep = {"synapse_model": "static_synapse", "weight":w_minus, "delay":0.1, 'receptor_type': 0}
+syn_spec_inhibitory = {"synapse_model": "static_synapse", "weight":-1.0, "delay":0.1, 'receptor_type': 0}
 syn_spec_ext = {"synapse_model": "static_synapse", "weight":1., "delay":0.1, 'receptor_type': 1}
 
 sr_nonselective = nest.Create("spike_recorder")
@@ -107,29 +106,38 @@ mm_selective1 = nest.Create("multimeter", {"record_from": ["V_m", "s_NMDA", "s_A
 mm_inhibitory = nest.Create("multimeter", {"record_from": ["V_m", "s_NMDA", "s_AMPA", "s_GABA"]})
 
 
-
 nest.Connect(poisson_0,
              nonselective_pop + selective_pop1 + selective_pop2 + inhibitory_pop,
              conn_spec="all_to_all",
              syn_spec=syn_spec_ext)
 
 nest.Connect(nonselective_pop,
-             selective_pop1 + selective_pop2 + nonselective_pop,
+             selective_pop1 + selective_pop2,
              conn_spec="all_to_all",
-             syn_spec=syn_spec_nonselective)
+             syn_spec=syn_spec_dep)
+
+nest.Connect(nonselective_pop,
+             nonselective_pop + inhibitory_pop,
+             conn_spec="all_to_all",
+             syn_spec=syn_spec_default)
 
 nest.Connect(selective_pop1,
              selective_pop2,
              conn_spec="all_to_all",
-             syn_spec=syn_spec_selective)
+             syn_spec=syn_spec_dep)
 
 nest.Connect(selective_pop2,
              selective_pop1,
              conn_spec="all_to_all",
-             syn_spec=syn_spec_selective)
+             syn_spec=syn_spec_dep)
+
+nest.Connect(selective_pop1 + selective_pop2,
+             nonselective_pop + inhibitory_pop,
+             conn_spec="all_to_all",
+             syn_spec=syn_spec_default)
 
 nest.Connect(inhibitory_pop,
-             selective_pop1 + selective_pop2 + nonselective_pop,
+             selective_pop1 + selective_pop2 + nonselective_pop + inhibitory_pop,
              conn_spec="all_to_all",
              syn_spec=syn_spec_inhibitory)
 
@@ -142,7 +150,6 @@ nest.Connect(poisson_b,
              selective_pop2,
              conn_spec="all_to_all",
              syn_spec=syn_spec_ext)
-
 
 nest.Connect(nonselective_pop, sr_nonselective)
 nest.Connect(selective_pop1, sr_selective1)
@@ -159,6 +166,10 @@ spikes_nonselective = sr_nonselective.get("events", "times")
 spikes_selective1 = sr_selective1.get("events", "times")
 spikes_selective2 = sr_selective2.get("events", "times")
 spikes_inhibitory = sr_inhibitory.get("events", "times")
+
+
+
+
 
 senders = mm_selective1.get("events", "senders")
 inds = senders == 1

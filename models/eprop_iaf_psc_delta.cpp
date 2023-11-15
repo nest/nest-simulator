@@ -153,38 +153,52 @@ nest::eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* nod
 
   if ( C_m_ <= 0 )
   {
-    throw BadProperty( "Capacitance must be > 0." );
+    throw BadProperty( "C_m must be > 0." );
+  }
+
+  if ( c_reg_ < 0 )
+  {
+    throw BadProperty( "c_reg must be >= 0." );
   }
 
   if ( f_target_ < 0 )
   {
-    throw BadProperty( "Target firing rate must be >= 0." );
+    throw BadProperty( "f_target must be >= 0." );
+  }
+
+  if ( gamma_ < 0.0 or 1.0 <= gamma_ )
+  {
+    throw BadProperty( "gamma must be [0,1)." );
   }
 
   if ( psc_scale_factor_ != "identity" and psc_scale_factor_ != "leak_propagator_complement" )
   {
-    throw BadProperty(
-      "Available presynaptic current scale factors are \"identity\" and \"leak_propagator_complement\"." );
+    throw BadProperty( "psc_scale_factor must be chosen from [\"identity\", \"leak_propagator_complement\"]." );
   }
 
   if ( surrogate_gradient_ != "piecewise_linear" )
   {
-    throw BadProperty( "One of the available surrogate gradients \"piecewise_linear\" needs to be selected." );
+    throw BadProperty( "surrogate_gradient must be chosen from [\"piecewise_linear\"]." );
   }
 
   if ( tau_m_ <= 0 )
   {
-    throw BadProperty( "Membrane time constant must be > 0." );
+    throw BadProperty( "tau_m must be > 0." );
   }
 
   if ( t_ref_ < 0 )
   {
-    throw BadProperty( "Refractory time must not be negative." );
+    throw BadProperty( "t_ref must be >= 0." );
   }
 
   if ( surrogate_gradient_ == "piecewise_linear" and fabs( V_th_ ) < 1e-6 )
   {
     throw BadProperty( "V_th-E_L must be != 0 if surrogate_gradient is \"piecewise_linear\"." );
+  }
+
+  if ( V_th_ < V_min_ )
+  {
+    throw BadProperty( "V_th must be >= V_min." );
   }
 
   return delta_EL;

@@ -132,12 +132,17 @@ nest::eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
 
   if ( C_m_ <= 0 )
   {
-    throw BadProperty( "Capacitance must be > 0." );
+    throw BadProperty( "C_m must be > 0." );
+  }
+
+  if ( loss_ != "mean_squared_error" and loss_ != "cross_entropy_loss" )
+  {
+    throw BadProperty( "loss must be chosen from [\"mean_squared_error\", \"cross_entropy_loss\"]." );
   }
 
   if ( tau_m_ <= 0 )
   {
-    throw BadProperty( "Membrane time constant must be > 0." );
+    throw BadProperty( "tau_m must be > 0." );
   }
 
   return delta_EL;

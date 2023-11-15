@@ -476,11 +476,6 @@ eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
   updateValue< double >( d, names::adam_m, adam_m_ );
   updateValue< double >( d, names::adam_v, adam_v_ );
 
-  if ( eta_ < 0 )
-  {
-    throw BadProperty( "eta must be >= 0." );
-  }
-
   if ( tau_m_readout_ <= 0 )
   {
     throw BadProperty( "tau_m_readout must be > 0." );

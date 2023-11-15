@@ -344,7 +344,7 @@ input_spike_bools = np.random.rand(n_batch, steps["sequence"], n_in) < input_spi
 input_spike_bools = np.hstack(input_spike_bools.swapaxes(1, 2))
 input_spike_bools[:, 0] = 0  # remove spikes in 0th time step of every sequence for technical reasons
 
-sequence_starts = np.arange(0.0, duration["task"], duration["sequence"]) + duration["offset_gen"]
+sequence_starts = np.arange(0.0, duration["task"], duration["sequence"] * n_batch) + duration["offset_gen"]
 params_gen_spk_in = []
 for input_spike_bool in input_spike_bools:
     input_spike_times = np.arange(0.0, duration["sequence"] * n_batch, duration["step"])[input_spike_bool]

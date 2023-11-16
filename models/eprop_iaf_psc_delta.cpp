@@ -254,7 +254,7 @@ eprop_iaf_psc_delta::pre_run_hook()
   B_.logger_.init(); // ensures initialization in case multimeter connected after Simulate
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  
+
   const double dt = Time::get_resolution().get_ms();
 
   const double alpha = std::exp( -dt / P_.tau_m_ );

@@ -60,13 +60,28 @@ will be applied to all connections created in the current
 Array parameters
 ~~~~~~~~~~~~~~~~
 
-Array parameters can be used with the rules ``all_to_all``,
-``fixed_indegree``, ``fixed_outdegree``, ``fixed_total_number`` and
-``one_to_one``. The arrays can be specified as NumPy arrays or Python
+Array parameters can be used with the rules ``one_to_one``, ``all_to_all``,
+``fixed_total_number``, ``fixed_indegree``, and ``fixed_outdegree``.
+For details on connection rules, see :ref:`connection_management`.
+The arrays can be specified as NumPy arrays or Python
 lists. As with the scalar parameters, all parameters have to be
 specified as arrays of the correct type.
 
-rule: all-to-all
+Rule: One-to-one
+^^^^^^^^^^^^^^^^
+
+For rule ``one_to_one`` the array must have the same length as there
+are nodes in ``A`` and ``B``.
+
+.. code-block:: python
+
+    A = nest.Create('iaf_psc_alpha', 2)
+    B = nest.Create('spike_recorder', 2)
+    conn_spec_dict = {'rule': 'one_to_one'}
+    syn_spec_dict = {'weight': [1.2, -3.5]}
+    nest.Connect(A, B, conn_spec_dict, syn_spec_dict)
+
+Rule: All-to-all
 ^^^^^^^^^^^^^^^^
 
 When connecting with rule ``all_to_all``, the array parameter must
@@ -79,8 +94,22 @@ have dimension `len(B) x len(A)`.
     syn_spec_dict = {'weight': [[1.2, -3.5, 2.5], [0.4, -0.2, 0.7]]}
     nest.Connect(A, B, syn_spec=syn_spec_dict)
 
-rule: fixed indegree
-^^^^^^^^^^^^^^^^^^^^
+Rule: Random, fixed total number
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+For rule ``fixed_total_number``, the array has to be same the length as the
+number of connections ``N``.
+
+.. code-block:: python
+
+    A = nest.Create('iaf_psc_alpha', 3)
+    B = nest.Create('iaf_psc_alpha', 4)
+    conn_spec_dict = {'rule': 'fixed_total_number', 'N': 4}
+    syn_spec_dict = {'weight': [1.2, -3.5, 0.4, -0.2]}
+    nest.Connect(A, B, conn_spec_dict, syn_spec_dict)
+
+Rule: Random, fixed in-degree
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 For rule ``fixed_indegree`` the array has to be a two-dimensional
 NumPy array or Python list with shape ``(len(B), indegree)``, where
@@ -97,8 +126,8 @@ of the identity of the source neurons.
     syn_spec_dict = {'weight': [[1.2, -3.5],[0.4, -0.2],[0.6, 2.2]]}
     nest.Connect(A, B, conn_spec_dict, syn_spec_dict)
 
-rule: fixed outdegree
-^^^^^^^^^^^^^^^^^^^^^
+Rule: Random, fixed out-degree
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 For rule ``fixed_outdegree`` the array has to be a two-dimensional
 NumPy array or Python list with shape ``(len(A), outdegree)``, where
@@ -113,34 +142,6 @@ regardless of the identity of the target neuron.
     B = nest.Create('iaf_psc_alpha', 5)
     conn_spec_dict = {'rule': 'fixed_outdegree', 'outdegree': 3}
     syn_spec_dict = {'weight': [[1.2, -3.5, 0.4], [-0.2, 0.6, 2.2]]}
-    nest.Connect(A, B, conn_spec_dict, syn_spec_dict)
-
-rule: fixed total number
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-For rule ``fixed_total_number``, the array has to be same the length as the
-number of connections ``N``.
-
-.. code-block:: python
-
-    A = nest.Create('iaf_psc_alpha', 3)
-    B = nest.Create('iaf_psc_alpha', 4)
-    conn_spec_dict = {'rule': 'fixed_total_number', 'N': 4}
-    syn_spec_dict = {'weight': [1.2, -3.5, 0.4, -0.2]}
-    nest.Connect(A, B, conn_spec_dict, syn_spec_dict)
-
-rule: one-to-one
-^^^^^^^^^^^^^^^^
-
-For rule ``one_to_one`` the array must have the same length as there
-are nodes in ``A`` and ``B``.
-
-.. code-block:: python
-
-    A = nest.Create('iaf_psc_alpha', 2)
-    B = nest.Create('spike_recorder', 2)
-    conn_spec_dict = {'rule': 'one_to_one'}
-    syn_spec_dict = {'weight': [1.2, -3.5]}
     nest.Connect(A, B, conn_spec_dict, syn_spec_dict)
 
 .. _dist_params:

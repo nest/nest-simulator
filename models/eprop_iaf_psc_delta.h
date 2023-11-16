@@ -221,7 +221,7 @@ private:
     double gamma_;                   //!< scaling of pseudo-derivative of membrane voltage
     double I_e_;                     //!< external DC current (pA)
     std::string psc_scale_factor_;   //!< scale factor of presynaptic current "identity" (1.0)
-                                     //!< or "leak constant complement" (1.0 - exp(dt/tau_m))
+                                     //!< or "leak_propagator_complement" (1.0 - exp(dt/tau_m))
     std::string surrogate_gradient_; //!< surrogate gradient method / pseudo-derivative
     double t_ref_;                   //!< refractory period (ms)
     double tau_m_;                   //!< membrane time constant (ms)

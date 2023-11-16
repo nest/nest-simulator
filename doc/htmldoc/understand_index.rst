@@ -21,6 +21,8 @@ Here you can dive into various topics about NEST.
 
        * :ref:`connection_management`
 
+       * :ref:`synapse_spec`
+
        * :ref:`handling_connections`
 
        * :ref:`sim_gap_junctions`

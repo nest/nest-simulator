@@ -177,7 +177,7 @@ params_nrn_rec = {
     "E_L": 0.0,  # mV, leak reversal potential
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
     "I_e": 0.0,  # pA, external current input
-    "psc_scale_factor": "leak_propagator_complement",  # postsynaptic current scale factor
+    "psc_scale_factor": "alpha_complement",  # postsynaptic current scale factor
     "surrogate_gradient": "piecewise_linear",  # pseudo-derivative
     "t_ref": 0.0,  # ms, duration of refractory period
     "tau_m": 30.0,  # ms, membrane time constant

@@ -78,7 +78,7 @@ eprop_iaf_psc_delta_adapt::Parameters_::Parameters_()
   , f_target_( 0.01 )
   , gamma_( 0.3 )
   , I_e_( 0.0 )
-  , psc_scale_factor_( "leak_propagator_complement" )
+  , psc_scale_factor_( "alpha_complement" )
   , surrogate_gradient_( "piecewise_linear" )
   , t_ref_( 2.0 )
   , tau_m_( 10.0 )
@@ -188,9 +188,9 @@ eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Node* nod
     throw BadProperty( "gamma must be in [0,1)." );
   }
 
-  if ( psc_scale_factor_ != "identity" and psc_scale_factor_ != "leak_propagator_complement" )
+  if ( psc_scale_factor_ != "identity" and psc_scale_factor_ != "alpha_complement" )
   {
-    throw BadProperty( "psc_scale_factor must be chosen from [\"identity\", \"leak_propagator_complement\"]." );
+    throw BadProperty( "psc_scale_factor must be chosen from [\"identity\", \"alpha_complement\"]." );
   }
 
   if ( surrogate_gradient_ != "piecewise_linear" )
@@ -283,7 +283,7 @@ eprop_iaf_psc_delta_adapt::pre_run_hook()
   V_.P33_ =  alpha;
   V_.P30_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - alpha );
 
-  if ( P_.psc_scale_factor_ == "leak_propagator_complement" )
+  if ( P_.psc_scale_factor_ == "alpha_complement" )
   {
     V_.P33_complement_ = 1.0 - alpha;
   }

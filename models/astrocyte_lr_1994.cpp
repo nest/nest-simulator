@@ -37,6 +37,7 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -46,6 +47,12 @@ nest::RecordablesMap< nest::astrocyte_lr_1994 > nest::astrocyte_lr_1994::recorda
 
 namespace nest
 {
+void
+register_astrocyte_lr_1994( const std::string& name )
+{
+  register_node_model< astrocyte_lr_1994 >( name );
+}
+
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>
@@ -486,7 +493,7 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
 }
 
 /**
- * Default implementation of register_stdp_connection() just
+ * Default implementation of register_stdp_connection( const std::string& name )
  * throws IllegalConnection
  */
 void

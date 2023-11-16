@@ -194,6 +194,8 @@ iaf_cond_alpha, aeif_cond_exp, astrocyte_lr_1994, sic_connection
 
 EndUserDocs */
 
+void register_aeif_cond_alpha_astro( const std::string& name );
+
 class aeif_cond_alpha_astro : public ArchivingNode
 {
 

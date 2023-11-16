@@ -22,8 +22,9 @@
 import glob
 import os
 import sys
-from sphinx.application import Sphinx
 from pathlib import Path
+
+from sphinx.application import Sphinx
 
 
 def add_button_to_examples(app, env, docnames):

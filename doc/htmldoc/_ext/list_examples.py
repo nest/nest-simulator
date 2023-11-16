@@ -19,15 +19,14 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+import glob
+import logging
+import os
+
 from docutils import nodes
 from docutils.parsers.rst import Directive, Parser
-
 from sphinx.application import Sphinx
 from sphinx.util.docutils import SphinxDirective
-import os
-import glob
-
-import logging
 
 logging.basicConfig(level=logging.WARNING)
 log = logging.getLogger(__name__)

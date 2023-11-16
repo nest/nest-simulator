@@ -40,8 +40,8 @@ errors occurred.
 
 
 import os
-import sys
 import re
+import sys
 
 
 def eprint(*args, **kwargs):

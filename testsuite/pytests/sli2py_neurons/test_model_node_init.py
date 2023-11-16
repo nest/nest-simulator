@@ -29,8 +29,8 @@
    and comparing traces.
 """
 
-import pytest
 import nest
+import pytest
 
 
 def _get_network_state(nc):

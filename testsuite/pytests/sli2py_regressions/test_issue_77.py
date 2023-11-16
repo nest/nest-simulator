@@ -23,9 +23,8 @@
 Regression test for Issue #77 (GitHub).
 """
 
-import pytest
-
 import nest
+import pytest
 
 # The following models will not be tested:
 skip_models = [

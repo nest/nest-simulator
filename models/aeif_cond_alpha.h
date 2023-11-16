@@ -192,6 +192,8 @@ Examples using this model
 
 EndUserDocs */
 
+void register_aeif_cond_alpha( const std::string& name );
+
 class aeif_cond_alpha : public ArchivingNode
 {
 

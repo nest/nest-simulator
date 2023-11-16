@@ -128,6 +128,8 @@ public:
  * Class representing an STDP connection with homogeneous parameters, i.e.
  * parameters are the same for all synapses.
  */
+void register_stdp_pl_synapse_hom( const std::string& name );
+
 template < typename targetidentifierT >
 class stdp_pl_synapse_hom : public Connection< targetidentifierT >
 {

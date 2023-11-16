@@ -150,7 +150,7 @@ FilesystemModule::DirectoryFunction::execute( SLIInterpreter* i ) const
     assert( path_buffer );
   }
   Token sd( new StringDatum( path_buffer ) );
-  delete[]( path_buffer );
+  delete[] ( path_buffer );
   i->OStack.push_move( sd );
   i->EStack.pop();
 }

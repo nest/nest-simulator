@@ -29,10 +29,9 @@ delays with resolution 0.04 are 1.0 0.96 0.96 0.92 0.92 0.88 0.84 and expected
 weights are 1.0, 0.98, 0.96, 0.94, 0.92, 0.90, 0.88, 0.86, 0.84, 0.82.
 """
 
+import nest
 import numpy as np
 import pytest
-
-import nest
 
 
 def build_network(layer_type):

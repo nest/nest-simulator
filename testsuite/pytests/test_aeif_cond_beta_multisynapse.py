@@ -213,7 +213,7 @@ class TestAeifCondBetaMultisynapse:
         stime = sr.events["times"][0] - 1  # minus one because of 1-based indexing
 
         # test that V_m == V_reset at spike time
-        nptest.assert_almost_equal(vm.events["V_m"][stime], V_reset)
+        np.testing.assert_almost_equal(vm.events["V_m"][stime], V_reset)
 
         if t_ref == 0:
             # test that V_m > V_reset one step after spike

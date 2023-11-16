@@ -253,16 +253,18 @@ eprop_iaf_psc_delta::pre_run_hook()
 {
   B_.logger_.init(); // ensures initialization in case multimeter connected after Simulate
 
+  V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
+  
   const double dt = Time::get_resolution().get_ms();
 
-  V_.P33_ = std::exp( -dt / P_.tau_m_ ); // alpha
-  V_.P30_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - V_.P33_ );
+  const double alpha = std::exp( -dt / P_.tau_m_ );
 
-  V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
+  V_.P33_ = alpha;
+  V_.P30_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - alpha );
 
   if ( P_.psc_scale_factor_ == "leak_propagator_complement" )
   {
-    V_.P33_complement_ = 1.0 - V_.P33_;
+    V_.P33_complement_ = 1.0 - alpha;
   }
   else if ( P_.psc_scale_factor_ == "identity" )
   {

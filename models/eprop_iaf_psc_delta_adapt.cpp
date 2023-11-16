@@ -292,7 +292,7 @@ nest::eprop_iaf_psc_delta_adapt::pre_run_hook()
   {
     V_.P33_complement_ = 1.0 - V_.P33_;
   }
-  else
+  else if ( P_.psc_scale_factor_ == "identity" )
   {
     V_.P33_complement_ = 1.0;
   }

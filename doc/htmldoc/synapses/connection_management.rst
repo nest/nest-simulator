@@ -60,7 +60,7 @@ Connection management
 		.. image:: ../static/img/Fixed_outdegree_H.png
 
 .. card::
-	:shadow: none
+    :shadow: none
     :text-align: center
 
     Basic connection rules commonly used in the computational neuroscience community. For more details, go to the section :ref:`conn_rules` or just click on one of the illustrations.

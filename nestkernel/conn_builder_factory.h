@@ -51,7 +51,7 @@ public:
   }
 
   /**
-   * Factory method for builders for bi-partite connection rules (the default).
+   * Factory method for builders for bipartite connection rules (the default).
    */
   virtual ConnBuilder* create( NodeCollectionPTR,
     NodeCollectionPTR,
@@ -59,7 +59,7 @@ public:
     const std::vector< DictionaryDatum >& ) const = 0;
 
   /**
-   * Factory method for builders for tri-partite connection rules.
+   * Factory method for builders for tripartite connection rules.
    */
   virtual ConnBuilder* create( NodeCollectionPTR,
     NodeCollectionPTR,

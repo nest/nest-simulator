@@ -25,7 +25,7 @@ Tripartite connectivity in NEST
 -------------------------------
 
 NEST now supports creation of connections involving three populations
-of neurons, a pre-synaptic, a post-synaptic and a third-factor
+of neurons: a pre-synaptic, a post-synaptic and a third-factor
 population. At present, as single tripartite connection rule is
 available, ``tripartite_bernoulli_with_pool``. Tripartite connections
 are created with the new :py:func:`.TripartiteConnect` function. The first

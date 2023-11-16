@@ -75,8 +75,8 @@ sim_params = {
     "dt": 0.1,  # simulation resolution in ms
     "pre_sim_time": 100.0,  # pre-simulation time in ms (data not recorded)
     "sim_time": 1000.0,  # simulation time in ms
-    "N_rec_spk": 100,  # number of samples (neuron) for spike detector
-    "N_rec_mm": 50,  # number of samples (neuron, astrocyte) for multimeter
+    "N_rec_spk": 100,  # number of neurons to record from with spike recorder
+    "N_rec_mm": 50,  # number of nodes (neurons, astrocytes) to record from with multimeter
     "n_threads": 4,  # number of threads for NEST
     "seed": 100,  # seed for the random module
 }
@@ -263,18 +263,18 @@ def run_simulation():
     nest.print_time = True
     nest.overwrite_files = True
 
-    # Use random seed for reproducible sampling
+    # use random seed for reproducible sampling
     random.seed(sim_params["seed"])
 
-    # Simulation settings
+    # simulation settings
     pre_sim_time = sim_params["pre_sim_time"]
     sim_time = sim_params["sim_time"]
 
-    # Create and connect nodes
+    # create and connect nodes
     exc, inh, astro, noise = create_astro_network()
     connect_astro_network(exc, inh, astro, noise)
 
-    # Create and connect recorders (multimeter default resolution = 1 ms)
+    # create and connect recorders (multimeter default resolution = 1 ms)
     sr_neuron = nest.Create("spike_recorder")
     mm_neuron = nest.Create("multimeter", params={"record_from": ["I_SIC"]})
     mm_astro = nest.Create("multimeter", params={"record_from": ["IP3", "Ca"]})
@@ -283,7 +283,7 @@ def run_simulation():
     print("Running pre-simulation ...")
     nest.Simulate(pre_sim_time)
 
-    # Select nodes randomly and connect them with recorders
+    # select nodes randomly and connect them with recorders
     print("Connecting recorders ...")
     neuron_list = (exc + inh).tolist()
     astro_list = astro.tolist()
@@ -297,24 +297,24 @@ def run_simulation():
     nest.Connect(mm_neuron, neuron_list_for_mm)
     nest.Connect(mm_astro, astro_list_for_mm)
 
-    # Run simulation
+    # run simulation
     print("Running simulation ...")
     nest.Simulate(sim_time)
 
-    # Read out recordings
+    # read out recordings
     neuron_spikes = sr_neuron.events
     neuron_data = mm_neuron.events
     astro_data = mm_astro.events
 
-    # Make raster plot
+    # make raster plot
     nest.raster_plot.from_device(
         sr_neuron, hist=True, title=f"Raster plot of neuron {neuron_list_for_sr[0]} to {neuron_list_for_sr[-1]}"
     )
 
-    # Plot dynamics in astrocytes and neurons
+    # plot dynamics in astrocytes and neurons
     plot_dynamics(astro_data, neuron_data, pre_sim_time)
 
-    # Show plots
+    # show plots
     plt.show()
 
 

@@ -266,12 +266,12 @@ NEST supports creating connections of three node populations using the
 
 .. code-block:: python
 
-    TripartiteConnect(pre, post, third, conn_spec)
+    nest.TripartiteConnect(pre, post, third, conn_spec)
     TripartiteConnect(pre, post, third, conn_spec, syn_specs)
 
 ``pre``, ``post``, and ``third`` are ``NodeCollections``, defining the nodes of
 origin (`sources`) and termination (`targets`) as well as the third
-factor to be included. Details of the connections created depend on
+factor population to be included. Connections will be established from ``pre`` to both ``third`` and ``post``, and from ``third`` to ``post``. Details of the connections created depend on
 the connection rule used.
 
 ``conn_spec`` must be provided and must specify a tripartite
@@ -294,7 +294,7 @@ specification to connections from ``pre`` to ``third`` nodes and
 the ``"third_out"`` specification to connections from ``third`` to
 ``post`` nodes.
 
-tripartite_bernoulli_with_pool
+Tripartite Bernoulli with pool
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For each possible pair of nodes from ``A`` and ``B``, a connection is

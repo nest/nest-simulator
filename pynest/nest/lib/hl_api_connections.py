@@ -297,11 +297,11 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
 @check_stack
 def TripartiteConnect(pre, post, third, conn_spec, syn_specs=None):
     """
-    Connect `pre` nodes to `post` nodes and a `third` population.
+    Connect `pre` nodes to `post` nodes and a `third`-factor nodes.
 
-    Nodes in `pre` and `post` are connected using the specified tripartite connectivity rule
+    Nodes in `pre` and `post` are connected using the specified tripartite connection rule
     and the given synapse types (all :cpp:class:`static_synapse <nest::static_synapse>` by default).
-    Details depend on the connectivity rule.
+    Details depend on the connection rule.
 
     Lists of synapse models and connection rules are available as
     ``nest.synapse_models`` and ``nest.connection_rules``, respectively. Note that only tripartite
@@ -316,7 +316,7 @@ def TripartiteConnect(pre, post, third, conn_spec, syn_specs=None):
     third : NodeCollection
         Third population to include in connection
     conn_spec : dict
-        Specifies connectivity rule, which must support tripartite connections, see below
+        Specifies connection rule, which must support tripartite connections, see below
     syn_spec : dict, optional
         Specifies synapse models to be used, see below
 
@@ -338,15 +338,15 @@ def TripartiteConnect(pre, post, third, conn_spec, syn_specs=None):
     **Synapse specifications (syn_specs)**
 
     Synapse specifications for tripartite connections are given as a dictionary with specifications
-    for each of the three connections to be created::
+    for each of the three projections to be created::
 
      {"primary": <syn_spec>,
      "third_in": <syn_spec>,
      "third_out": <syn_spec>}
 
-    Here, ``"primary"`` marks the synapse specification for the connections between ``pre`` and ``post`` neurons,
-    ``"third_in"`` for connections between ``pre`` and ``third`` neurons and ``"third_out"`` for connections between
-    ``third`` and ``post`` neurons.
+    Here, ``"primary"`` marks the synapse specification for the projections between ``pre`` and ``post`` nodes,
+    ``"third_in"`` for connections between ``pre`` and ``third`` nodes and ``"third_out"`` for connections between
+    ``third`` and ``post`` nodes.
 
     Each ``<syn_spec>`` entry can be any entry that would be possible as synapse specification
     in a normal ``Connect()`` call. Any missing entries default to ``static_synapse``. If no ``<syn_spec>`` argument

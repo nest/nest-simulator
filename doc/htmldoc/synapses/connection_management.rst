@@ -59,17 +59,17 @@ Connection management
 
 		.. image:: ../static/img/Fixed_outdegree_H.png
 
+.. card::
+	:shadow: none
+    :text-align: center
 
-.. class:: center
-
-Basic connection rules commonly used in the computational neuroscience community.
-For more details, go to the section :ref:`Connection rules <conn_rules>` or just click on one of the illustrations.
+    Basic connection rules commonly used in the computational neuroscience community. For more details, go to the section :ref:`conn_rules` or just click on one of the illustrations.
 
 This documentation not only describes how to define network connectivity in NEST, but also represents a living reference for the connection rules defined in the article "Connectivity concepts in neuronal network modeling" [1]_. Deviations from the rules defined in the publication are highlighted in green.
 
 .. The same article also introduces a graphical notation for neuronal network diagrams which is curated in the documentation of NEST Desktop. TODO ADD LINK WHEN IT EXISTS
 
-:ref:`Spatially structured networks <spatial_networks>` are described on a separate page.
+:ref:`spatial_networks` are described on a separate page.
 
 We use the term `connection` to mean a single, atomic edge between network nodes (i.e., neurons or devices).
 A `projection` is a group of edges that connects groups of nodes with similar properties (i.e., populations).
@@ -84,16 +84,16 @@ Projections are created in NEST with the :py:func:`.Connect` function:
     nest.Connect(pre, post, conn_spec, syn_spec)
 
 In the simplest case, the function just takes the ``NodeCollections`` ``pre`` and ``post``, defining the nodes of
-origin (`sources`) and termination (`targets`) for the connections to be established with the default rule ``all-to-all`` and the synapse model :hxt_ref:`static_synapse`.
+origin (`sources`) and termination (`targets`) for the connections to be established with the default rule ``all-to-all`` and the synapse model :ref:`static_synapse`.
 
 Other connectivity patterns can be achieved by explicitly specifying the connection rule with the connectivity specification dictionary ``conn_spec`` which expects a ``rule`` alongside additional rule-specific parameters.
 Rules that do not require parameters can be directly provided as string instead of the dictionary; for example, ``nest.Connect(pre, post, 'one_to_one')``.
 Examples of parameters might be in- and out-degrees, or the probability for establishing a connection.
-All available rules are described in the section :ref:`Connection rules <conn_rules>` below.
+All available rules are described in the section :ref:`conn_rules` below.
 
 Properties of individual connections (i.e., synapses) can be set via the synapse specification dictionary ``syn_spec``.
 Parameters like the synaptic weight or delay can be either set values or drawn and combined flexibly from random distributions.
-For details on synapse models and their parameters refer to :ref:`Synapse specification <synapse_spec>`.Note that is also possible to define multiple projections with different synapse properties in the same :py:func:`.Connect` call (see :ref:`collocated synapses <collocated_synapses>`).
+For details on synapse models and their parameters refer to :ref:`synapse_spec`.Note that is also possible to define multiple projections with different synapse properties in the same :py:func:`.Connect` call (see :ref:`collocated_synapses`).
 
 By using the keyword variant ``nest.Connect(pre, post, syn_spec=syn_spec)``, the `conn_spec` can be omitted in the call to :py:func:`.Connect` and will just take on the default value ``all-to-all``.
 
@@ -113,7 +113,7 @@ Have a look at the section :ref:`handling_connections` to get more tips on how t
 Connection rules
 ----------------
 
-We here elaborate on the connectivity concepts with details on :ref:`Autapses and multapses <autapse_multapse>`, :ref:`Deterministic connection rules <deterministic_rules>`, :ref:`Probabilistic connection rules <probabilistic_rules>`, and finally the :ref:`Connection generator interface <conn_builder_conngen>` (a method to create connections via CSA, the Connection Set Algebra [2]_).
+We here elaborate on the connectivity concepts with details on :ref:`autapse_multapse`, :ref:`deterministic_rules`, :ref:`probabilistic_rules`, and finally the :ref:`conn_builder_conngen` (a method to create connections via CSA, the Connection Set Algebra [2]_).
 Each rule is described with an illustration, a NEST code example, and mathematical details.
 The mathematical details are extracted from the study on connectivity concepts [1]_ and contain a symbol which we recommend to use for describing this type of connectivity, the corresponding expression from CSA, and a formal definition with an algorithmic construction rule and the resulting connectivity distribution.
 
@@ -209,7 +209,7 @@ specified.
 Explicit connections
 ~~~~~~~~~~~~~~~~~~~~
 
-Connections between explicit lists of source-target pairs can be realized in NEST by extracting the respective node ids from the ``NodeCollections`` and using the :ref:`One-to-one <one-to-one>` rule.
+Connections between explicit lists of source-target pairs can be realized in NEST by extracting the respective node ids from the ``NodeCollections`` and using the :ref:`one_to_one` rule.
 
 .. code-block:: python
 
@@ -474,17 +474,17 @@ As multapses are per default allowed and possible with this rule, you can disall
 
 .. dropdown:: Mathematical details: Random, fixed out-degree with multapses
 
-	| 		**Symbol:** :math:`K_text{out}, M`
+	| 		**Symbol:** :math:`K_\text{out}, M`
 	| 		**CSA:** :math:`\mathbf{\rho_0}(K)\mathbf{M}(\mathbb{N}_S \times \mathbb{N}_T)`
 	| 		**Definition:** Each source node in :math:`\mathcal{S}` is connected to :math:`K_\text{out}` nodes in :math:`\mathcal{T}` randomly chosen with replacement. 
-	|		By definition, the out-degree distribution is a :math:`P(K)=\delta_{K,K_\text{out}}`. The respective in-degree distribution and marginal distributions are obtained by switching source and target indices, and replacing :math:`K_\text{out}` with :math:`K_\text{in}` in equation from :ref:`Random, fixed in-degree with multapses <fixed_indegree>` [5]_.
+	|		By definition, the out-degree distribution is a :math:`P(K)=\delta_{K,K_\text{out}}`. The respective in-degree distribution and marginal distributions are obtained by switching source and target indices, and replacing :math:`K_\text{out}` with :math:`K_\text{in}` in equation from :ref:`fixed_indegree` [5]_.
 
 .. dropdown:: Mathematical details: Random, fixed out-degree without multapses
 
-	| 		**Symbol:** :math:`K_text{out},\cancel{M}`
+	| 		**Symbol:** :math:`K_\text{out},\cancel{M}`
 	| 		**CSA:** :math:`\mathbf{\rho_0}(K)(\mathbb{N}_S \times \mathbb{N}_T)`
 	| 		**Definition:**  Each source node in :math:`S` is connected to :math:`K_\text{out}` nodes in :math:`\mathcal{T}` randomly chosen without replacement. 
-	|		The out-degree distribution is by definition :math:`P(K)=\delta_{K,K_\text{out}}`, while the in-degree distribution is obtained by switching source and target indices, and replacing :math:`K_\text{out}` with :math:`K_\text{in}` in equation (2) from :ref:`Random, fixed in-degree without multapses <fixed_indegree>`.
+	|		The out-degree distribution is by definition :math:`P(K)=\delta_{K,K_\text{out}}`, while the in-degree distribution is obtained by switching source and target indices, and replacing :math:`K_\text{out}` with :math:`K_\text{in}` in equation (2) from :ref:`fixed_indegree`.
 
 
 .. _conn_builder_conngen:

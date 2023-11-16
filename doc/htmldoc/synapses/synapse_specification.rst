@@ -1,7 +1,9 @@
 .. _synapse_spec:
 
-Synapse Specification
+Synapse specification
 ========================
+
+This page is about parameterizing synapses. See :ref:`connection_management` for specifying connections, and :ref:`handling_connections` for inspecting and modifying ``SynapseCollections``.
 
 The synapse properties can be given as just the name of the desired
 synapse model as a string, as a dictionary specifying synapse model
@@ -67,8 +69,8 @@ The arrays can be specified as NumPy arrays or Python
 lists. As with the scalar parameters, all parameters have to be
 specified as arrays of the correct type.
 
-Rule: One-to-one
-^^^^^^^^^^^^^^^^
+One-to-one
+^^^^^^^^^^
 
 For rule ``one_to_one`` the array must have the same length as there
 are nodes in ``A`` and ``B``.
@@ -81,8 +83,8 @@ are nodes in ``A`` and ``B``.
     syn_spec_dict = {'weight': [1.2, -3.5]}
     nest.Connect(A, B, conn_spec_dict, syn_spec_dict)
 
-Rule: All-to-all
-^^^^^^^^^^^^^^^^
+All-to-all
+^^^^^^^^^^
 
 When connecting with rule ``all_to_all``, the array parameter must
 have dimension `len(B) x len(A)`.
@@ -94,8 +96,8 @@ have dimension `len(B) x len(A)`.
     syn_spec_dict = {'weight': [[1.2, -3.5, 2.5], [0.4, -0.2, 0.7]]}
     nest.Connect(A, B, syn_spec=syn_spec_dict)
 
-Rule: Random, fixed total number
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Random, fixed total number
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 For rule ``fixed_total_number``, the array has to be same the length as the
 number of connections ``N``.
@@ -108,8 +110,8 @@ number of connections ``N``.
     syn_spec_dict = {'weight': [1.2, -3.5, 0.4, -0.2]}
     nest.Connect(A, B, conn_spec_dict, syn_spec_dict)
 
-Rule: Random, fixed in-degree
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Random, fixed in-degree
+^^^^^^^^^^^^^^^^^^^^^^^
 
 For rule ``fixed_indegree`` the array has to be a two-dimensional
 NumPy array or Python list with shape ``(len(B), indegree)``, where
@@ -126,8 +128,8 @@ of the identity of the source neurons.
     syn_spec_dict = {'weight': [[1.2, -3.5],[0.4, -0.2],[0.6, 2.2]]}
     nest.Connect(A, B, conn_spec_dict, syn_spec_dict)
 
-Rule: Random, fixed out-degree
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Random, fixed out-degree
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 For rule ``fixed_outdegree`` the array has to be a two-dimensional
 NumPy array or Python list with shape ``(len(A), outdegree)``, where

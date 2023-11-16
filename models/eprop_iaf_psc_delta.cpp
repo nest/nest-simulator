@@ -91,6 +91,7 @@ nest::eprop_iaf_psc_delta::State_::State_()
   , surrogate_gradient_( 0.0 )
   , y0_( 0.0 )
   , y3_( 0.0 )
+  , z_( 0.0 )
 {
 }
 
@@ -247,8 +248,6 @@ nest::eprop_iaf_psc_delta::init_buffers_()
   B_.spikes_.clear();   // includes resize
   B_.currents_.clear(); // includes resize
   B_.logger_.reset();   // includes resize
-
-  S_.z_ = 0.0;
 }
 
 void

@@ -6,63 +6,70 @@ Connection management
 .. grid:: 4
     :gutter: 1
 
-    .. card::
-		:link: one_to_one
-		:link-type: ref
-
-		.. image:: ../static/img/One_to_one_H.png
-
-    .. card::
-		:link: all_to_all
-		:link-type: ref
-
-		.. image:: ../static/img/All_to_all_H.png
-
-    .. card::
-		:link: fixed_indegree
-		:link-type: ref
-
-		.. image:: ../static/img/Fixed_indegree_H.png
-
-    .. card::
-		:link: fixed_outdegree
-		:link-type: ref
-
-		.. image:: ../static/img/Fixed_outdegree_H.png
-
-.. grid:: 4
-    :gutter: 1
-
-    .. card::
-		:link: fixed_total_number
-		:link-type: ref
-
-		.. image:: ../static/img/Fixed_total_number_H.png
-
-    .. card::
-		:link: pairwise_bernoulli
-		:link-type: ref
-
-		.. image:: ../static/img/Pairwise_bernoulli_H.png
-
-    .. card::
+    .. grid-item-card::
 		:link: autapse_multapse
 		:link-type: ref
 
 		.. image:: ../static/img/Autapse_H.png
 
-    .. card::
+    .. grid-item-card::
 		:link: autapse_multapse
 		:link-type: ref
 
 		.. image:: ../static/img/Multapse_H.png
 
+    .. grid-item-card::
+		:link: one_to_one
+		:link-type: ref
+
+		.. image:: ../static/img/One_to_one_H.png
+
+    .. grid-item-card::
+		:link: all_to_all
+		:link-type: ref
+
+		.. image:: ../static/img/All_to_all_H.png
+
+.. grid:: 4
+    :gutter: 1
+
+    .. grid-item-card::
+		:link: pairwise_bernoulli
+		:link-type: ref
+
+		.. image:: ../static/img/Pairwise_bernoulli_H.png
+
+
+    .. grid-item-card::
+		:link: fixed_total_number
+		:link-type: ref
+
+		.. image:: ../static/img/Fixed_total_number_H.png
+			
+
+    .. grid-item-card::
+		:link: fixed_indegree
+		:link-type: ref
+
+		.. image:: ../static/img/Fixed_indegree_H.png
+
+    .. grid-item-card::
+		:link: fixed_outdegree
+		:link-type: ref
+
+		.. image:: ../static/img/Fixed_outdegree_H.png
+
+
+.. class:: center
+
 Basic connection rules commonly used in the computational neuroscience community.
 For more details, go to the section :ref:`Connection rules <conn_rules>` or just click on one of the illustrations.
 
-This documentation not only describes how to define network connectivity in NEST, but also represents a living reference for the connection rules defined in the article "Connectivity concepts in neuronal network modeling" [1]_.
-The same article also introduces a graphical notation for neuronal network diagrams which is curated in the documentation of NEST Desktop. TODO ADD LINK
-For spatially structured networks, refer to TODO.
+This documentation not only describes how to define network connectivity in NEST, but also represents a living reference for the connection rules defined in the article "Connectivity concepts in neuronal network modeling" [1]_. Deviations from the rules defined in the publication are highlighted in green.
+
+.. The same article also introduces a graphical notation for neuronal network diagrams which is curated in the documentation of NEST Desktop. TODO ADD LINK WHEN IT EXISTS
+
+:ref:`Spatially structured networks <spatial_networks>` are described on a separate page.
 
 We use the term `connection` to mean a single, atomic edge between network nodes (i.e., neurons or devices).
 A `projection` is a group of edges that connects groups of nodes with similar properties (i.e., populations).
@@ -98,7 +105,7 @@ done using the corresponding kernel attribute:
 
     print(nest.num_connections)
 
-Have a look at the section :ref:`inspecting_connections` to get more tips on how to examine the connections in greater detail. TODO LINK DOES NOT WORK
+Have a look at the section :ref:`handling_connections` to get more tips on how to examine the connections in greater detail.
 
 
 .. _conn_rules:
@@ -209,7 +216,7 @@ Connections between explicit lists of source-target pairs can be realized in NES
     n, m = 5, 5
     S = nest.Create('iaf_psc_alpha', n) # node ids: 1..5
     T = nest.Create('iaf_psc_alpha', m) # node ids: 6..10
-	# source-target pairs: (3,8), (4,1), (1,9)
+    # source-target pairs: (3,8), (4,1), (1,9)
     nest.Connect([3,4,1], [8,6,9], 'one_to_one')
 
 .. dropdown:: Mathematical details: Explicit connections
@@ -365,7 +372,7 @@ As multapses are per default allowed and possible with this rule, you can disall
 
 .. _fixed_indegree:
 
-Random, fixed indegree
+Random, fixed in-degree
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. image:: ../static/img/Fixed_indegree.png
@@ -373,7 +380,7 @@ Random, fixed indegree
      :align: center
 
 The nodes in ``S`` are randomly connected with the nodes in ``T`` such
-that each node in ``T`` has a fixed :hxt_ref:`indegree` of ``N``.
+that each node in ``T`` has a fixed ``indegree`` of ``N``.
 
 As multapses are per default allowed and possible with this rule, you can disallow them by adding ``'allow_multapses': False`` to the ``conn_dict``.
 
@@ -445,7 +452,7 @@ As multapses are per default allowed and possible with this rule, you can disall
 
 .. _fixed_outdegree:
 
-Random, fixed outdegree
+Random, fixed out-degree
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. image:: ../static/img/Fixed_outdegree.png
@@ -453,7 +460,7 @@ Random, fixed outdegree
      :align: center
 
 The nodes in ``S`` are randomly connected with the nodes in ``T`` such
-that each node in ``S`` has a fixed :hxt_ref:`outdegree` of ``N``.
+that each node in ``S`` has a fixed ``outdegree`` of ``N``.
 
 As multapses are per default allowed and possible with this rule, you can disallow them by adding ``'allow_multapses': False`` to the ``conn_dict``.
 
@@ -492,7 +499,7 @@ Connection generator interface
 
 To allow the generation of connectivity by means of an external
 library, NEST supports the Connection Generator Interface [6]_. For
-more details on this interface, see the Git repository of `libneurosim
+more details on this interface, see the git repository of `libneurosim
 <https://github.com/INCF/libneurosim>`_.
 
 In contrast to the other rules for creating connections, this rule
@@ -505,7 +512,7 @@ indices can be specified under the key ``params_map``. Alternatively,
 all synapse parameters can be specified using the synapse
 specification argument to ``Connect()``.
 
-The following listing shows an example for using the `Connection Set Algebra <https://github.com/INCF/csa>`_ [2]_ in NEST via the Connection
+The following listing shows an example for using CSA (`Connection Set Algebra <https://github.com/INCF/csa>`_ [2]_) in NEST via the Connection
 generator interface and randomly connects 10% of the neurons from
 ``A`` to the neurons in ``B``, each connection having a weight of
 10000.0 pA and a delay of 1.0 ms:

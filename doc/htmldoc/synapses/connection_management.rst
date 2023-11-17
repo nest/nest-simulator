@@ -93,7 +93,7 @@ All available rules are described in the section :ref:`conn_rules` below.
 
 Properties of individual connections (i.e., synapses) can be set via the synapse specification dictionary ``syn_spec``.
 Parameters like the synaptic weight or delay can be either set values or drawn and combined flexibly from random distributions.
-For details on synapse models and their parameters refer to :ref:`synapse_spec`.Note that is also possible to define multiple projections with different synapse properties in the same :py:func:`.Connect` call (see :ref:`collocated_synapses`).
+For details on synapse models and their parameters refer to :ref:`synapse_spec`. Note that is also possible to define multiple projections with different synapse properties in the same :py:func:`.Connect` call (see :ref:`collocated_synapses`).
 
 By using the keyword variant ``nest.Connect(pre, post, syn_spec=syn_spec)``, the `conn_spec` can be omitted in the call to :py:func:`.Connect` and will just take on the default value ``all-to-all``.
 

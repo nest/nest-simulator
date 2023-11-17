@@ -25,7 +25,6 @@ import numpy as np
 import pytest
 import scipy.stats
 
-# copied from connect_test_base.py
 try:
     from mpi4py import MPI
 
@@ -34,38 +33,69 @@ except ImportError:
     haveMPI4Py = False
 
 
-# adapted from connect_test_base.py
-def setup_network(
-    conn_dict, syn_dict, N1, N2, neuron_model="aeif_cond_alpha_astro", astrocyte_model="astrocyte_lr_1994"
-):
-    pop1 = nest.Create(neuron_model, N1)
-    pop2 = nest.Create(neuron_model, N2)
-    pop_astro = nest.Create(astrocyte_model, N2)
-    nest.TripartiteConnect(pop1, pop2, pop_astro, conn_spec=conn_dict, syn_specs=syn_dict)
-    return pop1, pop2, pop_astro
+def setup_network(conn_dict, syn_dict, N1, N2, primary_model="aeif_cond_alpha_astro", third_model="astrocyte_lr_1994"):
+    """Setup the network for the statistical test.
 
+    A three-population network is created for a statictical test of the
+    "tripartite_bernoulli_with_pool" rule.
 
-# copied from connect_test_base.py
-def get_expected_degrees_bernoulli(p, fan, len_source_pop, len_target_pop):
+    Parameters
+    ---------
+    conn_dict
+        Dictionary for the connectivity specifications (conn_spec).
+    syn_dict
+        Dictionary for the synapse specifications (syn_spec).
+    N1
+        Number of nodes in the source population.
+    N2
+        Number of nodes in the target population.
+    primary_model
+        Model name for the nodes of the primary (source and target) populations.
+    third_model
+        Model name for the nodes of the third population.
+
+    Return values
+    -------------
+        Nodes of the three populations created.
+
     """
-    Calculate expected degree distribution.
+    pop1 = nest.Create(primary_model, N1)
+    pop2 = nest.Create(primary_model, N2)
+    pop3 = nest.Create(third_model, N2)
+    nest.TripartiteConnect(pop1, pop2, pop3, conn_spec=conn_dict, syn_specs=syn_dict)
+    return pop1, pop2, pop3
+
+
+def get_expected_degrees_bernoulli(p, fan, len_source_pop, len_target_pop):
+    """Calculate expected degree distribution.
 
     Degrees with expected number of observations below e_min are combined
     into larger bins.
+
+    Parameters
+    ---------
+    p
+        Connection probability between the source and target populations.
+    fan
+        Type of degree to be calculated.
+    len_source_pop
+        Number of nodes in the source population.
+    len_source_pop
+        Number of nodes in the target population.
 
     Return values
     -------------
         2D array. The four columns contain degree,
         expected number of observation, actual number observations, and
         the number of bins combined.
-    """
 
+    """
     n = len_source_pop if fan == "in" else len_target_pop
     n_p = len_target_pop if fan == "in" else len_source_pop
     mid = int(round(n * p))
     e_min = 5
 
-    # Combine from front.
+    # combine from front
     data_front = []
     cumexp = 0.0
     bins_combined = 0
@@ -85,7 +115,7 @@ def get_expected_degrees_bernoulli(p, fan, len_source_pop, len_target_pop):
             cumexp = 0.0
             bins_combined = 0
 
-    # Combine from back.
+    # combine from back
     data_back = []
     cumexp = 0.0
     bins_combined = 0
@@ -109,15 +139,34 @@ def get_expected_degrees_bernoulli(p, fan, len_source_pop, len_target_pop):
     expected = np.array(data_front + data_back)
     if fan == "out":
         assert sum(expected[:, 3]) == len_target_pop + 1
-    else:  # , 'Something is wrong'
+    else:
         assert sum(expected[:, 3]) == len_source_pop + 1
 
-    # np.hstack((np.asarray(data_front)[0], np.asarray(data_back)[0]))
     return expected
 
 
-# copied from connect_test_base.py
 def get_degrees(fan, pop1, pop2):
+    """Get total indegree or outdegree in a connectivity matrix.
+
+    The total indegree or outdegree in the connectivity matrix of two
+    connected populations is calculated.
+
+    Parameters
+    ---------
+    p
+        Connection probability between the source and target populations.
+    fan
+        Type of degree to be calculated.
+    pop1
+        Source population.
+    pop2
+        Target population.
+
+    Return values
+    -------------
+        Total indegree or outdegree.
+
+    """
     M = get_connectivity_matrix(pop1, pop2)
     if fan == "in":
         degrees = np.sum(M, axis=1)
@@ -126,13 +175,24 @@ def get_degrees(fan, pop1, pop2):
     return degrees
 
 
-# copied from connect_test_base.py
 def gather_data(data_array):
-    """
-    Gathers data from all mpi processes by collecting all element in a list if
+    """Gather data of a given array from all MPI processes.
+
+    Gathers data from all MPI processes by collecting all element in a list if
     data is a list and summing all elements to one numpy-array if data is one
-    numpy-array. Returns gathered data if rank of current mpi node is zero and
+    numpy-array. Returns gathered data if rank of current MPI node is zero and
     None otherwise.
+
+    Parameters
+    ---------
+    data_array
+        The array for which data are to be obtained.
+
+    Return values
+    -------------
+        If MPI is available, the array with data from all MPI processes
+        (MPI node is zero) or None (otherwise) is returned. If MPI is not
+        available, the original array is returned.
 
     """
     if haveMPI4Py:
@@ -149,59 +209,67 @@ def gather_data(data_array):
         return data_array
 
 
-# copied from connect_test_base.py
-def chi_squared_check(degrees, expected, distribution=None):
+def chi_squared_check(degrees, expected):
     """
-    Create a single network and compare the resulting degree distribution
-    with the expected distribution using Pearson's chi-squared GOF test.
+    Compare the actual degree distribution with the expected distribution using
+    Pearson's chi-squared GOF test.
 
     Parameters
     ----------
-        seed   : PRNG seed value.
-        control: Boolean value. If True, _generate_multinomial_degrees will
-                 be used instead of _get_degrees.
+    degrees
+        The actual degree distribution to be evaluated.
+    expected
+        The expected degree distribution.
 
     Return values
     -------------
         chi-squared statistic.
         p-value from chi-squared test.
+
     """
+    observed = {}
+    for degree in degrees:
+        if degree not in observed:
+            observed[degree] = 1
+        else:
+            observed[degree] += 1
 
-    if distribution in ("pairwise_bernoulli", "symmetric_pairwise_bernoulli"):
-        observed = {}
-        for degree in degrees:
-            if degree not in observed:
-                observed[degree] = 1
-            else:
-                observed[degree] += 1
-        # Add observations to data structure, combining multiple observations
-        # where necessary.
-        expected[:, 2] = 0.0
-        for row in expected:
-            for i in range(int(row[3])):
-                deg = int(row[0]) + i
-                if deg in observed:
-                    row[2] += observed[deg]
+    # add observations to data structure
+    # combine multiple observations where necessary
+    expected[:, 2] = 0.0
+    for row in expected:
+        for i in range(int(row[3])):
+            deg = int(row[0]) + i
+            if deg in observed:
+                row[2] += observed[deg]
 
-        # ddof: adjustment to the degrees of freedom. df = k-1-ddof
-        return scipy.stats.chisquare(np.array(expected[:, 2]), np.array(expected[:, 1]))
-    else:
-        # ddof: adjustment to the degrees of freedom. df = k-1-ddof
-        return scipy.stats.chisquare(np.array(degrees), np.array(expected))
+    # adjustment to the degrees of freedom
+    return scipy.stats.chisquare(np.array(expected[:, 2]), np.array(expected[:, 1]))
 
 
-# copied from connect_test_base.py
 def mpi_barrier():
+    """Forms a barrier for MPI processes until all of them call the function."""
     if haveMPI4Py:
         MPI.COMM_WORLD.Barrier()
 
 
-# copied from connect_test_base.py
 def get_connectivity_matrix(pop1, pop2):
     """
     Returns a connectivity matrix describing all connections from pop1 to pop2
-    such that M_ij describes the connection between the jth neuron in pop1 to
-    the ith neuron in pop2.
+    such that M_ij describes the connection between the jth node in pop1 to
+    the ith node in pop2.
+
+    Parameters
+    ---------
+    pop1
+        Source population.
+    pop2
+        Target population.
+
+    Return values
+    -------------
+        A connectivity matrix describing all connections from pop1 to pop2.
+
     """
 
     M = np.zeros((len(pop2), len(pop1)))
@@ -216,14 +284,18 @@ def get_connectivity_matrix(pop1, pop2):
     return M
 
 
-# adapted from connect_test_base.py
 def mpi_assert(data_original, data_test):
     """
-    Compares data_original and data_test.
-    """
+    Compares two arrays with assert and pytest.
 
+    Parameters
+    ---------
+    data_original
+        The original data.
+    data_test
+        The data to be compared with.
+    """
     data_original = gather_data(data_original)
-    # only test if on rank 0
     if data_original is not None:
         if isinstance(data_original, (np.ndarray, np.generic)) and isinstance(data_test, (np.ndarray, np.generic)):
             assert data_original == pytest.approx(data_test)
@@ -231,17 +303,24 @@ def mpi_assert(data_original, data_test):
             assert data_original == data_test
 
 
-# adapted from test_connect_pairwise_bernoulli.py
-# a test for parameters "p" and "max_astro_per_target"
-# run for three levels of neuron-neuron connection probabilities
 @pytest.mark.skipif_missing_threads
-@pytest.mark.parametrize("p_n2n", [0.1, 0.3, 0.5])
-def test_statistics(p_n2n):
-    # set connection parameters
+@pytest.mark.parametrize("p_primary", [0.1, 0.3, 0.5])
+def test_statistics(p_primary):
+    """
+    A test for the parameters "p_primary" and "pool_size" in the
+    "tripartite_bernoulli_with_pool" rule.
+
+    Parameters
+    ---------
+    p_primary
+        Connection probability between the primary populations.
+
+    """
+    # set network and connectivity parameters
     N1 = 50
     N2 = 50
-    max_astro_per_target = 5
-    conn_dict = {"rule": "tripartite_bernoulli_with_pool", "p_primary": p_n2n, "pool_size": max_astro_per_target}
+    pool_size = 5
+    conn_dict = {"rule": "tripartite_bernoulli_with_pool", "p_primary": p_primary, "pool_size": pool_size}
 
     # set test parameters
     stat_dict = {"alpha2": 0.05, "n_runs": 20}
@@ -251,46 +330,54 @@ def test_statistics(p_n2n):
     nest.set_verbosity("M_FATAL")
 
     # here we test
-    # 1. p yields the correct indegree and outdegree
-    # 2. max_astro_per_target limits the number of astrocytes connected to each target neuron
+    # 1. p_primary yields the correct indegree and outdegree
+    # 2. pool_size limits the number of third-population nodes connected to each target nodes
     for fan in ["in", "out"]:
         expected = get_expected_degrees_bernoulli(conn_dict["p_primary"], fan, N1, N2)
         pvalues = []
-        n_astrocytes = []
+        n_third_nodes = []
         for i in range(stat_dict["n_runs"]):
             # setup network and connect
             nest.ResetKernel()
             nest.local_num_threads = nr_threads
             nest.rng_seed = i + 1
-            pop1, pop2, pop_astro = setup_network(conn_dict, {"third_out": {"synapse_model": "sic_connection"}}, N1, N2)
+            pop1, pop2, pop3 = setup_network(conn_dict, {"third_out": {"synapse_model": "sic_connection"}}, N1, N2)
             # get indegree or outdegree
             degrees = get_degrees(fan, pop1, pop2)
             # gather data from MPI processes
             degrees = gather_data(degrees)
             # do chi-square test for indegree or outdegree
             if degrees is not None:
-                chi, p_degrees = chi_squared_check(degrees, expected, "pairwise_bernoulli")
+                chi, p_degrees = chi_squared_check(degrees, expected)
                 pvalues.append(p_degrees)
             mpi_barrier()
-            # get number of astrocytes connected to each target neuron
+            # get number of third_nodes connected to each target nodes
             conns_n2n = nest.GetConnections(pop1, pop2).get()
-            conns_a2n = nest.GetConnections(pop_astro, pop2).get()
+            conns_a2n = nest.GetConnections(pop3, pop2).get()
             for id in list(set(conns_n2n["target"])):
-                astrocytes = np.array(conns_a2n["source"])
+                third_nodes = np.array(conns_a2n["source"])
                 targets = np.array(conns_a2n["target"])
-                n_astrocytes.append(len(set(astrocytes[targets == id])))
+                n_third_nodes.append(len(set(third_nodes[targets == id])))
         # assert that the p-values are uniformly distributed
         if degrees is not None:
             ks, p_uniform = scipy.stats.kstest(pvalues, "uniform")
             assert p_uniform > stat_dict["alpha2"]
-        # assert that for each target neuron, number of astrocytes is smaller than max_astro_per_target
-        assert all(n <= max_astro_per_target for n in n_astrocytes)
+        # assert that for each target nodes, number of third_nodes is smaller than pool_size
+        assert all(n <= pool_size for n in n_third_nodes)
 
 
-# adapted from test_connect_pairwise_bernoulli
 @pytest.mark.parametrize("autapses", [True, False])
 def test_autapses_true(autapses):
-    # set connection parameters
+    """
+    A test for autapses in the "tripartite_bernoulli_with_pool" rule.
+
+    Parameters
+    ---------
+    autapses
+        If True, autapses are allowed. If False, not allowed.
+
+    """
+    # set network and connectivity parameters
     N = 50
     conn_dict = {
         "rule": "tripartite_bernoulli_with_pool",
@@ -301,13 +388,18 @@ def test_autapses_true(autapses):
     # set NEST verbosity
     nest.set_verbosity("M_FATAL")
 
-    # test that autapses exist
-    pop = nest.Create("aeif_cond_alpha_astro", N)
-    pop_astro = nest.Create("astrocyte_lr_1994", N)
+    # create the network
+    pop_primay = nest.Create("aeif_cond_alpha_astro", N)
+    pop_third = nest.Create("astrocyte_lr_1994", N)
     nest.TripartiteConnect(
-        pop, pop, pop_astro, conn_spec=conn_dict, syn_specs={"third_out": {"synapse_model": "sic_connection"}}
+        pop_primay,
+        pop_primay,
+        pop_third,
+        conn_spec=conn_dict,
+        syn_specs={"third_out": {"synapse_model": "sic_connection"}},
     )
-    # make sure all connections do exist
-    M = get_connectivity_matrix(pop, pop)
+
+    # make sure autapses do (or do not) exist
+    M = get_connectivity_matrix(pop_primay, pop_primay)
     mpi_assert(np.diag(M), autapses * np.ones(N))
     mpi_assert(np.sum(M), N**2 - (1 - autapses) * N)

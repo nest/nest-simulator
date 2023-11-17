@@ -150,6 +150,10 @@ def create_astro_network(scale=1.0):
     scale
         Scale of the model.
 
+    Return values
+    -------------
+        Created nodes and Poisson generator.
+
     """
     print("Creating nodes ...")
     assert scale >= 1.0, "scale must be >= 1.0"

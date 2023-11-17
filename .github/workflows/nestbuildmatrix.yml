@@ -375,7 +375,7 @@ jobs:
           name: "sphinx-rtd output"
           path: |
             build/sphinx-output.log
-            build/userdoc/html/
+            build/doc/_build/html/
 
   sphinx-conda:
     # as close as possible to the suggested user docs build in the documentation
@@ -414,7 +414,7 @@ jobs:
         with:
           path: |
             build/sphinx-output.log
-            build/userdoc/html/
+            build/doc/_build/html/
 
   build_linux:
     if: ${{ !contains(github.event.head_commit.message, 'ci skip') }}

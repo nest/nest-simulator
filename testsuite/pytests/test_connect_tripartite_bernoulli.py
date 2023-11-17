@@ -95,13 +95,15 @@ def get_expected_degrees_bernoulli(p, fan, len_source_pop, len_target_pop):
     mid = int(round(n * p))
     e_min = 5
 
-    # combine from front
     data_front = []
-    cumexp = 0.0
+    cumexp = 0.0  # expected number of observations
     bins_combined = 0
+    # iterate from degree=0 to degree=mid-1, where mid is the expected degree
     for degree in range(mid):
+        # for each degree, generate expected number of observations, with binomial distribution
         cumexp += scipy.stats.binom.pmf(degree, n, p) * n_p
         bins_combined += 1
+        # if cumexp is < e_min, keep it and combine it into bins of larger degrees later
         if cumexp < e_min:
             if degree == mid - 1:
                 if len(data_front) == 0:
@@ -110,15 +112,17 @@ def get_expected_degrees_bernoulli(p, fan, len_source_pop, len_target_pop):
                 data_front[-1] = (deg, exp + cumexp, obs, num + bins_combined)
             else:
                 continue
+        # if cumexp is >= e_min, save the data (along with previously unsaved data)
         else:
             data_front.append((degree - bins_combined + 1, cumexp, 0, bins_combined))
+            # reset number of observations and move on to the next degree
             cumexp = 0.0
             bins_combined = 0
 
-    # combine from back
     data_back = []
     cumexp = 0.0
     bins_combined = 0
+    # do the same iteration but from degree=n to degree=mid
     for degree in reversed(range(mid, n + 1)):
         cumexp += scipy.stats.binom.pmf(degree, n, p) * n_p
         bins_combined += 1
@@ -136,6 +140,7 @@ def get_expected_degrees_bernoulli(p, fan, len_source_pop, len_target_pop):
             bins_combined = 0
     data_back.reverse()
 
+    # combine to obtain the expected degree distribution
     expected = np.array(data_front + data_back)
     if fan == "out":
         assert sum(expected[:, 3]) == len_target_pop + 1

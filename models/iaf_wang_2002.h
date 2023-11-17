@@ -236,6 +236,7 @@ private:
     double g_GABA;         //!< Peak conductance GABA
     double g_NMDA;         //!< Peak conductance NMDA
     double g_AMPA;         //!< Peak conductance AMPA
+    double g_AMPA_ext;         //!< Peak conductance AMPA
     double t_ref;          //!< Refractory period in ms
     double tau_AMPA;       //!< Synaptic Time Constant AMPA Synapse in ms
     double tau_GABA;       //!< Synaptic Time Constant GABA Synapse in ms
@@ -393,11 +394,18 @@ iaf_wang_2002::send_test_event( Node& target, size_t receptor_type, synindex, bo
 inline size_t
 iaf_wang_2002::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
-  if ( receptor_type != 0 )
+  if  ( receptor_type == 0 )
+  {
+    return 0;
+  }
+  else if ( receptor_type == 1 )
+  {
+    return 1;
+  }
+  else
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
-  return 0;
 }
 
 inline size_t

@@ -120,6 +120,7 @@ nest::iaf_wang_2002::Parameters_::Parameters_()
   , g_GABA ( 1.3 )        //
   , g_NMDA ( 0.165 )        //
   , g_AMPA ( 0.05 )        //
+  , g_AMPA_ext ( 0.05 )   //
   , t_ref( 2.0 )          // ms
   , tau_AMPA( 2.0 )       // ms
   , tau_GABA( 5.0 )       // ms
@@ -190,6 +191,7 @@ nest::iaf_wang_2002::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::g_GABA, g_GABA );
   def< double >( d, names::g_NMDA, g_NMDA );
   def< double >( d, names::g_AMPA, g_AMPA );
+  def< double >( d, names::g_AMPA_ext, g_AMPA_ext );
   def< double >( d, names::t_ref, t_ref );
   def< double >( d, names::tau_AMPA, tau_AMPA );
   def< double >( d, names::tau_GABA, tau_GABA );
@@ -213,6 +215,7 @@ nest::iaf_wang_2002::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::g_GABA, g_GABA, node );
   updateValueParam< double >( d, names::g_NMDA, g_NMDA, node );
   updateValueParam< double >( d, names::g_AMPA, g_AMPA, node );
+  updateValueParam< double >( d, names::g_AMPA_ext, g_AMPA_ext, node );
   updateValueParam< double >( d, names::t_ref, t_ref, node );
   updateValueParam< double >( d, names::tau_AMPA, tau_AMPA, node );
   updateValueParam< double >( d, names::tau_GABA, tau_GABA, node );
@@ -499,9 +502,18 @@ nest::iaf_wang_2002::handle( SpikeEvent& e )
 
   if ( e.get_weight() > 0.0 )
   {
+    if ( e.get_rport() == 0 ) {
       B_.spike_AMPA.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
         e.get_weight() * e.get_multiplicity() );
-
+    }
+    // if from external population, ignore weight
+    // when computing the actual synaptic current, this contribution will be multiplied by
+    // g_AMPA. therefore we multiply by g_AMPA_ext / g_AMPA here, and the g_AMPA denominator
+    // will be cancelled
+    else if ( e.get_rport() == 1 ) {
+      B_.spike_AMPA.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+        P_.g_AMPA_ext / P_.g_AMPA * e.get_multiplicity() );
+    }
     if ( e.get_offset() != 0.0 ) {
       B_.spike_NMDA.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
         e.get_weight() * e.get_multiplicity() * e.get_offset() );

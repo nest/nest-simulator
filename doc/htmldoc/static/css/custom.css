@@ -102,10 +102,17 @@ section#kernel-attributes-nest-nestmodule dd {
  * Rules for  mermaid diagrams
  *************************************************************/
 
-.mermaid .cluster rect {
+section#user-level-documentation-workflow .mermaid .cluster rect {
 	fill: #47555B21 !important;
 	stroke: None !important;
 	stroke-width: None !important;
+}
+
+section#conceptual-approach div.mermaid .cluster rect {
+	fill: #fff0 !important;
+	stroke: #f63 !important;
+	stroke-width: 3px !important;
+  stroke-dasharray: 5 10;
 }
 
 
@@ -114,7 +121,11 @@ rect.basic.label-container {
 	stroke: #ff6633;
 	stroke-width: 1px;
 }
-
+/*
+section#conceptual-approach foreignObject{
+ width: 200px;
+}
+*/
 figure.align-default {
 	text-align: center;
 }

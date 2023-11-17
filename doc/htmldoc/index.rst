@@ -72,39 +72,43 @@ Description of this diagram. Click the image below to discover more!
 
 .. mermaid::
 
-   flowchart LR
+   flowchart TB
 
      classDef nodeStyle color:#fff, stroke:#fff0, fill:#015491;
-     classDef nodeStyle2 color:#fff, stroke:#fff0, fill:#532B01;
+     classDef nodeStyle2 color:#fff, stroke:#fff0, fill:#072f42;
+     classDef nodeStyle3 color:#222, stroke:#fff0, fill:#22222233;
 
-     subgraph Built-in or user provided models
-        neuron_models:::nodeStyle --> network
+     subgraph models [Built-in or user provided models]
+        direction RL
+        neuron_models:::nodeStyle --> network:::nodeStyle
         synapse_models:::nodeStyle --> network
 
      end
      subgraph nest-simulator
        direction TB
-       stimulating_devices:::nodeStyle --> simulate
-       simulate:::nodeStyle --> recording_devices:::nodeStyle
+       stimulating_devices:::nodeStyle2 --> simulate
+       simulate:::nodeStyle2 --> recording_devices:::nodeStyle2
      end
-     network:::nodeStyle -->nest-simulator
+     models -->nest-simulator
 
+     exp(Experimental protocols)
+     act
+    recording_devices --> act(Activity data):::nodeStyle3
+    exp:::nodeStyle3 --> stimulating_devices
 
-     nest-simulator -->|output| act(Activity data):::nodeStyle2
-     exp(Experimental protocols):::nodeStyle2 -->|input| nest-simulator
-
-   simulate[<img src='_static/img//nest_logo.png' /> \n Simulation ]
+   simulate[<img src='_static/img/nest_logo.png' /> Simulation \n ______________________]
    neuron_models[<img src='_static/img/neuron.svg' /> \n Neuron Models]
    synapse_models[<img src='_static/img/synapse.svg' /> \n Synapse Models]
-   stimulating_devices[<img src='_static/img/stimulate.svg' /> \n Stimulating Devices]
-   recording_devices[<img src='_static/img/recording.svg' /> \n Recording \nDevices]
-   network[<img src='_static/img/networkbrain.svg' /> \n Network Models]
+   stimulating_devices[<img src='_static/img/stimulatelight.svg' /> Stimulating Devices]
+   recording_devices[<img src='_static/img/recordinglight.svg' /> Recording Devices]
+   network[<img src='_static/img/networkbrainlight.svg' /> \n Network Models]
    click network href "https://nest-simulator.org"
    click neuron_models href "/models/index.html"
    click synapse_models href "file:///home/mitchell/Work/build-repo/doc/_build/html/understand_index.html"
    click stimulating_devices href "https://nest-simulator.org"
    click recording_devices href "https://nest-simulator.org"
    click stimulate href "https://nest-simulator.org"
+
 
 
 .. toctree::

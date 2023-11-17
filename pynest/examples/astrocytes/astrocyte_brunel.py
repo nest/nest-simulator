@@ -139,7 +139,18 @@ neuron_params_in = {
 
 
 def create_astro_network(scale=1.0):
-    """Create nodes for a neuron-astrocyte network."""
+    """Create nodes for a neuron-astrocyte network.
+
+    Nodes in a neuron-astrocyte network are created according to the give scale
+    of the model. The nodes created include excitatory and inhibitory neruons,
+    astrocytes, and a Poisson generator.
+
+    Parameters
+    ---------
+    scale
+        Scale of the model.
+
+    """
     print("Creating nodes ...")
     assert scale >= 1.0, "scale must be >= 1.0"
     nodes_ex = nest.Create(neuron_model, int(network_params["N_ex"] * scale), params=neuron_params_ex)
@@ -151,7 +162,25 @@ def create_astro_network(scale=1.0):
 
 def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise, scale=1.0):
     """Connect the nodes in a neuron-astrocyte network.
-    The astrocytes are paired with excitatory connections only.
+
+    Nodes in a neuron-astrocyte network are connected. The connection
+    probability between neurons is divided by a the given scale to preserve
+    the expected number of connections for each node. The astrocytes are paired
+    with excitatory connections only.
+
+    Parameters
+    ---------
+    nodes_ex
+        Nodes of excitatory neurons.
+    nodes_in
+        Nodes of inhibitory neurons.
+    nodes_astro
+        Nodes of astrocytes.
+    node_noise
+        Poisson generator.
+    scale
+        Scale of the model.
+
     """
     print("Connecting Poisson generator ...")
     assert scale >= 1.0, "scale must be >= 1.0"
@@ -201,6 +230,22 @@ def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise, scale=1.
 
 
 def plot_dynamics(astro_data, neuron_data, start):
+    """Plot the dynamics in neurons and astrocytes.
+
+    The dynamics in the given neuron and astrocyte nodes are plotted. The
+    dynamics in clude IP3 and calcium in the astrocytes, and the SIC input to
+    the neurons.
+
+    Parameters
+    ---------
+    astro_data
+        Data of IP3 and calcium dynamics in the astrocytes.
+    neuron_data
+        Data of SIC input to the neurons.
+    start
+        Start time of the plotted dynamics.
+
+    """
     print("Plotting dynamics ...")
     # astrocyte data
     astro_mask = astro_data["times"] > start
@@ -256,6 +301,7 @@ def plot_dynamics(astro_data, neuron_data, start):
 
 
 def run_simulation():
+    """Run simulation of a neuron-astrocyte network."""
     # NEST configuration
     nest.ResetKernel()
     nest.resolution = sim_params["dt"]
@@ -279,10 +325,6 @@ def run_simulation():
     mm_neuron = nest.Create("multimeter", params={"record_from": ["I_SIC"]})
     mm_astro = nest.Create("multimeter", params={"record_from": ["IP3", "Ca"]})
 
-    # Run pre-simulation
-    print("Running pre-simulation ...")
-    nest.Simulate(pre_sim_time)
-
     # select nodes randomly and connect them with recorders
     print("Connecting recorders ...")
     neuron_list = (exc + inh).tolist()
@@ -296,6 +338,10 @@ def run_simulation():
     nest.Connect(neuron_list_for_sr, sr_neuron)
     nest.Connect(mm_neuron, neuron_list_for_mm)
     nest.Connect(mm_astro, astro_list_for_mm)
+
+    # run pre-simulation
+    print("Running pre-simulation ...")
+    nest.Simulate(pre_sim_time)
 
     # run simulation
     print("Running simulation ...")
@@ -312,7 +358,7 @@ def run_simulation():
     )
 
     # plot dynamics in astrocytes and neurons
-    plot_dynamics(astro_data, neuron_data, pre_sim_time)
+    plot_dynamics(astro_data, neuron_data, 0.0)
 
     # show plots
     plt.show()

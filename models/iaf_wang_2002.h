@@ -76,6 +76,7 @@ the following equations
 
 .. math::
     I_{\mathrm{AMPA}} = g_{\mathrm{AMPA}}(V(t) - E_{\mathrm{ex}} \sum_{j=1}^{C_E} w_j s_j^{\mathrm{AMPA}}
+    \frac{d}{dt}s^{\mathrm{AMPA}}_j = -\frac{s_j}{\tau_{\mathrm{AMPA}}}
 
 .. math::
    \frac{ ds_j^{NMDA}(t) }{ dt } = - \frac{ s_j^{NMDA}(t) }{ \tau_{NMDA,decay} } + \alpha x_j(t)(1 - s_j^{NMDA}(t)) \\
@@ -277,7 +278,8 @@ public:
     };
 
     double y_[ STATE_VEC_SIZE ]; //!< state vector, must be C-array for GSL solver
-    double s_NMDA_pre; // ADD INITIALIZATION
+    double s_NMDA_pre;  // for determining (unweighted) alpha * (1 - s_NMDA) term on
+                        // pre-synaptic side
     int r_;             //!< number of refractory steps remaining
 
     State_( const Parameters_& ); //!< Default initialization

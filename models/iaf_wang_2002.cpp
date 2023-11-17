@@ -137,6 +137,7 @@ nest::iaf_wang_2002::State_::State_( const Parameters_& p )
   y_[ s_AMPA ] = 0.0;
   y_[ s_GABA ] = 0.0;
   y_[ s_NMDA ] = 0.0;
+  s_NMDA_pre = 0.0;
 }
 
 nest::iaf_wang_2002::State_::State_( const State_& s )
@@ -146,6 +147,7 @@ nest::iaf_wang_2002::State_::State_( const State_& s )
   y_[ s_AMPA ] = s.y_[ s_AMPA ];
   y_[ s_GABA ] = s.y_[ s_GABA ];
   y_[ s_NMDA ] = s.y_[ s_NMDA ];
+  s_NMDA_pre = s.s_NMDA_pre;
 }
 
 nest::iaf_wang_2002::Buffers_::Buffers_( iaf_wang_2002& n )
@@ -404,12 +406,10 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
 {
   std::vector< double > s_vals( kernel().connection_manager.get_min_delay(), 0.0 );
 
-  std::cout << "INSIDE UPDATE" << std::endl;
   for ( long lag = from; lag < to; ++lag )
   {
     double t = 0.0;
     
-    std::cout << "INSIDE INNER UPDATE" << std::endl;
     // numerical integration with adaptive step size control:
     // ------------------------------------------------------
     // gsl_odeiv_evolve_apply performs only a single numerical
@@ -425,11 +425,6 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
 
     while ( t < B_.step_ )
     {
-      std::cout << "INSIDE GSL LOOP" << std::endl;
-      std::cout << "V_m: " << S_.y_[ 0 ] << std::endl;
-      std::cout << "s_AMPA: " << S_.y_[ State_::s_AMPA ] << std::endl;
-      std::cout << "s_NMDA: " << S_.y_[ State_::s_NMDA ] << std::endl;
-      std::cout << "s_GABA: " << S_.y_[ State_::s_GABA ] << std::endl;
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
@@ -445,7 +440,6 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
       }
     }
 
-    std::cout << "GSL STEP RUN" << std::endl;
     // add incoming spikes
     S_.y_[ State_::s_AMPA ] += B_.spike_AMPA.get_value( lag );
     S_.y_[ State_::s_GABA ] += B_.spike_GABA.get_value( lag );
@@ -453,14 +447,12 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
     S_.y_[ State_::s_NMDA ] = std::min( S_.y_[ State_::s_NMDA ], 1.0 );
     if ( S_.r_ )
     {
-      std::cout << "REFRACTORY" << std::endl;
       // neuron is absolute refractory
       --S_.r_;
       S_.y_[ State_::V_m ] = P_.V_reset; // clamp potential
     }
     else if ( S_.y_[ State_::V_m ] >= P_.V_th )
     {
-      std::cout << "SPIKING" << std::endl;
       // neuron is not absolute refractory
       S_.r_ = V_.RefractoryCounts_;
       S_.y_[ State_::V_m ] = P_.V_reset;
@@ -476,24 +468,19 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
       // compute current value of s_NMDA and add NMDA update to spike offset
       S_.s_NMDA_pre = S_.s_NMDA_pre * exp( -( t_spike - t_lastspike ) / P_.tau_decay_NMDA );
       double s_NMDA_delta = P_.alpha * (1 - S_.s_NMDA_pre);
-      S_.s_NMDA_pre += s_NMDA_delta;
+      S_.s_NMDA_pre += s_NMDA_delta; // guaranteed to be <= 1.
      
-      std::cout << "CREATING SPIKEEVENT" << std::endl;
       SpikeEvent se;
       se.set_offset( s_NMDA_delta );
       kernel().event_delivery_manager.send( *this, se, lag );
-      std::cout << "FINISHED SPIKEEVENT" << std::endl;
     }
 
 
     // set new input current
     B_.I_stim_ = B_.currents_.get_value( lag );
 
-    std::cout << "LOGGING DATA" << std::endl;
     // voltage logging
     B_.logger_.record_data( origin.get_steps() + lag );
-    std::cout << "FINISHED UPDATE" << std::endl;
-    std::cout << "" << std::endl;
   }
 }
 
@@ -509,7 +496,6 @@ void
 nest::iaf_wang_2002::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
-  std::cout << "INSIDE HANDLE SPIKEEVENT" << std::endl;
 
   if ( e.get_weight() > 0.0 )
   {
@@ -526,7 +512,6 @@ nest::iaf_wang_2002::handle( SpikeEvent& e )
     B_.spike_GABA.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() );
   }
-  std::cout << "EXITING HANDLE SPIKEEVENT" << std::endl;
 }
 
 void

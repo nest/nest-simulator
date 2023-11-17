@@ -67,16 +67,18 @@ Leaky integrate-and-fire-neuron model with dynamic NMDA receptors.
 Description
 +++++++++++
 
-This model implements a version of the neuron model described in [1]_.
+This model implements a simplified version of the neuron model described in [1]_.
 
-It contains AMPA, GABA and NMDA synapses, where the number of NMDA ports are dependent
-on the number of presynaptic connections.
+It contains AMPA, GABA and NMDA synapses
 
-The AMPA and GABA synapses are given as alpha functions, while the NMDA synapse is modeled
-with a non-linear function described by
+The equations for the synaptic currents from AMPA and GABA receptors are given by
+the following equations
 
 .. math::
-   \frac{ dg_j^{NMDA}(t) }{ dt } = - \frac{ g_j^{NMDA}(t) }{ \tau_{NMDA,decay} } + \alpha x_j(t)(1 - s_j^{NMDA}(t)) \\
+    I_{\mathrm{AMPA}} = g_{\mathrm{AMPA}}(V(t) - E_{\mathrm{ex}} \sum_{j=1}^{C_E} w_j s_j^{\mathrm{AMPA}}
+
+.. math::
+   \frac{ ds_j^{NMDA}(t) }{ dt } = - \frac{ s_j^{NMDA}(t) }{ \tau_{NMDA,decay} } + \alpha x_j(t)(1 - s_j^{NMDA}(t)) \\
    \frac{ dx_j(t) }{ dt } =- \frac{ x_j(t) }{ \tau_{NMDA,rise} } + \sum_k \delta(t - t_j^k).
 
 The synaptic current of NMDA is given by
@@ -100,7 +102,6 @@ The following parameters can be set in the status dictionary.
  V_reset        mV      Reset potential
  C_m            pF      Membrane capacitance
  g_L            nS      Leak conductance
- g_AMPA_ext     nS      Peak external AMPA conductance 
  g_AMPA         nS      Peak recurrent AMPA conductance 
  g_NMDA         nS      Peak recurrent NMDA conductance 
  g_GABA         nS      Peak recurrent GABA conductance 
@@ -122,7 +123,6 @@ The following values can be recorded.
 =========== ===========================================================
  V_m         Membrane potential
  s_AMPA      AMPA gate
- s_AMPA_ext  external AMPA gate
  s_GABA      GABA gate
  NMDA_sum    sum of NMDA over all presynaptic neurons j
 =========== ===========================================================
@@ -185,7 +185,6 @@ public:
 //  void sends_secondary_event( DelayedRateConnectionEvent& ) override;
 
   void handle( SpikeEvent& ) override;         //!< accept spikes
-//  void handle( DelayedRateConnectionEvent& ) override;         //!< accept spikes
   void handle( CurrentEvent& ) override;     //!< accept current
   void handle( DataLoggingRequest& ) override; //!< allow recording with multimeter
 
@@ -208,17 +207,6 @@ public:
     }
 
 private:
-  /**
-   * Synapse types to connect to
-   */
-  enum SynapseTypes
-  {
-    INF_SPIKE_RECEPTOR = 0,
-    AMPA_NMDA,
-    GABA,
-    SUP_SPIKE_RECEPTOR
-  };
-
   void init_state_() override;
   void pre_run_hook() override;
   void init_buffers_() override;
@@ -247,7 +235,6 @@ private:
     double g_GABA;         //!< Peak conductance GABA
     double g_NMDA;         //!< Peak conductance NMDA
     double g_AMPA;         //!< Peak conductance AMPA
-    double g_AMPA_ext;     //!< Peak conductance external AMPA
     double t_ref;          //!< Refractory period in ms
     double tau_AMPA;       //!< Synaptic Time Constant AMPA Synapse in ms
     double tau_GABA;       //!< Synaptic Time Constant GABA Synapse in ms
@@ -284,19 +271,18 @@ public:
     {
       V_m = 0,
       s_AMPA,
-      s_AMPA_ext,
       s_NMDA,
       s_GABA,
       STATE_VEC_SIZE
     };
 
     double y_[ STATE_VEC_SIZE ]; //!< state vector, must be C-array for GSL solver
+    double s_NMDA_pre; // ADD INITIALIZATION
     int r_;             //!< number of refractory steps remaining
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
 
-    double s_NMDA_pre = 0;
 
     void get( DictionaryDatum& ) const;
     void set( const DictionaryDatum&, const Parameters_&, Node* );
@@ -325,7 +311,6 @@ private:
     //   Buffers and sums of incoming spikes and currents per timestep
     // -----------------------------------------------------------------------
     RingBuffer spike_AMPA;
-    RingBuffer spike_AMPA_ext;
     RingBuffer spike_GABA;
     RingBuffer spike_NMDA;
     RingBuffer currents_;
@@ -406,18 +391,11 @@ iaf_wang_2002::send_test_event( Node& target, size_t receptor_type, synindex, bo
 inline size_t
 iaf_wang_2002::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
-  if ( receptor_type == 0 )
-  {
-    return 0;
-  }
-  else if ( receptor_type == 1 )
-  {
-    return 1;
-  }
-  else
+  if ( receptor_type != 0 )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
+  return 0;
 }
 
 inline size_t
@@ -454,10 +432,6 @@ iaf_wang_2002::get_status( DictionaryDatum& d ) const
   P_.get( d );
   S_.get( d );
   ArchivingNode::get_status( d );
-
-  DictionaryDatum receptor_type = new Dictionary();
-
-//  ( *d )[ names::receptor_types ] = receptor_type;
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }

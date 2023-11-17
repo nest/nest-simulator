@@ -267,7 +267,7 @@ NEST supports creating connections of three node populations using the
 .. code-block:: python
 
     nest.TripartiteConnect(pre, post, third, conn_spec)
-    TripartiteConnect(pre, post, third, conn_spec, syn_specs)
+    nest.TripartiteConnect(pre, post, third, conn_spec, syn_specs)
 
 ``pre``, ``post``, and ``third`` are ``NodeCollections``, defining the nodes of
 origin (`sources`) and termination (`targets`) as well as the third
@@ -331,13 +331,13 @@ is required.
     A = nest.Create('aeif_cond_alpha_astro', 10)
     B = nest.Create('aeif_cond_alpha_astro', 20)
     C = nest.Create('astrocyte_lr_1994', 5)
-    conn_spec_dict = {'rule': 'tripartite_bernoulli_with_pool',
+    conn_spec = {'rule': 'tripartite_bernoulli_with_pool',
                       'p_primary': 0.8,
 		      'p_third_if_primary': 0.5,
                       'pool_type': 'random',
 		      'pool_size': 3}
-    syn_specs_dict = {'third_out': 'sic_connection'}
-    nest.TripartiteConnect(A, B, C, conn_spec_dict, syn_specs_dict)
+    syn_specs = {'third_out': 'sic_connection'}
+    nest.TripartiteConnect(A, B, C, conn_spec, syn_specs)
 
 
 .. image:: ../static/img/tripartite_pool_type.svg

@@ -21,12 +21,12 @@ nrn2 = nest.Create("iaf_wang_2002", {"tau_AMPA": tau_AMPA,
                                      "tau_decay_NMDA": tau_NMDA,
                                      "t_ref": 0.})
 
-mm1 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_AMPA_ext", "s_NMDA", "s_GABA"], "interval": 0.1})
-mm2 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_AMPA_ext", "s_NMDA", "s_GABA"], "interval": 0.1})
+mm1 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_NMDA", "s_GABA"], "interval": 0.1})
+mm2 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_NMDA", "s_GABA"], "interval": 0.1})
 
 ex_syn_spec = {"synapse_model": "static_synapse",
-                "weight": w_ex,
-               "receptor_type": 0}
+                "weight": w_ex}
+
 
 in_syn_spec = {"synapse_model": "static_synapse",
                 "weight": w_in}

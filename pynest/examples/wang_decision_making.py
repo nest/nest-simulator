@@ -1,13 +1,18 @@
 import nest
 import matplotlib.pyplot as plt
+from matplotlib.gridspec import GridSpec
 import numpy as np
 
 np.random.seed(123)
 rng = np.random.default_rng()
 
+dt = 0.1
+nest.set(resolution=dt, print_time=True)
+
+
 # Parameters from paper
-epop_params = {"g_AMPA_ext": 2.1,
-               "g_AMPA": 0.05,
+epop_params = {"g_AMPA": 0.05,
+               "g_AMPA_ext": 2.1,
                "g_NMDA": 0.165,
                "g_GABA": 1.3,
                "tau_GABA": 5.0,
@@ -26,8 +31,8 @@ epop_params = {"g_AMPA_ext": 2.1,
                }
 
 
-ipop_params = {"g_AMPA_ext": 1.62,
-               "g_AMPA": 0.04,
+ipop_params = {"g_AMPA": 0.04,
+               "g_AMPA_ext": 1.62,
                "g_NMDA": 0.13,
                "g_GABA": 1.0,
                "tau_GABA": 5.0,
@@ -52,6 +57,8 @@ signal_update_interval = 50.
 f = 0.15 # proportion of neurons receiving signal inputs
 w_plus = 1.7
 w_minus = 1 - f * (w_plus - 1) / (1 - f)
+delay = 0.1
+
 
 NE = 1600
 NI = 400
@@ -64,7 +71,7 @@ inhibitory_pop = nest.Create("iaf_wang_2002", NI, params=ipop_params)
 mu_0 = 40.
 rho_a = mu_0 / 100
 rho_b = rho_a
-c = 80.
+c = 0.
 sigma = 4.
 mu_a = mu_0 + rho_a * c
 mu_b = mu_0 - rho_b * c
@@ -91,20 +98,21 @@ poisson_b = nest.Create("inhomogeneous_poisson_generator",
 
 poisson_0 = nest.Create("poisson_generator", params={"rate": 2400.})
 
-syn_spec_pot = {"synapse_model": "static_synapse", "weight":w_plus, "delay":0.1, 'receptor_type': 0}
-syn_spec_default = {"synapse_model": "static_synapse", "weight":1.0, "delay":0.1, 'receptor_type': 0}
-syn_spec_dep = {"synapse_model": "static_synapse", "weight":w_minus, "delay":0.1, 'receptor_type': 0}
-syn_spec_inhibitory = {"synapse_model": "static_synapse", "weight":-1.0, "delay":0.1, 'receptor_type': 0}
-syn_spec_ext = {"synapse_model": "static_synapse", "weight":1., "delay":0.1, 'receptor_type': 1}
+syn_spec_pot = {"synapse_model": "static_synapse", "weight":w_plus, "delay":delay, "receptor_type": 0}
+syn_spec_default = {"synapse_model": "static_synapse", "weight":1.0, "delay":delay, "receptor_type": 0}
+syn_spec_dep = {"synapse_model": "static_synapse", "weight":w_minus, "delay":delay, "receptor_type": 0}
+syn_spec_inhibitory = {"synapse_model": "static_synapse", "weight":-1.0, "delay":delay, "receptor_type": 0}
+syn_spec_ext = {"synapse_model": "static_synapse", "weight":1., "delay":0.1, "receptor_type": 1}
 
 sr_nonselective = nest.Create("spike_recorder")
 sr_selective1 = nest.Create("spike_recorder")
 sr_selective2 = nest.Create("spike_recorder")
 sr_inhibitory = nest.Create("spike_recorder")
 
-mm_selective1 = nest.Create("multimeter", {"record_from": ["V_m", "s_NMDA", "s_AMPA", "s_AMPA_ext", "s_GABA"]})
+mm_selective1 = nest.Create("multimeter", {"record_from": ["V_m", "s_NMDA", "s_AMPA", "s_GABA"]})
+mm_selective2 = nest.Create("multimeter", {"record_from": ["V_m", "s_NMDA", "s_AMPA", "s_GABA"]})
+mm_nonselective = nest.Create("multimeter", {"record_from": ["V_m", "s_NMDA", "s_AMPA", "s_GABA"]})
 mm_inhibitory = nest.Create("multimeter", {"record_from": ["V_m", "s_NMDA", "s_AMPA", "s_GABA"]})
-
 
 nest.Connect(poisson_0,
              nonselective_pop + selective_pop1 + selective_pop2 + inhibitory_pop,
@@ -156,9 +164,10 @@ nest.Connect(selective_pop1, sr_selective1)
 nest.Connect(selective_pop2, sr_selective2)
 nest.Connect(inhibitory_pop, sr_inhibitory)
 
-
-nest.Connect(mm_selective1, selective_pop1)
-nest.Connect(mm_inhibitory, inhibitory_pop)
+nest.Connect(mm_selective1, selective_pop1[0])
+nest.Connect(mm_selective2, selective_pop2[0])
+nest.Connect(mm_nonselective, nonselective_pop[0])
+nest.Connect(mm_inhibitory, inhibitory_pop[0])
 
 nest.Simulate(4000.)
 
@@ -167,15 +176,27 @@ spikes_selective1 = sr_selective1.get("events", "times")
 spikes_selective2 = sr_selective2.get("events", "times")
 spikes_inhibitory = sr_inhibitory.get("events", "times")
 
+vm_selective1 = mm_selective1.get("events", "V_m")
+s_AMPA_selective1 = mm_selective1.get("events", "s_AMPA")
+s_GABA_selective1 = mm_selective1.get("events", "s_GABA")
+s_NMDA_selective1 = mm_selective1.get("events", "s_NMDA")
 
+vm_selective2 = mm_selective2.get("events", "V_m")
+s_AMPA_selective2 = mm_selective2.get("events", "s_AMPA")
+s_GABA_selective2 = mm_selective2.get("events", "s_GABA")
+s_NMDA_selective2 = mm_selective2.get("events", "s_NMDA")
 
+vm_inhibitory = mm_inhibitory.get("events", "V_m")
+s_AMPA_inhibitory = mm_inhibitory.get("events", "s_AMPA")
+s_GABA_inhibitory = mm_inhibitory.get("events", "s_GABA")
+s_NMDA_inhibitory = mm_inhibitory.get("events", "s_NMDA")
 
+gs = GridSpec(5,5)
 
-senders = mm_selective1.get("events", "senders")
-inds = senders == 1
-vm = mm_selective1.get("events", "V_m")[inds]
-s_AMPA = mm_selective1.get("events", "s_AMPA")[inds]
-s_AMPA_ext = mm_selective1.get("events", "s_AMPA_ext")[inds]
-s_GABA = mm_selective1.get("events", "s_GABA")[inds]
-s_NMDA = mm_selective1.get("events", "s_NMDA")[inds]
+bins = np.arange(0, 4001, 5) - 0.001
+plt.hist(spikes_selective1, bins=bins, histtype="step")
+plt.hist(spikes_selective2, bins=bins, histtype="step")
+
+plt.show()
+
 

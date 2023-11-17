@@ -195,7 +195,9 @@ def connect_astro_network(nodes_ex, nodes_in, nodes_astro, nodes_noise, scale=1.
     conn_params_e = {
         "rule": "tripartite_bernoulli_with_pool",
         "p_primary": network_params["p_primary"] / scale,
-        "p_third_if_primary": network_params["p_third_if_primary"],
+        "p_third_if_primary": network_params[
+            "p_third_if_primary"
+        ],  # "p_third_if_primary" is scaled along with "p_primary", so no further scaling is required
         "pool_size": network_params["pool_size"],
         "pool_type": network_params["pool_type"],
     }

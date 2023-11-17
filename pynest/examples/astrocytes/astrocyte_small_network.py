@@ -174,8 +174,25 @@ neuron_params = {
 # Functions for plotting.
 
 
-# Plot all connections between neurons and astrocytes
 def plot_connections(conn_n2n, conn_n2a, conn_a2n, pre_id_list, post_id_list, astro_id_list):
+    """Plot all connections between neurons and astrocytes.
+
+    Parameters
+    ---------
+    conn_n2n
+        Data of neuron-to-neuron connections.
+    conn_n2a
+        Data of neuron-to-astrocyte connections.
+    conn_a2n
+        Data of astrocyte-to-neuron connections.
+    pre_id_list
+        ID list of presynaptic neurons.
+    post_id_list
+        ID list of postsynaptic neurons.
+    astro_id_list
+        ID list of astrocytes.
+
+    """
     print("Plotting connections ...")
 
     # helper function to create lists of connection positions
@@ -248,8 +265,21 @@ def plot_connections(conn_n2n, conn_n2a, conn_a2n, pre_id_list, post_id_list, as
     axs.spines["right"].set_visible(False)
 
 
-# Helper function to get times, means, and standard deviation of data for plotting
 def get_plot_data(data_in, variable):
+    """Helper function to get times, means, and standard deviations of data for plotting.
+
+    Parameters
+    ---------
+    data_in
+        Data containing the variable to be plotted.
+    Variable
+        Variable to be plotted.
+
+    Return values
+    -------------
+        Times, means, and standard deviations of the variable to be plotted.
+
+    """
     times_all = data_in["times"]
     ts = list(set(data_in["times"]))
     means = np.array([np.mean(data_in[variable][times_all == t]) for t in ts])
@@ -257,8 +287,20 @@ def get_plot_data(data_in, variable):
     return ts, means, sds
 
 
-# Plot membrane potentials of presynaptic and postsynaptic neurons
 def plot_vm(pre_data, post_data, start):
+    """Plot membrane potentials of presynaptic and postsynaptic neurons.
+
+    Parameters
+    ---------
+    pre_data
+        Data of the presynaptic neurons.
+    post_data
+        Data of the postsynaptic neurons.
+    start
+       Start time of the data to be plotted.
+
+    """
+
     print("Plotting V_m ...")
     # get presynaptic data
     pre_times, pre_vm_mean, pre_vm_sd = get_plot_data(pre_data, "V_m")
@@ -284,8 +326,19 @@ def plot_vm(pre_data, post_data, start):
     axes[1].plot(post_times, post_vm_mean, linewidth=2, color=color_post)
 
 
-# Plot dynamics in astrocytes and SIC in neurons
 def plot_dynamics(astro_data, neuron_data, start):
+    """Plot dynamics in astrocytes and SIC in neurons.
+
+    Parameters
+    ---------
+    astro_data
+        Data of the astrocytes.
+    neuron_data
+        Data of the neurons.
+    start
+       Start time of the data to be plotted.
+
+    """
     print("Plotting dynamics ...")
     # get astrocyte data
     astro_times, astro_ip3_mean, astro_ip3_sd = get_plot_data(astro_data, "IP3")

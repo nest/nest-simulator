@@ -275,31 +275,33 @@ factor population to be included. Connections will be established from ``pre`` t
 the connection rule used.
 
 ``conn_spec`` must be provided and must specify a tripartite
-connection rule.
+connection rule, e.g., :ref:`tripartite Bernoulli with pool <tripartite_bernoulli_with_pool>`.
 
 ``syn_specs`` is a dictionary of the form
 
 .. code-block:: python
 
-    {"primary": <syn_spec>,
-     "third_in": <syn_spec>,
-     "third_out": <syn_spec>}
+    {'primary': <syn_spec>,
+     'third_in': <syn_spec>,
+     'third_out': <syn_spec>}
 
 where the individual ``syn_spec`` elements follow the same rules as
 for the :py:func:`.Connect` function. Any of the three elements can be
 left out, in which case the synapse specification defaults to
-``"static_synapse"``. The ``"primary"`` synapse specification applies
-to connections from ``pre`` to ``post`` nodes, the ``"third_in"``
+``'static_synapse'``. The ``'primary'`` synapse specification applies
+to connections from ``pre`` to ``post`` nodes, the ``'third_in'``
 specification to connections from ``pre`` to ``third`` nodes and
-the ``"third_out"`` specification to connections from ``third`` to
+the ``'third_out'`` specification to connections from ``third`` to
 ``post`` nodes.
+
+.. _tripartite_bernoulli_with_pool:
 
 Tripartite Bernoulli with pool
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For each possible pair of nodes from ``A`` and ``B``, a connection is
 created with probability ``p_primary``, and these connections are
-called "primary" connections. For each primary connection, a
+called 'primary' connections. For each primary connection, a
 third-party connection pair involving a node from ``C`` (a third
 ``NodeCollection``) is created with the conditional probability
 ``p_third_if_primary``. This connection pair includes a connection
@@ -309,8 +311,8 @@ question, and a connection from this node from ``C`` to the node from
 at random from a pool, a subset of the nodes in ``C``. By default,
 this pool is all of ``C``.
 
-Pool formation is controlled by parameters ``pool_type``, which can be ``"random"``
-(default) or ``"block"``, and ``pool_size`` which must be between 1
+Pool formation is controlled by parameters ``pool_type``, which can be ``'random'``
+(default) or ``'block'``, and ``pool_size`` which must be between 1
 and the size of ``C`` (default). For random pools, for each node from
 ``B``, ``pool_size`` nodes from ``C`` are chosen randomly without
 replacement.
@@ -328,14 +330,15 @@ is required.
 
 .. code-block:: python
 
-    A = nest.Create('aeif_cond_alpha_astro', 10)
-    B = nest.Create('aeif_cond_alpha_astro', 20)
-    C = nest.Create('astrocyte_lr_1994', 5)
+    n, m, x, p_primary, p_third_if_primary, pool_size = 10, 10, 5, 0.25, 1.0, 2
+    A = nest.Create('aeif_cond_alpha_astro', n)
+    B = nest.Create('aeif_cond_alpha_astro', m)
+    C = nest.Create('astrocyte_lr_1994', x)
     conn_spec = {'rule': 'tripartite_bernoulli_with_pool',
-                      'p_primary': 0.8,
-		      'p_third_if_primary': 0.5,
+                      'p_primary': p_primary,
+		      'p_third_if_primary': p_third_if_primary,
                       'pool_type': 'random',
-		      'pool_size': 3}
+		      'pool_size': pool_size}
     syn_specs = {'third_out': 'sic_connection'}
     nest.TripartiteConnect(A, B, C, conn_spec, syn_specs)
 
@@ -344,13 +347,13 @@ is required.
     :align: center
 
 Possible outcomes of connectivity with the two pool types. In the example
-of ``"random"`` pool type (left), each node in ``B`` can be connected with
+of ``'random'`` pool type (left), each node in ``B`` can be connected with
 up to two randomly selected nodes in ``C`` (given ``pool_size == 2``). In
-the first example of ``"block"`` pool type (middle), let ``n(B)/n(C)`` = 2,
+the first example of ``'block'`` pool type (middle), let ``n(B)/n(C)`` = 2,
 then each node in ``B`` can be connected with one node in ``C``
 (``pool_size == 1`` is required because ``n(C) < n(B)``), and each node in
 ``C`` can be connected with up to two nodes in ``B``. In the second example
-of ``"block"`` pool type (right), let ``n(C)/n(B)`` = 2, then each node in
+of ``'block'`` pool type (right), let ``n(C)/n(B)`` = 2, then each node in
 ``B`` can be connected with up to two nodes in ``C`` (``pool_size == 2`` is
 required because ``n(C)/n(B)`` = 2), and each node in ``C`` can be
 connected to one node in ``B``. Colors of nodes in ``B`` and ``C`` indicate

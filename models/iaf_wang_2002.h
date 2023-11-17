@@ -177,7 +177,6 @@ public:
    */
 
   using Node::handles_test_event;
-//  using Node::sends_secondary_event;
   using Node::handle;
 
   //! Used to validate that we can send SpikeEvent to desired target:port.
@@ -313,9 +312,9 @@ private:
     // -----------------------------------------------------------------------
     //   Buffers and sums of incoming spikes and currents per timestep
     // -----------------------------------------------------------------------
-    RingBuffer spike_AMPA;
-    RingBuffer spike_GABA;
-    RingBuffer spike_NMDA;
+    RingBuffer spike_AMPA_;
+    RingBuffer spike_GABA_;
+    RingBuffer spike_NMDA_;
     RingBuffer currents_;
 
     // -----------------------------------------------------------------------

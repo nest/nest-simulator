@@ -153,9 +153,9 @@ nest::iaf_wang_2002::State_::State_( const State_& s )
 
 nest::iaf_wang_2002::Buffers_::Buffers_( iaf_wang_2002& n )
   : logger_( n )
-  , spike_AMPA()
-  , spike_GABA()
-  , spike_NMDA()
+  , spike_AMPA_()
+  , spike_GABA_()
+  , spike_NMDA_()
   , s_( nullptr )
   , c_( nullptr )
   , e_( nullptr )
@@ -335,9 +335,9 @@ nest::iaf_wang_2002::init_state_()
 void
 nest::iaf_wang_2002::init_buffers_()
 {
-  B_.spike_AMPA.clear();
-  B_.spike_GABA.clear();
-  B_.spike_NMDA.clear();
+  B_.spike_AMPA_.clear();
+  B_.spike_GABA_.clear();
+  B_.spike_NMDA_.clear();
   B_.currents_.clear(); // includes resize
 
   B_.logger_.reset(); // includes resize
@@ -444,9 +444,9 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
     }
 
     // add incoming spikes
-    S_.y_[ State_::s_AMPA ] += B_.spike_AMPA.get_value( lag );
-    S_.y_[ State_::s_GABA ] += B_.spike_GABA.get_value( lag );
-    S_.y_[ State_::s_NMDA ] += B_.spike_NMDA.get_value( lag );
+    S_.y_[ State_::s_AMPA ] += B_.spike_AMPA_.get_value( lag );
+    S_.y_[ State_::s_GABA ] += B_.spike_GABA_.get_value( lag );
+    S_.y_[ State_::s_NMDA ] += B_.spike_NMDA_.get_value( lag );
     S_.y_[ State_::s_NMDA ] = std::min( S_.y_[ State_::s_NMDA ], 1.0 );
     if ( S_.r_ )
     {
@@ -470,7 +470,7 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
 
       // compute current value of s_NMDA and add NMDA update to spike offset
       S_.s_NMDA_pre = S_.s_NMDA_pre * exp( -( t_spike - t_lastspike ) / P_.tau_decay_NMDA );
-      double s_NMDA_delta = P_.alpha * (1 - S_.s_NMDA_pre);
+      const double s_NMDA_delta = P_.alpha * (1 - S_.s_NMDA_pre);
       S_.s_NMDA_pre += s_NMDA_delta; // guaranteed to be <= 1.
      
       SpikeEvent se;
@@ -503,7 +503,7 @@ nest::iaf_wang_2002::handle( SpikeEvent& e )
   if ( e.get_weight() > 0.0 )
   {
     if ( e.get_rport() == 0 ) {
-      B_.spike_AMPA.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+      B_.spike_AMPA_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
         e.get_weight() * e.get_multiplicity() );
     }
     // if from external population, ignore weight
@@ -511,17 +511,17 @@ nest::iaf_wang_2002::handle( SpikeEvent& e )
     // g_AMPA. therefore we multiply by g_AMPA_ext / g_AMPA here, and the g_AMPA denominator
     // will be cancelled
     else if ( e.get_rport() == 1 ) {
-      B_.spike_AMPA.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+      B_.spike_AMPA_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
         P_.g_AMPA_ext / P_.g_AMPA * e.get_multiplicity() );
     }
     if ( e.get_offset() != 0.0 ) {
-      B_.spike_NMDA.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+      B_.spike_NMDA_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
         e.get_weight() * e.get_multiplicity() * e.get_offset() );
     }
   }
   else
   {
-    B_.spike_GABA.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_GABA_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() );
   }
 }

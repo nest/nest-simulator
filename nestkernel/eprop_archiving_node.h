@@ -46,7 +46,7 @@ class EpropArchivingNode : public Node
 {
 
 public:
-  //! Constructor.
+  //! Defautl constructor.
   EpropArchivingNode();
 
   //! Copy constructor.

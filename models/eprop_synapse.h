@@ -204,6 +204,7 @@ EndUserDocs */
 class EpropCommonProperties : public CommonSynapseProperties
 {
 public:
+  // Default constructor.
   EpropCommonProperties();
 
   //! Get parameter dictionary.
@@ -239,17 +240,18 @@ class eprop_synapse : public Connection< targetidentifierT >
 {
 
 public:
-  //! Common synapse properties type.
+  //! Type of the common synapse properties type.
   typedef EpropCommonProperties CommonPropertiesType;
 
-  //! Connection base type.
+  //! Type of the connection base.
   typedef Connection< targetidentifierT > ConnectionBase;
 
+  //! Properties of the connection model.
   static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
     | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::REQUIRES_EPROP_ARCHIVING
     | ConnectionModelProperties::SUPPORTS_HPC | ConnectionModelProperties::SUPPORTS_LBL;
 
-  //! Constructor.
+  //! Default constructor.
   eprop_synapse();
 
   //! Copy constructor.
@@ -278,10 +280,10 @@ public:
   //! Update the synaptic weight via the Adam optimizer.
   void optimize_via_adam( const long current_optimization_step, const EpropCommonProperties& cp );
 
-  //! Optimize.
+  //! Update the synaptic weight via an optimizer.
   void ( eprop_synapse::*optimize )( const long current_optimization_step, const EpropCommonProperties& cp );
 
-  //! Connection test dummy node.
+  //! Dummy node for testing the connection.
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
   public:
@@ -300,7 +302,7 @@ public:
     }
   };
 
-  //! Check if the target accepts the event type and receptor type requested by the sender and set variables that stay
+  //! Check if the target accepts the event and receptor type requested by the sender and set variables that stay
   //! constant throughout the simulation.
   void
   check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& cp )

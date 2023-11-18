@@ -139,7 +139,7 @@ class eprop_readout : public EpropArchivingNode
 {
 
 public:
-  //! Constructor.
+  //! Default constructor.
   eprop_readout();
 
   //! Copy constructor.
@@ -195,13 +195,13 @@ private:
   //! Compute the error signal.
   void ( eprop_readout::*compute_error_signal )( const long lag );
 
-  //! Recordables map.
+  //! Map for storing a static set of recordables.
   friend class RecordablesMap< eprop_readout >;
 
-  //! Universal data logger.
+  //! Logger for universal data supporting the data logging request / reply mechanism. Populated with a recordables map.
   friend class UniversalDataLogger< eprop_readout >;
 
-  //! Parameters.
+  //! Structure of parameters.
   struct Parameters_
   {
     //! Capacitance of the membrane (pF).
@@ -222,29 +222,29 @@ private:
     //! Absolute lower bound of the membrane voltage relative to the leak membrane potential (mV).
     double V_min_;
 
-    //! Constructor.
+    //! Default constructor.
     Parameters_();
 
-    //! Get parameters.
+    //! Get the parameters and their values.
     void get( DictionaryDatum& ) const;
 
-    //! Set parameters.
+    //! Set the parameters and throw errors in case of invalid values.
     double set( const DictionaryDatum&, Node* );
   };
 
-  //! State variables.
+  //! Structure of state variables.
   struct State_
   {
-    //! Deviation between the readout and the target signal.
+    //! Error signal. Deviation between the readout and the target signal.
     double error_signal_;
 
     //! Readout signal. Leaky integrated spikes emitted by the recurrent network.
     double readout_signal_;
 
-    //! Unnormalized readout signal.
+    //! Unnormalized readout signal. Readout signal not yet divided by the readout signals of other readout neurons.
     double readout_signal_unnorm_;
 
-    //! Target signal. The signal the network is supposed to learn.
+    //! Target / teacher signal that the network is supposed to learn.
     double target_signal_;
 
     //! Input current (pA).
@@ -253,26 +253,26 @@ private:
     //! Membrane voltage relative to the leak membrane potential (mV).
     double y3_;
 
-    //! Constructor.
+    //! Default constructor.
     State_();
 
-    //! Get the value of the provided parameter from the dictionary.
+    //! Get the state variables and their values.
     void get( DictionaryDatum&, const Parameters_& ) const;
 
-    //! Set the provided parameter in the dictionary to the provided value.
+    //! Set the state variables.
     void set( const DictionaryDatum&, const Parameters_&, double, Node* );
   };
 
-  //! Buffers.
+  //! Structure of buffers.
   struct Buffers_
   {
-    //! Constructor.
+    //! Default constructor.
     Buffers_( eprop_readout& );
 
     //! Copy constructor.
     Buffers_( const Buffers_&, eprop_readout& );
 
-    //! Normalization rate of the readout signal.
+    //! Normalization rate of the readout signal. Sum of the readout signals of all readout neurons.
     double normalization_rate_;
 
     //! Buffer for incoming spikes.
@@ -281,33 +281,31 @@ private:
     //! Buffer for incoming currents.
     RingBuffer currents_;
 
-    //! Universal data logger.
+    //! Logger for universal data.
     UniversalDataLogger< eprop_readout > logger_;
   };
 
+  //! Structure of general variables.
   struct Variables_
   {
-    //! Propagator entry 33.
+    //! Propagator matrix entry for evolving the membrane voltage.
     double P33_;
 
-    //! Complement of propagator entry 33.
+    //! Propagator matrix entry for evolving the incoming spike variables.
     double P33_complement_;
 
-    //! Propagator entry 30.
+    //! Propagator matrix entry for evolving the incoming currents.
     double P30_;
 
-    //! If the loss function requires a buffer for the normalization rates.
+    //! If the loss requires communication between the readout neurons and thus a buffer for the exchanged signals.
     bool requires_buffer_;
   };
 
-  /**
-   * Minimal spike receptor type.
-   * @note Start with 1 so we can forbid port 0 to avoid accidental
-   *       creation of connections with no receptor type set.
-   */
+  //! Minimal spike receptor type. Start with 1 to forbid port 0 and avoid accidental creation of connections with no
+  //! receptor type set.
   static const size_t MIN_RATE_RECEPTOR = 1;
 
-  //! Spike receptors.
+  //! Enumeration of spike receptor types.
   enum RateSynapseTypes
   {
     READOUT_SIG = MIN_RATE_RECEPTOR,
@@ -315,48 +313,49 @@ private:
     SUP_RATE_RECEPTOR
   };
 
-  //! Get the membrane voltage.
+  //! Get the current value of the membrane voltage.
   double
   get_V_m_() const
   {
     return S_.y3_ + P_.E_L_;
   }
 
-  //! Get the readout signal.
+  //! Get the current value of the readout signal.
   double
   get_readout_signal_() const
   {
     return S_.readout_signal_;
   }
 
-  //! Get the target signal.
+  //! Get the current value of the target signal.
   double
   get_target_signal_() const
   {
     return S_.target_signal_;
   }
 
-  //! Get the error signal.
+  //! Get the current value of the error signal.
   double
   get_error_signal_() const
   {
     return S_.error_signal_;
   }
 
-  /**
-   * @defgroup eprop_readout_data
-   * Instances of private data structures for the different types
-   * of data pertaining to the model.
-   * @note The order of definitions is important for speed.
-   * @{
-   */
-  Parameters_ P_; //!< Parameters.
-  State_ S_;      //!< State variables.
-  Variables_ V_;  //!< General variables.
-  Buffers_ B_;    //!< Buffers.
-  /** @} */
+  // the order in which the structure instances are defined is important for speed
 
-  //! Recordables map.
+  //!< Structure of parameters.
+  Parameters_ P_;
+
+  //!< Structure of state variables.
+  State_ S_;
+
+  //!< Structure of general variables.
+  Variables_ V_;
+
+  //!< Structure of buffers.
+  Buffers_ B_;
+
+  //! Map storing a static set of recordables.
   static RecordablesMap< eprop_readout > recordablesMap_;
 };
 

@@ -170,7 +170,7 @@ class eprop_iaf_psc_delta : public EpropArchivingNode
 {
 
 public:
-  //! Constructor.
+  //! Default constructor.
   eprop_iaf_psc_delta();
 
   //! Copy constructor.
@@ -213,13 +213,13 @@ private:
   //! Compute the surrogate gradient.
   double ( eprop_iaf_psc_delta::*compute_surrogate_gradient )();
 
-  //! Recordables map.
+  //! Map for storing a static set of recordables.
   friend class RecordablesMap< eprop_iaf_psc_delta >;
 
-  //! Universal data logger.
+  //! Logger for universal data supporting the data logging request / reply mechanism. Populated with a recordables map.
   friend class UniversalDataLogger< eprop_iaf_psc_delta >;
 
-  //! Parameters.
+  //! Structure of parameters.
   struct Parameters_
   {
     //! Capacitance of the membrane (pF).
@@ -240,7 +240,7 @@ private:
     //! Constant external input current (pA).
     double I_e_;
 
-    //! Scale factor for presynaptic current ["identity": 1.0, "alpha_complement": (1.0 - alpha)]
+    //! Scale factor for presynaptic current ["identity", "alpha_complement"]
     std::string psc_scale_factor_;
 
     //! Surrogate gradient method / pseudo-derivative ["piecewise_linear"].
@@ -258,20 +258,20 @@ private:
     //! Spike threshold voltage relative to the leak membrane potential (mV).
     double V_th_;
 
-    //! Constructor.
+    //! Default constructor.
     Parameters_();
 
-    //! Get parameters.
+    //! Get the parameters and their values.
     void get( DictionaryDatum& ) const;
 
-    //! Set parameters.
+    //! Set the parameters and throw errors in case of invalid values.
     double set( const DictionaryDatum&, Node* );
   };
 
-  //! State variables.
+  //! Structure of state variables.
   struct State_
   {
-    //! Learning signal.
+    //! Learning signal. Sum of weighted error signals coming from the readout neurons.
     double learning_signal_;
 
     //! Number of remaining refractory steps.
@@ -286,24 +286,23 @@ private:
     //! Membrane voltage relative to the leak membrane potential (mV).
     double y3_;
 
-    //! Binary spike variable. Takes on value 1.0 if the neuron has spiked in the previous time step and is 0.0
-    //! otherwise.
+    //! Binary spike variable - 1.0 if the neuron has spiked in the previous time step and 0.0 otherwise.
     double z_;
 
-    //! Constructor.
+    //! Default constructor.
     State_();
 
-    //! Get the value of the provided parameter from the dictionary.
+    //! Get the state variables and their values.
     void get( DictionaryDatum&, const Parameters_& ) const;
 
-    //! Set the provided parameter in the dictionary to the provided value.
+    //! Set the state variables.
     void set( const DictionaryDatum&, const Parameters_&, double, Node* );
   };
 
-  //! Buffers.
+  //! Structure of buffers.
   struct Buffers_
   {
-    //! Constructor.
+    //! Default constructor.
     Buffers_( eprop_iaf_psc_delta& );
 
     //! Copy constructor.
@@ -315,60 +314,62 @@ private:
     //! Buffer for incoming currents.
     RingBuffer currents_;
 
-    //! Universal data logger.
+    //! Logger for universal data.
     UniversalDataLogger< eprop_iaf_psc_delta > logger_;
   };
 
+  //! Structure of general variables.
   struct Variables_
   {
-    //! Propagator entry 33.
+    //! Propagator matrix entry for evolving the membrane voltage.
     double P33_;
 
-    //! Complement of propagator entry 33.
+    //! Propagator matrix entry for evolving the incoming spike variables.
     double P33_complement_;
 
-    //! Propagator entry 30.
+    //! Propagator matrix entry for evolving the incoming currents.
     double P30_;
 
     //! Total refractory steps.
     int RefractoryCounts_;
   };
 
-  //! Get the membrane voltage.
+  //! Get the current value of the membrane voltage.
   double
   get_V_m_() const
   {
     return S_.y3_ + P_.E_L_;
   }
 
-  //! Get the surrogate gradient.
+  //! Get the current value of the surrogate gradient.
   double
   get_surrogate_gradient_() const
   {
     return S_.surrogate_gradient_;
   }
 
-  //! Get the learning signal.
+  //! Get the current value of the learning signal.
   double
   get_learning_signal_() const
   {
     return S_.learning_signal_;
   }
 
-  /**
-   * @defgroup eprop_iaf_psc_delta_data
-   * Instances of private data structures for the different types
-   * of data pertaining to the model.
-   * @note The order of definitions is important for speed.
-   * @{
-   */
-  Parameters_ P_; //!< Parameters.
-  State_ S_;      //!< State variables.
-  Variables_ V_;  //!< General variables.
-  Buffers_ B_;    //!< Buffers.
-  /** @} */
+  // the order in which the structure instances are defined is important for speed
 
-  //! Recordables map.
+  //!< Structure of parameters.
+  Parameters_ P_;
+
+  //!< Structure of state variables.
+  State_ S_;
+
+  //!< Structure of general variables.
+  Variables_ V_;
+
+  //!< Structure of buffers.
+  Buffers_ B_;
+
+  //! Map storing a static set of recordables.
   static RecordablesMap< eprop_iaf_psc_delta > recordablesMap_;
 };
 

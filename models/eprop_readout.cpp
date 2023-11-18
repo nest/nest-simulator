@@ -41,12 +41,12 @@
 
 namespace nest
 {
+
 void
 register_eprop_readout( const std::string& name )
 {
   register_node_model< eprop_readout >( name );
 }
-
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -64,13 +64,12 @@ RecordablesMap< eprop_readout >::create()
   insert_( names::V_m, &eprop_readout::get_V_m_ );
 }
 
-} // namespace nest
 
 /* ----------------------------------------------------------------
  * Default constructors for parameters, state, and buffers
  * ---------------------------------------------------------------- */
 
-nest::eprop_readout::Parameters_::Parameters_()
+eprop_readout::Parameters_::Parameters_()
   : C_m_( 250.0 )
   , E_L_( 0.0 )
   , I_e_( 0.0 )
@@ -80,7 +79,7 @@ nest::eprop_readout::Parameters_::Parameters_()
 {
 }
 
-nest::eprop_readout::State_::State_()
+eprop_readout::State_::State_()
   : error_signal_( 0.0 )
   , readout_signal_( 0.0 )
   , readout_signal_unnorm_( 0.0 )
@@ -90,12 +89,12 @@ nest::eprop_readout::State_::State_()
 {
 }
 
-nest::eprop_readout::Buffers_::Buffers_( eprop_readout& n )
+eprop_readout::Buffers_::Buffers_( eprop_readout& n )
   : logger_( n )
 {
 }
 
-nest::eprop_readout::Buffers_::Buffers_( const Buffers_&, eprop_readout& n )
+eprop_readout::Buffers_::Buffers_( const Buffers_&, eprop_readout& n )
   : logger_( n )
 {
 }
@@ -105,7 +104,7 @@ nest::eprop_readout::Buffers_::Buffers_( const Buffers_&, eprop_readout& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::eprop_readout::Parameters_::get( DictionaryDatum& d ) const
+eprop_readout::Parameters_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::C_m, C_m_ );
   def< double >( d, names::E_L, E_L_ );
@@ -116,7 +115,7 @@ nest::eprop_readout::Parameters_::get( DictionaryDatum& d ) const
 }
 
 double
-nest::eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
+eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   // if leak potential is changed, adjust all variables defined relative to it
   const double ELold = E_L_;
@@ -132,19 +131,24 @@ nest::eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
 
   if ( C_m_ <= 0 )
   {
-    throw BadProperty( "Capacitance must be > 0." );
+    throw BadProperty( "C_m must be > 0." );
+  }
+
+  if ( loss_ != "mean_squared_error" and loss_ != "cross_entropy_loss" )
+  {
+    throw BadProperty( "loss must be chosen from [\"mean_squared_error\", \"cross_entropy_loss\"]." );
   }
 
   if ( tau_m_ <= 0 )
   {
-    throw BadProperty( "Membrane time constant must be > 0." );
+    throw BadProperty( "tau_m must be > 0." );
   }
 
   return delta_EL;
 }
 
 void
-nest::eprop_readout::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+eprop_readout::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
   def< double >( d, names::V_m, y3_ + p.E_L_ );
   def< double >( d, names::error_signal, error_signal_ );
@@ -153,7 +157,7 @@ nest::eprop_readout::State_::get( DictionaryDatum& d, const Parameters_& p ) con
 }
 
 void
-nest::eprop_readout::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
+eprop_readout::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
 {
   y3_ -= updateValueParam< double >( d, names::V_m, y3_, node ) ? p.E_L_ : delta_EL;
 }
@@ -162,7 +166,7 @@ nest::eprop_readout::State_::set( const DictionaryDatum& d, const Parameters_& p
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::eprop_readout::eprop_readout()
+eprop_readout::eprop_readout()
   : EpropArchivingNode()
   , P_()
   , S_()
@@ -171,7 +175,7 @@ nest::eprop_readout::eprop_readout()
   recordablesMap_.create();
 }
 
-nest::eprop_readout::eprop_readout( const eprop_readout& n )
+eprop_readout::eprop_readout( const eprop_readout& n )
   : EpropArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -184,7 +188,7 @@ nest::eprop_readout::eprop_readout( const eprop_readout& n )
  * ---------------------------------------------------------------- */
 
 void
-nest::eprop_readout::init_buffers_()
+eprop_readout::init_buffers_()
 {
   B_.normalization_rate_ = 0;
   B_.spikes_.clear();   // includes resize
@@ -193,7 +197,7 @@ nest::eprop_readout::init_buffers_()
 }
 
 void
-nest::eprop_readout::pre_run_hook()
+eprop_readout::pre_run_hook()
 {
   B_.logger_.init(); // ensures initialization in case multimeter connected after Simulate
 
@@ -216,7 +220,7 @@ nest::eprop_readout::pre_run_hook()
 }
 
 long
-nest::eprop_readout::get_shift() const
+eprop_readout::get_shift() const
 {
   return offset_gen_ + delay_in_rec_ + delay_rec_out_;
 }
@@ -226,7 +230,7 @@ nest::eprop_readout::get_shift() const
  * ---------------------------------------------------------------- */
 
 void
-nest::eprop_readout::update( Time const& origin, const long from, const long to )
+eprop_readout::update( Time const& origin, const long from, const long to )
 {
   const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
   const double learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
@@ -299,7 +303,7 @@ nest::eprop_readout::update( Time const& origin, const long from, const long to 
  * ---------------------------------------------------------------- */
 
 void
-nest::eprop_readout::compute_error_signal_mean_squared_error( const long lag )
+eprop_readout::compute_error_signal_mean_squared_error( const long lag )
 {
   S_.readout_signal_ = S_.readout_signal_unnorm_;
   S_.readout_signal_unnorm_ = S_.y3_ + P_.E_L_;
@@ -307,7 +311,7 @@ nest::eprop_readout::compute_error_signal_mean_squared_error( const long lag )
 }
 
 void
-nest::eprop_readout::compute_error_signal_cross_entropy_loss( const long lag )
+eprop_readout::compute_error_signal_cross_entropy_loss( const long lag )
 {
   const double norm_rate = B_.normalization_rate_ + S_.readout_signal_unnorm_;
   S_.readout_signal_ = S_.readout_signal_unnorm_ / norm_rate;
@@ -320,7 +324,7 @@ nest::eprop_readout::compute_error_signal_cross_entropy_loss( const long lag )
  * ---------------------------------------------------------------- */
 
 void
-nest::eprop_readout::handle( DelayedRateConnectionEvent& e )
+eprop_readout::handle( DelayedRateConnectionEvent& e )
 {
   const size_t rport = e.get_rport();
   assert( rport < SUP_RATE_RECEPTOR );
@@ -342,7 +346,7 @@ nest::eprop_readout::handle( DelayedRateConnectionEvent& e )
 }
 
 void
-nest::eprop_readout::handle( SpikeEvent& e )
+eprop_readout::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -351,7 +355,7 @@ nest::eprop_readout::handle( SpikeEvent& e )
 }
 
 void
-nest::eprop_readout::handle( CurrentEvent& e )
+eprop_readout::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -360,13 +364,13 @@ nest::eprop_readout::handle( CurrentEvent& e )
 }
 
 void
-nest::eprop_readout::handle( DataLoggingRequest& e )
+eprop_readout::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
 
 double
-nest::eprop_readout::gradient_change( std::vector< long >& presyn_isis,
+eprop_readout::gradient_change( std::vector< long >& presyn_isis,
   const long,
   const long t_previous_trigger_spike,
   const double kappa,
@@ -402,3 +406,5 @@ nest::eprop_readout::gradient_change( std::vector< long >& presyn_isis,
 
   return grad;
 }
+
+} // namespace nest

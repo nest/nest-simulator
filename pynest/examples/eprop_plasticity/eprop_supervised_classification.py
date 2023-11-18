@@ -598,6 +598,7 @@ loss_reference = [
     0.7294289628449472,
 ]
 
+
 # Determine the number of elements to compare (up to len(loss_reference))
 n_compare = min(len(loss), len(loss_reference))
 

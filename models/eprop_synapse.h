@@ -321,8 +321,7 @@ public:
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
-    EpropArchivingNode& t_arch = dynamic_cast< EpropArchivingNode& >( t );
-    t_arch.init_update_history();
+    t.register_eprop_connection();
 
     const double dt = Time::get_resolution().get_ms();
     kappa_ = exp( -dt / tau_m_readout_ );
@@ -544,14 +543,19 @@ eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
   updateValue< double >( d, names::adam_m, adam_m_ );
   updateValue< double >( d, names::adam_v, adam_v_ );
 
-  if ( weight_ < Wmin_ or weight_ > Wmax_ )
-  {
-    throw BadProperty( "Wmin <= weight <= Wmax must be satisfied." );
-  }
-
   if ( tau_m_readout_ <= 0 )
   {
-    throw BadProperty( "Membrane time constant of readout neuron constant must be > 0." );
+    throw BadProperty( "tau_m_readout must be > 0." );
+  }
+
+  if ( weight_ < Wmin_ )
+  {
+    throw BadProperty( "Wmin must be < weight." );
+  }
+
+  if ( weight_ > Wmax_ )
+  {
+    throw BadProperty( "Wmax must be > weight." );
   }
 }
 

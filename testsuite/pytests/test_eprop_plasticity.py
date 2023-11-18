@@ -143,7 +143,7 @@ def test_eprop_regression():
         "E_L": 0.0,
         "f_target": 10.0,
         "I_e": 0.0,
-        "psc_scale_factor": "leak_propagator_complement",
+        "psc_scale_factor": "alpha_complement",
         "surrogate_gradient": "piecewise_linear",
         "t_ref": 0.0,
         "tau_m": 30.0,

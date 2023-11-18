@@ -22,7 +22,7 @@
 
 #include "eprop_synapse.h"
 
-// Includes from nestkernel:
+// nestkernel
 #include "nest_impl.h"
 
 
@@ -71,28 +71,28 @@ EpropCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm 
 
   if ( adam_beta1_ < 0.0 or 1.0 <= adam_beta1_ )
   {
-    throw BadProperty( "adam_beta1 must be in [0,1)" );
+    throw BadProperty( "adam_beta1 must be in [0,1)." );
   }
 
   if ( adam_beta2_ < 0.0 or 1.0 <= adam_beta2_ )
   {
-    throw BadProperty( "adam_beta2 must be in [0,1)" );
+    throw BadProperty( "adam_beta2 must be in [0,1)." );
   }
 
   if ( adam_epsilon_ < 0.0 )
   {
-    throw BadProperty( "adam_epsilon must be >= 0" );
+    throw BadProperty( "adam_epsilon must be >= 0." );
   }
 
   if ( batch_size_ <= 0 )
   {
-    throw BadProperty( "batch_size must be > 0" );
+    throw BadProperty( "batch_size must be > 0." );
   }
 
   if ( optimizer_ != "gradient_descent" and optimizer_ != "adam" )
   {
-    throw BadProperty( "optimizer must be either \"gradient_descent\" or \"adam\"" );
+    throw BadProperty( "optimizer must be chosen from [\"gradient_descent\", \"adam\"]." );
   }
 }
 
-}
+} // namespace nest

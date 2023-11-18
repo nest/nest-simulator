@@ -177,7 +177,7 @@ params_nrn_rec = {
     "E_L": 0.0,  # mV, leak reversal potential
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
     "I_e": 0.0,  # pA, external current input
-    "psc_scale_factor": "leak_propagator_complement",  # postsynaptic current scale factor
+    "psc_scale_factor": "alpha_complement",  # postsynaptic current scale factor
     "surrogate_gradient": "piecewise_linear",  # pseudo-derivative
     "t_ref": 0.0,  # ms, duration of refractory period
     "tau_m": 30.0,  # ms, membrane time constant
@@ -344,7 +344,7 @@ input_spike_bools = np.random.rand(n_batch, steps["sequence"], n_in) < input_spi
 input_spike_bools = np.hstack(input_spike_bools.swapaxes(1, 2))
 input_spike_bools[:, 0] = 0  # remove spikes in 0th time step of every sequence for technical reasons
 
-sequence_starts = np.arange(0.0, duration["task"], duration["sequence"]) + duration["offset_gen"]
+sequence_starts = np.arange(0.0, duration["task"], duration["sequence"] * n_batch) + duration["offset_gen"]
 params_gen_spk_in = []
 for input_spike_bool in input_spike_bools:
     input_spike_times = np.arange(0.0, duration["sequence"] * n_batch, duration["step"])[input_spike_bool]

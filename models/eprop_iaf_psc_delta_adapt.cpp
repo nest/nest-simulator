@@ -41,6 +41,7 @@
 
 namespace nest
 {
+
 void
 register_eprop_iaf_psc_delta_adapt( const std::string& name )
 {
@@ -63,13 +64,12 @@ RecordablesMap< eprop_iaf_psc_delta_adapt >::create()
   insert_( names::surrogate_gradient, &eprop_iaf_psc_delta_adapt::get_surrogate_gradient_ );
   insert_( names::V_m, &eprop_iaf_psc_delta_adapt::get_V_m_ );
 }
-} // namespace nest
 
 /* ----------------------------------------------------------------
  * Default constructors for parameters, state, and buffers
  * ---------------------------------------------------------------- */
 
-nest::eprop_iaf_psc_delta_adapt::Parameters_::Parameters_()
+eprop_iaf_psc_delta_adapt::Parameters_::Parameters_()
   : adapt_beta_( 1.0 )
   , adapt_tau_( 10.0 )
   , C_m_( 250.0 )
@@ -78,7 +78,7 @@ nest::eprop_iaf_psc_delta_adapt::Parameters_::Parameters_()
   , f_target_( 0.01 )
   , gamma_( 0.3 )
   , I_e_( 0.0 )
-  , psc_scale_factor_( "leak_propagator_complement" )
+  , psc_scale_factor_( "alpha_complement" )
   , surrogate_gradient_( "piecewise_linear" )
   , t_ref_( 2.0 )
   , tau_m_( 10.0 )
@@ -87,22 +87,23 @@ nest::eprop_iaf_psc_delta_adapt::Parameters_::Parameters_()
 {
 }
 
-nest::eprop_iaf_psc_delta_adapt::State_::State_()
+eprop_iaf_psc_delta_adapt::State_::State_()
   : adaptation_( 0.0 )
   , learning_signal_( 0.0 )
   , r_( 0 )
   , surrogate_gradient_( 0.0 )
   , y0_( 0.0 )
   , y3_( 0.0 )
+  , z_( 0.0 )
 {
 }
 
-nest::eprop_iaf_psc_delta_adapt::Buffers_::Buffers_( eprop_iaf_psc_delta_adapt& n )
+eprop_iaf_psc_delta_adapt::Buffers_::Buffers_( eprop_iaf_psc_delta_adapt& n )
   : logger_( n )
 {
 }
 
-nest::eprop_iaf_psc_delta_adapt::Buffers_::Buffers_( const Buffers_&, eprop_iaf_psc_delta_adapt& n )
+eprop_iaf_psc_delta_adapt::Buffers_::Buffers_( const Buffers_&, eprop_iaf_psc_delta_adapt& n )
   : logger_( n )
 {
 }
@@ -112,7 +113,7 @@ nest::eprop_iaf_psc_delta_adapt::Buffers_::Buffers_( const Buffers_&, eprop_iaf_
  * ---------------------------------------------------------------- */
 
 void
-nest::eprop_iaf_psc_delta_adapt::Parameters_::get( DictionaryDatum& d ) const
+eprop_iaf_psc_delta_adapt::Parameters_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::adapt_beta, adapt_beta_ );
   def< double >( d, names::adapt_tau, adapt_tau_ );
@@ -131,7 +132,7 @@ nest::eprop_iaf_psc_delta_adapt::Parameters_::get( DictionaryDatum& d ) const
 }
 
 double
-nest::eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Node* node )
+eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   // if leak potential is changed, adjust all variables defined relative to it
   const double ELold = E_L_;
@@ -158,40 +159,53 @@ nest::eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Nod
   updateValueParam< double >( d, names::t_ref, t_ref_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
 
+  if ( adapt_beta_ < 0 )
+  {
+    throw BadProperty( "adapt_beta must be >= 0" );
+  }
+
   if ( adapt_tau_ <= 0 )
   {
-    throw BadProperty( "Time constant of threshold adaptation must be > 0." );
+    throw BadProperty( "adapt_tau must be > 0." );
   }
 
   if ( C_m_ <= 0 )
   {
-    throw BadProperty( "Capacitance must be > 0." );
+    throw BadProperty( "C_m must be > 0." );
   }
 
+  if ( c_reg_ < 0 )
+  {
+    throw BadProperty( "c_reg must be >= 0." );
+  }
   if ( f_target_ < 0 )
   {
-    throw BadProperty( "Target firing rate must be >= 0." );
+    throw BadProperty( "f_target must be >= 0." );
   }
 
-  if ( psc_scale_factor_ != "identity" and psc_scale_factor_ != "leak_propagator_complement" )
+  if ( gamma_ < 0.0 or 1.0 <= gamma_ )
   {
-    throw BadProperty(
-      "Available presynaptic current scale factors are \"identity\" and \"leak_propagator_complement\"." );
+    throw BadProperty( "gamma must be in [0,1)." );
+  }
+
+  if ( psc_scale_factor_ != "identity" and psc_scale_factor_ != "alpha_complement" )
+  {
+    throw BadProperty( "psc_scale_factor must be chosen from [\"identity\", \"alpha_complement\"]." );
   }
 
   if ( surrogate_gradient_ != "piecewise_linear" )
   {
-    throw BadProperty( "One of the available surrogate gradients [\"piecewise_linear\"] needs to be selected." );
+    throw BadProperty( "surrogate_gradient must be chosen from [\"piecewise_linear\"]." );
   }
 
   if ( tau_m_ <= 0 )
   {
-    throw BadProperty( "Membrane time constant must be > 0." );
+    throw BadProperty( "tau_m must be > 0." );
   }
 
   if ( t_ref_ < 0 )
   {
-    throw BadProperty( "Refractory time must not be negative." );
+    throw BadProperty( "t_ref must be >= 0." );
   }
 
   if ( surrogate_gradient_ == "piecewise_linear" and fabs( V_th_ ) < 1e-6 )
@@ -199,21 +213,23 @@ nest::eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Nod
     throw BadProperty( "V_th-E_L must be != 0 if surrogate_gradient is \"piecewise_linear\"." );
   }
 
+  if ( V_th_ < V_min_ )
+  {
+    throw BadProperty( "V_th must be >= V_min." );
+  }
+
   return delta_EL;
 }
 
 void
-nest::eprop_iaf_psc_delta_adapt::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+eprop_iaf_psc_delta_adapt::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
   def< double >( d, names::adaptation, adaptation_ );
   def< double >( d, names::V_m, y3_ + p.E_L_ );
 }
 
 void
-nest::eprop_iaf_psc_delta_adapt::State_::set( const DictionaryDatum& d,
-  const Parameters_& p,
-  double delta_EL,
-  Node* node )
+eprop_iaf_psc_delta_adapt::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
 {
   updateValueParam< double >( d, names::adaptation, adaptation_, node );
 
@@ -224,7 +240,7 @@ nest::eprop_iaf_psc_delta_adapt::State_::set( const DictionaryDatum& d,
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::eprop_iaf_psc_delta_adapt::eprop_iaf_psc_delta_adapt()
+eprop_iaf_psc_delta_adapt::eprop_iaf_psc_delta_adapt()
   : EpropArchivingNode()
   , P_()
   , S_()
@@ -233,7 +249,7 @@ nest::eprop_iaf_psc_delta_adapt::eprop_iaf_psc_delta_adapt()
   recordablesMap_.create();
 }
 
-nest::eprop_iaf_psc_delta_adapt::eprop_iaf_psc_delta_adapt( const eprop_iaf_psc_delta_adapt& n )
+eprop_iaf_psc_delta_adapt::eprop_iaf_psc_delta_adapt( const eprop_iaf_psc_delta_adapt& n )
   : EpropArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -246,37 +262,37 @@ nest::eprop_iaf_psc_delta_adapt::eprop_iaf_psc_delta_adapt( const eprop_iaf_psc_
  * ---------------------------------------------------------------- */
 
 void
-nest::eprop_iaf_psc_delta_adapt::init_buffers_()
+eprop_iaf_psc_delta_adapt::init_buffers_()
 {
   B_.spikes_.clear();   // includes resize
   B_.currents_.clear(); // includes resize
   B_.logger_.reset();   // includes resize
-
-  S_.z_ = 0.0;
 }
 
 void
-nest::eprop_iaf_psc_delta_adapt::pre_run_hook()
+eprop_iaf_psc_delta_adapt::pre_run_hook()
 {
   B_.logger_.init(); // ensures initialization in case multimeter connected after Simulate
 
-  const double dt = Time::get_resolution().get_ms();
-
-  V_.P33_ = std::exp( -dt / P_.tau_m_ ); // alpha
-  V_.P30_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - V_.P33_ );
-
-  V_.Pa_ = std::exp( -dt / P_.adapt_tau_ );
-
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
 
-  if ( P_.psc_scale_factor_ == "leak_propagator_complement" )
+  const double dt = Time::get_resolution().get_ms();
+
+  const double alpha = std::exp( -dt / P_.tau_m_ );
+
+  V_.P33_ = alpha;
+  V_.P30_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - alpha );
+
+  if ( P_.psc_scale_factor_ == "alpha_complement" )
   {
-    V_.P33_complement_ = 1.0 - V_.P33_;
+    V_.P33_complement_ = 1.0 - alpha;
   }
-  else
+  else if ( P_.psc_scale_factor_ == "identity" )
   {
     V_.P33_complement_ = 1.0;
   }
+
+  V_.Pa_ = std::exp( -dt / P_.adapt_tau_ );
 
   if ( P_.surrogate_gradient_ == "piecewise_linear" )
   {
@@ -285,7 +301,7 @@ nest::eprop_iaf_psc_delta_adapt::pre_run_hook()
 }
 
 long
-nest::eprop_iaf_psc_delta_adapt::get_shift() const
+eprop_iaf_psc_delta_adapt::get_shift() const
 {
   return offset_gen_ + delay_in_rec_;
 }
@@ -295,7 +311,7 @@ nest::eprop_iaf_psc_delta_adapt::get_shift() const
  * ---------------------------------------------------------------- */
 
 void
-nest::eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, const long to )
+eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, const long to )
 {
   const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
   const bool with_reset = kernel().simulation_manager.get_eprop_reset_neurons_on_update();
@@ -357,8 +373,7 @@ nest::eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, co
       reset_spike_count();
     }
 
-    const auto it_eprop_hist = get_eprop_history( t - shift );
-    S_.learning_signal_ = it_eprop_hist->learning_signal_;
+    S_.learning_signal_ = get_learning_signal( t - shift );
 
     if ( S_.r_ > 0 )
     {
@@ -376,21 +391,22 @@ nest::eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, co
  * ---------------------------------------------------------------- */
 
 double
-nest::eprop_iaf_psc_delta_adapt::compute_piecewise_linear_derivative()
+eprop_iaf_psc_delta_adapt::compute_piecewise_linear_derivative()
 {
-  const double v_m = S_.r_ > 0 ? 0.0 : S_.y3_;
-  const double v_th = S_.r_ > 0 ? P_.V_th_ : S_.adapting_threshold_;
-  const double psi = P_.gamma_ * std::max( 0.0, 1.0 - std::fabs( ( v_m - v_th ) / P_.V_th_ ) ) / P_.V_th_;
-  return psi;
-}
+  if ( S_.r_ > 0 )
+  {
+    return 0.0;
+  }
 
+  return P_.gamma_ * std::max( 0.0, 1.0 - std::fabs( ( S_.y3_ - S_.adapting_threshold_ ) / P_.V_th_ ) ) / P_.V_th_;
+}
 
 /* ----------------------------------------------------------------
  * Event handling functions
  * ---------------------------------------------------------------- */
 
 void
-nest::eprop_iaf_psc_delta_adapt::handle( SpikeEvent& e )
+eprop_iaf_psc_delta_adapt::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -399,7 +415,7 @@ nest::eprop_iaf_psc_delta_adapt::handle( SpikeEvent& e )
 }
 
 void
-nest::eprop_iaf_psc_delta_adapt::handle( CurrentEvent& e )
+eprop_iaf_psc_delta_adapt::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -408,7 +424,7 @@ nest::eprop_iaf_psc_delta_adapt::handle( CurrentEvent& e )
 }
 
 void
-nest::eprop_iaf_psc_delta_adapt::handle( LearningSignalConnectionEvent& e )
+eprop_iaf_psc_delta_adapt::handle( LearningSignalConnectionEvent& e )
 {
   for ( auto it_event = e.begin(); it_event != e.end(); )
   {
@@ -423,13 +439,13 @@ nest::eprop_iaf_psc_delta_adapt::handle( LearningSignalConnectionEvent& e )
 }
 
 void
-nest::eprop_iaf_psc_delta_adapt::handle( DataLoggingRequest& e )
+eprop_iaf_psc_delta_adapt::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
 
 double
-nest::eprop_iaf_psc_delta_adapt::gradient_change( std::vector< long >& presyn_isis,
+eprop_iaf_psc_delta_adapt::gradient_change( std::vector< long >& presyn_isis,
   const long t_previous_update,
   const long t_previous_trigger_spike,
   const double kappa,
@@ -481,3 +497,5 @@ nest::eprop_iaf_psc_delta_adapt::gradient_change( std::vector< long >& presyn_is
 
   return grad;
 }
+
+} // namespace nest

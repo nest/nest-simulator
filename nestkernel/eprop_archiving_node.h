@@ -53,8 +53,7 @@ public:
   EpropArchivingNode( const EpropArchivingNode& );
 
   //! Initialize the update history and register the eprop synapse.
-  void init_update_history();
-
+  void register_eprop_connection() override;
 
   //! Register current update in the update history and deregister previous update.
   void write_update_to_history( const long t_previous_update, const long t_current_update );
@@ -83,6 +82,8 @@ public:
 
   //! Get an iterator pointing to the firing rate regularization history of the given time step.
   std::vector< HistEntryEpropFiringRateReg >::iterator get_firing_rate_reg_history( const long time_step );
+  //! Return learning signal from history for given time step or zero if time step not in history
+  double get_learning_signal( const long time_step );
 
 
   //! Erase no longer needed parts of the update history.
@@ -104,6 +105,9 @@ public:
 private:
   //! Count of the emitted spikes for the firing rate regularization.
   size_t n_spikes_;
+
+  //!< number of incoming eprop synapses
+  size_t eprop_indegree_;
 
   //! History of updates still needed by at least one synapse.
   std::vector< HistEntryEpropUpdate > update_history_;
@@ -131,5 +135,18 @@ protected:
   const long delay_out_norm_ = 1;
 };
 
+inline void
+EpropArchivingNode::count_spike()
+{
+  ++n_spikes_;
+}
+
+inline void
+EpropArchivingNode::reset_spike_count()
+{
+  n_spikes_ = 0;
+}
+
 } // namespace nest
+
 #endif // EPROP_ARCHIVING_NODE_H

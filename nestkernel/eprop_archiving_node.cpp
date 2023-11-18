@@ -30,14 +30,14 @@
 namespace nest
 {
 
-nest::EpropArchivingNode::EpropArchivingNode()
+EpropArchivingNode::EpropArchivingNode()
   : Node()
   , n_spikes_( 0 )
   , eprop_indegree_( 0 )
 {
 }
 
-nest::EpropArchivingNode::EpropArchivingNode( const EpropArchivingNode& n )
+EpropArchivingNode::EpropArchivingNode( const EpropArchivingNode& n )
   : Node( n )
   , n_spikes_( n.n_spikes_ )
   , eprop_indegree_( n.eprop_indegree_ )
@@ -45,7 +45,7 @@ nest::EpropArchivingNode::EpropArchivingNode( const EpropArchivingNode& n )
 }
 
 void
-nest::EpropArchivingNode::register_eprop_connection()
+EpropArchivingNode::register_eprop_connection()
 {
   ++eprop_indegree_;
 
@@ -64,7 +64,7 @@ nest::EpropArchivingNode::register_eprop_connection()
 }
 
 void
-nest::EpropArchivingNode::write_update_to_history( const long t_previous_update, const long t_current_update )
+EpropArchivingNode::write_update_to_history( const long t_previous_update, const long t_current_update )
 {
   if ( eprop_indegree_ == 0 )
   {
@@ -94,7 +94,7 @@ nest::EpropArchivingNode::write_update_to_history( const long t_previous_update,
 }
 
 void
-nest::EpropArchivingNode::write_surrogate_gradient_to_history( const long time_step, const double surrogate_gradient )
+EpropArchivingNode::write_surrogate_gradient_to_history( const long time_step, const double surrogate_gradient )
 {
   if ( eprop_indegree_ == 0 )
   {
@@ -105,7 +105,7 @@ nest::EpropArchivingNode::write_surrogate_gradient_to_history( const long time_s
 }
 
 void
-nest::EpropArchivingNode::write_error_signal_to_history( const long time_step, const double error_signal )
+EpropArchivingNode::write_error_signal_to_history( const long time_step, const double error_signal )
 {
   if ( eprop_indegree_ == 0 )
   {
@@ -118,7 +118,7 @@ nest::EpropArchivingNode::write_error_signal_to_history( const long time_step, c
 }
 
 void
-nest::EpropArchivingNode::write_learning_signal_to_history( const long time_step,
+EpropArchivingNode::write_learning_signal_to_history( const long time_step,
   const long delay_out_rec,
   const double learning_signal )
 {
@@ -144,7 +144,7 @@ nest::EpropArchivingNode::write_learning_signal_to_history( const long time_step
 }
 
 void
-nest::EpropArchivingNode::write_firing_rate_reg_to_history( const long t_current_update,
+EpropArchivingNode::write_firing_rate_reg_to_history( const long t_current_update,
   const double f_target,
   const double c_reg )
 {
@@ -165,31 +165,31 @@ nest::EpropArchivingNode::write_firing_rate_reg_to_history( const long t_current
 }
 
 long
-nest::EpropArchivingNode::get_shift() const
+EpropArchivingNode::get_shift() const
 {
   return 0;
 }
 
 std::vector< HistEntryEpropUpdate >::iterator
-nest::EpropArchivingNode::get_update_history( const long time_step )
+EpropArchivingNode::get_update_history( const long time_step )
 {
   return std::lower_bound( update_history_.begin(), update_history_.end(), time_step );
 }
 
 std::vector< HistEntryEpropArchive >::iterator
-nest::EpropArchivingNode::get_eprop_history( const long time_step )
+EpropArchivingNode::get_eprop_history( const long time_step )
 {
   return std::lower_bound( eprop_history_.begin(), eprop_history_.end(), time_step );
 }
 
 std::vector< HistEntryEpropFiringRateReg >::iterator
-nest::EpropArchivingNode::get_firing_rate_reg_history( const long time_step )
+EpropArchivingNode::get_firing_rate_reg_history( const long time_step )
 {
   return std::lower_bound( firing_rate_reg_history_.begin(), firing_rate_reg_history_.end(), time_step );
 }
 
 double
-nest::EpropArchivingNode::get_learning_signal( const long time_step )
+EpropArchivingNode::get_learning_signal( const long time_step )
 {
   const auto it = get_eprop_history( time_step );
   if ( it != eprop_history_.end() )
@@ -203,7 +203,7 @@ nest::EpropArchivingNode::get_learning_signal( const long time_step )
 }
 
 void
-nest::EpropArchivingNode::erase_unneeded_update_history()
+EpropArchivingNode::erase_unneeded_update_history()
 {
   auto it_hist = update_history_.begin();
   while ( it_hist != update_history_.end() )
@@ -221,7 +221,7 @@ nest::EpropArchivingNode::erase_unneeded_update_history()
 }
 
 void
-nest::EpropArchivingNode::erase_unneeded_eprop_history()
+EpropArchivingNode::erase_unneeded_eprop_history()
 {
   if ( eprop_history_.empty()  // nothing to remove
     or update_history_.empty() // no time markers to check
@@ -255,7 +255,7 @@ nest::EpropArchivingNode::erase_unneeded_eprop_history()
 }
 
 void
-nest::EpropArchivingNode::erase_unneeded_firing_rate_reg_history()
+EpropArchivingNode::erase_unneeded_firing_rate_reg_history()
 {
   auto it_update_hist = update_history_.begin();
   auto it_reg_hist = firing_rate_reg_history_.begin();

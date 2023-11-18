@@ -145,4 +145,5 @@ EpropArchivingNode::reset_spike_count()
 }
 
 } // namespace nest
+
 #endif // EPROP_ARCHIVING_NODE_H

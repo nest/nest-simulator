@@ -22,7 +22,7 @@
 
 #include "eprop_synapse.h"
 
-// Includes from nestkernel:
+// nestkernel
 #include "nest_impl.h"
 
 
@@ -95,4 +95,4 @@ EpropCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm 
   }
 }
 
-}
+} // namespace nest

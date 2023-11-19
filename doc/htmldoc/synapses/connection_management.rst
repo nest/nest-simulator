@@ -328,19 +328,20 @@ second ``pool_size`` elements of ``A`` are the pool for the second
 node in ``T`` and so forth. In this case, ``N_T * pool_size == N_A``
 is required.
 
-The following code and figure demonstrate three possible use cases with
+The following code and figure demonstrate three use case examples with
 ``pool_type`` being ``'random'`` or ``'block'``:
 
 .. code-block:: python
 
-    N_S, N_T, N_A, p_primary, p_third_if_primary, pool_size = 6, 6, 3, 0.2, 1.0, 2
+    N_S, N_T, N_A, p_primary, p_third_if_primary = 6, 6, 3, 0.2, 1.0
+    pool_type, pool_size = 'random', 2
     S = nest.Create('aeif_cond_alpha_astro', N_S)
     T = nest.Create('aeif_cond_alpha_astro', N_T)
     A = nest.Create('astrocyte_lr_1994', N_A)
     conn_spec = {'rule': 'tripartite_bernoulli_with_pool',
                       'p_primary': p_primary,
 		      'p_third_if_primary': p_third_if_primary,
-                      'pool_type': 'random',
+                      'pool_type': pool_type,
 		      'pool_size': pool_size}
     syn_specs = {'third_out': 'sic_connection'}
     nest.TripartiteConnect(S, T, A, conn_spec, syn_specs)
@@ -348,14 +349,15 @@ The following code and figure demonstrate three possible use cases with
 
 .. code-block:: python
 
-    N_S, N_T, N_A, p_primary, p_third_if_primary, pool_size = 6, 6, 3, 0.2, 1.0, 1
+    N_S, N_T, N_A, p_primary, p_third_if_primary = 6, 6, 3, 0.2, 1.0
+    pool_type, pool_size = 'block', 1
     S = nest.Create('aeif_cond_alpha_astro', N_S)
     T = nest.Create('aeif_cond_alpha_astro', N_T)
     A = nest.Create('astrocyte_lr_1994', N_A)
     conn_spec = {'rule': 'tripartite_bernoulli_with_pool',
                       'p_primary': p_primary,
 		      'p_third_if_primary': p_third_if_primary,
-                      'pool_type': 'block',
+                      'pool_type': pool_type,
 		      'pool_size': pool_size}
     syn_specs = {'third_out': 'sic_connection'}
     nest.TripartiteConnect(S, T, A, conn_spec, syn_specs)
@@ -363,14 +365,15 @@ The following code and figure demonstrate three possible use cases with
 
 .. code-block:: python
 
-    N_S, N_T, N_A, p_primary, p_third_if_primary, pool_size = 6, 3, 6, 0.2, 1.0, 2
+    N_S, N_T, N_A, p_primary, p_third_if_primary = 6, 3, 6, 0.2, 1.0
+    pool_type, pool_size = 'block', 2
     S = nest.Create('aeif_cond_alpha_astro', N_S)
     T = nest.Create('aeif_cond_alpha_astro', N_T)
     A = nest.Create('astrocyte_lr_1994', N_A)
     conn_spec = {'rule': 'tripartite_bernoulli_with_pool',
                       'p_primary': p_primary,
 		      'p_third_if_primary': p_third_if_primary,
-                      'pool_type': 'block',
+                      'pool_type': pool_type,
 		      'pool_size': pool_size}
     syn_specs = {'third_out': 'sic_connection'}
     nest.TripartiteConnect(S, T, A, conn_spec, syn_specs)

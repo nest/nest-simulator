@@ -170,9 +170,9 @@ eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
     throw BadProperty( "gamma must be [0,1)." );
   }
 
-  if ( psc_scale_factor_ != "identity" and psc_scale_factor_ != "alpha_complement" )
+  if ( psc_scale_factor_ != "unity" and psc_scale_factor_ != "alpha_complement" )
   {
-    throw BadProperty( "psc_scale_factor must be chosen from [\"identity\", \"alpha_complement\"]." );
+    throw BadProperty( "psc_scale_factor must be chosen from [\"unity\", \"alpha_complement\"]." );
   }
 
   if ( surrogate_gradient_ != "piecewise_linear" )
@@ -266,7 +266,7 @@ eprop_iaf_psc_delta::pre_run_hook()
   {
     V_.P33_complement_ = 1.0 - alpha;
   }
-  else if ( P_.psc_scale_factor_ == "identity" )
+  else if ( P_.psc_scale_factor_ == "unity" )
   {
     V_.P33_complement_ = 1.0;
   }

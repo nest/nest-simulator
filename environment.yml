@@ -47,6 +47,8 @@ dependencies:
 
   # Testing NEST ------------
   - attrs
+  # Pytest currently incompatible with pylint 3, see https://github.com/pylint-dev/pylint/issues/8862
+  - pylint < 3
   - pytest
   - pytest-timeout
   - pytest-xdist

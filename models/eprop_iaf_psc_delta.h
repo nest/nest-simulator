@@ -109,7 +109,7 @@ gamma                   :math:`\gamma`                       0.3 Scaling of pseu
 I_e                pA   :math:`I_\text{e}`                   0.0 Constant external input current
 psc_scale_factor                                alpha_complement Scale factor type for presynaptic current
                                                                  ["alpha_complement": :math:`1 - \alpha`,
-                                                                 "identity": :math:`1`]
+                                                                 "unity": :math:`1`]
 surrogate_gradient      :math:`\psi`            piecewise_linear Surrogate gradient method / pseudo-derivative
                                                                  ["piecewise_linear"]
 t_ref              ms   :math:`t_\text{ref}`                 2.0 Duration of the refractory period
@@ -219,7 +219,7 @@ private:
     double f_target_;                //!< target firing rate of rate regularization (spikes/s)
     double gamma_;                   //!< scaling of pseudo-derivative of membrane voltage
     double I_e_;                     //!< external DC current (pA)
-    std::string psc_scale_factor_;   //!< scale factor of presynaptic current "identity" (1.0)
+    std::string psc_scale_factor_;   //!< scale factor of presynaptic current "unity" (1.0)
                                      //!< or "alpha_complement" (1.0 - alpha))
     std::string surrogate_gradient_; //!< surrogate gradient method / pseudo-derivative
     double t_ref_;                   //!< refractory period (ms)

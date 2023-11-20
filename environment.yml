@@ -74,6 +74,9 @@ dependencies:
   - jupyter
   - jupyterlab
 
+  # Contributin to NEST -----
+  - pre-commit
+
   # Building NEST documentation
   - PyYAML>=4.2b1
   - breathe

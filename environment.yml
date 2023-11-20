@@ -74,7 +74,7 @@ dependencies:
   - jupyter
   - jupyterlab
 
-  # Contributin to NEST -----
+  # Contributing to NEST -----
   - pre-commit
 
   # Building NEST documentation

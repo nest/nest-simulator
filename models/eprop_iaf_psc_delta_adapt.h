@@ -119,7 +119,7 @@ gamma                   :math:`\gamma`                       0.3 Scaling of pseu
 I_e                pA   :math:`I_\text{e}`                   0.0 Constant external input current
 psc_scale_factor                                alpha_complement Scale factor type for presynaptic current
                                                                  ["alpha_complement": :math:`1 - \alpha`,
-                                                                 "identity": :math:`1`]
+                                                                 "unity": :math:`1`]
 surrogate_gradient      :math:`\psi`            piecewise_linear Surrogate gradient method / pseudo-derivative
                                                                  ["piecewise_linear"]
 t_ref              ms   :math:`t_\text{ref}`                 2.0 Duration of the refractory period
@@ -258,7 +258,7 @@ private:
     //! Constant external input current (pA).
     double I_e_;
 
-    //! Scale factor for presynaptic current ["identity", "alpha_complement"]
+    //! Scale factor for presynaptic current ["unity", "alpha_complement"]
     std::string psc_scale_factor_;
 
     //! Surrogate gradient method / pseudo-derivative ["piecewise_linear"].

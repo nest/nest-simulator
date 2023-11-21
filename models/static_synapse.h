@@ -53,7 +53,14 @@ See also
 
 tsodyks_synapse, stdp_synapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: static_synapse
+
 EndUserDocs */
+
+void register_static_synapse( const std::string& name );
 
 template < typename targetidentifierT >
 class static_synapse : public Connection< targetidentifierT >

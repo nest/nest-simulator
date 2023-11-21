@@ -19,6 +19,11 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+Functions to build and simulate networks with the SONATA format
+"""
+
+
 import itertools
 import json
 import os

@@ -74,7 +74,14 @@ See also
 
 hh_psc_alpha_gap
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: gap_junction
+
 EndUserDocs */
+
+void register_gap_junction( const std::string& name );
 
 template < typename targetidentifierT >
 class gap_junction : public Connection< targetidentifierT >

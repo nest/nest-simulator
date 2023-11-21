@@ -177,7 +177,14 @@ See also
 
 aeif_cond_alpha_multisynapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: aeif_cond_beta_multisynapse
+
 EndUserDocs */
+
+void register_aeif_cond_beta_multisynapse( const std::string& name );
 
 class aeif_cond_beta_multisynapse : public ArchivingNode
 {

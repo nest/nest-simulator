@@ -27,9 +27,10 @@ the spike times for different options and emits spikes correctly in
 simulation.
 """
 
+import math
+
 import nest
 import pytest
-import math
 
 
 @pytest.fixture

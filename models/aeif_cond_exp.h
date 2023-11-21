@@ -186,7 +186,14 @@ See also
 
 iaf_cond_exp, aeif_cond_alpha
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: aeif_cond_exp
+
 EndUserDocs */
+
+void register_aeif_cond_exp( const std::string& name );
 
 class aeif_cond_exp : public ArchivingNode
 {

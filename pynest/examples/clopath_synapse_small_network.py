@@ -41,10 +41,11 @@ References
        Nature Neuroscience 13:3, 344--352
 """
 
+import random
+
+import matplotlib.pyplot as plt
 import nest
 import numpy as np
-import matplotlib.pyplot as plt
-import random
 
 ##############################################################################
 # Set the parameters

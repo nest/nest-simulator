@@ -131,6 +131,11 @@ See also
 
 tsodyks_synapse, stdp_synapse_hom, static_synapse_hom_w
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: tsodyks_synapse_hom
+
 EndUserDocs */
 
 /**
@@ -164,6 +169,8 @@ public:
   double U_;       //!< asymptotic value of probability of release
 };
 
+
+void register_tsodyks_synapse_hom( const std::string& name );
 
 template < typename targetidentifierT >
 class tsodyks_synapse_hom : public Connection< targetidentifierT >

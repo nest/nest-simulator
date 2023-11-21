@@ -108,7 +108,14 @@ Receives
 
 SpikeEvent, DataLoggingRequest
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_chs_2007
+
 EndUserDocs */
+
+void register_iaf_chs_2007( const std::string& name );
 
 class iaf_chs_2007 : public ArchivingNode
 {

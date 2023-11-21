@@ -98,10 +98,17 @@ See also
 
 stdp_synapse, clopath_synapse, pp_cond_exp_mc_urbanczik
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: urbanczik_synapse
+
 EndUserDocs */
 
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
+
+void register_urbanczik_synapse( const std::string& name );
 
 template < typename targetidentifierT >
 class urbanczik_synapse : public Connection< targetidentifierT >

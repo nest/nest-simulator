@@ -105,10 +105,17 @@ See also
 
 stdp_synapse, aeif_psc_delta_clopath, hh_psc_alpha_clopath
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_psc_alpha
+
 EndUserDocs */
 
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
+void register_clopath_synapse( const std::string& name );
+
 template < typename targetidentifierT >
 class clopath_synapse : public Connection< targetidentifierT >
 {

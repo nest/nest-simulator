@@ -131,7 +131,15 @@ See also
 
 diffusion_connection
 
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: siegert_neuron
+
 EndUserDocs */
+
+void register_siegert_neuron( const std::string& name );
 
 class siegert_neuron : public ArchivingNode
 {

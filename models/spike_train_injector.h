@@ -225,6 +225,11 @@ See also
 
 spike_generator
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: spike_train_injector
+
 EndUserDocs */
 
 /**
@@ -235,6 +240,8 @@ EndUserDocs */
  * @note Spikes emitted by a spike train injector neuron will be counted by
  * the local spike count.
  */
+void register_spike_train_injector( const std::string& name );
+
 class spike_train_injector : public Node, public Device
 {
 

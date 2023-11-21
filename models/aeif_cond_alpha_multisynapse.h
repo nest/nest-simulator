@@ -160,6 +160,11 @@ See also
 
 aeif_cond_alpha_multisynapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: aeif_cond_alpha_multisynapse
+
 EndUserDocs */
 
 namespace nest
@@ -175,6 +180,8 @@ namespace nest
  * @param void* Pointer to model neuron instance.
  */
 extern "C" int aeif_cond_alpha_multisynapse_dynamics( double, const double*, double*, void* );
+
+void register_aeif_cond_alpha_multisynapse( const std::string& name );
 
 class aeif_cond_alpha_multisynapse : public ArchivingNode
 {

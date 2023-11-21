@@ -120,6 +120,11 @@ See also
 
 correlation_detector, correlomatrix_detector, spike_recorder
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: correlospinmatrix_detector
+
 EndUserDocs */
 
 /**
@@ -127,6 +132,8 @@ EndUserDocs */
  * follows: the internal buffers for storing spikes are part of
  * State_, but are initialized by init_buffers_().
  */
+
+void register_correlospinmatrix_detector( const std::string& name );
 
 class correlospinmatrix_detector : public Node
 {

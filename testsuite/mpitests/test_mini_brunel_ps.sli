@@ -36,6 +36,7 @@ See: brunel_ps.sli
 
 (unittest) run
 /unittest using
+/distributed_process_invariant_events_assert_or_die << /show_results true >> SetOptions
 
 skip_if_not_threaded
 
@@ -180,18 +181,15 @@ def % brunel_setup
     inpoisson I_neurons /all_to_all /syn_ex Connect
     E_neurons I_neurons << /rule /fixed_indegree /indegree CE >> << /synapse_model /syn_ex >> Connect
     I_neurons I_neurons << /rule /fixed_indegree /indegree CI >> << /synapse_model /syn_in >> Connect
-    
+
     E_neurons Nrec Take exsr Connect
-    
+
     simtime Simulate
 
-    % get events, replace vectors with SLI arrays    
+    % get events, replace vectors with SLI arrays
     /ev exsr /events get def
     ev keys { /k Set ev dup k get cva k exch put } forall
-    ev 
+    ev
   endusing
 
 } distributed_process_invariant_events_assert_or_die
-
-
-

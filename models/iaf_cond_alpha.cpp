@@ -36,6 +36,7 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -49,6 +50,12 @@ nest::RecordablesMap< nest::iaf_cond_alpha > nest::iaf_cond_alpha::recordablesMa
 
 namespace nest // template specialization must be placed in namespace
 {
+void
+register_iaf_cond_alpha( const std::string& name )
+{
+  register_node_model< iaf_cond_alpha >( name );
+}
+
 /*
  * Override the create() method with one call to RecordablesMap::insert_()
  * for each quantity to be recorded.
@@ -103,7 +110,7 @@ nest::iaf_cond_alpha_dynamics( double, const double y[], double f[], void* pnode
   f[ 1 ] = -y[ S::DG_EXC ] / node.P_.tau_synE;
   f[ 2 ] = y[ S::DG_EXC ] - ( y[ S::G_EXC ] / node.P_.tau_synE );
 
-  // d dg_exc/dt, dg_exc/dt
+  // d dg_inh/dt, dg_inh/dt
   f[ 3 ] = -y[ S::DG_INH ] / node.P_.tau_synI;
   f[ 4 ] = y[ S::DG_INH ] - ( y[ S::G_INH ] / node.P_.tau_synI );
 

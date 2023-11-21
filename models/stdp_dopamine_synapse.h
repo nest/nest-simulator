@@ -97,7 +97,7 @@ Parameters
  b                   real          Dopaminergic baseline concentration
  Wmin                real          Minimal synaptic weight
  Wmax                real          Maximal synaptic weight
-==================== ============= ======================================================
+=================== ============== ======================================================
 
 The common properties can only be set by :py:func:`.SetDefaults` and apply
 to all instances of the synapse model.
@@ -129,6 +129,11 @@ See also
 ++++++++
 
 volume_transmitter
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: stdp_dopamine_synapse
 
 EndUserDocs */
 
@@ -185,6 +190,8 @@ STDPDopaCommonProperties::get_vt_node_id() const
  * Class representing an stdp_dopamine_synapse with homogeneous parameters,
  * i.e. parameters are the same for all synapses.
  */
+void register_stdp_dopamine_synapse( const std::string& name );
+
 template < typename targetidentifierT >
 class stdp_dopamine_synapse : public Connection< targetidentifierT >
 {

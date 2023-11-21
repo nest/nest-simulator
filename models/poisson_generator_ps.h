@@ -88,7 +88,14 @@ See also
 
 poisson_generator, parrot_neuron_ps
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: poisson_generator_ps
+
 EndUserDocs */
+
+void register_poisson_generator_ps( const std::string& name );
 
 class poisson_generator_ps : public StimulationDevice
 {

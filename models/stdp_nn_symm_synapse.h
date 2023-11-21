@@ -114,10 +114,17 @@ See also
 
 stdp_synapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: stdp_nn_symm_synapse
+
 EndUserDocs */
 
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
+
+void register_stdp_nn_symm_synapse( const std::string& name );
 
 template < typename targetidentifierT >
 class stdp_nn_symm_synapse : public Connection< targetidentifierT >

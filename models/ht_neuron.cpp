@@ -33,10 +33,17 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 namespace nest
 {
+void
+register_ht_neuron( const std::string& name )
+{
+  register_node_model< ht_neuron >( name );
+}
+
 
 RecordablesMap< ht_neuron > ht_neuron::recordablesMap_;
 
@@ -847,7 +854,7 @@ void
 nest::ht_neuron::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
-  assert( e.get_rport() < static_cast< int >( B_.spike_inputs_.size() ) );
+  assert( e.get_rport() < B_.spike_inputs_.size() );
 
   B_.spike_inputs_[ e.get_rport() ].add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );

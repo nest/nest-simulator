@@ -120,7 +120,14 @@ See also
 
 iaf_psc_delta, iaf_psc_exp, iaf_cond_exp
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_cond_exp
+
 EndUserDocs*/
+
+void register_iaf_cond_exp( const std::string& name );
 
 class iaf_cond_exp : public ArchivingNode
 {

@@ -21,9 +21,8 @@
 
 import unittest
 
-import numpy as np
-
 import nest
+import numpy as np
 
 """
 Assert that all neuronal models that have a refractory period implement it
@@ -56,11 +55,7 @@ neurons_interspike = [
     "mat2_psc_exp",
 ]
 
-neurons_interspike_ps = [
-    "iaf_psc_alpha_ps",
-    "iaf_psc_delta_ps",
-    "iaf_psc_exp_ps",
-]
+neurons_interspike_ps = ["iaf_psc_alpha_ps", "iaf_psc_delta_ps", "iaf_psc_exp_ps"]
 
 # Models that first clamp the membrane potential at a higher value
 neurons_with_clamping = [
@@ -84,6 +79,7 @@ ignore_model = [
     "iaf_psc_exp_ps_lossless",  # This one use presice times
     "siegert_neuron",  # This one does not connect to voltmeter
     "step_rate_generator",  # No regular neuron model
+    "iaf_tum_2000",  # Hijacks the offset field, see #2912
 ]
 
 tested_models = [
@@ -140,6 +136,7 @@ class TestRefractoryCase(unittest.TestCase):
         t_ref_sim : double
             Value of the simulated refractory period.
         """
+
         spike_times = nest.GetStatus(sr, "events")[0]["times"]
 
         if model in neurons_interspike:
@@ -156,7 +153,7 @@ class TestRefractoryCase(unittest.TestCase):
             name_Vm = "V_m.s" if model in mc_models else "V_m"
             Vs = nest.GetStatus(vm, "events")[0][name_Vm]
 
-            # Get the index at which the spike occurred
+            # Get the index at which the first spike occurred
             idx_spike = np.argwhere(times == spike_times[0])[0][0]
 
             # Find end of refractory period between 1st and 2nd spike
@@ -169,6 +166,7 @@ class TestRefractoryCase(unittest.TestCase):
         """
         Check that refractory time implementation is correct.
         """
+
         for model in tested_models:
             self.reset()
 

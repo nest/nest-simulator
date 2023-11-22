@@ -46,7 +46,10 @@ class EpropArchivingNode : public Node
 {
 
 public:
+  //! Defautl constructor.
   EpropArchivingNode();
+
+  //! Copy constructor.
   EpropArchivingNode( const EpropArchivingNode& );
 
   //! Initialize the update history and register the eprop synapse.

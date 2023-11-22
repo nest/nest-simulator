@@ -298,7 +298,7 @@ private:
     double P30_;
 
     //! If the loss requires communication between the readout neurons and thus a buffer for the exchanged signals.
-    bool requires_buffer_;
+    bool signal_to_other_readouts_;
   };
 
   //! Minimal spike receptor type. Start with 1 to forbid port 0 and avoid accidental creation of connections with no

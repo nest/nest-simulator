@@ -431,6 +431,8 @@ eprop_iaf_psc_delta::gradient_change( std::vector< long >& presyn_isis,
   double z = 0.0;     // Spiking variable
   double z_bar = 0.0; // Low-pass filtered spiking variable
   double grad = 0.0;  // Gradient value to be calculated
+  double psi = 0.0;   // Surrogate gradient
+  double L = 0.0;     // Learning signal
 
   for ( long presyn_isi : presyn_isis )
   {
@@ -440,8 +442,8 @@ eprop_iaf_psc_delta::gradient_change( std::vector< long >& presyn_isis,
     {
       assert( eprop_hist_it != eprop_history_.end() );
 
-      const double psi = eprop_hist_it->surrogate_gradient_;
-      const double L = eprop_hist_it->learning_signal_;
+      psi = eprop_hist_it->surrogate_gradient_;
+      L = eprop_hist_it->learning_signal_;
 
       z_bar = V_.P33_ * z_bar + V_.P33_complement_ * z;
       e = psi * z_bar;

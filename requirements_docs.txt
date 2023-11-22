@@ -1,0 +1,35 @@
+# Required Python packages to build NEST documentation.
+#
+# This file specifies the required Python packages to build the NEST
+# documentation. It is meant for those who would like to compile NEST
+# or build NEST documentation themselves. If you just want to execute
+# NEST, you should install NEST directly as described in
+# https://www.nest-simulator.org/installation.
+#
+# The listed requirements are used to build the conda environment defined
+# in the environment yaml file. If you want to build an environment
+# yourself, e.g., independent of conda, the requirements from this file
+# can be installed by
+#
+#     pip install -r requirements_docs.txt
+
+sphinx >= 4.0.2
+sphinx_rtd_theme
+sphinx_autobuild
+sphinx_gallery
+sphinx-tabs
+sphinx_design
+sphinx-material
+sphinx-copybutton
+sphinx-notfound-page
+sphinxcontrib-mermaid
+nbsphinx
+numpydoc
+example
+Image
+breathe
+csvkit
+docutils
+PyYAML >= 4.2b1
+tqdm
+yamllint

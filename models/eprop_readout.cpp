@@ -381,6 +381,7 @@ eprop_readout::gradient_change( std::vector< long >& presyn_isis,
   double z = 0.0;     // Spiking variable
   double z_bar = 0.0; // Low-pass filtered spiking variable
   double grad = 0.0;  // Gradient value to be calculated
+  double L = 0.0;     // Learning signal
 
   for ( long presyn_isi : presyn_isis )
   {
@@ -389,7 +390,8 @@ eprop_readout::gradient_change( std::vector< long >& presyn_isis,
     for ( long t = 0; t < presyn_isi; ++t )
     {
       assert( eprop_hist_it != eprop_history_.end() );
-      const double L = eprop_hist_it->learning_signal_;
+
+      L = eprop_hist_it->learning_signal_;
       z_bar = V_.P33_ * z_bar + V_.P33_complement_ * z;
       grad += L * z_bar;
       z = 0.0; //  Set spiking variable to 0 between spikes

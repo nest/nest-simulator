@@ -76,7 +76,7 @@ def test_wang():
                                          "tau_decay_NMDA": tau_NMDA})
     
     pg = nest.Create("poisson_generator", {"rate": 50.})
-    sr = nest.Create("spike_recorder")
+    sr = nest.Create("spike_recorder", {"time_in_steps": True})
     nrn2 = nest.Create("iaf_wang_2002", {"tau_AMPA": tau_AMPA,
                                          "tau_GABA": tau_GABA,
                                          "tau_decay_NMDA": tau_NMDA,

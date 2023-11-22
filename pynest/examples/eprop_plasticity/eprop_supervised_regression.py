@@ -131,7 +131,9 @@ steps.update(
     }
 )
 
-steps["total_offset"] = steps["offset_gen"] + steps["delay_in_rec"] + steps["delay_rec_out"] + steps["delay_out_norm"]
+steps["delays"] = steps["delay_in_rec"] + steps["delay_rec_out"] + steps["delay_out_norm"]  # time steps of delays
+
+steps["total_offset"] = steps["offset_gen"] + steps["delays"]  # time steps of total offset
 
 steps["sim"] = steps["task"] + steps["total_offset"] + steps["extension_sim"]  # time steps of sim
 
@@ -401,7 +403,7 @@ nest.SetStatus(gen_rate_target, params_gen_rate_target)
 # the last update interval, by sending a strong spike to all neurons that form the presynaptic side of an eprop
 # synapse. This step is required purely for technical reasons.
 
-gen_spk_final_update = nest.Create("spike_generator", 1, {"spike_times": [duration["task"] + duration["total_offset"]]})
+gen_spk_final_update = nest.Create("spike_generator", 1, {"spike_times": [duration["task"] + duration["delays"]]})
 
 nest.Connect(gen_spk_final_update, nrns_in + nrns_rec, "all_to_all", {"weight": 1000.0})
 
@@ -414,12 +416,12 @@ nest.Connect(gen_spk_final_update, nrns_in + nrns_rec, "all_to_all", {"weight": 
 
 def get_weights(pop_pre, pop_post):
     conns = nest.GetConnections(pop_pre, pop_post).get(["source", "target", "weight"])
-    conns["source"] = np.array(conns["source"]) - np.min(conns["source"])
-    conns["target"] = np.array(conns["target"]) - np.min(conns["target"])
+    conns["senders"] = np.array(conns["source"]) - np.min(conns["source"])
+    conns["targets"] = np.array(conns["target"]) - np.min(conns["target"])
 
-    weight_matrix = np.zeros((len(pop_post), len(pop_pre)))
-    weight_matrix[conns["target"], conns["source"]] = conns["weight"]
-    return weight_matrix
+    conns["weight_matrix"] = np.zeros((len(pop_post), len(pop_pre)))
+    conns["weight_matrix"][conns["targets"], conns["senders"]] = conns["weight"]
+    return conns
 
 
 weights_pre_train = {
@@ -589,23 +591,30 @@ for xlims in [(0, steps["sequence"]), (steps["task"] - steps["sequence"], steps[
 # Similarly, we can plot the weight histories. Note that the weight recorder, attached to the synapses, works
 # differently than the other recorders. Since synapses only get activated when they transmit a spike, the weight
 # recorder only records the weight in those moments. That is why the first weight registrations do not start in
-# the first time step.
+# the first time step and we add the inital weights manually.
 
 
-def plot_weight_time_course(ax, events, nrns_senders, nrns_targets, ylabel):
+def plot_weight_time_course(ax, events, nrns_senders, nrns_targets, label, ylabel):
     for sender in nrns_senders.tolist():
         for target in nrns_targets.tolist():
             idc_syn = (events["senders"] == sender) & (events["targets"] == target)
-            ax.step(events["times"][idc_syn], events["weights"][idc_syn], c=colors["blue"])
+            idc_syn_pre = (weights_pre_train[label]["source"] == sender) & (
+                weights_pre_train[label]["target"] == target
+            )
+
+            times = [0.0] + events["times"][idc_syn].tolist()
+            weights = [weights_pre_train[label]["weight"][idc_syn_pre]] + events["weights"][idc_syn].tolist()
+
+            ax.step(times, weights, c=colors["blue"])
         ax.set_ylabel(ylabel)
         ax.set_ylim(-0.6, 0.6)
 
 
 fig, axs = plt.subplots(3, 1, sharex=True, figsize=(3, 4))
 
-plot_weight_time_course(axs[0], events_wr, nrns_in, nrns_rec, r"$W_\mathrm{in}$" + "\n(pA)")
-plot_weight_time_course(axs[1], events_wr, nrns_rec, nrns_rec, r"$W_\mathrm{rec}$" + "\n(pA)")
-plot_weight_time_course(axs[2], events_wr, nrns_rec, nrns_out, r"$W_\mathrm{out}$" + "\n(pA)")
+plot_weight_time_course(axs[0], events_wr, nrns_in, nrns_rec, "in_rec", r"$W_\mathrm{in}$" + "\n(pA)")
+plot_weight_time_course(axs[1], events_wr, nrns_rec, nrns_rec, "rec_rec", r"$W_\mathrm{rec}$" + "\n(pA)")
+plot_weight_time_course(axs[2], events_wr, nrns_rec, nrns_out, "rec_out", r"$W_\mathrm{out}$" + "\n(pA)")
 
 axs[-1].set_xlabel(r"$t$ (ms)")
 axs[-1].set_xlim(0, steps["task"])
@@ -626,13 +635,19 @@ cmap = mpl.colors.LinearSegmentedColormap.from_list(
 
 fig, axs = plt.subplots(3, 2, sharex="col", sharey="row")
 
-all_w_extrema = [[[np.min(v), np.max(v)] for v in w.values()] for w in [weights_pre_train, weights_post_train]]
+all_w_extrema = []
+
+for k in weights_pre_train.keys():
+    w_pre = weights_pre_train[k]["weight"]
+    w_post = weights_post_train[k]["weight"]
+    all_w_extrema.append([np.min(w_pre), np.max(w_pre), np.min(w_post), np.max(w_post)])
+
 args = {"cmap": cmap, "vmin": np.min(all_w_extrema), "vmax": np.max(all_w_extrema)}
 
 for i, weights in zip([0, 1], [weights_pre_train, weights_post_train]):
-    axs[0, i].pcolormesh(weights["in_rec"].T, **args)
-    axs[1, i].pcolormesh(weights["rec_rec"], **args)
-    cmesh = axs[2, i].pcolormesh(weights["rec_out"], **args)
+    axs[0, i].pcolormesh(weights["in_rec"]["weight_matrix"].T, **args)
+    axs[1, i].pcolormesh(weights["rec_rec"]["weight_matrix"], **args)
+    cmesh = axs[2, i].pcolormesh(weights["rec_out"]["weight_matrix"], **args)
 
     axs[2, i].set_xlabel("recurrent\nneurons")
 

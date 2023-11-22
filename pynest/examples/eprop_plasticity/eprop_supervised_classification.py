@@ -602,11 +602,8 @@ loss_reference = [
     0.7294289628449472,
 ]
 
-
-# Determine the number of elements to compare (up to len(loss_reference))
 n_compare = min(len(loss), len(loss_reference))
 
-# Compare the required number of elements
 if np.allclose(loss[:n_compare], loss_reference[:n_compare], rtol=1e-8):
     print()
     print("Verification successful.")

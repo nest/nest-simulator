@@ -99,7 +99,6 @@ def test_simulation_against_analytical_solution():
             "weight": weight,
             "receptor_type": syn_idx + 1,
         }
-
         nest.Connect(sg, nrn, conn_spec="one_to_one", syn_spec=syn_spec)
 
     mm = nest.Create(
@@ -110,17 +109,12 @@ def test_simulation_against_analytical_solution():
     nest.Connect(mm, nrn, syn_spec={"delay": 0.1})
     nest.Simulate(simtime)
     times = mm.get("events", "times")
-    I_syn = mm.get("events", "I_syn")
-    print(times)
     I_syns_analytical = []
     V_m_analytical = np.zeros_like(times, dtype=np.float64)
     for weight, delay, tau_s in zip(weights, delays, tau_syns):
         I_syns_analytical.append(exp_psc_fn(times - delay - spike_time, tau_s) * weight)
-        print(I_syns_analytical[-1])
         V_m_analytical += exp_psc_voltage_response(times - delay - spike_time, tau_s, tau_m, C_m, weight)
 
-    print(I_syn)
-    nptest.assert_array_almost_equal(mm.get("events", "I_syn"), np.sum(I_syns_analytical, axis=0))
     for idx, I_syn_analytical in enumerate(I_syns_analytical):
         nptest.assert_array_almost_equal(mm.get("events", f"I_syn_{idx+1}"), I_syn_analytical)
     nptest.assert_array_almost_equal(mm.get("events", "V_m"), V_m_analytical)

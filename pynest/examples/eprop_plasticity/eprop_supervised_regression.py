@@ -220,6 +220,7 @@ n_record_w = 3  # number of senders and targets to record weights from
 
 params_mm_rec = {
     "record_from": ["V_m", "surrogate_gradient", "learning_signal"],  # recordables
+    "start": duration["offset_gen"] + duration["delay_in_rec"],
     "interval": duration["step"],
 }
 

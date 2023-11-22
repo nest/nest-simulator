@@ -171,7 +171,11 @@ def test_eprop_regression():
     n_record = 1
     n_record_w = 1
 
-    params_mm_rec = {"record_from": ["V_m", "surrogate_gradient", "learning_signal"], "interval": duration["sequence"]}
+    params_mm_rec = {
+        "record_from": ["V_m", "surrogate_gradient", "learning_signal"],
+        "start": duration["offset_gen"] + duration["delay_in_rec"],
+        "interval": duration["sequence"],
+    }
 
     params_mm_out = {
         "record_from": ["V_m", "readout_signal", "target_signal", "error_signal"],
@@ -504,7 +508,11 @@ def test_eprop_classification():
     n_record = 1
     n_record_w = 1
 
-    params_mm_rec = {"record_from": ["V_m", "surrogate_gradient", "learning_signal"], "interval": duration["sequence"]}
+    params_mm_rec = {
+        "record_from": ["V_m", "surrogate_gradient", "learning_signal"],
+        "start": duration["offset_gen"] + duration["delay_in_rec"],
+        "interval": duration["sequence"],
+    }
 
     params_mm_out = {
         "record_from": ["V_m", "readout_signal", "target_signal", "error_signal"],

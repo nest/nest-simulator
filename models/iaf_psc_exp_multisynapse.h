@@ -296,10 +296,24 @@ private:
     }
     else if ( elem == State_::I )
     {
-      return S_.current_;
+      std::cout << "GETTING I_SYN_SUM" << std::endl;
+      std::cout << S_.i_syn_[ 0 ] << std::endl;
+      std::cout << S_.i_syn_[ 1 ] << std::endl;
+      std::cout << S_.i_syn_[ 2 ] << std::endl;
+      std::cout << S_.i_syn_[ 3 ] << std::endl;
+      std::cout << "" << std::endl;
+      return std::accumulate(S_.i_syn_.begin(), S_.i_syn_.end(), 0.0);
+//      return S_.current_;
     }
     else
     {
+      std::cout << "GETTING I_SYN" << std::endl;
+      std::cout << S_.i_syn_[ 0 ] << std::endl;
+      std::cout << S_.i_syn_[ 1 ] << std::endl;
+      std::cout << S_.i_syn_[ 2 ] << std::endl;
+      std::cout << S_.i_syn_[ 3 ] << std::endl;
+      std::cout << S_.i_syn_[ elem - S_.NUMBER_OF_FIXED_STATES_ELEMENTS ] << std::endl;
+      std::cout << "" << std::endl;
       return S_.i_syn_[ elem - S_.NUMBER_OF_FIXED_STATES_ELEMENTS ];
     }
   };

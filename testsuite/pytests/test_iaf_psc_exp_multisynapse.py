@@ -66,7 +66,7 @@ def test_simulation_against_analytical_solution():
     from multiple different synaptic ports are the same as the analytical solution.
     """
 
-    tau_syn = [2.0, 20.0, 60.0, 100.0]
+    tau_syns = [2.0, 20.0, 60.0, 100.0]
     delays = [7.0, 5.0, 2.0, 1.0]
     weights = [30.0, 50.0, 20.0, 10.0]
     C_m = 250.0
@@ -86,7 +86,7 @@ def test_simulation_against_analytical_solution():
             "V_th": 1500.0,
             "I_e": 0.0,
             "tau_m": tau_m,
-            "tau_syn": tau_syn,
+            "tau_syn": tau_syns,
         },
     )
 
@@ -107,17 +107,19 @@ def test_simulation_against_analytical_solution():
         params={"record_from": ["I_syn_1", "I_syn_2", "I_syn_3", "I_syn_4", "V_m", "I_syn"], "interval": dt},
     )
 
-    nest.Connect(mm, nrn)
+    nest.Connect(mm, nrn, syn_spec={"delay": 0.1})
     nest.Simulate(simtime)
     times = mm.get("events", "times")
     I_syn = mm.get("events", "I_syn")
-
+    print(times)
     I_syns_analytical = []
     V_m_analytical = np.zeros_like(times, dtype=np.float64)
-    for weight, delay, tau_s in zip(weights, delays, tau_syn):
-        I_syns_analytical.append(exp_psc_fn(times - delay - spike_time, tau_syn) * weight)
-        V_m_analytical += exp_psc_voltage_response(times - delay - spike_time, tau_syn, tau_m, C_m, weight)
+    for weight, delay, tau_s in zip(weights, delays, tau_syns):
+        I_syns_analytical.append(exp_psc_fn(times - delay - spike_time, tau_s) * weight)
+        print(I_syns_analytical[-1])
+        V_m_analytical += exp_psc_voltage_response(times - delay - spike_time, tau_s, tau_m, C_m, weight)
 
+    print(I_syn)
     nptest.assert_array_almost_equal(mm.get("events", "I_syn"), np.sum(I_syns_analytical, axis=0))
     for idx, I_syn_analytical in enumerate(I_syns_analytical):
         nptest.assert_array_almost_equal(mm.get("events", f"I_syn_{idx+1}"), I_syn_analytical)
@@ -136,7 +138,6 @@ def test_default_recordables():
     assert "I_syn" in recordables
     assert "I_syn_1" in recordables
     assert "V_m" in recordables
-
 
 def test_resize_recordables():
     """

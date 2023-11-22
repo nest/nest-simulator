@@ -322,17 +322,17 @@ iaf_psc_exp_multisynapse::update( const Time& origin, const long from, const lon
       --S_.refractory_steps_; // neuron is absolute refractory
     }
 
-    S_.current_ = 0.0;
-    for ( size_t i = 0; i < P_.n_receptors_(); i++ )
-    {
-      // exponential decaying PSCs
-      S_.i_syn_[ i ] *= V_.P11_syn_[ i ];
-
-      // collect spikes
-      S_.i_syn_[ i ] += B_.spikes_[ i ].get_value( lag ); // not sure about this
-
-      S_.current_ += S_.i_syn_[ i ];
-    }
+//     S_.current_ = 0.0;
+//     for ( size_t i = 0; i < P_.n_receptors_(); i++ )
+//     {
+//       // exponential decaying PSCs
+//       S_.i_syn_[ i ] *= V_.P11_syn_[ i ];
+// 
+//       // collect spikes
+//       S_.i_syn_[ i ] += B_.spikes_[ i ].get_value( lag ); // not sure about this
+// 
+//       S_.current_ += S_.i_syn_[ i ];
+//     }
 
     if ( S_.V_m_ >= P_.Theta_ ) // threshold crossing
     {

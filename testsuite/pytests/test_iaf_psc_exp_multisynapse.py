@@ -94,12 +94,12 @@ def test_simulation_against_analytical_solution():
 
     sg = nest.Create("spike_generator", params={"spike_times": [spike_time]})
 
-    for i, syn_id in enumerate(range(1, 5)):
+    for syn_idx, (delay, weight) in enumerate(zip(delays, weights)):
         syn_spec = {
             "synapse_model": "static_synapse",
-            "delay": delays[i],
-            "weight": weights[i],
-            "receptor_type": syn_id,
+            "delay": delay,
+            "weight": weight,
+            "receptor_type": syn_idx + 1,
         }
 
         nest.Connect(sg, nrn, conn_spec="one_to_one", syn_spec=syn_spec)

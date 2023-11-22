@@ -49,6 +49,13 @@ Description
 neuron model with delta-shaped postsynaptic currents used for eligibility
 propagation (e-prop) plasticity.
 
+.. note::
+  Contrary to what the model names suggest, `eprop_iaf_psc_delta` is not simply
+  the `iaf_psc_delta` model endowed with e-prop. While both models are
+  integrate-and-fire neurons with delta-shaped post-synaptic currents, there are
+  minor differences in the dynamics of the two models, such as the propagator of
+  the post-synaptic current and the voltage reset upon a spike.
+
 E-prop plasticity was originally introduced and implemented in TensorFlow in [1]_.
 
 The membrane voltage time course is given by:

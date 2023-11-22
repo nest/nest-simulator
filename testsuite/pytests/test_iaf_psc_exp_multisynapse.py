@@ -110,7 +110,7 @@ def test_simulation_against_analytical_solution():
     nest.Connect(mm, nrn)
     nest.Simulate(simtime)
     times = mm.get("events", "times")
-    I_syn = np.sum([mm.get("events", f"I_syn_{i}") for i in range(1, 5)], axis=0)
+    I_syn = mm.get("events", "I_syn")
 
     I_syns_analytical = []
     V_m_analytical = np.zeros_like(times, dtype=np.float64)

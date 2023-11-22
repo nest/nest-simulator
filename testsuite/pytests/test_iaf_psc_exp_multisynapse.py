@@ -58,7 +58,7 @@ def test_set_synaptic_time_constants():
     nptest.assert_array_almost_equal(nrn.get("tau_syn"), taus)
 
 
-def test_simulation_against_analytical_soln():
+def test_simulation_against_analytical_solution():
     """
     Test simulated PSCs against analytical expectation.
 
@@ -92,12 +92,12 @@ def test_simulation_against_analytical_soln():
 
     sg = nest.Create("spike_generator", params={"spike_times": [spike_time]})
 
-    for i, syn_id in enumerate(range(1, 5)):
+    for syn_idx, (delay, weight) in enumerate(zip(delays, weights)):
         syn_spec = {
             "synapse_model": "static_synapse",
-            "delay": delays[i],
-            "weight": weights[i],
-            "receptor_type": syn_id,
+            "delay": delay,
+            "weight": weight,
+            "receptor_type": syn_idx + 1,
         }
 
         nest.Connect(sg, nrn, conn_spec="one_to_one", syn_spec=syn_spec)
@@ -114,15 +114,13 @@ def test_simulation_against_analytical_soln():
 
     I_syns_analytical = []
     V_m_analytical = np.zeros_like(times, dtype=np.float64)
-    for i in range(4):
-        I_syns_analytical.append(exp_psc_fn(times - delays[i] - spike_time, tau_syn[i]) * weights[i])
-        V_m_analytical += exp_psc_voltage_response(times - delays[i] - spike_time, tau_syn[i], tau_m, C_m, weights[i])
+    for weight, delay, tau_s in zip(weights, delays, tau_syn):
+        I_syns_analytical.append(exp_psc_fn(times - delay - spike_time, tau_syn) * weight)
+        V_m_analytical += exp_psc_voltage_response(times - delay - spike_time, tau_syn, tau_m, C_m, weight)
 
     nptest.assert_array_almost_equal(mm.get("events", "I_syn"), np.sum(I_syns_analytical, axis=0))
-    nptest.assert_array_almost_equal(mm.get("events", "I_syn_1"), I_syns_analytical[0])
-    nptest.assert_array_almost_equal(mm.get("events", "I_syn_2"), I_syns_analytical[1])
-    nptest.assert_array_almost_equal(mm.get("events", "I_syn_3"), I_syns_analytical[2])
-    nptest.assert_array_almost_equal(mm.get("events", "I_syn_4"), I_syns_analytical[3])
+    for idx, I_syn_analytical in enumerate(I_syns_analytical):
+        nptest.assert_array_almost_equal(mm.get("events", f"I_syn_{idx+1}"), I_syn_analytical)
     nptest.assert_array_almost_equal(mm.get("events", "V_m"), V_m_analytical)
 
 

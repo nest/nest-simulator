@@ -121,10 +121,8 @@ def test_simulation_against_analytical_solution():
         V_m_analytical += exp_psc_voltage_response(times - delays[i] - spike_time, tau_syn[i], tau_m, C_m, weights[i])
 
     nptest.assert_array_almost_equal(mm.get("events", "I_syn"), np.sum(I_syns_analytical, axis=0))
-    nptest.assert_array_almost_equal(mm.get("events", "I_syn_1"), I_syns_analytical[0])
-    nptest.assert_array_almost_equal(mm.get("events", "I_syn_2"), I_syns_analytical[1])
-    nptest.assert_array_almost_equal(mm.get("events", "I_syn_3"), I_syns_analytical[2])
-    nptest.assert_array_almost_equal(mm.get("events", "I_syn_4"), I_syns_analytical[3])
+    for idx, I_syn_analytical in enumerate(I_syns_analytical):
+        nptest.assert_array_almost_equal(mm.get("events", f"I_syn_{idx+1}"), I_syn_analytical)
     nptest.assert_array_almost_equal(mm.get("events", "V_m"), V_m_analytical)
 
 

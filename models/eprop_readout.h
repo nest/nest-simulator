@@ -239,7 +239,7 @@ private:
     double P30_;
     double P33_; //!< corresponds to kappa in eprop_synapse
     double P33_complement_;
-    bool requires_buffer_;
+    bool signal_to_other_readouts_;
   };
 
   /**

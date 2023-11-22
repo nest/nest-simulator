@@ -210,12 +210,12 @@ eprop_readout::pre_run_hook()
   if ( P_.loss_ == "mean_squared_error" )
   {
     compute_error_signal = &eprop_readout::compute_error_signal_mean_squared_error;
-    V_.requires_buffer_ = false;
+    V_.signal_to_other_readouts_ = false;
   }
   else if ( P_.loss_ == "cross_entropy_loss" )
   {
     compute_error_signal = &eprop_readout::compute_error_signal_cross_entropy_loss;
-    V_.requires_buffer_ = true;
+    V_.signal_to_other_readouts_ = true;
   }
 }
 
@@ -268,7 +268,7 @@ eprop_readout::update( Time const& origin, const long from, const long to )
 
     B_.normalization_rate_ = 0.0;
 
-    if ( V_.requires_buffer_ )
+    if ( V_.signal_to_other_readouts_ )
     {
       readout_signal_unnorm_buffer[ lag ] = S_.readout_signal_unnorm_;
     }
@@ -286,7 +286,7 @@ eprop_readout::update( Time const& origin, const long from, const long to )
   error_signal_event.set_coeffarray( error_signal_buffer );
   kernel().event_delivery_manager.send_secondary( *this, error_signal_event );
 
-  if ( V_.requires_buffer_ )
+  if ( V_.signal_to_other_readouts_ )
   {
     // time is one time step longer than the final interval_step to enable sending the
     // unnormalized readout signal one time step in advance so that it is available

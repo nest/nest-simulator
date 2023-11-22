@@ -37,16 +37,14 @@ def reset():
 
 def exp_psc_fn(t, tau_syn):
     vals = np.zeros_like(t)
-    zero_inds = t <= 0.0
-    nonzero_inds = ~zero_inds
+    nonzero_inds = t > 0.0
     vals[nonzero_inds] = np.exp(-t[nonzero_inds] / tau_syn)
     return vals
 
 
 def exp_psc_voltage_response(t, tau_syn, tau_m, C_m, w):
     vals = np.zeros_like(t)
-    zero_inds = t <= 0.0
-    nonzero_inds = ~zero_inds
+    nonzero_inds = t > 0.0
     delta_e = np.exp(-t[nonzero_inds] / tau_m) - np.exp(-t[nonzero_inds] / tau_syn)
     vals[nonzero_inds] = w / (C_m * (1.0 / tau_syn - 1.0 / tau_m)) * delta_e
     return vals

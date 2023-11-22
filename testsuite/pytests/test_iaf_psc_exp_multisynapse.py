@@ -60,7 +60,7 @@ def test_set_synaptic_time_constants():
     nptest.assert_array_almost_equal(nrn.get("tau_syn"), taus)
 
 
-def test_simulation_against_analytical_soln():
+def test_simulation_against_analytical_solution():
     """
     Test simulated PSCs against analytical expectation.
 

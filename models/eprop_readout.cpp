@@ -61,7 +61,7 @@ RecordablesMap< eprop_readout >::create()
   insert_( names::error_signal, &eprop_readout::get_error_signal_ );
   insert_( names::readout_signal, &eprop_readout::get_readout_signal_ );
   insert_( names::target_signal, &eprop_readout::get_target_signal_ );
-  insert_( names::V_m, &eprop_readout::get_v_ );
+  insert_( names::V_m, &eprop_readout::get_v_m_ );
 }
 
 /* ----------------------------------------------------------------
@@ -84,7 +84,7 @@ eprop_readout::State_::State_()
   , readout_signal_unnorm_( 0.0 )
   , target_signal_( 0.0 )
   , i_in_( 0.0 )
-  , v_( 0.0 )
+  , v_m_( 0.0 )
   , z_in_( 0.0 )
 {
 }
@@ -150,7 +150,7 @@ eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
 void
 eprop_readout::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, v_ + p.E_L_ );
+  def< double >( d, names::V_m, v_m_ + p.E_L_ );
   def< double >( d, names::error_signal, error_signal_ );
   def< double >( d, names::readout_signal, readout_signal_ );
   def< double >( d, names::target_signal, target_signal_ );
@@ -159,7 +159,7 @@ eprop_readout::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 void
 eprop_readout::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  v_ -= updateValueParam< double >( d, names::V_m, v_, node ) ? p.E_L_ : delta_EL;
+  v_m_ -= updateValueParam< double >( d, names::V_m, v_m_, node ) ? p.E_L_ : delta_EL;
 }
 
 /* ----------------------------------------------------------------
@@ -216,7 +216,7 @@ eprop_readout::pre_run_hook()
 
   const double kappa = std::exp( -dt / P_.tau_m_ );
 
-  V_.P_v_ = kappa;
+  V_.P_v_m_ = kappa;
   V_.P_i_in_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - kappa );
   V_.P_z_in_ = 1.0 - kappa;
 }
@@ -252,13 +252,13 @@ eprop_readout::update( Time const& origin, const long from, const long to )
 
     if ( with_reset and interval_step == 0 )
     {
-      S_.v_ = 0.0;
+      S_.v_m_ = 0.0;
     }
 
     S_.z_in_ = B_.spikes_.get_value( lag );
 
-    S_.v_ = V_.P_i_in_ * S_.i_in_ + V_.P_z_in_ * S_.z_in_ + V_.P_v_ * S_.v_;
-    S_.v_ = std::max( S_.v_, P_.V_min_ );
+    S_.v_m_ = V_.P_i_in_ * S_.i_in_ + V_.P_z_in_ * S_.z_in_ + V_.P_v_m_ * S_.v_m_;
+    S_.v_m_ = std::max( S_.v_m_, P_.V_min_ );
 
     ( this->*compute_error_signal )( lag );
 
@@ -309,7 +309,7 @@ void
 eprop_readout::compute_error_signal_mean_squared_error( const long lag )
 {
   S_.readout_signal_ = S_.readout_signal_unnorm_;
-  S_.readout_signal_unnorm_ = S_.v_ + P_.E_L_;
+  S_.readout_signal_unnorm_ = S_.v_m_ + P_.E_L_;
   S_.error_signal_ = S_.readout_signal_ - S_.target_signal_;
 }
 
@@ -318,7 +318,7 @@ eprop_readout::compute_error_signal_cross_entropy( const long lag )
 {
   const double norm_rate = B_.normalization_rate_ + S_.readout_signal_unnorm_;
   S_.readout_signal_ = S_.readout_signal_unnorm_ / norm_rate;
-  S_.readout_signal_unnorm_ = std::exp( S_.v_ + P_.E_L_ );
+  S_.readout_signal_unnorm_ = std::exp( S_.v_m_ + P_.E_L_ );
   S_.error_signal_ = S_.readout_signal_ - S_.target_signal_;
 }
 
@@ -396,7 +396,7 @@ eprop_readout::gradient_change( std::vector< long >& presyn_isis,
 
       L = eprop_hist_it->learning_signal_;
 
-      z_bar = V_.P_v_ * z_bar + V_.P_z_in_ * z;
+      z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
       grad += L * z_bar;
       z = 0.0; //  Set spiking variable to 0 between spikes
 

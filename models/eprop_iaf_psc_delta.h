@@ -291,7 +291,7 @@ private:
     double i_in_;
 
     //! Membrane voltage relative to the leak membrane potential (mV).
-    double v_;
+    double v_m_;
 
     //! Binary spike variable - 1.0 if the neuron has spiked in the previous time step and 0.0 otherwise.
     double z_;
@@ -332,7 +332,7 @@ private:
   struct Variables_
   {
     //! Propagator matrix entry for evolving the membrane voltage.
-    double P_v_;
+    double P_v_m_;
 
     //! Propagator matrix entry for evolving the incoming spike variables.
     double P_z_in_;
@@ -346,9 +346,9 @@ private:
 
   //! Get the current value of the membrane voltage.
   double
-  get_v_() const
+  get_v_m_() const
   {
-    return S_.v_ + P_.E_L_;
+    return S_.v_m_ + P_.E_L_;
   }
 
   //! Get the current value of the surrogate gradient.

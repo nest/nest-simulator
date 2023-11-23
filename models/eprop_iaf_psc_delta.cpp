@@ -60,7 +60,7 @@ RecordablesMap< eprop_iaf_psc_delta >::create()
 {
   insert_( names::learning_signal, &eprop_iaf_psc_delta::get_learning_signal_ );
   insert_( names::surrogate_gradient, &eprop_iaf_psc_delta::get_surrogate_gradient_ );
-  insert_( names::V_m, &eprop_iaf_psc_delta::get_v_ );
+  insert_( names::V_m, &eprop_iaf_psc_delta::get_v_m_ );
 }
 
 /* ----------------------------------------------------------------
@@ -88,7 +88,7 @@ eprop_iaf_psc_delta::State_::State_()
   , r_( 0 )
   , surrogate_gradient_( 0.0 )
   , i_in_( 0.0 )
-  , v_( 0.0 )
+  , v_m_( 0.0 )
   , z_in_( 0.0 )
   , z_( 0.0 )
 {
@@ -207,13 +207,13 @@ eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
 void
 eprop_iaf_psc_delta::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, v_ + p.E_L_ );
+  def< double >( d, names::V_m, v_m_ + p.E_L_ );
 }
 
 void
 eprop_iaf_psc_delta::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  v_ -= updateValueParam< double >( d, names::V_m, v_, node ) ? p.E_L_ : delta_EL;
+  v_m_ -= updateValueParam< double >( d, names::V_m, v_m_, node ) ? p.E_L_ : delta_EL;
 }
 
 /* ----------------------------------------------------------------
@@ -267,7 +267,7 @@ eprop_iaf_psc_delta::pre_run_hook()
 
   const double alpha = std::exp( -dt / P_.tau_m_ );
 
-  V_.P_v_ = alpha;
+  V_.P_v_m_ = alpha;
   V_.P_i_in_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - alpha );
 
   if ( P_.psc_scale_factor_ == "alpha_complement" )
@@ -310,7 +310,7 @@ eprop_iaf_psc_delta::update( Time const& origin, const long from, const long to 
 
       if ( with_reset )
       {
-        S_.v_ = 0.0;
+        S_.v_m_ = 0.0;
         S_.r_ = 0;
         S_.z_ = 0.0;
       }
@@ -318,9 +318,9 @@ eprop_iaf_psc_delta::update( Time const& origin, const long from, const long to 
 
     S_.z_in_ = B_.spikes_.get_value( lag );
 
-    S_.v_ = V_.P_i_in_ * S_.i_in_ + V_.P_z_in_ * S_.z_in_ + V_.P_v_ * S_.v_;
-    S_.v_ -= P_.V_th_ * S_.z_;
-    S_.v_ = std::max( S_.v_, P_.V_min_ );
+    S_.v_m_ = V_.P_i_in_ * S_.i_in_ + V_.P_z_in_ * S_.z_in_ + V_.P_v_m_ * S_.v_m_;
+    S_.v_m_ -= P_.V_th_ * S_.z_;
+    S_.v_m_ = std::max( S_.v_m_, P_.V_min_ );
 
     S_.z_ = 0.0;
 
@@ -328,7 +328,7 @@ eprop_iaf_psc_delta::update( Time const& origin, const long from, const long to 
 
     write_surrogate_gradient_to_history( t, S_.surrogate_gradient_ );
 
-    if ( S_.v_ >= P_.V_th_ and S_.r_ == 0 )
+    if ( S_.v_m_ >= P_.V_th_ and S_.r_ == 0 )
     {
       count_spike();
 
@@ -374,7 +374,7 @@ eprop_iaf_psc_delta::compute_piecewise_linear_derivative()
     return 0.0;
   }
 
-  return P_.gamma_ * std::max( 0.0, 1.0 - std::fabs( ( S_.v_ - P_.V_th_ ) / P_.V_th_ ) ) / P_.V_th_;
+  return P_.gamma_ * std::max( 0.0, 1.0 - std::fabs( ( S_.v_m_ - P_.V_th_ ) / P_.V_th_ ) ) / P_.V_th_;
 }
 
 /* ----------------------------------------------------------------
@@ -449,7 +449,7 @@ eprop_iaf_psc_delta::gradient_change( std::vector< long >& presyn_isis,
       psi = eprop_hist_it->surrogate_gradient_;
       L = eprop_hist_it->learning_signal_;
 
-      z_bar = V_.P_v_ * z_bar + V_.P_z_in_ * z;
+      z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
       e = psi * z_bar;
       e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
       grad += L * e_bar;

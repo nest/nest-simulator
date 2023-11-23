@@ -88,7 +88,7 @@ eprop_iaf_psc_delta_adapt::Parameters_::Parameters_()
 }
 
 eprop_iaf_psc_delta_adapt::State_::State_()
-  : a_( 0.0 )
+  : adapt_( 0.0 )
   , learning_signal_( 0.0 )
   , r_( 0 )
   , surrogate_gradient_( 0.0 )
@@ -226,14 +226,14 @@ eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Node* nod
 void
 eprop_iaf_psc_delta_adapt::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
-  def< double >( d, names::adaptation, a_ );
+  def< double >( d, names::adaptation, adapt_ );
   def< double >( d, names::V_m, v_m_ + p.E_L_ );
 }
 
 void
 eprop_iaf_psc_delta_adapt::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  updateValueParam< double >( d, names::adaptation, a_, node );
+  updateValueParam< double >( d, names::adaptation, adapt_, node );
 
   v_m_ -= updateValueParam< double >( d, names::V_m, v_m_, node ) ? p.E_L_ : delta_EL;
 }
@@ -301,7 +301,7 @@ eprop_iaf_psc_delta_adapt::pre_run_hook()
     V_.P_z_in_ = 1.0;
   }
 
-  V_.P_a_ = std::exp( -dt / P_.adapt_tau_ );
+  V_.P_adapt_ = std::exp( -dt / P_.adapt_tau_ );
 }
 
 long
@@ -335,7 +335,7 @@ eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, const lo
       if ( with_reset )
       {
         S_.v_m_ = 0.0;
-        S_.a_ = 0.0;
+        S_.adapt_ = 0.0;
         S_.r_ = 0;
         S_.z_ = 0.0;
       }
@@ -347,8 +347,8 @@ eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, const lo
     S_.v_m_ -= P_.V_th_ * S_.z_;
     S_.v_m_ = std::max( S_.v_m_, P_.V_min_ );
 
-    S_.a_ = V_.P_a_ * S_.a_ + S_.z_;
-    S_.v_th_adapt_ = P_.V_th_ + P_.adapt_beta_ * S_.a_;
+    S_.adapt_ = V_.P_adapt_ * S_.adapt_ + S_.z_;
+    S_.v_th_adapt_ = P_.V_th_ + P_.adapt_beta_ * S_.adapt_;
 
     S_.z_ = 0.0;
 
@@ -480,7 +480,7 @@ eprop_iaf_psc_delta_adapt::gradient_change( std::vector< long >& presyn_isis,
 
       z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
       e = psi * ( z_bar - P_.adapt_beta_ * epsilon );
-      epsilon = psi * z_bar + ( V_.P_a_ - psi * P_.adapt_beta_ ) * epsilon;
+      epsilon = psi * z_bar + ( V_.P_adapt_ - psi * P_.adapt_beta_ ) * epsilon;
       e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
       grad += L * e_bar;
       sum_e += e;

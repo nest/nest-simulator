@@ -298,7 +298,7 @@ private:
   struct State_
   {
     //! Adaptation variable.
-    double a_;
+    double adapt_;
 
     //! Adapting spike threshold voltage.
     double v_th_adapt_;
@@ -366,7 +366,7 @@ private:
     double P_i_in_;
 
     //! Propagator matrix entry for evolving the adaptation.
-    double P_a_;
+    double P_adapt_;
 
     //! Total refractory steps.
     int RefractoryCounts_;
@@ -404,7 +404,7 @@ private:
   double
   get_adaptation_() const
   {
-    return S_.a_;
+    return S_.adapt_;
   }
 
   // the order in which the structure instances are defined is important for speed

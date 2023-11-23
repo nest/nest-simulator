@@ -178,6 +178,7 @@ eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Node* nod
   {
     throw BadProperty( "c_reg must be >= 0." );
   }
+
   if ( f_target_ < 0 )
   {
     throw BadProperty( "f_target must be >= 0." );

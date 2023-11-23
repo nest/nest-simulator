@@ -167,7 +167,7 @@ eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
 
   if ( gamma_ < 0.0 or 1.0 <= gamma_ )
   {
-    throw BadProperty( "gamma must be [0,1)." );
+    throw BadProperty( "gamma must be in [0,1)." );
   }
 
   if ( psc_scale_factor_ != "unity" and psc_scale_factor_ != "alpha_complement" )

@@ -64,7 +64,6 @@ RecordablesMap< eprop_readout >::create()
   insert_( names::V_m, &eprop_readout::get_V_m_ );
 }
 
-
 /* ----------------------------------------------------------------
  * Default constructors for parameters, state, and buffers
  * ---------------------------------------------------------------- */
@@ -392,9 +391,11 @@ eprop_readout::gradient_change( std::vector< long >& presyn_isis,
       assert( eprop_hist_it != eprop_history_.end() );
 
       L = eprop_hist_it->learning_signal_;
+
       z_bar = V_.P33_ * z_bar + V_.P33_complement_ * z;
       grad += L * z_bar;
       z = 0.0; //  Set spiking variable to 0 between spikes
+
       ++eprop_hist_it;
     }
   }

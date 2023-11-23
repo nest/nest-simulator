@@ -229,7 +229,6 @@ private:
   //! Structure of parameters.
   struct Parameters_
   {
-
     //! Capacitance of the membrane (pF).
     double C_m_;
 

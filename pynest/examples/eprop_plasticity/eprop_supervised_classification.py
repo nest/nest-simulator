@@ -231,7 +231,7 @@ params_nrn_out = {
     "C_m": 1.0,
     "E_L": 0.0,
     "I_e": 0.0,
-    "loss": "cross_entropy_loss",
+    "loss": "cross_entropy",
     "tau_m": 20.0,
     "V_m": 0.0,
 }

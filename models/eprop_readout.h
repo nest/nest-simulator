@@ -81,7 +81,7 @@ Parameter           Unit     Math equivalent          Default            Descrip
  E_L                mV       :math:`E_\text{L}`                      0.0 Leak membrane potential
  I_e                pA       :math:`I_\text{e}`                      0.0 Constant external input current
  loss                        :math:`E`                mean_squared_error Loss function
-                                                                         ["mean_squared_error", "cross_entropy_loss"]
+                                                                         ["mean_squared_error", "cross_entropy"]
  tau_m              ms       :math:`\tau_\text{m}`                  10.0 Time constant of the membrane
  V_m                mV       :math:`v_j^0`                           0.0 Initial value of the membrane voltage
  V_min              mV       :math:`v_\text{min}`             -1.79e+308 Absolute lower bound of the membrane voltage
@@ -186,13 +186,13 @@ private:
 
   void update( Time const&, const long, const long ) override;
 
-  //! Compute the error signal based on the mean-squared error.
+  //! Compute the error signal based on the mean-squared error loss.
   void compute_error_signal_mean_squared_error( const long lag );
 
   //! Compute the error signal based on the cross-entropy loss.
-  void compute_error_signal_cross_entropy_loss( const long lag );
+  void compute_error_signal_cross_entropy( const long lag );
 
-  //! Compute the error signal.
+  //! Compute the error signal based on a loss function.
   void ( eprop_readout::*compute_error_signal )( const long lag );
 
   //! Map for storing a static set of recordables.
@@ -213,7 +213,7 @@ private:
     //! Constant external input current (pA).
     double I_e_;
 
-    //! Loss function ["mean_squared_error", "cross_entropy_loss"].
+    //! Loss function ["mean_squared_error", "cross_entropy"].
     std::string loss_;
 
     //! Time constant of the membrane (ms).

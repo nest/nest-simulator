@@ -134,9 +134,9 @@ eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
     throw BadProperty( "C_m must be > 0." );
   }
 
-  if ( loss_ != "mean_squared_error" and loss_ != "cross_entropy_loss" )
+  if ( loss_ != "mean_squared_error" and loss_ != "cross_entropy" )
   {
-    throw BadProperty( "loss must be chosen from [\"mean_squared_error\", \"cross_entropy_loss\"]." );
+    throw BadProperty( "loss must be chosen from [\"mean_squared_error\", \"cross_entropy\"]." );
   }
 
   if ( tau_m_ <= 0 )
@@ -212,9 +212,9 @@ eprop_readout::pre_run_hook()
     compute_error_signal = &eprop_readout::compute_error_signal_mean_squared_error;
     V_.signal_to_other_readouts_ = false;
   }
-  else if ( P_.loss_ == "cross_entropy_loss" )
+  else if ( P_.loss_ == "cross_entropy" )
   {
-    compute_error_signal = &eprop_readout::compute_error_signal_cross_entropy_loss;
+    compute_error_signal = &eprop_readout::compute_error_signal_cross_entropy;
     V_.signal_to_other_readouts_ = true;
   }
 }
@@ -311,7 +311,7 @@ eprop_readout::compute_error_signal_mean_squared_error( const long lag )
 }
 
 void
-eprop_readout::compute_error_signal_cross_entropy_loss( const long lag )
+eprop_readout::compute_error_signal_cross_entropy( const long lag )
 {
   const double norm_rate = B_.normalization_rate_ + S_.readout_signal_unnorm_;
   S_.readout_signal_ = S_.readout_signal_unnorm_ / norm_rate;

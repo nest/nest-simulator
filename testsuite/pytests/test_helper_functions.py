@@ -19,39 +19,39 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import unittest
-
 import nest
+import pytest
+import testutil
 
 
-class TestHelperFunctions(unittest.TestCase):
-    def test_get_verbosity(self):
-        verbosity = nest.get_verbosity()
-        self.assertTrue(isinstance(verbosity, int))
-
-    def test_set_verbosity(self):
-        levels = [
-            ("M_ALL", 0),
-            ("M_DEBUG", 5),
-            ("M_STATUS", 7),
-            ("M_INFO", 10),
-            ("M_DEPRECATED", 18),
-            ("M_WARNING", 20),
-            ("M_ERROR", 30),
-            ("M_FATAL", 40),
-            ("M_QUIET", 100),
-        ]
-        for level, code in levels:
-            nest.set_verbosity(level)
-            verbosity = nest.get_verbosity()
-            self.assertEqual(verbosity, code)
+@pytest.mark.parametrize(
+    "level, value",
+    [
+        ("M_ALL", 0),
+        ("M_DEBUG", 5),
+        ("M_STATUS", 7),
+        ("M_INFO", 10),
+        ("M_DEPRECATED", 18),
+        ("M_WARNING", 20),
+        ("M_ERROR", 30),
+        ("M_FATAL", 40),
+        ("M_QUIET", 100),
+    ],
+)
+def test_set_verbosity(level, value):
+    nest.set_verbosity(level)
+    assert nest.get_verbosity() == value
 
 
-def suite():
-    suite = unittest.makeSuite(TestHelperFunctions, "test")
-    return suite
-
-
-if __name__ == "__main__":
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(suite())
+@pytest.mark.parametrize(
+    "a, b, expected",
+    [
+        ({}, {}, True),
+        ({}, {"a": 5}, True),
+        ({"a": 5}, {"a": 5}, True),
+        ({"a": 7}, {"a": 5}, False),
+        ({"a": 5, "b": 3}, {"a": 5}, False),
+    ],
+)
+def test_dict_is_subset(a, b, expected):
+    assert testutil.dict_is_subset_of(a, b) == expected

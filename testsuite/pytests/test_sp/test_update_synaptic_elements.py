@@ -22,6 +22,7 @@
 import unittest
 
 import nest
+from testutil import dict_is_subset_of
 
 
 class TestUpdateSynapticElements(unittest.TestCase):
@@ -55,12 +56,8 @@ class TestUpdateSynapticElements(unittest.TestCase):
         self.assertIn("Den_ex", neuron_synaptic_elements)
         self.assertIn("Axon", neuron_synaptic_elements)
 
-        self.assertEqual(
-            neuron_synaptic_elements["Axon"], structural_p_elements["Axon"] | neuron_synaptic_elements["Axon"]
-        )
-        self.assertEqual(
-            neuron_synaptic_elements["Den_ex"], structural_p_elements["Den_ex"] | neuron_synaptic_elements["Den_ex"]
-        )
+        self.assertTrue(structural_p_elements["Axon"], neuron_synaptic_elements["Axon"])
+        self.assertTrue(structural_p_elements["Den_ex"], neuron_synaptic_elements["Den_ex"])
 
         # Update Axon elements
         nest.SetStatus(neuron, "synaptic_elements_param", elements_to_update)
@@ -69,13 +66,10 @@ class TestUpdateSynapticElements(unittest.TestCase):
         self.assertIn("Axon", neuron_synaptic_elements)
 
         # Should have been updated
-        self.assertEqual(
-            neuron_synaptic_elements["Axon"], elements_to_update["Axon"] | neuron_synaptic_elements["Axon"]
-        )
+        self.assertTrue(elements_to_update["Axon"], neuron_synaptic_elements["Axon"])
+
         # Should be unchanged
-        self.assertEqual(
-            neuron_synaptic_elements["Den_ex"], structural_p_elements["Den_ex"] | neuron_synaptic_elements["Den_ex"]
-        )
+        self.assertTrue(structural_p_elements["Den_ex"], neuron_synaptic_elements["Den_ex"])
 
 
 def suite():

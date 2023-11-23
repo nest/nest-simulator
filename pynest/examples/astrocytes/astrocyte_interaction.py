@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# astrocyte_tripartite.py
+# astrocyte_interaction.py
 #
 # This file is part of NEST.
 #

@@ -91,7 +91,7 @@ project = "NEST Simulator user documentation"
 copyright = "2004, nest-simulator"
 author = "nest-simulator"
 
-hoverxref_tooltip_maxwidth = 650
+# hoverxref_tooltip_maxwidth = 650
 hoverxref_auto_ref = True
 
 

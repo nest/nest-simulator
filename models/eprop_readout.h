@@ -248,10 +248,13 @@ private:
     double target_signal_;
 
     //! Input current (pA).
-    double y0_;
+    double i_in_;
 
     //! Membrane voltage relative to the leak membrane potential (mV).
-    double y3_;
+    double v_;
+
+    //! Binary input spike variables - 1.0 if the neuron has spiked in the previous time step and 0.0 otherwise.
+    double z_in_;
 
     //! Default constructor.
     State_();
@@ -289,13 +292,13 @@ private:
   struct Variables_
   {
     //! Propagator matrix entry for evolving the membrane voltage.
-    double P33_;
+    double P_v_;
 
     //! Propagator matrix entry for evolving the incoming spike variables.
-    double P33_complement_;
+    double P_z_in_;
 
     //! Propagator matrix entry for evolving the incoming currents.
-    double P30_;
+    double P_i_in_;
 
     //! If the loss requires communication between the readout neurons and thus a buffer for the exchanged signals.
     bool signal_to_other_readouts_;
@@ -315,9 +318,9 @@ private:
 
   //! Get the current value of the membrane voltage.
   double
-  get_V_m_() const
+  get_v_() const
   {
-    return S_.y3_ + P_.E_L_;
+    return S_.v_ + P_.E_L_;
   }
 
   //! Get the current value of the readout signal.

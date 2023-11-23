@@ -44,18 +44,18 @@ Neuron generating spikes at fixed intervals irrespective of inputs.
 Description
 +++++++++++
 
-The ignore_and_fire neuron is a neuron model generating spikes at a predefined firing_rate with a constant inter-spike
-interval ("fire"), irrespective of its inputs ("ignore"). In this simplest version of the ignore_and_fire neuron, the
+The ``ignore_and_fire`` neuron is a neuron model generating spikes at a predefined ``rate`` with a constant inter-spike
+interval ("fire"), irrespective of its inputs ("ignore"). In this simplest version of the ``ignore_and_fire`` neuron, the
 inputs from other neurons or devices are not processed at all (*).
 
-The model's state variable, the phase, describes the time to the next spike relative to the firing period (the inverse
-of the rate). In each update step, the phase is decremented by a fixed amount. If it hits zero, a spike is emitted and
-the phase is reset to +1.
+The model's state variable, the ``phase``, describes the time to the next spike relative to the firing period (the inverse
+of the ``rate``). In each update step, the ``phase`` is decremented by a fixed amount. If it hits zero, a spike is emitted and
+the ``phase`` is reset to +1.
 
-To create asynchronous activity for a population of ignore_and_fire neurons, the firing phases can be randomly
+To create asynchronous activity for a population of ``ignore_and_fire`` neurons, the firing phases can be randomly
 initialized.
 
-The ignore_and_fire neuron is primarily used for neuronal-network model verification and validation purposes
+The ``ignore_and_fire`` neuron is primarily used for neuronal-network model verification and validation purposes
 ("benchmarking"), in particular, to evaluate the correctness and performance of connectivity generation and inter-neuron
 communication. It permits an easy scaling of the network size and/or connectivity without affecting the output spike
 statistics. The amount of network traffic is predefined by the user, and therefore fully controllable and predictable,
@@ -72,8 +72,8 @@ Parameters
 The following parameters can be set in the status dictionary.
 
 ================= ======= ======================================================
- phase                     Phase (relative time to next spike; 0<phase<=1)
- rate               1/s    Firing rate
+ ``phase``                     Phase (relative time to next spike; 0<phase<=1)
+ ``rate``               1/s    Firing rate
 ================= ======= ======================================================
 
 Sends

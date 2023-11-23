@@ -94,8 +94,8 @@ eprop_iaf_psc_delta_adapt::State_::State_()
   , surrogate_gradient_( 0.0 )
   , i_in_( 0.0 )
   , v_m_( 0.0 )
-  , z_in_( 0.0 )
   , z_( 0.0 )
+  , z_in_( 0.0 )
 {
 }
 

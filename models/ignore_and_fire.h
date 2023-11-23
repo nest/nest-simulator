@@ -44,19 +44,27 @@ Neuron generating spikes at fixed intervals irrespective of inputs.
 Description
 +++++++++++
 
-The ``ignore_and_fire`` neuron is a neuron model generating spikes with a fixed predefined inter-spike interval,
-irrespective of its inputs ("ignore"). In this simplest version of the ignore_and_fire neuron, the inputs from other
-neurons or devices are not processed at all (*). The ``ignore_and_fire`` neuron is primarily used for neuronal-network
-model validation and benchmarking purposes, in particular to evaluate the correctness and performance of connectivity
-generation and inter-neuron communication. It permits an easy scaling of the network size and/or connectivity without
-affecting the output spike statistics. The amount of network traffic is predefined by the user, and therefore fully
-controllable and predictable, irrespective of the network size and structure. To generate asynchronous activity for a
-population of ignore_and_fire neurons, the firing phases can be randomly initialized. Note that the firing phase is a
-real number, defined as the time to the next spike relative to the firing period.
+The ignore_and_fire neuron is a neuron model generating spikes at a predefined firing_rate with a constant inter-spike
+interval ("fire"), irrespective of its inputs ("ignore"). In this simplest version of the ignore_and_fire neuron, the
+inputs from other neurons or devices are not processed at all (*).
 
-(*) The model can easily be extended and equipped with any arbitrary input processing or (after-) spike generation
-dynamics to make it more similar and comparable to other non-ignorant neuron models. In such extended ignore_and_fire
-models, the spike emission process would still be decoupled from the intrinsic neuron dynamics.
+The model's state variable, the phase, describes the time to the next spike relative to the firing period (the inverse
+of the rate). In each update step, the phase is decremented by a fixed amount. If it hits zero, a spike is emitted and
+the phase is reset to +1.
+
+To create asynchronous activity for a population of ignore_and_fire neurons, the firing phases can be randomly
+initialized.
+
+The ignore_and_fire neuron is primarily used for neuronal-network model verification and validation purposes
+("benchmarking"), in particular, to evaluate the correctness and performance of connectivity generation and inter-neuron
+communication. It permits an easy scaling of the network size and/or connectivity without affecting the output spike
+statistics. The amount of network traffic is predefined by the user, and therefore fully controllable and predictable,
+irrespective of the network size and structure.
+
+(*) The model can easily be extended and equipped with any arbitrary input processing (such as calculating input
+currents with alpha-function shaped PSC kernels or updating the gating variables in the Hodgkin-Huxley model) or
+(after-) spike generation dynamics to make it more similar and comparable to other non-ignorant neuron models. In such
+extended ignore_and_fire models, the spike emission process would still be decoupled from the intrinsic neuron dynamics.
 
 Parameters
 ++++++++++

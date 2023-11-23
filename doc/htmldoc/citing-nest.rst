@@ -3,9 +3,9 @@
 Cite NEST
 =========
 
-Please cite the *version of NEST you used in your work*. 
+Please cite the *version of NEST you used in your work*.
 
-For all versions from 2.8 onwards, you can find the full citation `on Zenodo <https://zenodo.org/search?page=1&size=20&q=title:NEST%20AND%20-description:graphical%20AND%20simulator&file_type=gz&sort=-publication_date>`_
+For all versions from 2.8 onwards, you can find the full citation `on Zenodo <https://zenodo.org/search?q=title%3ANEST%20AND%20-description%3Agraphical%20AND%20simulator&l=list&p=1&s=10&sort=publication-desc>`_
 You can also specify the commit hash for work done in the development branches.
 
 You can :ref:`let us know <contact_us>` about your publications that used NEST, and we

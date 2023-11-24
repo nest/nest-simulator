@@ -49,7 +49,7 @@ interval ("fire"), irrespective of its inputs ("ignore"). In this simplest versi
 the inputs from other neurons or devices are not processed at all.
 
 The model's state variable, the ``phase``, describes the time to the next spike relative to the firing period (the
-inverse of the ``rate``). In each update step, the ``phase`` is decremented by a fixed amount. If it hits zero, a spike
+inverse of the ``rate``). In each update step, the ``phase`` is decreased by a fixed amount. If it hits zero, a spike
 is emitted and the ``phase`` is reset to +1.
 
 To create asynchronous activity for a population of ``ignore_and_fire`` neurons, the firing phases can be randomly

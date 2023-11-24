@@ -88,6 +88,11 @@ Receives
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: ignore_and_fire
+
 EndUserDocs */
 
 

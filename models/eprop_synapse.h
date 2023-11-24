@@ -26,6 +26,7 @@
 // nestkernel
 #include "connection.h"
 #include "eprop_archiving_node.h"
+#include "eprop_optimizer.h"
 
 namespace nest
 {
@@ -213,21 +214,6 @@ public:
   //! Update values in parameter dictionary.
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
-  //! Exponential decay rate for first moment estimate of Adam optimizer.
-  double adam_beta1_;
-
-  //! Exponential decay rate for second moment estimate of Adam optimizer.
-  double adam_beta2_;
-
-  //! Small constant for numerical stability of Adam optimizer.
-  double adam_epsilon_;
-
-  //! Size of batch.
-  long batch_size_;
-
-  //! Optimizer. If adam, use Adam optimizer, if gd, gradient descent.
-  std::string optimizer_;
-
   //! If True, average the gradient over the learning window.
   bool average_gradient_;
 };
@@ -251,14 +237,18 @@ public:
     | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::REQUIRES_EPROP_ARCHIVING
     | ConnectionModelProperties::SUPPORTS_HPC | ConnectionModelProperties::SUPPORTS_LBL;
 
-  //! Default constructor.
+  //! Constructor.
   eprop_synapse();
 
-  //! Copy constructor.
-  eprop_synapse( const eprop_synapse& ) = default;
+  //! Destructor
+  ~eprop_synapse();
 
-  //! Equal operator
-  eprop_synapse& operator=( const eprop_synapse& ) = default;
+  //! Copy constructor. Creates new optimizer instance.
+  eprop_synapse( const eprop_synapse& );
+
+  //! Assignment operator. Creates new optimizer instance.
+  eprop_synapse& operator=( const eprop_synapse& );
+
 
   using ConnectionBase::get_delay;
   using ConnectionBase::get_delay_steps;
@@ -273,15 +263,6 @@ public:
 
   //! Send the spike event.
   void send( Event& e, size_t thread, const EpropCommonProperties& cp );
-
-  //! Update the synaptic weight via gradient descent.
-  void optimize_via_gradient_descent( const long current_optimization_step, const EpropCommonProperties& cp );
-
-  //! Update the synaptic weight via the Adam optimizer.
-  void optimize_via_adam( const long current_optimization_step, const EpropCommonProperties& cp );
-
-  //! Update the synaptic weight via an optimizer.
-  void ( eprop_synapse::*optimize )( const long current_optimization_step, const EpropCommonProperties& cp );
 
   //! Dummy node for testing the connection.
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -330,15 +311,6 @@ public:
 
     const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
     t_next_update_ = update_interval;
-
-    if ( cp.optimizer_ == "adam" )
-    {
-      optimize = &eprop_synapse::optimize_via_adam;
-    }
-    else if ( cp.optimizer_ == "gradient_descent" )
-    {
-      optimize = &eprop_synapse::optimize_via_gradient_descent;
-    }
   }
 
   //! Set the synaptic weight to the provided value.
@@ -348,21 +320,9 @@ public:
     weight_ = w;
   }
 
-protected:
+private:
   //! Synaptic weight.
   double weight_;
-
-  //! Learning rate.
-  double eta_;
-
-  //! Minimal synaptic weight.
-  double Wmin_;
-
-  //! Maximal synaptic weight.
-  double Wmax_;
-
-  //! Optimization step.
-  long optimization_step_;
 
   //! The time step when the previous spike arrived.
   long t_previous_spike_;
@@ -382,24 +342,77 @@ protected:
   //! Low-pass filter of the eligibility trace.
   double kappa_;
 
-  //! First moment estimate of Adam optimizer.
-  double adam_m_;
-
-  //! Second moment raw estimate of Adam optimizer.
-  double adam_v_;
-
-  //! Sum over all gradients in one batch.
-  double sum_grads_;
-
   //! If this connection is between two recurrent neurons.
   bool is_recurrent_to_recurrent_conn_;
 
   //! Vector of presynaptic inter-spike-intervals.
   std::vector< long > presyn_isis_;
+
+  //! Optimizer
+  EpropOptimizer* optimizer_;
 };
 
 template < typename targetidentifierT >
 constexpr ConnectionModelProperties eprop_synapse< targetidentifierT >::properties;
+
+template < typename targetidentifierT >
+eprop_synapse< targetidentifierT >::eprop_synapse()
+  : ConnectionBase()
+  , weight_( 1.0 )
+  , t_previous_spike_( 0 )
+  , t_previous_update_( 0 )
+  , t_next_update_( 1000 )
+  , t_previous_trigger_spike_( 0 )
+  , tau_m_readout_( 10.0 )
+  , kappa_( 0.0 )
+  , optimizer_( new EpropOptimizerGradientDescent() )
+{
+}
+
+template < typename targetidentifierT >
+eprop_synapse< targetidentifierT >::~eprop_synapse()
+{
+  delete optimizer_;
+}
+
+// This copy constructor is used to create instances from prototypes.
+// Therefore, only parameter values are copied.
+template < typename targetidentifierT >
+eprop_synapse< targetidentifierT >::eprop_synapse( const eprop_synapse& es )
+  : ConnectionBase()
+  , weight_( es.weight_ )
+  , t_previous_spike_( 0 )
+  , t_previous_update_( 0 )
+  , t_next_update_( 1000 )
+  , t_previous_trigger_spike_( 0 )
+  , tau_m_readout_( es.tau_m_readout_ )
+  , kappa_( es.kappa_ )
+  , optimizer_( new EpropOptimizerGradientDescent() )
+{
+}
+
+// This assignement operator is used to create instances from prototypes.
+// Therefore, only parameter values are copied.
+template < typename targetidentifierT >
+eprop_synapse< targetidentifierT >&
+eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
+{
+  if ( this == &es )
+  {
+    return *this;
+  }
+
+  weight_ = es.weight_;
+  t_previous_spike_ = 0;
+  t_previous_update_ = 0;
+  t_next_update_ = 1000;
+  t_previous_trigger_spike_ = 0;
+  tau_m_readout_ = es.tau_m_readout_;
+  kappa_ = es.kappa_;
+  optimizer_ = new EpropOptimizerGradientDescent();
+
+  return *this;
+}
 
 template < typename targetidentifierT >
 inline void
@@ -434,21 +447,13 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
   {
     const long idx_current_update = ( t_spike - shift ) / update_interval;
     const long t_current_update = idx_current_update * update_interval;
-    const long current_optimization_step = 1 + idx_current_update / cp.batch_size_;
 
     target->write_update_to_history( t_previous_update_, t_current_update );
 
-    sum_grads_ += target->gradient_change(
+    const double gradient_change = target->gradient_change(
       presyn_isis_, t_previous_update_, t_previous_trigger_spike_, kappa_, cp.average_gradient_ );
 
-    if ( optimization_step_ < current_optimization_step )
-    {
-      sum_grads_ /= cp.batch_size_; // mean over batches
-
-      ( this->*optimize )( current_optimization_step, cp );
-
-      weight_ = std::max( Wmin_, std::min( weight_, Wmax_ ) );
-    }
+    weight_ = optimizer_->optimized_weight( idx_current_update, gradient_change, weight_ );
 
     t_previous_update_ = t_current_update;
     t_next_update_ = t_current_update + update_interval;
@@ -466,70 +471,13 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
 }
 
 template < typename targetidentifierT >
-inline void
-eprop_synapse< targetidentifierT >::optimize_via_gradient_descent( const long current_optimization_step,
-  const EpropCommonProperties& cp )
-{
-  weight_ -= eta_ * sum_grads_;
-  optimization_step_ = current_optimization_step;
-  sum_grads_ = 0.0;
-}
-
-template < typename targetidentifierT >
-inline void
-eprop_synapse< targetidentifierT >::optimize_via_adam( const long current_optimization_step,
-  const EpropCommonProperties& cp )
-{
-  for ( ; optimization_step_ < current_optimization_step; ++optimization_step_ )
-  {
-    const double adam_beta1_factor = 1.0 - std::pow( cp.adam_beta1_, optimization_step_ );
-    const double adam_beta2_factor = 1.0 - std::pow( cp.adam_beta2_, optimization_step_ );
-
-    const double alpha_t = eta_ * std::sqrt( adam_beta2_factor ) / adam_beta1_factor;
-
-    adam_m_ = cp.adam_beta1_ * adam_m_ + ( 1.0 - cp.adam_beta1_ ) * sum_grads_;
-    adam_v_ = cp.adam_beta2_ * adam_v_ + ( 1.0 - cp.adam_beta2_ ) * sum_grads_ * sum_grads_;
-
-    weight_ -= alpha_t * adam_m_ / ( std::sqrt( adam_v_ ) + cp.adam_epsilon_ );
-
-    sum_grads_ = 0.0; // reset for following iterations
-    // since more than 1 cycle through loop indicates past learning periods with vanishing gradients
-  }
-}
-
-template < typename targetidentifierT >
-eprop_synapse< targetidentifierT >::eprop_synapse()
-  : ConnectionBase()
-  , weight_( 1.0 )
-  , eta_( 0.0001 )
-  , Wmin_( 0.0 )
-  , Wmax_( 100.0 )
-  , optimization_step_( 1 )
-  , t_previous_spike_( 0 )
-  , t_previous_update_( 0 )
-  , t_next_update_( 1000 )
-  , t_previous_trigger_spike_( 0 )
-  , tau_m_readout_( 10.0 )
-  , kappa_( 0.0 )
-  , adam_m_( 0.0 )
-  , adam_v_( 0.0 )
-  , sum_grads_( 0.0 )
-{
-}
-
-template < typename targetidentifierT >
 void
 eprop_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
-  def< double >( d, names::eta, eta_ );
-  def< double >( d, names::Wmin, Wmin_ );
-  def< double >( d, names::Wmax, Wmax_ );
   def< double >( d, names::tau_m_readout, tau_m_readout_ );
   def< long >( d, names::size_of, sizeof( *this ) );
-  def< double >( d, names::adam_m, adam_m_ );
-  def< double >( d, names::adam_v, adam_v_ );
 }
 
 template < typename targetidentifierT >
@@ -538,24 +486,42 @@ eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
-  updateValue< double >( d, names::eta, eta_ );
-  updateValue< double >( d, names::Wmin, Wmin_ );
-  updateValue< double >( d, names::Wmax, Wmax_ );
   updateValue< double >( d, names::tau_m_readout, tau_m_readout_ );
-  updateValue< double >( d, names::adam_m, adam_m_ );
-  updateValue< double >( d, names::adam_v, adam_v_ );
+
+  std::string new_optimizer;
+  const bool set_optimizer = updateValue< std::string >( d, names::optimizer, new_optimizer );
+  if ( set_optimizer and new_optimizer != optimizer_->get_name() )
+  {
+    delete optimizer_;
+
+    // TODO: Selection here should be based on an optimizer registry and a factory.
+    if ( new_optimizer == "gradient_descent" )
+    {
+      optimizer_ = new EpropOptimizerGradientDescent();
+    }
+    else if ( new_optimizer == "adam" )
+    {
+      optimizer_ = new EpropOptimizerAdam();
+    }
+    else
+    {
+      throw BadProperty( "optimizer must be chosen from [\"gradient_descent\", \"adam\"]." );
+    }
+  }
+
+  optimizer_->set_status( d );
 
   if ( tau_m_readout_ <= 0 )
   {
     throw BadProperty( "tau_m_readout must be > 0." );
   }
 
-  if ( weight_ < Wmin_ )
+  if ( weight_ < optimizer_->get_Wmin() )
   {
     throw BadProperty( "Wmin must be < weight." );
   }
 
-  if ( weight_ > Wmax_ )
+  if ( weight_ > optimizer_->get_Wmax() )
   {
     throw BadProperty( "Wmax must be > weight." );
   }

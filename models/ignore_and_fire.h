@@ -46,7 +46,7 @@ Description
 
 The ``ignore_and_fire`` neuron is a neuron model generating spikes at a predefined ``rate`` with a constant inter-spike
 interval ("fire"), irrespective of its inputs ("ignore"). In this simplest version of the ``ignore_and_fire`` neuron,
-the inputs from other neurons or devices are not processed at all (*).
+the inputs from other neurons or devices are not processed at all.
 
 The model's state variable, the ``phase``, describes the time to the next spike relative to the firing period (the
 inverse of the ``rate``). In each update step, the ``phase`` is decremented by a fixed amount. If it hits zero, a spike

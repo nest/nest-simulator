@@ -22,9 +22,12 @@
 
 #include "eprop_optimizer.h"
 
-// nestkernel
-#include "nest_impl.h"
+// Includes from nestkernel
+#include "exceptions.h"
+#include "nest_names.h"
 
+// Includes from sli
+#include "dictutils.h"
 
 namespace nest
 {
@@ -41,6 +44,7 @@ EpropOptimizer::EpropOptimizer()
 void
 EpropOptimizer::get_status( DictionaryDatum& d ) const
 {
+  def< std::string >( d, names::optimizer, get_name() );
   def< long >( d, names::batch_size, batch_size_ );
   def< double >( d, names::eta, eta_ );
   def< double >( d, names::Wmin, Wmin_ );

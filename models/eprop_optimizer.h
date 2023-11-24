@@ -58,6 +58,7 @@ public:
   {
     return Wmin_;
   }
+
   double
   get_Wmax() const
   {

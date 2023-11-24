@@ -249,7 +249,6 @@ public:
   //! Assignment operator. Creates new optimizer instance.
   eprop_synapse& operator=( const eprop_synapse& );
 
-
   using ConnectionBase::get_delay;
   using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
@@ -379,7 +378,7 @@ eprop_synapse< targetidentifierT >::~eprop_synapse()
 // Therefore, only parameter values are copied.
 template < typename targetidentifierT >
 eprop_synapse< targetidentifierT >::eprop_synapse( const eprop_synapse& es )
-  : ConnectionBase()
+  : ConnectionBase( es )
   , weight_( es.weight_ )
   , t_previous_spike_( 0 )
   , t_previous_update_( 0 )
@@ -401,6 +400,8 @@ eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
   {
     return *this;
   }
+
+  ConnectionBase::operator=( es );
 
   weight_ = es.weight_;
   t_previous_spike_ = 0;
@@ -475,6 +476,7 @@ void
 eprop_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
+  optimizer_->get_status( d );
   def< double >( d, names::weight, weight_ );
   def< double >( d, names::tau_m_readout, tau_m_readout_ );
   def< long >( d, names::size_of, sizeof( *this ) );
@@ -485,45 +487,47 @@ void
 eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
-  updateValue< double >( d, names::tau_m_readout, tau_m_readout_ );
 
   std::string new_optimizer;
   const bool set_optimizer = updateValue< std::string >( d, names::optimizer, new_optimizer );
   if ( set_optimizer and new_optimizer != optimizer_->get_name() )
   {
-    delete optimizer_;
-
     // TODO: Selection here should be based on an optimizer registry and a factory.
+    // delete is in if/elif because we must delete only when we are sure that we have a valid optimizer.
     if ( new_optimizer == "gradient_descent" )
     {
+      delete optimizer_;
       optimizer_ = new EpropOptimizerGradientDescent();
     }
     else if ( new_optimizer == "adam" )
     {
+      delete optimizer_;
       optimizer_ = new EpropOptimizerAdam();
     }
     else
     {
-      throw BadProperty( "optimizer must be chosen from [\"gradient_descent\", \"adam\"]." );
+      throw BadProperty( "optimizer must be chosen from [\"gradient_descent\", \"adam\"]" );
     }
   }
 
   optimizer_->set_status( d );
 
+  updateValue< double >( d, names::weight, weight_ );
+  updateValue< double >( d, names::tau_m_readout, tau_m_readout_ );
+
   if ( tau_m_readout_ <= 0 )
   {
-    throw BadProperty( "tau_m_readout must be > 0." );
+    throw BadProperty( "tau_m_readout > 0 required" );
   }
 
   if ( weight_ < optimizer_->get_Wmin() )
   {
-    throw BadProperty( "Wmin must be < weight." );
+    throw BadProperty( "Wmin < weight required" );
   }
 
   if ( weight_ > optimizer_->get_Wmax() )
   {
-    throw BadProperty( "Wmax must be > weight." );
+    throw BadProperty( "weight < Wmax required" );
   }
 }
 

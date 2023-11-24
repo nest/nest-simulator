@@ -39,7 +39,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Neuron generating spikes at fixed intervals irrespective of inputs.
+Ignore-and-fire neuron model for generating spikes at fixed intervals irrespective of inputs
 
 Description
 +++++++++++

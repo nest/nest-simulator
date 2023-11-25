@@ -109,8 +109,9 @@ def test_simulation_against_analytical_solution():
     nest.Connect(mm, nrn, syn_spec={"delay": 0.1})
     nest.Simulate(simtime)
     times = mm.get("events", "times")
+
     I_syns_analytical = []
-    V_m_analytical = np.zeros_like(times, dtype=np.float64)
+    V_m_analytical = np.zeros_like(times)
     for weight, delay, tau_s in zip(weights, delays, tau_syns):
         I_syns_analytical.append(exp_psc_fn(times - delay - spike_time, tau_s) * weight)
         V_m_analytical += exp_psc_voltage_response(times - delay - spike_time, tau_s, tau_m, C_m, weight)
@@ -132,6 +133,7 @@ def test_default_recordables():
     assert "I_syn" in recordables
     assert "I_syn_1" in recordables
     assert "V_m" in recordables
+
 
 def test_resize_recordables():
     """

@@ -294,7 +294,7 @@ private:
     }
     else if ( elem == State_::I )
     {
-      return std::accumulate(S_.i_syn_.begin(), S_.i_syn_.end(), 0.0);
+      return std::accumulate( S_.i_syn_.begin(), S_.i_syn_.end(), 0.0 );
     }
     else
     {

@@ -76,6 +76,13 @@ public:
     const std::vector< DictionaryDatum >& syn_specs );
   virtual ~ConnBuilder();
 
+  /**
+   * Mark ConnBuilder subclasses as building tripartite rules or not.
+   *
+   * @note This flag is required for template specialisation of ConnBuilderFactory's.
+   */
+  static constexpr bool is_tripartite = false;
+
   size_t
   get_synapse_model() const
   {
@@ -445,6 +452,82 @@ protected:
 private:
   void inner_connect_( const int, RngPtr, Node*, size_t );
   ParameterDatum p_; //!< connection probability
+};
+
+/**
+ * Helper class to support parameter handling for tripartite builders.
+ *
+ * In tripartite builders, the actual builder class decides which connections to create and
+ * handles parameterization of the primary connection. For each third-party connection,
+ * it maintains an AuxiliaryBuilder which handles the parameterization of the corresponding
+ * third-party connection.
+ */
+class AuxiliaryBuilder : public ConnBuilder
+{
+public:
+  AuxiliaryBuilder( NodeCollectionPTR,
+    NodeCollectionPTR,
+    const DictionaryDatum&,
+    const std::vector< DictionaryDatum >& );
+
+  //! forwards to single_connect_() in underlying ConnBuilder
+  void single_connect( size_t, Node&, size_t, RngPtr );
+
+protected:
+  void
+  connect_() override
+  {
+    // The auxiliary builder does not create connections, it only parameterizes them.
+    assert( false );
+  }
+};
+
+/**
+ * Class representing tripartite Bernoulli connector
+ *
+ * For each source-target pair, a Bernoulli trial is performed. If a primary connection is created, a third-factor
+ * connection is created conditionally on a second Bernoulli trial. The third-party neuron to be connected is
+ * chosen from a pool, which can either be set up in blocks or randomized. The third-party neuron receives
+ * input from the source neuron and provides output to the target neuron of the primary connection.
+ */
+class TripartiteBernoulliWithPoolBuilder : public ConnBuilder
+{
+public:
+  /**
+   * Constructor
+   *
+   * @param sources Source population for primary connection
+   * @param targets Target population for primary connection
+   * @param third Third-party population
+   * @param conn_spec Connection specification dictionary for tripartite bernoulli rule
+   * @param syn_specs Dictionary of synapse specifications for the three connections that may be created. Allowed keys
+   * are `"primary"`, `"third_in"`, `"third_out"`
+   */
+  TripartiteBernoulliWithPoolBuilder( NodeCollectionPTR sources,
+    NodeCollectionPTR targets,
+    NodeCollectionPTR third,
+    const DictionaryDatum& conn_spec,
+    const std::map< Name, std::vector< DictionaryDatum > >& syn_specs );
+
+  static constexpr bool is_tripartite = true;
+
+protected:
+  void connect_() override;
+
+private:
+  //! Provide index of first third-party node to be assigned to pool for given target node
+  size_t get_first_pool_index_( const size_t target_index ) const;
+
+  NodeCollectionPTR third_;
+
+  AuxiliaryBuilder third_in_builder_;
+  AuxiliaryBuilder third_out_builder_;
+
+  double p_primary_;          //!< connection probability for pre-post connections
+  double p_third_if_primary_; //!< probability of third-factor connection if primary connection created
+  bool random_pool_;          //!< if true, select astrocyte pool at random
+  size_t pool_size_;          //!< size of third-factor pool
+  size_t targets_per_third_;  //!< target nodes per third-factor node
 };
 
 class SymmetricBernoulliBuilder : public ConnBuilder

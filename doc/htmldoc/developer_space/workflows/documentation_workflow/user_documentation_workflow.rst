@@ -118,6 +118,21 @@ If you use pip, install ``pandoc`` from your platform's package manager (e.g. ap
 
     sudo apt-get install pandoc
 
+.. admonition::  Building plantuml diagrams locally
+
+   The plantuml diagrams require additional requirements
+   to make them work in a local build.
+
+   You will need to
+
+   - check if you have Java installed. The minimum version needed is Java 8.
+     (e.g., to install the latest available version on Ubuntu: ``apt install jre-default``)
+   - Download the `plantuml jar file <https://plantuml.com/download>`_ (Minimum version is 1-2023-10)
+   - Move the jar file to ``/tmp/plantuml.jar``
+
+   - To see if plantuml diagrams render correctly after building the documentation you can take a look
+     at our :ref:`test_uml`.
+
 
 Edit and create pages
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -176,6 +191,7 @@ you will need to build the documentation locally with Sphinx.
 
    sphinx-build . ../_build/html -b html
 
+
 #. Preview files. They are located in ``doc/_build/html``
 
 .. code-block:: bash
@@ -229,3 +245,8 @@ on Read the Docs, you can set up your own account and link it with your Github a
 
 See `this guide <https://docs.readthedocs.io/en/stable/intro/import-guide.htmli>`_
 for more information.
+
+.. toctree::
+   :hidden:
+
+   /testuml

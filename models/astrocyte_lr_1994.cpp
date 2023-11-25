@@ -328,7 +328,7 @@ nest::astrocyte_lr_1994::Buffers_::Buffers_( const Buffers_&, astrocyte_lr_1994&
  * ---------------------------------------------------------------- */
 
 nest::astrocyte_lr_1994::astrocyte_lr_1994()
-  : ArchivingNode()
+  : StructuralPlasticityNode()
   , P_()
   , S_( P_ )
   , B_( *this )
@@ -337,7 +337,7 @@ nest::astrocyte_lr_1994::astrocyte_lr_1994()
 }
 
 nest::astrocyte_lr_1994::astrocyte_lr_1994( const astrocyte_lr_1994& n )
-  : ArchivingNode( n )
+  : StructuralPlasticityNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -372,8 +372,6 @@ nest::astrocyte_lr_1994::init_buffers_()
   B_.currents_.clear();
   B_.sic_values.resize(
     kernel().connection_manager.get_min_delay(), 0.0 ); // set size of SIC buffer according to min_delay
-
-  ArchivingNode::clear_history();
 
   B_.logger_.reset();
 
@@ -490,16 +488,6 @@ nest::astrocyte_lr_1994::update( Time const& origin, const long from, const long
   SICEvent sic;
   sic.set_coeffarray( B_.sic_values );
   kernel().event_delivery_manager.send_secondary( *this, sic );
-}
-
-/**
- * Default implementation of register_stdp_connection( const std::string& name )
- * throws IllegalConnection
- */
-void
-nest::astrocyte_lr_1994::register_stdp_connection( double, double )
-{
-  throw IllegalConnection( "The target node does not support STDP synapses." );
 }
 
 void

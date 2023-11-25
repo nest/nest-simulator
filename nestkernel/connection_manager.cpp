@@ -363,6 +363,20 @@ nest::ConnectionManager::get_conn_builder( const std::string& name,
   return cb;
 }
 
+nest::ConnBuilder*
+nest::ConnectionManager::get_conn_builder( const std::string& name,
+  NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  NodeCollectionPTR third,
+  const DictionaryDatum& conn_spec,
+  const std::map< Name, std::vector< DictionaryDatum > >& syn_specs )
+{
+  const size_t rule_id = connruledict_->lookup( name );
+  ConnBuilder* cb = connbuilder_factories_.at( rule_id )->create( sources, targets, third, conn_spec, syn_specs );
+  assert( cb );
+  return cb;
+}
+
 void
 nest::ConnectionManager::calibrate( const TimeConverter& tc )
 {
@@ -421,6 +435,7 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
   delete cb;
 }
 
+
 void
 nest::ConnectionManager::connect( TokenArray sources, TokenArray targets, const DictionaryDatum& syn_spec )
 {
@@ -445,6 +460,7 @@ nest::ConnectionManager::connect( TokenArray sources, TokenArray targets, const 
     }
   }
 }
+
 
 void
 nest::ConnectionManager::update_delay_extrema_()
@@ -742,6 +758,66 @@ nest::ConnectionManager::connect_sonata( const DictionaryDatum& graph_specs, con
   throw KernelException( "Cannot use connect_sonata because NEST was compiled without HDF5 support" );
 #endif
 }
+
+void
+nest::ConnectionManager::connect_tripartite( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  NodeCollectionPTR third,
+  const DictionaryDatum& conn_spec,
+  const std::map< Name, std::vector< DictionaryDatum > >& syn_specs )
+{
+  if ( sources->empty() )
+  {
+    throw IllegalConnection( "Presynaptic nodes cannot be an empty NodeCollection" );
+  }
+  if ( targets->empty() )
+  {
+    throw IllegalConnection( "Postsynaptic nodes cannot be an empty NodeCollection" );
+  }
+  if ( third->empty() )
+  {
+    throw IllegalConnection( "Third-factor nodes cannot be an empty NodeCollection" );
+  }
+
+  conn_spec->clear_access_flags();
+  for ( auto& [ key, syn_spec_array ] : syn_specs )
+  {
+    for ( auto& syn_spec : syn_spec_array )
+    {
+      syn_spec->clear_access_flags();
+    }
+  }
+
+  if ( not conn_spec->known( names::rule ) )
+  {
+    throw BadProperty( "The connection specification must contain a connection rule." );
+  }
+  const std::string rule_name = static_cast< const std::string >( ( *conn_spec )[ names::rule ] );
+
+  if ( not connruledict_->known( rule_name ) )
+  {
+    throw BadProperty( String::compose( "Unknown connection rule: %1", rule_name ) );
+  }
+
+  ConnBuilder* cb = get_conn_builder( rule_name, sources, targets, third, conn_spec, syn_specs );
+
+  // at this point, all entries in conn_spec and syn_spec have been checked
+  ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries in conn_spec: " );
+  for ( auto& [ key, syn_spec_array ] : syn_specs )
+  {
+    for ( auto& syn_spec : syn_spec_array )
+    {
+      ALL_ENTRIES_ACCESSED( *syn_spec, "Connect", "Unread dictionary entries in syn_specs: " );
+    }
+  }
+
+  // Set flag before calling cb->connect() in case exception is thrown after some connections have been created.
+  set_connections_have_changed();
+
+  cb->connect();
+  delete cb;
+}
+
 
 void
 nest::ConnectionManager::connect_( Node& source,

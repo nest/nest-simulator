@@ -313,6 +313,7 @@ const Name music_channel( "music_channel" );
 
 const Name N( "N" );
 const Name NMDA( "NMDA" );
+const Name NMDA_sum( "NMDA_sum" );
 const Name N_channels( "N_channels" );
 const Name N_NaP( "N_NaP" );
 const Name N_T( "N_T" );

@@ -76,7 +76,7 @@ The following parameters can be set in the status dictionary.
 
 ================= ======= ======================================================
  ``phase``                     Phase (relative time to next spike; 0<phase<=1)
- ``rate``               1/s    Firing rate
+ ``rate``          1/s         Firing rate
 ================= ======= ======================================================
 
 Sends

@@ -3,11 +3,17 @@
 Conda forge install
 ===================
 
-.. note:: 
-   
-   If you encounter problems installing the NEST conda package and 
-   environment, we recommend using Mamba (https://mamba.readthedocs.io). 
-   Mamba has the advantage of installing conda packages and 
+.. note::
+
+   We provide conda packages for linux-64, osx-64 and osx-arm64. Due to the
+   cross compiling of the conda NEST package for Apple silicon with ARM64
+   architecture, there only exists a limited set of random generators.
+
+.. note::
+
+   If you encounter problems installing the NEST conda package and
+   environment, we recommend using Mamba (https://mamba.readthedocs.io).
+   Mamba has the advantage of installing conda packages and
    environments more quickly and can be used as a complete drop-in replacement for conda.
 
 1. To keep your conda setup tidy, we recommend that you install NEST into

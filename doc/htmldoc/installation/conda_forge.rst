@@ -8,7 +8,6 @@ Conda forge install
    Due to a cross-compiling issue in the conda NEST package, some random number 
    generators are not available if you are using macOS arm64 architecture. 
    The available generators are the Mersenne Twister generators `mt19937` and `mt19937_64`.
-   cross compiling of the conda NEST package for Apple silicon with ARM64
    architecture, there only exists a limited set of random generators.
 
 .. note::

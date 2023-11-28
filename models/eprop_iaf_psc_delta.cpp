@@ -349,7 +349,7 @@ eprop_iaf_psc_delta::update( Time const& origin, const long from, const long to 
       reset_spike_count();
     }
 
-    S_.learning_signal_ = get_learning_signal( t - shift );
+    S_.learning_signal_ = get_learning_signal( t );
 
     if ( S_.r_ > 0 )
     {
@@ -405,12 +405,11 @@ eprop_iaf_psc_delta::handle( LearningSignalConnectionEvent& e )
   for ( auto it_event = e.begin(); it_event != e.end(); )
   {
     const long time_step = e.get_stamp().get_steps();
-    const long delay_out_rec = e.get_delay_steps();
     const double weight = e.get_weight();
     const double error_signal = e.get_coeffvalue( it_event ); // get_coeffvalue advances iterator
     const double learning_signal = weight * error_signal;
 
-    write_learning_signal_to_history( time_step, delay_out_rec, learning_signal );
+    write_learning_signal_to_history( time_step, learning_signal );
   }
 }
 

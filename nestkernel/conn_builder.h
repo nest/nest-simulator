@@ -458,6 +458,7 @@ class PoissonBuilder : public ConnBuilder
 {
 public:
   PoissonBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const std::vector< DictionaryDatum >& );
+
 protected:
   void connect_() override;
 

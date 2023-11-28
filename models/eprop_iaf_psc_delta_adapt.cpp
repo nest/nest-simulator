@@ -89,6 +89,7 @@ eprop_iaf_psc_delta_adapt::Parameters_::Parameters_()
 
 eprop_iaf_psc_delta_adapt::State_::State_()
   : adapt_( 0.0 )
+  , v_th_adapt_( 15.0 )
   , learning_signal_( 0.0 )
   , r_( 0 )
   , surrogate_gradient_( 0.0 )

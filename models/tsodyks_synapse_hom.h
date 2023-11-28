@@ -251,7 +251,7 @@ public:
   void
   set_weight( double )
   {
-    throw BadProperty(
+    throw NotImplemented(
       "Setting of individual weights is not possible! The common weights can "
       "be changed via "
       "CopyModel()." );

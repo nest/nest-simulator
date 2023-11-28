@@ -210,13 +210,6 @@ public:
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
   /**
-   * Checks to see if illegal parameters are given in syn_spec.
-   *
-   * The illegal parameters are:  "alpha", "beta", "lambda", "mu_plus", "mu_minus", "tau_plus", "Wmax"
-   */
-  void check_synapse_params( const DictionaryDatum& d ) const;
-
-  /**
    * Send an event to the receiver of this connection.
    * \param e The event to send
    * \param cp common properties of all synapses (empty).
@@ -387,24 +380,6 @@ jonke_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
   if ( Kplus_ < 0 )
   {
     throw BadProperty( "Kplus must be non-negative." );
-  }
-}
-
-template < typename targetidentifierT >
-void
-jonke_synapse< targetidentifierT >::check_synapse_params( const DictionaryDatum& syn_spec ) const
-{
-  std::string param_arr[] = { "alpha", "beta", "lambda", "mu_plus", "mu_minus", "tau_plus", "Wmax" };
-
-  const size_t n_param = sizeof( param_arr ) / sizeof( std::string );
-  for ( size_t n = 0; n < n_param; ++n )
-  {
-    if ( syn_spec->known( param_arr[ n ] ) )
-    {
-      std::string msg = "Connect doesn't support the setting of parameter " + param_arr[ n ]
-        + " in jonke_synapse. Use SetDefaults() or CopyModel().";
-      throw NotImplemented( msg );
-    }
   }
 }
 

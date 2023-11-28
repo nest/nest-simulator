@@ -150,7 +150,7 @@ GenericConnectorModel< ConnectionT >::check_synapse_params( const DictionaryDatu
   {
     if ( dummy->known( key ) )
     {
-      throw BadProperty(
+      throw NotImplemented(
         String::compose( "Synapse parameter \"%1\" can only be set via SetDefaults() or CopyModel().", key ) );
     }
   }

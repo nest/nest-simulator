@@ -345,14 +345,13 @@ nest.Connect(mm_out, nrns_out, params_conn_all_to_all, params_syn_static)
 input_spike_prob = 0.05  # spike probability of frozen input noise
 dtype_in_spks = np.float32  # data type of input spikes - for reproducing TF results set to np.float32
 
-input_spike_bools = np.random.rand(n_batch, steps["sequence"], n_in) < input_spike_prob
-input_spike_bools = np.hstack(input_spike_bools.swapaxes(1, 2))
+input_spike_bools = (np.random.rand(steps["sequence"], n_in) < input_spike_prob).swapaxes(0, 1)
 input_spike_bools[:, 0] = 0  # remove spikes in 0th time step of every sequence for technical reasons
 
-sequence_starts = np.arange(0.0, duration["task"], duration["sequence"] * n_batch) + duration["offset_gen"]
+sequence_starts = np.arange(0.0, duration["task"], duration["sequence"]) + duration["offset_gen"]
 params_gen_spk_in = []
 for input_spike_bool in input_spike_bools:
-    input_spike_times = np.arange(0.0, duration["sequence"] * n_batch, duration["step"])[input_spike_bool]
+    input_spike_times = np.arange(0.0, duration["sequence"], duration["step"])[input_spike_bool]
     input_spike_times_all = [input_spike_times + start for start in sequence_starts]
     params_gen_spk_in.append({"spike_times": np.hstack(input_spike_times_all).astype(dtype_in_spks).tolist()})
 

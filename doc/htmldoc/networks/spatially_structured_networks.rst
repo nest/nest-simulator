@@ -866,7 +866,7 @@ Free probabilistic connections using ``pairwise_poisson``
    In this case, :py:func:`.Connect` considers each driver node :math:`D` in turn.
    For each :math:`D`, it evaluates the parameter value for each pool node
    :math:`P` within the mask and creates a number of connections that are sampled
-   from a Poisson distribution with mean  of the parameter value. This means in
+   from a Poisson distribution with mean of the parameter value. This means in
    particular that *each possible driver-pool pair is inspected exactly once*
    and that *more than one connection between each driver-pool pair is possible*.
    Additionally, the parameter may be larger than :math:`1`.

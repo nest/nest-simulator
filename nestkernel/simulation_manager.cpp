@@ -431,6 +431,11 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
       LOG( M_ERROR, "SimulationManager::set_status", "eprop_learning_window > 0 required." );
       throw KernelException();
     }
+    if ( eprop_learning_window_new > eprop_update_interval_ )
+    {
+      LOG( M_ERROR, "SimulationManager::set_status", "eprop_learning_window =< eprop_update_interval required." );
+      throw KernelException();
+    }
 
     eprop_learning_window_ = eprop_learning_window_new;
   }

@@ -32,7 +32,7 @@
 
 #include "dictdatum.h"
 
-/* BeginUserDocs: integrate-and-fire, current-based
+/* BeginUserDocs: neuron, integrate-and-fire, current-based
 
 Short description
 +++++++++++++++++

@@ -55,10 +55,12 @@ PyNEST examples
            * :doc:`../auto_examples/pong/generate_gif`
 
     .. grid-item-card:: Astrocytes
-           :img-top: ../static/img/astrocyte_tripartite.png
+           :img-top: ../static/img/astrocyte_interaction.png
 
-           * :doc:`../auto_examples/astrocyte_single`
-           * :doc:`../auto_examples/astrocyte_tripartite`
+           * :doc:`../auto_examples/astrocytes/astrocyte_single`
+           * :doc:`../auto_examples/astrocytes/astrocyte_interaction`
+           * :doc:`../auto_examples/astrocytes/astrocyte_small_network`
+           * :doc:`../auto_examples/astrocytes/astrocyte_brunel`
 
 
 .. grid:: 1 1 2 3
@@ -325,8 +327,10 @@ PyNEST examples
    ../auto_examples/csa_example
    ../auto_examples/csa_spatial_example
    ../auto_examples/hpc_benchmark
-   ../auto_examples/astrocyte_single
-   ../auto_examples/astrocyte_tripartite
+   ../auto_examples/astrocytes/astrocyte_single
+   ../auto_examples/astrocytes/astrocyte_interaction
+   ../auto_examples/astrocytes/astrocyte_small_network
+   ../auto_examples/astrocytes/astrocyte_brunel
 
 .. toctree::
    :hidden:

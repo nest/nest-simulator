@@ -24,7 +24,9 @@
 #define RANDOM_GENERATORS_H
 
 // C++ includes:
+#include <algorithm>
 #include <initializer_list>
+#include <iterator>
 #include <memory>
 #include <random>
 #include <type_traits>
@@ -32,6 +34,9 @@
 
 // libnestutil includes:
 #include "randutils.hpp"
+
+// nestkernel includes:
+#include "node_collection.h"
 
 namespace nest
 {
@@ -122,6 +127,15 @@ public:
    * @param mu Mean value of Poisson distribution.
    */
   virtual unsigned long prand( double mu ) = 0;
+  /**
+   * @brief Wrap std::sample for selection from NodeCollection
+   *
+   * Inserts random sample without replacement of size n from range `[first, last)`into `dest`.
+   */
+  virtual void sample( NodeCollection::const_iterator first,
+    NodeCollection::const_iterator last,
+    std::back_insert_iterator< std::vector< NodeIDTriple > > dest,
+    size_t n ) = 0;
 };
 
 /**
@@ -278,6 +292,14 @@ public:
   {
     std::poisson_distribution< unsigned long >::param_type param( mu );
     return poisson_ulong_dist_( rng_, param );
+  }
+  inline void
+  sample( NodeCollection::const_iterator first,
+    NodeCollection::const_iterator last,
+    std::back_insert_iterator< std::vector< NodeIDTriple > > dest,
+    size_t n ) override
+  {
+    std::sample( first, last, dest, n, rng_ );
   }
 
 private:

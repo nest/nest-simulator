@@ -3,7 +3,7 @@
 Conda forge install
 ===================
 
-.. note::
+.. admonition:: osx-arm64: missing random number generators
 
    Due to a cross-compiling issue in the conda NEST package, some random number 
    generators are not available if you are using macOS arm64 architecture. 

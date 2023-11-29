@@ -111,7 +111,7 @@ def test_copy_common_properties(syn_model, specs):
 
 @pytest.mark.parametrize("syn_model, specs", available_cp_models.items())
 def test_no_setting_on_connection(syn_model, specs):
-    """Test that common property cannot be set on individual connection."""
+    """Test that common property cannot be set on individual connection"""
 
     if specs["setup"]:
         specs["setup"]()

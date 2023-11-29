@@ -99,6 +99,11 @@ See also
 
 tsodyks2_synapse, stdp_synapse, static_synapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: quantal_stp_synapse
+
 EndUserDocs */
 
 void register_quantal_stp_synapse( const std::string& name );

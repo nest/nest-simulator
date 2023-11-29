@@ -85,6 +85,11 @@ See also
 
 iaf_psc_alpha, iaf_psc_delta, iaf_psc_exp, iaf_cond_exp, iaf_psc_alpha_multisynapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_psc_exp_multisynapse
+
 EndUserDocs */
 
 void register_iaf_psc_exp_multisynapse( const std::string& name );

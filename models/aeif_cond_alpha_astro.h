@@ -192,6 +192,11 @@ See also
 
 iaf_cond_alpha, aeif_cond_exp, astrocyte_lr_1994, sic_connection
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: aeif_cond_alpha_astro
+
 EndUserDocs */
 
 void register_aeif_cond_alpha_astro( const std::string& name );

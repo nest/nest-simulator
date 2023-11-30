@@ -19,10 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-
-# pylint: disable=line-too-long   (problem with very long link in docstring)
-
-"""
+r"""
 Supervised learning of a regression task with e-prop plasticity
 ---------------------------------------------------------------
 
@@ -35,7 +32,7 @@ is equipped with the eligibility propagation (e-prop) plasticity mechanism by Be
 This type of learning is demonstrated at the proof-of-concept task in [1]_. We based this script on their
 TensorFlow script given in [2]_.
 
-In this task, the network learns to generate an arbitrary N-dimensional temporal pattern.  Here, the
+In this task, the network learns to generate an arbitrary N-dimensional temporal pattern. Here, the
 network learns to reproduce with its overall spiking activity a one-dimensional, one-second-long target signal
 which is a superposition of four sine waves of different amplitudes, phases, and periods.
 
@@ -61,7 +58,7 @@ References
        learning dilemma for recurrent networks of spiking neurons. Nature Communications, 11:3625.
        https://doi.org/10.1038/s41467-020-17236-y
 
-.. [2] https://github.com/IGITUGraz/eligibility_propagation/blob/master/Figure_3_and_S7_e_prop_tutorials/tutorial_pattern_generation.py  # noqa: E501
+.. [2] https://github.com/IGITUGraz/eligibility_propagation/blob/master/Figure_3_and_S7_e_prop_tutorials/tutorial_pattern_generation.py  # pylint: disable=line-too-long # noqa: E501
 
 .. [3] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D, van Albada SJ, Bolten M, Diesmann M.
        Event-based implementation of eligibility propagation (in preparation)
@@ -151,7 +148,7 @@ params_setup = {
     "eprop_learning_window": duration["learning_window"],
     "eprop_reset_neurons_on_update": True,  # if True, reset dynamic variables at start of each update interval
     "eprop_update_interval": duration["sequence"],  # ms, time interval for updating the synaptic weights
-    "print_time": False,  # True,  # if True, print time progress bar during simulation, set False if run as code cell
+    "print_time": False,  # if True, print time progress bar during simulation, set False if run as code cell
     "resolution": duration["step"],
     "total_num_virtual_procs": 1,  # number of virtual processes, set in case of distributed computing
 }
@@ -175,9 +172,9 @@ n_out = 1  # number of readout neurons
 params_nrn_rec = {
     "C_m": 1.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
     "c_reg": 300.0,  # firing rate regularization scaling
-    "gamma": 0.3,  # scaling of the pseudo derivative
     "E_L": 0.0,  # mV, leak reversal potential
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
+    "gamma": 0.3,  # scaling of the pseudo derivative
     "I_e": 0.0,  # pA, external current input
     "psc_scale_factor": "alpha_complement",  # postsynaptic current scale factor
     "surrogate_gradient": "piecewise_linear",  # pseudo-derivative
@@ -191,7 +188,7 @@ params_nrn_out = {
     "C_m": 1.0,
     "E_L": 0.0,
     "I_e": 0.0,
-    "loss": "mean_squared_error",
+    "loss": "mean_squared_error",  # loss function
     "tau_m": 30.0,
     "V_m": 0.0,
 }
@@ -221,17 +218,17 @@ n_record = 1  # number of neurons to record recordables from
 n_record_w = 3  # number of senders and targets to record weights from
 
 params_mm_rec = {
+    "interval": duration["step"],  # interval between two recorded time points
     "record_from": ["V_m", "surrogate_gradient", "learning_signal"],  # recordables
-    "start": duration["offset_gen"] + duration["delay_in_rec"],
-    "stop": duration["offset_gen"] + duration["delay_in_rec"] + duration["task"],
-    "interval": duration["step"],
+    "start": duration["offset_gen"] + duration["delay_in_rec"],  # start time of recording
+    "stop": duration["offset_gen"] + duration["delay_in_rec"] + duration["task"],  # stop time of recording
 }
 
 params_mm_out = {
+    "interval": duration["step"],
     "record_from": ["V_m", "readout_signal", "target_signal", "error_signal"],
     "start": duration["total_offset"],
     "stop": duration["total_offset"] + duration["task"],
-    "interval": duration["step"],
 }
 
 params_wr = {
@@ -266,10 +263,10 @@ weights_rec_out = np.array(np.random.randn(n_rec, n_out).T / np.sqrt(n_rec), dty
 weights_out_rec = np.array(np.random.randn(n_rec, n_out) / np.sqrt(n_rec), dtype=dtype_weights)
 
 params_common_syn_eprop = {
+    "average_gradient": False,  # if True, average the gradient over the learning window
     "batch_size": n_batch,
-    "optimizer": "gradient_descent",  # algorithm to optimize the weights; either "adam" or "gradient_descent"
+    "optimizer": "gradient_descent",  # algorithm to optimize the weights
     "weight_recorder": wr,
-    "average_gradient": False,
 }
 
 params_syn_in = {
@@ -353,7 +350,7 @@ params_gen_spk_in = []
 for input_spike_bool in input_spike_bools:
     input_spike_times = np.arange(0.0, duration["sequence"], duration["step"])[input_spike_bool]
     input_spike_times_all = [input_spike_times + start for start in sequence_starts]
-    params_gen_spk_in.append({"spike_times": np.hstack(input_spike_times_all).astype(dtype_in_spks).tolist()})
+    params_gen_spk_in.append({"spike_times": np.hstack(input_spike_times_all).astype(dtype_in_spks)})
 
 ####################
 
@@ -387,8 +384,8 @@ def generate_superimposed_sines(steps_sequence, periods):
 target_signal = generate_superimposed_sines(steps["sequence"], [1000, 500, 333, 200])  # periods in steps
 
 params_gen_rate_target = {
-    "amplitude_times": (np.arange(0.0, duration["task"], duration["step"]) + duration["total_offset"]).tolist(),
-    "amplitude_values": np.tile(target_signal, n_iter * n_batch).tolist(),
+    "amplitude_times": np.arange(0.0, duration["task"], duration["step"]) + duration["total_offset"],
+    "amplitude_values": np.tile(target_signal, n_iter * n_batch),
 }
 
 ####################
@@ -478,7 +475,13 @@ loss = 0.5 * np.add.reduceat(error, np.arange(0, steps["task"], steps["sequence"
 # Furthermore, we compare the calculated losses to some hardcoded verification losses to ensure everything with
 # the NEST installation is fine. For the unmodified script, these should be precisely the same.
 
-loss_reference = [101.96435699904158, 103.46673112620580, 103.34060707477168, 103.68024403768639, 104.41277574875247]
+loss_reference = [
+    101.96435699904158,
+    103.46673112620580,
+    103.34060707477168,
+    103.68024403768639,
+    104.41277574875247,
+]
 
 n_compare = min(len(loss), len(loss_reference))
 
@@ -543,7 +546,7 @@ fig.tight_layout()
 
 
 def plot_recordable(ax, events, recordable, ylabel, xlims):
-    for sender in np.unique(events["senders"]):
+    for sender in set(events["senders"]):
         idc_sender = events["senders"] == sender
         idc_times = (events["times"][idc_sender] > xlims[0]) & (events["times"][idc_sender] < xlims[1])
         ax.plot(events["times"][idc_sender][idc_times], events[recordable][idc_sender][idc_times], lw=0.5)

@@ -289,7 +289,7 @@ def test_eprop_regression():
     for input_spike_bool in input_spike_bools:
         input_spike_times = np.arange(0.0, duration["sequence"] * n_batch, duration["step"])[input_spike_bool]
         input_spike_times_all = [input_spike_times + start for start in sequence_starts]
-        params_gen_spk_in.append({"spike_times": np.hstack(input_spike_times_all).astype(dtype_in_spks).tolist()})
+        params_gen_spk_in.append({"spike_times": np.hstack(input_spike_times_all).astype(dtype_in_spks)})
 
     nest.SetStatus(gen_spk_in, params_gen_spk_in)
 
@@ -314,8 +314,8 @@ def test_eprop_regression():
     target_signal = generate_superimposed_sines(steps["sequence"], [1000, 500, 333, 200])
 
     params_gen_rate_target = {
-        "amplitude_times": (np.arange(0.0, duration["task"], duration["step"]) + duration["total_offset"]).tolist(),
-        "amplitude_values": np.tile(target_signal, n_iter * n_batch).tolist(),
+        "amplitude_times": np.arange(0.0, duration["task"], duration["step"]) + duration["total_offset"],
+        "amplitude_values": np.tile(target_signal, n_iter * n_batch),
     }
 
     nest.SetStatus(gen_rate_target, params_gen_rate_target)
@@ -693,7 +693,7 @@ def test_eprop_classification():
     timeline_task = np.arange(0.0, duration["task"], duration["step"]) + duration["offset_gen"]
 
     params_gen_spk_in = [
-        {"spike_times": timeline_task[input_spike_bools_arr[:, nrn_in_idx]].astype(dtype_in_spks).tolist()}
+        {"spike_times": timeline_task[input_spike_bools_arr[:, nrn_in_idx]].astype(dtype_in_spks)}
         for nrn_in_idx in range(n_in)
     ]
 
@@ -702,10 +702,8 @@ def test_eprop_classification():
 
     params_gen_rate_target = [
         {
-            "amplitude_times": (
-                np.arange(0.0, duration["task"], duration["sequence"]) + duration["total_offset"]
-            ).tolist(),
-            "amplitude_values": target_rate_changes[nrn_out_idx].tolist(),
+            "amplitude_times": np.arange(0.0, duration["task"], duration["sequence"]) + duration["total_offset"],
+            "amplitude_values": target_rate_changes[nrn_out_idx],
         }
         for nrn_out_idx in range(n_out)
     ]
@@ -727,8 +725,8 @@ def test_eprop_classification():
     target_signal = events_mm_out["target_signal"]
     senders = events_mm_out["senders"]
 
-    readout_signal = np.array([readout_signal[senders == i] for i in np.unique(senders)])
-    target_signal = np.array([target_signal[senders == i] for i in np.unique(senders)])
+    readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
+    target_signal = np.array([target_signal[senders == i] for i in set(senders)])
 
     readout_signal = readout_signal.reshape((n_out, n_iter, n_batch, steps["sequence"]))
     readout_signal = readout_signal[:, :, :, -steps["learning_window"] :]

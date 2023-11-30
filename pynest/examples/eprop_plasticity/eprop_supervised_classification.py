@@ -52,7 +52,7 @@ experiment, one group providing the input spikes of the left cues and one group 
 cues, and a last group defining the recall window, in which the network has to decide. The readout neuron
 compares the network signal :math:`\pi_k` with the teacher target signal :math:`\pi_k^*`, which it receives from
 a rate generator. Since the decision is at the end and all the cues are relevant, the network has to keep the
-cues in memory. Additional adaptive neurons in the network enable this memory.  The network's training error is
+cues in memory. Additional adaptive neurons in the network enable this memory. The network's training error is
 assessed by employing a cross-entropy error loss.
 
 Details on the event-based NEST implementation of e-prop can be found in [3]_.
@@ -231,14 +231,14 @@ params_nrn_out = {
     "C_m": 1.0,
     "E_L": 0.0,
     "I_e": 0.0,
-    "loss": "cross_entropy",
+    "loss": "cross_entropy",  # loss function
     "tau_m": 20.0,
     "V_m": 0.0,
 }
 
 ####################
 
-# intermediate parrot neurons required between input spike generators and recurrent neurons,
+# Intermediate parrot neurons required between input spike generators and recurrent neurons,
 # since devices cannot establish plastic synapses for technical reasons
 
 gen_spk_in = nest.Create("spike_generator", n_in)
@@ -263,24 +263,24 @@ n_record = 1  # number of adaptive and regular neurons each to record recordable
 n_record_w = 3  # number of senders and targets to record weights from
 
 params_mm_reg = {
+    "interval": duration["step"],  # interval between two recorded time points
     "record_from": ["V_m", "surrogate_gradient", "learning_signal"],  # recordables
-    "start": duration["offset_gen"] + duration["delay_in_rec"],
-    "stop": duration["offset_gen"] + duration["delay_in_rec"] + duration["task"],
-    "interval": duration["step"],
+    "start": duration["offset_gen"] + duration["delay_in_rec"],  # start time of recording
+    "stop": duration["offset_gen"] + duration["delay_in_rec"] + duration["task"],  # stop time of recording
 }
 
 params_mm_ad = {
+    "interval": duration["step"],
     "record_from": params_mm_reg["record_from"] + ["adapting_threshold", "adaptation"],
     "start": duration["offset_gen"] + duration["delay_in_rec"],
     "stop": duration["offset_gen"] + duration["delay_in_rec"] + duration["task"],
-    "interval": duration["step"],
 }
 
 params_mm_out = {
+    "interval": duration["step"],
     "record_from": ["V_m", "readout_signal", "target_signal", "error_signal"],
     "start": duration["total_offset"],
     "stop": duration["total_offset"] + duration["task"],
-    "interval": duration["step"],
 }
 
 params_wr = {
@@ -325,13 +325,13 @@ weights_rec_out = np.array(calculate_glorot_dist(n_rec, n_out).T, dtype=dtype_we
 weights_out_rec = np.array(np.random.randn(n_rec, n_out), dtype=dtype_weights)
 
 params_common_syn_eprop = {
-    "adam_beta1": 0.9,  # exponential decay rate for 1st moment estimate of Adam optimizeradam_beta1,
+    "adam_beta1": 0.9,  # exponential decay rate for 1st moment estimate of Adam optimizer
     "adam_beta2": 0.999,  # exponential decay rate for 2nd moment raw estimate of Adam optimizer
     "adam_epsilon": 1e-8,  # small numerical stabilization constant of Adam optimizer
-    "optimizer": "adam",  # algorithm to optimize the weights; either "adam" or "gradient_descent"
+    "average_gradient": True,  # if True, average the gradient over the learning window
     "batch_size": n_batch,
+    "optimizer": "adam",  # algorithm to optimize the weights
     "weight_recorder": wr,
-    "average_gradient": True,
 }
 
 params_syn_in = {
@@ -461,7 +461,7 @@ def generate_evidence_accumulation_input_output(
     return input_spike_bools, target_cues
 
 
-input_spike_prob = 0.04  # input spike probability of frozen input noise
+input_spike_prob = 0.04  # spike probability of frozen input noise
 dtype_in_spks = np.float32  # data type of input spikes - for reproducing TF results set to np.float32
 
 input_spike_bools_list = []
@@ -478,7 +478,7 @@ input_spike_bools_arr = np.array(input_spike_bools_list).reshape(steps["task"], 
 timeline_task = np.arange(0.0, duration["task"], duration["step"]) + duration["offset_gen"]
 
 params_gen_spk_in = [
-    {"spike_times": timeline_task[input_spike_bools_arr[:, nrn_in_idx]].astype(dtype_in_spks).tolist()}
+    {"spike_times": timeline_task[input_spike_bools_arr[:, nrn_in_idx]].astype(dtype_in_spks)}
     for nrn_in_idx in range(n_in)
 ]
 
@@ -487,8 +487,8 @@ target_rate_changes[np.array(target_cues_list), np.arange(n_batch * n_iter)] = 1
 
 params_gen_rate_target = [
     {
-        "amplitude_times": (np.arange(0.0, duration["task"], duration["sequence"]) + duration["total_offset"]).tolist(),
-        "amplitude_values": target_rate_changes[nrn_out_idx].tolist(),
+        "amplitude_times": np.arange(0.0, duration["task"], duration["sequence"]) + duration["total_offset"],
+        "amplitude_values": target_rate_changes[nrn_out_idx],
     }
     for nrn_out_idx in range(n_out)
 ]
@@ -502,8 +502,8 @@ nest.SetStatus(gen_rate_target, params_gen_rate_target)
 # %% ###########################################################################################################
 # Force final update
 # ~~~~~~~~~~~~~~~~~~
-# Synapses only get active, i.e., the correct weight update calculated and applied, when they transmit a spike.
-# To still be able to read out the correct weights at the end of the simulation, we force spiking of the
+# Synapses only get active, that is, the correct weight update calculated and applied, when they transmit a
+# spike. To still be able to read out the correct weights at the end of the simulation, we force spiking of the
 # presynaptic neuron and thus an update of all synapses, including those that have not transmitted a spike in
 # the last update interval, by sending a strong spike to all neurons that form the presynaptic side of an eprop
 # synapse. This step is required purely for technical reasons.
@@ -575,8 +575,8 @@ readout_signal = events_mm_out["readout_signal"]  # corresponds to softmax
 target_signal = events_mm_out["target_signal"]
 senders = events_mm_out["senders"]
 
-readout_signal = np.array([readout_signal[senders == i] for i in np.unique(senders)])
-target_signal = np.array([target_signal[senders == i] for i in np.unique(senders)])
+readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])
+target_signal = np.array([target_signal[senders == i] for i in set(senders)])
 
 readout_signal = readout_signal.reshape((n_out, n_iter, n_batch, steps["sequence"]))
 readout_signal = readout_signal[:, :, :, -steps["learning_window"] :]
@@ -673,7 +673,7 @@ fig.tight_layout()
 
 
 def plot_recordable(ax, events, recordable, ylabel, xlims):
-    for sender in np.unique(events["senders"]):
+    for sender in set(events["senders"]):
         idc_sender = events["senders"] == sender
         idc_times = (events["times"][idc_sender] > xlims[0]) & (events["times"][idc_sender] < xlims[1])
         ax.plot(events["times"][idc_sender][idc_times], events[recordable][idc_sender][idc_times], lw=0.5)

@@ -550,6 +550,8 @@ nest::iaf_wang_2002_exact::handle( SpikeEvent& e )
 
   const double steps = e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() );
 
+  std::cout << "B_.spikes_.size() = " << B_.spikes_.size() << std::endl;
+  std::cout << "rport: " << e.get_rport() << std::endl;
   const auto rport = e.get_rport();
   if ( rport < NMDA )
   {

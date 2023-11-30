@@ -161,22 +161,8 @@ void register_iaf_wang_2002_exact( const std::string& name );
 class iaf_wang_2002_exact : public ArchivingNode
 {
 public:
-  /**
-   * The constructor is only used to create the model prototype in the model manager.
-  **/
   iaf_wang_2002_exact();
-
-  /**
-   * The copy constructor is used to create model copies and instances of the model.
-   * @note The copy constructor needs to initialize the parameters and part of the state.
-   *       Initialization of rest of state, buffers and internal variables is deferred to
-   *       @c init_state_(), @c init_buffers_() and @c calibrate().
-  **/
   iaf_wang_2002_exact( const iaf_wang_2002_exact& );
-
-  /**
-   * Destructor.
-  **/
   ~iaf_wang_2002_exact() override;
 
   /*
@@ -192,12 +178,6 @@ public:
    * Used to validate that we can send SpikeEvent to desired target:port.
   **/
   size_t send_test_event( Node& target, size_t receptor_type, synindex, bool ) override;
-
-  /* -------------------------------------------------------------------------
-   * Functions handling incoming events.
-   * We tell NEST that we can handle incoming events of various types by
-   * defining handle() for the given event.
-   * ------------------------------------------------------------------------- */
 
   void handle( SpikeEvent& ) override;         //!< accept spikes
   void handle( CurrentEvent& e ) override;     //!< accept current
@@ -215,6 +195,12 @@ public:
   void set_status( const DictionaryDatum& ) override;
 
 private:
+  void init_state_() override;
+  void pre_run_hook() override;
+  void init_buffers_() override;
+  void calibrate();
+  void update( Time const&, const long, const long ) override;
+
   /**
    * Synapse types to connect to
   **/
@@ -227,25 +213,15 @@ private:
     SUP_SPIKE_RECEPTOR
   };
 
-  void init_state_() override;
-  void pre_run_hook() override;
-  void init_buffers_() override;
-  void calibrate();
-  void update( Time const&, const long, const long ) override;
+
+
+  // make dynamics function quasi-member
+  friend int iaf_wang_2002_exact_dynamics( double, const double y[], double f[], void* pnode );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< iaf_wang_2002_exact >;
   friend class UniversalDataLogger< iaf_wang_2002_exact >;
 
-  // Parameters class --------------------------------------------------------------
-
-  /**
-   * Parameters of the neuron.
-   *
-   * These are the parameters that can be set by the user through @c `node.set()`.
-   * They are initialized from the model prototype when the node is created.
-   * Parameters do not change during calls to @c update().
-  **/
   struct Parameters_
   {
     double E_L;            //!< Resting Potential in mV
@@ -274,7 +250,7 @@ private:
     void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
-
+public:
   // State variables class --------------------------------------------
 
   /**
@@ -322,18 +298,7 @@ private:
     }
   };
 
-  // Variables class -------------------------------------------------------
-
-  /**
-   * Internal variables of the model.
-   * Variables are re-initialized upon each call to Simulate.
-   */
-  struct Variables_
-  {
-    //! refractory time in steps
-    long RefractoryCounts;
-  };
-
+private:
   // Buffers class --------------------------------------------------------
 
   /**
@@ -392,6 +357,19 @@ private:
     double I_stim_;
   };
 
+
+  // Variables class -------------------------------------------------------
+
+  /**
+   * Internal variables of the model.
+   * Variables are re-initialized upon each call to Simulate.
+   */
+  struct Variables_
+  {
+    //! refractory time in steps
+    long RefractoryCounts;
+  };
+
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Read out state vector elements, used by UniversalDataLogger
@@ -419,7 +397,6 @@ private:
 
   //! Mapping of recordables names to access functions
   static RecordablesMap< iaf_wang_2002_exact > recordablesMap_;
-  friend int iaf_wang_2002_exact_dynamics( double, const double y[], double f[], void* pnode );
 
 }; /* neuron iaf_wang_2002_exact */
 
@@ -443,9 +420,14 @@ iaf_wang_2002_exact::handles_test_event( SpikeEvent&, size_t receptor_type )
   {
     if ( receptor_type == NMDA )
     {
+      // give each NMDA synapse a unique rport, starting from 2 (num_ports_ is initialized to 2) 
       ++S_.num_ports_;
+      return S_.num_ports_ - 1;
     }
+    else 
+    {
     return receptor_type;
+    }
   }
 }
 

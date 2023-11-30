@@ -182,14 +182,11 @@ public:
   //! Used to validate that we can send SpikeEvent to desired target:port.
   size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-//  void sends_secondary_event( DelayedRateConnectionEvent& ) override;
-
   void handle( SpikeEvent& ) override;         //!< accept spikes
   void handle( CurrentEvent& ) override;     //!< accept current
   void handle( DataLoggingRequest& ) override; //!< allow recording with multimeter
 
   size_t handles_test_event( SpikeEvent&, size_t ) override;
-//  size_t handles_test_event( DelayedRateConnectionEvent&,size_t ) override;
   size_t handles_test_event( CurrentEvent&, size_t ) override;
   size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
@@ -220,9 +217,6 @@ private:
   friend class RecordablesMap< iaf_wang_2002 >;
   friend class UniversalDataLogger< iaf_wang_2002 >;
 
-private:
-  //
-  // Model parameters 
   struct Parameters_
   {
     double E_L;            //!< Resting Potential in mV
@@ -285,15 +279,13 @@ public:
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
 
-
     void get( DictionaryDatum& ) const;
     void set( const DictionaryDatum&, const Parameters_&, Node* );
-
   };
 
 
 private:
-    // Buffers class --------------------------------------------------------
+  // Buffers class --------------------------------------------------------
 
   /**
    * Buffers of the model.
@@ -356,8 +348,6 @@ private:
     //! refractory time in steps
     long RefractoryCounts_;
   };
-
-
 
   // Access functions for UniversalDataLogger -------------------------------
 

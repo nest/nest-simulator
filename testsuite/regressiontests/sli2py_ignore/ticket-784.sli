@@ -1,5 +1,5 @@
 /*
- *  ticket-733.sli
+ *  ticket-784.sli
  *
  *  This file is part of NEST.
  *
@@ -22,16 +22,22 @@
 
 /** @BeginDocumentation
 
-Name: testsuite::ticket-733 - neq does not work correctly for intvector and doublevector
+Name: testsuite::ticket-784 - xor and neq are not protected by tries
 
-Synopsis: (ticket-773) run -> NEST exits if test fails
+Synopsis: (ticket-784) run -> NEST exits if test fails
 
 Description:
-This test verify that neq returns false when two intvectors or two double vectors are equals
-*/
+Test that xor and neq check their arguments.
+
+Author: Marc-Oliver Gewaltig, 2013-12-25
+ */
 
 (unittest) run
 /unittest using
 
-<# 1 2 3 #> <# 1 2 3 #> neq false eq assert_or_die
-<. 1 2 3 .> <. 1 2 3 .> neq false eq assert_or_die
+{ neq } fail_or_die % no arguments
+[ 1 1.0 (a) [] ] { {neq } stopped {errordict /newerror false put} { 3 quit_i } ifelse clear} forall
+
+clear
+{ xor } fail_or_die % no arguments
+[ 1 1.0 (a) [] ] { {xor} stopped {errordict /newerror false put} { 3 quit_i } ifelse clear } forall

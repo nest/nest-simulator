@@ -74,6 +74,7 @@ templates_path = ["templates"]
 
 # To run plantuml locally see the user documentation workflow
 plantuml = "java -jar /tmp/plantuml.jar"
+plantuml_output_format = "svg_img"
 sphinx_gallery_conf = {
     # path to your examples scripts
     "examples_dirs": "../../pynest/examples",

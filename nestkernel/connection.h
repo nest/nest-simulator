@@ -158,6 +158,8 @@ public:
    *
    * @note Classes requiring checks need to override the function with their own
    * implementation, as this base class implementation does not do anything.
+   *
+   * @see ConnectorModel::check_synapse_params
    */
   void check_synapse_params( const DictionaryDatum& d ) const;
 

@@ -128,7 +128,7 @@ public:
     return name_;
   }
 
-  bool
+  bool constexpr
   has_property( const ConnectionModelProperties& property ) const
   {
     return flag_is_set( properties_, property );

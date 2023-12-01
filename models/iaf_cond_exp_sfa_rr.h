@@ -150,6 +150,8 @@ Examples using this model
 
 EndUserDocs */
 
+void register_iaf_cond_exp_sfa_rr( const std::string& name );
+
 class iaf_cond_exp_sfa_rr : public ArchivingNode
 {
 

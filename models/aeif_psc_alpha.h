@@ -183,6 +183,8 @@ Examples using this model
 
 EndUserDocs */
 
+void register_aeif_psc_alpha( const std::string& name );
+
 class aeif_psc_alpha : public ArchivingNode
 {
 

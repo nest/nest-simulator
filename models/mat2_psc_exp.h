@@ -146,6 +146,8 @@ EndUserDocs */
  * object is required.
  */
 
+void register_mat2_psc_exp( const std::string& name );
+
 class mat2_psc_exp : public ArchivingNode
 {
 

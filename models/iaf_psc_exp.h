@@ -179,6 +179,8 @@ EndUserDocs */
  * matrix objects.
  */
 
+void register_iaf_psc_exp( const std::string& name );
+
 class iaf_psc_exp : public ArchivingNode
 {
 

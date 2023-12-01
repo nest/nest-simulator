@@ -2,9 +2,9 @@
 
 # With this script you can easily format all C/C++ files contained in
 # any (sub)directory of NEST. Internally it uses clang-format to do
-# the actual formatting. 
-# 
-# NEST C/C++ code should be formatted according to clang-format version 13.0.0.
+# the actual formatting.
+#
+# NEST C/C++ code should be formatted according to clang-format version 17.0.4.
 # If you would like to see how the code will be formatted with a different
 # clang-format version, execute e.g. `CLANG_FORMAT=clang-format-14 ./format_all_c_c++_files.sh`.
 #

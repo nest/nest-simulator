@@ -204,6 +204,8 @@ Examples using this model
 
 EndUserDocs */
 
+void register_gif_psc_exp( const std::string& name );
+
 class gif_psc_exp : public ArchivingNode
 {
 

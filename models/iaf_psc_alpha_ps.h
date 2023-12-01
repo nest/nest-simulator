@@ -153,6 +153,8 @@ Examples using this model
 
 EndUserDocs */
 
+void register_iaf_psc_alpha_ps( const std::string& name );
+
 class iaf_psc_alpha_ps : public ArchivingNode
 {
 public:

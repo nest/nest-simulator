@@ -65,12 +65,19 @@ See also
 
 rate_connection_instantaneous, rate_neuron_ipn, rate_neuron_opn
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: rate_connection_delayed
+
 EndUserDocs */
 
 /**
  * Class representing a delayed rate connection. A rate_connection_delayed
  * has the properties weight, delay and receiver port.
  */
+void register_rate_connection_delayed( const std::string& name );
+
 template < typename targetidentifierT >
 class rate_connection_delayed : public Connection< targetidentifierT >
 {

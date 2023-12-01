@@ -95,6 +95,8 @@ Examples using this model
 
 EndUserDocs */
 
+void register_poisson_generator_ps( const std::string& name );
+
 class poisson_generator_ps : public StimulationDevice
 {
 

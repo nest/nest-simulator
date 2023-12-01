@@ -170,6 +170,8 @@ public:
 };
 
 
+void register_tsodyks_synapse_hom( const std::string& name );
+
 template < typename targetidentifierT >
 class tsodyks_synapse_hom : public Connection< targetidentifierT >
 {
@@ -249,10 +251,9 @@ public:
   void
   set_weight( double )
   {
-    throw BadProperty(
+    throw NotImplemented(
       "Setting of individual weights is not possible! The common weights can "
-      "be changed via "
-      "CopyModel()." );
+      "be changed via CopyModel()." );
   }
 
 private:

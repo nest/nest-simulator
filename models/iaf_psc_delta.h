@@ -146,6 +146,8 @@ EndUserDocs */
  * matrix objects.
  */
 
+void register_iaf_psc_delta( const std::string& name );
+
 class iaf_psc_delta : public ArchivingNode
 {
 

@@ -77,6 +77,8 @@ EndUserDocs */
  * Class representing a rate connection. A rate connection
  * has the properties weight and receiver port.
  */
+void register_rate_connection_instantaneous( const std::string& name );
+
 template < typename targetidentifierT >
 class rate_connection_instantaneous : public Connection< targetidentifierT >
 {

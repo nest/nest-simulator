@@ -184,6 +184,8 @@ Examples using this model
 
 EndUserDocs */
 
+void register_aeif_cond_beta_multisynapse( const std::string& name );
+
 class aeif_cond_beta_multisynapse : public ArchivingNode
 {
 

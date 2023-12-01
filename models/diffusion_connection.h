@@ -89,6 +89,8 @@ Examples using this model
 
 EndUserDocs */
 
+void register_diffusion_connection( const std::string& name );
+
 template < typename targetidentifierT >
 class diffusion_connection : public Connection< targetidentifierT >
 {

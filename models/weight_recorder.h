@@ -87,6 +87,8 @@ EndUserDocs */
 namespace nest
 {
 
+void register_weight_recorder( const std::string& name );
+
 class weight_recorder : public RecordingDevice
 {
 

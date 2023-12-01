@@ -26,10 +26,6 @@
 // C++ includes:
 #include <string>
 
-// Includes from nestkernel:
-#include "nest.h"
-#include "nest_impl.h"
-
 // Includes from sli:
 #include "slimodule.h"
 

@@ -88,6 +88,8 @@ Examples using this model
 
 EndUserDocs */
 
+void register_iaf_psc_alpha_multisynapse( const std::string& name );
+
 class iaf_psc_alpha_multisynapse : public ArchivingNode
 {
 

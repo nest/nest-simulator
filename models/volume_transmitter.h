@@ -109,6 +109,8 @@ EndUserDocs */
 
 class ConnectorBase;
 
+void register_volume_transmitter( const std::string& name );
+
 class volume_transmitter : public Node
 {
 

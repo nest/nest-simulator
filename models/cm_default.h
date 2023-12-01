@@ -230,6 +230,8 @@ Examples using this model
 
 EndUserDocs*/
 
+void register_cm_default( const std::string& name );
+
 class cm_default : public ArchivingNode
 {
 

@@ -23,7 +23,6 @@
 #ifndef TSODYKS_SYNAPSE_H
 #define TSODYKS_SYNAPSE_H
 
-
 // C++ includes:
 #include <cmath>
 
@@ -110,6 +109,7 @@ The following parameters can be set in the status dictionary:
                   releasable pool [0,1]
  y        real    Initial fraction of synaptic vesicles in the synaptic
                   cleft [0,1]
+ u        real    Initial release probability of synaptic vesicles [0,1]
 ========  ======  ========================================================
 
 References
@@ -127,7 +127,7 @@ SpikeEvent
 See also
 ++++++++
 
-stdp_synapse, static_synapse, iaf_psc_exp, iaf_tum_2000
+iaf_tum_2000, stdp_synapse, static_synapse, iaf_psc_exp
 
 Examples using this model
 +++++++++++++++++++++++++
@@ -135,6 +135,8 @@ Examples using this model
 .. listexamples:: tsodyks_synapse
 
 EndUserDocs */
+
+void register_tsodyks_synapse( const std::string& name );
 
 template < typename targetidentifierT >
 class tsodyks_synapse : public Connection< targetidentifierT >
@@ -254,13 +256,10 @@ tsodyks_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSyna
   // !!! x != 1.0 -> z != 0.0 -> t_lastspike_=0 has influence on dynamics
 
   // propagator
-  // TODO: use expm1 here instead, where applicable
   double Puu = ( tau_fac_ == 0.0 ) ? 0.0 : std::exp( -h / tau_fac_ );
   double Pyy = std::exp( -h / tau_psc_ );
-  double Pzz = std::exp( -h / tau_rec_ );
-
-  double Pxy = ( ( Pzz - 1.0 ) * tau_rec_ - ( Pyy - 1.0 ) * tau_psc_ ) / ( tau_psc_ - tau_rec_ );
-  double Pxz = 1.0 - Pzz;
+  double Pzz = std::expm1( -h / tau_rec_ );
+  double Pxy = ( Pzz * tau_rec_ - ( Pyy - 1.0 ) * tau_psc_ ) / ( tau_psc_ - tau_rec_ );
 
   double z = 1.0 - x_ - y_;
 
@@ -268,7 +267,7 @@ tsodyks_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSyna
   // don't change the order !
 
   u_ *= Puu;
-  x_ += Pxy * y_ + Pxz * z;
+  x_ += Pxy * y_ - Pzz * z;
   y_ *= Pyy;
 
   // delta function u
@@ -312,7 +311,6 @@ tsodyks_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
-
   def< double >( d, names::U, U_ );
   def< double >( d, names::tau_psc, tau_psc_ );
   def< double >( d, names::tau_rec, tau_rec_ );
@@ -349,28 +347,32 @@ tsodyks_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Conn
   updateValue< double >( d, names::U, U_ );
   if ( U_ > 1.0 or U_ < 0.0 )
   {
-    throw BadProperty( "U must be in [0,1]." );
+    throw BadProperty( "'U' must be in [0,1]." );
   }
 
   updateValue< double >( d, names::tau_psc, tau_psc_ );
   if ( tau_psc_ <= 0.0 )
   {
-    throw BadProperty( "tau_psc must be > 0." );
+    throw BadProperty( "'tau_psc' must be > 0." );
   }
 
   updateValue< double >( d, names::tau_rec, tau_rec_ );
   if ( tau_rec_ <= 0.0 )
   {
-    throw BadProperty( "tau_rec must be > 0." );
+    throw BadProperty( "'tau_rec' must be > 0." );
   }
 
   updateValue< double >( d, names::tau_fac, tau_fac_ );
   if ( tau_fac_ < 0.0 )
   {
-    throw BadProperty( "tau_fac must be >= 0." );
+    throw BadProperty( "'tau_fac' must be >= 0." );
   }
 
   updateValue< double >( d, names::u, u_ );
+  if ( u_ > 1.0 or u_ < 0.0 )
+  {
+    throw BadProperty( "'u' must be in [0,1]." );
+  }
 }
 
 } // namespace

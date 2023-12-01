@@ -200,7 +200,24 @@ public:
   std::unique_ptr< SecondaryEvent >
   get_secondary_event() override
   {
-    return default_connection_.get_secondary_event();
+    constexpr bool is_primary = flag_is_set( ConnectionT::properties, nest::ConnectionModelProperties::IS_PRIMARY );
+    constexpr bool has_get_secondary_event = requires( ConnectionT & c )
+    {
+      c.get_secondary_event();
+    };
+
+    static_assert(
+      is_primary xor has_get_secondary_event, "Non-primary connections have to provide get_secondary_event()" );
+
+    if constexpr ( has_get_secondary_event )
+    {
+      return default_connection_.get_secondary_event();
+    }
+    // Throw error for invalid runtime call on primary connections
+    UnexpectedEvent(
+      "Using secondary events on primary connections is not possible. Secondary connections must implement "
+      "get_secondary_event!" );
+    return nullptr;
   }
 
   ConnectionT const&

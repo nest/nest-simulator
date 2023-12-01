@@ -77,10 +77,9 @@ Usage
 
 This model can only be used in combination with the other e-prop models,
 whereby the network architecture requires specific wiring, input, and output.
-The usage is demonstrated in a
-:doc:`supervised regression task <../auto_examples/eprop_plasticity/eprop_supervised_regression/>`
-and a :doc:`supervised classification task <../auto_examples/eprop_plasticity/eprop_supervised_classification>`,
-reproducing the original proof-of-concept tasks in [1]_.
+The usage is demonstrated in several
+:doc:`supervised regression and classification tasks <../auto_examples/eprop_plasticity/index>`
+reproducing among others the original proof-of-concept tasks in [1]_.
 
 Transmits
 +++++++++

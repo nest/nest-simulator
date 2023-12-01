@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# eprop_supervised_classification.py
+# eprop_supervised_classification_evidence-accumulation.py
 #
 # This file is part of NEST.
 #
@@ -20,8 +20,10 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 r"""
-Supervised learning of a classification task with e-prop plasticity
--------------------------------------------------------------------
+Tutorial on learning to accumulate evidence with e-prop
+-------------------------------------------------------
+
+Training a classification model using supervised e-prop plasticity to accumulate evidence.
 
 Description
 ~~~~~~~~~~~
@@ -38,7 +40,7 @@ taking a left and a right turn of which one is correct. After a number of iterat
 infer the underlying rationale of the task. Here, the solution is to turn to the side in which more cues were
 presented.
 
-.. image:: ../../../../pynest/examples/eprop_plasticity/eprop_supervised_regression_infrastructure.png
+.. image:: ../../../../pynest/examples/eprop_plasticity/eprop_supervised_classification_infrastructure.png
    :width: 70 %
    :alt: See Figure 1 below.
    :align: center
@@ -64,11 +66,11 @@ References
        learning dilemma for recurrent networks of spiking neurons. Nature Communications, 11:3625.
        https://doi.org/10.1038/s41467-020-17236-y
 
-.. [2] https://github.com/IGITUGraz/eligibility_propagation/blob/master/Figure_3_and_S7_e_prop_tutorials/tutorial_evidence_accumulation_with_alif.py  # pylint: disable=line-too-long # noqa: E501
+.. [2] https://github.com/IGITUGraz/eligibility_propagation/blob/master/Figure_3_and_S7_e_prop_tutorials/tutorial_evidence_accumulation_with_alif.py
 
 .. [3] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D, van Albada SJ, Bolten M, Diesmann M.
        Event-based implementation of eligibility propagation (in preparation)
-"""
+"""  # pylint: disable=line-too-long # flake8: noqa: E501
 
 # %% ###########################################################################################################
 # Import libraries
@@ -80,6 +82,7 @@ import matplotlib.pyplot as plt
 import nest
 import numpy as np
 from cycler import cycler
+from IPython.display import Image
 
 # %% ###########################################################################################################
 # Schematic of network architecture
@@ -89,10 +92,7 @@ from cycler import cycler
 # synapse models below. The connections that must be established are numbered 1 to 7.
 
 try:
-    # Display image in IPython or notebook if available
-    from IPython.display import Image
-
-    Image(filename="./eprop_supervised_regression_infrastructure.png")
+    Image(filename="./eprop_supervised_classification_infrastructure.png")
 except Exception:
     pass
 

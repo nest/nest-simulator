@@ -334,8 +334,8 @@ PyNEST examples
    ../auto_examples/hpc_benchmark
    ../auto_examples/astrocyte_single
    ../auto_examples/astrocyte_tripartite
-   ../auto_examples/eprop_plasticity/eprop_supervised_classification
-   ../auto_examples/eprop_plasticity/eprop_supervised_regression
+   ../auto_examples/eprop_plasticity/eprop_supervised_classification_evidence-accumulation
+   ../auto_examples/eprop_plasticity/eprop_supervised_regression_sine-waves
    ../auto_examples/eprop_plasticity/index
 
 .. toctree::

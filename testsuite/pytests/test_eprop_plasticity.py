@@ -64,7 +64,7 @@ def test_unsupported_model_raises(target_model):
 def test_eprop_regression():
     """
     Test correct computation of losses for a regresion task
-    (for details on the task, see nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_regression.py)
+    (for details on the task, see nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_regression_sine-waves.py)
     by comparing the simulated losses with
 
         1. NEST reference losses to catch scenarios in which the e-prop model does not work as intended (e.g.,
@@ -74,11 +74,11 @@ def test_eprop_regression():
 
         2. TensorFlow reference losses to check the faithfulness to the original model. These reference losses were
            obtained from a simulation with the original TensorFlow implementation
-           (https://github.com/INM-6/eligibility_propagation/blob/eprop_in_nest/Figure_3_and_S7_e_prop_tutorials/tutorial_pattern_generation.py,  # pylint: disable=line-too-long # noqa: E501
+           (https://github.com/INM-6/eligibility_propagation/blob/eprop_in_nest/Figure_3_and_S7_e_prop_tutorials/tutorial_pattern_generation.py,
             a modified fork of the original model at https://github.com/IGITUGraz/eligibility_propagation) run with
             Linux 4.15.0-213-generic, Python v3.6.10, Numpy v1.18.0, TensorFlow v1.15.0, and
             INM6/elgibility_propagation@7df7d2627.
-    """
+    """  # pylint: disable=line-too-long # flake8: noqa: E501
 
     # Initialize random generator
     rng_seed = 1
@@ -365,7 +365,7 @@ def test_eprop_regression():
 def test_eprop_classification():
     """
     Test correct computation of losses for a classification task
-    (for details on the task, see nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_classification.py)
+    (for details on the task, see nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_classification_evidence-accumulation.py)
     by comparing the simulated losses with
 
         1. NEST reference losses to catch scenarios in which the e-prop model does not work as intended (e.g.,
@@ -375,11 +375,11 @@ def test_eprop_classification():
 
         2. TensorFlow reference losses to check the faithfulness to the original model. These reference losses were
            obtained from a simulation with the original TensorFlow implementation
-           (https://github.com/INM-6/eligibility_propagation/blob/eprop_in_nest/Figure_3_and_S7_e_prop_tutorials/tutorial_evidence_accumulation_with_alif.py,  # pylint: disable=line-too-long # noqa: E501
+           (https://github.com/INM-6/eligibility_propagation/blob/eprop_in_nest/Figure_3_and_S7_e_prop_tutorials/tutorial_evidence_accumulation_with_alif.py,
            a modified fork of the original model at https://github.com/IGITUGraz/eligibility_propagation) run with
            Linux 4.15.0-213-generic, Python v3.6.10, Numpy v1.18.0, TensorFlow v1.15.0, and
            INM6/elgibility_propagation@7df7d2627.
-    """
+    """  # pylint: disable=line-too-long # flake8: noqa: E501
 
     # Initialize random generator
 

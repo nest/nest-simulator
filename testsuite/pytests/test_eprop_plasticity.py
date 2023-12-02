@@ -78,7 +78,7 @@ def test_eprop_regression():
             a modified fork of the original model at https://github.com/IGITUGraz/eligibility_propagation) run with
             Linux 4.15.0-213-generic, Python v3.6.10, Numpy v1.18.0, TensorFlow v1.15.0, and
             INM6/elgibility_propagation@7df7d2627.
-    """  # pylint: disable=line-too-long # flake8: noqa: E501
+    """  # pylint: disable=line-too-long # noqa: E501
 
     # Initialize random generator
     rng_seed = 1
@@ -379,7 +379,7 @@ def test_eprop_classification():
            a modified fork of the original model at https://github.com/IGITUGraz/eligibility_propagation) run with
            Linux 4.15.0-213-generic, Python v3.6.10, Numpy v1.18.0, TensorFlow v1.15.0, and
            INM6/elgibility_propagation@7df7d2627.
-    """  # pylint: disable=line-too-long # flake8: noqa: E501
+    """  # pylint: disable=line-too-long # noqa: E501
 
     # Initialize random generator
 

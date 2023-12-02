@@ -70,7 +70,7 @@ References
 
 .. [3] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D, van Albada SJ, Bolten M, Diesmann M.
        Event-based implementation of eligibility propagation (in preparation)
-"""  # pylint: disable=line-too-long # flake8: noqa: E501
+"""  # pylint: disable=line-too-long # noqa: E501
 
 # %% ###########################################################################################################
 # Import libraries

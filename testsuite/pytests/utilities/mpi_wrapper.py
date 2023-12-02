@@ -29,6 +29,7 @@ import tempfile
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 import pytest
 from decorator import decorator
 
@@ -50,9 +51,8 @@ class DecoratorParserBase:
 
         modules = []
         for node in ast.walk(tree):
-            if isinstance(node, (ast.Import, ast.ImportFrom)):
+            if isinstance(node, (ast.Import, ast.ImportFrom)) and not node.names[0].name.startswith("mpi_assert"):
                 modules.append(ast.unparse(node).encode())
-
         return modules
 
     def _parse_func_source(self, func):
@@ -103,29 +103,11 @@ class mpi_assert_equal_df(DecoratorParserBase):
 
             for procs in self._procs_lst:
                 # TODO: MPI and subprocess does not seem to play well together
-                """
-                subprocess.run(['python', fp.name],
-                               capture_output=True,
-                               check=True
-                               )
-                """
-
-                """
-                res = subprocess.run(
-                    ["mpirun", "-np", str(procs), "python", fp.name], capture_output=True, check=True, env=os.environ
-                )
-
-                """
-                res = subprocess.run(
-                    # ["mpiexec", "-n", str(procs), sys.executable, fp.name],
-                    ["mpirun", "-np", str(procs), "python", fp.name],
-                    capture_output=True,
-                    check=True,
-                    shell=True,
-                    env=os.environ,
-                )
+                res = subprocess.run(["mpirun", "-np", str(procs), "python", "runner.py"], check=True, cwd=self._path)
 
                 print(res)
+
+            self._check_equal()
 
         # Here we need to assert that dfs from all runs are equal
 
@@ -154,3 +136,14 @@ class mpi_assert_equal_df(DecoratorParserBase):
 
         # TODO: only the main block needs to be changed between runner runs
         fp.write(self._main_block_equal_df(func, *args, **kwargs))
+
+    def _check_equal(self):
+        res = [
+            pd.concat(pd.read_csv(f, sep="\t", comment="#") for f in self._path.glob(f"sr_{n:02d}*.dat")).sort_values(
+                by=["time_ms", "sender"]
+            )
+            for n in self._procs_lst
+        ]
+
+        for r in res[1:]:
+            pd.testing.assert_frame_equal(res[0], r)

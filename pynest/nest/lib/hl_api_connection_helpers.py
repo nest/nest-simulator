@@ -244,7 +244,6 @@ def _connect_layers_needed(conn_spec, syn_spec):
         if (
             "mask" in conn_spec
             or ("pairwise_avg_num_conns" in conn_spec and not rule_is_poisson)
-            or "use_on_source" in conn_spec
         ):
             return True
     # If a syn_spec entry is based on spatial properties, we must use ConnectLayers.

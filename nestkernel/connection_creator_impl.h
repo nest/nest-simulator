@@ -147,7 +147,7 @@ ConnectionCreator::connect_to_target_poisson_( Iterator from,
 
     // Sample number of connections that are to be established
     poisson_distribution::param_type param( kernel_->value( rng, source_pos, target_pos, source, tgt_ptr ) );
-    num_conns = poi_dist( rng, param );
+    const unsigned long num_conns = poi_dist( rng, param );
     if ( without_kernel or num_conns )
     {
       for ( unsigned long conn_counter = 1; conn_counter <= num_conns; ++conn_counter )

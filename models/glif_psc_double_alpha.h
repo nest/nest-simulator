@@ -212,6 +212,11 @@ See also
 gif_psc_exp_multisynapse, gif_cond_exp, gif_cond_exp_multisynapse, gif_pop_psc_exp,
 glif_psc
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: glif_psc_double_alpha
+
 EndUserDocs */
 
 namespace nest

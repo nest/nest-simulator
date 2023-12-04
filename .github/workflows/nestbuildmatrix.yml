@@ -361,7 +361,7 @@ jobs:
     runs-on: "ubuntu-20.04"
     steps:
       - name: "Checkout repository content"
-        uses: actions/checkout@v4
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           fetch-depth: 0
 
@@ -454,7 +454,7 @@ jobs:
           make docs |& tee sphinx-output.log
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
+        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
         with:
           name: "sphinx-rtd output"
           path: |
@@ -479,7 +479,7 @@ jobs:
           fetch-depth: 0
 
       - name: Install Conda
-        uses: conda-incubator/setup-miniconda@9f54435e0e72c53962ee863144e47a4b094bfd35   # v2.3.0
+        uses: conda-incubator/setup-miniconda@11b562958363ec5770fef326fe8ef0366f8cbf8a   # v3.0.1
         with:
           auto-update-conda: true
           python-version: "3.7"
@@ -500,7 +500,7 @@ jobs:
           make html |& tee sphinx-output.log
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
+        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
         with:
           path: |
             build/sphinx-output.log
@@ -547,7 +547,7 @@ jobs:
           python-version: 3.9
 
       - name: "Restore apt cache"
-        uses: actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3.3.1
+        uses: actions/cache@704facf57e6136b1bc63b828d79edcd491f0ee84 # v3.3.2
         env:
           cache-name: "apt-cache"
         with:
@@ -588,7 +588,7 @@ jobs:
         # source (hashed), compiler (mtime+size) and compile flags.
         env:
           cache-name: "ccache"
-        uses: actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3.3.1
+        uses: actions/cache@704facf57e6136b1bc63b828d79edcd491f0ee84 # v3.3.2
         with:
           path: |
             $HOME/.ccache
@@ -604,7 +604,7 @@ jobs:
       - name: "Restore pip cache"
         env:
           cache-name: "pip-cache"
-        uses: actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3.3.1
+        uses: actions/cache@704facf57e6136b1bc63b828d79edcd491f0ee84 # v3.3.2
         with:
           path: |
             /opt/hostedtoolcache/Python/**/site-packages/*
@@ -705,7 +705,7 @@ jobs:
           make VERBOSE=1 installcheck
 
       - name: "Upload install and test results"
-        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
+        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
         if: always()
         with:
           name: "build-logs-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.use }}"
@@ -758,7 +758,7 @@ jobs:
       - name: "Restore pip cache"
         env:
           cache-name: "pip-cache"
-        uses: actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8 # v3.3.1
+        uses: actions/cache@704facf57e6136b1bc63b828d79edcd491f0ee84 # v3.3.2
         with:
           path: |
             /opt/hostedtoolcache/Python/**/site-packages/*
@@ -825,7 +825,7 @@ jobs:
           make VERBOSE=1 installcheck
 
       - name: "Upload install and test results"
-        uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
+        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
         if: ${{ always() }}
         with:
           name: "${{ matrix.NEST_BUILD_TYPE }}-build-logs-${{ matrix.os }}-${{ matrix.cpp_compiler }}"

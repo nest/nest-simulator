@@ -1,5 +1,5 @@
 /*
- *  ticket-784.sli
+ *  ticket-537.sli
  *
  *  This file is part of NEST.
  *
@@ -22,24 +22,40 @@
 
 /** @BeginDocumentation
 
-Name: testsuite::ticket-784 - xor and neq are not protected by tries
+Name: testsuite::ticket-537 - Regression test for memory allocation/free error in TokenarrayObj
 
-Synopsis: (ticket-784) run -> NEST exits if test fails
+Synopsis: (ticket-537) run -> NEST exits if test fails
 
 Description:
-Test that xor and neq check their arguments.
+This test detects a memory allocation/freeing problem introduced with the SLI modernization per r9458.
+This bug occurred only on certain Linux platforms.
 
-Author: Marc-Oliver Gewaltig, 2013-12-25
+Author: Hans Ekkehard Plesser, 2012-01-12, based on reproduces by Marc-Oliver Gewaltig
  */
 
 (unittest) run
 /unittest using
 
-{ neq } fail_or_die % no arguments
-[ 1 1.0 (a) [] ] { {neq } stopped {errordict /newerror false put} { 3 quit_i } ifelse clear} forall
+M_ERROR setverbosity
 
-clear
-{ xor } fail_or_die % no arguments
-[ 1 1.0 (a) [] ] { {xor} stopped {errordict /newerror false put} { 3 quit_i } ifelse clear } forall
+% Original reproducer
+{
+  /a [2] def
+  1000 { a { } Map } repeat
+}
+pass_or_die
+
+% Simplified reproducer for Map
+{
+  100 { [] { } Map } repeat
+}
+pass_or_die
+
+% Reproducer for forall, still fails per r9476
+{
+  100 { (1 2) { } forall } repeat
+}
+pass_or_die
 
 
+endusing

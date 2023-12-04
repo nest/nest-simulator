@@ -145,6 +145,11 @@ See also
 
 iaf_psc_exp, tsodyks_synapse, stdp_synapse, static_synapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_tum_2000
+
 EndUserDocs */
 // clang-format on
 

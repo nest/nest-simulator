@@ -22,8 +22,8 @@
 # This script tests the ignore_and_fire neuron in NEST.
 
 import math
-import unittest
 import numpy
+import unittest
 
 import nest
 
@@ -37,10 +37,10 @@ class IgnoreAndFireNeuronTestCase(unittest.TestCase):
         nest.ResetKernel()
 
         # set up source spike generator, as well as parrot neurons
-        self.rate = 5.0  ## firing rate (spikes/s)
-        self.phase = 0.4  ## firing phase
-        self.dt = 2**-3  ## simulation time resolution (ms)
-        self.T = 1000.0  ## simulation time (ms)
+        self.rate = 5.0  # firing rate (spikes/s)
+        self.phase = 0.4  # firing phase
+        self.dt = 2**-3  # simulation time resolution (ms)
+        self.T = 1000.0  # simulation time (ms)
 
         nest.SetKernelStatus({"resolution": self.dt})
 

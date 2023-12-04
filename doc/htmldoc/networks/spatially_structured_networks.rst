@@ -846,7 +846,7 @@ For the ``pairwise_bernoulli`` rule, the probability can then be a
 constant, depend on the position of the source or the target neuron,
 or on the distance between a driver and a pool node to a connection probability.
 For the ``pairwise_poisson`` rule, the pairwise average number of connections
-again can depend on the position of the source or the target neuron,
+can depend on the position of the source or the target neuron,
 or on the distance between a driver and a pool node to a connection probability.
 To create dependencies on neuron positions, NEST :py:class:`.Parameter` objects are used.
 NEST then generates a connection according to this probability.

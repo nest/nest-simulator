@@ -469,16 +469,16 @@ Pool
    +--------------------------------+--------------+--------------+
    | Connection parameters          | Driver       | Pool         |
    +================================+==============+==============+
-   | ``rule='pairwise_bernoulli'``  | source layer | target layer |
-   +--------------------------------+--------------+--------------+
-   | ``rule='pairwise_poisson'``    | source layer | target layer |
+   | ``rule='fixed_indegree'``      | target layer | source layer |
    +--------------------------------+--------------+--------------+
    | ``rule='fixed_outdegree'``     | source layer | target layer |
+   +--------------------------------+--------------+--------------+
+   | ``rule='pairwise_bernoulli'``  | source layer | target layer |
    +--------------------------------+--------------+--------------+
    | ``rule='pairwise_bernoulli'``  | target layer | source layer |
    | and ``use_on_source=True``     |              |              |
    +--------------------------------+--------------+--------------+
-   | ``rule='fixed_indegree'``      | target layer | source layer |
+   | ``rule='pairwise_poisson'``    | source layer | target layer |
    +--------------------------------+--------------+--------------+
 
 Displacement

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_parrot_neuron.py
+# test_ignore_and_fire_neuron.py
 #
 # This file is part of NEST.
 #

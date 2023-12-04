@@ -56,12 +56,12 @@ class IgnoreAndFireNeuronTestCase(unittest.TestCase):
 
         nest.Simulate(self.T)
 
-        ## theoretical spike times
+        # theoretical spike times
         period = 1.0 / self.rate * 1e3
         first_spike_time = self.phase * period + self.dt
         spike_times_target = numpy.arange(first_spike_time, self.T, period)
 
-        ## spike times of NEST model
+        # spike times of NEST model
         spike_times_nest = nest.GetStatus(self.spike_recorder, "events")[0]["times"]
 
         # assert spike times match the expected values

@@ -132,6 +132,9 @@ ConnectionCreator::connect_to_target_poisson_( Iterator from,
   std::vector< double > source_pos( D );
   const std::vector< double > target_pos = tgt_pos.get_vector();
 
+
+  poisson_distribution poi_dist;
+
   // Declare number of connections variable
   unsigned long num_conns;
 
@@ -145,7 +148,8 @@ ConnectionCreator::connect_to_target_poisson_( Iterator from,
     iter->first.get_vector( source_pos );
 
     // Sample number of connections that are to be established
-    num_conns = rng->prand( kernel_->value( rng, source_pos, target_pos, source, tgt_ptr ) );
+    poisson_distribution::param_type param( kernel_->value( rng, source_pos, target_pos, source, tgt_ptr ) );
+    num_conns = poi_dist( rng, param );
     if ( without_kernel or num_conns )
     {
       for ( unsigned long conn_counter = 1; conn_counter <= num_conns; ++conn_counter )

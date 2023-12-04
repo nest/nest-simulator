@@ -1685,8 +1685,9 @@ nest::PoissonBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, s
     return;
   }
 
-  // It is not possible to disable multapses with the PoissonBuilder, already checked
+  poisson_distribution poi_dist;
 
+  // It is not possible to disable multapses with the PoissonBuilder, already checked
   NodeCollection::const_iterator source_it = sources_->begin();
   for ( ; source_it < sources_->end(); ++source_it )
   {
@@ -1698,7 +1699,8 @@ nest::PoissonBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, s
     }
 
     // Sample to number of connections that are to be established
-    num_conns = rng->prand( pairwise_avg_num_conns_->value( rng, target ) );
+    poisson_distribution::param_type param( pairwise_avg_num_conns_->value( rng, target ) );
+    num_conns = poi_dist( rng, param );
 
     if ( num_conns == 0 )
     {

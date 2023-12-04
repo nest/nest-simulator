@@ -51,13 +51,13 @@ using RngPtr = BaseRandomGenerator*;
 
 using uniform_int_distribution = RandomDistribution< std::uniform_int_distribution< unsigned long > >;
 using uniform_real_distribution = RandomDistribution< std::uniform_real_distribution<> >;
-using poisson_distribution = RandomDistribution< std::poisson_distribution< unsigned long > >;
 using normal_distribution = RandomDistribution< std::normal_distribution<> >;
 using lognormal_distribution = RandomDistribution< std::lognormal_distribution<> >;
 using binomial_distribution = RandomDistribution< std::binomial_distribution< unsigned long > >;
 using gamma_distribution = RandomDistribution< std::gamma_distribution<> >;
 using exponential_distribution = RandomDistribution< std::exponential_distribution<> >;
 using discrete_distribution = RandomDistribution< std::discrete_distribution< unsigned long > >;
+using poisson_distribution = RandomDistribution< std::poisson_distribution< unsigned long > >;
 
 
 /**
@@ -79,13 +79,13 @@ public:
    */
   virtual unsigned long operator()( std::uniform_int_distribution< unsigned long >& d ) = 0;
   virtual double operator()( std::uniform_real_distribution<>& d ) = 0;
-  virtual unsigned long operator()( std::poisson_distribution< unsigned long >& d ) = 0;
   virtual double operator()( std::normal_distribution<>& d ) = 0;
   virtual double operator()( std::lognormal_distribution<>& d ) = 0;
   virtual unsigned long operator()( std::binomial_distribution< unsigned long >& d ) = 0;
   virtual double operator()( std::gamma_distribution<>& d ) = 0;
   virtual double operator()( std::exponential_distribution<>& d ) = 0;
   virtual unsigned long operator()( std::discrete_distribution< unsigned long >& d ) = 0;
+  virtual unsigned long operator()( std::poisson_distribution< unsigned long >& d ) = 0;
 
   /**
    * @brief Calls the provided distribution with the wrapped RNG engine, using provided distribution parameters.
@@ -98,8 +98,6 @@ public:
   virtual unsigned long operator()( std::uniform_int_distribution< unsigned long >& d,
     std::uniform_int_distribution< unsigned long >::param_type& p ) = 0;
   virtual double operator()( std::uniform_real_distribution<>& d, std::uniform_real_distribution<>::param_type& p ) = 0;
-  virtual unsigned long operator()( std::poisson_distribution< unsigned long >& d,
-    std::poisson_distribution< unsigned long >::param_type& p ) = 0;
   virtual double operator()( std::normal_distribution<>& d, std::normal_distribution<>::param_type& p ) = 0;
   virtual double operator()( std::lognormal_distribution<>& d, std::lognormal_distribution<>::param_type& p ) = 0;
   virtual unsigned long operator()( std::binomial_distribution< unsigned long >& d,
@@ -108,6 +106,8 @@ public:
   virtual double operator()( std::exponential_distribution<>& d, std::exponential_distribution<>::param_type& p ) = 0;
   virtual unsigned long operator()( std::discrete_distribution< unsigned long >& d,
     std::discrete_distribution< unsigned long >::param_type& p ) = 0;
+  virtual unsigned long operator()( std::poisson_distribution< unsigned long >& d,
+    std::poisson_distribution< unsigned long >::param_type& p ) = 0;
 
   /**
    * @brief Uses the wrapped RNG engine to draw a double from a uniform distribution in the range [0, 1).
@@ -121,12 +121,6 @@ public:
    */
   virtual unsigned long ulrand( unsigned long N ) = 0;
 
-  /**
-   * @brief Uses the wrapped RNG engine to draw an unsigned long from a Poisson distribution with mean mu.
-   *
-   * @param mu Mean value of Poisson distribution.
-   */
-  virtual unsigned long prand( double mu ) = 0;
   /**
    * @brief Wrap std::sample for selection from NodeCollection
    *
@@ -174,12 +168,6 @@ public:
     return d( rng_ );
   }
 
-  inline unsigned long
-  operator()( std::poisson_distribution< unsigned long >& d ) override
-  {
-    return d( rng_ );
-  }
-
   inline double
   operator()( std::normal_distribution<>& d ) override
   {
@@ -215,6 +203,11 @@ public:
   {
     return d( rng_ );
   }
+  inline unsigned long
+  operator()( std::poisson_distribution< unsigned long >& d ) override
+  {
+    return d( rng_ );
+  }
 
   inline unsigned long
   operator()( std::uniform_int_distribution< unsigned long >& d,
@@ -225,13 +218,6 @@ public:
 
   inline double
   operator()( std::uniform_real_distribution<>& d, std::uniform_real_distribution<>::param_type& p ) override
-  {
-    return d( rng_, p );
-  }
-
-  inline unsigned long
-  operator()( std::poisson_distribution< unsigned long >& d,
-    std::poisson_distribution< unsigned long >::param_type& p ) override
   {
     return d( rng_, p );
   }
@@ -273,6 +259,13 @@ public:
   {
     return d( rng_, p );
   }
+  
+  inline unsigned long
+  operator()( std::poisson_distribution< unsigned long >& d,
+    std::poisson_distribution< unsigned long >::param_type& p ) override
+  {
+    return d( rng_, p );
+  }
 
   inline double
   drand() override
@@ -287,12 +280,6 @@ public:
     return uniform_ulong_dist_( rng_, param );
   }
 
-  inline unsigned long
-  prand( double mu ) override
-  {
-    std::poisson_distribution< unsigned long >::param_type param( mu );
-    return poisson_ulong_dist_( rng_, param );
-  }
   inline void
   sample( NodeCollection::const_iterator first,
     NodeCollection::const_iterator last,
@@ -306,7 +293,6 @@ private:
   RandomEngineT rng_; //!< Wrapped RNG engine.
   std::uniform_int_distribution< unsigned long > uniform_ulong_dist_;
   std::uniform_real_distribution<> uniform_double_dist_0_1_;
-  std::poisson_distribution< unsigned long > poisson_ulong_dist_;
 };
 
 /**

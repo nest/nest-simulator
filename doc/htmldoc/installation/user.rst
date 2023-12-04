@@ -131,21 +131,17 @@ macOS |macos|
 --------
 
 
-Windows
--------
+Options for Windows users
+--------------------------
 
-NEST does not officially support Windows. If you want to use NEST on Windows,
-we suggest trying the Windows Subsystem for Linux or the :ref:`docker container <docker_win>`.
+Please note that NEST does not officially support Windows. Members of our community have had success
+using NEST on Windows with the `Windows Subsystem for Linux <https://ubuntu.com/tutorials/install-ubuntu-on-wsl2-on-windows-11-with-gui-support#1-overview>`_.
+You can also try our :ref:`docker container <docker_win>`.
 
 .. |linux| image:: ../static/img/linux.png
    :class: no-scaled-link
    :scale: 11%
 
 .. |macos| image:: ../static/img/macos.png
-   :class: no-scaled-link
-   :scale: 11%
-
-
-.. |windows| image:: ../static/img/windows.png
    :class: no-scaled-link
    :scale: 11%

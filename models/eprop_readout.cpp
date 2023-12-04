@@ -250,9 +250,16 @@ eprop_readout::update( Time const& origin, const long from, const long to )
     const long interval_step = ( t - shift ) % update_interval;
     const long interval_step_signals = ( t - shift - delay_out_norm_ ) % update_interval;
 
-    if ( with_reset and interval_step == 0 )
+
+    if ( interval_step == 0 )
     {
-      S_.v_m_ = 0.0;
+      erase_unneeded_update_history();
+      erase_unneeded_eprop_history();
+
+      if ( with_reset )
+      {
+        S_.v_m_ = 0.0;
+      }
     }
 
     S_.z_in_ = B_.spikes_.get_value( lag );

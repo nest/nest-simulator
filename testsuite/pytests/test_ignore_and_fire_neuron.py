@@ -22,9 +22,10 @@
 # This script tests the ignore_and_fire neuron in NEST.
 
 import math
+import unittest
+
 import nest
 import numpy
-import unittest
 
 
 @nest.ll_api.check_stack

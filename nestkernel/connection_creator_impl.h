@@ -135,8 +135,6 @@ ConnectionCreator::connect_to_target_poisson_( Iterator from,
 
   poisson_distribution poi_dist;
 
-  // Declare number of connections variable
-  unsigned long num_conns;
 
   const bool without_kernel = not kernel_.get();
   for ( Iterator iter = from; iter != to; ++iter )

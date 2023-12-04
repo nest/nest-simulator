@@ -3,8 +3,8 @@
 User install instructions
 =========================
 
-Cross-platform |macos| |linux| |windows|
-----------------------------------------
+Cross-platform |macos| |linux|
+------------------------------
 
 Docker
 ~~~~~~
@@ -128,7 +128,14 @@ macOS |macos|
 
     brew install nest
 
+--------
 
+
+Windows
+-------
+
+NEST does not officially support Windows. If you want to use NEST on Windows,
+we suggest trying the Windows Subsystem for Linux or the :ref:`docker container <docker_win>`.
 
 .. |linux| image:: ../static/img/linux.png
    :class: no-scaled-link
@@ -142,6 +149,3 @@ macOS |macos|
 .. |windows| image:: ../static/img/windows.png
    :class: no-scaled-link
    :scale: 11%
-
-
-

@@ -203,6 +203,7 @@ public:
   {
     return d( rng_ );
   }
+
   inline unsigned long
   operator()( std::poisson_distribution< unsigned long >& d ) override
   {

@@ -151,7 +151,7 @@ Setting up the project
 
    a. *Cmake: Build Directory* to ``${workspaceFolder}/../build``
    #. *Cmake: Install Prefix* to ``${workspaceFolder}/../build/install``
-   #. *Cpp Standard* to ``c++11``
+   #. *Cpp Standard* to ``c++17``
 
 #. In the source directory, open ``.vscode/c_cpp_properties.json``, and add
 

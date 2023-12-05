@@ -54,7 +54,7 @@ jobs:
 
       - name: "Run cppcheck..."
         run: |
-          cppcheck --enable=all --language=c++ --std=c++11 -i sli/ --suppressions-list=.cppcheck_suppressions ./
+          cppcheck --enable=all --language=c++ --std=c++17 -i sli/ --suppressions-list=.cppcheck_suppressions ./
 
   rstcheck:
     runs-on: "ubuntu-20.04"

@@ -94,6 +94,16 @@ EpropOptimizer::EpropOptimizer()
 {
 }
 
+void
+EpropOptimizer::get_status( DictionaryDatum& d ) const
+{
+}
+
+void
+EpropOptimizer::set_status( const DictionaryDatum& d )
+{
+}
+
 double
 EpropOptimizer::optimized_weight( const EpropOptimizerCommonProperties& cp,
   const size_t idx_current_update,
@@ -175,9 +185,9 @@ EpropOptimizerCommonPropertiesAdam::get_status( DictionaryDatum& d ) const
 {
   EpropOptimizerCommonProperties::get_status( d );
 
-  def< double >( d, names::adam_beta1, beta1_ );
-  def< double >( d, names::adam_beta2, beta2_ );
-  def< double >( d, names::adam_epsilon, epsilon_ );
+  def< double >( d, names::beta_1, beta1_ );
+  def< double >( d, names::beta_2, beta2_ );
+  def< double >( d, names::epsilon, epsilon_ );
 }
 
 void
@@ -185,23 +195,23 @@ EpropOptimizerCommonPropertiesAdam::set_status( const DictionaryDatum& d )
 {
   EpropOptimizerCommonProperties::set_status( d );
 
-  updateValue< double >( d, names::adam_beta1, beta1_ );
-  updateValue< double >( d, names::adam_beta2, beta2_ );
-  updateValue< double >( d, names::adam_epsilon, epsilon_ );
+  updateValue< double >( d, names::beta_1, beta1_ );
+  updateValue< double >( d, names::beta_2, beta2_ );
+  updateValue< double >( d, names::epsilon, epsilon_ );
 
   if ( beta1_ < 0.0 or 1.0 <= beta1_ )
   {
-    throw BadProperty( "adam_beta1 must be in [0,1)." );
+    throw BadProperty( "For adam optimizer, beta_1 must be in [0,1)." );
   }
 
   if ( beta2_ < 0.0 or 1.0 <= beta2_ )
   {
-    throw BadProperty( "adam_beta2 must be in [0,1)." );
+    throw BadProperty( "For adam optimizer, beta_2 must be in [0,1)." );
   }
 
   if ( epsilon_ < 0.0 )
   {
-    throw BadProperty( "adam_epsilon must be >= 0." );
+    throw BadProperty( "For adam optimizer, epsilon must be ≥ 0." );
   }
 }
 
@@ -211,6 +221,23 @@ EpropOptimizerAdam::EpropOptimizerAdam()
   , adam_v_( 0.0 )
 {
 }
+
+void
+EpropOptimizerAdam::get_status( DictionaryDatum& d ) const
+{
+  EpropOptimizer::get_status( d );
+  def< double >( d, names::m, adam_m_ );
+  def< double >( d, names::v, adam_v_ );
+}
+
+void
+EpropOptimizerAdam::set_status( const DictionaryDatum& d )
+{
+  EpropOptimizer::set_status( d );
+  updateValue< double >( d, names::m, adam_m_ );
+  updateValue< double >( d, names::v, adam_v_ );
+}
+
 
 double
 EpropOptimizerAdam::do_optimize_( const EpropOptimizerCommonProperties& cp,

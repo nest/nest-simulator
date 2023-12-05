@@ -496,6 +496,15 @@ eprop_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
   def< double >( d, names::weight, weight_ );
   def< double >( d, names::tau_m_readout, tau_m_readout_ );
   def< long >( d, names::size_of, sizeof( *this ) );
+
+  DictionaryDatum optimizer_status = new Dictionary();
+
+  // The default_connection_ has no optimizer, therefore we need to protect it
+  if ( optimizer_ )
+  {
+    optimizer_->get_status( optimizer_status );
+    ( *d )[ names::optimizer_status ] = optimizer_status;
+  }
 }
 
 template < typename targetidentifierT >
@@ -503,6 +512,7 @@ void
 eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
+  // optimizer_->set_status( ( *d )[ names::optimizer_status ] );
 
   updateValue< double >( d, names::weight, weight_ );
 

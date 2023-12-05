@@ -210,38 +210,32 @@ def test_eprop_regression():
     params_common_syn_eprop = {
         "batch_size": n_batch,
         "optimizer": "gradient_descent",
+        "eta": 1e-4,
         "weight_recorder": wr,
         "average_gradient": False,
+        "Wmax": 100.0,
+        "Wmin": -100.0,
     }
 
     params_syn_in = {
         "synapse_model": "eprop_synapse",
         "delay": duration["step"],
-        "eta": 1e-4,
         "tau_m_readout": params_nrn_out["tau_m"],
         "weight": weights_in_rec,
-        "Wmax": 100.0,
-        "Wmin": -100.0,
     }
 
     params_syn_rec = {
         "synapse_model": "eprop_synapse",
         "delay": duration["step"],
-        "eta": 1e-4,
         "tau_m_readout": params_nrn_out["tau_m"],
         "weight": weights_rec_rec,
-        "Wmax": 100.0,
-        "Wmin": -100.0,
     }
 
     params_syn_out = {
         "synapse_model": "eprop_synapse",
         "delay": duration["step"],
-        "eta": 1e-4,
         "tau_m_readout": params_nrn_out["tau_m"],
         "weight": weights_rec_out,
-        "Wmax": 100.0,
-        "Wmin": -100.0,
     }
 
     params_syn_feedback = {
@@ -558,6 +552,7 @@ def test_eprop_classification():
         "batch_size": n_batch,
         "weight_recorder": wr,
         "average_gradient": True,
+        "eta": 5e-3,
         "Wmax": 100.0,
         "Wmin": -100.0,
     }
@@ -565,7 +560,6 @@ def test_eprop_classification():
     params_syn_in = {
         "synapse_model": "eprop_synapse",
         "delay": duration["step"],
-        "eta": 5e-3,
         "tau_m_readout": params_nrn_out["tau_m"],
         "weight": weights_in_rec,
     }
@@ -573,7 +567,6 @@ def test_eprop_classification():
     params_syn_rec = {
         "synapse_model": "eprop_synapse",
         "delay": duration["step"],
-        "eta": 5e-3,
         "tau_m_readout": params_nrn_out["tau_m"],
         "weight": weights_rec_rec,
     }
@@ -581,7 +574,6 @@ def test_eprop_classification():
     params_syn_out = {
         "synapse_model": "eprop_synapse",
         "delay": duration["step"],
-        "eta": 5e-3,
         "tau_m_readout": params_nrn_out["tau_m"],
         "weight": weights_rec_out,
     }

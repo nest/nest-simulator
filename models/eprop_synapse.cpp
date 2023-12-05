@@ -38,7 +38,20 @@ register_eprop_synapse( const std::string& name )
 EpropCommonProperties::EpropCommonProperties()
   : CommonSynapseProperties()
   , average_gradient_( false )
+  , optimizer_cp_( new EpropOptimizerCommonPropertiesGradientDescent() )
 {
+}
+
+EpropCommonProperties::EpropCommonProperties( const EpropCommonProperties& cp )
+  : CommonSynapseProperties( cp )
+  , average_gradient_( cp.average_gradient_ )
+  , optimizer_cp_( cp.optimizer_cp_->clone() )
+{
+}
+
+EpropCommonProperties::~EpropCommonProperties()
+{
+  delete optimizer_cp_;
 }
 
 void
@@ -46,6 +59,8 @@ EpropCommonProperties::get_status( DictionaryDatum& d ) const
 {
   CommonSynapseProperties::get_status( d );
   def< bool >( d, names::average_gradient, average_gradient_ );
+  def< std::string >( d, names::optimizer, optimizer_cp_->get_name() );
+  optimizer_cp_->get_status( d );
 }
 
 void
@@ -53,6 +68,31 @@ EpropCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm 
 {
   CommonSynapseProperties::set_status( d, cm );
   updateValue< bool >( d, names::average_gradient, average_gradient_ );
+
+  std::string new_optimizer;
+  const bool set_optimizer = updateValue< std::string >( d, names::optimizer, new_optimizer );
+  if ( set_optimizer and new_optimizer != optimizer_cp_->get_name() )
+  {
+    // TODO: Selection here should be based on an optimizer registry and a factory.
+    // delete is in if/elif because we must delete only when we are sure that we have a valid optimizer.
+    if ( new_optimizer == "gradient_descent" )
+    {
+      delete optimizer_cp_;
+      optimizer_cp_ = new EpropOptimizerCommonPropertiesGradientDescent();
+    }
+    else if ( new_optimizer == "adam" )
+    {
+      delete optimizer_cp_;
+      optimizer_cp_ = new EpropOptimizerCommonPropertiesAdam();
+    }
+    else
+    {
+      throw BadProperty( "optimizer must be chosen from [\"gradient_descent\", \"adam\"]" );
+    }
+  }
+
+  // We can now set the defaults on the new optimizer common props
+  optimizer_cp_->set_status( d );
 }
 
 } // namespace nest

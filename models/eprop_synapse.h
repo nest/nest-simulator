@@ -207,6 +207,9 @@ class EpropCommonProperties : public CommonSynapseProperties
 public:
   // Default constructor.
   EpropCommonProperties();
+  EpropCommonProperties( const EpropCommonProperties& );
+  EpropCommonProperties& operator=( const EpropCommonProperties& ) = delete;
+  ~EpropCommonProperties();
 
   //! Get parameter dictionary.
   void get_status( DictionaryDatum& d ) const;
@@ -216,6 +219,8 @@ public:
 
   //! If True, average the gradient over the learning window.
   bool average_gradient_;
+
+  EpropOptimizerCommonProperties* optimizer_cp_;
 };
 
 //! Register the eprop synapse model.
@@ -232,10 +237,13 @@ public:
   //! Type of the connection base.
   typedef Connection< targetidentifierT > ConnectionBase;
 
-  //! Properties of the connection model.
+  /**
+   * Properties of the connection model.
+   * @note Does not support LBL at present because we cannot properly cast GenericModel common props in that case.
+   */
   static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
     | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::REQUIRES_EPROP_ARCHIVING
-    | ConnectionModelProperties::SUPPORTS_HPC | ConnectionModelProperties::SUPPORTS_LBL;
+    | ConnectionModelProperties::SUPPORTS_HPC;
 
   //! Constructor.
   eprop_synapse();
@@ -310,6 +318,8 @@ public:
 
     const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
     t_next_update_ = update_interval;
+
+    optimizer_ = cp.optimizer_cp_->get_optimizer();
   }
 
   //! Set the synaptic weight to the provided value.
@@ -364,14 +374,18 @@ eprop_synapse< targetidentifierT >::eprop_synapse()
   , t_previous_trigger_spike_( 0 )
   , tau_m_readout_( 10.0 )
   , kappa_( 0.0 )
-  , optimizer_( new EpropOptimizerGradientDescent() )
+  , optimizer_( nullptr ) // to be set by check_connection()
 {
 }
 
 template < typename targetidentifierT >
 eprop_synapse< targetidentifierT >::~eprop_synapse()
 {
-  delete optimizer_;
+  if ( optimizer_ != nullptr )
+  {
+    // default connections do not have optimizers
+    delete optimizer_;
+  }
 }
 
 // This copy constructor is used to create instances from prototypes.
@@ -386,12 +400,11 @@ eprop_synapse< targetidentifierT >::eprop_synapse( const eprop_synapse& es )
   , t_previous_trigger_spike_( 0 )
   , tau_m_readout_( es.tau_m_readout_ )
   , kappa_( es.kappa_ )
-  , optimizer_( new EpropOptimizerGradientDescent() )
+  , optimizer_( nullptr ) // to be set by check_connection()
 {
 }
 
-// This assignement operator is used to create instances from prototypes.
-// Therefore, only parameter values are copied.
+// This assignement operator is used to write a connection into the connection array.
 template < typename targetidentifierT >
 eprop_synapse< targetidentifierT >&
 eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
@@ -410,7 +423,15 @@ eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
   t_previous_trigger_spike_ = 0;
   tau_m_readout_ = es.tau_m_readout_;
   kappa_ = es.kappa_;
-  optimizer_ = new EpropOptimizerGradientDescent();
+
+  if ( optimizer_ != nullptr )
+  {
+    delete optimizer_;
+  }
+  // When es is destroyed, optimizer_ in it will be destructed. We need to
+  // create a new optimizer object.
+  // TODO: is there a better solution?
+  optimizer_ = es.optimizer_ ? es.optimizer_->clone() : nullptr;
 
   return *this;
 }
@@ -454,7 +475,7 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
     const double gradient_change = target->gradient_change(
       presyn_isis_, t_previous_update_, t_previous_trigger_spike_, kappa_, cp.average_gradient_ );
 
-    weight_ = optimizer_->optimized_weight( idx_current_update, gradient_change, weight_ );
+    weight_ = optimizer_->optimized_weight( *cp.optimizer_cp_, idx_current_update, gradient_change, weight_ );
 
     t_previous_update_ = t_current_update;
     t_next_update_ = t_current_update + update_interval;
@@ -476,7 +497,6 @@ void
 eprop_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
-  optimizer_->get_status( d );
   def< double >( d, names::weight, weight_ );
   def< double >( d, names::tau_m_readout, tau_m_readout_ );
   def< long >( d, names::size_of, sizeof( *this ) );
@@ -488,30 +508,6 @@ eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
 {
   ConnectionBase::set_status( d, cm );
 
-  std::string new_optimizer;
-  const bool set_optimizer = updateValue< std::string >( d, names::optimizer, new_optimizer );
-  if ( set_optimizer and new_optimizer != optimizer_->get_name() )
-  {
-    // TODO: Selection here should be based on an optimizer registry and a factory.
-    // delete is in if/elif because we must delete only when we are sure that we have a valid optimizer.
-    if ( new_optimizer == "gradient_descent" )
-    {
-      delete optimizer_;
-      optimizer_ = new EpropOptimizerGradientDescent();
-    }
-    else if ( new_optimizer == "adam" )
-    {
-      delete optimizer_;
-      optimizer_ = new EpropOptimizerAdam();
-    }
-    else
-    {
-      throw BadProperty( "optimizer must be chosen from [\"gradient_descent\", \"adam\"]" );
-    }
-  }
-
-  optimizer_->set_status( d );
-
   updateValue< double >( d, names::weight, weight_ );
   updateValue< double >( d, names::tau_m_readout, tau_m_readout_ );
 
@@ -520,14 +516,16 @@ eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
     throw BadProperty( "tau_m_readout > 0 required" );
   }
 
-  if ( weight_ < optimizer_->get_Wmin() )
+  const auto& gcm = dynamic_cast< const GenericConnectorModel< eprop_synapse< targetidentifierT > >& >( cm );
+  const CommonPropertiesType& epcp = gcm.get_common_properties();
+  if ( weight_ < epcp.optimizer_cp_->get_Wmin() )
   {
-    throw BadProperty( "Wmin < weight required" );
+    throw BadProperty( "Wmin ≤ weight required" );
   }
 
-  if ( weight_ > optimizer_->get_Wmax() )
+  if ( weight_ > epcp.optimizer_cp_->get_Wmax() )
   {
-    throw BadProperty( "weight < Wmax required" );
+    throw BadProperty( "weight ≤ Wmax required" );
   }
 }
 

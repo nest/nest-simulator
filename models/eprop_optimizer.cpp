@@ -31,18 +31,24 @@
 
 namespace nest
 {
-EpropOptimizer::EpropOptimizer()
+EpropOptimizerCommonProperties::EpropOptimizerCommonProperties()
   : batch_size_( 1 )
   , eta_( 1e-4 )
   , Wmin_( 0.0 )
   , Wmax_( 100.0 )
-  , sum_gradients_( 0.0 )
-  , optimization_step_( 0 )
+{
+}
+
+EpropOptimizerCommonProperties::EpropOptimizerCommonProperties( const EpropOptimizerCommonProperties& cp )
+  : batch_size_( cp.batch_size_ )
+  , eta_( cp.eta_ )
+  , Wmin_( cp.Wmin_ )
+  , Wmax_( cp.Wmax_ )
 {
 }
 
 void
-EpropOptimizer::get_status( DictionaryDatum& d ) const
+EpropOptimizerCommonProperties::get_status( DictionaryDatum& d ) const
 {
   def< std::string >( d, names::optimizer, get_name() );
   def< long >( d, names::batch_size, batch_size_ );
@@ -52,7 +58,7 @@ EpropOptimizer::get_status( DictionaryDatum& d ) const
 }
 
 void
-EpropOptimizer::set_status( const DictionaryDatum& d )
+EpropOptimizerCommonProperties::set_status( const DictionaryDatum& d )
 {
   long new_batch_size = batch_size_;
   updateValue< long >( d, names::batch_size, new_batch_size );
@@ -72,8 +78,8 @@ EpropOptimizer::set_status( const DictionaryDatum& d )
 
   double new_Wmin = Wmin_;
   double new_Wmax = Wmax_;
-  updateValue< double >( d, names::Wmin, Wmin_ );
-  updateValue< double >( d, names::Wmax, Wmax_ );
+  updateValue< double >( d, names::Wmin, new_Wmin );
+  updateValue< double >( d, names::Wmax, new_Wmax );
   if ( new_Wmin > new_Wmax )
   {
     throw BadProperty( "Wmin ≤ Wmax required." );
@@ -82,19 +88,40 @@ EpropOptimizer::set_status( const DictionaryDatum& d )
   Wmax_ = new_Wmax;
 }
 
+EpropOptimizer::EpropOptimizer()
+  : sum_gradients_( 0.0 )
+  , optimization_step_( 0 )
+{
+}
+
 double
-EpropOptimizer::optimized_weight( const size_t idx_current_update, const double gradient_change, double weight )
+EpropOptimizer::optimized_weight( const EpropOptimizerCommonProperties& cp,
+  const size_t idx_current_update,
+  const double gradient_change,
+  double weight )
 {
   sum_gradients_ += gradient_change;
 
-  const size_t current_optimization_step = 1 + idx_current_update / batch_size_;
+  const size_t current_optimization_step = 1 + idx_current_update / cp.batch_size_;
   if ( optimization_step_ < current_optimization_step )
   {
-    sum_gradients_ /= batch_size_;
-    weight = std::max( Wmin_, std::min( do_optimize_( weight, current_optimization_step ), Wmax_ ) );
+    sum_gradients_ /= cp.batch_size_;
+    weight = std::max( cp.Wmin_, std::min( do_optimize_( cp, weight, current_optimization_step ), cp.Wmax_ ) );
     optimization_step_ = current_optimization_step;
   }
   return weight;
+}
+
+EpropOptimizerCommonProperties*
+EpropOptimizerCommonPropertiesGradientDescent::clone() const
+{
+  return new EpropOptimizerCommonPropertiesGradientDescent( *this );
+}
+
+EpropOptimizer*
+EpropOptimizerCommonPropertiesGradientDescent::get_optimizer() const
+{
+  return new EpropOptimizerGradientDescent();
 }
 
 EpropOptimizerGradientDescent::EpropOptimizerGradientDescent()
@@ -102,40 +129,61 @@ EpropOptimizerGradientDescent::EpropOptimizerGradientDescent()
 {
 }
 
-double
-EpropOptimizerGradientDescent::do_optimize_( double weight, size_t )
+EpropOptimizer*
+EpropOptimizerGradientDescent::clone() const
 {
-  weight -= eta_ * sum_gradients_;
+  return new EpropOptimizerGradientDescent( *this );
+}
+
+double
+EpropOptimizerGradientDescent::do_optimize_( const EpropOptimizerCommonProperties& cp, double weight, size_t )
+{
+  weight -= cp.eta_ * sum_gradients_;
   sum_gradients_ = 0;
   return weight;
 }
 
-EpropOptimizerAdam::EpropOptimizerAdam()
-  : EpropOptimizer()
+EpropOptimizerCommonPropertiesAdam::EpropOptimizerCommonPropertiesAdam()
+  : EpropOptimizerCommonProperties()
   , beta1_( 0.9 )
   , beta2_( 0.999 )
   , epsilon_( 1e-8 )
-  , adam_m_( 0.0 )
-  , adam_v_( 0.0 )
 {
 }
 
-void
-EpropOptimizerAdam::get_status( DictionaryDatum& d ) const
+
+EpropOptimizerCommonProperties*
+EpropOptimizerCommonPropertiesAdam::clone() const
 {
-  EpropOptimizer::get_status( d );
+  return new EpropOptimizerCommonPropertiesAdam( *this );
+}
+
+EpropOptimizer*
+EpropOptimizerCommonPropertiesAdam::get_optimizer() const
+{
+  return new EpropOptimizerAdam();
+}
+
+EpropOptimizer*
+EpropOptimizerAdam::clone() const
+{
+  return new EpropOptimizerAdam( *this );
+}
+
+void
+EpropOptimizerCommonPropertiesAdam::get_status( DictionaryDatum& d ) const
+{
+  EpropOptimizerCommonProperties::get_status( d );
 
   def< double >( d, names::adam_beta1, beta1_ );
   def< double >( d, names::adam_beta2, beta2_ );
   def< double >( d, names::adam_epsilon, epsilon_ );
-  def< double >( d, names::adam_m, adam_m_ );
-  def< double >( d, names::adam_v, adam_v_ );
 }
 
 void
-EpropOptimizerAdam::set_status( const DictionaryDatum& d )
+EpropOptimizerCommonPropertiesAdam::set_status( const DictionaryDatum& d )
 {
-  EpropOptimizer::set_status( d );
+  EpropOptimizerCommonProperties::set_status( d );
 
   updateValue< double >( d, names::adam_beta1, beta1_ );
   updateValue< double >( d, names::adam_beta2, beta2_ );
@@ -157,20 +205,31 @@ EpropOptimizerAdam::set_status( const DictionaryDatum& d )
   }
 }
 
-double
-EpropOptimizerAdam::do_optimize_( double weight, size_t current_optimization_step )
+EpropOptimizerAdam::EpropOptimizerAdam()
+  : EpropOptimizer()
+  , adam_m_( 0.0 )
+  , adam_v_( 0.0 )
 {
+}
+
+double
+EpropOptimizerAdam::do_optimize_( const EpropOptimizerCommonProperties& cp,
+  double weight,
+  size_t current_optimization_step )
+{
+  const EpropOptimizerCommonPropertiesAdam& acp = dynamic_cast< const EpropOptimizerCommonPropertiesAdam& >( cp );
+
   for ( ; optimization_step_ < current_optimization_step; ++optimization_step_ )
   {
-    const double adam_beta1_factor = 1.0 - std::pow( beta1_, optimization_step_ );
-    const double adam_beta2_factor = 1.0 - std::pow( beta2_, optimization_step_ );
+    const double adam_beta1_factor = 1.0 - std::pow( acp.beta1_, optimization_step_ );
+    const double adam_beta2_factor = 1.0 - std::pow( acp.beta2_, optimization_step_ );
 
-    const double alpha_t = eta_ * std::sqrt( adam_beta2_factor ) / adam_beta1_factor;
+    const double alpha_t = cp.eta_ * std::sqrt( adam_beta2_factor ) / adam_beta1_factor;
 
-    adam_m_ = beta1_ * adam_m_ + ( 1.0 - beta1_ ) * sum_gradients_;
-    adam_v_ = beta2_ * adam_v_ + ( 1.0 - beta2_ ) * sum_gradients_ * sum_gradients_;
+    adam_m_ = acp.beta1_ * adam_m_ + ( 1.0 - acp.beta1_ ) * sum_gradients_;
+    adam_v_ = acp.beta2_ * adam_v_ + ( 1.0 - acp.beta2_ ) * sum_gradients_ * sum_gradients_;
 
-    weight -= alpha_t * adam_m_ / ( std::sqrt( adam_v_ ) + epsilon_ );
+    weight -= alpha_t * adam_m_ / ( std::sqrt( adam_v_ ) + acp.epsilon_ );
 
     // Set gradients to zero for following iterations since more than
     // one cycle indicates past learning periods with vanishing gradients

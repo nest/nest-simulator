@@ -29,29 +29,30 @@
 namespace nest
 {
 
+class EpropOptimizer;
+
 /**
- * Base class for e-prop optimizers.
+ * Base class for common properties for eprop optimizers.
  *
- * An optimizer is used by an e-prop synapse to optimize the weight.
- *
- * An optimizer may have internal state which is maintained from call to call of the `optimized_weight()` method.
- * Each optimized object belongs to exactly one e-prop synapse.
+ * The CommonProperties of eprop synapse models own an object of this class hierarchy.
+ * The values in these objects are used by the synapse-specific optimizer object.
+ * Change of optimizer type is only possible before synapses of the model have been created.
  */
-class EpropOptimizer
+class EpropOptimizerCommonProperties
 {
 public:
-  EpropOptimizer();
-  virtual ~EpropOptimizer()
+  EpropOptimizerCommonProperties();
+  virtual ~EpropOptimizerCommonProperties()
   {
   }
-  EpropOptimizer( const EpropOptimizer& ) = delete;
+  EpropOptimizerCommonProperties( const EpropOptimizerCommonProperties& );
   EpropOptimizer& operator=( const EpropOptimizer& ) = delete;
 
   virtual void get_status( DictionaryDatum& d ) const;
   virtual void set_status( const DictionaryDatum& d );
 
-  //! Return optimized weight based on current weight
-  double optimized_weight( const size_t idx_current_update, const double gradient_change, double weight );
+  virtual EpropOptimizerCommonProperties* clone() const = 0;
+  virtual EpropOptimizer* get_optimizer() const = 0;
 
   double
   get_Wmin() const
@@ -67,43 +68,104 @@ public:
 
   virtual std::string get_name() const = 0;
 
-protected:
-  //! Actually perform specific optimization, called by optimized_weight()
-  virtual double do_optimize_( double weight, size_t current_opt_step ) = 0;
-
+public:
   size_t batch_size_; //!< size of optimization batches
   double eta_;        //!< learning rate
   double Wmin_;       //!< lower bound for weight
   double Wmax_;       //!< upper bound for weight
+};
+
+/**
+ * Base class for e-prop optimizers.
+ *
+ * An optimizer is used by an e-prop synapse to optimize the weight.
+ *
+ * An optimizer may have internal state which is maintained from call to call of the `optimized_weight()` method.
+ * Each optimized object belongs to exactly one e-prop synapse.
+ */
+class EpropOptimizer
+{
+public:
+  EpropOptimizer();
+  virtual ~EpropOptimizer()
+  {
+  }
+  EpropOptimizer( const EpropOptimizer& ) = default;
+  EpropOptimizer& operator=( const EpropOptimizer& ) = delete;
+  virtual EpropOptimizer* clone() const = 0;
+
+  //! Return optimized weight based on current weight
+  double optimized_weight( const EpropOptimizerCommonProperties& cp,
+    const size_t idx_current_update,
+    const double gradient_change,
+    double weight );
+
+protected:
+  //! Actually perform specific optimization, called by optimized_weight()
+  virtual double do_optimize_( const EpropOptimizerCommonProperties& cp, double weight, size_t current_opt_step ) = 0;
 
   double sum_gradients_;     //!< Sum of gradients accumulated in current batch
   size_t optimization_step_; //!< Current optimization step; optimization happens evert batch_size_ steps.
 };
 
+
 class EpropOptimizerGradientDescent : public EpropOptimizer
 {
 public:
   EpropOptimizerGradientDescent();
-  EpropOptimizerGradientDescent( const EpropOptimizerGradientDescent& ) = delete;
+  EpropOptimizerGradientDescent( const EpropOptimizerGradientDescent& ) = default;
   EpropOptimizerGradientDescent& operator=( const EpropOptimizerGradientDescent& ) = delete;
+  EpropOptimizer* clone() const override;
+
+private:
+  double do_optimize_( const EpropOptimizerCommonProperties& cp, double weight, size_t current_opt_step ) override;
+};
+
+class EpropOptimizerCommonPropertiesGradientDescent : public EpropOptimizerCommonProperties
+{
+  friend class EpropOptimizerGradientDescent;
+
+public:
+  EpropOptimizerCommonPropertiesGradientDescent& operator=(
+    const EpropOptimizerCommonPropertiesGradientDescent& ) = delete;
+
+  EpropOptimizerCommonProperties* clone() const override;
+  EpropOptimizer* get_optimizer() const override;
 
   std::string
   get_name() const override
   {
     return "gradient_descent";
   }
-
-protected:
-  //! Return optimized weight based on current weight
-  double do_optimize_( double weight, size_t current_opt_step ) override;
 };
 
 class EpropOptimizerAdam : public EpropOptimizer
 {
 public:
   EpropOptimizerAdam();
-  EpropOptimizerAdam( const EpropOptimizerAdam& ) = delete;
+  EpropOptimizerAdam( const EpropOptimizerAdam& ) = default;
   EpropOptimizerAdam& operator=( const EpropOptimizerAdam& ) = delete;
+  EpropOptimizer* clone() const override;
+
+private:
+  //! Return optimized weight based on current weight
+  double do_optimize_( const EpropOptimizerCommonProperties& cp, double weight, size_t current_opt_step ) override;
+
+  double adam_m_;
+  double adam_v_;
+};
+
+
+class EpropOptimizerCommonPropertiesAdam : public EpropOptimizerCommonProperties
+{
+  friend class EpropOptimizerAdam;
+
+public:
+  EpropOptimizerCommonPropertiesAdam();
+  EpropOptimizerCommonPropertiesAdam& operator=( const EpropOptimizerCommonPropertiesAdam& ) = delete;
+
+  EpropOptimizerCommonProperties* clone() const override;
+  EpropOptimizer* get_optimizer() const override;
 
   void get_status( DictionaryDatum& d ) const override;
   void set_status( const DictionaryDatum& d ) override;
@@ -114,17 +176,10 @@ public:
     return "adam";
   }
 
-protected:
-  //! Return optimized weight based on current weight
-  double do_optimize_( double weight, size_t current_opt_step ) override;
-
 private:
   double beta1_;   //!< Exponential decay rate for first moment estimate of Adam optimizer.
   double beta2_;   //!< Exponential decay rate for second moment estimate of Adam optimizer.
   double epsilon_; //!< Small constant for numerical stability of Adam optimizer.
-
-  double adam_m_;
-  double adam_v_;
 };
 
 } // namespace nest

@@ -558,42 +558,32 @@ def test_eprop_classification():
         "batch_size": n_batch,
         "weight_recorder": wr,
         "average_gradient": True,
+        "Wmax": 100.0,
+        "Wmin": -100.0,
     }
 
     params_syn_in = {
         "synapse_model": "eprop_synapse",
-        "adam_m": 0.0,
-        "adam_v": 0.0,
         "delay": duration["step"],
         "eta": 5e-3,
         "tau_m_readout": params_nrn_out["tau_m"],
         "weight": weights_in_rec,
-        "Wmax": 100.0,
-        "Wmin": -100.0,
     }
 
     params_syn_rec = {
         "synapse_model": "eprop_synapse",
-        "adam_m": 0.0,
-        "adam_v": 0.0,
         "delay": duration["step"],
         "eta": 5e-3,
         "tau_m_readout": params_nrn_out["tau_m"],
         "weight": weights_rec_rec,
-        "Wmax": 100.0,
-        "Wmin": -100.0,
     }
 
     params_syn_out = {
         "synapse_model": "eprop_synapse",
-        "adam_m": 0.0,
-        "adam_v": 0.0,
         "delay": duration["step"],
         "eta": 5e-3,
         "tau_m_readout": params_nrn_out["tau_m"],
         "weight": weights_rec_out,
-        "Wmax": 100.0,
-        "Wmin": -100.0,
     }
 
     params_syn_feedback = {

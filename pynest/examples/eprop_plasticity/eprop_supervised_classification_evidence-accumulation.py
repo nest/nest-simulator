@@ -328,18 +328,13 @@ params_common_syn_eprop = {
     "adam_beta1": 0.9,  # exponential decay rate for 1st moment estimate of Adam optimizer
     "adam_beta2": 0.999,  # exponential decay rate for 2nd moment raw estimate of Adam optimizer
     "adam_epsilon": 1e-8,  # small numerical stabilization constant of Adam optimizer
+    "eta": 5e-3,  # learning rate
     "average_gradient": True,  # if True, average the gradient over the learning window
     "batch_size": n_batch,
     "optimizer": "adam",  # algorithm to optimize the weights
     "weight_recorder": wr,
     "Wmax": 100.0,  # pA, maximal limit of the synaptic weights
     "Wmin": -100.0,  # pA, minimal limit of the synaptic weights
-}
-
-params_syn_in = {
-    "synapse_model": "eprop_synapse",
-    "delay": duration["step"],  # ms, dendritic delay
-    "eta": 5e-3,  # learning rate
 }
 
 params_syn_in = {

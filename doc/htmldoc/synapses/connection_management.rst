@@ -568,8 +568,14 @@ second ``pool_size`` elements of ``A`` are the pool for the second
 node in ``T`` and so forth. In this case, ``N_T * pool_size == N_A``
 is required.
 
-The following code and figure demonstrate three use case examples with
+The following figure and code demonstrate three use case examples with
 ``pool_type`` being ``'random'`` or ``'block'``:
+
+.. image:: ../static/img/tripartite_pool_type.svg
+    :align: center
+
+(A) In the example of ``'random'`` pool type, each node in ``T`` can be connected with
+up to two randomly selected nodes in ``A`` (given ``pool_size == 2``).
 
 .. code-block:: python
 
@@ -586,6 +592,11 @@ The following code and figure demonstrate three use case examples with
     syn_specs = {'third_out': 'sic_connection'}
     nest.TripartiteConnect(S, T, A, conn_spec, syn_specs)
 
+(B) In
+the first example of ``'block'`` pool type, let ``N_T/N_A`` = 2,
+then each node in ``T`` can be connected with one node in ``A``
+(``pool_size == 1`` is required because ``N_A < N_T``), and each node in
+``A`` can be connected with up to two nodes in ``T``.
 
 .. code-block:: python
 
@@ -595,13 +606,18 @@ The following code and figure demonstrate three use case examples with
     T = nest.Create('aeif_cond_alpha_astro', N_T)
     A = nest.Create('astrocyte_lr_1994', N_A)
     conn_spec = {'rule': 'tripartite_bernoulli_with_pool',
-                      'p_primary': p_primary,
-		      'p_third_if_primary': p_third_if_primary,
-                      'pool_type': pool_type,
-		      'pool_size': pool_size}
+                 'p_primary': p_primary,
+                 'p_third_if_primary': p_third_if_primary,
+                 'pool_type': pool_type,
+                 'pool_size': pool_size}
     syn_specs = {'third_out': 'sic_connection'}
     nest.TripartiteConnect(S, T, A, conn_spec, syn_specs)
 
+(C) In the second example
+of ``'block'`` pool type, let ``N_A/N_T`` = 2, then each node in
+``T`` can be connected with up to two nodes in ``A`` (``pool_size == 2`` is
+required because ``N_A/N_T`` = 2), and each node in ``A`` can be
+connected to one node in ``T``.
 
 .. code-block:: python
 
@@ -611,27 +627,12 @@ The following code and figure demonstrate three use case examples with
     T = nest.Create('aeif_cond_alpha_astro', N_T)
     A = nest.Create('astrocyte_lr_1994', N_A)
     conn_spec = {'rule': 'tripartite_bernoulli_with_pool',
-                      'p_primary': p_primary,
-		      'p_third_if_primary': p_third_if_primary,
-                      'pool_type': pool_type,
-		      'pool_size': pool_size}
+                 'p_primary': p_primary,
+                 'p_third_if_primary': p_third_if_primary,
+                 'pool_type': pool_type,
+                 'pool_size': pool_size}
     syn_specs = {'third_out': 'sic_connection'}
     nest.TripartiteConnect(S, T, A, conn_spec, syn_specs)
-
-
-.. image:: ../static/img/tripartite_pool_type.svg
-    :align: center
-
-(A) In the example of ``'random'`` pool type, each node in ``T`` can be connected with
-up to two randomly selected nodes in ``A`` (given ``pool_size == 2``). (B) In
-the first example of ``'block'`` pool type, let ``N_T/N_A`` = 2,
-then each node in ``T`` can be connected with one node in ``A``
-(``pool_size == 1`` is required because ``N_A < N_T``), and each node in
-``A`` can be connected with up to two nodes in ``T``. (C) In the second example
-of ``'block'`` pool type, let ``N_A/N_T`` = 2, then each node in
-``T`` can be connected with up to two nodes in ``A`` (``pool_size == 2`` is
-required because ``N_A/N_T`` = 2), and each node in ``A`` can be
-connected to one node in ``T``.
 
 
 References

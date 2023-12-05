@@ -368,6 +368,7 @@ eprop_synapse< targetidentifierT >::eprop_synapse()
   , t_previous_trigger_spike_( 0 )
   , tau_m_readout_( 10.0 )
   , kappa_( std::exp( -Time::get_resolution().get_ms() / tau_m_readout_ ) )
+  , is_recurrent_to_recurrent_conn_( false )
   , optimizer_( nullptr ) // to be set by check_connection()
 {
 }
@@ -393,7 +394,8 @@ eprop_synapse< targetidentifierT >::eprop_synapse( const eprop_synapse& es )
   , t_next_update_( kernel().simulation_manager.get_eprop_update_interval().get_steps() )
   , t_previous_trigger_spike_( 0 )
   , tau_m_readout_( es.tau_m_readout_ )
-  , kappa_( es.kappa_ )
+  , kappa_( std::exp( -Time::get_resolution().get_ms() / tau_m_readout_ ) )
+  , is_recurrent_to_recurrent_conn_( es.is_recurrent_to_recurrent_conn_ )
   , optimizer_( nullptr ) // to be set by check_connection()
 {
 }
@@ -417,6 +419,7 @@ eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
   tau_m_readout_ = es.tau_m_readout_;
   kappa_ = es.kappa_;
+  is_recurrent_to_recurrent_conn_ = es.is_recurrent_to_recurrent_conn_;
 
   if ( optimizer_ != nullptr )
   {

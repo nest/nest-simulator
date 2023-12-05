@@ -329,6 +329,7 @@ params_common_syn_eprop = {
     "batch_size": n_batch,
     "weight_recorder": wr,
     "average_gradient": True,
+    "eta": 5e-3,  # learning rate
     "Wmax": 100.0,  # pA, maximal limit of the synaptic weights
     "Wmin": -100.0,  # pA, minimal limit of the synaptic weights
 }
@@ -336,7 +337,6 @@ params_common_syn_eprop = {
 params_syn_in = {
     "synapse_model": "eprop_synapse",
     "delay": duration["step"],  # ms, dendritic delay
-    "eta": 5e-3,  # learning rate
     "tau_m_readout": params_nrn_out["tau_m"],  # ms, for technical reasons pass readout neuron membrane time constant
     "weight": weights_in_rec,  # pA, initial values for the synaptic weights
 }
@@ -344,7 +344,6 @@ params_syn_in = {
 params_syn_rec = {
     "synapse_model": "eprop_synapse",
     "delay": duration["step"],
-    "eta": 5e-3,
     "tau_m_readout": params_nrn_out["tau_m"],
     "weight": weights_rec_rec,
 }
@@ -352,7 +351,6 @@ params_syn_rec = {
 params_syn_out = {
     "synapse_model": "eprop_synapse",
     "delay": duration["step"],
-    "eta": 5e-3,
     "tau_m_readout": params_nrn_out["tau_m"],
     "weight": weights_rec_out,
 }

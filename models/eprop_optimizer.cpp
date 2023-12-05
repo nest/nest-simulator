@@ -90,7 +90,7 @@ EpropOptimizerCommonProperties::set_status( const DictionaryDatum& d )
 
 EpropOptimizer::EpropOptimizer()
   : sum_gradients_( 0.0 )
-  , optimization_step_( 0 )
+  , optimization_step_( 1 )
 {
 }
 

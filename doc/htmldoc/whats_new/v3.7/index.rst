@@ -40,3 +40,11 @@ See examples using astrocyte models:
 See connectivity documentation:
 
 * :ref:`tripartite_connectivity`
+
+Connectivity concepts
+---------------------
+The documentation on :ref:`connection_management` now serves as a living reference for the connection rules defined in the article "Connectivity concepts in neuronal network modeling" [1]_.
+
+References
+----------
+.. [1] Senk J, Kriener B, Djurfeldt M, Voges N, Jiang HJ, et al. (2022) Connectivity concepts in neuronal network modeling. PLOS Computational Biology 18(9): e1010086. https://doi.org/10.1371/journal.pcbi.1010086

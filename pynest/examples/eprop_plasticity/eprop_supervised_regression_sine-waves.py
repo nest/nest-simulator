@@ -267,7 +267,6 @@ params_common_syn_eprop = {
     "batch_size": n_batch,
     "optimizer": "gradient_descent",  # algorithm to optimize the weights
     "weight_recorder": wr,
-    "average_gradient": False,
     "eta": 1e-4,  # learning rate
     "Wmax": 100.0,  # pA, maximal limit of the synaptic weights
     "Wmin": -100.0,  # pA, minimal limit of the synaptic weights

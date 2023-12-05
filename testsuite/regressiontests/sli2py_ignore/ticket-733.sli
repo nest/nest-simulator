@@ -1,5 +1,5 @@
 /*
- *  ticket-537.sli
+ *  ticket-733.sli
  *
  *  This file is part of NEST.
  *
@@ -22,40 +22,16 @@
 
 /** @BeginDocumentation
 
-Name: testsuite::ticket-537 - Regression test for memory allocation/free error in TokenarrayObj
+Name: testsuite::ticket-733 - neq does not work correctly for intvector and doublevector
 
-Synopsis: (ticket-537) run -> NEST exits if test fails
+Synopsis: (ticket-773) run -> NEST exits if test fails
 
 Description:
-This test detects a memory allocation/freeing problem introduced with the SLI modernization per r9458. 
-This bug occurred only on certain Linux platforms.
- 
-Author: Hans Ekkehard Plesser, 2012-01-12, based on reproduces by Marc-Oliver Gewaltig
- */
+This test verify that neq returns false when two intvectors or two double vectors are equals
+*/
 
 (unittest) run
 /unittest using
 
-M_ERROR setverbosity
-
-% Original reproducer
-{
-  /a [2] def
-  1000 { a { } Map } repeat
-}
-pass_or_die
-
-% Simplified reproducer for Map
-{
-  100 { [] { } Map } repeat
-}
-pass_or_die
-
-% Reproducer for forall, still fails per r9476
-{
-  100 { (1 2) { } forall } repeat
-}
-pass_or_die
-
-
-endusing
+<# 1 2 3 #> <# 1 2 3 #> neq false eq assert_or_die
+<. 1 2 3 .> <. 1 2 3 .> neq false eq assert_or_die

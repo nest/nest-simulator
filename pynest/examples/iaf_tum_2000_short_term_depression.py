@@ -23,7 +23,7 @@ r"""
 Short-term depression example
 -----------------------------
 
-The `iaf_tum_2000 <../models/iaf_tum_2000>` neuron [1]_ is a model with
+The :doc:`iaf_tum_2000 </models/iaf_tum_2000>` neuron [1]_ is a model with
 *short-term synaptic plasticity*. Short-term plasticity can either strengthen
 or weaken a synapse and acts on a timescale of milliseconds to seconds. This
 example illustrates *short-term depression*, which is caused by depletion of
@@ -48,11 +48,11 @@ For an example on *short-term facilitation*, see
 
 .. note::
 
-    The `iaf_tum_2000 <../models/iaf_tum_2000>` neuron model combined with
-    `static_synapse <../models/static_synapse>` provides a more efficient
+    The :doc:`iaf_tum_2000 </models/iaf_tum_2000>` neuron model combined with
+    :doc:`static_synapse </models/static_synapse>` provides a more efficient
     implementation of the model studied in [1]_ and [2]_ than the combination
-    of `iaf_psc_exp <../models/iaf_psc_exp>` with
-    `tsodyks_synapse <../models/tsodyks_synapse>`.
+    of :doc:`iaf_psc_exp </models/iaf_psc_exp>` with
+    :doc:`tsodyks_synapse </models/tsodyks_synapse>`.
 
 References
 ~~~~~~~~~~

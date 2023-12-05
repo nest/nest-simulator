@@ -194,6 +194,14 @@ nc_const_iterator::operator++()
   return *this;
 }
 
+nc_const_iterator
+nc_const_iterator::operator++( int )
+{
+  nc_const_iterator tmp = *this;
+  ++( *this );
+  return tmp;
+}
+
 NodeCollectionPTR
 operator+( NodeCollectionPTR lhs, NodeCollectionPTR rhs )
 {

@@ -65,7 +65,10 @@ Connection management
 
     Basic connection rules commonly used in the computational neuroscience community. For more details, go to the section :ref:`conn_rules` or just click on one of the illustrations.
 
-This documentation not only describes how to define network connectivity in NEST, but also represents a living reference for the connection rules defined in the article "Connectivity concepts in neuronal network modeling" [1]_. Deviations from the rules defined in the publication are highlighted in green.
+
+This documentation not only describes how to define network connectivity in NEST, but also provides details on connectivity concepts.
+The article "Connectivity concepts in neuronal network modeling" [1]_ serves as a permanent reference for a number of connection rules and we suggest to cite it if rules defined there are used.
+This documentation instead represents a living reference for these rules, and deviations from and extensions to what is described in the article are here highlighted in green.
 
 .. The same article also introduces a graphical notation for neuronal network diagrams which is curated in the documentation of NEST Desktop. TODO ADD LINK WHEN IT EXISTS
 
@@ -113,8 +116,9 @@ Have a look at the section :ref:`handling_connections` to get more tips on how t
 Connection rules
 ----------------
 
-Here we elaborate on the connectivity concepts with details on :ref:`autapse_multapse`, :ref:`deterministic_rules`, :ref:`probabilistic_rules`, and finally the :ref:`conn_builder_conngen` (a method to create connections via CSA, the Connection Set Algebra [2]_).
-Each rule is described with an illustration, a NEST code example, and mathematical details.
+Here we elaborate on the connectivity concepts with details on :ref:`autapse_multapse`, :ref:`deterministic_rules`, :ref:`probabilistic_rules`, and the :ref:`conn_builder_conngen` (a method to create connections via CSA, the Connection Set Algebra [2]_).
+Finally, we introduce the rule :ref:`tripartite_connectivity` for third-party connections in addition to primary connections between ``pre`` and ``post``.
+Each primary rule is described with an illustration, a NEST code example, and mathematical details.
 The mathematical details are extracted from the study on connectivity concepts [1]_ and contain a symbol which we recommend to use for describing this type of connectivity, the corresponding expression from CSA, and a formal definition with an algorithmic construction rule and the resulting connectivity distribution.
 
 .. dropdown:: Mathematical details: General notations and definitions
@@ -531,6 +535,107 @@ generator interface and randomly connects 10% of the neurons from
 
    conn_spec = {'rule': 'conngen', 'cg': cg, 'params_map': params_map}
    nest.Connect(A, B, conn_spec)
+
+
+.. _tripartite_connectivity:
+
+Tripartite Bernoulli with pool
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For each possible pair of nodes from a source ``NodeCollection`` (e.g., a neuron population ``S``)
+and a target ``NodeCollection`` (e.g., a neuron population ``T``), a connection is
+created with probability ``p_primary``, and these connections are
+called 'primary' connections. For each primary connection, a
+third-party connection pair involving a node from a third ``NodeCollection``
+(e.g., an astrocyte population ``A``) is created with the conditional probability
+``p_third_if_primary``. This connection pair includes a connection
+from the ``S`` node to the ``A`` node, and a connection from the ``A`` node to the
+``T`` node. The ``A`` node to connect to is chosen
+at random from a pool, a subset of the nodes in ``A``. By default,
+this pool is all of ``A``.
+
+Pool formation is controlled by parameters ``pool_type``, which can be ``'random'``
+(default) or ``'block'``, and ``pool_size``, which must be between 1
+and the size of ``A`` (default). For random pools, for each node from
+``T``, ``pool_size`` nodes from ``A`` are chosen randomly without
+replacement.
+
+For block pools, two variants exist. Let ``N_T`` and ``N_A`` be the number of
+nodes in ``T`` and ``A``, respectively. If ``pool_size == 1``, the
+first ``N_T/N_A`` nodes in ``T`` are assigned the first node in
+``A`` as their pool, the second ``N_T/N_A`` nodes in ``T`` the
+second node in ``A`` and so forth. In this case, ``N_T`` must be a
+multiple of ``N_A``. If ``pool_size > 1``, the first ``pool_size``
+elements of ``A`` are the pool for the first node in ``T``, the
+second ``pool_size`` elements of ``A`` are the pool for the second
+node in ``T`` and so forth. In this case, ``N_T * pool_size == N_A``
+is required.
+
+The following figure and code demonstrate three use case examples with
+``pool_type`` being ``'random'`` or ``'block'``:
+
+.. image:: ../static/img/tripartite_pool_type.svg
+    :align: center
+
+(A) In the example of ``'random'`` pool type, each node in ``T`` can be connected with
+up to two randomly selected nodes in ``A`` (given ``pool_size == 2``).
+
+.. code-block:: python
+
+    N_S, N_T, N_A, p_primary, p_third_if_primary = 6, 6, 3, 0.2, 1.0
+    pool_type, pool_size = 'random', 2
+    S = nest.Create('aeif_cond_alpha_astro', N_S)
+    T = nest.Create('aeif_cond_alpha_astro', N_T)
+    A = nest.Create('astrocyte_lr_1994', N_A)
+    conn_spec = {'rule': 'tripartite_bernoulli_with_pool',
+                      'p_primary': p_primary,
+		      'p_third_if_primary': p_third_if_primary,
+                      'pool_type': pool_type,
+		      'pool_size': pool_size}
+    syn_specs = {'third_out': 'sic_connection'}
+    nest.TripartiteConnect(S, T, A, conn_spec, syn_specs)
+
+(B) In
+the first example of ``'block'`` pool type, let ``N_T/N_A`` = 2,
+then each node in ``T`` can be connected with one node in ``A``
+(``pool_size == 1`` is required because ``N_A < N_T``), and each node in
+``A`` can be connected with up to two nodes in ``T``.
+
+.. code-block:: python
+
+    N_S, N_T, N_A, p_primary, p_third_if_primary = 6, 6, 3, 0.2, 1.0
+    pool_type, pool_size = 'block', 1
+    S = nest.Create('aeif_cond_alpha_astro', N_S)
+    T = nest.Create('aeif_cond_alpha_astro', N_T)
+    A = nest.Create('astrocyte_lr_1994', N_A)
+    conn_spec = {'rule': 'tripartite_bernoulli_with_pool',
+                 'p_primary': p_primary,
+                 'p_third_if_primary': p_third_if_primary,
+                 'pool_type': pool_type,
+                 'pool_size': pool_size}
+    syn_specs = {'third_out': 'sic_connection'}
+    nest.TripartiteConnect(S, T, A, conn_spec, syn_specs)
+
+(C) In the second example
+of ``'block'`` pool type, let ``N_A/N_T`` = 2, then each node in
+``T`` can be connected with up to two nodes in ``A`` (``pool_size == 2`` is
+required because ``N_A/N_T`` = 2), and each node in ``A`` can be
+connected to one node in ``T``.
+
+.. code-block:: python
+
+    N_S, N_T, N_A, p_primary, p_third_if_primary = 6, 3, 6, 0.2, 1.0
+    pool_type, pool_size = 'block', 2
+    S = nest.Create('aeif_cond_alpha_astro', N_S)
+    T = nest.Create('aeif_cond_alpha_astro', N_T)
+    A = nest.Create('astrocyte_lr_1994', N_A)
+    conn_spec = {'rule': 'tripartite_bernoulli_with_pool',
+                 'p_primary': p_primary,
+                 'p_third_if_primary': p_third_if_primary,
+                 'pool_type': pool_type,
+                 'pool_size': pool_size}
+    syn_specs = {'third_out': 'sic_connection'}
+    nest.TripartiteConnect(S, T, A, conn_spec, syn_specs)
 
 
 References

@@ -1,5 +1,5 @@
 /*
- *  ticket-235.sli
+ *  ticket-785.sli
  *
  *  This file is part of NEST.
  *
@@ -20,30 +20,27 @@
  *
  */
 
-/*
- * Regression test for Ticket #235
- *
- * Asserts that the commands below throws error when no input
- * exits on stack.
+/** @BeginDocumentation
+
+Name: testsuite::ticket-785 - fail_or_die inconsistenly reports errors
+
+Synopsis: (ticket-785) run -> NEST exits if test fails
+
+Description:
+Test that fail_or_die reports errors consistently. There are two calls to fail_or_die. The first one passes, the second one fails to pass.
+
+Author: Marc-Oliver Gewaltig, 2013-12-25
  */
 
 (unittest) run
 /unittest using
 
-% preparatory work for proper test code in case NEST is complied with MPI support
-% For now we just ignore this test, this will later be replaced 
-% by a restart of NEST with a serial binary.
-skip_if_have_mpi
+{ 1 div } fail_or_die % this one works
+clear
 
+% the next test shows that {1 neq}  produces an error
+{1 neq } stopped {errordict /newerror false put} { 3 quit_i } ifelse
+clear
 
-{load} failbutnocrash_or_die
-{setcallback} failbutnocrash_or_die
-{stopped} failbutnocrash_or_die
-{load} failbutnocrash_or_die
-{typeinfo} failbutnocrash_or_die
-{switch} failbutnocrash_or_die
-{switchdefault} failbutnocrash_or_die
-{token_is} failbutnocrash_or_die
-{setguard} failbutnocrash_or_die
-
-endusing
+% the next test shows that the error is not caught by fail_or_die
+{ 1 neq } fail_or_die % this one breaks

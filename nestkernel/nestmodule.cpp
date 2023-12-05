@@ -767,6 +767,44 @@ NestModule::Connect_g_g_D_aFunction::execute( SLIInterpreter* i ) const
   kernel().connection_manager.sw_construction_connect.stop();
 }
 
+
+void
+NestModule::ConnectTripartite_g_g_g_D_DFunction::execute( SLIInterpreter* i ) const
+{
+  kernel().connection_manager.sw_construction_connect.start();
+
+  i->assert_stack_load( 5 );
+
+  NodeCollectionDatum sources = getValue< NodeCollectionDatum >( i->OStack.pick( 4 ) );
+  NodeCollectionDatum targets = getValue< NodeCollectionDatum >( i->OStack.pick( 3 ) );
+  NodeCollectionDatum third = getValue< NodeCollectionDatum >( i->OStack.pick( 2 ) );
+  DictionaryDatum connectivity = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
+  DictionaryDatum synapse_specs_dict = getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
+
+  std::map< Name, std::vector< DictionaryDatum > > synapse_specs {
+    { names::primary, {} }, { names::third_in, {} }, { names::third_out, {} }
+  };
+
+  for ( auto& [ key, syn_spec_array ] : synapse_specs )
+  {
+    ArrayDatum spec = getValue< ArrayDatum >( ( *synapse_specs_dict )[ key ] );
+
+    for ( auto syn_param : spec )
+    {
+      syn_spec_array.push_back( getValue< DictionaryDatum >( syn_param ) );
+    }
+  }
+
+  // dictionary access checking is handled by connect
+  connect_tripartite( sources, targets, third, connectivity, synapse_specs );
+
+  i->OStack.pop( 5 );
+  i->EStack.pop();
+
+  kernel().connection_manager.sw_construction_connect.stop();
+}
+
+
 void
 NestModule::ConnectSonata_D_Function::execute( SLIInterpreter* i ) const
 {
@@ -2083,6 +2121,7 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "Connect_g_g_D_D", &connect_g_g_D_Dfunction );
   i->createcommand( "Connect_g_g_D_a", &connect_g_g_D_afunction );
   i->createcommand( "ConnectSonata_D", &ConnectSonata_D_Function );
+  i->createcommand( "ConnectTripartite_g_g_g_D_D", &connect_tripartite_g_g_g_D_Dfunction );
 
   i->createcommand( "ResetKernel", &resetkernelfunction );
 
@@ -2164,6 +2203,8 @@ NestModule::init( SLIInterpreter* i )
   kernel().connection_manager.register_conn_builder< FixedInDegreeBuilder >( "fixed_indegree" );
   kernel().connection_manager.register_conn_builder< FixedOutDegreeBuilder >( "fixed_outdegree" );
   kernel().connection_manager.register_conn_builder< BernoulliBuilder >( "pairwise_bernoulli" );
+  kernel().connection_manager.register_conn_builder< TripartiteBernoulliWithPoolBuilder >(
+    "tripartite_bernoulli_with_pool" );
   kernel().connection_manager.register_conn_builder< SymmetricBernoulliBuilder >( "symmetric_pairwise_bernoulli" );
   kernel().connection_manager.register_conn_builder< FixedTotalNumberBuilder >( "fixed_total_number" );
 #ifdef HAVE_LIBNEUROSIM

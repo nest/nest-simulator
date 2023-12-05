@@ -12,10 +12,10 @@ Install NEST
 
       * :ref:`Docker (cross-platform) <docker>`
         (Includes NESTML)
-      * :ref:`conda-forge (cross-platform)<conda_forge_install>`
-      * :ref:`Live media (cross-platform) <download_livemedia>`
+      * :ref:`conda-forge (Linux/macOS) <conda_forge_install>`
       * :ref:`Ubuntu PPA (Linux) <ubuntu_install>`
       * :ref:`Homebrew (macOS) <macos_install>`
+      * :ref:`Options for Windows users <windows_install>`
 
 
    .. grid-item-card:: |dev| Source install

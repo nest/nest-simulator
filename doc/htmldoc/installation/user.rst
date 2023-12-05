@@ -137,6 +137,7 @@ macOS |macos|
 
 --------
 
+.. _windows_install:
 
 Options for Windows users |windows|
 ------------------------------------

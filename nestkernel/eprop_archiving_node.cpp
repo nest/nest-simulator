@@ -185,7 +185,10 @@ EpropArchivingNode::get_eprop_history( const long time_step )
 std::vector< HistEntryEpropFiringRateReg >::iterator
 EpropArchivingNode::get_firing_rate_reg_history( const long time_step )
 {
-  return std::lower_bound( firing_rate_reg_history_.begin(), firing_rate_reg_history_.end(), time_step );
+  const auto lb = std::lower_bound( firing_rate_reg_history_.begin(), firing_rate_reg_history_.end(), time_step );
+  assert( lb != firing_rate_reg_history_.end() );
+
+  return lb;
 }
 
 double

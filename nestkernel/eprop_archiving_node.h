@@ -65,7 +65,7 @@ public:
   void write_error_signal_to_history( const long time_step, const double error_signal );
 
   //! Add learning signal to the eprop history entry of the given time step.
-  void write_learning_signal_to_history( const long time_step, const long delay_out_rec, const double learning_signal );
+  void write_learning_signal_to_history( const long time_step, const double learning_signal );
 
   //! Create an entry in the firing rate regularization history for the current update.
   void write_firing_rate_reg_to_history( const long t_current_update, const double f_target, const double c_reg );
@@ -133,6 +133,9 @@ protected:
 
   //! Connection delay between output neurons for normalization.
   const long delay_out_norm_ = 1;
+
+  //! Connection delay from output neurons to recurrent neurons.
+  const long delay_out_rec_ = 1;
 };
 
 inline void

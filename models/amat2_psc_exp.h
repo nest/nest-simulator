@@ -158,6 +158,11 @@ Receives
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: amat2_psc_exp
+
 EndUserDocs */
 
 void register_amat2_psc_exp( const std::string& name );

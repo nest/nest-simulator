@@ -26,13 +26,13 @@ Name: testsuite::ticket-580 - getinterval: No error if range of array is exceede
 
 Synopsis: (ticket-564) run -> NEST exits if test fails
 
-Description: 
-1) This test checks whether the sli functions getinterval and Take perform Range Checks, i.e. whether they throw errors if the requested part of the interval exceeds the original array or not. 
+Description:
+1) This test checks whether the sli functions getinterval and Take perform Range Checks, i.e. whether they throw errors if the requested part of the interval exceeds the original array or not.
 2) Furthermore, it checks whether getinterval throws an error if negative indices are given and whether Takes does not throw an error.
 3) Checks whether Take returns an empty array if n_2 < n_1
 
 In addition, it checks whether they return the same results for a correct usage.
- 
+
 Author: Maximilian Schmidt, 2012-10-16
  */
 
@@ -46,7 +46,7 @@ M_ERROR setverbosity
 (Hallo) /y Set
 
 
-{ 
+{
   x [1 4] Take
 } fail_or_die
 
@@ -70,7 +70,7 @@ M_ERROR setverbosity
   [] eq
 } assert_or_die
 
-{ 
+{
   x 0 4 getinterval
 } fail_or_die
 

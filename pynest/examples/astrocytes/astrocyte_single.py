@@ -34,7 +34,7 @@ the astrocyte.
 See Also
 ~~~~~~~~
 
-:doc:`astrocyte_tripartite`
+:doc:`astrocyte_interaction`
 
 References
 ~~~~~~~~~~

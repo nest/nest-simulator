@@ -3,12 +3,17 @@ version: 2
 build:
   os: ubuntu-22.04
   tools:
-    python: "3.8"
-
+    python: "3.10"
+  apt_packages:
+    - default-jre-headless
+  jobs:
+    pre_install:
+      - wget "https://github.com/plantuml/plantuml/releases/download/v1.2023.10/plantuml.jar" -O "/tmp/plantuml.jar"
+      - echo "ee06454723028763dd8280459e8fd8f31fcd85b1ae8d9ab0e32122243c098c3b" "/tmp/plantuml.jar" | sha256sum -c
 sphinx:
   builder: html
   configuration: doc/htmldoc/conf.py
 
 python:
-   install:
-   - requirements: doc/requirements.txt
+  install:
+    - requirements: doc/requirements.txt

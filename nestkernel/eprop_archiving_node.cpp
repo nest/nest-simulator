@@ -118,9 +118,7 @@ EpropArchivingNode::write_error_signal_to_history( const long time_step, const d
 }
 
 void
-EpropArchivingNode::write_learning_signal_to_history( const long time_step,
-  const long delay_out_rec,
-  const double learning_signal )
+EpropArchivingNode::write_learning_signal_to_history( const long time_step, const double learning_signal )
 {
   if ( eprop_indegree_ == 0 )
   {
@@ -129,10 +127,10 @@ EpropArchivingNode::write_learning_signal_to_history( const long time_step,
 
   // These 3 delays must be taken into account to place the learning signal in the correct location
   // in the e-prop history
-  const long shift = delay_rec_out_ + delay_out_norm_ + delay_out_rec;
+  const long shift = delay_rec_out_ + delay_out_norm_ + delay_out_rec_;
 
   auto it_hist = get_eprop_history( time_step - shift );
-  const auto it_hist_end = get_eprop_history( time_step - shift + delay_out_rec );
+  const auto it_hist_end = get_eprop_history( time_step - shift + delay_out_rec_ );
 
   for ( ; it_hist != it_hist_end; ++it_hist )
   {
@@ -194,7 +192,9 @@ EpropArchivingNode::get_firing_rate_reg_history( const long time_step )
 double
 EpropArchivingNode::get_learning_signal( const long time_step )
 {
-  const auto it = get_eprop_history( time_step );
+  const long shift = delay_rec_out_ + delay_out_norm_ + delay_out_rec_;
+
+  const auto it = get_eprop_history( time_step - shift );
   if ( it != eprop_history_.end() )
   {
     return it->learning_signal_;

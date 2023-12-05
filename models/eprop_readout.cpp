@@ -61,7 +61,7 @@ RecordablesMap< eprop_readout >::create()
   insert_( names::error_signal, &eprop_readout::get_error_signal_ );
   insert_( names::readout_signal, &eprop_readout::get_readout_signal_ );
   insert_( names::target_signal, &eprop_readout::get_target_signal_ );
-  insert_( names::V_m, &eprop_readout::get_V_m_ );
+  insert_( names::V_m, &eprop_readout::get_v_m_ );
 }
 
 /* ----------------------------------------------------------------
@@ -83,8 +83,9 @@ eprop_readout::State_::State_()
   , readout_signal_( 0.0 )
   , readout_signal_unnorm_( 0.0 )
   , target_signal_( 0.0 )
-  , y0_( 0.0 )
-  , y3_( 0.0 )
+  , i_in_( 0.0 )
+  , v_m_( 0.0 )
+  , z_in_( 0.0 )
 {
 }
 
@@ -149,7 +150,7 @@ eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
 void
 eprop_readout::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, y3_ + p.E_L_ );
+  def< double >( d, names::V_m, v_m_ + p.E_L_ );
   def< double >( d, names::error_signal, error_signal_ );
   def< double >( d, names::readout_signal, readout_signal_ );
   def< double >( d, names::target_signal, target_signal_ );
@@ -158,7 +159,7 @@ eprop_readout::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 void
 eprop_readout::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  y3_ -= updateValueParam< double >( d, names::V_m, y3_, node ) ? p.E_L_ : delta_EL;
+  v_m_ -= updateValueParam< double >( d, names::V_m, v_m_, node ) ? p.E_L_ : delta_EL;
 }
 
 /* ----------------------------------------------------------------
@@ -200,12 +201,6 @@ eprop_readout::pre_run_hook()
 {
   B_.logger_.init(); // ensures initialization in case multimeter connected after Simulate
 
-  const double dt = Time::get_resolution().get_ms();
-
-  V_.P33_ = std::exp( -dt / P_.tau_m_ );
-  V_.P30_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - V_.P33_ );
-  V_.P33_complement_ = 1.0 - V_.P33_;
-
   if ( P_.loss_ == "mean_squared_error" )
   {
     compute_error_signal = &eprop_readout::compute_error_signal_mean_squared_error;
@@ -216,6 +211,14 @@ eprop_readout::pre_run_hook()
     compute_error_signal = &eprop_readout::compute_error_signal_cross_entropy;
     V_.signal_to_other_readouts_ = true;
   }
+
+  const double dt = Time::get_resolution().get_ms();
+
+  const double kappa = std::exp( -dt / P_.tau_m_ );
+
+  V_.P_v_m_ = kappa;
+  V_.P_i_in_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - kappa );
+  V_.P_z_in_ = 1.0 - kappa;
 }
 
 long
@@ -247,14 +250,22 @@ eprop_readout::update( Time const& origin, const long from, const long to )
     const long interval_step = ( t - shift ) % update_interval;
     const long interval_step_signals = ( t - shift - delay_out_norm_ ) % update_interval;
 
-    if ( with_reset and interval_step == 0 )
+
+    if ( interval_step == 0 )
     {
-      S_.y3_ = 0.0;
+      erase_unneeded_update_history();
+      erase_unneeded_eprop_history();
+
+      if ( with_reset )
+      {
+        S_.v_m_ = 0.0;
+      }
     }
 
-    S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P33_ * S_.y3_ + V_.P33_complement_ * B_.spikes_.get_value( lag );
+    S_.z_in_ = B_.spikes_.get_value( lag );
 
-    S_.y3_ = std::max( S_.y3_, P_.V_min_ );
+    S_.v_m_ = V_.P_i_in_ * S_.i_in_ + V_.P_z_in_ * S_.z_in_ + V_.P_v_m_ * S_.v_m_;
+    S_.v_m_ = std::max( S_.v_m_, P_.V_min_ );
 
     ( this->*compute_error_signal )( lag );
 
@@ -276,7 +287,7 @@ eprop_readout::update( Time const& origin, const long from, const long to )
 
     write_error_signal_to_history( t, S_.error_signal_ );
 
-    S_.y0_ = B_.currents_.get_value( lag );
+    S_.i_in_ = B_.currents_.get_value( lag ) + P_.I_e_;
 
     B_.logger_.record_data( t );
   }
@@ -305,7 +316,7 @@ void
 eprop_readout::compute_error_signal_mean_squared_error( const long lag )
 {
   S_.readout_signal_ = S_.readout_signal_unnorm_;
-  S_.readout_signal_unnorm_ = S_.y3_ + P_.E_L_;
+  S_.readout_signal_unnorm_ = S_.v_m_ + P_.E_L_;
   S_.error_signal_ = S_.readout_signal_ - S_.target_signal_;
 }
 
@@ -314,7 +325,7 @@ eprop_readout::compute_error_signal_cross_entropy( const long lag )
 {
   const double norm_rate = B_.normalization_rate_ + S_.readout_signal_unnorm_;
   S_.readout_signal_ = S_.readout_signal_unnorm_ / norm_rate;
-  S_.readout_signal_unnorm_ = std::exp( S_.y3_ + P_.E_L_ );
+  S_.readout_signal_unnorm_ = std::exp( S_.v_m_ + P_.E_L_ );
   S_.error_signal_ = S_.readout_signal_ - S_.target_signal_;
 }
 
@@ -392,7 +403,7 @@ eprop_readout::gradient_change( std::vector< long >& presyn_isis,
 
       L = eprop_hist_it->learning_signal_;
 
-      z_bar = V_.P33_ * z_bar + V_.P33_complement_ * z;
+      z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
       grad += L * z_bar;
       z = 0.0; //  Set spiking variable to 0 between spikes
 

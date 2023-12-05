@@ -153,10 +153,9 @@ Usage
 
 This model can only be used in combination with the other e-prop models,
 whereby the network architecture requires specific wiring, input, and output.
-The usage is demonstrated in a
-:doc:`supervised regression task <../auto_examples/eprop_plasticity/eprop_supervised_regression/>`
-and a :doc:`supervised classification task <../auto_examples/eprop_plasticity/eprop_supervised_classification>`,
-reproducing the original proof-of-concept tasks in [1]_.
+The usage is demonstrated in several
+:doc:`supervised regression and classification tasks <../auto_examples/eprop_plasticity/index>`
+reproducing among others the original proof-of-concept tasks in [1]_.
 
 References
 ++++++++++
@@ -298,10 +297,10 @@ private:
   struct State_
   {
     //! Adaptation variable.
-    double adaptation_;
+    double adapt_;
 
     //! Adapting spike threshold voltage.
-    double adapting_threshold_;
+    double v_th_adapt_;
 
     //! Learning signal. Sum of weighted error signals coming from the readout neurons.
     double learning_signal_;
@@ -313,13 +312,16 @@ private:
     double surrogate_gradient_;
 
     //! Input current (pA).
-    double y0_;
+    double i_in_;
 
     //! Membrane voltage relative to the leak membrane potential (mV).
-    double y3_;
+    double v_m_;
 
     //! Binary spike variable - 1.0 if the neuron has spiked in the previous time step and 0.0 otherwise.
     double z_;
+
+    //! Binary input spike variables - 1.0 if the neuron has spiked in the previous time step and 0.0 otherwise.
+    double z_in_;
 
     //! Default constructor.
     State_();
@@ -354,16 +356,16 @@ private:
   struct Variables_
   {
     //! Propagator matrix entry for evolving the membrane voltage.
-    double P33_;
+    double P_v_m_;
 
     //! Propagator matrix entry for evolving the incoming spike variables.
-    double P33_complement_;
+    double P_z_in_;
 
     //! Propagator matrix entry for evolving the incoming currents.
-    double P30_;
+    double P_i_in_;
 
     //! Propagator matrix entry for evolving the adaptation.
-    double Pa_;
+    double P_adapt_;
 
     //! Total refractory steps.
     int RefractoryCounts_;
@@ -371,9 +373,9 @@ private:
 
   //! Get the current value of the membrane voltage.
   double
-  get_V_m_() const
+  get_v_m_() const
   {
-    return S_.y3_ + P_.E_L_;
+    return S_.v_m_ + P_.E_L_;
   }
 
   //! Get the current value of the surrogate gradient.
@@ -394,14 +396,14 @@ private:
   double
   get_adapting_threshold_() const
   {
-    return S_.adapting_threshold_ + P_.E_L_;
+    return S_.v_th_adapt_ + P_.E_L_;
   }
 
   //! Get the current value of the adaptation.
   double
   get_adaptation_() const
   {
-    return S_.adaptation_;
+    return S_.adapt_;
   }
 
   // the order in which the structure instances are defined is important for speed

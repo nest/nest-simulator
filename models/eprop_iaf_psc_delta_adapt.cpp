@@ -62,7 +62,7 @@ RecordablesMap< eprop_iaf_psc_delta_adapt >::create()
   insert_( names::adapting_threshold, &eprop_iaf_psc_delta_adapt::get_adapting_threshold_ );
   insert_( names::learning_signal, &eprop_iaf_psc_delta_adapt::get_learning_signal_ );
   insert_( names::surrogate_gradient, &eprop_iaf_psc_delta_adapt::get_surrogate_gradient_ );
-  insert_( names::V_m, &eprop_iaf_psc_delta_adapt::get_V_m_ );
+  insert_( names::V_m, &eprop_iaf_psc_delta_adapt::get_v_m_ );
 }
 
 /* ----------------------------------------------------------------
@@ -88,13 +88,15 @@ eprop_iaf_psc_delta_adapt::Parameters_::Parameters_()
 }
 
 eprop_iaf_psc_delta_adapt::State_::State_()
-  : adaptation_( 0.0 )
+  : adapt_( 0.0 )
+  , v_th_adapt_( 15.0 )
   , learning_signal_( 0.0 )
   , r_( 0 )
   , surrogate_gradient_( 0.0 )
-  , y0_( 0.0 )
-  , y3_( 0.0 )
+  , i_in_( 0.0 )
+  , v_m_( 0.0 )
   , z_( 0.0 )
+  , z_in_( 0.0 )
 {
 }
 
@@ -225,16 +227,16 @@ eprop_iaf_psc_delta_adapt::Parameters_::set( const DictionaryDatum& d, Node* nod
 void
 eprop_iaf_psc_delta_adapt::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
-  def< double >( d, names::adaptation, adaptation_ );
-  def< double >( d, names::V_m, y3_ + p.E_L_ );
+  def< double >( d, names::adaptation, adapt_ );
+  def< double >( d, names::V_m, v_m_ + p.E_L_ );
 }
 
 void
 eprop_iaf_psc_delta_adapt::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  updateValueParam< double >( d, names::adaptation, adaptation_, node );
+  updateValueParam< double >( d, names::adaptation, adapt_, node );
 
-  y3_ -= updateValueParam< double >( d, names::V_m, y3_, node ) ? p.E_L_ : delta_EL;
+  v_m_ -= updateValueParam< double >( d, names::V_m, v_m_, node ) ? p.E_L_ : delta_EL;
 }
 
 /* ----------------------------------------------------------------
@@ -277,28 +279,30 @@ eprop_iaf_psc_delta_adapt::pre_run_hook()
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
 
-  const double dt = Time::get_resolution().get_ms();
-
-  const double alpha = std::exp( -dt / P_.tau_m_ );
-
-  V_.P33_ = alpha;
-  V_.P30_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - alpha );
-
-  if ( P_.psc_scale_factor_ == "alpha_complement" )
-  {
-    V_.P33_complement_ = 1.0 - alpha;
-  }
-  else if ( P_.psc_scale_factor_ == "unity" )
-  {
-    V_.P33_complement_ = 1.0;
-  }
-
-  V_.Pa_ = std::exp( -dt / P_.adapt_tau_ );
-
   if ( P_.surrogate_gradient_ == "piecewise_linear" )
   {
     compute_surrogate_gradient = &eprop_iaf_psc_delta_adapt::compute_piecewise_linear_derivative;
   }
+
+  // calculate the entries of the propagator matrix for the evolution of the state vector
+
+  const double dt = Time::get_resolution().get_ms();
+
+  const double alpha = std::exp( -dt / P_.tau_m_ );
+
+  V_.P_v_m_ = alpha;
+  V_.P_i_in_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - alpha );
+
+  if ( P_.psc_scale_factor_ == "alpha_complement" )
+  {
+    V_.P_z_in_ = 1.0 - alpha;
+  }
+  else if ( P_.psc_scale_factor_ == "unity" )
+  {
+    V_.P_z_in_ = 1.0;
+  }
+
+  V_.P_adapt_ = std::exp( -dt / P_.adapt_tau_ );
 }
 
 long
@@ -331,29 +335,29 @@ eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, const lo
 
       if ( with_reset )
       {
-        S_.y3_ = 0.0;
-        S_.adaptation_ = 0.0;
+        S_.v_m_ = 0.0;
+        S_.adapt_ = 0.0;
         S_.r_ = 0;
         S_.z_ = 0.0;
       }
     }
 
-    S_.adaptation_ *= V_.Pa_;
-    S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P33_ * S_.y3_ + V_.P33_complement_ * B_.spikes_.get_value( lag );
+    S_.z_in_ = B_.spikes_.get_value( lag );
 
-    S_.adaptation_ += S_.z_;
-    S_.y3_ -= S_.z_ * P_.V_th_;
+    S_.v_m_ = V_.P_i_in_ * S_.i_in_ + V_.P_z_in_ * S_.z_in_ + V_.P_v_m_ * S_.v_m_;
+    S_.v_m_ -= P_.V_th_ * S_.z_;
+    S_.v_m_ = std::max( S_.v_m_, P_.V_min_ );
+
+    S_.adapt_ = V_.P_adapt_ * S_.adapt_ + S_.z_;
+    S_.v_th_adapt_ = P_.V_th_ + P_.adapt_beta_ * S_.adapt_;
+
     S_.z_ = 0.0;
-
-    S_.y3_ = std::max( S_.y3_, P_.V_min_ );
-
-    S_.adapting_threshold_ = P_.V_th_ + P_.adapt_beta_ * S_.adaptation_;
 
     S_.surrogate_gradient_ = ( this->*compute_surrogate_gradient )();
 
     write_surrogate_gradient_to_history( t, S_.surrogate_gradient_ );
 
-    if ( S_.y3_ >= S_.adapting_threshold_ and S_.r_ == 0 )
+    if ( S_.v_m_ >= S_.v_th_adapt_ and S_.r_ == 0 )
     {
       count_spike();
 
@@ -374,14 +378,14 @@ eprop_iaf_psc_delta_adapt::update( Time const& origin, const long from, const lo
       reset_spike_count();
     }
 
-    S_.learning_signal_ = get_learning_signal( t - shift );
+    S_.learning_signal_ = get_learning_signal( t );
 
     if ( S_.r_ > 0 )
     {
       --S_.r_;
     }
 
-    S_.y0_ = B_.currents_.get_value( lag );
+    S_.i_in_ = B_.currents_.get_value( lag ) + P_.I_e_;
 
     B_.logger_.record_data( t );
   }
@@ -399,7 +403,7 @@ eprop_iaf_psc_delta_adapt::compute_piecewise_linear_derivative()
     return 0.0;
   }
 
-  return P_.gamma_ * std::max( 0.0, 1.0 - std::fabs( ( S_.y3_ - S_.adapting_threshold_ ) / P_.V_th_ ) ) / P_.V_th_;
+  return P_.gamma_ * std::max( 0.0, 1.0 - std::fabs( ( S_.v_m_ - S_.v_th_adapt_ ) / P_.V_th_ ) ) / P_.V_th_;
 }
 
 /* ----------------------------------------------------------------
@@ -430,12 +434,11 @@ eprop_iaf_psc_delta_adapt::handle( LearningSignalConnectionEvent& e )
   for ( auto it_event = e.begin(); it_event != e.end(); )
   {
     const long time_step = e.get_stamp().get_steps();
-    const long delay_out_rec = e.get_delay_steps();
     const double weight = e.get_weight();
     const double error_signal = e.get_coeffvalue( it_event ); // get_coeffvalue advances iterator
     const double learning_signal = weight * error_signal;
 
-    write_learning_signal_to_history( time_step, delay_out_rec, learning_signal );
+    write_learning_signal_to_history( time_step, learning_signal );
   }
 }
 
@@ -475,9 +478,9 @@ eprop_iaf_psc_delta_adapt::gradient_change( std::vector< long >& presyn_isis,
       psi = eprop_hist_it->surrogate_gradient_;
       L = eprop_hist_it->learning_signal_;
 
-      z_bar = V_.P33_ * z_bar + V_.P33_complement_ * z;
+      z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
       e = psi * ( z_bar - P_.adapt_beta_ * epsilon );
-      epsilon = psi * z_bar + ( V_.Pa_ - psi * P_.adapt_beta_ ) * epsilon;
+      epsilon = psi * z_bar + ( V_.P_adapt_ - psi * P_.adapt_beta_ ) * epsilon;
       e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
       grad += L * e_bar;
       sum_e += e;

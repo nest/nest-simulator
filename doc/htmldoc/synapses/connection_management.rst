@@ -113,7 +113,8 @@ Have a look at the section :ref:`handling_connections` to get more tips on how t
 Connection rules
 ----------------
 
-Here we elaborate on the connectivity concepts with details on :ref:`autapse_multapse`, :ref:`deterministic_rules`, :ref:`probabilistic_rules`, and finally the :ref:`conn_builder_conngen` (a method to create connections via CSA, the Connection Set Algebra [2]_).
+Here we elaborate on the connectivity concepts with details on :ref:`autapse_multapse`, :ref:`deterministic_rules`, :ref:`probabilistic_rules`, and the :ref:`conn_builder_conngen` (a method to create connections via CSA, the Connection Set Algebra [2]_).
+Finally, we introduce the rule :ref:`tripartite_bernoulli` for third-party connections in addition to primary connections between ``pre`` and ``post``.
 Each rule is described with an illustration, a NEST code example, and mathematical details.
 The mathematical details are extracted from the study on connectivity concepts [1]_ and contain a symbol which we recommend to use for describing this type of connectivity, the corresponding expression from CSA, and a formal definition with an algorithmic construction rule and the resulting connectivity distribution.
 
@@ -486,6 +487,55 @@ As multapses are per default allowed and possible with this rule, you can disall
 	| 		**Definition:**  Each source node in :math:`S` is connected to :math:`K_\text{out}` nodes in :math:`\mathcal{T}` randomly chosen without replacement. 
 	|		The out-degree distribution is by definition :math:`P(K)=\delta_{K,K_\text{out}}`, while the in-degree distribution is obtained by switching source and target indices, and replacing :math:`K_\text{out}` with :math:`K_\text{in}` in equation (2) from :ref:`fixed_indegree`.
 
+
+.. _conn_builder_conngen:
+
+Connection generator interface
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. admonition:: Availability
+
+   This connection rule is only available if NEST was compiled with
+   :ref:`support for libneurosim <compile_with_libneurosim>`.
+
+To allow the generation of connectivity by means of an external
+library, NEST supports the Connection Generator Interface [6]_. For
+more details on this interface, see the git repository of `libneurosim
+<https://github.com/INCF/libneurosim>`_.
+
+In contrast to the other rules for creating connections, this rule
+relies on a Connection Generator object to describe the connectivity
+pattern in a library-specific way. The Connection Generator is handed
+to :py:func:`.Connect` under the key ``cg`` of the connection specification
+dictionary and evaluated internally. If the Connection Generator
+provides values for connection weights and delays, their respective
+indices can be specified under the key ``params_map``. Alternatively,
+all synapse parameters can be specified using the synapse
+specification argument to ``Connect()``.
+
+The following listing shows an example for using CSA (`Connection Set Algebra <https://github.com/INCF/csa>`_ [2]_) in NEST via the Connection
+generator interface and randomly connects 10% of the neurons from
+``A`` to the neurons in ``B``, each connection having a weight of
+10000.0 pA and a delay of 1.0 ms:
+
+.. code-block:: python
+
+   A = nest.Create('iaf_psc_alpha', 100)
+   B = nest.Create('iaf_psc_alpha', 100)
+
+   # Create the Connection Generator object
+   import csa
+   cg = csa.cset(csa.random(0.1), 10000.0, 1.0)
+
+   # Map weight and delay indices to values from cg
+   params_map = {'weight': 0, 'delay': 1}
+
+   conn_spec = {'rule': 'conngen', 'cg': cg, 'params_map': params_map}
+   nest.Connect(A, B, conn_spec)
+
+
+.. _tripartite_bernoulli:
+
 Tripartite Bernoulli with pool
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -582,52 +632,6 @@ of ``'block'`` pool type, let ``N_A/N_T`` = 2, then each node in
 ``T`` can be connected with up to two nodes in ``A`` (``pool_size == 2`` is
 required because ``N_A/N_T`` = 2), and each node in ``A`` can be
 connected to one node in ``T``.
-
-
-.. _conn_builder_conngen:
-
-Connection generator interface
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. admonition:: Availability
-
-   This connection rule is only available if NEST was compiled with
-   :ref:`support for libneurosim <compile_with_libneurosim>`.
-
-To allow the generation of connectivity by means of an external
-library, NEST supports the Connection Generator Interface [6]_. For
-more details on this interface, see the git repository of `libneurosim
-<https://github.com/INCF/libneurosim>`_.
-
-In contrast to the other rules for creating connections, this rule
-relies on a Connection Generator object to describe the connectivity
-pattern in a library-specific way. The Connection Generator is handed
-to :py:func:`.Connect` under the key ``cg`` of the connection specification
-dictionary and evaluated internally. If the Connection Generator
-provides values for connection weights and delays, their respective
-indices can be specified under the key ``params_map``. Alternatively,
-all synapse parameters can be specified using the synapse
-specification argument to ``Connect()``.
-
-The following listing shows an example for using CSA (`Connection Set Algebra <https://github.com/INCF/csa>`_ [2]_) in NEST via the Connection
-generator interface and randomly connects 10% of the neurons from
-``A`` to the neurons in ``B``, each connection having a weight of
-10000.0 pA and a delay of 1.0 ms:
-
-.. code-block:: python
-
-   A = nest.Create('iaf_psc_alpha', 100)
-   B = nest.Create('iaf_psc_alpha', 100)
-
-   # Create the Connection Generator object
-   import csa
-   cg = csa.cset(csa.random(0.1), 10000.0, 1.0)
-
-   # Map weight and delay indices to values from cg
-   params_map = {'weight': 0, 'delay': 1}
-
-   conn_spec = {'rule': 'conngen', 'cg': cg, 'params_map': params_map}
-   nest.Connect(A, B, conn_spec)
 
 
 References

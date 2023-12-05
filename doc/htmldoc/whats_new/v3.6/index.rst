@@ -26,8 +26,8 @@ neuron-astrocyte circuits.
 
 See examples using astrocyte models:
 
-* :doc:`../../../auto_examples/astrocyte_single`
-* :doc:`../../../auto_examples/astrocyte_tripartite`
+* :doc:`../../../auto_examples/astrocytes/astrocyte_single`
+* :doc:`../../../auto_examples/astrocytes/astrocyte_interaction`
 
 See model docs:
 

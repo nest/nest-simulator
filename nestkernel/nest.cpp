@@ -188,6 +188,16 @@ connect( NodeCollectionPTR sources,
 }
 
 void
+connect_tripartite( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  NodeCollectionPTR third,
+  const DictionaryDatum& connectivity,
+  const std::map< Name, std::vector< DictionaryDatum > >& synapse_specs )
+{
+  kernel().connection_manager.connect_tripartite( sources, targets, third, connectivity, synapse_specs );
+}
+
+void
 connect_arrays( long* sources,
   long* targets,
   double* weights,

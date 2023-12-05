@@ -56,6 +56,11 @@ See also
 
 astrocyte_lr_1994, aeif_cond_alpha_astro
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: sic_connection
+
 EndUserDocs */
 
 void register_sic_connection( const std::string& name );

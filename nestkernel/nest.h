@@ -84,10 +84,25 @@ NodeCollectionPTR create( const Name& model_name, const size_t n );
 
 NodeCollectionPTR get_nodes( const DictionaryDatum& dict, const bool local_only );
 
+/**
+ * Create bipartite connections.
+ */
 void connect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& connectivity,
   const std::vector< DictionaryDatum >& synapse_params );
+
+/**
+ * Create tripartite connections
+ *
+ * @note `synapse_specs` is dictionary `{"primary": <syn_spec>, "third_in": <syn_spec>, "third_out": <syn_spec>}`; all
+ * entries are optional.
+ */
+void connect_tripartite( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  NodeCollectionPTR third,
+  const DictionaryDatum& connectivity,
+  const std::map< Name, std::vector< DictionaryDatum > >& synapse_specs );
 
 /**
  * @brief Connect arrays of node IDs one-to-one

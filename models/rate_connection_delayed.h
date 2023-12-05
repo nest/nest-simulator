@@ -65,6 +65,11 @@ See also
 
 rate_connection_instantaneous, rate_neuron_ipn, rate_neuron_opn
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: rate_connection_delayed
+
 EndUserDocs */
 
 /**

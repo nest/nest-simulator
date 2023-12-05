@@ -118,7 +118,7 @@ Connection rules
 
 Here we elaborate on the connectivity concepts with details on :ref:`autapse_multapse`, :ref:`deterministic_rules`, :ref:`probabilistic_rules`, and the :ref:`conn_builder_conngen` (a method to create connections via CSA, the Connection Set Algebra [2]_).
 Finally, we introduce the rule :ref:`tripartite_connectivity` for third-party connections in addition to primary connections between ``pre`` and ``post``.
-Each rule is described with an illustration, a NEST code example, and mathematical details.
+Each primary rule is described with an illustration, a NEST code example, and mathematical details.
 The mathematical details are extracted from the study on connectivity concepts [1]_ and contain a symbol which we recommend to use for describing this type of connectivity, the corresponding expression from CSA, and a formal definition with an algorithmic construction rule and the resulting connectivity distribution.
 
 .. dropdown:: Mathematical details: General notations and definitions

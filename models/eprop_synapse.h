@@ -313,12 +313,6 @@ public:
 
     t.register_eprop_connection();
 
-    const double dt = Time::get_resolution().get_ms();
-    kappa_ = exp( -dt / tau_m_readout_ );
-
-    const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
-    t_next_update_ = update_interval;
-
     optimizer_ = cp.optimizer_cp_->get_optimizer();
   }
 
@@ -370,10 +364,10 @@ eprop_synapse< targetidentifierT >::eprop_synapse()
   , weight_( 1.0 )
   , t_previous_spike_( 0 )
   , t_previous_update_( 0 )
-  , t_next_update_( 1000 )
+  , t_next_update_( 0 )
   , t_previous_trigger_spike_( 0 )
   , tau_m_readout_( 10.0 )
-  , kappa_( 0.0 )
+  , kappa_( std::exp( -Time::get_resolution().get_ms() / tau_m_readout_ ) )
   , optimizer_( nullptr ) // to be set by check_connection()
 {
 }
@@ -396,7 +390,7 @@ eprop_synapse< targetidentifierT >::eprop_synapse( const eprop_synapse& es )
   , weight_( es.weight_ )
   , t_previous_spike_( 0 )
   , t_previous_update_( 0 )
-  , t_next_update_( 1000 )
+  , t_next_update_( kernel().simulation_manager.get_eprop_update_interval().get_steps() )
   , t_previous_trigger_spike_( 0 )
   , tau_m_readout_( es.tau_m_readout_ )
   , kappa_( es.kappa_ )
@@ -417,10 +411,10 @@ eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
   ConnectionBase::operator=( es );
 
   weight_ = es.weight_;
-  t_previous_spike_ = 0;
-  t_previous_update_ = 0;
-  t_next_update_ = 1000;
-  t_previous_trigger_spike_ = 0;
+  t_previous_spike_ = es.t_previous_spike_;
+  t_previous_update_ = es.t_previous_update_;
+  t_next_update_ = es.t_next_update_;
+  t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
   tau_m_readout_ = es.tau_m_readout_;
   kappa_ = es.kappa_;
 
@@ -509,11 +503,14 @@ eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
   ConnectionBase::set_status( d, cm );
 
   updateValue< double >( d, names::weight, weight_ );
-  updateValue< double >( d, names::tau_m_readout, tau_m_readout_ );
 
-  if ( tau_m_readout_ <= 0 )
+  if ( updateValue< double >( d, names::tau_m_readout, tau_m_readout_ ) )
   {
-    throw BadProperty( "tau_m_readout > 0 required" );
+    if ( tau_m_readout_ <= 0 )
+    {
+      throw BadProperty( "tau_m_readout > 0 required" );
+    }
+    kappa_ = std::exp( -Time::get_resolution().get_ms() / tau_m_readout_ );
   }
 
   const auto& gcm = dynamic_cast< const GenericConnectorModel< eprop_synapse< targetidentifierT > >& >( cm );

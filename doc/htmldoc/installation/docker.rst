@@ -146,8 +146,8 @@ If you want to use the compose configuration for the ``dev`` NEST version, you c
 
 .. _docker_win:
 
-Run NEST on Windows
-^^^^^^^^^^^^^^^^^^^
+Run NEST on Windows |windows|
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. important::
 

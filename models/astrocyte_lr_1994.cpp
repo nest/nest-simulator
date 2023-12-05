@@ -416,8 +416,6 @@ nest::astrocyte_lr_1994::init_buffers_()
 void
 nest::astrocyte_lr_1994::pre_run_hook()
 {
-  ArchivingNode::pre_run_hook_();
-
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 }

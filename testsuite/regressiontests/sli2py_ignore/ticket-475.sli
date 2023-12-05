@@ -29,7 +29,7 @@ Synopsis: (ticket-475) run -> NEST exits if test fails
 Description:
 Compilation on Stallo with icpc 11.1 cause crashed when collecting data across
 threads.
- 
+
 Author: Hans Ekkehard Plesser, 2010-10-11
  */
 
@@ -40,7 +40,7 @@ M_INFO setverbosity
 
 
 {
-  /spike_recorder Create 
+  /spike_recorder Create
 %  sd ShowStatus
   %10 Simulate
  % sd GetStatus

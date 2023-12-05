@@ -100,18 +100,19 @@ def get_models_from_file(model_file):
     """
 
     model_patterns = {
-        "neuron": "public ArchivingNode",
-        "stimulator": "public StimulationDevice",
-        "recorder": "public RecordingDevice",
-        "devicelike": "public DeviceNode",
-        "connection": "public Connection",
-        "node": "public Node",
-        "clopath": "public ClopathArchivingNode",
-        "urbanczik": "public UrbanczikArchivingNode",
-        "eprop": "public EpropArchivingNode",
-        "eprop_connection": "public eprop_synapse",
-        "binary": "typedef binary_neuron",
-        "rate": "typedef rate_",
+        "public ArchivingNode": "neuron",
+        "public StructuralPlasticityNode": "neuron",
+        "public StimulationDevice": "stimulator",
+        "public RecordingDevice": "recorder",
+        "public DeviceNode": "devicelike",
+        "public Connection": "connection",
+        "public Node": "node",
+        "public ClopathArchivingNode": "clopath",
+        "public UrbanczikArchivingNode": "urbanczik",
+        "public EpropArchivingNode": "eprop",
+        "public eprop_synapse": "eprop_connection",
+        "typedef binary_neuron": "binary",
+        "typedef rate_": "rate",
     }
 
     fname = Path(srcdir) / "models" / f"{model_file}.h"
@@ -127,7 +128,7 @@ def get_models_from_file(model_file):
             if line.startswith("#ifdef HAVE_"):
                 guards.append(line.strip().split()[1])
             if line.startswith(f"class {model_file} : "):
-                for mtype, pattern in model_patterns.items():
+                for pattern, mtype in model_patterns.items():
                     if pattern in line:
                         names.append(model_file)
                         types.append(mtype)
@@ -140,7 +141,7 @@ def get_models_from_file(model_file):
                 except (ValueError, KeyError) as e:
                     types.append("node")
             if line.startswith("typedef "):
-                for mtype, pattern in model_patterns.items():
+                for pattern, mtype in model_patterns.items():
                     if pattern in line:
                         names.append(line.rsplit(" ", 1)[-1].strip()[:-1])
                         types.append(mtype)

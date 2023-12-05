@@ -52,7 +52,7 @@ class IgnoreAndFireNeuronTestCase(unittest.TestCase):
         nest.Connect(self.neuron, self.spike_recorder)
 
     def test_IgnoreAndFireSpikeTimes(self):
-        """Check parrot_neuron repeats spikes on port 0"""
+        """Check ignore_and_fire neuron spikes at expected times"""
 
         nest.Simulate(self.T)
 

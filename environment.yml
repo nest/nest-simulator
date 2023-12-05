@@ -1,23 +1,19 @@
-# Conda environment specification for NEST Simulator
+# Conda environment specification for NEST Simulator.
 #
 # This file specifies a conda environment for those who would
 # like to compile NEST or build NEST documentation themselves.
 # If you just want to execute NEST, you should install NEST
 # directly as described in https://www.nest-simulator.org/installation.
 #
-#
 # The environment specification below is comprehensive: it includes
 # all packages required to build and run NEST with OpenMP and MPI
-# parallelisation, GSL-dependent models, NumPy and Pandas-dependent
+# parallelization, GSL-dependent models, NumPy and Pandas-dependent
 # features of PyNEST and examples requiring Matplotlib, and to run
 # the NEST testsuite. It also comprises all tools required to build
-# NEST documentation and to run NEST Server. The requirements for the
-# documentation and server are marked in separate sections below so
-# you can remove them if you would like a leaner environment.
-#
-# NOTE: Do NOT delete the PIP section at the end of the file. Environment files
-#       allow just a single PIP section. All dependencies not satisfied by
-#       conda-forge are placed there.
+# NEST documentation and to run NEST Server. The required Python
+# packages are divided in separate requirements files and marked in
+# separate sections below so you can remove them if you would like a
+# leaner environment.
 #
 # NOTE: libneurosim, MUSIC and SIONLib are not included in this environment.
 #
@@ -31,85 +27,38 @@ channels:
   - conda-forge
 
 dependencies:
-  # Basics ------------------
-  - python >= 3.8
+
+  - python >= 3.10
   - pip
 
-  # Building NEST -----------
   - cmake >= 3.19
-  - cython
   - openmpi
   - boost >= 1.69
   - gsl >= 1.11
   - libtool
   - readline
   - hdf5
-
-  # Testing NEST ------------
-  - attrs
-  - pytest
-  - pytest-timeout
-  - pytest-xdist
-  - pytest-pylint
-  - pytest-mypy
-  - pytest-cov
-  - numpy
-  - pandas
-  - scipy
-  - mpi4py
-  - data-science-types
-  - h5py
-  - terminaltables
-  - pycodestyle
-  - pydocstyle
-  - rstcheck
-  - mypy[version='>=0.8']
   - cppcheck
-
-  # Working with NEST ------
-  - ipython
-  - matplotlib
-  - jupyter
-  - jupyterlab
-
-  # Building NEST documentation
-  - PyYAML>=4.2b1
-  - breathe
-  - csvkit
-  - docutils
   - doxygen
-  - mock
-  - nbsphinx
-  - numpydoc
-  - path.py
-  - pydot
-  - recommonmark
-  - sphinx >= 4.0.2
-  - sphinx_rtd_theme
-  - tqdm
-  - yamllint
+  - graphviz
 
-  # Running NEST Server ----
-  - flask
-  - flask_cors
-  - gunicorn
-  - requests
-  - restrictedpython
-  - werkzeug
+  # mpi4py must be installed by conda in order to automatically find the path
+  # to OpenMPI installed by conda. Note that mpi4py also is included in
+  # requirements_pynest.txt in case someone wants to build an environment
+  # without conda. When this conda environment is built, the pip installation
+  # of mpi4py will be skipped since it is already installed by conda.
+  - mpi4py
 
-  # PIP dependencies -- do not delete
   - pip:
-    # For testsuite
-    - junitparser >= 2
-    - clang-format == 17.0.4
-    # For documentation
-    - example
-    - Image
-    - sphinx_autobuild
-    - sphinx-copybutton
-    - sphinx_design
-    - sphinx_gallery
-    - sphinx-material
-    - sphinx-tabs
-    - sphinx-notfound-page
-    - sphinxcontrib-mermaid
+
+    # To build and work with PyNEST
+    - -r requirements_pynest.txt
+
+    # To run NEST testsuite
+    - -r requirements_testing.txt
+
+    # To build NEST documentation
+    - -r requirements_docs.txt
+
+    # To run NEST Server
+    - -r requirements_nest_server.txt

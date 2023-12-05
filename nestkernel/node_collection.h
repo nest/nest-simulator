@@ -148,15 +148,23 @@ private:
   void composite_update_indices_();
 
 public:
+  using iterator_category = std::forward_iterator_tag;
+  using difference_type = long;
+  using value_type = NodeIDTriple;
+  using pointer = NodeIDTriple*;
+  using reference = NodeIDTriple&;
+
   nc_const_iterator( const nc_const_iterator& nci ) = default;
   void get_current_part_offset( size_t&, size_t& ) const;
 
   NodeIDTriple operator*() const;
+  bool operator==( const nc_const_iterator& rhs ) const;
   bool operator!=( const nc_const_iterator& rhs ) const;
   bool operator<( const nc_const_iterator& rhs ) const;
   bool operator<=( const nc_const_iterator& rhs ) const;
 
   nc_const_iterator& operator++();
+  nc_const_iterator operator++( int ); // postfix
   nc_const_iterator& operator+=( const size_t );
   nc_const_iterator operator+( const size_t ) const;
 
@@ -708,6 +716,12 @@ nc_const_iterator::operator+( const size_t n ) const
 {
   nc_const_iterator it = *this;
   return it += n;
+}
+
+inline bool
+nc_const_iterator::operator==( const nc_const_iterator& rhs ) const
+{
+  return part_idx_ == rhs.part_idx_ and element_idx_ == rhs.element_idx_;
 }
 
 inline bool

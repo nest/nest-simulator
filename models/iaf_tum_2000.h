@@ -51,7 +51,7 @@ plasticity and exponential shaped postsynaptic currents (PSCs). In particular,
 ``iaf_tum_2000`` implements short-term depression and short-term facilitation
 according to [1]_ by solving Eqs. (3) and (4) from that paper in an exact manner.
 
-``iaf_tum_2000`` differs from `iaf_psc_exp <../models/iaf_psc_exp>` by the addition
+``iaf_tum_2000`` differs from :doc:`iaf_psc_exp </models/iaf_psc_exp>` by the addition
 of synaptic state variables :math:`x`, :math:`z` and :math:`u`, which together
 with the membrane potential :math:`V_\text{m}` and synaptic current :math:`I_\text{syn}`
 obey the following dynamics:
@@ -77,7 +77,7 @@ where :math:`\Gamma_X` is an index set over either excitatory (:math:`\text{X} =
 :math:`k` indexes the spike times of neuron :math:`j`, and :math:`d_j`
 is the delay from neuron :math:`j`.
 
-``iaf_tum_2000`` incorporates the `tsodyks_synapse <../models/tsodyks_synapse>`
+``iaf_tum_2000`` incorporates the :doc:`tsodyks_synapse </models/tsodyks_synapse>`
 computations directly in the presynaptic neuron, that is, the  synaptic state
 variables :math:`x,y,z,u` are integrated in the presynaptic neuron instead of
 the synapse model. For a presynaptic neuron with :math:`K` outgoing connections
@@ -144,6 +144,11 @@ See also
 ++++++++
 
 iaf_psc_exp, tsodyks_synapse, stdp_synapse, static_synapse
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_tum_2000
 
 EndUserDocs */
 // clang-format on

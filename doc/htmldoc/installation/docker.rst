@@ -161,10 +161,12 @@ NEST master from https://hub.docker.com/r/nest/nest-simulator and start it.
 After booting, a URL is presented. Click on it or copy it to your browser.
 
 
-On Windows
-----------
+.. _docker_win:
 
-.. note::
+Run NEST on Windows |windows|
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. important::
 
     The following commands should work on Windows. Please note that NEST does not officially
     support Windows!
@@ -177,7 +179,12 @@ On Windows
 In Powershell, '%cd%' might not work for the current directory. Then
 you should explicitly specify a folder with existing write permissions.
 
-In any case, You can update the image with:
+In any case, this will download the docker image with the pre-installed
+NEST master from https://hub.docker.com/r/nest/nest-simulator and start it.
+After booting, a URL is presented. Click on it or copy it to your browser.
+Voilá! Jupyter notebook starts from the docker image.
+
+You can update the image with:
 
 .. code-block:: bash
 

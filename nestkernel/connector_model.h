@@ -111,6 +111,10 @@ public:
 
   /**
    * Checks to see if illegal parameters are given in syn_spec.
+   *
+   * Checks against setting CommonSynapseProperties upon Connect() are implemented in GenericConnectorModel.
+   * Any further checks need to be implemented by the connection model class by overriding
+   * Connection::check_synapse_params().
    */
   virtual void check_synapse_params( const DictionaryDatum& ) const = 0;
 
@@ -182,12 +186,6 @@ public:
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
 
-  void
-  check_synapse_params( const DictionaryDatum& syn_spec ) const override
-  {
-    default_connection_.check_synapse_params( syn_spec );
-  }
-
   typename ConnectionT::CommonPropertiesType const&
   get_common_properties() const override
   {
@@ -195,6 +193,8 @@ public:
   }
 
   void set_syn_id( synindex syn_id ) override;
+
+  void check_synapse_params( const DictionaryDatum& syn_spec ) const override;
 
   SecondaryEvent*
   get_secondary_event() override

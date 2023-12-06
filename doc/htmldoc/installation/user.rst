@@ -50,7 +50,7 @@ Ubuntu users can install NEST via the PPA repository.
 
      sudo apt-get install nest
 
-   Or install NEST with `NESTML <https://nestml.readthedocs.io/en/latest/index.html>`_
+Or install NEST with `NESTML <https://nestml.readthedocs.io/en/latest/index.html>`_
 
 .. code-block:: bash
 

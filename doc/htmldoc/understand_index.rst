@@ -19,9 +19,11 @@ Here you can dive into various topics about NEST.
    .. grid-item-card:: |synapse|  All about synapses and connections
        :class-title: sd-d-flex-row sd-align-minor-center
 
-       * :ref:`connection_management`
+       * :ref:`connectivity_concept`
 
        * :ref:`synapse_spec`
+
+       * :ref:`connection_generator`
 
        * :ref:`handling_connections`
 

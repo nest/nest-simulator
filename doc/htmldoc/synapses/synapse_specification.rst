@@ -3,7 +3,8 @@
 Synapse specification
 ========================
 
-This page is about parameterizing synapses. See :ref:`connection_management` for specifying connections, and :ref:`handling_connections` for inspecting and modifying ``SynapseCollections``.
+This page is about parameterizing synapses. See :ref:`connectivity_concept` for specifying connections, :ref:`connection_generator` for generation of connectivity and :ref:`handling_connections` for inspecting and modifying ``SynapseCollections``.
+
 
 The synapse properties can be given as just the name of the desired
 synapse model as a string, as a dictionary specifying synapse model
@@ -64,7 +65,7 @@ Array parameters
 
 Array parameters can be used with the rules ``one_to_one``, ``all_to_all``,
 ``fixed_total_number``, ``fixed_indegree``, and ``fixed_outdegree``.
-For details on connection rules, see :ref:`connection_management`.
+For details on connection rules, see :ref:`connectivity_concept`.
 The arrays can be specified as NumPy arrays or Python
 lists. As with the scalar parameters, all parameters have to be
 specified as arrays of the correct type.
@@ -131,7 +132,7 @@ of the identity of the source neurons.
 Random, fixed out-degree
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-For rule ``fixed_outdegree`` the array has to be a two-dimensional
+For rule :ref:`fixed_outdegree` the array has to be a two-dimensional
 NumPy array or Python list with shape ``(len(A), outdegree)``, where
 :hxt_ref:`outdegree` is the number of outgoing connections per source
 neuron. This means that the rows describe the source, while the

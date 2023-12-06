@@ -3,7 +3,7 @@
 Connection management
 =====================
 
-.. grid:: 4
+.. grid:: 8
     :gutter: 1
 
     .. grid-item-card::
@@ -30,22 +30,17 @@ Connection management
 
 		.. image:: ../static/img/All_to_all_H.png
 
-.. grid:: 4
-    :gutter: 1
-
     .. grid-item-card::
 		:link: pairwise_bernoulli
 		:link-type: ref
 
 		.. image:: ../static/img/Pairwise_bernoulli_H.png
 
-
     .. grid-item-card::
 		:link: fixed_total_number
 		:link-type: ref
 
 		.. image:: ../static/img/Fixed_total_number_H.png
-
 
     .. grid-item-card::
 		:link: fixed_indegree

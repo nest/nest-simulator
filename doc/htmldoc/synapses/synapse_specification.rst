@@ -72,7 +72,7 @@ specified as arrays of the correct type.
 One-to-one
 ^^^^^^^^^^
 
-For rule ``one_to_one`` the array must have the same length as there
+For rule :ref:`one_to_one` the array must have the same length as there
 are nodes in ``A`` and ``B``.
 
 .. code-block:: python
@@ -86,7 +86,7 @@ are nodes in ``A`` and ``B``.
 All-to-all
 ^^^^^^^^^^
 
-When connecting with rule ``all_to_all``, the array parameter must
+When connecting with rule :ref:`all_to_all`, the array parameter must
 have dimension `len(B) x len(A)`.
 
 .. code-block:: python
@@ -99,7 +99,7 @@ have dimension `len(B) x len(A)`.
 Random, fixed total number
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-For rule ``fixed_total_number``, the array has to be same the length as the
+For rule :ref:`fixed_total_number`, the array has to be same the length as the
 number of connections ``N``.
 
 .. code-block:: python
@@ -113,7 +113,7 @@ number of connections ``N``.
 Random, fixed in-degree
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-For rule ``fixed_indegree`` the array has to be a two-dimensional
+For rule :ref:`fixed_indegree` the array has to be a two-dimensional
 NumPy array or Python list with shape ``(len(B), indegree)``, where
 :hxt_ref:`indegree` is the number of incoming connections per target neuron.
 This means that the rows describe the target, while the columns

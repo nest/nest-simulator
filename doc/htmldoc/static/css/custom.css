@@ -1,4 +1,4 @@
-/* 
+/*
  * Customize css to define NEST specific colors, style and format
  *
    primary styles, for custom index.html and layout.html pages (see templates/ folder)
@@ -8,7 +8,7 @@
 
    Sphinx theme: sphinx-material
    https://bashtage.github.io/sphinx-material/index.html
-   Sphinx material theme properties use 'md' in variable names 
+   Sphinx material theme properties use 'md' in variable names
    Extesion for grid / cards in reStructured Text see sphinx-design
    https://sphinx-design.readthedocs.io/
    Sphinx design properties use the sd in variable names
@@ -123,9 +123,14 @@ figure.align-default {
 	outline-style: groove;
 }
 
+.center {
+
+  text-align: center;
+  font-style: italic;
+}
 
 /**************************************************************************************
- Settings for overriding material design theme 
+ Settings for overriding material design theme
  Setting nest colors to override sphinx material "orange" and other default colors
 
 **************************************************************************************/
@@ -140,7 +145,7 @@ figure.align-default {
    font-weight: 600;
 }
 .md-typeset h1[id]:before,
-.md-typeset h2[id]:before, 
+.md-typeset h2[id]:before,
 .md-typeset h3[id]:before,
 .md-typeset h4[id]:before {
    margin-top: -3.4rem;
@@ -199,7 +204,7 @@ div[role="main"] .md-source {
 div.sd-card-title.sd-font-weight-bold.sd-d-flex-row.docutils a.reference.internal img {
  margin-right: 2em;
  margin-bottom: 0.5em;
- 
+
 }
 
 .md-typeset .admonition, .md-typeset .admonition.tip {
@@ -228,7 +233,7 @@ div.sd-card-title.sd-font-weight-bold.sd-d-flex-row.docutils a.reference.interna
 }
 .md-typeset .admonition.warning {
    border-left-color: #be1717;
-} 
+}
 .md-typeset .admonition.warning > .admonition-title {
    background-color: #be1717;
 }

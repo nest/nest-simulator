@@ -45,7 +45,7 @@ Connection management
 		:link-type: ref
 
 		.. image:: ../static/img/Fixed_total_number_H.png
-			
+
 
     .. grid-item-card::
 		:link: fixed_indegree
@@ -59,9 +59,7 @@ Connection management
 
 		.. image:: ../static/img/Fixed_outdegree_H.png
 
-.. card::
-    :shadow: none
-    :text-align: center
+.. rst-class:: center
 
     Basic connection rules commonly used in the computational neuroscience community. For more details, go to the section :ref:`conn_rules` or just click on one of the illustrations.
 
@@ -178,7 +176,7 @@ nodes.
 
 	|		**Symbol:** :math:`\delta`
 	|		**CSA:** :math:`\delta`
-	|		**Definition:** Each node in :math:`\mathcal{S}` is uniquely connected to one node in :math:`\mathcal{T}`. 
+	|		**Definition:** Each node in :math:`\mathcal{S}` is uniquely connected to one node in :math:`\mathcal{T}`.
 	|		:math:`\mathcal{S}` and :math:`\mathcal{T}` must have identical cardinality :math:`N_s=N_t`. Both sources and targets can be permuted independently even if :math:`\mathcal{S}=\mathcal{T}`. The in- and out-degree distributions are given by :math:`P(K)=\delta_{K,1}`, with Kronecker delta :math:`\delta_{i,j}=1` if :math:`i=j`, and zero otherwise.
 
 
@@ -207,7 +205,7 @@ specified.
 
 	|		**Symbol:** :math:`\Omega`
 	|		**CSA:** :math:`\Omega`
-	|		**Definition:** Each node in :math:`\mathcal{S}` is  connected to all nodes in :math:`\mathcal{T}`. 
+	|		**Definition:** Each node in :math:`\mathcal{S}` is  connected to all nodes in :math:`\mathcal{T}`.
 	|		The resulting edge set is the full edge set :math:`\mathcal{E}_\mathcal{ST}`. The in- and out-degree distributions are :math:`P_\text{in}(K)=\delta_{K,N_s}` for :math:`\mathcal{T}`, and :math:`P_\text{out}(K)=\delta_{K,N_t}` for :math:`\mathcal{S}`, respectively.
 
 Explicit connections
@@ -227,7 +225,7 @@ Connections between explicit lists of source-target pairs can be realized in NES
 
 	|		**Symbol:** X
 	|		**CSA:** Not applicable
-	|		**Definition:** Connections are established according to an explicit list of source-target pairs. 
+	|		**Definition:** Connections are established according to an explicit list of source-target pairs.
 	|		Connectivity is defined by an explicit list of sources and targets, also known as `adjacency list`, as for instance derived from anatomical measurements. It is, hence, not the result of any specific algorithm. An alternative way of representing a fixed connectivity is by means of the `adjacency matrix` :math:`A`, such that :math:`A_{ij}=1` if :math:`j` is connected to :math:`i`, and zero otherwise. We here adopt the common computational neuroscience practice to have the first index :math:`i` denote the target and the second index :math:`j` denote the source node.
 
 
@@ -257,7 +255,7 @@ Note that multapses cannot be produced with this rule because each possible edge
     T = nest.Create('iaf_psc_alpha', m)
     conn_spec = {'rule': 'pairwise_bernoulli', 'p': p}
     nest.Connect(S, T, conn_spec)
-	
+
 .. dropdown:: Mathematical details: Pairwise Bernoulli
 
 	|		**Symbol:** :math:`p`
@@ -272,7 +270,7 @@ Note that multapses cannot be produced with this rule because each possible edge
 
 	.. math::
 		P(K_\text{out}=K)=\mathcal{B}(K|N_t,p)\,,
-	 
+
 	respectively.
 	The expected total number of edges equals :math:`\text{E}[N_\text{syn}]=pN_tN_s`.
 
@@ -325,7 +323,7 @@ As multapses are per default allowed and possible with this rule, you can disall
 	|		**CSA:** :math:`\mathbf{\rho_N}(N_\text{syn})\mathbf{M}(\mathbb{N}_S \times \mathbb{N}_T)`
 	|		**Definition:** :math:`N_\text{syn}\in\{0,\ldots,N_sN_t\}` edges are randomly drawn from the edge set :math:`\mathcal{E}_\mathcal{ST}` with replacement.
 	|		If multapses are allowed, there are :math:`\begin{pmatrix}N_sN_t+N_\text{syn}-1\\N_\text{syn}\end{pmatrix}` possible networks for any given number :math:`N_\text{syn}\leq N_sN_t`.
-	|		Because exactly :math:`N_\text{syn}` connections are distributed across :math:`N_t` targets with replacement, the joint in-degree distribution is multinomial, 
+	|		Because exactly :math:`N_\text{syn}` connections are distributed across :math:`N_t` targets with replacement, the joint in-degree distribution is multinomial,
 
 	.. math::
 		\begin{equation}\label{eq:randfixKm}
@@ -336,7 +334,7 @@ As multapses are per default allowed and possible with this rule, you can disall
 		 \quad\quad 0  & \text{otherwise}\end{cases}\,
 		\end{split}
 		\end{equation}
-		
+
 	with :math:`p=1/N_t`.
 
 	The out-degrees have an analogous multinomial distribution :math:`P(K_{\text{out},1}=K_1,\ldots,K_{\text{out},N_s}=K_{N_s})`, with :math:`p=1/N_s` and sources and targets switched. The marginal distributions are binomial distributions :math:`P(K_{\text{in},j}=K)= \mathcal{B}(K|N_\text{syn},1/N_t)` and :math:`P(K_{\text{out},j}=K)= \mathcal{B}(K|N_\text{syn},1/N_s)`, respectively.
@@ -349,7 +347,7 @@ As multapses are per default allowed and possible with this rule, you can disall
 
 	|		**Symbol:** :math:`N_\text{syn} \cancel{M}`
 	|		**CSA:** :math:`\mathbf{\rho_{N}}(N_\text{syn})(\mathbb{N}_S \times \mathbb{N}_T)`
-	|		**Definition:** :math:`N_\text{syn}\in\{0,\ldots,N_sN_t\}` edges are randomly drawn from the edge set :math:`\mathcal{E}_\mathcal{ST}` without replacement. 
+	|		**Definition:** :math:`N_\text{syn}\in\{0,\ldots,N_sN_t\}` edges are randomly drawn from the edge set :math:`\mathcal{E}_\mathcal{ST}` without replacement.
 	|		For :math:`\mathcal{S}=\mathcal{T}` this is a directed graph generalization of Erdős-Rényi graphs of the `constant number of edges` :math:`N_\text{syn}`-ensemble :math:`G(N,N_\text{syn})` [4]_. There are :math:`\begin{pmatrix}N_s N_t\\N_\text{syn}\end{pmatrix}` possible networks for any given number :math:`N_\text{syn}\leq N_sN_t`, which all have the same probability. The resulting in- and out-degree distributions are multivariate hypergeometric distributions.
 
 	.. math::
@@ -413,19 +411,19 @@ As multapses are per default allowed and possible with this rule, you can disall
 		\end{split}
 		\end{equation}
 
-	The marginal distributions are binomial distributions 
+	The marginal distributions are binomial distributions
 
 	.. math::
 		\begin{equation}\label{eq:rfinmarg}
 		P(K_{\text{out},j}=K)= \mathcal{B}(K|N_tK_\text{in},1/N_s)\,.
 		\end{equation}
 
-	
+
 .. dropdown:: Mathematical details: Random, fixed in-degree without multapses
 
 	| 		**Symbol:** :math:`K_\text{in}, \cancel{M}`
 	|		**CSA:** :math:`{\rho_1}(K)(\mathbb{N}_S \times \mathbb{N}_T)`
-	|		**Definition:** Each target node in :math:`\mathcal{T}` is connected to :math:`K_\text{in}` nodes in :math:`\mathcal{S}` randomly chosen without replacement. 
+	|		**Definition:** Each target node in :math:`\mathcal{T}` is connected to :math:`K_\text{in}` nodes in :math:`\mathcal{S}` randomly chosen without replacement.
 	|		The in-degree distribution is by definition :math:`P(K)=\delta_{K,K_\text{in}}`. To obtain the out-degree distribution, observe that after one target node has drawn its :math:`K_\text{out}` sources the joint probability distribution of out-degrees :math:`K_{\text{out},j}` is multivariate-hypergeometric such that
 
 	.. math::
@@ -435,7 +433,7 @@ As multapses are per default allowed and possible with this rule, you can disall
 		& \quad \quad \quad= \begin{cases}
 		\prod_{j=1}^{N_s} \begin{pmatrix} 1\\K_j\end{pmatrix}\Bigg/\begin{pmatrix} N_s\\K_\text{in}\end{pmatrix}
 		&  \text{if}\,\,\sum_{j=1}^{N_s} K_j = K_\text{in}\\
-		 \phantom{bl}0  & \text{otherwise}\end{cases}\,, \qquad (1) 
+		 \phantom{bl}0  & \text{otherwise}\end{cases}\,, \qquad (1)
 		\end{split}
 		\end{equation}
 
@@ -447,7 +445,7 @@ As multapses are per default allowed and possible with this rule, you can disall
 		P(K_{\text{out},j}=K)=
 		\begin{pmatrix} 1\\K \end{pmatrix} \begin{pmatrix}N_s-1 \\
 		  K_\text{in}-K \end{pmatrix}\Bigg/\begin{pmatrix}N_s
-			\\ K_\text{in}\end{pmatrix} = \text{Ber}(K_\text{in}/N_s)\,, \qquad (2) 
+			\\ K_\text{in}\end{pmatrix} = \text{Ber}(K_\text{in}/N_s)\,, \qquad (2)
 		\end{eqnarray}
 
 	with :math:`\text{Ber}(p)` denoting the Bernoulli distribution with parameter :math:`p`, because :math:`K\in\{0,1\}`.
@@ -480,14 +478,14 @@ As multapses are per default allowed and possible with this rule, you can disall
 
 	| 		**Symbol:** :math:`K_\text{out}, M`
 	| 		**CSA:** :math:`\mathbf{\rho_0}(K)\mathbf{M}(\mathbb{N}_S \times \mathbb{N}_T)`
-	| 		**Definition:** Each source node in :math:`\mathcal{S}` is connected to :math:`K_\text{out}` nodes in :math:`\mathcal{T}` randomly chosen with replacement. 
+	| 		**Definition:** Each source node in :math:`\mathcal{S}` is connected to :math:`K_\text{out}` nodes in :math:`\mathcal{T}` randomly chosen with replacement.
 	|		By definition, the out-degree distribution is a :math:`P(K)=\delta_{K,K_\text{out}}`. The respective in-degree distribution and marginal distributions are obtained by switching source and target indices, and replacing :math:`K_\text{out}` with :math:`K_\text{in}` in equation from :ref:`fixed_indegree` [5]_.
 
 .. dropdown:: Mathematical details: Random, fixed out-degree without multapses
 
 	| 		**Symbol:** :math:`K_\text{out},\cancel{M}`
 	| 		**CSA:** :math:`\mathbf{\rho_0}(K)(\mathbb{N}_S \times \mathbb{N}_T)`
-	| 		**Definition:**  Each source node in :math:`S` is connected to :math:`K_\text{out}` nodes in :math:`\mathcal{T}` randomly chosen without replacement. 
+	| 		**Definition:**  Each source node in :math:`S` is connected to :math:`K_\text{out}` nodes in :math:`\mathcal{T}` randomly chosen without replacement.
 	|		The out-degree distribution is by definition :math:`P(K)=\delta_{K,K_\text{out}}`, while the in-degree distribution is obtained by switching source and target indices, and replacing :math:`K_\text{out}` with :math:`K_\text{in}` in equation (2) from :ref:`fixed_indegree`.
 
 
@@ -649,4 +647,3 @@ References
        connectivity in neuronal networks from simulator-independent
        descriptions. Front. Neuroinform.
        https://doi.org/10.3389/fninf.2014.00043
-

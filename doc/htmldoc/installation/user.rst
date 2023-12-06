@@ -57,7 +57,7 @@ Ubuntu users can install NEST via the PPA repository.
     sudo apt install nest python3-nestml
     python3 -m pip install --upgrade odetoolbox pygsl antlr4-python3-runtime==4.10
 
-4. Set the environment
+3. Set the environment
 
 .. code-block:: bash
 

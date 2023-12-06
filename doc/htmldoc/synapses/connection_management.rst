@@ -68,9 +68,9 @@ Connection management
 
 This documentation not only describes how to define network connectivity in NEST, but also provides details on connectivity concepts.
 The article "Connectivity concepts in neuronal network modeling" [1]_ serves as a permanent reference for a number of connection rules and we suggest to cite it if rules defined there are used.
-This documentation instead represents a living reference for these rules, and deviations from and extensions to what is described in the article are here highlighted in green.
+This documentation instead represents a living reference for these rules, and deviations from and extensions to what is described in the article will be highlighted.
 
-.. The same article also introduces a graphical notation for neuronal network diagrams which is curated in the documentation of NEST Desktop. TODO ADD LINK WHEN IT EXISTS
+.. The same article also introduces a graphical notation for neuronal network diagrams which will be curated in the documentation of :doc:`NEST Desktop <desktop:user/usage-advanced/network-graph>`.
 
 :ref:`spatial_networks` are described on a separate page.
 
@@ -494,7 +494,7 @@ As multapses are per default allowed and possible with this rule, you can disall
 .. _conn_builder_conngen:
 
 Connection generator interface
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------
 
 .. admonition:: Availability
 
@@ -540,7 +540,7 @@ generator interface and randomly connects 10% of the neurons from
 .. _tripartite_connectivity:
 
 Tripartite Bernoulli with pool
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------
 
 For each possible pair of nodes from a source ``NodeCollection`` (e.g., a neuron population ``S``)
 and a target ``NodeCollection`` (e.g., a neuron population ``T``), a connection is

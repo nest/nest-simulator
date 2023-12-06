@@ -1,7 +1,7 @@
 .. _handling_connections:
 
-How to handle inspect and modify connections
-============================================
+How to inspect and modify connections
+=====================================
 
 Here, we describe how to inspect and modify already created connections.
 :ref:`connection_management` describes how to create new connections and :ref:`synapse_spec` how to parameterize synapses as they are created.

@@ -55,11 +55,11 @@ BufferResizeLog::add_entry( size_t global_max_spikes_sent, size_t new_buffer_siz
 void
 BufferResizeLog::to_dict( DictionaryDatum& events ) const
 {
-  initialize_property_array( events, names::times );
+  initialize_property_intvector( events, names::times );
   append_property( events, names::times, time_steps_ );
-  initialize_property_array( events, "global_max_spikes_sent" );
+  initialize_property_intvector( events, "global_max_spikes_sent" );
   append_property( events, "global_max_spikes_sent", global_max_spikes_sent_ );
-  initialize_property_array( events, "new_buffer_size" );
+  initialize_property_intvector( events, "new_buffer_size" );
   append_property( events, "new_buffer_size", new_buffer_size_ );
 }
 

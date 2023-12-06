@@ -111,7 +111,7 @@ def get_models_from_file(model_file):
         "public ClopathArchivingNode": "clopath",
         "public UrbanczikArchivingNode": "urbanczik",
         "typedef binary_neuron": "binary",
-        "typedef rate_": "rate"
+        "typedef rate_": "rate",
     }
 
     fname = Path(srcdir) / "models" / f"{model_file}.h"

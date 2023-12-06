@@ -9,8 +9,14 @@ jobs:
     name: "Trigger downstream repos"
     runs-on: ubuntu-latest
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@eb238b55efaa70779f274895e782ed17c84f2895 # v2.6.1
+        with:
+          egress-policy: audit
+          disable-telemetry: true
+
       - name: Trigger nest/nest-extension-module CI
-        uses: peter-evans/repository-dispatch@v2
+        uses: peter-evans/repository-dispatch@bf47d102fdb849e755b0b0023ea3e81a44b6f570 # v2.1.2
         with:
           token: ${{ secrets.NEST_EXTENSION_MODULE_TRIGGER_TOKEN }}
           repository: 'nest/nest-extension-module'

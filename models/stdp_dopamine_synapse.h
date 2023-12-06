@@ -393,13 +393,6 @@ template < typename targetidentifierT >
 void
 stdp_dopamine_synapse< targetidentifierT >::check_synapse_params( const DictionaryDatum& syn_spec ) const
 {
-  if ( syn_spec->known( names::volume_transmitter ) )
-  {
-    throw NotImplemented(
-      "Connect doesn't support the direct specification of the "
-      "volume transmitter of stdp_dopamine_synapse in syn_spec."
-      "Use SetDefaults() or CopyModel()." );
-  }
   // Setting of parameter c and n not thread safe.
   if ( kernel().vp_manager.get_num_threads() > 1 )
   {
@@ -416,18 +409,6 @@ stdp_dopamine_synapse< targetidentifierT >::check_synapse_params( const Dictiona
         "For multi-threading Connect doesn't support the setting "
         "of parameter n in stdp_dopamine_synapse. "
         "Use SetDefaults() or CopyModel()." );
-    }
-  }
-  std::string param_arr[] = { "A_minus", "A_plus", "Wmax", "Wmin", "b", "tau_c", "tau_n", "tau_plus" };
-
-  const size_t n_param = sizeof( param_arr ) / sizeof( std::string );
-  for ( size_t n = 0; n < n_param; ++n )
-  {
-    if ( syn_spec->known( param_arr[ n ] ) )
-    {
-      std::string msg = "Connect doesn't support the setting of parameter " + param_arr[ n ]
-        + " in stdp_dopamine_synapse. Use SetDefaults() or CopyModel().";
-      throw NotImplemented( msg );
     }
   }
 }

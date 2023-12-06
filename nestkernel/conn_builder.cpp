@@ -39,6 +39,9 @@
 #include "fdstream.h"
 #include "name.h"
 
+// Includes from C++:
+#include <algorithm>
+
 nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
@@ -1581,6 +1584,208 @@ nest::BernoulliBuilder::inner_connect_( const int tid, RngPtr rng, Node* target,
     }
 
     single_connect_( snode_id, *target, target_thread, rng );
+  }
+}
+
+
+nest::AuxiliaryBuilder::AuxiliaryBuilder( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  const DictionaryDatum& conn_spec,
+  const std::vector< DictionaryDatum >& syn_spec )
+  : ConnBuilder( sources, targets, conn_spec, syn_spec )
+{
+}
+
+void
+nest::AuxiliaryBuilder::single_connect( size_t snode_id, Node& tgt, size_t tid, RngPtr rng )
+{
+  single_connect_( snode_id, tgt, tid, rng );
+}
+
+
+nest::TripartiteBernoulliWithPoolBuilder::TripartiteBernoulliWithPoolBuilder( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  NodeCollectionPTR third,
+  const DictionaryDatum& conn_spec,
+  const std::map< Name, std::vector< DictionaryDatum > >& syn_specs )
+  : ConnBuilder( sources,
+    targets,
+    conn_spec,
+    // const_cast here seems required, clang complains otherwise; try to clean up when Datums disappear
+    const_cast< std::map< Name, std::vector< DictionaryDatum > >& >( syn_specs )[ names::primary ] )
+  , third_( third )
+  , third_in_builder_( sources,
+      third,
+      conn_spec,
+      const_cast< std::map< Name, std::vector< DictionaryDatum > >& >( syn_specs )[ names::third_in ] )
+  , third_out_builder_( third,
+      targets,
+      conn_spec,
+      const_cast< std::map< Name, std::vector< DictionaryDatum > >& >( syn_specs )[ names::third_out ] )
+  , p_primary_( 1.0 )
+  , p_third_if_primary_( 1.0 )
+  , random_pool_( true )
+  , pool_size_( third->size() )
+  , targets_per_third_( targets->size() / third->size() )
+{
+  updateValue< double >( conn_spec, names::p_primary, p_primary_ );
+  updateValue< double >( conn_spec, names::p_third_if_primary, p_third_if_primary_ );
+  updateValue< long >( conn_spec, names::pool_size, pool_size_ );
+  std::string pool_type;
+  if ( updateValue< std::string >( conn_spec, names::pool_type, pool_type ) )
+  {
+    if ( pool_type == "random" )
+    {
+      random_pool_ = true;
+    }
+    else if ( pool_type == "block" )
+    {
+      random_pool_ = false;
+    }
+    else
+    {
+      throw BadProperty( "pool_type must be 'random' or 'block'" );
+    }
+  }
+
+  if ( p_primary_ < 0 or 1 < p_primary_ )
+  {
+    throw BadProperty( "Probability of primary connection 0 ≤ p_primary ≤ 1 required" );
+  }
+
+  if ( p_third_if_primary_ < 0 or 1 < p_third_if_primary_ )
+  {
+    throw BadProperty( "Conditional probability of third-factor connection 0 ≤ p_third_if_primary ≤ 1 required" );
+  }
+
+  if ( pool_size_ < 1 or third->size() < pool_size_ )
+  {
+    throw BadProperty( "Pool size 1 ≤ pool_size ≤ size of third-factor population required" );
+  }
+
+  if ( not( random_pool_ or ( targets->size() * pool_size_ == third->size() )
+         or ( pool_size_ == 1 and targets->size() % third->size() == 0 ) ) )
+  {
+    throw BadProperty(
+      "The sizes of target and third-factor populations and the chosen pool size do not fit."
+      " If pool_size == 1, the target population size must be a multiple of the third-factor"
+      " population size. For pool_size > 1, size(targets) * pool_size == size(third factor)"
+      " is required. For all other cases, use random pools." );
+  }
+}
+
+size_t
+nest::TripartiteBernoulliWithPoolBuilder::get_first_pool_index_( const size_t target_index ) const
+{
+  if ( pool_size_ > 1 )
+  {
+    return target_index * pool_size_;
+  }
+
+  return target_index / targets_per_third_; // intentional integer division
+}
+
+void
+nest::TripartiteBernoulliWithPoolBuilder::connect_()
+{
+#pragma omp parallel
+  {
+    const size_t tid = kernel().vp_manager.get_thread_id();
+
+    try
+    {
+      /* Random number generators:
+       * - Use RNG generating same number sequence on all threads to decide which connections to create
+       * - Use per-thread random number generator to randomize connection properties
+       */
+      RngPtr synced_rng = get_vp_synced_rng( tid );
+      RngPtr rng = get_vp_specific_rng( tid );
+
+      binomial_distribution bino_dist;
+      binomial_distribution::param_type bino_param( sources_->size(), p_primary_ );
+
+      // Iterate through target neurons. For each, three steps are done:
+      // 1. draw indegree 2. select astrocyte pool 3. make connections
+      for ( const auto& target : *targets_ )
+      {
+        const size_t tnode_id = target.node_id;
+        Node* target_node = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+        const bool local_target = not target_node->is_proxy();
+
+        // step 1, draw indegree for this target
+        const auto indegree = bino_dist( synced_rng, bino_param );
+        if ( indegree == 0 )
+        {
+          continue; // no connections for this target
+        }
+
+        // step 2, build pool for target
+        std::vector< NodeIDTriple > pool;
+        pool.reserve( pool_size_ );
+        if ( random_pool_ )
+        {
+          synced_rng->sample( third_->begin(), third_->end(), std::back_inserter( pool ), pool_size_ );
+        }
+        else
+        {
+          std::copy_n( third_->begin() + get_first_pool_index_( target.lid ), pool_size_, std::back_inserter( pool ) );
+        }
+
+        // step 3, iterate through indegree to make connections for this target
+        //   - by construction, we cannot get multapses
+        //   - if the target is also among sources, it can be drawn at most once;
+        //     we ignore it then connecting if no autapses are wanted
+        std::vector< NodeIDTriple > sources_to_connect_;
+        sources_to_connect_.reserve( indegree );
+        synced_rng->sample( sources_->begin(), sources_->end(), std::back_inserter( sources_to_connect_ ), indegree );
+
+        for ( const auto source : sources_to_connect_ )
+        {
+          const auto snode_id = source.node_id;
+          if ( not allow_autapses_ and snode_id == tnode_id )
+          {
+            continue;
+          }
+
+          if ( local_target )
+          {
+            // plain connect now with thread-local rng for randomized parameters
+            single_connect_( snode_id, *target_node, tid, rng );
+          }
+
+          // conditionally connect third factor
+          if ( not( synced_rng->drand() < p_third_if_primary_ ) )
+          {
+            continue;
+          }
+
+          // select third-factor neuron randomly from pool for this target
+          const auto third_index = pool_size_ == 1 ? 0 : synced_rng->ulrand( pool_size_ );
+          const auto third_node_id = pool[ third_index ].node_id;
+          Node* third_node = kernel().node_manager.get_node_or_proxy( third_node_id, tid );
+          const bool local_third_node = not third_node->is_proxy();
+
+          if ( local_third_node )
+          {
+            // route via auxiliary builder who handles parameters
+            third_in_builder_.single_connect( snode_id, *third_node, tid, rng );
+          }
+
+          // connection third-factor node to target if local
+          if ( local_target )
+          {
+            // route via auxiliary builder who handles parameters
+            third_out_builder_.single_connect( third_node_id, *target_node, tid, rng );
+          }
+        }
+      }
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
   }
 }
 

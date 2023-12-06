@@ -275,7 +275,6 @@ private:
   }; // Variables
 
   /**
-   * @defgroup iaf_psc_exp_multisynapse_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.

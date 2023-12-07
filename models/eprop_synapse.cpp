@@ -60,7 +60,9 @@ EpropCommonProperties::get_status( DictionaryDatum& d ) const
   CommonSynapseProperties::get_status( d );
   def< bool >( d, names::average_gradient, average_gradient_ );
   def< std::string >( d, names::optimizer, optimizer_cp_->get_name() );
-  optimizer_cp_->get_status( d );
+  DictionaryDatum optimizer_status = new Dictionary;
+  optimizer_cp_->get_status( optimizer_status );
+  ( *d )[ names::optimizer_status ] = optimizer_status;
 }
 
 template <>
@@ -110,7 +112,7 @@ EpropCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm 
   }
 
   // We can now set the defaults on the new optimizer common props
-  optimizer_cp_->set_status( d );
+  // optimizer_cp_->set_status( d[ names::optimizer_status ] );
 }
 
 } // namespace nest

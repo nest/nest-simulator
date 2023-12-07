@@ -94,6 +94,9 @@ public:
   EpropOptimizer& operator=( const EpropOptimizer& ) = delete;
   virtual EpropOptimizer* clone() const = 0;
 
+  virtual void get_status( DictionaryDatum& d ) const;
+  virtual void set_status( const DictionaryDatum& d );
+
   //! Return optimized weight based on current weight
   double optimized_weight( const EpropOptimizerCommonProperties& cp,
     const size_t idx_current_update,
@@ -146,6 +149,9 @@ public:
   EpropOptimizerAdam( const EpropOptimizerAdam& ) = default;
   EpropOptimizerAdam& operator=( const EpropOptimizerAdam& ) = delete;
   EpropOptimizer* clone() const override;
+
+  void get_status( DictionaryDatum& d ) const override;
+  void set_status( const DictionaryDatum& d ) override;
 
 private:
   //! Return optimized weight based on current weight

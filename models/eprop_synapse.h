@@ -404,7 +404,7 @@ template < typename targetidentifierT >
 inline void
 eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCommonProperties& cp )
 {
-  EpropArchivingNode* target = dynamic_cast< EpropArchivingNode* >( get_target( thread ) );
+  Node* target = get_target( thread );
   assert( target );
 
   const long t_spike = e.get_stamp().get_steps();

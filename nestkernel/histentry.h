@@ -84,13 +84,21 @@ operator<( const HistEntryEprop& he, long t )
   return ( he.t_ ) < t;
 }
 
-class HistEntryEpropArchive : public HistEntryEprop
+class HistEntryEpropRecurrent : public HistEntryEprop
 {
 public:
-  HistEntryEpropArchive( long t, double surrogate_gradient, double learning_signal );
+  HistEntryEpropRecurrent( long t, double surrogate_gradient, double learning_signal );
 
   double surrogate_gradient_;
   double learning_signal_;
+};
+
+class HistEntryEpropReadout : public HistEntryEprop
+{
+public:
+  HistEntryEpropReadout( double t, double error_signal );
+
+  double error_signal_;
 };
 
 class HistEntryEpropUpdate : public HistEntryEprop

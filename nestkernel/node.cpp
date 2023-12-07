@@ -222,6 +222,18 @@ Node::register_eprop_connection()
   throw IllegalConnection( "The target node does not support eprop synapses." );
 }
 
+long
+Node::get_shift() const
+{
+  throw IllegalConnection( "The target node is not an e-prop neuron." );
+}
+
+void
+Node::write_update_to_history( const long t_previous_update, const long t_current_update )
+{
+  throw IllegalConnection( "The target node is not an e-prop neuron." );
+}
+
 /**
  * Default implementation of event handlers just throws
  * an UnexpectedEvent exception.

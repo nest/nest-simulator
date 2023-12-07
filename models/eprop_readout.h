@@ -26,6 +26,7 @@
 // nestkernel
 #include "connection.h"
 #include "eprop_archiving_node.h"
+#include "eprop_archiving_node_impl.h"
 #include "event.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
@@ -134,7 +135,7 @@ EndUserDocs */
 
 void register_eprop_readout( const std::string& name );
 
-class eprop_readout : public EpropArchivingNode
+class eprop_readout : public EpropArchivingNodeReadout
 {
 
 public:

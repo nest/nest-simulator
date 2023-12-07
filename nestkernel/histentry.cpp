@@ -42,10 +42,16 @@ nest::HistEntryEprop::HistEntryEprop( long t )
 {
 }
 
-nest::HistEntryEpropArchive::HistEntryEpropArchive( long t, double surrogate_gradient, double learning_signal )
+nest::HistEntryEpropRecurrent::HistEntryEpropRecurrent( long t, double surrogate_gradient, double learning_signal )
   : HistEntryEprop( t )
   , surrogate_gradient_( surrogate_gradient )
   , learning_signal_( learning_signal )
+{
+}
+
+nest::HistEntryEpropReadout::HistEntryEpropReadout( double t, double error_signal )
+  : HistEntryEprop( t )
+  , error_signal_( error_signal )
 {
 }
 

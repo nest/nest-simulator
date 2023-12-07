@@ -26,6 +26,7 @@
 // nestkernel
 #include "connection.h"
 #include "eprop_archiving_node.h"
+#include "eprop_archiving_node_impl.h"
 #include "event.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
@@ -185,7 +186,7 @@ EndUserDocs */
 
 void register_eprop_iaf_psc_delta_adapt( const std::string& name );
 
-class eprop_iaf_psc_delta_adapt : public EpropArchivingNode
+class eprop_iaf_psc_delta_adapt : public EpropArchivingNodeRecurrent
 {
 
 public:

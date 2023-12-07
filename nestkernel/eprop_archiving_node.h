@@ -42,11 +42,12 @@
 namespace nest
 {
 
+template < typename HistEntryT >
 class EpropArchivingNode : public Node
 {
 
 public:
-  //! Defautl constructor.
+  //! Default constructor.
   EpropArchivingNode();
 
   //! Copy constructor.
@@ -56,35 +57,14 @@ public:
   void register_eprop_connection() override;
 
   //! Register current update in the update history and deregister previous update.
-  void write_update_to_history( const long t_previous_update, const long t_current_update );
+  void write_update_to_history( const long t_previous_update, const long t_current_update ) override;
 
-  //! Create an entry in the eprop history for the given time step and surrogate gradient.
-  void write_surrogate_gradient_to_history( const long time_step, const double surrogate_gradient );
-
-  //! Create an entry in the eprop history for the given time step and error signal.
-  void write_error_signal_to_history( const long time_step, const double error_signal );
-
-  //! Add learning signal to the eprop history entry of the given time step.
-  void write_learning_signal_to_history( const long time_step, const double learning_signal );
-
-  //! Create an entry in the firing rate regularization history for the current update.
-  void write_firing_rate_reg_to_history( const long t_current_update, const double f_target, const double c_reg );
-
-
-  //! Get the number of time steps by which the eprop history is shifted to synchronize its factors.
-  virtual long get_shift() const;
 
   //! Get an iterator pointing to the update history entry of the given time step.
   std::vector< HistEntryEpropUpdate >::iterator get_update_history( const long time_step );
 
   //! Get an iterator pointing to the eprop history entry of the given time step.
-  std::vector< HistEntryEpropArchive >::iterator get_eprop_history( const long time_step );
-
-  //! Get an iterator pointing to the firing rate regularization history of the given time step.
-  std::vector< HistEntryEpropFiringRateReg >::iterator get_firing_rate_reg_history( const long time_step );
-  //! Return learning signal from history for given time step or zero if time step not in history
-  double get_learning_signal( const long time_step );
-
+  typename std::vector< HistEntryT >::iterator get_eprop_history( const long time_step );
 
   //! Erase no longer needed parts of the update history.
   void erase_unneeded_update_history();
@@ -92,32 +72,15 @@ public:
   //! Erase no longer needed parts of the eprop history.
   void erase_unneeded_eprop_history();
 
-  //! Erase no longer needed parts of the firing rate regularization history.
-  void erase_unneeded_firing_rate_reg_history();
-
-
-  //! Count emitted spike for the firing rate regularization.
-  void count_spike();
-
-  //! Reset spike count for the firing rate regularization.
-  void reset_spike_count();
-
-private:
-  //! Count of the emitted spikes for the firing rate regularization.
-  size_t n_spikes_;
-
+protected:
   //!< number of incoming eprop synapses
   size_t eprop_indegree_;
 
   //! History of updates still needed by at least one synapse.
   std::vector< HistEntryEpropUpdate > update_history_;
 
-  //! History of the firing rate regularization.
-  std::vector< HistEntryEpropFiringRateReg > firing_rate_reg_history_;
-
-protected:
   //! History of dynamic variables needed for e-prop plasticity.
-  std::vector< HistEntryEpropArchive > eprop_history_;
+  std::vector< HistEntryT > eprop_history_;
 
   // The following shifts are, for now, hardcoded to 1 time step since the current
   // implementation only works if all the delays are equal to the simulation resolution.
@@ -138,17 +101,74 @@ protected:
   const long delay_out_rec_ = 1;
 };
 
+class EpropArchivingNodeRecurrent : public EpropArchivingNode< HistEntryEpropRecurrent >
+{
+
+public:
+  //! Default constructor.
+  EpropArchivingNodeRecurrent();
+
+  //! Copy constructor.
+  EpropArchivingNodeRecurrent( const EpropArchivingNodeRecurrent& );
+
+  //! Create an entry in the eprop history for the given time step and surrogate gradient.
+  void write_surrogate_gradient_to_history( const long time_step, const double surrogate_gradient );
+
+  //! Add learning signal to the eprop history entry of the given time step.
+  void write_learning_signal_to_history( const long time_step, const double learning_signal );
+
+  //! Create an entry in the firing rate regularization history for the current update.
+  void write_firing_rate_reg_to_history( const long t_current_update, const double f_target, const double c_reg );
+
+  //! Get an iterator pointing to the firing rate regularization history of the given time step.
+  std::vector< HistEntryEpropFiringRateReg >::iterator get_firing_rate_reg_history( const long time_step );
+
+  //! Return learning signal from history for given time step or zero if time step not in history
+  double get_learning_signal( const long time_step );
+
+  //! Erase no longer needed parts of the firing rate regularization history.
+  void erase_unneeded_firing_rate_reg_history();
+
+  //! Count emitted spike for the firing rate regularization.
+  void count_spike();
+
+  //! Reset spike count for the firing rate regularization.
+  void reset_spike_count();
+
+
+private:
+  //! Count of the emitted spikes for the firing rate regularization.
+  size_t n_spikes_;
+
+
+  //! History of the firing rate regularization.
+  std::vector< HistEntryEpropFiringRateReg > firing_rate_reg_history_;
+};
+
 inline void
-EpropArchivingNode::count_spike()
+EpropArchivingNodeRecurrent::count_spike()
 {
   ++n_spikes_;
 }
 
 inline void
-EpropArchivingNode::reset_spike_count()
+EpropArchivingNodeRecurrent::reset_spike_count()
 {
   n_spikes_ = 0;
 }
+
+class EpropArchivingNodeReadout : public EpropArchivingNode< HistEntryEpropReadout >
+{
+public:
+  //! Default constructor.
+  EpropArchivingNodeReadout();
+
+  //! Copy constructor.
+  EpropArchivingNodeReadout( const EpropArchivingNodeReadout& );
+
+  //! Create an entry in the eprop history for the given time step and error signal.
+  void write_error_signal_to_history( const long time_step, const double error_signal );
+};
 
 } // namespace nest
 

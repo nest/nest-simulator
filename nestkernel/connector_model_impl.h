@@ -206,7 +206,7 @@ template < typename ConnectionT >
 size_t
 GenericConnectorModel< ConnectionT >::get_syn_id() const
 {
-  default_connection_.get_syn_id();
+  return default_connection_.get_syn_id();
 }
 
 template < typename ConnectionT >

@@ -1598,7 +1598,6 @@ nest::PoissonBuilder::PoissonBuilder( NodeCollectionPTR sources,
   if ( pd )
   {
     pairwise_avg_num_conns_ = *pd;
-    // TODO: Checks of parameter range
   }
   else
   {

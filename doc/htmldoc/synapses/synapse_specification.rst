@@ -1,7 +1,7 @@
 .. _synapse_spec:
 
 Synapse specification
-========================
+=====================
 
 This page is about parameterizing synapses. See :ref:`connectivity_concept` for specifying connections, :ref:`connection_generator` for generation of connectivity and :ref:`handling_connections` for inspecting and modifying ``SynapseCollections``.
 
@@ -41,7 +41,7 @@ as long as they are supported by the chosen connection rule.
 .. _scalar_params:
 
 Scalar parameters
-~~~~~~~~~~~~~~~~~
+-----------------
 
 Scalar parameters must be given with the correct type. The ``weight``
 for instance must be a float, while the ``receptor_type`` has to be of
@@ -61,7 +61,7 @@ will be applied to all connections created in the current
 .. _array_params:
 
 Array parameters
-~~~~~~~~~~~~~~~~
+----------------
 
 Array parameters can be used with the rules ``one_to_one``, ``all_to_all``,
 ``fixed_total_number``, ``fixed_indegree``, and ``fixed_outdegree``.
@@ -71,7 +71,7 @@ lists. As with the scalar parameters, all parameters have to be
 specified as arrays of the correct type.
 
 One-to-one
-^^^^^^^^^^
+~~~~~~~~~~
 
 For rule :ref:`one_to_one` the array must have the same length as there
 are nodes in ``A`` and ``B``.
@@ -85,7 +85,7 @@ are nodes in ``A`` and ``B``.
     nest.Connect(A, B, conn_spec_dict, syn_spec_dict)
 
 All-to-all
-^^^^^^^^^^
+~~~~~~~~~~
 
 When connecting with rule :ref:`all_to_all`, the array parameter must
 have dimension `len(B) x len(A)`.
@@ -98,7 +98,7 @@ have dimension `len(B) x len(A)`.
     nest.Connect(A, B, syn_spec=syn_spec_dict)
 
 Random, fixed total number
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For rule :ref:`fixed_total_number`, the array has to be same the length as the
 number of connections ``N``.
@@ -112,7 +112,7 @@ number of connections ``N``.
     nest.Connect(A, B, conn_spec_dict, syn_spec_dict)
 
 Random, fixed in-degree
-^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~
 
 For rule :ref:`fixed_indegree` the array has to be a two-dimensional
 NumPy array or Python list with shape ``(len(B), indegree)``, where
@@ -130,7 +130,7 @@ of the identity of the source neurons.
     nest.Connect(A, B, conn_spec_dict, syn_spec_dict)
 
 Random, fixed out-degree
-^^^^^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 For rule :ref:`fixed_outdegree` the array has to be a two-dimensional
 NumPy array or Python list with shape ``(len(A), outdegree)``, where
@@ -150,7 +150,7 @@ regardless of the identity of the target neuron.
 .. _dist_params:
 
 Expressions as parameters
-~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------
 
 ``nest.Parameter`` objects support a flexible specification of synapse
 parameters through expressions.  This includes parameters drawn from random
@@ -215,7 +215,7 @@ For further information on the available distributions see
 .. _collocated_synapses:
 
 Collocated synapses
-~~~~~~~~~~~~~~~~~~~
+-------------------
 
 Some modeling applications require multiple connections between the
 same pairs of nodes. An example of this could be a network, where each
@@ -716,4 +716,3 @@ using the dot-notation:
 Note that some parameters like ``source`` and ``target`` are read-only and
 cannot be set. The documentation of a specific synapse model will
 point out which parameters can be set and which are read-only.
-

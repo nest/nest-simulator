@@ -43,7 +43,8 @@ See connectivity documentation:
 
 Connectivity concepts
 ---------------------
-The documentation on :ref:`connection_management` now serves as a living reference for the connection rules defined in the article "Connectivity concepts in neuronal network modeling" [1]_.
+
+The documentation on :ref:`connectivity_concept` now serves as a living reference for the connection rules defined in the article "Connectivity concepts in neuronal network modeling" [1]_.
 
 References
 ----------

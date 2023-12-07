@@ -52,7 +52,7 @@ EpropArchivingNodeRecurrent::write_surrogate_gradient_to_history( const long tim
     return;
   }
 
-  eprop_history_.push_back( HistEntryEpropRecurrent( time_step, surrogate_gradient, 0.0 ) );
+  eprop_history_.emplace_back( time_step, surrogate_gradient, 0.0 );
 }
 
 void
@@ -97,7 +97,7 @@ EpropArchivingNodeRecurrent::write_firing_rate_reg_to_history( const long t_curr
   const double f_target_ = f_target * dt; // convert from spikes/ms to spikes/step
   const double firing_rate_reg = c_reg * ( f_av - f_target_ ) / update_interval;
 
-  firing_rate_reg_history_.push_back( HistEntryEpropFiringRateReg( t_current_update + shift, firing_rate_reg ) );
+  firing_rate_reg_history_.emplace_back( t_current_update + shift, firing_rate_reg );
 }
 
 std::vector< HistEntryEpropFiringRateReg >::iterator
@@ -162,7 +162,7 @@ EpropArchivingNodeReadout::write_error_signal_to_history( const long time_step, 
 
   const long shift = delay_out_norm_;
 
-  eprop_history_.push_back( HistEntryEpropReadout( time_step - shift, error_signal ) );
+  eprop_history_.emplace_back( time_step - shift, error_signal );
 }
 
 

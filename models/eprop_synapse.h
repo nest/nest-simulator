@@ -422,7 +422,7 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
     presyn_isis_.push_back( t - t_previous_spike_ );
   }
 
-  if ( t_spike >= t_next_update_ + shift )
+  if ( t_spike > t_next_update_ + shift )
   {
     const long idx_current_update = ( t_spike - shift ) / update_interval;
     const long t_current_update = idx_current_update * update_interval;

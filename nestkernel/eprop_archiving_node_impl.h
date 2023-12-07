@@ -1,5 +1,5 @@
 /*
- *  eprop_archiving_node.h
+ *  eprop_archiving_node_impl.h
  *
  *  This file is part of NEST.
  *

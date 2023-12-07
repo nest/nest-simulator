@@ -46,8 +46,7 @@ To use 'docker-compose' you need the definition file from the git repository. Do
 
 .. code-block:: bash
 
-    wget https://raw.githubusercontent.com/steffengraber/nest-docker/<TAG>/docker-compose.yml
-
+    wget https://raw.githubusercontent.com/nest/nest-docker/master/docker-compose.yml
 
 You can then run ``docker-compose up`` with one of the following options:
 

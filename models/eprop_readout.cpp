@@ -167,7 +167,7 @@ eprop_readout::State_::set( const DictionaryDatum& d, const Parameters_& p, doub
  * ---------------------------------------------------------------- */
 
 eprop_readout::eprop_readout()
-  : EpropArchivingNode()
+  : EpropArchivingNodeReadout()
   , P_()
   , S_()
   , B_( *this )
@@ -176,7 +176,7 @@ eprop_readout::eprop_readout()
 }
 
 eprop_readout::eprop_readout( const eprop_readout& n )
-  : EpropArchivingNode( n )
+  : EpropArchivingNodeReadout( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -225,6 +225,12 @@ long
 eprop_readout::get_shift() const
 {
   return offset_gen_ + delay_in_rec_ + delay_rec_out_;
+}
+
+bool
+eprop_readout::is_eprop_recurrent_node() const
+{
+  return false;
 }
 
 /* ----------------------------------------------------------------
@@ -401,7 +407,7 @@ eprop_readout::gradient_change( std::vector< long >& presyn_isis,
     {
       assert( eprop_hist_it != eprop_history_.end() );
 
-      L = eprop_hist_it->learning_signal_;
+      L = eprop_hist_it->error_signal_;
 
       z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
       grad += L * z_bar;

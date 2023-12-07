@@ -489,6 +489,28 @@ public:
   virtual void register_eprop_connection();
 
   /**
+   * Get shift.
+   *
+   * @throws IllegalConnection
+   */
+  virtual long get_shift() const;
+
+  /**
+   * Register current update in the update history and deregister previous update.
+   *
+   * @throws IllegalConnection
+   */
+  virtual void write_update_to_history( const long t_previous_update, const long t_current_update );
+
+  /**
+   * Return if is an e-prop recurrent node.
+   *
+   * @throws IllegalConnection
+   */
+  virtual bool is_eprop_recurrent_node() const;
+
+
+  /**
    * Handle incoming spike events.
    *
    * @param thrd Id of the calling thread.

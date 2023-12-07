@@ -244,7 +244,7 @@ eprop_iaf_psc_delta_adapt::State_::set( const DictionaryDatum& d, const Paramete
  * ---------------------------------------------------------------- */
 
 eprop_iaf_psc_delta_adapt::eprop_iaf_psc_delta_adapt()
-  : EpropArchivingNode()
+  : EpropArchivingNodeRecurrent()
   , P_()
   , S_()
   , B_( *this )
@@ -253,7 +253,7 @@ eprop_iaf_psc_delta_adapt::eprop_iaf_psc_delta_adapt()
 }
 
 eprop_iaf_psc_delta_adapt::eprop_iaf_psc_delta_adapt( const eprop_iaf_psc_delta_adapt& n )
-  : EpropArchivingNode( n )
+  : EpropArchivingNodeRecurrent( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -309,6 +309,12 @@ long
 eprop_iaf_psc_delta_adapt::get_shift() const
 {
   return offset_gen_ + delay_in_rec_;
+}
+
+bool
+eprop_iaf_psc_delta_adapt::is_eprop_recurrent_node() const
+{
+  return true;
 }
 
 /* ----------------------------------------------------------------

@@ -22,6 +22,7 @@
 
 // nestkernel
 #include "eprop_archiving_node.h"
+#include "eprop_archiving_node_impl.h"
 #include "kernel_manager.h"
 
 // sli
@@ -30,95 +31,32 @@
 namespace nest
 {
 
-EpropArchivingNode::EpropArchivingNode()
-  : Node()
+EpropArchivingNodeRecurrent::EpropArchivingNodeRecurrent()
+  : EpropArchivingNode()
   , n_spikes_( 0 )
-  , eprop_indegree_( 0 )
 {
 }
 
-EpropArchivingNode::EpropArchivingNode( const EpropArchivingNode& n )
-  : Node( n )
+EpropArchivingNodeRecurrent::EpropArchivingNodeRecurrent( const EpropArchivingNodeRecurrent& n )
+  : EpropArchivingNode( n )
   , n_spikes_( n.n_spikes_ )
-  , eprop_indegree_( n.eprop_indegree_ )
 {
 }
 
 void
-EpropArchivingNode::register_eprop_connection()
-{
-  ++eprop_indegree_;
-
-  const long shift = get_shift();
-
-  const auto it_hist = get_update_history( shift );
-
-  if ( it_hist == update_history_.end() or it_hist->t_ != shift )
-  {
-    update_history_.insert( it_hist, HistEntryEpropUpdate( shift, 1 ) );
-  }
-  else
-  {
-    ++it_hist->access_counter_;
-  }
-}
-
-void
-EpropArchivingNode::write_update_to_history( const long t_previous_update, const long t_current_update )
+EpropArchivingNodeRecurrent::write_surrogate_gradient_to_history( const long time_step,
+  const double surrogate_gradient )
 {
   if ( eprop_indegree_ == 0 )
   {
     return;
   }
 
-  const long shift = get_shift();
-
-  const auto it_hist_curr = get_update_history( t_current_update + shift );
-
-  if ( it_hist_curr != update_history_.end() and it_hist_curr->t_ == t_current_update + shift )
-  {
-    ++it_hist_curr->access_counter_;
-  }
-  else
-  {
-    update_history_.insert( it_hist_curr, HistEntryEpropUpdate( t_current_update + shift, 1 ) );
-  }
-
-  const auto it_hist_prev = get_update_history( t_previous_update + shift );
-
-  if ( it_hist_prev != update_history_.end() and it_hist_prev->t_ == t_previous_update + shift )
-  {
-    // If an entry exists for the previous update time, decrement its access counter
-    --it_hist_prev->access_counter_;
-  }
+  eprop_history_.emplace_back( time_step, surrogate_gradient, 0.0 );
 }
 
 void
-EpropArchivingNode::write_surrogate_gradient_to_history( const long time_step, const double surrogate_gradient )
-{
-  if ( eprop_indegree_ == 0 )
-  {
-    return;
-  }
-
-  eprop_history_.push_back( HistEntryEpropArchive( time_step, surrogate_gradient, 0.0 ) );
-}
-
-void
-EpropArchivingNode::write_error_signal_to_history( const long time_step, const double error_signal )
-{
-  if ( eprop_indegree_ == 0 )
-  {
-    return;
-  }
-
-  const long shift = delay_out_norm_;
-
-  eprop_history_.push_back( HistEntryEpropArchive( time_step - shift, 0.0, error_signal ) );
-}
-
-void
-EpropArchivingNode::write_learning_signal_to_history( const long time_step, const double learning_signal )
+EpropArchivingNodeRecurrent::write_learning_signal_to_history( const long time_step, const double learning_signal )
 {
   if ( eprop_indegree_ == 0 )
   {
@@ -142,7 +80,7 @@ EpropArchivingNode::write_learning_signal_to_history( const long time_step, cons
 }
 
 void
-EpropArchivingNode::write_firing_rate_reg_to_history( const long t_current_update,
+EpropArchivingNodeRecurrent::write_firing_rate_reg_to_history( const long t_current_update,
   const double f_target,
   const double c_reg )
 {
@@ -159,29 +97,11 @@ EpropArchivingNode::write_firing_rate_reg_to_history( const long t_current_updat
   const double f_target_ = f_target * dt; // convert from spikes/ms to spikes/step
   const double firing_rate_reg = c_reg * ( f_av - f_target_ ) / update_interval;
 
-  firing_rate_reg_history_.push_back( HistEntryEpropFiringRateReg( t_current_update + shift, firing_rate_reg ) );
-}
-
-long
-EpropArchivingNode::get_shift() const
-{
-  return 0;
-}
-
-std::vector< HistEntryEpropUpdate >::iterator
-EpropArchivingNode::get_update_history( const long time_step )
-{
-  return std::lower_bound( update_history_.begin(), update_history_.end(), time_step );
-}
-
-std::vector< HistEntryEpropArchive >::iterator
-EpropArchivingNode::get_eprop_history( const long time_step )
-{
-  return std::lower_bound( eprop_history_.begin(), eprop_history_.end(), time_step );
+  firing_rate_reg_history_.emplace_back( t_current_update + shift, firing_rate_reg );
 }
 
 std::vector< HistEntryEpropFiringRateReg >::iterator
-EpropArchivingNode::get_firing_rate_reg_history( const long time_step )
+EpropArchivingNodeRecurrent::get_firing_rate_reg_history( const long time_step )
 {
   const auto lb = std::lower_bound( firing_rate_reg_history_.begin(), firing_rate_reg_history_.end(), time_step );
   assert( lb != firing_rate_reg_history_.end() );
@@ -190,7 +110,7 @@ EpropArchivingNode::get_firing_rate_reg_history( const long time_step )
 }
 
 double
-EpropArchivingNode::get_learning_signal( const long time_step )
+EpropArchivingNodeRecurrent::get_learning_signal( const long time_step )
 {
   const long shift = delay_rec_out_ + delay_out_norm_ + delay_out_rec_;
 
@@ -206,59 +126,7 @@ EpropArchivingNode::get_learning_signal( const long time_step )
 }
 
 void
-EpropArchivingNode::erase_unneeded_update_history()
-{
-  auto it_hist = update_history_.begin();
-  while ( it_hist != update_history_.end() )
-  {
-    if ( it_hist->access_counter_ == 0 )
-    {
-      // erase() invalidates the iterator, but returns a new, valid iterator
-      it_hist = update_history_.erase( it_hist );
-    }
-    else
-    {
-      ++it_hist;
-    }
-  }
-}
-
-void
-EpropArchivingNode::erase_unneeded_eprop_history()
-{
-  if ( eprop_history_.empty()  // nothing to remove
-    or update_history_.empty() // no time markers to check
-  )
-  {
-    return;
-  }
-
-  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
-
-  auto it_update_hist = update_history_.begin();
-
-  for ( long t = update_history_.begin()->t_;
-        t <= ( update_history_.end() - 1 )->t_ and it_update_hist != update_history_.end();
-        t += update_interval )
-  {
-    if ( it_update_hist->t_ == t )
-    {
-      ++it_update_hist;
-    }
-    else
-    {
-      const auto it_eprop_hist_from = get_eprop_history( t );
-      const auto it_eprop_hist_to = get_eprop_history( t + update_interval );
-      eprop_history_.erase( it_eprop_hist_from, it_eprop_hist_to ); // erase found entries since no longer used
-    }
-  }
-  const auto it_eprop_hist_from = get_eprop_history( 0 );
-  const auto it_eprop_hist_to = get_eprop_history( update_history_.begin()->t_ );
-  eprop_history_.erase( it_eprop_hist_from, it_eprop_hist_to ); // erase found entries since no longer used
-}
-
-void
-EpropArchivingNode::erase_unneeded_firing_rate_reg_history()
+EpropArchivingNodeRecurrent::erase_unneeded_firing_rate_reg_history()
 {
   auto it_update_hist = update_history_.begin();
   auto it_reg_hist = firing_rate_reg_history_.begin();
@@ -276,5 +144,29 @@ EpropArchivingNode::erase_unneeded_firing_rate_reg_history()
     ++it_update_hist;
   }
 }
+
+EpropArchivingNodeReadout::EpropArchivingNodeReadout()
+  : EpropArchivingNode()
+{
+}
+
+EpropArchivingNodeReadout::EpropArchivingNodeReadout( const EpropArchivingNodeReadout& n )
+  : EpropArchivingNode( n )
+{
+}
+
+void
+EpropArchivingNodeReadout::write_error_signal_to_history( const long time_step, const double error_signal )
+{
+  if ( eprop_indegree_ == 0 )
+  {
+    return;
+  }
+
+  const long shift = delay_out_norm_;
+
+  eprop_history_.emplace_back( time_step - shift, error_signal );
+}
+
 
 } // namespace nest

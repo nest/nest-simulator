@@ -312,13 +312,6 @@ public:
       throw KernelException( "eprop synapses currently require a delay of one simulation step" );
     }
 
-    const bool is_source_recurrent_neuron =
-      s.get_name() == "eprop_iaf_psc_delta" or s.get_name() == "eprop_iaf_psc_delta_adapt";
-    const bool is_target_recurrent_neuron =
-      t.get_name() == "eprop_iaf_psc_delta" or t.get_name() == "eprop_iaf_psc_delta_adapt";
-
-    is_recurrent_to_recurrent_conn_ = is_source_recurrent_neuron and is_target_recurrent_neuron;
-
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
@@ -413,7 +406,7 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
 
   const long interval_step = ( t_spike - shift ) % update_interval;
 
-  if ( is_recurrent_to_recurrent_conn_ and interval_step == 0 )
+  if ( target->is_eprop_recurrent_node() and interval_step == 0 )
   {
     return;
   }

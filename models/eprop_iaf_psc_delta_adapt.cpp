@@ -311,6 +311,12 @@ eprop_iaf_psc_delta_adapt::get_shift() const
   return offset_gen_ + delay_in_rec_;
 }
 
+bool
+eprop_iaf_psc_delta_adapt::is_eprop_recurrent_node() const
+{
+  return true;
+}
+
 /* ----------------------------------------------------------------
  * Update function
  * ---------------------------------------------------------------- */

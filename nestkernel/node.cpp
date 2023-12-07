@@ -234,6 +234,12 @@ Node::write_update_to_history( const long t_previous_update, const long t_curren
   throw IllegalConnection( "The target node is not an e-prop neuron." );
 }
 
+bool
+Node::is_eprop_recurrent_node() const
+{
+  throw IllegalConnection( "The target node is not an e-prop neuron." );
+}
+
 /**
  * Default implementation of event handlers just throws
  * an UnexpectedEvent exception.

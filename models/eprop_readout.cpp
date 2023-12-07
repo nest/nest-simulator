@@ -227,6 +227,12 @@ eprop_readout::get_shift() const
   return offset_gen_ + delay_in_rec_ + delay_rec_out_;
 }
 
+bool
+eprop_readout::is_eprop_recurrent_node() const
+{
+  return false;
+}
+
 /* ----------------------------------------------------------------
  * Update function
  * ---------------------------------------------------------------- */

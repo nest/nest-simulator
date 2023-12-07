@@ -502,6 +502,13 @@ public:
    */
   virtual void write_update_to_history( const long t_previous_update, const long t_current_update );
 
+  /**
+   * Return if is an e-prop recurrent node.
+   *
+   * @throws IllegalConnection
+   */
+  virtual bool is_eprop_recurrent_node() const;
+
 
   /**
    * Handle incoming spike events.

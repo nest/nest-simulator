@@ -1317,7 +1317,7 @@ The following table presents some query functions provided by NEST.
 +---------------------------------+-----------------------------------------------------+
 | ``nest.GetConnections()``       | Retrieve connections (all or for a given            |
 |                                 | source or target); see also                         |
-|                                 | http://www.nest-simulator.org/connection_management.|
+|                                 | :ref:`connectivity_concept`.                        |
 +---------------------------------+-----------------------------------------------------+
 | ``nest.GetNodes()``             | Returns a NodeCollection of all elements with given |
 |                                 | properties.                                         |

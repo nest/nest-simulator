@@ -3,56 +3,48 @@
 Connectivity concept
 =====================
 
-.. grid:: 8
+.. grid:: 2 2 7 7
     :gutter: 0
 
-    .. grid-item-card:: Autapse
-		:link: autapse_multapse
-		:link-type: ref
+    .. grid-item-card:: Autapse and multapse
+		  :link: autapse_multapse
+		  :link-type: ref
+		  :img-top: ../static/img/Autapse_multapse_v.png
 
-		.. image:: ../static/img/Autapse.png
-
-    .. grid-item-card:: Multapse
-		:link: autapse_multapse
-		:link-type: ref
-		
-		.. image:: ../static/img/Multapse.png
 
     .. grid-item-card:: One to one
-		:link: one_to_one
-		:link-type: ref
+		  :link: one_to_one
+		  :link-type: ref
+		  :img-top: ../static/img/One_to_one.png
 
-		.. image:: ../static/img/One_to_one.png
 
     .. grid-item-card:: All to all
-		:link: all_to_all
-		:link-type: ref
-
-		.. image:: ../static/img/All_to_all.png
+		  :link: all_to_all
+		  :link-type: ref
+		  :img-top: ../static/img/All_to_all.png
 
     .. grid-item-card:: Pairwise Bernoulli
-		:link: pairwise_bernoulli
-		:link-type: ref
+		  :link: pairwise_bernoulli
+		  :link-type: ref
+		  :img-top: ../static/img/Pairwise_bernoulli.png
 
-		.. image:: ../static/img/Pairwise_bernoulli.png
 
     .. grid-item-card:: Fixed total number
-		:link: fixed_total_number
-		:link-type: ref
+		  :link: fixed_total_number
+		  :link-type: ref
+		  :img-top: ../static/img/Fixed_total_number.png
 
-		.. image:: ../static/img/Fixed_total_number.png
 
     .. grid-item-card:: Fixed in-degree
-		:link: fixed_indegree
-		:link-type: ref
+		  :link: fixed_indegree
+		  :link-type: ref
+		  :img-top: ../static/img/Fixed_indegree.png
 
-		.. image:: ../static/img/Fixed_indegree.png
 
     .. grid-item-card:: Fixed out-degree
-		:link: fixed_outdegree
-		:link-type: ref
-
-		.. image:: ../static/img/Fixed_outdegree.png
+		  :link: fixed_outdegree
+		  :link-type: ref
+		  :img-top: ../static/img/Fixed_outdegree.png
 
 .. rst-class:: center
 
@@ -109,7 +101,7 @@ Have a look at the section :ref:`handling_connections` to get more tips on how t
 Connection rules
 ----------------
 
-Here we elaborate on the connectivity concepts with details on :ref:`autapse_multapse`, :ref:`deterministic_rules`, :ref:`probabilistic_rules`, and the :ref:`conn_builder_conngen` (a method to create connections via CSA, the Connection Set Algebra [2]_).
+Here we elaborate on the connectivity concepts with details on :ref:`autapse_multapse`, :ref:`deterministic_rules`, :ref:`probabilistic_rules`, and the :ref:`connection_generator` (a method to create connections via CSA, the Connection Set Algebra [2]_).
 Finally, we introduce the rule :ref:`tripartite_connectivity` for third-party connections in addition to primary connections between ``pre`` and ``post``.
 Each primary rule is described with an illustration, a NEST code example, and mathematical details.
 The mathematical details are extracted from the study on connectivity concepts [1]_ and contain a symbol which we recommend to use for describing this type of connectivity, the corresponding expression from CSA, and a formal definition with an algorithmic construction rule and the resulting connectivity distribution.

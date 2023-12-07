@@ -400,8 +400,6 @@ eprop_synapse< targetidentifierT >::eprop_synapse( const eprop_synapse& es )
   , is_recurrent_to_recurrent_conn_( es.is_recurrent_to_recurrent_conn_ )
   , optimizer_( es.optimizer_->clone() )
 {
-  std::cout << "Copy ctor this " << this << ", optimizer " << optimizer_ << ", es.optimizer " << es.optimizer_
-            << std::endl;
 }
 
 // This assignement operator is used to write a connection into the connection array.

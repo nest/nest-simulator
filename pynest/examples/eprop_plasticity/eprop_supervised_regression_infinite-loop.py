@@ -155,6 +155,7 @@ params_setup = {
     "print_time": False,  # if True, print time progress bar during simulation, set False if run as code cell
     "resolution": duration["step"],
     "total_num_virtual_procs": 1,  # number of virtual processes, set in case of distributed computing
+    "rng_seed": rng_seed,  # seed for NEST random generator
 }
 
 ####################
@@ -486,11 +487,11 @@ loss = np.sum(loss_list, axis=0)
 # the NEST installation is fine. For the unmodified script, these should be precisely the same.
 
 loss_reference = [
-    628.75436185941669,
-    627.86551273147711,
-    625.10351364586165,
-    621.28411439539514,
-    617.83402092432709,
+    628.60885077286002,
+    627.68254387245838,
+    624.67943267615897,
+    621.32821511784573,
+    618.38707000865702,
 ]
 
 n_compare = min(len(loss), len(loss_reference))

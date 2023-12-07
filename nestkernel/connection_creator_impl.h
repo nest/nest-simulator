@@ -148,9 +148,9 @@ ConnectionCreator::connect_to_target_poisson_( Iterator from,
     // Sample number of connections that are to be established
     poisson_distribution::param_type param( kernel_->value( rng, source_pos, target_pos, source, tgt_ptr ) );
     const unsigned long num_conns = poi_dist( rng, param );
-    if ( without_kernel or num_conns )
+    if ( num_conns )
     {
-      for ( unsigned long conn_counter = 1; conn_counter <= num_conns; ++conn_counter )
+      for ( unsigned long conn_counter = 0; conn_counter < num_conns; ++conn_counter )
       {
         for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
         {
@@ -162,6 +162,19 @@ ConnectionCreator::connect_to_target_poisson_( Iterator from,
             delay_[ indx ]->value( rng, source_pos, target_pos, source, tgt_ptr ),
             weight_[ indx ]->value( rng, source_pos, target_pos, source, tgt_ptr ) );
         }
+      }
+    }
+    else if ( without_kernel )
+    {
+      for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
+      {
+        kernel().connection_manager.connect( iter->second,
+          tgt_ptr,
+          tgt_thread,
+          synapse_model_[ indx ],
+          param_dicts_[ indx ][ tgt_thread ],
+          delay_[ indx ]->value( rng, source_pos, target_pos, source, tgt_ptr ),
+          weight_[ indx ]->value( rng, source_pos, target_pos, source, tgt_ptr ) );
       }
     }
   }

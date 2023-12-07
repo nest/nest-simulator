@@ -203,6 +203,13 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
 }
 
 template < typename ConnectionT >
+size_t
+GenericConnectorModel< ConnectionT >::get_syn_id() const
+{
+  default_connection_.get_syn_id();
+}
+
+template < typename ConnectionT >
 void
 GenericConnectorModel< ConnectionT >::set_syn_id( synindex syn_id )
 {

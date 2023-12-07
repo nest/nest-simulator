@@ -91,6 +91,11 @@ EpropCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm 
   const bool set_optimizer = updateValue< std::string >( d, names::optimizer, new_optimizer );
   if ( set_optimizer and new_optimizer != optimizer_cp_->get_name() )
   {
+    if ( kernel().connection_manager.get_num_connections( cm.get_syn_id() ) > 0 )
+    {
+      throw BadParameter( "The optimizer cannot be changed because synapses have been created." );
+    }
+
     // TODO: Selection here should be based on an optimizer registry and a factory.
     // delete is in if/elif because we must delete only when we are sure that we have a valid optimizer.
     if ( new_optimizer == "gradient_descent" )

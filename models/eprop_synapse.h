@@ -300,10 +300,16 @@ public:
   void
   check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& cp )
   {
-    // When we get here, delay has been set so we can check it.
-    if ( get_delay_steps() != 1 )
+#ifdef HAVE_BOOST
+    // This is a fix until Boost-sorting of connection objects containing pointers works.
+    throw IllegalConnection( "eprop synapses are supported only if NEST was built without Boost." );
+#endif
+
+    throw
+      // When we get here, delay has been set so we can check it.
+      if ( get_delay_steps() != 1 )
     {
-      throw KernelException( "eprop synapses currently require a delay of one simulation step" );
+      throw IllegalConnection( "eprop synapses currently require a delay of one simulation step" );
     }
 
     const bool is_source_recurrent_neuron =
@@ -317,8 +323,6 @@ public:
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
     t.register_eprop_connection();
-
-    //    optimizer_ = cp.optimizer_cp_->get_optimizer();
   }
 
   //! Set the synaptic weight to the provided value.

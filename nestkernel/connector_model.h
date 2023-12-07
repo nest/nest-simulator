@@ -67,6 +67,8 @@ struct EnableBitMaskOperators< ConnectionModelProperties >
   static const bool enable = true;
 };
 
+class EpropOptimizer;
+
 class ConnectorModel
 {
 
@@ -141,6 +143,8 @@ public:
     return properties_;
   }
 
+  virtual void set_optimizer_on_default_connection( EpropOptimizer* const ) = 0;
+
 protected:
   std::string name_;                     //!< name of the ConnectorModel
   bool default_delay_needs_check_;       //!< indicates whether the default delay must be checked
@@ -207,6 +211,11 @@ public:
   get_default_connection() const
   {
     return default_connection_;
+  }
+
+  void
+  set_optimizer_on_default_connection( EpropOptimizer* const ) override
+  {
   }
 
 private:

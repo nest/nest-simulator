@@ -256,6 +256,12 @@ public:
   //! Assignment operator. Creates new optimizer instance.
   eprop_synapse& operator=( const eprop_synapse& );
 
+  //! Move constructor. Creates new optimizer instance.
+  eprop_synapse( eprop_synapse&& );
+
+  //! Move Assignment operator. Creates new optimizer instance.
+  eprop_synapse& operator=( eprop_synapse&& );
+
   using ConnectionBase::get_delay;
   using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
@@ -312,7 +318,7 @@ public:
 
     t.register_eprop_connection();
 
-    optimizer_ = cp.optimizer_cp_->get_optimizer();
+    //    optimizer_ = cp.optimizer_cp_->get_optimizer();
   }
 
   //! Set the synaptic weight to the provided value.
@@ -350,6 +356,7 @@ private:
   //! Vector of presynaptic inter-spike-intervals.
   std::vector< long > presyn_isis_;
 
+public:
   //! Optimizer
   EpropOptimizer* optimizer_;
 };
@@ -368,18 +375,14 @@ eprop_synapse< targetidentifierT >::eprop_synapse()
   , tau_m_readout_( 10.0 )
   , kappa_( std::exp( -Time::get_resolution().get_ms() / tau_m_readout_ ) )
   , is_recurrent_to_recurrent_conn_( false )
-  , optimizer_( nullptr ) // to be set by check_connection()
+  , optimizer_( new EpropOptimizerGradientDescent() )
 {
 }
 
 template < typename targetidentifierT >
 eprop_synapse< targetidentifierT >::~eprop_synapse()
 {
-  if ( optimizer_ != nullptr )
-  {
-    // default connections do not have optimizers
-    delete optimizer_;
-  }
+  delete optimizer_;
 }
 
 // This copy constructor is used to create instances from prototypes.
@@ -395,8 +398,10 @@ eprop_synapse< targetidentifierT >::eprop_synapse( const eprop_synapse& es )
   , tau_m_readout_( es.tau_m_readout_ )
   , kappa_( std::exp( -Time::get_resolution().get_ms() / tau_m_readout_ ) )
   , is_recurrent_to_recurrent_conn_( es.is_recurrent_to_recurrent_conn_ )
-  , optimizer_( nullptr ) // to be set by check_connection()
+  , optimizer_( es.optimizer_->clone() )
 {
+  std::cout << "Copy ctor this " << this << ", optimizer " << optimizer_ << ", es.optimizer " << es.optimizer_
+            << std::endl;
 }
 
 // This assignement operator is used to write a connection into the connection array.
@@ -420,17 +425,56 @@ eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
   kappa_ = es.kappa_;
   is_recurrent_to_recurrent_conn_ = es.is_recurrent_to_recurrent_conn_;
 
-  if ( optimizer_ != nullptr )
-  {
-    delete optimizer_;
-  }
-  // When es is destroyed, optimizer_ in it will be destructed. We need to
-  // create a new optimizer object.
-  // TODO: is there a better solution?
-  optimizer_ = es.optimizer_ ? es.optimizer_->clone() : nullptr;
+  delete optimizer_;
+  optimizer_ = es.optimizer_;
 
   return *this;
 }
+
+template < typename targetidentifierT >
+eprop_synapse< targetidentifierT >::eprop_synapse( eprop_synapse&& es )
+  : ConnectionBase( es )
+  , weight_( es.weight_ )
+  , t_previous_spike_( 0 )
+  , t_previous_update_( 0 )
+  , t_next_update_( es.t_next_update_ )
+  , t_previous_trigger_spike_( 0 )
+  , tau_m_readout_( es.tau_m_readout_ )
+  , kappa_( es.kappa_ )
+  , is_recurrent_to_recurrent_conn_( es.is_recurrent_to_recurrent_conn_ )
+  , optimizer_( es.optimizer_ )
+{
+  es.optimizer_ = nullptr;
+}
+
+// This assignement operator is used to write a connection into the connection array.
+template < typename targetidentifierT >
+eprop_synapse< targetidentifierT >&
+eprop_synapse< targetidentifierT >::operator=( eprop_synapse&& es )
+{
+  if ( this == &es )
+  {
+    return *this;
+  }
+
+  ConnectionBase::operator=( es );
+
+  weight_ = es.weight_;
+  t_previous_spike_ = es.t_previous_spike_;
+  t_previous_update_ = es.t_previous_update_;
+  t_next_update_ = es.t_next_update_;
+  t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
+  tau_m_readout_ = es.tau_m_readout_;
+  kappa_ = es.kappa_;
+  is_recurrent_to_recurrent_conn_ = es.is_recurrent_to_recurrent_conn_;
+
+  delete optimizer_;
+  optimizer_ = es.optimizer_;
+  es.optimizer_ = nullptr;
+
+  return *this;
+}
+
 
 template < typename targetidentifierT >
 inline void

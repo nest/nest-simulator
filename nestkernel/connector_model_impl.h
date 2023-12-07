@@ -310,7 +310,7 @@ GenericConnectorModel< ConnectionT >::add_connection_( Node& src,
   assert( connector );
 
   Connector< ConnectionT >* vc = static_cast< Connector< ConnectionT >* >( connector );
-  vc->push_back( connection );
+  vc->push_back( std::move( connection ) );
 }
 
 } // namespace nest

@@ -271,9 +271,7 @@ ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source,
 
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
 
-// sharing specs on next line commented out because gcc 4.2 cannot handle them
-#pragma omp parallel // default(none) shared(source, target, masked_layer,
-                     // target_begin, target_end)
+#pragma omp parallel
   {
     const int thread_id = kernel().vp_manager.get_thread_id();
     try
@@ -357,9 +355,7 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
     throw IllegalConnection( "Spatial Connect with pairwise_bernoulli to devices is not possible." );
   }
 
-// sharing specs on next line commented out because gcc 4.2 cannot handle them
-#pragma omp parallel // default(none) shared(source, target, masked_layer,
-                     // target_begin, target_end)
+#pragma omp parallel
   {
     const int thread_id = kernel().vp_manager.get_thread_id();
     try
@@ -434,9 +430,7 @@ ConnectionCreator::pairwise_poisson_( Layer< D >& source,
 
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
 
-// sharing specs on next line commented out because gcc 4.2 cannot handle them
-#pragma omp parallel // default(none) shared(source, target, masked_layer,
-                     // target_begin, target_end)
+#pragma omp parallel
   {
     const int thread_id = kernel().vp_manager.get_thread_id();
     try

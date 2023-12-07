@@ -305,9 +305,8 @@ public:
     throw IllegalConnection( "eprop synapses are supported only if NEST was built without Boost." );
 #endif
 
-    throw
-      // When we get here, delay has been set so we can check it.
-      if ( get_delay_steps() != 1 )
+    // When we get here, delay has been set so we can check it.
+    if ( get_delay_steps() != 1 )
     {
       throw IllegalConnection( "eprop synapses currently require a delay of one simulation step" );
     }

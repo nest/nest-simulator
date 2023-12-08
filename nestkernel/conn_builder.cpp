@@ -1701,11 +1701,7 @@ nest::PoissonBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, s
     poisson_distribution::param_type param( pairwise_avg_num_conns_->value( rng, target ) );
     num_conns = poi_dist( rng, param );
 
-    if ( num_conns == 0 )
-    {
-      continue;
-    }
-    for ( unsigned long conn_counter = 1; conn_counter <= num_conns; ++conn_counter )
+    for ( size_t n= 0 ; n < num_conns ; ++n )
     {
       single_connect_( snode_id, *target, target_thread, rng );
     }

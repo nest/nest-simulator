@@ -65,22 +65,6 @@ EpropCommonProperties::get_status( DictionaryDatum& d ) const
   ( *d )[ names::optimizer_status ] = optimizer_status;
 }
 
-template <>
-void
-GenericConnectorModel< eprop_synapse< TargetIdentifierPtrRport > >::set_optimizer_on_default_connection(
-  EpropOptimizer* const optimizer )
-{
-  default_connection_.optimizer_ = optimizer;
-}
-
-template <>
-void
-GenericConnectorModel< eprop_synapse< TargetIdentifierIndex > >::set_optimizer_on_default_connection(
-  EpropOptimizer* const optimizer )
-{
-  default_connection_.optimizer_ = optimizer;
-}
-
 void
 EpropCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
@@ -112,8 +96,6 @@ EpropCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm 
     {
       throw BadProperty( "optimizer must be chosen from [\"gradient_descent\", \"adam\"]" );
     }
-
-    cm.set_optimizer_on_default_connection( optimizer_cp_->get_optimizer() );
   }
 
   // We can now set the defaults on the new optimizer common props

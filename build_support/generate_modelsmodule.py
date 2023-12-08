@@ -270,6 +270,50 @@ def generate_modelsmodule():
         file.write(
             dedent(
                 """
+            namespace nest
+            {
+                template <>
+                void
+                Connector< eprop_synapse< TargetIdentifierPtrRport > >::disable_connection( const size_t lcid )
+                {
+                assert( not C_[ lcid ].is_disabled() );
+                C_[ lcid ].disable();
+                delete C_[ lcid ].optimizer_;
+                C_[ lcid ].optimizer_ = nullptr;
+                }
+
+                template <>
+                void
+                Connector< eprop_synapse< TargetIdentifierIndex > >::disable_connection( const size_t lcid )
+                {
+                assert( not C_[ lcid ].is_disabled() );
+                C_[ lcid ].disable();
+                delete C_[ lcid ].optimizer_;
+                C_[ lcid ].optimizer_ = nullptr;
+                }
+
+
+                template <>
+                Connector< eprop_synapse< TargetIdentifierPtrRport > >::~Connector()
+                {
+                for ( auto& c : C_ )
+                {
+                delete c.optimizer_;
+                }
+                C_.clear();
+                }
+
+                template <>
+                Connector< eprop_synapse< TargetIdentifierIndex > >::~Connector()
+                {
+                for ( auto& c : C_ )
+                {
+                delete c.optimizer_;
+                }
+                C_.clear();
+                }
+            }
+
             nest::ModelsModule::ModelsModule()
             {
             }

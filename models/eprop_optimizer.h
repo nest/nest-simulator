@@ -89,10 +89,10 @@ public:
   EpropOptimizer();
   virtual ~EpropOptimizer()
   {
+    // std::cout << "Deleting optimizer " << this << std::endl;
   }
   EpropOptimizer( const EpropOptimizer& ) = default;
   EpropOptimizer& operator=( const EpropOptimizer& ) = delete;
-  virtual EpropOptimizer* clone() const = 0;
 
   virtual void get_status( DictionaryDatum& d ) const;
   virtual void set_status( const DictionaryDatum& d );
@@ -118,7 +118,6 @@ public:
   EpropOptimizerGradientDescent();
   EpropOptimizerGradientDescent( const EpropOptimizerGradientDescent& ) = default;
   EpropOptimizerGradientDescent& operator=( const EpropOptimizerGradientDescent& ) = delete;
-  EpropOptimizer* clone() const override;
 
 private:
   double do_optimize_( const EpropOptimizerCommonProperties& cp, double weight, size_t current_opt_step ) override;
@@ -148,7 +147,6 @@ public:
   EpropOptimizerAdam();
   EpropOptimizerAdam( const EpropOptimizerAdam& ) = default;
   EpropOptimizerAdam& operator=( const EpropOptimizerAdam& ) = delete;
-  EpropOptimizer* clone() const override;
 
   void get_status( DictionaryDatum& d ) const override;
   void set_status( const DictionaryDatum& d ) override;

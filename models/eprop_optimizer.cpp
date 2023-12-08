@@ -92,6 +92,7 @@ EpropOptimizer::EpropOptimizer()
   : sum_gradients_( 0.0 )
   , optimization_step_( 1 )
 {
+  // std::cout << "Creating optimizer " << this << std::endl;
 }
 
 void
@@ -139,12 +140,6 @@ EpropOptimizerGradientDescent::EpropOptimizerGradientDescent()
 {
 }
 
-EpropOptimizer*
-EpropOptimizerGradientDescent::clone() const
-{
-  return new EpropOptimizerGradientDescent( *this );
-}
-
 double
 EpropOptimizerGradientDescent::do_optimize_( const EpropOptimizerCommonProperties& cp, double weight, size_t )
 {
@@ -172,12 +167,6 @@ EpropOptimizer*
 EpropOptimizerCommonPropertiesAdam::get_optimizer() const
 {
   return new EpropOptimizerAdam();
-}
-
-EpropOptimizer*
-EpropOptimizerAdam::clone() const
-{
-  return new EpropOptimizerAdam( *this );
 }
 
 void

@@ -27,6 +27,7 @@
 #include "connection.h"
 #include "eprop_archiving_node.h"
 #include "eprop_optimizer.h"
+#include "target_identifier.h"
 
 namespace nest
 {
@@ -250,16 +251,16 @@ public:
   //! Destructor
   ~eprop_synapse();
 
-  //! Copy constructor. Creates new optimizer instance.
+  //! Copy constructor -- not default because setting some constants
   eprop_synapse( const eprop_synapse& );
 
-  //! Assignment operator. Creates new optimizer instance.
+  //! Assignment operator
   eprop_synapse& operator=( const eprop_synapse& );
 
-  //! Move constructor. Creates new optimizer instance.
+  //! Move constructor
   eprop_synapse( eprop_synapse&& );
 
-  //! Move Assignment operator. Creates new optimizer instance.
+  //! Move Assignment operator
   eprop_synapse& operator=( eprop_synapse&& );
 
   using ConnectionBase::get_delay;
@@ -315,6 +316,8 @@ public:
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
     t.register_eprop_connection();
+
+    optimizer_ = cp.optimizer_cp_->get_optimizer();
   }
 
   //! Set the synaptic weight to the provided value.
@@ -353,7 +356,11 @@ private:
   std::vector< long > presyn_isis_;
 
 public:
-  //! Optimizer
+  /**
+   *  Optimizer
+   *  Pointer is managed entirely by Connector
+   *   @todo Make non-public!
+   */
   EpropOptimizer* optimizer_;
 };
 
@@ -371,14 +378,16 @@ eprop_synapse< targetidentifierT >::eprop_synapse()
   , tau_m_readout_( 10.0 )
   , kappa_( std::exp( -Time::get_resolution().get_ms() / tau_m_readout_ ) )
   , is_recurrent_to_recurrent_conn_( false )
-  , optimizer_( new EpropOptimizerGradientDescent() )
+  , optimizer_( nullptr )
 {
+  // std::cout << "Create this " << this << ", optimizer " << optimizer_ << std::endl;
 }
 
 template < typename targetidentifierT >
 eprop_synapse< targetidentifierT >::~eprop_synapse()
 {
-  delete optimizer_;
+  // explicitly do not delete optimizer_, handled by Connector
+  // std::cout << "Delete this " << this << ", optimizer " << optimizer_ << std::endl;
 }
 
 // This copy constructor is used to create instances from prototypes.
@@ -394,15 +403,21 @@ eprop_synapse< targetidentifierT >::eprop_synapse( const eprop_synapse& es )
   , tau_m_readout_( es.tau_m_readout_ )
   , kappa_( std::exp( -Time::get_resolution().get_ms() / tau_m_readout_ ) )
   , is_recurrent_to_recurrent_conn_( es.is_recurrent_to_recurrent_conn_ )
-  , optimizer_( es.optimizer_->clone() )
+  , optimizer_( es.optimizer_ )
 {
+  // std::cout << "Copy   this " << this << ", optimizer " << optimizer_ <<
+  // " from this " << &es << ", optimizer " << es.optimizer_ << std::endl;
 }
+
 
 // This assignement operator is used to write a connection into the connection array.
 template < typename targetidentifierT >
 eprop_synapse< targetidentifierT >&
 eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
 {
+  // std::cout << "Assign this " << this << ", optimizer " << optimizer_ <<
+  //" from this " << &es << ", optimizer " << es.optimizer_ << std::endl;
+
   if ( this == &es )
   {
     return *this;
@@ -418,8 +433,6 @@ eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
   tau_m_readout_ = es.tau_m_readout_;
   kappa_ = es.kappa_;
   is_recurrent_to_recurrent_conn_ = es.is_recurrent_to_recurrent_conn_;
-
-  delete optimizer_;
   optimizer_ = es.optimizer_;
 
   return *this;
@@ -438,6 +451,9 @@ eprop_synapse< targetidentifierT >::eprop_synapse( eprop_synapse&& es )
   , is_recurrent_to_recurrent_conn_( es.is_recurrent_to_recurrent_conn_ )
   , optimizer_( es.optimizer_ )
 {
+  //  std::cout << "Move   this " << this << ", optimizer " << optimizer_ <<
+  //  " from this " << &es << ", optimizer " << es.optimizer_ << std::endl;
+
   es.optimizer_ = nullptr;
 }
 
@@ -446,6 +462,9 @@ template < typename targetidentifierT >
 eprop_synapse< targetidentifierT >&
 eprop_synapse< targetidentifierT >::operator=( eprop_synapse&& es )
 {
+  // std::cout << "MvAssg this " << this << ", optimizer " << optimizer_ <<
+  // " from this " << &es << ", optimizer " << es.optimizer_ << std::endl;
+
   if ( this == &es )
   {
     return *this;
@@ -462,13 +481,11 @@ eprop_synapse< targetidentifierT >::operator=( eprop_synapse&& es )
   kappa_ = es.kappa_;
   is_recurrent_to_recurrent_conn_ = es.is_recurrent_to_recurrent_conn_;
 
-  delete optimizer_;
   optimizer_ = es.optimizer_;
   es.optimizer_ = nullptr;
 
   return *this;
 }
-
 
 template < typename targetidentifierT >
 inline void

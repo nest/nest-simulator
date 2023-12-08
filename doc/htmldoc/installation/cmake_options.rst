@@ -262,7 +262,7 @@ follwing switch for the invocation of ``cmake``. It expects either
     -Dwith-libneurosim=[OFF|ON|</path/to/libneurosim>]
 
 For details on how to use the Connection Generator Interface, see the
-:ref:`guide on connection generation <connection_generation>`.
+:ref:`guide on connection generation <connection_generator>`.
 
 .. _compile_with_python:
 

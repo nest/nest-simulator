@@ -89,10 +89,10 @@ public:
   EpropOptimizer();
   virtual ~EpropOptimizer()
   {
+    // std::cout << "Deleting optimizer " << this << std::endl;
   }
   EpropOptimizer( const EpropOptimizer& ) = default;
   EpropOptimizer& operator=( const EpropOptimizer& ) = delete;
-  virtual EpropOptimizer* clone() const = 0;
 
   //! Return optimized weight based on current weight
   double optimized_weight( const EpropOptimizerCommonProperties& cp,
@@ -115,7 +115,6 @@ public:
   EpropOptimizerGradientDescent();
   EpropOptimizerGradientDescent( const EpropOptimizerGradientDescent& ) = default;
   EpropOptimizerGradientDescent& operator=( const EpropOptimizerGradientDescent& ) = delete;
-  EpropOptimizer* clone() const override;
 
 private:
   double do_optimize_( const EpropOptimizerCommonProperties& cp, double weight, size_t current_opt_step ) override;
@@ -145,7 +144,6 @@ public:
   EpropOptimizerAdam();
   EpropOptimizerAdam( const EpropOptimizerAdam& ) = default;
   EpropOptimizerAdam& operator=( const EpropOptimizerAdam& ) = delete;
-  EpropOptimizer* clone() const override;
 
 private:
   //! Return optimized weight based on current weight

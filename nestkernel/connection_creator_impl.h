@@ -65,8 +65,6 @@ ConnectionCreator::connect( Layer< D >& source,
 
   case Pairwise_poisson:
 
-    if ( not kernel_ ) throw BadProperty( "pairwise_poisson requires setting a kernel" );
-
     pairwise_poisson_( source, source_nc, target, target_nc );
     break;
 

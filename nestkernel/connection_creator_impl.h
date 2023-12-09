@@ -65,6 +65,8 @@ ConnectionCreator::connect( Layer< D >& source,
 
   case Pairwise_poisson:
 
+    if ( not kernel_ ) throw BadProperty( "pairwise_poisson requires setting a kernel" );
+
     pairwise_poisson_( source, source_nc, target, target_nc );
     break;
 
@@ -90,7 +92,6 @@ ConnectionCreator::connect_to_target_( Iterator from,
   std::vector< double > source_pos( D );
   const std::vector< double > target_pos = tgt_pos.get_vector();
 
-  const bool without_kernel = not kernel_.get();
   for ( Iterator iter = from; iter != to; ++iter )
   {
     if ( not allow_autapses_ and ( iter->second == tgt_ptr->get_node_id() ) )
@@ -99,7 +100,7 @@ ConnectionCreator::connect_to_target_( Iterator from,
     }
     iter->first.get_vector( source_pos );
 
-    if ( without_kernel or rng->drand() < kernel_->value( rng, source_pos, target_pos, source, tgt_ptr ) )
+    if ( not kernel_ or rng->drand() < kernel_->value( rng, source_pos, target_pos, source, tgt_ptr ) )
     {
       for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
       {
@@ -136,7 +137,6 @@ ConnectionCreator::connect_to_target_poisson_( Iterator from,
   poisson_distribution poi_dist;
 
 
-  const bool without_kernel = not kernel_.get();
   for ( Iterator iter = from; iter != to; ++iter )
   {
     if ( not allow_autapses_ and ( iter->second == tgt_ptr->get_node_id() ) )
@@ -148,23 +148,7 @@ ConnectionCreator::connect_to_target_poisson_( Iterator from,
     // Sample number of connections that are to be established
     poisson_distribution::param_type param( kernel_->value( rng, source_pos, target_pos, source, tgt_ptr ) );
     const unsigned long num_conns = poi_dist( rng, param );
-    if ( num_conns )
-    {
-      for ( unsigned long conn_counter = 0; conn_counter < num_conns; ++conn_counter )
-      {
-        for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
-        {
-          kernel().connection_manager.connect( iter->second,
-            tgt_ptr,
-            tgt_thread,
-            synapse_model_[ indx ],
-            param_dicts_[ indx ][ tgt_thread ],
-            delay_[ indx ]->value( rng, source_pos, target_pos, source, tgt_ptr ),
-            weight_[ indx ]->value( rng, source_pos, target_pos, source, tgt_ptr ) );
-        }
-      }
-    }
-    else if ( without_kernel )
+    for ( unsigned long conn_counter = 0; conn_counter < num_conns; ++conn_counter )
     {
       for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
       {
@@ -544,7 +528,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
       // If there is no kernel, we can just draw uniform random numbers,
       // but with a kernel we have to set up a probability distribution
       // function using a discrete_distribution.
-      if ( kernel_.get() )
+      if ( kernel_ )
       {
 
         std::vector< double > probabilities;
@@ -677,7 +661,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
       // If there is no kernel, we can just draw uniform random numbers,
       // but with a kernel we have to set up a probability distribution
       // function using a discrete_distribution.
-      if ( kernel_.get() )
+      if ( kernel_ )
       {
 
         std::vector< double > probabilities;
@@ -836,7 +820,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
     std::copy( masked_target.begin( source_pos ), masked_target_end, target_pos_node_id_pairs.begin() );
 
     probabilities.reserve( target_pos_node_id_pairs.size() );
-    if ( kernel_.get() )
+    if ( kernel_ )
     {
       for ( const auto& target_pos_node_id_pair : target_pos_node_id_pairs )
       {

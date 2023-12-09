@@ -260,7 +260,7 @@ public:
   {
     return d( rng_, p );
   }
-  
+
   inline unsigned long
   operator()( std::poisson_distribution< unsigned long >& d,
     std::poisson_distribution< unsigned long >::param_type& p ) override

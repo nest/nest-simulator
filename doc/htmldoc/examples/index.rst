@@ -203,10 +203,10 @@ PyNEST examples
     .. grid-item-card:: E-prop plasticity
            :img-top: ../static/img/pynest/eprop_supervised_classification_infrastructure.png
 
-  * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_classification_evidence-accumulation`
-  * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_sine-waves`
-  * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_handwriting`
-  * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_infinite-loop`
+           * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_classification_evidence-accumulation`
+           * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_sine-waves`
+           * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_handwriting`
+           * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_infinite-loop`
 
 
 .. grid:: 1 1 2 3

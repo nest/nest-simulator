@@ -100,6 +100,11 @@ References
 See also
 ++++++++
 
+Examples using this model
+++++++++++++++++++++++++++
+
+.. listexamples:: eprop_learning_signal_connection
+
 EndUserDocs */
 
 void register_eprop_learning_signal_connection( const std::string& name );

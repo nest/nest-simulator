@@ -131,6 +131,11 @@ SpikeEvent, CurrentEvent, DelayedRateConnectionEvent, DataLoggingRequest
 See also
 ++++++++
 
+Examples using this model
+++++++++++++++++++++++++++
+
+.. listexamples:: eprop_readout
+
 EndUserDocs */
 
 void register_eprop_readout( const std::string& name );

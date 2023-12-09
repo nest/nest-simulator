@@ -51,8 +51,8 @@ neuron model with delta-shaped postsynaptic currents and threshold adaptation
 used for eligibility propagation (e-prop) plasticity.
 
 .. note::
-  Contrary to what the model names suggest, `eprop_iaf_psc_delta_adapt` is not
-  simply the `iaf_psc_delta` model with adaptation endowed with e-prop. While
+  Contrary to what the model names suggest, ``eprop_iaf_psc_delta_adapt`` is not
+  simply the ``iaf_psc_delta`` model with adaptation endowed with e-prop. While
   both models are integrate-and-fire neurons with delta-shaped post-synaptic
   currents, there are minor differences in the dynamics of the two models, such
   as the propagator of the post-synaptic current and the voltage reset upon a
@@ -181,6 +181,11 @@ SpikeEvent, CurrentEvent, LearningSignalConnectionEvent, DataLoggingRequest
 
 See also
 ++++++++
+
+Examples using this model
+++++++++++++++++++++++++++
+
+.. listexamples:: eprop_iaf_psc_delta_adapt
 
 EndUserDocs */
 

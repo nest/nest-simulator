@@ -198,6 +198,11 @@ References
 See also
 ++++++++
 
+Examples using this model
+++++++++++++++++++++++++++
+
+.. listexamples:: eprop_synapse
+
 EndUserDocs */
 
 class EpropCommonProperties : public CommonSynapseProperties

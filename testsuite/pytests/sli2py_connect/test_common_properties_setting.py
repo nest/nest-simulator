@@ -45,8 +45,8 @@ def set_default_delay_resolution():
 # setup function can be provided if preparations are required. Provide also supported neuron model.
 common_prop_models = {
     "eprop_synapse": {
-        "parameter": "batch_size",
-        "value": 10,
+        "parameter": "average_gradient",
+        "value": not nest.GetDefaults("eprop_synapse")["average_gradient"],
         "setup": set_default_delay_resolution,
         "neuron": "eprop_iaf_psc_delta",
     },

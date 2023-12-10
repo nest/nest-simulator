@@ -301,11 +301,6 @@ public:
   void
   check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& cp )
   {
-#ifdef HAVE_BOOST
-    // This is a fix until Boost-sorting of connection objects containing pointers works.
-    throw IllegalConnection( "eprop synapses are supported only if NEST was built without Boost." );
-#endif
-
     // When we get here, delay has been set so we can check it.
     if ( get_delay_steps() != 1 )
     {
@@ -567,7 +562,15 @@ void
 eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  // optimizer_->set_status( ( *d )[ names::optimizer_status ] );
+  if ( d->known( names::optimizer_status ) )
+  {
+    // We must pass here if called by SetDefaults. In that case, the user will get and error
+    // message because the parameters for the synapse-specific optimizer have not been accessed.
+    if ( optimizer_ )
+    {
+      optimizer_->set_status( getValue< DictionaryDatum >( d->lookup( names::optimizer_status ) ) );
+    }
+  }
 
   updateValue< double >( d, names::weight, weight_ );
 

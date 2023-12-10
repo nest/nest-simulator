@@ -99,7 +99,10 @@ EpropCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm 
   }
 
   // We can now set the defaults on the new optimizer common props
-  // optimizer_cp_->set_status( d[ names::optimizer_status ] );
+  if ( d->known( names::optimizer_status ) )
+  {
+    optimizer_cp_->set_status( getValue< DictionaryDatum >( d->lookup( names::optimizer_status ) ) );
+  }
 }
 
 } // namespace nest

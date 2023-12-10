@@ -353,7 +353,6 @@ const Name offset( "offset" );
 const Name offsets( "offsets" );
 const Name omega( "omega" );
 const Name optimizer( "optimizer" );
-const Name optimizer_status( "optimizer_status" );
 const Name order( "order" );
 const Name origin( "origin" );
 const Name other( "other" );
@@ -597,6 +596,7 @@ const Name time_update( "time_update" );
 const Name times( "times" );
 const Name to_do( "to_do" );
 const Name total_num_virtual_procs( "total_num_virtual_procs" );
+const Name type( "type" );
 const Name type_id( "type_id" );
 
 const Name U( "U" );

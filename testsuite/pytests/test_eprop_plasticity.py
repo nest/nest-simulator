@@ -208,13 +208,15 @@ def test_eprop_regression():
     weights_out_rec = np.array(np.random.randn(n_rec, n_out) / np.sqrt(n_rec), dtype=dtype_weights)
 
     params_common_syn_eprop = {
-        "batch_size": n_batch,
-        "optimizer": "gradient_descent",
-        "eta": 1e-4,
+        "optimizer": {
+            "type": "gradient_descent",
+            "batch_size": n_batch,
+            "eta": 1e-4,
+            "Wmin": -100.0,
+            "Wmax": 100.0,
+        },
         "weight_recorder": wr,
         "average_gradient": False,
-        "Wmax": 100.0,
-        "Wmin": -100.0,
     }
 
     params_syn_in = {
@@ -545,16 +547,18 @@ def test_eprop_classification():
     weights_out_rec = np.array(np.random.randn(n_rec, n_out), dtype=dtype_weights)
 
     params_common_syn_eprop = {
-        "adam_beta1": 0.9,
-        "adam_beta2": 0.999,
-        "adam_epsilon": 1e-8,
-        "optimizer": "adam",
-        "batch_size": n_batch,
+        "optimizer": {
+            "type": "adam",
+            "batch_size": n_batch,
+            "eta": 5e-3,
+            "Wmin": -100.0,
+            "Wmax": 100.0,
+            "beta_1": 0.9,
+            "beta_2": 0.999,
+            "epsilon": 1e-8,
+        },
         "weight_recorder": wr,
         "average_gradient": True,
-        "eta": 5e-3,
-        "Wmax": 100.0,
-        "Wmin": -100.0,
     }
 
     params_syn_in = {

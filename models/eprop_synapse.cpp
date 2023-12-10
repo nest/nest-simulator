@@ -60,9 +60,9 @@ EpropCommonProperties::get_status( DictionaryDatum& d ) const
   CommonSynapseProperties::get_status( d );
   def< bool >( d, names::average_gradient, average_gradient_ );
   def< std::string >( d, names::optimizer, optimizer_cp_->get_name() );
-  DictionaryDatum optimizer_status = new Dictionary;
-  optimizer_cp_->get_status( optimizer_status );
-  ( *d )[ names::optimizer_status ] = optimizer_status;
+  DictionaryDatum optimizer_dict = new Dictionary;
+  optimizer_cp_->get_status( optimizer_dict );
+  ( *d )[ names::optimizer ] = optimizer_dict;
 }
 
 void
@@ -71,37 +71,39 @@ EpropCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm 
   CommonSynapseProperties::set_status( d, cm );
   updateValue< bool >( d, names::average_gradient, average_gradient_ );
 
-  std::string new_optimizer;
-  const bool set_optimizer = updateValue< std::string >( d, names::optimizer, new_optimizer );
-  if ( set_optimizer and new_optimizer != optimizer_cp_->get_name() )
+  if ( d->known( names::optimizer ) )
   {
-    if ( kernel().connection_manager.get_num_connections( cm.get_syn_id() ) > 0 )
+    DictionaryDatum optimizer_dict = getValue< DictionaryDatum >( d->lookup( names::optimizer ) );
+
+    std::string new_optimizer;
+    const bool set_optimizer = updateValue< std::string >( optimizer_dict, names::type, new_optimizer );
+    if ( set_optimizer and new_optimizer != optimizer_cp_->get_name() )
     {
-      throw BadParameter( "The optimizer cannot be changed because synapses have been created." );
+      if ( kernel().connection_manager.get_num_connections( cm.get_syn_id() ) > 0 )
+      {
+        throw BadParameter( "The optimizer cannot be changed because synapses have been created." );
+      }
+
+      // TODO: Selection here should be based on an optimizer registry and a factory.
+      // delete is in if/elif because we must delete only when we are sure that we have a valid optimizer.
+      if ( new_optimizer == "gradient_descent" )
+      {
+        delete optimizer_cp_;
+        optimizer_cp_ = new EpropOptimizerCommonPropertiesGradientDescent();
+      }
+      else if ( new_optimizer == "adam" )
+      {
+        delete optimizer_cp_;
+        optimizer_cp_ = new EpropOptimizerCommonPropertiesAdam();
+      }
+      else
+      {
+        throw BadProperty( "optimizer must be chosen from [\"gradient_descent\", \"adam\"]" );
+      }
     }
 
-    // TODO: Selection here should be based on an optimizer registry and a factory.
-    // delete is in if/elif because we must delete only when we are sure that we have a valid optimizer.
-    if ( new_optimizer == "gradient_descent" )
-    {
-      delete optimizer_cp_;
-      optimizer_cp_ = new EpropOptimizerCommonPropertiesGradientDescent();
-    }
-    else if ( new_optimizer == "adam" )
-    {
-      delete optimizer_cp_;
-      optimizer_cp_ = new EpropOptimizerCommonPropertiesAdam();
-    }
-    else
-    {
-      throw BadProperty( "optimizer must be chosen from [\"gradient_descent\", \"adam\"]" );
-    }
-  }
-
-  // We can now set the defaults on the new optimizer common props
-  if ( d->known( names::optimizer_status ) )
-  {
-    optimizer_cp_->set_status( getValue< DictionaryDatum >( d->lookup( names::optimizer_status ) ) );
+    // We can now set the defaults on the new optimizer common props
+    optimizer_cp_->set_status( optimizer_dict );
   }
 }
 

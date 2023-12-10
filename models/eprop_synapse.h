@@ -547,13 +547,13 @@ eprop_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
   def< double >( d, names::tau_m_readout, tau_m_readout_ );
   def< long >( d, names::size_of, sizeof( *this ) );
 
-  DictionaryDatum optimizer_status = new Dictionary();
+  DictionaryDatum optimizer_dict = new Dictionary();
 
   // The default_connection_ has no optimizer, therefore we need to protect it
   if ( optimizer_ )
   {
-    optimizer_->get_status( optimizer_status );
-    ( *d )[ names::optimizer_status ] = optimizer_status;
+    optimizer_->get_status( optimizer_dict );
+    ( *d )[ names::optimizer ] = optimizer_dict;
   }
 }
 
@@ -562,13 +562,13 @@ void
 eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  if ( d->known( names::optimizer_status ) )
+  if ( d->known( names::optimizer ) )
   {
     // We must pass here if called by SetDefaults. In that case, the user will get and error
     // message because the parameters for the synapse-specific optimizer have not been accessed.
     if ( optimizer_ )
     {
-      optimizer_->set_status( getValue< DictionaryDatum >( d->lookup( names::optimizer_status ) ) );
+      optimizer_->set_status( getValue< DictionaryDatum >( d->lookup( names::optimizer ) ) );
     }
   }
 

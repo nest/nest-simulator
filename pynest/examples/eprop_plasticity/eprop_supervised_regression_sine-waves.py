@@ -263,13 +263,15 @@ weights_rec_out = np.array(np.random.randn(n_rec, n_out).T / np.sqrt(n_rec), dty
 weights_out_rec = np.array(np.random.randn(n_rec, n_out) / np.sqrt(n_rec), dtype=dtype_weights)
 
 params_common_syn_eprop = {
+    "optimizer": {
+        "type": "gradient_descent",  # algorithm to optimize the weights
+        "batch_size": n_batch,
+        "eta": 1e-4,  # learning rate
+        "Wmin": -100.0,  # pA, minimal limit of the synaptic weights
+        "Wmax": 100.0,  # pA, maximal limit of the synaptic weights
+    },
     "average_gradient": False,  # if True, average the gradient over the learning window
-    "batch_size": n_batch,
-    "optimizer": "gradient_descent",  # algorithm to optimize the weights
     "weight_recorder": wr,
-    "eta": 1e-4,  # learning rate
-    "Wmax": 100.0,  # pA, maximal limit of the synaptic weights
-    "Wmin": -100.0,  # pA, minimal limit of the synaptic weights
 }
 
 params_syn_in = {

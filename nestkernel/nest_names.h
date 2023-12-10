@@ -381,7 +381,6 @@ extern const Name offset;
 extern const Name offsets;
 extern const Name omega;
 extern const Name optimizer;
-extern const Name optimizer_status;
 extern const Name order;
 extern const Name origin;
 extern const Name other;
@@ -625,6 +624,7 @@ extern const Name time_update;
 extern const Name times;
 extern const Name to_do;
 extern const Name total_num_virtual_procs;
+extern const Name type;
 extern const Name type_id;
 
 extern const Name U;

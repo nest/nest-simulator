@@ -253,6 +253,9 @@ def generate_modelsmodule():
                 """
             #include "modelsmodule.h"
 
+            // Includes from nestkernel
+            #include "target_identifier.h"
+
             // Generated includes
             #include "config.h"
         """

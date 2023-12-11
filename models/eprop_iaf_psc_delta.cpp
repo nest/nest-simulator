@@ -75,7 +75,7 @@ eprop_iaf_psc_delta::Parameters_::Parameters_()
   , gamma_( 0.3 )
   , I_e_( 0.0 )
   , psc_scale_factor_( "alpha_complement" )
-  , surrogate_gradient_( "piecewise_linear" )
+  , surrogate_gradient_function_( "piecewise_linear" )
   , t_ref_( 2.0 )
   , tau_m_( 10.0 )
   , V_min_( -std::numeric_limits< double >::max() )
@@ -118,7 +118,7 @@ eprop_iaf_psc_delta::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::gamma, gamma_ );
   def< double >( d, names::I_e, I_e_ );
   def< std::string >( d, names::psc_scale_factor, psc_scale_factor_ );
-  def< std::string >( d, names::surrogate_gradient, surrogate_gradient_ );
+  def< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_ );
   def< double >( d, names::t_ref, t_ref_ );
   def< double >( d, names::tau_m, tau_m_ );
   def< double >( d, names::V_min, V_min_ + E_L_ );
@@ -147,7 +147,7 @@ eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::gamma, gamma_, node );
   updateValueParam< double >( d, names::I_e, I_e_, node );
   updateValueParam< std::string >( d, names::psc_scale_factor, psc_scale_factor_, node );
-  updateValueParam< std::string >( d, names::surrogate_gradient, surrogate_gradient_, node );
+  updateValueParam< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_, node );
   updateValueParam< double >( d, names::t_ref, t_ref_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
 
@@ -176,9 +176,9 @@ eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
     throw BadProperty( "psc_scale_factor must be chosen from [\"unity\", \"alpha_complement\"]." );
   }
 
-  if ( surrogate_gradient_ != "piecewise_linear" )
+  if ( surrogate_gradient_function_ != "piecewise_linear" )
   {
-    throw BadProperty( "surrogate_gradient must be chosen from [\"piecewise_linear\"]." );
+    throw BadProperty( "surrogate_gradient_function must be chosen from [\"piecewise_linear\"]." );
   }
 
   if ( tau_m_ <= 0 )
@@ -191,9 +191,9 @@ eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
     throw BadProperty( "t_ref must be >= 0." );
   }
 
-  if ( surrogate_gradient_ == "piecewise_linear" and fabs( V_th_ ) < 1e-6 )
+  if ( surrogate_gradient_function_ == "piecewise_linear" and fabs( V_th_ ) < 1e-6 )
   {
-    throw BadProperty( "V_th-E_L must be != 0 if surrogate_gradient is \"piecewise_linear\"." );
+    throw BadProperty( "V_th-E_L must be != 0 if surrogate_gradient_function is \"piecewise_linear\"." );
   }
 
   if ( V_th_ < V_min_ )
@@ -256,7 +256,7 @@ eprop_iaf_psc_delta::pre_run_hook()
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
 
-  if ( P_.surrogate_gradient_ == "piecewise_linear" )
+  if ( P_.surrogate_gradient_function_ == "piecewise_linear" )
   {
     compute_surrogate_gradient = &eprop_iaf_psc_delta::compute_piecewise_linear_derivative;
   }

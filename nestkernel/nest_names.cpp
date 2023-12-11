@@ -479,6 +479,7 @@ const Name stop( "stop" );
 const Name structural_plasticity_synapses( "structural_plasticity_synapses" );
 const Name structural_plasticity_update_interval( "structural_plasticity_update_interval" );
 const Name surrogate_gradient( "surrogate_gradient" );
+const Name surrogate_gradient_function( "surrogate_gradient_function" );
 const Name synapse_id( "synapse_id" );
 const Name synapse_label( "synapse_label" );
 const Name synapse_model( "synapse_model" );

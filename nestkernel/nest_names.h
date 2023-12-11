@@ -505,6 +505,7 @@ extern const Name stop;
 extern const Name structural_plasticity_synapses;
 extern const Name structural_plasticity_update_interval;
 extern const Name surrogate_gradient;
+extern const Name surrogate_gradient_function;
 extern const Name synapse_id;
 extern const Name synapse_label;
 extern const Name synapse_model;

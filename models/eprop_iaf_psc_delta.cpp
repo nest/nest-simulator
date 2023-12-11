@@ -208,6 +208,8 @@ void
 eprop_iaf_psc_delta::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
   def< double >( d, names::V_m, v_m_ + p.E_L_ );
+  def< double >( d, names::surrogate_gradient, surrogate_gradient_ );
+  def< double >( d, names::learning_signal, learning_signal_ );
 }
 
 void

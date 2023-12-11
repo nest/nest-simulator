@@ -178,7 +178,7 @@ def test_eprop_regression():
     }
 
     params_mm_out = {
-        "record_from": ["V_m", "readout_signal", "target_signal", "error_signal"],
+        "record_from": ["V_m", "readout_signal", "readout_signal_unnorm", "target_signal", "error_signal"],
         "start": duration["total_offset"],
         "interval": duration["step"],
     }
@@ -515,7 +515,7 @@ def test_eprop_classification():
     }
 
     params_mm_out = {
-        "record_from": ["V_m", "readout_signal", "target_signal", "error_signal"],
+        "record_from": ["V_m", "readout_signal", "readout_signal_unnorm", "target_signal", "error_signal"],
         "start": duration["total_offset"],
         "interval": duration["step"],
     }

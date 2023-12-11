@@ -60,6 +60,7 @@ RecordablesMap< eprop_readout >::create()
 {
   insert_( names::error_signal, &eprop_readout::get_error_signal_ );
   insert_( names::readout_signal, &eprop_readout::get_readout_signal_ );
+  insert_( names::readout_signal_unnorm, &eprop_readout::get_readout_signal_unnorm_ );
   insert_( names::target_signal, &eprop_readout::get_target_signal_ );
   insert_( names::V_m, &eprop_readout::get_v_m_ );
 }
@@ -153,6 +154,7 @@ eprop_readout::State_::get( DictionaryDatum& d, const Parameters_& p ) const
   def< double >( d, names::V_m, v_m_ + p.E_L_ );
   def< double >( d, names::error_signal, error_signal_ );
   def< double >( d, names::readout_signal, readout_signal_ );
+  def< double >( d, names::readout_signal_unnorm, readout_signal_unnorm_ );
   def< double >( d, names::target_signal, target_signal_ );
 }
 

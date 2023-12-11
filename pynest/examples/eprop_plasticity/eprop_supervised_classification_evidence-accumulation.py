@@ -278,7 +278,7 @@ params_mm_ad = {
 
 params_mm_out = {
     "interval": duration["step"],
-    "record_from": ["V_m", "readout_signal", "target_signal", "error_signal"],
+    "record_from": ["V_m", "readout_signal", "readout_signal_unnorm", "target_signal", "error_signal"],
     "start": duration["total_offset"],
     "stop": duration["total_offset"] + duration["task"],
 }

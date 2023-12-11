@@ -439,6 +439,7 @@ extern const Name rate_values;
 extern const Name ratio_ER_cyt;
 extern const Name readout_cycle_duration;
 extern const Name readout_signal;
+extern const Name readout_signal_unnorm;
 extern const Name receptor_idx;
 extern const Name receptor_type;
 extern const Name receptor_types;

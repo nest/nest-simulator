@@ -129,14 +129,6 @@ public:
   Connection& operator=( const Connection< targetidentifierT >& rhs ) = default;
 
   /**
-   * Get a pointer to an instance of a SecondaryEvent if this connection supports secondary events.
-   *
-   * To prevent erronous calls of this function on primary connections, the base class implementation
-   * below just contains `assert(false)`.
-   */
-  SecondaryEvent* get_secondary_event();
-
-  /**
    * Get all properties of this connection and put them into a dictionary.
    */
   void get_status( DictionaryDatum& d ) const;
@@ -396,13 +388,6 @@ Connection< targetidentifierT >::trigger_update_weight( const size_t,
   const CommonSynapseProperties& )
 {
   throw IllegalConnection( "Connection does not support updates that are triggered by a volume transmitter." );
-}
-
-template < typename targetidentifierT >
-SecondaryEvent*
-Connection< targetidentifierT >::get_secondary_event()
-{
-  assert( false );
 }
 
 } // namespace nest

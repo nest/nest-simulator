@@ -59,6 +59,26 @@ enum class ConnectionModelProperties : unsigned
   REQUIRES_CLOPATH_ARCHIVING = 1 << 6,
   REQUIRES_URBANCZIK_ARCHIVING = 1 << 7
 };
+}
+
+namespace
+{ // FIXME: utils namespace?
+
+template < typename, typename = void >
+struct has_get_secondary_event_t : std::false_type
+{
+};
+
+template < typename ConnectionT >
+struct has_get_secondary_event_t< ConnectionT,
+  std::void_t< decltype( std::declval< ConnectionT >().get_secondary_event() ) > > : public std::true_type
+{
+};
+
+} // end of FIXME
+
+namespace nest
+{
 
 template <>
 struct EnableBitMaskOperators< ConnectionModelProperties >
@@ -128,7 +148,7 @@ public:
     return name_;
   }
 
-  bool
+  bool constexpr
   has_property( const ConnectionModelProperties& property ) const
   {
     return flag_is_set( properties_, property );
@@ -199,7 +219,19 @@ public:
   SecondaryEvent*
   get_secondary_event() override
   {
-    return default_connection_.get_secondary_event();
+    constexpr bool is_primary = flag_is_set( ConnectionT::properties, nest::ConnectionModelProperties::IS_PRIMARY );
+    constexpr bool has_get_secondary_event = has_get_secondary_event_t< ConnectionT >::value;
+    static_assert(
+      is_primary xor has_get_secondary_event, "Non-primary connections have to provide get_secondary_event()" );
+    if constexpr ( ( not is_primary ) and has_get_secondary_event )
+    {
+      return default_connection_.get_secondary_event();
+    }
+    else
+    {
+      // unreachable code
+      return nullptr;
+    }
   }
 
   ConnectionT const&

@@ -116,7 +116,7 @@ void
 EventDeliveryManager::finalize()
 {
   // clear the spike buffers
-  for ( auto vec_spikedata_ptr : emitted_spikes_register_ )
+  for ( auto& vec_spikedata_ptr : emitted_spikes_register_ )
   {
     delete vec_spikedata_ptr;
   }

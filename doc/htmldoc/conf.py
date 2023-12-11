@@ -53,6 +53,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinxcontrib.mermaid",
     "sphinx.ext.mathjax",
+    "sphinxcontrib.plantuml",
     "add_button_notebook",
     "IPython.sphinxext.ipython_console_highlighting",
     "nbsphinx",
@@ -70,6 +71,8 @@ panels_add_bootstrap_css = False
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["templates"]
 
+# To run plantuml locally see the user documentation workflow
+plantuml = "java -jar /tmp/plantuml.jar"
 sphinx_gallery_conf = {
     # path to your examples scripts
     "examples_dirs": "../../pynest/examples",

@@ -344,6 +344,8 @@ const Name overwrite_files( "overwrite_files" );
 const Name P( "P" );
 const Name p( "p" );
 const Name p_copy( "p_copy" );
+const Name p_primary( "p_primary" );
+const Name p_third_if_primary( "p_third_if_primary" );
 const Name p_transmit( "p_transmit" );
 const Name pairwise_bernoulli_on_source( "pairwise_bernoulli_on_source" );
 const Name pairwise_bernoulli_on_target( "pairwise_bernoulli_on_target" );
@@ -353,6 +355,8 @@ const Name phase( "phase" );
 const Name phi_max( "phi_max" );
 const Name polar_angle( "polar_angle" );
 const Name polar_axis( "polar_axis" );
+const Name pool_size( "pool_size" );
+const Name pool_type( "pool_type" );
 const Name port( "port" );
 const Name port_name( "port_name" );
 const Name port_width( "port_width" );
@@ -364,6 +368,7 @@ const Name pre_synaptic_element( "pre_synaptic_element" );
 const Name precise_times( "precise_times" );
 const Name precision( "precision" );
 const Name prepared( "prepared" );
+const Name primary( "primary" );
 const Name print_time( "print_time" );
 const Name proximal_curr( "proximal_curr" );
 const Name proximal_exc( "proximal_exc" );
@@ -543,6 +548,8 @@ const Name theta_ex( "theta_ex" );
 const Name theta_in( "theta_in" );
 const Name theta_minus( "theta_minus" );
 const Name theta_plus( "theta_plus" );
+const Name third_in( "third_in" );
+const Name third_out( "third_out" );
 const Name thread( "thread" );
 const Name thread_local_id( "thread_local_id" );
 const Name threshold( "threshold" );
@@ -623,6 +630,7 @@ const Name y_1( "y_1" );
 
 const Name z( "z" );
 const Name z_connected( "z_connected" );
+
 } // namespace names
 
 } // namespace nest

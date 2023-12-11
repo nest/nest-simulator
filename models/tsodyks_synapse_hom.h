@@ -226,7 +226,7 @@ public:
    * \param e The event to send
    * \param cp Common properties to all synapses (empty).
    */
-  void send( Event& e, size_t t, const TsodyksHomCommonProperties& cp );
+  bool send( Event& e, size_t t, const TsodyksHomCommonProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -251,10 +251,9 @@ public:
   void
   set_weight( double )
   {
-    throw BadProperty(
+    throw NotImplemented(
       "Setting of individual weights is not possible! The common weights can "
-      "be changed via "
-      "CopyModel()." );
+      "be changed via CopyModel()." );
   }
 
 private:
@@ -273,7 +272,7 @@ constexpr ConnectionModelProperties tsodyks_synapse_hom< targetidentifierT >::pr
  * \param p The port under which this connection is stored in the Connector.
  */
 template < typename targetidentifierT >
-inline void
+inline bool
 tsodyks_synapse_hom< targetidentifierT >::send( Event& e, size_t t, const TsodyksHomCommonProperties& cp )
 {
   const double t_spike = e.get_stamp().get_ms();
@@ -319,6 +318,8 @@ tsodyks_synapse_hom< targetidentifierT >::send( Event& e, size_t t, const Tsodyk
   e();
 
   t_lastspike_ = t_spike;
+
+  return true;
 }
 
 template < typename targetidentifierT >

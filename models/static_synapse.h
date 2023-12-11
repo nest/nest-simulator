@@ -157,7 +157,7 @@ public:
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
   }
 
-  void
+  bool
   send( Event& e, const size_t tid, const CommonSynapseProperties& )
   {
     e.set_weight( weight_ );
@@ -165,6 +165,7 @@ public:
     e.set_receiver( *get_target( tid ) );
     e.set_rport( get_rport() );
     e();
+    return true;
   }
 
   void get_status( DictionaryDatum& d ) const;

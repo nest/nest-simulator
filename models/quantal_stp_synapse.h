@@ -99,6 +99,11 @@ See also
 
 tsodyks2_synapse, stdp_synapse, static_synapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: quantal_stp_synapse
+
 EndUserDocs */
 
 void register_quantal_stp_synapse( const std::string& name );
@@ -151,7 +156,7 @@ public:
    * \param e The event to send
    * \param cp Common properties to all synapses (empty).
    */
-  void send( Event& e, size_t t, const CommonSynapseProperties& cp );
+  bool send( Event& e, size_t t, const CommonSynapseProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -200,7 +205,7 @@ constexpr ConnectionModelProperties quantal_stp_synapse< targetidentifierT >::pr
  * \param cp Common properties object, containing the quantal_stp parameters.
  */
 template < typename targetidentifierT >
-inline void
+inline bool
 quantal_stp_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapseProperties& )
 {
   const double t_spike = e.get_stamp().get_ms();
@@ -220,7 +225,9 @@ quantal_stp_synapse< targetidentifierT >::send( Event& e, size_t t, const Common
     }
   }
 
-  if ( n_release > 0 )
+  const bool send_spike = n_release > 0;
+
+  if ( send_spike )
   {
     e.set_receiver( *get_target( t ) );
     e.set_weight( n_release * weight_ );
@@ -243,6 +250,8 @@ quantal_stp_synapse< targetidentifierT >::send( Event& e, size_t t, const Common
   }
 
   t_lastspike_ = t_spike;
+
+  return send_spike;
 }
 
 } // namespace

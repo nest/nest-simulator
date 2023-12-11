@@ -105,7 +105,6 @@ class Node
   friend class NodeManager;
   friend class ModelManager;
   friend class proxynode;
-  friend class Synapse;
   friend class Model;
   friend class SimulationManager;
 
@@ -211,15 +210,6 @@ public:
    *       It is only set when actual nodes are created from a prototype.
    */
   int get_model_id() const;
-
-  /**
-   * Prints out one line of the tree view of the network.
-   */
-  virtual std::string
-  print_network( int, int, std::string = "" )
-  {
-    return std::string();
-  }
 
   /**
    * Returns true if node is frozen, i.e., shall not be updated.

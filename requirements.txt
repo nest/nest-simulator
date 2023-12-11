@@ -1,0 +1,28 @@
+# Required Python packages for NEST Simulator.
+#
+# This file specifies the required Python packages for those who would
+# like to compile NEST or build NEST documentation themselves.
+# If you just want to execute NEST, you should install NEST
+# directly as described in https://www.nest-simulator.org/installation.
+#
+# Note that this file only specifies the required Python packages and 
+# not the entire software stack needed to build and work with NEST Simulator.
+# To create a conda environment with the entire software stack for NEST
+# Simulator, use the the environment yaml file.
+#
+# The requirements from this file can be installed by
+#
+#     pip install -r requirements.txt
+ 
+
+# To build and work with PyNEST
+-r requirements_pynest.txt
+
+# To run NEST testsuite
+-r requirements_testing.txt
+
+# To build NEST documentation
+-r requirements_docs.txt
+
+# To run NEST Server
+-r requirements_nest_server.txt

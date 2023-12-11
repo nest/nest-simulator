@@ -118,8 +118,7 @@ private:
 private:
   std::vector< deliver_logging_event_ptr > client_callbacks_;
   nest::severity_t logging_level_;
-  bool dict_miss_is_error_; //!< whether to throw exception on missed dictionary
-                            //!< entries
+  bool dict_miss_is_error_; //!< whether to throw exception on missed dictionary entries
 };
 
 } // namespace nest

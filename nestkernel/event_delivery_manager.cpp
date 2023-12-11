@@ -63,7 +63,7 @@ EventDeliveryManager::EventDeliveryManager()
   , recv_buffer_target_data_()
   , buffer_size_target_data_has_changed_( false )
   , global_max_spikes_per_rank_( 0 )
-  , send_recv_buffer_shrink_limit_( 0.0 )
+  , send_recv_buffer_shrink_limit_( 0.2 )
   , send_recv_buffer_shrink_spare_( 0.1 )
   , send_recv_buffer_grow_extra_( 0.5 )
   , send_recv_buffer_resize_log_()
@@ -87,7 +87,7 @@ EventDeliveryManager::initialize( const bool reset_kernel )
     // Ensures that ResetKernel resets off_grid_spiking_
     off_grid_spiking_ = false;
     buffer_size_target_data_has_changed_ = false;
-    send_recv_buffer_shrink_limit_ = 0.0;
+    send_recv_buffer_shrink_limit_ = 0.2;
     send_recv_buffer_shrink_spare_ = 0.1;
     send_recv_buffer_grow_extra_ = 0.5;
     send_recv_buffer_resize_log_.clear();
@@ -121,17 +121,15 @@ void
 EventDeliveryManager::finalize( const bool )
 {
   // clear the spike buffers
-  for ( auto it = emitted_spikes_register_.begin(); it < emitted_spikes_register_.end(); ++it )
+  for ( auto& vec_spikedata_ptr : emitted_spikes_register_ )
   {
-    ( *it )->clear();
-    delete ( *it );
+    delete vec_spikedata_ptr;
   }
-  emitted_spikes_register_.clear();
+  emitted_spikes_register_.clear(); // remove stale pointers
 
-  for ( auto it = off_grid_emitted_spikes_register_.begin(); it < off_grid_emitted_spikes_register_.end(); ++it )
+  for ( auto& vec_spikedata_ptr : off_grid_emitted_spikes_register_ )
   {
-    ( *it )->clear();
-    delete ( *it );
+    delete vec_spikedata_ptr;
   }
   off_grid_emitted_spikes_register_.clear();
 

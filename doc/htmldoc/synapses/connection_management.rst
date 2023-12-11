@@ -256,6 +256,144 @@ must be ``True``.
                       'allow_autapses': False, 'make_symmetric': True}
     nest.Connect(A, B, conn_spec_dict)
 
+.. _tripartite_connectivity:
+
+Tripartite connectivity
+-----------------------
+
+NEST supports creating connections of three node populations using the
+:py:func:`.TripartiteConnect` function:
+
+.. code-block:: python
+
+    nest.TripartiteConnect(pre, post, third, conn_spec)
+    nest.TripartiteConnect(pre, post, third, conn_spec, syn_specs)
+
+``pre``, ``post``, and ``third`` are ``NodeCollections``, defining the nodes of
+origin (`sources`) and termination (`targets`) as well as the third
+factor population to be included. Connections will be established from ``pre`` to both ``third`` and ``post``, and from ``third`` to ``post``. Details of the connections created depend on
+the connection rule used.
+
+``conn_spec`` must be provided and must specify a tripartite
+connection rule, e.g., :ref:`tripartite Bernoulli with pool <tripartite_bernoulli_with_pool>`.
+
+``syn_specs`` is a dictionary of the form
+
+.. code-block:: python
+
+    {'primary': <syn_spec>,
+     'third_in': <syn_spec>,
+     'third_out': <syn_spec>}
+
+where the individual ``syn_spec`` elements follow the same rules as
+for the :py:func:`.Connect` function. Any of the three elements can be
+left out, in which case the synapse specification defaults to
+``'static_synapse'``. The ``'primary'`` synapse specification applies
+to connections from ``pre`` to ``post`` nodes, the ``'third_in'``
+specification to connections from ``pre`` to ``third`` nodes and
+the ``'third_out'`` specification to connections from ``third`` to
+``post`` nodes.
+
+.. _tripartite_bernoulli_with_pool:
+
+Tripartite Bernoulli with pool
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For each possible pair of nodes from a source ``NodeCollection`` (e.g., a neuron population ``S``)
+and a target ``NodeCollection`` (e.g., a neuron population ``T``), a connection is
+created with probability ``p_primary``, and these connections are
+called 'primary' connections. For each primary connection, a
+third-party connection pair involving a node from a third ``NodeCollection``
+(e.g., an astrocyte population ``A``) is created with the conditional probability
+``p_third_if_primary``. This connection pair includes a connection
+from the ``S`` node to the ``A`` node, and a connection from the ``A`` node to the
+``T`` node. The ``A`` node to connect to is chosen
+at random from a pool, a subset of the nodes in ``A``. By default,
+this pool is all of ``A``.
+
+Pool formation is controlled by parameters ``pool_type``, which can be ``'random'``
+(default) or ``'block'``, and ``pool_size``, which must be between 1
+and the size of ``A`` (default). For random pools, for each node from
+``T``, ``pool_size`` nodes from ``A`` are chosen randomly without
+replacement.
+
+For block pools, two variants exist. Let ``N_T`` and ``N_A`` be the number of
+nodes in ``T`` and ``A``, respectively. If ``pool_size == 1``, the
+first ``N_T/N_A`` nodes in ``T`` are assigned the first node in
+``A`` as their pool, the second ``N_T/N_A`` nodes in ``T`` the
+second node in ``A`` and so forth. In this case, ``N_T`` must be a
+multiple of ``N_A``. If ``pool_size > 1``, the first ``pool_size``
+elements of ``A`` are the pool for the first node in ``T``, the
+second ``pool_size`` elements of ``A`` are the pool for the second
+node in ``T`` and so forth. In this case, ``N_T * pool_size == N_A``
+is required.
+
+The following code and figure demonstrate three use case examples with
+``pool_type`` being ``'random'`` or ``'block'``:
+
+.. code-block:: python
+
+    N_S, N_T, N_A, p_primary, p_third_if_primary = 6, 6, 3, 0.2, 1.0
+    pool_type, pool_size = 'random', 2
+    S = nest.Create('aeif_cond_alpha_astro', N_S)
+    T = nest.Create('aeif_cond_alpha_astro', N_T)
+    A = nest.Create('astrocyte_lr_1994', N_A)
+    conn_spec = {'rule': 'tripartite_bernoulli_with_pool',
+                      'p_primary': p_primary,
+		      'p_third_if_primary': p_third_if_primary,
+                      'pool_type': pool_type,
+		      'pool_size': pool_size}
+    syn_specs = {'third_out': 'sic_connection'}
+    nest.TripartiteConnect(S, T, A, conn_spec, syn_specs)
+
+
+.. code-block:: python
+
+    N_S, N_T, N_A, p_primary, p_third_if_primary = 6, 6, 3, 0.2, 1.0
+    pool_type, pool_size = 'block', 1
+    S = nest.Create('aeif_cond_alpha_astro', N_S)
+    T = nest.Create('aeif_cond_alpha_astro', N_T)
+    A = nest.Create('astrocyte_lr_1994', N_A)
+    conn_spec = {'rule': 'tripartite_bernoulli_with_pool',
+                      'p_primary': p_primary,
+		      'p_third_if_primary': p_third_if_primary,
+                      'pool_type': pool_type,
+		      'pool_size': pool_size}
+    syn_specs = {'third_out': 'sic_connection'}
+    nest.TripartiteConnect(S, T, A, conn_spec, syn_specs)
+
+
+.. code-block:: python
+
+    N_S, N_T, N_A, p_primary, p_third_if_primary = 6, 3, 6, 0.2, 1.0
+    pool_type, pool_size = 'block', 2
+    S = nest.Create('aeif_cond_alpha_astro', N_S)
+    T = nest.Create('aeif_cond_alpha_astro', N_T)
+    A = nest.Create('astrocyte_lr_1994', N_A)
+    conn_spec = {'rule': 'tripartite_bernoulli_with_pool',
+                      'p_primary': p_primary,
+		      'p_third_if_primary': p_third_if_primary,
+                      'pool_type': pool_type,
+		      'pool_size': pool_size}
+    syn_specs = {'third_out': 'sic_connection'}
+    nest.TripartiteConnect(S, T, A, conn_spec, syn_specs)
+
+
+.. image:: ../static/img/tripartite_pool_type.svg
+    :align: center
+
+(A) In the example of ``'random'`` pool type, each node in ``T`` can be connected with
+up to two randomly selected nodes in ``A`` (given ``pool_size == 2``). (B) In
+the first example of ``'block'`` pool type, let ``N_T/N_A`` = 2,
+then each node in ``T`` can be connected with one node in ``A``
+(``pool_size == 1`` is required because ``N_A < N_T``), and each node in
+``A`` can be connected with up to two nodes in ``T``. (C) In the second example
+of ``'block'`` pool type, let ``N_A/N_T`` = 2, then each node in
+``T`` can be connected with up to two nodes in ``A`` (``pool_size == 2`` is
+required because ``N_A/N_T`` = 2), and each node in ``A`` can be
+connected to one node in ``T``.
+
+
 .. _synapse_spec:
 
 Synapse Specification

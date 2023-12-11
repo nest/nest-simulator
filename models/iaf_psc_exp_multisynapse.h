@@ -85,6 +85,11 @@ See also
 
 iaf_psc_alpha, iaf_psc_delta, iaf_psc_exp, iaf_cond_exp, iaf_psc_alpha_multisynapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_psc_exp_multisynapse
+
 EndUserDocs */
 
 void register_iaf_psc_exp_multisynapse( const std::string& name );
@@ -270,7 +275,6 @@ private:
   }; // Variables
 
   /**
-   * @defgroup iaf_psc_exp_multisynapse_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.

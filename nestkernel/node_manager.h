@@ -145,7 +145,6 @@ public:
    * @param node_id index of the Node
    * @param tid local thread index of the Node
    *
-   * @ingroup net_access
    */
   Node* get_node_or_proxy( size_t node_id, size_t tid );
 
@@ -172,7 +171,6 @@ public:
    *
    * @throws nest::NoThreadSiblingsAvailable Node does not have thread siblings.
    *
-   * @ingroup net_access
    */
   std::vector< Node* > get_thread_siblings( size_t n ) const;
 

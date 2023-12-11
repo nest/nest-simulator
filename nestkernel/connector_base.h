@@ -399,7 +399,11 @@ public:
       if ( not conn.is_disabled() )
       {
         // Some synapses, e.g., bernoulli_synapse, may not send an event after all
-        conn.send( e, tid, cp ) and send_weight_event( tid, lcid + lcid_offset, e, cp );
+        const bool event_sent = conn.send( e, tid, cp );
+        if ( event_sent )
+        {
+          send_weight_event( tid, lcid + lcid_offset, e, cp );
+        }
       }
       if ( not conn.source_has_more_targets() )
       {

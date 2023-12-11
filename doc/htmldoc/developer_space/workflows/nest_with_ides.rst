@@ -277,7 +277,7 @@ Homebrew
 ^^^^^^^^
 
 1. Follow the install instructions for Homebrew (`short <http://brew.sh/>`_) or `long <https://github.com/Homebrew/homebrew/blob/master/share/doc/homebrew/Installation.md#installation>`_)
-1. Open up the Terminal and execute the following lines:
+2. Open up the Terminal and execute the following lines:
 
    .. code-block:: sh
 
@@ -289,7 +289,7 @@ MacPorts
 (We recommend using the Homebrew workflow, since there you can use a more current OpenMPI version for NEST, but we leave the MacPorts instructions for legacy purposes.)
 
 1. Follow the install instructions for `MacPorts <https://www.macports.org/install.php>`_.
-1. Open up the Terminal and execute the following lines:
+2. Open up the Terminal and execute the following lines:
 
    .. code-block:: sh
 
@@ -298,8 +298,8 @@ MacPorts
       sudo port install gsl +gcc48
       sudo port install cmake       # build tools
 
-1. NEST on Mac requires OpenMPI 1.6 from MacPorts to work properly, so we have to get this older version for MacPort. Download the portsfile `Portfile-openmpi-1.6.4.txt <http://www.nest-simulator.org/wp-content/uploads/2014/12/Portfile-openmpi-1.6.4.txt>`_ and save it under the name ``Portfile`` in an arbitraty directory.
-1. In Terminal, move to the directory containing Portfile and run
+3. NEST on Mac requires OpenMPI 1.6 from MacPorts to work properly, so we have to get this older version for MacPort. Download the portsfile `Portfile-openmpi-1.6.4.txt <http://www.nest-simulator.org/wp-content/uploads/2014/12/Portfile-openmpi-1.6.4.txt>`_ and save it under the name ``Portfile`` in an arbitraty directory.
+4. In Terminal, move to the directory containing Portfile and run
 
    .. code-block:: sh
 
@@ -327,7 +327,7 @@ Install NEST
       - build/
       - install/
 
-1. Build NEST
+2. Build NEST
 
    .. code-block:: sh
 
@@ -368,7 +368,7 @@ Get Xcode working with NEST
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1. Create a new project, which we will call ``NEST-fork`` in this article. In the menu select File -> New -> Project... . Then select OS X -> Other -> External Build System (with build tool ``/usr/bin/make``)
-1. Add the NEST sources to the project. There is a ``+`` in the left-bottom corner. Click ``Add Files to "NEST-fork"...``. Then select the ``<somebase>/NEST/src/`` folder (do not copy items and use groups).
+2. Add the NEST sources to the project. There is a ``+`` in the left-bottom corner. Click ``Add Files to "NEST-fork"...``. Then select the ``<somebase>/NEST/src/`` folder (do not copy items and use groups).
 
 Also add the generated files:
 
@@ -378,15 +378,15 @@ Also add the generated files:
     <somebase>/NEST/build/libnestutil/sliconfig.h
     <somebase>/NEST/build/nest/static_modules.h
 
-1. On the left panel select the newly created project ``NEST-fork``, then select the created target.
+3. On the left panel select the newly created project ``NEST-fork``, then select the created target.
 
    Here you set set Directory to ``<somebase>/NEST/build``. This will be the directory, in which the ``make`` command is executed. Also check ``Pass build settings in environment``.
 
-1. Next select the ``Build Settings`` panel.
+4. Next select the ``Build Settings`` panel.
 
   Here you ``Add User-Defined Setting`` and name it ``PATH``. In the ``NEST-fork`` column (the second) you copy the content of your ``PATH`` variable (do ``echo $PATH`` in the Terminal).
 
-1. The build system (CMD+B) should work from now on.
+5. The build system (CMD+B) should work from now on.
 
 Running NEST from Xcode
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -394,10 +394,10 @@ Running NEST from Xcode
 We have to edit the Targets Scheme:
 
 1. In the menu select: Product -> Scheme -> Manage Schemes...
-1. Select the ``NEST-fork`` target and hit ``Edit...``
-1. Select the ``Run`` option on the left and then on the right select ``Info``.
-1. As ``Executable`` select ``<somebase>/NEST/install/bin/nest``.
-1. You can specify arguments in the ``Arguments`` panel.
+2. Select the ``NEST-fork`` target and hit ``Edit...``
+3. Select the ``Run`` option on the left and then on the right select ``Info``.
+4. As ``Executable`` select ``<somebase>/NEST/install/bin/nest``.
+5. You can specify arguments in the ``Arguments`` panel.
 
 .. note::
 
@@ -410,7 +410,42 @@ Code Completion in Xcode
 We have to create a new target and configure it appropriately:
 
 1. In the menu select: File -> New -> Target....
-1. Make the target a OS X -> Command Line Tool (Next), of type C++ in your project (preselected). We call it ``completion``
-1. Remove all files and folders that are created with the new target.
-1. In the tab "Build Phase" of the new target, under "Compile Sources" add all ``*.h``, ``*.hpp``, ``*.c``, ``*.cc``, ``*.cpp`` files from the list (you can use CMD+a).
-1. Now Xcode generates its index and after that code completion should work.
+2. Make the target a OS X -> Command Line Tool (Next), of type C++ in your project (preselected). We call it ``completion``
+3. Remove all files and folders that are created with the new target.
+4. In the tab "Build Phase" of the new target, under "Compile Sources" add all ``*.h``, ``*.hpp``, ``*.c``, ``*.cc``, ``*.cpp`` files from the list (you can use CMD+a).
+5. Now Xcode generates its index and after that code completion should work.
+
+
+CLion
+-----
+
+This recipe describes how to set up CLion for editing, building and
+running NEST. The description here was tested on Ubuntu 23.
+
+
+Setting up the project
+~~~~~~~~~~~~~~~~~~~~~~
+
+1. :ref:`Clone NEST <git_workflow>` onto your computer or select ``Get from VCS`` from CLion's start window
+2. First setup CMake
+
+.. image:: ../../static/img/clion_cmake_config.png
+
+3. Add the following CMake option: ``-DPython_ROOT_DIR=[path/to/root/of/python/env]``
+4. Then add a run configuration
+
+.. image:: ../../static/img/clion_run_configuration.png
+
+5. Add a ``custom build application``
+6. Set the ``PYTHONPATH``` environment variable: ``PYTHONPATH=[build/dir]/install/lib/python3.9/site-packages:$PYTHONPATH``
+7. Add a custom target
+
+.. image:: ../../static/img/clion_custom_build_targets.png
+
+8. Add an external build tool
+
+.. image:: ../../static/img/clion_external_tools.png
+
+9. The working directory should be set to the build directory set in the cmake configuration before
+
+.. image:: ../../static/img/clion_custom_build_targets.png

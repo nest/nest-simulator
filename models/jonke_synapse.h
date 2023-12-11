@@ -214,7 +214,7 @@ public:
    * \param e The event to send
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e, size_t t, const JonkeCommonProperties& cp );
+  bool send( Event& e, size_t t, const JonkeCommonProperties& cp );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -297,7 +297,7 @@ constexpr ConnectionModelProperties jonke_synapse< targetidentifierT >::properti
  * \param cp Common properties object, containing the stdp parameters.
  */
 template < typename targetidentifierT >
-inline void
+inline bool
 jonke_synapse< targetidentifierT >::send( Event& e, size_t t, const JonkeCommonProperties& cp )
 {
   // synapse STDP depressing/facilitation dynamics
@@ -347,6 +347,8 @@ jonke_synapse< targetidentifierT >::send( Event& e, size_t t, const JonkeCommonP
   Kplus_ = Kplus_ * std::exp( ( t_lastspike_ - t_spike ) / cp.tau_plus_ ) + 1.0;
 
   t_lastspike_ = t_spike;
+
+  return true;
 }
 
 

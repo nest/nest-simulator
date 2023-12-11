@@ -116,17 +116,15 @@ void
 EventDeliveryManager::finalize()
 {
   // clear the spike buffers
-  for ( auto it = emitted_spikes_register_.begin(); it < emitted_spikes_register_.end(); ++it )
+  for ( auto& vec_spikedata_ptr : emitted_spikes_register_ )
   {
-    ( *it )->clear();
-    delete ( *it );
+    delete vec_spikedata_ptr;
   }
-  emitted_spikes_register_.clear();
+  emitted_spikes_register_.clear(); // remove stale pointers
 
-  for ( auto it = off_grid_emitted_spikes_register_.begin(); it < off_grid_emitted_spikes_register_.end(); ++it )
+  for ( auto& vec_spikedata_ptr : off_grid_emitted_spikes_register_ )
   {
-    ( *it )->clear();
-    delete ( *it );
+    delete vec_spikedata_ptr;
   }
   off_grid_emitted_spikes_register_.clear();
 

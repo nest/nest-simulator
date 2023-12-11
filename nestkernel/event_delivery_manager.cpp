@@ -63,7 +63,7 @@ EventDeliveryManager::EventDeliveryManager()
   , recv_buffer_target_data_()
   , buffer_size_target_data_has_changed_( false )
   , global_max_spikes_per_rank_( 0 )
-  , send_recv_buffer_shrink_limit_( 0.0 )
+  , send_recv_buffer_shrink_limit_( 0.2 )
   , send_recv_buffer_shrink_spare_( 0.1 )
   , send_recv_buffer_grow_extra_( 0.5 )
   , send_recv_buffer_resize_log_()
@@ -91,7 +91,7 @@ EventDeliveryManager::initialize()
   // Ensures that ResetKernel resets off_grid_spiking_
   off_grid_spiking_ = false;
   buffer_size_target_data_has_changed_ = false;
-  send_recv_buffer_shrink_limit_ = 0.0;
+  send_recv_buffer_shrink_limit_ = 0.2;
   send_recv_buffer_shrink_spare_ = 0.1;
   send_recv_buffer_grow_extra_ = 0.5;
   send_recv_buffer_resize_log_.clear();

@@ -398,7 +398,8 @@ public:
       e.set_port( lcid + lcid_offset );
       if ( not conn.is_disabled() )
       {
-        // Some synapses, e.g., bernoulli_synapse, may not send an event after all
+        // Some synapses, e.g., bernoulli_synapse, may not send an event after all.
+        // Short circuiting will call send_weight_event() only if conn.send() actually sent the event.
         conn.send( e, tid, cp ) and send_weight_event( tid, lcid + lcid_offset, e, cp );
       }
       if ( not conn.source_has_more_targets() )

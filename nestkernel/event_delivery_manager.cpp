@@ -122,7 +122,7 @@ EventDeliveryManager::finalize()
   }
   emitted_spikes_register_.clear(); // remove stale pointers
 
-  for ( auto vec_spikedata_ptr : off_grid_emitted_spikes_register_ )
+  for ( auto& vec_spikedata_ptr : off_grid_emitted_spikes_register_ )
   {
     delete vec_spikedata_ptr;
   }

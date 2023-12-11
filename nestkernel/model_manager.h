@@ -180,7 +180,7 @@ private:
   /**
    * Delete all models and clear the modeldict
    *
-   * This function delete all models, which will as a side-effect also
+   * This function deletes all models, which will as a side-effect also
    * delete all nodes. The built-in models will be re-registered in
    * initialize()
    */
@@ -200,7 +200,7 @@ private:
    * @param new_name name of new model.
    * @see copy_model(), copy_connection_model_()
    */
-  void copy_node_model_( size_t old_id, Name new_name, DictionaryDatum params );
+  void copy_node_model_( const size_t old_id, Name new_name, DictionaryDatum params );
 
   /**
    * Copy an existing synapse model and register it as a new model.

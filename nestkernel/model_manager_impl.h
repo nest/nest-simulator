@@ -87,7 +87,7 @@ ModelManager::register_specific_connection_model_( const std::string& name )
     throw NamingConflict( msg );
   }
 
-  const auto new_syn_id = connection_models_.at( kernel().vp_manager.get_thread_id() ).size();
+  const auto new_syn_id = get_num_connection_models();
   if ( new_syn_id >= invalid_synindex )
   {
     const std::string msg = String::compose(

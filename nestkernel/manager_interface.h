@@ -69,7 +69,7 @@ public:
    * is responsible for calling the initialization routines on the
    * specific managers in correct order.
    *
-   * @param reset_kernel  Pass false if calling from kernel_manager::change_number_of_threads to limit operations
+   * @param reset_kernel  Pass false if calling from kernel_manager::change_number_of_threads() to limit operations
    *
    * @see finalize()
    */
@@ -88,7 +88,7 @@ public:
    * specific managers in correct order, i.e., the opposite order of
    * initialize() calls.
    *
-   * @param reset_kernel  pass true if calling from kernel_manager::change_number_of_threads to limit operations
+   * @param reset_kernel  pass false if calling from kernel_manager::change_number_of_threads() to limit operations
    *
    * @see initialize()
    */

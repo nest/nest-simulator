@@ -144,12 +144,12 @@ public:
   /**
    * Fails if NEST is in thread-parallel section.
    */
-  void assert_single_threaded();
+  void assert_single_threaded() const;
 
   /**
    * Fails if NEST is not in thread-parallel section.
    */
-  void assert_thread_parallel();
+  void assert_thread_parallel() const;
 
   /**
    * Returns the number of processes that are taken care of by a single thread
@@ -192,7 +192,7 @@ nest::VPManager::get_num_threads() const
 }
 
 inline void
-nest::VPManager::assert_single_threaded()
+nest::VPManager::assert_single_threaded() const
 {
 #ifdef _OPENMP
   assert( omp_get_num_threads() == 1 );
@@ -200,7 +200,7 @@ nest::VPManager::assert_single_threaded()
 }
 
 inline void
-nest::VPManager::assert_thread_parallel()
+nest::VPManager::assert_thread_parallel() const
 {
 #ifdef _OPENMP
   assert( omp_get_num_threads() == n_threads_ );

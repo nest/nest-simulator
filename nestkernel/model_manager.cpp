@@ -180,7 +180,7 @@ ModelManager::register_node_model_( Model* model )
 }
 
 void
-ModelManager::copy_node_model_( size_t old_id, Name new_name, DictionaryDatum params )
+ModelManager::copy_node_model_( const size_t old_id, Name new_name, DictionaryDatum params )
 {
   Model* old_model = get_node_model( old_id );
   old_model->deprecation_warning( "CopyModel" );
@@ -356,7 +356,7 @@ ModelManager::get_connector_defaults( synindex syn_id ) const
 void
 ModelManager::clear_node_models_()
 {
-  for ( auto&& node_model : node_models_ )
+  for ( const auto& node_model : node_models_ )
   {
     if ( node_model )
     {
@@ -381,7 +381,7 @@ ModelManager::clear_connection_models_()
 {
   for ( size_t t = 0; t < connection_models_.size(); ++t )
   {
-    for ( auto&& connection_model : connection_models_[ t ] )
+    for ( const auto& connection_model : connection_models_[ t ] )
     {
       if ( connection_model )
       {

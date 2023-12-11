@@ -178,7 +178,7 @@ NodeManager::add_node( size_t model_id, long n )
 
 #pragma omp parallel
   {
-    // must be caled in parallel context to properly configure per-thread data structures
+    // must be called in parallel context to properly configure per-thread data structures
     kernel().connection_manager.resize_target_table_devices_to_number_of_synapse_types();
   }
 

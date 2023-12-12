@@ -200,7 +200,7 @@ PyNEST examples
 
 .. grid:: 1 1 2 3
 
-    .. grid-item-card:: E-prop plasticity
+    .. grid-item-card:: :doc:`../auto_examples/eprop_plasticity/index`
            :img-top: ../static/img/pynest/eprop_supervised_classification_infrastructure.png
 
            * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_classification_evidence-accumulation`
@@ -341,6 +341,7 @@ PyNEST examples
    ../auto_examples/astrocytes/astrocyte_interaction
    ../auto_examples/astrocytes/astrocyte_small_network
    ../auto_examples/astrocytes/astrocyte_brunel
+   ../auto_examples/eprop_plasticity/index
 
 .. toctree::
    :hidden:

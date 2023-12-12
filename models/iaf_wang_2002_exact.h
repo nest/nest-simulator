@@ -118,17 +118,17 @@ The following values can be recorded.
 
 =========== ===========================================================
  V_m         Membrane potential
- g_AMPA      AMPA gate
- g_GABA      GABA gate
+ s_AMPA      AMPA gate
+ s_GABA      GABA gate
  NMDA_sum    sum of NMDA over all presynaptic neurons j
 =========== ===========================================================
 
 .. note::
-   It is possible to set values for `V_m`, `g_AMPA` and `g_GABA` when creating the model, while the
-   different `g_NMDA_j` (`j` represents presynaptic neuron `j`) can not be set by the user.
+   It is possible to set values for `V_m`, `s_AMPA` and `s_GABA` when creating the model, while the
+   different `s_NMDA_j` (`j` represents presynaptic neuron `j`) can not be set by the user.
 
 .. note::
-   The variable `g_AMPA` and `g_GABA` in the NEST implementation does not correspond to `g_{recAMPA, extAMPA, GABA}`
+   The variable `s_AMPA` and `s_GABA` in the NEST implementation does not correspond to `g_{recAMPA, extAMPA, GABA}`
    in [1]_. `g_{recAMPA, extAMPA, GABA, NMBA}` from [1]_ is built into the weights in this NEST model, so setting the
    variables is thus done by changing the weights.
 
@@ -422,7 +422,7 @@ iaf_wang_2002_exact::handles_test_event( SpikeEvent&, size_t receptor_type )
     {
       // give each NMDA synapse a unique rport, starting from 2 (num_ports_ is initialized to 2) 
       ++S_.num_ports_;
-      return S_.num_ports_ - 1;
+      return S_.num_ports_;
     }
     else 
     {

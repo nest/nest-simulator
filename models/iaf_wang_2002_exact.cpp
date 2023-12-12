@@ -64,8 +64,8 @@ RecordablesMap< iaf_wang_2002_exact >::create()
 {
   // add state variables to recordables map
   insert_( names::V_m, &iaf_wang_2002_exact::get_ode_state_elem_< iaf_wang_2002_exact::State_::V_m > );
-  insert_( names::g_AMPA, &iaf_wang_2002_exact::get_ode_state_elem_< iaf_wang_2002_exact::State_::G_AMPA > );
-  insert_( names::g_GABA, &iaf_wang_2002_exact::get_ode_state_elem_< iaf_wang_2002_exact::State_::G_GABA > );
+  insert_( names::s_AMPA, &iaf_wang_2002_exact::get_ode_state_elem_< iaf_wang_2002_exact::State_::G_AMPA > );
+  insert_( names::s_GABA, &iaf_wang_2002_exact::get_ode_state_elem_< iaf_wang_2002_exact::State_::G_GABA > );
   insert_( names::NMDA_sum, &iaf_wang_2002_exact::get_NMDA_sum_ );
 }
 }
@@ -234,8 +234,8 @@ void
 nest::iaf_wang_2002_exact::State_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::V_m, ode_state_[ V_m ] ); // Membrane potential
-  def< double >( d, names::g_AMPA, ode_state_[ G_AMPA ] );
-  def< double >( d, names::g_GABA, ode_state_[ G_GABA ] );
+  def< double >( d, names::s_AMPA, ode_state_[ G_AMPA ] );
+  def< double >( d, names::s_GABA, ode_state_[ G_GABA ] );
 
   // total NMDA sum
   double NMDA_sum = get_NMDA_sum();
@@ -246,8 +246,8 @@ void
 nest::iaf_wang_2002_exact::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
 {
   updateValueParam< double >( d, names::V_m, ode_state_[ V_m ], node );
-  updateValueParam< double >( d, names::g_AMPA, ode_state_[ G_AMPA ], node );
-  updateValueParam< double >( d, names::g_GABA, ode_state_[ G_GABA ], node );
+  updateValueParam< double >( d, names::s_AMPA, ode_state_[ G_AMPA ], node );
+  updateValueParam< double >( d, names::s_GABA, ode_state_[ G_GABA ], node );
 }
 
 /* ---------------------------------------------------------------------------
@@ -550,15 +550,17 @@ nest::iaf_wang_2002_exact::handle( SpikeEvent& e )
 
   const double steps = e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() );
 
-  std::cout << "B_.spikes_.size() = " << B_.spikes_.size() << std::endl;
-  std::cout << "rport: " << e.get_rport() << std::endl;
   const auto rport = e.get_rport();
   if ( rport < NMDA )
   {
+//     std::cout << "Received non-NMDA spike: " << std::endl;
+//     std::cout << "rport: " << e.get_rport() << std::endl;
     B_.spikes_[ rport - 1 ].add_value( steps, e.get_weight() * e.get_multiplicity() );
   }
   else
   {
+    std::cout << "Received NMDA spike: " << std::endl;
+    std::cout << "rport: " << e.get_rport() << std::endl;
     B_.spikes_[ rport - 1 ].add_value( steps, e.get_multiplicity() );
 
     const size_t w_idx = rport - NMDA;
@@ -568,6 +570,7 @@ nest::iaf_wang_2002_exact::handle( SpikeEvent& e )
     }
     else if ( B_.weights_[ w_idx ] != e.get_weight() )
     {
+      // Why??
       throw KernelException( "iaf_wang_2002_exact requires constant weights." );
     }
   }

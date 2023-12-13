@@ -38,7 +38,7 @@ register_eprop_synapse( const std::string& name )
 EpropCommonProperties::EpropCommonProperties()
   : CommonSynapseProperties()
   , average_gradient_( false )
-  , optimizer_cp_( new EpropOptimizerCommonPropertiesGradientDescent() )
+  , optimizer_cp_( new WeightOptimizerCommonPropertiesGradientDescent() )
 {
 }
 
@@ -89,7 +89,7 @@ EpropCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm 
       if ( new_optimizer == "gradient_descent" )
       {
         delete optimizer_cp_;
-        optimizer_cp_ = new EpropOptimizerCommonPropertiesGradientDescent();
+        optimizer_cp_ = new WeightOptimizerCommonPropertiesGradientDescent();
       }
       else if ( new_optimizer == "adam" )
       {

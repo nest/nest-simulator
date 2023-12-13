@@ -122,13 +122,13 @@ private:
   double optimize_( const WeightOptimizerCommonProperties& cp, double weight, size_t current_opt_step ) override;
 };
 
-class EpropOptimizerCommonPropertiesGradientDescent : public WeightOptimizerCommonProperties
+class WeightOptimizerCommonPropertiesGradientDescent : public WeightOptimizerCommonProperties
 {
   friend class WeightOptimizerGradientDescent;
 
 public:
-  EpropOptimizerCommonPropertiesGradientDescent& operator=(
-    const EpropOptimizerCommonPropertiesGradientDescent& ) = delete;
+  WeightOptimizerCommonPropertiesGradientDescent& operator=(
+    const WeightOptimizerCommonPropertiesGradientDescent& ) = delete;
 
   WeightOptimizerCommonProperties* clone() const override;
   WeightOptimizer* get_optimizer() const override;

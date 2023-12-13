@@ -123,13 +123,13 @@ WeightOptimizer::optimized_weight( const WeightOptimizerCommonProperties& cp,
 }
 
 WeightOptimizerCommonProperties*
-EpropOptimizerCommonPropertiesGradientDescent::clone() const
+WeightOptimizerCommonPropertiesGradientDescent::clone() const
 {
-  return new EpropOptimizerCommonPropertiesGradientDescent( *this );
+  return new WeightOptimizerCommonPropertiesGradientDescent( *this );
 }
 
 WeightOptimizer*
-EpropOptimizerCommonPropertiesGradientDescent::get_optimizer() const
+WeightOptimizerCommonPropertiesGradientDescent::get_optimizer() const
 {
   return new WeightOptimizerGradientDescent();
 }

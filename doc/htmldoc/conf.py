@@ -61,7 +61,6 @@ extensions = [
     "nbsphinx",
     "extract_api_functions",
     "sphinx_design",
-    "HoverXTooltip",
     "VersionSyncRole",
     "sphinx_copybutton",
     "notfound.extension",
@@ -91,17 +90,6 @@ carousel_show_captions_below = True
 project = "NEST Simulator user documentation"
 copyright = "2004, nest-simulator"
 author = "nest-simulator"
-
-# hoverxref_tooltip_maxwidth = 650
-hoverxref_auto_ref = True
-
-
-hoverxref_role_types = {
-    "hoverxref": "tooltip",
-    "ref": "tooltip",
-}
-hoverxref_sphinxtabs = True
-hoverxref_mathjax = True
 
 copybutton_prompt_text = ">>> "
 # The output lines will not be copied if set to True

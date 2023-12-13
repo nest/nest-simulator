@@ -282,12 +282,12 @@ params_common_syn_eprop = {
     "optimizer": {
         "type": "adam",  # algorithm to optimize the weights
         "batch_size": n_batch,
-        "eta": 5e-3,  # learning rate
-        "Wmin": -100.0,  # pA, minimal limit of the synaptic weights
-        "Wmax": 100.0,  # pA, maximal limit of the synaptic weights
         "beta_1": 0.9,  # exponential decay rate for 1st moment estimate of Adam optimizer
         "beta_2": 0.999,  # exponential decay rate for 2nd moment raw estimate of Adam optimizer
         "epsilon": 1e-8,  # small numerical stabilization constant of Adam optimizer
+        "eta": 5e-3,  # learning rate
+        "Wmax": 100.0,  # pA, maximal limit of the synaptic weights
+        "Wmin": -100.0,  # pA, minimal limit of the synaptic weights
     },
     "average_gradient": False,  # if True, average the gradient over the learning window
     "weight_recorder": wr,

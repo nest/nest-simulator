@@ -103,10 +103,10 @@ EpropArchivingNodeRecurrent::write_firing_rate_reg_to_history( const long t_curr
 std::vector< HistEntryEpropFiringRateReg >::iterator
 EpropArchivingNodeRecurrent::get_firing_rate_reg_history( const long time_step )
 {
-  const auto lb = std::lower_bound( firing_rate_reg_history_.begin(), firing_rate_reg_history_.end(), time_step );
-  assert( lb != firing_rate_reg_history_.end() );
+  const auto it_hist = std::lower_bound( firing_rate_reg_history_.begin(), firing_rate_reg_history_.end(), time_step );
+  assert( it_hist != firing_rate_reg_history_.end() );
 
-  return lb;
+  return it_hist;
 }
 
 double

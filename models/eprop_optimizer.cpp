@@ -92,7 +92,6 @@ EpropOptimizer::EpropOptimizer()
   : sum_gradients_( 0.0 )
   , optimization_step_( 1 )
 {
-  // std::cout << "Creating optimizer " << this << std::endl;
 }
 
 void
@@ -190,17 +189,17 @@ EpropOptimizerCommonPropertiesAdam::set_status( const DictionaryDatum& d )
 
   if ( beta1_ < 0.0 or 1.0 <= beta1_ )
   {
-    throw BadProperty( "For adam optimizer, beta_1 must be in [0,1)." );
+    throw BadProperty( "For Adam optimizer, beta_1 must be in [0,1)." );
   }
 
   if ( beta2_ < 0.0 or 1.0 <= beta2_ )
   {
-    throw BadProperty( "For adam optimizer, beta_2 must be in [0,1)." );
+    throw BadProperty( "For Adam optimizer, beta_2 must be in [0,1)." );
   }
 
   if ( epsilon_ < 0.0 )
   {
-    throw BadProperty( "For adam optimizer, epsilon must be ≥ 0." );
+    throw BadProperty( "For Adam optimizer, epsilon must be ≥ 0." );
   }
 }
 

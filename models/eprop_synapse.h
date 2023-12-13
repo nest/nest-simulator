@@ -26,8 +26,8 @@
 // nestkernel
 #include "connection.h"
 #include "eprop_archiving_node.h"
-#include "eprop_optimizer.h"
 #include "target_identifier.h"
+#include "weight_optimizer.h"
 
 namespace nest
 {
@@ -220,7 +220,7 @@ public:
   //! If True, average the gradient over the learning window.
   bool average_gradient_;
 
-  EpropOptimizerCommonProperties* optimizer_cp_;
+  WeightOptimizerCommonProperties* optimizer_cp_;
 };
 
 //! Register the eprop synapse model.
@@ -356,7 +356,7 @@ public:
    *  Pointer is managed entirely by Connector
    *   @todo Make non-public!
    */
-  EpropOptimizer* optimizer_;
+  WeightOptimizer* optimizer_;
 };
 
 template < typename targetidentifierT >

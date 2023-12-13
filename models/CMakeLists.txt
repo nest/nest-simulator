@@ -22,10 +22,10 @@ set(models_sources
     binary_neuron.h
     cm_compartmentcurrents.h cm_compartmentcurrents.cpp
     cm_tree.h cm_tree.cpp
-    eprop_optimizer.h eprop_optimizer.cpp
     rate_neuron_ipn.h rate_neuron_ipn_impl.h
     rate_neuron_opn.h rate_neuron_opn_impl.h
     rate_transformer_node.h rate_transformer_node_impl.h
+    weight_optimizer.h weight_optimizer.cpp
     ${MODELS_SOURCES_GENERATED}
 )
 

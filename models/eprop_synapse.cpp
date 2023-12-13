@@ -94,7 +94,7 @@ EpropCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm 
       else if ( new_optimizer == "adam" )
       {
         delete optimizer_cp_;
-        optimizer_cp_ = new EpropOptimizerCommonPropertiesAdam();
+        optimizer_cp_ = new WeightOptimizerCommonPropertiesAdam();
       }
       else
       {

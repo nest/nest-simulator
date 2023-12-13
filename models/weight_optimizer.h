@@ -1,5 +1,5 @@
 /*
- *  eprop_optimizer.h
+ *  weight_optimizer.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef EPROP_OPTIMIZER_H
-#define EPROP_OPTIMIZER_H
+#ifndef WEIGHT_OPTIMIZER_H
+#define WEIGHT_OPTIMIZER_H
 
 // Includes from sli
 #include "dictdatum.h"
@@ -29,7 +29,7 @@
 namespace nest
 {
 
-class EpropOptimizer;
+class WeightOptimizer;
 
 /**
  * Base class for common properties for eprop optimizers.
@@ -38,21 +38,21 @@ class EpropOptimizer;
  * The values in these objects are used by the synapse-specific optimizer object.
  * Change of optimizer type is only possible before synapses of the model have been created.
  */
-class EpropOptimizerCommonProperties
+class WeightOptimizerCommonProperties
 {
 public:
-  EpropOptimizerCommonProperties();
-  virtual ~EpropOptimizerCommonProperties()
+  WeightOptimizerCommonProperties();
+  virtual ~WeightOptimizerCommonProperties()
   {
   }
-  EpropOptimizerCommonProperties( const EpropOptimizerCommonProperties& );
-  EpropOptimizer& operator=( const EpropOptimizer& ) = delete;
+  WeightOptimizerCommonProperties( const WeightOptimizerCommonProperties& );
+  WeightOptimizer& operator=( const WeightOptimizer& ) = delete;
 
   virtual void get_status( DictionaryDatum& d ) const;
   virtual void set_status( const DictionaryDatum& d );
 
-  virtual EpropOptimizerCommonProperties* clone() const = 0;
-  virtual EpropOptimizer* get_optimizer() const = 0;
+  virtual WeightOptimizerCommonProperties* clone() const = 0;
+  virtual WeightOptimizer* get_optimizer() const = 0;
 
   double
   get_Wmin() const
@@ -83,56 +83,56 @@ public:
  * An optimizer may have internal state which is maintained from call to call of the `optimized_weight()` method.
  * Each optimized object belongs to exactly one e-prop synapse.
  */
-class EpropOptimizer
+class WeightOptimizer
 {
 public:
-  EpropOptimizer();
-  virtual ~EpropOptimizer()
+  WeightOptimizer();
+  virtual ~WeightOptimizer()
   {
     // std::cout << "Deleting optimizer " << this << std::endl;
   }
-  EpropOptimizer( const EpropOptimizer& ) = default;
-  EpropOptimizer& operator=( const EpropOptimizer& ) = delete;
+  WeightOptimizer( const WeightOptimizer& ) = default;
+  WeightOptimizer& operator=( const WeightOptimizer& ) = delete;
 
   virtual void get_status( DictionaryDatum& d ) const;
   virtual void set_status( const DictionaryDatum& d );
 
   //! Return optimized weight based on current weight
-  double optimized_weight( const EpropOptimizerCommonProperties& cp,
+  double optimized_weight( const WeightOptimizerCommonProperties& cp,
     const size_t idx_current_update,
     const double gradient_change,
     double weight );
 
 protected:
   //! Actually perform specific optimization, called by optimized_weight()
-  virtual double optimize_( const EpropOptimizerCommonProperties& cp, double weight, size_t current_opt_step ) = 0;
+  virtual double optimize_( const WeightOptimizerCommonProperties& cp, double weight, size_t current_opt_step ) = 0;
 
   double sum_gradients_;     //!< Sum of gradients accumulated in current batch
   size_t optimization_step_; //!< Current optimization step; optimization happens evert batch_size_ steps.
 };
 
 
-class EpropOptimizerGradientDescent : public EpropOptimizer
+class WeightOptimizerGradientDescent : public WeightOptimizer
 {
 public:
-  EpropOptimizerGradientDescent();
-  EpropOptimizerGradientDescent( const EpropOptimizerGradientDescent& ) = default;
-  EpropOptimizerGradientDescent& operator=( const EpropOptimizerGradientDescent& ) = delete;
+  WeightOptimizerGradientDescent();
+  WeightOptimizerGradientDescent( const WeightOptimizerGradientDescent& ) = default;
+  WeightOptimizerGradientDescent& operator=( const WeightOptimizerGradientDescent& ) = delete;
 
 private:
-  double optimize_( const EpropOptimizerCommonProperties& cp, double weight, size_t current_opt_step ) override;
+  double optimize_( const WeightOptimizerCommonProperties& cp, double weight, size_t current_opt_step ) override;
 };
 
-class EpropOptimizerCommonPropertiesGradientDescent : public EpropOptimizerCommonProperties
+class EpropOptimizerCommonPropertiesGradientDescent : public WeightOptimizerCommonProperties
 {
-  friend class EpropOptimizerGradientDescent;
+  friend class WeightOptimizerGradientDescent;
 
 public:
   EpropOptimizerCommonPropertiesGradientDescent& operator=(
     const EpropOptimizerCommonPropertiesGradientDescent& ) = delete;
 
-  EpropOptimizerCommonProperties* clone() const override;
-  EpropOptimizer* get_optimizer() const override;
+  WeightOptimizerCommonProperties* clone() const override;
+  WeightOptimizer* get_optimizer() const override;
 
   std::string
   get_name() const override
@@ -141,35 +141,35 @@ public:
   }
 };
 
-class EpropOptimizerAdam : public EpropOptimizer
+class WeightOptimizerAdam : public WeightOptimizer
 {
 public:
-  EpropOptimizerAdam();
-  EpropOptimizerAdam( const EpropOptimizerAdam& ) = default;
-  EpropOptimizerAdam& operator=( const EpropOptimizerAdam& ) = delete;
+  WeightOptimizerAdam();
+  WeightOptimizerAdam( const WeightOptimizerAdam& ) = default;
+  WeightOptimizerAdam& operator=( const WeightOptimizerAdam& ) = delete;
 
   void get_status( DictionaryDatum& d ) const override;
   void set_status( const DictionaryDatum& d ) override;
 
 private:
   //! Return optimized weight based on current weight
-  double optimize_( const EpropOptimizerCommonProperties& cp, double weight, size_t current_opt_step ) override;
+  double optimize_( const WeightOptimizerCommonProperties& cp, double weight, size_t current_opt_step ) override;
 
   double m_;
   double v_;
 };
 
 
-class EpropOptimizerCommonPropertiesAdam : public EpropOptimizerCommonProperties
+class WeightOptimizerCommonPropertiesAdam : public WeightOptimizerCommonProperties
 {
-  friend class EpropOptimizerAdam;
+  friend class WeightOptimizerAdam;
 
 public:
-  EpropOptimizerCommonPropertiesAdam();
-  EpropOptimizerCommonPropertiesAdam& operator=( const EpropOptimizerCommonPropertiesAdam& ) = delete;
+  WeightOptimizerCommonPropertiesAdam();
+  WeightOptimizerCommonPropertiesAdam& operator=( const WeightOptimizerCommonPropertiesAdam& ) = delete;
 
-  EpropOptimizerCommonProperties* clone() const override;
-  EpropOptimizer* get_optimizer() const override;
+  WeightOptimizerCommonProperties* clone() const override;
+  WeightOptimizer* get_optimizer() const override;
 
   void get_status( DictionaryDatum& d ) const override;
   void set_status( const DictionaryDatum& d ) override;
@@ -188,4 +188,4 @@ private:
 
 } // namespace nest
 
-#endif // EPROP_OPTIMIZER_H
+#endif // WEIGHT_OPTIMIZER_H

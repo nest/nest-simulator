@@ -1,5 +1,5 @@
 /*
- *  eprop_optimizer.cpp
+ *  weight_optimizer.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,7 +20,7 @@
  *
  */
 
-#include "eprop_optimizer.h"
+#include "weight_optimizer.h"
 
 // Includes from nestkernel
 #include "exceptions.h"
@@ -31,7 +31,7 @@
 
 namespace nest
 {
-EpropOptimizerCommonProperties::EpropOptimizerCommonProperties()
+WeightOptimizerCommonProperties::WeightOptimizerCommonProperties()
   : batch_size_( 1 )
   , eta_( 1e-4 )
   , Wmin_( 0.0 )
@@ -39,7 +39,7 @@ EpropOptimizerCommonProperties::EpropOptimizerCommonProperties()
 {
 }
 
-EpropOptimizerCommonProperties::EpropOptimizerCommonProperties( const EpropOptimizerCommonProperties& cp )
+WeightOptimizerCommonProperties::WeightOptimizerCommonProperties( const WeightOptimizerCommonProperties& cp )
   : batch_size_( cp.batch_size_ )
   , eta_( cp.eta_ )
   , Wmin_( cp.Wmin_ )
@@ -48,7 +48,7 @@ EpropOptimizerCommonProperties::EpropOptimizerCommonProperties( const EpropOptim
 }
 
 void
-EpropOptimizerCommonProperties::get_status( DictionaryDatum& d ) const
+WeightOptimizerCommonProperties::get_status( DictionaryDatum& d ) const
 {
   def< std::string >( d, names::optimizer, get_name() );
   def< long >( d, names::batch_size, batch_size_ );
@@ -58,7 +58,7 @@ EpropOptimizerCommonProperties::get_status( DictionaryDatum& d ) const
 }
 
 void
-EpropOptimizerCommonProperties::set_status( const DictionaryDatum& d )
+WeightOptimizerCommonProperties::set_status( const DictionaryDatum& d )
 {
   long new_batch_size = batch_size_;
   updateValue< long >( d, names::batch_size, new_batch_size );
@@ -88,24 +88,24 @@ EpropOptimizerCommonProperties::set_status( const DictionaryDatum& d )
   Wmax_ = new_Wmax;
 }
 
-EpropOptimizer::EpropOptimizer()
+WeightOptimizer::WeightOptimizer()
   : sum_gradients_( 0.0 )
   , optimization_step_( 1 )
 {
 }
 
 void
-EpropOptimizer::get_status( DictionaryDatum& d ) const
+WeightOptimizer::get_status( DictionaryDatum& d ) const
 {
 }
 
 void
-EpropOptimizer::set_status( const DictionaryDatum& d )
+WeightOptimizer::set_status( const DictionaryDatum& d )
 {
 }
 
 double
-EpropOptimizer::optimized_weight( const EpropOptimizerCommonProperties& cp,
+WeightOptimizer::optimized_weight( const WeightOptimizerCommonProperties& cp,
   const size_t idx_current_update,
   const double gradient_change,
   double weight )
@@ -122,33 +122,33 @@ EpropOptimizer::optimized_weight( const EpropOptimizerCommonProperties& cp,
   return weight;
 }
 
-EpropOptimizerCommonProperties*
+WeightOptimizerCommonProperties*
 EpropOptimizerCommonPropertiesGradientDescent::clone() const
 {
   return new EpropOptimizerCommonPropertiesGradientDescent( *this );
 }
 
-EpropOptimizer*
+WeightOptimizer*
 EpropOptimizerCommonPropertiesGradientDescent::get_optimizer() const
 {
-  return new EpropOptimizerGradientDescent();
+  return new WeightOptimizerGradientDescent();
 }
 
-EpropOptimizerGradientDescent::EpropOptimizerGradientDescent()
-  : EpropOptimizer()
+WeightOptimizerGradientDescent::WeightOptimizerGradientDescent()
+  : WeightOptimizer()
 {
 }
 
 double
-EpropOptimizerGradientDescent::optimize_( const EpropOptimizerCommonProperties& cp, double weight, size_t )
+WeightOptimizerGradientDescent::optimize_( const WeightOptimizerCommonProperties& cp, double weight, size_t )
 {
   weight -= cp.eta_ * sum_gradients_;
   sum_gradients_ = 0;
   return weight;
 }
 
-EpropOptimizerCommonPropertiesAdam::EpropOptimizerCommonPropertiesAdam()
-  : EpropOptimizerCommonProperties()
+WeightOptimizerCommonPropertiesAdam::WeightOptimizerCommonPropertiesAdam()
+  : WeightOptimizerCommonProperties()
   , beta1_( 0.9 )
   , beta2_( 0.999 )
   , epsilon_( 1e-8 )
@@ -156,22 +156,22 @@ EpropOptimizerCommonPropertiesAdam::EpropOptimizerCommonPropertiesAdam()
 }
 
 
-EpropOptimizerCommonProperties*
-EpropOptimizerCommonPropertiesAdam::clone() const
+WeightOptimizerCommonProperties*
+WeightOptimizerCommonPropertiesAdam::clone() const
 {
-  return new EpropOptimizerCommonPropertiesAdam( *this );
+  return new WeightOptimizerCommonPropertiesAdam( *this );
 }
 
-EpropOptimizer*
-EpropOptimizerCommonPropertiesAdam::get_optimizer() const
+WeightOptimizer*
+WeightOptimizerCommonPropertiesAdam::get_optimizer() const
 {
-  return new EpropOptimizerAdam();
+  return new WeightOptimizerAdam();
 }
 
 void
-EpropOptimizerCommonPropertiesAdam::get_status( DictionaryDatum& d ) const
+WeightOptimizerCommonPropertiesAdam::get_status( DictionaryDatum& d ) const
 {
-  EpropOptimizerCommonProperties::get_status( d );
+  WeightOptimizerCommonProperties::get_status( d );
 
   def< double >( d, names::beta_1, beta1_ );
   def< double >( d, names::beta_2, beta2_ );
@@ -179,9 +179,9 @@ EpropOptimizerCommonPropertiesAdam::get_status( DictionaryDatum& d ) const
 }
 
 void
-EpropOptimizerCommonPropertiesAdam::set_status( const DictionaryDatum& d )
+WeightOptimizerCommonPropertiesAdam::set_status( const DictionaryDatum& d )
 {
-  EpropOptimizerCommonProperties::set_status( d );
+  WeightOptimizerCommonProperties::set_status( d );
 
   updateValue< double >( d, names::beta_1, beta1_ );
   updateValue< double >( d, names::beta_2, beta2_ );
@@ -203,36 +203,36 @@ EpropOptimizerCommonPropertiesAdam::set_status( const DictionaryDatum& d )
   }
 }
 
-EpropOptimizerAdam::EpropOptimizerAdam()
-  : EpropOptimizer()
+WeightOptimizerAdam::WeightOptimizerAdam()
+  : WeightOptimizer()
   , m_( 0.0 )
   , v_( 0.0 )
 {
 }
 
 void
-EpropOptimizerAdam::get_status( DictionaryDatum& d ) const
+WeightOptimizerAdam::get_status( DictionaryDatum& d ) const
 {
-  EpropOptimizer::get_status( d );
+  WeightOptimizer::get_status( d );
   def< double >( d, names::m, m_ );
   def< double >( d, names::v, v_ );
 }
 
 void
-EpropOptimizerAdam::set_status( const DictionaryDatum& d )
+WeightOptimizerAdam::set_status( const DictionaryDatum& d )
 {
-  EpropOptimizer::set_status( d );
+  WeightOptimizer::set_status( d );
   updateValue< double >( d, names::m, m_ );
   updateValue< double >( d, names::v, v_ );
 }
 
 
 double
-EpropOptimizerAdam::optimize_( const EpropOptimizerCommonProperties& cp,
+WeightOptimizerAdam::optimize_( const WeightOptimizerCommonProperties& cp,
   double weight,
   size_t current_optimization_step )
 {
-  const EpropOptimizerCommonPropertiesAdam& acp = dynamic_cast< const EpropOptimizerCommonPropertiesAdam& >( cp );
+  const WeightOptimizerCommonPropertiesAdam& acp = dynamic_cast< const WeightOptimizerCommonPropertiesAdam& >( cp );
 
   for ( ; optimization_step_ < current_optimization_step; ++optimization_step_ )
   {

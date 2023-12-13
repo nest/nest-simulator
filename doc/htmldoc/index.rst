@@ -48,7 +48,7 @@ Welcome!
                   Create 3D spatially structured networks
 
 
-                .. figure:: static/img/astrocyte_tripartite.png
+                .. figure:: static/img/astrocyte_interaction.png
 
                   Investigate neuron and astrocyte interactions
 
@@ -67,8 +67,6 @@ Welcome!
 
 Conceptual approach
 -------------------
-
-Description of this diagram. Click the image below to discover more!
 
 .. mermaid::
 
@@ -101,18 +99,25 @@ Description of this diagram. Click the image below to discover more!
        smp(spike membrane potential, <br> synaptic weights, etc.):::nodeStyle3
      end
 
+     class act sg
+     class exp sg
+     class models main
+     class nest-simulator main
+     classDef sg fill:#ddd, stroke:#4441, color:#111;
+     classDef main fill:#fff0, stroke:#f63, color:#111, font-weight: bold, stroke-dasharray:5 10, stroke-width:3px;
+
    simulate[<img src='_static/img/nest_logo.png' /> Simulation \n ______________________]
    neuron_models[<img src='_static/img/neuron.svg' /> \n Neuron Models]
    synapse_models[<img src='_static/img/synapse.svg' /> \n Synapse Models]
    stimulating_devices[<img src='_static/img/stimulatelight.svg' /> Stimulating Devices]
    recording_devices[<img src='_static/img/recordinglight.svg' /> Recording Devices]
    network[<img src='_static/img/networkbrainlight.svg' /> \n Network Models]
-   click network href "https://nest-simulator.org"
-   click neuron_models href "/models/index.html"
-   click synapse_models href "file:///home/mitchell/Work/build-repo/doc/_build/html/understand_index.html"
-   click stimulating_devices href "https://nest-simulator.org"
-   click recording_devices href "https://nest-simulator.org"
-   click stimulate href "https://nest-simulator.org"
+   click network href "./networks/spatially_structured_networks.html"
+   click neuron_models href "./models/index_neuron.html"
+   click synapse_models href "./models/index_synapse.html"
+   click stimulating_devices href "./models/index_generator.html"
+   click recording_devices href "./models/index_device.html"
+   click simulate href "./nest_behavior/running_simulations.html"
 
 
 

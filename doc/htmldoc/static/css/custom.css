@@ -108,14 +108,6 @@ section#user-level-documentation-workflow .mermaid .cluster rect {
 	stroke-width: None !important;
 }
 
-section#conceptual-approach div.mermaid .cluster rect {
-	fill: #fff0 !important;
-	stroke: #f63 !important;
-	stroke-width: 3px !important;
-  stroke-dasharray: 5 10;
-}
-
-
 rect.basic.label-container {
 	fill: #e2e2e200; !important
 	stroke: #ff6633;

@@ -6,6 +6,7 @@ weight_recorder
 
 spike_generator
 step_rate_generator
+poisson_generator
 
 eprop_iaf_psc_delta
 eprop_iaf_psc_delta_adapt

@@ -1,16 +1,18 @@
-# Minimal modelset for spiking neuron simulations with NEST
+# Minimal modelset for spiking neuron simulations with e-prop plasticity
 
-spike_generator
-parrot_neuron
-eprop_iaf_psc_delta
-eprop_iaf_psc_delta_adapt
-eprop_readout
-step_rate_generator
 multimeter
 spike_recorder
 weight_recorder
 
-eprop_synapse
+spike_generator
+step_rate_generator
+
+eprop_iaf_psc_delta
+eprop_iaf_psc_delta_adapt
+eprop_readout
+parrot_neuron
+
 eprop_learning_signal_connection
+eprop_synapse
 rate_connection_delayed
 static_synapse

@@ -66,8 +66,13 @@ nest::SimulationManager::SimulationManager()
 }
 
 void
-nest::SimulationManager::initialize()
+nest::SimulationManager::initialize( const bool reset_kernel )
 {
+  if ( not reset_kernel )
+  {
+    return;
+  }
+
   Time::reset_to_defaults();
   Time::reset_resolution();
 
@@ -101,7 +106,7 @@ nest::SimulationManager::initialize()
 }
 
 void
-nest::SimulationManager::finalize()
+nest::SimulationManager::finalize( const bool )
 {
 }
 

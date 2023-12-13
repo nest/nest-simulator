@@ -376,7 +376,6 @@ Also add the generated files:
 
     <somebase>/NEST/build/libnestutil/config.h
     <somebase>/NEST/build/libnestutil/sliconfig.h
-    <somebase>/NEST/build/nest/static_modules.h
 
 1. On the left panel select the newly created project ``NEST-fork``, then select the created target.
 

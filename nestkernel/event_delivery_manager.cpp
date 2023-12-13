@@ -76,25 +76,30 @@ EventDeliveryManager::~EventDeliveryManager()
 }
 
 void
-EventDeliveryManager::initialize()
+EventDeliveryManager::initialize( const bool reset_kernel )
 {
+  if ( reset_kernel )
+  {
+    init_moduli();
+    reset_timers_for_preparation();
+    reset_timers_for_dynamics();
+
+    // Ensures that ResetKernel resets off_grid_spiking_
+    off_grid_spiking_ = false;
+    buffer_size_target_data_has_changed_ = false;
+    send_recv_buffer_shrink_limit_ = 0.2;
+    send_recv_buffer_shrink_spare_ = 0.1;
+    send_recv_buffer_grow_extra_ = 0.5;
+    send_recv_buffer_resize_log_.clear();
+  }
+
   const size_t num_threads = kernel().vp_manager.get_num_threads();
 
-  init_moduli();
   local_spike_counter_.resize( num_threads, 0 );
   reset_counters();
-  reset_timers_for_preparation();
-  reset_timers_for_dynamics();
   emitted_spikes_register_.resize( num_threads );
   off_grid_emitted_spikes_register_.resize( num_threads );
   gather_completed_checker_.initialize( num_threads, false );
-  // Ensures that ResetKernel resets off_grid_spiking_
-  off_grid_spiking_ = false;
-  buffer_size_target_data_has_changed_ = false;
-  send_recv_buffer_shrink_limit_ = 0.2;
-  send_recv_buffer_shrink_spare_ = 0.1;
-  send_recv_buffer_grow_extra_ = 0.5;
-  send_recv_buffer_resize_log_.clear();
 
 #pragma omp parallel
   {
@@ -113,7 +118,7 @@ EventDeliveryManager::initialize()
 }
 
 void
-EventDeliveryManager::finalize()
+EventDeliveryManager::finalize( const bool )
 {
   // clear the spike buffers
   for ( auto& vec_spikedata_ptr : emitted_spikes_register_ )
@@ -134,13 +139,6 @@ EventDeliveryManager::finalize()
   recv_buffer_spike_data_.clear();
   send_buffer_off_grid_spike_data_.clear();
   recv_buffer_off_grid_spike_data_.clear();
-}
-
-void
-EventDeliveryManager::change_number_of_threads()
-{
-  finalize();
-  initialize();
 }
 
 void

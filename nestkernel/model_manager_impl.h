@@ -57,23 +57,58 @@ template < template < typename targetidentifierT > class ConnectionT >
 void
 ModelManager::register_connection_model( const std::string& name )
 {
-  // register normal version of the synapse
-  ConnectorModel* cf = new GenericConnectorModel< ConnectionT< TargetIdentifierPtrRport > >( name );
-  register_connection_model_( cf );
+  // Required to check which variants to create
+  ConnectorModel const* const dummy_model =
+    new GenericConnectorModel< ConnectionT< TargetIdentifierPtrRport > >( "dummy" );
 
-  // register the "hpc" version with the same parameters but a different target identifier
-  if ( cf->has_property( ConnectionModelProperties::SUPPORTS_HPC ) )
+  register_specific_connection_model_< ConnectionT< TargetIdentifierPtrRport > >( name );
+  if ( dummy_model->has_property( ConnectionModelProperties::SUPPORTS_HPC ) )
   {
-    cf = new GenericConnectorModel< ConnectionT< TargetIdentifierIndex > >( name + "_hpc" );
-    register_connection_model_( cf );
+    register_specific_connection_model_< ConnectionT< TargetIdentifierIndex > >( name + "_hpc" );
+  }
+  if ( dummy_model->has_property( ConnectionModelProperties::SUPPORTS_LBL ) )
+  {
+    register_specific_connection_model_< ConnectionLabel< ConnectionT< TargetIdentifierPtrRport > > >( name + "_lbl" );
   }
 
-  // register the "lbl" (labeled) version with the same parameters but a different connection type
-  if ( cf->has_property( ConnectionModelProperties::SUPPORTS_LBL ) )
+  delete dummy_model;
+}
+
+template < typename CompleteConnectionT >
+void
+ModelManager::register_specific_connection_model_( const std::string& name )
+{
+  kernel().vp_manager.assert_single_threaded();
+
+  if ( synapsedict_->known( name ) )
   {
-    cf = new GenericConnectorModel< ConnectionLabel< ConnectionT< TargetIdentifierPtrRport > > >( name + "_lbl" );
-    register_connection_model_( cf );
+    std::string msg =
+      String::compose( "A synapse type called '%1' already exists.\nPlease choose a different name!", name );
+    throw NamingConflict( msg );
   }
+
+  const auto new_syn_id = get_num_connection_models();
+  if ( new_syn_id >= invalid_synindex )
+  {
+    const std::string msg = String::compose(
+      "CopyModel cannot generate another synapse. Maximal synapse model count of %1 exceeded.", MAX_SYN_ID );
+    LOG( M_ERROR, "ModelManager::copy_connection_model_", msg );
+    throw KernelException( "Synapse model count exceeded" );
+  }
+
+  synapsedict_->insert( name, new_syn_id );
+
+#pragma omp parallel
+  {
+    ConnectorModel* conn_model = new GenericConnectorModel< CompleteConnectionT >( name );
+    conn_model->set_syn_id( new_syn_id );
+    if ( not conn_model->has_property( ConnectionModelProperties::IS_PRIMARY ) )
+    {
+      conn_model->get_secondary_event()->add_syn_id( new_syn_id );
+    }
+    connection_models_.at( kernel().vp_manager.get_thread_id() ).push_back( conn_model );
+    kernel().connection_manager.resize_connections();
+  } // end of parallel section
 }
 
 inline Node*

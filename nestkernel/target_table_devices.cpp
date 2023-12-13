@@ -88,20 +88,19 @@ nest::TargetTableDevices::resize_to_number_of_neurons()
 void
 nest::TargetTableDevices::resize_to_number_of_synapse_types()
 {
-#pragma omp parallel
+  kernel().vp_manager.assert_thread_parallel();
+
+  const size_t tid = kernel().vp_manager.get_thread_id();
+  for ( size_t lid = 0; lid < target_to_devices_.at( tid ).size(); ++lid )
   {
-    const size_t tid = kernel().vp_manager.get_thread_id();
-    for ( size_t lid = 0; lid < target_to_devices_[ tid ].size(); ++lid )
-    {
-      // make sure this device has support for all synapse types
-      target_to_devices_[ tid ][ lid ].resize( kernel().model_manager.get_num_connection_models(), nullptr );
-    }
-    for ( size_t ldid = 0; ldid < target_from_devices_[ tid ].size(); ++ldid )
-    {
-      // make sure this device has support for all synapse types
-      target_from_devices_[ tid ][ ldid ].resize( kernel().model_manager.get_num_connection_models(), nullptr );
-    }
-  } // end omp parallel
+    // make sure this device has support for all synapse types
+    target_to_devices_.at( tid ).at( lid ).resize( kernel().model_manager.get_num_connection_models(), nullptr );
+  }
+  for ( size_t ldid = 0; ldid < target_from_devices_.at( tid ).size(); ++ldid )
+  {
+    // make sure this device has support for all synapse types
+    target_from_devices_.at( tid ).at( ldid ).resize( kernel().model_manager.get_num_connection_models(), nullptr );
+  }
 }
 
 void

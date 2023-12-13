@@ -38,6 +38,7 @@
 #include "kernel_manager.h"
 #include "nest_time.h"
 #include "nest_timeconverter.h"
+#include "secondary_event_impl.h"
 
 // Includes from sli:
 #include "dictutils.h"

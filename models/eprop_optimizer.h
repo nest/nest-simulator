@@ -105,7 +105,7 @@ public:
 
 protected:
   //! Actually perform specific optimization, called by optimized_weight()
-  virtual double do_optimize_( const EpropOptimizerCommonProperties& cp, double weight, size_t current_opt_step ) = 0;
+  virtual double optimize_( const EpropOptimizerCommonProperties& cp, double weight, size_t current_opt_step ) = 0;
 
   double sum_gradients_;     //!< Sum of gradients accumulated in current batch
   size_t optimization_step_; //!< Current optimization step; optimization happens evert batch_size_ steps.
@@ -120,7 +120,7 @@ public:
   EpropOptimizerGradientDescent& operator=( const EpropOptimizerGradientDescent& ) = delete;
 
 private:
-  double do_optimize_( const EpropOptimizerCommonProperties& cp, double weight, size_t current_opt_step ) override;
+  double optimize_( const EpropOptimizerCommonProperties& cp, double weight, size_t current_opt_step ) override;
 };
 
 class EpropOptimizerCommonPropertiesGradientDescent : public EpropOptimizerCommonProperties
@@ -153,10 +153,10 @@ public:
 
 private:
   //! Return optimized weight based on current weight
-  double do_optimize_( const EpropOptimizerCommonProperties& cp, double weight, size_t current_opt_step ) override;
+  double optimize_( const EpropOptimizerCommonProperties& cp, double weight, size_t current_opt_step ) override;
 
-  double adam_m_;
-  double adam_v_;
+  double m_;
+  double v_;
 };
 
 

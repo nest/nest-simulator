@@ -89,7 +89,6 @@ public:
   WeightOptimizer();
   virtual ~WeightOptimizer()
   {
-    // std::cout << "Deleting optimizer " << this << std::endl;
   }
   WeightOptimizer( const WeightOptimizer& ) = default;
   WeightOptimizer& operator=( const WeightOptimizer& ) = delete;

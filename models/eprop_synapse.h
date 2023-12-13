@@ -296,24 +296,12 @@ public:
     }
   };
 
-  //! Check if the target accepts the event and receptor type requested by the sender and set variables that stay
-  //! constant throughout the simulation.
-  void
-  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& cp )
-  {
-    // When we get here, delay has been set so we can check it.
-    if ( get_delay_steps() != 1 )
-    {
-      throw IllegalConnection( "eprop synapses currently require a delay of one simulation step" );
-    }
-
-    ConnTestDummyNode dummy_target;
-    ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
-
-    t.register_eprop_connection();
-
-    optimizer_ = cp.optimizer_cp_->get_optimizer();
-  }
+  /**
+   * Check if the target accepts the event and receptor type requested by the sender.
+   *
+   * @note This sets the optimizer_ member.
+   */
+  void check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& cp );
 
   //! Set the synaptic weight to the provided value.
   void
@@ -321,6 +309,9 @@ public:
   {
     weight_ = w;
   }
+
+  //! Delete optimizer
+  void delete_optimizer();
 
 private:
   //! Synaptic weight.
@@ -350,11 +341,10 @@ private:
   //! Vector of presynaptic inter-spike-intervals.
   std::vector< long > presyn_isis_;
 
-public:
   /**
    *  Optimizer
-   *  Pointer is managed entirely by Connector
-   *   @todo Make non-public!
+   *
+   *  @note Pointer is set by check_connection() and deleted by delete_optimizer().
    */
   WeightOptimizer* optimizer_;
 };
@@ -375,14 +365,11 @@ eprop_synapse< targetidentifierT >::eprop_synapse()
   , is_recurrent_to_recurrent_conn_( false )
   , optimizer_( nullptr )
 {
-  // std::cout << "Create this " << this << ", optimizer " << optimizer_ << std::endl;
 }
 
 template < typename targetidentifierT >
 eprop_synapse< targetidentifierT >::~eprop_synapse()
 {
-  // explicitly do not delete optimizer_, handled by Connector
-  // std::cout << "Delete this " << this << ", optimizer " << optimizer_ << std::endl;
 }
 
 // This copy constructor is used to create instances from prototypes.
@@ -400,19 +387,13 @@ eprop_synapse< targetidentifierT >::eprop_synapse( const eprop_synapse& es )
   , is_recurrent_to_recurrent_conn_( es.is_recurrent_to_recurrent_conn_ )
   , optimizer_( es.optimizer_ )
 {
-  // std::cout << "Copy   this " << this << ", optimizer " << optimizer_ <<
-  // " from this " << &es << ", optimizer " << es.optimizer_ << std::endl;
 }
-
 
 // This assignement operator is used to write a connection into the connection array.
 template < typename targetidentifierT >
 eprop_synapse< targetidentifierT >&
 eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
 {
-  // std::cout << "Assign this " << this << ", optimizer " << optimizer_ <<
-  //" from this " << &es << ", optimizer " << es.optimizer_ << std::endl;
-
   if ( this == &es )
   {
     return *this;
@@ -446,9 +427,6 @@ eprop_synapse< targetidentifierT >::eprop_synapse( eprop_synapse&& es )
   , is_recurrent_to_recurrent_conn_( es.is_recurrent_to_recurrent_conn_ )
   , optimizer_( es.optimizer_ )
 {
-  //  std::cout << "Move   this " << this << ", optimizer " << optimizer_ <<
-  //  " from this " << &es << ", optimizer " << es.optimizer_ << std::endl;
-
   es.optimizer_ = nullptr;
 }
 
@@ -457,9 +435,6 @@ template < typename targetidentifierT >
 eprop_synapse< targetidentifierT >&
 eprop_synapse< targetidentifierT >::operator=( eprop_synapse&& es )
 {
-  // std::cout << "MvAssg this " << this << ", optimizer " << optimizer_ <<
-  // " from this " << &es << ", optimizer " << es.optimizer_ << std::endl;
-
   if ( this == &es )
   {
     return *this;
@@ -480,6 +455,35 @@ eprop_synapse< targetidentifierT >::operator=( eprop_synapse&& es )
   es.optimizer_ = nullptr;
 
   return *this;
+}
+
+template < typename targetidentifierT >
+inline void
+eprop_synapse< targetidentifierT >::check_connection( Node& s,
+  Node& t,
+  size_t receptor_type,
+  const CommonPropertiesType& cp )
+{
+  // When we get here, delay has been set so we can check it.
+  if ( get_delay_steps() != 1 )
+  {
+    throw IllegalConnection( "eprop synapses currently require a delay of one simulation step" );
+  }
+
+  ConnTestDummyNode dummy_target;
+  ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
+
+  t.register_eprop_connection();
+
+  optimizer_ = cp.optimizer_cp_->get_optimizer();
+}
+
+template < typename targetidentifierT >
+inline void
+eprop_synapse< targetidentifierT >::delete_optimizer()
+{
+  delete optimizer_;
+  // do not set to nullptr to allow detection of double deletion
 }
 
 template < typename targetidentifierT >

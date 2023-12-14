@@ -653,6 +653,7 @@ extern const Name V_reset;
 extern const Name V_T;
 extern const Name V_T_star;
 extern const Name V_th;
+extern const Name V_th_adapt;
 extern const Name V_th_alpha_1;
 extern const Name V_th_alpha_2;
 extern const Name V_th_max;

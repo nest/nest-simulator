@@ -235,7 +235,7 @@ n_record_w = 3  # number of senders and targets to record weights from
 
 params_mm_rec = {
     "interval": duration["step"],  # interval between two recorded time points
-    "record_from": ["V_m", "surrogate_gradient", "learning_signal", "adapting_threshold", "adaptation"],  # recordables
+    "record_from": ["V_m", "surrogate_gradient", "learning_signal", "V_th_adapt", "adaptation"],  # recordables
     "start": duration["offset_gen"] + duration["delay_in_rec"],  # start time of recording
     "stop": duration["offset_gen"] + duration["delay_in_rec"] + duration["task"],  # stop time of recording
 }
@@ -624,7 +624,7 @@ for xlims in [(0, steps["sequence"]), (steps["task"] - steps["sequence"], steps[
 
     plot_recordable(axs[4], events_mm_rec, "V_m", r"$v_j$" + "\n(mV)", xlims)
     plot_recordable(axs[5], events_mm_rec, "surrogate_gradient", r"$\psi_j$" + "\n", xlims)
-    plot_recordable(axs[6], events_mm_rec, "adapting_threshold", r"$A_j$" + "\n(mV)", xlims)
+    plot_recordable(axs[6], events_mm_rec, "V_th_adapt", r"$A_j$" + "\n(mV)", xlims)
     plot_recordable(axs[7], events_mm_rec, "learning_signal", r"$L_j$" + "\n(pA)", xlims)
 
     plot_recordable(axs[8], events_mm_out, "V_m", r"$v_k$" + "\n(mV)", xlims)

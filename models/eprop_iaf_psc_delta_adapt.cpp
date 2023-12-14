@@ -59,7 +59,7 @@ void
 RecordablesMap< eprop_iaf_psc_delta_adapt >::create()
 {
   insert_( names::adaptation, &eprop_iaf_psc_delta_adapt::get_adaptation_ );
-  insert_( names::adapting_threshold, &eprop_iaf_psc_delta_adapt::get_adapting_threshold_ );
+  insert_( names::V_th_adapt, &eprop_iaf_psc_delta_adapt::get_v_th_adapt_ );
   insert_( names::learning_signal, &eprop_iaf_psc_delta_adapt::get_learning_signal_ );
   insert_( names::surrogate_gradient, &eprop_iaf_psc_delta_adapt::get_surrogate_gradient_ );
   insert_( names::V_m, &eprop_iaf_psc_delta_adapt::get_v_m_ );
@@ -229,7 +229,7 @@ eprop_iaf_psc_delta_adapt::State_::get( DictionaryDatum& d, const Parameters_& p
 {
   def< double >( d, names::adaptation, adapt_ );
   def< double >( d, names::V_m, v_m_ + p.E_L_ );
-  def< double >( d, names::adapting_threshold, v_th_adapt_ + p.E_L_ );
+  def< double >( d, names::V_th_adapt, v_th_adapt_ + p.E_L_ );
   def< double >( d, names::surrogate_gradient, surrogate_gradient_ );
   def< double >( d, names::learning_signal, learning_signal_ );
 }

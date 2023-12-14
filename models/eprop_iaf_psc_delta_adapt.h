@@ -149,7 +149,7 @@ Recordables
 The following variables can be recorded:
 
   - adaptation variable ``adaptation``
-  - adapting spike threshold ``adapting_threshold``
+  - adapting spike threshold ``V_th_adapt``
   - learning signal ``learning_signal``
   - membrane potential ``V_m``
   - surrogate gradient ``surrogate_gradient``
@@ -406,7 +406,7 @@ private:
 
   //! Get the current value of the adapting threshold.
   double
-  get_adapting_threshold_() const
+  get_v_th_adapt_() const
   {
     return S_.v_th_adapt_ + P_.E_L_;
   }

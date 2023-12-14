@@ -271,7 +271,7 @@ params_mm_reg = {
 
 params_mm_ad = {
     "interval": duration["step"],
-    "record_from": params_mm_reg["record_from"] + ["adapting_threshold", "adaptation"],
+    "record_from": params_mm_reg["record_from"] + ["V_th_adapt", "adaptation"],
     "start": duration["offset_gen"] + duration["delay_in_rec"],
     "stop": duration["offset_gen"] + duration["delay_in_rec"] + duration["task"],
 }
@@ -698,7 +698,7 @@ for xlims in [(0, steps["sequence"]), (steps["task"] - steps["sequence"], steps[
 
     plot_recordable(axs[6], events_mm_ad, "V_m", r"$v_j$" + "\n(mV)", xlims)
     plot_recordable(axs[7], events_mm_ad, "surrogate_gradient", r"$\psi_j$" + "\n", xlims)
-    plot_recordable(axs[8], events_mm_ad, "adapting_threshold", r"$A_j$" + "\n(mV)", xlims)
+    plot_recordable(axs[8], events_mm_ad, "V_th_adapt", r"$A_j$" + "\n(mV)", xlims)
     plot_recordable(axs[9], events_mm_ad, "learning_signal", r"$L_j$" + "\n(pA)", xlims)
 
     plot_recordable(axs[10], events_mm_out, "V_m", r"$v_k$" + "\n(mV)", xlims)

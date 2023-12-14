@@ -625,6 +625,7 @@ const Name V_reset( "V_reset" );
 const Name V_T( "V_T" );
 const Name V_T_star( "V_T_star" );
 const Name V_th( "V_th" );
+const Name V_th_adapt( "V_th_adapt" );
 const Name V_th_alpha_1( "V_th_alpha_1" );
 const Name V_th_alpha_2( "V_th_alpha_2" );
 const Name V_th_max( "V_th_max" );

@@ -150,7 +150,7 @@ public:
   }
 
   //! Send the learning signal event.
-  void
+  bool
   send( Event& e, size_t t, const CommonSynapseProperties& )
   {
     e.set_weight( weight_ );
@@ -158,6 +158,7 @@ public:
     e.set_receiver( *get_target( t ) );
     e.set_rport( get_rport() );
     e();
+    return true;
   }
 
   //! Get the model attributes and their values.

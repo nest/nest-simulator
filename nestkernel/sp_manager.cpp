@@ -48,18 +48,22 @@ SPManager::SPManager()
 
 SPManager::~SPManager()
 {
-  finalize();
 }
 
 void
-SPManager::initialize()
+SPManager::initialize( const bool reset_kernel )
 {
+  if ( not reset_kernel )
+  {
+    return;
+  }
+
   structural_plasticity_update_interval_ = 10000.;
   structural_plasticity_enabled_ = false;
 }
 
 void
-SPManager::finalize()
+SPManager::finalize( const bool )
 {
   for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin(); i != sp_conn_builders_.end(); i++ )
   {

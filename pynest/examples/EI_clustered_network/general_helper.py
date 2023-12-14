@@ -29,6 +29,7 @@ from types import ModuleType
 import copy
 import numpy as np
 
+
 def merge_params(params, default_values):
     """
     Updates default Values defined in a module with params-dictionary.
@@ -37,7 +38,6 @@ def merge_params(params, default_values):
     :return: updated dictionary
     """
     return nested_update(module_to_dict(default_values), params)
-
 
 
 def module_to_dict(module):
@@ -49,7 +49,8 @@ def module_to_dict(module):
     """
     module_dict = {}
     if module:
-        module_dict = {key: value for key, value in module.__dict__.items() if not (key.startswith('__') or key.startswith('_') or isinstance(value, ModuleType))}
+        module_dict = {key: value for key, value in module.__dict__.items() if
+                       not (key.startswith('__') or key.startswith('_') or isinstance(value, ModuleType))}
     return module_dict
 
 
@@ -60,7 +61,7 @@ def nested_update(d, d2):
     :param d2: dictionary with update values
     :return: updated dictionary
     """
-    d_local=copy.deepcopy(d)
+    d_local = copy.deepcopy(d)
     for key in d2:
         if isinstance(d2[key], dict) and key in d_local:
             d_local[key] = nested_update(d_local[key], d2[key])
@@ -68,12 +69,13 @@ def nested_update(d, d2):
             d_local[key] = d2[key]
     return d_local
 
+
 def raster_plot(spiketimes, tlim=None, colorgroups=None, ax=None, markersize=0.5):
     """
     Plots raster plot of spiketimes.
     :param spiketimes: spiketimes (np.array): Row 0: spiketimes, Row 1: neuron ID.
     :param tlim: time limits of plot (list): [tmin, tmax], if None: [min(spiketimes), max(spiketimes)]
-    :param colorgroups: list of tuples (color, start_neuron_ID, stop_neuron_ID]) for coloring neurons, if None: all black
+    :param colorgroups: list of tuples (color, start_neuron_ID, stop_neuron_ID]) for coloring neurons, if None: black
     :param ax: axis object, if None: new figure
     :param markersize: size of markers
     :return: axis object
@@ -93,5 +95,3 @@ def raster_plot(spiketimes, tlim=None, colorgroups=None, ax=None, markersize=0.5
     ax.set_xlabel('Time [ms]')
     ax.set_ylabel('Neuron ID')
     return ax
-
-

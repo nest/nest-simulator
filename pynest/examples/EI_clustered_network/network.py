@@ -35,8 +35,8 @@ import general_helper
 
 
 class ClusteredNetwork(object):
-    """ Provides functions to create neuron populations, stimulation devices and recording devices for an EI-clustered network
-    and setups the simulation in NEST (v3.x).
+    """ Provides functions to create neuron populations, stimulation devices and recording devices for an
+    EI-clustered network and setups the simulation in NEST (v3.x).
 
     Creates an object with functions to create neuron populations,
     stimulation devices and recording devices for an EI-clustered network.

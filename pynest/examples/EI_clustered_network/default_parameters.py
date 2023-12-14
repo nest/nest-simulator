@@ -32,9 +32,9 @@ import numpy as np
 eps = np.finfo(float).eps
 n_jobs = 1
 
-dt=0.1
-simtime=1000.
-warmup=0.
+dt = 0.1
+simtime = 1000.
+warmup = 0.
 record_voltage = False
 record_from = 'all'
 recording_interval = dt
@@ -43,7 +43,7 @@ return_weights = False
 ############################################
 # neuron parameters
 ############################################
-neuron_type = 'iaf_psc_exp' # 'gif_psc_exp'
+neuron_type = 'iaf_psc_exp'  # 'gif_psc_exp'
 E_L = 0.
 C_m = 1.
 tau_E = 20.
@@ -65,14 +65,13 @@ tau_syn_ex = 3.
 tau_syn_in = 2.
 delay = 0.1  # synaptic delay
 
-#Distribution of synaptic weights
-#available distributions= https://nest-simulator.readthedocs.io/en/stable/guides/connection_management.html#dist-params
+# Distribution of synaptic weights
+# available distributions= https://nest-simulator.readthedocs.io/en/stable/guides/connection_management.html#dist-params
 
-DistParams={'distribution':'normal', 'sigma': 0.0, 'fraction': False}
+DistParams = {'distribution': 'normal', 'sigma': 0.0, 'fraction': False}
 
-syn_params={"U": 0.2, "u": 0.0, "tau_rec": 120.0,
-                  "tau_fac": 0.0}
-
+syn_params = {"U": 0.2, "u": 0.0, "tau_rec": 120.0,
+              "tau_fac": 0.0}
 
 ############################################
 # network parameters
@@ -85,15 +84,15 @@ N_I = 300
 # cluster number
 Q = 6
 # cluster weight ratios
-jplus = np.ones((2,2))
+jplus = np.ones((2, 2))
 
 # connection probabilities
-ps = np.array([[0.2,0.5],[0.5,0.5]])
+ps = np.array([[0.2, 0.5], [0.5, 0.5]])
 
 # connections strengths
 # weights are js/sqrt(N)
 # nan means they are calculated
-js = np.ones((2,2))*np.nan
+js = np.ones((2, 2)) * np.nan
 # factors for inhibitory weights
 ge = 1.2
 gi = 1.
@@ -106,18 +105,7 @@ fixed_indegree = False
 ############################################
 # stimulation parameters
 ############################################
-stim_clusters = None # clusters to be stimulated
+stim_clusters = None  # clusters to be stimulated
 stim_amp = 0.  # amplitude of the stimulation current in pA
-stim_starts = []      # list of stimulation start times
-stim_ends = []          # list of stimulation end times
-
-
-
-
-
-
-
-
-
-
-
+stim_starts = []  # list of stimulation start times
+stim_ends = []  # list of stimulation end times

@@ -25,6 +25,7 @@
 
 // nestkernel
 #include "connection.h"
+#include "connector_base.h"
 #include "eprop_archiving_node.h"
 #include "target_identifier.h"
 #include "weight_optimizer.h"
@@ -356,6 +357,20 @@ private:
 
 template < typename targetidentifierT >
 constexpr ConnectionModelProperties eprop_synapse< targetidentifierT >::properties;
+
+// Explicitly declare specializations of Connector methods that need to do special things for eprop_synapse
+template <>
+void Connector< eprop_synapse< TargetIdentifierPtrRport > >::disable_connection( const size_t lcid );
+
+template <>
+void Connector< eprop_synapse< TargetIdentifierIndex > >::disable_connection( const size_t lcid );
+
+template <>
+Connector< eprop_synapse< TargetIdentifierPtrRport > >::~Connector();
+
+template <>
+Connector< eprop_synapse< TargetIdentifierIndex > >::~Connector();
+
 
 template < typename targetidentifierT >
 eprop_synapse< targetidentifierT >::eprop_synapse()

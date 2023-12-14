@@ -239,9 +239,6 @@ def generate_modelsmodule():
 
     """
 
-    # create flat list of model names
-    model_names = set(itertools.chain(*itertools.chain(*(itertools.chain(dv.values()) for dv in models.values()))))
-
     fname = Path(srcdir) / "doc" / "copyright_header.cpp"
     with open(fname, "r") as file:
         copyright_header = file.read()
@@ -256,9 +253,6 @@ def generate_modelsmodule():
                 """
             #include "models.h"
 
-            // Includes from nestkernel
-            #include "target_identifier.h"
-
             // Generated includes
             #include "config.h"
         """
@@ -272,55 +266,6 @@ def generate_modelsmodule():
                 for fname in fnames:
                     file.write(f'#include "{fname}"\n')
                 file.write(end_guard(guards))
-
-        if "eprop_synapse" in model_names:
-            file.write(
-                dedent(
-                    """
-            namespace nest
-            {
-              template <>
-              void
-              Connector< eprop_synapse< TargetIdentifierPtrRport > >::disable_connection( const size_t lcid )
-              {
-                assert( not C_[ lcid ].is_disabled() );
-                C_[ lcid ].disable();
-                C_[ lcid ].delete_optimizer();
-              }
-
-              template <>
-              void
-              Connector< eprop_synapse< TargetIdentifierIndex > >::disable_connection( const size_t lcid )
-              {
-                assert( not C_[ lcid ].is_disabled() );
-                C_[ lcid ].disable();
-                C_[ lcid ].delete_optimizer();
-              }
-
-
-              template <>
-              Connector< eprop_synapse< TargetIdentifierPtrRport > >::~Connector()
-              {
-                for ( auto& c : C_ )
-                {
-                  c.delete_optimizer();
-                }
-                C_.clear();
-              }
-
-              template <>
-              Connector< eprop_synapse< TargetIdentifierIndex > >::~Connector()
-              {
-                for ( auto& c : C_ )
-                {
-                  c.delete_optimizer();
-                }
-                C_.clear();
-              }
-            }
-                """
-                )
-            )
 
         file.write("\nvoid nest::register_models()\n{")
 

@@ -24,9 +24,10 @@
 
 Helper functions for merging dictionaries and some plotting functions.
 """
-import matplotlib.pyplot as plt
-from types import ModuleType
 import copy
+from types import ModuleType
+
+import matplotlib.pyplot as plt
 import numpy as np
 
 

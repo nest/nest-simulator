@@ -27,6 +27,7 @@ random balanced networks.
 """
 
 import numpy as np
+
 small = 1e-10
 
 

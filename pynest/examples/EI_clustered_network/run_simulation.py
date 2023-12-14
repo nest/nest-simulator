@@ -26,11 +26,11 @@ This is an example script for running the EI-clustered model with two stimulatio
 and generating a raster plot.
 """
 
-import numpy as np
 import default_parameters as default
-import network
 import general_helper
 import matplotlib.pyplot as plt
+import network
+import numpy as np
 
 if __name__ == '__main__':
     # set the parameters for the simulation

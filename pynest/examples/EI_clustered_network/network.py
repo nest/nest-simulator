@@ -27,11 +27,12 @@ build and simulate the network.
 
 """
 
+import pickle
+
+import general_helper
+import helper
 import nest
 import numpy as np
-import pickle
-import helper
-import general_helper
 
 
 class ClusteredNetwork(object):

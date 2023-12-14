@@ -50,8 +50,15 @@ def module_to_dict(module):
     """
     module_dict = {}
     if module:
-        module_dict = {key: value for key, value in module.__dict__.items() if
-                       not (key.startswith('__') or key.startswith('_') or isinstance(value, ModuleType))}
+        module_dict = {
+            key: value
+            for key, value in module.__dict__.items()
+            if not (
+                key.startswith("__")
+                or key.startswith("_")
+                or isinstance(value, ModuleType)
+            )
+        }
     return module_dict
 
 
@@ -86,13 +93,18 @@ def raster_plot(spiketimes, tlim=None, colorgroups=None, ax=None, markersize=0.5
     if tlim is None:
         tlim = [min(spiketimes[0]), max(spiketimes[0])]
     if colorgroups is None:
-        colorgroups = [('k', 0, max(spiketimes[1]))]
+        colorgroups = [("k", 0, max(spiketimes[1]))]
     for color, start, stop in colorgroups:
-        ax.plot(spiketimes[0][np.logical_and(spiketimes[1] >= start, spiketimes[1] < stop)],
-                spiketimes[1][np.logical_and(spiketimes[1] >= start, spiketimes[1] < stop)],
-                color=color, marker='.', linestyle='None', markersize=markersize)
+        ax.plot(
+            spiketimes[0][np.logical_and(spiketimes[1] >= start, spiketimes[1] < stop)],
+            spiketimes[1][np.logical_and(spiketimes[1] >= start, spiketimes[1] < stop)],
+            color=color,
+            marker=".",
+            linestyle="None",
+            markersize=markersize,
+        )
     ax.set_xlim(tlim)
     ax.set_ylim([0, max(spiketimes[1])])
-    ax.set_xlabel('Time [ms]')
-    ax.set_ylabel('Neuron ID')
+    ax.set_xlabel("Time [ms]")
+    ax.set_ylabel("Neuron ID")
     return ax

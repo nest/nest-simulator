@@ -33,45 +33,44 @@ eps = np.finfo(float).eps
 n_jobs = 1
 
 dt = 0.1
-simtime = 1000.
-warmup = 0.
+simtime = 1000.0
+warmup = 0.0
 record_voltage = False
-record_from = 'all'
+record_from = "all"
 recording_interval = dt
 return_weights = False
 
 ############################################
 # neuron parameters
 ############################################
-neuron_type = 'iaf_psc_exp'  # 'gif_psc_exp'
-E_L = 0.
-C_m = 1.
-tau_E = 20.
-tau_I = 10.
-t_ref = 5.
-V_th_E = 20.
-V_th_I = 20.
-V_r = 0.
-I_xE = 1.
-I_xI = 2.
-delta_I_xE = 0.
-delta_I_xI = 0.
+neuron_type = "iaf_psc_exp"  # 'gif_psc_exp'
+E_L = 0.0
+C_m = 1.0
+tau_E = 20.0
+tau_I = 10.0
+t_ref = 5.0
+V_th_E = 20.0
+V_th_I = 20.0
+V_r = 0.0
+I_xE = 1.0
+I_xI = 2.0
+delta_I_xE = 0.0
+delta_I_xI = 0.0
 I_th_E = 1.25
 I_th_I = 0.78
-V_m = 'rand'
+V_m = "rand"
 
 # synapse parameters
-tau_syn_ex = 3.
-tau_syn_in = 2.
+tau_syn_ex = 3.0
+tau_syn_in = 2.0
 delay = 0.1  # synaptic delay
 
 # Distribution of synaptic weights
 # available distributions= https://nest-simulator.readthedocs.io/en/stable/guides/connection_management.html#dist-params
 
-DistParams = {'distribution': 'normal', 'sigma': 0.0, 'fraction': False}
+DistParams = {"distribution": "normal", "sigma": 0.0, "fraction": False}
 
-syn_params = {"U": 0.2, "u": 0.0, "tau_rec": 120.0,
-              "tau_fac": 0.0}
+syn_params = {"U": 0.2, "u": 0.0, "tau_rec": 120.0, "tau_fac": 0.0}
 
 ############################################
 # network parameters
@@ -95,17 +94,17 @@ ps = np.array([[0.2, 0.5], [0.5, 0.5]])
 js = np.ones((2, 2)) * np.nan
 # factors for inhibitory weights
 ge = 1.2
-gi = 1.
-gie = 1.
+gi = 1.0
+gie = 1.0
 
 # factor multiplied with weights
-s = 1.
+s = 1.0
 fixed_indegree = False
 
 ############################################
 # stimulation parameters
 ############################################
 stim_clusters = None  # clusters to be stimulated
-stim_amp = 0.  # amplitude of the stimulation current in pA
+stim_amp = 0.0  # amplitude of the stimulation current in pA
 stim_starts = []  # list of stimulation start times
 stim_ends = []  # list of stimulation end times

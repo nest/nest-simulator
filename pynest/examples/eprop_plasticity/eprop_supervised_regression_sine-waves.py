@@ -274,26 +274,20 @@ params_common_syn_eprop = {
     "weight_recorder": wr,
 }
 
-params_syn_in = {
+params_syn_base = {
     "synapse_model": "eprop_synapse",
     "delay": duration["step"],  # ms, dendritic delay
     "tau_m_readout": params_nrn_out["tau_m"],  # ms, for technical reasons pass readout neuron membrane time constant
-    "weight": weights_in_rec,  # pA, initial values for the synaptic weights
 }
 
-params_syn_rec = {
-    "synapse_model": "eprop_synapse",
-    "delay": duration["step"],
-    "tau_m_readout": params_nrn_out["tau_m"],
-    "weight": weights_rec_rec,
-}
+params_syn_in = params_syn_base.copy()
+params_syn_in["weight"] = weights_in_rec  # pA, initial values for the synaptic weights
 
-params_syn_out = {
-    "synapse_model": "eprop_synapse",
-    "delay": duration["step"],
-    "tau_m_readout": params_nrn_out["tau_m"],
-    "weight": weights_rec_out,
-}
+params_syn_rec = params_syn_base.copy()
+params_syn_rec["weight"] = weights_rec_rec
+
+params_syn_out = params_syn_base.copy()
+params_syn_out["weight"] = weights_rec_out
 
 params_syn_feedback = {
     "synapse_model": "eprop_learning_signal_connection",

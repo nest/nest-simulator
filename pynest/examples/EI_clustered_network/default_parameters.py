@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# helper.py
+# default_parameters.py
 #
 # This file is part of NEST.
 #

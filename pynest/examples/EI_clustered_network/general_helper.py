@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# helper.py
+# general_helper.py
 #
 # This file is part of NEST.
 #

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# network.py
+# run_simulation.py
 #
 # This file is part of NEST.
 #

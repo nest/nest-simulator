@@ -82,7 +82,7 @@ WeightOptimizerCommonProperties::set_status( const DictionaryDatum& d )
   updateValue< double >( d, names::Wmax, new_Wmax );
   if ( new_Wmin > new_Wmax )
   {
-    throw BadProperty( "Wmin ≤ Wmax required." );
+    throw BadProperty( "Minimal weight Wmin ≤ maximal weight Wmax required." );
   }
   Wmin_ = new_Wmin;
   Wmax_ = new_Wmax;
@@ -189,17 +189,17 @@ WeightOptimizerCommonPropertiesAdam::set_status( const DictionaryDatum& d )
 
   if ( beta1_ < 0.0 or 1.0 <= beta1_ )
   {
-    throw BadProperty( "For Adam optimizer, beta_1 must be in [0,1)." );
+    throw BadProperty( "For Adam optimizer, beta_1 from interval [0,1) required." );
   }
 
   if ( beta2_ < 0.0 or 1.0 <= beta2_ )
   {
-    throw BadProperty( "For Adam optimizer, beta_2 must be in [0,1)." );
+    throw BadProperty( "For Adam optimizer, beta_2 from interval [0,1) required." );
   }
 
   if ( epsilon_ < 0.0 )
   {
-    throw BadProperty( "For Adam optimizer, epsilon must be ≥ 0." );
+    throw BadProperty( "For Adam optimizer, epsilon ≥ 0 required." );
   }
 }
 

@@ -127,8 +127,8 @@ c_reg                            :math:`c_\text{reg}`                 0.0 Prefac
 E_L                         mV   :math:`E_\text{L}`                 -70.0 Leak membrane potential
 f_target                    Hz   :math:`f^\text{target}`             10.0 Target firing rate of rate
                                                                           regularization
-gamma                            :math:`\gamma`                       0.3 Scaling of pseudo-derivative of
-                                                                          membrane voltage
+gamma                            :math:`\gamma`                       0.3 Scaling of surrogate gradient /
+                                                                          pseudo-derivative of membrane voltage
 I_e                         pA   :math:`I_\text{e}`                   0.0 Constant external input current
 psc_scale_factor                                         alpha_complement Scale factor for presynaptic current
                                                                           ["alpha_complement": :math:`1 -

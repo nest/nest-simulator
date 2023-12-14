@@ -153,52 +153,56 @@ eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
 
   if ( C_m_ <= 0 )
   {
-    throw BadProperty( "C_m must be > 0." );
+    throw BadProperty( "Membrane capacitance C_m > 0 required." );
   }
 
   if ( c_reg_ < 0 )
   {
-    throw BadProperty( "c_reg must be >= 0." );
+    throw BadProperty( "Firing rate regularization prefactor c_reg ≥ 0 required." );
   }
 
   if ( f_target_ < 0 )
   {
-    throw BadProperty( "f_target must be >= 0." );
+    throw BadProperty( "Firing rate regularization target rate f_target ≥ 0 required." );
   }
 
   if ( gamma_ < 0.0 or 1.0 <= gamma_ )
   {
-    throw BadProperty( "gamma must be in [0,1)." );
+    throw BadProperty( "Surrogate gradient / pseudo-derivative scaling gamma from interval [0,1) required." );
   }
 
   if ( psc_scale_factor_ != "unity" and psc_scale_factor_ != "alpha_complement" )
   {
-    throw BadProperty( "psc_scale_factor must be chosen from [\"unity\", \"alpha_complement\"]." );
+    throw BadProperty(
+      "Presynaptic input scale factor psc_scale_factor from [\"unity\", \"alpha_complement\"] required." );
   }
 
   if ( surrogate_gradient_function_ != "piecewise_linear" )
   {
-    throw BadProperty( "surrogate_gradient_function must be chosen from [\"piecewise_linear\"]." );
+    throw BadProperty(
+      "Surrogate gradient / pseudo derivate function surrogate_gradient_function from [\"piecewise_linear\"] "
+      "required." );
   }
 
   if ( tau_m_ <= 0 )
   {
-    throw BadProperty( "tau_m must be > 0." );
+    throw BadProperty( "Membrane time constant tau_m > 0 required." );
   }
 
   if ( t_ref_ < 0 )
   {
-    throw BadProperty( "t_ref must be >= 0." );
+    throw BadProperty( "Refractory time t_ref ≥ 0 required." );
   }
 
   if ( surrogate_gradient_function_ == "piecewise_linear" and fabs( V_th_ ) < 1e-6 )
   {
-    throw BadProperty( "V_th-E_L must be != 0 if surrogate_gradient_function is \"piecewise_linear\"." );
+    throw BadProperty(
+      "Relative threshold voltage V_th-E_L ≠ 0 required if surrogate_gradient_function is \"piecewise_linear\"." );
   }
 
   if ( V_th_ < V_min_ )
   {
-    throw BadProperty( "V_th must be >= V_min." );
+    throw BadProperty( "Spike threshold voltage V_th ≥ minimal voltage V_min required." );
   }
 
   return delta_EL;

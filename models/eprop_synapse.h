@@ -604,7 +604,7 @@ eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
   {
     if ( tau_m_readout_ <= 0 )
     {
-      throw BadProperty( "tau_m_readout > 0 required" );
+      throw BadProperty( "Membrane time constant of readout neuron tau_m_readout > 0 required." );
     }
     kappa_ = std::exp( -Time::get_resolution().get_ms() / tau_m_readout_ );
   }
@@ -613,12 +613,12 @@ eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
   const CommonPropertiesType& epcp = gcm.get_common_properties();
   if ( weight_ < epcp.optimizer_cp_->get_Wmin() )
   {
-    throw BadProperty( "Wmin ≤ weight required" );
+    throw BadProperty( "Minimal weight Wmin ≤ weight required." );
   }
 
   if ( weight_ > epcp.optimizer_cp_->get_Wmax() )
   {
-    throw BadProperty( "weight ≤ Wmax required" );
+    throw BadProperty( "weight ≤ maximal weight Wmax required." );
   }
 }
 

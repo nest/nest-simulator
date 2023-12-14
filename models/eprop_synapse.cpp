@@ -97,7 +97,7 @@ EpropCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm 
       }
       else
       {
-        throw BadProperty( "optimizer must be chosen from [\"gradient_descent\", \"adam\"]" );
+        throw BadProperty( "optimizer from [\"gradient_descent\", \"adam\"] required." );
       }
     }
 

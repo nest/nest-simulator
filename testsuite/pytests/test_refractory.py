@@ -168,12 +168,8 @@ class TestRefractoryCase(unittest.TestCase):
         simtime = 100
 
         for model in tested_models:
-            if model in neurons_eprop:
-                self.resolution = 1.0
-                t_ref = 2.0
-            else:
-                self.resolution = 0.1
-                t_ref = 1.7
+            self.resolution = 0.1
+            t_ref = 1.7
             self.reset()
 
             if "t_ref" not in nest.GetDefaults(model):

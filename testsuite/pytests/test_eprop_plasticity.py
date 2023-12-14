@@ -36,7 +36,6 @@ supported_target_models = supported_source_models + ["eprop_readout"]
 @pytest.fixture(autouse=True)
 def fix_resolution():
     nest.ResetKernel()
-    nest.resolution = 1.0
 
 
 @pytest.mark.parametrize("source_model", supported_source_models)
@@ -47,7 +46,7 @@ def test_connect_with_eprop_synapse(source_model, target_model):
     # Connect supported models with e-prop synapse
     src = nest.Create(source_model)
     tgt = nest.Create(target_model)
-    nest.Connect(src, tgt, "all_to_all", {"synapse_model": "eprop_synapse"})
+    nest.Connect(src, tgt, "all_to_all", {"synapse_model": "eprop_synapse", "delay": nest.resolution})
 
 
 @pytest.mark.parametrize("target_model", set(nest.node_models) - set(supported_target_models))

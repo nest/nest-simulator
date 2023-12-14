@@ -37,7 +37,6 @@ class LabeledSynapsesTestCase(unittest.TestCase):
 
     def default_network(self, syn_model):
         nest.ResetKernel()
-        nest.resolution = 1.0  # for eprop synapses
 
         # set volume transmitter for stdp_dopamine_synapse_lbl
         vt = nest.Create("volume_transmitter", 3)
@@ -197,20 +196,31 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             with self.assertRaises(nest.kernel.NESTError):
                 nest.SetDefaults(syn, {"synapse_label": 123})
 
-            # try set on connect
-            with self.assertRaises(nest.kernel.NESTError):
-                nest.Connect(
-                    a, a, {"rule": "one_to_one", "make_symmetric": symm}, {"synapse_model": syn, "synapse_label": 123}
-                )
             # plain connection
-            if syn in self.eprop_connections:
+            if syn in self.eprop_connections or syn in self.eprop_synapses:
+                # try set on connect
+                with self.assertRaises(nest.kernel.NESTError):
+                    nest.Connect(
+                        a[:2],
+                        a[-2:],
+                        {"rule": "one_to_one", "make_symmetric": symm},
+                        {"synapse_model": syn, "synapse_label": 123, "delay": nest.resolution},
+                    )
                 nest.Connect(
-                    a[: len(a) // 2],
-                    a[len(a) // 2 :],
+                    a[:2],
+                    a[-2:],
                     {"rule": "one_to_one", "make_symmetric": symm},
-                    {"synapse_model": syn, "receptor_type": r_type},
+                    {"synapse_model": syn, "receptor_type": r_type, "delay": nest.resolution},
                 )
             else:
+                # try set on connect
+                with self.assertRaises(nest.kernel.NESTError):
+                    nest.Connect(
+                        a,
+                        a,
+                        {"rule": "one_to_one", "make_symmetric": symm},
+                        {"synapse_model": syn, "synapse_label": 123},
+                    )
                 nest.Connect(
                     a,
                     a,

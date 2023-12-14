@@ -43,8 +43,6 @@ def test_dcgen_vs_I_e(model):
         nest.SetDefaults(model, params={"lambda_0": 0.0})
     elif model == "pp_psc_delta":
         nest.SetDefaults(model, params={"c_2": 0.0})
-    elif model.startswith("eprop_"):
-        nest.resolution = 1.0
 
     # Create two neurons
     n1 = nest.Create(model)

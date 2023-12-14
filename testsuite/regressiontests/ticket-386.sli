@@ -40,7 +40,7 @@ FirstVersion: 2010-10-03
 
 M_ERROR setverbosity
 
-/resolution 1.0 def
+/resolution 0.1 def
 
 % Execute test for one model
 % Argument: model name

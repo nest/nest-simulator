@@ -200,10 +200,13 @@ PyNEST examples
 
 .. grid:: 1 1 2 3
 
-    .. grid-item-card:: E-prop plasticity
+    .. grid-item-card:: :doc:`../auto_examples/eprop_plasticity/index`
            :img-top: ../static/img/pynest/eprop_supervised_classification_infrastructure.png
 
-           * :doc:`../auto_examples/eprop_plasticity/index`
+           * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_classification_evidence-accumulation`
+           * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_sine-waves`
+           * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_handwriting`
+           * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_infinite-loop`
 
 
 .. grid:: 1 1 2 3
@@ -338,6 +341,7 @@ PyNEST examples
    ../auto_examples/astrocytes/astrocyte_interaction
    ../auto_examples/astrocytes/astrocyte_small_network
    ../auto_examples/astrocytes/astrocyte_brunel
+   ../auto_examples/eprop_plasticity/index
 
 .. toctree::
    :hidden:

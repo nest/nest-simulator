@@ -198,7 +198,7 @@ params_nrn_reg = {
     "gamma": 0.3,  # scaling of the pseudo derivative
     "I_e": 0.0,  # pA, external current input
     "psc_scale_factor": "unity",  # postsynaptic current scale factor
-    "surrogate_gradient": "piecewise_linear",  # pseudo-derivative
+    "surrogate_gradient_function": "piecewise_linear",  # surrogate gradient / pseudo-derivative function
     "t_ref": 5.0,  # ms, duration of refractory period
     "tau_m": 20.0,  # ms, membrane time constant
     "V_m": 0.0,  # mV, initial value of the membrane voltage
@@ -215,7 +215,7 @@ params_nrn_ad = {
     "gamma": 0.3,
     "I_e": 0.0,
     "psc_scale_factor": "unity",  # postsynaptic current scale factor
-    "surrogate_gradient": "piecewise_linear",
+    "surrogate_gradient_function": "piecewise_linear",
     "t_ref": 5.0,
     "tau_m": 20.0,
     "V_m": 0.0,
@@ -278,7 +278,7 @@ params_mm_ad = {
 
 params_mm_out = {
     "interval": duration["step"],
-    "record_from": ["V_m", "readout_signal", "target_signal", "error_signal"],
+    "record_from": ["V_m", "readout_signal", "readout_signal_unnorm", "target_signal", "error_signal"],
     "start": duration["total_offset"],
     "stop": duration["total_offset"] + duration["task"],
 }

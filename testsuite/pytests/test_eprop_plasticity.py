@@ -144,7 +144,7 @@ def test_eprop_regression():
         "f_target": 10.0,
         "I_e": 0.0,
         "psc_scale_factor": "alpha_complement",
-        "surrogate_gradient": "piecewise_linear",
+        "surrogate_gradient_function": "piecewise_linear",
         "t_ref": 0.0,
         "tau_m": 30.0,
         "V_m": 0.0,
@@ -178,7 +178,7 @@ def test_eprop_regression():
     }
 
     params_mm_out = {
-        "record_from": ["V_m", "readout_signal", "target_signal", "error_signal"],
+        "record_from": ["V_m", "readout_signal", "readout_signal_unnorm", "target_signal", "error_signal"],
         "start": duration["total_offset"],
         "interval": duration["step"],
     }
@@ -453,7 +453,7 @@ def test_eprop_classification():
         "gamma": 0.3,
         "I_e": 0.0,
         "psc_scale_factor": "unity",
-        "surrogate_gradient": "piecewise_linear",
+        "surrogate_gradient_function": "piecewise_linear",
         "t_ref": 5.0,
         "tau_m": 20.0,
         "V_m": 0.0,
@@ -470,7 +470,7 @@ def test_eprop_classification():
         "gamma": 0.3,
         "I_e": 0.0,
         "psc_scale_factor": "unity",
-        "surrogate_gradient": "piecewise_linear",
+        "surrogate_gradient_function": "piecewise_linear",
         "t_ref": 5.0,
         "tau_m": 20.0,
         "V_m": 0.0,
@@ -511,7 +511,7 @@ def test_eprop_classification():
     }
 
     params_mm_out = {
-        "record_from": ["V_m", "readout_signal", "target_signal", "error_signal"],
+        "record_from": ["V_m", "readout_signal", "readout_signal_unnorm", "target_signal", "error_signal"],
         "start": duration["total_offset"],
         "interval": duration["step"],
     }

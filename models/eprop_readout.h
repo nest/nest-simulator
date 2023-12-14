@@ -131,6 +131,11 @@ SpikeEvent, CurrentEvent, DelayedRateConnectionEvent, DataLoggingRequest
 See also
 ++++++++
 
+Examples using this model
+++++++++++++++++++++++++++
+
+.. listexamples:: eprop_readout
+
 EndUserDocs */
 
 void register_eprop_readout( const std::string& name );
@@ -324,11 +329,18 @@ private:
     return S_.v_m_ + P_.E_L_;
   }
 
-  //! Get the current value of the readout signal.
+  //! Get the current value of the normalized readout signal.
   double
   get_readout_signal_() const
   {
     return S_.readout_signal_;
+  }
+
+  //! Get the current value of the unnormalized readout signal.
+  double
+  get_readout_signal_unnorm_() const
+  {
+    return S_.readout_signal_unnorm_;
   }
 
   //! Get the current value of the target signal.

@@ -361,7 +361,7 @@ eprop_iaf_psc_delta::update( Time const& origin, const long from, const long to 
       reset_spike_count();
     }
 
-    S_.learning_signal_ = get_learning_signal( t );
+    S_.learning_signal_ = get_learning_signal_history( t );
 
     if ( S_.r_ > 0 )
     {

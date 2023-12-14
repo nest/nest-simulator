@@ -27,6 +27,7 @@ compiled by CMake.
 """
 
 import argparse
+import itertools
 import os
 import sys
 from pathlib import Path
@@ -229,8 +230,7 @@ def generate_modelsmodule():
     1. the copyright header.
     2. a list of generic NEST includes
     3. the list of includes for the models to build into NEST
-    4. some boilerplate function implementations needed to fulfill the
-       Module interface
+    4. if required template specialization for eprop_synapse
     5. the list of model registration lines for the models to build
        into NEST
 
@@ -238,6 +238,9 @@ def generate_modelsmodule():
     debugging of the code generation process easier in case of errors.
 
     """
+
+    # create flat list of model names
+    model_names = set(itertools.chain(*itertools.chain(*(itertools.chain(dv.values()) for dv in models.values()))))
 
     fname = Path(srcdir) / "doc" / "copyright_header.cpp"
     with open(fname, "r") as file:
@@ -270,9 +273,10 @@ def generate_modelsmodule():
                     file.write(f'#include "{fname}"\n')
                 file.write(end_guard(guards))
 
-        file.write(
-            dedent(
-                """
+        if "eprop_synapse" in model_names:
+            file.write(
+                dedent(
+                    """
             namespace nest
             {
               template <>
@@ -314,9 +318,9 @@ def generate_modelsmodule():
                 C_.clear();
               }
             }
-            """
+                """
+                )
             )
-        )
 
         file.write("\nvoid nest::register_models()\n{")
 

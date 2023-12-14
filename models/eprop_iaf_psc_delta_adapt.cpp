@@ -237,14 +237,19 @@ eprop_iaf_psc_delta_adapt::State_::get( DictionaryDatum& d, const Parameters_& p
 void
 eprop_iaf_psc_delta_adapt::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
 {
-  updateValueParam< double >( d, names::adaptation, adapt_, node );
+  v_m_ -= updateValueParam< double >( d, names::V_m, v_m_, node ) ? p.E_L_ : delta_EL;
 
+  // Adaptive threshold can only be set indirectly via the adaptation variable.
   if ( updateValueParam< double >( d, names::adaptation, adapt_, node ) )
   {
+    // If E_L changed in this SetStatus call, p.V_th_ has been adjusted and no further action is needed
     v_th_adapt_ = p.V_th_ + p.adapt_beta_ * adapt_;
   }
-
-  v_m_ -= updateValueParam< double >( d, names::V_m, v_m_, node ) ? p.E_L_ : delta_EL;
+  else
+  {
+    // Adjust voltage to change in E_L
+    v_th_adapt_ -= delta_EL;
+  }
 }
 
 /* ----------------------------------------------------------------

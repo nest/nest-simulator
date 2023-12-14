@@ -26,6 +26,8 @@
 // nestkernel
 #include "connection.h"
 #include "eprop_archiving_node.h"
+#include "target_identifier.h"
+#include "weight_optimizer.h"
 
 namespace nest
 {
@@ -210,6 +212,9 @@ class EpropCommonProperties : public CommonSynapseProperties
 public:
   // Default constructor.
   EpropCommonProperties();
+  EpropCommonProperties( const EpropCommonProperties& );
+  EpropCommonProperties& operator=( const EpropCommonProperties& ) = delete;
+  ~EpropCommonProperties();
 
   //! Get parameter dictionary.
   void get_status( DictionaryDatum& d ) const;
@@ -217,23 +222,10 @@ public:
   //! Update values in parameter dictionary.
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
-  //! Exponential decay rate for first moment estimate of Adam optimizer.
-  double adam_beta1_;
-
-  //! Exponential decay rate for second moment estimate of Adam optimizer.
-  double adam_beta2_;
-
-  //! Small constant for numerical stability of Adam optimizer.
-  double adam_epsilon_;
-
-  //! Size of batch.
-  long batch_size_;
-
-  //! Optimizer. If adam, use Adam optimizer, if gd, gradient descent.
-  std::string optimizer_;
-
   //! If True, average the gradient over the learning window.
   bool average_gradient_;
+
+  WeightOptimizerCommonProperties* optimizer_cp_;
 };
 
 //! Register the eprop synapse model.
@@ -250,19 +242,31 @@ public:
   //! Type of the connection base.
   typedef Connection< targetidentifierT > ConnectionBase;
 
-  //! Properties of the connection model.
+  /**
+   * Properties of the connection model.
+   * @note Does not support LBL at present because we cannot properly cast GenericModel common props in that case.
+   */
   static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
     | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::REQUIRES_EPROP_ARCHIVING
-    | ConnectionModelProperties::SUPPORTS_HPC | ConnectionModelProperties::SUPPORTS_LBL;
+    | ConnectionModelProperties::SUPPORTS_HPC;
 
-  //! Default constructor.
+  //! Constructor.
   eprop_synapse();
 
-  //! Copy constructor.
-  eprop_synapse( const eprop_synapse& ) = default;
+  //! Destructor
+  ~eprop_synapse();
 
-  //! Equal operator
-  eprop_synapse& operator=( const eprop_synapse& ) = default;
+  //! Copy constructor -- not default because setting some constants
+  eprop_synapse( const eprop_synapse& );
+
+  //! Assignment operator
+  eprop_synapse& operator=( const eprop_synapse& );
+
+  //! Move constructor
+  eprop_synapse( eprop_synapse&& );
+
+  //! Move Assignment operator
+  eprop_synapse& operator=( eprop_synapse&& );
 
   using ConnectionBase::get_delay;
   using ConnectionBase::get_delay_steps;
@@ -277,15 +281,6 @@ public:
 
   //! Send the spike event.
   void send( Event& e, size_t thread, const EpropCommonProperties& cp );
-
-  //! Update the synaptic weight via gradient descent.
-  void optimize_via_gradient_descent( const long current_optimization_step, const EpropCommonProperties& cp );
-
-  //! Update the synaptic weight via the Adam optimizer.
-  void optimize_via_adam( const long current_optimization_step, const EpropCommonProperties& cp );
-
-  //! Update the synaptic weight via an optimizer.
-  void ( eprop_synapse::*optimize )( const long current_optimization_step, const EpropCommonProperties& cp );
 
   //! Dummy node for testing the connection.
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -306,37 +301,12 @@ public:
     }
   };
 
-  //! Check if the target accepts the event and receptor type requested by the sender and set variables that stay
-  //! constant throughout the simulation.
-  void
-  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& cp )
-  {
-    // When we get here, delay has been set so we can check it.
-    if ( get_delay_steps() != 1 )
-    {
-      throw KernelException( "eprop synapses currently require a delay of one simulation step" );
-    }
-
-    ConnTestDummyNode dummy_target;
-    ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
-
-    t.register_eprop_connection();
-
-    const double dt = Time::get_resolution().get_ms();
-    kappa_ = exp( -dt / tau_m_readout_ );
-
-    const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
-    t_next_update_ = update_interval;
-
-    if ( cp.optimizer_ == "adam" )
-    {
-      optimize = &eprop_synapse::optimize_via_adam;
-    }
-    else if ( cp.optimizer_ == "gradient_descent" )
-    {
-      optimize = &eprop_synapse::optimize_via_gradient_descent;
-    }
-  }
+  /**
+   * Check if the target accepts the event and receptor type requested by the sender.
+   *
+   * @note This sets the optimizer_ member.
+   */
+  void check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& cp );
 
   //! Set the synaptic weight to the provided value.
   void
@@ -345,21 +315,12 @@ public:
     weight_ = w;
   }
 
-protected:
+  //! Delete optimizer
+  void delete_optimizer();
+
+private:
   //! Synaptic weight.
   double weight_;
-
-  //! Learning rate.
-  double eta_;
-
-  //! Minimal synaptic weight.
-  double Wmin_;
-
-  //! Maximal synaptic weight.
-  double Wmax_;
-
-  //! Optimization step.
-  long optimization_step_;
 
   //! The time step when the previous spike arrived.
   long t_previous_spike_;
@@ -379,24 +340,156 @@ protected:
   //! Low-pass filter of the eligibility trace.
   double kappa_;
 
-  //! First moment estimate of Adam optimizer.
-  double adam_m_;
-
-  //! Second moment raw estimate of Adam optimizer.
-  double adam_v_;
-
-  //! Sum over all gradients in one batch.
-  double sum_grads_;
-
   //! If this connection is between two recurrent neurons.
   bool is_recurrent_to_recurrent_conn_;
 
   //! Vector of presynaptic inter-spike-intervals.
   std::vector< long > presyn_isis_;
+
+  /**
+   *  Optimizer
+   *
+   *  @note Pointer is set by check_connection() and deleted by delete_optimizer().
+   */
+  WeightOptimizer* optimizer_;
 };
 
 template < typename targetidentifierT >
 constexpr ConnectionModelProperties eprop_synapse< targetidentifierT >::properties;
+
+template < typename targetidentifierT >
+eprop_synapse< targetidentifierT >::eprop_synapse()
+  : ConnectionBase()
+  , weight_( 1.0 )
+  , t_previous_spike_( 0 )
+  , t_previous_update_( 0 )
+  , t_next_update_( 0 )
+  , t_previous_trigger_spike_( 0 )
+  , tau_m_readout_( 10.0 )
+  , kappa_( std::exp( -Time::get_resolution().get_ms() / tau_m_readout_ ) )
+  , is_recurrent_to_recurrent_conn_( false )
+  , optimizer_( nullptr )
+{
+}
+
+template < typename targetidentifierT >
+eprop_synapse< targetidentifierT >::~eprop_synapse()
+{
+}
+
+// This copy constructor is used to create instances from prototypes.
+// Therefore, only parameter values are copied.
+template < typename targetidentifierT >
+eprop_synapse< targetidentifierT >::eprop_synapse( const eprop_synapse& es )
+  : ConnectionBase( es )
+  , weight_( es.weight_ )
+  , t_previous_spike_( 0 )
+  , t_previous_update_( 0 )
+  , t_next_update_( kernel().simulation_manager.get_eprop_update_interval().get_steps() )
+  , t_previous_trigger_spike_( 0 )
+  , tau_m_readout_( es.tau_m_readout_ )
+  , kappa_( std::exp( -Time::get_resolution().get_ms() / tau_m_readout_ ) )
+  , is_recurrent_to_recurrent_conn_( es.is_recurrent_to_recurrent_conn_ )
+  , optimizer_( es.optimizer_ )
+{
+}
+
+// This assignement operator is used to write a connection into the connection array.
+template < typename targetidentifierT >
+eprop_synapse< targetidentifierT >&
+eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
+{
+  if ( this == &es )
+  {
+    return *this;
+  }
+
+  ConnectionBase::operator=( es );
+
+  weight_ = es.weight_;
+  t_previous_spike_ = es.t_previous_spike_;
+  t_previous_update_ = es.t_previous_update_;
+  t_next_update_ = es.t_next_update_;
+  t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
+  tau_m_readout_ = es.tau_m_readout_;
+  kappa_ = es.kappa_;
+  is_recurrent_to_recurrent_conn_ = es.is_recurrent_to_recurrent_conn_;
+  optimizer_ = es.optimizer_;
+
+  return *this;
+}
+
+template < typename targetidentifierT >
+eprop_synapse< targetidentifierT >::eprop_synapse( eprop_synapse&& es )
+  : ConnectionBase( es )
+  , weight_( es.weight_ )
+  , t_previous_spike_( 0 )
+  , t_previous_update_( 0 )
+  , t_next_update_( es.t_next_update_ )
+  , t_previous_trigger_spike_( 0 )
+  , tau_m_readout_( es.tau_m_readout_ )
+  , kappa_( es.kappa_ )
+  , is_recurrent_to_recurrent_conn_( es.is_recurrent_to_recurrent_conn_ )
+  , optimizer_( es.optimizer_ )
+{
+  es.optimizer_ = nullptr;
+}
+
+// This assignement operator is used to write a connection into the connection array.
+template < typename targetidentifierT >
+eprop_synapse< targetidentifierT >&
+eprop_synapse< targetidentifierT >::operator=( eprop_synapse&& es )
+{
+  if ( this == &es )
+  {
+    return *this;
+  }
+
+  ConnectionBase::operator=( es );
+
+  weight_ = es.weight_;
+  t_previous_spike_ = es.t_previous_spike_;
+  t_previous_update_ = es.t_previous_update_;
+  t_next_update_ = es.t_next_update_;
+  t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
+  tau_m_readout_ = es.tau_m_readout_;
+  kappa_ = es.kappa_;
+  is_recurrent_to_recurrent_conn_ = es.is_recurrent_to_recurrent_conn_;
+
+  optimizer_ = es.optimizer_;
+  es.optimizer_ = nullptr;
+
+  return *this;
+}
+
+template < typename targetidentifierT >
+inline void
+eprop_synapse< targetidentifierT >::check_connection( Node& s,
+  Node& t,
+  size_t receptor_type,
+  const CommonPropertiesType& cp )
+{
+  // When we get here, delay has been set so we can check it.
+  if ( get_delay_steps() != 1 )
+  {
+    throw IllegalConnection( "eprop synapses currently require a delay of one simulation step" );
+  }
+
+  ConnTestDummyNode dummy_target;
+  ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
+
+  t.register_eprop_connection();
+
+  optimizer_ = cp.optimizer_cp_->get_optimizer();
+}
+
+template < typename targetidentifierT >
+inline void
+eprop_synapse< targetidentifierT >::delete_optimizer()
+{
+  delete optimizer_;
+  // do not set to nullptr to allow detection of double deletion
+}
 
 template < typename targetidentifierT >
 inline void
@@ -431,21 +524,13 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
   {
     const long idx_current_update = ( t_spike - shift ) / update_interval;
     const long t_current_update = idx_current_update * update_interval;
-    const long current_optimization_step = 1 + idx_current_update / cp.batch_size_;
 
     target->write_update_to_history( t_previous_update_, t_current_update );
 
-    sum_grads_ += target->gradient_change(
+    const double gradient_change = target->gradient_change(
       presyn_isis_, t_previous_update_, t_previous_trigger_spike_, kappa_, cp.average_gradient_ );
 
-    if ( optimization_step_ < current_optimization_step )
-    {
-      sum_grads_ /= cp.batch_size_; // mean over batches
-
-      ( this->*optimize )( current_optimization_step, cp );
-
-      weight_ = std::max( Wmin_, std::min( weight_, Wmax_ ) );
-    }
+    weight_ = optimizer_->optimized_weight( *cp.optimizer_cp_, idx_current_update, gradient_change, weight_ );
 
     t_previous_update_ = t_current_update;
     t_next_update_ = t_current_update + update_interval;
@@ -463,70 +548,22 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
 }
 
 template < typename targetidentifierT >
-inline void
-eprop_synapse< targetidentifierT >::optimize_via_gradient_descent( const long current_optimization_step,
-  const EpropCommonProperties& cp )
-{
-  weight_ -= eta_ * sum_grads_;
-  optimization_step_ = current_optimization_step;
-  sum_grads_ = 0.0;
-}
-
-template < typename targetidentifierT >
-inline void
-eprop_synapse< targetidentifierT >::optimize_via_adam( const long current_optimization_step,
-  const EpropCommonProperties& cp )
-{
-  for ( ; optimization_step_ < current_optimization_step; ++optimization_step_ )
-  {
-    const double adam_beta1_factor = 1.0 - std::pow( cp.adam_beta1_, optimization_step_ );
-    const double adam_beta2_factor = 1.0 - std::pow( cp.adam_beta2_, optimization_step_ );
-
-    const double alpha_t = eta_ * std::sqrt( adam_beta2_factor ) / adam_beta1_factor;
-
-    adam_m_ = cp.adam_beta1_ * adam_m_ + ( 1.0 - cp.adam_beta1_ ) * sum_grads_;
-    adam_v_ = cp.adam_beta2_ * adam_v_ + ( 1.0 - cp.adam_beta2_ ) * sum_grads_ * sum_grads_;
-
-    weight_ -= alpha_t * adam_m_ / ( std::sqrt( adam_v_ ) + cp.adam_epsilon_ );
-
-    sum_grads_ = 0.0; // reset for following iterations
-    // since more than 1 cycle through loop indicates past learning periods with vanishing gradients
-  }
-}
-
-template < typename targetidentifierT >
-eprop_synapse< targetidentifierT >::eprop_synapse()
-  : ConnectionBase()
-  , weight_( 1.0 )
-  , eta_( 0.0001 )
-  , Wmin_( 0.0 )
-  , Wmax_( 100.0 )
-  , optimization_step_( 1 )
-  , t_previous_spike_( 0 )
-  , t_previous_update_( 0 )
-  , t_next_update_( 1000 )
-  , t_previous_trigger_spike_( 0 )
-  , tau_m_readout_( 10.0 )
-  , kappa_( 0.0 )
-  , adam_m_( 0.0 )
-  , adam_v_( 0.0 )
-  , sum_grads_( 0.0 )
-{
-}
-
-template < typename targetidentifierT >
 void
 eprop_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
-  def< double >( d, names::eta, eta_ );
-  def< double >( d, names::Wmin, Wmin_ );
-  def< double >( d, names::Wmax, Wmax_ );
   def< double >( d, names::tau_m_readout, tau_m_readout_ );
   def< long >( d, names::size_of, sizeof( *this ) );
-  def< double >( d, names::adam_m, adam_m_ );
-  def< double >( d, names::adam_v, adam_v_ );
+
+  DictionaryDatum optimizer_dict = new Dictionary();
+
+  // The default_connection_ has no optimizer, therefore we need to protect it
+  if ( optimizer_ )
+  {
+    optimizer_->get_status( optimizer_dict );
+    ( *d )[ names::optimizer ] = optimizer_dict;
+  }
 }
 
 template < typename targetidentifierT >
@@ -534,27 +571,37 @@ void
 eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
+  if ( d->known( names::optimizer ) )
+  {
+    // We must pass here if called by SetDefaults. In that case, the user will get and error
+    // message because the parameters for the synapse-specific optimizer have not been accessed.
+    if ( optimizer_ )
+    {
+      optimizer_->set_status( getValue< DictionaryDatum >( d->lookup( names::optimizer ) ) );
+    }
+  }
+
   updateValue< double >( d, names::weight, weight_ );
-  updateValue< double >( d, names::eta, eta_ );
-  updateValue< double >( d, names::Wmin, Wmin_ );
-  updateValue< double >( d, names::Wmax, Wmax_ );
-  updateValue< double >( d, names::tau_m_readout, tau_m_readout_ );
-  updateValue< double >( d, names::adam_m, adam_m_ );
-  updateValue< double >( d, names::adam_v, adam_v_ );
 
-  if ( tau_m_readout_ <= 0 )
+  if ( updateValue< double >( d, names::tau_m_readout, tau_m_readout_ ) )
   {
-    throw BadProperty( "tau_m_readout must be > 0." );
+    if ( tau_m_readout_ <= 0 )
+    {
+      throw BadProperty( "tau_m_readout > 0 required" );
+    }
+    kappa_ = std::exp( -Time::get_resolution().get_ms() / tau_m_readout_ );
   }
 
-  if ( weight_ < Wmin_ )
+  const auto& gcm = dynamic_cast< const GenericConnectorModel< eprop_synapse< targetidentifierT > >& >( cm );
+  const CommonPropertiesType& epcp = gcm.get_common_properties();
+  if ( weight_ < epcp.optimizer_cp_->get_Wmin() )
   {
-    throw BadProperty( "Wmin must be < weight." );
+    throw BadProperty( "Wmin ≤ weight required" );
   }
 
-  if ( weight_ > Wmax_ )
+  if ( weight_ > epcp.optimizer_cp_->get_Wmax() )
   {
-    throw BadProperty( "Wmax must be > weight." );
+    throw BadProperty( "weight ≤ Wmax required" );
   }
 }
 

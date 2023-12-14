@@ -208,8 +208,13 @@ def test_eprop_regression():
     weights_out_rec = np.array(np.random.randn(n_rec, n_out) / np.sqrt(n_rec), dtype=dtype_weights)
 
     params_common_syn_eprop = {
-        "batch_size": n_batch,
-        "optimizer": "gradient_descent",
+        "optimizer": {
+            "type": "gradient_descent",
+            "batch_size": n_batch,
+            "eta": 1e-4,
+            "Wmin": -100.0,
+            "Wmax": 100.0,
+        },
         "weight_recorder": wr,
         "average_gradient": False,
     }
@@ -217,31 +222,22 @@ def test_eprop_regression():
     params_syn_in = {
         "synapse_model": "eprop_synapse",
         "delay": duration["step"],
-        "eta": 1e-4,
         "tau_m_readout": params_nrn_out["tau_m"],
         "weight": weights_in_rec,
-        "Wmax": 100.0,
-        "Wmin": -100.0,
     }
 
     params_syn_rec = {
         "synapse_model": "eprop_synapse",
         "delay": duration["step"],
-        "eta": 1e-4,
         "tau_m_readout": params_nrn_out["tau_m"],
         "weight": weights_rec_rec,
-        "Wmax": 100.0,
-        "Wmin": -100.0,
     }
 
     params_syn_out = {
         "synapse_model": "eprop_synapse",
         "delay": duration["step"],
-        "eta": 1e-4,
         "tau_m_readout": params_nrn_out["tau_m"],
         "weight": weights_rec_out,
-        "Wmax": 100.0,
-        "Wmin": -100.0,
     }
 
     params_syn_feedback = {
@@ -551,49 +547,39 @@ def test_eprop_classification():
     weights_out_rec = np.array(np.random.randn(n_rec, n_out), dtype=dtype_weights)
 
     params_common_syn_eprop = {
-        "adam_beta1": 0.9,
-        "adam_beta2": 0.999,
-        "adam_epsilon": 1e-8,
-        "optimizer": "adam",
-        "batch_size": n_batch,
+        "optimizer": {
+            "type": "adam",
+            "batch_size": n_batch,
+            "beta_1": 0.9,
+            "beta_2": 0.999,
+            "epsilon": 1e-8,
+            "eta": 5e-3,
+            "Wmin": -100.0,
+            "Wmax": 100.0,
+        },
         "weight_recorder": wr,
         "average_gradient": True,
     }
 
     params_syn_in = {
         "synapse_model": "eprop_synapse",
-        "adam_m": 0.0,
-        "adam_v": 0.0,
         "delay": duration["step"],
-        "eta": 5e-3,
         "tau_m_readout": params_nrn_out["tau_m"],
         "weight": weights_in_rec,
-        "Wmax": 100.0,
-        "Wmin": -100.0,
     }
 
     params_syn_rec = {
         "synapse_model": "eprop_synapse",
-        "adam_m": 0.0,
-        "adam_v": 0.0,
         "delay": duration["step"],
-        "eta": 5e-3,
         "tau_m_readout": params_nrn_out["tau_m"],
         "weight": weights_rec_rec,
-        "Wmax": 100.0,
-        "Wmin": -100.0,
     }
 
     params_syn_out = {
         "synapse_model": "eprop_synapse",
-        "adam_m": 0.0,
-        "adam_v": 0.0,
         "delay": duration["step"],
-        "eta": 5e-3,
         "tau_m_readout": params_nrn_out["tau_m"],
         "weight": weights_rec_out,
-        "Wmax": 100.0,
-        "Wmin": -100.0,
     }
 
     params_syn_feedback = {

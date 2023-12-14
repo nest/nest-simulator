@@ -73,11 +73,6 @@ extern const Name a_thresh_th;
 extern const Name a_thresh_tl;
 extern const Name acceptable_latency;
 extern const Name activity;
-extern const Name adam_beta1;
-extern const Name adam_beta2;
-extern const Name adam_epsilon;
-extern const Name adam_m;
-extern const Name adam_v;
 extern const Name adapt_beta;
 extern const Name adapt_tau;
 extern const Name adaptation;
@@ -111,6 +106,9 @@ extern const Name azimuth_angle;
 extern const Name b;
 extern const Name batch_size;
 extern const Name beta;
+extern const Name beta_1;
+extern const Name beta_2;
+
 extern const Name beta_Ca;
 extern const Name biological_time;
 extern const Name box;
@@ -207,6 +205,8 @@ extern const Name eprop_learning_window;
 extern const Name eprop_reset_neurons_on_update;
 extern const Name eprop_update_interval;
 extern const Name eps;
+extern const Name epsilon;
+
 extern const Name equilibrate;
 extern const Name error_signal;
 extern const Name eta;
@@ -326,6 +326,7 @@ extern const Name lookuptable_2;
 extern const Name loss;
 extern const Name lower_left;
 
+extern const Name m;
 extern const Name major_axis;
 extern const Name make_symmetric;
 extern const Name mask;
@@ -625,6 +626,7 @@ extern const Name time_update;
 extern const Name times;
 extern const Name to_do;
 extern const Name total_num_virtual_procs;
+extern const Name type;
 extern const Name type_id;
 
 extern const Name U;
@@ -639,6 +641,7 @@ extern const Name upper_right;
 extern const Name use_compressed_spikes;
 extern const Name use_wfr;
 
+extern const Name v;
 extern const Name V_act_NMDA;
 extern const Name V_clamp;
 extern const Name V_epsp;

@@ -1,14 +1,19 @@
+# Minimal modelset for spiking neuron simulations with e-prop plasticity
+
+multimeter
+spike_recorder
+weight_recorder
+
+spike_generator
+step_rate_generator
+poisson_generator
+
 eprop_iaf_psc_delta
 eprop_iaf_psc_delta_adapt
-eprop_learning_signal_connection
 eprop_readout
-eprop_synapse
-multimeter
 parrot_neuron
-poisson_generator
+
+eprop_learning_signal_connection
+eprop_synapse
 rate_connection_delayed
-spike_generator
-spike_recorder
 static_synapse
-step_rate_generator
-weight_recorder

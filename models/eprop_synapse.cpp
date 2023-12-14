@@ -37,61 +37,73 @@ register_eprop_synapse( const std::string& name )
 
 EpropCommonProperties::EpropCommonProperties()
   : CommonSynapseProperties()
-  , adam_beta1_( 0.9 )
-  , adam_beta2_( 0.999 )
-  , adam_epsilon_( 1e-8 )
-  , batch_size_( 1 )
-  , optimizer_( "gradient_descent" )
   , average_gradient_( false )
+  , optimizer_cp_( new WeightOptimizerCommonPropertiesGradientDescent() )
 {
+}
+
+EpropCommonProperties::EpropCommonProperties( const EpropCommonProperties& cp )
+  : CommonSynapseProperties( cp )
+  , average_gradient_( cp.average_gradient_ )
+  , optimizer_cp_( cp.optimizer_cp_->clone() )
+{
+}
+
+EpropCommonProperties::~EpropCommonProperties()
+{
+  delete optimizer_cp_;
 }
 
 void
 EpropCommonProperties::get_status( DictionaryDatum& d ) const
 {
   CommonSynapseProperties::get_status( d );
-  def< double >( d, names::adam_beta1, adam_beta1_ );
-  def< double >( d, names::adam_beta2, adam_beta2_ );
-  def< double >( d, names::adam_epsilon, adam_epsilon_ );
-  def< long >( d, names::batch_size, batch_size_ );
-  def< std::string >( d, names::optimizer, optimizer_ );
   def< bool >( d, names::average_gradient, average_gradient_ );
+  def< std::string >( d, names::optimizer, optimizer_cp_->get_name() );
+  DictionaryDatum optimizer_dict = new Dictionary;
+  optimizer_cp_->get_status( optimizer_dict );
+  ( *d )[ names::optimizer ] = optimizer_dict;
 }
 
 void
 EpropCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   CommonSynapseProperties::set_status( d, cm );
-  updateValue< double >( d, names::adam_beta1, adam_beta1_ );
-  updateValue< double >( d, names::adam_beta2, adam_beta2_ );
-  updateValue< double >( d, names::adam_epsilon, adam_epsilon_ );
-  updateValue< long >( d, names::batch_size, batch_size_ );
-  updateValue< std::string >( d, names::optimizer, optimizer_ );
   updateValue< bool >( d, names::average_gradient, average_gradient_ );
 
-  if ( adam_beta1_ < 0.0 or 1.0 <= adam_beta1_ )
+  if ( d->known( names::optimizer ) )
   {
-    throw BadProperty( "adam_beta1 must be in [0,1)." );
-  }
+    DictionaryDatum optimizer_dict = getValue< DictionaryDatum >( d->lookup( names::optimizer ) );
 
-  if ( adam_beta2_ < 0.0 or 1.0 <= adam_beta2_ )
-  {
-    throw BadProperty( "adam_beta2 must be in [0,1)." );
-  }
+    std::string new_optimizer;
+    const bool set_optimizer = updateValue< std::string >( optimizer_dict, names::type, new_optimizer );
+    if ( set_optimizer and new_optimizer != optimizer_cp_->get_name() )
+    {
+      if ( kernel().connection_manager.get_num_connections( cm.get_syn_id() ) > 0 )
+      {
+        throw BadParameter( "The optimizer cannot be changed because synapses have been created." );
+      }
 
-  if ( adam_epsilon_ < 0.0 )
-  {
-    throw BadProperty( "adam_epsilon must be >= 0." );
-  }
+      // TODO: Selection here should be based on an optimizer registry and a factory.
+      // delete is in if/elif because we must delete only when we are sure that we have a valid optimizer.
+      if ( new_optimizer == "gradient_descent" )
+      {
+        delete optimizer_cp_;
+        optimizer_cp_ = new WeightOptimizerCommonPropertiesGradientDescent();
+      }
+      else if ( new_optimizer == "adam" )
+      {
+        delete optimizer_cp_;
+        optimizer_cp_ = new WeightOptimizerCommonPropertiesAdam();
+      }
+      else
+      {
+        throw BadProperty( "optimizer must be chosen from [\"gradient_descent\", \"adam\"]" );
+      }
+    }
 
-  if ( batch_size_ <= 0 )
-  {
-    throw BadProperty( "batch_size must be > 0." );
-  }
-
-  if ( optimizer_ != "gradient_descent" and optimizer_ != "adam" )
-  {
-    throw BadProperty( "optimizer must be chosen from [\"gradient_descent\", \"adam\"]." );
+    // We can now set the defaults on the new optimizer common props
+    optimizer_cp_->set_status( optimizer_dict );
   }
 }
 

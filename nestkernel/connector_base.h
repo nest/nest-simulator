@@ -269,6 +269,12 @@ public:
   }
 
   void
+  push_back( ConnectionT&& c )
+  {
+    C_.push_back( std::move( c ) );
+  }
+
+  void
   get_connection( const size_t source_node_id,
     const size_t target_node_id,
     const size_t tid,

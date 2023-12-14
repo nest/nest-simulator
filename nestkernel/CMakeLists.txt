@@ -60,7 +60,7 @@ set ( nestkernel_sources
       recording_device.h recording_device.cpp
       pseudo_recording_device.h
       ring_buffer.h ring_buffer_impl.h ring_buffer.cpp
-      secondary_event.h
+      secondary_event.h secondary_event_impl.h
       slice_ring_buffer.cpp slice_ring_buffer.h
       spikecounter.h spikecounter.cpp
       stimulation_device.h stimulation_device.cpp
@@ -146,7 +146,7 @@ set_target_properties( nestkernel
     )
 
 target_link_libraries( nestkernel
-    nestutil sli_lib
+    nestutil sli_lib models
     ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES} ${HDF5_LIBRARIES}
     )
 

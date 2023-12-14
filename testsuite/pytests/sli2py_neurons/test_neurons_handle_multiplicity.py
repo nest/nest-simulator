@@ -34,6 +34,7 @@ import pytest
 # The following models will not be tested:
 skip_list = [
     "ginzburg_neuron",  # binary neuron
+    "ignore_and_fire",  # input independent neuron
     "mcculloch_pitts_neuron",  # binary neuron
     "erfc_neuron",  # binary neuron
     "lin_rate_ipn",  # rate neuron

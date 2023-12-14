@@ -243,7 +243,7 @@ def generate_modelsmodule():
     with open(fname, "r") as file:
         copyright_header = file.read()
 
-    fname = "modelsmodule.cpp"
+    fname = "models.cpp"
     modeldir = Path(blddir) / "models"
     modeldir.mkdir(parents=True, exist_ok=True)
     with open(modeldir / fname, "w") as file:
@@ -251,7 +251,7 @@ def generate_modelsmodule():
         file.write(
             dedent(
                 """
-            #include "modelsmodule.h"
+            #include "models.h"
 
             // Includes from nestkernel
             #include "target_identifier.h"
@@ -314,26 +314,11 @@ def generate_modelsmodule():
                 C_.clear();
               }
             }
-
-            nest::ModelsModule::ModelsModule()
-            {
-            }
-
-            nest::ModelsModule::~ModelsModule()
-            {
-            }
-
-            const std::string
-            nest::ModelsModule::name() const
-            {
-              return std::string( "NEST standard models module" );
-            }
-
-            void
-            nest::ModelsModule::init( SLIInterpreter* )
-            {"""
+            """
             )
         )
+
+        file.write("\nvoid nest::register_models()\n{")
 
         for model_type, guards_mnames in models.items():
             file.write(f"\n  // {model_type.capitalize()} models\n")

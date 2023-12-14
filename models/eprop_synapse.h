@@ -280,7 +280,7 @@ public:
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
   //! Send the spike event.
-  void send( Event& e, size_t thread, const EpropCommonProperties& cp );
+  bool send( Event& e, size_t thread, const EpropCommonProperties& cp );
 
   //! Dummy node for testing the connection.
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -492,7 +492,7 @@ eprop_synapse< targetidentifierT >::delete_optimizer()
 }
 
 template < typename targetidentifierT >
-inline void
+bool
 eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCommonProperties& cp )
 {
   Node* target = get_target( thread );
@@ -506,7 +506,7 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
 
   if ( target->is_eprop_recurrent_node() and interval_step == 0 )
   {
-    return;
+    return false;
   }
 
   if ( t_previous_trigger_spike_ == 0 )
@@ -545,6 +545,8 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
   e.set_delay_steps( get_delay_steps() );
   e.set_rport( get_rport() );
   e();
+
+  return true;
 }
 
 template < typename targetidentifierT >

@@ -20,9 +20,10 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import math
+import os
+
 import nest
 import numpy as np
-import os
 import pytest
 
 

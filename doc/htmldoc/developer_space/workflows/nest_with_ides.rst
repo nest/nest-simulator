@@ -419,8 +419,13 @@ We have to create a new target and configure it appropriately:
 CLion
 -----
 
-This recipe describes how to set up CLion for editing, building and
-running NEST. The description here was tested on Ubuntu 23.
+This recipe describes how to set up CLion for editing, building, and running NEST. The description here was tested on Ubuntu 23.  
+All the steps below are fully optional if you don't intend to debug your code using CLion and prefer to build NEST manually from the command line.  
+If you just want to debug your code, you can skip steps 1-2 and only follow steps 3-7. However, it is advised to also follow steps 1-2 to inform CLion of your desired CMake configuration.  
+Setting up the CMake configuration in CLion has the following advantages:  
+* CLion's default CMake configuration creates the build directory inside the source code root directory, which easily leads to unknowingly committing build files to git.
+* CLion regenerates build files when checking out a new branch, potentially overriding the build you created by manually running CMake from the command line.
+* After setting up both the CMake configuaration and a run configuration, you won't need to use the command line to run ``cmake``, ``make``, ``make install``, and ``python *.py`` at all anymore. All will be done automatically by CLion and you only need to run your application without having to manually recompile.
 
 
 Setting up the project

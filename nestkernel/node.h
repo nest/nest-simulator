@@ -482,14 +482,20 @@ public:
   virtual void register_stdp_connection( double, double );
 
   /**
-   * Register eprop connection
+   * Initialize the update history and register the eprop synapse.
    *
    * @throws IllegalConnection
    */
   virtual void register_eprop_connection();
 
   /**
-   * Get shift.
+   * Get the number of steps the time-point of the signal has to be shifted to
+   * place it at the correct location in the e-prop-related histories.
+   *
+   * @note Unlike the original e-prop, where signals arise instantaneously, NEST
+   * considers connection delays. Thus, to reproduce the original results, we
+   * compensate for the delays and synchronize the signals by shifting the
+   * history.
    *
    * @throws IllegalConnection
    */
@@ -503,7 +509,11 @@ public:
   virtual void write_update_to_history( const long t_previous_update, const long t_current_update );
 
   /**
-   * Return if is an e-prop recurrent node.
+   * Return if the node is part of the recurrent network (and thus not a readout neuron).
+   *
+   * @note The e-prop synapse calls this function of the target node. If true,
+   * it skips weight updates within the first interval step of the update
+   * interval.
    *
    * @throws IllegalConnection
    */

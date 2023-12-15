@@ -215,14 +215,15 @@ public:
     const double kappa,
     const bool average_gradient ) override;
 
-private:
-  void init_buffers_() override;
   void pre_run_hook() override;
   long get_shift() const override;
   bool is_eprop_recurrent_node() const override;
-
   void update( Time const&, const long, const long ) override;
 
+protected:
+  void init_buffers_() override;
+
+private:
   //! Compute the piecewise linear surrogate gradient.
   double compute_piecewise_linear_derivative();
 

@@ -29,6 +29,101 @@
 namespace nest
 {
 
+/* BeginUserDocs: e-prop plasticity
+
+Short description
++++++++++++++++++
+
+Selection of weight optimizers
+
+Description
++++++++++++
+
+Currently two weight optimizers are implemented: gradient descent and the Adam optimizer.
+
+In gradient descent [1]_ the weights are optimized via:
+
+.. math::
+  W_t = W_{t-1} - \eta g_t \,,
+
+whereby :math:`\eta` denotes the learning rate and :math:`g_t` the gradient of the current
+time step :math:`t`.
+
+In the Adam scheme [2]_ the weights are optimized via:
+
+.. math::
+  m_0 &= 0, v_0 = 0, t = 1 \,, \\
+  m_t &= \beta_1 \cdot m_{t-1} + \left(1-\beta_1\right) \cdot g_t \,, \\
+  v_t &= \beta_2 \cdot v_{t-1} + \left(1-\beta_2\right) \cdot g_t^2 \,, \\
+  \hat{m}_t &= \frac{m_t}{1-\beta_1^t} \,, \\
+  \hat{v}_t &= \frac{v_t}{1-\beta_2^t} \,, \\
+  W_t &= W_{t-1} - \eta\frac{\hat{m_t}}{\sqrt{\hat{v}_t} + \epsilon} \,.
+
+Parameters
+++++++++++
+
+The following parameters can be set in the status dictionary.
+
+========== ===== ========================= ================ =========================================================
+**General optimizer parameters**
+---------------------------------------------------------------------------------------------------------------------
+Parameter   Unit  Math equivalent          Default          Description
+========== ===== ========================= ================ =========================================================
+batch_size                                                1 Size of batch
+eta              :math:`\eta`                          1e-4 Learning rate
+Wmax          pA :math:`W_{ji}^\text{max}`            100.0 Maximal value for synaptic weight
+Wmin          pA :math:`W_{ji}^\text{min}`              0.0 Minimal value for synaptic weight
+========== ===== ========================= ================ =========================================================
+
+========== ===== ========================= ================ =========================================================
+**Gradient descent parameters (default optimizer)**
+---------------------------------------------------------------------------------------------------------------------
+Parameter   Unit  Math equivalent          Default          Description
+========== ===== ========================= ================ =========================================================
+type                                       gradient_descent Optimizer type
+========== ===== ========================= ================ =========================================================
+
+========== ===== ========================= ================ =========================================================
+**Adam optimizer parameters**
+---------------------------------------------------------------------------------------------------------------------
+Parameter   Unit  Math equivalent          Default          Description
+========== ===== ========================= ================ =========================================================
+type                                                   adam Optimizer type
+beta1            :math:`\beta_1`                        0.9 Exponential decay rate for first moment estimate of Adam
+                                                            optimizer
+beta2            :math:`\beta_2`                      0.999 Exponential decay rate for second moment estimate of Adam
+                                                            optimizer
+epsilon          :math:`\epsilon`                      1e-8 Small constant for numerical stability of Adam optimizer
+========== ===== ========================= ================ =========================================================
+
+========= ==== =============== =======  ===============================================================
+**Adam optimizer parameters for individual synapses**
+-------------------------------------------------------------------------------------------------------
+Parameter Unit Math equivalent Default  Description
+========= ==== =============== =======  ===============================================================
+m              :math:`m_0`         0.0  Initial value of first moment estimate m of Adam optimizer
+v              :math:`v_0`         0.0  Initial value of second moment raw estimate v of Adam optimizer
+========= ==== =============== =======  ===============================================================
+
+
+References
+++++++++++
+.. [1] Huh, D. & Sejnowski, T. J. Gradient descent for spiking neural networks. 32nd
+       Conference on Neural Information Processing Systems (2018).
+.. [2] Kingma DP, Ba JL (2015). Adam: A method for stochastic optimization.
+       Proceedings of International Conference on Learning Representations (ICLR).
+       https://doi.org/10.48550/arXiv.1412.6980
+
+See also
+++++++++
+
+Examples using this model
+++++++++++++++++++++++++++
+
+.. listexamples:: eprop_synapse
+
+EndUserDocs */
+
 class WeightOptimizer;
 
 /**

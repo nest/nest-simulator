@@ -50,12 +50,15 @@ Description
 neuron model with delta-shaped postsynaptic currents and threshold adaptation
 used for eligibility propagation (e-prop) plasticity.
 
+An additional state variable and the corresponding differential
+equation represents a piecewise constant external current.
+
 .. note::
   Contrary to what the model names suggest, ``eprop_iaf_psc_delta_adapt`` is not
   simply the ``iaf_psc_delta`` model with adaptation endowed with e-prop. While
-  both models are integrate-and-fire neurons with delta-shaped post-synaptic
+  both models are integrate-and-fire neurons with delta-shaped postsynaptic
   currents, there are minor differences in the dynamics of the two models, such
-  as the propagator of the post-synaptic current and the voltage reset upon a
+  as the propagator of the postsynaptic current and the voltage reset upon a
   spike.
 
 E-prop plasticity was originally introduced and implemented in TensorFlow in [1]_.
@@ -79,9 +82,9 @@ The spike state variable is expressed by a Heaviside function:
 .. math::
     z_j^t = H\left(v_j^t-A_j^t\right) \,.
 
-If the membrane voltage crosses the adaptive threshold voltage, a spike is
+If the membrane voltage crosses the adaptive threshold voltage :math:`A_j^t`, a spike is
 emitted and the membrane voltage is reduced by :math:`v_\text{th}` in the next
-time step. Counted from the time step of the spike emission, the neuron is not
+time step. After the time step of the spike emission, the neuron is not
 able to spike for an absolute refractory period :math:`t_\text{ref}`.
 
 An additional state variable and the corresponding differential equation
@@ -96,6 +99,42 @@ plasticity is calculated:
 
 See the documentation on the ``iaf_psc_delta`` neuron model for more information
 on the integration of the subthreshold dynamics.
+
+The change of the synaptic weight is calculated from the gradient
+:math:`\frac{\mathrm{d}{E}}{\mathrm{d}{W_{ij}}}=g`
+which depends on the presynaptic
+spikes :math:`z_i^{t-1}`, the surrogate-gradient / pseudo-derivative of the postsynaptic membrane
+voltage :math:`\psi_j^t` (which together form the eligibility trace
+:math:`e_{ji}`), and the learning signal :math:`L_j^t` emitted by the readout
+neurons.
+
+.. math::
+  \frac{\mathrm{d}E}{\mathrm{d}W_{ji}} = g &= \sum_t L_j^t \bar{e}_{ji}^t, \\
+  e_{ji}^t &= \psi_j^t \left(\bar{z}_i^{t-1} - \beta \epsilon_{ji,a}^{t-1}\right)\,, \\
+  \epsilon^{t-1}_{ji,\text{a}} &= \psi_j^{t-1}\bar{z}_i^{t-2} + \left( \rho - \psi_j^{t-1} \beta \right)
+  \epsilon^{t-2}_{ji,a}\; \text{with}\,\rho &= \exp\left(-\frac{\delta t}{\tau_\text{a}}\right)\,. \\
+
+The eligibility trace and the presynaptic spike trains are low-pass filtered
+with some exponential kernels:
+
+.. math::
+  \bar{e}_{ji}=\mathcal{F}_\kappa(e_{ji}) \;\text{with}\, \kappa=\exp\left(\frac{-\delta t}{\tau_\text{m,
+out}}\right)\,,\\ \bar{z}_i=\mathcal{F}_\alpha(z_i) \;\text{with}\, \alpha=\exp\left(\frac{-\delta
+t}{\tau_\text{m}}\right)\,.
+
+Furthermore, a firing rate regularization mechanism keeps the average firing
+rate :math:`f^\text{av}_j` of the postsynaptic neuron close to a target firing rate
+:math:`f^\text{target}`:
+
+.. math::
+  \frac{\mathrm{d}E^\text{reg}}{\mathrm{d}W_{ji}} = g^\text{reg} = c_\text{reg}
+  \sum_t \frac{1}{Tn_\text{trial}} \left( f^\text{target}-f^\text{av}_j\right)e_{ji}^t\,,
+
+whereby :math:`c_\text{reg}` scales the overall regularization and the average
+is taken over the time that passed since the previous update, that is, the number of
+trials :math:`n_\text{trial}` times the duration of an update interval :math:`T`.
+
+The overall gradient is given by the addition of the two gradients.
 
 For more information on e-prop plasticity, see the documentation on the other e-prop models:
 
@@ -272,7 +311,7 @@ private:
     //! Target firing rate of rate regularization (spikes/s).
     double f_target_;
 
-    //! Scaling of pseudo-derivative of membrane voltage.
+    //! Scaling of surrogate-gradient / pseudo-derivative of membrane voltage.
     double gamma_;
 
     //! Constant external input current (pA).

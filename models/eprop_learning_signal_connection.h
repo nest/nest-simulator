@@ -42,7 +42,8 @@ Description
 
 ``eprop_learning_signal_connection`` is a feedback connector  from ``eprop_readout``
 neurons to ``eprop_iaf_psc_delta`` or ``eprop_iaf_psc_delta_adapt`` neurons and
-transmits the learning signals for e-prop plasticity [1]_.
+transmits the learning signals :math:`L_j^t` for e-prop plasticity [1]_ and has
+a static weight :math:`B_{jk}`.
 
 For more information on e-prop plasticity, see the documentation on the other e-prop models:
 

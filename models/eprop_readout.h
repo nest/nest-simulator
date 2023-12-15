@@ -48,16 +48,39 @@ Description
 
 ``eprop_readout`` is an implementation of a integrate-and-fire neuron model
 with delta-shaped postsynaptic currents used as readout neuron for e-prop plasticity [1]_.
+
 An additional state variable and the corresponding differential
 equation represents a piecewise constant external current.
 
+E-prop plasticity was originally introduced and implemented in TensorFlow in [1]_.
+
+The membrane voltage time course is given by:
+
 .. math::
-    v_j^t &= \alpha v_j^{t-1}+\sum_{i \neq j}W_{ji}^\mathrm{rec}z_i^{t-1}
-              + \sum_i W_{ji}^\mathrm{in}x_i^t-z_j^{t-1}v_\mathrm{th} \\
-    \alpha &= e^{-\frac{\delta t}{\tau_\mathrm{m}}}
+    v_j^t &= \alpha v_j^{t-1}+\sum_{i \neq j}W_{ji}^\mathrm{out}z_i^{t-1}
+             -z_j^{t-1}v_\mathrm{th} \,, \\
+    \alpha &= e^{-\frac{\delta t}{\tau_\mathrm{m}}} \,.
 
 See the documentation on the ``iaf_psc_delta`` neuron model for more information
 on the integration of the subthreshold dynamics.
+
+The change of the synaptic weight is calculated from the gradient
+:math:`\frac{\mathrm{d}{E}}{\mathrm{d}{W_{ij}}}=g`
+which depends on the presynaptic
+spikes :math:`z_i^{t-1}` and the learning signal :math:`L_j^t` emitted by the readout
+neurons.
+
+.. math::
+  \frac{\mathrm{d}E}{\mathrm{d}W_{ji}} = g &= \sum_t L_j^t \bar{z}_i^{t-1}\,. \\
+
+The presynaptic spike trains are low-pass filtered with an exponential kernel:
+
+.. math::
+  \bar{z}_i=\mathcal{F}_\kappa(z_i) \;\text{with}\, \kappa=\exp\left(\frac{-\delta t}{\tau_\text{m}}\right)\,.
+
+Since readout neurons are leaky integrators without a spiking mechanism, the
+formula for computing the gradient lacks the surrogate gradient /
+pseudo-derivative and a firing regularization term.
 
 For more information on e-prop plasticity, see the documentation on the other e-prop models:
 

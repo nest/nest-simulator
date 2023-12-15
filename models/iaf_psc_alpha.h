@@ -143,7 +143,7 @@ Parameters
 The following parameters can be set in the status dictionary.
 
 =============== ================== =============================== ========================================================================
-**Parameter**   **Default** **Math equivalent**                    **Description**
+**Parameter**   **Default**        **Math equivalent**             **Description**
 =============== ================== =============================== ========================================================================
 ``E_L``         -70 mV             :math:`E_\text{L}`              Resting membrane potential
 ``C_m``         250 pF             :math:`C_{\text{m}}`            Capacity of the membrane

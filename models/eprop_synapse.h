@@ -208,6 +208,17 @@ Examples using this model
 
 EndUserDocs */
 
+/**
+ * Common properties base class for Eprop neurons.
+ *
+ * This class in particular manages a pointer to weight-optimizer common properties to support
+ * exchanging the weight optimizer at runtime. Setting the weight-optimizer common properties
+ * determines the WO type. It can only be exchanged as long as no synapses for the model exist.
+ * The WO CP object is responsible for providing individual optimizer objects to synapses upon
+ * connection.
+ *
+ * @see WeightOptimizerCommonProperties
+ */
 class EpropCommonProperties : public CommonSynapseProperties
 {
 public:
@@ -226,12 +237,40 @@ public:
   //! If True, average the gradient over the learning window.
   bool average_gradient_;
 
+  /**
+   * Pointer to common properties object for weight optimizer.
+   *
+   * @note Must only be changed as long as no synapses of the model exist.
+   */
   WeightOptimizerCommonProperties* optimizer_cp_;
 };
 
 //! Register the eprop synapse model.
 void register_eprop_synapse( const std::string& name );
 
+/**
+ * Class implementing e-prop plasticity according to Bellec et al (2020)
+ *
+ * @note Several aspects of this synapse are in place to reproduce the Tensorflow implementation of Bellec et al (2020).
+ *
+ * @note Each synapse has a optimizer_ object managed through a `WeightOptimizer*`, pointing to an object of
+ * a specific weight optimizer type. This optimizer, drawing also on parameters in the `WeightOptimizerCommonProperties`
+ * accessible via the synapse models `CommonProperties::optimizer_cp_` pointer, computes the weight update for the
+ * neuron. The actual optimizer type can be selected at runtime (before creating any synapses) by exchaning the
+ * `optimizer_cp_` pointer. Individual optimizer objects are created by `check_connection()` when a synapse is actually
+ * created. It is important that the constructors of `eprop_synapse` **do not** create optimizer objects and that the
+ * destructor **does not** delete optimizer objects; this currently leads to bugs when using Boosts's `spreadsort()` due
+ * to use of the copy constructor where it should suffice to use the move constructor. Therefore,
+ * `check_connection()`creates the optimizer object when it is needed and specializations of `Connector::~Connctor()`
+ * and `Connector::disable_connection()` delete it by calling `delete_optimizer()`. A disadvantage of this approach is
+ * that the `default_connection` in the connector model does not have an optimizer object, whence it is not possible to
+ * set default (initial) values for the per-synapse optimizer.
+ *
+ * @note If we can find a way to modify our co-sorting of source and target tables in Boost's `spreadsort()` to only use
+ * move operations, it should be possible to create the individual optimizers in the copy constructor of `eprop_synapse`
+ * and to delete it in the destructor. The `default_connection` can then own an optimizer and default values could be
+ * set on it.
+ */
 template < typename targetidentifierT >
 class eprop_synapse : public Connection< targetidentifierT >
 {

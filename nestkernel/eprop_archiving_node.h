@@ -33,6 +33,8 @@
 #include "dictdatum.h"
 
 /**
+ * Intermediate base class for nodes supporting e-prop plasticity.
+ *
  * A node which archives the history of dynamic variables, the firing rate
  * regularization, and update times needed to calculate the weight updates for
  * e-prop plasticity. It further provides a set of get, write, and set functions
@@ -58,7 +60,6 @@ public:
 
   //! Register current update in the update history and deregister previous update.
   void write_update_to_history( const long t_previous_update, const long t_current_update ) override;
-
 
   //! Get an iterator pointing to the update history entry of the given time step.
   std::vector< HistEntryEpropUpdate >::iterator get_update_history( const long time_step );

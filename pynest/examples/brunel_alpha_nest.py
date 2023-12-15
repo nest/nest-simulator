@@ -49,13 +49,12 @@ References
 # should be imported before nest.
 
 import time
-import numpy as np
-import scipy.special as sp
 
+import matplotlib.pyplot as plt
 import nest
 import nest.raster_plot
-import matplotlib.pyplot as plt
-
+import numpy as np
+import scipy.special as sp
 
 ###############################################################################
 # Definition of functions used in this example. First, define the `Lambert W`

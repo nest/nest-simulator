@@ -45,8 +45,13 @@ sim_dict = {
     "data_path": os.path.join(os.getcwd(), "data/"),
     # Seed for NEST
     "rng_seed": 55,
-    # number of threads per MPI process
-    "local_num_threads": 1,
+    # Number of threads per MPI process
+    #
+    # Note that when you scale up the network, the microcircut model
+    # may not run correctly if there is < 4 virtual processes
+    # (i.e., a thread in an MPI process)
+    # If you have 4 or more MPI processes, then you can set this value to 1.
+    "local_num_threads": 4,
     # recording interval of the membrane potential (in ms)
     "rec_V_int": 1.0,
     # if True, data will be overwritten,

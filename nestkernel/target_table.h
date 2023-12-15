@@ -39,14 +39,16 @@ namespace nest
 {
 
 /**
- * This data structure stores all targets of the local neurons. This
- * is the presynaptic part of the connection infrastructure.
+ * This data structure stores all targets of the local neurons.
+ *
+ * This is the presynaptic part of the connection infrastructure.
  */
 class TargetTable
 {
 private:
   /**
    * Stores targets of local neurons
+   *
    * Three dimensional objects:
    *   - first dim: threads
    *   - second dim: local neurons
@@ -57,6 +59,7 @@ private:
   /**
    * Stores MPI send buffer positions for secondary targets of local
    * neurons.
+   *
    * Four dimensional object:
    *   - first dim: threads
    *   - second dim: local neurons
@@ -93,8 +96,9 @@ public:
   const std::vector< Target >& get_targets( const size_t tid, const size_t lid ) const;
 
   /**
-   * Returns all MPI send buffer positions of a neuron. Used to fill
-   * MPI buffer in EventDeliveryManager.
+   * Returns all MPI send buffer positions of a neuron.
+   *
+   * Used to fill MPI buffer in EventDeliveryManager.
    */
   const std::vector< size_t >&
   get_secondary_send_buffer_positions( const size_t tid, const size_t lid, const synindex syn_id ) const;
@@ -133,4 +137,4 @@ TargetTable::clear( const size_t tid )
 
 } // namespace nest
 
-#endif
+#endif /* #ifndef TARGET_TABLE_H */

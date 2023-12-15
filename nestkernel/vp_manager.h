@@ -56,8 +56,8 @@ public:
   {
   }
 
-  void initialize() override;
-  void finalize() override;
+  void initialize( const bool ) override;
+  void finalize( const bool ) override;
 
   void set_status( const DictionaryDatum& ) override;
   void get_status( DictionaryDatum& ) override;
@@ -78,9 +78,17 @@ public:
 
   /**
    * Get number of threads.
+   *
    * This function returns the total number of threads per process.
    */
   size_t get_num_threads() const;
+
+  /**
+   * Get OMP_NUM_THREADS environment variable.
+   *
+   * @note Returns 0 if OMP_NUM_THREADS is not set.
+   */
+  size_t get_OMP_NUM_THREADS() const;
 
   /**
    * Returns true if the given global node exists on this vp.
@@ -104,6 +112,7 @@ public:
 
   /**
    * Return a thread number for a given global node id.
+   *
    * Each node has a default thread on which it will run.
    * The thread is defined by the relation:
    * t = (node_id div P) mod T, where P is the number of simulation processes and
@@ -135,7 +144,12 @@ public:
   /**
    * Fails if NEST is in thread-parallel section.
    */
-  static void assert_single_threaded();
+  void assert_single_threaded() const;
+
+  /**
+   * Fails if NEST is not in thread-parallel section.
+   */
+  void assert_thread_parallel() const;
 
   /**
    * Returns the number of processes that are taken care of by a single thread
@@ -147,8 +161,9 @@ public:
   size_t get_end_rank_per_thread( const size_t rank_start, const size_t num_assigned_ranks_per_thread ) const;
 
   /**
-   * Returns assigned ranks per thread to fill MPI buffers. Thread tid
-   * is responsible for all ranks in [assigned_ranks.begin,
+   * Returns assigned ranks per thread to fill MPI buffers.
+   *
+   * Thread tid is responsible for all ranks in [assigned_ranks.begin,
    * assigned_ranks.end), which are in total assigned_ranks.size and
    * at most assigned_ranks.max_size
    */
@@ -176,4 +191,21 @@ nest::VPManager::get_num_threads() const
   return n_threads_;
 }
 
-#endif /* VP_MANAGER_H */
+inline void
+nest::VPManager::assert_single_threaded() const
+{
+#ifdef _OPENMP
+  assert( omp_get_num_threads() == 1 );
+#endif
+}
+
+inline void
+nest::VPManager::assert_thread_parallel() const
+{
+#ifdef _OPENMP
+  assert( omp_get_num_threads() == n_threads_ );
+#endif
+}
+
+
+#endif /* #ifndef VP_MANAGER_H */

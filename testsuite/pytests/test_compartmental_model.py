@@ -23,10 +23,10 @@
 Tests for the compartmental model
 """
 
-import nest
 import unittest
-import numpy as np
 
+import nest
+import numpy as np
 
 SP = {"C_m": 1.00, "g_C": 0.00, "g_L": 0.100, "e_L": -70.0}
 DP = [

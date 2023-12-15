@@ -75,7 +75,14 @@ See also
 
 poisson_generator_ps
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: poisson_generator
+
 EndUserDocs */
+
+void register_poisson_generator( const std::string& name );
 
 class poisson_generator : public StimulationDevice
 {

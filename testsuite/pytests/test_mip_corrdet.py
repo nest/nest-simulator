@@ -26,8 +26,8 @@ to known value.
 
 
 import nest
-import pytest
 import numpy.testing as nptest
+import pytest
 
 
 def test_correlation_detector_mip():
@@ -77,7 +77,9 @@ def test_correlation_detector_mip():
     syn_spec = {"weight": 1.0, "receptor_type": 1}
     nest.Connect(pn2, cd, syn_spec=syn_spec)
 
-    nest.Simulate(100000.0)
+    # One extra time step so that after conversion to deliver-events-first logic
+    # final spikes are delivered as in NEST 3 up to NEST 3.5.
+    nest.Simulate(100000.0 + nest.resolution)
 
     hist = cd.get("histogram")
     nptest.assert_array_equal(hist, expected_hist)

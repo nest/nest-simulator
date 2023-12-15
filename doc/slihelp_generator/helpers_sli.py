@@ -19,10 +19,10 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import re
-import os
-import shutil
 import errno
+import os
+import re
+import shutil
 
 
 def cut_it(separator, text):

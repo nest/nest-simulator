@@ -146,6 +146,7 @@ public:
 
   /**
    * Record data using predefined access functions.
+   *
    * This function should be called once per time step at the end of the
    * time step to record data from the node to the logger.
    *
@@ -160,6 +161,7 @@ public:
 
   /**
    * Initialize logger, i.e., set up data buffers.
+   *
    * Has no effect if buffer is initialized already.
    */
   void init();
@@ -167,6 +169,7 @@ public:
 private:
   /**
    * Single data logger, serving one multimeter.
+   *
    * For each multimeter connected to a node, one DataLogger_ instance is
    * created. The UniversalDataLogger forwards all requests to the correct
    * DataLogger_ based on the rport of the request.
@@ -199,6 +202,7 @@ private:
 
     /**
      * Buffer for data.
+     *
      * The first dimension has size two, to provide for alternate
      * writing/reading using a toggle. The second dimension has
      * one entry per recording time in each time slice. Each entry
@@ -214,6 +218,7 @@ private:
 
   /**
    * Data loggers, one per connected multimeter.
+   *
    * Indices are rport-1.
    */
   std::vector< DataLogger_ > data_loggers_;
@@ -403,6 +408,7 @@ public:
 
   /**
    * Record data using predefined access functions.
+   *
    * This function should be called once per time step at the end of the
    * time step to record data from the node to the logger.
    *
@@ -417,6 +423,7 @@ public:
 
   /**
    * Initialize logger, i.e., set up data buffers.
+   *
    * Has no effect if buffer is initialized already.
    */
   void init();
@@ -424,6 +431,7 @@ public:
 private:
   /**
    * Single data logger, serving one multimeter.
+   *
    * For each multimeter connected to a node, one DataLogger_ instance is
    * created. The UniversalDataLogger forwards all requests to the correct
    * DataLogger_ based on the rport of the request.
@@ -456,6 +464,7 @@ private:
 
     /**
      * Buffer for data.
+     *
      * The first dimension has size two, to provide for alternate
      * writing/reading using a toggle. The second dimension has
      * one entry per recording time in each time slice. Each entry
@@ -560,6 +569,7 @@ nest::DynamicUniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const Da
   recording_interval_ = req.get_recording_interval();
   recording_offset_ = req.get_recording_offset();
 }
-}
 
-#endif // UNIVERSAL_DATA_LOGGER_H
+} // namespace nest
+
+#endif /* #ifndef UNIVERSAL_DATA_LOGGER_H */

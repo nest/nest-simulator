@@ -100,7 +100,6 @@ class Node;
 
  * @ingroup event_interface
  */
-
 class Event
 {
 
@@ -111,9 +110,6 @@ public:
   {
   }
 
-  /**
-   * Virtual copy constructor.
-   */
   virtual Event* clone() const = 0;
 
   /**
@@ -176,6 +172,7 @@ public:
 
   /**
    * Return time stamp of the event.
+   *
    * The stamp denotes the time when the event was created.
    * The resolution of Stamp is limited by the time base of the
    * simulation kernel (@see class nest::Time).
@@ -186,6 +183,7 @@ public:
 
   /**
    * Set the transmission delay of the event.
+   *
    * The delay refers to the time until the event is
    * expected to arrive at the receiver.
    * @param t delay.
@@ -195,6 +193,7 @@ public:
 
   /**
    * Return transmission delay of the event.
+   *
    * The delay refers to the time until the event is
    * expected to arrive at the receiver.
    */
@@ -202,6 +201,7 @@ public:
 
   /**
    * Relative spike delivery time in steps.
+   *
    * Returns the delivery time of the spike relative to a given
    * time in steps.  Causality commands that the result should
    * not be negative.
@@ -215,6 +215,7 @@ public:
 
   /**
    * Return the sender port number of the event.
+   *
    * This function returns the number of the port over which the
    * Event was sent.
    * @retval A negative return value indicates that no port number
@@ -224,6 +225,7 @@ public:
 
   /**
    * Return the receiver port number of the event.
+   *
    * This function returns the number of the r-port over which the
    * Event was sent.
    * @note A return value of 0 indicates that the r-port is not used.
@@ -232,6 +234,7 @@ public:
 
   /**
    * Set the port number.
+   *
    * Each event carries the number of the port over which the event
    * is sent. When a connection is established, it receives a unique
    * ID from the sender. This number has to be stored in each Event
@@ -242,6 +245,7 @@ public:
 
   /**
    * Set the receiver port number (r-port).
+   *
    * When a connection is established, the receiving Node may issue
    * a port number (r-port) to distinguish the incomin
    * connection. By the default, the r-port is not used and its port
@@ -252,6 +256,7 @@ public:
 
   /**
    * Return the creation time offset of the Event.
+   *
    * Each Event carries the exact time of creation. This
    * time need not coincide with an integral multiple of the
    * temporal resolution. Rather, Events may be created at any point
@@ -261,6 +266,7 @@ public:
 
   /**
    * Set the creation time of the Event.
+   *
    * Each Event carries the exact time of creation in realtime. This
    * time need not coincide with an integral multiple of the
    * temporal resolution. Rather, Events may be created at any point
@@ -301,6 +307,7 @@ public:
 
   /**
    * Check integrity of the event.
+   *
    * This function returns true, if all data, in particular sender
    * and receiver pointers are correctly set.
    */
@@ -308,6 +315,7 @@ public:
 
   /**
    * Set the time stamp of the event.
+   *
    * The time stamp refers to the time when the event
    * was created.
    */
@@ -316,19 +324,18 @@ public:
 protected:
   size_t sender_node_id_;       //!< node ID of sender or 0
   SpikeData sender_spike_data_; //!< spike data of sender node, in some cases required to retrieve node ID
-  /*
-   * The original formulation used references to Nodes as
-   * members, however, in order to avoid the reference of reference
-   * problem, we store sender and receiver as pointers and use
-   * references in the interface.
-   * Thus, we can still ensure that the pointers are never nullptr.
-   */
+  // The original formulation used references to Nodes as
+  // members, however, in order to avoid the reference of reference
+  // problem, we store sender and receiver as pointers and use
+  // references in the interface.
+  // Thus, we can still ensure that the pointers are never nullptr.
   Node* sender_;   //!< Pointer to sender or nullptr.
   Node* receiver_; //!< Pointer to receiver or nullptr.
 
 
   /**
    * Sender port number.
+   *
    * The sender port is used as a unique identifier for the
    * connection.  The receiver of an event can use the port number
    * to obtain data from the sender.  The sender uses this number to
@@ -339,6 +346,7 @@ protected:
 
   /**
    * Receiver port number (r-port).
+   *
    * The receiver port (r-port) can be used by the receiving Node to
    * distinguish incoming connections. E.g. the r-port number can be
    * used by Events to access specific parts of a Node. In most
@@ -350,6 +358,7 @@ protected:
 
   /**
    * Transmission delay.
+   *
    * Number of simulations steps that pass before the event is
    * delivered at the receiver.
    * The delay must be at least 1.
@@ -358,6 +367,7 @@ protected:
 
   /**
    * Time stamp.
+   *
    * The time stamp specifies the absolute time
    * when the event shall arrive at the target.
    */
@@ -365,6 +375,7 @@ protected:
 
   /**
    * Time stamp in steps.
+   *
    * Caches the value of stamp in steps for efficiency.
    * Needs to be declared mutable since it is modified
    * by a const function (get_rel_delivery_steps).
@@ -373,6 +384,7 @@ protected:
 
   /**
    * Offset for precise spike times.
+   *
    * offset_ specifies a correction to the creation time.
    * If the resolution of stamp is not sufficiently precise,
    * this attribute can be used to correct the creation time.
@@ -390,6 +402,7 @@ protected:
 // Built-in event types
 /**
  * Event for spike information.
+ *
  * Used to send a spike from one node to the next.
  */
 class SpikeEvent : public Event
@@ -399,11 +412,11 @@ public:
   void operator()() override;
   SpikeEvent* clone() const override;
 
-  void set_multiplicity( int );
-  int get_multiplicity() const;
+  void set_multiplicity( size_t );
+  size_t get_multiplicity() const;
 
 protected:
-  int multiplicity_;
+  size_t multiplicity_;
 };
 
 inline SpikeEvent::SpikeEvent()
@@ -418,12 +431,12 @@ SpikeEvent::clone() const
 }
 
 inline void
-SpikeEvent::set_multiplicity( int multiplicity )
+SpikeEvent::set_multiplicity( size_t multiplicity )
 {
   multiplicity_ = multiplicity;
 }
 
-inline int
+inline size_t
 SpikeEvent::get_multiplicity() const
 {
   return multiplicity_;
@@ -503,6 +516,7 @@ public:
 
 /**
  * Event for firing rate information.
+ *
  * Used to send firing rate from one node to the next.
  * The rate information is not contained in the event
  * object. Rather, the receiver has to poll this information
@@ -709,6 +723,7 @@ DataLoggingRequest::record_from() const
 
 /**
  * Provide logged data through request transmitting reference.
+ *
  * @see DataLoggingRequest
  * @ingroup DataLoggingEvents
  */
@@ -718,7 +733,9 @@ public:
   //! Data type data at single recording time
   typedef std::vector< double > DataItem;
 
-  /** Data item with pertaining time stamp.
+  /**
+   * Data item with pertaining time stamp.
+   *
    * Items are initialized with time stamp -inf to mark them as invalid.
    * Data is initialized to <double>::max() as a highly implausible value.
    * Ideally, we should initialized to a NaN, but since the C++-standard does
@@ -775,6 +792,7 @@ inline DataLoggingReply::DataLoggingReply( const Container& d )
 
 /**
  * Event for electrical conductances.
+ *
  * Used to send conductance from one node to the next.
  * The conductance is contained in the event object.
  */
@@ -811,6 +829,7 @@ ConductanceEvent::get_conductance() const
 
 /**
  * Event for transmitting arbitrary data.
+ *
  * This event type may be used for transmitting arbitrary
  * data between events, e.g., images or their FFTs.
  * A shared_ptr to the data is transmitted.  The date type
@@ -1013,4 +1032,4 @@ Event::set_rport( size_t rp )
 }
 }
 
-#endif // EVENT_H
+#endif /* EVENT_H */

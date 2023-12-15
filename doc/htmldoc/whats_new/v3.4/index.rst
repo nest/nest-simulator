@@ -44,8 +44,8 @@ Extent and center for spatial layers with freely placed neurons
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Spatial layers in NEST can be created by specifying node positions in
-the call to :py:func:`.Create` using :ref:`spatial distributions
-<pynest_spatial>` from ``nest.spatial``.
+the call to :py:func:`.Create` using :ref:`spatial distributions <pynest_spatial>`
+from ``nest.spatial``.
 
 When using :py:class:`.spatial.free`, the layer's ``extent`` will be
 determined automatically based on the positions of the lower-leftmost

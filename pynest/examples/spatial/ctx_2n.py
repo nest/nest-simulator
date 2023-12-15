@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-4x3 grid with pyramidal cells and interneurons
-----------------------------------------------
+Spatial networks: 4x3 grid with pyramidal cells and interneurons
+----------------------------------------------------------------
 
 Create a 4x3 grid with one pyramidal cell and one interneuron at each position.
 
@@ -29,8 +29,8 @@ BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
 """
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 import numpy as np
 
 nest.ResetKernel()

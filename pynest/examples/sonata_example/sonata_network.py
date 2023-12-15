@@ -45,9 +45,10 @@ References
 ###############################################################################
 # Import all necessary packages for simulation, analysis and plotting.
 
-import nest
-import matplotlib.pyplot as plt
 from pathlib import Path
+
+import matplotlib.pyplot as plt
+import nest
 
 nest.set_verbosity("M_ERROR")
 nest.ResetKernel()

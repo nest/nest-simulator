@@ -7,5 +7,9 @@ markers = [
     "simulation: the simulation class to use. Always pass a 2nd dummy argument"
 ]
 
+[tool.isort]
+profile = "black"
+known_third_party = "nest"
+
 [tool.black]
 line-length = 120

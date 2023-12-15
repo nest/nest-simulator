@@ -63,7 +63,7 @@ nest::StimulationBackendMPI::finalize()
 }
 
 void
-nest::StimulationBackendMPI::enroll( nest::StimulationDevice& device, const DictionaryDatum& )
+nest::StimulationBackendMPI::enroll( nest::StimulationDevice& device, const DictionaryDatum& params )
 {
   size_t tid = device.get_thread();
   size_t node_id = device.get_node_id();
@@ -79,6 +79,9 @@ nest::StimulationBackendMPI::enroll( nest::StimulationDevice& device, const Dict
   std::pair< size_t, std::pair< const MPI_Comm*, StimulationDevice* > > secondpair = std::make_pair( node_id, pair );
   devices_[ tid ].insert( secondpair );
   enrolled_ = true;
+
+  // Try to read the mpi_address from the device status
+  updateValue< std::string >( params, names::mpi_address, mpi_address_ );
 }
 
 
@@ -112,8 +115,7 @@ nest::StimulationBackendMPI::prepare()
   // need to be run only by the master thread : it is the case because this part is not running in parallel
   size_t thread_id_master = kernel().vp_manager.get_thread_id();
   // Create the connection with MPI
-  // 1) take all the ports of the connections
-  // get port and update the list of device only for master
+  // 1) take all the ports of the connections. Get port and update the list of device only for master
   for ( auto& it_device : devices_[ thread_id_master ] )
   {
     // add the link between MPI communicator and the device (devices can share the same MPI communicator)
@@ -189,11 +191,13 @@ nest::StimulationBackendMPI::prepare()
   // 2) connect the master thread to the MPI process it needs to be connected to
   for ( auto& it_comm : commMap_ )
   {
-    MPI_Comm_connect( it_comm.first.data(),
-      MPI_INFO_NULL,
-      0,
-      MPI_COMM_WORLD,
-      std::get< 0 >( it_comm.second ) ); // should use the status for handle error
+    int ret =
+      MPI_Comm_connect( it_comm.first.data(), MPI_INFO_NULL, 0, MPI_COMM_WORLD, std::get< 0 >( it_comm.second ) );
+
+    if ( ret != MPI_SUCCESS )
+    {
+      throw MPIErrorCode( ret );
+    }
     std::ostringstream msg;
     msg << "Connect to " << it_comm.first.data() << "\n";
     LOG( M_INFO, "MPI Input connect", msg.str() );
@@ -257,8 +261,7 @@ void
 nest::StimulationBackendMPI::cleanup()
 {
 // Disconnect all the MPI connection and send information about this disconnection
-// Clean all the elements in the map
-// disconnect MPI message
+// Clean all the elements in the map and disconnect MPI message
 #pragma omp master
   {
     for ( auto& it_comm : commMap_ )
@@ -285,7 +288,21 @@ nest::StimulationBackendMPI::cleanup()
 void
 nest::StimulationBackendMPI::get_port( nest::StimulationDevice* device, std::string* port_name )
 {
-  get_port( device->get_node_id(), device->get_label(), port_name );
+  const std::string& label = device->get_label();
+  // The MPI address can be provided by two different means.
+  // a) the address is given via the mpi_address device status
+  // b) the file is provided via a file: {data_path}/{data_prefix}{label}/{node_id}.txt
+
+  // Case a: MPI address is given via device status, use the supplied address
+  if ( not mpi_address_.empty() )
+  {
+    *port_name = mpi_address_;
+  }
+  // Case b: fallback to get_port implementation that reads the address from file
+  else
+  {
+    get_port( device->get_node_id(), label, port_name );
+  }
 }
 
 void
@@ -313,8 +330,11 @@ nest::StimulationBackendMPI::get_port( const size_t index_node, const std::strin
   }
   // add the id of the device to the path
   basename << "/" << index_node << ".txt";
-  std::cout << basename.rdbuf() << std::endl;
   std::ifstream file( basename.str() );
+  if ( !file.good() )
+  {
+    throw MPIPortsFileMissing( index_node, basename.str() );
+  }
 
   // read the file
   if ( file.is_open() )

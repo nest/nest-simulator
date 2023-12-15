@@ -25,12 +25,13 @@ Connect function.
 """
 
 import copy
+
 import numpy as np
 
-from ..ll_api import sps, sr, spp
 from .. import pynestkernel as kernel
-from .hl_api_types import CollocatedSynapses, Mask, NodeCollection, Parameter
+from ..ll_api import spp, sps, sr
 from .hl_api_exceptions import NESTErrors
+from .hl_api_types import CollocatedSynapses, Mask, NodeCollection, Parameter
 
 __all__ = [
     "_connect_layers_needed",

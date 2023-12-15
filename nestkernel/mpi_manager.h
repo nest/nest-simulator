@@ -65,8 +65,8 @@ public:
   {
   }
 
-  void initialize() override;
-  void finalize() override;
+  void initialize( const bool ) override;
+  void finalize( const bool ) override;
   void set_status( const DictionaryDatum& ) override;
   void get_status( DictionaryDatum& ) override;
 
@@ -83,6 +83,7 @@ public:
 
   /**
    * Return the number of processes used during simulation.
+   *
    * This functions returns the number of processes.
    * Since each process has the same number of threads, the total number
    * of threads is given by get_num_threads()*get_num_processes().
@@ -101,8 +102,9 @@ public:
   size_t get_rank() const;
 
   /**
-   * Return the process id for a given virtual process. The real process' id
-   * of a virtual process is defined by the relation: p = (vp mod P), where
+   * Return the process id for a given virtual process.
+   * The real process' id of a virtual process is defined
+   * by the relation: p = (vp mod P), where
    * P is the total number of processes.
    */
   size_t get_process_id_of_vp( const size_t vp ) const;
@@ -123,16 +125,20 @@ public:
    */
   void mpi_abort( int exitcode );
 
-  /*
-   * gather all send_buffer vectors on other mpi process to recv_buffer
-   * vector
-   */
+  // gather all send_buffer vectors on other mpi process to recv_buffer
+  // vector
   void communicate( std::vector< long >& send_buffer, std::vector< long >& recv_buffer );
 
+  /**
+   * communicate (on-grid) if compiled without MPI
+   */
   void communicate( std::vector< unsigned int >& send_buffer,
     std::vector< unsigned int >& recv_buffer,
     std::vector< int >& displacements );
 
+  /**
+   * communicate (off-grid) if compiled without MPI
+   */
   void communicate( std::vector< OffGridSpike >& send_buffer,
     std::vector< OffGridSpike >& recv_buffer,
     std::vector< int >& displacements );
@@ -152,9 +158,7 @@ public:
   void communicate( std::vector< int >& );
   void communicate( std::vector< long >& );
 
-  /*
-   * Sum across all rank
-   */
+  //! Sum across all ranks
   void communicate_Allreduce_sum_in_place( double buffer );
   void communicate_Allreduce_sum_in_place( std::vector< double >& buffer );
   void communicate_Allreduce_sum_in_place( std::vector< int >& buffer );
@@ -214,7 +218,7 @@ public:
     const int* recv_counts,
     const int* recv_displacements );
 
-#endif // HAVE_MPI
+#endif /* HAVE_MPI */
 
   template < class D >
   void communicate_Alltoall( std::vector< D >& send_buffer,
@@ -229,6 +233,10 @@ public:
   template < class D >
   void communicate_secondary_events_Alltoallv( std::vector< D >& send_buffer, std::vector< D >& recv_buffer );
 
+  /**
+   * Ensure all processes have reached the same stage by waiting until all
+   * processes have sent a dummy message to process 0.
+   */
   void synchronize();
 
   bool any_true( const bool );
@@ -236,8 +244,8 @@ public:
   /**
    * Benchmark communication time of different MPI methods
    *
-   *  The methods `time_communicate*` can be used to benchmark the timing
-   *  of different MPI communication methods.
+   * The methods `time_communicate*` can be used to benchmark the timing
+   * of different MPI communication methods.
    */
   double time_communicate( int num_bytes, int samples = 1000 );
   double time_communicatev( int num_bytes, int samples = 1000 );
@@ -255,26 +263,9 @@ public:
   bool increase_buffer_size_target_data();
 
   /**
-   * Increases the size of the MPI buffer for communication of spikes if it
-   * needs to be increased. Returns whether the size was changed.
-   */
-  bool increase_buffer_size_spike_data();
-
-  /**
-   * Decreases the size of the MPI buffer for communication of spikes if it
-   * can be decreased.
-   */
-  void decrease_buffer_size_spike_data();
-
-  /**
    * Returns whether MPI buffers for communication of connections are adaptive.
    */
   bool adaptive_target_buffers() const;
-
-  /**
-   * Returns whether MPI buffers for communication of spikes are adaptive.
-   */
-  bool adaptive_spike_buffers() const;
 
   /**
    * Sets the recvcounts parameter of Alltoallv for communication of
@@ -334,14 +325,8 @@ private:
   size_t max_buffer_size_target_data_; //!< maximal size of MPI buffer for
   // communication of connections
 
-  size_t max_buffer_size_spike_data_; //!< maximal size of MPI buffer for
-  // communication of spikes
-
   bool adaptive_target_buffers_; //!< whether MPI buffers for communication of
   // connections resize on the fly
-
-  bool adaptive_spike_buffers_; //!< whether MPI buffers for communication of
-  // spikes resize on the fly
 
   double growth_factor_buffer_spike_data_;
   double growth_factor_buffer_target_data_;
@@ -351,23 +336,24 @@ private:
   unsigned int send_recv_count_spike_data_per_rank_;
   unsigned int send_recv_count_target_data_per_rank_;
 
-  std::vector< int > recv_counts_secondary_events_in_int_per_rank_; //!< how many secondary elements (in ints) will be
-                                                                    //!< received from each rank
+  //! How many secondary elements (in ints) will be received from each rank
+  std::vector< int > recv_counts_secondary_events_in_int_per_rank_;
+
   std::vector< int >
     send_counts_secondary_events_in_int_per_rank_; //!< how many secondary elements (in ints) will be sent to each rank
 
-  std::vector< int > recv_displacements_secondary_events_in_int_per_rank_; //!< offset in the MPI receive buffer (in
-  //!< ints) at which elements received from each
-  //!< rank will be written
+  //! Offset in the MPI receive buffer (in ints) at which elements received from each rank will be written
+  std::vector< int > recv_displacements_secondary_events_in_int_per_rank_;
 
-  std::vector< int > send_displacements_secondary_events_in_int_per_rank_; //!< offset in the MPI send buffer (in ints)
-  //!< from which elements send to each rank will
-  //!< be read
+  //! Offset in the MPI send buffer (in ints) from which elements send to each rank will be read
+  std::vector< int > send_displacements_secondary_events_in_int_per_rank_;
 
 #ifdef HAVE_MPI
-  //! array containing communication partner for each step.
+
   std::vector< int > comm_step_;
-  unsigned int COMM_OVERFLOW_ERROR;
+
+  unsigned int COMM_OVERFLOW_ERROR; //<! array containing communication partner for each step.
+
 
   //! Variable to hold the MPI communicator to use (the datatype matters).
   MPI_Comm comm;
@@ -595,14 +581,7 @@ inline void
 MPIManager::set_buffer_size_spike_data( const size_t buffer_size )
 {
   assert( buffer_size >= static_cast< size_t >( 2 * get_num_processes() ) );
-  if ( buffer_size <= max_buffer_size_spike_data_ )
-  {
-    buffer_size_spike_data_ = buffer_size;
-  }
-  else
-  {
-    buffer_size_spike_data_ = max_buffer_size_spike_data_;
-  }
+  buffer_size_spike_data_ = buffer_size;
 
   send_recv_count_spike_data_per_rank_ = floor( get_buffer_size_spike_data() / get_num_processes() );
 
@@ -635,48 +614,9 @@ MPIManager::increase_buffer_size_target_data()
 }
 
 inline bool
-MPIManager::increase_buffer_size_spike_data()
-{
-  assert( adaptive_spike_buffers_ );
-  if ( buffer_size_spike_data_ >= max_buffer_size_spike_data_ )
-  {
-    return false;
-  }
-  else
-  {
-    if ( buffer_size_spike_data_ * growth_factor_buffer_spike_data_ < max_buffer_size_spike_data_ )
-    {
-      set_buffer_size_spike_data( floor( buffer_size_spike_data_ * growth_factor_buffer_spike_data_ ) );
-    }
-    else
-    {
-      set_buffer_size_spike_data( max_buffer_size_spike_data_ );
-    }
-    return true;
-  }
-}
-
-inline void
-MPIManager::decrease_buffer_size_spike_data()
-{
-  assert( adaptive_spike_buffers_ );
-  // the minimum is set to 4.0 * get_num_processes() to differentiate the initial size
-  if ( buffer_size_spike_data_ / shrink_factor_buffer_spike_data_ > 4.0 * get_num_processes() )
-  {
-    set_buffer_size_spike_data( floor( buffer_size_spike_data_ / shrink_factor_buffer_spike_data_ ) );
-  }
-}
-
-inline bool
 MPIManager::adaptive_target_buffers() const
 {
   return adaptive_target_buffers_;
-}
-
-inline bool
-MPIManager::adaptive_spike_buffers() const
-{
-  return adaptive_spike_buffers_;
 }
 
 #ifndef HAVE_MPI
@@ -802,7 +742,7 @@ MPIManager::communicate_secondary_events_Alltoallv( std::vector< D >& send_buffe
   recv_buffer.swap( send_buffer );
 }
 
-#endif // HAVE_MPI
+#endif /* HAVE_MPI */
 
 template < class D >
 void

@@ -22,12 +22,12 @@
 
 #include "iaf_psc_exp_multisynapse.h"
 
-
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "exceptions.h"
 #include "iaf_propagator.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
 
@@ -41,6 +41,12 @@
 
 namespace nest
 {
+void
+register_iaf_psc_exp_multisynapse( const std::string& name )
+{
+  register_node_model< iaf_psc_exp_multisynapse >( name );
+}
+
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>
@@ -100,7 +106,6 @@ iaf_psc_exp_multisynapse::Parameters_::Parameters_()
 iaf_psc_exp_multisynapse::State_::State_()
   : I_const_( 0.0 )
   , V_m_( 0.0 )
-  , current_( 0.0 )
   , refractory_steps_( 0 )
 {
   i_syn_.clear();
@@ -306,17 +311,16 @@ iaf_psc_exp_multisynapse::update( const Time& origin, const long from, const lon
     {
       S_.V_m_ = S_.V_m_ * V_.P22_ + ( P_.I_e_ + S_.I_const_ ) * V_.P20_; // not sure about this
 
-      S_.current_ = 0.0;
       for ( size_t i = 0; i < P_.n_receptors_(); i++ )
       {
         S_.V_m_ += V_.P21_syn_[ i ] * S_.i_syn_[ i ];
-        S_.current_ += S_.i_syn_[ i ]; // not sure about this
       }
     }
     else
     {
       --S_.refractory_steps_; // neuron is absolute refractory
     }
+
     for ( size_t i = 0; i < P_.n_receptors_(); i++ )
     {
       // exponential decaying PSCs

@@ -140,11 +140,9 @@ nest::SparseNodeArray::get_node_by_node_id( size_t node_id ) const
     return nullptr;
   }
 
-  /* Find base index and node ID for estimating location of desired node in array.
-   *
-   * In the expression for base_id, split_node_id_ will only be used if we are on the
-   * right side, when the value is well-defined.
-   */
+  // Find base index and node ID for estimating location of desired node in array.
+  // In the expression for base_id, split_node_id_ will only be used if we are on the
+  // right side, when the value is well-defined.
   const bool left_side = node_id < split_node_id_;
   const double scale = left_side ? left_scale_ : right_scale_;
   const size_t base_idx = left_side ? 0 : split_idx_;

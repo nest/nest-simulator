@@ -20,13 +20,6 @@
  *
  */
 
-/*
- * File:   sp_updater.cpp
- * Author: naveau
- *
- * Created on November 26, 2013, 2:28 PM
- */
-
 #include "sp_manager.h"
 
 // C++ includes:
@@ -43,18 +36,6 @@
 namespace nest
 {
 
-template < typename T >
-void
-print_vector( const std::vector< T >& vec )
-{
-  std::cout << "#######BEGIN############################\n";
-  for ( typename std::vector< T >::const_iterator cit = vec.begin(); cit != vec.end(); ++cit )
-  {
-    std::cout << *cit << ", ";
-  }
-  std::cout << "########END############################\n";
-}
-
 SPManager::SPManager()
   : ManagerInterface()
   , structural_plasticity_update_interval_( 10000. )
@@ -67,18 +48,22 @@ SPManager::SPManager()
 
 SPManager::~SPManager()
 {
-  finalize();
 }
 
 void
-SPManager::initialize()
+SPManager::initialize( const bool reset_kernel )
 {
+  if ( not reset_kernel )
+  {
+    return;
+  }
+
   structural_plasticity_update_interval_ = 10000.;
   structural_plasticity_enabled_ = false;
 }
 
 void
-SPManager::finalize()
+SPManager::finalize( const bool )
 {
   for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin(); i != sp_conn_builders_.end(); i++ )
   {
@@ -87,9 +72,6 @@ SPManager::finalize()
   sp_conn_builders_.clear();
 }
 
-/*
- * Methods to retrieve data regarding structural plasticity variables
- */
 void
 SPManager::get_status( DictionaryDatum& d )
 {
@@ -101,12 +83,12 @@ SPManager::get_status( DictionaryDatum& d )
     sp_synapse = DictionaryDatum( new Dictionary() );
     def< std::string >( sp_synapse, names::pre_synaptic_element, ( *i )->get_pre_synaptic_element_name() );
     def< std::string >( sp_synapse, names::post_synaptic_element, ( *i )->get_post_synaptic_element_name() );
-    def< std::string >( sp_synapse,
-      names::synapse_model,
-      kernel().model_manager.get_connection_model( ( *i )->get_synapse_model(), 0 ).get_name() );
-    std::stringstream syn_name;
-    syn_name << "syn" << ( sp_conn_builders_.end() - i );
-    def< DictionaryDatum >( sp_synapses, syn_name.str(), sp_synapse );
+    const std::string model = kernel().model_manager.get_connection_model( ( *i )->get_synapse_model(), 0 ).get_name();
+    def< std::string >( sp_synapse, names::synapse_model, model );
+    def< bool >( sp_synapse, names::allow_autapses, ( *i )->allows_autapses() );
+    def< bool >( sp_synapse, names::allow_multapses, ( *i )->allows_multapses() );
+
+    def< DictionaryDatum >( sp_synapses, ( *i )->get_name(), sp_synapse );
   }
 
   def< double >( d, names::structural_plasticity_update_interval, structural_plasticity_update_interval_ );
@@ -119,36 +101,21 @@ SPManager::get_status( DictionaryDatum& d )
   def< ArrayDatum >( d, names::growth_curves, growth_curves );
 }
 
-/**
- * Set status of synaptic plasticity variables: synaptic update interval,
- * synapses and synaptic elements.
- * @param d Dictionary containing the values to be set
- */
 void
 SPManager::set_status( const DictionaryDatum& d )
 {
-  if ( d->known( names::structural_plasticity_update_interval ) )
-  {
-    updateValue< double >( d, names::structural_plasticity_update_interval, structural_plasticity_update_interval_ );
-  }
+  updateValue< double >( d, names::structural_plasticity_update_interval, structural_plasticity_update_interval_ );
+
   if ( not d->known( names::structural_plasticity_synapses ) )
   {
     return;
-  } /*
-     * Configure synapses model updated during the simulation.
-     */
-  Token synmodel;
-  DictionaryDatum syn_specs, syn_spec;
-  DictionaryDatum conn_spec = DictionaryDatum( new Dictionary() );
+  }
 
-  if ( d->known( names::allow_autapses ) )
-  {
-    def< bool >( conn_spec, names::allow_autapses, getValue< bool >( d, names::allow_autapses ) );
-  }
-  if ( d->known( names::allow_multapses ) )
-  {
-    def< bool >( conn_spec, names::allow_multapses, getValue< bool >( d, names::allow_multapses ) );
-  }
+  // Configure synapses model updated during the simulation.
+  Token synmodel;
+  DictionaryDatum syn_specs;
+  DictionaryDatum syn_spec;
+  DictionaryDatum conn_spec = DictionaryDatum( new Dictionary() );
   NodeCollectionPTR sources( new NodeCollectionPrimitive() );
   NodeCollectionPTR targets( new NodeCollectionPrimitive() );
 
@@ -157,12 +124,23 @@ SPManager::set_status( const DictionaryDatum& d )
     delete ( *i );
   }
   sp_conn_builders_.clear();
+
   updateValue< DictionaryDatum >( d, names::structural_plasticity_synapses, syn_specs );
   for ( Dictionary::const_iterator i = syn_specs->begin(); i != syn_specs->end(); ++i )
   {
     syn_spec = getValue< DictionaryDatum >( syn_specs, i->first );
+    if ( syn_spec->known( names::allow_autapses ) )
+    {
+      def< bool >( conn_spec, names::allow_autapses, getValue< bool >( syn_spec, names::allow_autapses ) );
+    }
+    if ( syn_spec->known( names::allow_multapses ) )
+    {
+      def< bool >( conn_spec, names::allow_multapses, getValue< bool >( syn_spec, names::allow_multapses ) );
+    }
+
     // We use a ConnBuilder with dummy values to check the synapse parameters
     SPBuilder* conn_builder = new SPBuilder( sources, targets, conn_spec, { syn_spec } );
+    conn_builder->set_name( i->first.toString() );
 
     // check that the user defined the min and max delay properly, if the
     // default delay is not used.
@@ -204,13 +182,6 @@ SPManager::builder_max_delay() const
   return max_delay;
 }
 
-/**
- * Deletes synapses between a source and a target.
- * @param snode_id
- * @param target
- * @param target_thread
- * @param syn_id
- */
 void
 SPManager::disconnect( const size_t snode_id, Node* target, size_t target_thread, const size_t syn_id )
 {
@@ -251,15 +222,6 @@ SPManager::disconnect( const size_t snode_id, Node* target, size_t target_thread
   }
 }
 
-/**
- * Obtains the right connection builder and performs a synapse deletion
- * according to the specified connection specs.
- * @param sources collection of sources
- * @param targets collection of targets
- * @param conn_spec disconnection specs. For now only all to all and one to one
- * rules are implemented.
- * @param syn_spec synapse specs
- */
 void
 SPManager::disconnect( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
@@ -299,8 +261,8 @@ SPManager::disconnect( NodeCollectionPTR sources,
       if ( ( *i )->get_synapse_model() == kernel().model_manager.get_synapse_model_id( synModel ) )
       {
         cb = kernel().connection_manager.get_conn_builder( rule_name, sources, targets, conn_spec, { syn_spec } );
-        cb->set_post_synaptic_element_name( ( *i )->get_post_synaptic_element_name() );
-        cb->set_pre_synaptic_element_name( ( *i )->get_pre_synaptic_element_name() );
+        cb->set_synaptic_element_names(
+          ( *i )->get_pre_synaptic_element_name(), ( *i )->get_post_synaptic_element_name() );
       }
     }
   }
@@ -330,13 +292,6 @@ SPManager::update_structural_plasticity()
   }
 }
 
-/**
- * Handles the general dynamic creation and deletion of synapses when
- * structural plasticity is enabled. Retrieves the number of available
- * synaptic elements to create new synapses. Retrieves the number of
- * deleted synaptic elements to delete already created synapses.
- * @param sp_builder The structural plasticity connection builder to use
- */
 void
 SPManager::update_structural_plasticity( SPBuilder* sp_builder )
 {
@@ -416,16 +371,6 @@ SPManager::update_structural_plasticity( SPBuilder* sp_builder )
   }
 }
 
-/**
- * Dynamic creation of synapses
- * @param pre_id source id
- * @param pre_n number of available synaptic elements in the pre node
- * @param post_id target id
- * @param post_n number of available synaptic elements in the post node
- * @param sp_conn_builder structural plasticity connection builder to use
- *
- * @return true if synapses are created
- */
 bool
 SPManager::create_synapses( std::vector< size_t >& pre_id,
   std::vector< int >& pre_n,
@@ -462,16 +407,6 @@ SPManager::create_synapses( std::vector< size_t >& pre_id,
   return not pre_id_rnd.empty();
 }
 
-/**
- * Deletion of synapses due to the loss of a pre synaptic element. The
- * corresponding pre synaptic element will still remain available for a new
- * connection on the following updates in connectivity
- * @param pre_deleted_id Id of the node with the deleted pre synaptic element
- * @param pre_deleted_n number of deleted pre synaptic elements
- * @param synapse_model model name
- * @param se_pre_name pre synaptic element name
- * @param se_post_name postsynaptic element name
- */
 void
 SPManager::delete_synapses_from_pre( const std::vector< size_t >& pre_deleted_id,
   std::vector< int >& pre_deleted_n,
@@ -479,10 +414,8 @@ SPManager::delete_synapses_from_pre( const std::vector< size_t >& pre_deleted_id
   const std::string& se_pre_name,
   const std::string& se_post_name )
 {
-  /*
-   * Synapses deletion due to the loss of a pre-synaptic element need a
-   * communication of the lists of target
-   */
+  // Synapses deletion due to the loss of a pre-synaptic element need a
+  // communication of the lists of target
 
   // Connectivity
   std::vector< std::vector< size_t > > connectivity;
@@ -518,17 +451,6 @@ SPManager::delete_synapses_from_pre( const std::vector< size_t >& pre_deleted_id
   }
 }
 
-/**
- * Handles the deletion of synapses between source and target nodes. The
- * deletion is defined by the pre and postsynaptic elements and the synapse
- * type. Updates the number of connected synaptic elements in the source and
- * target.
- * @param snode_id source id
- * @param tnode_id target id
- * @param syn_id synapse type
- * @param se_pre_name name of the pre synaptic element
- * @param se_post_name name of the postsynaptic element
- */
 void
 SPManager::delete_synapse( const size_t snode_id,
   const size_t tnode_id,
@@ -561,16 +483,6 @@ SPManager::delete_synapse( const size_t snode_id,
   }
 }
 
-/**
- * Deletion of synapses due to the loss of a postsynaptic element. The
- * corresponding pre synaptic element will still remain available for a new
- * connection on the following updates in connectivity
- * @param post_deleted_id Id of the node with the deleted postsynaptic element
- * @param post_deleted_n number of deleted postsynaptic elements
- * @param synapse_model model name
- * @param se_pre_name pre synaptic element name
- * @param se_post_name postsynaptic element name
- */
 void
 SPManager::delete_synapses_from_post( std::vector< size_t >& post_deleted_id,
   std::vector< int >& post_deleted_n,
@@ -578,11 +490,9 @@ SPManager::delete_synapses_from_post( std::vector< size_t >& post_deleted_id,
   std::string se_pre_name,
   std::string se_post_name )
 {
-  /*
-   * TODO: Synapses deletion due to the loss of a postsynaptic element can
-   * be done locally (except for the update of the number of pre-synaptic
-   * element)
-   */
+  // TODO: Synapses deletion due to the loss of a postsynaptic element can
+  // be done locally (except for the update of the number of pre-synaptic
+  // element)
 
   // Connectivity
   std::vector< std::vector< size_t > > connectivity;
@@ -707,9 +617,6 @@ nest::SPManager::global_shuffle( std::vector< size_t >& v )
   global_shuffle( v, v.size() );
 }
 
-/*
- * Shuffles the n first items of the vector v
- */
 void
 nest::SPManager::global_shuffle( std::vector< size_t >& v, size_t n )
 {
@@ -734,9 +641,6 @@ nest::SPManager::global_shuffle( std::vector< size_t >& v, size_t n )
 }
 
 
-/*
- * Enable structural plasticity
- */
 void
 nest::SPManager::enable_structural_plasticity()
 {
@@ -750,18 +654,15 @@ nest::SPManager::enable_structural_plasticity()
       "Structural plasticity can not be enabled if keep_source_table has been "
       "set to false." );
   }
-  if ( not kernel().connection_manager.get_sort_connections_by_source() )
+  if ( not kernel().connection_manager.use_compressed_spikes() )
   {
     throw KernelException(
-      "Structural plasticity can not be enabled if sort_connections_by_source "
+      "Structural plasticity can not be enabled if use_compressed_spikes "
       "has been set to false." );
   }
   structural_plasticity_enabled_ = true;
 }
 
-/*
- Disable  structural plasticity
- */
 void
 nest::SPManager::disable_structural_plasticity()
 {

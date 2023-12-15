@@ -53,17 +53,11 @@ typedef std::shared_ptr< AbstractLayer > AbstractLayerPTR;
 class AbstractLayer
 {
 public:
-  /**
-   * Constructor.
-   */
   AbstractLayer()
     : node_collection_( NodeCollectionPTR( nullptr ) )
   {
   }
 
-  /**
-   * Virtual destructor
-   */
   virtual ~AbstractLayer();
 
   /**
@@ -84,6 +78,7 @@ public:
 
   /**
    * Get position of node. Only possible for local nodes.
+   *
    * @param lid index of node within layer
    * @returns position of node as std::vector
    */
@@ -92,6 +87,7 @@ public:
   /**
    * Returns displacement of node from given position. When using periodic
    * boundary conditions, will return minimum displacement.
+   *
    * @param from_pos  position vector in layer
    * @param to        node in layer to which displacement is to be computed
    * @returns vector pointing from from_pos to node to's position
@@ -105,6 +101,7 @@ public:
   /**
    * Returns distance to node from given position. When using periodic
    * boundary conditions, will return minimum distance.
+   *
    * @param from_pos  position vector in layer
    * @param to        node in layer to which displacement is to be computed
    * @returns length of vector pointing from from_pos to node to's position
@@ -116,6 +113,7 @@ public:
   /**
    * Connect this layer to the given target layer. The actual connections
    * are made in class ConnectionCreator.
+   *
    * @param source_nc NodeCollection of the source layer
    * @param target    target layer to connect to. Must have same dimension
    *                  as this layer.
@@ -137,6 +135,7 @@ public:
 
   /**
    * Return a vector with the node IDs of the nodes inside the mask.
+   *
    * @param mask            mask to apply.
    * @param anchor          position to center mask in.
    * @param allow_oversized allow mask to be greater than layer
@@ -150,6 +149,7 @@ public:
 
   /**
    * Write layer data to stream.
+   *
    * For each node in layer, write one line to stream containing:
    * node ID x-position y-position [z-position]
    * @param os     output stream
@@ -161,6 +161,7 @@ public:
    * source in
    * the given layer to the given output stream. For distributed simulations
    * this function will dump the connections with local targets only.
+   *
    * @param out output stream
    * @param node_collection NodeCollection of the layer
    * @param target_layer Target layer
@@ -221,19 +222,14 @@ public:
    */
   Layer();
 
-  /**
-   * Copy constructor.
-   */
   Layer( const Layer& other_layer );
 
-  /**
-   * Virtual destructor
-   */
   ~Layer() override;
 
   /**
    * Change properties of the layer according to the
    * entries in the dictionary.
+   *
    * @param d Dictionary with named parameter settings.
    */
   void set_status( const DictionaryDatum& ) override;
@@ -241,6 +237,7 @@ public:
   /**
    * Export properties of the layer by setting
    * entries in the status dictionary.
+   *
    * @param d Dictionary.
    */
   void get_status( DictionaryDatum& ) const override;
@@ -289,6 +286,7 @@ public:
 
   /**
    * Get position of node. Only possible for local nodes.
+   *
    * @param sind index of node
    * @returns position of node.
    */
@@ -303,6 +301,7 @@ public:
   /**
    * Returns displacement of a position from another position. When using
    * periodic boundary conditions, will return minimum displacement.
+   *
    * @param from_pos  position vector in layer
    * @param to_pos    position to which displacement is to be computed
    * @returns vector pointing from from_pos to to_pos
@@ -315,6 +314,7 @@ public:
   /**
    * Returns displacement of node from given position. When using periodic
    * boundary conditions, will return minimum displacement.
+   *
    * @param from_pos  position vector in layer
    * @param to        node in layer to which displacement is to be computed
    * @returns vector pointing from from_pos to node to's position
@@ -326,6 +326,7 @@ public:
   /**
    * Returns distance to node from given position. When using periodic
    * boundary conditions, will return minimum distance.
+   *
    * @param from_pos  position vector in layer
    * @param to        node in layer to which displacement is to be computed
    * @returns length of vector pointing from from_pos to node to's position
@@ -338,8 +339,9 @@ public:
 
 
   /**
-   * Get positions for all nodes in layer, including nodes on other MPI
-   * processes. The positions will be cached so that subsequent calls for
+   * Get positions for all nodes in layer, including nodes on other MPI processes.
+   *
+   * The positions will be cached so that subsequent calls for
    * the same layer are fast. One one layer is cached at the time, so the
    * user should group together all ConnectLayers calls using the same
    * pool layer.
@@ -347,8 +349,9 @@ public:
   std::shared_ptr< Ntree< D, size_t > > get_global_positions_ntree( NodeCollectionPTR node_collection );
 
   /**
-   * Get positions globally, overriding the dimensions of the layer and
-   * the periodic flags. The supplied lower left corner and extent
+   * Get positions globally, overriding the dimensions of the layer and the periodic flags.
+
+   * The supplied lower left corner and extent
    * coordinates are only used for the dimensions where the supplied
    * periodic flag is set.
    */
@@ -375,6 +378,7 @@ public:
   /**
    * Connect this layer to the given target layer. The actual connections
    * are made in class ConnectionCreator.
+   *
    * @param source_nc NodeCollection to the source layer.
    * @param target    target layer to connect to. Must have same dimension
    *                  as this layer.
@@ -388,6 +392,7 @@ public:
 
   /**
    * Write layer data to stream.
+   *
    * For each node in layer, write one line to stream containing:
    * node ID x-position y-position [z-position]
    * @param os     output stream
@@ -396,7 +401,9 @@ public:
 
   /**
    * Dumps information about all connections of the given type having their
-   * source in the given layer to the given output stream. For distributed
+   * source in the given layer to the given output stream.
+   *
+   * For distributed
    * simulations this function will dump the connections with local targets
    * only.
    * @param out output stream
@@ -457,6 +464,7 @@ class MaskedLayer
 public:
   /**
    * Regular constructor.
+   *
    * @param layer           The layer to mask
    * @param mask            The mask to apply to the layer
    * @param allow_oversized If true, allow larges masks than layers when using
@@ -466,8 +474,9 @@ public:
   MaskedLayer( Layer< D >& layer, const MaskDatum& mask, bool allow_oversized, NodeCollectionPTR node_collection );
 
   /**
-   * Constructor for applying "converse" mask to layer. To be used for
-   * applying a mask for the target layer to the source layer. The mask
+   * Constructor for applying "converse" mask to layer.
+   *
+   * To be used for applying a mask for the target layer to the source layer. The mask
    * will be mirrored about the origin, and settings for periodicity for
    * the target layer will be applied to the source layer.
    * @param layer           The layer to mask (source layer)
@@ -486,6 +495,7 @@ public:
 
   /**
    * Iterate over nodes inside mask
+   *
    * @param anchor Position to apply mask to
    * @returns an iterator for the nodes inside the mask centered on the anchor
    * position
@@ -499,8 +509,9 @@ public:
 
 protected:
   /**
-   * Will check that the mask can be applied to the layer. The mask must
-   * have the same dimensionality as the layer, and a grid mask may only
+   * Will check that the mask can be applied to the layer.
+   *
+   * The mask must have the same dimensionality as the layer, and a grid mask may only
    * be applied to a grid layer. Unless the allow_oversized flag is set,
    * the mask must also not be larger than the layer in case of periodic
    * boundary conditions. Will throw an exception if the mask does not

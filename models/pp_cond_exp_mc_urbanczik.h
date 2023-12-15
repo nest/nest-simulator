@@ -242,7 +242,14 @@ See also
 
 urbanczik_synapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: pp_cond_exp_mc_urbanczik
+
 EndUserDocs */
+
+void register_pp_cond_exp_mc_urbanczik( const std::string& name );
 
 class pp_cond_exp_mc_urbanczik : public UrbanczikArchivingNode< pp_cond_exp_mc_urbanczik_parameters >
 {

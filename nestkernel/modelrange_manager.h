@@ -45,8 +45,8 @@ public:
   {
   }
 
-  void initialize() override;
-  void finalize() override;
+  void initialize( const bool ) override;
+  void finalize( const bool ) override;
   void set_status( const DictionaryDatum& ) override;
   void get_status( DictionaryDatum& ) override;
 
@@ -99,7 +99,7 @@ nest::ModelRangeManager::get_status( DictionaryDatum& )
 inline bool
 nest::ModelRangeManager::is_in_range( size_t node_id ) const
 {
-  return ( node_id <= last_node_id_ and node_id >= first_node_id_ );
+  return ( node_id > 0 and node_id <= last_node_id_ and node_id >= first_node_id_ );
 }
 
 inline std::vector< modelrange >::const_iterator

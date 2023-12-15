@@ -48,8 +48,8 @@ References
 ###############################################################################
 # First, we import all necessary modules.
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 
 ###############################################################################
 # Next, we check for the availability of the CSA Python module. If it does

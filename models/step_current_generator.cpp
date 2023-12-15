@@ -25,6 +25,7 @@
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -34,6 +35,12 @@
 
 namespace nest
 {
+void
+register_step_current_generator( const std::string& name )
+{
+  register_node_model< step_current_generator >( name );
+}
+
 RecordablesMap< step_current_generator > step_current_generator::recordablesMap_;
 
 template <>

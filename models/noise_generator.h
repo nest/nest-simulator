@@ -89,7 +89,7 @@ changes must be a multiple of the time step.
 
    You can use a :doc:`multimeter <multimeter>` to record the average current sent to all targets for each time step
    if simulating on a single thread; multiple MPI processes with one thread each also work. In this case,
-   the recording interval of the multimeter should be the equal to the simulation resolution to avoid confusing effects
+   the recording interval of the multimeter should be equal to the simulation resolution to avoid confusing effects
    due to offset or drift between the recording times of the multimeter and the switching times of the
    noise generator. In multi-threaded mode, recording of noise currents is prohibited for technical reasons.
 
@@ -139,7 +139,14 @@ See also
 
 step_current_generator
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: noise_generator
+
 EndUserDocs */
+
+void register_noise_generator( const std::string& name );
 
 class noise_generator : public StimulationDevice
 {

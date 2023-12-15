@@ -35,6 +35,8 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -67,6 +69,12 @@ nest::RecordablesMap< nest::pp_cond_exp_mc_urbanczik > nest::pp_cond_exp_mc_urba
 
 namespace nest
 {
+void
+register_pp_cond_exp_mc_urbanczik( const std::string& name )
+{
+  register_node_model< pp_cond_exp_mc_urbanczik >( name );
+}
+
 // specialization must be place in namespace
 
 template <>

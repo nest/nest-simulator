@@ -84,6 +84,9 @@ it is considered a spike.
 
 See also [1]_, [2]_, [3]_, [4]_, [5]_, [6]_.
 
+For details on asynchronicity in spike and firing events with Hodgkin Huxley models
+see :ref:`here <hh_details>`.
+
 Parameters
 ++++++++++
 
@@ -103,6 +106,7 @@ u_bar_bar   mV      Low-pass filtered u_bar_minus
 -------------------------------------------------------------------------------
 E_L         mV      Leak reversal potential
 C_m         pF      Capacity of the membrane
+t_ref       ms      Duration of refractory period
 g_L         nS      Leak conductance
 tau_ex      ms      Rise time of the excitatory synaptic alpha function
 tau_in      ms      Rise time of the inhibitory synaptic alpha function
@@ -178,7 +182,14 @@ See also
 
 hh_psc_alpha, clopath_synapse, aeif_psc_delta_clopath
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: hh_psc_alpha_clopath
+
 EndUserDocs */
+
+void register_hh_psc_alpha_clopath( const std::string& name );
 
 class hh_psc_alpha_clopath : public ClopathArchivingNode
 {

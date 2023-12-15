@@ -32,15 +32,14 @@ Life Science, 2013. http://hdl.handle.net/11250/189117.
 """
 
 import math
-import numpy as np
-import numpy.random as rnd
-import scipy.integrate
-import scipy.stats
-import scipy.special
 import unittest
 
 import nest
-
+import numpy as np
+import numpy.random as rnd
+import scipy.integrate
+import scipy.special
+import scipy.stats
 
 try:
     # for debugging
@@ -122,6 +121,7 @@ class SpatialTester:
             "gaussian": self._gauss,
             "gaussian2d": self._gauss2d,
             "gamma": self._gamma,
+            "gabor": self._gabor,
         }
         self._distribution = spatial_distributions[spatial_distribution]
 
@@ -140,6 +140,7 @@ class SpatialTester:
                 "c": 0.0,
             },
             "gamma": {"kappa": 3.0, "theta": self._L / 4.0},
+            "gabor": {"std": self._L, "gamma": 0.7, "lam": self._L, "theta": 360.0 / 8.0, "psi": -360.0 / 6.0},
         }
         self._params = default_params[spatial_distribution]
         if distribution_params is not None:
@@ -183,6 +184,16 @@ class SpatialTester:
         elif spatial_distribution == "gamma":
             distribution = nest.spatial_distributions.gamma(
                 nest.spatial.distance, kappa=self._params["kappa"], theta=self._params["theta"]
+            )
+        elif spatial_distribution == "gabor":
+            distribution = nest.spatial_distributions.gabor(
+                nest.spatial.distance,
+                nest.spatial.distance,
+                std=self._params["std"],
+                gamma=self._params["gamma"],
+                lam=self._params["lam"],
+                theta=self._params["theta"],
+                psi=self._params["psi"],
             )
 
         self._conndict = {"rule": "pairwise_bernoulli", "p": distribution, "mask": maskdict}
@@ -255,6 +266,14 @@ class SpatialTester:
     def _gamma(self, D):
         """Gamma spatial distribution"""
         return D**self.kappa_m_1 / self.gamma_kappa_mul_theta_pow_kappa * math.exp(-D / self._params["theta"])
+
+    def _gabor(self, D):
+        """Rectified Gabor distribution"""
+        x_prime = D * np.cos(self._params["theta"] * np.pi / 180) + D * np.sin(self._params["theta"] * np.pi / 180)
+        y_prime = -D * np.sin(self._params["theta"] * np.pi / 180) + D * np.cos(self._params["theta"] * np.pi / 180)
+        gabor_cos = np.cos(2 * np.pi * y_prime / self._params["lam"] + self._params["psi"] * np.pi / 180)
+        gabor_exp = np.exp(-(self._params["gamma"] ** 2 * x_prime**2 + y_prime**2) / (2 * self._params["std"] ** 2))
+        return np.maximum(gabor_cos, 0) * gabor_exp
 
     def _create_distance_data(self):
         self._reset(self._seed)
@@ -615,6 +634,14 @@ class TestSpatial2D(unittest.TestCase):
         self.assertGreater(p_ks, P_MIN, "{} failed KS-test".format(distribution))
         self.assertGreater(p_Z, P_MIN, "{} failed Z-test".format(distribution))
 
+    def test_gabor(self):
+        distribution = "gabor"
+        test = SpatialTester(seed=SEED, dim=2, L=1.0, N=10000, spatial_distribution=distribution)
+        _, p_ks = test.ks_test()
+        _, p_Z = test.z_test()
+        self.assertGreater(p_ks, P_MIN, "{} failed KS-test".format(distribution))
+        self.assertGreater(p_Z, P_MIN, "{} failed Z-test".format(distribution))
+
 
 class TestSpatial2DOBC(unittest.TestCase):
     """
@@ -663,6 +690,14 @@ class TestSpatial2DOBC(unittest.TestCase):
 
     def test_gamma(self):
         distribution = "gamma"
+        test = SpatialTester(seed=SEED, dim=2, L=1.0, N=10000, spatial_distribution=distribution, open_bc=True)
+        _, p_ks = test.ks_test()
+        _, p_Z = test.z_test()
+        self.assertGreater(p_ks, P_MIN, "{} failed KS-test".format(distribution))
+        self.assertGreater(p_Z, P_MIN, "{} failed Z-test".format(distribution))
+
+    def test_gabor(self):
+        distribution = "gabor"
         test = SpatialTester(seed=SEED, dim=2, L=1.0, N=10000, spatial_distribution=distribution, open_bc=True)
         _, p_ks = test.ks_test()
         _, p_Z = test.z_test()

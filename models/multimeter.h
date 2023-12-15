@@ -124,10 +124,18 @@ interval
 See also
 ++++++++
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: multimeter
+
 EndUserDocs */
 
 namespace nest
 {
+
+void register_multimeter( const std::string& name );
+void register_voltmeter( const std::string& name );
 
 class multimeter : public RecordingDevice
 {

@@ -88,6 +88,9 @@ Gap Junctions are implemented by a gap current of the form
 
 See also [1]_, [2]_, [3]_, [4]_.
 
+For details on asynchronicity in spike and firing events with Hodgkin Huxley models
+see :ref:`here <hh_details>`.
+
 Parameters
 ++++++++++
 
@@ -101,6 +104,7 @@ V_m          mV      Membrane potential
 E_L          mV      Leak reversal potential
 g_L          nS      Leak conductance
 C_m          pF      Capacity of the membrane
+t_ref        ms      Duration of refractory period
 tau_syn_ex   ms      Rise time of the excitatory synaptic alpha function
 tau_syn_in   ms      Rise time of the inhibitory synaptic alpha function
 E_Na         mV      Sodium reversal potential
@@ -148,7 +152,14 @@ See also
 
 hh_psc_alpha, hh_cond_exp_traub, gap_junction
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: hh_psc_alpha_gap
+
 EndUserDocs */
+
+void register_hh_psc_alpha_gap( const std::string& name );
 
 class hh_psc_alpha_gap : public ArchivingNode
 {

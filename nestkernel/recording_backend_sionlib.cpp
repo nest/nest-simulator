@@ -24,7 +24,7 @@
 #include <mpi.h>
 #ifdef BG_MULTIFILE
 #include <mpix.h>
-#endif // BG_MULTIFILE
+#endif /* BG_MULTIFILE */
 
 // Generated includes:
 #include "config.h"
@@ -160,7 +160,7 @@ nest::RecordingBackendSIONlib::open_files_()
       MPIX_Pset_same_comm_create( &local_comm_ );
     }
 #pragma omp barrier
-#endif // BG_MULTIFILE
+#endif /* BG_MULTIFILE */
     // use additional local variable for local communicator to
     // avoid problems when calling sion_paropen_ompi(..)
     MPI_Comm local_comm = local_comm_;
@@ -215,7 +215,7 @@ nest::RecordingBackendSIONlib::open_files_()
       int n_files = -1;
 #else
       int n_files = P_.sion_n_files_;
-#endif // BG_MULTIFILE
+#endif /* BG_MULTIFILE */
       sion_int32 fs_block_size = -1;
       sion_int64 sion_chunksize = P_.sion_chunksize_;
       int rank = kernel().mpi_manager.get_rank();

@@ -105,10 +105,17 @@ See also
 
 stdp_synapse, aeif_psc_delta_clopath, hh_psc_alpha_clopath
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_psc_alpha
+
 EndUserDocs */
 
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
+void register_clopath_synapse( const std::string& name );
+
 template < typename targetidentifierT >
 class clopath_synapse : public Connection< targetidentifierT >
 {
@@ -160,7 +167,7 @@ public:
    * \param e The event to send
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e, size_t t, const CommonSynapseProperties& cp );
+  bool send( Event& e, size_t t, const CommonSynapseProperties& cp );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -227,7 +234,7 @@ constexpr ConnectionModelProperties clopath_synapse< targetidentifierT >::proper
  * \param cp Common properties object, containing the stdp parameters.
  */
 template < typename targetidentifierT >
-inline void
+inline bool
 clopath_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapseProperties& )
 {
   double t_spike = e.get_stamp().get_ms();
@@ -272,6 +279,8 @@ clopath_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSyna
   x_bar_ = x_bar_ * std::exp( ( t_lastspike_ - t_spike ) / tau_x_ ) + 1.0 / tau_x_;
 
   t_lastspike_ = t_spike;
+
+  return true;
 }
 
 

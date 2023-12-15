@@ -21,6 +21,7 @@
 
 import os
 import unittest
+
 import nest
 
 HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")

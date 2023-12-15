@@ -41,8 +41,9 @@ template < int D >
 class Mask;
 
 /**
- * A Ntree object represents a subtree or leaf in a Ntree structure. Any
- * ntree covers a specific region in space. A leaf ntree contains a list
+ * A Ntree object represents a subtree or leaf in a Ntree structure.
+ *
+ * Any ntree covers a specific region in space. A leaf ntree contains a list
  * of items and their corresponding positions. A branch ntree contains a
  * list of N=1<<D other ntrees, each covering a region corresponding to the
  * upper-left, lower-left, upper-right and lower-left corner of their
@@ -187,7 +188,9 @@ public:
 
     /**
      * Move the iterator to the next node inside the mask within the
-     * tree. May cause the iterator to become invalid if there are no
+     * tree.
+     *
+     * May cause the iterator to become invalid if there are no
      * more nodes.
      */
     masked_iterator& operator++();
@@ -230,8 +233,9 @@ public:
     void next_leaf_();
 
     /**
-     * Find the first leaf which is not outside the mask. If no leaf is
-     * found below the current quadrant, will continue to next_leaf_().
+     * Find the first leaf which is not outside the mask.
+     *
+     * If no leaf is found below the current quadrant, will continue to next_leaf_().
      */
     void first_leaf_();
 
@@ -269,6 +273,7 @@ public:
   /**
    * Create a Ntree that covers the region defined by the two
    * input positions.
+   *
    * @param lower_left  Lower left corner of ntree.
    * @param extent      Size (width,height) of ntree.
    */
@@ -285,6 +290,7 @@ public:
 
   /**
    * Traverse quadtree structure from current ntree.
+   *
    * Inserts node in correct leaf in quadtree.
    * @returns iterator pointing to inserted node.
    */
@@ -307,6 +313,7 @@ public:
 
   /**
    * Applies a Mask to this ntree.
+   *
    * @param mask    mask to apply.
    * @param anchor  position to center mask in.
    * @returns member nodes in ntree inside mask.
@@ -316,6 +323,7 @@ public:
   /**
    * This function returns a node iterator which will traverse the
    * subtree below this Ntree.
+   *
    * @returns iterator for nodes in quadtree.
    */
   iterator
@@ -333,6 +341,7 @@ public:
   /**
    * This function returns a masked node iterator which will traverse the
    * subtree below this Ntree, skipping nodes outside the mask.
+   *
    * @returns iterator for nodes in quadtree.
    */
   masked_iterator

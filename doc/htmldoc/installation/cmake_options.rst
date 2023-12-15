@@ -15,7 +15,7 @@ environment.
 
 .. note::
 
-  If you want to specify an alternative install location, use  
+  If you want to specify an alternative install location, use
   ``-DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir>``. It needs to be
   writable by the user running the install command.
 
@@ -38,6 +38,31 @@ Options for configuring NEST
 
 NEST allows for several configuration options for custom builds:
 
+.. _modelset_config:
+
+Select built-in models
+~~~~~~~~~~~~~~~~~~~~~~
+
+By default, NEST will compile and register *all* neuron and synapse
+models that are shipped in the source distribution. This is very
+convenient for an explorative development of simulation scripts, but
+leads to quite long compilation times and is often not necessary.
+
+There are two ways to restrict the set of built-in models to tailor
+NEST to your needs:
+
++---------------------------------------+------------------------------------------------------------------------------+
+| ``-Dwith-modelset=<modelset>``        | Specify the modelset to include. Sample configurations are in the            |
+|                                       | `modelsets <https://github.com/nest/nest-simulator/tree/master/modelsets>`_  |
+|                                       | directory in the top-level of the source tree. A modelset is just a file     |
+|                                       | listing one model header files (without the .h filename extension) to scan   |
+|                                       | for models.                                                                  |
+|                                       | This option is mutually exclusive with -Dwith-models. [default=full].        |
++---------------------------------------+------------------------------------------------------------------------------+
+| ``-Dwith-models=[<modellist>|OFF]``   | Specify the models to include as a semicolon-separated list of model header  |
+|                                       | files (without the .h filename extension) that are to be scanned for models. |
+|                                       | This option is mutually exclusive with -Dwith-modelset. [default=OFF].       |
++---------------------------------------+------------------------------------------------------------------------------+
 
 Use Python to build PyNEST
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -63,6 +88,24 @@ Select parallelization scheme
 +---------------------------------------------+----------------------------------------------------------------+
 
 See also the section on :ref:`building with MPI <compile-with-mpi>` below.
+
+
+Build documentation
+~~~~~~~~~~~~~~~~~~~
+
++------------------------------+-------------------------------------------------------------+
+| ``-Dwith-devdoc=[OFF|ON]``   | Build the developer (doxygen) documentation [default=OFF]   |
+|                              |                                                             |
++------------------------------+-------------------------------------------------------------+
+| ``-Dwith-userdoc=[OFF|ON]``  | Build the user (Sphinx) documentation [default=OFF]         |
+|                              |                                                             |
++------------------------------+-------------------------------------------------------------+
+
+If either documentation build is toggled to `ON`, you can then run ``make docs`` if you only want to
+build the docs.
+
+See also the :ref:`documentation workflow <doc_workflow>` for user and developer docs.
+
 
 External libraries
 ~~~~~~~~~~~~~~~~~~
@@ -111,6 +154,11 @@ NEST properties
 |                                               | If running on more than 262144 MPI processes or more than 512  |
 |                                               | threads, change to 'hpc'.                                      |
 +-----------------------------------------------+----------------------------------------------------------------+
+| ``-Dwith-full-logging=[OFF|ON]``              | Write debug output to file ``dump_<num_ranks>_<rank>.log``     |
+|                                               | [default=OFF]. Developers should wrap debugging output in      |
+|                                               | macro ``FULL_LOGGING_ONLY()`` and call kernel().write_dump()`  |
+|                                               | from inside it. The macro can contain almost any valid code.   |
++-----------------------------------------------+----------------------------------------------------------------+
 
 Generic build configuration
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -132,7 +180,7 @@ Generic build configuration
 | ``-Dwith-intel-compiler-flags=[OFF|<list;of;flags>]``| User defined flags for the Intel compiler                        |
 |                                                      | [default='-fp-model strict']. Separate multiple flags by ';'.    |
 +------------------------------------------------------+------------------------------------------------------------------+
-| ``-Dwith-cpp-std=[<C++ standard>]``                  | C++ standard to use for compilation [default='c++11'].           |
+| ``-Dwith-cpp-std=[<C++ standard>]``                  | C++ standard to use for compilation [default='c++17'].           |
 +------------------------------------------------------+------------------------------------------------------------------+
 | ``-Dwith-libraries=[OFF|<list;of;libraries>]``       | Link additional libraries [default=OFF]. Give full path. Separate|
 |                                                      | multiple libraries by ';'.                                       |

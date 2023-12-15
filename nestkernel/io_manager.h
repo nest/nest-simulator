@@ -35,20 +35,24 @@
 namespace nest
 {
 
-/*
-  IOManager: Handles data storage files from spike recorders and
-  multimeters to file system(s)/memory/output. Distinct from logging
-  for error streams.
-*/
+/**
+ * Manager to handle everything related to input and output.
+ *
+ * IOManager handles the data path and prefix variables of the NEST kernel and
+ * manages the recording and stimulation backends and the routing of data from
+ * and to devices to and from the backends.
+ *
+ * This manager is not responsible for logging and messaging to the user.
+ * See LoggingManager if you are looging for that.
+ */
 class IOManager : public ManagerInterface
 {
 public:
   IOManager();
   ~IOManager() override;
 
-  void initialize() override;
-  void finalize() override;
-  void change_number_of_threads() override;
+  void initialize( const bool ) override;
+  void finalize( const bool ) override;
   void set_status( const DictionaryDatum& ) override;
   void get_status( DictionaryDatum& ) override;
 
@@ -57,6 +61,7 @@ public:
 
   /**
    * The prefix for files written by devices.
+   *
    * The prefix must not contain any part of a path.
    * @see get_data_dir(), overwrite_files()
    */
@@ -64,6 +69,7 @@ public:
 
   /**
    * The path for files written by devices.
+   *
    * It may be the empty string (use current directory).
    * @see get_data_prefix(), overwrite_files()
    */
@@ -71,6 +77,7 @@ public:
 
   /**
    * Indicate if existing data files should be overwritten.
+   *
    * @return true if existing data files should be overwritten by devices.
    * Default: false.
    */

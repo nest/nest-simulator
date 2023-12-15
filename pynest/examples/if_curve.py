@@ -38,9 +38,10 @@ supplied when the IF_curve object is created.
 
 """
 
-import numpy
-import nest
 import shelve
+
+import nest
+import numpy
 
 ###############################################################################
 # Here we define which model and the neuron parameters to use for measuring

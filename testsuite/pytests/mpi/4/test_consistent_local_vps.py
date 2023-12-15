@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
-import nest
 
+import nest
 
 HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
 

@@ -51,8 +51,8 @@ namespace nest
 {
 
 /**
- * \file nest_types.h
  * Default types used by the NEST kernel.
+ *
  * These typedefs should be used
  * in place of the primitive C/C++ types.
  * Thus, it will be easy to change
@@ -75,9 +75,9 @@ generate_max_value( const uint8_t num_bits )
   return ( ( static_cast< uint64_t >( 1 ) << num_bits ) - 1 );
 }
 
-/*
- * Sizes of bitfields used in various classes in the kernel.
- */
+
+// Sizes of bitfields used in various classes in the kernel.
+
 #if TARGET_BITS_SPLIT == TARGET_BITS_SPLIT_STANDARD
 constexpr uint8_t NUM_BITS_RANK = 18U;
 constexpr uint8_t NUM_BITS_TID = 9U;
@@ -94,9 +94,8 @@ constexpr uint8_t NUM_BITS_LAG = 14U;
 constexpr uint8_t NUM_BITS_DELAY = 21U;
 constexpr uint8_t NUM_BITS_NODE_ID = 62U;
 
-/*
- * Maximally allowed values for bitfields
- */
+// Maximally allowed values for bitfields
+
 constexpr uint64_t MAX_LCID = generate_max_value( NUM_BITS_LCID );
 constexpr int64_t MAX_RANK = generate_max_value( NUM_BITS_RANK );
 constexpr int64_t MAX_TID = generate_max_value( NUM_BITS_TID );
@@ -144,6 +143,11 @@ const targetindex invalid_targetindex = USHRT_MAX;
 __attribute__( ( __unused__ ) ) const size_t max_targetindex = invalid_targetindex - 1;
 
 /**
+ * Marker for invalid LCID values.
+ */
+constexpr size_t invalid_lcid = MAX_LCID;
+
+/**
  * Value for invalid connection thread id.
  */
 constexpr size_t invalid_thread = std::numeric_limits< size_t >::max();
@@ -161,6 +165,7 @@ constexpr long delay_max = std::numeric_limits< long >::max();
 
 /**
  * enum type of signal conveyed by spike events of a node.
+ *
  * These types are used upon connect to check if spikes sent by one
  * neuron are interpreted the same way by receiving neuron.
  *
@@ -182,4 +187,4 @@ enum SignalType
 };
 }
 
-#endif // NEST_TYPES_H
+#endif /* #ifndef NEST_TYPES_H */

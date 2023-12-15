@@ -38,9 +38,9 @@ References
 """
 
 
+import matplotlib.pyplot as plt
 import nest
 import nest.voltage_trace
-import matplotlib.pyplot as plt
 
 nest.ResetKernel()
 

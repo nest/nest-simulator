@@ -22,8 +22,25 @@
 
 #include "sigmoid_rate.h"
 
+// Includes from nestkernel
+#include "kernel_manager.h"
+#include "model_manager_impl.h"
+#include "nest_impl.h"
+
 namespace nest
 {
+void
+register_sigmoid_rate_ipn( const std::string& name )
+{
+  register_node_model< sigmoid_rate_ipn >( name );
+}
+
+void
+register_rate_transformer_sigmoid( const std::string& name )
+{
+  register_node_model< rate_transformer_sigmoid >( name );
+}
+
 
 void
 nonlinearities_sigmoid_rate::get( DictionaryDatum& d ) const

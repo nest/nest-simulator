@@ -168,13 +168,13 @@ enum enum_status_target_data_id
  * Used to communicate part of the connection infrastructure from
  * post- to presynaptic side. These are the elements of the MPI
  * buffers.
+ *
  * SeeAlso: SpikeData
  */
 class TargetData
 {
   // Members must be set explicitly -- no defaults
-  // Done this way to create large vector without preconstruction
-  // and to handle variant fields
+  // Done this way to create large vector without preconstruction and to handle variant fields
 
 private:
   static constexpr uint8_t NUM_BITS_LID = 19U;
@@ -297,4 +297,4 @@ TargetData::is_primary() const
 }
 } // namespace nest
 
-#endif // TARGET_DATA_H
+#endif /* #ifndef TARGET_DATA_H */

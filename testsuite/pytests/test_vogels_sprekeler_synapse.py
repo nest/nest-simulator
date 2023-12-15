@@ -21,9 +21,10 @@
 
 # This script tests the vogels_sprekeler_synapse in NEST.
 
-import nest
 import unittest
 from math import exp
+
+import nest
 
 
 @nest.ll_api.check_stack

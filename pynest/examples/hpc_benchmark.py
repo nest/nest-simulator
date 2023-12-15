@@ -90,14 +90,14 @@ References
 
 """
 
-import numpy as np
 import os
 import sys
 import time
-import scipy.special as sp
 
 import nest
 import nest.raster_plot
+import numpy as np
+import scipy.special as sp
 
 M_INFO = 10
 M_ERROR = 30
@@ -109,7 +109,7 @@ M_ERROR = 30
 
 
 params = {
-    "nvp": 1,  # total number of virtual processes
+    "num_threads": 1,  # total number of threads per process
     "scale": 1.0,  # scaling factor of the network size
     # total network size = scale*11250 neurons
     "simtime": 250.0,  # total simulation time in ms
@@ -219,7 +219,7 @@ def build_network(logger):
     stdp_params = brunel_params["stdp_params"]
 
     # set global kernel parameters
-    nest.total_num_virtual_procs = params["nvp"]
+    nest.local_num_threads = params["num_threads"]
     nest.resolution = params["dt"]
     nest.overwrite_files = True
 
@@ -318,7 +318,7 @@ def build_network(logger):
     )
 
     if params["record_spikes"]:
-        if params["nvp"] != 1:
+        if params["num_threads"] != 1:
             local_neurons = nest.GetLocalNodeCollection(E_neurons)
             # GetLocalNodeCollection returns a stepped composite NodeCollection, which
             # cannot be sliced. In order to allow slicing it later on, we're creating a

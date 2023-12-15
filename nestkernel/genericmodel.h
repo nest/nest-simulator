@@ -33,6 +33,7 @@ namespace nest
 {
 /**
  * Generic Model template.
+ *
  * The template GenericModel should be used
  * as base class for custom model classes. It already includes the
  * element factory functionality, as well as a pool based memory
@@ -60,19 +61,13 @@ public:
   bool one_node_per_process() override;
   bool is_off_grid() override;
   void calibrate_time( const TimeConverter& tc ) override;
-  /**
-     @note The decision of whether one node can receive a certain
-     event was originally in the node. But in the distributed case,
-     it may be that you only have a proxy node and not he real
-     thing. Thus, you need to be able to make this decision without
-     having the node. Since the model now takes responsibility for a
-     lot of general node properties, it was a natural place to put
-     this function.
 
-     Model::send_test_event() is a forwarding function that calls
-     send_test_event() from the prototype. Since proxies know the
-     model they represent, they can now answer a call to check
-     connection by referring back to the model.
+  /**
+   * Send a test event to a target node.
+   *
+   * This is a forwarding function that calls Node::send_test_event() from the prototype.
+   * Since proxies know the model they represent, they can now answer a call to check
+   * connection by referring back to the model.
    */
   size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
@@ -85,6 +80,8 @@ public:
   void sends_secondary_event( DiffusionConnectionEvent& de ) override;
 
   void sends_secondary_event( DelayedRateConnectionEvent& re ) override;
+
+  void sends_secondary_event( SICEvent& sic ) override;
 
   Node const& get_prototype() const override;
 
@@ -115,9 +112,7 @@ private:
    */
   std::string deprecation_info_;
 
-  /**
-   * False until deprecation warning has been issued once
-   */
+  //! False until deprecation warning has been issued once
   bool deprecation_warning_issued_;
 };
 
@@ -218,6 +213,13 @@ inline void
 GenericModel< ElementT >::sends_secondary_event( DelayedRateConnectionEvent& re )
 {
   return proto_.sends_secondary_event( re );
+}
+
+template < typename ElementT >
+inline void
+GenericModel< ElementT >::sends_secondary_event( SICEvent& sic )
+{
+  return proto_.sends_secondary_event( sic );
 }
 
 template < typename ElementT >

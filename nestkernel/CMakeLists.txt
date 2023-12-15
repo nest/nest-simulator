@@ -59,7 +59,7 @@ set ( nestkernel_sources
       recording_device.h recording_device.cpp
       pseudo_recording_device.h
       ring_buffer.h ring_buffer_impl.h ring_buffer.cpp
-      secondary_event.h
+      secondary_event.h secondary_event_impl.h
       slice_ring_buffer.cpp slice_ring_buffer.h
       spikecounter.h spikecounter.cpp
       stimulation_device.h stimulation_device.cpp
@@ -98,7 +98,7 @@ set ( nestkernel_sources
       target_table.h target_table.cpp
       target_table_devices.h target_table_devices.cpp target_table_devices_impl.h
       target.h target_data.h static_assert.h
-      send_buffer_position.h
+      send_buffer_position.h send_buffer_position.cpp
       source.h
       source_table.h source_table.cpp
       source_table_position.h
@@ -114,6 +114,7 @@ set ( nestkernel_sources
       position.h
       spatial.h spatial.cpp
       stimulation_backend.h
+      buffer_resize_log.h buffer_resize_log.cpp
       )
 
 
@@ -133,7 +134,7 @@ if ( HAVE_MPI )
 endif ()
 
 
-# Prevent problems with Conda path substitution (see #2348) 
+# Prevent problems with Conda path substitution (see #2348)
 set_source_files_properties( dynamicloader.cpp PROPERTIES COMPILE_OPTIONS "-O0" )
 
 
@@ -144,7 +145,7 @@ set_target_properties( nestkernel
     )
 
 target_link_libraries( nestkernel
-    nestutil sli_lib
+    nestutil sli_lib models
     ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES} ${HDF5_LIBRARIES}
     )
 
@@ -152,6 +153,7 @@ target_include_directories( nestkernel PRIVATE
     ${PROJECT_SOURCE_DIR}/thirdparty
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
+    ${PROJECT_SOURCE_DIR}/models
     ${PROJECT_SOURCE_DIR}/sli
     ${PROJECT_SOURCE_DIR}/nestkernel
     ${PROJECT_SOURCE_DIR}/nestkernel/spatial

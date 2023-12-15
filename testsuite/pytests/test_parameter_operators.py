@@ -32,9 +32,10 @@ It also confirms that operations on Parameter objects and plain numbers work.
    we can use constant parameters for simplicity.
 """
 
+import operator as ops
+
 import nest
 import pytest
-import operator as ops
 
 
 def _const_param(val):

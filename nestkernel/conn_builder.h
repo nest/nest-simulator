@@ -64,21 +64,24 @@ class SparseNodeArray;
 class ConnBuilder
 {
 public:
-  /**
-   * Connect sources to targets according to specifications in dictionary.
-   *
-   * To create a connection, call
-   *
-   *   cb.connect();
-   *
-   * where conn_spec_dict speficies connection type and its parameters.
-   */
+  //! Connect with or without structural plasticity
   virtual void connect();
+
+  //! Delete synapses with or without structural plasticity
   virtual void disconnect();
 
-  //! parameters: sources, targets, specifications
-  ConnBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const std::vector< DictionaryDatum >& );
+  ConnBuilder( NodeCollectionPTR sources,
+    NodeCollectionPTR targets,
+    const DictionaryDatum& conn_spec,
+    const std::vector< DictionaryDatum >& syn_specs );
   virtual ~ConnBuilder();
+
+  /**
+   * Mark ConnBuilder subclasses as building tripartite rules or not.
+   *
+   * @note This flag is required for template specialisation of ConnBuilderFactory's.
+   */
+  static constexpr bool is_tripartite = false;
 
   size_t
   get_synapse_model() const
@@ -100,12 +103,20 @@ public:
     return default_delay_[ 0 ];
   }
 
-  void set_pre_synaptic_element_name( const std::string& name );
-  void set_post_synaptic_element_name( const std::string& name );
+  void set_synaptic_element_names( const std::string& pre_name, const std::string& post_name );
 
   bool all_parameters_scalar_() const;
 
-  bool change_connected_synaptic_elements( size_t, size_t, const size_t, int );
+  /**
+   * Updates the number of connected synaptic elements in the target and the source.
+   *
+   * @param snode_id The node ID of the source
+   * @param tnode_id The node ID of the target
+   * @param tid the thread of the target
+   * @param update Amount of connected synaptic elements to update
+   * @return A bool indicating if the target node is on the local thread/process or not
+   */
+  bool change_connected_synaptic_elements( size_t snode_id, size_t tnode_id, const size_t tid, int update );
 
   virtual bool
   supports_symmetric() const
@@ -119,6 +130,18 @@ public:
     return false;
   }
 
+  bool
+  allows_autapses() const
+  {
+    return allow_autapses_;
+  }
+
+  bool
+  allows_multapses() const
+  {
+    return allow_multapses_;
+  }
+
   //! Return true if rule is applicable only to nodes with proxies
   virtual bool
   requires_proxies() const
@@ -129,16 +152,19 @@ public:
 protected:
   //! Implements the actual connection algorithm
   virtual void connect_() = 0;
+
   virtual void
   sp_connect_()
   {
     throw NotImplemented( "This connection rule is not implemented for structural plasticity." );
   }
+
   virtual void
   disconnect_()
   {
     throw NotImplemented( "This disconnection rule is not implemented." );
   }
+
   virtual void
   sp_disconnect_()
   {
@@ -189,19 +215,11 @@ protected:
   //! buffer for exceptions raised in threads
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_;
 
-  // Name of the pre synaptic and postsynaptic elements for this connection
-  // builder
-  Name pre_synaptic_element_name_;
-  Name post_synaptic_element_name_;
+  // Name of the pre synaptic and postsynaptic elements for this connection builder
+  std::string pre_synaptic_element_name_;
+  std::string post_synaptic_element_name_;
 
-  bool use_pre_synaptic_element_;
-  bool use_post_synaptic_element_;
-
-  inline bool
-  use_structural_plasticity_() const
-  {
-    return use_pre_synaptic_element_ and use_post_synaptic_element_;
-  }
+  bool use_structural_plasticity_;
 
   //! pointers to connection parameters specified as arrays
   std::vector< ConnParameter* > parameters_requiring_skipping_;
@@ -242,12 +260,28 @@ private:
    */
   void register_parameters_requiring_skipping_( ConnParameter& param );
 
-  /*
+  /**
    * Set synapse specific parameters.
    */
   void set_synapse_model_( DictionaryDatum syn_params, size_t indx );
   void set_default_weight_or_delay_( DictionaryDatum syn_params, size_t indx );
   void set_synapse_params( DictionaryDatum syn_defaults, DictionaryDatum syn_params, size_t indx );
+
+  /**
+   * Set structural plasticity parameters (if provided)
+   *
+   * This function first checks if any of the given syn_specs contains
+   * one of the structural plasticity parameters pre_synaptic_element
+   * or post_synaptic_element. If that is the case and only a single
+   * syn_spec is given, the parameters are copied to the variables
+   * pre_synaptic_element_name_ and post_synaptic_element_name_, and
+   * the flag use_structural_plasticity_ is set to true.
+   *
+   * An exception is thrown if either
+   * * only one of the structural plasticity parameter is given
+   * * multiple syn_specs are given and structural plasticity parameters
+   *   are present
+   */
   void set_structural_plasticity_parameters( std::vector< DictionaryDatum > syn_specs );
 
   /**
@@ -279,8 +313,28 @@ public:
 
 protected:
   void connect_() override;
+
+  /**
+   * Connect two nodes in a OneToOne fashion with structural plasticity.
+   *
+   * This method is used by the SPManager based on the homostatic rules defined
+   * for the synaptic elements on each node.
+   */
   void sp_connect_() override;
+
+  /**
+   * Disconnecti two nodes connected in a OneToOne fashion without structural plasticity.
+   *
+   * This method can be manually called by the user to delete existing synapses.
+   */
   void disconnect_() override;
+
+  /**
+   * Disconnect two nodes connected in a OneToOne fashion with structural plasticity.
+   *
+   * This method is used by the SPManager based on the homostatic rules defined
+   * for the synaptic elements on each node.
+   */
   void sp_disconnect_() override;
 };
 
@@ -309,8 +363,28 @@ public:
 
 protected:
   void connect_() override;
+
+  /**
+   * Connect two nodes in a AllToAll fashion with structural plasticity.
+   *
+   * This method is used by the SPManager based on the homostatic rules defined
+   * for the synaptic elements on each node.
+   */
   void sp_connect_() override;
+
+  /**
+   * Disconnecti two nodes connected in a AllToAll fashion without structural plasticity.
+   *
+   * This method can be manually called by the user to delete existing synapses.
+   */
   void disconnect_() override;
+
+  /**
+   * Disconnect two nodes connected in a AllToAll fashion with structural plasticity.
+   *
+   * This method is used by the SPManager based on the homostatic rules defined
+   * for the synaptic elements on each node.
+   */
   void sp_disconnect_() override;
 
 private:
@@ -380,6 +454,82 @@ private:
   ParameterDatum p_; //!< connection probability
 };
 
+/**
+ * Helper class to support parameter handling for tripartite builders.
+ *
+ * In tripartite builders, the actual builder class decides which connections to create and
+ * handles parameterization of the primary connection. For each third-party connection,
+ * it maintains an AuxiliaryBuilder which handles the parameterization of the corresponding
+ * third-party connection.
+ */
+class AuxiliaryBuilder : public ConnBuilder
+{
+public:
+  AuxiliaryBuilder( NodeCollectionPTR,
+    NodeCollectionPTR,
+    const DictionaryDatum&,
+    const std::vector< DictionaryDatum >& );
+
+  //! forwards to single_connect_() in underlying ConnBuilder
+  void single_connect( size_t, Node&, size_t, RngPtr );
+
+protected:
+  void
+  connect_() override
+  {
+    // The auxiliary builder does not create connections, it only parameterizes them.
+    assert( false );
+  }
+};
+
+/**
+ * Class representing tripartite Bernoulli connector
+ *
+ * For each source-target pair, a Bernoulli trial is performed. If a primary connection is created, a third-factor
+ * connection is created conditionally on a second Bernoulli trial. The third-party neuron to be connected is
+ * chosen from a pool, which can either be set up in blocks or randomized. The third-party neuron receives
+ * input from the source neuron and provides output to the target neuron of the primary connection.
+ */
+class TripartiteBernoulliWithPoolBuilder : public ConnBuilder
+{
+public:
+  /**
+   * Constructor
+   *
+   * @param sources Source population for primary connection
+   * @param targets Target population for primary connection
+   * @param third Third-party population
+   * @param conn_spec Connection specification dictionary for tripartite bernoulli rule
+   * @param syn_specs Dictionary of synapse specifications for the three connections that may be created. Allowed keys
+   * are `"primary"`, `"third_in"`, `"third_out"`
+   */
+  TripartiteBernoulliWithPoolBuilder( NodeCollectionPTR sources,
+    NodeCollectionPTR targets,
+    NodeCollectionPTR third,
+    const DictionaryDatum& conn_spec,
+    const std::map< Name, std::vector< DictionaryDatum > >& syn_specs );
+
+  static constexpr bool is_tripartite = true;
+
+protected:
+  void connect_() override;
+
+private:
+  //! Provide index of first third-party node to be assigned to pool for given target node
+  size_t get_first_pool_index_( const size_t target_index ) const;
+
+  NodeCollectionPTR third_;
+
+  AuxiliaryBuilder third_in_builder_;
+  AuxiliaryBuilder third_out_builder_;
+
+  double p_primary_;          //!< connection probability for pre-post connections
+  double p_third_if_primary_; //!< probability of third-factor connection if primary connection created
+  bool random_pool_;          //!< if true, select astrocyte pool at random
+  size_t pool_size_;          //!< size of third-factor pool
+  size_t targets_per_third_;  //!< target nodes per third-factor node
+};
+
 class SymmetricBernoulliBuilder : public ConnBuilder
 {
 public:
@@ -404,26 +554,48 @@ private:
 class SPBuilder : public ConnBuilder
 {
 public:
+  /**
+   * The SPBuilder is in charge of the creation of synapses during the simulation
+   * under the control of the structural plasticity manager
+   *
+   * @param sources the source nodes on which synapses can be created/deleted
+   * @param targets the target nodes on which synapses can be created/deleted
+   * @param conn_spec connectivity specification
+   * @param syn_spec synapse specifications
+   */
   SPBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
     const std::vector< DictionaryDatum >& syn_spec );
 
-  std::string
+  const std::string&
   get_pre_synaptic_element_name() const
   {
-    return pre_synaptic_element_name_.toString();
+    return pre_synaptic_element_name_;
   }
-  std::string
+
+  const std::string&
   get_post_synaptic_element_name() const
   {
-    return post_synaptic_element_name_.toString();
+    return post_synaptic_element_name_;
+  }
+
+  void
+  set_name( const std::string& name )
+  {
+    name_ = name;
+  }
+
+  std::string
+  get_name() const
+  {
+    return name_;
   }
 
   /**
-   * Writes the default delay of the connection model, if the
-   * SPBuilder only uses the default delay. If not, the min/max_delay
-   * has to be specified explicitly with the kernel status.
+   * Writes the default delay of the connection model, if the SPBuilder only uses the default delay.
+   *
+   * If not, the min/max_delay has to be specified explicitly with the kernel status.
    */
   void update_delay( long& d ) const;
 
@@ -433,12 +605,16 @@ public:
   void sp_connect( const std::vector< size_t >& sources, const std::vector< size_t >& targets );
 
 protected:
+  //! The name of the SPBuilder; used to identify its properties in the structural_plasticity_synapses kernel attributes
+  std::string name_;
+
   using ConnBuilder::connect_;
   void connect_() override;
   void connect_( NodeCollectionPTR sources, NodeCollectionPTR targets );
 
   /**
    * In charge of dynamically creating the new synapses
+   *
    * @param sources nodes from which synapses can be created
    * @param targets target nodes for the newly created synapses
    */

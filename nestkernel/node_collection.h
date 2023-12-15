@@ -43,6 +43,7 @@
 
 namespace nest
 {
+class Node;
 class NodeCollection;
 class NodeCollectionPrimitive;
 class NodeCollectionComposite;
@@ -101,18 +102,21 @@ private:
 
   /**
    * Pointer to primitive collection to iterate over.
+   *
    * Zero if iterator is for composite collection.
    */
   NodeCollectionPrimitive const* const primitive_collection_;
 
   /**
    * Pointer to composite collection to iterate over.
+   *
    * Zero if iterator is for primitive collection.
    */
   NodeCollectionComposite const* const composite_collection_;
 
   /**
    * Create safe iterator for NodeCollectionPrimitive.
+   *
    * @param collection_ptr smart pointer to collection to keep collection alive
    * @param collection  Collection to iterate over
    * @param offset  Index of collection element iterator points to
@@ -125,6 +129,7 @@ private:
 
   /**
    * Create safe iterator for NodeCollectionComposite.
+   *
    * @param collection_ptr smart pointer to collection to keep collection alive
    * @param collection  Collection to iterate over
    * @param part    Index of part of collection iterator points to
@@ -143,15 +148,23 @@ private:
   void composite_update_indices_();
 
 public:
+  using iterator_category = std::forward_iterator_tag;
+  using difference_type = long;
+  using value_type = NodeIDTriple;
+  using pointer = NodeIDTriple*;
+  using reference = NodeIDTriple&;
+
   nc_const_iterator( const nc_const_iterator& nci ) = default;
   void get_current_part_offset( size_t&, size_t& ) const;
 
   NodeIDTriple operator*() const;
+  bool operator==( const nc_const_iterator& rhs ) const;
   bool operator!=( const nc_const_iterator& rhs ) const;
   bool operator<( const nc_const_iterator& rhs ) const;
   bool operator<=( const nc_const_iterator& rhs ) const;
 
   nc_const_iterator& operator++();
+  nc_const_iterator operator++( int ); // postfix
   nc_const_iterator& operator+=( const size_t );
   nc_const_iterator operator+( const size_t ) const;
 
@@ -184,7 +197,9 @@ public:
   virtual ~NodeCollection() = default;
 
   /**
-   * Create a NodeCollection from a vector of node IDs. Results in a primitive if the
+   * Create a NodeCollection from a vector of node IDs.
+   *
+   * Results in a primitive if the
    * node IDs are homogeneous and contiguous, or a composite otherwise.
    *
    * @param node_ids Vector of node IDs from which to create the NodeCollection
@@ -193,8 +208,10 @@ public:
   static NodeCollectionPTR create( const IntVectorDatum& node_ids );
 
   /**
-   * Create a NodeCollection from an array of node IDs. Results in a primitive if the
-   * node IDs are homogeneous and contiguous, or a composite otherwise.
+   * Create a NodeCollection from an array of node IDs.
+   *
+   * Results in a primitive if the node IDs are homogeneous and
+   * contiguous, or a composite otherwise.
    *
    * @param node_ids Array of node IDs from which to create the NodeCollection
    * @return a NodeCollection pointer to the created NodeCollection
@@ -202,7 +219,9 @@ public:
   static NodeCollectionPTR create( const TokenArray& node_ids );
 
   /**
-   * Create a NodeCollection from a single node ID. Results in a primitive.
+   * Create a NodeCollection from a single node ID.
+   *
+   * Results in a primitive unconditionally.
    *
    * @param node_id Node ID from which to create the NodeCollection
    * @return a NodeCollection pointer to the created NodeCollection
@@ -210,8 +229,20 @@ public:
   static NodeCollectionPTR create( const size_t node_id );
 
   /**
-   * Create a NodeCollection from an array of node IDs. Results in a primitive if the
-   * node IDs are homogeneous and contiguous, or a composite otherwise.
+   * Create a NodeCollection from a single node pointer.
+   *
+   * Results in a primitive unconditionally.
+   *
+   * @param node Node pointer from which to create the NodeCollection
+   * @return a NodeCollection pointer to the created NodeCollection
+   */
+  static NodeCollectionPTR create( const Node* node );
+
+  /**
+   * Create a NodeCollection from an array of node IDs.
+   *
+   * Results in a primitive if the node IDs are homogeneous and
+   * contiguous, or a composite otherwise.
    *
    * @param node_ids Array of node IDs from which to create the NodeCollection
    * @return a NodeCollection pointer to the created NodeCollection
@@ -241,7 +272,9 @@ public:
   virtual size_t operator[]( size_t ) const = 0;
 
   /**
-   * Join two NodeCollections. May return a primitive or composite, depending on
+   * Join two NodeCollections.
+   *
+   * May return a primitive or composite, depending on
    * the input.
    *
    * @param rhs NodeCollection pointer to the NodeCollection to be added
@@ -322,7 +355,9 @@ public:
 
   /**
    * Slices the NodeCollection to the boundaries, with an optional step
-   * parameter. Note that the boundaries being specified are inclusive.
+   * parameter.
+   *
+   * Note that the boundaries being specified are inclusive.
    *
    * @param start Index of the NodeCollection to start at
    * @param end One past the index of the NodeCollection to stop at
@@ -359,7 +394,7 @@ public:
    *
    * @return Index of node with given node ID; -1 if node not in NodeCollection.
    */
-  virtual long find( const size_t ) const = 0;
+  virtual long get_lid( const size_t ) const = 0;
 
   /**
    * Returns whether the NodeCollection contains any nodes with proxies or not.
@@ -367,6 +402,17 @@ public:
    * @return true if any nodes in the NodeCollection has proxies, false otherwise.
    */
   virtual bool has_proxies() const = 0;
+
+  /**
+   * return the first stored ID (i.e, ID at index zero) inside the NodeCollection
+   */
+  size_t get_first() const;
+
+  /**
+   * return the last stored ID inside the NodeCollection
+   */
+  size_t get_last() const;
+
 
 private:
   unsigned long fingerprint_; //!< Unique identity of the kernel that created the NodeCollection
@@ -485,7 +531,7 @@ public:
   bool is_range() const override;
   bool empty() const override;
 
-  long find( const size_t ) const override;
+  long get_lid( const size_t ) const override;
 
   bool has_proxies() const override;
 
@@ -623,7 +669,7 @@ public:
   bool is_range() const override;
   bool empty() const override;
 
-  long find( const size_t ) const override;
+  long get_lid( const size_t ) const override;
 
   bool has_proxies() const override;
 };
@@ -639,6 +685,20 @@ NodeCollection::set_metadata( NodeCollectionMetadataPTR )
 {
   throw KernelException( "Cannot set Metadata on this type of NodeCollection." );
 }
+
+inline size_t
+NodeCollection::get_first() const
+{
+  return ( *begin() ).node_id;
+}
+
+inline size_t
+NodeCollection::get_last() const
+{
+  size_t offset = size() - 1;
+  return ( *( begin() + offset ) ).node_id;
+}
+
 
 inline nc_const_iterator&
 nc_const_iterator::operator+=( const size_t n )
@@ -656,6 +716,12 @@ nc_const_iterator::operator+( const size_t n ) const
 {
   nc_const_iterator it = *this;
   return it += n;
+}
+
+inline bool
+nc_const_iterator::operator==( const nc_const_iterator& rhs ) const
+{
+  return part_idx_ == rhs.part_idx_ and element_idx_ == rhs.element_idx_;
 }
 
 inline bool
@@ -780,7 +846,7 @@ NodeCollectionPrimitive::empty() const
 }
 
 inline long
-NodeCollectionPrimitive::find( const size_t neuron_id ) const
+NodeCollectionPrimitive::get_lid( const size_t neuron_id ) const
 {
   if ( neuron_id > last_ )
   {

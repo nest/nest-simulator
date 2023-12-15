@@ -24,6 +24,7 @@ Test implementation of erfc-neuron.
 """
 
 import unittest
+
 import nest
 import numpy as np
 from scipy.special import erfc

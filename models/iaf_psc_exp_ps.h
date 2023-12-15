@@ -90,7 +90,7 @@ can only change at on-grid times.
   `tau_syn_in`, respectively, to avoid numerical instabilities.
 
   For implementation details see the
-  `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+  `IAF Integration Singularity notebook <../model_details/IAF_Integration_Singularity.ipynb>`_.
 
 For details about exact subthreshold integration, please see
 :doc:`../neurons/exact-integration`.
@@ -140,7 +140,14 @@ See also
 
 iaf_psc_exp, iaf_psc_alpha_ps
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_psc_exp_ps
+
 EndUserDocs */
+
+void register_iaf_psc_exp_ps( const std::string& name );
 
 class iaf_psc_exp_ps : public ArchivingNode
 {
@@ -293,11 +300,11 @@ private:
     /** External DC current [pA] */
     double I_e_;
 
-    /** Threshold, RELATIVE TO RESTING POTENTAIL(!).
+    /** Threshold, RELATIVE TO RESTING POTENTIAL(!).
         I.e. the real threshold is U_th_ + E_L_. */
     double U_th_;
 
-    /** Lower bound, RELATIVE TO RESTING POTENTAIL(!).
+    /** Lower bound, RELATIVE TO RESTING POTENTIAL(!).
         I.e. the real lower bound is U_min_+E_L_. */
     double U_min_;
 
@@ -398,7 +405,6 @@ private:
   // ----------------------------------------------------------------
 
   /**
-   * @defgroup iaf_psc_exp_ps_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.

@@ -40,7 +40,7 @@ as NodeCollections.
 Printing
     Printing a SynapseCollection produces a table with source and target node IDs, synapse model, weight and delay.
     If your SynapseCollection has more than 36 elements, only the first and last 15 connections are displayed.
-    To print all, first set ``print_all = True`` on your SynapseCollection.
+    To print all, first set ``print_full = True`` on your SynapseCollection.
 
     >>>  nest.Connect(nodes[:2], nodes[:2])
     >>>  synapses = nest.GetConnections()
@@ -52,7 +52,7 @@ Printing
                2        1  static_synapse    1.000   1.000
                2        2  static_synapse    1.000   1.000
 
-    >>> synapses.print_all = True
+    >>> synapses.print_full = True
 
 .. _conn_indexing:
 

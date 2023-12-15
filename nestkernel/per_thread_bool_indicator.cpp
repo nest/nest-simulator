@@ -22,6 +22,9 @@
 
 #include "per_thread_bool_indicator.h"
 
+// Includes from nestkernel
+#include "kernel_manager.h"
+
 namespace nest
 {
 
@@ -44,7 +47,7 @@ PerThreadBoolIndicator::operator[]( const size_t tid )
 void
 PerThreadBoolIndicator::initialize( const size_t num_threads, const bool status )
 {
-  VPManager::assert_single_threaded();
+  kernel().vp_manager.assert_single_threaded();
   per_thread_status_.clear();
   per_thread_status_.resize( num_threads, BoolIndicatorUInt64( status ) );
 }
@@ -105,4 +108,4 @@ PerThreadBoolIndicator::any_true() const
   return false;
 }
 
-} /* namespace nest */
+} // namespace nest

@@ -24,7 +24,9 @@
 #define RANDOM_GENERATORS_H
 
 // C++ includes:
+#include <algorithm>
 #include <initializer_list>
+#include <iterator>
 #include <memory>
 #include <random>
 #include <type_traits>
@@ -32,6 +34,9 @@
 
 // libnestutil includes:
 #include "randutils.hpp"
+
+// nestkernel includes:
+#include "node_collection.h"
 
 namespace nest
 {
@@ -67,6 +72,7 @@ public:
 
   /**
    * @brief Calls the provided distribution with the wrapped RNG engine.
+   *
    * One operator per distribution must be defined.
    *
    * @param d Distribution that will be called.
@@ -83,6 +89,7 @@ public:
 
   /**
    * @brief Calls the provided distribution with the wrapped RNG engine, using provided distribution parameters.
+   *
    * One operator per distribution must be defined.
    *
    * @param d Distribution that will be called.
@@ -109,13 +116,25 @@ public:
 
   /**
    * @brief Uses the wrapped RNG engine to draw an unsigned long from a uniform distribution in the range [0, N).
+   *
    * @param N Maximum value that can be drawn.
    */
   virtual unsigned long ulrand( unsigned long N ) = 0;
+
+  /**
+   * @brief Wrap std::sample for selection from NodeCollection
+   *
+   * Inserts random sample without replacement of size n from range `[first, last)`into `dest`.
+   */
+  virtual void sample( NodeCollection::const_iterator first,
+    NodeCollection::const_iterator last,
+    std::back_insert_iterator< std::vector< NodeIDTriple > > dest,
+    size_t n ) = 0;
 };
 
 /**
  * @brief Wrapper for RNG engines.
+ *
  * @tparam RandomEngineT Type of the wrapped engine, must conform with the C++11 random engine interface.
  */
 template < typename RandomEngineT >
@@ -262,6 +281,15 @@ public:
     return uniform_ulong_dist_( rng_, param );
   }
 
+  inline void
+  sample( NodeCollection::const_iterator first,
+    NodeCollection::const_iterator last,
+    std::back_insert_iterator< std::vector< NodeIDTriple > > dest,
+    size_t n ) override
+  {
+    std::sample( first, last, dest, n, rng_ );
+  }
+
 private:
   RandomEngineT rng_; //!< Wrapped RNG engine.
   std::uniform_int_distribution< unsigned long > uniform_ulong_dist_;
@@ -278,6 +306,7 @@ public:
 
   /**
    * @brief Clones the RNG wrapper and sets the state of the cloned RNG engine.
+   *
    * @param seed_initializer Initializer list for C++11-conforming SeedSeq for RNG.
    */
   virtual RngPtr create( std::initializer_list< std::uint32_t > seed_initializer ) const = 0;
@@ -299,6 +328,7 @@ public:
 
 /**
  * @brief Wrapper for distributions.
+ *
  * The result_type of the distribution must be unsigned long or double.
  *
  * @tparam DistributionT Type of the wrapped RandomDistribution.
@@ -351,6 +381,7 @@ public:
 
   /**
    * @brief Sets the distribution's associated parameter set to params.
+   *
    * @param params New contents of the distribution's associated parameter set.
    */
   inline void

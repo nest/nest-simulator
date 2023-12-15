@@ -9,6 +9,12 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.repository_owner == 'nest' }}
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@eb238b55efaa70779f274895e782ed17c84f2895 # v2.6.1
+        with:
+          egress-policy: audit
+          disable-telemetry: true
+
       - name: sycnmaster
         uses: wei/git-sync@55c6b63b4f21607da0e9877ca9b4d11a29fc6d83
         with:

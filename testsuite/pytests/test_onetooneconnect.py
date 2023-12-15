@@ -24,6 +24,7 @@ UnitTests for the PyNEST connect API.
 """
 
 import unittest
+
 import nest
 
 

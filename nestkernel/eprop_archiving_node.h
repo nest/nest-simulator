@@ -67,10 +67,12 @@ public:
   //! Get an iterator pointing to the eprop history entry of the given time step.
   typename std::vector< HistEntryT >::iterator get_eprop_history( const long time_step );
 
-  //! Erase no longer needed parts of the update history.
+  //! Erase update history parts for which the access counter has decreased to zero since no synapse needs them
+  //! any longer.
   void erase_unneeded_update_history();
 
-  //! Erase no longer needed parts of the eprop history.
+  //! Erase update intervals from the e-prop history in which each synapse has either not transmitted a spike or has
+  //! transmitted a spike in a more recent update interval.
   void erase_unneeded_eprop_history();
 
 protected:
@@ -127,7 +129,8 @@ public:
   //! Return learning signal from history for given time step or zero if time step not in history
   double get_learning_signal_history( const long time_step );
 
-  //! Erase no longer needed parts of the firing rate regularization history.
+  //! Erase parts of the firing rate regularization history for which the access counter in the update history has
+  //! decreased to zero since no synapse needs them any longer.
   void erase_unneeded_firing_rate_reg_history();
 
   //! Count emitted spike for the firing rate regularization.

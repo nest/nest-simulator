@@ -31,13 +31,6 @@
 // Includes from sli:
 #include "dictutils.h"
 
-/**
- * A node which archives the history of dynamic variables, the firing rate
- * regularization, and update times needed to calculate the weight updates for
- * e-prop plasticity. It further provides a set of get, write, and set functions
- * for these histories and the hardcoded shifts to synchronize the factors of
- * the plasticity rule.
- */
 namespace nest
 {
 

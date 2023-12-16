@@ -22,11 +22,11 @@
 
 #include "weight_optimizer.h"
 
-// Includes from nestkernel
+// nestkernel
 #include "exceptions.h"
 #include "nest_names.h"
 
-// Includes from sli
+// sli
 #include "dictutils.h"
 
 namespace nest
@@ -246,7 +246,7 @@ WeightOptimizerAdam::optimize_( const WeightOptimizerCommonProperties& cp,
 
     weight -= alpha_t * m_ / ( std::sqrt( v_ ) + acp.epsilon_ );
 
-    // Set gradients to zero for following iterations since more than
+    // set gradients to zero for following iterations since more than
     // one cycle indicates past learning periods with vanishing gradients
     sum_gradients_ = 0.0; // reset for following iterations
   }

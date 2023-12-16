@@ -83,8 +83,8 @@ EpropCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm 
         throw BadParameter( "The optimizer cannot be changed because synapses have been created." );
       }
 
-      // TODO: Selection here should be based on an optimizer registry and a factory.
-      // delete is in if/elif because we must delete only when we are sure that we have a valid optimizer.
+      // TODO: selection here should be based on an optimizer registry and a factory
+      // delete is in if/else if because we must delete only when we are sure that we have a valid optimizer
       if ( new_optimizer == "gradient_descent" )
       {
         delete optimizer_cp_;
@@ -101,7 +101,7 @@ EpropCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm 
       }
     }
 
-    // We can now set the defaults on the new optimizer common props
+    // we can now set the defaults on the new optimizer common properties
     optimizer_cp_->set_status( optimizer_dict );
   }
 }

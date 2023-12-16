@@ -63,8 +63,6 @@ EpropArchivingNodeRecurrent::write_learning_signal_to_history( const long time_s
     return;
   }
 
-  // These 3 delays must be taken into account to place the learning signal in the correct location
-  // in the e-prop history
   const long shift = delay_rec_out_ + delay_out_norm_ + delay_out_rec_;
 
   auto it_hist = get_eprop_history( time_step - shift );
@@ -72,9 +70,6 @@ EpropArchivingNodeRecurrent::write_learning_signal_to_history( const long time_s
 
   for ( ; it_hist != it_hist_end; ++it_hist )
   {
-    // Update the learning signal for each history entry within the range. In cases where multiple readout neurons
-    // contribute to the learning signal, each neuron's contribution is added to the existing value. Hence,
-    // the use of the '+=' operator to incrementally accumulate the learning signal
     it_hist->learning_signal_ += learning_signal;
   }
 }

@@ -440,18 +440,18 @@ eprop_iaf_psc_delta::gradient_change( std::vector< long >& presyn_isis,
 {
   auto eprop_hist_it = get_eprop_history( t_previous_trigger_spike );
 
-  double e = 0.0;     // Eligibility trace
-  double e_bar = 0.0; // Low-pass filtered eligibility trace
-  double sum_e = 0.0; // Sum of eligibility traces
-  double z = 0.0;     // Spiking variable
-  double z_bar = 0.0; // Low-pass filtered spiking variable
-  double grad = 0.0;  // Gradient value to be calculated
-  double psi = 0.0;   // Surrogate gradient
-  double L = 0.0;     // Learning signal
+  double e = 0.0;     // eligibility trace
+  double e_bar = 0.0; // low-pass filtered eligibility trace
+  double sum_e = 0.0; // sum of eligibility traces
+  double z = 0.0;     // spiking variable
+  double z_bar = 0.0; // low-pass filtered spiking variable
+  double grad = 0.0;  // gradient value to be calculated
+  double psi = 0.0;   // surrogate gradient
+  double L = 0.0;     // learning signal
 
   for ( long presyn_isi : presyn_isis )
   {
-    z = 1.0; // Set spiking variable to 1 for each incoming spike
+    z = 1.0; // set spiking variable to 1 for each incoming spike
 
     for ( long t = 0; t < presyn_isi; ++t )
     {
@@ -465,7 +465,7 @@ eprop_iaf_psc_delta::gradient_change( std::vector< long >& presyn_isis,
       e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
       grad += L * e_bar;
       sum_e += e;
-      z = 0.0; //  Set spiking variable to 0 between spikes
+      z = 0.0; // set spiking variable to 0 between spikes
 
       ++eprop_hist_it;
     }

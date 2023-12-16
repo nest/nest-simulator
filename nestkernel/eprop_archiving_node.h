@@ -120,7 +120,8 @@ public:
   //! Create an entry in the eprop history for the given time step and surrogate gradient.
   void write_surrogate_gradient_to_history( const long time_step, const double surrogate_gradient );
 
-  //! Add learning signal to the eprop history entry of the given time step.
+  //! Update the learning signal in the eprop history entry of the given time step by writing the value of the incoming
+  //! learning signal to the history or adding it to the existing value in case of multiple readout neurons.
   void write_learning_signal_to_history( const long time_step, const double learning_signal );
 
   //! Create an entry in the firing rate regularization history for the current update.

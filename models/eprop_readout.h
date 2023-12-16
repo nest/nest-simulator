@@ -163,6 +163,10 @@ EndUserDocs */
 
 void register_eprop_readout( const std::string& name );
 
+/**
+ * Class implementing a current-based leaky integrate readout neuron model with delta-shaped postsynaptic currents for
+ * e-prop plasticity.
+ */
 class eprop_readout : public EpropArchivingNodeReadout
 {
 

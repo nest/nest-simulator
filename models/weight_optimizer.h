@@ -127,11 +127,11 @@ EndUserDocs */
 class WeightOptimizer;
 
 /**
- * Base class for common properties for eprop optimizers.
+ * Base class implementing common properties of a weight optimizer model.
  *
- * The CommonProperties of eprop synapse models own an object of this class hierarchy.
+ * The CommonProperties of synapse models supporting weight optimization own an object of this class hierarchy.
  * The values in these objects are used by the synapse-specific optimizer object.
- * Change of optimizer type is only possible before synapses of the model have been created.
+ * Change of the optimizer type is only possible before synapses of the model have been created.
  */
 class WeightOptimizerCommonProperties
 {
@@ -171,12 +171,12 @@ public:
 };
 
 /**
- * Base class for e-prop optimizers.
+ * Base class implementing a weight optimizer model.
  *
- * An optimizer is used by an e-prop synapse to optimize the weight.
+ * An optimizer is used by a synapse that supports this mechanism to optimize the weight.
  *
- * An optimizer may have internal state which is maintained from call to call of the `optimized_weight()` method.
- * Each optimized object belongs to exactly one e-prop synapse.
+ * An optimizer may have an internal state which is maintained from call to call of the `optimized_weight()` method.
+ * Each optimized object belongs to exactly one synapse.
  */
 class WeightOptimizer
 {
@@ -205,7 +205,9 @@ protected:
   size_t optimization_step_; //!< Current optimization step; optimization happens evert batch_size_ steps.
 };
 
-
+/**
+ * Base class implementing a gradient descent weight optimizer model.
+ */
 class WeightOptimizerGradientDescent : public WeightOptimizer
 {
 public:
@@ -217,6 +219,9 @@ private:
   double optimize_( const WeightOptimizerCommonProperties& cp, double weight, size_t current_opt_step ) override;
 };
 
+/**
+ * Base class implementing common properties of a gradient descent weight optimizer model.
+ */
 class WeightOptimizerCommonPropertiesGradientDescent : public WeightOptimizerCommonProperties
 {
   friend class WeightOptimizerGradientDescent;
@@ -235,6 +240,9 @@ public:
   }
 };
 
+/**
+ * Base class implementing an Adam weight optimizer model.
+ */
 class WeightOptimizerAdam : public WeightOptimizer
 {
 public:
@@ -253,7 +261,9 @@ private:
   double v_;
 };
 
-
+/**
+ * Base class implementing common properties of an Adam weight optimizer model.
+ */
 class WeightOptimizerCommonPropertiesAdam : public WeightOptimizerCommonProperties
 {
   friend class WeightOptimizerAdam;

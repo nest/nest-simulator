@@ -235,6 +235,10 @@ EndUserDocs */
 
 void register_eprop_iaf_psc_delta_adapt( const std::string& name );
 
+/**
+ * Class implementing a current-based leaky integrate-and-fire neuron model with delta-shaped postsynaptic currents and
+ * threshold adaptation for e-prop plasticity
+ */
 class eprop_iaf_psc_delta_adapt : public EpropArchivingNodeRecurrent
 {
 

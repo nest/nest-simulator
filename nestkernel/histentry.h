@@ -65,6 +65,9 @@ operator<( const histentry_extended he, double t )
   return ( he.t_ ) < t;
 }
 
+/**
+ * Base class implementing history entries for e-prop plasticity.
+ */
 class HistEntryEprop
 {
 public:
@@ -84,6 +87,9 @@ operator<( const HistEntryEprop& he, long t )
   return ( he.t_ ) < t;
 }
 
+/**
+ * Class implementing entries of the recurrent node model's history of e-prop dynamic variables.
+ */
 class HistEntryEpropRecurrent : public HistEntryEprop
 {
 public:
@@ -93,6 +99,9 @@ public:
   double learning_signal_;
 };
 
+/**
+ * Class implementing entries of the readout node model's history of e-prop dynamic variables.
+ */
 class HistEntryEpropReadout : public HistEntryEprop
 {
 public:
@@ -101,6 +110,9 @@ public:
   double error_signal_;
 };
 
+/**
+ * Class implementing entries of the update history for e-prop plasticity.
+ */
 class HistEntryEpropUpdate : public HistEntryEprop
 {
 public:
@@ -109,6 +121,9 @@ public:
   size_t access_counter_;
 };
 
+/**
+ * Class implementing entries of the firing rate regularization history for e-prop plasticity.
+ */
 class HistEntryEpropFiringRateReg : public HistEntryEprop
 {
 public:

@@ -35,7 +35,7 @@ namespace nest
 Short description
 +++++++++++++++++
 
-Synapse type transmitting feedback learning signals for e-prop plasticity
+Synapse model transmitting feedback learning signals for e-prop plasticity
 
 Description
 +++++++++++
@@ -110,6 +110,9 @@ EndUserDocs */
 
 void register_eprop_learning_signal_connection( const std::string& name );
 
+/**
+ * Class implementing a synapse model transmitting secondary feedback learning signals for e-prop plasticity.
+ */
 template < typename targetidentifierT >
 class eprop_learning_signal_connection : public Connection< targetidentifierT >
 {

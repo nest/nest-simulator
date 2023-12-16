@@ -32,8 +32,11 @@
 // sli
 #include "dictdatum.h"
 
+namespace nest
+{
+
 /**
- * Intermediate base class for nodes supporting e-prop plasticity.
+ * Base class implementing an intermediate archiving node model for node models supporting e-prop plasticity.
  *
  * A node which archives the history of dynamic variables, the firing rate
  * regularization, and update times needed to calculate the weight updates for
@@ -41,9 +44,6 @@
  * for these histories and the hardcoded shifts to synchronize the factors of
  * the plasticity rule.
  */
-namespace nest
-{
-
 template < typename HistEntryT >
 class EpropArchivingNode : public Node
 {
@@ -104,6 +104,9 @@ protected:
   const long delay_out_rec_ = 1;
 };
 
+/**
+ * Class implementing an intermediate archiving node model for recurrent node models supporting e-prop plasticity.
+ */
 class EpropArchivingNodeRecurrent : public EpropArchivingNode< HistEntryEpropRecurrent >
 {
 
@@ -161,6 +164,9 @@ EpropArchivingNodeRecurrent::reset_spike_count()
   n_spikes_ = 0;
 }
 
+/**
+ * Class implementing an intermediate archiving node model for readout node models supporting e-prop plasticity.
+ */
 class EpropArchivingNodeReadout : public EpropArchivingNode< HistEntryEpropReadout >
 {
 public:

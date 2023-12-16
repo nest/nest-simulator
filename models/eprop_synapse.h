@@ -160,8 +160,14 @@ class EpropCommonProperties : public CommonSynapseProperties
 public:
   // Default constructor.
   EpropCommonProperties();
+
+  //! Copy constructor.
   EpropCommonProperties( const EpropCommonProperties& );
+
+  //! Assignment operator.
   EpropCommonProperties& operator=( const EpropCommonProperties& ) = delete;
+
+  //! Destructor.
   ~EpropCommonProperties();
 
   //! Get parameter dictionary.
@@ -212,7 +218,7 @@ class eprop_synapse : public Connection< targetidentifierT >
 {
 
 public:
-  //! Type of the common synapse properties type.
+  //! Type of the common synapse properties.
   typedef EpropCommonProperties CommonPropertiesType;
 
   //! Type of the connection base.
@@ -220,19 +226,20 @@ public:
 
   /**
    * Properties of the connection model.
+   *
    * @note Does not support LBL at present because we cannot properly cast GenericModel common props in that case.
    */
   static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
     | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::REQUIRES_EPROP_ARCHIVING
     | ConnectionModelProperties::SUPPORTS_HPC;
 
-  //! Constructor.
+  //! Default constructor.
   eprop_synapse();
 
   //! Destructor
   ~eprop_synapse();
 
-  //! Copy constructor -- not default because setting some constants
+  //! Parameterized copy constructor.
   eprop_synapse( const eprop_synapse& );
 
   //! Assignment operator
@@ -241,7 +248,7 @@ public:
   //! Move constructor
   eprop_synapse( eprop_synapse&& );
 
-  //! Move Assignment operator
+  //! Move assignment operator
   eprop_synapse& operator=( eprop_synapse&& );
 
   using ConnectionBase::get_delay;
@@ -310,7 +317,7 @@ private:
   //! The time step when the spike arrived that triggered the previous e-prop update.
   long t_previous_trigger_spike_;
 
-  //! Time constant for low-pass filtering the eligibility trace.
+  //! %Time constant for low-pass filtering the eligibility trace.
   double tau_m_readout_;
 
   //! Low-pass filter of the eligibility trace.

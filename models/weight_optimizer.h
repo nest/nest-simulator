@@ -136,38 +136,61 @@ class WeightOptimizer;
 class WeightOptimizerCommonProperties
 {
 public:
+  //! Default constructor.
   WeightOptimizerCommonProperties();
+
+  //! Destructor.
   virtual ~WeightOptimizerCommonProperties()
   {
   }
+
+  //! Copy constructor.
   WeightOptimizerCommonProperties( const WeightOptimizerCommonProperties& );
+
+  //! Assignment operator.
   WeightOptimizer& operator=( const WeightOptimizer& ) = delete;
 
+  //! Get parameter dictionary.
   virtual void get_status( DictionaryDatum& d ) const;
+
+  //! Update parameters in parameter dictionary.
   virtual void set_status( const DictionaryDatum& d );
 
+  //! Clone constructor.
   virtual WeightOptimizerCommonProperties* clone() const = 0;
+
+  //! Get optimizer.
   virtual WeightOptimizer* get_optimizer() const = 0;
 
+  //! Get minimal value for synaptic weight.
   double
   get_Wmin() const
   {
     return Wmin_;
   }
 
+  //! Get maximal value for synaptic weight.
   double
   get_Wmax() const
   {
     return Wmax_;
   }
 
+  //! Get optimizer name.
   virtual std::string get_name() const = 0;
 
 public:
-  size_t batch_size_; //!< size of optimization batches
-  double eta_;        //!< learning rate
-  double Wmin_;       //!< lower bound for weight
-  double Wmax_;       //!< upper bound for weight
+  //! Size of an optimization batch.
+  size_t batch_size_;
+
+  //! Learning rate.
+  double eta_;
+
+  //! Minimal value for synaptic weight.
+  double Wmin_;
+
+  //! Maximal value for synaptic weight.
+  double Wmax_;
 };
 
 /**
@@ -181,28 +204,41 @@ public:
 class WeightOptimizer
 {
 public:
+  //! Default constructor.
   WeightOptimizer();
+
+  //! Destructor.
   virtual ~WeightOptimizer()
   {
   }
+
+  //! Copy constructor.
   WeightOptimizer( const WeightOptimizer& ) = default;
+
+  //! Assignment operator.
   WeightOptimizer& operator=( const WeightOptimizer& ) = delete;
 
+  //! Get parameter dictionary.
   virtual void get_status( DictionaryDatum& d ) const;
+
+  //! Update values in parameter dictionary.
   virtual void set_status( const DictionaryDatum& d );
 
-  //! Return optimized weight based on current weight
+  //! Return optimized weight based on current weight.
   double optimized_weight( const WeightOptimizerCommonProperties& cp,
     const size_t idx_current_update,
     const double gradient_change,
     double weight );
 
 protected:
-  //! Actually perform specific optimization, called by optimized_weight()
+  //! Perform specific optimization.
   virtual double optimize_( const WeightOptimizerCommonProperties& cp, double weight, size_t current_opt_step ) = 0;
 
-  double sum_gradients_;     //!< Sum of gradients accumulated in current batch
-  size_t optimization_step_; //!< Current optimization step; optimization happens evert batch_size_ steps.
+  //! Sum of gradients accumulated in current batch.
+  double sum_gradients_;
+
+  //! Current optimization step, whereby optimization happens every batch_size_ steps.
+  size_t optimization_step_;
 };
 
 /**
@@ -211,8 +247,13 @@ protected:
 class WeightOptimizerGradientDescent : public WeightOptimizer
 {
 public:
+  //! Default constructor.
   WeightOptimizerGradientDescent();
+
+  //! Copy constructor.
   WeightOptimizerGradientDescent( const WeightOptimizerGradientDescent& ) = default;
+
+  //! Assignment operator.
   WeightOptimizerGradientDescent& operator=( const WeightOptimizerGradientDescent& ) = delete;
 
 private:
@@ -224,9 +265,11 @@ private:
  */
 class WeightOptimizerCommonPropertiesGradientDescent : public WeightOptimizerCommonProperties
 {
+  //! Friend class for gradient descent weight optimizer model.
   friend class WeightOptimizerGradientDescent;
 
 public:
+  //! Assignment operator.
   WeightOptimizerCommonPropertiesGradientDescent& operator=(
     const WeightOptimizerCommonPropertiesGradientDescent& ) = delete;
 
@@ -246,18 +289,25 @@ public:
 class WeightOptimizerAdam : public WeightOptimizer
 {
 public:
+  //! Default constructor.
   WeightOptimizerAdam();
+
+  //! Copy constructor.
   WeightOptimizerAdam( const WeightOptimizerAdam& ) = default;
+
+  //! Assignment operator.
   WeightOptimizerAdam& operator=( const WeightOptimizerAdam& ) = delete;
 
   void get_status( DictionaryDatum& d ) const override;
   void set_status( const DictionaryDatum& d ) override;
 
 private:
-  //! Return optimized weight based on current weight
   double optimize_( const WeightOptimizerCommonProperties& cp, double weight, size_t current_opt_step ) override;
 
+  //! First moment estimate variable.
   double m_;
+
+  //! Second moment estimate variable.
   double v_;
 };
 
@@ -266,10 +316,14 @@ private:
  */
 class WeightOptimizerCommonPropertiesAdam : public WeightOptimizerCommonProperties
 {
+  //! Friend class for Adam weight optimizer model.
   friend class WeightOptimizerAdam;
 
 public:
+  //! Default constructor.
   WeightOptimizerCommonPropertiesAdam();
+
+  //! Assignment operator.
   WeightOptimizerCommonPropertiesAdam& operator=( const WeightOptimizerCommonPropertiesAdam& ) = delete;
 
   WeightOptimizerCommonProperties* clone() const override;
@@ -285,9 +339,14 @@ public:
   }
 
 private:
-  double beta_1_;  //!< Exponential decay rate for first moment estimate.
-  double beta_2_;  //!< Exponential decay rate for second moment estimate.
-  double epsilon_; //!< Small constant for numerical stability.
+  //! Exponential decay rate for first moment estimate.
+  double beta_1_;
+
+  //! Exponential decay rate for second moment estimate.
+  double beta_2_;
+
+  //! Small constant for numerical stability.
+  double epsilon_;
 };
 
 } // namespace nest

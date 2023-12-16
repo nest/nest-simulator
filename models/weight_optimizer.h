@@ -275,9 +275,9 @@ public:
   }
 
 private:
-  double beta_1_;  //!< Exponential decay rate for first moment estimate of Adam optimizer.
-  double beta_2_;  //!< Exponential decay rate for second moment estimate of Adam optimizer.
-  double epsilon_; //!< Small constant for numerical stability of Adam optimizer.
+  double beta_1_;  //!< Exponential decay rate for first moment estimate.
+  double beta_2_;  //!< Exponential decay rate for second moment estimate.
+  double epsilon_; //!< Small constant for numerical stability.
 };
 
 } // namespace nest

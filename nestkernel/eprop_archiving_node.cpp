@@ -110,7 +110,7 @@ EpropArchivingNodeRecurrent::get_firing_rate_reg_history( const long time_step )
 }
 
 double
-EpropArchivingNodeRecurrent::get_learning_signal_history( const long time_step )
+EpropArchivingNodeRecurrent::get_learning_signal_from_history( const long time_step )
 {
   const long shift = delay_rec_out_ + delay_out_norm_ + delay_out_rec_;
 

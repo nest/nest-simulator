@@ -89,9 +89,9 @@ type                                       gradient_descent Optimizer type
 Parameter   Unit  Math equivalent          Default          Description
 ========== ===== ========================= ================ =========================================================
 type                                                   adam Optimizer type
-beta1            :math:`\beta_1`                        0.9 Exponential decay rate for first moment estimate of Adam
+beta_1            :math:`\beta_1`                        0.9 Exponential decay rate for first moment estimate of Adam
                                                             optimizer
-beta2            :math:`\beta_2`                      0.999 Exponential decay rate for second moment estimate of Adam
+beta_2            :math:`\beta_2`                      0.999 Exponential decay rate for second moment estimate of Adam
                                                             optimizer
 epsilon          :math:`\epsilon`                      1e-8 Small constant for numerical stability of Adam optimizer
 ========== ===== ========================= ================ =========================================================
@@ -275,8 +275,8 @@ public:
   }
 
 private:
-  double beta1_;   //!< Exponential decay rate for first moment estimate of Adam optimizer.
-  double beta2_;   //!< Exponential decay rate for second moment estimate of Adam optimizer.
+  double beta_1_;  //!< Exponential decay rate for first moment estimate of Adam optimizer.
+  double beta_2_;  //!< Exponential decay rate for second moment estimate of Adam optimizer.
   double epsilon_; //!< Small constant for numerical stability of Adam optimizer.
 };
 

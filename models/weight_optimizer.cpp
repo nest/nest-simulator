@@ -149,8 +149,8 @@ WeightOptimizerGradientDescent::optimize_( const WeightOptimizerCommonProperties
 
 WeightOptimizerCommonPropertiesAdam::WeightOptimizerCommonPropertiesAdam()
   : WeightOptimizerCommonProperties()
-  , beta1_( 0.9 )
-  , beta2_( 0.999 )
+  , beta_1_( 0.9 )
+  , beta_2_( 0.999 )
   , epsilon_( 1e-8 )
 {
 }
@@ -173,8 +173,8 @@ WeightOptimizerCommonPropertiesAdam::get_status( DictionaryDatum& d ) const
 {
   WeightOptimizerCommonProperties::get_status( d );
 
-  def< double >( d, names::beta_1, beta1_ );
-  def< double >( d, names::beta_2, beta2_ );
+  def< double >( d, names::beta_1, beta_1_ );
+  def< double >( d, names::beta_2, beta_2_ );
   def< double >( d, names::epsilon, epsilon_ );
 }
 
@@ -183,16 +183,16 @@ WeightOptimizerCommonPropertiesAdam::set_status( const DictionaryDatum& d )
 {
   WeightOptimizerCommonProperties::set_status( d );
 
-  updateValue< double >( d, names::beta_1, beta1_ );
-  updateValue< double >( d, names::beta_2, beta2_ );
+  updateValue< double >( d, names::beta_1, beta_1_ );
+  updateValue< double >( d, names::beta_2, beta_2_ );
   updateValue< double >( d, names::epsilon, epsilon_ );
 
-  if ( beta1_ < 0.0 or 1.0 <= beta1_ )
+  if ( beta_1_ < 0.0 or 1.0 <= beta_1_ )
   {
     throw BadProperty( "For Adam optimizer, beta_1 from interval [0,1) required." );
   }
 
-  if ( beta2_ < 0.0 or 1.0 <= beta2_ )
+  if ( beta_2_ < 0.0 or 1.0 <= beta_2_ )
   {
     throw BadProperty( "For Adam optimizer, beta_2 from interval [0,1) required." );
   }
@@ -236,13 +236,13 @@ WeightOptimizerAdam::optimize_( const WeightOptimizerCommonProperties& cp,
 
   for ( ; optimization_step_ < current_optimization_step; ++optimization_step_ )
   {
-    const double beta1_factor = 1.0 - std::pow( acp.beta1_, optimization_step_ );
-    const double beta2_factor = 1.0 - std::pow( acp.beta2_, optimization_step_ );
+    const double beta_1_factor = 1.0 - std::pow( acp.beta_1_, optimization_step_ );
+    const double beta_2_factor = 1.0 - std::pow( acp.beta_2_, optimization_step_ );
 
-    const double alpha_t = cp.eta_ * std::sqrt( beta2_factor ) / beta1_factor;
+    const double alpha_t = cp.eta_ * std::sqrt( beta_2_factor ) / beta_1_factor;
 
-    m_ = acp.beta1_ * m_ + ( 1.0 - acp.beta1_ ) * sum_gradients_;
-    v_ = acp.beta2_ * v_ + ( 1.0 - acp.beta2_ ) * sum_gradients_ * sum_gradients_;
+    m_ = acp.beta_1_ * m_ + ( 1.0 - acp.beta_1_ ) * sum_gradients_;
+    v_ = acp.beta_2_ * v_ + ( 1.0 - acp.beta_2_ ) * sum_gradients_ * sum_gradients_;
 
     weight -= alpha_t * m_ / ( std::sqrt( v_ ) + acp.epsilon_ );
 

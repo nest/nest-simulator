@@ -107,9 +107,22 @@ Parameter           Unit     Math equivalent          Default            Descrip
  loss                        :math:`E`                mean_squared_error Loss function
                                                                          ["mean_squared_error", "cross_entropy"]
  tau_m              ms       :math:`\tau_\text{m}`                  10.0 Time constant of the membrane
- V_m                mV       :math:`v_j^0`                           0.0 Initial value of the membrane voltage
  V_min              mV       :math:`v_\text{min}`             -1.79e+308 Absolute lower bound of the membrane voltage
 ==================  =======  =======================  ================== ===============================================
+
+The following state variables evolve during simulation.
+
+===================== ==== =============== ============= ==========================
+**Neuron state variables and recordables**
+-----------------------------------------------------------------------------------
+State variable        Unit Math equivalent Initial value Description
+===================== ==== =============== ============= ==========================
+error_signal          mV   :math:`L_j`               0.0 Error signal
+readout_signal        mV   :math:`y_j`               0.0 Readout signal
+readout_signal_unnorm mV                             0.0 Unnormalized readout signal
+target_signal         mV   :math:`y^*_j`             0.0 Target signal
+V_m                   mV   :math:`v_j`               0.0 Membrane voltage
+===================== ==== =============== ============= ==========================
 
 Recordables
 +++++++++++
@@ -118,6 +131,7 @@ The following variables can be recorded:
 
   - error signal ``error_signal``
   - readout signal ``readout_signal``
+  - readout signal ``readout_signal_unnorm``
   - target signal ``target_signal``
   - membrane potential ``V_m``
 

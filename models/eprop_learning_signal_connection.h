@@ -57,14 +57,16 @@ Details on the event-based NEST implementation of e-prop can be found in [2]_.
 Parameters
 ++++++++++
 
-===========  =======  =======================  =======  =========================================
-**Neuron parameters**
--------------------------------------------------------------------------------------------------
-Parameter     Unit     Math equivalent         Default  Description
-===========  =======  =======================  =======  =========================================
-delay        ms       :math:`d_{jk}`               1.0  Dendritic delay
-weight       pA       :math:`B_{jk}`               1.0  Initial synaptic weight of the connection
-===========  =======  =======================  =======  =========================================
+The following parameters can be set in the status dictionary.
+
+========= ===== ================ ======= ===============
+**Individual synapse parameters**
+--------------------------------------------------------
+Parameter  Unit  Math equivalent Default Description
+========= ===== ================ ======= ===============
+delay     ms    :math:`d_{jk}`       1.0 Dendritic delay
+weight    pA    :math:`B_{jk}`       1.0 Synaptic weight
+========= ===== ================ ======= ===============
 
 Recordables
 +++++++++++

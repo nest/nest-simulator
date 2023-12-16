@@ -82,24 +82,24 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-================  ========  ================  ================ =========================================================
-**Common synapse properties**
-------------------------------------------------------------------------------------------------------------------------
-Parameter         Unit      Math equivalent   Default          Description
-================  ========  ================  ================ =========================================================
-optimizer                                     {'type': 'gradient_descent} Dictionary of optimizer parameters
-average_gradient                              False            If True, average the gradient over the learning window
-================  ========  ================  ================ =========================================================
+================ ==== =============== ======= ======================================================
+**Common synapse parameters**
+----------------------------------------------------------------------------------------------------
+Parameter        Unit Math equivalent Default Description
+================ ==== =============== ======= ======================================================
+average_gradient                        False If True, average the gradient over the learning window
+optimizer                                  {} Dictionary of optimizer parameters
+================ ==== =============== ======= ======================================================
 
-=============  ====  =========================  =======  ===============================================================
-**Individual synapse properties**
-------------------------------------------------------------------------------------------------------------------------
-Parameter      Unit  Math equivalent            Default  Description
-=============  ====  =========================  =======  ===============================================================
-delay          ms    :math:`d_{ji}`                 1.0  Dendritic delay
-tau_m_readout  ms    :math:`\tau_\text{m,out}`      0.0  Time constant for low-pass filtering of eligibility trace
-weight         pA    :math:`W_{ji}`                 1.0  Synaptic weight
-=============  ====  =========================  =======  ===============================================================
+============= ==== ========================= ======= =========================================================
+**Individual synapse parameters**
+--------------------------------------------------------------------------------------------------------------
+Parameter     Unit Math equivalent           Default Description
+============= ==== ========================= ======= =========================================================
+delay         ms   :math:`d_{ji}`                1.0 Dendritic delay
+tau_m_readout ms   :math:`\tau_\text{m,out}`     0.0 Time constant for low-pass filtering of eligibility trace
+weight        pA   :math:`W_{ji}`                1.0 Initial value of synaptic weight
+============= ==== ========================= ======= =========================================================
 
 Recordables
 +++++++++++

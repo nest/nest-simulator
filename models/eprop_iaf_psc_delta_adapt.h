@@ -158,8 +158,6 @@ Parameter                   Unit Math equivalent         Default          Descri
 adapt_beta                       :math:`\beta`                        1.0 Prefactor of the threshold adaptation
 adapt_tau                   ms   :math:`\tau_\text{a}`               10.0 Time constant of the threshold
                                                                           adaptation
-adaptation                       :math:`a_j^0`                        0.0 Initial value of the adaptation
-                                                                          variable
 C_m                         pF   :math:`C_\text{m}`                 250.0 Capacitance of the membrane
 c_reg                            :math:`c_\text{reg}`                 0.0 Prefactor of firing rate
                                                                           regularization
@@ -176,11 +174,24 @@ surrogate_gradient_function      :math:`\psi`            piecewise_linear Surrog
                                                                           function ["piecewise_linear"]
 t_ref                       ms   :math:`t_\text{ref}`                 2.0 Duration of the refractory period
 tau_m                       ms   :math:`\tau_\text{m}`               10.0 Time constant of the membrane
-V_m                         mV   :math:`v_j^0`                      -70.0 Initial value of the membrane voltage
 V_min                       mV   :math:`v_\text{min}`          -1.79e+308 Absolute lower bound of the membrane
                                                                           voltage
 V_th                        mV   :math:`v_\text{th}`                -55.0 Spike threshold voltage
 =========================== ==== ======================= ================ ======================================
+
+The following state variables evolve during simulation.
+
+================== ==== =============== ============= ========================
+**Neuron state variables and recordables**
+------------------------------------------------------------------------------
+State variable     Unit Math equivalent Initial value Description
+================== ==== =============== ============= ========================
+adaptation              :math:`a_j`               0.0 Adaptation variable
+learning_signal         :math:`L_j`               0.0 Learning signal
+surrogate_gradient      :math:`\psi_j`            0.0 Surrogate gradient
+V_m                  mV :math:`v_j`             -70.0 Membrane voltage
+V_th_adapt           mV :math:`A_j`             -15.0 Adapting spike threshold
+================== ==== =============== ============= ========================
 
 Recordables
 +++++++++++

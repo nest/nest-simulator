@@ -64,46 +64,46 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-========== ===== ========================= ================ =========================================================
-**General optimizer parameters**
----------------------------------------------------------------------------------------------------------------------
-Parameter   Unit  Math equivalent          Default          Description
-========== ===== ========================= ================ =========================================================
-batch_size                                                1 Size of batch
-eta              :math:`\eta`                          1e-4 Learning rate
-Wmax          pA :math:`W_{ji}^\text{max}`            100.0 Maximal value for synaptic weight
-Wmin          pA :math:`W_{ji}^\text{min}`              0.0 Minimal value for synaptic weight
-========== ===== ========================= ================ =========================================================
+========== ==== ========================= ======= =================================
+**Common optimizer parameters**
+-----------------------------------------------------------------------------------
+Parameter  Unit  Math equivalent          Default Description
+========== ==== ========================= ======= =================================
+batch_size                                      1 Size of batch
+eta             :math:`\eta`                 1e-4 Learning rate
+Wmax         pA :math:`W_{ji}^\text{max}`   100.0 Maximal value for synaptic weight
+Wmin         pA :math:`W_{ji}^\text{min}`     0.0 Minimal value for synaptic weight
+========== ==== ========================= ======= =================================
 
-========== ===== ========================= ================ =========================================================
+========= ==== =============== ================ ==============
 **Gradient descent parameters (default optimizer)**
----------------------------------------------------------------------------------------------------------------------
-Parameter   Unit  Math equivalent          Default          Description
-========== ===== ========================= ================ =========================================================
-type                                       gradient_descent Optimizer type
-========== ===== ========================= ================ =========================================================
+--------------------------------------------------------------
+Parameter Unit Math equivalent Default          Description
+========= ==== =============== ================ ==============
+type                           gradient_descent Optimizer type
+========= ==== =============== ================ ==============
 
-========== ===== ========================= ================ =========================================================
+========= ==== ================ ======= =================================================
 **Adam optimizer parameters**
----------------------------------------------------------------------------------------------------------------------
-Parameter   Unit  Math equivalent          Default          Description
-========== ===== ========================= ================ =========================================================
-type                                                   adam Optimizer type
-beta_1            :math:`\beta_1`                        0.9 Exponential decay rate for first moment estimate of Adam
-                                                            optimizer
-beta_2            :math:`\beta_2`                      0.999 Exponential decay rate for second moment estimate of Adam
-                                                            optimizer
-epsilon          :math:`\epsilon`                      1e-8 Small constant for numerical stability of Adam optimizer
-========== ===== ========================= ================ =========================================================
+-----------------------------------------------------------------------------------------
+Parameter Unit Math equivalent  Default Description
+========= ==== ================ ======= =================================================
+type                               adam Optimizer type
+beta_1         :math:`\beta_1`      0.9 Exponential decay rate for first moment estimate
+beta_2         :math:`\beta_2`    0.999 Exponential decay rate for second moment estimate
+epsilon        :math:`\epsilon`    1e-8 Small constant for numerical stability
+========= ==== ================ ======= =================================================
 
-========= ==== =============== =======  ===============================================================
-**Adam optimizer parameters for individual synapses**
--------------------------------------------------------------------------------------------------------
-Parameter Unit Math equivalent Default  Description
-========= ==== =============== =======  ===============================================================
-m              :math:`m_0`         0.0  Initial value of first moment estimate m of Adam optimizer
-v              :math:`v_0`         0.0  Initial value of second moment raw estimate v of Adam optimizer
-========= ==== =============== =======  ===============================================================
+The following state variables evolve during simulation.
+
+============== ==== =============== ============= ==========================
+**Adam optimizer state variables for individual synapses**
+----------------------------------------------------------------------------
+State variable Unit Math equivalent Initial value Description
+============== ==== =============== ============= ==========================
+m                   :math:`m`                 0.0 First moment estimate
+v                   :math:`v`                 0.0 Second moment raw estimate
+============== ==== =============== ============= ==========================
 
 
 References

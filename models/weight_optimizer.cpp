@@ -70,9 +70,9 @@ WeightOptimizerCommonProperties::set_status( const DictionaryDatum& d )
 
   double new_eta = eta_;
   updateValue< double >( d, names::eta, new_eta );
-  if ( new_eta <= 0 )
+  if ( new_eta < 0 )
   {
-    throw BadProperty( "Learning rate eta > 0 required." );
+    throw BadProperty( "Learning rate eta ≥ 0 required." );
   }
   eta_ = new_eta;
 

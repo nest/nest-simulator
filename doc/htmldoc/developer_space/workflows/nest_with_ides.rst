@@ -428,6 +428,11 @@ Setting up the CMake configuration in CLion has the following advantages:
 * CLion regenerates build files when checking out a new branch, potentially overriding the build you created by manually running CMake from the command line.
 * After setting up both the CMake configuaration and a run configuration, you won't need to use the command line to run ``cmake``, ``make``, ``make install``, and ``python *.py`` at all anymore. All will be done automatically by CLion and you only need to run your application without having to manually recompile.
 
+.. note::
+
+   CLion is a commercial product. It is *your responsibility* to ensure that you have a valid
+   license permitting you to use CLion (or any software product) for your work on the    
+   NEST Simulator. 
 
 Setting up the project
 ~~~~~~~~~~~~~~~~~~~~~~

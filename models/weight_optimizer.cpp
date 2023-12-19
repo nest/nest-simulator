@@ -34,7 +34,7 @@ namespace nest
 WeightOptimizerCommonProperties::WeightOptimizerCommonProperties()
   : batch_size_( 1 )
   , eta_( 1e-4 )
-  , Wmin_( 0.0 )
+  , Wmin_( -100.0 )
   , Wmax_( 100.0 )
 {
 }

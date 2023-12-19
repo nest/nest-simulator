@@ -808,7 +808,7 @@ public:
    *
    * @params presyn_isis  is cleared during call
    */
-  virtual double gradient_change( std::vector< long >& presyn_isis,
+  virtual double compute_gradient( std::vector< long >& presyn_isis,
     const long t_previous_update,
     const long t_previous_trigger_spike,
     const double kappa,

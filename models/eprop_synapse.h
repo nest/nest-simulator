@@ -524,10 +524,10 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
 
     target->write_update_to_history( t_previous_update_, t_current_update );
 
-    const double gradient_change = target->gradient_change(
+    const double gradient = target->compute_gradient(
       presyn_isis_, t_previous_update_, t_previous_trigger_spike_, kappa_, cp.average_gradient_ );
 
-    weight_ = optimizer_->optimized_weight( *cp.optimizer_cp_, idx_current_update, gradient_change, weight_ );
+    weight_ = optimizer_->optimized_weight( *cp.optimizer_cp_, idx_current_update, gradient, weight_ );
 
     t_previous_update_ = t_current_update;
     t_next_update_ = t_current_update + update_interval;

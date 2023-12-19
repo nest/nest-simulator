@@ -432,7 +432,7 @@ eprop_iaf_psc_delta::handle( DataLoggingRequest& e )
 }
 
 double
-eprop_iaf_psc_delta::gradient_change( std::vector< long >& presyn_isis,
+eprop_iaf_psc_delta::compute_gradient( std::vector< long >& presyn_isis,
   const long t_previous_update,
   const long t_previous_trigger_spike,
   const double kappa,

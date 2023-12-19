@@ -219,7 +219,7 @@ public:
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
 
-  double gradient_change( std::vector< long >& presyn_isis,
+  double compute_gradient( std::vector< long >& presyn_isis,
     const long t_previous_update,
     const long t_previous_trigger_spike,
     const double kappa,

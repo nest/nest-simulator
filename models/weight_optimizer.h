@@ -227,7 +227,7 @@ public:
   //! Return optimized weight based on current weight.
   double optimized_weight( const WeightOptimizerCommonProperties& cp,
     const size_t idx_current_update,
-    const double gradient_change,
+    const double gradient,
     double weight );
 
 protected:

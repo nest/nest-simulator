@@ -107,10 +107,10 @@ WeightOptimizer::set_status( const DictionaryDatum& d )
 double
 WeightOptimizer::optimized_weight( const WeightOptimizerCommonProperties& cp,
   const size_t idx_current_update,
-  const double gradient_change,
+  const double gradient,
   double weight )
 {
-  sum_gradients_ += gradient_change;
+  sum_gradients_ += gradient;
 
   const size_t current_optimization_step = 1 + idx_current_update / cp.batch_size_;
   if ( optimization_step_ < current_optimization_step )

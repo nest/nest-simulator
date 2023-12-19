@@ -388,7 +388,7 @@ eprop_readout::handle( DataLoggingRequest& e )
 }
 
 double
-eprop_readout::gradient_change( std::vector< long >& presyn_isis,
+eprop_readout::compute_gradient( std::vector< long >& presyn_isis,
   const long,
   const long t_previous_trigger_spike,
   const double kappa,

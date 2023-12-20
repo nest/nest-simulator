@@ -22,7 +22,7 @@ correlospinmatrix_detector
 dc_generator
 diffusion_connection
 eprop_iaf_bsshslm_2020
-eprop_iaf_bsshslm_2020_adapt
+eprop_iaf_adapt_bsshslm_2020
 eprop_readout_bsshslm_2020
 eprop_synapse_bsshslm_2020
 eprop_learning_signal_connection_bsshslm_2020

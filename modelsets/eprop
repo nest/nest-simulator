@@ -9,7 +9,7 @@ step_rate_generator
 poisson_generator
 
 eprop_iaf_bsshslm_2020
-eprop_iaf_bsshslm_2020_adapt
+eprop_iaf_adapt_bsshslm_2020
 eprop_readout_bsshslm_2020
 parrot_neuron
 

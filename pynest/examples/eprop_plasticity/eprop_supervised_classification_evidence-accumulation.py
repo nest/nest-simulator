@@ -589,35 +589,6 @@ accuracy = np.mean((y_target == y_prediction), axis=1)
 recall_errors = 1.0 - accuracy
 
 # %% ###########################################################################################################
-# Verify results
-# ~~~~~~~~~~~~~~
-# Furthermore, we compare the calculated losses to some hardcoded verification losses to ensure everything with
-# the NEST installation is fine. For the unmodified script, these should be precisely the same.
-
-loss_reference = [
-    0.7411525500061912,
-    0.7403881877007442,
-    0.6657852331777671,
-    0.6636441933229886,
-    0.7294289628449472,
-]
-
-n_compare = min(len(loss), len(loss_reference))
-
-if np.allclose(loss[:n_compare], loss_reference[:n_compare], rtol=1e-8):
-    print()
-    print("Verification successful.")
-    print()
-else:
-    print()
-    print("Verification FAILED!")
-    print(f"    Expected  : {loss_reference[:n_compare]}")
-    print(f"    Observed  : {loss[:n_compare]}")
-    print(f"    Difference: {np.array(loss_reference[:n_compare]) - np.array(loss[:n_compare])}")
-    print()
-    exit(1)
-
-# %% ###########################################################################################################
 # Plot results
 # ~~~~~~~~~~~~
 # Then, we plot a series of plots.

@@ -2,7 +2,7 @@ E-prop plasticity examples
 ==========================
 
 
-.. image:: ../../../../pynest/examples/eprop_plasticity/eprop_supervised_regression_infrastructure.png
+.. image:: ../../../../pynest/examples/eprop_plasticity/eprop_supervised_regression_schematic_sine-waves.png
 
 Eligibility propagation (e-prop) [1]_ is a three-factor learning rule for spiking neural networks
 that approximates backpropagation through time. The original TensorFlow implementation of e-prop

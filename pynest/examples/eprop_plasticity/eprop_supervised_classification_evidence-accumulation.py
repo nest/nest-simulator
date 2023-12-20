@@ -40,7 +40,7 @@ taking a left and a right turn of which one is correct. After a number of iterat
 infer the underlying rationale of the task. Here, the solution is to turn to the side in which more cues were
 presented.
 
-.. image:: ../../../../pynest/examples/eprop_plasticity/eprop_supervised_classification_infrastructure.png
+.. image:: ../../../../pynest/examples/eprop_plasticity/eprop_supervised_classification_schematic_evidence-accumulation.png
    :width: 70 %
    :alt: See Figure 1 below.
    :align: center
@@ -92,7 +92,7 @@ from IPython.display import Image
 # synapse models below. The connections that must be established are numbered 1 to 7.
 
 try:
-    Image(filename="./eprop_supervised_classification_infrastructure.png")
+    Image(filename="./eprop_supervised_classification_schematic_evidence-accumulation.png")
 except Exception:
     pass
 

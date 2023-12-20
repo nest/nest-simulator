@@ -39,7 +39,7 @@ In this task, the network learns to generate an arbitrary N-dimensional temporal
 learns to reproduce with its overall spiking activity a two-dimensional, roughly two-second-long target signal
 which encode the x and y coordinates of an infinite-loop.
 
-.. image:: ../../../../pynest/examples/eprop_plasticity/eprop_supervised_regression_infrastructure.png
+.. image:: ../../../../pynest/examples/eprop_plasticity/eprop_supervised_regression_schematic_infinite-loop.png
    :width: 70 %
    :alt: See Figure 1 below.
    :align: center
@@ -90,7 +90,7 @@ from IPython.display import Image
 # synapse models below. The connections that must be established are numbered 1 to 6.
 
 try:
-    Image(filename="./eprop_supervised_regression_infrastructure.png")
+    Image(filename="./eprop_supervised_regression_schematic_infinite-loop.png")
 except Exception:
     pass
 

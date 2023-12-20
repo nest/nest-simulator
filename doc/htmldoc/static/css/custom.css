@@ -99,6 +99,9 @@ section#kernel-attributes-nest-nestmodule dd {
         border-bottom: 1px solid #ddd;
 }
 
+.menuselection {
+   font-weight: bold;
+}
 
 /**************************************************************************************
  Settings for overriding material design theme 

@@ -1,5 +1,5 @@
 /*
- *  eprop_iaf_psc_delta.h
+ *  eprop_iaf_bsshslm_2020.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef EPROP_IAF_PSC_DELTA_H
-#define EPROP_IAF_PSC_DELTA_H
+#ifndef EPROP_IAF_BSSHSLM_2020_H
+#define EPROP_IAF_BSSHSLM_2020_H
 
 // nestkernel
 #include "connection.h"
@@ -46,7 +46,7 @@ postsynaptic currents for e-prop plasticity
 Description
 +++++++++++
 
-``eprop_iaf_psc_delta`` is an implementation of a leaky integrate-and-fire
+``eprop_iaf_bsshslm_2020`` is an implementation of a leaky integrate-and-fire
 neuron model with delta-shaped postsynaptic currents used for eligibility
 propagation (e-prop) plasticity.
 
@@ -54,9 +54,7 @@ An additional state variable and the corresponding differential
 equation represents a piecewise constant external current.
 
 .. note::
-  Contrary to what the model names suggest, ``eprop_iaf_psc_delta`` is not simply
-  the ``iaf_psc_delta`` model endowed with e-prop. While both models are
-  integrate-and-fire neurons with delta-shaped post-synaptic currents, there are
+  The ``eprop_iaf_bsshslm_2020`` is similar to the ``iaf_psc_delta`` model, but there are
   minor differences in the dynamics of the two models, such as the propagator of
   the post-synaptic current and the voltage reset upon a spike.
 
@@ -128,10 +126,10 @@ The overall gradient is given by the addition of the two gradients.
 
 For more information on e-prop plasticity, see the documentation on the other e-prop models:
 
-    * :doc:`eprop_iaf_psc_delta_adapt<../models/eprop_iaf_psc_delta_adapt/>`
-    * :doc:`eprop_readout<../models/eprop_readout/>`
-    * :doc:`eprop_synapse<../models/eprop_synapse/>`
-    * :doc:`eprop_learning_signal_connection<../models/eprop_learning_signal_connection/>`
+    * :doc:`eprop_iaf_bsshslm_2020_adapt<../models/eprop_iaf_bsshslm_2020_adapt/>`
+    * :doc:`eprop_readout_bsshslm_2020<../models/eprop_readout_bsshslm_2020/>`
+    * :doc:`eprop_synapse_bsshslm_2020<../models/eprop_synapse_bsshslm_2020/>`
+    * :doc:`eprop_learning_signal_connection_bsshslm_2020<../models/eprop_learning_signal_connection_bsshslm_2020/>`
 
 Details on the event-based NEST implementation of e-prop can be found in [2]_.
 
@@ -223,25 +221,25 @@ See also
 Examples using this model
 ++++++++++++++++++++++++++
 
-.. listexamples:: eprop_iaf_psc_delta
+.. listexamples:: eprop_iaf_bsshslm_2020
 
 EndUserDocs */
 
-void register_eprop_iaf_psc_delta( const std::string& name );
+void register_eprop_iaf_bsshslm_2020( const std::string& name );
 
 /**
  * Class implementing a current-based leaky integrate-and-fire neuron model with delta-shaped postsynaptic currents for
- * e-prop plasticity.
+ * e-prop plasticity according to Bellec et al (2020).
  */
-class eprop_iaf_psc_delta : public EpropArchivingNodeRecurrent
+class eprop_iaf_bsshslm_2020 : public EpropArchivingNodeRecurrent
 {
 
 public:
   //! Default constructor.
-  eprop_iaf_psc_delta();
+  eprop_iaf_bsshslm_2020();
 
   //! Copy constructor.
-  eprop_iaf_psc_delta( const eprop_iaf_psc_delta& );
+  eprop_iaf_bsshslm_2020( const eprop_iaf_bsshslm_2020& );
 
   using Node::handle;
   using Node::handles_test_event;
@@ -280,13 +278,13 @@ private:
   double compute_piecewise_linear_derivative();
 
   //! Compute the surrogate gradient.
-  double ( eprop_iaf_psc_delta::*compute_surrogate_gradient )();
+  double ( eprop_iaf_bsshslm_2020::*compute_surrogate_gradient )();
 
   //! Map for storing a static set of recordables.
-  friend class RecordablesMap< eprop_iaf_psc_delta >;
+  friend class RecordablesMap< eprop_iaf_bsshslm_2020 >;
 
   //! Logger for universal data supporting the data logging request / reply mechanism. Populated with a recordables map.
-  friend class UniversalDataLogger< eprop_iaf_psc_delta >;
+  friend class UniversalDataLogger< eprop_iaf_bsshslm_2020 >;
 
   //! Structure of parameters.
   struct Parameters_
@@ -375,10 +373,10 @@ private:
   struct Buffers_
   {
     //! Default constructor.
-    Buffers_( eprop_iaf_psc_delta& );
+    Buffers_( eprop_iaf_bsshslm_2020& );
 
     //! Copy constructor.
-    Buffers_( const Buffers_&, eprop_iaf_psc_delta& );
+    Buffers_( const Buffers_&, eprop_iaf_bsshslm_2020& );
 
     //! Buffer for incoming spikes.
     RingBuffer spikes_;
@@ -387,7 +385,7 @@ private:
     RingBuffer currents_;
 
     //! Logger for universal data.
-    UniversalDataLogger< eprop_iaf_psc_delta > logger_;
+    UniversalDataLogger< eprop_iaf_bsshslm_2020 > logger_;
   };
 
   //! Structure of general variables.
@@ -442,11 +440,11 @@ private:
   Buffers_ B_;
 
   //! Map storing a static set of recordables.
-  static RecordablesMap< eprop_iaf_psc_delta > recordablesMap_;
+  static RecordablesMap< eprop_iaf_bsshslm_2020 > recordablesMap_;
 };
 
 inline size_t
-eprop_iaf_psc_delta::send_test_event( Node& target, size_t receptor_type, synindex, bool )
+eprop_iaf_bsshslm_2020::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -454,7 +452,7 @@ eprop_iaf_psc_delta::send_test_event( Node& target, size_t receptor_type, synind
 }
 
 inline size_t
-eprop_iaf_psc_delta::handles_test_event( SpikeEvent&, size_t receptor_type )
+eprop_iaf_bsshslm_2020::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -465,7 +463,7 @@ eprop_iaf_psc_delta::handles_test_event( SpikeEvent&, size_t receptor_type )
 }
 
 inline size_t
-eprop_iaf_psc_delta::handles_test_event( CurrentEvent&, size_t receptor_type )
+eprop_iaf_bsshslm_2020::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -476,7 +474,7 @@ eprop_iaf_psc_delta::handles_test_event( CurrentEvent&, size_t receptor_type )
 }
 
 inline size_t
-eprop_iaf_psc_delta::handles_test_event( LearningSignalConnectionEvent&, size_t receptor_type )
+eprop_iaf_bsshslm_2020::handles_test_event( LearningSignalConnectionEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -487,7 +485,7 @@ eprop_iaf_psc_delta::handles_test_event( LearningSignalConnectionEvent&, size_t 
 }
 
 inline size_t
-eprop_iaf_psc_delta::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
+eprop_iaf_bsshslm_2020::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -498,7 +496,7 @@ eprop_iaf_psc_delta::handles_test_event( DataLoggingRequest& dlr, size_t recepto
 }
 
 inline void
-eprop_iaf_psc_delta::get_status( DictionaryDatum& d ) const
+eprop_iaf_bsshslm_2020::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
@@ -506,7 +504,7 @@ eprop_iaf_psc_delta::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-eprop_iaf_psc_delta::set_status( const DictionaryDatum& d )
+eprop_iaf_bsshslm_2020::set_status( const DictionaryDatum& d )
 {
   // temporary copies in case of errors
   Parameters_ ptmp = P_;
@@ -522,4 +520,4 @@ eprop_iaf_psc_delta::set_status( const DictionaryDatum& d )
 
 } // namespace nest
 
-#endif // EPROP_IAF_PSC_DELTA_H
+#endif // EPROP_IAF_BSSHSLM_2020_H

@@ -1,5 +1,5 @@
 /*
- *  eprop_synapse.h
+ *  eprop_synapse_bsshslm_2020.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef EPROP_SYNAPSE_H
-#define EPROP_SYNAPSE_H
+#ifndef EPROP_SYNAPSE_BSSHSLM_2020_H
+#define EPROP_SYNAPSE_BSSHSLM_2020_H
 
 // nestkernel
 #include "connection.h"
@@ -43,7 +43,7 @@ Synapse type for e-prop plasticity
 Description
 +++++++++++
 
-``eprop_synapse`` is a connector to create e-prop synapses between postsynaptic
+``eprop_synapse_bsshslm_2020`` is a connector to create e-prop synapses between postsynaptic
 neurons :math:`j` and presynaptic neurons and :math:`i` as defined in [1]_.
 
 The e-prop synapse collects the presynaptic spikes needed for calculating the
@@ -55,14 +55,14 @@ Evntually, it optimizes the weight with the specified optimizer.
 E-prop synapses require archiving of continuous quantities. Therefore e-prop
 synapses can only be connected to neuron models that are capable of doing this
 archiving. So far, compatible models are ``eprop_iaf_psc_delta``,
-``eprop_iaf_psc_delta_adapt``, and ``eprop_readout``.
+``eprop_iaf_psc_delta_adapt``, and ``eprop_readout_bsshslm_2020``.
 
 For more information on e-prop plasticity, see the documentation on the other e-prop models:
 
-    * :doc:`eprop_iaf_psc_delta<../models/eprop_iaf_psc_delta/>`
-    * :doc:`eprop_readout<../models/eprop_readout/>`
-    * :doc:`eprop_synapse<../models/eprop_synapse/>`
-    * :doc:`eprop_learning_signal_connection<../models/eprop_learning_signal_connection/>`
+    * :doc:`eprop_iaf_bsshslm_2020<../models/eprop_iaf_bsshslm_2020/>`
+    * :doc:`eprop_readout_bsshslm_2020<../models/eprop_readout_bsshslm_2020/>`
+    * :doc:`eprop_synapse_bsshslm_2020<../models/eprop_synapse_bsshslm_2020/>`
+    * :doc:`eprop_learning_signal_connection_bsshslm_2020<../models/eprop_learning_signal_connection_bsshslm_2020/>`
 
 For more information on the optimizers, see the documentation of the weight optimizer:
 
@@ -140,7 +140,7 @@ See also
 Examples using this model
 ++++++++++++++++++++++++++
 
-.. listexamples:: eprop_synapse
+.. listexamples:: eprop_synapse_bsshslm_2020
 
 EndUserDocs */
 
@@ -155,20 +155,20 @@ EndUserDocs */
  *
  * @see WeightOptimizerCommonProperties
  */
-class EpropCommonProperties : public CommonSynapseProperties
+class EpropSynapseBSSHSLM2020CommonProperties : public CommonSynapseProperties
 {
 public:
   // Default constructor.
-  EpropCommonProperties();
+  EpropSynapseBSSHSLM2020CommonProperties();
 
   //! Copy constructor.
-  EpropCommonProperties( const EpropCommonProperties& );
+  EpropSynapseBSSHSLM2020CommonProperties( const EpropSynapseBSSHSLM2020CommonProperties& );
 
   //! Assignment operator.
-  EpropCommonProperties& operator=( const EpropCommonProperties& ) = delete;
+  EpropSynapseBSSHSLM2020CommonProperties& operator=( const EpropSynapseBSSHSLM2020CommonProperties& ) = delete;
 
   //! Destructor.
-  ~EpropCommonProperties();
+  ~EpropSynapseBSSHSLM2020CommonProperties();
 
   //! Get parameter dictionary.
   void get_status( DictionaryDatum& d ) const;
@@ -188,7 +188,7 @@ public:
 };
 
 //! Register the eprop synapse model.
-void register_eprop_synapse( const std::string& name );
+void register_eprop_synapse_bsshslm_2020( const std::string& name );
 
 /**
  * Class implementing a synapse model for e-prop plasticity.
@@ -214,12 +214,12 @@ void register_eprop_synapse( const std::string& name );
  * set on it.
  */
 template < typename targetidentifierT >
-class eprop_synapse : public Connection< targetidentifierT >
+class eprop_synapse_bsshslm_2020 : public Connection< targetidentifierT >
 {
 
 public:
   //! Type of the common synapse properties.
-  typedef EpropCommonProperties CommonPropertiesType;
+  typedef EpropSynapseBSSHSLM2020CommonProperties CommonPropertiesType;
 
   //! Type of the connection base.
   typedef Connection< targetidentifierT > ConnectionBase;
@@ -234,22 +234,22 @@ public:
     | ConnectionModelProperties::SUPPORTS_HPC;
 
   //! Default constructor.
-  eprop_synapse();
+  eprop_synapse_bsshslm_2020();
 
   //! Destructor
-  ~eprop_synapse();
+  ~eprop_synapse_bsshslm_2020();
 
   //! Parameterized copy constructor.
-  eprop_synapse( const eprop_synapse& );
+  eprop_synapse_bsshslm_2020( const eprop_synapse_bsshslm_2020& );
 
   //! Assignment operator
-  eprop_synapse& operator=( const eprop_synapse& );
+  eprop_synapse_bsshslm_2020& operator=( const eprop_synapse_bsshslm_2020& );
 
   //! Move constructor
-  eprop_synapse( eprop_synapse&& );
+  eprop_synapse_bsshslm_2020( eprop_synapse_bsshslm_2020&& );
 
   //! Move assignment operator
-  eprop_synapse& operator=( eprop_synapse&& );
+  eprop_synapse_bsshslm_2020& operator=( eprop_synapse_bsshslm_2020&& );
 
   using ConnectionBase::get_delay;
   using ConnectionBase::get_delay_steps;
@@ -263,7 +263,7 @@ public:
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
   //! Send the spike event.
-  bool send( Event& e, size_t thread, const EpropCommonProperties& cp );
+  bool send( Event& e, size_t thread, const EpropSynapseBSSHSLM2020CommonProperties& cp );
 
   //! Dummy node for testing the connection.
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -338,24 +338,24 @@ private:
 };
 
 template < typename targetidentifierT >
-constexpr ConnectionModelProperties eprop_synapse< targetidentifierT >::properties;
+constexpr ConnectionModelProperties eprop_synapse_bsshslm_2020< targetidentifierT >::properties;
 
 // Explicitly declare specializations of Connector methods that need to do special things for eprop_synapse
 template <>
-void Connector< eprop_synapse< TargetIdentifierPtrRport > >::disable_connection( const size_t lcid );
+void Connector< eprop_synapse_bsshslm_2020< TargetIdentifierPtrRport > >::disable_connection( const size_t lcid );
 
 template <>
-void Connector< eprop_synapse< TargetIdentifierIndex > >::disable_connection( const size_t lcid );
+void Connector< eprop_synapse_bsshslm_2020< TargetIdentifierIndex > >::disable_connection( const size_t lcid );
 
 template <>
-Connector< eprop_synapse< TargetIdentifierPtrRport > >::~Connector();
+Connector< eprop_synapse_bsshslm_2020< TargetIdentifierPtrRport > >::~Connector();
 
 template <>
-Connector< eprop_synapse< TargetIdentifierIndex > >::~Connector();
+Connector< eprop_synapse_bsshslm_2020< TargetIdentifierIndex > >::~Connector();
 
 
 template < typename targetidentifierT >
-eprop_synapse< targetidentifierT >::eprop_synapse()
+eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020()
   : ConnectionBase()
   , weight_( 1.0 )
   , t_previous_spike_( 0 )
@@ -370,14 +370,14 @@ eprop_synapse< targetidentifierT >::eprop_synapse()
 }
 
 template < typename targetidentifierT >
-eprop_synapse< targetidentifierT >::~eprop_synapse()
+eprop_synapse_bsshslm_2020< targetidentifierT >::~eprop_synapse_bsshslm_2020()
 {
 }
 
 // This copy constructor is used to create instances from prototypes.
 // Therefore, only parameter values are copied.
 template < typename targetidentifierT >
-eprop_synapse< targetidentifierT >::eprop_synapse( const eprop_synapse& es )
+eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020( const eprop_synapse_bsshslm_2020& es )
   : ConnectionBase( es )
   , weight_( es.weight_ )
   , t_previous_spike_( 0 )
@@ -393,8 +393,8 @@ eprop_synapse< targetidentifierT >::eprop_synapse( const eprop_synapse& es )
 
 // This assignement operator is used to write a connection into the connection array.
 template < typename targetidentifierT >
-eprop_synapse< targetidentifierT >&
-eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
+eprop_synapse_bsshslm_2020< targetidentifierT >&
+eprop_synapse_bsshslm_2020< targetidentifierT >::operator=( const eprop_synapse_bsshslm_2020& es )
 {
   if ( this == &es )
   {
@@ -417,7 +417,7 @@ eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
 }
 
 template < typename targetidentifierT >
-eprop_synapse< targetidentifierT >::eprop_synapse( eprop_synapse&& es )
+eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020( eprop_synapse_bsshslm_2020&& es )
   : ConnectionBase( es )
   , weight_( es.weight_ )
   , t_previous_spike_( 0 )
@@ -434,8 +434,8 @@ eprop_synapse< targetidentifierT >::eprop_synapse( eprop_synapse&& es )
 
 // This assignement operator is used to write a connection into the connection array.
 template < typename targetidentifierT >
-eprop_synapse< targetidentifierT >&
-eprop_synapse< targetidentifierT >::operator=( eprop_synapse&& es )
+eprop_synapse_bsshslm_2020< targetidentifierT >&
+eprop_synapse_bsshslm_2020< targetidentifierT >::operator=( eprop_synapse_bsshslm_2020&& es )
 {
   if ( this == &es )
   {
@@ -461,7 +461,7 @@ eprop_synapse< targetidentifierT >::operator=( eprop_synapse&& es )
 
 template < typename targetidentifierT >
 inline void
-eprop_synapse< targetidentifierT >::check_connection( Node& s,
+eprop_synapse_bsshslm_2020< targetidentifierT >::check_connection( Node& s,
   Node& t,
   size_t receptor_type,
   const CommonPropertiesType& cp )
@@ -482,7 +482,7 @@ eprop_synapse< targetidentifierT >::check_connection( Node& s,
 
 template < typename targetidentifierT >
 inline void
-eprop_synapse< targetidentifierT >::delete_optimizer()
+eprop_synapse_bsshslm_2020< targetidentifierT >::delete_optimizer()
 {
   delete optimizer_;
   // do not set to nullptr to allow detection of double deletion
@@ -490,7 +490,9 @@ eprop_synapse< targetidentifierT >::delete_optimizer()
 
 template < typename targetidentifierT >
 bool
-eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCommonProperties& cp )
+eprop_synapse_bsshslm_2020< targetidentifierT >::send( Event& e,
+  size_t thread,
+  const EpropSynapseBSSHSLM2020CommonProperties& cp )
 {
   Node* target = get_target( thread );
   assert( target );
@@ -548,7 +550,7 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropCo
 
 template < typename targetidentifierT >
 void
-eprop_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
+eprop_synapse_bsshslm_2020< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
@@ -567,7 +569,7 @@ eprop_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+eprop_synapse_bsshslm_2020< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   if ( d->known( names::optimizer ) )
@@ -591,7 +593,8 @@ eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
     kappa_ = std::exp( -Time::get_resolution().get_ms() / tau_m_readout_ );
   }
 
-  const auto& gcm = dynamic_cast< const GenericConnectorModel< eprop_synapse< targetidentifierT > >& >( cm );
+  const auto& gcm =
+    dynamic_cast< const GenericConnectorModel< eprop_synapse_bsshslm_2020< targetidentifierT > >& >( cm );
   const CommonPropertiesType& epcp = gcm.get_common_properties();
   if ( weight_ < epcp.optimizer_cp_->get_Wmin() )
   {
@@ -606,4 +609,4 @@ eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
 
 } // namespace nest
 
-#endif // EPROP_SYNAPSE_H
+#endif // EPROP_SYNAPSE_BSSHSLM_2020_H

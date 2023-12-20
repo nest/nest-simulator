@@ -1,5 +1,5 @@
 /*
- *  eprop_learning_signal_connection.cpp
+ *  eprop_learning_signal_connection_bsshslm_2020.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,13 +20,13 @@
  *
  */
 
-#include "eprop_learning_signal_connection.h"
+#include "eprop_learning_signal_connection_bsshslm_2020.h"
 
 // nestkernel
 #include "nest_impl.h"
 
 void
-nest::register_eprop_learning_signal_connection( const std::string& name )
+nest::register_eprop_learning_signal_connection_bsshslm_2020( const std::string& name )
 {
-  register_connection_model< eprop_learning_signal_connection >( name );
+  register_connection_model< eprop_learning_signal_connection_bsshslm_2020 >( name );
 }

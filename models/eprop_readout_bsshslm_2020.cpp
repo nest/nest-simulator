@@ -1,5 +1,5 @@
 /*
- *  eprop_readout.cpp
+ *  eprop_readout_bsshslm_2020.cpp
  *
  *  This file is part of NEST.
  *
@@ -21,7 +21,7 @@
  */
 
 // nest models
-#include "eprop_readout.h"
+#include "eprop_readout_bsshslm_2020.h"
 
 // C++
 #include <limits>
@@ -43,33 +43,33 @@ namespace nest
 {
 
 void
-register_eprop_readout( const std::string& name )
+register_eprop_readout_bsshslm_2020( const std::string& name )
 {
-  register_node_model< eprop_readout >( name );
+  register_node_model< eprop_readout_bsshslm_2020 >( name );
 }
 
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
 
-RecordablesMap< eprop_readout > eprop_readout::recordablesMap_;
+RecordablesMap< eprop_readout_bsshslm_2020 > eprop_readout_bsshslm_2020::recordablesMap_;
 
 template <>
 void
-RecordablesMap< eprop_readout >::create()
+RecordablesMap< eprop_readout_bsshslm_2020 >::create()
 {
-  insert_( names::error_signal, &eprop_readout::get_error_signal_ );
-  insert_( names::readout_signal, &eprop_readout::get_readout_signal_ );
-  insert_( names::readout_signal_unnorm, &eprop_readout::get_readout_signal_unnorm_ );
-  insert_( names::target_signal, &eprop_readout::get_target_signal_ );
-  insert_( names::V_m, &eprop_readout::get_v_m_ );
+  insert_( names::error_signal, &eprop_readout_bsshslm_2020::get_error_signal_ );
+  insert_( names::readout_signal, &eprop_readout_bsshslm_2020::get_readout_signal_ );
+  insert_( names::readout_signal_unnorm, &eprop_readout_bsshslm_2020::get_readout_signal_unnorm_ );
+  insert_( names::target_signal, &eprop_readout_bsshslm_2020::get_target_signal_ );
+  insert_( names::V_m, &eprop_readout_bsshslm_2020::get_v_m_ );
 }
 
 /* ----------------------------------------------------------------
  * Default constructors for parameters, state, and buffers
  * ---------------------------------------------------------------- */
 
-eprop_readout::Parameters_::Parameters_()
+eprop_readout_bsshslm_2020::Parameters_::Parameters_()
   : C_m_( 250.0 )
   , E_L_( 0.0 )
   , I_e_( 0.0 )
@@ -79,7 +79,7 @@ eprop_readout::Parameters_::Parameters_()
 {
 }
 
-eprop_readout::State_::State_()
+eprop_readout_bsshslm_2020::State_::State_()
   : error_signal_( 0.0 )
   , readout_signal_( 0.0 )
   , readout_signal_unnorm_( 0.0 )
@@ -90,12 +90,12 @@ eprop_readout::State_::State_()
 {
 }
 
-eprop_readout::Buffers_::Buffers_( eprop_readout& n )
+eprop_readout_bsshslm_2020::Buffers_::Buffers_( eprop_readout_bsshslm_2020& n )
   : logger_( n )
 {
 }
 
-eprop_readout::Buffers_::Buffers_( const Buffers_&, eprop_readout& n )
+eprop_readout_bsshslm_2020::Buffers_::Buffers_( const Buffers_&, eprop_readout_bsshslm_2020& n )
   : logger_( n )
 {
 }
@@ -105,7 +105,7 @@ eprop_readout::Buffers_::Buffers_( const Buffers_&, eprop_readout& n )
  * ---------------------------------------------------------------- */
 
 void
-eprop_readout::Parameters_::get( DictionaryDatum& d ) const
+eprop_readout_bsshslm_2020::Parameters_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::C_m, C_m_ );
   def< double >( d, names::E_L, E_L_ );
@@ -116,7 +116,7 @@ eprop_readout::Parameters_::get( DictionaryDatum& d ) const
 }
 
 double
-eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
+eprop_readout_bsshslm_2020::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   // if leak potential is changed, adjust all variables defined relative to it
   const double ELold = E_L_;
@@ -149,7 +149,7 @@ eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-eprop_readout::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+eprop_readout_bsshslm_2020::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
   def< double >( d, names::V_m, v_m_ + p.E_L_ );
   def< double >( d, names::error_signal, error_signal_ );
@@ -159,7 +159,7 @@ eprop_readout::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 }
 
 void
-eprop_readout::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
+eprop_readout_bsshslm_2020::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
 {
   v_m_ -= updateValueParam< double >( d, names::V_m, v_m_, node ) ? p.E_L_ : delta_EL;
 }
@@ -168,7 +168,7 @@ eprop_readout::State_::set( const DictionaryDatum& d, const Parameters_& p, doub
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-eprop_readout::eprop_readout()
+eprop_readout_bsshslm_2020::eprop_readout_bsshslm_2020()
   : EpropArchivingNodeReadout()
   , P_()
   , S_()
@@ -177,7 +177,7 @@ eprop_readout::eprop_readout()
   recordablesMap_.create();
 }
 
-eprop_readout::eprop_readout( const eprop_readout& n )
+eprop_readout_bsshslm_2020::eprop_readout_bsshslm_2020( const eprop_readout_bsshslm_2020& n )
   : EpropArchivingNodeReadout( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -190,7 +190,7 @@ eprop_readout::eprop_readout( const eprop_readout& n )
  * ---------------------------------------------------------------- */
 
 void
-eprop_readout::init_buffers_()
+eprop_readout_bsshslm_2020::init_buffers_()
 {
   B_.normalization_rate_ = 0;
   B_.spikes_.clear();   // includes resize
@@ -199,18 +199,18 @@ eprop_readout::init_buffers_()
 }
 
 void
-eprop_readout::pre_run_hook()
+eprop_readout_bsshslm_2020::pre_run_hook()
 {
   B_.logger_.init(); // ensures initialization in case multimeter connected after Simulate
 
   if ( P_.loss_ == "mean_squared_error" )
   {
-    compute_error_signal = &eprop_readout::compute_error_signal_mean_squared_error;
+    compute_error_signal = &eprop_readout_bsshslm_2020::compute_error_signal_mean_squared_error;
     V_.signal_to_other_readouts_ = false;
   }
   else if ( P_.loss_ == "cross_entropy" )
   {
-    compute_error_signal = &eprop_readout::compute_error_signal_cross_entropy;
+    compute_error_signal = &eprop_readout_bsshslm_2020::compute_error_signal_cross_entropy;
     V_.signal_to_other_readouts_ = true;
   }
 
@@ -224,13 +224,13 @@ eprop_readout::pre_run_hook()
 }
 
 long
-eprop_readout::get_shift() const
+eprop_readout_bsshslm_2020::get_shift() const
 {
   return offset_gen_ + delay_in_rec_ + delay_rec_out_;
 }
 
 bool
-eprop_readout::is_eprop_recurrent_node() const
+eprop_readout_bsshslm_2020::is_eprop_recurrent_node() const
 {
   return false;
 }
@@ -240,7 +240,7 @@ eprop_readout::is_eprop_recurrent_node() const
  * ---------------------------------------------------------------- */
 
 void
-eprop_readout::update( Time const& origin, const long from, const long to )
+eprop_readout_bsshslm_2020::update( Time const& origin, const long from, const long to )
 {
   const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
   const double learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
@@ -321,7 +321,7 @@ eprop_readout::update( Time const& origin, const long from, const long to )
  * ---------------------------------------------------------------- */
 
 void
-eprop_readout::compute_error_signal_mean_squared_error( const long lag )
+eprop_readout_bsshslm_2020::compute_error_signal_mean_squared_error( const long lag )
 {
   S_.readout_signal_ = S_.readout_signal_unnorm_;
   S_.readout_signal_unnorm_ = S_.v_m_ + P_.E_L_;
@@ -329,7 +329,7 @@ eprop_readout::compute_error_signal_mean_squared_error( const long lag )
 }
 
 void
-eprop_readout::compute_error_signal_cross_entropy( const long lag )
+eprop_readout_bsshslm_2020::compute_error_signal_cross_entropy( const long lag )
 {
   const double norm_rate = B_.normalization_rate_ + S_.readout_signal_unnorm_;
   S_.readout_signal_ = S_.readout_signal_unnorm_ / norm_rate;
@@ -342,7 +342,7 @@ eprop_readout::compute_error_signal_cross_entropy( const long lag )
  * ---------------------------------------------------------------- */
 
 void
-eprop_readout::handle( DelayedRateConnectionEvent& e )
+eprop_readout_bsshslm_2020::handle( DelayedRateConnectionEvent& e )
 {
   const size_t rport = e.get_rport();
   assert( rport < SUP_RATE_RECEPTOR );
@@ -364,7 +364,7 @@ eprop_readout::handle( DelayedRateConnectionEvent& e )
 }
 
 void
-eprop_readout::handle( SpikeEvent& e )
+eprop_readout_bsshslm_2020::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -373,7 +373,7 @@ eprop_readout::handle( SpikeEvent& e )
 }
 
 void
-eprop_readout::handle( CurrentEvent& e )
+eprop_readout_bsshslm_2020::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -382,13 +382,13 @@ eprop_readout::handle( CurrentEvent& e )
 }
 
 void
-eprop_readout::handle( DataLoggingRequest& e )
+eprop_readout_bsshslm_2020::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
 
 double
-eprop_readout::compute_gradient( std::vector< long >& presyn_isis,
+eprop_readout_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis,
   const long,
   const long t_previous_trigger_spike,
   const double kappa,

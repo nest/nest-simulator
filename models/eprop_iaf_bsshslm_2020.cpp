@@ -1,5 +1,5 @@
 /*
- *  eprop_iaf_psc_delta.cpp
+ *  eprop_iaf_bsshslm_2020.cpp
  *
  *  This file is part of NEST.
  *
@@ -21,7 +21,7 @@
  */
 
 // nest models
-#include "eprop_iaf_psc_delta.h"
+#include "eprop_iaf_bsshslm_2020.h"
 
 // C++
 #include <limits>
@@ -43,31 +43,31 @@ namespace nest
 {
 
 void
-register_eprop_iaf_psc_delta( const std::string& name )
+register_eprop_iaf_bsshslm_2020( const std::string& name )
 {
-  register_node_model< eprop_iaf_psc_delta >( name );
+  register_node_model< eprop_iaf_bsshslm_2020 >( name );
 }
 
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
 
-RecordablesMap< eprop_iaf_psc_delta > eprop_iaf_psc_delta::recordablesMap_;
+RecordablesMap< eprop_iaf_bsshslm_2020 > eprop_iaf_bsshslm_2020::recordablesMap_;
 
 template <>
 void
-RecordablesMap< eprop_iaf_psc_delta >::create()
+RecordablesMap< eprop_iaf_bsshslm_2020 >::create()
 {
-  insert_( names::learning_signal, &eprop_iaf_psc_delta::get_learning_signal_ );
-  insert_( names::surrogate_gradient, &eprop_iaf_psc_delta::get_surrogate_gradient_ );
-  insert_( names::V_m, &eprop_iaf_psc_delta::get_v_m_ );
+  insert_( names::learning_signal, &eprop_iaf_bsshslm_2020::get_learning_signal_ );
+  insert_( names::surrogate_gradient, &eprop_iaf_bsshslm_2020::get_surrogate_gradient_ );
+  insert_( names::V_m, &eprop_iaf_bsshslm_2020::get_v_m_ );
 }
 
 /* ----------------------------------------------------------------
  * Default constructors for parameters, state, and buffers
  * ---------------------------------------------------------------- */
 
-eprop_iaf_psc_delta::Parameters_::Parameters_()
+eprop_iaf_bsshslm_2020::Parameters_::Parameters_()
   : C_m_( 250.0 )
   , c_reg_( 0.0 )
   , E_L_( -70.0 )
@@ -83,7 +83,7 @@ eprop_iaf_psc_delta::Parameters_::Parameters_()
 {
 }
 
-eprop_iaf_psc_delta::State_::State_()
+eprop_iaf_bsshslm_2020::State_::State_()
   : learning_signal_( 0.0 )
   , r_( 0 )
   , surrogate_gradient_( 0.0 )
@@ -94,12 +94,12 @@ eprop_iaf_psc_delta::State_::State_()
 {
 }
 
-eprop_iaf_psc_delta::Buffers_::Buffers_( eprop_iaf_psc_delta& n )
+eprop_iaf_bsshslm_2020::Buffers_::Buffers_( eprop_iaf_bsshslm_2020& n )
   : logger_( n )
 {
 }
 
-eprop_iaf_psc_delta::Buffers_::Buffers_( const Buffers_&, eprop_iaf_psc_delta& n )
+eprop_iaf_bsshslm_2020::Buffers_::Buffers_( const Buffers_&, eprop_iaf_bsshslm_2020& n )
   : logger_( n )
 {
 }
@@ -109,7 +109,7 @@ eprop_iaf_psc_delta::Buffers_::Buffers_( const Buffers_&, eprop_iaf_psc_delta& n
  * ---------------------------------------------------------------- */
 
 void
-eprop_iaf_psc_delta::Parameters_::get( DictionaryDatum& d ) const
+eprop_iaf_bsshslm_2020::Parameters_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::C_m, C_m_ );
   def< double >( d, names::c_reg, c_reg_ );
@@ -126,7 +126,7 @@ eprop_iaf_psc_delta::Parameters_::get( DictionaryDatum& d ) const
 }
 
 double
-eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
+eprop_iaf_bsshslm_2020::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   // if leak potential is changed, adjust all variables defined relative to it
   const double ELold = E_L_;
@@ -209,7 +209,7 @@ eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-eprop_iaf_psc_delta::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+eprop_iaf_bsshslm_2020::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
   def< double >( d, names::V_m, v_m_ + p.E_L_ );
   def< double >( d, names::surrogate_gradient, surrogate_gradient_ );
@@ -217,7 +217,7 @@ eprop_iaf_psc_delta::State_::get( DictionaryDatum& d, const Parameters_& p ) con
 }
 
 void
-eprop_iaf_psc_delta::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
+eprop_iaf_bsshslm_2020::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL, Node* node )
 {
   v_m_ -= updateValueParam< double >( d, names::V_m, v_m_, node ) ? p.E_L_ : delta_EL;
 }
@@ -226,7 +226,7 @@ eprop_iaf_psc_delta::State_::set( const DictionaryDatum& d, const Parameters_& p
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-eprop_iaf_psc_delta::eprop_iaf_psc_delta()
+eprop_iaf_bsshslm_2020::eprop_iaf_bsshslm_2020()
   : EpropArchivingNodeRecurrent()
   , P_()
   , S_()
@@ -235,7 +235,7 @@ eprop_iaf_psc_delta::eprop_iaf_psc_delta()
   recordablesMap_.create();
 }
 
-eprop_iaf_psc_delta::eprop_iaf_psc_delta( const eprop_iaf_psc_delta& n )
+eprop_iaf_bsshslm_2020::eprop_iaf_bsshslm_2020( const eprop_iaf_bsshslm_2020& n )
   : EpropArchivingNodeRecurrent( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -248,7 +248,7 @@ eprop_iaf_psc_delta::eprop_iaf_psc_delta( const eprop_iaf_psc_delta& n )
  * ---------------------------------------------------------------- */
 
 void
-eprop_iaf_psc_delta::init_buffers_()
+eprop_iaf_bsshslm_2020::init_buffers_()
 {
   B_.spikes_.clear();   // includes resize
   B_.currents_.clear(); // includes resize
@@ -256,7 +256,7 @@ eprop_iaf_psc_delta::init_buffers_()
 }
 
 void
-eprop_iaf_psc_delta::pre_run_hook()
+eprop_iaf_bsshslm_2020::pre_run_hook()
 {
   B_.logger_.init(); // ensures initialization in case multimeter connected after Simulate
 
@@ -264,7 +264,7 @@ eprop_iaf_psc_delta::pre_run_hook()
 
   if ( P_.surrogate_gradient_function_ == "piecewise_linear" )
   {
-    compute_surrogate_gradient = &eprop_iaf_psc_delta::compute_piecewise_linear_derivative;
+    compute_surrogate_gradient = &eprop_iaf_bsshslm_2020::compute_piecewise_linear_derivative;
   }
 
   // calculate the entries of the propagator matrix for the evolution of the state vector
@@ -287,13 +287,13 @@ eprop_iaf_psc_delta::pre_run_hook()
 }
 
 long
-eprop_iaf_psc_delta::get_shift() const
+eprop_iaf_bsshslm_2020::get_shift() const
 {
   return offset_gen_ + delay_in_rec_;
 }
 
 bool
-eprop_iaf_psc_delta::is_eprop_recurrent_node() const
+eprop_iaf_bsshslm_2020::is_eprop_recurrent_node() const
 {
   return true;
 }
@@ -303,7 +303,7 @@ eprop_iaf_psc_delta::is_eprop_recurrent_node() const
  * ---------------------------------------------------------------- */
 
 void
-eprop_iaf_psc_delta::update( Time const& origin, const long from, const long to )
+eprop_iaf_bsshslm_2020::update( Time const& origin, const long from, const long to )
 {
   const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
   const bool with_reset = kernel().simulation_manager.get_eprop_reset_neurons_on_update();
@@ -379,7 +379,7 @@ eprop_iaf_psc_delta::update( Time const& origin, const long from, const long to 
  * ---------------------------------------------------------------- */
 
 double
-eprop_iaf_psc_delta::compute_piecewise_linear_derivative()
+eprop_iaf_bsshslm_2020::compute_piecewise_linear_derivative()
 {
   if ( S_.r_ > 0 )
   {
@@ -394,7 +394,7 @@ eprop_iaf_psc_delta::compute_piecewise_linear_derivative()
  * ---------------------------------------------------------------- */
 
 void
-eprop_iaf_psc_delta::handle( SpikeEvent& e )
+eprop_iaf_bsshslm_2020::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -403,7 +403,7 @@ eprop_iaf_psc_delta::handle( SpikeEvent& e )
 }
 
 void
-eprop_iaf_psc_delta::handle( CurrentEvent& e )
+eprop_iaf_bsshslm_2020::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -412,7 +412,7 @@ eprop_iaf_psc_delta::handle( CurrentEvent& e )
 }
 
 void
-eprop_iaf_psc_delta::handle( LearningSignalConnectionEvent& e )
+eprop_iaf_bsshslm_2020::handle( LearningSignalConnectionEvent& e )
 {
   for ( auto it_event = e.begin(); it_event != e.end(); )
   {
@@ -426,13 +426,13 @@ eprop_iaf_psc_delta::handle( LearningSignalConnectionEvent& e )
 }
 
 void
-eprop_iaf_psc_delta::handle( DataLoggingRequest& e )
+eprop_iaf_bsshslm_2020::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
 
 double
-eprop_iaf_psc_delta::compute_gradient( std::vector< long >& presyn_isis,
+eprop_iaf_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis,
   const long t_previous_update,
   const long t_previous_trigger_spike,
   const double kappa,

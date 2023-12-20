@@ -1,5 +1,5 @@
 /*
- *  eprop_synapse.cpp
+ *  eprop_synapse_bsshslm_2020.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,7 +20,7 @@
  *
  */
 
-#include "eprop_synapse.h"
+#include "eprop_synapse_bsshslm_2020.h"
 
 // nestkernel
 #include "nest_impl.h"
@@ -29,32 +29,33 @@ namespace nest
 {
 
 void
-register_eprop_synapse( const std::string& name )
+register_eprop_synapse_bsshslm_2020( const std::string& name )
 {
-  register_connection_model< eprop_synapse >( name );
+  register_connection_model< eprop_synapse_bsshslm_2020 >( name );
 }
 
-EpropCommonProperties::EpropCommonProperties()
+EpropSynapseBSSHSLM2020CommonProperties::EpropSynapseBSSHSLM2020CommonProperties()
   : CommonSynapseProperties()
   , average_gradient_( false )
   , optimizer_cp_( new WeightOptimizerCommonPropertiesGradientDescent() )
 {
 }
 
-EpropCommonProperties::EpropCommonProperties( const EpropCommonProperties& cp )
+EpropSynapseBSSHSLM2020CommonProperties::EpropSynapseBSSHSLM2020CommonProperties(
+  const EpropSynapseBSSHSLM2020CommonProperties& cp )
   : CommonSynapseProperties( cp )
   , average_gradient_( cp.average_gradient_ )
   , optimizer_cp_( cp.optimizer_cp_->clone() )
 {
 }
 
-EpropCommonProperties::~EpropCommonProperties()
+EpropSynapseBSSHSLM2020CommonProperties::~EpropSynapseBSSHSLM2020CommonProperties()
 {
   delete optimizer_cp_;
 }
 
 void
-EpropCommonProperties::get_status( DictionaryDatum& d ) const
+EpropSynapseBSSHSLM2020CommonProperties::get_status( DictionaryDatum& d ) const
 {
   CommonSynapseProperties::get_status( d );
   def< bool >( d, names::average_gradient, average_gradient_ );
@@ -65,7 +66,7 @@ EpropCommonProperties::get_status( DictionaryDatum& d ) const
 }
 
 void
-EpropCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+EpropSynapseBSSHSLM2020CommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   CommonSynapseProperties::set_status( d, cm );
   updateValue< bool >( d, names::average_gradient, average_gradient_ );
@@ -108,7 +109,7 @@ EpropCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm 
 
 template <>
 void
-Connector< eprop_synapse< TargetIdentifierPtrRport > >::disable_connection( const size_t lcid )
+Connector< eprop_synapse_bsshslm_2020< TargetIdentifierPtrRport > >::disable_connection( const size_t lcid )
 {
   assert( not C_[ lcid ].is_disabled() );
   C_[ lcid ].disable();
@@ -117,7 +118,7 @@ Connector< eprop_synapse< TargetIdentifierPtrRport > >::disable_connection( cons
 
 template <>
 void
-Connector< eprop_synapse< TargetIdentifierIndex > >::disable_connection( const size_t lcid )
+Connector< eprop_synapse_bsshslm_2020< TargetIdentifierIndex > >::disable_connection( const size_t lcid )
 {
   assert( not C_[ lcid ].is_disabled() );
   C_[ lcid ].disable();
@@ -126,7 +127,7 @@ Connector< eprop_synapse< TargetIdentifierIndex > >::disable_connection( const s
 
 
 template <>
-Connector< eprop_synapse< TargetIdentifierPtrRport > >::~Connector()
+Connector< eprop_synapse_bsshslm_2020< TargetIdentifierPtrRport > >::~Connector()
 {
   for ( auto& c : C_ )
   {
@@ -136,7 +137,7 @@ Connector< eprop_synapse< TargetIdentifierPtrRport > >::~Connector()
 }
 
 template <>
-Connector< eprop_synapse< TargetIdentifierIndex > >::~Connector()
+Connector< eprop_synapse_bsshslm_2020< TargetIdentifierIndex > >::~Connector()
 {
   for ( auto& c : C_ )
   {

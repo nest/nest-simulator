@@ -212,7 +212,7 @@ params_nrn_out = {
 
 gen_spk_in = nest.Create("spike_generator", n_in)
 nrns_in = nest.Create("parrot_neuron", n_in)
-nrns_rec = nest.Create("eprop_iaf_bsshslm_2020_adapt", n_rec, params_nrn_rec)
+nrns_rec = nest.Create("eprop_iaf_adapt_bsshslm_2020", n_rec, params_nrn_rec)
 nrns_out = nest.Create("eprop_readout_bsshslm_2020", n_out, params_nrn_out)
 gen_rate_target = nest.Create("step_rate_generator", n_out)
 

@@ -126,7 +126,7 @@ The overall gradient is given by the addition of the two gradients.
 
 For more information on e-prop plasticity, see the documentation on the other e-prop models:
 
-    * :doc:`eprop_iaf_bsshslm_2020_adapt<../models/eprop_iaf_bsshslm_2020_adapt/>`
+    * :doc:`eprop_iaf_adapt_bsshslm_2020<../models/eprop_iaf_adapt_bsshslm_2020/>`
     * :doc:`eprop_readout_bsshslm_2020<../models/eprop_readout_bsshslm_2020/>`
     * :doc:`eprop_synapse_bsshslm_2020<../models/eprop_synapse_bsshslm_2020/>`
     * :doc:`eprop_learning_signal_connection_bsshslm_2020<../models/eprop_learning_signal_connection_bsshslm_2020/>`

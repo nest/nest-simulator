@@ -59,7 +59,7 @@ neurons_interspike_ps = ["iaf_psc_alpha_ps", "iaf_psc_delta_ps", "iaf_psc_exp_ps
 
 neurons_eprop = [
     "eprop_iaf_bsshslm_2020",
-    "eprop_iaf_bsshslm_2020_adapt",
+    "eprop_iaf_adapt_bsshslm_2020",
 ]
 
 # Models that first clamp the membrane potential at a higher value

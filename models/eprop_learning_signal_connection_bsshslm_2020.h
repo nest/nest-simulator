@@ -41,14 +41,14 @@ Description
 +++++++++++
 
 ``eprop_learning_signal_connection_bsshslm_2020`` is a feedback connector  from ``eprop_readout_bsshslm_2020``
-neurons to ``eprop_iaf_bsshslm_2020`` or ``eprop_iaf_bsshslm_2020_adapt`` neurons and
+neurons to ``eprop_iaf_bsshslm_2020`` or ``eprop_iaf_adapt_bsshslm_2020`` neurons and
 transmits the learning signals :math:`L_j^t` for e-prop plasticity [1]_ and has
 a static weight :math:`B_{jk}`.
 
 For more information on e-prop plasticity, see the documentation on the other e-prop models:
 
  * :doc:`eprop_iaf_bsshslm_2020<../models/eprop_iaf_bsshslm_2020/>`
- * :doc:`eprop_iaf_bsshslm_2020_adapt<../models/eprop_iaf_bsshslm_2020_adapt/>`
+ * :doc:`eprop_iaf_adapt_bsshslm_2020<../models/eprop_iaf_adapt_bsshslm_2020/>`
  * :doc:`eprop_readout_bsshslm_2020<../models/eprop_readout_bsshslm_2020/>`
  * :doc:`eprop_synapse_bsshslm_2020<../models/eprop_synapse_bsshslm_2020/>`
 
@@ -107,7 +107,7 @@ See also
 Examples using this model
 ++++++++++++++++++++++++++
 
-.. listexamples:: eprop_learning_signal_connection
+.. listexamples:: eprop_learning_signal_connection_bsshslm_2020
 
 EndUserDocs */
 

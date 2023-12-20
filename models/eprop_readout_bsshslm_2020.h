@@ -85,7 +85,7 @@ pseudo-derivative and a firing regularization term.
 For more information on e-prop plasticity, see the documentation on the other e-prop models:
 
  * :doc:`eprop_iaf_bsshslm_2020<../models/eprop_iaf_bsshslm_2020/>`
- * :doc:`eprop_iaf_bsshslm_2020_adapt<../models/eprop_iaf_bsshslm_2020_adapt/>`
+ * :doc:`eprop_iaf_adapt_bsshslm_2020<../models/eprop_iaf_adapt_bsshslm_2020/>`
  * :doc:`eprop_synapse_bsshslm_2020<../models/eprop_synapse_bsshslm_2020/>`
  * :doc:`eprop_learning_signal_connection_bsshslm_2020<../models/eprop_learning_signal_connection_bsshslm_2020/>`
 
@@ -448,7 +448,8 @@ eprop_readout_bsshslm_2020::handles_test_event( DelayedRateConnectionEvent& e, s
   if ( step_rate_model_id == model_id and receptor_type != TARGET_SIG )
   {
     throw IllegalConnection(
-      "eprop_readout neurons expect a connection with a step_rate_generator node through receptor_type 2." );
+      "eprop_readout_bsshslm_2020 neurons expect a connection with a step_rate_generator node through receptor_type "
+      "2." );
   }
 
   if ( receptor_type < MIN_RATE_RECEPTOR or receptor_type >= SUP_RATE_RECEPTOR )

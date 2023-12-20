@@ -29,7 +29,7 @@ import pytest
 
 nest.set_verbosity("M_WARNING")
 
-supported_source_models = ["eprop_iaf_bsshslm_2020", "eprop_iaf_bsshslm_2020_adapt"]
+supported_source_models = ["eprop_iaf_bsshslm_2020", "eprop_iaf_adapt_bsshslm_2020"]
 supported_target_models = supported_source_models + ["eprop_readout_bsshslm_2020"]
 
 
@@ -51,7 +51,7 @@ def test_connect_with_eprop_synapse(source_model, target_model):
 
 @pytest.mark.parametrize("target_model", set(nest.node_models) - set(supported_target_models))
 def test_unsupported_model_raises(target_model):
-    """Confirm that connecting a non-eprop neuron as target via an eprop_synapse raises an error."""
+    """Confirm that connecting a non-eprop neuron as target via an eprop_synapse_bsshslm_2020 raises an error."""
 
     src_nrn = nest.Create(supported_source_models[0])
     tgt_nrn = nest.Create(target_model)
@@ -492,7 +492,7 @@ def test_eprop_classification():
     gen_spk_in = nest.Create("spike_generator", n_in)
     nrns_in = nest.Create("parrot_neuron", n_in)
     nrns_reg = nest.Create("eprop_iaf_bsshslm_2020", n_reg, params_nrn_reg)
-    nrns_ad = nest.Create("eprop_iaf_bsshslm_2020_adapt", n_ad, params_nrn_ad)
+    nrns_ad = nest.Create("eprop_iaf_adapt_bsshslm_2020", n_ad, params_nrn_ad)
     nrns_out = nest.Create("eprop_readout_bsshslm_2020", n_out, params_nrn_out)
     gen_rate_target = nest.Create("step_rate_generator", n_out)
 

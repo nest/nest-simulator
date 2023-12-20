@@ -54,8 +54,8 @@ Evntually, it optimizes the weight with the specified optimizer.
 
 E-prop synapses require archiving of continuous quantities. Therefore e-prop
 synapses can only be connected to neuron models that are capable of doing this
-archiving. So far, compatible models are ``eprop_iaf_psc_delta``,
-``eprop_iaf_psc_delta_adapt``, and ``eprop_readout_bsshslm_2020``.
+archiving. So far, compatible models are ``eprop_iaf_bsshslm_2020``,
+``eprop_iaf_adapt_bsshslm_2020``, and ``eprop_readout_bsshslm_2020``.
 
 For more information on e-prop plasticity, see the documentation on the other e-prop models:
 
@@ -191,7 +191,7 @@ public:
 void register_eprop_synapse_bsshslm_2020( const std::string& name );
 
 /**
- * Class implementing a synapse model for e-prop plasticity.
+ * Class implementing a synapse model for e-prop plasticity according to Bellec et al. (2020).
  *
  * @note Several aspects of this synapse are in place to reproduce the Tensorflow implementation of Bellec et al (2020).
  *
@@ -200,18 +200,18 @@ void register_eprop_synapse_bsshslm_2020( const std::string& name );
  * accessible via the synapse models `CommonProperties::optimizer_cp_` pointer, computes the weight update for the
  * neuron. The actual optimizer type can be selected at runtime (before creating any synapses) by exchaning the
  * `optimizer_cp_` pointer. Individual optimizer objects are created by `check_connection()` when a synapse is actually
- * created. It is important that the constructors of `eprop_synapse` **do not** create optimizer objects and that the
- * destructor **does not** delete optimizer objects; this currently leads to bugs when using Boosts's `spreadsort()` due
- * to use of the copy constructor where it should suffice to use the move constructor. Therefore,
+ * created. It is important that the constructors of `eprop_synapse_bsshslm_2020` **do not** create optimizer objects
+ * and that the destructor **does not** delete optimizer objects; this currently leads to bugs when using Boosts's
+ * `spreadsort()` due to use of the copy constructor where it should suffice to use the move constructor. Therefore,
  * `check_connection()`creates the optimizer object when it is needed and specializations of `Connector::~Connctor()`
  * and `Connector::disable_connection()` delete it by calling `delete_optimizer()`. A disadvantage of this approach is
  * that the `default_connection` in the connector model does not have an optimizer object, whence it is not possible to
  * set default (initial) values for the per-synapse optimizer.
  *
  * @note If we can find a way to modify our co-sorting of source and target tables in Boost's `spreadsort()` to only use
- * move operations, it should be possible to create the individual optimizers in the copy constructor of `eprop_synapse`
- * and to delete it in the destructor. The `default_connection` can then own an optimizer and default values could be
- * set on it.
+ * move operations, it should be possible to create the individual optimizers in the copy constructor of
+ * `eprop_synapse_bsshslm_2020` and to delete it in the destructor. The `default_connection` can then own an optimizer
+ * and default values could be set on it.
  */
 template < typename targetidentifierT >
 class eprop_synapse_bsshslm_2020 : public Connection< targetidentifierT >
@@ -340,7 +340,7 @@ private:
 template < typename targetidentifierT >
 constexpr ConnectionModelProperties eprop_synapse_bsshslm_2020< targetidentifierT >::properties;
 
-// Explicitly declare specializations of Connector methods that need to do special things for eprop_synapse
+// Explicitly declare specializations of Connector methods that need to do special things for eprop_synapse_bsshslm_2020
 template <>
 void Connector< eprop_synapse_bsshslm_2020< TargetIdentifierPtrRport > >::disable_connection( const size_t lcid );
 

@@ -1,5 +1,5 @@
 /*
- *  eprop_iaf_bsshslm_2020_adapt.h
+ *  eprop_iaf_adapt_bsshslm_2020.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef EPROP_IAF_BSSHSLM_2020_ADAPT_H
-#define EPROP_IAF_BSSHSLM_2020_ADAPT_H
+#ifndef EPROP_IAF_ADAPT_BSSHSLM_2020_H
+#define EPROP_IAF_ADAPT_BSSHSLM_2020_H
 
 // nestkernel
 #include "connection.h"
@@ -46,7 +46,7 @@ postsynaptic currents and threshold adaptation for e-prop plasticity
 Description
 +++++++++++
 
-``eprop_iaf_bsshslm_2020_adapt`` is an implementation of a leaky integrate-and-fire
+``eprop_iaf_adapt_bsshslm_2020`` is an implementation of a leaky integrate-and-fire
 neuron model with delta-shaped postsynaptic currents and threshold adaptation
 used for eligibility propagation (e-prop) plasticity.
 
@@ -54,7 +54,7 @@ An additional state variable and the corresponding differential
 equation represents a piecewise constant external current.
 
  .. note::
-   The ``eprop_iaf_bsshslm_2020_adapt`` is similar to the ``iaf_psc_delta`` model, but there are
+   The ``eprop_iaf_adapt_bsshslm_2020`` is similar to the ``iaf_psc_delta`` model, but there are
    minor differences in the dynamics of the two models, such as the propagator of
    the post-synaptic current and the voltage reset upon a spike.
 
@@ -237,25 +237,25 @@ See also
 Examples using this model
 ++++++++++++++++++++++++++
 
-.. listexamples:: eprop_iaf_psc_delta_adapt
+.. listexamples:: eprop_iaf_adapt_bsshslm_2020
 
 EndUserDocs */
 
-void register_eprop_iaf_bsshslm_2020_adapt( const std::string& name );
+void register_eprop_iaf_adapt_bsshslm_2020( const std::string& name );
 
 /**
  * Class implementing a current-based leaky integrate-and-fire neuron model with delta-shaped postsynaptic currents and
  * threshold adaptation for e-prop plasticity according to Bellec et al (2020).
  */
-class eprop_iaf_bsshslm_2020_adapt : public EpropArchivingNodeRecurrent
+class eprop_iaf_adapt_bsshslm_2020 : public EpropArchivingNodeRecurrent
 {
 
 public:
   //! Default constructor.
-  eprop_iaf_bsshslm_2020_adapt();
+  eprop_iaf_adapt_bsshslm_2020();
 
   //! Copy constructor.
-  eprop_iaf_bsshslm_2020_adapt( const eprop_iaf_bsshslm_2020_adapt& );
+  eprop_iaf_adapt_bsshslm_2020( const eprop_iaf_adapt_bsshslm_2020& );
 
   using Node::handle;
   using Node::handles_test_event;
@@ -294,13 +294,13 @@ private:
   double compute_piecewise_linear_derivative();
 
   //! Compute the surrogate gradient.
-  double ( eprop_iaf_bsshslm_2020_adapt::*compute_surrogate_gradient )();
+  double ( eprop_iaf_adapt_bsshslm_2020::*compute_surrogate_gradient )();
 
   //! Map for storing a static set of recordables.
-  friend class RecordablesMap< eprop_iaf_bsshslm_2020_adapt >;
+  friend class RecordablesMap< eprop_iaf_adapt_bsshslm_2020 >;
 
   //! Logger for universal data supporting the data logging request / reply mechanism. Populated with a recordables map.
-  friend class UniversalDataLogger< eprop_iaf_bsshslm_2020_adapt >;
+  friend class UniversalDataLogger< eprop_iaf_adapt_bsshslm_2020 >;
 
   //! Structure of parameters.
   struct Parameters_
@@ -401,10 +401,10 @@ private:
   struct Buffers_
   {
     //! Default constructor.
-    Buffers_( eprop_iaf_bsshslm_2020_adapt& );
+    Buffers_( eprop_iaf_adapt_bsshslm_2020& );
 
     //! Copy constructor.
-    Buffers_( const Buffers_&, eprop_iaf_bsshslm_2020_adapt& );
+    Buffers_( const Buffers_&, eprop_iaf_adapt_bsshslm_2020& );
 
     //! Buffer for incoming spikes.
     RingBuffer spikes_;
@@ -413,7 +413,7 @@ private:
     RingBuffer currents_;
 
     //! Logger for universal data.
-    UniversalDataLogger< eprop_iaf_bsshslm_2020_adapt > logger_;
+    UniversalDataLogger< eprop_iaf_adapt_bsshslm_2020 > logger_;
   };
 
   //! Structure of general variables.
@@ -485,11 +485,11 @@ private:
   Buffers_ B_;
 
   //! Map storing a static set of recordables.
-  static RecordablesMap< eprop_iaf_bsshslm_2020_adapt > recordablesMap_;
+  static RecordablesMap< eprop_iaf_adapt_bsshslm_2020 > recordablesMap_;
 };
 
 inline size_t
-eprop_iaf_bsshslm_2020_adapt::send_test_event( Node& target, size_t receptor_type, synindex, bool )
+eprop_iaf_adapt_bsshslm_2020::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -497,7 +497,7 @@ eprop_iaf_bsshslm_2020_adapt::send_test_event( Node& target, size_t receptor_typ
 }
 
 inline size_t
-eprop_iaf_bsshslm_2020_adapt::handles_test_event( SpikeEvent&, size_t receptor_type )
+eprop_iaf_adapt_bsshslm_2020::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -508,7 +508,7 @@ eprop_iaf_bsshslm_2020_adapt::handles_test_event( SpikeEvent&, size_t receptor_t
 }
 
 inline size_t
-eprop_iaf_bsshslm_2020_adapt::handles_test_event( CurrentEvent&, size_t receptor_type )
+eprop_iaf_adapt_bsshslm_2020::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -519,7 +519,7 @@ eprop_iaf_bsshslm_2020_adapt::handles_test_event( CurrentEvent&, size_t receptor
 }
 
 inline size_t
-eprop_iaf_bsshslm_2020_adapt::handles_test_event( LearningSignalConnectionEvent&, size_t receptor_type )
+eprop_iaf_adapt_bsshslm_2020::handles_test_event( LearningSignalConnectionEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -530,7 +530,7 @@ eprop_iaf_bsshslm_2020_adapt::handles_test_event( LearningSignalConnectionEvent&
 }
 
 inline size_t
-eprop_iaf_bsshslm_2020_adapt::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
+eprop_iaf_adapt_bsshslm_2020::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -541,7 +541,7 @@ eprop_iaf_bsshslm_2020_adapt::handles_test_event( DataLoggingRequest& dlr, size_
 }
 
 inline void
-eprop_iaf_bsshslm_2020_adapt::get_status( DictionaryDatum& d ) const
+eprop_iaf_adapt_bsshslm_2020::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
@@ -549,7 +549,7 @@ eprop_iaf_bsshslm_2020_adapt::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-eprop_iaf_bsshslm_2020_adapt::set_status( const DictionaryDatum& d )
+eprop_iaf_adapt_bsshslm_2020::set_status( const DictionaryDatum& d )
 {
   // temporary copies in case of errors
   Parameters_ ptmp = P_;
@@ -565,4 +565,4 @@ eprop_iaf_bsshslm_2020_adapt::set_status( const DictionaryDatum& d )
 
 } // namespace nest
 
-#endif // EPROP_IAF_BSSHSLM_2020_ADAPT_H
+#endif // EPROP_IAF_ADAPT_BSSHSLM_2020_H

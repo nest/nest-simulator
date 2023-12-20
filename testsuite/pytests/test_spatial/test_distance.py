@@ -25,9 +25,8 @@ Simple tests for distance calculations.
 
 from math import sqrt
 
-import pytest
-
 import nest
+import pytest
 
 
 @pytest.fixture(autouse=True)

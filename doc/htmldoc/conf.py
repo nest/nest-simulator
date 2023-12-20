@@ -20,22 +20,19 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import sys
-import os
 import json
+import os
 import subprocess
-
-from urllib.request import urlretrieve
-
+import sys
 from pathlib import Path
 from shutil import copyfile
+from urllib.request import urlretrieve
 
 # Add the extension modules to the path
 extension_module_dir = os.path.abspath("./_ext")
 sys.path.append(extension_module_dir)
 
 from extractor_userdocs import ExtractUserDocs, relative_glob  # noqa
-from extract_api_functions import ExtractPyNESTAPIS  # noqa
 
 repo_root_dir = os.path.abspath("../..")
 pynest_dir = os.path.join(repo_root_dir, "pynest")
@@ -48,14 +45,19 @@ source_suffix = ".rst"
 master_doc = "index"
 extensions = [
     "sphinx_gallery.gen_gallery",
+    "list_examples",
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
     "sphinx.ext.autosummary",
     "sphinx.ext.doctest",
     "sphinx.ext.intersphinx",
+    "sphinxcontrib.mermaid",
     "sphinx.ext.mathjax",
+    "sphinxcontrib.plantuml",
+    "add_button_notebook",
     "IPython.sphinxext.ipython_console_highlighting",
     "nbsphinx",
+    "extract_api_functions",
     "sphinx_design",
     "HoverXTooltip",
     "VersionSyncRole",
@@ -69,6 +71,8 @@ panels_add_bootstrap_css = False
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["templates"]
 
+# To run plantuml locally see the user documentation workflow
+plantuml = "java -jar /tmp/plantuml.jar"
 sphinx_gallery_conf = {
     # path to your examples scripts
     "examples_dirs": "../../pynest/examples",
@@ -87,6 +91,11 @@ copybutton_prompt_text = ">>> "
 # The output lines will not be copied if set to True
 copybutton_only_copy_prompt_lines = True
 
+mermaid_output_format = "raw"
+mermaid_version = "10.2.0"
+
+# disable require js - mermaid doesn't work if require.js is loaded before it
+nbsphinx_requirejs_path = ""
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
@@ -164,6 +173,7 @@ html_theme_options = {
     "globaltoc_collapse": True,
     # If True, show hidden TOC entries
     "globaltoc_includehidden": True,
+    "version_dropdown": False,
 }
 
 html_static_path = ["static"]
@@ -207,101 +217,6 @@ def config_inited_handler(app, config):
     )
 
 
-def get_pynest_list(app, env, docname):
-    ExtractPyNESTAPIS()
-
-
-def add_button_to_examples(app, env, docnames):
-    """Find all examples and include a link to launch notebook.
-
-    Function finds all restructured text files in auto_examples
-    and injects the multistring prolog, which is rendered
-    as a button link in HTML. The target is set to a Jupyter notebook of
-    the same name and a service to run it.
-    The nameholder in the string is replaced with the file name.
-
-    The rst files are generated at build time by Sphinx_gallery.
-    The notebooks that the target points to are linked with
-    services (like EBRAINS JupyterHub) that runs notebooks using nbgitpuller.
-    See https://hub.jupyter.org/nbgitpuller/link.html
-    The notebooks are located in the repository nest/nest-simulator-examples/.
-    The notebooks are generated from the CI workflow of NEST
-    on GitHub, which converts the source Python files to .ipynb.
-
-    The link to run the notebook is rendered in an image within a card directive.
-    """
-    example_prolog = """
-.. only:: html
-
-----
-
- Run this example as a Jupyter notebook:
-
-  .. card::
-    :width: 25%
-    :margin: 2
-    :text-align: center
-    :link: https://lab.ebrains.eu/hub/user-redirect/\
-git-pull?repo=https%3A%2F%2Fgithub.com%2Fnest%2Fnest-simulator-examples&urlpath=lab\
-%2Ftree%2Fnest-simulator-examples%2Fnotebooks%2Fnotebooks%2Ffilepath.ipynb&branch=main
-    :link-alt: JupyterHub service
-
-    .. image:: https://nest-simulator.org/TryItOnEBRAINS.png
-
-
-.. grid:: 1 1 1 1
-   :padding: 0 0 2 0
-
-   .. grid-item::
-     :class: sd-text-muted
-     :margin: 0 0 3 0
-     :padding: 0 0 3 0
-     :columns: 4
-
-     See :ref:`our guide <run_jupyter>` for more information and troubleshooting.
-
-----
-"""
-    # Find all relevant files
-    # Inject prolog into Python example
-    files = list(Path("auto_examples/").rglob("*.rst"))
-    for file in files:
-        # Skip index files and benchmark file. These files do not have notebooks that can run
-        # on the service.
-        if file.stem == "index" or file.stem == "hpc_benchmark":
-            continue
-
-        with open(file, "r") as f:
-            parent = Path("auto_examples/")
-            path2example = os.path.relpath(file, parent)
-            path2example = os.path.splitext(path2example)[0]
-            path2example = path2example.replace("/", "%2F")
-            prolog = example_prolog.replace("filepath", path2example)
-
-            lines = f.readlines()
-
-        # find the first heading of the file.
-        for i, item in enumerate(lines):
-            if item.startswith("-----"):
-                break
-
-        # insert prolog into rst file after heading
-        lines.insert(i + 1, prolog + "\n")
-
-        with open(file, "w") as f:
-            lines = "".join(lines)
-            f.write(lines)
-
-
-def api_customizer(app, docname, source):
-    if docname == "ref_material/pynest_api/index":
-        list_apis = json.load(open("api_function_list.json"))
-        html_context = {"api_dict": list_apis}
-        api_source = source[0]
-        rendered = app.builder.templates.render_string(api_source, html_context)
-        source[0] = rendered
-
-
 def toc_customizer(app, docname, source):
     if docname == "models/models-toc":
         models_toc = json.load(open("models/toc-tree.json"))
@@ -315,12 +230,9 @@ def setup(app):
     # for events see
     # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
     app.connect("source-read", toc_customizer)
-    app.connect("source-read", api_customizer)
     app.add_css_file("css/custom.css")
     app.add_css_file("css/pygments.css")
     app.add_js_file("js/custom.js")
-    app.connect("env-before-read-docs", get_pynest_list)
-    app.connect("env-before-read-docs", add_button_to_examples)
     app.connect("config-inited", config_inited_handler)
 
 

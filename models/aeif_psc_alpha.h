@@ -176,7 +176,14 @@ See also
 
 iaf_psc_alpha, aeif_cond_exp
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: aeif_psc_alpha
+
 EndUserDocs */
+
+void register_aeif_psc_alpha( const std::string& name );
 
 class aeif_psc_alpha : public ArchivingNode
 {

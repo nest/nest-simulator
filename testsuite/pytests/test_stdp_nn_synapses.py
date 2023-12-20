@@ -22,11 +22,11 @@
 # This script tests the stdp_nn_symm_synapse, stdp_nn_pre_centered_synapse,
 # and stdp_nn_restr_synapse in NEST.
 
+from math import exp
+
 import nest
 import numpy as np
 import pytest
-
-from math import exp
 
 
 @nest.ll_api.check_stack

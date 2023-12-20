@@ -98,10 +98,17 @@ See also
 
 stdp_synapse, clopath_synapse, pp_cond_exp_mc_urbanczik
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: urbanczik_synapse
+
 EndUserDocs */
 
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
+
+void register_urbanczik_synapse( const std::string& name );
 
 template < typename targetidentifierT >
 class urbanczik_synapse : public Connection< targetidentifierT >
@@ -154,7 +161,7 @@ public:
    * \param e The event to send
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e, size_t t, const CommonSynapseProperties& cp );
+  bool send( Event& e, size_t t, const CommonSynapseProperties& cp );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -212,7 +219,7 @@ constexpr ConnectionModelProperties urbanczik_synapse< targetidentifierT >::prop
  * \param cp Common properties object, containing the stdp parameters.
  */
 template < typename targetidentifierT >
-inline void
+inline bool
 urbanczik_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapseProperties& )
 {
   double t_spike = e.get_stamp().get_ms();
@@ -273,6 +280,8 @@ urbanczik_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSy
   tau_s_trace_ = tau_s_trace_ * std::exp( ( t_lastspike_ - t_spike ) / tau_s ) + 1.0;
 
   t_lastspike_ = t_spike;
+
+  return true;
 }
 
 

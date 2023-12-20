@@ -37,9 +37,9 @@ Voltage traces, current traces, threshold traces, and spikes are shown.
 # First, we import all necessary modules to simulate, analyze and plot this
 # example.
 
-import nest
-import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
+import matplotlib.pyplot as plt
+import nest
 
 ##############################################################################
 # We initialize NEST and set the simulation resolution.

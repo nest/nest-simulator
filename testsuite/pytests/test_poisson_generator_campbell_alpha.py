@@ -31,8 +31,8 @@ where nu is the rate of the poisson generator.
 
 
 import nest
-import pytest
 import numpy as np
+import pytest
 
 
 def test_poisson_generator_alpha():

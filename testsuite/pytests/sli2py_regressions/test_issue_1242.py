@@ -23,9 +23,8 @@
 Regression test for Issue #1242 (GitHub).
 """
 
-import pytest
-
 import nest
+import pytest
 
 
 def test_volume_transmitter_illegal_connection():

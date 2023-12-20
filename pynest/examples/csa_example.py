@@ -47,10 +47,9 @@ References
 ###############################################################################
 # First, we import all necessary modules for simulation and plotting.
 
-import nest
-from nest import voltage_trace
-from nest import visualization
 import matplotlib.pyplot as plt
+import nest
+from nest import visualization, voltage_trace
 
 ###############################################################################
 # Next, we check for the availability of the CSA Python module. If it does

@@ -388,31 +388,31 @@ public:
     typename ConnectionT::CommonPropertiesType const& cp =
       static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties();
 
-    size_t current_lcid = lcid;
+    size_t lcid_offset = 0;
 
     while ( true )
     {
-      ConnectionT& conn = C_[ current_lcid ];
-      const bool is_disabled = conn.is_disabled();
-      const bool source_has_more_targets = conn.source_has_more_targets();
+      assert( lcid + lcid_offset < C_.size() );
+      ConnectionT& conn = C_[ lcid + lcid_offset ];
 
-      e.set_port( current_lcid );
-      if ( not is_disabled )
+      e.set_port( lcid + lcid_offset );
+      if ( not conn.is_disabled() )
       {
-        // non-local sender -> receiver retrieves ID of sender Node from SourceTable based on tid, syn_id, lcid
-        // only if needed, as this is computationally costly
-        e.set_sender_node_id_info( tid, syn_id_, current_lcid );
-        conn.send( e, tid, cp );
-        send_weight_event( tid, current_lcid, e, cp );
+        // Some synapses, e.g., bernoulli_synapse, may not send an event after all
+        const bool event_sent = conn.send( e, tid, cp );
+        if ( event_sent )
+        {
+          send_weight_event( tid, lcid + lcid_offset, e, cp );
+        }
       }
-      if ( not source_has_more_targets )
+      if ( not conn.source_has_more_targets() )
       {
         break;
       }
-      ++current_lcid;
+      ++lcid_offset;
     }
 
-    return 1 + current_lcid - lcid; // event was delivered to at least one target
+    return 1 + lcid_offset; // event was delivered to at least one target
   }
 
   // Implemented in connector_base_impl.h

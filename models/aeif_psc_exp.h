@@ -173,7 +173,14 @@ See also
 
 iaf_psc_exp, aeif_cond_exp
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: aeif_psc_exp
+
 EndUserDocs */
+
+void register_aeif_psc_exp( const std::string& name );
 
 class aeif_psc_exp : public ArchivingNode
 {

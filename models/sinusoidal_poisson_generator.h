@@ -119,7 +119,15 @@ See also
 
 poisson_generator, sinusoidal_gamma_generator
 
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: sinusoidal_poisson_generator
+
 EndUserDocs */
+
+void register_sinusoidal_poisson_generator( const std::string& name );
 
 class sinusoidal_poisson_generator : public StimulationDevice
 {

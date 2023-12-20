@@ -26,9 +26,8 @@ This set of tests ensures that NEST can set small resolutions and deals with
 rounding errors correctly.
 """
 
-import pytest
-
 import nest
+import pytest
 
 
 @pytest.fixture(autouse=True)

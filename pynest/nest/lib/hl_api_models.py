@@ -23,10 +23,15 @@
 Functions for model handling
 """
 
-from ..ll_api import check_stack, sps, sr, spp
-from .hl_api_helper import deprecated, is_iterable, is_literal, model_deprecation_warning
-from .hl_api_types import to_json
+from ..ll_api import check_stack, spp, sps, sr
+from .hl_api_helper import (
+    deprecated,
+    is_iterable,
+    is_literal,
+    model_deprecation_warning,
+)
 from .hl_api_simulation import GetKernelStatus
+from .hl_api_types import to_json
 
 __all__ = [
     "ConnectionRules",

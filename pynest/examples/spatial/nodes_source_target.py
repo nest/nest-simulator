@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Showcase of PlotTargets, PlotSources, GetTargetNodes, GetSourceNodes
---------------------------------------------------------------------
+Spatial networks: Showcase of PlotTargets, PlotSources, GetTargetNodes, GetSourceNodes
+--------------------------------------------------------------------------------------
 
 Anno Christopher Kurth, INM-6
 """

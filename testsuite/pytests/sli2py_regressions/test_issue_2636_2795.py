@@ -40,9 +40,8 @@ first and last node id's also being 0 before a ``NodeCollection`` is created.
 The consistency check now addresses the edge case of ``node_id=0``.
 """
 
-import pytest
-
 import nest
+import pytest
 
 
 @pytest.mark.parametrize("node_id", [0, 1])

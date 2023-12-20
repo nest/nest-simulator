@@ -82,7 +82,14 @@ See also
 
 siegert_neuron, rate_connection_instantaneous
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: diffusion_connection
+
 EndUserDocs */
+
+void register_diffusion_connection( const std::string& name );
 
 template < typename targetidentifierT >
 class diffusion_connection : public Connection< targetidentifierT >
@@ -133,7 +140,7 @@ public:
    * \param e The event to send
    * \param p The port under which this connection is stored in the Connector.
    */
-  void
+  bool
   send( Event& e, size_t t, const CommonSynapseProperties& )
   {
     e.set_drift_factor( drift_factor_ );
@@ -141,6 +148,8 @@ public:
     e.set_receiver( *get_target( t ) );
     e.set_rport( get_rport() );
     e();
+
+    return true;
   }
 
   void get_status( DictionaryDatum& d ) const;

@@ -26,6 +26,7 @@
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -35,6 +36,12 @@
 #include "booldatum.h"
 #include "dict.h"
 #include "dictutils.h"
+
+void
+nest::register_spike_generator( const std::string& name )
+{
+  register_node_model< spike_generator >( name );
+}
 
 
 /* ----------------------------------------------------------------

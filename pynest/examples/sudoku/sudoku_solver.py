@@ -56,13 +56,14 @@ population: Collection of neurons coding for a single digit in a cell
 
 :Authors: J Gille, S Furber, A Rowley
 """
-import nest
-import sudoku_net
-import numpy as np
 import logging
 import pickle
-from helpers_sudoku import get_puzzle, validate_solution, plot_field
+
 import matplotlib.pyplot as plt
+import nest
+import numpy as np
+import sudoku_net
+from helpers_sudoku import get_puzzle, plot_field, validate_solution
 
 nest.SetKernelStatus({"local_num_threads": 8})
 nest.set_verbosity("M_WARNING")

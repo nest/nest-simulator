@@ -23,10 +23,9 @@
 Regression test for Issue #1640 (GitHub).
 """
 
+import nest
 import numpy as np
 import pytest
-
-import nest
 
 
 @pytest.mark.skipif_missing_threads

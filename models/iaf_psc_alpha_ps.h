@@ -146,7 +146,14 @@ See also
 
 iaf_psc_alpha, iaf_psc_exp_ps
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_psc_alpha_ps
+
 EndUserDocs */
+
+void register_iaf_psc_alpha_ps( const std::string& name );
 
 class iaf_psc_alpha_ps : public ArchivingNode
 {
@@ -301,11 +308,11 @@ private:
     /** External DC current [pA] */
     double I_e_;
 
-    /** Threshold, RELATIVE TO RESTING POTENTAIL(!).
+    /** Threshold, RELATIVE TO RESTING POTENTIAL(!).
         I.e. the real threshold is U_th_ + E_L_. */
     double U_th_;
 
-    /** Lower bound, RELATIVE TO RESTING POTENTAIL(!).
+    /** Lower bound, RELATIVE TO RESTING POTENTIAL(!).
         I.e. the real lower bound is U_min_+E_L_. */
     double U_min_;
 
@@ -442,7 +449,6 @@ private:
   // ----------------------------------------------------------------
 
   /**
-   * @defgroup iaf_psc_alpha_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.

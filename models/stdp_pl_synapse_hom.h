@@ -84,6 +84,11 @@ See also
 
 stdp_synapse, tsodyks_synapse, static_synapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: stdp_pl_synapse_hom
+
 EndUserDocs */
 
 /**
@@ -123,6 +128,8 @@ public:
  * Class representing an STDP connection with homogeneous parameters, i.e.
  * parameters are the same for all synapses.
  */
+void register_stdp_pl_synapse_hom( const std::string& name );
+
 template < typename targetidentifierT >
 class stdp_pl_synapse_hom : public Connection< targetidentifierT >
 {
@@ -171,7 +178,7 @@ public:
    * Send an event to the receiver of this connection.
    * \param e The event to send
    */
-  void send( Event& e, size_t t, const STDPPLHomCommonProperties& );
+  bool send( Event& e, size_t t, const STDPPLHomCommonProperties& );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -248,7 +255,7 @@ constexpr ConnectionModelProperties stdp_pl_synapse_hom< targetidentifierT >::pr
  * \param p The port under which this connection is stored in the Connector.
  */
 template < typename targetidentifierT >
-inline void
+inline bool
 stdp_pl_synapse_hom< targetidentifierT >::send( Event& e, size_t t, const STDPPLHomCommonProperties& cp )
 {
   // synapse STDP depressing/facilitation dynamics
@@ -290,6 +297,8 @@ stdp_pl_synapse_hom< targetidentifierT >::send( Event& e, size_t t, const STDPPL
   Kplus_ = Kplus_ * std::exp( ( t_lastspike_ - t_spike ) * cp.tau_plus_inv_ ) + 1.0;
 
   t_lastspike_ = t_spike;
+
+  return true;
 }
 
 template < typename targetidentifierT >

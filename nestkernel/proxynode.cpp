@@ -73,6 +73,12 @@ proxynode::sends_secondary_event( DelayedRateConnectionEvent& re )
   kernel().model_manager.get_node_model( get_model_id() )->sends_secondary_event( re );
 }
 
+void
+proxynode::sends_secondary_event( SICEvent& sic )
+{
+  kernel().model_manager.get_node_model( get_model_id() )->sends_secondary_event( sic );
+}
+
 nest::SignalType
 proxynode::sends_signal() const
 {

@@ -69,6 +69,11 @@ reversed (i.e., connecting *sr* to *neurons*).
 See also
 ++++++++
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: spike_recorder
+
 EndUserDocs */
 
 namespace nest
@@ -77,6 +82,8 @@ namespace nest
 /**
  * Class spike_recorder
  */
+
+void register_spike_recorder( const std::string& name );
 
 class spike_recorder : public RecordingDevice
 {

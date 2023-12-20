@@ -20,6 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import numpy as np
+
 from ..lib.hl_api_types import CreateParameter, Parameter
 from ..ll_api import sli_func
 

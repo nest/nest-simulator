@@ -48,18 +48,22 @@ SPManager::SPManager()
 
 SPManager::~SPManager()
 {
-  finalize();
 }
 
 void
-SPManager::initialize()
+SPManager::initialize( const bool reset_kernel )
 {
+  if ( not reset_kernel )
+  {
+    return;
+  }
+
   structural_plasticity_update_interval_ = 10000.;
   structural_plasticity_enabled_ = false;
 }
 
 void
-SPManager::finalize()
+SPManager::finalize( const bool )
 {
   for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin(); i != sp_conn_builders_.end(); i++ )
   {
@@ -650,10 +654,10 @@ nest::SPManager::enable_structural_plasticity()
       "Structural plasticity can not be enabled if keep_source_table has been "
       "set to false." );
   }
-  if ( not kernel().connection_manager.get_sort_connections_by_source() )
+  if ( not kernel().connection_manager.use_compressed_spikes() )
   {
     throw KernelException(
-      "Structural plasticity can not be enabled if sort_connections_by_source "
+      "Structural plasticity can not be enabled if use_compressed_spikes "
       "has been set to false." );
   }
   structural_plasticity_enabled_ = true;

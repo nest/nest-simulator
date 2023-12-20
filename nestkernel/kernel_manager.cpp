@@ -27,7 +27,7 @@ nest::KernelManager* nest::KernelManager::kernel_manager_instance_ = nullptr;
 void
 nest::KernelManager::create_kernel_manager()
 {
-#pragma omp critical( create_kernel_manager )
+#pragma omp master
   {
     if ( not kernel_manager_instance_ )
     {
@@ -35,6 +35,7 @@ nest::KernelManager::create_kernel_manager()
       assert( kernel_manager_instance_ );
     }
   }
+#pragma omp barrier
 }
 
 void
@@ -65,10 +66,10 @@ nest::KernelManager::KernelManager()
       &random_manager,
       &simulation_manager,
       &modelrange_manager,
-      &model_manager,
       &connection_manager,
       &sp_manager,
       &event_delivery_manager,
+      &model_manager,
       &music_manager,
       &io_manager,
       &node_manager } )
@@ -90,6 +91,8 @@ nest::KernelManager::initialize()
 
   ++fingerprint_;
   initialized_ = true;
+  FULL_LOGGING_ONLY( dump_.open(
+    String::compose( "dump_%1_%2.log", mpi_manager.get_num_processes(), mpi_manager.get_rank() ).c_str() ); )
 }
 
 void
@@ -113,6 +116,8 @@ nest::KernelManager::cleanup()
 void
 nest::KernelManager::finalize()
 {
+  FULL_LOGGING_ONLY( dump_.close(); )
+
   for ( auto&& m_it = managers.rbegin(); m_it != managers.rend(); ++m_it )
   {
     ( *m_it )->finalize();
@@ -137,10 +142,18 @@ nest::KernelManager::change_number_of_threads( size_t new_num_threads )
   assert( not simulation_manager.has_been_simulated() );
   assert( not sp_manager.is_structural_plasticity_enabled() or new_num_threads == 1 );
 
+  // Finalize in reverse order of initialization with old thread number set
+  for ( auto mgr_it = managers.rbegin(); mgr_it != managers.rend(); ++mgr_it )
+  {
+    ( *mgr_it )->finalize( /* reset_kernel */ false );
+  }
+
   vp_manager.set_num_threads( new_num_threads );
+
+  // Initialize in original order with new number of threads set
   for ( auto& manager : managers )
   {
-    manager->change_number_of_threads();
+    manager->initialize( /* reset_kernel */ false );
   }
 }
 
@@ -163,5 +176,15 @@ nest::KernelManager::get_status( DictionaryDatum& dict )
   for ( auto& manager : managers )
   {
     manager->get_status( dict );
+  }
+}
+
+void
+nest::KernelManager::write_to_dump( const std::string& msg )
+{
+#pragma omp critical
+  // In critical section to avoid any garbling of output.
+  {
+    dump_ << msg << std::endl << std::flush;
   }
 }

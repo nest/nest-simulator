@@ -412,11 +412,11 @@ public:
   void operator()() override;
   SpikeEvent* clone() const override;
 
-  void set_multiplicity( int );
-  int get_multiplicity() const;
+  void set_multiplicity( size_t );
+  size_t get_multiplicity() const;
 
 protected:
-  int multiplicity_;
+  size_t multiplicity_;
 };
 
 inline SpikeEvent::SpikeEvent()
@@ -431,12 +431,12 @@ SpikeEvent::clone() const
 }
 
 inline void
-SpikeEvent::set_multiplicity( int multiplicity )
+SpikeEvent::set_multiplicity( size_t multiplicity )
 {
   multiplicity_ = multiplicity;
 }
 
-inline int
+inline size_t
 SpikeEvent::get_multiplicity() const
 {
   return multiplicity_;

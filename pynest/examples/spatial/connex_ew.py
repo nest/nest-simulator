@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Circular mask and flat probability, with edge wrap
----------------------------------------------------
+Spatial networks: Circular mask and flat probability, with edge wrap
+--------------------------------------------------------------------
 
 Create two populations of iaf_psc_alpha neurons on a 30x30 grid with edge_wrap,
 connect with circular mask, flat probability,
@@ -32,8 +32,8 @@ Hans Ekkehard Plesser, UMB
 """
 
 import matplotlib.pyplot as plt
-import numpy as np
 import nest
+import numpy as np
 
 nest.ResetKernel()
 

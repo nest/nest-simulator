@@ -49,8 +49,8 @@ class SimulationManager : public ManagerInterface
 public:
   SimulationManager();
 
-  void initialize() override;
-  void finalize() override;
+  void initialize( const bool ) override;
+  void finalize( const bool ) override;
   void set_status( const DictionaryDatum& ) override;
   void get_status( DictionaryDatum& ) override;
 
@@ -231,6 +231,7 @@ private:
   Stopwatch sw_gather_spike_data_;
   Stopwatch sw_update_;
   Stopwatch sw_gather_target_data_;
+  Stopwatch sw_deliver_spike_data_;
 #endif
 };
 

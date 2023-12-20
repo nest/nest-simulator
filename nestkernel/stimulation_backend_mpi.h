@@ -163,6 +163,7 @@ private:
    */
   void get_port( StimulationDevice* device, std::string* port_name );
   void get_port( size_t index_node, const std::string& label, std::string* port_name );
+
   /**
    * MPI communication for receiving the data before each run.
    *

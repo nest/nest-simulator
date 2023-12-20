@@ -77,10 +77,10 @@ Jakob Jordan
 """
 
 import matplotlib.pyplot as plt
-from matplotlib.patches import Ellipse
+import nest
 import numpy as np
 import scipy.special as sp
-import nest
+from matplotlib.patches import Ellipse
 
 ###############################################################################
 # Analysis
@@ -390,7 +390,7 @@ def optimize(
             s = np.vstack([s, -s])
 
         # evaluate fitness for every individual in population
-        fitness = np.fromiter((func(*zi) for zi in z), np.float)
+        fitness = np.fromiter((func(*zi) for zi in z), float)
 
         # print status if enabled
         if verbosity > 0:

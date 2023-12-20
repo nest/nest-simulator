@@ -66,8 +66,13 @@ nest::SimulationManager::SimulationManager()
 }
 
 void
-nest::SimulationManager::initialize()
+nest::SimulationManager::initialize( const bool reset_kernel )
 {
+  if ( not reset_kernel )
+  {
+    return;
+  }
+
   Time::reset_to_defaults();
   Time::reset_resolution();
 
@@ -101,7 +106,7 @@ nest::SimulationManager::initialize()
 }
 
 void
-nest::SimulationManager::finalize()
+nest::SimulationManager::finalize( const bool )
 {
 }
 
@@ -121,6 +126,7 @@ nest::SimulationManager::reset_timers_for_dynamics()
 #ifdef TIMER_DETAILED
   sw_gather_spike_data_.reset();
   sw_update_.reset();
+  sw_deliver_spike_data_.reset();
 #endif
 }
 
@@ -439,6 +445,7 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
   def< double >( d, names::time_gather_spike_data, sw_gather_spike_data_.elapsed() );
   def< double >( d, names::time_update, sw_update_.elapsed() );
   def< double >( d, names::time_gather_target_data, sw_gather_target_data_.elapsed() );
+  def< double >( d, names::time_deliver_spike_data, sw_deliver_spike_data_.elapsed() );
 #endif
 }
 
@@ -732,7 +739,19 @@ nest::SimulationManager::update_connection_infrastructure( const size_t tid )
 
   // communicate connection information from postsynaptic to
   // presynaptic side
-  kernel().event_delivery_manager.gather_target_data( tid );
+  if ( kernel().connection_manager.use_compressed_spikes() )
+  {
+#pragma omp barrier
+#pragma omp single
+    {
+      kernel().connection_manager.initialize_iteration_state(); // could possibly be combined with s'th above
+    }
+    kernel().event_delivery_manager.gather_target_data_compressed( tid );
+  }
+  else
+  {
+    kernel().event_delivery_manager.gather_target_data( tid );
+  }
 
 #ifdef TIMER_DETAILED
 #pragma omp barrier
@@ -748,13 +767,9 @@ nest::SimulationManager::update_connection_infrastructure( const size_t tid )
   }
 
 #pragma omp barrier
-  if ( kernel().connection_manager.use_compressed_spikes() )
-  {
-    kernel().connection_manager.clear_compressed_spike_data_map( tid );
-  }
-
 #pragma omp single
   {
+    kernel().connection_manager.clear_compressed_spike_data_map();
     kernel().node_manager.set_have_nodes_changed( false );
     kernel().connection_manager.unset_connections_have_changed();
   }
@@ -784,6 +799,7 @@ nest::SimulationManager::update_()
   bool update_time_limit_exceeded = false;
 
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
+
 // parallel section begins
 #pragma omp parallel
   {
@@ -800,42 +816,35 @@ nest::SimulationManager::update_()
           gettimeofday( &t_slice_begin_, nullptr );
         }
 
-        if ( kernel().sp_manager.is_structural_plasticity_enabled()
-          and ( std::fmod( Time( Time::step( clock_.get_steps() + from_step_ ) ).get_ms(),
-                  kernel().sp_manager.get_structural_plasticity_update_interval() )
-            == 0 ) )
+        // Do not deliver events at beginning of first slice, nothing can be there yet
+        // and invalid markers have not been properly set in send buffers.
+        if ( slice_ > 0 and from_step_ == 0 )
         {
-          for ( SparseNodeArray::const_iterator i = kernel().node_manager.get_local_nodes( tid ).begin();
-                i != kernel().node_manager.get_local_nodes( tid ).end();
-                ++i )
+
+          if ( kernel().connection_manager.has_primary_connections() )
           {
-            Node* node = i->get_node();
-            node->update_synaptic_elements( Time( Time::step( clock_.get_steps() + from_step_ ) ).get_ms() );
+#ifdef TIMER_DETAILED
+            if ( tid == 0 )
+            {
+              sw_deliver_spike_data_.start();
+            }
+#endif
+            // Deliver spikes from receive buffer to ring buffers.
+            kernel().event_delivery_manager.deliver_events( tid );
+
+#ifdef TIMER_DETAILED
+            if ( tid == 0 )
+            {
+              sw_deliver_spike_data_.stop();
+            }
+#endif
           }
-#pragma omp barrier
-#pragma omp single
+          if ( kernel().connection_manager.secondary_connections_exist() )
           {
-            kernel().sp_manager.update_structural_plasticity();
-          }
-          // Remove 10% of the vacant elements
-          for ( SparseNodeArray::const_iterator i = kernel().node_manager.get_local_nodes( tid ).begin();
-                i != kernel().node_manager.get_local_nodes( tid ).end();
-                ++i )
-          {
-            Node* node = i->get_node();
-            node->decay_synaptic_elements_vacant();
+            kernel().event_delivery_manager.deliver_secondary_events( tid, false );
           }
 
-          // after structural plasticity has created and deleted
-          // connections, update the connection infrastructure; implies
-          // complete removal of presynaptic part and reconstruction
-          // from postsynaptic data
-          update_connection_infrastructure( tid );
 
-        } // of structural plasticity
-
-        if ( from_step_ == 0 )
-        {
 #ifdef HAVE_MUSIC
 // advance the time of music by one step (min_delay * h) must
 // be done after deliver_events_() since it calls
@@ -863,7 +872,7 @@ nest::SimulationManager::update_()
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier
 #endif
-        }
+        } // if from_step == 0
 
         // preliminary update of nodes that use waveform relaxtion, only
         // necessary if secondary connections exist and any node uses
@@ -951,6 +960,42 @@ nest::SimulationManager::update_()
         } // of if(wfr_is_used)
           // end of preliminary update
 
+        if ( kernel().sp_manager.is_structural_plasticity_enabled()
+          and ( std::fmod( Time( Time::step( clock_.get_steps() + from_step_ ) ).get_ms(),
+                  kernel().sp_manager.get_structural_plasticity_update_interval() )
+            == 0 ) )
+        {
+#pragma omp barrier
+          for ( SparseNodeArray::const_iterator i = kernel().node_manager.get_local_nodes( tid ).begin();
+                i != kernel().node_manager.get_local_nodes( tid ).end();
+                ++i )
+          {
+            Node* node = i->get_node();
+            node->update_synaptic_elements( Time( Time::step( clock_.get_steps() + from_step_ ) ).get_ms() );
+          }
+#pragma omp barrier
+#pragma omp single
+          {
+            kernel().sp_manager.update_structural_plasticity();
+          }
+          // Remove 10% of the vacant elements
+          for ( SparseNodeArray::const_iterator i = kernel().node_manager.get_local_nodes( tid ).begin();
+                i != kernel().node_manager.get_local_nodes( tid ).end();
+                ++i )
+          {
+            Node* node = i->get_node();
+            node->decay_synaptic_elements_vacant();
+          }
+
+          // after structural plasticity has created and deleted
+          // connections, update the connection infrastructure; implies
+          // complete removal of presynaptic part and reconstruction
+          // from postsynaptic data
+          update_connection_infrastructure( tid );
+
+        } // of structural plasticity
+
+
 #ifdef TIMER_DETAILED
 #pragma omp barrier
         if ( tid == 0 )
@@ -971,43 +1016,39 @@ nest::SimulationManager::update_()
 
 // parallel section ends, wait until all threads are done -> synchronize
 #pragma omp barrier
+
 #ifdef TIMER_DETAILED
         if ( tid == 0 )
         {
           sw_update_.stop();
-          sw_gather_spike_data_.start();
         }
 #endif
 
-        // gather and deliver only at end of slice, i.e., end of min_delay step
-        if ( to_step_ == kernel().connection_manager.get_min_delay() )
-        {
-          if ( kernel().connection_manager.has_primary_connections() )
-          {
-            kernel().event_delivery_manager.gather_spike_data( tid );
-          }
-          if ( kernel().connection_manager.secondary_connections_exist() )
-          {
-#pragma omp single
-            {
-              kernel().event_delivery_manager.gather_secondary_events( true );
-            }
-            kernel().event_delivery_manager.deliver_secondary_events( tid, false );
-          }
-        }
-
-#pragma omp barrier
-#ifdef TIMER_DETAILED
-        if ( tid == 0 )
-        {
-          sw_gather_spike_data_.stop();
-        }
-#endif
-
-// the following block is executed by the master thread only
+        // the following block is executed by the master thread only
 // the other threads are enforced to wait at the end of the block
 #pragma omp master
         {
+          // gather and deliver only at end of slice, i.e., end of min_delay step
+          if ( to_step_ == kernel().connection_manager.get_min_delay() )
+          {
+            if ( kernel().connection_manager.has_primary_connections() )
+            {
+#ifdef TIMER_DETAILED
+              sw_gather_spike_data_.start();
+#endif
+
+              kernel().event_delivery_manager.gather_spike_data();
+#ifdef TIMER_DETAILED
+              sw_gather_spike_data_.stop();
+#endif
+            }
+            if ( kernel().connection_manager.secondary_connections_exist() )
+            {
+              kernel().event_delivery_manager.gather_secondary_events( true );
+            }
+          }
+
+
           advance_time_();
 
           if ( print_time_ )
@@ -1026,9 +1067,14 @@ nest::SimulationManager::update_()
         }
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier
+
+        // if block to avoid omp barrier if SIONLIB is not used
+#ifdef HAVE_SIONLIB
         kernel().io_manager.post_step_hook();
 // enforce synchronization after post-step activities of the recording backends
 #pragma omp barrier
+#endif
+
         const double end_current_update = sw_simulate_.elapsed();
         if ( end_current_update - start_current_update > update_time_limit_ )
         {

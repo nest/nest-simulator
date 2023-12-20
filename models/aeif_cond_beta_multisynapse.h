@@ -177,7 +177,14 @@ See also
 
 aeif_cond_alpha_multisynapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: aeif_cond_beta_multisynapse
+
 EndUserDocs */
+
+void register_aeif_cond_beta_multisynapse( const std::string& name );
 
 class aeif_cond_beta_multisynapse : public ArchivingNode
 {
@@ -364,7 +371,6 @@ private:
   // Data members -----------------------------------------------------------
 
   /**
-   * @defgroup aeif_cond_beta_multisynapse
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.

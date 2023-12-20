@@ -76,7 +76,15 @@ See also
 
 mip_generator
 
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: spike_dilutor
+
 EndUserDocs */
+
+void register_spike_dilutor( const std::string& name );
 
 class spike_dilutor : public DeviceNode
 {

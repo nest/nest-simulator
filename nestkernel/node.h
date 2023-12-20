@@ -38,7 +38,6 @@
 #include "nest_names.h"
 #include "nest_time.h"
 #include "nest_types.h"
-#include "node_collection.h"
 #include "secondary_event.h"
 
 // Includes from sli:
@@ -106,7 +105,6 @@ class Node
   friend class NodeManager;
   friend class ModelManager;
   friend class proxynode;
-  friend class Synapse;
   friend class Model;
   friend class SimulationManager;
 
@@ -202,10 +200,6 @@ public:
    */
   size_t get_node_id() const;
 
-  /**
-   * Return lockpointer to the NodeCollection that created this node.
-   */
-  NodeCollectionPTR get_nc() const;
 
   /**
    * Return model ID of the node.
@@ -216,15 +210,6 @@ public:
    *       It is only set when actual nodes are created from a prototype.
    */
   int get_model_id() const;
-
-  /**
-   * Prints out one line of the tree view of the network.
-   */
-  virtual std::string
-  print_network( int, int, std::string = "" )
-  {
-    return std::string();
-  }
 
   /**
    * Returns true if node is frozen, i.e., shall not be updated.
@@ -425,6 +410,7 @@ public:
   virtual size_t handles_test_event( InstantaneousRateConnectionEvent&, size_t receptor_type );
   virtual size_t handles_test_event( DiffusionConnectionEvent&, size_t receptor_type );
   virtual size_t handles_test_event( DelayedRateConnectionEvent&, size_t receptor_type );
+  virtual size_t handles_test_event( SICEvent&, size_t receptor_type );
 
   /**
    * Required to check, if source neuron may send a SecondaryEvent.
@@ -465,6 +451,16 @@ public:
    * @throws IllegalConnection
    */
   virtual void sends_secondary_event( DelayedRateConnectionEvent& re );
+
+  /**
+   * Required to check, if source node may send a SICEvent.
+   *
+   * This base class implementation throws IllegalConnection
+   * and needs to be overwritten in the derived class.
+   * @ingroup event_interface
+   * @throws IllegalConnection
+   */
+  virtual void sends_secondary_event( SICEvent& sic );
 
   /**
    * Register a STDP connection
@@ -591,6 +587,14 @@ public:
    * @throws UnexpectedEvent
    */
   virtual void handle( DelayedRateConnectionEvent& e );
+
+  /**
+   * Handler for slow inward current events (SICEvents).
+   * @see handle(thread,SICEvent&)
+   * @ingroup event_interface
+   * @throws UnexpectedEvent
+   */
+  virtual void handle( SICEvent& e );
 
   /**
    * @defgroup SP_functions Structural Plasticity in NEST.
@@ -879,11 +883,6 @@ public:
 private:
   void set_node_id_( size_t ); //!< Set global node id
 
-  /**
-   * Set the original NodeCollection of this node.
-   */
-  void set_nc_( NodeCollectionPTR );
-
   /** Return a new dictionary datum .
    *
    * This function is called by get_status_base() and returns a new
@@ -958,8 +957,6 @@ private:
   bool frozen_;        //!< node shall not be updated if true
   bool initialized_;   //!< state and buffers have been initialized
   bool node_uses_wfr_; //!< node uses waveform relaxation method
-
-  NodeCollectionPTR nc_ptr_; //!< Original NodeCollection of this node, used to extract node-specific metadata
 };
 
 inline bool
@@ -1028,11 +1025,6 @@ Node::get_node_id() const
   return node_id_;
 }
 
-inline NodeCollectionPTR
-Node::get_nc() const
-{
-  return nc_ptr_;
-}
 
 inline void
 Node::set_node_id_( size_t i )
@@ -1040,12 +1032,6 @@ Node::set_node_id_( size_t i )
   node_id_ = i;
 }
 
-
-inline void
-Node::set_nc_( NodeCollectionPTR nc_ptr )
-{
-  nc_ptr_ = nc_ptr;
-}
 
 inline int
 Node::get_model_id() const

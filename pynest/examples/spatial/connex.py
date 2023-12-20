@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Circular mask and flat probability
-----------------------------------
+Spatial networks: Circular mask and flat probability
+----------------------------------------------------
 
 Create two populations on a 30x30 grid of iaf_psc_alpha neurons,
 connect with circular mask, flat probability,
@@ -31,8 +31,8 @@ BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
 """
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 import numpy as np
 
 nest.ResetKernel()

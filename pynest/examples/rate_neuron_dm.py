@@ -35,8 +35,8 @@ affects which neuron exhibits larger activity and hence which
 decision will be made.
 """
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 import numpy
 
 ##########################################################################

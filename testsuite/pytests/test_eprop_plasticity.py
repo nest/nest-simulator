@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_eprop_plasticity.py
+# test_eprop_bsshslm_2020_plasticity.py
 #
 # This file is part of NEST.
 #
@@ -29,8 +29,8 @@ import pytest
 
 nest.set_verbosity("M_WARNING")
 
-supported_source_models = ["eprop_iaf_psc_delta", "eprop_iaf_psc_delta_adapt"]
-supported_target_models = supported_source_models + ["eprop_readout"]
+supported_source_models = ["eprop_iaf_bsshslm_2020", "eprop_iaf_bsshslm_2020_adapt"]
+supported_target_models = supported_source_models + ["eprop_readout_bsshslm_2020"]
 
 
 @pytest.fixture(autouse=True)
@@ -46,7 +46,7 @@ def test_connect_with_eprop_synapse(source_model, target_model):
     # Connect supported models with e-prop synapse
     src = nest.Create(source_model)
     tgt = nest.Create(target_model)
-    nest.Connect(src, tgt, "all_to_all", {"synapse_model": "eprop_synapse", "delay": nest.resolution})
+    nest.Connect(src, tgt, "all_to_all", {"synapse_model": "eprop_synapse_bsshslm_2020", "delay": nest.resolution})
 
 
 @pytest.mark.parametrize("target_model", set(nest.node_models) - set(supported_target_models))
@@ -57,7 +57,7 @@ def test_unsupported_model_raises(target_model):
     tgt_nrn = nest.Create(target_model)
 
     with pytest.raises(nest.kernel.NESTError):
-        nest.Connect(src_nrn, tgt_nrn, "all_to_all", {"synapse_model": "eprop_synapse"})
+        nest.Connect(src_nrn, tgt_nrn, "all_to_all", {"synapse_model": "eprop_synapse_bsshslm_2020"})
 
 
 def test_eprop_regression():
@@ -161,8 +161,8 @@ def test_eprop_regression():
 
     gen_spk_in = nest.Create("spike_generator", n_in)
     nrns_in = nest.Create("parrot_neuron", n_in)
-    nrns_rec = nest.Create("eprop_iaf_psc_delta", n_rec, params_nrn_rec)
-    nrns_out = nest.Create("eprop_readout", n_out, params_nrn_out)
+    nrns_rec = nest.Create("eprop_iaf_bsshslm_2020", n_rec, params_nrn_rec)
+    nrns_out = nest.Create("eprop_readout_bsshslm_2020", n_out, params_nrn_out)
     gen_rate_target = nest.Create("step_rate_generator", n_out)
 
     # Create recorders
@@ -219,28 +219,28 @@ def test_eprop_regression():
     }
 
     params_syn_in = {
-        "synapse_model": "eprop_synapse",
+        "synapse_model": "eprop_synapse_bsshslm_2020",
         "delay": duration["step"],
         "tau_m_readout": params_nrn_out["tau_m"],
         "weight": weights_in_rec,
     }
 
     params_syn_rec = {
-        "synapse_model": "eprop_synapse",
+        "synapse_model": "eprop_synapse_bsshslm_2020",
         "delay": duration["step"],
         "tau_m_readout": params_nrn_out["tau_m"],
         "weight": weights_rec_rec,
     }
 
     params_syn_out = {
-        "synapse_model": "eprop_synapse",
+        "synapse_model": "eprop_synapse_bsshslm_2020",
         "delay": duration["step"],
         "tau_m_readout": params_nrn_out["tau_m"],
         "weight": weights_rec_out,
     }
 
     params_syn_feedback = {
-        "synapse_model": "eprop_learning_signal_connection",
+        "synapse_model": "eprop_learning_signal_connection_bsshslm_2020",
         "delay": duration["step"],
         "weight": weights_out_rec,
     }
@@ -256,7 +256,7 @@ def test_eprop_regression():
         "delay": duration["step"],
     }
 
-    nest.SetDefaults("eprop_synapse", params_common_syn_eprop)
+    nest.SetDefaults("eprop_synapse_bsshslm_2020", params_common_syn_eprop)
 
     nest.Connect(gen_spk_in, nrns_in, params_conn_one_to_one, params_syn_static)
     nest.Connect(nrns_in, nrns_rec, params_conn_all_to_all, params_syn_in)
@@ -491,9 +491,9 @@ def test_eprop_classification():
 
     gen_spk_in = nest.Create("spike_generator", n_in)
     nrns_in = nest.Create("parrot_neuron", n_in)
-    nrns_reg = nest.Create("eprop_iaf_psc_delta", n_reg, params_nrn_reg)
-    nrns_ad = nest.Create("eprop_iaf_psc_delta_adapt", n_ad, params_nrn_ad)
-    nrns_out = nest.Create("eprop_readout", n_out, params_nrn_out)
+    nrns_reg = nest.Create("eprop_iaf_bsshslm_2020", n_reg, params_nrn_reg)
+    nrns_ad = nest.Create("eprop_iaf_bsshslm_2020_adapt", n_ad, params_nrn_ad)
+    nrns_out = nest.Create("eprop_readout_bsshslm_2020", n_out, params_nrn_out)
     gen_rate_target = nest.Create("step_rate_generator", n_out)
 
     nrns_rec = nrns_reg + nrns_ad
@@ -561,28 +561,28 @@ def test_eprop_classification():
     }
 
     params_syn_in = {
-        "synapse_model": "eprop_synapse",
+        "synapse_model": "eprop_synapse_bsshslm_2020",
         "delay": duration["step"],
         "tau_m_readout": params_nrn_out["tau_m"],
         "weight": weights_in_rec,
     }
 
     params_syn_rec = {
-        "synapse_model": "eprop_synapse",
+        "synapse_model": "eprop_synapse_bsshslm_2020",
         "delay": duration["step"],
         "tau_m_readout": params_nrn_out["tau_m"],
         "weight": weights_rec_rec,
     }
 
     params_syn_out = {
-        "synapse_model": "eprop_synapse",
+        "synapse_model": "eprop_synapse_bsshslm_2020",
         "delay": duration["step"],
         "tau_m_readout": params_nrn_out["tau_m"],
         "weight": weights_rec_out,
     }
 
     params_syn_feedback = {
-        "synapse_model": "eprop_learning_signal_connection",
+        "synapse_model": "eprop_learning_signal_connection_bsshslm_2020",
         "delay": duration["step"],
         "weight": weights_out_rec,
     }
@@ -605,7 +605,7 @@ def test_eprop_classification():
         "delay": duration["step"],
     }
 
-    nest.SetDefaults("eprop_synapse", params_common_syn_eprop)
+    nest.SetDefaults("eprop_synapse_bsshslm_2020", params_common_syn_eprop)
 
     nest.Connect(gen_spk_in, nrns_in, params_conn_one_to_one, params_syn_static)
     nest.Connect(nrns_in, nrns_rec, params_conn_all_to_all, params_syn_in)

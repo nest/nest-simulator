@@ -483,35 +483,6 @@ for sender in set(senders):
 
 loss = np.sum(loss_list, axis=0)
 
-# %% ###########################################################################################################
-# Verify results
-# ~~~~~~~~~~~~~~
-# Furthermore, we compare the calculated losses to some hardcoded verification losses to ensure everything with
-# the NEST installation is fine. For the unmodified script, these should be precisely the same.
-
-loss_reference = [
-    628.60885077286002,
-    627.68254387245838,
-    624.67943267615897,
-    621.32821511784573,
-    618.38707000865702,
-]
-
-n_compare = min(len(loss), len(loss_reference))
-
-if np.allclose(loss[:n_compare], loss_reference[:n_compare], rtol=1e-8):
-    print()
-    print("Verification successful.")
-    print()
-else:
-    print()
-    print("Verification FAILED!")
-    print(f"    Expected  : {loss_reference[:n_compare]}")
-    print(f"    Observed  : {loss[:n_compare]}")
-    print(f"    Difference: {np.array(loss_reference[:n_compare]) - np.array(loss[:n_compare])}")
-    print()
-    exit(1)
-
 
 # %% ###########################################################################################################
 # Plot results

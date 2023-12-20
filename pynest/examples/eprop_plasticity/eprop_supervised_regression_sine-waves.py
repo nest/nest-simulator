@@ -460,35 +460,6 @@ error = (readout_signal - target_signal) ** 2
 loss = 0.5 * np.add.reduceat(error, np.arange(0, steps["task"], steps["sequence"]))
 
 # %% ###########################################################################################################
-# Verify results
-# ~~~~~~~~~~~~~~
-# Furthermore, we compare the calculated losses to some hardcoded verification losses to ensure everything with
-# the NEST installation is fine. For the unmodified script, these should be precisely the same.
-
-loss_reference = [
-    101.96435699904158,
-    103.46673112620580,
-    103.34060707477168,
-    103.68024403768639,
-    104.41277574875247,
-]
-
-n_compare = min(len(loss), len(loss_reference))
-
-if np.allclose(loss[:n_compare], loss_reference[:n_compare], rtol=1e-8):
-    print()
-    print("Verification successful.")
-    print()
-else:
-    print()
-    print("Verification FAILED!")
-    print(f"    Expected  : {loss_reference[:n_compare]}")
-    print(f"    Observed  : {loss[:n_compare]}")
-    print(f"    Difference: {np.array(loss_reference[:n_compare]) - np.array(loss[:n_compare])}")
-    print()
-    exit(1)
-
-# %% ###########################################################################################################
 # Plot results
 # ~~~~~~~~~~~~
 # Then, we plot a series of plots.

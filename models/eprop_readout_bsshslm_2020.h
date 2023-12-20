@@ -179,7 +179,7 @@ void register_eprop_readout_bsshslm_2020( const std::string& name );
 
 /**
  * Class implementing a current-based leaky integrate readout neuron model with delta-shaped postsynaptic currents for
- * e-prop plasticity.
+ * e-prop plasticity according to Bellec et al. (2020).
  */
 class eprop_readout_bsshslm_2020 : public EpropArchivingNodeReadout
 {

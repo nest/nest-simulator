@@ -56,12 +56,11 @@ The suffix ``_bsshslm_2020`` follows the NEST convention to indicate in the
 model name the paper that introduced it by the first letter of the authors' last
 names and the publication year.
 
-
 .. note::
-  The ``eprop_iaf_bsshslm_2020`` is similar to the ``iaf_psc_delta`` model, but there are
-  minor differences in the dynamics of the two models, such as the propagator of
-  the post-synaptic current and the voltage reset upon a spike.
-
+  The neuron dynamics of the ``eprop_iaf_bsshslm_2020`` model (excluding e-prop
+  plasticity) are similar to the neuron dynamics of the ``iaf_psc_delta`` model,
+  with minor differences, such as the propagator of the post-synaptic current
+  and the voltage reset upon a spike.
 
 The membrane voltage time course is given by:
 

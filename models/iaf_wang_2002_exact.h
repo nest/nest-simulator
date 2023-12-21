@@ -268,9 +268,9 @@ public:
     enum StateVecElems
     {
       V_m = 0,
-      G_AMPA,
-      G_GABA,
-      G_NMDA_base, // (x_NMDA_1, G_NMDA_1), (x_NMDA_2, G_NMDA_2), (x_NMDA_3, G_NMDA_3), ..., (x_NMDA_j, G_NMDA_j)
+      s_AMPA,
+      s_GABA,
+      s_NMDA_base, // (x_NMDA_1, G_NMDA_1), (x_NMDA_2, G_NMDA_2), (x_NMDA_3, G_NMDA_3), ..., (x_NMDA_j, G_NMDA_j)
     };
 
     size_t state_vec_size;
@@ -290,7 +290,7 @@ public:
     get_NMDA_sum() const
     {
       double NMDA_sum = 0.0;
-      for ( size_t i = G_NMDA_base; i < state_vec_size; i += 2 )
+      for ( size_t i = s_NMDA_base; i < state_vec_size; i += 2 )
       {
         NMDA_sum += ode_state_[ i + 1 ];
       }

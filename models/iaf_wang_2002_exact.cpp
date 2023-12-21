@@ -64,8 +64,8 @@ RecordablesMap< iaf_wang_2002_exact >::create()
 {
   // add state variables to recordables map
   insert_( names::V_m, &iaf_wang_2002_exact::get_ode_state_elem_< iaf_wang_2002_exact::State_::V_m > );
-  insert_( names::s_AMPA, &iaf_wang_2002_exact::get_ode_state_elem_< iaf_wang_2002_exact::State_::G_AMPA > );
-  insert_( names::s_GABA, &iaf_wang_2002_exact::get_ode_state_elem_< iaf_wang_2002_exact::State_::G_GABA > );
+  insert_( names::s_AMPA, &iaf_wang_2002_exact::get_ode_state_elem_< iaf_wang_2002_exact::State_::s_AMPA > );
+  insert_( names::s_GABA, &iaf_wang_2002_exact::get_ode_state_elem_< iaf_wang_2002_exact::State_::s_GABA > );
   insert_( names::NMDA_sum, &iaf_wang_2002_exact::get_NMDA_sum_ );
 }
 }
@@ -98,14 +98,14 @@ nest::iaf_wang_2002_exact::State_::State_( const Parameters_& p )
   , num_ports_( 2 )
   , r_( 0 )
 {
-  ode_state_ = new double[ G_NMDA_base ];
+  ode_state_ = new double[ s_NMDA_base ];
   assert( ode_state_ );
 
   ode_state_[ V_m ] = p.E_L; // initialize to reversal potential
-  ode_state_[ G_AMPA ] = 0.0;
-  ode_state_[ G_GABA ] = 0.0;
+  ode_state_[ s_AMPA ] = 0.0;
+  ode_state_[ s_GABA ] = 0.0;
 
-  state_vec_size = G_NMDA_base;
+  state_vec_size = s_NMDA_base;
 }
 
 nest::iaf_wang_2002_exact::State_::State_( const State_& s )
@@ -115,14 +115,14 @@ nest::iaf_wang_2002_exact::State_::State_( const State_& s )
   , r_( s.r_ )
 {
   assert( s.num_ports_ == 2 );
-  assert( state_vec_size == G_NMDA_base );
+  assert( state_vec_size == s_NMDA_base );
 
-  ode_state_ = new double[ G_NMDA_base ];
+  ode_state_ = new double[ s_NMDA_base ];
   assert( ode_state_ );
 
   ode_state_[ V_m ] = s.ode_state_[ V_m ];
-  ode_state_[ G_AMPA ] = s.ode_state_[ G_AMPA ];
-  ode_state_[ G_GABA ] = s.ode_state_[ G_GABA ];
+  ode_state_[ s_AMPA ] = s.ode_state_[ s_AMPA ];
+  ode_state_[ s_GABA ] = s.ode_state_[ s_GABA ];
 }
 
 nest::iaf_wang_2002_exact::Buffers_::Buffers_( iaf_wang_2002_exact& n )
@@ -234,8 +234,8 @@ void
 nest::iaf_wang_2002_exact::State_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::V_m, ode_state_[ V_m ] ); // Membrane potential
-  def< double >( d, names::s_AMPA, ode_state_[ G_AMPA ] );
-  def< double >( d, names::s_GABA, ode_state_[ G_GABA ] );
+  def< double >( d, names::s_AMPA, ode_state_[ s_AMPA ] );
+  def< double >( d, names::s_GABA, ode_state_[ s_GABA ] );
 
   // total NMDA sum
   double NMDA_sum = get_NMDA_sum();
@@ -246,8 +246,8 @@ void
 nest::iaf_wang_2002_exact::State_::set( const DictionaryDatum& d, const Parameters_&, Node* node )
 {
   updateValueParam< double >( d, names::V_m, ode_state_[ V_m ], node );
-  updateValueParam< double >( d, names::s_AMPA, ode_state_[ G_AMPA ], node );
-  updateValueParam< double >( d, names::s_GABA, ode_state_[ G_GABA ], node );
+  updateValueParam< double >( d, names::s_AMPA, ode_state_[ s_AMPA ], node );
+  updateValueParam< double >( d, names::s_GABA, ode_state_[ s_GABA ], node );
 }
 
 /* ---------------------------------------------------------------------------
@@ -313,19 +313,19 @@ nest::iaf_wang_2002_exact::~iaf_wang_2002_exact()
 void
 nest::iaf_wang_2002_exact::init_state_()
 {
-  assert( S_.state_vec_size == State_::G_NMDA_base );
+  assert( S_.state_vec_size == State_::s_NMDA_base );
 
   double* old_state = S_.ode_state_;
-  S_.state_vec_size = State_::G_NMDA_base + 2 * ( S_.num_ports_ - 2 );
+  S_.state_vec_size = State_::s_NMDA_base + 2 * ( S_.num_ports_ - 2 );
   S_.ode_state_ = new double[ S_.state_vec_size ];
 
   assert( S_.ode_state_ );
 
   S_.ode_state_[ State_::V_m ] = old_state[ State_::V_m ];
-  S_.ode_state_[ State_::G_AMPA ] = old_state[ State_::G_AMPA ];
-  S_.ode_state_[ State_::G_GABA ] = old_state[ State_::G_GABA ];
+  S_.ode_state_[ State_::s_AMPA ] = old_state[ State_::s_AMPA ];
+  S_.ode_state_[ State_::s_GABA ] = old_state[ State_::s_GABA ];
 
-  for ( size_t i = State_::G_NMDA_base; i < S_.state_vec_size; ++i )
+  for ( size_t i = State_::s_NMDA_base; i < S_.state_vec_size; ++i )
   {
     S_.ode_state_[ i ] = 0.0;
   }
@@ -425,13 +425,13 @@ nest::iaf_wang_2002_exact_dynamics( double, const double ode_state[], double f[]
   // ode_state[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.ode_state[].
 
-  const double I_AMPA = ( ode_state[ State_::V_m ] - node.P_.E_ex ) * ode_state[ State_::G_AMPA ];
+  const double I_AMPA = ( ode_state[ State_::V_m ] - node.P_.E_ex ) * ode_state[ State_::s_AMPA ];
 
-  const double I_rec_GABA = ( ode_state[ State_::V_m ] - node.P_.E_in ) * ode_state[ State_::G_GABA ];
+  const double I_rec_GABA = ( ode_state[ State_::V_m ] - node.P_.E_in ) * ode_state[ State_::s_GABA ];
 
-  // The sum of NMDA_G
+  // The sum of s_NMDA
   double total_NMDA = 0;
-  for ( size_t i = State_::G_NMDA_base + 1, w_idx = 0; i < node.S_.state_vec_size; i += 2, ++w_idx )
+  for ( size_t i = State_::s_NMDA_base + 1, w_idx = 0; i < node.S_.state_vec_size; i += 2, ++w_idx )
   {
     total_NMDA += ode_state[ i ] * node.B_.weights_.at( w_idx );
   }
@@ -443,10 +443,10 @@ nest::iaf_wang_2002_exact_dynamics( double, const double ode_state[], double f[]
 
   f[ State_::V_m ] = ( -node.P_.g_L * ( ode_state[ State_::V_m ] - node.P_.E_L ) - I_syn ) / node.P_.C_m;
 
-  f[ State_::G_AMPA ] = -ode_state[ State_::G_AMPA ] / node.P_.tau_AMPA;
-  f[ State_::G_GABA ] = -ode_state[ State_::G_GABA ] / node.P_.tau_GABA;
+  f[ State_::s_AMPA ] = -ode_state[ State_::s_AMPA ] / node.P_.tau_AMPA;
+  f[ State_::s_GABA ] = -ode_state[ State_::s_GABA ] / node.P_.tau_GABA;
 
-  for ( size_t i = State_::G_NMDA_base; i < node.S_.state_vec_size; i += 2 )
+  for ( size_t i = State_::s_NMDA_base; i < node.S_.state_vec_size; i += 2 )
   {
     f[ i + 1 ] =
       -ode_state[ i + 1 ] / node.P_.tau_decay_NMDA + node.P_.alpha * ode_state[ i ] * ( 1 - ode_state[ i + 1 ] );
@@ -493,17 +493,17 @@ nest::iaf_wang_2002_exact::update( Time const& origin, const long from, const lo
     }
 
     // add incoming spikes
-    S_.ode_state_[ State_::G_AMPA ] += B_.spikes_[ AMPA - 1 ].get_value( lag );
-    S_.ode_state_[ State_::G_GABA ] += B_.spikes_[ GABA - 1 ].get_value( lag );
+    S_.ode_state_[ State_::s_AMPA ] += B_.spikes_[ AMPA - 1 ].get_value( lag );
+    S_.ode_state_[ State_::s_GABA ] += B_.spikes_[ GABA - 1 ].get_value( lag );
 
     for ( size_t i = NMDA - 1; i < B_.spikes_.size(); ++i )
     {
       const size_t si = i - ( NMDA - 1 );
 
       assert( si >= 0 );
-      assert( State_::G_NMDA_base + si * 2 < S_.state_vec_size );
+      assert( State_::s_NMDA_base + si * 2 < S_.state_vec_size );
 
-      S_.ode_state_[ State_::G_NMDA_base + si * 2 ] += B_.spikes_.at( i ).get_value( lag );
+      S_.ode_state_[ State_::s_NMDA_base + si * 2 ] += B_.spikes_.at( i ).get_value( lag );
     }
 
     // absolute refractory period
@@ -559,8 +559,6 @@ nest::iaf_wang_2002_exact::handle( SpikeEvent& e )
   }
   else
   {
-    std::cout << "Received NMDA spike: " << std::endl;
-    std::cout << "rport: " << e.get_rport() << std::endl;
     B_.spikes_[ rport - 1 ].add_value( steps, e.get_multiplicity() );
 
     const size_t w_idx = rport - NMDA;

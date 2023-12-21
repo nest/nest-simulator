@@ -109,9 +109,9 @@ The eligibility trace and the presynaptic spike trains are low-pass filtered
 with some exponential kernels:
 
 .. math::
-  \bar{e}_{ji}=\mathcal{F}_\kappa(e_{ji}) \;\text{with}\, \kappa=\exp\left(\frac{-\delta t}{\tau_\text{m,
-out}}\right)\,,\\ \bar{z}_i=\mathcal{F}_\alpha(z_i) \;\text{with}\, \alpha=\exp\left(\frac{-\delta
-t}{\tau_\text{m}}\right)\,.
+  \bar{e}_{ji}=\mathcal{F}_\kappa(e_{ji}) \;\text{with}\, \kappa=\exp\left(\frac{-\delta t}{
+    \tau_\text{m,out}}\right)\,,\\ \bar{z}_i=\mathcal{F}_\alpha(z_i) \;\text{with}\,
+    \alpha=\exp\left(\frac{-\delta t}{\tau_\text{m}}\right)\,.
 
 Furthermore, a firing rate regularization mechanism keeps the average firing
 rate :math:`f^\text{av}_j` of the postsynaptic neuron close to a target firing rate

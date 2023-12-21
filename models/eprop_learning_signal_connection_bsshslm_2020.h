@@ -40,10 +40,17 @@ Synapse model transmitting feedback learning signals for e-prop plasticity
 Description
 +++++++++++
 
-``eprop_learning_signal_connection_bsshslm_2020`` is a feedback connector  from ``eprop_readout_bsshslm_2020``
-neurons to ``eprop_iaf_bsshslm_2020`` or ``eprop_iaf_adapt_bsshslm_2020`` neurons and
-transmits the learning signals :math:`L_j^t` for e-prop plasticity [1]_ and has
-a static weight :math:`B_{jk}`.
+``eprop_learning_signal_connection_bsshslm_2020`` is an implementation of a feedback connector from
+``eprop_readout_bsshslm_2020`` readout neurons to ``eprop_iaf_bsshslm_2020`` or ``eprop_iaf_adapt_bsshslm_2020``
+recurrent neurons that transmits the learning signals :math:`L_j^t` for eligibility propagation (e-prop) plasticity and
+has a static weight :math:`B_{jk}`.
+
+E-prop plasticity was originally introduced and implemented in TensorFlow in [1]_.
+
+The suffix ``_bsshslm_2020`` follows the NEST convention to indicate in the
+model name the paper that introduced it by the first letter of the authors' last
+names and the publication year.
+
 
 For more information on e-prop plasticity, see the documentation on the other e-prop models:
 
@@ -51,7 +58,6 @@ For more information on e-prop plasticity, see the documentation on the other e-
  * :doc:`eprop_iaf_adapt_bsshslm_2020<../models/eprop_iaf_adapt_bsshslm_2020/>`
  * :doc:`eprop_readout_bsshslm_2020<../models/eprop_readout_bsshslm_2020/>`
  * :doc:`eprop_synapse_bsshslm_2020<../models/eprop_synapse_bsshslm_2020/>`
-
 
 Details on the event-based NEST implementation of e-prop can be found in [2]_.
 

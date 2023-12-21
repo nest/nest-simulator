@@ -50,15 +50,18 @@ Description
 neuron model with delta-shaped postsynaptic currents used for eligibility
 propagation (e-prop) plasticity.
 
-An additional state variable and the corresponding differential
-equation represents a piecewise constant external current.
+E-prop plasticity was originally introduced and implemented in TensorFlow in [1]_.
+
+The suffix ``_bsshslm_2020`` follows the NEST convention to indicate in the
+model name the paper that introduced it by the first letter of the authors' last
+names and the publication year.
+
 
 .. note::
   The ``eprop_iaf_bsshslm_2020`` is similar to the ``iaf_psc_delta`` model, but there are
   minor differences in the dynamics of the two models, such as the propagator of
   the post-synaptic current and the voltage reset upon a spike.
 
-E-prop plasticity was originally introduced and implemented in TensorFlow in [1]_.
 
 The membrane voltage time course is given by:
 
@@ -126,10 +129,10 @@ The overall gradient is given by the addition of the two gradients.
 
 For more information on e-prop plasticity, see the documentation on the other e-prop models:
 
-    * :doc:`eprop_iaf_adapt_bsshslm_2020<../models/eprop_iaf_adapt_bsshslm_2020/>`
-    * :doc:`eprop_readout_bsshslm_2020<../models/eprop_readout_bsshslm_2020/>`
-    * :doc:`eprop_synapse_bsshslm_2020<../models/eprop_synapse_bsshslm_2020/>`
-    * :doc:`eprop_learning_signal_connection_bsshslm_2020<../models/eprop_learning_signal_connection_bsshslm_2020/>`
+ * :doc:`eprop_iaf_adapt_bsshslm_2020<../models/eprop_iaf_adapt_bsshslm_2020/>`
+ * :doc:`eprop_readout_bsshslm_2020<../models/eprop_readout_bsshslm_2020/>`
+ * :doc:`eprop_synapse_bsshslm_2020<../models/eprop_synapse_bsshslm_2020/>`
+ * :doc:`eprop_learning_signal_connection_bsshslm_2020<../models/eprop_learning_signal_connection_bsshslm_2020/>`
 
 Details on the event-based NEST implementation of e-prop can be found in [2]_.
 

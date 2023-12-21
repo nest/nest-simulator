@@ -43,8 +43,15 @@ Synapse type for e-prop plasticity
 Description
 +++++++++++
 
-``eprop_synapse_bsshslm_2020`` is a connector to create e-prop synapses between postsynaptic
-neurons :math:`j` and presynaptic neurons and :math:`i` as defined in [1]_.
+``eprop_synapse_bsshslm_2020`` is an implementation of a connector model to create synapses between postsynaptic
+neurons :math:`j` and presynaptic neurons and :math:`i` for eligibility propagation (e-prop) plasticity.
+
+E-prop plasticity was originally introduced and implemented in TensorFlow in [1]_.
+
+The suffix ``_bsshslm_2020`` follows the NEST convention to indicate in the
+model name the paper that introduced it by the first letter of the authors' last
+names and the publication year.
+
 
 The e-prop synapse collects the presynaptic spikes needed for calculating the
 weight update. When it is time to update, it triggers the calculation of the
@@ -59,14 +66,14 @@ archiving. So far, compatible models are ``eprop_iaf_bsshslm_2020``,
 
 For more information on e-prop plasticity, see the documentation on the other e-prop models:
 
-    * :doc:`eprop_iaf_bsshslm_2020<../models/eprop_iaf_bsshslm_2020/>`
-    * :doc:`eprop_readout_bsshslm_2020<../models/eprop_readout_bsshslm_2020/>`
-    * :doc:`eprop_synapse_bsshslm_2020<../models/eprop_synapse_bsshslm_2020/>`
-    * :doc:`eprop_learning_signal_connection_bsshslm_2020<../models/eprop_learning_signal_connection_bsshslm_2020/>`
+ * :doc:`eprop_iaf_bsshslm_2020<../models/eprop_iaf_bsshslm_2020/>`
+ * :doc:`eprop_readout_bsshslm_2020<../models/eprop_readout_bsshslm_2020/>`
+ * :doc:`eprop_synapse_bsshslm_2020<../models/eprop_synapse_bsshslm_2020/>`
+ * :doc:`eprop_learning_signal_connection_bsshslm_2020<../models/eprop_learning_signal_connection_bsshslm_2020/>`
 
 For more information on the optimizers, see the documentation of the weight optimizer:
 
-    * :doc:`weight_optimizer<../models/weight_optimizer/>`
+ * :doc:`weight_optimizer<../models/weight_optimizer/>`
 
 Details on the event-based NEST implementation of e-prop can be found in [2]_.
 

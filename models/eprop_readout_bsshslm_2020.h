@@ -47,12 +47,14 @@ Description
 +++++++++++
 
 ``eprop_readout_bsshslm_2020`` is an implementation of a integrate-and-fire neuron model
-with delta-shaped postsynaptic currents used as readout neuron for e-prop plasticity [1]_.
-
-An additional state variable and the corresponding differential
-equation represents a piecewise constant external current.
+with delta-shaped postsynaptic currents used as readout neuron for eligibility propagation (e-prop) plasticity.
 
 E-prop plasticity was originally introduced and implemented in TensorFlow in [1]_.
+
+The suffix ``_bsshslm_2020`` follows the NEST convention to indicate in the
+model name the paper that introduced it by the first letter of the authors' last
+names and the publication year.
+
 
 The membrane voltage time course is given by:
 
@@ -60,6 +62,9 @@ The membrane voltage time course is given by:
     v_j^t &= \alpha v_j^{t-1}+\sum_{i \neq j}W_{ji}^\mathrm{out}z_i^{t-1}
              -z_j^{t-1}v_\mathrm{th} \,, \\
     \alpha &= e^{-\frac{\delta t}{\tau_\mathrm{m}}} \,.
+
+An additional state variable and the corresponding differential
+equation represents a piecewise constant external current.
 
 See the documentation on the ``iaf_psc_delta`` neuron model for more information
 on the integration of the subthreshold dynamics.

@@ -29,7 +29,7 @@ import pandas.testing as pdtest
 import pytest
 
 skip_models = [
-    "eprop_readout",  # extra timestep added to some recordables in update function
+    "eprop_readout_bsshslm_2020",  # extra timestep added to some recordables in update function
     "erfc_neuron",  # binary neuron
     "ginzburg_neuron",  # binary neuron
     "mcculloch_pitts_neuron",  # binary neuron

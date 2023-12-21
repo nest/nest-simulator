@@ -110,8 +110,7 @@ def get_models_from_file(model_file):
         "public Node": "node",
         "public ClopathArchivingNode": "clopath",
         "public UrbanczikArchivingNode": "urbanczik",
-        "public EpropArchivingNode": "eprop",
-        "public eprop_synapse": "eprop_connection",
+        "public EpropArchivingNode": "neuron",
         "typedef binary_neuron": "binary",
         "typedef rate_": "rate",
     }
@@ -230,8 +229,7 @@ def generate_modelsmodule():
     1. the copyright header.
     2. a list of generic NEST includes
     3. the list of includes for the models to build into NEST
-    4. if required template specialization for eprop_synapse
-    5. the list of model registration lines for the models to build
+    4. the list of model registration lines for the models to build
        into NEST
 
     The code is enriched by structured C++ comments as to make

@@ -59,7 +59,7 @@ namespace nest
  *
  * @note If any member functions need to do something special for a given connection type,
  * declare specializations in the corresponding header file and define them in the corresponding
- * source file. For an example, see `eprop_synapse`.
+ * source file. For an example, see `eprop_synapse_bsshslm_2020`.
  */
 class ConnectorBase
 {

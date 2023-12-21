@@ -200,8 +200,8 @@ params_nrn_out = {
 
 gen_spk_in = nest.Create("spike_generator", n_in)
 nrns_in = nest.Create("parrot_neuron", n_in)
-nrns_rec = nest.Create("eprop_iaf_psc_delta", n_rec, params_nrn_rec)
-nrns_out = nest.Create("eprop_readout", n_out, params_nrn_out)
+nrns_rec = nest.Create("eprop_iaf_bsshslm_2020", n_rec, params_nrn_rec)
+nrns_out = nest.Create("eprop_readout_bsshslm_2020", n_out, params_nrn_out)
 gen_rate_target = nest.Create("step_rate_generator", n_out)
 
 
@@ -275,7 +275,7 @@ params_common_syn_eprop = {
 }
 
 params_syn_base = {
-    "synapse_model": "eprop_synapse",
+    "synapse_model": "eprop_synapse_bsshslm_2020",
     "delay": duration["step"],  # ms, dendritic delay
     "tau_m_readout": params_nrn_out["tau_m"],  # ms, for technical reasons pass readout neuron membrane time constant
 }
@@ -290,7 +290,7 @@ params_syn_out = params_syn_base.copy()
 params_syn_out["weight"] = weights_rec_out
 
 params_syn_feedback = {
-    "synapse_model": "eprop_learning_signal_connection",
+    "synapse_model": "eprop_learning_signal_connection_bsshslm_2020",
     "delay": duration["step"],
     "weight": weights_out_rec,
 }
@@ -308,7 +308,7 @@ params_syn_static = {
 
 ####################
 
-nest.SetDefaults("eprop_synapse", params_common_syn_eprop)
+nest.SetDefaults("eprop_synapse_bsshslm_2020", params_common_syn_eprop)
 
 nest.Connect(gen_spk_in, nrns_in, params_conn_one_to_one, params_syn_static)  # connection 1
 nest.Connect(nrns_in, nrns_rec, params_conn_all_to_all, params_syn_in)  # connection 2

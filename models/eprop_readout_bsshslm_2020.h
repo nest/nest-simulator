@@ -1,5 +1,5 @@
 /*
- *  eprop_readout.h
+ *  eprop_readout_bsshslm_2020.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef EPROP_READOUT_H
-#define EPROP_READOUT_H
+#ifndef EPROP_READOUT_BSSHSLM_2020_H
+#define EPROP_READOUT_BSSHSLM_2020_H
 
 // nestkernel
 #include "connection.h"
@@ -46,7 +46,7 @@ postsynaptic currents for e-prop plasticity
 Description
 +++++++++++
 
-``eprop_readout`` is an implementation of a integrate-and-fire neuron model
+``eprop_readout_bsshslm_2020`` is an implementation of a integrate-and-fire neuron model
 with delta-shaped postsynaptic currents used as readout neuron for e-prop plasticity [1]_.
 
 An additional state variable and the corresponding differential
@@ -84,10 +84,10 @@ pseudo-derivative and a firing regularization term.
 
 For more information on e-prop plasticity, see the documentation on the other e-prop models:
 
-    * :doc:`eprop_iaf_psc_delta<../models/eprop_iaf_psc_delta/>`
-    * :doc:`eprop_iaf_psc_delta_adapt<../models/eprop_iaf_psc_delta_adapt/>`
-    * :doc:`eprop_synapse<../models/eprop_synapse/>`
-    * :doc:`eprop_learning_signal_connection<../models/eprop_learning_signal_connection/>`
+ * :doc:`eprop_iaf_bsshslm_2020<../models/eprop_iaf_bsshslm_2020/>`
+ * :doc:`eprop_iaf_adapt_bsshslm_2020<../models/eprop_iaf_adapt_bsshslm_2020/>`
+ * :doc:`eprop_synapse_bsshslm_2020<../models/eprop_synapse_bsshslm_2020/>`
+ * :doc:`eprop_learning_signal_connection_bsshslm_2020<../models/eprop_learning_signal_connection_bsshslm_2020/>`
 
 Details on the event-based NEST implementation of e-prop can be found in [2]_.
 
@@ -171,25 +171,25 @@ See also
 Examples using this model
 ++++++++++++++++++++++++++
 
-.. listexamples:: eprop_readout
+.. listexamples:: eprop_readout_bsshslm_2020
 
 EndUserDocs */
 
-void register_eprop_readout( const std::string& name );
+void register_eprop_readout_bsshslm_2020( const std::string& name );
 
 /**
  * Class implementing a current-based leaky integrate readout neuron model with delta-shaped postsynaptic currents for
- * e-prop plasticity.
+ * e-prop plasticity according to Bellec et al. (2020).
  */
-class eprop_readout : public EpropArchivingNodeReadout
+class eprop_readout_bsshslm_2020 : public EpropArchivingNodeReadout
 {
 
 public:
   //! Default constructor.
-  eprop_readout();
+  eprop_readout_bsshslm_2020();
 
   //! Copy constructor.
-  eprop_readout( const eprop_readout& );
+  eprop_readout_bsshslm_2020( const eprop_readout_bsshslm_2020& );
 
   using Node::handle;
   using Node::handles_test_event;
@@ -241,13 +241,13 @@ private:
   void compute_error_signal_cross_entropy( const long lag );
 
   //! Compute the error signal based on a loss function.
-  void ( eprop_readout::*compute_error_signal )( const long lag );
+  void ( eprop_readout_bsshslm_2020::*compute_error_signal )( const long lag );
 
   //! Map for storing a static set of recordables.
-  friend class RecordablesMap< eprop_readout >;
+  friend class RecordablesMap< eprop_readout_bsshslm_2020 >;
 
   //! Logger for universal data supporting the data logging request / reply mechanism. Populated with a recordables map.
-  friend class UniversalDataLogger< eprop_readout >;
+  friend class UniversalDataLogger< eprop_readout_bsshslm_2020 >;
 
   //! Structure of parameters.
   struct Parameters_
@@ -318,10 +318,10 @@ private:
   struct Buffers_
   {
     //! Default constructor.
-    Buffers_( eprop_readout& );
+    Buffers_( eprop_readout_bsshslm_2020& );
 
     //! Copy constructor.
-    Buffers_( const Buffers_&, eprop_readout& );
+    Buffers_( const Buffers_&, eprop_readout_bsshslm_2020& );
 
     //! Normalization rate of the readout signal. Sum of the readout signals of all readout neurons.
     double normalization_rate_;
@@ -333,7 +333,7 @@ private:
     RingBuffer currents_;
 
     //! Logger for universal data.
-    UniversalDataLogger< eprop_readout > logger_;
+    UniversalDataLogger< eprop_readout_bsshslm_2020 > logger_;
   };
 
   //! Structure of general variables.
@@ -414,11 +414,11 @@ private:
   Buffers_ B_;
 
   //! Map storing a static set of recordables.
-  static RecordablesMap< eprop_readout > recordablesMap_;
+  static RecordablesMap< eprop_readout_bsshslm_2020 > recordablesMap_;
 };
 
 inline size_t
-eprop_readout::handles_test_event( SpikeEvent&, size_t receptor_type )
+eprop_readout_bsshslm_2020::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -429,7 +429,7 @@ eprop_readout::handles_test_event( SpikeEvent&, size_t receptor_type )
 }
 
 inline size_t
-eprop_readout::handles_test_event( CurrentEvent&, size_t receptor_type )
+eprop_readout_bsshslm_2020::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -440,7 +440,7 @@ eprop_readout::handles_test_event( CurrentEvent&, size_t receptor_type )
 }
 
 inline size_t
-eprop_readout::handles_test_event( DelayedRateConnectionEvent& e, size_t receptor_type )
+eprop_readout_bsshslm_2020::handles_test_event( DelayedRateConnectionEvent& e, size_t receptor_type )
 {
   size_t step_rate_model_id = kernel().model_manager.get_node_model_id( "step_rate_generator" );
   size_t model_id = e.get_sender().get_model_id();
@@ -448,7 +448,8 @@ eprop_readout::handles_test_event( DelayedRateConnectionEvent& e, size_t recepto
   if ( step_rate_model_id == model_id and receptor_type != TARGET_SIG )
   {
     throw IllegalConnection(
-      "eprop_readout neurons expect a connection with a step_rate_generator node through receptor_type 2." );
+      "eprop_readout_bsshslm_2020 neurons expect a connection with a step_rate_generator node through receptor_type "
+      "2." );
   }
 
   if ( receptor_type < MIN_RATE_RECEPTOR or receptor_type >= SUP_RATE_RECEPTOR )
@@ -460,7 +461,7 @@ eprop_readout::handles_test_event( DelayedRateConnectionEvent& e, size_t recepto
 }
 
 inline size_t
-eprop_readout::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
+eprop_readout_bsshslm_2020::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -471,7 +472,7 @@ eprop_readout::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type
 }
 
 inline void
-eprop_readout::get_status( DictionaryDatum& d ) const
+eprop_readout_bsshslm_2020::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
@@ -485,7 +486,7 @@ eprop_readout::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-eprop_readout::set_status( const DictionaryDatum& d )
+eprop_readout_bsshslm_2020::set_status( const DictionaryDatum& d )
 {
   // temporary copies in case of errors
   Parameters_ ptmp = P_;
@@ -501,4 +502,4 @@ eprop_readout::set_status( const DictionaryDatum& d )
 
 } // namespace nest
 
-#endif // EPROP_READOUT_H
+#endif // EPROP_READOUT_BSSHSLM_2020_H

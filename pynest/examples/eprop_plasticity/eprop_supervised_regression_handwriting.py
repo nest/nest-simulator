@@ -499,7 +499,7 @@ loss = np.sum(loss_list, axis=0)
 # ~~~~~~~~~~~~
 # Then, we plot a series of plots.
 
-do_plotting = False  # if True, plot the results
+do_plotting = True  # if True, plot the results
 
 if not do_plotting:
     exit()

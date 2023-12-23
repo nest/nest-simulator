@@ -96,8 +96,8 @@ it should record from by using the standard ``Connect`` routine.
     nest.Connect(mm, neurons)
 
 To learn more about possible connection patterns and additional
-options when using ``Connect``, see the guide on :ref:`connection
-management <connection_management>`.
+options when using ``Connect``, see the guide on :ref:`connectivity
+concept <connectivity_concept>`.
 
 The above call to ``Connect`` would fail if the neurons would not
 support the sampling of the values ``V_m`` and ``g_ex``. It would also

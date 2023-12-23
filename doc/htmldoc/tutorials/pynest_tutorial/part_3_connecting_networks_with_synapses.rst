@@ -119,7 +119,7 @@ parameters associated with the distribution can be set (for example
     nest.Connect(epop1, neuron, "all_to_all", syn_dict)
 
 Available distributions and associated parameters are described in
-:ref:`Connection Management <connection_management>`, the most common
+:ref:`parametrization <param_ex>`, the most common
 ones are:
 
 +-------------------+------------------------+

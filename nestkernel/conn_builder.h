@@ -527,8 +527,6 @@ protected:
   void connect_() override;
 
 private:
-  void inner_connect_( const int, RngPtr, Node*, size_t );
-  ParameterDatum pairwise_avg_num_conns_; //!< Mean number of connections
   //! Provide index of first third-party node to be assigned to pool for given target node
   size_t get_first_pool_index_( const size_t target_index ) const;
 

@@ -1675,8 +1675,6 @@ nest::PoissonBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, s
 {
   const size_t target_thread = target->get_thread();
 
-  unsigned long num_conns;
-
   // check whether the target is on our thread
   if ( static_cast< size_t >( tid ) != target_thread )
   {
@@ -1698,7 +1696,7 @@ nest::PoissonBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, s
 
     // Sample to number of connections that are to be established
     poisson_distribution::param_type param( pairwise_avg_num_conns_->value( rng, target ) );
-    num_conns = poi_dist( rng, param );
+    const size_t num_conns = poi_dist( rng, param );
 
     for ( size_t n = 0; n < num_conns; ++n )
     {

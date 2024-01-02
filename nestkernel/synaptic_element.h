@@ -51,7 +51,7 @@
  *  growth_rate      double  - The maximum amount by which the synaptic elements
  * will
  *                             change between time steps. In elements/ms.
- *  tau_vacant       double  - Rate at which vacant synaptic elements will decay.
+ *  decay_vacant     double  - Rate at which vacant synaptic elements will decay.
  *                             Typical is 0.1 which represents a
  *                             loss of 10% of the vacant synaptic elements each
  * time
@@ -165,12 +165,12 @@ public:
     return z_connected_;
   }
   /**
-   * Retrieves the value of tau_vacant
+   * Retrieves the value of decay_vacant
    */
   double
-  get_tau_vacant() const
+  get_decay_vacant() const
   {
-    return tau_vacant_;
+    return decay_vacant_;
   }
   /**
    * Changes the number of bound synaptic elements by n.
@@ -221,14 +221,14 @@ public:
   }
   /**
    * Reduce the amount of vacant synaptic elements by a factor
-   * of tau_vacant_
+   * of decay_vacant_
    */
   void
   decay_z_vacant()
   {
     if ( get_z_vacant() > 0 )
     {
-      z_ -= get_z_vacant() * tau_vacant_;
+      z_ -= get_z_vacant() * decay_vacant_;
     }
   }
 
@@ -252,7 +252,7 @@ private:
   // steps.
   double growth_rate_;
   // Rate at which vacant synaptic elements will decay
-  double tau_vacant_;
+  double decay_vacant_;
   // Growth curve which defines the dynamics of this synaptic element.
   GrowthCurve* growth_curve_;
 };

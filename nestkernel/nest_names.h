@@ -560,7 +560,7 @@ extern const Name tau_u_bar_minus;
 extern const Name tau_u_bar_plus;
 extern const Name tau_V_th;
 extern const Name tau_v;
-extern const Name tau_vacant;
+extern const Name decay_vacant;
 extern const Name tau_w;
 extern const Name tau_x;
 extern const Name tau_z;

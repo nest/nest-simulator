@@ -681,7 +681,7 @@ public:
    * Is used to reduce the number of synaptic elements in the node through
    * time.
    *
-   * This amount is defined by tau_vacant.
+   * This amount is defined by decay_vacant.
    * @ingroup SP_functions
    */
   virtual void decay_synaptic_elements_vacant() {};

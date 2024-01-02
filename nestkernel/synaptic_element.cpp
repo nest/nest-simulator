@@ -40,7 +40,7 @@ nest::SynapticElement::SynapticElement()
   , z_connected_( 0 )
   , continuous_( true )
   , growth_rate_( 1.0 )
-  , tau_vacant_( 0.1 )
+  , decay_vacant_( 0.1 )
   , growth_curve_( new GrowthCurveLinear )
 {
 }
@@ -51,7 +51,7 @@ nest::SynapticElement::SynapticElement( const SynapticElement& se )
   , z_connected_( se.z_connected_ )
   , continuous_( se.continuous_ )
   , growth_rate_( se.growth_rate_ )
-  , tau_vacant_( se.tau_vacant_ )
+  , decay_vacant_( se.decay_vacant_ )
 {
   growth_curve_ = kernel().sp_manager.new_growth_curve( se.growth_curve_->get_name() );
   assert( growth_curve_ );
@@ -80,7 +80,7 @@ nest::SynapticElement::operator=( const SynapticElement& other )
     z_connected_ = other.z_connected_;
     continuous_ = other.continuous_;
     growth_rate_ = other.growth_rate_;
-    tau_vacant_ = other.tau_vacant_;
+    decay_vacant_ = other.decay_vacant_;
   }
   return *this;
 }
@@ -93,7 +93,7 @@ nest::SynapticElement::get( DictionaryDatum& d ) const
 {
   // Store current values in the dictionary
   def< double >( d, names::growth_rate, growth_rate_ );
-  def< double >( d, names::tau_vacant, tau_vacant_ );
+  def< double >( d, names::decay_vacant, decay_vacant_ );
   def< bool >( d, names::continuous, continuous_ );
   def< double >( d, names::z, z_ );
   def< int >( d, names::z_connected, z_connected_ );
@@ -108,11 +108,11 @@ nest::SynapticElement::get( DictionaryDatum& d ) const
 void
 nest::SynapticElement::set( const DictionaryDatum& d )
 {
-  double new_tau_vacant = tau_vacant_;
+  double new_decay_vacant = decay_vacant_;
 
   // Store values
   updateValue< double >( d, names::growth_rate, growth_rate_ );
-  updateValue< double >( d, names::tau_vacant, new_tau_vacant );
+  updateValue< double >( d, names::decay_vacant, new_decay_vacant );
   updateValue< bool >( d, names::continuous, continuous_ );
   updateValue< double >( d, names::z, z_ );
 
@@ -126,11 +126,11 @@ nest::SynapticElement::set( const DictionaryDatum& d )
   }
   growth_curve_->set( d );
 
-  if ( new_tau_vacant <= 0.0 )
+  if ( new_decay_vacant < 0.0 )
   {
-    throw BadProperty( "All time constants must be strictly positive." );
+    throw BadProperty( "Decay constant must be strictly positive." );
   }
-  tau_vacant_ = new_tau_vacant;
+  decay_vacant_ = new_decay_vacant;
 }
 
 

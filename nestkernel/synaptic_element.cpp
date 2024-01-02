@@ -129,7 +129,6 @@ nest::SynapticElement::set( const DictionaryDatum& d )
   if ( new_decay_vacant < 0.0 )
   {
     throw BadProperty( "Decay constant must be greater than or equal to zero." );
-
   }
   decay_vacant_ = new_decay_vacant;
 }

@@ -1636,7 +1636,7 @@ nest::PoissonBuilder::connect_()
           Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
           if ( target->is_proxy() )
           {
-            // skip array parameters handled in other virtual processes
+            // skip parameters handled in other virtual processes
             skip_conn_parameter_( tid );
             continue;
           }

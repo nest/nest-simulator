@@ -257,7 +257,7 @@ must be ``True``.
     nest.Connect(A, B, conn_spec_dict)
 
 pairwise poisson
-~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 For each possible pair of nodes from ``A`` and ``B``, a number of
 connections is created following a Poisson distribution with mean

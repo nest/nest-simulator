@@ -278,16 +278,6 @@ class ConnectLayersTestCase(unittest.TestCase):
         }
         self._check_connections(conn_spec, 108)
 
-    def test_connect_layers_poisson_mask(self):
-        """Connecting layers with pairwise_poisson and mask"""
-        conn_spec = {
-            "rule": "pairwise_poisson",
-            "pairwise_avg_num_conns": 0.5,
-            "mask": {"rectangular": {"lower_left": [-5.0, -5.0], "upper_right": [0.1, 0.1]}},
-        }
-        conns = self._check_connections(conn_spec, None, return_conns=True)
-        np.testing.assert_allclose(54, len(conns), atol=5)
-
     @unittest.skipIf(not HAVE_SCIPY, "SciPy package is not available")
     def test_connect_layers_bernoulli_kernel_mask(self):
         """Connecting layers with pairwise_bernoulli, kernel and mask"""

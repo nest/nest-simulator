@@ -51,7 +51,7 @@
  *  growth_rate      double  - The maximum amount by which the synaptic elements
  * will
  *                             change between time steps. In elements/ms.
- *  decay_vacant     double  - Rate at which vacant synaptic elements will decay.
+ *  decay_vacant     double  - Factor with which vacant synaptic elements will decay.
  *                             Typical is 0.1 which represents a
  *                             loss of 10% of the vacant synaptic elements each
  * time
@@ -251,7 +251,7 @@ private:
   // The maximum amount by which the synaptic elements will change between time
   // steps.
   double growth_rate_;
-  // Rate at which vacant synaptic elements will decay
+  // Factor with which vacant synaptic elements will decay
   double decay_vacant_;
   // Growth curve which defines the dynamics of this synaptic element.
   GrowthCurve* growth_curve_;

@@ -137,14 +137,7 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
   }
   else if ( connection_type == names::pairwise_poisson )
   {
-    if ( dict->known( names::number_of_connections ) )
-    {
-      type_ = Fixed_indegree;
-    }
-    else
-    {
-      type_ = Pairwise_poisson;
-    }
+    type_ = Pairwise_poisson;
   }
   else if ( connection_type == names::pairwise_bernoulli_on_target )
   {

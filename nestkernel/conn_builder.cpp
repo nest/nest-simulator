@@ -192,7 +192,8 @@ nest::ConnBuilder::connect()
   // classes are fully constructed when the test is executed
   for ( auto synapse_model_id : synapse_model_id_ )
   {
-    const ConnectorModel& synapse_model = kernel().model_manager.get_connection_model( synapse_model_id );
+    const ConnectorModel& synapse_model =
+      kernel().model_manager.get_connection_model( synapse_model_id, /* thread */ 0 );
     const bool requires_symmetric = synapse_model.has_property( ConnectionModelProperties::REQUIRES_SYMMETRIC );
 
     if ( requires_symmetric and not( is_symmetric() or make_symmetric_ ) )
@@ -421,7 +422,7 @@ nest::ConnBuilder::set_synapse_model_( DictionaryDatum syn_params, size_t synaps
   synapse_model_id_[ synapse_indx ] = synapse_model_id;
 
   // We need to make sure that Connect can process all synapse parameters specified.
-  const ConnectorModel& synapse_model = kernel().model_manager.get_connection_model( synapse_model_id );
+  const ConnectorModel& synapse_model = kernel().model_manager.get_connection_model( synapse_model_id, /* thread */ 0 );
   synapse_model.check_synapse_params( syn_params );
 }
 

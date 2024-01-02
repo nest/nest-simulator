@@ -130,7 +130,6 @@ ConnectionCreator::connect_to_target_poisson_( Iterator from,
   // unnecessarily many vectors.
   std::vector< double > source_pos( D );
   const std::vector< double > target_pos = tgt_pos.get_vector();
-
   poisson_distribution poi_dist;
 
   for ( Iterator iter = from; iter != to; ++iter )

@@ -1644,7 +1644,6 @@ nest::PoissonBuilder::connect_()
           inner_connect_( tid, rng, target, tnode_id );
         }
       }
-
       else
       {
         const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );

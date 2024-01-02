@@ -1605,7 +1605,7 @@ nest::PoissonBuilder::PoissonBuilder( NodeCollectionPTR sources,
     const double value = ( *conn_spec )[ names::pairwise_avg_num_conns ];
     if ( value < 0 )
     {
-      throw BadProperty( "Connection parameter 0 <= pairwise_avg_num_conns required." );
+      throw BadProperty( "Connection parameter 0 ≤ pairwise_avg_num_conns required." );
     }
     if ( not allow_multapses_ )
     {

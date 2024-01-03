@@ -210,6 +210,19 @@ private:
   void calibrate();
   void update( Time const&, const long, const long ) override;
 
+  /**
+   * Synapse types to connect to
+  **/
+  enum SynapseTypes
+  {
+    INF_SPIKE_RECEPTOR = 0,
+    AMPA,
+    GABA,
+    NMDA,
+    SUP_SPIKE_RECEPTOR
+  };
+
+
   // make dynamics function quasi-member
   friend int iaf_wang_2002_dynamics( double, const double*, double*, void* );
 
@@ -226,10 +239,10 @@ private:
     double V_reset;        //!< Reset Potential in mV
     double C_m;            //!< Membrane Capacitance in pF
     double g_L;            //!< Leak Conductance in nS
-    double g_GABA;         //!< Peak conductance GABA
-    double g_NMDA;         //!< Peak conductance NMDA
-    double g_AMPA;         //!< Peak conductance AMPA
-    double g_AMPA_ext;         //!< Peak conductance AMPA
+//     double g_GABA;         //!< Peak conductance GABA
+//     double g_NMDA;         //!< Peak conductance NMDA
+//     double g_AMPA;         //!< Peak conductance AMPA
+//     double g_AMPA_ext;         //!< Peak conductance AMPA
     double t_ref;          //!< Refractory period in ms
     double tau_AMPA;       //!< Synaptic Time Constant AMPA Synapse in ms
     double tau_GABA;       //!< Synaptic Time Constant GABA Synapse in ms
@@ -266,8 +279,8 @@ public:
     {
       V_m = 0,
       s_AMPA,
-      s_NMDA,
       s_GABA,
+      s_NMDA,
       STATE_VEC_SIZE
     };
 
@@ -304,9 +317,10 @@ private:
     // -----------------------------------------------------------------------
     //   Buffers and sums of incoming spikes and currents per timestep
     // -----------------------------------------------------------------------
-    RingBuffer spike_AMPA_;
-    RingBuffer spike_GABA_;
-    RingBuffer spike_NMDA_;
+    std::vector< RingBuffer > spikes_;
+//     RingBuffer spike_AMPA_;
+//     RingBuffer spike_GABA_;
+//     RingBuffer spike_NMDA_;
     RingBuffer currents_;
 
     // -----------------------------------------------------------------------
@@ -383,17 +397,14 @@ iaf_wang_2002::send_test_event( Node& target, size_t receptor_type, synindex, bo
 inline size_t
 iaf_wang_2002::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
-  if  ( receptor_type == 0 )
+  if ( not( INF_SPIKE_RECEPTOR < receptor_type and receptor_type < SUP_SPIKE_RECEPTOR ) )
   {
+    throw UnknownReceptorType( receptor_type, get_name() );
     return 0;
-  }
-  else if ( receptor_type == 1 )
-  {
-    return 1;
   }
   else
   {
-    throw UnknownReceptorType( receptor_type, get_name() );
+    return receptor_type;
   }
 }
 

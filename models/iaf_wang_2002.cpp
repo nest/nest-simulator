@@ -86,11 +86,11 @@ nest::iaf_wang_2002_dynamics( double, const double y[], double f[], void* pnode 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
 
-  const double I_AMPA = node.P_.g_AMPA * ( y[ S::V_m ] - node.P_.E_ex ) * y[ S::s_AMPA ];
+  const double I_AMPA = ( y[ S::V_m ] - node.P_.E_ex ) * y[ S::s_AMPA ];
 
-  const double I_rec_GABA = node.P_.g_GABA * ( y[ S::V_m ] - node.P_.E_in ) * y[ S::s_GABA ];
+  const double I_rec_GABA = ( y[ S::V_m ] - node.P_.E_in ) * y[ S::s_GABA ];
 
-  const double I_rec_NMDA = node.P_.g_NMDA * ( y[ S::V_m ] - node.P_.E_ex )
+  const double I_rec_NMDA = ( y[ S::V_m ] - node.P_.E_ex )
     / ( 1 + node.P_.conc_Mg2 * std::exp( -0.062 * y[ S::V_m ] ) / 3.57 ) * y[ S::s_NMDA ]; 
 
   const double I_syn = I_AMPA + I_rec_GABA + I_rec_NMDA + node.B_.I_stim_;
@@ -117,10 +117,10 @@ nest::iaf_wang_2002::Parameters_::Parameters_()
   , V_reset( -60.0 )      // mV
   , C_m( 500.0 )          // pF
   , g_L( 25.0 )           // nS
-  , g_GABA ( 1.3 )        //
-  , g_NMDA ( 0.165 )        //
-  , g_AMPA ( 0.05 )        //
-  , g_AMPA_ext ( 0.05 )   //
+//   , g_GABA ( 1.3 )        //
+//   , g_NMDA ( 0.165 )        //
+//   , g_AMPA ( 0.05 )        //
+//   , g_AMPA_ext ( 0.05 )   //
   , t_ref( 2.0 )          // ms
   , tau_AMPA( 2.0 )       // ms
   , tau_GABA( 5.0 )       // ms
@@ -153,9 +153,7 @@ nest::iaf_wang_2002::State_::State_( const State_& s )
 
 nest::iaf_wang_2002::Buffers_::Buffers_( iaf_wang_2002& n )
   : logger_( n )
-  , spike_AMPA_()
-  , spike_GABA_()
-  , spike_NMDA_()
+  , spikes_()
   , s_( nullptr )
   , c_( nullptr )
   , e_( nullptr )
@@ -188,10 +186,10 @@ nest::iaf_wang_2002::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::V_reset, V_reset );
   def< double >( d, names::C_m, C_m );
   def< double >( d, names::g_L, g_L );
-  def< double >( d, names::g_GABA, g_GABA );
-  def< double >( d, names::g_NMDA, g_NMDA );
-  def< double >( d, names::g_AMPA, g_AMPA );
-  def< double >( d, names::g_AMPA_ext, g_AMPA_ext );
+//   def< double >( d, names::g_GABA, g_GABA );
+//   def< double >( d, names::g_NMDA, g_NMDA );
+//   def< double >( d, names::g_AMPA, g_AMPA );
+//   def< double >( d, names::g_AMPA_ext, g_AMPA_ext );
   def< double >( d, names::t_ref, t_ref );
   def< double >( d, names::tau_AMPA, tau_AMPA );
   def< double >( d, names::tau_GABA, tau_GABA );
@@ -212,10 +210,10 @@ nest::iaf_wang_2002::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::V_reset, V_reset, node );
   updateValueParam< double >( d, names::C_m, C_m, node );
   updateValueParam< double >( d, names::g_L, g_L, node );
-  updateValueParam< double >( d, names::g_GABA, g_GABA, node );
-  updateValueParam< double >( d, names::g_NMDA, g_NMDA, node );
-  updateValueParam< double >( d, names::g_AMPA, g_AMPA, node );
-  updateValueParam< double >( d, names::g_AMPA_ext, g_AMPA_ext, node );
+//   updateValueParam< double >( d, names::g_GABA, g_GABA, node );
+//   updateValueParam< double >( d, names::g_NMDA, g_NMDA, node );
+//   updateValueParam< double >( d, names::g_AMPA, g_AMPA, node );
+//   updateValueParam< double >( d, names::g_AMPA_ext, g_AMPA_ext, node );
   updateValueParam< double >( d, names::t_ref, t_ref, node );
   updateValueParam< double >( d, names::tau_AMPA, tau_AMPA, node );
   updateValueParam< double >( d, names::tau_GABA, tau_GABA, node );
@@ -335,9 +333,13 @@ nest::iaf_wang_2002::init_state_()
 void
 nest::iaf_wang_2002::init_buffers_()
 {
-  B_.spike_AMPA_.clear();
-  B_.spike_GABA_.clear();
-  B_.spike_NMDA_.clear();
+//  std::cout << "Inside init buffers" << std::endl;
+  B_.spikes_.resize( 3 );
+  for ( auto& sb : B_.spikes_ )
+  {
+    sb.clear(); // includes resize
+  }
+
   B_.currents_.clear(); // includes resize
 
   B_.logger_.reset(); // includes resize
@@ -408,7 +410,7 @@ void
 nest::iaf_wang_2002::update( Time const& origin, const long from, const long to )
 {
   std::vector< double > s_vals( kernel().connection_manager.get_min_delay(), 0.0 );
-
+//  std::cout << "Inside update" << std::endl;
   for ( long lag = from; lag < to; ++lag )
   {
     double t = 0.0;
@@ -425,7 +427,6 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
     // enforce setting IntegrationStep to step-t; this is of advantage
     // for a consistent and efficient integration across subsequent
     // simulation intervals
-
     while ( t < B_.step_ )
     {
       const int status = gsl_odeiv_evolve_apply( B_.e_,
@@ -443,11 +444,14 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
       }
     }
 
+
     // add incoming spikes
-    S_.y_[ State_::s_AMPA ] += B_.spike_AMPA_.get_value( lag );
-    S_.y_[ State_::s_GABA ] += B_.spike_GABA_.get_value( lag );
-    S_.y_[ State_::s_NMDA ] += B_.spike_NMDA_.get_value( lag );
+    S_.y_[ State_::s_AMPA ] += B_.spikes_[ AMPA - 1 ].get_value( lag );
+    S_.y_[ State_::s_GABA ] += B_.spikes_[ GABA - 1 ].get_value( lag );
+
+    S_.y_[ State_::s_NMDA ] += B_.spikes_[ NMDA - 1 ].get_value( lag );
     S_.y_[ State_::s_NMDA ] = std::min( S_.y_[ State_::s_NMDA ], 1.0 );
+
     if ( S_.r_ )
     {
       // neuron is absolute refractory
@@ -478,7 +482,6 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
       kernel().event_delivery_manager.send( *this, se, lag );
     }
 
-
     // set new input current
     B_.I_stim_ = B_.currents_.get_value( lag );
 
@@ -500,29 +503,17 @@ nest::iaf_wang_2002::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
-  if ( e.get_weight() > 0.0 )
+  const double steps = e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() );
+
+  const auto rport = e.get_rport();
+
+  if ( rport < NMDA )
   {
-    if ( e.get_rport() == 0 ) {
-      B_.spike_AMPA_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-        e.get_weight() * e.get_multiplicity() );
-    }
-    // if from external population, ignore weight
-    // when computing the actual synaptic current, this contribution will be multiplied by
-    // g_AMPA. therefore we multiply by g_AMPA_ext / g_AMPA here, and the g_AMPA denominator
-    // will be cancelled
-    else if ( e.get_rport() == 1 ) {
-      B_.spike_AMPA_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-        P_.g_AMPA_ext / P_.g_AMPA * e.get_multiplicity() );
-    }
-    if ( e.get_offset() != 0.0 ) {
-      B_.spike_NMDA_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-        e.get_weight() * e.get_multiplicity() * e.get_offset() );
-    }
+    B_.spikes_[ rport - 1 ].add_value( steps, e.get_weight() * e.get_multiplicity() );
   }
   else
   {
-    B_.spike_GABA_.add_value( e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-      -e.get_weight() * e.get_multiplicity() );
+    B_.spikes_[ rport - 1 ].add_value( steps, e.get_weight() * e.get_multiplicity() * e.get_offset() );
   }
 }
 

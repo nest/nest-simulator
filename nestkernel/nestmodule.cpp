@@ -2203,6 +2203,7 @@ NestModule::init( SLIInterpreter* i )
   kernel().connection_manager.register_conn_builder< FixedInDegreeBuilder >( "fixed_indegree" );
   kernel().connection_manager.register_conn_builder< FixedOutDegreeBuilder >( "fixed_outdegree" );
   kernel().connection_manager.register_conn_builder< BernoulliBuilder >( "pairwise_bernoulli" );
+  kernel().connection_manager.register_conn_builder< PoissonBuilder >( "pairwise_poisson" );
   kernel().connection_manager.register_conn_builder< TripartiteBernoulliWithPoolBuilder >(
     "tripartite_bernoulli_with_pool" );
   kernel().connection_manager.register_conn_builder< SymmetricBernoulliBuilder >( "symmetric_pairwise_bernoulli" );

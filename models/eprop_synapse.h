@@ -330,18 +330,24 @@ private:
   //! Low-pass filter of the eligibility trace.
   double kappa_;
 
-  //! If this connection is between two recurrent neurons.
-  bool is_recurrent_to_recurrent_conn_;
-
-  //! Vector of presynaptic inter-spike-intervals.
-  std::vector< long > presyn_isis_;
-
   /**
    *  Optimizer
    *
    *  @note Pointer is set by check_connection() and deleted by delete_optimizer().
    */
   WeightOptimizer* optimizer_;
+
+  double gradient_change_;
+
+  long idx_current_update; // TODO: no _?
+  double grad_= 0.0;
+  double z_bar_ =0.0;
+  double e_bar_ = 0.0;
+  double sum_e_ = 0.0;
+
+  long t_ = 0;
+  double prev_z_buffer_ = 0.0;
+  bool is_first_spike_ = true ;
 };
 
 template < typename targetidentifierT >
@@ -371,7 +377,6 @@ eprop_synapse< targetidentifierT >::eprop_synapse()
   , t_previous_trigger_spike_( 0 )
   , tau_m_readout_( 10.0 )
   , kappa_( std::exp( -Time::get_resolution().get_ms() / tau_m_readout_ ) )
-  , is_recurrent_to_recurrent_conn_( false )
   , optimizer_( nullptr )
 {
 }
@@ -393,7 +398,6 @@ eprop_synapse< targetidentifierT >::eprop_synapse( const eprop_synapse& es )
   , t_previous_trigger_spike_( 0 )
   , tau_m_readout_( es.tau_m_readout_ )
   , kappa_( std::exp( -Time::get_resolution().get_ms() / tau_m_readout_ ) )
-  , is_recurrent_to_recurrent_conn_( es.is_recurrent_to_recurrent_conn_ )
   , optimizer_( es.optimizer_ )
 {
 }
@@ -417,7 +421,6 @@ eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
   tau_m_readout_ = es.tau_m_readout_;
   kappa_ = es.kappa_;
-  is_recurrent_to_recurrent_conn_ = es.is_recurrent_to_recurrent_conn_;
   optimizer_ = es.optimizer_;
 
   return *this;
@@ -433,7 +436,6 @@ eprop_synapse< targetidentifierT >::eprop_synapse( eprop_synapse&& es )
   , t_previous_trigger_spike_( 0 )
   , tau_m_readout_( es.tau_m_readout_ )
   , kappa_( es.kappa_ )
-  , is_recurrent_to_recurrent_conn_( es.is_recurrent_to_recurrent_conn_ )
   , optimizer_( es.optimizer_ )
 {
   es.optimizer_ = nullptr;
@@ -458,7 +460,6 @@ eprop_synapse< targetidentifierT >::operator=( eprop_synapse&& es )
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
   tau_m_readout_ = es.tau_m_readout_;
   kappa_ = es.kappa_;
-  is_recurrent_to_recurrent_conn_ = es.is_recurrent_to_recurrent_conn_;
 
   optimizer_ = es.optimizer_;
   es.optimizer_ = nullptr;
@@ -497,51 +498,85 @@ eprop_synapse< targetidentifierT >::delete_optimizer()
 
 template < typename targetidentifierT >
 bool
-eprop_synapse< targetidentifierT >::send( Event& e,
-  size_t thread,
-  const EpropSynapseCommonProperties& cp )
+eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSynapseCommonProperties& cp )
 {
   Node* target = get_target( thread );
   assert( target );
 
+  bool is_target_recurrent = target->is_eprop_recurrent_node();
+
   const long t_spike = e.get_stamp().get_steps();
   const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
-  const long shift = target->get_shift();
+  const long shift = is_target_recurrent ? target->get_shift(): target->get_shift() + 1.0;
 
   const long interval_step = ( t_spike - shift ) % update_interval;
 
-  if ( target->is_eprop_recurrent_node() and interval_step == 0 )
+  if (t_spike < t_next_update_ + shift)
   {
-    return false;
+     if ( is_first_spike_)
+     {
+       is_first_spike_ = false;
+       t_ = t_spike;
+     }
+     else
+     {
+        target->compute_gradient(t_spike, t_previous_spike_, t_, prev_z_buffer_,
+                                 z_bar_, e_bar_, sum_e_, grad_, kappa_); 
+     }
   }
-
-  if ( t_previous_trigger_spike_ == 0 )
+  else
   {
-    t_previous_trigger_spike_ = t_spike;
-  }
+    long interval_end = t_next_update_ + shift;
+    if ( is_first_spike_)
+    {
+      is_first_spike_ = false;
+      t_ = t_spike;
+    }
+    else
+    {
+      target->compute_gradient(interval_end, t_previous_spike_, t_, prev_z_buffer_,
+                              z_bar_, e_bar_, sum_e_, grad_, kappa_); 
+    }
 
-  if ( t_previous_spike_ > 0 )
-  {
-    const long t = t_spike >= t_next_update_ + shift ? t_next_update_ + shift : t_spike;
-    presyn_isis_.push_back( t - t_previous_spike_ );
-  }
-
-  if ( t_spike > t_next_update_ + shift )
-  {
-    const long idx_current_update = ( t_spike - shift ) / update_interval;
-    const long t_current_update = idx_current_update * update_interval;
+    idx_current_update = ( t_spike - shift ) / update_interval;
+    long t_current_update = idx_current_update * update_interval;
 
     target->write_update_to_history( t_previous_update_, t_current_update );
 
-    const double gradient = target->compute_gradient(
-      presyn_isis_, t_previous_update_, t_previous_trigger_spike_, kappa_, cp.average_gradient_ );
+    const long learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
+    if (cp.average_gradient_ )
+    {
+      grad_ /= learning_window;
+    }
 
-    weight_ = optimizer_->optimized_weight( *cp.optimizer_cp_, idx_current_update, gradient, weight_ );
+    double loss_grad = grad_;
+    double reg_grad = 0.0;
+    if (target->get_name() != "eprop_readout")
+    {
+      EpropArchivingNodeRecurrent* rec_target = dynamic_cast< EpropArchivingNodeRecurrent* >(target);
+
+      const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
+      const auto it_reg_hist = rec_target->get_firing_rate_reg_history( t_previous_update_ + update_interval );
+      reg_grad = it_reg_hist->firing_rate_reg_ * sum_e_;
+      grad_ += reg_grad;
+    }
+
+    gradient_change_ += grad_;
+
+    weight_ = optimizer_->optimized_weight( *cp.optimizer_cp_, idx_current_update, gradient_change_, weight_ );
+
+    grad_ = 0.0;
+    e_bar_ = 0.0;
+    z_bar_ = 0.0;
+    sum_e_ = 0.0;
+    prev_z_buffer_ = 0.0;
+
+    gradient_change_ = 0.0;
 
     t_previous_update_ = t_current_update;
     t_next_update_ = t_current_update + update_interval;
 
-    t_previous_trigger_spike_ = t_spike;
+    t_ = t_spike;
   }
 
   t_previous_spike_ = t_spike;

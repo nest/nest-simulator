@@ -122,9 +122,9 @@ steps.update(
     {
         "offset_gen": 1,  # offset since generator signals start from time step 1
         "delay_in_rec": 1,  # connection delay between input and recurrent neurons
-        "delay_rec_out": 1,  # connection delay between recurrent and output neurons
-        "delay_out_norm": 1,  # connection delay between output neurons for normalization
-        "extension_sim": 1,  # extra time step to close right-open simulation time interval in Simulate()
+        "delay_rec_out": 0,  # connection delay between recurrent and output neurons
+        "delay_out_norm": 0,  # connection delay between output neurons for normalization
+        "extension_sim": 1+2,  # extra time step to close right-open simulation time interval in Simulate()
     }
 )
 
@@ -267,7 +267,7 @@ params_common_syn_eprop = {
     "optimizer": {
         "type": "gradient_descent",  # algorithm to optimize the weights
         "batch_size": n_batch,
-        "eta": 1e-4,  # learning rate
+        "eta": 5e-3,  # learning rate
         "Wmin": -100.0,  # pA, minimal limit of the synaptic weights
         "Wmax": 100.0,  # pA, maximal limit of the synaptic weights
     },
@@ -334,7 +334,7 @@ input_spike_prob = 0.05  # spike probability of frozen input noise
 dtype_in_spks = np.float32  # data type of input spikes - for reproducing TF results set to np.float32
 
 input_spike_bools = (np.random.rand(steps["sequence"], n_in) < input_spike_prob).swapaxes(0, 1)
-input_spike_bools[:, 0] = 0  # remove spikes in 0th time step of every sequence for technical reasons
+#input_spike_bools[:, 0] = 0  # remove spikes in 0th time step of every sequence for technical reasons
 
 sequence_starts = np.arange(0.0, duration["task"], duration["sequence"]) + duration["offset_gen"]
 params_gen_spk_in = []
@@ -392,7 +392,7 @@ nest.SetStatus(gen_rate_target, params_gen_rate_target)
 # the last update interval, by sending a strong spike to all neurons that form the presynaptic side of an eprop
 # synapse. This step is required purely for technical reasons.
 
-gen_spk_final_update = nest.Create("spike_generator", 1, {"spike_times": [duration["task"] + duration["delays"]]})
+gen_spk_final_update = nest.Create("spike_generator", 1, {"spike_times": [duration["task"] + duration["delays"] + 2 ]})
 
 nest.Connect(gen_spk_final_update, nrns_in + nrns_rec, "all_to_all", {"weight": 1000.0})
 

@@ -223,12 +223,6 @@ eprop_readout::pre_run_hook()
   V_.P_z_in_ = 1.0 - kappa;
 }
 
-long
-eprop_readout::get_shift() const
-{
-  return offset_gen_ + delay_in_rec_ + delay_rec_out_;
-}
-
 bool
 eprop_readout::is_eprop_recurrent_node() const
 {
@@ -261,8 +255,11 @@ eprop_readout::update( Time const& origin, const long from, const long to )
 
     if ( interval_step == 0 )
     {
-      erase_unneeded_update_history();
-      erase_unneeded_eprop_history();
+      if(t > 2)
+      {      
+        erase_unneeded_update_history();
+        erase_unneeded_eprop_history();
+      }
 
       if ( with_reset )
       {
@@ -323,8 +320,7 @@ eprop_readout::update( Time const& origin, const long from, const long to )
 void
 eprop_readout::compute_error_signal_mean_squared_error( const long lag )
 {
-  S_.readout_signal_ = S_.readout_signal_unnorm_;
-  S_.readout_signal_unnorm_ = S_.v_m_ + P_.E_L_;
+  S_.readout_signal_ = S_.v_m_ + P_.E_L_;
   S_.error_signal_ = S_.readout_signal_ - S_.target_signal_;
 }
 
@@ -387,46 +383,66 @@ eprop_readout::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-double
-eprop_readout::compute_gradient( std::vector< long >& presyn_isis,
-  const long,
-  const long t_previous_trigger_spike,
-  const double kappa,
-  const bool average_gradient )
+void
+eprop_readout::compute_gradient( const long t_spike,
+  const long t_prev_spike,
+  long& t,
+  double& prev_z_buffer,
+  double& z_bar,
+  double& e_bar,
+  double& sum_e,
+  double& grad,
+  const double kappa)
 {
-  auto eprop_hist_it = get_eprop_history( t_previous_trigger_spike );
+  auto eprop_hist_it = get_eprop_history( t_prev_spike - 1);
 
-  double z = 0.0;     // spiking variable
-  double z_bar = 0.0; // low-pass filtered spiking variable
-  double grad = 0.0;  // gradient value to be calculated
-  double L = 0.0;     // learning signal
+  double g = 0.0;
+  double z = 0.0;     // Spiking variable
+  double L = 0.0;     // Learning signal
 
-  for ( long presyn_isi : presyn_isis )
+  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
+  bool ignore_this_grad = ((t-3) % update_interval == update_interval - 1); 
+
+  z = prev_z_buffer;
+
+  L = eprop_hist_it->error_signal_;
+
+  if (not ignore_this_grad)
   {
-    z = 1.0; // set spiking variable to 1 for each incoming spike
-
-    for ( long t = 0; t < presyn_isi; ++t )
-    {
-      assert( eprop_hist_it != eprop_history_.end() );
-
-      L = eprop_hist_it->error_signal_;
-
-      z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
-      grad += L * z_bar;
-      z = 0.0; // set spiking variable to 0 between spikes
-
-      ++eprop_hist_it;
-    }
-  }
-  presyn_isis.clear();
-
-  const long learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
-  if ( average_gradient )
-  {
-    grad /= learning_window;
+    z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
+    g = L * z_bar;
   }
 
-  return grad;
+  grad += g;
+  prev_z_buffer = 1.0;
+  t += 1;
+
+  if (t < t_spike)
+  {
+    ++eprop_hist_it;
+    z = 1.0;
+    L = eprop_hist_it->error_signal_;
+  
+    z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
+    g = L * z_bar;
+  
+    grad += g;
+    prev_z_buffer = 0.0;
+    t += 1;
+  }
+  while (t < t_spike)
+  {
+    ++eprop_hist_it;
+    z = 0.0;
+    L = eprop_hist_it->error_signal_;
+  
+    z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
+    g = L * z_bar;
+  
+    grad += g;
+    prev_z_buffer = 0.0;
+    t += 1;
+  }
 }
 
 } // namespace nest

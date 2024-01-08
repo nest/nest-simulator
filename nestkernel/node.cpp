@@ -541,6 +541,20 @@ nest::Node::get_tau_syn_in( int )
   throw UnexpectedEvent();
 }
 
+void
+nest::Node::compute_gradient( const long t_spike,
+  const long t_prev_spike,
+  long& t,
+  double& prev_z_buffer,
+  double& z_bar,
+  double& e_bar,
+  double& sum_e,
+  double& grad,
+  const double kappa)
+{
+  throw KernelException( "The target node does not support compute_gradient()." );
+}
+
 double
 nest::Node::compute_gradient( std::vector< long >&, const long, const long, const double, const bool )
 {

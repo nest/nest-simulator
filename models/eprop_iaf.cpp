@@ -286,12 +286,6 @@ eprop_iaf::pre_run_hook()
   }
 }
 
-long
-eprop_iaf::get_shift() const
-{
-  return offset_gen_ + delay_in_rec_;
-}
-
 bool
 eprop_iaf::is_eprop_recurrent_node() const
 {
@@ -316,9 +310,13 @@ eprop_iaf::update( Time const& origin, const long from, const long to )
 
     if ( interval_step == 0 )
     {
-      erase_unneeded_firing_rate_reg_history();
-      erase_unneeded_update_history();
-      erase_unneeded_eprop_history();
+      // TODO: find a better way to do this check
+      if(t > 2)
+      {
+        erase_unneeded_firing_rate_reg_history();
+        erase_unneeded_update_history();
+        erase_unneeded_eprop_history();
+      }
 
       if ( with_reset )
       {
@@ -340,7 +338,7 @@ eprop_iaf::update( Time const& origin, const long from, const long to )
 
     write_surrogate_gradient_to_history( t, S_.surrogate_gradient_ );
 
-    if ( S_.v_m_ >= P_.V_th_ and S_.r_ == 0 )
+    if ( S_.v_m_ >= P_.V_th_ and S_.r_ == 0 and interval_step < ( update_interval - 1 ))
     {
       count_spike();
 
@@ -431,58 +429,80 @@ eprop_iaf::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-double
-eprop_iaf::compute_gradient( std::vector< long >& presyn_isis,
-  const long t_previous_update,
-  const long t_previous_trigger_spike,
-  const double kappa,
-  const bool average_gradient )
+void
+eprop_iaf::compute_gradient( const long t_spike,
+  const long t_prev_spike,
+  long& t,
+  double& prev_z_buffer,
+  double& z_bar,
+  double& e_bar,
+  double& sum_e,
+  double& grad,
+  const double kappa)
 {
-  auto eprop_hist_it = get_eprop_history( t_previous_trigger_spike );
+  auto eprop_hist_it = get_eprop_history( t_prev_spike - 1);
 
-  double e = 0.0;     // eligibility trace
-  double e_bar = 0.0; // low-pass filtered eligibility trace
-  double sum_e = 0.0; // sum of eligibility traces
-  double z = 0.0;     // spiking variable
-  double z_bar = 0.0; // low-pass filtered spiking variable
-  double grad = 0.0;  // gradient value to be calculated
-  double psi = 0.0;   // surrogate gradient
-  double L = 0.0;     // learning signal
-
-  for ( long presyn_isi : presyn_isis )
-  {
-    z = 1.0; // set spiking variable to 1 for each incoming spike
-
-    for ( long t = 0; t < presyn_isi; ++t )
-    {
-      assert( eprop_hist_it != eprop_history_.end() );
-
-      psi = eprop_hist_it->surrogate_gradient_;
-      L = eprop_hist_it->learning_signal_;
-
-      z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
-      e = psi * z_bar;
-      e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
-      grad += L * e_bar;
-      sum_e += e;
-      z = 0.0; // set spiking variable to 0 between spikes
-
-      ++eprop_hist_it;
-    }
-  }
-  presyn_isis.clear();
-
-  const long learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
-  if ( average_gradient )
-  {
-    grad /= learning_window;
-  }
+  double g = 0.0;
+  double e = 0.0;     // Eligibility trace
+  double z = 0.0;     // Spiking variable
+  double psi = 0.0;   // Surrogate gradient
+  double L = 0.0;     // Learning signal
 
   const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
-  const auto it_reg_hist = get_firing_rate_reg_history( t_previous_update + get_shift() + update_interval );
-  grad += it_reg_hist->firing_rate_reg_ * sum_e;
+  bool ignore_this_grad = ((t-3) % update_interval == update_interval - 1); 
 
-  return grad;
+  z = prev_z_buffer;
+  psi = eprop_hist_it->surrogate_gradient_;
+  L = eprop_hist_it->learning_signal_;
+
+  if (not ignore_this_grad)
+  {
+    z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
+    e = psi * z_bar;
+    sum_e += e;
+    e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
+    g = L * e_bar;
+  }
+
+  grad += g;
+  prev_z_buffer = 1.0;
+  t += 1;
+  
+  if (t < t_spike)
+  {
+    ++eprop_hist_it;
+    z = 1.0;
+    psi = eprop_hist_it->surrogate_gradient_;
+    L = eprop_hist_it->learning_signal_;
+
+    z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
+    e = psi * z_bar;
+    sum_e += e;
+    e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
+    g = L * e_bar;
+  
+    grad += g;
+    prev_z_buffer = 0.0;
+    t += 1;
+  }
+
+  while (t < t_spike)
+  {
+    ++eprop_hist_it;
+    z = 0.0;
+    psi = eprop_hist_it->surrogate_gradient_;
+    L = eprop_hist_it->learning_signal_;
+  
+    z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
+    e = psi * z_bar;
+    sum_e += e;
+    e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
+    g = L * e_bar;
+  
+    grad += g;
+    prev_z_buffer = 0.0;
+    t += 1;
+  }
 }
 
 } // namespace nest

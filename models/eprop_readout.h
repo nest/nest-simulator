@@ -224,14 +224,17 @@ public:
   void get_status( DictionaryDatum& ) const override;
   void set_status( const DictionaryDatum& ) override;
 
-  double compute_gradient( std::vector< long >& presyn_isis,
-    const long t_previous_update,
-    const long t_previous_trigger_spike,
-    const double kappa,
-    const bool average_gradient ) override;
+  void compute_gradient( const long t_spike,
+  const long t_prev_spike,
+  long& t,
+  double& prev_z_buffer,
+  double& z_bar,
+  double& e_bar,
+  double& sum_e,
+  double& grad,
+  const double kappa) override;
 
   void pre_run_hook() override;
-  long get_shift() const override;
   bool is_eprop_recurrent_node() const override;
   void update( Time const&, const long, const long ) override;
 

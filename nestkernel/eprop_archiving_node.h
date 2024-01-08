@@ -61,6 +61,9 @@ public:
   //! Register current update in the update history and deregister previous update.
   void write_update_to_history( const long t_previous_update, const long t_current_update ) override;
 
+  //! Get the number of time steps by which the eprop history is shifted to synchronize its factors.
+  long get_shift() const;
+
   //! Get an iterator pointing to the update history entry of the given time step.
   std::vector< HistEntryEpropUpdate >::iterator get_update_history( const long time_step );
 
@@ -98,7 +101,7 @@ protected:
   const long delay_rec_out_ = 1;
 
   //! Connection delay between output neurons for normalization.
-  const long delay_out_norm_ = 1;
+  const long delay_out_norm_ = 0;
 
   //! Connection delay from output neurons to recurrent neurons.
   const long delay_out_rec_ = 1;

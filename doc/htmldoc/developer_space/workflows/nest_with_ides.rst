@@ -426,7 +426,7 @@ Setting up the CMake configuration in CLion has the following advantages:
 
 * CLion's default CMake configuration creates the build directory inside the source code root directory, which easily leads to unknowingly committing build files to git.
 * CLion regenerates build files when checking out a new branch, potentially overriding the build you created by manually running CMake from the command line.
-* After setting up both the CMake configuaration and a run configuration, you won't need to use the command line to run ``cmake``, ``make``, ``make install``, and ``python *.py`` at all anymore. All will be done automatically by CLion and you only need to run your application without having to manually recompile.
+* After setting up both the CMake configuration and a run configuration, you won't need to use the command line to run ``cmake``, ``make``, ``make install``, and ``python *.py`` at all anymore. All will be done automatically by CLion and you only need to run your application without having to manually recompile.
 
 .. note::
 
@@ -438,7 +438,7 @@ Setting up the project
 ~~~~~~~~~~~~~~~~~~~~~~
 
 1. :ref:`Clone NEST <git_workflow>` onto your computer or select ``Get from VCS`` from CLion's start window
-2. You will be prompted to setup CMake. You can find the CMake configuration in the settings (Build,Execution,Deployment --> CMake) to make more changes at a later point. Make the following changes and press "Ok":
+2. You will be prompted to setup CMake. You can find the CMake configuration in the settings (Go to :menuselection:`Build,Execution,Deployment --> CMake`) to make more changes at a later point.
 
     * Generator: ``Let CMake decide``
     * CMake options: ``-DCMAKE_INSTALL_PREFIX=[YOUR BUILD DIRECTORY]/install -DPython_ROOT_DIR=[YOUR PYTHON ENV ROOT] -Wunused-parameter -Wall -Wextra -Werror -Dwith-optimize=OFF -Dwith-debug=ON``

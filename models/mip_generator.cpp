@@ -30,6 +30,14 @@
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
+
+void
+nest::register_mip_generator( const std::string& name )
+{
+  register_node_model< mip_generator >( name );
+}
+
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter

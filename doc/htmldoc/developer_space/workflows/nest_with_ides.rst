@@ -151,7 +151,7 @@ Setting up the project
 
    a. *Cmake: Build Directory* to ``${workspaceFolder}/../build``
    #. *Cmake: Install Prefix* to ``${workspaceFolder}/../build/install``
-   #. *Cpp Standard* to ``c++11``
+   #. *Cpp Standard* to ``c++17``
 
 #. In the source directory, open ``.vscode/c_cpp_properties.json``, and add
 
@@ -376,7 +376,6 @@ Also add the generated files:
 
     <somebase>/NEST/build/libnestutil/config.h
     <somebase>/NEST/build/libnestutil/sliconfig.h
-    <somebase>/NEST/build/nest/static_modules.h
 
 3. On the left panel select the newly created project ``NEST-fork``, then select the created target.
 

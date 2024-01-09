@@ -26,9 +26,8 @@ This test ensures that models with precise timing handle input spikes
 arriving at exactly the same times correctly.
 """
 
-import pytest
-
 import nest
+import pytest
 
 
 @pytest.fixture(autouse=True)

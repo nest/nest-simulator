@@ -121,6 +121,11 @@ See also
 
 rate_connection_instantaneous, rate_connection_delayed
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: threshold_lin_rate
+
 EndUserDocs */
 
 class nonlinearities_threshold_lin_rate
@@ -171,8 +176,14 @@ nonlinearities_threshold_lin_rate::mult_coupling_in( double )
 }
 
 typedef rate_neuron_ipn< nest::nonlinearities_threshold_lin_rate > threshold_lin_rate_ipn;
+void register_threshold_lin_rate_ipn( const std::string& name );
+
 typedef rate_neuron_opn< nest::nonlinearities_threshold_lin_rate > threshold_lin_rate_opn;
+void register_threshold_lin_rate_opn( const std::string& name );
+
 typedef rate_transformer_node< nest::nonlinearities_threshold_lin_rate > rate_transformer_threshold_lin;
+void register_rate_transformer_threshold_lin( const std::string& name );
+
 
 template <>
 void RecordablesMap< threshold_lin_rate_ipn >::create();

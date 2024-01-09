@@ -23,9 +23,8 @@
 Regression test for Issue #410 (GitHub).
 """
 
-import pytest
-
 import nest
+import pytest
 
 pytestmark = [pytest.mark.skipif_missing_gsl, pytest.mark.skipif_missing_threads]
 

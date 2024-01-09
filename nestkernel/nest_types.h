@@ -143,6 +143,11 @@ const targetindex invalid_targetindex = USHRT_MAX;
 __attribute__( ( __unused__ ) ) const size_t max_targetindex = invalid_targetindex - 1;
 
 /**
+ * Marker for invalid LCID values.
+ */
+constexpr size_t invalid_lcid = MAX_LCID;
+
+/**
  * Value for invalid connection thread id.
  */
 constexpr size_t invalid_thread = std::numeric_limits< size_t >::max();

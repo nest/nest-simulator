@@ -44,12 +44,12 @@ References
 
 """
 
+###############################################################################
+# Import necessary modules.
 
-# Loading the necessary modules:
-import numpy as np
 import matplotlib.pyplot as plt
 import nest
-
+import numpy as np
 
 ###############################################################################
 # We first set the parameters of the microscopic model:

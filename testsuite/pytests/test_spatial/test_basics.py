@@ -24,6 +24,7 @@ Tests for basic hl_api_spatial functions.
 """
 
 import unittest
+
 import nest
 
 try:
@@ -298,8 +299,7 @@ class BasicsTestCase(unittest.TestCase):
         cdict = {"rule": "pairwise_bernoulli", "p": 1.0, "mask": {"grid": {"shape": [2, 2]}}}
         sdict = {"synapse_model": "stdp_synapse"}
         nest.ResetKernel()
-        # For co-dependent properties, we use `set()` instead of kernel attributes
-        nest.set(use_compressed_spikes=False, sort_connections_by_source=False)
+        nest.use_compressed_spikes = False
 
         layer = nest.Create(
             "iaf_psc_alpha", positions=nest.spatial.grid(shape=[3, 3], extent=(2.0, 2.0), edge_wrap=True)
@@ -342,8 +342,7 @@ class BasicsTestCase(unittest.TestCase):
         cdict = {"rule": "pairwise_bernoulli", "p": 1.0, "mask": {"grid": {"shape": [2, 2]}}}
         sdict = {"synapse_model": "stdp_synapse"}
         nest.ResetKernel()
-        # For co-dependent properties, we use `set()` instead of kernel attributes
-        nest.set(use_compressed_spikes=False, sort_connections_by_source=False)
+        nest.use_compressed_spikes = False
 
         layer = nest.Create(
             "iaf_psc_alpha", positions=nest.spatial.grid(shape=[3, 3], extent=(2.0, 2.0), edge_wrap=True)
@@ -387,8 +386,7 @@ class BasicsTestCase(unittest.TestCase):
         cdict = {"rule": "pairwise_bernoulli", "p": 1.0}
         sdict = {"synapse_model": "stdp_synapse"}
 
-        # For co-dependent properties, we use `set()` instead of kernel attributes
-        nest.set(use_compressed_spikes=False, sort_connections_by_source=False)
+        nest.use_compressed_spikes = False
 
         layer = nest.Create(
             "iaf_psc_alpha", positions=nest.spatial.grid(shape=[1, 1], extent=(1.0, 1.0), edge_wrap=False)
@@ -401,8 +399,7 @@ class BasicsTestCase(unittest.TestCase):
 
         # Test positions on a grid, we can calculate what they should be
         nest.ResetKernel()
-        # For co-dependent properties, we use `set()` instead of kernel attributes
-        nest.set(use_compressed_spikes=False, sort_connections_by_source=False)
+        nest.use_compressed_spikes = False
 
         x_extent = 1.0
         y_extent = 1.0
@@ -437,8 +434,7 @@ class BasicsTestCase(unittest.TestCase):
         # Test that we get correct positions when we send in a positions array
         # when creating the layer
         nest.ResetKernel()
-        # For co-dependent properties, we use `set()` instead of kernel attributes
-        nest.set(use_compressed_spikes=False, sort_connections_by_source=False)
+        nest.use_compressed_spikes = False
 
         positions = [(np.random.uniform(-0.5, 0.5), np.random.uniform(-0.5, 0.5)) for _ in range(50)]
         layer = nest.Create("iaf_psc_alpha", positions=nest.spatial.free(positions, edge_wrap=False))
@@ -457,8 +453,7 @@ class BasicsTestCase(unittest.TestCase):
         cdict = {"rule": "pairwise_bernoulli", "p": 1.0}
         sdict = {"synapse_model": "stdp_synapse"}
 
-        # For co-dependent properties, we use `set()` instead of kernel attributes
-        nest.set(use_compressed_spikes=False, sort_connections_by_source=False)
+        nest.use_compressed_spikes = False
 
         layer = nest.Create(
             "iaf_psc_alpha", positions=nest.spatial.grid(shape=[1, 1], extent=(1.0, 1.0), edge_wrap=False)
@@ -471,8 +466,7 @@ class BasicsTestCase(unittest.TestCase):
 
         # Test positions on a grid, we can calculate what they should be
         nest.ResetKernel()
-        # For co-dependent properties, we use `set()` instead of kernel attributes
-        nest.set(use_compressed_spikes=False, sort_connections_by_source=False)
+        nest.use_compressed_spikes = False
 
         x_extent = 1.0
         y_extent = 1.0
@@ -507,8 +501,7 @@ class BasicsTestCase(unittest.TestCase):
         # Test that we get correct positions when we send in a positions array
         # when creating the layer
         nest.ResetKernel()
-        # For co-dependent properties, we use `set()` instead of kernel attributes
-        nest.set(use_compressed_spikes=False, sort_connections_by_source=False)
+        nest.use_compressed_spikes = False
 
         positions = [(np.random.uniform(-0.5, 0.5), np.random.uniform(-0.5, 0.5)) for _ in range(50)]
         layer = nest.Create("iaf_psc_alpha", positions=nest.spatial.free(positions, edge_wrap=False))

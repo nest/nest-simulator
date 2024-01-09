@@ -65,8 +65,8 @@ public:
   {
   }
 
-  void initialize() override;
-  void finalize() override;
+  void initialize( const bool ) override;
+  void finalize( const bool ) override;
   void set_status( const DictionaryDatum& ) override;
   void get_status( DictionaryDatum& ) override;
 
@@ -263,26 +263,9 @@ public:
   bool increase_buffer_size_target_data();
 
   /**
-   * Increases the size of the MPI buffer for communication of spikes if it
-   * needs to be increased. Returns whether the size was changed.
-   */
-  bool increase_buffer_size_spike_data();
-
-  /**
-   * Decreases the size of the MPI buffer for communication of spikes if it
-   * can be decreased.
-   */
-  void decrease_buffer_size_spike_data();
-
-  /**
    * Returns whether MPI buffers for communication of connections are adaptive.
    */
   bool adaptive_target_buffers() const;
-
-  /**
-   * Returns whether MPI buffers for communication of spikes are adaptive.
-   */
-  bool adaptive_spike_buffers() const;
 
   /**
    * Sets the recvcounts parameter of Alltoallv for communication of
@@ -342,14 +325,8 @@ private:
   size_t max_buffer_size_target_data_; //!< maximal size of MPI buffer for
   // communication of connections
 
-  size_t max_buffer_size_spike_data_; //!< maximal size of MPI buffer for
-  // communication of spikes
-
   bool adaptive_target_buffers_; //!< whether MPI buffers for communication of
   // connections resize on the fly
-
-  bool adaptive_spike_buffers_; //!< whether MPI buffers for communication of
-  // spikes resize on the fly
 
   double growth_factor_buffer_spike_data_;
   double growth_factor_buffer_target_data_;
@@ -604,14 +581,7 @@ inline void
 MPIManager::set_buffer_size_spike_data( const size_t buffer_size )
 {
   assert( buffer_size >= static_cast< size_t >( 2 * get_num_processes() ) );
-  if ( buffer_size <= max_buffer_size_spike_data_ )
-  {
-    buffer_size_spike_data_ = buffer_size;
-  }
-  else
-  {
-    buffer_size_spike_data_ = max_buffer_size_spike_data_;
-  }
+  buffer_size_spike_data_ = buffer_size;
 
   send_recv_count_spike_data_per_rank_ = floor( get_buffer_size_spike_data() / get_num_processes() );
 
@@ -644,48 +614,9 @@ MPIManager::increase_buffer_size_target_data()
 }
 
 inline bool
-MPIManager::increase_buffer_size_spike_data()
-{
-  assert( adaptive_spike_buffers_ );
-  if ( buffer_size_spike_data_ >= max_buffer_size_spike_data_ )
-  {
-    return false;
-  }
-  else
-  {
-    if ( buffer_size_spike_data_ * growth_factor_buffer_spike_data_ < max_buffer_size_spike_data_ )
-    {
-      set_buffer_size_spike_data( floor( buffer_size_spike_data_ * growth_factor_buffer_spike_data_ ) );
-    }
-    else
-    {
-      set_buffer_size_spike_data( max_buffer_size_spike_data_ );
-    }
-    return true;
-  }
-}
-
-inline void
-MPIManager::decrease_buffer_size_spike_data()
-{
-  assert( adaptive_spike_buffers_ );
-  // the minimum is set to 4.0 * get_num_processes() to differentiate the initial size
-  if ( buffer_size_spike_data_ / shrink_factor_buffer_spike_data_ > 4.0 * get_num_processes() )
-  {
-    set_buffer_size_spike_data( floor( buffer_size_spike_data_ / shrink_factor_buffer_spike_data_ ) );
-  }
-}
-
-inline bool
 MPIManager::adaptive_target_buffers() const
 {
   return adaptive_target_buffers_;
-}
-
-inline bool
-MPIManager::adaptive_spike_buffers() const
-{
-  return adaptive_spike_buffers_;
 }
 
 #ifndef HAVE_MPI

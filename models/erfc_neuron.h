@@ -123,6 +123,11 @@ CurrentEvent
 See also
 ++++++++
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: erfc_neuron
+
 
 EndUserDocs */
 
@@ -157,6 +162,8 @@ gainfunction_erfc::operator()( RngPtr rng, double h )
 }
 
 typedef binary_neuron< nest::gainfunction_erfc > erfc_neuron;
+void register_erfc_neuron( const std::string& name );
+
 
 template <>
 void RecordablesMap< erfc_neuron >::create();

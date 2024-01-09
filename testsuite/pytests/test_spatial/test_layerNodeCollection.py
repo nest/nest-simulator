@@ -24,6 +24,7 @@ General tests for layer NodeCollections.
 """
 
 import unittest
+
 import nest
 import numpy as np
 

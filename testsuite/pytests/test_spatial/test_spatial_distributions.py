@@ -32,15 +32,14 @@ Life Science, 2013. http://hdl.handle.net/11250/189117.
 """
 
 import math
-import numpy as np
-import numpy.random as rnd
-import scipy.integrate
-import scipy.stats
-import scipy.special
 import unittest
 
 import nest
-
+import numpy as np
+import numpy.random as rnd
+import scipy.integrate
+import scipy.special
+import scipy.stats
 
 try:
     # for debugging

@@ -20,9 +20,6 @@
  *
  */
 
-#ifndef DEPRECATION_WARNING_IMPL_H
-#define DEPRECATION_WARNING_IMPL_H
-
 #include "deprecation_warning.h"
 
 // Includes from nestkernel:
@@ -57,5 +54,3 @@ DeprecationWarning::deprecation_warning( std::string name, std::string new_name 
   }
 }
 }
-
-#endif /* DEPRECATION_WARNING_IMPL_H */

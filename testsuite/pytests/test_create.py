@@ -25,6 +25,7 @@ Creation tests
 
 import unittest
 import warnings
+
 import nest
 
 
@@ -50,6 +51,26 @@ class CreateTestCase(unittest.TestCase):
             nodes = nest.Create(model, num_nodes)
             self.assertEqual(len(nodes), num_nodes)
 
+    def test_correct_node_collection_model_created(self):
+        """
+        Ensure that the correct model is created for node in ``NodeCollection``.
+
+        NOTE: This test was moved from test_NodeCollection.py and may overlap
+        with test already present in this test suite. If that is the case,
+        consider to just drop this test.
+        """
+
+        models = nest.node_models
+        nc = nest.NodeCollection()
+
+        for model in models:
+            nc += nest.Create(model)
+
+        self.assertTrue(len(nc) > 0)
+
+        for i, node in enumerate(nc):
+            self.assertEqual(node.model, models[i])
+
     def test_ModelCreateNdict(self):
         """Model Creation with N and dict"""
 
@@ -58,6 +79,16 @@ class CreateTestCase(unittest.TestCase):
         n = nest.Create("iaf_psc_alpha", num_nodes, {"V_m": voltage})
 
         self.assertEqual(nest.GetStatus(n, "V_m"), (voltage,) * num_nodes)
+
+    def test_Create_accepts_empty_params_dict(self):
+        """
+        Create with empty parameter dictionary
+
+        NOTE: This test was moved from test_NodeCollection.py and may overlap
+        with test already present in this test suite. If that is the case,
+        consider to just drop this test.
+        """
+        nest.Create("iaf_psc_delta", params={})
 
     def test_erroneous_param_to_create(self):
         """Erroneous param to Create raises exception"""

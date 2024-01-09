@@ -19,10 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+import nest
 import numpy.testing as nptest
 import pytest
-
-import nest
 
 # Obtain all models with non-empty recordables list
 all_models_with_rec = [model for model in nest.node_models if nest.GetDefaults(model).get("recordables")]

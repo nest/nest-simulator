@@ -47,10 +47,11 @@ SeeAlso: testsuite::test_iaf_ps_psp_accuracy, testsuite::test_iaf_ps_dc_accuracy
 """
 
 
-import nest
-import pytest
 import math
 from math import exp
+
+import nest
+import pytest
 
 DEBUG = False
 

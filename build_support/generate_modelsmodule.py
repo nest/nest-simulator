@@ -26,10 +26,9 @@ models/modelsmodule.cpp as well as the list of source files to be
 compiled by CMake.
 """
 
+import argparse
 import os
 import sys
-import argparse
-
 from pathlib import Path
 from textwrap import dedent
 
@@ -101,16 +100,17 @@ def get_models_from_file(model_file):
     """
 
     model_patterns = {
-        "neuron": "public ArchivingNode",
-        "stimulator": "public StimulationDevice",
-        "recorder": "public RecordingDevice",
-        "devicelike": "public DeviceNode",
-        "connection": "public Connection",
-        "node": "public Node",
-        "clopath": "public ClopathArchivingNode",
-        "urbanczik": "public UrbanczikArchivingNode",
-        "binary": "typedef binary_neuron",
-        "rate": "typedef rate_",
+        "public ArchivingNode": "neuron",
+        "public StructuralPlasticityNode": "neuron",
+        "public StimulationDevice": "stimulator",
+        "public RecordingDevice": "recorder",
+        "public DeviceNode": "devicelike",
+        "public Connection": "connection",
+        "public Node": "node",
+        "public ClopathArchivingNode": "clopath",
+        "public UrbanczikArchivingNode": "urbanczik",
+        "typedef binary_neuron": "binary",
+        "typedef rate_": "rate",
     }
 
     fname = Path(srcdir) / "models" / f"{model_file}.h"
@@ -126,7 +126,7 @@ def get_models_from_file(model_file):
             if line.startswith("#ifdef HAVE_"):
                 guards.append(line.strip().split()[1])
             if line.startswith(f"class {model_file} : "):
-                for mtype, pattern in model_patterns.items():
+                for pattern, mtype in model_patterns.items():
                     if pattern in line:
                         names.append(model_file)
                         types.append(mtype)
@@ -139,7 +139,7 @@ def get_models_from_file(model_file):
                 except (ValueError, KeyError) as e:
                     types.append("node")
             if line.startswith("typedef "):
-                for mtype, pattern in model_patterns.items():
+                for pattern, mtype in model_patterns.items():
                     if pattern in line:
                         names.append(line.rsplit(" ", 1)[-1].strip()[:-1])
                         types.append(mtype)
@@ -241,30 +241,12 @@ def generate_modelsmodule():
     with open(fname, "r") as file:
         copyright_header = file.read()
 
-    fname = "modelsmodule.cpp"
+    fname = "models.cpp"
     modeldir = Path(blddir) / "models"
     modeldir.mkdir(parents=True, exist_ok=True)
     with open(modeldir / fname, "w") as file:
         file.write(copyright_header.replace("{{file_name}}", fname))
-        file.write(
-            dedent(
-                """
-            #include "modelsmodule.h"
-
-            // Generated includes
-            #include "config.h"
-
-            // Includes from nestkernel
-            #include "common_synapse_properties.h"
-            #include "connector_model_impl.h"
-            #include "genericmodel.h"
-            #include "genericmodel_impl.h"
-            #include "kernel_manager.h"
-            #include "model_manager_impl.h"
-            #include "target_identifier.h"
-        """
-            )
-        )
+        file.write('\n#include "models.h"\n\n// Generated includes\n#include "config.h"\n')
 
         for model_type, guards_fnames in includes.items():
             file.write(f"\n// {model_type.capitalize()} models\n")
@@ -274,41 +256,14 @@ def generate_modelsmodule():
                     file.write(f'#include "{fname}"\n')
                 file.write(end_guard(guards))
 
-        file.write(
-            dedent(
-                """
-            nest::ModelsModule::ModelsModule()
-            {
-            }
-
-            nest::ModelsModule::~ModelsModule()
-            {
-            }
-
-            const std::string
-            nest::ModelsModule::name() const
-            {
-              return std::string( "NEST standard models module" );
-            }
-
-            void
-            nest::ModelsModule::init( SLIInterpreter* )
-            {"""
-            )
-        )
-
-        conn_reg = '  register_connection_model< {model} >( "{model}" );\n'
-        node_reg = '  kernel().model_manager.register_node_model< {model} >( "{model}" );\n'
+        file.write("\nvoid nest::register_models()\n{")
 
         for model_type, guards_mnames in models.items():
             file.write(f"\n  // {model_type.capitalize()} models\n")
             for guards, mnames in guards_mnames.items():
                 file.write(start_guard(guards))
                 for mname in mnames:
-                    if model_type == "connection":
-                        file.write(conn_reg.format(model=mname))
-                    else:
-                        file.write(node_reg.format(model=mname))
+                    file.write(f'  register_{mname}( "{mname}" );\n')
                 file.write(end_guard(guards))
 
         file.write("}")

@@ -23,9 +23,10 @@
 Tests for visualization functions.
 """
 
+import os
+
 import nest
 import numpy as np
-import os
 import pytest
 
 try:

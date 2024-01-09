@@ -133,7 +133,7 @@ public:
   static AbstractMask* create_mask( const Name& name, const DictionaryDatum& d );
 
   /**
-   * @defgroup NestSliInterface SLI Interface functions of the NEST kernel.
+   * SLI Interface functions of the NEST kernel.
    *
    * This group contains the functions that form the SLI interface
    * of the NEST kernel.
@@ -544,6 +544,12 @@ public:
   public:
     void execute( SLIInterpreter* ) const;
   } ConnectSonata_D_Function;
+
+  class ConnectTripartite_g_g_g_D_DFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const override;
+  } connect_tripartite_g_g_g_D_Dfunction;
 
   class ResetKernelFunction : public SLIFunction
   {

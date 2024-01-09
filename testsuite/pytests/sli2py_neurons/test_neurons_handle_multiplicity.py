@@ -26,15 +26,15 @@ as two events with multiplicity one. The membrane potential after
 the spikes have arrived must be identical in both cases.
 """
 
+import nest
 import numpy as np
 import numpy.testing as nptest
 import pytest
 
-import nest
-
 # The following models will not be tested:
 skip_list = [
     "ginzburg_neuron",  # binary neuron
+    "ignore_and_fire",  # input independent neuron
     "mcculloch_pitts_neuron",  # binary neuron
     "erfc_neuron",  # binary neuron
     "lin_rate_ipn",  # rate neuron
@@ -67,6 +67,7 @@ skip_list = [
     "music_message_out_proxy",  # music device
     "music_rate_in_proxy",  # music device
     "music_rate_out_proxy",  # music device
+    "astrocyte_lr_1994",  # does not have V_m
 ]
 
 extra_params = {
@@ -76,6 +77,10 @@ extra_params = {
     "gif_cond_exp_multisynapse": {"params": {"tau_syn": [1.0]}, "receptor_type": 1},
     "glif_cond": {"params": {"tau_syn": [1.0], "E_rev": [-85.0]}, "receptor_type": 1},
     "glif_psc": {"params": {"tau_syn": [1.0]}, "receptor_type": 1},
+    "glif_psc_double_alpha": {
+        "params": {"tau_syn_fast": [1.0], "tau_syn_slow": [2.0], "amp_slow": [0.5]},
+        "receptor_type": 1,
+    },
     "aeif_cond_alpha_multisynapse": {"params": {"tau_syn": [1.0]}, "receptor_type": 1},
     "aeif_cond_beta_multisynapse": {
         "params": {"E_rev": [0.0], "tau_rise": [1.0], "tau_decay": [1.0]},

@@ -19,10 +19,11 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+import unittest
+
+import nest
 import numpy as np
 import scipy.stats
-import nest
-import unittest
 
 try:
     from mpi4py import MPI

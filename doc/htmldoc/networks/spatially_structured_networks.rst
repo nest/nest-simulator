@@ -1000,9 +1000,9 @@ Rectified Gabor Function
    perpendicular to :math:`\theta`. This probability depends on the
    displacement along the coordinates axes, not the distance:
 
-.. literalinclude:: spatially_structured_networks/scripts/connections.py
-    :start-after: #{ conn4gab #}
-    :end-before: #{ end #}
+.. literalinclude:: scripts/connections.py
+    :start-after: # { conn4gab #}
+    :end-before: # { end #}
 
 Note that for pool layers with periodic boundary conditions, NEST
 always uses the shortest possible displacement vector from driver to

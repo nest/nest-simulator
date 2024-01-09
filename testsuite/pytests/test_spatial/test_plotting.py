@@ -23,9 +23,9 @@
 Tests for basic spatial plotting functions.
 """
 
-import pytest
 import nest
 import numpy as np
+import pytest
 
 try:
     import matplotlib

@@ -49,6 +49,44 @@ namespace nest
 class TargetData;
 
 /**
+ * Entry of compressed_spike_data_map_.
+ *
+ * Combines source node index and target node thread.
+ */
+class CSDMapEntry
+{
+public:
+  CSDMapEntry( size_t source_index, size_t target_thread )
+    : source_index_( source_index )
+    , target_thread_( target_thread )
+  {
+    // MAX_LCID cannot be used since the value is used to mark invalid entries.
+    // MAX_TID is defined based on the NUM_BITS_TID field width and thus much smaller than invalid_thread and can be
+    // used.
+    assert( source_index < MAX_LCID );
+    assert( target_thread <= MAX_TID );
+  }
+
+  size_t
+  get_source_index() const
+  {
+    return source_index_;
+  }
+  size_t
+  get_target_thread() const
+  {
+    return target_thread_;
+  }
+
+private:
+  size_t source_index_ : NUM_BITS_LCID;
+  size_t target_thread_ : NUM_BITS_TID;
+};
+
+//! check legal size
+using success_csdmapentry_size = StaticAssert< sizeof( CSDMapEntry ) == 8 >::success;
+
+/**
  * This data structure stores the node IDs of presynaptic neurons
  * during postsynaptic connection creation, before the connection
  * information has been transferred to the presynaptic side. The core
@@ -64,6 +102,8 @@ class TargetData;
  */
 class SourceTable
 {
+  friend class ConnectionManager;
+
 private:
   /**
    * 3D structure storing node IDs of presynaptic neurons.
@@ -150,10 +190,10 @@ private:
    *
    * Data from this structure is transferred to the
    * presynaptic side during construction of the presynaptic
-   * connection infrastructure. Arranged as a two dimensional vector
-   * (thread|synapse) with an inner map (source node id -> index).
+   * connection infrastructure. Arranged as a one-dimensional vector
+   * over synapse ids with an inner map (source node id -> (source_index+target_thread).
    */
-  std::vector< std::vector< std::map< size_t, size_t > > > compressed_spike_data_map_;
+  std::vector< std::map< size_t, CSDMapEntry > > compressed_spike_data_map_;
 
 public:
   SourceTable();
@@ -292,10 +332,9 @@ public:
   size_t num_unique_sources( const size_t tid, const synindex syn_id ) const;
 
   /**
-   * Resizes sources_ according to total number of threads and
-   * synapse types.
+   * Resizes sources_ according to total number of threads and synapse types.
    */
-  void resize_sources( const size_t tid );
+  void resize_sources();
 
   /**
    * Encodes combination of node ID and synapse types as single
@@ -310,7 +349,12 @@ public:
   // fills the compressed_spike_data structure in ConnectionManager
   void fill_compressed_spike_data( std::vector< std::vector< std::vector< SpikeData > > >& compressed_spike_data );
 
-  void clear_compressed_spike_data_map( const size_t tid );
+  void clear_compressed_spike_data_map();
+
+  void dump_sources() const;
+  void dump_compressible_sources() const;
+  void dump_compressed_spike_data(
+    const std::vector< std::vector< std::vector< SpikeData > > >& compressed_spike_data ) const;
 };
 
 inline void
@@ -500,11 +544,11 @@ SourceTable::pack_source_node_id_and_syn_id( const size_t source_node_id, const 
 }
 
 inline void
-SourceTable::clear_compressed_spike_data_map( const size_t tid )
+SourceTable::clear_compressed_spike_data_map()
 {
-  for ( synindex syn_id = 0; syn_id < compressed_spike_data_map_[ tid ].size(); ++syn_id )
+  for ( auto& source_index_map : compressed_spike_data_map_ )
   {
-    compressed_spike_data_map_[ tid ][ syn_id ].clear();
+    source_index_map.clear();
   }
 }
 

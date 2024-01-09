@@ -85,7 +85,14 @@ See also
 
 iaf_psc_alpha, iaf_psc_delta, iaf_psc_exp, iaf_cond_exp, iaf_psc_alpha_multisynapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_psc_exp_multisynapse
+
 EndUserDocs */
+
+void register_iaf_psc_exp_multisynapse( const std::string& name );
 
 class iaf_psc_exp_multisynapse : public ArchivingNode
 {
@@ -204,9 +211,7 @@ private:
 
     double I_const_; //!< synaptic dc input current, variable 0
     std::vector< double > i_syn_;
-    double V_m_;     //!< membrane potential, variable 2
-    double current_; //!< This is the current in a time step. This is only
-                     //!< here to allow logging
+    double V_m_; //!< membrane potential, variable 2
 
     //! absolute refractory counter (no membrane potential propagation)
     int refractory_steps_;
@@ -268,7 +273,6 @@ private:
   }; // Variables
 
   /**
-   * @defgroup iaf_psc_exp_multisynapse_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.
@@ -294,7 +298,7 @@ private:
     }
     else if ( elem == State_::I )
     {
-      return S_.current_;
+      return std::accumulate( S_.i_syn_.begin(), S_.i_syn_.end(), 0.0 );
     }
     else
     {

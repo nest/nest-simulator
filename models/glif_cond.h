@@ -42,7 +42,7 @@
 
 #include "dictdatum.h"
 
-/* BeginUserDocs: integrate-and-fire, conductance-based
+/* BeginUserDocs:  neuron, integrate-and-fire, conductance-based
 
 Short description
 +++++++++++++++++
@@ -195,12 +195,19 @@ See also
 
 gif_psc_exp_multisynapse, gif_cond_exp, gif_cond_exp_multisynapse, gif_pop_psc_exp
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: glif_cond
+
 EndUserDocs */
 
 namespace nest
 {
 
 extern "C" int glif_cond_dynamics( double, const double*, double*, void* );
+
+void register_glif_cond( const std::string& name );
 
 class glif_cond : public ArchivingNode
 {

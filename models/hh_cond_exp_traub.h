@@ -84,6 +84,7 @@ to match those used with NEST 1.9.10 when preparing data for [1]_. Code for all
 simulators covered is available from ModelDB [3]_.
 
 .. note::
+
    In this model, a spike is emitted if :math:`V_m \geq V_T + 30` mV and :math:`V_m`
    has fallen during the current time step.
 
@@ -91,6 +92,9 @@ simulators covered is available from ModelDB [3]_.
    spike, it is essential to choose a sufficiently long refractory period.
    Traub and Miles used  :math:`t_{ref} = 3` ms ([2]_, p 118), while we used
    :math:`t_{ref} = 2` ms in [2]_.
+
+   For further details on asynchronicity in spike and firing events with Hodgkin Huxley models
+   see :ref:`here <hh_details>`.
 
 Parameters
 ++++++++++
@@ -144,7 +148,14 @@ See also
 
 hh_psc_alpha
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: hh_cond_exp_traub
+
 EndUserDocs */
+
+void register_hh_cond_exp_traub( const std::string& name );
 
 class hh_cond_exp_traub : public ArchivingNode
 {

@@ -23,9 +23,10 @@
 Tests for hl_api_spatial dumping functions.
 """
 
-import unittest
-import nest
 import os
+import unittest
+
+import nest
 import numpy as np
 
 

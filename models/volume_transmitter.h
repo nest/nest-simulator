@@ -99,9 +99,17 @@ See also
 
 stdp_dopamine_synapse
 
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: volume_transmitter
+
 EndUserDocs */
 
 class ConnectorBase;
+
+void register_volume_transmitter( const std::string& name );
 
 class volume_transmitter : public Node
 {

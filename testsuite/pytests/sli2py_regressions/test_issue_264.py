@@ -30,9 +30,8 @@ Ensure error is raised on times incommensurate with resolution.
     handles the unusual case where NEST is compiled with a different value.
 """
 
-import pytest
-
 import nest
+import pytest
 
 
 @pytest.fixture(autouse=True)

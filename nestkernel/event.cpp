@@ -25,6 +25,7 @@
 // Includes from nestkernel:
 #include "kernel_manager.h"
 #include "node.h"
+#include "secondary_event_impl.h"
 
 namespace nest
 {
@@ -146,6 +147,12 @@ DelayedRateConnectionEvent::operator()()
 
 void
 DiffusionConnectionEvent::operator()()
+{
+  receiver_->handle( *this );
+}
+
+void
+SICEvent::operator()()
 {
   receiver_->handle( *this );
 }

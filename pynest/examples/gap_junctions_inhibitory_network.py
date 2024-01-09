@@ -45,8 +45,8 @@ References
        Neuroinform. http://dx.doi.org/10.3389/neuro.11.012.2008
 """
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 import numpy
 
 n_neuron = 500

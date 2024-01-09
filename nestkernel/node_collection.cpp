@@ -194,6 +194,14 @@ nc_const_iterator::operator++()
   return *this;
 }
 
+nc_const_iterator
+nc_const_iterator::operator++( int )
+{
+  nc_const_iterator tmp = *this;
+  ++( *this );
+  return tmp;
+}
+
 NodeCollectionPTR
 operator+( NodeCollectionPTR lhs, NodeCollectionPTR rhs )
 {
@@ -981,11 +989,11 @@ NodeCollectionComposite::merge_parts_( std::vector< NodeCollectionPrimitive >& p
 bool
 NodeCollectionComposite::contains( const size_t node_id ) const
 {
-  return find( node_id ) != -1;
+  return get_lid( node_id ) != -1;
 }
 
 long
-NodeCollectionComposite::find( const size_t node_id ) const
+NodeCollectionComposite::get_lid( const size_t node_id ) const
 {
   const auto add_size_op = []( const long a, const NodeCollectionPrimitive& b ) { return a + b.size(); };
 
@@ -1018,7 +1026,7 @@ NodeCollectionComposite::find( const size_t node_id ) const
         // Need to find number of nodes in previous parts to know if the the step hits the node_id.
         const auto num_prev_nodes =
           std::accumulate( parts_.begin(), parts_.begin() + middle, static_cast< size_t >( 0 ), add_size_op );
-        const auto absolute_pos = num_prev_nodes + parts_[ middle ].find( node_id );
+        const auto absolute_pos = num_prev_nodes + parts_[ middle ].get_lid( node_id );
 
         // The first or the last node can be somewhere in the middle part.
         const auto absolute_part_start = start_part_ == middle ? start_offset_ : 0;
@@ -1041,7 +1049,7 @@ NodeCollectionComposite::find( const size_t node_id ) const
         // Since NC is not sliced, we can just calculate and return the local ID.
         const auto sum_pre =
           std::accumulate( parts_.begin(), parts_.begin() + middle, static_cast< size_t >( 0 ), add_size_op );
-        return sum_pre + parts_[ middle ].find( node_id );
+        return sum_pre + parts_[ middle ].get_lid( node_id );
       }
     }
   }

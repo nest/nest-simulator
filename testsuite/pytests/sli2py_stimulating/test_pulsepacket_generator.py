@@ -23,12 +23,11 @@
 Test parameter setting and correct number of spikes emitted by `pulsepacket_generator`.
 """
 
+import nest
 import numpy as np
 import pandas as pd
 import pandas.testing as pdtest
 import pytest
-
-import nest
 
 
 @pytest.fixture(autouse=True)

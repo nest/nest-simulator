@@ -23,8 +23,8 @@
 Functions to visualize a network built in NEST.
 """
 
-import pydot
 import nest
+import pydot
 
 __all__ = [
     "plot_network",

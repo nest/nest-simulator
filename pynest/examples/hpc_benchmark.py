@@ -90,14 +90,14 @@ References
 
 """
 
-import numpy as np
 import os
 import sys
 import time
-import scipy.special as sp
 
 import nest
 import nest.raster_plot
+import numpy as np
+import scipy.special as sp
 
 M_INFO = 10
 M_ERROR = 30

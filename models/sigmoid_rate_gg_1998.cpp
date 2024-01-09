@@ -22,8 +22,25 @@
 
 #include "sigmoid_rate_gg_1998.h"
 
+// Includes from nestkernel
+#include "kernel_manager.h"
+#include "model_manager_impl.h"
+#include "nest_impl.h"
+
 namespace nest
 {
+void
+register_sigmoid_rate_gg_1998_ipn( const std::string& name )
+{
+  register_node_model< sigmoid_rate_gg_1998_ipn >( name );
+}
+
+void
+register_rate_transformer_sigmoid_gg_1998( const std::string& name )
+{
+  register_node_model< rate_transformer_sigmoid_gg_1998 >( name );
+}
+
 
 void
 nonlinearities_sigmoid_rate_gg_1998::get( DictionaryDatum& d ) const

@@ -35,9 +35,8 @@ import dataclasses
 import pathlib
 import sys
 
-import pytest
-
 import nest
+import pytest
 
 # Make all modules in the `utilities` folder available to import in any test
 sys.path.append(str(pathlib.Path(__file__).parent / "utilities"))

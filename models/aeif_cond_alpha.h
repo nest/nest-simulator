@@ -100,7 +100,7 @@ and
 
  \tau_w \frac{dw}{dt} = a(V-E_L) - w
 
-For implementation details see the
+For the reference implementation of this model, see
 `aeif_models_implementation <../model_details/aeif_models_implementation.ipynb>`_ notebook.
 
 See also [1]_.
@@ -185,7 +185,14 @@ See also
 
 iaf_cond_alpha, aeif_cond_exp
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: aeif_cond_alpha
+
 EndUserDocs */
+
+void register_aeif_cond_alpha( const std::string& name );
 
 class aeif_cond_alpha : public ArchivingNode
 {

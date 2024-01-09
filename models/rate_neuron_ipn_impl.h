@@ -434,7 +434,7 @@ void
 nest::rate_neuron_ipn< TNonlinearities >::handle( DelayedRateConnectionEvent& e )
 {
   const double weight = e.get_weight();
-  const long delay = e.get_delay_steps();
+  const long delay = e.get_delay_steps() - kernel().connection_manager.get_min_delay();
 
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();

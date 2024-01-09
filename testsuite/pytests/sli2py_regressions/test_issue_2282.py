@@ -26,10 +26,9 @@ The test ensures that the `multimeter` cannot be connected to a
 `noise_generator` if NEST runs with multiple threads.
 """
 
+import nest
 import numpy as np
 import pytest
-
-import nest
 
 pytestmark = pytest.mark.skipif_missing_threads
 

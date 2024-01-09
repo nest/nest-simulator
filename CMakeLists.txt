@@ -76,7 +76,7 @@ option( static-libraries "Build static executable and libraries [default=OFF]" O
 set( with-optimize ON CACHE STRING "Enable user defined optimizations [default=ON (uses '-O2')]. When OFF, no '-O' flag is passed to the compiler. Explicit compiler flags can be given; separate multiple flags by ';'." )
 set( with-warning ON CACHE STRING "Enable user defined warnings [default=ON (uses '-Wall')]. Separate  multiple flags by ';'." )
 set( with-debug OFF CACHE STRING "Enable user defined debug flags [default=OFF]. When ON, '-g' is used. Separate  multiple flags by ';'." )
-set( with-cpp-std "c++11" CACHE STRING "C++ standard to use for compilation [default='c++11']." )
+set( with-cpp-std "c++17" CACHE STRING "C++ standard to use for compilation [default='c++17']." )
 set( with-intel-compiler-flags OFF CACHE STRING "User defined flags for the Intel compiler [default='-fp-model strict']. Separate multiple flags by ';'." )
 set( with-libraries OFF CACHE STRING "Link additional libraries [default=OFF]. Give full path. Separate multiple libraries by ';'." )
 set( with-includes OFF CACHE STRING "Add additional include paths [default=OFF]. Give full path without '-I'. Separate multiple include paths by ';'." )
@@ -85,6 +85,8 @@ set( with-defines OFF CACHE STRING "Additional defines, e.g. '-DXYZ=1' [default=
 # documentation build configuration
 set( with-userdoc OFF CACHE STRING "Build user documentation [default=OFF]")
 set( with-devdoc OFF CACHE STRING "Build developer documentation [default=OFF]")
+
+set( with-full-logging OFF CACHE STRING "Write debug output to 'dump_<num_ranks>_<rank>.log' file [default=OFF]")
 
 ################################################################################
 ##################      Project Directory variables           ##################
@@ -111,7 +113,6 @@ include( CheckIncludesSymbols )
 
 # These includes publish function names.
 include( ProcessOptions )
-include( WriteStaticModules_h )
 include( CheckExtraCompilerFeatures )
 include( ConfigureSummary )
 include( GetTriple )
@@ -153,6 +154,7 @@ nest_process_with_hdf5()
 nest_process_target_bits_split()
 nest_process_userdoc()
 nest_process_devdoc()
+nest_process_full_logging()
 
 nest_process_models()
 
@@ -166,8 +168,6 @@ nest_process_with_debug()
 nest_get_color_flags()
 set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${NEST_C_COLOR_FLAGS}" )
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${NEST_CXX_COLOR_FLAGS}" )
-
-nest_write_static_module_header( "${PROJECT_BINARY_DIR}/nest/static_modules.h" )
 
 # check additionals
 nest_check_exitcode_abort()

@@ -1,4 +1,4 @@
-.. _sec:kernel_attributes:
+.. _sec_kernel_attributes:
 
 Kernel attributes (nest.NestModule)
 ===================================

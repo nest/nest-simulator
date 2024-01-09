@@ -197,7 +197,14 @@ See also
 
 pp_psc_delta, gif_psc_exp_multisynapse, gif_cond_exp, gif_cond_exp_multisynapse, gif_pop_psc_exp
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: gif_psc_exp
+
 EndUserDocs */
+
+void register_gif_psc_exp( const std::string& name );
 
 class gif_psc_exp : public ArchivingNode
 {
@@ -393,7 +400,6 @@ private:
   // ----------------------------------------------------------------
 
   /**
-   * @defgroup iaf_psc_alpha_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.

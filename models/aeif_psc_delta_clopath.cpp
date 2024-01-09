@@ -37,6 +37,7 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "nest_names.h"
 #include "universal_data_logger_impl.h"
 
@@ -51,6 +52,12 @@ nest::RecordablesMap< nest::aeif_psc_delta_clopath > nest::aeif_psc_delta_clopat
 
 namespace nest
 {
+void
+register_aeif_psc_delta_clopath( const std::string& name )
+{
+  register_node_model< aeif_psc_delta_clopath >( name );
+}
+
 /*
  * template specialization must be placed in namespace
  *

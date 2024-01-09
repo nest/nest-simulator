@@ -130,6 +130,11 @@ Receives
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: mat2_psc_exp
+
 EndUserDocs */
 
 /**
@@ -140,6 +145,8 @@ EndUserDocs */
  * computation can be done "in place", i.e. no temporary state vector
  * object is required.
  */
+
+void register_mat2_psc_exp( const std::string& name );
 
 class mat2_psc_exp : public ArchivingNode
 {
@@ -328,7 +335,6 @@ private:
   // ----------------------------------------------------------------
 
   /**
-   * @defgroup mat2_psc_exp_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.

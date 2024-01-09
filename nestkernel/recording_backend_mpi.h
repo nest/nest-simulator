@@ -173,7 +173,6 @@ private:
   typedef std::map< std::string, std::tuple< int, MPI_Comm*, int > > comm_map;
   comm_map commMap_;
 
-
   std::string mpi_address_;
 
   void get_port( const RecordingDevice* device, std::string* port_name );

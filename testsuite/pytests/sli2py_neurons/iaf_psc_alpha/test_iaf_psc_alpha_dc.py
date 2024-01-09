@@ -21,11 +21,11 @@
 
 import dataclasses
 
+import nest
 import numpy as np
 import pytest
-import nest
-import testutil
 import testsimulation
+import testutil
 
 
 @dataclasses.dataclass

@@ -812,7 +812,7 @@ public:
     const long t_previous_update,
     const long t_previous_trigger_spike,
     const double kappa,
-    const bool );
+    const bool average_gradient );
 
   /**
    * Modify Event object parameters during event delivery.

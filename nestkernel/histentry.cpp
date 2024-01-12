@@ -49,7 +49,7 @@ nest::HistEntryEpropRecurrent::HistEntryEpropRecurrent( long t, double surrogate
 {
 }
 
-nest::HistEntryEpropReadout::HistEntryEpropReadout( double t, double error_signal )
+nest::HistEntryEpropReadout::HistEntryEpropReadout( long t, double error_signal )
   : HistEntryEprop( t )
   , error_signal_( error_signal )
 {

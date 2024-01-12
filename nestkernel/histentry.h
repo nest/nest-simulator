@@ -105,7 +105,7 @@ public:
 class HistEntryEpropReadout : public HistEntryEprop
 {
 public:
-  HistEntryEpropReadout( double t, double error_signal );
+  HistEntryEpropReadout( long t, double error_signal );
 
   double error_signal_;
 };

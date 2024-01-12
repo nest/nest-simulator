@@ -269,7 +269,7 @@ public:
     double& e_bar,
     double& sum_e,
     double& grad,
-    const double kappa );
+    const double kappa ) override;
 
   void pre_run_hook() override;
   bool is_eprop_recurrent_node() const override;

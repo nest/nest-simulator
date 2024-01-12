@@ -130,6 +130,13 @@ public:
   //! Create an entry in the firing rate regularization history for the current update.
   void write_firing_rate_reg_to_history( const long t_current_update, const double f_target, const double c_reg );
 
+  //! Create an entry in the firing rate regularization history for the current update.
+  void write_firing_rate_reg_to_history( const long t,
+    const long interval_step,
+    const double z,
+    const double f_target,
+    const double c_reg );
+
   //! Get an iterator pointing to the firing rate regularization history of the given time step.
   std::vector< HistEntryEpropFiringRateReg >::iterator get_firing_rate_reg_history( const long time_step );
 
@@ -145,6 +152,12 @@ public:
 
   //! Reset spike count for the firing rate regularization.
   void reset_spike_count();
+
+  //! Firing rate regularization.
+  double firing_rate_reg_;
+
+  //! Average firing rate.
+  double f_av_;
 
 private:
   //! Count of the emitted spikes for the firing rate regularization.

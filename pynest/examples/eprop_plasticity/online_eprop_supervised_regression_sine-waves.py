@@ -171,7 +171,7 @@ n_out = 1  # number of readout neurons
 
 params_nrn_rec = {
     "C_m": 1.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
-    "c_reg": 300.0,  # firing rate regularization scaling
+    "c_reg": 300.0 / duration["sequence"],  # firing rate regularization scaling
     "E_L": 0.0,  # mV, leak reversal potential
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
     "gamma": 0.3,  # scaling of the pseudo derivative

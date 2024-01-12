@@ -548,9 +548,10 @@ nest::Node::compute_gradient( const long t_spike,
   double& prev_z_buffer,
   double& z_bar,
   double& e_bar,
-  double& sum_e,
+  double& avg_e,
   double& grad,
-  const double kappa )
+  const double kappa,
+  const bool average_gradient )
 {
   throw KernelException( "The target node does not support compute_gradient()." );
 }

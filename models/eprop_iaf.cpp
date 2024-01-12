@@ -313,13 +313,14 @@ eprop_iaf::update( Time const& origin, const long from, const long to )
       // TODO: find a better way to do this check
       if ( t > 2 )
       {
-        erase_unneeded_firing_rate_reg_history();
         erase_unneeded_update_history();
         erase_unneeded_eprop_history();
       }
 
       if ( with_reset )
       {
+        f_av_ = 0.0;
+        firing_rate_reg_ = 0.0;
         S_.v_m_ = 0.0;
         S_.r_ = 0;
         S_.z_ = 0.0;
@@ -340,8 +341,6 @@ eprop_iaf::update( Time const& origin, const long from, const long to )
 
     if ( S_.v_m_ >= P_.V_th_ and S_.r_ == 0 and interval_step < ( update_interval - 1 ) )
     {
-      count_spike();
-
       SpikeEvent se;
       kernel().event_delivery_manager.send( *this, se, lag );
 
@@ -353,11 +352,7 @@ eprop_iaf::update( Time const& origin, const long from, const long to )
       }
     }
 
-    if ( interval_step == update_interval - 1 )
-    {
-      write_firing_rate_reg_to_history( t, P_.f_target_, P_.c_reg_ );
-      reset_spike_count();
-    }
+    write_firing_rate_reg_to_history( t, interval_step, S_.z_, P_.f_target_, P_.c_reg_ );
 
     S_.learning_signal_ = get_learning_signal_from_history( t );
 
@@ -436,19 +431,28 @@ eprop_iaf::compute_gradient( const long t_spike,
   double& prev_z_buffer,
   double& z_bar,
   double& e_bar,
-  double& sum_e,
+  double& avg_e,
   double& grad,
-  const double kappa )
+  const double kappa,
+  const bool average_gradient )
 {
   auto eprop_hist_it = get_eprop_history( t_prev_spike - 1 );
 
-  double e = 0.0;   // eligibility trace
-  double z = 0.0;   // spiking variable
-  double psi = 0.0; // surrogate gradient
-  double L = 0.0;   // learning signal
+  double e = 0.0;               // eligibility trace
+  double z = 0.0;               // spiking variable
+  double psi = 0.0;             // surrogate gradient
+  double L = 0.0;               // learning signal
+  double firing_rate_reg = 0.0; // firing rate regularization
+  long t_hist = 0;              // time step
+  long interval_step = 0;       // interval step
+  double beta = 0.0;            // beta
 
   const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
-  bool ignore_this_grad = ( ( t - 3 ) % update_interval == update_interval - 1 );
+  const long learning_window = average_gradient ? kernel().simulation_manager.get_eprop_learning_window().get_steps() : 1;
+  const long shift = get_shift();
+
+  const bool ignore_this_grad = ( ( t - 3 ) % update_interval == update_interval - 1 );
+
 
   bool pre = true;
 
@@ -475,19 +479,24 @@ eprop_iaf::compute_gradient( const long t_spike,
         z = 0.0;
       }
     }
-    
-    if ( not ( pre and ignore_this_grad ))
+
+    if ( not ( pre and ignore_this_grad ) )
     {
       psi = eprop_hist_it->surrogate_gradient_;
       L = eprop_hist_it->learning_signal_;
+      firing_rate_reg = eprop_hist_it->firing_rate_reg_;
+      t_hist = eprop_hist_it->t_;
 
       z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
       e = psi * z_bar;
-      sum_e += e;
+      interval_step = ( t_hist - shift ) % update_interval + 2;
+      beta = ( interval_step - 1.0 ) / interval_step;
+      avg_e = beta * avg_e + ( 1.0 - beta ) * e;
       e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
-      grad += L * e_bar;
+      grad += L * e_bar / learning_window;
+      grad += firing_rate_reg * avg_e;
     }
-    
+
     ++eprop_hist_it;
     ++t;
   }

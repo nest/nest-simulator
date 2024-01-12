@@ -237,7 +237,7 @@ void
 eprop_readout::update( Time const& origin, const long from, const long to )
 {
   const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
-  const double learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
+  const long learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
   const bool with_reset = kernel().simulation_manager.get_eprop_reset_neurons_on_update();
   const long shift = get_shift();
 
@@ -390,17 +390,20 @@ eprop_readout::compute_gradient( const long t_spike,
   double& prev_z_buffer,
   double& z_bar,
   double& e_bar,
-  double& sum_e,
+  double& avg_e,
   double& grad,
-  const double kappa )
+  const double kappa,
+  const bool average_gradient )
 {
   auto eprop_hist_it = get_eprop_history( t_prev_spike - 1 );
 
   double z = 0.0; // spiking variable
-  double L = 0.0; // learning signal
+  double L = 0.0; // error signal
 
   const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
-  bool ignore_this_grad = ( ( t - 3 ) % update_interval == update_interval - 1 );
+  const long learning_window = average_gradient ? kernel().simulation_manager.get_eprop_learning_window().get_steps() : 1;
+
+  const bool ignore_this_grad = ( ( t - 3 ) % update_interval == update_interval - 1 );
 
   bool pre = true;
 
@@ -427,15 +430,15 @@ eprop_readout::compute_gradient( const long t_spike,
         z = 0.0;
       }
     }
-    
-    if ( not ( pre and ignore_this_grad ))
+
+    if ( not ( pre and ignore_this_grad ) )
     {
       L = eprop_hist_it->error_signal_;
 
       z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
-      grad += L * z_bar;
+      grad += L * z_bar / learning_window;
     }
-    
+
     ++eprop_hist_it;
     ++t;
   }

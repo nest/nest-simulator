@@ -33,12 +33,16 @@ namespace nest
 
 EpropArchivingNodeRecurrent::EpropArchivingNodeRecurrent()
   : EpropArchivingNode()
+  , firing_rate_reg_( 0.0 )
+  , f_av_( 0.0 )
   , n_spikes_( 0 )
 {
 }
 
 EpropArchivingNodeRecurrent::EpropArchivingNodeRecurrent( const EpropArchivingNodeRecurrent& n )
   : EpropArchivingNode( n )
+  , firing_rate_reg_( n.firing_rate_reg_ )
+  , f_av_( n.f_av_ )
   , n_spikes_( n.n_spikes_ )
 {
 }
@@ -52,7 +56,7 @@ EpropArchivingNodeRecurrent::write_surrogate_gradient_to_history( const long tim
     return;
   }
 
-  eprop_history_.emplace_back( time_step, surrogate_gradient, 0.0 );
+  eprop_history_.emplace_back( time_step, surrogate_gradient, 0.0, 0.0 );
 }
 
 void
@@ -102,6 +106,37 @@ EpropArchivingNodeRecurrent::get_firing_rate_reg_history( const long time_step )
   assert( it_hist != firing_rate_reg_history_.end() );
 
   return it_hist;
+}
+
+void
+EpropArchivingNodeRecurrent::write_firing_rate_reg_to_history( const long t,
+  const long interval_step,
+  const double z,
+  const double f_target,
+  const double c_reg )
+{
+  if ( eprop_indegree_ == 0 )
+  {
+    return;
+  }
+
+  const double dt = Time::get_resolution().get_ms();
+
+  const double f_target_ = f_target * dt; // convert from spikes/ms to spikes/step
+
+  if ( interval_step < 0 )
+  {
+    return;
+  }
+
+  double beta = interval_step / ( interval_step + 1.0 );
+
+  f_av_ = beta * f_av_ + ( 1.0 - beta ) * z / dt;
+
+  firing_rate_reg_ = c_reg * ( f_av_ - f_target_ );
+
+  auto it_hist = get_eprop_history( t );
+  it_hist->firing_rate_reg_ = firing_rate_reg_;
 }
 
 double

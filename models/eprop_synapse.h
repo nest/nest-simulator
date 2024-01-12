@@ -509,8 +509,6 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
   const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
   const long shift = is_target_recurrent ? target->get_shift() : target->get_shift() + 1.0;
 
-  const long interval_step = ( t_spike - shift ) % update_interval;
-
   if ( t_spike < t_next_update_ + shift )
   {
     if ( is_first_spike_ )
@@ -548,7 +546,6 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
       grad_ /= learning_window;
     }
 
-    double loss_grad = grad_;
     double reg_grad = 0.0;
     if ( target->get_name() != "eprop_readout" )
     {

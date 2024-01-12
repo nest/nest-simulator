@@ -396,52 +396,48 @@ eprop_readout::compute_gradient( const long t_spike,
 {
   auto eprop_hist_it = get_eprop_history( t_prev_spike - 1 );
 
-  double g = 0.0;
-  double z = 0.0; // Spiking variable
-  double L = 0.0; // Learning signal
+  double z = 0.0; // spiking variable
+  double L = 0.0; // learning signal
 
   const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
   bool ignore_this_grad = ( ( t - 3 ) % update_interval == update_interval - 1 );
 
-  z = prev_z_buffer;
+  bool pre = true;
 
-  L = eprop_hist_it->error_signal_;
-
-  if ( not ignore_this_grad )
-  {
-    z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
-    g = L * z_bar;
-  }
-
-  grad += g;
-  prev_z_buffer = 1.0;
-  t += 1;
-
-  if ( t < t_spike )
-  {
-    ++eprop_hist_it;
-    z = 1.0;
-    L = eprop_hist_it->error_signal_;
-
-    z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
-    g = L * z_bar;
-
-    grad += g;
-    prev_z_buffer = 0.0;
-    t += 1;
-  }
   while ( t < t_spike )
   {
+    if ( pre )
+    {
+      if ( not ignore_this_grad )
+      {
+        z = prev_z_buffer;
+      }
+      prev_z_buffer = 1.0;
+      pre = false;
+    }
+    else
+    {
+      if ( prev_z_buffer == 1.0 )
+      {
+        z = 1.0;
+        prev_z_buffer = 0.0;
+      }
+      else
+      {
+        z = 0.0;
+      }
+    }
+    
+    if ( not ( pre and ignore_this_grad ))
+    {
+      L = eprop_hist_it->error_signal_;
+
+      z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
+      grad += L * z_bar;
+    }
+    
     ++eprop_hist_it;
-    z = 0.0;
-    L = eprop_hist_it->error_signal_;
-
-    z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
-    g = L * z_bar;
-
-    grad += g;
-    prev_z_buffer = 0.0;
-    t += 1;
+    ++t;
   }
 }
 

@@ -481,66 +481,54 @@ eprop_iaf_adapt::compute_gradient( const long t_spike,
 {
   auto eprop_hist_it = get_eprop_history( t_prev_spike - 1 );
 
-  double g = 0.0;
-  double e = 0.0;   // Eligibility trace
-  double z = 0.0;   // Spiking variable
-  double psi = 0.0; // Surrogate gradient
-  double L = 0.0;   // Learning signal
+  double e = 0.0;   // eligibility trace
+  double z = 0.0;   // spiking variable
+  double psi = 0.0; // surrogate gradient
+  double L = 0.0;   // learning signal
 
   const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
   bool ignore_this_grad = ( ( t - 3 ) % update_interval == update_interval - 1 );
 
-  z = prev_z_buffer;
-  psi = eprop_hist_it->surrogate_gradient_;
-  L = eprop_hist_it->learning_signal_;
-
-  if ( not ignore_this_grad )
-  {
-    z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
-    e = psi * z_bar;
-    sum_e += e;
-    e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
-    g = L * e_bar;
-  }
-
-  grad += g;
-  prev_z_buffer = 1.0;
-  t += 1;
-
-  if ( t < t_spike )
-  {
-    ++eprop_hist_it;
-    z = 1.0;
-    psi = eprop_hist_it->surrogate_gradient_;
-    L = eprop_hist_it->learning_signal_;
-
-    z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
-    e = psi * z_bar;
-    sum_e += e;
-    e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
-    g = L * e_bar;
-
-    grad += g;
-    prev_z_buffer = 0.0;
-    t += 1;
-  }
+  bool pre = true;
 
   while ( t < t_spike )
   {
+    if ( pre )
+    {
+      if ( not ignore_this_grad )
+      {
+        z = prev_z_buffer;
+      }
+      prev_z_buffer = 1.0;
+      pre = false;
+    }
+    else
+    {
+      if ( prev_z_buffer == 1.0 )
+      {
+        z = 1.0;
+        prev_z_buffer = 0.0;
+      }
+      else
+      {
+        z = 0.0;
+      }
+    }
+    
+    if ( not ( pre and ignore_this_grad ))
+    {
+      psi = eprop_hist_it->surrogate_gradient_;
+      L = eprop_hist_it->learning_signal_;
+
+      z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
+      e = psi * z_bar;
+      sum_e += e;
+      e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
+      grad += L * e_bar;
+    }
+    
     ++eprop_hist_it;
-    z = 0.0;
-    psi = eprop_hist_it->surrogate_gradient_;
-    L = eprop_hist_it->learning_signal_;
-
-    z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
-    e = psi * z_bar;
-    sum_e += e;
-    e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
-    g = L * e_bar;
-
-    grad += g;
-    prev_z_buffer = 0.0;
-    t += 1;
+    ++t;
   }
 }
 

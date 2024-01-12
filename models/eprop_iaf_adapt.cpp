@@ -481,10 +481,11 @@ eprop_iaf_adapt::compute_gradient( const long t_spike,
 {
   auto eprop_hist_it = get_eprop_history( t_prev_spike - 1 );
 
-  double e = 0.0;   // eligibility trace
-  double z = 0.0;   // spiking variable
-  double psi = 0.0; // surrogate gradient
-  double L = 0.0;   // learning signal
+  double e = 0.0;       // eligibility trace
+  double epsilon = 0.0; // adaptative component of eligibility vector
+  double z = 0.0;       // spiking variable
+  double psi = 0.0;     // surrogate gradient
+  double L = 0.0;       // learning signal
 
   const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
   bool ignore_this_grad = ( ( t - 3 ) % update_interval == update_interval - 1 );
@@ -521,7 +522,8 @@ eprop_iaf_adapt::compute_gradient( const long t_spike,
       L = eprop_hist_it->learning_signal_;
 
       z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
-      e = psi * z_bar;
+      e = psi * ( z_bar - P_.adapt_beta_ * epsilon );
+      epsilon = psi * z_bar + ( V_.P_adapt_ - psi * P_.adapt_beta_ ) * epsilon;
       sum_e += e;
       e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
       grad += L * e_bar;

@@ -243,7 +243,7 @@ void
 eprop_readout_bsshslm_2020::update( Time const& origin, const long from, const long to )
 {
   const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
-  const double learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
+  const long learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
   const bool with_reset = kernel().simulation_manager.get_eprop_reset_neurons_on_update();
   const long shift = get_shift();
 

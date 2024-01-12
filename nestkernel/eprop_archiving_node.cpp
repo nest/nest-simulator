@@ -62,7 +62,7 @@ EpropArchivingNodeRecurrent::write_learning_signal_to_history( const long time_s
   {
     return;
   }
-  
+
   const long shift = delay_rec_out_ + delay_out_norm_ + delay_out_rec_;
 
   auto it_hist = get_eprop_history( time_step - shift );
@@ -107,7 +107,7 @@ EpropArchivingNodeRecurrent::get_firing_rate_reg_history( const long time_step )
 double
 EpropArchivingNodeRecurrent::get_learning_signal_from_history( const long time_step )
 {
-  const long shift = 0; //delay_rec_out_ + delay_out_norm_ + delay_out_rec_;
+  const long shift = 0; // delay_rec_out_ + delay_out_norm_ + delay_out_rec_;
 
   const auto it = get_eprop_history( time_step - shift );
   if ( it == eprop_history_.end() )

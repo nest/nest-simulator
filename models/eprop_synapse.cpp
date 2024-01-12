@@ -41,8 +41,7 @@ EpropSynapseCommonProperties::EpropSynapseCommonProperties()
 {
 }
 
-EpropSynapseCommonProperties::EpropSynapseCommonProperties(
-  const EpropSynapseCommonProperties& cp )
+EpropSynapseCommonProperties::EpropSynapseCommonProperties( const EpropSynapseCommonProperties& cp )
   : CommonSynapseProperties( cp )
   , average_gradient_( cp.average_gradient_ )
   , optimizer_cp_( cp.optimizer_cp_->clone() )

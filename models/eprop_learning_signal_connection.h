@@ -207,8 +207,7 @@ eprop_learning_signal_connection< targetidentifierT >::get_status( DictionaryDat
 
 template < typename targetidentifierT >
 void
-eprop_learning_signal_connection< targetidentifierT >::set_status( const DictionaryDatum& d,
-  ConnectorModel& cm )
+eprop_learning_signal_connection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );

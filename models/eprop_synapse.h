@@ -340,14 +340,14 @@ private:
   double gradient_change_;
 
   long idx_current_update; // TODO: no _?
-  double grad_= 0.0;
-  double z_bar_ =0.0;
+  double grad_ = 0.0;
+  double z_bar_ = 0.0;
   double e_bar_ = 0.0;
   double sum_e_ = 0.0;
 
   long t_ = 0;
   double prev_z_buffer_ = 0.0;
-  bool is_first_spike_ = true ;
+  bool is_first_spike_ = true;
 };
 
 template < typename targetidentifierT >
@@ -507,35 +507,34 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
 
   const long t_spike = e.get_stamp().get_steps();
   const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
-  const long shift = is_target_recurrent ? target->get_shift(): target->get_shift() + 1.0;
+  const long shift = is_target_recurrent ? target->get_shift() : target->get_shift() + 1.0;
 
   const long interval_step = ( t_spike - shift ) % update_interval;
 
-  if (t_spike < t_next_update_ + shift)
+  if ( t_spike < t_next_update_ + shift )
   {
-     if ( is_first_spike_)
-     {
-       is_first_spike_ = false;
-       t_ = t_spike;
-     }
-     else
-     {
-        target->compute_gradient(t_spike, t_previous_spike_, t_, prev_z_buffer_,
-                                 z_bar_, e_bar_, sum_e_, grad_, kappa_); 
-     }
-  }
-  else
-  {
-    long interval_end = t_next_update_ + shift;
-    if ( is_first_spike_)
+    if ( is_first_spike_ )
     {
       is_first_spike_ = false;
       t_ = t_spike;
     }
     else
     {
-      target->compute_gradient(interval_end, t_previous_spike_, t_, prev_z_buffer_,
-                              z_bar_, e_bar_, sum_e_, grad_, kappa_); 
+      target->compute_gradient( t_spike, t_previous_spike_, t_, prev_z_buffer_, z_bar_, e_bar_, sum_e_, grad_, kappa_ );
+    }
+  }
+  else
+  {
+    long interval_end = t_next_update_ + shift;
+    if ( is_first_spike_ )
+    {
+      is_first_spike_ = false;
+      t_ = t_spike;
+    }
+    else
+    {
+      target->compute_gradient(
+        interval_end, t_previous_spike_, t_, prev_z_buffer_, z_bar_, e_bar_, sum_e_, grad_, kappa_ );
     }
 
     idx_current_update = ( t_spike - shift ) / update_interval;
@@ -544,16 +543,16 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
     target->write_update_to_history( t_previous_update_, t_current_update );
 
     const long learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
-    if (cp.average_gradient_ )
+    if ( cp.average_gradient_ )
     {
       grad_ /= learning_window;
     }
 
     double loss_grad = grad_;
     double reg_grad = 0.0;
-    if (target->get_name() != "eprop_readout")
+    if ( target->get_name() != "eprop_readout" )
     {
-      EpropArchivingNodeRecurrent* rec_target = dynamic_cast< EpropArchivingNodeRecurrent* >(target);
+      EpropArchivingNodeRecurrent* rec_target = dynamic_cast< EpropArchivingNodeRecurrent* >( target );
 
       const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
       const auto it_reg_hist = rec_target->get_firing_rate_reg_history( t_previous_update_ + update_interval );
@@ -635,8 +634,7 @@ eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
     kappa_ = std::exp( -Time::get_resolution().get_ms() / tau_m_readout_ );
   }
 
-  const auto& gcm =
-    dynamic_cast< const GenericConnectorModel< eprop_synapse< targetidentifierT > >& >( cm );
+  const auto& gcm = dynamic_cast< const GenericConnectorModel< eprop_synapse< targetidentifierT > >& >( cm );
   const CommonPropertiesType& epcp = gcm.get_common_properties();
   if ( weight_ < epcp.optimizer_cp_->get_Wmin() )
   {

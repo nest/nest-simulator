@@ -278,14 +278,14 @@ public:
   void set_status( const DictionaryDatum& ) override;
 
   void compute_gradient( const long t_spike,
-  const long t_prev_spike,
-  long& t,
-  double& prev_z_buffer,
-  double& z_bar,
-  double& e_bar,
-  double& sum_e,
-  double& grad,
-  const double kappa) override;
+    const long t_prev_spike,
+    long& t,
+    double& prev_z_buffer,
+    double& z_bar,
+    double& e_bar,
+    double& sum_e,
+    double& grad,
+    const double kappa ) override;
 
   void pre_run_hook() override;
   bool is_eprop_recurrent_node() const override;

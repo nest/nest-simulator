@@ -255,8 +255,8 @@ eprop_readout::update( Time const& origin, const long from, const long to )
 
     if ( interval_step == 0 )
     {
-      if(t > 2)
-      {      
+      if ( t > 2 )
+      {
         erase_unneeded_update_history();
         erase_unneeded_eprop_history();
       }
@@ -392,22 +392,22 @@ eprop_readout::compute_gradient( const long t_spike,
   double& e_bar,
   double& sum_e,
   double& grad,
-  const double kappa)
+  const double kappa )
 {
-  auto eprop_hist_it = get_eprop_history( t_prev_spike - 1);
+  auto eprop_hist_it = get_eprop_history( t_prev_spike - 1 );
 
   double g = 0.0;
-  double z = 0.0;     // Spiking variable
-  double L = 0.0;     // Learning signal
+  double z = 0.0; // Spiking variable
+  double L = 0.0; // Learning signal
 
   const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
-  bool ignore_this_grad = ((t-3) % update_interval == update_interval - 1); 
+  bool ignore_this_grad = ( ( t - 3 ) % update_interval == update_interval - 1 );
 
   z = prev_z_buffer;
 
   L = eprop_hist_it->error_signal_;
 
-  if (not ignore_this_grad)
+  if ( not ignore_this_grad )
   {
     z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
     g = L * z_bar;
@@ -417,28 +417,28 @@ eprop_readout::compute_gradient( const long t_spike,
   prev_z_buffer = 1.0;
   t += 1;
 
-  if (t < t_spike)
+  if ( t < t_spike )
   {
     ++eprop_hist_it;
     z = 1.0;
     L = eprop_hist_it->error_signal_;
-  
+
     z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
     g = L * z_bar;
-  
+
     grad += g;
     prev_z_buffer = 0.0;
     t += 1;
   }
-  while (t < t_spike)
+  while ( t < t_spike )
   {
     ++eprop_hist_it;
     z = 0.0;
     L = eprop_hist_it->error_signal_;
-  
+
     z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
     g = L * z_bar;
-  
+
     grad += g;
     prev_z_buffer = 0.0;
     t += 1;

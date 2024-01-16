@@ -115,7 +115,7 @@ def createCommitOnBranch():
                 print("SOMETHING WENT WRONG!\n")
                 print(f"{stat['conclusion']} - {(stat['status'])}")
     else:
-        print("\n COMPLETED! \n")
+        print("\n CHECK COMPLETED! \n")
     print(f"\n COMMIT RESPONSE \n -------------- \n{response.text}")
 
 

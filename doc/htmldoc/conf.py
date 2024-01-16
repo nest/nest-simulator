@@ -44,6 +44,7 @@ sys.path.append(pynest_dir)
 source_suffix = ".rst"
 master_doc = "index"
 extensions = [
+    "add_button_notebook",
     "sphinx_gallery.gen_gallery",
     "list_examples",
     "sphinx.ext.autodoc",
@@ -54,7 +55,6 @@ extensions = [
     "sphinxcontrib.mermaid",
     "sphinx.ext.mathjax",
     "sphinxcontrib.plantuml",
-    "add_button_notebook",
     "IPython.sphinxext.ipython_console_highlighting",
     "nbsphinx",
     "extract_api_functions",
@@ -80,6 +80,7 @@ sphinx_gallery_conf = {
     "gallery_dirs": "auto_examples",
     "plot_gallery": "False",
     "download_all_examples": False,
+    "copyfile_regex": r".*\.rst|.*\.png",
 }
 
 # General information about the project.

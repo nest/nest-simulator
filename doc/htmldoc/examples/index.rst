@@ -341,7 +341,9 @@ PyNEST examples
 
 .. toctree::
    :hidden:
+   :glob:
 
+   ../auto_examples/ignore_and_fire/*
    ../auto_examples/pong/run_simulations
    ../auto_examples/pong/pong
    ../auto_examples/pong/generate_gif

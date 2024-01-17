@@ -81,7 +81,6 @@ git-pull?repo=https%3A%2F%2Fgithub.com%2Fnest%2Fnest-simulator-examples&urlpath=
     # Find all relevant files
     # Inject prolog into Python example
     files = list(Path("auto_examples/").rglob("*.rst"))
-    # Filter ".rst" files with corresponding ".py" files
     for file in files:
         # Skip index files and benchmark file. These files do not have notebooks that can run
         # on the service.

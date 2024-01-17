@@ -53,26 +53,27 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinxcontrib.mermaid",
     "sphinx.ext.mathjax",
+    "sphinx_carousel.carousel",
     "sphinxcontrib.plantuml",
     "add_button_notebook",
     "IPython.sphinxext.ipython_console_highlighting",
     "nbsphinx",
     "extract_api_functions",
     "sphinx_design",
-    "HoverXTooltip",
     "VersionSyncRole",
+    "HoverXTooltip",
     "sphinx_copybutton",
     "notfound.extension",
 ]
 
 autodoc_mock_imports = ["nest.pynestkernel", "nest.ll_api"]
 mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-panels_add_bootstrap_css = False
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["templates"]
 
 # To run plantuml locally see the user documentation workflow
 plantuml = "java -jar /tmp/plantuml.jar"
+plantuml_output_format = "svg_img"
 sphinx_gallery_conf = {
     # path to your examples scripts
     "examples_dirs": "../../pynest/examples",
@@ -81,6 +82,9 @@ sphinx_gallery_conf = {
     "plot_gallery": "False",
     "download_all_examples": False,
 }
+
+carousel_show_captions_below = True
+# carousel_show_controls = True
 
 # General information about the project.
 project = "NEST Simulator user documentation"
@@ -177,7 +181,18 @@ html_theme_options = {
 }
 
 html_static_path = ["static"]
-html_additional_pages = {"index": "index.html"}
+
+html_css_files = [
+    "css/custom.css",
+    "css/popup.css",
+    "css/pygments.css",
+]
+
+html_js_files = [
+    "js/custom.js",
+    "js/popup.js",
+]
+# html_additional_pages = {"index": "index.html"}
 html_sidebars = {"**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]}
 
 html_favicon = "static/img/nest_favicon.ico"
@@ -230,9 +245,6 @@ def setup(app):
     # for events see
     # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
     app.connect("source-read", toc_customizer)
-    app.add_css_file("css/custom.css")
-    app.add_css_file("css/pygments.css")
-    app.add_js_file("js/custom.js")
     app.connect("config-inited", config_inited_handler)
 
 

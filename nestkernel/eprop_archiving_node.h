@@ -76,7 +76,7 @@ public:
   void erase_used_eprop_history();
 
 protected:
-  //!< number of incoming eprop synapses
+  //!< Number of incoming eprop synapses
   size_t eprop_indegree_;
 
   //! History of updates still needed by at least one synapse.

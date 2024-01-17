@@ -97,14 +97,14 @@ class lockPTR
     PointerObject( PointerObject const& );
 
   public:
-    PointerObject( D* p = NULL )
+    explicit PointerObject( D* p = nullptr )
       : pointee( p )
       , deletable( true )
       , locked( false )
     {
     }
 
-    PointerObject( D& p_o )
+    explicit PointerObject( D& p_o )
       : pointee( &p_o )
       , deletable( false )
       , locked( false )
@@ -114,32 +114,32 @@ class lockPTR
     ~PointerObject()
     {
       assert( not locked );
-      if ( ( pointee != NULL ) && deletable && ( not locked ) )
+      if ( pointee and deletable and not locked )
       {
         delete pointee;
       }
     }
 
     D*
-    get( void ) const
+    get() const
     {
       return pointee;
     }
 
     bool
-    islocked( void ) const
+    islocked() const
     {
       return locked;
     }
 
     bool
-    isdeletable( void ) const
+    isdeletable() const
     {
       return deletable;
     }
 
     void
-    lock( void )
+    lock()
     {
       assert( not locked );
 #pragma omp atomic write // To avoid race conditions.
@@ -147,7 +147,7 @@ class lockPTR
     }
 
     void
-    unlock( void )
+    unlock()
     {
       assert( locked );
 #pragma omp atomic write // To avoid race conditions.
@@ -164,34 +164,34 @@ public:
   // object which must then be initialised, for example
   // by assignement.
 
-  explicit lockPTR( D* p = NULL )
+  explicit lockPTR( D* p = nullptr )
   {
     obj = std::make_shared< PointerObject >( p );
-    assert( obj != NULL );
+    assert( obj );
   }
 
   explicit lockPTR( D& p_o )
   {
     obj = std::make_shared< PointerObject >( p_o );
-    assert( obj != NULL );
+    assert( obj );
   }
 
   lockPTR( const lockPTR< D >& spd )
     : obj( spd.obj )
   {
-    assert( obj != NULL );
+    assert( obj );
   }
 
   virtual ~lockPTR()
   {
-    assert( obj != NULL );
+    assert( obj );
   }
 
   lockPTR< D >
   operator=( const lockPTR< D >& spd )
   {
-    assert( obj != NULL );
-    assert( spd.obj != NULL );
+    assert( obj );
+    assert( spd.obj );
 
     obj = spd.obj;
 
@@ -215,7 +215,7 @@ public:
   }
 
   D*
-  get( void )
+  get()
   {
     assert( not obj->islocked() );
     obj->lock(); // Try to lock Object
@@ -223,7 +223,7 @@ public:
   }
 
   D*
-  get( void ) const
+  get() const
   {
     assert( not obj->islocked() );
 
@@ -234,7 +234,7 @@ public:
   D*
   operator->() const
   {
-    assert( obj->get() != NULL );
+    assert( obj->get() );
 
     return obj->get();
   }
@@ -242,7 +242,7 @@ public:
   D*
   operator->()
   {
-    assert( obj->get() != NULL );
+    assert( obj->get() );
 
     return obj->get();
   }
@@ -250,7 +250,7 @@ public:
   D&
   operator*()
   {
-    assert( obj->get() != NULL );
+    assert( obj->get() );
 
     return *( obj->get() );
   }
@@ -258,17 +258,15 @@ public:
   const D&
   operator*() const
   {
-    assert( obj->get() != NULL );
+    assert( obj->get() );
     return *( obj->get() );
   }
 
 
   bool
-  operator not() const //!< returns true if and only if obj->pointee == NULL
+  operator not() const //!< returns true if and only if not obj->pointee
   {
-    // assert(obj != NULL);
-
-    return ( obj->get() == NULL );
+    return not obj->get();
   }
 
 
@@ -296,51 +294,51 @@ public:
 
 
   bool
-  valid( void ) const //!< returns true if and only if obj->pointee != NULL
+  valid() const //!< returns true if and only if obj->pointee
   {
-    assert( obj != NULL );
-    return ( obj->get() != NULL );
+    assert( obj );
+    return ( obj->get() );
   }
 
   bool
-  islocked( void ) const
+  islocked() const
   {
-    assert( obj != NULL );
+    assert( obj );
     return ( obj->islocked() );
   }
 
   bool
-  deletable( void ) const
+  deletable() const
   {
-    assert( obj != NULL );
+    assert( obj );
     return ( obj->isdeletable() );
   }
 
   void
-  lock( void ) const
+  lock() const
   {
-    assert( obj != NULL );
+    assert( obj );
     obj->lock();
   }
 
   void
-  unlock( void ) const
+  unlock() const
   {
-    assert( obj != NULL );
+    assert( obj );
     obj->unlock();
   }
 
   void
-  unlock( void )
+  unlock()
   {
-    assert( obj != NULL );
+    assert( obj );
     obj->unlock();
   }
 
   size_t
-  references( void ) const
+  references() const
   {
-    return ( obj == NULL ) ? 0 : obj.use_count();
+    return not obj ? 0 : obj.use_count();
   }
 };
 

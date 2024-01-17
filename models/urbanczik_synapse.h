@@ -98,10 +98,17 @@ See also
 
 stdp_synapse, clopath_synapse, pp_cond_exp_mc_urbanczik
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: urbanczik_synapse
+
 EndUserDocs */
 
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
+
+void register_urbanczik_synapse( const std::string& name );
 
 template < typename targetidentifierT >
 class urbanczik_synapse : public Connection< targetidentifierT >
@@ -110,6 +117,11 @@ class urbanczik_synapse : public Connection< targetidentifierT >
 public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
+
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::REQUIRES_URBANCZIK_ARCHIVING
+    | ConnectionModelProperties::SUPPORTS_HPC | ConnectionModelProperties::SUPPORTS_LBL
+    | ConnectionModelProperties::SUPPORTS_WFR;
 
   /**
    * Default Constructor.
@@ -149,7 +161,7 @@ public:
    * \param e The event to send
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e, thread t, const CommonSynapseProperties& cp );
+  bool send( Event& e, size_t t, const CommonSynapseProperties& cp );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -158,15 +170,15 @@ public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
-    port
-    handles_test_event( SpikeEvent&, rport )
+    size_t
+    handles_test_event( SpikeEvent&, size_t ) override
     {
       return invalid_port;
     }
   };
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
 
@@ -197,6 +209,8 @@ private:
   double t_lastspike_;
 };
 
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties urbanczik_synapse< targetidentifierT >::properties;
 
 /**
  * Send an event to the receiver of this connection.
@@ -205,8 +219,8 @@ private:
  * \param cp Common properties object, containing the stdp parameters.
  */
 template < typename targetidentifierT >
-inline void
-urbanczik_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
+inline bool
+urbanczik_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapseProperties& )
 {
   double t_spike = e.get_stamp().get_ms();
   // use accessor functions (inherited from Connection< >) to obtain delay and target
@@ -266,6 +280,8 @@ urbanczik_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSy
   tau_s_trace_ = tau_s_trace_ * std::exp( ( t_lastspike_ - t_spike ) / tau_s ) + 1.0;
 
   t_lastspike_ = t_spike;
+
+  return true;
 }
 
 
@@ -312,7 +328,7 @@ urbanczik_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Co
 
   init_weight_ = weight_;
   // check if weight_ and Wmin_ has the same sign
-  if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) == ( ( Wmin_ >= 0 ) - ( Wmin_ < 0 ) ) ) )
+  if ( std::signbit( weight_ ) != std::signbit( Wmax_ ) )
   {
     throw BadProperty( "Weight and Wmin must have same sign." );
   }

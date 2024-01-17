@@ -49,7 +49,7 @@ nest_quicksort( BlockVector< int >& bv0, BlockVector< int >& bv1 )
 }
 
 /**
- * Fixture filling two BlockVectors and a vector with lineary decreasing numbers.
+ * Fixture filling two BlockVectors and a vector with linearly decreasing numbers.
  * The vector is then sorted.
  */
 struct fill_bv_vec_linear

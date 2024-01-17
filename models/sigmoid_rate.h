@@ -123,6 +123,12 @@ See also
 
 rate_connection_instantaneous, rate_connection_delayed
 
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: sigmoid_rate
+
 EndUserDocs */
 
 class nonlinearities_sigmoid_rate
@@ -143,7 +149,7 @@ public:
   }
 
   void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-  void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+  void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
 
   double input( double h );               // non-linearity on input
   double mult_coupling_ex( double rate ); // factor of multiplicative coupling
@@ -169,7 +175,11 @@ nonlinearities_sigmoid_rate::mult_coupling_in( double )
 }
 
 typedef rate_neuron_ipn< nest::nonlinearities_sigmoid_rate > sigmoid_rate_ipn;
+void register_sigmoid_rate_ipn( const std::string& name );
+
 typedef rate_transformer_node< nest::nonlinearities_sigmoid_rate > rate_transformer_sigmoid;
+void register_rate_transformer_sigmoid( const std::string& name );
+
 
 template <>
 void RecordablesMap< sigmoid_rate_ipn >::create();

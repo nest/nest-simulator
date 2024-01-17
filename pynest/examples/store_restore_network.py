@@ -18,6 +18,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+#
+# isort: skip_file
 
 """
 Store and restore a network simulation
@@ -96,8 +98,8 @@ class EINetwork:
         nest.CopyModel("stdp_synapse_hom", "e_syn", {"Wmax": 2 * self.JE})
         nest.CopyModel("static_synapse", "i_syn")
 
-        self.nrn_params = {"V_m": nest.random.normal(-65., 5.)}
-        self.poisson_rate = 800.
+        self.nrn_params = {"V_m": nest.random.normal(-65.0, 5.0)}
+        self.poisson_rate = 800.0
 
     def build(self):
         """
@@ -111,12 +113,18 @@ class EINetwork:
         self.pg = nest.Create("poisson_generator", {"rate": self.poisson_rate})
         self.sr = nest.Create("spike_recorder")
 
-        nest.Connect(self.e_neurons, self.neurons,
-                     {"rule": "fixed_indegree", "indegree": self.indeg_e},
-                     {"synapse_model": "e_syn", "weight": self.JE})
-        nest.Connect(self.i_neurons, self.neurons,
-                     {"rule": "fixed_indegree", "indegree": self.indeg_i},
-                     {"synapse_model": "i_syn", "weight": self.JI})
+        nest.Connect(
+            self.e_neurons,
+            self.neurons,
+            {"rule": "fixed_indegree", "indegree": self.indeg_e},
+            {"synapse_model": "e_syn", "weight": self.JE},
+        )
+        nest.Connect(
+            self.i_neurons,
+            self.neurons,
+            {"rule": "fixed_indegree", "indegree": self.indeg_i},
+            {"synapse_model": "i_syn", "weight": self.JI},
+        )
         nest.Connect(self.pg, self.neurons, "all_to_all", {"weight": self.JE})
         nest.Connect(self.e_neurons, self.sr)
 
@@ -127,17 +135,17 @@ class EINetwork:
 
         assert nest.NumProcesses() == 1, "Cannot dump MPI parallel"
 
-###############################################################################
-# Build dictionary with relevant network information:
-#
-#   - membrane potential for all neurons in each population
-#   - source, target and weight of all connections
-#
-# Dictionary entries are Pandas Dataframes.
-#
-# Strictly speaking, we would not need to store the weight of the inhibitory
-# synapses since they are fixed, but we do so out of symmetry and to make it
-# easier to add plasticity for inhibitory connections later.
+        ###############################################################################
+        # Build dictionary with relevant network information:
+        #
+        #   - membrane potential for all neurons in each population
+        #   - source, target and weight of all connections
+        #
+        # Dictionary entries are Pandas Dataframes.
+        #
+        # Strictly speaking, we would not need to store the weight of the inhibitory
+        # synapses since they are fixed, but we do so out of symmetry and to make it
+        # easier to add plasticity for inhibitory connections later.
 
         network = {}
         network["n_vp"] = nest.total_num_virtual_procs
@@ -145,9 +153,11 @@ class EINetwork:
         network["i_nrns"] = self.neurons.get(["V_m"], output="pandas")
 
         network["e_syns"] = nest.GetConnections(synapse_model="e_syn").get(
-            ("source", "target", "weight"), output="pandas")
+            ("source", "target", "weight"), output="pandas"
+        )
         network["i_syns"] = nest.GetConnections(synapse_model="i_syn").get(
-            ("source", "target", "weight"), output="pandas")
+            ("source", "target", "weight"), output="pandas"
+        )
 
         with open(dump_filename, "wb") as f:
             pickle.dump(network, f, pickle.HIGHEST_PROTOCOL)
@@ -164,33 +174,37 @@ class EINetwork:
 
         assert network["n_vp"] == nest.total_num_virtual_procs, "N_VP must match"
 
-###############################################################################
-# Reconstruct neurons
-# Since NEST does not understand Pandas Series, we must pass the values as
-# NumPy arrays
-        self.e_neurons = nest.Create(self.neuron_model, n=self.nE,
-                                     params={"V_m": network["e_nrns"].V_m.values})
-        self.i_neurons = nest.Create(self.neuron_model, n=self.nI,
-                                     params={"V_m": network["i_nrns"].V_m.values})
+        ###############################################################################
+        # Reconstruct neurons
+        # Since NEST does not understand Pandas Series, we must pass the values as
+        # NumPy arrays
+        self.e_neurons = nest.Create(self.neuron_model, n=self.nE, params={"V_m": network["e_nrns"].V_m.values})
+        self.i_neurons = nest.Create(self.neuron_model, n=self.nI, params={"V_m": network["i_nrns"].V_m.values})
         self.neurons = self.e_neurons + self.i_neurons
 
-###############################################################################
-# Reconstruct instrumentation
+        ###############################################################################
+        # Reconstruct instrumentation
         self.pg = nest.Create("poisson_generator", {"rate": self.poisson_rate})
         self.sr = nest.Create("spike_recorder")
 
-###############################################################################
-# Reconstruct connectivity
-        nest.Connect(network["e_syns"].source.values, network["e_syns"].target.values,
-                     "one_to_one",
-                     {"synapse_model": "e_syn", "weight": network["e_syns"].weight.values})
+        ###############################################################################
+        # Reconstruct connectivity
+        nest.Connect(
+            network["e_syns"].source.values,
+            network["e_syns"].target.values,
+            "one_to_one",
+            {"synapse_model": "e_syn", "weight": network["e_syns"].weight.values},
+        )
 
-        nest.Connect(network["i_syns"].source.values, network["i_syns"].target.values,
-                     "one_to_one",
-                     {"synapse_model": "i_syn", "weight": network["i_syns"].weight.values})
+        nest.Connect(
+            network["i_syns"].source.values,
+            network["i_syns"].target.values,
+            "one_to_one",
+            {"synapse_model": "i_syn", "weight": network["i_syns"].weight.values},
+        )
 
-###############################################################################
-# Reconnect instruments
+        ###############################################################################
+        # Reconnect instruments
         nest.Connect(self.pg, self.neurons, "all_to_all", {"weight": self.JE})
         nest.Connect(self.e_neurons, self.sr)
 
@@ -208,18 +222,21 @@ class DemoPlot:
         self._colors = [c["color"] for c in plt.rcParams["axes.prop_cycle"]]
         self._next_line = 0
 
-        plt.rcParams.update({'font.size': 10})
+        plt.rcParams.update({"font.size": 10})
         self.fig = plt.figure(figsize=(10, 7), constrained_layout=False)
 
         gs = gridspec.GridSpec(4, 2, bottom=0.08, top=0.9, left=0.07, right=0.98, wspace=0.2, hspace=0.4)
-        self.rasters = ([self.fig.add_subplot(gs[0, 0])] +
-                        [self.fig.add_subplot(gs[n, 1]) for n in range(4)])
+        self.rasters = [self.fig.add_subplot(gs[0, 0])] + [self.fig.add_subplot(gs[n, 1]) for n in range(4)]
         self.weights = self.fig.add_subplot(gs[1, 0])
         self.comment = self.fig.add_subplot(gs[2:, 0])
 
         self.fig.suptitle("Storing and reloading a network simulation")
         self.comment.set_axis_off()
-        self.comment.text(0, 1, textwrap.dedent("""
+        self.comment.text(
+            0,
+            1,
+            textwrap.dedent(
+                """
             Storing, loading and continuing a simulation of a balanced E-I network
             with STDP in excitatory synapses.
 
@@ -242,32 +259,40 @@ class DemoPlot:
             above but with different random seed yields different spike patterns (purple).
 
             Above: Distribution of excitatory synaptic weights at end of each sample
-            simulation. Green and red curves are identical and overlay to form brown curve."""),
-                          transform=self.comment.transAxes, fontsize=8,
-                          verticalalignment='top')
+            simulation. Green and red curves are identical and overlay to form brown curve."""
+            ),
+            transform=self.comment.transAxes,
+            fontsize=8,
+            verticalalignment="top",
+        )
 
     def add_to_plot(self, net, n_max=100, t_min=0, t_max=1000, lbl=""):
         spks = pd.DataFrame.from_dict(net.sr.get("events"))
         spks = spks.loc[(spks.senders < n_max) & (t_min < spks.times) & (spks.times < t_max)]
 
-        self.rasters[self._next_line].plot(spks.times, spks.senders, ".",
-                                           color=self._colors[self._next_line])
+        self.rasters[self._next_line].plot(spks.times, spks.senders, ".", color=self._colors[self._next_line])
         self.rasters[self._next_line].set_xlim(t_min, t_max)
         self.rasters[self._next_line].set_title(lbl)
         if 1 < self._next_line < 4:
             self.rasters[self._next_line].set_xticklabels([])
         elif self._next_line == 4:
-            self.rasters[self._next_line].set_xlabel('Time [ms]')
+            self.rasters[self._next_line].set_xlabel("Time [ms]")
 
-################################################################################################
-# To save time while plotting, we extract only a subset of connections.
-# For simplicity, we just use a prime-number stepping.
+        ################################################################################################
+        # To save time while plotting, we extract only a subset of connections.
+        # For simplicity, we just use a prime-number stepping.
         w = nest.GetConnections(source=net.e_neurons[::41], synapse_model="e_syn").weight
         wbins = np.arange(0.7, 1.4, 0.01)
-        self.weights.hist(w, bins=wbins,
-                          histtype="step", density=True, label=lbl,
-                          color=self._colors[self._next_line],
-                          alpha=0.7, lw=3)
+        self.weights.hist(
+            w,
+            bins=wbins,
+            histtype="step",
+            density=True,
+            label=lbl,
+            color=self._colors[self._next_line],
+            alpha=0.7,
+            lw=3,
+        )
 
         if self._next_line == 0:
             self.rasters[0].set_ylabel("neuron id")
@@ -281,20 +306,17 @@ class DemoPlot:
 
 
 if __name__ == "__main__":
-
-    plt.ion()
-
     T_sim = 1000
 
     dplot = DemoPlot()
 
-###############################################################################
-# Ensure clean slate and make NEST less chatty
+    ###############################################################################
+    # Ensure clean slate and make NEST less chatty
     nest.set_verbosity("M_WARNING")
     nest.ResetKernel()
 
-###############################################################################
-# Create network from scratch and simulate 1s.
+    ###############################################################################
+    # Create network from scratch and simulate 1s.
     nest.local_num_threads = 4
     nest.print_time = True
     ein = EINetwork()
@@ -303,20 +325,20 @@ if __name__ == "__main__":
     nest.Simulate(T_sim)
     dplot.add_to_plot(ein, lbl="Initial simulation")
 
-###############################################################################
-# Store network state to file with state after 1s.
+    ###############################################################################
+    # Store network state to file with state after 1s.
     print("\n*** Storing simulation ...", end="", flush=True)
     ein.store("ein_1000.pkl")
     print(" done ***\n")
 
-###############################################################################
-# Continue simulation by another 1s.
+    ###############################################################################
+    # Continue simulation by another 1s.
     print("\n*** Continuing simulation ***")
     nest.Simulate(T_sim)
     dplot.add_to_plot(ein, lbl="Continued simulation", t_min=T_sim, t_max=2 * T_sim)
 
-###############################################################################
-# Clear kernel, restore network from file and simulate for 1s.
+    ###############################################################################
+    # Clear kernel, restore network from file and simulate for 1s.
     print("\n*** Reloading and resuming simulation ***")
     nest.ResetKernel()
     nest.local_num_threads = 4
@@ -325,9 +347,9 @@ if __name__ == "__main__":
     nest.Simulate(T_sim)
     dplot.add_to_plot(ein2, lbl="Reloaded simulation")
 
-###############################################################################
-# Repeat previous step. This shall result in *exactly* the same results as
-# the previous run because we use the same random seed.
+    ###############################################################################
+    # Repeat previous step. This shall result in *exactly* the same results as
+    # the previous run because we use the same random seed.
     print("\n*** Reloading and resuming simulation (same seed) ***")
     nest.ResetKernel()
     nest.local_num_threads = 4
@@ -336,9 +358,9 @@ if __name__ == "__main__":
     nest.Simulate(T_sim)
     dplot.add_to_plot(ein2, lbl="Reloaded simulation (same seed)")
 
-###############################################################################
-# Clear, restore and simulate again, but now with different random seed.
-# Details in results shall differ from previous run.
+    ###############################################################################
+    # Clear, restore and simulate again, but now with different random seed.
+    # Details in results shall differ from previous run.
     print("\n*** Reloading and resuming simulation (different seed) ***")
     nest.ResetKernel()
     nest.local_num_threads = 4
@@ -348,6 +370,4 @@ if __name__ == "__main__":
     nest.Simulate(T_sim)
     dplot.add_to_plot(ein2, lbl="Reloaded simulation (different seed)")
 
-    dplot.fig.savefig("store_restore_network.png")
-
-    input("Press ENTER to close figure!")
+    plt.show()

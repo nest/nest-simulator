@@ -122,7 +122,14 @@ See also
 
 iaf_psc_delta, mat2_psc_exp
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: izhikevich
+
 EndUserDocs */
+
+void register_izhikevich( const std::string& name );
 
 class izhikevich : public ArchivingNode
 {
@@ -139,27 +146,27 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  void handle( DataLoggingRequest& );
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
+  void handle( DataLoggingRequest& ) override;
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
 
-  port handles_test_event( DataLoggingRequest&, rport );
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
   friend class RecordablesMap< izhikevich >;
   friend class UniversalDataLogger< izhikevich >;
 
-  void init_buffers_();
-  void pre_run_hook();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   // ----------------------------------------------------------------
 
@@ -188,7 +195,7 @@ private:
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   // ----------------------------------------------------------------
@@ -268,8 +275,8 @@ private:
   /** @} */
 };
 
-inline port
-izhikevich::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+izhikevich::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -277,8 +284,8 @@ izhikevich::send_test_event( Node& target, rport receptor_type, synindex, bool )
   return target.handles_test_event( e, receptor_type );
 }
 
-inline port
-izhikevich::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+izhikevich::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -287,8 +294,8 @@ izhikevich::handles_test_event( SpikeEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-izhikevich::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+izhikevich::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -297,8 +304,8 @@ izhikevich::handles_test_event( CurrentEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-izhikevich::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+izhikevich::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

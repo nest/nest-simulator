@@ -276,7 +276,7 @@ public:
   // numerical integration step
   std::pair< double, double > f_numstep( const double v_comp, const long lag );
 
-  // synapse specific funtion
+  // synapse specific function
   inline std::pair< double, double >
   NMDA_sigmoid__and__d_NMDAsigmoid_dv( double v_comp )
   {
@@ -349,7 +349,7 @@ public:
   // numerical integration step
   std::pair< double, double > f_numstep( const double v_comp, const long lag );
 
-  // synapse specific funtion
+  // synapse specific function
   inline std::pair< double, double >
   NMDA_sigmoid__and__d_NMDAsigmoid_dv( double v_comp )
   {

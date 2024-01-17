@@ -23,44 +23,46 @@
 Functions to get information on NEST.
 """
 
-import sys
 import os
 import textwrap
 import webbrowser
 
-from ..ll_api import check_stack, sli_func, sps, sr, spp
-from .hl_api_helper import broadcast, is_iterable, is_literal, load_help, show_help_with_pager, uni_str
-from .hl_api_types import to_json
 import nest
 
+from ..ll_api import check_stack, sli_func, spp, sps, sr
+from .hl_api_helper import (
+    broadcast,
+    is_iterable,
+    is_literal,
+    load_help,
+    show_help_with_pager,
+)
+from .hl_api_types import to_json
+
 __all__ = [
-    'authors',
-    'get_argv',
-    'GetStatus',
-    'get_verbosity',
-    'help',
-    'helpdesk',
-    'message',
-    'SetStatus',
-    'set_verbosity',
-    'sysinfo',
+    "authors",
+    "get_argv",
+    "GetStatus",
+    "get_verbosity",
+    "help",
+    "helpdesk",
+    "message",
+    "SetStatus",
+    "set_verbosity",
+    "sysinfo",
 ]
 
 
 @check_stack
 def sysinfo():
-    """Print information on the platform on which NEST was compiled.
-
-    """
+    """Print information on the platform on which NEST was compiled."""
 
     sr("sysinfo")
 
 
 @check_stack
 def authors():
-    """Print the authors of NEST.
-
-    """
+    """Print the authors of NEST."""
 
     sr("authors")
 
@@ -79,7 +81,7 @@ def helpdesk():
     """
 
     docdir = sli_func("statusdict/prgdocdir ::")
-    help_fname = os.path.join(docdir, 'html', 'index.html')
+    help_fname = os.path.join(docdir, "html", "index.html")
 
     if not os.path.isfile(help_fname):
         msg = "Sorry, the help index cannot be opened. "
@@ -121,9 +123,13 @@ def help(obj=None, return_text=False):
             else:
                 show_help_with_pager(obj)
         except FileNotFoundError:
-            print(textwrap.dedent(f"""
+            print(
+                textwrap.dedent(
+                    f"""
                 Sorry, there is no help for model '{obj}'.
-                Use the Python help() function to obtain help on PyNEST functions."""))
+                Use the Python help() function to obtain help on PyNEST functions."""
+                )
+            )
     else:
         print(nest.__doc__)
 
@@ -142,9 +148,9 @@ def get_argv():
 
     """
 
-    sr('statusdict')
+    sr("statusdict")
     statusdict = spp()
-    return statusdict['argv']
+    return statusdict["argv"]
 
 
 @check_stack
@@ -165,7 +171,7 @@ def message(level, sender, text):
     sps(level)
     sps(sender)
     sps(text)
-    sr('message')
+    sr("message")
 
 
 @check_stack
@@ -185,7 +191,7 @@ def get_verbosity():
         The current verbosity level
     """
 
-    sr('verbosity')
+    sr("verbosity")
     return spp()
 
 
@@ -199,6 +205,12 @@ def set_verbosity(level):
     - M_WARNING=20, display warning messages and above
     - M_ERROR=30, display error messages and above
     - M_FATAL=40, display failure messages and above
+
+    .. note::
+
+       To suppress the usual output when NEST starts up (e.g., the welcome message and
+       version information), you can run ``export PYNEST_QUIET=1`` on the command
+       line before executing your simulation script.
 
     Parameters
     ----------
@@ -263,11 +275,12 @@ def SetStatus(nodes, params, val=None):
         local_nodes = [nodes.local] if len(nodes) == 1 else nodes.local
         set_status_nodes = set_status_nodes and all(local_nodes)
 
-    if (params_is_dict and set_status_nodes):
-
+    if params_is_dict and set_status_nodes:
         node_params = nodes[0].get()
-        contains_list = [is_iterable(vals) and key in node_params and not is_iterable(node_params[key]) for
-                         key, vals in params.items()]
+        contains_list = [
+            is_iterable(vals) and key in node_params and not is_iterable(node_params[key])
+            for key, vals in params.items()
+        ]
 
         if any(contains_list):
             temp_param = [{} for _ in range(len(nodes))]
@@ -282,7 +295,7 @@ def SetStatus(nodes, params, val=None):
             params = temp_param
 
     if val is not None and is_literal(params):
-        if is_iterable(val) and not isinstance(val, (uni_str, dict)):
+        if is_iterable(val) and not isinstance(val, (str, dict)):
             params = [{params: x} for x in val]
         else:
             params = {params: val}
@@ -296,14 +309,14 @@ def SetStatus(nodes, params, val=None):
         sps(nodes)
         sps(params)
 
-        sr('2 arraystore')
-        sr('Transpose { arrayload pop SetStatus } forall')
+        sr("2 arraystore")
+        sr("Transpose { arrayload pop SetStatus } forall")
     else:
-        sli_func('SetStatus', nodes, params)
+        sli_func("SetStatus", nodes, params)
 
 
 @check_stack
-def GetStatus(nodes, keys=None, output=''):
+def GetStatus(nodes, keys=None, output=""):
     """Return the parameter dictionaries of nodes or connections.
 
     If `keys` is given, a list of values is returned instead. `keys` may
@@ -406,15 +419,15 @@ def GetStatus(nodes, keys=None, output=''):
         raise TypeError("The first input (nodes) must be NodeCollection or a SynapseCollection with connection handles")
 
     if len(nodes) == 0:
-        return '[]' if output == 'json' else ()
+        return "[]" if output == "json" else ()
 
     if keys is None:
-        cmd = 'GetStatus'
+        cmd = "GetStatus"
     elif is_literal(keys):
-        cmd = 'GetStatus {{ /{0} get }} Map'.format(keys)
+        cmd = "GetStatus {{ /{0} get }} Map".format(keys)
     elif is_iterable(keys):
         keys_str = " ".join("/{0}".format(x) for x in keys)
-        cmd = 'GetStatus {{ [ [ {0} ] ] get }} Map'.format(keys_str)
+        cmd = "GetStatus {{ [ [ {0} ] ] get }} Map".format(keys_str)
     else:
         raise TypeError("keys should be either a string or an iterable")
 
@@ -429,7 +442,7 @@ def GetStatus(nodes, keys=None, output=''):
         # dictionary from C++, so we need to turn it into a tuple for consistency.
         result = (result,)
 
-    if output == 'json':
+    if output == "json":
         result = to_json(result)
 
     return result

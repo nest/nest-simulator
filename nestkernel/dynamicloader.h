@@ -39,9 +39,7 @@
 
 namespace nest
 {
-
-// structure to store handles and pointers to modules
-struct sDynModule;
+struct sDynModule; // structure to store handles and pointers to modules
 
 typedef std::vector< sDynModule > vecDynModules;
 
@@ -49,21 +47,27 @@ typedef std::vector< SLIModule* > vecLinkedModules;
 
 
 /**
- * SLI interface of the Ddynamic module loader.
+ * SLI interface of the dynamic module loader.
+ *
  * This class implements the SLI functions which allow for
  * loading dynamic modules into the kernel to extend its functionality.
+ *
+ * At the time when DynamicLoaderModule is constructed, the SLI Interpreter
+ * and NestModule must be already constructed and initialized.
+ * DynamicLoaderModule relies on the presence of
+ * the following SLI datastructures: Name, Dictionary.
  */
 
 class DynamicLoaderModule : public SLIModule
 {
 public:
-  DynamicLoaderModule( SLIInterpreter& interpreter );
-  ~DynamicLoaderModule();
+  explicit DynamicLoaderModule( SLIInterpreter& interpreter );
+  ~DynamicLoaderModule() override;
 
-  void init( SLIInterpreter* );
+  void init( SLIInterpreter* ) override;
 
-  const std::string commandstring( void ) const;
-  const std::string name( void ) const;
+  const std::string commandstring() const override;
+  const std::string name() const override;
 
 
   /**
@@ -78,23 +82,6 @@ public:
 
   void initLinkedModules( SLIInterpreter& );
 
-public:
-  class LoadModuleFunction : public SLIFunction
-  {
-  public:
-    LoadModuleFunction( vecDynModules& dyn_modules );
-
-  private:
-    void execute( SLIInterpreter* ) const;
-
-  private:
-    vecDynModules& dyn_modules_;
-  };
-
-  /** @} */
-
-  LoadModuleFunction loadmodule_function;
-
 private:
   /**
    * Provide access to the list of linked modules managed DynamicLoader.
@@ -104,15 +91,41 @@ private:
    */
   static vecLinkedModules& getLinkedModules();
 
-  // vector to store handles and pointers to dynamic modules
+  //! Vector to store handles and pointers to dynamic modules
   vecDynModules dyn_modules;
 
   //! Dictionary for dynamically loaded modules.
   static Dictionary* moduledict_;
+
+public:
+  class LoadModuleFunction : public SLIFunction
+  {
+  public:
+    explicit LoadModuleFunction( vecDynModules& dyn_modules );
+
+  private:
+    void execute( SLIInterpreter* ) const override;
+
+  private:
+    vecDynModules& dyn_modules_;
+  };
+
+  /**
+   * @BeginDocumentation
+   * Name: Install - Load a dynamic module to extend the functionality.
+   *
+   * Description:
+   * Load the specified dynamic module into NEST. The module has to be visible
+   * on the runtime linker's search path (i.e. LD_LIBRARY_PATH on Linux and
+   * DYLD_LIBRARY_PATH on macOS).
+   *
+   * Synopsis: (module_name) Install -> handle
+   */
+  LoadModuleFunction loadmodule_function;
 };
 
 } // namespace
 
-#endif // HAVE_LIBLTDL
+#endif /* #ifdef HAVE_LIBLTDL */
 
 #endif

@@ -49,31 +49,29 @@ class SimulationManager : public ManagerInterface
 public:
   SimulationManager();
 
-  virtual void initialize() override;
-  virtual void finalize() override;
-  virtual void set_status( const DictionaryDatum& ) override;
-  virtual void get_status( DictionaryDatum& ) override;
+  void initialize( const bool ) override;
+  void finalize( const bool ) override;
+  void set_status( const DictionaryDatum& ) override;
+  void get_status( DictionaryDatum& ) override;
 
   /**
-      check for errors in time before run
-      @throws KernelException if illegal time passed
-  */
+   *  Check for errors in time before run
+   *
+   *   @throws KernelException if illegal time passed
+   */
   void assert_valid_simtime( Time const& );
-
-  /*
-     Simulate can be broken up into .. prepare... run.. run.. cleanup..
-     instead of calling simulate multiple times, and thus reduplicating
-     effort in prepare, cleanup many times.
-  */
 
   /**
    * Initialize simulation for a set of run calls.
+   *
    * Must be called before a sequence of runs, and again after cleanup.
    */
   void prepare() override;
 
   /**
-   * Run a simulation for another `Time`. Can be repeated ad infinitum with
+   * Run a simulation for another `Time`.
+   *
+   * Can be repeated ad infinitum with
    * calls to get_status(), but any changes to the network are undefined,
    * leading serious risk of incorrect results.
    */
@@ -81,6 +79,7 @@ public:
 
   /**
    * Closes a set of runs, doing finalizations such as file closures.
+   *
    * After cleanup() is called, no more run()s can be called before another
    * prepare() call.
    */
@@ -118,6 +117,7 @@ public:
 
   /**
    * Precise time of simulation.
+   *
    * @note The precise time of the simulation is defined only
    *       while the simulation is not in progress.
    */
@@ -125,7 +125,9 @@ public:
 
   /**
    * Return true, if the SimulationManager has already been simulated for some
-   * time. This does NOT indicate that simulate has been called (i.e. if
+   * time.
+   *
+   * This does NOT indicate that simulate has been called (i.e. if
    * Simulate is called with 0 as argument, the flag is still set to false.)
    */
   bool has_been_simulated() const;
@@ -164,14 +166,14 @@ public:
 
   //! Return start of current time slice, in steps.
   // TODO: rename / precisely how defined?
-  delay get_from_step() const;
+  long get_from_step() const;
 
   //! Return end of current time slice, in steps.
   // TODO: rename / precisely how defined?
-  delay get_to_step() const;
+  long get_to_step() const;
 
   //! Sorts source table and connections and create new target table.
-  void update_connection_infrastructure( const thread tid );
+  void update_connection_infrastructure( const size_t tid );
 
   /**
    * Set time measurements for internal profiling to zero (reg. prep.)
@@ -191,11 +193,11 @@ private:
   void print_progress_(); //!< TODO: Remove, replace by logging!
 
   Time clock_;                     //!< SimulationManager clock, updated once per slice
-  delay slice_;                    //!< current update slice
-  delay to_do_;                    //!< number of pending steps
-  delay to_do_total_;              //!< number of requested steps in current simulation
-  delay from_step_;                //!< update clock_+from_step<=T<clock_+to_step_
-  delay to_step_;                  //!< update clock_+from_step<=T<clock_+to_step_
+  long slice_;                     //!< current update slice
+  long to_do_;                     //!< number of pending steps
+  long to_do_total_;               //!< number of requested steps in current simulation
+  long from_step_;                 //!< update clock_+from_step<=T<clock_+to_step_
+  long to_step_;                   //!< update clock_+from_step<=T<clock_+to_step_
   timeval t_slice_begin_;          //!< Wall-clock time at the begin of a time slice
   timeval t_slice_end_;            //!< Wall-clock time at the end of time slice
   long t_real_;                    //!< Accumulated wall-clock time spent simulating (in us)
@@ -229,6 +231,7 @@ private:
   Stopwatch sw_gather_spike_data_;
   Stopwatch sw_update_;
   Stopwatch sw_gather_target_data_;
+  Stopwatch sw_deliver_spike_data_;
 #endif
 };
 
@@ -289,13 +292,13 @@ SimulationManager::run_end_time() const
   return ( get_time().get_steps() + to_do_ ) * Time::get_resolution();
 }
 
-inline delay
+inline long
 SimulationManager::get_from_step() const
 {
   return from_step_;
 }
 
-inline delay
+inline long
 SimulationManager::get_to_step() const
 {
   return to_step_;
@@ -327,4 +330,4 @@ SimulationManager::get_wfr_interpolation_order() const
 }
 
 
-#endif /* SIMULATION_MANAGER_H */
+#endif /* #ifndef SIMULATION_MANAGER_H */

@@ -22,9 +22,6 @@
 
 #include "iaf_chs_2007.h"
 
-// C++ includes:
-#include <limits>
-
 // Includes from libnestutil:
 #include "dict_util.h"
 #include "numerics.h"
@@ -32,13 +29,12 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -48,6 +44,12 @@ nest::RecordablesMap< nest::iaf_chs_2007 > nest::iaf_chs_2007::recordablesMap_;
 
 namespace nest
 {
+void
+register_iaf_chs_2007( const std::string& name )
+{
+  register_node_model< iaf_chs_2007 >( name );
+}
+
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>
@@ -118,7 +120,7 @@ nest::iaf_chs_2007::Parameters_::set( const DictionaryDatum& d, State_& s, Node*
   /*
   // TODO: How to handle setting U_noise first and noise later and still make
            sure they are consistent?
-  if ( U_noise_ > 0 && noise_.empty() )
+  if ( U_noise_ > 0 and noise_.empty() )
         throw BadProperty("Noise amplitude larger than zero while noise signal "
                           "is missing.");
   */
@@ -131,7 +133,7 @@ nest::iaf_chs_2007::Parameters_::set( const DictionaryDatum& d, State_& s, Node*
   {
     throw BadProperty( "Reset potential cannot be negative." );
   }
-  if ( tau_epsp_ <= 0 || tau_reset_ <= 0 )
+  if ( tau_epsp_ <= 0 or tau_reset_ <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
@@ -201,7 +203,7 @@ nest::iaf_chs_2007::pre_run_hook()
 
   const double h = Time::get_resolution().get_ms();
 
-  // numbering of state vaiables: i_0 = 0, i_syn_ = 1, V_syn_ = 2, V_spike _= 3,
+  // numbering of state variables: i_0 = 0, i_syn_ = 1, V_syn_ = 2, V_spike _= 3,
   // V_m_ = 4
 
   // these P are independent
@@ -222,9 +224,6 @@ nest::iaf_chs_2007::pre_run_hook()
 void
 nest::iaf_chs_2007::update( const Time& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   // evolve from timestep 'from' to timestep 'to' with steps of h each
   for ( long lag = from; lag < to; ++lag )
   {
@@ -240,7 +239,7 @@ nest::iaf_chs_2007::update( const Time& origin, const long from, const long to )
     // exponentially decaying ahp
     S_.V_spike_ *= V_.P30_;
 
-    double noise_term = P_.U_noise_ > 0.0 && not P_.noise_.empty() ? P_.U_noise_ * P_.noise_[ S_.position_++ ] : 0.0;
+    double noise_term = P_.U_noise_ > 0.0 and not P_.noise_.empty() ? P_.U_noise_ * P_.noise_[ S_.position_++ ] : 0.0;
 
     S_.V_m_ = S_.V_syn_ + S_.V_spike_ + noise_term;
 

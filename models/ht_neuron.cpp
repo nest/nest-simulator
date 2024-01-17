@@ -33,10 +33,17 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 namespace nest
 {
+void
+register_ht_neuron( const std::string& name )
+{
+  register_node_model< ht_neuron >( name );
+}
+
 
 RecordablesMap< ht_neuron > ht_neuron::recordablesMap_;
 
@@ -582,9 +589,9 @@ nest::ht_neuron::State_::set( const DictionaryDatum& d, const ht_neuron& node, N
 nest::ht_neuron::Buffers_::Buffers_( ht_neuron& n )
   : logger_( n )
   , spike_inputs_( std::vector< RingBuffer >( SUP_SPIKE_RECEPTOR - 1 ) )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
   , step_( Time::get_resolution().get_ms() )
   , integration_step_( step_ )
   , I_stim_( 0.0 )
@@ -594,9 +601,9 @@ nest::ht_neuron::Buffers_::Buffers_( ht_neuron& n )
 nest::ht_neuron::Buffers_::Buffers_( const Buffers_&, ht_neuron& n )
   : logger_( n )
   , spike_inputs_( std::vector< RingBuffer >( SUP_SPIKE_RECEPTOR - 1 ) )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
   , step_( Time::get_resolution().get_ms() )
   , integration_step_( step_ )
   , I_stim_( 0.0 )
@@ -663,7 +670,7 @@ nest::ht_neuron::init_buffers_()
   B_.step_ = Time::get_resolution().get_ms();
   B_.integration_step_ = B_.step_;
 
-  if ( B_.s_ == 0 )
+  if ( not B_.s_ )
   {
     B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
@@ -672,7 +679,7 @@ nest::ht_neuron::init_buffers_()
     gsl_odeiv_step_reset( B_.s_ );
   }
 
-  if ( B_.c_ == 0 )
+  if ( not B_.c_ )
   {
     B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
   }
@@ -681,7 +688,7 @@ nest::ht_neuron::init_buffers_()
     gsl_odeiv_control_init( B_.c_, 1e-3, 0.0, 1.0, 0.0 );
   }
 
-  if ( B_.e_ == 0 )
+  if ( not B_.e_ )
   {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
   }
@@ -691,7 +698,7 @@ nest::ht_neuron::init_buffers_()
   }
 
   B_.sys_.function = ht_neuron_dynamics;
-  B_.sys_.jacobian = 0;
+  B_.sys_.jacobian = nullptr;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
 
@@ -770,9 +777,6 @@ nest::ht_neuron::set_status( const DictionaryDatum& d )
 void
 ht_neuron::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
     double tt = 0.0; // it's all relative!
@@ -850,7 +854,7 @@ void
 nest::ht_neuron::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
-  assert( e.get_rport() < static_cast< int >( B_.spike_inputs_.size() ) );
+  assert( e.get_rport() < B_.spike_inputs_.size() );
 
   B_.spike_inputs_[ e.get_rport() ].add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), e.get_weight() * e.get_multiplicity() );

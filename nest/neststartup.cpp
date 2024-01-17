@@ -22,29 +22,20 @@
 
 #include "neststartup.h"
 
-// C++ includes:
-#include <fstream>
 
 // Generated includes:
 #include "config.h"
-#include "static_modules.h"
 
 // Includes from libnestutil:
-#include "logging.h"
 #include "logging_event.h"
 
 // Includes from nestkernel:
 #include "dynamicloader.h"
-#include "exceptions.h"
-#include "genericmodel_impl.h"
 #include "kernel_manager.h"
-#include "model_manager_impl.h"
 #include "nest.h"
 #include "nestmodule.h"
 
 // Includes from sli:
-#include "dict.h"
-#include "dictdatum.h"
 #include "filesystem.h"
 #include "interpret.h"
 #include "oosupport.h"
@@ -120,9 +111,6 @@ neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string module
   // NestModule extends SLI by commands for neuronal simulations
   addmodule< nest::NestModule >( engine );
 
-  // now add static modules providing components.
-  add_static_modules( engine );
-
 /*
  * The following section concerns shared user modules and is thus only
  * included if we built with libtool and libltdl.
@@ -149,7 +137,7 @@ neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string module
 #ifdef _IS_PYNEST
   // add the init-script to the list of module initializers
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( engine.baselookup( engine.commandstring_name ).datum() );
-  assert( ad != NULL );
+  assert( ad );
   ad->push_back( new StringDatum( "(" + modulepath + "/pynest-init.sli) run" ) );
 #endif
 
@@ -168,11 +156,11 @@ nestshutdown( int exitcode )
 Datum*
 CYTHON_unpackConnectionGeneratorDatum( PyObject* obj )
 {
-  Datum* ret = NULL;
-  ConnectionGenerator* cg = NULL;
+  Datum* ret = nullptr;
+  ConnectionGenerator* cg = nullptr;
 
   cg = PNS::unpackConnectionGenerator( obj );
-  if ( cg != NULL )
+  if ( cg )
   {
     ret = static_cast< Datum* >( new ConnectionGeneratorDatum( cg ) );
   }

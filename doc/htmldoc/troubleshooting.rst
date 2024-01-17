@@ -203,7 +203,7 @@ If your Python version is correct and you still have the same error, then try on
 
     .. code-block:: bash
 
-        docker pull nestsim/nest:<version>
+        docker pull nest/nest-simulator:<version>
 
     replacing ``<version>`` with the actual version you want to use.
 
@@ -211,7 +211,7 @@ If your Python version is correct and you still have the same error, then try on
 
     .. code-block:: bash
 
-       docker run --rm -e LOCAL_USER_ID=`id -u $USER` -v $(pwd):/opt/data -p 8080:8080 nestsim/nest:<version> notebook
+       docker run --rm -e LOCAL_USER_ID=`id -u $USER` -v $(pwd):/opt/data -p 8080:8080 nest/nest-simulator:<version> notebook
 
 Can't find an answer to your question?
 --------------------------------------

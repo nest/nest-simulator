@@ -22,24 +22,27 @@
 
 #include "volume_transmitter.h"
 
-// C++ includes:
-#include <numeric>
 
 // Includes from nestkernel:
 #include "connector_base.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
+#include "nest_impl.h"
 #include "spikecounter.h"
 
 // Includes from libnestutil:
 #include "dict_util.h"
 
 // Includes from sli:
-#include "arraydatum.h"
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
+
+void
+nest::register_volume_transmitter( const std::string& name )
+{
+  register_node_model< volume_transmitter >( name );
+}
+
 
 /* ----------------------------------------------------------------
  * Default constructor defining default parameters

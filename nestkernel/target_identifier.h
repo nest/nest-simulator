@@ -49,7 +49,7 @@ class TargetIdentifierPtrRport
 
 public:
   TargetIdentifierPtrRport()
-    : target_( 0 )
+    : target_( nullptr )
     , rport_( 0 )
   {
   }
@@ -63,7 +63,7 @@ public:
   get_status( DictionaryDatum& d ) const
   {
     // Do nothing if called on synapse prototype
-    if ( target_ != 0 )
+    if ( target_ )
     {
       def< long >( d, names::rport, rport_ );
       def< long >( d, names::target, target_->get_node_id() );
@@ -71,12 +71,12 @@ public:
   }
 
   Node*
-  get_target_ptr( const thread ) const
+  get_target_ptr( const size_t ) const
   {
     return target_;
   }
 
-  rport
+  size_t
   get_rport() const
   {
     return rport_;
@@ -89,14 +89,14 @@ public:
   }
 
   void
-  set_rport( rport rprt )
+  set_rport( size_t rprt )
   {
     rport_ = rprt;
   }
 
 private:
   Node* target_; //!< Target node
-  rport rport_;  //!< Receiver port at the target node
+  size_t rport_; //!< Receiver port at the target node
 };
 
 
@@ -135,13 +135,13 @@ public:
   }
 
   Node*
-  get_target_ptr( const thread tid ) const
+  get_target_ptr( const size_t tid ) const
   {
     assert( target_ != invalid_targetindex );
     return kernel().node_manager.thread_lid_to_node( tid, target_ );
   }
 
-  rport
+  size_t
   get_rport() const
   {
     return 0;
@@ -150,12 +150,12 @@ public:
   void set_target( Node* target );
 
   void
-  set_rport( rport rprt )
+  set_rport( size_t rprt )
   {
     if ( rprt != 0 )
     {
       throw IllegalConnection(
-        "Only rport==0 allowed for HPC synpases. Use normal synapse models "
+        "Only rport==0 allowed for HPC synapses. Use normal synapse models "
         "instead. See Kunkel et al, Front Neuroinform 8:78 (2014), Sec "
         "3.3.2." );
     }
@@ -170,7 +170,7 @@ TargetIdentifierIndex::set_target( Node* target )
 {
   kernel().node_manager.ensure_valid_thread_local_ids();
 
-  index target_lid = target->get_thread_lid();
+  size_t target_lid = target->get_thread_lid();
   if ( target_lid > max_targetindex )
   {
     throw IllegalConnection(

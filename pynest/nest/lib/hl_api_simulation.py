@@ -23,31 +23,32 @@
 Functions for simulation control
 """
 
-from contextlib import contextmanager
 import warnings
+from contextlib import contextmanager
 
-from ..ll_api import check_stack, sps, sr, spp
+from ..ll_api import check_stack, spp, sps, sr
 from .hl_api_helper import is_iterable, is_literal
-from .hl_api_parallel_computing import Rank
 
 __all__ = [
-    'Cleanup',
-    'DisableStructuralPlasticity',
-    'EnableStructuralPlasticity',
-    'GetKernelStatus',
-    'Install',
-    'Prepare',
-    'ResetKernel',
-    'Run',
-    'RunManager',
-    'SetKernelStatus',
-    'Simulate',
+    "Cleanup",
+    "DisableStructuralPlasticity",
+    "EnableStructuralPlasticity",
+    "GetKernelStatus",
+    "Install",
+    "Prepare",
+    "ResetKernel",
+    "Run",
+    "RunManager",
+    "SetKernelStatus",
+    "Simulate",
 ]
 
 
 @check_stack
 def Simulate(t):
     """Simulate the network for `t` milliseconds.
+
+    `Simulate(t)` runs `Prepare()`, `Run(t)`, and `Cleanup()` in this order.
 
     Parameters
     ----------
@@ -56,12 +57,12 @@ def Simulate(t):
 
     See Also
     --------
-    RunManager
+    RunManager, Prepare, Run, Cleanup
 
     """
 
     sps(float(t))
-    sr('ms Simulate')
+    sr("ms Simulate")
 
 
 @check_stack
@@ -77,9 +78,7 @@ def Run(t):
     ------
 
     Call between `Prepare` and `Cleanup` calls, or within a
-    ``with RunManager`` clause.
-
-    Simulate(t): t' = t/m; Prepare(); for _ in range(m): Run(t'); Cleanup()
+    ``with RunManager`` clause.  `Run(t)` is called once by each call to `Simulate(t)`.
 
     `Prepare` must be called before `Run` to calibrate the system, and
     `Cleanup` must be called after `Run` to close files, cleanup handles, and
@@ -93,6 +92,8 @@ def Run(t):
     membrane or synaptic times constants will not work correctly. If in doubt, assume
     that changes may cause undefined behavior and check these thoroughly.
 
+    Also note that `local_spike_counter` is reset each time you call `Run`.
+
     See Also
     --------
     Prepare, Cleanup, RunManager, Simulate
@@ -100,38 +101,42 @@ def Run(t):
     """
 
     sps(float(t))
-    sr('ms Run')
+    sr("ms Run")
 
 
 @check_stack
 def Prepare():
-    """Calibrate the system before a `Run` call. Not needed for `Simulate`.
+    """Calibrate the system before a `Run` call.
+
+    `Prepare` is automatically called by `Simulate` and `RunManager`.
 
     Call before the first `Run` call, or before calling `Run` after changing
     the system, calling `SetStatus` or `Cleanup`.
 
     See Also
     --------
-    Run, Cleanup
+    Run, Cleanup, Simulate, RunManager
 
     """
 
-    sr('Prepare')
+    sr("Prepare")
 
 
 @check_stack
 def Cleanup():
-    """Cleans up resources after a `Run` call. Not needed for `Simulate`.
+    """Cleans up resources after a `Run` calls.
+
+    `Cleanup` is automatically called by `Simulate` and `RunManager`.
 
     Closes state for a series of runs, such as flushing and closing files.
     A `Prepare` is needed after a `Cleanup` before any more calls to `Run`.
 
     See Also
     --------
-    Run, Prepare
+    Run, Prepare, Simulate, RunManager
 
     """
-    sr('Cleanup')
+    sr("Cleanup")
 
 
 @contextmanager
@@ -140,7 +145,7 @@ def RunManager():
 
     Calls `Prepare` before a series of `Run` calls, and calls `Cleanup` at end.
 
-    E.g.:
+    For example:
 
     ::
 
@@ -184,16 +189,18 @@ def ResetKernel():
     * all network nodes
     * all connections
     * all user-defined neuron and synapse models
+
     are deleted, and
 
     * time
     * random generators
+
     are reset. The only exception is that dynamically loaded modules are not
     unloaded. This may change in a future version of NEST.
 
-   """
+    """
 
-    sr('ResetKernel')
+    sr("ResetKernel")
 
 
 @check_stack
@@ -219,28 +226,31 @@ def SetKernelStatus(params):
     # _kernel_attr_names and _readonly_kernel_attrs. As hl_api_simulation is
     # imported during nest module initialization, we can't put the import on
     # the module level, but have to have it on the function level.
-    import nest    # noqa
-    raise_errors = params.get('dict_miss_is_error', nest.dict_miss_is_error)
+    import nest  # noqa
+
+    raise_errors = params.get("dict_miss_is_error", nest.dict_miss_is_error)
     valids = nest._kernel_attr_names
     readonly = nest._readonly_kernel_attrs
     keys = list(params.keys())
     for key in keys:
         msg = None
         if key not in valids:
-            msg = f'`{key}` is not a valid kernel parameter, ' + \
-                  'valid parameters are: ' + \
-                  ', '.join(f"'{p}'" for p in sorted(valids))
+            msg = (
+                f"`{key}` is not a valid kernel parameter, "
+                + "valid parameters are: "
+                + ", ".join(f"'{p}'" for p in sorted(valids))
+            )
         elif key in readonly:
-            msg = f'`{key}` is a readonly kernel parameter'
+            msg = f"`{key}` is a readonly kernel parameter"
         if msg is not None:
             if raise_errors:
                 raise ValueError(msg)
             else:
-                warnings.warn(msg + f' \n`{key}` has been ignored')
+                warnings.warn(msg + f" \n`{key}` has been ignored")
                 del params[key]
 
     sps(params)
-    sr('SetKernelStatus')
+    sr("SetKernelStatus")
 
 
 @check_stack
@@ -279,7 +289,7 @@ def GetKernelStatus(keys=None):
 
     """
 
-    sr('GetKernelStatus')
+    sr("GetKernelStatus")
     status_root = spp()
 
     if keys is None:
@@ -332,7 +342,7 @@ def EnableStructuralPlasticity():
 
     """
 
-    sr('EnableStructuralPlasticity')
+    sr("EnableStructuralPlasticity")
 
 
 @check_stack
@@ -344,4 +354,4 @@ def DisableStructuralPlasticity():
     EnableStructuralPlasticity
 
     """
-    sr('DisableStructuralPlasticity')
+    sr("DisableStructuralPlasticity")

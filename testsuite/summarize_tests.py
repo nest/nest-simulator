@@ -27,18 +27,16 @@
 #
 # <No of tests run> <No of skipped tests> <No of failed tests> <No of errored tests> <List of unsuccessful tests>
 
-import junitparser as jp
 import glob
 import os
 import sys
-import xml
 
+import junitparser as jp
 
-assert int(jp.version.split('.')[0]) >= 2, 'junitparser version must be >= 2'
+assert int(jp.version.split(".")[0]) >= 2, "junitparser version must be >= 2"
 
 
 def parse_result_file(fname):
-
     results = jp.JUnitXml.fromfile(fname)
     if isinstance(results, jp.junitparser.JUnitXml):
         # special case for pytest, which wraps all once more
@@ -46,82 +44,84 @@ def parse_result_file(fname):
         assert len(suites) == 1, "JUnit XML files may only contain results from a single testsuite."
         results = suites[0]
 
-    assert all(len(case.result) == 1 for case in results if case.result), 'Case result has unexpected length > 1'
-    failed_tests = ['.'.join((case.classname, case.name)) for case in results
-                    if case.result and not isinstance(case.result[0], jp.junitparser.Skipped)]
+    assert all(len(case.result) == 1 for case in results if case.result), "Case result has unexpected length > 1"
+    failed_tests = [
+        ".".join((case.classname, case.name))
+        for case in results
+        if case.result and not isinstance(case.result[0], jp.junitparser.Skipped)
+    ]
 
-    return {'Tests': results.tests,
-            'Skipped': results.skipped,
-            'Failures': results.failures,
-            'Errors': results.errors,
-            'Time': results.time,
-            'Failed tests': failed_tests}
+    return {
+        "Tests": results.tests,
+        "Skipped": results.skipped,
+        "Failures": results.failures,
+        "Errors": results.errors,
+        "Time": results.time,
+        "Failed tests": failed_tests,
+    }
 
 
-if __name__ == '__main__':
-
-    assert len(sys.argv) == 2, 'summarize_tests must be called with TEST_OUTDIR.'
+if __name__ == "__main__":
+    assert len(sys.argv) == 2, "summarize_tests must be called with TEST_OUTDIR."
 
     test_outdir = sys.argv[1]
 
     results = {}
-    totals = {'Tests': 0, 'Skipped': 0,
-              'Failures': 0, 'Errors': 0,
-              'Time': 0, 'Failed tests': []}
+    totals = {"Tests": 0, "Skipped": 0, "Failures": 0, "Errors": 0, "Time": 0, "Failed tests": []}
 
-    for pfile in sorted(glob.glob(os.path.join(test_outdir, '*.xml'))):
-        ph_name = os.path.splitext(os.path.split(pfile)[1])[0].replace('_', ' ')
+    for pfile in sorted(glob.glob(os.path.join(test_outdir, "*.xml"))):
+        ph_name = os.path.splitext(os.path.split(pfile)[1])[0].replace("_", " ")
         ph_res = parse_result_file(pfile)
         results[ph_name] = ph_res
         for k, v in ph_res.items():
             totals[k] += v
 
-    cols = ['Tests', 'Skipped', 'Failures', 'Errors', 'Time']
-    tline = '-' * (len(cols) * 10 + 20)
+    cols = ["Tests", "Skipped", "Failures", "Errors", "Time"]
+    tline = "-" * (len(cols) * 10 + 20)
 
     print()
     print()
     print(tline)
-    print('NEST Testsuite Results')
+    print("NEST Testsuite Results")
 
     print(tline)
-    print('{:<20s}'.format('Phase'), end='')
+    print("{:<20s}".format("Phase"), end="")
     for c in cols:
-        print('{:>10s}'.format(c), end='')
+        print("{:>10s}".format(c), end="")
     print()
 
     print(tline)
     for pn, pr in results.items():
-        print('{:<20s}'.format(pn), end='')
+        print("{:<20s}".format(pn), end="")
         for c in cols:
-            fstr = '{:10.1f}' if c == 'Time' else '{:10d}'
-            print(fstr.format(pr[c]), end='')
+            fstr = "{:10.1f}" if c == "Time" else "{:10d}"
+            print(fstr.format(pr[c]), end="")
         print()
 
     print(tline)
-    print('{:<20s}'.format('Total'), end='')
+    print("{:<20s}".format("Total"), end="")
     for c in cols:
-        fstr = '{:10.1f}' if c == 'Time' else '{:10d}'
-        print(fstr.format(totals[c]), end='')
+        fstr = "{:10.1f}" if c == "Time" else "{:10d}"
+        print(fstr.format(totals[c]), end="")
     print()
     print(tline)
     print()
 
-    if totals['Failures'] + totals['Errors'] > 0:
-        print('THE NEST TESTSUITE DISCOVERED PROBLEMS')
-        print('    The following tests failed')
-        for t in totals['Failed tests']:
-            print(f'    | {t}')   # | marks line for parsing
+    if totals["Failures"] + totals["Errors"] > 0:
+        print("THE NEST TESTSUITE DISCOVERED PROBLEMS")
+        print("    The following tests failed")
+        for t in totals["Failed tests"]:
+            print(f"    | {t}")  # | marks line for parsing
         print()
-        print('    Please report test failures by creating an issue at')
-        print('        https://github.com/nest/nest_simulator/issues')
+        print("    Please report test failures by creating an issue at")
+        print("        https://github.com/nest/nest_simulator/issues")
         print()
         print(tline)
         print()
 
         sys.exit(1)
     else:
-        print('The NEST Testsuite passed successfully.')
+        print("The NEST Testsuite passed successfully.")
         print()
         print(tline)
         print()

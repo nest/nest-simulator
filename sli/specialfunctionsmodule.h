@@ -53,14 +53,14 @@ class SpecialFunctionsModule : public SLIModule
   // Part 1: Methods pertaining to the module ----------------------
 
 public:
-  SpecialFunctionsModule( void ) {};
+  SpecialFunctionsModule() {};
   // ~SpecialFunctionsModule(void);
 
   // The Module is registered by a call to this Function:
-  void init( SLIInterpreter* );
+  void init( SLIInterpreter* ) override;
 
   // This function will return the name of our module:
-  const std::string name( void ) const;
+  const std::string name() const override;
 
 
   // Part 2: Classes for the implemented functions -----------------
@@ -78,7 +78,7 @@ public:
     GammaIncFunction()
     {
     }
-    void execute( SLIInterpreter* ) const;
+    void execute( SLIInterpreter* ) const override;
   };
   class LambertW0Function : public SLIFunction
   {
@@ -86,7 +86,7 @@ public:
     LambertW0Function()
     {
     }
-    void execute( SLIInterpreter* ) const;
+    void execute( SLIInterpreter* ) const override;
   };
   class LambertWm1Function : public SLIFunction
   {
@@ -94,7 +94,7 @@ public:
     LambertWm1Function()
     {
     }
-    void execute( SLIInterpreter* ) const;
+    void execute( SLIInterpreter* ) const override;
   };
 
   class ErfFunction : public SLIFunction
@@ -103,7 +103,7 @@ public:
     ErfFunction()
     {
     }
-    void execute( SLIInterpreter* ) const;
+    void execute( SLIInterpreter* ) const override;
   };
 
   class ErfcFunction : public SLIFunction
@@ -112,17 +112,17 @@ public:
     ErfcFunction()
     {
     }
-    void execute( SLIInterpreter* ) const;
+    void execute( SLIInterpreter* ) const override;
   };
 
   class GaussDiskConvFunction : public SLIFunction
   {
   public:
-    void execute( SLIInterpreter* ) const;
+    void execute( SLIInterpreter* ) const override;
 
     // need constructor and destructor to set up integration workspace
-    GaussDiskConvFunction( void );
-    ~GaussDiskConvFunction( void );
+    GaussDiskConvFunction();
+    ~GaussDiskConvFunction() override;
 
   private:
     // quadrature parameters, see GSL Reference

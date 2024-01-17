@@ -124,6 +124,11 @@ See also
 rate_connection_instantaneous, rate_connection_delayed,
 rate_neuron_ipn, rate_neuron_opn
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: lin_rate
+
 EndUserDocs */
 
 class nonlinearities_lin_rate
@@ -151,7 +156,7 @@ public:
   }
 
   void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-  void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+  void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
 
   double input( double h );               // non-linearity on input
   double mult_coupling_ex( double rate ); // factor of multiplicative coupling
@@ -177,8 +182,14 @@ nonlinearities_lin_rate::mult_coupling_in( double rate )
 }
 
 typedef rate_neuron_ipn< nest::nonlinearities_lin_rate > lin_rate_ipn;
+void register_lin_rate_ipn( const std::string& name );
+
 typedef rate_neuron_opn< nest::nonlinearities_lin_rate > lin_rate_opn;
+void register_lin_rate_opn( const std::string& name );
+
 typedef rate_transformer_node< nest::nonlinearities_lin_rate > rate_transformer_lin;
+void register_rate_transformer_lin( const std::string& name );
+
 
 template <>
 void RecordablesMap< lin_rate_ipn >::create();

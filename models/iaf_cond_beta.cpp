@@ -27,9 +27,7 @@
 
 // C++ includes:
 #include <cstdio>
-#include <iomanip>
 #include <iostream>
-#include <limits>
 
 // Includes from libnestutil:
 #include "beta_normalization_factor.h"
@@ -39,13 +37,11 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -55,6 +51,12 @@ nest::RecordablesMap< nest::iaf_cond_beta > nest::iaf_cond_beta::recordablesMap_
 
 namespace nest // template specialization must be placed in namespace
 {
+void
+register_iaf_cond_beta( const std::string& name )
+{
+  register_node_model< iaf_cond_beta >( name );
+}
+
 /*
  * Override the create() method with one call to RecordablesMap::insert_()
  * for each quantity to be recorded.
@@ -63,7 +65,7 @@ template <>
 void
 RecordablesMap< iaf_cond_beta >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &iaf_cond_beta::get_y_elem_< iaf_cond_beta::State_::V_M > );
   insert_( names::g_ex, &iaf_cond_beta::get_y_elem_< iaf_cond_beta::State_::G_EXC > );
   insert_( names::g_in, &iaf_cond_beta::get_y_elem_< iaf_cond_beta::State_::G_INH > );
@@ -169,9 +171,9 @@ nest::iaf_cond_beta::State_::operator=( const State_& s )
 
 nest::iaf_cond_beta::Buffers_::Buffers_( iaf_cond_beta& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -179,9 +181,9 @@ nest::iaf_cond_beta::Buffers_::Buffers_( iaf_cond_beta& n )
 
 nest::iaf_cond_beta::Buffers_::Buffers_( const Buffers_&, iaf_cond_beta& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -242,7 +244,7 @@ nest::iaf_cond_beta::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Refractory time cannot be negative." );
   }
-  if ( tau_rise_ex <= 0 || tau_decay_ex <= 0 || tau_rise_in <= 0 || tau_decay_in <= 0 )
+  if ( tau_rise_ex <= 0 or tau_decay_ex <= 0 or tau_rise_in <= 0 or tau_decay_in <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
@@ -325,7 +327,7 @@ nest::iaf_cond_beta::init_buffers_()
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ = B_.step_;
 
-  if ( B_.s_ == 0 )
+  if ( not B_.s_ )
   {
     B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
@@ -334,7 +336,7 @@ nest::iaf_cond_beta::init_buffers_()
     gsl_odeiv_step_reset( B_.s_ );
   }
 
-  if ( B_.c_ == 0 )
+  if ( not B_.c_ )
   {
     B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
   }
@@ -343,7 +345,7 @@ nest::iaf_cond_beta::init_buffers_()
     gsl_odeiv_control_init( B_.c_, 1e-3, 0.0, 1.0, 0.0 );
   }
 
-  if ( B_.e_ == 0 )
+  if ( not B_.e_ )
   {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
   }
@@ -353,7 +355,7 @@ nest::iaf_cond_beta::init_buffers_()
   }
 
   B_.sys_.function = iaf_cond_beta_dynamics;
-  B_.sys_.jacobian = NULL;
+  B_.sys_.jacobian = nullptr;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
 
@@ -387,10 +389,6 @@ nest::iaf_cond_beta::pre_run_hook()
 void
 nest::iaf_cond_beta::update( Time const& origin, const long from, const long to )
 {
-
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
 

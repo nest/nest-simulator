@@ -70,7 +70,7 @@ insertion_sort( BlockVector< T1 >& vec_sort, BlockVector< T2 >& vec_perm, const 
 {
   for ( size_t i = lo + 1; i < hi + 1; ++i )
   {
-    for ( size_t j = i; ( j > lo ) and ( vec_sort[ j ] < vec_sort[ j - 1 ] ); --j )
+    for ( size_t j = i; j > lo and ( vec_sort[ j ] < vec_sort[ j - 1 ] ); --j )
     {
       std::swap( vec_sort[ j ], vec_sort[ j - 1 ] );
       std::swap( vec_perm[ j ], vec_perm[ j - 1 ] );

@@ -114,10 +114,17 @@ See also
 
 stdp_synapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: stdp_nn_symm_synapse
+
 EndUserDocs */
 
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
+
+void register_stdp_nn_symm_synapse( const std::string& name );
 
 template < typename targetidentifierT >
 class stdp_nn_symm_synapse : public Connection< targetidentifierT >
@@ -126,6 +133,10 @@ class stdp_nn_symm_synapse : public Connection< targetidentifierT >
 public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
+
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL;
 
   /**
    * Default Constructor.
@@ -165,7 +176,7 @@ public:
    * \param e The event to send
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e, thread t, const CommonSynapseProperties& cp );
+  bool send( Event& e, size_t t, const CommonSynapseProperties& cp );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -174,15 +185,15 @@ public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
-    port
-    handles_test_event( SpikeEvent&, rport )
+    size_t
+    handles_test_event( SpikeEvent&, size_t ) override
     {
       return invalid_port;
     }
   };
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
 
@@ -224,6 +235,8 @@ private:
   double t_lastspike_;
 };
 
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties stdp_nn_symm_synapse< targetidentifierT >::properties;
 
 /**
  * Send an event to the receiver of this connection.
@@ -232,8 +245,8 @@ private:
  * \param cp Common properties object, containing the stdp parameters.
  */
 template < typename targetidentifierT >
-inline void
-stdp_nn_symm_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
+inline bool
+stdp_nn_symm_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapseProperties& )
 {
   // synapse STDP depressing/facilitation dynamics
   double t_spike = e.get_stamp().get_ms();
@@ -285,6 +298,8 @@ stdp_nn_symm_synapse< targetidentifierT >::send( Event& e, thread t, const Commo
   e();
 
   t_lastspike_ = t_spike;
+
+  return true;
 }
 
 
@@ -331,7 +346,7 @@ stdp_nn_symm_synapse< targetidentifierT >::set_status( const DictionaryDatum& d,
   updateValue< double >( d, names::Wmax, Wmax_ );
 
   // check if weight_ and Wmax_ have the same sign
-  if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) ) == ( ( Wmax_ >= 0 ) - ( Wmax_ < 0 ) ) ) )
+  if ( std::signbit( weight_ ) != std::signbit( Wmax_ ) )
   {
     throw BadProperty( "Weight and Wmax must have same sign." );
   }

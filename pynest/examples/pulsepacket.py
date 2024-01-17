@@ -46,44 +46,44 @@ References
 # First, we import all necessary modules for simulation, analysis and
 # plotting.
 
-import scipy.special as sp
+import matplotlib.pyplot as plt
 import nest
 import numpy
-import matplotlib.pyplot as plt
+import scipy.special as sp
 
 # Properties of pulse packet:
 
-a = 100            # number of spikes in one pulse packet
-sdev = 10.         # width of pulse packet (ms)
-weight = 0.1       # PSP amplitude (mV)
-pulsetime = 500.   # occurrence time (center) of pulse-packet (ms)
+a = 100  # number of spikes in one pulse packet
+sdev = 10.0  # width of pulse packet (ms)
+weight = 0.1  # PSP amplitude (mV)
+pulsetime = 500.0  # occurrence time (center) of pulse-packet (ms)
 
 
 # Network and neuron characteristics:
 
-n_neurons = 100    # number of neurons
-cm = 200.          # membrane capacitance (pF)
-tau_s = 0.5        # synaptic time constant (ms)
-tau_m = 20.        # membrane time constant (ms)
-V0 = 0.0           # resting potential (mV)
-Vth = numpy.inf    # firing threshold, high value to avoid spiking
+n_neurons = 100  # number of neurons
+cm = 200.0  # membrane capacitance (pF)
+tau_s = 0.5  # synaptic time constant (ms)
+tau_m = 20.0  # membrane time constant (ms)
+V0 = 0.0  # resting potential (mV)
+Vth = numpy.inf  # firing threshold, high value to avoid spiking
 
 
 # Simulation and analysis parameters:
 
-simtime = 1000.               # how long we simulate (ms)
+simtime = 1000.0  # how long we simulate (ms)
 simulation_resolution = 0.1  # (ms)
-sampling_resolution = 1.   # for voltmeter (ms)
-convolution_resolution = 1.   # for the analytics (ms)
+sampling_resolution = 1.0  # for voltmeter (ms)
+convolution_resolution = 1.0  # for the analytics (ms)
 
 
 # Some parameters in base units.
 
-Cm = cm * 1e-12            # convert to Farad
-Weight = weight * 1e-12    # convert to Ampere
-Tau_s = tau_s * 1e-3       # convert to sec
-Tau_m = tau_m * 1e-3       # convert to sec
-Sdev = sdev * 1e-3         # convert to sec
+Cm = cm * 1e-12  # convert to Farad
+Weight = weight * 1e-12  # convert to Ampere
+Tau_s = tau_s * 1e-3  # convert to sec
+Tau_m = tau_m * 1e-3  # convert to sec
+Sdev = sdev * 1e-3  # convert to sec
 Convolution_resolution = convolution_resolution * 1e-3  # convert to sec
 
 
@@ -100,12 +100,12 @@ Convolution_resolution = convolution_resolution * 1e-3  # convert to sec
 #
 # It returns the provoked membrane potential (in mV)
 
+
 def make_psp(Time, Tau_s, Tau_m, Cm, Weight):
-    term1 = (1 / Tau_s - 1 / Tau_m)
+    term1 = 1 / Tau_s - 1 / Tau_m
     term2 = numpy.exp(-Time / Tau_s)
     term3 = numpy.exp(-Time / Tau_m)
-    PSP = (Weight / Cm * numpy.exp(1) / Tau_s *
-           (((-Time * term2) / term1) + (term3 - term2) / term1 ** 2))
+    PSP = Weight / Cm * numpy.exp(1) / Tau_s * (((-Time * term2) / term1) + (term3 - term2) / term1**2)
     return PSP * 1e3
 
 
@@ -119,6 +119,7 @@ def make_psp(Time, Tau_s, Tau_m, Cm, Weight):
 # * ``Tau_s`` and ``Tau_m``: the synaptic and membrane time constant (in sec)
 #
 # It returns the location of the maximum (in sec)
+
 
 def LambertWm1(x):
     # Using scipy to mimic the gsl_sf_lambert_Wm1 function.
@@ -141,7 +142,7 @@ sig = Sdev
 mu = 0.0
 x = numpy.arange(-4 * sig, 4 * sig, Convolution_resolution)
 term1 = 1 / (sig * numpy.sqrt(2 * numpy.pi))
-term2 = numpy.exp(-(x - mu)**2 / (sig**2 * 2))
+term2 = numpy.exp(-((x - mu) ** 2) / (sig**2 * 2))
 gauss = term1 * term2 * Convolution_resolution
 
 
@@ -178,11 +179,10 @@ psp_norm = psp / psp_amp
 # simulation outcome. Therefore we need a time vector (`t_U`) with the correct
 # temporal resolution, which places the excursion of the potential at the
 # correct time.
-psp_norm = numpy.pad(psp_norm, [len(psp_norm) - 1, 1], mode='constant')
+psp_norm = numpy.pad(psp_norm, [len(psp_norm) - 1, 1], mode="constant")
 U = a * psp_amp * numpy.convolve(gauss, psp_norm)
 ulen = len(U)
-t_U = (convolution_resolution * numpy.linspace(-ulen / 2., ulen / 2., ulen) +
-       pulsetime + 1.)
+t_U = convolution_resolution * numpy.linspace(-ulen / 2.0, ulen / 2.0, ulen) + pulsetime + 1.0
 
 
 ###############################################################################
@@ -205,24 +205,12 @@ nest.resolution = simulation_resolution
 # dictionaries (here: `neuron_pars` for the neurons, `ppg_pars`
 # for the and pulse-packet-generators and `vm_pars` for the voltmeter).
 
-neuron_pars = {
-    'V_th': Vth,
-    'tau_m': tau_m,
-    'tau_syn_ex': tau_s,
-    'C_m': cm,
-    'E_L': V0,
-    'V_reset': V0,
-    'V_m': V0
-}
-neurons = nest.Create('iaf_psc_alpha', n_neurons, neuron_pars)
-ppg_pars = {
-    'pulse_times': [pulsetime],
-    'activity': a,
-    'sdev': sdev
-}
-ppgs = nest.Create('pulsepacket_generator', n_neurons, ppg_pars)
-vm_pars = {'interval': sampling_resolution}
-vm = nest.Create('voltmeter', params=vm_pars)
+neuron_pars = {"V_th": Vth, "tau_m": tau_m, "tau_syn_ex": tau_s, "C_m": cm, "E_L": V0, "V_reset": V0, "V_m": V0}
+neurons = nest.Create("iaf_psc_alpha", n_neurons, neuron_pars)
+ppg_pars = {"pulse_times": [pulsetime], "activity": a, "sdev": sdev}
+ppgs = nest.Create("pulsepacket_generator", n_neurons, ppg_pars)
+vm_pars = {"interval": sampling_resolution}
+vm = nest.Create("voltmeter", params=vm_pars)
 
 
 ###############################################################################
@@ -236,8 +224,8 @@ vm = nest.Create('voltmeter', params=vm_pars)
 # generator (source) to one neuron (target).
 # In addition we also connect the `voltmeter` to the `neurons`.
 
-nest.Connect(ppgs, neurons, 'one_to_one', syn_spec={'weight': weight})
-nest.Connect(vm, neurons, syn_spec={'weight': weight})
+nest.Connect(ppgs, neurons, "one_to_one", syn_spec={"weight": weight})
+nest.Connect(vm, neurons, syn_spec={"weight": weight})
 
 
 ###############################################################################
@@ -252,9 +240,9 @@ nest.Simulate(simtime)
 # data point at position x in the voltage array (``V_m``), can be found at the
 # same position x in the sender (`senders`) and the time array (`times`).
 
-Vm = vm.get('events', 'V_m')
-times = vm.get('events', 'times')
-senders = vm.get('events', 'senders')
+Vm = vm.get("events", "V_m")
+times = vm.get("events", "times")
+senders = vm.get("events", "senders")
 
 
 ###############################################################################
@@ -266,7 +254,7 @@ senders = vm.get('events', 'senders')
 # We plot the analytical solution U (the resting potential V0 shifts the
 # membrane potential up or downwards).
 
-plt.plot(t_U, U + V0, 'r', lw=2, zorder=3, label='analytical solution')
+plt.plot(t_U, U + V0, "r", lw=2, zorder=3, label="analytical solution")
 
 
 ###############################################################################
@@ -277,21 +265,18 @@ Vm_single = [Vm[senders == n.global_id] for n in neurons]
 simtimes = numpy.arange(1, simtime)
 for idn in range(n_neurons):
     if idn == 0:
-        plt.plot(simtimes, Vm_single[idn], 'gray',
-                 zorder=1, label='single potentials')
+        plt.plot(simtimes, Vm_single[idn], "gray", zorder=1, label="single potentials")
     else:
-        plt.plot(simtimes, Vm_single[idn], 'gray', zorder=1)
+        plt.plot(simtimes, Vm_single[idn], "gray", zorder=1)
 
 
 ###############################################################################
 # Finally, we plot the averaged membrane potential.
 
 Vm_average = numpy.mean(Vm_single, axis=0)
-plt.plot(simtimes, Vm_average, 'b', lw=4,
-         zorder=2, label='averaged potential')
+plt.plot(simtimes, Vm_average, "b", lw=4, zorder=2, label="averaged potential")
 plt.legend()
-plt.xlabel('time (ms)')
-plt.ylabel('membrane potential (mV)')
-plt.xlim((-5 * (tau_m + tau_s) + pulsetime,
-          10 * (tau_m + tau_s) + pulsetime))
+plt.xlabel("time (ms)")
+plt.ylabel("membrane potential (mV)")
+plt.xlim((-5 * (tau_m + tau_s) + pulsetime, 10 * (tau_m + tau_s) + pulsetime))
 plt.show()

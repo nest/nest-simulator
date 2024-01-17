@@ -42,6 +42,29 @@ PyNEST examples
 
 .. grid:: 1 1 2 3
 
+    .. grid-item-card:: NEST Sudoku solver
+           :img-top: ../static/img/sudoku_solution.gif
+
+           * :doc:`../auto_examples/sudoku/sudoku_solver`
+           * :doc:`../auto_examples/sudoku/plot_progress`
+
+    .. grid-item-card:: NEST Pong game
+           :img-top: ../static/img/pong_sim.gif
+
+           * :doc:`../auto_examples/pong/run_simulations`
+           * :doc:`../auto_examples/pong/generate_gif`
+
+    .. grid-item-card:: Astrocytes
+           :img-top: ../static/img/astrocyte_interaction.png
+
+           * :doc:`../auto_examples/astrocytes/astrocyte_single`
+           * :doc:`../auto_examples/astrocytes/astrocyte_interaction`
+           * :doc:`../auto_examples/astrocytes/astrocyte_small_network`
+           * :doc:`../auto_examples/astrocytes/astrocyte_brunel`
+
+
+.. grid:: 1 1 2 3
+
     .. grid-item-card:: Random balanced networks (Brunel)
            :img-top: ../static/img/pynest/brunel_alpha.png
 
@@ -51,20 +74,20 @@ PyNEST examples
            * :doc:`../auto_examples/brunel_exp_multisynapse_nest`
            * :doc:`../auto_examples/brunel_alpha_evolution_strategies`
 
- 
 
+    .. grid-item-card:: Cortical microcircuit (Potjans)
+           :img-top: ../static/img/potjans_2014_raster_plot.png
 
-    .. grid-item-card:: Cortical microcircuit (Potjans) 
-           :img-top: ../static/img/pynest/raster_plot.png
-
-           * :doc:`cortical_microcircuit_index`
-
+           * :doc:`../auto_examples/Potjans_2014/index`
 
     .. grid-item-card:: GLIF (from Allen institute)
            :img-top: ../static/img/pynest/glif_cond.png
 
            * :doc:`../auto_examples/glif_cond_neuron`
            * :doc:`../auto_examples/glif_psc_neuron`
+           * :doc:`../auto_examples/glif_psc_double_alpha_neuron`
+
+
 
 .. grid:: 1 1 2 3
 
@@ -93,7 +116,7 @@ PyNEST examples
 
 .. grid:: 1 1 2 3
 
-    .. grid-item-card:: Hodgkin-Huxley 
+    .. grid-item-card:: Hodgkin-Huxley
            :img-top: ../static/img/pynest/hh_phase.png
 
            * :doc:`../auto_examples/hh_psc_alpha`
@@ -104,19 +127,13 @@ PyNEST examples
 
            * :doc:`../auto_examples/BrodyHopfield`
 
-
-    .. grid-item-card:: Campbell Siegert
-           :img-top: ../static/img/nest_logo-faded.png
-
-           * :doc:`../auto_examples/CampbellSiegert`
-
-.. grid:: 1 1 2 3
-
     .. grid-item-card:: Brette and Gerstner
            :img-top: ../static/img/pynest/brette_gerstner2c.png
 
            * :doc:`../auto_examples/brette_gerstner_fig_2c`
            * :doc:`../auto_examples/brette_gerstner_fig_3d`
+
+.. grid:: 1 1 2 3
 
 
     .. grid-item-card:: Precise spiking
@@ -124,11 +141,20 @@ PyNEST examples
 
            * :doc:`../auto_examples/precise_spiking`
 
+    .. grid-item-card:: Campbell Siegert
+           :img-top: ../static/img/nest_logo-faded.png
+
+           * :doc:`../auto_examples/CampbellSiegert`
+
+    .. grid-item-card:: SONATA network
+           :img-top: ../static/img/300_pointneurons.png
+
+           * :doc:`../auto_examples/sonata_example/sonata_network`
 
 
 .. grid:: 1 1 2 3
 
-    .. grid-item-card:: Gap junctions 
+    .. grid-item-card:: Gap junctions
            :img-top: ../static/img/pynest/gap_junctioninhib.png
 
 
@@ -136,19 +162,19 @@ PyNEST examples
            * :doc:`../auto_examples/gap_junctions_inhibitory_network`
 
 
-    .. grid-item-card:: Structural plasticity 
+    .. grid-item-card:: Structural plasticity
            :img-top: ../static/img/pynest/structuralplasticity.png
 
            * :doc:`../auto_examples/structural_plasticity`
 
-    .. grid-item-card:: Synapse collection 
+    .. grid-item-card:: Synapse collection
            :img-top: ../static/img/pynest/synapsecollection.png
 
            * :doc:`../auto_examples/synapsecollection`
 
 .. grid:: 1 1 2 3
 
-    .. grid-item-card:: Urbanczik 
+    .. grid-item-card:: Urbanczik
            :img-top: ../static/img/pynest/urbanczik_syn.png
 
            * :doc:`../auto_examples/urbanczik_synapse_example`
@@ -164,11 +190,11 @@ PyNEST examples
 
 
 
-    .. grid-item-card:: Tsodyks
+    .. grid-item-card:: Short-term plasticity
            :img-top: ../static/img/pynest/tsodyks_dep.png
 
-           * :doc:`../auto_examples/tsodyks_depressing`
-           * :doc:`../auto_examples/tsodyks_facilitating`
+           * :doc:`../auto_examples/iaf_tum_2000_short_term_depression`
+           * :doc:`../auto_examples/iaf_tum_2000_short_term_facilitation`
            * :doc:`../auto_examples/evaluate_tsodyks2_synapse`
 
 
@@ -201,6 +227,7 @@ PyNEST examples
 
            * :doc:`../auto_examples/recording_demo`
            * :doc:`../auto_examples/store_restore_network`
+           * :doc:`../auto_examples/music_cont_out_proxy_example/nest_script`
 
 
 .. grid:: 1 1 2 3
@@ -218,9 +245,15 @@ PyNEST examples
            * :doc:`../auto_examples/csa_spatial_example`
 
 .. toctree::
-   :maxdepth: 1
    :hidden:
 
+   running_notebooks
+   ../auto_examples/sudoku/index
+   ../auto_examples/pong/index
+   ../auto_examples/spatial/index
+   ../auto_examples/music_cont_out_proxy_example/index
+   ../auto_examples/compartmental_model/index
+   ../auto_examples/Potjans_2014/index
    ../auto_examples/one_neuron
    ../auto_examples/one_neuron_with_noise
    ../auto_examples/twoneurons
@@ -237,6 +270,7 @@ PyNEST examples
    ../auto_examples/mc_neuron
    ../auto_examples/glif_cond_neuron
    ../auto_examples/glif_psc_neuron
+   ../auto_examples/glif_psc_double_alpha_neuron
    ../auto_examples/precise_spiking
    ../auto_examples/CampbellSiegert
    ../auto_examples/vinit_example
@@ -251,8 +285,8 @@ PyNEST examples
    ../auto_examples/clopath_synapse_spike_pairing
    ../auto_examples/clopath_synapse_small_network
    ../auto_examples/urbanczik_synapse_example
-   ../auto_examples/tsodyks_depressing
-   ../auto_examples/tsodyks_facilitating
+   ../auto_examples/iaf_tum_2000_short_term_depression
+   ../auto_examples/iaf_tum_2000_short_term_facilitation
    ../auto_examples/compartmental_model/receptors_and_current
    ../auto_examples/compartmental_model/two_comps
    ../auto_examples/lin_rate_ipn_network
@@ -262,7 +296,8 @@ PyNEST examples
    ../auto_examples/brunel_siegert_nest
    ../auto_examples/brunel_exp_multisynapse_nest
    ../auto_examples/brunel_alpha_evolution_strategies
-   Cortical microcircuit model (based on Potjans and Diesmann, 2014) <cortical_microcircuit_index>
+   ../auto_examples/sonata_example/index
+   ../auto_examples/sonata_example/sonata_network
    ../auto_examples/spatial/conncomp
    ../auto_examples/spatial/conncon_sources
    ../auto_examples/spatial/conncon_targets
@@ -292,11 +327,21 @@ PyNEST examples
    ../auto_examples/csa_example
    ../auto_examples/csa_spatial_example
    ../auto_examples/hpc_benchmark
+   ../auto_examples/astrocytes/astrocyte_single
+   ../auto_examples/astrocytes/astrocyte_interaction
+   ../auto_examples/astrocytes/astrocyte_small_network
+   ../auto_examples/astrocytes/astrocyte_brunel
 
 .. toctree::
-   :maxdepth: 1
-   :caption: Sudoku
+   :hidden:
 
    ../auto_examples/sudoku/sudoku_net
    ../auto_examples/sudoku/sudoku_solver
    ../auto_examples/sudoku/plot_progress
+
+.. toctree::
+   :hidden:
+
+   ../auto_examples/pong/run_simulations
+   ../auto_examples/pong/pong
+   ../auto_examples/pong/generate_gif

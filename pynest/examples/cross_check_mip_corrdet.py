@@ -47,7 +47,7 @@ def corr_spikes_sorted(spike1, spike2, tbin, tau_max, resolution):
     tau_max_i = int(tau_max / resolution)
     tbin_i = int(tbin / resolution)
 
-    cross = np.zeros(int(2 * tau_max_i / tbin_i + 1), 'd')
+    cross = np.zeros(int(2 * tau_max_i / tbin_i + 1), "d")
 
     j0 = 0
 
@@ -58,8 +58,7 @@ def corr_spikes_sorted(spike1, spike2, tbin, tau_max, resolution):
         j0 = j
 
         while j < len(spike2) and spike2[j] - spki < tau_max_i + tbin_i / 2.0:
-            cross[int(
-                (spike2[j] - spki + tau_max_i + 0.5 * tbin_i) / tbin_i)] += 1.0
+            cross[int((spike2[j] - spki + tau_max_i + 0.5 * tbin_i) / tbin_i)] += 1.0
             j += 1
 
     return cross
@@ -67,11 +66,11 @@ def corr_spikes_sorted(spike1, spike2, tbin, tau_max, resolution):
 
 nest.ResetKernel()
 
-resolution = 0.1    # Computation step size in ms
-T = 100000.0        # Total duration
+resolution = 0.1  # Computation step size in ms
+T = 100000.0  # Total duration
 delta_tau = 10.0
-tau_max = 100.0     # ms correlation window
-t_bin = 10.0        # ms bin size
+tau_max = 100.0  # ms correlation window
+t_bin = 10.0  # ms bin size
 pc = 0.5
 nu = 100.0
 
@@ -81,24 +80,24 @@ nest.overwrite_files = True
 nest.rng_seed = 12345
 
 # Set up network, connect and simulate
-mg = nest.Create('mip_generator')
+mg = nest.Create("mip_generator")
 mg.set(rate=nu, p_copy=pc)
 
-cd = nest.Create('correlation_detector')
+cd = nest.Create("correlation_detector")
 cd.set(tau_max=tau_max, delta_tau=delta_tau)
 
-sr = nest.Create('spike_recorder', params={'time_in_steps': True})
+sr = nest.Create("spike_recorder", params={"time_in_steps": True})
 
-pn1 = nest.Create('parrot_neuron')
-pn2 = nest.Create('parrot_neuron')
+pn1 = nest.Create("parrot_neuron")
+pn2 = nest.Create("parrot_neuron")
 
 nest.Connect(mg, pn1)
 nest.Connect(mg, pn2)
 nest.Connect(pn1, sr)
 nest.Connect(pn2, sr)
 
-nest.Connect(pn1, cd, syn_spec={'weight': 1.0, 'receptor_type': 0})
-nest.Connect(pn2, cd, syn_spec={'weight': 1.0, 'receptor_type': 1})
+nest.Connect(pn1, cd, syn_spec={"weight": 1.0, "receptor_type": 0})
+nest.Connect(pn2, cd, syn_spec={"weight": 1.0, "receptor_type": 1})
 
 nest.Simulate(T)
 
@@ -107,7 +106,7 @@ n_events_1, n_events_2 = cd.n_events
 lmbd1 = (n_events_1 / (T - tau_max)) * 1000.0
 lmbd2 = (n_events_2 / (T - tau_max)) * 1000.0
 
-spikes = sr.get('events', 'senders')
+spikes = sr.get("events", "senders")
 
 sp1 = spikes[spikes == 4]
 sp2 = spikes[spikes == 5]

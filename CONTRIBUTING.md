@@ -1,6 +1,6 @@
 # Contribute to NEST
 
-The NEST simulator is a scientific tool and as such it is never finished and constantly changing to meet the needs of novel neuroscientific endeavors. Here you find the most important information on how you can contribute to NEST. This document is an excerpt from our [Contributing to NEST documentation](https://nest-simulator.readthedocs.io/en/latest/contribute/index.html), which provides more detailed information.
+The NEST Simulator is a scientific tool and as such it is never finished and constantly changing to meet the needs of novel neuroscientific endeavors. Here you find the most important information on how you can contribute to NEST. This document is an excerpt from our [Contributing to NEST documentation](https://nest-simulator.readthedocs.io/en/latest/contribute/index.html), which provides more detailed information.
 
 
 * Make sure you have a [GitHub account](https://github.com/signup/free)

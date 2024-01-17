@@ -41,10 +41,11 @@ References
        Nature Neuroscience 13:3, 344--352
 """
 
+import random
+
+import matplotlib.pyplot as plt
 import nest
 import numpy as np
-import matplotlib.pyplot as plt
-import random
 
 ##############################################################################
 # Set the parameters
@@ -54,30 +55,32 @@ resolution = 0.1
 delay = resolution
 
 # Poisson_generator parameters
-pg_A = 30.      # amplitude of Gaussian
-pg_sigma = 10.  # std deviation
+pg_A = 30.0  # amplitude of Gaussian
+pg_sigma = 10.0  # std deviation
 
 nest.ResetKernel()
 nest.resolution = resolution
 
 # Create neurons and devices
-nrn_model = 'aeif_psc_delta_clopath'
-nrn_params = {'V_m': -30.6,
-              'g_L': 30.0,
-              'w': 0.0,
-              'tau_u_bar_plus': 7.0,
-              'tau_u_bar_minus': 10.0,
-              'tau_w': 144.0,
-              'a': 4.0,
-              'C_m': 281.0,
-              'Delta_T': 2.0,
-              'V_peak': 20.0,
-              't_clamp': 2.0,
-              'A_LTP': 8.0e-6,
-              'A_LTD': 14.0e-6,
-              'A_LTD_const': False,
-              'b': 0.0805,
-              'u_ref_squared': 60.0**2}
+nrn_model = "aeif_psc_delta_clopath"
+nrn_params = {
+    "V_m": -30.6,
+    "g_L": 30.0,
+    "w": 0.0,
+    "tau_u_bar_plus": 7.0,
+    "tau_u_bar_minus": 10.0,
+    "tau_w": 144.0,
+    "a": 4.0,
+    "C_m": 281.0,
+    "Delta_T": 2.0,
+    "V_peak": 20.0,
+    "t_clamp": 2.0,
+    "A_LTP": 8.0e-6,
+    "A_LTD": 14.0e-6,
+    "A_LTD_const": False,
+    "b": 0.0805,
+    "u_ref_squared": 60.0**2,
+}
 
 pop_exc = nest.Create(nrn_model, 10, nrn_params)
 pop_inh = nest.Create(nrn_model, 3, nrn_params)
@@ -86,71 +89,64 @@ pop_inh = nest.Create(nrn_model, 3, nrn_params)
 # We need parrot neurons since Poisson generators can only be connected
 # with static connections
 
-pop_input = nest.Create('parrot_neuron', 500)  # helper neurons
-pg = nest.Create('poisson_generator', 500)
-wr = nest.Create('weight_recorder')
+pop_input = nest.Create("parrot_neuron", 500)  # helper neurons
+pg = nest.Create("poisson_generator", 500)
+wr = nest.Create("weight_recorder")
 
 ##############################################################################
 # First connect Poisson generators to helper neurons
-nest.Connect(pg, pop_input, 'one_to_one', {'synapse_model': 'static_synapse',
-                                           'weight': 1.0, 'delay': delay})
+nest.Connect(pg, pop_input, "one_to_one", {"synapse_model": "static_synapse", "weight": 1.0, "delay": delay})
 
 ##############################################################################
 # Create all the connections
 
-nest.CopyModel('clopath_synapse', 'clopath_input_to_exc',
-               {'Wmax': 3.0})
-conn_dict_input_to_exc = {'rule': 'all_to_all'}
-syn_dict_input_to_exc = {'synapse_model': 'clopath_input_to_exc',
-                         'weight': nest.random.uniform(0.5, 2.0),
-                         'delay': delay}
-nest.Connect(pop_input, pop_exc, conn_dict_input_to_exc,
-             syn_dict_input_to_exc)
+nest.CopyModel("clopath_synapse", "clopath_input_to_exc", {"Wmax": 3.0})
+conn_dict_input_to_exc = {"rule": "all_to_all"}
+syn_dict_input_to_exc = {
+    "synapse_model": "clopath_input_to_exc",
+    "weight": nest.random.uniform(0.5, 2.0),
+    "delay": delay,
+}
+nest.Connect(pop_input, pop_exc, conn_dict_input_to_exc, syn_dict_input_to_exc)
 
 # Create input->inh connections
-conn_dict_input_to_inh = {'rule': 'all_to_all'}
-syn_dict_input_to_inh = {'synapse_model': 'static_synapse',
-                         'weight': nest.random.uniform(0.0, 0.5),
-                         'delay': delay}
+conn_dict_input_to_inh = {"rule": "all_to_all"}
+syn_dict_input_to_inh = {"synapse_model": "static_synapse", "weight": nest.random.uniform(0.0, 0.5), "delay": delay}
 nest.Connect(pop_input, pop_inh, conn_dict_input_to_inh, syn_dict_input_to_inh)
 
 # Create exc->exc connections
-nest.CopyModel('clopath_synapse', 'clopath_exc_to_exc',
-               {'Wmax': 0.75, 'weight_recorder': wr})
-syn_dict_exc_to_exc = {'synapse_model': 'clopath_exc_to_exc', 'weight': 0.25,
-                       'delay': delay}
-conn_dict_exc_to_exc = {'rule': 'all_to_all', 'allow_autapses': False}
+nest.CopyModel("clopath_synapse", "clopath_exc_to_exc", {"Wmax": 0.75, "weight_recorder": wr})
+syn_dict_exc_to_exc = {"synapse_model": "clopath_exc_to_exc", "weight": 0.25, "delay": delay}
+conn_dict_exc_to_exc = {"rule": "all_to_all", "allow_autapses": False}
 nest.Connect(pop_exc, pop_exc, conn_dict_exc_to_exc, syn_dict_exc_to_exc)
 
 # Create exc->inh connections
-syn_dict_exc_to_inh = {'synapse_model': 'static_synapse',
-                       'weight': 1.0, 'delay': delay}
-conn_dict_exc_to_inh = {'rule': 'fixed_indegree', 'indegree': 8}
+syn_dict_exc_to_inh = {"synapse_model": "static_synapse", "weight": 1.0, "delay": delay}
+conn_dict_exc_to_inh = {"rule": "fixed_indegree", "indegree": 8}
 nest.Connect(pop_exc, pop_inh, conn_dict_exc_to_inh, syn_dict_exc_to_inh)
 
 # Create inh->exc connections
-syn_dict_inh_to_exc = {'synapse_model': 'static_synapse',
-                       'weight': 1.0, 'delay': delay}
-conn_dict_inh_to_exc = {'rule': 'fixed_outdegree', 'outdegree': 6}
+syn_dict_inh_to_exc = {"synapse_model": "static_synapse", "weight": 1.0, "delay": delay}
+conn_dict_inh_to_exc = {"rule": "fixed_outdegree", "outdegree": 6}
 nest.Connect(pop_inh, pop_exc, conn_dict_inh_to_exc, syn_dict_inh_to_exc)
 
 ##############################################################################
 # Randomize the initial membrane potential
 
-pop_exc.V_m = nest.random.normal(-60., 25.)
-pop_inh.V_m = nest.random.normal(-60., 25.)
+pop_exc.V_m = nest.random.normal(-60.0, 25.0)
+pop_inh.V_m = nest.random.normal(-60.0, 25.0)
 
 ##############################################################################
 # Simulation divided into intervals of 100ms for shifting the Gaussian
 
-sim_interval = 100.
+sim_interval = 100.0
 for i in range(int(simulation_time / sim_interval)):
     # set rates of poisson generators
     rates = np.empty(500)
     # pg_mu will be randomly chosen out of 25,75,125,...,425,475
     pg_mu = 25 + random.randint(0, 9) * 50
     for j in range(500):
-        rates[j] = pg_A * np.exp((-1 * (j - pg_mu)**2) / (2 * pg_sigma**2))
+        rates[j] = pg_A * np.exp((-1 * (j - pg_mu) ** 2) / (2 * pg_sigma**2))
         pg[j].rate = rates[j] * 1.75
     nest.Simulate(sim_interval)
 
@@ -189,9 +185,9 @@ init_w_matrix -= np.identity(10) * 0.25
 cax = ax.imshow(weight_matrix - init_w_matrix)
 cbarB = fig.colorbar(cax, ax=ax)
 ax.set_xticks([0, 2, 4, 6, 8])
-ax.set_xticklabels(['1', '3', '5', '7', '9'])
+ax.set_xticklabels(["1", "3", "5", "7", "9"])
 ax.set_yticks([0, 2, 4, 6, 8])
-ax.set_xticklabels(['1', '3', '5', '7', '9'])
+ax.set_xticklabels(["1", "3", "5", "7", "9"])
 ax.set_xlabel("to neuron")
 ax.set_ylabel("from neuron")
 ax.set_title("Change of syn weights before and after simulation")

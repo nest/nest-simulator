@@ -29,10 +29,8 @@ def reset():
 
 
 def connect_and_get_connections(pre, post):
-    conn_spec = {'rule': 'pairwise_bernoulli',
-                 'p': 1.0,
-                 'mask': {'circular': {'radius': 1.0}}}
-    nest.Connect(pre, post, conn_spec, {'weight': nest.spatial.distance})
+    conn_spec = {"rule": "pairwise_bernoulli", "p": 1.0, "mask": {"circular": {"radius": 1.0}}}
+    nest.Connect(pre, post, conn_spec, {"weight": nest.spatial.distance})
     return nest.GetConnections()
 
 
@@ -40,26 +38,26 @@ def testFreePositions(reset):
     """Correct positions used in Connect with free positions"""
 
     positions = [[0.1 * x, 0.0] for x in range(1, 10)]
-    nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.free(positions))
-    pre = nest.Create('iaf_psc_alpha', positions=nest.spatial.free([[0.0, 0.0]]))
+    nodes = nest.Create("iaf_psc_alpha", positions=nest.spatial.free(positions))
+    pre = nest.Create("iaf_psc_alpha", positions=nest.spatial.free([[0.0, 0.0]], extent=[1.0, 1.0]))
 
     conns = connect_and_get_connections(pre, nodes)
 
     # The expected weight is the distance, which corresponds to the position on the x-axis,
     # which corresponds to the node ID.
     expected_weight = [0.1 * t for t in conns.target]
-    assert(conns.weight == expected_weight)
+    assert conns.weight == expected_weight
 
 
 def testGridPositions(reset):
     """Correct positions used in Connect with grid positions"""
 
-    nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid([1, 9], center=[0, -5], extent=[1.0, 9.0]))
-    pre = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid([1, 1]))
+    nodes = nest.Create("iaf_psc_alpha", positions=nest.spatial.grid([1, 9], center=[0, -5], extent=[1.0, 9.0]))
+    pre = nest.Create("iaf_psc_alpha", positions=nest.spatial.grid([1, 1]))
 
     conns = connect_and_get_connections(pre, nodes)
 
     # The expected weight is the distance, which corresponds to the position on the x-axis,
     # which corresponds to the node ID.
     expected_weight = conns.target
-    assert(conns.weight == expected_weight)
+    assert conns.weight == expected_weight

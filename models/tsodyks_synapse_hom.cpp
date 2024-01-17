@@ -24,6 +24,14 @@
 
 // Includes from nestkernel:
 #include "connector_model.h"
+#include "nest_impl.h"
+
+void
+nest::register_tsodyks_synapse_hom( const std::string& name )
+{
+  register_connection_model< tsodyks_synapse_hom >( name );
+}
+
 
 namespace nest
 {
@@ -58,7 +66,7 @@ TsodyksHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel
   CommonPropertiesHomW::set_status( d, cm );
 
   updateValue< double >( d, names::U, U_ );
-  if ( U_ > 1.0 || U_ < 0.0 )
+  if ( U_ > 1.0 or U_ < 0.0 )
   {
     throw BadProperty( "U must be in [0,1]." );
   }

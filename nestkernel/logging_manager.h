@@ -49,10 +49,10 @@ class LoggingManager : public ManagerInterface
 public:
   LoggingManager();
 
-  virtual void initialize() override;
-  virtual void finalize() override;
-  virtual void set_status( const DictionaryDatum& ) override;
-  virtual void get_status( DictionaryDatum& ) override;
+  void initialize( const bool ) override;
+  void finalize( const bool ) override;
+  void set_status( const DictionaryDatum& ) override;
+  void get_status( DictionaryDatum& ) override;
 
   /**
    * Register a logging client.
@@ -118,10 +118,9 @@ private:
 private:
   std::vector< deliver_logging_event_ptr > client_callbacks_;
   nest::severity_t logging_level_;
-  bool dict_miss_is_error_; //!< whether to throw exception on missed dictionary
-                            //!< entries
+  bool dict_miss_is_error_; //!< whether to throw exception on missed dictionary entries
 };
 
 } // namespace nest
 
-#endif // ifndef LOGGING_MANAGER_H
+#endif /* ifndef LOGGING_MANAGER_H */

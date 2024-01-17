@@ -51,8 +51,8 @@ namespace nest
 {
 
 /**
- * \file nest_types.h
  * Default types used by the NEST kernel.
+ *
  * These typedefs should be used
  * in place of the primitive C/C++ types.
  * Thus, it will be easy to change
@@ -75,9 +75,9 @@ generate_max_value( const uint8_t num_bits )
   return ( ( static_cast< uint64_t >( 1 ) << num_bits ) - 1 );
 }
 
-/*
- * Sizes of bitfields used in various classes in the kernel.
- */
+
+// Sizes of bitfields used in various classes in the kernel.
+
 #if TARGET_BITS_SPLIT == TARGET_BITS_SPLIT_STANDARD
 constexpr uint8_t NUM_BITS_RANK = 18U;
 constexpr uint8_t NUM_BITS_TID = 9U;
@@ -94,9 +94,8 @@ constexpr uint8_t NUM_BITS_LAG = 14U;
 constexpr uint8_t NUM_BITS_DELAY = 21U;
 constexpr uint8_t NUM_BITS_NODE_ID = 62U;
 
-/*
- * Maximally allowed values for bitfields
- */
+// Maximally allowed values for bitfields
+
 constexpr uint64_t MAX_LCID = generate_max_value( NUM_BITS_LCID );
 constexpr int64_t MAX_RANK = generate_max_value( NUM_BITS_RANK );
 constexpr int64_t MAX_TID = generate_max_value( NUM_BITS_TID );
@@ -125,11 +124,7 @@ const tic_t tic_t_min = LONG_MIN;
 /**
  *  Unsigned long type for enumerations.
  */
-typedef size_t index;
-#ifndef SIZE_MAX
-#define SIZE_MAX ( static_cast< std::size_t >( -1 ) )
-#endif
-__attribute__( ( __unused__ ) ) const index invalid_index = SIZE_MAX;
+__attribute__( ( __unused__ ) ) constexpr size_t invalid_index = std::numeric_limits< size_t >::max();
 
 /**
  *  For enumerations of synapse types.
@@ -145,65 +140,32 @@ const synindex invalid_synindex = MAX_SYN_ID;
 //! target index into thread local node vector
 typedef unsigned short targetindex;
 const targetindex invalid_targetindex = USHRT_MAX;
-__attribute__( ( __unused__ ) ) const index max_targetindex = invalid_targetindex - 1;
+__attribute__( ( __unused__ ) ) const size_t max_targetindex = invalid_targetindex - 1;
 
 /**
- * Thread index type.
- * NEST threads are assigned non-negative numbers for
- * identification.
- * For invalid or undefined threads, the value -1 is used.
+ * Marker for invalid LCID values.
  */
-typedef int thread;
+constexpr size_t invalid_lcid = MAX_LCID;
 
 /**
- * Value for invalid connection port number.
+ * Value for invalid connection thread id.
  */
-const thread invalid_thread = -1;
-
-/**
- * Connection port number to distinguish incoming connections,
- * also called receiver port.
- * Connections between Nodes are assigned port numbers.
- * Valid port numbers start at zero (0).
- * The value -1 is used for invalid or unassigned ports.
- */
-typedef long rport;
-
-/**
- * Connection port number to distinguish outgoing connections.
- * Connections between Nodes are assigned port numbers.
- * Valid port numbers start at zero (0).
- * The value -1 is used for invalid or unassigned ports.
- */
-typedef long port;
+constexpr size_t invalid_thread = std::numeric_limits< size_t >::max();
 
 /**
  * Value for invalid connection port number.
  */
-const rport invalid_port = -1;
+constexpr size_t invalid_port = std::numeric_limits< size_t >::max();
 
 /**
- * Weight of a connection.
- * Connections have a weight which is used to scale the influence
- * of an event.
- * A weight of 0 should have the same influence on the receiving node
- * as a non-existing connection. Otherwise, there is no default range for
- * connection weights.
+ * Values for min and max delay.
  */
-typedef double weight;
-
-/**
- * Delay of a connection.
- * The delay defines the number of simulation steps which elapse
- * before an Event arrives at the receiving Node.
- * Delays must be equal or larger than one.
- */
-typedef long delay;
-const long delay_min = LONG_MIN;
-const long delay_max = LONG_MAX;
+constexpr long delay_min = std::numeric_limits< long >::min();
+constexpr long delay_max = std::numeric_limits< long >::max();
 
 /**
  * enum type of signal conveyed by spike events of a node.
+ *
  * These types are used upon connect to check if spikes sent by one
  * neuron are interpreted the same way by receiving neuron.
  *
@@ -228,4 +190,4 @@ enum SignalType
 };
 }
 
-#endif // NEST_TYPES_H
+#endif /* #ifndef NEST_TYPES_H */

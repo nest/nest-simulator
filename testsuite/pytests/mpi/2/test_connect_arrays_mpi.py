@@ -19,27 +19,30 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
-import subprocess as sp
 import unittest
+
 import nest
 import numpy as np
 
 try:
     from mpi4py import MPI
+
     HAVE_MPI4PY = True
 except ImportError:
     HAVE_MPI4PY = False
 
 HAVE_MPI = nest.ll_api.sli_func("statusdict/have_mpi ::")
+HAVE_OPENMP = nest.ll_api.sli_func("is_threaded")
 
 
-@unittest.skipIf(not HAVE_MPI4PY, 'mpi4py is not available')
+@unittest.skipIf(not HAVE_OPENMP, "NEST was compiled without multi-threading")
+@unittest.skipIf(not HAVE_MPI4PY, "mpi4py is not available")
 class TestConnectArraysMPICase(unittest.TestCase):
     """
     This TestCase uses mpi4py to collect and assert results from all
     processes, and is supposed to only be run with multiple processes.
     """
+
     non_unique = np.array([1, 1, 3, 5, 4, 5, 9, 7, 2, 8], dtype=np.uint64)
 
     # The test class is instantiated by the unittest framework regardless of the value of
@@ -55,17 +58,23 @@ class TestConnectArraysMPICase(unittest.TestCase):
         projections = [[s, t] for s, t in zip(conns.source, conns.target)]
         weights = conns.weight
         delays = conns.delay
-        if rule == 'one_to_one':
+        if rule == "one_to_one":
             expected_projections = np.array([[s, t] for s, t in zip(expected_sources, expected_targets)])
-        elif rule == 'all_to_all':
+        elif rule == "all_to_all":
             expected_projections = np.array([[s, t] for s in expected_sources for t in expected_targets])
         else:
-            self.assertFalse(True, 'rule={} is not valid'.format(rule))
+            self.assertFalse(True, "rule={} is not valid".format(rule))
 
-        expected_weights = (expected_weights if type(expected_weights) is np.ndarray
-                            else expected_weights*np.ones(len(expected_projections)))
-        expected_delays = (expected_delays if type(expected_delays) is np.ndarray
-                           else expected_delays*np.ones(len(expected_projections)))
+        expected_weights = (
+            expected_weights
+            if type(expected_weights) is np.ndarray
+            else expected_weights * np.ones(len(expected_projections))
+        )
+        expected_delays = (
+            expected_delays
+            if type(expected_delays) is np.ndarray
+            else expected_delays * np.ones(len(expected_projections))
+        )
 
         recv_projections = self.comm.gather(projections, root=0)
         recv_weights = self.comm.gather(weights, root=0)
@@ -90,43 +99,44 @@ class TestConnectArraysMPICase(unittest.TestCase):
     def test_connect_arrays_unique(self):
         """Connecting NumPy arrays of unique node IDs with MPI"""
         n = 10
-        nest.Create('iaf_psc_alpha', n)
-        sources = np.arange(1, n+1, dtype=np.uint64)
-        targets = np.arange(1, n+1, dtype=np.uint64)
+        nest.Create("iaf_psc_alpha", n)
+        sources = np.arange(1, n + 1, dtype=np.uint64)
+        targets = np.arange(1, n + 1, dtype=np.uint64)
         weight = 1.5
         delay = 1.4
 
-        nest.Connect(sources, targets, syn_spec={'weight': weight, 'delay': delay})
+        nest.Connect(sources, targets, syn_spec={"weight": weight, "delay": delay})
 
-        self.assert_connections(sources, targets, weight, delay, 'all_to_all')
+        self.assert_connections(sources, targets, weight, delay, "all_to_all")
 
     def test_connect_arrays_nonunique(self):
         """Connecting NumPy arrays with non-unique node IDs with MPI"""
         n = 10
-        nest.Create('iaf_psc_alpha', n)
-        sources = np.arange(1, n+1, dtype=np.uint64)
+        nest.Create("iaf_psc_alpha", n)
+        sources = np.arange(1, n + 1, dtype=np.uint64)
         targets = self.non_unique
         weights = np.ones(n)
         delays = np.ones(n)
-        nest.Connect(sources, targets, syn_spec={'weight': weights, 'delay': delays},
-                     conn_spec='one_to_one')
+        nest.Connect(sources, targets, syn_spec={"weight": weights, "delay": delays}, conn_spec="one_to_one")
 
-        self.assert_connections(sources, targets, weights, delays, 'one_to_one')
+        self.assert_connections(sources, targets, weights, delays, "one_to_one")
 
     def test_connect_arrays_threaded(self):
         """Connecting NumPy arrays, threaded with MPI"""
         nest.local_num_threads = 2
         n = 10
-        nest.Create('iaf_psc_alpha', n)
-        sources = np.arange(1, n+1, dtype=np.uint64)
+        nest.Create("iaf_psc_alpha", n)
+        sources = np.arange(1, n + 1, dtype=np.uint64)
         targets = self.non_unique
-        syn_model = 'static_synapse'
+        syn_model = "static_synapse"
         weights = np.linspace(0.6, 1.5, len(sources))  # Interval endpoints are carefully selected to get nice values,
-        delays = np.linspace(0.4, 1.3, len(sources))   # that is, a step of 0.1 between values.
+        delays = np.linspace(0.4, 1.3, len(sources))  # that is, a step of 0.1 between values.
 
-        nest.Connect(sources, targets, conn_spec='one_to_one',
-                     syn_spec={'weight': weights,
-                               'delay': delays,
-                               'synapse_model': syn_model})
+        nest.Connect(
+            sources,
+            targets,
+            conn_spec="one_to_one",
+            syn_spec={"weight": weights, "delay": delays, "synapse_model": syn_model},
+        )
 
-        self.assert_connections(sources, targets, weights, delays, 'one_to_one')
+        self.assert_connections(sources, targets, weights, delays, "one_to_one")

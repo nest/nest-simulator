@@ -42,13 +42,16 @@ nest::LoggingManager::LoggingManager()
 }
 
 void
-nest::LoggingManager::initialize()
+nest::LoggingManager::initialize( const bool reset_kernel )
 {
-  dict_miss_is_error_ = true;
+  if ( reset_kernel )
+  {
+    dict_miss_is_error_ = true;
+  }
 }
 
 void
-nest::LoggingManager::finalize()
+nest::LoggingManager::finalize( const bool )
 {
 }
 
@@ -68,7 +71,7 @@ nest::LoggingManager::get_status( DictionaryDatum& dict )
 void
 nest::LoggingManager::register_logging_client( const deliver_logging_event_ptr callback )
 {
-  assert( callback != 0 );
+  assert( callback );
 
   client_callbacks_.push_back( callback );
 }

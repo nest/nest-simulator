@@ -68,7 +68,7 @@ void
 nest::music_rate_in_proxy::Parameters_::set( const DictionaryDatum& d, State_& s )
 {
   // TODO: This is not possible, as P_ does not know about get_name()
-  //  if(d->known(names::port_name) && s.registered_)
+  //  if(d->known(names::port_name) and s.registered_)
   //    throw MUSICPortAlreadyPublished(get_name(), P_.port_name_);
 
   if ( not s.registered_ )

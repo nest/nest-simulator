@@ -20,18 +20,12 @@
  *
  */
 
-/**
- *  @file event.cpp
- *  Implementation of Event::operator() for all event types.
- *  @note Must be isolated here, since it requires full access to
- *  classes Node and Scheduler.
- */
-
 #include "event.h"
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
 #include "node.h"
+#include "secondary_event_impl.h"
 
 namespace nest
 {
@@ -40,8 +34,8 @@ Event::Event()
                          // node ID 0 is network, can never send an event, so
                          // this is safe
   , sender_spike_data_()
-  , sender_( NULL )
-  , receiver_( NULL )
+  , sender_( nullptr )
+  , receiver_( nullptr )
   , p_( -1 )
   , rp_( 0 )
   , d_( 1 )
@@ -52,7 +46,7 @@ Event::Event()
 {
 }
 
-index
+size_t
 Event::retrieve_sender_node_id_from_source_table() const
 {
   if ( sender_node_id_ > 0 )
@@ -61,13 +55,13 @@ Event::retrieve_sender_node_id_from_source_table() const
   }
   else
   {
-    const index node_id = kernel().connection_manager.get_source_node_id(
+    const size_t node_id = kernel().connection_manager.get_source_node_id(
       sender_spike_data_.get_tid(), sender_spike_data_.get_syn_id(), sender_spike_data_.get_lcid() );
     return node_id;
   }
 }
 
-index
+size_t
 Event::get_receiver_node_id() const
 {
   return receiver_->get_node_id();
@@ -153,6 +147,12 @@ DelayedRateConnectionEvent::operator()()
 
 void
 DiffusionConnectionEvent::operator()()
+{
+  receiver_->handle( *this );
+}
+
+void
+SICEvent::operator()()
 {
   receiver_->handle( *this );
 }

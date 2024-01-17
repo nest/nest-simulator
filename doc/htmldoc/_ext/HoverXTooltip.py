@@ -19,13 +19,12 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import re
 import os
+import re
 import sys
+
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
-
-from conf import doc_build_dir
 
 
 class HoverXTooltipDirective(Directive):
@@ -39,7 +38,7 @@ class HoverXTooltipDirective(Directive):
 
     required_arguments = 0
     optional_arguemtns = 0
-    option_spec = {'term': directives.unchanged, 'desc': directives.unchanged}
+    option_spec = {"term": directives.unchanged, "desc": directives.unchanged}
 
     def run(self):
         """Generates tooltip by defining text and tooltip content
@@ -55,20 +54,24 @@ class HoverXTooltipDirective(Directive):
         desc = options["desc"]
 
         # the tag in which the term and description is defined.
-        span_tag = "<span class='hoverxtool' data-toggle='tooltip' " \
-            "data-placement='top' title='{desc}'>" \
+        span_tag = (
+            "<span class='hoverxtool' data-toggle='tooltip' "
+            "data-placement='top' title='{desc}'>"
             "{term}</span>".format(desc=desc, term=term)
+        )
 
         # the docutils object that holds the tag as html code.
-        hover_raw_node = nodes.raw(text=span_tag, format='html')
+        hover_raw_node = nodes.raw(text=span_tag, format="html")
 
         # the jquery function to enable hovering.
-        jquery_tag = "<script type='text/javascript'>" \
-            "$('span[data-toggle=tooltip]').tooltip({" \
-            "animated: 'fade'," \
-            "delay: {show: 100, hide: 1500}," \
+        jquery_tag = (
+            "<script type='text/javascript'>"
+            "$('span[data-toggle=tooltip]').tooltip({"
+            "animated: 'fade',"
+            "delay: {show: 100, hide: 1500},"
             "placement: 'top', }); </script>"
-        js_raw_node = nodes.raw(text=jquery_tag, format='html')
+        )
+        js_raw_node = nodes.raw(text=jquery_tag, format="html")
 
         return [hover_raw_node, js_raw_node]
 
@@ -82,8 +85,8 @@ def hxt_role(pattern):
     Returns:
         function: returns its own function.
     """
-    def role(name, rawtext, text, lineno, inliner, options={}, content=[]):
 
+    def role(name, rawtext, text, lineno, inliner, options={}, content=[]):
         # example: iaf <hxt:integrate and fire>
         raw_params = pattern % (text,)
 
@@ -98,27 +101,30 @@ def hxt_role(pattern):
             desc = re.search(desc_template, raw_params).group(1)
 
             # the tag in which the term and description is defined.
-            span_tag = "<span class='hoverxtool hoverxtool_highlighter' " \
-                "data-toggle='tooltip' " \
-                "data-placement='top' title='{desc}'>" \
+            span_tag = (
+                "<span class='hoverxtool hoverxtool_highlighter' "
+                "data-toggle='tooltip' "
+                "data-placement='top' title='{desc}'>"
                 "{term}</span>".format(desc=desc, term=term)
+            )
 
             # the docutils object that holds the tag as html code.
-            hover_raw_node = nodes.raw(text=span_tag, format='html')
+            hover_raw_node = nodes.raw(text=span_tag, format="html")
 
             # the jquery function to enable hovering.
-            jquery_tag = "<script type='text/javascript'>" \
-                "$('span[data-toggle=tooltip]').tooltip({" \
-                "animated: 'fade'," \
-                "delay: {show: 100, hide: 1500}," \
+            jquery_tag = (
+                "<script type='text/javascript'>"
+                "$('span[data-toggle=tooltip]').tooltip({"
+                "animated: 'fade',"
+                "delay: {show: 100, hide: 1500},"
                 "placement: 'top', }); </script>"
-            js_raw_node = nodes.raw(text=jquery_tag, format='html')
+            )
+            js_raw_node = nodes.raw(text=jquery_tag, format="html")
 
             return [hover_raw_node, js_raw_node], []
 
         except Exception as e:
-            print("Something went wrong while parsing the hxt pattern: ({e})"
-                  .format(e))
+            print(f"Something went wrong while parsing the hxt pattern: ({e})")
             sys.exit(-1)
 
     return role
@@ -133,44 +139,49 @@ def hxt_role_ref(pattern):
     Returns:
         function: returns its function pointer.
     """
-    def role(name, rawtext, text, lineno, inliner, options={}, content=[]):
 
+    def role(name, rawtext, text, lineno, inliner, options={}, content=[]):
         term = pattern % (text,)
         desc = get_desc_from_glossary(term)
 
-        base_url = inliner.document.attributes['source']
+        term_conv = term.replace(" ", "-")
+        base_url = inliner.document.attributes["source"]
 
         # for rtd builds
         if os.environ.get("READTHEDOCS") == "True":
-            branch_name = base_url.split('/doc/')[0].split('/')[-1]
-            refuri = (f'/en/{branch_name}/ref_material/glossary.html#term-{term}')
+            branch_name = base_url.split("/doc/")[0].split("/")[-1]
+            refuri = f"/en/{branch_name}/ref_material/glossary.html#term-{term_conv}"
         # for local builds
         else:
-            refuri = base_url.split('htmldoc')[0] + f'htmldoc/html/glossary.html#term-{term}'
+            refuri = base_url.split("htmldoc")[0] + f"htmldoc/html/ref_material/glossary.html#term-{term_conv}"
 
         # the tag in which the term and description is defined.
-        ref_tag = "<a class='reference external' " \
-                  "href='{refuri}'>" \
-                  "<span class='hoverxtool hoverxtool_highlighter' " \
-                  "data-toggle='tooltip' " \
-                  "data-placement='top' title='{desc}'>" \
-                  "{term}</span>" \
-                  "</a>" \
-                  .format(refuri=refuri, desc=desc, term=term)
+        ref_tag = (
+            "<a class='reference external' "
+            "href='{refuri}'>"
+            "<span class='hoverxtool hoverxtool_highlighter' "
+            "data-toggle='tooltip' "
+            "data-placement='top' title='{desc}'>"
+            "{term}</span>"
+            "</a>".format(refuri=refuri, desc=desc, term=term)
+        )
 
         # the docutils object that holds the tag as html code.
-        ref_node = nodes.raw(text=ref_tag, format='html')
+        ref_node = nodes.raw(text=ref_tag, format="html")
 
         # the jquery function to enable hovering.
         # Note this should be added once!
-        jquery_tag = "<script type='text/javascript'>" \
-                     "$('span[data-toggle=tooltip]').tooltip({" \
-                     "animated: 'fade'," \
-                     "delay: {show: 100, hide: 1500}," \
-                     "placement: 'top', }); </script>"
-        js_raw_node = nodes.raw(text=jquery_tag, format='html')
+        jquery_tag = (
+            "<script type='text/javascript'>"
+            "$('span[data-toggle=tooltip]').tooltip({"
+            "animated: 'fade',"
+            "delay: {show: 100, hide: 1500},"
+            "placement: 'top', }); </script>"
+        )
+        js_raw_node = nodes.raw(text=jquery_tag, format="html")
 
         return [ref_node, js_raw_node], []
+
     return role
 
 
@@ -209,27 +220,26 @@ def get_desc_from_glossary(term):
     """
 
     try:
-        with open(str(doc_build_dir) + '/ref_material/glossary.rst') as f:
+        with open("ref_material/glossary.rst") as f:
             file_content = f.read()
 
         # generate a list of lines from file content.
-        raw_file_content = list(filter(None, file_content
-                                .split('Glossary')[1].splitlines(True)))
+        raw_file_content = list(filter(None, file_content.split("Glossary")[1].splitlines(True)))
 
         glossary_dict = {}  # dictionary that holds terms and descriptions.
         for idx, line in enumerate(raw_file_content):
             # detect a term based on value of first column.
-            if len(line) > 1 and line[1] is not ' ':
+            if len(line) > 1 and line[1] != " ":
                 # the key is the term in the dictionary.
-                key = line.strip('\n')
+                key = line.strip("\n")
                 # the value is the description (which is on the next line).
-                val = raw_file_content[idx+1].strip('\n')
+                val = raw_file_content[idx + 1].strip("\n")
 
                 glossary_dict[key[1:]] = val
 
         return glossary_dict[term]
     except Exception as e:
-        return f'Description Unavailable: {e}'
+        return f"Description Unavailable: {e}"
 
 
 def setup(app):
@@ -242,23 +252,23 @@ def setup(app):
         TYPE: Description
     """
     # add external css/js files
-    app.add_js_file('js/bootstrap.min.js')
-    app.add_css_file('css/bootstrap.min.css')
+    app.add_js_file("js/bootstrap/bootstrap.bundle.min.js")
+    app.add_css_file("css/bootstrap/bootstrap.min.css")
 
     # add custom css file
-    app.add_css_file('css/hoverxtooltip.css')
+    app.add_css_file("css/hoverxtooltip.css")
 
     # add the HoverXTooltipDirective
     app.add_directive("hxt_directive", HoverXTooltipDirective)
 
     # add the role that generates explicit text and tooltip.
-    app.add_role('hxt', hxt_role('%s'))
+    app.add_role("hxt", hxt_role("%s"))
 
     # add the role that generates tooltips based on glossary.rst.
-    app.add_role('hxt_ref', hxt_role_ref('%s'))
+    app.add_role("hxt_ref", hxt_role_ref("%s"))
 
     return {
-        'version': '0.1',
-        'parallel_read_safe': True,
-        'parallel_write_safe': True,
+        "version": "0.1",
+        "parallel_read_safe": True,
+        "parallel_write_safe": True,
     }

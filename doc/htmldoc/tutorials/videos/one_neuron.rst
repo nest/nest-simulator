@@ -1,8 +1,13 @@
 .. _video_one_neuron:
 
-Introduction to NEST: Simulating a single neuron
-==================================================
+Introduction to NEST: Simulating a single neuron (NEST version 2.12)
+=====================================================================
 
+.. admonition::  NEST 3.X incompatibility
+
+  The syntax used in NEST has changed in 3.X compared to what is seen in the video. Please
+  see our :doc:`one neuron example </auto_examples/one_neuron/>` for a simple
+  example with updated syntax.
 
 .. raw:: html
 

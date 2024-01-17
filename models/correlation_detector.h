@@ -140,6 +140,11 @@ See also
 
 spike_recorder
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: correlation_detector
+
 EndUserDocs */
 
 /**
@@ -157,6 +162,8 @@ EndUserDocs */
  *   entries, then registers new entries in histogram
  */
 
+void register_correlation_detector( const std::string& name );
+
 class correlation_detector : public Node
 {
 
@@ -169,13 +176,13 @@ public:
    * spikes also from sources which live on other threads.
    */
   bool
-  has_proxies() const
+  has_proxies() const override
   {
     return true;
   }
 
   Name
-  get_element_type() const
+  get_element_type() const override
   {
     return names::recorder;
   }
@@ -188,21 +195,21 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  void handle( SpikeEvent& );
+  void handle( SpikeEvent& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
-  void calibrate_time( const TimeConverter& tc );
+  void calibrate_time( const TimeConverter& tc ) override;
 
 private:
-  void init_state_();
-  void init_buffers_();
-  void pre_run_hook();
+  void init_state_() override;
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   // ------------------------------------------------------------
 
@@ -252,7 +259,7 @@ private:
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
 
     /**
-     * Set values from dicitonary.
+     * Set values from dictionary.
      * @returns true if the state needs to be reset after a change of
      *          binwidth or tau_max.
      */
@@ -307,10 +314,10 @@ private:
   State_ S_;
 };
 
-inline port
-correlation_detector::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+correlation_detector::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
-  if ( receptor_type < 0 || receptor_type > 1 )
+  if ( receptor_type > 1 )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }

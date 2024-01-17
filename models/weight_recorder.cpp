@@ -22,26 +22,29 @@
 
 #include "weight_recorder.h"
 
-// C++ includes:
-#include <numeric>
 
 // Includes from libnestutil:
 #include "compose.hpp"
-#include "dict_util.h"
-#include "logging.h"
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
 #include "nest_datums.h"
+#include "nest_impl.h"
 #include "node_collection.h"
 
 // Includes from sli:
 #include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
+
+void
+nest::register_weight_recorder( const std::string& name )
+{
+  register_node_model< weight_recorder >( name );
+}
+
 
 // record time, node ID, weight and receiver node ID
 nest::weight_recorder::weight_recorder()

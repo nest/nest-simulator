@@ -1,0 +1,31 @@
+name: Mirror to JSC
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  sync_to_jsc:
+    runs-on: ubuntu-latest
+    if: ${{ github.repository_owner == 'nest' }}
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@eb238b55efaa70779f274895e782ed17c84f2895 # v2.6.1
+        with:
+          egress-policy: audit
+          disable-telemetry: true
+
+      - name: sycnmaster
+        uses: wei/git-sync@55c6b63b4f21607da0e9877ca9b4d11a29fc6d83
+        with:
+          source_repo: "nest/nest-simulator"
+          source_branch: "master"
+          destination_repo: "https://ghpusher:${{ secrets.JSC_GITLAB_TOKEN }}@gitlab.jsc.fz-juelich.de/nest/nest-simulator.git"
+          destination_branch: "master"
+      - name: synctags
+        uses: wei/git-sync@55c6b63b4f21607da0e9877ca9b4d11a29fc6d83
+        with:
+          source_repo: "nest/nest-simulator"
+          source_branch: "refs/tags/v*"
+          destination_repo: "https://ghpusher:${{ secrets.JSC_GITLAB_TOKEN }}@gitlab.jsc.fz-juelich.de/nest/nest-simulator.git"
+          destination_branch: "refs/tags/v*"

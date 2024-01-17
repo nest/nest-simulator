@@ -54,7 +54,7 @@ and spikes are collected only from local sources.
 
    ``spike_dilutor`` is deprecated because it does not work with multiple threads.
    To create connections that transmit spikes with a given probability, use :doc:`bernoulli_synapse <bernoulli_synapse>`
-instead.
+   instead.
 
 .. admonition:: Does not work with threads
 
@@ -76,7 +76,15 @@ See also
 
 mip_generator
 
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: spike_dilutor
+
 EndUserDocs */
+
+void register_spike_dilutor( const std::string& name );
 
 class spike_dilutor : public DeviceNode
 {
@@ -107,8 +115,8 @@ public:
   using Node::handle;
   using Node::handles_test_event; // new
 
-  port send_test_event( Node&, rport, synindex, bool ) override;
-  port handles_test_event( SpikeEvent&, rport ) override;
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
   void handle( SpikeEvent& ) override;
 
   void get_status( DictionaryDatum& ) const override;
@@ -137,7 +145,7 @@ private:
     Parameters_& operator=( const Parameters_& ) = default;
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
   struct Buffers_
@@ -160,10 +168,9 @@ private:
   Buffers_ B_;
 };
 
-inline port
-spike_dilutor::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
+inline size_t
+spike_dilutor::send_test_event( Node& target, size_t receptor_type, synindex syn_id, bool )
 {
-
   device_.enforce_single_syn_type( syn_id );
 
   SpikeEvent e;
@@ -171,8 +178,8 @@ spike_dilutor::send_test_event( Node& target, rport receptor_type, synindex syn_
   return target.handles_test_event( e, receptor_type );
 }
 
-inline port
-spike_dilutor::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+spike_dilutor::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

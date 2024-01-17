@@ -20,13 +20,13 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
-from docutils import nodes
+from pathlib import Path
 
-from conf import doc_build_dir
+from docutils import nodes
 
 
 def version_role(pattern):
-    """ Defines the role function
+    """Defines the role function
 
     Args:
         pattern (str): This argument represents the input pattern of the role which is just a string (%s).
@@ -36,7 +36,7 @@ def version_role(pattern):
     """
 
     def role(name, rawtext, text, lineno, inliner, options={}, content=[]):
-        """ Actual role implementation.
+        """Actual role implementation.
 
         Args:
             Refer to https://docutils.sourceforge.io/docs/howto/rst-roles.html for an overview.
@@ -46,7 +46,7 @@ def version_role(pattern):
         """
 
         package_level = pattern % text
-        payload = package_level.split(',')
+        payload = package_level.split(",")
         package = payload[0]
 
         if len(payload) > 1:
@@ -54,21 +54,22 @@ def version_role(pattern):
         else:
             level = "min"
 
-        with open(str(doc_build_dir) + '/_ext/versions.json') as fp:
+        with open(Path(__file__).parent / "versions.json") as fp:
             data = json.load(fp)
 
         try:
             version = data[package.strip()][level.strip()]
-        except KeyError as e:
+        except KeyError:
             version = f"'{level}' was not found!"
 
         node = nodes.Text(version)
         return [node], []
+
     return role
 
 
 def setup(app):
-    """ Adds the necessary routines to Sphinx.
+    """Adds the necessary routines to Sphinx.
 
     Args:
         app (app): Application object.
@@ -77,10 +78,10 @@ def setup(app):
         dict: returns a dict with version number of the extension and IO safety arguments.
     """
 
-    app.add_role('version', version_role('%s'))
+    app.add_role("version", version_role("%s"))
 
     return {
-        'version': '0.1',
-        'parallel_read_safe': True,
-        'parallel_write_safe': True,
+        "version": "0.1",
+        "parallel_read_safe": True,
+        "parallel_write_safe": True,
     }

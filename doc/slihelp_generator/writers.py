@@ -31,8 +31,9 @@ import io
 import os
 import re
 import textwrap
-from helpers import cut_it
 from string import Template
+
+from helpers_sli import cut_it
 
 
 def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
@@ -42,15 +43,15 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
     Write html for integration in NEST Help-System
     """
     # Loading Template for commands
-    ftemplate = io.open('templates/cmd.tpl.html', encoding='utf-8')
+    ftemplate = io.open("templates/cmd.tpl.html", encoding="utf-8")
     templ = ftemplate.read()
     ftemplate.close()
     # Loading Template for CSS
-    cssf = io.open('templates/nest.tpl.css', encoding='utf-8')
+    cssf = io.open("templates/nest.tpl.css", encoding="utf-8")
     csstempl = cssf.read()
     cssf.close()
     # Loading Template for footer
-    footerf = io.open('templates/footer.tpl.html', encoding='utf-8')
+    footerf = io.open("templates/footer.tpl.html", encoding="utf-8")
     footertempl = footerf.read()
     footerf.close()
 
@@ -59,7 +60,7 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
     htmllist = []
     hlplist = []
 
-    name = ''
+    name = ""
     for key, value in doc_dic.items():
         if key == "Name":
             name = value.strip()
@@ -69,19 +70,20 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
             fullname = value.strip(r"\s\n")
             fullname = re.sub(r"(\n)", " <br/> ", fullname)
 
-            htmllist.append('''<div class="doc_header">Name:</div>
-<div class="doc_paragraph">%s - %s</div>''' %
-                            (name, fullname))
-            hlpfullname = re.sub(r' <br\/> ', '\n', fullname).strip()
-            hlplist.append('Name: %s - %s\n' % (name, hlpfullname))
+            htmllist.append(
+                """<div class="doc_header">Name:</div>
+<div class="doc_paragraph">%s - %s</div>"""
+                % (name, fullname)
+            )
+            hlpfullname = re.sub(r" <br\/> ", "\n", fullname).strip()
+            hlplist.append("Name: %s - %s\n" % (name, hlpfullname))
 
     # sorting linked keywords
     for word in keywords:
-        word = word.strip(':')
+        word = word.strip(":")
         for key, value in doc_dic.items():
             if key == word:
-                if (key != "Name" and key != "FullName" and
-                        key != "SeeAlso" and key != "File"):
+                if key != "Name" and key != "FullName" and key != "SeeAlso" and key != "File":
                     # strip whitespace and paragraph breaks at start of entry
                     value = re.sub(r"^(\s*(\n))*\s*", "", value)
                     # strip whitespace and paragraph breaks at end of entry
@@ -89,63 +91,60 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
                     value = re.sub(r"(\n)", " <br/> ", value)
                     value = re.sub(r"(^|\n) ", "&nbsp;", value)
                     htmllist.append('<div class="doc_header">%s: </div>' % key)
-                    htmllist.append('<div class="doc_paragraph">%s</div>'
-                                    % value)
-                    hlpvalue = re.sub(' <br/> ', '\n', value).rstrip()
-                    hlpvalue = re.sub('\n ', '\n', hlpvalue).rstrip()
-                    hlpvalue = hlpvalue.lstrip('\n')
-                    hlpvalue = re.sub(r'\n[\s?]*\n', '\n', hlpvalue).rstrip()
+                    htmllist.append('<div class="doc_paragraph">%s</div>' % value)
+                    hlpvalue = re.sub(" <br/> ", "\n", value).rstrip()
+                    hlpvalue = re.sub("\n ", "\n", hlpvalue).rstrip()
+                    hlpvalue = hlpvalue.lstrip("\n")
+                    hlpvalue = re.sub(r"\n[\s?]*\n", "\n", hlpvalue).rstrip()
                     # Better looking .hlp files
                     dedented_text = textwrap.dedent(hlpvalue).strip()
-                    hlpcontent = ('%s:\n\n%s\n\n' % (key, dedented_text))
+                    hlpcontent = "%s:\n\n%s\n\n" % (key, dedented_text)
                     hlplist.append(hlpcontent)
 
     for key, value in doc_dic.items():
         if key == "SeeAlso":
             htmllist.append('<div class="doc_header">%s: </div>' % key)
-            hlplist.append('%s:\n' % key)
-            htmllist.append('<ul>')
+            hlplist.append("%s:\n" % key)
+            htmllist.append("<ul>")
             for i in value:
                 see = i.strip("\n ~~")
                 if see:
                     if see in sli_command_list:
-                        htmllist.append('    <li><a href="../sli/' + see +
-                                        '.html">' + see + '</a></li>')
-                        hlplist.append('%s' % see)
+                        htmllist.append('    <li><a href="../sli/' + see + '.html">' + see + "</a></li>")
+                        hlplist.append("%s" % see)
                     else:
-                        htmllist.append('    <li><a href="../cc/' + see +
-                                        '.html">' + see + '</a></li>')
-                        hlplist.append('%s' % see)
-            hlplist.append('')
-            htmllist.append('</ul>')
+                        htmllist.append('    <li><a href="../cc/' + see + '.html">' + see + "</a></li>")
+                        hlplist.append("%s" % see)
+            hlplist.append("")
+            htmllist.append("</ul>")
 
     for key, value in doc_dic.items():
         if key == "File":
             value = value.strip("\n \n $$")
-            htmllist.append('''<div class="doc_header">Source:</div>
-<div class="doc_paragraph">%s</div>''' % value)
-            hlplist.append('Source:\n\n%s' % value)
+            htmllist.append(
+                """<div class="doc_header">Source:</div>
+<div class="doc_paragraph">%s</div>"""
+                % value
+            )
+            hlplist.append("Source:\n\n%s" % value)
 
-    htmlstring = (u'\n'.join(htmllist))
-    cmdindexstring = s.substitute(indexbody=htmlstring, css=csstempl,
-                                  title=name, footer=footertempl)
+    htmlstring = "\n".join(htmllist)
+    cmdindexstring = s.substitute(indexbody=htmlstring, css=csstempl, title=name, footer=footertempl)
 
     if name:  # only, if there is a name
-        if fname.endswith('.sli'):
-            path = os.path.join(helpdir, 'sli')
+        if fname.endswith(".sli"):
+            path = os.path.join(helpdir, "sli")
         else:
-            path = os.path.join(helpdir, 'cc')
+            path = os.path.join(helpdir, "cc")
 
-        f_file_name = io.open(os.path.join(path, '{}.html'.format(name)),
-                              mode='w', encoding='utf-8')
+        f_file_name = io.open(os.path.join(path, "{}.html".format(name)), mode="w", encoding="utf-8")
         f_file_name.write(cmdindexstring)
-        f_file_name.write(u'\n')
+        f_file_name.write("\n")
         f_file_name.close()
 
-        f_file_name_hlp = io.open(os.path.join(path, '{}.hlp'.format(name)),
-                                  mode='w', encoding='utf-8')
-        f_file_name_hlp.write(u'\n'.join(hlplist))
-        f_file_name_hlp.write(u'\n')
+        f_file_name_hlp = io.open(os.path.join(path, "{}.hlp".format(name)), mode="w", encoding="utf-8")
+        f_file_name_hlp.write("\n".join(hlplist))
+        f_file_name_hlp.write("\n")
         f_file_name_hlp.close()
 
 
@@ -161,46 +160,66 @@ def write_helpindex(helpdir):
         print("Error: Help directory not found: " + helpdir)
         return
 
-    filelist = glob.glob(os.path.join(helpdir, '*', '*.hlp'))
+    filelist = glob.glob(os.path.join(helpdir, "*", "*.hlp"))
     html_list = []
     hlp_list = []
 
     # Loading Template for helpindex.html
-    ftemplate = io.open(os.path.join('templates', 'helpindex.tpl.html'),
-                        encoding='utf-8')
+    ftemplate = io.open(os.path.join("templates", "helpindex.tpl.html"), encoding="utf-8")
     templ = ftemplate.read()
     ftemplate.close()
     # Loading Template for CSS
-    cssf = io.open(os.path.join('templates', 'nest.tpl.css'),
-                   encoding='utf-8')
+    cssf = io.open(os.path.join("templates", "nest.tpl.css"), encoding="utf-8")
     csstempl = cssf.read()
     cssf.close()
     # Loading Template for footer
-    footerf = io.open(os.path.join('templates', 'footer.tpl.html'),
-                      encoding='utf-8')
+    footerf = io.open(os.path.join("templates", "footer.tpl.html"), encoding="utf-8")
     footertempl = footerf.read()
     footerf.close()
 
     s = Template(templ)
 
-    alpha = [('A', 'a'), ('B', 'b'), ('C', 'c'), ('D', 'd'), ('E', 'e'),
-             ('F', 'f'), ('G', 'g'), ('H', 'h'), ('I', 'i'), ('J', 'j'),
-             ('K', 'k'), ('L', 'l'), ('M', 'm'), ('N', 'n'), ('O', 'o'),
-             ('P', 'p'), ('Q', 'q'), ('R', 'r'), ('S', 's'), ('T', 't'),
-             ('U', 'u'), ('V', 'v'), ('W', 'w'), ('X', 'x'), ('Z', 'z'), '-',
-             ':', '<', '=']
+    alpha = [
+        ("A", "a"),
+        ("B", "b"),
+        ("C", "c"),
+        ("D", "d"),
+        ("E", "e"),
+        ("F", "f"),
+        ("G", "g"),
+        ("H", "h"),
+        ("I", "i"),
+        ("J", "j"),
+        ("K", "k"),
+        ("L", "l"),
+        ("M", "m"),
+        ("N", "n"),
+        ("O", "o"),
+        ("P", "p"),
+        ("Q", "q"),
+        ("R", "r"),
+        ("S", "s"),
+        ("T", "t"),
+        ("U", "u"),
+        ("V", "v"),
+        ("W", "w"),
+        ("X", "x"),
+        ("Z", "z"),
+        "-",
+        ":",
+        "<",
+        "=",
+    ]
 
     for doubles in alpha:
         html_list.append('<center><table class="alpha">')
         html_list.append('<table class="letteridx"><tr>')
         for x in alpha:
             html_list.append('<td><a href="#%s">%s</a></td>' % (x[0], x[0]))
-        html_list.append('</tr></table></center>')
-        html_list.append('<center><table class="commands" id="%s">'
-                         % doubles[0])
-        for item in sorted(filelist,
-                           key=lambda name: name.lower().rsplit('/', 1)[1]):
-            fitem = io.open(item, encoding='utf-8')
+        html_list.append("</tr></table></center>")
+        html_list.append('<center><table class="commands" id="%s">' % doubles[0])
+        for item in sorted(filelist, key=lambda name: name.lower().rsplit("/", 1)[1]):
+            fitem = io.open(item, encoding="utf-8")
             itemtext = fitem.read()
             fitem.close()
             # only the basename of the file
@@ -208,46 +227,41 @@ def write_helpindex(helpdir):
             # only the first line of itemtext
             name_line = itemtext.splitlines()[0]
             #
-            if name_line.rsplit(' - ')[0] == 'Name: ' + name:
-                fullname = name_line.rsplit(' - ')[1]
+            if name_line.rsplit(" - ")[0] == "Name: " + name:
+                fullname = name_line.rsplit(" - ")[1]
             else:
                 fullname = name
             # file extension
-            itemext = item.rsplit('/')[-2]
+            itemext = item.rsplit("/")[-2]
             if name.startswith(doubles) and os.path.isfile(item):
                 # check if 'name' is available in folder with os.path.isfile(
                 # checkfile)
                 html_list.append('<tr><td class="left">')
-                html_list.append('<a href="%s/%s.html">%s</a></td>' %
-                                 (itemext, name, name))
-                html_list.append('<td>%s</td></tr>' % fullname)
+                html_list.append('<a href="%s/%s.html">%s</a></td>' % (itemext, name, name))
+                html_list.append("<td>%s</td></tr>" % fullname)
 
                 # Better Format for the index.hlp
                 c = len(name)
-                hlp_list.append(name + '\t' * (16 - min(c, 60) // 4) +
-                                fullname)
+                hlp_list.append(name + "\t" * (16 - min(c, 60) // 4) + fullname)
             elif not os.path.isfile(item):
-                print('WARNING: Checkfile ' + item + ' not exist.')
+                print("WARNING: Checkfile " + item + " not exist.")
 
-        html_list.append('</table></center>')
-        html_list.append('</table></center>')
+        html_list.append("</table></center>")
+        html_list.append("</table></center>")
 
     # html_list.append(footer)
-    htmlstring = (u'\n'.join(html_list))
-    indexstring = s.substitute(indexbody=htmlstring, css=csstempl,
-                               footer=footertempl)
+    htmlstring = "\n".join(html_list)
+    indexstring = s.substitute(indexbody=htmlstring, css=csstempl, footer=footertempl)
 
-    f_helpindex = io.open(os.path.join(helpdir, 'helpindex.html'), mode='w',
-                          encoding='utf-8')
+    f_helpindex = io.open(os.path.join(helpdir, "helpindex.html"), mode="w", encoding="utf-8")
     f_helpindex.write(indexstring)
-    f_helpindex.write(u'\n')
+    f_helpindex.write("\n")
     f_helpindex.close()
 
     # Todo: using string template for .hlp
-    f_helphlpindex = io.open(os.path.join(helpdir, 'helpindex.hlp'), mode='w',
-                             encoding='utf-8')
-    f_helphlpindex.write(u'\n'.join(hlp_list))
-    f_helphlpindex.write(u'\n')
+    f_helphlpindex = io.open(os.path.join(helpdir, "helpindex.hlp"), mode="w", encoding="utf-8")
+    f_helphlpindex.write("\n".join(hlp_list))
+    f_helphlpindex.write("\n")
     f_helphlpindex.close()
 
 
@@ -269,7 +283,7 @@ def coll_data(keywords, documentation, num, helpdir, fname, sli_command_list):
                 ifullname = ifullname.lstrip(iname).strip()
                 ifullname = ifullname.lstrip("- ")
                 if iname:
-                    iname = iname.strip('~~')
+                    iname = iname.strip("~~")
                     doc_dic.update({"Name": iname})
                 if ifullname:
                     doc_dic.update({"FullName": ifullname})

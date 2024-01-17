@@ -80,6 +80,11 @@ See also
 
 music_rate_in_proxy, music_cont_out_proxy
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: music_rate_out_proxy
+
 EndUserDocs */
 
 namespace nest
@@ -118,7 +123,7 @@ public:
 
   void handle( InstantaneousRateConnectionEvent& );
 
-  port handles_test_event( InstantaneousRateConnectionEvent&, rport );
+  size_t handles_test_event( InstantaneousRateConnectionEvent&, size_t );
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
@@ -143,7 +148,7 @@ private:
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const;          //!< Store current values in dictionary
-    void set( const DictionaryDatum&, State_& ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, State_& ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------
@@ -184,8 +189,8 @@ private:
   Buffers_ B_;
 };
 
-inline port
-music_rate_out_proxy::handles_test_event( InstantaneousRateConnectionEvent&, rport receptor_type )
+inline size_t
+music_rate_out_proxy::handles_test_event( InstantaneousRateConnectionEvent&, size_t receptor_type )
 {
   // receptor_type i is mapped to channel i of the MUSIC port so we
   // have to generate the index map here, that assigns the channel
@@ -206,6 +211,6 @@ music_rate_out_proxy::handles_test_event( InstantaneousRateConnectionEvent&, rpo
 
 } // namespace
 
-#endif /* #ifndef MUSIC_RATE_OUT_PROXY_H */
+#endif /* HAVE_MUSIC */
 
 #endif

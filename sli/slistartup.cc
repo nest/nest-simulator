@@ -40,7 +40,6 @@
 #include "integerdatum.h"
 #include "interpret.h"
 #include "iostreamdatum.h"
-#include "namedatum.h"
 #include "stringdatum.h"
 
 // Access to environement variables.
@@ -116,10 +115,10 @@ SLIStartup::GetenvFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   StringDatum* sd = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
-  assert( sd != NULL );
+  assert( sd );
   const char* s = ::getenv( sd->c_str() );
   i->OStack.pop();
-  if ( s != NULL )
+  if ( s )
   {
     Token t( new StringDatum( s ) );
     i->OStack.push_move( t );
@@ -145,6 +144,10 @@ SLIStartup::SLIStartup( int argc, char** argv )
   , debug_( false )
   , argv_name( "argv" )
   , version_name( "version" )
+  , version_git_info_name( "git_info" )
+  , version_git_hash_name( "hash" )
+  , version_git_branch_name( "branch" )
+  , version_git_remote_name( "remote" )
   , exitcode_name( "exitcode" )
   , prgbuilt_name( "built" )
   , prefix_name( "prefix" )
@@ -172,6 +175,7 @@ SLIStartup::SLIStartup( int argc, char** argv )
   , have_music_name( "have_music" )
   , have_libneurosim_name( "have_libneurosim" )
   , have_sionlib_name( "have_sionlib" )
+  , have_hdf5_name( "have_hdf5" )
   , ndebug_name( "ndebug" )
   , mpiexec_name( "mpiexec" )
   , mpiexec_numproc_flag_name( "mpiexec_numproc_flag" )
@@ -208,7 +212,7 @@ SLIStartup::SLIStartup( int argc, char** argv )
     StringDatum* sd = new StringDatum( argv[ i ] );
     args_array.push_back( Token( sd ) );
 
-    if ( *sd == "-d" || *sd == "--debug" )
+    if ( *sd == "-d" or *sd == "--debug" )
     {
       debug_ = true;
       verbosity_ = SLIInterpreter::M_ALL; // make the interpreter verbose.
@@ -275,7 +279,14 @@ SLIStartup::init( SLIInterpreter* i )
   assert( statusdict.valid() );
 
   statusdict->insert_move( argv_name, commandline_args_ );
-  statusdict->insert( version_name, Token( new StringDatum( NEST_VERSION_STRING ) ) );
+  statusdict->insert( version_name, Token( new StringDatum( NEST_VERSION ) ) );
+#ifdef NEST_VERSION_GIT
+  DictionaryDatum rcsinfodict( new Dictionary() );
+  rcsinfodict->insert( version_git_hash_name, Token( new StringDatum( NEST_VERSION_GIT_HASH ) ) );
+  rcsinfodict->insert( version_git_branch_name, Token( new StringDatum( NEST_VERSION_GIT_BRANCH ) ) );
+  rcsinfodict->insert( version_git_remote_name, Token( new StringDatum( NEST_VERSION_GIT_REMOTE ) ) );
+  statusdict->insert( version_git_info_name, Token( rcsinfodict ) );
+#endif
   statusdict->insert( exitcode_name, Token( new IntegerDatum( EXIT_SUCCESS ) ) );
   statusdict->insert( prgbuilt_name, Token( new StringDatum( String::compose( "%1 %2", __DATE__, __TIME__ ) ) ) );
   statusdict->insert( prgdatadir_name, Token( new StringDatum( slilibdir ) ) );
@@ -329,6 +340,12 @@ SLIStartup::init( SLIInterpreter* i )
   statusdict->insert( have_sionlib_name, Token( new BoolDatum( true ) ) );
 #else
   statusdict->insert( have_sionlib_name, Token( new BoolDatum( false ) ) );
+#endif
+
+#ifdef HAVE_HDF5
+  statusdict->insert( have_hdf5_name, Token( new BoolDatum( true ) ) );
+#else
+  statusdict->insert( have_hdf5_name, Token( new BoolDatum( false ) ) );
 #endif
 
 #ifdef NDEBUG

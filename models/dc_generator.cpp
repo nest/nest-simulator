@@ -25,6 +25,7 @@
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from libnestutil:
@@ -34,10 +35,15 @@
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
-#include "integerdatum.h"
 
 namespace nest
 {
+void
+register_dc_generator( const std::string& name )
+{
+  register_node_model< dc_generator >( name );
+}
+
 RecordablesMap< dc_generator > dc_generator::recordablesMap_;
 
 template <>
@@ -162,9 +168,6 @@ nest::dc_generator::pre_run_hook()
 void
 nest::dc_generator::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   long start = origin.get_steps();
 
   CurrentEvent ce;

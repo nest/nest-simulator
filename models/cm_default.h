@@ -223,7 +223,14 @@ See also
 
 NEURON simulator ;-D
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: cm_default
+
 EndUserDocs*/
+
+void register_cm_default( const std::string& name );
 
 class cm_default : public ArchivingNode
 {
@@ -235,27 +242,27 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
   void add_compartment_( DictionaryDatum& dd );
   void add_receptor_( DictionaryDatum& dd );
 
   void init_recordables_pointers_();
-  void pre_run_hook();
+  void pre_run_hook() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   CompTree c_tree_;
   std::vector< RingBuffer > syn_buffers_;
@@ -289,18 +296,18 @@ private:
 };
 
 
-inline port
-nest::cm_default::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+nest::cm_default::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
   return target.handles_test_event( e, receptor_type );
 }
 
-inline port
-cm_default::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+cm_default::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
-  if ( ( receptor_type < 0 ) or ( receptor_type >= static_cast< port >( syn_buffers_.size() ) ) )
+  if ( receptor_type >= syn_buffers_.size() )
   {
     std::ostringstream msg;
     msg << "Valid spike receptor ports for " << get_name() << " are in ";
@@ -310,8 +317,8 @@ cm_default::handles_test_event( SpikeEvent&, rport receptor_type )
   return receptor_type;
 }
 
-inline port
-cm_default::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+cm_default::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   // if get_compartment returns nullptr, raise the error
   if ( not c_tree_.get_compartment( long( receptor_type ), c_tree_.get_root(), 0 ) )
@@ -324,8 +331,8 @@ cm_default::handles_test_event( CurrentEvent&, rport receptor_type )
   return receptor_type;
 }
 
-inline port
-cm_default::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+cm_default::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

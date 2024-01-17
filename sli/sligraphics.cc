@@ -28,11 +28,9 @@
 #include <iostream>
 
 // Includes from sli:
-#include "aggregatedatum.h"
 #include "arraydatum.h"
 #include "fdstream.h"
 #include "integerdatum.h"
-#include "numericdatum.h"
 #include "stringdatum.h"
 
 
@@ -81,12 +79,12 @@ SLIgraphics::ReadPGMFunction::execute( SLIInterpreter* i ) const
 
   StringDatum* sd = dynamic_cast< StringDatum* >( i->OStack.top().datum() );
 
-  if ( sd == NULL )
+  if ( not sd )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
-  std::istream* in = NULL;
+  std::istream* in = nullptr;
   std::vector< long > image;
   // for the image parameters: width, height, maxval
   int width = 0, height = 0, maxval = 0;
@@ -193,13 +191,13 @@ SLIgraphics::ReadPGMFunction::readImage( std::istream* in,
     if ( std::string( magic ) == std::string( "P2" ) ) // ASCII PGM
     {
       int tmp;
-      while ( ( *in >> tmp ) && not( in->eof() ) )
+      while ( *in >> tmp and not in->eof() )
       {
-        image.push_back( ( long ) tmp );
+        image.push_back( static_cast< long >( tmp ) );
       }
     }
     else if ( std::string( magic ) == std::string( "P5" )
-      || std::string( magic ) == std::string( "P6" ) ) // Raw PGM (resp. PPM)
+      or std::string( magic ) == std::string( "P6" ) ) // Raw PGM (resp. PPM)
     {
       if ( maxval > 255 )
       {
@@ -210,10 +208,10 @@ SLIgraphics::ReadPGMFunction::readImage( std::istream* in,
       in->read( &tmp, 1 ); // throw away LF after maxval
       // TODO: Protect this from reading too much data like trailing
       // newlines: use for instead of while
-      while ( in->read( &tmp, 1 ) && not( in->eof() ) )
+      while ( in->read( &tmp, 1 ) and not( in->eof() ) )
       {
         tmp2 = ( unsigned char ) tmp;
-        image.push_back( ( long ) tmp2 );
+        image.push_back( static_cast< long >( tmp2 ) );
       }
     }
     else
@@ -279,11 +277,11 @@ SLIgraphics::WritePGMFunction::execute( SLIInterpreter* i ) const
   ArrayDatum* image = dynamic_cast< ArrayDatum* >( i->OStack.pick( 3 ).datum() );
   StringDatum* filename = dynamic_cast< StringDatum* >( i->OStack.pick( 4 ).datum() );
 
-  long width = ( long ) w->get();
-  long height = ( long ) h->get();
-  long maxval = ( long ) m->get();
+  long width = static_cast< long >( w->get() );
+  long height = static_cast< long >( h->get() );
+  long maxval = static_cast< long >( m->get() );
 
-  std::ostream* out = NULL;
+  std::ostream* out = nullptr;
 
   try
   {
@@ -294,7 +292,7 @@ SLIgraphics::WritePGMFunction::execute( SLIInterpreter* i ) const
       throw std::string( "Error when opening file for writing." );
     }
 
-    if ( ( long ) image->size() != width * height )
+    if ( static_cast< long >( image->size() ) != width * height )
     {
       throw std::string( "Array size does not match given dimensions." );
     }

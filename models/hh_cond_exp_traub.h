@@ -83,14 +83,18 @@ example of the Brette et al (2007) review. Default parameter values are chosen
 to match those used with NEST 1.9.10 when preparing data for [1]_. Code for all
 simulators covered is available from ModelDB [3]_.
 
-Note:
-In this model, a spike is emitted if :math:`V_m \geq V_T + 30` mV and :math:`V_m`
-has fallen during the current time step.
+.. note::
 
-To avoid that this leads to multiple spikes during the falling flank of a
-spike, it is essential to chose a sufficiently long refractory period.
-Traub and Miles used  :math:`t_{ref} = 3` ms ([2]_, p 118), while we used
-:math:`t_{ref} = 2` ms in [2]_.
+   In this model, a spike is emitted if :math:`V_m \geq V_T + 30` mV and :math:`V_m`
+   has fallen during the current time step.
+
+   To avoid multiple spikes from occurring during the falling flank of a
+   spike, it is essential to choose a sufficiently long refractory period.
+   Traub and Miles used  :math:`t_{ref} = 3` ms ([2]_, p 118), while we used
+   :math:`t_{ref} = 2` ms in [2]_.
+
+   For further details on asynchronicity in spike and firing events with Hodgkin Huxley models
+   see :ref:`here <hh_details>`.
 
 Parameters
 ++++++++++
@@ -144,7 +148,14 @@ See also
 
 hh_psc_alpha
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: hh_cond_exp_traub
+
 EndUserDocs */
+
+void register_hh_cond_exp_traub( const std::string& name );
 
 class hh_cond_exp_traub : public ArchivingNode
 {
@@ -152,7 +163,7 @@ class hh_cond_exp_traub : public ArchivingNode
 public:
   hh_cond_exp_traub();
   hh_cond_exp_traub( const hh_cond_exp_traub& );
-  ~hh_cond_exp_traub();
+  ~hh_cond_exp_traub() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -162,24 +173,24 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_buffers_();
-  void pre_run_hook();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   // END Boilerplate function declarations ----------------------------
 
@@ -222,7 +233,7 @@ private:
     Parameters_();
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
 public:
@@ -294,7 +305,7 @@ public:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
     double step_;            //!< step size in ms
@@ -329,8 +340,8 @@ public:
   static RecordablesMap< hh_cond_exp_traub > recordablesMap_;
 };
 
-inline port
-hh_cond_exp_traub::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+hh_cond_exp_traub::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -339,8 +350,8 @@ hh_cond_exp_traub::send_test_event( Node& target, rport receptor_type, synindex,
 }
 
 
-inline port
-hh_cond_exp_traub::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+hh_cond_exp_traub::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -349,8 +360,8 @@ hh_cond_exp_traub::handles_test_event( SpikeEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-hh_cond_exp_traub::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+hh_cond_exp_traub::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -359,8 +370,8 @@ hh_cond_exp_traub::handles_test_event( CurrentEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-hh_cond_exp_traub::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+hh_cond_exp_traub::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

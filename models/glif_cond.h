@@ -42,7 +42,7 @@
 
 #include "dictdatum.h"
 
-/* BeginUserDocs: integrate-and-fire, conductance-based
+/* BeginUserDocs:  neuron, integrate-and-fire, conductance-based
 
 Short description
 +++++++++++++++++
@@ -56,8 +56,8 @@ Description
 and fire (GLIF) models [1]_ with conductance-based synapses.
 Incoming spike events induce a postsynaptic change of conductance modeled
 by an alpha function [2]_. The alpha function is normalized such that an event
-of weight 1.0 results in a peak conductance change of 1 nS at :math:`t = tau_syn`. On
-the postsynaptic side, there can be arbitrarily many synaptic time constants.
+of weight 1.0 results in a peak conductance change of 1 nS at :math:`t = \tau_\mathrm{syn}`.
+On the postsynaptic side, there can be arbitrarily many synaptic time constants.
 This can be reached by specifying separate receptor ports, each for a different
 time constant. The port number has to match the respective ``receptor_type`` in
 the connectors.
@@ -78,33 +78,41 @@ GLIF model mechanism setting is based on three parameters
 The settings of these three parameters for the five GLIF models are listed
 below. Other combinations of these parameters will not be supported.
 
-============= ======= ======= ======
-**Parameter settings**
-------------------------------------
-GLIF Model 1   False   False   False
-GLIF Model 2   True    False   False
-GLIF Model 3   False   True    False
-GLIF Model 4   True    True    False
-GLIF Model 5   True    True    True
-============= ======= ======= ======
++--------+---------------------------+----------------------+--------------------+
+| Model  | spike_dependent_threshold | after_spike_currents | adapting_threshold |
++========+===========================+======================+====================+
+| GLIF1  | False                     | False                | False              |
++--------+---------------------------+----------------------+--------------------+
+| GLIF2  | True                      | False                | False              |
++--------+---------------------------+----------------------+--------------------+
+| GLIF3  | False                     | True                 | False              |
++--------+---------------------------+----------------------+--------------------+
+| GLIF4  | True                      | True                 | False              |
++--------+---------------------------+----------------------+--------------------+
+| GLIF5  | True                      | True                 | True               |
++--------+---------------------------+----------------------+--------------------+
 
 Typical parameter setting of different levels of GLIF models for different cells
 can be found and downloaded in the `Allen Cell Type Database
 <https://celltypes.brain-map.org>`_. For example, the default parameter setting of this
-glif_cond neuron model was from the parameter values of GLIF Model 5 of Cell
+``glif_cond`` neuron model was from the parameter values of GLIF Model 5 of Cell
 490626718, which can be retrieved from the `Allen Brain Atlas
 <https://celltypes.brain-map.org/mouse/experiment/electrophysiology/
 490626718>`_, with units being converted from SI units (i.e., V, S (1/Ohm),
 F, s, A) to NEST used units (i.e., mV, nS (1/GOhm), pF, ms, pA) and values
 being rounded to appropriate digits for simplification.
 
-For models with spike dependent threshold (i.e., GLIF 2, GLIF 4 and GLIF 5),
-parameter setting of voltage_reset_fraction and voltage_reset_add may lead to the
-situation that voltage is bigger than threshold after reset. In this case, the neuron
-will continue to spike until the end of the simulation regardless the stimulated inputs.
-We recommend the setting of the parameters of these three models to follow the
-condition of :math:`(E_L + voltage_reset_fraction * ( V_th - E_L ) + voltage_reset_add)
-< (V_th + th_spike_add)`.
+For models with spike dependent threshold (i.e., GLIF2, GLIF4 and GLIF5),
+parameter setting of ``voltage_reset_fraction`` and ``voltage_reset_add`` may lead
+to the situation that voltage is bigger than threshold after reset. In this case,
+the neuron will continue to spike until the end of the simulation regardless the
+stimulated inputs. We recommend the setting of the parameters of these three models
+to follow the condition of
+
+.. math::
+
+    E_L + \mathrm{voltage\_reset\_fraction} \cdot \left( V_\mathrm{th} - E_L \right)
+    + \mathrm{voltage\_reset\_add} < V_\mathrm{th} + \mathrm{th\_spike\_add}
 
 Parameters
 ++++++++++
@@ -187,6 +195,11 @@ See also
 
 gif_psc_exp_multisynapse, gif_cond_exp, gif_cond_exp_multisynapse, gif_pop_psc_exp
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: glif_cond
+
 EndUserDocs */
 
 namespace nest
@@ -194,40 +207,42 @@ namespace nest
 
 extern "C" int glif_cond_dynamics( double, const double*, double*, void* );
 
-class glif_cond : public nest::ArchivingNode
+void register_glif_cond( const std::string& name );
+
+class glif_cond : public ArchivingNode
 {
 public:
   glif_cond();
 
   glif_cond( const glif_cond& );
 
-  ~glif_cond();
+  ~glif_cond() override;
 
   using nest::Node::handle;
   using nest::Node::handles_test_event;
 
-  nest::port send_test_event( nest::Node&, nest::port, nest::synindex, bool );
+  size_t send_test_event( nest::Node&, size_t, nest::synindex, bool ) override;
 
-  void handle( nest::SpikeEvent& );
-  void handle( nest::CurrentEvent& );
-  void handle( nest::DataLoggingRequest& );
+  void handle( nest::SpikeEvent& ) override;
+  void handle( nest::CurrentEvent& ) override;
+  void handle( nest::DataLoggingRequest& ) override;
 
-  nest::port handles_test_event( nest::SpikeEvent&, nest::port );
-  nest::port handles_test_event( nest::CurrentEvent&, nest::port );
-  nest::port handles_test_event( nest::DataLoggingRequest&, nest::port );
+  size_t handles_test_event( nest::SpikeEvent&, size_t ) override;
+  size_t handles_test_event( nest::CurrentEvent&, size_t ) override;
+  size_t handles_test_event( nest::DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
   //! Reset internal buffers of neuron.
-  void init_buffers_();
+  void init_buffers_() override;
 
   //! Initialize auxiliary quantities, leave parameters and state untouched.
-  void pre_run_hook();
+  void pre_run_hook() override;
 
   //! Take neuron through given time interval
-  void update( nest::Time const&, const long, const long );
+  void update( nest::Time const&, const long, const long ) override;
 
   // make dynamics function quasi-member
   friend int glif_cond_dynamics( double, const double*, double*, void* );
@@ -277,7 +292,7 @@ private:
     Parameters_();
 
     void get( DictionaryDatum& ) const;
-    double set( const DictionaryDatum& );
+    double set( const DictionaryDatum&, Node* );
   };
 
 
@@ -319,7 +334,7 @@ private:
     State_( const Parameters_& );
 
     void get( DictionaryDatum&, const Parameters_& ) const;
-    void set( const DictionaryDatum&, const Parameters_&, double );
+    void set( const DictionaryDatum&, const Parameters_&, double, Node* );
   };
 
 
@@ -340,7 +355,7 @@ private:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // IntergrationStep_ should be reset with the neuron on ResetNetwork,
+    // IntegrationStep_ should be reset with the neuron on ResetNetwork,
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
@@ -435,16 +450,16 @@ nest::glif_cond::Parameters_::n_receptors_() const
 }
 
 
-inline nest::port
-nest::glif_cond::send_test_event( nest::Node& target, nest::port receptor_type, nest::synindex, bool )
+inline size_t
+nest::glif_cond::send_test_event( nest::Node& target, size_t receptor_type, nest::synindex, bool )
 {
   nest::SpikeEvent e;
   e.set_sender( *this );
   return target.handles_test_event( e, receptor_type );
 }
 
-inline nest::port
-nest::glif_cond::handles_test_event( nest::CurrentEvent&, nest::port receptor_type )
+inline size_t
+nest::glif_cond::handles_test_event( nest::CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -453,8 +468,8 @@ nest::glif_cond::handles_test_event( nest::CurrentEvent&, nest::port receptor_ty
   return 0;
 }
 
-inline nest::port
-nest::glif_cond::handles_test_event( nest::DataLoggingRequest& dlr, nest::port receptor_type )
+inline size_t
+nest::glif_cond::handles_test_event( nest::DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -480,10 +495,10 @@ glif_cond::get_status( DictionaryDatum& d ) const
 inline void
 glif_cond::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_;                 // temporary copy in case of errors
-  const double delta_EL = ptmp.set( d ); // throws if BadProperty
-  State_ stmp = S_;                      // temporary copy in case of errors
-  stmp.set( d, ptmp, delta_EL );         // throws if BadProperty
+  Parameters_ ptmp = P_;                       // temporary copy in case of errors
+  const double delta_EL = ptmp.set( d, this ); // throws if BadProperty
+  State_ stmp = S_;                            // temporary copy in case of errors
+  stmp.set( d, ptmp, delta_EL, this );         // throws if BadProperty
 
   ArchivingNode::set_status( d );
 

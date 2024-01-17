@@ -69,6 +69,11 @@ reversed (i.e., connecting *sr* to *neurons*).
 See also
 ++++++++
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: spike_recorder
+
 EndUserDocs */
 
 namespace nest
@@ -78,6 +83,8 @@ namespace nest
  * Class spike_recorder
  */
 
+void register_spike_recorder( const std::string& name );
+
 class spike_recorder : public RecordingDevice
 {
 
@@ -86,19 +93,19 @@ public:
   spike_recorder( const spike_recorder& );
 
   bool
-  has_proxies() const
+  has_proxies() const override
   {
     return false;
   }
 
   bool
-  local_receiver() const
+  local_receiver() const override
   {
     return true;
   }
 
   Name
-  get_element_type() const
+  get_element_type() const override
   {
     return names::recorder;
   }
@@ -112,23 +119,23 @@ public:
   using Node::handles_test_event;
   using Node::receives_signal;
 
-  void handle( SpikeEvent& );
+  void handle( SpikeEvent& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
 
-  Type get_type() const;
-  SignalType receives_signal() const;
+  Type get_type() const override;
+  SignalType receives_signal() const override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void pre_run_hook();
-  void update( Time const&, const long, const long );
+  void pre_run_hook() override;
+  void update( Time const&, const long, const long ) override;
 };
 
-inline port
-spike_recorder::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+spike_recorder::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

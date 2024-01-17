@@ -113,28 +113,31 @@ positive or negative):
  \gamma_i = \gamma_i + q_{\gamma_i} \text{ (in case of spike emission).}
 
 
-Note:
+.. note::
 
-In the current implementation of the model,
-the values of :math:`\eta_i` and :math:`\gamma_i` are affected immediately
-after spike emission. However, `GIF toolbox <http://wiki.epfl.ch/giftoolbox>`_,
-which fits the model using experimental data, requires a different set of
-:math:`\eta_i` and :math:`\gamma_i`. It applies the jump of :math:`\eta_i` and
-:math:`\gamma_i` after the refractory period. One can easily convert between
-:math:`q_{\eta/\gamma}` of these two approaches:
+   In the current implementation of the model,
+   the values of :math:`\eta_i` and :math:`\gamma_i` are affected immediately
+   after spike emission. However, `GIF toolbox <http://wiki.epfl.ch/giftoolbox>`_,
+   which fits the model using experimental data, requires a different set of
+   :math:`\eta_i` and :math:`\gamma_i`. It applies the jump of :math:`\eta_i` and
+   :math:`\gamma_i` after the refractory period. One can easily convert between
+   :math:`q_{\eta/\gamma}` with these two approaches:
 
-.. math::
+   .. math::
 
-   q_{\eta,giftoolbox} = q_{\eta,NEST} \cdot (1 - \exp( -\tau_{ref} / \tau_\eta ))
+      q_{\eta,giftoolbox} = q_{\eta,NEST} \cdot (1 - \exp( -\tau_{ref} / \tau_\eta ))
 
-The same formula applies for :math:`q_\gamma`.
+   The same formula applies for :math:`q_\gamma`.
 
-On the postsynaptic side, there can be arbitrarily many synaptic time constants
-(gif_psc_exp has exactly two: ``tau_syn_ex`` and ``tau_syn_in``). This can be reached
-by specifying separate receptor ports, each for a different time constant. The
-port number has to match the respective ``receptor_type`` in the connectors.
+On the postsynaptic side, there can be arbitrarily many synaptic time
+constants (gif_psc_exp has exactly two: ``tau_syn_ex`` and
+``tau_syn_in``). This can be reached by specifying separate receptor
+ports, each for a different time constant. The port number has to
+match the respective ``receptor_type`` in the connectors. The shape of
+synaptic conductance is exponential.
 
-The shape of synaptic conductance is exponential.
+When connecting to conductance-based multisynapse models, all synaptic weights
+must be non-negative.
 
 Parameters
 ++++++++++
@@ -211,7 +214,14 @@ See also
 
 pp_psc_delta, gif_cond_exp, iaf_psc_exp_multisynapse, gif_psc_exp_multisynapse
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: gif_cond_exp_multisynapse
+
 EndUserDocs */
+
+void register_gif_cond_exp_multisynapse( const std::string& name );
 
 class gif_cond_exp_multisynapse : public ArchivingNode
 {
@@ -219,7 +229,7 @@ class gif_cond_exp_multisynapse : public ArchivingNode
 public:
   gif_cond_exp_multisynapse();
   gif_cond_exp_multisynapse( const gif_cond_exp_multisynapse& );
-  ~gif_cond_exp_multisynapse();
+  ~gif_cond_exp_multisynapse() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -229,25 +239,25 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_buffers_();
-  void pre_run_hook();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
   // make dynamics function quasi-member
   friend int gif_cond_exp_multisynapse_dynamics( double, const double*, double*, void* );
@@ -377,7 +387,7 @@ private:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing system
 
-    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
     double step_;            //!< step size in ms
@@ -440,8 +450,8 @@ private:
   static RecordablesMap< gif_cond_exp_multisynapse > recordablesMap_;
 };
 
-inline port
-gif_cond_exp_multisynapse::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+gif_cond_exp_multisynapse::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -449,10 +459,10 @@ gif_cond_exp_multisynapse::send_test_event( Node& target, rport receptor_type, s
   return target.handles_test_event( e, receptor_type );
 }
 
-inline port
-gif_cond_exp_multisynapse::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+gif_cond_exp_multisynapse::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
-  if ( receptor_type <= 0 || receptor_type > static_cast< port >( P_.n_receptors() ) )
+  if ( receptor_type <= 0 or receptor_type > P_.n_receptors() )
   {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
   }
@@ -461,8 +471,8 @@ gif_cond_exp_multisynapse::handles_test_event( SpikeEvent&, rport receptor_type 
   return receptor_type;
 }
 
-inline port
-gif_cond_exp_multisynapse::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+gif_cond_exp_multisynapse::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -471,8 +481,8 @@ gif_cond_exp_multisynapse::handles_test_event( CurrentEvent&, rport receptor_typ
   return 0;
 }
 
-inline port
-gif_cond_exp_multisynapse::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+gif_cond_exp_multisynapse::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

@@ -33,11 +33,18 @@
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
+
+void
+nest::register_pulsepacket_generator( const std::string& name )
+{
+  register_node_model< pulsepacket_generator >( name );
+}
 
 
 /* ----------------------------------------------------------------
@@ -74,7 +81,6 @@ nest::pulsepacket_generator::Parameters_::get( DictionaryDatum& d ) const
 void
 nest::pulsepacket_generator::Parameters_::set( const DictionaryDatum& d, pulsepacket_generator& ppg, Node* node )
 {
-
   // We cannot use a single line here since short-circuiting may stop evaluation
   // prematurely. Therefore, neednewpulse must be second arg on second line.
   bool neednewpulse = updateValueParam< long >( d, names::activity, a_, node );
@@ -164,11 +170,8 @@ nest::pulsepacket_generator::pre_run_hook()
 
 
 void
-nest::pulsepacket_generator::update( Time const& T, const long from, const long to )
+nest::pulsepacket_generator::update( Time const& T, const long, const long to )
 {
-  assert( to >= from );
-  assert( ( to - from ) <= kernel().connection_manager.get_min_delay() );
-
   if ( ( V_.start_center_idx_ == P_.pulse_times_.size() and B_.spiketimes_.empty() )
     or ( not StimulationDevice::is_active( T ) ) )
   {

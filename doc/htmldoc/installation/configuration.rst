@@ -7,7 +7,6 @@ The behavior of the NEST executable can be tweaked by supplying it
 with command line switches, SLI scripts, and additional parameters for
 the scripts.
 
-
 Command line switches for the nest executable
 ---------------------------------------------
 

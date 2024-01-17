@@ -85,7 +85,7 @@ public:
   {
   }
 
-  ~RecordingBackendScreen() throw()
+  ~RecordingBackendScreen() throw() override
   {
   }
 
@@ -144,4 +144,4 @@ private:
 
 } // namespace
 
-#endif // RECORDING_BACKEND_SCREEN_H
+#endif /* #ifndef RECORDING_BACKEND_SCREEN_H */

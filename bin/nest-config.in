@@ -12,10 +12,12 @@ Known values for OPTION are:
 
   --prefix              NEST install prefix for architecture-independent files
   --exec-prefix         NEST install prefix for architecture-dependent files
-  --libs                print library linking information
+  --libs                print library linking information for extension modules
   --cflags              print pre-processor and compiler flags
   --includes            print includes
   --compiler            print the compiler used to compile NEST
+  --compiler-name       Print the compiler name used to compile NEST
+  --compiler-version    Print the compiler version used to compile NEST
   --python-executable   print full path to Python interpreter used
   --python-version      print Python version string for interpreter
   --static-libraries    print "ON" if configured for static libraries, "OFF" otherwise
@@ -54,7 +56,7 @@ while test $# -gt 0; do
         echo $exec_prefix
         ;;
     --version)
-        echo "@NEST_VERSION_STRING@"
+        echo "@NEST_VERSION@"
         ;;
     --help)
         usage 0
@@ -66,10 +68,16 @@ while test $# -gt 0; do
         echo "@ALL_CXXFLAGS@"
         ;;
     --libs)
-        echo "-L$prefix/@CMAKE_INSTALL_LIBDIR@/nest @ALL_LIBS@"
+        echo "-L$prefix/@CMAKE_INSTALL_LIBDIR@/nest @MODULE_LINK_LIBS@"
         ;;
     --compiler)
         echo "@CMAKE_CXX_COMPILER@"
+        ;;
+    --compiler-name)
+        echo "@CMAKE_CXX_COMPILER_ID@"
+        ;;
+    --compiler-version)
+        echo "@CMAKE_CXX_COMPILER_VERSION@"
         ;;
     --python-executable)
         echo "@Python_EXECUTABLE@"

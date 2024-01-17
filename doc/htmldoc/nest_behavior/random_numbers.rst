@@ -3,6 +3,12 @@
 Randomness in NEST Simulations
 ==============================
 
+.. admonition:: osx-arm64: missing random number generators
+
+   Due to a cross-compiling issue in the conda NEST package, some random number
+   generators are not available if you are using macOS arm64 architecture.
+   The available generators are the Mersenne Twister generators `mt19937` and `mt19937_64`.
+
 Random numbers in network simulations
 -------------------------------------
 
@@ -99,7 +105,7 @@ set it in the following way:
 
 It is a good idea to cross-check your simulation results using a different random number generator
 type. Even though generators and our understanding of them has become much better in recent years,
-there always remains a risk of RNG artifacts affecting simulations.
+there always remains a risk of :hxt_ref:`RNG` artifacts affecting simulations.
 
 
 Seed the random number generator
@@ -118,7 +124,7 @@ You can use any number :math:`s` with :math:`1\leq s \leq 2^{31}-1` as seed:
 As long as you use different seed values, NEST will ensure that all random number streams in a
 simulation are seeded properly; see :ref:`Random number internals <random_internals>` for details.
 
-You can inspect the RNG type and seed value used with
+You can inspect the :hxt_ref:`RNG` type and seed value used with
 
 ::
 
@@ -136,11 +142,11 @@ The NEST random module
 The ``nest.random`` module provides a range of random distributions that
 can be used to specify parameters for neurons, synapses, and connection
 rules. See :ref:`below for examples <random_examples>` on how to use them in
-practice.
+practice and :ref:`some details on randomizing delays <random_delays>`.
 
 .. automodule:: nest.random.hl_api_random
     :members:
-
+    :noindex:
 
 .. _random_examples:
 
@@ -151,7 +157,7 @@ Examples of using randomness
 Randomize the membrane potential
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To set the membrane potential at creation, just pass a random distribution as the ``V_m`` value.
+To set the membrane potential at creation, just pass a random distribution as the :hxt_ref:`V_m` value.
 
 ::
 
@@ -184,6 +190,49 @@ Likewise, synapse parameters can be specified using the random distributions.
 
    nest.Connect(n, n, syn_spec={'weight': nest.random.normal(mean=0., std=1.),
                                 'delay': nest.random.uniform(min=0.5, max=1.5)})
+
+.. _random_delays:
+
+Rounding effects when randomizing delays
+........................................
+
+Connection delays in NEST are rounded to the nearest multiple of the simulation resolution,
+even if delays are drawn from a continuous distribution. This will work as expected if the
+distribution has infinite support, for example, the normal distribution. For the uniform distribution,
+though, this rounding will usually lead to lower probabilities for the delays at the edges of
+the distribution. This then also applies to a truncated normal distribution.
+Consider the following case:
+
+::
+
+    nest.resolution = 0.1
+    n = nest.Create('iaf_psc_alpha', 100)
+    nest.Connect(n, n, syn_spec={'delay': nest.random.uniform(min=1, max=2)})
+
+This will create 10000 connections in total with delay values 1.0, 1.1, ..., 2.0. But while
+the interior delay values 1.1, ..., 1.9 will occur approximately 1000 times each, the first and last
+cases, 1.0 and 2.0, will occur only approximately 500 times each. This happens because NEST
+first draws the delay uniformly from :math:`[1, 2)` and then rounds to a fixed delay. Thus,
+any number from :math:`[1.05, 1.15)` will be rounded to 1.1, but only numbers in
+:math:`[1.0, 1.05)` will be rounded to 1.0.
+
+To achieve equal probabilities of the first and last values, you can either extend the interval
+of the uniform distribution by half the resolution:
+
+::
+
+    nest.Connect(n, n, syn_spec={'delay': nest.random.uniform(min=1 - 0.5 * nest.resolution,
+                                                              max=2 + 0.5 * nest.resolution)})
+
+or use the uniform integer distribution. Since it always draws numbers beginning with zero,
+this is slightly more cumbersome:
+
+::
+
+    nest.Connect(n, n, syn_spec={'delay': 1 + 0.1 * nest.random.uniform_int(11)})
+
+An in-depth analysis of delay rounding is available in a
+`master thesis <https://hdl.handle.net/11250/3012689>`_.
 
 Randomize spatial positions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -241,7 +290,7 @@ before continuing.
 
 A key principle of parallel simulation in NEST is that a simulation performed with a fixed
 number of virtual processes :math:`N_{\text{vp}} = M \times T` shall produce identical results
-independent of the number of MPI processes :math:`M` and threads :math:`T` that go into each virtual process.
+independent of the number of :hxt_ref:`MPI` processes :math:`M` and threads :math:`T` that go into each virtual process.
 To observe this principle when also randomizing from the Python level, it is essential
 to create one Python random number generator per virtual process and use the random number
 generator for the virtual process to which a node belongs (for synapses: the VP of the target
@@ -250,7 +299,7 @@ node).
 We consider first an example setting a random membrane potential.
 We use the `modern random package introduced with NumPy 1.17 <https://numpy.org/doc/stable/reference/random/>`__.
 
-.. admonition:: Don't do this in Python!
+.. warning:: Don't do this in Python!
 
    The randomization example below is shown only to demonstrate how you in principle could
    use random values generated at the Python level in a NEST simulation in a way consistent
@@ -347,7 +396,7 @@ NEST therefore provides three kinds of random number streams
 This results in a total of :math:`N_{\text{vp}}+2` random number streams.
 To avoid unnecessary complications in the code using random numbers,
 serial simulations also use all three kinds. The generators for all streams
-are of the same type. If the RNG type is changed, the change
+are of the same type. If the :hxt_ref:`RNG` type is changed, the change
 applies to all generators.
 
 NEST regularly checks during a simulation that the rank- and VP-synchronized
@@ -395,19 +444,19 @@ different seeds will overlap is given by
 
 We have
 
-.. math ::
+.. math::
 
    s = N_{\text{vp}} = 10^7 \sim 2^{23}\quad\text{and}\quad l = 10^{11} \sim 2^{37}\;,
 
-so assuming an RNG period of :math:`r = 2^{128}` we obtain
+so assuming an :hxt_ref:`RNG` period of :math:`r = 2^{128}` we obtain
 
-.. math ::
+.. math::
 
    p_{\text{overlap}} \sim \left(2^{23}\right)^2 \times 2^{37} / 2^{128} = 2^{-45} \sim 3 \times 10^{-14}
 
 while for a period of :math:`r = 2^{256}` we obtain
 
-.. math ::
+.. math::
 
    p_{\text{overlap}} \sim 2^{-173} \sim 10^{-52}\; .
 

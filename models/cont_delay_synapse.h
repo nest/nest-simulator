@@ -71,7 +71,14 @@ See also
 
 static_synapse, iaf_psc_alpha_ps
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: cont_delay_synapse
+
 EndUserDocs */
+
+void register_cont_delay_synapse( const std::string& name );
 
 template < typename targetidentifierT >
 class cont_delay_synapse : public Connection< targetidentifierT >
@@ -80,6 +87,10 @@ class cont_delay_synapse : public Connection< targetidentifierT >
 public:
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
+
+  static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
+    | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
+    | ConnectionModelProperties::SUPPORTS_LBL | ConnectionModelProperties::SUPPORTS_WFR;
 
   /**
    * Default Constructor.
@@ -136,7 +147,7 @@ public:
    * \param e The event to send
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e, thread t, const CommonSynapseProperties& cp );
+  bool send( Event& e, size_t t, const CommonSynapseProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -144,50 +155,50 @@ public:
     // Ensure proper overriding of overloaded virtual functions.
     // Return values from functions are ignored.
     using ConnTestDummyNodeBase::handles_test_event;
-    port
-    handles_test_event( SpikeEvent&, rport )
+    size_t
+    handles_test_event( SpikeEvent&, size_t ) override
     {
       return invalid_port;
     }
-    port
-    handles_test_event( RateEvent&, rport )
+    size_t
+    handles_test_event( RateEvent&, size_t ) override
     {
       return invalid_port;
     }
-    port
-    handles_test_event( DataLoggingRequest&, rport )
+    size_t
+    handles_test_event( DataLoggingRequest&, size_t ) override
     {
       return invalid_port;
     }
-    port
-    handles_test_event( CurrentEvent&, rport )
+    size_t
+    handles_test_event( CurrentEvent&, size_t ) override
     {
       return invalid_port;
     }
-    port
-    handles_test_event( ConductanceEvent&, rport )
+    size_t
+    handles_test_event( ConductanceEvent&, size_t ) override
     {
       return invalid_port;
     }
-    port
-    handles_test_event( DoubleDataEvent&, rport )
+    size_t
+    handles_test_event( DoubleDataEvent&, size_t ) override
     {
       return invalid_port;
     }
-    port
-    handles_test_event( DSSpikeEvent&, rport )
+    size_t
+    handles_test_event( DSSpikeEvent&, size_t ) override
     {
       return invalid_port;
     }
-    port
-    handles_test_event( DSCurrentEvent&, rport )
+    size_t
+    handles_test_event( DSCurrentEvent&, size_t ) override
     {
       return invalid_port;
     }
   };
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -205,8 +216,8 @@ private:
  * \param p The port under which this connection is stored in the Connector.
  */
 template < typename targetidentifierT >
-inline void
-cont_delay_synapse< targetidentifierT >::send( Event& e, thread t, const CommonSynapseProperties& )
+inline bool
+cont_delay_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapseProperties& )
 {
   e.set_receiver( *get_target( t ) );
   e.set_weight( weight_ );
@@ -230,7 +241,12 @@ cont_delay_synapse< targetidentifierT >::send( Event& e, thread t, const CommonS
   e();
   // reset offset to original value
   e.set_offset( orig_event_offset );
+
+  return true;
 }
+
+template < typename targetidentifierT >
+constexpr ConnectionModelProperties cont_delay_synapse< targetidentifierT >::properties;
 
 } // of namespace nest
 

@@ -78,19 +78,19 @@ The membrane potential is given by the following differential equation:
 
 .. math::
 
- C dV/dt= -g_L(V-E_L)+g_L\cdot\Delta_T\cdot\exp((V-V_T)/\Delta_T)-g_e(t)(V-E_e) \\
-                                                     -g_i(t)(V-E_i)-w +I_e
+ C dV/dt= -g_L(V-E_L)+g_L\cdot\Delta_T\cdot\exp((V-V_T)/\Delta_T) - w(t) + I_{syn}(t) + I_e
 
 and
 
 .. math::
 
- \tau_w \cdot dw/dt= a(V-E_L) -W
+ \tau_w \cdot dw/dt= a(V-E_L) - w
 
+.. math::
 
-Note that the spike detection threshold ``V_peak`` is automatically set to
-:math:`V_th+10` mV to avoid numerical instabilites that may result from
-setting ``V_peak`` too high.
+ I_{syn}(t) ~ \sum_k \exp((t-t^k)/\tau_{syn})H(t - t^k) .
+
+Here :math:`H(t)` is the Heaviside step function and `k` indexes incoming spikes.
 
 For implementation details see the
 `aeif_models_implementation <../model_details/aeif_models_implementation.ipynb>`_ notebook.
@@ -129,7 +129,7 @@ The following parameters can be set in the status dictionary.
  b       pA      Spike-triggered adaptation
  Delta_T mV      Slope factor
  tau_w   ms      Adaptation time constant
- V_t     mV      Spike initiation threshold
+ V_th    mV      Spike initiation threshold
  V_peak  mV      Spike detection threshold
 ======== ======= ==================================
 
@@ -173,7 +173,14 @@ See also
 
 iaf_psc_exp, aeif_cond_exp
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: aeif_psc_exp
+
 EndUserDocs */
+
+void register_aeif_psc_exp( const std::string& name );
 
 class aeif_psc_exp : public ArchivingNode
 {
@@ -181,7 +188,7 @@ class aeif_psc_exp : public ArchivingNode
 public:
   aeif_psc_exp();
   aeif_psc_exp( const aeif_psc_exp& );
-  ~aeif_psc_exp();
+  ~aeif_psc_exp() override;
 
   /**
    * Import sets of overloaded virtual functions.
@@ -191,23 +198,23 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  size_t send_test_event( Node&, size_t, synindex, bool ) override;
 
-  void handle( SpikeEvent& );
-  void handle( CurrentEvent& );
-  void handle( DataLoggingRequest& );
+  void handle( SpikeEvent& ) override;
+  void handle( CurrentEvent& ) override;
+  void handle( DataLoggingRequest& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
+  size_t handles_test_event( CurrentEvent&, size_t ) override;
+  size_t handles_test_event( DataLoggingRequest&, size_t ) override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
 private:
-  void init_buffers_();
-  void pre_run_hook();
-  void update( const Time&, const long, const long );
+  void init_buffers_() override;
+  void pre_run_hook() override;
+  void update( const Time&, const long, const long ) override;
 
   // END Boilerplate function declarations ----------------------------
 
@@ -233,7 +240,7 @@ private:
     double g_L;        //!< Leak Conductance in nS
     double C_m;        //!< Membrane Capacitance in pF
     double E_L;        //!< Leak reversal Potential (aka resting potential) in mV
-    double Delta_T;    //!< Slope factor in ms
+    double Delta_T;    //!< Slope factor in mV
     double tau_w;      //!< Adaptation time-constant in ms
     double a;          //!< Subthreshold adaptation in nS
     double b;          //!< Spike-triggered adaptation in pA
@@ -247,7 +254,7 @@ private:
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Node* node ); //!< Set values from dicitonary
+    void set( const DictionaryDatum&, Node* node ); //!< Set values from dictionary
   };
 
 public:
@@ -311,7 +318,7 @@ public:
     gsl_odeiv_evolve* e_;  //!< evolution function
     gsl_odeiv_system sys_; //!< struct describing the GSL system
 
-    // Since IntergrationStep_ is initialized with step_, and the resolution
+    // Since IntegrationStep_ is initialized with step_, and the resolution
     // cannot change after nodes have been created, it is safe to place both
     // here.
     double step_;            //!< step size in ms
@@ -364,8 +371,8 @@ public:
   static RecordablesMap< aeif_psc_exp > recordablesMap_;
 };
 
-inline port
-aeif_psc_exp::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+aeif_psc_exp::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -373,8 +380,8 @@ aeif_psc_exp::send_test_event( Node& target, rport receptor_type, synindex, bool
   return target.handles_test_event( e, receptor_type );
 }
 
-inline port
-aeif_psc_exp::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+aeif_psc_exp::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -383,8 +390,8 @@ aeif_psc_exp::handles_test_event( SpikeEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-aeif_psc_exp::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+aeif_psc_exp::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -393,8 +400,8 @@ aeif_psc_exp::handles_test_event( CurrentEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-aeif_psc_exp::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+aeif_psc_exp::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

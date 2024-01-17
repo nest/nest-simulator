@@ -29,10 +29,19 @@
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
+#include "nest_impl.h"
 
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
+
+void
+nest::register_spike_dilutor( const std::string& name )
+{
+  register_node_model< spike_dilutor >( name );
+}
+
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
@@ -119,9 +128,6 @@ nest::spike_dilutor::pre_run_hook()
 void
 nest::spike_dilutor::update( Time const& T, const long from, const long to )
 {
-  assert( to >= 0 and static_cast< delay >( from ) < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
     if ( not device_.is_active( T ) )

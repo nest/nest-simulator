@@ -108,8 +108,8 @@ To create spatially distributed nodes (see :ref:`spatial_networks` for more), us
   grid_nodes = nest.Create('iaf_psc_alpha', positions=nest.spatial.grid(shape=[10, 8]))
   nest.PlotLayer(grid_nodes);
 
- image:: ../static/img/NEST3_23_0.png
-:width: 500px
+.. image:: ../static/img/NEST3_23_0.png
+  :width: 500px
 
 .. code-block:: ipython
 
@@ -167,7 +167,7 @@ others can be used when connecting.
    spatial_nodes = nest.Create('iaf_psc_alpha', positions=positions)
 
    parameter = -60 + nest.spatial.pos.x + (0.4 * nest.spatial.pos.x * nest.random.normal())
-   spatial_nodes.set('V_m'=parameter)
+   spatial_nodes.set(V_m=parameter)
 
    node_pos = np.array(nest.GetPosition(spatial_nodes))
    node_pos[:,1]
@@ -252,7 +252,7 @@ parameter:
     fig, ax = pyplot.subplots(figsize=(12, 6))
     bars = ax.hist(targets, bins=N, edgecolor='black', linewidth=1.2)
 
-    pyplot.xticks(bars[1] + 0.5,np.arange(1, N+1))
+    pyplot.xticks(bars[1] + 0.5,np.arange(1, N+2))
     ax.set_title('Connections from node with NodeID {}'.format(spatial_nodes[middle_node].get('global_id')))
     ax.set_xlabel('Target NodeID')
     ax.set_ylabel('Num. connections');
@@ -351,6 +351,8 @@ The ``nest.math.min()`` and ``nest.math.max()`` functions are used to clip
 a parameter. Essentially they work like the standard ``min()`` and
 ``max()`` functions, ``nest.math.min()`` yielding the smaller of two
 values, and ``nest.math.max()`` yielding the larger of two values.
+Note that the order of inputs matter, meaning that the first argument
+must be a parameter, and the second argument must be a threshold value.
 
 ::
 
@@ -466,9 +468,9 @@ Using parameters makes it easy to set node properties
 |                                               |                                                    |
 | ::                                            | ::                                                 |
 |                                               |                                                    |
-|     for gid in nrns:                          |     nrns.V_m=nest.random.uniform(-20., 20)         |
-|       v_m = numpy.random.uniform(-20., 20.)   |                                                    |
-|       nest.SetStatus([node_id], {'V_m': V_m}) |                                                    |
+|     for gid in nrns:                          |     nrns.V_m = nest.random.uniform(-20.0, 20.0)    |
+|       v_m = numpy.random.uniform(-20.0, 20.0) |                                                    |
+|       nest.SetStatus(gid, {"V_m": v_m})       |                                                    |
 |                                               |                                                    |
 |                                               |                                                    |
 +-----------------------------------------------+----------------------------------------------------+

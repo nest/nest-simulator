@@ -26,9 +26,6 @@
 
 // C++ includes:
 #include <cstdio>
-#include <iomanip>
-#include <iostream>
-#include <limits>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -37,13 +34,11 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -53,6 +48,12 @@ nest::RecordablesMap< nest::iaf_chxk_2008 > nest::iaf_chxk_2008::recordablesMap_
 
 namespace nest // template specialization must be placed in namespace
 {
+void
+register_iaf_chxk_2008( const std::string& name )
+{
+  register_node_model< iaf_chxk_2008 >( name );
+}
+
 /*
  * Override the create() method with one call to RecordablesMap::insert_()
  * for each quantity to be recorded.
@@ -171,9 +172,9 @@ nest::iaf_chxk_2008::State_::operator=( const State_& s )
 
 nest::iaf_chxk_2008::Buffers_::Buffers_( iaf_chxk_2008& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -181,9 +182,9 @@ nest::iaf_chxk_2008::Buffers_::Buffers_( iaf_chxk_2008& n )
 
 nest::iaf_chxk_2008::Buffers_::Buffers_( const Buffers_&, iaf_chxk_2008& n )
   : logger_( n )
-  , s_( 0 )
-  , c_( 0 )
-  , e_( 0 )
+  , s_( nullptr )
+  , c_( nullptr )
+  , e_( nullptr )
 {
   // Initialization of the remaining members is deferred to
   // init_buffers_().
@@ -305,7 +306,7 @@ nest::iaf_chxk_2008::init_buffers_()
   B_.step_ = Time::get_resolution().get_ms();
   B_.IntegrationStep_ = B_.step_;
 
-  if ( B_.s_ == 0 )
+  if ( not B_.s_ )
   {
     B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   }
@@ -314,7 +315,7 @@ nest::iaf_chxk_2008::init_buffers_()
     gsl_odeiv_step_reset( B_.s_ );
   }
 
-  if ( B_.c_ == 0 )
+  if ( not B_.c_ )
   {
     B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
   }
@@ -323,7 +324,7 @@ nest::iaf_chxk_2008::init_buffers_()
     gsl_odeiv_control_init( B_.c_, 1e-3, 0.0, 1.0, 0.0 );
   }
 
-  if ( B_.e_ == 0 )
+  if ( not B_.e_ )
   {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
   }
@@ -333,7 +334,7 @@ nest::iaf_chxk_2008::init_buffers_()
   }
 
   B_.sys_.function = iaf_chxk_2008_dynamics;
-  B_.sys_.jacobian = NULL;
+  B_.sys_.jacobian = nullptr;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
 
@@ -358,10 +359,6 @@ nest::iaf_chxk_2008::pre_run_hook()
 void
 nest::iaf_chxk_2008::update( Time const& origin, const long from, const long to )
 {
-
-  assert( to >= 0 and ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
 

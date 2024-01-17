@@ -30,6 +30,14 @@
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
+
+void
+nest::register_mip_generator( const std::string& name )
+{
+  register_node_model< mip_generator >( name );
+}
+
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
@@ -119,12 +127,9 @@ nest::mip_generator::pre_run_hook()
 void
 nest::mip_generator::update( Time const& T, const long from, const long to )
 {
-  assert( to >= 0 and static_cast< delay >( from ) < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
-    if ( not StimulationDevice::is_active( T ) || P_.rate_ <= 0 )
+    if ( not StimulationDevice::is_active( T ) or P_.rate_ <= 0 )
     {
       return; // no spikes to be generated
     }

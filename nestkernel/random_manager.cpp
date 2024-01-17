@@ -57,66 +57,29 @@ nest::RandomManager::RandomManager()
 
 nest::RandomManager::~RandomManager()
 {
-  finalize();
 }
 
 void
-nest::RandomManager::initialize()
+nest::RandomManager::initialize( const bool reset_kernel )
 {
-  register_rng_type< std::mt19937 >( "mt19937" );
-  register_rng_type< std::mt19937_64 >( "mt19937_64" );
+  if ( reset_kernel )
+  {
+    register_rng_type< std::mt19937 >( "mt19937" );
+    register_rng_type< std::mt19937_64 >( "mt19937_64" );
 #ifdef HAVE_RANDOM123
-  register_rng_type< r123::Engine< r123::Philox4x32 > >( "Philox_32" );
+    register_rng_type< r123::Engine< r123::Philox4x32 > >( "Philox_32" );
 #if R123_USE_PHILOX_64BIT
-  register_rng_type< r123::Engine< r123::Philox4x64 > >( "Philox_64" );
+    register_rng_type< r123::Engine< r123::Philox4x64 > >( "Philox_64" );
 #endif
-  register_rng_type< r123::Engine< r123::Threefry4x32 > >( "Threefry_32" );
+    register_rng_type< r123::Engine< r123::Threefry4x32 > >( "Threefry_32" );
 #if R123_USE_64BIT
-  register_rng_type< r123::Engine< r123::Threefry4x64 > >( "Threefry_64" );
+    register_rng_type< r123::Engine< r123::Threefry4x64 > >( "Threefry_64" );
 #endif
 #endif
 
-  current_rng_type_ = DEFAULT_RNG_TYPE_;
-  base_seed_ = DEFAULT_BASE_SEED_;
-
-  reset_rngs_();
-}
-
-void
-nest::RandomManager::finalize()
-{
-  for ( auto& it : rng_types_ )
-  {
-    delete it.second;
+    current_rng_type_ = DEFAULT_RNG_TYPE_;
+    base_seed_ = DEFAULT_BASE_SEED_;
   }
-
-  rng_types_.clear();
-  vp_specific_rngs_.clear();
-}
-
-void
-nest::RandomManager::change_number_of_threads()
-{
-  finalize();
-  initialize();
-}
-
-void
-nest::RandomManager::reset_rngs_()
-{
-  // Delete existing RNGs.
-  delete rank_synced_rng_;
-
-  auto delete_rngs = []( std::vector< RngPtr >& rng_vec )
-  {
-    for ( auto rng : rng_vec )
-    {
-      delete rng;
-    }
-  };
-
-  delete_rngs( vp_synced_rngs_ );
-  delete_rngs( vp_specific_rngs_ );
 
   // Create new RNGs of the currently used RNG type.
   rank_synced_rng_ = rng_types_[ current_rng_type_ ]->create( { base_seed_, RANK_SYNCED_SEEDER_ } );
@@ -127,9 +90,37 @@ nest::RandomManager::reset_rngs_()
 #pragma omp parallel
   {
     const auto tid = kernel().vp_manager.get_thread_id();
-    const std::uint32_t vp = kernel().vp_manager.get_vp();
+    const std::uint32_t vp = kernel().vp_manager.get_vp(); // type required for rng initializer
     vp_synced_rngs_[ tid ] = rng_types_[ current_rng_type_ ]->create( { base_seed_, THREAD_SYNCED_SEEDER_ } );
     vp_specific_rngs_[ tid ] = rng_types_[ current_rng_type_ ]->create( { base_seed_, THREAD_SPECIFIC_SEEDER_, vp } );
+  }
+}
+
+void
+nest::RandomManager::finalize( const bool reset_kernel )
+{
+  // Delete existing RNGs
+  auto delete_rngs = []( std::vector< RngPtr >& rng_vec )
+  {
+    for ( auto rng : rng_vec )
+    {
+      delete rng;
+    }
+  };
+
+  delete rank_synced_rng_;
+  delete_rngs( vp_synced_rngs_ );
+  delete_rngs( vp_specific_rngs_ );
+  vp_synced_rngs_.clear();
+  vp_specific_rngs_.clear();
+
+  if ( reset_kernel )
+  {
+    for ( auto& it : rng_types_ )
+    {
+      delete it.second;
+    }
+    rng_types_.clear();
   }
 }
 
@@ -178,11 +169,10 @@ nest::RandomManager::set_status( const DictionaryDatum& d )
     current_rng_type_ = rng_type;
   }
 
-  // If number of threads has been changed, we need to update the RNGs.
-  bool n_threads_updated = d->known( names::local_num_threads );
-  if ( n_threads_updated or rng_seed_updated or rng_type_updated )
+  if ( rng_seed_updated or rng_type_updated )
   {
-    reset_rngs_();
+    finalize( /* reset_kernel */ false );
+    initialize( /* reset_kernel */ false );
   }
 }
 
@@ -196,9 +186,7 @@ nest::RandomManager::check_rng_synchrony() const
   for ( auto n = 0; n < NUM_ROUNDS; ++n )
   {
     const auto r = rank_synced_rng_->drand();
-    const auto min = kernel().mpi_manager.min_cross_ranks( r );
-    const auto max = kernel().mpi_manager.max_cross_ranks( r );
-    if ( min != max )
+    if ( not kernel().mpi_manager.equal_cross_ranks( r ) )
     {
       throw KernelException( "Rank-synchronized random number generators are out of sync." );
     }
@@ -207,21 +195,23 @@ nest::RandomManager::check_rng_synchrony() const
   // We check thread-synchrony under all circumstances to keep the code simple.
   for ( auto n = 0; n < NUM_ROUNDS; ++n )
   {
-    const index num_threads = kernel().vp_manager.get_num_threads();
+    const size_t num_threads = kernel().vp_manager.get_num_threads();
     double local_min = std::numeric_limits< double >::max();
     double local_max = std::numeric_limits< double >::min();
-    for ( index t = 0; t < num_threads; ++t )
+    for ( size_t t = 0; t < num_threads; ++t )
     {
       const auto r = vp_synced_rngs_[ t ]->drand();
       local_min = std::min( r, local_min );
       local_max = std::max( r, local_max );
     }
 
-    // Finding the local min and max on each thread and then determining the
-    // global min/max, ensures that all ranks will learn about sync errors.
-    const long min = kernel().mpi_manager.min_cross_ranks( local_min );
-    const long max = kernel().mpi_manager.max_cross_ranks( local_max );
-    if ( min != max )
+    // If local values are not equal, flag this in local_min.
+    if ( local_min != local_max )
+    {
+      local_min = -std::numeric_limits< double >::infinity();
+    }
+
+    if ( not kernel().mpi_manager.equal_cross_ranks( local_min ) )
     {
       throw KernelException( "Thread-synchronized random number generators are out of sync." );
     }
@@ -230,7 +220,7 @@ nest::RandomManager::check_rng_synchrony() const
 
 template < typename RNG_TYPE >
 void
-nest::RandomManager::register_rng_type( std::string name )
+nest::RandomManager::register_rng_type( const std::string& name )
 {
   rng_types_.insert( std::make_pair( name, new RandomGeneratorFactory< RNG_TYPE >() ) );
 }

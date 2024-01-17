@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-4x3 grid with pyramidal cells and interneurons
-----------------------------------------------
+Spatial networks: 4x3 grid with pyramidal cells and interneurons
+----------------------------------------------------------------
 
 Create a 4x3 grid with one pyramidal cell and one interneuron at each position.
 
@@ -29,19 +29,19 @@ BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
 """
 
-import nest
 import matplotlib.pyplot as plt
+import nest
 import numpy as np
 
 nest.ResetKernel()
 
-nest.CopyModel('iaf_psc_alpha', 'pyr')
-nest.CopyModel('iaf_psc_alpha', 'in')
+nest.CopyModel("iaf_psc_alpha", "pyr")
+nest.CopyModel("iaf_psc_alpha", "in")
 
-pos = nest.spatial.grid(shape=[4, 3], extent=[2., 1.5])
+pos = nest.spatial.grid(shape=[4, 3], extent=[2.0, 1.5])
 
-ctx_pyr = nest.Create('pyr', positions=pos)
-ctx_in = nest.Create('in', positions=pos)
+ctx_pyr = nest.Create("pyr", positions=pos)
+ctx_in = nest.Create("in", positions=pos)
 
 nest.PrintNodes()
 
@@ -57,21 +57,20 @@ pin_y = np.array([y for x, y in pin])
 
 # plot
 plt.clf()
-plt.plot(pin_x - 0.05, ppyr_y - 0.05, 'bo', markersize=20,
-         label='Pyramidal', zorder=2)
-plt.plot(pin_x + 0.05, pin_y + 0.05, 'ro', markersize=20,
-         label='Interneuron', zorder=2)
-plt.plot(pin_x, ppyr_y, 'o', markerfacecolor=(0.7, 0.7, 0.7),
-         markersize=60, markeredgewidth=0, zorder=1, label='_nolegend_')
+plt.plot(pin_x - 0.05, ppyr_y - 0.05, "bo", markersize=20, label="Pyramidal", zorder=2)
+plt.plot(pin_x + 0.05, pin_y + 0.05, "ro", markersize=20, label="Interneuron", zorder=2)
+plt.plot(
+    pin_x, ppyr_y, "o", markerfacecolor=(0.7, 0.7, 0.7), markersize=60, markeredgewidth=0, zorder=1, label="_nolegend_"
+)
 
 # beautify
 plt.axis([-1.0, 1.0, -1.0, 1.0])
-plt.axes().set_aspect('equal', 'box')
+plt.axes().set_aspect("equal", "box")
 plt.axes().set_xticks((-0.75, -0.25, 0.25, 0.75))
 plt.axes().set_yticks((-0.5, 0, 0.5))
 plt.grid(True)
-plt.xlabel('4 Columns, Extent: 1.5')
-plt.ylabel('3 Rows, Extent: 1.0')
+plt.xlabel("4 Columns, Extent: 1.5")
+plt.ylabel("3 Rows, Extent: 1.0")
 plt.legend(numpoints=1)
 
 plt.show()

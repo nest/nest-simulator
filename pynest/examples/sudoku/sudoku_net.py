@@ -47,62 +47,62 @@ configuration, thus solving the puzzle.
 
 :Authors: J Gille, S Furber, A Rowley
 """
-import nest
-import numpy as np
 import logging
 
+import nest
+import numpy as np
 
-inter_neuron_weight = -0.2   # inhibitory weight for synapses between neurons
-weight_stim = 1.3            # weight from stimulation sources to neurons
-weight_noise = 1.6           # weight for the background poisson generator
-delay = 1.0                  # delay for all synapses
+inter_neuron_weight = -0.2  # inhibitory weight for synapses between neurons
+weight_stim = 1.3  # weight from stimulation sources to neurons
+weight_noise = 1.6  # weight for the background poisson generator
+delay = 1.0  # delay for all synapses
 
 neuron_params = {
-    'C_m': 0.25,        # nF    membrane capacitance
-    'I_e': 0.5,         # nA    bias current
-    'tau_m': 20.0,      # ms    membrane time constant
-    't_ref': 2.0,       # ms    refractory period
-    'tau_syn_ex': 5.0,  # ms    excitatory synapse time constant
-    'tau_syn_in': 5.0,  # ms    inhibitory synapse time constant
-    'V_reset': -70.0,   # mV    reset membrane potential
-    'E_L': -65.0,       # mV    resting membrane potential
-    'V_th': -50.0,      # mV    firing threshold voltage
-    'V_m': nest.random.uniform(min=-65, max=-55)
+    "C_m": 0.25,  # nF    membrane capacitance
+    "I_e": 0.5,  # nA    bias current
+    "tau_m": 20.0,  # ms    membrane time constant
+    "t_ref": 2.0,  # ms    refractory period
+    "tau_syn_ex": 5.0,  # ms    excitatory synapse time constant
+    "tau_syn_in": 5.0,  # ms    inhibitory synapse time constant
+    "V_reset": -70.0,  # mV    reset membrane potential
+    "E_L": -65.0,  # mV    resting membrane potential
+    "V_th": -50.0,  # mV    firing threshold voltage
+    "V_m": nest.random.uniform(min=-65, max=-55),
 }
 
 
 class SudokuNet:
     # number of neuron populations (rows*columns*digits)
-    n_populations = 9 ** 3
+    n_populations = 9**3
 
-    def __init__(self, pop_size=5, noise_rate=350., stim_rate=200., input=None):
-        self.stim_rate = stim_rate          # frequency for input generators
-        self.pop_size = pop_size            # number of neurons per population
+    def __init__(self, pop_size=5, noise_rate=350.0, stim_rate=200.0, input=None):
+        self.stim_rate = stim_rate  # frequency for input generators
+        self.pop_size = pop_size  # number of neurons per population
         # total number of neurons
         self.n_total = self.n_populations * self.pop_size
 
         logging.info("Creating neuron populations...")
-        self.neurons = nest.Create(
-            'iaf_psc_exp', self.n_total, params=neuron_params)
+        self.neurons = nest.Create("iaf_psc_exp", self.n_total, params=neuron_params)
 
         logging.info("Setting up noise...")
         self.noise = nest.Create("poisson_generator", 1, {"rate": noise_rate})
-        nest.Connect(self.noise, self.neurons, 'all_to_all',
-                     {'synapse_model': 'static_synapse', "delay": delay,
-                      'weight': weight_noise})
+        nest.Connect(
+            self.noise,
+            self.neurons,
+            "all_to_all",
+            {"synapse_model": "static_synapse", "delay": delay, "weight": weight_noise},
+        )
 
         # one stimulation source for every digit in every cell
-        self.stim = nest.Create("poisson_generator", self.n_populations,
-                                {'rate': self.stim_rate})
+        self.stim = nest.Create("poisson_generator", self.n_populations, {"rate": self.stim_rate})
 
         # one spike recorder for every digit in every cell
-        self.spikerecorders = nest.Create('spike_recorder', self.n_populations)
+        self.spikerecorders = nest.Create("spike_recorder", self.n_populations)
 
         # Matrix that stores indices of all neurons in a structured way
         # for easy access during connection setup.
         # Dimensions: (row, column, digit value, individual neuron)
-        self.neuron_indices = np.reshape(np.arange(self.n_total),
-                                         (9, 9, 9, self.pop_size))
+        self.neuron_indices = np.reshape(np.arange(self.n_total), (9, 9, 9, self.pop_size))
 
         # Matrix that stores indices of inputs and outputs of the network
         # (stimulation sources and spike recorders) to be connected to the
@@ -121,8 +121,7 @@ class SudokuNet:
                 box_col_end = box_col_start + 3
 
                 # Obtain all populations in the surrounding 3x3 box.
-                current_box = self.neuron_indices[box_row_start:box_row_end,
-                                                  box_col_start:box_col_end]
+                current_box = self.neuron_indices[box_row_start:box_row_end, box_col_start:box_col_end]
 
                 for digit in range(9):
                     # population coding for the current row, column and digit
@@ -137,9 +136,7 @@ class SudokuNet:
                     # neurons coding for different digits in the current cell
                     digit_targets = self.neuron_indices[row, column, :]
 
-                    targets = np.concatenate(
-                        (row_targets, col_targets, box_targets, digit_targets),
-                        axis=None)
+                    targets = np.concatenate((row_targets, col_targets, box_targets, digit_targets), axis=None)
                     # Remove duplicates to avoid multapses
                     targets = np.unique(targets)
                     # Remove the sources from the targets to avoid the
@@ -152,21 +149,24 @@ class SudokuNet:
 
                     # Create inhibitory connections
                     nest.Connect(
-                        sources, targets, 'all_to_all',
-                        {'synapse_model': 'static_synapse', "delay": delay,
-                         'weight': inter_neuron_weight})
+                        sources,
+                        targets,
+                        "all_to_all",
+                        {"synapse_model": "static_synapse", "delay": delay, "weight": inter_neuron_weight},
+                    )
 
                     # connect the stimulation source to the current population.
                     # Weights are initialized to 0 and altered in
                     # set_input_config()
                     nest.Connect(
                         self.stim[self.io_indices[row, column, digit]],
-                        sources, 'all_to_all', {"delay": delay, "weight": 0.})
+                        sources,
+                        "all_to_all",
+                        {"delay": delay, "weight": 0.0},
+                    )
 
                     # connect current population to a single spike_recorder
-                    nest.Connect(
-                        sources, self.spikerecorders
-                        [self.io_indices[row, column, digit]])
+                    nest.Connect(sources, self.spikerecorders[self.io_indices[row, column, digit]])
 
         if input is not None:
             logging.info("setting input...")
@@ -175,16 +175,17 @@ class SudokuNet:
         logging.info("Setup complete.")
 
     def reset_input(self):
-        """sets all weights between input and network neurons to 0.
-        """
-        nest.GetConnections(self.stim).set({"weight": 0.})
+        """Sets all weights between input and network neurons to 0."""
+        nest.GetConnections(self.stim).set({"weight": 0.0})
 
     def set_input_config(self, input):
-        """sets the connection weights from stimulation sources to populations
+        """Sets the connection weights from stimulation sources to populations
         in order to stimulate the network according to a puzzle configuration.
 
-        Args:
-            input (np.array): a np.array of shape (9,9) where each entry is the value of the corresponding
+        Parameters
+        ----------
+        input : np.array
+            a np.array of shape (9,9) where each entry is the value of the corresponding
             cell in the sudoku field. Zero-valued entries are ignored.
         """
         self.reset_input()
@@ -195,37 +196,42 @@ class SudokuNet:
 
                 # only apply stimulation where the input configuration dictates a number
                 if value != 0:
-                    connections = nest.GetConnections(
-                        self.stim[self.io_indices[row, column, value-1]])
+                    connections = nest.GetConnections(self.stim[self.io_indices[row, column, value - 1]])
                     connections.set({"weight": weight_stim})
 
     def get_spike_trains(self):
+        """Returns all events recorded by the spike recorders.
+
+        Returns:
+            np.array
+                array of all the data from all spike recorders
+        """
         return np.array(self.spikerecorders.get("events"))
 
     def reset(self):
-        """resets the network in three steps:
-                setting all input weights to 0
-                resetting all membrane potentials to their default value
-                deleting all recorded spikes
+        """Resets the network in three steps:
+        setting all input weights to 0
+        resetting all membrane potentials to their default value
+        deleting all recorded spikes
         """
         self.reset_input()
         self.reset_V_m()
         self.reset_spike_recorders()
 
     def reset_V_m(self):
-        """resets membrane potential of all neurons to (uniformly random) default values.
-        """
+        """Resets membrane potential of all neurons to (uniformly random) default values."""
         self.neurons.V_m = nest.random.uniform(-65, 55)
 
     def reset_spike_recorders(self):
-        """deletes all recorded spikes from the spike recorders connected to the network.
-        """
+        """Deletes all recorded spikes from the spike recorders connected to the network."""
         self.spikerecorders.n_events = 0
 
     def set_noise_rate(self, rate):
-        """sets the rate of the Poisson generator that feeds noise into the network.
+        """Sets the rate of the Poisson generator that feeds noise into the network.
 
-        Args:
-            rate (float): average spike frequency in Hz
+        Parameters
+        ----------
+        rate : float
+            average spike frequency in Hz
         """
         self.noise.rate = rate

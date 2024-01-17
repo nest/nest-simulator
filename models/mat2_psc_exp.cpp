@@ -22,8 +22,6 @@
 
 #include "mat2_psc_exp.h"
 
-// C++ includes:
-#include <limits>
 
 // Includes from libnestutil:
 #include "dict_util.h"
@@ -32,13 +30,11 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
-#include "dict.h"
 #include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -48,6 +44,12 @@ nest::RecordablesMap< nest::mat2_psc_exp > nest::mat2_psc_exp::recordablesMap_;
 
 namespace nest // template specialization must be placed in namespace
 {
+void
+register_mat2_psc_exp( const std::string& name )
+{
+  register_node_model< mat2_psc_exp >( name );
+}
+
 /*
  * Override the create() method with one call to RecordablesMap::insert_()
  * for each quantity to be recorded.
@@ -56,7 +58,7 @@ template <>
 void
 RecordablesMap< mat2_psc_exp >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &mat2_psc_exp::get_V_m_ );
   insert_( names::V_th, &mat2_psc_exp::get_V_th_ );
 }
@@ -148,11 +150,11 @@ nest::mat2_psc_exp::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Capacitance must be strictly positive." );
   }
-  if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 || tau_ref_ <= 0 || tau_1_ <= 0 || tau_2_ <= 0 )
+  if ( Tau_ <= 0 or tau_ex_ <= 0 or tau_in_ <= 0 or tau_ref_ <= 0 or tau_1_ <= 0 or tau_2_ <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
-  if ( Tau_ == tau_ex_ || Tau_ == tau_in_ )
+  if ( Tau_ == tau_ex_ or Tau_ == tau_in_ )
   {
     throw BadProperty(
       "Membrane and synapse time constant(s) must differ."
@@ -307,9 +309,6 @@ nest::mat2_psc_exp::pre_run_hook()
 void
 nest::mat2_psc_exp::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   // evolve from timestep 'from' to timestep 'to' with steps of h each
   for ( long lag = from; lag < to; ++lag )
   {

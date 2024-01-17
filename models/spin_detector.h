@@ -82,6 +82,11 @@ Receives
 
 SpikeEvent
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: spin_detector
+
 EndUserDocs */
 
 /**
@@ -92,6 +97,8 @@ EndUserDocs */
  * stores them via its RecordingDevice.
  *
  */
+void register_spin_detector( const std::string& name );
+
 class spin_detector : public RecordingDevice
 {
 
@@ -100,18 +107,18 @@ public:
   spin_detector( const spin_detector& );
 
   bool
-  has_proxies() const
+  has_proxies() const override
   {
     return false;
   }
   bool
-  local_receiver() const
+  local_receiver() const override
   {
     return true;
   }
 
   Name
-  get_element_type() const
+  get_element_type() const override
   {
     return names::recorder;
   }
@@ -125,21 +132,21 @@ public:
   using Node::handles_test_event;
   using Node::receives_signal;
 
-  void handle( SpikeEvent& );
+  void handle( SpikeEvent& ) override;
 
-  port handles_test_event( SpikeEvent&, rport );
+  size_t handles_test_event( SpikeEvent&, size_t ) override;
 
-  Type get_type() const;
-  SignalType receives_signal() const;
+  Type get_type() const override;
+  SignalType receives_signal() const override;
 
-  void get_status( DictionaryDatum& ) const;
-  void set_status( const DictionaryDatum& );
+  void get_status( DictionaryDatum& ) const override;
+  void set_status( const DictionaryDatum& ) override;
 
-  void calibrate_time( const TimeConverter& tc );
+  void calibrate_time( const TimeConverter& tc ) override;
 
 private:
-  void init_buffers_();
-  void pre_run_hook();
+  void init_buffers_() override;
+  void pre_run_hook() override;
 
   /**
    * Update detector by recording spikes.
@@ -149,15 +156,15 @@ private:
    *
    * @see RecordingDevice
    */
-  void update( Time const&, const long, const long );
+  void update( Time const&, const long, const long ) override;
 
-  index last_in_node_id_;
+  size_t last_in_node_id_;
   SpikeEvent last_event_;
   Time t_last_in_spike_;
 };
 
-inline port
-spin_detector::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+spin_detector::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {

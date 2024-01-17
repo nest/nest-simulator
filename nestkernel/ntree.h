@@ -41,8 +41,9 @@ template < int D >
 class Mask;
 
 /**
- * A Ntree object represents a subtree or leaf in a Ntree structure. Any
- * ntree covers a specific region in space. A leaf ntree contains a list
+ * A Ntree object represents a subtree or leaf in a Ntree structure.
+ *
+ * Any ntree covers a specific region in space. A leaf ntree contains a list
  * of items and their corresponding positions. A branch ntree contains a
  * list of N=1<<D other ntrees, each covering a region corresponding to the
  * upper-left, lower-left, upper-right and lower-left corner of their
@@ -81,14 +82,14 @@ public:
      * Initialize an iterator to point to the first node in the first
      * non-empty leaf within the tree below this Ntree.
      */
-    iterator( Ntree& q );
+    explicit iterator( Ntree& q );
 
     /**
      * Initialize an iterator to point to the nth node in this Ntree,
      * which must be a leaf. The top of the tree is the first ancestor of
      * the Ntree.
      */
-    iterator( Ntree& q, index n );
+    iterator( Ntree& q, size_t n );
 
     value_type&
     operator*()
@@ -125,12 +126,12 @@ public:
     bool
     operator==( const iterator& other ) const
     {
-      return ( other.ntree_ == ntree_ ) && ( other.node_ == node_ );
+      return other.ntree_ == ntree_ and ( other.node_ == node_ );
     }
     bool
     operator!=( const iterator& other ) const
     {
-      return ( other.ntree_ != ntree_ ) || ( other.node_ != node_ );
+      return ( other.ntree_ != ntree_ ) or ( other.node_ != node_ );
     }
 
   protected:
@@ -142,7 +143,7 @@ public:
 
     Ntree* ntree_;
     Ntree* top_;
-    index node_;
+    size_t node_;
   };
 
   /**
@@ -187,7 +188,9 @@ public:
 
     /**
      * Move the iterator to the next node inside the mask within the
-     * tree. May cause the iterator to become invalid if there are no
+     * tree.
+     *
+     * May cause the iterator to become invalid if there are no
      * more nodes.
      */
     masked_iterator& operator++();
@@ -210,12 +213,12 @@ public:
     bool
     operator==( const masked_iterator& other ) const
     {
-      return ( other.ntree_ == ntree_ ) && ( other.node_ == node_ );
+      return other.ntree_ == ntree_ and ( other.node_ == node_ );
     }
     bool
     operator!=( const masked_iterator& other ) const
     {
-      return ( other.ntree_ != ntree_ ) || ( other.node_ != node_ );
+      return ( other.ntree_ != ntree_ ) or ( other.node_ != node_ );
     }
 
   protected:
@@ -230,8 +233,9 @@ public:
     void next_leaf_();
 
     /**
-     * Find the first leaf which is not outside the mask. If no leaf is
-     * found below the current quadrant, will continue to next_leaf_().
+     * Find the first leaf which is not outside the mask.
+     *
+     * If no leaf is found below the current quadrant, will continue to next_leaf_().
      */
     void first_leaf_();
 
@@ -258,17 +262,18 @@ public:
     Ntree* ntree_;
     Ntree* top_;
     Ntree* allin_top_;
-    index node_;
+    size_t node_;
     const Mask< D >* mask_;
     Position< D > anchor_;
     Position< D > anchored_position_;
     std::vector< Position< D > > anchors_;
-    index current_anchor_;
+    size_t current_anchor_;
   };
 
   /**
    * Create a Ntree that covers the region defined by the two
    * input positions.
+   *
    * @param lower_left  Lower left corner of ntree.
    * @param extent      Size (width,height) of ntree.
    */
@@ -285,6 +290,7 @@ public:
 
   /**
    * Traverse quadtree structure from current ntree.
+   *
    * Inserts node in correct leaf in quadtree.
    * @returns iterator pointing to inserted node.
    */
@@ -307,6 +313,7 @@ public:
 
   /**
    * Applies a Mask to this ntree.
+   *
    * @param mask    mask to apply.
    * @param anchor  position to center mask in.
    * @returns member nodes in ntree inside mask.
@@ -316,6 +323,7 @@ public:
   /**
    * This function returns a node iterator which will traverse the
    * subtree below this Ntree.
+   *
    * @returns iterator for nodes in quadtree.
    */
   iterator
@@ -333,6 +341,7 @@ public:
   /**
    * This function returns a masked node iterator which will traverse the
    * subtree below this Ntree, skipping nodes outside the mask.
+   *
    * @returns iterator for nodes in quadtree.
    */
   masked_iterator
@@ -423,7 +432,7 @@ Ntree< D, T, max_capacity, max_depth >::~Ntree()
 }
 
 template < int D, class T, int max_capacity, int max_depth >
-Ntree< D, T, max_capacity, max_depth >::iterator::iterator( Ntree& q, index n )
+Ntree< D, T, max_capacity, max_depth >::iterator::iterator( Ntree& q, size_t n )
   : ntree_( &q )
   , top_( &q )
   , node_( n )

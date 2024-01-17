@@ -52,6 +52,7 @@ skip_if_not_threaded
   /layer_spec_b
   <<
     /positions [[0.0 0.0]]
+    /extent [1.0 1.0]
     /edge_wrap false
     /elements /spike_recorder
   >> def
@@ -74,4 +75,3 @@ skip_if_not_threaded
 {
   << /connection_type /pairwise_bernoulli_on_source >> test_connection
 } distributed_process_invariant_collect_assert_or_die
-

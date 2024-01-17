@@ -45,9 +45,10 @@ References
 # Import all necessary modules for simulation, analysis and plotting.
 
 import time
+
+import matplotlib.pyplot as plt
 import nest
 import nest.raster_plot
-import matplotlib.pyplot as plt
 
 nest.ResetKernel()
 
@@ -96,13 +97,7 @@ C_tot = int(CI + CE)  # total number of synapses per neuron
 
 tauMem = 20.0  # time constant of membrane potential in ms
 theta = 20.0  # membrane threshold potential in mV
-neuron_params = {"C_m": 1.0,
-                 "tau_m": tauMem,
-                 "t_ref": 2.0,
-                 "E_L": 0.0,
-                 "V_reset": 0.0,
-                 "V_m": 0.0,
-                 "V_th": theta}
+neuron_params = {"C_m": 1.0, "tau_m": tauMem, "t_ref": 2.0, "E_L": 0.0, "V_reset": 0.0, "V_m": 0.0, "V_th": theta}
 J = 0.1  # postsynaptic amplitude in mV
 J_ex = J  # amplitude of excitatory postsynaptic potential
 J_in = -g * J_ex  # amplitude of inhibitory postsynaptic potential
@@ -161,10 +156,8 @@ print("Connecting devices")
 # the excitatory and one for the inhibitory connections giving the
 # previously defined weights and equal delays.
 
-nest.CopyModel("static_synapse", "excitatory",
-               {"weight": J_ex, "delay": delay})
-nest.CopyModel("static_synapse", "inhibitory",
-               {"weight": J_in, "delay": delay})
+nest.CopyModel("static_synapse", "excitatory", {"weight": J_ex, "delay": delay})
+nest.CopyModel("static_synapse", "inhibitory", {"weight": J_in, "delay": delay})
 
 ###############################################################################
 # Connecting the previously defined poisson generator to the excitatory and
@@ -198,7 +191,7 @@ print("Excitatory connections")
 # specification is reduced to assigning the pre-defined excitatory synapse it
 # suffices to insert a string.
 
-conn_params_ex = {'rule': 'fixed_indegree', 'indegree': CE}
+conn_params_ex = {"rule": "fixed_indegree", "indegree": CE}
 nest.Connect(nodes_ex, nodes_ex + nodes_in, conn_params_ex, "excitatory")
 
 print("Inhibitory connections")
@@ -209,7 +202,7 @@ print("Inhibitory connections")
 # parameters are defined analogously to the connection from the excitatory
 # population defined above.
 
-conn_params_in = {'rule': 'fixed_indegree', 'indegree': CI}
+conn_params_in = {"rule": "fixed_indegree", "indegree": CI}
 nest.Connect(nodes_in, nodes_ex + nodes_in, conn_params_in, "inhibitory")
 
 ###############################################################################
@@ -250,8 +243,9 @@ rate_in = events_in / simtime * 1000.0 / N_rec
 # inhibitory synapse model. The numbers are summed up resulting in the total
 # number of synapses.
 
-num_synapses = (nest.GetDefaults("excitatory")["num_connections"] +
-                nest.GetDefaults("inhibitory")["num_connections"])
+num_synapses_ex = nest.GetDefaults("excitatory")["num_connections"]
+num_synapses_in = nest.GetDefaults("inhibitory")["num_connections"]
+num_synapses = num_synapses_ex + num_synapses_in
 
 ###############################################################################
 # Establishing the time it took to build and simulate the network by taking
@@ -266,8 +260,8 @@ sim_time = endsimulate - endbuild
 print("Brunel network simulation (Python)")
 print(f"Number of neurons : {N_neurons}")
 print(f"Number of synapses: {num_synapses}")
-print(f"       Exitatory  : {int(CE * N_neurons) + N_neurons}")
-print(f"       Inhibitory : {int(CI * N_neurons)}")
+print(f"       Excitatory : {num_synapses_ex}")
+print(f"       Inhibitory : {num_synapses_in}")
 print(f"Excitatory rate   : {rate_ex:.2f} Hz")
 print(f"Inhibitory rate   : {rate_in:.2f} Hz")
 print(f"Building time     : {build_time:.2f} s")

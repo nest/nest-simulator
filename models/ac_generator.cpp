@@ -32,16 +32,22 @@
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
-#include "integerdatum.h"
 
 namespace nest
 {
+void
+register_ac_generator( const std::string& name )
+{
+  register_node_model< ac_generator >( name );
+}
+
 RecordablesMap< ac_generator > ac_generator::recordablesMap_;
 
 template <>
@@ -202,9 +208,6 @@ nest::ac_generator::pre_run_hook()
 void
 nest::ac_generator::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   long start = origin.get_steps();
 
   CurrentEvent ce;

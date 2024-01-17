@@ -45,38 +45,40 @@ References
 #################################################################################
 # First, we import all necessary modules for simulation, analysis, and plotting.
 
+import matplotlib.pyplot as plt
 import nest
 import nest.raster_plot
-import matplotlib.pyplot as plt
 
 ###############################################################################
 # Second, the simulation parameters are assigned to variables.
 
-N = 1000           # number of neurons
-bias_begin = 140.  # minimal value for the bias current injection [pA]
-bias_end = 200.    # maximal value for the bias current injection [pA]
-T = 600            # simulation time (ms)
+N = 1000  # number of neurons
+bias_begin = 140.0  # minimal value for the bias current injection [pA]
+bias_end = 200.0  # maximal value for the bias current injection [pA]
+T = 600  # simulation time (ms)
 
 # parameters for the alternating-current generator
-driveparams = {'amplitude': 50., 'frequency': 35.}
+driveparams = {"amplitude": 50.0, "frequency": 35.0}
 # parameters for the noise generator
-noiseparams = {'mean': 0.0, 'std': 200.}
-neuronparams = {'tau_m': 20.,  # membrane time constant
-                'V_th': 20.,  # threshold potential
-                'E_L': 10.,  # membrane resting potential
-                't_ref': 2.,  # refractory period
-                'V_reset': 0.,  # reset potential
-                'C_m': 200.,  # membrane capacitance
-                'V_m': 0.}      # initial membrane potential
+noiseparams = {"mean": 0.0, "std": 200.0}
+neuronparams = {
+    "tau_m": 20.0,  # membrane time constant
+    "V_th": 20.0,  # threshold potential
+    "E_L": 10.0,  # membrane resting potential
+    "t_ref": 2.0,  # refractory period
+    "V_reset": 0.0,  # reset potential
+    "C_m": 200.0,  # membrane capacitance
+    "V_m": 0.0,
+}  # initial membrane potential
 
 ###############################################################################
 # Third, the nodes are created using ``Create``. We store the returned handles
 # in variables for later reference.
 
-neurons = nest.Create('iaf_psc_alpha', N)
-sr = nest.Create('spike_recorder')
-noise = nest.Create('noise_generator')
-drive = nest.Create('ac_generator')
+neurons = nest.Create("iaf_psc_alpha", N)
+sr = nest.Create("spike_recorder")
+noise = nest.Create("noise_generator")
+drive = nest.Create("ac_generator")
 
 ###############################################################################
 # Set the parameters specified above for the generators using ``set``.
@@ -87,22 +89,21 @@ noise.set(noiseparams)
 ###############################################################################
 # Set the parameters specified above for the neurons. Neurons get an internal
 # current. The first neuron additionally receives the current with amplitude
-# `bias_begin`, the last neuron with amplitude `bias_end`.
+# ``bias_begin``, the last neuron with amplitude ``bias_end``.
 
 neurons.set(neuronparams)
-neurons.I_e = [(n * (bias_end - bias_begin) / N + bias_begin)
-               for n in range(1, len(neurons) + 1)]
+neurons.I_e = [(n * (bias_end - bias_begin) / N + bias_begin) for n in range(1, len(neurons) + 1)]
 
 ###############################################################################
 # Connect alternating current and noise generators as well as
-# `spike_recorder`s to neurons
+# spike_recorders to neurons
 
 nest.Connect(drive, neurons)
 nest.Connect(noise, neurons)
 nest.Connect(neurons, sr)
 
 ###############################################################################
-# Simulate the network for time `T`.
+# Simulate the network for time ``T``.
 
 nest.Simulate(T)
 

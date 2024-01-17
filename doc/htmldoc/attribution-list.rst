@@ -1,4 +1,16 @@
-:orphan: 
+:orphan:
+
+
+The following images were created by A. Fischer - INM-6 Forschungszentrum Juelich GmBH
+
+Cite the author of the work if using in NEST project.
+
+* neuron.svg
+* synapse.svg
+* networkbrainlight.svg
+* stimulatelight.svg
+* recordinglight.svg
+
 
 Icons provided by Flaticon
 --------------------------
@@ -15,7 +27,7 @@ Icons provided by Flaticon
 <a href="https://www.flaticon.com/free-icons/brain" title="brain icons">Brain icons created by Freepik - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/teacher" title="teacher icons">Teacher icons created by Good Ware - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/math" title="math icons">Math icons created by Freepik - Flaticon</a>
-<a href="https://www.flaticon.com/free-icons/data-storage" title="data storage icons">Data storage icons created by IconLauk - Flaticon</a> 
+<a href="https://www.flaticon.com/free-icons/data-storage" title="data storage icons">Data storage icons created by IconLauk - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/version" title="version icons">Version icons created by Ahmad Roaayala - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/developer" title="developer icons">Developer icons created by Freepik - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/cloud-computing" title="cloud computing icons">Cloud computing icons created by Prosymbols Premium - Flaticon</a>

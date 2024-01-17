@@ -121,7 +121,7 @@ EpropArchivingNodeRecurrent::get_learning_signal_from_history( const long time_s
 }
 
 void
-EpropArchivingNodeRecurrent::erase_unneeded_firing_rate_reg_history()
+EpropArchivingNodeRecurrent::erase_used_firing_rate_reg_history()
 {
   auto it_update_hist = update_history_.begin();
   auto it_reg_hist = firing_rate_reg_history_.begin();

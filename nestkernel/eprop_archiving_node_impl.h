@@ -115,7 +115,7 @@ EpropArchivingNode< HistEntryT >::get_eprop_history( const long time_step )
 
 template < typename HistEntryT >
 void
-EpropArchivingNode< HistEntryT >::erase_unneeded_eprop_history()
+EpropArchivingNode< HistEntryT >::erase_used_eprop_history()
 {
   if ( eprop_history_.empty()  // nothing to remove
     or update_history_.empty() // no time markers to check
@@ -150,7 +150,7 @@ EpropArchivingNode< HistEntryT >::erase_unneeded_eprop_history()
 
 template < typename HistEntryT >
 void
-EpropArchivingNode< HistEntryT >::erase_unneeded_update_history()
+EpropArchivingNode< HistEntryT >::erase_used_update_history()
 {
   auto it_hist = update_history_.begin();
   while ( it_hist != update_history_.end() )

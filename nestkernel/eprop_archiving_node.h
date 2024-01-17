@@ -69,11 +69,11 @@ public:
 
   //! Erase update history parts for which the access counter has decreased to zero since no synapse needs them
   //! any longer.
-  void erase_unneeded_update_history();
+  void erase_used_update_history();
 
   //! Erase update intervals from the e-prop history in which each synapse has either not transmitted a spike or has
   //! transmitted a spike in a more recent update interval.
-  void erase_unneeded_eprop_history();
+  void erase_used_eprop_history();
 
 protected:
   //!< number of incoming eprop synapses
@@ -135,7 +135,7 @@ public:
 
   //! Erase parts of the firing rate regularization history for which the access counter in the update history has
   //! decreased to zero since no synapse needs them any longer.
-  void erase_unneeded_firing_rate_reg_history();
+  void erase_used_firing_rate_reg_history();
 
   //! Count emitted spike for the firing rate regularization.
   void count_spike();

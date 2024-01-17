@@ -544,7 +544,7 @@ nest::Node::get_tau_syn_in( int )
 double
 nest::Node::compute_gradient( std::vector< long >&, const long, const long, const double, const bool )
 {
-  throw KernelException( "compute_gradient() not supported." );
+  throw IllegalConnection( "The target node does not support compute_gradient()." );
 }
 
 void

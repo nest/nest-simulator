@@ -163,7 +163,7 @@ After booting, a URL is presented. Click on it or copy it to your browser.
 .. _docker_win:
 
 Run NEST on Windows |windows|
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-----------------------------
 
 .. important::
 

@@ -130,10 +130,9 @@ Conceptual approach
    Install <installation/index>
    Tutorials and Guides <get-started_index>
    Examples <examples/index>
-   PyNEST API <ref_material/pynest_api/index>
    Available models <models/index>
+   PyNEST API <ref_material/pynest_api/index>
    ref_material/glossary
-   Technical docs <developer_space/index>
 
 
 .. toctree::
@@ -143,7 +142,7 @@ Conceptual approach
 
    Cite NEST <citing-nest>
    Contact us <community>
-   Contribute <contribute>
+   Contribute <developer_space/index>
    What's new? <whats_new/index>
    NEST Homepage <https://nest-simulator.org>
 

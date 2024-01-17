@@ -1,6 +1,6 @@
 """
-Two population STDP network model
----------------------------------
+Scalable two population STDP network model
+------------------------------------------
 
 In this example, we employ a simple network model describing the
 dynamics of a local cortical circuit at the spatial scale of ~1mm within
@@ -14,7 +14,7 @@ asynchronous irregular spiking activity (see figure below). A detailed
 
 
 The model used here can be configured into a truly scalable mode by
-replacing the integrate-and-fire neurons by an ``ignore_and_fire``
+replacing the ``integrate-and-fire`` neurons by an ``ignore_and_fire``
 dynamics.
 By doing so, the spike generation dynamics is decoupled from the input
 integration and the plasticity dynamics; the overall network activity,

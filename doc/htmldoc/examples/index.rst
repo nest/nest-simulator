@@ -232,11 +232,11 @@ PyNEST examples
 
 .. grid:: 1 1 2 3
 
-    .. grid-item-card:: HPC benchmark
+    .. grid-item-card:: Performance testing
            :img-top: ../static/img/nest_logo-faded.png
 
            * :doc:`../auto_examples/hpc_benchmark`
-
+           * :doc:`../auto_examples/ignore_and_fire/index`
 
     .. grid-item-card:: Connection set algebra
            :img-top: ../static/img/nest_logo-faded.png

@@ -1,5 +1,5 @@
-Example applications of the ``ignore_and_fire`` neuron with a two population STDP network model
-===============================================================================================
+Using ``ignore_and_fire`` neuron for scaling experiments
+========================================================
 
 File structure
 ---------------

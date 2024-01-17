@@ -52,15 +52,17 @@ public:
   bool is_true() const;
   bool is_false() const;
 
+
+protected:
   void set_true();
   void set_false();
-
   void logical_and( const bool status );
 
 private:
   static constexpr std::uint_fast64_t true_uint64 = true;
   static constexpr std::uint_fast64_t false_uint64 = false;
   std::uint_fast64_t status_;
+  friend class PerThreadBoolIndicator;
 };
 
 inline bool
@@ -106,6 +108,34 @@ public:
 
   BoolIndicatorUInt64& operator[]( const size_t tid );
 
+  void
+  set_true( const size_t tid )
+  {
+    if ( per_thread_status_[ tid ].is_false() )
+    {
+      are_true_++;
+      per_thread_status_[ tid ].set_true();
+    }
+  }
+  void
+  set_false( const size_t tid )
+  {
+    if ( per_thread_status_[ tid ].is_true() )
+    {
+      are_true_--;
+      per_thread_status_[ tid ].set_false();
+    }
+  }
+  void
+  logical_and( const size_t tid, const bool status )
+  {
+    if ( per_thread_status_[ tid ].is_true() && !status )
+    {
+      are_true_--;
+      per_thread_status_[ tid ].set_false();
+    }
+  }
+
   /**
    * Resize to the given number of threads and set all elements to false.
    */
@@ -133,6 +163,7 @@ public:
 
 private:
   std::vector< BoolIndicatorUInt64 > per_thread_status_;
+  std::atomic< int > size_ { 0 }, are_true_ { 0 };
 };
 
 } // namespace nest

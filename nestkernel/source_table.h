@@ -372,7 +372,7 @@ SourceTable::clear( const size_t tid )
     it->clear();
   }
   sources_[ tid ].clear();
-  is_cleared_[ tid ].set_true();
+  is_cleared_.set_true( tid );
 }
 
 inline void
@@ -412,7 +412,7 @@ SourceTable::save_entry_point( const size_t tid )
       assert( current_positions_[ tid ].lcid == -1 );
       saved_positions_[ tid ].lcid = -1;
     }
-    saved_entry_point_[ tid ].set_true();
+    saved_entry_point_.set_true( tid );
   }
 }
 
@@ -420,7 +420,7 @@ inline void
 SourceTable::restore_entry_point( const size_t tid )
 {
   current_positions_[ tid ] = saved_positions_[ tid ];
-  saved_entry_point_[ tid ].set_false();
+  saved_entry_point_.set_false( tid );
 }
 
 inline void

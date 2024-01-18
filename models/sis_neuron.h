@@ -146,7 +146,7 @@ private:
    */
   struct State_
   {
-    int y_;                 //!< output of neuron in [0,1]
+    const size_t y_;                 //!< output of neuron in [0,1]
     double h_;               //!< total input current to neuron
     double last_in_node_id_; //!< node ID of the last spike being received
     Time t_next_;            //!< time point of next update

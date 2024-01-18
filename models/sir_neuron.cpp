@@ -276,7 +276,7 @@ sir_neuron::update( Time const& origin, const long from, const long to )
       // targets
 
       // initialize y_new
-      int new_y;
+      const size_t new_y;
 
       if (S_.y_ == 0) // neuron is susceptible
       {

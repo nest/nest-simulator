@@ -261,10 +261,6 @@ sis_neuron::pre_run_hook()
 void
 sis_neuron::update( Time const& origin, const long from, const long to )
 {
-  // update neuron from timepoint 'from' to timepoint 'to'
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
-  assert( from < to );
-
   for ( long lag = from; lag < to; ++lag )
   {
     // update the input current

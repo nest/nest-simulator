@@ -72,6 +72,9 @@ namespace nest
  * 
  * @see sirs_neuron
  */
+
+void register_sir_neuron( const std::string& name );
+
 class sir_neuron : public ArchivingNode
 {
 

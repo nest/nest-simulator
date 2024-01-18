@@ -24,6 +24,11 @@
 
 namespace nest
 {
+void
+register_sirs_neuron( const std::string& name )
+{
+  register_node_model< sirs_neuron >( name );
+}
 
 
 template <>

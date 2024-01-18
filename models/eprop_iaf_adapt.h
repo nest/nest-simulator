@@ -278,9 +278,9 @@ public:
   void set_status( const DictionaryDatum& ) override;
 
   void compute_gradient( const long t_spike,
-    const long t_prev_spike,
+    const long t_previous_spike,
     long& t,
-    double& prev_z_buffer,
+    double& previous_z_buffer,
     double& z_bar,
     double& e_bar,
     double& avg_e,

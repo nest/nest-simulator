@@ -77,6 +77,45 @@ EpropArchivingNode< HistEntryT >::register_eprop_connection()
 
 template < typename HistEntryT >
 void
+EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous_update,
+  const long t_current_update,
+  const bool clean )
+{
+  if ( eprop_indegree_ == 0 )
+  {
+    return;
+  }
+
+  const long shift = get_shift();
+
+  const auto it_hist_curr = get_update_history( t_current_update + shift );
+
+  if ( it_hist_curr != update_history_.end() and it_hist_curr->t_ == t_current_update + shift )
+  {
+    ++it_hist_curr->access_counter_;
+  }
+  else
+  {
+    update_history_.insert( it_hist_curr, HistEntryEpropUpdate( t_current_update + shift, 1 ) );
+    if ( clean )
+    {
+      erase_unneeded_eprop_history();
+    }
+  }
+
+  const auto it_hist_prev = get_update_history( t_previous_update + shift );
+
+  if ( it_hist_prev != update_history_.end() and it_hist_prev->t_ == t_previous_update + shift )
+  {
+    // If an entry exists for the previous update time, decrement its access counter
+    --it_hist_prev->access_counter_;
+  }
+
+  erase_unneeded_update_history();
+}
+
+template < typename HistEntryT >
+void
 EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous_update, const long t_current_update )
 {
   if ( eprop_indegree_ == 0 )
@@ -131,27 +170,17 @@ EpropArchivingNode< HistEntryT >::erase_used_eprop_history()
     return;
   }
 
-  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
+  const long cutoff_ = 10;
+  const long t_prev = ( update_history_.end() - 2 )->t_;
+  const long t_curr = ( update_history_.end() - 1 )->t_;
 
-  auto it_update_hist = update_history_.begin();
+  const auto it_eprop_hist_erase_from = get_eprop_history( t_prev + cutoff_ );
+  const auto it_eprop_hist_erase_to = get_eprop_history( t_curr );
+  eprop_history_.erase( it_eprop_hist_erase_from, it_eprop_hist_erase_to ); // erase found entries since no longer used
 
-  for ( long t = update_history_.begin()->t_;
-        t <= ( update_history_.end() - 1 )->t_ and it_update_hist != update_history_.end();
-        t += update_interval )
-  {
-    if ( it_update_hist->t_ == t )
-    {
-      ++it_update_hist;
-    }
-    else
-    {
-      const auto it_eprop_hist_from = get_eprop_history( t );
-      const auto it_eprop_hist_to = get_eprop_history( t + update_interval );
-      eprop_history_.erase( it_eprop_hist_from, it_eprop_hist_to ); // erase found entries since no longer used
-    }
-  }
   const auto it_eprop_hist_from = get_eprop_history( 0 );
-  const auto it_eprop_hist_to = get_eprop_history( update_history_.begin()->t_ );
+  const auto it_eprop_hist_to = get_eprop_history( update_history_.begin()->t_ - 1 );
+
   eprop_history_.erase( it_eprop_hist_from, it_eprop_hist_to ); // erase found entries since no longer used
 }
 

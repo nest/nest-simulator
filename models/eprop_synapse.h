@@ -315,12 +315,6 @@ private:
   //! The time step when the previous spike arrived.
   long t_previous_spike_;
 
-  //! The time step when the previous e-prop update was.
-  long t_previous_update_;
-
-  //! The time step when the next e-prop update will be.
-  long t_next_update_;
-
   //! The time step when the spike arrived that triggered the previous e-prop update.
   long t_previous_trigger_spike_;
 
@@ -346,7 +340,7 @@ private:
   double avg_e_ = 0.0;
 
   long t_ = 0;
-  double prev_z_buffer_ = 0.0;
+  double previous_z_buffer_ = 0.0;
   bool is_first_spike_ = true;
 };
 
@@ -372,8 +366,6 @@ eprop_synapse< targetidentifierT >::eprop_synapse()
   : ConnectionBase()
   , weight_( 1.0 )
   , t_previous_spike_( 0 )
-  , t_previous_update_( 0 )
-  , t_next_update_( 0 )
   , t_previous_trigger_spike_( 0 )
   , tau_m_readout_( 10.0 )
   , kappa_( std::exp( -Time::get_resolution().get_ms() / tau_m_readout_ ) )
@@ -393,8 +385,6 @@ eprop_synapse< targetidentifierT >::eprop_synapse( const eprop_synapse& es )
   : ConnectionBase( es )
   , weight_( es.weight_ )
   , t_previous_spike_( 0 )
-  , t_previous_update_( 0 )
-  , t_next_update_( kernel().simulation_manager.get_eprop_update_interval().get_steps() )
   , t_previous_trigger_spike_( 0 )
   , tau_m_readout_( es.tau_m_readout_ )
   , kappa_( std::exp( -Time::get_resolution().get_ms() / tau_m_readout_ ) )
@@ -416,8 +406,6 @@ eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
 
   weight_ = es.weight_;
   t_previous_spike_ = es.t_previous_spike_;
-  t_previous_update_ = es.t_previous_update_;
-  t_next_update_ = es.t_next_update_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
   tau_m_readout_ = es.tau_m_readout_;
   kappa_ = es.kappa_;
@@ -431,8 +419,6 @@ eprop_synapse< targetidentifierT >::eprop_synapse( eprop_synapse&& es )
   : ConnectionBase( es )
   , weight_( es.weight_ )
   , t_previous_spike_( 0 )
-  , t_previous_update_( 0 )
-  , t_next_update_( es.t_next_update_ )
   , t_previous_trigger_spike_( 0 )
   , tau_m_readout_( es.tau_m_readout_ )
   , kappa_( es.kappa_ )
@@ -455,8 +441,6 @@ eprop_synapse< targetidentifierT >::operator=( eprop_synapse&& es )
 
   weight_ = es.weight_;
   t_previous_spike_ = es.t_previous_spike_;
-  t_previous_update_ = es.t_previous_update_;
-  t_next_update_ = es.t_next_update_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
   tau_m_readout_ = es.tau_m_readout_;
   kappa_ = es.kappa_;
@@ -503,70 +487,25 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
   Node* target = get_target( thread );
   assert( target );
 
-  bool is_target_recurrent = target->is_eprop_recurrent_node();
-
   const long t_spike = e.get_stamp().get_steps();
-  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
-  const long shift = is_target_recurrent ? target->get_shift() : target->get_shift() + 1.0;
 
-  if ( t_spike < t_next_update_ + shift )
+  if ( is_first_spike_ )
   {
-    if ( is_first_spike_ )
-    {
-      is_first_spike_ = false;
-      t_ = t_spike;
-    }
-    else
-    {
-      target->compute_gradient(
-        t_spike, t_previous_spike_, t_, prev_z_buffer_, z_bar_, e_bar_, avg_e_, grad_, kappa_, cp.average_gradient_ );
-    }
+    is_first_spike_ = false;
+    target->write_update_to_history( 0, t_spike, false );
   }
   else
   {
-    long interval_end = t_next_update_ + shift;
-    if ( is_first_spike_ )
-    {
-      is_first_spike_ = false;
-      t_ = t_spike;
-    }
-    else
-    {
-      target->compute_gradient( interval_end,
-        t_previous_spike_,
-        t_,
-        prev_z_buffer_,
-        z_bar_,
-        e_bar_,
-        avg_e_,
-        grad_,
-        kappa_,
-        cp.average_gradient_ );
-    }
+    target->compute_gradient(
+      t_spike, t_previous_spike_, t_, previous_z_buffer_, z_bar_, e_bar_, avg_e_, grad_, kappa_, cp.average_gradient_ );
+    target->write_update_to_history( t_previous_spike_, t_spike, true );
 
-    idx_current_update = ( t_spike - shift ) / update_interval;
-    long t_current_update = idx_current_update * update_interval;
-
-    target->write_update_to_history( t_previous_update_, t_current_update );
-    gradient_change_ += grad_;
-
-    weight_ = optimizer_->optimized_weight( *cp.optimizer_cp_, idx_current_update, gradient_change_, weight_ );
-
+    weight_ -= 5e-3 * grad_;
     grad_ = 0.0;
-    e_bar_ = 0.0;
-    z_bar_ = 0.0;
-    avg_e_ = 0.0;
-    prev_z_buffer_ = 0.0;
-
-    gradient_change_ = 0.0;
-
-    t_previous_update_ = t_current_update;
-    t_next_update_ = t_current_update + update_interval;
-
-    t_ = t_spike;
   }
 
   t_previous_spike_ = t_spike;
+  t_ = t_spike;
 
   e.set_receiver( *target );
   e.set_weight( weight_ );

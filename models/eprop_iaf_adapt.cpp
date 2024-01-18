@@ -335,33 +335,9 @@ eprop_iaf_adapt::is_eprop_recurrent_node() const
 void
 eprop_iaf_adapt::update( Time const& origin, const long from, const long to )
 {
-  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
-  const bool with_reset = kernel().simulation_manager.get_eprop_reset_neurons_on_update();
-  const long shift = get_shift();
-
   for ( long lag = from; lag < to; ++lag )
   {
     const long t = origin.get_steps() + lag;
-    const long interval_step = ( t - shift ) % update_interval;
-
-    if ( interval_step == 0 )
-    {
-      if ( t > 2 )
-      {
-        erase_unneeded_update_history();
-        erase_unneeded_eprop_history();
-      }
-
-      if ( with_reset )
-      {
-        f_av_ = 0.0;
-        firing_rate_reg_ = 0.0;
-        S_.v_m_ = 0.0;
-        S_.adapt_ = 0.0;
-        S_.r_ = 0;
-        S_.z_ = 0.0;
-      }
-    }
 
     S_.z_in_ = B_.spikes_.get_value( lag );
 
@@ -378,7 +354,7 @@ eprop_iaf_adapt::update( Time const& origin, const long from, const long to )
 
     write_surrogate_gradient_to_history( t, S_.surrogate_gradient_ );
 
-    if ( S_.v_m_ >= S_.v_th_adapt_ and S_.r_ == 0 and interval_step < ( update_interval - 1 ) )
+    if ( S_.v_m_ >= S_.v_th_adapt_ and S_.r_ == 0 )
     {
       SpikeEvent se;
       kernel().event_delivery_manager.send( *this, se, lag );
@@ -391,7 +367,7 @@ eprop_iaf_adapt::update( Time const& origin, const long from, const long to )
       }
     }
 
-    write_firing_rate_reg_to_history( t, interval_step, S_.z_, P_.f_target_, P_.c_reg_ );
+    write_firing_rate_reg_to_history( t, t, S_.z_, P_.f_target_, P_.c_reg_ );
 
     S_.learning_signal_ = get_learning_signal_from_history( t );
 
@@ -465,9 +441,9 @@ eprop_iaf_adapt::handle( DataLoggingRequest& e )
 
 void
 eprop_iaf_adapt::compute_gradient( const long t_spike,
-  const long t_prev_spike,
+  const long t_previous_spike,
   long& t,
-  double& prev_z_buffer,
+  double& previous_z_buffer,
   double& z_bar,
   double& e_bar,
   double& avg_e,
@@ -475,43 +451,36 @@ eprop_iaf_adapt::compute_gradient( const long t_spike,
   const double kappa,
   const bool average_gradient )
 {
-  auto eprop_hist_it = get_eprop_history( t_prev_spike - 1 );
-
   double e = 0.0;               // eligibility trace
   double epsilon = 0.0;         // adaptative component of eligibility vector
   double z = 0.0;               // spiking variable
   double psi = 0.0;             // surrogate gradient
   double L = 0.0;               // learning signal
   double firing_rate_reg = 0.0; // firing rate regularization
-  long t_hist = 0;              // time step
-  long interval_step = 0;       // interval step
-  double beta = 0.0;            // beta
+  double beta = 0.999;          // beta
 
-  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
-  const long learning_window = average_gradient ? kernel().simulation_manager.get_eprop_learning_window().get_steps() : 1;
-  const long shift = get_shift();
+  const long learning_window =
+    average_gradient ? kernel().simulation_manager.get_eprop_learning_window().get_steps() : 1;
+  const long cutoff_ = 10;
 
-  const bool ignore_this_grad = ( ( t - 3 ) % update_interval == update_interval - 1 );
+  auto eprop_hist_it = get_eprop_history( t_previous_spike - 1 );
 
   bool pre = true;
 
-  while ( t < t_spike )
+  while ( t < std::min( t_spike, t_previous_spike + cutoff_ ) )
   {
     if ( pre )
     {
-      if ( not ignore_this_grad )
-      {
-        z = prev_z_buffer;
-      }
-      prev_z_buffer = 1.0;
+      z = previous_z_buffer;
+      previous_z_buffer = 1.0;
       pre = false;
     }
     else
     {
-      if ( prev_z_buffer == 1.0 )
+      if ( previous_z_buffer == 1.0 )
       {
         z = 1.0;
-        prev_z_buffer = 0.0;
+        previous_z_buffer = 0.0;
       }
       else
       {
@@ -519,23 +488,16 @@ eprop_iaf_adapt::compute_gradient( const long t_spike,
       }
     }
 
-    if ( not ( pre and ignore_this_grad ) )
-    {
-      psi = eprop_hist_it->surrogate_gradient_;
-      L = eprop_hist_it->learning_signal_;
-      firing_rate_reg = eprop_hist_it->firing_rate_reg_;
-      t_hist = eprop_hist_it->t_;
+    psi = eprop_hist_it->surrogate_gradient_;
+    L = eprop_hist_it->learning_signal_;
+    firing_rate_reg = eprop_hist_it->firing_rate_reg_;
 
-      z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
-      e = psi * ( z_bar - P_.adapt_beta_ * epsilon );
-      epsilon = psi * z_bar + ( V_.P_adapt_ - psi * P_.adapt_beta_ ) * epsilon;
-      interval_step = ( t_hist - shift ) % update_interval + 2;
-      beta = ( interval_step - 1.0 ) / interval_step;
-      avg_e = beta * avg_e + ( 1.0 - beta ) * e;
-      e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
-      grad += L * e_bar / learning_window;
-      grad += firing_rate_reg * avg_e;
-    }
+    z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
+    e = psi * ( z_bar - P_.adapt_beta_ * epsilon );
+    epsilon = psi * z_bar + ( V_.P_adapt_ - psi * P_.adapt_beta_ ) * epsilon;
+    avg_e = beta * avg_e + ( 1.0 - beta ) * e;
+    e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
+    grad += L * e_bar / learning_window + firing_rate_reg * avg_e;
 
     ++eprop_hist_it;
     ++t;

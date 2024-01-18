@@ -234,6 +234,13 @@ Node::write_update_to_history( const long t_previous_update, const long t_curren
   throw IllegalConnection( "The target node is not an e-prop neuron." );
 }
 
+
+void
+Node::write_update_to_history( const long t_previous_update, const long t_current_update, const bool clean )
+{
+  throw IllegalConnection( "The target node is not an e-prop neuron." );
+}
+
 bool
 Node::is_eprop_recurrent_node() const
 {
@@ -543,9 +550,9 @@ nest::Node::get_tau_syn_in( int )
 
 void
 nest::Node::compute_gradient( const long t_spike,
-  const long t_prev_spike,
+  const long t_previous_spike,
   long& t,
-  double& prev_z_buffer,
+  double& previous_z_buffer,
   double& z_bar,
   double& e_bar,
   double& avg_e,

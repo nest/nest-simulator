@@ -506,6 +506,13 @@ public:
    *
    * @throws IllegalConnection
    */
+  virtual void write_update_to_history( const long t_previous_update, const long t_current_update, const bool clean );
+
+  /**
+   * Register current update in the update history and deregister previous update.
+   *
+   * @throws IllegalConnection
+   */
   virtual void write_update_to_history( const long t_previous_update, const long t_current_update );
 
   /**
@@ -809,9 +816,9 @@ public:
    * @params presyn_isis  is cleared during call
    */
   virtual void compute_gradient( const long t_spike,
-    const long t_prev_spike,
+    const long t_previous_spike,
     long& t,
-    double& prev_z_buffer,
+    double& previous_z_buffer,
     double& z_bar,
     double& e_bar,
     double& avg_e,

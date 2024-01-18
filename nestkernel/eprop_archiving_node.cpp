@@ -124,12 +124,7 @@ EpropArchivingNodeRecurrent::write_firing_rate_reg_to_history( const long t,
 
   const double f_target_ = f_target * dt; // convert from spikes/ms to spikes/step
 
-  if ( interval_step < 0 )
-  {
-    return;
-  }
-
-  double beta = interval_step / ( interval_step + 1.0 );
+  double beta = 0.999;
 
   f_av_ = beta * f_av_ + ( 1.0 - beta ) * z / dt;
 

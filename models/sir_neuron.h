@@ -92,15 +92,15 @@ public:
   using Node::receives_signal;
   using Node::sends_signal;
 
-  port send_test_event( Node&, rport, synindex, bool );
+  size_t send_test_event( Node&, size_t, synindex, bool );
 
   void handle( SpikeEvent& );
   void handle( CurrentEvent& );
   void handle( DataLoggingRequest& );
 
-  port handles_test_event( SpikeEvent&, rport );
-  port handles_test_event( CurrentEvent&, rport );
-  port handles_test_event( DataLoggingRequest&, rport );
+  size_t handles_test_event( SpikeEvent&, size_t );
+  size_t handles_test_event( CurrentEvent&, size_t );
+  size_t handles_test_event( DataLoggingRequest&, size_t );
 
   SignalType sends_signal() const;
   SignalType receives_signal() const;
@@ -149,7 +149,7 @@ private:
    */
   struct State_
   {
-    const size_t y_;                 //!< output of neuron in [0,1,2]
+    size_t y_;                 //!< output of neuron in [0,1,2]
     double h_;               //!< total input current to neuron
     double last_in_node_id_; //!< node ID of the last spike being received
     Time t_next_;            //!< time point of next update

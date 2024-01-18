@@ -40,8 +40,8 @@ void RecordablesMap< sis_neuron >::create()
 }
 
 
-inline port
-sis_neuron::send_test_event( Node& target, rport receptor_type, synindex, bool )
+inline size_t
+sis_neuron::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -49,8 +49,8 @@ sis_neuron::send_test_event( Node& target, rport receptor_type, synindex, bool )
   return target.handles_test_event( e, receptor_type );
 }
 
-inline port
-sis_neuron::handles_test_event( SpikeEvent&, rport receptor_type )
+inline size_t
+sis_neuron::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -59,8 +59,8 @@ sis_neuron::handles_test_event( SpikeEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-sis_neuron::handles_test_event( CurrentEvent&, rport receptor_type )
+inline size_t
+sis_neuron::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -69,8 +69,8 @@ sis_neuron::handles_test_event( CurrentEvent&, rport receptor_type )
   return 0;
 }
 
-inline port
-sis_neuron::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+inline size_t
+sis_neuron::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -282,7 +282,7 @@ sis_neuron::update( Time const& origin, const long from, const long to )
       // an event sent to all its targets
 
       // initialize y_new
-      const size_t new_y;
+      size_t new_y;
 
       if (S_.y_ == 0) // neuron is susceptible
       {

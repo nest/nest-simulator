@@ -7,19 +7,19 @@ Summary of network model
 ------------------------
 
 .. list-table::
+   :stub-columns: 1
 
-
-    * - Populations
-      - excitatory population :math:`\mathcal{E}` inhibitory population :math:`\mathcal{I}`, external Poissonian spike sources :math:`\mathcal{X}`
-    * - Connectivity
-      - sparse random connectivity respecting Dale’s principle
-    * - Neurons
-      - leaky integrate-and-fire (LIF)
-    * - Synapses
-      - linear input integration with alpha-shaped postsynaptic currents (PSCs), spike-timing dependent plasticity (STDP) for connections between
-        excitatory neurons
-    * - Input
-      - stationary, uncorrelated Poissonian spike trains
+   * - **Populations**
+     - excitatory population :math:`\mathcal{E}` inhibitory population :math:`\mathcal{I}`, external Poissonian spike sources :math:`\mathcal{X}`
+   * - **Connectivity**
+     - sparse random connectivity respecting Dale’s principle
+   * - **Neurons**
+     - leaky integrate-and-fire (LIF)
+   * - **Synapses**
+     - linear input integration with alpha-shaped postsynaptic currents (PSCs), spike-timing dependent plasticity (STDP) for connections between
+       excitatory neurons
+   * - **Input**
+     - stationary, uncorrelated Poissonian spike trains
 
 
 Detailed desciption of network model
@@ -151,189 +151,192 @@ Connectivity
 
 
 
-Neuron: Leaky integrate-and-fire (LIF) dynamics
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Neuron
+~~~~~~
 
+.. list-table::
 
-Dynamics of membrane potential :math:`V_{i}(t)` and
-spiking activity :math:`s_i(t)` of neuro :math:`i\in\left\{1,\ldots,N\right\}`:
+   * - **Leaky integrate-and-fire (iaf) dynamics**
+     - Dynamics of membrane potential :math:`V_{i}(t)` and
+       spiking activity :math:`s_i(t)` of neuro :math:`i\in\left\{1,\ldots,N\right\}`:
 
-emission of :math:`k`\ th (:math:`k=1,2,\ldots`) spike of neuron
-:math:`i` at time :math:`t_{i}^{k}` if
+       * emission of :math:`k`\ th (:math:`k=1,2,\ldots`) spike of neuron
+         :math:`i` at time :math:`t_{i}^{k}` if
 
-.. math::
-    V_{i}\left(t_{i}^{k}\right)\geq\theta
+         .. math::
+            V_{i}\left(t_{i}^{k}\right)\geq\theta
 
-with spike threshold :math:`\theta`
+         with spike threshold :math:`\theta`
 
- - reset and refractoriness:
+       * reset and refractoriness:
 
-.. math:: \forall{}k,\ \forall t \in \left(t_{k}^{i},\,t_{k}^{i}+\tau_\text{ref}\right]:\quad V_{i}(t)=V_\text{reset}
+         .. math:: \forall{}k,\ \forall t \in \left(t_{k}^{i},\,t_{k}^{i}+\tau_\text{ref}\right]:\quad V_{i}(t)=V_\text{reset}
 
-with refractory period :math:`\tau_\text{ref}` and reset potential
-:math:`V_\text{reset}`
+         with refractory period :math:`\tau_\text{ref}` and reset potential
+         :math:`V_\text{reset}`
 
--  spike train :math:`\displaystyle s_i(t)=\sum_k \delta(t-t_i^k)`
+       * spike train :math:`\displaystyle s_i(t)=\sum_k \delta(t-t_i^k)`
 
--  subthreshold dynamics of membrane potential :math:`V_{i}(t)`:
+       * subthreshold dynamics of membrane potential :math:`V_{i}(t)`:
 
-.. math::
+         .. math::
 
-   \begin{aligned}
-                                   &\forall{}k,\ \forall t \notin \left[t_{i}^{k},\,t_{i}^{k}+\tau_\text{ref}\right):\\
-                                   &\qquad\tau_\text{m}\frac{\text{d}{}V_i(t)}{\text{d}{}t} =
-                                   \Bigl[E_\text{L}-V_i(t)\Bigr]+R_\text{m}I_i(t)
-                                 \end{aligned}
+            \begin{aligned}
+                                          &\forall{}k,\ \forall t \notin \left[t_{i}^{k},\,t_{i}^{k}+\tau_\text{ref}\right):\\
+                                          &\qquad\tau_\text{m}\frac{\text{d}{}V_i(t)}{\text{d}{}t} =
+                                          \Bigl[E_\text{L}-V_i(t)\Bigr]+R_\text{m}I_i(t)
+                                        \end{aligned}
 
-with membrane time constant :math:`\tau_\text{m}`, membrane
-resistance :math:`R_\text{m}`, resting potential :math:`E_\text{L}`,
-and total synaptic input current :math:`I_i(t)`
+         with membrane time constant :math:`\tau_\text{m}`, membrane
+         resistance :math:`R_\text{m}`, resting potential :math:`E_\text{L}`,
+         and total synaptic input current :math:`I_i(t)`
 
 
 Synapse: transmission
 ~~~~~~~~~~~~~~~~~~~~~
 
-Current-based synapses with alpha-function shaped postsynaptic currents (PSCs)
-``````````````````````````````````````````````````````````````````````````````
+.. list-table::
+
+   * - **Current-based synapses with alpha-function shaped postsynaptic currents (PSCs)**
 
 
-Total synaptic input current of neuron :math:`i`
+     - Total synaptic input current of neuron :math:`i`
 
-.. math:: I_i(t)=I_{\text{E},i}(t)+I_{\text{I},i}(t)+I_{\text{X},i}(t)
+       .. math:: I_i(t)=I_{\text{E},i}(t)+I_{\text{I},i}(t)+I_{\text{X},i}(t)
 
--  excitatory, inhibitory and external synaptic input currents
+       * excitatory, inhibitory and external synaptic input currents
 
-.. math::
+         .. math::
 
-    %I_{P,i}(t)=\sum_{j\in\mathcal{P}}(\text{PSC}_{ij}*s_j)(t)
-                               %\quad\text{for}\quad
-                               %(P,\mathcal{P})\in\{(\exc,\Epop),(\inh,\Ipop),(\ext,\Xpop)\}
-                               %,
-                                \begin{aligned}
-                                  I_{\text{E},i}(t)&=\sum_{j\in\mathcal{E}}\bigl(\text{PSC}_{ij}*s_j\bigr)(t-d_{ij})\\
-                                  I_{\text{I},i}(t)&=\sum_{j\in\mathcal{I}}\bigl(\text{PSC}_{ij}*s_j\bigr)(t-d_{ij})\\
-                                  I_{\text{X},i}(t)&=\sum_{j\in\mathcal{X}}\bigl(\text{PSC}_{ij}*s_j\bigr)(t-d_{ij})
-                                \end{aligned}
+             %I_{P,i}(t)=\sum_{j\in\mathcal{P}}(\text{PSC}_{ij}*s_j)(t)
+                                      %\quad\text{for}\quad
+                                      %(P,\mathcal{P})\in\{(\exc,\Epop),(\inh,\Ipop),(\ext,\Xpop)\}
+                                      %,
+                                       \begin{aligned}
+                                         I_{\text{E},i}(t)&=\sum_{j\in\mathcal{E}}\bigl(\text{PSC}_{ij}*s_j\bigr)(t-d_{ij})\\
+                                         I_{\text{I},i}(t)&=\sum_{j\in\mathcal{I}}\bigl(\text{PSC}_{ij}*s_j\bigr)(t-d_{ij})\\
+                                         I_{\text{X},i}(t)&=\sum_{j\in\mathcal{X}}\bigl(\text{PSC}_{ij}*s_j\bigr)(t-d_{ij})
+                                       \end{aligned}
 
-with spike trains :math:`s_j(t)` of local
-(:math:`j\in\mathcal{E}\cup\mathcal{I}`) and external sources
-(:math:`j\in\mathcal{X}`), spike transmission delays :math:`d_{ij}`,
-and convolution operator “:math:`*`”:
-:math:`\displaystyle\bigl(f*g\bigr)(t)=\int_{-\infty}^\infty\text{d}s\,f(s)g(t-s)`)
+         with spike trains :math:`s_j(t)` of local
+         (:math:`j\in\mathcal{E}\cup\mathcal{I}`) and external sources
+         (:math:`j\in\mathcal{X}`), spike transmission delays :math:`d_{ij}`,
+         and convolution operator “:math:`*`”:
+         :math:`\displaystyle\bigl(f*g\bigr)(t)=\int_{-\infty}^\infty\text{d}s\,f(s)g(t-s)`)
 
--  alpha-function shaped postsynaptic currents
+       * alpha-function shaped postsynaptic currents
 
-.. math:: \text{PSC}_{ij}(t)=\hat{I}_{ij}e\tau_\text{s}^{-1}te^{-t/\tau_\text{s}}\Theta(t)
+         .. math:: \text{PSC}_{ij}(t)=\hat{I}_{ij}e\tau_\text{s}^{-1}te^{-t/\tau_\text{s}}\Theta(t)
 
-with synaptic time constant :math:`\tau_\text{s}` and Heaviside
-function :math:`\Theta(\cdot)`
+         with synaptic time constant :math:`\tau_\text{s}` and Heaviside
+         function :math:`\Theta(\cdot)`
 
--  postsynaptic potential triggered by a single presynaptic spike
+       * postsynaptic potential triggered by a single presynaptic spike
 
-.. math::
+         .. math::
 
-    \text{PSP}_{ij}(t)=
-                               \hat{I}_{ij}\frac{e}{\tau_\text{s}C_\text{m}}
-                               \left(\frac{1}{\tau_\text{m}}-\frac{1}{\tau_\text{s}}\right)^{-2}
-                               \left(\left(\frac{1}{\tau_\text{m}}-\frac{1}{\tau_\text{s}}\right) t e^{-t/\tau_\text{s}} - e^{-t/\tau_\text{s}} + e^{-t/\tau_\text{m}} \right) \Theta(t)
+             \text{PSP}_{ij}(t)=
+                                      \hat{I}_{ij}\frac{e}{\tau_\text{s}C_\text{m}}
+                                      \left(\frac{1}{\tau_\text{m}}-\frac{1}{\tau_\text{s}}\right)^{-2}
+                                      \left(\left(\frac{1}{\tau_\text{m}}-\frac{1}{\tau_\text{s}}\right) t e^{-t/\tau_\text{s}} - e^{-t/\tau_\text{s}} + e^{-t/\tau_\text{m}} \right) \Theta(t)
 
--  PSC amplitude (synaptic weight)
+       * PSC amplitude (synaptic weight)
 
-.. math::
+         .. math::
 
-    \hat{I}_{ij}=\text{max}_t\bigl(\text{PSC}_{ij}(t)\bigr)
-                               =\frac{J_{ij}}{J_\text{unit}(\tau_\text{m},\tau_\text{s},C_\text{m})}
+             \hat{I}_{ij}=\text{max}_t\bigl(\text{PSC}_{ij}(t)\bigr)
+                                      =\frac{J_{ij}}{J_\text{unit}(\tau_\text{m},\tau_\text{s},C_\text{m})}
 
-parameterized by PSP amplitude
-:math:`J_{ij}=\text{max}_t\bigl(\text{PSP}_{ij}(t)\bigr)`
+         parameterized by PSP amplitude
+         :math:`J_{ij}=\text{max}_t\bigl(\text{PSP}_{ij}(t)\bigr)`
 
--  with unit PSP amplitude (PSP amplitude for :math:`\hat{I}_{ij}=1`):
+         with unit PSP amplitude (PSP amplitude for :math:`\hat{I}_{ij}=1`):
 
-    .. math::
+            .. math::
 
-       J_\text{unit}(\tau_\text{m},\tau_\text{s},C_\text{m})
-                                  = \frac{e}{C_\text{m}\left(1-\frac{\tau_\text{s}}{\tau_\text{m}}\right)}\left( \frac{e^{-t_\text{max}/\tau_\text{m}} - e^{-t_\text{max}/\tau_\text{s}}}{\frac{1}{\tau_\text{s}} - \frac{1}{\tau_\text{m}}} - t_\text{max}e^{-t_\text{max}/\tau_\text{s}} \right),
+               J_\text{unit}(\tau_\text{m},\tau_\text{s},C_\text{m})
+                                         = \frac{e}{C_\text{m}\left(1-\frac{\tau_\text{s}}{\tau_\text{m}}\right)}\left( \frac{e^{-t_\text{max}/\tau_\text{m}} - e^{-t_\text{max}/\tau_\text{s}}}{\frac{1}{\tau_\text{s}} - \frac{1}{\tau_\text{m}}} - t_\text{max}e^{-t_\text{max}/\tau_\text{s}} \right),
 
--  time to PSP maximum
+         time to PSP maximum
 
-    .. math::
+            .. math::
 
-       t_\text{max} =
-                                  \frac{1}{\frac{1}{\tau_\text{s}} - \frac{1}{\tau_\text{m}}}\left(-W_{-1}\left(\frac{-\tau_\text{s}e^{-\frac{\tau_\text{s}}{\tau_\text{m}}}}{\tau_\text{m}}\right) - \frac{\tau_\text{s}}{\tau_\text{m}}\right),
+               t_\text{max} =
+                                         \frac{1}{\frac{1}{\tau_\text{s}} - \frac{1}{\tau_\text{m}}}\left(-W_{-1}\left(\frac{-\tau_\text{s}e^{-\frac{\tau_\text{s}}{\tau_\text{m}}}}{\tau_\text{m}}\right) - \frac{\tau_\text{s}}{\tau_\text{m}}\right),
 
-    and Lambert-W function :math:`\displaystyle W_{-1}(x)` for
-    :math:`\displaystyle x \ge -1/e`
+         and Lambert-W function :math:`\displaystyle W_{-1}(x)` for
+         :math:`\displaystyle x \ge -1/e`
 
 
 
 Synapse: plasticity
 ~~~~~~~~~~~~~~~~~~~
 
-Spike-timing dependent plasticity (STDP) with power-law weight dependence and all-to-all spike pairing scheme
-`````````````````````````````````````````````````````````````````````````````````````````````````````````````
+.. list-table::
 
-See Morrison et al. [1]_ for connections between excitatory neurons.
+   * - **Spike-timing dependent plasticity (STDP) with power-law weight dependence and all-to-all spike pairing scheme.**
+       See Morrison et al. [1]_ for connections between excitatory neurons.
 
 
-Dynamics of synaptic weights :math:`J_{ij}(t)` :math:`\forall{}i\in\mathcal{E}, j\in\mathcal{E}`:
+     - Dynamics of synaptic weights :math:`J_{ij}(t)` :math:`\forall{}i\in\mathcal{E}, j\in\mathcal{E}`:
 
-   .. math::
+          .. math::
 
-      \begin{aligned}
-             &\forall J_{ij}\ge{}0: \\[1ex]
-             &\quad
-             \frac{\text{d}}{}J_{ij}{\text{d}{}t}=
-             \lambda^+f^+(J_{ij})\sum_k x^+_j(t)\delta\Bigl(t-[t_i^k+d_{ij}]\Bigr)
-             + \lambda^-f^-(J_{ij})\sum_l x^-_i(t)\delta\Big(t-[t_j^l-d_{ij}]\Bigr)\\[1ex]
-             &\forall{}\{t|J_{ij}(t)<0\}: \quad J_{ij}(t)=0  \quad \text{(clipping)}
-           \end{aligned}
+             \begin{aligned}
+                    &\forall J_{ij}\ge{}0: \\[1ex]
+                    &\quad
+                    \frac{\text{d}}{}J_{ij}{\text{d}{}t}=
+                    \lambda^+f^+(J_{ij})\sum_k x^+_j(t)\delta\Bigl(t-[t_i^k+d_{ij}]\Bigr)
+                    + \lambda^-f^-(J_{ij})\sum_l x^-_i(t)\delta\Big(t-[t_j^l-d_{ij}]\Bigr)\\[1ex]
+                    &\forall{}\{t|J_{ij}(t)<0\}: \quad J_{ij}(t)=0  \quad \text{(clipping)}
+                  \end{aligned}
 
-   with
+          with
 
- -  pre- and postsynaptic spike times :math:`\{t_j^l|l=1,2,\ldots\}` and
-    :math:`\{t_i^k|k=1,2,\ldots\}`,
+        -  pre- and postsynaptic spike times :math:`\{t_j^l|l=1,2,\ldots\}` and
+           :math:`\{t_i^k|k=1,2,\ldots\}`,
 
- -  magnitude :math:`\lambda^+=\lambda` of weight update for causal
-    firing (postsynaptic spike following presynaptic spikes:
-    :math:`t_i^k>t_j^l`),
+        -  magnitude :math:`\lambda^+=\lambda` of weight update for causal
+           firing (postsynaptic spike following presynaptic spikes:
+           :math:`t_i^k>t_j^l`),
 
- -  magnitude :math:`\lambda^-=-\alpha\lambda` of weight update for
-    acausal firing (presynaptic spike following postsynaptic spikes:
-    :math:`t_i^k<t_j^l`),
+        -  magnitude :math:`\lambda^-=-\alpha\lambda` of weight update for
+           acausal firing (presynaptic spike following postsynaptic spikes:
+           :math:`t_i^k<t_j^l`),
 
- -  power-law weight dependence
-    :math:`f^+(J_{ij})=J_0(J_{ij}/J_0)^{\mu^+}` of weight update for
-    causal firing with exponent :math:`\mu^+` and reference weight
-    :math:`J_0`,
+        -  power-law weight dependence
+           :math:`f^+(J_{ij})=J_0(J_{ij}/J_0)^{\mu^+}` of weight update for
+           causal firing with exponent :math:`\mu^+` and reference weight
+           :math:`J_0`,
 
- -  linear weight dependence :math:`f^-(J_{ij})=J_{ij}` of weight update
-    for acausal firing,
+        -  linear weight dependence :math:`f^-(J_{ij})=J_{ij}` of weight update
+           for acausal firing,
 
- -  (dendritic) delay :math:`d_{ij}`,
+        -  (dendritic) delay :math:`d_{ij}`,
 
- -  spike trace :math:`x^+_j(t)` of presynaptic neuron :math:`j`,
-    evolving according to
+        -  spike trace :math:`x^+_j(t)` of presynaptic neuron :math:`j`,
+           evolving according to
 
-    .. math:: \frac{\text{d}{}x^+_j}{\text{d}{}t}=-\frac{x^+_j(t)}{\tau^+}+\sum_l\delta(t-t_j^l)
+           .. math:: \frac{\text{d}{}x^+_j}{\text{d}{}t}=-\frac{x^+_j(t)}{\tau^+}+\sum_l\delta(t-t_j^l)
 
-    with presynaptic spike times :math:`\{t_j^l|l=1,2,\ldots\}` and time
-    constant :math:`\tau^+`,
+           with presynaptic spike times :math:`\{t_j^l|l=1,2,\ldots\}` and time
+           constant :math:`\tau^+`,
 
- -  spike trace :math:`x^-_i(t)` of postsynaptic neuron :math:`i`,
-    evolving according to
+        -  spike trace :math:`x^-_i(t)` of postsynaptic neuron :math:`i`,
+           evolving according to
 
-    .. math:: \frac{\text{d}{}x^-_i}{\text{d}{}t}=-\frac{x^-_i(t)}{\tau^-}+\sum_k\delta(t-t_i^k)
+           .. math:: \frac{\text{d}{}x^-_i}{\text{d}{}t}=-\frac{x^-_i(t)}{\tau^-}+\sum_k\delta(t-t_i^k)
 
-    with postsynaptic spike times :math:`\{t_i^k|k=1,2,\ldots\}` and time
-    constant :math:`\tau^-`
+           with postsynaptic spike times :math:`\{t_i^k|k=1,2,\ldots\}` and time
+           constant :math:`\tau^-`
 
-.. note::
+       .. note::
 
-   The above weight update accounts for *all* pairs of pre- and
-   postsynaptic spikes (all-to-all spike pairing scheme). The spike
-   histories and the dependence of the weight update on the time lag of
-   pre- and postsynaptic firing are fully captured by the spike traces
-   :math:`x^+_j(t)` and :math:`x^-_i(t)`.
+          The above weight update accounts for *all* pairs of pre- and
+          postsynaptic spikes (all-to-all spike pairing scheme). The spike
+          histories and the dependence of the weight update on the time lag of
+          pre- and postsynaptic firing are fully captured by the spike traces
+          :math:`x^+_j(t)` and :math:`x^-_i(t)`.
 
 
 Stimulus
@@ -341,28 +344,28 @@ Stimulus
 
 .. table::
 
-   +-----------------+---------------------------------------------------+
-   | **Type**        | stationary, uncorrelated Poisson spike trains     |
-   +-----------------+---------------------------------------------------+
-   | **Description** | :math:`N=|\mathcal{X}|` independent realizations  |
-   |                 | :math:`s_i(t)` (:math:`i\in\mathcal{X}`) of a     |
-   |                 | Poisson point process with constant rate          |
-   |                 | :math:`\nu_\text{X}(t)=\eta\nu_\theta`, where     |
-   |                 |                                                   |
-   |                 | .. math::                                         |
-   |                 |                                                   |
-   |                 |    \label{eq:rheobase_rate_LIF_alpha}             |
-   |                 |                                                   |
-   |                 |                   \nu_\theta=\frac{\theta-E       |
-   |                 |                   _\text{L}}{R_\text{m}{}         |
-   |                 |                  \hat{I}_X{}e\tau_\text{s}}       |
-   |                 |                                                   |
-   |                 | denotes the rheobase rate, and :math:`\eta` and   |
-   |                 | :math:`\hat{I}_X=J/J_\text{unit}` the relative    |
-   |                 | rate and the synaptic weight (PSC amplitude) of   |
-   |                 | external sources                                  |
-   |                 |                                                   |
-   +-----------------+---------------------------------------------------+
+   +-------------------------------------------------+---------------------------------------------------+
+   | **Type**                                        | **Description**                                   |
+   +=================================================+===================================================+
+   | stationary, uncorrelated Poisson spike trains   | :math:`N=|\mathcal{X}|` independent realizations  |
+   |                                                 | :math:`s_i(t)` (:math:`i\in\mathcal{X}`) of a     |
+   |                                                 | Poisson point process with constant rate          |
+   |                                                 | :math:`\nu_\text{X}(t)=\eta\nu_\theta`, where     |
+   |                                                 |                                                   |
+   |                                                 | .. math::                                         |
+   |                                                 |                                                   |
+   |                                                 |    \label{eq:rheobase_rate_LIF_alpha}             |
+   |                                                 |                                                   |
+   |                                                 |                   \nu_\theta=\frac{\theta-E       |
+   |                                                 |                   _\text{L}}{R_\text{m}{}         |
+   |                                                 |                  \hat{I}_X{}e\tau_\text{s}}       |
+   |                                                 |                                                   |
+   |                                                 | denotes the rheobase rate, and :math:`\eta` and   |
+   |                                                 | :math:`\hat{I}_X=J/J_\text{unit}` the relative    |
+   |                                                 | rate and the synaptic weight (PSC amplitude) of   |
+   |                                                 | external sources                                  |
+   |                                                 |                                                   |
+   +-------------------------------------------------+---------------------------------------------------+
 
 
 Initial conditions
@@ -370,28 +373,28 @@ Initial conditions
 
 .. table::
 
-   +-----------------+---------------------------------------------------+
-   | **Type**        | random initial membrane potentials, homogeneous   |
-   |                 | initial synaptic weights and spike traces         |
-   +-----------------+---------------------------------------------------+
-   | **Description** | -  membrane potentials:                           |
-   |                 |    :math:`V_i(t=0)\sim \                          |
-   |                 |    \mathcal{U}(V_{0,\text{min}},V_{0,\text{max}})`|
-   |                 |    randomly and independently drawn from a        |
-   |                 |    uniform distribution between                   |
-   |                 |    :math:`V_{0,\text{min}}` and                   |
-   |                 |    :math:`V_{0,\text{max}}` (:math:`\forall{}i`)  |
-   |                 |                                                   |
-   |                 | -  synaptic weights:                              |
-   |                 |    :math:`\hat{I}_{ij}(t=0)=J/J_\text{unit}`      |
-   |                 |                                                   |
-   |                 | :math:`\forall{}i\in\mathcal{E},               \  |
-   |                 | j\in\mathcal{E}`)                                 |
-   |                 |                                                   |
-   |                 | -  spike traces:                                  |
-   |                 |    :math:`x_{+,i}(t=0)=x_{-,i}(t=0)=0`            |
-   |                 |    (:math:`\forall{}i\in\mathcal{E}`)             |
-   +-----------------+---------------------------------------------------+
+   +--------------------------------------------------+---------------------------------------------------+
+   | **Type**                                         | **Description**                                   |
+   |                                                  |                                                   |
+   +==================================================+===================================================+
+   | random initial membrane potentials, homogeneous  | -  membrane potentials:                           |
+   | initial synaptic weights and spike traces        |    :math:`V_i(t=0)\sim \                          |
+   |                                                  |    \mathcal{U}(V_{0,\text{min}},V_{0,\text{max}})`|
+   |                                                  |    randomly and independently drawn from a        |
+   |                                                  |    uniform distribution between                   |
+   |                                                  |    :math:`V_{0,\text{min}}` and                   |
+   |                                                  |    :math:`V_{0,\text{max}}` (:math:`\forall{}i`)  |
+   |                                                  |                                                   |
+   |                                                  | -  synaptic weights:                              |
+   |                                                  |    :math:`\hat{I}_{ij}(t=0)=J/J_\text{unit}`      |
+   |                                                  |                                                   |
+   |                                                  |    (:math:`\forall{}i\in\mathcal{E},           \  |
+   |                                                  |    j\in\mathcal{E}`)                              |
+   |                                                  |                                                   |
+   |                                                  | -  spike traces:                                  |
+   |                                                  |    :math:`x_{+,i}(t=0)=x_{-,i}(t=0)=0`            |
+   |                                                  |    (:math:`\forall{}i\in\mathcal{E}`)             |
+   +--------------------------------------------------+---------------------------------------------------+
 
 .. _sec_model_parameters:
 
@@ -409,7 +412,7 @@ Network and connectivity
 
       +----------------------------------+---------------------------+----------------------+
       | **Name**                         | **Value**                 | **Description**      |
-      +----------------------------------+---------------------------+----------------------+
+      +==================================+===========================+======================+
       | :math:`N`                        | :math:`12500`             | total number of      |
       |                                  |                           | neurons in local     |
       |                                  |                           | network              |
@@ -445,7 +448,7 @@ Neuron parameters
 
       +---------------------------------+--------------------------------+----------------------+
       | **Name**                        | **Value**                      | **Description**      |
-      +---------------------------------+--------------------------------+----------------------+
+      +=================================+================================+======================+
       | :math:`\theta`                  |                                | spike threshold      |
       |                                 | :math:`20\,\text{mV}`          |                      |
       +---------------------------------+--------------------------------+----------------------+
@@ -476,7 +479,7 @@ Synapse parameters
 
       +---------------------------------------+-----------------------------+----------------------+
       | **Name**                              | **Value**                   | **Description**      |
-      +---------------------------------------+-----------------------------+----------------------+
+      +=======================================+=============================+======================+
       | :math:`J`                             |                             | (initial) weight     |
       |                                       | :math:`0.5\,\,\text{mV}`    | (PSP amplitude) of   |
       |                                       |                             | excitatory synapses  |
@@ -545,7 +548,7 @@ Stimulus parameters
 
       +--------------------------------------+------------------------+----------------------+
       | **Name**                             | **Value**              | **Description**      |
-      +--------------------------------------+------------------------+----------------------+
+      +======================================+========================+======================+
       | :math:`\eta`                         | :math:`1.2`            | relative rate of     |
       |                                      |                        | external Poissonian  |
       |                                      |                        | sources              |
@@ -565,7 +568,7 @@ Initial conditions parameters
 
       +---------------------------------------+------------------------+----------------------+
       | **Name**                              | **Value**              | **Description**      |
-      +---------------------------------------+------------------------+----------------------+
+      +=======================================+========================+======================+
       |                                       | :math:`E_\text{L}\     | minimum initial      |
       | :math:`\color{blue} V_{0,\text{min}}` | =0\,\,\text{mV}`       | membrane potential   |
       +---------------------------------------+------------------------+----------------------+

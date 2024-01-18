@@ -44,7 +44,6 @@
 #include "recordables_map.h"
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
-#include "universal_data_logger_impl.h"
 
 // Includes from sli:
 #include "dict.h"
@@ -207,7 +206,6 @@ private:
   // ----------------------------------------------------------------
 
   /**
-   * @defgroup iaf_psc_alpha_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.

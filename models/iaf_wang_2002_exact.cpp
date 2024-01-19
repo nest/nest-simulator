@@ -497,7 +497,10 @@ nest::iaf_wang_2002_exact::update( Time const& origin, const long from, const lo
     S_.ode_state_[ State_::s_GABA ] += B_.spikes_[ GABA - 1 ].get_value( lag );
 
     for ( size_t i = NMDA - 1; i < B_.spikes_.size(); ++i )
+    // i starts at 2, runs through all NMDA spikes
     {
+
+      // index which starts at 0
       const size_t si = i - ( NMDA - 1 );
 
       assert( si >= 0 );
@@ -559,6 +562,8 @@ nest::iaf_wang_2002_exact::handle( SpikeEvent& e )
   }
   else
   {
+    // spikes_ has 2 + N elements, where N is number of NMDA synapses
+    // rport starts at 1, so subtract one to get correct index
     B_.spikes_[ rport - 1 ].add_value( steps, e.get_multiplicity() );
 
     const size_t w_idx = rport - NMDA;

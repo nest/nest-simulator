@@ -117,14 +117,11 @@ nest::iaf_wang_2002::Parameters_::Parameters_()
   , V_reset( -60.0 )      // mV
   , C_m( 500.0 )          // pF
   , g_L( 25.0 )           // nS
-//   , g_GABA ( 1.3 )        //
-//   , g_NMDA ( 0.165 )        //
-//   , g_AMPA ( 0.05 )        //
-//   , g_AMPA_ext ( 0.05 )   //
   , t_ref( 2.0 )          // ms
   , tau_AMPA( 2.0 )       // ms
   , tau_GABA( 5.0 )       // ms
   , tau_decay_NMDA( 100 ) // ms
+  , tau_rise_NMDA( 2 ) // ms
   , alpha( 0.5 )          // 1 / ms
   , conc_Mg2( 1 )         // mM
   , gsl_error_tol( 1e-3 )
@@ -186,14 +183,11 @@ nest::iaf_wang_2002::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::V_reset, V_reset );
   def< double >( d, names::C_m, C_m );
   def< double >( d, names::g_L, g_L );
-//   def< double >( d, names::g_GABA, g_GABA );
-//   def< double >( d, names::g_NMDA, g_NMDA );
-//   def< double >( d, names::g_AMPA, g_AMPA );
-//   def< double >( d, names::g_AMPA_ext, g_AMPA_ext );
   def< double >( d, names::t_ref, t_ref );
   def< double >( d, names::tau_AMPA, tau_AMPA );
   def< double >( d, names::tau_GABA, tau_GABA );
   def< double >( d, names::tau_decay_NMDA, tau_decay_NMDA );
+  def< double >( d, names::tau_rise_NMDA, tau_rise_NMDA );
   def< double >( d, names::alpha, alpha );
   def< double >( d, names::conc_Mg2, conc_Mg2 );
   def< double >( d, names::gsl_error_tol, gsl_error_tol );
@@ -210,14 +204,11 @@ nest::iaf_wang_2002::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::V_reset, V_reset, node );
   updateValueParam< double >( d, names::C_m, C_m, node );
   updateValueParam< double >( d, names::g_L, g_L, node );
-//   updateValueParam< double >( d, names::g_GABA, g_GABA, node );
-//   updateValueParam< double >( d, names::g_NMDA, g_NMDA, node );
-//   updateValueParam< double >( d, names::g_AMPA, g_AMPA, node );
-//   updateValueParam< double >( d, names::g_AMPA_ext, g_AMPA_ext, node );
   updateValueParam< double >( d, names::t_ref, t_ref, node );
   updateValueParam< double >( d, names::tau_AMPA, tau_AMPA, node );
   updateValueParam< double >( d, names::tau_GABA, tau_GABA, node );
   updateValueParam< double >( d, names::tau_decay_NMDA, tau_decay_NMDA, node );
+  updateValueParam< double >( d, names::tau_rise_NMDA, tau_rise_NMDA, node );
   updateValueParam< double >( d, names::alpha, alpha, node );
   updateValueParam< double >( d, names::conc_Mg2, conc_Mg2, node );
   updateValueParam< double >( d, names::gsl_error_tol, gsl_error_tol, node );
@@ -333,7 +324,6 @@ nest::iaf_wang_2002::init_state_()
 void
 nest::iaf_wang_2002::init_buffers_()
 {
-//  std::cout << "Inside init buffers" << std::endl;
   B_.spikes_.resize( 3 );
   for ( auto& sb : B_.spikes_ )
   {
@@ -410,7 +400,6 @@ void
 nest::iaf_wang_2002::update( Time const& origin, const long from, const long to )
 {
   std::vector< double > s_vals( kernel().connection_manager.get_min_delay(), 0.0 );
-//  std::cout << "Inside update" << std::endl;
   for ( long lag = from; lag < to; ++lag )
   {
     double t = 0.0;
@@ -474,9 +463,9 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
 
       // compute current value of s_NMDA and add NMDA update to spike offset
       S_.s_NMDA_pre = S_.s_NMDA_pre * exp( -( t_spike - t_lastspike ) / P_.tau_decay_NMDA );
-      const double s_NMDA_delta = P_.alpha * (1 - S_.s_NMDA_pre);
+      const double s_NMDA_delta = pow(P_.tau_rise_NMDA, 2) * P_.alpha * (1 - S_.s_NMDA_pre);
       S_.s_NMDA_pre += s_NMDA_delta; // guaranteed to be <= 1.
-     
+
       SpikeEvent se;
       se.set_offset( s_NMDA_delta );
       kernel().event_delivery_manager.send( *this, se, lag );

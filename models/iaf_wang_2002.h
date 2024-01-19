@@ -111,6 +111,7 @@ The following parameters can be set in the status dictionary.
  tau_AMPA       ms      Synaptic time constant for AMPA synapse
  tau_GABA       ms      Synaptic time constant for GABA synapse
  tau_decay_NMDA ms      Synaptic decay time constant for NMDA synapse
+ tau_rise_NMDA  ms      Synaptic rise time constant for NMDA synapse
  alpha          1/ms    Scaling factor for NMDA synapse
  conc_Mg2       mM      Extracellular magnesium concentration
  gsl_error_tol  -       GSL error tolerance
@@ -239,14 +240,11 @@ private:
     double V_reset;        //!< Reset Potential in mV
     double C_m;            //!< Membrane Capacitance in pF
     double g_L;            //!< Leak Conductance in nS
-//     double g_GABA;         //!< Peak conductance GABA
-//     double g_NMDA;         //!< Peak conductance NMDA
-//     double g_AMPA;         //!< Peak conductance AMPA
-//     double g_AMPA_ext;         //!< Peak conductance AMPA
     double t_ref;          //!< Refractory period in ms
     double tau_AMPA;       //!< Synaptic Time Constant AMPA Synapse in ms
     double tau_GABA;       //!< Synaptic Time Constant GABA Synapse in ms
     double tau_decay_NMDA; //!< Synaptic Decay Time Constant NMDA Synapse in ms
+    double tau_rise_NMDA; //!< Synaptic Decay Time Constant NMDA Synapse in ms
     double alpha;          //!< Scaling factor for NMDA synapse in 1/ms
     double conc_Mg2;       //!< Extracellular Magnesium Concentration in mM
 
@@ -318,9 +316,6 @@ private:
     //   Buffers and sums of incoming spikes and currents per timestep
     // -----------------------------------------------------------------------
     std::vector< RingBuffer > spikes_;
-//     RingBuffer spike_AMPA_;
-//     RingBuffer spike_GABA_;
-//     RingBuffer spike_NMDA_;
     RingBuffer currents_;
 
     // -----------------------------------------------------------------------

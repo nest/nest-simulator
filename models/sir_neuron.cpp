@@ -22,6 +22,29 @@
 
 #include "sir_neuron.h"
 
+// C++ includes:
+#include <cmath>
+#include <limits>
+
+// Includes from libnestutil:
+#include "dict_util.h"
+#include "numerics.h"
+
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "nest_impl.h"
+#include "nest_timeconverter.h"
+#include "random_generators.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
+
 namespace nest
 {
 void

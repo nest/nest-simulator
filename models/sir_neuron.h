@@ -23,6 +23,9 @@
 #ifndef SIR_NEURON_H
 #define SIR_NEURON_H
 
+// Generated includes:
+#include "config.h"
+
 // C++ includes:
 #include <cmath>
 #include <limits>
@@ -44,6 +47,7 @@
 #include "recordables_map.h"
 #include "ring_buffer.h"
 #include "universal_data_logger.h"
+#include "universal_data_logger_impl.h"
 
 // Includes from sli:
 #include "dict.h"

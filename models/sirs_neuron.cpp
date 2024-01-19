@@ -41,7 +41,7 @@ void RecordablesMap< sirs_neuron >::create()
 
 
 inline size_t
-sirs_neuron::send_test_event( Node& target, size_t receptor_type, synindex, bool )
+nest::sirs_neuron::send_test_event( Node& target, size_t receptor_type, synindex, bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -50,7 +50,7 @@ sirs_neuron::send_test_event( Node& target, size_t receptor_type, synindex, bool
 }
 
 inline size_t
-sirs_neuron::handles_test_event( SpikeEvent&, size_t receptor_type )
+nest::sirs_neuron::handles_test_event( SpikeEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -60,7 +60,7 @@ sirs_neuron::handles_test_event( SpikeEvent&, size_t receptor_type )
 }
 
 inline size_t
-sirs_neuron::handles_test_event( CurrentEvent&, size_t receptor_type )
+nest::sirs_neuron::handles_test_event( CurrentEvent&, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -70,7 +70,7 @@ sirs_neuron::handles_test_event( CurrentEvent&, size_t receptor_type )
 }
 
 inline size_t
-sirs_neuron::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
+nest::sirs_neuron::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 {
   if ( receptor_type != 0 )
   {
@@ -81,20 +81,20 @@ sirs_neuron::handles_test_event( DataLoggingRequest& dlr, size_t receptor_type )
 
 
 inline SignalType
-sirs_neuron::sends_signal() const
+nest::sirs_neuron::sends_signal() const
 {
   return SIRS;
 }
 
 inline SignalType
-sirs_neuron::receives_signal() const
+nest::sirs_neuron::receives_signal() const
 {
   return SIRS;
 }
 
 
 inline void
-sirs_neuron::get_status( DictionaryDatum& d ) const
+nest::sirs_neuron::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
@@ -104,7 +104,7 @@ sirs_neuron::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-sirs_neuron::set_status( const DictionaryDatum& d )
+nest::sirs_neuron::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_;     // temporary copy in case of errors
   ptmp.set( d, this );       // throws if BadProperty
@@ -129,7 +129,7 @@ RecordablesMap< nest::sirs_neuron > nest::sirs_neuron::recordablesMap_;
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-sirs_neuron::Parameters_::Parameters_()
+nest::sirs_neuron::Parameters_::Parameters_()
   : tau_m_( 10.0 ) // ms
   , beta_sirs_( 0.1 ) // unitless
   , mu_sirs_( 0.1 ) // unitless
@@ -138,7 +138,7 @@ sirs_neuron::Parameters_::Parameters_()
   recordablesMap_.create();
 }
 
-sirs_neuron::State_::State_()
+nest::sirs_neuron::State_::State_()
   : y_( 0 )
   , h_( 0.0 )
   , last_in_node_id_( 0 )
@@ -152,7 +152,7 @@ sirs_neuron::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-sirs_neuron::Parameters_::get( DictionaryDatum& d ) const
+nest::sirs_neuron::Parameters_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::tau_m, tau_m_ );
   def< double >( d, names::beta_sirs, beta_sirs_ );
@@ -161,7 +161,7 @@ sirs_neuron::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-sirs_neuron::Parameters_::set( const DictionaryDatum& d, Node* node )
+nest::sirs_neuron::Parameters_::set( const DictionaryDatum& d, Node* node )
 {
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
   if ( tau_m_ <= 0 )
@@ -189,25 +189,25 @@ sirs_neuron::Parameters_::set( const DictionaryDatum& d, Node* node )
 }
 
 void
-sirs_neuron::State_::get( DictionaryDatum& d, const Parameters_& ) const
+nest::sirs_neuron::State_::get( DictionaryDatum& d, const Parameters_& ) const
 {
   def< double >( d, names::h, h_ ); // summed input
   def< double >( d, names::S, y_ ); // sirs_neuron output state
 }
 
 void
-sirs_neuron::State_::set( const DictionaryDatum& d, Node* node )
+nest::sirs_neuron::State_::set( const DictionaryDatum& d, Node* node )
 {
   updateValueParam< double >( d, names::h, h_, node );
   updateValueParam< double >( d, names::S, y_, node );
 }
 
-sirs_neuron::Buffers_::Buffers_( sirs_neuron& n )
+nest::sirs_neuron::Buffers_::Buffers_( sirs_neuron& n )
   : logger_( n )
 {
 }
 
-sirs_neuron::Buffers_::Buffers_( const Buffers_&, sirs_neuron& n )
+nest::sirs_neuron::Buffers_::Buffers_( const Buffers_&, sirs_neuron& n )
   : logger_( n )
 {
 }
@@ -217,7 +217,7 @@ sirs_neuron::Buffers_::Buffers_( const Buffers_&, sirs_neuron& n )
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-sirs_neuron::sirs_neuron()
+nest::sirs_neuron::sirs_neuron()
   : ArchivingNode()
   , P_()
   , S_()
@@ -225,7 +225,7 @@ sirs_neuron::sirs_neuron()
 {
 }
 
-sirs_neuron::sirs_neuron( const sirs_neuron& n )
+nest::sirs_neuron::sirs_neuron( const sirs_neuron& n )
   : ArchivingNode( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -238,7 +238,7 @@ sirs_neuron::sirs_neuron( const sirs_neuron& n )
  * ---------------------------------------------------------------- */
 
 void
-sirs_neuron::init_buffers_()
+nest::sirs_neuron::init_buffers_()
 {
   B_.spikes_.clear();   // includes resize
   B_.currents_.clear(); // includes resize
@@ -247,7 +247,7 @@ sirs_neuron::init_buffers_()
 }
 
 void
-sirs_neuron::pre_run_hook()
+nest::sirs_neuron::pre_run_hook()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
@@ -266,7 +266,7 @@ sirs_neuron::pre_run_hook()
  */
 
 void
-sirs_neuron::update( Time const& origin, const long from, const long to )
+nest::sirs_neuron::update( Time const& origin, const long from, const long to )
 {
   for ( long lag = from; lag < to; ++lag )
   {
@@ -348,7 +348,7 @@ sirs_neuron::update( Time const& origin, const long from, const long to )
 }
 
 void
-sirs_neuron::handle( SpikeEvent& e )
+nest::sirs_neuron::handle( SpikeEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -403,7 +403,7 @@ sirs_neuron::handle( SpikeEvent& e )
 }
 
 void
-sirs_neuron::handle( CurrentEvent& e )
+nest::sirs_neuron::handle( CurrentEvent& e )
 {
   assert( e.get_delay_steps() > 0 );
 
@@ -418,13 +418,13 @@ sirs_neuron::handle( CurrentEvent& e )
 
 
 void
-sirs_neuron::handle( DataLoggingRequest& e )
+nest::sirs_neuron::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
 
 void
-sirs_neuron::calibrate_time( const TimeConverter& tc )
+nest::sirs_neuron::calibrate_time( const TimeConverter& tc )
 {
   S_.t_next_ = tc.from_old_tics( S_.t_next_.get_tics() );
   S_.t_last_in_spike_ = tc.from_old_tics( S_.t_last_in_spike_.get_tics() );

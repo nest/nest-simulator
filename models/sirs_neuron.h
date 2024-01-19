@@ -23,6 +23,9 @@
 #ifndef SIRS_NEURON_H
 #define SIRS_NEURON_H
 
+// Generated includes:
+#include "config.h"
+
 // C++ includes:
 #include <cmath>
 #include <limits>

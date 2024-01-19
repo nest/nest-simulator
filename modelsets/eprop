@@ -15,6 +15,7 @@ eprop_iaf
 eprop_iaf_adapt
 eprop_readout
 parrot_neuron
+eprop_iaf_psc_delta
 
 eprop_learning_signal_connection_bsshslm_2020
 eprop_synapse_bsshslm_2020

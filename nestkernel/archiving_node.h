@@ -178,6 +178,7 @@ private:
     double weight_revert_;    //!< synaptic weight to revert to (STDP depression needs to be undone)
   };
 
+protected:
   /**
    * Framework for STDP with predominantly axonal delays:
    * Buffer of correction entries sorted by t_spike_pre + delay
@@ -191,7 +192,7 @@ private:
    * Framework for STDP with predominantly axonal delays:
    * Triggered when this neuron spikes, to correct all relevant incoming STDP synapses with predominantly axonal delays
    * and corresponding received spikes. */
-  void correct_synapses_stdp_ax_delay_( const Time& t_spike );
+  virtual void correct_synapses_stdp_ax_delay_( const Time& t_spike );
 };
 
 inline double

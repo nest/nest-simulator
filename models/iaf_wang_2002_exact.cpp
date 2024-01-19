@@ -556,8 +556,6 @@ nest::iaf_wang_2002_exact::handle( SpikeEvent& e )
   const auto rport = e.get_rport();
   if ( rport < NMDA )
   {
-//     std::cout << "Received non-NMDA spike: " << std::endl;
-//     std::cout << "rport: " << e.get_rport() << std::endl;
     B_.spikes_[ rport - 1 ].add_value( steps, e.get_weight() * e.get_multiplicity() );
   }
   else

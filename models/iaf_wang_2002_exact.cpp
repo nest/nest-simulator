@@ -556,7 +556,14 @@ nest::iaf_wang_2002_exact::handle( SpikeEvent& e )
   const auto rport = e.get_rport();
   if ( rport < NMDA )
   {
-    B_.spikes_[ rport - 1 ].add_value( steps, e.get_weight() * e.get_multiplicity() );
+    if ( e.get_weight() > 0 )
+    {
+      B_.spikes_[ AMPA - 1 ].add_value( steps, e.get_weight() * e.get_multiplicity() );
+    }
+    else 
+    {
+      B_.spikes_[ GABA - 1 ].add_value( steps, -e.get_weight() * e.get_multiplicity() );
+    }
   }
   else
   {

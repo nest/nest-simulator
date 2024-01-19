@@ -337,6 +337,7 @@ private:
   double grad_ = 0.0;
   double z_bar_ = 0.0;
   double e_bar_ = 0.0;
+  double epsilon_ = 0.0;
   double avg_e_ = 0.0;
 
   long t_ = 0;
@@ -497,7 +498,7 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
   else
   {
     target->compute_gradient(
-      t_spike, t_previous_spike_, t_, previous_z_buffer_, z_bar_, e_bar_, avg_e_, grad_, kappa_, cp.average_gradient_ );
+      t_spike, t_previous_spike_, t_, previous_z_buffer_, z_bar_, e_bar_, epsilon_, avg_e_, grad_, kappa_, cp.average_gradient_ );
     target->write_update_to_history( t_previous_spike_, t_spike, true );
 
     weight_ -= 5e-3 * grad_;

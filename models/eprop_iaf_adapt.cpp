@@ -446,13 +446,13 @@ eprop_iaf_adapt::compute_gradient( const long t_spike,
   double& previous_z_buffer,
   double& z_bar,
   double& e_bar,
+  double& epsilon,     
   double& avg_e,
   double& grad,
   const double kappa,
   const bool average_gradient )
 {
   double e = 0.0;               // eligibility trace
-  double epsilon = 0.0;         // adaptative component of eligibility vector
   double z = 0.0;               // spiking variable
   double psi = 0.0;             // surrogate gradient
   double L = 0.0;               // learning signal

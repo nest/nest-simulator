@@ -821,6 +821,7 @@ public:
     double& previous_z_buffer,
     double& z_bar,
     double& e_bar,
+    double& epsilon,    
     double& avg_e,
     double& grad,
     const double kappa,

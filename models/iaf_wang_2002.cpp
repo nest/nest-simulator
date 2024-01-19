@@ -454,7 +454,6 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
     S_.y_[ State_::s_GABA ] += B_.spikes_[ GABA - 1 ].get_value( lag );
 
     S_.y_[ State_::s_NMDA ] += B_.spikes_[ NMDA - 1 ].get_value( lag );
-//    S_.y_[ State_::s_NMDA ] = std::min( S_.y_[ State_::s_NMDA ], 1.0 );
 
     if ( S_.r_ )
     {

@@ -41,6 +41,7 @@
 #include "event_delivery_manager_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "nest_timeconverter.h"
 #include "nest_types.h"
 #include "random_generators.h"

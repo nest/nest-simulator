@@ -124,6 +124,7 @@ nest::iaf_wang_2002::Parameters_::Parameters_()
   , tau_rise_NMDA( 2 ) // ms
   , alpha( 0.5 )          // 1 / ms
   , conc_Mg2( 1 )         // mM
+  , approx_t_exact ( 4)
   , gsl_error_tol( 1e-3 )
 {
 }
@@ -190,6 +191,7 @@ nest::iaf_wang_2002::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_rise_NMDA, tau_rise_NMDA );
   def< double >( d, names::alpha, alpha );
   def< double >( d, names::conc_Mg2, conc_Mg2 );
+  def< double >( d, names::approx_t_exact, approx_t_exact );
   def< double >( d, names::gsl_error_tol, gsl_error_tol );
 }
 
@@ -211,6 +213,7 @@ nest::iaf_wang_2002::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::tau_rise_NMDA, tau_rise_NMDA, node );
   updateValueParam< double >( d, names::alpha, alpha, node );
   updateValueParam< double >( d, names::conc_Mg2, conc_Mg2, node );
+  updateValueParam< double >( d, names::approx_t_exact, approx_t_exact, node );
   updateValueParam< double >( d, names::gsl_error_tol, gsl_error_tol, node );
 
   if ( V_reset >= V_th )
@@ -236,6 +239,10 @@ nest::iaf_wang_2002::Parameters_::set( const DictionaryDatum& d, Node* node )
   if ( conc_Mg2 <= 0 )
   {
     throw BadProperty( "Mg2 concentration must be strictly positive." );
+  }
+  if ( approx_t_exact <= 0.0 )
+  {
+    throw BadProperty( "approx_t_exact must be strictly positive." );
   }
   if ( gsl_error_tol <= 0.0 )
   {
@@ -381,6 +388,14 @@ nest::iaf_wang_2002::pre_run_hook()
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref ) ).get_steps();
   // since t_ref_ >= 0, this can only fail in error
   assert( V_.RefractoryCounts_ >= 0 );
+
+  // compute S_NMDA jump height variables
+  const double f1 = exp(-P_.alpha * P_.tau_rise_NMDA * (1 - exp(-P_.approx_t_exact / P_.tau_rise_NMDA)));
+
+  const double f2 = -(1 - exp(P_.alpha * P_.tau_rise_NMDA * (1 - exp(-P_.approx_t_exact / P_.tau_rise_NMDA))));
+  V_.S_jump_0 = f1 * f2;
+  V_.S_jump_1 = f1;
+
 }
 
 void
@@ -463,7 +478,7 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
 
       // compute current value of s_NMDA and add NMDA update to spike offset
       S_.s_NMDA_pre = S_.s_NMDA_pre * exp( -( t_spike - t_lastspike ) / P_.tau_decay_NMDA );
-      const double s_NMDA_delta = pow(P_.tau_rise_NMDA, 2) * P_.alpha * (1 - S_.s_NMDA_pre);
+      const double s_NMDA_delta = V_.S_jump_0 + V_.S_jump_1 * S_.s_NMDA_pre - S_.s_NMDA_pre;
       S_.s_NMDA_pre += s_NMDA_delta; // guaranteed to be <= 1.
 
       SpikeEvent se;

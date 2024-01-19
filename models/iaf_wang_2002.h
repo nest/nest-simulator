@@ -244,10 +244,12 @@ private:
     double tau_AMPA;       //!< Synaptic Time Constant AMPA Synapse in ms
     double tau_GABA;       //!< Synaptic Time Constant GABA Synapse in ms
     double tau_decay_NMDA; //!< Synaptic Decay Time Constant NMDA Synapse in ms
-    double tau_rise_NMDA; //!< Synaptic Decay Time Constant NMDA Synapse in ms
+    double tau_rise_NMDA;  //!< Synaptic Decay Time Constant NMDA Synapse in ms
     double alpha;          //!< Scaling factor for NMDA synapse in 1/ms
     double conc_Mg2;       //!< Extracellular Magnesium Concentration in mM
 
+    // TODO: find better name for this variable
+    double approx_t_exact;  // Time at which the S_NMDA approximation is exact
     double gsl_error_tol; //!< GSL Error Tolerance
 
     //! Initialize parameters to their default values.
@@ -356,6 +358,8 @@ private:
   {
     //! refractory time in steps
     long RefractoryCounts_;
+    double S_jump_0; // zeroth order term of jump
+    double S_jump_1; // first order term of jump
   };
 
   // Access functions for UniversalDataLogger -------------------------------

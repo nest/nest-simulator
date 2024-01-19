@@ -1,0 +1,1269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<office:document xmlns:officeooo="http://openoffice.org/2009/office" xmlns:anim="urn:oasis:names:tc:opendocument:xmlns:animation:1.0" xmlns:smil="urn:oasis:names:tc:opendocument:xmlns:smil-compatible:1.0" xmlns:presentation="urn:oasis:names:tc:opendocument:xmlns:presentation:1.0" xmlns:css3t="http://www.w3.org/TR/css3-text/" xmlns:grddl="http://www.w3.org/2003/g/data-view#" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:formx="urn:openoffice:names:experimental:ooxml-odf-interop:xmlns:form:1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:chart="urn:oasis:names:tc:opendocument:xmlns:chart:1.0" xmlns:svg="urn:oasis:names:tc:opendocument:xmlns:svg-compatible:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:oooc="http://openoffice.org/2004/calc" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:ooow="http://openoffice.org/2004/writer" xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rpt="http://openoffice.org/2005/report" xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0" xmlns:config="urn:oasis:names:tc:opendocument:xmlns:config:1.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" xmlns:ooo="http://openoffice.org/2004/office" xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:dr3d="urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0" xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0" xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0" xmlns:of="urn:oasis:names:tc:opendocument:xmlns:of:1.2" xmlns:calcext="urn:org:documentfoundation:names:experimental:calc:xmlns:calcext:1.0" xmlns:tableooo="http://openoffice.org/2009/table" xmlns:drawooo="http://openoffice.org/2010/draw" xmlns:loext="urn:org:documentfoundation:names:experimental:office:xmlns:loext:1.0" xmlns:dom="http://www.w3.org/2001/xml-events" xmlns:field="urn:openoffice:names:experimental:ooo-ms-interop:xmlns:field:1.0" xmlns:math="http://www.w3.org/1998/Math/MathML" xmlns:form="urn:oasis:names:tc:opendocument:xmlns:form:1.0" xmlns:script="urn:oasis:names:tc:opendocument:xmlns:script:1.0" xmlns:xforms="http://www.w3.org/2002/xforms" office:version="1.3" office:mimetype="application/vnd.oasis.opendocument.graphics">
+ <office:meta><meta:creation-date>2023-07-04T10:55:29.142806567</meta:creation-date><dc:date>2023-08-22T10:41:05.856932532</dc:date><meta:editing-duration>PT1H46M41S</meta:editing-duration><meta:editing-cycles>13</meta:editing-cycles><meta:generator>LibreOffice/7.3.7.2$Linux_X86_64 LibreOffice_project/30$Build-2</meta:generator><meta:document-statistic meta:object-count="94"/></office:meta>
+ <office:settings>
+  <config:config-item-set config:name="ooo:view-settings">
+   <config:config-item config:name="VisibleAreaTop" config:type="int">-643</config:config-item>
+   <config:config-item config:name="VisibleAreaLeft" config:type="int">50</config:config-item>
+   <config:config-item config:name="VisibleAreaWidth" config:type="int">14476</config:config-item>
+   <config:config-item config:name="VisibleAreaHeight" config:type="int">10949</config:config-item>
+   <config:config-item-map-indexed config:name="Views">
+    <config:config-item-map-entry>
+     <config:config-item config:name="ViewId" config:type="string">view1</config:config-item>
+     <config:config-item config:name="GridIsVisible" config:type="boolean">true</config:config-item>
+     <config:config-item config:name="GridIsFront" config:type="boolean">false</config:config-item>
+     <config:config-item config:name="IsSnapToGrid" config:type="boolean">true</config:config-item>
+     <config:config-item config:name="IsSnapToPageMargins" config:type="boolean">true</config:config-item>
+     <config:config-item config:name="IsSnapToSnapLines" config:type="boolean">false</config:config-item>
+     <config:config-item config:name="IsSnapToObjectFrame" config:type="boolean">false</config:config-item>
+     <config:config-item config:name="IsSnapToObjectPoints" config:type="boolean">false</config:config-item>
+     <config:config-item config:name="IsPlusHandlesAlwaysVisible" config:type="boolean">false</config:config-item>
+     <config:config-item config:name="IsFrameDragSingles" config:type="boolean">true</config:config-item>
+     <config:config-item config:name="EliminatePolyPointLimitAngle" config:type="int">1500</config:config-item>
+     <config:config-item config:name="IsEliminatePolyPoints" config:type="boolean">false</config:config-item>
+     <config:config-item config:name="VisibleLayers" config:type="base64Binary">Hw==</config:config-item>
+     <config:config-item config:name="PrintableLayers" config:type="base64Binary">Hw==</config:config-item>
+     <config:config-item config:name="LockedLayers" config:type="base64Binary"/>
+     <config:config-item config:name="NoAttribs" config:type="boolean">false</config:config-item>
+     <config:config-item config:name="NoColors" config:type="boolean">true</config:config-item>
+     <config:config-item config:name="RulerIsVisible" config:type="boolean">true</config:config-item>
+     <config:config-item config:name="PageKind" config:type="short">0</config:config-item>
+     <config:config-item config:name="SelectedPage" config:type="short">0</config:config-item>
+     <config:config-item config:name="IsLayerMode" config:type="boolean">true</config:config-item>
+     <config:config-item config:name="IsDoubleClickTextEdit" config:type="boolean">true</config:config-item>
+     <config:config-item config:name="IsClickChangeRotation" config:type="boolean">true</config:config-item>
+     <config:config-item config:name="SlidesPerRow" config:type="short">4</config:config-item>
+     <config:config-item config:name="EditMode" config:type="int">0</config:config-item>
+     <config:config-item config:name="VisibleAreaTop" config:type="int">-230</config:config-item>
+     <config:config-item config:name="VisibleAreaLeft" config:type="int">499</config:config-item>
+     <config:config-item config:name="VisibleAreaWidth" config:type="int">13600</config:config-item>
+     <config:config-item config:name="VisibleAreaHeight" config:type="int">10145</config:config-item>
+     <config:config-item config:name="GridCoarseWidth" config:type="int">35</config:config-item>
+     <config:config-item config:name="GridCoarseHeight" config:type="int">35</config:config-item>
+     <config:config-item config:name="GridFineWidth" config:type="int">8</config:config-item>
+     <config:config-item config:name="GridFineHeight" config:type="int">8</config:config-item>
+     <config:config-item config:name="GridSnapWidthXNumerator" config:type="int">35</config:config-item>
+     <config:config-item config:name="GridSnapWidthXDenominator" config:type="int">4</config:config-item>
+     <config:config-item config:name="GridSnapWidthYNumerator" config:type="int">35</config:config-item>
+     <config:config-item config:name="GridSnapWidthYDenominator" config:type="int">4</config:config-item>
+     <config:config-item config:name="IsAngleSnapEnabled" config:type="boolean">false</config:config-item>
+     <config:config-item config:name="SnapAngle" config:type="int">1500</config:config-item>
+     <config:config-item config:name="ZoomOnPage" config:type="boolean">false</config:config-item>
+     <config:config-item config:name="AnchoredTextOverflowLegacy" config:type="boolean">false</config:config-item>
+    </config:config-item-map-entry>
+   </config:config-item-map-indexed>
+  </config:config-item-set>
+  <config:config-item-set config:name="ooo:configuration-settings">
+   <config:config-item config:name="ApplyUserData" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="BitmapTableURL" config:type="string">$(brandbaseurl)/share/palette%3B$(user)/config/standard.sob</config:config-item>
+   <config:config-item config:name="CharacterCompressionType" config:type="short">0</config:config-item>
+   <config:config-item config:name="ColorTableURL" config:type="string">$(brandbaseurl)/share/palette%3B$(user)/config/standard.soc</config:config-item>
+   <config:config-item config:name="DashTableURL" config:type="string">$(brandbaseurl)/share/palette%3B$(user)/config/standard.sod</config:config-item>
+   <config:config-item config:name="DefaultTabStop" config:type="int">1270</config:config-item>
+   <config:config-item config:name="EmbedAsianScriptFonts" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="EmbedComplexScriptFonts" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="EmbedFonts" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="EmbedLatinScriptFonts" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="EmbedOnlyUsedFonts" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="GradientTableURL" config:type="string">$(brandbaseurl)/share/palette%3B$(user)/config/standard.sog</config:config-item>
+   <config:config-item config:name="HatchTableURL" config:type="string">$(brandbaseurl)/share/palette%3B$(user)/config/standard.soh</config:config-item>
+   <config:config-item config:name="IsKernAsianPunctuation" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="IsPrintBooklet" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="IsPrintBookletBack" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="IsPrintBookletFront" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="IsPrintDate" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="IsPrintFitPage" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="IsPrintHiddenPages" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="IsPrintPageName" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="IsPrintTilePage" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="IsPrintTime" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="LineEndTableURL" config:type="string">$(brandbaseurl)/share/palette%3B$(user)/config/standard.soe</config:config-item>
+   <config:config-item config:name="LoadReadonly" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="MeasureUnit" config:type="short">8</config:config-item>
+   <config:config-item config:name="PageNumberFormat" config:type="int">4</config:config-item>
+   <config:config-item config:name="ParagraphSummation" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="PrintQuality" config:type="int">0</config:config-item>
+   <config:config-item config:name="PrinterIndependentLayout" config:type="string">low-resolution</config:config-item>
+   <config:config-item config:name="PrinterName" config:type="string">IM-C3000</config:config-item>
+   <config:config-item config:name="PrinterPaperFromSetup" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="PrinterSetup" config:type="base64Binary">xwH+/0lNLUMzMDAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQ1VQUzpJTS1DMzAwMAAAAAAAAAAAAAAAAAAAAAAAAAAWAAMA4wAAAAAABgAEAAhSAAAEdAAASm9iRGF0YSAxCnByaW50ZXI9SU0tQzMwMDAKb3JpZW50YXRpb249UG9ydHJhaXQKY29waWVzPTEKY29sbGF0ZT1mYWxzZQptYXJnaW5hZGp1c3RtZW50PTAsMCwwLDAKY29sb3JkZXB0aD0yNApwc2xldmVsPTAKcGRmZGV2aWNlPTEKY29sb3JkZXZpY2U9MApQUERDb250ZXh0RGF0YQpDb2xvck1vZGVsOkdyYXkAUGFnZVNpemU6QTQASW5wdXRTbG90OkF1dG8ARHVwbGV4OkR1cGxleE5vVHVtYmxlAAASAENPTVBBVF9EVVBMRVhfTU9ERRQARHVwbGV4TW9kZTo6TG9uZ0VkZ2U=</config:config-item>
+   <config:config-item config:name="SaveThumbnail" config:type="boolean">true</config:config-item>
+   <config:config-item config:name="SaveVersionOnClose" config:type="boolean">false</config:config-item>
+   <config:config-item config:name="ScaleDenominator" config:type="int">1</config:config-item>
+   <config:config-item config:name="ScaleNumerator" config:type="int">1</config:config-item>
+   <config:config-item config:name="UpdateFromTemplate" config:type="boolean">true</config:config-item>
+  </config:config-item-set>
+ </office:settings>
+ <office:scripts>
+  <office:script script:language="ooo:Basic">
+   <ooo:libraries xmlns:ooo="http://openoffice.org/2004/office" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <ooo:library-embedded ooo:name="Standard"/>
+   </ooo:libraries>
+  </office:script>
+ </office:scripts>
+ <office:font-face-decls>
+  <style:font-face style:name="DejaVu Sans" svg:font-family="&apos;DejaVu Sans&apos;" style:font-family-generic="system" style:font-pitch="variable"/>
+  <style:font-face style:name="Liberation Sans" svg:font-family="&apos;Liberation Sans&apos;" style:font-family-generic="roman" style:font-pitch="variable"/>
+  <style:font-face style:name="Liberation Serif" svg:font-family="&apos;Liberation Serif&apos;" style:font-family-generic="roman" style:font-pitch="variable"/>
+  <style:font-face style:name="Lohit Devanagari" svg:font-family="&apos;Lohit Devanagari&apos;" style:font-family-generic="system" style:font-pitch="variable"/>
+  <style:font-face style:name="Noto Sans" svg:font-family="&apos;Noto Sans&apos;" style:font-family-generic="roman" style:font-pitch="variable"/>
+  <style:font-face style:name="Noto Sans CJK SC" svg:font-family="&apos;Noto Sans CJK SC&apos;" style:font-family-generic="system" style:font-pitch="variable"/>
+ </office:font-face-decls>
+ <office:styles>
+  <draw:gradient draw:name="Filled" draw:style="linear" draw:start-color="#ffffff" draw:end-color="#cccccc" draw:start-intensity="100%" draw:end-intensity="100%" draw:angle="30deg" draw:border="0%"/>
+  <draw:gradient draw:name="Filled_20_Blue" draw:display-name="Filled Blue" draw:style="linear" draw:start-color="#729fcf" draw:end-color="#355269" draw:start-intensity="100%" draw:end-intensity="100%" draw:angle="30deg" draw:border="0%"/>
+  <draw:gradient draw:name="Filled_20_Green" draw:display-name="Filled Green" draw:style="linear" draw:start-color="#77bc65" draw:end-color="#127622" draw:start-intensity="100%" draw:end-intensity="100%" draw:angle="30deg" draw:border="0%"/>
+  <draw:gradient draw:name="Filled_20_Red" draw:display-name="Filled Red" draw:style="linear" draw:start-color="#ff6d6d" draw:end-color="#c9211e" draw:start-intensity="100%" draw:end-intensity="100%" draw:angle="30deg" draw:border="0%"/>
+  <draw:gradient draw:name="Filled_20_Yellow" draw:display-name="Filled Yellow" draw:style="linear" draw:start-color="#ffde59" draw:end-color="#b47804" draw:start-intensity="100%" draw:end-intensity="100%" draw:angle="30deg" draw:border="0%"/>
+  <draw:gradient draw:name="Shapes" draw:style="rectangular" draw:cx="50%" draw:cy="50%" draw:start-color="#cccccc" draw:end-color="#ffffff" draw:start-intensity="100%" draw:end-intensity="100%" draw:angle="0deg" draw:border="0%"/>
+  <draw:marker draw:name="Arrow" svg:viewBox="0 0 20 30" svg:d="M10 0l-10 30h20z"/>
+  <draw:marker draw:name="Arrowheads_20_1" draw:display-name="Arrowheads 1" svg:viewBox="0 0 20 20" svg:d="M0 20l10-20 10 20z"/>
+  <draw:marker draw:name="Arrowheads_20_10" draw:display-name="Arrowheads 10" svg:viewBox="0 0 20 20" svg:d="M0 20l10-20 10 20z"/>
+  <draw:marker draw:name="Arrowheads_20_2" draw:display-name="Arrowheads 2" svg:viewBox="0 0 20 20" svg:d="M0 20l10-20 10 20z"/>
+  <draw:marker draw:name="Arrowheads_20_5" draw:display-name="Arrowheads 5" svg:viewBox="0 0 20 20" svg:d="M0 20l10-20 10 20z"/>
+  <draw:marker draw:name="Arrowheads_20_6" draw:display-name="Arrowheads 6" svg:viewBox="0 0 20 20" svg:d="M0 20l10-20 10 20z"/>
+  <draw:marker draw:name="Arrowheads_20_7" draw:display-name="Arrowheads 7" svg:viewBox="0 0 20 20" svg:d="M0 20l10-20 10 20z"/>
+  <draw:marker draw:name="Circle" svg:viewBox="0 0 1131 1131" svg:d="M462 1118l-102-29-102-51-93-72-72-93-51-102-29-102-13-105 13-102 29-106 51-102 72-89 93-72 102-50 102-34 106-9 101 9 106 34 98 50 93 72 72 89 51 102 29 106 13 102-13 105-29 102-51 102-72 93-93 72-98 51-106 29-101 13z"/>
+  <draw:marker draw:name="Concave" svg:viewBox="0 0 1131 1580" svg:d="M1013 1491l118 89-567-1580-564 1580 114-85 136-68 148-46 161-17 161 13 153 46z"/>
+  <draw:stroke-dash draw:name="Dash_20__28_Rounded_29_" draw:display-name="Dash (Rounded)" draw:style="round" draw:dots1="1" draw:dots1-length="201%" draw:distance="199%"/>
+  <draw:stroke-dash draw:name="Dash_20_Dot_20_4" draw:display-name="Dash Dot 4" draw:style="rect" draw:dots1="1" draw:dots1-length="0.02cm" draw:dots2="1" draw:dots2-length="0.02cm" draw:distance="0.02cm"/>
+  <style:default-style style:family="graphic">
+   <style:graphic-properties svg:stroke-color="#3465a4" draw:fill-color="#729fcf" fo:wrap-option="no-wrap"/>
+   <style:paragraph-properties style:text-autospace="ideograph-alpha" style:punctuation-wrap="simple" style:line-break="strict" style:font-independent-line-spacing="false">
+    <style:tab-stops/>
+   </style:paragraph-properties>
+   <style:text-properties style:use-window-font-color="true" loext:opacity="0%" style:font-name="Liberation Serif" fo:font-size="24pt" fo:language="en" fo:country="US" style:font-name-asian="DejaVu Sans" style:font-size-asian="24pt" style:language-asian="zh" style:country-asian="CN" style:font-name-complex="DejaVu Sans" style:font-size-complex="24pt" style:language-complex="hi" style:country-complex="IN"/>
+  </style:default-style>
+  <style:style style:name="standard" style:family="graphic">
+   <style:graphic-properties draw:stroke="dash" draw:stroke-dash="Dash_20__28_Rounded_29_" svg:stroke-width="0.102cm" svg:stroke-color="#000000" draw:marker-start-width="0.356cm" draw:marker-start-center="false" draw:marker-end="Circle" draw:marker-end-width="0.356cm" draw:marker-end-center="false" svg:stroke-linecap="round" draw:fill="solid" draw:fill-color="#729fcf" draw:textarea-horizontal-align="justify" fo:padding-top="0.125cm" fo:padding-bottom="0.125cm" fo:padding-left="0.25cm" fo:padding-right="0.25cm" fo:wrap-option="wrap" draw:shadow="hidden" draw:shadow-offset-x="0.2cm" draw:shadow-offset-y="0.2cm" draw:shadow-color="#808080">
+    <text:list-style style:name="standard">
+     <text:list-level-style-bullet text:level="1" text:bullet-char="●">
+      <style:list-level-properties text:min-label-width="0.6cm"/>
+      <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%"/>
+     </text:list-level-style-bullet>
+     <text:list-level-style-bullet text:level="2" text:bullet-char="●">
+      <style:list-level-properties text:space-before="0.6cm" text:min-label-width="0.6cm"/>
+      <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%"/>
+     </text:list-level-style-bullet>
+     <text:list-level-style-bullet text:level="3" text:bullet-char="●">
+      <style:list-level-properties text:space-before="1.2cm" text:min-label-width="0.6cm"/>
+      <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%"/>
+     </text:list-level-style-bullet>
+     <text:list-level-style-bullet text:level="4" text:bullet-char="●">
+      <style:list-level-properties text:space-before="1.8cm" text:min-label-width="0.6cm"/>
+      <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%"/>
+     </text:list-level-style-bullet>
+     <text:list-level-style-bullet text:level="5" text:bullet-char="●">
+      <style:list-level-properties text:space-before="2.4cm" text:min-label-width="0.6cm"/>
+      <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%"/>
+     </text:list-level-style-bullet>
+     <text:list-level-style-bullet text:level="6" text:bullet-char="●">
+      <style:list-level-properties text:space-before="3cm" text:min-label-width="0.6cm"/>
+      <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%"/>
+     </text:list-level-style-bullet>
+     <text:list-level-style-bullet text:level="7" text:bullet-char="●">
+      <style:list-level-properties text:space-before="3.6cm" text:min-label-width="0.6cm"/>
+      <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%"/>
+     </text:list-level-style-bullet>
+     <text:list-level-style-bullet text:level="8" text:bullet-char="●">
+      <style:list-level-properties text:space-before="4.2cm" text:min-label-width="0.6cm"/>
+      <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%"/>
+     </text:list-level-style-bullet>
+     <text:list-level-style-bullet text:level="9" text:bullet-char="●">
+      <style:list-level-properties text:space-before="4.8cm" text:min-label-width="0.6cm"/>
+      <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%"/>
+     </text:list-level-style-bullet>
+     <text:list-level-style-bullet text:level="10" text:bullet-char="●">
+      <style:list-level-properties text:space-before="5.4cm" text:min-label-width="0.6cm"/>
+      <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%"/>
+     </text:list-level-style-bullet>
+    </text:list-style>
+   </style:graphic-properties>
+   <style:paragraph-properties fo:margin-left="0cm" fo:margin-right="0cm" fo:margin-top="0cm" fo:margin-bottom="0cm" fo:line-height="100%" fo:text-indent="0cm"/>
+   <style:text-properties fo:font-variant="normal" fo:text-transform="none" style:use-window-font-color="true" loext:opacity="0%" style:text-outline="false" style:text-line-through-style="none" style:text-line-through-type="none" style:font-name="Liberation Sans" fo:font-family="&apos;Liberation Sans&apos;" style:font-family-generic="roman" style:font-pitch="variable" fo:font-size="18pt" fo:font-style="normal" fo:text-shadow="none" style:text-underline-style="none" fo:font-weight="normal" style:letter-kerning="true" style:font-name-asian="Noto Sans CJK SC" style:font-family-asian="&apos;Noto Sans CJK SC&apos;" style:font-family-generic-asian="system" style:font-pitch-asian="variable" style:font-size-asian="18pt" style:font-style-asian="normal" style:font-weight-asian="normal" style:font-name-complex="Lohit Devanagari" style:font-family-complex="&apos;Lohit Devanagari&apos;" style:font-family-generic-complex="system" style:font-pitch-complex="variable" style:font-size-complex="18pt" style:font-style-complex="normal" style:font-weight-complex="normal" style:text-emphasize="none" style:font-relief="none" style:text-overline-style="none" style:text-overline-color="font-color"/>
+  </style:style>
+  <style:style style:name="objectwithoutfill" style:family="graphic" style:parent-style-name="standard">
+   <style:graphic-properties draw:stroke="dash" draw:stroke-dash="Dash_20__28_Rounded_29_" svg:stroke-width="0.102cm" svg:stroke-color="#000000" draw:marker-start-width="0.356cm" draw:marker-end="Circle" draw:marker-end-width="0.356cm" svg:stroke-linecap="round" draw:fill="none"/>
+  </style:style>
+  <style:style style:name="Object_20_with_20_no_20_fill_20_and_20_no_20_line" style:display-name="Object with no fill and no line" style:family="graphic" style:parent-style-name="standard">
+   <style:graphic-properties draw:stroke="none" draw:fill="none"/>
+  </style:style>
+  <style:style style:name="Text" style:family="graphic">
+   <style:graphic-properties draw:stroke="solid" svg:stroke-color="#cccccc" draw:fill="solid" draw:fill-color="#eeeeee"/>
+   <style:text-properties style:font-name="Noto Sans" fo:font-family="&apos;Noto Sans&apos;" style:font-family-generic="roman" style:font-pitch="variable"/>
+  </style:style>
+  <style:style style:name="A4" style:family="graphic" style:parent-style-name="Text">
+   <style:graphic-properties draw:fill="none"/>
+   <style:text-properties fo:font-size="18pt"/>
+  </style:style>
+  <style:style style:name="Title_20_A4" style:display-name="Title A4" style:family="graphic" style:parent-style-name="A4">
+   <style:graphic-properties draw:stroke="none"/>
+   <style:text-properties fo:font-size="44pt"/>
+  </style:style>
+  <style:style style:name="Heading_20_A4" style:display-name="Heading A4" style:family="graphic" style:parent-style-name="A4">
+   <style:graphic-properties draw:stroke="none"/>
+   <style:text-properties fo:font-size="24pt"/>
+  </style:style>
+  <style:style style:name="Text_20_A4" style:display-name="Text A4" style:family="graphic" style:parent-style-name="A4">
+   <style:graphic-properties draw:stroke="none"/>
+  </style:style>
+  <style:style style:name="A4" style:family="graphic" style:parent-style-name="Text">
+   <style:graphic-properties draw:fill="none"/>
+   <style:text-properties fo:font-size="18pt"/>
+  </style:style>
+  <style:style style:name="Title_20_A0" style:display-name="Title A0" style:family="graphic" style:parent-style-name="A4">
+   <style:graphic-properties draw:stroke="none"/>
+   <style:text-properties fo:font-size="96pt"/>
+  </style:style>
+  <style:style style:name="Heading_20_A0" style:display-name="Heading A0" style:family="graphic" style:parent-style-name="A4">
+   <style:graphic-properties draw:stroke="none"/>
+   <style:text-properties fo:font-size="71.9000015258789pt"/>
+  </style:style>
+  <style:style style:name="Text_20_A0" style:display-name="Text A0" style:family="graphic" style:parent-style-name="A4">
+   <style:graphic-properties draw:stroke="none"/>
+  </style:style>
+  <style:style style:name="Graphic" style:family="graphic">
+   <style:graphic-properties draw:fill="solid" draw:fill-color="#ffffff"/>
+   <style:text-properties style:font-name="Liberation Sans" fo:font-family="&apos;Liberation Sans&apos;" style:font-family-generic="roman" style:font-pitch="variable" fo:font-size="18pt"/>
+  </style:style>
+  <style:style style:name="Shapes" style:family="graphic" style:parent-style-name="Graphic">
+   <style:graphic-properties draw:stroke="none" draw:fill="gradient" draw:fill-gradient-name="Shapes"/>
+   <style:text-properties fo:font-size="14pt" fo:font-weight="bold"/>
+  </style:style>
+  <style:style style:name="Filled" style:family="graphic" style:parent-style-name="Shapes">
+   <style:graphic-properties draw:fill="gradient" draw:fill-gradient-name="Filled"/>
+  </style:style>
+  <style:style style:name="Filled_20_Blue" style:display-name="Filled Blue" style:family="graphic" style:parent-style-name="Filled">
+   <style:graphic-properties draw:fill-gradient-name="Filled_20_Blue"/>
+   <style:text-properties fo:color="#ffffff" loext:opacity="100%"/>
+  </style:style>
+  <style:style style:name="Filled_20_Green" style:display-name="Filled Green" style:family="graphic" style:parent-style-name="Filled">
+   <style:graphic-properties draw:fill-gradient-name="Filled_20_Green"/>
+   <style:text-properties fo:color="#ffffff" loext:opacity="100%" style:font-name="Liberation Sans" fo:font-family="&apos;Liberation Sans&apos;" style:font-family-generic="roman" style:font-pitch="variable"/>
+  </style:style>
+  <style:style style:name="Filled_20_Red" style:display-name="Filled Red" style:family="graphic" style:parent-style-name="Filled">
+   <style:graphic-properties draw:fill-gradient-name="Filled_20_Red"/>
+   <style:text-properties fo:color="#ffffff" loext:opacity="100%"/>
+  </style:style>
+  <style:style style:name="Filled_20_Yellow" style:display-name="Filled Yellow" style:family="graphic" style:parent-style-name="Filled">
+   <style:graphic-properties draw:fill-gradient-name="Filled_20_Yellow"/>
+   <style:text-properties fo:color="#ffffff" loext:opacity="100%"/>
+  </style:style>
+  <style:style style:name="Outlined" style:family="graphic" style:parent-style-name="Shapes">
+   <style:graphic-properties draw:stroke="solid" svg:stroke-width="0.081cm" svg:stroke-color="#000000" draw:fill="none"/>
+  </style:style>
+  <style:style style:name="Outlined_20_Blue" style:display-name="Outlined Blue" style:family="graphic" style:parent-style-name="Outlined">
+   <style:graphic-properties svg:stroke-color="#355269"/>
+   <style:text-properties fo:color="#355269" loext:opacity="100%"/>
+  </style:style>
+  <style:style style:name="Outlined_20_Green" style:display-name="Outlined Green" style:family="graphic" style:parent-style-name="Outlined">
+   <style:graphic-properties svg:stroke-color="#127622"/>
+   <style:text-properties fo:color="#127622" loext:opacity="100%"/>
+  </style:style>
+  <style:style style:name="Outlined_20_Red" style:display-name="Outlined Red" style:family="graphic" style:parent-style-name="Outlined">
+   <style:graphic-properties svg:stroke-color="#c9211e"/>
+   <style:text-properties fo:color="#c9211e" loext:opacity="100%"/>
+  </style:style>
+  <style:style style:name="Outlined_20_Yellow" style:display-name="Outlined Yellow" style:family="graphic" style:parent-style-name="Outlined">
+   <style:graphic-properties draw:stroke="solid" svg:stroke-color="#b47804"/>
+   <style:text-properties fo:color="#b47804" loext:opacity="100%"/>
+  </style:style>
+  <style:style style:name="Lines" style:family="graphic" style:parent-style-name="Graphic">
+   <style:graphic-properties draw:stroke="solid" svg:stroke-color="#000000" draw:fill="none"/>
+  </style:style>
+  <style:style style:name="Arrow_20_Line" style:display-name="Arrow Line" style:family="graphic" style:parent-style-name="Lines">
+   <style:graphic-properties draw:marker-start="Arrow" draw:marker-start-width="0.2cm" draw:marker-end="Arrow" draw:marker-end-width="0.2cm" draw:show-unit="true"/>
+  </style:style>
+  <style:style style:name="Arrow_20_Dashed" style:display-name="Arrow Dashed" style:family="graphic" style:parent-style-name="Lines">
+   <style:graphic-properties draw:stroke="dash"/>
+  </style:style>
+ </office:styles>
+ <office:automatic-styles>
+  <style:page-layout style:name="PM0">
+   <style:page-layout-properties fo:margin-top="0.247cm" fo:margin-bottom="0.247cm" fo:margin-left="0.494cm" fo:margin-right="0.494cm" fo:page-width="14.605cm" fo:page-height="7.761cm" style:print-orientation="landscape"/>
+  </style:page-layout>
+  <style:style style:name="dp1" style:family="drawing-page">
+   <style:drawing-page-properties draw:background-size="border" draw:fill="none"/>
+  </style:style>
+  <style:style style:name="dp2" style:family="drawing-page"/>
+  <style:style style:name="gr1" style:family="graphic" style:parent-style-name="Object_20_with_20_no_20_fill_20_and_20_no_20_line">
+   <style:graphic-properties draw:textarea-horizontal-align="center" draw:textarea-vertical-align="middle" draw:ole-draw-aspect="1" style:protect="size"/>
+  </style:style>
+  <style:style style:name="gr2" style:family="graphic" style:parent-style-name="Filled">
+   <style:graphic-properties draw:textarea-vertical-align="middle"/>
+  </style:style>
+  <style:style style:name="gr3" style:family="graphic" style:parent-style-name="objectwithoutfill">
+   <style:graphic-properties svg:stroke-width="0.053cm" draw:marker-start="Circle" draw:marker-start-width="0.265cm" draw:marker-end="" draw:marker-end-width="0.332cm" draw:fill="none" draw:textarea-vertical-align="middle" fo:padding-top="0.101cm" fo:padding-bottom="0.101cm" fo:padding-left="0.226cm" fo:padding-right="0.226cm"/>
+  </style:style>
+  <style:style style:name="gr4" style:family="graphic" style:parent-style-name="objectwithoutfill">
+   <style:graphic-properties svg:stroke-width="0.053cm" draw:marker-start="Concave" draw:marker-start-width="0.265cm" draw:marker-end="" draw:marker-end-width="0.332cm" draw:fill="none" draw:textarea-vertical-align="middle" fo:padding-top="0.101cm" fo:padding-bottom="0.101cm" fo:padding-left="0.226cm" fo:padding-right="0.226cm"/>
+  </style:style>
+  <style:style style:name="gr5" style:family="graphic" style:parent-style-name="objectwithoutfill">
+   <style:graphic-properties draw:stroke="solid" svg:stroke-width="0.053cm" draw:marker-start-width="0.282cm" draw:marker-end="Concave" draw:marker-end-width="0.265cm" draw:fill="none" draw:textarea-vertical-align="middle" fo:padding-top="0.101cm" fo:padding-bottom="0.101cm" fo:padding-left="0.226cm" fo:padding-right="0.226cm"/>
+  </style:style>
+  <style:style style:name="gr6" style:family="graphic" style:parent-style-name="standard">
+   <style:graphic-properties draw:stroke="none" draw:stroke-dash="Dash_20_Dot_20_4" svg:stroke-width="0cm" draw:stroke-linejoin="none" svg:stroke-linecap="butt" draw:fill="solid" draw:fill-color="#ffffff" draw:textarea-horizontal-align="center" draw:textarea-vertical-align="middle"/>
+  </style:style>
+  <style:style style:name="gr7" style:family="graphic" style:parent-style-name="standard">
+   <style:graphic-properties draw:stroke="none" draw:stroke-dash="Dash_20_Dot_20_4" svg:stroke-width="0cm" draw:stroke-linejoin="none" svg:stroke-linecap="butt" draw:fill="solid" draw:fill-color="#000000" draw:textarea-horizontal-align="center" draw:textarea-vertical-align="middle"/>
+  </style:style>
+  <style:style style:name="gr8" style:family="graphic" style:parent-style-name="objectwithoutfill">
+   <style:graphic-properties svg:stroke-width="0.053cm" draw:marker-start-width="0.282cm" draw:marker-end="Concave" draw:marker-end-width="0.265cm" draw:fill="none" draw:textarea-vertical-align="middle" fo:padding-top="0.101cm" fo:padding-bottom="0.101cm" fo:padding-left="0.226cm" fo:padding-right="0.226cm"/>
+  </style:style>
+  <style:style style:name="gr9" style:family="graphic" style:parent-style-name="objectwithoutfill">
+   <style:graphic-properties svg:stroke-width="0.053cm" draw:marker-start-width="0.282cm" draw:marker-end="Circle" draw:marker-end-width="0.265cm" draw:fill="none" draw:textarea-vertical-align="middle" fo:padding-top="0.101cm" fo:padding-bottom="0.101cm" fo:padding-left="0.226cm" fo:padding-right="0.226cm"/>
+  </style:style>
+  <style:style style:name="gr10" style:family="graphic" style:parent-style-name="Object_20_with_20_no_20_fill_20_and_20_no_20_line">
+   <style:graphic-properties draw:stroke="none" draw:fill="none" draw:textarea-horizontal-align="center" draw:textarea-vertical-align="middle" draw:color-mode="standard" draw:luminance="0%" draw:contrast="0%" draw:gamma="100%" draw:red="0%" draw:green="0%" draw:blue="0%" fo:clip="rect(0cm, 0cm, 0cm, 0cm)" draw:image-opacity="100%" style:mirror="none"/>
+  </style:style>
+  <style:style style:name="P1" style:family="paragraph">
+   <style:paragraph-properties fo:text-align="center"/>
+  </style:style>
+  <style:style style:name="P2" style:family="paragraph">
+   <loext:graphic-properties draw:fill="none"/>
+   <style:paragraph-properties fo:text-align="center"/>
+  </style:style>
+  <style:style style:name="P3" style:family="paragraph">
+   <loext:graphic-properties draw:fill="solid" draw:fill-color="#ffffff"/>
+   <style:paragraph-properties fo:text-align="center"/>
+  </style:style>
+  <style:style style:name="P4" style:family="paragraph">
+   <loext:graphic-properties draw:fill="solid" draw:fill-color="#000000"/>
+   <style:paragraph-properties fo:text-align="center"/>
+  </style:style>
+  <text:list-style style:name="L1">
+   <text:list-level-style-bullet text:level="1" text:bullet-char="●">
+    <style:list-level-properties text:min-label-width="0.6cm"/>
+    <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%"/>
+   </text:list-level-style-bullet>
+   <text:list-level-style-bullet text:level="2" text:bullet-char="●">
+    <style:list-level-properties text:space-before="0.6cm" text:min-label-width="0.6cm"/>
+    <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%"/>
+   </text:list-level-style-bullet>
+   <text:list-level-style-bullet text:level="3" text:bullet-char="●">
+    <style:list-level-properties text:space-before="1.2cm" text:min-label-width="0.6cm"/>
+    <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%"/>
+   </text:list-level-style-bullet>
+   <text:list-level-style-bullet text:level="4" text:bullet-char="●">
+    <style:list-level-properties text:space-before="1.8cm" text:min-label-width="0.6cm"/>
+    <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%"/>
+   </text:list-level-style-bullet>
+   <text:list-level-style-bullet text:level="5" text:bullet-char="●">
+    <style:list-level-properties text:space-before="2.4cm" text:min-label-width="0.6cm"/>
+    <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%"/>
+   </text:list-level-style-bullet>
+   <text:list-level-style-bullet text:level="6" text:bullet-char="●">
+    <style:list-level-properties text:space-before="3cm" text:min-label-width="0.6cm"/>
+    <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%"/>
+   </text:list-level-style-bullet>
+   <text:list-level-style-bullet text:level="7" text:bullet-char="●">
+    <style:list-level-properties text:space-before="3.6cm" text:min-label-width="0.6cm"/>
+    <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%"/>
+   </text:list-level-style-bullet>
+   <text:list-level-style-bullet text:level="8" text:bullet-char="●">
+    <style:list-level-properties text:space-before="4.2cm" text:min-label-width="0.6cm"/>
+    <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%"/>
+   </text:list-level-style-bullet>
+   <text:list-level-style-bullet text:level="9" text:bullet-char="●">
+    <style:list-level-properties text:space-before="4.8cm" text:min-label-width="0.6cm"/>
+    <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%"/>
+   </text:list-level-style-bullet>
+   <text:list-level-style-bullet text:level="10" text:bullet-char="●">
+    <style:list-level-properties text:space-before="5.4cm" text:min-label-width="0.6cm"/>
+    <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%"/>
+   </text:list-level-style-bullet>
+  </text:list-style>
+  <text:list-style style:name="L2">
+   <text:list-level-style-bullet text:level="1" text:bullet-char="●">
+    <style:list-level-properties text:min-label-width="0.6cm"/>
+    <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%"/>
+   </text:list-level-style-bullet>
+   <text:list-level-style-bullet text:level="2" text:bullet-char="●">
+    <style:list-level-properties text:space-before="0.6cm" text:min-label-width="0.6cm"/>
+    <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%"/>
+   </text:list-level-style-bullet>
+   <text:list-level-style-bullet text:level="3" text:bullet-char="●">
+    <style:list-level-properties text:space-before="1.2cm" text:min-label-width="0.6cm"/>
+    <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%"/>
+   </text:list-level-style-bullet>
+   <text:list-level-style-bullet text:level="4" text:bullet-char="●">
+    <style:list-level-properties text:space-before="1.8cm" text:min-label-width="0.6cm"/>
+    <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%"/>
+   </text:list-level-style-bullet>
+   <text:list-level-style-bullet text:level="5" text:bullet-char="●">
+    <style:list-level-properties text:space-before="2.4cm" text:min-label-width="0.6cm"/>
+    <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%"/>
+   </text:list-level-style-bullet>
+   <text:list-level-style-bullet text:level="6" text:bullet-char="●">
+    <style:list-level-properties text:space-before="3cm" text:min-label-width="0.6cm"/>
+    <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%"/>
+   </text:list-level-style-bullet>
+   <text:list-level-style-bullet text:level="7" text:bullet-char="●">
+    <style:list-level-properties text:space-before="3.6cm" text:min-label-width="0.6cm"/>
+    <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%"/>
+   </text:list-level-style-bullet>
+   <text:list-level-style-bullet text:level="8" text:bullet-char="●">
+    <style:list-level-properties text:space-before="4.2cm" text:min-label-width="0.6cm"/>
+    <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%"/>
+   </text:list-level-style-bullet>
+   <text:list-level-style-bullet text:level="9" text:bullet-char="●">
+    <style:list-level-properties text:space-before="4.8cm" text:min-label-width="0.6cm"/>
+    <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%"/>
+   </text:list-level-style-bullet>
+   <text:list-level-style-bullet text:level="10" text:bullet-char="●">
+    <style:list-level-properties text:space-before="5.4cm" text:min-label-width="0.6cm"/>
+    <style:text-properties fo:font-family="StarSymbol" style:use-window-font-color="true" fo:font-size="45%"/>
+   </text:list-level-style-bullet>
+  </text:list-style>
+ </office:automatic-styles>
+ <office:master-styles>
+  <draw:layer-set>
+   <draw:layer draw:name="layout"/>
+   <draw:layer draw:name="background"/>
+   <draw:layer draw:name="backgroundobjects"/>
+   <draw:layer draw:name="controls"/>
+   <draw:layer draw:name="measurelines"/>
+  </draw:layer-set>
+  <style:master-page style:name="Default" style:page-layout-name="PM0" draw:style-name="dp1"/>
+ </office:master-styles>
+ <office:body>
+  <office:drawing>
+   <draw:page draw:name="page1" draw:style-name="dp2" draw:master-page-name="Default">
+    <draw:frame draw:style-name="gr1" draw:text-style-name="P1" draw:layer="layout" svg:width="1.999cm" svg:height="0.999cm" svg:x="8.515cm" svg:y="11.058cm">
+     <draw:object>
+      <loext:p/>
+      <math xmlns="http://www.w3.org/1998/Math/MathML" display="block"/>
+     </draw:object><draw:image>
+      <office:binary-data>VkNMTVRGAQAxAAAAAAAAAAEAGwAAAAAAAAAAAAAAAAABAAAAAQAAAAEAAAABAAAAAckAAADX
+       AQAACAAAAJYAAQACAAAACQCLAAEAAgAAAP//gQABABAAAAAAAAAAAAAAAMgAAADWAQAAlQAB
+       AAQAAAAAAAAAlgABAAIAAAAJAJUAAQAEAAAAAAAAAJYAAQACAAAACQCMAAEAAAAAAA==
+      </office:binary-data>
+     </draw:image>
+    </draw:frame>
+    <draw:connector draw:style-name="gr2" draw:text-style-name="P1" draw:layer="layout" draw:type="line" svg:x1="11.152cm" svg:y1="5.531cm" svg:x2="17.773cm" svg:y2="5.534cm" svg:d="M11152 5531l6621 3" svg:viewBox="0 0 6622 4">
+     <text:p/>
+    </draw:connector>
+    <draw:connector draw:style-name="gr3" draw:text-style-name="P2" draw:layer="layout" draw:type="line" svg:x1="5.867cm" svg:y1="3.116cm" svg:x2="8.685cm" svg:y2="3.116cm" draw:start-shape="id1" draw:start-glue-point="8" draw:end-shape="id2" draw:end-glue-point="5" svg:d="M5867 3116h2818" svg:viewBox="0 0 2819 1">
+     <text:p/>
+    </draw:connector>
+    <draw:connector draw:style-name="gr4" draw:text-style-name="P2" draw:layer="layout" draw:type="line" svg:x1="8.693cm" svg:y1="1.824cm" svg:x2="5.21cm" svg:y2="1.824cm" draw:start-shape="id2" draw:start-glue-point="4" draw:end-shape="id1" draw:end-glue-point="7" svg:d="M8693 1824h-3483" svg:viewBox="0 0 3484 1">
+     <text:p/>
+    </draw:connector>
+    <draw:connector draw:style-name="gr5" draw:text-style-name="P2" draw:layer="layout" draw:type="line" svg:x1="8.363cm" svg:y1="5.998cm" svg:x2="9.551cm" svg:y2="3.554cm" draw:start-shape="id3" draw:start-glue-point="4" draw:end-shape="id2" draw:end-glue-point="6" svg:d="M8363 5998l1188-2444" svg:viewBox="0 0 1189 2445">
+     <text:p/>
+    </draw:connector>
+    <draw:connector draw:style-name="gr5" draw:text-style-name="P2" draw:layer="layout" draw:type="line" svg:x1="6.231cm" svg:y1="5.999cm" svg:x2="4.992cm" svg:y2="3.554cm" draw:start-shape="id3" draw:start-glue-point="5" draw:end-shape="id1" draw:end-glue-point="6" svg:d="M6231 5999l-1239-2445" svg:viewBox="0 0 1240 2446">
+     <text:p/>
+    </draw:connector>
+    <draw:g>
+     <svg:title>TexMaths</svg:title>
+     <svg:desc>10§display§K_{\mathsf{in}},\,
+\mathbb{M}§svg§600§FALSE§</svg:desc>
+     <draw:path draw:style-name="gr6" draw:text-style-name="P3" draw:layer="layout" svg:width="1.015cm" svg:height="0.27cm" svg:x="6.418cm" svg:y="1.441cm" svg:viewBox="0 0 1016 271" svg:d="M509 271c-170 0-339 0-509 0 0-90 0-181 0-271 339 0 677 0 1016 0 0 90 0 181 0 271-169 0-338 0-507 0z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.297cm" svg:height="0.237cm" svg:x="6.414cm" svg:y="1.424cm" svg:viewBox="0 0 298 238" svg:d="M165 98c0-1-2-4-2-5s7-6 10-8c20-16 41-32 62-48 33-24 47-25 57-26 3-1 6-1 6-7 0-2-1-4-3-4-8 0-17 1-25 1-13 0-27-1-39-1-3 0-7 0-7 7 0 2 2 3 4 4 8 0 11 2 11 7 0 6-10 14-13 16-46 35-91 70-137 105 10-38 19-75 29-112 3-13 3-16 29-16 9 0 12 0 12-7 0-3-3-4-5-4-10 0-35 1-45 1s-35-1-45-1c-3 0-7 0-7 7 0 4 3 4 10 4 5 0 11 0 15 0 6 1 8 2 8 6 0 1-1 3-2 7-16 62-31 125-47 187-3 14-4 16-32 16-6 0-9 0-9 7 0 4 4 4 5 4 10 0 35-1 44-1 8 0 16 0 23 0 8 0 15 1 23 1 2 0 7 0 7-7 0-4-3-4-10-4-13 0-23 0-23-6 0-2 2-10 3-15 5-19 10-37 14-54 18-14 35-28 53-41 13 31 27 62 40 93 5 10 5 10 5 12 0 11-15 11-19 11s-7 0-7 7c0 4 4 4 5 4 14 0 28-1 42-1 8 0 27 1 35 1 2 0 6 0 6-7 0-4-4-4-7-4-14 0-19-3-24-15-17-38-34-76-50-114z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.024cm" svg:height="0.167cm" svg:x="6.717cm" svg:y="1.547cm" svg:viewBox="0 0 25 168" svg:d="M25 0c-8 0-17 0-25 0 0 8 0 17 0 25 8 0 17 0 25 0 0-8 0-17 0-25zM23 60c-7 0-14 0-21 0 0 36 0 72 0 108 7 0 14 0 21 0 0-36 0-72 0-108z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.093cm" svg:height="0.111cm" svg:x="6.781cm" svg:y="1.603cm" svg:viewBox="0 0 94 112" svg:d="M94 39c0-19-6-39-36-39-14 0-27 6-38 19 0-6 0-12 0-18-7 0-13 0-20 0 0 37 0 74 0 111 7 0 15 0 22 0 0-20 0-40 0-60 0-16 7-35 25-35 26 0 26 17 26 24 0 23 0 47 0 71 7 0 14 0 21 0 0-25 0-49 0-73z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.041cm" svg:height="0.104cm" svg:x="6.942cm" svg:y="1.625cm" svg:viewBox="0 0 42 105" svg:d="M42 37c0-23-9-37-23-37-11 0-19 9-19 19 0 9 8 18 19 18 4 0 9-1 12-4 1-1 1-1 2-1 0 2 1 0 1 5 0 26-12 47-24 58-4 4-4 5-4 6 0 2 2 4 4 4 3 0 32-27 32-68z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.318cm" svg:height="0.238cm" svg:x="7.133cm" svg:y="1.423cm" svg:viewBox="0 0 319 239" svg:d="M158 167c-23-54-45-107-68-160-2-7-3-7-12-7-22 0-43 0-65 0-7 0-12 0-12 6s6 6 8 6c4 0 14 1 21 4 0 62 0 124 0 186 0 7 0 23-23 25-7 1-5 4-7 6 0 6 5 6 12 6 18 0 36 0 54 0 7 0 12 0 12-6 0-3-3-6-6-6-27-2-27-17-27-25 0-57 0-115 0-173l1-1c28 68 57 136 85 204 3 6 5 7 8 7 4 0 5-3 7-7 29-68 57-136 86-204v1c0 58 0 116 0 173 0 7 0 23-24 25-7 1-5 4-7 6 0 6 6 6 12 6 31 0 62 0 94 0 7 0 12 0 12-6 0-3-3-6-6-6-27-2-27-17-27-25 0-55 0-110 0-165 0-7 0-22 24-25 4 0 7-2 7-6 0-6-6-6-12-6-23 0-46 0-68 0-9 0-10 0-13 8-22 53-44 106-66 159zM147 172c3 6 3 6 7 8-5 13-10 25-15 37h-1c-27-63-53-127-80-190-2-4-4-10-9-15 10 0 20 0 30 0 23 53 45 107 68 160zM41 227c-2 0-4 0-6 0 1-1 1-2 2-3 0 0 0-1 1-1 1 2 2 3 3 4zM244 12c12 0 25 0 38 0-8 9-8 18-8 25 0 55 0 111 0 166 0 6 0 15 8 24-15 0-30 0-45 0 7-9 7-18 7-24 0-63 0-127 0-191z">
+      <text:p/>
+     </draw:path>
+    </draw:g>
+    <draw:g>
+     <svg:title>TexMaths</svg:title>
+     <svg:desc>10§display§K_{\mathsf{E}},\,
+J,\,
+d§svg§600§FALSE§</svg:desc>
+     <draw:path draw:style-name="gr6" draw:text-style-name="P3" draw:layer="layout" svg:width="1.235cm" svg:height="0.273cm" svg:x="6.291cm" svg:y="1.942cm" svg:viewBox="0 0 1236 274" svg:d="M619 274c-207 0-413 0-619 0 0-91 0-183 0-274 412 0 824 0 1236 0 0 91 0 183 0 274-206 0-412 0-617 0z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.297cm" svg:height="0.237cm" svg:x="6.287cm" svg:y="1.928cm" svg:viewBox="0 0 298 238" svg:d="M165 98c0-1-2-4-2-5s7-5 10-8c21-16 41-31 62-47 33-25 47-26 57-27 3 0 6-1 6-7 0-2-1-4-3-4-8 0-17 1-25 1-13 0-27-1-39-1-3 0-7 0-7 7 0 2 2 4 4 4 8 1 11 2 11 7 0 7-10 15-13 16-46 35-91 70-137 105 10-38 19-75 29-112 3-13 3-16 29-16 9 0 12 0 12-7 0-3-3-4-5-4-10 0-35 1-45 1s-35-1-45-1c-3 0-7 0-7 7 0 4 3 4 10 4 5 0 11 0 15 1 6 0 8 1 8 5 0 2-1 3-2 7-16 62-31 125-47 187-3 14-4 16-32 16-6 0-9 0-9 7 0 4 4 4 5 4 10 0 35-1 44-1 8 0 16 1 23 1 8 0 15 0 23 0 2 0 7 0 7-7 0-4-3-4-10-4-13 0-23 0-23-6 0-2 2-10 3-15 5-19 10-37 14-54 18-14 35-28 53-41 13 31 27 62 40 93 5 10 5 10 5 13 0 10-15 10-19 10s-7 0-7 7c0 4 4 4 5 4 14 0 28-1 42-1 8 0 27 1 35 1 2 0 6 0 6-7 0-4-4-4-7-4-14 0-19-3-24-15-17-38-33-76-50-114z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.121cm" svg:height="0.168cm" svg:x="6.595cm" svg:y="2.05cm" svg:viewBox="0 0 122 169" svg:d="M111 90c0-6 0-11 0-16-29 0-57 0-86 0 0-19 0-38 0-57 12 0 24 0 36 0 3 0 6 1 9 1 16 0 32 0 48 0 0-6 0-12 0-18-39 0-79 0-118 0 0 56 0 113 0 169 41 0 81 0 122 0 0-6 0-12 0-18-7 0-15 0-22 0-21 0-41 0-62 0-4 0-9 0-13 0 0-21 0-41 0-61 29 0 57 0 86 0z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.04cm" svg:height="0.104cm" svg:x="6.776cm" svg:y="2.129cm" svg:viewBox="0 0 41 105" svg:d="M41 37c0-23-9-37-22-37-12 0-19 9-19 19 0 9 7 18 19 18 4 0 8-1 12-4 1-1 1-1 2-1 0 2 0 0 0 5 0 26-12 47-24 58-3 4-3 5-3 6 0 2 1 4 3 4 4 0 32-27 32-68z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.197cm" svg:height="0.245cm" svg:x="6.984cm" svg:y="1.928cm" svg:viewBox="0 0 198 246" svg:d="M165 26c3-12 4-15 23-15 6 0 10 0 10-7 0-3-2-4-5-4-9 0-30 1-39 1-12 0-40-1-52-1-3 0-7 0-7 7 0 4 3 4 12 4 8 0 11 0 20 1s11 2 11 7c0 2-1 4-1 7-14 53-27 107-41 160-8 34-32 52-50 52-10 0-28-3-34-21 1 0 3 0 4 0 14 0 23-12 23-23s-9-14-15-14-24 4-24 28c0 21 19 38 47 38 32 0 69-23 77-58 14-54 27-108 41-162z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.04cm" svg:height="0.104cm" svg:x="7.179cm" svg:y="2.129cm" svg:viewBox="0 0 41 105" svg:d="M41 37c0-23-9-37-22-37-12 0-19 9-19 19 0 9 7 18 19 18 4 0 9-1 12-4 1-1 1-1 2-1 0 2 0 0 0 5 0 26-12 47-23 58-4 4-4 5-4 6 0 2 1 4 3 4 4 0 32-27 32-68z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.166cm" svg:height="0.245cm" svg:x="7.378cm" svg:y="1.924cm" svg:viewBox="0 0 167 246" svg:d="M167 4c-2-1 0-4-5-4s-38 3-44 4c-3 0-5 2-5 7 0 4 3 4 8 4 17 0 18 2 18 6 0 2-1 5-1 7-7 28-14 55-21 83-7-13-17-23-33-23-41 0-84 52-84 102 0 33 19 56 46 56 7 0 25-1 46-26 3 15 15 26 32 26 12 0 20-8 26-19 6-13 10-34 10-35 0-3-3-3-4-3-3 0-4 1-5 6-6 23-12 43-26 43-10 0-11-9-11-16 0-8 1-11 2-17 17-67 34-134 51-201zM94 201c-2 6-2 7-7 13-16 19-30 24-40 24-18 0-22-19-22-33 0-17 11-59 19-75 11-21 27-34 41-34 22 0 27 29 27 31s0 4-1 6c-6 23-11 45-17 68z">
+      <text:p/>
+     </draw:path>
+    </draw:g>
+    <draw:connector draw:style-name="gr8" draw:text-style-name="P2" draw:layer="layout" svg:x1="4.434cm" svg:y1="2.471cm" svg:x2="4.987cm" svg:y2="1.377cm" draw:start-shape="id1" draw:start-glue-point="5" draw:end-shape="id1" draw:end-glue-point="4" svg:d="M4434 2471h-1229v-1780h1782v686" svg:viewBox="0 0 1783 1781">
+     <text:p/>
+    </draw:connector>
+    <draw:connector draw:style-name="gr9" draw:text-style-name="P2" draw:layer="layout" svg:x1="10.633cm" svg:y1="2.471cm" svg:x2="9.551cm" svg:y2="1.385cm" draw:start-shape="id2" draw:start-glue-point="8" draw:end-shape="id2" draw:end-glue-point="7" svg:d="M10633 2471h704v-1780h-1786v694" svg:viewBox="0 0 1787 1781">
+     <text:p/>
+    </draw:connector>
+    <draw:g>
+     <svg:title>TexMaths</svg:title>
+     <svg:desc>10§display§K_{\mathsf{in}},\,
+\mathbb{M}§svg§600§FALSE§</svg:desc>
+     <draw:path draw:style-name="gr6" draw:text-style-name="P3" draw:layer="layout" svg:width="1.015cm" svg:height="0.27cm" svg:x="6.743cm" svg:y="2.735cm" svg:viewBox="0 0 1016 271" svg:d="M509 271c-170 0-339 0-509 0 0-90 0-181 0-271 339 0 677 0 1016 0 0 90 0 181 0 271-169 0-338 0-507 0z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.297cm" svg:height="0.237cm" svg:x="6.739cm" svg:y="2.718cm" svg:viewBox="0 0 298 238" svg:d="M165 98c0-1-2-4-2-5s7-6 10-8c20-16 41-32 62-48 33-24 47-25 57-26 3-1 6-1 6-7 0-2-1-4-3-4-8 0-17 1-25 1-13 0-27-1-39-1-3 0-7 0-7 7 0 2 2 3 4 4 8 0 11 2 11 7 0 6-10 14-13 16-46 35-91 70-137 105 10-38 19-75 29-112 3-13 3-16 29-16 9 0 12 0 12-7 0-3-3-4-5-4-10 0-35 1-45 1s-35-1-45-1c-3 0-7 0-7 7 0 4 3 4 10 4 5 0 11 0 15 0 6 1 8 2 8 6 0 1-1 3-2 7-16 62-31 125-47 187-3 14-4 16-32 16-6 0-9 0-9 7 0 4 4 4 5 4 10 0 35-1 44-1 8 0 16 0 23 0 8 0 15 1 23 1 2 0 7 0 7-7 0-4-3-4-10-4-13 0-23 0-23-6 0-2 2-10 3-15 5-19 10-37 14-54 18-14 35-28 53-41 13 31 27 62 40 93 5 10 5 10 5 12 0 11-15 11-19 11s-7 0-7 7c0 4 4 4 5 4 14 0 28-1 42-1 8 0 27 1 35 1 2 0 6 0 6-7 0-4-4-4-7-4-14 0-19-3-24-15-17-38-34-76-50-114z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.024cm" svg:height="0.167cm" svg:x="7.042cm" svg:y="2.841cm" svg:viewBox="0 0 25 168" svg:d="M25 0c-8 0-17 0-25 0 0 8 0 17 0 25 8 0 17 0 25 0 0-8 0-17 0-25zM23 60c-7 0-14 0-21 0 0 36 0 72 0 108 7 0 14 0 21 0 0-36 0-72 0-108z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.093cm" svg:height="0.111cm" svg:x="7.106cm" svg:y="2.897cm" svg:viewBox="0 0 94 112" svg:d="M94 39c0-19-6-39-36-39-14 0-27 6-38 19 0-6 0-12 0-18-7 0-13 0-20 0 0 37 0 74 0 111 7 0 15 0 22 0 0-20 0-40 0-60 0-16 7-35 25-35 26 0 26 17 26 24 0 23 0 47 0 71 7 0 14 0 21 0 0-25 0-49 0-73z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.041cm" svg:height="0.104cm" svg:x="7.267cm" svg:y="2.919cm" svg:viewBox="0 0 42 105" svg:d="M42 37c0-23-9-37-23-37-11 0-19 9-19 19 0 9 8 18 19 18 4 0 9-1 12-4 1-1 1-1 2-1 0 2 1 0 1 5 0 26-12 47-24 58-4 4-4 5-4 6 0 2 2 4 4 4 3 0 32-27 32-68z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.318cm" svg:height="0.238cm" svg:x="7.458cm" svg:y="2.717cm" svg:viewBox="0 0 319 239" svg:d="M158 167c-23-54-45-107-68-160-2-7-3-7-12-7-22 0-43 0-65 0-7 0-12 0-12 6s6 6 8 6c4 0 14 1 21 4 0 62 0 124 0 186 0 7 0 23-23 25-7 1-5 4-7 6 0 6 5 6 12 6 18 0 36 0 54 0 7 0 12 0 12-6 0-3-3-6-6-6-27-2-27-17-27-25 0-57 0-115 0-173l1-1c28 68 57 136 85 204 3 6 5 7 8 7 4 0 5-3 7-7 29-68 57-136 86-204v1c0 58 0 116 0 173 0 7 0 23-24 25-7 1-5 4-7 6 0 6 6 6 12 6 31 0 62 0 94 0 7 0 12 0 12-6 0-3-3-6-6-6-27-2-27-17-27-25 0-55 0-110 0-165 0-7 0-22 24-25 4 0 7-2 7-6 0-6-6-6-12-6-23 0-46 0-68 0-9 0-10 0-13 8-22 53-44 106-66 159zM147 172c3 6 3 6 7 8-5 13-10 25-15 37h-1c-27-63-53-127-80-190-2-4-4-10-9-15 10 0 20 0 30 0 23 53 45 107 68 160zM41 227c-2 0-4 0-6 0 1-1 1-2 2-3 0 0 0-1 1-1 1 2 2 3 3 4zM244 12c12 0 25 0 38 0-8 9-8 18-8 25 0 55 0 111 0 166 0 6 0 15 8 24-15 0-30 0-45 0 7-9 7-18 7-24 0-63 0-127 0-191z">
+      <text:p/>
+     </draw:path>
+    </draw:g>
+    <draw:g>
+     <svg:title>TexMaths</svg:title>
+     <svg:desc>10§display§K_{\mathsf{I}},\,
+-gJ,\,
+d§svg§600§FALSE§</svg:desc>
+     <draw:path draw:style-name="gr6" draw:text-style-name="P3" draw:layer="layout" svg:width="1.604cm" svg:height="0.277cm" svg:x="6.355cm" svg:y="3.242cm" svg:viewBox="0 0 1605 278" svg:d="M0 0c535 0 1070 0 1605 0 0 93 0 185 0 278-535 0-1070 0-1605 0 0-93 0-185 0-278z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.298cm" svg:height="0.237cm" svg:x="6.35cm" svg:y="3.228cm" svg:viewBox="0 0 299 238" svg:d="M166 98c-1-1-2-4-2-5s6-6 10-8c21-16 41-32 62-48 33-24 46-25 57-26 3-1 6-1 6-7 0-2-1-4-4-4-7 0-16 1-25 1-12 0-26-1-39-1-2 0-6 0-6 7 0 2 2 3 4 4 8 0 11 2 11 7 0 6-11 14-13 16-46 35-91 70-137 105 9-38 19-75 28-112 4-13 4-16 30-16 9 0 12 0 12-7 0-3-3-4-5-4-10 0-35 1-45 1s-35-1-45-1c-3 0-7 0-7 7 0 4 3 4 10 4 4 0 11 0 15 0 6 1 8 2 8 6 0 1-1 2-2 7-16 62-31 125-47 187-3 14-4 16-32 16-6 0-10 0-10 7 0 4 5 4 6 4 9 0 34-1 44-1 8 0 15 0 23 0 7 0 15 1 23 1 2 0 7 0 7-7 0-4-4-4-10-4-13 0-23 0-23-6 0-2 2-10 3-15 5-19 10-37 14-54 17-14 35-28 52-41 14 31 27 62 41 93 4 10 4 10 4 12 0 11-15 11-18 11-4 0-8 0-8 7 0 4 3 3 5 4 14 0 29-1 43-1 8 0 27 1 35 1 1 0 6 0 6-7 0-4-4-4-7-4-14 0-19-3-24-15-17-38-33-76-50-114z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.024cm" svg:height="0.168cm" svg:x="6.659cm" svg:y="3.35cm" svg:viewBox="0 0 25 169" svg:d="M0 0c8 0 17 0 25 0 0 56 0 113 0 169-8 0-17 0-25 0 0-56 0-113 0-169z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.04cm" svg:height="0.104cm" svg:x="6.756cm" svg:y="3.429cm" svg:viewBox="0 0 41 105" svg:d="M41 37c0-23-9-37-23-37-11 0-18 9-18 19 0 9 7 18 18 18 5 0 9-1 13-4 1-1 1-1 1-1 1 0 1 0 1 5 0 26-12 47-24 58-4 4-4 5-4 6 0 2 2 4 4 4 4 0 32-27 32-68z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.214cm" svg:height="0.013cm" svg:x="6.969cm" svg:y="3.373cm" svg:viewBox="0 0 215 14" svg:d="M203 14c6 0 12 0 12-7s-6-7-12-7c-63 0-127 0-190 0-6 0-13 0-13 7s7 7 13 7c63 0 127 0 190 0z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.16cm" svg:height="0.225cm" svg:x="7.218cm" svg:y="3.312cm" svg:viewBox="0 0 161 226" svg:d="M160 23c0-2 1-4 1-6 0-6-4-10-10-10-4 0-13 3-15 15-6-13-18-22-32-22-40 0-84 49-84 100 0 34 21 55 47 55 20 0 37-16 40-20h1c-8 30-8 30-12 45-1 4-13 38-50 38-7 0-19 0-28-3 10-3 14-12 14-18s-4-13-13-13c-8 0-19 7-19 21s13 21 46 21c44 0 70-27 75-48 13-51 26-103 39-155zM114 110c-2 9-10 18-18 25-7 6-18 12-28 12-18 0-23-18-23-32 0-17 10-58 20-76 9-17 24-31 39-31 23 0 28 28 28 30s-1 4-1 5c-6 22-11 44-17 67z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.197cm" svg:height="0.245cm" svg:x="7.417cm" svg:y="3.228cm" svg:viewBox="0 0 198 246" svg:d="M166 25c2-11 3-14 22-14 6 0 10 0 10-7 0-3-2-4-5-4-9 0-30 1-39 1-12 0-40-1-52-1-3 0-7 0-7 7 0 4 3 4 12 4 8 0 11 0 20 0 9 1 11 3 11 7 0 3-1 5-1 8-14 53-27 107-41 160-8 34-32 52-50 52-9 0-28-3-34-22 1 1 4 1 5 1 13 0 22-12 22-23s-9-14-15-14-24 4-24 28c0 21 19 38 47 38 32 0 69-23 77-58 14-54 28-109 42-163z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.04cm" svg:height="0.104cm" svg:x="7.612cm" svg:y="3.429cm" svg:viewBox="0 0 41 105" svg:d="M41 37c0-23-8-37-22-37-12 0-19 9-19 19 0 9 7 18 19 18 4 0 9-1 12-4 1-1 1-1 2-1 0 2 1 0 1 5 0 26-13 47-24 58-4 4-4 5-4 6 0 2 2 4 3 4 4 0 32-27 32-68z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.166cm" svg:height="0.245cm" svg:x="7.811cm" svg:y="3.224cm" svg:viewBox="0 0 167 246" svg:d="M167 4c-2-1 0-4-5-4s-38 3-44 4c-3 0-5 2-5 7 0 4 3 4 8 4 17 0 18 2 18 6 0 2-1 5-1 7-7 27-14 55-21 83-7-13-17-23-33-23-41 0-84 52-84 102 0 33 19 56 47 56 7 0 24-1 45-26 3 14 15 26 32 26 12 0 21-8 26-19 6-13 11-34 11-35 0-3-3-3-5-3-3 0-3 1-4 6-6 23-13 43-27 43-10 0-11-9-11-16 0-8 1-11 2-17 17-67 34-134 51-201zM94 200c-2 7-2 7-7 13-16 20-30 25-40 25-17 0-22-19-22-33 0-17 11-59 19-75 11-21 27-34 41-34 23 0 28 29 28 31s-1 4-2 6c-6 22-11 45-17 67z">
+      <text:p/>
+     </draw:path>
+    </draw:g>
+    <draw:g>
+     <svg:title>TexMaths</svg:title>
+     <svg:desc>10§latex§\begin{gather*}
+K_{\mathsf{in}},\,
+\neg{\mathbb{A}},\,
+\mathbb{M} \\
+K_{\mathsf{E}},\,
+ J_{ij}(t),\,
+ d
+\end{gather*}§svg§600§FALSE§</svg:desc>
+     <draw:path draw:style-name="gr6" draw:text-style-name="P3" draw:layer="layout" svg:width="1.887cm" svg:height="0.839cm" svg:x="1.2cm" svg:y="1.163cm" svg:viewBox="0 0 1888 840" svg:d="M0 0c629 0 1259 0 1888 0 0 280 0 560 0 840-629 0-1259 0-1888 0 0-280 0-560 0-840z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.298cm" svg:height="0.239cm" svg:x="1.278cm" svg:y="1.152cm" svg:viewBox="0 0 299 240" svg:d="M165 98c0-1-2-3-2-5 4-3 7-5 11-8 20-16 41-31 61-47 33-24 47-26 57-27 3 0 7 0 7-7 0-1-1-4-4-4-8 0-17 1-25 1-13 0-26-1-39-1-3 0-7 0-7 7 0 3 2 4 4 4 8 1 11 3 11 8 0 6-10 14-12 16-46 35-91 70-137 105 9-38 19-75 28-113 3-12 4-16 29-16 9 0 12 0 12-7 0-3-3-4-5-4-10 0-35 1-45 1s-35-1-45-1c-2 0-7 0-7 7 0 4 3 4 10 4 5 0 11 1 15 1 6 1 8 2 8 6 0 1 0 2-1 6-16 63-31 126-47 189-4 14-5 16-32 16-6 0-10 0-10 7 0 4 4 4 5 4 10 0 35-1 45-1 7 0 15 1 22 1 8 0 16 0 23 0 2 0 7 0 7-7 0-4-3-4-10-4-13 0-23 0-23-6 0-2 2-10 3-15 5-19 10-37 15-56 17-13 35-27 52-40 14 31 27 62 41 94 4 10 4 10 4 13 0 10-15 10-18 10-4 0-8 0-8 7 0 4 4 4 5 4 14 0 29-1 43-1 7 0 26 1 34 1 2 0 6 0 6-7 0-4-4-4-7-4-14 0-19-3-24-15-17-39-33-77-50-116z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.024cm" svg:height="0.168cm" svg:x="1.581cm" svg:y="1.276cm" svg:viewBox="0 0 25 169" svg:d="M25 0c-8 0-17 0-25 0 0 8 0 17 0 25 8 0 17 0 25 0 0-8 0-17 0-25zM23 60c-7 0-14 0-21 0 0 36 0 73 0 109 7 0 14 0 21 0 0-36 0-73 0-109z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.093cm" svg:height="0.111cm" svg:x="1.645cm" svg:y="1.333cm" svg:viewBox="0 0 94 112" svg:d="M94 39c0-19-5-39-36-39-14 0-27 6-38 19 0-6 0-12 0-18-7 0-13 0-20 0 0 37 0 74 0 111 7 0 15 0 22 0 0-20 0-40 0-60 0-16 7-35 26-35 25 0 25 17 25 24 0 24 0 47 0 71 7 0 14 0 21 0 0-24 0-49 0-73z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.04cm" svg:height="0.104cm" svg:x="1.808cm" svg:y="1.355cm" svg:viewBox="0 0 41 105" svg:d="M41 37c0-23-9-37-23-37-11 0-18 9-18 19 0 9 7 18 18 18 4 0 9-1 13-4 1-1 1-1 1-1 1 0 1 0 1 5 0 26-12 47-24 59-4 3-4 4-4 5 0 3 2 4 4 4 4 0 32-27 32-68z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.195cm" svg:height="0.093cm" svg:x="2.011cm" svg:y="1.267cm" svg:viewBox="0 0 196 94" svg:d="M196 13c0-12-1-13-13-13-57 0-113 0-170 0-6 0-13 0-13 7s7 7 13 7c56 0 113 0 169 0 0 22 0 45 0 67 0 7 0 13 7 13s7-6 7-13c0-23 0-45 0-68z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.24cm" svg:height="0.246cm" svg:x="2.231cm" svg:y="1.145cm" svg:viewBox="0 0 241 247" svg:d="M123 8c-2-6-3-8-7-8s-6 3-7 7c-27 70-53 140-80 210-5 12-12 17-21 18-2 0-8 1-8 6 0 6 6 6 12 6 19 0 37 0 56 0 7 0 12 0 12-6 0-5-5-6-7-6-5 0-14-2-14-23 0-11 2-23 5-34 26 0 51 0 77 0 12 35 13 40 13 48-8 8-18 9-22 9s-6 3-6 6c0 6 5 6 11 6 31 0 61 0 92 0 6 0 12 0 12-6 0-5-4-6-8-6-7-1-13-7-20-23-30-68-60-136-90-204zM67 166c8-31 20-61 31-90 11 23 32 74 38 90-23 0-46 0-69 0zM47 205c0 1 0 2 0 4 0 1 0 1 0 3s0 15 4 23c-6 0-13 0-19 0 5-5 6-9 9-15 2-5 4-10 6-15zM103 57c4-12 9-23 13-35 28 65 57 130 85 195 2 3 6 12 11 18-17 0-33 0-50 0 3-2 4-7 4-11 0-22-30-93-45-128-6-13-12-26-18-39z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.04cm" svg:height="0.104cm" svg:x="2.509cm" svg:y="1.355cm" svg:viewBox="0 0 41 105" svg:d="M41 37c0-23-9-37-22-37-12 0-19 9-19 19 0 9 7 18 19 18 4 0 8-1 12-4 1-1 1-1 2-1 0 2 0 0 0 5 0 26-12 47-23 59-4 3-4 4-4 5 0 3 1 4 3 4 4 0 32-27 32-68z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.318cm" svg:height="0.239cm" svg:x="2.699cm" svg:y="1.152cm" svg:viewBox="0 0 319 240" svg:d="M158 167c-22-53-45-107-67-160-3-7-3-7-13-7-22 0-43 0-65 0-6 0-12 0-12 6s7 6 9 6c4 0 13 1 21 3 0 63 0 125 0 188 0 7 0 23-24 25-7 1-5 4-7 6 0 6 6 6 12 6 18 0 37 0 55 0 6 0 11 0 11-6 0-3-2-6-5-6-27-2-27-17-27-25 0-58 0-117 0-175 29 68 57 136 86 205 3 6 5 7 7 7 4 0 5-3 7-7 29-69 57-137 86-205h1c0 58 0 117 0 175 0 7 0 23-24 25-7 1-5 4-7 6 0 6 6 6 12 6 31 0 63 0 94 0 6 0 11 0 11-6 0-3-2-6-5-6-27-2-27-17-27-25 0-56 0-111 0-166 0-7 0-23 24-25 3 0 6-2 6-6 0-6-5-6-11-6-23 0-45 0-68 0-9 0-10 0-13 7-22 53-45 107-67 160zM148 173c2 6 3 6 7 8-5 12-10 24-15 37h-1c-27-64-53-127-80-191-2-5-5-11-10-15 10 0 21 0 31 0 23 54 45 107 68 161zM42 228c-2 0-4 0-6 0 0-1 1-2 2-3 0-1 0-1 0-1 1 1 3 2 4 4zM245 12c12 0 25 0 37 0-8 9-8 18-8 24 0 56 0 112 0 168 0 6 0 15 8 24-15 0-30 0-45 0 8-9 8-18 8-24 0-64 0-128 0-192z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.298cm" svg:height="0.239cm" svg:x="1.195cm" svg:y="1.678cm" svg:viewBox="0 0 299 240" svg:d="M166 98c-1-1-2-4-2-5 3-3 6-5 10-8 21-16 41-31 62-47 33-24 46-26 57-27 3 0 6-1 6-7 0-1-1-4-4-4-7 0-16 1-25 1-12 0-26-1-39-1-2 0-6 0-6 7 0 3 2 4 4 4 8 1 11 3 11 8 0 6-11 14-13 16-46 35-91 70-137 105 9-38 19-75 28-113 4-12 4-16 30-16 9 0 12 0 12-7 0-3-3-4-5-4-10 0-35 1-45 1s-35-1-45-1c-3 0-7 0-7 7 0 4 3 4 10 4 4 0 11 0 15 1 5 1 8 2 8 5 0 2-1 3-2 7-16 63-31 126-47 189-3 13-4 16-32 16-6 0-10 0-10 7 0 4 5 4 6 4 9 0 34-1 44-1 8 0 15 0 23 0 7 0 15 1 23 1 2 0 7 0 7-7 0-4-4-4-10-4-13 0-23 0-23-6 0-3 2-10 3-16 5-18 10-36 14-55 17-13 35-27 52-40 14 31 27 62 41 94 4 10 4 10 4 12 0 11-15 11-18 11-4 0-8 0-8 7 0 4 3 2 5 4 14 0 29-1 43-1 8 0 27 1 35 1 1 0 6 0 6-7 0-4-4-4-7-4-15 0-19-3-24-16-17-39-33-77-50-115z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.121cm" svg:height="0.169cm" svg:x="1.504cm" svg:y="1.801cm" svg:viewBox="0 0 122 170" svg:d="M111 90c0-6 0-11 0-17-29 0-57 0-86 0 0-19 0-37 0-56 12 0 24 0 36 0 3 0 6 0 9 0 16 0 32 0 48 0 0-6 0-11 0-17-39 0-79 0-118 0 0 57 0 113 0 170 41 0 81 0 122 0 0-7 0-13 0-19-7 0-15 0-22 0-21 0-42 0-62 0-4 0-9 0-13 0 0-20 0-41 0-61 29 0 57 0 86 0z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.04cm" svg:height="0.104cm" svg:x="1.685cm" svg:y="1.881cm" svg:viewBox="0 0 41 105" svg:d="M41 37c0-23-9-37-23-37-11 0-18 9-18 19 0 9 7 18 18 18 5 0 9-1 13-4 1-1 1-1 1-1 1 0 1 0 1 5 0 26-12 47-24 58-4 4-4 5-4 6 0 3 2 4 4 4 4 0 32-27 32-68z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.196cm" svg:height="0.247cm" svg:x="1.894cm" svg:y="1.678cm" svg:viewBox="0 0 197 248" svg:d="M165 26c3-12 4-15 23-15 6 0 9 0 9-7 0-3-2-4-5-4-8 0-30 1-38 1-12 0-41-1-52-1-3 0-7 0-7 7 0 4 2 4 11 4s12 0 21 1c8 1 11 2 11 7 0 2-1 4-2 7-13 54-27 107-40 161-9 35-32 53-51 53-9 0-27-3-33-22 1 1 3 1 4 1 14 0 23-12 23-23s-9-15-15-15c-7 0-24 5-24 29 0 21 19 38 46 38 33 0 69-23 78-58 14-55 27-109 41-164z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.074cm" svg:height="0.164cm" svg:x="2.075cm" svg:y="1.808cm" svg:viewBox="0 0 75 165" svg:d="M68 9c0-4-2-9-9-9s-14 6-14 13c0 5 3 10 10 10s13-7 13-14zM18 134c-1 3-2 6-2 10 0 12 10 21 23 21 25 0 36-34 36-37 0-4-3-4-4-4-3 0-4 2-5 5-5 19-16 29-26 29-5 0-6-3-6-8 0-6 2-11 4-16 2-7 5-13 8-20 2-5 11-28 12-31 1-2 1-5 1-8 0-11-9-21-23-21-24 0-36 34-36 38 0 3 4 3 5 3 3 0 3-1 4-4 6-21 17-30 26-30 4 0 6 2 6 9 0 6-1 9-7 24-5 13-11 27-16 40z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.107cm" svg:height="0.212cm" svg:x="2.162cm" svg:y="1.808cm" svg:viewBox="0 0 108 213" svg:d="M108 9c0-4-3-9-10-9s-13 7-13 13c0 4 2 10 9 10s14-7 14-14zM56 175c-4 17-17 31-32 31-3 0-6 0-9-1 7-3 9-9 9-13 0-6-5-9-10-9-7 0-14 7-14 15 0 9 10 15 25 15 14 0 43-9 51-39 7-29 15-59 22-88 1-3 1-5 1-8 0-14-12-24-26-24-28 0-43 35-43 38s3 3 4 3c3 0 3-1 5-4 6-14 19-30 33-30 6 0 8 4 8 12 0 3 0 6 0 8-8 31-16 63-24 94z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.08cm" svg:height="0.35cm" svg:x="2.345cm" svg:y="1.655cm" svg:viewBox="0 0 81 351" svg:d="M81 347c0-1 0-1-6-7-43-45-55-111-55-165 0-61 14-122 57-166 4-4 4-5 4-6 0-2-1-3-3-3-4 0-35 24-56 68-18 39-22 78-22 107 0 28 4 70 23 110 21 43 51 66 55 66 2 0 3-1 3-4z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.107cm" svg:height="0.223cm" svg:x="2.455cm" svg:y="1.698cm" svg:viewBox="0 0 108 224" svg:d="M64 80c11 0 22 0 33 0 7 0 11 0 11-7 0-4-4-4-10-4-10 0-21 0-31 0 13-50 14-57 14-59 0-6-4-10-10-10-1 0-11 1-14 13-5 19-9 37-14 56-11 0-22 0-33 0-7 0-10 0-10 6 0 5 3 5 10 5 10 0 21 0 31 0-26 99-27 105-27 112 0 19 13 32 32 32 36 0 56-51 56-54 0-4-3-4-4-4-3 0-4 1-5 5-16 37-34 45-46 45-7 0-11-4-11-16 0-8 1-11 2-17 9-35 17-69 26-103z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.08cm" svg:height="0.35cm" svg:x="2.594cm" svg:y="1.655cm" svg:viewBox="0 0 81 351" svg:d="M81 175c0-27-4-70-23-109-21-43-51-66-55-66-2 0-3 1-3 3 0 1 0 2 6 8 35 35 55 91 55 164 0 60-13 122-57 166-4 5-4 5-4 6 0 3 1 4 3 4 4 0 35-24 56-69 18-38 22-77 22-107z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.04cm" svg:height="0.104cm" svg:x="2.74cm" svg:y="1.881cm" svg:viewBox="0 0 41 105" svg:d="M41 37c0-23-8-37-22-37-12 0-19 9-19 19 0 9 7 18 19 18 4 0 9-1 12-4 1-1 1-1 2-1 0 2 1 0 1 5 0 26-13 47-24 58-4 4-4 5-4 6 0 3 2 4 3 4 4 0 32-27 32-68z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.166cm" svg:height="0.247cm" svg:x="2.939cm" svg:y="1.674cm" svg:viewBox="0 0 167 248" svg:d="M167 4c-2-1 0-4-5-4s-38 4-44 4c-3 1-5 2-5 7 0 4 3 4 8 4 17 0 18 3 18 6 0 2-1 5-1 7-7 28-14 55-21 83-7-13-17-22-33-22-41 0-84 52-84 103 0 33 19 56 47 56 7 0 24-1 45-26 3 14 15 26 32 26 12 0 21-8 26-19 6-13 11-34 11-35 0-4-3-4-5-4-3 0-3 2-4 7-6 23-13 43-27 43-10 0-11-9-11-16 0-8 1-11 2-17 17-68 34-135 51-203zM94 202c-2 7-2 7-7 13-16 20-30 25-40 25-17 0-22-19-22-33 0-17 11-60 19-77 11-20 27-33 41-33 23 0 28 28 28 31 0 2-1 4-1 6-6 22-12 45-18 68z">
+      <text:p/>
+     </draw:path>
+    </draw:g>
+    <draw:g>
+     <svg:title>TexMaths</svg:title>
+     <svg:desc>10§latex§\begin{gather*}
+K_{\mathsf{in}},\,
+\neg \mathbb{A},\,
+\mathbb{M} \\
+K_{\mathsf{I}},\,
+-gJ,\,
+d
+\end{gather*}§svg§600§FALSE§</svg:desc>
+     <draw:path draw:style-name="gr6" draw:text-style-name="P3" draw:layer="layout" svg:width="1.717cm" svg:height="0.808cm" svg:x="11.498cm" svg:y="1.142cm" svg:viewBox="0 0 1718 809" svg:d="M0 0c573 0 1145 0 1718 0 0 270 0 539 0 809-573 0-1145 0-1718 0 0-270 0-539 0-809z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.298cm" svg:height="0.239cm" svg:x="11.493cm" svg:y="1.131cm" svg:viewBox="0 0 299 240" svg:d="M166 98c-1-1-2-4-2-5 3-3 6-5 10-8 21-16 41-31 62-47 33-24 46-26 57-27 3 0 6 0 6-7 0-1-1-4-4-4-7 0-16 1-25 1-12 0-26-1-39-1-2 0-6 0-6 7 0 3 2 4 4 4 8 1 11 3 11 8 0 6-11 14-13 16-46 35-91 70-137 105 9-38 19-75 28-113 4-12 4-16 30-16 9 0 12 0 12-7 0-3-3-4-5-4-10 0-35 1-45 1s-35-1-45-1c-3 0-7 0-7 7 0 4 3 4 10 4 4 0 11 1 15 1 6 1 8 2 8 6 0 1-1 2-2 6-16 63-31 126-47 189-3 14-4 16-32 16-6 0-10 0-10 7 0 4 5 4 6 4 9 0 34-1 44-1 8 0 15 1 23 1 7 0 15 0 23 0 2 0 7 0 7-7 0-4-4-4-10-4-13 0-23 0-23-6 0-2 2-10 3-15 5-19 10-37 14-56 17-13 35-27 52-40 14 31 27 62 41 94 4 10 4 10 4 12 0 11-15 11-18 11-4 0-8 0-8 7 0 4 3 2 5 4 14 0 29-1 43-1 8 0 27 1 35 1 1 0 6 0 6-7 0-4-4-4-7-4-15 0-19-3-24-15-17-39-33-77-50-116z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.024cm" svg:height="0.168cm" svg:x="11.797cm" svg:y="1.255cm" svg:viewBox="0 0 25 169" svg:d="M25 0c-8 0-17 0-25 0 0 8 0 17 0 25 8 0 17 0 25 0 0-8 0-17 0-25zM23 60c-7 0-14 0-21 0 0 36 0 73 0 109 7 0 14 0 21 0 0-36 0-73 0-109z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.093cm" svg:height="0.111cm" svg:x="11.861cm" svg:y="1.312cm" svg:viewBox="0 0 94 112" svg:d="M94 39c0-19-6-39-36-39-14 0-27 6-38 19 0-6 0-12 0-18-7 0-13 0-20 0 0 37 0 74 0 111 7 0 14 0 21 0 0-20 0-40 0-60 0-16 7-35 26-35 26 0 26 17 26 24 0 24 0 47 0 71 7 0 14 0 21 0 0-24 0-49 0-73z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.04cm" svg:height="0.104cm" svg:x="12.023cm" svg:y="1.334cm" svg:viewBox="0 0 41 105" svg:d="M41 37c0-23-8-37-22-37-12 0-19 9-19 19 0 9 7 18 19 18 4 0 9-1 12-4 1-1 1-1 2-1 0 2 1 0 1 5 0 26-13 47-24 59-4 3-4 4-4 5 0 3 2 4 3 4 4 0 32-27 32-68z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.194cm" svg:height="0.093cm" svg:x="12.227cm" svg:y="1.246cm" svg:viewBox="0 0 195 94" svg:d="M195 13c0-12-1-13-12-13-57 0-114 0-171 0-6 0-12 0-12 7s6 7 12 7c56 0 113 0 169 0 0 22 0 45 0 67 0 7 0 13 7 13s7-6 7-13c0-23 0-45 0-68z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.24cm" svg:height="0.246cm" svg:x="12.447cm" svg:y="1.124cm" svg:viewBox="0 0 241 247" svg:d="M123 8c-3-6-3-8-7-8s-6 3-8 7c-27 70-53 140-80 210-4 12-11 17-21 18-2 0-7 1-7 6 0 6 5 6 12 6 19 0 37 0 56 0 6 0 12 0 12-6 0-5-5-6-8-6-5 0-14-2-14-23 0-11 3-23 5-34 26 0 52 0 78 0 12 34 12 40 13 47-9 9-19 10-22 10-4 0-6 3-6 6 0 6 5 6 11 6 31 0 61 0 92 0 6 0 12 0 12-6 0-5-5-6-8-6-8-1-14-7-21-23-30-68-59-136-89-204zM67 166c8-31 19-61 31-90 11 23 32 74 38 90-23 0-46 0-69 0zM46 205h1c0 1 0 2 0 4-1 1-1 1-1 3s0 15 5 23c-6 0-13 0-19 0 5-5 6-9 8-15 2-5 4-10 6-15zM103 57c4-12 9-23 13-35 28 65 57 130 85 195 1 3 5 12 10 18-17 0-33 0-50 0 4-2 5-7 5-11 0-22-31-93-46-128-6-13-11-26-17-39z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.04cm" svg:height="0.104cm" svg:x="12.725cm" svg:y="1.334cm" svg:viewBox="0 0 41 105" svg:d="M41 37c0-23-9-37-23-37-11 0-18 9-18 19 0 9 7 18 18 18 5 0 9-1 13-4 1-1 1-1 1-1 1 0 1 0 1 5 0 26-12 47-24 59-4 3-4 4-4 5 0 3 2 4 4 4 4 0 32-27 32-68z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.318cm" svg:height="0.239cm" svg:x="12.915cm" svg:y="1.131cm" svg:viewBox="0 0 319 240" svg:d="M158 166c-22-53-45-106-67-159-3-7-3-7-13-7-22 0-43 0-65 0-7 0-12 0-12 6s6 6 8 6c4 0 14 1 22 3 0 63 0 125 0 188 0 7 0 23-24 25-7 1-5 4-7 6 0 6 6 6 12 6 18 0 36 0 54 0 7 0 12 0 12-6 0-3-3-6-6-6-27-2-27-17-27-25 0-59 0-117 0-175h1c28 68 57 136 85 205 3 6 6 7 8 7 4 0 5-3 7-7 29-69 57-137 86-205 0 58 0 116 0 175 0 7 0 23-24 25-6 1-4 4-6 6 0 6 5 6 12 6 31 0 62 0 93 0 7 0 12 0 12-6 0-3-3-6-6-6-27-2-27-17-27-25 0-56 0-111 0-166 0-7 0-23 24-25 4 0 7-2 7-6 0-6-5-6-12-6-22 0-45 0-67 0-10 0-10 0-13 7-22 53-45 106-67 159zM147 173c3 6 3 6 8 8-5 12-11 24-16 37h-1c-27-64-53-127-80-191-1-5-4-11-9-15 10 0 20 0 30 0 23 54 45 107 68 161zM41 228c-2 0-4 0-6 0 1-1 1-3 2-3 1-1 1-1 1-1 1 1 2 2 3 4zM245 12c12 0 25 0 37 0-8 9-8 18-8 24 0 56 0 112 0 168 0 6 0 15 8 24-15 0-30 0-45 0 8-9 8-18 8-24 0-64 0-128 0-192z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.298cm" svg:height="0.239cm" svg:x="11.553cm" svg:y="1.657cm" svg:viewBox="0 0 299 240" svg:d="M165 98c0-1-2-4-2-5 3-3 7-5 10-8 21-16 41-31 62-47 33-25 47-26 57-27 3 0 7-1 7-7 0-1-2-4-4-4-8 0-17 1-25 1-13 0-27-1-39-1-3 0-7 0-7 7 0 3 2 4 4 4 8 1 11 2 11 7 0 7-10 15-12 17-46 35-91 70-137 105 9-38 19-75 28-113 3-12 3-16 29-16 9 0 12 0 12-7 0-3-3-4-5-4-10 0-35 1-45 1s-35-1-45-1c-3 0-7 0-7 7 0 4 3 4 10 4 5 0 11 0 15 1 6 0 8 1 8 5 0 2 0 3-2 7-16 63-31 126-47 189-3 13-4 16-32 16-6 0-9 0-9 7 0 4 4 4 5 4 10 0 35-1 44-1 8 0 16 0 23 0 8 0 15 1 23 1 2 0 7 0 7-7 0-4-3-4-10-4-13 0-23 0-23-6 0-3 2-10 3-16 5-18 10-37 14-55 18-14 35-27 53-41 13 31 27 63 40 95 5 9 5 10 5 12 0 11-15 11-19 11-3 0-7 0-7 7 0 4 4 4 5 4 14 0 28-1 42-1 8 0 27 1 35 1 2 0 6 0 6-7 0-4-4-4-7-4-14 0-19-3-24-16-17-39-33-77-50-115z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.024cm" svg:height="0.17cm" svg:x="11.861cm" svg:y="1.779cm" svg:viewBox="0 0 25 171" svg:d="M0 0c8 0 17 0 25 0 0 57 0 114 0 171-8 0-17 0-25 0 0-57 0-114 0-171z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.04cm" svg:height="0.104cm" svg:x="11.958cm" svg:y="1.86cm" svg:viewBox="0 0 41 105" svg:d="M41 37c0-24-9-37-22-37-12 0-19 9-19 18 0 10 7 19 19 19 4 0 8-1 12-5 1 0 1-1 2-1 0 2 0 1 0 6 0 26-13 46-24 58-4 3-3 5-3 6 0 2 1 4 3 4 4 0 32-27 32-68z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.214cm" svg:height="0.013cm" svg:x="12.171cm" svg:y="1.802cm" svg:viewBox="0 0 215 14" svg:d="M203 14c6 0 12 0 12-7s-6-7-12-7c-63 0-127 0-190 0-6 0-13 0-13 7s7 7 13 7c63 0 127 0 190 0z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.16cm" svg:height="0.226cm" svg:x="12.42cm" svg:y="1.742cm" svg:viewBox="0 0 161 227" svg:d="M160 23c0-2 1-4 1-7 0-6-4-9-10-9-4 0-13 2-15 15-6-13-18-22-32-22-40 0-84 49-84 100 0 34 22 55 47 55 21 0 37-16 41-20-7 31-8 30-12 46-1 4-13 38-50 38-7 0-18 0-28-3 10-3 14-13 14-18 0-6-4-13-13-13-8 0-19 7-19 21s13 21 46 21c44 0 70-27 75-48 13-52 26-104 39-156zM114 110c-2 9-10 18-18 25-7 6-18 12-28 12-18 0-23-18-23-32 0-17 10-58 20-76 9-17 24-31 39-31 23 0 28 28 28 30 0 1-1 4-1 5-6 22-11 45-17 67z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.196cm" svg:height="0.247cm" svg:x="12.62cm" svg:y="1.657cm" svg:viewBox="0 0 197 248" svg:d="M165 26c2-12 3-15 22-15 6 0 10 0 10-7 0-3-2-4-5-4-9 0-30 1-39 1-12 0-40-1-52-1-3 0-7 0-7 7 0 4 3 4 12 4 8 0 12 0 20 1 9 1 11 2 11 7 0 2 0 4-1 7-14 54-27 107-41 161-8 34-32 53-50 53-9 0-28-4-34-22 2 1 4 1 5 1 13 0 23-12 23-23s-10-15-16-15-23 5-23 28c0 22 18 39 46 39 32 0 69-23 78-58 14-55 27-109 41-164z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.04cm" svg:height="0.104cm" svg:x="12.814cm" svg:y="1.86cm" svg:viewBox="0 0 41 105" svg:d="M41 37c0-24-8-37-22-37-12 0-19 9-19 18 0 10 7 19 19 19 4 0 9-1 12-5 1 0 1-1 2-1 0 2 1 1 1 6 0 26-13 47-24 58-4 4-4 5-4 6 0 2 2 4 3 4 4 0 32-27 32-68z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.166cm" svg:height="0.247cm" svg:x="13.013cm" svg:y="1.653cm" svg:viewBox="0 0 167 248" svg:d="M167 4c-2-1 0-4-5-4s-38 3-44 4c-3 1-5 2-5 7 0 4 3 4 8 4 17 0 18 2 18 6 0 2-1 5-1 7-7 28-14 55-21 83-7-13-17-22-33-22-41 0-84 51-84 103 0 33 19 56 47 56 7 0 24-2 45-26 3 14 15 26 32 26 12 0 21-8 26-19 6-13 7-24 11-35 0-4-3-4-5-4-3 0-3 2-4 7-6 22-13 43-27 43-10 0-11-9-11-16 0-8 1-11 2-17 17-68 34-135 51-203zM94 202c-2 7-2 7-7 13-16 20-30 25-40 25-17 0-22-19-22-33 0-17 11-61 19-77 11-20 27-33 41-33 23 0 28 27 28 30 0 2-1 5-2 6-6 23-11 46-17 69z">
+      <text:p/>
+     </draw:path>
+    </draw:g>
+    <draw:g>
+     <svg:title>TexMaths</svg:title>
+     <svg:desc>10§latex§\begin{gather*}
+\delta \\
+J,\,
+d
+\end{gather*}§svg§600§FALSE§</svg:desc>
+     <draw:path draw:style-name="gr6" draw:text-style-name="P3" draw:layer="layout" svg:width="0.547cm" svg:height="0.806cm" svg:x="4.929cm" svg:y="4.886cm" svg:viewBox="0 0 548 807" svg:d="M274 807c-92 0-183 0-274 0 0-269 0-538 0-807 183 0 365 0 548 0 0 269 0 538 0 807-91 0-183 0-274 0z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.143cm" svg:height="0.253cm" svg:x="5.134cm" svg:y="4.868cm" svg:viewBox="0 0 144 254" svg:d="M78 96c-44 11-78 57-78 99 0 34 23 59 56 59 41 0 70-55 70-104 0-32-14-49-26-65-13-16-33-42-33-57 0-8 7-17 19-17 11 0 18 5 25 10 7 4 14 9 19 9 9 0 14-9 14-14 0-8-5-9-18-12-18-4-23-4-29-4-27 0-40 15-40 36 0 19 10 39 21 60zM83 104c8 16 19 35 19 60 0 24-14 82-46 82-19 0-34-15-34-41 0-22 13-88 61-101z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.196cm" svg:height="0.247cm" svg:x="4.936cm" svg:y="5.403cm" svg:viewBox="0 0 197 248" svg:d="M165 26c3-12 3-15 23-15 5 0 9 0 9-6 0-4-2-5-5-5-8 0-30 1-39 1-11 0-40-1-51-1-3 0-8 0-8 7 0 4 3 4 12 4 8 0 12 0 21 1 8 1 11 2 11 7 0 2-1 5-2 7-14 54-27 107-40 161-9 34-32 53-51 53-9 0-27-3-33-22 1 1 3 0 4 1 14 0 23-12 23-23s-9-15-15-15c-7 0-24 5-24 29 0 21 19 38 46 38 33 0 69-23 78-58 13-55 27-109 41-164z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.04cm" svg:height="0.104cm" svg:x="5.131cm" svg:y="5.606cm" svg:viewBox="0 0 41 105" svg:d="M41 37c0-23-9-37-23-37-11 0-18 9-18 18 0 10 7 19 18 19 4 0 9-1 12-4 2-1 1-1 2-2 1 0 1 1 1 6 0 26-12 47-24 58-4 4-4 5-4 6 0 2 2 4 4 4 4 0 32-27 32-68z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.166cm" svg:height="0.246cm" svg:x="5.328cm" svg:y="5.4cm" svg:viewBox="0 0 167 247" svg:d="M167 3c-2-1 0-3-5-3s-38 3-44 3c-3 1-5 3-5 7s3 4 8 4c17 0 18 3 18 6-1 2-1 5-1 7-7 28-14 55-21 83-7-13-17-22-33-22-41 0-84 52-84 103 0 33 19 56 46 56 8 0 25-1 46-26 3 14 15 26 32 26 12 0 20-8 26-19 6-13 10-34 10-35 0-4-3-4-4-4-3 0-4 2-5 7-6 23-12 43-26 43-10 0-11-9-11-16 0-8 1-11 2-17 17-68 34-135 51-203zM94 201c-2 7-2 7-7 13-16 20-30 25-40 25-17 0-22-19-22-33 0-17 11-60 19-77 11-20 27-33 41-33 23 0 27 28 27 31 0 2 0 4-1 6-6 22-11 45-17 68z">
+      <text:p/>
+     </draw:path>
+    </draw:g>
+    <draw:g>
+     <svg:title>TexMaths</svg:title>
+     <svg:desc>10§latex§\begin{gather*}
+\delta \\
+J,\,
+d
+\end{gather*}§svg§600§FALSE§</svg:desc>
+     <draw:path draw:style-name="gr6" draw:text-style-name="P3" draw:layer="layout" svg:width="0.547cm" svg:height="0.806cm" svg:x="9.05cm" svg:y="4.874cm" svg:viewBox="0 0 548 807" svg:d="M274 807c-92 0-183 0-274 0 0-269 0-538 0-807 183 0 365 0 548 0 0 269 0 538 0 807-91 0-183 0-274 0z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.143cm" svg:height="0.253cm" svg:x="9.255cm" svg:y="4.856cm" svg:viewBox="0 0 144 254" svg:d="M78 96c-44 11-78 57-78 99 0 34 23 59 56 59 41 0 70-55 70-104 0-32-14-49-26-65-13-16-33-42-33-57 0-8 7-17 19-17 11 0 18 5 25 10 7 4 14 9 19 9 9 0 14-9 14-14 0-8-5-9-18-12-18-4-23-4-29-4-27 0-40 15-40 36 0 19 10 39 21 60zM83 104c8 16 19 35 19 60 0 24-14 82-46 82-19 0-34-15-34-41 0-22 13-88 61-101z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.196cm" svg:height="0.247cm" svg:x="9.057cm" svg:y="5.391cm" svg:viewBox="0 0 197 248" svg:d="M165 26c3-12 3-15 23-15 5 0 9 0 9-6 0-4-2-5-5-5-8 0-30 1-39 1-11 0-40-1-51-1-3 0-8 0-8 7 0 4 3 4 12 4 8 0 12 0 21 1 8 1 11 2 11 7 0 2-1 5-2 7-14 54-27 107-40 161-9 34-32 53-51 53-9 0-27-3-33-22 1 1 3 0 4 1 14 0 23-12 23-23s-9-15-15-15c-7 0-24 5-24 29 0 21 19 38 46 38 33 0 69-23 78-58 13-55 27-109 41-164z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.04cm" svg:height="0.104cm" svg:x="9.252cm" svg:y="5.594cm" svg:viewBox="0 0 41 105" svg:d="M41 37c0-23-9-37-23-37-11 0-18 9-18 18 0 10 7 19 18 19 4 0 9-1 12-4 2-1 1-1 2-2 1 0 1 1 1 6 0 26-12 47-24 58-4 4-4 5-4 6 0 2 2 4 4 4 4 0 32-27 32-68z">
+      <text:p/>
+     </draw:path>
+     <draw:path draw:style-name="gr7" draw:text-style-name="P4" draw:layer="layout" svg:width="0.166cm" svg:height="0.246cm" svg:x="9.449cm" svg:y="5.388cm" svg:viewBox="0 0 167 247" svg:d="M167 3c-2-1 0-3-5-3s-38 3-44 3c-3 1-5 3-5 7s3 4 8 4c17 0 18 3 18 6-1 2-1 5-1 7-7 28-14 55-21 83-7-13-17-22-33-22-41 0-84 52-84 103 0 33 19 56 46 56 8 0 25-1 46-26 3 14 15 26 32 26 12 0 20-8 26-19 6-13 10-34 10-35 0-4-3-4-4-4-3 0-4 2-5 7-6 23-12 43-26 43-10 0-11-9-11-16 0-8 1-11 2-17 17-68 34-135 51-203zM94 201c-2 7-2 7-7 13-16 20-30 25-40 25-17 0-22-19-22-33 0-17 11-60 19-77 11-20 27-33 41-33 23 0 27 28 27 31 0 2 0 4-1 6-6 22-11 45-17 68z">
+      <text:p/>
+     </draw:path>
+    </draw:g>
+    <draw:frame draw:style-name="gr10" draw:text-style-name="P2" xml:id="id1" draw:id="id1" draw:layer="layout" svg:width="2.565cm" svg:height="2.565cm" svg:x="3.705cm" svg:y="1.191cm">
+     <draw:image draw:mime-type="image/svg+xml">
+      <office:binary-data>PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHN2ZyBQ
+       VUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3Jh
+       cGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KPHN2ZyB2ZXJzaW9uPSIxLjIiIHdpZHRo
+       PSIyNS40bW0iIGhlaWdodD0iMjUuNG1tIiB2aWV3Qm94PSIwIDAgMjU0MCAyNTQwIiBwcmVz
+       ZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2Ut
+       d2lkdGg9IjI4LjIyMiIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgeG1sbnM9Imh0dHA6Ly93
+       d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczpvb289Imh0dHA6Ly94bWwub3Blbm9mZmljZS5v
+       cmcvc3ZnL2V4cG9ydCIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxp
+       bmsiIHhtbG5zOnByZXNlbnRhdGlvbj0iaHR0cDovL3N1bi5jb20veG1sbnMvc3Rhcm9mZmlj
+       ZS9wcmVzZW50YXRpb24iIHhtbG5zOnNtaWw9Imh0dHA6Ly93d3cudzMub3JnLzIwMDEvU01J
+       TDIwLyIgeG1sbnM6YW5pbT0idXJuOm9hc2lzOm5hbWVzOnRjOm9wZW5kb2N1bWVudDp4bWxu
+       czphbmltYXRpb246MS4wIiB4bWw6c3BhY2U9InByZXNlcnZlIj4KIDxkZWZzIGNsYXNzPSJD
+       bGlwUGF0aEdyb3VwIj4KICA8Y2xpcFBhdGggaWQ9InByZXNlbnRhdGlvbl9jbGlwX3BhdGgi
+       IGNsaXBQYXRoVW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KICAgPHJlY3QgeD0iMCIgeT0iMCIg
+       d2lkdGg9IjI1NDAiIGhlaWdodD0iMjU0MCIvPgogIDwvY2xpcFBhdGg+CiAgPGNsaXBQYXRo
+       IGlkPSJwcmVzZW50YXRpb25fY2xpcF9wYXRoX3NocmluayIgY2xpcFBhdGhVbml0cz0idXNl
+       clNwYWNlT25Vc2UiPgogICA8cmVjdCB4PSIyIiB5PSIyIiB3aWR0aD0iMjUzNSIgaGVpZ2h0
+       PSIyNTM1Ii8+CiAgPC9jbGlwUGF0aD4KIDwvZGVmcz4KIDxkZWZzIGNsYXNzPSJUZXh0U2hh
+       cGVJbmRleCI+CiAgPGcgb29vOnNsaWRlPSJpZDEiIG9vbzppZC1saXN0PSJpZDMgaWQ0IGlk
+       NSIvPgogPC9kZWZzPgogPGRlZnMgY2xhc3M9IkVtYmVkZGVkQnVsbGV0Q2hhcnMiPgogIDxn
+       IGlkPSJidWxsZXQtY2hhci10ZW1wbGF0ZS01NzM1NiIgdHJhbnNmb3JtPSJzY2FsZSgwLjAw
+       MDQ4ODI4MTI1LC0wLjAwMDQ4ODI4MTI1KSI+CiAgIDxwYXRoIGQ9Ik0gNTgwLDExNDEgTCAx
+       MTYzLDU3MSA1ODAsMCAtNCw1NzEgNTgwLDExNDEgWiIvPgogIDwvZz4KICA8ZyBpZD0iYnVs
+       bGV0LWNoYXItdGVtcGxhdGUtNTczNTQiIHRyYW5zZm9ybT0ic2NhbGUoMC4wMDA0ODgyODEy
+       NSwtMC4wMDA0ODgyODEyNSkiPgogICA8cGF0aCBkPSJNIDgsMTEyOCBMIDExMzcsMTEyOCAx
+       MTM3LDAgOCwwIDgsMTEyOCBaIi8+CiAgPC9nPgogIDxnIGlkPSJidWxsZXQtY2hhci10ZW1w
+       bGF0ZS0xMDE0NiIgdHJhbnNmb3JtPSJzY2FsZSgwLjAwMDQ4ODI4MTI1LC0wLjAwMDQ4ODI4
+       MTI1KSI+CiAgIDxwYXRoIGQ9Ik0gMTc0LDAgTCA2MDIsNzM5IDE3NCwxNDgxIDE0NTYsNzM5
+       IDE3NCwwIFogTSAxMzU4LDczOSBMIDMwOSwxMzQ2IDY1OSw3MzkgMTM1OCw3MzkgWiIvPgog
+       IDwvZz4KICA8ZyBpZD0iYnVsbGV0LWNoYXItdGVtcGxhdGUtMTAxMzIiIHRyYW5zZm9ybT0i
+       c2NhbGUoMC4wMDA0ODgyODEyNSwtMC4wMDA0ODgyODEyNSkiPgogICA8cGF0aCBkPSJNIDIw
+       MTUsNzM5IEwgMTI3NiwwIDcxNywwIDEyNjAsNTQzIDE3NCw1NDMgMTc0LDkzNiAxMjYwLDkz
+       NiA3MTcsMTQ4MSAxMjc0LDE0ODEgMjAxNSw3MzkgWiIvPgogIDwvZz4KICA8ZyBpZD0iYnVs
+       bGV0LWNoYXItdGVtcGxhdGUtMTAwMDciIHRyYW5zZm9ybT0ic2NhbGUoMC4wMDA0ODgyODEy
+       NSwtMC4wMDA0ODgyODEyNSkiPgogICA8cGF0aCBkPSJNIDAsLTIgQyAtNywxNCAtMTYsMjcg
+       LTI1LDM3IEwgMzU2LDU2NyBDIDI2Miw4MjMgMjE1LDk1MiAyMTUsOTU0IDIxNSw5NzkgMjI4
+       LDk5MiAyNTUsOTkyIDI2NCw5OTIgMjc2LDk5MCAyODksOTg3IDMxMCw5OTEgMzMxLDk5OSAz
+       NTQsMTAxMiBMIDM4MSw5OTkgNDkyLDc0OCA3NzIsMTA0OSA4MzYsMTAyNCA4NjAsMTA0OSBD
+       IDg4MSwxMDM5IDkwMSwxMDI1IDkyMiwxMDA2IDg4Niw5MzcgODM1LDg2MyA3NzAsNzg0IDc2
+       OSw3ODMgNzEwLDcxNiA1OTQsNTg0IEwgNzc0LDIyMyBDIDc3NCwxOTYgNzUzLDE2OCA3MTEs
+       MTM5IEwgNzI3LDExOSBDIDcxNyw5MCA2OTksNzYgNjcyLDc2IDY0MSw3NiA1NzAsMTc4IDQ1
+       NywzODEgTCAxNjQsLTc2IEMgMTQyLC0xMTAgMTExLC0xMjcgNzIsLTEyNyAzMCwtMTI3IDks
+       LTExMCA4LC03NiAxLC02NyAtMiwtNTIgLTIsLTMyIC0yLC0yMyAtMSwtMTMgMCwtMiBaIi8+
+       CiAgPC9nPgogIDxnIGlkPSJidWxsZXQtY2hhci10ZW1wbGF0ZS0xMDAwNCIgdHJhbnNmb3Jt
+       PSJzY2FsZSgwLjAwMDQ4ODI4MTI1LC0wLjAwMDQ4ODI4MTI1KSI+CiAgIDxwYXRoIGQ9Ik0g
+       Mjg1LC0zMyBDIDE4MiwtMzMgMTExLDMwIDc0LDE1NiA1MiwyMjggNDEsMzMzIDQxLDQ3MSA0
+       MSw1NDkgNTUsNjE2IDgyLDY3MiAxMTYsNzQzIDE2OSw3NzggMjQwLDc3OCAyOTMsNzc4IDMy
+       OCw3NDcgMzQ2LDY4NCBMIDM2OSw1MDggQyAzNzcsNDQ0IDM5Nyw0MTEgNDI4LDQxMCBMIDEx
+       NjMsMTExNiBDIDExNzQsMTEyNyAxMTk2LDExMzMgMTIyOSwxMTMzIDEyNzEsMTEzMyAxMjky
+       LDExMTggMTI5MiwxMDg3IEwgMTI5Miw5NjUgQyAxMjkyLDkyOSAxMjgyLDkwMSAxMjYyLDg4
+       MSBMIDQ0Miw0NyBDIDM5MCwtNiAzMzgsLTMzIDI4NSwtMzMgWiIvPgogIDwvZz4KICA8ZyBp
+       ZD0iYnVsbGV0LWNoYXItdGVtcGxhdGUtOTY3OSIgdHJhbnNmb3JtPSJzY2FsZSgwLjAwMDQ4
+       ODI4MTI1LC0wLjAwMDQ4ODI4MTI1KSI+CiAgIDxwYXRoIGQ9Ik0gODEzLDAgQyA2MzIsMCA0
+       ODksNTQgMzgzLDE2MSAyNzYsMjY4IDIyMyw0MTEgMjIzLDU5MiAyMjMsNzczIDI3Niw5MTYg
+       MzgzLDEwMjMgNDg5LDExMzAgNjMyLDExODQgODEzLDExODQgOTkyLDExODQgMTEzNiwxMTMw
+       IDEyNDUsMTAyMyAxMzUzLDkxNiAxNDA3LDc3MiAxNDA3LDU5MiAxNDA3LDQxMiAxMzUzLDI2
+       OCAxMjQ1LDE2MSAxMTM2LDU0IDk5MiwwIDgxMywwIFoiLz4KICA8L2c+CiAgPGcgaWQ9ImJ1
+       bGxldC1jaGFyLXRlbXBsYXRlLTgyMjYiIHRyYW5zZm9ybT0ic2NhbGUoMC4wMDA0ODgyODEy
+       NSwtMC4wMDA0ODgyODEyNSkiPgogICA8cGF0aCBkPSJNIDM0Niw0NTcgQyAyNzMsNDU3IDIw
+       OSw0ODMgMTU1LDUzNSAxMDEsNTg2IDc0LDY0OSA3NCw3MjMgNzQsNzk2IDEwMSw4NTkgMTU1
+       LDkxMSAyMDksOTYzIDI3Myw5ODkgMzQ2LDk4OSA0MTksOTg5IDQ4MCw5NjMgNTMxLDkxMCA1
+       ODIsODU5IDYwOCw3OTYgNjA4LDcyMyA2MDgsNjQ4IDU4Myw1ODYgNTMyLDUzNSA0ODIsNDgz
+       IDQyMCw0NTcgMzQ2LDQ1NyBaIi8+CiAgPC9nPgogIDxnIGlkPSJidWxsZXQtY2hhci10ZW1w
+       bGF0ZS04MjExIiB0cmFuc2Zvcm09InNjYWxlKDAuMDAwNDg4MjgxMjUsLTAuMDAwNDg4Mjgx
+       MjUpIj4KICAgPHBhdGggZD0iTSAtNCw0NTkgTCAxMTM1LDQ1OSAxMTM1LDYwNiAtNCw2MDYg
+       LTQsNDU5IFoiLz4KICA8L2c+CiAgPGcgaWQ9ImJ1bGxldC1jaGFyLXRlbXBsYXRlLTYxNTQ4
+       IiB0cmFuc2Zvcm09InNjYWxlKDAuMDAwNDg4MjgxMjUsLTAuMDAwNDg4MjgxMjUpIj4KICAg
+       PHBhdGggZD0iTSAxNzMsNzQwIEMgMTczLDkwMyAyMzEsMTA0MyAzNDYsMTE1OSA0NjIsMTI3
+       NCA2MDEsMTMzMiA3NjUsMTMzMiA5MjgsMTMzMiAxMDY3LDEyNzQgMTE4MywxMTU5IDEyOTks
+       MTA0MyAxMzU3LDkwMyAxMzU3LDc0MCAxMzU3LDU3NyAxMjk5LDQzNyAxMTgzLDMyMiAxMDY3
+       LDIwNiA5MjgsMTQ4IDc2NSwxNDggNjAxLDE0OCA0NjIsMjA2IDM0NiwzMjIgMjMxLDQzNyAx
+       NzMsNTc3IDE3Myw3NDAgWiIvPgogIDwvZz4KIDwvZGVmcz4KIDxnPgogIDxnIGlkPSJpZDIi
+       IGNsYXNzPSJNYXN0ZXJfU2xpZGUiPgogICA8ZyBpZD0iYmctaWQyIiBjbGFzcz0iQmFja2dy
+       b3VuZCIvPgogICA8ZyBpZD0iYm8taWQyIiBjbGFzcz0iQmFja2dyb3VuZE9iamVjdHMiLz4K
+       ICA8L2c+CiA8L2c+CiA8ZyBjbGFzcz0iU2xpZGVHcm91cCI+CiAgPGc+CiAgIDxnIGlkPSJj
+       b250YWluZXItaWQxIj4KICAgIDxnIGlkPSJpZDEiIGNsYXNzPSJTbGlkZSIgY2xpcC1wYXRo
+       PSJ1cmwoI3ByZXNlbnRhdGlvbl9jbGlwX3BhdGgpIj4KICAgICA8ZyBjbGFzcz0iUGFnZSI+
+       CiAgICAgIDxnIGNsYXNzPSJjb20uc3VuLnN0YXIuZHJhd2luZy5DdXN0b21TaGFwZSI+CiAg
+       ICAgICA8ZyBpZD0iaWQzIj4KICAgICAgICA8cmVjdCBjbGFzcz0iQm91bmRpbmdCb3giIHN0
+       cm9rZT0ibm9uZSIgZmlsbD0ibm9uZSIgeD0iMTc1IiB5PSIxNzUiIHdpZHRoPSIyMTkxIiBo
+       ZWlnaHQ9IjIxOTEiLz4KICAgICAgICA8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9InJnYigw
+       LDAsMCkiIHN0cm9rZS13aWR0aD0iNzEiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGQ9Ik0g
+       MTI3MCwyMTEgTCAyMzI5LDIzMjkgMjExLDIzMjkgMTI3MCwyMTEgWiIvPgogICAgICAgPC9n
+       PgogICAgICA8L2c+CiAgICAgIDxnIGNsYXNzPSJHcm91cCI+CiAgICAgICA8ZyBjbGFzcz0i
+       Y29tLnN1bi5zdGFyLmRyYXdpbmcuQ2xvc2VkQmV6aWVyU2hhcGUiPgogICAgICAgIDxnIGlk
+       PSJpZDQiPgogICAgICAgICA8cmVjdCBjbGFzcz0iQm91bmRpbmdCb3giIHN0cm9rZT0ibm9u
+       ZSIgZmlsbD0ibm9uZSIgeD0iMTEzNCIgeT0iMTQ0NyIgd2lkdGg9IjI2MCIgaGVpZ2h0PSIz
+       NTEiLz4KICAgICAgICAgPHBhdGggZmlsbD0icmdiKDI1NSwyNTUsMjU1KSIgc3Ryb2tlPSJu
+       b25lIiBkPSJNIDExMzQsMTQ0NyBDIDEyMjAsMTQ0NyAxMzA3LDE0NDcgMTM5MywxNDQ3IDEz
+       OTMsMTU2NCAxMzkzLDE2ODEgMTM5MywxNzk3IDEzMDcsMTc5NyAxMjIwLDE3OTcgMTEzNCwx
+       Nzk3IDExMzQsMTY4MSAxMTM0LDE1NjQgMTEzNCwxNDQ3IFoiLz4KICAgICAgICA8L2c+CiAg
+       ICAgICA8L2c+CiAgICAgICA8ZyBjbGFzcz0iY29tLnN1bi5zdGFyLmRyYXdpbmcuQ2xvc2Vk
+       QmV6aWVyU2hhcGUiPgogICAgICAgIDxnIGlkPSJpZDUiPgogICAgICAgICA8cmVjdCBjbGFz
+       cz0iQm91bmRpbmdCb3giIHN0cm9rZT0ibm9uZSIgZmlsbD0ibm9uZSIgeD0iMTEyMSIgeT0i
+       MTQxOCIgd2lkdGg9IjMwMiIgaGVpZ2h0PSI0MDkiLz4KICAgICAgICAgPHBhdGggZmlsbD0i
+       cmdiKDAsMCwwKSIgc3Ryb2tlPSJub25lIiBkPSJNIDEyMzksMTYxMCBDIDExMjcsMTY3MSAx
+       MTIxLDE3NDMgMTEyMSwxNzU3IDExMjEsMTc5OSAxMTYzLDE4MjYgMTIxNSwxODI2IDEzMTAs
+       MTgyNiAxMzg1LDE3MzggMTM4NSwxNzI1IDEzODUsMTcyMiAxMzgyLDE3MjIgMTM3OSwxNzIy
+       IDEzNzIsMTcyMiAxMzUwLDE3MjggMTMzNywxNzQ2IDEzMjYsMTc2MiAxMzAyLDE3OTYgMTI1
+       MiwxNzk2IDEyMTIsMTc5NiAxMTY5LDE3NzUgMTE2OSwxNzMyIDExNjksMTcwNCAxMTk5LDE2
+       MjEgMTI4OSwxNjE4IDEzMTUsMTYxOCAxMzM0LDE1OTcgMTMzNCwxNTkxIDEzMzQsMTU4OCAx
+       MzMyLDE1ODggMTMyOSwxNTg4IDEyNDksMTU4NCAxMjM1LDE1NDYgMTIzNSwxNTI0IDEyMzUs
+       MTUxMSAxMjQzLDE0NDggMTMyMSwxNDQ4IDEzMzIsMTQ0OCAxMzc0LDE0NTAgMTM3NCwxNDgw
+       IDEzNzQsMTQ4OCAxMzY5LDE0OTYgMTM2OCwxNTAwIDEzNjYsMTUwMSAxMzY0LDE1MDQgMTM2
+       NCwxNTA2IDEzNjQsMTUxMSAxMzY5LDE1MTEgMTM3MSwxNTExIDEzODcsMTUxMSAxNDIyLDE0
+       ODggMTQyMiwxNDU2IDE0MjIsMTQyMyAxMzg0LDE0MTggMTM1OCwxNDE4IDEyODEsMTQxOCAx
+       MTg3LDE0NzkgMTE4NywxNTQ4IDExODcsMTU4MCAxMjEyLDE2MDAgMTIzOSwxNjEwIFoiLz4K
+       ICAgICAgICA8L2c+CiAgICAgICA8L2c+CiAgICAgIDwvZz4KICAgICA8L2c+CiAgICA8L2c+
+       CiAgIDwvZz4KICA8L2c+CiA8L2c+Cjwvc3ZnPg==
+      </office:binary-data>
+      <text:p/>
+     </draw:image>
+     <draw:image draw:mime-type="image/png">
+      <office:binary-data>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
+      </office:binary-data>
+     </draw:image>
+     <draw:glue-point draw:id="4" svg:x="-0.003cm" svg:y="-4.276cm"/>
+     <draw:glue-point draw:id="5" svg:x="-2.159cm" svg:y="-0.011cm"/>
+     <draw:glue-point draw:id="6" svg:x="0.023cm" svg:y="4.218cm"/>
+     <draw:glue-point draw:id="7" svg:x="0.873cm" svg:y="-2.534cm"/>
+     <draw:glue-point draw:id="8" svg:x="3.434cm" svg:y="2.51cm"/>
+    </draw:frame>
+    <draw:frame draw:style-name="gr10" draw:text-style-name="P2" xml:id="id2" draw:id="id2" draw:layer="layout" svg:width="2.565cm" svg:height="2.565cm" svg:x="8.272cm" svg:y="1.191cm">
+     <draw:image draw:mime-type="image/svg+xml">
+      <office:binary-data>PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHN2ZyBQ
+       VUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3Jh
+       cGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KPHN2ZyB2ZXJzaW9uPSIxLjIiIHdpZHRo
+       PSIyNS40bW0iIGhlaWdodD0iMjUuNG1tIiB2aWV3Qm94PSIwIDAgMjU0MCAyNTQwIiBwcmVz
+       ZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2Ut
+       d2lkdGg9IjI4LjIyMiIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgeG1sbnM9Imh0dHA6Ly93
+       d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczpvb289Imh0dHA6Ly94bWwub3Blbm9mZmljZS5v
+       cmcvc3ZnL2V4cG9ydCIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxp
+       bmsiIHhtbG5zOnByZXNlbnRhdGlvbj0iaHR0cDovL3N1bi5jb20veG1sbnMvc3Rhcm9mZmlj
+       ZS9wcmVzZW50YXRpb24iIHhtbG5zOnNtaWw9Imh0dHA6Ly93d3cudzMub3JnLzIwMDEvU01J
+       TDIwLyIgeG1sbnM6YW5pbT0idXJuOm9hc2lzOm5hbWVzOnRjOm9wZW5kb2N1bWVudDp4bWxu
+       czphbmltYXRpb246MS4wIiB4bWw6c3BhY2U9InByZXNlcnZlIj4KIDxkZWZzIGNsYXNzPSJD
+       bGlwUGF0aEdyb3VwIj4KICA8Y2xpcFBhdGggaWQ9InByZXNlbnRhdGlvbl9jbGlwX3BhdGgi
+       IGNsaXBQYXRoVW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KICAgPHJlY3QgeD0iMCIgeT0iMCIg
+       d2lkdGg9IjI1NDAiIGhlaWdodD0iMjU0MCIvPgogIDwvY2xpcFBhdGg+CiAgPGNsaXBQYXRo
+       IGlkPSJwcmVzZW50YXRpb25fY2xpcF9wYXRoX3NocmluayIgY2xpcFBhdGhVbml0cz0idXNl
+       clNwYWNlT25Vc2UiPgogICA8cmVjdCB4PSIyIiB5PSIyIiB3aWR0aD0iMjUzNSIgaGVpZ2h0
+       PSIyNTM1Ii8+CiAgPC9jbGlwUGF0aD4KIDwvZGVmcz4KIDxkZWZzIGNsYXNzPSJUZXh0U2hh
+       cGVJbmRleCI+CiAgPGcgb29vOnNsaWRlPSJpZDEiIG9vbzppZC1saXN0PSJpZDMgaWQ0IGlk
+       NSIvPgogPC9kZWZzPgogPGRlZnMgY2xhc3M9IkVtYmVkZGVkQnVsbGV0Q2hhcnMiPgogIDxn
+       IGlkPSJidWxsZXQtY2hhci10ZW1wbGF0ZS01NzM1NiIgdHJhbnNmb3JtPSJzY2FsZSgwLjAw
+       MDQ4ODI4MTI1LC0wLjAwMDQ4ODI4MTI1KSI+CiAgIDxwYXRoIGQ9Ik0gNTgwLDExNDEgTCAx
+       MTYzLDU3MSA1ODAsMCAtNCw1NzEgNTgwLDExNDEgWiIvPgogIDwvZz4KICA8ZyBpZD0iYnVs
+       bGV0LWNoYXItdGVtcGxhdGUtNTczNTQiIHRyYW5zZm9ybT0ic2NhbGUoMC4wMDA0ODgyODEy
+       NSwtMC4wMDA0ODgyODEyNSkiPgogICA8cGF0aCBkPSJNIDgsMTEyOCBMIDExMzcsMTEyOCAx
+       MTM3LDAgOCwwIDgsMTEyOCBaIi8+CiAgPC9nPgogIDxnIGlkPSJidWxsZXQtY2hhci10ZW1w
+       bGF0ZS0xMDE0NiIgdHJhbnNmb3JtPSJzY2FsZSgwLjAwMDQ4ODI4MTI1LC0wLjAwMDQ4ODI4
+       MTI1KSI+CiAgIDxwYXRoIGQ9Ik0gMTc0LDAgTCA2MDIsNzM5IDE3NCwxNDgxIDE0NTYsNzM5
+       IDE3NCwwIFogTSAxMzU4LDczOSBMIDMwOSwxMzQ2IDY1OSw3MzkgMTM1OCw3MzkgWiIvPgog
+       IDwvZz4KICA8ZyBpZD0iYnVsbGV0LWNoYXItdGVtcGxhdGUtMTAxMzIiIHRyYW5zZm9ybT0i
+       c2NhbGUoMC4wMDA0ODgyODEyNSwtMC4wMDA0ODgyODEyNSkiPgogICA8cGF0aCBkPSJNIDIw
+       MTUsNzM5IEwgMTI3NiwwIDcxNywwIDEyNjAsNTQzIDE3NCw1NDMgMTc0LDkzNiAxMjYwLDkz
+       NiA3MTcsMTQ4MSAxMjc0LDE0ODEgMjAxNSw3MzkgWiIvPgogIDwvZz4KICA8ZyBpZD0iYnVs
+       bGV0LWNoYXItdGVtcGxhdGUtMTAwMDciIHRyYW5zZm9ybT0ic2NhbGUoMC4wMDA0ODgyODEy
+       NSwtMC4wMDA0ODgyODEyNSkiPgogICA8cGF0aCBkPSJNIDAsLTIgQyAtNywxNCAtMTYsMjcg
+       LTI1LDM3IEwgMzU2LDU2NyBDIDI2Miw4MjMgMjE1LDk1MiAyMTUsOTU0IDIxNSw5NzkgMjI4
+       LDk5MiAyNTUsOTkyIDI2NCw5OTIgMjc2LDk5MCAyODksOTg3IDMxMCw5OTEgMzMxLDk5OSAz
+       NTQsMTAxMiBMIDM4MSw5OTkgNDkyLDc0OCA3NzIsMTA0OSA4MzYsMTAyNCA4NjAsMTA0OSBD
+       IDg4MSwxMDM5IDkwMSwxMDI1IDkyMiwxMDA2IDg4Niw5MzcgODM1LDg2MyA3NzAsNzg0IDc2
+       OSw3ODMgNzEwLDcxNiA1OTQsNTg0IEwgNzc0LDIyMyBDIDc3NCwxOTYgNzUzLDE2OCA3MTEs
+       MTM5IEwgNzI3LDExOSBDIDcxNyw5MCA2OTksNzYgNjcyLDc2IDY0MSw3NiA1NzAsMTc4IDQ1
+       NywzODEgTCAxNjQsLTc2IEMgMTQyLC0xMTAgMTExLC0xMjcgNzIsLTEyNyAzMCwtMTI3IDks
+       LTExMCA4LC03NiAxLC02NyAtMiwtNTIgLTIsLTMyIC0yLC0yMyAtMSwtMTMgMCwtMiBaIi8+
+       CiAgPC9nPgogIDxnIGlkPSJidWxsZXQtY2hhci10ZW1wbGF0ZS0xMDAwNCIgdHJhbnNmb3Jt
+       PSJzY2FsZSgwLjAwMDQ4ODI4MTI1LC0wLjAwMDQ4ODI4MTI1KSI+CiAgIDxwYXRoIGQ9Ik0g
+       Mjg1LC0zMyBDIDE4MiwtMzMgMTExLDMwIDc0LDE1NiA1MiwyMjggNDEsMzMzIDQxLDQ3MSA0
+       MSw1NDkgNTUsNjE2IDgyLDY3MiAxMTYsNzQzIDE2OSw3NzggMjQwLDc3OCAyOTMsNzc4IDMy
+       OCw3NDcgMzQ2LDY4NCBMIDM2OSw1MDggQyAzNzcsNDQ0IDM5Nyw0MTEgNDI4LDQxMCBMIDEx
+       NjMsMTExNiBDIDExNzQsMTEyNyAxMTk2LDExMzMgMTIyOSwxMTMzIDEyNzEsMTEzMyAxMjky
+       LDExMTggMTI5MiwxMDg3IEwgMTI5Miw5NjUgQyAxMjkyLDkyOSAxMjgyLDkwMSAxMjYyLDg4
+       MSBMIDQ0Miw0NyBDIDM5MCwtNiAzMzgsLTMzIDI4NSwtMzMgWiIvPgogIDwvZz4KICA8ZyBp
+       ZD0iYnVsbGV0LWNoYXItdGVtcGxhdGUtOTY3OSIgdHJhbnNmb3JtPSJzY2FsZSgwLjAwMDQ4
+       ODI4MTI1LC0wLjAwMDQ4ODI4MTI1KSI+CiAgIDxwYXRoIGQ9Ik0gODEzLDAgQyA2MzIsMCA0
+       ODksNTQgMzgzLDE2MSAyNzYsMjY4IDIyMyw0MTEgMjIzLDU5MiAyMjMsNzczIDI3Niw5MTYg
+       MzgzLDEwMjMgNDg5LDExMzAgNjMyLDExODQgODEzLDExODQgOTkyLDExODQgMTEzNiwxMTMw
+       IDEyNDUsMTAyMyAxMzUzLDkxNiAxNDA3LDc3MiAxNDA3LDU5MiAxNDA3LDQxMiAxMzUzLDI2
+       OCAxMjQ1LDE2MSAxMTM2LDU0IDk5MiwwIDgxMywwIFoiLz4KICA8L2c+CiAgPGcgaWQ9ImJ1
+       bGxldC1jaGFyLXRlbXBsYXRlLTgyMjYiIHRyYW5zZm9ybT0ic2NhbGUoMC4wMDA0ODgyODEy
+       NSwtMC4wMDA0ODgyODEyNSkiPgogICA8cGF0aCBkPSJNIDM0Niw0NTcgQyAyNzMsNDU3IDIw
+       OSw0ODMgMTU1LDUzNSAxMDEsNTg2IDc0LDY0OSA3NCw3MjMgNzQsNzk2IDEwMSw4NTkgMTU1
+       LDkxMSAyMDksOTYzIDI3Myw5ODkgMzQ2LDk4OSA0MTksOTg5IDQ4MCw5NjMgNTMxLDkxMCA1
+       ODIsODU5IDYwOCw3OTYgNjA4LDcyMyA2MDgsNjQ4IDU4Myw1ODYgNTMyLDUzNSA0ODIsNDgz
+       IDQyMCw0NTcgMzQ2LDQ1NyBaIi8+CiAgPC9nPgogIDxnIGlkPSJidWxsZXQtY2hhci10ZW1w
+       bGF0ZS04MjExIiB0cmFuc2Zvcm09InNjYWxlKDAuMDAwNDg4MjgxMjUsLTAuMDAwNDg4Mjgx
+       MjUpIj4KICAgPHBhdGggZD0iTSAtNCw0NTkgTCAxMTM1LDQ1OSAxMTM1LDYwNiAtNCw2MDYg
+       LTQsNDU5IFoiLz4KICA8L2c+CiAgPGcgaWQ9ImJ1bGxldC1jaGFyLXRlbXBsYXRlLTYxNTQ4
+       IiB0cmFuc2Zvcm09InNjYWxlKDAuMDAwNDg4MjgxMjUsLTAuMDAwNDg4MjgxMjUpIj4KICAg
+       PHBhdGggZD0iTSAxNzMsNzQwIEMgMTczLDkwMyAyMzEsMTA0MyAzNDYsMTE1OSA0NjIsMTI3
+       NCA2MDEsMTMzMiA3NjUsMTMzMiA5MjgsMTMzMiAxMDY3LDEyNzQgMTE4MywxMTU5IDEyOTks
+       MTA0MyAxMzU3LDkwMyAxMzU3LDc0MCAxMzU3LDU3NyAxMjk5LDQzNyAxMTgzLDMyMiAxMDY3
+       LDIwNiA5MjgsMTQ4IDc2NSwxNDggNjAxLDE0OCA0NjIsMjA2IDM0NiwzMjIgMjMxLDQzNyAx
+       NzMsNTc3IDE3Myw3NDAgWiIvPgogIDwvZz4KIDwvZGVmcz4KIDxnPgogIDxnIGlkPSJpZDIi
+       IGNsYXNzPSJNYXN0ZXJfU2xpZGUiPgogICA8ZyBpZD0iYmctaWQyIiBjbGFzcz0iQmFja2dy
+       b3VuZCIvPgogICA8ZyBpZD0iYm8taWQyIiBjbGFzcz0iQmFja2dyb3VuZE9iamVjdHMiLz4K
+       ICA8L2c+CiA8L2c+CiA8ZyBjbGFzcz0iU2xpZGVHcm91cCI+CiAgPGc+CiAgIDxnIGlkPSJj
+       b250YWluZXItaWQxIj4KICAgIDxnIGlkPSJpZDEiIGNsYXNzPSJTbGlkZSIgY2xpcC1wYXRo
+       PSJ1cmwoI3ByZXNlbnRhdGlvbl9jbGlwX3BhdGgpIj4KICAgICA8ZyBjbGFzcz0iUGFnZSI+
+       CiAgICAgIDxnIGNsYXNzPSJjb20uc3VuLnN0YXIuZHJhd2luZy5DdXN0b21TaGFwZSI+CiAg
+       ICAgICA8ZyBpZD0iaWQzIj4KICAgICAgICA8cmVjdCBjbGFzcz0iQm91bmRpbmdCb3giIHN0
+       cm9rZT0ibm9uZSIgZmlsbD0ibm9uZSIgeD0iMTc1IiB5PSIxNzUiIHdpZHRoPSIyMTkxIiBo
+       ZWlnaHQ9IjIxOTEiLz4KICAgICAgICA8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9InJnYigw
+       LDAsMCkiIHN0cm9rZS13aWR0aD0iNzEiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGQ9Ik0g
+       MjMyOSwxMjcwIEMgMjMyOSwxNDU2IDIyODAsMTYzOSAyMTg3LDE4MDAgMjA5NCwxOTYwIDE5
+       NjAsMjA5NCAxODAwLDIxODcgMTYzOSwyMjgwIDE0NTYsMjMyOSAxMjcwLDIzMjkgMTA4NCwy
+       MzI5IDkwMSwyMjgwIDc0MSwyMTg3IDU4MCwyMDk0IDQ0NiwxOTYwIDM1MywxODAwIDI2MCwx
+       NjM5IDIxMSwxNDU2IDIxMSwxMjcwIDIxMSwxMDg0IDI2MCw5MDEgMzUzLDc0MSA0NDYsNTgw
+       IDU4MCw0NDYgNzQwLDM1MyA5MDEsMjYwIDEwODQsMjExIDEyNzAsMjExIDE0NTYsMjExIDE2
+       MzksMjYwIDE3OTksMzUzIDE5NjAsNDQ2IDIwOTQsNTgwIDIxODcsNzQwIDIyODAsOTAxIDIz
+       MjksMTA4NCAyMzI5LDEyNzAgTCAyMzI5LDEyNzAgWiIvPgogICAgICAgPC9nPgogICAgICA8
+       L2c+CiAgICAgIDxnIGNsYXNzPSJHcm91cCI+CiAgICAgICA8ZyBjbGFzcz0iY29tLnN1bi5z
+       dGFyLmRyYXdpbmcuQ2xvc2VkQmV6aWVyU2hhcGUiPgogICAgICAgIDxnIGlkPSJpZDQiPgog
+       ICAgICAgICA8cmVjdCBjbGFzcz0iQm91bmRpbmdCb3giIHN0cm9rZT0ibm9uZSIgZmlsbD0i
+       bm9uZSIgeD0iMTExNSIgeT0iMTEwOSIgd2lkdGg9IjMxMiIgaGVpZ2h0PSIzMjUiLz4KICAg
+       ICAgICAgPHBhdGggZmlsbD0icmdiKDI1NSwyNTUsMjU1KSIgc3Ryb2tlPSJub25lIiBkPSJN
+       IDExMTUsMTEwOSBDIDEyMTksMTEwOSAxMzIyLDExMDkgMTQyNiwxMTA5IDE0MjYsMTIxNyAx
+       NDI2LDEzMjUgMTQyNiwxNDMzIDEzMjIsMTQzMyAxMjE5LDE0MzMgMTExNSwxNDMzIDExMTUs
+       MTMyNSAxMTE1LDEyMTcgMTExNSwxMTA5IFoiLz4KICAgICAgICA8L2c+CiAgICAgICA8L2c+
+       CiAgICAgICA8ZyBjbGFzcz0iY29tLnN1bi5zdGFyLmRyYXdpbmcuQ2xvc2VkQmV6aWVyU2hh
+       cGUiPgogICAgICAgIDxnIGlkPSJpZDUiPgogICAgICAgICA8cmVjdCBjbGFzcz0iQm91bmRp
+       bmdCb3giIHN0cm9rZT0ibm9uZSIgZmlsbD0ibm9uZSIgeD0iMTA4NiIgeT0iMTA4MCIgd2lk
+       dGg9IjM2OSIgaGVpZ2h0PSIzODIiLz4KICAgICAgICAgPHBhdGggZmlsbD0icmdiKDAsMCww
+       KSIgc3Ryb2tlPSJub25lIiBkPSJNIDEyOTgsMTA4MCBDIDEyMjgsMTA4MCAxMTk4LDEwOTMg
+       MTE4NSwxMDk4IDExMjcsMTEyMSAxMTE1LDExNjAgMTExNSwxMTY4IDExMTUsMTE3MSAxMTE4
+       LDExNzEgMTEyMSwxMTcxIDExMzEsMTE3MSAxMTU4LDExNTggMTE2MiwxMTQ1IDExNjksMTEy
+       NSAxMTcwLDExMTggMTIwOSwxMTEzIDEyMjgsMTExMiAxMjQ1LDExMTAgMTI2NCwxMTEwIDEy
+       ODEsMTExMCAxMjk4LDExMTAgMTMxNSwxMTEwIDEyODAsMTE0NSAxMjY0LDEyMDQgMTI0NCwx
+       Mjg0IDEyMjgsMTM1MSAxMjE1LDEzOTQgMTE5MywxNDI0IDExODYsMTQyOSAxMTg2LDE0MzEg
+       MTE3MCwxNDMxIDExNTksMTQzMSAxMTQ3LDE0MzEgMTEzNSwxNDMxIDExMjQsMTQzMSAxMTE4
+       LDE0MzEgMTEwNSwxNDM5IDEwOTksMTQ0MiAxMDg2LDE0NTEgMTA4NiwxNDU4IDEwODYsMTQ2
+       MSAxMDg2LDE0NjEgMTA5OSwxNDYxIDExNjIsMTQ2MSAxMjI2LDE0NjEgMTI5MCwxNDYxIDEz
+       NTUsMTQ2MSAxNDAzLDE0MTMgMTQwMywxMzkyIDE0MDMsMTM4OSAxNDAwLDEzODkgMTM5OCwx
+       Mzg5IDEzODksMTM4OSAxMzYyLDE0MDIgMTM1NywxNDE1IDEzNTIsMTQyOCAxMzUwLDE0MzEg
+       MTMyMywxNDMxIDEyODgsMTQzMSAxMjUyLDE0MzEgMTIxNywxNDMxIDEyNTYsMTM5NiAxMjcy
+       LDEzNDEgMTI5MiwxMjY1IDEzMDYsMTIwNCAxMzIwLDExNTAgMTM0MiwxMTE3IDEzNDYsMTEx
+       MiAxMzQ3LDExMTAgMTM1OCwxMTEwIDEzNzQsMTExMCAxMzkwLDExMTAgMTQwNiwxMTEwIDE0
+       MTcsMTExMCAxNDIyLDExMTAgMTQzNiwxMTAyIDE0NDEsMTA5OSAxNDU0LDEwOTEgMTQ1NCwx
+       MDgzIDE0NTQsMTA4MCAxNDU0LDEwODAgMTQ0MSwxMDgwIDEzOTMsMTA4MCAxMzQ2LDEwODAg
+       MTI5OCwxMDgwIFoiLz4KICAgICAgICA8L2c+CiAgICAgICA8L2c+CiAgICAgIDwvZz4KICAg
+       ICA8L2c+CiAgICA8L2c+CiAgIDwvZz4KICA8L2c+CiA8L2c+Cjwvc3ZnPg==
+      </office:binary-data>
+      <text:p/>
+     </draw:image>
+     <draw:image draw:mime-type="image/png">
+      <office:binary-data>iVBORw0KGgoAAAANSUhEUgAAAGEAAABhCAYAAADGBs+jAAAOsElEQVR4nO2dB1AUWR7GMWcx
+       YcJwBtTVWxXFLIpgxAhnsbvqKmvOmNZ8UrorimdOKOqZvTtXxQyiqGcWE+6pa3bNOYFZhJuf
+       W69qZHGmu6dnuhnnq+rizTDT/eZ9/d77586YnJzs5IC2yKh1BxxwkKALOEjQARwk6AAOEnQA
+       Bwk6QJoiITExMeODBw8K3rlzp+iTJ0/yPX/+3Nn4/87Ozs/z5cv3pGjRoncKFiz4IGPGjIla
+       9VUOdEvC69evsx07dqzGgQMH6p86dcr97NmzlS5fvlz2/fv3maR8P1OmTO/d3NwuVaxY8Zy7
+       u/spT0/P/TVq1DiWNWvWN9buu1zoioRbt24V27RpU9stW7a03rt3r9fbt2+zKD0XZJ07d64i
+       x7p169rzXpYsWd42atRoT5s2bTZzuLq63lav98qhOQnv3r3LvGHDBv+lS5f+sGvXrsZJSUnp
+       U/tcyZIlr1eoUOF86dKlrxYuXPgey03OnDlfMLD8/82bN1lfvnyZg+Xq7t27Ra5du1bqt99+
+       ++rGjRslxDkgNSoqqjnHgAED5jRp0mRnYGDgMn9//w3MHFv95pTQjIRnz57lWbBgQe85c+YM
+       YI03/l/69OmTatasGcsg1a1b9xBH7ty545Vch33j8OHDdQ4ePFhv586dTVjiIPrDhw8ZBCHF
+       ihW7NXDgwNm9evVaqPQ6lsDmJLDWM/CTJ08e+fTp07zi/XTp0iXXq1fvYJcuXZazVHCnq3E9
+       NuvmzZtHcfz0009/v3//fiGWvBUrVnSGGD7DMjh8+PApoaGhI0aPHh3Sr1+/eWKG2QI2JYFl
+       Z9CgQTNv3rxZXLzHktK1a9d/9u/ffy4bqbX7UKhQofs9e/YM57hw4UJ5bgiWwlevXmV//Phx
+       /qFDh07jvdmzZw9s3br1Fmv3B9iEhNu3b7v27t17wdatW1uJ9xj8IUOGTIeUvHnzPrVFP1Ki
+       fPnyF+bOndt//PjxwdOnTx8yc+bMQZDx+++//4XZyF4xf/78vhBnzX5YnYSNGze26969+2Lu
+       Ml6z3vfo0WMRP9zaP04q8ufP/3jixIljWIbGjBkzcfny5V2Sk5PTMXMRkZkpvr6+2611fauR
+       wMb3448//mPGjBmDxXtff/31/8LDw3vWrl37iLWuawlQ8hhwA5Yyc5GukLZatWq1lT0jJCRk
+       NDeR2te1CglIPt9+++2/d+zY0YzXbLqDBw+ewY+w5YanFA0aNNh38uTJatxE8+bN68esYNM+
+       c+bMX9esWdNBbQlKdRKQPpo2bRr966+/VuZ1njx5ntHxFi1aRKp9LWsCzZoNGjH5+++/Xxkf
+       H59727ZtLb28vPYi1qolvQFVSUDq8fHxibl06ZIbr9n4Nm/e3KZcuXIX1byOLcEGjZ7Rtm3b
+       TZhNMKEwU1As0S/UuIZqJDx8+NCFGSAIqFat2kmWowIFCjxS6xpaAfvT0aNHazGbY2NjayLa
+       Yv7Yv3+/J9q7pedXhQS0Uqbt+fPnK/AapWv79u2+Wmif1gLW2ejo6KZISYcOHarLrIAUbFwo
+       hJac22ISMAF07Nhx9enTp6vwukqVKqcxwNkTAQIMdmRkZAtvb+/dJ06cqB4XF1c1ICBgLTdc
+       hgwZPig9r8UkjBgxIpQNizYaL/YZrZQvW4CbCyKwZzEbmB2MwdSpU4cpPadFJNCZadOmDaWd
+       K1euhIiICD8XF5eHlpwzLYDfiPaPvoM4zhjgr2DzVnI+xSRgLsbYhgyNHrB69eqOlSpVOqv0
+       fGkNSH6rVq3qhH2JMcAqgNMIhU/uuRST0Ldv3/lIRLQxA9vK2KUntGzZcltQUNAsbE6PHj0q
+       ABHsD3LPo4gEZH9sQrS5+zFLKzmPPYDfjs6ANs3yvH79+r8ZsF7OOWSTgAcL9mmzDOGY0aPf
+       1lbADIM9rH79+geQFLEKI8Zmy5bttdRzyCYBWwqmXtoYuri43HPYG+rUqXMYy/DChQt74SDC
+       3IHBT+r3ZZGAUoYRjnaOHDle/vzzz2PldthegWke4eTFixc5WaJwlUpV4mSRwNJDvA9trKJF
+       ihS5q6TD9gh8I4wJLlTctswKqbNBMgmEkOCFop09e/ZXrH0K+2u3gAT8J8wG3KOMUebMmd+Z
+       +55kEojdYb2j3a1btyV4oyzpsD0CSwG6E/smLl2U12+++eY/5r4nmQQ8TvxFIsIpb0ln7RnE
+       M0EC7WXLlgWqRgIzICYmxoc2FtK07B+wNtCksSthacWORkyVOS1aEgkoZiIyjummRmftGYwR
+       JOBnJ8apT58+YaY+L4kENGT+4uT+Es0TctGuXbuNDDw3LmZ9i0kgYm7fvn0NaNeqVeuoXsJU
+       9Az8zxjz8Mbt2bOnEVYGU1YFsyTgzhPR0XjP1OysPaNx48a7IAECjh8/7mHKsmCWBIKfRJtN
+       Wa1O2juMx4qYV4tIILqAv4imegnawmyMyZiwGoKzuNtS+xzBvVWrVo2zcfc+wnisiGEy9Vmz
+       JJAhw98SJUrc0NhvXCshIaFXcHCwx9WrV3O5ubnFG/rzzsXFJclAQoaQkBD3wMDAC6VLl04w
+       CBDJhjV5tVYEABQ3klBQ2khUMfVZkyRgqrhy5UoZ2oR9qNlJuUhMTKzg6+v7g6enJyLzJ/8L
+       CgoixBLb1leGGSveXmLrPqYEvhZIuHjxYjny7T6XQ2eShHv37hUWOWKlSpW6Zo2OSkVcXFwJ
+       Ly8vlphP3jf8SAbfKSwszMmIAF1AjBnZSCybn1PaTJKAH1m0tbaYenh4XDMcf3p/5cqVzBJk
+       c9t3ygyMx4yxVEQCG6Boqxl7qSYMG7STu7s7wVlad+VPMNaphD8+NZgkAUVNtDFfq9M19RAf
+       H+905MgRTMhadyVVGI+Z8VimhEkSjFNY9ehHjo6ORnhw8vb21rorqcLYz/w5MRponkJrCSIj
+       I7k5yCfQuisWwSQJxgkdppjUCswEHx8f7jitu5IqjJcgxbYj4+lEQp06XVMHZ86cwc9B3I/W
+       XfksjMfMVAiMSRKM40rJwFGna+ogIiKCHDMnf39/rbvyWaBnibYp6dIkCSnlXHW6ZjkMd9hH
+       BS0kJOSTpcgw/Z26du3qFBAQ4OTn56dhD/+A8ZiZ8q6ZJIEsFGo+oDVTK0LNDspFbGxsdoPW
+       fCIpKSldVFRUYWdn55wG6e1SeHj4x/8btNL0MTExBStXrvzcQACByVe17C+4fv16Sf4ScWEq
+       Wt0kCdg6ypQpc4UMHNJJ1e6kVGCFHDt2bPvk5GSR9/DE1dXV6Zdffvn4gvWW4iOhoaGL9eT/
+       Jj6Vv/TJVBKJWREVIxQkUC2FCDxLU4OUgPw3kjFsfV1LQAAYxjva5lIGzJLAABBpTAy+QTut
+       3axZsx1qddSeQcanaDOGpj5rloSUHiIHCdJg7JE0FzRtlgTqDqG0YcIgDn/ChAnj1OikvUPE
+       aaGkWTwT2PQaNmz4X9ZkHNfIvmrk7tozEE0pbkWbTE9zdjdJtiNijSCBOBoS5kgLUqOz9gri
+       tNhDaUuJ05JEAlmJZOdAAmVoHCSYBmPEX8RSKRmdkkgoXrz4TWpWEFvJ5kzpBFtU6UqLQJwX
+       khFlJqR4JCWbskmNggSmGXkKs2bNCrKks/YKkcMBqDQp5TuSSWjfvv06Mk+I0F6yZEm3cePG
+       TXDkKHwKspgIh6dNuAsxqVK+J5kEbEiUJxs1atQk6o+SiUKelrLu2ifI0mFsaLOHSsnSAbI8
+       a5QkmzJlynBUcgr3kVDuCBD+A5j6Rak5KsJQbVLqd2WRQBUvimmMHDlyMnlZwcHB40kmlNth
+       ewTLs5gFjJEcG5tsHzMlFNh82BsWLVrUg81HLzGqWoGEkMWLF3enTTUwUqbkfF82CWjQ1HJg
+       o0ZvIF+X8Pm0UGDQGsD3ztIjMpmQGuVk8wNF0RbUbqA2HJohkdFEP4uSO18aWHpE0DTlFCho
+       K/ccikNewsLC+jANidJjQ8JGQtUTpedLiyAVihIKtPGciSVJLhSTgM8U9ZzCrShw33333b/Q
+       FL+Umkdoxp07d14h6j1BgNJ4XYuCv5h+1LtmKUpISMjl5+cXgVnD3qt/iarBVP3iNUXOWZ6V
+       ns/iCDz0BkpUYl3FpkSuFhUS7bUOHkVqqQIp8jZwclla78liEkirpQwZPgcqQrJRY76lOKEW
+       /mhrAh87s1+kP+GsWbt2bYAllSCBKrGoDDbGPSrnslaKRDl8EFrnNagFliAehCFy+MqWLXtZ
+       rdqvqgUEsw8w6KTZsjwR7kGFRDLa0/pmTc4Za75YgiidwE2nlslG1ahs/A4knos7hk5TFYtH
+       p0i1KOoNiKGdOnVaxV7Aax4XpuuC5YDOsTF36NBhDfsCUhMKDKUFKOAqV5vUCmjCmO4x0QhX
+       JXpQmijdD+gk2jSaNNITP4LHouzevdsbgx+buDWuqxbY0zBFiNRX9ACepUDpOUs34dRgtSQR
+       pCZENzZrvHJsbGzaVFunCgqPT1FSyNWawByNNRTFS9iC2Ouo9WRNa4DVM3UQ6RBb8T3wjBpm
+       Bd4nRDscHyh7Wpf353k/GCWNnTKAfQzzjLVDfGySLoUUQSglCh1mXkp6kkAxadKkUVgdmRmY
+       yAnqtUV/BMQjvrgpjAcfAQPPoa2ECZvmrKHqI8JSnoz1lTsQMrjbOJCksMfw46119xG8RhEt
+       JDbjeFGARwyHFeXlbClA2DxxEL8DSxCxS1TWZSaIAocMCge+bA8Pj+PisY+Qo9QMgvNdnBfZ
+       nrI3KZ/vKR77yGashZavWfYmEtSwYcOmsi9QNZElAWWPkmUMEo4iDvF5ohdQ+ihVgBaOKEye
+       sMgVZkZxsLmKB6Bi50/5XE8BpBzigvAMYnj8Ih+AKsCP52kcHAwYoi2HqJglPkesv4j3Vwpi
+       QsWjgImM04tJRXMSjIHISkQHBwTwyBRkdgxmyOxspBTrkHIuwk0wL1Cdpnr16idY1lji9OiG
+       1RUJxuCuJTfCOD+CZUosN6z12POFNotCRTQIm6tYrqyhWFkDuiUhNaAAMsB6WUbUQpoiwV7h
+       IEEHcJCgAzhI0AEcJOgA/wftpTsoDwVKsQAAAABJRU5ErkJggg==
+      </office:binary-data>
+     </draw:image>
+     <draw:glue-point draw:id="4" svg:x="-3.36cm" svg:y="-2.534cm"/>
+     <draw:glue-point draw:id="5" svg:x="-3.391cm" svg:y="2.51cm"/>
+     <draw:glue-point draw:id="6" svg:x="-0.015cm" svg:y="4.218cm"/>
+     <draw:glue-point draw:id="7" svg:x="-0.015cm" svg:y="-4.245cm"/>
+     <draw:glue-point draw:id="8" svg:x="4.21cm" svg:y="-0.011cm"/>
+    </draw:frame>
+    <draw:frame draw:style-name="gr10" draw:text-style-name="P2" xml:id="id3" draw:id="id3" draw:layer="layout" svg:width="2.565cm" svg:height="2.565cm" svg:x="6.02cm" svg:y="4.727cm">
+     <draw:image draw:mime-type="image/svg+xml">
+      <office:binary-data>PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHN2ZyBQ
+       VUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3Jh
+       cGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KPHN2ZyB2ZXJzaW9uPSIxLjIiIHdpZHRo
+       PSIyNS40bW0iIGhlaWdodD0iMjUuNG1tIiB2aWV3Qm94PSIwIDAgMjU0MCAyNTQwIiBwcmVz
+       ZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCIgZmlsbC1ydWxlPSJldmVub2RkIiBzdHJva2Ut
+       d2lkdGg9IjI4LjIyMiIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgeG1sbnM9Imh0dHA6Ly93
+       d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczpvb289Imh0dHA6Ly94bWwub3Blbm9mZmljZS5v
+       cmcvc3ZnL2V4cG9ydCIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxp
+       bmsiIHhtbG5zOnByZXNlbnRhdGlvbj0iaHR0cDovL3N1bi5jb20veG1sbnMvc3Rhcm9mZmlj
+       ZS9wcmVzZW50YXRpb24iIHhtbG5zOnNtaWw9Imh0dHA6Ly93d3cudzMub3JnLzIwMDEvU01J
+       TDIwLyIgeG1sbnM6YW5pbT0idXJuOm9hc2lzOm5hbWVzOnRjOm9wZW5kb2N1bWVudDp4bWxu
+       czphbmltYXRpb246MS4wIiB4bWw6c3BhY2U9InByZXNlcnZlIj4KIDxkZWZzIGNsYXNzPSJD
+       bGlwUGF0aEdyb3VwIj4KICA8Y2xpcFBhdGggaWQ9InByZXNlbnRhdGlvbl9jbGlwX3BhdGgi
+       IGNsaXBQYXRoVW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KICAgPHJlY3QgeD0iMCIgeT0iMCIg
+       d2lkdGg9IjI1NDAiIGhlaWdodD0iMjU0MCIvPgogIDwvY2xpcFBhdGg+CiAgPGNsaXBQYXRo
+       IGlkPSJwcmVzZW50YXRpb25fY2xpcF9wYXRoX3NocmluayIgY2xpcFBhdGhVbml0cz0idXNl
+       clNwYWNlT25Vc2UiPgogICA8cmVjdCB4PSIyIiB5PSIyIiB3aWR0aD0iMjUzNSIgaGVpZ2h0
+       PSIyNTM1Ii8+CiAgPC9jbGlwUGF0aD4KIDwvZGVmcz4KIDxkZWZzIGNsYXNzPSJUZXh0U2hh
+       cGVJbmRleCI+CiAgPGcgb29vOnNsaWRlPSJpZDEiIG9vbzppZC1saXN0PSJpZDMgaWQ0IGlk
+       NSIvPgogPC9kZWZzPgogPGRlZnMgY2xhc3M9IkVtYmVkZGVkQnVsbGV0Q2hhcnMiPgogIDxn
+       IGlkPSJidWxsZXQtY2hhci10ZW1wbGF0ZS01NzM1NiIgdHJhbnNmb3JtPSJzY2FsZSgwLjAw
+       MDQ4ODI4MTI1LC0wLjAwMDQ4ODI4MTI1KSI+CiAgIDxwYXRoIGQ9Ik0gNTgwLDExNDEgTCAx
+       MTYzLDU3MSA1ODAsMCAtNCw1NzEgNTgwLDExNDEgWiIvPgogIDwvZz4KICA8ZyBpZD0iYnVs
+       bGV0LWNoYXItdGVtcGxhdGUtNTczNTQiIHRyYW5zZm9ybT0ic2NhbGUoMC4wMDA0ODgyODEy
+       NSwtMC4wMDA0ODgyODEyNSkiPgogICA8cGF0aCBkPSJNIDgsMTEyOCBMIDExMzcsMTEyOCAx
+       MTM3LDAgOCwwIDgsMTEyOCBaIi8+CiAgPC9nPgogIDxnIGlkPSJidWxsZXQtY2hhci10ZW1w
+       bGF0ZS0xMDE0NiIgdHJhbnNmb3JtPSJzY2FsZSgwLjAwMDQ4ODI4MTI1LC0wLjAwMDQ4ODI4
+       MTI1KSI+CiAgIDxwYXRoIGQ9Ik0gMTc0LDAgTCA2MDIsNzM5IDE3NCwxNDgxIDE0NTYsNzM5
+       IDE3NCwwIFogTSAxMzU4LDczOSBMIDMwOSwxMzQ2IDY1OSw3MzkgMTM1OCw3MzkgWiIvPgog
+       IDwvZz4KICA8ZyBpZD0iYnVsbGV0LWNoYXItdGVtcGxhdGUtMTAxMzIiIHRyYW5zZm9ybT0i
+       c2NhbGUoMC4wMDA0ODgyODEyNSwtMC4wMDA0ODgyODEyNSkiPgogICA8cGF0aCBkPSJNIDIw
+       MTUsNzM5IEwgMTI3NiwwIDcxNywwIDEyNjAsNTQzIDE3NCw1NDMgMTc0LDkzNiAxMjYwLDkz
+       NiA3MTcsMTQ4MSAxMjc0LDE0ODEgMjAxNSw3MzkgWiIvPgogIDwvZz4KICA8ZyBpZD0iYnVs
+       bGV0LWNoYXItdGVtcGxhdGUtMTAwMDciIHRyYW5zZm9ybT0ic2NhbGUoMC4wMDA0ODgyODEy
+       NSwtMC4wMDA0ODgyODEyNSkiPgogICA8cGF0aCBkPSJNIDAsLTIgQyAtNywxNCAtMTYsMjcg
+       LTI1LDM3IEwgMzU2LDU2NyBDIDI2Miw4MjMgMjE1LDk1MiAyMTUsOTU0IDIxNSw5NzkgMjI4
+       LDk5MiAyNTUsOTkyIDI2NCw5OTIgMjc2LDk5MCAyODksOTg3IDMxMCw5OTEgMzMxLDk5OSAz
+       NTQsMTAxMiBMIDM4MSw5OTkgNDkyLDc0OCA3NzIsMTA0OSA4MzYsMTAyNCA4NjAsMTA0OSBD
+       IDg4MSwxMDM5IDkwMSwxMDI1IDkyMiwxMDA2IDg4Niw5MzcgODM1LDg2MyA3NzAsNzg0IDc2
+       OSw3ODMgNzEwLDcxNiA1OTQsNTg0IEwgNzc0LDIyMyBDIDc3NCwxOTYgNzUzLDE2OCA3MTEs
+       MTM5IEwgNzI3LDExOSBDIDcxNyw5MCA2OTksNzYgNjcyLDc2IDY0MSw3NiA1NzAsMTc4IDQ1
+       NywzODEgTCAxNjQsLTc2IEMgMTQyLC0xMTAgMTExLC0xMjcgNzIsLTEyNyAzMCwtMTI3IDks
+       LTExMCA4LC03NiAxLC02NyAtMiwtNTIgLTIsLTMyIC0yLC0yMyAtMSwtMTMgMCwtMiBaIi8+
+       CiAgPC9nPgogIDxnIGlkPSJidWxsZXQtY2hhci10ZW1wbGF0ZS0xMDAwNCIgdHJhbnNmb3Jt
+       PSJzY2FsZSgwLjAwMDQ4ODI4MTI1LC0wLjAwMDQ4ODI4MTI1KSI+CiAgIDxwYXRoIGQ9Ik0g
+       Mjg1LC0zMyBDIDE4MiwtMzMgMTExLDMwIDc0LDE1NiA1MiwyMjggNDEsMzMzIDQxLDQ3MSA0
+       MSw1NDkgNTUsNjE2IDgyLDY3MiAxMTYsNzQzIDE2OSw3NzggMjQwLDc3OCAyOTMsNzc4IDMy
+       OCw3NDcgMzQ2LDY4NCBMIDM2OSw1MDggQyAzNzcsNDQ0IDM5Nyw0MTEgNDI4LDQxMCBMIDEx
+       NjMsMTExNiBDIDExNzQsMTEyNyAxMTk2LDExMzMgMTIyOSwxMTMzIDEyNzEsMTEzMyAxMjky
+       LDExMTggMTI5MiwxMDg3IEwgMTI5Miw5NjUgQyAxMjkyLDkyOSAxMjgyLDkwMSAxMjYyLDg4
+       MSBMIDQ0Miw0NyBDIDM5MCwtNiAzMzgsLTMzIDI4NSwtMzMgWiIvPgogIDwvZz4KICA8ZyBp
+       ZD0iYnVsbGV0LWNoYXItdGVtcGxhdGUtOTY3OSIgdHJhbnNmb3JtPSJzY2FsZSgwLjAwMDQ4
+       ODI4MTI1LC0wLjAwMDQ4ODI4MTI1KSI+CiAgIDxwYXRoIGQ9Ik0gODEzLDAgQyA2MzIsMCA0
+       ODksNTQgMzgzLDE2MSAyNzYsMjY4IDIyMyw0MTEgMjIzLDU5MiAyMjMsNzczIDI3Niw5MTYg
+       MzgzLDEwMjMgNDg5LDExMzAgNjMyLDExODQgODEzLDExODQgOTkyLDExODQgMTEzNiwxMTMw
+       IDEyNDUsMTAyMyAxMzUzLDkxNiAxNDA3LDc3MiAxNDA3LDU5MiAxNDA3LDQxMiAxMzUzLDI2
+       OCAxMjQ1LDE2MSAxMTM2LDU0IDk5MiwwIDgxMywwIFoiLz4KICA8L2c+CiAgPGcgaWQ9ImJ1
+       bGxldC1jaGFyLXRlbXBsYXRlLTgyMjYiIHRyYW5zZm9ybT0ic2NhbGUoMC4wMDA0ODgyODEy
+       NSwtMC4wMDA0ODgyODEyNSkiPgogICA8cGF0aCBkPSJNIDM0Niw0NTcgQyAyNzMsNDU3IDIw
+       OSw0ODMgMTU1LDUzNSAxMDEsNTg2IDc0LDY0OSA3NCw3MjMgNzQsNzk2IDEwMSw4NTkgMTU1
+       LDkxMSAyMDksOTYzIDI3Myw5ODkgMzQ2LDk4OSA0MTksOTg5IDQ4MCw5NjMgNTMxLDkxMCA1
+       ODIsODU5IDYwOCw3OTYgNjA4LDcyMyA2MDgsNjQ4IDU4Myw1ODYgNTMyLDUzNSA0ODIsNDgz
+       IDQyMCw0NTcgMzQ2LDQ1NyBaIi8+CiAgPC9nPgogIDxnIGlkPSJidWxsZXQtY2hhci10ZW1w
+       bGF0ZS04MjExIiB0cmFuc2Zvcm09InNjYWxlKDAuMDAwNDg4MjgxMjUsLTAuMDAwNDg4Mjgx
+       MjUpIj4KICAgPHBhdGggZD0iTSAtNCw0NTkgTCAxMTM1LDQ1OSAxMTM1LDYwNiAtNCw2MDYg
+       LTQsNDU5IFoiLz4KICA8L2c+CiAgPGcgaWQ9ImJ1bGxldC1jaGFyLXRlbXBsYXRlLTYxNTQ4
+       IiB0cmFuc2Zvcm09InNjYWxlKDAuMDAwNDg4MjgxMjUsLTAuMDAwNDg4MjgxMjUpIj4KICAg
+       PHBhdGggZD0iTSAxNzMsNzQwIEMgMTczLDkwMyAyMzEsMTA0MyAzNDYsMTE1OSA0NjIsMTI3
+       NCA2MDEsMTMzMiA3NjUsMTMzMiA5MjgsMTMzMiAxMDY3LDEyNzQgMTE4MywxMTU5IDEyOTks
+       MTA0MyAxMzU3LDkwMyAxMzU3LDc0MCAxMzU3LDU3NyAxMjk5LDQzNyAxMTgzLDMyMiAxMDY3
+       LDIwNiA5MjgsMTQ4IDc2NSwxNDggNjAxLDE0OCA0NjIsMjA2IDM0NiwzMjIgMjMxLDQzNyAx
+       NzMsNTc3IDE3Myw3NDAgWiIvPgogIDwvZz4KIDwvZGVmcz4KIDxnPgogIDxnIGlkPSJpZDIi
+       IGNsYXNzPSJNYXN0ZXJfU2xpZGUiPgogICA8ZyBpZD0iYmctaWQyIiBjbGFzcz0iQmFja2dy
+       b3VuZCIvPgogICA8ZyBpZD0iYm8taWQyIiBjbGFzcz0iQmFja2dyb3VuZE9iamVjdHMiLz4K
+       ICA8L2c+CiA8L2c+CiA8ZyBjbGFzcz0iU2xpZGVHcm91cCI+CiAgPGc+CiAgIDxnIGlkPSJj
+       b250YWluZXItaWQxIj4KICAgIDxnIGlkPSJpZDEiIGNsYXNzPSJTbGlkZSIgY2xpcC1wYXRo
+       PSJ1cmwoI3ByZXNlbnRhdGlvbl9jbGlwX3BhdGgpIj4KICAgICA8ZyBjbGFzcz0iUGFnZSI+
+       CiAgICAgIDxnIGNsYXNzPSJjb20uc3VuLnN0YXIuZHJhd2luZy5DdXN0b21TaGFwZSI+CiAg
+       ICAgICA8ZyBpZD0iaWQzIj4KICAgICAgICA8cmVjdCBjbGFzcz0iQm91bmRpbmdCb3giIHN0
+       cm9rZT0ibm9uZSIgZmlsbD0ibm9uZSIgeD0iMTc1IiB5PSIxNzUiIHdpZHRoPSIyMTkxIiBo
+       ZWlnaHQ9IjIxOTEiLz4KICAgICAgICA8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9InJnYigw
+       LDAsMCkiIHN0cm9rZS13aWR0aD0iNzEiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGQ9Ik0g
+       NzQwLDIxMSBMIDE3OTksMjExIDIzMjksMTI3MCAxNzk5LDIzMjkgNzQwLDIzMjkgMjExLDEy
+       NzAgNzQwLDIxMSBaIi8+CiAgICAgICA8L2c+CiAgICAgIDwvZz4KICAgICAgPGcgY2xhc3M9
+       Ikdyb3VwIj4KICAgICAgIDxnIGNsYXNzPSJjb20uc3VuLnN0YXIuZHJhd2luZy5DbG9zZWRC
+       ZXppZXJTaGFwZSI+CiAgICAgICAgPGcgaWQ9ImlkNCI+CiAgICAgICAgIDxyZWN0IGNsYXNz
+       PSJCb3VuZGluZ0JveCIgc3Ryb2tlPSJub25lIiBmaWxsPSJub25lIiB4PSIxMTI0IiB5PSIx
+       MTE5IiB3aWR0aD0iMjc1IiBoZWlnaHQ9IjMwNCIvPgogICAgICAgICA8cGF0aCBmaWxsPSJy
+       Z2IoMjU1LDI1NSwyNTUpIiBzdHJva2U9Im5vbmUiIGQ9Ik0gMTEyNCwxMTE5IEMgMTIxNSwx
+       MTE5IDEzMDcsMTExOSAxMzk4LDExMTkgMTM5OCwxMjIwIDEzOTgsMTMyMSAxMzk4LDE0MjIg
+       MTMwNywxNDIyIDEyMTUsMTQyMiAxMTI0LDE0MjIgMTEyNCwxMzIxIDExMjQsMTIyMCAxMTI0
+       LDExMTkgWiIvPgogICAgICAgIDwvZz4KICAgICAgIDwvZz4KICAgICAgIDxnIGNsYXNzPSJj
+       b20uc3VuLnN0YXIuZHJhd2luZy5DbG9zZWRCZXppZXJTaGFwZSI+CiAgICAgICAgPGcgaWQ9
+       ImlkNSI+CiAgICAgICAgIDxyZWN0IGNsYXNzPSJCb3VuZGluZ0JveCIgc3Ryb2tlPSJub25l
+       IiBmaWxsPSJub25lIiB4PSIxMTEzIiB5PSIxMDkwIiB3aWR0aD0iMzE1IiBoZWlnaHQ9IjM2
+       MSIvPgogICAgICAgICA8cGF0aCBmaWxsPSJyZ2IoMCwwLDApIiBzdHJva2U9Im5vbmUiIGQ9
+       Ik0gMTQyMSwxMTEyIEMgMTQyNywxMTA2IDE0MjcsMTEwNCAxNDI3LDExMDMgMTQyNywxMTAw
+       IDE0MjUsMTA5NiAxNDIxLDEwOTYgMTQxOCwxMDk2IDE0MTQsMTEwMCAxNDExLDExMDMgMTM2
+       OSwxMTUwIDEzMjYsMTE5NyAxMjg0LDEyNDUgMTI2MSwxMTc0IDEyNTYsMTE2MCAxMjQ0LDEx
+       MzAgMTIzNywxMTE3IDEyMjYsMTA5MCAxMTc3LDEwOTAgMTE0MywxMDkwIDExMjksMTExOSAx
+       MTI5LDExMjcgMTEzMiwxMTI5IDExMjksMTEzMyAxMTM3LDExMzMgMTE0MiwxMTMzIDExNDIs
+       MTEyOCAxMTQzLDExMjcgMTE1MSwxMTA0IDExNzAsMTEwMyAxMTc0LDExMDMgMTE5MCwxMTAz
+       IDEyMDcsMTE0NCAxMjE3LDExNzAgMTIzNCwxMjEzIDEyNTIsMTI3OCAxMjUyLDEyODAgMTI1
+       MCwxMjgyIDEyNTIsMTI4MSAxMjQ3LDEyODYgMTIwNCwxMzMzIDExNjIsMTM4MCAxMTE5LDE0
+       MjggMTExMywxNDM0IDExMTMsMTQzNiAxMTEzLDE0MzcgMTExMywxNDQwIDExMTYsMTQ0NCAx
+       MTE5LDE0NDQgMTEyNCwxNDQ0IDExMjYsMTQ0MCAxMTI5LDE0MzcgMTE3MSwxMzkwIDEyMTQs
+       MTM0MyAxMjU2LDEyOTUgMTI3NCwxMzUzIDEyODAsMTM3NCAxMjk1LDE0MDUgMTMwMSwxNDIz
+       IDEzMTQsMTQ1MCAxMzYzLDE0NTAgMTM5NSwxNDUwIDE0MTEsMTQyMSAxNDExLDE0MTMgMTQx
+       MSwxNDEyIDE0MTAsMTQwNyAxNDA1LDE0MDcgMTM5OSwxNDA3IDEzOTgsMTQxMCAxMzk3LDE0
+       MTUgMTM5MiwxNDI5IDEzNzgsMTQzNyAxMzY3LDE0MzcgMTMzOCwxNDM3IDEzMDEsMTMwMyAx
+       Mjg4LDEyNjAgMTMzMiwxMjExIDEzNzcsMTE2MiAxNDIxLDExMTIgWiIvPgogICAgICAgIDwv
+       Zz4KICAgICAgIDwvZz4KICAgICAgPC9nPgogICAgIDwvZz4KICAgIDwvZz4KICAgPC9nPgog
+       IDwvZz4KIDwvZz4KPC9zdmc+
+      </office:binary-data>
+      <text:p/>
+     </draw:image>
+     <draw:image draw:mime-type="image/png">
+      <office:binary-data>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
+      </office:binary-data>
+     </draw:image>
+     <draw:glue-point draw:id="4" svg:x="4.14cm" svg:y="-0.046cm"/>
+     <draw:glue-point draw:id="5" svg:x="-4.179cm" svg:y="-0.042cm"/>
+    </draw:frame>
+   </draw:page>
+  </office:drawing>
+ </office:body>
+</office:document>

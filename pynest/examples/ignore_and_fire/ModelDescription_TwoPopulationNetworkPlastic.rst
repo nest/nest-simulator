@@ -21,6 +21,9 @@ Summary of network model
    * - **Input**
      - stationary, uncorrelated Poissonian spike trains
 
+.. figure:: NetworkSketch_TwoPopulationNetworkPlastic.fodg
+
+   For legend see https://doi.org/10.1371/journal.pcbi.1010086.g008
 
 Detailed desciption of network model
 ------------------------------------

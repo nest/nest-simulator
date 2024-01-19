@@ -2,14 +2,14 @@
 Parameter dictionary
 ====================
 
+Default parameters for Two population STDP network model (TwoPopulationNetworkPlastic)
 
 """
 
-## default parameters for TwoPopulationNetworkPlastic
 
 pars = {}
 
-pars["model_name"] = "TwoPopulationNetworkPlastic"  # model name
+pars["model_name"] = "TwoPopulationNetworkPlastic"  # Network model name
 
 # network and connectivity parameters
 pars["N"] = 12500  # total number of neurons

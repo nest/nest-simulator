@@ -483,12 +483,12 @@ eprop_iaf_adapt_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis
   double e = 0.0;       // eligibility trace
   double e_bar = 0.0;   // low-pass filtered eligibility trace
   double epsilon = 0.0; // adaptative component of eligibility vector
+  double grad = 0.0;    // gradient value to be calculated
+  double L = 0.0;       // learning signal
+  double psi = 0.0;     // surrogate gradient
   double sum_e = 0.0;   // sum of eligibility traces
   double z = 0.0;       // spiking variable
   double z_bar = 0.0;   // low-pass filtered spiking variable
-  double grad = 0.0;    // gradient value to be calculated
-  double psi = 0.0;     // surrogate gradient
-  double L = 0.0;       // learning signal
 
   for ( long presyn_isi : presyn_isis )
   {

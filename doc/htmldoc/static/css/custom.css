@@ -312,6 +312,11 @@ span.md-nav__link.caption {
   width: auto;
   height: max-content;
 }
+#network-models img.sd-card-img-top {
+  width: max-content;
+  height: 200px;
+  align-self: center;
+}
 .sd-card-body {
    padding: 0.6rem;
 }

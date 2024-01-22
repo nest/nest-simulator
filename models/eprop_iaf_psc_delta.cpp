@@ -508,7 +508,7 @@ eprop_iaf_psc_delta::compute_gradient( const long t_spike,
     L = eprop_hist_it->learning_signal_;
     firing_rate_reg = eprop_hist_it->firing_rate_reg_;
 
-    z_bar = V_.P30_ * z_bar + V_.P_z_in_ * z;
+    z_bar = V_.P33_ * z_bar + V_.P_z_in_ * z;
     e = psi * z_bar;
     avg_e = beta * avg_e + ( 1.0 - beta ) * e;
     e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;

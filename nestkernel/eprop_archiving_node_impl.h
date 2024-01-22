@@ -79,7 +79,7 @@ template < typename HistEntryT >
 void
 EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous_update,
   const long t_current_update,
-  const bool clean )
+  const bool erase )
 {
   if ( eprop_indegree_ == 0 )
   {
@@ -97,7 +97,7 @@ EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous
   else
   {
     update_history_.insert( it_hist_curr, HistEntryEpropUpdate( t_current_update + shift, 1 ) );
-    if ( clean )
+    if ( erase )
     {
       erase_unneeded_eprop_history();
     }
@@ -111,37 +111,9 @@ EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous
     --it_hist_prev->access_counter_;
   }
 
-  erase_unneeded_update_history();
-}
-
-template < typename HistEntryT >
-void
-EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous_update, const long t_current_update )
-{
-  if ( eprop_indegree_ == 0 )
+  if ( erase )
   {
-    return;
-  }
-
-  const long shift = get_shift();
-
-  const auto it_hist_curr = get_update_history( t_current_update + shift );
-
-  if ( it_hist_curr != update_history_.end() and it_hist_curr->t_ == t_current_update + shift )
-  {
-    ++it_hist_curr->access_counter_;
-  }
-  else
-  {
-    update_history_.insert( it_hist_curr, HistEntryEpropUpdate( t_current_update + shift, 1 ) );
-  }
-
-  const auto it_hist_prev = get_update_history( t_previous_update + shift );
-
-  if ( it_hist_prev != update_history_.end() and it_hist_prev->t_ == t_previous_update + shift )
-  {
-    // If an entry exists for the previous update time, decrement its access counter
-    --it_hist_prev->access_counter_;
+    erase_unneeded_update_history();
   }
 }
 

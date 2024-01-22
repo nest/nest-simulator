@@ -489,21 +489,33 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
   assert( target );
 
   const long t_spike = e.get_stamp().get_steps();
+  long t_begin;
 
   if ( is_first_spike_ )
   {
     is_first_spike_ = false;
-    target->write_update_to_history( 0, t_spike, false );
+    t_begin = 0;
   }
   else
   {
-    target->compute_gradient(
-      t_spike, t_previous_spike_, t_, previous_z_buffer_, z_bar_, e_bar_, epsilon_, avg_e_, grad_, kappa_, cp.average_gradient_ );
-    target->write_update_to_history( t_previous_spike_, t_spike, true );
+    target->compute_gradient( t_spike,
+      t_previous_spike_,
+      t_,
+      previous_z_buffer_,
+      z_bar_,
+      e_bar_,
+      epsilon_,
+      avg_e_,
+      grad_,
+      kappa_,
+      cp.average_gradient_ );
+    t_begin = t_previous_spike_;
 
     weight_ -= 5e-3 * grad_;
     grad_ = 0.0;
   }
+
+  target->write_update_to_history( t_begin, t_spike, true );
 
   t_previous_spike_ = t_spike;
   t_ = t_spike;

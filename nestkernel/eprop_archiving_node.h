@@ -59,10 +59,9 @@ public:
   void register_eprop_connection() override;
 
   //! Register current update in the update history and deregister previous update.
-  void write_update_to_history( const long t_previous_update, const long t_current_update, const bool clean ) override;
-
-  //! Register current update in the update history and deregister previous update.
-  void write_update_to_history( const long t_previous_update, const long t_current_update ) override;
+  void write_update_to_history( const long t_previous_update,
+    const long t_current_update,
+    const bool erase = false ) override;
 
   //! Get the number of time steps by which the eprop history is shifted to synchronize its factors.
   long get_shift() const;

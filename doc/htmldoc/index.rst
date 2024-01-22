@@ -125,7 +125,7 @@ Conceptual approach
    stimulating_devices(<img src="_static/img/stimulatelight.svg" /> Stimulating Devices)
    recording_devices(<img src="_static/img/recordinglight.svg" />  Recording Devices )
    network(<img src="_static/img/networkbrainlight.svg" /> \n  Network  Models )
-   smp(<img src="_static/img/pynest/mc_neuron_sm.png" /> \n spike membrane potential, \n synaptic weights, etc.)
+   smp(<img src="_static/img/pynest/mc_neuron_sm.png" /> \n spikes, membrane potential, \n synaptic weights, etc.)
    ir(<img src="_static/img/experiment.png"/> \n Input rates, input currents, \n timed sequences, etc.)
    click network href "./networks/index.html"
    click neuron_models href "./models/index_neuron.html"

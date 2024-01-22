@@ -61,29 +61,42 @@ extern "C" inline int iaf_wang_2002_exact_dynamics( double, const double y[], do
 Short description
 +++++++++++++++++
 
-Leaky integrate-and-fire-neuron model with dynamic NMDA receptors.
+Leaky integrate-and-fire-neuron model with conductance based synapses, and additional NMDA receptors.
 
 Description
 +++++++++++
 
-This model implements a version of the neuron model described in [1]_.
+``iaf_wang_2002_exact_dynamics`` is a leaky integrate-and-fire neuron model with
 
-It contains AMPA, GABA and NMDA synapses, where the number of NMDA ports are dependent
-on the number of presynaptic connections.
+* an exact implementation of the neuron model described in [1]_.
+* exponential conductance-based AMPA and GABA-synapses
+* NMDA synapses with slow nonlinear dynamics
+* a fixed refractory period
+* no adaptation mechanisms
 
-The AMPA and GABA synapses are given as alpha functions, while the NMDA synapse is modeled
-with a non-linear function described by
+Neuron and synaptic dynamics
+..................................................
+
+The membrane potential and synaptic variables evolve according to
 
 .. math::
-   \frac{ dg_j^{NMDA}(t) }{ dt } = - \frac{ g_j^{NMDA}(t) }{ \tau_{NMDA,decay} } + \alpha x_j(t)(1 - s_j^{NMDA}(t)) \\
-   \frac{ dx_j(t) }{ dt } =- \frac{ x_j(t) }{ \tau_{NMDA,rise} } + \sum_k \delta(t - t_j^k).
 
-The synaptic current of NMDA is given by
+    C_\mathrm{m} \frac{dV(t)}{dt} &= -g_\mathrm{L} (V(t) - V_\mathrm{L}) - I_\mathrm{syn} (t) \\[3ex]
+    I_\mathrm{syn}(t) &= I_\mathrm{AMPA}(t) + I_\mathrm{NMDA}(t) + I_\mathrm{GABA}(t) (t) \\[3ex]
+    I_\mathrm{AMPA} &= (V(t) - V_E)\sum_{j \in \Gamma_\mathrm{ex}}^{N_E}w_jS_{j,\mathrm{AMPA}}(t) \\[3ex]
+    I_\mathrm{NMDA} &= \frac{(V(t) - V_E)}{1+[\mathrm{Mg^{2+}}]\mathrm{exp}(-0.062V(t))/3.57}\sum_{j \in \Gamma_\mathrm{ex}}^{N_E}w_jS_{j,\mathrm{NMDA}}(t) \\[3ex]
+    I_\mathrm{GABA} &= (V(t) - V_E)\sum_{j \in \Gamma_\mathrm{in}}^{N_E}w_jS_{j,\mathrm{GABA}}(t) \\[5ex]
+    \frac{dS_{j,\mathrm{AMPA}}}{dt} &= -\frac{j,S_{\mathrm{AMPA}}}{\tau_\mathrm{AMPA}}+\sum_{k \in \Delta_j} \delta (t - t_j^k) \\[3ex]
+    \frac{dS_{j,\mathrm{GABA}}}{dt} &= -\frac{S_{j,\mathrm{GABA}}}{\tau_\mathrm{GABA}} + \sum_{k \in \Delta_j} \delta (t - t_j^k) \\[3ex]
+    \frac{dS_{j,\mathrm{NMDA}}}{dt} &= -\frac{S_{j,\mathrm{NMDA}}}{\tau_\mathrm{NMDA,decay}}+ \alpha x_j (1 -  S_{j,\mathrm{NMDA}})\\[3ex]
+    \frac{dx_j}{dt} &= - \frac{x_j}{\tau_\mathrm{NMDA,rise}} + \sum_{k \in \Delta_j} \delta (t - t_j^k)
 
-.. math::
-   I_{NMDA}(t) = \frac{ V(t) - E_{ex} }{ 1 + [Mg^{2+}]exp(-0.062V(t))/3.57 }\sum_{j=1}w_jg_j^{NMDA},
 
-where `w_j` is the weight of connection with presynaptic neuron `j`.
+where :math:`\Gamma_\mathrm{ex}` and :math:`\Gamma_\mathrm{in}` are index sets for presynaptic excitatory and inhibitory neurons respectively, and :math:`\Delta_j` is an index set for the spike times of neuron :math:`j`.
+
+Since :math:`S_{j,\mathrm{AMPA}}` and :math:`S_{j,\mathrm{GABA}}` are piecewise exponential functions, the sums are also a piecewise exponential function, and can be stored in a single synaptic variable each, :math:`S_{\mathrm{AMPA}}` and :math:`S_{\mathrm{GABA}}` respectively. The sum over :math:`S_{j,\mathrm{NMDA}}` does not have a simple expression, and cannot be simplified. Therefore, for each synapse, we need to integrate separate state variable, which makes the model slow.
+
+The specification of this model differs slightly from the one in [1]_. The parameters :math:`g_\mathrm{AMPA}`, :math:`g_\mathrm{GABA}`, and :math:`g_\mathrm{NMDA}` have been absorbed into the respective synaptic weights. Additionally, the synaptic variable from the external population is not kept in a separate variable :math:`S_{\mathrm{rec,AMPA}}`, but is taken together with the local synapses in :math:`S_{\mathrm{AMPA}}`.
 
 
 Parameters
@@ -118,18 +131,17 @@ The following values can be recorded.
 
 =========== ===========================================================
  V_m         Membrane potential
- s_AMPA      AMPA gate
- s_GABA      GABA gate
- NMDA_sum    sum of NMDA over all presynaptic neurons j
+ s_AMPA      sum of AMPA gating variables
+ s_GABA      sum of GABA gating variables
+ s_NMDA      sum of NMDA gating variables
 =========== ===========================================================
 
 .. note::
-   It is possible to set values for `V_m`, `s_AMPA` and `s_GABA` when creating the model, while the
-   different `s_NMDA_j` (`j` represents presynaptic neuron `j`) can not be set by the user.
+   It is possible to set values for :math:`V_\mathrm{m}`, :math:`S_\mathrm{AMPA}` and :math:`S_\mathrm{GABA}` when creating the model, while the
+   different :math:`s_{j,\mathrm{NMDA}}` (`j` represents presynaptic neuron `j`) can not be set by the user.
 
 .. note::
-   The variable `s_AMPA` and `s_GABA` in the NEST implementation does not correspond to `g_{recAMPA, extAMPA, GABA}`
-   in [1]_. `g_{recAMPA, extAMPA, GABA, NMBA}` from [1]_ is built into the weights in this NEST model, so setting the
+   :math:`g_{\mathrm{\{\{rec,AMPA\}, \{ext,AMPA\}, GABA, NMBA}\}}` from [1]_ is built into the weights in this NEST model, so setting the
    variables is thus done by changing the weights.
 
 Sends

@@ -22,7 +22,10 @@ Tutorials and guides
        :link: guides
        :link-type: ref
 
+.. toctree::
+   :hidden:
 
+   understand_index
 
 .. |nav| image:: static/img/GPS-Settings-256_nest.svg
 .. |example| image::  static/img/Documents-02-256_nest.svg

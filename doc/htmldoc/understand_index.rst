@@ -103,7 +103,6 @@ Here you can dive into various topics about NEST.
 
 
 .. toctree::
-   :maxdepth: 1
    :hidden:
 
 

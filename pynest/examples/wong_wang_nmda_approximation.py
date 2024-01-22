@@ -1,3 +1,7 @@
+"""
+docstring
+"""
+
 import nest
 import matplotlib.pyplot as plt
 import numpy as np
@@ -95,19 +99,14 @@ nest.Connect(mm3, nrn3)
 
 nest.Simulate(1000.)
 
-# get spike times from membrane potential
-# cannot use spike_recorder because we abuse exact spike timing
-V_m = mm1.get("events", "V_m")
-times = mm1.get("events", "times")
-diff = np.ediff1d(V_m, to_begin=0.)
-spikes = sr.get("events", "times")
-spikes = times[diff < -3]
 
-# compute analytical solutions
-times = mm1.get("events", "times")
-# ampa_soln = spiketrain_response(times, tau_AMPA, spikes, w_ex)
-# nmda_soln = spiketrain_response_nmda(times, tau_NMDA, spikes, w_ex, alpha)
-# gaba_soln = spiketrain_response(times, tau_GABA, spikes, np.abs(w_in))
+times = mm3.get("events", "times")
+nest_nmda = mm3.get("events", "NMDA_sum")
+nest_nmda_approx = mm2.get("events", "s_NMDA")
+times -= times[(nest_nmda > 0).argmax()] - 0.1
+
+
+
 
 from scipy.integrate import cumtrapz
 def nmda_integrand(t, x0, tau_decay, tau_rise, alpha):
@@ -134,7 +133,7 @@ def nmda_fn_approx(t, x0, tau_decay, tau_rise, alpha):
 
 
 t = np.arange(0.1, 1000, 0.1)
-s0 = 0.1
+s0 = 0.
 f1s, f2s = [], []
 for t_ in t:
     f1, f2 = nmda_fn(t_, 0., 1., 100., 2., 0.5)
@@ -153,13 +152,39 @@ def nmda_approx_exp(t, tau_rise, alpha, tau_decay):
 
 f1_exp, f2_exp = nmda_approx_exp(t, 2.0, 0.5, 100)
 
-i = 50
+i = 40
 s_nmda_exp = (f1_exp[i] * f2_exp[i] + f1_exp[i] * s0) * np.exp(-t / 100)
 
 plt.plot(t, s_nmda, color="C0")
 plt.plot(t, s_nmda_approx, color="C1")
 plt.plot(t, s_nmda_exp, "--", color="C2")
-#plt.plot(t, f1_exp * f2_exp, "--", color="C2")
 
 plt.show()
+
+
+
+
+from scipy.special import expn, gamma
+def limfun(tau_rise, tau_decay, alpha):
+    f0 = np.exp(-alpha * tau_rise)
+
+    at = alpha * tau_rise
+    tr_td = tau_rise / tau_decay
+    f1 = -at * expn(tr_td, at) + at ** tr_td * gamma(1 - tr_td)
+    
+    return f0, f1
+
+f0, f1 = limfun(2, 100, 0.5)
+
+
+
+
+plt.plot(t, s_nmda)
+plt.plot(times, nest_nmda)
+plt.plot(times, nest_nmda_approx)
+plt.plot(t, f1 * np.exp(-t / 100))
+
+plt.show()
+
+
 

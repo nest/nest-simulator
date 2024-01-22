@@ -1,3 +1,7 @@
+"""
+docstring
+"""
+
 import nest
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
@@ -5,6 +9,8 @@ import numpy as np
 
 np.random.seed(1234)
 rng = np.random.default_rng()
+
+model = "iaf_wang_2002_exact"
 
 dt = 0.1
 nest.set(resolution=dt, print_time=True)
@@ -66,10 +72,10 @@ delay = 0.5
 NE = 1600
 NI = 400
 
-selective_pop1 = nest.Create("iaf_wang_2002", int(0.15 * NE), params=epop_params)
-selective_pop2 = nest.Create("iaf_wang_2002", int(0.15 * NE), params=epop_params)
-nonselective_pop = nest.Create("iaf_wang_2002", int(0.7 * NE), params=epop_params)
-inhibitory_pop = nest.Create("iaf_wang_2002", NI, params=ipop_params)
+selective_pop1 = nest.Create(model, int(0.15 * NE), params=epop_params)
+selective_pop2 = nest.Create(model, int(0.15 * NE), params=epop_params)
+nonselective_pop = nest.Create(model, int(0.7 * NE), params=epop_params)
+inhibitory_pop = nest.Create(model, NI, params=ipop_params)
 
 mu_0 = 40.
 rho_a = mu_0 / 100

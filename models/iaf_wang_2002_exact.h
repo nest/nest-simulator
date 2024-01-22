@@ -394,7 +394,7 @@ private:
 
   //! Get the sum of NMDA from state, used by UniversalDataLogger
   double
-  get_NMDA_sum_() const
+  get_s_NMDA_() const
   {
     return S_.get_NMDA_sum();
   }

@@ -66,7 +66,7 @@ RecordablesMap< iaf_wang_2002_exact >::create()
   insert_( names::V_m, &iaf_wang_2002_exact::get_ode_state_elem_< iaf_wang_2002_exact::State_::V_m > );
   insert_( names::s_AMPA, &iaf_wang_2002_exact::get_ode_state_elem_< iaf_wang_2002_exact::State_::s_AMPA > );
   insert_( names::s_GABA, &iaf_wang_2002_exact::get_ode_state_elem_< iaf_wang_2002_exact::State_::s_GABA > );
-  insert_( names::NMDA_sum, &iaf_wang_2002_exact::get_NMDA_sum_ );
+  insert_( names::s_NMDA, &iaf_wang_2002_exact::get_s_NMDA_ );
 }
 }
 /* ---------------------------------------------------------------------------
@@ -238,8 +238,8 @@ nest::iaf_wang_2002_exact::State_::get( DictionaryDatum& d ) const
   def< double >( d, names::s_GABA, ode_state_[ s_GABA ] );
 
   // total NMDA sum
-  double NMDA_sum = get_NMDA_sum();
-  def< double >( d, names::NMDA_sum, NMDA_sum );
+  double s_NMDA = get_NMDA_sum();
+  def< double >( d, names::NMDA_sum, s_NMDA );
 }
 
 void

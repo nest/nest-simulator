@@ -1,3 +1,6 @@
+"""
+docstring
+"""
 import nest
 import matplotlib.pyplot as plt
 import numpy as np
@@ -6,7 +9,7 @@ nest.ResetKernel()
 nest.rng_seed = 12345
 
 w_ext = 40.
-w_ex = 5.
+w_ex = 1.
 w_in = -15.
 
 params_exact = {"tau_AMPA": 2.0,
@@ -25,7 +28,7 @@ params_exact = {"tau_AMPA": 2.0,
                 "t_ref": 2.0}
 
 params_approx = params_exact.copy()
-del params_approx["tau_rise_NMDA"]
+params_approx["approx_t_exact"] = 200
 
 nrn1 = nest.Create("iaf_wang_2002", params_approx)
 pg = nest.Create("poisson_generator", {"rate": 50.})
@@ -36,7 +39,7 @@ nrn3 = nest.Create("iaf_wang_2002_exact", params_exact)
 
 mm1 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_NMDA", "s_GABA"], "interval": 0.1})
 mm2 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_NMDA", "s_GABA"], "interval": 0.1})
-mm3 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "NMDA_sum", "s_GABA"], "interval": 0.1})
+mm3 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_NMDA", "s_GABA"], "interval": 0.1})
 
 ampa_ext_syn_spec = {"synapse_model": "static_synapse",
                      "weight": w_ext,
@@ -103,11 +106,19 @@ diff = np.ediff1d(V_m, to_begin=0.)
 spikes = sr.get("events", "times")
 spikes = times[diff < -3]
 
-# compute analytical solutions
-times = mm1.get("events", "times")
-# ampa_soln = spiketrain_response(times, tau_AMPA, spikes, w_ex)
-# nmda_soln = spiketrain_response_nmda(times, tau_NMDA, spikes, w_ex, alpha)
-# gaba_soln = spiketrain_response(times, tau_GABA, spikes, np.abs(w_in))
+def nmda_integrand(t, x0, tau_decay, tau_rise, alpha):
+    a = (1 / tau_decay - 1 / tau_rise)
+
+    # argument of exp
+    arg = t * a  + alpha * x0 * tau_rise * (1 - np.exp(- t / tau_rise))
+    return np.exp(arg)
+
+def nmda_fn(t, s0, x0, tau_decay, tau_rise, alpha):
+    f1 = np.exp(- t / tau_decay + alpha * x0 * tau_rise * (1 - np.exp(-t / tau_rise)))
+    
+    tvec = np.linspace(0, t, 1001)
+    f2 = alpha * x0 * np.trapz(nmda_integrand(tvec, x0, tau_decay, tau_rise, alpha), x = tvec) + s0
+    return f1, f2
 
 fig, ax = plt.subplots(4,2)
 fig.set_size_inches([12,10])
@@ -119,9 +130,8 @@ ax[0,0].set_ylabel("membrane potential V (mV)")
 ax[0,0].legend()
 ax[0,0].set_title("Presynaptic neuron")
 
-
 ax[0,1].plot(mm2.events["V_m"])
-ax[0,1].plot(mm3.events["V_m"])
+ax[0,1].plot(mm3.events["V_m"], "--")
 ax[0,1].set_xlabel("time (ms)")
 ax[0,1].set_ylabel("membrane potential V (mV)")
 ax[0,1].set_title("Postsynaptic neuron")
@@ -140,14 +150,13 @@ ax[2,1].set_ylabel("s_GABA")
 
 
 ax[3,1].plot(mm2.events["s_NMDA"])
-ax[3,1].plot(mm3.events["NMDA_sum"], "--")
+ax[3,1].plot(mm3.events["s_NMDA"], "--")
 ax[3,1].set_xlabel("time (ms)")
 ax[3,1].set_ylabel("s_NMDA")
 
 ax[1,0].axis("off")
 ax[2,0].axis("off")
 ax[3,0].axis("off")
-
 
 plt.show()
 

@@ -44,6 +44,8 @@
 
 // Includes from standard library
 #include <algorithm>
+#include <boost/math/special_functions/expint.hpp>
+#include <boost/math/special_functions/gamma.hpp>
 
 /* ---------------------------------------------------------------------------
  * Recordables map
@@ -390,10 +392,20 @@ nest::iaf_wang_2002::pre_run_hook()
   assert( V_.RefractoryCounts_ >= 0 );
 
   // compute S_NMDA jump height variables
-  const double f1 = exp(-P_.alpha * P_.tau_rise_NMDA * (1 - exp(-P_.approx_t_exact / P_.tau_rise_NMDA)));
+  const double f1_old = exp(-P_.alpha * P_.tau_rise_NMDA * (1 - exp(-P_.approx_t_exact / P_.tau_rise_NMDA)));
+  const double f2_old = -(1 - exp(P_.alpha * P_.tau_rise_NMDA * (1 - exp(-P_.approx_t_exact / P_.tau_rise_NMDA))));
 
-  const double f2 = -(1 - exp(P_.alpha * P_.tau_rise_NMDA * (1 - exp(-P_.approx_t_exact / P_.tau_rise_NMDA))));
-  V_.S_jump_0 = f1 * f2;
+  // helper vars
+  const double at = P_.alpha * P_.tau_rise_NMDA;
+  const double tau_rise_tau_dec = P_.tau_rise_NMDA / P_.tau_decay_NMDA;
+  const double exp_at = exp(-P_.alpha * P_.tau_rise_NMDA);
+
+  const double f2 = -boost::math::expint(tau_rise_tau_dec, at) * at 
+                      + pow(at, tau_rise_tau_dec) * boost::math::tgamma(1 - tau_rise_tau_dec);
+
+  const double f1 = exp_at;       
+
+  V_.S_jump_0 = f2;
   V_.S_jump_1 = f1;
 
 }

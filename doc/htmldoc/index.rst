@@ -68,22 +68,32 @@ Welcome!
 Conceptual approach
 -------------------
 
+
 .. mermaid::
 
+   %%{
+     init:{
+       "theme": "base",
+       "themeVariables": {
+          "lineColor": "#f63",
+          "fontSize" : "18px"
+       }
+     }
+    }%%
    flowchart LR
 
-     classDef nodeStyle color:#fff, stroke:#fff0, fill:#015491;
-     classDef nodeStyle2 color:#fff, stroke:#fff0, fill:#072f42;
-     classDef nodeStyle3 color:#222, stroke:#fff0, fill:#22222233;
+     classDef nodeStyle color:#fff, stroke:#fff0, fill:#0E6A93;
+     classDef nodeStyle2 color:#000, stroke:#fff0, fill:#072f4200;
+     classDef nodeStyle3 color:#222, stroke:#fff0, fill:#bbb0;
 
      exp --> nest-simulator
      models -->nest-simulator
      nest-simulator --> act
 
      subgraph  exp [Experimental protocols]
-      ir(input rates, input currents, <br> timed sequences, etc.):::nodeStyle3
+      ir:::nodeStyle3
      end
-     subgraph nest-simulator
+     subgraph nest-simulator [nest-simulator]
        direction TB
        stimulating_devices:::nodeStyle2 --> simulate
        simulate:::nodeStyle2 --> recording_devices:::nodeStyle2
@@ -96,23 +106,28 @@ Conceptual approach
 
      end
      subgraph act [Activity data]
-       smp(spike membrane potential, <br> synaptic weights, etc.):::nodeStyle3
+       smp:::nodeStyle3
      end
 
      class act sg
      class exp sg
-     class models main
-     class nest-simulator main
-     classDef sg fill:#ddd, stroke:#4441, color:#111;
-     classDef main fill:#fff0, stroke:#f63, color:#111, font-weight: bold, stroke-dasharray:5 10, stroke-width:3px;
+     class models bg_models
+     class nest-simulator bg_devices
+     classDef sg fill:#bbb4, stroke:#4441, color:#111;
+     classDef bg_models fill:#bbb7, stroke:#3330, color:#000, font-weight: bold;
+     classDef bg_devices fill:#bbb7, stroke:#3330, color:#000, font-weight: bold;
 
-   simulate[<img src='_static/img/nest_logo.png' /> Simulation \n ______________________]
-   neuron_models[<img src='_static/img/neuron.svg' /> \n Neuron Models]
-   synapse_models[<img src='_static/img/synapse.svg' /> \n Synapse Models]
-   stimulating_devices[<img src='_static/img/stimulatelight.svg' /> Stimulating Devices]
-   recording_devices[<img src='_static/img/recordinglight.svg' /> Recording Devices]
-   network[<img src='_static/img/networkbrainlight.svg' /> \n Network Models]
-   click network href "./networks/spatially_structured_networks.html"
+   %% Note that the spaces used in the "Simulation" text are the copy pasted unicode space character.
+   %% HTML spaces like %emsp; do not work
+   simulate(<img src="_static/img/nest_logo.png"/>     Simulation     \n)
+   neuron_models(<img src="_static/img/neuron.svg" /> \n  Neuron Models)
+   synapse_models(<img src="_static/img/synapse.svg" /> \n Synapse Models )
+   stimulating_devices(<img src="_static/img/stimulatelight.svg" /> Stimulating Devices)
+   recording_devices(<img src="_static/img/recordinglight.svg" />  Recording Devices )
+   network(<img src="_static/img/networkbrainlight.svg" /> \n  Network  Models )
+   smp(<img src="_static/img/pynest/mc_neuron_sm.png" /> \n spike membrane potential, \n synaptic weights, etc.)
+   ir(<img src="_static/img/experiment.png"/> \n Input rates, input currents, \n timed sequences, etc.)
+   click network href "./networks/index.html"
    click neuron_models href "./models/index_neuron.html"
    click synapse_models href "./models/index_synapse.html"
    click stimulating_devices href "./models/index_generator.html"

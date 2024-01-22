@@ -158,6 +158,11 @@ Receives
 
 SpikeEvent, CurrentEvent, DataLoggingRequest
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: amat2_psc_exp
+
 EndUserDocs */
 
 void register_amat2_psc_exp( const std::string& name );
@@ -384,7 +389,6 @@ private:
   // ----------------------------------------------------------------
 
   /**
-   * @defgroup amat2_psc_exp_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.

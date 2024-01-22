@@ -1,5 +1,5 @@
 /*
- *  ticket-733.sli
+ *  models.h
  *
  *  This file is part of NEST.
  *
@@ -20,18 +20,21 @@
  *
  */
 
-/** @BeginDocumentation
+#ifndef MODELS_H
+#define MODELS_H
 
-Name: testsuite::ticket-733 - neq does not work correctly for intvector and doublevector
+// Includes from nestkernel:
+#include "nest.h"
 
-Synopsis: (ticket-773) run -> NEST exits if test fails
+namespace nest
+{
+/**
+ * Function to register all node and connection models that were
+ * selected for compilation either by using the cmake switch
+ * -Dwith-models=<model;list> or as specified in the modelset given to
+ * the option -Dwith-modelset=<modelset>
+ */
+void register_models();
+}
 
-Description:
-This test verify that neq returns false when two intvectors or two double vectors are equals
-*/
-
-(unittest) run
-/unittest using
-
-<# 1 2 3 #> <# 1 2 3 #> neq false eq assert_or_die
-<. 1 2 3 .> <. 1 2 3 .> neq false eq assert_or_die
+#endif

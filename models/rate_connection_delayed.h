@@ -65,6 +65,11 @@ See also
 
 rate_connection_instantaneous, rate_neuron_ipn, rate_neuron_opn
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: rate_connection_delayed
+
 EndUserDocs */
 
 /**
@@ -122,7 +127,7 @@ public:
    * \param e The event to send
    * \param p The port under which this connection is stored in the Connector.
    */
-  void
+  bool
   send( Event& e, size_t t, const CommonSynapseProperties& )
   {
     e.set_weight( weight_ );
@@ -130,6 +135,8 @@ public:
     e.set_receiver( *get_target( t ) );
     e.set_rport( get_rport() );
     e();
+
+    return true;
   }
 
   void get_status( DictionaryDatum& d ) const;

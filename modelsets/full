@@ -62,6 +62,7 @@ iaf_psc_exp_ps_lossless
 iaf_tum_2000
 iaf_wang_2002
 iaf_wang_2002_exact
+ignore_and_fire
 izhikevich
 jonke_synapse
 lin_rate

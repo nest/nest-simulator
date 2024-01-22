@@ -1,5 +1,5 @@
 /*
- *  modelsmodule.h
+ *  ticket-733.sli
  *
  *  This file is part of NEST.
  *
@@ -20,40 +20,18 @@
  *
  */
 
-#ifndef MODELSMODULE_H
-#define MODELSMODULE_H
+/** @BeginDocumentation
 
-// C++ includes:
-#include <string>
+Name: testsuite::ticket-733 - neq does not work correctly for intvector and doublevector
 
-// Includes from sli:
-#include "slimodule.h"
+Synopsis: (ticket-773) run -> NEST exits if test fails
 
-namespace nest
-{
-/**
- * Module supplying all models that are included in the NEST release.
- *
- * First Version: June 2006
- *
- * @todo Should this be a dynamic module?
- */
-class ModelsModule : public SLIModule
-{
-public:
-  ModelsModule();
-  ~ModelsModule() override;
+Description:
+This test verify that neq returns false when two intvectors or two double vectors are equals
+*/
 
-  /**
-   * Initialize module by registering models with the network.
-   * @param SLIInterpreter* SLI interpreter
-   */
-  void init( SLIInterpreter* ) override;
+(unittest) run
+/unittest using
 
-  const std::string name() const override;
-};
-
-
-} // namespace
-
-#endif
+<# 1 2 3 #> <# 1 2 3 #> neq false eq assert_or_die
+<. 1 2 3 .> <. 1 2 3 .> neq false eq assert_or_die

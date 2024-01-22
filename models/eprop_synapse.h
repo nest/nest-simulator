@@ -501,7 +501,7 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
       t_spike, t_previous_spike_, t_, previous_z_buffer_, z_bar_, e_bar_, epsilon_, avg_e_, grad_, kappa_, cp.average_gradient_ );
     target->write_update_to_history( t_previous_spike_, t_spike, true );
 
-    weight_ -= 5e-2 * grad_;
+    weight_ -= 5e-3 * grad_;
     grad_ = 0.0;
   }
 

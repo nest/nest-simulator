@@ -5,6 +5,6 @@ Functions to provide additional information.
 
 
 .. automodule:: nest.lib.hl_api_info
-   :members: authors, get_verbosity, help, helpdesk, message, set_verbosity, sysinfo
+   :members:
    :undoc-members:
    :show-inheritance:

@@ -170,6 +170,7 @@ n_rec = 100  # number of recurrent neurons
 n_out = 1  # number of readout neurons
 
 params_nrn_rec = {
+    "beta_fr_ema": 0.999, # Smoothing factor of firing rate exponential moving average
     "C_m": 1.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
     "c_reg": 300.0 / duration["sequence"],  # firing rate regularization scaling
     "E_L": 0.0,  # mV, leak reversal potential

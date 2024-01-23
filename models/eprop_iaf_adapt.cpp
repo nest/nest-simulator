@@ -84,6 +84,7 @@ eprop_iaf_adapt::Parameters_::Parameters_()
   , tau_m_( 10.0 )
   , V_min_( -std::numeric_limits< double >::max() )
   , V_th_( -55.0 - E_L_ )
+  , beta_fr_ema_( 0.0 )
   , eprop_isi_trace_cutoff_( std::numeric_limits< long >::max() )  
 {
 }
@@ -132,6 +133,7 @@ eprop_iaf_adapt::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_m, tau_m_ );
   def< double >( d, names::V_min, V_min_ + E_L_ );
   def< double >( d, names::V_th, V_th_ + E_L_ );
+  def< double >( d, names::beta_fr_ema, beta_fr_ema_ );    
   def< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_);   
 }
 
@@ -162,6 +164,7 @@ eprop_iaf_adapt::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_, node );
   updateValueParam< double >( d, names::t_ref, t_ref_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
+  updateValueParam< double >( d, names::beta_fr_ema, beta_fr_ema_, node );    
   updateValueParam< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );    
 
   if ( adapt_beta_ < 0 )
@@ -227,6 +230,11 @@ eprop_iaf_adapt::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Spike threshold voltage V_th ≥ minimal voltage V_min required." );
   }
+
+  if ( beta_fr_ema_ < 0 or 1 <= beta_fr_ema_ )
+  {
+    throw BadProperty( "Smoothing factor of firing rate exponential moving average beta_fr_ema_ from interval [0,1) required." );
+  }  
 
   if ( eprop_isi_trace_cutoff_ < 0 )
   {
@@ -465,7 +473,6 @@ eprop_iaf_adapt::compute_gradient( const long t_spike,
   double psi = 0.0;             // surrogate gradient
   double L = 0.0;               // learning signal
   double firing_rate_reg = 0.0; // firing rate regularization
-  double beta = 0.999;          // beta
 
   const long learning_window =
     average_gradient ? kernel().simulation_manager.get_eprop_learning_window().get_steps() : 1;
@@ -502,7 +509,7 @@ eprop_iaf_adapt::compute_gradient( const long t_spike,
     z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
     e = psi * ( z_bar - P_.adapt_beta_ * epsilon );
     epsilon = psi * z_bar + ( V_.P_adapt_ - psi * P_.adapt_beta_ ) * epsilon;
-    avg_e = beta * avg_e + ( 1.0 - beta ) * e;
+    avg_e = P_.beta_fr_ema_ * avg_e + ( 1.0 - P_.beta_fr_ema_ ) * e;
     e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
     grad += L * e_bar / learning_window + firing_rate_reg * avg_e;
 

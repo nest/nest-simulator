@@ -357,6 +357,9 @@ private:
     //! Spike threshold voltage relative to the leak membrane potential (mV).
     double V_th_;
 
+    //! Smoothing factor of firing rate exponential moving average.
+    double beta_fr_ema_;
+    
     //!< Number of time steps integrated between two consecutive spikes is equal to the minimum between eprop_isi_trace_cutoff_ and the inter-spike distance.
     long eprop_isi_trace_cutoff_;    
 

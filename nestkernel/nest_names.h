@@ -110,6 +110,7 @@ extern const Name beta_1;
 extern const Name beta_2;
 
 extern const Name beta_Ca;
+extern const Name beta_fr_ema;
 extern const Name biological_time;
 extern const Name box;
 extern const Name buffer_size;

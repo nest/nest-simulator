@@ -282,7 +282,7 @@ private:
 
     //! Absolute lower bound of the membrane voltage relative to the leak membrane potential (mV).
     double V_min_;
-
+    
     //!< Number of time steps integrated between two consecutive spikes is equal to the minimum between eprop_isi_trace_cutoff_ and the inter-spike distance.
     long eprop_isi_trace_cutoff_;    
 

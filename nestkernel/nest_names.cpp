@@ -83,6 +83,7 @@ const Name beta( "beta" );
 const Name beta_1( "beta_1" );
 const Name beta_2( "beta_2" );
 const Name beta_Ca( "beta_Ca" );
+const Name beta_fr_ema( "beta_fr_ema" );
 const Name biological_time( "biological_time" );
 const Name box( "box" );
 const Name buffer_size( "buffer_size" );

@@ -85,6 +85,7 @@ nest::eprop_iaf_psc_delta::Parameters_::Parameters_()
   , f_target_( 0.01 )
   , gamma_( 0.3 )
   , surrogate_gradient_function_( "piecewise_linear" )
+  , beta_fr_ema_( 0.0 )  
   , eprop_isi_trace_cutoff_( std::numeric_limits< long >::max() )  
 {
 }
@@ -120,6 +121,7 @@ nest::eprop_iaf_psc_delta::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::f_target, f_target_ );
   def< double >( d, names::gamma, gamma_ );
   def< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_ );
+  def< double >( d, names::beta_fr_ema, beta_fr_ema_ );    
   def< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_);    
 }
 
@@ -170,6 +172,7 @@ nest::eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* nod
   }
   updateValueParam< double >( d, names::gamma, gamma_, node );
   updateValueParam< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_, node );
+  updateValueParam< double >( d, names::beta_fr_ema, beta_fr_ema_, node );  
   updateValueParam< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );  
 
   if ( V_reset_ >= V_th_ )
@@ -211,6 +214,11 @@ nest::eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* nod
       "Surrogate gradient / pseudo derivate function surrogate_gradient_function from [\"piecewise_linear\"] "
       "required." );
   }
+
+  if ( beta_fr_ema_ < 0 or 1 <= beta_fr_ema_ )
+  {
+    throw BadProperty( "Smoothing factor of firing rate exponential moving average beta_fr_ema_ from interval [0,1) required." );
+  }    
 
   if ( eprop_isi_trace_cutoff_ < 0 )
   {
@@ -483,7 +491,6 @@ eprop_iaf_psc_delta::compute_gradient( const long t_spike,
   double psi = 0.0;             // surrogate gradient
   double L = 0.0;               // learning signal
   double firing_rate_reg = 0.0; // firing rate regularization
-  double beta = 0.999;          // beta
 
   const long learning_window =
     average_gradient ? kernel().simulation_manager.get_eprop_learning_window().get_steps() : 1;
@@ -519,7 +526,7 @@ eprop_iaf_psc_delta::compute_gradient( const long t_spike,
 
     z_bar = V_.P33_ * z_bar + V_.P_z_in_ * z;
     e = psi * z_bar;
-    avg_e = beta * avg_e + ( 1.0 - beta ) * e;
+    avg_e = P_.beta_fr_ema_ * avg_e + ( 1.0 - P_.beta_fr_ema_ ) * e;
     e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
     grad += L * e_bar / learning_window + firing_rate_reg * avg_e;
 

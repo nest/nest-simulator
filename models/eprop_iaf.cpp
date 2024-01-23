@@ -344,7 +344,7 @@ eprop_iaf::update( Time const& origin, const long from, const long to )
       }
     }
 
-    write_firing_rate_reg_to_history( t, t, S_.z_, P_.f_target_, P_.c_reg_ );
+    write_firing_rate_reg_to_history( t, t, S_.z_, P_.f_target_, P_.beta_fr_ema_, P_.c_reg_ );
 
     S_.learning_signal_ = get_learning_signal_from_history( t );
 

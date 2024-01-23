@@ -506,7 +506,7 @@ public:
    *
    * @throws IllegalConnection
    */
-  virtual void write_update_to_history( const long t_previous_update, const long t_current_update, const bool clean );
+  virtual void write_update_to_history( const long t_previous_update, const long t_current_update, const long eprop_isi_trace_cutoff, const bool clean );
 
   /**
    * Register current update in the update history and deregister previous update.
@@ -514,6 +514,14 @@ public:
    * @throws IllegalConnection
    */
   virtual void write_update_to_history( const long t_previous_update, const long t_current_update );
+
+  /**
+   * Get maximum number of time steps integrated between two consecutive spikes.
+   *
+   * @throws IllegalConnection
+   */
+
+  virtual long get_eprop_isi_trace_cutoff();
 
   /**
    * Return if the node is part of the recurrent network (and thus not a readout neuron).

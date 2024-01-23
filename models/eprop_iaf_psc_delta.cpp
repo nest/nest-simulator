@@ -85,6 +85,7 @@ nest::eprop_iaf_psc_delta::Parameters_::Parameters_()
   , f_target_( 0.01 )
   , gamma_( 0.3 )
   , surrogate_gradient_function_( "piecewise_linear" )
+  , eprop_isi_trace_cutoff_( std::numeric_limits< long >::max() )  
 {
 }
 
@@ -119,6 +120,7 @@ nest::eprop_iaf_psc_delta::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::f_target, f_target_ );
   def< double >( d, names::gamma, gamma_ );
   def< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_ );
+  def< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_);    
 }
 
 double
@@ -168,6 +170,8 @@ nest::eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* nod
   }
   updateValueParam< double >( d, names::gamma, gamma_, node );
   updateValueParam< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_, node );
+  updateValueParam< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );  
+
   if ( V_reset_ >= V_th_ )
   {
     throw BadProperty( "Reset potential must be smaller than threshold." );
@@ -207,6 +211,12 @@ nest::eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* nod
       "Surrogate gradient / pseudo derivate function surrogate_gradient_function from [\"piecewise_linear\"] "
       "required." );
   }
+
+  if ( eprop_isi_trace_cutoff_ < 0 )
+  {
+    throw BadProperty( "Cutoff of integration of eprop trace between spikes eprop_isi_trace_cutoff ≥ 0 required." );
+  }
+    
   return delta_EL;
 }
 
@@ -477,13 +487,12 @@ eprop_iaf_psc_delta::compute_gradient( const long t_spike,
 
   const long learning_window =
     average_gradient ? kernel().simulation_manager.get_eprop_learning_window().get_steps() : 1;
-  const long cutoff_ = 10;
 
   auto eprop_hist_it = get_eprop_history( t_previous_spike - 1 );
 
   bool pre = true;
 
-  while ( t < std::min( t_spike, t_previous_spike + cutoff_ ) )
+  while ( t < std::min( t_spike, t_previous_spike + P_.eprop_isi_trace_cutoff_ ) )
   {
     if ( pre )
     {

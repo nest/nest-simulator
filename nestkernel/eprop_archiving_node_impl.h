@@ -79,6 +79,7 @@ template < typename HistEntryT >
 void
 EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous_update,
   const long t_current_update,
+  const long eprop_isi_trace_cutoff,
   const bool erase )
 {
   if ( eprop_indegree_ == 0 )
@@ -99,7 +100,7 @@ EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous
     update_history_.insert( it_hist_curr, HistEntryEpropUpdate( t_current_update + shift, 1 ) );
     if ( erase )
     {
-      erase_unneeded_eprop_history();
+      erase_unneeded_eprop_history( eprop_isi_trace_cutoff );
     }
   }
 
@@ -133,7 +134,7 @@ EpropArchivingNode< HistEntryT >::get_eprop_history( const long time_step )
 
 template < typename HistEntryT >
 void
-EpropArchivingNode< HistEntryT >::erase_used_eprop_history()
+EpropArchivingNode< HistEntryT >::erase_used_eprop_history( const long eprop_isi_trace_cutoff )
 {
   if ( eprop_history_.empty()  // nothing to remove
     or update_history_.empty() // no time markers to check
@@ -142,11 +143,10 @@ EpropArchivingNode< HistEntryT >::erase_used_eprop_history()
     return;
   }
 
-  const long cutoff_ = 10;
   const long t_prev = ( update_history_.end() - 2 )->t_;
   const long t_curr = ( update_history_.end() - 1 )->t_;
 
-  const auto it_eprop_hist_erase_from = get_eprop_history( t_prev + cutoff_ );
+  const auto it_eprop_hist_erase_from = get_eprop_history( t_prev + eprop_isi_trace_cutoff );
   const auto it_eprop_hist_erase_to = get_eprop_history( t_curr );
   eprop_history_.erase( it_eprop_hist_erase_from, it_eprop_hist_erase_to ); // erase found entries since no longer used
 

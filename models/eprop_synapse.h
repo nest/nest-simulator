@@ -515,7 +515,8 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
     grad_ = 0.0;
   }
 
-  target->write_update_to_history( t_begin, t_spike, true );
+  const long eprop_isi_trace_cutoff = target->get_eprop_isi_trace_cutoff();
+  target->write_update_to_history( t_begin, t_spike, eprop_isi_trace_cutoff, true );
 
   t_previous_spike_ = t_spike;
   t_ = t_spike;

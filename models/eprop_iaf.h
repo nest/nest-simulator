@@ -277,6 +277,9 @@ public:
   bool is_eprop_recurrent_node() const override;
   void update( Time const&, const long, const long ) override;
 
+  //! Get maximum number of time steps integrated between two consecutive spikes.
+  long get_eprop_isi_trace_cutoff() override;  
+
 protected:
   void init_buffers_() override;
 
@@ -331,6 +334,9 @@ private:
 
     //! Spike threshold voltage relative to the leak membrane potential (mV).
     double V_th_;
+
+    //!< Number of time steps integrated between two consecutive spikes is equal to the minimum between eprop_isi_trace_cutoff_ and the inter-spike distance.
+    long eprop_isi_trace_cutoff_;    
 
     //! Default constructor.
     Parameters_();
@@ -449,6 +455,12 @@ private:
   //! Map storing a static set of recordables.
   static RecordablesMap< eprop_iaf > recordablesMap_;
 };
+
+inline long
+eprop_iaf::get_eprop_isi_trace_cutoff()
+{
+  return P_.eprop_isi_trace_cutoff_;
+}
 
 inline size_t
 eprop_iaf::send_test_event( Node& target, size_t receptor_type, synindex, bool )

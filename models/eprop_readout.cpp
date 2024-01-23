@@ -76,6 +76,7 @@ eprop_readout::Parameters_::Parameters_()
   , loss_( "mean_squared_error" )
   , tau_m_( 10.0 )
   , V_min_( -std::numeric_limits< double >::max() )
+  , eprop_isi_trace_cutoff_( std::numeric_limits< long >::max() )  
 {
 }
 
@@ -113,6 +114,7 @@ eprop_readout::Parameters_::get( DictionaryDatum& d ) const
   def< std::string >( d, names::loss, loss_ );
   def< double >( d, names::tau_m, tau_m_ );
   def< double >( d, names::V_min, V_min_ + E_L_ );
+  def< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_);   
 }
 
 double
@@ -129,6 +131,7 @@ eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::I_e, I_e_, node );
   updateValueParam< std::string >( d, names::loss, loss_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
+  updateValueParam< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );  
 
   if ( C_m_ <= 0 )
   {
@@ -145,6 +148,11 @@ eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
     throw BadProperty( "Membrane time constant tau_m > 0 required." );
   }
 
+  if ( eprop_isi_trace_cutoff_ < 0 )
+  {
+    throw BadProperty( "Cutoff of integration of eprop trace between spikes eprop_isi_trace_cutoff ≥ 0 required." );
+  }
+  
   return delta_EL;
 }
 
@@ -384,13 +392,12 @@ eprop_readout::compute_gradient( const long t_spike,
 
   const long learning_window =
     average_gradient ? kernel().simulation_manager.get_eprop_learning_window().get_steps() : 1;
-  const long cutoff_ = 10;
 
   auto eprop_hist_it = get_eprop_history( t_previous_spike - 1 );
 
   bool pre = true;
 
-  while ( t < std::min( t_spike, t_previous_spike + cutoff_ ) )
+  while ( t < std::min( t_spike, t_previous_spike + P_.eprop_isi_trace_cutoff_ ) )
   {
     if ( pre )
     {

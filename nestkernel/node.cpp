@@ -236,7 +236,13 @@ Node::write_update_to_history( const long t_previous_update, const long t_curren
 
 
 void
-Node::write_update_to_history( const long t_previous_update, const long t_current_update, const bool clean )
+Node::write_update_to_history( const long t_previous_update, const long t_current_update, const long eprop_isi_trace_cutoff, const bool clean )
+{
+  throw IllegalConnection( "The target node is not an e-prop neuron." );
+}
+
+long
+Node::get_eprop_isi_trace_cutoff()
 {
   throw IllegalConnection( "The target node is not an e-prop neuron." );
 }

@@ -195,6 +195,9 @@ public:
   bool is_eprop_recurrent_node() const override;
   void update( Time const&, const long, const long ) override;
 
+  //! Get maximum number of time steps integrated between two consecutive spikes.
+  long get_eprop_isi_trace_cutoff() override;  
+
 protected:
   void init_buffers_() override;
 
@@ -257,7 +260,10 @@ private:
     //! Scaling of surrogate-gradient / pseudo-derivative of membrane voltage.
     double gamma_;
     //! Surrogate gradient / pseudo-derivative function ["piecewise_linear"].
-    std::string surrogate_gradient_function_;                           
+    std::string surrogate_gradient_function_;     
+
+    //!< Number of time steps integrated between two consecutive spikes is equal to the minimum between eprop_isi_trace_cutoff_ and the inter-spike distance.
+    long eprop_isi_trace_cutoff_;                          
 
     Parameters_(); //!< Sets default parameter values
 
@@ -384,6 +390,11 @@ private:
   static RecordablesMap< eprop_iaf_psc_delta > recordablesMap_;
 };
 
+inline long
+eprop_iaf_psc_delta::get_eprop_isi_trace_cutoff()
+{
+  return P_.eprop_isi_trace_cutoff_;
+}
 
 inline size_t
 nest::eprop_iaf_psc_delta::send_test_event( Node& target, size_t receptor_type, synindex, bool )

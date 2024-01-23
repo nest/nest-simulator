@@ -202,6 +202,7 @@ extern const Name elements;
 extern const Name elementsize;
 extern const Name ellipsoidal;
 extern const Name elliptical;
+extern const Name eprop_isi_trace_cutoff;
 extern const Name eprop_learning_window;
 extern const Name eprop_reset_neurons_on_update;
 extern const Name eprop_update_interval;

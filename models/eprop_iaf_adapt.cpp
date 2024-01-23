@@ -84,6 +84,7 @@ eprop_iaf_adapt::Parameters_::Parameters_()
   , tau_m_( 10.0 )
   , V_min_( -std::numeric_limits< double >::max() )
   , V_th_( -55.0 - E_L_ )
+  , eprop_isi_trace_cutoff_( std::numeric_limits< long >::max() )  
 {
 }
 
@@ -131,6 +132,7 @@ eprop_iaf_adapt::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_m, tau_m_ );
   def< double >( d, names::V_min, V_min_ + E_L_ );
   def< double >( d, names::V_th, V_th_ + E_L_ );
+  def< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_);   
 }
 
 double
@@ -160,6 +162,7 @@ eprop_iaf_adapt::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_, node );
   updateValueParam< double >( d, names::t_ref, t_ref_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
+  updateValueParam< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );    
 
   if ( adapt_beta_ < 0 )
   {
@@ -223,6 +226,11 @@ eprop_iaf_adapt::Parameters_::set( const DictionaryDatum& d, Node* node )
   if ( V_th_ < V_min_ )
   {
     throw BadProperty( "Spike threshold voltage V_th ≥ minimal voltage V_min required." );
+  }
+
+  if ( eprop_isi_trace_cutoff_ < 0 )
+  {
+    throw BadProperty( "Cutoff of integration of eprop trace between spikes eprop_isi_trace_cutoff ≥ 0 required." );
   }
 
   return delta_EL;
@@ -461,13 +469,12 @@ eprop_iaf_adapt::compute_gradient( const long t_spike,
 
   const long learning_window =
     average_gradient ? kernel().simulation_manager.get_eprop_learning_window().get_steps() : 1;
-  const long cutoff_ = 10;
 
   auto eprop_hist_it = get_eprop_history( t_previous_spike - 1 );
 
   bool pre = true;
 
-  while ( t < std::min( t_spike, t_previous_spike + cutoff_ ) )
+  while ( t < std::min( t_spike, t_previous_spike + P_.eprop_isi_trace_cutoff_ ) )
   {
     if ( pre )
     {

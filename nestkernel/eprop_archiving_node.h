@@ -61,6 +61,7 @@ public:
   //! Register current update in the update history and deregister previous update.
   void write_update_to_history( const long t_previous_update,
     const long t_current_update,
+    const long eprop_isi_trace_cutoff = 0,
     const bool erase = false ) override;
 
   //! Get the number of time steps by which the eprop history is shifted to synchronize its factors.
@@ -78,7 +79,7 @@ public:
 
   //! Erase update intervals from the e-prop history in which each synapse has either not transmitted a spike or has
   //! transmitted a spike in a more recent update interval.
-  void erase_used_eprop_history();
+  void erase_used_eprop_history(const long eprop_isi_trace_cutoff = 0);
 
 protected:
   //!< Number of incoming eprop synapses

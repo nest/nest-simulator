@@ -9,20 +9,18 @@ Models module
 
 
 
+.. admonition:: Deprecated function
 
-.. autofunction:: Models(mtype="all", sel=None)
+    ``ConnectionRules`` deprecated since 3.3.
 
-
-   .. admonition:: Deprecated function
-
-      Deprecated since 3.3.
-
-      Use :py:obj:`~.NestModule.node_models` or :py:obj:`~.NestModule.synapse_models` instead.
+    Use :py:obj:`~.NestModule.connection_rules` instead.
 
 .. autofunction:: ConnectionRules
 
-   .. admonition:: Deprecated function
+.. admonition:: Deprecated function
 
-      Deprecated since 3.3.
+     ``Models`` deprecated since 3.3.
 
-      Use :py:obj:`~.NestModule.connection_rules` instead.
+     Use :py:obj:`~.NestModule.node_models` or :py:obj:`~.NestModule.synapse_models` instead.
+
+.. autofunction:: Models(mtype="all", sel=None)

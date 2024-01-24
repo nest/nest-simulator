@@ -571,6 +571,8 @@ nest::iaf_wang_2002_exact::handle( SpikeEvent& e )
     // rport starts at 1, so subtract one to get correct index
     B_.spikes_[ rport - 1 ].add_value( steps, e.get_multiplicity() );
 
+    // we need to scale each individual S_j variable by its weight,
+    // so we keep track of the weight.
     const size_t w_idx = rport - NMDA;
     if ( B_.weights_[ w_idx ] == 0.0 )
     {
@@ -578,7 +580,6 @@ nest::iaf_wang_2002_exact::handle( SpikeEvent& e )
     }
     else if ( B_.weights_[ w_idx ] != e.get_weight() )
     {
-      // Why??
       throw KernelException( "iaf_wang_2002_exact requires constant weights." );
     }
   }

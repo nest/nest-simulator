@@ -391,23 +391,13 @@ nest::iaf_wang_2002::pre_run_hook()
   // since t_ref_ >= 0, this can only fail in error
   assert( V_.RefractoryCounts_ >= 0 );
 
-  // compute S_NMDA jump height variables
-  const double f1_old = exp(-P_.alpha * P_.tau_rise_NMDA * (1 - exp(-P_.approx_t_exact / P_.tau_rise_NMDA)));
-  const double f2_old = -(1 - exp(P_.alpha * P_.tau_rise_NMDA * (1 - exp(-P_.approx_t_exact / P_.tau_rise_NMDA))));
-
   // helper vars
   const double at = P_.alpha * P_.tau_rise_NMDA;
   const double tau_rise_tau_dec = P_.tau_rise_NMDA / P_.tau_decay_NMDA;
-  const double exp_at = exp(-P_.alpha * P_.tau_rise_NMDA);
 
-  const double f2 = -boost::math::expint(tau_rise_tau_dec, at) * at 
+  V_.S_jump_1 = exp(-P_.alpha * P_.tau_rise_NMDA);
+  V_.S_jump_0 = -boost::math::expint(tau_rise_tau_dec, at) * at 
                       + pow(at, tau_rise_tau_dec) * boost::math::tgamma(1 - tau_rise_tau_dec);
-
-  const double f1 = exp_at;       
-
-  V_.S_jump_0 = f2;
-  V_.S_jump_1 = f1;
-
 }
 
 void
@@ -464,7 +454,6 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
     // add incoming spikes
     S_.y_[ State_::s_AMPA ] += B_.spikes_[ AMPA - 1 ].get_value( lag );
     S_.y_[ State_::s_GABA ] += B_.spikes_[ GABA - 1 ].get_value( lag );
-
     S_.y_[ State_::s_NMDA ] += B_.spikes_[ NMDA - 1 ].get_value( lag );
 
     if ( S_.r_ )

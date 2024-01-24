@@ -18,7 +18,7 @@
     --nest-orange: #ff6633;
     --nest-blue: #0E6A93;
     --nest-dkblue: #072f42;
-    --nest-brown: #4b210c; /*formally green */
+    --nest-brown: #4b210c;
     --sd-color-primary: var(--nest-orange);
     --sd-color-success: var(--nest-brown);
     --sd-color-dark: var(--nest-dkblue);
@@ -32,17 +32,11 @@ body{
 	background:#fff;
 	color:#666;
 	font-family: 'Droid Sans', Arial, Helvetica, sans-serif;
-	/*font-size: medium;
-	line-height:1.5em;
-	font-weight:normal;*/
 }
+
 h1, h2, h3, h4, h5, h6{
-  /*font-size: 1.5em;*/
 	font-weight:600;
 	font-family: 'Open Sans', Arial, Helvetica, sans-serif;
-	/*line-height:1.5em;
-	margin:.45em 0;
-	padding:0;*/
 }
 
 /* Box sizing. Awesome thing. Read about it here: http://www.w3schools.com/cssref/css3_pr_box-sizing.asp */
@@ -113,11 +107,7 @@ rect.basic.label-container {
 	stroke: #ff6633;
 	stroke-width: 1px;
 }
-/*
-section#conceptual-approach foreignObject{
- width: 200px;
-}
-*/
+
 figure.align-default {
 	text-align: center;
 }
@@ -203,7 +193,6 @@ div[role="main"] .md-source {
 .md-typeset .sd-card-title img, .md-typeset .sd-card-header img{
   border: none;
   opacity: 0.9;
-  /*width: 64px;*/
   height: 60px;
   margin-right: 2em;
   margin-bottom: 0.5em;
@@ -390,11 +379,6 @@ header{
 .flexslider{
 	display:none;
 }
-/*#content,
-aside,
-.vertical-padding{
-	padding:40px 0;
-}*/
 
 p{ margin:0 0 1.5em;}
 

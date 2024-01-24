@@ -45,7 +45,7 @@ __all__ = [
 @check_stack
 @deprecated("nest.node_models or nest.synapse_models")
 def Models(mtype="all", sel=None):
-    """Return a tuple of neuron, device, or synapse model names.
+    r"""Return a tuple of neuron, device, or synapse model names.
 
     Parameters
     ----------

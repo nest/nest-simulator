@@ -124,7 +124,7 @@ steps.update(
         "delay_in_rec": 1,  # connection delay between input and recurrent neurons
         "delay_rec_out": 0,  # connection delay between recurrent and output neurons
         "delay_out_norm": 0,  # connection delay between output neurons for normalization
-        "extension_sim": 1+2,  # extra time step to close right-open simulation time interval in Simulate()
+        "extension_sim": 1 + 2,  # extra time step to close right-open simulation time interval in Simulate()
     }
 )
 
@@ -170,11 +170,11 @@ n_rec = 100  # number of recurrent neurons
 n_out = 1  # number of readout neurons
 
 params_nrn_rec = {
-    "beta_fr_ema": 0.999, # Smoothing factor of firing rate exponential moving average
+    "beta_fr_ema": 0.999,  # Smoothing factor of firing rate exponential moving average
     "C_m": 1.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
     "c_reg": 300.0 / duration["sequence"],  # firing rate regularization scaling
     "E_L": 0.0,  # mV, leak reversal potential
-    "eprop_isi_trace_cutoff": 10, # cutoff of integration of eprop trace between spikes
+    "eprop_isi_trace_cutoff": 10,  # cutoff of integration of eprop trace between spikes
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
     "gamma": 0.3,  # scaling of the pseudo derivative
     "I_e": 0.0,  # pA, external current input
@@ -337,7 +337,7 @@ input_spike_prob = 0.05  # spike probability of frozen input noise
 dtype_in_spks = np.float32  # data type of input spikes - for reproducing TF results set to np.float32
 
 input_spike_bools = (np.random.rand(steps["sequence"], n_in) < input_spike_prob).swapaxes(0, 1)
-#input_spike_bools[:, 0] = 0  # remove spikes in 0th time step of every sequence for technical reasons
+# input_spike_bools[:, 0] = 0  # remove spikes in 0th time step of every sequence for technical reasons
 
 sequence_starts = np.arange(0.0, duration["task"], duration["sequence"]) + duration["offset_gen"]
 params_gen_spk_in = []
@@ -395,7 +395,7 @@ nest.SetStatus(gen_rate_target, params_gen_rate_target)
 # the last update interval, by sending a strong spike to all neurons that form the presynaptic side of an eprop
 # synapse. This step is required purely for technical reasons.
 
-gen_spk_final_update = nest.Create("spike_generator", 1, {"spike_times": [duration["task"] + duration["delays"] + 2 ]})
+gen_spk_final_update = nest.Create("spike_generator", 1, {"spike_times": [duration["task"] + duration["delays"] + 2]})
 
 nest.Connect(gen_spk_final_update, nrns_in + nrns_rec, "all_to_all", {"weight": 1000.0})
 

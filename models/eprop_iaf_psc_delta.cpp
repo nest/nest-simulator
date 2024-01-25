@@ -85,8 +85,8 @@ nest::eprop_iaf_psc_delta::Parameters_::Parameters_()
   , f_target_( 0.01 )
   , gamma_( 0.3 )
   , surrogate_gradient_function_( "piecewise_linear" )
-  , beta_fr_ema_( 0.0 )  
-  , eprop_isi_trace_cutoff_( std::numeric_limits< long >::max() )  
+  , beta_fr_ema_( 0.0 )
+  , eprop_isi_trace_cutoff_( std::numeric_limits< long >::max() )
 {
 }
 
@@ -121,8 +121,8 @@ nest::eprop_iaf_psc_delta::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::f_target, f_target_ );
   def< double >( d, names::gamma, gamma_ );
   def< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_ );
-  def< double >( d, names::beta_fr_ema, beta_fr_ema_ );    
-  def< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_);    
+  def< double >( d, names::beta_fr_ema, beta_fr_ema_ );
+  def< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
 }
 
 double
@@ -172,8 +172,8 @@ nest::eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* nod
   }
   updateValueParam< double >( d, names::gamma, gamma_, node );
   updateValueParam< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_, node );
-  updateValueParam< double >( d, names::beta_fr_ema, beta_fr_ema_, node );  
-  updateValueParam< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );  
+  updateValueParam< double >( d, names::beta_fr_ema, beta_fr_ema_, node );
+  updateValueParam< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
 
   if ( V_reset_ >= V_th_ )
   {
@@ -217,14 +217,15 @@ nest::eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* nod
 
   if ( beta_fr_ema_ < 0 or 1 <= beta_fr_ema_ )
   {
-    throw BadProperty( "Smoothing factor of firing rate exponential moving average beta_fr_ema_ from interval [0,1) required." );
-  }    
+    throw BadProperty(
+      "Smoothing factor of firing rate exponential moving average beta_fr_ema_ from interval [0,1) required." );
+  }
 
   if ( eprop_isi_trace_cutoff_ < 0 )
   {
     throw BadProperty( "Cutoff of integration of eprop trace between spikes eprop_isi_trace_cutoff ≥ 0 required." );
   }
-    
+
   return delta_EL;
 }
 
@@ -480,7 +481,7 @@ eprop_iaf_psc_delta::compute_gradient( const long t_spike,
   double& previous_z_buffer,
   double& z_bar,
   double& e_bar,
-  double& epsilon,   
+  double& epsilon,
   double& avg_e,
   double& grad,
   const double kappa,

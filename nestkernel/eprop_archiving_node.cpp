@@ -113,7 +113,7 @@ EpropArchivingNodeRecurrent::write_firing_rate_reg_to_history( const long t,
   const long interval_step,
   const double z,
   const double f_target,
-  const double beta_fr_ema,  
+  const double beta_fr_ema,
   const double c_reg )
 {
   if ( eprop_indegree_ == 0 )

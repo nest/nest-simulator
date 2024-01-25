@@ -85,7 +85,7 @@ eprop_iaf_adapt::Parameters_::Parameters_()
   , V_min_( -std::numeric_limits< double >::max() )
   , V_th_( -55.0 - E_L_ )
   , beta_fr_ema_( 0.0 )
-  , eprop_isi_trace_cutoff_( std::numeric_limits< long >::max() )  
+  , eprop_isi_trace_cutoff_( std::numeric_limits< long >::max() )
 {
 }
 
@@ -133,8 +133,8 @@ eprop_iaf_adapt::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_m, tau_m_ );
   def< double >( d, names::V_min, V_min_ + E_L_ );
   def< double >( d, names::V_th, V_th_ + E_L_ );
-  def< double >( d, names::beta_fr_ema, beta_fr_ema_ );    
-  def< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_);   
+  def< double >( d, names::beta_fr_ema, beta_fr_ema_ );
+  def< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
 }
 
 double
@@ -164,8 +164,8 @@ eprop_iaf_adapt::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_, node );
   updateValueParam< double >( d, names::t_ref, t_ref_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
-  updateValueParam< double >( d, names::beta_fr_ema, beta_fr_ema_, node );    
-  updateValueParam< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );    
+  updateValueParam< double >( d, names::beta_fr_ema, beta_fr_ema_, node );
+  updateValueParam< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
 
   if ( adapt_beta_ < 0 )
   {
@@ -233,8 +233,9 @@ eprop_iaf_adapt::Parameters_::set( const DictionaryDatum& d, Node* node )
 
   if ( beta_fr_ema_ < 0 or 1 <= beta_fr_ema_ )
   {
-    throw BadProperty( "Smoothing factor of firing rate exponential moving average beta_fr_ema_ from interval [0,1) required." );
-  }  
+    throw BadProperty(
+      "Smoothing factor of firing rate exponential moving average beta_fr_ema_ from interval [0,1) required." );
+  }
 
   if ( eprop_isi_trace_cutoff_ < 0 )
   {
@@ -462,7 +463,7 @@ eprop_iaf_adapt::compute_gradient( const long t_spike,
   double& previous_z_buffer,
   double& z_bar,
   double& e_bar,
-  double& epsilon,     
+  double& epsilon,
   double& avg_e,
   double& grad,
   const double kappa,

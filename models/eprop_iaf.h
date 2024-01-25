@@ -267,7 +267,7 @@ public:
     double& previous_z_buffer,
     double& z_bar,
     double& e_bar,
-    double& epsilon,     
+    double& epsilon,
     double& avg_e,
     double& grad,
     const double kappa,
@@ -278,7 +278,7 @@ public:
   void update( Time const&, const long, const long ) override;
 
   //! Get maximum number of time steps integrated between two consecutive spikes.
-  long get_eprop_isi_trace_cutoff() override;  
+  long get_eprop_isi_trace_cutoff() override;
 
 protected:
   void init_buffers_() override;
@@ -338,7 +338,8 @@ private:
     //! Smoothing factor of firing rate exponential moving average.
     double beta_fr_ema_;
 
-    //!< Number of time steps integrated between two consecutive spikes is equal to the minimum between eprop_isi_trace_cutoff_ and the inter-spike distance.
+    //!< Number of time steps integrated between two consecutive spikes is equal to the minimum between
+    //!< eprop_isi_trace_cutoff_ and the inter-spike distance.
     long eprop_isi_trace_cutoff_;
 
     //! Default constructor.

@@ -76,7 +76,7 @@ eprop_readout::Parameters_::Parameters_()
   , loss_( "mean_squared_error" )
   , tau_m_( 10.0 )
   , V_min_( -std::numeric_limits< double >::max() )
-  , eprop_isi_trace_cutoff_( std::numeric_limits< long >::max() )  
+  , eprop_isi_trace_cutoff_( std::numeric_limits< long >::max() )
 {
 }
 
@@ -114,7 +114,7 @@ eprop_readout::Parameters_::get( DictionaryDatum& d ) const
   def< std::string >( d, names::loss, loss_ );
   def< double >( d, names::tau_m, tau_m_ );
   def< double >( d, names::V_min, V_min_ + E_L_ );
-  def< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_);   
+  def< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
 }
 
 double
@@ -131,7 +131,7 @@ eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::I_e, I_e_, node );
   updateValueParam< std::string >( d, names::loss, loss_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
-  updateValueParam< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );  
+  updateValueParam< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
 
   if ( C_m_ <= 0 )
   {
@@ -152,7 +152,7 @@ eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Cutoff of integration of eprop trace between spikes eprop_isi_trace_cutoff ≥ 0 required." );
   }
-  
+
   return delta_EL;
 }
 
@@ -381,7 +381,7 @@ eprop_readout::compute_gradient( const long t_spike,
   double& previous_z_buffer,
   double& z_bar,
   double& e_bar,
-  double& epsilon, 
+  double& epsilon,
   double& avg_e,
   double& grad,
   const double kappa,

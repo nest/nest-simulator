@@ -506,7 +506,10 @@ public:
    *
    * @throws IllegalConnection
    */
-  virtual void write_update_to_history( const long t_previous_update, const long t_current_update, const long eprop_isi_trace_cutoff, const bool clean );
+  virtual void write_update_to_history( const long t_previous_update,
+    const long t_current_update,
+    const long eprop_isi_trace_cutoff,
+    const bool clean );
 
   /**
    * Register current update in the update history and deregister previous update.
@@ -829,7 +832,7 @@ public:
     double& previous_z_buffer,
     double& z_bar,
     double& e_bar,
-    double& epsilon,    
+    double& epsilon,
     double& avg_e,
     double& grad,
     const double kappa,

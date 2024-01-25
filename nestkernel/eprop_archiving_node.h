@@ -79,7 +79,7 @@ public:
 
   //! Erase update intervals from the e-prop history in which each synapse has either not transmitted a spike or has
   //! transmitted a spike in a more recent update interval.
-  void erase_used_eprop_history(const long eprop_isi_trace_cutoff = 0);
+  void erase_used_eprop_history( const long eprop_isi_trace_cutoff = 0 );
 
 protected:
   //!< Number of incoming eprop synapses
@@ -138,7 +138,7 @@ public:
     const long interval_step,
     const double z,
     const double f_target,
-    const double beta_fr_ema,    
+    const double beta_fr_ema,
     const double c_reg );
 
   //! Get an iterator pointing to the firing rate regularization history of the given time step.

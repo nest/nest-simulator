@@ -1,35 +1,5 @@
-Using ``ignore_and_fire`` neuron for scaling experiments
+Scaling experiments using the ``ignore_and_fire`` neuron
 ========================================================
-
-File structure
----------------
-
-
-- :doc:`/auto_examples/ignore_and_fire/model`: an example script using :doc:`ignore_and_fire </models/ignore_and_fire>`
-
-- :doc:`Parameter dictionary </auto_examples/ignore_and_fire/parameter_dicts>`
-
-- :doc:`Simulation details </auto_examples/ignore_and_fire/simulation_details>`
-
-
-- :doc:`Detailed network model description and
-  parameters </auto_examples/ignore_and_fire/ModelDescription_TwoPopulationNetworkPlastic>`
-
-
-- :doc:`Run scaling experiments and generate scaling
-  figure </auto_examples/ignore_and_fire/scaling>`
-
-- :doc:`Run network simulations to produce spike and synaptic-weight
-  data shown in figures below </auto_examples/ignore_and_fire/generate_reference_data>`
-
-- :doc:`Generate figure below showing spiking activity and synaptic weight
-  distributions </auto_examples/ignore_and_fire/generate_reference_figures>`
-
-
-Citing this code
-----------------
-
-If you use this code, we ask you to cite the paper by ??? and the NEST release on Zenodo.
 
 
 (Non-) Scalability of recurrent neuronal networks
@@ -70,11 +40,7 @@ connections between excitatory neurons. The weight dynamics are
 described by the spike-timing-dependent plasticity (STDP) model derived
 by Morrison et al. ( [7]_). The model provides a mechanism underlying the
 formation of broad distributions of synaptic weights in combination with
-asynchronous irregular spiking activity (see figure below). A detailed
-description of the network model and parameters are provided
-`here </ModelDescription_TwoPopulationNetworkPlastic.pdf>`__.
-Implementation details can be found
-`here <PyNEST/README_TwoPopulationNetworkPlastic_PyNEST.md>`__.
+asynchronous irregular spiking activity (see figure below).
 
 A variant of this model, the
 :doc:`hpc_benchmark </auto_examples/hpc_benchmark>`
@@ -93,13 +59,20 @@ of the weight distribution (see figure below). Synaptic weights thereby
 become a sensitive target metric for verification and validation
 studies.
 
+.. seealso::
+
+    * :doc:`Detailed description of the network model and parameters <ModelDescription_TwoPopulationNetworkPlastic>`
+    * :doc:`Implementation details for the NEST simulation <simulation_details>`.
+    * :doc:`model.py </auto_examples/ignore_and_fire/model>`: network definition and :doc:`parameter_dicts.py <parameter_dicts>`: parameter dictionary
+    * :doc:`ignore_and_fire </models/ignore_and_fire>` neuron model documentation
+
+
 Comparison between the networks with ``integrate-and-fire`` and ``ignore-and-fire`` dynamics
 --------------------------------------------------------------------------------------------
 
 The model employed here can be configured into a truly scalable mode by
 replacing the integrate-and-fire neurons by an ``ignore_and_fire``
-dynamics (for details, see
-`here <PyNEST/README_TwoPopulationNetworkPlastic_PyNEST.md>`__). By
+dynamics. By
 doing so, the spike generation dynamics is decoupled from the input
 integration and the plasticity dynamics; the overall network activity,
 and, hence, the communication load, is fully controlled by the user. The
@@ -125,6 +98,15 @@ Spiking activity (top) and synaptic weight distributions (bottom) of
 the network with integrate-and-fire (``iaf_psc_alpha_nest``) and
 ignore-and-fire dynamics (``ignore_and_fire``). Scaling experiments
 
+
+.. admonition:: Run script
+
+  To recreate the above figures:
+
+  * :doc:`generate_reference_data.py </auto_examples/ignore_and_fire/generate_reference_data>`: Run network simulations to produce spike and synapstic weight data
+  * :doc:`generate_reference_figures.py </auto_examples/ignore_and_fire/generate_reference_figures>`: Generate figures for spiking activity and synaptic weigh distributions
+
+Scaling experiments
 -------------------
 
 The ``ignore_and_fire`` variant of the model permits exact scaling
@@ -140,6 +122,12 @@ network size (see figure below).
    network size :math:`N` for the\ ``integrate-and-fire`` (black) and the
    ``ignore-and-fire`` variant of the network model (gray). The in-degree
    :math:`K=1250` is fixed.
+
+.. admonition:: Run script
+
+  * :doc:`scaling.py </auto_examples/ignore_and_fire/scaling>`: Run scaling experiments and generate scaling figure
+
+
 
 
 References

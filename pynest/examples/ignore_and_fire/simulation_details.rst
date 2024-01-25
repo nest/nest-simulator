@@ -4,9 +4,8 @@ Two population STDP network model simulation
 Simulation details
 ------------------
 
-By default, this implementation is based on the
-:doc:`iaf_psc_alpha </models/iaf_psc_alpha>`
-neuron and the
+By default, this implementation is based on the LIF neuron,
+:doc:`iaf_psc_alpha </models/iaf_psc_alpha>` and the
 :doc:`stdp_pl_synapse_hom  </models/stdp_pl_synapse_hom>`
 synapse models provided in NEST. With
 ``pars['neuron_model']='ignore_and_fire'``, the model is configured into

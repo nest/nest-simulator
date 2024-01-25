@@ -110,14 +110,12 @@ EpropArchivingNodeRecurrent::get_learning_signal_from_history( const long time_s
   const long shift = delay_rec_out_ + delay_out_norm_ + delay_out_rec_;
 
   const auto it = get_eprop_history( time_step - shift );
-  if ( it != eprop_history_.end() )
-  {
-    return it->learning_signal_;
-  }
-  else
+  if ( it == eprop_history_.end() )
   {
     return 0;
   }
+
+  return it->learning_signal_;
 }
 
 void

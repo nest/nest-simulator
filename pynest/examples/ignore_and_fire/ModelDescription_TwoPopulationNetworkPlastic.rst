@@ -21,9 +21,11 @@ Summary of network model
    * - **Input**
      - stationary, uncorrelated Poissonian spike trains
 
-.. figure:: NetworkSketch_TwoPopulationNetworkPlastic.fodg
+   * -
+     - .. figure:: NetworkSketch_TwoPopulationNetworkPlastic_converted.svg
 
-   For legend see https://doi.org/10.1371/journal.pcbi.1010086.g008
+           Network sketch. For legend see `Fig. 8  <https://doi.org/10.1371/journal.pcbi.1010086.g008>`_
+           in Senk et al. [1]_.
 
 Detailed desciption of network model
 ------------------------------------
@@ -278,7 +280,7 @@ Synapse: plasticity
 .. list-table::
 
    * - **Spike-timing dependent plasticity (STDP) with power-law weight dependence and all-to-all spike pairing scheme.**
-       See Morrison et al. [1]_ for connections between excitatory neurons.
+       See Morrison et al. [2]_ for connections between excitatory neurons.
 
 
      - Dynamics of synaptic weights :math:`J_{ij}(t)` :math:`\forall{}i\in\mathcal{E}, j\in\mathcal{E}`:
@@ -581,6 +583,10 @@ Initial conditions parameters
       +---------------------------------------+------------------------+----------------------+
 
 
-.. [1] Morrison A. Aertsen, A. and Diesmann M. 2007.
+.. [1] Senk J, Kriener B, Djurfeldt M, Voges N, Jiang H-J, Schüttler L, et al. 2022.
+       Connectivity concepts in neuronal network modeling. PLoS Comput Biol 18(9): e1010086.
+       https://doi.org/10.1371/journal.pcbi.1010086
+
+.. [2] Morrison A. Aertsen, A. and Diesmann M. 2007.
        Spike-timing-dependent plasticity in balanced random networks.
        Neural Computation. 19(6):1437–1467.

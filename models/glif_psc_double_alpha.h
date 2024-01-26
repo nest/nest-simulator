@@ -56,7 +56,7 @@ The relative peak current of the slow component is given as ``amp_slow``, at
 .. math::
 
     I_\text{syn} = \text{alpha_function} \left( \tau_\text{syn} = \tau_\text{syn, fast} \right) + \text{amp_slow} \cdot
-\text{alpha_function} \left( \tau_\text{syn} = \tau_\text{syn, slow} \right).
+    \text{alpha_function} \left( \tau_\text{syn} = \tau_\text{syn, slow} \right).
 
 Therefore if ``amp_slow`` is not 0, the peak current of the total synaptic current is larger
 than the specified weight. By default, ``glif_psc_double_alpha`` has a single synapse that

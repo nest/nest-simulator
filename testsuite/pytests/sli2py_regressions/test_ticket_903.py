@@ -24,7 +24,6 @@
 
 import nest
 import numpy as np
-import pytest
 import scipy.stats
 
 
@@ -46,4 +45,4 @@ def test_correct_rounding_distributions():
     delays = nest.GetConnections().delay
 
     assert set(delays) == {1, 2}
-    assert scipy.stats.binom_test(sum(np.array(delays) == 2.0), indegree) > significance
+    assert scipy.stats.binomtest(sum(np.array(delays) == 2.0), indegree).pvalue > significance

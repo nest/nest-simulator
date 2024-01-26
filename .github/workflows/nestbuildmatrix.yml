@@ -385,7 +385,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Run black..."
-        uses: psf/black@d9ad09a32b0e0481bb4fef548d35b7a49cc03c5d  # 23.12.0
+        uses: psf/black@0e6e46b9eb45f5a22062fe84c2c2ff46bd0d738e  # 24.1.0
         with:
           jupyter: true
 

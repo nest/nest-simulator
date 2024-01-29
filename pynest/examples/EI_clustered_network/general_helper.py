@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """PyNEST EI-clustered network: general helper functions
--------------------------------------------
+--------------------------------------------------------
 
 Helper functions for merging dictionaries and some plotting functions.
 """

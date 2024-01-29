@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """PyNEST EI-clustered network: Helper Functions
--------------------------------------------
+------------------------------------------------
 
 Helper functions to calculate synaptic weights and first passage times for exponential synapses to construct
 random balanced networks.

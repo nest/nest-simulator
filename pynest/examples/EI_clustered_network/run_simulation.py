@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """PyNEST EI-clustered network: Run Simulation
-----------------------------------------
+-----------------------------------------------
 
 This is an example script for running the EI-clustered model with two stimulations
 and generating a raster plot.

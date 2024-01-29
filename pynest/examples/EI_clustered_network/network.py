@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """PyNEST EI-clustered network: Network Class
-----------------------------------------
+----------------------------------------------
 
 Main file of the EI-clustered network defining the ``ClusteredNetwork`` class with functions to
 build and simulate the network.

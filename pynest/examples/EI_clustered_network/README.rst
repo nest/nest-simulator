@@ -3,8 +3,7 @@ EI-clustered circuit model
 
 This is PyNEST implementation of the EI-clustered circuit model described by Rostami et al. [1]_.
 
-.. figure:: Network_Schematic.png
-   :scale: 50 %
+.. figure:: /static/img/pynest/EI_clustered_network_schematic.png
    :alt: EI-clustered circuit model
 
    Schematic of the EI-clustered circuit model. The network consists of Q clusters with one excitatory and one inhibitory population each.
@@ -16,11 +15,12 @@ If you use this code, we ask you to cite the paper by Rostami et al. [1]_ and th
 
 File structure
 --------------
-* `run_simulation.py`: an example script to try out the EI-clustered circuit model
-* `network.py`: the main Network class with functions to build and simulate the network
-* `helper.py`: helper functions for calculation of synaptic weights and currents
-* `general_helper.py`: helper functions to merge dictionaries and plot function for raster plots
-* `default_parameters.py`: default parameters for the network and simulation
+
+* :doc:`run_simulation.py <run_simulation>`: an example script to try out the EI-clustered circuit model
+* :doc:`network.py <network>`: the main Network class with functions to build and simulate the network
+* :doc:`helper.py <helper>`: helper functions for calculation of synaptic weights and currents
+* :doc:`general_helper.py <general_helper>`: helper functions to merge dictionaries and plot function for raster plots
+* :doc:`default_parameters.py <default_parameters>`: default parameters for the network and simulation
 
 Running the simulation
 ----------------------
@@ -64,4 +64,3 @@ References
 .. [2]  Schmitt FJ, Rostami V and Nawrot MP. 2023.
         Efficient parameter calibration and real-time simulation of large-scale spiking neural networks with GeNN
         and NEST. Front. Neuroinform. 17:941696. DOI: `10.3389/fninf.2023.941696 <https://doi.org/10.3389/fninf.2023.941696>`__.
-

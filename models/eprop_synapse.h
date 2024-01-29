@@ -506,13 +506,10 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
       e_bar_,
       epsilon_,
       avg_e_,
-      grad_,
+      weight_,
       kappa_,
       cp.average_gradient_ );
     t_begin = t_previous_spike_;
-
-    weight_ -= 5e-3 * grad_;
-    grad_ = 0.0;
   }
 
   const long eprop_isi_trace_cutoff = target->get_eprop_isi_trace_cutoff();

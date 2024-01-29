@@ -834,7 +834,7 @@ public:
     double& e_bar,
     double& epsilon,
     double& avg_e,
-    double& grad,
+    double& weight,
     const double kappa,
     const bool average_gradient );
 

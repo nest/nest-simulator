@@ -269,7 +269,7 @@ public:
     double& e_bar,
     double& epsilon,
     double& avg_e,
-    double& grad,
+    double& weight,
     const double kappa,
     const bool average_gradient ) override;
 
@@ -341,6 +341,9 @@ private:
     //!< Number of time steps integrated between two consecutive spikes is equal to the minimum between
     //!< eprop_isi_trace_cutoff_ and the inter-spike distance.
     long eprop_isi_trace_cutoff_;
+
+    //! Learning rate.
+    double eta_; 
 
     //! Default constructor.
     Parameters_();

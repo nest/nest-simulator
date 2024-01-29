@@ -109,7 +109,7 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # The task's temporal structure is then defined, once as time steps and once as durations in milliseconds.
 
 n_batch = 1  # batch size, 1 in reference [2]
-n_iter = 5  # number of iterations, 2000 in reference [2]
+n_iter = 20  # number of iterations, 2000 in reference [2]
 
 steps = {
     "sequence": 1000,  # time steps of one full sequence
@@ -184,6 +184,7 @@ params_nrn_rec = {
     "tau_m": 30.0,  # ms, membrane time constant
     "V_m": 0.0,  # mV, initial value of the membrane voltage
     "V_th": 0.03,  # mV, spike threshold membrane voltage
+    "eta": 5e-3, # learning rate
 }
 
 params_nrn_out = {
@@ -194,6 +195,7 @@ params_nrn_out = {
     "loss": "mean_squared_error",  # loss function
     "tau_m": 30.0,
     "V_m": 0.0,
+    "eta": 5e-3, # learning rate
 }
 
 ####################

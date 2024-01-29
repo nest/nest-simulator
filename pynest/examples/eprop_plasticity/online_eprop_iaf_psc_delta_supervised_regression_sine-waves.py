@@ -184,6 +184,7 @@ params_nrn_rec = {
     "tau_m": 30.0,  # ms, membrane time constant
     "V_m": 0.0,  # mV, initial value of the membrane voltage
     "V_th": 0.0001,  # mV, spike threshold membrane voltage
+    "eta": 5e-3, # learning rate
 }
 
 params_nrn_out = {
@@ -194,6 +195,7 @@ params_nrn_out = {
     "loss": "mean_squared_error",  # loss function
     "tau_m": 30.0,
     "V_m": 0.0,
+    "eta": 5e-3, # learning rate
 }
 
 ####################

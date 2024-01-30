@@ -207,7 +207,7 @@ def ResetKernel():
 def SetKernelStatus(params):
     """Set parameters for the simulation kernel.
 
-    See the documentation of :ref:`sec:kernel_attributes` for a valid
+    See the documentation of :ref:`sec_kernel_attributes` for a valid
     list of params.
 
     Parameters

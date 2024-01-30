@@ -21,8 +21,8 @@
 
 """
 Current-based generalized leaky integrate and fire (GLIF) neuron with double alpha \
-synaptic function example
-------------------------------------------------------------------------
+synaptic function
+-------------------------------------------------------------------------------------------------------------
 
 Simple example of how to use the ``glif_psc_double_alpha`` neuron model that illustrates
 differences from the ``glif_psc`` neuron model.

@@ -40,7 +40,7 @@ nrn3 = nest.Create("iaf_wang_2002_exact", params_exact)
 
 mm1 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_NMDA", "s_GABA"], "interval": 0.1})
 mm2 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_NMDA", "s_GABA"], "interval": 0.1})
-mm3 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "NMDA_sum", "s_GABA"], "interval": 0.1})
+mm3 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_NMDA", "s_GABA"], "interval": 0.1})
 
 ampa_ext_syn_spec = {"synapse_model": "static_synapse",
                      "weight": w_ext,
@@ -99,14 +99,10 @@ nest.Connect(mm3, nrn3)
 
 nest.Simulate(1000.)
 
-
 times = mm3.get("events", "times")
-nest_nmda = mm3.get("events", "NMDA_sum")
+nest_nmda = mm3.get("events", "s_NMDA")
 nest_nmda_approx = mm2.get("events", "s_NMDA")
 times -= times[(nest_nmda > 0).argmax()] - 0.1
-
-
-
 
 from scipy.integrate import cumtrapz
 def nmda_integrand(t, x0, tau_decay, tau_rise, alpha):
@@ -161,30 +157,32 @@ plt.plot(t, s_nmda_exp, "--", color="C2")
 
 plt.show()
 
-
-
-
 from scipy.special import expn, gamma
 def limfun(tau_rise, tau_decay, alpha):
-    f0 = np.exp(-alpha * tau_rise)
+    f1 = np.exp(-alpha * tau_rise)
 
     at = alpha * tau_rise
     tr_td = tau_rise / tau_decay
-    f1 = -at * expn(tr_td, at) + at ** tr_td * gamma(1 - tr_td)
-    
+    f0 = -at * expn(tr_td, at) + at ** tr_td * gamma(1 - tr_td)
     return f0, f1
 
 f0, f1 = limfun(2, 100, 0.5)
 
-
-
-
 plt.plot(t, s_nmda)
-plt.plot(times, nest_nmda)
-plt.plot(times, nest_nmda_approx)
-plt.plot(t, f1 * np.exp(-t / 100))
+# plt.plot(times, nest_nmda)
+# plt.plot(times, nest_nmda_approx)
+plt.plot(t, np.exp(-t / 100) * (f0 + s0 * f1))
+plt.plot(t, np.exp(-t / 100) * (s0 + 0.5 * (1 - s0)))
 
 plt.show()
 
+
+a = np.exp(-t / 100) * (f0 + s0 * f1)
+b = np.exp(-t / 100) * (s0 + 0.5 * (1 - s0))
+c = s_nmda.copy()
+
+print(np.trapz(a, x=t))
+print(np.trapz(b, x=t))
+print(np.trapz(c, x=t))
 
 

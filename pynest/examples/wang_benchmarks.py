@@ -191,14 +191,14 @@ conn5.delay = 1.0 * b2.ms
 # To excitatory neurons
 rate_E = 4000 * b2.Hz
 ext_inputE = b2.PoissonGroup(NE, rates = rate_E)
-ext_connE = b2.Synapses(ext_inputE, popE, on_pre="s_AMPA_ext += 1")
+ext_connE = b2.Synapses(ext_inputE, popE, on_pre="s_AMPA_ext += 1", method="rk4")
 ext_connE.connect(j="i")
 ext_connE.delay = 1.0 * b2.ms
 
 # To inhibitory neurons
-rate_I=4000 * b2.Hz
+rate_I= 4000 * b2.Hz
 ext_inputI= b2.PoissonGroup(NI, rates = rate_I)
-ext_connI = b2.Synapses(ext_inputI, popI, on_pre="s_AMPA_ext += 1")
+ext_connI = b2.Synapses(ext_inputI, popI, on_pre="s_AMPA_ext += 1", method="rk4")
 ext_connI.connect(j="i")
 ext_connI.delay = 1.0 * b2.ms
  

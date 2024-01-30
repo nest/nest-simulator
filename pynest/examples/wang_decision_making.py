@@ -10,7 +10,7 @@ import numpy as np
 np.random.seed(1234)
 rng = np.random.default_rng()
 
-model = "iaf_wang_2002_exact"
+model = "iaf_wang_2002"
 
 dt = 0.1
 nest.set(resolution=dt, print_time=True)
@@ -285,7 +285,6 @@ ax[0,0].set_title("Selective pop1")
 ax[0,1].set_title("Selective pop2")
 ax[0,2].set_title("Nonselective pop")
 ax[0,3].set_title("Inhibitory pop")
-
 
 
 plt.show()

@@ -51,9 +51,8 @@ Mg2 = 1.
 
 # synaptic weights
 weight_AMPA = 1.
-weight_GABA = 1.
-weight_NMDA = 1.
-
+weight_GABA = 3.
+weight_NMDA = 2.
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # Brian simulation
@@ -69,6 +68,7 @@ eqsE="""
     ds_AMPA_ext / dt = - s_AMPA_ext / tau_AMPA : 1
     #Here I don"t need the summed variable because the neuron receive inputs from only one Poisson generator. Each neuron need only one s.
 
+
     I_AMPA_rec = g_AMPA_rec * (v - E_ex) * 1 * s_AMPA_tot : amp
     s_AMPA_tot : 1  #the eqs_ampa solve many s and sum them and give the summed value here
     #Each neuron receives inputs from many neurons. Each of them has his own differential equation s_AMPA (where I have the deltas with the spikes). 
@@ -77,13 +77,14 @@ eqsE="""
     I_GABA= g_GABA * (v - E_in) * s_GABA_tot : amp
     s_GABA_tot :1
 
+
     I_NMDA  = g_NMDA * (v - E_ex) / (1 + Mg2 * exp(-0.062 * v / mV) / 3.57) * s_NMDA_tot : amp
     s_NMDA_tot : 1
 
  """
 
 eqs_ampa="""
-          s_AMPA_tot_post = w_AMPA * s_AMPA : 1 (summed)  
+          s_AMPA_tot_post= w_AMPA * s_AMPA : 1 (summed)  
           ds_AMPA / dt = - s_AMPA / tau_AMPA : 1 (clock-driven)
           w_AMPA: 1
         """
@@ -100,21 +101,19 @@ eqs_nmda="""s_NMDA_tot_post = w_NMDA * s_NMDA : 1 (summed)
             w_NMDA : 1
          """
 
-b2.defaultclock.dt = 0.01 * b2.ms
-
 nrn1 = b2.NeuronGroup(1, model=eqsE, threshold="v > V_th", reset="v = V_reset", refractory=t_ref, method="rk4")
 nrn2 = b2.NeuronGroup(1, model=eqsE, threshold="v > V_th", reset="v = V_reset", refractory=t_ref, method="rk4")
 
-nrn1[0].v[0] = V_reset
-nrn2[0].v[0] = V_reset
+nrn1[0].v[0]=V_reset
+nrn2[0].v[0]=V_reset
 
-times = np.array([10, 20, 40, 80, 90, 104, 109, 115, 185, 188, 190]) * b2.ms
+times = np.array([10, 20, 40, 80, 90]) * b2.ms
 indices = np.arange(len(times))
 spikeGen = b2.SpikeGeneratorGroup(len(times), indices, times)
 
-ext_conn1 = b2.Synapses(spikeGen, nrn1, on_pre="s_AMPA_ext += 1", method="rk4")
+ext_conn1 = b2.Synapses(spikeGen, nrn1, on_pre="s_AMPA_ext += 1")
 ext_conn1.connect()
-ext_conn1.delay = 0.9 * b2.ms
+ext_conn1.delay = 1.0 * b2.ms
 
 conn2 = b2.Synapses(nrn1, nrn2, model=eqs_ampa, on_pre="s_AMPA+=1", method="rk4")
 conn2.connect()
@@ -144,6 +143,7 @@ nmdaMonitor2 = b2.StateMonitor(nrn2, "s_NMDA_tot", record=True)
 t_sim = 300
 b2.run(t_sim * b2.ms)
 
+
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # NEST simulation
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
@@ -151,47 +151,29 @@ b2.run(t_sim * b2.ms)
 nest.rng_seed = 12345
 
 nest.ResetKernel()
-nest.resolution = b2.defaultclock.dt / b2.ms
 
-neuron_params = {"tau_AMPA": np.asarray(tau_AMPA) * 1e3,             # units ms
-                 "tau_GABA": np.asarray(tau_GABA) * 1e3,             # units ms
-                 "tau_rise_NMDA": np.asarray(tau_NMDA_rise) * 1e3,   # units ms
-                 "tau_decay_NMDA": np.asarray(tau_NMDA_decay) * 1e3, # units ms
-                 "conc_Mg2": np.asarray(Mg2),                        # dimensionless
+neuron_params = {"tau_AMPA": np.asarray(tau_AMPA) * 1e3,           # units ms
                  "E_ex": np.asarray(E_ex) * 1e3,                     # units mV
-                 "E_in": np.asarray(E_in) * 1e3,                     # units mV
                  "E_L": np.asarray(E_L) * 1e3,                       # units mV
                  "V_th": np.asarray(V_th) * 1e3,                     # units mV
                  "C_m": np.asarray(C_m) * 1e12,                      # units pF
                  "g_L": np.asarray(g_L) * 1e9,                       # units nS
                  "V_reset": np.asarray(V_reset) * 1e3,               # units nS
-                 "alpha": np.asarray(alpha * b2.ms),                 # units nS
                  # DIFFERENCE: subtract 0.1 ms from t_ref                 
-                 "t_ref": np.asarray(t_ref) * 1e3 - b2.defaultclock.dt / b2.ms} # units ms
-
+                 "t_ref": np.asarray(t_ref) * 1e3 - 0.1}                   # units ms
 
 nrn1 = nest.Create("iaf_wang_2002", neuron_params)
-nrn2 = nest.Create("iaf_wang_2002_exact", neuron_params)
-nrn3 = nest.Create("iaf_wang_2002", neuron_params)
+nrn2 = nest.Create("iaf_wang_2002", neuron_params)
 
-times = np.array([10, 20, 40, 80, 90, 104, 109, 115, 185, 188, 190]) * 1.0
+times = np.array([10.0, 20.0, 40.0, 80.0, 90.0])
 sg = nest.Create("spike_generator", {"spike_times": times})
 sr = nest.Create("spike_recorder")
 
-mm1 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_NMDA", "s_GABA"], 
-                                 "interval": b2.defaultclock.dt / b2.ms}
-)
-
-mm2 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_NMDA", "s_GABA"],
-                                 "interval": b2.defaultclock.dt / b2.ms}
-)
-
-mm3 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_NMDA", "s_GABA"],
-                                 "interval": b2.defaultclock.dt / b2.ms}
-)
+mm1 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_GABA", "s_NMDA"], "interval": 0.1})
+mm2 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_GABA", "s_NMDA"], "interval": 0.1})
 
 # DIFFERENCE: add 0.1ms to delay
-nest_delay = 1.# + b2.defaultclock.dt / b2.ms
+nest_delay = 1.1
 ex_syn_spec = {"synapse_model": "static_synapse",
                "weight": np.asarray(g_AMPA_rec) * 1e9 * weight_AMPA,   # units nS
                "receptor_type": 1,
@@ -208,28 +190,23 @@ nmda_syn_spec = {"synapse_model": "static_synapse",
                  "delay": nest_delay}
 
 in_syn_spec = {"synapse_model": "static_synapse",
-               "weight": -np.asarray(g_GABA) * 1e9 * weight_GABA,   # units nS
+               "weight": np.asarray(g_GABA) * 1e9 * weight_GABA,   # units nS
                "receptor_type": 2,
                "delay": nest_delay}
 
 conn_spec = {"rule": "all_to_all"}
 
+
 nest.Connect(sg, nrn1, syn_spec=ex_syn_spec_ext, conn_spec=conn_spec)
 nest.Connect(nrn1, sr)
-
 nest.Connect(nrn1, nrn2, syn_spec=ex_syn_spec, conn_spec=conn_spec)
 nest.Connect(nrn1, nrn2, syn_spec=in_syn_spec, conn_spec=conn_spec)
 nest.Connect(nrn1, nrn2, syn_spec=nmda_syn_spec, conn_spec=conn_spec)
-
-nest.Connect(nrn1, nrn3, syn_spec=ex_syn_spec, conn_spec=conn_spec)
-nest.Connect(nrn1, nrn3, syn_spec=in_syn_spec, conn_spec=conn_spec)
-nest.Connect(nrn1, nrn3, syn_spec=nmda_syn_spec, conn_spec=conn_spec)
-
 nest.Connect(mm1, nrn1)
 nest.Connect(mm2, nrn2)
-nest.Connect(mm3, nrn3)
 
 nest.Simulate(300.)
+
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 # Plotting
@@ -238,41 +215,43 @@ nest.Simulate(300.)
 fig, ax = plt.subplots(4, 2)
 fig.set_size_inches([12,10])
 fig.subplots_adjust(hspace=0.5)
-ax[0,0].plot(vMonitor1.t / b2.ms, vMonitor1.v[0] / b2.mV, label="brian2", c="black")
+ax[0,0].plot(vMonitor1.t / b2.ms, vMonitor1.v[0] / b2.mV, label="brian2")
 ax[0,0].plot(mm1.get("events", "times"), mm1.get("events", "V_m"), "--", label="nest")
 ax[0,0].set_xlabel("time (ms)")
 ax[0,0].set_ylabel("membrane potential V (mV)")
+ax[0,0].legend()
 ax[0,0].set_title("Presynaptic neuron")
 
-ax[0,1].plot(vMonitor2.t / b2.ms, vMonitor2.v[0] / b2.mV, label="brian2", c="black")
-ax[0,1].plot(mm2.get("events", "times"), mm2.get("events", "V_m"), "--", label="NEST exact", c="C0")
-ax[0,1].plot(mm3.get("events", "times"), mm3.get("events", "V_m"), "--", label="NEST approx", c="C1")
+ax[0,1].plot(vMonitor2.t / b2.ms, vMonitor2.v[0] / b2.mV)
+ax[0,1].plot(mm2.get("events", "times"), mm2.get("events", "V_m"), "--")
 ax[0,1].set_xlabel("time (ms)")
 ax[0,1].set_ylabel("membrane potential V (mV)")
 ax[0,1].set_title("Postsynaptic neuron")
-ax[0,1].legend()
 
-ax[1,1].plot(ampaMonitor2.t/b2.ms, ampaMonitor2.s_AMPA_tot[0], c="black")
-ax[1,1].plot(mm2.get("events", "times"), mm2.get("events", "s_AMPA"), "--", c="C0")
-ax[1,1].plot(mm3.get("events", "times"), mm3.get("events", "s_AMPA"), "--", c="C1")
+# multiply by g_AMPA_ext since it is baked into s_AMPA in NEST
+ax[1,0].plot(ampaMonitor1.t/b2.ms, ampaMonitor1.s_AMPA_ext[0] * g_AMPA_ext / b2.nS)
+ax[1,0].plot(mm1.get("events", "times"), mm1.get("events", "s_AMPA"), "--")
+ax[1,0].set_xlabel("time (ms)")
+ax[1,0].set_ylabel("s_AMPA")
+
+ax[1,1].plot(ampaMonitor2.t/b2.ms, ampaMonitor2.s_AMPA_tot[0])
+ax[1,1].plot(mm2.get("events", "times"), mm2.get("events", "s_AMPA"), "--")
 ax[1,1].set_xlabel("time (ms)")
 ax[1,1].set_ylabel("s_AMPA")
 
-ax[2,1].plot(gabaMonitor2.t/b2.ms, gabaMonitor2.s_GABA_tot[0], c="black")
-ax[2,1].plot(mm2.get("events", "times"), mm2.get("events", "s_GABA"), "--", c="C0")
-ax[2,1].plot(mm3.get("events", "times"), mm3.get("events", "s_GABA"), "--", c="C1")
+ax[2,1].plot(gabaMonitor2.t/b2.ms, gabaMonitor2.s_GABA_tot[0])
+ax[2,1].plot(mm2.get("events", "times"), mm2.get("events", "s_GABA"), "--")
 ax[2,1].set_xlabel("time (ms)")
 ax[2,1].set_ylabel("s_GABA")
 
-ax[3,1].plot(nmdaMonitor2.t/b2.ms, nmdaMonitor2.s_NMDA_tot[0], c="black")
-ax[3,1].plot(mm2.get("events", "times"), mm2.get("events", "s_NMDA"), "--", c="C0")
-ax[3,1].plot(mm3.get("events", "times"), mm3.get("events", "s_NMDA"), "--", c="C1")
+ax[3,1].plot(nmdaMonitor2.t/b2.ms, nmdaMonitor2.s_NMDA_tot[0])
+ax[3,1].plot(mm2.get("events", "times"), mm2.get("events", "s_NMDA"), "--")
 ax[3,1].set_xlabel("time (ms)")
 ax[3,1].set_ylabel("s_NMDA")
 
-ax[1,0].axis("off")
 ax[2,0].axis("off")
 ax[3,0].axis("off")
 
 plt.show()
+
 

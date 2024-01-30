@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """PyNEST EI-clustered network: default parameters for EI-clustered network
-----------------------------------------------------------------------------
+---------------------------------------------------------------------------
 
 default parameters for EI-clustered network simulation
 """

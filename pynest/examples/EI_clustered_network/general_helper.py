@@ -32,21 +32,40 @@ import numpy as np
 
 
 def merge_params(params, default_values):
-    """
+    """Merge default values with params dictionary.
+
     Updates default Values defined in a module with params-dictionary.
-    :param params: dictionary of parameters
-    :param default_values: module with default values
-    :return: updated dictionary
+
+    Parameters
+    ----------
+    params: dict
+         Override parameters.
+    default_values: module
+        Parameters with default values.
+
+    Returns
+    -------
+    dict
+        Dictionary with default values updated by params.
     """
     return nested_update(module_to_dict(default_values), params)
 
 
 def module_to_dict(module):
-    """
+    """Create dict of module variables.
+
     Creates dict of explicit variables in module which are not imported modules.
     Generates for each variable name an entry in the dictionary.
-    :param module: module
-    :return: dict of explicit variables
+
+    Parameters
+    ----------
+    module: module
+        Module to be converted to dict.
+
+    Returns
+    -------
+    dict
+        Dictionary with module variables.
     """
     module_dict = {}
     if module:
@@ -63,11 +82,21 @@ def module_to_dict(module):
 
 
 def nested_update(d, d2):
-    """
-    Updates values in d with values of d2. Adds new keys if they are not present.
-    :param d: dictionary to be updated
-    :param d2: dictionary with update values
-    :return: updated dictionary
+    """Update nested dictionary.
+
+    Update values in one dictionary with values of second dictionary. Adds new keys if they are not present.
+
+    Parameters
+    ----------
+    d: dict
+        Dictionary to be updated.
+    d2: dict
+        Dictionary with update values.
+
+    Returns
+    -------
+    dict
+        Updated dictionary.
     """
     d_local = copy.deepcopy(d)
     for key in d2:
@@ -79,14 +108,28 @@ def nested_update(d, d2):
 
 
 def raster_plot(spiketimes, tlim=None, colorgroups=None, ax=None, markersize=0.5):
-    """
-    Plots raster plot of spiketimes.
-    :param spiketimes: spiketimes (np.array): Row 0: spiketimes, Row 1: neuron ID.
-    :param tlim: time limits of plot (list): [tmin, tmax], if None: [min(spiketimes), max(spiketimes)]
-    :param colorgroups: list of tuples (color, start_neuron_ID, stop_neuron_ID]) for coloring neurons, if None: black
-    :param ax: axis object, if None: new figure
-    :param markersize: size of markers
-    :return: axis object
+    """Raster plot of spiketimes.
+
+    Plots raster plot of spiketimes withing given time limits and colors neurons according to colorgroups.
+
+    Parameters
+    ----------
+    spiketimes: ndarray
+        2D array [2xN_Spikes] of spiketimes with spiketimes in row 0 and neuron IDs in row 1.
+    tlim: list of floats (optional)
+        Time limits of plot: [tmin, tmax], if None: [min(spiketimes), max(spiketimes)]
+    colorgroups: list of tuples (optional)
+        Each element is a tuple in the format (color, start_neuron_ID, stop_neuron_ID]) for coloring neurons in
+        given range, if None is given all neurons are black.
+    ax: axis object (optional)
+        If None a new figure is created, else the plot is added to the given axis.
+    markersize: float (optional)
+        Size of markers. (default: 0.5)
+
+    Returns
+    -------
+    axis object
+        Axis object with raster plot.
     """
     if ax is None:
         fig, ax = plt.subplots()

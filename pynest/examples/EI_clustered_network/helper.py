@@ -32,13 +32,23 @@ small = 1e-10
 
 
 def max_psp_exp(tau_m, tau_syn, c_m=1.0, e_l=0.0):
-    """
-    Calculates the maximum psp amplitude for exponential synapses and unit J.
-    :param tau_m: Membrane time constant [ms]
-    :param tau_syn: Synapse time constant  [ms]
-    :param c_m: Membrane capacity [pF]
-    :param e_l: Resting potential [mV]
-    :return: maximum psp amplitude
+    """Maximum psp amplitude for exponential synapses and unit J.
+
+    Parameters
+    ----------
+    tau_m: float
+        Membrane time constant [ms]
+    tau_syn: float
+        Synapse time constant  [ms]
+    c_m: float (optional)
+        Membrane capacity [pF] (default: 1.0)
+    e_l: float (optional)
+        Resting potential [mV] (default: 0.0)
+
+    Returns
+    -------
+    float
+        maximum psp amplitude [mV]
     """
     tmax = np.log(tau_syn / tau_m) / (1 / tau_m - 1 / tau_syn)
     B = tau_m * tau_syn / c_m / (tau_syn - tau_m)
@@ -46,10 +56,17 @@ def max_psp_exp(tau_m, tau_syn, c_m=1.0, e_l=0.0):
 
 
 def calc_js(params):
-    """
-    calculates the synaptic weights for exponential synapses before clustering
-    :param params: dictionary of network parameters
-    :return: synaptic weights 2x2 matrix
+    """Calculate synaptic weights for exponential synapses before clustering.
+
+    Parameters
+    ----------
+    params: dict
+        Dictionary of network parameters
+
+    Returns
+    -------
+    ndarray
+        synaptic weights 2x2 matrix [[EE, EI], [IE, II]]
     """
     N_E = params.get("N_E")  # excitatory units
     N_I = params.get("N_I")  # inhibitory units
@@ -88,15 +105,27 @@ def calc_js(params):
 
 
 def fpt(tau_m, e_l, i_e, c_m, vtarget, vstart):
-    """
-    calculate first pasage time between Vstart and Vtarget.
-    :param tau_m: Membrane time constant [ms]
-    :param e_l: Resting potential [mV]
-    :param i_e: external current [pA]
-    :param c_m: Membrane capacity [pF]
-    :param vtarget: target voltage [mV]
-    :param vstart: start voltage [mV]
-    :return: first passage time [ms]
+    """Calculate first pasage time between Vstart and Vtarget.
+
+    Parameters
+    ----------
+    tau_m: float
+        Membrane time constant [ms]
+    e_l: float
+        Resting potential [mV]
+    i_e: float
+        external current [pA]
+    c_m: float
+        Membrane capacity [pF]
+    vtarget: float
+        target voltage [mV]
+    vstart: float
+        start voltage [mV]
+
+    Returns
+    -------
+    float
+        first passage time [ms]
     """
     inner = (vtarget - e_l - tau_m * i_e / c_m) / (
         vstart - e_l - tau_m * i_e / c_m + small
@@ -108,16 +137,29 @@ def fpt(tau_m, e_l, i_e, c_m, vtarget, vstart):
 
 
 def v_fpt(tau_m, e_l, i_e, c_m, ttarget, vtarget, t_ref):
-    """
-    Calculate the initial voltage required to obtain a certain first passage time.
-    :param tau_m: Membrane time constant [ms]
-    :param e_l: Resting potential [mV]
-    :param i_e: external current [pA]
-    :param c_m: Membrane capacity [pF]
-    :param ttarget: target first passage time [ms]
-    :param vtarget: target voltage [mV]
-    :param t_ref: refractory period [ms]
-    :return: initial voltage [mV]
+    """Initial voltage to obtain a certain first passage time.
+
+    Parameters
+    ----------
+    tau_m: float
+        Membrane time constant [ms]
+    e_l: float
+        Resting potential [mV]
+    i_e: float
+        external current [pA]
+    c_m: float
+        Membrane capacity [pF]
+    ttarget: float
+        target first passage time [ms]
+    vtarget: float
+        target voltage [mV]
+    t_ref: float
+        refractory period [ms]
+
+    Returns
+    -------
+    float
+        initial voltage [mV]
     """
     return (
         (vtarget - e_l - tau_m * i_e / c_m) * np.exp(ttarget / tau_m)

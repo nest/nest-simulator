@@ -172,7 +172,7 @@ n_out = 1  # number of readout neurons
 params_nrn_rec = {
     "beta_fr_ema": 0.999,  # Smoothing factor of firing rate exponential moving average
     "C_m": 1.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
-    "c_reg": 300.0 / duration["sequence"],  # firing rate regularization scaling
+    "c_reg": 2.0 / duration["sequence"],  # firing rate regularization scaling
     "E_L": 0.0,  # mV, leak reversal potential
     "eprop_isi_trace_cutoff": 10,  # cutoff of integration of eprop trace between spikes
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
@@ -183,7 +183,8 @@ params_nrn_rec = {
     "t_ref": 0.0,  # ms, duration of refractory period
     "tau_m": 30.0,  # ms, membrane time constant
     "V_m": 0.0,  # mV, initial value of the membrane voltage
-    "V_th": 0.0001,  # mV, spike threshold membrane voltage
+    "V_th": 1.8,  # mV, spike threshold membrane voltage
+    "V_reset": -0.03,
     "eta": 5e-3, # learning rate
 }
 
@@ -267,6 +268,11 @@ weights_rec_rec = np.array(np.random.randn(n_rec, n_rec).T / np.sqrt(n_rec), dty
 np.fill_diagonal(weights_rec_rec, 0.0)  # since no autapses set corresponding weights to zero
 weights_rec_out = np.array(np.random.randn(n_rec, n_out).T / np.sqrt(n_rec), dtype=dtype_weights)
 weights_out_rec = np.array(np.random.randn(n_rec, n_out) / np.sqrt(n_rec), dtype=dtype_weights)
+
+weights_rescale_factor = 1.0e-2
+weights_in_rec *= weights_rescale_factor 
+weights_rec_rec *= weights_rescale_factor
+weights_rec_out *= weights_rescale_factor
 
 params_common_syn_eprop = {
     "optimizer": {

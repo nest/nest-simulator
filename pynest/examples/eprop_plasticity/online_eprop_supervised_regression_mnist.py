@@ -75,9 +75,9 @@ References
 
 import sys
 
-import urllib.request
-import gzip
 import os
+import gzip
+import urllib.request
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -510,9 +510,9 @@ print( "-"*25 + "\n\tTRAINING\n" + "-"*25 )
 loader = train_loader
 accuracies = []
 prev_targets_batch = None
-for iteration in np.arange(n_iter):
+for iteration in np.arange(n_iter+1):
     
-    if iteration == n_iter-n_iter_test:
+    if iteration == n_iter-n_iter_test+1:
         print( "-"*25 + "\n\tTESTING\n" + "-"*25 )
         loader = test_loader
         nest.SetStatus(nrns_rec, {"eta": 0.})
@@ -612,7 +612,6 @@ for iteration in np.arange(n_iter):
 
 nest.Simulate(duration["extension_sim"])  
 
-# np.save(f"./mnist_plot/mnist_accuracy_nlabels_{n_out}_regression_online.npy", accuracies)
 
 exit()
 # %% ###########################################################################################################

@@ -109,7 +109,7 @@ except Exception:
 # We seed the numpy random generator, which will generate random initial weights as well as random input and
 # output.
 
-rng_seed = 1  # numpy random seed
+rng_seed = 0  # numpy random seed
 np.random.seed(rng_seed)  # fix numpy random seed
 
 # %% ###########################################################################################################
@@ -120,14 +120,16 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # The original number of iterations requires distributed computing.
 
 n_batch = 32 # batch size, 64 in reference [2], 32 in the README to reference [2]
-n_iter = 100
-n_iter_test = 10
+n_iter_train = 50
+n_iter_test = 5
 
 steps = {}
 
 steps["sequence"] = 100 # time steps of one full sequence
 steps["learning_window"] =  10 # time steps of window with non-zero learning signals
-steps["task"] = n_iter * n_batch * steps["sequence"]  # time steps of task
+steps["training_time"] = n_iter_train * n_batch * steps["sequence"]
+steps["testing_time"] = n_iter_test * n_batch * steps["sequence"]
+steps["task"] = steps["training_time"] + steps["testing_time"]  # time steps of task
 
 steps.update(
     {
@@ -159,7 +161,7 @@ params_setup = {
     "eprop_learning_window": duration["learning_window"],
     "eprop_reset_neurons_on_update": True,  # if True, reset dynamic variables at start of each update interval
     "eprop_update_interval": duration["sequence"],  # ms, time interval for updating the synaptic weights
-    "print_time": False,  # if True, print time progress bar during simulation, set False if run as code cell
+    "print_time": True,  # if True, print time progress bar during simulation, set False if run as code cell
     "resolution": duration["step"],
     "total_num_virtual_procs": 1,  # number of virtual processes, set in case of distributed computing
 }
@@ -251,7 +253,7 @@ params_mm_out = {
     "interval": duration["step"],
     "record_from": ["V_m", "readout_signal", "readout_signal_unnorm", "target_signal", "error_signal"],
     "start": duration["total_offset"]-1, #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-    # "stop": duration["total_offset"] + duration["task"],
+    "stop": duration["total_offset"] + duration["task"]-1,
 }
 
 # params_wr = {
@@ -505,113 +507,95 @@ weights_pre_train = {
 # We train the network by simulating for a set simulation time, determined by the number of iterations and the
 # batch size and the length of one sequence.
 
-print( "-"*25 + "\n\tTRAINING\n" + "-"*25 )
 
-loader = train_loader
+
 accuracies = []
 prev_targets_batch = None
-for iteration in np.arange(n_iter+1):
-    
-    if iteration == n_iter-n_iter_test+1:
-        print( "-"*25 + "\n\tTESTING\n" + "-"*25 )
+
+spike_times = [[] for _ in range(n_in)]
+target_rates = np.zeros((n_out, steps["task"]))
+target_signal_rescale_factor = 1.0
+
+for iteration in np.arange(n_iter_train + n_iter_test):  
+    t_start_iteration =  iteration * n_batch * steps["sequence"]
+    t_end_iteration = t_start_iteration + n_batch * steps["sequence"]
+
+    if iteration < n_iter_train:
+        loader = train_loader
+    else:
         loader = test_loader
-        nest.SetStatus(nrns_rec, {"eta": 0.})
-        nest.SetStatus(nrns_out, {"eta": 0.})
     
-
-    t_start_iteration =  iteration * n_batch * duration["sequence"]
-    t_end_iteration = t_start_iteration + n_batch * duration["sequence"]
-
     img_batch, targets_batch = loader.get_new_batch()
 
-    spike_times_batch = [[] for _ in range(n_in)]
+
     for batch_elem in range(n_batch):
-        t_start_batch_elem = t_start_iteration + batch_elem * duration["sequence"]
+        t_start_batch_elem = t_start_iteration + batch_elem * steps["sequence"]
+        t_end_batch_elem = t_start_batch_elem + steps["sequence"]
+
+        target_rates[targets_batch[batch_elem], t_start_batch_elem: t_end_batch_elem] = target_signal_rescale_factor
 
         img = (duration["sequence"]-3.0)*img_batch[batch_elem]
         img = np.array(img, dtype=int).flatten()
-
         for n, t in enumerate(img):
-            if t: spike_times_batch[n].append(t_start_batch_elem + float(t))
-
-    params_gen_spk_in = []
-    for spike_times in spike_times_batch:
-        params_gen_spk_in.append({"spike_times": spike_times})
+            if t: spike_times[n].append(t_start_batch_elem + float(t))
+            
 
 
-    target_rates = np.zeros((n_out, steps["sequence"] * n_batch ))
-    target_signal_rescale_factor = 1.0
-    for batch_elem, target_num in enumerate(targets_batch):
-        start = batch_elem * steps["sequence"]
-        end = start + steps["sequence"]
-        target_rates[target_num, start:end] = target_signal_rescale_factor
+params_gen_spk_in = []
+for spk_times in spike_times:
+    params_gen_spk_in.append({"spike_times": spk_times})
 
-    params_gen_rate_target = []
-    for target_rate in target_rates:
-        params_gen_rate_target.append({'amplitude_times': 1.*np.arange( int(t_start_iteration) + duration["total_offset"],
-                                                                        int(t_end_iteration) + duration["total_offset"] ),
-                                        'amplitude_values': target_rate})    
+params_gen_rate_target = []
+for target_rate in target_rates:
+    params_gen_rate_target.append({'amplitude_times': np.arange(duration["total_offset"], duration["total_offset"] + duration["task"]),
+                                   'amplitude_values': target_rate})    
 
-    nest.SetStatus(gen_spk_in, params_gen_spk_in)
-    nest.SetStatus(gen_rate_target, params_gen_rate_target) 
-
-    nest.Simulate(duration["total_offset"])
-
-    if iteration > 0: 
+nest.SetStatus(gen_spk_in, params_gen_spk_in)
+nest.SetStatus(gen_rate_target, params_gen_rate_target) 
+nest.Simulate(duration["total_offset"] + duration["training_time"])
+nest.SetStatus(nrns_rec, {"eta": 0.})
+nest.SetStatus(nrns_out, {"eta": 0.})
+nest.Simulate(duration["extension_sim"] + duration["testing_time"])
 
 
-        start =  int(t_start_iteration - n_batch * duration["sequence"])
-        end = int(t_end_iteration - n_batch * duration["sequence"])
-        
-        '''
-        process data of recording devices
-        '''
-        events_mm_out = mm_out.get("events")    
-        senders = events_mm_out["senders"]
+'''
+process data of recording devices
+'''
+events_mm_out = mm_out.get("events")
+  
+senders = events_mm_out["senders"]
+readout_signal = events_mm_out["V_m"]
+target_signal = events_mm_out["target_signal"]
 
-        Vms_out = np.array(
-            [events_mm_out['V_m'][np.where(senders == i)][start:end] for i in nrns_out.tolist()])
+readout_signal = np.array([readout_signal[senders == i] for i in set(senders)]) # nrns_out.tolist()
+target_signal = np.array([target_signal[senders == i] for i in set(senders)])
 
-        readout_signal = Vms_out.reshape(n_out, n_batch, steps["sequence"])[:, :, -steps["learning_window"]:]
+readout_signal = readout_signal.reshape((n_out, n_iter_train + n_iter_test, n_batch, steps["sequence"]))
+readout_signal = readout_signal[:, :, :, -steps["learning_window"] :]
 
+target_signal = target_signal.reshape((n_out, n_iter_train + n_iter_test, n_batch, steps["sequence"]))
+target_signal = target_signal[:, :, :, -steps["learning_window"] :]
 
-        '''
-        calculate recall errors
-        '''
+'''
+calculate recall errors
+'''
 
-        mse = np.mean((1. - readout_signal)**2, axis=2)
+mse = np.mean((target_signal - readout_signal)**2, axis=3)
+distance_to_target = np.mean((target_signal_rescale_factor - readout_signal)**2, axis=3)
 
-        loss = np.mean(mse, axis=(0,1))
+losses = np.mean(mse, axis=(0,2))
 
-        predicted_labels = np.zeros_like(mse)
-        for b in range(mse.shape[1]):
-            pred_indx = np.argmin(mse[:, b])
-            predicted_labels[pred_indx, b] = 1.
-        
-        actual_labels = prev_targets_batch / target_signal_rescale_factor
+y_prediction = np.argmin(distance_to_target, axis=0)
+y_target = np.argmax(np.mean(target_signal, axis=3), axis=0)
+accuracy = np.mean((y_target == y_prediction), axis=1)
 
-        errors = 0
-        for b in range(n_batch):
-            pred_label = np.where(predicted_labels[:, b] == 1.0)[0][0] 
-            actual_label = prev_targets_batch[b]
+print("\nTraining: ")
+for i, (loss, acc) in enumerate(zip(losses[:n_iter_train], accuracy[:n_iter_train])):
+    print(f"    iter: {i} loss: {loss:0.5f} acc: {acc:0.5f}")
 
-            if pred_label != actual_label: errors += 1
-
-
-        accuracy = 1.0 - errors/n_batch
-    
-        print(f"iteration: {iteration}, loss: {loss:.5f}, accuracy: {accuracy:.5f}")
-
-        accuracies.append(accuracy)
-
-    prev_targets_batch = np.copy(targets_batch)
-
-    nest.Simulate(n_batch * duration["sequence"] -  duration["total_offset"])
-
-
-
-nest.Simulate(duration["extension_sim"])  
-
+print("\nTesting: ")
+for i, (loss, acc) in enumerate(zip(losses[n_iter_train:], accuracy[n_iter_train:])):
+   print(f"    iter: {i} loss: {loss:0.5f} acc: {acc:0.5f}")
 
 exit()
 # %% ###########################################################################################################

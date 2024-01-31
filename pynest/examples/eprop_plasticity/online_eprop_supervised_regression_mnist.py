@@ -509,11 +509,6 @@ weights_pre_train = {
 # We train the network by simulating for a set simulation time, determined by the number of iterations and the
 # batch size and the length of one sequence.
 
-
-
-accuracies = []
-prev_targets_batch = None
-
 spike_times = [[] for _ in range(n_in)]
 target_rates = np.zeros((n_out, steps["task"]))
 target_signal_rescale_factor = 1.0
@@ -541,8 +536,6 @@ for iteration in np.arange(n_iter_train + n_iter_test):
         for n, t in enumerate(img):
             if t: spike_times[n].append(t_start_batch_elem + float(t))
             
-
-
 params_gen_spk_in = []
 for spk_times in spike_times:
     params_gen_spk_in.append({"spike_times": spk_times})

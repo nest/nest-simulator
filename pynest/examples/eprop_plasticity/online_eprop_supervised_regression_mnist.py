@@ -125,7 +125,9 @@ n_iter_test = 5
 
 steps = {}
 
-steps["sequence"] = 100 # time steps of one full sequence
+steps["sample_length"] = 97
+steps["extra_sample_steps"] = 3
+steps["sequence"] = steps["sample_length"] + steps["extra_sample_steps"] # time steps of one full sequence
 steps["learning_window"] =  10 # time steps of window with non-zero learning signals
 steps["training_time"] = n_iter_train * n_batch * steps["sequence"]
 steps["testing_time"] = n_iter_test * n_batch * steps["sequence"]
@@ -534,7 +536,7 @@ for iteration in np.arange(n_iter_train + n_iter_test):
 
         target_rates[targets_batch[batch_elem], t_start_batch_elem: t_end_batch_elem] = target_signal_rescale_factor
 
-        img = (duration["sequence"]-3.0)*img_batch[batch_elem]
+        img = duration["sample_length"]*img_batch[batch_elem]
         img = np.array(img, dtype=int).flatten()
         for n, t in enumerate(img):
             if t: spike_times[n].append(t_start_batch_elem + float(t))

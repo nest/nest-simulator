@@ -343,7 +343,7 @@ private:
     long eprop_isi_trace_cutoff_;
 
     //! Learning rate.
-    double eta_; 
+    double eta_;
 
     //! Default constructor.
     Parameters_();

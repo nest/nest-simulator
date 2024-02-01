@@ -77,7 +77,7 @@ eprop_readout::Parameters_::Parameters_()
   , tau_m_( 10.0 )
   , V_min_( -std::numeric_limits< double >::max() )
   , eprop_isi_trace_cutoff_( std::numeric_limits< long >::max() )
-  , eta_ (0.0)  
+  , eta_( 0.0 )
 {
 }
 
@@ -116,7 +116,7 @@ eprop_readout::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_m, tau_m_ );
   def< double >( d, names::V_min, V_min_ + E_L_ );
   def< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
-  def< double >( d, names::eta, eta_ );  
+  def< double >( d, names::eta, eta_ );
 }
 
 double
@@ -134,7 +134,7 @@ eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< std::string >( d, names::loss, loss_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
   updateValueParam< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
-  updateValueParam< double >( d, names::eta, eta_, node );  
+  updateValueParam< double >( d, names::eta, eta_, node );
 
   if ( C_m_ <= 0 )
   {
@@ -159,7 +159,7 @@ eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
   if ( eta_ < 0 )
   {
     throw BadProperty( "Learning rate eta ≥ 0 required." );
-  }   
+  }
 
   return delta_EL;
 }
@@ -397,7 +397,7 @@ eprop_readout::compute_gradient( const long t_spike,
 {
   double z = 0.0;    // spiking variable
   double L = 0.0;    // error signal
-  double grad = 0.0; // gradient  
+  double grad = 0.0; // gradient
 
   const long learning_window =
     average_gradient ? kernel().simulation_manager.get_eprop_learning_window().get_steps() : 1;
@@ -431,7 +431,7 @@ eprop_readout::compute_gradient( const long t_spike,
 
     z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
     grad = L * z_bar / learning_window;
-    weight -= P_.eta_ * grad;    
+    weight -= P_.eta_ * grad;
 
     ++eprop_hist_it;
     ++t;

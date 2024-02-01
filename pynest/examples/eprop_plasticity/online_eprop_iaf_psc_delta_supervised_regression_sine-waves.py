@@ -185,7 +185,7 @@ params_nrn_rec = {
     "V_m": 0.0,  # mV, initial value of the membrane voltage
     "V_th": 1.8,  # mV, spike threshold membrane voltage
     "V_reset": -0.03,
-    "eta": 5e-3, # learning rate
+    "eta": 5e-3,  # learning rate
 }
 
 params_nrn_out = {
@@ -196,7 +196,7 @@ params_nrn_out = {
     "loss": "mean_squared_error",  # loss function
     "tau_m": 30.0,
     "V_m": 0.0,
-    "eta": 5e-3, # learning rate
+    "eta": 5e-3,  # learning rate
 }
 
 ####################
@@ -270,7 +270,7 @@ weights_rec_out = np.array(np.random.randn(n_rec, n_out).T / np.sqrt(n_rec), dty
 weights_out_rec = np.array(np.random.randn(n_rec, n_out) / np.sqrt(n_rec), dtype=dtype_weights)
 
 weights_rescale_factor = 1.0e-2
-weights_in_rec *= weights_rescale_factor 
+weights_in_rec *= weights_rescale_factor
 weights_rec_rec *= weights_rescale_factor
 weights_rec_out *= weights_rescale_factor
 

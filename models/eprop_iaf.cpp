@@ -82,7 +82,7 @@ eprop_iaf::Parameters_::Parameters_()
   , V_th_( -55.0 - E_L_ )
   , beta_fr_ema_( 0.0 )
   , eprop_isi_trace_cutoff_( std::numeric_limits< long >::max() )
-  , eta_ (0.0)  
+  , eta_( 0.0 )
 {
 }
 
@@ -128,7 +128,7 @@ eprop_iaf::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::V_th, V_th_ + E_L_ );
   def< double >( d, names::beta_fr_ema, beta_fr_ema_ );
   def< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
-  def< double >( d, names::eta, eta_ );  
+  def< double >( d, names::eta, eta_ );
 }
 
 double
@@ -158,7 +158,7 @@ eprop_iaf::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
   updateValueParam< double >( d, names::beta_fr_ema, beta_fr_ema_, node );
   updateValueParam< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
-  updateValueParam< double >( d, names::eta, eta_, node );   
+  updateValueParam< double >( d, names::eta, eta_, node );
 
   if ( C_m_ <= 0 )
   {
@@ -228,7 +228,7 @@ eprop_iaf::Parameters_::set( const DictionaryDatum& d, Node* node )
   if ( eta_ < 0 )
   {
     throw BadProperty( "Learning rate eta ≥ 0 required." );
-  } 
+  }
 
   return delta_EL;
 }
@@ -482,7 +482,7 @@ eprop_iaf::compute_gradient( const long t_spike,
     avg_e = P_.beta_fr_ema_ * avg_e + ( 1.0 - P_.beta_fr_ema_ ) * e;
     e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
     grad = L * e_bar / learning_window + firing_rate_reg * avg_e;
-    weight -= P_.eta_ * grad;  
+    weight -= P_.eta_ * grad;
 
     ++eprop_hist_it;
     ++t;

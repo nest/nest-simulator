@@ -270,7 +270,7 @@ private:
     long eprop_isi_trace_cutoff_;
 
     //! Learning rate.
-    double eta_;    
+    double eta_;
 
     Parameters_(); //!< Sets default parameter values
 

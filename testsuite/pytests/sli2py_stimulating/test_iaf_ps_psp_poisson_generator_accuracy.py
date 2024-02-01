@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_iaf_ps_psp_poisson_accuracy.py
+# test_iaf_ps_psp_poisson_generator_accuracy.py
 #
 # This file is part of NEST.
 #
@@ -98,7 +98,7 @@ def spiketrain_response(spiketrain):
 
 def create_spiketrain():
     nest.ResetKernel()
-    nest.set(tics_per_ms=2 ** 10, resolution=1)
+    nest.set(tics_per_ms=2**10, resolution=1)
 
     pg = nest.Create("poisson_generator_ps", {"rate": 16000})
     sr = nest.Create("spike_recorder")
@@ -115,7 +115,7 @@ spiketrain = create_spiketrain()
 def test_poisson_spikes_different_stepsizes(h):
     nest.ResetKernel()
 
-    nest.set(tics_per_ms=2 ** 10, resolution=2 ** h)
+    nest.set(tics_per_ms=2**10, resolution=2**h)
 
     sg = nest.Create("spike_generator", {"start": 0, "spike_times": spiketrain, "precise_times": True})
 
@@ -123,7 +123,7 @@ def test_poisson_spikes_different_stepsizes(h):
     sr = nest.Create("spike_recorder")
 
     if DEBUG:
-        mm = nest.Create("multimeter", params={"record_from": ["V_m"], "interval": 2 ** h})
+        mm = nest.Create("multimeter", params={"record_from": ["V_m"], "interval": 2**h})
         nest.Connect(mm, neuron)
 
     nest.Connect(sg, neuron, syn_spec={"weight": weight, "delay": delay})

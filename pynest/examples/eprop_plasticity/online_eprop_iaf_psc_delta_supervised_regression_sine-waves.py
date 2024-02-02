@@ -183,8 +183,8 @@ params_nrn_rec = {
     "t_ref": 0.0,  # ms, duration of refractory period
     "tau_m": 30.0,  # ms, membrane time constant
     "V_m": 0.0,  # mV, initial value of the membrane voltage
-    "V_th": 1.8,  # mV, spike threshold membrane voltage
-    "V_reset": -0.03,
+    "V_th": 0.5,  # mV, spike threshold membrane voltage
+    "V_reset": -0.5,
     "eta": 5e-3,  # learning rate
 }
 
@@ -268,11 +268,6 @@ weights_rec_rec = np.array(np.random.randn(n_rec, n_rec).T / np.sqrt(n_rec), dty
 np.fill_diagonal(weights_rec_rec, 0.0)  # since no autapses set corresponding weights to zero
 weights_rec_out = np.array(np.random.randn(n_rec, n_out).T / np.sqrt(n_rec), dtype=dtype_weights)
 weights_out_rec = np.array(np.random.randn(n_rec, n_out) / np.sqrt(n_rec), dtype=dtype_weights)
-
-weights_rescale_factor = 1.0e-2
-weights_in_rec *= weights_rescale_factor
-weights_rec_rec *= weights_rescale_factor
-weights_rec_out *= weights_rescale_factor
 
 params_common_syn_eprop = {
     "optimizer": {

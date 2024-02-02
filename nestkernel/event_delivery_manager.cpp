@@ -804,7 +804,7 @@ EventDeliveryManager::gather_target_data( const size_t tid )
     // otherwise
     gather_completed_checker_[ tid ].set_true();
 
-#pragma omp 
+#pragma omp master
     {
       if ( kernel().mpi_manager.adaptive_target_buffers() and buffer_size_target_data_has_changed_ )
       {
@@ -839,7 +839,7 @@ EventDeliveryManager::gather_target_data( const size_t tid )
       sw_communicate_target_data_.stop();
 #endif
     } // of omp master (no barriers!)
-
+#pragma omp barrier
 
     const bool distribute_completed = distribute_target_data_buffers_( tid );
     gather_completed_checker_[ tid ].logical_and( distribute_completed );
@@ -851,6 +851,7 @@ EventDeliveryManager::gather_target_data( const size_t tid )
       {
         buffer_size_target_data_has_changed_ = kernel().mpi_manager.increase_buffer_size_target_data();
       }
+#pragma omp barrier
     }
   } // of while
 

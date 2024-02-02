@@ -804,13 +804,14 @@ EventDeliveryManager::gather_target_data( const size_t tid )
     // otherwise
     gather_completed_checker_[ tid ].set_true();
 
-#pragma omp single
+#pragma omp master
     {
       if ( kernel().mpi_manager.adaptive_target_buffers() and buffer_size_target_data_has_changed_ )
       {
         resize_send_recv_buffers_target_data();
       }
-    } // of omp single; implicit barrier
+    } // of omp master; (no barrier)
+    #pragma omp barrier
 
     kernel().connection_manager.restore_source_table_entry_point( tid );
 
@@ -828,7 +829,7 @@ EventDeliveryManager::gather_target_data( const size_t tid )
 #pragma omp barrier
     kernel().connection_manager.clean_source_table( tid );
 
-#pragma omp single
+#pragma omp master
     {
 #ifdef TIMER_DETAILED
       sw_communicate_target_data_.start();
@@ -837,7 +838,7 @@ EventDeliveryManager::gather_target_data( const size_t tid )
 #ifdef TIMER_DETAILED
       sw_communicate_target_data_.stop();
 #endif
-    } // of omp single (implicit barrier)
+    } // of omp master (no barriers!)
 
 
     const bool distribute_completed = distribute_target_data_buffers_( tid );
@@ -846,7 +847,7 @@ EventDeliveryManager::gather_target_data( const size_t tid )
     // resize mpi buffers, if necessary and allowed
     if ( gather_completed_checker_.any_false() and kernel().mpi_manager.adaptive_target_buffers() )
     {
-#pragma omp single
+#pragma omp master
       {
         buffer_size_target_data_has_changed_ = kernel().mpi_manager.increase_buffer_size_target_data();
       }
@@ -874,13 +875,14 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
     // assume this is the last gather round and change to false otherwise
     gather_completed_checker_[ tid ].set_true();
 
-#pragma omp single
+#pragma omp master
     {
       if ( kernel().mpi_manager.adaptive_target_buffers() and buffer_size_target_data_has_changed_ )
       {
         resize_send_recv_buffers_target_data();
       }
-    } // of omp single; implicit barrier
+    } // of omp master; no barrier
+#pragma omp barrier
 
     TargetSendBufferPosition send_buffer_position(
       assigned_ranks, kernel().mpi_manager.get_send_recv_count_target_data_per_rank() );
@@ -897,7 +899,7 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
 
 #pragma omp barrier
 
-#pragma omp single
+#pragma omp master
     {
 #ifdef TIMER_DETAILED
       sw_communicate_target_data_.start();
@@ -906,7 +908,8 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
 #ifdef TIMER_DETAILED
       sw_communicate_target_data_.stop();
 #endif
-    } // of omp single (implicit barrier)
+    } // of omp master (no barrier)
+#pragma omp barrier
 
     // Up to here, gather_completed_checker_ just has local info: has this thread been able to write
     // all data it is responsible for to buffers. Now combine with information on whether other ranks
@@ -917,7 +920,7 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
     // resize mpi buffers, if necessary and allowed
     if ( gather_completed_checker_.any_false() and kernel().mpi_manager.adaptive_target_buffers() )
     {
-#pragma omp single
+#pragma omp master
       {
         buffer_size_target_data_has_changed_ = kernel().mpi_manager.increase_buffer_size_target_data();
       }

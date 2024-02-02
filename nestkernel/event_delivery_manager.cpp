@@ -804,14 +804,14 @@ EventDeliveryManager::gather_target_data( const size_t tid )
     // otherwise
     gather_completed_checker_[ tid ].set_true();
 
-#pragma omp master
+#pragma omp 
     {
       if ( kernel().mpi_manager.adaptive_target_buffers() and buffer_size_target_data_has_changed_ )
       {
         resize_send_recv_buffers_target_data();
       }
     } // of omp master; (no barrier)
-    #pragma omp barrier
+#pragma omp barrier
 
     kernel().connection_manager.restore_source_table_entry_point( tid );
 

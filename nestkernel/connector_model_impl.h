@@ -147,8 +147,8 @@ GenericConnectorModel< ConnectionT >::set_status( const DictionaryDatum& d )
   if ( new_default_delay != Time::delay_steps_to_ms( default_delay_ )
     or new_default_axonal_delay != Time::delay_steps_to_ms( default_axonal_delay_ ) )
   {
-    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
-      new_default_delay + new_default_axonal_delay );
+    // kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
+    //   new_default_delay + new_default_axonal_delay );
     default_delay_ = Time::delay_ms_to_steps( new_default_delay );
     default_axonal_delay_ = Time::delay_ms_to_steps( new_default_axonal_delay );
   }

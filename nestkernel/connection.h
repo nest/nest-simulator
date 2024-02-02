@@ -221,7 +221,6 @@ public:
   void
   set_axonal_delay( const double )
   {
-    throw UnexpectedEvent( "Connection does not support axonal delays." );
   }
 
   /**
@@ -230,7 +229,7 @@ public:
   double
   get_axonal_delay() const
   {
-    throw UnexpectedEvent( "Connection does not support axonal delays." );
+    return 0.;
   }
 
   /**
@@ -387,12 +386,13 @@ Connection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 inline void
-Connection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& )
+Connection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   double dendritic_delay;
   if ( updateValue< double >( d, names::delay, dendritic_delay ) )
   {
-    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( dendritic_delay );
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
+      dendritic_delay + Time::delay_steps_to_ms( cm.get_default_axonal_delay() ) );
     syn_id_delay_.set_delay_ms( dendritic_delay );
   }
   // no call to target_.set_status() because target and rport cannot be changed

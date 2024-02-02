@@ -28,13 +28,17 @@ namespace nest
 ConnectorModel::ConnectorModel( const std::string name, const ConnectionModelProperties& properties )
   : name_( name )
   , default_delay_needs_check_( true )
+  , default_axonal_delay_( 0 )
   , properties_( properties )
 {
+  default_delay_ = Time::delay_ms_to_steps( 1.0 );
 }
 
 ConnectorModel::ConnectorModel( const ConnectorModel& cm, const std::string name )
   : name_( name )
   , default_delay_needs_check_( true )
+  , default_delay_( cm.default_delay_ )
+  , default_axonal_delay_( cm.default_axonal_delay_ )
   , properties_( cm.properties_ )
 {
 }

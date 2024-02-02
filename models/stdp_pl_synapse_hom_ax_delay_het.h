@@ -1,5 +1,5 @@
 /*
- *  stdp_pl_synapse_hom_ax_delay.h
+ *  stdp_pl_synapse_hom_ax_delay_het.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STDP_PL_SYNAPSE_HOM_AX_DELAY_H
-#define STDP_PL_SYNAPSE_HOM_AX_DELAY_H
+#ifndef STDP_PL_SYNAPSE_HOM_AX_DELAY_HET_H
+#define STDP_PL_SYNAPSE_HOM_AX_DELAY_HET_H
 
 // C++ includes:
 #include <cmath>
@@ -89,9 +89,9 @@ EndUserDocs */
 
 /**
  * Class containing the common properties for all synapses of type
- * stdp_pl_synapse_hom_ax_delay.
+ * stdp_pl_synapse_hom_ax_delay_het.
  */
-class STDPPLHomAxDelayCommonProperties : public CommonHomAxonalDelaySynapseProperties
+class STDPPLHomAxDelayHetCommonProperties : public CommonSynapseProperties
 {
 
 public:
@@ -99,7 +99,7 @@ public:
    * Default constructor.
    * Sets all property values to defaults.
    */
-  STDPPLHomAxDelayCommonProperties();
+  STDPPLHomAxDelayHetCommonProperties();
 
   /**
    * Get all properties and put them into a dictionary.
@@ -122,19 +122,19 @@ public:
 /**
  * Class representing an STDP connection with homogeneous parameters, i.e. parameters are the same for all synapses.
  */
-void register_stdp_pl_synapse_hom_ax_delay( const std::string& name );
+void register_stdp_pl_synapse_hom_ax_delay_het( const std::string& name );
 
 /**
  * Class representing an STDP connection with homogeneous parameters, i.e.
  * parameters are the same for all synapses.
  */
 template < typename targetidentifierT >
-class stdp_pl_synapse_hom_ax_delay : public Connection< targetidentifierT >
+class stdp_pl_synapse_hom_ax_delay_het : public AxonalDelayConnection< targetidentifierT >
 {
 
 public:
-  typedef STDPPLHomAxDelayCommonProperties CommonPropertiesType;
-  typedef Connection< targetidentifierT > ConnectionBase;
+  typedef STDPPLHomAxDelayHetCommonProperties CommonPropertiesType;
+  typedef AxonalDelayConnection< targetidentifierT > ConnectionBase;
 
   static constexpr ConnectionModelProperties properties = ConnectionModelProperties::HAS_DELAY
     | ConnectionModelProperties::IS_PRIMARY | ConnectionModelProperties::SUPPORTS_HPC
@@ -144,19 +144,20 @@ public:
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  stdp_pl_synapse_hom_ax_delay();
+  stdp_pl_synapse_hom_ax_delay_het();
 
   /**
    * Copy constructor from a property object.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  stdp_pl_synapse_hom_ax_delay( const stdp_pl_synapse_hom_ax_delay& ) = default;
-  stdp_pl_synapse_hom_ax_delay& operator=( const stdp_pl_synapse_hom_ax_delay& ) = default;
+  stdp_pl_synapse_hom_ax_delay_het( const stdp_pl_synapse_hom_ax_delay_het& ) = default;
+  stdp_pl_synapse_hom_ax_delay_het& operator=( const stdp_pl_synapse_hom_ax_delay_het& ) = default;
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
+  using ConnectionBase::get_axonal_delay;
   using ConnectionBase::get_dendritic_delay;
   using ConnectionBase::get_dendritic_delay_steps;
   using ConnectionBase::get_rport;
@@ -176,7 +177,7 @@ public:
    * Send an event to the receiver of this connection.
    * \param e The event to send
    */
-  void send( Event& e, size_t t, const STDPPLHomAxDelayCommonProperties& );
+  void send( Event& e, size_t t, const STDPPLHomAxDelayHetCommonProperties& );
 
   /**
    * Framework for STDP with predominantly axonal delays:
@@ -187,7 +188,7 @@ public:
     const double t_last_spike,
     double* weight_revert,
     const double t_post_spike,
-    const STDPPLHomAxDelayCommonProperties& cp );
+    const STDPPLHomAxDelayHetCommonProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -221,10 +222,8 @@ public:
     const size_t receptor_type,
     const long dendritic_delay,
     const long axonal_delay,
-    const CommonPropertiesType& cp )
+    const CommonPropertiesType& )
   {
-    assert( Time::delay_ms_to_steps( cp.get_axonal_delay() ) == axonal_delay );
-
     ConnTestDummyNode dummy_target;
 
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -245,13 +244,13 @@ public:
 
 private:
   double
-  facilitate_( double w, double kplus, const STDPPLHomAxDelayCommonProperties& cp )
+  facilitate_( double w, double kplus, const STDPPLHomAxDelayHetCommonProperties& cp )
   {
     return w + ( cp.lambda_ * std::pow( w, cp.mu_ ) * kplus );
   }
 
   double
-  depress_( double w, double kminus, const STDPPLHomAxDelayCommonProperties& cp )
+  depress_( double w, double kminus, const STDPPLHomAxDelayHetCommonProperties& cp )
   {
     double new_w = w - ( cp.lambda_ * cp.alpha_ * w * kminus );
     return new_w > 0.0 ? new_w : 0.0;
@@ -264,10 +263,10 @@ private:
 };
 
 template < typename targetidentifierT >
-constexpr ConnectionModelProperties stdp_pl_synapse_hom_ax_delay< targetidentifierT >::properties;
+constexpr ConnectionModelProperties stdp_pl_synapse_hom_ax_delay_het< targetidentifierT >::properties;
 
 //
-// Implementation of class stdp_pl_synapse_hom_ax_delay.
+// Implementation of class stdp_pl_synapse_hom_ax_delay_het.
 //
 
 /**
@@ -277,12 +276,12 @@ constexpr ConnectionModelProperties stdp_pl_synapse_hom_ax_delay< targetidentifi
  */
 template < typename targetidentifierT >
 inline void
-stdp_pl_synapse_hom_ax_delay< targetidentifierT >::send( Event& e,
+stdp_pl_synapse_hom_ax_delay_het< targetidentifierT >::send( Event& e,
   size_t tid,
-  const STDPPLHomAxDelayCommonProperties& cp )
+  const STDPPLHomAxDelayHetCommonProperties& cp )
 {
   // synapse STDP depressing/facilitation dynamics
-  const double axonal_delay_ms = cp.get_axonal_delay();
+  const double axonal_delay_ms = get_axonal_delay();
   const double dendritic_delay_ms = get_dendritic_delay();
   const double t_spike = e.get_stamp().get_ms();
 
@@ -335,7 +334,7 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::send( Event& e,
 }
 
 template < typename targetidentifierT >
-stdp_pl_synapse_hom_ax_delay< targetidentifierT >::stdp_pl_synapse_hom_ax_delay()
+stdp_pl_synapse_hom_ax_delay_het< targetidentifierT >::stdp_pl_synapse_hom_ax_delay_het()
   : ConnectionBase()
   , weight_( 1.0 )
   , Kplus_( 0.0 )
@@ -345,7 +344,7 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::stdp_pl_synapse_hom_ax_delay(
 
 template < typename targetidentifierT >
 void
-stdp_pl_synapse_hom_ax_delay< targetidentifierT >::get_status( DictionaryDatum& d ) const
+stdp_pl_synapse_hom_ax_delay_het< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
 
   // base class properties, different for individual synapse
@@ -359,7 +358,7 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::get_status( DictionaryDatum& 
 
 template < typename targetidentifierT >
 void
-stdp_pl_synapse_hom_ax_delay< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+stdp_pl_synapse_hom_ax_delay_het< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
@@ -369,18 +368,18 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::set_status( const DictionaryD
 
 template < typename targetidentifierT >
 inline void
-stdp_pl_synapse_hom_ax_delay< targetidentifierT >::correct_synapse_stdp_ax_delay( const size_t tid,
+stdp_pl_synapse_hom_ax_delay_het< targetidentifierT >::correct_synapse_stdp_ax_delay( const size_t tid,
   const double t_last_spike,
   double* weight_revert,
   const double t_post_spike,
-  const STDPPLHomAxDelayCommonProperties& cp )
+  const STDPPLHomAxDelayHetCommonProperties& cp )
 {
   const double t_spike = t_lastspike_; // no new pre-synaptic spike since last send()
   const double wrong_weight = weight_; // incorrectly transmitted weight
   weight_ = *weight_revert;            // removes the last depressive step
   Node* target = get_target( tid );
 
-  const double axonal_delay_ms = cp.get_axonal_delay();
+  const double axonal_delay_ms = get_axonal_delay();
   double dendritic_delay_ms = get_dendritic_delay();
 
   // facilitation due to new post-synaptic spike
@@ -415,4 +414,4 @@ stdp_pl_synapse_hom_ax_delay< targetidentifierT >::correct_synapse_stdp_ax_delay
 
 } // of namespace nest
 
-#endif // of #ifndef STDP_PL_SYNAPSE_HOM_AX_DELAY_H
+#endif // of #ifndef STDP_PL_SYNAPSE_HOM_AX_DELAY_HET_H

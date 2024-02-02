@@ -105,6 +105,7 @@ stdp_nn_restr_synapse
 stdp_nn_symm_synapse
 stdp_pl_synapse_hom
 stdp_pl_synapse_hom_ax_delay
+stdp_pl_synapse_hom_ax_delay_het
 stdp_synapse
 stdp_facetshw_synapse_hom
 stdp_synapse_hom

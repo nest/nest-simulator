@@ -1,5 +1,5 @@
 /*
- *  stdp_pl_synapse_hom_ax_delay.cpp
+ *  stdp_pl_synapse_hom_ax_delay_het.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,7 +20,7 @@
  *
  */
 
-#include "stdp_pl_synapse_hom_ax_delay.h"
+#include "stdp_pl_synapse_hom_ax_delay_het.h"
 
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
@@ -33,20 +33,20 @@
 
 
 void
-nest::register_stdp_pl_synapse_hom_ax_delay( const std::string& name )
+nest::register_stdp_pl_synapse_hom_ax_delay_het( const std::string& name )
 {
-  register_connection_model< stdp_pl_synapse_hom_ax_delay >( name );
+  register_connection_model< stdp_pl_synapse_hom_ax_delay_het >( name );
 }
 
 namespace nest
 {
 
 //
-// Implementation of class STDPPLHomAxDelayCommonProperties.
+// Implementation of class STDPPLHomAxDelayHetCommonProperties.
 //
 
-STDPPLHomAxDelayCommonProperties::STDPPLHomAxDelayCommonProperties()
-  : CommonHomAxonalDelaySynapseProperties()
+STDPPLHomAxDelayHetCommonProperties::STDPPLHomAxDelayHetCommonProperties()
+  : CommonSynapseProperties()
   , tau_plus_( 20.0 )
   , tau_plus_inv_( 1. / tau_plus_ )
   , lambda_( 0.1 )
@@ -56,9 +56,9 @@ STDPPLHomAxDelayCommonProperties::STDPPLHomAxDelayCommonProperties()
 }
 
 void
-STDPPLHomAxDelayCommonProperties::get_status( DictionaryDatum& d ) const
+STDPPLHomAxDelayHetCommonProperties::get_status( DictionaryDatum& d ) const
 {
-  CommonHomAxonalDelaySynapseProperties::get_status( d );
+  CommonSynapseProperties::get_status( d );
 
   def< double >( d, names::tau_plus, tau_plus_ );
   def< double >( d, names::lambda, lambda_ );
@@ -67,9 +67,9 @@ STDPPLHomAxDelayCommonProperties::get_status( DictionaryDatum& d ) const
 }
 
 void
-STDPPLHomAxDelayCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+STDPPLHomAxDelayHetCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
-  CommonHomAxonalDelaySynapseProperties::set_status( d, cm );
+  CommonSynapseProperties::set_status( d, cm );
 
   updateValue< double >( d, names::tau_plus, tau_plus_ );
   if ( tau_plus_ > 0. )

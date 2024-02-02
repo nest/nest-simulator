@@ -105,6 +105,40 @@ CommonSynapseProperties::get_weight_recorder() const
 }
 
 
+class CommonHomAxonalDelaySynapseProperties : public CommonSynapseProperties
+{
+public:
+  CommonHomAxonalDelaySynapseProperties();
+
+  ~CommonHomAxonalDelaySynapseProperties();
+
+  /**
+   * Get all properties and put them into a dictionary.
+   */
+  void get_status( DictionaryDatum& d ) const;
+
+  /**
+   * Set properties from the values given in dictionary.
+   */
+  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+
+  /**
+   * Get axonal delay of connection
+   */
+  double get_axonal_delay() const;
+
+
+private:
+  double axonal_delay_;
+};
+
+inline double
+CommonHomAxonalDelaySynapseProperties::get_axonal_delay() const
+{
+  return axonal_delay_;
+}
+
+
 } // of namespace nest
 
 #endif

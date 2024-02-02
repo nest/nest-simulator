@@ -693,6 +693,9 @@ private:
   //! For each thread, store (syn_id, compressed_spike_data_map_::iterator) pair for next iteration while filling target
   //! buffers
   std::vector< std::pair< size_t, std::map< size_t, CSDMapEntry >::const_iterator > > iteration_state_;
+
+  //! Number of weight corrections required for STDP synapses with predominant axonal delays during the whole simulation
+  size_t num_corrections_;
 };
 
 inline bool
@@ -899,6 +902,7 @@ ConnectionManager::correct_synapse_stdp_ax_delay( const SpikeData& spike_data,
   double* weight_revert,
   const double t_post_spike )
 {
+  ++num_corrections_;
   connections_[ spike_data.get_tid() ][ spike_data.get_syn_id() ]->correct_synapse_stdp_ax_delay(
     spike_data, t_last_pre_spike, weight_revert, t_post_spike );
 }

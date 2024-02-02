@@ -375,8 +375,6 @@ ArchivingNode::correct_synapses_stdp_ax_delay_( const Time& t_spike )
           t_spike.get_ms() );
       }
       // indicate that the new spike was processed by these STDP synapses
-      std::cout << &history_ << std::endl;
-      std::cout << &(ArchivingNode::history_) << std::endl;
       history_.back().access_counter_ += correction_entries_stdp_ax_delay_[ idx ].size();
     }
   }

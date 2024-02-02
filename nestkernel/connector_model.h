@@ -123,6 +123,18 @@ public:
 
   virtual void set_syn_id( synindex syn_id ) = 0;
 
+  long
+  get_default_delay() const
+  {
+    return default_delay_;
+  }
+
+  long
+  get_default_axonal_delay() const
+  {
+    return default_axonal_delay_;
+  }
+
   std::string
   get_name() const
   {
@@ -142,8 +154,10 @@ public:
   }
 
 protected:
-  std::string name_;                     //!< name of the ConnectorModel
-  bool default_delay_needs_check_;       //!< indicates whether the default delay must be checked
+  std::string name_;               //!< name of the ConnectorModel
+  bool default_delay_needs_check_; //!< indicates whether the default delay must be checked
+  long default_delay_;
+  long default_axonal_delay_;
   ConnectionModelProperties properties_; //!< connection properties
 };
 
@@ -155,25 +169,19 @@ private:
   typename ConnectionT::CommonPropertiesType cp_;
 
   ConnectionT default_connection_;
-  long default_delay_;
-  long default_axonal_delay_;
   size_t receptor_type_;
 
 public:
   GenericConnectorModel( const std::string name )
     : ConnectorModel( name, ConnectionT::properties )
-    , default_axonal_delay_( 0 )
     , receptor_type_( 0 )
   {
-    default_delay_ = Time::delay_ms_to_steps( 1.0 );
   }
 
   GenericConnectorModel( const GenericConnectorModel& cm, const std::string name )
     : ConnectorModel( cm, name )
     , cp_( cm.cp_ )
     , default_connection_( cm.default_connection_ )
-    , default_delay_( cm.default_delay_ )
-    , default_axonal_delay_( cm.default_axonal_delay_ )
     , receptor_type_( cm.receptor_type_ )
   {
   }

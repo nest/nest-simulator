@@ -80,4 +80,41 @@ CommonSynapseProperties::calibrate( const TimeConverter& )
 {
 }
 
+
+CommonHomAxonalDelaySynapseProperties::CommonHomAxonalDelaySynapseProperties()
+  : axonal_delay_( 0. )
+{
+}
+
+CommonHomAxonalDelaySynapseProperties::~CommonHomAxonalDelaySynapseProperties()
+{
+}
+
+void
+CommonHomAxonalDelaySynapseProperties::get_status( DictionaryDatum& d ) const
+{
+  CommonSynapseProperties::get_status( d );
+
+  def< double >( d, names::axonal_delay, axonal_delay_ );
+}
+
+void
+CommonHomAxonalDelaySynapseProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+{
+  CommonSynapseProperties::set_status( d, cm );
+
+  double axonal_delay;
+  if ( updateValue< double >( d, names::axonal_delay, axonal_delay ) )
+  {
+    if ( axonal_delay >= 0 )
+    {
+      axonal_delay_ = axonal_delay;
+    }
+    else
+    {
+      throw BadDelay( axonal_delay, "Axonal delay must be positive or 0." );
+    }
+  }
+}
+
 } // namespace nest

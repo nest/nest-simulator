@@ -401,7 +401,7 @@ class TestSTDPPlSynapse:
             (0.0, self.resolution),
         ):
             self.synapse_parameters["delay"] = self.dendritic_delay
-            self.synapse_parameters["axonal_delay"] = self.axonal_delay
+            self.synapse_common_properties["axonal_delay"] = self.axonal_delay
 
             for self.min_delay in (1.0, 0.4, self.resolution):
                 for self.max_delay in (3.0, 1.0):

@@ -923,7 +923,8 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
 #pragma omp master
       {
         buffer_size_target_data_has_changed_ = kernel().mpi_manager.increase_buffer_size_target_data();
-      }
+      } // of omp master (no barrier)
+#pragma omp barrier
     }
 
   } // of while

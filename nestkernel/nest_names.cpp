@@ -84,6 +84,7 @@ const Name buffer_size_target_data( "buffer_size_target_data" );
 
 const Name C_m( "C_m" );
 const Name Ca( "Ca" );
+const Name Ca_astro( "Ca_astro" );
 const Name Ca_tot( "Ca_tot" );
 const Name c( "c" );
 const Name c_1( "c_1" );

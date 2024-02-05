@@ -110,6 +110,7 @@ extern const Name buffer_size_target_data;
 
 extern const Name C_m;
 extern const Name Ca;
+extern const Name Ca_astro;
 extern const Name Ca_tot;
 extern const Name c;
 extern const Name c_1;

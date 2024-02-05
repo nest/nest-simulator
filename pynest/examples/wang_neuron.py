@@ -27,8 +27,6 @@ params_exact = {"tau_AMPA": 2.0,
                 "alpha": 0.5,
                 "t_ref": 2.0}
 
-params_approx = params_exact.copy()
-params_approx["approx_t_exact"] = 200
 
 nrn1 = nest.Create("iaf_wang_2002", params_approx)
 pg = nest.Create("poisson_generator", {"rate": 50.})

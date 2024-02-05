@@ -63,6 +63,11 @@ ConnectionCreator::connect( Layer< D >& source,
     pairwise_bernoulli_on_target_( source, source_nc, target, target_nc );
     break;
 
+  case Pairwise_poisson:
+
+    pairwise_poisson_( source, source_nc, target, target_nc );
+    break;
+
   default:
     throw BadProperty( "Unknown connection type." );
   }
@@ -85,7 +90,6 @@ ConnectionCreator::connect_to_target_( Iterator from,
   std::vector< double > source_pos( D );
   const std::vector< double > target_pos = tgt_pos.get_vector();
 
-  const bool without_kernel = not kernel_.get();
   for ( Iterator iter = from; iter != to; ++iter )
   {
     if ( not allow_autapses_ and ( iter->second == tgt_ptr->get_node_id() ) )
@@ -94,7 +98,52 @@ ConnectionCreator::connect_to_target_( Iterator from,
     }
     iter->first.get_vector( source_pos );
 
-    if ( without_kernel or rng->drand() < kernel_->value( rng, source_pos, target_pos, source, tgt_ptr ) )
+    if ( not kernel_ or rng->drand() < kernel_->value( rng, source_pos, target_pos, source, tgt_ptr ) )
+    {
+      for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
+      {
+        kernel().connection_manager.connect( iter->second,
+          tgt_ptr,
+          tgt_thread,
+          synapse_model_[ indx ],
+          param_dicts_[ indx ][ tgt_thread ],
+          delay_[ indx ]->value( rng, source_pos, target_pos, source, tgt_ptr ),
+          weight_[ indx ]->value( rng, source_pos, target_pos, source, tgt_ptr ) );
+      }
+    }
+  }
+}
+
+template < typename Iterator, int D >
+void
+ConnectionCreator::connect_to_target_poisson_( Iterator from,
+  Iterator to,
+  Node* tgt_ptr,
+  const Position< D >& tgt_pos,
+  size_t tgt_thread,
+  const Layer< D >& source )
+{
+  RngPtr rng = get_vp_specific_rng( tgt_thread );
+
+  // We create a source pos vector here that can be updated with the
+  // source position. This is done to avoid creating and destroying
+  // unnecessarily many vectors.
+  std::vector< double > source_pos( D );
+  const std::vector< double > target_pos = tgt_pos.get_vector();
+  poisson_distribution poi_dist;
+
+  for ( Iterator iter = from; iter != to; ++iter )
+  {
+    if ( not allow_autapses_ and ( iter->second == tgt_ptr->get_node_id() ) )
+    {
+      continue;
+    }
+    iter->first.get_vector( source_pos );
+
+    // Sample number of connections that are to be established
+    poisson_distribution::param_type param( kernel_->value( rng, source_pos, target_pos, source, tgt_ptr ) );
+    const unsigned long num_conns = poi_dist( rng, param );
+    for ( unsigned long conn_counter = 0; conn_counter < num_conns; ++conn_counter )
     {
       for ( size_t indx = 0; indx < synapse_model_.size(); ++indx )
       {
@@ -201,9 +250,7 @@ ConnectionCreator::pairwise_bernoulli_on_source_( Layer< D >& source,
 
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
 
-// sharing specs on next line commented out because gcc 4.2 cannot handle them
-#pragma omp parallel // default(none) shared(source, target, masked_layer,
-                     // target_begin, target_end)
+#pragma omp parallel
   {
     const int thread_id = kernel().vp_manager.get_thread_id();
     try
@@ -287,9 +334,7 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
     throw IllegalConnection( "Spatial Connect with pairwise_bernoulli to devices is not possible." );
   }
 
-// sharing specs on next line commented out because gcc 4.2 cannot handle them
-#pragma omp parallel // default(none) shared(source, target, masked_layer,
-                     // target_begin, target_end)
+#pragma omp parallel
   {
     const int thread_id = kernel().vp_manager.get_thread_id();
     try
@@ -336,6 +381,80 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
     }
   }
 }
+
+
+template < int D >
+void
+ConnectionCreator::pairwise_poisson_( Layer< D >& source,
+  NodeCollectionPTR source_nc,
+  Layer< D >& target,
+  NodeCollectionPTR target_nc )
+{
+  // Connect using pairwise Poisson drawing source nodes (target driven)
+  // For each local target node:
+  //  1. Apply Mask to source layer
+  //  2. For each source node: Compute probability, draw random number, make
+  //     connection conditionally
+
+  // retrieve global positions, either for masked or unmasked pool
+  PoolWrapper_< D > pool;
+  if ( mask_.get() ) // MaskedLayer will be freed by PoolWrapper d'tor
+  {
+    pool.define( new MaskedLayer< D >( source, mask_, allow_oversized_, source_nc ) );
+  }
+  else
+  {
+    pool.define( source.get_global_positions_vector( source_nc ) );
+  }
+
+  std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
+
+#pragma omp parallel
+  {
+    const int thread_id = kernel().vp_manager.get_thread_id();
+    try
+    {
+      NodeCollection::const_iterator target_begin = target_nc->begin();
+      NodeCollection::const_iterator target_end = target_nc->end();
+
+      for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
+      {
+        Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id, thread_id );
+
+        if ( not tgt->is_proxy() )
+        {
+          const Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
+
+          if ( mask_.get() )
+          {
+            connect_to_target_poisson_(
+              pool.masked_begin( target_pos ), pool.masked_end(), tgt, target_pos, thread_id, source );
+          }
+          else
+          {
+            connect_to_target_poisson_( pool.begin(), pool.end(), tgt, target_pos, thread_id, source );
+          }
+        }
+      } // for target_begin
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( thread_id ) =
+        std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  } // omp parallel
+  // check if any exceptions have been raised
+  for ( size_t thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+  {
+    if ( exceptions_raised_.at( thr ).get() )
+    {
+      throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
+    }
+  }
+}
+
 
 template < int D >
 void
@@ -404,7 +523,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
       // If there is no kernel, we can just draw uniform random numbers,
       // but with a kernel we have to set up a probability distribution
       // function using a discrete_distribution.
-      if ( kernel_.get() )
+      if ( kernel_ )
       {
 
         std::vector< double > probabilities;
@@ -537,7 +656,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
       // If there is no kernel, we can just draw uniform random numbers,
       // but with a kernel we have to set up a probability distribution
       // function using a discrete_distribution.
-      if ( kernel_.get() )
+      if ( kernel_ )
       {
 
         std::vector< double > probabilities;
@@ -696,7 +815,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
     std::copy( masked_target.begin( source_pos ), masked_target_end, target_pos_node_id_pairs.begin() );
 
     probabilities.reserve( target_pos_node_id_pairs.size() );
-    if ( kernel_.get() )
+    if ( kernel_ )
     {
       for ( const auto& target_pos_node_id_pair : target_pos_node_id_pairs )
       {

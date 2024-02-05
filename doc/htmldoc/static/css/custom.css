@@ -96,6 +96,10 @@ section#kernel-attributes-nest-nestmodule dd {
         border-bottom: 1px solid #ddd;
 }
 
+.menuselection {
+   font-weight: bold;
+}
+
 /*************************************************************
  * Rules for  mermaid diagrams
  *************************************************************/
@@ -105,7 +109,6 @@ section#kernel-attributes-nest-nestmodule dd {
 	stroke: None !important;
 	stroke-width: None !important;
 }
-
 
 rect.basic.label-container {
 	fill: #e2e2e200; !important
@@ -122,7 +125,6 @@ figure.align-default {
 	outline-width: medium;
 	outline-style: groove;
 }
-
 
 /**************************************************************************************
  Settings for overriding material design theme 

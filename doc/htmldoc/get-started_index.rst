@@ -7,7 +7,7 @@ Tutorials and examples
 
    tutorials/index
    PyNEST example scripts <examples/index>
-
+   understand_index
 
 .. grid:: 1 1 2 2
     :gutter: 1
@@ -24,5 +24,5 @@ Tutorials and examples
 
 
 
-.. |nav| image:: static/img/GPS-Settings-256_nest.svg 
+.. |nav| image:: static/img/GPS-Settings-256_nest.svg
 .. |example| image::  static/img/Documents-02-256_nest.svg

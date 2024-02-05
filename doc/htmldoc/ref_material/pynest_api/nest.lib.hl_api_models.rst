@@ -2,23 +2,25 @@ Models module
 =============
 
 .. automodule:: nest.lib.hl_api_models
-   :members:
+   :members: CopyModel, GetDefaults, SetDefaults
    :undoc-members:
    :show-inheritance:
 
 
 
 
+.. admonition:: Deprecated function
 
-.. autofunction:: Models(mtype="all", sel=None)
+    ``ConnectionRules`` deprecated since 3.3.
 
-
-   Deprecated since 3.3.
-
-   Use :py:obj:`~.NestModule.node_models` or :py:obj:`~.NestModule.synapse_models` instead.
+    Use :py:obj:`~.NestModule.connection_rules` instead.
 
 .. autofunction:: ConnectionRules
 
-   Deprecated since 3.3.
+.. admonition:: Deprecated function
 
-   Use :py:obj:`~.NestModule.connection_rules` instead.
+     ``Models`` deprecated since 3.3.
+
+     Use :py:obj:`~.NestModule.node_models` or :py:obj:`~.NestModule.synapse_models` instead.
+
+.. autofunction:: Models(mtype="all", sel=None)

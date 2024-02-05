@@ -117,8 +117,8 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # The original number of iterations requires distributed computing.
 
 n_batch = 32  # batch size, 64 in reference [2], 32 in the README to reference [2]
-n_iter_train = 6
-n_iter_test = 1
+n_iter_train = 30
+n_iter_test = 10
 
 steps = {}
 
@@ -177,9 +177,11 @@ nest.set_verbosity("M_FATAL")
 # configure later. Within the recurrent network, alongside a population of regular neurons, we introduce a
 # population of adaptive neurons, to enhance the network's memory retention.
 
-n_in = 2 * 34 * 34  # number of input neurons
+pixels_blacklist = np.loadtxt("./NMNIST_pixels_blacklist.txt")
+
+n_in = 2 * 34 * 34 - len(pixels_blacklist) # number of input neurons
 n_rec = 100  # number of recurrent neurons
-n_out = 3
+n_out = 10
 
 
 params_nrn_rec = {
@@ -295,6 +297,14 @@ weights_rec_out = np.array(calculate_glorot_dist(n_rec, n_out).T, dtype=dtype_we
 weights_out_rec = np.array(np.random.randn(n_rec, n_out), dtype=dtype_weights)
 
 
+sparsity_level_in = 0.9
+mask_in = np.random.choice([0,1], weights_in_rec.shape, p=[sparsity_level_in, 1-sparsity_level_in])
+sparsity_level_out = 0.0
+mask_out = np.random.choice([0,1], weights_rec_out.shape, p=[sparsity_level_out, 1-sparsity_level_out])
+
+weights_in_rec *= mask_in
+weights_rec_out *= mask_out
+
 params_common_syn_eprop = {
     "optimizer": {
         "type": "gradient_descent",  # algorithm to optimize the weights
@@ -313,13 +323,8 @@ params_syn_base = {
 }
 
 params_syn_in = params_syn_base.copy()
-params_syn_in["weight"] = weights_in_rec  # pA, initial values for the synaptic weights
-
 params_syn_rec = params_syn_base.copy()
-params_syn_rec["weight"] = weights_rec_rec
-
 params_syn_out = params_syn_base.copy()
-params_syn_out["weight"] = weights_rec_out
 
 
 params_syn_feedback = {
@@ -358,9 +363,21 @@ params_init_optimizer = {
 nest.SetDefaults("eprop_synapse", params_common_syn_eprop)
 
 nest.Connect(gen_spk_in, nrns_in, params_conn_one_to_one, params_syn_static)  # connection 1
-nest.Connect(nrns_in, nrns_rec, params_conn_all_to_all, params_syn_in)  # connection 2
+# nest.Connect(nrns_in, nrns_rec, params_conn_all_to_all, params_syn_in)  # connection 2
+for j in range(n_rec):
+    for i in range(n_in):
+        w = weights_in_rec[j,i]
+        if np.abs(w) > 0:
+            params_syn_in["weight"] = w
+            nest.Connect(nrns_in[i], nrns_rec[j], params_conn_one_to_one, params_syn_in)
 # nest.Connect(nrns_rec, nrns_rec, params_conn_all_to_all, params_syn_rec)  # connection 3
-nest.Connect(nrns_rec, nrns_out, params_conn_all_to_all, params_syn_out)  # connection 4
+# nest.Connect(nrns_rec, nrns_out, params_conn_all_to_all, params_syn_out)  # connection 4
+for j in range(n_out):
+    for i in range(n_rec):
+        w = weights_rec_out[j,i]
+        if np.abs(w) > 0:
+            params_syn_out["weight"] = w
+            nest.Connect(nrns_rec[i], nrns_out[j], params_conn_one_to_one, params_syn_out)            
 nest.Connect(nrns_out, nrns_rec, params_conn_all_to_all, params_syn_feedback)  # connection 5
 nest.Connect(gen_rate_target, nrns_out, params_conn_one_to_one, params_syn_rate_target)  # connection 6
 nest.Connect(nrns_out, nrns_out, params_conn_all_to_all, params_syn_out_out)  # connection 7
@@ -383,7 +400,7 @@ def extract_dataset(zip_path, target_folder):
                 zip_file.extract(member, target_folder)
 
 
-def load_n_mnist(file_path, num_labels=10, shuffle=True):
+def load_n_mnist(file_path, num_labels=10, shuffle=True, pixels_blacklist=None):
     assert 0 < num_labels <= 10, "num_labels must be between 1 and 10"
 
     samples = np.loadtxt(file_path, dtype="int")
@@ -402,12 +419,11 @@ def load_n_mnist(file_path, num_labels=10, shuffle=True):
         shuffled_indices = np.random.permutation(len(indices))
         indices, labels = indices[shuffled_indices], labels[shuffled_indices]
 
-    images = [load_image(f"NMNISTsmall/{idx}.bs2") for idx in indices]
+    images = [load_image(f"NMNISTsmall/{idx}.bs2", pixels_blacklist) for idx in indices]
 
-    return np.array(images), labels
+    return images, labels
 
-
-def load_image(file_path):
+def load_image(file_path, pixels_blacklist=None):
     with open(file_path, "rb") as file:
         inputByteArray = file.read()
     byte_array = np.asarray([x for x in inputByteArray])
@@ -416,19 +432,25 @@ def load_image(file_path):
     y_coords = byte_array[1::5]
     polarities = byte_array[2::5] >> 7
     times = ((byte_array[2::5] << 16) | (byte_array[3::5] << 8) | byte_array[4::5]) & 0x7FFFFF
-    times = np.clip(times // 1000, 0, 299)
+    times = np.clip(times // 1000, 1, 299)
 
-    image = np.zeros((2, 34, 34, 300), dtype=int)
+    image_full = [ [] for _ in range(2*34*34) ]
+    image = []
+ 
     for polarity, x, y, time in zip(polarities, y_coords, x_coords, times):
-        image[polarity, 33 - x, y, time] = 1
+        pixel = polarity*34*34 +  x * 34 + y
+        image_full[pixel].append(time)
+
+    for pixel, times in enumerate(image_full): 
+        if pixel not in pixels_blacklist:
+            image.append(times)
 
     return image
 
-
 class DataLoader:
     def __init__(self, images, labels, n_batch):
-        self.images = np.array(images)
-        self.labels = np.array(labels)
+        self.images = images
+        self.labels = labels
         self.n_batch = n_batch
         self.current_index = 0
 
@@ -440,7 +462,7 @@ class DataLoader:
             batch_labels = self.labels[self.current_index : end_index]
         else:
             overflow = end_index - len(self.images)
-            batch_images = np.concatenate((self.images[self.current_index :], self.images[:overflow]))
+            batch_images = self.images[self.current_index :] + self.images[:overflow]
             batch_labels = np.concatenate((self.labels[self.current_index :], self.labels[:overflow]))
 
         self.current_index = (end_index) % len(self.images)
@@ -452,8 +474,8 @@ extract_dataset("NMNISTsmall.zip", "./")
 file_path_train = "NMNISTsmall/train1K.txt"
 file_path_test = "NMNISTsmall/test100.txt"
 
-train_images, train_labels = load_n_mnist(file_path_train, num_labels=n_out, shuffle=True)
-test_images, test_labels = load_n_mnist(file_path_test, num_labels=n_out, shuffle=True)
+train_images, train_labels = load_n_mnist(file_path_train, num_labels=n_out, shuffle=True, pixels_blacklist=pixels_blacklist)
+test_images, test_labels = load_n_mnist(file_path_test, num_labels=n_out, shuffle=True, pixels_blacklist=pixels_blacklist)
 
 train_loader = DataLoader(train_images, train_labels, n_batch=n_batch)
 test_loader = DataLoader(test_images, test_labels, n_batch=n_batch)
@@ -521,9 +543,7 @@ for iteration in np.arange(n_iter_train + n_iter_test):
 
         target_rates[targets_batch[batch_elem], t_start_batch_elem:t_end_batch_elem] = target_signal_rescale_factor
 
-        img = img_batch[batch_elem].reshape(2 * 34 * 34, -1)
-        for n, spks in enumerate(img):
-            relative_times = np.unique(spks * np.arange(duration["sequence"]))[1:]
+        for n, relative_times in enumerate(img_batch[batch_elem]):
             absolute_times = t_start_batch_elem * np.ones_like(relative_times) + relative_times
             spike_times[n] += absolute_times.tolist()
 

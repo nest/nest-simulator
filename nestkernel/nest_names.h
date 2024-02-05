@@ -91,7 +91,6 @@ extern const Name amplitude;
 extern const Name amplitude_times;
 extern const Name amplitude_values;
 extern const Name anchor;
-extern const Name approx_t_exact;
 extern const Name archiver_length;
 extern const Name asc_amps;
 extern const Name asc_decay;

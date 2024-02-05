@@ -66,7 +66,7 @@ Leaky integrate-and-fire-neuron model with conductance based synapses, and addit
 Description
 +++++++++++
 
-``iaf_wang_2002_exact_dynamics`` is a leaky integrate-and-fire neuron model with
+``iaf_wang_2002_exact`` is a leaky integrate-and-fire neuron model with
 
 * an exact implementation of the neuron model described in [1]_.
 * exponential conductance-based AMPA and GABA-synapses
@@ -96,7 +96,7 @@ where :math:`\Gamma_\mathrm{ex}` and :math:`\Gamma_\mathrm{in}` are index sets f
 
 Since :math:`S_{j,\mathrm{AMPA}}` and :math:`S_{j,\mathrm{GABA}}` are piecewise exponential functions, the sums are also a piecewise exponential function, and can be stored in a single synaptic variable each, :math:`S_{\mathrm{AMPA}}` and :math:`S_{\mathrm{GABA}}` respectively. The sum over :math:`S_{j,\mathrm{NMDA}}` does not have a simple expression, and cannot be simplified. Therefore, for each synapse, we need to integrate separate state variable, which makes the model slow.
 
-The specification of this model differs slightly from the one in [1]_. The parameters :math:`g_\mathrm{AMPA}`, :math:`g_\mathrm{GABA}`, and :math:`g_\mathrm{NMDA}` have been absorbed into the respective synaptic weights. Additionally, the synaptic variable from the external population is not kept in a separate variable :math:`S_{\mathrm{rec,AMPA}}`, but is taken together with the local synapses in :math:`S_{\mathrm{AMPA}}`.
+The specification of this model differs slightly from the one in [1]_. The parameters :math:`g_\mathrm{AMPA}`, :math:`g_\mathrm{GABA}`, and :math:`g_\mathrm{NMDA}` have been absorbed into the respective synaptic weights. Additionally, the synapses from the external population is not separated from the recurrent AMPA-synapses. 
 
 
 Parameters

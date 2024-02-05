@@ -65,7 +65,6 @@ const Name amplitude( "amplitude" );
 const Name amplitude_times( "amplitude_times" );
 const Name amplitude_values( "amplitude_values" );
 const Name anchor( "anchor" );
-const Name approx_t_exact( "approx_t_exact" );
 const Name archiver_length( "archiver_length" );
 const Name asc_amps( "asc_amps" );
 const Name asc_decay( "asc_decay" );

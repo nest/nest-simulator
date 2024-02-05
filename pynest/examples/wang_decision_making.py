@@ -1,5 +1,44 @@
+# -*- coding: utf-8 -*-
+#
+# brunel_alpha_nest.py
+#
+# This file is part of NEST.
+#
+# Copyright (C) 2004 The NEST Initiative
+#
+# NEST is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# NEST is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
 """
-docstring
+Decision making in recurrent network with NMDA-dynamics
+------------------------------------------------------------
+
+This script simulates the network modelled in [1]_.
+An excitatory and an inhibitory population receives input
+from an external population modelled as a Poisson process.
+Two different subsets of the excitatory population,
+comprising 15% of the total population each, receive additional
+inputs from a time-inhomogeneous Poisson process, where the
+coherence between the two signals can be varied. Local inhibition
+mediates a winner-takes-all comptetion, and the activity of
+one of the sub-population is suppressed.
+
+References
+~~~~~~~~~~
+.. [1] Wang X-J (2002). Probabilistic Decision Making by Slow Reverberation in 
+Cortical Circuits. Neuron, Volume 36, Issue 5, Pages 955-968. 
+https://doi.org/10.1016/S0896-6273(02)01092-9.
+
 """
 
 import nest
@@ -10,11 +49,16 @@ import numpy as np
 np.random.seed(1234)
 rng = np.random.default_rng()
 
+# Use approximate model, can be replaced by "iaf_wang_2002_exact"
 model = "iaf_wang_2002"
 
 dt = 0.1
 nest.set(resolution=dt, print_time=True)
 
+##################################################
+# Set parameter values, taken from [1]_.
+
+# conductances
 g_AMPA_ex = 0.05
 g_AMPA_ext_ex = 2.1
 g_NMDA_ex = 0.165
@@ -25,8 +69,7 @@ g_AMPA_ext_in = 1.62
 g_NMDA_in = 0.13
 g_GABA_in = 1.0
 
-
-# Parameters from paper
+# neuron parameters
 epop_params = {"tau_GABA": 5.0,
                "tau_AMPA": 2.0,
                "tau_decay_NMDA": 100.0,
@@ -42,7 +85,6 @@ epop_params = {"tau_GABA": 5.0,
                "C_m": 500.0,            # membrane capacitance
                "t_ref": 2.0             # refreactory period
                }
-
 
 ipop_params = {"tau_GABA": 5.0,
                "tau_AMPA": 2.0,
@@ -60,36 +102,53 @@ ipop_params = {"tau_GABA": 5.0,
                "t_ref": 1.0             # refreactory period
                }
 
-simtime = 4000.
+# synaptic weights
+w_plus = 1.7
+w_minus = 1 - f * (w_plus - 1) / (1 - f)
+
+
+# signals to the two different excitatory sub-populations
+# the signal is given by a time-inhomogeneous Poisson process,
+# where the expectations are constant over intervals of 50ms,
+# and then change. The values for each interval are normally
+# distributed, with means mu_a and mu_b, and standard deviation
+# sigma.
 signal_start = 1000.
 signal_duration = 2000.
 signal_update_interval = 50.
 f = 0.15 # proportion of neurons receiving signal inputs
-w_plus = 1.7
-w_minus = 1 - f * (w_plus - 1) / (1 - f)
-delay = 0.5
-
-NE = 1600
-NI = 400
-
-selective_pop1 = nest.Create(model, int(0.15 * NE), params=epop_params)
-selective_pop2 = nest.Create(model, int(0.15 * NE), params=epop_params)
-nonselective_pop = nest.Create(model, int(0.7 * NE), params=epop_params)
-inhibitory_pop = nest.Create(model, NI, params=ipop_params)
-
-mu_0 = 40.
-rho_a = mu_0 / 100
+# compute expectations of the time-inhomogeneous Poisson processes
+mu_0 = 40.                  # base rate
+rho_a = mu_0 / 100          # scaling factors coherence
 rho_b = rho_a
-c = 0.
-sigma = 4.
-mu_a = mu_0 + rho_a * c
-mu_b = mu_0 - rho_b * c
+c = 0.                      # coherence
+sigma = 4.                  # standard deviation
+mu_a = mu_0 + rho_a * c     # expectation for pop A
+mu_b = mu_0 - rho_b * c     # expectation for pop B 
 
+# sample values for the Poisson process
 num_updates = int(signal_duration / signal_update_interval)
 update_times = np.arange(0, signal_duration, signal_update_interval)
 update_times[0] = 0.1
 rates_a = np.random.normal(mu_a, sigma, size=num_updates)
 rates_b = np.random.normal(mu_b, sigma, size=num_updates)
+
+
+
+delay = 0.5
+
+# number of neurons in each population
+NE = 1600
+NI = 400
+
+
+##################################################
+# Create neurons and devices
+
+selective_pop1 = nest.Create(model, int(0.15 * NE), params=epop_params)
+selective_pop2 = nest.Create(model, int(0.15 * NE), params=epop_params)
+nonselective_pop = nest.Create(model, int(0.7 * NE), params=epop_params)
+inhibitory_pop = nest.Create(model, NI, params=ipop_params)
 
 poisson_a = nest.Create("inhomogeneous_poisson_generator",
                         params={"origin": signal_start-0.1,
@@ -106,6 +165,20 @@ poisson_b = nest.Create("inhomogeneous_poisson_generator",
                                 "rate_values": rates_b})
 
 poisson_0 = nest.Create("poisson_generator", params={"rate": 2400.})
+
+sr_nonselective = nest.Create("spike_recorder")
+sr_selective1 = nest.Create("spike_recorder")
+sr_selective2 = nest.Create("spike_recorder")
+sr_inhibitory = nest.Create("spike_recorder")
+
+mm_selective1 = nest.Create("multimeter", {"record_from": ["V_m", "s_NMDA", "s_AMPA", "s_GABA"]})
+mm_selective2 = nest.Create("multimeter", {"record_from": ["V_m", "s_NMDA", "s_AMPA", "s_GABA"]})
+mm_nonselective = nest.Create("multimeter", {"record_from": ["V_m", "s_NMDA", "s_AMPA", "s_GABA"]})
+mm_inhibitory = nest.Create("multimeter", {"record_from": ["V_m", "s_NMDA", "s_AMPA", "s_GABA"]})
+
+
+##################################################
+# Define synapse specifications
 
 syn_spec_pot_AMPA = {"synapse_model": "static_synapse", "weight":w_plus * g_AMPA_ex, "delay":delay, "receptor_type": 1}
 syn_spec_pot_NMDA = {"synapse_model": "static_synapse", "weight":w_plus * g_NMDA_ex, "delay":delay, "receptor_type": 3}
@@ -124,19 +197,10 @@ ee_syn_spec_NMDA = {"synapse_model": "static_synapse", "weight": 1.0 * g_NMDA_ex
 exte_syn_spec = {"synapse_model": "static_synapse", "weight":g_AMPA_ext_ex, "delay":0.1, "receptor_type": 1}
 exti_syn_spec = {"synapse_model": "static_synapse", "weight":g_AMPA_ext_in, "delay":0.1, "receptor_type": 1}
 
-sr_nonselective = nest.Create("spike_recorder")
-sr_selective1 = nest.Create("spike_recorder")
-sr_selective2 = nest.Create("spike_recorder")
-sr_inhibitory = nest.Create("spike_recorder")
-
-mm_selective1 = nest.Create("multimeter", {"record_from": ["V_m", "s_NMDA", "s_AMPA", "s_GABA"]})
-mm_selective2 = nest.Create("multimeter", {"record_from": ["V_m", "s_NMDA", "s_AMPA", "s_GABA"]})
-mm_nonselective = nest.Create("multimeter", {"record_from": ["V_m", "s_NMDA", "s_AMPA", "s_GABA"]})
-mm_inhibitory = nest.Create("multimeter", {"record_from": ["V_m", "s_NMDA", "s_AMPA", "s_GABA"]})
 
 
-
-# # # Create connections
+##################################################
+# Create connections
 
 # from external
 nest.Connect(poisson_0, nonselective_pop + selective_pop1 + selective_pop2, conn_spec="all_to_all", syn_spec=exte_syn_spec)
@@ -185,15 +249,21 @@ nest.Connect(inhibitory_pop, inhibitory_pop, conn_spec="all_to_all", syn_spec=ii
 
 nest.Connect(inhibitory_pop, sr_inhibitory)
 
-
-# multimeters
+# multimeters record from single neuron from each population.
+# since the network is fully connected, it's the same for all
+# neurons in the same population.
 nest.Connect(mm_selective1, selective_pop1[0])
 nest.Connect(mm_selective2, selective_pop2[0])
 nest.Connect(mm_nonselective, nonselective_pop[0])
 nest.Connect(mm_inhibitory, inhibitory_pop[0])
 
+##################################################
+# Run simulation
 nest.Simulate(5000.)
 
+
+##################################################
+# Collect data from simulation
 spikes_nonselective = sr_nonselective.get("events", "times")
 spikes_selective1 = sr_selective1.get("events", "times")
 spikes_selective2 = sr_selective2.get("events", "times")
@@ -220,51 +290,62 @@ s_GABA_inhibitory = mm_inhibitory.get("events", "s_GABA")
 s_NMDA_inhibitory = mm_inhibitory.get("events", "s_NMDA")
 
 
-res = 1.0
+
+##################################################
+# Plots
+
+# bins for histograms
+res = 1.0  
 bins = np.arange(0, 4001, res) - 0.001
 
 fig, ax = plt.subplots(ncols=2, nrows=2, sharex=True, sharey=True)
 fig.tight_layout()
-d = NE * f * (res / 1000)
+
+# selective populations
+num = NE * f * (res / 1000)
 hist1, _ = np.histogram(spikes_selective1, bins=bins)
 hist2, _ = np.histogram(spikes_selective2, bins=bins)
-
-ax[0,0].plot(hist1 / d)
+ax[0,0].plot(hist1 / num)
 ax[0,0].set_title("Selective pop A")
-ax[0,1].plot(hist2 / d)
+ax[0,1].plot(hist2 / num)
 ax[0,1].set_title("Selective pop B")
 
-d = NE * (1 - 2*f) * res / 1000
+# nonselective population
+num = NE * (1 - 2*f) * res / 1000
 hist, _ = np.histogram(spikes_nonselective, bins=bins)
-ax[1,0].plot(hist / d)
+ax[1,0].plot(hist / num)
 ax[1,0].set_title("Nonselective pop")
 
-d = NI * res / 1000
+# inhibitory population
+num = NI * res / 1000
 hist, _ = np.histogram(spikes_inhibitory, bins=bins)
-ax[1,1].plot(hist / d)
+ax[1,1].plot(hist / num)
 ax[1,1].set_title("Inhibitory pop")
-
 
 
 fig, ax = plt.subplots(ncols=4, nrows=4, sharex=True, sharey="row")
 fig.tight_layout()
 
-
+# AMPA conductances
 ax[0,0].plot(s_AMPA_selective1)
 ax[0,1].plot(s_AMPA_selective2)
 ax[0,2].plot(s_AMPA_nonselective)
 ax[0,3].plot(s_AMPA_inhibitory)
 
+# NMDA conductances
 ax[1,0].plot(s_NMDA_selective1)
 ax[1,1].plot(s_NMDA_selective2)
 ax[1,2].plot(s_NMDA_nonselective)
 ax[1,3].plot(s_NMDA_inhibitory)
 
+
+# GABA conductances
 ax[2,0].plot(s_GABA_selective1)
 ax[2,1].plot(s_GABA_selective2)
 ax[2,2].plot(s_GABA_nonselective)
 ax[2,3].plot(s_GABA_inhibitory)
 
+# Membrane potential
 ax[3,0].plot(vm_selective1)
 ax[3,1].plot(vm_selective2)
 ax[3,2].plot(vm_nonselective)

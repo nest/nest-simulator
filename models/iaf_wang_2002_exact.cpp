@@ -183,21 +183,16 @@ nest::iaf_wang_2002_exact::Parameters_::set( const DictionaryDatum& d, Node* nod
   updateValueParam< double >( d, names::V_reset, V_reset, node );
   updateValueParam< double >( d, names::t_ref, t_ref, node );
   updateValueParam< double >( d, names::E_L, E_L, node );
-
   updateValueParam< double >( d, names::E_ex, E_ex, node );
   updateValueParam< double >( d, names::E_in, E_in, node );
-
   updateValueParam< double >( d, names::C_m, C_m, node );
   updateValueParam< double >( d, names::g_L, g_L, node );
-
   updateValueParam< double >( d, names::tau_AMPA, tau_AMPA, node );
   updateValueParam< double >( d, names::tau_GABA, tau_GABA, node );
   updateValueParam< double >( d, names::tau_rise_NMDA, tau_rise_NMDA, node );
   updateValueParam< double >( d, names::tau_decay_NMDA, tau_decay_NMDA, node );
-
   updateValueParam< double >( d, names::alpha, alpha, node );
   updateValueParam< double >( d, names::conc_Mg2, conc_Mg2, node );
-
   updateValueParam< double >( d, names::gsl_error_tol, gsl_error_tol, node );
 
   if ( V_reset >= V_th )

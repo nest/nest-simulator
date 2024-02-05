@@ -226,7 +226,6 @@ private:
   };
 
 
-
   // make dynamics function quasi-member
   friend int iaf_wang_2002_exact_dynamics( double, const double y[], double f[], void* pnode );
 

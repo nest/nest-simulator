@@ -95,11 +95,10 @@ where :math:`\Gamma_\mathrm{ex}` and :math:`\Gamma_\mathrm{in}` are index sets f
 
 .. math::
 
-    k_0 &= \mathrm{exp}(-\alpha \tau_\mathrm{r}) \\[3ex]
+    k_0 &= \mathrm{exp}(-\alpha \tau_\mathrm{r}) - 1 \\[3ex]
     k_1 &= -\alpha \tau_\mathrm{r} \mathrm{E_N} \Big[ \frac{\tau_\mathrm{r}}{\tau_\mathrm{d}}, \alpha \tau_\mathrm{r} \Big] + (\alpha \tau_\mathrm{r})^{\frac{\tau_\mathrm{r}}{\tau_\mathrm{d}}} \Gamma \Big[ 1 - \frac{\tau_\mathrm{r}}{\tau_\mathrm{d}} \Big]
 
 where :math:`\mathrm{E_N}` is the generalized exponential integral (https://en.wikipedia.org/wiki/Exponential_integral#Generalization), and :math:`\Gamma` is the gamma-function (https://en.wikipedia.org/wiki/Gamma_function).
-
 
 The specification of this model differs slightly from the one in [1]_. The parameters :math:`g_\mathrm{AMPA}`, :math:`g_\mathrm{GABA}`, and :math:`g_\mathrm{NMDA}` have been absorbed into the respective synaptic weights. Additionally, the synapses from the external population is not separated from the recurrent AMPA-synapses. 
 
@@ -142,10 +141,6 @@ The following values can be recorded.
 =========== ===========================================================
 
 .. note::
-   It is possible to set values for :math:`V_\mathrm{m}`, :math:`S_\mathrm{AMPA}` and :math:`S_\mathrm{GABA}` when creating the model, while the
-   different :math:`s_{j,\mathrm{NMDA}}` (`j` represents presynaptic neuron `j`) can not be set by the user.
-
-.. note::
    :math:`g_{\mathrm{\{\{rec,AMPA\}, \{ext,AMPA\}, GABA, NMBA}\}}` from [1]_ is built into the weights in this NEST model, so setting the
    variables is thus done by changing the weights.
 
@@ -172,7 +167,6 @@ See also
 iaf_cond_alpha, ht_neuron
 
 EndUserDocs */
-
 
 void register_iaf_wang_2002( const std::string& name );
 

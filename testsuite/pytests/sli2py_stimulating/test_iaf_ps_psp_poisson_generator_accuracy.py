@@ -93,7 +93,7 @@ def V_m_response_fn(t):
     if t < 0.0:
         return 0.0
     prefactor = weight * math.e / (tau_syn * C_m)
-    term1 = (exp(-t / tau_m) - exp(-t / tau_syn)) / (1 / tau_syn - 1 / tau_m)**2
+    term1 = (exp(-t / tau_m) - exp(-t / tau_syn)) / (1 / tau_syn - 1 / tau_m) ** 2
     term2 = t * exp(-t / tau_syn) / (1 / tau_syn - 1 / tau_m)
     return prefactor * (term1 - term2)
 

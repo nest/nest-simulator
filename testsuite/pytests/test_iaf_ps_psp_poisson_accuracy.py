@@ -75,20 +75,30 @@ neuron_params = {
 }
 
 
-def alpha_fn(t):
+def V_m_response_fn(t):
+    """
+    Returns the value of the membrane potential at time t, assuming
+    alpha-shaped post-synaptic currents and an incoming spike at t=0.
+    The weight and neuron parameters are taken from outer scope.
+    """
     if t < 0.0:
         return 0.0
     prefactor = weight * math.e / (tau_syn * C_m)
-    t1 = (exp(-t / tau_m) - exp(-t / tau_syn)) / (1 / tau_syn - 1 / tau_m) ** 2
-    t2 = t * exp(-t / tau_syn) / (1 / tau_syn - 1 / tau_m)
-    return prefactor * (t1 - t2)
+    term1 = (exp(-t / tau_m) - exp(-t / tau_syn)) / (1 / tau_syn - 1 / tau_m) ** 2
+    term2 = t * exp(-t / tau_syn) / (1 / tau_syn - 1 / tau_m)
+    return prefactor * (term1 - term2)
 
 
 def spiketrain_response(spiketrain):
+    """
+    Compute the value of the membrane potential at time T
+    given a spiketrain. Assumes all synaptic variables
+    and membrane potential to have values 0 at time t=0.
+    """
     response = 0.0
     for sp in spiketrain:
         t = T - delay - sp
-        response += alpha_fn(t)
+        response += V_m_response_fn(t)
     return response
 
 
@@ -96,7 +106,7 @@ def spiketrain_response(spiketrain):
 def test_poisson_spikes_different_stepsizes(h):
     nest.ResetKernel()
 
-    nest.set(tics_per_ms=2**10, resolution=2**h)
+    nest.set(tics_per_ms=2 ** 10, resolution=2 ** h)
 
     pg = nest.Create("poisson_generator_ps", params={"rate": 16000.0})
 
@@ -106,7 +116,7 @@ def test_poisson_spikes_different_stepsizes(h):
     sr = nest.Create("spike_recorder")
 
     if DEBUG:
-        mm = nest.Create("multimeter", params={"record_from": ["V_m"], "interval": 2**h})
+        mm = nest.Create("multimeter", params={"record_from": ["V_m"], "interval": 2 ** h})
         nest.Connect(mm, neuron)
 
     nest.Connect(pg, parrot)

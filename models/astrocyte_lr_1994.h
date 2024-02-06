@@ -354,8 +354,8 @@ public:
     enum StateVecElems
     {
       IP3 = 0,
-      Ca_astro,  // 1
-      h_IP3R,    // 2
+      Ca_astro, // 1
+      h_IP3R,   // 2
       STATE_VEC_SIZE
     };
 

@@ -93,7 +93,7 @@ def V_m_response_fn(t):
     if t < 0.0:
         return 0.0
     prefactor = weight * math.e / (tau_syn * C_m)
-    term1 = (exp(-t / tau_m) - exp(-t / tau_syn)) / (1 / tau_syn - 1 / tau_m) ** 2
+    term1 = (exp(-t / tau_m) - exp(-t / tau_syn)) / (1 / tau_syn - 1 / tau_m)**2
     term2 = t * exp(-t / tau_syn) / (1 / tau_syn - 1 / tau_m)
     return prefactor * (term1 - term2)
 
@@ -113,7 +113,7 @@ def spiketrain_response(spiketrain):
 
 def create_spiketrain():
     nest.ResetKernel()
-    nest.set(tics_per_ms=2 ** -min_exponent, resolution=1)
+    nest.set(tics_per_ms=2**-min_exponent, resolution=1)
 
     pg = nest.Create("poisson_generator_ps", {"rate": poisson_rate})
     sr = nest.Create("spike_recorder")
@@ -131,7 +131,7 @@ def test_poisson_spikes_different_stepsizes(h):
     print("Spiketrain: ", spiketrain)
     nest.ResetKernel()
 
-    nest.set(tics_per_ms=2 ** -min_exponent, resolution=2 ** h)
+    nest.set(tics_per_ms=2**-min_exponent, resolution=2**h)
 
     sg = nest.Create("spike_generator", {"start": 0, "spike_times": spiketrain, "precise_times": True})
 
@@ -139,7 +139,7 @@ def test_poisson_spikes_different_stepsizes(h):
     sr = nest.Create("spike_recorder")
 
     if DEBUG:
-        mm = nest.Create("multimeter", params={"record_from": ["V_m"], "interval": 2 ** h})
+        mm = nest.Create("multimeter", params={"record_from": ["V_m"], "interval": 2**h})
         nest.Connect(mm, neuron)
 
     nest.Connect(sg, neuron, syn_spec={"weight": weight, "delay": delay})

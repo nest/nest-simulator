@@ -31,5 +31,6 @@ Here is a suitable BibTeX entry:
       year    = {2007},
       volume  = {2},
       pages   = {1430},
-      number  = {4}
+      number  = {4},
+      doi     = {10.4249/scholarpedia.1430}
     }

@@ -109,8 +109,8 @@ def V_m_response_fn(t):
 @pytest.mark.parametrize("h", range(-12, 1, 2))
 def test_single_spike_different_stepsizes(h):
     nest.ResetKernel()
-    res = 2 ** h
-    nest.set(tics_per_ms=2 ** 14, resolution=res)
+    res = 2**h
+    nest.set(tics_per_ms=2**14, resolution=res)
 
     sg = nest.Create("spike_generator")
     sg.set(precise_times=True, origin=0.0, spike_times=spike_emission, start=0.0, stop=5.0)

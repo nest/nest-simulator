@@ -106,7 +106,7 @@ def spiketrain_response(spiketrain):
 def test_poisson_spikes_different_stepsizes(h):
     nest.ResetKernel()
 
-    nest.set(tics_per_ms=2 ** 10, resolution=2 ** h)
+    nest.set(tics_per_ms=2**10, resolution=2**h)
 
     pg = nest.Create("poisson_generator_ps", params={"rate": 16000.0})
 
@@ -116,7 +116,7 @@ def test_poisson_spikes_different_stepsizes(h):
     sr = nest.Create("spike_recorder")
 
     if DEBUG:
-        mm = nest.Create("multimeter", params={"record_from": ["V_m"], "interval": 2 ** h})
+        mm = nest.Create("multimeter", params={"record_from": ["V_m"], "interval": 2**h})
         nest.Connect(mm, neuron)
 
     nest.Connect(pg, parrot)

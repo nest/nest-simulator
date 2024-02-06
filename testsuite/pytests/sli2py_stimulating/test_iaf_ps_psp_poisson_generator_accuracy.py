@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_iaf_ps_psp_poisson_accuracy.py
+# test_iaf_ps_psp_poisson_generator_accuracy.py
 #
 # This file is part of NEST.
 #
@@ -70,6 +70,7 @@ delay = 1.0
 min_exponent = -10
 max_exponent = 2
 poisson_rate = 16000.0
+
 
 neuron_params = {
     "E_L": 0.0,

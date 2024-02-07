@@ -58,50 +58,51 @@ nest.set(resolution=dt, print_time=True)
 ##################################################
 # Set parameter values, taken from [1]_.
 
-# conductances
-g_AMPA_ex = 0.05
-g_AMPA_ext_ex = 2.1
-g_NMDA_ex = 0.165
-g_GABA_ex = 1.3
+# conductances excitatory population
+g_AMPA_ex = 0.05                 # recurrent AMPA conductance
+g_AMPA_ext_ex = 2.1              # external AMPA conductance
+g_NMDA_ex = 0.165                # recurrent GABA conductance
+g_GABA_ex = 1.3                  # recurrent GABA conductance
 
-g_AMPA_in = 0.04
-g_AMPA_ext_in = 1.62
-g_NMDA_in = 0.13
-g_GABA_in = 1.0
+# conductances inhibitory population
+g_AMPA_in = 0.04                 # recurrent AMPA conductance
+g_AMPA_ext_in = 1.62             # external AMPA conductance
+g_NMDA_in = 0.13                 # recurrent GABA conductance
+g_GABA_in = 1.0                  # recurrent GABA conductance
 
 # neuron parameters
 epop_params = {
-    "tau_GABA": 5.0,
-    "tau_AMPA": 2.0,
-    "tau_decay_NMDA": 100.0,
-    "tau_rise_NMDA": 2.0,
-    "alpha": 0.5,
-    "conc_Mg2": 1.0,
-    "g_L": 25.0,  # leak conductance
-    "E_L": -70.0,  # leak reversal potential
-    "E_ex": 0.0,  # excitatory reversal potential
-    "E_in": -70.0,  # inhibitory reversal potential
-    "V_reset": -55.0,  # reset potential
-    "V_th": -50.0,  # threshold
-    "C_m": 500.0,  # membrane capacitance
-    "t_ref": 2.0,  # refreactory period
+    "tau_GABA": 5.0,             # GABA decay time constant
+    "tau_AMPA": 2.0,             # AMPA decay time constant
+    "tau_decay_NMDA": 100.0,     # NMDA decay time constant
+    "tau_rise_NMDA": 2.0,        # NMDA rise time constant
+    "alpha": 0.5,                # NMDA parameter
+    "conc_Mg2": 1.0,             # Magnesium concentration
+    "g_L": 25.0,                 # leak conductance
+    "E_L": -70.0,                # leak reversal potential
+    "E_ex": 0.0,                 # excitatory reversal potential
+    "E_in": -70.0,               # inhibitory reversal potential
+    "V_reset": -55.0,            # reset potential
+    "V_th": -50.0,               # threshold
+    "C_m": 500.0,                # membrane capacitance
+    "t_ref": 2.0,                # refreactory period
 }
 
 ipop_params = {
-    "tau_GABA": 5.0,
-    "tau_AMPA": 2.0,
-    "tau_decay_NMDA": 100.0,
-    "tau_rise_NMDA": 2.0,
-    "alpha": 0.5,
-    "conc_Mg2": 1.0,
-    "g_L": 20.0,  # leak conductance
-    "E_L": -70.0,  # leak reversal potential
-    "E_ex": 0.0,  # excitatory reversal potential
-    "E_in": -70.0,  # inhibitory reversal potential
-    "V_reset": -55.0,  # reset potential
-    "V_th": -50.0,  # threshold
-    "C_m": 200.0,  # membrane capacitance
-    "t_ref": 1.0,  # refreactory period
+    "tau_GABA": 5.0,             # GABA decay time constant
+    "tau_AMPA": 2.0,             # AMPA decay time constant
+    "tau_decay_NMDA": 100.0,     # NMDA decay time constant
+    "tau_rise_NMDA": 2.0,        # NMDA rise time constant
+    "alpha": 0.5,                # NMDA parameter
+    "conc_Mg2": 1.0,             # Magnesium concentration
+    "g_L": 20.0,                 # leak conductance
+    "E_L": -70.0,                # leak reversal potential
+    "E_ex": 0.0,                 # excitatory reversal potential
+    "E_in": -70.0,               # inhibitory reversal potential
+    "V_reset": -55.0,            # reset potential
+    "V_th": -50.0,               # threshold
+    "C_m": 200.0,                # membrane capacitance
+    "t_ref": 1.0,                # refreactory period
 }
 
 # signals to the two different excitatory sub-populations

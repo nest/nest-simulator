@@ -25,8 +25,8 @@
 #ifdef HAVE_GSL
 
 // Includes from libnestutil:
-#include "dictdatum.h"
 #include "dict_util.h"
+#include "dictdatum.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -555,7 +555,7 @@ nest::iaf_wang_2002_exact::handle( SpikeEvent& e )
     {
       B_.spikes_[ AMPA - 1 ].add_value( steps, e.get_weight() * e.get_multiplicity() );
     }
-    else 
+    else
     {
       B_.spikes_[ GABA - 1 ].add_value( steps, -e.get_weight() * e.get_multiplicity() );
     }

@@ -52,7 +52,7 @@ namespace nest
  * @note No point in declaring it inline, since it is called
  *       through a function pointer.
  * @param void* Pointer to model neuron instance.
-**/
+ **/
 extern "C" inline int iaf_wang_2002_exact_dynamics( double, const double y[], double f[], void* pnode );
 
 
@@ -84,19 +84,28 @@ The membrane potential and synaptic variables evolve according to
     C_\mathrm{m} \frac{dV(t)}{dt} &= -g_\mathrm{L} (V(t) - V_\mathrm{L}) - I_\mathrm{syn} (t) \\[3ex]
     I_\mathrm{syn}(t) &= I_\mathrm{AMPA}(t) + I_\mathrm{NMDA}(t) + I_\mathrm{GABA}(t) (t) \\[3ex]
     I_\mathrm{AMPA} &= (V(t) - V_E)\sum_{j \in \Gamma_\mathrm{ex}}^{N_E}w_jS_{j,\mathrm{AMPA}}(t) \\[3ex]
-    I_\mathrm{NMDA} &= \frac{(V(t) - V_E)}{1+[\mathrm{Mg^{2+}}]\mathrm{exp}(-0.062V(t))/3.57}\sum_{j \in \Gamma_\mathrm{ex}}^{N_E}w_jS_{j,\mathrm{NMDA}}(t) \\[3ex]
-    I_\mathrm{GABA} &= (V(t) - V_E)\sum_{j \in \Gamma_\mathrm{in}}^{N_E}w_jS_{j,\mathrm{GABA}}(t) \\[5ex]
-    \frac{dS_{j,\mathrm{AMPA}}}{dt} &= -\frac{j,S_{\mathrm{AMPA}}}{\tau_\mathrm{AMPA}}+\sum_{k \in \Delta_j} \delta (t - t_j^k) \\[3ex]
-    \frac{dS_{j,\mathrm{GABA}}}{dt} &= -\frac{S_{j,\mathrm{GABA}}}{\tau_\mathrm{GABA}} + \sum_{k \in \Delta_j} \delta (t - t_j^k) \\[3ex]
-    \frac{dS_{j,\mathrm{NMDA}}}{dt} &= -\frac{S_{j,\mathrm{NMDA}}}{\tau_\mathrm{NMDA,decay}}+ \alpha x_j (1 -  S_{j,\mathrm{NMDA}})\\[3ex]
-    \frac{dx_j}{dt} &= - \frac{x_j}{\tau_\mathrm{NMDA,rise}} + \sum_{k \in \Delta_j} \delta (t - t_j^k)
+    I_\mathrm{NMDA} &= \frac{(V(t) - V_E)}{1+[\mathrm{Mg^{2+}}]\mathrm{exp}(-0.062V(t))/3.57}\sum_{j \in
+\Gamma_\mathrm{ex}}^{N_E}w_jS_{j,\mathrm{NMDA}}(t) \\[3ex] I_\mathrm{GABA} &= (V(t) - V_E)\sum_{j \in
+\Gamma_\mathrm{in}}^{N_E}w_jS_{j,\mathrm{GABA}}(t) \\[5ex] \frac{dS_{j,\mathrm{AMPA}}}{dt} &=
+-\frac{j,S_{\mathrm{AMPA}}}{\tau_\mathrm{AMPA}}+\sum_{k \in \Delta_j} \delta (t - t_j^k) \\[3ex]
+    \frac{dS_{j,\mathrm{GABA}}}{dt} &= -\frac{S_{j,\mathrm{GABA}}}{\tau_\mathrm{GABA}} + \sum_{k \in \Delta_j} \delta (t
+- t_j^k) \\[3ex] \frac{dS_{j,\mathrm{NMDA}}}{dt} &= -\frac{S_{j,\mathrm{NMDA}}}{\tau_\mathrm{NMDA,decay}}+ \alpha x_j (1
+-  S_{j,\mathrm{NMDA}})\\[3ex] \frac{dx_j}{dt} &= - \frac{x_j}{\tau_\mathrm{NMDA,rise}} + \sum_{k \in \Delta_j} \delta
+(t - t_j^k)
 
 
-where :math:`\Gamma_\mathrm{ex}` and :math:`\Gamma_\mathrm{in}` are index sets for presynaptic excitatory and inhibitory neurons respectively, and :math:`\Delta_j` is an index set for the spike times of neuron :math:`j`.
+where :math:`\Gamma_\mathrm{ex}` and :math:`\Gamma_\mathrm{in}` are index sets for presynaptic excitatory and inhibitory
+neurons respectively, and :math:`\Delta_j` is an index set for the spike times of neuron :math:`j`.
 
-Since :math:`S_{j,\mathrm{AMPA}}` and :math:`S_{j,\mathrm{GABA}}` are piecewise exponential functions, the sums are also a piecewise exponential function, and can be stored in a single synaptic variable each, :math:`S_{\mathrm{AMPA}}` and :math:`S_{\mathrm{GABA}}` respectively. The sum over :math:`S_{j,\mathrm{NMDA}}` does not have a simple expression, and cannot be simplified. Therefore, for each synapse, we need to integrate separate state variable, which makes the model slow.
+Since :math:`S_{j,\mathrm{AMPA}}` and :math:`S_{j,\mathrm{GABA}}` are piecewise exponential functions, the sums are also
+a piecewise exponential function, and can be stored in a single synaptic variable each, :math:`S_{\mathrm{AMPA}}` and
+:math:`S_{\mathrm{GABA}}` respectively. The sum over :math:`S_{j,\mathrm{NMDA}}` does not have a simple expression, and
+cannot be simplified. Therefore, for each synapse, we need to integrate separate state variable, which makes the model
+slow.
 
-The specification of this model differs slightly from the one in [1]_. The parameters :math:`g_\mathrm{AMPA}`, :math:`g_\mathrm{GABA}`, and :math:`g_\mathrm{NMDA}` have been absorbed into the respective synaptic weights. Additionally, the synapses from the external population is not separated from the recurrent AMPA-synapses. 
+The specification of this model differs slightly from the one in [1]_. The parameters :math:`g_\mathrm{AMPA}`,
+:math:`g_\mathrm{GABA}`, and :math:`g_\mathrm{NMDA}` have been absorbed into the respective synaptic weights.
+Additionally, the synapses from the external population is not separated from the recurrent AMPA-synapses.
 
 
 Parameters
@@ -137,12 +146,13 @@ The following values can be recorded.
 =========== ===========================================================
 
 .. note::
-   It is possible to set values for :math:`V_\mathrm{m}`, :math:`S_\mathrm{AMPA}` and :math:`S_\mathrm{GABA}` when creating the model, while the
-   different :math:`s_{j,\mathrm{NMDA}}` (`j` represents presynaptic neuron `j`) can not be set by the user.
+   It is possible to set values for :math:`V_\mathrm{m}`, :math:`S_\mathrm{AMPA}` and :math:`S_\mathrm{GABA}` when
+creating the model, while the different :math:`s_{j,\mathrm{NMDA}}` (`j` represents presynaptic neuron `j`) can not be
+set by the user.
 
 .. note::
-   :math:`g_{\mathrm{\{\{rec,AMPA\}, \{ext,AMPA\}, GABA, NMBA}\}}` from [1]_ is built into the weights in this NEST model, so setting the
-   variables is thus done by changing the weights.
+   :math:`g_{\mathrm{\{\{rec,AMPA\}, \{ext,AMPA\}, GABA, NMBA}\}}` from [1]_ is built into the weights in this NEST
+model, so setting the variables is thus done by changing the weights.
 
 Sends
 +++++
@@ -183,12 +193,12 @@ public:
    * see http://www.gotw.ca/gotw/005.htm.
    */
 
-  using Node::handles_test_event;
   using Node::handle;
+  using Node::handles_test_event;
 
   /**
    * Used to validate that we can send SpikeEvent to desired target:port.
-  **/
+   **/
   size_t send_test_event( Node& target, size_t receptor_type, synindex, bool ) override;
 
   void handle( SpikeEvent& ) override;         //!< accept spikes
@@ -215,7 +225,7 @@ private:
 
   /**
    * Synapse types to connect to
-  **/
+   **/
   enum SynapseTypes
   {
     INF_SPIKE_RECEPTOR = 0,
@@ -254,7 +264,7 @@ private:
 
     /**
      * Initialize parameters to their default values.
-    **/
+     **/
     Parameters_();
 
     void get( DictionaryDatum& ) const;             //!< Store current values in dictionary
@@ -325,7 +335,7 @@ private:
 
     /**
      * Logger for all analog data
-    **/
+     **/
     UniversalDataLogger< iaf_wang_2002_exact > logger_;
 
     // -----------------------------------------------------------------------
@@ -431,13 +441,13 @@ iaf_wang_2002_exact::handles_test_event( SpikeEvent&, size_t receptor_type )
   {
     if ( receptor_type == NMDA )
     {
-      // give each NMDA synapse a unique rport, starting from 2 (num_ports_ is initialized to 2) 
+      // give each NMDA synapse a unique rport, starting from 2 (num_ports_ is initialized to 2)
       ++S_.num_ports_;
       return S_.num_ports_;
     }
-    else 
+    else
     {
-    return receptor_type;
+      return receptor_type;
     }
   }
 }

@@ -25,8 +25,8 @@
 #ifdef HAVE_GSL
 
 // Includes from libnestutil:
-#include "dictdatum.h"
 #include "dict_util.h"
+#include "dictdatum.h"
 #include "numerics.h"
 
 // Includes from nestkernel:
@@ -93,7 +93,7 @@ nest::iaf_wang_2002_dynamics( double, const double y[], double f[], void* pnode 
   const double I_rec_GABA = ( y[ S::V_m ] - node.P_.E_in ) * y[ S::s_GABA ];
 
   const double I_rec_NMDA = ( y[ S::V_m ] - node.P_.E_ex )
-    / ( 1 + node.P_.conc_Mg2 * std::exp( -0.062 * y[ S::V_m ] ) / 3.57 ) * y[ S::s_NMDA ]; 
+    / ( 1 + node.P_.conc_Mg2 * std::exp( -0.062 * y[ S::V_m ] ) / 3.57 ) * y[ S::s_NMDA ];
 
   const double I_syn = I_AMPA + I_rec_GABA + I_rec_NMDA + node.B_.I_stim_;
 
@@ -123,7 +123,7 @@ nest::iaf_wang_2002::Parameters_::Parameters_()
   , tau_AMPA( 2.0 )       // ms
   , tau_GABA( 5.0 )       // ms
   , tau_decay_NMDA( 100 ) // ms
-  , tau_rise_NMDA( 2 ) // ms
+  , tau_rise_NMDA( 2 )    // ms
   , alpha( 0.5 )          // 1 / ms
   , conc_Mg2( 1 )         // mM
   , gsl_error_tol( 1e-3 )
@@ -251,7 +251,7 @@ nest::iaf_wang_2002::State_::get( DictionaryDatum& d ) const
   def< double >( d, names::V_m, y_[ V_m ] ); // Membrane potential
   def< double >( d, names::s_AMPA, y_[ s_AMPA ] );
   def< double >( d, names::s_GABA, y_[ s_GABA ] );
-  def< double >( d, names::s_NMDA, y_[ s_NMDA] );
+  def< double >( d, names::s_NMDA, y_[ s_NMDA ] );
 }
 
 void
@@ -388,9 +388,9 @@ nest::iaf_wang_2002::pre_run_hook()
   const double at = P_.alpha * P_.tau_rise_NMDA;
   const double tau_rise_tau_dec = P_.tau_rise_NMDA / P_.tau_decay_NMDA;
 
-  V_.S_jump_1 = exp(-P_.alpha * P_.tau_rise_NMDA) - 1;
-  V_.S_jump_0 = -boost::math::expint(tau_rise_tau_dec, at) * at 
-                      + pow(at, tau_rise_tau_dec) * boost::math::tgamma(1 - tau_rise_tau_dec);
+  V_.S_jump_1 = exp( -P_.alpha * P_.tau_rise_NMDA ) - 1;
+  V_.S_jump_0 = -boost::math::expint( tau_rise_tau_dec, at ) * at
+    + pow( at, tau_rise_tau_dec ) * boost::math::tgamma( 1 - tau_rise_tau_dec );
 }
 
 void
@@ -413,7 +413,7 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
   for ( long lag = from; lag < to; ++lag )
   {
     double t = 0.0;
-    
+
     // numerical integration with adaptive step size control:
     // ------------------------------------------------------
     // gsl_odeiv_evolve_apply performs only a single numerical
@@ -435,7 +435,7 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
         &t,                    // from t
         B_.step_,              // to t <= step
         &B_.integration_step_, // integration step size
-        S_.y_ );       // neuronal state
+        S_.y_ );               // neuronal state
 
       if ( status != GSL_SUCCESS )
       {
@@ -462,7 +462,7 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
       S_.y_[ State_::V_m ] = P_.V_reset;
 
       // get previous spike time
-      double t_lastspike = get_spiketime_ms();               
+      double t_lastspike = get_spiketime_ms();
 
       // log spike with ArchivingNode
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
@@ -510,7 +510,7 @@ nest::iaf_wang_2002::handle( SpikeEvent& e )
     {
       B_.spikes_[ AMPA - 1 ].add_value( steps, e.get_weight() * e.get_multiplicity() );
     }
-    else 
+    else
     {
       B_.spikes_[ GABA - 1 ].add_value( steps, -e.get_weight() * e.get_multiplicity() );
     }

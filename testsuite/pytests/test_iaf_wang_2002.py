@@ -23,7 +23,7 @@
 Tests synaptic dynamics of the approximate model iaf_wang_2002.
 
 Since the neuron is conductance based, it is impossible to analytically
-confirm the membrane potential, but all the synaptic currents can be 
+confirm the membrane potential, but all the synaptic currents can be
 computed analytically (for the simplified implementation we use).
 The integration of the membrane potential is not tested here.
 """

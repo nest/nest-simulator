@@ -446,6 +446,12 @@ iaf_wang_2002::get_status( DictionaryDatum& d ) const
   S_.get( d );
   ArchivingNode::get_status( d );
 
+  DictionaryDatum receptor_type = new Dictionary();
+  ( *receptor_type )[ names::AMPA ] = AMPA;
+  ( *receptor_type )[ names::GABA ] = GABA;
+  ( *receptor_type )[ names::NMDA ] = NMDA;
+  ( *d )[ names::receptor_types ] = receptor_type;
+
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 

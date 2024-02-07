@@ -98,6 +98,9 @@ def test_wang():
                                          "tau_rise_NMDA": tau_rise_NMDA,
                                          "t_ref": 0.})
 
+    receptor_types = nrn1.get("receptor_types")
+
+
     pg = nest.Create("poisson_generator", {"rate": 50.})
     sr = nest.Create("spike_recorder", {"time_in_steps": True})
 
@@ -109,13 +112,13 @@ def test_wang():
                                      "time_in_steps": True})
 
     ampa_syn_spec = {"weight": w_ex,
-                     "receptor_type": 1}
+                     "receptor_type": receptor_types["AMPA"]}
 
     gaba_syn_spec = {"weight": w_in,
-                     "receptor_type": 2}
+                     "receptor_type": receptor_types["GABA"]}
 
     nmda_syn_spec = {"weight": w_ex,
-                    "receptor_type": 3}
+                    "receptor_type": receptor_types["NMDA"]}
 
     nest.Connect(pg, nrn1, syn_spec=ampa_syn_spec)
     nest.Connect(nrn1, sr)

@@ -102,11 +102,6 @@ ipop_params = {"tau_GABA": 5.0,
                "t_ref": 1.0             # refreactory period
                }
 
-# synaptic weights
-w_plus = 1.7
-w_minus = 1 - f * (w_plus - 1) / (1 - f)
-
-
 # signals to the two different excitatory sub-populations
 # the signal is given by a time-inhomogeneous Poisson process,
 # where the expectations are constant over intervals of 50ms,
@@ -133,6 +128,9 @@ update_times[0] = 0.1
 rates_a = np.random.normal(mu_a, sigma, size=num_updates)
 rates_b = np.random.normal(mu_b, sigma, size=num_updates)
 
+# synaptic weights
+w_plus = 1.7
+w_minus = 1 - f * (w_plus - 1) / (1 - f)
 
 
 delay = 0.5
@@ -145,9 +143,9 @@ NI = 400
 ##################################################
 # Create neurons and devices
 
-selective_pop1 = nest.Create(model, int(0.15 * NE), params=epop_params)
-selective_pop2 = nest.Create(model, int(0.15 * NE), params=epop_params)
-nonselective_pop = nest.Create(model, int(0.7 * NE), params=epop_params)
+selective_pop1 = nest.Create(model, int(f * NE), params=epop_params)
+selective_pop2 = nest.Create(model, int(f * NE), params=epop_params)
+nonselective_pop = nest.Create(model, int((1 - 2 * f) * NE), params=epop_params)
 inhibitory_pop = nest.Create(model, NI, params=ipop_params)
 
 poisson_a = nest.Create("inhomogeneous_poisson_generator",
@@ -180,22 +178,66 @@ mm_inhibitory = nest.Create("multimeter", {"record_from": ["V_m", "s_NMDA", "s_A
 ##################################################
 # Define synapse specifications
 
-syn_spec_pot_AMPA = {"synapse_model": "static_synapse", "weight":w_plus * g_AMPA_ex, "delay":delay, "receptor_type": 1}
-syn_spec_pot_NMDA = {"synapse_model": "static_synapse", "weight":w_plus * g_NMDA_ex, "delay":delay, "receptor_type": 3}
+receptor_types = selective_pop1[0].get("receptor_types")
 
-syn_spec_dep_AMPA = {"synapse_model": "static_synapse", "weight":w_minus * g_AMPA_ex, "delay":delay, "receptor_type": 1}
-syn_spec_dep_NMDA = {"synapse_model": "static_synapse", "weight":w_minus * g_NMDA_ex, "delay":delay, "receptor_type": 3}
+syn_spec_pot_AMPA = {"synapse_model": "static_synapse", 
+                     "weight":w_plus * g_AMPA_ex,
+                     "delay":delay,
+                     "receptor_type": receptor_types["AMPA"]}
+syn_spec_pot_NMDA = {"synapse_model": "static_synapse",
+                     "weight":w_plus * g_NMDA_ex,
+                     "delay":delay,
+                     "receptor_type": receptor_types["NMDA"]}
 
-ie_syn_spec = {"synapse_model": "static_synapse", "weight": -1.0 * g_GABA_ex, "delay":delay, "receptor_type": 2}
-ii_syn_spec = {"synapse_model": "static_synapse", "weight": -1.0 * g_GABA_in, "delay":delay, "receptor_type": 2}
+syn_spec_dep_AMPA = {"synapse_model": "static_synapse",
+                     "weight":w_minus * g_AMPA_ex,
+                     "delay":delay,
+                     "receptor_type": receptor_types["AMPA"]}
 
-ei_syn_spec_AMPA = {"synapse_model": "static_synapse", "weight": 1.0 * g_AMPA_in, "delay":delay, "receptor_type": 1}
-ei_syn_spec_NMDA = {"synapse_model": "static_synapse", "weight": 1.0 * g_NMDA_in, "delay":delay, "receptor_type": 3}
-ee_syn_spec_AMPA = {"synapse_model": "static_synapse", "weight": 1.0 * g_AMPA_ex, "delay":delay, "receptor_type": 1}
-ee_syn_spec_NMDA = {"synapse_model": "static_synapse", "weight": 1.0 * g_NMDA_ex, "delay":delay, "receptor_type": 3}
+syn_spec_dep_NMDA = {"synapse_model": "static_synapse",
+                     "weight":w_minus * g_NMDA_ex,
+                     "delay":delay,
+                     "receptor_type": receptor_types["NMDA"]}
 
-exte_syn_spec = {"synapse_model": "static_synapse", "weight":g_AMPA_ext_ex, "delay":0.1, "receptor_type": 1}
-exti_syn_spec = {"synapse_model": "static_synapse", "weight":g_AMPA_ext_in, "delay":0.1, "receptor_type": 1}
+ie_syn_spec = {"synapse_model": "static_synapse",
+               "weight": -1.0 * g_GABA_ex,
+               "delay":delay,
+               "receptor_type": receptor_types["GABA"]}
+
+ii_syn_spec = {"synapse_model": "static_synapse",
+               "weight": -1.0 * g_GABA_in,
+               "delay":delay,
+               "receptor_type": receptor_types["GABA"]}
+
+ei_syn_spec_AMPA = {"synapse_model": "static_synapse",
+                    "weight": 1.0 * g_AMPA_in,
+                    "delay":delay,
+                    "receptor_type": receptor_types["AMPA"]}
+
+ei_syn_spec_NMDA = {"synapse_model": "static_synapse",
+                    "weight": 1.0 * g_NMDA_in,
+                    "delay":delay,
+                    "receptor_type": receptor_types["NMDA"]}
+
+ee_syn_spec_AMPA = {"synapse_model": "static_synapse",
+                    "weight": 1.0 * g_AMPA_ex,
+                    "delay":delay,
+                    "receptor_type": receptor_types["AMPA"]}
+
+ee_syn_spec_NMDA = {"synapse_model": "static_synapse",
+                    "weight": 1.0 * g_NMDA_ex,
+                    "delay":delay,
+                    "receptor_type": receptor_types["NMDA"]}
+
+exte_syn_spec = {"synapse_model": "static_synapse",
+                 "weight":g_AMPA_ext_ex,
+                 "delay":0.1,
+                 "receptor_type": receptor_types["AMPA"]}
+
+exti_syn_spec = {"synapse_model": "static_synapse",
+                 "weight":g_AMPA_ext_in,
+                 "delay":0.1,
+                 "receptor_type": receptor_types["AMPA"]}
 
 
 

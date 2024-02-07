@@ -31,17 +31,33 @@ import nest
 import numpy as np
 import numpy.testing as nptest
 import pytest
+from scipy.special import expn, gamma
+
+
+w_ex = 40.
+w_in = -15.
+alpha = 0.5
+tau_AMPA = 2.0
+tau_GABA = 5.0
+tau_rise_NMDA = 1.8
+tau_decay_NMDA = 100.0
+
 
 def s_soln(w, t, tau):
     """
-    Solution for GABA/AMPA receptors
+    Solution for synaptic variables
     """
     isyn = np.zeros_like(t)
     useinds = t >= 0.
     isyn[useinds] = w * np.exp(-t[useinds] / tau)
     return isyn
 
+
 def spiketrain_response(t, tau, spiketrain, w):
+    """
+    Response for AMPA/NMDA
+    """
+
     response = np.zeros_like(t)
     for sp in spiketrain:
         t_ = t - 1. - sp
@@ -49,75 +65,81 @@ def spiketrain_response(t, tau, spiketrain, w):
         response += s_soln(w, t_, tau)
     return response
 
-def spiketrain_response_nmda(t, tau, spiketrain, w, alpha):
+
+def spiketrain_response_nmda(t, spiketrain):
     """
-    Solution for NMDA receptors
+    Response for NMDA
     """
+    tr = tau_rise_NMDA / tau_decay_NMDA
+    at = alpha * tau_rise_NMDA
+    k_0 = -expn(tr, at) * at + at**tr * gamma(1 - tr)
+    k_1 = np.exp(-alpha * tau_rise_NMDA) - 1
+ 
     response = np.zeros_like(t)
     for sp in spiketrain:
         t_ = t - 1. - sp
         zero_arg = t_ == 0.
-        w_ = w * alpha * (1 - response[zero_arg])
-        w_ = min(w_, 1 - response[zero_arg])
-        response += s_soln(w_, t_, tau)
+        s0 = response[zero_arg]
+        w = k_0 + k_1 * s0
+        response += s_soln(w, t_, tau_decay_NMDA)
+    response *= w_ex
     return response
 
 def test_wang():
-    w_ex = 40.
-    w_in = -15.
-    alpha = 0.5
-    tau_AMPA = 2.0
-    tau_GABA = 5.0
-    tau_NMDA = 100.0
-
     # Create 2 neurons, so that the Wang dynamics are present
     nrn1 = nest.Create("iaf_wang_2002", {"tau_AMPA": tau_AMPA,
                                          "tau_GABA": tau_GABA,
-                                         "tau_decay_NMDA": tau_NMDA})
-    
-    pg = nest.Create("poisson_generator", {"rate": 50.})
-    sr = nest.Create("spike_recorder", {"time_in_steps": True})
+                                         "tau_decay_NMDA": tau_decay_NMDA,
+                                         "tau_rise_NMDA": tau_rise_NMDA})
+
     nrn2 = nest.Create("iaf_wang_2002", {"tau_AMPA": tau_AMPA,
                                          "tau_GABA": tau_GABA,
-                                         "tau_decay_NMDA": tau_NMDA,
+                                         "tau_decay_NMDA": tau_decay_NMDA,
+                                         "tau_rise_NMDA": tau_rise_NMDA,
                                          "t_ref": 0.})
-    
-    mm1 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_NMDA", "s_GABA"], "interval": 0.1})
-    mm2 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_NMDA", "s_GABA"], "interval": 0.1})
-    
-    ex_syn_spec = {"synapse_model": "static_synapse",
-                    "weight": w_ex,
-                   "receptor_type": 0}
-    
-    in_syn_spec = {"synapse_model": "static_synapse",
-                    "weight": w_in}
-    
-    conn_spec = {"rule": "all_to_all"}
-   
-    nest.Connect(pg, nrn1, syn_spec=ex_syn_spec, conn_spec=conn_spec)
+
+    pg = nest.Create("poisson_generator", {"rate": 50.})
+    sr = nest.Create("spike_recorder", {"time_in_steps": True})
+
+    mm1 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_NMDA", "s_GABA"], 
+                                     "interval": 0.1,
+                                     "time_in_steps": True})
+    mm2 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_NMDA", "s_GABA"],
+                                     "interval": 0.1,
+                                     "time_in_steps": True})
+
+    ampa_syn_spec = {"weight": w_ex,
+                     "receptor_type": 1}
+
+    gaba_syn_spec = {"weight": w_in,
+                     "receptor_type": 2}
+
+    nmda_syn_spec = {"weight": w_ex,
+                    "receptor_type": 3}
+
+    nest.Connect(pg, nrn1, syn_spec=ampa_syn_spec)
     nest.Connect(nrn1, sr)
-    nest.Connect(nrn1, nrn2, syn_spec=ex_syn_spec, conn_spec=conn_spec)
-    nest.Connect(nrn1, nrn2, syn_spec=in_syn_spec, conn_spec=conn_spec)
+    nest.Connect(nrn1, nrn2, syn_spec=ampa_syn_spec)
+    nest.Connect(nrn1, nrn2, syn_spec=gaba_syn_spec)
+    nest.Connect(nrn1, nrn2, syn_spec=nmda_syn_spec)
     nest.Connect(mm1, nrn1)
-    
     nest.Connect(mm2, nrn2)
-    
+
     nest.Simulate(1000.)
-    
-    # get spike times from membrane potential
-    # cannot use spike_recorder because we abuse exact spike timing
-    V_m = mm1.get("events", "V_m")
-    times = mm1.get("events", "times")
-    diff = np.ediff1d(V_m, to_begin=0.)
-    spikes = sr.get("events", "times")
-    spikes = times[diff < -3]
-    
+
+    spikes = sr.get("events", "times") * nest.resolution
+
     # compute analytical solutions
-    times = mm1.get("events", "times")
+    times = mm1.get("events", "times") * nest.resolution
     ampa_soln = spiketrain_response(times, tau_AMPA, spikes, w_ex)
-    nmda_soln = spiketrain_response_nmda(times, tau_NMDA, spikes, w_ex, alpha)
+    nmda_soln = spiketrain_response_nmda(times, spikes)
     gaba_soln = spiketrain_response(times, tau_GABA, spikes, np.abs(w_in))
-    
+
+    import matplotlib.pyplot as plt
+    plt.plot(mm2.events["s_NMDA"])
+    plt.plot(nmda_soln)
+    plt.show()
+
     nptest.assert_array_almost_equal(ampa_soln, mm2.events["s_AMPA"]) 
     nptest.assert_array_almost_equal(gaba_soln, mm2.events["s_GABA"]) 
     nptest.assert_array_almost_equal(nmda_soln, mm2.events["s_NMDA"]) 

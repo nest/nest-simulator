@@ -35,40 +35,42 @@ class IafWang2002TestCase(unittest.TestCase):
         Check that setting multiple NMDA receptors works
         """
         # Create the new model, noise and detectors
-        neuron = nest.Create('iaf_wang_2002')
-        poiss = nest.Create('poisson_generator')
-        poiss.rate = 6400.
+        neuron = nest.Create("iaf_wang_2002")
+        poiss = nest.Create("poisson_generator")
+        poiss.rate = 6400.0
 
-        voltmeter = nest.Create('voltmeter')
-        voltmeter.set(record_from=['V_m', 'g_AMPA', 'g_GABA', 'NMDA_sum'])
+        voltmeter = nest.Create("voltmeter")
+        voltmeter.set(record_from=["V_m", "g_AMPA", "g_GABA", "NMDA_sum"])
 
         # Connect to NMDA receptor several times to check that we create new ports every time.
-        receptors = neuron.get('receptor_types')
+        receptors = neuron.get("receptor_types")
 
-        nest.Connect(poiss, neuron, syn_spec={'receptor_type': receptors['AMPA']})
-        nest.Connect(poiss, neuron, syn_spec={'receptor_type': receptors['GABA']})
-        nest.Connect(poiss, neuron, syn_spec={'receptor_type': receptors['NMDA']})
-        nest.Connect(poiss, neuron, syn_spec={'receptor_type': receptors['NMDA']})
-        nest.Connect(poiss, neuron, syn_spec={'receptor_type': receptors['NMDA']})
-        nest.Connect(poiss, neuron, syn_spec={'receptor_type': receptors['NMDA']})
+        nest.Connect(poiss, neuron, syn_spec={"receptor_type": receptors["AMPA"]})
+        nest.Connect(poiss, neuron, syn_spec={"receptor_type": receptors["GABA"]})
+        nest.Connect(poiss, neuron, syn_spec={"receptor_type": receptors["NMDA"]})
+        nest.Connect(poiss, neuron, syn_spec={"receptor_type": receptors["NMDA"]})
+        nest.Connect(poiss, neuron, syn_spec={"receptor_type": receptors["NMDA"]})
+        nest.Connect(poiss, neuron, syn_spec={"receptor_type": receptors["NMDA"]})
 
         nest.Connect(voltmeter, neuron)
 
         # Check if NMDA sum is 0 before simulating
-        self.assertEqual(neuron.NMDA_sum, 0.)
+        self.assertEqual(neuron.NMDA_sum, 0.0)
 
         # Simulate
-        nest.Simulate(1000.)
+        nest.Simulate(1000.0)
 
         # Check sum NMDA after simulating
-        self.assertTrue(neuron.NMDA_sum > 0.)
+        self.assertTrue(neuron.NMDA_sum > 0.0)
 
         # Check g_AMPA after simulating
-        self.assertTrue(voltmeter.get('events', 'g_AMPA').any() > 0.)
+        self.assertTrue(voltmeter.get("events", "g_AMPA").any() > 0.0)
+
 
 def suite():
-    suite = unittest.makeSuite(IafWang2002TestCase, 'test')
+    suite = unittest.makeSuite(IafWang2002TestCase, "test")
     return suite
+
 
 def run():
     runner = unittest.TextTestRunner(verbosity=2)

@@ -70,37 +70,39 @@ g_NMDA_in = 0.13
 g_GABA_in = 1.0
 
 # neuron parameters
-epop_params = {"tau_GABA": 5.0,
-               "tau_AMPA": 2.0,
-               "tau_decay_NMDA": 100.0,
-               "tau_rise_NMDA": 2.0,
-               "alpha": 0.5,
-               "conc_Mg2": 1.0,
-               "g_L": 25.,               # leak conductance
-               "E_L": -70.0,            # leak reversal potential
-               "E_ex": 0.0,             # excitatory reversal potential
-               "E_in": -70.0,           # inhibitory reversal potential
-               "V_reset": -55.0,        # reset potential
-               "V_th": -50.0,           # threshold
-               "C_m": 500.0,            # membrane capacitance
-               "t_ref": 2.0             # refreactory period
-               }
+epop_params = {
+    "tau_GABA": 5.0,
+    "tau_AMPA": 2.0,
+    "tau_decay_NMDA": 100.0,
+    "tau_rise_NMDA": 2.0,
+    "alpha": 0.5,
+    "conc_Mg2": 1.0,
+    "g_L": 25.0,  # leak conductance
+    "E_L": -70.0,  # leak reversal potential
+    "E_ex": 0.0,  # excitatory reversal potential
+    "E_in": -70.0,  # inhibitory reversal potential
+    "V_reset": -55.0,  # reset potential
+    "V_th": -50.0,  # threshold
+    "C_m": 500.0,  # membrane capacitance
+    "t_ref": 2.0,  # refreactory period
+}
 
-ipop_params = {"tau_GABA": 5.0,
-               "tau_AMPA": 2.0,
-               "tau_decay_NMDA": 100.0,
-               "tau_rise_NMDA": 2.0,
-               "alpha": 0.5,
-               "conc_Mg2": 1.0,
-               "g_L": 20.,               # leak conductance
-               "E_L": -70.0,            # leak reversal potential
-               "E_ex": 0.0,             # excitatory reversal potential
-               "E_in": -70.0,           # inhibitory reversal potential
-               "V_reset": -55.0,        # reset potential
-               "V_th": -50.0,           # threshold
-               "C_m": 200.0,            # membrane capacitance
-               "t_ref": 1.0             # refreactory period
-               }
+ipop_params = {
+    "tau_GABA": 5.0,
+    "tau_AMPA": 2.0,
+    "tau_decay_NMDA": 100.0,
+    "tau_rise_NMDA": 2.0,
+    "alpha": 0.5,
+    "conc_Mg2": 1.0,
+    "g_L": 20.0,  # leak conductance
+    "E_L": -70.0,  # leak reversal potential
+    "E_ex": 0.0,  # excitatory reversal potential
+    "E_in": -70.0,  # inhibitory reversal potential
+    "V_reset": -55.0,  # reset potential
+    "V_th": -50.0,  # threshold
+    "C_m": 200.0,  # membrane capacitance
+    "t_ref": 1.0,  # refreactory period
+}
 
 # signals to the two different excitatory sub-populations
 # the signal is given by a time-inhomogeneous Poisson process,
@@ -108,18 +110,18 @@ ipop_params = {"tau_GABA": 5.0,
 # and then change. The values for each interval are normally
 # distributed, with means mu_a and mu_b, and standard deviation
 # sigma.
-signal_start = 1000.
-signal_duration = 2000.
-signal_update_interval = 50.
-f = 0.15 # proportion of neurons receiving signal inputs
+signal_start = 1000.0
+signal_duration = 2000.0
+signal_update_interval = 50.0
+f = 0.15  # proportion of neurons receiving signal inputs
 # compute expectations of the time-inhomogeneous Poisson processes
-mu_0 = 40.                  # base rate
-rho_a = mu_0 / 100          # scaling factors coherence
+mu_0 = 40.0  # base rate
+rho_a = mu_0 / 100  # scaling factors coherence
 rho_b = rho_a
-c = 0.                      # coherence
-sigma = 4.                  # standard deviation
-mu_a = mu_0 + rho_a * c     # expectation for pop A
-mu_b = mu_0 - rho_b * c     # expectation for pop B 
+c = 0.0  # coherence
+sigma = 4.0  # standard deviation
+mu_a = mu_0 + rho_a * c  # expectation for pop A
+mu_b = mu_0 - rho_b * c  # expectation for pop B
 
 # sample values for the Poisson process
 num_updates = int(signal_duration / signal_update_interval)
@@ -148,21 +150,29 @@ selective_pop2 = nest.Create(model, int(f * NE), params=epop_params)
 nonselective_pop = nest.Create(model, int((1 - 2 * f) * NE), params=epop_params)
 inhibitory_pop = nest.Create(model, NI, params=ipop_params)
 
-poisson_a = nest.Create("inhomogeneous_poisson_generator",
-                        params={"origin": signal_start-0.1,
-                                "start": 0.,
-                                "stop": signal_duration,
-                                "rate_times": update_times,
-                                "rate_values": rates_a})
+poisson_a = nest.Create(
+    "inhomogeneous_poisson_generator",
+    params={
+        "origin": signal_start - 0.1,
+        "start": 0.0,
+        "stop": signal_duration,
+        "rate_times": update_times,
+        "rate_values": rates_a,
+    },
+)
 
-poisson_b = nest.Create("inhomogeneous_poisson_generator",
-                        params={"origin": signal_start-0.1,
-                                "start": 0.,
-                                "stop": signal_duration,
-                                "rate_times": update_times,
-                                "rate_values": rates_b})
+poisson_b = nest.Create(
+    "inhomogeneous_poisson_generator",
+    params={
+        "origin": signal_start - 0.1,
+        "start": 0.0,
+        "stop": signal_duration,
+        "rate_times": update_times,
+        "rate_values": rates_b,
+    },
+)
 
-poisson_0 = nest.Create("poisson_generator", params={"rate": 2400.})
+poisson_0 = nest.Create("poisson_generator", params={"rate": 2400.0})
 
 sr_nonselective = nest.Create("spike_recorder")
 sr_selective1 = nest.Create("spike_recorder")
@@ -180,72 +190,97 @@ mm_inhibitory = nest.Create("multimeter", {"record_from": ["V_m", "s_NMDA", "s_A
 
 receptor_types = selective_pop1[0].get("receptor_types")
 
-syn_spec_pot_AMPA = {"synapse_model": "static_synapse", 
-                     "weight":w_plus * g_AMPA_ex,
-                     "delay":delay,
-                     "receptor_type": receptor_types["AMPA"]}
-syn_spec_pot_NMDA = {"synapse_model": "static_synapse",
-                     "weight":w_plus * g_NMDA_ex,
-                     "delay":delay,
-                     "receptor_type": receptor_types["NMDA"]}
+syn_spec_pot_AMPA = {
+    "synapse_model": "static_synapse",
+    "weight": w_plus * g_AMPA_ex,
+    "delay": delay,
+    "receptor_type": receptor_types["AMPA"],
+}
+syn_spec_pot_NMDA = {
+    "synapse_model": "static_synapse",
+    "weight": w_plus * g_NMDA_ex,
+    "delay": delay,
+    "receptor_type": receptor_types["NMDA"],
+}
 
-syn_spec_dep_AMPA = {"synapse_model": "static_synapse",
-                     "weight":w_minus * g_AMPA_ex,
-                     "delay":delay,
-                     "receptor_type": receptor_types["AMPA"]}
+syn_spec_dep_AMPA = {
+    "synapse_model": "static_synapse",
+    "weight": w_minus * g_AMPA_ex,
+    "delay": delay,
+    "receptor_type": receptor_types["AMPA"],
+}
 
-syn_spec_dep_NMDA = {"synapse_model": "static_synapse",
-                     "weight":w_minus * g_NMDA_ex,
-                     "delay":delay,
-                     "receptor_type": receptor_types["NMDA"]}
+syn_spec_dep_NMDA = {
+    "synapse_model": "static_synapse",
+    "weight": w_minus * g_NMDA_ex,
+    "delay": delay,
+    "receptor_type": receptor_types["NMDA"],
+}
 
-ie_syn_spec = {"synapse_model": "static_synapse",
-               "weight": -1.0 * g_GABA_ex,
-               "delay":delay,
-               "receptor_type": receptor_types["GABA"]}
+ie_syn_spec = {
+    "synapse_model": "static_synapse",
+    "weight": -1.0 * g_GABA_ex,
+    "delay": delay,
+    "receptor_type": receptor_types["GABA"],
+}
 
-ii_syn_spec = {"synapse_model": "static_synapse",
-               "weight": -1.0 * g_GABA_in,
-               "delay":delay,
-               "receptor_type": receptor_types["GABA"]}
+ii_syn_spec = {
+    "synapse_model": "static_synapse",
+    "weight": -1.0 * g_GABA_in,
+    "delay": delay,
+    "receptor_type": receptor_types["GABA"],
+}
 
-ei_syn_spec_AMPA = {"synapse_model": "static_synapse",
-                    "weight": 1.0 * g_AMPA_in,
-                    "delay":delay,
-                    "receptor_type": receptor_types["AMPA"]}
+ei_syn_spec_AMPA = {
+    "synapse_model": "static_synapse",
+    "weight": 1.0 * g_AMPA_in,
+    "delay": delay,
+    "receptor_type": receptor_types["AMPA"],
+}
 
-ei_syn_spec_NMDA = {"synapse_model": "static_synapse",
-                    "weight": 1.0 * g_NMDA_in,
-                    "delay":delay,
-                    "receptor_type": receptor_types["NMDA"]}
+ei_syn_spec_NMDA = {
+    "synapse_model": "static_synapse",
+    "weight": 1.0 * g_NMDA_in,
+    "delay": delay,
+    "receptor_type": receptor_types["NMDA"],
+}
 
-ee_syn_spec_AMPA = {"synapse_model": "static_synapse",
-                    "weight": 1.0 * g_AMPA_ex,
-                    "delay":delay,
-                    "receptor_type": receptor_types["AMPA"]}
+ee_syn_spec_AMPA = {
+    "synapse_model": "static_synapse",
+    "weight": 1.0 * g_AMPA_ex,
+    "delay": delay,
+    "receptor_type": receptor_types["AMPA"],
+}
 
-ee_syn_spec_NMDA = {"synapse_model": "static_synapse",
-                    "weight": 1.0 * g_NMDA_ex,
-                    "delay":delay,
-                    "receptor_type": receptor_types["NMDA"]}
+ee_syn_spec_NMDA = {
+    "synapse_model": "static_synapse",
+    "weight": 1.0 * g_NMDA_ex,
+    "delay": delay,
+    "receptor_type": receptor_types["NMDA"],
+}
 
-exte_syn_spec = {"synapse_model": "static_synapse",
-                 "weight":g_AMPA_ext_ex,
-                 "delay":0.1,
-                 "receptor_type": receptor_types["AMPA"]}
+exte_syn_spec = {
+    "synapse_model": "static_synapse",
+    "weight": g_AMPA_ext_ex,
+    "delay": 0.1,
+    "receptor_type": receptor_types["AMPA"],
+}
 
-exti_syn_spec = {"synapse_model": "static_synapse",
-                 "weight":g_AMPA_ext_in,
-                 "delay":0.1,
-                 "receptor_type": receptor_types["AMPA"]}
-
+exti_syn_spec = {
+    "synapse_model": "static_synapse",
+    "weight": g_AMPA_ext_in,
+    "delay": 0.1,
+    "receptor_type": receptor_types["AMPA"],
+}
 
 
 ##################################################
 # Create connections
 
 # from external
-nest.Connect(poisson_0, nonselective_pop + selective_pop1 + selective_pop2, conn_spec="all_to_all", syn_spec=exte_syn_spec)
+nest.Connect(
+    poisson_0, nonselective_pop + selective_pop1 + selective_pop2, conn_spec="all_to_all", syn_spec=exte_syn_spec
+)
 nest.Connect(poisson_0, inhibitory_pop, conn_spec="all_to_all", syn_spec=exti_syn_spec)
 
 nest.Connect(poisson_a, selective_pop1, conn_spec="all_to_all", syn_spec=exte_syn_spec)
@@ -286,7 +321,9 @@ nest.Connect(selective_pop1, sr_selective1)
 nest.Connect(selective_pop2, sr_selective2)
 
 # from inhibitory pop
-nest.Connect(inhibitory_pop, selective_pop1 + selective_pop2 + nonselective_pop, conn_spec="all_to_all", syn_spec=ie_syn_spec)
+nest.Connect(
+    inhibitory_pop, selective_pop1 + selective_pop2 + nonselective_pop, conn_spec="all_to_all", syn_spec=ie_syn_spec
+)
 nest.Connect(inhibitory_pop, inhibitory_pop, conn_spec="all_to_all", syn_spec=ii_syn_spec)
 
 nest.Connect(inhibitory_pop, sr_inhibitory)
@@ -301,7 +338,7 @@ nest.Connect(mm_inhibitory, inhibitory_pop[0])
 
 ##################################################
 # Run simulation
-nest.Simulate(5000.)
+nest.Simulate(5000.0)
 
 
 ##################################################
@@ -332,12 +369,11 @@ s_GABA_inhibitory = mm_inhibitory.get("events", "s_GABA")
 s_NMDA_inhibitory = mm_inhibitory.get("events", "s_NMDA")
 
 
-
 ##################################################
 # Plots
 
 # bins for histograms
-res = 1.0  
+res = 1.0
 bins = np.arange(0, 4001, res) - 0.001
 
 fig, ax = plt.subplots(ncols=2, nrows=2, sharex=True, sharey=True)
@@ -347,68 +383,67 @@ fig.tight_layout()
 num = NE * f * (res / 1000)
 hist1, _ = np.histogram(spikes_selective1, bins=bins)
 hist2, _ = np.histogram(spikes_selective2, bins=bins)
-ax[0,0].plot(hist1 / num)
-ax[0,0].set_title("Selective pop A")
-ax[0,1].plot(hist2 / num)
-ax[0,1].set_title("Selective pop B")
+ax[0, 0].plot(hist1 / num)
+ax[0, 0].set_title("Selective pop A")
+ax[0, 1].plot(hist2 / num)
+ax[0, 1].set_title("Selective pop B")
 
 # nonselective population
-num = NE * (1 - 2*f) * res / 1000
+num = NE * (1 - 2 * f) * res / 1000
 hist, _ = np.histogram(spikes_nonselective, bins=bins)
-ax[1,0].plot(hist / num)
-ax[1,0].set_title("Nonselective pop")
+ax[1, 0].plot(hist / num)
+ax[1, 0].set_title("Nonselective pop")
 
 # inhibitory population
 num = NI * res / 1000
 hist, _ = np.histogram(spikes_inhibitory, bins=bins)
-ax[1,1].plot(hist / num)
-ax[1,1].set_title("Inhibitory pop")
+ax[1, 1].plot(hist / num)
+ax[1, 1].set_title("Inhibitory pop")
 
 
 fig, ax = plt.subplots(ncols=4, nrows=4, sharex=True, sharey="row")
 fig.tight_layout()
 
 # AMPA conductances
-ax[0,0].plot(s_AMPA_selective1)
-ax[0,1].plot(s_AMPA_selective2)
-ax[0,2].plot(s_AMPA_nonselective)
-ax[0,3].plot(s_AMPA_inhibitory)
+ax[0, 0].plot(s_AMPA_selective1)
+ax[0, 1].plot(s_AMPA_selective2)
+ax[0, 2].plot(s_AMPA_nonselective)
+ax[0, 3].plot(s_AMPA_inhibitory)
 
 # NMDA conductances
-ax[1,0].plot(s_NMDA_selective1)
-ax[1,1].plot(s_NMDA_selective2)
-ax[1,2].plot(s_NMDA_nonselective)
-ax[1,3].plot(s_NMDA_inhibitory)
+ax[1, 0].plot(s_NMDA_selective1)
+ax[1, 1].plot(s_NMDA_selective2)
+ax[1, 2].plot(s_NMDA_nonselective)
+ax[1, 3].plot(s_NMDA_inhibitory)
 
 
 # GABA conductances
-ax[2,0].plot(s_GABA_selective1)
-ax[2,1].plot(s_GABA_selective2)
-ax[2,2].plot(s_GABA_nonselective)
-ax[2,3].plot(s_GABA_inhibitory)
+ax[2, 0].plot(s_GABA_selective1)
+ax[2, 1].plot(s_GABA_selective2)
+ax[2, 2].plot(s_GABA_nonselective)
+ax[2, 3].plot(s_GABA_inhibitory)
 
 # Membrane potential
-ax[3,0].plot(vm_selective1)
-ax[3,1].plot(vm_selective2)
-ax[3,2].plot(vm_nonselective)
-ax[3,3].plot(vm_inhibitory)
+ax[3, 0].plot(vm_selective1)
+ax[3, 1].plot(vm_selective2)
+ax[3, 2].plot(vm_nonselective)
+ax[3, 3].plot(vm_inhibitory)
 
 
-ax[0,0].set_ylabel("S_AMPA")
-ax[1,0].set_ylabel("S_NMDA")
-ax[2,0].set_ylabel("S_GABA")
-ax[3,0].set_ylabel("V_m")
+ax[0, 0].set_ylabel("S_AMPA")
+ax[1, 0].set_ylabel("S_NMDA")
+ax[2, 0].set_ylabel("S_GABA")
+ax[3, 0].set_ylabel("V_m")
 
-ax[0,0].set_title("Selective pop1")
-ax[0,1].set_title("Selective pop2")
-ax[0,2].set_title("Nonselective pop")
-ax[0,3].set_title("Inhibitory pop")
+ax[0, 0].set_title("Selective pop1")
+ax[0, 1].set_title("Selective pop2")
+ax[0, 2].set_title("Nonselective pop")
+ax[0, 3].set_title("Inhibitory pop")
 
-ax[0,0].set_title("Selective pop1")
-ax[0,1].set_title("Selective pop2")
-ax[0,2].set_title("Nonselective pop")
-ax[0,3].set_title("Inhibitory pop")
+ax[0, 0].set_title("Selective pop1")
+ax[0, 1].set_title("Selective pop2")
+ax[0, 2].set_title("Nonselective pop")
+ax[0, 3].set_title("Inhibitory pop")
 
 
 plt.show()
-

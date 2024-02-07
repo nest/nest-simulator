@@ -308,7 +308,7 @@ public:
 
     //! Get the sum of NMDA over all presynaptic neurons
     double
-    get_NMDA_sum() const
+    get_s_NMDA() const
     {
       double NMDA_sum = 0.0;
       for ( size_t i = s_NMDA_base; i < state_vec_size; i += 2 )
@@ -405,7 +405,7 @@ private:
   double
   get_s_NMDA_() const
   {
-    return S_.get_NMDA_sum();
+    return S_.get_s_NMDA();
   }
 
   // Data members -----------------------------------------------------------

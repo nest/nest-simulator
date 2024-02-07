@@ -233,8 +233,8 @@ nest::iaf_wang_2002_exact::State_::get( DictionaryDatum& d ) const
   def< double >( d, names::s_GABA, ode_state_[ s_GABA ] );
 
   // total NMDA sum
-  double s_NMDA = get_NMDA_sum();
-  def< double >( d, names::NMDA_sum, s_NMDA );
+  double s_NMDA = get_s_NMDA();
+  def< double >( d, names::s_NMDA, s_NMDA );
 }
 
 void

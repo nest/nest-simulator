@@ -339,7 +339,6 @@ extern const Name music_channel;
 
 extern const Name N;
 extern const Name NMDA;
-extern const Name NMDA_sum;
 extern const Name N_channels;
 extern const Name N_NaP;
 extern const Name N_T;

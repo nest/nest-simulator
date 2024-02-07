@@ -42,9 +42,9 @@ https://doi.org/10.1016/S0896-6273(02)01092-9.
 """
 
 import matplotlib.pyplot as plt
-from matplotlib.gridspec import GridSpec
 import nest
 import numpy as np
+from matplotlib.gridspec import GridSpec
 
 np.random.seed(1234)
 rng = np.random.default_rng()

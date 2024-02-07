@@ -139,12 +139,6 @@ def test_wang():
     nmda_soln = spiketrain_response_nmda(times, spikes)
     gaba_soln = spiketrain_response(times, tau_GABA, spikes, np.abs(w_in))
 
-    import matplotlib.pyplot as plt
-
-    plt.plot(mm2.events["s_NMDA"])
-    plt.plot(nmda_soln)
-    plt.show()
-
     nptest.assert_array_almost_equal(ampa_soln, mm2.events["s_AMPA"])
     nptest.assert_array_almost_equal(gaba_soln, mm2.events["s_GABA"])
     nptest.assert_array_almost_equal(nmda_soln, mm2.events["s_NMDA"])

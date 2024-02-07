@@ -35,15 +35,15 @@ one of the sub-population is suppressed.
 
 References
 ~~~~~~~~~~
-.. [1] Wang X-J (2002). Probabilistic Decision Making by Slow Reverberation in 
-Cortical Circuits. Neuron, Volume 36, Issue 5, Pages 955-968. 
+.. [1] Wang X-J (2002). Probabilistic Decision Making by Slow Reverberation in
+Cortical Circuits. Neuron, Volume 36, Issue 5, Pages 955-968.
 https://doi.org/10.1016/S0896-6273(02)01092-9.
 
 """
 
-import nest
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
+import nest
 import numpy as np
 
 np.random.seed(1234)

@@ -98,7 +98,7 @@ where :math:`\Gamma_\mathrm{ex}` and :math:`\Gamma_\mathrm{in}` are index sets f
     k_0 &= \mathrm{exp}(-\alpha \tau_\mathrm{r}) - 1 \\[3ex]
     k_1 &= -\alpha \tau_\mathrm{r} \mathrm{E_N} \Big[ \frac{\tau_\mathrm{r}}{\tau_\mathrm{d}}, \alpha \tau_\mathrm{r} \Big] + (\alpha \tau_\mathrm{r})^{\frac{\tau_\mathrm{r}}{\tau_\mathrm{d}}} \Gamma \Big[ 1 - \frac{\tau_\mathrm{r}}{\tau_\mathrm{d}} \Big]
 
-where :math:`\mathrm{E_N}` is the generalized exponential integral (https://en.wikipedia.org/wiki/Exponential_integral#Generalization), and :math:`\Gamma` is the gamma-function (https://en.wikipedia.org/wiki/Gamma_function).
+where :math:`\mathrm{E_N}` is the generalized exponential integral (https://en.wikipedia.org/wiki/Exponential_integral#Generalization), and :math:`\Gamma` is the gamma-function (https://en.wikipedia.org/wiki/Gamma_function). For these values of :math:`k_0` and :math:`k_1`, the approximate model will approach the exact model for large t.
 
 The specification of this model differs slightly from the one in [1]_. The parameters :math:`g_\mathrm{AMPA}`, :math:`g_\mathrm{GABA}`, and :math:`g_\mathrm{NMDA}` have been absorbed into the respective synaptic weights. Additionally, the synapses from the external population is not separated from the recurrent AMPA-synapses. 
 

@@ -471,8 +471,8 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
 
       // compute current value of s_NMDA and add NMDA update to spike offset
       S_.s_NMDA_pre = S_.s_NMDA_pre * exp( -( t_spike - t_lastspike ) / P_.tau_decay_NMDA );
-      const double s_NMDA_delta = V_.S_jump_0 + V_.S_jump_1 * S_.s_NMDA_pre;//- S_.s_NMDA_pre;
-      S_.s_NMDA_pre += s_NMDA_delta; // guaranteed to be <= 1.
+      const double s_NMDA_delta = V_.S_jump_0 + V_.S_jump_1 * S_.s_NMDA_pre;
+      S_.s_NMDA_pre += s_NMDA_delta;
 
       SpikeEvent se;
       se.set_offset( s_NMDA_delta );

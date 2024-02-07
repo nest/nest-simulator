@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# brunel_alpha_nest.py
+# wang_decision_making.py
 #
 # This file is part of NEST.
 #

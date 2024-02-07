@@ -20,9 +20,11 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Tests synaptic dynamics of iaf_wang_2002_exact. Since the neuron is conductance based,
-it is impossible to analytically confirm the membrane potential. We can confirm the
-AMPA and GABA values exactly, and upper and lower bounds on the NMDA values.
+Tests synaptic dynamics of the exact model iaf_wang_2002_exact.
+
+Since the neuron is conductance based, it is impossible to analytically
+confirm the membrane potential. We can confirm the AMPA and GABA values
+exactly, and upper and lower bounds on the NMDA values.
 """
 
 

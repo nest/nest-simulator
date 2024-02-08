@@ -1044,7 +1044,7 @@ class CompartmentsTestCase(unittest.TestCase):
 
         nest.Simulate(10.0)
 
-        self.assertTrue(np.allclose(mm.events["v_comp0"], -60.0))
+        self.assertTrue(np.allclose(mm.events["v_comp0"], sp0["V_init"]))
         self.assertTrue(np.allclose(mm.events["v_comp1"], -60.0))
 
         # test initialization different from leak

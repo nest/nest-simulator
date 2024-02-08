@@ -32,7 +32,7 @@
 
 #include "dictdatum.h"
 
-/* BeginUserDocs: integrate-and-fire, current-based
+/* BeginUserDocs: neuron, integrate-and-fire, current-based
 
 Short description
 +++++++++++++++++
@@ -204,6 +204,8 @@ EndUserDocs */
 
 namespace nest
 {
+
+void register_glif_psc( const std::string& name );
 
 class glif_psc : public ArchivingNode
 {

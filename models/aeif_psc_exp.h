@@ -180,6 +180,8 @@ Examples using this model
 
 EndUserDocs */
 
+void register_aeif_psc_exp( const std::string& name );
+
 class aeif_psc_exp : public ArchivingNode
 {
 

@@ -197,6 +197,8 @@ Examples using this model
 
 EndUserDocs */
 
+void register_pp_psc_delta( const std::string& name );
+
 class pp_psc_delta : public ArchivingNode
 {
 
@@ -378,7 +380,6 @@ private:
   // ----------------------------------------------------------------
 
   /**
-   * @defgroup iaf_psc_alpha_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.

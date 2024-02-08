@@ -34,6 +34,7 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -47,6 +48,12 @@ nest::RecordablesMap< nest::iaf_psc_alpha_ps > nest::iaf_psc_alpha_ps::recordabl
 
 namespace nest
 {
+void
+register_iaf_psc_alpha_ps( const std::string& name )
+{
+  register_node_model< iaf_psc_alpha_ps >( name );
+}
+
 /*
  * Override the create() method with one call to RecordablesMap::insert_()
  * for each quantity to be recorded.

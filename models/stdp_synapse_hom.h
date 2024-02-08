@@ -154,6 +154,8 @@ public:
  * Class representing an STDP connection with homogeneous parameters, i.e.
  * parameters are the same for all synapses.
  */
+void register_stdp_synapse_hom( const std::string& name );
+
 template < typename targetidentifierT >
 class stdp_synapse_hom : public Connection< targetidentifierT >
 {
@@ -203,7 +205,7 @@ public:
    * Send an event to the receiver of this connection.
    * \param e The event to send
    */
-  void send( Event& e, size_t t, const STDPHomCommonProperties& );
+  bool send( Event& e, size_t t, const STDPHomCommonProperties& );
 
   void
   set_weight( double w )
@@ -290,7 +292,7 @@ stdp_synapse_hom< targetidentifierT >::stdp_synapse_hom()
  * \param p The port under which this connection is stored in the Connector.
  */
 template < typename targetidentifierT >
-inline void
+inline bool
 stdp_synapse_hom< targetidentifierT >::send( Event& e, size_t t, const STDPHomCommonProperties& cp )
 {
   // synapse STDP depressing/facilitation dynamics
@@ -330,6 +332,8 @@ stdp_synapse_hom< targetidentifierT >::send( Event& e, size_t t, const STDPHomCo
   Kplus_ = Kplus_ * std::exp( ( t_lastspike_ - t_spike ) / cp.tau_plus_ ) + 1.0;
 
   t_lastspike_ = t_spike;
+
+  return true;
 }
 
 template < typename targetidentifierT >

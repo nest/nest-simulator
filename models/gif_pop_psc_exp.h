@@ -160,6 +160,8 @@ EndUserDocs */
  * representing each single neuron. The computational cost is largely
  * independent of the number N of neurons represented.
  */
+void register_gif_pop_psc_exp( const std::string& name );
+
 class gif_pop_psc_exp : public Node
 {
 
@@ -392,7 +394,6 @@ private:
   // ----------------------------------------------------------------
 
   /**
-   * @defgroup iaf_psc_alpha_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.

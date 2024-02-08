@@ -178,8 +178,13 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
 #endif /* #ifdef HAVE_MPI */
 
 void
-nest::MPIManager::initialize()
+nest::MPIManager::initialize( const bool reset_kernel )
 {
+  if ( not reset_kernel )
+  {
+    return;
+  }
+
 #ifndef HAVE_MPI
   char* pmix_rank_set = std::getenv( "PMIX_RANK" ); // set by OpenMPI's launcher
   char* pmi_rank_set = std::getenv( "PMI_RANK" );   // set by MPICH's launcher
@@ -211,7 +216,7 @@ nest::MPIManager::initialize()
 }
 
 void
-nest::MPIManager::finalize()
+nest::MPIManager::finalize( const bool )
 {
 }
 

@@ -147,6 +147,8 @@ Examples using this model
 
 EndUserDocs */
 
+void register_iaf_psc_exp_ps( const std::string& name );
+
 class iaf_psc_exp_ps : public ArchivingNode
 {
 public:
@@ -403,7 +405,6 @@ private:
   // ----------------------------------------------------------------
 
   /**
-   * @defgroup iaf_psc_exp_ps_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.

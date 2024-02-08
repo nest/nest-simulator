@@ -38,6 +38,7 @@
 #include "kernel_manager.h"
 #include "nest_time.h"
 #include "nest_timeconverter.h"
+#include "secondary_event_impl.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -136,6 +137,28 @@ GenericConnectorModel< ConnectionT >::set_status( const DictionaryDatum& d )
   // it is used
   default_delay_needs_check_ = true;
 }
+
+template < typename ConnectionT >
+void
+GenericConnectorModel< ConnectionT >::check_synapse_params( const DictionaryDatum& syn_spec ) const
+{
+  // This is called just once per Connect() call, so we need not worry much about performance.
+  // We get a dictionary with synapse default values and check if any of its keys are in syn_spec.
+  DictionaryDatum dummy( new Dictionary );
+  cp_.get_status( dummy );
+
+  for ( [[maybe_unused]] const auto& [ key, val ] : *syn_spec )
+  {
+    if ( dummy->known( key ) )
+    {
+      throw NotImplemented(
+        String::compose( "Synapse parameter \"%1\" can only be set via SetDefaults() or CopyModel().", key ) );
+    }
+  }
+
+  default_connection_.check_synapse_params( syn_spec );
+}
+
 
 template < typename ConnectionT >
 void

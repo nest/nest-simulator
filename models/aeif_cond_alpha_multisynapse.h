@@ -181,6 +181,8 @@ namespace nest
  */
 extern "C" int aeif_cond_alpha_multisynapse_dynamics( double, const double*, double*, void* );
 
+void register_aeif_cond_alpha_multisynapse( const std::string& name );
+
 class aeif_cond_alpha_multisynapse : public ArchivingNode
 {
 
@@ -365,7 +367,6 @@ private:
   // Data members -----------------------------------------------------------
 
   /**
-   * @defgroup aeif_cond_alpha_multisynapse
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.

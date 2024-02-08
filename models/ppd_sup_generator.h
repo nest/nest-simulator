@@ -106,6 +106,8 @@ Examples using this model
 
 EndUserDocs */
 
+void register_ppd_sup_generator( const std::string& name );
+
 class ppd_sup_generator : public StimulationDevice
 {
 

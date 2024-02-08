@@ -66,6 +66,8 @@ Examples using this model
 
 EndUserDocs */
 
+void register_static_synapse_hom_w( const std::string& name );
+
 template < typename targetidentifierT >
 class static_synapse_hom_w : public Connection< targetidentifierT >
 {
@@ -164,7 +166,7 @@ public:
    * \param tid Thread ID of the target
    * \param cp Common properties-object of the synapse
    */
-  void
+  bool
   send( Event& e, const size_t tid, const CommonPropertiesHomW& cp )
   {
     e.set_weight( cp.get_weight() );
@@ -172,6 +174,8 @@ public:
     e.set_receiver( *get_target( tid ) );
     e.set_rport( get_rport() );
     e();
+
+    return true;
   }
 
   void

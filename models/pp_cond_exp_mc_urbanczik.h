@@ -249,6 +249,8 @@ Examples using this model
 
 EndUserDocs */
 
+void register_pp_cond_exp_mc_urbanczik( const std::string& name );
+
 class pp_cond_exp_mc_urbanczik : public UrbanczikArchivingNode< pp_cond_exp_mc_urbanczik_parameters >
 {
 

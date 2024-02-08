@@ -1,7 +1,7 @@
 .. _docker:
 
-Docker |macos| |linux| |windows|
---------------------------------
+Docker |macos| |linux|
+----------------------
 
 Docker provides an isolated container to run applications.
 
@@ -27,7 +27,7 @@ Docker provides an isolated container to run applications.
 Usage
 
 
-You can use the docker images directly out of https://hub.docker.com/r/nest/nest-simulator 
+You can use the docker images directly out of https://hub.docker.com/r/nest/nest-simulator
 like this:
 
 .. code-block:: bash
@@ -46,8 +46,7 @@ To use 'docker-compose' you need the definition file from the git repository. Do
 
 .. code-block:: bash
 
-    wget https://raw.githubusercontent.com/steffengraber/nest-docker/<TAG>/docker-compose.yml
-
+    wget https://raw.githubusercontent.com/nest/nest-docker/master/docker-compose.yml
 
 You can then run ``docker-compose up`` with one of the following options:
 
@@ -144,10 +143,12 @@ If you want to use the compose configuration for the ``dev`` NEST version, you c
     wget https://raw.githubusercontent.com/nest/nest-docker/master/docker-compose-dev.yml
     docker-compose -f docker-compose-dev.yml up nest-notebook
 
-On Windows
-^^^^^^^^^^
+.. _docker_win:
 
-.. note::
+Run NEST on Windows |windows|
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. important::
 
     The following commands should work on Windows. Please note that NEST does not officially
     support Windows!
@@ -161,8 +162,8 @@ In Powershell, '%cd%' might not work for the current directory. Then
 you should explicitly specify a folder with existing write permissions.
 
 In any case, this will download the docker image with the pre-installed
-NEST master from https://hub.docker.com/r/nest/nest-simulator and start it. 
-After booting, a URL is presented. Click on it or copy it to your browser. 
+NEST master from https://hub.docker.com/r/nest/nest-simulator and start it.
+After booting, a URL is presented. Click on it or copy it to your browser.
 Voilá! Jupyter notebook starts from the docker image.
 
 You can update the image with:

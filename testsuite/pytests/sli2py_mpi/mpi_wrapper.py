@@ -19,17 +19,12 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import ast
-import functools
 import inspect
-import os
 import subprocess
-import sys
 import tempfile
 import textwrap
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 import pytest
 from decorator import decorator

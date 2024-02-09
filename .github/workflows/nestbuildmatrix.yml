@@ -618,7 +618,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip setuptools
           python -c "import setuptools; print('package location:', setuptools.__file__)"
-          python -m pip install --force-reinstall --upgrade scipy 'junitparser>=2' numpy pytest pytest-timeout pytest-xdist cython matplotlib terminaltables pandoc pandas
+          python -m pip install --force-reinstall --upgrade scipy 'junitparser>=2' numpy pytest pytest-timeout pytest-xdist cython matplotlib terminaltables pandoc pandas decorator
           # Install mpi4py regardless of whether we compile NEST with or without MPI, so regressiontests/issue-1703.py will run in both cases
           python -m pip install --force-reinstall --upgrade mpi4py
           test \! -e "=2"   # assert junitparser is correctly quoted and '>' is not interpreted as shell redirect
@@ -772,7 +772,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip setuptools
           python -c "import setuptools; print('package location:', setuptools.__file__)"
-          python -m pip install --force-reinstall --upgrade scipy 'junitparser>=2' numpy pytest pytest-timeout pytest-xdist mpi4py h5py cython matplotlib terminaltables pandoc pandas
+          python -m pip install --force-reinstall --upgrade scipy 'junitparser>=2' numpy pytest pytest-timeout pytest-xdist mpi4py h5py cython matplotlib terminaltables pandoc pandas decorator
           test \! -e "=2"   # assert junitparser is correctly quoted and '>' is not interpreted as shell redirect
           python -c "import pytest; print('package location:', pytest.__file__)"
           pip list

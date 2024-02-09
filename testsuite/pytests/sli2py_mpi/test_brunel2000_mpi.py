@@ -70,8 +70,8 @@ def test_brunel2000():
     nu_ext = eta * nu_thresh
 
     # Build network
-    enodes = nest.Create("iaf_psc_delta", NE, params=neuron_params)
-    inodes = nest.Create("iaf_psc_delta", NI, params=neuron_params)
+    enodes = nest.Create("iaf_psc_delta_ps", NE, params=neuron_params)
+    inodes = nest.Create("iaf_psc_delta_ps", NI, params=neuron_params)
     ext = nest.Create("poisson_generator", 1, params={"rate": nu_ext * CE * 1000.0})
     srec = nest.Create("spike_recorder", 1, params={"label": f"sr_{nest.num_processes:02d}", "record_to": "ascii"})
 

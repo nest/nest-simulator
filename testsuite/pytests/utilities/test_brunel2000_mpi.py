@@ -20,13 +20,13 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from mpi_wrapper import mpi_assert_equal_df
+from mpi_wrapper import MPIAssertEqual
 
 
-@mpi_assert_equal_df([1, 2])
+@MPIAssertEqual([1, 2, 4])
 def test_brunel2000():
-    """Implementation of the sparsely connected recurrent network described by
-    Brunel (2000).
+    """
+    Implementation of the sparsely connected recurrent network described by Brunel (2000).
 
     References
     ----------
@@ -39,7 +39,7 @@ def test_brunel2000():
 
     nest.ResetKernel()
 
-    nest.set(total_num_virtual_procs=2)
+    nest.set(total_num_virtual_procs=4, overwrite_files=True)
 
     # Model parameters
     NE = 1000  # number of excitatory neurons

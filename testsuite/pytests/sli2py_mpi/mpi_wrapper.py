@@ -80,7 +80,11 @@ class MPIWrapper:
                 self._write_runner(func, *args, **kwargs)
 
                 for procs in self._procs_lst:
-                    subprocess.run(["mpirun", "-np", str(procs), "python", "runner.py"], check=True, cwd=self._tmpdir)
+                    subprocess.run(
+                        ["mpirun", "-np", str(procs), "--oversubscribe", "python", "runner.py"],
+                        check=True,
+                        cwd=self._tmpdir,
+                    )
 
                 self.assert_correct_results()
 

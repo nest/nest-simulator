@@ -145,6 +145,7 @@ ls -la "${TEST_BASEDIR}"
 
 NEST="nest_serial"
 HAVE_MPI="$(sli -c 'statusdict/have_mpi :: =only')"
+HAVE_OPENMP="$(sli -c 'is_threaded =only')"
 
 if test "${HAVE_MPI}" = "true"; then
     MPI_LAUNCHER="$(sli -c 'statusdict/mpiexec :: =only')"
@@ -512,12 +513,14 @@ if test "${PYTHON}"; then
     set -e
 
     # Run tests in the sli2py_mpi subdirectory. The must be run without loading conftest.py.
-    XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_sli2py_mpi.xml"
-    env
-    set +e
-    "${PYTHON}" -m pytest --noconftest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" --numprocesses=1 \
-          "${PYNEST_TEST_DIR}/sli2py_mpi" 2>&1 | tee -a "${TEST_LOGFILE}"
-    set -e
+    if test "${HAVE_MPI}" = "true" && test "${HAVE_OPENMP}" = "true" ; then
+	XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_sli2py_mpi.xml"
+	env
+	set +e
+	"${PYTHON}" -m pytest --noconftest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" --numprocesses=1 \
+		    "${PYNEST_TEST_DIR}/sli2py_mpi" 2>&1 | tee -a "${TEST_LOGFILE}"
+	set -e
+    fi
 
     # Run tests in the mpi* subdirectories, grouped by number of processes
     if test "${HAVE_MPI}" = "true"; then

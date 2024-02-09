@@ -66,7 +66,6 @@ namespace nest
  *
  * @author Sandra Diaz
  *
- * @ingroup NESTio
  */
 
 class StimulationBackend
@@ -108,7 +107,6 @@ public:
    *
    * @see disenroll()
    *
-   * @ingroup NESTio
    */
   virtual void enroll( StimulationDevice&, const DictionaryDatum& ) {};
 
@@ -126,7 +124,6 @@ public:
    *
    * @see enroll()
    *
-   * @ingroup NESTio
    */
   virtual void disenroll( StimulationDevice& ) {};
 
@@ -142,7 +139,6 @@ public:
    *
    * @see post_run_hook()
    *
-   * @ingroup NESTio
    */
   virtual void pre_run_hook() = 0;
 
@@ -154,7 +150,6 @@ public:
    *
    * @see pre_run_hook()
    *
-   * @ingroup NESTio
    */
   virtual void post_run_hook() = 0;
 
@@ -175,7 +170,6 @@ public:
    *
    * @see cleanup()
    *
-   * @ingroup NESTio
    */
   virtual void prepare() = 0;
 
@@ -188,7 +182,6 @@ public:
    *
    * @see prepare()
    *
-   * @ingroup NESTio
    */
   virtual void cleanup() = 0;
 

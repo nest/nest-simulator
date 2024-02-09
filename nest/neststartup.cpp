@@ -25,7 +25,6 @@
 
 // Generated includes:
 #include "config.h"
-#include "static_modules.h"
 
 // Includes from libnestutil:
 #include "logging_event.h"
@@ -111,9 +110,6 @@ neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string module
 
   // NestModule extends SLI by commands for neuronal simulations
   addmodule< nest::NestModule >( engine );
-
-  // now add static modules providing components.
-  add_static_modules( engine );
 
 /*
  * The following section concerns shared user modules and is thus only

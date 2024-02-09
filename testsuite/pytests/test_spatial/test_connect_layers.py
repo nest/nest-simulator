@@ -45,14 +45,17 @@ class ConnectLayersTestCase(unittest.TestCase):
         nest.rng_seed = 123
         self.layer = nest.Create("iaf_psc_alpha", positions=nest.spatial.grid(self.dim, extent=self.extent))
 
-    def _check_connections(self, conn_spec, expected_num_connections):
+    def _check_connections(self, conn_spec, expected_num_connections, return_conns=False):
         """Helper function which asserts that connecting with the specified conn_spec gives
         the expected number of connections."""
         nest.Connect(self.layer, self.layer, conn_spec)
         conns = nest.GetConnections()
-        self.assertEqual(len(conns), expected_num_connections)
+        if return_conns:
+            return conns
+        else:
+            self.assertEqual(len(conns), expected_num_connections)
 
-    def _check_connections_statistical(self, conn_spec, p, num_pairs):
+    def _check_connections_statistical_bernoulli(self, conn_spec, p, num_pairs):
         """Helper function which asserts that the number of connections created are based on a bernoulli distribution.
         The connection function is iterated N times, then the distribution of number of created connections are tested
         against a bernoulli distribution using a Kolmogorov-Smirnov test. This is done ks_N times, to get statistical
@@ -74,6 +77,38 @@ class ConnectLayersTestCase(unittest.TestCase):
                 nest.Connect(self.layer, self.layer, conn_spec)
                 n_conns[i] = nest.num_connections - np.sum(n_conns)
                 ref[i] = np.sum(scipy.stats.bernoulli.rvs(p, size=num_pairs))
+            ks_stats[ks_i], p_vals[ks_i] = scipy.stats.ks_2samp(n_conns, ref)
+            print(f"ks_stat={ks_stats[ks_i]}, p_val={p_vals[ks_i]}")
+
+        mean_p_val = np.mean(p_vals)
+        mean_ks_stat = np.mean(ks_stats)
+        print(f"mean_ks_stat={mean_ks_stat}, mean_p_val={mean_p_val}")
+
+        self.assertGreater(mean_p_val, p_val_lim)
+        self.assertLess(mean_ks_stat, ks_stat_lim)
+
+    def _check_connections_statistical_poisson(self, conn_spec, pairwise_avg_num_conns, num_pairs):
+        """Helper function which asserts that the number of connections created are based on a poisson distribution.
+        The connection function is iterated N times, then the distribution of number of created connections are tested
+        against a bernoulli distribution using a Kolmogorov-Smirnov test. This is done ks_N times, to get statistical
+        values. The mean of the KS tests is then compared to the limits. If either of the values are below the specified
+        limits, the test fails."""
+        self.assertEqual(conn_spec["rule"], "pairwise_poisson")
+        N = 100  # Number of samples per KS test
+        ks_N = 5  # Number of KS tests to perform.
+        p_val_lim = 0.1  # Limit for the p value of the KS test
+        ks_stat_lim = 0.2  # Limit for the KS statistic
+
+        p_vals = np.zeros(ks_N)
+        ks_stats = np.zeros(ks_N)
+
+        for ks_i in range(ks_N):
+            n_conns = np.zeros(N)
+            ref = np.zeros(N)
+            for i in range(N):
+                nest.Connect(self.layer, self.layer, conn_spec)
+                n_conns[i] = nest.num_connections - np.sum(n_conns)
+                ref[i] = np.sum(scipy.stats.poisson.rvs(pairwise_avg_num_conns, size=num_pairs))
             ks_stats[ks_i], p_vals[ks_i] = scipy.stats.ks_2samp(n_conns, ref)
             print(f"ks_stat={ks_stats[ks_i]}, p_val={p_vals[ks_i]}")
 
@@ -164,6 +199,12 @@ class ConnectLayersTestCase(unittest.TestCase):
         conn_spec = {"rule": "pairwise_bernoulli", "p": 1.0, "use_on_source": True}
         self._check_connections(conn_spec, 400)
 
+    def test_connect_layers_poisson(self):
+        """Connecting layers with pairwise_poisson."""
+        conn_spec = {"rule": "pairwise_poisson", "pairwise_avg_num_conns": 0.5}
+        conns = self._check_connections(conn_spec, None, return_conns=True)
+        np.testing.assert_allclose(200, len(conns), atol=5)
+
     def test_connect_layers_indegree_mask(self):
         """Connecting layers with fixed_indegree and mask."""
         conn_spec = {
@@ -246,7 +287,18 @@ class ConnectLayersTestCase(unittest.TestCase):
             "p": p,
             "mask": {"rectangular": {"lower_left": [-5.0, -5.0], "upper_right": [0.1, 0.1]}},
         }
-        self._check_connections_statistical(conn_spec, p, 108)
+        self._check_connections_statistical_bernoulli(conn_spec, p, 108)
+
+    @unittest.skipIf(not HAVE_SCIPY, "SciPy package is not available")
+    def test_connect_layers_poisson_kernel_mask(self):
+        """Connecting layers with pairwise_poisson, kernel and mask"""
+        pairwise_avg_num_conns = 0.5
+        conn_spec = {
+            "rule": "pairwise_poisson",
+            "pairwise_avg_num_conns": pairwise_avg_num_conns,
+            "mask": {"rectangular": {"lower_left": [-5.0, -5.0], "upper_right": [0.1, 0.1]}},
+        }
+        self._check_connections_statistical_poisson(conn_spec, pairwise_avg_num_conns, 108)
 
     @unittest.skipIf(not HAVE_SCIPY, "SciPy package is not available")
     def test_connect_layers_bernoulli_kernel_mask_source(self):
@@ -260,13 +312,24 @@ class ConnectLayersTestCase(unittest.TestCase):
             "mask": {"rectangular": {"lower_left": [-5.0, -5.0], "upper_right": [0.1, 0.1]}},
             "use_on_source": True,
         }
-        self._check_connections_statistical(conn_spec, p, 108)
+        self._check_connections_statistical_bernoulli(conn_spec, p, 108)
 
-    def test_connect_nonlayers_mask(self):
+    def test_connect_nonlayers_mask_bernoulli(self):
         """Throw when connecting non-layer NodeCollections with mask."""
         neurons = nest.Create("iaf_psc_alpha", 20)
         conn_spec = {
             "rule": "pairwise_bernoulli",
+            "p": 1.0,
+            "mask": {"rectangular": {"lower_left": [-5.0, -5.0], "upper_right": [0.1, 0.1]}},
+        }
+        with self.assertRaises(TypeError):
+            nest.Connect(neurons, neurons, conn_spec)
+
+    def test_connect_nonlayers_mask_poisson(self):
+        """Throw when connecting non-layer NodeCollections with mask."""
+        neurons = nest.Create("iaf_psc_alpha", 20)
+        conn_spec = {
+            "rule": "pairwise_poisson",
             "p": 1.0,
             "mask": {"rectangular": {"lower_left": [-5.0, -5.0], "upper_right": [0.1, 0.1]}},
         }

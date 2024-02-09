@@ -53,6 +53,9 @@ Description
 * no adaptation mechanisms,
 * :math:`\alpha`-shaped synaptic input currents.
 
+Membrane potential evolution, spike emission, and refractoriness
+................................................................
+
 The membrane potential evolves according to
 
 .. math::
@@ -75,6 +78,9 @@ Subsequently,
    V_\text{m}(t) = V_{\text{reset}} \quad\text{for}\quad t^* \leq t < t^* + t_{\text{ref}} \;,
 
 that is, the membrane potential is clamped to :math:`V_{\text{reset}}` during the refractory period.
+
+Synaptic input
+..............
 
 The synaptic input current has an excitatory and an inhibitory component
 
@@ -136,21 +142,31 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-=============== ======== =============================== ========================================================================
-**Parameter**   **Unit** **Math equivalent**             **Description**
-=============== ======== =============================== ========================================================================
- ``V_m``         mV       :math:`V_{\text{m}}`           Membrane potential
- ``E_L``         mV       :math:`E_\text{L}`             Resting membrane potential
- ``C_m``         pF       :math:`C_{\text{m}}`           Capacity of the membrane
- ``tau_m``       ms       :math:`\tau_{\text{m}}`        Membrane time constant
- ``t_ref``       ms       :math:`t_{\text{ref}}`         Duration of refractory period
- ``V_th``        mV       :math:`V_{\text{th}}`          Spike threshold
- ``V_reset``     mV       :math:`V_{\text{reset}}`       Reset potential of the membrane
- ``tau_syn_ex``  ms       :math:`\tau_{\text{syn, ex}}`  Rise time of the excitatory synaptic alpha function
- ``tau_syn_in``  ms       :math:`\tau_{\text{syn, in}}`  Rise time of the inhibitory synaptic alpha function
- ``I_e``         pA       :math:`I_\text{e}`             Constant input current
- ``V_min``       mV       :math:`V_{\text{min}}`         Absolute lower value for the membrane potenial (default :math:`-\infty`)
-=============== ======== =============================== ========================================================================
+=============== ================== =============================== ========================================================================
+**Parameter**   **Default**        **Math equivalent**             **Description**
+=============== ================== =============================== ========================================================================
+``E_L``         -70 mV             :math:`E_\text{L}`              Resting membrane potential
+``C_m``         250 pF             :math:`C_{\text{m}}`            Capacity of the membrane
+``tau_m``       10 ms              :math:`\tau_{\text{m}}`         Membrane time constant
+``t_ref``       2 ms               :math:`t_{\text{ref}}`          Duration of refractory period
+``V_th``        -55 mV             :math:`V_{\text{th}}`           Spike threshold
+``V_reset``     -70 mV             :math:`V_{\text{reset}}`        Reset potential of the membrane
+``tau_syn_ex``  2 ms               :math:`\tau_{\text{syn, ex}}`   Rise time of the excitatory synaptic alpha function
+``tau_syn_in``  2 ms               :math:`\tau_{\text{syn, in}}`   Rise time of the inhibitory synaptic alpha function
+``I_e``         0 pA               :math:`I_\text{e}`              Constant input current
+``V_min``       :math:`-\infty` mV :math:`V_{\text{min}}`          Absolute lower value for the membrane potential
+=============== ================== =============================== ========================================================================
+
+The following state variables evolve during simulation and are available either as neuron properties or as recordables.
+
+================== ================= ========================== =================================
+**State variable** **Initial value** **Math equivalent**        **Description**
+================== ================= ========================== =================================
+``V_m``            -70 mV            :math:`V_{\text{m}}`       Membrane potential
+``I_syn_ex``       0 pA              :math:`I_{\text{syn, ex}}` Excitatory synaptic input current
+``I_syn_in``       0 pA              :math:`I_{\text{syn, in}}` Inhibitory synaptic input current
+================== ================= ========================== =================================
+
 
 References
 ++++++++++
@@ -383,7 +399,6 @@ private:
   // Data members -----------------------------------------------------------
 
   /**
-   * @defgroup iaf_psc_alpha_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.

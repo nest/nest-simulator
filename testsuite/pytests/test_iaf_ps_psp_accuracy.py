@@ -92,11 +92,18 @@ neuron_params = {
 spike_emission = [1.132123512]
 
 
-def alpha_fn(t):
-    prefactor = analytical_u = weight * math.e / (tau_syn * C_m)
-    t1 = (exp(-t / tau_m) - exp(-t / tau_syn)) / (1 / tau_syn - 1 / tau_m) ** 2
-    t2 = t * exp(-t / tau_syn) / (1 / tau_syn - 1 / tau_m)
-    return prefactor * (t1 - t2)
+def V_m_response_fn(t):
+    """
+    Returns the value of the membrane potential at time t, assuming
+    alpha-shaped post-synaptic currents and an incoming spike at t=0.
+    The weight and neuron parameters are taken from outer scope.
+    """
+    if t < 0.0:
+        return 0.0
+    prefactor = weight * math.e / (tau_syn * C_m)
+    term1 = (exp(-t / tau_m) - exp(-t / tau_syn)) / (1 / tau_syn - 1 / tau_m) ** 2
+    term2 = t * exp(-t / tau_syn) / (1 / tau_syn - 1 / tau_m)
+    return prefactor * (term1 - term2)
 
 
 @pytest.mark.parametrize("h", range(-12, 1, 2))
@@ -120,11 +127,11 @@ def test_single_spike_different_stepsizes(h):
 
     # first checkpoint
     t = T1 - delay - spike_emission[0]
-    reference_potential1 = alpha_fn(t)
+    reference_potential1 = V_m_response_fn(t)
 
     # second checkpoint
     t = T2 - delay - spike_emission[0]
-    reference_potential2 = alpha_fn(t)
+    reference_potential2 = V_m_response_fn(t)
 
     assert reference_potential1 == pytest.approx(V_m1)
     assert reference_potential2 == pytest.approx(V_m2)

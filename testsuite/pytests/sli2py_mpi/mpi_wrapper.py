@@ -36,14 +36,14 @@ class MPIWrapper:
     test parametrization.
     """
 
-    def __init__(self, procs_lst):
+    def __init__(self, procs_lst, debug=False):
         try:
             iter(procs_lst)
         except TypeError:
             raise TypeError("procs_lst must be a list of numbers")
 
         self._procs_lst = procs_lst
-        self._caller_fname = inspect.stack()[1].filename
+        self._debug = debug
         self._tmpdir = None
 
     def _parse_func_source(self, func):
@@ -75,16 +75,22 @@ class MPIWrapper:
 
     def __call__(self, func):
         def wrapper(func, *args, **kwargs):
-            with tempfile.TemporaryDirectory() as tmpdirname:
+            with tempfile.TemporaryDirectory(delete=not self._debug) as tmpdirname:
                 self._tmpdir = Path(tmpdirname)
                 self._write_runner(func, *args, **kwargs)
 
+                res = {}
                 for procs in self._procs_lst:
-                    subprocess.run(
+                    res[procs] = subprocess.run(
                         ["mpirun", "-np", str(procs), "--oversubscribe", "python", "runner.py"],
                         check=True,
                         cwd=self._tmpdir,
+                        capture_output=self._debug,
                     )
+
+                if self._debug:
+                    print(f"\n\nTMPDIR: {self._tmpdir}\n\n")
+                    print(res)
 
                 self.assert_correct_results()
 

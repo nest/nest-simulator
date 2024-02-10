@@ -75,7 +75,12 @@ class MPIWrapper:
 
     def __call__(self, func):
         def wrapper(func, *args, **kwargs):
-            with tempfile.TemporaryDirectory(delete=not self._debug) as tmpdirname:
+            try:
+                tmpdir = tempfile.TemporaryDirectory(delete=not self._debug)
+            except TypeError:
+                # delete parameter only available in Python 3.12 and later
+                tmpdir = tempfile.TemporaryDirectory()
+            with tmpdir as tmpdirname:
                 self._tmpdir = Path(tmpdirname)
                 self._write_runner(func, *args, **kwargs)
 

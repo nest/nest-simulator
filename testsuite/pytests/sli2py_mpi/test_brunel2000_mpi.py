@@ -23,7 +23,7 @@
 from mpi_wrapper import MPIAssertEqual
 
 
-@MPIAssertEqual([1, 2, 4], debug=False)
+@MPIAssertEqual([1, 2, 4])
 def test_brunel2000():
     """
     Implementation of the sparsely connected recurrent network described by Brunel (2000).
@@ -97,5 +97,5 @@ def test_brunel2000():
     # Simulate network
     nest.Simulate(400)
 
-    # next variant is for testing the test
+    # Uncomment next line to provoke test failure
     # nest.Simulate(200 if nest.num_processes == 1 else 400)

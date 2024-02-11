@@ -70,7 +70,11 @@ def test_mini_brunel_ps():
     srec = nest.Create(
         "spike_recorder",
         1,
-        params={"label": SPIKE_LABEL.format(nest.num_processes), "record_to": "ascii", "time_in_steps": True},
+        params={
+            "label": SPIKE_LABEL.format(nest.num_processes),  # noqa: F821
+            "record_to": "ascii",
+            "time_in_steps": True,
+        },
     )
 
     nest.CopyModel("static_synapse", "esyn", params={"weight": JE, "delay": D})

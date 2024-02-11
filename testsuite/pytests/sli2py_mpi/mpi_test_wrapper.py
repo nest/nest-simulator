@@ -170,14 +170,15 @@ class MPITestAssertEqual(MPITestWrapper):
             )
 
         if self._multi:
-            raise NotImplemented("MULTI is not ready yet")
+            raise NotImplementedError("MULTI is not ready yet")
 
         if self._other:
             # For each number of procs, combine across ranks or VPs (depends on what test has written) and
             # sort by all columns so that if results for different proc numbers are equal up to a permutation
             # of rows, the sorted frames will compare equal
 
-            # next(iter(...)) returns the first value in the _other dictionary, [0] then picks the first DataFrame from that list
+            # next(iter(...)) returns the first value in the _other dictionary
+            # [0] then picks the first DataFrame from that list
             # columns need to be converted to list() to be passed to sort_values()
             all_columns = list(next(iter(self._other.values()))[0].columns)
             all_res.append(

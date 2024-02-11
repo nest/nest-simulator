@@ -38,4 +38,4 @@ def test_all_to_all():
     nest.Connect(nrns, nrns, "all_to_all")
 
     conns = nest.GetConnections().get(output="pandas").drop(labels=["target_thread", "port"], axis=1)
-    conns.to_csv(OTHER_LABEL.format(nest.num_processes) + f"-{nest.Rank()}.dat", index=False)
+    conns.to_csv(OTHER_LABEL.format(nest.num_processes) + f"-{nest.Rank()}.dat", index=False)  # noqa: F821

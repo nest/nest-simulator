@@ -23,7 +23,7 @@
 from mpi_test_wrapper import MPITestAssertEqual
 
 
-@MPITestAssertEqual([1, 2, 4], debug=False)
+@MPITestAssertEqual([1, 2, 4])
 def test_mini_brunel_ps():
     """
     Confirm that downscaled Brunel net with precise neurons is invariant under number of MPI ranks.

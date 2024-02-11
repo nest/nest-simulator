@@ -37,11 +37,15 @@ class MPITestWrapper:
     """
 
     RUNNER = "runner.py"
-    SPIKE_LABEL = "spikes-{}"
+    SPIKE_LABEL = "spike-{}"
+    MULTI_LABEL = "multi-{}"
+    OTHER_LABEL = "other-{}"
 
     RUNNER_TEMPLATE = textwrap.dedent(
         """\
         SPIKE_LABEL = '{spike_lbl}'
+        MULTI_LABEL = '{multi_lbl}'
+        OTHER_LABEL = '{other_lbl}'
 
         {fcode}
 
@@ -58,6 +62,9 @@ class MPITestWrapper:
 
         self._procs_lst = procs_lst
         self._debug = debug
+        self._spike = None
+        self._multi = None
+        self._other = None
 
     def _func_without_decorators(self, func):
         return "".join(line for line in inspect.getsourcelines(func)[0] if not line.startswith("@"))
@@ -77,6 +84,8 @@ class MPITestWrapper:
             fp.write(
                 self.RUNNER_TEMPLATE.format(
                     spike_lbl=self.SPIKE_LABEL,
+                    multi_lbl=self.MULTI_LABEL,
+                    other_lbl=self.OTHER_LABEL,
                     fcode=self._func_without_decorators(func),
                     fname=func.__name__,
                     params=self._params_as_str(*args, **kwargs),
@@ -111,21 +120,32 @@ class MPITestWrapper:
                 print(res)
                 print(f"\n\nTMPDIR: {tmpdirpath}\n\n")
 
-            self.collect_results(tmpdirpath)
-            self.assert_correct_results()
+            self.assert_correct_results(tmpdirpath)
 
         return decorator(wrapper, func)
 
-    def collect_results(self, tmpdirpath):
-        self._spikes = {
-            n_procs: [
-                pd.read_csv(f, sep="\t", comment="#")
-                for f in tmpdirpath.glob(f"{self.SPIKE_LABEL.format(n_procs)}-*.dat")
-            ]
+    def _collect_result_by_label(self, tmpdirpath, label):
+        try:
+            next(tmpdirpath.glob(f"{label.format('*')}.dat"))
+        except StopIteration:
+            return None  # no data for this label
+
+        return {
+            n_procs: [pd.read_csv(f, sep="\t", comment="#") for f in tmpdirpath.glob(f"{label.format(n_procs)}-*.dat")]
             for n_procs in self._procs_lst
         }
 
-    def assert_correct_results(self):
+    def collect_results(self, tmpdirpath):
+        """
+        For each of the result types, build a dictionary mapping number of MPI procs to a list of
+        dataframes, collected per rank or VP.
+        """
+
+        self._spike = self._collect_result_by_label(tmpdirpath, self.SPIKE_LABEL)
+        self._multi = self._collect_result_by_label(tmpdirpath, self.MULTI_LABEL)
+        self._other = self._collect_result_by_label(tmpdirpath, self.OTHER_LABEL)
+
+    def assert_correct_results(self, tmpdirpath):
         assert False, "Test-specific checks not implemented"
 
 
@@ -134,10 +154,43 @@ class MPITestAssertEqual(MPITestWrapper):
     Assert that combined, sorted output from all VPs is identical for all numbers of MPI ranks.
     """
 
-    def assert_correct_results(self):
-        res = [
-            pd.concat(spikes).sort_values(by=["time_step", "time_offset", "sender"]) for spikes in self._spikes.values()
-        ]
+    def assert_correct_results(self, tmpdirpath):
+        self.collect_results(tmpdirpath)
 
-        for r in res[1:]:
-            pd.testing.assert_frame_equal(res[0], r)
+        all_res = []
+        if self._spike:
+            # For each number of procs, combine results across VPs and sort by time and sender
+            all_res.append(
+                [
+                    pd.concat(spikes, ignore_index=True).sort_values(
+                        by=["time_step", "time_offset", "sender"], ignore_index=True
+                    )
+                    for spikes in self._spike.values()
+                ]
+            )
+
+        if self._multi:
+            raise NotImplemented("MULTI is not ready yet")
+
+        if self._other:
+            # For each number of procs, combine across ranks or VPs (depends on what test has written) and
+            # sort by all columns so that if results for different proc numbers are equal up to a permutation
+            # of rows, the sorted frames will compare equal
+
+            # next(iter(...)) returns the first value in the _other dictionary, [0] then picks the first DataFrame from that list
+            # columns need to be converted to list() to be passed to sort_values()
+            all_columns = list(next(iter(self._other.values()))[0].columns)
+            all_res.append(
+                [
+                    pd.concat(others, ignore_index=True).sort_values(by=all_columns, ignore_index=True)
+                    for others in self._other.values()
+                ]
+            )
+
+        assert all_res, "No test data collected"
+
+        for res in all_res:
+            assert len(res) == len(self._procs_lst), "Could not collect data for all procs"
+
+            for r in res[1:]:
+                pd.testing.assert_frame_equal(res[0], r)

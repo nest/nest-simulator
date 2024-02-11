@@ -33,6 +33,7 @@
 #include "logging_manager.h"
 #include "model_manager.h"
 #include "modelrange_manager.h"
+#include "module_manager.h"
 #include "mpi_manager.h"
 #include "music_manager.h"
 #include "node_manager.h"
@@ -266,6 +267,7 @@ public:
   LoggingManager logging_manager;
   MPIManager mpi_manager;
   VPManager vp_manager;
+  ModuleManager module_manager;
   RandomManager random_manager;
   SimulationManager simulation_manager;
   ModelRangeManager modelrange_manager;

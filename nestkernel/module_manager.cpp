@@ -1,0 +1,148 @@
+/*
+ *  module_manager.cpp
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "module_manager.h"
+
+#ifdef HAVE_LIBLTDL
+
+// Includes from libnestutil:
+#include "logging.h"
+
+// Includes from nestkernel:
+#include "kernel_manager.h"
+
+// Includes from sli:
+#include "arraydatum.h"
+
+namespace nest
+{
+
+ModuleManager::ModuleManager()
+  : modules_()
+{
+  lt_dlinit();
+}
+
+ModuleManager::~ModuleManager()
+{
+  finalize( /* reset_kernel = */ true );
+  lt_dlexit();
+}
+
+void
+ModuleManager::initialize( const bool )
+{
+}
+
+void
+ModuleManager::finalize( const bool )
+{
+  // unload all loaded modules
+  for ( const auto& [ name, handle ] : modules_ )
+  {
+    lt_dlclose( handle );
+  }
+  modules_.clear();
+}
+
+void
+ModuleManager::get_status( DictionaryDatum& d )
+{
+  ArrayDatum loaded;
+  for ( const auto& [ name, handle ] : modules_ )
+  {
+    loaded.push_back( new LiteralDatum( name ) );
+  }
+  ( *d )[ names::modules ] = loaded;
+}
+
+void
+ModuleManager::set_status( const DictionaryDatum& d )
+{
+}
+
+void
+ModuleManager::install( const std::string& name )
+{
+  if ( name.empty() )
+  {
+    throw DynamicModuleManagementError( "Module name must not be empty." );
+  }
+
+  if ( modules_.find( name ) != modules_.end() )
+  {
+    throw DynamicModuleManagementError( "Module '" + name + "' is loaded already." );
+  }
+
+  // call lt_dlerror() to reset any error messages hanging around
+  lt_dlerror();
+
+  // try to open the module
+  const lt_dlhandle hModule = lt_dlopenext( name.c_str() );
+
+  if ( not hModule )
+  {
+    char* errstr = ( char* ) lt_dlerror();
+    std::string msg = "Module '" + name + "' could not be opened.";
+    if ( errstr )
+    {
+      msg += "\nThe dynamic loader returned the following error: '" + std::string( errstr ) + "'.";
+    }
+    msg += "\n\nPlease check LD_LIBRARY_PATH (OSX: DYLD_LIBRARY_PATH)!";
+    throw DynamicModuleManagementError( msg );
+  }
+
+  // see if we can find the register_components symbol in the module
+  using reg_func_type = void();
+  reg_func_type* register_components = ( reg_func_type* ) lt_dlsym( hModule, "register_components" );
+  char* errstr = ( char* ) lt_dlerror();
+  if ( errstr )
+  {
+    lt_dlclose( hModule ); // close module again
+    lt_dlerror();          // remove any error caused by lt_dlclose()
+    throw DynamicModuleManagementError(
+            "Module '" + name + "' could not be loaded.\n"
+            "The dynamic loader returned the following error: '"
+            + std::string(errstr) + "'.");
+  }
+
+  // all is well an we can register module components
+  try
+  {
+    register_components();
+  }
+  catch ( std::exception& e )
+  {
+    lt_dlclose( hModule );
+    lt_dlerror(); // remove any error caused by lt_dlclose()
+    throw;        // no arg re-throws entire exception, see Stroustrup 14.3.1
+  }
+
+  // add the handle to list of loaded modules
+  modules_[ name ] = hModule;
+
+  LOG( M_INFO, "Install", ( "loaded module " + name ).c_str() );
+}
+
+} // namespace nest
+
+#endif /* HAVE_LIBLTDL */

@@ -50,6 +50,7 @@ nest::KernelManager::KernelManager()
   , logging_manager()
   , mpi_manager()
   , vp_manager()
+  , module_manager()
   , random_manager()
   , simulation_manager()
   , modelrange_manager()
@@ -63,6 +64,7 @@ nest::KernelManager::KernelManager()
   , managers( { &logging_manager,
       &mpi_manager,
       &vp_manager,
+      &module_manager,
       &random_manager,
       &simulation_manager,
       &modelrange_manager,

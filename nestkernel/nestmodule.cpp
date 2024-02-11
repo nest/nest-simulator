@@ -94,7 +94,7 @@ NestModule::~NestModule()
 const std::string
 NestModule::name() const
 {
-  return std::string( "NEST Kernel 2" ); // Return name of the module
+  return std::string( "NEST Kernel 3" ); // Return name of the module
 }
 
 const std::string

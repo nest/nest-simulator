@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_brunel2000_mpi.py
+# test_mini_brunel_ps.py
 #
 # This file is part of NEST.
 #
@@ -24,15 +24,9 @@ from mpi_test_wrapper import MPITestAssertEqual
 
 
 @MPITestAssertEqual([1, 2, 4], debug=False)
-def test_brunel2000():
+def test_mini_brunel_ps():
     """
-    Implementation of the sparsely connected recurrent network described by Brunel (2000).
-
-    References
-    ----------
-    Brunel N, Dynamics of Sparsely Connected Networks of Excitatory and
-    Inhibitory Spiking Neurons, Journal of Computational Neuroscience 8,
-    183-208 (2000).
+    Confirm that downscaled Brunel net with precise neurons is invariant under number of MPI ranks.
     """
 
     import nest
@@ -72,7 +66,7 @@ def test_brunel2000():
     # Build network
     enodes = nest.Create("iaf_psc_delta_ps", NE, params=neuron_params)
     inodes = nest.Create("iaf_psc_delta_ps", NI, params=neuron_params)
-    ext = nest.Create("poisson_generator", 1, params={"rate": nu_ext * CE * 1000.0})
+    ext = nest.Create("poisson_generator_ps", 1, params={"rate": nu_ext * CE * 1000.0})
     srec = nest.Create(
         "spike_recorder",
         1,
@@ -102,4 +96,4 @@ def test_brunel2000():
     nest.Simulate(400)
 
     # Uncomment next line to provoke test failure
-    # nest.Simulate(200 if nest.num_processes == 1 else 400)
+    # nest.Simulate(200 if -nest.num_processes == 1 else 400)

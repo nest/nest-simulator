@@ -107,8 +107,9 @@ class MPITestWrapper:
                 )
 
             if self._debug:
-                print(f"\n\nTMPDIR: {tmpdirpath}\n\n")
+                print("\n\n")
                 print(res)
+                print(f"\n\nTMPDIR: {tmpdirpath}\n\n")
 
             self.collect_results(tmpdirpath)
             self.assert_correct_results()

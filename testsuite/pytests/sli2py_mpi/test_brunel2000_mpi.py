@@ -20,10 +20,10 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from mpi_wrapper import MPIAssertEqual
+from mpi_test_wrapper import MPITestAssertEqual
 
 
-@MPIAssertEqual([1, 2, 4])
+@MPITestAssertEqual([1, 2, 4], debug=False)
 def test_brunel2000():
     """
     Implementation of the sparsely connected recurrent network described by Brunel (2000).
@@ -42,7 +42,7 @@ def test_brunel2000():
     nest.set(total_num_virtual_procs=4, overwrite_files=True)
 
     # Model parameters
-    NE = 1000  # number of excitatory neurons
+    NE = 1000  # number of excitatory neurons-
     NI = 250  # number of inhibitory neurons
     CE = 100  # number of excitatory synapses per neuron
     CI = 250  # number of inhibitory synapses per neuron
@@ -73,7 +73,11 @@ def test_brunel2000():
     enodes = nest.Create("iaf_psc_delta_ps", NE, params=neuron_params)
     inodes = nest.Create("iaf_psc_delta_ps", NI, params=neuron_params)
     ext = nest.Create("poisson_generator", 1, params={"rate": nu_ext * CE * 1000.0})
-    srec = nest.Create("spike_recorder", 1, params={"label": f"sr_{nest.num_processes:02d}", "record_to": "ascii"})
+    srec = nest.Create(
+        "spike_recorder",
+        1,
+        params={"label": SPIKE_LABEL.format(nest.num_processes), "record_to": "ascii", "time_in_steps": True},
+    )
 
     nest.CopyModel("static_synapse", "esyn", params={"weight": JE, "delay": D})
     nest.CopyModel("static_synapse", "isyn", params={"weight": JI, "delay": D})

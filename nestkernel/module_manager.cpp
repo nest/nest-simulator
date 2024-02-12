@@ -29,6 +29,7 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
+#include "nest_extension_interface.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -59,7 +60,8 @@ ModuleManager::finalize( const bool )
   // unload all loaded modules
   for ( const auto& [ name, handle ] : modules_ )
   {
-    lt_dlclose( handle );
+    // TODO: If this is not commented out, unloading leads to a seg-fault.
+    // lt_dlclose( handle );
   }
   modules_.clear();
 }
@@ -112,8 +114,7 @@ ModuleManager::install( const std::string& name )
   }
 
   // see if we can find the register_components symbol in the module
-  using reg_func_type = void();
-  reg_func_type* register_components = ( reg_func_type* ) lt_dlsym( hModule, "register_components" );
+  NESTExtensionInterface* extension = reinterpret_cast< NESTExtensionInterface* >( lt_dlsym( hModule, "module" ) );
   char* errstr = ( char* ) lt_dlerror();
   if ( errstr )
   {
@@ -128,7 +129,7 @@ ModuleManager::install( const std::string& name )
   // all is well an we can register module components
   try
   {
-    register_components();
+    extension->init();
   }
   catch ( std::exception& e )
   {
@@ -140,7 +141,7 @@ ModuleManager::install( const std::string& name )
   // add the handle to list of loaded modules
   modules_[ name ] = hModule;
 
-  LOG( M_INFO, "Install", ( "loaded module " + name ).c_str() );
+  LOG( M_INFO, "Install", ( "loaded module " + extension->name() ).c_str() );
 }
 
 } // namespace nest

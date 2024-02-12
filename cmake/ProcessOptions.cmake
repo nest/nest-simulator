@@ -222,43 +222,6 @@ function( NEST_PROCESS_STATIC_LIBRARIES )
   endif ()
 endfunction()
 
-function( NEST_PROCESS_EXTERNAL_MODULES )
-  if ( external-modules )
-    # headers from external modules will be installed here
-    include_directories( "${CMAKE_INSTALL_FULL_INCLUDEDIR}" )
-
-    # put all external libs into this variable
-    set( EXTERNAL_MODULE_LIBRARIES )
-    # put all external headers into this variable
-    set( EXTERNAL_MODULE_INCLUDES )
-    foreach ( mod ${external-modules} )
-      # find module header
-      find_file( ${mod}_EXT_MOD_INCLUDE
-          NAMES ${mod}module.h
-          HINTS "${CMAKE_INSTALL_FULL_INCLUDEDIR}/${mod}module"
-          )
-      if ( ${mod}_EXT_MOD_INCLUDE STREQUAL "${mod}_EXT_MOD_INCLUDE-NOTFOUND" )
-         printError( "Cannot find header for external module '${mod}'. "
-          "Should be '${CMAKE_INSTALL_FULL_INCLUDEDIR}/${mod}module/${mod}module.h' ." )
-      endif ()
-      list( APPEND EXTERNAL_MODULE_INCLUDES ${${mod}_EXT_MOD_INCLUDE} )
-
-      # find module library
-      find_library( ${mod}_EXT_MOD_LIBRARY
-          NAMES ${mod}module
-          HINTS "${CMAKE_INSTALL_FULL_LIBDIR}/nest"
-          )
-      if ( ${mod}_EXT_MOD_LIBRARY STREQUAL "${mod}_EXT_MOD_LIBRARY-NOTFOUND" )
-        printError( "Cannot find library for external module '${mod}'." )
-      endif ()
-      list( APPEND EXTERNAL_MODULE_LIBRARIES "${${mod}_EXT_MOD_LIBRARY}" )
-    endforeach ()
-
-    set( EXTERNAL_MODULE_LIBRARIES ${EXTERNAL_MODULE_LIBRARIES} PARENT_SCOPE )
-    set( EXTERNAL_MODULE_INCLUDES ${EXTERNAL_MODULE_INCLUDES} PARENT_SCOPE )
-  endif ()
-endfunction()
-
 function( NEST_PROCESS_TICS_PER_MS )
   # Set tics per ms / step
   if ( tics_per_ms )

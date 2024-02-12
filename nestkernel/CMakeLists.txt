@@ -115,6 +115,7 @@ set ( nestkernel_sources
       spatial.h spatial.cpp
       stimulation_backend.h
       buffer_resize_log.h buffer_resize_log.cpp
+      nest_extension_interface.h
       )
 
 

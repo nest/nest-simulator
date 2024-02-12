@@ -62,6 +62,8 @@ private:
 
 #else
 
+#include "exceptions.h"
+
 namespace nest
 {
 class ModuleManager : public ManagerInterface

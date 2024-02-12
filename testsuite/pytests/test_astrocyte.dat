@@ -9,7 +9,7 @@
 # ``doc/htmldoc/model_details/astrocyte_model_implementation.ipynb``.
 # This data is used as reference for the tests in ``test_astrocyte.py``.
 # 
-#        Times                     IP3                       Ca                     h_IP3R         
+#        Times                     IP3                    Ca_astro                  h_IP3R
 1.000000000000000056e-01 9.999882386709698645e-01 1.000187105302611235e+00 9.999799984511013040e-01
 2.000000000000000111e-01 9.999764775066160016e-01 1.000374129429669079e+00 9.999599938057039950e-01
 3.000000000000000444e-01 9.999647165069364130e-01 1.000561072405474095e+00 9.999399860656773553e-01

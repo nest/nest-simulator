@@ -60,8 +60,7 @@ ModuleManager::finalize( const bool )
   // unload all loaded modules
   for ( const auto& [ name, handle ] : modules_ )
   {
-    // TODO: If this is not commented out, unloading leads to a seg-fault.
-    // lt_dlclose( handle );
+    lt_dlclose( handle );
   }
   modules_.clear();
 }

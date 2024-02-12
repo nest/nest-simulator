@@ -243,7 +243,7 @@ function( NEST_PROCESS_WITH_LIBLTDL )
   if ( with-ltdl AND NOT static-libraries )
     if ( NOT ${with-ltdl} STREQUAL "ON" )
       # a path is set
-      set( LTDL_ROOT_DIR "${with-ltdl}" )
+      set( LTDL_ROOT "${with-ltdl}" )
     endif ()
 
     find_package( LTDL )
@@ -267,7 +267,7 @@ function( NEST_PROCESS_WITH_READLINE )
   if ( with-readline )
     if ( NOT ${with-readline} STREQUAL "ON" )
       # a path is set
-      set( READLINE_ROOT_DIR "${with-readline}" )
+      set( READLINE_ROOT "${with-readline}" )
     endif ()
 
     find_package( Readline )
@@ -291,7 +291,7 @@ function( NEST_PROCESS_WITH_GSL )
   if ( with-gsl )
     if ( NOT ${with-gsl} STREQUAL "ON" )
       # if set, use this prefix
-      set( GSL_ROOT_DIR "${with-gsl}" )
+      set( GSL_ROOT "${with-gsl}" )
     endif ()
 
     find_package( GSL )
@@ -490,7 +490,7 @@ function( NEST_PROCESS_WITH_MUSIC )
   if ( with-music )
     if ( NOT ${with-music} STREQUAL "ON" )
       # a path is set
-      set( MUSIC_ROOT_DIR "${with-music}" )
+      set( MUSIC_ROOT "${with-music}" )
     endif ()
 
     if ( NOT HAVE_MPI )
@@ -516,7 +516,7 @@ function( NEST_PROCESS_WITH_SIONLIB )
   set( HAVE_SIONLIB OFF )
   if ( with-sionlib )
     if ( NOT ${with-sionlib} STREQUAL "ON" )
-      set( SIONLIB_ROOT_DIR "${with-sionlib}" CACHE INTERNAL "sionlib" )
+      set( SIONLIB_ROOT "${with-sionlib}" CACHE INTERNAL "sionlib" )
     endif()
 
     if ( NOT HAVE_MPI )

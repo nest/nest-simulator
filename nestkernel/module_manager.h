@@ -26,13 +26,6 @@
 // Generated includes:
 #include "config.h"
 
-// DynamicLoaderModule defined only if libltdl is available
-
-#ifdef HAVE_LIBLTDL
-
-// External includes:
-#include <ltdl.h>
-
 // C++ includes:
 #include <map>
 #include <string>
@@ -42,6 +35,10 @@
 
 // Includes from sli:
 #include "dictutils.h"
+
+// DynamicLoaderModule defined only if libltdl is available
+#ifdef HAVE_LIBLTDL
+#include <ltdl.h>
 
 namespace nest
 {
@@ -61,9 +58,47 @@ public:
 private:
   std::map< std::string, lt_dlhandle > modules_;
 };
+}
 
-} // namespace
+#else
 
-#endif /* #ifdef HAVE_LIBLTDL */
+namespace nest
+{
+class ModuleManager : public ManagerInterface
+{
+public:
+  ModuleManager()
+  {
+  }
+  ~ModuleManager() override
+  {
+  }
+
+  void
+  initialize( const bool ) override
+  {
+  }
+  void
+  finalize( const bool ) override
+  {
+  }
+  void
+  get_status( DictionaryDatum& ) override
+  {
+  }
+  void
+  set_status( const DictionaryDatum& ) override
+  {
+  }
+
+  void
+  install( const std::string& name )
+  {
+    throw KernelException( "Dynamic modules not supported without libltdl." );
+  }
+};
+}
+
+#endif
 
 #endif

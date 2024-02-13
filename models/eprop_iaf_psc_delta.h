@@ -27,6 +27,7 @@
 #include "connection.h"
 #include "eprop_archiving_node.h"
 #include "eprop_archiving_node_impl.h"
+#include "eprop_synapse.h"
 #include "event.h"
 #include "nest_types.h"
 #include "ring_buffer.h"
@@ -189,7 +190,8 @@ public:
     double& avg_e,
     double& weight,
     const double kappa,
-    const bool average_gradient ) override;
+    const CommonSynapseProperties& cp,
+    WeightOptimizer* optimizer ) override;
 
   void pre_run_hook() override;
   bool is_eprop_recurrent_node() const override;

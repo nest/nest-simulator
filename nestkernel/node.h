@@ -32,6 +32,7 @@
 #include <vector>
 
 // Includes from nestkernel:
+#include "common_synapse_properties.h"
 #include "deprecation_warning.h"
 #include "event.h"
 #include "histentry.h"
@@ -39,6 +40,7 @@
 #include "nest_time.h"
 #include "nest_types.h"
 #include "secondary_event.h"
+#include "weight_optimizer.h"
 
 // Includes from sli:
 #include "dictdatum.h"
@@ -836,7 +838,8 @@ public:
     double& avg_e,
     double& weight,
     const double kappa,
-    const bool average_gradient );
+    const CommonSynapseProperties& cp,
+    WeightOptimizer* optimizer );
 
   /**
    * Compute gradient change for eprop synapses.

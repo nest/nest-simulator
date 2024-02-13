@@ -508,7 +508,8 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
       avg_e_,
       weight_,
       kappa_,
-      cp.average_gradient_ );
+      cp,
+      optimizer_ );
     t_begin = t_previous_spike_;
   }
 

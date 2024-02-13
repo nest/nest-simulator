@@ -475,7 +475,8 @@ eprop_iaf_adapt::compute_gradient( const long t_spike,
   double& avg_e,
   double& weight,
   const double kappa,
-  const bool average_gradient )
+  const CommonSynapseProperties& cp,
+  WeightOptimizer* optimizer )
 {
   double e = 0.0;               // eligibility trace
   double z = 0.0;               // spiking variable
@@ -484,8 +485,10 @@ eprop_iaf_adapt::compute_gradient( const long t_spike,
   double firing_rate_reg = 0.0; // firing rate regularization
   double grad = 0.0;            // gradient
 
+  const EpropSynapseCommonProperties& ecp = static_cast< const EpropSynapseCommonProperties& >( cp );
+
   const long learning_window =
-    average_gradient ? kernel().simulation_manager.get_eprop_learning_window().get_steps() : 1;
+    ecp.average_gradient_ ? kernel().simulation_manager.get_eprop_learning_window().get_steps() : 1;
 
   auto eprop_hist_it = get_eprop_history( t_previous_spike - 1 );
 
@@ -522,7 +525,8 @@ eprop_iaf_adapt::compute_gradient( const long t_spike,
     avg_e = P_.beta_fr_ema_ * avg_e + ( 1.0 - P_.beta_fr_ema_ ) * e;
     e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
     grad = L * e_bar / learning_window + firing_rate_reg * avg_e;
-    weight -= P_.eta_ * grad;
+
+    weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t, grad, weight );
 
     ++eprop_hist_it;
     ++t;

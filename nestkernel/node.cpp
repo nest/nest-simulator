@@ -568,7 +568,8 @@ nest::Node::compute_gradient( const long t_spike,
   double& avg_e,
   double& weight,
   const double kappa,
-  const bool average_gradient )
+  const CommonSynapseProperties& cp,
+  WeightOptimizer* optimizer )
 {
   throw KernelException( "The target node does not support compute_gradient()." );
 }

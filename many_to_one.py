@@ -150,7 +150,7 @@ def plot_corrections():
     ax.tick_params(width=2)
     set_font_sizes()
     fig.savefig('num_corrections.tif')
-    save_grayscale('num_corrections.tif')
+    # save_grayscale('num_corrections.tif')
     plt.show()
 
 
@@ -169,7 +169,7 @@ def plot_weights():
         plt.legend()
         set_font_sizes()
         fig.savefig('weight_distributions.tif')
-        save_grayscale('weight_distributions.tif')
+        # save_grayscale('weight_distributions.tif')
         plt.show()
     else:
         import nest

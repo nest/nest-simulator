@@ -441,7 +441,7 @@ iaf_wang_2002_exact::handles_test_event( SpikeEvent&, size_t receptor_type )
   {
     if ( receptor_type == SynapseTypes::NMDA )
     {
-      // give each NMDA synapse a unique rport, starting from 2 (num_ports_ is initialized to 2)
+      // give each NMDA synapse a unique rport, starting from 3 (num_ports_ is initialized to 3)
       ++S_.num_ports_;
       return S_.num_ports_;
     }

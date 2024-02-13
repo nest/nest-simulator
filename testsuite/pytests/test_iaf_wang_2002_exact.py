@@ -35,7 +35,7 @@ import pytest
 from scipy.special import expn, gamma
 
 w_ex = 40.0
-w_in = -15.0
+w_in = 15.0
 alpha = 0.5
 tau_AMPA = 2.0
 tau_GABA = 5.0

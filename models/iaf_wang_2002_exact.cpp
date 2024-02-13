@@ -538,25 +538,14 @@ nest::iaf_wang_2002_exact::handle( SpikeEvent& e )
   const double steps = e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() );
 
   const auto rport = e.get_rport();
-  if ( rport < NMDA )
-  {
-    if ( e.get_weight() > 0 )
-    {
-      B_.spikes_[ AMPA - 1 ].add_value( steps, e.get_weight() * e.get_multiplicity() );
-    }
-    else
-    {
-      B_.spikes_[ GABA - 1 ].add_value( steps, -e.get_weight() * e.get_multiplicity() );
-    }
-  }
-  else
-  {
-    // spikes_ has 2 + N elements, where N is number of NMDA synapses
-    // rport starts at 1, so subtract one to get correct index
-    B_.spikes_[ rport - 1 ].add_value( steps, e.get_multiplicity() );
 
-    // we need to scale each individual S_j variable by its weight,
-    // so we keep track of the weight.
+  B_.spikes_[ rport - 1 ].add_value( steps, e.get_weight() * e.get_multiplicity() );
+
+
+  if ( rport >= NMDA )
+  // we need to scale each individual S_j variable by its weight,
+  // so we store them
+  {
     const size_t w_idx = rport - NMDA;
     if ( B_.weights_[ w_idx ] == 0.0 )
     {

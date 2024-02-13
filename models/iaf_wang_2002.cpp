@@ -274,8 +274,6 @@ nest::iaf_wang_2002::iaf_wang_2002()
   , B_( *this )
 {
   recordablesMap_.create();
-
-  calibrate();
 }
 
 /* ---------------------------------------------------------------------------
@@ -385,22 +383,14 @@ nest::iaf_wang_2002::pre_run_hook()
   assert( V_.RefractoryCounts_ >= 0 );
 
   // helper vars
-  const double at = P_.alpha * P_.tau_rise_NMDA;
+  const double alpha_tau = P_.alpha * P_.tau_rise_NMDA;
   const double tau_rise_tau_dec = P_.tau_rise_NMDA / P_.tau_decay_NMDA;
 
   V_.S_jump_1 = exp( -P_.alpha * P_.tau_rise_NMDA ) - 1;
-  V_.S_jump_0 = -boost::math::expint( tau_rise_tau_dec, at ) * at
-    + pow( at, tau_rise_tau_dec ) * boost::math::tgamma( 1 - tau_rise_tau_dec );
+  V_.S_jump_0 = -boost::math::expint( tau_rise_tau_dec, alpha_tau ) * alpha_tau
+    + pow( alpha_tau, tau_rise_tau_dec ) * boost::math::tgamma( 1 - tau_rise_tau_dec );
 }
 
-void
-nest::iaf_wang_2002::calibrate()
-{
-  B_.logger_.init();
-
-  // internals V_
-  V_.RefractoryCounts_ = Time( Time::ms( ( double ) ( P_.t_ref ) ) ).get_steps();
-}
 
 /* ---------------------------------------------------------------------------
  * Update and spike handling functions
@@ -445,9 +435,9 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
 
 
     // add incoming spikes
-    S_.y_[ State_::s_AMPA ] += B_.spikes_[ AMPA - 1 ].get_value( lag );
-    S_.y_[ State_::s_GABA ] += B_.spikes_[ GABA - 1 ].get_value( lag );
-    S_.y_[ State_::s_NMDA ] += B_.spikes_[ NMDA - 1 ].get_value( lag );
+    S_.y_[ State_::s_AMPA ] += B_.spikes_[ SynapseTypes::AMPA - 1 ].get_value( lag );
+    S_.y_[ State_::s_GABA ] += B_.spikes_[ SynapseTypes::GABA - 1 ].get_value( lag );
+    S_.y_[ State_::s_NMDA ] += B_.spikes_[ SynapseTypes::NMDA - 1 ].get_value( lag );
 
     if ( S_.r_ )
     {
@@ -462,12 +452,12 @@ nest::iaf_wang_2002::update( Time const& origin, const long from, const long to 
       S_.y_[ State_::V_m ] = P_.V_reset;
 
       // get previous spike time
-      double t_lastspike = get_spiketime_ms();
+      const double t_lastspike = get_spiketime_ms();
 
       // log spike with ArchivingNode
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
-      double t_spike = get_spiketime_ms();
+      const double t_spike = get_spiketime_ms();
 
       // compute current value of s_NMDA and add NMDA update to spike offset
       S_.s_NMDA_pre = S_.s_NMDA_pre * exp( -( t_spike - t_lastspike ) / P_.tau_decay_NMDA );
@@ -506,14 +496,7 @@ nest::iaf_wang_2002::handle( SpikeEvent& e )
 
   if ( rport < NMDA )
   {
-    if ( e.get_weight() > 0 )
-    {
-      B_.spikes_[ AMPA - 1 ].add_value( steps, e.get_weight() * e.get_multiplicity() );
-    }
-    else
-    {
-      B_.spikes_[ GABA - 1 ].add_value( steps, -e.get_weight() * e.get_multiplicity() );
-    }
+    B_.spikes_[ rport - 1 ].add_value( steps, e.get_weight() * e.get_multiplicity() );
   }
   else
   {

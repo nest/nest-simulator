@@ -95,7 +95,7 @@ nest::iaf_wang_2002_exact::Parameters_::Parameters_()
 nest::iaf_wang_2002_exact::State_::State_( const Parameters_& p )
   : state_vec_size( 0 )
   , ode_state_( nullptr )
-  , num_ports_( 2 )
+  , num_ports_( SynapseTypes::NMDA )
   , r_( 0 )
 {
   ode_state_ = new double[ s_NMDA_base ];
@@ -114,7 +114,7 @@ nest::iaf_wang_2002_exact::State_::State_( const State_& s )
   , num_ports_( s.num_ports_ )
   , r_( s.r_ )
 {
-  assert( s.num_ports_ == 2 );
+  assert( s.num_ports_ == SynapseTypes::NMDA );
   assert( state_vec_size == s_NMDA_base );
 
   ode_state_ = new double[ s_NMDA_base ];
@@ -256,8 +256,6 @@ nest::iaf_wang_2002_exact::iaf_wang_2002_exact()
   , B_( *this )
 {
   recordablesMap_.create();
-
-  calibrate();
 }
 
 /* ---------------------------------------------------------------------------
@@ -311,7 +309,7 @@ nest::iaf_wang_2002_exact::init_state_()
   assert( S_.state_vec_size == State_::s_NMDA_base );
 
   double* old_state = S_.ode_state_;
-  S_.state_vec_size = State_::s_NMDA_base + 2 * ( S_.num_ports_ - 2 );
+  S_.state_vec_size = State_::s_NMDA_base + 2 * ( S_.num_ports_ - SynapseTypes::NMDA );
   S_.ode_state_ = new double[ S_.state_vec_size ];
 
   assert( S_.ode_state_ );
@@ -340,7 +338,7 @@ nest::iaf_wang_2002_exact::init_buffers_()
 
   B_.currents_.clear(); // includes resize
 
-  B_.weights_.resize( S_.num_ports_ - NMDA + 1, 0.0 );
+  B_.weights_.resize( S_.num_ports_ - SynapseTypes::NMDA + 1, 0.0 );
 
   B_.logger_.reset(); // includes resize
   ArchivingNode::clear_history();
@@ -392,15 +390,6 @@ nest::iaf_wang_2002_exact::pre_run_hook()
   V_.RefractoryCounts = Time( Time::ms( P_.t_ref ) ).get_steps();
   // since t_ref_ >= 0, this can only fail in error
   assert( V_.RefractoryCounts >= 0 );
-}
-
-void
-nest::iaf_wang_2002_exact::calibrate()
-{
-  B_.logger_.init();
-
-  // internals V_
-  V_.RefractoryCounts = Time( Time::ms( ( double ) ( P_.t_ref ) ) ).get_steps();
 }
 
 /* ---------------------------------------------------------------------------

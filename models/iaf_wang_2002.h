@@ -84,14 +84,10 @@ The membrane potential and synaptic variables evolve according to
     C_\mathrm{m} \frac{dV(t)}{dt} &= -g_\mathrm{L} (V(t) - V_\mathrm{L}) - I_\mathrm{syn} (t) \\[3ex]
     I_\mathrm{syn}(t) &= I_\mathrm{AMPA}(t) + I_\mathrm{NMDA}(t) + I_\mathrm{GABA}(t) (t) \\[3ex]
     I_\mathrm{AMPA} &= (V(t) - V_E)\sum_{j \in \Gamma_\mathrm{ex}}^{N_E}w_jS_{j,\mathrm{AMPA}}(t) \\[3ex]
-    I_\mathrm{NMDA} &= \frac{(V(t) - V_E)}{1+[\mathrm{Mg^{2+}}]\mathrm{exp}(-0.062V(t))/3.57}\sum_{j \in
-\Gamma_\mathrm{ex}}^{N_E}w_jS_{j,\mathrm{NMDA}}(t) \\[3ex] I_\mathrm{GABA} &= (V(t) - V_E)\sum_{j \in
-\Gamma_\mathrm{in}}^{N_E}w_jS_{j,\mathrm{GABA}}(t) \\[5ex] \frac{dS_{j,\mathrm{AMPA}}}{dt} &=
--\frac{j,S_{\mathrm{AMPA}}}{\tau_\mathrm{AMPA}}+\sum_{k \in \Delta_j} \delta (t - t_j^k) \\[3ex]
-    \frac{dS_{j,\mathrm{GABA}}}{dt} &= -\frac{S_{j,\mathrm{GABA}}}{\tau_\mathrm{GABA}} + \sum_{k \in \Delta_j} \delta (t
-- t_j^k) \\[3ex] \frac{dS_{j,\mathrm{NMDA}}}{dt} &= -\frac{S_{j,\mathrm{GABA}}}{\tau_\mathrm{GABA}} + \sum_{k \in
-\Delta_j} (k_0 + k_1 S(t)) \delta (t - t_j^k) \\[3ex]
-
+    I_\mathrm{NMDA} &= \frac{(V(t) - V_E)}{1+[\mathrm{Mg^{2+}}]\mathrm{exp}(-0.062V(t))/3.57}\sum_{j \in \Gamma_\mathrm{ex}}^{N_E}w_jS_{j,\mathrm{NMDA}}(t) \\[3ex]
+    I_\mathrm{GABA} &= (V(t) - V_I)\sum_{j \in \Gamma_\mathrm{in}}^{N_E}w_jS_{j,\mathrm{GABA}}(t) \\[5ex] \frac{dS_{j,\mathrm{AMPA}}}{dt} &= -\frac{j,S_{\mathrm{AMPA}}}{\tau_\mathrm{AMPA}}+\sum_{k \in \Delta_j} \delta (t - t_j^k) \\[3ex]
+    \frac{dS_{j,\mathrm{GABA}}}{dt} &= -\frac{S_{j,\mathrm{GABA}}}{\tau_\mathrm{GABA}} + \sum_{k \in \Delta_j} \delta (t - t_j^k) \\[3ex]
+    \frac{dS_{j,\mathrm{NMDA}}}{dt} &= -\frac{S_{j,\mathrm{NMDA}}}{\tau_\mathrm{NMDA,decay}} + \sum_{k \in \Delta_j} (k_0 + k_1 S(t)) \delta (t - t_j^k) \\[3ex]
 
 where :math:`\Gamma_\mathrm{ex}` and :math:`\Gamma_\mathrm{in}` are index sets for presynaptic excitatory and inhibitory
 neurons respectively, and :math:`\Delta_j` is an index set for the spike times of neuron :math:`j`.
@@ -99,14 +95,9 @@ neurons respectively, and :math:`\Delta_j` is an index set for the spike times o
 .. math::
 
     k_0 &= \mathrm{exp}(-\alpha \tau_\mathrm{r}) - 1 \\[3ex]
-    k_1 &= -\alpha \tau_\mathrm{r} \mathrm{E_N} \Big[ \frac{\tau_\mathrm{r}}{\tau_\mathrm{d}}, \alpha \tau_\mathrm{r}
-\Big] + (\alpha \tau_\mathrm{r})^{\frac{\tau_\mathrm{r}}{\tau_\mathrm{d}}} \Gamma \Big[ 1 -
-\frac{\tau_\mathrm{r}}{\tau_\mathrm{d}} \Big]
+    k_1 &= -\alpha \tau_\mathrm{r} \mathrm{E_N} \Big[ \frac{\tau_\mathrm{r}}{\tau_\mathrm{d}}, \alpha \tau_\mathrm{r} \Big] + (\alpha \tau_\mathrm{r})^{\frac{\tau_\mathrm{r}}{\tau_\mathrm{d}}} \Gamma \Big[ 1 - \frac{\tau_\mathrm{r}}{\tau_\mathrm{d}} \Big]
 
-where :math:`\mathrm{E_N}` is the generalized exponential integral
-(https://en.wikipedia.org/wiki/Exponential_integral#Generalization), and :math:`\Gamma` is the gamma-function
-(https://en.wikipedia.org/wiki/Gamma_function). For these values of :math:`k_0` and :math:`k_1`, the approximate model
-will approach the exact model for large t.
+where :math:`\mathrm{E_N}` is the `generalized exponential integral <https://en.wikipedia.org/wiki/Exponential_integral#Generalization>`_, and :math:`\Gamma` is the `gamma function <https://en.wikipedia.org/wiki/Gamma_function>`_. For these values of :math:`k_0` and :math:`k_1`, the approximate model will approach the exact model for large t.
 
 The specification of this model differs slightly from the one in [1]_. The parameters :math:`g_\mathrm{AMPA}`,
 :math:`g_\mathrm{GABA}`, and :math:`g_\mathrm{NMDA}` have been absorbed into the respective synaptic weights.
@@ -174,7 +165,7 @@ References
 See also
 ++++++++
 
-iaf_cond_alpha, ht_neuron
+iaf_wang_2002_exact
 
 EndUserDocs */
 
@@ -224,7 +215,6 @@ private:
   void init_state_() override;
   void pre_run_hook() override;
   void init_buffers_() override;
-  void calibrate();
   void update( Time const&, const long, const long ) override;
 
   /**
@@ -413,12 +403,9 @@ iaf_wang_2002::handles_test_event( SpikeEvent&, size_t receptor_type )
   if ( not( INF_SPIKE_RECEPTOR < receptor_type and receptor_type < SUP_SPIKE_RECEPTOR ) )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
-    return 0;
   }
-  else
-  {
-    return receptor_type;
-  }
+
+  return receptor_type;
 }
 
 inline size_t

@@ -85,14 +85,12 @@ The membrane potential and synaptic variables evolve according to
     I_\mathrm{syn}(t) &= I_\mathrm{AMPA}(t) + I_\mathrm{NMDA}(t) + I_\mathrm{GABA}(t) (t) \\[3ex]
     I_\mathrm{AMPA} &= (V(t) - V_E)\sum_{j \in \Gamma_\mathrm{ex}}^{N_E}w_jS_{j,\mathrm{AMPA}}(t) \\[3ex]
     I_\mathrm{NMDA} &= \frac{(V(t) - V_E)}{1+[\mathrm{Mg^{2+}}]\mathrm{exp}(-0.062V(t))/3.57}\sum_{j \in
-\Gamma_\mathrm{ex}}^{N_E}w_jS_{j,\mathrm{NMDA}}(t) \\[3ex] I_\mathrm{GABA} &= (V(t) - V_E)\sum_{j \in
-\Gamma_\mathrm{in}}^{N_E}w_jS_{j,\mathrm{GABA}}(t) \\[5ex] \frac{dS_{j,\mathrm{AMPA}}}{dt} &=
--\frac{j,S_{\mathrm{AMPA}}}{\tau_\mathrm{AMPA}}+\sum_{k \in \Delta_j} \delta (t - t_j^k) \\[3ex]
-    \frac{dS_{j,\mathrm{GABA}}}{dt} &= -\frac{S_{j,\mathrm{GABA}}}{\tau_\mathrm{GABA}} + \sum_{k \in \Delta_j} \delta (t
-- t_j^k) \\[3ex] \frac{dS_{j,\mathrm{NMDA}}}{dt} &= -\frac{S_{j,\mathrm{NMDA}}}{\tau_\mathrm{NMDA,decay}}+ \alpha x_j (1
--  S_{j,\mathrm{NMDA}})\\[3ex] \frac{dx_j}{dt} &= - \frac{x_j}{\tau_\mathrm{NMDA,rise}} + \sum_{k \in \Delta_j} \delta
-(t - t_j^k)
-
+    \Gamma_\mathrm{ex}}^{N_E}w_jS_{j,\mathrm{NMDA}}(t) \\[3ex]
+    I_\mathrm{GABA} &= (V(t) - V_I)\sum_{j \in \Gamma_\mathrm{in}}^{N_E}w_jS_{j,\mathrm{GABA}}(t) \\[5ex]
+    \frac{dS_{j,\mathrm{AMPA}}}{dt} &=-\frac{j,S_{\mathrm{AMPA}}}{\tau_\mathrm{AMPA}}+\sum_{k \in \Delta_j} \delta (t - t_j^k) \\[3ex]
+    \frac{dS_{j,\mathrm{GABA}}}{dt} &= -\frac{S_{j,\mathrm{GABA}}}{\tau_\mathrm{GABA}} + \sum_{k \in \Delta_j} \delta (t - t_j^k) \\[3ex]
+    \frac{dS_{j,\mathrm{NMDA}}}{dt} &= -\frac{S_{j,\mathrm{NMDA}}}{\tau_\mathrm{NMDA,decay}}+ \alpha x_j (1 - S_{j,\mathrm{NMDA}})\\[3ex]
+    \frac{dx_j}{dt} &= - \frac{x_j}{\tau_\mathrm{NMDA,rise}} + \sum_{k \in \Delta_j} \delta (t - t_j^k)
 
 where :math:`\Gamma_\mathrm{ex}` and :math:`\Gamma_\mathrm{in}` are index sets for presynaptic excitatory and inhibitory
 neurons respectively, and :math:`\Delta_j` is an index set for the spike times of neuron :math:`j`.
@@ -174,7 +172,7 @@ References
 See also
 ++++++++
 
-iaf_cond_alpha, ht_neuron
+iaf_wang_2002
 
 EndUserDocs */
 
@@ -220,7 +218,6 @@ private:
   void init_state_() override;
   void pre_run_hook() override;
   void init_buffers_() override;
-  void calibrate();
   void update( Time const&, const long, const long ) override;
 
   /**
@@ -285,13 +282,16 @@ public:
    */
   struct State_
   {
-    //! Symbolic indices to the elements of the state vector y
+    /** 
+     * Symbolic indices to the elements of the state vector y
+     * (x_NMDA_1, G_NMDA_1), (x_NMDA_2, G_NMDA_2), (x_NMDA_3, G_NMDA_3), ..., (x_NMDA_j, G_NMDA_j)
+     */
     enum StateVecElems
     {
       V_m = 0,
       s_AMPA,
       s_GABA,
-      s_NMDA_base, // (x_NMDA_1, G_NMDA_1), (x_NMDA_2, G_NMDA_2), (x_NMDA_3, G_NMDA_3), ..., (x_NMDA_j, G_NMDA_j)
+      s_NMDA_base,
     };
 
     size_t state_vec_size;
@@ -311,9 +311,9 @@ public:
     get_s_NMDA() const
     {
       double NMDA_sum = 0.0;
-      for ( size_t i = s_NMDA_base; i < state_vec_size; i += 2 )
+      for ( size_t i = s_NMDA_base + 1; i < state_vec_size; i += 2 )
       {
-        NMDA_sum += ode_state_[ i + 1 ];
+        NMDA_sum += ode_state_[ i ];
       }
       return NMDA_sum;
     }
@@ -439,7 +439,7 @@ iaf_wang_2002_exact::handles_test_event( SpikeEvent&, size_t receptor_type )
   }
   else
   {
-    if ( receptor_type == NMDA )
+    if ( receptor_type == SynapseTypes::NMDA )
     {
       // give each NMDA synapse a unique rport, starting from 2 (num_ports_ is initialized to 2)
       ++S_.num_ports_;

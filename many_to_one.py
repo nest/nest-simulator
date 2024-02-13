@@ -1,12 +1,11 @@
-import math
 import os.path
 import random
 
 import numpy as np
+import pandas as pd
+from scipy.spatial.distance import jensenshannon
 import matplotlib.pyplot as plt
 import seaborn as sns
-
-import nest
 
 
 tau_syn = 0.32582722403722841
@@ -44,11 +43,8 @@ def rate_cv(sr):
     return len(times) / T * 1000., cv
 
 
-def get_weights(post_neuron):
-    return nest.GetConnections(target=post_neuron, synapse_model="stdp_pl_synapse_hom_ax_delay").get("weight")
-
-
 def run(enable_stdp):
+    import nest
     if enable_stdp:
         stdp_params['lambda'] = 0.1
     else:
@@ -83,6 +79,7 @@ def run(enable_stdp):
 
 
 def find_equilibrium():
+    import nest
     global eta
     rate = 0
     cv = 0
@@ -97,13 +94,14 @@ def find_equilibrium():
 
 
 def find_equilibrium_stdp():
+    import nest
     rate = 0
     cv = 0
     syn_weight = 0
     while not (44. < syn_weight < 46. and 9.9 < rate < 10.1 and 0.99 < cv < 1.01):
         sr, post_neuron = run(enable_stdp=False)
         rate, cv = rate_cv(sr)
-        weights = get_weights(post_neuron)
+        weights = nest.GetConnections(target=post_neuron, synapse_model="stdp_pl_synapse_hom_ax_delay").get("weight")
         syn_weight = np.mean(weights)
         print(f"rate: {rate:.3f}, cv: {cv:.3f}, weight: {syn_weight:.3f}, alpha: {stdp_params['alpha']}")
         if syn_weight >= 46.:
@@ -112,41 +110,116 @@ def find_equilibrium_stdp():
             stdp_params['alpha'] *= 1. + 0.02 * abs(syn_weight - 45.) * max(0.7, random.random())
 
 
+def set_font_sizes(small=8, medium=10, large=12, family='Helvetica'):
+    plt.rc('font', size=small)  # controls default text sizes
+    plt.rc('axes', titlesize=small)  # fontsize of the axes title
+    plt.rc('axes', labelsize=medium)  # fontsize of the x and y labels
+    plt.rc('xtick', labelsize=small)  # fontsize of the tick labels
+    plt.rc('ytick', labelsize=small)  # fontsize of the tick labels
+    plt.rc('legend', fontsize=small)  # legend fontsize
+    plt.rc('figure', titlesize=large)  # fontsize of the figure title
+    plt.rc('font', family=family)
+
+
+def save_grayscale(filename):
+    from PIL import Image
+    img = Image.open(filename).convert('L')
+    name, ending = filename.split('.')
+    img.save(name + '_g.' + ending)
+
+
 def plot_corrections():
     ax_perc = np.arange(0.0, 1.01, 0.01, dtype=np.float32)
     if os.path.exists("num_corrections.npy"):
         num_corrections = np.load("num_corrections.npy")
     else:
+        import nest
         num_corrections = np.empty(101, dtype=np.int32)
         for i, p in enumerate(ax_perc):
             print(i)
             stdp_params["delay"] = 5. * (1 - p)
             stdp_params["axonal_delay"] = 5. * p
             run(enable_stdp=False)
-            num_corrections[i] = nest.kernel_status["num_corrections"]
+            num_corrections[i] = nest.kernel_status["num_corrections"] / NE
         np.save("num_corrections.npy", num_corrections)
-    plt.plot(ax_perc, num_corrections)
+    fig, ax = plt.subplots(dpi=300)
+    plt.plot(ax_perc, num_corrections, color="black")
+    plt.setp(ax.spines.values(), linewidth=2)
+    ax.set_xlabel("Axonal delay ratio")
+    ax.set_ylabel("Number of corrections")  # average per neuron
+    ax.tick_params(width=2)
+    set_font_sizes()
+    fig.savefig('num_corrections.tif')
+    save_grayscale('num_corrections.tif')
     plt.show()
 
 
 def plot_weights():
     if os.path.exists("weights_correction.npy") and os.path.exists("weights_no_correction.npy"):
+        fig, ax = plt.subplots(dpi=300)
         weights_correction = np.load("weights_correction.npy")
         weights_no_correction = np.load("weights_no_correction.npy")
-        sns.distplot(weights_correction, hist=False, kde=True, kde_kws={'shade': True, 'linewidth': 3}, label="correction")
-        sns.distplot(weights_no_correction, hist=False, kde=True, kde_kws={'shade': True, 'linewidth': 3},
-                     label="no correction")
+        sns.distplot(weights_correction, hist=False, kde=True, kde_kws={'fill': True, 'linewidth': 3},
+                     label="correction", ax=ax)
+        sns.distplot(weights_no_correction, hist=False, kde=True, kde_kws={'fill': True, 'linewidth': 3},
+                     label="no correction", ax=ax)
+        plt.setp(ax.spines.values(), linewidth=2)
+        ax.set_xlabel("Synaptic weight")
+        ax.tick_params(width=2)
         plt.legend()
+        set_font_sizes()
+        fig.savefig('weight_distributions.tif')
+        save_grayscale('weight_distributions.tif')
         plt.show()
     else:
+        import nest
         stdp_params["delay"] = 0.
         stdp_params["axonal_delay"] = 5.
         _, post_neuron = run(enable_stdp=True)
-        weights = get_weights(post_neuron)
+        weights = nest.GetConnections(target=post_neuron, synapse_model="stdp_pl_synapse_hom_ax_delay").get("weight")
         np.save("weights_no_correction.npy", weights)
+
+
+def jensen_shannon_divergence():
+    weights_correction = np.load("weights_correction.npy")
+    weights_no_correction = np.load("weights_no_correction.npy")
+    p = np.histogram(weights_correction, bins=100000, density=True)[0]
+    q = np.histogram(weights_no_correction, bins=100000, density=True)[0]
+    print(round(jensenshannon(p, q)**2, 3))
 
 
 # find_equilibrium()
 # find_equilibrium_stdp()
-# plot_corrections()
-plot_weights()
+plot_corrections()
+# plot_weights()
+# jensen_shannon_divergence()
+
+
+def plot_benchmark_static():
+    df_master = pd.read_csv("/home/vogelsang1/Documents/ax-delay-paper-results/hpc_axonal_delay_master_static.txt", delimiter=',').drop('rng_seed', axis=1).groupby("num_nodes").agg("mean")
+    df_corr = pd.read_csv("/home/vogelsang1/Documents/ax-delay-paper-results/hpc_axonal_delay_correction_static.txt", delimiter=',').drop('rng_seed', axis=1).groupby("num_nodes").agg("mean")
+    df_adj = pd.read_csv("/home/vogelsang1/Documents/ax-delay-paper-results/hpc_axonal_delay_adjacency_static.txt", delimiter=',').drop('rng_seed', axis=1).groupby("num_nodes").agg("mean")
+    plt.plot(df_master.index, df_master["time_simulate"], label="master")
+    plt.plot(df_corr.index, df_corr["time_simulate"], label="corr")
+    plt.plot(df_adj.index, df_adj["time_simulate"], label="adj")
+    plt.legend()
+    plt.show()
+
+
+def plot_benchmark_stdp():
+    df_corr = pd.read_csv("/home/vogelsang1/Documents/ax-delay-paper-results/hpc_axonal_delay_correction_stdp.txt", delimiter=',').drop('rng_seed', axis=1)
+    df_adj = pd.read_csv("/home/vogelsang1/Documents/ax-delay-paper-results/hpc_axonal_delay_adjacency_stdp.txt", delimiter=',').drop('rng_seed', axis=1)
+    plt.show()
+
+    df_corr_1 = df_corr[df_corr["num_nodes"] == 1]
+    df_corr_32 = df_corr[df_corr["num_nodes"] == 32]
+    df_adj_1 = df_adj[df_adj["num_nodes"] == 1]
+    df_adj_32 = df_adj[df_adj["num_nodes"] == 32]
+    plt.plot(df_corr_1["axonal_delay"], df_corr_1["time_simulate"])
+    plt.plot(df_corr_32["axonal_delay"], df_corr_32["time_simulate"])
+    plt.plot(df_adj_1["axonal_delay"], df_adj_1["time_simulate"])
+    plt.plot(df_adj_32  ["axonal_delay"], df_adj_32["time_simulate"])
+
+
+# plot_benchmark_static()
+# plot_benchmark_stdp()

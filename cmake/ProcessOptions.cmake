@@ -267,7 +267,7 @@ function( NEST_PROCESS_WITH_READLINE )
   if ( with-readline )
     if ( NOT ${with-readline} STREQUAL "ON" )
       # a path is set
-      set( READLINE_ROOT "${with-readline}" )
+      set( Readline_ROOT "${with-readline}" )
     endif ()
 
     find_package( Readline )
@@ -466,7 +466,7 @@ function( NEST_PROCESS_WITH_LIBNEUROSIM )
   if ( with-libneurosim )
     if ( NOT ${with-libneurosim} STREQUAL "ON" )
       # a path is set
-      set( LIBNEUROSIM_ROOT ${with-libneurosim} )
+      set( LibNeurosim_ROOT ${with-libneurosim} )
     endif ()
 
     find_package( LibNeurosim )
@@ -490,7 +490,7 @@ function( NEST_PROCESS_WITH_MUSIC )
   if ( with-music )
     if ( NOT ${with-music} STREQUAL "ON" )
       # a path is set
-      set( MUSIC_ROOT "${with-music}" )
+      set( Music_ROOT "${with-music}" )
     endif ()
 
     if ( NOT HAVE_MPI )
@@ -516,7 +516,7 @@ function( NEST_PROCESS_WITH_SIONLIB )
   set( HAVE_SIONLIB OFF )
   if ( with-sionlib )
     if ( NOT ${with-sionlib} STREQUAL "ON" )
-      set( SIONLIB_ROOT "${with-sionlib}" CACHE INTERNAL "sionlib" )
+      set( SIONlib_ROOT "${with-sionlib}" CACHE INTERNAL "sionlib" )
     endif()
 
     if ( NOT HAVE_MPI )
@@ -539,7 +539,7 @@ function( NEST_PROCESS_WITH_BOOST )
   if ( with-boost )
     if ( NOT ${with-boost} STREQUAL "ON" )
       # a path is set
-      set( BOOST_ROOT "${with-boost}" )
+      set( Boost_ROOT "${with-boost}" )
     endif ()
 
     set(Boost_USE_DEBUG_LIBS OFF)  # ignore debug libs

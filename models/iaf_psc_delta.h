@@ -59,9 +59,9 @@ The membrane potential evolves according to
 
 .. math::
 
-   \frac{dV_\text{m}}{dt} = -\frac{V_{\text{m}} - E_\text{L}}{\tau_{\text{m}}} + \frac{I_{\text{syn}} + I_\text{e}}{C_{\text{m}}}
+   \frac{dV_\text{m}}{dt} = -\frac{V_{\text{m}} - E_\text{L}}{\tau_{\text{m}}} + \Delta V_{\text{syn}} + \frac{I_{\text{syn}} + I_\text{e}}{C_{\text{m}}}
 
-where the synaptic input current :math:`I_{\text{syn}}(t)` is discussed below and :math:`I_\text{e}` is
+where is the change in voltage due to synaptic input :math:`\Delta V_{\text{syn}}(t)` is discussed below and :math:`I_\text{e}` is
 a constant input current set as a model parameter.
 
 A spike is emitted at time step :math:`t^*=t_{k+1}` if
@@ -81,30 +81,29 @@ that is, the membrane potential is clamped to :math:`V_{\text{reset}}` during th
 Synaptic input
 ..............
 
-The synaptic input current handles excitatory and an inhibitory inputs:
+The change in voltage due to synaptic inputs handles excitatory and an inhibitory inputs:
 
 .. math::
 
-   I_{\text{syn}}(t) = \sum_{j} w_j \sum_k i_{\text{syn}}(t-t_j^k-d_j) \;,
+   \Deta V_{\text{syn}}(t) = \sum_{j} w_j \sum_k \delta(t-t_j^k-d_j) \;,
 
 where :math:`j` indexes either excitatory (:math:`w_j > 0`)
 or inhibitory (:math:`w_j < 0`) presynaptic neurons,
-:math:`k` indexes the spike times of neuron :math:`j`, and :math:`d_j`
-is the delay from neuron :math:`j`.
+:math:`k` indexes the spike times of neuron :math:`j`, :math:`d_j`
+is the delay from neuron :math:`j`, and :math:`\delta` is the Dirac delta distribution.
 
-The individual post-synaptic currents (PSCs) are given by
+The change in voltage cause by the synaptic input can be interpreted as being cause
+by individual post-synaptic currents (PSCs) given by
 
 .. math::
 
-   i_{\text{syn}}(t) = \delta(t)
-
-where :math:`\delta` is the Dirac delta distribution.
+   i_{\text{syn}}(t) = C_{\text{m}} \cdot \delta(t).
 
 As a consequence, the total charge :math:`q` transferred by a single PSC is
 
 .. math::
 
-   q = \int_0^{\infty}  i_{\text{syn, X}}(t) dt = 1 \;.
+   q = \int_0^{\infty}  i_{\text{syn, X}}(t) dt = C_{\text{m}} \;.
 
 By default, :math:`V_\text{m}` is not bounded from below. To limit
 hyperpolarization to biophysically plausible values, set parameter

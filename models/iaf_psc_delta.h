@@ -139,7 +139,7 @@ The following parameters can be set in the status dictionary.
 ``V_reset``          -70 mV             :math:`V_{\text{reset}}`        Reset potential of the membrane
 ``I_e``              0 pA               :math:`I_\text{e}`              Constant input current
 ``V_min``            :math:`-\infty` mV :math:`V_{\text{min}}`          Absolute lower value for the membrane potential
-``refractory_input`` ``False``          None                            If set to true, spikes arriving during refractory period are integrated afterwards
+``refractory_input`` ``False``          None                            If set to True, spikes arriving during refractory period are integrated afterwards
 ==================== ================== =============================== ==================================================================================
 
 

@@ -148,7 +148,7 @@ Parameter                   Unit Math equivalent         Default          Descri
 C_m                         pF   :math:`C_\text{m}`                 250.0 Capacitance of the membrane
 c_reg                            :math:`c_\text{reg}`                 0.0 Prefactor of firing rate
                                                                           regularization
-E_L                         mV   :math:`E_\text{L}`                 -70.0 Leak membrane potential
+E_L                         mV   :math:`E_\text{L}`                 -70.0 Leak / resting membrane potential
 f_target                    Hz   :math:`f^\text{target}`             10.0 Target firing rate of rate
                                                                           regularization
 gamma                            :math:`\gamma`                       0.3 Scaling of surrogate gradient /
@@ -297,7 +297,7 @@ private:
     //! Prefactor of firing rate regularization.
     double c_reg_;
 
-    //! Leak membrane potential (mV).
+    //! Leak / resting membrane potential (mV).
     double E_L_;
 
     //! Target firing rate of rate regularization (spikes/s).

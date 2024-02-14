@@ -107,7 +107,7 @@ The following parameters can be set in the status dictionary.
 Parameter           Unit     Math equivalent          Default            Description
 ==================  =======  =======================  ================== ===============================================
  C_m                pF       :math:`C_\text{m}`                    250.0 Capacitance of the membrane
- E_L                mV       :math:`E_\text{L}`                      0.0 Leak membrane potential
+ E_L                mV       :math:`E_\text{L}`                      0.0 Leak / resting membrane potential
  I_e                pA       :math:`I_\text{e}`                      0.0 Constant external input current
  loss                        :math:`E`                mean_squared_error Loss function
                                                                          ["mean_squared_error", "cross_entropy"]
@@ -260,7 +260,7 @@ private:
     //! Capacitance of the membrane (pF).
     double C_m_;
 
-    //! Leak membrane potential (mV).
+    //! Leak / resting membrane potential (mV).
     double E_L_;
 
     //! Constant external input current (pA).

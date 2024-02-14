@@ -33,7 +33,7 @@ def conns():
 
 
 def test_conn_weight(conns):
-    """Test that operation does cause MPI deadlock."""
+    """Test that operation does not cause MPI deadlock."""
 
     if conns:
         conns.weight = 2.5

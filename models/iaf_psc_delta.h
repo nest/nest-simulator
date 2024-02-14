@@ -113,8 +113,6 @@ hyperpolarization to biophysically plausible values, set parameter
 
 
 
-``iaf_psc_delta`` is an implementation of a leaky integrate-and-fire model
-where the potential jumps on each spike arrival.
 
 The threshold crossing is followed by an absolute refractory period
 during which the membrane potential is clamped to the resting potential.

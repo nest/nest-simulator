@@ -233,9 +233,11 @@ private:
 #ifdef TIMER_DETAILED
   // intended for internal core developers, not for use in the public API
   Stopwatch sw_gather_spike_data_;
+  Stopwatch sw_gather_secondary_data_;
   Stopwatch sw_update_;
   Stopwatch sw_gather_target_data_;
   Stopwatch sw_deliver_spike_data_;
+  Stopwatch sw_deliver_secondary_data_;
 #endif
 
   double eprop_update_interval_;

@@ -58,7 +58,6 @@ public:
   friend bool operator<( const histentry_extended he, double t );
 };
 
-
 inline bool
 operator<( const histentry_extended he, double t )
 {

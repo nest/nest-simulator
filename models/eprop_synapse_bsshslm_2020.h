@@ -52,7 +52,6 @@ The suffix ``_bsshslm_2020`` follows the NEST convention to indicate in the
 model name the paper that introduced it by the first letter of the authors' last
 names and the publication year.
 
-
 The e-prop synapse collects the presynaptic spikes needed for calculating the
 weight update. When it is time to update, it triggers the calculation of the
 gradient which is specific to the post-synaptic neuron and is thus defined there.

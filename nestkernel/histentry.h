@@ -62,7 +62,7 @@ public:
 inline bool
 operator<( const histentry_extended he, double t )
 {
-  return ( he.t_ ) < t;
+  return he.t_ < t;
 }
 
 /**

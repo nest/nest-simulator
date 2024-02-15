@@ -31,7 +31,7 @@ from decorator import decorator
 
 
 class MPITestWrapper:
-    """-
+    """
     Base class that parses the test module to retrieve imports, test code and
     test parametrization.
     """

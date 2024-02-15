@@ -36,7 +36,7 @@ def test_mini_brunel_ps():
     nest.set(total_num_virtual_procs=4, overwrite_files=True)
 
     # Model parameters
-    NE = 1000  # number of excitatory neurons-
+    NE = 1000  # number of excitatory neurons
     NI = 250  # number of inhibitory neurons
     CE = 100  # number of excitatory synapses per neuron
     CI = 250  # number of inhibitory synapses per neuron

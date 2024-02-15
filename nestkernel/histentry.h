@@ -84,7 +84,7 @@ public:
 inline bool
 operator<( const HistEntryEprop& he, long t )
 {
-  return ( he.t_ ) < t;
+  return he.t_ < t;
 }
 
 /**

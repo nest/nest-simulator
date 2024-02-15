@@ -312,7 +312,7 @@ private:
 };
 
 /**
- * Base class implementing common properties of an Adam weight optimizer model.
+ * Class implementing common properties of an Adam weight optimizer model.
  */
 class WeightOptimizerCommonPropertiesAdam : public WeightOptimizerCommonProperties
 {

@@ -148,7 +148,6 @@ private:
   //! Count of the emitted spikes for the firing rate regularization.
   size_t n_spikes_;
 
-
   //! History of the firing rate regularization.
   std::vector< HistEntryEpropFiringRateReg > firing_rate_reg_history_;
 };

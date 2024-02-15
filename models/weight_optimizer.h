@@ -261,7 +261,7 @@ private:
 };
 
 /**
- * Base class implementing common properties of a gradient descent weight optimizer model.
+ * Class implementing common properties of a gradient descent weight optimizer model.
  */
 class WeightOptimizerCommonPropertiesGradientDescent : public WeightOptimizerCommonProperties
 {

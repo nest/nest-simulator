@@ -44,7 +44,6 @@
 
 // Includes from standard library
 #include <algorithm>
-#include <boost/math/special_functions/expint.hpp>
 #include <boost/math/special_functions/gamma.hpp>
 
 /* ---------------------------------------------------------------------------
@@ -385,9 +384,12 @@ nest::iaf_wang_2002::pre_run_hook()
   // helper vars
   const double alpha_tau = P_.alpha * P_.tau_rise_NMDA;
   const double tau_rise_tau_dec = P_.tau_rise_NMDA / P_.tau_decay_NMDA;
+  const double expint = boost::math::gamma_q(1 - tau_rise_tau_dec, alpha_tau) 
+    * boost::math::tgamma(1 - tau_rise_tau_dec) * pow(alpha_tau, tau_rise_tau_dec - 1);
+
 
   V_.S_jump_1 = exp( -P_.alpha * P_.tau_rise_NMDA ) - 1;
-  V_.S_jump_0 = -boost::math::expint( tau_rise_tau_dec, alpha_tau ) * alpha_tau
+  V_.S_jump_0 = -expint * alpha_tau
     + pow( alpha_tau, tau_rise_tau_dec ) * boost::math::tgamma( 1 - tau_rise_tau_dec );
 }
 

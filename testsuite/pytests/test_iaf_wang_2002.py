@@ -33,7 +33,7 @@ import nest
 import numpy as np
 import numpy.testing as nptest
 import pytest
-from scipy.special import expn, gamma
+from scipy.special import gamma, gammaincc
 
 w_ex = 40.0
 w_in = 15.0
@@ -73,11 +73,10 @@ def spiketrain_response_nmda(t, spiketrain):
     """
     tr = tau_rise_NMDA / tau_decay_NMDA
     at = alpha * tau_rise_NMDA
-    k_0 = -expn(0, at) * at + at**tr * gamma(1 - tr)
-    print(tr)
+    expn = gammaincc(1 - tr, at) * gamma(1 - tr) * at ** (tr - 1)
+
+    k_0 = -expn * at + at**tr * gamma(1 - tr)
     k_1 = np.exp(-alpha * tau_rise_NMDA) - 1
-    print(expn(0, at))
-    print(at)
 
     response = np.zeros_like(t)
     for sp in spiketrain:

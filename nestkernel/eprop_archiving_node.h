@@ -143,7 +143,6 @@ public:
   //! Reset spike count for the firing rate regularization.
   void reset_spike_count();
 
-
 private:
   //! Count of the emitted spikes for the firing rate regularization.
   size_t n_spikes_;

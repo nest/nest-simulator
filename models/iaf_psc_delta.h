@@ -59,9 +59,9 @@ The membrane potential evolves according to
 
 .. math::
 
-   \frac{dV_\text{m}}{dt} = -\frac{V_{\text{m}} - E_\text{L}}{\tau_{\text{m}}} + \Delta V_{\text{syn}} + \frac{I_{\text{syn}} + I_\text{e}}{C_{\text{m}}}
+   \frac{dV_\text{m}}{dt} = -\frac{V_{\text{m}} - E_\text{L}}{\tau_{\text{m}}} + \Delta \dot{V}_{\text{syn}} + \frac{I_{\text{syn}} + I_\text{e}}{C_{\text{m}}}
 
-where is the change in voltage due to synaptic input :math:`\Delta V_{\text{syn}}(t)` is discussed below and :math:`I_\text{e}` is
+where the derivative of change in voltage due to synaptic input :math:`\Delta \dot{V}_{\text{syn}}(t)` is discussed below and :math:`I_\text{e}` is
 a constant input current set as a model parameter.
 
 A spike is emitted at time step :math:`t^*=t_{k+1}` if
@@ -85,14 +85,22 @@ The change in voltage due to synaptic inputs handles excitatory and an inhibitor
 
 .. math::
 
-   \Deta V_{\text{syn}}(t) = \sum_{j} w_j \sum_k \delta(t-t_j^k-d_j) \;,
+   \Delta \dot{V}_{\text{syn}}(t) = \sum_{j} w_j \sum_k \delta(t-t_j^k-d_j) \;,
 
 where :math:`j` indexes either excitatory (:math:`w_j > 0`)
 or inhibitory (:math:`w_j < 0`) presynaptic neurons,
 :math:`k` indexes the spike times of neuron :math:`j`, :math:`d_j`
 is the delay from neuron :math:`j`, and :math:`\delta` is the Dirac delta distribution.
+This implies that the jump in voltage upon a single synaptic input spike is
 
-The change in voltage cause by the synaptic input can be interpreted as being cause
+.. math::
+
+   \Delta V_{\text{syn}} = w \;,
+
+where :math:`w` is the corresponding synaptic weight.
+
+
+The change in voltage caused by the synaptic input can be interpreted as being caused
 by individual post-synaptic currents (PSCs) given by
 
 .. math::
@@ -113,14 +121,12 @@ hyperpolarization to biophysically plausible values, set parameter
 
 
 
-The threshold crossing is followed by an absolute refractory period
-during which the membrane potential is clamped to the resting potential.
-
-Spikes arriving while the neuron is refractory, are discarded by
-default. If the property ``refractory_input`` is set to true, such
-spikes are added to the membrane potential at the end of the
-refractory period, dampened according to the interval between
-arrival and end of refractoriness.
+.. note::
+   Spikes arriving while the neuron is refractory, are discarded by
+   default. If the property ``refractory_input`` is set to true, such
+   spikes are added to the membrane potential at the end of the
+   refractory period, dampened according to the interval between
+   arrival and end of refractoriness.
 
 Parameters
 ++++++++++

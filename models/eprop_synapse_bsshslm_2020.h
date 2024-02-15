@@ -57,7 +57,7 @@ The e-prop synapse collects the presynaptic spikes needed for calculating the
 weight update. When it is time to update, it triggers the calculation of the
 gradient which is specific to the post-synaptic neuron and is thus defined there.
 
-Evntually, it optimizes the weight with the specified optimizer.
+Eventually, it optimizes the weight with the specified optimizer.
 
 E-prop synapses require archiving of continuous quantities. Therefore e-prop
 synapses can only be connected to neuron models that are capable of doing this

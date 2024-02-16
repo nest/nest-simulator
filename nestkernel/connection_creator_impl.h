@@ -108,6 +108,7 @@ ConnectionCreator::connect_to_target_( Iterator from,
           synapse_model_[ indx ],
           param_dicts_[ indx ][ tgt_thread ],
           delay_[ indx ]->value( rng, source_pos, target_pos, source, tgt_ptr ),
+          axonal_delay_[ indx ]->value( rng, source_pos, target_pos, source, tgt_ptr ),
           weight_[ indx ]->value( rng, source_pos, target_pos, source, tgt_ptr ) );
       }
     }

@@ -177,7 +177,7 @@ public:
    * Send an event to the receiver of this connection.
    * \param e The event to send
    */
-  void send( Event& e, size_t t, const STDPPLHomAxDelayHetCommonProperties& );
+  bool send( Event& e, size_t t, const STDPPLHomAxDelayHetCommonProperties& );
 
   /**
    * Framework for STDP with predominantly axonal delays:
@@ -275,7 +275,7 @@ constexpr ConnectionModelProperties stdp_pl_synapse_hom_ax_delay_het< targetiden
  * \param p The port under which this connection is stored in the Connector.
  */
 template < typename targetidentifierT >
-inline void
+inline bool
 stdp_pl_synapse_hom_ax_delay_het< targetidentifierT >::send( Event& e,
   size_t tid,
   const STDPPLHomAxDelayHetCommonProperties& cp )
@@ -331,6 +331,8 @@ stdp_pl_synapse_hom_ax_delay_het< targetidentifierT >::send( Event& e,
   Kplus_ = Kplus_ * std::exp( ( t_lastspike_ - t_spike ) * cp.tau_plus_inv_ ) + 1.0;
 
   t_lastspike_ = t_spike;
+
+  return true;
 }
 
 template < typename targetidentifierT >

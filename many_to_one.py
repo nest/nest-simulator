@@ -267,7 +267,7 @@ def plot_benchmark_stdp():
     # save_grayscale('benchmark_stdp.tif')
     plt.show()
 
-# find_equilibrium()
+find_equilibrium()
 # find_equilibrium_stdp()
 # plot_corrections()
 # plot_weights()

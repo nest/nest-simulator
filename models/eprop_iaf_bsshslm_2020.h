@@ -156,8 +156,8 @@ gamma                               :math:`\gamma`                       0.3 Sca
                                                                              voltage
 I_e                         pA      :math:`I_\text{e}`                   0.0 Constant external input current
 regular_spike_arrival       Boolean                                     True If True, the input spikes arrive at
-                                                                             the beginning of the time step, if
-                                                                             False at the end (determines
+                                                                             the end of the time step, if
+                                                                             False at the beginning (determines
                                                                              PSC scale)
 surrogate_gradient_function         :math:`\psi`            piecewise_linear Surrogate gradient /
                                                                              pseudo-derivative function

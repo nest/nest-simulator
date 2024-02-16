@@ -112,8 +112,8 @@ I_e                   pA      :math:`I_\text{e}`                   0.0 Constant 
 loss                          :math:`E`             mean_squared_error Loss function
                                                                        ["mean_squared_error", "cross_entropy"]
 regular_spike_arrival Boolean                                     True If True, the input spikes arrive at the
-                                                                       beginning of the time step, if False at the end
-                                                                       (determines PSC scale)
+                                                                       end of the time step, if False at the
+                                                                       beginning (determines PSC scale)
 tau_m                 ms      :math:`\tau_\text{m}`               10.0 Time constant of the membrane
 V_min                 mV      :math:`v_\text{min}`          -1.79e+308 Absolute lower bound of the membrane voltage
 ===================== ======= ===================== ================== ===============================================

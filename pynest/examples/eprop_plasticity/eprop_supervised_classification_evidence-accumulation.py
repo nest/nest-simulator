@@ -197,7 +197,7 @@ params_nrn_reg = {
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
     "gamma": 0.3,  # scaling of the pseudo derivative
     "I_e": 0.0,  # pA, external current input
-    "regular_spike_arrival": True,  # If True, input spikes arrive at beginning of time step, if False at end
+    "regular_spike_arrival": True,  # If True, input spikes arrive at end of time step, if False at beginning
     "surrogate_gradient_function": "piecewise_linear",  # surrogate gradient / pseudo-derivative function
     "t_ref": 5.0,  # ms, duration of refractory period
     "tau_m": 20.0,  # ms, membrane time constant

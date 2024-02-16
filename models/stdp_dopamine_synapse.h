@@ -249,7 +249,7 @@ public:
    * Send an event to the receiver of this connection.
    * \param e The event to send
    */
-  void send( Event& e, size_t t, const STDPDopaCommonProperties& cp );
+  bool send( Event& e, size_t t, const STDPDopaCommonProperties& cp );
 
   void trigger_update_weight( size_t t,
     const std::vector< spikecounter >& dopa_spikes,
@@ -528,7 +528,7 @@ stdp_dopamine_synapse< targetidentifierT >::depress_( double kminus, const STDPD
  * \param p The port under which this connection is stored in the Connector.
  */
 template < typename targetidentifierT >
-inline void
+inline bool
 stdp_dopamine_synapse< targetidentifierT >::send( Event& e, size_t t, const STDPDopaCommonProperties& cp )
 {
   Node* target = get_target( t );
@@ -577,6 +577,8 @@ stdp_dopamine_synapse< targetidentifierT >::send( Event& e, size_t t, const STDP
   Kplus_ = Kplus_ * std::exp( ( t_last_update_ - t_spike ) / cp.tau_plus_ ) + 1.0;
   t_last_update_ = t_spike;
   t_lastspike_ = t_spike;
+
+  return true;
 }
 
 template < typename targetidentifierT >

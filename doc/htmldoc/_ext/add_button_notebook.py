@@ -96,17 +96,22 @@ git-pull?repo=https%3A%2F%2Fgithub.com%2Fnest%2Fnest-simulator-examples&urlpath=
 
             lines = f.readlines()
 
-        # find the first heading of the file.
-        for i, item in enumerate(lines):
-            if item.startswith("-----"):
-                break
+        # make sure rst file is auto generated Python file
+        check_line = lines[1]
+        if check_line.startswith(".."):
+            # find the first heading of the file.
+            for i, item in enumerate(lines):
+                if item.startswith("-----"):
+                    break
 
-        # insert prolog into rst file after heading
-        lines.insert(i + 1, prolog + "\n")
+            # insert prolog into rst file after heading
+            lines.insert(i + 1, prolog + "\n")
 
-        with open(file, "w") as f:
-            lines = "".join(lines)
-            f.write(lines)
+            with open(file, "w") as f:
+                lines = "".join(lines)
+                f.write(lines)
+        else:
+            continue
 
 
 def setup(app):

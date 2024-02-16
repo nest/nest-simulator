@@ -282,8 +282,7 @@ public:
    * Send an event to the receiver of this connection.
    * \param e The event to send
    */
-  void send( Event& e, size_t t, const STDPFACETSHWHomCommonProperties< targetidentifierT >& );
-
+  bool send( Event& e, size_t t, const STDPFACETSHWHomCommonProperties< targetidentifierT >& );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -412,7 +411,7 @@ stdp_facetshw_synapse_hom< targetidentifierT >::lookup_( unsigned int discrete_w
  * \param p The port under which this connection is stored in the Connector.
  */
 template < typename targetidentifierT >
-inline void
+inline bool
 stdp_facetshw_synapse_hom< targetidentifierT >::send( Event& e,
   size_t t,
   const STDPFACETSHWHomCommonProperties< targetidentifierT >& cp )
@@ -539,6 +538,8 @@ stdp_facetshw_synapse_hom< targetidentifierT >::send( Event& e,
   e();
 
   t_lastspike_ = t_spike;
+
+  return true;
 }
 } // of namespace nest
 

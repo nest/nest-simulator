@@ -332,10 +332,9 @@ public:
   size_t num_unique_sources( const size_t tid, const synindex syn_id ) const;
 
   /**
-   * Resizes sources_ according to total number of threads and
-   * synapse types.
+   * Resizes sources_ according to total number of threads and synapse types.
    */
-  void resize_sources( const size_t tid );
+  void resize_sources();
 
   /**
    * Encodes combination of node ID and synapse types as single

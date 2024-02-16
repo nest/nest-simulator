@@ -167,6 +167,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
      - 'fixed_total_number', 'N'
      - 'pairwise_bernoulli', 'p'
      - 'symmetric_pairwise_bernoulli', 'p'
+     - 'pairwise_poisson', 'pairwise_avg_num_conns'
 
     See :ref:`conn_rules` for more details, including example usage.
 

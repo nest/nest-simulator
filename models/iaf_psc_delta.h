@@ -1,7 +1,5 @@
 /*
- *  iaf_psc_delta.h
- *
- *  This file is part of NEST.
+ *  iaf_psc_delta.h This file is part of NEST.
  *
  *  Copyright (C) 2004 The NEST Initiative
  *
@@ -59,9 +57,9 @@ The membrane potential evolves according to
 
 .. math::
 
-   \frac{dV_\text{m}}{dt} = -\frac{V_{\text{m}} - E_\text{L}}{\tau_{\text{m}}} + \Delta \dot{V}_{\text{syn}} + \frac{I_{\text{syn}} + I_\text{e}}{C_{\text{m}}}
+   \frac{dV_\text{m}}{dt} = -\frac{V_{\text{m}} - E_\text{L}}{\tau_{\text{m}}} + \dot{\Delta}_{\text{syn}} + \frac{I_{\text{syn}} + I_\text{e}}{C_{\text{m}}}
 
-where the derivative of change in voltage due to synaptic input :math:`\Delta \dot{V}_{\text{syn}}(t)` is discussed below and :math:`I_\text{e}` is
+where the derivative of change in voltage due to synaptic input :math:`\dot{\Delta}_{\text{syn}}(t)` is discussed below and :math:`I_\text{e}` is
 a constant input current set as a model parameter.
 
 A spike is emitted at time step :math:`t^*=t_{k+1}` if
@@ -85,7 +83,7 @@ The change in voltage due to synaptic inputs handles excitatory and an inhibitor
 
 .. math::
 
-   \Delta \dot{V}_{\text{syn}}(t) = \sum_{j} w_j \sum_k \delta(t-t_j^k-d_j) \;,
+   \dot{\Delta}_{\text{syn}}(t) = \sum_{j} w_j \sum_k \delta(t-t_j^k-d_j) \;,
 
 where :math:`j` indexes either excitatory (:math:`w_j > 0`)
 or inhibitory (:math:`w_j < 0`) presynaptic neurons,
@@ -95,9 +93,9 @@ This implies that the jump in voltage upon a single synaptic input spike is
 
 .. math::
 
-   \Delta V_{\text{syn}} = w \;,
+   \Delta_{\text{syn}} = w \;,
 
-where :math:`w` is the corresponding synaptic weight.
+where :math:`w` is the corresponding synaptic weight in mV.
 
 
 The change in voltage caused by the synaptic input can be interpreted as being caused
@@ -105,13 +103,13 @@ by individual post-synaptic currents (PSCs) given by
 
 .. math::
 
-   i_{\text{syn}}(t) = C_{\text{m}} \cdot \delta(t).
+   i_{\text{syn}}(t) = C_{\text{m}} \cdot w \cdot \delta(t).
 
 As a consequence, the total charge :math:`q` transferred by a single PSC is
 
 .. math::
 
-   q = \int_0^{\infty}  i_{\text{syn, X}}(t) dt = C_{\text{m}} \;.
+   q = \int_0^{\infty}  i_{\text{syn, X}}(t) dt = C_{\text{m}} \cdot w \;.
 
 By default, :math:`V_\text{m}` is not bounded from below. To limit
 hyperpolarization to biophysically plausible values, set parameter

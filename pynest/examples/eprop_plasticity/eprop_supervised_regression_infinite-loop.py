@@ -184,7 +184,7 @@ params_nrn_rec = {
     "f_target": 20.0,  # spikes/s, target firing rate for firing rate regularization
     "gamma": 0.3,  # scaling of the pseudo derivative
     "I_e": 0.0,  # pA, external current input
-    "psc_scale_factor": "alpha_complement",  # postsynaptic current scale factor
+    "regular_spike_arrival": False,  # If True, input spikes arrive at beginning of time step, if False at end
     "surrogate_gradient_function": "piecewise_linear",  # surrogate gradient / pseudo-derivative function
     "t_ref": 0.0,  # ms, duration of refractory period
     "tau_m": nest.random.normal(mean=tau_m_mean, std=2.0),  # ms, membrane time constant
@@ -201,6 +201,7 @@ params_nrn_out = {
     "E_L": 0.0,
     "I_e": 0.0,
     "loss": "mean_squared_error",  # loss function
+    "regular_spike_arrival": False,
     "tau_m": 50.0,
     "V_m": 0.0,
 }

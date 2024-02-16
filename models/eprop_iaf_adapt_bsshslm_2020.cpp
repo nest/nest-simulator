@@ -78,7 +78,7 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::Parameters_()
   , f_target_( 0.01 )
   , gamma_( 0.3 )
   , I_e_( 0.0 )
-  , psc_scale_factor_( "alpha_complement" )
+  , regular_spike_arrival_( true )
   , surrogate_gradient_function_( "piecewise_linear" )
   , t_ref_( 2.0 )
   , tau_m_( 10.0 )
@@ -125,7 +125,7 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::f_target, f_target_ );
   def< double >( d, names::gamma, gamma_ );
   def< double >( d, names::I_e, I_e_ );
-  def< std::string >( d, names::psc_scale_factor, psc_scale_factor_ );
+  def< bool >( d, names::regular_spike_arrival, regular_spike_arrival_ );
   def< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_ );
   def< double >( d, names::t_ref, t_ref_ );
   def< double >( d, names::tau_m, tau_m_ );
@@ -156,7 +156,7 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::set( const DictionaryDatum& d, Node* 
 
   updateValueParam< double >( d, names::gamma, gamma_, node );
   updateValueParam< double >( d, names::I_e, I_e_, node );
-  updateValueParam< std::string >( d, names::psc_scale_factor, psc_scale_factor_, node );
+  updateValueParam< bool >( d, names::regular_spike_arrival, regular_spike_arrival_, node );
   updateValueParam< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_, node );
   updateValueParam< double >( d, names::t_ref, t_ref_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
@@ -189,12 +189,6 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::set( const DictionaryDatum& d, Node* 
   if ( gamma_ < 0.0 or 1.0 <= gamma_ )
   {
     throw BadProperty( "Surrogate gradient / pseudo-derivative scaling gamma from interval [0,1) required." );
-  }
-
-  if ( psc_scale_factor_ != "unity" and psc_scale_factor_ != "alpha_complement" )
-  {
-    throw BadProperty(
-      "Presynaptic input scale factor psc_scale_factor from [\"unity\", \"alpha_complement\"] required." );
   }
 
   if ( surrogate_gradient_function_ != "piecewise_linear" )
@@ -305,10 +299,9 @@ eprop_iaf_adapt_bsshslm_2020::pre_run_hook()
 
   const double dt = Time::get_resolution().get_ms();
 
-  V_.P_v_m_ = std::exp( -dt / P_.tau_m_ );
-  V_.P_i_in_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - V_.P_v_m_  );
-  V_.P_z_in_ = P_.regular_spike_arrival ? 1.0 : 1.0 - V_.P_v_m_;
-
+  V_.P_v_m_ = std::exp( -dt / P_.tau_m_ ); // called alpha in reference [1]_
+  V_.P_i_in_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - V_.P_v_m_ );
+  V_.P_z_in_ = P_.regular_spike_arrival_ ? 1.0 : 1.0 - V_.P_v_m_;
   V_.P_adapt_ = std::exp( -dt / P_.adapt_tau_ );
 }
 

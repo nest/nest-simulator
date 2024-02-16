@@ -101,19 +101,22 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-==================  =======  =======================  ================== ===============================================
+===================== ======= ===================== ================== ===============================================
 **Neuron parameters**
-------------------------------------------------------------------------------------------------------------------------
-Parameter           Unit     Math equivalent          Default            Description
-==================  =======  =======================  ================== ===============================================
- C_m                pF       :math:`C_\text{m}`                    250.0 Capacitance of the membrane
- E_L                mV       :math:`E_\text{L}`                      0.0 Leak / resting membrane potential
- I_e                pA       :math:`I_\text{e}`                      0.0 Constant external input current
- loss                        :math:`E`                mean_squared_error Loss function
-                                                                         ["mean_squared_error", "cross_entropy"]
- tau_m              ms       :math:`\tau_\text{m}`                  10.0 Time constant of the membrane
- V_min              mV       :math:`v_\text{min}`             -1.79e+308 Absolute lower bound of the membrane voltage
-==================  =======  =======================  ================== ===============================================
+----------------------------------------------------------------------------------------------------------------------
+Parameter             Unit    Math equivalent       Default            Description
+===================== ======= ===================== ================== ===============================================
+C_m                   pF      :math:`C_\text{m}`                 250.0 Capacitance of the membrane
+E_L                   mV      :math:`E_\text{L}`                   0.0 Leak / resting membrane potential
+I_e                   pA      :math:`I_\text{e}`                   0.0 Constant external input current
+loss                          :math:`E`             mean_squared_error Loss function
+                                                                       ["mean_squared_error", "cross_entropy"]
+regular_spike_arrival Boolean                                     True If True, the input spikes arrive at the
+                                                                       beginning of the time step, if False at the end
+                                                                       (determines PSC scale)
+tau_m                 ms      :math:`\tau_\text{m}`               10.0 Time constant of the membrane
+V_min                 mV      :math:`v_\text{min}`          -1.79e+308 Absolute lower bound of the membrane voltage
+===================== ======= ===================== ================== ===============================================
 
 The following state variables evolve during simulation.
 
@@ -268,6 +271,9 @@ private:
 
     //! Loss function ["mean_squared_error", "cross_entropy"].
     std::string loss_;
+
+    //! If True, the input spikes arrive at the beginning of the time step, if False at the end (determines PSC scale).
+    bool regular_spike_arrival_;
 
     //! Time constant of the membrane (ms).
     double tau_m_;

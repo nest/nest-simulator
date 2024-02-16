@@ -54,7 +54,7 @@ jobs:
 
       - name: "Run cppcheck..."
         run: |
-          cppcheck --enable=all --language=c++ --std=c++11 -i sli/ --suppressions-list=.cppcheck_suppressions ./
+          cppcheck --enable=all --language=c++ --std=c++17 -i sli/ --suppressions-list=.cppcheck_suppressions ./
 
   rstcheck:
     runs-on: "ubuntu-20.04"
@@ -71,7 +71,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
           python-version: 3.9
 
@@ -98,7 +98,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
           python-version: 3.9
 
@@ -130,7 +130,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
           python-version: 3.9
 
@@ -157,7 +157,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
           python-version: 3.9
 
@@ -225,7 +225,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
           python-version: 3.9
 
@@ -252,7 +252,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
           python-version: 3.9
 
@@ -291,7 +291,7 @@ jobs:
   #         name: "build-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.use }}"
 
   #     - name: "Set up Python 3.x"
-  #       uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
+  #       uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
   #       with:
   #         python-version: 3.9
 
@@ -318,7 +318,7 @@ jobs:
   #         fetch-depth: 0
 
   #     - name: "Set up Python 3.x"
-  #       uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
+  #       uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
   #       with:
   #         python-version: 3.9
 
@@ -345,7 +345,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
           python-version: 3.9
 
@@ -385,7 +385,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Run black..."
-        uses: psf/black@2a1c67e0b2f81df602ec1f6e7aeb030b9709dc7c  # 23.11.0
+        uses: psf/black@d9ad09a32b0e0481bb4fef548d35b7a49cc03c5d  # 23.12.0
         with:
           jupyter: true
 
@@ -404,7 +404,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
           python-version: 3.9
 
@@ -433,7 +433,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
           # Using 3.8 because Read the docs does not work with higher versions.
           # See also: https://github.com/nest/nest-simulator/pull/2744
@@ -454,7 +454,7 @@ jobs:
           make docs |& tee sphinx-output.log
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
+        uses: actions/upload-artifact@1eb3cb2b3e0f29609092a73eb033bb759a334595 # v4.1.0
         with:
           name: "sphinx-rtd output"
           path: |
@@ -500,7 +500,7 @@ jobs:
           make html |& tee sphinx-output.log
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
+        uses: actions/upload-artifact@1eb3cb2b3e0f29609092a73eb033bb759a334595 # v4.1.0
         with:
           path: |
             build/sphinx-output.log
@@ -542,7 +542,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
           python-version: 3.9
 
@@ -705,7 +705,7 @@ jobs:
           make VERBOSE=1 installcheck
 
       - name: "Upload install and test results"
-        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
+        uses: actions/upload-artifact@1eb3cb2b3e0f29609092a73eb033bb759a334595 # v4.1.0
         if: always()
         with:
           name: "build-logs-${{ matrix.os }}-${{ matrix.cpp_compiler }}-${{ matrix.use }}"
@@ -747,7 +747,7 @@ jobs:
           fetch-depth: 0
 
       - name: "Set up Python 3.x"
-        uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # v4.7.1
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # v5.0.0
         with:
           python-version: 3.9
 
@@ -825,7 +825,7 @@ jobs:
           make VERBOSE=1 installcheck
 
       - name: "Upload install and test results"
-        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
+        uses: actions/upload-artifact@1eb3cb2b3e0f29609092a73eb033bb759a334595 # v4.1.0
         if: ${{ always() }}
         with:
           name: "${{ matrix.NEST_BUILD_TYPE }}-build-logs-${{ matrix.os }}-${{ matrix.cpp_compiler }}"

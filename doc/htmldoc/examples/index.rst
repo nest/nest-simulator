@@ -327,6 +327,7 @@ PyNEST examples
    ../auto_examples/csa_example
    ../auto_examples/csa_spatial_example
    ../auto_examples/hpc_benchmark
+   ../auto_examples/astrocytes/index
    ../auto_examples/astrocytes/astrocyte_single
    ../auto_examples/astrocytes/astrocyte_interaction
    ../auto_examples/astrocytes/astrocyte_small_network

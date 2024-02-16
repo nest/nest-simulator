@@ -25,7 +25,6 @@
 // C++ includes:
 #include <algorithm>
 #include <cassert>
-#include <cmath>
 #include <iomanip>
 #include <limits>
 #include <set>
@@ -90,27 +89,38 @@ ConnectionManager::~ConnectionManager()
 }
 
 void
-ConnectionManager::initialize()
+ConnectionManager::initialize( const bool reset_kernel )
 {
+  if ( reset_kernel )
+  {
+    keep_source_table_ = true;
+    connections_have_changed_ = false;
+    get_connections_has_been_called_ = false;
+    use_compressed_spikes_ = true;
+    stdp_eps_ = 1.0e-6;
+    min_delay_ = max_delay_ = 1;
+    sw_construction_connect.reset();
+  }
+
   const size_t num_threads = kernel().vp_manager.get_num_threads();
   connections_.resize( num_threads );
   secondary_recv_buffer_pos_.resize( num_threads );
-  keep_source_table_ = true;
-  connections_have_changed_ = false;
-  get_connections_has_been_called_ = false;
-  use_compressed_spikes_ = true;
   compressed_spike_data_.resize( 0 );
+
   has_primary_connections_ = false;
   check_primary_connections_.initialize( num_threads, false );
   secondary_connections_exist_ = false;
   check_secondary_connections_.initialize( num_threads, false );
-  stdp_eps_ = 1.0e-6;
+
+  // We need to obtain this while in serial context to avoid problems when
+  // increasing the number of threads.
+  const size_t num_conn_models = kernel().model_manager.get_num_connection_models();
 
 #pragma omp parallel
   {
     const size_t tid = kernel().vp_manager.get_thread_id();
-    connections_[ tid ] = std::vector< ConnectorBase* >( kernel().model_manager.get_num_connection_models() );
-    secondary_recv_buffer_pos_[ tid ] = std::vector< std::vector< size_t > >();
+    connections_.at( tid ) = std::vector< ConnectorBase* >( num_conn_models );
+    secondary_recv_buffer_pos_.at( tid ) = std::vector< std::vector< size_t > >();
   } // of omp parallel
 
   source_table_.initialize();
@@ -122,16 +132,10 @@ ConnectionManager::initialize()
 
   std::vector< std::vector< size_t > > tmp2( kernel().vp_manager.get_num_threads(), std::vector< size_t >() );
   num_connections_.swap( tmp2 );
-
-  // The following line is executed by all processes, no need to communicate
-  // this change in delays.
-  min_delay_ = max_delay_ = 1;
-
-  sw_construction_connect.reset();
 }
 
 void
-ConnectionManager::finalize()
+ConnectionManager::finalize( const bool )
 {
   source_table_.finalize();
   target_table_.finalize();
@@ -142,12 +146,6 @@ ConnectionManager::finalize()
   compressed_spike_data_.clear();
 }
 
-void
-ConnectionManager::change_number_of_threads()
-{
-  finalize();
-  initialize();
-}
 
 void
 ConnectionManager::set_status( const DictionaryDatum& d )
@@ -215,7 +213,8 @@ ConnectionManager::get_synapse_status( const size_t source_node_id,
 
   DictionaryDatum dict( new Dictionary );
   ( *dict )[ names::source ] = source_node_id;
-  ( *dict )[ names::synapse_model ] = LiteralDatum( kernel().model_manager.get_connection_model( syn_id ).get_name() );
+  ( *dict )[ names::synapse_model ] =
+    LiteralDatum( kernel().model_manager.get_connection_model( syn_id, /* thread */ 0 ).get_name() );
   ( *dict )[ names::target_thread ] = tid;
   ( *dict )[ names::synapse_id ] = syn_id;
   ( *dict )[ names::port ] = lcid;
@@ -467,6 +466,13 @@ ConnectionManager::connect( TokenArray sources, TokenArray targets, const Dictio
 void
 ConnectionManager::update_delay_extrema_()
 {
+  if ( kernel().simulation_manager.has_been_simulated() )
+  {
+    // Once simulation has started, min/max_delay can no longer change,
+    // so there is nothing to update.
+    return;
+  }
+
   min_delay_ = get_min_delay_time_().get_steps();
   max_delay_ = get_max_delay_time_().get_steps();
 
@@ -478,7 +484,13 @@ ConnectionManager::update_delay_extrema_()
     max_delay_ = std::max( max_delay_, kernel().sp_manager.builder_max_delay() );
   }
 
-  if ( kernel().mpi_manager.get_num_processes() > 1 )
+  // If the user explicitly set min/max_delay, this happend on all MPI ranks,
+  // so all ranks are up to date already. Also, once the user has set min/max_delay
+  // explicitly, Connect() cannot induce new extrema. Thuse, we only need to communicate
+  // with other ranks if the user has not set the extrema and connections may have
+  // been created.
+  if ( not kernel().connection_manager.get_user_set_delay_extrema()
+    and kernel().connection_manager.connections_have_changed() and kernel().mpi_manager.get_num_processes() > 1 )
   {
     std::vector< long > min_delays( kernel().mpi_manager.get_num_processes() );
     min_delays[ kernel().mpi_manager.get_rank() ] = min_delay_;
@@ -1627,7 +1639,7 @@ ConnectionManager::deliver_secondary_events( const size_t tid,
   const synindex syn_id_end = positions_tid.size();
   for ( synindex syn_id = 0; syn_id < syn_id_end; ++syn_id )
   {
-    const ConnectorModel& conn_model = kernel().model_manager.get_connection_model( syn_id );
+    const ConnectorModel& conn_model = kernel().model_manager.get_connection_model( syn_id, tid );
     const bool supports_wfr = conn_model.has_property( ConnectionModelProperties::SUPPORTS_WFR );
     if ( not called_from_wfr_update or supports_wfr )
     {
@@ -1695,17 +1707,11 @@ ConnectionManager::remove_disabled_connections( const size_t tid )
 void
 ConnectionManager::resize_connections()
 {
-  kernel().vp_manager.assert_single_threaded();
+  kernel().vp_manager.assert_thread_parallel();
 
-  // Resize data structures for connections between neurons
-  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-  {
-    connections_[ tid ].resize( kernel().model_manager.get_num_connection_models() );
-    source_table_.resize_sources( tid );
-  }
+  connections_.at( kernel().vp_manager.get_thread_id() ).resize( kernel().model_manager.get_num_connection_models() );
 
-  // Resize data structures for connections between neurons and
-  // devices
+  source_table_.resize_sources();
   target_table_devices_.resize_to_number_of_synapse_types();
 }
 

@@ -113,7 +113,6 @@ include( CheckIncludesSymbols )
 
 # These includes publish function names.
 include( ProcessOptions )
-include( WriteStaticModules_h )
 include( CheckExtraCompilerFeatures )
 include( ConfigureSummary )
 include( GetTriple )
@@ -169,8 +168,6 @@ nest_process_with_debug()
 nest_get_color_flags()
 set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${NEST_C_COLOR_FLAGS}" )
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${NEST_CXX_COLOR_FLAGS}" )
-
-nest_write_static_module_header( "${PROJECT_BINARY_DIR}/nest/static_modules.h" )
 
 # check additionals
 nest_check_exitcode_abort()
@@ -278,13 +275,13 @@ endforeach ()
 set( MODULE_LINK_LIBS
   "-lnest"
   "-lsli"
-  "${OpenMP_CXX_FLAGS}"
   "${LTDL_LIBRARIES}"
   "${READLINE_LIBRARIES}"
   "${GSL_LIBRARIES}"
   "${LIBNEUROSIM_LIBRARIES}"
   "${MUSIC_LIBRARIES}"
   "${MPI_CXX_LIBRARIES}"
+  "${OpenMP_CXX_LIBRARIES}"
   "${SIONLIB_LIBRARIES}"
   "${BOOST_LIBRARIES}" )
 

@@ -173,8 +173,7 @@ public:
    * \param e The event to send
    * \param cp Common properties to all synapses (empty).
    */
-  void send( Event& e, size_t t, const CommonSynapseProperties& cp );
-
+  bool send( Event& e, size_t t, const CommonSynapseProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -228,7 +227,7 @@ constexpr ConnectionModelProperties tsodyks2_synapse< targetidentifierT >::prope
  * \param p The port under which this connection is stored in the Connector.
  */
 template < typename targetidentifierT >
-inline void
+inline bool
 tsodyks2_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSynapseProperties& )
 {
   Node* target = get_target( t );
@@ -250,6 +249,8 @@ tsodyks2_synapse< targetidentifierT >::send( Event& e, size_t t, const CommonSyn
   u_ = U_ + u_ * ( 1. - U_ ) * u_decay;      // Eq. 4 from [3]_
 
   t_lastspike_ = t_spike;
+
+  return true;
 }
 
 template < typename targetidentifierT >

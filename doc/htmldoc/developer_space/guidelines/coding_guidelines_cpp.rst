@@ -14,7 +14,7 @@ on their own.
 
 .. seealso::
 
-    Before you make a pull request :ref:`see how to check your code <check_code>`  to ensure its compliant with our guidelines.
+    Before you make a pull request :ref:`see which developer tools are required <required_dev_tools>`  to ensure its compliant with our guidelines.
 
 C++ language features
 ---------------------
@@ -303,7 +303,7 @@ line.
 
 Control structures (``if``, ``while``, ``for``, ...) have a single space after the
 keyword. The parenthesis around the tests
-have a space after the opening and before the closing parenthesis. 
+have a space after the opening and before the closing parenthesis.
 The case labels in ``switch`` statements are not indented.
 
 .. code::
@@ -328,7 +328,7 @@ The case labels in ``switch`` statements are not indented.
 Binary operators (`+`, `-`, `*`, `||`, `&`, ...) are surrounded by one space, e.g.
 ``a + b``.
 
-Unary operators have no space between operator and operand, e.g. ``-a``. 
+Unary operators have no space between operator and operand, e.g. ``-a``.
 Do not use the negation operator `!` since it can easily be
 overseen. Instead use ``not``, e.g. ``not vec.empty()``.
 
@@ -673,5 +673,3 @@ And the corresponding ``stopwatch.cpp``:
       return os;
     }
     }
-
-

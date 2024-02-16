@@ -76,9 +76,8 @@ public:
   ConnectionManager();
   ~ConnectionManager() override;
 
-  void initialize() override;
-  void finalize() override;
-  void change_number_of_threads() override;
+  void initialize( const bool ) override;
+  void finalize( const bool ) override;
   void set_status( const DictionaryDatum& ) override;
   void get_status( DictionaryDatum& ) override;
 
@@ -489,8 +488,7 @@ private:
   /**
    * Update delay extrema to current values.
    *
-   * Static since it only operates in static variables. This allows it to be
-   * called from const-method get_status() as well.
+   * @note This entails MPI communication.
    */
   void update_delay_extrema_();
 

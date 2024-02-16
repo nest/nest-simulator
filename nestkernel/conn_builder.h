@@ -469,6 +469,18 @@ private:
   ParameterDatum p_; //!< connection probability
 };
 
+class PoissonBuilder : public ConnBuilder
+{
+public:
+  PoissonBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const std::vector< DictionaryDatum >& );
+
+protected:
+  void connect_() override;
+
+private:
+  void inner_connect_( const int, RngPtr, Node*, size_t );
+  ParameterDatum pairwise_avg_num_conns_; //!< Mean number of connections
+};
 /**
  * Helper class to support parameter handling for tripartite builders.
  *

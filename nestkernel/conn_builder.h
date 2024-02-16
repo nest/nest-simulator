@@ -103,6 +103,16 @@ public:
     return default_delay_[ 0 ];
   }
 
+  bool
+  get_default_axonal_delay() const
+  {
+    if ( synapse_model_id_.size() > 1 )
+    {
+      throw KernelException( "Can only retrieve default axonal delay when one synapse per connection is used." );
+    }
+    return default_axonal_delay_[ 0 ];
+  }
+
   void set_synaptic_element_names( const std::string& pre_name, const std::string& post_name );
 
   bool all_parameters_scalar_() const;
@@ -233,17 +243,21 @@ private:
   typedef std::map< Name, ConnParameter* > ConnParameterMap;
 
   //! indicate that weight and delay should not be set per synapse
-  std::vector< bool > default_weight_and_delay_;
+  // std::vector< bool > default_weight_and_delay_;
 
   //! indicate that weight should not be set per synapse
   std::vector< bool > default_weight_;
 
-  //! indicate that delay should not be set per synapse
+  //! indicate that dendritic delay should not be set per synapse
   std::vector< bool > default_delay_;
+
+  //! indicate that axonal delay should not be set per synapse
+  std::vector< bool > default_axonal_delay_;
 
   // null-pointer indicates that default be used
   std::vector< ConnParameter* > weights_;
   std::vector< ConnParameter* > delays_;
+  std::vector< ConnParameter* > axonal_delays_;
 
   //! all other parameters, mapping name to value representation
   std::vector< ConnParameterMap > synapse_params_;
@@ -264,7 +278,7 @@ private:
    * Set synapse specific parameters.
    */
   void set_synapse_model_( DictionaryDatum syn_params, size_t indx );
-  void set_default_weight_or_delay_( DictionaryDatum syn_params, size_t indx );
+  void set_default_weight_or_delays_( DictionaryDatum syn_params, size_t indx );
   void set_synapse_params( DictionaryDatum syn_defaults, DictionaryDatum syn_params, size_t indx );
 
   /**
@@ -289,6 +303,7 @@ private:
    */
   void reset_weights_();
   void reset_delays_();
+  void reset_axonal_delays_();
 };
 
 class OneToOneBuilder : public ConnBuilder

@@ -342,6 +342,12 @@ Layer< D >::dump_connections( std::ostream& out,
       // Print source, target, weight, delay, rports
       out << source_node_id << ' ' << target_node_id << ' ' << weight << ' ' << delay;
 
+      if ( result_dict->known( names::axonal_delay ) )
+      {
+        double axonal_delay = getValue< double >( result_dict, names::axonal_delay );
+        out << ' ' << axonal_delay;
+      }
+
       Layer< D >* tgt_layer = dynamic_cast< Layer< D >* >( target_layer.get() );
 
       out << ' ';

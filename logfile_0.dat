@@ -1,0 +1,83 @@
+py_time_init 10.749258518218994
+py_time_presimulate 135.70755624771118
+py_time_simulate 290.219003200531
+base_memory 1509044224.0
+init_memory 23677562880.0
+total_memory 23684861952.0
+base_memory_rss 123064320.0
+init_memory_rss 18237894656.0
+total_memory_rss 18243489792.0
+base_memory_peak 1509044224.0
+init_memory_peak 23677562880.0
+total_memory_peak 23684861952.0
+average_rate 0.0
+py_time_create 0.38869285583496094
+py_time_connect 18.749215841293335
+node_memory 6440710144.0
+node_memory_rss 434229248.0
+node_memory_peak 6601187328.0
+network_memory 23545315328.0
+network_memory_rss 17729441792.0
+network_memory_peak 23612424192.0
+adaptive_target_buffers True
+biological_time 1500.0
+buffer_size_spike_data 113452
+buffer_size_target_data 5184000
+connection_rules ('one_to_one', 'all_to_all', 'fixed_indegree', 'fixed_outdegree', 'pairwise_bernoulli', 'tripartite_bernoulli_with_pool', 'symmetric_pairwise_bernoulli', 'fixed_total_number')
+data_path 
+data_prefix 
+dict_miss_is_error True
+growth_curves ('gaussian', 'linear', 'sigmoid')
+growth_factor_buffer_spike_data 1.5
+growth_factor_buffer_target_data 1.5
+keep_source_table False
+local_num_threads 64
+local_spike_counter 0
+max_buffer_size_target_data 16777216
+max_delay 5.0
+max_num_syn_models 512
+max_update_time 11.820073999999977
+min_delay 5.0
+min_update_time 0.028298
+ms_per_tic 0.001
+network_size 45001
+node_models ('volume_transmitter', 'weight_recorder', 'ac_generator', 'dc_generator', 'gamma_sup_generator', 'mip_generator', 'noise_generator', 'inhomogeneous_poisson_generator', 'poisson_generator', 'poisson_generator_ps', 'ppd_sup_generator', 'pulsepacket_generator', 'sinusoidal_poisson_generator', 'spike_generator', 'step_current_generator', 'step_rate_generator', 'sinusoidal_gamma_generator', 'aeif_cond_alpha', 'aeif_cond_alpha_astro', 'aeif_cond_alpha_multisynapse', 'aeif_cond_beta_multisynapse', 'aeif_cond_exp', 'aeif_psc_alpha', 'aeif_psc_exp', 'aeif_psc_delta', 'astrocyte_lr_1994', 'gif_cond_exp', 'gif_cond_exp_multisynapse', 'glif_cond', 'hh_cond_exp_traub', 'hh_cond_beta_gap_traub', 'hh_psc_alpha', 'hh_psc_alpha_gap', 'ht_neuron', 'iaf_chxk_2008', 'iaf_cond_alpha', 'iaf_cond_alpha_mc', 'iaf_cond_beta', 'iaf_cond_exp', 'iaf_cond_exp_sfa_rr', 'siegert_neuron', 'amat2_psc_exp', 'cm_default', 'gif_psc_exp', 'gif_psc_exp_multisynapse', 'glif_psc', 'glif_psc_double_alpha', 'iaf_chs_2007', 'iaf_psc_alpha', 'iaf_psc_alpha_multisynapse', 'iaf_psc_alpha_ps', 'iaf_psc_delta', 'iaf_psc_delta_ps', 'iaf_psc_exp', 'iaf_psc_exp_htum', 'iaf_psc_exp_multisynapse', 'iaf_psc_exp_ps', 'iaf_psc_exp_ps_lossless', 'iaf_tum_2000', 'izhikevich', 'mat2_psc_exp', 'parrot_neuron', 'parrot_neuron_ps', 'pp_psc_delta', 'aeif_psc_delta_clopath', 'hh_psc_alpha_clopath', 'correlation_detector', 'correlomatrix_detector', 'correlospinmatrix_detector', 'spike_train_injector', 'gif_pop_psc_exp', 'erfc_neuron', 'ginzburg_neuron', 'mcculloch_pitts_neuron', 'gauss_rate_ipn', 'rate_transformer_gauss', 'lin_rate_ipn', 'lin_rate_opn', 'rate_transformer_lin', 'sigmoid_rate_ipn', 'rate_transformer_sigmoid', 'sigmoid_rate_gg_1998_ipn', 'rate_transformer_sigmoid_gg_1998', 'tanh_rate_ipn', 'tanh_rate_opn', 'rate_transformer_tanh', 'threshold_lin_rate_ipn', 'threshold_lin_rate_opn', 'rate_transformer_threshold_lin', 'multimeter', 'voltmeter', 'spike_recorder', 'spin_detector', 'spike_dilutor', 'pp_cond_exp_mc_urbanczik')
+num_connections 506295000
+num_corrections 0
+num_processes 1
+off_grid_spiking False
+overwrite_files True
+prepared True
+print_time False
+recording_backends ('memory', 'ascii', 'screen')
+recv_buffer_size_secondary_events 0
+resolution 0.1
+rng_seed 654
+rng_type mt19937_64
+rng_types ('Philox_32', 'Philox_64', 'Threefry_32', 'Threefry_64', 'mt19937', 'mt19937_64')
+send_buffer_size_secondary_events 0
+spike_buffer_grow_extra 0.5
+spike_buffer_resize_log {'times': array([   0,  100,  150,  450, 3100]), 'global_max_spikes_sent': array([ 1818,  9863, 26708, 49709, 75635]), 'new_buffer_size': array([  2727,  14794,  40062,  74563, 113452])}
+spike_buffer_shrink_limit 0.0
+spike_buffer_shrink_spare 0.1
+stimulation_backends ()
+structural_plasticity_synapses {}
+structural_plasticity_update_interval 10000.0
+synapse_models ('bernoulli_synapse', 'bernoulli_synapse_hpc', 'bernoulli_synapse_lbl', 'clopath_synapse', 'clopath_synapse_hpc', 'clopath_synapse_lbl', 'cont_delay_synapse', 'cont_delay_synapse_hpc', 'cont_delay_synapse_lbl', 'diffusion_connection', 'gap_junction', 'ht_synapse', 'ht_synapse_hpc', 'ht_synapse_lbl', 'jonke_synapse', 'jonke_synapse_hpc', 'jonke_synapse_lbl', 'quantal_stp_synapse', 'quantal_stp_synapse_hpc', 'quantal_stp_synapse_lbl', 'rate_connection_delayed', 'rate_connection_instantaneous', 'sic_connection', 'static_synapse', 'static_synapse_hpc', 'static_synapse_lbl', 'static_synapse_hom_w', 'static_synapse_hom_w_hpc', 'static_synapse_hom_w_lbl', 'stdp_dopamine_synapse', 'stdp_dopamine_synapse_hpc', 'stdp_dopamine_synapse_lbl', 'stdp_nn_pre_centered_synapse', 'stdp_nn_pre_centered_synapse_hpc', 'stdp_nn_pre_centered_synapse_lbl', 'stdp_nn_restr_synapse', 'stdp_nn_restr_synapse_hpc', 'stdp_nn_restr_synapse_lbl', 'stdp_nn_symm_synapse', 'stdp_nn_symm_synapse_hpc', 'stdp_nn_symm_synapse_lbl', 'stdp_pl_synapse_hom', 'stdp_pl_synapse_hom_hpc', 'stdp_pl_synapse_hom_lbl', 'stdp_pl_synapse_hom_ax_delay', 'stdp_pl_synapse_hom_ax_delay_hpc', 'stdp_pl_synapse_hom_ax_delay_lbl', 'stdp_synapse', 'stdp_synapse_hpc', 'stdp_synapse_lbl', 'stdp_facetshw_synapse_hom', 'stdp_facetshw_synapse_hom_hpc', 'stdp_facetshw_synapse_hom_lbl', 'stdp_synapse_hom', 'stdp_synapse_hom_hpc', 'stdp_synapse_hom_lbl', 'stdp_triplet_synapse', 'stdp_triplet_synapse_hpc', 'stdp_triplet_synapse_lbl', 'tsodyks2_synapse', 'tsodyks2_synapse_hpc', 'tsodyks2_synapse_lbl', 'tsodyks_synapse', 'tsodyks_synapse_hpc', 'tsodyks_synapse_lbl', 'tsodyks_synapse_hom', 'tsodyks_synapse_hom_hpc', 'tsodyks_synapse_hom_lbl', 'urbanczik_synapse', 'urbanczik_synapse_hpc', 'urbanczik_synapse_lbl', 'vogels_sprekeler_synapse', 'vogels_sprekeler_synapse_hpc', 'vogels_sprekeler_synapse_lbl', 'stdp_pl_synapse_hom_ax_delay_het', 'stdp_pl_synapse_hom_ax_delay_het_hpc', 'stdp_pl_synapse_hom_ax_delay_het_lbl', 'syn_ex', 'syn_in')
+T_max 1152921504606846.8
+T_min -1152921504606846.8
+tics_per_ms 1000.0
+tics_per_step 100
+time_communicate_prepare 10.466594
+time_construction_connect 18.733912
+time_construction_create 0.107948
+time_simulate 425.610635
+to_do 0
+total_num_virtual_procs 64
+update_time_limit inf
+use_compressed_spikes True
+use_wfr True
+wfr_comm_interval 1.0
+wfr_interpolation_order 3
+wfr_max_iterations 15
+wfr_tol 0.0001

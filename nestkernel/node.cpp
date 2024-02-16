@@ -141,6 +141,12 @@ Node::get_local_device_id() const
   return invalid_index;
 }
 
+void
+Node::add_correction_entry_stdp_ax_delay( SpikeEvent&, const double, const double, const double )
+{
+  throw UnexpectedEvent( "Node does not support framework for STDP synapses with predominantly axonal delays." );
+}
+
 DictionaryDatum
 Node::get_status_base()
 {
@@ -224,6 +230,11 @@ Node::register_stdp_connection( double, double )
  */
 void
 Node::handle( SpikeEvent& )
+{
+  throw UnexpectedEvent( "The target node does not handle spike input." );
+}
+void
+Node::handle( CorrectionSpikeEvent& )
 {
   throw UnexpectedEvent( "The target node does not handle spike input." );
 }

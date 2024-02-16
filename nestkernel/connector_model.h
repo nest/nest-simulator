@@ -98,6 +98,7 @@ public:
     const synindex syn_id,
     const DictionaryDatum& d,
     const double delay = NAN,
+    const double axonal_delay = NAN,
     const double weight = NAN ) = 0;
 
   virtual ConnectorModel* clone( std::string, synindex syn_id ) const = 0;
@@ -122,6 +123,18 @@ public:
 
   virtual void set_syn_id( synindex syn_id ) = 0;
 
+  long
+  get_default_delay() const
+  {
+    return default_delay_;
+  }
+
+  long
+  get_default_axonal_delay() const
+  {
+    return default_axonal_delay_;
+  }
+
   std::string
   get_name() const
   {
@@ -141,8 +154,10 @@ public:
   }
 
 protected:
-  std::string name_;                     //!< name of the ConnectorModel
-  bool default_delay_needs_check_;       //!< indicates whether the default delay must be checked
+  std::string name_;               //!< name of the ConnectorModel
+  bool default_delay_needs_check_; //!< indicates whether the default delay must be checked
+  long default_delay_;
+  long default_axonal_delay_;
   ConnectionModelProperties properties_; //!< connection properties
 };
 
@@ -177,6 +192,7 @@ public:
     const synindex syn_id,
     const DictionaryDatum& d,
     const double delay,
+    const double axonal_delay,
     const double weight ) override;
 
   ConnectorModel* clone( std::string, synindex ) const override;
@@ -210,13 +226,6 @@ public:
 
 private:
   void used_default_delay();
-
-  void add_connection_( Node& src,
-    Node& tgt,
-    std::vector< ConnectorBase* >& hetconn,
-    const synindex syn_id,
-    ConnectionT& c,
-    const size_t receptor_type );
 
 }; // GenericConnectorModel
 

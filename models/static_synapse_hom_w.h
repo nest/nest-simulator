@@ -81,7 +81,7 @@ public:
   // ConnectionBase. This avoids explicit name prefixes in all places these
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
-  using ConnectionBase::get_delay_steps;
+  using ConnectionBase::get_dendritic_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
@@ -140,7 +140,12 @@ public:
   void get_status( DictionaryDatum& d ) const;
 
   void
-  check_connection( Node& s, Node& t, size_t receptor_type, const CommonPropertiesType& )
+  check_connection( Node& s,
+    Node& t,
+    const size_t receptor_type,
+    const long dendritic_delay,
+    const long axonal_delay,
+    const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -170,7 +175,7 @@ public:
   send( Event& e, const size_t tid, const CommonPropertiesHomW& cp )
   {
     e.set_weight( cp.get_weight() );
-    e.set_delay_steps( get_delay_steps() );
+    e.set_delay_steps( get_dendritic_delay_steps() );
     e.set_receiver( *get_target( tid ) );
     e.set_rport( get_rport() );
     e();

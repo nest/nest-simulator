@@ -76,7 +76,7 @@ class ConnTestDummyNodeBase : public Node
   {
   }
   void
-  update( const nest::Time&, long, long ) override
+  update( const nest::Time&, const long, const long ) override
   {
   }
   void
@@ -169,10 +169,21 @@ public:
   void calibrate( const TimeConverter& );
 
   /**
+   * Framework for STDP with predominantly axonal delays:
+   * Correct this synapse and the corresponding previously sent spike
+   * taking into account a new post-synaptic spike.
+   */
+  void correct_synapse_stdp_ax_delay( const size_t tid,
+    const double t_last_pre_spike,
+    double* weight_revert,
+    const double t_post_spike,
+    const CommonSynapseProperties& );
+
+  /**
    * Return the delay of the connection in ms
    */
   double
-  get_delay() const
+  get_dendritic_delay() const
   {
     return syn_id_delay_.get_delay_ms();
   }
@@ -181,7 +192,7 @@ public:
    * Return the delay of the connection in steps
    */
   long
-  get_delay_steps() const
+  get_dendritic_delay_steps() const
   {
     return syn_id_delay_.delay;
   }
@@ -190,7 +201,7 @@ public:
    * Set the delay of the connection
    */
   void
-  set_delay( const double delay )
+  set_dendritic_delay( const double delay )
   {
     syn_id_delay_.set_delay_ms( delay );
   }
@@ -199,9 +210,26 @@ public:
    * Set the delay of the connection in steps
    */
   void
-  set_delay_steps( const long delay )
+  set_dendritic_delay_steps( const long delay )
   {
     syn_id_delay_.delay = delay;
+  }
+
+  /**
+   * Set the proportion of the transmission delay attributed to the axon.
+   */
+  void
+  set_axonal_delay( const double )
+  {
+  }
+
+  /**
+   * Get the proportion of the transmission delay attributed to the axon.
+   */
+  double
+  get_axonal_delay() const
+  {
+    return 0.;
   }
 
   /**
@@ -358,13 +386,14 @@ Connection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 inline void
-Connection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& )
+Connection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
-  double delay;
-  if ( updateValue< double >( d, names::delay, delay ) )
+  double dendritic_delay;
+  if ( updateValue< double >( d, names::delay, dendritic_delay ) )
   {
-    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
-    syn_id_delay_.set_delay_ms( delay );
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
+      dendritic_delay + Time::delay_steps_to_ms( cm.get_default_axonal_delay() ) );
+    syn_id_delay_.set_delay_ms( dendritic_delay );
   }
   // no call to target_.set_status() because target and rport cannot be changed
 }
@@ -386,6 +415,17 @@ Connection< targetidentifierT >::calibrate( const TimeConverter& tc )
   {
     syn_id_delay_.delay = 1;
   }
+}
+
+template < typename targetidentifierT >
+inline void
+Connection< targetidentifierT >::correct_synapse_stdp_ax_delay( const size_t,
+  const double,
+  double*,
+  const double,
+  const CommonSynapseProperties& )
+{
+  throw IllegalConnection( "Connection does not support correction in case of STDP with predominantly axonal delays." );
 }
 
 template < typename targetidentifierT >

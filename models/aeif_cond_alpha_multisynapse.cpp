@@ -441,6 +441,8 @@ aeif_cond_alpha_multisynapse::init_buffers_()
 void
 aeif_cond_alpha_multisynapse::pre_run_hook()
 {
+  ArchivingNode::pre_run_hook_();
+
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 

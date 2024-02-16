@@ -1,5 +1,7 @@
 /*
- *  iaf_psc_delta.h This file is part of NEST.
+ *  iaf_psc_delta.h
+ *
+ *  This file is part of NEST.
  *
  *  Copyright (C) 2004 The NEST Initiative
  *

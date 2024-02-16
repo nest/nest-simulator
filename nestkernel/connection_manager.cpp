@@ -79,6 +79,7 @@ ConnectionManager::ConnectionManager()
   , check_secondary_connections_()
   , stdp_eps_( 1.0e-6 )
   , num_corrections_( 0 )
+  , num_pre_spikes_( 0 )
 {
 }
 
@@ -148,6 +149,8 @@ ConnectionManager::finalize( const bool )
   std::vector< std::vector< ConnectorBase* > >().swap( connections_ );
   std::vector< std::vector< std::vector< size_t > > >().swap( secondary_recv_buffer_pos_ );
   compressed_spike_data_.clear();
+  num_corrections_ = 0;
+  num_pre_spikes_ = 0;
 }
 
 void
@@ -194,6 +197,7 @@ ConnectionManager::get_status( DictionaryDatum& dict )
   def< bool >( dict, names::use_compressed_spikes, use_compressed_spikes_ );
 
   def< size_t >( dict, names::num_corrections, num_corrections_ );
+  def< size_t >( dict, names::num_pre_spikes, num_pre_spikes_ );
 
   def< double >( dict, names::time_construction_connect, sw_construction_connect.elapsed() );
 

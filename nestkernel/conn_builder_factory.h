@@ -49,7 +49,7 @@ public:
   virtual ~GenericConnBuilderFactory()
   {
   }
-  virtual ConnBuilder* create( NodeCollectionPTR,
+  virtual std::unique_ptr< ConnBuilder > create( NodeCollectionPTR,
     NodeCollectionPTR,
     const DictionaryDatum&,
     const std::vector< DictionaryDatum >& ) const = 0;
@@ -65,13 +65,13 @@ class ConnBuilderFactory : public GenericConnBuilderFactory
 
 public:
   //! create conn builder
-  ConnBuilder*
+  std::unique_ptr< ConnBuilder >
   create( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
     const std::vector< DictionaryDatum >& syn_specs ) const override
   {
-    return new ConnBuilderType( sources, targets, conn_spec, syn_specs );
+    return std::make_unique< ConnBuilderType >( sources, targets, conn_spec, syn_specs );
   }
 };
 

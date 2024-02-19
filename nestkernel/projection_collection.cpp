@@ -43,7 +43,8 @@ ProjectionCollection::ProjectionCollection( const ArrayDatum& projections )
     auto conn_spec = getValue< DictionaryDatum >( projection_array[ 2 ] );
     if ( is_spatial )
     {
-      projections_.emplace_back( new ConnectionClassWrapper_::SpatialBuilderWrapper_( sources, targets, conn_spec ) );
+      projections_.emplace_back(
+        std::make_unique< ConnectionClassWrapper_::SpatialBuilderWrapper_ >( sources, targets, conn_spec ) );
       // TODO: delete builder in destructor, or put it in smart pointer
       post_spatial_connector_creation_checks( conn_spec ); // checks of dictionary access flags
     }
@@ -57,7 +58,6 @@ ProjectionCollection::ProjectionCollection( const ArrayDatum& projections )
         synapse_params.begin(),
         // Lambda expression that handles the conversion of each element.
         []( Token& token ) -> DictionaryDatum { return getValue< DictionaryDatum >( token ); } );
-
       // Need to do the same checks of arguments as in ConnectionManager::connect().
       pre_connector_creation_checks( sources, targets, conn_spec, synapse_params );
       const auto rule_name = static_cast< const std::string >( ( *conn_spec )[ names::rule ] );
@@ -160,15 +160,16 @@ ProjectionCollection::post_spatial_connector_creation_checks( DictionaryDatum& c
 }
 
 
-ProjectionCollection::ConnectionClassWrapper_::ConnectionClassWrapper_( ConnBuilder* const conn_builder )
-  : conn_builder_( conn_builder )
+ProjectionCollection::ConnectionClassWrapper_::ConnectionClassWrapper_( std::unique_ptr< ConnBuilder > conn_builder )
+  : conn_builder_( std::move( conn_builder ) )
   , spatial_conn_creator_( nullptr )
 {
 }
 
-ProjectionCollection::ConnectionClassWrapper_::ConnectionClassWrapper_( SpatialBuilderWrapper_* const spatial_builder )
+ProjectionCollection::ConnectionClassWrapper_::ConnectionClassWrapper_(
+  std::unique_ptr< SpatialBuilderWrapper_ > spatial_builder )
   : conn_builder_( nullptr )
-  , spatial_conn_creator_( spatial_builder )
+  , spatial_conn_creator_( std::move( spatial_builder ) )
 {
 }
 

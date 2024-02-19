@@ -350,7 +350,7 @@ nest::ConnectionManager::get_user_set_delay_extrema() const
   return user_set_delay_extrema;
 }
 
-nest::ConnBuilder*
+std::unique_ptr< nest::ConnBuilder >
 nest::ConnectionManager::get_conn_builder( const std::string& name,
   NodeCollectionPTR sources,
   NodeCollectionPTR targets,
@@ -358,7 +358,8 @@ nest::ConnectionManager::get_conn_builder( const std::string& name,
   const std::vector< DictionaryDatum >& syn_specs )
 {
   const size_t rule_id = connruledict_->lookup( name );
-  ConnBuilder* cb = connbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_specs );
+  std::unique_ptr< ConnBuilder > cb =
+    connbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_specs );
   assert( cb );
   return cb;
 }

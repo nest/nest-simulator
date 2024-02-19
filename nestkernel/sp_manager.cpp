@@ -233,7 +233,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
     }
   }
 
-  ConnBuilder* cb = nullptr;
+  std::unique_ptr< ConnBuilder > cb = nullptr;
   conn_spec->clear_access_flags();
   syn_spec->clear_access_flags();
 
@@ -275,8 +275,6 @@ SPManager::disconnect( NodeCollectionPTR sources,
   // Set flag before calling cb->disconnect() in case exception is thrown after some connections have been removed.
   kernel().connection_manager.set_connections_have_changed();
   cb->disconnect();
-
-  delete cb;
 }
 
 void

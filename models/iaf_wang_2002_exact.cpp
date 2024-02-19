@@ -547,13 +547,9 @@ nest::iaf_wang_2002_exact::handle( SpikeEvent& e )
   // so we store them
   {
     const size_t w_idx = rport - NMDA;
-    if ( B_.weights_[ w_idx ] == 0.0 )
+    if ( B_.weights_[ w_idx ] != e.get_weight() )
     {
       B_.weights_[ w_idx ] = e.get_weight();
-    }
-    else if ( B_.weights_[ w_idx ] != e.get_weight() )
-    {
-      throw KernelException( "iaf_wang_2002_exact requires constant weights." );
     }
   }
 }

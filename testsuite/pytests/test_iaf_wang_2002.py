@@ -78,7 +78,7 @@ def spiketrain_response_nmda(t, spiketrain):
     at = alpha * tau_rise_NMDA
     expn = gammaincc(1 - tr, at) * gamma(1 - tr) * at ** (tr - 1)
 
-    k_0 = -expn * at + at**tr * gamma(1 - tr)
+    k_0 = -expn * at + at ** tr * gamma(1 - tr)
     k_1 = np.exp(-alpha * tau_rise_NMDA) - 1
 
     response = np.zeros_like(t)
@@ -150,6 +150,7 @@ def test_wang():
     nptest.assert_array_almost_equal(gaba_soln, mm2.events["s_GABA"])
     nptest.assert_array_almost_equal(nmda_soln, mm2.events["s_NMDA"])
 
+
 def test_illegal_connection_error():
     """
     Test that connecting with NMDA synapses from iaf_psc_exp throws error.
@@ -161,10 +162,3 @@ def test_illegal_connection_error():
     nmda_syn_spec = {"receptor_type": receptor_types["NMDA"]}
     with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):
         nest.Connect(nrn1, nrn2, syn_spec=nmda_syn_spec)
-
-
-
-
-
-
-

@@ -103,6 +103,10 @@ The specification of this model differs slightly from the one in [1]_. The param
 :math:`g_\mathrm{GABA}`, and :math:`g_\mathrm{NMDA}` have been absorbed into the respective synaptic weights.
 Additionally, the synapses from the external population is not separated from the recurrent AMPA-synapses.
 
+For more implementation details and a comparison to the exact version see:
+
+- `wong_approximate_implementation <../model_details/wong_approximate_implementation.ipynb>`_
+
 
 Parameters
 ++++++++++
@@ -145,6 +149,10 @@ The following values can be recorded.
    :math:`g_{\mathrm{\{\{rec,AMPA\}, \{ext,AMPA\}, GABA, NMBA}\}}` from [1]_ is built into the weights in this NEST
 model, so setting the variables is thus done by changing the weights.
 
+.. note::
+    For the NMDA dynamics to work, the both pre-synaptic and post-synaptic neuron must be of type iaf_wang_2002. For AMPA/GABA synapses, any pre-synaptic neuron can be used.
+
+
 Sends
 +++++
 
@@ -166,6 +174,14 @@ See also
 ++++++++
 
 iaf_wang_2002_exact
+
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: ht_neuron
+
+
 
 EndUserDocs */
 
@@ -398,13 +414,17 @@ iaf_wang_2002::send_test_event( Node& target, size_t receptor_type, synindex, bo
 }
 
 inline size_t
-iaf_wang_2002::handles_test_event( SpikeEvent&, size_t receptor_type )
+iaf_wang_2002::handles_test_event( SpikeEvent& e, size_t receptor_type )
 {
   if ( not( INF_SPIKE_RECEPTOR < receptor_type and receptor_type < SUP_SPIKE_RECEPTOR ) )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
 
+  if ( receptor_type == NMDA and typeid( e.get_sender() ) != typeid( *this ) )
+  {
+      throw IllegalConnection( "For NMDA synapses in iaf_wang_2002, pre-synaptic neuron must also be of type iaf_wang_2002" );
+  }
   return receptor_type;
 }
 

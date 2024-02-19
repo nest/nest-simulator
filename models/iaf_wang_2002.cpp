@@ -45,6 +45,7 @@
 // Includes from standard library
 #include <algorithm>
 #include <boost/math/special_functions/gamma.hpp>
+#include <typeinfo>
 
 /* ---------------------------------------------------------------------------
  * Recordables map

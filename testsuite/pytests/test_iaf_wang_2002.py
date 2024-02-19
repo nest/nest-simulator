@@ -20,12 +20,15 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Tests synaptic dynamics of the approximate model iaf_wang_2002.
+Tests synaptic dynamics and connections of the approximate model iaf_wang_2002.
 
 Since the neuron is conductance based, it is impossible to analytically
 confirm the membrane potential, but all the synaptic currents can be
 computed analytically (for the simplified implementation we use).
 The integration of the membrane potential is not tested here.
+
+Also tests that an error is correctly raised when an NMDA-connection
+from neuron other than iaf_wang_2002 is made.
 """
 
 
@@ -146,3 +149,22 @@ def test_wang():
     nptest.assert_array_almost_equal(ampa_soln, mm2.events["s_AMPA"])
     nptest.assert_array_almost_equal(gaba_soln, mm2.events["s_GABA"])
     nptest.assert_array_almost_equal(nmda_soln, mm2.events["s_NMDA"])
+
+def test_illegal_connection_error():
+    """
+    Test that connecting with NMDA synapses from iaf_psc_exp throws error.
+    """
+    nest.ResetKernel()
+    nrn1 = nest.Create("iaf_psc_exp")
+    nrn2 = nest.Create("iaf_wang_2002")
+    receptor_types = nrn2.get("receptor_types")
+    nmda_syn_spec = {"receptor_type": receptor_types["NMDA"]}
+    with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):
+        nest.Connect(nrn1, nrn2, syn_spec=nmda_syn_spec)
+
+
+
+
+
+
+

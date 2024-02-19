@@ -34,6 +34,10 @@
 // Includes from sli:
 #include "arraydatum.h"
 
+// Includes from thirdparty:
+#include "compose.hpp"
+
+
 namespace nest
 {
 
@@ -41,6 +45,18 @@ ModuleManager::ModuleManager()
   : modules_()
 {
   lt_dlinit();
+
+  // Add NEST lib install dir to ltdl search path
+  // To avoid problems due to string substitution in NEST binaries during
+  // Conda installation, we need to convert the literal to string, cstr and back,
+  // see #2237 and https://github.com/conda/conda-build/issues/1674#issuecomment-280378336
+  const std::string module_dir = std::string( NEST_INSTALL_PREFIX ).c_str() + std::string( "/" NEST_INSTALL_LIBDIR );
+  if ( lt_dladdsearchdir( module_dir.c_str() ) )
+  {
+    LOG( M_ERROR,
+      "ModuleManager::ModuleManager",
+      String::compose( "Could not add dynamic module search directory '%1'.", module_dir ) );
+  }
 }
 
 ModuleManager::~ModuleManager()

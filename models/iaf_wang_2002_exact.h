@@ -285,7 +285,7 @@ public:
   {
     /**
      * Symbolic indices to the elements of the state vector y
-     * (x_NMDA_1, G_NMDA_1), (x_NMDA_2, G_NMDA_2), (x_NMDA_3, G_NMDA_3), ..., (x_NMDA_j, G_NMDA_j)
+     * (x_NMDA_1, s_NMDA_1), (x_NMDA_2, s_NMDA_2), (x_NMDA_3, s_NMDA_3), ..., (x_NMDA_j, s_NMDA_j)
      */
     enum StateVecElems
     {

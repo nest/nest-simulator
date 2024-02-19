@@ -45,7 +45,6 @@ ProjectionCollection::ProjectionCollection( const ArrayDatum& projections )
     {
       projections_.emplace_back(
         std::make_unique< ConnectionClassWrapper_::SpatialBuilderWrapper_ >( sources, targets, conn_spec ) );
-      // TODO: delete builder in destructor, or put it in smart pointer
       post_spatial_connector_creation_checks( conn_spec ); // checks of dictionary access flags
     }
     else
@@ -63,7 +62,6 @@ ProjectionCollection::ProjectionCollection( const ArrayDatum& projections )
       const auto rule_name = static_cast< const std::string >( ( *conn_spec )[ names::rule ] );
       projections_.emplace_back(
         kernel().connection_manager.get_conn_builder( rule_name, sources, targets, conn_spec, synapse_params ) );
-      // TODO: delete builder in destructor, or put it in smart pointer
       post_connector_creation_checks( conn_spec, synapse_params ); // checks of dictionary access flags
     }
   }

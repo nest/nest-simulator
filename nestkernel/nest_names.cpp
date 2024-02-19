@@ -96,6 +96,7 @@ const Name clear( "clear" );
 const Name comp_idx( "comp_idx" );
 const Name comparator( "comparator" );
 const Name compartments( "compartments" );
+const Name conc_Mg2( "conc_Mg2" );
 const Name configbit_0( "configbit_0" );
 const Name configbit_1( "configbit_1" );
 const Name connection_count( "connection_count" );
@@ -106,7 +107,6 @@ const Name continuous( "continuous" );
 const Name count_covariance( "count_covariance" );
 const Name count_histogram( "count_histogram" );
 const Name covariance( "covariance" );
-const Name conc_Mg2( "conc_Mg2" );
 
 const Name Delta_T( "Delta_T" );
 const Name Delta_V( "Delta_V" );

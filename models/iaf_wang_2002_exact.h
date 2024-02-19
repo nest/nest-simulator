@@ -87,10 +87,11 @@ The membrane potential and synaptic variables evolve according to
     I_\mathrm{NMDA} &= \frac{(V(t) - V_E)}{1+[\mathrm{Mg^{2+}}]\mathrm{exp}(-0.062V(t))/3.57}\sum_{j \in
     \Gamma_\mathrm{ex}}^{N_E}w_jS_{j,\mathrm{NMDA}}(t) \\[3ex]
     I_\mathrm{GABA} &= (V(t) - V_I)\sum_{j \in \Gamma_\mathrm{in}}^{N_E}w_jS_{j,\mathrm{GABA}}(t) \\[5ex]
-    \frac{dS_{j,\mathrm{AMPA}}}{dt} &=-\frac{j,S_{\mathrm{AMPA}}}{\tau_\mathrm{AMPA}}+\sum_{k \in \Delta_j} \delta (t - t_j^k) \\[3ex]
-    \frac{dS_{j,\mathrm{GABA}}}{dt} &= -\frac{S_{j,\mathrm{GABA}}}{\tau_\mathrm{GABA}} + \sum_{k \in \Delta_j} \delta (t - t_j^k) \\[3ex]
-    \frac{dS_{j,\mathrm{NMDA}}}{dt} &= -\frac{S_{j,\mathrm{NMDA}}}{\tau_\mathrm{NMDA,decay}}+ \alpha x_j (1 - S_{j,\mathrm{NMDA}})\\[3ex]
-    \frac{dx_j}{dt} &= - \frac{x_j}{\tau_\mathrm{NMDA,rise}} + \sum_{k \in \Delta_j} \delta (t - t_j^k)
+    \frac{dS_{j,\mathrm{AMPA}}}{dt} &=-\frac{j,S_{\mathrm{AMPA}}}{\tau_\mathrm{AMPA}}+\sum_{k \in \Delta_j} \delta (t -
+t_j^k) \\[3ex] \frac{dS_{j,\mathrm{GABA}}}{dt} &= -\frac{S_{j,\mathrm{GABA}}}{\tau_\mathrm{GABA}} + \sum_{k \in
+\Delta_j} \delta (t - t_j^k) \\[3ex] \frac{dS_{j,\mathrm{NMDA}}}{dt} &=
+-\frac{S_{j,\mathrm{NMDA}}}{\tau_\mathrm{NMDA,decay}}+ \alpha x_j (1 - S_{j,\mathrm{NMDA}})\\[3ex] \frac{dx_j}{dt} &= -
+\frac{x_j}{\tau_\mathrm{NMDA,rise}} + \sum_{k \in \Delta_j} \delta (t - t_j^k)
 
 where :math:`\Gamma_\mathrm{ex}` and :math:`\Gamma_\mathrm{in}` are index sets for presynaptic excitatory and inhibitory
 neurons respectively, and :math:`\Delta_j` is an index set for the spike times of neuron :math:`j`.
@@ -282,7 +283,7 @@ public:
    */
   struct State_
   {
-    /** 
+    /**
      * Symbolic indices to the elements of the state vector y
      * (x_NMDA_1, G_NMDA_1), (x_NMDA_2, G_NMDA_2), (x_NMDA_3, G_NMDA_3), ..., (x_NMDA_j, G_NMDA_j)
      */

@@ -142,6 +142,7 @@ The following values can be recorded.
  s_AMPA      sum of AMPA gating variables
  s_GABA      sum of GABA gating variables
  s_NMDA      sum of NMDA gating variables
+ I_NMDA      NMDA currents
 =========== ===========================================================
 
 .. note::
@@ -301,6 +302,8 @@ public:
     long num_ports_;    //!< Number of ports
     int r_;             //!< number of refractory steps remaining
 
+    double I_NMDA_; // For recording NMDA currents
+
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
 
@@ -408,6 +411,11 @@ private:
   {
     return S_.get_s_NMDA();
   }
+  double
+  get_I_NMDA_() const
+  {
+    return S_.I_NMDA_;
+  }
 
   // Data members -----------------------------------------------------------
 
@@ -419,6 +427,7 @@ private:
 
   //! Mapping of recordables names to access functions
   static RecordablesMap< iaf_wang_2002_exact > recordablesMap_;
+
 
 }; /* neuron iaf_wang_2002_exact */
 

@@ -67,6 +67,7 @@ RecordablesMap< iaf_wang_2002_exact >::create()
   insert_( names::s_AMPA, &iaf_wang_2002_exact::get_ode_state_elem_< iaf_wang_2002_exact::State_::s_AMPA > );
   insert_( names::s_GABA, &iaf_wang_2002_exact::get_ode_state_elem_< iaf_wang_2002_exact::State_::s_GABA > );
   insert_( names::s_NMDA, &iaf_wang_2002_exact::get_s_NMDA_ );
+  insert_( names::I_NMDA, &iaf_wang_2002_exact::get_I_NMDA_ );
 }
 }
 /* ---------------------------------------------------------------------------
@@ -404,14 +405,14 @@ nest::iaf_wang_2002_exact_dynamics( double, const double ode_state[], double f[]
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::iaf_wang_2002_exact& node = *( reinterpret_cast< nest::iaf_wang_2002_exact* >( pnode ) );
+  nest::iaf_wang_2002_exact& node = *( reinterpret_cast< nest::iaf_wang_2002_exact* >( pnode ) );
 
   // ode_state[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.ode_state[].
 
   const double I_AMPA = ( ode_state[ State_::V_m ] - node.P_.E_ex ) * ode_state[ State_::s_AMPA ];
 
-  const double I_rec_GABA = ( ode_state[ State_::V_m ] - node.P_.E_in ) * ode_state[ State_::s_GABA ];
+  const double I_GABA = ( ode_state[ State_::V_m ] - node.P_.E_in ) * ode_state[ State_::s_GABA ];
 
   // The sum of s_NMDA
   double total_NMDA = 0;
@@ -420,10 +421,10 @@ nest::iaf_wang_2002_exact_dynamics( double, const double ode_state[], double f[]
     total_NMDA += ode_state[ i ] * node.B_.weights_.at( w_idx );
   }
 
-  const double I_rec_NMDA = ( ode_state[ State_::V_m ] - node.P_.E_ex )
+  node.S_.I_NMDA_ = ( ode_state[ State_::V_m ] - node.P_.E_ex )
     / ( 1 + node.P_.conc_Mg2 * std::exp( -0.062 * ode_state[ State_::V_m ] ) / 3.57 ) * total_NMDA;
 
-  const double I_syn = I_AMPA + I_rec_GABA + I_rec_NMDA - node.B_.I_stim_;
+  const double I_syn = I_AMPA + I_GABA + node.S_.I_NMDA_ - node.B_.I_stim_;
 
   f[ State_::V_m ] = ( -node.P_.g_L * ( ode_state[ State_::V_m ] - node.P_.E_L ) - I_syn ) / node.P_.C_m;
 

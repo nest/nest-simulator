@@ -151,6 +151,7 @@ The following values can be recorded.
  s_AMPA      sum of AMPA gating variables
  s_GABA      sum of GABA gating variables
  s_NMDA      sum of NMDA gating variables
+ I_NMDA      NMDA current
 =========== ===========================================================
 
 .. note::
@@ -316,7 +317,10 @@ public:
     double y_[ STATE_VEC_SIZE ]; //!< state vector, must be C-array for GSL solver
     double s_NMDA_pre;           // for determining (unweighted) alpha * (1 - s_NMDA) term on
                                  // pre-synaptic side
-    int r_;                      //!< number of refractory steps remaining
+
+    double I_NMDA_; // For recording NMDA currents
+
+    int r_; //!< number of refractory steps remaining
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -400,6 +404,12 @@ private:
   {
     return S_.y_[ elem ];
   }
+  double
+  get_I_NMDA_() const
+  {
+    return S_.I_NMDA_;
+  }
+
 
   // Data members -----------------------------------------------------------
 

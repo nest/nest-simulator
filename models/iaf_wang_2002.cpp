@@ -72,6 +72,7 @@ RecordablesMap< iaf_wang_2002 >::create()
   insert_( names::s_AMPA, &iaf_wang_2002::get_ode_state_elem_< iaf_wang_2002::State_::s_AMPA > );
   insert_( names::s_GABA, &iaf_wang_2002::get_ode_state_elem_< iaf_wang_2002::State_::s_GABA > );
   insert_( names::s_NMDA, &iaf_wang_2002::get_ode_state_elem_< iaf_wang_2002::State_::s_NMDA > );
+  insert_( names::I_NMDA, &iaf_wang_2002::get_I_NMDA_ );
 }
 }
 
@@ -83,19 +84,19 @@ nest::iaf_wang_2002_dynamics( double, const double y[], double f[], void* pnode 
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::iaf_wang_2002& node = *( reinterpret_cast< nest::iaf_wang_2002* >( pnode ) );
+  nest::iaf_wang_2002& node = *( reinterpret_cast< nest::iaf_wang_2002* >( pnode ) );
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
 
   const double I_AMPA = ( y[ S::V_m ] - node.P_.E_ex ) * y[ S::s_AMPA ];
 
-  const double I_rec_GABA = ( y[ S::V_m ] - node.P_.E_in ) * y[ S::s_GABA ];
+  const double I_GABA = ( y[ S::V_m ] - node.P_.E_in ) * y[ S::s_GABA ];
 
-  const double I_rec_NMDA = ( y[ S::V_m ] - node.P_.E_ex )
-    / ( 1 + node.P_.conc_Mg2 * std::exp( -0.062 * y[ S::V_m ] ) / 3.57 ) * y[ S::s_NMDA ];
+  node.S_.I_NMDA_ = ( y[ S::V_m ] - node.P_.E_ex ) / ( 1 + node.P_.conc_Mg2 * std::exp( -0.062 * y[ S::V_m ] ) / 3.57 )
+    * y[ S::s_NMDA ];
 
-  const double I_syn = I_AMPA + I_rec_GABA + I_rec_NMDA + node.B_.I_stim_;
+  const double I_syn = I_AMPA + I_GABA + node.S_.I_NMDA_ + node.B_.I_stim_;
 
   f[ S::V_m ] = ( -node.P_.g_L * ( y[ S::V_m ] - node.P_.E_L ) - I_syn ) / node.P_.C_m;
 
@@ -138,6 +139,7 @@ nest::iaf_wang_2002::State_::State_( const Parameters_& p )
   y_[ s_GABA ] = 0.0;
   y_[ s_NMDA ] = 0.0;
   s_NMDA_pre = 0.0;
+  I_NMDA_ = 0.0;
 }
 
 nest::iaf_wang_2002::State_::State_( const State_& s )
@@ -148,6 +150,7 @@ nest::iaf_wang_2002::State_::State_( const State_& s )
   y_[ s_GABA ] = s.y_[ s_GABA ];
   y_[ s_NMDA ] = s.y_[ s_NMDA ];
   s_NMDA_pre = s.s_NMDA_pre;
+  I_NMDA_ = s.I_NMDA_;
 }
 
 nest::iaf_wang_2002::Buffers_::Buffers_( iaf_wang_2002& n )
@@ -252,6 +255,7 @@ nest::iaf_wang_2002::State_::get( DictionaryDatum& d ) const
   def< double >( d, names::s_AMPA, y_[ s_AMPA ] );
   def< double >( d, names::s_GABA, y_[ s_GABA ] );
   def< double >( d, names::s_NMDA, y_[ s_NMDA ] );
+  def< double >( d, names::I_NMDA, I_NMDA_ );
 }
 
 void

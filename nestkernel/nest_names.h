@@ -262,6 +262,7 @@ extern const Name I_ahp;
 extern const Name I_e;
 extern const Name I_h;
 extern const Name I_KNa;
+extern const Name I_NMDA;
 extern const Name I_NaP;
 extern const Name I_SIC;
 extern const Name I_sp;

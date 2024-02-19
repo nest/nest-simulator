@@ -59,6 +59,7 @@ nest.set(resolution=dt, print_time=True)
 # Set parameter values, taken from [1]_.
 
 # conductances excitatory population
+# fmt: off
 g_AMPA_ex = 0.05                 # recurrent AMPA conductance
 g_AMPA_ext_ex = 2.1              # external AMPA conductance
 g_NMDA_ex = 0.165                # recurrent GABA conductance
@@ -104,6 +105,7 @@ ipop_params = {
     "C_m": 200.0,                # membrane capacitance
     "t_ref": 1.0,                # refreactory period
 }
+# fmt: on
 
 # signals to the two different excitatory sub-populations
 # the signal is given by a time-inhomogeneous Poisson process,

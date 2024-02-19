@@ -76,9 +76,9 @@ def spiketrain_response_nmda(t, spiketrain):
     """
     tr = tau_rise_NMDA / tau_decay_NMDA
     at = alpha * tau_rise_NMDA
-    expn = gammaincc(1 - tr, at) * gamma(1 - tr) * at**(tr - 1)
+    expn = gammaincc(1 - tr, at) * gamma(1 - tr) * at ** (tr - 1)
 
-    k_0 = -expn * at + at **tr* gamma(1 - tr)
+    k_0 = -expn * at + at**tr* gamma(1 - tr)
     k_1 = np.exp(-alpha * tau_rise_NMDA) - 1
 
     response = np.zeros_like(t)

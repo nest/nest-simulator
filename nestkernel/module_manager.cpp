@@ -128,7 +128,7 @@ ModuleManager::install( const std::string& name )
     throw DynamicModuleManagementError( msg );
   }
 
-  // see if we can find the register_components symbol in the module
+  // see if we can find the "module" symbol in the module
   NESTExtensionInterface* extension = reinterpret_cast< NESTExtensionInterface* >( lt_dlsym( hModule, "module" ) );
   char* errstr = ( char* ) lt_dlerror();
   if ( errstr )

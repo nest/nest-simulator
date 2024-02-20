@@ -39,18 +39,23 @@ Welcome!
               :show_fade:
               :data-bs-ride: carousel
 
-                .. figure:: static/img/pong_sim.gif
+                .. figure:: static/img/network_model_sketch_mesocircuit.png
 
-                  Play PONG with NEST
-
-                .. figure:: static/img/pynest/spatial_test3d.png
-
-                  Create 3D spatially structured networks
+                  Create spatially structured networks
 
 
                 .. figure:: static/img/astrocyte_interaction.png
 
                   Investigate neuron and astrocyte interactions
+
+
+                .. figure:: examples/hpc_benchmark_connectivity.svg
+
+                  Performance scaling benchmarks
+
+                .. figure:: static/img/pong_sim.gif
+
+                  Play PONG with NEST
 
 
        .. grid-item::

@@ -141,7 +141,7 @@ ModuleManager::install( const std::string& name )
             + std::string(errstr) + "'.");
   }
 
-  // all is well an we can register module components
+  // all is well and we can register module components
   try
   {
     extension->init();

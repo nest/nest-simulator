@@ -110,6 +110,7 @@ extern const Name buffer_size_target_data;
 
 extern const Name C_m;
 extern const Name Ca;
+extern const Name Ca_astro;
 extern const Name Ca_tot;
 extern const Name c;
 extern const Name c_1;
@@ -591,7 +592,9 @@ extern const Name time_communicate_spike_data;
 extern const Name time_communicate_target_data;
 extern const Name time_construction_connect;
 extern const Name time_construction_create;
+extern const Name time_deliver_secondary_data;
 extern const Name time_deliver_spike_data;
+extern const Name time_gather_secondary_data;
 extern const Name time_gather_spike_data;
 extern const Name time_gather_target_data;
 extern const Name time_in_steps;

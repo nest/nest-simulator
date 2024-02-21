@@ -66,8 +66,8 @@ irrespective of the network size and structure.
    The model can easily be extended and equipped with any arbitrary input processing (such as calculating input
    currents with alpha-function shaped PSC kernels or updating the gating variables in the Hodgkin-Huxley model) or
    (after-) spike generation dynamics to make it more similar and comparable to other non-ignorant neuron models. In
-such extended ignore_and_fire models, the spike emission process would still be decoupled from the intrinsic neuron
-dynamics.
+   such extended ignore_and_fire models, the spike emission process would still be decoupled from the intrinsic neuron
+   dynamics.
 
 Parameters
 ++++++++++

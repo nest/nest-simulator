@@ -33,6 +33,44 @@ jobs:
           files=$(find . \( -iname "*.h" -o -iname "*.c" -o -iname "*.cc" -o -iname "*.cpp" \) -not -path "./thirdparty/*")
           diff -u <(cat ${files}) <(clang-format ${files})
 
+  shellcheck:
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          fetch-depth: 0
+
+      - name: "Install Linux system dependencies"
+        run: |
+          sudo apt-get update
+          sudo apt-get install shellcheck
+
+      - name: "Run shellcheck..."
+        run: |
+          find . -iname "*.sh" | xargs shellcheck
+
+  pre-commit-hooks:
+    runs-on: "ubuntu-20.04"
+    steps:
+      - name: "Checkout repository content"
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          fetch-depth: 0
+
+      - name: "Set up Python 3.x"
+        uses: actions/setup-python@61a6322f88396a6271a6ee3565807d608ecaddd1 # v4.7.0
+        with:
+          python-version: 3.9
+
+      - name: "Install dependencies"
+        run: |
+          pip install pre-commit
+
+      - name: "Run shellcheck..."
+        run: |
+          pre-commit run --all-files
+
   cppcheck:
     runs-on: "ubuntu-20.04"
     steps:

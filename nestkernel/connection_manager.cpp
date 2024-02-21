@@ -464,6 +464,13 @@ nest::ConnectionManager::connect( TokenArray sources, TokenArray targets, const 
 void
 nest::ConnectionManager::update_delay_extrema_()
 {
+  if ( kernel().simulation_manager.has_been_simulated() )
+  {
+    // Once simulation has started, min/max_delay can no longer change,
+    // so there is nothing to update.
+    return;
+  }
+
   min_delay_ = get_min_delay_time_().get_steps();
   max_delay_ = get_max_delay_time_().get_steps();
 
@@ -475,7 +482,13 @@ nest::ConnectionManager::update_delay_extrema_()
     max_delay_ = std::max( max_delay_, kernel().sp_manager.builder_max_delay() );
   }
 
-  if ( kernel().mpi_manager.get_num_processes() > 1 )
+  // If the user explicitly set min/max_delay, this happend on all MPI ranks,
+  // so all ranks are up to date already. Also, once the user has set min/max_delay
+  // explicitly, Connect() cannot induce new extrema. Thuse, we only need to communicate
+  // with other ranks if the user has not set the extrema and connections may have
+  // been created.
+  if ( not kernel().connection_manager.get_user_set_delay_extrema()
+    and kernel().connection_manager.connections_have_changed() and kernel().mpi_manager.get_num_processes() > 1 )
   {
     std::vector< long > min_delays( kernel().mpi_manager.get_num_processes() );
     min_delays[ kernel().mpi_manager.get_rank() ] = min_delay_;

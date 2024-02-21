@@ -21,6 +21,7 @@ the new versions.
    :hidden:
    :glob:
 
+   v3.7/*
    v3.6/*
    v3.5/*
    v3.4/*
@@ -28,4 +29,3 @@ the new versions.
    v3.2/*
    v3.1/*
    v3.0/*
-

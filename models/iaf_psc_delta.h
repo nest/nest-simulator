@@ -123,7 +123,7 @@ hyperpolarization to biophysically plausible values, set parameter
 
 .. note::
    Spikes arriving while the neuron is refractory, are discarded by
-   default. If the property ``refractory_input`` is set to true, such
+   default. If the property ``refractory_input`` is set to True, such
    spikes are added to the membrane potential at the end of the
    refractory period, dampened according to the interval between
    arrival and end of refractoriness.

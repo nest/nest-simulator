@@ -49,7 +49,6 @@ Description
 
 * a hard threshold,
 * a fixed refractory period,
-* no adaptation mechanisms,
 * :math:`\delta`-shaped synaptic input currents.
 
 Membrane potential evolution, spike emission, and refractoriness

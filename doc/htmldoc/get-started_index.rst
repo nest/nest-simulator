@@ -237,7 +237,6 @@ Additional topics
 .. toctree::
    :maxdepth: 1
    :hidden:
-
    Neurons <neurons/index>
    Synapses and connections <synapses/index>
    Devices  <devices/index>

@@ -125,8 +125,10 @@ nest::SimulationManager::reset_timers_for_dynamics()
   sw_simulate_.reset();
 #ifdef TIMER_DETAILED
   sw_gather_spike_data_.reset();
+  sw_gather_secondary_data_.reset();
   sw_update_.reset();
   sw_deliver_spike_data_.reset();
+  sw_deliver_secondary_data_.reset();
 #endif
 }
 
@@ -443,9 +445,11 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
   def< double >( d, names::time_communicate_prepare, sw_communicate_prepare_.elapsed() );
 #ifdef TIMER_DETAILED
   def< double >( d, names::time_gather_spike_data, sw_gather_spike_data_.elapsed() );
+  def< double >( d, names::time_gather_secondary_data, sw_gather_secondary_data_.elapsed() );
   def< double >( d, names::time_update, sw_update_.elapsed() );
   def< double >( d, names::time_gather_target_data, sw_gather_target_data_.elapsed() );
   def< double >( d, names::time_deliver_spike_data, sw_deliver_spike_data_.elapsed() );
+  def< double >( d, names::time_deliver_secondary_data, sw_deliver_secondary_data_.elapsed() );
 #endif
 }
 
@@ -841,7 +845,19 @@ nest::SimulationManager::update_()
           }
           if ( kernel().connection_manager.secondary_connections_exist() )
           {
+#ifdef TIMER_DETAILED
+            if ( tid == 0 )
+            {
+              sw_deliver_secondary_data_.start();
+            }
+#endif
             kernel().event_delivery_manager.deliver_secondary_events( tid, false );
+#ifdef TIMER_DETAILED
+            if ( tid == 0 )
+            {
+              sw_deliver_secondary_data_.stop();
+            }
+#endif
           }
 
 
@@ -1044,8 +1060,14 @@ nest::SimulationManager::update_()
             }
             if ( kernel().connection_manager.secondary_connections_exist() )
             {
+#ifdef TIMER_DETAILED
+              sw_gather_secondary_data_.start();
+#endif
               kernel().event_delivery_manager.gather_secondary_events( true );
             }
+#ifdef TIMER_DETAILED
+            sw_gather_secondary_data_.stop();
+#endif
           }
 
 

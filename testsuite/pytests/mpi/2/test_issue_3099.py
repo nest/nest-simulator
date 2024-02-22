@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_ticket_903.py
+# test_issue_3099.py
 #
 # This file is part of NEST.
 #
@@ -20,29 +20,34 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""This test ensures that delays drawn from continuous distribution are not rounded up strictly."""
-
 import nest
-import numpy as np
-import scipy.stats
+import pytest
 
 
-def test_correct_rounding_distributions():
+@pytest.fixture
+def conns():
     nest.ResetKernel()
-    nest.resolution = 1.0
+    nrn = nest.Create("parrot_neuron")
+    nest.Connect(nrn, nrn)
+    return nest.GetConnections()
 
-    population = nest.Create("iaf_psc_alpha")
-    indegree = 100
-    significance = 0.01
 
-    nest.Connect(
-        population,
-        population,
-        syn_spec={"delay": nest.random.uniform(1.1, 1.9)},
-        conn_spec={"rule": "fixed_indegree", "indegree": indegree},
-    )
+def test_conn_weight(conns):
+    """Test that operation does not cause MPI deadlock."""
 
-    delays = nest.GetConnections().delay
+    if conns:
+        conns.weight = 2.5
 
-    assert set(delays) == {1, 2}
-    assert scipy.stats.binomtest(sum(np.array(delays) == 2.0), indegree).pvalue > significance
+
+def test_set_weight(conns):
+    """Test that operation does not cause MPI deadlock."""
+
+    if conns:
+        conns.set({"weight": 2.5})
+
+
+def test_set_status_weight(conns):
+    """Test that operation does not cause MPI deadlock."""
+
+    if conns:
+        nest.SetStatus(conns, "weight", 2.5)

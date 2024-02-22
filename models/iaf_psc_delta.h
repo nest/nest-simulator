@@ -49,7 +49,7 @@ Description
 
 * a hard threshold,
 * a fixed refractory period,
-* :math:`\delta`-shaped synaptic input currents.
+* Dirac delta (:math:`\delta`)-shaped synaptic input currents.
 
 Membrane potential evolution, spike emission, and refractoriness
 ................................................................

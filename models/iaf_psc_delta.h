@@ -81,7 +81,7 @@ that is, the membrane potential is clamped to :math:`V_{\text{reset}}` during th
 Synaptic input
 ..............
 
-The change in voltage due to synaptic inputs handles excitatory and an inhibitory inputs:
+The change in membrane potential due to synaptic inputs can be formulated as:
 
 .. math::
 

@@ -237,7 +237,7 @@ SPManager::disconnect( NodeCollectionPTR sources,
     }
   }
 
-  ConnBuilder* cb = nullptr;
+  BipartiteConnBuilder* cb = nullptr;
   conn_spec->clear_access_flags();
   syn_spec->clear_access_flags();
 

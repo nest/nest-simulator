@@ -35,6 +35,9 @@
 #include <set>
 #include <vector>
 
+// Includes from libnestutil
+#include "block_vector.h"
+
 // Includes from nestkernel:
 #include "conn_parameter.h"
 #include "nest_time.h"
@@ -50,9 +53,13 @@ namespace nest
 class Node;
 class ConnParameter;
 class SparseNodeArray;
+class BipartiteConnBuilder;
+class ThirdInBuilder;
+class ThirdOutBuilder;
+
 
 /**
- * Abstract base class for ConnBuilders.
+ * Abstract base class for Bipartite ConnBuilders which form the components of ConnBuilder.
  *
  * The base class extracts and holds parameters and provides
  * the connect interface. Derived classes implement the connect
@@ -60,8 +67,7 @@ class SparseNodeArray;
  *
  * @note Naming classes *Builder to avoid name confusion with Connector classes.
  */
-
-class ConnBuilder
+class BipartiteConnBuilder
 {
 public:
   //! Connect with or without structural plasticity
@@ -70,18 +76,12 @@ public:
   //! Delete synapses with or without structural plasticity
   virtual void disconnect();
 
-  ConnBuilder( NodeCollectionPTR sources,
+  BipartiteConnBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
+    ThirdOutBuilder* third_out,
     const DictionaryDatum& conn_spec,
     const std::vector< DictionaryDatum >& syn_specs );
-  virtual ~ConnBuilder();
-
-  /**
-   * Mark ConnBuilder subclasses as building tripartite rules or not.
-   *
-   * @note This flag is required for template specialisation of ConnBuilderFactory's.
-   */
-  static constexpr bool is_tripartite = false;
+  virtual ~BipartiteConnBuilder();
 
   size_t
   get_synapse_model() const
@@ -207,6 +207,8 @@ protected:
   NodeCollectionPTR sources_;
   NodeCollectionPTR targets_;
 
+  ThirdOutBuilder* third_out_;
+
   bool allow_autapses_;
   bool allow_multapses_;
   bool make_symmetric_;
@@ -291,7 +293,140 @@ private:
   void reset_delays_();
 };
 
-class OneToOneBuilder : public ConnBuilder
+// not expected to be subclassed further
+class ThirdInBuilder : public BipartiteConnBuilder
+{
+public:
+  ThirdInBuilder( NodeCollectionPTR,
+    NodeCollectionPTR,
+    BipartiteConnBuilder*,
+    const DictionaryDatum&, // only for compatibility with BCB
+    const std::vector< DictionaryDatum >& );
+
+private:
+  void connect_() override;
+
+  ThirdOutBuilder* third_out_;
+};
+
+// to be subclassed further
+class ThirdOutBuilder : public BipartiteConnBuilder
+{
+public:
+  ThirdOutBuilder( NodeCollectionPTR,
+    NodeCollectionPTR,
+    const DictionaryDatum&, // only for compatibility with BCB
+    const std::vector< DictionaryDatum >& );
+
+  void connect() override;
+
+  virtual void third_connect( size_t source_gid, Node& target ) = 0;
+};
+
+
+/**
+ * Class representing a connection builder which may be bi- or tripartite.
+ *
+ * A ConnBuilder alwyas has a primary BipartiteConnBuilder. It additionally can have a pair of third_in and third_out
+ * Bipartite builders, where the third_in builder must perform one-to-one connections on given source-third pairs.
+ */
+class ConnBuilder
+{
+public:
+  /**
+   * Constructor for bipartite connection
+   *
+   * @param primary_rule Name of conn rule for primary connection
+   * @param sources Source population for primary connection
+   * @param targets Target population for primary connection
+   * @param conn_spec Connection specification dictionary for tripartite bernoulli rule
+   * @param syn_spec Dictionary of synapse specification
+   */
+  ConnBuilder( const std::string& primary_rule,
+    NodeCollectionPTR sources,
+    NodeCollectionPTR targets,
+    const DictionaryDatum& conn_spec,
+    const std::vector< DictionaryDatum >& syn_specs );
+
+  /**
+   * Constructor for tripartite connection
+   *
+   * @param primary_rule Name of conn rule for primary connection
+   * @param third_rule Name of conn rule for third-factor connection
+   * @param sources Source population for primary connection
+   * @param targets Target population for primary connection
+   * @param third Third-party population
+   * @param conn_spec Connection specification dictionary for tripartite bernoulli rule
+   * @param syn_specs Dictionary of synapse specifications for the three connections that may be created. Allowed keys
+   * are `"primary"`, `"third_in"`, `"third_out"`
+   */
+  ConnBuilder( const std::string& primary_rule,
+    const std::string& third_rule,
+    NodeCollectionPTR sources,
+    NodeCollectionPTR targets,
+    NodeCollectionPTR third,
+    const DictionaryDatum& conn_spec,
+    const std::map< Name, std::vector< DictionaryDatum > >& syn_specs );
+
+  ~ConnBuilder();
+
+  //! Connect with or without structural plasticity
+  void connect();
+
+  //! Delete synapses with or without structural plasticity
+  void disconnect();
+
+private:
+  // order of declarations based on dependencies
+  ThirdOutBuilder* third_out_builder_;
+  ThirdInBuilder third_in_builder_;
+  BipartiteConnBuilder* primary_builder_;
+};
+
+
+class ThirdBernoulliWithPoolBuilder : public ThirdOutBuilder
+{
+public:
+  ThirdBernoulliWithPoolBuilder( NodeCollectionPTR,
+    NodeCollectionPTR,
+    const DictionaryDatum&, // only for compatibility with BCB
+    const std::vector< DictionaryDatum >& );
+
+  void third_connect( size_t source_gid, Node& target ) override;
+
+private:
+  size_t get_first_pool_index_( const size_t target_index ) const;
+
+  double p_;
+  bool random_pool_;
+  size_t pool_size_;
+  size_t targets_per_third_;
+  std::vector< Node* > previous_target_;             // TODO: cache thrashing possibility
+  std::vector< std::vector< NodeIDTriple >* > pool_; // outer: threads
+
+  struct SourceThirdInfo_
+  {
+    SourceThirdInfo_( size_t src, size_t trd, size_t rank )
+      : source_gid( src )
+      , third_gid( trd )
+      , third_rank( rank )
+    {
+    }
+
+    size_t source_gid;
+    size_t third_gid;
+    size_t third_rank;
+  };
+
+  //! source-thirdparty GID pairs to be communicated; one per thread
+  std::vector< BlockVector< SourceThirdInfo_ >* > source_third_gids_;
+
+  //! number of source-third pairs to send. Outer dimension writing thread, inner dimension rank to send to
+  std::vector< std::vector< size_t >* > source_third_counts_;
+};
+
+
+class OneToOneBuilder : public BipartiteConnBuilder
 {
 public:
   OneToOneBuilder( NodeCollectionPTR sources,
@@ -338,14 +473,14 @@ protected:
   void sp_disconnect_() override;
 };
 
-class AllToAllBuilder : public ConnBuilder
+class AllToAllBuilder : public BipartiteConnBuilder
 {
 public:
   AllToAllBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
     const std::vector< DictionaryDatum >& syn_specs )
-    : ConnBuilder( sources, targets, conn_spec, syn_specs )
+    : BipartiteConnBuilder( sources, targets, conn_spec, syn_specs )
   {
   }
 
@@ -392,7 +527,7 @@ private:
 };
 
 
-class FixedInDegreeBuilder : public ConnBuilder
+class FixedInDegreeBuilder : public BipartiteConnBuilder
 {
 public:
   FixedInDegreeBuilder( NodeCollectionPTR,
@@ -408,7 +543,7 @@ private:
   ParameterDatum indegree_;
 };
 
-class FixedOutDegreeBuilder : public ConnBuilder
+class FixedOutDegreeBuilder : public BipartiteConnBuilder
 {
 public:
   FixedOutDegreeBuilder( NodeCollectionPTR,
@@ -423,7 +558,7 @@ private:
   ParameterDatum outdegree_;
 };
 
-class FixedTotalNumberBuilder : public ConnBuilder
+class FixedTotalNumberBuilder : public BipartiteConnBuilder
 {
 public:
   FixedTotalNumberBuilder( NodeCollectionPTR,
@@ -438,7 +573,7 @@ private:
   long N_;
 };
 
-class BernoulliBuilder : public ConnBuilder
+class BernoulliBuilder : public BipartiteConnBuilder
 {
 public:
   BernoulliBuilder( NodeCollectionPTR,
@@ -454,7 +589,7 @@ private:
   ParameterDatum p_; //!< connection probability
 };
 
-class PoissonBuilder : public ConnBuilder
+class PoissonBuilder : public BipartiteConnBuilder
 {
 public:
   PoissonBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const std::vector< DictionaryDatum >& );
@@ -474,7 +609,7 @@ private:
  * it maintains an AuxiliaryBuilder which handles the parameterization of the corresponding
  * third-party connection.
  */
-class AuxiliaryBuilder : public ConnBuilder
+class AuxiliaryBuilder : public BipartiteConnBuilder
 {
 public:
   AuxiliaryBuilder( NodeCollectionPTR,
@@ -494,55 +629,7 @@ protected:
   }
 };
 
-/**
- * Class representing tripartite Bernoulli connector
- *
- * For each source-target pair, a Bernoulli trial is performed. If a primary connection is created, a third-factor
- * connection is created conditionally on a second Bernoulli trial. The third-party neuron to be connected is
- * chosen from a pool, which can either be set up in blocks or randomized. The third-party neuron receives
- * input from the source neuron and provides output to the target neuron of the primary connection.
- */
-class TripartiteBernoulliWithPoolBuilder : public ConnBuilder
-{
-public:
-  /**
-   * Constructor
-   *
-   * @param sources Source population for primary connection
-   * @param targets Target population for primary connection
-   * @param third Third-party population
-   * @param conn_spec Connection specification dictionary for tripartite bernoulli rule
-   * @param syn_specs Dictionary of synapse specifications for the three connections that may be created. Allowed keys
-   * are `"primary"`, `"third_in"`, `"third_out"`
-   */
-  TripartiteBernoulliWithPoolBuilder( NodeCollectionPTR sources,
-    NodeCollectionPTR targets,
-    NodeCollectionPTR third,
-    const DictionaryDatum& conn_spec,
-    const std::map< Name, std::vector< DictionaryDatum > >& syn_specs );
-
-  static constexpr bool is_tripartite = true;
-
-protected:
-  void connect_() override;
-
-private:
-  //! Provide index of first third-party node to be assigned to pool for given target node
-  size_t get_first_pool_index_( const size_t target_index ) const;
-
-  NodeCollectionPTR third_;
-
-  AuxiliaryBuilder third_in_builder_;
-  AuxiliaryBuilder third_out_builder_;
-
-  double p_primary_;          //!< connection probability for pre-post connections
-  double p_third_if_primary_; //!< probability of third-factor connection if primary connection created
-  bool random_pool_;          //!< if true, select astrocyte pool at random
-  size_t pool_size_;          //!< size of third-factor pool
-  size_t targets_per_third_;  //!< target nodes per third-factor node
-};
-
-class SymmetricBernoulliBuilder : public ConnBuilder
+class SymmetricBernoulliBuilder : public BipartiteConnBuilder
 {
 public:
   SymmetricBernoulliBuilder( NodeCollectionPTR,
@@ -563,7 +650,7 @@ private:
   double p_; //!< connection probability
 };
 
-class SPBuilder : public ConnBuilder
+class SPBuilder : public BipartiteConnBuilder
 {
 public:
   /**
@@ -620,7 +707,7 @@ protected:
   //! The name of the SPBuilder; used to identify its properties in the structural_plasticity_synapses kernel attributes
   std::string name_;
 
-  using ConnBuilder::connect_;
+  using BipartiteConnBuilder::connect_;
   void connect_() override;
   void connect_( NodeCollectionPTR sources, NodeCollectionPTR targets );
 
@@ -634,7 +721,7 @@ protected:
 };
 
 inline void
-ConnBuilder::register_parameters_requiring_skipping_( ConnParameter& param )
+BipartiteConnBuilder::register_parameters_requiring_skipping_( ConnParameter& param )
 {
   if ( param.is_array() )
   {
@@ -643,7 +730,7 @@ ConnBuilder::register_parameters_requiring_skipping_( ConnParameter& param )
 }
 
 inline void
-ConnBuilder::skip_conn_parameter_( size_t target_thread, size_t n_skip )
+BipartiteConnBuilder::skip_conn_parameter_( size_t target_thread, size_t n_skip )
 {
   for ( std::vector< ConnParameter* >::iterator it = parameters_requiring_skipping_.begin();
         it != parameters_requiring_skipping_.end();

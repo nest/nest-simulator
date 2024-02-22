@@ -349,7 +349,7 @@ nest::ConnectionManager::get_user_set_delay_extrema() const
   return user_set_delay_extrema;
 }
 
-nest::ConnBuilder*
+nest::BipartiteConnBuilder*
 nest::ConnectionManager::get_conn_builder( const std::string& name,
   NodeCollectionPTR sources,
   NodeCollectionPTR targets,
@@ -357,12 +357,12 @@ nest::ConnectionManager::get_conn_builder( const std::string& name,
   const std::vector< DictionaryDatum >& syn_specs )
 {
   const size_t rule_id = connruledict_->lookup( name );
-  ConnBuilder* cb = connbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_specs );
+  BipartiteConnBuilder* cb = connbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_specs );
   assert( cb );
   return cb;
 }
 
-nest::ConnBuilder*
+nest::BipartiteConnBuilder*
 nest::ConnectionManager::get_conn_builder( const std::string& name,
   NodeCollectionPTR sources,
   NodeCollectionPTR targets,
@@ -370,8 +370,34 @@ nest::ConnectionManager::get_conn_builder( const std::string& name,
   const DictionaryDatum& conn_spec,
   const std::map< Name, std::vector< DictionaryDatum > >& syn_specs )
 {
+  if ( not connruledict_->known( name ) )
+  {
+    throw BadProperty( String::compose( "Unknown connection rule: %1", name ) );
+  }
+
   const size_t rule_id = connruledict_->lookup( name );
-  ConnBuilder* cb = connbuilder_factories_.at( rule_id )->create( sources, targets, third, conn_spec, syn_specs );
+  BipartiteConnBuilder* cb =
+    connbuilder_factories_.at( rule_id )->create( sources, targets, third, conn_spec, syn_specs );
+  assert( cb );
+  return cb;
+}
+
+nest::BipartiteConnBuilder*
+nest::ConnectionManager::get_third_conn_builder( const std::string& name,
+  NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  NodeCollectionPTR third,
+  const DictionaryDatum& conn_spec,
+  const std::map< Name, std::vector< DictionaryDatum > >& syn_specs )
+{
+  if ( not thirdconnruledict_->known( name ) )
+  {
+    throw BadProperty( String::compose( "Unknown third-factor connection rule: %1", name ) );
+  }
+
+  const size_t rule_id = connruledict_->lookup( name );
+  BipartiteConnBuilder* cb =
+    connbuilder_factories_.at( rule_id )->create( sources, targets, third, conn_spec, syn_specs );
   assert( cb );
   return cb;
 }
@@ -418,7 +444,7 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
     throw BadProperty( String::compose( "Unknown connection rule: %1", rule_name ) );
   }
 
-  ConnBuilder* cb = get_conn_builder( rule_name, sources, targets, conn_spec, syn_specs );
+  ConnBuilder cb( sources, targets, conn_spec, syn_specs );
 
   // at this point, all entries in conn_spec and syn_spec have been checked
   ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries in conn_spec: " );
@@ -430,8 +456,7 @@ nest::ConnectionManager::connect( NodeCollectionPTR sources,
   // Set flag before calling cb->connect() in case exception is thrown after some connections have been created.
   set_connections_have_changed();
 
-  cb->connect();
-  delete cb;
+  cb.connect();
 }
 
 
@@ -804,14 +829,15 @@ nest::ConnectionManager::connect_tripartite( NodeCollectionPTR sources,
   {
     throw BadProperty( "The connection specification must contain a connection rule." );
   }
-  const std::string rule_name = static_cast< const std::string >( ( *conn_spec )[ names::rule ] );
-
-  if ( not connruledict_->known( rule_name ) )
+  if ( not third_conn_spec->known( names::rule ) )
   {
-    throw BadProperty( String::compose( "Unknown connection rule: %1", rule_name ) );
+    throw BadProperty( "The third-factor connection specification must contain a connection rule." );
   }
 
-  ConnBuilder* cb = get_conn_builder( rule_name, sources, targets, third, conn_spec, syn_specs );
+  const std::string primary_rule = static_cast< const std::string >( ( *conn_spec )[ names::rule ] );
+  const std::string third_rule = static_cast< const std::string >( ( *conn_spec )[ names::third_rule ] );
+
+  ConnBuilder cb( primary_rule, third_rule, sources, targets, third, conn_spec, syn_specs );
 
   // at this point, all entries in conn_spec and syn_spec have been checked
   ALL_ENTRIES_ACCESSED( *conn_spec, "Connect", "Unread dictionary entries in conn_spec: " );
@@ -826,8 +852,7 @@ nest::ConnectionManager::connect_tripartite( NodeCollectionPTR sources,
   // Set flag before calling cb->connect() in case exception is thrown after some connections have been created.
   set_connections_have_changed();
 
-  cb->connect();
-  delete cb;
+  cb.connect();
 }
 
 

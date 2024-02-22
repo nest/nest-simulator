@@ -95,14 +95,14 @@ public:
   void register_conn_builder( const std::string& name );
 
   //! Obtain builder for bipartite connections
-  ConnBuilder* get_conn_builder( const std::string& name,
+  BipartiteConnBuilder* get_conn_builder( const std::string& name,
     NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
     const std::vector< DictionaryDatum >& syn_specs );
 
   //! Obtain builder for tripartite connections
-  ConnBuilder* get_conn_builder( const std::string& name,
+  BipartiteConnBuilder* get_conn_builder( const std::string& name,
     NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     NodeCollectionPTR third,

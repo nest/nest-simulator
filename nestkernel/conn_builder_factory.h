@@ -53,7 +53,7 @@ public:
   /**
    * Factory method for builders for bipartite connection rules (the default).
    */
-  virtual ConnBuilder* create( NodeCollectionPTR,
+  virtual BipartiteConnBuilder* create( NodeCollectionPTR,
     NodeCollectionPTR,
     const DictionaryDatum&,
     const std::vector< DictionaryDatum >& ) const = 0;
@@ -61,7 +61,7 @@ public:
   /**
    * Factory method for builders for tripartite connection rules.
    */
-  virtual ConnBuilder* create( NodeCollectionPTR,
+  virtual BipartiteConnBuilder* create( NodeCollectionPTR,
     NodeCollectionPTR,
     NodeCollectionPTR,
     const DictionaryDatum&,
@@ -80,7 +80,7 @@ template < typename ConnBuilderType, bool is_tripartite = ConnBuilderType::is_tr
 class ConnBuilderFactory : public GenericConnBuilderFactory
 {
 public:
-  ConnBuilder*
+  BipartiteConnBuilder*
   create( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
@@ -90,7 +90,7 @@ public:
   }
 
   //! create tripartite builder
-  ConnBuilder*
+  BipartiteConnBuilder*
   create( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     NodeCollectionPTR third,
@@ -106,7 +106,7 @@ public:
 template < typename ConnBuilderType >
 class ConnBuilderFactory< ConnBuilderType, false > : public GenericConnBuilderFactory
 {
-  ConnBuilder*
+  BipartiteConnBuilder*
   create( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
@@ -115,7 +115,7 @@ class ConnBuilderFactory< ConnBuilderType, false > : public GenericConnBuilderFa
     return new ConnBuilderType( sources, targets, conn_spec, syn_specs );
   }
 
-  ConnBuilder*
+  BipartiteConnBuilder*
   create( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     NodeCollectionPTR third,
@@ -131,7 +131,7 @@ class ConnBuilderFactory< ConnBuilderType, false > : public GenericConnBuilderFa
 template < typename ConnBuilderType >
 class ConnBuilderFactory< ConnBuilderType, true > : public GenericConnBuilderFactory
 {
-  ConnBuilder*
+  BipartiteConnBuilder*
   create( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
@@ -141,7 +141,7 @@ class ConnBuilderFactory< ConnBuilderType, true > : public GenericConnBuilderFac
       String::compose( "Connection rule %1 only supports tripartite connections.", ( *conn_spec )[ names::rule ] ) );
   }
 
-  ConnBuilder*
+  BipartiteConnBuilder*
   create( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     NodeCollectionPTR third,

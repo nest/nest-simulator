@@ -20,6 +20,8 @@
     --nest-dkblue: #072f42;
     --nest-brown: #4b210c; /*formally green */
     --sd-color-primary: var(--nest-orange);
+    --sd-color-secondary: #666;
+    --sd-color-warning: #f22;
     --sd-color-success: var(--nest-brown);
     --sd-color-dark: var(--nest-dkblue);
     --sd-color-primary-highlight: #e05a2d;

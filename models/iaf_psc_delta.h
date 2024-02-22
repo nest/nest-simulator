@@ -137,7 +137,7 @@ The following parameters can be set in the status dictionary.
 **Parameter**        **Default**        **Math equivalent**             **Description**
 ==================== ================== =============================== ==================================================================================
 ``E_L``              -70 mV             :math:`E_\text{L}`              Resting membrane potential
-``C_m``              250 pF             :math:`C_{\text{m}}`            Capacity of the membrane
+``C_m``              250 pF             :math:`C_{\text{m}}`            Capacitance of the membrane
 ``tau_m``            10 ms              :math:`\tau_{\text{m}}`         Membrane time constant
 ``t_ref``            2 ms               :math:`t_{\text{ref}}`          Duration of refractory period
 ``V_th``             -55 mV             :math:`V_{\text{th}}`           Spike threshold

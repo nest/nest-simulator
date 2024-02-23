@@ -457,7 +457,7 @@ endfunction()
 function( NEST_PROCESS_WITH_MPI )
   # Find MPI
   set( HAVE_MPI OFF PARENT_SCOPE )
-  if ( with-mpi )
+  if ( NOT "${with-mpi}" STREQUAL "OFF" )
     find_package( MPI REQUIRED )
     if ( MPI_CXX_FOUND )
       set( HAVE_MPI ON PARENT_SCOPE )

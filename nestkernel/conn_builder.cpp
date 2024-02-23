@@ -28,6 +28,7 @@
 // Includes from nestkernel:
 #include "conn_builder_impl.h"
 #include "conn_parameter.h"
+#include "connection_manager.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "nest_names.h"
@@ -49,14 +50,13 @@ nest::ConnBuilder::ConnBuilder( const std::string& primary_rule,
   const DictionaryDatum& conn_spec,
   const std::vector< DictionaryDatum >& syn_specs )
   : third_out_builder_( nullptr )
-  ,
-  , third_in_builder_()
-  , primary_builder_( get_conn_builder( rule_name,
+  , third_in_builder_( nullptr )
+  , primary_builder_( kernel().connection_manager.get_conn_builder( primary_rule,
       sources,
       targets,
       third_out_builder_,
       conn_spec,
-      const_cast< std::map< Name, std::vector< DictionaryDatum > >& >( syn_specs )[ names::primary ] ) )
+      syn_specs ) )
 {
 }
 
@@ -68,18 +68,18 @@ nest::ConnBuilder::ConnBuilder( const std::string& primary_rule,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& third_conn_spec,
   const std::map< Name, std::vector< DictionaryDatum > >& syn_specs )
-  : third_out_builder_( get_third_conn_builder( third_rule,
+  : third_out_builder_( kernel().connection_manager.get_third_conn_builder( third_rule,
     targets,
     third,
     third_conn_spec,
     // const_cast here seems required, clang complains otherwise; try to clean up when Datums disappear
     const_cast< std::map< Name, std::vector< DictionaryDatum > >& >( syn_specs )[ names::third_out ] ) )
-  , third_in_builder_( sources,
+  , third_in_builder_( new ThirdInBuilder( sources,
       third,
-      *third_out_builder_,
+      third_out_builder_,
       third_conn_spec,
-      const_cast< std::map< Name, std::vector< DictionaryDatum > >& >( syn_specs )[ names::third_in ] )
-  , primary_builder_( get_conn_builder( rule_name,
+      const_cast< std::map< Name, std::vector< DictionaryDatum > >& >( syn_specs )[ names::third_in ] ) )
+  , primary_builder_( kernel().connection_manager.get_conn_builder( primary_rule,
       sources,
       targets,
       third_out_builder_,
@@ -102,7 +102,7 @@ void
 nest::ConnBuilder::connect()
 {
   primary_builder_->connect(); // triggers third_out_builder_
-  third_in_builder_.connect();
+  third_in_builder_->connect();
 }
 
 void
@@ -118,8 +118,8 @@ nest::ConnBuilder::disconnect()
 
 nest::BipartiteConnBuilder::BipartiteConnBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
+  ThirdOutBuilder* third_out,
   const DictionaryDatum& conn_spec,
-  ThirdOutBuilder* third_out_,
   const std::vector< DictionaryDatum >& syn_specs )
   : sources_( sources )
   , targets_( targets )
@@ -645,9 +645,9 @@ nest::BipartiteConnBuilder::reset_delays_()
   }
 }
 
-nest::ThirdInBuilder::ThirdInBuilder( const NodeCollectionPTR sources,
-  const NodeCollectionPTR third,
-  BipartiteConnBuilder* third_out,
+nest::ThirdInBuilder::ThirdInBuilder( NodeCollectionPTR sources,
+  NodeCollectionPTR third,
+  ThirdOutBuilder* third_out,
   const DictionaryDatum& third_conn_spec,
   const std::vector< DictionaryDatum >& syn_specs )
   : BipartiteConnBuilder( sources, third, nullptr, third_conn_spec, syn_specs )
@@ -677,14 +677,13 @@ nest::ThirdOutBuilder::connect()
 
 nest::ThirdBernoulliWithPoolBuilder::ThirdBernoulliWithPoolBuilder( const NodeCollectionPTR third,
   const NodeCollectionPTR targets,
-  const DictionaryDatum& third_conn_spec,
+  const DictionaryDatum& conn_spec,
   const std::vector< DictionaryDatum >& syn_specs )
-  : ThirdOutBuilder( third, targets, nullptr, third_conn_spec, syn_specs )
+  : ThirdOutBuilder( third, targets, conn_spec, syn_specs )
   , p_( 1.0 )
   , random_pool_( true )
   , pool_size_( third->size() )
   , targets_per_third_( targets->size() / third->size() )
-  ,
   , previous_target_( kernel().vp_manager.get_num_threads(), nullptr )
 {
   updateValue< double >( conn_spec, names::p, p_ );
@@ -729,13 +728,14 @@ nest::ThirdBernoulliWithPoolBuilder::ThirdBernoulliWithPoolBuilder( const NodeCo
 #pragma omp parallel
   {
     const size_t thrd = kernel().vp_manager.get_thread_id();
-    pool_[ thrd ] = new BlockVector< NodeIDTriple >();
+    pool_[ thrd ] = new std::vector< NodeIDTriple >();
     source_third_gids_[ thrd ] = new BlockVector< SourceThirdInfo_ >();
-    source_third_counts_[ thrd ] = new std::vector< size_t >( KernelManager().mpi_manager.get_num_processes(), 0 );
+    source_third_counts_[ thrd ] = new std::vector< size_t >( kernel().mpi_manager.get_num_processes(), 0 );
   }
 }
 
-void nest::ThirdBernoulliWithPoolBuilder::third_connect( < #size_t source_gid # >, < #Node & target # > )
+void
+nest::ThirdBernoulliWithPoolBuilder::third_connect( size_t primary_source_id, Node& primary_target )
 {
   // We assume target is on this thread
   const size_t tid = kernel().vp_manager.get_thread_id();
@@ -749,284 +749,78 @@ void nest::ThirdBernoulliWithPoolBuilder::third_connect( < #size_t source_gid # 
   }
 
   // step 2, build pool if new target
-  if ( &target != previous_target_[ tid ] )
+  if ( &primary_target != previous_target_[ tid ] )
   {
     pool_[ tid ]->reserve( pool_size_ );
     if ( random_pool_ )
     {
-      rng->sample( third_->begin(), third_->end(), std::back_inserter( *pool_[ tid ] ), pool_size_ );
+      rng->sample( sources_->begin(), sources_->end(), std::back_inserter( *pool_[ tid ] ), pool_size_ );
     }
     else
     {
-      std::copy_n(
-        third_->begin() + get_first_pool_index_( target.lid ), pool_size_, std::back_inserter( *pool[ tid ] ) );
-    }
-
-    // select third-factor neuron randomly from pool for this target
-    const auto third_index = pool_size_ == 1 ? 0 : rng->ulrand( pool_size_ );
-    const auto third_node_id = ( *pool_[ tid ] )[ third_index ].node_id;
-    const auto third_node_rank = kernel().mpi_manager.get_process_id_of_vp( kernel().vp_manager.node_id_to_vp( third_node_id );
-
-  single_connect_( third_node_id, target, tid, rng );
-
-  source_third_gids_[ tid ]->emplace_back( { snode_id, third_node_id, third_node_rank } );
-  ++((*source_third_counts_[tid])[third_node_rank]);
-  }
-
-
-  size_t nest::ThirdBernoulliWithPoolBuilder::get_first_pool_index_( const size_t target_index ) const
-  {
-    if ( pool_size_ > 1 )
-    {
-      return target_index * pool_size_;
-    }
-
-    return target_index / targets_per_third_; // intentional integer division
-  }
-
-  void nest::TripartiteBernoulliWithPoolBuilder::connect_()
-  {
-#pragma omp parallel
-    {
-      const size_t tid = kernel().vp_manager.get_thread_id();
-
-      try
-      {
-        /* Random number generators:
-         * - Use RNG generating same number sequence on all threads to decide which connections to create
-         * - Use per-thread random number generator to randomize connection properties
-         */
-        RngPtr synced_rng = get_vp_synced_rng( tid );
-        RngPtr rng = get_vp_specific_rng( tid );
-
-        binomial_distribution bino_dist;
-        binomial_distribution::param_type bino_param( sources_->size(), p_primary_ );
-
-        // Iterate through target neurons. For each, three steps are done:
-        // 1. draw indegree 2. select astrocyte pool 3. make connections
-        for ( const auto& target : *targets_ )
-        {
-          const size_t tnode_id = target.node_id;
-          Node* target_node = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-          const bool local_target = not target_node->is_proxy();
-
-          // step 1, draw indegree for this target
-          const auto indegree = bino_dist( synced_rng, bino_param );
-          if ( indegree == 0 )
-          {
-            continue; // no connections for this target
-          }
-
-
-          // step 3, iterate through indegree to make connections for this target
-          //   - by construction, we cannot get multapses
-          //   - if the target is also among sources, it can be drawn at most once;
-          //     we ignore it then connecting if no autapses are wanted
-          std::vector< NodeIDTriple > sources_to_connect_;
-          sources_to_connect_.reserve( indegree );
-          synced_rng->sample( sources_->begin(), sources_->end(), std::back_inserter( sources_to_connect_ ), indegree );
-
-          for ( const auto source : sources_to_connect_ )
-          {
-            const auto snode_id = source.node_id;
-            if ( not allow_autapses_ and snode_id == tnode_id )
-            {
-              continue;
-            }
-
-            if ( local_target )
-            {
-              // plain connect now with thread-local rng for randomized parameters
-              single_connect_( snode_id, *target_node, tid, rng );
-            }
-
-            // conditionally connect third factor
-            if ( not( synced_rng->drand() < p_third_if_primary_ ) )
-            {
-              continue;
-            }
-
-            // select third-factor neuron randomly from pool for this target
-            const auto third_index = pool_size_ == 1 ? 0 : synced_rng->ulrand( pool_size_ );
-            const auto third_node_id = pool[ third_index ].node_id;
-            Node* third_node = kernel().node_manager.get_node_or_proxy( third_node_id, tid );
-            const bool local_third_node = not third_node->is_proxy();
-
-            if ( local_third_node )
-            {
-              // route via auxiliary builder who handles parameters
-              third_in_builder_.single_connect( snode_id, *third_node, tid, rng );
-            }
-
-            // connection third-factor node to target if local
-            if ( local_target )
-            {
-              // route via auxiliary builder who handles parameters
-              third_out_builder_.single_connect( third_node_id, *target_node, tid, rng );
-            }
-          }
-        }
-      }
-      catch ( std::exception& err )
-      {
-        // We must create a new exception here, err's lifetime ends at
-        // the end of the catch block.
-        exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
-      }
+      std::copy_n( sources_->begin() + get_first_pool_index_( primary_target.get_thread_lid() ),
+        pool_size_,
+        std::back_inserter( *( pool_[ tid ] ) ) );
     }
   }
 
+  // select third-factor neuron randomly from pool for this target
+  const auto third_index = pool_size_ == 1 ? 0 : rng->ulrand( pool_size_ );
+  const auto third_node_id = ( *pool_[ tid ] )[ third_index ].node_id;
+  const auto third_node_rank =
+    kernel().mpi_manager.get_process_id_of_vp( kernel().vp_manager.node_id_to_vp( third_node_id ) );
 
-  nest::OneToOneBuilder::OneToOneBuilder( const NodeCollectionPTR sources,
-    const NodeCollectionPTR targets,
-    const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs )
-    : BipartiteConnBuilder( sources, targets, conn_spec, syn_specs )
+  single_connect_( third_node_id, primary_target, tid, rng );
+
+  source_third_gids_[ tid ]->push_back( { primary_source_id, third_node_id, third_node_rank } );
+  ++( ( *source_third_counts_[ tid ] )[ third_node_rank ] );
+}
+
+
+size_t
+nest::ThirdBernoulliWithPoolBuilder::get_first_pool_index_( const size_t target_index ) const
+{
+  if ( pool_size_ > 1 )
   {
-    // make sure that target and source population have the same size
-    if ( sources_->size() != targets_->size() )
-    {
-      throw DimensionMismatch( "Source and Target population must be of the same size." );
-    }
+    return target_index * pool_size_;
   }
 
-  void nest::OneToOneBuilder::connect_()
+  return target_index / targets_per_third_; // intentional integer division
+}
+
+
+nest::OneToOneBuilder::OneToOneBuilder( const NodeCollectionPTR sources,
+  const NodeCollectionPTR targets,
+  ThirdOutBuilder* third_out,
+  const DictionaryDatum& conn_spec,
+  const std::vector< DictionaryDatum >& syn_specs )
+  : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
+{
+  // make sure that target and source population have the same size
+  if ( sources_->size() != targets_->size() )
   {
+    throw DimensionMismatch( "Source and Target population must be of the same size." );
+  }
+}
+
+void
+nest::OneToOneBuilder::connect_()
+{
 
 #pragma omp parallel
-    {
-      // get thread id
-      const size_t tid = kernel().vp_manager.get_thread_id();
-
-      try
-      {
-        RngPtr rng = get_vp_specific_rng( tid );
-
-        if ( loop_over_targets_() )
-        {
-          // A more efficient way of doing this might be to use NodeCollection's local_begin(). For this to work we
-          // would need to change some of the logic, sources and targets might not be on the same process etc., so
-          // therefore we are not doing it at the moment. This also applies to other ConnBuilders below.
-          NodeCollection::const_iterator target_it = targets_->begin();
-          NodeCollection::const_iterator source_it = sources_->begin();
-          for ( ; target_it < targets_->end(); ++target_it, ++source_it )
-          {
-            assert( source_it < sources_->end() );
-
-            const size_t snode_id = ( *source_it ).node_id;
-            const size_t tnode_id = ( *target_it ).node_id;
-
-            if ( snode_id == tnode_id and not allow_autapses_ )
-            {
-              continue;
-            }
-
-            Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-            if ( target->is_proxy() )
-            {
-              // skip array parameters handled in other virtual processes
-              skip_conn_parameter_( tid );
-              continue;
-            }
-
-            single_connect_( snode_id, *target, tid, rng );
-          }
-        }
-        else
-        {
-          const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
-          SparseNodeArray::const_iterator n;
-          for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
-          {
-            Node* target = n->get_node();
-
-            const size_t tnode_id = n->get_node_id();
-            const long lid = targets_->get_lid( tnode_id );
-            if ( lid < 0 ) // Is local node in target list?
-            {
-              continue;
-            }
-
-            // one-to-one, thus we can use target idx for source as well
-            const size_t snode_id = ( *sources_ )[ lid ];
-            if ( not allow_autapses_ and snode_id == tnode_id )
-            {
-              // no skipping required / possible,
-              // as we iterate only over local nodes
-              continue;
-            }
-            single_connect_( snode_id, *target, tid, rng );
-          }
-        }
-      }
-      catch ( std::exception& err )
-      {
-        // We must create a new exception here, err's lifetime ends at
-        // the end of the catch block.
-        exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
-      }
-    }
-  }
-
-  void nest::OneToOneBuilder::disconnect_()
   {
+    // get thread id
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
-#pragma omp parallel
+    try
     {
-      // get thread id
-      const size_t tid = kernel().vp_manager.get_thread_id();
+      RngPtr rng = get_vp_specific_rng( tid );
 
-      try
+      if ( loop_over_targets_() )
       {
-        NodeCollection::const_iterator target_it = targets_->begin();
-        NodeCollection::const_iterator source_it = sources_->begin();
-        for ( ; target_it < targets_->end(); ++target_it, ++source_it )
-        {
-          assert( source_it < sources_->end() );
-
-          const size_t tnode_id = ( *target_it ).node_id;
-          const size_t snode_id = ( *source_it ).node_id;
-
-          // check whether the target is on this mpi machine
-          if ( not kernel().node_manager.is_local_node_id( tnode_id ) )
-          {
-            // Disconnecting: no parameter skipping required
-            continue;
-          }
-
-          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-          const size_t target_thread = target->get_thread();
-
-          // check whether the target is a proxy
-          if ( target->is_proxy() )
-          {
-            // Disconnecting: no parameter skipping required
-            continue;
-          }
-          single_disconnect_( snode_id, *target, target_thread );
-        }
-      }
-      catch ( std::exception& err )
-      {
-        // We must create a new exception here, err's lifetime ends at
-        // the end of the catch block.
-        exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
-      }
-    }
-  }
-
-  void nest::OneToOneBuilder::sp_connect_()
-  {
-
-#pragma omp parallel
-    {
-      // get thread id
-      const size_t tid = kernel().vp_manager.get_thread_id();
-
-      try
-      {
-        RngPtr rng = get_vp_specific_rng( tid );
-
+        // A more efficient way of doing this might be to use NodeCollection's local_begin(). For this to work we
+        // would need to change some of the logic, sources and targets might not be on the same process etc., so
+        // therefore we are not doing it at the moment. This also applies to other ConnBuilders below.
         NodeCollection::const_iterator target_it = targets_->begin();
         NodeCollection::const_iterator source_it = sources_->begin();
         for ( ; target_it < targets_->end(); ++target_it, ++source_it )
@@ -1041,768 +835,676 @@ void nest::ThirdBernoulliWithPoolBuilder::third_connect( < #size_t source_gid # 
             continue;
           }
 
-          if ( not change_connected_synaptic_elements( snode_id, tnode_id, tid, 1 ) )
+          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+          if ( target->is_proxy() )
+          {
+            // skip array parameters handled in other virtual processes
+            skip_conn_parameter_( tid );
+            continue;
+          }
+
+          single_connect_( snode_id, *target, tid, rng );
+        }
+      }
+      else
+      {
+        const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
+        SparseNodeArray::const_iterator n;
+        for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
+        {
+          Node* target = n->get_node();
+
+          const size_t tnode_id = n->get_node_id();
+          const long lid = targets_->get_lid( tnode_id );
+          if ( lid < 0 ) // Is local node in target list?
+          {
+            continue;
+          }
+
+          // one-to-one, thus we can use target idx for source as well
+          const size_t snode_id = ( *sources_ )[ lid ];
+          if ( not allow_autapses_ and snode_id == tnode_id )
+          {
+            // no skipping required / possible,
+            // as we iterate only over local nodes
+            continue;
+          }
+          single_connect_( snode_id, *target, tid, rng );
+        }
+      }
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  }
+}
+
+void
+nest::OneToOneBuilder::disconnect_()
+{
+
+#pragma omp parallel
+  {
+    // get thread id
+    const size_t tid = kernel().vp_manager.get_thread_id();
+
+    try
+    {
+      NodeCollection::const_iterator target_it = targets_->begin();
+      NodeCollection::const_iterator source_it = sources_->begin();
+      for ( ; target_it < targets_->end(); ++target_it, ++source_it )
+      {
+        assert( source_it < sources_->end() );
+
+        const size_t tnode_id = ( *target_it ).node_id;
+        const size_t snode_id = ( *source_it ).node_id;
+
+        // check whether the target is on this mpi machine
+        if ( not kernel().node_manager.is_local_node_id( tnode_id ) )
+        {
+          // Disconnecting: no parameter skipping required
+          continue;
+        }
+
+        Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+        const size_t target_thread = target->get_thread();
+
+        // check whether the target is a proxy
+        if ( target->is_proxy() )
+        {
+          // Disconnecting: no parameter skipping required
+          continue;
+        }
+        single_disconnect_( snode_id, *target, target_thread );
+      }
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  }
+}
+
+void
+nest::OneToOneBuilder::sp_connect_()
+{
+
+#pragma omp parallel
+  {
+    // get thread id
+    const size_t tid = kernel().vp_manager.get_thread_id();
+
+    try
+    {
+      RngPtr rng = get_vp_specific_rng( tid );
+
+      NodeCollection::const_iterator target_it = targets_->begin();
+      NodeCollection::const_iterator source_it = sources_->begin();
+      for ( ; target_it < targets_->end(); ++target_it, ++source_it )
+      {
+        assert( source_it < sources_->end() );
+
+        const size_t snode_id = ( *source_it ).node_id;
+        const size_t tnode_id = ( *target_it ).node_id;
+
+        if ( snode_id == tnode_id and not allow_autapses_ )
+        {
+          continue;
+        }
+
+        if ( not change_connected_synaptic_elements( snode_id, tnode_id, tid, 1 ) )
+        {
+          skip_conn_parameter_( tid );
+          continue;
+        }
+        Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+        const size_t target_thread = target->get_thread();
+
+        single_connect_( snode_id, *target, target_thread, rng );
+      }
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  }
+}
+
+void
+nest::OneToOneBuilder::sp_disconnect_()
+{
+
+#pragma omp parallel
+  {
+    // get thread id
+    const size_t tid = kernel().vp_manager.get_thread_id();
+
+    try
+    {
+      NodeCollection::const_iterator target_it = targets_->begin();
+      NodeCollection::const_iterator source_it = sources_->begin();
+      for ( ; target_it < targets_->end(); ++target_it, ++source_it )
+      {
+        assert( source_it < sources_->end() );
+
+        const size_t snode_id = ( *source_it ).node_id;
+        const size_t tnode_id = ( *target_it ).node_id;
+
+        if ( not change_connected_synaptic_elements( snode_id, tnode_id, tid, -1 ) )
+        {
+          continue;
+        }
+
+        Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+        const size_t target_thread = target->get_thread();
+
+        single_disconnect_( snode_id, *target, target_thread );
+      }
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  }
+}
+
+void
+nest::AllToAllBuilder::connect_()
+{
+
+#pragma omp parallel
+  {
+    // get thread id
+    const size_t tid = kernel().vp_manager.get_thread_id();
+
+    try
+    {
+      RngPtr rng = get_vp_specific_rng( tid );
+
+      if ( loop_over_targets_() )
+      {
+        NodeCollection::const_iterator target_it = targets_->begin();
+        for ( ; target_it < targets_->end(); ++target_it )
+        {
+          const size_t tnode_id = ( *target_it ).node_id;
+          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+          if ( target->is_proxy() )
+          {
+            skip_conn_parameter_( tid, sources_->size() );
+            continue;
+          }
+
+          inner_connect_( tid, rng, target, tnode_id, true );
+        }
+      }
+      else
+      {
+        const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
+        SparseNodeArray::const_iterator n;
+        for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
+        {
+          const size_t tnode_id = n->get_node_id();
+
+          // Is the local node in the targets list?
+          if ( targets_->get_lid( tnode_id ) < 0 )
+          {
+            continue;
+          }
+
+          inner_connect_( tid, rng, n->get_node(), tnode_id, false );
+        }
+      }
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  }
+}
+
+void
+nest::AllToAllBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, size_t tnode_id, bool skip )
+{
+  const size_t target_thread = target->get_thread();
+
+  // check whether the target is on our thread
+  if ( static_cast< size_t >( tid ) != target_thread )
+  {
+    if ( skip )
+    {
+      skip_conn_parameter_( tid, sources_->size() );
+    }
+    return;
+  }
+
+  NodeCollection::const_iterator source_it = sources_->begin();
+  for ( ; source_it < sources_->end(); ++source_it )
+  {
+    const size_t snode_id = ( *source_it ).node_id;
+
+    if ( not allow_autapses_ and snode_id == tnode_id )
+    {
+      if ( skip )
+      {
+        skip_conn_parameter_( target_thread );
+      }
+      continue;
+    }
+
+    single_connect_( snode_id, *target, target_thread, rng );
+  }
+}
+
+void
+nest::AllToAllBuilder::sp_connect_()
+{
+#pragma omp parallel
+  {
+    // get thread id
+    const size_t tid = kernel().vp_manager.get_thread_id();
+    try
+    {
+      RngPtr rng = get_vp_specific_rng( tid );
+
+      NodeCollection::const_iterator target_it = targets_->begin();
+      for ( ; target_it < targets_->end(); ++target_it )
+      {
+        const size_t tnode_id = ( *target_it ).node_id;
+
+        NodeCollection::const_iterator source_it = sources_->begin();
+        for ( ; source_it < sources_->end(); ++source_it )
+        {
+          const size_t snode_id = ( *source_it ).node_id;
+
+          if ( not allow_autapses_ and snode_id == tnode_id )
           {
             skip_conn_parameter_( tid );
             continue;
           }
+          if ( not change_connected_synaptic_elements( snode_id, tnode_id, tid, 1 ) )
+          {
+            skip_conn_parameter_( tid, sources_->size() );
+            continue;
+          }
           Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
           const size_t target_thread = target->get_thread();
-
           single_connect_( snode_id, *target, target_thread, rng );
         }
       }
-      catch ( std::exception& err )
-      {
-        // We must create a new exception here, err's lifetime ends at
-        // the end of the catch block.
-        exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
-      }
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   }
+}
 
-  void nest::OneToOneBuilder::sp_disconnect_()
-  {
+void
+nest::AllToAllBuilder::disconnect_()
+{
 
 #pragma omp parallel
+  {
+    // get thread id
+    const size_t tid = kernel().vp_manager.get_thread_id();
+
+    try
     {
-      // get thread id
-      const size_t tid = kernel().vp_manager.get_thread_id();
-
-      try
+      NodeCollection::const_iterator target_it = targets_->begin();
+      for ( ; target_it < targets_->end(); ++target_it )
       {
-        NodeCollection::const_iterator target_it = targets_->begin();
-        NodeCollection::const_iterator source_it = sources_->begin();
-        for ( ; target_it < targets_->end(); ++target_it, ++source_it )
+        const size_t tnode_id = ( *target_it ).node_id;
+
+        // check whether the target is on this mpi machine
+        if ( not kernel().node_manager.is_local_node_id( tnode_id ) )
         {
-          assert( source_it < sources_->end() );
+          // Disconnecting: no parameter skipping required
+          continue;
+        }
 
+        Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+        const size_t target_thread = target->get_thread();
+
+        // check whether the target is a proxy
+        if ( target->is_proxy() )
+        {
+          // Disconnecting: no parameter skipping required
+          continue;
+        }
+
+        NodeCollection::const_iterator source_it = sources_->begin();
+        for ( ; source_it < sources_->end(); ++source_it )
+        {
           const size_t snode_id = ( *source_it ).node_id;
-          const size_t tnode_id = ( *target_it ).node_id;
-
-          if ( not change_connected_synaptic_elements( snode_id, tnode_id, tid, -1 ) )
-          {
-            continue;
-          }
-
-          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-          const size_t target_thread = target->get_thread();
-
           single_disconnect_( snode_id, *target, target_thread );
         }
       }
-      catch ( std::exception& err )
-      {
-        // We must create a new exception here, err's lifetime ends at
-        // the end of the catch block.
-        exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
-      }
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   }
+}
 
-  void nest::AllToAllBuilder::connect_()
-  {
-
+void
+nest::AllToAllBuilder::sp_disconnect_()
+{
 #pragma omp parallel
-    {
-      // get thread id
-      const size_t tid = kernel().vp_manager.get_thread_id();
-
-      try
-      {
-        RngPtr rng = get_vp_specific_rng( tid );
-
-        if ( loop_over_targets_() )
-        {
-          NodeCollection::const_iterator target_it = targets_->begin();
-          for ( ; target_it < targets_->end(); ++target_it )
-          {
-            const size_t tnode_id = ( *target_it ).node_id;
-            Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-            if ( target->is_proxy() )
-            {
-              skip_conn_parameter_( tid, sources_->size() );
-              continue;
-            }
-
-            inner_connect_( tid, rng, target, tnode_id, true );
-          }
-        }
-        else
-        {
-          const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
-          SparseNodeArray::const_iterator n;
-          for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
-          {
-            const size_t tnode_id = n->get_node_id();
-
-            // Is the local node in the targets list?
-            if ( targets_->get_lid( tnode_id ) < 0 )
-            {
-              continue;
-            }
-
-            inner_connect_( tid, rng, n->get_node(), tnode_id, false );
-          }
-        }
-      }
-      catch ( std::exception& err )
-      {
-        // We must create a new exception here, err's lifetime ends at
-        // the end of the catch block.
-        exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
-      }
-    }
-  }
-
-  void nest::AllToAllBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, size_t tnode_id, bool skip )
   {
-    const size_t target_thread = target->get_thread();
+    // get thread id
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
-    // check whether the target is on our thread
-    if ( static_cast< size_t >( tid ) != target_thread )
+    try
     {
-      if ( skip )
+      NodeCollection::const_iterator target_it = targets_->begin();
+      for ( ; target_it < targets_->end(); ++target_it )
       {
-        skip_conn_parameter_( tid, sources_->size() );
-      }
-      return;
-    }
+        const size_t tnode_id = ( *target_it ).node_id;
 
-    NodeCollection::const_iterator source_it = sources_->begin();
-    for ( ; source_it < sources_->end(); ++source_it )
-    {
-      const size_t snode_id = ( *source_it ).node_id;
-
-      if ( not allow_autapses_ and snode_id == tnode_id )
-      {
-        if ( skip )
+        NodeCollection::const_iterator source_it = sources_->begin();
+        for ( ; source_it < sources_->end(); ++source_it )
         {
-          skip_conn_parameter_( target_thread );
-        }
-        continue;
-      }
+          const size_t snode_id = ( *source_it ).node_id;
 
-      single_connect_( snode_id, *target, target_thread, rng );
-    }
-  }
-
-  void nest::AllToAllBuilder::sp_connect_()
-  {
-#pragma omp parallel
-    {
-      // get thread id
-      const size_t tid = kernel().vp_manager.get_thread_id();
-      try
-      {
-        RngPtr rng = get_vp_specific_rng( tid );
-
-        NodeCollection::const_iterator target_it = targets_->begin();
-        for ( ; target_it < targets_->end(); ++target_it )
-        {
-          const size_t tnode_id = ( *target_it ).node_id;
-
-          NodeCollection::const_iterator source_it = sources_->begin();
-          for ( ; source_it < sources_->end(); ++source_it )
-          {
-            const size_t snode_id = ( *source_it ).node_id;
-
-            if ( not allow_autapses_ and snode_id == tnode_id )
-            {
-              skip_conn_parameter_( tid );
-              continue;
-            }
-            if ( not change_connected_synaptic_elements( snode_id, tnode_id, tid, 1 ) )
-            {
-              skip_conn_parameter_( tid, sources_->size() );
-              continue;
-            }
-            Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-            const size_t target_thread = target->get_thread();
-            single_connect_( snode_id, *target, target_thread, rng );
-          }
-        }
-      }
-      catch ( std::exception& err )
-      {
-        // We must create a new exception here, err's lifetime ends at
-        // the end of the catch block.
-        exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
-      }
-    }
-  }
-
-  void nest::AllToAllBuilder::disconnect_()
-  {
-
-#pragma omp parallel
-    {
-      // get thread id
-      const size_t tid = kernel().vp_manager.get_thread_id();
-
-      try
-      {
-        NodeCollection::const_iterator target_it = targets_->begin();
-        for ( ; target_it < targets_->end(); ++target_it )
-        {
-          const size_t tnode_id = ( *target_it ).node_id;
-
-          // check whether the target is on this mpi machine
-          if ( not kernel().node_manager.is_local_node_id( tnode_id ) )
+          if ( not change_connected_synaptic_elements( snode_id, tnode_id, tid, -1 ) )
           {
             // Disconnecting: no parameter skipping required
             continue;
           }
-
           Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
           const size_t target_thread = target->get_thread();
-
-          // check whether the target is a proxy
-          if ( target->is_proxy() )
-          {
-            // Disconnecting: no parameter skipping required
-            continue;
-          }
-
-          NodeCollection::const_iterator source_it = sources_->begin();
-          for ( ; source_it < sources_->end(); ++source_it )
-          {
-            const size_t snode_id = ( *source_it ).node_id;
-            single_disconnect_( snode_id, *target, target_thread );
-          }
+          single_disconnect_( snode_id, *target, target_thread );
         }
       }
-      catch ( std::exception& err )
-      {
-        // We must create a new exception here, err's lifetime ends at
-        // the end of the catch block.
-        exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
-      }
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   }
+}
 
-  void nest::AllToAllBuilder::sp_disconnect_()
+nest::FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  ThirdOutBuilder* third_out,
+  const DictionaryDatum& conn_spec,
+  const std::vector< DictionaryDatum >& syn_specs )
+  : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
+{
+  // check for potential errors
+  long n_sources = static_cast< long >( sources_->size() );
+  if ( n_sources == 0 )
   {
-#pragma omp parallel
-    {
-      // get thread id
-      const size_t tid = kernel().vp_manager.get_thread_id();
+    throw BadProperty( "Source array must not be empty." );
+  }
+  ParameterDatum* pd = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::indegree ].datum() );
+  if ( pd )
+  {
+    indegree_ = *pd;
+    // TODO: Checks of parameter range
+  }
+  else
+  {
+    // Assume indegree is a scalar
+    const long value = ( *conn_spec )[ names::indegree ];
+    indegree_ = std::shared_ptr< Parameter >( new ConstantParameter( value ) );
 
-      try
+    // verify that indegree is not larger than source population if multapses are disabled
+    if ( not allow_multapses_ )
+    {
+      if ( value > n_sources )
+      {
+        throw BadProperty( "Indegree cannot be larger than population size." );
+      }
+      else if ( value == n_sources and not allow_autapses_ )
+      {
+        LOG( M_WARNING,
+          "FixedInDegreeBuilder::connect",
+          "Multapses and autapses prohibited. When the sources and the targets "
+          "have a non-empty intersection, the connect algorithm will enter an infinite loop." );
+        return;
+      }
+
+      if ( value > 0.9 * n_sources )
+      {
+        LOG( M_WARNING,
+          "FixedInDegreeBuilder::connect",
+          "Multapses are prohibited and you request more than 90% connectivity. Expect long connecting times!" );
+      }
+    } // if (not allow_multapses_ )
+
+    if ( value < 0 )
+    {
+      throw BadProperty( "Indegree cannot be less than zero." );
+    }
+  }
+}
+
+void
+nest::FixedInDegreeBuilder::connect_()
+{
+
+#pragma omp parallel
+  {
+    // get thread id
+    const size_t tid = kernel().vp_manager.get_thread_id();
+
+    try
+    {
+      RngPtr rng = get_vp_specific_rng( tid );
+
+      if ( loop_over_targets_() )
       {
         NodeCollection::const_iterator target_it = targets_->begin();
         for ( ; target_it < targets_->end(); ++target_it )
         {
           const size_t tnode_id = ( *target_it ).node_id;
+          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
 
-          NodeCollection::const_iterator source_it = sources_->begin();
-          for ( ; source_it < sources_->end(); ++source_it )
+          const long indegree_value = std::round( indegree_->value( rng, target ) );
+          if ( target->is_proxy() )
           {
-            const size_t snode_id = ( *source_it ).node_id;
-
-            if ( not change_connected_synaptic_elements( snode_id, tnode_id, tid, -1 ) )
-            {
-              // Disconnecting: no parameter skipping required
-              continue;
-            }
-            Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-            const size_t target_thread = target->get_thread();
-            single_disconnect_( snode_id, *target, target_thread );
+            // skip array parameters handled in other virtual processes
+            skip_conn_parameter_( tid, indegree_value );
+            continue;
           }
+
+          inner_connect_( tid, rng, target, tnode_id, true, indegree_value );
         }
       }
-      catch ( std::exception& err )
+      else
       {
-        // We must create a new exception here, err's lifetime ends at
-        // the end of the catch block.
-        exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+        const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
+        SparseNodeArray::const_iterator n;
+        for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
+        {
+          const size_t tnode_id = n->get_node_id();
+
+          // Is the local node in the targets list?
+          if ( targets_->get_lid( tnode_id ) < 0 )
+          {
+            continue;
+          }
+          auto source = n->get_node();
+          const long indegree_value = std::round( indegree_->value( rng, source ) );
+
+          inner_connect_( tid, rng, source, tnode_id, false, indegree_value );
+        }
       }
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   }
+}
 
-  nest::FixedInDegreeBuilder::FixedInDegreeBuilder( NodeCollectionPTR sources,
-    NodeCollectionPTR targets,
-    const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs )
-    : BipartiteConnBuilder( sources, targets, conn_spec, syn_specs )
+void
+nest::FixedInDegreeBuilder::inner_connect_( const int tid,
+  RngPtr rng,
+  Node* target,
+  size_t tnode_id,
+  bool skip,
+  long indegree_value )
+{
+  const size_t target_thread = target->get_thread();
+
+  // check whether the target is on our thread
+  if ( static_cast< size_t >( tid ) != target_thread )
   {
-    // check for potential errors
-    long n_sources = static_cast< long >( sources_->size() );
-    if ( n_sources == 0 )
+    // skip array parameters handled in other virtual processes
+    if ( skip )
     {
-      throw BadProperty( "Source array must not be empty." );
+      skip_conn_parameter_( tid, indegree_value );
     }
-    ParameterDatum* pd = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::indegree ].datum() );
-    if ( pd )
-    {
-      indegree_ = *pd;
-      // TODO: Checks of parameter range
-    }
-    else
-    {
-      // Assume indegree is a scalar
-      const long value = ( *conn_spec )[ names::indegree ];
-      indegree_ = std::shared_ptr< Parameter >( new ConstantParameter( value ) );
-
-      // verify that indegree is not larger than source population if multapses are disabled
-      if ( not allow_multapses_ )
-      {
-        if ( value > n_sources )
-        {
-          throw BadProperty( "Indegree cannot be larger than population size." );
-        }
-        else if ( value == n_sources and not allow_autapses_ )
-        {
-          LOG( M_WARNING,
-            "FixedInDegreeBuilder::connect",
-            "Multapses and autapses prohibited. When the sources and the targets "
-            "have a non-empty intersection, the connect algorithm will enter an infinite loop." );
-          return;
-        }
-
-        if ( value > 0.9 * n_sources )
-        {
-          LOG( M_WARNING,
-            "FixedInDegreeBuilder::connect",
-            "Multapses are prohibited and you request more than 90% connectivity. Expect long connecting times!" );
-        }
-      } // if (not allow_multapses_ )
-
-      if ( value < 0 )
-      {
-        throw BadProperty( "Indegree cannot be less than zero." );
-      }
-    }
+    return;
   }
 
-  void nest::FixedInDegreeBuilder::connect_()
+  std::set< long > ch_ids;
+  long n_rnd = sources_->size();
+
+  for ( long j = 0; j < indegree_value; ++j )
   {
+    unsigned long s_id;
+    size_t snode_id;
+    bool skip_autapse = false;
+    bool skip_multapse = false;
 
-#pragma omp parallel
+    do
     {
-      // get thread id
-      const size_t tid = kernel().vp_manager.get_thread_id();
+      s_id = rng->ulrand( n_rnd );
+      snode_id = ( *sources_ )[ s_id ];
+      skip_autapse = not allow_autapses_ and snode_id == tnode_id;
+      skip_multapse = not allow_multapses_ and ch_ids.find( s_id ) != ch_ids.end();
+    } while ( skip_autapse or skip_multapse );
 
-      try
+    if ( not allow_multapses_ )
+    {
+      ch_ids.insert( s_id );
+    }
+
+    single_connect_( snode_id, *target, target_thread, rng );
+  }
+}
+
+nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  ThirdOutBuilder* third_out,
+  const DictionaryDatum& conn_spec,
+  const std::vector< DictionaryDatum >& syn_specs )
+  : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
+{
+  // check for potential errors
+  long n_targets = static_cast< long >( targets_->size() );
+  if ( n_targets == 0 )
+  {
+    throw BadProperty( "Target array must not be empty." );
+  }
+  ParameterDatum* pd = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::outdegree ].datum() );
+  if ( pd )
+  {
+    outdegree_ = *pd;
+    // TODO: Checks of parameter range
+  }
+  else
+  {
+    // Assume outdegree is a scalar
+    const long value = ( *conn_spec )[ names::outdegree ];
+
+    outdegree_ = std::shared_ptr< Parameter >( new ConstantParameter( value ) );
+
+    // verify that outdegree is not larger than target population if multapses
+    // are disabled
+    if ( not allow_multapses_ )
+    {
+      if ( value > n_targets )
       {
-        RngPtr rng = get_vp_specific_rng( tid );
-
-        if ( loop_over_targets_() )
-        {
-          NodeCollection::const_iterator target_it = targets_->begin();
-          for ( ; target_it < targets_->end(); ++target_it )
-          {
-            const size_t tnode_id = ( *target_it ).node_id;
-            Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-
-            const long indegree_value = std::round( indegree_->value( rng, target ) );
-            if ( target->is_proxy() )
-            {
-              // skip array parameters handled in other virtual processes
-              skip_conn_parameter_( tid, indegree_value );
-              continue;
-            }
-
-            inner_connect_( tid, rng, target, tnode_id, true, indegree_value );
-          }
-        }
-        else
-        {
-          const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
-          SparseNodeArray::const_iterator n;
-          for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
-          {
-            const size_t tnode_id = n->get_node_id();
-
-            // Is the local node in the targets list?
-            if ( targets_->get_lid( tnode_id ) < 0 )
-            {
-              continue;
-            }
-            auto source = n->get_node();
-            const long indegree_value = std::round( indegree_->value( rng, source ) );
-
-            inner_connect_( tid, rng, source, tnode_id, false, indegree_value );
-          }
-        }
+        throw BadProperty( "Outdegree cannot be larger than population size." );
       }
-      catch ( std::exception& err )
+      else if ( value == n_targets and not allow_autapses_ )
       {
-        // We must create a new exception here, err's lifetime ends at
-        // the end of the catch block.
-        exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+        LOG( M_WARNING,
+          "FixedOutDegreeBuilder::connect",
+          "Multapses and autapses prohibited. When the sources and the targets "
+          "have a non-empty intersection, the connect algorithm will enter an infinite loop." );
+        return;
       }
+
+      if ( value > 0.9 * n_targets )
+      {
+        LOG( M_WARNING,
+          "FixedOutDegreeBuilder::connect",
+          "Multapses are prohibited and you request more than 90% connectivity. Expect long connecting times!" );
+      }
+    }
+
+    if ( value < 0 )
+    {
+      throw BadProperty( "Outdegree cannot be less than zero." );
     }
   }
+}
 
-  void nest::FixedInDegreeBuilder::inner_connect_(
-    const int tid, RngPtr rng, Node* target, size_t tnode_id, bool skip, long indegree_value )
+void
+nest::FixedOutDegreeBuilder::connect_()
+{
+  // get global rng that is tested for synchronization for all threads
+  RngPtr grng = get_rank_synced_rng();
+
+  NodeCollection::const_iterator source_it = sources_->begin();
+  for ( ; source_it < sources_->end(); ++source_it )
   {
-    const size_t target_thread = target->get_thread();
-
-    // check whether the target is on our thread
-    if ( static_cast< size_t >( tid ) != target_thread )
-    {
-      // skip array parameters handled in other virtual processes
-      if ( skip )
-      {
-        skip_conn_parameter_( tid, indegree_value );
-      }
-      return;
-    }
+    const size_t snode_id = ( *source_it ).node_id;
 
     std::set< long > ch_ids;
-    long n_rnd = sources_->size();
+    std::vector< size_t > tgt_ids_;
+    const long n_rnd = targets_->size();
 
-    for ( long j = 0; j < indegree_value; ++j )
+    Node* source_node = kernel().node_manager.get_node_or_proxy( snode_id );
+    const long outdegree_value = std::round( outdegree_->value( grng, source_node ) );
+    for ( long j = 0; j < outdegree_value; ++j )
     {
-      unsigned long s_id;
-      size_t snode_id;
+      unsigned long t_id;
+      size_t tnode_id;
       bool skip_autapse = false;
       bool skip_multapse = false;
 
       do
       {
-        s_id = rng->ulrand( n_rnd );
-        snode_id = ( *sources_ )[ s_id ];
-        skip_autapse = not allow_autapses_ and snode_id == tnode_id;
-        skip_multapse = not allow_multapses_ and ch_ids.find( s_id ) != ch_ids.end();
+        t_id = grng->ulrand( n_rnd );
+        tnode_id = ( *targets_ )[ t_id ];
+        skip_autapse = not allow_autapses_ and tnode_id == snode_id;
+        skip_multapse = not allow_multapses_ and ch_ids.find( t_id ) != ch_ids.end();
       } while ( skip_autapse or skip_multapse );
 
       if ( not allow_multapses_ )
       {
-        ch_ids.insert( s_id );
+        ch_ids.insert( t_id );
       }
 
-      single_connect_( snode_id, *target, target_thread, rng );
-    }
-  }
-
-  nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( NodeCollectionPTR sources,
-    NodeCollectionPTR targets,
-    const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs )
-    : BipartiteConnBuilder( sources, targets, conn_spec, syn_specs )
-  {
-    // check for potential errors
-    long n_targets = static_cast< long >( targets_->size() );
-    if ( n_targets == 0 )
-    {
-      throw BadProperty( "Target array must not be empty." );
-    }
-    ParameterDatum* pd = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::outdegree ].datum() );
-    if ( pd )
-    {
-      outdegree_ = *pd;
-      // TODO: Checks of parameter range
-    }
-    else
-    {
-      // Assume outdegree is a scalar
-      const long value = ( *conn_spec )[ names::outdegree ];
-
-      outdegree_ = std::shared_ptr< Parameter >( new ConstantParameter( value ) );
-
-      // verify that outdegree is not larger than target population if multapses
-      // are disabled
-      if ( not allow_multapses_ )
-      {
-        if ( value > n_targets )
-        {
-          throw BadProperty( "Outdegree cannot be larger than population size." );
-        }
-        else if ( value == n_targets and not allow_autapses_ )
-        {
-          LOG( M_WARNING,
-            "FixedOutDegreeBuilder::connect",
-            "Multapses and autapses prohibited. When the sources and the targets "
-            "have a non-empty intersection, the connect algorithm will enter an infinite loop." );
-          return;
-        }
-
-        if ( value > 0.9 * n_targets )
-        {
-          LOG( M_WARNING,
-            "FixedOutDegreeBuilder::connect",
-            "Multapses are prohibited and you request more than 90% connectivity. Expect long connecting times!" );
-        }
-      }
-
-      if ( value < 0 )
-      {
-        throw BadProperty( "Outdegree cannot be less than zero." );
-      }
-    }
-  }
-
-  void nest::FixedOutDegreeBuilder::connect_()
-  {
-    // get global rng that is tested for synchronization for all threads
-    RngPtr grng = get_rank_synced_rng();
-
-    NodeCollection::const_iterator source_it = sources_->begin();
-    for ( ; source_it < sources_->end(); ++source_it )
-    {
-      const size_t snode_id = ( *source_it ).node_id;
-
-      std::set< long > ch_ids;
-      std::vector< size_t > tgt_ids_;
-      const long n_rnd = targets_->size();
-
-      Node* source_node = kernel().node_manager.get_node_or_proxy( snode_id );
-      const long outdegree_value = std::round( outdegree_->value( grng, source_node ) );
-      for ( long j = 0; j < outdegree_value; ++j )
-      {
-        unsigned long t_id;
-        size_t tnode_id;
-        bool skip_autapse = false;
-        bool skip_multapse = false;
-
-        do
-        {
-          t_id = grng->ulrand( n_rnd );
-          tnode_id = ( *targets_ )[ t_id ];
-          skip_autapse = not allow_autapses_ and tnode_id == snode_id;
-          skip_multapse = not allow_multapses_ and ch_ids.find( t_id ) != ch_ids.end();
-        } while ( skip_autapse or skip_multapse );
-
-        if ( not allow_multapses_ )
-        {
-          ch_ids.insert( t_id );
-        }
-
-        tgt_ids_.push_back( tnode_id );
-      }
-
-#pragma omp parallel
-      {
-        // get thread id
-        const size_t tid = kernel().vp_manager.get_thread_id();
-
-        try
-        {
-          RngPtr rng = get_vp_specific_rng( tid );
-
-          std::vector< size_t >::const_iterator tnode_id_it = tgt_ids_.begin();
-          for ( ; tnode_id_it != tgt_ids_.end(); ++tnode_id_it )
-          {
-            Node* const target = kernel().node_manager.get_node_or_proxy( *tnode_id_it, tid );
-            if ( target->is_proxy() )
-            {
-              // skip array parameters handled in other virtual processes
-              skip_conn_parameter_( tid );
-              continue;
-            }
-
-            single_connect_( snode_id, *target, tid, rng );
-          }
-        }
-        catch ( std::exception& err )
-        {
-          // We must create a new exception here, err's lifetime ends at
-          // the end of the catch block.
-          exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
-        }
-      }
-    }
-  }
-
-  nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder( NodeCollectionPTR sources,
-    NodeCollectionPTR targets,
-    const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs )
-    : BipartiteConnBuilder( sources, targets, conn_spec, syn_specs )
-    , N_( ( *conn_spec )[ names::N ] )
-  {
-
-    // check for potential errors
-
-    // verify that total number of connections is not larger than
-    // N_sources*N_targets
-    if ( not allow_multapses_ )
-    {
-      if ( ( N_ > static_cast< long >( sources_->size() * targets_->size() ) ) )
-      {
-        throw BadProperty( "Total number of connections cannot exceed product of source and target population sizes." );
-      }
+      tgt_ids_.push_back( tnode_id );
     }
 
-    if ( N_ < 0 )
-    {
-      throw BadProperty( "Total number of connections cannot be negative." );
-    }
-
-    // for now multapses cannot be forbidden
-    // TODO: Implement option for multapses_ = False, where already existing
-    // connections are stored in
-    // a bitmap
-    if ( not allow_multapses_ )
-    {
-      throw NotImplemented( "Connect doesn't support the suppression of multapses in the FixedTotalNumber connector." );
-    }
-  }
-
-  void nest::FixedTotalNumberBuilder::connect_()
-  {
-    const int M = kernel().vp_manager.get_num_virtual_processes();
-    const long size_sources = sources_->size();
-    const long size_targets = targets_->size();
-
-    // drawing connection ids
-
-    // Compute the distribution of targets over processes using the modulo
-    // function
-    std::vector< size_t > number_of_targets_on_vp( M, 0 );
-    std::vector< size_t > local_targets;
-    local_targets.reserve( size_targets / kernel().mpi_manager.get_num_processes() );
-    for ( size_t t = 0; t < targets_->size(); t++ )
-    {
-      int vp = kernel().vp_manager.node_id_to_vp( ( *targets_ )[ t ] );
-      ++number_of_targets_on_vp[ vp ];
-      if ( kernel().vp_manager.is_local_vp( vp ) )
-      {
-        local_targets.push_back( ( *targets_ )[ t ] );
-      }
-    }
-
-    // We use the multinomial distribution to determine the number of
-    // connections that will be made on one virtual process, i.e. we
-    // partition the set of edges into n_vps subsets. The number of
-    // edges on one virtual process is binomially distributed with
-    // the boundary condition that the sum of all edges over virtual
-    // processes is the total number of edges.
-    // To obtain the num_conns_on_vp we adapt the gsl
-    // implementation of the multinomial distribution.
-
-    // K from gsl is equivalent to M = n_vps
-    // N is already taken from stack
-    // p[] is targets_on_vp
-    std::vector< long > num_conns_on_vp( M, 0 ); // corresponds to n[]
-
-    // calculate exact multinomial distribution
-    // get global rng that is tested for synchronization for all threads
-    RngPtr grng = get_rank_synced_rng();
-
-    // begin code adapted from gsl 1.8 //
-    double sum_dist = 0.0; // corresponds to sum_p
-    // norm is equivalent to size_targets
-    unsigned int sum_partitions = 0; // corresponds to sum_n
-
-    binomial_distribution bino_dist;
-    for ( int k = 0; k < M; k++ )
-    {
-      // If we have distributed all connections on the previous processes we exit the loop. It is important to
-      // have this check here, as N - sum_partition is set as n value for GSL, and this must be larger than 0.
-      if ( N_ == sum_partitions )
-      {
-        break;
-      }
-      if ( number_of_targets_on_vp[ k ] > 0 )
-      {
-        double num_local_targets = static_cast< double >( number_of_targets_on_vp[ k ] );
-        double p_local = num_local_targets / ( size_targets - sum_dist );
-
-        binomial_distribution::param_type param( N_ - sum_partitions, p_local );
-        num_conns_on_vp[ k ] = bino_dist( grng, param );
-      }
-
-      sum_dist += static_cast< double >( number_of_targets_on_vp[ k ] );
-      sum_partitions += static_cast< unsigned int >( num_conns_on_vp[ k ] );
-    }
-
-    // end code adapted from gsl 1.8
-
-#pragma omp parallel
-    {
-      // get thread id
-      const size_t tid = kernel().vp_manager.get_thread_id();
-
-      try
-      {
-        const size_t vp_id = kernel().vp_manager.thread_to_vp( tid );
-
-        if ( kernel().vp_manager.is_local_vp( vp_id ) )
-        {
-          RngPtr rng = get_vp_specific_rng( tid );
-
-          // gather local target node IDs
-          std::vector< size_t > thread_local_targets;
-          thread_local_targets.reserve( number_of_targets_on_vp[ vp_id ] );
-
-          std::vector< size_t >::const_iterator tnode_id_it = local_targets.begin();
-          for ( ; tnode_id_it != local_targets.end(); ++tnode_id_it )
-          {
-            if ( kernel().vp_manager.node_id_to_vp( *tnode_id_it ) == vp_id )
-            {
-              thread_local_targets.push_back( *tnode_id_it );
-            }
-          }
-
-          assert( thread_local_targets.size() == number_of_targets_on_vp[ vp_id ] );
-
-          while ( num_conns_on_vp[ vp_id ] > 0 )
-          {
-
-            // draw random numbers for source node from all source neurons
-            const long s_index = rng->ulrand( size_sources );
-            // draw random numbers for target node from
-            // targets_on_vp on this virtual process
-            const long t_index = rng->ulrand( thread_local_targets.size() );
-            // map random number of source node to node ID corresponding to
-            // the source_adr vector
-            const long snode_id = ( *sources_ )[ s_index ];
-            // map random number of target node to node ID using the
-            // targets_on_vp vector
-            const long tnode_id = thread_local_targets[ t_index ];
-
-            Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-            const size_t target_thread = target->get_thread();
-
-            if ( allow_autapses_ or snode_id != tnode_id )
-            {
-              single_connect_( snode_id, *target, target_thread, rng );
-              num_conns_on_vp[ vp_id ]--;
-            }
-          }
-        }
-      }
-      catch ( std::exception& err )
-      {
-        // We must create a new exception here, err's lifetime ends at
-        // the end of the catch block.
-        exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
-      }
-    }
-  }
-
-
-  nest::BernoulliBuilder::BernoulliBuilder( NodeCollectionPTR sources,
-    NodeCollectionPTR targets,
-    const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs )
-    : BipartiteConnBuilder( sources, targets, conn_spec, syn_specs )
-  {
-    ParameterDatum* pd = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::p ].datum() );
-    if ( pd )
-    {
-      p_ = *pd;
-      // TODO: Checks of parameter range
-    }
-    else
-    {
-      // Assume p is a scalar
-      const double value = ( *conn_spec )[ names::p ];
-      if ( value < 0 or 1 < value )
-      {
-        throw BadProperty( "Connection probability 0 <= p <= 1 required." );
-      }
-      p_ = std::shared_ptr< Parameter >( new ConstantParameter( value ) );
-    }
-  }
-
-
-  void nest::BernoulliBuilder::connect_()
-  {
 #pragma omp parallel
     {
       // get thread id
@@ -1812,40 +1514,18 @@ void nest::ThirdBernoulliWithPoolBuilder::third_connect( < #size_t source_gid # 
       {
         RngPtr rng = get_vp_specific_rng( tid );
 
-        if ( loop_over_targets_() )
+        std::vector< size_t >::const_iterator tnode_id_it = tgt_ids_.begin();
+        for ( ; tnode_id_it != tgt_ids_.end(); ++tnode_id_it )
         {
-          NodeCollection::const_iterator target_it = targets_->begin();
-          for ( ; target_it < targets_->end(); ++target_it )
+          Node* const target = kernel().node_manager.get_node_or_proxy( *tnode_id_it, tid );
+          if ( target->is_proxy() )
           {
-            const size_t tnode_id = ( *target_it ).node_id;
-            Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-            if ( target->is_proxy() )
-            {
-              // skip array parameters handled in other virtual processes
-              skip_conn_parameter_( tid );
-              continue;
-            }
-
-            inner_connect_( tid, rng, target, tnode_id );
+            // skip array parameters handled in other virtual processes
+            skip_conn_parameter_( tid );
+            continue;
           }
-        }
 
-        else
-        {
-          const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
-          SparseNodeArray::const_iterator n;
-          for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
-          {
-            const size_t tnode_id = n->get_node_id();
-
-            // Is the local node in the targets list?
-            if ( targets_->get_lid( tnode_id ) < 0 )
-            {
-              continue;
-            }
-
-            inner_connect_( tid, rng, n->get_node(), tnode_id );
-          }
+          single_connect_( snode_id, *target, tid, rng );
         }
       }
       catch ( std::exception& err )
@@ -1854,157 +1534,416 @@ void nest::ThirdBernoulliWithPoolBuilder::third_connect( < #size_t source_gid # 
         // the end of the catch block.
         exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
       }
-    } // of omp parallel
-  }
-
-  void nest::BernoulliBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, size_t tnode_id )
-  {
-    const size_t target_thread = target->get_thread();
-
-    // check whether the target is on our thread
-    if ( static_cast< size_t >( tid ) != target_thread )
-    {
-      return;
     }
+  }
+}
 
-    // It is not possible to create multapses with this type of BernoulliBuilder,
-    // hence leave out corresponding checks.
+nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  ThirdOutBuilder* third_out,
+  const DictionaryDatum& conn_spec,
+  const std::vector< DictionaryDatum >& syn_specs )
+  : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
+  , N_( ( *conn_spec )[ names::N ] )
+{
 
-    NodeCollection::const_iterator source_it = sources_->begin();
-    for ( ; source_it < sources_->end(); ++source_it )
+  // check for potential errors
+
+  // verify that total number of connections is not larger than
+  // N_sources*N_targets
+  if ( not allow_multapses_ )
+  {
+    if ( ( N_ > static_cast< long >( sources_->size() * targets_->size() ) ) )
     {
-      const size_t snode_id = ( *source_it ).node_id;
-
-      if ( not allow_autapses_ and snode_id == tnode_id )
-      {
-        continue;
-      }
-      if ( rng->drand() >= p_->value( rng, target ) )
-      {
-        continue;
-      }
-
-      single_connect_( snode_id, *target, target_thread, rng );
+      throw BadProperty( "Total number of connections cannot exceed product of source and target population sizes." );
     }
   }
 
-
-  nest::PoissonBuilder::PoissonBuilder( NodeCollectionPTR sources,
-    NodeCollectionPTR targets,
-    const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs )
-    : BipartiteConnBuilder( sources, targets, conn_spec, syn_specs )
+  if ( N_ < 0 )
   {
-    ParameterDatum* pd = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::pairwise_avg_num_conns ].datum() );
-    if ( pd )
+    throw BadProperty( "Total number of connections cannot be negative." );
+  }
+
+  // for now multapses cannot be forbidden
+  // TODO: Implement option for multapses_ = False, where already existing
+  // connections are stored in
+  // a bitmap
+  if ( not allow_multapses_ )
+  {
+    throw NotImplemented( "Connect doesn't support the suppression of multapses in the FixedTotalNumber connector." );
+  }
+}
+
+void
+nest::FixedTotalNumberBuilder::connect_()
+{
+  const int M = kernel().vp_manager.get_num_virtual_processes();
+  const long size_sources = sources_->size();
+  const long size_targets = targets_->size();
+
+  // drawing connection ids
+
+  // Compute the distribution of targets over processes using the modulo
+  // function
+  std::vector< size_t > number_of_targets_on_vp( M, 0 );
+  std::vector< size_t > local_targets;
+  local_targets.reserve( size_targets / kernel().mpi_manager.get_num_processes() );
+  for ( size_t t = 0; t < targets_->size(); t++ )
+  {
+    int vp = kernel().vp_manager.node_id_to_vp( ( *targets_ )[ t ] );
+    ++number_of_targets_on_vp[ vp ];
+    if ( kernel().vp_manager.is_local_vp( vp ) )
     {
-      pairwise_avg_num_conns_ = *pd;
-    }
-    else
-    {
-      // Assume pairwise_avg_num_conns is a scalar
-      const double value = ( *conn_spec )[ names::pairwise_avg_num_conns ];
-      if ( value < 0 )
-      {
-        throw BadProperty( "Connection parameter 0 ≤ pairwise_avg_num_conns required." );
-      }
-      if ( not allow_multapses_ )
-      {
-        throw BadProperty( "Multapses must be allowed for this connection rule." );
-      }
-      pairwise_avg_num_conns_ = std::shared_ptr< Parameter >( new ConstantParameter( value ) );
+      local_targets.push_back( ( *targets_ )[ t ] );
     }
   }
 
-  void nest::PoissonBuilder::connect_()
+  // We use the multinomial distribution to determine the number of
+  // connections that will be made on one virtual process, i.e. we
+  // partition the set of edges into n_vps subsets. The number of
+  // edges on one virtual process is binomially distributed with
+  // the boundary condition that the sum of all edges over virtual
+  // processes is the total number of edges.
+  // To obtain the num_conns_on_vp we adapt the gsl
+  // implementation of the multinomial distribution.
+
+  // K from gsl is equivalent to M = n_vps
+  // N is already taken from stack
+  // p[] is targets_on_vp
+  std::vector< long > num_conns_on_vp( M, 0 ); // corresponds to n[]
+
+  // calculate exact multinomial distribution
+  // get global rng that is tested for synchronization for all threads
+  RngPtr grng = get_rank_synced_rng();
+
+  // begin code adapted from gsl 1.8 //
+  double sum_dist = 0.0; // corresponds to sum_p
+  // norm is equivalent to size_targets
+  unsigned int sum_partitions = 0; // corresponds to sum_n
+
+  binomial_distribution bino_dist;
+  for ( int k = 0; k < M; k++ )
   {
+    // If we have distributed all connections on the previous processes we exit the loop. It is important to
+    // have this check here, as N - sum_partition is set as n value for GSL, and this must be larger than 0.
+    if ( N_ == sum_partitions )
+    {
+      break;
+    }
+    if ( number_of_targets_on_vp[ k ] > 0 )
+    {
+      double num_local_targets = static_cast< double >( number_of_targets_on_vp[ k ] );
+      double p_local = num_local_targets / ( size_targets - sum_dist );
+
+      binomial_distribution::param_type param( N_ - sum_partitions, p_local );
+      num_conns_on_vp[ k ] = bino_dist( grng, param );
+    }
+
+    sum_dist += static_cast< double >( number_of_targets_on_vp[ k ] );
+    sum_partitions += static_cast< unsigned int >( num_conns_on_vp[ k ] );
+  }
+
+  // end code adapted from gsl 1.8
+
 #pragma omp parallel
-    {
-      // get thread id
-      const size_t tid = kernel().vp_manager.get_thread_id();
+  {
+    // get thread id
+    const size_t tid = kernel().vp_manager.get_thread_id();
 
-      try
+    try
+    {
+      const size_t vp_id = kernel().vp_manager.thread_to_vp( tid );
+
+      if ( kernel().vp_manager.is_local_vp( vp_id ) )
       {
         RngPtr rng = get_vp_specific_rng( tid );
 
-        if ( loop_over_targets_() )
-        {
-          NodeCollection::const_iterator target_it = targets_->begin();
-          for ( ; target_it < targets_->end(); ++target_it )
-          {
-            const size_t tnode_id = ( *target_it ).node_id;
-            Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-            if ( target->is_proxy() )
-            {
-              // skip parameters handled in other virtual processes
-              skip_conn_parameter_( tid );
-              continue;
-            }
+        // gather local target node IDs
+        std::vector< size_t > thread_local_targets;
+        thread_local_targets.reserve( number_of_targets_on_vp[ vp_id ] );
 
-            inner_connect_( tid, rng, target, tnode_id );
+        std::vector< size_t >::const_iterator tnode_id_it = local_targets.begin();
+        for ( ; tnode_id_it != local_targets.end(); ++tnode_id_it )
+        {
+          if ( kernel().vp_manager.node_id_to_vp( *tnode_id_it ) == vp_id )
+          {
+            thread_local_targets.push_back( *tnode_id_it );
           }
         }
-        else
-        {
-          const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
-          SparseNodeArray::const_iterator n;
-          for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
-          {
-            const size_t tnode_id = n->get_node_id();
 
-            // Is the local node in the targets list?
-            if ( targets_->get_lid( tnode_id ) < 0 )
-            {
-              continue;
-            }
-            inner_connect_( tid, rng, n->get_node(), tnode_id );
+        assert( thread_local_targets.size() == number_of_targets_on_vp[ vp_id ] );
+
+        while ( num_conns_on_vp[ vp_id ] > 0 )
+        {
+
+          // draw random numbers for source node from all source neurons
+          const long s_index = rng->ulrand( size_sources );
+          // draw random numbers for target node from
+          // targets_on_vp on this virtual process
+          const long t_index = rng->ulrand( thread_local_targets.size() );
+          // map random number of source node to node ID corresponding to
+          // the source_adr vector
+          const long snode_id = ( *sources_ )[ s_index ];
+          // map random number of target node to node ID using the
+          // targets_on_vp vector
+          const long tnode_id = thread_local_targets[ t_index ];
+
+          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+          const size_t target_thread = target->get_thread();
+
+          if ( allow_autapses_ or snode_id != tnode_id )
+          {
+            single_connect_( snode_id, *target, target_thread, rng );
+            num_conns_on_vp[ vp_id ]--;
           }
         }
       }
-      catch ( std::exception& err )
-      {
-        // We must create a new exception here, err's lifetime ends at
-        // the end of the catch block.
-        exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
-      }
-    } // of omp parallel
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
   }
+}
 
-  void nest::PoissonBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, size_t tnode_id )
+
+nest::BernoulliBuilder::BernoulliBuilder( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  ThirdOutBuilder* third_out,
+  const DictionaryDatum& conn_spec,
+  const std::vector< DictionaryDatum >& syn_specs )
+  : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
+{
+  ParameterDatum* pd = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::p ].datum() );
+  if ( pd )
   {
-    const size_t target_thread = target->get_thread();
-
-    // check whether the target is on our thread
-    if ( static_cast< size_t >( tid ) != target_thread )
+    p_ = *pd;
+    // TODO: Checks of parameter range
+  }
+  else
+  {
+    // Assume p is a scalar
+    const double value = ( *conn_spec )[ names::p ];
+    if ( value < 0 or 1 < value )
     {
-      return;
+      throw BadProperty( "Connection probability 0 <= p <= 1 required." );
     }
+    p_ = std::shared_ptr< Parameter >( new ConstantParameter( value ) );
+  }
+}
 
-    poisson_distribution poi_dist;
 
-    // It is not possible to disable multapses with the PoissonBuilder, already checked
-    NodeCollection::const_iterator source_it = sources_->begin();
-    for ( ; source_it < sources_->end(); ++source_it )
+void
+nest::BernoulliBuilder::connect_()
+{
+#pragma omp parallel
+  {
+    // get thread id
+    const size_t tid = kernel().vp_manager.get_thread_id();
+
+    try
     {
-      const size_t snode_id = ( *source_it ).node_id;
+      RngPtr rng = get_vp_specific_rng( tid );
 
-      if ( not allow_autapses_ and snode_id == tnode_id )
+      if ( loop_over_targets_() )
       {
-        continue;
+        NodeCollection::const_iterator target_it = targets_->begin();
+        for ( ; target_it < targets_->end(); ++target_it )
+        {
+          const size_t tnode_id = ( *target_it ).node_id;
+          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+          if ( target->is_proxy() )
+          {
+            // skip array parameters handled in other virtual processes
+            skip_conn_parameter_( tid );
+            continue;
+          }
+
+          inner_connect_( tid, rng, target, tnode_id );
+        }
       }
 
-      // Sample to number of connections that are to be established
-      poisson_distribution::param_type param( pairwise_avg_num_conns_->value( rng, target ) );
-      const size_t num_conns = poi_dist( rng, param );
-
-      for ( size_t n = 0; n < num_conns; ++n )
+      else
       {
-        single_connect_( snode_id, *target, target_thread, rng );
+        const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
+        SparseNodeArray::const_iterator n;
+        for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
+        {
+          const size_t tnode_id = n->get_node_id();
+
+          // Is the local node in the targets list?
+          if ( targets_->get_lid( tnode_id ) < 0 )
+          {
+            continue;
+          }
+
+          inner_connect_( tid, rng, n->get_node(), tnode_id );
+        }
       }
     }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  } // of omp parallel
+}
+
+void
+nest::BernoulliBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, size_t tnode_id )
+{
+  const size_t target_thread = target->get_thread();
+
+  // check whether the target is on our thread
+  if ( static_cast< size_t >( tid ) != target_thread )
+  {
+    return;
   }
 
+  // It is not possible to create multapses with this type of BernoulliBuilder,
+  // hence leave out corresponding checks.
 
+  NodeCollection::const_iterator source_it = sources_->begin();
+  for ( ; source_it < sources_->end(); ++source_it )
+  {
+    const size_t snode_id = ( *source_it ).node_id;
+
+    if ( not allow_autapses_ and snode_id == tnode_id )
+    {
+      continue;
+    }
+    if ( rng->drand() >= p_->value( rng, target ) )
+    {
+      continue;
+    }
+
+    single_connect_( snode_id, *target, target_thread, rng );
+  }
+}
+
+
+nest::PoissonBuilder::PoissonBuilder( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  ThirdOutBuilder* third_out,
+  const DictionaryDatum& conn_spec,
+  const std::vector< DictionaryDatum >& syn_specs )
+  : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
+{
+  ParameterDatum* pd = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::pairwise_avg_num_conns ].datum() );
+  if ( pd )
+  {
+    pairwise_avg_num_conns_ = *pd;
+  }
+  else
+  {
+    // Assume pairwise_avg_num_conns is a scalar
+    const double value = ( *conn_spec )[ names::pairwise_avg_num_conns ];
+    if ( value < 0 )
+    {
+      throw BadProperty( "Connection parameter 0 ≤ pairwise_avg_num_conns required." );
+    }
+    if ( not allow_multapses_ )
+    {
+      throw BadProperty( "Multapses must be allowed for this connection rule." );
+    }
+    pairwise_avg_num_conns_ = std::shared_ptr< Parameter >( new ConstantParameter( value ) );
+  }
+}
+
+void
+nest::PoissonBuilder::connect_()
+{
+#pragma omp parallel
+  {
+    // get thread id
+    const size_t tid = kernel().vp_manager.get_thread_id();
+
+    try
+    {
+      RngPtr rng = get_vp_specific_rng( tid );
+
+      if ( loop_over_targets_() )
+      {
+        NodeCollection::const_iterator target_it = targets_->begin();
+        for ( ; target_it < targets_->end(); ++target_it )
+        {
+          const size_t tnode_id = ( *target_it ).node_id;
+          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+          if ( target->is_proxy() )
+          {
+            // skip parameters handled in other virtual processes
+            skip_conn_parameter_( tid );
+            continue;
+          }
+
+          inner_connect_( tid, rng, target, tnode_id );
+        }
+      }
+      else
+      {
+        const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
+        SparseNodeArray::const_iterator n;
+        for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
+        {
+          const size_t tnode_id = n->get_node_id();
+
+          // Is the local node in the targets list?
+          if ( targets_->get_lid( tnode_id ) < 0 )
+          {
+            continue;
+          }
+          inner_connect_( tid, rng, n->get_node(), tnode_id );
+        }
+      }
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  } // of omp parallel
+}
+
+void
+nest::PoissonBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, size_t tnode_id )
+{
+  const size_t target_thread = target->get_thread();
+
+  // check whether the target is on our thread
+  if ( static_cast< size_t >( tid ) != target_thread )
+  {
+    return;
+  }
+
+  poisson_distribution poi_dist;
+
+  // It is not possible to disable multapses with the PoissonBuilder, already checked
+  NodeCollection::const_iterator source_it = sources_->begin();
+  for ( ; source_it < sources_->end(); ++source_it )
+  {
+    const size_t snode_id = ( *source_it ).node_id;
+
+    if ( not allow_autapses_ and snode_id == tnode_id )
+    {
+      continue;
+    }
+
+    // Sample to number of connections that are to be established
+    poisson_distribution::param_type param( pairwise_avg_num_conns_->value( rng, target ) );
+    const size_t num_conns = poi_dist( rng, param );
+
+    for ( size_t n = 0; n < num_conns; ++n )
+    {
+      single_connect_( snode_id, *target, target_thread, rng );
+    }
+  }
+}
+
+/*
   nest::AuxiliaryBuilder::AuxiliaryBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
@@ -2017,228 +1956,236 @@ void nest::ThirdBernoulliWithPoolBuilder::third_connect( < #size_t source_gid # 
   {
     single_connect_( snode_id, tgt, tid, rng );
   }
+*/
 
+nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  ThirdOutBuilder* third_out,
+  const DictionaryDatum& conn_spec,
+  const std::vector< DictionaryDatum >& syn_specs )
+  : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
+  , p_( ( *conn_spec )[ names::p ] )
+{
+  // This connector takes care of symmetric connections on its own
+  creates_symmetric_connections_ = true;
 
-  nest::SymmetricBernoulliBuilder::SymmetricBernoulliBuilder( NodeCollectionPTR sources,
-    NodeCollectionPTR targets,
-    const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs )
-    : BipartiteConnBuilder( sources, targets, conn_spec, syn_specs )
-    , p_( ( *conn_spec )[ names::p ] )
+  if ( p_ < 0 or 1 <= p_ )
   {
-    // This connector takes care of symmetric connections on its own
-    creates_symmetric_connections_ = true;
-
-    if ( p_ < 0 or 1 <= p_ )
-    {
-      throw BadProperty( "Connection probability 0 <= p < 1 required." );
-    }
-
-    if ( not allow_multapses_ )
-    {
-      throw BadProperty( "Multapses must be enabled." );
-    }
-
-    if ( allow_autapses_ )
-    {
-      throw BadProperty( "Autapses must be disabled." );
-    }
-
-    if ( not make_symmetric_ )
-    {
-      throw BadProperty( "Symmetric connections must be enabled." );
-    }
+    throw BadProperty( "Connection probability 0 <= p < 1 required." );
   }
 
-
-  void nest::SymmetricBernoulliBuilder::connect_()
+  if ( not allow_multapses_ )
   {
+    throw BadProperty( "Multapses must be enabled." );
+  }
+
+  if ( allow_autapses_ )
+  {
+    throw BadProperty( "Autapses must be disabled." );
+  }
+
+  if ( not make_symmetric_ )
+  {
+    throw BadProperty( "Symmetric connections must be enabled." );
+  }
+}
+
+
+void
+nest::SymmetricBernoulliBuilder::connect_()
+{
 #pragma omp parallel
+  {
+    const size_t tid = kernel().vp_manager.get_thread_id();
+
+    // Use RNG generating same number sequence on all threads
+    RngPtr synced_rng = get_vp_synced_rng( tid );
+
+    try
     {
-      const size_t tid = kernel().vp_manager.get_thread_id();
+      binomial_distribution bino_dist;
+      binomial_distribution::param_type param( sources_->size(), p_ );
 
-      // Use RNG generating same number sequence on all threads
-      RngPtr synced_rng = get_vp_synced_rng( tid );
+      unsigned long indegree;
+      size_t snode_id;
+      std::set< size_t > previous_snode_ids;
+      Node* target;
+      size_t target_thread;
+      Node* source;
+      size_t source_thread;
 
-      try
+      for ( NodeCollection::const_iterator tnode_id = targets_->begin(); tnode_id != targets_->end(); ++tnode_id )
       {
-        binomial_distribution bino_dist;
-        binomial_distribution::param_type param( sources_->size(), p_ );
-
-        unsigned long indegree;
-        size_t snode_id;
-        std::set< size_t > previous_snode_ids;
-        Node* target;
-        size_t target_thread;
-        Node* source;
-        size_t source_thread;
-
-        for ( NodeCollection::const_iterator tnode_id = targets_->begin(); tnode_id != targets_->end(); ++tnode_id )
+        // sample indegree according to truncated Binomial distribution
+        indegree = sources_->size();
+        while ( indegree >= sources_->size() )
         {
-          // sample indegree according to truncated Binomial distribution
-          indegree = sources_->size();
-          while ( indegree >= sources_->size() )
-          {
-            indegree = bino_dist( synced_rng, param );
-          }
-          assert( indegree < sources_->size() );
-
-          target = kernel().node_manager.get_node_or_proxy( ( *tnode_id ).node_id, tid );
-          target_thread = tid;
-
-          // check whether the target is on this thread
-          if ( target->is_proxy() )
-          {
-            target_thread = invalid_thread;
-          }
-
-          previous_snode_ids.clear();
-
-          // choose indegree number of sources randomly from all sources
-          size_t i = 0;
-          while ( i < indegree )
-          {
-            snode_id = ( *sources_ )[ synced_rng->ulrand( sources_->size() ) ];
-
-            // Avoid autapses and multapses. Due to symmetric connectivity,
-            // multapses might exist if the target neuron with node ID snode_id draws the
-            // source with node ID tnode_id while choosing sources itself.
-            if ( snode_id == ( *tnode_id ).node_id or previous_snode_ids.find( snode_id ) != previous_snode_ids.end() )
-            {
-              continue;
-            }
-            previous_snode_ids.insert( snode_id );
-
-            source = kernel().node_manager.get_node_or_proxy( snode_id, tid );
-            source_thread = tid;
-
-            if ( source->is_proxy() )
-            {
-              source_thread = invalid_thread;
-            }
-
-            // if target is local: connect
-            if ( target_thread == tid )
-            {
-              assert( target );
-              single_connect_( snode_id, *target, target_thread, synced_rng );
-            }
-
-            // if source is local: connect
-            if ( source_thread == tid )
-            {
-              assert( source );
-              single_connect_( ( *tnode_id ).node_id, *source, source_thread, synced_rng );
-            }
-
-            ++i;
-          }
+          indegree = bino_dist( synced_rng, param );
         }
-      }
-      catch ( std::exception& err )
-      {
-        // We must create a new exception here, err's lifetime ends at
-        // the end of the catch block.
-        exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
-      }
-    }
-  }
+        assert( indegree < sources_->size() );
 
+        target = kernel().node_manager.get_node_or_proxy( ( *tnode_id ).node_id, tid );
+        target_thread = tid;
 
-  nest::SPBuilder::SPBuilder( NodeCollectionPTR sources,
-    NodeCollectionPTR targets,
-    const DictionaryDatum& conn_spec,
-    const std::vector< DictionaryDatum >& syn_specs )
-    : BipartiteConnBuilder( sources, targets, conn_spec, syn_specs )
-  {
-    // Check that both pre and postsynaptic element are provided
-    if ( not use_structural_plasticity_ )
-    {
-      throw BadProperty( "pre_synaptic_element and/or post_synaptic_elements is missing." );
-    }
-  }
-
-  void nest::SPBuilder::update_delay( long& d ) const
-  {
-    if ( get_default_delay() )
-    {
-      DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( get_synapse_model() );
-      const double delay = getValue< double >( syn_defaults, "delay" );
-      d = Time( Time::ms( delay ) ).get_steps();
-    }
-  }
-
-  void nest::SPBuilder::sp_connect( const std::vector< size_t >& sources, const std::vector< size_t >& targets )
-  {
-    connect_( sources, targets );
-
-    // check if any exceptions have been raised
-    for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-    {
-      if ( exceptions_raised_.at( tid ).get() )
-      {
-        throw WrappedThreadException( *( exceptions_raised_.at( tid ) ) );
-      }
-    }
-  }
-
-  void nest::SPBuilder::connect_()
-  {
-    throw NotImplemented( "Connection without structural plasticity is not possible for this connection builder." );
-  }
-
-  /**
-   * In charge of dynamically creating the new synapses
-   */
-  void nest::SPBuilder::connect_( NodeCollectionPTR, NodeCollectionPTR )
-  {
-    throw NotImplemented( "Connection without structural plasticity is not possible for this connection builder." );
-  }
-
-  void nest::SPBuilder::connect_( const std::vector< size_t >& sources, const std::vector< size_t >& targets )
-  {
-    // Code copied and adapted from OneToOneBuilder::connect_()
-    // make sure that target and source population have the same size
-    if ( sources.size() != targets.size() )
-    {
-      throw DimensionMismatch( "Source and target population must be of the same size." );
-    }
-
-#pragma omp parallel
-    {
-      // get thread id
-      const size_t tid = kernel().vp_manager.get_thread_id();
-
-      try
-      {
-        RngPtr rng = get_vp_specific_rng( tid );
-
-        std::vector< size_t >::const_iterator tnode_id_it = targets.begin();
-        std::vector< size_t >::const_iterator snode_id_it = sources.begin();
-        for ( ; tnode_id_it != targets.end(); ++tnode_id_it, ++snode_id_it )
+        // check whether the target is on this thread
+        if ( target->is_proxy() )
         {
-          assert( snode_id_it != sources.end() );
+          target_thread = invalid_thread;
+        }
 
-          if ( *snode_id_it == *tnode_id_it and not allow_autapses_ )
+        previous_snode_ids.clear();
+
+        // choose indegree number of sources randomly from all sources
+        size_t i = 0;
+        while ( i < indegree )
+        {
+          snode_id = ( *sources_ )[ synced_rng->ulrand( sources_->size() ) ];
+
+          // Avoid autapses and multapses. Due to symmetric connectivity,
+          // multapses might exist if the target neuron with node ID snode_id draws the
+          // source with node ID tnode_id while choosing sources itself.
+          if ( snode_id == ( *tnode_id ).node_id or previous_snode_ids.find( snode_id ) != previous_snode_ids.end() )
           {
             continue;
           }
+          previous_snode_ids.insert( snode_id );
 
-          if ( not change_connected_synaptic_elements( *snode_id_it, *tnode_id_it, tid, 1 ) )
+          source = kernel().node_manager.get_node_or_proxy( snode_id, tid );
+          source_thread = tid;
+
+          if ( source->is_proxy() )
           {
-            skip_conn_parameter_( tid );
-            continue;
+            source_thread = invalid_thread;
           }
-          Node* const target = kernel().node_manager.get_node_or_proxy( *tnode_id_it, tid );
 
-          single_connect_( *snode_id_it, *target, tid, rng );
+          // if target is local: connect
+          if ( target_thread == tid )
+          {
+            assert( target );
+            single_connect_( snode_id, *target, target_thread, synced_rng );
+          }
+
+          // if source is local: connect
+          if ( source_thread == tid )
+          {
+            assert( source );
+            single_connect_( ( *tnode_id ).node_id, *source, source_thread, synced_rng );
+          }
+
+          ++i;
         }
       }
-      catch ( std::exception& err )
-      {
-        // We must create a new exception here, err's lifetime ends at
-        // the end of the catch block.
-        exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
-      }
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   }
+}
+
+
+nest::SPBuilder::SPBuilder( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  ThirdOutBuilder* third_out,
+  const DictionaryDatum& conn_spec,
+  const std::vector< DictionaryDatum >& syn_specs )
+  : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
+{
+  // Check that both pre and postsynaptic element are provided
+  if ( not use_structural_plasticity_ )
+  {
+    throw BadProperty( "pre_synaptic_element and/or post_synaptic_elements is missing." );
+  }
+}
+
+void
+nest::SPBuilder::update_delay( long& d ) const
+{
+  if ( get_default_delay() )
+  {
+    DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( get_synapse_model() );
+    const double delay = getValue< double >( syn_defaults, "delay" );
+    d = Time( Time::ms( delay ) ).get_steps();
+  }
+}
+
+void
+nest::SPBuilder::sp_connect( const std::vector< size_t >& sources, const std::vector< size_t >& targets )
+{
+  connect_( sources, targets );
+
+  // check if any exceptions have been raised
+  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  {
+    if ( exceptions_raised_.at( tid ).get() )
+    {
+      throw WrappedThreadException( *( exceptions_raised_.at( tid ) ) );
+    }
+  }
+}
+
+void
+nest::SPBuilder::connect_()
+{
+  throw NotImplemented( "Connection without structural plasticity is not possible for this connection builder." );
+}
+
+/**
+ * In charge of dynamically creating the new synapses
+ */
+void
+nest::SPBuilder::connect_( NodeCollectionPTR, NodeCollectionPTR )
+{
+  throw NotImplemented( "Connection without structural plasticity is not possible for this connection builder." );
+}
+
+void
+nest::SPBuilder::connect_( const std::vector< size_t >& sources, const std::vector< size_t >& targets )
+{
+  // Code copied and adapted from OneToOneBuilder::connect_()
+  // make sure that target and source population have the same size
+  if ( sources.size() != targets.size() )
+  {
+    throw DimensionMismatch( "Source and target population must be of the same size." );
+  }
+
+#pragma omp parallel
+  {
+    // get thread id
+    const size_t tid = kernel().vp_manager.get_thread_id();
+
+    try
+    {
+      RngPtr rng = get_vp_specific_rng( tid );
+
+      std::vector< size_t >::const_iterator tnode_id_it = targets.begin();
+      std::vector< size_t >::const_iterator snode_id_it = sources.begin();
+      for ( ; tnode_id_it != targets.end(); ++tnode_id_it, ++snode_id_it )
+      {
+        assert( snode_id_it != sources.end() );
+
+        if ( *snode_id_it == *tnode_id_it and not allow_autapses_ )
+        {
+          continue;
+        }
+
+        if ( not change_connected_synaptic_elements( *snode_id_it, *tnode_id_it, tid, 1 ) )
+        {
+          skip_conn_parameter_( tid );
+          continue;
+        }
+        Node* const target = kernel().node_manager.get_node_or_proxy( *tnode_id_it, tid );
+
+        single_connect_( *snode_id_it, *target, tid, rng );
+      }
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  }
+}

@@ -53,6 +53,7 @@
 namespace nest
 {
 class GenericConnBuilderFactory;
+class GenericThirdConnBuilderFactory;
 class spikecounter;
 class Node;
 class Event;
@@ -94,20 +95,26 @@ public:
   template < typename ConnBuilder >
   void register_conn_builder( const std::string& name );
 
+  /**
+   * Add a connectivity rule, i.e. the respective ConnBuilderFactory.
+   */
+  template < typename ThirdConnBuilder >
+  void register_third_conn_builder( const std::string& name );
+
   //! Obtain builder for bipartite connections
   BipartiteConnBuilder* get_conn_builder( const std::string& name,
     NodeCollectionPTR sources,
     NodeCollectionPTR targets,
+    ThirdOutBuilder* third_out,
     const DictionaryDatum& conn_spec,
     const std::vector< DictionaryDatum >& syn_specs );
 
-  //! Obtain builder for tripartite connections
-  BipartiteConnBuilder* get_conn_builder( const std::string& name,
+  //! Obtain builder for bipartite connections
+  ThirdOutBuilder* get_third_conn_builder( const std::string& name,
     NodeCollectionPTR sources,
     NodeCollectionPTR targets,
-    NodeCollectionPTR third,
     const DictionaryDatum& conn_spec,
-    const std::map< Name, std::vector< DictionaryDatum > >& syn_specs );
+    const std::vector< DictionaryDatum >& syn_specs );
 
   /**
    * Create connections.
@@ -192,6 +199,7 @@ public:
     NodeCollectionPTR targets,
     NodeCollectionPTR third,
     const DictionaryDatum& connectivity,
+    const DictionaryDatum& third_connectivity,
     const std::map< Name, std::vector< DictionaryDatum > >& synapse_specs );
 
   size_t find_connection( const size_t tid, const synindex syn_id, const size_t snode_id, const size_t tnode_id );
@@ -639,6 +647,11 @@ private:
 
   //! ConnBuilder factories, indexed by connruledict_ elements.
   std::vector< GenericConnBuilderFactory* > connbuilder_factories_;
+
+  DictionaryDatum thirdconnruledict_; //!< Dictionary for third-factor connection rules.
+
+  //! Third-factor ConnBuilder factories, indexed by thirdconnruledict_ elements.
+  std::vector< GenericThirdConnBuilderFactory* > thirdconnbuilder_factories_;
 
   long min_delay_; //!< Value of the smallest delay in the network.
 

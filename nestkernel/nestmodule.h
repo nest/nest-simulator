@@ -549,7 +549,7 @@ public:
   {
   public:
     void execute( SLIInterpreter* ) const override;
-  } connect_tripartite_g_g_g_D_Dfunction;
+  } connect_tripartite_g_g_g_D_D_Dfunction;
 
   class ResetKernelFunction : public SLIFunction
   {

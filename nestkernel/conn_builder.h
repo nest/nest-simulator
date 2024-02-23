@@ -299,7 +299,7 @@ class ThirdInBuilder : public BipartiteConnBuilder
 public:
   ThirdInBuilder( NodeCollectionPTR,
     NodeCollectionPTR,
-    BipartiteConnBuilder*,
+    ThirdOutBuilder*,
     const DictionaryDatum&, // only for compatibility with BCB
     const std::vector< DictionaryDatum >& );
 
@@ -366,6 +366,7 @@ public:
     NodeCollectionPTR targets,
     NodeCollectionPTR third,
     const DictionaryDatum& conn_spec,
+    const DictionaryDatum& third_conn_spec,
     const std::map< Name, std::vector< DictionaryDatum > >& syn_specs );
 
   ~ConnBuilder();
@@ -379,7 +380,7 @@ public:
 private:
   // order of declarations based on dependencies
   ThirdOutBuilder* third_out_builder_;
-  ThirdInBuilder third_in_builder_;
+  ThirdInBuilder* third_in_builder_;
   BipartiteConnBuilder* primary_builder_;
 };
 
@@ -395,6 +396,11 @@ public:
   void third_connect( size_t source_gid, Node& target ) override;
 
 private:
+  void
+  connect_() override
+  {
+    assert( false );
+  }
   size_t get_first_pool_index_( const size_t target_index ) const;
 
   double p_;
@@ -406,6 +412,12 @@ private:
 
   struct SourceThirdInfo_
   {
+    SourceThirdInfo_()
+      : source_gid( 0 )
+      , third_gid( 0 )
+      , third_rank( 0 )
+    {
+    }
     SourceThirdInfo_( size_t src, size_t trd, size_t rank )
       : source_gid( src )
       , third_gid( trd )
@@ -431,6 +443,7 @@ class OneToOneBuilder : public BipartiteConnBuilder
 public:
   OneToOneBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
+    ThirdOutBuilder* third_out,
     const DictionaryDatum& conn_spec,
     const std::vector< DictionaryDatum >& syn_specs );
 
@@ -478,9 +491,10 @@ class AllToAllBuilder : public BipartiteConnBuilder
 public:
   AllToAllBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
+    ThirdOutBuilder* third_out,
     const DictionaryDatum& conn_spec,
     const std::vector< DictionaryDatum >& syn_specs )
-    : BipartiteConnBuilder( sources, targets, conn_spec, syn_specs )
+    : BipartiteConnBuilder( sources, targets, third_out, conn_spec, syn_specs )
   {
   }
 
@@ -532,6 +546,7 @@ class FixedInDegreeBuilder : public BipartiteConnBuilder
 public:
   FixedInDegreeBuilder( NodeCollectionPTR,
     NodeCollectionPTR,
+    ThirdOutBuilder* third_out,
     const DictionaryDatum&,
     const std::vector< DictionaryDatum >& );
 
@@ -548,6 +563,7 @@ class FixedOutDegreeBuilder : public BipartiteConnBuilder
 public:
   FixedOutDegreeBuilder( NodeCollectionPTR,
     NodeCollectionPTR,
+    ThirdOutBuilder* third_out,
     const DictionaryDatum&,
     const std::vector< DictionaryDatum >& );
 
@@ -563,6 +579,7 @@ class FixedTotalNumberBuilder : public BipartiteConnBuilder
 public:
   FixedTotalNumberBuilder( NodeCollectionPTR,
     NodeCollectionPTR,
+    ThirdOutBuilder* third_out,
     const DictionaryDatum&,
     const std::vector< DictionaryDatum >& );
 
@@ -578,6 +595,7 @@ class BernoulliBuilder : public BipartiteConnBuilder
 public:
   BernoulliBuilder( NodeCollectionPTR,
     NodeCollectionPTR,
+    ThirdOutBuilder* third_out,
     const DictionaryDatum&,
     const std::vector< DictionaryDatum >& );
 
@@ -592,7 +610,11 @@ private:
 class PoissonBuilder : public BipartiteConnBuilder
 {
 public:
-  PoissonBuilder( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const std::vector< DictionaryDatum >& );
+  PoissonBuilder( NodeCollectionPTR,
+    NodeCollectionPTR,
+    ThirdOutBuilder* third_out,
+    const DictionaryDatum&,
+    const std::vector< DictionaryDatum >& );
 
 protected:
   void connect_() override;
@@ -609,6 +631,7 @@ private:
  * it maintains an AuxiliaryBuilder which handles the parameterization of the corresponding
  * third-party connection.
  */
+/*
 class AuxiliaryBuilder : public BipartiteConnBuilder
 {
 public:
@@ -628,12 +651,14 @@ protected:
     assert( false );
   }
 };
+*/
 
 class SymmetricBernoulliBuilder : public BipartiteConnBuilder
 {
 public:
   SymmetricBernoulliBuilder( NodeCollectionPTR,
     NodeCollectionPTR,
+    ThirdOutBuilder* third_out,
     const DictionaryDatum&,
     const std::vector< DictionaryDatum >& );
 
@@ -664,6 +689,7 @@ public:
    */
   SPBuilder( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
+    ThirdOutBuilder* third_out,
     const DictionaryDatum& conn_spec,
     const std::vector< DictionaryDatum >& syn_spec );
 

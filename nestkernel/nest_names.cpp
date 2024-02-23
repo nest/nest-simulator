@@ -84,6 +84,7 @@ const Name buffer_size_target_data( "buffer_size_target_data" );
 
 const Name C_m( "C_m" );
 const Name Ca( "Ca" );
+const Name Ca_astro( "Ca_astro" );
 const Name Ca_tot( "Ca_tot" );
 const Name c( "c" );
 const Name c_1( "c_1" );
@@ -565,7 +566,9 @@ const Name time_communicate_spike_data( "time_communicate_spike_data" );
 const Name time_communicate_target_data( "time_communicate_target_data" );
 const Name time_construction_connect( "time_construction_connect" );
 const Name time_construction_create( "time_construction_create" );
+const Name time_deliver_secondary_data( "time_deliver_secondary_data" );
 const Name time_deliver_spike_data( "time_deliver_spike_data" );
+const Name time_gather_secondary_data( "time_gather_secondary_data" );
 const Name time_gather_spike_data( "time_gather_spike_data" );
 const Name time_gather_target_data( "time_gather_target_data" );
 const Name time_in_steps( "time_in_steps" );

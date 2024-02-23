@@ -62,7 +62,7 @@ def test_unsupported_model_raises(target_model):
 
 def test_eprop_regression():
     """
-    Test correct computation of losses for a regresion task
+    Test correct computation of losses for a regression task
     (for details on the task, see nest-simulator/pynest/examples/eprop_plasticity/eprop_supervised_regression_sine-waves.py)
     by comparing the simulated losses with
 

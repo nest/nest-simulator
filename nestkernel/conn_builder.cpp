@@ -102,7 +102,10 @@ void
 nest::ConnBuilder::connect()
 {
   primary_builder_->connect(); // triggers third_out_builder_
-  third_in_builder_->connect();
+  if ( third_in_builder_ )
+  {
+    third_in_builder_->connect();
+  }
 }
 
 void

@@ -90,6 +90,7 @@ public:
    */
   virtual ThirdOutBuilder* create( NodeCollectionPTR,
     NodeCollectionPTR,
+    ThirdInBuilder*,
     const DictionaryDatum&,
     const std::vector< DictionaryDatum >& ) const = 0;
 };
@@ -104,10 +105,11 @@ public:
   ThirdOutBuilder*
   create( NodeCollectionPTR sources,
     NodeCollectionPTR targets,
+    ThirdInBuilder* third_in,
     const DictionaryDatum& conn_spec,
     const std::vector< DictionaryDatum >& syn_specs ) const override
   {
-    return new ThirdConnBuilderType( sources, targets, conn_spec, syn_specs );
+    return new ThirdConnBuilderType( sources, targets, third_in, conn_spec, syn_specs );
   }
 };
 

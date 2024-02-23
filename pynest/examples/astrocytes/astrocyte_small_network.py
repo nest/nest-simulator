@@ -399,9 +399,12 @@ nest.TripartiteConnect(
     post_neurons,
     astrocytes,
     conn_spec={
-        "rule": "tripartite_bernoulli_with_pool",
-        "p_primary": p_primary,
-        "p_third_if_primary": p_third_if_primary,
+        "rule": "bernoulli",
+        "p": p_primary,
+    },
+    third_factor_conn_spec={
+        "rule": "third_factor_bernoulli_with_pool",
+        "p": p_third_if_primary,
         "pool_size": pool_size,
         "pool_type": pool_type,
     },

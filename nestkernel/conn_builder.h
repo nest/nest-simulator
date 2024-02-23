@@ -299,14 +299,45 @@ class ThirdInBuilder : public BipartiteConnBuilder
 public:
   ThirdInBuilder( NodeCollectionPTR,
     NodeCollectionPTR,
-    ThirdOutBuilder*,
     const DictionaryDatum&, // only for compatibility with BCB
     const std::vector< DictionaryDatum >& );
+  ~ThirdInBuilder();
+
+  void register_connection( size_t primary_source_id, size_t primary_target_id );
 
 private:
   void connect_() override;
 
-  ThirdOutBuilder* third_out_;
+  /**
+   * Provide information on connections from primary source to third-factor population.
+   *
+   * Data is written by ThirdOutBuilder and communicated and processed by ThirdInBuilder.
+   */
+  struct SourceThirdInfo_
+  {
+    SourceThirdInfo_()
+      : source_gid( 0 )
+      , third_gid( 0 )
+      , third_rank( 0 )
+    {
+    }
+    SourceThirdInfo_( size_t src, size_t trd, size_t rank )
+      : source_gid( src )
+      , third_gid( trd )
+      , third_rank( rank )
+    {
+    }
+
+    size_t source_gid;
+    size_t third_gid;
+    size_t third_rank;
+  };
+
+  //! source-thirdparty GID pairs to be communicated; one per thread
+  std::vector< BlockVector< SourceThirdInfo_ >* > source_third_gids_;
+
+  //! number of source-third pairs to send. Outer dimension writing thread, inner dimension rank to send to
+  std::vector< std::vector< size_t >* > source_third_counts_;
 };
 
 // to be subclassed further
@@ -315,12 +346,16 @@ class ThirdOutBuilder : public BipartiteConnBuilder
 public:
   ThirdOutBuilder( NodeCollectionPTR,
     NodeCollectionPTR,
+    ThirdInBuilder*,
     const DictionaryDatum&, // only for compatibility with BCB
     const std::vector< DictionaryDatum >& );
 
   void connect() override;
 
   virtual void third_connect( size_t source_gid, Node& target ) = 0;
+
+protected:
+  ThirdInBuilder* third_in_;
 };
 
 
@@ -379,8 +414,8 @@ public:
 
 private:
   // order of declarations based on dependencies
-  ThirdOutBuilder* third_out_builder_;
   ThirdInBuilder* third_in_builder_;
+  ThirdOutBuilder* third_out_builder_;
   BipartiteConnBuilder* primary_builder_;
 };
 
@@ -390,8 +425,10 @@ class ThirdBernoulliWithPoolBuilder : public ThirdOutBuilder
 public:
   ThirdBernoulliWithPoolBuilder( NodeCollectionPTR,
     NodeCollectionPTR,
+    ThirdInBuilder* third_in,
     const DictionaryDatum&, // only for compatibility with BCB
     const std::vector< DictionaryDatum >& );
+  ~ThirdBernoulliWithPoolBuilder();
 
   void third_connect( size_t source_gid, Node& target ) override;
 
@@ -409,32 +446,6 @@ private:
   size_t targets_per_third_;
   std::vector< Node* > previous_target_;             // TODO: cache thrashing possibility
   std::vector< std::vector< NodeIDTriple >* > pool_; // outer: threads
-
-  struct SourceThirdInfo_
-  {
-    SourceThirdInfo_()
-      : source_gid( 0 )
-      , third_gid( 0 )
-      , third_rank( 0 )
-    {
-    }
-    SourceThirdInfo_( size_t src, size_t trd, size_t rank )
-      : source_gid( src )
-      , third_gid( trd )
-      , third_rank( rank )
-    {
-    }
-
-    size_t source_gid;
-    size_t third_gid;
-    size_t third_rank;
-  };
-
-  //! source-thirdparty GID pairs to be communicated; one per thread
-  std::vector< BlockVector< SourceThirdInfo_ >* > source_third_gids_;
-
-  //! number of source-third pairs to send. Outer dimension writing thread, inner dimension rank to send to
-  std::vector< std::vector< size_t >* > source_third_counts_;
 };
 
 

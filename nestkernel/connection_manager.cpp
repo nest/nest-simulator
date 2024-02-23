@@ -370,11 +370,13 @@ nest::ThirdOutBuilder*
 nest::ConnectionManager::get_third_conn_builder( const std::string& name,
   NodeCollectionPTR sources,
   NodeCollectionPTR targets,
+  ThirdInBuilder* third_in,
   const DictionaryDatum& conn_spec,
   const std::vector< DictionaryDatum >& syn_specs )
 {
   const size_t rule_id = thirdconnruledict_->lookup( name );
-  ThirdOutBuilder* cb = thirdconnbuilder_factories_.at( rule_id )->create( sources, targets, conn_spec, syn_specs );
+  ThirdOutBuilder* cb =
+    thirdconnbuilder_factories_.at( rule_id )->create( sources, targets, third_in, conn_spec, syn_specs );
   assert( cb );
   return cb;
 }
@@ -813,7 +815,7 @@ nest::ConnectionManager::connect_tripartite( NodeCollectionPTR sources,
   }
 
   const std::string primary_rule = static_cast< const std::string >( ( *conn_spec )[ names::rule ] );
-  const std::string third_rule = static_cast< const std::string >( ( *conn_spec )[ names::rule ] );
+  const std::string third_rule = static_cast< const std::string >( ( *third_conn_spec )[ names::rule ] );
 
   ConnBuilder cb( primary_rule, third_rule, sources, targets, third, conn_spec, third_conn_spec, syn_specs );
 

@@ -769,7 +769,7 @@ NestModule::Connect_g_g_D_aFunction::execute( SLIInterpreter* i ) const
 
 
 void
-NestModule::ConnectTripartite_g_g_g_D_DFunction::execute( SLIInterpreter* i ) const
+NestModule::ConnectTripartite_g_g_g_D_D_DFunction::execute( SLIInterpreter* i ) const
 {
   kernel().connection_manager.sw_construction_connect.start();
 

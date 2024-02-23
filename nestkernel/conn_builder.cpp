@@ -49,8 +49,8 @@ nest::ConnBuilder::ConnBuilder( const std::string& primary_rule,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
   const std::vector< DictionaryDatum >& syn_specs )
-  : third_out_builder_( nullptr )
-  , third_in_builder_( nullptr )
+  : third_in_builder_( nullptr )
+  , third_out_builder_( nullptr )
   , primary_builder_( kernel().connection_manager.get_conn_builder( primary_rule,
       sources,
       targets,
@@ -68,17 +68,17 @@ nest::ConnBuilder::ConnBuilder( const std::string& primary_rule,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& third_conn_spec,
   const std::map< Name, std::vector< DictionaryDatum > >& syn_specs )
-  : third_out_builder_( kernel().connection_manager.get_third_conn_builder( third_rule,
-    targets,
+  : third_in_builder_( new ThirdInBuilder( sources,
     third,
     third_conn_spec,
-    // const_cast here seems required, clang complains otherwise; try to clean up when Datums disappear
-    const_cast< std::map< Name, std::vector< DictionaryDatum > >& >( syn_specs )[ names::third_out ] ) )
-  , third_in_builder_( new ThirdInBuilder( sources,
+    const_cast< std::map< Name, std::vector< DictionaryDatum > >& >( syn_specs )[ names::third_in ] ) )
+  , third_out_builder_( kernel().connection_manager.get_third_conn_builder( third_rule,
       third,
-      third_out_builder_,
+      targets,
+      third_in_builder_,
       third_conn_spec,
-      const_cast< std::map< Name, std::vector< DictionaryDatum > >& >( syn_specs )[ names::third_in ] ) )
+      // const_cast here seems required, clang complains otherwise; try to clean up when Datums disappear
+      const_cast< std::map< Name, std::vector< DictionaryDatum > >& >( syn_specs )[ names::third_out ] ) )
   , primary_builder_( kernel().connection_manager.get_conn_builder( primary_rule,
       sources,
       targets,
@@ -91,6 +91,11 @@ nest::ConnBuilder::ConnBuilder( const std::string& primary_rule,
 nest::ConnBuilder::~ConnBuilder()
 {
   delete primary_builder_; // fully constructed CB has one
+
+  if ( third_in_builder_ )
+  {
+    delete third_in_builder_;
+  }
 
   if ( third_out_builder_ )
   {
@@ -650,25 +655,68 @@ nest::BipartiteConnBuilder::reset_delays_()
 
 nest::ThirdInBuilder::ThirdInBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR third,
-  ThirdOutBuilder* third_out,
   const DictionaryDatum& third_conn_spec,
   const std::vector< DictionaryDatum >& syn_specs )
   : BipartiteConnBuilder( sources, third, nullptr, third_conn_spec, syn_specs )
-  , third_out_( third_out )
+  , source_third_gids_( kernel().vp_manager.get_num_threads(), nullptr )
+  , source_third_counts_( kernel().vp_manager.get_num_threads(), nullptr )
 {
+#pragma omp parallel
+  {
+    const size_t thrd = kernel().vp_manager.get_thread_id();
+    source_third_gids_[ thrd ] = new BlockVector< SourceThirdInfo_ >();
+    source_third_counts_[ thrd ] = new std::vector< size_t >( kernel().mpi_manager.get_num_processes(), 0 );
+  }
+}
+
+nest::ThirdInBuilder::~ThirdInBuilder()
+{
+#pragma omp parallel
+  {
+    const size_t thrd = kernel().vp_manager.get_thread_id();
+    delete source_third_gids_[ thrd ];
+    delete source_third_counts_[ thrd ];
+  }
+}
+
+void
+nest::ThirdInBuilder::register_connection( size_t primary_source_id, size_t third_node_id )
+{
+  const size_t tid = kernel().vp_manager.get_thread_id();
+  const auto third_node_rank =
+    kernel().mpi_manager.get_process_id_of_vp( kernel().vp_manager.node_id_to_vp( third_node_id ) );
+  source_third_gids_[ tid ]->push_back( { primary_source_id, third_node_id, third_node_rank } );
+  ++( ( *source_third_counts_[ tid ] )[ third_node_rank ] );
 }
 
 void
 nest::ThirdInBuilder::connect_()
 {
-  std::cout << "not implemented yet" << std::endl;
+  kernel().vp_manager.assert_single_threaded();
+
+#pragma omp parallel
+  {
+    const size_t tid = kernel().vp_manager.get_thread_id();
+    RngPtr rng = kernel().random_manager.get_vp_specific_rng( tid );
+
+    for ( auto& stg : *source_third_gids_[ tid ] )
+    {
+      if ( not kernel().vp_manager.is_node_id_vp_local( stg.third_gid ) )
+      {
+        continue;
+      }
+      single_connect_( stg.source_gid, *kernel().node_manager.get_node_or_proxy( stg.third_gid, tid ), tid, rng );
+    }
+  }
 }
 
 nest::ThirdOutBuilder::ThirdOutBuilder( const NodeCollectionPTR third,
   const NodeCollectionPTR targets,
+  ThirdInBuilder* third_in,
   const DictionaryDatum& third_conn_spec,
   const std::vector< DictionaryDatum >& syn_specs )
   : BipartiteConnBuilder( third, targets, nullptr, third_conn_spec, syn_specs )
+  , third_in_( third_in )
 {
 }
 
@@ -678,16 +726,19 @@ nest::ThirdOutBuilder::connect()
   assert( false ); // should never be called
 }
 
+
 nest::ThirdBernoulliWithPoolBuilder::ThirdBernoulliWithPoolBuilder( const NodeCollectionPTR third,
   const NodeCollectionPTR targets,
+  ThirdInBuilder* third_in,
   const DictionaryDatum& conn_spec,
   const std::vector< DictionaryDatum >& syn_specs )
-  : ThirdOutBuilder( third, targets, conn_spec, syn_specs )
+  : ThirdOutBuilder( third, targets, third_in, conn_spec, syn_specs )
   , p_( 1.0 )
   , random_pool_( true )
   , pool_size_( third->size() )
   , targets_per_third_( targets->size() / third->size() )
   , previous_target_( kernel().vp_manager.get_num_threads(), nullptr )
+  , pool_( kernel().vp_manager.get_num_threads(), nullptr )
 {
   updateValue< double >( conn_spec, names::p, p_ );
   updateValue< long >( conn_spec, names::pool_size, pool_size_ );
@@ -732,8 +783,16 @@ nest::ThirdBernoulliWithPoolBuilder::ThirdBernoulliWithPoolBuilder( const NodeCo
   {
     const size_t thrd = kernel().vp_manager.get_thread_id();
     pool_[ thrd ] = new std::vector< NodeIDTriple >();
-    source_third_gids_[ thrd ] = new BlockVector< SourceThirdInfo_ >();
-    source_third_counts_[ thrd ] = new std::vector< size_t >( kernel().mpi_manager.get_num_processes(), 0 );
+    pool_[ thrd ]->reserve( pool_size_ );
+  }
+}
+
+nest::ThirdBernoulliWithPoolBuilder::~ThirdBernoulliWithPoolBuilder()
+{
+#pragma omp parallel
+  {
+    const size_t thrd = kernel().vp_manager.get_thread_id();
+    delete pool_[ thrd ];
   }
 }
 
@@ -744,7 +803,6 @@ nest::ThirdBernoulliWithPoolBuilder::third_connect( size_t primary_source_id, No
   const size_t tid = kernel().vp_manager.get_thread_id();
   RngPtr rng = get_vp_specific_rng( tid );
 
-
   // conditionally connect third factor
   if ( not( rng->drand() < p_ ) )
   {
@@ -754,7 +812,7 @@ nest::ThirdBernoulliWithPoolBuilder::third_connect( size_t primary_source_id, No
   // step 2, build pool if new target
   if ( &primary_target != previous_target_[ tid ] )
   {
-    pool_[ tid ]->reserve( pool_size_ );
+    pool_[ tid ]->clear();
     if ( random_pool_ )
     {
       rng->sample( sources_->begin(), sources_->end(), std::back_inserter( *pool_[ tid ] ), pool_size_ );
@@ -770,13 +828,10 @@ nest::ThirdBernoulliWithPoolBuilder::third_connect( size_t primary_source_id, No
   // select third-factor neuron randomly from pool for this target
   const auto third_index = pool_size_ == 1 ? 0 : rng->ulrand( pool_size_ );
   const auto third_node_id = ( *pool_[ tid ] )[ third_index ].node_id;
-  const auto third_node_rank =
-    kernel().mpi_manager.get_process_id_of_vp( kernel().vp_manager.node_id_to_vp( third_node_id ) );
 
   single_connect_( third_node_id, primary_target, tid, rng );
 
-  source_third_gids_[ tid ]->push_back( { primary_source_id, third_node_id, third_node_rank } );
-  ++( ( *source_third_counts_[ tid ] )[ third_node_rank ] );
+  third_in_->register_connection( primary_source_id, third_node_id );
 }
 
 

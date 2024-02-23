@@ -113,6 +113,7 @@ public:
   ThirdOutBuilder* get_third_conn_builder( const std::string& name,
     NodeCollectionPTR sources,
     NodeCollectionPTR targets,
+    ThirdInBuilder* third_in,
     const DictionaryDatum& conn_spec,
     const std::vector< DictionaryDatum >& syn_specs );
 

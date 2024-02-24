@@ -31,6 +31,11 @@
 #include "stopwatch.h"
 
 #ifdef HAVE_BOOST
+#ifdef __cpp_lib_hardware_interference_size
+using std::hardware_destructive_interference_size;
+#else
+constexpr std::size_t hardware_destructive_interference_size = 64;
+#endif
 #include <boost/align/aligned_allocator.hpp>
 #include <new>
 #endif
@@ -61,7 +66,7 @@ namespace nest
 #ifdef HAVE_BOOST
 template < typename T >
 using aligned_vector =
-  std::vector< T, boost::alignment::aligned_allocator< T, std::hardware_destructive_interference_size > >;
+  std::vector< T, boost::alignment::aligned_allocator< T, hardware_destructive_interference_size > >;
 #else
 template < typename T >
 using aligned_vector = std::vector< T >;

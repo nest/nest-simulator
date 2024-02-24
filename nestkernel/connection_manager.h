@@ -31,8 +31,8 @@
 #include "stopwatch.h"
 
 #ifdef HAVE_BOOST
-#include <new>
 #include <boost/align/aligned_allocator.hpp>
+#include <new>
 #endif
 
 // Includes from nestkernel:
@@ -59,11 +59,12 @@ namespace nest
 {
 
 #ifdef HAVE_BOOST
-  template <typename T>
-  using aligned_vector = std::vector< T, boost::alignment::aligned_allocator<T, std::hardware_destructive_interference_size> >;
+template < typename T >
+using aligned_vector =
+  std::vector< T, boost::alignment::aligned_allocator< T, std::hardware_destructive_interference_size > >;
 #else
-  template <typename T>
-  using aligned_vector = std::vector<T>;
+template < typename T >
+using aligned_vector = std::vector< T >;
 #endif
 
 class GenericConnBuilderFactory;
@@ -648,7 +649,7 @@ private:
    * type. Arranged in a 2d structure: threads|synapsetypes.
    */
 
-  std::vector<aligned_vector<size_t>> num_connections_;
+  std::vector< aligned_vector< size_t > > num_connections_;
 
   DictionaryDatum connruledict_; //!< Dictionary for connection rules.
 

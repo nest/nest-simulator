@@ -131,7 +131,7 @@ nest::ConnectionManager::initialize( const bool reset_kernel )
   std::vector< DelayChecker > tmp( kernel().vp_manager.get_num_threads() );
   delay_checkers_.swap( tmp );
 
-  std::vector< std::vector< size_t > > tmp2( kernel().vp_manager.get_num_threads(), std::vector< size_t >() );
+  std::vector<aligned_vector<size_t>> tmp2( kernel().vp_manager.get_num_threads(), aligned_vector<size_t>() );
   num_connections_.swap( tmp2 );
 }
 

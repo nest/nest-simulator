@@ -359,6 +359,11 @@ nest::ConnectionManager::get_conn_builder( const std::string& name,
   const DictionaryDatum& conn_spec,
   const std::vector< DictionaryDatum >& syn_specs )
 {
+  if ( not connruledict_->known( name ) )
+  {
+    throw IllegalConnection( String::compose( "Unknown connection rule '%1'.", name ) );
+  }
+
   const size_t rule_id = connruledict_->lookup( name );
   BipartiteConnBuilder* cb =
     connbuilder_factories_.at( rule_id )->create( sources, targets, third_out, conn_spec, syn_specs );
@@ -374,6 +379,11 @@ nest::ConnectionManager::get_third_conn_builder( const std::string& name,
   const DictionaryDatum& conn_spec,
   const std::vector< DictionaryDatum >& syn_specs )
 {
+  if ( not thirdconnruledict_->known( name ) )
+  {
+    throw IllegalConnection( String::compose( "Unknown third-factor connection rule '%1'.", name ) );
+  }
+
   const size_t rule_id = thirdconnruledict_->lookup( name );
   ThirdOutBuilder* cb =
     thirdconnbuilder_factories_.at( rule_id )->create( sources, targets, third_in, conn_spec, syn_specs );

@@ -699,13 +699,17 @@ nest::ThirdInBuilder::connect_()
     const size_t tid = kernel().vp_manager.get_thread_id();
     RngPtr rng = kernel().random_manager.get_vp_specific_rng( tid );
 
-    for ( auto& stg : *source_third_gids_[ tid ] )
+    for ( auto& conn_pairs_per_thread : source_third_gids_ )
     {
-      if ( not kernel().vp_manager.is_node_id_vp_local( stg.third_gid ) )
+      for ( auto& conn_pair : *conn_pairs_per_thread )
       {
-        continue;
+        if ( not kernel().vp_manager.is_node_id_vp_local( conn_pair.third_gid ) )
+        {
+          continue;
+        }
+        single_connect_(
+          conn_pair.source_gid, *kernel().node_manager.get_node_or_proxy( conn_pair.third_gid, tid ), tid, rng );
       }
-      single_connect_( stg.source_gid, *kernel().node_manager.get_node_or_proxy( stg.third_gid, tid ), tid, rng );
     }
   }
 }
@@ -819,10 +823,13 @@ nest::ThirdBernoulliWithPoolBuilder::third_connect( size_t primary_source_id, No
     }
     else
     {
-      std::copy_n( sources_->begin() + get_first_pool_index_( primary_target.get_thread_lid() ),
+      throw NotImplemented(
+        "block pools are currently not implemented because we do not have access to pos of target in targets" );
+      std::copy_n( sources_->begin() + get_first_pool_index_( 0 /* pos ot target in targets node collection */ ),
         pool_size_,
         std::back_inserter( *( pool_[ tid ] ) ) );
     }
+    previous_target_[ tid ] = &primary_target;
   }
 
   // select third-factor neuron randomly from pool for this target

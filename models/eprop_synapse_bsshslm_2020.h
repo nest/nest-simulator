@@ -204,12 +204,12 @@ void register_eprop_synapse_bsshslm_2020( const std::string& name );
  * @note Each synapse has a optimizer_ object managed through a `WeightOptimizer*`, pointing to an object of
  * a specific weight optimizer type. This optimizer, drawing also on parameters in the `WeightOptimizerCommonProperties`
  * accessible via the synapse models `CommonProperties::optimizer_cp_` pointer, computes the weight update for the
- * neuron. The actual optimizer type can be selected at runtime (before creating any synapses) by exchaning the
+ * neuron. The actual optimizer type can be selected at runtime (before creating any synapses) by exchanging the
  * `optimizer_cp_` pointer. Individual optimizer objects are created by `check_connection()` when a synapse is actually
  * created. It is important that the constructors of `eprop_synapse_bsshslm_2020` **do not** create optimizer objects
  * and that the destructor **does not** delete optimizer objects; this currently leads to bugs when using Boosts's
  * `spreadsort()` due to use of the copy constructor where it should suffice to use the move constructor. Therefore,
- * `check_connection()`creates the optimizer object when it is needed and specializations of `Connector::~Connctor()`
+ * `check_connection()`creates the optimizer object when it is needed and specializations of `Connector::~Connector()`
  * and `Connector::disable_connection()` delete it by calling `delete_optimizer()`. A disadvantage of this approach is
  * that the `default_connection` in the connector model does not have an optimizer object, whence it is not possible to
  * set default (initial) values for the per-synapse optimizer.
@@ -397,7 +397,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020( con
 {
 }
 
-// This assignement operator is used to write a connection into the connection array.
+// This assignment operator is used to write a connection into the connection array.
 template < typename targetidentifierT >
 eprop_synapse_bsshslm_2020< targetidentifierT >&
 eprop_synapse_bsshslm_2020< targetidentifierT >::operator=( const eprop_synapse_bsshslm_2020& es )
@@ -438,7 +438,7 @@ eprop_synapse_bsshslm_2020< targetidentifierT >::eprop_synapse_bsshslm_2020( epr
   es.optimizer_ = nullptr;
 }
 
-// This assignement operator is used to write a connection into the connection array.
+// This assignment operator is used to write a connection into the connection array.
 template < typename targetidentifierT >
 eprop_synapse_bsshslm_2020< targetidentifierT >&
 eprop_synapse_bsshslm_2020< targetidentifierT >::operator=( eprop_synapse_bsshslm_2020&& es )

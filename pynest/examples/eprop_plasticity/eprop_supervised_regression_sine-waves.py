@@ -132,7 +132,7 @@ steps["delays"] = steps["delay_in_rec"] + steps["delay_rec_out"] + steps["delay_
 
 steps["total_offset"] = steps["offset_gen"] + steps["delays"]  # time steps of total offset
 
-steps["sim"] = steps["task"] + steps["total_offset"] + steps["extension_sim"]  # time steps of sim
+steps["sim"] = steps["task"] + steps["total_offset"] + steps["extension_sim"]  # time steps of simulation
 
 duration = {"step": 1.0}  # ms, temporal resolution of the simulation
 
@@ -219,7 +219,7 @@ gen_rate_target = nest.Create("step_rate_generator", n_out)
 # experiment, and the recording interval can be increased (see the documentation on the specific recorders). By
 # default, recordings are stored in memory but can also be written to file.
 
-n_record = 1  # number of neurons to record recordables from - this script requires n_record >= 1
+n_record = 1  # number of neurons to record dynamic variables from - this script requires n_record >= 1
 n_record_w = 3  # number of senders and targets to record weights from - this script requires n_record_w >=1
 
 if n_record == 0 or n_record_w == 0:
@@ -227,7 +227,7 @@ if n_record == 0 or n_record_w == 0:
 
 params_mm_rec = {
     "interval": duration["step"],  # interval between two recorded time points
-    "record_from": ["V_m", "surrogate_gradient", "learning_signal"],  # recordables
+    "record_from": ["V_m", "surrogate_gradient", "learning_signal"],  # dynamic variables to record
     "start": duration["offset_gen"] + duration["delay_in_rec"],  # start time of recording
     "stop": duration["offset_gen"] + duration["delay_in_rec"] + duration["task"],  # stop time of recording
 }
@@ -256,7 +256,7 @@ nrns_rec_record = nrns_rec[:n_record]
 # %% ###########################################################################################################
 # Create connections
 # ~~~~~~~~~~~~~~~~~~
-# Now, we define the connectivities and set up the synaptic parameters, with the synaptic weights drawn from
+# Now, we define the connectivity and set up the synaptic parameters, with the synaptic weights drawn from
 # normal distributions. After these preparations, we establish the enumerated connections of the core network,
 # as well as additional connections to the recorders.
 
@@ -508,8 +508,8 @@ ax.xaxis.get_major_locator().set_params(integer=True)
 fig.tight_layout()
 
 # %% ###########################################################################################################
-# Plot recordables
-# ................
+# Plot spikes and dynamic variables
+# .................................
 # This plotting routine shows how to plot all of the recorded dynamic variables and spikes across time. We take
 # one snapshot in the first iteration and one snapshot at the end.
 
@@ -562,7 +562,7 @@ for xlims in [(0, steps["sequence"]), (steps["task"] - steps["sequence"], steps[
 # Similarly, we can plot the weight histories. Note that the weight recorder, attached to the synapses, works
 # differently than the other recorders. Since synapses only get activated when they transmit a spike, the weight
 # recorder only records the weight in those moments. That is why the first weight registrations do not start in
-# the first time step and we add the inital weights manually.
+# the first time step and we add the initial weights manually.
 
 
 def plot_weight_time_course(ax, events, nrns_senders, nrns_targets, label, ylabel):

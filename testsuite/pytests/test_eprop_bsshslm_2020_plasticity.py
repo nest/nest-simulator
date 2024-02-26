@@ -76,7 +76,7 @@ def test_eprop_regression():
            (https://github.com/INM-6/eligibility_propagation/blob/eprop_in_nest/Figure_3_and_S7_e_prop_tutorials/tutorial_pattern_generation.py,
             a modified fork of the original model at https://github.com/IGITUGraz/eligibility_propagation) run with
             Linux 4.15.0-213-generic, Python v3.6.10, Numpy v1.18.0, TensorFlow v1.15.0, and
-            INM6/elgibility_propagation@7df7d2627.
+            INM6/eligibility_propagation@7df7d2627.
     """  # pylint: disable=line-too-long # noqa: E501
 
     # Initialize random generator
@@ -374,7 +374,7 @@ def test_eprop_classification():
            (https://github.com/INM-6/eligibility_propagation/blob/eprop_in_nest/Figure_3_and_S7_e_prop_tutorials/tutorial_evidence_accumulation_with_alif.py,
            a modified fork of the original model at https://github.com/IGITUGraz/eligibility_propagation) run with
            Linux 4.15.0-213-generic, Python v3.6.10, Numpy v1.18.0, TensorFlow v1.15.0, and
-           INM6/elgibility_propagation@7df7d2627.
+           INM6/eligibility_propagation@7df7d2627.
     """  # pylint: disable=line-too-long # noqa: E501
 
     # Initialize random generator

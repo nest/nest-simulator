@@ -694,21 +694,69 @@ nest::ThirdInBuilder::connect_()
 {
   kernel().vp_manager.assert_single_threaded();
 
+  // count up how many source-third pairs we need to send to each rank
+  const size_t num_ranks = kernel().mpi_manager.get_num_processes();
+  std::vector< size_t > source_third_per_rank( num_ranks, 0 );
+  for ( auto stcp : source_third_counts_ )
+  {
+    const auto& stc = *stcp;
+    for ( size_t rank = 0; rank < stc.size(); ++rank )
+    {
+      source_third_per_rank[ rank ] += stc[ rank ];
+    }
+  }
+
+  // now find global maximum; for simplicity, we will use this to configure buffers
+  std::vector< long > max_stc( num_ranks ); // MPIManager does not support size_t
+  max_stc[ kernel().mpi_manager.get_rank() ] =
+    *std::max_element( source_third_per_rank.begin(), source_third_per_rank.end() );
+  kernel().mpi_manager.communicate( max_stc );
+  const size_t global_max_stc = *std::max_element( max_stc.begin(), max_stc.end() );
+  const size_t slots_per_rank = 2 * global_max_stc;
+
+  // create and fill send buffer, entries per pair
+  std::vector< size_t > send_stg( num_ranks * slots_per_rank, 0 );
+  std::vector< size_t > rank_idx( num_ranks, 0 );
+
+  for ( auto stgp : source_third_gids_ )
+  {
+    for ( auto& stg : *stgp )
+    {
+      const auto ix = stg.third_rank * slots_per_rank + rank_idx[ stg.third_rank ];
+      send_stg[ ix ] = stg.third_gid; // write third gid first because we need to look at it first below
+      send_stg[ ix + 1 ] = stg.source_gid;
+      rank_idx[ stg.third_rank ] += 2;
+    }
+  }
+
+  std::vector< size_t > recv_stg( num_ranks * slots_per_rank, 0 );
+
+  const size_t send_recv_count = sizeof( size_t ) / sizeof( unsigned int ) * slots_per_rank;
+
+  // force to master thread for compatibility with MPI standard
+#pragma omp master
+  {
+    kernel().mpi_manager.communicate_Alltoall( send_stg, recv_stg, send_recv_count );
+  }
+
+  // Now recv_stg contains all source-third pairs where third is on current rank
+  // Create connections in parallel
+
 #pragma omp parallel
   {
     const size_t tid = kernel().vp_manager.get_thread_id();
     RngPtr rng = kernel().random_manager.get_vp_specific_rng( tid );
 
-    for ( auto& conn_pairs_per_thread : source_third_gids_ )
+    for ( size_t idx = 0; idx < recv_stg.size(); idx += 2 )
     {
-      for ( auto& conn_pair : *conn_pairs_per_thread )
+      // TODO: Once third_gid == 0, we are done for data for this rank and could jump
+      // to beginning of section for next rank
+      const auto third_gid = recv_stg[ idx ];
+      if ( third_gid > 0 and kernel().vp_manager.is_node_id_vp_local( third_gid ) )
       {
-        if ( not kernel().vp_manager.is_node_id_vp_local( conn_pair.third_gid ) )
-        {
-          continue;
-        }
-        single_connect_(
-          conn_pair.source_gid, *kernel().node_manager.get_node_or_proxy( conn_pair.third_gid, tid ), tid, rng );
+        const auto source_gid = recv_stg[ idx + 1 ];
+        assert( source_gid > 0 );
+        single_connect_( source_gid, *kernel().node_manager.get_node_or_proxy( third_gid, tid ), tid, rng );
       }
     }
   }

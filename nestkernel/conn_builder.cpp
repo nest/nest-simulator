@@ -789,6 +789,22 @@ nest::ThirdBernoulliWithPoolBuilder::ThirdBernoulliWithPoolBuilder( const NodeCo
     pool_[ thrd ] = new std::vector< NodeIDTriple >();
     pool_[ thrd ]->reserve( pool_size_ );
   }
+
+  if ( not random_pool_ )
+  {
+    // We cannot do this parallel with targets->local_begin() since we need to
+    // count over all elements of the node collection which might be a complex
+    // composition of slices with non-trivial mapping between elements and vps.
+    size_t idx = 0;
+    for ( auto tgt_it = targets_->begin(); tgt_it != targets_->end(); ++tgt_it )
+    {
+      Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id );
+      if ( not tgt->is_proxy() )
+      {
+        tgt->set_tmp_nc_index( idx++ ); // must be postfix
+      }
+    }
+  }
 }
 
 nest::ThirdBernoulliWithPoolBuilder::~ThirdBernoulliWithPoolBuilder()
@@ -797,6 +813,17 @@ nest::ThirdBernoulliWithPoolBuilder::~ThirdBernoulliWithPoolBuilder()
   {
     const size_t thrd = kernel().vp_manager.get_thread_id();
     delete pool_[ thrd ];
+
+    if ( not random_pool_ )
+    {
+      // Here we can work in parallel since we just reset to invalid_index
+      for ( auto tgt_it = targets_->local_begin(); tgt_it != targets_->end(); ++tgt_it )
+      {
+        Node* const tgt = kernel().node_manager.get_node_or_proxy( ( *tgt_it ).node_id, thrd );
+        assert( not tgt->is_proxy() );
+        tgt->set_tmp_nc_index( invalid_index );
+      }
+    }
   }
 }
 
@@ -823,9 +850,7 @@ nest::ThirdBernoulliWithPoolBuilder::third_connect( size_t primary_source_id, No
     }
     else
     {
-      throw NotImplemented(
-        "block pools are currently not implemented because we do not have access to pos of target in targets" );
-      std::copy_n( sources_->begin() + get_first_pool_index_( 0 /* pos ot target in targets node collection */ ),
+      std::copy_n( sources_->begin() + get_first_pool_index_( primary_target.get_tmp_nc_index() ),
         pool_size_,
         std::back_inserter( *( pool_[ tid ] ) ) );
     }

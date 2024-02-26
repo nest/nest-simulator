@@ -880,6 +880,17 @@ public:
    */
   DeprecationWarning deprecation_warning;
 
+  /**
+   * This is only to be used to get the index in the NC to the ThirdOutBuilder
+   */
+  void set_tmp_nc_index( size_t index );
+
+  /**
+   * Return index in NC and invalidate entry to avoid multiple reads. Only to be called by ThirdOutBuilder
+   */
+  size_t get_tmp_nc_index() const;
+
+
 private:
   void set_node_id_( size_t ); //!< Set global node id
 
@@ -957,6 +968,15 @@ private:
   bool frozen_;        //!< node shall not be updated if true
   bool initialized_;   //!< state and buffers have been initialized
   bool node_uses_wfr_; //!< node uses waveform relaxation method
+
+  /**
+   * Store index in NodeCollection.
+   *
+   * @note This is only here so that the primary connection builder can inform the ThirdOutBuilder
+   * about the index of the target neuron in the targets node collection. This is required for block-based
+   * builders.
+   */
+  size_t tmp_nc_index_;
 };
 
 inline bool
@@ -1095,6 +1115,21 @@ Node::get_thread_lid() const
 {
   return thread_lid_;
 }
+
+inline void
+Node::set_tmp_nc_index( size_t index )
+{
+  tmp_nc_index_ = index;
+}
+
+inline size_t
+Node::get_tmp_nc_index() const
+{
+  assert( tmp_nc_index_ != invalid_index );
+
+  return tmp_nc_index_;
+}
+
 
 } // namespace
 

@@ -48,6 +48,7 @@ Node::Node()
   , frozen_( false )
   , initialized_( false )
   , node_uses_wfr_( false )
+  , tmp_nc_index_( invalid_index )
 {
 }
 
@@ -62,6 +63,7 @@ Node::Node( const Node& n )
   // copy must always initialized its own buffers
   , initialized_( false )
   , node_uses_wfr_( n.node_uses_wfr_ )
+  , tmp_nc_index_( invalid_index )
 {
 }
 

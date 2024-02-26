@@ -242,13 +242,20 @@ params_mm_out = {
 params_wr = {
     "senders": nrns_in[:n_record_w] + nrns_rec[:n_record_w],  # limit senders to subsample weights to record
     "targets": nrns_rec[:n_record_w] + nrns_out,  # limit targets to subsample weights to record from
+    "start": duration["total_offset"],
+    "stop": duration["total_offset"] + duration["task"],
+}
+
+params_sr = {
+    "start": duration["total_offset"],
+    "stop": duration["total_offset"] + duration["task"],
 }
 
 ####################
 
 mm_rec = nest.Create("multimeter", params_mm_rec)
 mm_out = nest.Create("multimeter", params_mm_out)
-sr = nest.Create("spike_recorder")
+sr = nest.Create("spike_recorder", params_sr)
 wr = nest.Create("weight_recorder", params_wr)
 
 nrns_rec_record = nrns_rec[:n_record]

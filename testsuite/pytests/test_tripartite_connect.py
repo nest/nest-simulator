@@ -45,7 +45,11 @@ def test_connect_all():
     third = nest.Create("parrot_neuron", n_third)
 
     nest.TripartiteConnect(
-        pre, post, third, {"rule": "tripartite_bernoulli_with_pool", "p_primary": 1.0, "p_third_if_primary": 1}
+        pre,
+        post,
+        third,
+        {"rule": "pairwise_bernoulli", "p": 1.0},
+        {"rule": "third_factor_bernoulli_with_pool", "p": 1.0},
     )
 
     n_primary = n_pre * n_post
@@ -64,7 +68,8 @@ def test_connect_astro():
         pre,
         post,
         third,
-        {"rule": "tripartite_bernoulli_with_pool", "p_primary": 1.0, "p_third_if_primary": 1},
+        {"rule": "pairwise_bernoulli", "p": 1.0},
+        {"rule": "third_factor_bernoulli_with_pool", "p": 1.0},
         {"third_out": {"synapse_model": "sic_connection"}},
     )
 
@@ -81,7 +86,11 @@ def test_explicit_random_pool():
     third = nest.Create("parrot_neuron", n_third)
 
     nest.TripartiteConnect(
-        pre, post, third, {"rule": "tripartite_bernoulli_with_pool", "pool_type": "random", "pool_size": 2}
+        pre,
+        post,
+        third,
+        {"rule": "pairwise_bernoulli", "p": 1.0},
+        {"rule": "third_factor_bernoulli_with_pool", "p": 1.0, "pool_type": "random", "pool_size": 2},
     )
 
     n_primary = n_pre * n_post
@@ -97,7 +106,11 @@ def test_block_pool_single():
     third = nest.Create("parrot_neuron", n_third)
 
     nest.TripartiteConnect(
-        pre, post, third, {"rule": "tripartite_bernoulli_with_pool", "pool_type": "block", "pool_size": 1}
+        pre,
+        post,
+        third,
+        {"rule": "pairwise_bernoulli", "p": 1.0},
+        {"rule": "third_factor_bernoulli_with_pool", "p": 1.0, "pool_type": "block", "pool_size": 1},
     )
 
     n_primary = n_pre * n_post
@@ -113,7 +126,11 @@ def test_block_pool_wide():
     third = nest.Create("parrot_neuron", n_third)
 
     nest.TripartiteConnect(
-        pre, post, third, {"rule": "tripartite_bernoulli_with_pool", "pool_type": "block", "pool_size": 4}
+        pre,
+        post,
+        third,
+        {"rule": "pairwise_bernoulli", "p": 1.0},
+        {"rule": "third_factor_bernoulli_with_pool", "p": 1.0, "pool_type": "block", "pool_size": 4},
     )
 
     n_primary = n_pre * n_post
@@ -129,7 +146,7 @@ def test_bipartitet_raises():
     third = nest.Create("parrot_neuron", n_third)
 
     with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):
-        nest.TripartiteConnect(pre, post, third, {"rule": "one_to_one"})
+        nest.TripartiteConnect(pre, post, third, {"rule": "one_to_one"}, {"rule": "one_to_one"})
 
 
 def test_connect_complex_synspecs():
@@ -142,7 +159,8 @@ def test_connect_complex_synspecs():
         pre,
         post,
         third,
-        {"rule": "tripartite_bernoulli_with_pool", "p_primary": 1.0, "p_third_if_primary": 1},
+        {"rule": "pairwise_bernoulli", "p": 1.0},
+        {"rule": "third_factor_bernoulli_with_pool", "p": 1.0},
         {
             "primary": nest.CollocatedSynapses(
                 {"synapse_model": "stdp_synapse", "weight": 2.0}, {"synapse_model": "tsodyks_synapse", "delay": 3.0}

@@ -264,8 +264,11 @@ nrns_rec = nrns_reg + nrns_ad
 # experiment, and the recording interval can be increased (see the documentation on the specific recorders). By
 # default, recordings are stored in memory but can also be written to file.
 
-n_record = 1  # number of adaptive and regular neurons each to record dynamic variables from
-n_record_w = 3  # number of senders and targets to record weights from
+n_record = 1  # number of neurons per type to record dynamic variables from - this script requires n_record >= 1
+n_record_w = 3  # number of senders and targets to record weights from - this script requires n_record_w >=1
+
+if n_record == 0 or n_record_w == 0:
+    raise ValueError("n_record and n_record_w >= 1 required")
 
 params_mm_reg = {
     "interval": duration["step"],  # interval between two recorded time points

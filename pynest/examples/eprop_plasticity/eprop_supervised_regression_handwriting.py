@@ -235,6 +235,12 @@ gen_rate_target = nest.Create("step_rate_generator", n_out)
 # experiment, and the recording interval can be increased (see the documentation on the specific recorders). By
 # default, recordings are stored in memory but can also be written to file.
 
+n_record = 1  # number of neurons to record dynamic variables from - this script requires n_record >= 1
+n_record_w = 3  # number of senders and targets to record weights from - this script requires n_record_w >=1
+
+if n_record == 0 or n_record_w == 0:
+    raise ValueError("n_record and n_record_w >= 1 required")
+
 n_record = 1  # number of neurons to record dynamic variables from
 n_record_w = 3  # number of senders and targets to record weights from
 

@@ -241,9 +241,6 @@ n_record_w = 3  # number of senders and targets to record weights from - this sc
 if n_record == 0 or n_record_w == 0:
     raise ValueError("n_record and n_record_w >= 1 required")
 
-n_record = 1  # number of neurons to record dynamic variables from
-n_record_w = 3  # number of senders and targets to record weights from
-
 params_mm_rec = {
     "interval": duration["step"],  # interval between two recorded time points
     "record_from": [

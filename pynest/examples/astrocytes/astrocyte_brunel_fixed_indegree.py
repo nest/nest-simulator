@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# astrocyte_brunel.py
+# astrocyte_brunel_fixed_indegree.py
 #
 # This file is part of NEST.
 #
@@ -33,6 +33,9 @@ The simulation results show how astrocytes affect neuronal excitability. The
 astrocytic dynamics, the slow inward current in the neurons induced by the
 astrocytes, and the raster plot of neuronal firings are shown in the created
 figures.
+
+In this version of the model, primary connections between populations are
+created with the fixed-indegree rule.
 
 References
 ~~~~~~~~~~
@@ -384,6 +387,3 @@ def run_simulation():
 # Run simulation.
 
 run_simulation()
-
-print(nest.num_connections)
-print(nest.GetKernelStatus()["time_construction_connect"])

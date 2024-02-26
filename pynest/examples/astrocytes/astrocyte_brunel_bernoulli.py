@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# astrocyte_brunel.py
+# astrocyte_brunel_bernoulli.py
 #
 # This file is part of NEST.
 #
@@ -33,6 +33,9 @@ The simulation results show how astrocytes affect neuronal excitability. The
 astrocytic dynamics, the slow inward current in the neurons induced by the
 astrocytes, and the raster plot of neuronal firings are shown in the created
 figures.
+
+In this version of the model, primary connections between populations are
+created with the pairwise bernoulli rule.
 
 References
 ~~~~~~~~~~
@@ -77,8 +80,8 @@ sim_params = {
     "sim_time": 1000.0,  # simulation time in ms
     "N_rec_spk": 100,  # number of neurons to record from with spike recorder
     "N_rec_mm": 50,  # number of nodes (neurons, astrocytes) to record from with multimeter
-    "n_threads": 4,  # number of threads for NEST
-    "seed": 1010,  # seed for the random module
+    "n_vp": 4,  # number of VPs for NEST
+    "seed": 100,  # seed for the random module
 }
 
 ###############################################################################
@@ -318,7 +321,7 @@ def run_simulation():
     # NEST configuration
     nest.ResetKernel()
     nest.resolution = sim_params["dt"]
-    nest.local_num_threads = sim_params["n_threads"]
+    nest.total_num_virtual_procs = sim_params["n_vp"]
     nest.print_time = True
     nest.overwrite_files = True
 
@@ -381,6 +384,3 @@ def run_simulation():
 # Run simulation.
 
 run_simulation()
-
-print(nest.num_connections)
-print(nest.GetKernelStatus()["time_construction_connect"])

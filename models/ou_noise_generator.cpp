@@ -225,10 +225,6 @@ nest::ou_noise_generator::pre_run_hook()
   const double noise_amp = P_.std_ *  std::sqrt(-1 * std::expm1(-2 * h / P_.tau_));
   const double prop = std::exp(-1 * h / P_.tau_);
   const double tau_inv = h / P_.tau_;
-  std::cout << "I am in pre run" << std::endl;
-  std::cout << P_.tau_ << std::endl;
-  std::cout << h << std::endl;
-
 
   V_.noise_amp_ = noise_amp;
   V_.prop_ = prop;
@@ -291,31 +287,21 @@ nest::ou_noise_generator::update( Time const& origin, const long from, const lon
       // compute new currents
       for ( double& amp : B_.amps_ )
       {
-        amp = P_.mean_ * V_.tau_inv_ + S_.I_avg_ * V_.prop_ + V_.noise_amp_ * V_.normal_dist_( get_vp_specific_rng( get_thread() ) );
-        std::cout << amp << std::endl;
-        std::cout << S_.I_avg_ - P_.mean_ << std::endl;
-        std::cout << S_.I_avg_ << std::endl;
-        std::cout << P_.mean_ << std::endl;
-        std::cout << V_.prop_ << std::endl;
-        std::cout << V_.noise_amp_ << std::endl;
+        amp = P_.mean_ * V_.tau_inv_
+            + amp * V_.prop_ + V_.noise_amp_
+            * V_.normal_dist_( get_vp_specific_rng( get_thread() ) );
       }
       // use now as reference, in case we woke up from inactive period
       B_.next_step_ = now + V_.dt_steps_;
     }
 
     // record values
-    int i = 0;
     for ( double& amp : B_.amps_ )
     {
-      i++;
-      std::cout << "record values" << std::endl;
-      std::cout << amp << std::endl;
-      S_.I_avg_ = amp;
-      std::cout << S_.I_avg_ << std::endl;
+      S_.I_avg_ += amp;
     }
-    std::cout << i << std::endl;
 
-    // S_.I_avg_ /= std::max( 1, int( B_.amps_.size() ) );
+    S_.I_avg_ /= std::max( 1, int( B_.amps_.size() ) );
     B_.logger_.record_data( origin.get_steps() + offs );
 
     DSCurrentEvent ce;

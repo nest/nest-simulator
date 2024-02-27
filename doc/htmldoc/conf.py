@@ -83,9 +83,6 @@ sphinx_gallery_conf = {
     "download_all_examples": False,
 }
 
-carousel_show_captions_below = True
-# carousel_show_controls = True
-
 # General information about the project.
 project = "NEST Simulator user documentation"
 copyright = "2004, nest-simulator"
@@ -128,9 +125,6 @@ exclude_patterns = [
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = "manni"
 
-# If true, `todo` and `todoList` produce output, else they produce nothing.
-todo_include_todos = False
-
 # add numbered figure link
 numfig = True
 
@@ -164,13 +158,11 @@ html_theme_options = {
     "color_primary": "orange",
     "color_accent": "white",
     "theme_color": "ff6633",
-    "master_doc": True,
+    "master_doc": False,
     # Set the repo location to get a badge with stats
     "repo_url": "https://github.com/nest/nest-simulator/",
     "repo_name": "NEST Simulator",
-    # "nav_links": [
-    #     {"href": "index", "internal": True, "title": "NEST docs home"}
-    #     ],
+    "nav_links": [{"href": "index", "internal": True, "title": "NEST docs home"}],
     # Visible levels of the global TOC; -1 means unlimited
     "globaltoc_depth": 1,
     # If False, expand all TOC entries

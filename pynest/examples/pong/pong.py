@@ -193,10 +193,7 @@ class GameOfPong(object):
         """Updates ball and paddle coordinates based on direction and velocity."""
         for paddle in [self.r_paddle, self.l_paddle]:
             paddle.y_pos += paddle.direction * paddle.velocity
-            if paddle.y_pos < 0:
-                paddle.y_pos = 0
-            if paddle.y_pos > self.y_length:
-                paddle.y_pos = self.y_length
+            paddle.y_pos = min(max(0, paddle.y_pos), self.y_length)
             paddle.update_cell()
         self.ball.y_pos += self.ball.velocity * self.ball.direction[1]
         self.ball.x_pos += self.ball.velocity * self.ball.direction[0]

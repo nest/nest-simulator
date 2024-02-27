@@ -1,3 +1,5 @@
+.. _tutorials_guides:
+
 Tutorials and guides
 ====================
 

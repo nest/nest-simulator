@@ -51,12 +51,15 @@ Welcome!
 
                 .. figure:: examples/hpc_benchmark_connectivity.svg
 
-                  Performance scaling benchmarks
+                  Test perfomance and benchmarks
 
                 .. figure:: static/img/pong_sim.gif
 
                   Play PONG with NEST
 
+                .. figure:: static/img/gapjunctions.png
+
+                  Explore synapses types like gap junctions
 
        .. grid-item::
 
@@ -172,7 +175,7 @@ Conceptual approach
 
    NEST Desktop <https://nest-desktop.readthedocs.io/en/latest/>
    NESTML <https://nestml.readthedocs.io/en/latest/>
-   NESTGPU <https://nestgpu.readthedocs.io/en/latest/>
+   NESTGPU <https://nest-gpu.readthedocs.io/en/latest/>
 
 .. toctree::
    :maxdepth: 1

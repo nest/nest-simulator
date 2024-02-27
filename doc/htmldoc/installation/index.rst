@@ -4,11 +4,12 @@ Install NEST
 ============
 
 
-.. grid:: 3
+.. grid:: 2
    :gutter: 1
 
    .. grid-item-card:: |user|  Install a pre-built NEST package using
       :class-title: sd-d-flex-row sd-align-minor-center
+      :columns: 4
 
       * :ref:`Docker (cross-platform) <docker>`
         (Includes NESTML)
@@ -20,20 +21,18 @@ Install NEST
 
    .. grid-item-card:: |dev| Source install
       :class-title: sd-d-flex-row sd-align-minor-center
+      :columns: 4
 
       If you want to do development with NEST
 
       * :ref:`dev_install`
 
-   .. grid-item-card:: |admin| HPC install
-      :class-title: sd-d-flex-row sd-align-minor-center
-
-      If you are working with HPC systems
-
-      * :ref:`Install NEST for supercomputers and clusters <hpc_install>`
+.. grid:: 2
+   :gutter: 1
 
    .. grid-item-card:: |desktop|
       :class-title: sd-d-flex-row sd-align-minor-center
+      :columns: 4
 
       A graphical user interface, ideal for learning and teaching concepts
       regarding neural networks in classrooms and workshops.
@@ -44,6 +43,7 @@ Install NEST
 
    .. grid-item-card:: |nestml|
       :class-title: sd-d-flex-row sd-align-minor-center
+      :columns: 4
 
       Install the NEST modeling language to create and customize models
 

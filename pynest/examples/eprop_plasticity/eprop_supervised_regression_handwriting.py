@@ -661,13 +661,11 @@ def plot_weight_time_course(ax, events, nrns_senders, nrns_targets, label, ylabe
 
 fig, axs = plt.subplots(3, 1, sharex=True, figsize=(3, 4))
 
+plot_weight_time_course(axs[0], events_wr, nrns_in[:n_record_w], nrns_rec[:n_record_w], "in_rec", r"$W_\text{in}$ (pA)")
 plot_weight_time_course(
-    axs[0], events_wr, nrns_in[:n_record_w], nrns_rec[:n_record_w], "in_rec", f"$W_\\text{{in}}$ (pA)"
+    axs[1], events_wr, nrns_rec[:n_record_w], nrns_rec[:n_record_w], "rec_rec", r"$W_\text{rec}$ (pA)"
 )
-plot_weight_time_course(
-    axs[1], events_wr, nrns_rec[:n_record_w], nrns_rec[:n_record_w], "rec_rec", f"$W_\\text{{rec}}$ (pA)"
-)
-plot_weight_time_course(axs[2], events_wr, nrns_rec[:n_record_w], nrns_out, "rec_out", f"$W_\\text{{out}}$ (pA)")
+plot_weight_time_course(axs[2], events_wr, nrns_rec[:n_record_w], nrns_out, "rec_out", r"$W_\text{out}$ (pA)")
 
 axs[-1].set_xlabel(r"$t$ (ms)")
 axs[-1].set_xlim(0, steps["task"])

@@ -148,6 +148,11 @@ nest::BipartiteConnBuilder::BipartiteConnBuilder( NodeCollectionPTR sources,
   updateValue< bool >( conn_spec, names::allow_multapses, allow_multapses_ );
   updateValue< bool >( conn_spec, names::make_symmetric, make_symmetric_ );
 
+  if ( make_symmetric_ and third_out_ )
+  {
+    throw BadProperty( "Third-factor connectivity cannot be used with 'make_symmetric == True'." );
+  }
+
   // Synapse-specific parameters that should be skipped when we set default synapse parameters
   skip_syn_params_ = {
     names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model

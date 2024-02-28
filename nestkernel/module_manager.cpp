@@ -100,6 +100,15 @@ ModuleManager::set_status( const DictionaryDatum& d )
 void
 ModuleManager::install( const std::string& name )
 {
+  // We cannot have connections without network elements, so we only need to check nodes.
+  // Simulating an empty network causes no problems, so we don't have to check for that.
+  if ( kernel().node_manager.size() > 0 )
+  {
+    throw KernelException(
+      "Network elements have been created, so external modules can no longer be imported. "
+      "Call ResetKernel() first." )
+  }
+
   if ( name.empty() )
   {
     throw DynamicModuleManagementError( "Module name must not be empty." );

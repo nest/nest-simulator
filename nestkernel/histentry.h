@@ -49,9 +49,86 @@ class histentry_extended
 public:
   histentry_extended( double t, double dw, size_t access_counter );
 
-  double t_;              //!< point in time when spike occurred (in ms)
-  double dw_;             //!< value dependend on the additional factor
-  size_t access_counter_; //!< access counter to enable removal of the entry, once all neurons read it
+  double t_; //!< point in time when spike occurred (in ms)
+  double dw_;
+  //! how often this entry was accessed (to enable removal, once read by all
+  //! neurons which need it)
+  size_t access_counter_;
+
+  friend bool operator<( const histentry_extended he, double t );
+};
+
+inline bool
+operator<( const histentry_extended he, double t )
+{
+  return he.t_ < t;
+}
+
+/**
+ * Base class implementing history entries for e-prop plasticity.
+ */
+class HistEntryEprop
+{
+public:
+  HistEntryEprop( long t );
+
+  long t_;
+  virtual ~HistEntryEprop()
+  {
+  }
+
+  friend bool operator<( const HistEntryEprop& he, long t );
+};
+
+inline bool
+operator<( const HistEntryEprop& he, long t )
+{
+  return he.t_ < t;
+}
+
+/**
+ * Class implementing entries of the recurrent node model's history of e-prop dynamic variables.
+ */
+class HistEntryEpropRecurrent : public HistEntryEprop
+{
+public:
+  HistEntryEpropRecurrent( long t, double surrogate_gradient, double learning_signal );
+
+  double surrogate_gradient_;
+  double learning_signal_;
+};
+
+/**
+ * Class implementing entries of the readout node model's history of e-prop dynamic variables.
+ */
+class HistEntryEpropReadout : public HistEntryEprop
+{
+public:
+  HistEntryEpropReadout( long t, double error_signal );
+
+  double error_signal_;
+};
+
+/**
+ * Class implementing entries of the update history for e-prop plasticity.
+ */
+class HistEntryEpropUpdate : public HistEntryEprop
+{
+public:
+  HistEntryEpropUpdate( long t, size_t access_counter );
+
+  size_t access_counter_;
+};
+
+/**
+ * Class implementing entries of the firing rate regularization history for e-prop plasticity.
+ */
+class HistEntryEpropFiringRateReg : public HistEntryEprop
+{
+public:
+  HistEntryEpropFiringRateReg( long t, double firing_rate_reg );
+
+  double firing_rate_reg_;
 };
 }
 

@@ -38,13 +38,18 @@ Selection of weight optimizers
 
 Description
 +++++++++++
+A weight optimizer is an algorithm that adjusts the synaptic weights in a
+network during training to minimize the loss function and thus improve the
+network's performance on a given task.
+
+This method is an essential part of plasticity rules like e-prop plasticity.
 
 Currently two weight optimizers are implemented: gradient descent and the Adam optimizer.
 
 In gradient descent [1]_ the weights are optimized via:
 
 .. math::
-  W_t = W_{t-1} - \eta g_t \,,
+  W_t = W_{t-1} - \eta \, g_t \,,
 
 whereby :math:`\eta` denotes the learning rate and :math:`g_t` the gradient of the current
 time step :math:`t`.
@@ -53,8 +58,8 @@ In the Adam scheme [2]_ the weights are optimized via:
 
 .. math::
   m_0 &= 0, v_0 = 0, t = 1 \,, \\
-  m_t &= \beta_1 \cdot m_{t-1} + \left(1-\beta_1\right) \cdot g_t \,, \\
-  v_t &= \beta_2 \cdot v_{t-1} + \left(1-\beta_2\right) \cdot g_t^2 \,, \\
+  m_t &= \beta_1 \, m_{t-1} + \left(1-\beta_1\right) \, g_t \,, \\
+  v_t &= \beta_2 \, v_{t-1} + \left(1-\beta_2\right) \, g_t^2 \,, \\
   \hat{m}_t &= \frac{m_t}{1-\beta_1^t} \,, \\
   \hat{v}_t &= \frac{v_t}{1-\beta_2^t} \,, \\
   W_t &= W_{t-1} - \eta\frac{\hat{m_t}}{\sqrt{\hat{v}_t} + \epsilon} \,.
@@ -72,7 +77,7 @@ Parameter  Unit  Math equivalent          Default Description
 batch_size                                      1 Size of batch
 eta             :math:`\eta`                 1e-4 Learning rate
 Wmax         pA :math:`W_{ji}^\text{max}`   100.0 Maximal value for synaptic weight
-Wmin         pA :math:`W_{ji}^\text{min}`     0.0 Minimal value for synaptic weight
+Wmin         pA :math:`W_{ji}^\text{min}`  -100.0 Minimal value for synaptic weight
 ========== ==== ========================= ======= =================================
 
 ========= ==== =============== ================ ==============

@@ -62,19 +62,25 @@ names and the publication year.
    dynamics of the ``iaf_psc_delta`` model, with minor differences, such as the
    propagator of the post-synaptic current and the voltage reset upon a spike.
 
-The membrane voltage time course is given by:
+The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given by:
 
 .. math::
     v_j^t &= \alpha v_j^{t-1}+\sum_{i \neq j}W_{ji}^\mathrm{rec}z_i^{t-1}
              + \sum_i W_{ji}^\mathrm{in}x_i^t-z_j^{t-1}v_\mathrm{th} \,, \\
-    \alpha &= e^{-\frac{\delta t}{\tau_\mathrm{m}}} \,.
+    \alpha &= e^{-\frac{\Delta t}{\tau_\mathrm{m}}} \,,
+
+whereby :math:`W_{ji}^\mathrm{rec}` and :math:`W_{ji}^\mathrm{in}` are the recurrent and
+input synaptic weights, and :math:`z_i^{t-1}` and :math:`x_i^t` are the
+recurrent and input presynaptic spike state variables, respectively.
+
+Descriptions of further parameters and variables can be found in the table below.
 
 The threshold adaptation is given by:
 
 .. math::
     A_j^t &= v_\mathrm{th} + \beta a_j^t \,, \\
     a_j^t &= \rho a_j^{t-1} + z_j^{t-1} \,, \\
-    \rho &= e^{-\frac{\delta t}{\tau_\mathrm{a}}} \,.
+    \rho &= e^{-\frac{\Delta t}{\tau_\mathrm{a}}} \,.
 
 The spike state variable is expressed by a Heaviside function:
 
@@ -99,31 +105,37 @@ plasticity is calculated:
 See the documentation on the ``iaf_psc_delta`` neuron model for more information
 on the integration of the subthreshold dynamics.
 
-The change of the synaptic weight is calculated from the gradient
+The change of the synaptic weight is calculated from the gradient :math:`g` of
+the loss :math:`E` with respect to the synaptic weight :math:`W_{ji}`:
 :math:`\frac{\mathrm{d}{E}}{\mathrm{d}{W_{ij}}}=g`
 which depends on the presynaptic
 spikes :math:`z_i^{t-1}`, the surrogate-gradient / pseudo-derivative of the postsynaptic membrane
 voltage :math:`\psi_j^t` (which together form the eligibility trace
-:math:`e_{ji}`), and the learning signal :math:`L_j^t` emitted by the readout
+:math:`e_{ji}^t`), and the learning signal :math:`L_j^t` emitted by the readout
 neurons.
 
 .. math::
   \frac{\mathrm{d}E}{\mathrm{d}W_{ji}} = g &= \sum_t L_j^t \bar{e}_{ji}^t, \\
   e_{ji}^t &= \psi_j^t \left(\bar{z}_i^{t-1} - \beta \epsilon_{ji,a}^{t-1}\right)\,, \\
   \epsilon^{t-1}_{ji,\text{a}} &= \psi_j^{t-1}\bar{z}_i^{t-2} + \left( \rho - \psi_j^{t-1} \beta \right)
-  \epsilon^{t-2}_{ji,a}\; \text{with}\,\rho &= \exp\left(-\frac{\delta t}{\tau_\text{a}}\right)\,. \\
+  \epsilon^{t-2}_{ji,a}\,. \\
 
 The eligibility trace and the presynaptic spike trains are low-pass filtered
 with some exponential kernels:
 
 .. math::
-  \bar{e}_{ji}=\mathcal{F}_\kappa(e_{ji}) \;\text{with}\, \kappa=\exp\left(\frac{-\delta t}{
-    \tau_\text{m,out}}\right)\,,\\ \bar{z}_i=\mathcal{F}_\alpha(z_i) \;\text{with}\,
-    \alpha=\exp\left(\frac{-\delta t}{\tau_\text{m}}\right)\,.
+  \bar{e}_{ji}^t&=\mathcal{F}_\kappa(e_{ji}^t) \;\text{with}\, \kappa=e^{-\frac{\Delta t}{
+    \tau_\text{m,out}}}\,,\\
+    \bar{z}_i^t&=\mathcal{F}_\alpha(z_i^t)\,,\\
+    \mathcal{F}_\alpha(z_i^t) &= \alpha\, \mathcal{F}_\alpha(z_i^{t-1}) + z_i^t
+    \;\text{with}\, \mathcal{F}_\alpha(z_i^0)=z_i^0\,\,,
+
+whereby :math:`\tau_\text{m,out}` is the membrane time constant of the readout neuron.
 
 Furthermore, a firing rate regularization mechanism keeps the average firing
 rate :math:`f^\text{av}_j` of the postsynaptic neuron close to a target firing rate
-:math:`f^\text{target}`:
+:math:`f^\text{target}`. The gradient :math:`g^\text{reg}` of the regularization loss :math:`E^\text{reg}`
+with respect to the synaptic weight :math:`W_{ji}` is given by:
 
 .. math::
   \frac{\mathrm{d}E^\text{reg}}{\mathrm{d}W_{ji}} = g^\text{reg} = c_\text{reg}
@@ -193,7 +205,7 @@ adaptation              :math:`a_j`               0.0 Adaptation variable
 learning_signal         :math:`L_j`               0.0 Learning signal
 surrogate_gradient      :math:`\psi_j`            0.0 Surrogate gradient
 V_m                  mV :math:`v_j`             -70.0 Membrane voltage
-V_th_adapt           mV :math:`A_j`             -15.0 Adapting spike threshold
+V_th_adapt           mV :math:`A_j`             -55.0 Adapting spike threshold
 ================== ==== =============== ============= ========================
 
 Recordables

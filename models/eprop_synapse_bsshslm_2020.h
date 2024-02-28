@@ -44,7 +44,7 @@ Description
 +++++++++++
 
 ``eprop_synapse_bsshslm_2020`` is an implementation of a connector model to create synapses between postsynaptic
-neurons :math:`j` and presynaptic neurons and :math:`i` for eligibility propagation (e-prop) plasticity.
+neurons :math:`j` and presynaptic neurons :math:`i` for eligibility propagation (e-prop) plasticity.
 
 E-prop plasticity was originally introduced and implemented in TensorFlow in [1]_.
 
@@ -59,15 +59,15 @@ gradient which is specific to the post-synaptic neuron and is thus defined there
 Eventually, it optimizes the weight with the specified optimizer.
 
 E-prop synapses require archiving of continuous quantities. Therefore e-prop
-synapses can only be connected to neuron models that are capable of doing this
+synapses can only be connected to neuron models that are capable of
 archiving. So far, compatible models are ``eprop_iaf_bsshslm_2020``,
 ``eprop_iaf_adapt_bsshslm_2020``, and ``eprop_readout_bsshslm_2020``.
 
 For more information on e-prop plasticity, see the documentation on the other e-prop models:
 
  * :doc:`eprop_iaf_bsshslm_2020<../models/eprop_iaf_bsshslm_2020/>`
+ * :doc:`eprop_iaf_adapt_bsshslm_2020<../models/eprop_iaf_adapt_bsshslm_2020/>`
  * :doc:`eprop_readout_bsshslm_2020<../models/eprop_readout_bsshslm_2020/>`
- * :doc:`eprop_synapse_bsshslm_2020<../models/eprop_synapse_bsshslm_2020/>`
  * :doc:`eprop_learning_signal_connection_bsshslm_2020<../models/eprop_learning_signal_connection_bsshslm_2020/>`
 
 For more information on the optimizers, see the documentation of the weight optimizer:
@@ -103,7 +103,7 @@ optimizer                                     {} Dictionary of optimizer paramet
 Parameter     Unit Math equivalent           Default Description
 ============= ==== ========================= ======= =========================================================
 delay         ms   :math:`d_{ji}`                1.0 Dendritic delay
-tau_m_readout ms   :math:`\tau_\text{m,out}`     0.0 Time constant for low-pass filtering of eligibility trace
+tau_m_readout ms   :math:`\tau_\text{m,out}`    10.0 Time constant for low-pass filtering of eligibility trace
 weight        pA   :math:`W_{ji}`                1.0 Initial value of synaptic weight
 ============= ==== ========================= ======= =========================================================
 

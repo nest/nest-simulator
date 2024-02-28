@@ -51,7 +51,6 @@ The suffix ``_bsshslm_2020`` follows the NEST convention to indicate in the
 model name the paper that introduced it by the first letter of the authors' last
 names and the publication year.
 
-
 For more information on e-prop plasticity, see the documentation on the other e-prop models:
 
  * :doc:`eprop_iaf_bsshslm_2020<../models/eprop_iaf_bsshslm_2020/>`

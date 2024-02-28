@@ -56,12 +56,17 @@ model name the paper that introduced it by the first letter of the authors' last
 names and the publication year.
 
 
-The membrane voltage time course is given by:
+The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given by:
 
 .. math::
-    v_j^t &= \alpha v_j^{t-1}+\sum_{i \neq j}W_{ji}^\mathrm{out}z_i^{t-1}
+    v_j^t &= \kappa v_j^{t-1}+\sum_{i \neq j}W_{ji}^\mathrm{out}z_i^{t-1}
              -z_j^{t-1}v_\mathrm{th} \,, \\
-    \alpha &= e^{-\frac{\delta t}{\tau_\mathrm{m}}} \,.
+    \kappa &= e^{-\frac{\Delta t}{\tau_\mathrm{m}}} \,,
+
+whereby :math:`W_{ji}^\mathrm{out}` are the output synaptic weights and
+:math:`z_i^{t-1}` are the recurrent presynaptic spike state variables.
+
+Descriptions of further parameters and variables can be found in the table below.
 
 An additional state variable and the corresponding differential
 equation represents a piecewise constant external current.
@@ -69,6 +74,8 @@ equation represents a piecewise constant external current.
 See the documentation on the ``iaf_psc_delta`` neuron model for more information
 on the integration of the subthreshold dynamics.
 
+The change of the synaptic weight is calculated from the gradient :math:`g` of
+the loss :math:`E` with respect to the synaptic weight :math:`W_{ji}`:
 The change of the synaptic weight is calculated from the gradient
 :math:`\frac{\mathrm{d}{E}}{\mathrm{d}{W_{ij}}}=g`
 which depends on the presynaptic
@@ -81,7 +88,9 @@ neurons.
 The presynaptic spike trains are low-pass filtered with an exponential kernel:
 
 .. math::
-  \bar{z}_i=\mathcal{F}_\kappa(z_i) \;\text{with}\, \kappa=\exp\left(\frac{-\delta t}{\tau_\text{m}}\right)\,.
+  \bar{z}_i^t &=\mathcal{F}_\kappa(z_i^t)\,, \\
+  \mathcal{F}_\kappa(z_i^t) &= \kappa\, \mathcal{F}_\kappa(z_i^{t-1}) + z_i^t
+  \;\text{with}\, \mathcal{F}_\kappa(z_i^0)=z_i^0\,\,.
 
 Since readout neurons are leaky integrators without a spiking mechanism, the
 formula for computing the gradient lacks the surrogate gradient /

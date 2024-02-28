@@ -118,15 +118,15 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # The original number of iterations requires distributed computing.
 
 n_batch = 32  # batch size, 64 in reference [2], 32 in the README to reference [2]
-n_iter_train = 50
-n_iter_test = 5
+n_iter_train = 4
+n_iter_test = 1
 
 steps = {}
 
 steps["sample_length"] = 97
 steps["extra_sample_steps"] = 3
 steps["sequence"] = steps["sample_length"] + steps["extra_sample_steps"]  # time steps of one full sequence
-steps["learning_window"] = 10  # time steps of window with non-zero learning signals
+steps["learning_window"] = 15  # time steps of window with non-zero learning signals
 steps["training_time"] = n_iter_train * n_batch * steps["sequence"]
 steps["testing_time"] = n_iter_test * n_batch * steps["sequence"]
 steps["task"] = steps["training_time"] + steps["testing_time"]  # time steps of task
@@ -184,25 +184,31 @@ n_in = 28 * 28  # number of input neurons
 n_rec = 200  # number of recurrent neurons
 n_out = 10
 
+model_nrn_rec = "eprop_iaf_psc_delta"
 
 params_nrn_rec = {
     "beta_fr_ema": 0.999,  # Smoothing factor of firing rate exponential moving average
     "C_m": 1.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
-    "c_reg": 2.0
-    / duration["sequence"],  # firing rate regularization scaling - double the TF c_reg for technical reasons
+    "c_reg": 2.0 / duration["sequence"],  # firing rate regularization scaling
     "E_L": 0.0,  # mV, leak reversal potential
-    "eprop_isi_trace_cutoff": 100,  # cutoff of integration of eprop trace between spikes
+    "eprop_isi_trace_cutoff": 10,  # cutoff of integration of eprop trace between spikes
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
     "gamma": 0.3,  # scaling of the pseudo derivative
     "I_e": 0.0,  # pA, external current input
-    "psc_scale_factor": "unity",  # postsynaptic current scale factor
     "surrogate_gradient_function": "piecewise_linear",  # surrogate gradient / pseudo-derivative function
     "t_ref": 0.0,  # ms, duration of refractory period
-    "tau_m": 20.0,  # ms, membrane time constant
+    "tau_m": 30.0,  # ms, membrane time constant
     "V_m": 0.0,  # mV, initial value of the membrane voltage
-    "V_th": 0.6,  # mV, spike threshold membrane voltage,
-    "eta": 5e-3,
+    "V_th": 0.5,  # mV, spike threshold membrane voltage
+    "V_reset": -0.5,
 }
+
+if model_nrn_rec == "eprop_iaf":
+    del params_nrn_rec["V_reset"]
+    params_nrn_rec["c_reg"] = 300.0 / duration["sequence"]  # firing rate regularization scaling
+    params_nrn_rec["psc_scale_factor"] = "unity" # postsynaptic current scale factor
+    params_nrn_rec["V_th"] = 0.6  # mV, spike threshold membrane voltage
+
 
 params_nrn_out = {
     "C_m": 1.0,
@@ -212,7 +218,6 @@ params_nrn_out = {
     "loss": "mean_squared_error",  # loss function
     "tau_m": 20.0,
     "V_m": 0.0,
-    "eta": 5e-3,
 }
 
 ####################
@@ -226,7 +231,7 @@ nrns_in = nest.Create("parrot_neuron", n_in)
 # The suffix _bsshslm_2020 follows the NEST convention to indicate in the model name the paper
 # that introduced it by the first letter of the authors' last names and the publication year.
 
-nrns_rec = nest.Create("eprop_iaf", n_rec, params_nrn_rec)
+nrns_rec = nest.Create(model_nrn_rec, n_rec, params_nrn_rec)
 nrns_out = nest.Create("eprop_readout", n_out, params_nrn_out)
 gen_rate_target = nest.Create("step_rate_generator", n_out)
 
@@ -558,8 +563,8 @@ for target_rate in target_rates:
 nest.SetStatus(gen_spk_in, params_gen_spk_in)
 nest.SetStatus(gen_rate_target, params_gen_rate_target)
 nest.Simulate(duration["total_offset"] + duration["training_time"])
-nest.SetStatus(nrns_rec, {"eta": 0.0})
-nest.SetStatus(nrns_out, {"eta": 0.0})
+params_common_syn_eprop["optimizer"]["eta"] = 0.0
+nest.SetDefaults("eprop_synapse", params_common_syn_eprop)
 nest.Simulate(duration["extension_sim"] + duration["testing_time"])
 
 

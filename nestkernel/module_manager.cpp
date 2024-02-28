@@ -106,7 +106,7 @@ ModuleManager::install( const std::string& name )
   {
     throw KernelException(
       "Network elements have been created, so external modules can no longer be imported. "
-      "Call ResetKernel() first." )
+      "Call ResetKernel() first." );
   }
 
   if ( name.empty() )

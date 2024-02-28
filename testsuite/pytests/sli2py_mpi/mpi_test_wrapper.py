@@ -19,15 +19,77 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+
+"""
+Support for NEST-style MPI Tests.
+
+NEST-style MPI tests run the same simulation script for different number of MPI
+processes and then compare results. Often, the number of virtual processes will
+be fixed while the number of MPI processes is varied, but this is not required.
+
+- The process is managed by subclasses of the `MPITestWrapper` base class
+- Each test file must contain exactly one test function
+    - The test function must be decorated with a subclass of `MPITestWrapper`
+    - The wrapper will write a modified version of the test file as `runner.py`
+      to a temporary directory and mpirun it from there; results are collected
+      in the temporary directory
+    - The test function can be decorated with other pytest decorators. These
+      are evaluated in the wrapping process
+    - No decorators are written to the `runner.py` file.
+    - Test files **must not import nest** outside the test function
+    - In `runner.py`, the following constants are defined:
+         - `SPIKE_LABEL`
+         - `MULTI_LABEL`
+         - `OTHER_LABEL`
+      They must be used as `label` for spike recorders and multimeters, respectively,
+      or for other files for output data (CSV files). They are format strings expecting
+      the number of processes with which NEST is run as argument.
+- `conftest.py` must not be loaded, otherwise mpirun will return a non-zero exit code;
+  use `pytest --noconftest`
+- Set `debug=True` on the decorator to see debug output and keep the
+  temporary directory that has been created (latter works only in
+  Python 3.12 and later)
+- Evaluation criteria are determined by the `MPITestWrapper` subclass
+
+This is still work in progress.
+"""
+
+import ast
 import inspect
 import subprocess
 import tempfile
 import textwrap
-from pathlib import Path
 from functools import wraps
+from pathlib import Path
 
 import pandas as pd
 import pytest
+
+
+class _RemoveDecoratorsAndMPITestImports(ast.NodeTransformer):
+    """
+    Remove any decorators set on function definitions and imports of MPITest* entities.
+
+    Returning None (falling off the end) of visit_* deletes a node.
+    See https://docs.python.org/3/library/ast.html#ast.NodeTransformer for details.
+
+    """
+
+    def visit_FunctionDef(self, node):
+        """Remove any decorators"""
+
+        node.decorator_list.clear()
+        return node
+
+    def visit_Import(self, node):
+        """Drop import"""
+        if not any(alias.name.startswith("MPITest") for alias in node.names):
+            return node
+
+    def visit_ImportFrom(self, node):
+        """Drop from import"""
+        if not any(alias.name.startswith("MPITest") for alias in node.names):
+            return node
 
 
 class MPITestWrapper:
@@ -66,8 +128,12 @@ class MPITestWrapper:
         self._multi = None
         self._other = None
 
-    def _func_without_decorators(self, func):
-        return "".join(line for line in inspect.getsourcelines(func)[0] if not line.startswith("@"))
+    @staticmethod
+    def _pure_test_func(func):
+        source_file = inspect.getsourcefile(func)
+        tree = ast.parse(open(source_file).read())
+        _RemoveDecoratorsAndMPITestImports().visit(tree)
+        return ast.unparse(tree)
 
     def _params_as_str(self, *args, **kwargs):
         return ", ".join(
@@ -86,7 +152,7 @@ class MPITestWrapper:
                     spike_lbl=self.SPIKE_LABEL,
                     multi_lbl=self.MULTI_LABEL,
                     other_lbl=self.OTHER_LABEL,
-                    fcode=self._func_without_decorators(func),
+                    fcode=self._pure_test_func(func),
                     fname=func.__name__,
                     params=self._params_as_str(*args, **kwargs),
                 )

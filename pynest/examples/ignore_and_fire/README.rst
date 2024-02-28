@@ -62,7 +62,7 @@ studies.
 .. seealso::
 
     * :doc:`Detailed description of the network model and parameters <doc/ModelDescription_TwoPopulationNetworkPlastic>`
-    * :doc:`Implementation details for the NEST simulation <doc/simulation_details>`.
+    * :doc:`NEST implementation details <doc/simulation_details>`.
     * :doc:`code/model.py </auto_examples/ignore_and_fire/model>`: NEST implementation of the network model, and :doc:`code/parameter_dicts.py <parameter_dicts>`: Parameter setting      
     * :doc:`ignore_and_fire </models/ignore_and_fire>` Neuron model documentation
 
@@ -87,30 +87,19 @@ activity. The plasticity dynamics remains intact (see figure below).
 ================== =====================
 
 
-.. |iaf_spikes| image:: figures/TwoPopulationNetworkPlastic_iaf_spikes.png
-.. |iaf_weight| image:: figures/TwoPopulationNetworkPlastic_iaf_weight_distributions.png
-.. |ign_spikes| image:: figures/TwoPopulationNetworkPlastic_ign_spikes.png
-.. |ign_weight| image:: figures/TwoPopulationNetworkPlastic_ign_weight_distributions.png
+.. |iaf_spikes| image:: figures/TwoPopulationNetworkPlastic_iaf_psc_alpha_spikes.png
+.. |iaf_weight| image:: figures/TwoPopulationNetworkPlastic_iaf_psc_alpha_weight_distributions.png
+.. |ign_spikes| image:: figures/TwoPopulationNetworkPlastic_ignore_and_fire_spikes.png
+.. |ign_weight| image:: figures/TwoPopulationNetworkPlastic_ignore_and_fire_weight_distributions.png
 
 
-Spiking activity (top) and synaptic weight distributions (bottom) of
-the network with integrate-and-fire (``iaf_psc_alpha_nest``) and
-ignore-and-fire dynamics (``ignore_and_fire``). Scaling experiments
+Spiking activity (top) and synaptic weight distributions (bottom) of the network with integrate-and-fire (``iaf_psc_alpha_nest``) and ignore-and-fire dynamics (``ignore_and_fire``). Figures generated using :doc:`code/generate_reference_data.py </auto_examples/ignore_and_fire/generate_reference_data>` and :doc:`code generate_reference_figures.py </auto_examples/ignore_and_fire/generate_reference_figures>`.
 
-
-.. admonition:: Run script
-
-  To recreate the above figures:
-
-  * :doc:`code/generate_reference_data.py </auto_examples/ignore_and_fire/generate_reference_data>`: Run network simulations to produce spike and synapstic weight data
-  * :doc:`code/generate_reference_figures.py </auto_examples/ignore_and_fire/generate_reference_figures>`: Generate figures for spiking activity and synaptic weigh distributions
 
 Scaling experiments
 -------------------
 
-The ``ignore_and_fire`` variant of the model permits exact scaling
-experiments, without the need for any parameter tuning when changing the
-network size (see figure below).
+The ``ignore_and_fire`` variant of the model permits exact scaling experiments, without the need for any parameter tuning when changing the network size (see figure below).
 
 
 .. figure:: figures/scaling.png
@@ -120,12 +109,7 @@ network size (see figure below).
    averaged firing rate (middle) and the synaptic weights (bottom) on the
    network size :math:`N` for the\ ``integrate-and-fire`` (black) and the
    ``ignore-and-fire`` variant of the network model (gray). The in-degree
-   :math:`K=1250` is fixed.
-
-.. admonition:: Run script
-
-  * :doc:`code/scaling.py </auto_examples/ignore_and_fire/scaling>`: Run scaling experiments and generate scaling figure
-
+   :math:`K=1250` is fixed. Figure generated using :doc:`code/scaling.py </auto_examples/ignore_and_fire/scaling>`.
 
 
 

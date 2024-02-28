@@ -225,8 +225,7 @@ class TestJonkeSynapse:
             * Kplus
             * np.exp(_delta_t / self.synapse_constants["tau_plus"])
         )
-        if weight > self.synapse_constants["Wmax"]:
-            weight = self.synapse_constants["Wmax"]
+        weight = min(weight, self.synapse_constants["Wmax"])
         return weight
 
     def depress(self, _delta_t, weight, Kminus):

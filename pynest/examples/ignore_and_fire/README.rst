@@ -61,10 +61,10 @@ studies.
 
 .. seealso::
 
-    * :doc:`Detailed description of the network model and parameters <ModelDescription_TwoPopulationNetworkPlastic>`
-    * :doc:`Implementation details for the NEST simulation <simulation_details>`.
-    * :doc:`model.py </auto_examples/ignore_and_fire/model>`: network definition and :doc:`parameter_dicts.py <parameter_dicts>`: parameter dictionary
-    * :doc:`ignore_and_fire </models/ignore_and_fire>` neuron model documentation
+    * :doc:`Detailed description of the network model and parameters <doc/ModelDescription_TwoPopulationNetworkPlastic>`
+    * :doc:`Implementation details for the NEST simulation <doc/simulation_details>`.
+    * :doc:`code/model.py </auto_examples/ignore_and_fire/model>`: NEST implementation of the network model, and :doc:`code/parameter_dicts.py <parameter_dicts>`: Parameter setting      
+    * :doc:`ignore_and_fire </models/ignore_and_fire>` Neuron model documentation
 
 
 Comparison between the networks with ``integrate-and-fire`` and ``ignore-and-fire`` dynamics
@@ -72,8 +72,7 @@ Comparison between the networks with ``integrate-and-fire`` and ``ignore-and-fir
 
 The model employed here can be configured into a truly scalable mode by
 replacing the integrate-and-fire neurons by an ``ignore_and_fire``
-dynamics. By
-doing so, the spike generation dynamics is decoupled from the input
+dynamics. By doing so, the spike generation dynamics is decoupled from the input
 integration and the plasticity dynamics; the overall network activity,
 and, hence, the communication load, is fully controlled by the user. The
 firing rates and phases of the ``ignore-and-fire`` model are randomly
@@ -88,10 +87,10 @@ activity. The plasticity dynamics remains intact (see figure below).
 ================== =====================
 
 
-.. |iaf_spikes| image:: TwoPopulationNetworkPlastic_iaf_spikes.png
-.. |iaf_weight| image:: TwoPopulationNetworkPlastic_iaf_weight_distributions.png
-.. |ign_spikes| image:: TwoPopulationNetworkPlastic_ign_spikes.png
-.. |ign_weight| image:: TwoPopulationNetworkPlastic_ign_weight_distributions.png
+.. |iaf_spikes| image:: figures/TwoPopulationNetworkPlastic_iaf_spikes.png
+.. |iaf_weight| image:: figures/TwoPopulationNetworkPlastic_iaf_weight_distributions.png
+.. |ign_spikes| image:: figures/TwoPopulationNetworkPlastic_ign_spikes.png
+.. |ign_weight| image:: figures/TwoPopulationNetworkPlastic_ign_weight_distributions.png
 
 
 Spiking activity (top) and synaptic weight distributions (bottom) of
@@ -103,8 +102,8 @@ ignore-and-fire dynamics (``ignore_and_fire``). Scaling experiments
 
   To recreate the above figures:
 
-  * :doc:`generate_reference_data.py </auto_examples/ignore_and_fire/generate_reference_data>`: Run network simulations to produce spike and synapstic weight data
-  * :doc:`generate_reference_figures.py </auto_examples/ignore_and_fire/generate_reference_figures>`: Generate figures for spiking activity and synaptic weigh distributions
+  * :doc:`code/generate_reference_data.py </auto_examples/ignore_and_fire/generate_reference_data>`: Run network simulations to produce spike and synapstic weight data
+  * :doc:`code/generate_reference_figures.py </auto_examples/ignore_and_fire/generate_reference_figures>`: Generate figures for spiking activity and synaptic weigh distributions
 
 Scaling experiments
 -------------------
@@ -114,7 +113,7 @@ experiments, without the need for any parameter tuning when changing the
 network size (see figure below).
 
 
-.. figure:: scaling.png
+.. figure:: figures/scaling.png
    :scale: 50%
 
    Dependence of the simulation time (top), the time and population
@@ -125,7 +124,7 @@ network size (see figure below).
 
 .. admonition:: Run script
 
-  * :doc:`scaling.py </auto_examples/ignore_and_fire/scaling>`: Run scaling experiments and generate scaling figure
+  * :doc:`code/scaling.py </auto_examples/ignore_and_fire/scaling>`: Run scaling experiments and generate scaling figure
 
 
 

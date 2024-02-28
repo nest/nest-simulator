@@ -504,7 +504,7 @@ if test "${PYTHON}"; then
     PYNEST_TEST_DIR="${TEST_BASEDIR}/pytests"
     XUNIT_NAME="07_pynesttests"
 
-    # Run all tests except those in the mpi* subdirectories because they cannot be run concurrently
+    # Run all tests except those in the mpi* and sli2py_mpi subdirectories because they cannot be run concurrently
     XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
     env
     set +e
@@ -522,9 +522,10 @@ if test "${PYTHON}"; then
 	set -e
     fi
 
-    # Run tests in the mpi* subdirectories, grouped by number of processes
+    # Run tests in the mpi/* subdirectories, with one subdirectory per number of processes to use
     if test "${HAVE_MPI}" = "true"; then
         if test "${MPI_LAUNCHER}"; then
+	    # Loop over subdirectories whose names are the number of mpi procs to use
             for numproc in $(cd ${PYNEST_TEST_DIR}/mpi/; ls -d */ | tr -d '/'); do
                 XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
                 PYTEST_ARGS="--verbose --timeout $TIME_LIMIT --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"

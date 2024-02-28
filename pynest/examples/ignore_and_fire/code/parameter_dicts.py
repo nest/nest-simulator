@@ -76,4 +76,4 @@ pars["n_threads"] = 4  # number of threads for simulation
 pars["print_simulation_progress"] = True  # print network time and realtime factor
 pars["nest_verbosity"] = "M_WARNING"  # "M_FATAL", "M_ERROR", "M_WARNING", "M_DEPRECATED", "M_INFO", "M_ALL"
 
-pars["data_path"] = "./" + pars["neuron_model"]
+pars["data_path"] = "data"

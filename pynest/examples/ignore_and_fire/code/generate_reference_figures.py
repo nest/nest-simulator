@@ -13,7 +13,6 @@ import nest
 import numpy as np
 from matplotlib import gridspec
 
-
 ##############################################
 def time_and_population_averaged_spike_rate(spikes, time_interval, pop_size):
     D = time_interval[1] - time_interval[0]
@@ -43,7 +42,7 @@ def plot_spikes(spikes, nodes, pars, path="./"):
     plt.ylim(0, pars["N_rec_spikes"])
     plt.xlabel(r"time (ms)")
     plt.ylabel(r"neuron id")
-    plt.savefig(path + "/TwoPopulationNetworkPlastic_spikes.png")
+    plt.savefig(path + "/TwoPopulationNetworkPlastic_%s_spikes.png" % pars['neuron_model'])
 
 
 # def center_axes_ticks(ax):
@@ -62,7 +61,7 @@ def plot_spikes(spikes, nodes, pars, path="./"):
 
 
 #################################################
-def plot_connectivity_matrix(W, pop_pre, pop_post, filename_label=None, path="./"):
+def plot_connectivity_matrix(W, pop_pre, pop_post, pars, filename_label=None, path="./"):
     """
     Plot connectivity matrix "W" for source and target neurons contained in "pop_pre" and "pop_post",
     and save figure to file.
@@ -98,11 +97,10 @@ def plot_connectivity_matrix(W, pop_pre, pop_post, filename_label=None, path="./
     ###
 
     plt.subplots_adjust(left=0.12, bottom=0.1, right=0.9, top=0.95, wspace=0.1)
-    plt.savefig(path + "/TwoPopulationNetworkPlastic_connectivity%s.png" % (filename_label))
-
+    plt.savefig(path + "/TwoPopulationNetworkPlastic_%s_connectivity%s.png" % (pars['neuron_model'],filename_label))
 
 #################################################
-def plot_weight_distributions(whist_presim, whist_postsim, weights, path="./"):
+def plot_weight_distributions(whist_presim, whist_postsim, weights, pars, path="./"):
     """
     Plot distributions of synaptic weights before and after simulation.
     """
@@ -121,15 +119,17 @@ def plot_weight_distributions(whist_presim, whist_postsim, weights, path="./"):
     plt.xlim(weights[0], weights[-2])
     plt.ylim(5e-5, 3)
     plt.subplots_adjust(left=0.12, bottom=0.12, right=0.95, top=0.95)
-    plt.savefig(path + "/TwoPopulationNetworkPlastic_weight_distributions.png")
-
+    plt.savefig(path + "/TwoPopulationNetworkPlastic_%s_weight_distributions.png" % pars['neuron_model'])    
 
 #################################################
-def generate_reference_figures():
+def generate_reference_figures(neuron_model='ignore_and_fire'):
     """Generate and store set of reference data"""
 
     ## raster plot
     parameters = model.get_default_parameters()
+
+    parameters["neuron_model"] = neuron_model
+    
     parameters["record_spikes"] = True
     parameters["record_weights"] = True
 
@@ -142,17 +142,18 @@ def generate_reference_figures():
 
     ## load spikes from reference data
     spikes = model.load_spike_data(
-        "../reference_data/" + model_instance.pars["data_path"],
+        model_instance.pars["data_path"],
         "spikes-%d" % (np.array(model_instance.nodes["spike_recorder"])[0]),
     )
-    plot_spikes(spikes, model_instance.nodes, model_instance.pars, model_instance.pars["data_path"])
+    #plot_spikes(spikes, model_instance.nodes, model_instance.pars, model_instance.pars["data_path"])
+    plot_spikes(spikes, model_instance.nodes, model_instance.pars, "../figures")    
 
     ## load connectivity from reference data
     connectivity_presim = model.load_connectivity_data(
-        "../reference_data/" + model_instance.pars["data_path"], "connectivity_presim"
+        model_instance.pars["data_path"], "connectivity_presim"
     )
     connectivity_postsim = model.load_connectivity_data(
-        "../reference_data/" + model_instance.pars["data_path"], "connectivity_postsim"
+        model_instance.pars["data_path"], "connectivity_postsim"
     )
 
     ## create connectivity matrices before and after simulation for a subset of neurons
@@ -163,8 +164,10 @@ def generate_reference_figures():
     W_postsim, pop_pre, pop_post = model.get_connectivity_matrix(connectivity_postsim, pop_pre, pop_post)
 
     ## plot connectivity matrices
-    plot_connectivity_matrix(W_presim, pop_pre, pop_post, "_presim", model_instance.pars["data_path"])
-    plot_connectivity_matrix(W_postsim, pop_pre, pop_post, "_postsim", model_instance.pars["data_path"])
+    #plot_connectivity_matrix(W_presim, pop_pre, pop_post, "_presim", model_instance.pars["data_path"])
+    #plot_connectivity_matrix(W_postsim, pop_pre, pop_post, "_postsim", model_instance.pars["data_path"])
+    plot_connectivity_matrix(W_presim, pop_pre, pop_post, model_instance.pars, "_presim", "../figures")
+    plot_connectivity_matrix(W_postsim, pop_pre, pop_post, model_instance.pars, "_postsim", "../figures")
 
     ## compute weight distributions
     # weights = np.arange(29.5,34.1,0.05)
@@ -173,9 +176,10 @@ def generate_reference_figures():
     whist_postsim = model.get_weight_distribution(connectivity_postsim, weights)
 
     ## plot weight distributions
-    plot_weight_distributions(whist_presim, whist_postsim, weights, model_instance.pars["data_path"])
+    #plot_weight_distributions(whist_presim, whist_postsim, weights, model_instance.pars["data_path"])
+    plot_weight_distributions(whist_presim, whist_postsim, weights, model_instance.pars, "../figures")    
 
 
 #################################################
 
-generate_reference_figures()
+generate_reference_figures(neuron_model = sys.argv[1])

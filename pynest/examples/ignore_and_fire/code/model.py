@@ -71,9 +71,11 @@ class Model:
         # set parameters derived from base parameters
         self.__derived_parameters(parameters)
 
+        self.pars["data_path"] += "/" + self.pars["neuron_model"]
+
         # create data directory (if necessary)
         os.system("mkdir -p " + self.pars["data_path"])
-
+    
         # initialize NEST kernel
         nest.ResetKernel()
         nest.SetKernelStatus(
@@ -152,7 +154,7 @@ class Model:
         # number of neurons spikes are recorded from
         if self.pars["N_rec_spikes"] == "all":
             self.pars["N_rec_spikes"] = self.pars["N"]
-
+                    
         return
 
     ##############################################

@@ -1,16 +1,16 @@
 """
-Example scaling
-===============
+Scaling experiment
+==================
 
-* demonstrate scaling experiments with the Two population STDP network testcase,
-* illustrate the problems arising with the standard ``integrate-and-fire`` dynamics, and
-* describe how to perform exact scaling experiments by using ``ignore_and_fire`` neurons.
+* demonstrates scaling experiments with a plastic two-population network,
+* illustrates problems arising with standard ``integrate-and-fire`` dynamics, and
+* describes how to perform exact scaling experiments by using ``ignore_and_fire`` neurons.
 """
 
+import os
 import sys
 import time
 
-sys.path.append(r"../")
 import json
 
 import matplotlib.pyplot as plt
@@ -20,13 +20,10 @@ from matplotlib import gridspec
 
 ##########################################################
 ## parameters
-neuron_models = ["iaf_psc_alpha", "ignore_and_fire"]
-# neuron_models = ["iaf_psc_alpha"]
-# neuron_models = ["ignore_and_fire"]
-Ns = numpy.arange(1250, 15000, 1250)
-# Ns = numpy.arange(13750,15000,1250)
+neuron_models = ["iaf_psc_alpha", "ignore_and_fire"]  ## neuron models
+Ns = numpy.arange(1250, 15000, 1250)                  ## network sizes
 
-data_path_root = "./data"
+data_path_root = "./data"                             ## root of path to simulation data
 
 simulate = True
 # simulate = False
@@ -49,11 +46,12 @@ def run_model(neuron_model, N, data_path_root):
     parameters["record_spikes"] = True
     parameters["neuron_model"] = neuron_model  ## choose model flavor
     parameters["N"] = N  ## specify scale (network sizes)
-    parameters["data_path"] = data_path_root + "_" + neuron_model + "_" + str(N)
+    parameters["data_path"] = data_path_root + "/N" + str(N)
 
     ## create and simulate network
-    start = time.time()
     model_instance = model.Model(parameters)
+
+    start = time.time()    
     model_instance.create()
     model_instance.connect()
     stop = time.time()
@@ -179,7 +177,7 @@ def load_data(neuron_model, N, data_path_root):
     data = {}
 
     ## read data from json file
-    data_path = data_path_root + "_" + neuron_model + "_" + str(N)
+    data_path = data_path_root + "/N" + str(N)  + "/" + neuron_model
     with open(data_path + "/data.json") as f:
         data = json.load(f)
 
@@ -202,7 +200,7 @@ for cm, neuron_model in enumerate(neuron_models):
     print("%s\n" % neuron_model)
 
     for cN, N in enumerate(Ns):
-        print("\tN = %d" % N)
+        print("N = %d" % N)
 
         if simulate:
             data = run_model(neuron_model, int(N), data_path_root)
@@ -306,4 +304,4 @@ if analyse:
         ax3.legend(loc=1)
 
     plt.subplots_adjust(left=0.17, bottom=0.1, right=0.95, top=0.95, hspace=0.1)
-    plt.savefig("scaling.png")
+    plt.savefig("../figures/scaling.png")

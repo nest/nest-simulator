@@ -24,10 +24,10 @@ import subprocess
 import tempfile
 import textwrap
 from pathlib import Path
+from functools import wraps
 
 import pandas as pd
 import pytest
-from decorator import decorator
 
 
 class MPITestWrapper:
@@ -93,7 +93,8 @@ class MPITestWrapper:
             )
 
     def __call__(self, func):
-        def wrapper(func, *args, **kwargs):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
             # "delete" parameter only available in Python 3.12 and later
             try:
                 tmpdir = tempfile.TemporaryDirectory(delete=not self._debug)
@@ -122,7 +123,7 @@ class MPITestWrapper:
 
             self.assert_correct_results(tmpdirpath)
 
-        return decorator(wrapper, func)
+        return wrapper
 
     def _collect_result_by_label(self, tmpdirpath, label):
         try:

@@ -20,7 +20,6 @@ pytest-pylint
 pytest-mypy
 pytest-cov
 data-science-types
-decorator
 terminaltables
 pycodestyle
 pydocstyle

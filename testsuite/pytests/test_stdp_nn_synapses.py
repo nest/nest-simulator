@@ -260,8 +260,7 @@ class TestSTDPNNSynapses:
             * ((1 - w / self.synapse_parameters["Wmax"]) ** self.synapse_parameters["mu_plus"])
             * exp(-1 * _delta_t / self.synapse_parameters["tau_plus"])
         )
-        if w > self.synapse_parameters["Wmax"]:
-            w = self.synapse_parameters["Wmax"]
+        w = min(w, self.synapse_parameters["Wmax"])
         return w
 
     def depress(self, _delta_t, w):
@@ -273,8 +272,7 @@ class TestSTDPNNSynapses:
             * ((w / self.synapse_parameters["Wmax"]) ** self.synapse_parameters["mu_minus"])
             * exp(_delta_t / self.neuron_parameters["tau_minus"])
         )
-        if w < 0:
-            w = 0
+        w = max(0, w)
         return w
 
     def test_nn_symm_synapse(self):

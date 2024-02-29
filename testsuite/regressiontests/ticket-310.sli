@@ -27,7 +27,7 @@
  * V_m to be set to >= V_th, and that they emit a spike with
  * time stamp == resolution in that case.
  *
- * Hans Ekkehard Plesser, 2009-02-11 
+ * Hans Ekkehard Plesser, 2009-02-11
  *
  */
 
@@ -37,10 +37,12 @@
 % use power-of-two resolution to avoid roundof problems
 /res -3 dexp def
 
-/* The following models will not be tested:
-   iaf_cxhk_2008  ---  spikes only on explicit positive threshold crossings
-*/
-/skip_list [ /iaf_chxk_2008 /correlospinmatrix_detector ] def
+/skip_list [ /iaf_chxk_2008                 % non-standard spiking conditions
+             /correlospinmatrix_detector    % not a neuron
+             /eprop_iaf_bsshslm_2020        % no ArchivingNode, thus no t_spike
+	     /eprop_iaf_adapt_bsshslm_2020  % no ArchivingNode, thus no t_spike
+	     /eprop_readout_bsshslm_2020    % no ArchivingNode, thus no t_spike
+	   ] def
 
 {
   GetKernelStatus /node_models get
@@ -59,10 +61,10 @@
         n << /V_m n /V_th get 15.0 add >> SetStatus
         res Simulate
         n /t_spike get res leq    % works also for precise models
-        dup not { (FAILED: ) model cvs join == n ShowStatus } if      
+        dup not { (FAILED: ) model cvs join == n ShowStatus } if
       }
       { true }
-      ifelse   
+      ifelse
     }
     { true }
     ifelse
@@ -72,7 +74,7 @@
   % see if all entries are true
   true exch { and } Fold
 
-} 
+}
 assert_or_die
 
 endusing

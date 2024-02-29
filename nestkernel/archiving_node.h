@@ -92,7 +92,7 @@ public:
    * t_first_read: The newly registered synapse will read the history entries
    * with t > t_first_read.
    */
-  void register_stdp_connection( double t_first_read, double delay ) override;
+  void register_stdp_connection( const double t_first_read, const double dendritic_delay, const double axonal_delay ) override;
 
   void get_status( DictionaryDatum& d ) const override;
   void set_status( const DictionaryDatum& d ) override;
@@ -104,7 +104,7 @@ public:
   void add_correction_entry_stdp_ax_delay( SpikeEvent& spike_event,
     const double t_last_pre_spike,
     const double weight_revert,
-    const double dendritic_delay );
+    const double time_until_uncritical );
 
 
 protected:
@@ -166,17 +166,22 @@ private:
    */
   struct CorrectionEntrySTDPAxDelay
   {
-    CorrectionEntrySTDPAxDelay( const SpikeData& spike_data, const double t_last_pre_spike, const double weight_revert )
-      : spike_data_( spike_data )
+    CorrectionEntrySTDPAxDelay( const size_t lcid, const synindex syn_id, const double t_last_pre_spike, const double weight_revert )
+      : lcid_( lcid )
+      , syn_id_( syn_id )
       , t_last_pre_spike_( t_last_pre_spike )
       , weight_revert_( weight_revert )
     {
     }
 
-    SpikeData spike_data_;    //!< data of incoming spike including synapse location (tid|syn_id|lcid)
-    double t_last_pre_spike_; //!< time of the last pre-synaptic spike before this spike
-    double weight_revert_;    //!< synaptic weight to revert to (STDP depression needs to be undone)
+    unsigned int lcid_;        //!< local connection index
+    synindex syn_id_;          //!< synapse-type index
+    double t_last_pre_spike_;  //!< time of the last pre-synaptic spike before this spike
+    double weight_revert_;     //!< synaptic weight to revert to (STDP depression needs to be undone)
   };
+
+  //! check for correct correction entry size
+  using correction_entry_size = StaticAssert< sizeof( ArchivingNode::CorrectionEntrySTDPAxDelay ) == 24 >::success;
 
 protected:
   /**

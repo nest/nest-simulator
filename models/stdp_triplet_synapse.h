@@ -217,7 +217,7 @@ public:
 
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
 
-    t.register_stdp_connection( t_lastspike_ - get_dendritic_delay(), get_dendritic_delay() );
+    t.register_stdp_connection( t_lastspike_ - get_dendritic_delay(), get_dendritic_delay(), 0 );
   }
 
   void

@@ -300,7 +300,9 @@ public:
     const std::vector< ConnectorModel* >& cm,
     Event& e );
 
-  void correct_synapse_stdp_ax_delay( const SpikeData& spike_data,
+  void correct_synapse_stdp_ax_delay( const size_t tid,
+    const synindex syn_id,
+    const size_t lcid,
     const double t_last_pre_spike,
     double* weight_revert,
     const double t_post_spike );
@@ -898,14 +900,16 @@ ConnectionManager::send( const size_t tid,
 }
 
 inline void
-ConnectionManager::correct_synapse_stdp_ax_delay( const SpikeData& spike_data,
+ConnectionManager::correct_synapse_stdp_ax_delay( const size_t tid,
+  const synindex syn_id,
+  const size_t lcid,
   const double t_last_pre_spike,
   double* weight_revert,
   const double t_post_spike )
 {
   ++num_corrections_;
-  connections_[ spike_data.get_tid() ][ spike_data.get_syn_id() ]->correct_synapse_stdp_ax_delay(
-    spike_data, t_last_pre_spike, weight_revert, t_post_spike );
+  connections_[ tid ][ syn_id ]->correct_synapse_stdp_ax_delay(
+    tid, syn_id, lcid, t_last_pre_spike, weight_revert, t_post_spike );
 }
 
 inline void

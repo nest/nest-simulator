@@ -207,23 +207,23 @@ def plot_benchmark_static():
     set_font_sizes()
     plt.setp(ax.spines.values(), linewidth=2)
 
-    df_master = pd.read_csv("benchmark-results/hpc_axonal_delay_master_static.txt", delimiter=',').drop('rng_seed', axis=1).groupby("num_nodes").agg("mean").reset_index()
-    df_corr = pd.read_csv("benchmark-results/hpc_axonal_delay_correction_static.txt", delimiter=',').drop('rng_seed', axis=1).groupby("num_nodes").agg("mean").reset_index()
-    df_adj = pd.read_csv("benchmark-results/hpc_axonal_delay_adjacency_static.txt", delimiter=',').drop('rng_seed', axis=1).groupby("num_nodes").agg("mean").reset_index()
+    df_master = pd.read_csv("benchmark-results/hpc_axonal_delay_master_static.csv", delimiter=',').drop('rng_seed', axis=1).groupby("num_nodes").agg("mean").reset_index()
+    df_corr = pd.read_csv("benchmark-results/hpc_axonal_delay_correction_static.csv", delimiter=',').drop('rng_seed', axis=1).groupby("num_nodes").agg("mean").reset_index()
+    df_adj = pd.read_csv("benchmark-results/hpc_axonal_delay_adjacency_static.csv", delimiter=',').drop('rng_seed', axis=1).groupby("num_nodes").agg("mean").reset_index()
     plt.plot(df_master["num_nodes"], df_master["py_time_simulate"], label="master", marker="o", ms=6, linewidth=2, color=cmap(1))
     plt.plot(df_corr["num_nodes"], df_corr["py_time_simulate"], label="corr", marker="*", ms=8, linewidth=2, color=cmap(0))
     plt.plot(df_adj["num_nodes"], df_adj["py_time_simulate"], label="adj", marker="X", ms=6, linewidth=2, color=cmap(2))
-    plt.plot(df_master["num_nodes"], df_master["time_simulate"], label="master", marker="o", ms=6, linewidth=2,
-             color=cmap(1), linestyle="--")
-    plt.plot(df_corr["num_nodes"], df_corr["time_simulate"], label="corr", marker="*", ms=8, linewidth=2,
-             color=cmap(0), linestyle="--")
-    plt.plot(df_adj["num_nodes"], df_adj["time_simulate"], label="adj", marker="X", ms=6, linewidth=2, color=cmap(2), linestyle="--")
-    plt.plot(df_master["num_nodes"], df_master["py_time_presimulate"], label="master", marker="o", ms=6, linewidth=2,
-             color=cmap(1), linestyle="dotted")
-    plt.plot(df_corr["num_nodes"], df_corr["py_time_presimulate"], label="corr", marker="*", ms=8, linewidth=2,
-             color=cmap(0), linestyle="dotted")
-    plt.plot(df_adj["num_nodes"], df_adj["py_time_presimulate"], label="adj", marker="X", ms=6, linewidth=2, color=cmap(2),
-             linestyle="dotted")
+    # plt.plot(df_master["num_nodes"], df_master["time_simulate"], label="master", marker="o", ms=6, linewidth=2,
+    #          color=cmap(1), linestyle="--")
+    # plt.plot(df_corr["num_nodes"], df_corr["time_simulate"], label="corr", marker="*", ms=8, linewidth=2,
+    #          color=cmap(0), linestyle="--")
+    # plt.plot(df_adj["num_nodes"], df_adj["time_simulate"], label="adj", marker="X", ms=6, linewidth=2, color=cmap(2), linestyle="--")
+    # plt.plot(df_master["num_nodes"], df_master["py_time_presimulate"], label="master", marker="o", ms=6, linewidth=2,
+    #          color=cmap(1), linestyle="dotted")
+    # plt.plot(df_corr["num_nodes"], df_corr["py_time_presimulate"], label="corr", marker="*", ms=8, linewidth=2,
+    #          color=cmap(0), linestyle="dotted")
+    # plt.plot(df_adj["num_nodes"], df_adj["py_time_presimulate"], label="adj", marker="X", ms=6, linewidth=2, color=cmap(2),
+    #          linestyle="dotted")
 
     plt.legend()
     # ax.set_yticks([100, 300, 500, 700, 900, 1100, 1300])
@@ -247,31 +247,31 @@ def plot_benchmark_stdp():
         plt.setp(ax.spines.values(), linewidth=2)
         ax.tick_params(width=2)
 
-    df_corr = pd.read_csv("benchmark-results/hpc_axonal_delay_correction_stdp.txt", delimiter=',').drop('rng_seed', axis=1)
-    df_adj = pd.read_csv("benchmark-results/hpc_axonal_delay_adjacency_stdp.txt", delimiter=',').drop('rng_seed', axis=1)
+    df_corr = pd.read_csv("benchmark-results/hpc_axonal_delay_correction_stdp.csv", delimiter=',').drop('rng_seed', axis=1)
+    df_adj = pd.read_csv("benchmark-results/hpc_axonal_delay_adjacency_stdp.csv", delimiter=',').drop('rng_seed', axis=1)
     df_corr_1 = df_corr[df_corr["num_nodes"] == 1].groupby(["axonal_delay", "dendritic_delay"]).agg("mean").reset_index()
     df_corr_32 = df_corr[df_corr["num_nodes"] == 32].groupby(["axonal_delay", "dendritic_delay"]).agg("mean").reset_index()
     df_adj_1 = df_adj[df_adj["num_nodes"] == 1].groupby(["axonal_delay", "dendritic_delay"]).agg("mean").reset_index()
     df_adj_32 = df_adj[df_adj["num_nodes"] == 32].groupby(["axonal_delay", "dendritic_delay"]).agg("mean").reset_index()
     axs[0].plot(df_corr_1["axonal_delay"] / (df_corr_1["axonal_delay"] + df_corr_1["dendritic_delay"]), df_corr_1["py_time_simulate"], label="corr 1", marker="*", ms=8, linewidth=2, color=cmap(0))
-    axs[1].plot(df_corr_32["axonal_delay"] / (df_corr_32["axonal_delay"] + df_corr_32["dendritic_delay"]), df_corr_32["py_time_simulate"], label="corr 32", marker="^", ms=8, linewidth=2, color=cmap(0))
+    axs[1].plot(df_corr_32["axonal_delay"] / (df_corr_32["axonal_delay"] + df_corr_32["dendritic_delay"]), df_corr_32["py_time_simulate"], label="corr 32", marker="*", ms=8, linewidth=2, color=cmap(0))
     axs[0].plot(df_adj_1["axonal_delay"] / (df_adj_1["axonal_delay"] + df_adj_1["dendritic_delay"]), df_adj_1["py_time_simulate"], label="adj 1", marker="X", ms=6, linewidth=2, color=cmap(1))
-    axs[1].plot(df_adj_32["axonal_delay"] / (df_adj_32["axonal_delay"] + df_adj_32["dendritic_delay"]), df_adj_32["py_time_simulate"], label="adj 32", marker="x", ms=6, linewidth=2, color=cmap(1))
+    axs[1].plot(df_adj_32["axonal_delay"] / (df_adj_32["axonal_delay"] + df_adj_32["dendritic_delay"]), df_adj_32["py_time_simulate"], label="adj 32", marker="X", ms=6, linewidth=2, color=cmap(1))
     axs[0].set_xlabel("Axonal delay [ms]")
     axs[1].set_xlabel("Axonal delay [ms]")
     axs[0].set_ylabel("Simulation time [s]")
     plt.legend()
     fig.tight_layout()
-    # fig.savefig('benchmark_stdp.tif', dpi=300)
-    # fig.savefig('benchmark_stdp.jpg', dpi=300)
+    fig.savefig('benchmark_stdp.tif', dpi=300)
+    fig.savefig('benchmark_stdp.jpg', dpi=300)
     # save_grayscale('benchmark_stdp.tif')
     plt.show()
 
-find_equilibrium()
+# find_equilibrium()
 # find_equilibrium_stdp()
 # plot_corrections()
 # plot_weights()
 # jensen_shannon_divergence()
 
 plot_benchmark_static()
-# plot_benchmark_stdp()
+plot_benchmark_stdp()

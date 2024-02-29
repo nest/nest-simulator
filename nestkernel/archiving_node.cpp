@@ -73,21 +73,29 @@ ArchivingNode::ArchivingNode( const ArchivingNode& n )
 void
 ArchivingNode::pre_run_hook_()
 {
-  const size_t num_time_slots =
-    kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
-  if ( correction_entries_stdp_ax_delay_.size() != num_time_slots )
+  if ( has_stdp_ax_delay_ )
   {
-    correction_entries_stdp_ax_delay_.resize( num_time_slots );
+    const size_t num_time_slots =
+      kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
+    if ( correction_entries_stdp_ax_delay_.size() != num_time_slots )
+    {
+      correction_entries_stdp_ax_delay_.resize( num_time_slots );
+    }
   }
 }
 
 void
-ArchivingNode::register_stdp_connection( double t_first_read, double delay )
+ArchivingNode::register_stdp_connection( const double t_first_read, const double dendritic_delay, const double axonal_delay )
 {
   // Mark all entries in the deque, which we will not read in future as read by
   // this input, so that we safely increment the incoming number of
   // connections afterwards without leaving spikes in the history.
   // For details see bug #218. MH 08-04-22
+
+  if ( axonal_delay > 0 )
+  {
+    has_stdp_ax_delay_ = true;
+  }
 
   for ( std::deque< histentry >::iterator runner = history_.begin();
         runner != history_.end() and ( t_first_read - runner->t_ > -1.0 * kernel().connection_manager.get_stdp_eps() );
@@ -98,7 +106,7 @@ ArchivingNode::register_stdp_connection( double t_first_read, double delay )
 
   n_incoming_++;
 
-  max_delay_ = std::max( delay, max_delay_ );
+  max_delay_ = std::max( dendritic_delay + axonal_delay, max_delay_ );
 }
 
 double
@@ -294,40 +302,17 @@ void
 ArchivingNode::add_correction_entry_stdp_ax_delay( SpikeEvent& spike_event,
   const double t_last_pre_spike,
   const double weight_revert,
-  const double dendritic_delay )
+  const double time_until_uncritical )
 {
-  if ( not has_stdp_ax_delay_ )
-  {
-    has_stdp_ax_delay_ = true;
-
-    const size_t num_time_slots =
-      kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay();
-    if ( correction_entries_stdp_ax_delay_.size() != num_time_slots )
-    {
-      correction_entries_stdp_ax_delay_.resize( num_time_slots );
-    }
-  }
-
   assert( correction_entries_stdp_ax_delay_.size()
     == static_cast< size_t >(
       kernel().connection_manager.get_min_delay() + kernel().connection_manager.get_max_delay() ) );
+  const long idx = kernel().event_delivery_manager.get_modulo( time_until_uncritical - 1 );
+  assert( static_cast< size_t >( idx ) < correction_entries_stdp_ax_delay_.size() );
 
-  // axonal_delay-dendritic_delay = total_delay-2*dendritic_delay
-  const long time_until_uncritical =
-    spike_event.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() )
-    - 2 * Time::delay_ms_to_steps( dendritic_delay ) + 1;
-  // Only add correction entry if there could potentially be any post-synaptic spike that occurs before the
-  // pre-synaptic one arrives at the synapse. Has to be strictly greater than min_delay, because a post-synaptic spike
-  // at time slice_origin+min_delay corresponds to the last update step in the current slice (before delivery) and was
-  // thus already known at time of delivery of the pre-synaptic one.
-  if ( time_until_uncritical > 0 )
-  {
-    const long idx = kernel().event_delivery_manager.get_modulo( time_until_uncritical - 1 );
-    assert( static_cast< size_t >( idx ) < correction_entries_stdp_ax_delay_.size() );
-
-    correction_entries_stdp_ax_delay_[ idx ].push_back(
-      CorrectionEntrySTDPAxDelay( spike_event.get_sender_spike_data(), t_last_pre_spike, weight_revert ) );
-  }
+  const SpikeData& spike_data = spike_event.get_sender_spike_data();
+  correction_entries_stdp_ax_delay_[ idx ].push_back(
+    CorrectionEntrySTDPAxDelay( spike_data.get_lcid(), spike_data.get_syn_id(), t_last_pre_spike, weight_revert ) );
 }
 
 void
@@ -369,7 +354,9 @@ ArchivingNode::correct_synapses_stdp_ax_delay_( const Time& t_spike )
             it_corr_entry < correction_entries_stdp_ax_delay_[ idx ].end();
             ++it_corr_entry )
       {
-        kernel().connection_manager.correct_synapse_stdp_ax_delay( it_corr_entry->spike_data_,
+        kernel().connection_manager.correct_synapse_stdp_ax_delay( get_thread(),
+          it_corr_entry->syn_id_,
+          it_corr_entry->lcid_,
           it_corr_entry->t_last_pre_spike_,
           &it_corr_entry->weight_revert_,
           t_spike.get_ms() );

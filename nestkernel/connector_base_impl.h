@@ -63,16 +63,16 @@ Connector< ConnectionT >::send_weight_event( const size_t tid,
 
 template < typename ConnectionT >
 void
-Connector< ConnectionT >::correct_synapse_stdp_ax_delay( const SpikeData& spike_data,
+Connector< ConnectionT >::correct_synapse_stdp_ax_delay( const size_t tid,
+  const synindex syn_id,
+  const size_t lcid,
   const double t_last_pre_spike,
   double* weight_revert,
   const double t_post_spike )
 {
   typename ConnectionT::CommonPropertiesType const& cp = static_cast< GenericConnectorModel< ConnectionT >* >(
-    kernel().model_manager.get_connection_models( spike_data.get_tid() )[ spike_data.get_syn_id() ] )
-                                                           ->get_common_properties();
-  C_[ spike_data.get_lcid() ].correct_synapse_stdp_ax_delay(
-    spike_data.get_tid(), t_last_pre_spike, weight_revert, t_post_spike, cp );
+    kernel().model_manager.get_connection_models( tid )[ syn_id ] )->get_common_properties();
+  C_[ lcid ].correct_synapse_stdp_ax_delay( tid, t_last_pre_spike, weight_revert, t_post_spike, cp );
 }
 
 } // of namespace nest

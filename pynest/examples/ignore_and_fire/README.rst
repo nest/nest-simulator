@@ -17,7 +17,7 @@ Network model
 
 In this example, we employ a simple network model describing the dynamics of a local cortical circuit at the spatial scale of ~1mm within a single cortical layer. It is derived from the model proposed in [2]_, but accounts for the synaptic weight dynamics for connections between excitatory neurons. The weight dynamics are described by the spike-timing-dependent plasticity (STDP) model derived in [8]_. The model provides a mechanism underlying the formation of broad distributions of synaptic weights in combination with asynchronous irregular spiking activity (see figure below).
 
-A variant of this model, the :doc:`hpc_benchmark </auto_examples/hpc_benchmark>`, has been used in a number of benchmarking studies, in particular for weak-scaling experiments ([3]_-[7]_). Due to its random homogeneous connectivity, the model represents a hard benchmarking scenario: each neuron projects with equal probability to any other neuron in the network. Implementations of this model can therefore not exploit any spatial connectivity patterns. In contrast to the model used here, the plasticity dynamics in the ``hpc_benchmark`` is parameterized such that it has only a weak effect on the synaptic weights and, hence, the network dynamics. Here, the effect of the synaptic plasticity is substantial and leads to a significant broadening of the weight distribution (see figure below). Synaptic weights thereby become a sensitive target metric for verification and validation studies.
+A variant of this model, the :doc:`hpc_benchmark </auto_examples/hpc_benchmark>`, has been used in a number of benchmarking studies, in particular for weak-scaling experiments ([3]_, [4]_, [5]_, [6]_, [7]_). Due to its random homogeneous connectivity, the model represents a hard benchmarking scenario: each neuron projects with equal probability to any other neuron in the network. Implementations of this model can therefore not exploit any spatial connectivity patterns. In contrast to the model used here, the plasticity dynamics in the ``hpc_benchmark`` is parameterized such that it has only a weak effect on the synaptic weights and, hence, the network dynamics. Here, the effect of the synaptic plasticity is substantial and leads to a significant broadening of the weight distribution (see figure below). Synaptic weights thereby become a sensitive target metric for verification and validation studies.
 
 
 Comparison between the networks with ``integrate-and-fire`` and ``ignore-and-fire`` dynamics
@@ -49,7 +49,10 @@ The ``ignore_and_fire`` variant of the network model permits exact scaling exper
 The number of incoming connections per neuron, the in-degree, is kept constant at :math:`K=1250`.
 The total number of connections hence scales linearly with :math:`N`. For each simulation, we monitor the simulation (wall clock) time, the time and population averaged firing rate, and the mean standard deviation of the excitatory synaptic weights at the end of the simulation.
 
-For the integrate-and-fire variant of the network model, the firing rate and the synaptic-weight distribution depend on the network size :math:`N`. In particular, for small :math:`N`, the firing rates and the synaptic weights increase due to the denser connectivity. For the ignore-and-fire version, in contrast, the dynamics is independent of the network size. The average firing rate is --by definition-- constant. As the firing phases of the ignore-and-fire neurons are chosen randomly, the spiking activity is asynchronous, irrespective of the connection density. As a consequence, the distribution of synaptic weights (which is shaped by correlations between neurons) remains constant, too. The overall communication load, i.e., the total number of spikes that need to be sent across the network within each time interval, is hence fully controlled by the user.
+For the integrate-and-fire variant of the network model, the firing rate and the synaptic-weight distribution depend on the network size :math:`N`. In particular for small :math:`N`, the firing rates and the synaptic weights increase due to the denser connectivity. For the ignore-and-fire version, in contrast, the dynamics is independent of the network size. The average firing rate is --by definition-- constant. As the firing phases of the ignore-and-fire neurons are chosen randomly, the spiking activity is asynchronous, irrespective of the connection density. As a consequence, the distribution of synaptic weights (which is shaped by cross-correlations in the spiking activity) remains constant, too.
+
+With the ignore-and-fire version of the model, performance benchmarking studies can thus be performed under better defined conditions. For example, the overall communication load, i.e., the total number of spikes that need to be sent across the network within each time interval, is fully controlled by the user.
+
 
 .. figure:: figures/scaling.png
    :scale: 50%
@@ -60,7 +63,7 @@ Dependence of the simulation time (top), the time and population averaged firing
 Running the simulations
 ------------------------
 
-The workflows underlying the numerical experiments shown above are documented in `Snakefile </auto_examples/ignore_and_fire/workflow>`.
+The workflows underlying the numerical experiments shown above are documented in the `Snakefile </auto_examples/ignore_and_fire/workflow>`.
 
 
 References

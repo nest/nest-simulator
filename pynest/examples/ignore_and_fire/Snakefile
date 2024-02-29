@@ -1,6 +1,6 @@
 rule all:
     """
-    Creates all figures for use case documentation.
+    Runs simulations and creates all figures for the ignore-and-fire usecase documentation.
     """
     input:
         'figures/TwoPopulationNetworkPlastic_iaf_psc_alpha_spikes.png',
@@ -15,7 +15,7 @@ rule all:
         
 rule generate_reference_data_LIF:
     """
-    Simulate network with LIF neurons, and store spikes and synaptic weights.
+    Simulates network with LIF neurons, and stores spikes and synaptic weights.
     """
     input:
         'code/model.py',
@@ -28,7 +28,7 @@ rule generate_reference_data_LIF:
 
 rule generate_reference_data_IgAF:
     """
-    Simulate network with ignore-and-fire neurons, and store spikes and synaptic weights.
+    Simulates network with ignore-and-fire neurons, and stores spikes and synaptic weights.
     """
     input:
         'code/model.py',
@@ -41,8 +41,8 @@ rule generate_reference_data_IgAF:
         
 rule generate_reference_figures_LIF:
     """
-    Create figures showing spiking activity, weight matrices and weight distributions 
-    before and after simulations from data obtained by simulating model
+    Creates figures showing spiking activity, weight matrices and weight distributions 
+    before and after simulations from data obtained by simulating the model
     with LIF neurons.
     """
     input:
@@ -60,8 +60,8 @@ rule generate_reference_figures_LIF:
 
 rule generate_reference_figures_IgAF:
     """
-    Create figures showing spiking activity, weight matrices and weight distributions 
-    before and after simulations from data obtained by simulating model 
+    Creates figures showing spiking activity, weight matrices and weight distributions 
+    before and after simulations from data obtained by simulating the model 
     with ignore_and_fire neurons.
     """
     input:
@@ -80,7 +80,8 @@ rule generate_reference_figures_IgAF:
 rule scaling_experiment:
     """
     Performs scaling experiments with LIF and ignore-and-fire neurons, 
-    and creates figure showing the results.
+    and creates figure showing the simulation times, average firing rates,
+    and synaptic weights for a range of network sizes.
     """
     input:
         'code/model.py',

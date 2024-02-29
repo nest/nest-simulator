@@ -19,13 +19,6 @@ In this example, we employ a simple network model describing the dynamics of a l
 
 A variant of this model, the :doc:`hpc_benchmark </auto_examples/hpc_benchmark>`, has been used in a number of benchmarking studies, in particular for weak-scaling experiments (Helias et al., [2]_; Kunkel et al., [3]_; Ippen et al., [4]_; Kunkel & Schenk, [5]_; Jordan et al., [6]_). Due to its random homogeneous connectivity, the model represents a hard benchmarking scenario: each neuron projects with equal probability to any other neuron in the network. Implementations of this model can therefore not exploit any spatial connectivity patterns. In contrast to the model used here, the plasticity dynamics in the ``hpc_benchmark`` is parameterized such that it has only a weak effect on the synaptic weights and, hence, the network dynamics. Here, the effect of the synaptic plasticity is substantial and leads to a significant broadening of the weight distribution (see figure below). Synaptic weights thereby become a sensitive target metric for verification and validation studies.
 
-.. seealso::
-
-    * :doc:`Detailed description of the network model and parameters <doc/ModelDescription_TwoPopulationNetworkPlastic>`
-    * :doc:`NEST implementation details <doc/simulation_details>`.
-    * :doc:`code/model.py </auto_examples/ignore_and_fire/model>`: NEST implementation of the network model, and :doc:`code/parameter_dicts.py <parameter_dicts>`: Parameter setting      
-    * :doc:`ignore_and_fire </models/ignore_and_fire>` Neuron model documentation
-
 
 Comparison between the networks with ``integrate-and-fire`` and ``ignore-and-fire`` dynamics
 --------------------------------------------------------------------------------------------
@@ -101,6 +94,16 @@ References
        plasticity in balanced random networks. Neural Computation
        19(6):1437-1467 <https://doi.org/10.1162/neco.2007.19.6.1437
 
+       
+.. seealso::
+
+    * :doc:`Detailed description of the network model and parameters <doc/ModelDescription_TwoPopulationNetworkPlastic>`
+    * :doc:`NEST implementation details <doc/simulation_details>`.
+    * :doc:`code/model.py </auto_examples/ignore_and_fire/model>`: NEST implementation of the network model
+    * :doc:`code/parameter_dicts.py <parameter_dicts>`: parameter setting
+    * :doc:`ignore_and_fire model documentation </models/ignore_and_fire>`
+
+      
 .. toctree::
   :hidden:
   :glob:

@@ -26,7 +26,7 @@ Ns = numpy.arange(1250, 15000, 1250)                  ## network sizes
 data_path_root = "./data"                             ## root of path to simulation data
 
 simulate = True
-# simulate = False
+#simulate = False
 analyse = True
 # analyse = False
 
@@ -265,7 +265,7 @@ if analyse:
         ax1.set_xlim(Ns[0], Ns[-1])
         ax1.set_xticklabels([])
         ax1.set_ylabel(r"simulation time (s)")
-        ax1.set_title(r"fixed in-degree $K=1250$")
+        #ax1.set_title(r"fixed in-degree $K=1250$")
 
         ## firing rate
         ax2.plot(

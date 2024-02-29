@@ -1,63 +1,23 @@
-Scaling experiments using the ``ignore_and_fire`` neuron
-========================================================
+Exact scaling experiments using the ``ignore_and_fire`` neuron
+===============================================================
 
+Background: (Non-) Scalability of recurrent neuronal networks
+---------------------------------------------------------------
 
-(Non-) Scalability of recurrent neuronal networks
--------------------------------------------------
+The verification and validation of neuronal simulation architectures (soft- and hardware) is typically based on models describing networks of neurons. Ideally, such test-case models are scalable with respect to the network size
 
-The verification and validation of simulation architectures (soft- and
-hardware) is typically based on models describing networks of neurons.
-Ideally, such test-case models are *scalable* with respect to the
-network size
+-  to foster a comparison between different computing architectures with different computational resources,
+-  to be able to extrapolate (up-scale) to networks at brain scale, even if data constrained and well tested network models at this scale are not yet published or existing, and
+-  to be able to study and compare different plasticity mechanisms with slow dynamics (down-scaling).
 
--  to foster a comparison between different computing architectures with
-   different computational resources,
--  to be able to extrapolate (up-scale) to networks at brain scale, even
-   if data constrained and well tested network models at this scale are
-   not published or existing yet, and
--  to be able to study and compare different plasticity mechanisms with
-   slow dynamics (down-scaling).
-
-Biological neuronal networks are characterized by a high degree of
-recurrency. As shown by van Albada et al. (2015), scaling the number of
-nodes or edges in a recurrent neuronal networks generally alters the
-network dynamics such as the structure of pairwise correlations.
-Preserving certain dynamical features by adjusting other parameters can
-only be achieved in limited ranges or exceptional cases. Recurrent
-neuronal networks are hence not truly scalable. In this example, we
-demonstrate how the ``ignore_and_fire`` can help to perform
-systematic scaling experiments with arbitrary types of networks, without
-altering the network dynamics.
+Biological neuronal networks are characterized by a high degree of recurrency. As shown by van Albada et al. (2015), scaling the number of nodes or edges in a recurrent neuronal networks generally alters the network dynamics such as the structure of pairwise correlations. Preserving certain dynamical features by adjusting other parameters can only be achieved in limited ranges or exceptional cases. Recurrent neuronal networks are hence not truly scalable. In this example, we demonstrate how the :doc:`ignore_and_fire </models/ignore_and_fire>` neuron can help to perform exact scaling experiments with arbitrary types of networks.
 
 Network model
 -------------
 
-In this example, we employ a simple network model describing the
-dynamics of a local cortical circuit at the spatial scale of ~1mm within
-a single cortical layer. It is derived from the model proposed in
-(Brunel [1]_), but accounts for the synaptic weight dynamics for
-connections between excitatory neurons. The weight dynamics are
-described by the spike-timing-dependent plasticity (STDP) model derived
-by Morrison et al. ( [7]_). The model provides a mechanism underlying the
-formation of broad distributions of synaptic weights in combination with
-asynchronous irregular spiking activity (see figure below).
+In this example, we employ a simple network model describing the dynamics of a local cortical circuit at the spatial scale of ~1mm within a single cortical layer. It is derived from the model proposed in (Brunel [1]_), but accounts for the synaptic weight dynamics for connections between excitatory neurons. The weight dynamics are described by the spike-timing-dependent plasticity (STDP) model derived by Morrison et al. ( [7]_). The model provides a mechanism underlying the formation of broad distributions of synaptic weights in combination with asynchronous irregular spiking activity (see figure below).
 
-A variant of this model, the
-:doc:`hpc_benchmark </auto_examples/hpc_benchmark>`
-has been used in a number of benchmarking studies, in particular for
-weak-scaling experiments (Helias et al., [2]_; Kunkel et al., [3]_;
-Ippen et al., [4]_; Kunkel & Schenk, [5]_; Jordan et al., [6]_). Due to
-its random homogeneous connectivity, the model represents a hard
-benchmarking scenario: each neuron projects with equal probability to
-any other neuron in the network. Implementations of this model can
-therefore not exploit any spatial connectivity patterns. In contrast to
-the model used here, the plasticity dynamics in the ``hpc_benchmark`` is
-parameterized such that it has only a weak effect on the synaptic
-weights and, hence, the network dynamics. Here, the effect of the
-synaptic plasticity is substantial and leads to a significant broadening
-of the weight distribution (see figure below). Synaptic weights thereby
-become a sensitive target metric for verification and validation
-studies.
+A variant of this model, the :doc:`hpc_benchmark </auto_examples/hpc_benchmark>`, has been used in a number of benchmarking studies, in particular for weak-scaling experiments (Helias et al., [2]_; Kunkel et al., [3]_; Ippen et al., [4]_; Kunkel & Schenk, [5]_; Jordan et al., [6]_). Due to its random homogeneous connectivity, the model represents a hard benchmarking scenario: each neuron projects with equal probability to any other neuron in the network. Implementations of this model can therefore not exploit any spatial connectivity patterns. In contrast to the model used here, the plasticity dynamics in the ``hpc_benchmark`` is parameterized such that it has only a weak effect on the synaptic weights and, hence, the network dynamics. Here, the effect of the synaptic plasticity is substantial and leads to a significant broadening of the weight distribution (see figure below). Synaptic weights thereby become a sensitive target metric for verification and validation studies.
 
 .. seealso::
 
@@ -70,14 +30,7 @@ studies.
 Comparison between the networks with ``integrate-and-fire`` and ``ignore-and-fire`` dynamics
 --------------------------------------------------------------------------------------------
 
-The model employed here can be configured into a truly scalable mode by
-replacing the integrate-and-fire neurons by an ``ignore_and_fire``
-dynamics. By doing so, the spike generation dynamics is decoupled from the input
-integration and the plasticity dynamics; the overall network activity,
-and, hence, the communication load, is fully controlled by the user. The
-firing rates and phases of the ``ignore-and-fire`` model are randomly
-drawn from uniform distributions to guarantee asynchronous spiking
-activity. The plasticity dynamics remains intact (see figure below).
+The model employed here can be configured into a truly scalable mode by replacing the integrate-and-fire neurons by an :doc:`ignore_and_fire </models/ignore_and_fire>` dynamics. By doing so, the spike generation dynamics is decoupled from the input integration and the plasticity dynamics; the overall network activity, and, hence, the communication load, is fully controlled by the user. The firing rates and phases of the :doc:`ignore_and_fire </models/ignore_and_fire>` model are randomly drawn from uniform distributions to guarantee asynchronous spiking activity. The plasticity dynamics remains intact (see figure below).
 
 ================== =====================
 ``iaf_psc_alpha``   ``ignore_and_fire``
@@ -93,7 +46,7 @@ activity. The plasticity dynamics remains intact (see figure below).
 .. |ign_weight| image:: figures/TwoPopulationNetworkPlastic_ignore_and_fire_weight_distributions.png
 
 
-Spiking activity (top) and synaptic weight distributions (bottom) of the network with integrate-and-fire (``iaf_psc_alpha_nest``) and ignore-and-fire dynamics (``ignore_and_fire``). Figures generated using :doc:`code/generate_reference_data.py </auto_examples/ignore_and_fire/generate_reference_data>` and :doc:`code generate_reference_figures.py </auto_examples/ignore_and_fire/generate_reference_figures>`.
+Spiking activity (top) and synaptic weight distributions (bottom) of the network with integrate-and-fire (``iaf_psc_alpha_nest``) and :doc:`ignore_and_fire </models/ignore_and_fire>` dynamics (``ignore_and_fire``). Figures generated using :doc:`code/generate_reference_data.py </auto_examples/ignore_and_fire/generate_reference_data>` and :doc:`code generate_reference_figures.py </auto_examples/ignore_and_fire/generate_reference_figures>`.
 
 
 Scaling experiments

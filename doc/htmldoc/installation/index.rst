@@ -27,6 +27,20 @@ Install NEST
 
       * :ref:`dev_install`
 
+   .. grid-item-card:: |launch| Try NEST installation-free
+      :class-title: sd-d-flex-row sd-align-minor-center
+      :columns: 4
+
+      With the JupyterHub service from EBRAINS you can
+      try out NEST (and many other tools) directly in your browser.
+
+      .. rst-class:: imgbutton
+
+         .. image:: https://nest-simulator.org/TryItOnEBRAINS.png
+            :target: https://lab.ebrains.eu/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2Fnest%2Fnest-simulator-examples&urlpath=lab%2Ftree%2Fnest-simulator-examples%2Fnotebooks%2Fnotebooks%2Fone_neuron.ipynb&branch=main
+
+      For more info see :ref:`our guide to running notebooks  <run_jupyter>`
+
 .. grid:: 2
    :gutter: 1
 
@@ -73,7 +87,7 @@ If installation didn't work, see the :ref:`troubleshooting section <troubleshoot
 
 .. |user| image:: ../static/img/020-user.svg
 .. |teacher| image:: ../static/img/014-teacher.svg
-.. |admin| image:: ../static/img/001-shuttle.svg
+.. |launch| image:: ../static/img/001-shuttle.svg
 .. |dev| image:: ../static/img/dev_orange.svg
 .. |desktop| image:: ../static/img/nestdesktop022023.svg
 .. |nestml| image:: ../static/img/nestml022023.svg

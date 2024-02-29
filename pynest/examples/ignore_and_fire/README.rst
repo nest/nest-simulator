@@ -10,14 +10,14 @@ The verification and validation of neuronal simulation architectures (soft- and 
 -  to be able to extrapolate (up-scale) to networks at brain scale, even if data constrained and well tested network models at this scale are not yet published or existing, and
 -  to be able to study and compare different plasticity mechanisms with slow dynamics (down-scaling).
 
-Biological neuronal networks are characterized by a high degree of recurrency. As shown by van Albada et al. (2015), scaling the number of nodes or edges in a recurrent neuronal networks generally alters the network dynamics such as the structure of pairwise correlations. Preserving certain dynamical features by adjusting other parameters can only be achieved in limited ranges or exceptional cases. Recurrent neuronal networks are hence not truly scalable. In this example, we demonstrate how the :doc:`ignore_and_fire </models/ignore_and_fire>` neuron can help to perform exact scaling experiments with arbitrary types of networks.
+Biological neuronal networks are characterized by a high degree of recurrency. As shown in [1]_, scaling the number of nodes or edges in a recurrent neuronal networks generally alters the network dynamics, such as the average activity level or the structure of correlations. Preserving certain dynamical features by adjusting other parameters can only be achieved in limited ranges or exceptional cases. Recurrent neuronal networks are hence not truly scalable. In this example, we demonstrate how the :doc:`ignore_and_fire </models/ignore_and_fire>` neuron can help to perform exact scaling experiments with arbitrary types of networks.
 
 Network model
 -------------
 
-In this example, we employ a simple network model describing the dynamics of a local cortical circuit at the spatial scale of ~1mm within a single cortical layer. It is derived from the model proposed in (Brunel [1]_), but accounts for the synaptic weight dynamics for connections between excitatory neurons. The weight dynamics are described by the spike-timing-dependent plasticity (STDP) model derived by Morrison et al. ( [7]_). The model provides a mechanism underlying the formation of broad distributions of synaptic weights in combination with asynchronous irregular spiking activity (see figure below).
+In this example, we employ a simple network model describing the dynamics of a local cortical circuit at the spatial scale of ~1mm within a single cortical layer. It is derived from the model proposed in [2]_, but accounts for the synaptic weight dynamics for connections between excitatory neurons. The weight dynamics are described by the spike-timing-dependent plasticity (STDP) model derived in [8]_. The model provides a mechanism underlying the formation of broad distributions of synaptic weights in combination with asynchronous irregular spiking activity (see figure below).
 
-A variant of this model, the :doc:`hpc_benchmark </auto_examples/hpc_benchmark>`, has been used in a number of benchmarking studies, in particular for weak-scaling experiments (Helias et al., [2]_; Kunkel et al., [3]_; Ippen et al., [4]_; Kunkel & Schenk, [5]_; Jordan et al., [6]_). Due to its random homogeneous connectivity, the model represents a hard benchmarking scenario: each neuron projects with equal probability to any other neuron in the network. Implementations of this model can therefore not exploit any spatial connectivity patterns. In contrast to the model used here, the plasticity dynamics in the ``hpc_benchmark`` is parameterized such that it has only a weak effect on the synaptic weights and, hence, the network dynamics. Here, the effect of the synaptic plasticity is substantial and leads to a significant broadening of the weight distribution (see figure below). Synaptic weights thereby become a sensitive target metric for verification and validation studies.
+A variant of this model, the :doc:`hpc_benchmark </auto_examples/hpc_benchmark>`, has been used in a number of benchmarking studies, in particular for weak-scaling experiments ([3]_, [4]_, [5]_, [6]_, [7]_). Due to its random homogeneous connectivity, the model represents a hard benchmarking scenario: each neuron projects with equal probability to any other neuron in the network. Implementations of this model can therefore not exploit any spatial connectivity patterns. In contrast to the model used here, the plasticity dynamics in the ``hpc_benchmark`` is parameterized such that it has only a weak effect on the synaptic weights and, hence, the network dynamics. Here, the effect of the synaptic plasticity is substantial and leads to a significant broadening of the weight distribution (see figure below). Synaptic weights thereby become a sensitive target metric for verification and validation studies.
 
 
 Comparison between the networks with ``integrate-and-fire`` and ``ignore-and-fire`` dynamics
@@ -39,20 +39,22 @@ The model employed here can be configured into a truly scalable mode by replacin
 .. |ign_weight| image:: figures/TwoPopulationNetworkPlastic_ignore_and_fire_weight_distributions.png
 
 
-Spiking activity (top) and synaptic weight distributions (bottom) of the network with integrate-and-fire (``iaf_psc_alpha_nest``) and :doc:`ignore_and_fire </models/ignore_and_fire>` dynamics (``ignore_and_fire``). Figures generated using :doc:`code/generate_reference_data.py </auto_examples/ignore_and_fire/generate_reference_data>` and :doc:`code generate_reference_figures.py </auto_examples/ignore_and_fire/generate_reference_figures>`.
+Spiking activity (top) and distributions of excitatory synaptic weights (bottom) for the network with integrate-and-fire (``iaf_psc_alpha_nest``) and :doc:`ignore_and_fire </models/ignore_and_fire>` dynamics (``ignore_and_fire``). Figures generated using :doc:`code/generate_reference_data.py </auto_examples/ignore_and_fire/generate_reference_data>` and :doc:`code generate_reference_figures.py </auto_examples/ignore_and_fire/generate_reference_figures>`.
 
 
 Scaling experiments
 -------------------
 
-The ``ignore_and_fire`` variant of the model permits exact scaling experiments, without the need for any parameter tuning when changing the network size (see figure below).
+The ``ignore_and_fire`` variant of the network model permits exact scaling experiments, without the need for any parameter tuning when changing the network size (see figure below). We demonstrate this here by simulating the network for various network sizes between :math:`N=1250` and  :math:`N=13750`.
+The number of incoming connections per neuron, the in-degree, is kept constant at :math:`K=1250`.
+The total number of connections hence scales linearly with :math:`N=1250`. For each simulation, we monitor the simulation (wall clock) time, the time and population averaged firing rate, and the mean standard deviation of the excitatory synaptic weights at the end of the simulation.
 
 
 .. figure:: figures/scaling.png
-   :scale: 50%
+#   :scale: 50%
 
    Dependence of the simulation time (top), the time and population
-   averaged firing rate (middle) and the synaptic weights (bottom) on the
+   averaged firing rate (middle) and the excitatory synaptic weights (bottom) on the
    network size :math:`N` for the\ ``integrate-and-fire`` (black) and the
    ``ignore-and-fire`` variant of the network model (gray). The in-degree
    :math:`K=1250` is fixed. Figure generated using :doc:`code/scaling.py </auto_examples/ignore_and_fire/scaling>`.
@@ -62,37 +64,40 @@ The ``ignore_and_fire`` variant of the model permits exact scaling experiments, 
 References
 ----------
 
-.. [1] Brunel (2000). Dynamics of networks of randomly connected excitatory
+.. [1] Van Albada S J, Helias M, Diesmann M (2015). Scalability of asynchronous
+       networks is limited by one-to-one mapping between effective connectivity
+       and correlations. PLoS computational biology, 11(9), e1004490.
+       <https://doi.org/10.1371/journal.pcbi.1004490>
+       
+.. [2] Brunel N (2000). Dynamics of networks of randomly connected excitatory
        and inhibitory spiking neurons. Journal of Physiology-Paris
-       94(5-6):445-463.
-       doi:10.1023/A:1008925309027 <https://doi.org/10.1023/A:1008925309027>
+       94(5-6):445-463. <https://doi.org/10.1023/A:1008925309027>
 
-.. [2] Helias M, Kunkel S, Masumoto G, Igarashi J, Eppler JM, Ishii S, Fukai
+.. [3] Helias M, Kunkel S, Masumoto G, Igarashi J, Eppler JM, Ishii S, Fukai
        T, Morrison A, Diesmann M (2012). Supercomputers ready for use as
        discovery machines for neuroscience. Frontiers in Neuroinformatics
-       6:26 <https://doi.org/10.3389/fninf.2012.00026
+       6:26. <https://doi.org/10.3389/fninf.2012.00026
 
-.. [3] Ippen T, Eppler JM, Plesser HE, Diesmann M (2017). Constructing
+.. [4] Ippen T, Eppler JM, Plesser HE, Diesmann M (2017). Constructing
        neuronal network models in massively parallel environments. Frontiers in
-       Neuroinformatics 11:30 <https://doi.org/10.3389/fninf.2017.00030
+       Neuroinformatics 11:30. <https://doi.org/10.3389/fninf.2017.00030
 
-.. [4] Jordan J, Ippen T, Helias M, Kitayama I, Sato M, Igarashi J, Diesmann
+.. [5] Jordan J, Ippen T, Helias M, Kitayama I, Sato M, Igarashi J, Diesmann
        M, Kunkel S (2018). Extremely scalable spiking neuronal network
        simulation code: from laptops to exascale computers. Frontiers in
-       Neuroinformatics 12:2 <https://doi.org/10.3389/fninf.2018.00002
+       Neuroinformatics 12:2. <https://doi.org/10.3389/fninf.2018.00002
 
-.. [5] Kunkel S, Potjans TC, Eppler JM, Plesser HE, Morrison A, Diesmann M
+.. [6] Kunkel S, Potjans TC, Eppler JM, Plesser HE, Morrison A, Diesmann M
        (2012). Meeting the memory challenges of brain-scale simulation.
-       Frontiers in Neuroinformatics
-       5:35 <https://doi.org/10.3389/fninf.2011.00035
+       Frontiers in Neuroinformatics 5:35. <https://doi.org/10.3389/fninf.2011.00035
 
-.. [6] Kunkel S, Schenck W (2017). The NEST dry-run mode: Efficient dynamic
+.. [7] Kunkel S, Schenck W (2017). The NEST dry-run mode: Efficient dynamic
        analysis of neuronal network simulation code. Frontiers in
-       Neuroinformatics 11:40 <https://doi.org/10.3389/fninf.2017.00040
+       Neuroinformatics 11:40. <https://doi.org/10.3389/fninf.2017.00040
 
-.. [7] Morrison A, Aertsen A, Diesmann M (2007). Spike-timing-dependent
+.. [8] Morrison A, Aertsen A, Diesmann M (2007). Spike-timing-dependent
        plasticity in balanced random networks. Neural Computation
-       19(6):1437-1467 <https://doi.org/10.1162/neco.2007.19.6.1437
+       19(6):1437-1467. <https://doi.org/10.1162/neco.2007.19.6.1437
 
        
 .. seealso::

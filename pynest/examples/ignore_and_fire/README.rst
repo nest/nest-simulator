@@ -49,12 +49,20 @@ The ``ignore_and_fire`` variant of the network model permits exact scaling exper
 The number of incoming connections per neuron, the in-degree, is kept constant at :math:`K=1250`.
 The total number of connections hence scales linearly with :math:`N=1250`. For each simulation, we monitor the simulation (wall clock) time, the time and population averaged firing rate, and the mean standard deviation of the excitatory synaptic weights at the end of the simulation.
 
+For the integrate-and-fire variant of the network model, the firing rate and the synaptic-weight distribution depend on the network size :math:`N`. In particular, for small :math:`N`, the firing rates and the synaptic weights increase due to the denser connectivity. 
+
+For the ignore-and-fire version, the dynamics is independent of the network size. The average firing rate is --by definition-- constant. As the firing phases of the ignore-and-fire neurons are chosen randomly, the spiking activity is asynchronous, irrespective of the connection density. As a consequence, the distribution of synaptic weights (which is shaped by correlations between neurons) remains constant, too. The overall communication load, i.e., the total number of spikes that need to be sent across the network within each time interval, is hence fully controlled by the user.
 
 .. figure:: figures/scaling.png
-   :scale: 20%
+   :scale: 50%
 
 Dependence of the simulation time (top), the time and population averaged firing rate (middle) and the excitatory synaptic weights (bottom) on the network size :math:`N` for the\ ``integrate-and-fire`` (black) and the ``ignore-and-fire`` variant of the network model (gray). The in-degree :math:`K=1250` is fixed. Figure generated using :doc:`code/scaling.py </auto_examples/ignore_and_fire/scaling>`.
 
+
+Running the simulations
+------------------------
+
+The workflows underlying the numerical experiments shown above are documented in `Snakefile </auto_examples/ignore_and_fire/workflow>`.
 
 
 References
@@ -98,8 +106,9 @@ References
        
 .. seealso::
 
+    * :doc:`Snakefile </auto_examples/ignore_and_fire/workflow>`: simulation workflow
     * :doc:`Detailed description of the network model and parameters <doc/ModelDescription_TwoPopulationNetworkPlastic>`
-    * :doc:`NEST implementation details <doc/simulation_details>`.
+    * :doc:`NEST implementation details <doc/simulation_details>`
     * :doc:`code/model.py </auto_examples/ignore_and_fire/model>`: NEST implementation of the network model
     * :doc:`code/parameter_dicts.py <parameter_dicts>`: parameter setting
     * :doc:`ignore_and_fire model documentation </models/ignore_and_fire>`

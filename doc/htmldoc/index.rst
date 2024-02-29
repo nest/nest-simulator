@@ -50,7 +50,7 @@ Welcome to the NEST Simulator documentation
                   Investigate neuron and astrocyte interactions
 
 
-                .. figure:: examples/hpc_benchmark_connectivity.svg
+                .. figure:: static/img/hpc_benchmark_connectivity.svg
 
 
                   Test perfomance and benchmarks

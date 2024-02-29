@@ -1,4 +1,4 @@
-:orphan: 
+:orphan:
 
 Icons provided by Flaticon
 --------------------------
@@ -15,7 +15,7 @@ Icons provided by Flaticon
 <a href="https://www.flaticon.com/free-icons/brain" title="brain icons">Brain icons created by Freepik - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/teacher" title="teacher icons">Teacher icons created by Good Ware - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/math" title="math icons">Math icons created by Freepik - Flaticon</a>
-<a href="https://www.flaticon.com/free-icons/data-storage" title="data storage icons">Data storage icons created by IconLauk - Flaticon</a> 
+<a href="https://www.flaticon.com/free-icons/data-storage" title="data storage icons">Data storage icons created by IconLauk - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/version" title="version icons">Version icons created by Ahmad Roaayala - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/developer" title="developer icons">Developer icons created by Freepik - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/cloud-computing" title="cloud computing icons">Cloud computing icons created by Prosymbols Premium - Flaticon</a>
@@ -26,3 +26,8 @@ Icons provided by Flaticon
 <a href="https://www.flaticon.com/free-icons/quote" title="quote icons">Quote icons created by DinosoftLabs - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/mail" title="mail icons">Mail icons created by Freepik - Flaticon</a>
 <a href="https://www.flaticon.com/free-icons/external-link" title="external link icons">External link icons created by Bharat Icons - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/parallel" title="parallel icons">Parallel icons created by juicy_fish - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/simulation" title="simulation icons">Simulation icons created by Parzival’ 1997 - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/art-gallery" title="art gallery icons">Art gallery icons created by Freepik - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/python" title="python icons">Python icons created by Nadiinko - Flaticon</a>
+<a href="https://www.flaticon.com/free-icons/interactive" title="interactive icons">Interactive icons created by SBTS2018 - Flaticon</a>

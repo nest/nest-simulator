@@ -33,15 +33,17 @@ def plot_spikes(spikes, nodes, pars, path="./"):
     rate = time_and_population_averaged_spike_rate(spikes, (0.0, pars["T"]), pars["N_rec_spikes"])
 
     # plot spiking activity
-    plt.figure(num=1, figsize=(7, 5))
+    plt.figure(num=1)    
     plt.clf()
     plt.title(r"time and population averaged firing rate: $\nu=%.2f$ spikes/s" % rate)
-    plt.plot(spikes[:, 1], spikes[:, 0], "o", ms=0.5, lw=0, mfc="k", mec="k", alpha=0.3, rasterized=True)
+    plt.plot(spikes[:, 1], spikes[:, 0], "o", ms=1, lw=0, mfc="k", mec="k", mew=0, alpha=0.2, rasterized=True)
 
     plt.xlim(0, pars["T"])
     plt.ylim(0, pars["N_rec_spikes"])
     plt.xlabel(r"time (ms)")
     plt.ylabel(r"neuron id")
+
+    plt.subplots_adjust(bottom=0.14,top=0.9,left=0.15,right=0.95)
     plt.savefig(path + "/TwoPopulationNetworkPlastic_%s_spikes.png" % pars['neuron_model'])
 
 
@@ -71,7 +73,8 @@ def plot_connectivity_matrix(W, pop_pre, pop_post, pars, filename_label=None, pa
     wmax = 150
 
     print("\nPlotting connectivity matrix...")
-    fig = plt.figure(num=2, figsize=(6, 5))
+
+    fig = plt.figure(num=2)    
     plt.clf()
     gs = gridspec.GridSpec(1, 2, width_ratios=[15, 1])
 
@@ -105,7 +108,8 @@ def plot_weight_distributions(whist_presim, whist_postsim, weights, pars, path="
     Plot distributions of synaptic weights before and after simulation.
     """
     print("\nPlotting weight distributions...")
-    fig = plt.figure(num=3, figsize=(6, 4))
+
+    fig = plt.figure(num=3)
     plt.clf()
     lw = 3
     clr = ["0.6", "0.0"]
@@ -118,7 +122,8 @@ def plot_weight_distributions(whist_presim, whist_postsim, weights, pars, path="
     plt.ylabel(r"rel. frequency")
     plt.xlim(weights[0], weights[-2])
     plt.ylim(5e-5, 3)
-    plt.subplots_adjust(left=0.12, bottom=0.12, right=0.95, top=0.95)
+    #plt.subplots_adjust(left=0.12, bottom=0.12, right=0.95, top=0.95)
+    plt.subplots_adjust(bottom=0.14,top=0.9,left=0.15,right=0.95)
     plt.savefig(path + "/TwoPopulationNetworkPlastic_%s_weight_distributions.png" % pars['neuron_model'])    
 
 #################################################
@@ -181,5 +186,17 @@ def generate_reference_figures(neuron_model='ignore_and_fire'):
 
 
 #################################################
+
+from matplotlib import rcParams
+rcParams['figure.figsize']  = (4,3)
+rcParams['figure.dpi']      = 300
+rcParams['font.family']     = 'sans-serif'
+rcParams['font.size']       = 8
+rcParams['legend.fontsize'] = 8
+rcParams['axes.titlesize']  = 8
+rcParams['axes.labelsize']  = 8
+rcParams['ytick.labelsize'] = 8
+rcParams['xtick.labelsize'] = 8
+rcParams['text.usetex']     = True
 
 generate_reference_figures(neuron_model = sys.argv[1])

@@ -26,7 +26,7 @@ Ns = numpy.arange(1250, 15000, 1250)                  ## network sizes
 data_path_root = "./data"                             ## root of path to simulation data
 
 simulate = True
-#simulate = False
+simulate = False
 analyse = True
 # analyse = False
 
@@ -222,17 +222,21 @@ for cm, neuron_model in enumerate(neuron_models):
 
 if analyse:
     ## plotting
-    fig = plt.figure(num=3, figsize=(3, 4), dpi=300)
-    plt.clf()
 
-    plt.rcParams.update(
-        {
-            "text.usetex": True,
-            "font.size": 8,
-            "axes.titlesize": 8,
-            "legend.fontsize": 8,
-        }
-    )
+    from matplotlib import rcParams
+    rcParams['figure.figsize']  = (3,4)
+    rcParams['figure.dpi']      = 300
+    rcParams['font.family']     = 'sans-serif'
+    rcParams['font.size']       = 8
+    rcParams['legend.fontsize'] = 8
+    rcParams['axes.titlesize']  = 8
+    rcParams['axes.labelsize']  = 8
+    rcParams['ytick.labelsize'] = 8
+    rcParams['xtick.labelsize'] = 8
+    rcParams['text.usetex']     = True
+
+    fig = plt.figure(num=3)
+    plt.clf()
 
     gs = gridspec.GridSpec(3, 1)
 
@@ -260,22 +264,23 @@ if analyse:
             ms=ms,
             lw=lw,
             color=clrs[cm],
-            label=r"%s" % neuron_model,
+            label=r"\texttt{%s}" % neuron_model,
         )
         ax1.set_xlim(Ns[0], Ns[-1])
         ax1.set_xticklabels([])
         ax1.set_ylabel(r"simulation time (s)")
         #ax1.set_title(r"fixed in-degree $K=1250$")
-
+        ax1.legend(loc=2)
+        
         ## firing rate
         ax2.plot(
-            Ns, rate[cm, :], "-o", mfc=clrs[cm], mec=clrs[cm], ms=ms, lw=lw, color=clrs[cm], label=r"%s" % neuron_model
+            Ns, rate[cm, :], "-o", mfc=clrs[cm], mec=clrs[cm], ms=ms, lw=lw, color=clrs[cm], label=r"\texttt{%s}" % neuron_model
         )
         ax2.set_xlim(Ns[0], Ns[-1])
         ax2.set_xticklabels([])
         ax2.set_ylim(0.5, 2)
         ax2.set_ylabel(r"firing rate (1/s)")
-        ax2.legend(loc=1)
+        #ax2.legend(loc=1)
 
         ## weight stat
         if cm == 0:

@@ -39,7 +39,7 @@ The model employed here can be configured into a truly scalable mode by replacin
 .. |ign_weight| image:: figures/TwoPopulationNetworkPlastic_ignore_and_fire_weight_distributions.png
 
 
-Spiking activity (top) and distributions of excitatory synaptic weights (bottom) for the network with integrate-and-fire (``iaf_psc_alpha_nest``) and :doc:`ignore_and_fire </models/ignore_and_fire>` dynamics (``ignore_and_fire``). Figures generated using :doc:`code/generate_reference_data.py </auto_examples/ignore_and_fire/generate_reference_data>` and :doc:`code generate_reference_figures.py </auto_examples/ignore_and_fire/generate_reference_figures>`.
+   Spiking activity (top) and distributions of excitatory synaptic weights (bottom) for the network with integrate-and-fire (``iaf_psc_alpha_nest``) and :doc:`ignore_and_fire </models/ignore_and_fire>` dynamics (``ignore_and_fire``). Figures generated using :doc:`code/generate_reference_data.py </auto_examples/ignore_and_fire/generate_reference_data>` and :doc:`code generate_reference_figures.py </auto_examples/ignore_and_fire/generate_reference_figures>`.
 
 
 Scaling experiments
@@ -53,11 +53,7 @@ The total number of connections hence scales linearly with :math:`N=1250`. For e
 .. figure:: figures/scaling.png
 #   :scale: 50%
 
-   Dependence of the simulation time (top), the time and population
-   averaged firing rate (middle) and the excitatory synaptic weights (bottom) on the
-   network size :math:`N` for the\ ``integrate-and-fire`` (black) and the
-   ``ignore-and-fire`` variant of the network model (gray). The in-degree
-   :math:`K=1250` is fixed. Figure generated using :doc:`code/scaling.py </auto_examples/ignore_and_fire/scaling>`.
+   Dependence of the simulation time (top), the time and population averaged firing rate (middle) and the excitatory synaptic weights (bottom) on the network size :math:`N` for the\ ``integrate-and-fire`` (black) and the ``ignore-and-fire`` variant of the network model (gray). The in-degree :math:`K=1250` is fixed. Figure generated using :doc:`code/scaling.py </auto_examples/ignore_and_fire/scaling>`.
 
 
 

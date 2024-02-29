@@ -47,11 +47,9 @@ Scaling experiments
 
 The ``ignore_and_fire`` variant of the network model permits exact scaling experiments, without the need for any parameter tuning when changing the network size (see figure below). We demonstrate this here by simulating the network for various network sizes between :math:`N=1250` and  :math:`N=13750`.
 The number of incoming connections per neuron, the in-degree, is kept constant at :math:`K=1250`.
-The total number of connections hence scales linearly with :math:`N=1250`. For each simulation, we monitor the simulation (wall clock) time, the time and population averaged firing rate, and the mean standard deviation of the excitatory synaptic weights at the end of the simulation.
+The total number of connections hence scales linearly with :math:`N`. For each simulation, we monitor the simulation (wall clock) time, the time and population averaged firing rate, and the mean standard deviation of the excitatory synaptic weights at the end of the simulation.
 
-For the integrate-and-fire variant of the network model, the firing rate and the synaptic-weight distribution depend on the network size :math:`N`. In particular, for small :math:`N`, the firing rates and the synaptic weights increase due to the denser connectivity. 
-
-For the ignore-and-fire version, the dynamics is independent of the network size. The average firing rate is --by definition-- constant. As the firing phases of the ignore-and-fire neurons are chosen randomly, the spiking activity is asynchronous, irrespective of the connection density. As a consequence, the distribution of synaptic weights (which is shaped by correlations between neurons) remains constant, too. The overall communication load, i.e., the total number of spikes that need to be sent across the network within each time interval, is hence fully controlled by the user.
+For the integrate-and-fire variant of the network model, the firing rate and the synaptic-weight distribution depend on the network size :math:`N`. In particular, for small :math:`N`, the firing rates and the synaptic weights increase due to the denser connectivity. For the ignore-and-fire version, in contrast, the dynamics is independent of the network size. The average firing rate is --by definition-- constant. As the firing phases of the ignore-and-fire neurons are chosen randomly, the spiking activity is asynchronous, irrespective of the connection density. As a consequence, the distribution of synaptic weights (which is shaped by correlations between neurons) remains constant, too. The overall communication load, i.e., the total number of spikes that need to be sent across the network within each time interval, is hence fully controlled by the user.
 
 .. figure:: figures/scaling.png
    :scale: 50%

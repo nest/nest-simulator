@@ -51,7 +51,7 @@ The total number of connections hence scales linearly with :math:`N=1250`. For e
 
 
 .. figure:: figures/scaling.png
-   :scale: 50%
+   :scale: 20%
 
 Dependence of the simulation time (top), the time and population averaged firing rate (middle) and the excitatory synaptic weights (bottom) on the network size :math:`N` for the\ ``integrate-and-fire`` (black) and the ``ignore-and-fire`` variant of the network model (gray). The in-degree :math:`K=1250` is fixed. Figure generated using :doc:`code/scaling.py </auto_examples/ignore_and_fire/scaling>`.
 

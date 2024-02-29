@@ -145,7 +145,6 @@ duration.update({key: value * duration["step"] for key, value in steps.items()})
 # objects and set some NEST kernel parameters, some of which are e-prop-related.
 
 params_setup = {
-    "eprop_learning_window": duration["learning_window"],
     "eprop_reset_neurons_on_update": True,  # if True, reset dynamic variables at start of each update interval
     "eprop_update_interval": duration["sequence"],  # ms, time interval for updating the synaptic weights
     "print_time": False,  # if True, print time progress bar during simulation, set False if run as code cell
@@ -216,7 +215,7 @@ nrns_in = nest.Create("parrot_neuron", n_in)
 nrns_rec = nest.Create(model_nrn_rec, n_rec, params_nrn_rec)
 nrns_out = nest.Create("eprop_readout", n_out, params_nrn_out)
 gen_rate_target = nest.Create("step_rate_generator", n_out)
-
+gen_learning_window = nest.Create("step_rate_generator")
 
 # %% ###########################################################################################################
 # Create recorders
@@ -314,6 +313,12 @@ params_syn_rate_target = {
     "receptor_type": 2,  # receptor type over which readout neuron receives target signal
 }
 
+params_syn_learning_window = {
+    "synapse_model": "rate_connection_delayed",
+    "delay": duration["step"],
+    "receptor_type": 3,  # receptor type over which readout neuron receives learning window signal
+}
+
 params_syn_static = {
     "synapse_model": "static_synapse",
     "delay": duration["step"],
@@ -329,6 +334,7 @@ nest.Connect(nrns_rec, nrns_rec, params_conn_all_to_all, params_syn_rec)  # conn
 nest.Connect(nrns_rec, nrns_out, params_conn_all_to_all, params_syn_out)  # connection 4
 nest.Connect(nrns_out, nrns_rec, params_conn_all_to_all, params_syn_feedback)  # connection 5
 nest.Connect(gen_rate_target, nrns_out, params_conn_one_to_one, params_syn_rate_target)  # connection 6
+nest.Connect(gen_learning_window, nrns_out, params_conn_all_to_all, params_syn_learning_window)  # connection 7
 
 nest.Connect(nrns_in + nrns_rec, sr, params_conn_all_to_all, params_syn_static)
 
@@ -391,9 +397,16 @@ params_gen_rate_target = {
     "amplitude_values": np.tile(target_signal, n_iter * n_batch),
 }
 
+params_gen_learning_window = {
+    "amplitude_times": [duration["total_offset"]],
+    "amplitude_values": [1.0],
+}
+
 ####################
 
 nest.SetStatus(gen_rate_target, params_gen_rate_target)
+
+nest.SetStatus(gen_learning_window, params_gen_learning_window)
 
 # %% ###########################################################################################################
 # Force final update

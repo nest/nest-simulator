@@ -317,6 +317,9 @@ private:
     //! Target / teacher signal that the network is supposed to learn.
     double target_signal_;
 
+    //! Flag indicating whether the readout neurons are in a learning phase. 
+    bool learning_window_flag_;        
+
     //! Input current (pA).
     double i_in_;
 
@@ -383,6 +386,7 @@ private:
   {
     READOUT_SIG = MIN_RATE_RECEPTOR,
     TARGET_SIG,
+    LEARNING_WINDOW_SIG,
     SUP_RATE_RECEPTOR
   };
 
@@ -473,11 +477,11 @@ eprop_readout::handles_test_event( DelayedRateConnectionEvent& e, size_t recepto
   size_t step_rate_model_id = kernel().model_manager.get_node_model_id( "step_rate_generator" );
   size_t model_id = e.get_sender().get_model_id();
 
-  if ( step_rate_model_id == model_id and receptor_type != TARGET_SIG )
+  if ( step_rate_model_id == model_id and receptor_type != TARGET_SIG and receptor_type != LEARNING_WINDOW_SIG )
   {
     throw IllegalConnection(
       "eprop_readout neurons expect a connection with a step_rate_generator node through receptor_type "
-      "2." );
+      "2 or 3." );
   }
 
   if ( receptor_type < MIN_RATE_RECEPTOR or receptor_type >= SUP_RATE_RECEPTOR )

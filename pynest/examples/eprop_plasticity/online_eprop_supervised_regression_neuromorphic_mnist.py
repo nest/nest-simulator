@@ -117,7 +117,7 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # The original number of iterations requires distributed computing.
 
 n_batch = 32  # batch size, 64 in reference [2], 32 in the README to reference [2]
-n_iter_train = 30
+n_iter_train = 4
 n_iter_test = 1
 
 steps = {}
@@ -155,7 +155,6 @@ duration.update({key: value * duration["step"] for key, value in steps.items()})
 # objects and set some NEST kernel parameters, some of which are e-prop-related.
 
 params_setup = {
-    "eprop_learning_window": duration["learning_window"],
     "eprop_reset_neurons_on_update": True,  # if True, reset dynamic variables at start of each update interval
     "eprop_update_interval": duration["sequence"],  # ms, time interval for updating the synaptic weights
     "print_time": True,  # if True, print time progress bar during simulation, set False if run as code cell
@@ -181,9 +180,9 @@ pixels_blacklist = np.loadtxt("./NMNIST_pixels_blacklist.txt")
 
 n_in = 2 * 34 * 34 - len(pixels_blacklist) # number of input neurons
 n_rec = 100  # number of recurrent neurons
-n_out = 4
+n_out = 10
 
-model_nrn_rec = "eprop_iaf_psc_delta"
+model_nrn_rec = "eprop_iaf"
 
 params_nrn_rec = {
     "beta_fr_ema": 0.999,  # Smoothing factor of firing rate exponential moving average
@@ -232,6 +231,7 @@ nrns_in = nest.Create("parrot_neuron", n_in)
 nrns_rec = nest.Create(model_nrn_rec, n_rec, params_nrn_rec)
 nrns_out = nest.Create("eprop_readout", n_out, params_nrn_out)
 gen_rate_target = nest.Create("step_rate_generator", n_out)
+gen_learning_window = nest.Create("step_rate_generator")
 
 
 # %% ###########################################################################################################
@@ -350,6 +350,12 @@ params_syn_rate_target = {
     "receptor_type": 2,  # receptor type over which readout neuron receives target signal
 }
 
+params_syn_learning_window = {
+    "synapse_model": "rate_connection_delayed",
+    "delay": duration["step"],
+    "receptor_type": 3,  # receptor type over which readout neuron receives learning window signal
+}
+
 params_syn_static = {
     "synapse_model": "static_synapse",
     "delay": duration["step"],
@@ -384,6 +390,7 @@ for j in range(n_out):
             nest.Connect(nrns_rec[i], nrns_out[j], params_conn_one_to_one, params_syn_out)            
 nest.Connect(nrns_out, nrns_rec, params_conn_all_to_all, params_syn_feedback)  # connection 5
 nest.Connect(gen_rate_target, nrns_out, params_conn_one_to_one, params_syn_rate_target)  # connection 6
+nest.Connect(gen_learning_window, nrns_out, params_conn_all_to_all, params_syn_learning_window)  # connection
 nest.Connect(nrns_out, nrns_out, params_conn_all_to_all, params_syn_out_out)  # connection 7
 nest.Connect(mm_out, nrns_out, params_conn_all_to_all, params_syn_static)
 
@@ -564,9 +571,20 @@ for target_rate in target_rates:
         }
     )
 
+learning_window = np.zeros((n_iter_train+n_iter_test, n_batch, steps["sequence"]))
+learning_window[:, :, -steps["learning_window"]:] = 1.0
+learning_window = learning_window.reshape(-1)
+
+params_gen_learning_window = {
+    "amplitude_times": np.arange(duration["total_offset"], duration["total_offset"] + duration["task"]),
+    "amplitude_values": learning_window,
+}
 
 nest.SetStatus(gen_spk_in, params_gen_spk_in)
 nest.SetStatus(gen_rate_target, params_gen_rate_target)
+nest.SetStatus(gen_learning_window, params_gen_learning_window)
+
+
 nest.Simulate(duration["total_offset"] + duration["training_time"])
 params_common_syn_eprop["optimizer"]["eta"] = 0.0
 nest.SetDefaults("eprop_synapse", params_common_syn_eprop)

@@ -298,77 +298,83 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
 @check_stack
 def TripartiteConnect(pre, post, third, conn_spec, syn_specs=None):
     """
-    Connect `pre` nodes to `post` nodes and a `third`-factor nodes.
+     Connect `pre` nodes to `post` nodes and a `third`-factor nodes.
 
-    Nodes in `pre` and `post` are connected using the specified tripartite connection rule
-    and the given synapse types (all :cpp:class:`static_synapse <nest::static_synapse>` by default).
-    Details depend on the connection rule.
+     Nodes in `pre` and `post` are connected using the specified tripartite connection rule
+     and the given synapse types (all :cpp:class:`static_synapse <nest::static_synapse>` by default).
+     Details depend on the connection rule.
 
-    Lists of synapse models and connection rules are available as
-    ``nest.synapse_models`` and ``nest.connection_rules``, respectively. Note that only tripartite
-    connection rules can be used.
+     Lists of synapse models and connection rules are available as
+     ``nest.synapse_models`` and ``nest.connection_rules``, respectively. Note that only tripartite
+     connection rules can be used.
 
-    Parameters
-    ----------
-    pre : NodeCollection
-        Presynaptic nodes
-    post : NodeCollection
-        Postsynaptic nodes
-    third : NodeCollection
-        Third population to include in connection
-    conn_spec : dict
-        Specifies connection rule, which must support tripartite connections, see below
-    syn_spec : dict, optional
-        Specifies synapse models to be used, see below
+     Parameters
+     ----------
+     pre : NodeCollection
+         Presynaptic nodes
+     post : NodeCollection
+         Postsynaptic nodes
+     third : NodeCollection
+         Third population to include in connection
+     conn_spec : dict
+         Specifies connection rule, which must support tripartite connections, see below
+     syn_spec : dict, optional
+         Specifies synapse models to be used, see below
 
-    Raises
-    ------
-    kernel.NESTError
+     Raises
+     ------
+     kernel.NESTError
 
-    Notes
-    -----
-    **Connectivity specification (conn_spec)**
+     Notes
+     -----
+     **Connectivity specification (conn_spec)**
 
-    Available tripartite rules::
+     Available tripartite rules::
 
-     - ``tripartite_bernoulli_with_pool``
+      - ``tripartite_bernoulli_with_pool``
 
-    See :ref:`tripartite_connectivity` for more details and :doc:`/auto_examples/astrocytes/astrocyte_small_network`
-    and :doc:`/auto_examples/astrocytes/astrocyte_brunel` for examples.
+     See :ref:`tripartite_connectivity` for more details and :doc:`/auto_examples/astrocytes/astrocyte_small_network`
+     and :doc:`/auto_examples/astrocytes/astrocyte_brunel` for examples.
 
-    **Synapse specifications (syn_specs)**
+     **Synapse specifications (syn_specs)**
 
-    Synapse specifications for tripartite connections are given as a dictionary with specifications
-    for each of the three projections to be created::
+     Synapse specifications for tripartite connections are given as a dictionary with specifications
+     for each of the three projections to be created::
 
-     {"primary": <syn_spec>,
-     "third_in": <syn_spec>,
-     "third_out": <syn_spec>}
+      {"primary": <syn_spec>,
+      "third_in": <syn_spec>,
+      "third_out": <syn_spec>}
 
-    Here, ``"primary"`` marks the synapse specification for the projections between ``pre`` and ``post`` nodes,
-    ``"third_in"`` for connections between ``pre`` and ``third`` nodes and ``"third_out"`` for connections between
-    ``third`` and ``post`` nodes.
+     Here, ``"primary"`` marks the synapse specification for the projections between ``pre`` and ``post`` nodes,
+     ``"third_in"`` for connections between ``pre`` and ``third`` nodes and ``"third_out"`` for connections between
+     ``third`` and ``post`` nodes.
 
-    Each ``<syn_spec>`` entry can be any entry that would be possible as synapse specification
-    in a normal ``Connect()`` call. Any missing entries default to ``static_synapse``. If no ``<syn_spec>`` argument
-    is given at all, all three entries default to ``static_synapse``.
+     Each ``<syn_spec>`` entry can be any entry that would be possible as synapse specification
+     in a normal ``Connect()`` call. Any missing entries default to ``static_synapse``. If no ``<syn_spec>`` argument
+     is given at all, all three entries default to ``static_synapse``.
 
-    The synapse model and its properties can be given either as a string
-    identifying a specific synapse model (default: :cpp:class:`static_synapse <nest::static_synapse>`) or
-    as a dictionary specifying the synapse model and its parameters.
+     The synapse model and its properties can be given either as a string
+     identifying a specific synapse model (default: :cpp:class:`static_synapse <nest::static_synapse>`) or
+     as a dictionary specifying the synapse model and its parameters.
 
-    Available keys in the synapse specification dictionary are::
+     Available keys in the synapse specification dictionary are::
 
-     - 'synapse_model'
-     - 'weight'
-     - 'delay'
-     - 'receptor_type'
-     - any parameters specific to the selected synapse model.
+      - 'synapse_model'
+      - 'weight'
+      - 'delay'
+      - 'receptor_type'
+      - any parameters specific to the selected synapse model.
 
 
-    See Also
-    ---------
-    :ref:`connection_management`
+    .. admonition:
+
+       Tripartite connectivity is a new feature. Please expect some adjustments to
+       the syntax and semantics for for tripartite connectivity in the next NEST releases.
+
+
+     See Also
+     ---------
+     :ref:`connection_management`
     """
 
     # Confirm that we got node collections

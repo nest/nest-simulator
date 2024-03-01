@@ -243,7 +243,7 @@ Read the Docs
 NEST documentation is hosted on Read the Docs. If you would like to view the documentation
 on Read the Docs, you can set up your own account and link it with your Github account.
 
-See `this guide <https://docs.readthedocs.io/en/stable/intro/import-guide.htmli>`_
+See `this guide <https://docs.readthedocs.io/en/stable/intro/import-guide.html>`_
 for more information.
 
 .. toctree::

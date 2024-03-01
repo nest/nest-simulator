@@ -87,13 +87,12 @@ The key differences between the current model and the model in [1]_ are:
 For details on asynchronicity in spike and firing events with Hodgkin Huxley models
 see :ref:`here <hh_details>`.
 
-See also [2]_.
 
 Postsynaptic currents
 ---------------------
 
 Incoming spike events induce a postsynaptic change of conductance modelled by a
-beta function as outlined in [3]_ [4]_. The beta function is normalized such that an
+beta function as outlined in [2]_ [3]_. The beta function is normalized such that an
 event of weight 1.0 results in a peak current of 1 nS at :math:`t = \tau_{rise,xx}`
 where xx is ex or in.
 
@@ -151,11 +150,10 @@ References
 
 .. [1] Traub RD and Miles R (1991). Neuronal Networks of the Hippocampus.
        Cambridge University Press, Cambridge UK.
-.. [2] http://modeldb.yale.edu/83319
-.. [3] Rotter S and Diesmann M (1999). Exact digital simulation of
+.. [2] Rotter S and Diesmann M (1999). Exact digital simulation of
        time-invariant linear systems with applications to neuronal modeling.
        Biological Cybernetics 81:381 DOI: https://doi.org/10.1007/s004220050570
-.. [4] Roth A and van Rossum M (2010). Chapter 6: Modeling synapses.
+.. [3] Roth A and van Rossum M (2010). Chapter 6: Modeling synapses.
        in De Schutter, Computational Modeling Methods for Neuroscientists,
        MIT Press.
 

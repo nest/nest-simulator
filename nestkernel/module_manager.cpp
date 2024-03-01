@@ -165,7 +165,7 @@ ModuleManager::install( const std::string& name )
   // add the handle to list of loaded modules
   modules_[ name ] = hModule;
 
-  LOG( M_INFO, "Install", ( "loaded module " + extension->name() ).c_str() );
+  LOG( M_INFO, "Install", ( "loaded module " + name ).c_str() );
 }
 
 } // namespace nest

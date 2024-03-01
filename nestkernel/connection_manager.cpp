@@ -46,6 +46,7 @@
 #include "connector_base.h"
 #include "connector_model.h"
 #include "delay_checker.h"
+#include "eprop_archiving_node.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
@@ -853,6 +854,14 @@ nest::ConnectionManager::connect_( Node& source,
   if ( urbanczik_archiving and not target.supports_urbanczik_archiving() )
   {
     throw NotImplemented( "This synapse model is not supported by the neuron model of at least one  connection." );
+  }
+
+  const bool eprop_archiving = conn_model.has_property( ConnectionModelProperties::REQUIRES_EPROP_ARCHIVING );
+  if ( eprop_archiving
+    and not( dynamic_cast< EpropArchivingNodeRecurrent* >( &target )
+      or dynamic_cast< EpropArchivingNodeReadout* >( &target ) ) )
+  {
+    throw NotImplemented( "This synapse model is not supported by the neuron model of at least one connection." );
   }
 
   const bool is_primary = conn_model.has_property( ConnectionModelProperties::IS_PRIMARY );

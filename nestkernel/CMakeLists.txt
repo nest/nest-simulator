@@ -23,6 +23,7 @@ set ( nestkernel_sources
       archiving_node.h archiving_node.cpp
       clopath_archiving_node.h clopath_archiving_node.cpp
       urbanczik_archiving_node.h urbanczik_archiving_node_impl.h
+      eprop_archiving_node.h eprop_archiving_node_impl.h eprop_archiving_node.cpp
       common_synapse_properties.h common_synapse_properties.cpp
       connection.h
       connection_label.h

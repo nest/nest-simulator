@@ -64,18 +64,6 @@ public:
    * Initialize module, register all components with kernel
    */
   virtual void init() = 0;
-
-  //! Name of module
-  virtual std::string name() = 0;
-
-  //! Contact information
-  virtual std::string contact() = 0;
-
-  //! Website
-  virtual std::string url() = 0;
-
-  //! Permanent URI
-  virtual std::string uri() = 0;
 };
 
 #endif // #ifndef NEST_EXTENSION_INTERFACE_H

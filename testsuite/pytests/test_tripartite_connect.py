@@ -122,7 +122,7 @@ def test_block_pool_wide():
     assert len(nest.GetConnections(third, post)) == n_primary
 
 
-def test_bipartitet_raises():
+def test_bipartite_raises():
     n_pre, n_post, n_third = 4, 2, 8
     pre = nest.Create("parrot_neuron", n_pre)
     post = nest.Create("parrot_neuron", n_post)
@@ -130,6 +130,16 @@ def test_bipartitet_raises():
 
     with pytest.raises(nest.kernel.NESTErrors.IllegalConnection):
         nest.TripartiteConnect(pre, post, third, {"rule": "one_to_one"})
+
+
+def test_sliced_third():
+    nest.local_num_threads = 4
+    nrn = nest.Create("parrot_neuron", 20)
+    third = nrn[:3] + nrn[5:]
+
+    nest.TripartiteConnect(
+        nrn, nrn, third[::3], {"rule": "tripartite_bernoulli_with_pool", "pool_type": "random", "pool_size": 2}
+    )
 
 
 def test_connect_complex_synspecs():

@@ -31,7 +31,7 @@ Install NEST
       :class-title: sd-d-flex-row sd-align-minor-center
       :columns: 4
 
-      With the JupyterHub service from EBRAINS you can
+      With the JupyterHub service from EBRAINS, you can
       try out NEST (and many other tools) directly in your browser.
 
       .. rst-class:: imgbutton
@@ -39,7 +39,8 @@ Install NEST
          .. image:: https://nest-simulator.org/TryItOnEBRAINS.png
             :target: https://lab.ebrains.eu/hub/user-redirect/git-pull?repo=https%3A%2F%2Fgithub.com%2Fnest%2Fnest-simulator-examples&urlpath=lab%2Ftree%2Fnest-simulator-examples%2Fnotebooks%2Fnotebooks%2Fone_neuron.ipynb&branch=main
 
-      For more info see :ref:`our guide to running Jupyter notebooks on EBRAINS  <run_jupyter>`
+
+      * For more info see :ref:`our guide to running Jupyter notebooks on EBRAINS <run_jupyter>`
 
 .. grid:: 2
    :gutter: 1

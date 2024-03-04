@@ -72,9 +72,9 @@ Next steps: Create your own network model
          |device| Device management
          ^^^
 
-         * :ref:`stimulate_network`: An overview of how to stimulate the network.
+         * :ref:`stimulate_network`: An overview of how to stimulate the network
          * :ref:`Get data from simulations <record_simulations>`: How to record data from neurons
-           and synapses.
+           and synapses
 
 
     .. grid-item-card::
@@ -84,7 +84,7 @@ Next steps: Create your own network model
          ^^^
 
          * :ref:`run_simulations`: A guide describing various factors in running simulations
-         * :ref:`random_numbers`: A guide to how random number are used in network simulations.
+         * :ref:`random_numbers`: A guide to how random number are used in network simulations
 
 
     .. grid-item-card::
@@ -94,7 +94,7 @@ Next steps: Create your own network model
          ^^^
 
          * :ref:`Manipulating nodes (neurons and devices) <node_handles>`: understand basic functionality of nodes
-         * :ref:`Manipulating connections (synapses) <handling_connections>`: understand basic fucntionality of connections
+         * :ref:`Manipulating connections (synapses) <handling_connections>`: understand basic functionality of connections
          * :ref:`param_ex`: explore how to use parameter objects in NEST
 
 
@@ -106,7 +106,7 @@ Next steps: Create your own network model
          ^^^
 
          * Explore our :ref:`PyNEST example networks <pynest_examples>` that showcase the numerous features and models
-           in NEST.
+           in NEST
 
     .. grid-item-card::
          :class-header: sd-d-flex-row sd-align-minor-center sd-bg-success sd-text-white
@@ -117,9 +117,9 @@ Next steps: Create your own network model
          Discover how to build large and more complex network models with these examples:
 
          * :doc:`Brunel network </auto_examples/brunel_alpha_nest>`: A random balanced network
-         * :doc:`The microcircuit  model <../auto_examples/Potjans_2014/index>`: A network model example based on Potjans and Diesman 2014.
+         * :doc:`The microcircuit  model <../auto_examples/Potjans_2014/index>`: A network model example based on Potjans and Diesman 2014
          * `The mesocircuit model <https://mesocircuit-model.readthedocs.io/en/latest/>`_: A layered cortical network with distance-dependent connectivity
-         * The `multi-area model <https://inm-6.github.io/multi-area-model/>`_: A network model of the visual cortex of the macaque monkey.
+         * The `multi-area model <https://inm-6.github.io/multi-area-model/>`_: A network model of the visual cortex of the macaque monkey
 
 
 
@@ -168,8 +168,8 @@ More topics
        ^^^
 
        * :ref:`optimize_performance`: Guides to optimize NEST performance in large scale simulations
-       * :ref:`built_in_timers`: A guide to the various timers available in NEST.
-       * :ref:`benchmark`: How to use the beNNch framework.
+       * :ref:`built_in_timers`: A guide to the various timers available in NEST
+       * :ref:`benchmark`: How to use the beNNch framework
 
 
 
@@ -186,10 +186,10 @@ More topics
        |connect| Connect to other tools
        ^^^
 
-       * :ref:`nest_server`: A guide showcasing how to interact with NEST via a RESTful API.
+       * :ref:`nest_server`: A guide showcasing how to interact with NEST via a RESTful API
        * :ref:`SONATA with NEST <nest_sonata>`: Guide to using the SONATA format
        * :ref:`MUSIC Tutorial <music_tutorial_1>`: how to transmit data between applications
-         with the MUSIC interface, step-by-step.
+         with the MUSIC interface, step-by-step
        * :ref:`nest_music`: Additional guide for building scripts with MUSIC
 
 

@@ -131,4 +131,35 @@ double dtruncate( double );
  */
 bool is_integer( double );
 
+/**
+ * Returns inverse of integer a modulo m
+ */
+long mod_inverse( long a, long m );
+
+/**
+ * Returns first matching index.
+ *
+ * Consider
+ * - a container of arbitrary length containing elements (e.g. GIDs) which map to certain values,
+ *     e.g., VP(GID), with a given *period*, e.g., the number of virtual processes
+ * - that the phase (e.g., the VP number) of the first entry in the container is *phase0*
+ * - that we slice the container with a given *step*
+ * - that we want to know the index of the first element in the container with a given *phase*
+ *
+ * This function returns that index. It is the responsibility of the caller to check if the returned index
+ * is within the bounds of the actual container—the algorithm assumes an infinite container.
+ *
+ * @note The function returns *invalid_index* if no solution exists.
+ *
+ * idx 0 1 2 3 4 5 6 7 8 9  10 11 | 12 13 14 15 16 17 18
+ * gid 1 2 3 4 5 6 7 8 9 10 11 12 | 13 14 15 16 17 18 19
+ * vp  1 2 3 0 1 2 3 0 1 2  3  0  | 1  2  3  0  1  2  3
+ *    *     *     *     *        | *        *        *
+ *    1     0     3     2        |
+ *
+ *  Asterisks mark first indices for the phases given below them, | indicates repetition starts
+ *
+ */
+long first_index( long period, long phase0, long step, long phase );
+
 #endif

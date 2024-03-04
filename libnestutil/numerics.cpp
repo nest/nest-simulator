@@ -20,6 +20,11 @@
  *
  */
 
+#include <cstdlib>
+#include <iostream>
+#include <numeric>
+
+#include "nest_types.h"
 #include "numerics.h"
 
 #ifndef HAVE_M_E
@@ -125,4 +130,75 @@ is_integer( double n )
 
   // factor 4 allows for two bits of rounding error
   return frac_part < 4 * n * std::numeric_limits< double >::epsilon();
+}
+
+long
+mod_inverse( long a, long m )
+{
+  assert( 0 <= a );
+
+  // next two only for self-test below, can be removed later
+  const long a_orig = a;
+  const long m_orig = m;
+
+  // Use half of extended Euclidean algorithm required to compute inverse
+  long s_0 = 1;
+  long s_1 = 0;
+
+  while ( a > 0 )
+  {
+    // get quotient and remainder in one go
+    const auto res = div( m, a );
+    m = a;
+    a = res.rem;
+
+    // line ordering matters below
+    const long s_0_new = -res.quot * s_0 + s_1;
+    s_1 = s_0;
+    s_0 = s_0_new;
+  }
+
+  // ensure positive result
+  s_1 = ( s_1 + m_orig ) % m_orig;
+
+  assert( m == 1 );                         // gcd() == 1 required
+  assert( ( a_orig * s_1 ) % m_orig == 1 ); // self-test
+
+  return s_1;
+}
+
+long
+first_index( long period, long phase0, long step, long phase )
+{
+  assert( period > 0 );
+  assert( step > 0 );
+  assert( 0 <= phase0 and phase0 < period );
+  assert( 0 <= phase and phase < period );
+
+  if ( phase == phase0 )
+  {
+    return 0;
+  }
+
+  const long delta_phase = ( phase - phase0 + period ) % period;
+  const long gcd = std::gcd( step, period );
+
+  if ( delta_phase % gcd != 0 )
+  {
+    return nest::invalid_index;
+  }
+  const long outer_period = std::lcm( period, step );
+
+  // scale by GCD, since modular inverse requires gcd==1
+  const long period_gcd = period / gcd;
+  const long solution_step = period_gcd * step;
+  long inner_ix = ( ( mod_inverse( step / gcd, period_gcd ) * delta_phase / gcd ) % period ) * step;
+  long min_ix = inner_ix % outer_period;
+  for ( size_t j = 1; j < gcd; ++j )
+  {
+    inner_ix += solution_step;
+    min_ix = std::min( min_ix, inner_ix % outer_period );
+  }
+
+  return min_ix;
 }

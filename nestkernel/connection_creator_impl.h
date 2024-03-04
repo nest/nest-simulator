@@ -339,7 +339,7 @@ ConnectionCreator::pairwise_bernoulli_on_target_( Layer< D >& source,
     const int thread_id = kernel().vp_manager.get_thread_id();
     try
     {
-      NodeCollection::const_iterator target_begin = target_nc->local_begin();
+      NodeCollection::const_iterator target_begin = target_nc->thread_local_begin();
       NodeCollection::const_iterator target_end = target_nc->end();
 
       for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )
@@ -477,7 +477,7 @@ ConnectionCreator::fixed_indegree_( Layer< D >& source,
     throw IllegalConnection( "Spatial Connect with fixed_indegree to devices is not possible." );
   }
 
-  NodeCollection::const_iterator target_begin = target_nc->MPI_local_begin();
+  NodeCollection::const_iterator target_begin = target_nc->rank_local_begin();
   NodeCollection::const_iterator target_end = target_nc->end();
 
   // protect against connecting to devices without proxies
@@ -769,7 +769,7 @@ ConnectionCreator::fixed_outdegree_( Layer< D >& source,
     throw IllegalConnection( "Spatial Connect with fixed_outdegree to devices is not possible." );
   }
 
-  NodeCollection::const_iterator target_begin = target_nc->MPI_local_begin();
+  NodeCollection::const_iterator target_begin = target_nc->rank_local_begin();
   NodeCollection::const_iterator target_end = target_nc->end();
 
   for ( NodeCollection::const_iterator tgt_it = target_begin; tgt_it < target_end; ++tgt_it )

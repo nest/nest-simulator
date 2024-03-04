@@ -22,6 +22,9 @@
 
 #include "node_collection.h"
 
+// Includes from libnestutil
+#include "numerics.h"
+
 // Includes from nestkernel:
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
@@ -484,7 +487,7 @@ NodeCollectionPrimitive::operator+( NodeCollectionPTR rhs ) const
 }
 
 NodeCollectionPrimitive::const_iterator
-NodeCollectionPrimitive::local_begin( NodeCollectionPTR cp ) const
+NodeCollectionPrimitive::thread_local_begin( NodeCollectionPTR cp ) const
 {
   const size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
   const size_t current_vp = kernel().vp_manager.thread_to_vp( kernel().vp_manager.get_thread_id() );
@@ -493,7 +496,7 @@ NodeCollectionPrimitive::local_begin( NodeCollectionPTR cp ) const
 
   if ( offset >= size() ) // Too few node IDs to be shared among all vps.
   {
-    return const_iterator( cp, *this, size() );
+    return const_iterator( cp, *this, size() ); // end iterator
   }
   else
   {
@@ -502,7 +505,7 @@ NodeCollectionPrimitive::local_begin( NodeCollectionPTR cp ) const
 }
 
 NodeCollectionPrimitive::const_iterator
-NodeCollectionPrimitive::MPI_local_begin( NodeCollectionPTR cp ) const
+NodeCollectionPrimitive::rank_local_begin( NodeCollectionPTR cp ) const
 {
   const size_t num_processes = kernel().mpi_manager.get_num_processes();
   const size_t rank = kernel().mpi_manager.get_rank();
@@ -871,53 +874,54 @@ NodeCollectionComposite::operator==( NodeCollectionPTR rhs ) const
 }
 
 NodeCollectionComposite::const_iterator
-NodeCollectionComposite::local_begin( NodeCollectionPTR cp ) const
+NodeCollectionComposite::thread_local_begin( NodeCollectionPTR cp ) const
 {
   const size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
   const size_t current_vp = kernel().vp_manager.thread_to_vp( kernel().vp_manager.get_thread_id() );
-  const size_t vp_first_node = kernel().vp_manager.node_id_to_vp( operator[]( 0 ) );
 
-  return local_begin_( cp, num_vps, current_vp, vp_first_node );
+  // See note on const_iterator class for end_part_/offset_ logic
+  for ( size_t pix = start_part_; pix < end_part_ + ( end_offset_ == 0 ? 0 : 1 ); ++pix )
+  {
+    // start_offset_ only applies to start_part_, in all following parts start from beginning
+    const size_t vp_first_node =
+      kernel().vp_manager.node_id_to_vp( parts_[ pix ][ pix == start_part_ ? start_offset_ : 0 ] );
+    const long offset =
+      first_index( num_vps, vp_first_node, step_, current_vp ) + ( pix == start_part_ ? start_offset_ : 0 );
+
+    if ( offset != invalid_index and offset < parts_[ pix ].size() )
+    {
+      assert( kernel().vp_manager.node_id_to_vp( parts_[ pix ][ offset ] ) == current_vp );
+      return nc_const_iterator( cp, *this, pix, offset, step_ * num_vps );
+    }
+  }
+
+  return end( cp );
 }
 
 NodeCollectionComposite::const_iterator
-NodeCollectionComposite::MPI_local_begin( NodeCollectionPTR cp ) const
+NodeCollectionComposite::rank_local_begin( NodeCollectionPTR cp ) const
 {
   const size_t num_processes = kernel().mpi_manager.get_num_processes();
-  const size_t rank = kernel().mpi_manager.get_rank();
-  const size_t rank_first_node =
-    kernel().mpi_manager.get_process_id_of_vp( kernel().vp_manager.node_id_to_vp( operator[]( 0 ) ) );
+  const size_t current_rank = kernel().mpi_manager.get_rank();
 
-  return local_begin_( cp, num_processes, rank, rank_first_node );
-}
-
-
-NodeCollectionComposite::const_iterator
-NodeCollectionComposite::local_begin_( const NodeCollectionPTR cp,
-  const size_t num_vp_elements,
-  const size_t current_vp_element,
-  const size_t vp_element_first_node ) const
-{
-  const size_t offset = ( current_vp_element - vp_element_first_node ) % num_vp_elements;
-
-  if ( ( current_vp_element - vp_element_first_node ) % step_ != 0 )
-  { // There are no local nodes in the NodeCollection.
-    return end( cp );
-  }
-
-  size_t current_part = start_part_;
-  size_t current_offset = start_offset_;
-  if ( offset )
+  // See note on const_iterator class for end_part_/offset_ logic
+  for ( size_t pix = start_part_; pix < end_part_ + ( end_offset_ == 0 ? 0 : 1 ); ++pix )
   {
-    // First create an iterator at the start position.
-    auto tmp_it = const_iterator( cp, *this, start_part_, start_offset_, step_ );
-    tmp_it += offset; // Go forward to the offset.
-    // Get current position.
-    tmp_it.get_current_part_offset( current_part, current_offset );
+    // start_offset_ only applies to start_part_, in all following parts start from beginning
+    const size_t rank_first_node = kernel().mpi_manager.get_process_id_of_vp(
+      kernel().vp_manager.node_id_to_vp( parts_[ pix ][ pix == start_part_ ? start_offset_ : 0 ] ) );
+    const long offset =
+      first_index( num_processes, rank_first_node, step_, current_rank ) + ( pix == start_part_ ? start_offset_ : 0 );
+    if ( offset != invalid_index and offset < parts_[ pix ].size() )
+    {
+      assert( kernel().mpi_manager.get_process_id_of_vp( parts_[ pix ][ offset ] ) == current_rank );
+      return nc_const_iterator( cp, *this, pix, offset, step_ * num_processes );
+    }
   }
 
-  return const_iterator( cp, *this, current_part, current_offset, num_vp_elements * step_ );
+  return end( cp );
 }
+
 
 ArrayDatum
 NodeCollectionComposite::to_array() const

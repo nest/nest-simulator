@@ -79,7 +79,7 @@ class NodeIDTriple
 public:
   size_t node_id { 0 };
   size_t model_id { 0 };
-  size_t lid { 0 };
+  size_t lid { 0 }; // position with node collection
   NodeIDTriple() = default;
 };
 
@@ -88,6 +88,11 @@ public:
  *
  * This iterator can iterate over primitive and composite NodeCollections.
  * Behavior is determined by the constructor used to create the iterator.
+ *
+ * @note In addition to a raw pointer to either a primitive or composite node collection, which is used
+ * for all actual work, the iterator also holds a NodeCollectionPTR to the NC it iterates over. This is solely
+ * so that anonymous node collections at the SLI/Python level are not auto-destroyed when they go out
+ * of scope while the iterator lives on.
  */
 class nc_const_iterator
 {
@@ -95,23 +100,15 @@ class nc_const_iterator
   friend class NodeCollectionComposite;
 
 private:
-  NodeCollectionPTR coll_ptr_; //!< holds pointer reference in safe iterators
+  NodeCollectionPTR coll_ptr_; //!< pointer for keep node collection alive, see note
   size_t element_idx_;         //!< index into (current) primitive node collection
   size_t part_idx_;            //!< index into parts vector of composite collection
   size_t step_;                //!< step for skipping due to e.g. slicing
 
-  /**
-   * Pointer to primitive collection to iterate over.
-   *
-   * Zero if iterator is for composite collection.
-   */
+  //! Pointer to primitive collection to iterate over.  Zero if iterator is for composite collection.
   NodeCollectionPrimitive const* const primitive_collection_;
 
-  /**
-   * Pointer to composite collection to iterate over.
-   *
-   * Zero if iterator is for primitive collection.
-   */
+  //! Pointer to composite collection to iterate over. Zero if iterator is for primitive collection.
   NodeCollectionComposite const* const composite_collection_;
 
   /**
@@ -167,6 +164,8 @@ public:
   nc_const_iterator operator++( int ); // postfix
   nc_const_iterator& operator+=( const size_t );
   nc_const_iterator operator+( const size_t ) const;
+
+  size_t get_step_size() const; //!< step size of iterator in number of elements
 
   void print_me( std::ostream& ) const;
 };
@@ -299,12 +298,12 @@ public:
   virtual const_iterator begin( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const = 0;
 
   /**
-   * Method to get an iterator representing the beginning of the NodeCollection.
+   * Return iterator stepping from first node on the thread it is called on over nodes on that thread.
    *
    * @return an iterator representing the beginning of the NodeCollection, in a
    * parallel context.
    */
-  virtual const_iterator local_begin( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const = 0;
+  virtual const_iterator thread_local_begin( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const = 0;
 
   /**
    * Method to get an iterator representing the beginning of the NodeCollection.
@@ -312,7 +311,7 @@ public:
    * @return an iterator representing the beginning of the NodeCollection, in an
    * MPI-parallel context.
    */
-  virtual const_iterator MPI_local_begin( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const = 0;
+  virtual const_iterator rank_local_begin( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const = 0;
 
   /**
    * Method to get an iterator representing the end of the NodeCollection.
@@ -508,8 +507,8 @@ public:
   bool operator==( const NodeCollectionPrimitive& rhs ) const;
 
   const_iterator begin( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const override;
-  const_iterator local_begin( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const override;
-  const_iterator MPI_local_begin( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const override;
+  const_iterator thread_local_begin( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const override;
+  const_iterator rank_local_begin( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const override;
   const_iterator end( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const override;
 
   //! Returns an ArrayDatum filled with node IDs from the primitive.
@@ -564,6 +563,23 @@ NodeCollectionPTR operator+( NodeCollectionPTR lhs, NodeCollectionPTR rhs );
  * contiguous and homogeneous with each other. If the composite is sliced, it
  * also holds information about what index to start at, one past the index to end at, and
  * the step. The endpoint is one past the last valid node.
+ *
+ * @note To avoid creating copies of Primitives (not sure that saves much), Composite keeps
+ * primitives as they are and then sets markers to the first node belonging to the slice
+ * (tuple start_part, start_offset_) and one past the last node belongig to the slice ( tuple end_part_, end_offset_).
+ * For the latter, the following logic applies to make comparison operators simpler
+ * - Assume that the last element final of the composite collection (after all slicing effects are taken into account),
+ * is in part i.
+ * - Let idx_in_i be the index of final in part[i], i.e., part[i][index_in_i] == final.
+ * - If final is the last element of part[i], i.e., idx_in_i == part[i].size()-1, then end_part_ == i+1 and end_offset_
+ * == 0
+ * - Otherwise, end_part_ == i and end_offset_ == idx_in_i
+ * Thus,
+ * - end_offset_ always observes "one-past-the-end" logic, while end_part_ does so only if end_offset_ == 0
+ * - to iterate over all parts containing elements of the NC, we need to do
+ *     for ( auto pix = start_part_ ; pix < end_part_ + ( end_offset_ == 0 ? 0 : 1 ) ; ++pix )
+ * - the logic here is that if end_offset_ == 0, end_part_ already follows "one past" logic, but otherwise we need to
+ * add 1
  */
 class NodeCollectionComposite : public NodeCollection
 {
@@ -575,9 +591,9 @@ private:
   size_t step_;                                  //!< Step length, set when slicing.
   size_t start_part_;                            //!< Primitive to start at, set when slicing
   size_t start_offset_;                          //!< Element to start at, set when slicing
-  size_t end_part_;                              //!< Primitive or one past the primitive to end at, set when slicing
-  size_t end_offset_;                            //!< One past the element to end at, set when slicing
-  bool is_sliced_;                               //!< Whether the NodeCollectionComposite is sliced
+  size_t end_part_;   //!< Primitive or one past the primitive to end at, set when slicing (see note above)
+  size_t end_offset_; //!< One past the element to end at, set when slicing (see note above)
+  bool is_sliced_;    //!< Whether the NodeCollectionComposite is sliced
 
   /**
    * Goes through the vector of primitives, merging as much as possible.
@@ -585,11 +601,6 @@ private:
    * @param parts Vector of primitives to be merged.
    */
   void merge_parts_( std::vector< NodeCollectionPrimitive >& parts ) const;
-
-  const_iterator local_begin_( const NodeCollectionPTR cp,
-    const size_t num_vp_elements,
-    const size_t current_vp_element,
-    const size_t vp_element_first_node ) const;
 
 public:
   /**
@@ -646,8 +657,8 @@ public:
   bool operator==( const NodeCollectionPTR rhs ) const override;
 
   const_iterator begin( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const override;
-  const_iterator local_begin( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const override;
-  const_iterator MPI_local_begin( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const override;
+  const_iterator thread_local_begin( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const override;
+  const_iterator rank_local_begin( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const override;
   const_iterator end( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const override;
 
   //! Returns an ArrayDatum filled with node IDs from the composite.
@@ -747,6 +758,12 @@ nc_const_iterator::get_current_part_offset( size_t& part, size_t& offset ) const
 {
   part = part_idx_;
   offset = element_idx_;
+}
+
+inline size_t
+nc_const_iterator::get_step_size() const
+{
+  return step_;
 }
 
 inline size_t

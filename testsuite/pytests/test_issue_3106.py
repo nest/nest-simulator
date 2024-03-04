@@ -43,5 +43,6 @@ def test_connect_with_threads_slice_and_mpi():
 
     # Distance-dependent weight forces use of layer-connect
     nest.Connect(layer, tgts, {"rule": "pairwise_bernoulli", "p": 1}, {"weight": nest.spatial.distance})
+    # nest.Connect(layer, tgts, {"rule": "fixed_indegree", "indegree": 5})
 
-    assert nest.num_connections == len(neurons) * len(tgts)
+    assert nest.num_connections == len(layer) * len(tgts)

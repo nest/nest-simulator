@@ -288,7 +288,7 @@ FreeLayer< D >::communicate_positions_( Ins iter, NodeCollectionPTR node_collect
   // know that all nodes in the NodeCollection have proxies. Likewise, if it returns false we know that
   // no nodes have proxies.
   NodeCollection::const_iterator nc_begin =
-    node_collection->has_proxies() ? node_collection->MPI_local_begin() : node_collection->begin();
+    node_collection->has_proxies() ? node_collection->rank_local_begin() : node_collection->begin();
   NodeCollection::const_iterator nc_end = node_collection->end();
 
   // Reserve capacity in the vector based on number of local nodes. If the NodeCollection is sliced,

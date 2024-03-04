@@ -286,7 +286,7 @@ template < int D >
 void
 Layer< D >::dump_nodes( std::ostream& out ) const
 {
-  for ( NodeCollection::const_iterator it = this->node_collection_->MPI_local_begin();
+  for ( NodeCollection::const_iterator it = this->node_collection_->rank_local_begin();
         it < this->node_collection_->end();
         ++it )
   {

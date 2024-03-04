@@ -427,7 +427,7 @@ slice_positions_if_sliced_nc( DictionaryDatum& dict, const NodeCollectionDatum& 
     {
       TokenArray sliced_points;
       // Iterate only local nodes
-      NodeCollection::const_iterator nc_begin = nc->has_proxies() ? nc->MPI_local_begin() : nc->begin();
+      NodeCollection::const_iterator nc_begin = nc->has_proxies() ? nc->rank_local_begin() : nc->begin();
       NodeCollection::const_iterator nc_end = nc->end();
       for ( auto node = nc_begin; node < nc_end; ++node )
       {

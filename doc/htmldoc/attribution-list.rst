@@ -6,9 +6,7 @@ Attribution for images, icons, diagrams
 Custom images
 -------------
 
-The following images were created by
-
-A. Fischer - INM-6 Forschungszentrum Juelich GmBH
+The following images were created by  *A. Fischer - INM-6 Forschungszentrum Juelich GmBH*
 
 * neuron.svg
 * synapse.svg

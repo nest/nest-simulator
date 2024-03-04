@@ -18,7 +18,7 @@
     --nest-orange: #ff6633;
     --nest-blue: #0E6A93;
     --nest-dkblue: #072f42;
-    --nest-brown: #4b210c; /*formally green */
+    --nest-brown: #4b210c;
     --sd-color-primary: var(--nest-orange);
     --sd-color-success: var(--nest-brown);
     --sd-color-dark: var(--nest-dkblue);
@@ -32,17 +32,11 @@ body{
 	background:#fff;
 	color:#666;
 	font-family: 'Droid Sans', Arial, Helvetica, sans-serif;
-	/*font-size: medium;
-	line-height:1.5em;
-	font-weight:normal;*/
 }
+
 h1, h2, h3, h4, h5, h6{
-  /*font-size: 1.5em;*/
 	font-weight:600;
 	font-family: 'Open Sans', Arial, Helvetica, sans-serif;
-	/*line-height:1.5em;
-	margin:.45em 0;
-	padding:0;*/
 }
 
 /* Box sizing. Awesome thing. Read about it here: http://www.w3schools.com/cssref/css3_pr_box-sizing.asp */
@@ -133,11 +127,7 @@ rect.basic.label-container {
 	stroke: #ff6633;
 	stroke-width: 1px;
 }
-/*
-section#conceptual-approach foreignObject{
- width: 200px;
-}
-*/
+
 figure.align-default {
 	text-align: center;
 }
@@ -148,7 +138,14 @@ figure.align-default {
 	outline-style: groove;
 }
 
-
+/**************************************************************************************
+ * Rules for carousel
+ * ***********************************************************************************/
+.scbs-carousel-dark .scbs-carousel-caption {
+   color: #666;
+   background-color: #fff9;
+   position: initial;
+}
 /**************************************************************************************
  Settings for overriding material design theme
  Setting nest colors to override sphinx material "orange" and other default colors
@@ -204,7 +201,7 @@ div[role="main"] .md-source {
   color: var(--nest-orange);
 	background-color: #ffffff8a;
 	border-radius: 5px;
-	padding: 2px;
+	padding: 6px;
 }
 .md-typeset details {
    background-color: white;
@@ -223,7 +220,6 @@ div[role="main"] .md-source {
 .md-typeset .sd-card-title img, .md-typeset .sd-card-header img{
   border: none;
   opacity: 0.9;
-  /*width: 64px;*/
   height: 60px;
   margin-right: 2em;
   margin-bottom: 0.5em;
@@ -316,6 +312,18 @@ span.md-nav__link.caption {
 .md-typeset details {
   border-left: none;
 }
+
+nav.md-nav.md-nav--secondary label.md-nav__title{
+    visibility: hidden;
+}
+nav.md-nav.md-nav--secondary label.md-nav__title:after{
+
+  content: "Page Contents";
+  visibility: visible;
+  display: block;
+  position: static;
+}
+
 
 /***********************************
  * Adjust settings for sphinx design
@@ -410,11 +418,6 @@ header{
 .flexslider{
 	display:none;
 }
-/*#content,
-aside,
-.vertical-padding{
-	padding:40px 0;
-}*/
 
 p{ margin:0 0 1.5em;}
 
@@ -487,7 +490,7 @@ p{ margin:0 0 1.5em;}
 .grid_10,
 .grid_11,
 .grid_12 {
-	margin-bottom:40px;
+	margin-bottom:5px;
 	/*positioning and padding*/
 	position: relative;
     min-height: 1px;
@@ -498,28 +501,6 @@ p{ margin:0 0 1.5em;}
 
   margin-top: auto;
 }
-/*FOOTER*/
-footer{
-	background:#333;
-	color:#ccc;
-	padding:20px 0;
-}
-footer ul{
-	margin:0 0 0 8%;
-	padding:0;
-}
-
-footer a, footer a:visited, footer a:active{
-    color:#777;
-    text-decoration: none;
-}
-
-footer a:hover{
-    color:#888;
-    text-decoration: underline;
-}
-
-
 
 /*Some more colored elements*/
 a.buttonlink{
@@ -719,13 +700,13 @@ MEDIAQUERIES
  {
   background-image: linear-gradient(to bottom, rgba(255, 102, 51, 0.63), rgba(255, 102, 51, 0.1), rgba(255, 102, 51, 0.73)), url('../img/background-particles-flattened.png');
   background-color: #ff6633;
-  height: 240px;
+  height: 180px;
  }
 
 header{
   background-color: var(--nest-orange);
   padding:15px 0;
-  height: 240px;
+  height: 180px;
  }
 .tsparticles-canvas-el {
     margin-top: -275px;
@@ -736,15 +717,15 @@ header{
 @media only screen and (max-width: 1023px) {
  .particle-img
  {
-  background-image: linear-gradient(to bottom, rgba(255, 102, 51, 0.63), rgba(255, 102, 51, 0.1), rgba(255, 102, 51, 0.73)), url('../img/background-particles-flattened.png');
+  background-image: linear-gradient(to bottom, rgba(255, 102, 51, 0.63), rgba(255, 102, 51, 0.1), rgba(255, 102, 51, 0.3)), url('../img/background-particles-flattened.png');
   background-color: #ff6633;
-  height: 210px;
+  height: 180px;
 
  }
 header{
   background-color: var(--nest-orange);
   padding:0 0;
-  height: 210px;
+  height: 180px;
 }
  #banner{
    padding-top: 50px;

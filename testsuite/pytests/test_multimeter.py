@@ -84,8 +84,6 @@ def test_recordables_are_recorded(model):
        This test does not check if the data is meaningful.
     """
 
-    nest.resolution = 2**-3  # Set to power of two to avoid rounding issues
-
     recording_interval = 2
     simtime = 10
     num_data_expected = simtime / recording_interval - 1

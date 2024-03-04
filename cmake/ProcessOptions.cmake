@@ -458,6 +458,10 @@ function( NEST_PROCESS_WITH_MPI )
   # Find MPI
   set( HAVE_MPI OFF PARENT_SCOPE )
   if ( NOT "${with-mpi}" STREQUAL "OFF" )
+    if ( NOT ${with-mpi} STREQUAL "ON" )
+      # if set, use this prefix
+      set( MPI_ROOT_DIR "${with-mpi}" )
+    endif ()
     find_package( MPI REQUIRED )
     if ( MPI_CXX_FOUND )
       set( HAVE_MPI ON PARENT_SCOPE )

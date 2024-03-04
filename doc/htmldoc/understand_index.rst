@@ -1,5 +1,7 @@
-Understand how NEST works
-=========================
+.. _guides:
+
+Guides
+=======
 
 Here you can dive into various topics about NEST.
 
@@ -51,7 +53,7 @@ Here you can dive into various topics about NEST.
 
    .. grid-item-card:: |sonata| NEST SONATA guide
        :class-title: sd-d-flex-row sd-align-minor-center
-       :link:  nest_sonata 
+       :link:  nest_sonata
        :link-type: ref
 
 
@@ -101,7 +103,6 @@ Here you can dive into various topics about NEST.
 
 
 .. toctree::
-   :maxdepth: 1
    :hidden:
 
 

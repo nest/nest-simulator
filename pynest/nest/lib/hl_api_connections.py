@@ -369,7 +369,7 @@ def TripartiteConnect(pre, post, third, conn_spec, syn_specs=None):
     .. admonition:
 
        Tripartite connectivity is a new feature. Please expect some adjustments to
-       the syntax and semantics for for tripartite connectivity in the next NEST releases.
+       the syntax and semantics for the tripartite connectivity in the next NEST releases.
 
 
     See Also

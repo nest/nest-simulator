@@ -317,7 +317,7 @@ the ``'third_out'`` specification to connections from ``third`` to
 .. admonition:
 
    Tripartite connectivity is a new feature. Please expect some adjustments to
-   the syntax and semantics for for tripartite connectivity in the next NEST releases.
+   the syntax and semantics for the tripartite connectivity in the next NEST releases.
 
 
 .. _tripartite_bernoulli_with_pool:

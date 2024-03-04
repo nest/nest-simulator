@@ -132,6 +132,7 @@ def test_bipartite_raises():
         nest.TripartiteConnect(pre, post, third, {"rule": "one_to_one"})
 
 
+@pytest.mark.skipif_missing_threads
 def test_sliced_third():
     nest.local_num_threads = 4
     nrn = nest.Create("parrot_neuron", 20)

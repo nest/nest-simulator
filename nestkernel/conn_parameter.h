@@ -252,7 +252,9 @@ public:
     }
     else
     {
-      throw KernelException( "Parameter values exhausted." );
+      // Delay exception on exhaustion until values are requested
+      // Makes certain loops using this simpler.
+      next_[ tid ] = values_->end();
     }
   }
 
@@ -334,7 +336,9 @@ public:
     }
     else
     {
-      throw KernelException( "Parameter values exhausted." );
+      // Delay exception on exhaustion until values are requested
+      // Makes certain loops using this simpler.
+      next_[ tid ] = values_->end();
     }
   }
 

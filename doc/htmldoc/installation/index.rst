@@ -53,6 +53,14 @@ Install NEST
       :ref:`Install docker container for NEST + NESTML <docker>`
 
 
+   .. grid-item-card:: |hpc| Configure HPC systems
+      :class-title: sd-d-flex-row sd-align-minor-center
+      :columns: 4
+
+      Find out how to set up and optimize HPC systems for NEST
+
+      * :ref:`optimize_performance`
+
 
 
 ----
@@ -76,3 +84,4 @@ If installation didn't work, see the :ref:`troubleshooting section <troubleshoot
 .. |dev| image:: ../static/img/dev_orange.svg
 .. |desktop| image:: ../static/img/nestdesktop022023.svg
 .. |nestml| image:: ../static/img/nestml022023.svg
+.. |hpc| image:: ../static/img/hpc_orange128.svg

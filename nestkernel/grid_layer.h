@@ -122,7 +122,7 @@ public:
    * @param sind index of node
    * @returns position of node.
    */
-  Position< D > get_position( size_t sind ) const;
+  Position< D > get_position( size_t sind ) const override;
 
   /**
    * Get position of node. Also allowed for non-local nodes.
@@ -148,17 +148,17 @@ public:
 
   Position< D, size_t > get_dims() const;
 
-  void set_status( const DictionaryDatum& d );
-  void get_status( DictionaryDatum& d ) const;
+  void set_status( const DictionaryDatum& d ) override;
+  void get_status( DictionaryDatum& d, NodeCollection const* ) const override;
 
 protected:
   Position< D, size_t > dims_; ///< number of nodes in each direction.
 
   template < class Ins >
   void insert_global_positions_( Ins iter, NodeCollectionPTR node_collection );
-  void insert_global_positions_ntree_( Ntree< D, size_t >& tree, NodeCollectionPTR node_collection );
+  void insert_global_positions_ntree_( Ntree< D, size_t >& tree, NodeCollectionPTR node_collection ) override;
   void insert_global_positions_vector_( std::vector< std::pair< Position< D >, size_t > >& vec,
-    NodeCollectionPTR node_collection );
+    NodeCollectionPTR node_collection ) override;
 };
 
 template < int D >
@@ -206,9 +206,9 @@ GridLayer< D >::set_status( const DictionaryDatum& d )
 
 template < int D >
 void
-GridLayer< D >::get_status( DictionaryDatum& d ) const
+GridLayer< D >::get_status( DictionaryDatum& d, NodeCollection const* nc ) const
 {
-  Layer< D >::get_status( d );
+  Layer< D >::get_status( d, nc );
 
   ( *d )[ names::shape ] = std::vector< size_t >( dims_.get_vector() );
 }

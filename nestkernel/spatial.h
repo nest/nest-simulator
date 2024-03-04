@@ -60,9 +60,9 @@ public:
   void set_status( const DictionaryDatum&, bool ) override {};
 
   void
-  get_status( DictionaryDatum& d ) const override
+  get_status( DictionaryDatum& d, NodeCollection const* nc ) const override
   {
-    layer_->get_status( d );
+    layer_->get_status( d, nc );
   }
 
   //! Returns pointer to object with layer representation
@@ -102,8 +102,11 @@ public:
     // Compare status dictionaries of this layer and rhs layer
     DictionaryDatum dict( new Dictionary() );
     DictionaryDatum rhs_dict( new Dictionary() );
-    get_status( dict );
-    rhs_layer_metadata->get_status( rhs_dict );
+
+    // Since we do not have access to the node collection here, we
+    // compare based on all metadata, irrespective of any slicing
+    get_status( dict, /* nc */ nullptr );
+    rhs_layer_metadata->get_status( rhs_dict, /* nc */ nullptr );
     return *dict == *rhs_dict;
   }
 

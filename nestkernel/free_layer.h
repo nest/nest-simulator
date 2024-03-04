@@ -48,9 +48,9 @@ template < int D >
 class FreeLayer : public Layer< D >
 {
 public:
-  Position< D > get_position( size_t sind ) const;
-  void set_status( const DictionaryDatum& );
-  void get_status( DictionaryDatum& ) const;
+  Position< D > get_position( size_t sind ) const override;
+  void set_status( const DictionaryDatum& ) override;
+  void get_status( DictionaryDatum&, NodeCollection const* ) const override;
 
 protected:
   /**
@@ -61,9 +61,9 @@ protected:
   template < class Ins >
   void communicate_positions_( Ins iter, NodeCollectionPTR node_collection );
 
-  void insert_global_positions_ntree_( Ntree< D, size_t >& tree, NodeCollectionPTR node_collection );
+  void insert_global_positions_ntree_( Ntree< D, size_t >& tree, NodeCollectionPTR node_collection ) override;
   void insert_global_positions_vector_( std::vector< std::pair< Position< D >, size_t > >& vec,
-    NodeCollectionPTR node_collection );
+    NodeCollectionPTR node_collection ) override;
 
   /**
    * Calculate the index in the position vector on this MPI process based on the local ID.
@@ -255,15 +255,41 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
 
 template < int D >
 void
-FreeLayer< D >::get_status( DictionaryDatum& d ) const
+FreeLayer< D >::get_status( DictionaryDatum& d, NodeCollection const* nc ) const
 {
-  Layer< D >::get_status( d );
+  Layer< D >::get_status( d, nc );
 
   TokenArray points;
-  for ( typename std::vector< Position< D > >::const_iterator it = positions_.begin(); it != positions_.end(); ++it )
+
+  if ( not nc )
   {
-    points.push_back( it->getToken() );
+    for ( const auto& pos : positions_ )
+    {
+      points.push_back( pos.getToken() );
+    }
   }
+  else
+  {
+    // copy only those that are in nc
+    auto nc_it = nc->rank_local_begin();
+    const auto nc_end = nc->end();
+    if ( nc_it == nc_end )
+    {
+      return; // no data on this rank
+    }
+
+    // since positions only contains data for local rank, we need to scale down
+    const size_t n_procs = kernel().mpi_manager.get_num_processes();
+
+    size_t pos_idx = ( *nc_it ).lid / n_procs;
+    size_t step = nc_it.get_step_size() / n_procs;
+
+    for ( ; nc_it < nc->end(); pos_idx += step, ++nc_it )
+    {
+      points.push_back( positions_.at( pos_idx ).getToken() );
+    }
+  }
+
   def2< TokenArray, ArrayDatum >( d, names::positions, points );
 }
 

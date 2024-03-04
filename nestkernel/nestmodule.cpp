@@ -513,17 +513,8 @@ NestModule::GetMetadata_gFunction::execute( SLIInterpreter* i ) const
       "InvalidNodeCollection: note that ResetKernel invalidates all previously created NodeCollections." );
   }
 
-  NodeCollectionMetadataPTR meta = nc->get_metadata();
   DictionaryDatum dict = DictionaryDatum( new Dictionary );
-
-  // return empty dict if NC does not have metadata
-  if ( meta.get() )
-  {
-    meta->get_status( dict );
-    slice_positions_if_sliced_nc( dict, nc );
-
-    ( *dict )[ names::network_size ] = nc->size();
-  }
+  nc->get_metadata_status( dict );
 
   i->OStack.pop();
   i->OStack.push( dict );

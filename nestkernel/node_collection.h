@@ -65,7 +65,13 @@ public:
   virtual ~NodeCollectionMetadata() = default;
 
   virtual void set_status( const DictionaryDatum&, bool ) = 0;
-  virtual void get_status( DictionaryDatum& ) const = 0;
+
+  /**
+   * Retrieve status information sliced according to slicing of node collection
+   *
+   * @note If nullptr is passed for NodeCollection*, full metadata irrespective of any slicing is returned.
+   */
+  virtual void get_status( DictionaryDatum&, NodeCollection const* ) const = 0;
 
   virtual void set_first_node_id( size_t ) = 0;
   virtual size_t get_first_node_id() const = 0;
@@ -401,6 +407,11 @@ public:
    * @return true if any nodes in the NodeCollection has proxies, false otherwise.
    */
   virtual bool has_proxies() const = 0;
+
+  /**
+   * Collect metadata into dictionary.
+   */
+  void get_metadata_status( DictionaryDatum& ) const;
 
   /**
    * return the first stored ID (i.e, ID at index zero) inside the NodeCollection

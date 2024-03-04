@@ -92,7 +92,7 @@ Layer< D >::set_status( const DictionaryDatum& d )
 
 template < int D >
 void
-Layer< D >::get_status( DictionaryDatum& d ) const
+Layer< D >::get_status( DictionaryDatum& d, NodeCollection const* nc ) const
 {
   ( *d )[ names::extent ] = std::vector< double >( extent_.get_vector() );
   ( *d )[ names::center ] = std::vector< double >( ( lower_left_ + extent_ / 2 ).get_vector() );
@@ -104,6 +104,11 @@ Layer< D >::get_status( DictionaryDatum& d ) const
   else if ( periodic_.count() == D )
   {
     ( *d )[ names::edge_wrap ] = true;
+  }
+
+  if ( nc )
+  {
+    ( *d )[ names::network_size ] = nc->size();
   }
 }
 

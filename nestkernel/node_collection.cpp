@@ -350,6 +350,17 @@ NodeCollection::valid() const
   return fingerprint_ == kernel().get_fingerprint();
 }
 
+void
+NodeCollection::get_metadata_status( DictionaryDatum& d ) const
+{
+  NodeCollectionMetadataPTR meta = get_metadata();
+  if ( not meta )
+  {
+    return;
+  }
+  meta->get_status( d, this );
+}
+
 NodeCollectionPrimitive::NodeCollectionPrimitive( size_t first,
   size_t last,
   size_t model_id,

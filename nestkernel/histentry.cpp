@@ -36,3 +36,33 @@ nest::histentry_extended::histentry_extended( double t, double dw, size_t access
   , access_counter_( access_counter )
 {
 }
+
+nest::HistEntryEprop::HistEntryEprop( long t )
+  : t_( t )
+{
+}
+
+nest::HistEntryEpropRecurrent::HistEntryEpropRecurrent( long t, double surrogate_gradient, double learning_signal )
+  : HistEntryEprop( t )
+  , surrogate_gradient_( surrogate_gradient )
+  , learning_signal_( learning_signal )
+{
+}
+
+nest::HistEntryEpropReadout::HistEntryEpropReadout( long t, double error_signal )
+  : HistEntryEprop( t )
+  , error_signal_( error_signal )
+{
+}
+
+nest::HistEntryEpropUpdate::HistEntryEpropUpdate( long t, size_t access_counter )
+  : HistEntryEprop( t )
+  , access_counter_( access_counter )
+{
+}
+
+nest::HistEntryEpropFiringRateReg::HistEntryEpropFiringRateReg( long t, double firing_rate_reg )
+  : HistEntryEprop( t )
+  , firing_rate_reg_( firing_rate_reg )
+{
+}

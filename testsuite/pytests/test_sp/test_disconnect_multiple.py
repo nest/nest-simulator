@@ -49,6 +49,11 @@ class TestDisconnect(unittest.TestCase):
             "urbanczik_synapse",
             "urbanczik_synapse_lbl",
             "urbanczik_synapse_hpc",
+            "eprop_synapse_bsshslm_2020",
+            "eprop_synapse_bsshslm_2020_hpc",
+            "eprop_learning_signal_connection_bsshslm_2020",
+            "eprop_learning_signal_connection_bsshslm_2020_lbl",
+            "eprop_learning_signal_connection_bsshslm_2020_hpc",
             "sic_connection",
         ]
 

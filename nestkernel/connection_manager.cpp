@@ -46,6 +46,7 @@
 #include "connector_base.h"
 #include "connector_model.h"
 #include "delay_checker.h"
+#include "eprop_archiving_node.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
@@ -207,7 +208,7 @@ nest::ConnectionManager::get_synapse_status( const size_t source_node_id,
   const synindex syn_id,
   const size_t lcid ) const
 {
-  kernel().model_manager.assert_valid_syn_id( syn_id );
+  kernel().model_manager.assert_valid_syn_id( syn_id, kernel().vp_manager.get_thread_id() );
 
   DictionaryDatum dict( new Dictionary );
   ( *dict )[ names::source ] = source_node_id;
@@ -253,7 +254,7 @@ nest::ConnectionManager::set_synapse_status( const size_t source_node_id,
   const size_t lcid,
   const DictionaryDatum& dict )
 {
-  kernel().model_manager.assert_valid_syn_id( syn_id );
+  kernel().model_manager.assert_valid_syn_id( syn_id, kernel().vp_manager.get_thread_id() );
 
   const Node* source = kernel().node_manager.get_node_or_proxy( source_node_id, tid );
   const Node* target = kernel().node_manager.get_node_or_proxy( target_node_id, tid );
@@ -517,7 +518,7 @@ nest::ConnectionManager::connect( const size_t snode_id,
   const double delay,
   const double weight )
 {
-  kernel().model_manager.assert_valid_syn_id( syn_id );
+  kernel().model_manager.assert_valid_syn_id( syn_id, kernel().vp_manager.get_thread_id() );
 
   Node* source = kernel().node_manager.get_node_or_proxy( snode_id, target_thread );
 
@@ -546,7 +547,7 @@ nest::ConnectionManager::connect( const size_t snode_id,
   const DictionaryDatum& params,
   const synindex syn_id )
 {
-  kernel().model_manager.assert_valid_syn_id( syn_id );
+  kernel().model_manager.assert_valid_syn_id( syn_id, kernel().vp_manager.get_thread_id() );
 
   const size_t tid = kernel().vp_manager.get_thread_id();
 
@@ -853,6 +854,14 @@ nest::ConnectionManager::connect_( Node& source,
   if ( urbanczik_archiving and not target.supports_urbanczik_archiving() )
   {
     throw NotImplemented( "This synapse model is not supported by the neuron model of at least one  connection." );
+  }
+
+  const bool eprop_archiving = conn_model.has_property( ConnectionModelProperties::REQUIRES_EPROP_ARCHIVING );
+  if ( eprop_archiving
+    and not( dynamic_cast< EpropArchivingNodeRecurrent* >( &target )
+      or dynamic_cast< EpropArchivingNodeReadout* >( &target ) ) )
+  {
+    throw NotImplemented( "This synapse model is not supported by the neuron model of at least one connection." );
   }
 
   const bool is_primary = conn_model.has_property( ConnectionModelProperties::IS_PRIMARY );

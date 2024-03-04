@@ -204,7 +204,6 @@ More topics
        * :ref:`See the latest changes <whats_new>`
 
 
-
 .. toctree::
    :maxdepth: 1
    :hidden:
@@ -229,8 +228,10 @@ More topics
    Connect NEST with other tools <connect_nest/index>
    From NEST 2.x to 3.x <whats_new/v3.0/refguide_nest2_nest3>
 
+.. toctree::
+   :hidden:
 
-
+   understand_index
 
 .. |nav| image:: static/img/GPS-Settings-256_nest.svg
 .. |script| image:: static/img/script_white.svg

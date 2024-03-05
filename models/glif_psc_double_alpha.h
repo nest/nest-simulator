@@ -124,7 +124,7 @@ condition of
   ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
   For implementation details see the
-  `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+  `IAF Integration Singularity <../model_details/IAF_Integration_Singularity.ipynb>`_ notebook.
 
 Parameters
 ++++++++++

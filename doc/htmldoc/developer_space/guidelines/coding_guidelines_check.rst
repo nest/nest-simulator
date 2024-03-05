@@ -76,7 +76,7 @@ Our ``clang-format`` configuration is specified in the
 ``clang-format`` is run automatically with ``pre-commit``.
 
 We supply the
-`build_support/format_all_c_c++_files.sh <https://github.com/nest/nest-simulator/blob/master/build_support/format_all_c_c++_files.sht>`_
+`build_support/format_all_c_c++_files.sh <https://github.com/nest/nest-simulator/blob/master/build_support/format_all_c_c++_files.sh>`_
 shell script to run ``clang-format`` manually:
 
 .. code-block:: bash

@@ -27,6 +27,9 @@ Install NEST
 
       * :ref:`dev_install`
 
+Install related tools
+~~~~~~~~~~~~~~~~~~~~~
+
 .. grid:: 2
    :gutter: 1
 
@@ -37,9 +40,9 @@ Install NEST
       A graphical user interface, ideal for learning and teaching concepts
       regarding neural networks in classrooms and workshops.
 
-      :doc:`NEST Desktop documentation <desktop:index>` :octicon:`link-external`
+      * :doc:`NEST Desktop documentation <desktop:index>` :octicon:`link-external`
 
-      :ref:`Install docker container with NEST + NEST Desktop <docker_compose>`
+      * :ref:`Install docker container with NEST + NEST Desktop <docker_compose>`
 
    .. grid-item-card:: |nestml|
       :class-title: sd-d-flex-row sd-align-minor-center
@@ -48,9 +51,9 @@ Install NEST
       Install the NEST modeling language to create and customize models
 
 
-      :doc:`NESTML documentation <nestml:index>` :octicon:`link-external`
+      * :doc:`NESTML documentation <nestml:index>` :octicon:`link-external`
 
-      :ref:`Install docker container for NEST + NESTML <docker>`
+      * :ref:`Install docker container for NEST + NESTML <docker>`
 
 
    .. grid-item-card:: |hpc| Configure HPC systems

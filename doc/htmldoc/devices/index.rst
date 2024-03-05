@@ -34,8 +34,14 @@ We have several ways you can access the data you recorded, these are referred to
 - output to SionLib
 - output to MPI
 
-
 You can specify the recording backend using ``record_to`` parameter
+
+  ::
+
+      nest.Create("spike_recorder", 1, {"record_to": "ascii", "time_in_steps": True}
+
+
+
 
 Each recording backend has their own parameters
 
@@ -55,11 +61,6 @@ Recording devices
 
 - How do I get data out
 
-
-  ::
-
-      nest.Create("spike_recorder", 1, {"record_to": "ascii", "time_in_steps": True}
-      sr =nest.Create("spike_recorder", 1, {"record_to": "memory", "time_in_steps": True}
 
 
 data recorded by recording backend ascii (time_in_steps=True)

@@ -64,7 +64,7 @@ precision
    controls the number of decimal places used to write decimal numbers
    to the terminal.
 
-time_in_step
+time_in_steps
    A boolean (default: false) specifying whether to print time in
    steps, i.e., in integer multiples of the resolution and an offset,
    rather than just in ms.

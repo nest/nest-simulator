@@ -24,6 +24,7 @@
 #define EVENT_DELIVERY_MANAGER_H
 
 // C++ includes:
+#include <atomic>
 #include <cassert>
 #include <limits>
 #include <vector>
@@ -464,7 +465,7 @@ private:
    */
   BufferResizeLog send_recv_buffer_resize_log_;
 
-  PerThreadBoolIndicator gather_completed_checker_;
+  std::atomic< int > gather_completed_check_[ 2 ];
 
 #ifdef TIMER_DETAILED
   // private stop watches for benchmarking purposes

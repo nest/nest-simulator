@@ -67,7 +67,6 @@ EventDeliveryManager::EventDeliveryManager()
   , send_recv_buffer_shrink_spare_( 0.1 )
   , send_recv_buffer_grow_extra_( 0.5 )
   , send_recv_buffer_resize_log_()
-  , gather_completed_checker_()
 {
 }
 
@@ -99,7 +98,6 @@ EventDeliveryManager::initialize( const bool reset_kernel )
   reset_counters();
   emitted_spikes_register_.resize( num_threads );
   off_grid_emitted_spikes_register_.resize( num_threads );
-  gather_completed_checker_.initialize( num_threads, false );
 
 #pragma omp parallel
   {
@@ -788,22 +786,25 @@ void
 EventDeliveryManager::gather_target_data( const size_t tid )
 {
   assert( not kernel().connection_manager.is_source_table_cleared() );
-
+#ifdef _OPENMP
+  int nthreads = omp_get_num_threads();
+#else
+  int nthreads = 1;
+#endif
+  int phase { 0 };
+  bool checked { false };
   // assume all threads have some work to do
-  gather_completed_checker_[ tid ].set_false();
-  assert( gather_completed_checker_.all_false() );
+  gather_completed_check_[ 0 ] = 0;
+  gather_completed_check_[ 1 ] = 0;
+  //  assert( gather_completed_checker_.all_false() );
 
   const AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
 
   kernel().connection_manager.prepare_target_table( tid );
   kernel().connection_manager.reset_source_table_entry_point( tid );
 
-  while ( gather_completed_checker_.any_false() )
+  while ( gather_completed_check_[ phase ] < nthreads )
   {
-    // assume this is the last gather round and change to false
-    // otherwise
-    gather_completed_checker_[ tid ].set_true();
-
 #pragma omp master
     {
       if ( kernel().mpi_manager.adaptive_target_buffers() and buffer_size_target_data_has_changed_ )
@@ -812,6 +813,12 @@ EventDeliveryManager::gather_target_data( const size_t tid )
       }
     } // of omp master; (no barrier)
 #pragma omp barrier
+    gather_completed_check_[ phase ] = 0;
+    phase = not phase;
+    // assume this is the last gather round and change to false
+    // otherwise
+    gather_completed_check_[ phase ]++;
+    checked = false;
 
     kernel().connection_manager.restore_source_table_entry_point( tid );
 
@@ -819,9 +826,13 @@ EventDeliveryManager::gather_target_data( const size_t tid )
       assigned_ranks, kernel().mpi_manager.get_send_recv_count_target_data_per_rank() );
 
     const bool gather_completed = collocate_target_data_buffers_( tid, assigned_ranks, send_buffer_position );
-    gather_completed_checker_[ tid ].logical_and( gather_completed );
+    if ( not checked and not gather_completed )
+    {
+      checked = true;
+      gather_completed_check_[ phase ]--;
+    }
 
-    if ( gather_completed_checker_.all_true() )
+    if ( gather_completed_check_[ phase ] == nthreads )
     {
       set_complete_marker_target_data_( assigned_ranks, send_buffer_position );
     }
@@ -842,10 +853,14 @@ EventDeliveryManager::gather_target_data( const size_t tid )
 #pragma omp barrier
 
     const bool distribute_completed = distribute_target_data_buffers_( tid );
-    gather_completed_checker_[ tid ].logical_and( distribute_completed );
+    if ( not checked and not distribute_completed )
+    {
+      checked = true;
+      gather_completed_check_[ phase ]--;
+    }
 
     // resize mpi buffers, if necessary and allowed
-    if ( gather_completed_checker_.any_false() and kernel().mpi_manager.adaptive_target_buffers() )
+    if ( gather_completed_check_[ phase ] < nthreads and kernel().mpi_manager.adaptive_target_buffers() )
     {
 #pragma omp master
       {
@@ -853,6 +868,7 @@ EventDeliveryManager::gather_target_data( const size_t tid )
       }
 #pragma omp barrier
     }
+#pragma omp barrier
   } // of while
 
   kernel().connection_manager.clear_source_table( tid );
@@ -863,19 +879,24 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
 {
   assert( not kernel().connection_manager.is_source_table_cleared() );
 
+#ifdef _OPENMP
+  int nthreads = omp_get_num_threads();
+#else
+  int nthreads = 1;
+#endif
+  int phase { 0 };
+  bool checked { false };
   // assume all threads have some work to do
-  gather_completed_checker_[ tid ].set_false();
-  assert( gather_completed_checker_.all_false() );
+  gather_completed_check_[ 0 ] = 0;
+  gather_completed_check_[ 1 ] = 0;
+  //  assert( gather_completed_checker_.all_false() );
 
   const AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
 
   kernel().connection_manager.prepare_target_table( tid );
 
-  while ( gather_completed_checker_.any_false() )
+  while ( gather_completed_check_[ phase ] < nthreads )
   {
-    // assume this is the last gather round and change to false otherwise
-    gather_completed_checker_[ tid ].set_true();
-
 #pragma omp master
     {
       if ( kernel().mpi_manager.adaptive_target_buffers() and buffer_size_target_data_has_changed_ )
@@ -884,6 +905,12 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
       }
     } // of omp master; no barrier
 #pragma omp barrier
+    gather_completed_check_[ phase ] = 0;
+    phase = not phase;
+    // assume this is the last gather round and change to false
+    // otherwise
+    gather_completed_check_[ phase ]++;
+    checked = false;
 
     TargetSendBufferPosition send_buffer_position(
       assigned_ranks, kernel().mpi_manager.get_send_recv_count_target_data_per_rank() );
@@ -891,9 +918,13 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
     const bool gather_completed =
       collocate_target_data_buffers_compressed_( tid, assigned_ranks, send_buffer_position );
 
-    gather_completed_checker_[ tid ].logical_and( gather_completed );
+    if ( not checked and not gather_completed )
+    {
+      checked = true;
+      gather_completed_check_[ phase ]--;
+    }
 
-    if ( gather_completed_checker_.all_true() )
+    if ( gather_completed_check_[ phase ] == nthreads )
     {
       set_complete_marker_target_data_( assigned_ranks, send_buffer_position );
     }
@@ -916,10 +947,15 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
     // all data it is responsible for to buffers. Now combine with information on whether other ranks
     // have sent all their data. Note: All threads will return the same value for distribute_completed.
     const bool distribute_completed = distribute_target_data_buffers_( tid );
-    gather_completed_checker_[ tid ].logical_and( distribute_completed );
+
+    if ( not checked and not distribute_completed )
+    {
+      checked = true;
+      gather_completed_check_[ phase ]--;
+    }
 
     // resize mpi buffers, if necessary and allowed
-    if ( gather_completed_checker_.any_false() and kernel().mpi_manager.adaptive_target_buffers() )
+    if ( gather_completed_check_[ phase ] < nthreads and kernel().mpi_manager.adaptive_target_buffers() )
     {
 #pragma omp master
       {
@@ -928,6 +964,7 @@ EventDeliveryManager::gather_target_data_compressed( const size_t tid )
 #pragma omp barrier
     }
 
+#pragma omp barrier
   } // of while
 
   kernel().connection_manager.clear_source_table( tid );

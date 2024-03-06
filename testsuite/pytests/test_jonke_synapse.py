@@ -38,8 +38,8 @@ class TestJonkeSynapse:
     """
 
     resolution = 0.1  # [ms]
-    presynaptic_firing_rate = 20.0  # [Hz]
-    postsynaptic_firing_rate = 20.0  # [Hz]
+    presynaptic_firing_rate = 20.0  # [spks/s]
+    postsynaptic_firing_rate = 20.0  # [spks/s]
     simulation_duration = 1e4  # [ms]
     hardcoded_trains_length = 15.0  # [ms]
     synapse_parameters = {

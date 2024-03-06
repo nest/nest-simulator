@@ -53,7 +53,7 @@ The ``rate_generator`` provides a piecewise constant rate input to the
 connected rate unit(s). Please note that this input is handled in the same
 way as input from any other rate unit, that is, it is processed by the input
 function of the receiving rate unit. The amplitude of the rate is changed
-at the specified times. The unit of the rate is Hz.
+at the specified times. The unit of the rate is spks/s.
 
 If ``allow_offgrid_times`` is false, times will be rounded to the nearest
 grid point if they are less than tic/2 from the grid point, otherwise

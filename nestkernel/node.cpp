@@ -217,7 +217,7 @@ Node::send_test_event( Node&, size_t, synindex, bool )
  * throws IllegalConnection
  */
 void
-Node::register_stdp_connection( double, double )
+Node::register_stdp_connection( double, double, double )
 {
   throw IllegalConnection( "The target node does not support STDP synapses." );
 }

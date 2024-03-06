@@ -233,7 +233,7 @@ public:
       throw BadProperty(
         "Combination of axonal and dendritic delay has to be more than 0." ); // TODO: Or does it actually?
     }
-    t.register_stdp_connection( t_lastspike_ - dendritic_delay + axonal_delay, dendritic_delay + axonal_delay );
+    t.register_stdp_connection( t_lastspike_ - dendritic_delay + axonal_delay, dendritic_delay, axonal_delay );
   }
 
   void
@@ -322,10 +322,16 @@ stdp_pl_synapse_hom_ax_delay_het< targetidentifierT >::send( Event& e,
   e.set_rport( get_rport() );
   e();
 
-  if ( ( axonal_delay_ms - dendritic_delay_ms ) > kernel().connection_manager.get_stdp_eps() )
+  // axonal_delay-dendritic_delay = total_delay-2*dendritic_delay
+  const long time_until_uncritical = e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ) - 2 * get_dendritic_delay_steps() + 1;
+  // Only add correction entry if there could potentially be any post-synaptic spike that occurs before the
+  // pre-synaptic one arrives at the synapse. Has to be strictly greater than min_delay, because a post-synaptic spike
+  // at time slice_origin+min_delay corresponds to the last update step in the current slice (before delivery) and was
+  // thus already known at time of delivery of the pre-synaptic one.
+  if ( time_until_uncritical > 0 )
   {
     target->add_correction_entry_stdp_ax_delay(
-      dynamic_cast< SpikeEvent& >( e ), t_lastspike_, weight_revert, dendritic_delay_ms );
+      dynamic_cast< SpikeEvent& >( e ), t_lastspike_, weight_revert, time_until_uncritical );
   }
 
   Kplus_ = Kplus_ * std::exp( ( t_lastspike_ - t_spike ) * cp.tau_plus_inv_ ) + 1.0;

@@ -404,8 +404,7 @@ nest::ConnBuilder::all_parameters_scalar_() const
 bool
 nest::ConnBuilder::loop_over_targets_() const
 {
-  const size_t thrd = kernel().vp_manager.get_thread_id();
-  return targets_->size() < kernel().node_manager.get_local_nodes( thrd ).size() or not targets_->is_range()
+  return targets_->size() < kernel().node_manager.size() or not targets_->is_range()
     or parameters_requiring_skipping_.size() > 0;
 }
 
@@ -587,9 +586,9 @@ nest::OneToOneBuilder::connect_()
 
       if ( loop_over_targets_() )
       {
-        // A more efficient way of doing this might be to use NodeCollection's thread_local_begin(). For this to work we
-        // would need to change some of the logic, sources and targets might not be on the same process etc., so
-        // therefore we are not doing it at the moment. This also applies to other ConnBuilders below.
+        // A more efficient way of doing this might be to use NodeCollection's local_begin(). For this to work we would
+        // need to change some of the logic, sources and targets might not be on the same process etc., so therefore
+        // we are not doing it at the moment. This also applies to other ConnBuilders below.
         NodeCollection::const_iterator target_it = targets_->begin();
         NodeCollection::const_iterator source_it = sources_->begin();
         for ( ; target_it < targets_->end(); ++target_it, ++source_it )
@@ -1079,27 +1078,43 @@ nest::FixedInDegreeBuilder::connect_()
     {
       RngPtr rng = get_vp_specific_rng( tid );
 
-      // must be constant
-      const long indegree_value = std::round( indegree_->value( rng, nullptr ) );
-
-      auto target_it = targets_->thread_local_begin();
-
-      // move to position for first targets on this thread
-      if ( target_it < targets_->end() )
+      if ( loop_over_targets_() )
       {
-        skip_conn_parameter_( tid, ( *target_it ).lid * indegree_value );
+        NodeCollection::const_iterator target_it = targets_->begin();
+        for ( ; target_it < targets_->end(); ++target_it )
+        {
+          const size_t tnode_id = ( *target_it ).node_id;
+          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+
+          const long indegree_value = std::round( indegree_->value( rng, target ) );
+          if ( target->is_proxy() )
+          {
+            // skip array parameters handled in other virtual processes
+            skip_conn_parameter_( tid, indegree_value );
+            continue;
+          }
+
+          inner_connect_( tid, rng, target, tnode_id, true, indegree_value );
+        }
       }
-
-      for ( ; target_it < targets_->end(); ++target_it )
+      else
       {
-        const size_t tnode_id = ( *target_it ).node_id;
-        Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
-        assert( not target->is_proxy() );
+        const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
+        SparseNodeArray::const_iterator n;
+        for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
+        {
+          const size_t tnode_id = n->get_node_id();
 
-        inner_connect_( tid, rng, target, tnode_id, true, indegree_value );
+          // Is the local node in the targets list?
+          if ( targets_->get_lid( tnode_id ) < 0 )
+          {
+            continue;
+          }
+          auto source = n->get_node();
+          const long indegree_value = std::round( indegree_->value( rng, source ) );
 
-        // skip to beginning of next position for this thread
-        skip_conn_parameter_( tid, ( target_it.get_step_size() - 1 ) * indegree_value );
+          inner_connect_( tid, rng, source, tnode_id, false, indegree_value );
+        }
       }
     }
     catch ( std::exception& err )
@@ -1119,7 +1134,18 @@ nest::FixedInDegreeBuilder::inner_connect_( const int tid,
   bool skip,
   long indegree_value )
 {
-  assert( target->get_thread() == tid );
+  const size_t target_thread = target->get_thread();
+
+  // check whether the target is on our thread
+  if ( static_cast< size_t >( tid ) != target_thread )
+  {
+    // skip array parameters handled in other virtual processes
+    if ( skip )
+    {
+      skip_conn_parameter_( tid, indegree_value );
+    }
+    return;
+  }
 
   std::set< long > ch_ids;
   long n_rnd = sources_->size();
@@ -1144,7 +1170,7 @@ nest::FixedInDegreeBuilder::inner_connect_( const int tid,
       ch_ids.insert( s_id );
     }
 
-    single_connect_( snode_id, *target, tid, rng );
+    single_connect_( snode_id, *target, target_thread, rng );
   }
 }
 

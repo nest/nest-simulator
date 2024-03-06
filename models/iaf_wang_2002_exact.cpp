@@ -537,16 +537,17 @@ nest::iaf_wang_2002_exact::handle( SpikeEvent& e )
   assert( e.get_rport() <= static_cast< int >( B_.spikes_.size() ) );
 
   const double steps = e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() );
-
   const auto rport = e.get_rport();
 
+  if ( rport < NMDA )
+  {
   B_.spikes_[ rport - 1 ].add_value( steps, e.get_weight() * e.get_multiplicity() );
-
-
-  if ( rport >= NMDA )
+  }
+  else
   // we need to scale each individual S_j variable by its weight,
   // so we store them
   {
+    B_.spikes_[ rport - 1 ].add_value( steps, e.get_multiplicity() );
     const size_t w_idx = rport - NMDA;
     if ( B_.weights_[ w_idx ] != e.get_weight() )
     {

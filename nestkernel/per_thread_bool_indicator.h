@@ -24,6 +24,7 @@
 #define PER_THREAD_BOOL_INDICATOR_H
 
 // C++ includes:
+#include <atomic>
 #include <cassert>
 #include <cstddef>
 #include <cstdint>
@@ -165,8 +166,8 @@ public:
 
 private:
   std::vector< BoolIndicatorUInt64 > per_thread_status_;
-  std::atomic< int > size_ { 0 };
-  
+  int size_ { 0 };
+
   /** Number of per-thread indicators currently true
    *
    * are_true_ == 0 -> all are false

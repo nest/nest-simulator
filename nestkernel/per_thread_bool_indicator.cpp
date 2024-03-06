@@ -67,6 +67,8 @@ PerThreadBoolIndicator::all_false() const
 // We need two barriers here to ensure that no thread can continue and change the result
 // before all threads have determined the result.
 #pragma omp barrier
+  // We need two barriers here to ensure that no thread can continue and change the result
+  // before all threads have determined the result.
   bool ret = ( are_true_ == 0 );
 #pragma omp barrier
   return ret;

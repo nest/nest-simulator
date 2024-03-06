@@ -117,6 +117,7 @@ public:
       per_thread_status_[ tid ].set_true();
     }
   }
+
   void
   set_false( const size_t tid )
   {
@@ -126,10 +127,11 @@ public:
       per_thread_status_[ tid ].set_false();
     }
   }
+
   void
   logical_and( const size_t tid, const bool status )
   {
-    if ( per_thread_status_[ tid ].is_true() && !status )
+    if ( per_thread_status_[ tid ].is_true() and not status )
     {
       are_true_--;
       per_thread_status_[ tid ].set_false();
@@ -163,7 +165,15 @@ public:
 
 private:
   std::vector< BoolIndicatorUInt64 > per_thread_status_;
-  std::atomic< int > size_ { 0 }, are_true_ { 0 };
+  std::atomic< int > size_ { 0 };
+  
+  /** Number of per-thread indicators currently true
+   *
+   * are_true_ == 0 -> all are false
+   * are_true_ == size_  -> all are true
+   * 0 < are_true_ < size_  -> some true, some false
+   */
+  std::atomic< int > are_true_ { 0 };
 };
 
 } // namespace nest

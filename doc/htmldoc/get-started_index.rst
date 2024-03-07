@@ -84,7 +84,7 @@ Next steps: Create your own network model
          ^^^
 
          * :ref:`run_simulations`: A guide describing various factors in running simulations
-         * :ref:`random_numbers`: A guide to how random number are used in network simulations
+         * :ref:`random_numbers`: A guide to how random numbers are used in network simulations
 
 
     .. grid-item-card::

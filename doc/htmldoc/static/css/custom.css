@@ -91,7 +91,28 @@ section#kernel-attributes-nest-nestmodule dd {
         border: none;
         border-bottom: 1px solid #ddd;
 }
+.imgbutton {
 
+  background-color: white;
+	outline-color: lightgray !important;
+	outline-style: solid !important;
+	outline-width: 1px !important;
+	padding-right: 1px !important;
+	padding-right: 1px !important;
+	padding-top: 20px !important;
+	padding-bottom: 20px !important;
+  box-shadow: 3px 3px lightgray !important;
+}
+.imgbutton:hover {
+
+  background-color: white;
+	outline-color: var(--nest-orange) !important;
+	outline-style: solid !important;
+	outline-width: 1px !important;
+	padding-top: 20px !important;
+	padding-bottom: 20px !important;
+  box-shadow: 3px 3px var(--nest-orange) !important;
+}
 /*************************************************************
  * Rules for  mermaid diagrams
  *************************************************************/

@@ -1,5 +1,5 @@
 EI-clustered circuit model
-===========================
+==========================
 
 This is PyNEST implementation of the EI-clustered circuit model described by Rostami et al. [1]_.
 
@@ -27,7 +27,7 @@ Running the simulation
 
 .. code-block:: bash
 
-   python3 run_simulation.py
+   python run_simulation.py
 
 A raster plot of the network activity is saved as ``Rasterplot.png``.
 

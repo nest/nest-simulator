@@ -24,6 +24,7 @@
 
 default parameters for EI-clustered network simulation
 """
+
 import numpy as np
 
 ############################################

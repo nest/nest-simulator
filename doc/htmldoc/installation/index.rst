@@ -16,7 +16,7 @@ Install NEST
       * :ref:`conda-forge (Linux/macOS) <conda_forge_install>`
       * :ref:`Ubuntu PPA (Linux) <ubuntu_install>`
       * :ref:`Homebrew (macOS) <macos_install>`
-      * :ref:`Options for Windows users <windows_install>`
+     * :ref:`Options for Windows users <windows_install>`
 
 
    .. grid-item-card:: |dev| Source install
@@ -42,6 +42,9 @@ Install NEST
 
       * For more info see :ref:`our guide to running Jupyter notebooks on EBRAINS <run_jupyter>`
 
+Install related tools
+~~~~~~~~~~~~~~~~~~~~~
+
 .. grid:: 2
    :gutter: 1
 
@@ -52,9 +55,9 @@ Install NEST
       A graphical user interface, ideal for learning and teaching concepts
       regarding neural networks in classrooms and workshops.
 
-      :doc:`NEST Desktop documentation <desktop:index>` :octicon:`link-external`
+      * :doc:`NEST Desktop documentation <desktop:index>` :octicon:`link-external`
 
-      :ref:`Install docker container with NEST + NEST Desktop <docker_compose>`
+      * :ref:`Install docker container with NEST + NEST Desktop <docker_compose>`
 
    .. grid-item-card:: |nestml|
       :class-title: sd-d-flex-row sd-align-minor-center
@@ -63,10 +66,18 @@ Install NEST
       Install the NEST modeling language to create and customize models
 
 
-      :doc:`NESTML documentation <nestml:index>` :octicon:`link-external`
+      * :doc:`NESTML documentation <nestml:index>` :octicon:`link-external`
 
-      :ref:`Install docker container for NEST + NESTML <docker>`
+      * :ref:`Install docker container for NEST + NESTML <docker>`
 
+
+   .. grid-item-card:: |hpc| Configure HPC systems
+      :class-title: sd-d-flex-row sd-align-minor-center
+      :columns: 4
+
+      Find out how to set up and optimize HPC systems for NEST
+
+      * :ref:`optimize_performance`
 
 
 
@@ -81,7 +92,6 @@ If installation didn't work, see the :ref:`troubleshooting section <troubleshoot
    :glob:
 
    mac_install
-   hpc_install
    livemedia
    cmake_options
    *
@@ -92,3 +102,4 @@ If installation didn't work, see the :ref:`troubleshooting section <troubleshoot
 .. |dev| image:: ../static/img/dev_orange.svg
 .. |desktop| image:: ../static/img/nestdesktop022023.svg
 .. |nestml| image:: ../static/img/nestml022023.svg
+.. |hpc| image:: ../static/img/hpc_orange128.svg

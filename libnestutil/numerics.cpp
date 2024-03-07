@@ -135,9 +135,25 @@ is_integer( double n )
 long
 mod_inverse( long a, long m )
 {
+  /*
+   The implementation here is based on the extended Euclidean algorithm which
+   solves
+
+     a x + m y = gcd( a, m ) = 1 mod m
+
+   for x and y. Note that the my term is zero mod m, so the equation is equivalent
+   to
+
+     a x = 1 mod m
+
+   Since we only need x, we can ignore y and use just half of the algorithm.
+
+   For details on the algorithm, see D. E. Knuth, The Art of Computer Programming,
+   ch 4.5.2, Algorithm X (vol 2), and ch 1.2.1, Algorithm E (vol 1).
+   */
+
   assert( 0 <= a );
 
-  // next two only for self-test below, can be removed later
   const long a_orig = a;
   const long m_orig = m;
 
@@ -152,7 +168,7 @@ mod_inverse( long a, long m )
     m = a;
     a = res.rem;
 
-    // line ordering matters below
+    // line ordering matters here
     const long s_0_new = -res.quot * s_0 + s_1;
     s_1 = s_0;
     s_0 = s_0_new;
@@ -180,21 +196,56 @@ first_index( long period, long phase0, long step, long phase )
     return 0;
   }
 
-  const long delta_phase = ( phase - phase0 + period ) % period;
-  const long gcd = std::gcd( step, period );
+  /*
+   The implementation here is based on
+   https://math.stackexchange.com/questions/25390/how-to-find-the-inverse-modulo-m
 
-  if ( delta_phase % gcd != 0 )
+   We first need to solve
+
+        phase0 + k step = phase mod period
+   <=>  k step = ( phase - phase0 ) = d_phase mod period
+
+   This has a solution iff d = gcd(step, period) divides d_phase.
+
+   Then, if d = 1, the solution is unique and given by
+
+        k' = mod_inv(step) * d_phase mod period
+
+   If d > 1, we need to divide the equation by it and solve
+
+        (step / d) k0 = d_phase / d  mod (period / d)
+
+   The set of solutions is then given by
+
+        k_j = k0 + j * period / d  for j = 0, 1, ..., d-1
+
+   and we need the smallest of these. Now we are interested in
+   an index given by k * step with a period of lcm(step, period)
+   (the outer_period below, marked by | in the illustration in
+   the doxygen comment), we immediately run over
+
+        k_j * step mod lcm(step, period)
+
+   below and take the smallest.
+   */
+
+  const long d_phase = ( phase - phase0 + period ) % period;
+  const long d = std::gcd( step, period );
+
+  if ( d_phase % d != 0 )
   {
-    return nest::invalid_index;
+    return nest::invalid_index; // no solution exists
   }
-  const long outer_period = std::lcm( period, step );
 
   // scale by GCD, since modular inverse requires gcd==1
-  const long period_gcd = period / gcd;
-  const long solution_step = period_gcd * step;
-  long inner_ix = ( ( mod_inverse( step / gcd, period_gcd ) * delta_phase / gcd ) % period ) * step;
+  const long period_d = period / d;
+  long inner_ix = ( ( mod_inverse( step / d, period_d ) * d_phase / d ) % period ) * step;
+
+  const long outer_period = std::lcm( period, step );
+  const long outer_step = period_d * step;
+
   long min_ix = inner_ix % outer_period;
-  for ( size_t j = 1; j < gcd; ++j )
+  for ( size_t j = 1; j < d; ++j )
   {
     inner_ix += solution_step;
     min_ix = std::min( min_ix, inner_ix % outer_period );

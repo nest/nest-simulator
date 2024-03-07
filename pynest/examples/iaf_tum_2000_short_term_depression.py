@@ -62,7 +62,7 @@ References
        20,RC50:1-5. URL: https://infoscience.epfl.ch/record/183402
 
 .. [2] Tsodyks M, Pawelzik K, Markram H (1998). Neural networks with dynamic synapses. Neural
-       computation, http://dx.doi.org/10.1162/089976698300017502
+       computation, https://doi.org/10.1162/089976698300017502
 
 See Also
 ~~~~~~~~

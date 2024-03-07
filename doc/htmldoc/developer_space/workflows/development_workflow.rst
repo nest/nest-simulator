@@ -197,7 +197,7 @@ It is extremely important to work on the latest available source code. If you
 work on old code, it is possible that in the meantime, someone else has
 already made more changes to the same files that you have also edited. This
 will result in `merge conflicts
-<https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging#Basic-Merge-Conflicts>`_
+<https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging>`_
 and resolving these is extra work for both the development team and you. It
 also muddles up the ``commit history`` of the source code.
 
@@ -326,7 +326,8 @@ Creating a pull request
 
 When you feel your work is finished, you can create a pull request (PR). GitHub
 has a nice help page that outlines the process for
-`submitting pull requests <https://help.github.com/articles/using-pull-requests/#initiating-the-pull-request>`_.
+`submitting pull requests
+<https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests#initiating-the-pull-request>`_.
 
 Please check out our :ref:`coding style guidelines <code_style_cpp>` and
 :ref:`code review guidelines <code_guidelines>` prior to submitting it.

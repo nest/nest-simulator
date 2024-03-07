@@ -3,40 +3,66 @@
 Install NEST
 ============
 
-.. grid:: 1 1 2 2
 
-   .. grid-item-card::  |user| Install pre-built NEST package
-       :class-title: sd-d-flex-row sd-align-minor-center
+.. grid:: 2
+   :gutter: 1
 
-       I'm a user who wants to :ref:`install NEST on my computer <user_install>`
+   .. grid-item-card:: |user|  Install a pre-built NEST package using
+      :class-title: sd-d-flex-row sd-align-minor-center
+      :columns: 4
+
+      * :ref:`Docker (cross-platform) <docker>`
+        (Includes NESTML)
+      * :ref:`conda-forge (Linux/macOS) <conda_forge_install>`
+      * :ref:`Ubuntu PPA (Linux) <ubuntu_install>`
+      * :ref:`Homebrew (macOS) <macos_install>`
+      * :ref:`Options for Windows users <windows_install>`
 
 
-   .. grid-item-card:: |teacher| Install NEST for a class or workshop
-       :class-title: sd-d-flex-row sd-align-minor-center
+   .. grid-item-card:: |dev| Source install
+      :class-title: sd-d-flex-row sd-align-minor-center
+      :columns: 4
 
-       I'm a lecturer who wants to :ref:`use NEST to teach <lecturer>`
+      If you want to do development with NEST
+
+      * :ref:`dev_install`
+
+Install related tools
+~~~~~~~~~~~~~~~~~~~~~
+
+.. grid:: 2
+   :gutter: 1
+
+   .. grid-item-card:: |desktop|
+      :class-title: sd-d-flex-row sd-align-minor-center
+      :columns: 4
+
+      A graphical user interface, ideal for learning and teaching concepts
+      regarding neural networks in classrooms and workshops.
+
+      * :doc:`NEST Desktop documentation <desktop:index>` :octicon:`link-external`
+
+      * :ref:`Install docker container with NEST + NEST Desktop <docker_compose>`
+
+   .. grid-item-card:: |nestml|
+      :class-title: sd-d-flex-row sd-align-minor-center
+      :columns: 4
+
+      Install the NEST modeling language to create and customize models
 
 
-.. grid:: 1 1 2 2
+      * :doc:`NESTML documentation <nestml:index>` :octicon:`link-external`
 
-    .. grid-item-card:: |admin| Install NEST for supercomputers and clusters
-       :class-title: sd-d-flex-row sd-align-minor-center
+      * :ref:`Install docker container for NEST + NESTML <docker>`
 
-       I'm an admin or user who wants to :ref:`run NEST on HPC <admin_install>`
 
-    .. grid-item-card:: |dev| Install NEST from source
-       :class-title: sd-d-flex-row sd-align-minor-center
+   .. grid-item-card:: |hpc| Configure HPC systems
+      :class-title: sd-d-flex-row sd-align-minor-center
+      :columns: 4
 
-       I'm a developer who wants to :ref:`do development in NEST <dev_install>`
+      Find out how to set up and optimize HPC systems for NEST
 
-.. grid:: 1 1 2 2
-
-    .. grid-item-card:: |nestml| Install NEST with NESTML
-       :class-title: sd-d-flex-row sd-align-minor-center
-
-       I'm a user who wants to :doc:`create or customize models <nestml:installation>`.
-
-|
+      * :ref:`optimize_performance`
 
 
 
@@ -51,7 +77,6 @@ If installation didn't work, see the :ref:`troubleshooting section <troubleshoot
    :glob:
 
    mac_install
-   hpc_install
    livemedia
    cmake_options
    *
@@ -60,5 +85,6 @@ If installation didn't work, see the :ref:`troubleshooting section <troubleshoot
 .. |teacher| image:: ../static/img/014-teacher.svg
 .. |admin| image:: ../static/img/001-shuttle.svg
 .. |dev| image:: ../static/img/dev_orange.svg
-.. |nestml| image:: ../static/img/nestml-logo.png
-      :scale: 15%
+.. |desktop| image:: ../static/img/nestdesktop022023.svg
+.. |nestml| image:: ../static/img/nestml022023.svg
+.. |hpc| image:: ../static/img/hpc_orange128.svg

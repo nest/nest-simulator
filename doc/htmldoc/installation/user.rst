@@ -32,6 +32,8 @@ We have live media (.ova) if you want to run NEST in a virtual machine.
 Linux |linux|
 -------------
 
+.. _ubuntu_install:
+
 Ubuntu
 ~~~~~~
 
@@ -66,6 +68,8 @@ Or install NEST with `NESTML <https://nestml.readthedocs.io/en/latest/index.html
 --------
 
 
+.. _macos_install:
+
 macOS |macos|
 -------------
 
@@ -79,6 +83,7 @@ macOS |macos|
 
 --------
 
+.. _windows_install:
 
 Options for Windows users |windows|
 ------------------------------------

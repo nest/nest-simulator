@@ -99,6 +99,28 @@ Use Python to build PyNEST
 
 For more details, see the :ref:`Python binding <compile_with_python>` section below.
 
+.. _benchmark_cmake:
+
+Performance and energy saving in benchmarks
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For benchmarking, we recommend that the following options are used to improve performance.
+
++------------------------------------------+-----------------------------------------------+
+| ``-Dwith-optimize="-O3; -march=native"`` | optimized for making code as fast as possible |
+|                                          | for the specific type of CPU that you're      |
+|                                          | using to compile NEST                         |
++------------------------------------------+-----------------------------------------------+
+| ``-Dwith-defines=-DNDEBUG``              | disables debugging of code                    |
++------------------------------------------+-----------------------------------------------+
+
+.. note::
+
+   These options should *only be used after* you have performed several simulations of a given model with the
+   ``-Dwith-optimize="-O2"``  option.
+
+
+
 Select parallelization scheme
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

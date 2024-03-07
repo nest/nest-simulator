@@ -99,25 +99,34 @@ Use Python to build PyNEST
 
 For more details, see the :ref:`Python binding <compile_with_python>` section below.
 
-.. _benchmark_cmake:
+.. _performance_cmake:
 
-Performance and energy saving in benchmarks
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Maximize performance, reduce energy consumption
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
 
-For benchmarking, we recommend that the following options are used to improve performance.
+The following options help to optimize NEST for maximal performance and thus reduced energy consumption.
 
 +------------------------------------------+-----------------------------------------------+
-| ``-Dwith-optimize="-O3; -march=native"`` | optimized for making code as fast as possible |
-|                                          | for the specific type of CPU that you're      |
-|                                          | using to compile NEST                         |
+| ``-Dwith-optimize="-O3 -march=native"``  | Activate most compiler options that do not    |
+|                                          | affect compliance with IEEE754 numerics and   |
+|                                          | optimize for CPU type used                    |
 +------------------------------------------+-----------------------------------------------+
-| ``-Dwith-defines=-DNDEBUG``              | disables debugging of code                    |
+| ``-Dwith-defines=-DNDEBUG``              | Disable all ``assert()`` statements in NEST   |
 +------------------------------------------+-----------------------------------------------+
 
 .. note::
 
-   These options should *only be used after* you have performed several simulations of a given model with the
-   ``-Dwith-optimize="-O2"``  option.
+   * In our experience, gains from these optimizations are not very large. I can still be sensible to test them,
+     especially if you are going to perform large numbers of simulations.
+   * Your particular use case may touch upon corner cases in NEST execution that our extensive test suite has
+     not covered. Internal consistency tests in NEST in form of ``assert()`` statements can help to detect such
+     corner cases. Using the optimization options above removes these internal checks and thus increases the
+     risk that NEST will produce incorrect results. Therefore, use these options *only after you have performed
+     multiple simulations of your specific model with default optimization settings* (i.e., ``-O2``) and assertions
+     thus in place.
+   * Using ``-march=native`` requires that you build NEST on the same CPU architecture as you will use to run it.
+   * For the technically minded: Even just using ``-O3`` removes some ``assert()``s from NEST since we
+     have wrapped some of them in functions which get eliminated due to interprocedural optimization. ```
 
 
 

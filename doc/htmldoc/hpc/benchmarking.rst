@@ -5,7 +5,7 @@ Benchmarking NEST
 
 .. seealso::
 
-   When compiling NEST to perform benchmarks, see :ref:`our cmake options <benchmark_cmake>` for improved performance and energy saving.
+   When compiling NEST to perform benchmarks, see :ref:`our cmake options <performance_cmake>` for improved performance and energy saving.
 
 beNNch
 ~~~~~~

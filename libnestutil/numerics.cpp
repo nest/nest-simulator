@@ -247,7 +247,7 @@ first_index( long period, long phase0, long step, long phase )
   long min_ix = inner_ix % outer_period;
   for ( size_t j = 1; j < d; ++j )
   {
-    inner_ix += solution_step;
+    inner_ix += outer_step;
     min_ix = std::min( min_ix, inner_ix % outer_period );
   }
 

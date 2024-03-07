@@ -70,6 +70,7 @@ public:
    * Retrieve status information sliced according to slicing of node collection
    *
    * @note If nullptr is passed for NodeCollection*, full metadata irrespective of any slicing is returned.
+   *  This is used by NodeCollectionMetadata::operator==() which does not have access to the NodeCollection.
    */
   virtual void get_status( DictionaryDatum&, NodeCollection const* ) const = 0;
 
@@ -80,12 +81,15 @@ public:
   virtual bool operator==( const NodeCollectionMetadataPTR ) const = 0;
 };
 
+/**
+ * Represent single node entry in node collection.
+ */
 class NodeIDTriple
 {
 public:
-  size_t node_id { 0 };
-  size_t model_id { 0 };
-  size_t lid { 0 }; // position with node collection
+  size_t node_id { 0 };  //!< Global ID of neuron
+  size_t model_id { 0 }; //!< ID of neuron model
+  size_t nc_index { 0 }; //!< position with node collection
   NodeIDTriple() = default;
 };
 
@@ -106,7 +110,7 @@ class nc_const_iterator
   friend class NodeCollectionComposite;
 
 private:
-  NodeCollectionPTR coll_ptr_; //!< pointer for keep node collection alive, see note
+  NodeCollectionPTR coll_ptr_; //!< pointer to keep node collection alive, see note
   size_t element_idx_;         //!< index into (current) primitive node collection
   size_t part_idx_;            //!< index into parts vector of composite collection
   size_t step_;                //!< step for skipping due to e.g. slicing
@@ -171,7 +175,15 @@ public:
   nc_const_iterator& operator+=( const size_t );
   nc_const_iterator operator+( const size_t ) const;
 
-  size_t get_step_size() const; //!< step size of iterator in number of elements
+  /**
+   * Return step size of iterator.
+   *
+   * For thread- and rank-local iterators, this takes into account stepping over all VPs / ranks.
+   * For stepped node collections, this takes also stepping into account. Thus if we have a
+   * thread-local iterator in a simulation with 4 VPs and a node-collection step of 3, then the
+   * iterator's step is 12.
+   */
+  size_t get_step_size() const;
 
   void print_me( std::ostream& ) const;
 };
@@ -399,7 +411,7 @@ public:
    *
    * @return Index of node with given node ID; -1 if node not in NodeCollection.
    */
-  virtual long get_lid( const size_t ) const = 0;
+  virtual long get_nc_index( const size_t ) const = 0;
 
   /**
    * Returns whether the NodeCollection contains any nodes with proxies or not.
@@ -541,7 +553,7 @@ public:
   bool is_range() const override;
   bool empty() const override;
 
-  long get_lid( const size_t ) const override;
+  long get_nc_index( const size_t ) const override;
 
   bool has_proxies() const override;
 
@@ -691,7 +703,7 @@ public:
   bool is_range() const override;
   bool empty() const override;
 
-  long get_lid( const size_t ) const override;
+  long get_nc_index( const size_t ) const override;
 
   bool has_proxies() const override;
 };
@@ -874,7 +886,7 @@ NodeCollectionPrimitive::empty() const
 }
 
 inline long
-NodeCollectionPrimitive::get_lid( const size_t neuron_id ) const
+NodeCollectionPrimitive::get_nc_index( const size_t neuron_id ) const
 {
   if ( neuron_id > last_ )
   {

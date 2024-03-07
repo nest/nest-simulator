@@ -68,7 +68,7 @@ protected:
   /**
    * Calculate the index in the position vector on this MPI process based on the local ID.
    *
-   * @param lid local ID of the node
+   * @param lid global index of node within layer
    * @return index in the local position vector
    */
   size_t lid_to_position_id_( size_t lid ) const;
@@ -263,6 +263,7 @@ FreeLayer< D >::get_status( DictionaryDatum& d, NodeCollection const* nc ) const
 
   if ( not nc )
   {
+    // This is needed by NodeCollectionMetadata::operator==() which does not have access to the node collection
     for ( const auto& pos : positions_ )
     {
       points.push_back( pos.getToken() );
@@ -270,7 +271,13 @@ FreeLayer< D >::get_status( DictionaryDatum& d, NodeCollection const* nc ) const
   }
   else
   {
-    // copy only those that are in nc
+    // Selecting the right positions
+    // - Coordinates for all nodes in the underlying primitive node collection
+    //   which belong to this rank are stored in positions_
+    // - nc has information on which nodes actually belong to it, especially
+    //   important for sliced collections with step > 1.
+    // - Use the rank-local iterator over the node collection to pick the right
+    //   nodes, then step in lockstep through the positions_ array.
     auto nc_it = nc->rank_local_begin();
     const auto nc_end = nc->end();
     if ( nc_it == nc_end )
@@ -278,10 +285,10 @@ FreeLayer< D >::get_status( DictionaryDatum& d, NodeCollection const* nc ) const
       return; // no data on this rank
     }
 
-    // since positions only contains data for local rank, we need to scale down
+    // Node index in node collection is global to NEST, so we need to scale down
+    // to get right indices into positions_, which has only rank-local data.
     const size_t n_procs = kernel().mpi_manager.get_num_processes();
-
-    size_t pos_idx = ( *nc_it ).lid / n_procs;
+    size_t pos_idx = ( *nc_it ).nc_index / n_procs;
     size_t step = nc_it.get_step_size() / n_procs;
 
     for ( ; nc_it < nc->end(); pos_idx += step, ++nc_it )
@@ -325,7 +332,7 @@ FreeLayer< D >::communicate_positions_( Ins iter, NodeCollectionPTR node_collect
     // Push node ID into array to communicate
     local_node_id_pos.push_back( ( *nc_it ).node_id );
     // Push coordinates one by one
-    const auto pos = get_position( ( *nc_it ).lid );
+    const auto pos = get_position( ( *nc_it ).nc_index );
     for ( int j = 0; j < D; ++j )
     {
       local_node_id_pos.push_back( pos[ j ] );

@@ -1459,35 +1459,6 @@ public:
    * linear, exponential and other.
    *
    *
-   * Parameter name: source
-   *
-   * Type: dictionary
-   *
-   * Parameter description:
-   *
-   * The source dictionary enables us to give further detail on
-   * how the nodes in the source layer used in the connection function
-   * should be processed.
-   *
-   * Parameters:
-   * model*             literal
-   * lid^               integer
-   *
-   * *modeltype (i.e. /iaf_psc_alpha) of nodes that should be connected to
-   * in the layer. All nodes are used if this variable isn't set.
-   * ^Nesting depth of nodes that should be connected to. All layers are used
-   * if this variable isn't set.
-   *
-   *
-   * Parameter name: target
-   *
-   * Type: dictionary
-   *
-   * Parameter description:
-   *
-   * See description for source dictionary.
-   *
-   *
    * Parameter name: number_of_connections
    *
    * Type: integer

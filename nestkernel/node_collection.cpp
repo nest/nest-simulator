@@ -144,7 +144,7 @@ nc_const_iterator::operator*() const
       throw KernelException( "Invalid NodeCollection iterator (primitive element beyond last element)" );
     }
     gt.model_id = primitive_collection_->model_id_;
-    gt.lid = element_idx_;
+    gt.nc_index = element_idx_;
   }
   else
   {
@@ -159,7 +159,7 @@ nc_const_iterator::operator*() const
 
     // Add to local placement from NodeCollectionPrimitives that comes before the
     // current one.
-    gt.lid = 0;
+    gt.nc_index = 0;
     for ( const auto& part : composite_collection_->parts_ )
     {
       // Using a stripped-down comparison of Primitives to avoid redundant and potentially expensive comparisons of
@@ -169,12 +169,12 @@ nc_const_iterator::operator*() const
       {
         break;
       }
-      gt.lid += part.size();
+      gt.nc_index += part.size();
     }
 
     gt.node_id = composite_collection_->parts_[ part_idx_ ][ element_idx_ ];
     gt.model_id = composite_collection_->parts_[ part_idx_ ].model_id_;
-    gt.lid += element_idx_;
+    gt.nc_index += element_idx_;
   }
   return gt;
 }
@@ -887,6 +887,7 @@ NodeCollectionComposite::operator==( NodeCollectionPTR rhs ) const
 NodeCollectionComposite::const_iterator
 NodeCollectionComposite::thread_local_begin( NodeCollectionPTR cp ) const
 {
+  // Same algorithm as for rank_local_begin() but based on VP number here
   const size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
   const size_t current_vp = kernel().vp_manager.thread_to_vp( kernel().vp_manager.get_thread_id() );
 
@@ -912,6 +913,7 @@ NodeCollectionComposite::thread_local_begin( NodeCollectionPTR cp ) const
 NodeCollectionComposite::const_iterator
 NodeCollectionComposite::rank_local_begin( NodeCollectionPTR cp ) const
 {
+  // Same algorithm as for thread_local_begin() but based on rank here
   const size_t num_processes = kernel().mpi_manager.get_num_processes();
   const size_t current_rank = kernel().mpi_manager.get_rank();
 
@@ -1004,11 +1006,11 @@ NodeCollectionComposite::merge_parts_( std::vector< NodeCollectionPrimitive >& p
 bool
 NodeCollectionComposite::contains( const size_t node_id ) const
 {
-  return get_lid( node_id ) != -1;
+  return get_nc_index( node_id ) != -1;
 }
 
 long
-NodeCollectionComposite::get_lid( const size_t node_id ) const
+NodeCollectionComposite::get_nc_index( const size_t node_id ) const
 {
   const auto add_size_op = []( const long a, const NodeCollectionPrimitive& b ) { return a + b.size(); };
 
@@ -1041,7 +1043,7 @@ NodeCollectionComposite::get_lid( const size_t node_id ) const
         // Need to find number of nodes in previous parts to know if the the step hits the node_id.
         const auto num_prev_nodes =
           std::accumulate( parts_.begin(), parts_.begin() + middle, static_cast< size_t >( 0 ), add_size_op );
-        const auto absolute_pos = num_prev_nodes + parts_[ middle ].get_lid( node_id );
+        const auto absolute_pos = num_prev_nodes + parts_[ middle ].get_nc_index( node_id );
 
         // The first or the last node can be somewhere in the middle part.
         const auto absolute_part_start = start_part_ == middle ? start_offset_ : 0;
@@ -1064,7 +1066,7 @@ NodeCollectionComposite::get_lid( const size_t node_id ) const
         // Since NC is not sliced, we can just calculate and return the local ID.
         const auto sum_pre =
           std::accumulate( parts_.begin(), parts_.begin() + middle, static_cast< size_t >( 0 ), add_size_op );
-        return sum_pre + parts_[ middle ].get_lid( node_id );
+        return sum_pre + parts_[ middle ].get_nc_index( node_id );
       }
     }
   }

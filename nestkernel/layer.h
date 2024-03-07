@@ -81,7 +81,7 @@ public:
   /**
    * Get position of node. Only possible for local nodes.
    *
-   * @param lid index of node within layer
+   * @param lid global index of node within layer
    * @returns position of node as std::vector
    */
   virtual std::vector< double > get_position_vector( const size_t lid ) const = 0;

@@ -127,7 +127,7 @@ public:
   /**
    * Get position of node. Also allowed for non-local nodes.
    *
-   * @param lid local index of node
+   * @param lid global index of node within layer
    * @returns position of node.
    */
   Position< D > lid_to_position( size_t lid ) const;
@@ -286,7 +286,7 @@ GridLayer< D >::insert_global_positions_( Ins iter, NodeCollectionPTR node_colle
   for ( auto gi = node_collection->begin(); gi < node_collection->end(); ++gi )
   {
     const auto triple = *gi;
-    *iter++ = std::pair< Position< D >, size_t >( lid_to_position( triple.lid ), triple.node_id );
+    *iter++ = std::pair< Position< D >, size_t >( lid_to_position( triple.nc_index ), triple.node_id );
   }
 }
 

@@ -108,6 +108,8 @@ Layer< D >::get_status( DictionaryDatum& d, NodeCollection const* nc ) const
 
   if ( nc )
   {
+    // This is for backward compatibility with some tests and scripts
+    // TODO: Rename parameter
     ( *d )[ names::network_size ] = nc->size();
   }
 }
@@ -296,7 +298,7 @@ Layer< D >::dump_nodes( std::ostream& out ) const
         ++it )
   {
     out << ( *it ).node_id << ' ';
-    get_position( ( *it ).lid ).print( out );
+    get_position( ( *it ).nc_index ).print( out );
     out << std::endl;
   }
 }
@@ -350,7 +352,7 @@ Layer< D >::dump_connections( std::ostream& out,
       Layer< D >* tgt_layer = dynamic_cast< Layer< D >* >( target_layer.get() );
 
       out << ' ';
-      const long tnode_lid = tgt_layer->node_collection_->get_lid( target_node_id );
+      const long tnode_lid = tgt_layer->node_collection_->get_nc_index( target_node_id );
       assert( tnode_lid >= 0 );
       tgt_layer->compute_displacement( source_pos, tnode_lid ).print( out );
       out << '\n';

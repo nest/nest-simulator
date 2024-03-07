@@ -1101,7 +1101,7 @@ NestModule::Find_g_iFunction::execute( SLIInterpreter* i ) const
   NodeCollectionDatum nodecollection = getValue< NodeCollectionDatum >( i->OStack.pick( 1 ) );
   const long node_id = getValue< long >( i->OStack.pick( 0 ) );
 
-  const auto res = nodecollection->get_lid( node_id );
+  const auto res = nodecollection->get_nc_index( node_id );
   i->OStack.pop( 2 );
   i->OStack.push( res );
   i->EStack.pop();

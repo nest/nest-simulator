@@ -114,7 +114,7 @@ ipop_params = {
 # distributed, with means mu_a and mu_b, and standard deviation
 # sigma.
 signal_start = 1000.0
-signal_duration = 2000.0
+signal_duration = 1000.0
 signal_update_interval = 50.0
 f = 0.15  # proportion of neurons receiving signal inputs
 # compute expectations of the time-inhomogeneous Poisson processes
@@ -222,14 +222,14 @@ syn_spec_dep_NMDA = {
 
 ie_syn_spec = {
     "synapse_model": "static_synapse",
-    "weight": -1.0 * g_GABA_ex,
+    "weight": 1.0 * g_GABA_ex,
     "delay": delay,
     "receptor_type": receptor_types["GABA"],
 }
 
 ii_syn_spec = {
     "synapse_model": "static_synapse",
-    "weight": -1.0 * g_GABA_in,
+    "weight": 1.0 * g_GABA_in,
     "delay": delay,
     "receptor_type": receptor_types["GABA"],
 }

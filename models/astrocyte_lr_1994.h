@@ -164,15 +164,15 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-======  ========= =============================================================
+======== ========= =============================================================
 **Dynamic state variables**
--------------------------------------------------------------------------------
-IP3     µM        Inositol 1,4,5-trisphosphate concentration in the astrocytic
-                  cytosol
-Ca      µM        Calcium concentration in the astrocytic cytosol
-h_IP3R  unitless  Fraction of IP3 receptors on the astrocytic ER that are not
-                  yet inactivated by calcium
-======  ========= =============================================================
+--------------------------------------------------------------------------------
+IP3      µM        Inositol 1,4,5-trisphosphate concentration in the astrocytic
+                   cytosol
+Ca_astro µM        Calcium concentration in the astrocytic cytosol
+h_IP3R   unitless  Fraction of IP3 receptors on the astrocytic ER that are not
+                   yet inactivated by calcium
+======== ========= =============================================================
 
 =============== ========= =====================================================
 **Parameters**
@@ -354,8 +354,8 @@ public:
     enum StateVecElems
     {
       IP3 = 0,
-      Ca,     // 1
-      h_IP3R, // 2
+      Ca_astro, // 1
+      h_IP3R,   // 2
       STATE_VEC_SIZE
     };
 

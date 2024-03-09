@@ -256,7 +256,7 @@ def plot_dynamics(astro_data, neuron_data, start):
     # astrocyte data
     astro_mask = astro_data["times"] > start
     astro_ip3 = astro_data["IP3"][astro_mask]
-    astro_cal = astro_data["Ca"][astro_mask]
+    astro_cal = astro_data["Ca_astro"][astro_mask]
     astro_times = astro_data["times"][astro_mask]
     astro_times_set = list(set(astro_times))
     ip3_means = np.array([np.mean(astro_ip3[astro_times == t]) for t in astro_times_set])
@@ -329,7 +329,7 @@ def run_simulation():
     # create and connect recorders (multimeter default resolution = 1 ms)
     sr_neuron = nest.Create("spike_recorder")
     mm_neuron = nest.Create("multimeter", params={"record_from": ["I_SIC"]})
-    mm_astro = nest.Create("multimeter", params={"record_from": ["IP3", "Ca"]})
+    mm_astro = nest.Create("multimeter", params={"record_from": ["IP3", "Ca_astro"]})
 
     # select nodes randomly and connect them with recorders
     print("Connecting recorders ...")

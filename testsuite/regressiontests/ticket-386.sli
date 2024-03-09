@@ -81,4 +81,3 @@ def
   GetKernelStatus /node_models get { run_test } forall
 }
 pass_or_die
-

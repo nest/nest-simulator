@@ -83,7 +83,7 @@ Coding style
 
 In the following the coding style guidelines are explained by example and some
 parts are adopted from `Google C++ Style
-Guide <https://google-styleguide.googlecode.com/svn/trunk/cppguide.html>`_.
+Guide <https://google.github.io/styleguide/cppguide.html>`_.
 
 The #define guard
 ~~~~~~~~~~~~~~~~~

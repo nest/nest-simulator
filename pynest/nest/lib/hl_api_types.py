@@ -816,13 +816,16 @@ class SynapseCollection:
                {'source': [1, 1, 1, 2, 2, 2, 3, 3, 3],
                 'weight': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]}
         """
+
         pandas_output = output == "pandas"
         if pandas_output and not HAVE_PANDAS:
             raise ImportError("Pandas could not be imported")
 
-        # Return empty dictionary if we have no connections or if we have done a nest.ResetKernel()
-        num_conns = GetKernelStatus("num_connections")  # Has to be called first because it involves MPI communication.
-        if self.__len__() == 0 or num_conns == 0:
+        # Return empty dictionary if we have no connections
+        # We also return if the network is empty after a ResetKernel.
+        # This avoids problems with invalid SynapseCollections.
+        # See also #3100.
+        if self.__len__() == 0 or GetKernelStatus("network_size") == 0:
             # Return empty tuple if get is called with an argument
             return {} if keys is None else ()
 
@@ -885,7 +888,9 @@ class SynapseCollection:
 
         # This was added to ensure that the function is a nop (instead of,
         # for instance, raising an exception) when applied to an empty
-        # SynapseCollection, or after having done a nest.ResetKernel().
+        # SynapseCollection. We also return if the network is empty after a
+        # reset kernel. This avoids problems with invalid SynapseCollections.
+        # See also #3100.
         if self.__len__() == 0 or GetKernelStatus("network_size") == 0:
             return
 

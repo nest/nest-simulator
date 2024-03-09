@@ -208,7 +208,7 @@ Every matrix entry is calculated twice. For inhibitory postsynaptic inputs (with
 
 The update is performed `here <https://github.com/nest/nest-simulator/blob/b3fc263e073f46f0732c10efb34fcc90f3b6771c/models/iaf_psc_alpha.cpp#L305-L307>`_. The first multiplication evolves the external input. The others are the multiplication of the matrix :math:`e^{Ah}` with :math:`y` (for inhibitory and excitatory inputs).
 
-If synaptic and membrane time constants become very close, :math:`\tau_m\approx \tau_{syn}`, the matrix :math:`e^{Ah}` becomes numerically unstable. NEST handles this gracefully as described in the `IAF Integration Singularity notebook <model_details/IAF_Integration_Singularity.ipynb>`_.
+If synaptic and membrane time constants become very close, :math:`\tau_m\approx \tau_{syn}`, the matrix :math:`e^{Ah}` becomes numerically unstable. NEST handles this gracefully as described in the `IAF Integration Singularity notebook <../model_details/IAF_Integration_Singularity.ipynb>`_.
 
 
 For more information see [1]_.

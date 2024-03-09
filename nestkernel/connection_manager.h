@@ -481,8 +481,7 @@ private:
   /**
    * Update delay extrema to current values.
    *
-   * Static since it only operates in static variables. This allows it to be
-   * called from const-method get_status() as well.
+   * @note This entails MPI communication.
    */
   void update_delay_extrema_();
 

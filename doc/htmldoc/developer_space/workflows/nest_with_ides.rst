@@ -276,7 +276,7 @@ We present two ways to install the rest: MacPorts and Homebrew. For both version
 Homebrew
 ^^^^^^^^
 
-1. Follow the install instructions for Homebrew (`short <http://brew.sh/>`_) or `long <https://github.com/Homebrew/homebrew/blob/master/share/doc/homebrew/Installation.md#installation>`_)
+1. Follow the install instructions for Homebrew (`short <http://brew.sh/>`_) or `long <https://github.com/Homebrew/brew/blob/master/docs/Installation.md>`_)
 2. Open up the Terminal and execute the following lines:
 
    .. code-block:: sh
@@ -430,8 +430,8 @@ Setting up the CMake configuration in CLion has the following advantages:
 .. note::
 
    `CLion <https://www.jetbrains.com/clion/>`_ is a commercial product. It is *your responsibility* to ensure that you have a valid
-   license permitting you to use CLion (or any software product) for your work on the    
-   NEST Simulator. 
+   license permitting you to use CLion (or any software product) for your work on the
+   NEST Simulator.
 
 Setting up the project
 ~~~~~~~~~~~~~~~~~~~~~~

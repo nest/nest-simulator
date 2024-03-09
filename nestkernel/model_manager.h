@@ -163,7 +163,7 @@ public:
    * Asserts validity of synapse index, otherwise throws exception.
    * @throws UnknownSynapseType
    */
-  void assert_valid_syn_id( synindex syn_id, size_t t = 0 ) const;
+  void assert_valid_syn_id( synindex syn_id, size_t t ) const;
 
   bool are_model_defaults_modified() const;
 
@@ -300,7 +300,7 @@ ModelManager::are_model_defaults_modified() const
 inline ConnectorModel&
 ModelManager::get_connection_model( synindex syn_id, size_t thread_id )
 {
-  assert_valid_syn_id( syn_id );
+  assert_valid_syn_id( syn_id, thread_id );
   return *( connection_models_[ thread_id ][ syn_id ] );
 }
 
@@ -322,7 +322,7 @@ ModelManager::assert_valid_syn_id( synindex syn_id, size_t t ) const
 inline SecondaryEvent&
 ModelManager::get_secondary_event_prototype( const synindex syn_id, const size_t tid )
 {
-  assert_valid_syn_id( syn_id );
+  assert_valid_syn_id( syn_id, tid );
   return *get_connection_model( syn_id, tid ).get_secondary_event();
 }
 

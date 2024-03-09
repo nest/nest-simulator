@@ -275,13 +275,13 @@ endforeach ()
 set( MODULE_LINK_LIBS
   "-lnest"
   "-lsli"
-  "${OpenMP_CXX_FLAGS}"
   "${LTDL_LIBRARIES}"
   "${READLINE_LIBRARIES}"
   "${GSL_LIBRARIES}"
   "${LIBNEUROSIM_LIBRARIES}"
   "${MUSIC_LIBRARIES}"
   "${MPI_CXX_LIBRARIES}"
+  "${OpenMP_CXX_LIBRARIES}"
   "${SIONLIB_LIBRARIES}"
   "${BOOST_LIBRARIES}" )
 

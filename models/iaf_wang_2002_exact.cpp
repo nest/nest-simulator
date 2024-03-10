@@ -234,8 +234,7 @@ nest::iaf_wang_2002_exact::State_::get( DictionaryDatum& d ) const
   def< double >( d, names::s_GABA, ode_state_[ s_GABA ] );
 
   // total NMDA sum
-  double s_NMDA = get_s_NMDA();
-  def< double >( d, names::s_NMDA, s_NMDA );
+  def< double >( d, names::s_NMDA, get_s_NMDA() );
 }
 
 void
@@ -424,9 +423,9 @@ nest::iaf_wang_2002_exact_dynamics( double, const double ode_state[], double f[]
   node.S_.I_NMDA_ = ( ode_state[ State_::V_m ] - node.P_.E_ex )
     / ( 1 + node.P_.conc_Mg2 * std::exp( -0.062 * ode_state[ State_::V_m ] ) / 3.57 ) * total_NMDA;
 
-  const double I_syn = I_AMPA + I_GABA + node.S_.I_NMDA_ - node.B_.I_stim_;
+  const double I_syn = I_AMPA + I_GABA + node.S_.I_NMDA_;
 
-  f[ State_::V_m ] = ( -node.P_.g_L * ( ode_state[ State_::V_m ] - node.P_.E_L ) - I_syn ) / node.P_.C_m;
+  f[ State_::V_m ] = ( -node.P_.g_L * ( ode_state[ State_::V_m ] - node.P_.E_L ) - I_syn + node.B_.I_stim_ ) / node.P_.C_m;
 
   f[ State_::s_AMPA ] = -ode_state[ State_::s_AMPA ] / node.P_.tau_AMPA;
   f[ State_::s_GABA ] = -ode_state[ State_::s_GABA ] / node.P_.tau_GABA;

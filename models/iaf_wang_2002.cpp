@@ -96,9 +96,9 @@ nest::iaf_wang_2002_dynamics( double, const double y[], double f[], void* pnode 
   node.S_.I_NMDA_ = ( y[ S::V_m ] - node.P_.E_ex ) / ( 1 + node.P_.conc_Mg2 * std::exp( -0.062 * y[ S::V_m ] ) / 3.57 )
     * y[ S::s_NMDA ];
 
-  const double I_syn = I_AMPA + I_GABA + node.S_.I_NMDA_ + node.B_.I_stim_;
+  const double I_syn = I_AMPA + I_GABA + node.S_.I_NMDA_;
 
-  f[ S::V_m ] = ( -node.P_.g_L * ( y[ S::V_m ] - node.P_.E_L ) - I_syn ) / node.P_.C_m;
+  f[ S::V_m ] = ( -node.P_.g_L * ( y[ S::V_m ] - node.P_.E_L ) - I_syn + node.B_.I_stim_ ) / node.P_.C_m;
 
   f[ S::s_AMPA ] = -y[ S::s_AMPA ] / node.P_.tau_AMPA;
   f[ S::s_NMDA ] = -y[ S::s_NMDA ] / node.P_.tau_decay_NMDA;

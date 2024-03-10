@@ -48,9 +48,9 @@ MUSICManager::MUSICManager()
 }
 
 void
-MUSICManager::initialize( const bool reset_kernel )
+MUSICManager::initialize( const bool adjust_number_of_threads_only )
 {
-  if ( not reset_kernel )
+  if ( adjust_number_of_threads_only )
   {
     return;
   }

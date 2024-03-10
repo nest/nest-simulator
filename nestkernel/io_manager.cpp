@@ -132,9 +132,9 @@ IOManager::set_data_path_prefix_( const DictionaryDatum& dict )
 }
 
 void
-IOManager::initialize( const bool reset_kernel )
+IOManager::initialize( const bool adjust_number_of_threads_only )
 {
-  if ( reset_kernel )
+  if ( not adjust_number_of_threads_only )
   {
     DictionaryDatum dict( new Dictionary );
     // The properties data_path and data_prefix can be set via environment variables

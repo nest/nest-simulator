@@ -425,7 +425,8 @@ nest::iaf_wang_2002_exact_dynamics( double, const double ode_state[], double f[]
 
   const double I_syn = I_AMPA + I_GABA + node.S_.I_NMDA_;
 
-  f[ State_::V_m ] = ( -node.P_.g_L * ( ode_state[ State_::V_m ] - node.P_.E_L ) - I_syn + node.B_.I_stim_ ) / node.P_.C_m;
+  f[ State_::V_m ] =
+    ( -node.P_.g_L * ( ode_state[ State_::V_m ] - node.P_.E_L ) - I_syn + node.B_.I_stim_ ) / node.P_.C_m;
 
   f[ State_::s_AMPA ] = -ode_state[ State_::s_AMPA ] / node.P_.tau_AMPA;
   f[ State_::s_GABA ] = -ode_state[ State_::s_GABA ] / node.P_.tau_GABA;

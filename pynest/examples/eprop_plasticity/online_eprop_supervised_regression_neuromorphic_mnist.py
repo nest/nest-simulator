@@ -178,7 +178,7 @@ nest.set_verbosity("M_FATAL")
 
 pixels_blacklist = np.loadtxt("./NMNIST_pixels_blacklist.txt")
 
-n_in = 2 * 34 * 34 - len(pixels_blacklist) # number of input neurons
+n_in = 2 * 34 * 34 - len(pixels_blacklist)  # number of input neurons
 n_rec = 100  # number of recurrent neurons
 n_out = 10
 
@@ -204,7 +204,7 @@ params_nrn_rec = {
 if model_nrn_rec == "eprop_iaf":
     del params_nrn_rec["V_reset"]
     params_nrn_rec["c_reg"] = 300.0 / duration["sequence"]  # firing rate regularization scaling
-    params_nrn_rec["psc_scale_factor"] = "unity" # postsynaptic current scale factor
+    params_nrn_rec["psc_scale_factor"] = "unity"  # postsynaptic current scale factor
     params_nrn_rec["V_th"] = 0.6  # mV, spike threshold membrane voltage
 
 params_nrn_out = {
@@ -302,9 +302,9 @@ weights_out_rec = np.array(np.random.randn(n_rec, n_out), dtype=dtype_weights)
 
 
 sparsity_level_in = 0.9
-mask_in = np.random.choice([0,1], weights_in_rec.shape, p=[sparsity_level_in, 1-sparsity_level_in])
+mask_in = np.random.choice([0, 1], weights_in_rec.shape, p=[sparsity_level_in, 1 - sparsity_level_in])
 sparsity_level_out = 0.0
-mask_out = np.random.choice([0,1], weights_rec_out.shape, p=[sparsity_level_out, 1-sparsity_level_out])
+mask_out = np.random.choice([0, 1], weights_rec_out.shape, p=[sparsity_level_out, 1 - sparsity_level_out])
 
 weights_in_rec *= mask_in
 weights_rec_out *= mask_out
@@ -376,7 +376,7 @@ nest.Connect(gen_spk_in, nrns_in, params_conn_one_to_one, params_syn_static)  # 
 # nest.Connect(nrns_in, nrns_rec, params_conn_all_to_all, params_syn_in)  # connection 2
 for j in range(n_rec):
     for i in range(n_in):
-        w = weights_in_rec[j,i]
+        w = weights_in_rec[j, i]
         if np.abs(w) > 0:
             params_syn_in["weight"] = w
             nest.Connect(nrns_in[i], nrns_rec[j], params_conn_one_to_one, params_syn_in)
@@ -384,10 +384,10 @@ for j in range(n_rec):
 # nest.Connect(nrns_rec, nrns_out, params_conn_all_to_all, params_syn_out)  # connection 4
 for j in range(n_out):
     for i in range(n_rec):
-        w = weights_rec_out[j,i]
+        w = weights_rec_out[j, i]
         if np.abs(w) > 0:
             params_syn_out["weight"] = w
-            nest.Connect(nrns_rec[i], nrns_out[j], params_conn_one_to_one, params_syn_out)            
+            nest.Connect(nrns_rec[i], nrns_out[j], params_conn_one_to_one, params_syn_out)
 nest.Connect(nrns_out, nrns_rec, params_conn_all_to_all, params_syn_feedback)  # connection 5
 nest.Connect(gen_rate_target, nrns_out, params_conn_one_to_one, params_syn_rate_target)  # connection 6
 nest.Connect(gen_learning_window, nrns_out, params_conn_all_to_all, params_syn_learning_window)  # connection
@@ -434,6 +434,7 @@ def load_n_mnist(file_path, num_labels=10, shuffle=True, pixels_blacklist=None):
 
     return images, labels
 
+
 def load_image(file_path, pixels_blacklist=None):
     with open(file_path, "rb") as file:
         inputByteArray = file.read()
@@ -445,18 +446,19 @@ def load_image(file_path, pixels_blacklist=None):
     times = ((byte_array[2::5] << 16) | (byte_array[3::5] << 8) | byte_array[4::5]) & 0x7FFFFF
     times = np.clip(times // 1000, 1, 299)
 
-    image_full = [ [] for _ in range(2*34*34) ]
+    image_full = [[] for _ in range(2 * 34 * 34)]
     image = []
- 
+
     for polarity, x, y, time in zip(polarities, y_coords, x_coords, times):
-        pixel = polarity*34*34 +  x * 34 + y
+        pixel = polarity * 34 * 34 + x * 34 + y
         image_full[pixel].append(time)
 
-    for pixel, times in enumerate(image_full): 
+    for pixel, times in enumerate(image_full):
         if pixel not in pixels_blacklist:
             image.append(times)
 
     return image
+
 
 class DataLoader:
     def __init__(self, images, labels, n_batch):
@@ -485,8 +487,12 @@ extract_dataset("NMNISTsmall.zip", "./")
 file_path_train = "NMNISTsmall/train1K.txt"
 file_path_test = "NMNISTsmall/test100.txt"
 
-train_images, train_labels = load_n_mnist(file_path_train, num_labels=n_out, shuffle=True, pixels_blacklist=pixels_blacklist)
-test_images, test_labels = load_n_mnist(file_path_test, num_labels=n_out, shuffle=True, pixels_blacklist=pixels_blacklist)
+train_images, train_labels = load_n_mnist(
+    file_path_train, num_labels=n_out, shuffle=True, pixels_blacklist=pixels_blacklist
+)
+test_images, test_labels = load_n_mnist(
+    file_path_test, num_labels=n_out, shuffle=True, pixels_blacklist=pixels_blacklist
+)
 
 train_loader = DataLoader(train_images, train_labels, n_batch=n_batch)
 test_loader = DataLoader(test_images, test_labels, n_batch=n_batch)
@@ -571,8 +577,8 @@ for target_rate in target_rates:
         }
     )
 
-learning_window = np.zeros((n_iter_train+n_iter_test, n_batch, steps["sequence"]))
-learning_window[:, :, -steps["learning_window"]:] = 1.0
+learning_window = np.zeros((n_iter_train + n_iter_test, n_batch, steps["sequence"]))
+learning_window[:, :, -steps["learning_window"] :] = 1.0
 learning_window = learning_window.reshape(-1)
 
 params_gen_learning_window = {

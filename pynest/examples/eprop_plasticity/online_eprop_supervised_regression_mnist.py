@@ -205,7 +205,7 @@ params_nrn_rec = {
 if model_nrn_rec == "eprop_iaf":
     del params_nrn_rec["V_reset"]
     params_nrn_rec["c_reg"] = 300.0 / duration["sequence"]  # firing rate regularization scaling
-    params_nrn_rec["psc_scale_factor"] = "unity" # postsynaptic current scale factor
+    params_nrn_rec["psc_scale_factor"] = "unity"  # postsynaptic current scale factor
     params_nrn_rec["V_th"] = 0.6  # mV, spike threshold membrane voltage
 
 
@@ -567,8 +567,8 @@ for target_rate in target_rates:
         }
     )
 
-learning_window = np.zeros((n_iter_train+n_iter_test, n_batch, steps["sequence"]))
-learning_window[:, :, -steps["learning_window"]:] = 1.0
+learning_window = np.zeros((n_iter_train + n_iter_test, n_batch, steps["sequence"]))
+learning_window[:, :, -steps["learning_window"] :] = 1.0
 learning_window = learning_window.reshape(-1)
 
 params_gen_learning_window = {

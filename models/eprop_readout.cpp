@@ -357,11 +357,11 @@ eprop_readout::handle( DelayedRateConnectionEvent& e )
   else if ( rport == LEARNING_WINDOW_SIG )
   {
     S_.learning_window_flag_ = true;
-    if ( std::abs(signal) < 1.0 )
+    if ( std::abs( signal ) < 1.0 )
     {
       S_.learning_window_flag_ = false;
-    } 
-  }  
+    }
+  }
 
   assert( it == e.end() );
 }

@@ -87,9 +87,9 @@ consideration, each of the restrictions can be disabled by setting a correspondi
   THIS OPENS YOUR COMPUTER TO REMOTE CODE EXECUTION.
 * ``NEST_SERVER_DISABLE_RESTRICTION``: By default, NEST Server runs all code passed to the ``/exec`` route through
   RestrictedPython to sanitize it. To disable this mechanism, this variable can be set to ``1``. For increased security,
-  code passed in this way only allows explictly whitelisted modules to be imported. To import modules, the variable
-  ``NEST_SERVER_MODULES`` can be set to a standard Python import line like this: ``NEST_SERVER_MODULES='import nest;
-  import scipy as sp; from numpy import random'``
+  code passed in this way only allows explictly whitelisted modules to be imported.
+* ``NEST_SERVER_MODULES``: To import modules, the variable can be set to a standard Python import line like this:
+  ``NEST_SERVER_MODULES='import nest; import scipy as sp; from numpy import random'``
 
 Run NEST Server
 ~~~~~~~~~~~~~~~

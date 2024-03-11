@@ -105,6 +105,12 @@ public:
   finalize( const bool ) override
   {
   }
+
+  void
+  reinitialize_dynamic_modules()
+  {
+  }
+
   void
   get_status( DictionaryDatum& ) override
   {

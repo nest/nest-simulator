@@ -66,7 +66,6 @@ RecordablesMap< iaf_wang_2002_exact >::create()
   insert_( names::V_m, &iaf_wang_2002_exact::get_ode_state_elem_< iaf_wang_2002_exact::State_::V_m > );
   insert_( names::s_AMPA, &iaf_wang_2002_exact::get_ode_state_elem_< iaf_wang_2002_exact::State_::s_AMPA > );
   insert_( names::s_GABA, &iaf_wang_2002_exact::get_ode_state_elem_< iaf_wang_2002_exact::State_::s_GABA > );
-  insert_( names::s_NMDA, &iaf_wang_2002_exact::get_s_NMDA_ );
   insert_( names::I_NMDA, &iaf_wang_2002_exact::get_I_NMDA_ );
 }
 }
@@ -232,9 +231,6 @@ nest::iaf_wang_2002_exact::State_::get( DictionaryDatum& d ) const
   def< double >( d, names::V_m, ode_state_[ V_m ] ); // Membrane potential
   def< double >( d, names::s_AMPA, ode_state_[ s_AMPA ] );
   def< double >( d, names::s_GABA, ode_state_[ s_GABA ] );
-
-  // total NMDA sum
-  def< double >( d, names::s_NMDA, get_s_NMDA() );
 }
 
 void

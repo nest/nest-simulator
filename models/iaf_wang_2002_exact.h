@@ -141,7 +141,6 @@ The following values can be recorded.
  V_m         Membrane potential
  s_AMPA      sum of AMPA gating variables
  s_GABA      sum of GABA gating variables
- s_NMDA      sum of NMDA gating variables
  I_NMDA      NMDA currents
 =========== ===========================================================
 
@@ -309,18 +308,6 @@ public:
 
     void get( DictionaryDatum& ) const;
     void set( const DictionaryDatum&, const Parameters_&, Node* );
-
-    //! Get the sum of NMDA over all presynaptic neurons
-    double
-    get_s_NMDA() const
-    {
-      double NMDA_sum = 0.0;
-      for ( size_t i = s_NMDA_base + 1; i < state_vec_size; i += 2 )
-      {
-        NMDA_sum += ode_state_[ i ];
-      }
-      return NMDA_sum;
-    }
   };
 
 private:
@@ -405,12 +392,7 @@ private:
     return S_.ode_state_[ elem ];
   }
 
-  //! Get the sum of NMDA from state, used by UniversalDataLogger
-  double
-  get_s_NMDA_() const
-  {
-    return S_.get_s_NMDA();
-  }
+  //! Get NMDA current from state, used by UniversalDataLogger
   double
   get_I_NMDA_() const
   {

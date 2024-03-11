@@ -26,7 +26,8 @@ Since the neuron is conductance based, it is impossible to analytically
 confirm the membrane potential. We therefore test that without the NMDA-
 currents, we get the same results as from an iaf_cond_exp neuron, and
 that with NMDA-currents, we get a larger V_m.
-We then test the AMPA and GABA gating variables against analytical soluton.
+We then test the AMPA and GABA gating variables against analytical solution,
+and NMDA synamptic current against analytical solution.
 We also test that an error is correctly raised when an NMDA-connection
 from neuron other than iaf_wang_2002 is made.
 """
@@ -61,28 +62,6 @@ def spiketrain_response(t, tau, spiketrain, w):
         t_ = t - 1.0 - sp
         zero_arg = t_ == 0.0
         response += s_soln(w, t_, tau)
-    return response
-
-
-def spiketrain_response_nmda(t, spiketrain):
-    """
-    Response for NMDA
-    """
-    tr = tau_rise_NMDA / tau_decay_NMDA
-    at = alpha * tau_rise_NMDA
-    expn = gammaincc(1 - tr, at) * gamma(1 - tr) * at ** (tr - 1)
-
-    k_0 = -expn * at + at**tr * gamma(1 - tr)
-    k_1 = np.exp(-alpha * tau_rise_NMDA) - 1
-
-    response = np.zeros_like(t)
-    for sp in spiketrain:
-        t_ = t - 1.0 - sp
-        zero_arg = t_ == 0.0
-        s0 = response[zero_arg]
-        w = k_0 + k_1 * s0
-        response += s_soln(w, t_, tau_decay_NMDA)
-    response *= w_ex
     return response
 
 

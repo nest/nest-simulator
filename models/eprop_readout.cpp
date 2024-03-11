@@ -252,10 +252,6 @@ eprop_readout::is_eprop_recurrent_node() const
 void
 eprop_readout::update( Time const& origin, const long from, const long to )
 {
-  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
-  const long learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
-  const long shift = get_shift();
-
   const size_t buffer_size = kernel().connection_manager.get_min_delay();
 
   std::vector< double > error_signal_buffer( buffer_size, 0.0 );
@@ -264,7 +260,6 @@ eprop_readout::update( Time const& origin, const long from, const long to )
   for ( long lag = from; lag < to; ++lag )
   {
     const long t = origin.get_steps() + lag;
-    const long interval_step_signals = ( t - shift - delay_out_norm_ ) % update_interval;
 
     S_.z_in_ = B_.spikes_.get_value( lag );
 

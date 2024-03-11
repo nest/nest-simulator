@@ -89,6 +89,8 @@ extra_params = {
     },
     "ht_neuron": {"receptor_type": 1},
     "pp_cond_exp_mc_urbanczik": {"receptor_type": 1},
+    "iaf_wang_2002": {"receptor_type": 1},
+    "iaf_wang_2002_exact": {"receptor_type": 1},
 }
 
 models = [

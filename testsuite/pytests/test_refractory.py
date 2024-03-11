@@ -86,6 +86,8 @@ ignore_model = [
     "step_rate_generator",  # No regular neuron model
     "eprop_readout_bsshslm_2020",  # This one does not spike
     "iaf_tum_2000",  # Hijacks the offset field, see #2912
+    "iaf_wang_2002",  # Hijacks the offset field, see #2912
+    "iaf_wang_2002_exact",  # Hijacks the offset field, see #2912
 ]
 
 tested_models = [

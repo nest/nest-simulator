@@ -56,7 +56,7 @@ To run the simulation, simply use:
 
 The output will be saved in the ``data`` directory.
 
-The code can be `parallelized <https://nest-simulator.readthedocs.io/en/latest/guides/parallel_computing.html>`_ using OpenMP and MPI, if NEST has been built with these features.
+The code can be :ref:`parallelized <parallel_computing>` using OpenMP and MPI, if NEST has been built with these features.
 The number of threads (per MPI process) can be chosen by adjusting ``local_num_threads`` in ``sim_params.py``.
 
 

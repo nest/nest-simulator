@@ -40,3 +40,25 @@ See examples using astrocyte models:
 See connectivity documentation:
 
 * :ref:`tripartite_connectivity`
+
+
+E-prop plasticity in NEST
+-------------------------
+
+Another new NEST feature is eligibility propagation (e-prop) [1]_, a local and
+online learning algorithm for recurrent spiking neural networks (RSNNs) that
+serves as a biologically plausible approximation to backpropagation through time
+(BPTT). It relies on eligibility traces and neuron-specific learning signals to
+compute gradients without the need for error propagation backward in time. This
+approach aligns with the brain's learning mechanisms and offers a strong
+candidate for efficient training of RSNNs in low-power neuromorphic hardware.
+
+For further information, see:
+
+* :doc:`/auto_examples/eprop_plasticity/index`
+* :doc:`/models/index_e-prop plasticity`
+
+.. [1] Bellec G, Scherr F, Subramoney F, Hajek E, Salaj D, Legenstein R,
+       Maass W (2020). A solution to the learning dilemma for recurrent
+       networks of spiking neurons. Nature Communications, 11:3625.
+       https://doi.org/10.1038/s41467-020-17236-y

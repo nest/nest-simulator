@@ -366,6 +366,12 @@ def TripartiteConnect(pre, post, third, conn_spec, syn_specs=None):
      - any parameters specific to the selected synapse model.
 
 
+    .. admonition:
+
+       Tripartite connectivity is a new feature. Please expect some adjustments to
+       the syntax and semantics for the tripartite connectivity in the next NEST releases.
+
+
     See Also
     ---------
     :ref:`connection_management`

@@ -185,6 +185,10 @@ public:
    */
   virtual void reset_timers_for_dynamics();
 
+  Time get_eprop_update_interval() const;
+  Time get_eprop_learning_window() const;
+  bool get_eprop_reset_neurons_on_update() const;
+
 private:
   void call_update_(); //!< actually run simulation, aka wrap update_
   void update_();      //! actually perform simulation
@@ -235,6 +239,10 @@ private:
   Stopwatch sw_deliver_spike_data_;
   Stopwatch sw_deliver_secondary_data_;
 #endif
+
+  double eprop_update_interval_;
+  double eprop_learning_window_;
+  bool eprop_reset_neurons_on_update_;
 };
 
 inline Time const&
@@ -329,6 +337,25 @@ SimulationManager::get_wfr_interpolation_order() const
 {
   return wfr_interpolation_order_;
 }
+
+inline Time
+SimulationManager::get_eprop_update_interval() const
+{
+  return Time::ms( eprop_update_interval_ );
+}
+
+inline Time
+SimulationManager::get_eprop_learning_window() const
+{
+  return Time::ms( eprop_learning_window_ );
+}
+
+inline bool
+SimulationManager::get_eprop_reset_neurons_on_update() const
+{
+  return eprop_reset_neurons_on_update_;
+}
+
 }
 
 

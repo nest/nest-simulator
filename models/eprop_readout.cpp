@@ -436,7 +436,8 @@ eprop_readout::compute_gradient( const long t_spike,
     L = eprop_hist_it->error_signal_;
 
     z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
-    grad = L * z_bar / learning_window;
+    grad = L * z_bar;
+    grad /= learning_window;
 
     weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t, grad, weight );
 

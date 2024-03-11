@@ -447,7 +447,7 @@ def test_eprop_classification():
 
     params_nrn_reg = {
         "C_m": 1.0,
-        "c_reg": 2.0,
+        "c_reg": 300.0,
         "E_L": 0.0,
         "f_target": 10.0,
         "gamma": 0.3,
@@ -464,7 +464,7 @@ def test_eprop_classification():
         "adapt_tau": 2000.0,
         "adaptation": 0.0,
         "C_m": 1.0,
-        "c_reg": 2.0,
+        "c_reg": 300.0,
         "E_L": 0.0,
         "f_target": 10.0,
         "gamma": 0.3,

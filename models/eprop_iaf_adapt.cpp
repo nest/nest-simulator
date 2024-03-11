@@ -524,7 +524,8 @@ eprop_iaf_adapt::compute_gradient( const long t_spike,
     epsilon = psi * z_bar + ( V_.P_adapt_ - psi * P_.adapt_beta_ ) * epsilon;
     avg_e = P_.beta_fr_ema_ * avg_e + ( 1.0 - P_.beta_fr_ema_ ) * e;
     e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
-    grad = L * e_bar / learning_window + firing_rate_reg * avg_e;
+    grad = L * e_bar + firing_rate_reg * avg_e;
+    grad /= learning_window;
 
     weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t, grad, weight );
 

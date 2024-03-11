@@ -484,7 +484,8 @@ eprop_iaf::compute_gradient( const long t_spike,
     e = psi * z_bar;
     avg_e = P_.beta_fr_ema_ * avg_e + ( 1.0 - P_.beta_fr_ema_ ) * e;
     e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
-    grad = L * e_bar / learning_window + firing_rate_reg * avg_e;
+    grad = L * e_bar + firing_rate_reg * avg_e;
+    grad /= learning_window;
 
     weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t, grad, weight );
 

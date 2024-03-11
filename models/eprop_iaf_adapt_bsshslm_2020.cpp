@@ -497,15 +497,15 @@ eprop_iaf_adapt_bsshslm_2020::compute_gradient( std::vector< long >& presyn_isis
   }
   presyn_isis.clear();
 
+  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
+  const auto it_reg_hist = get_firing_rate_reg_history( t_previous_update + get_shift() + update_interval );
+  grad += it_reg_hist->firing_rate_reg_ * sum_e;
+
   const long learning_window = kernel().simulation_manager.get_eprop_learning_window().get_steps();
   if ( average_gradient )
   {
     grad /= learning_window;
   }
-
-  const long update_interval = kernel().simulation_manager.get_eprop_update_interval().get_steps();
-  const auto it_reg_hist = get_firing_rate_reg_history( t_previous_update + get_shift() + update_interval );
-  grad += it_reg_hist->firing_rate_reg_ * sum_e;
 
   return grad;
 }

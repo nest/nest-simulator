@@ -229,7 +229,7 @@ nest::iaf_wang_2002::Parameters_::set( const DictionaryDatum& d, Node* node )
   {
     throw BadProperty( "Refractory time cannot be negative." );
   }
-  if ( tau_AMPA <= 0 or tau_GABA <= 0 or tau_decay_NMDA <= 0 )
+  if ( tau_AMPA <= 0 or tau_GABA <= 0 or tau_decay_NMDA <= 0 or tau_rise_NMDA <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }

@@ -76,9 +76,9 @@ EventDeliveryManager::~EventDeliveryManager()
 }
 
 void
-EventDeliveryManager::initialize( const bool adjust_number_of_threads_only )
+EventDeliveryManager::initialize( const bool adjust_number_of_threads_or_rng_seed_only )
 {
-  if ( not adjust_number_of_threads_only )
+  if ( not adjust_number_of_threads_or_rng_seed_only )
   {
     init_moduli();
     reset_timers_for_preparation();

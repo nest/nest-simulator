@@ -42,6 +42,8 @@
 
 namespace nest
 {
+class NESTExtensionInterface;
+
 class ModuleManager : public ManagerInterface
 {
 public:
@@ -49,14 +51,33 @@ public:
   ~ModuleManager() override;
 
   void initialize( const bool ) override;
-  void finalize( const bool ) override;
+
+  //! Unload modules but only on full ResetKernel(), not when just changing then number of threads
+  void finalize( const bool adjust_number_of_threads_only ) override;
+
+  //! To be called after change of number of threads to re-register components provided by modules
+  void reinitialize_dynamic_modules();
+
   void get_status( DictionaryDatum& ) override;
   void set_status( const DictionaryDatum& ) override;
 
   void install( const std::string& name );
 
 private:
-  std::map< std::string, lt_dlhandle > modules_;
+  struct ModuleMapEntry_
+  {
+    ModuleMapEntry_() = default;
+    ModuleMapEntry_( lt_dlhandle hndl, NESTExtensionInterface* ext )
+      : handle( hndl )
+      , extension( ext )
+    {
+    }
+
+    lt_dlhandle handle;                //!< required for unloading
+    NESTExtensionInterface* extension; //!< required to re-initizliation(), avoid re-casting handle
+  };
+
+  std::map< std::string, ModuleMapEntry_ > modules_;
 };
 }
 

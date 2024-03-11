@@ -48,9 +48,9 @@ MUSICManager::MUSICManager()
 }
 
 void
-MUSICManager::initialize( const bool adjust_number_of_threads_only )
+MUSICManager::initialize( const bool adjust_number_of_threads_or_rng_seed_only )
 {
-  if ( adjust_number_of_threads_only )
+  if ( adjust_number_of_threads_or_rng_seed_only )
   {
     return;
   }

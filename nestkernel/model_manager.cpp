@@ -80,12 +80,17 @@ ModelManager::initialize( const bool )
   // Make space for one vector of proxynodes for each thread
   proxy_nodes_.resize( num_threads );
 
+  // We must re-register all models even if only changing the number of threads because
+  // the model-managing data structures depend on the number of threads.
+  // Models provided by extension modules will be re-registered by the ModulesManager.
   register_models();
 }
 
 void
 ModelManager::finalize( const bool )
 {
+  // We must clear all models even if only changing the number of threads because
+  // the model-managing data structures depend on the number of threads
   clear_node_models_();
   clear_connection_models_();
 }

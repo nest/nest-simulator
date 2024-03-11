@@ -73,7 +73,7 @@ public:
    *
    * @see finalize()
    */
-  virtual void initialize( const bool adjust_number_of_threads_only = false ) = 0;
+  virtual void initialize( const bool adjust_number_of_threads_only ) = 0;
 
   /**
    * Take down manager after operation.
@@ -93,7 +93,7 @@ public:
    *
    * @see initialize()
    */
-  virtual void finalize( const bool adjust_number_of_threads_only = true ) = 0;
+  virtual void finalize( const bool adjust_number_of_threads_only ) = 0;
 
   /**
    * Set the status of the manager

@@ -53,6 +53,9 @@
  * The constructor should be empty.
  */
 
+namespace nest
+{
+
 class NESTExtensionInterface
 {
 public:
@@ -63,7 +66,9 @@ public:
   /**
    * Initialize module, register all components with kernel
    */
-  virtual void init() = 0;
+  virtual void initialize() = 0;
 };
+
+}
 
 #endif // #ifndef NEST_EXTENSION_INTERFACE_H

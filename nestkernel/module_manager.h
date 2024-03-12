@@ -128,6 +128,6 @@ public:
 };
 }
 
-#endif
+#endif  // HAVE_LIBLTDL
 
 #endif

@@ -130,4 +130,4 @@ public:
 
 #endif  // HAVE_LIBLTDL
 
-#endif
+#endif // #ifndef MODULE_MANAGER_H

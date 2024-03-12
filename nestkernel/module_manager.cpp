@@ -61,7 +61,7 @@ ModuleManager::ModuleManager()
 
 ModuleManager::~ModuleManager()
 {
-  finalize( /* reset_kernel = */ true );
+  finalize( /* adjust_number_of_threads_or_rng_seed_only */ false ); // closes dynamically loaded modules
   lt_dlexit();
 }
 
@@ -71,21 +71,35 @@ ModuleManager::initialize( const bool )
 }
 
 void
-ModuleManager::finalize( const bool )
+ModuleManager::finalize( const bool adjust_number_of_threads_or_rng_seed_only )
 {
-  // unload all loaded modules
-  for ( const auto& [ name, handle ] : modules_ )
+  if ( adjust_number_of_threads_or_rng_seed_only )
   {
-    lt_dlclose( handle );
+    return;
+  }
+
+  // unload all loaded modules
+  for ( const auto& [ name, module_info ] : modules_ )
+  {
+    lt_dlclose( module_info.handle );
   }
   modules_.clear();
+}
+
+void
+ModuleManager::reinitialize_dynamic_modules()
+{
+  for ( const auto& [ name, module_info ] : modules_ )
+  {
+    module_info.extension->initialize();
+  }
 }
 
 void
 ModuleManager::get_status( DictionaryDatum& d )
 {
   ArrayDatum loaded;
-  for ( const auto& [ name, handle ] : modules_ )
+  for ( const auto& [ name, module_info ] : modules_ )
   {
     loaded.push_back( new LiteralDatum( name ) );
   }
@@ -153,7 +167,7 @@ ModuleManager::install( const std::string& name )
   // all is well and we can register module components
   try
   {
-    extension->init();
+    extension->initialize();
   }
   catch ( std::exception& e )
   {
@@ -163,7 +177,7 @@ ModuleManager::install( const std::string& name )
   }
 
   // add the handle to list of loaded modules
-  modules_[ name ] = hModule;
+  modules_[ name ] = ModuleMapEntry_( hModule, extension );
 
   LOG( M_INFO, "Install", ( "loaded module " + name ).c_str() );
 }

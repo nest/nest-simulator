@@ -264,6 +264,14 @@ public:
    */
   void write_to_dump( const std::string& msg );
 
+  /**
+   * \defgroup Manager components in NEST kernel
+   *
+   * The managers are defined below in the order in which they need to be initialized.
+   *
+   * NodeManager is last to ensure all model structures are in place before it is initialized.
+   * @{
+   */
   LoggingManager logging_manager;
   MPIManager mpi_manager;
   VPManager vp_manager;
@@ -276,11 +284,13 @@ public:
   EventDeliveryManager event_delivery_manager;
   ModelManager model_manager;
   MUSICManager music_manager;
-  NodeManager node_manager;
   IOManager io_manager;
-
+  NodeManager node_manager;
+  /**@}*/
 private:
+  //! All managers, order determines initialization and finalization order (latter backwards)
   std::vector< ManagerInterface* > managers;
+
   bool initialized_;   //!< true if the kernel is initialized
   std::ofstream dump_; //!< for FULL_LOGGING output
 };

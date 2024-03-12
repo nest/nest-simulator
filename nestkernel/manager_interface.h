@@ -68,11 +68,12 @@ public:
    * is responsible for calling the initialization routines on the
    * specific managers in correct order.
    *
-   * @param reset_kernel  Pass false if calling from kernel_manager::change_number_of_threads() to limit operations
+   * @param adjust_number_of_threads_only  Pass true if calling from kernel_manager::change_number_of_threads() to limit
+   * operations to those necessary for thread adjustment.
    *
    * @see finalize()
    */
-  virtual void initialize( const bool reset_kernel = true ) = 0;
+  virtual void initialize( const bool adjust_number_of_threads_only ) = 0;
 
   /**
    * Take down manager after operation.
@@ -87,11 +88,12 @@ public:
    * specific managers in correct order, i.e., the opposite order of
    * initialize() calls.
    *
-   * @param reset_kernel  pass false if calling from kernel_manager::change_number_of_threads() to limit operations
+   * @param adjust_number_of_threads_only  Pass true if calling from kernel_manager::change_number_of_threads() to limit
+   * operations to those necessary for thread adjustment.
    *
    * @see initialize()
    */
-  virtual void finalize( const bool reset_kernel = true ) = 0;
+  virtual void finalize( const bool adjust_number_of_threads_only ) = 0;
 
   /**
    * Set the status of the manager

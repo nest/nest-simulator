@@ -128,6 +128,6 @@ public:
 };
 }
 
-#endif  // HAVE_LIBLTDL
+#endif // HAVE_LIBLTDL
 
 #endif // #ifndef MODULE_MANAGER_H

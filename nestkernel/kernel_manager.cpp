@@ -57,9 +57,9 @@ nest::KernelManager::KernelManager()
   , connection_manager()
   , sp_manager()
   , event_delivery_manager()
+  , io_manager()
   , model_manager()
   , music_manager()
-  , io_manager()
   , node_manager()
   , managers( { &logging_manager,
       &mpi_manager,
@@ -71,9 +71,9 @@ nest::KernelManager::KernelManager()
       &connection_manager,
       &sp_manager,
       &event_delivery_manager,
+      &io_manager,
       &model_manager,
       &music_manager,
-      &io_manager,
       &node_manager } )
   , initialized_( false )
 {

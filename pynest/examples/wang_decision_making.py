@@ -147,7 +147,7 @@ def run_sim(coherence, seed=123):
 
     ##################################################
     # Create neurons and devices
-    
+
     selective_pop1 = nest.Create(model, int(f * NE), params=epop_params)
     selective_pop2 = nest.Create(model, int(f * NE), params=epop_params)
     nonselective_pop = nest.Create(model, int((1 - 2 * f) * NE), params=epop_params)
@@ -184,18 +184,17 @@ def run_sim(coherence, seed=123):
 
     sr_selective1_raster = nest.Create("spike_recorder", 100)
     sr_selective2_raster = nest.Create("spike_recorder", 100)
-    
+
     mm_selective1 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_GABA"]})
     mm_selective2 = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_GABA"]})
     mm_nonselective = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_GABA"]})
     mm_inhibitory = nest.Create("multimeter", {"record_from": ["V_m", "s_AMPA", "s_GABA"]})
-    
-    
+
     ##################################################
     # Define synapse specifications
-    
+
     receptor_types = selective_pop1[0].get("receptor_types")
-    
+
     syn_spec_pot_AMPA = {
         "synapse_model": "static_synapse",
         "weight": w_plus * g_AMPA_ex,
@@ -279,10 +278,9 @@ def run_sim(coherence, seed=123):
         "receptor_type": receptor_types["AMPA"],
     }
 
-
     ##################################################
     # Create connections
-    
+
     # from external
     nest.Connect(
         poisson_0, nonselective_pop + selective_pop1 + selective_pop2, conn_spec="all_to_all", syn_spec=exte_syn_spec
@@ -348,7 +346,6 @@ def run_sim(coherence, seed=123):
     # Run simulation
     nest.Simulate(4000.0)
 
-
     ##################################################
     # Collect data from simulation
     spikes_nonselective = sr_nonselective.get("events", "times")
@@ -359,38 +356,40 @@ def run_sim(coherence, seed=123):
     spikes_selective1_raster = sr_selective1_raster.get("events", "times")
     spikes_selective2_raster = sr_selective2_raster.get("events", "times")
 
-#     vm_nonselective = mm_nonselective.get("events", "V_m")
-#     s_AMPA_nonselective = mm_nonselective.get("events", "s_AMPA")
-#     s_GABA_nonselective = mm_nonselective.get("events", "s_GABA")
-#     s_NMDA_nonselective = mm_nonselective.get("events", "s_NMDA")
-#     
-#     vm_selective1 = mm_selective1.get("events", "V_m")
-#     s_AMPA_selective1 = mm_selective1.get("events", "s_AMPA")
-#     s_GABA_selective1 = mm_selective1.get("events", "s_GABA")
-#     s_NMDA_selective1 = mm_selective1.get("events", "s_NMDA")
-#     
-#     vm_selective2 = mm_selective2.get("events", "V_m")
-#     s_AMPA_selective2 = mm_selective2.get("events", "s_AMPA")
-#     s_GABA_selective2 = mm_selective2.get("events", "s_GABA")
-#     s_NMDA_selective2 = mm_selective2.get("events", "s_NMDA")
-#     
-#     vm_inhibitory = mm_inhibitory.get("events", "V_m")
-#     s_AMPA_inhibitory = mm_inhibitory.get("events", "s_AMPA")
-#     s_GABA_inhibitory = mm_inhibitory.get("events", "s_GABA")
-#     s_NMDA_inhibitory = mm_inhibitory.get("events", "s_NMDA")
+    #     vm_nonselective = mm_nonselective.get("events", "V_m")
+    #     s_AMPA_nonselective = mm_nonselective.get("events", "s_AMPA")
+    #     s_GABA_nonselective = mm_nonselective.get("events", "s_GABA")
+    #     s_NMDA_nonselective = mm_nonselective.get("events", "s_NMDA")
+    #
+    #     vm_selective1 = mm_selective1.get("events", "V_m")
+    #     s_AMPA_selective1 = mm_selective1.get("events", "s_AMPA")
+    #     s_GABA_selective1 = mm_selective1.get("events", "s_GABA")
+    #     s_NMDA_selective1 = mm_selective1.get("events", "s_NMDA")
+    #
+    #     vm_selective2 = mm_selective2.get("events", "V_m")
+    #     s_AMPA_selective2 = mm_selective2.get("events", "s_AMPA")
+    #     s_GABA_selective2 = mm_selective2.get("events", "s_GABA")
+    #     s_NMDA_selective2 = mm_selective2.get("events", "s_NMDA")
+    #
+    #     vm_inhibitory = mm_inhibitory.get("events", "V_m")
+    #     s_AMPA_inhibitory = mm_inhibitory.get("events", "s_AMPA")
+    #     s_GABA_inhibitory = mm_inhibitory.get("events", "s_GABA")
+    #     s_NMDA_inhibitory = mm_inhibitory.get("events", "s_NMDA")
 
-    return {"nonselective": spikes_nonselective,
-            "selective1": spikes_selective1,
-            "selective2": spikes_selective2,
-            "inhibitory": spikes_inhibitory,
-            "selective1_raster": spikes_selective1_raster,
-            "selective2_raster": spikes_selective2_raster}
+    return {
+        "nonselective": spikes_nonselective,
+        "selective1": spikes_selective1,
+        "selective2": spikes_selective2,
+        "inhibitory": spikes_inhibitory,
+        "selective1_raster": spikes_selective1_raster,
+        "selective2_raster": spikes_selective2_raster,
+    }
 
-for i, seed in enumerate(range(100,110,1)):
+
+for i, seed in enumerate(range(100, 110, 1)):
     spikes = []
-    for c in [51.2, 12.8, 0.]:
+    for c in [51.2, 12.8, 0.0]:
         spikes.append(run_sim(c, seed=seed))
-
 
     ##################################################
     # Plots
@@ -399,10 +398,12 @@ for i, seed in enumerate(range(100,110,1)):
     res = 1.0
     bins = np.arange(0, 4001, res) - 0.001
 
-    fig, ax = plt.subplots(ncols=2, nrows=8, sharex=True, sharey=False, height_ratios=[1,0.7,0.3,1,0.7,0.3,1,0.7])
-    fig.subplots_adjust(hspace=0.)
-    ax[0,0].set_xlim(0,800)
-    ax[0,0].set_xticks([])
+    fig, ax = plt.subplots(
+        ncols=2, nrows=8, sharex=True, sharey=False, height_ratios=[1, 0.7, 0.3, 1, 0.7, 0.3, 1, 0.7]
+    )
+    fig.subplots_adjust(hspace=0.0)
+    ax[0, 0].set_xlim(0, 800)
+    ax[0, 0].set_xticks([])
     phi = np.arctan(1080 / 1920)
     sz = (14 * np.cos(phi), 14 * np.sin(phi))
     fig.set_size_inches(sz)
@@ -420,30 +421,29 @@ for i, seed in enumerate(range(100,110,1)):
         pop1_rate = np.convolve(hist1, np.ones(10) * 0.1, mode="valid") / num / 5 * 1000
         pop2_rate = np.convolve(hist2, np.ones(10) * 0.1, mode="valid") / num / 5 * 1000
 
-        ax[j*3+1,0].bar(np.arange(len(pop1_rate)), pop1_rate, width=1., color="black")
-        ax[j*3+1,1].bar(np.arange(len(pop2_rate)), pop2_rate, width=1., color="black")
-        ax[j*3+1,0].vlines([200, 400], 0, 40, colors="black", linewidths=2.4)
-        ax[j*3+1,1].vlines([200, 400], 0, 40, colors="black", linewidths=2.4)
-        ax[j*3+1,0].set_ylim(0, 40)
-        ax[j*3+1,1].set_ylim(0, 40)
+        ax[j * 3 + 1, 0].bar(np.arange(len(pop1_rate)), pop1_rate, width=1.0, color="black")
+        ax[j * 3 + 1, 1].bar(np.arange(len(pop2_rate)), pop2_rate, width=1.0, color="black")
+        ax[j * 3 + 1, 0].vlines([200, 400], 0, 40, colors="black", linewidths=2.4)
+        ax[j * 3 + 1, 1].vlines([200, 400], 0, 40, colors="black", linewidths=2.4)
+        ax[j * 3 + 1, 0].set_ylim(0, 40)
+        ax[j * 3 + 1, 1].set_ylim(0, 40)
         for k in range(100):
-            sp = spikes[j]["selective1_raster"][k] / 5. 
-            ax[j*3,0].scatter(sp, np.ones_like(sp) * k, s=1., marker="|", c="black")
-            ax[j*3,0].vlines([200, 400], 0, 100, colors="black", linewidths=1.)
-            ax[j*3,0].set_yticks([])
-            ax[j*3,0].set_ylim(0,99)
-            sp = spikes[j]["selective2_raster"][k] / 5. 
-            ax[j*3,1].scatter(sp, np.ones_like(sp) * k, s=1., marker="|", c="black")
-            ax[j*3,1].vlines([200, 400], 0, 100, colors="black", linewidths=1.)
-            ax[j*3,1].set_yticks([])
-            ax[j*3,1].set_ylim(0,99)
+            sp = spikes[j]["selective1_raster"][k] / 5.0
+            ax[j * 3, 0].scatter(sp, np.ones_like(sp) * k, s=1.0, marker="|", c="black")
+            ax[j * 3, 0].vlines([200, 400], 0, 100, colors="black", linewidths=1.0)
+            ax[j * 3, 0].set_yticks([])
+            ax[j * 3, 0].set_ylim(0, 99)
+            sp = spikes[j]["selective2_raster"][k] / 5.0
+            ax[j * 3, 1].scatter(sp, np.ones_like(sp) * k, s=1.0, marker="|", c="black")
+            ax[j * 3, 1].vlines([200, 400], 0, 100, colors="black", linewidths=1.0)
+            ax[j * 3, 1].set_yticks([])
+            ax[j * 3, 1].set_ylim(0, 99)
 
-    ax[0,0].set_title("Selective pop A")
-    ax[0,1].set_title("Selective pop B")
-    ax[2,0].axis("off")
-    ax[2,1].axis("off")
-    ax[5,0].axis("off")
-    ax[5,1].axis("off")
+    ax[0, 0].set_title("Selective pop A")
+    ax[0, 1].set_title("Selective pop B")
+    ax[2, 0].axis("off")
+    ax[2, 1].axis("off")
+    ax[5, 0].axis("off")
+    ax[5, 1].axis("off")
 
     fig.savefig(f"decision_making_{i}.png", dpi=1920 / sz[0])
-

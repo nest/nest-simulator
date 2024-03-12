@@ -65,14 +65,6 @@ IOManager::IOManager()
 
 IOManager::~IOManager()
 {
-  for ( auto& it : recording_backends_ )
-  {
-    delete it.second;
-  }
-  for ( auto& it : stimulation_backends_ )
-  {
-    delete it.second;
-  }
 }
 
 void
@@ -127,18 +119,25 @@ IOManager::finalize( const bool adjust_number_of_threads_or_rng_seed_only )
   for ( const auto& it : recording_backends_ )
   {
     it.second->finalize();
-    if ( not adjust_number_of_threads_or_rng_seed_only )
-    {
-      delete it.second;
-    }
   }
   for ( const auto& it : stimulation_backends_ )
   {
     it.second->finalize();
-    if ( not adjust_number_of_threads_or_rng_seed_only )
+  }
+
+  if ( not adjust_number_of_threads_or_rng_seed_only )
+  {
+    for ( const auto& it : recording_backends_ )
     {
       delete it.second;
     }
+    recording_backends_.clear();
+
+    for ( const auto& it : stimulation_backends_ )
+    {
+      delete it.second;
+    }
+    stimulation_backends_.clear();
   }
 }
 

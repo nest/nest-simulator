@@ -168,6 +168,7 @@ nest::ConnectionManager::finalize( const bool adjust_number_of_threads_or_rng_se
     {
       delete cbf;
     }
+    connbuilder_factories_.clear();
     connruledict_->clear();
   }
 }

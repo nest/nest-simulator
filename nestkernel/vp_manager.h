@@ -203,7 +203,8 @@ inline void
 nest::VPManager::assert_thread_parallel() const
 {
 #ifdef _OPENMP
-  assert( omp_get_num_threads() == n_threads_ );
+  // omp_get_num_threads() returns int
+  assert( omp_get_num_threads() == static_cast< int >( n_threads_ ) );
 #endif
 }
 

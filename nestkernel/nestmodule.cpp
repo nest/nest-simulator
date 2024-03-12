@@ -47,7 +47,6 @@
 #include "nest_types.h"
 #include "node.h"
 #include "parameter.h"
-#include "sp_manager_impl.h"
 #include "spatial.h"
 
 // Includes from sli:
@@ -2209,11 +2208,6 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "DumpLayerConnections_os_g_g_l", &dumplayerconnections_os_g_g_lfunction );
   i->createcommand( "cvdict_M", &cvdict_Mfunction );
   i->createcommand( "SelectNodesByMask_g_a_M", &selectnodesbymask_g_a_Mfunction );
-
-  // Add MSP growth curves
-  kernel().sp_manager.register_growth_curve< GrowthCurveSigmoid >( "sigmoid" );
-  kernel().sp_manager.register_growth_curve< GrowthCurveGaussian >( "gaussian" );
-  kernel().sp_manager.register_growth_curve< GrowthCurveLinear >( "linear" );
 
   Token statusd = i->baselookup( Name( "statusdict" ) );
   DictionaryDatum dd = getValue< DictionaryDatum >( statusd );

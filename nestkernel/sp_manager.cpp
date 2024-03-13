@@ -51,9 +51,9 @@ SPManager::~SPManager()
 }
 
 void
-SPManager::initialize( const bool adjust_number_of_threads_or_rng_seed_only )
+SPManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
-  if ( adjust_number_of_threads_or_rng_seed_only )
+  if ( adjust_number_of_threads_or_rng_only )
   {
     return;
   }

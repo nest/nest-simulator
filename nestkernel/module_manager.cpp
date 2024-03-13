@@ -61,7 +61,7 @@ ModuleManager::ModuleManager()
 
 ModuleManager::~ModuleManager()
 {
-  finalize( /* adjust_number_of_threads_or_rng_seed_only */ false ); // closes dynamically loaded modules
+  finalize( /* adjust_number_of_threads_or_rng_only */ false ); // closes dynamically loaded modules
   lt_dlexit();
 }
 
@@ -71,9 +71,9 @@ ModuleManager::initialize( const bool )
 }
 
 void
-ModuleManager::finalize( const bool adjust_number_of_threads_or_rng_seed_only )
+ModuleManager::finalize( const bool adjust_number_of_threads_or_rng_only )
 {
-  if ( adjust_number_of_threads_or_rng_seed_only )
+  if ( adjust_number_of_threads_or_rng_only )
   {
     return;
   }

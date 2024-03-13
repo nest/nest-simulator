@@ -178,9 +178,9 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
 #endif /* #ifdef HAVE_MPI */
 
 void
-nest::MPIManager::initialize( const bool adjust_number_of_threads_or_rng_seed_only )
+nest::MPIManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
-  if ( adjust_number_of_threads_or_rng_seed_only )
+  if ( adjust_number_of_threads_or_rng_only )
   {
     return;
   }

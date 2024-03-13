@@ -548,9 +548,11 @@ class NodeCollection:
             raise AttributeError("Cannot get attribute of empty NodeCollection")
 
         # IPython looks up this method when doing pretty printing
-        # Without special casing this, this would go through SLI which is *slow*
+        # As long as we do not provide special methods to support IPython prettyprinting,
+        # HTML-rendering, etc, we stop IPython from time-consuming checks by raising an
+        # exception here. The exception must *not* be AttributeError.
         if attr == "_ipython_canary_method_should_not_exist_":
-            raise KeyError(attr)
+            raise NotImplementedError("_ipython_canary_method_should_not_exist_")
 
         if attr == "spatial":
             metadata = sli_func("GetMetadata", self._datum)

@@ -62,3 +62,42 @@ For further information, see:
        Maass W (2020). A solution to the learning dilemma for recurrent
        networks of spiking neurons. Nature Communications, 11:3625.
        https://doi.org/10.1038/s41467-020-17236-y
+
+
+Ignore-and-fire neuron model
+----------------------------
+
+A neuron model for generating spikes at fixed intervals, irrespective of inputs.
+
+The ``ignore_and_fire`` neuron is primarily used for neuronal-network model verification and validation purposes
+("benchmarking"), in particular, to evaluate the correctness and performance of connectivity generation and inter-neuron
+communication. It permits an easy scaling of the network size and/or connectivity without affecting the output spike
+statistics.
+
+See documentation for more information:
+
+* :doc:`/models/ignore_and_fire`
+
+Neuron model with integrated short-term plasticity
+--------------------------------------------------
+
+The new ``iaf_tum_2000`` neuron model incoroporates the ``tsodyks_synapse`` directly
+into the neuron model. In particular,
+``iaf_tum_2000`` implements short-term depression and short-term facilitation based on Tsodyks et al. [2]_.
+It is based on the ``iaf_psc_exp`` model.
+
+.. [2] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
+       networks with frequency-dependent synapses. Journal of Neuroscience,
+       20 RC50. URL: http://infoscience.epfl.ch/record/183402
+
+
+New connection rule: ``pairwise_poisson``
+------------------------------------------
+
+The number of synapses between pre- and post-synaptic neurons is drawn from a Poisson distribution.
+The ``pairwise_poisson`` method is adapted from the ``pairwise bernouilli`` method.
+
+
+See more information:
+
+* :ref:`connection_management`

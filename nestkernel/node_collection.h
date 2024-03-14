@@ -41,6 +41,9 @@
 #include "arraydatum.h"
 #include "dictdatum.h"
 
+// Includes from thirdparty:
+#include "compose.hpp"
+
 namespace nest
 {
 class Node;
@@ -795,7 +798,7 @@ NodeCollectionPrimitive::operator[]( const size_t idx ) const
   // throw exception if outside of NodeCollection
   if ( first_ + idx > last_ )
   {
-    throw std::out_of_range( "pos points outside of the NodeCollection" );
+    throw std::out_of_range( String::compose( "pos %1 points outside of the NodeCollection", idx ) );
   }
   return first_ + idx;
 }

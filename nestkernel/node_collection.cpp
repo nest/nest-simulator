@@ -33,6 +33,7 @@
 
 // C++ includes:
 #include <algorithm> // copy
+#include <cmath>     // lcm
 #include <numeric>   // accumulate
 
 
@@ -858,7 +859,7 @@ NodeCollectionComposite::operator[]( const size_t i ) const
       }
     }
     // throw exception if outside of NodeCollection
-    throw std::out_of_range( "pos points outside of the NodeCollection" );
+    throw std::out_of_range( String::compose( "pos %1 points outside of the NodeCollection", i ) );
   }
 }
 
@@ -897,13 +898,17 @@ NodeCollectionComposite::thread_local_begin( NodeCollectionPTR cp ) const
     // start_offset_ only applies to start_part_, in all following parts start from beginning
     const size_t vp_first_node =
       kernel().vp_manager.node_id_to_vp( parts_[ pix ][ pix == start_part_ ? start_offset_ : 0 ] );
-    const long offset =
-      first_index( num_vps, vp_first_node, step_, current_vp ) + ( pix == start_part_ ? start_offset_ : 0 );
+    size_t offset = first_index( num_vps, vp_first_node, step_, current_vp );
+    if ( offset == invalid_index )
+    {
+      continue; // no solution in this part
+    }
 
+    offset += ( pix == start_part_ ? start_offset_ : 0 );
     if ( offset != invalid_index and offset < parts_[ pix ].size() )
     {
       assert( kernel().vp_manager.node_id_to_vp( parts_[ pix ][ offset ] ) == current_vp );
-      return nc_const_iterator( cp, *this, pix, offset, step_ * num_vps );
+      return nc_const_iterator( cp, *this, pix, offset, std::lcm( step_, num_vps ) );
     }
   }
 
@@ -923,12 +928,17 @@ NodeCollectionComposite::rank_local_begin( NodeCollectionPTR cp ) const
     // start_offset_ only applies to start_part_, in all following parts start from beginning
     const size_t rank_first_node = kernel().mpi_manager.get_process_id_of_vp(
       kernel().vp_manager.node_id_to_vp( parts_[ pix ][ pix == start_part_ ? start_offset_ : 0 ] ) );
-    const long offset =
-      first_index( num_processes, rank_first_node, step_, current_rank ) + ( pix == start_part_ ? start_offset_ : 0 );
-    if ( offset != invalid_index and offset < parts_[ pix ].size() )
+    size_t offset = first_index( num_processes, rank_first_node, step_, current_rank );
+    if ( offset == invalid_index )
+    {
+      continue; // no solution in this part
+    }
+
+    offset += ( pix == start_part_ ? start_offset_ : 0 );
+    if ( offset < parts_[ pix ].size() )
     {
       assert( kernel().mpi_manager.get_process_id_of_vp( parts_[ pix ][ offset ] ) == current_rank );
-      return nc_const_iterator( cp, *this, pix, offset, step_ * num_processes );
+      return nc_const_iterator( cp, *this, pix, offset, std::lcm( step_, num_processes ) );
     }
   }
 

@@ -20,6 +20,8 @@
     --nest-dkblue: #072f42;
     --nest-brown: #4b210c;
     --sd-color-primary: var(--nest-orange);
+    --sd-color-secondary: #666;
+    --sd-color-warning: #f22;
     --sd-color-success: var(--nest-brown);
     --sd-color-dark: var(--nest-dkblue);
     --sd-color-primary-highlight: #e05a2d;
@@ -222,7 +224,7 @@ div[role="main"] .md-source {
   border: none;
   opacity: 0.9;
   height: 60px;
-  margin-right: 2em;
+  margin-right: 1.2em;
   margin-bottom: 0.5em;
 
 }

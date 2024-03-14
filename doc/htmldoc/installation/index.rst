@@ -16,7 +16,7 @@ Install NEST
       * :ref:`conda-forge (Linux/macOS) <conda_forge_install>`
       * :ref:`Ubuntu PPA (Linux) <ubuntu_install>`
       * :ref:`Homebrew (macOS) <macos_install>`
-     * :ref:`Options for Windows users <windows_install>`
+      * :ref:`Options for Windows users <windows_install>`
 
 
    .. grid-item-card:: |dev| Source install

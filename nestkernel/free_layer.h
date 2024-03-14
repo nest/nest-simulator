@@ -280,20 +280,18 @@ FreeLayer< D >::get_status( DictionaryDatum& d, NodeCollection const* nc ) const
     //   nodes, then step in lockstep through the positions_ array.
     auto nc_it = nc->rank_local_begin();
     const auto nc_end = nc->end();
-    if ( nc_it == nc_end )
+    if ( nc_it != nc_end )
     {
-      return; // no data on this rank
-    }
+      // Node index in node collection is global to NEST, so we need to scale down
+      // to get right indices into positions_, which has only rank-local data.
+      const size_t n_procs = kernel().mpi_manager.get_num_processes();
+      size_t pos_idx = ( *nc_it ).nc_index / n_procs;
+      size_t step = nc_it.get_step_size() / n_procs;
 
-    // Node index in node collection is global to NEST, so we need to scale down
-    // to get right indices into positions_, which has only rank-local data.
-    const size_t n_procs = kernel().mpi_manager.get_num_processes();
-    size_t pos_idx = ( *nc_it ).nc_index / n_procs;
-    size_t step = nc_it.get_step_size() / n_procs;
-
-    for ( ; nc_it < nc->end(); pos_idx += step, ++nc_it )
-    {
-      points.push_back( positions_.at( pos_idx ).getToken() );
+      for ( ; nc_it < nc->end(); pos_idx += step, ++nc_it )
+      {
+        points.push_back( positions_.at( pos_idx ).getToken() );
+      }
     }
   }
 

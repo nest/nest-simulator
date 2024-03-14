@@ -19,7 +19,6 @@ For use in Forschungszentrum Juelich GmBH. Cite the author of the work if using.
 Icons provided by Flaticon
 --------------------------
 
-
 * <a href="https://www.flaticon.com/free-icons/neuron" title="neuron icons">Neuron icons created by Nadiinko - Flaticon</a>
 * <a href="https://www.flaticon.com/free-icons/neuron" title="neuron icons">Neuron icons created by Freepik - Flaticon</a>
 * <a href="https://www.flaticon.com/free-icons/monitor" title="monitor icons">Monitor icons created by Icongeek26 - Flaticon</a>

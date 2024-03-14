@@ -20,6 +20,8 @@
     --nest-dkblue: #072f42;
     --nest-brown: #4b210c;
     --sd-color-primary: var(--nest-orange);
+    --sd-color-secondary: #666;
+    --sd-color-warning: #f22;
     --sd-color-success: var(--nest-brown);
     --sd-color-dark: var(--nest-dkblue);
     --sd-color-primary-highlight: #e05a2d;
@@ -91,7 +93,28 @@ section#kernel-attributes-nest-nestmodule dd {
         border: none;
         border-bottom: 1px solid #ddd;
 }
+.imgbutton {
 
+  background-color: white;
+	outline-color: lightgray !important;
+	outline-style: solid !important;
+	outline-width: 1px !important;
+	padding-right: 1px !important;
+	padding-right: 1px !important;
+	padding-top: 20px !important;
+	padding-bottom: 20px !important;
+  box-shadow: 3px 3px lightgray !important;
+}
+.imgbutton:hover {
+
+  background-color: white;
+	outline-color: var(--nest-orange) !important;
+	outline-style: solid !important;
+	outline-width: 1px !important;
+	padding-top: 20px !important;
+	padding-bottom: 20px !important;
+  box-shadow: 3px 3px var(--nest-orange) !important;
+}
 /*************************************************************
  * Rules for  mermaid diagrams
  *************************************************************/
@@ -181,8 +204,12 @@ div[role="main"] .md-source {
   color: var(--nest-orange);
 	background-color: #ffffff8a;
 	border-radius: 5px;
-	padding: 6px;
 }
+/* Add padding around buttons on index page */
+#welcome-to-the-nest-simulator-documentation [data-md-color-primary="orange"] .md-typeset a {
+   padding: 6px;
+}
+
 .md-typeset details {
    background-color: white;
 }
@@ -201,7 +228,7 @@ div[role="main"] .md-source {
   border: none;
   opacity: 0.9;
   height: 60px;
-  margin-right: 2em;
+  margin-right: 1.2em;
   margin-bottom: 0.5em;
 
 }

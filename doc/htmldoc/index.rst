@@ -23,7 +23,7 @@ Welcome to the NEST Simulator documentation
        :shadow:
        :color: primary
 
-       Get started with NEST
+       Start exploring NEST
 
   .. grid-item::
 

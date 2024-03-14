@@ -15,7 +15,7 @@ neurons can propagate their state variables for an entire *h*-step
 without interruption by incoming spikes. This enables faster simulations
 of neurons with linear sub-threshold dynamics as a precomputed
 propagator matrix for a time step of fixed size *h* can be employed
-(`Rotter & Diesmann, 1999 <http://dx.doi.org/10.1007/s004220050570>`__).
+(`Rotter & Diesmann, 1999 <https://doi.org/10.1007/s004220050570>`__).
 
 Neurons buffer the incoming spikes until they become due, where spikes
 can be lumped together provided that the corresponding synapses have the
@@ -79,25 +79,24 @@ integrate-and-fire neuron model with alpha-shaped postsynaptic
 current that employ precise spike times; The grid-constrained
 counterpart is ``iaf_psc_alpha``. The neuron models have been developed
 in the context of `Morrison et al.
-(2007) <http://dx.doi.org/10.1162/neco.2007.19.1.47>`__. As the model
+(2007) <https://doi.org/10.1162/neco.2007.19.1.47>`__. As the model
 employ interpolation in order to determine the precise location of an
 outgoing spike, the achieved precision depends on the simulation
 resolution *h*. The models differ in the way they process incoming
 spikes, which also affects the attained precision (see `Morrison et al.
-(2007) <http://dx.doi.org/10.1162/neco.2007.19.1.47>`__ for details).
+(2007) <https://doi.org/10.1162/neco.2007.19.1.47>`__ for details).
 
 ``iaf_psc_exp_ps`` is an integrate-and-fire neuron model with
 exponentially shaped postsynaptic currents that employs precise spike
 times; its grid-constrained counterpart is ``iaf_psc_exp``. It has been
 developed in the context of `Hanuschkin et al.
-(2010) <http://dx.doi.org/10.3389/fninf.2010.00113>`__, which is a
+(2010) <https://doi.org/10.3389/fninf.2010.00113>`__, which is a
 continuation of the work presented in `Morrison et al.
-(2007) <http://dx.doi.org/10.1162/neco.2007.19.1.47>`__. As the neuron
+(2007) <https://doi.org/10.1162/neco.2007.19.1.47>`__. As the neuron
 model employs an iterative search in order to determine the precise
 location of an outgoing spike, the achieved precision does not depend on
 the simulation resolution h. The model can also be used through the
-`PyNN
-interface <http://neuralensemble.org/trac/PyNN/wiki/ContinuousTimeSpiking>`__.
+:doc:`PyNN interface <pynn:backends/NEST>`.
 
 Questions and answers about precise neurons
 -------------------------------------------
@@ -106,5 +105,3 @@ During the review process of the above mentioned papers, we came up with
 a list of questions and answers pertaining to the implementation and
 usage of precise spiking neurons. This list can be found
 :ref:`here <faqs_precise_neurons>`.
-
-

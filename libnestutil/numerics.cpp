@@ -183,7 +183,7 @@ mod_inverse( long a, long m )
   return s_1;
 }
 
-long
+size_t
 first_index( long period, long phase0, long step, long phase )
 {
   assert( period > 0 );
@@ -194,6 +194,11 @@ first_index( long period, long phase0, long step, long phase )
   if ( phase == phase0 )
   {
     return 0;
+  }
+  else if ( period == step )
+  {
+    // If we do not match at the beginning, we will never match when period and step are equal
+    return nest::invalid_index;
   }
 
   /*
@@ -227,6 +232,11 @@ first_index( long period, long phase0, long step, long phase )
         k_j * step mod lcm(step, period)
 
    below and take the smallest.
+
+   We do all calculations in signed long since we may encounter negative
+   values during the algorithm. The result will be non-negative and returned
+   as size_t. This is important because the "not found" case is signaled
+   by invalid_index, which is size_t.
    */
 
   const long d_phase = ( phase - phase0 + period ) % period;
@@ -251,5 +261,5 @@ first_index( long period, long phase0, long step, long phase )
     min_ix = std::min( min_ix, inner_ix % outer_period );
   }
 
-  return min_ix;
+  return static_cast< size_t >( min_ix );
 }

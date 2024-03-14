@@ -386,64 +386,69 @@ def run_sim(coherence, seed=123):
     }
 
 
-for i, seed in enumerate(range(100, 110, 1)):
-    spikes = []
-    for c in [51.2, 12.8, 0.0]:
-        spikes.append(run_sim(c, seed=seed))
+coherences = [51.2, 12.8, 0.0]
+spikes = []
+for c in coherences:
+    spikes.append(run_sim(c, seed=1234))
 
-    ##################################################
-    # Plots
+##################################################
+# Plots
 
-    # bins for histograms
-    res = 1.0
-    bins = np.arange(0, 4001, res) - 0.001
+# bins for histograms
+res = 1.0
+bins = np.arange(0, 4001, res) - 0.001
+fig, ax = plt.subplots(ncols=2, nrows=8, sharex=True, sharey=False, height_ratios=[1, 0.7, 0.3, 1, 0.7, 0.3, 1, 0.7])
 
-    fig, ax = plt.subplots(
-        ncols=2, nrows=8, sharex=True, sharey=False, height_ratios=[1, 0.7, 0.3, 1, 0.7, 0.3, 1, 0.7]
-    )
-    fig.subplots_adjust(hspace=0.0)
-    ax[0, 0].set_xlim(0, 800)
-    ax[0, 0].set_xticks([])
-    phi = np.arctan(1080 / 1920)
-    sz = (14 * np.cos(phi), 14 * np.sin(phi))
-    fig.set_size_inches(sz)
+fig.subplots_adjust(hspace=0.0)
+ax[0, 0].set_xlim(0, 800)
+ax[0, 0].set_xticks([])
+phi = np.arctan(1080 / 1920)
+sz = (14 * np.cos(phi), 14 * np.sin(phi))
+fig.set_size_inches(sz)
 
-    # selective populations
-    num = NE * 0.15
+# selective populations
+num = NE * 0.15
 
-    for j in range(3):
-        # compute firing rates as moving averages over 50 ms windows with 5 ms strides
-        hist1, _ = np.histogram(spikes[j]["selective1"], bins=bins)
-        hist1 = hist1.reshape((-1, 5)).sum(-1)
-        hist2, _ = np.histogram(spikes[j]["selective2"], bins=bins)
-        hist2 = hist2.reshape((-1, 5)).sum(-1)
+for j in range(3):
+    # compute firing rates as moving averages over 50 ms windows with 5 ms strides
+    hist1, _ = np.histogram(spikes[j]["selective1"], bins=bins)
+    hist1 = hist1.reshape((-1, 5)).sum(-1)
+    hist2, _ = np.histogram(spikes[j]["selective2"], bins=bins)
+    hist2 = hist2.reshape((-1, 5)).sum(-1)
 
-        pop1_rate = np.convolve(hist1, np.ones(10) * 0.1, mode="valid") / num / 5 * 1000
-        pop2_rate = np.convolve(hist2, np.ones(10) * 0.1, mode="valid") / num / 5 * 1000
+    pop1_rate = np.convolve(hist1, np.ones(10) * 0.1, mode="same") / num / 5 * 1000
+    pop2_rate = np.convolve(hist2, np.ones(10) * 0.1, mode="same") / num / 5 * 1000
 
-        ax[j * 3 + 1, 0].bar(np.arange(len(pop1_rate)), pop1_rate, width=1.0, color="black")
-        ax[j * 3 + 1, 1].bar(np.arange(len(pop2_rate)), pop2_rate, width=1.0, color="black")
-        ax[j * 3 + 1, 0].vlines([200, 400], 0, 40, colors="black", linewidths=2.4)
-        ax[j * 3 + 1, 1].vlines([200, 400], 0, 40, colors="black", linewidths=2.4)
-        ax[j * 3 + 1, 0].set_ylim(0, 40)
-        ax[j * 3 + 1, 1].set_ylim(0, 40)
-        for k in range(100):
-            sp = spikes[j]["selective1_raster"][k] / 5.0
-            ax[j * 3, 0].scatter(sp, np.ones_like(sp) * k, s=1.0, marker="|", c="black")
-            ax[j * 3, 0].vlines([200, 400], 0, 100, colors="black", linewidths=1.0)
-            ax[j * 3, 0].set_yticks([])
-            ax[j * 3, 0].set_ylim(0, 99)
-            sp = spikes[j]["selective2_raster"][k] / 5.0
-            ax[j * 3, 1].scatter(sp, np.ones_like(sp) * k, s=1.0, marker="|", c="black")
-            ax[j * 3, 1].vlines([200, 400], 0, 100, colors="black", linewidths=1.0)
-            ax[j * 3, 1].set_yticks([])
-            ax[j * 3, 1].set_ylim(0, 99)
+    ax[j * 3 + 1, 0].bar(np.arange(len(pop1_rate)), pop1_rate, width=1.0, color="black")
+    ax[j * 3 + 1, 1].bar(np.arange(len(pop2_rate)), pop2_rate, width=1.0, color="black")
+    ax[j * 3 + 1, 0].vlines([200, 400], 0, 40, colors="black", linewidths=2.4)
+    ax[j * 3 + 1, 1].vlines([200, 400], 0, 40, colors="black", linewidths=2.4)
+    ax[j * 3 + 1, 0].set_ylim(0, 40)
+    ax[j * 3 + 1, 1].set_ylim(0, 40)
+    for k in range(100):
+        sp = spikes[j]["selective1_raster"][k] / 5.0
+        ax[j * 3, 0].scatter(sp, np.ones_like(sp) * k, s=1.0, marker="|", c="black")
+        ax[j * 3, 0].vlines([200, 400], 0, 100, colors="black", linewidths=1.0)
+        ax[j * 3, 0].set_yticks([])
+        ax[j * 3, 0].set_ylim(0, 99)
+        sp = spikes[j]["selective2_raster"][k] / 5.0
+        ax[j * 3, 1].scatter(sp, np.ones_like(sp) * k, s=1.0, marker="|", c="black")
+        ax[j * 3, 1].vlines([200, 400], 0, 100, colors="black", linewidths=1.0)
+        ax[j * 3, 1].set_yticks([])
+        ax[j * 3, 1].set_ylim(0, 99)
+    ax[j * 3, 0].set_title(f"coherence = {coherences[j]}")
+    ax[j * 3, 1].set_title(f"coherence = {coherences[j]}")
 
-    ax[0, 0].set_title("Selective pop A")
-    ax[0, 1].set_title("Selective pop B")
-    ax[2, 0].axis("off")
-    ax[2, 1].axis("off")
-    ax[5, 0].axis("off")
-    ax[5, 1].axis("off")
-
-    fig.savefig(f"decision_making_{i}.png", dpi=1920 / sz[0])
+ax[-1, 0].set_xticks([0, 200, 400, 600, 800])
+ax[-1, 0].set_xticklabels(["0", "1000", "2000", "3000", "4000"])
+ax[-1, 1].set_xticks([0, 200, 400, 600, 800])
+ax[-1, 1].set_xticklabels(["0", "1000", "2000", "3000", "4000"])
+ax[-1, 0].set_xlabel("t (ms)")
+ax[-1, 1].set_xlabel("t (ms)")
+ax[0, 0].text(0.32, 1.5, "Selective pop A", transform=ax[0, 0].transAxes, fontsize=15)
+ax[0, 1].text(0.32, 1.5, "Selective pop B", transform=ax[0, 1].transAxes, fontsize=15)
+ax[2, 0].axis("off")
+ax[2, 1].axis("off")
+ax[5, 0].axis("off")
+ax[5, 1].axis("off")
+plt.show()

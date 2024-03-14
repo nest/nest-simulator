@@ -10,22 +10,21 @@ Summary of network model
    :stub-columns: 1
 
    * - **Populations**
-     - excitatory population :math:`\mathcal{E}` inhibitory population :math:`\mathcal{I}`, external Poissonian spike sources :math:`\mathcal{X}`
+     - excitatory population :math:`\mathcal{E}`, inhibitory population :math:`\mathcal{I}`, external Poissonian spike sources :math:`\mathcal{X}`
    * - **Connectivity**
      - sparse random connectivity respecting Dale’s principle
    * - **Neurons**
      - leaky integrate-and-fire (LIF)
    * - **Synapses**
-     - linear input integration with alpha-shaped postsynaptic currents (PSCs), spike-timing dependent plasticity (STDP) for connections between
-       excitatory neurons
+     - linear input integration with alpha-function-shaped postsynaptic currents (PSCs), spike-timing dependent plasticity (STDP) for connections between excitatory neurons
    * - **Input**
      - stationary, uncorrelated Poissonian spike trains
 
    * -
-     - .. figure:: NetworkSketch_TwoPopulationNetworkPlastic_converted.svg
+     - .. figure:: figures/NetworkSketch_TwoPopulationNetworkPlastic.svg
 
-           Network sketch. For legend see `Fig. 8  <https://doi.org/10.1371/journal.pcbi.1010086.g008>`_
-           in Senk et al. [1]_.
+           Network sketch (see `Fig. 8  <https://doi.org/10.1371/journal.pcbi.1010086.g008>`_
+           in Senk et al. [1]_).
 
 Detailed desciption of network model
 ------------------------------------

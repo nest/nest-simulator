@@ -3,14 +3,12 @@ Generate reference data
 =======================
 """
 import sys
-
-sys.path.append(r"../")
 import model
 import psutil
 
 
 #################################################
-def generate_reference_data():
+def generate_reference_data(neuron_model='ignore_and_fire'):
     """
     Generate set of reference data and store on disk (spike data and model paramaters).
 
@@ -28,10 +26,15 @@ def generate_reference_data():
     """
 
     parameters = model.get_default_parameters()
+    parameters["neuron_model"] = neuron_model
+        
     parameters["record_spikes"] = True
     # parameters["record_weights"] = True
 
     model_instance = model.Model(parameters)
+
+    print("\nneuron model: %s" % model_instance.pars['neuron_model'])
+    
     model_instance.create()
     model_instance.connect()
 
@@ -59,4 +62,4 @@ def generate_reference_data():
 
 #################################################
 
-generate_reference_data()
+generate_reference_data(neuron_model = sys.argv[1])

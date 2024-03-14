@@ -202,7 +202,7 @@ div[role="main"] .md-source {
   color: var(--nest-orange);
 	background-color: #ffffff8a;
 	border-radius: 5px;
-	padding: 6px;
+	padding: 2px;
 }
 .md-typeset details {
    background-color: white;

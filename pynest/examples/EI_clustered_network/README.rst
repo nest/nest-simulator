@@ -38,7 +38,7 @@ This can be done by setting the parameter ``n_vp`` in the ``run_simulation.py`` 
 Contributions to this PyNEST model implementation
 -------------------------------------------------
 
-2023: inital bersion of code and documentation by Felix J. Schmitt, Vahid Rostami and Martin Nawrot.
+2023: initial version of code and documentation by Felix J. Schmitt, Vahid Rostami and Martin Nawrot.
 
 Acknowledgments
 ---------------

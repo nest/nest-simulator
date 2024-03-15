@@ -134,7 +134,7 @@ bool is_integer( double );
 /**
  * Returns inverse of integer a modulo m
  *
- * For integer a ≥ 0, m > 0, find x so that ( a * x ) mod m = 1.
+ * For integer a > 0, m ≥ 2, find x so that ( a * x ) mod m = 1.
  */
 long mod_inverse( long a, long m );
 
@@ -151,7 +151,7 @@ long mod_inverse( long a, long m );
  *
  * If such an index x exists, it is given by
  *
- * x = phase0 k' mod lcm(period, step)
+ * x = phase0 + k' mod lcm(period, step)
  * k' = min_k ( phase0 + k step = phase mod period )
  *
  * As an example, consider

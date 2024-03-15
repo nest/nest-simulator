@@ -141,21 +141,33 @@ mod_inverse( long a, long m )
 
      a x + m y = gcd( a, m ) = 1 mod m
 
-   for x and y. Note that the my term is zero mod m, so the equation is equivalent
+   for x and y. Note that the m y term is zero mod m, so the equation is equivalent
    to
 
      a x = 1 mod m
 
    Since we only need x, we can ignore y and use just half of the algorithm.
 
+   We can assume without loss of generality that a < m, because if a = a' + j m with
+   0 < a' < m, we have
+
+      a x mod m = (a' + j m) x mod m = a' x + j x m mod m = a' x.
+
+   This implies that m ≥ 2.
+
    For details on the algorithm, see D. E. Knuth, The Art of Computer Programming,
    ch 4.5.2, Algorithm X (vol 2), and ch 1.2.1, Algorithm E (vol 1).
    */
 
-  assert( 0 <= a );
+  assert( 0 < a );
+  assert( 2 <= m );
 
   const long a_orig = a;
   const long m_orig = m;
+
+  // If a ≥ m, the algorithm needs two extra rounds to transform this to
+  // a' < m, so we take care of this in a single step here.
+  a = a % m;
 
   // Use half of extended Euclidean algorithm required to compute inverse
   long s_0 = 1;
@@ -191,16 +203,6 @@ first_index( long period, long phase0, long step, long phase )
   assert( 0 <= phase0 and phase0 < period );
   assert( 0 <= phase and phase < period );
 
-  if ( phase == phase0 )
-  {
-    return 0;
-  }
-  else if ( period == step )
-  {
-    // If we do not match at the beginning, we will never match when period and step are equal
-    return nest::invalid_index;
-  }
-
   /*
    The implementation here is based on
    https://math.stackexchange.com/questions/25390/how-to-find-the-inverse-modulo-m
@@ -218,26 +220,35 @@ first_index( long period, long phase0, long step, long phase )
 
    If d > 1, we need to divide the equation by it and solve
 
-        (step / d) k0 = d_phase / d  mod (period / d)
+        (step / d) k_0 = d_phase / d  mod (period / d)
 
    The set of solutions is then given by
 
-        k_j = k0 + j * period / d  for j = 0, 1, ..., d-1
+        k_j = k_0 + j * period / d  for j = 0, 1, ..., d-1
 
    and we need the smallest of these. Now we are interested in
    an index given by k * step with a period of lcm(step, period)
    (the outer_period below, marked by | in the illustration in
    the doxygen comment), we immediately run over
 
-        k_j * step mod lcm(step, period)
+        k_j * step = k_0 * step + j * step * period / d mod lcm(step, period)
 
-   below and take the smallest.
+   below and take the smallest; we call step * period / d the outer_step below.
 
    We do all calculations in signed long since we may encounter negative
    values during the algorithm. The result will be non-negative and returned
    as size_t. This is important because the "not found" case is signaled
    by invalid_index, which is size_t.
    */
+
+  // This check is not only a convenience: If step == k * period, we only match if
+  // phase == phase0 and the algorithm below will fail if we did not return here
+  // immediately, because we get d == period -> period_d = 1 and modular inverse
+  // for modulus 1 makes no sense.
+  if ( phase == phase0 )
+  {
+    return 0;
+  }
 
   const long d_phase = ( phase - phase0 + period ) % period;
   const long d = std::gcd( step, period );
@@ -247,18 +258,22 @@ first_index( long period, long phase0, long step, long phase )
     return nest::invalid_index; // no solution exists
   }
 
-  // scale by GCD, since modular inverse requires gcd==1
+  // Scale by GCD, since modular inverse requires gcd==1
   const long period_d = period / d;
-  long inner_ix = ( ( mod_inverse( step / d, period_d ) * d_phase / d ) % period ) * step;
+  const long step_d = step / d;
+  const long d_phase_d = d_phase / d;
+
+  // Compute k_0 and multiply by step, see explanation in introductory comment
+  long k_step = d_phase_d * mod_inverse( step_d, period_d ) * step;
 
   const long outer_period = std::lcm( period, step );
-  const long outer_step = period_d * step;
+  const long outer_step = step * period_d;
 
-  long min_ix = inner_ix % outer_period;
+  long min_ix = k_step % outer_period;
   for ( size_t j = 1; j < d; ++j )
   {
-    inner_ix += outer_step;
-    min_ix = std::min( min_ix, inner_ix % outer_period );
+    k_step += outer_step;
+    min_ix = std::min( min_ix, k_step % outer_period );
   }
 
   return static_cast< size_t >( min_ix );

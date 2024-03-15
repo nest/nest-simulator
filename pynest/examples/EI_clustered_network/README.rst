@@ -6,7 +6,7 @@ This is PyNEST implementation of the EI-clustered circuit model described by Ros
 .. figure:: /static/img/pynest/EI_clustered_network_schematic.png
    :alt: EI-clustered circuit model.
 
-   Schematic of the EI-clustered circuit model. The network consists of Q clusters with one excitatory and one inhibitory population each.
+   Schematic of the EI-clustered circuit model. The network consists of n_clusters clusters with one excitatory and one inhibitory population each.
 
 Citing this code
 ----------------
@@ -18,9 +18,10 @@ File structure
 
 * :doc:`run_simulation.py <run_simulation>`: an example script to try out the EI-clustered circuit model
 * :doc:`network.py <network>`: the main Network class with functions to build and simulate the network
-* :doc:`helper.py <helper>`: helper functions for calculation of synaptic weights and currents
-* :doc:`general_helper.py <general_helper>`: helper functions to merge dictionaries and plot function for raster plots
-* :doc:`default_parameters.py <default_parameters>`: default parameters for the network and simulation
+* :doc:`helper.py <helper>`: helper functions for calculation of synaptic weights and currents and plot function for raster plots
+* :doc:`network_params.py <network_params>`: network and neuron parameters
+* :doc:`stimulus_params.py <stimulus_params>`: parameters for optional external stimulation
+* :doc:`sim_params.py <sim_params>`: simulation parameters
 
 Running the simulation
 ----------------------
@@ -29,13 +30,14 @@ Running the simulation
 
    python run_simulation.py
 
-A raster plot of the network activity is saved as ``Rasterplot.png``.
+A raster plot of the network activity is saved as ``clustered_ei_raster.png``.
 
 The code can be parallelized by using multiple threads during the NEST simulation.
-This can be done by setting the parameter ``n_jobs`` in the ``run_simulation.py`` script.
+This can be done by setting the parameter ``n_vp`` in the ``run_simulation.py`` script.
 
 Contributions to this PyNEST model implementation
---------------------------------------------------------------
+-------------------------------------------------
+
 2023: inital bersion of code and documentation by Felix J. Schmitt, Vahid Rostami and Martin Nawrot.
 
 Acknowledgments

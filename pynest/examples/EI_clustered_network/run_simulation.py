@@ -22,8 +22,8 @@
 """PyNEST EI-clustered network: Run Simulation
 -----------------------------------------------
 
-This is an example script for running the EI-clustered model with two stimulations
-and generating a raster plot.
+This is an example script for running the EI-clustered model
+with two stimulations and generating a raster plot.
 """
 
 import matplotlib.pyplot as plt
@@ -38,8 +38,10 @@ if __name__ == "__main__":
     EI_Network = network.ClusteredNetwork(sim_dict, net_dict, stim_dict)
 
     # Runs the simulation and returns the spiketimes
-    # get simulation initializes the network in NEST and runs the simulation
-    # it returns a dict with the average rates, the spiketimes and the used parameters
+    # get simulation initializes the network in NEST
+    # and runs the simulation
+    # it returns a dict with the average rates,
+    # the spiketimes and the used parameters
     Result = EI_Network.get_simulation()
     ax = raster_plot(
         Result["spiketimes"],

@@ -60,7 +60,8 @@ net_dict = {
     "I_th_E": 1.25,
     # Feed forward inhibitory input [rheobase current]
     "I_th_I": 0.78,
-    # distribution of feed forward input, uniform around I_th with half width I_width
+    # distribution of feed forward input,
+    # I_th*[1-delta_I_../2, 1+delta_I_../2]
     "delta_I_xE": 0.0,  # excitatory
     "delta_I_xI": 0.0,  # inhibitory
     # initial membrane potential
@@ -83,15 +84,18 @@ net_dict = {
     "gei": 1.2,  # I to E
     "gie": 1.0,  # E to I
     "gii": 1.0,  # I to I
-    # additional scaling factor for all weights - can be used to scale weights with network size
+    # additional scaling factor for all weights
+    # - can be used to scale weights with network size
     "s": 1.0,
-    # fixed indegree - if false the synapses are established with probability ps
+    # fixed indegree - otherwise established with probability ps
     "fixed_indegree": False,
-    # cluster network by weight or connection probability - "weight" or "probabilities"
+    # cluster network by "weight" or "probabilities"
     "clustering": "weight",
-    # ratio excitatory to inhibitory clustering, rj = 0 means no clustering, which resembles a clustered network
+    # ratio excitatory to inhibitory clustering,
+    # rj = 0 means no clustering, which resembles a clustered network
     # with a blanket of inhibition
     "rj": 0.82,
-    # excitatory clustering factor, rep = 1 means no clustering, reselmbles a balanced random network
+    # excitatory clustering factor,
+    # rep = 1 means no clustering, reselmbles a balanced random network
     "rep": 6.0,
 }

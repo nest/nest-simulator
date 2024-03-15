@@ -22,7 +22,7 @@
 """PyNEST EI-clustered network: Helper Functions
 ------------------------------------------------
 
-Helper functions to calculate synaptic weights and first passage times for exponential synapses to construct
+Helper functions to calculate synaptic weights to construct
 random balanced networks and plot raster plot with color groups.
 """
 
@@ -33,7 +33,8 @@ small = 1e-10
 
 
 def postsynaptic_current_to_potential(tau_m, tau_syn, c_m=1.0, e_l=0.0):
-    """Maximum post-synaptic potential amplitude for exponential synapses and a synaptic efficacy J of 1 pA.
+    """Maximum post-synaptic potential amplitude
+    for exponential synapses and a synaptic efficacy J of 1 pA.
 
     Parameters
     ----------
@@ -51,13 +52,26 @@ def postsynaptic_current_to_potential(tau_m, tau_syn, c_m=1.0, e_l=0.0):
     float
         maximum psp amplitude (for a 1 pA current spike) [mV]
     """
-    tmax = np.log(tau_syn / tau_m) / (1 / tau_m - 1 / tau_syn)  # time of maximum deflection of the psp  [ms]
-    pre = tau_m * tau_syn / c_m / (tau_syn - tau_m)  # we assume here the current spike is 1 pA, otherwise [mV/pA]
+    # time of maximum deflection of the psp  [ms]
+    tmax = np.log(tau_syn / tau_m) / (1 / tau_m - 1 / tau_syn)
+    # we assume here the current spike is 1 pA, otherwise [mV/pA]
+    pre = tau_m * tau_syn / c_m / (tau_syn - tau_m)
     return (e_l - pre) * np.exp(-tmax / tau_m) + pre * np.exp(-tmax / tau_syn)
 
 
 def calculate_RBN_weights(params):
-    """Calculate synaptic weights for exponential synapses before clustering, for a random balanced network.
+    """Calculate synaptic weights for a random balanced network.
+
+    The synaptic weights are calculated according to the method
+    described in Eqs. 7-10 [1]_.
+
+    References
+    ----------
+    .. [1] Rostami V, Rost T, Riehle A, van Albada SJ and Nawrot MP. 2020.
+        Excitatory and inhibitory motor cortical clusters account for balance,
+        variability, and task performance. bioRxiv 2020.02.27.968339.
+        DOI: `10.1101/2020.02.27.968339
+        <https://doi.org/10.1101/2020.02.27.968339>`__.
 
     Parameters
     ----------
@@ -99,7 +113,7 @@ def calculate_RBN_weights(params):
 
 
 def rheobase_current(tau_m, e_l, v_th, c_m):
-    """Rheobase current for a given membrane time constant and resting potential.
+    """Rheobase current for membrane time constant and resting potential.
 
     Parameters
     ----------
@@ -123,19 +137,24 @@ def rheobase_current(tau_m, e_l, v_th, c_m):
 def raster_plot(spiketimes, tlim=None, colorgroups=None, ax=None, markersize=0.5):
     """Raster plot of spiketimes.
 
-    Plots raster plot of spiketimes withing given time limits and colors neurons according to colorgroups.
+    Plots raster plot of spiketimes withing given time limits and
+    colors neurons according to colorgroups.
 
     Parameters
     ----------
     spiketimes: ndarray
-        2D array [2xN_Spikes] of spiketimes with spiketimes in row 0 and neuron IDs in row 1.
+        2D array [2xN_Spikes]
+        of spiketimes with spiketimes in row 0 and neuron IDs in row 1.
     tlim: list of floats (optional)
-        Time limits of plot: [tmin, tmax], if None: [min(spiketimes), max(spiketimes)]
+        Time limits of plot: [tmin, tmax],
+        if None: [min(spiketimes), max(spiketimes)]
     colorgroups: list of tuples (optional)
-        Each element is a tuple in the format (color, start_neuron_ID, stop_neuron_ID]) for coloring neurons in
+        Each element is a tuple in the format
+        (color, start_neuron_ID, stop_neuron_ID]) for coloring neurons in
         given range, if None is given all neurons are black.
     ax: axis object (optional)
-        If None a new figure is created, else the plot is added to the given axis.
+        If None a new figure is created,
+        else the plot is added to the given axis.
     markersize: float (optional)
         Size of markers. (default: 0.5)
 

@@ -22,7 +22,8 @@
 """PyNEST EI-clustered network: Network Class
 ---------------------------------------------
 
-``ClusteredNetwork`` class with functions to build and simulate the EI-clustered network.
+``ClusteredNetwork`` class with functions to build and simulate
+the EI-clustered network.
 """
 
 import pickle
@@ -35,8 +36,10 @@ import numpy as np
 class ClusteredNetwork:
     """EI-clustered network objeect to build and simulate the network.
 
-    Provides functions to create neuron populations, stimulation devices and recording devices for an
-    EI-clustered network and setups the simulation in NEST (v3.x).
+    Provides functions to create neuron populations,
+    stimulation devices and recording devices for an
+    EI-clustered network and setups the simulation in
+    NEST (v3.x).
 
     Attributes
     ----------
@@ -55,7 +58,8 @@ class ClusteredNetwork:
     def __init__(self, sim_dict, net_dict, stim_dict):
         """Initialize the ClusteredNetwork object.
 
-        Parameters are given and explained in the files network_params.py, sim_params.py and stimulus_params.py.
+        Parameters are given and explained in the files network_params.py,
+        sim_params.py and stimulus_params.py.
 
         Parameters
         ----------
@@ -67,8 +71,9 @@ class ClusteredNetwork:
             Dictionary with stimulus parameters.
         """
         # merge dictionaries of simulation, network and stimulus parameters
-        self._params = {**sim_dict, **net_dict, **stim_dict}  # loo
-        self._populations = []  # list of neuron population groups [E_pops, I_pops]
+        self._params = {**sim_dict, **net_dict, **stim_dict}
+        # list of neuron population groups [E_pops, I_pops]
+        self._populations = []
         self._recording_devices = []
         self._currentsources = []
         self._model_build_pipeline = [
@@ -94,7 +99,8 @@ class ClusteredNetwork:
         """Initializes the NEST kernel.
 
         Reset the NEST kernel and pass parameters to it.
-        Updates randseed of parameters to the actual used one if none is supplied.
+        Updates randseed of parameters to the actual
+        used one if none is supplied.
         """
         nest.ResetKernel()
         nest.set_verbosity("M_WARNING")
@@ -106,7 +112,8 @@ class ClusteredNetwork:
     def create_populations(self):
         """Create all neuron populations.
 
-        n_clusters excitatory and inhibitory neuron populations with the parameters of the network are created.
+        n_clusters excitatory and inhibitory neuron populations
+        with the parameters of the network are created.
         """
         # make sure number of clusters and units are compatible
         if self._params["N_E"] % self._params["n_clusters"] != 0:
@@ -185,7 +192,8 @@ class ClusteredNetwork:
         self._populations = [E_pops, I_pops]
 
     def connect(self):
-        """Connect the excitatory and inhibitory populations with each other in the EI-clustered scheme
+        """Connect the excitatory and inhibitory populations with each other
+        in the EI-clustered scheme
 
         Raises
         ------
@@ -203,10 +211,11 @@ class ClusteredNetwork:
     def connect_probabilities(self):
         """Connect the clusters with a probability EI-clustered scheme
 
-        Connects the excitatory and inhibitory populations with each other in the EI-clustered scheme
-        by increasing the probabilies of the connections within the clusters and decreasing the probabilites of the
-        connections between the clusters. The weights are calculated so that the total input to a neuron
-        is balanced.
+        Connects the excitatory and inhibitory populations with each other
+        in the EI-clustered scheme by increasing the probabilities of the
+        connections within the clusters and decreasing the probabilities of the
+        connections between the clusters. The weights are calculated so that
+        the total input to a neuron is balanced.
         """
         #  self._populations[0] -> Excitatory population
         #  self._populations[1] -> Inhibitory population
@@ -420,10 +429,11 @@ class ClusteredNetwork:
     def connect_weight(self):
         """Connect the clusters with a weight EI-clustered scheme
 
-        Connects the excitatory and inhibitory populations with each other in the EI-clustered scheme
-        by increasing the weights of the connections within the clusters and decreasing the weights of the
-        connections between the clusters. The weights are calculated so that the total input to a neuron
-        is balanced.
+        Connects the excitatory and inhibitory populations with
+        each other in the EI-clustered scheme by increasing the weights
+        of the connections within the clusters and decreasing the weights
+        of the connections between the clusters. The weights are calculated
+        so that the total input to a neuron is balanced.
         """
         #  self._populations[0] -> Excitatory population
         #  self._populations[1] -> Inhibitory population
@@ -628,7 +638,8 @@ class ClusteredNetwork:
     def create_recording_devices(self):
         """Creates a spike recorder
 
-        Create and connect a spike recorder to all neuron populations in self._populations.
+        Create and connect a spike recorder to all neuron populations
+        in self._populations.
         """
         self._recording_devices = [nest.Create("spike_recorder")]
         self._recording_devices[0].record_to = "memory"
@@ -653,7 +664,8 @@ class ClusteredNetwork:
     def setup_network(self):
         """Setup network in NEST
 
-        Initializes NEST and creates the network in NEST, ready to be simulated.
+        Initializes NEST and creates
+        the network in NEST, ready to be simulated.
         Functions saved in _model_build_pipeline are executed.
         """
         for func in self._model_build_pipeline:
@@ -666,14 +678,17 @@ class ClusteredNetwork:
     def get_recordings(self):
         """Extract spikes from Spikerecorder
 
-        Extract spikes form the Spikerecorder connected to all populations created in create_populations.
+        Extract spikes form the Spikerecorder connected
+        to all populations created in create_populations.
         Cuts the warmup period away and sets time relative to end of warmup.
-        Ids 1:N_E correspond to excitatory neurons, N_E+1:N_E+N_I correspond to inhibitory neurons.
+        Ids 1:N_E correspond to excitatory neurons,
+        N_E+1:N_E+N_I correspond to inhibitory neurons.
 
         Returns
         -------
         spiketimes: ndarray
-            2D array [2xN_Spikes] of spiketimes with spiketimes in row 0 and neuron IDs in row 1.
+            2D array [2xN_Spikes]
+            of spiketimes with spiketimes in row 0 and neuron IDs in row 1.
         """
         events = nest.GetStatus(self._recording_devices[0], "events")[0]
         # convert them to the format accepted by spiketools
@@ -699,26 +714,33 @@ class ClusteredNetwork:
         Returns
         -------
         spiketimes: ndarray
-            2D array [2xN_Spikes] of spiketimes with spiketimes in row 0 and neuron IDs in row 1.
+            2D array [2xN_Spikes]
+            of spiketimes with spiketimes in row 0 and neuron IDs in row 1.
         """
         self.setup_network()
         self.simulate()
         return self.get_recordings()
 
     def get_firing_rates(self, spiketimes=None):
-        """Calculates the firing rates of all excitatory neurons and the firing rates of all inhibitory neurons.
+        """Calculates the average firing rates of
+        all excitatory and inhibitory neurons.
 
-        Calculates the firing rates of all excitatory neurons and the firing rates of all inhibitory neurons
-        created by self.create_populations. If spiketimes are not supplied, they get extracted.
+        Calculates the firing rates of all excitatory neurons
+        and the firing rates of all inhibitory neurons
+        created by self.create_populations.
+        If spiketimes are not supplied, they get extracted.
+
         Parameters
         ----------
         spiketimes: ndarray
-            2D array [2xN_Spikes] of spiketimes with spiketimes in row 0 and neuron IDs in row 1.
+            2D array [2xN_Spikes] of spiketimes
+            with spiketimes in row 0 and neuron IDs in row 1.
 
         Returns
         -------
         tuple[float, float]
-            average firing rates of excitatory (0) and inhibitory (1) neurons (spikes/s)
+            average firing rates of excitatory (0)
+            and inhibitory (1) neurons (spikes/s)
         """
         if spiketimes is None:
             spiketimes = self.get_recordings()
@@ -730,7 +752,8 @@ class ClusteredNetwork:
 
     def set_I_x(self, I_XE, I_XI):
         """Set DC currents for excitatory and inhibitory neurons
-        Adds DC currents for the excitatory and inhibitory neurons. The DC currents are added to the currents already
+        Adds DC currents for the excitatory and inhibitory neurons.
+        The DC currents are added to the currents already
         present in the populations.
 
         Parameters
@@ -750,9 +773,11 @@ class ClusteredNetwork:
     def get_simulation(self, PathSpikes=None):
         """Create network, simulate and return results
 
-        Creates the EI-clustered network and simulates it with the parameters supplied in the object creation.
-        Returns a dictionary with firing rates, timing information (dict) and parameters (dict). If PathSpikes is
-        supplied the spikes get saved to a pickle file.
+        Creates the EI-clustered network and simulates it with
+        the parameters supplied in the object creation.
+        Returns a dictionary with firing rates,
+        timing information (dict) and parameters (dict).
+        If PathSpikes is supplied the spikes get saved to a pickle file.
 
         Parameters
         ----------
@@ -762,7 +787,8 @@ class ClusteredNetwork:
         Returns
         -------
         dict
-         Dictionary with firing rates, spiketimes (ndarray) and parameters (dict)
+         Dictionary with firing rates,
+         spiketimes (ndarray) and parameters (dict)
         """
 
         self.setup_network()

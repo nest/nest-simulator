@@ -27,7 +27,7 @@ A dictionary with parameters for an optinal stimulation of clusters.
 """
 
 stim_dict = {
-    # list of clusters to be stimulated (None for no stimulation, 0-n_clusters-1)
+    # list of clusters to be stimulated (None: no stimulation, 0-n_clusters-1)
     "stim_clusters": [2, 3, 4],
     # stimulus amplitude (in pA)
     "stim_amp": 0.15,

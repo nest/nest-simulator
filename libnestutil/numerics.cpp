@@ -233,7 +233,9 @@ first_index( long period, long phase0, long step, long phase )
 
         k_j * step = k_0 * step + j * step * period / d mod lcm(step, period)
 
-   below and take the smallest; we call step * period / d the outer_step below.
+   below and take the smallest. But since step * period / d = lcm(step, period),
+   the term in j above vanishes and k_0 * step mod lcm(step, period) is actually
+   the solution.
 
    We do all calculations in signed long since we may encounter negative
    values during the algorithm. The result will be non-negative and returned
@@ -264,17 +266,7 @@ first_index( long period, long phase0, long step, long phase )
   const long d_phase_d = d_phase / d;
 
   // Compute k_0 and multiply by step, see explanation in introductory comment
-  long k_step = d_phase_d * mod_inverse( step_d, period_d ) * step;
+  const long idx = ( d_phase_d * mod_inverse( step_d, period_d ) * step ) % std::lcm( period, step );
 
-  const long outer_period = std::lcm( period, step );
-  const long outer_step = step * period_d;
-
-  long min_ix = k_step % outer_period;
-  for ( size_t j = 1; j < d; ++j )
-  {
-    k_step += outer_step;
-    min_ix = std::min( min_ix, k_step % outer_period );
-  }
-
-  return static_cast< size_t >( min_ix );
+  return static_cast< size_t >( idx );
 }

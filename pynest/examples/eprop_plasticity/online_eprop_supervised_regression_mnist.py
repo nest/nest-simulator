@@ -316,7 +316,9 @@ params_common_syn_eprop = {
 params_syn_base = {
     "synapse_model": "eprop_synapse",
     "delay": duration["step"],  # ms, dendritic delay
-    "tau_m_readout": params_nrn_out["tau_m"],  # ms, for technical reasons pass readout neuron membrane time constant
+    "kappa": np.exp(
+        -duration["step"] / params_nrn_out["tau_m"]
+    ),  # ms, for technical reasons pass a filter with the readout neuron membrane time constant
 }
 
 params_syn_in = params_syn_base.copy()

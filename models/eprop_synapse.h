@@ -104,7 +104,7 @@ optimizer                                  {} Dictionary of optimizer parameters
 Parameter     Unit Math equivalent           Default Description
 ============= ==== ========================= ======= =========================================================
 delay         ms   :math:`d_{ji}`                1.0 Dendritic delay
-tau_m_readout ms   :math:`\tau_\text{m,out}`     0.0 Time constant for low-pass filtering of eligibility trace
+kappa              :math:`\kappa`                0.9 Low-pass filtering kernel of the eligibility trace
 weight        pA   :math:`W_{ji}`                1.0 Initial value of synaptic weight
 ============= ==== ========================= ======= =========================================================
 
@@ -368,8 +368,7 @@ eprop_synapse< targetidentifierT >::eprop_synapse()
   , weight_( 1.0 )
   , t_previous_spike_( 0 )
   , t_previous_trigger_spike_( 0 )
-  , tau_m_readout_( 10.0 )
-  , kappa_( std::exp( -Time::get_resolution().get_ms() / tau_m_readout_ ) )
+  , kappa_( std::exp( -Time::get_resolution().get_ms() / 10.0 ) )
   , optimizer_( nullptr )
 {
 }
@@ -387,8 +386,7 @@ eprop_synapse< targetidentifierT >::eprop_synapse( const eprop_synapse& es )
   , weight_( es.weight_ )
   , t_previous_spike_( 0 )
   , t_previous_trigger_spike_( 0 )
-  , tau_m_readout_( es.tau_m_readout_ )
-  , kappa_( std::exp( -Time::get_resolution().get_ms() / tau_m_readout_ ) )
+  , kappa_( std::exp( -Time::get_resolution().get_ms() / 10.0 ) )
   , optimizer_( es.optimizer_ )
 {
 }
@@ -408,7 +406,6 @@ eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
   weight_ = es.weight_;
   t_previous_spike_ = es.t_previous_spike_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
-  tau_m_readout_ = es.tau_m_readout_;
   kappa_ = es.kappa_;
   optimizer_ = es.optimizer_;
 
@@ -421,7 +418,6 @@ eprop_synapse< targetidentifierT >::eprop_synapse( eprop_synapse&& es )
   , weight_( es.weight_ )
   , t_previous_spike_( 0 )
   , t_previous_trigger_spike_( 0 )
-  , tau_m_readout_( es.tau_m_readout_ )
   , kappa_( es.kappa_ )
   , optimizer_( es.optimizer_ )
 {
@@ -443,7 +439,6 @@ eprop_synapse< targetidentifierT >::operator=( eprop_synapse&& es )
   weight_ = es.weight_;
   t_previous_spike_ = es.t_previous_spike_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
-  tau_m_readout_ = es.tau_m_readout_;
   kappa_ = es.kappa_;
 
   optimizer_ = es.optimizer_;
@@ -534,7 +529,7 @@ eprop_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
-  def< double >( d, names::tau_m_readout, tau_m_readout_ );
+  def< double >( d, names::kappa, kappa_ );
   def< long >( d, names::size_of, sizeof( *this ) );
 
   DictionaryDatum optimizer_dict = new Dictionary();
@@ -564,13 +559,12 @@ eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
 
   updateValue< double >( d, names::weight, weight_ );
 
-  if ( updateValue< double >( d, names::tau_m_readout, tau_m_readout_ ) )
+  if ( updateValue< double >( d, names::kappa, kappa_ ) )
   {
-    if ( tau_m_readout_ <= 0 )
+    if ( kappa_ <= 0.0 or kappa_ > 1.0 )
     {
-      throw BadProperty( "Membrane time constant of readout neuron tau_m_readout > 0 required." );
+      throw BadProperty( "kappa must be in the range (0, 1)" );
     }
-    kappa_ = std::exp( -Time::get_resolution().get_ms() / tau_m_readout_ );
   }
 
   const auto& gcm = dynamic_cast< const GenericConnectorModel< eprop_synapse< targetidentifierT > >& >( cm );

@@ -274,6 +274,7 @@ const Name instantiations( "instantiations" );
 const Name interval( "interval" );
 const Name is_refractory( "is_refractory" );
 
+const Name kappa( "kappa" );
 const Name Kd_act( "Kd_act" );
 const Name Kd_IP3_1( "Kd_IP3_1" );
 const Name Kd_IP3_2( "Kd_IP3_2" );

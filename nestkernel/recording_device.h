@@ -59,9 +59,22 @@ Data handling
 +++++++++++++
 
 All recorded data is handed over to the recording backend, selected
-via the ``record_to`` property. More details on available backends and
-their properties can be found in the :ref:`guide to recording from
-simulations <recording_backends>`.
+via the ``record_to`` property::
+
+   >>> sr  = nest.Create("spike_recorder", params={"record_to":"ascii", "time_in_steps": False})
+   >>> mm = nest.Create("multimeter", 1, {"record_from": ["V_m", "g_ex"], "record_to": memory})
+
+
+By default, data recorded from recorders is stored in the `memory` backend.
+You can access the data recorded by the recorders with the ``events`` property.
+
+::
+
+   mm_events = mm.get("events")
+
+
+The complete list of parameters and other recording backend options
+can be found in the :ref:`guide to recording from simulations <recording_backends>`.
 
 Recorder properties
 +++++++++++++++++++

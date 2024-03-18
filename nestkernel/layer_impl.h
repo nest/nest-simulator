@@ -303,58 +303,59 @@ Layer< D >::dump_connections( std::ostream& out,
   AbstractLayerPTR target_layer,
   const Token& syn_model )
 {
-    std::vector< std::pair< Position< D >, size_t > >* src_vec = get_global_positions_vector( node_collection );
+  std::vector< std::pair< Position< D >, size_t > >* src_vec = get_global_positions_vector( node_collection );
 
-    // Dictionary with parameters for get_connections()
-    DictionaryDatum conn_filter( new Dictionary );
-    def( conn_filter, names::synapse_model, syn_model );
-    def( conn_filter, names::target, NodeCollectionDatum( target_layer->get_node_collection() ) );
-    def( conn_filter, names::source, NodeCollectionDatum( node_collection ) );
+  // Dictionary with parameters for get_connections()
+  DictionaryDatum conn_filter( new Dictionary );
+  def( conn_filter, names::synapse_model, syn_model );
+  def( conn_filter, names::target, NodeCollectionDatum( target_layer->get_node_collection() ) );
+  def( conn_filter, names::source, NodeCollectionDatum( node_collection ) );
 
-    ArrayDatum connectome = kernel().connection_manager.get_connections( conn_filter );
+  ArrayDatum connectome = kernel().connection_manager.get_connections( conn_filter );
 
-    // Initialize iterator and variables
-    size_t previous_source_node_id = getValue< ConnectionDatum >( connectome.get( 0 ) ).get_source_node_id();
-    typename std::vector< std::pair< Position< D >, size_t > >::iterator src_iter = src_vec->begin();
-    Position< D > source_pos = src_iter->first;
+  size_t previous_source_node_id = getValue< ConnectionDatum >( connectome.get( 0 ) ).get_source_node_id();
+  Position< D > source_pos = src_vec->begin()->first;
 
+  // Print information about all local connections for current source
+  for ( size_t i = 0; i < connectome.size(); ++i )
+  {
+    ConnectionDatum con_id = getValue< ConnectionDatum >( connectome.get( i ) );
+    const size_t source_node_id = con_id.get_source_node_id();
 
-    // Print information about all local connections for current source
-    for ( size_t i = 0; i < connectome.size(); ++i )
+    // Search source_pos for source node only if it is a different node
+    if(source_node_id != previous_source_node_id)
     {
-      ConnectionDatum con_id = getValue< ConnectionDatum >( connectome.get( i ) );
-      const size_t source_node_id = con_id.get_source_node_id();
+      source_pos = src_vec->begin()->first;
 
-      // Search source_pos for source node only if it is a different node. It considers both source nodes positions (src_vec) and connectome are ordered by source node
-      if(source_node_id != previous_source_node_id)
-      {
-        assert((src_iter++)!=src_vec->end());
-        source_pos = src_iter->first;
-        
-        previous_source_node_id = source_node_id;
-      }
+      for ( typename std::vector< std::pair< Position< D >, size_t > >::iterator src_iter = src_vec->begin();
+            src_iter != src_vec->end() && source_node_id!=src_iter->second;
+            ++src_iter, source_pos =  src_iter->first);
 
-      DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status( source_node_id,
+         previous_source_node_id = source_node_id;
+    }
+
+//      DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status( con_id.get_source_node_id(),
+    DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status( source_node_id,
         con_id.get_target_node_id(),
         con_id.get_target_thread(),
         con_id.get_synapse_model_id(),
         con_id.get_port() );
 
-      long target_node_id = getValue< long >( result_dict, names::target );
-      double weight = getValue< double >( result_dict, names::weight );
-      double delay = getValue< double >( result_dict, names::delay );
+    long target_node_id = getValue< long >( result_dict, names::target );
+    double weight = getValue< double >( result_dict, names::weight );
+    double delay = getValue< double >( result_dict, names::delay );
 
-      // Print source, target, weight, delay, rports
-      out << source_node_id << ' ' << target_node_id << ' ' << weight << ' ' << delay;
+    // Print source, target, weight, delay, rports
+    out << source_node_id << ' ' << target_node_id << ' ' << weight << ' ' << delay;
 
-      Layer< D >* tgt_layer = dynamic_cast< Layer< D >* >( target_layer.get() );
+    Layer< D >* tgt_layer = dynamic_cast< Layer< D >* >( target_layer.get() );
 
-      out << ' ';
-      const long tnode_lid = tgt_layer->node_collection_->get_lid( target_node_id );
-      assert( tnode_lid >= 0 );
-      tgt_layer->compute_displacement( source_pos, tnode_lid ).print( out );
-      out << '\n';
-    }
+    out << ' ';
+    const long tnode_lid = tgt_layer->node_collection_->get_lid( target_node_id );
+    assert( tnode_lid >= 0 );
+    tgt_layer->compute_displacement( source_pos, tnode_lid ).print( out );
+    out << '\n';
+
 }
 
 template < int D >

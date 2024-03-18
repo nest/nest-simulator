@@ -413,7 +413,7 @@ def
 
 /CreateParameter trie
 [/dictionarytype] /CreateParameter_D load addtotrie
-[/doubletype] /CreateParameter_D load addtotrie
+[/doubletype] { /val Set << /constant << /value val >> >> CreateParameter_D } addtotrie
 def
 
 /GetValue [/parametertype]

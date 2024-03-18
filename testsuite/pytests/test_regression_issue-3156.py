@@ -68,10 +68,11 @@ def test_params_random_numerator(op, rhs):
 def test_random_numer_and_denom():
     """
     For random parameters in numerator and denominator, we make the denominator uniform
-    on the set {-1, +1}. We expect then that there must be at least one positive and at
-    least one negative result.
+    on the set {-1, +1}. For 50 neurons we then have at least one positive and at least
+    one negative result with p = 2 * 2^-50 ≈ 2e-15.
     """
-    num_neurons = 10
+
+    num_neurons = 50
     try:
         n = nest.Create(
             "iaf_psc_alpha", num_neurons, {"V_m": nest.random.uniform(1, 2) / (1.0 - 2.0 * nest.random.uniform_int(2))}

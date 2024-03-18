@@ -57,19 +57,9 @@ spike creation rather than that of their arrival.
 
 ::
 
-   >>> neurons = nest.Create('iaf_psc_alpha', 5)
-   >>> sr = new = nest.Create("spike_recorder", params={"record_to":"memory", "time_in_steps": False})
+   >>> neurons = nest.Create("iaf_psc_alpha", 5)
+   >>> sr  = nest.Create("spike_recorder", params={"record_to":"memory", "time_in_steps": False})
    >>> nest.Connect(neurons, sr)
-   .
-   .
-   .
-   >>> nest.Simulate(100)
-   # If recording backend is set to "memory", the spike times can be retrieved in the events
-   # parameter. See below for more information about data handling.
-   >>> sr.get("events")
-   {'senders': array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]),
-    'times': array([ 2.1,  4.4,  6.7,  8.9, 11.1, 13.3, 15.5, 17.7, 19.9, 22.1, 24.3,
-       26.5, 28.7])}
 
 Note the call to ``Connect`` will fail if the connection direction is
 reversed (i.e., connecting *sr* to *neurons*).

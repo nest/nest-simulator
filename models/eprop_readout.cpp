@@ -444,6 +444,13 @@ eprop_readout::compute_gradient( const long t_spike,
     ++eprop_hist_it;
     ++t;
   }
+
+  int power = t_spike - ( t_previous_spike + P_.eprop_isi_trace_cutoff_ );
+
+  if ( power > 0 )
+  {
+    z_bar *= std::pow( V_.P_v_m_, power );
+  }
 }
 
 } // namespace nest

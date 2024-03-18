@@ -492,6 +492,15 @@ eprop_iaf::compute_gradient( const long t_spike,
     ++eprop_hist_it;
     ++t;
   }
+
+  int power = t_spike - ( t_previous_spike + P_.eprop_isi_trace_cutoff_ );
+
+  if ( power > 0 )
+  {
+    z_bar *= std::pow( V_.P_v_m_, power );
+    avg_e *= std::pow( P_.beta_fr_ema_, power );
+    e_bar *= std::pow( kappa, power );
+  }
 }
 
 } // namespace nest

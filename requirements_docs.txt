@@ -13,7 +13,7 @@
 #
 #     pip install -r requirements_docs.txt
 
-sphinx >= 4.0.2
+sphinx >= 6.2.1
 sphinx_rtd_theme
 sphinx_autobuild
 sphinx_gallery
@@ -21,8 +21,10 @@ sphinx-tabs
 sphinx_design
 sphinx-material
 sphinx-copybutton
+sphinx-carousel
 sphinx-notfound-page
 sphinxcontrib-mermaid
+sphinxcontrib-plantuml
 nbsphinx
 numpydoc
 example

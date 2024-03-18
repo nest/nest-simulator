@@ -50,62 +50,55 @@ PerThreadBoolIndicator::initialize( const size_t num_threads, const bool status 
   kernel().vp_manager.assert_single_threaded();
   per_thread_status_.clear();
   per_thread_status_.resize( num_threads, BoolIndicatorUInt64( status ) );
+  size_ = num_threads;
+  if ( status )
+  {
+    are_true_ = num_threads;
+  }
+  else
+  {
+    are_true_ = 0;
+  }
 }
 
 bool
 PerThreadBoolIndicator::all_false() const
 {
+// We need two barriers here to ensure that no thread can continue and change the result
+// before all threads have determined the result.
 #pragma omp barrier
-  for ( auto it = per_thread_status_.begin(); it < per_thread_status_.end(); ++it )
-  {
-    if ( it->is_true() )
-    {
-      return false;
-    }
-  }
-  return true;
+  // We need two barriers here to ensure that no thread can continue and change the result
+  // before all threads have determined the result.
+  bool ret = ( are_true_ == 0 );
+#pragma omp barrier
+  return ret;
 }
 
 bool
 PerThreadBoolIndicator::all_true() const
 {
 #pragma omp barrier
-  for ( auto it = per_thread_status_.begin(); it < per_thread_status_.end(); ++it )
-  {
-    if ( it->is_false() )
-    {
-      return false;
-    }
-  }
-  return true;
+  bool ret = ( are_true_ == size_ );
+#pragma omp barrier
+  return ret;
 }
 
 bool
 PerThreadBoolIndicator::any_false() const
 {
 #pragma omp barrier
-  for ( auto it = per_thread_status_.begin(); it < per_thread_status_.end(); ++it )
-  {
-    if ( it->is_false() )
-    {
-      return true;
-    }
-  }
-  return false;
+  bool ret = ( are_true_ < size_ );
+#pragma omp barrier
+  return ret;
 }
 
 bool
 PerThreadBoolIndicator::any_true() const
 {
 #pragma omp barrier
-  for ( auto it = per_thread_status_.begin(); it < per_thread_status_.end(); ++it )
-  {
-    if ( it->is_true() )
-    {
-      return true;
-    }
-  }
-  return false;
+  bool ret = ( are_true_ > 0 );
+#pragma omp barrier
+  return ret;
 }
 
 } // namespace nest

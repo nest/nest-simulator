@@ -103,7 +103,7 @@ References
 .. [3] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A, Diesmann M
        (2015). A unified framework for spiking and gap-junction interactions
        in distributed neuronal network simulations. Frontiers in
-       Neuroinformatics, 9:22. DOI: https://doi/org/10.3389/fninf.2015.00022
+       Neuroinformatics, 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
 
 
 Sends

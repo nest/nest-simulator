@@ -204,8 +204,12 @@ div[role="main"] .md-source {
   color: var(--nest-orange);
 	background-color: #ffffff8a;
 	border-radius: 5px;
-	padding: 6px;
 }
+/* Add padding around buttons on index page */
+#welcome-to-the-nest-simulator-documentation [data-md-color-primary="orange"] .md-typeset a {
+   padding: 6px;
+}
+
 .md-typeset details {
    background-color: white;
 }

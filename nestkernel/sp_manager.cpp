@@ -52,9 +52,9 @@ SPManager::~SPManager()
 }
 
 void
-SPManager::initialize( const bool adjust_number_of_threads_or_rng_seed_only )
+SPManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
-  if ( not adjust_number_of_threads_or_rng_seed_only )
+  if ( not adjust_number_of_threads_or_rng_only )
   {
     // Add MSP growth curves
     register_growth_curve< GrowthCurveSigmoid >( "sigmoid" );
@@ -67,9 +67,9 @@ SPManager::initialize( const bool adjust_number_of_threads_or_rng_seed_only )
 }
 
 void
-SPManager::finalize( const bool adjust_number_of_threads_or_rng_seed_only )
+SPManager::finalize( const bool adjust_number_of_threads_or_rng_only )
 {
-  if ( not adjust_number_of_threads_or_rng_seed_only )
+  if ( not adjust_number_of_threads_or_rng_only )
   {
     for ( auto spcb : sp_conn_builders_ )
     {

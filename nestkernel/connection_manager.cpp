@@ -93,9 +93,9 @@ nest::ConnectionManager::~ConnectionManager()
 }
 
 void
-nest::ConnectionManager::initialize( const bool adjust_number_of_threads_or_rng_seed_only )
+nest::ConnectionManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
-  if ( not adjust_number_of_threads_or_rng_seed_only )
+  if ( not adjust_number_of_threads_or_rng_only )
   {
     // Add connection rules
     register_conn_builder< OneToOneBuilder >( "one_to_one" );
@@ -153,7 +153,7 @@ nest::ConnectionManager::initialize( const bool adjust_number_of_threads_or_rng_
 }
 
 void
-nest::ConnectionManager::finalize( const bool adjust_number_of_threads_or_rng_seed_only )
+nest::ConnectionManager::finalize( const bool adjust_number_of_threads_or_rng_only )
 {
   source_table_.finalize();
   target_table_.finalize();
@@ -163,7 +163,7 @@ nest::ConnectionManager::finalize( const bool adjust_number_of_threads_or_rng_se
   std::vector< std::vector< std::vector< size_t > > >().swap( secondary_recv_buffer_pos_ );
   compressed_spike_data_.clear();
 
-  if ( not adjust_number_of_threads_or_rng_seed_only )
+  if ( not adjust_number_of_threads_or_rng_only )
   {
     for ( auto cbf : connbuilder_factories_ )
     {
@@ -902,13 +902,13 @@ nest::ConnectionManager::connect_( Node& source,
   {
 #pragma omp atomic write
     has_primary_connections_ = true;
-    check_primary_connections_[ tid ].set_true();
+    check_primary_connections_.set_true( tid );
   }
   else if ( check_secondary_connections_[ tid ].is_false() and not is_primary )
   {
 #pragma omp atomic write
     secondary_connections_exist_ = true;
-    check_secondary_connections_[ tid ].set_true();
+    check_secondary_connections_.set_true( tid );
   }
 }
 

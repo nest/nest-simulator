@@ -53,7 +53,7 @@ public:
   void initialize( const bool ) override;
 
   //! Unload modules but only on full ResetKernel(), not when just changing then number of threads
-  void finalize( const bool adjust_number_of_threads_only ) override;
+  void finalize( const bool adjust_number_of_threads_or_rng_only ) override;
 
   //! To be called after change of number of threads to re-register components provided by modules
   void reinitialize_dynamic_modules();

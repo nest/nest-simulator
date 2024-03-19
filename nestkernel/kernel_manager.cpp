@@ -88,7 +88,7 @@ nest::KernelManager::initialize()
 {
   for ( auto& manager : managers )
   {
-    manager->initialize( /* adjust_number_of_threads_only */ false );
+    manager->initialize( /* adjust_number_of_threads_or_rng_only */ false );
   }
 
   ++fingerprint_;
@@ -122,7 +122,7 @@ nest::KernelManager::finalize()
 
   for ( auto&& m_it = managers.rbegin(); m_it != managers.rend(); ++m_it )
   {
-    ( *m_it )->finalize( /* adjust_number_of_threads_only */ false );
+    ( *m_it )->finalize( /* adjust_number_of_threads_or_rng_only */ false );
   }
   initialized_ = false;
 }
@@ -147,7 +147,7 @@ nest::KernelManager::change_number_of_threads( size_t new_num_threads )
   // Finalize in reverse order of initialization with old thread number set
   for ( auto mgr_it = managers.rbegin(); mgr_it != managers.rend(); ++mgr_it )
   {
-    ( *mgr_it )->finalize( /* adjust_number_of_threads_or_rng_seed_only */ true );
+    ( *mgr_it )->finalize( /* adjust_number_of_threads_or_rng_only */ true );
   }
 
   vp_manager.set_num_threads( new_num_threads );
@@ -155,7 +155,7 @@ nest::KernelManager::change_number_of_threads( size_t new_num_threads )
   // Initialize in original order with new number of threads set
   for ( auto& manager : managers )
   {
-    manager->initialize( /* adjust_number_of_threads_or_rng_seed_only */ true );
+    manager->initialize( /* adjust_number_of_threads_or_rng_only */ true );
   }
 
   // Finalizing deleted all register components. Now that all infrastructure

@@ -68,9 +68,9 @@ IOManager::~IOManager()
 }
 
 void
-IOManager::initialize( const bool adjust_number_of_threads_or_rng_seed_only )
+IOManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
-  if ( not adjust_number_of_threads_or_rng_seed_only )
+  if ( not adjust_number_of_threads_or_rng_only )
   {
     // Register backends again, since finalize cleans up
     // so backends from external modules are unloaded
@@ -114,7 +114,7 @@ IOManager::initialize( const bool adjust_number_of_threads_or_rng_seed_only )
 }
 
 void
-IOManager::finalize( const bool adjust_number_of_threads_or_rng_seed_only )
+IOManager::finalize( const bool adjust_number_of_threads_or_rng_only )
 {
   for ( const auto& it : recording_backends_ )
   {
@@ -125,7 +125,7 @@ IOManager::finalize( const bool adjust_number_of_threads_or_rng_seed_only )
     it.second->finalize();
   }
 
-  if ( not adjust_number_of_threads_or_rng_seed_only )
+  if ( not adjust_number_of_threads_or_rng_only )
   {
     for ( const auto& it : recording_backends_ )
     {

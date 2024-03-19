@@ -50,7 +50,7 @@ def get_boolean_environ(env_key, default_value="false"):
     return env_value.lower() in ["yes", "true", "t", "1"]
 
 
-_default_origins = "http://localhost:*"
+_default_origins = "http://localhost:*,http://127.0.0.1:*"
 ACCESS_TOKEN = os.environ.get("NEST_SERVER_ACCESS_TOKEN", "")
 AUTH_DISABLED = get_boolean_environ("NEST_SERVER_DISABLE_AUTH")
 CORS_ORIGINS = os.environ.get("NEST_SERVER_CORS_ORIGINS", _default_origins).split(",")

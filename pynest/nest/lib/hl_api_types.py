@@ -547,6 +547,13 @@ class NodeCollection:
         if not self:
             raise AttributeError("Cannot get attribute of empty NodeCollection")
 
+        # IPython looks up this method when doing pretty printing
+        # As long as we do not provide special methods to support IPython prettyprinting,
+        # HTML-rendering, etc, we stop IPython from time-consuming checks by raising an
+        # exception here. The exception must *not* be AttributeError.
+        if attr == "_ipython_canary_method_should_not_exist_":
+            raise NotImplementedError("_ipython_canary_method_should_not_exist_")
+
         if attr == "spatial":
             metadata = sli_func("GetMetadata", self._datum)
             val = metadata if metadata else None
@@ -1077,8 +1084,7 @@ class Parameter:
         return self._binop("div", rhs)
 
     def __rtruediv__(self, lhs):
-        rhs_inv = CreateParameter("constant", {"value": 1 / float(self.GetValue())})
-        return rhs_inv._binop("mul", lhs)
+        return self**-1 * lhs
 
     def __pow__(self, exponent):
         try:

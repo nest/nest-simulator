@@ -69,7 +69,8 @@ def test_get_positions_with_mpi(start, step):
     assert pos == expected_pos
 
 
-def test_get_spatial_for_single_element_and_mpi():
+@pytest.mark.parametrize("pick", range(0, 7))
+def test_get_spatial_for_single_element_and_mpi(pick):
     """
     Test that spatial information can be collected from a single layer element.
 
@@ -77,7 +78,6 @@ def test_get_spatial_for_single_element_and_mpi():
     """
 
     num_neurons = 7
-    pick = 6
 
     nest.ResetKernel()
 
@@ -99,7 +99,8 @@ def test_get_spatial_for_single_element_and_mpi():
         assert len(sp) == 0
 
 
-def test_connect_with_single_element_slice_and_mpi():
+@pytest.mark.parametrize("pick", range(0, 5))
+def test_connect_with_single_element_slice_and_mpi(pick):
     """
     Test that connection with single-element sliced layer is possible on multiple mpi processes.
 
@@ -107,7 +108,6 @@ def test_connect_with_single_element_slice_and_mpi():
     """
 
     num_neurons = 5
-    pick = 3
 
     nest.ResetKernel()
     layer = nest.Create(

@@ -91,9 +91,9 @@ nest::ConnectionManager::~ConnectionManager()
 }
 
 void
-nest::ConnectionManager::initialize( const bool reset_kernel )
+nest::ConnectionManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
-  if ( reset_kernel )
+  if ( not adjust_number_of_threads_or_rng_only )
   {
     keep_source_table_ = true;
     connections_have_changed_ = false;

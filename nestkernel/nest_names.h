@@ -346,6 +346,7 @@ extern const Name min_update_time;
 extern const Name minor_axis;
 extern const Name model;
 extern const Name model_id;
+extern const Name modules;
 extern const Name mpi_address;
 extern const Name ms_per_tic;
 extern const Name mu;

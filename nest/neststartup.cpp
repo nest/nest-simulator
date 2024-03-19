@@ -30,7 +30,6 @@
 #include "logging_event.h"
 
 // Includes from nestkernel:
-#include "dynamicloader.h"
 #include "kernel_manager.h"
 #include "nest.h"
 #include "nestmodule.h"
@@ -110,29 +109,6 @@ neststartup( int* argc, char*** argv, SLIInterpreter& engine, std::string module
 
   // NestModule extends SLI by commands for neuronal simulations
   addmodule< nest::NestModule >( engine );
-
-/*
- * The following section concerns shared user modules and is thus only
- * included if we built with libtool and libltdl.
- *
- * One may want to link user modules statically, but for convenience
- * they still register themselves with the DyamicLoadModule during static
- * initialization. At the same time, we need to create the DynamicLoaderModule,
- * since the compiler might otherwise optimize DynamicLoaderModule::registerLinkedModule() away.
- */
-#ifdef HAVE_LIBLTDL
-  // dynamic loader module for managing linked and dynamically loaded extension
-  // modules
-  nest::DynamicLoaderModule* pDynLoader = new nest::DynamicLoaderModule( engine );
-
-  // initialize all modules that were linked at compile time.
-  // These modules were registered via DynamicLoader::registerLinkedModule
-  // from their constructor
-  pDynLoader->initLinkedModules( engine );
-
-  // interpreter will delete module on destruction
-  engine.addmodule( pDynLoader );
-#endif
 
 #ifdef _IS_PYNEST
   // add the init-script to the list of module initializers

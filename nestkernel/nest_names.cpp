@@ -318,6 +318,7 @@ const Name min_update_time( "min_update_time" );
 const Name minor_axis( "minor_axis" );
 const Name model( "model" );
 const Name model_id( "model_id" );
+const Name modules( "modules" );
 const Name mpi_address( "mpi_address" );
 const Name ms_per_tic( "ms_per_tic" );
 const Name mu( "mu" );

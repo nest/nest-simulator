@@ -94,7 +94,7 @@ NestModule::~NestModule()
 const std::string
 NestModule::name() const
 {
-  return std::string( "NEST Kernel 2" ); // Return name of the module
+  return std::string( "NEST Kernel" ); // Return name of the module
 }
 
 const std::string
@@ -564,6 +564,19 @@ NestModule::GetDefaults_lFunction::execute( SLIInterpreter* i ) const
 
   i->OStack.pop();
   i->OStack.push( dict );
+  i->EStack.pop();
+}
+
+void
+NestModule::Install_sFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+
+  const std::string modulename = getValue< std::string >( i->OStack.pick( 0 ) );
+
+  kernel().module_manager.install( modulename );
+
+  i->OStack.pop();
   i->EStack.pop();
 }
 
@@ -2086,6 +2099,8 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "CopyModel_l_l_D", &copymodel_l_l_Dfunction );
   i->createcommand( "SetDefaults_l_D", &setdefaults_l_Dfunction );
   i->createcommand( "GetDefaults_l", &getdefaults_lfunction );
+
+  i->createcommand( "Install", &install_sfunction );
 
   i->createcommand( "Create_l_i", &create_l_ifunction );
 

@@ -68,8 +68,8 @@ def test_params_random_numerator(op, rhs):
 def test_random_numer_and_denom():
     """
     For random parameters in numerator and denominator, we make the denominator uniform
-    on the set {-1, +1}. For 50 neurons we then have at least one positive and at least
-    one negative result with p = 2 * 2^-50 ≈ 2e-15.
+    on the set {-1, +1}. For 50 neurons, the probability that the denominator has the same
+    sign (either positive or negative) is 2 * 2^-50 ≈ 2e-15.
     """
 
     num_neurons = 50

@@ -313,6 +313,7 @@ Layer< D >::dump_connections( std::ostream& out,
 
   ArrayDatum connectome = kernel().connection_manager.get_connections( conn_filter );
 
+  // Get variables for loop
   size_t previous_source_node_id = getValue< ConnectionDatum >( connectome.get( 0 ) ).get_source_node_id();
   Position< D > source_pos = src_vec->begin()->first;
 
@@ -323,18 +324,17 @@ Layer< D >::dump_connections( std::ostream& out,
     const size_t source_node_id = con_id.get_source_node_id();
 
     // Search source_pos for source node only if it is a different node
-    if(source_node_id != previous_source_node_id)
+    if( source_node_id != previous_source_node_id )
     {
       source_pos = src_vec->begin()->first;
 
       for ( typename std::vector< std::pair< Position< D >, size_t > >::iterator src_iter = src_vec->begin();
-            src_iter != src_vec->end() && source_node_id!=src_iter->second;
-            ++src_iter, source_pos =  src_iter->first);
+            src_iter != src_vec->end() && source_node_id! = src_iter->second;
+            ++src_iter, source_pos =  src_iter->first );
 
          previous_source_node_id = source_node_id;
     }
 
-//      DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status( con_id.get_source_node_id(),
     DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status( source_node_id,
         con_id.get_target_node_id(),
         con_id.get_target_thread(),

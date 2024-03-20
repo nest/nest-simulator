@@ -79,7 +79,11 @@ public:
 
   //! Erase update intervals from the e-prop history in which each synapse has either not transmitted a spike or has
   //! transmitted a spike in a more recent update interval.
-  void erase_used_eprop_history( const long eprop_isi_trace_cutoff = 0 );
+  void erase_used_eprop_history();
+
+  //! Erase update intervals from the e-prop history in which each synapse has either not transmitted a spike or has
+  //! transmitted a spike in a more recent update interval.
+  void erase_used_eprop_history( const long eprop_isi_trace_cutoff );
 
 protected:
   //!< Number of incoming eprop synapses

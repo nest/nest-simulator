@@ -241,15 +241,15 @@ WeightOptimizerAdam::optimize_( const WeightOptimizerCommonProperties& cp,
 
     const double alpha = cp.eta_ * std::sqrt( beta_2_factor ) / beta_1_factor;
 
-  m_ = acp.beta_1_ * m_ + ( 1.0 - acp.beta_1_ ) * sum_gradients_;
-  v_ = acp.beta_2_ * v_ + ( 1.0 - acp.beta_2_ ) * sum_gradients_ * sum_gradients_;
+    m_ = acp.beta_1_ * m_ + ( 1.0 - acp.beta_1_ ) * sum_gradients_;
+    v_ = acp.beta_2_ * v_ + ( 1.0 - acp.beta_2_ ) * sum_gradients_ * sum_gradients_;
 
     weight -= alpha * m_ / ( std::sqrt( v_ ) + acp.epsilon_ );
 
-  // set gradients to zero for following iterations since more than
-  // one cycle indicates past learning periods with vanishing gradients
-  sum_gradients_ = 0.0; // reset for following iterations
-  // }
+    // set gradients to zero for following iterations since more than
+    // one cycle indicates past learning periods with vanishing gradients
+    sum_gradients_ = 0.0; // reset for following iterations
+  }
 
   return weight;
 }

@@ -332,7 +332,7 @@ Layer< D >::dump_connections( std::ostream& out,
             src_iter != src_vec->end() && source_node_id! = src_iter->second;
             ++src_iter, source_pos =  src_iter->first );
 
-         previous_source_node_id = source_node_id;
+      previous_source_node_id = source_node_id;
     }
 
     DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status( source_node_id,

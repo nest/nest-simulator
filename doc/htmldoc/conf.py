@@ -53,26 +53,27 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinxcontrib.mermaid",
     "sphinx.ext.mathjax",
+    "sphinx_carousel.carousel",
     "sphinxcontrib.plantuml",
     "add_button_notebook",
     "IPython.sphinxext.ipython_console_highlighting",
     "nbsphinx",
     "extract_api_functions",
     "sphinx_design",
-    "HoverXTooltip",
     "VersionSyncRole",
+    "HoverXTooltip",
     "sphinx_copybutton",
     "notfound.extension",
 ]
 
 autodoc_mock_imports = ["nest.pynestkernel", "nest.ll_api"]
 mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-panels_add_bootstrap_css = False
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["templates"]
 
 # To run plantuml locally see the user documentation workflow
 plantuml = "java -jar /tmp/plantuml.jar"
+plantuml_output_format = "svg_img"
 sphinx_gallery_conf = {
     # path to your examples scripts
     "examples_dirs": "../../pynest/examples",
@@ -124,9 +125,6 @@ exclude_patterns = [
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = "manni"
 
-# If true, `todo` and `todoList` produce output, else they produce nothing.
-todo_include_todos = False
-
 # add numbered figure link
 numfig = True
 
@@ -160,13 +158,11 @@ html_theme_options = {
     "color_primary": "orange",
     "color_accent": "white",
     "theme_color": "ff6633",
-    "master_doc": True,
+    "master_doc": False,
     # Set the repo location to get a badge with stats
     "repo_url": "https://github.com/nest/nest-simulator/",
     "repo_name": "NEST Simulator",
-    # "nav_links": [
-    #     {"href": "index", "internal": True, "title": "NEST docs home"}
-    #     ],
+    "nav_links": [{"href": "index", "internal": True, "title": "NEST docs home"}],
     # Visible levels of the global TOC; -1 means unlimited
     "globaltoc_depth": 1,
     # If False, expand all TOC entries
@@ -177,7 +173,15 @@ html_theme_options = {
 }
 
 html_static_path = ["static"]
-html_additional_pages = {"index": "index.html"}
+
+html_css_files = [
+    "css/custom.css",
+    "css/pygments.css",
+]
+
+html_js_files = [
+    "js/custom.js",
+]
 html_sidebars = {"**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"]}
 
 html_favicon = "static/img/nest_favicon.ico"
@@ -230,9 +234,6 @@ def setup(app):
     # for events see
     # https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx-core-events
     app.connect("source-read", toc_customizer)
-    app.add_css_file("css/custom.css")
-    app.add_css_file("css/pygments.css")
-    app.add_js_file("js/custom.js")
     app.connect("config-inited", config_inited_handler)
 
 

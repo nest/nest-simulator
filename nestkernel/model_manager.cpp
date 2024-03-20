@@ -80,12 +80,17 @@ ModelManager::initialize( const bool )
   // Make space for one vector of proxynodes for each thread
   proxy_nodes_.resize( num_threads );
 
+  // We must re-register all models even if only changing the number of threads because
+  // the model-managing data structures depend on the number of threads.
+  // Models provided by extension modules will be re-registered by the ModulesManager.
   register_models();
 }
 
 void
 ModelManager::finalize( const bool )
 {
+  // We must clear all models even if only changing the number of threads because
+  // the model-managing data structures depend on the number of threads
   clear_node_models_();
   clear_connection_models_();
 }
@@ -272,7 +277,7 @@ void
 ModelManager::set_synapse_defaults_( size_t model_id, const DictionaryDatum& params )
 {
   params->clear_access_flags();
-  assert_valid_syn_id( model_id );
+  assert_valid_syn_id( model_id, kernel().vp_manager.get_thread_id() );
 
   std::vector< std::shared_ptr< WrappedThreadException > > exceptions_raised_( kernel().vp_manager.get_num_threads() );
 
@@ -337,7 +342,7 @@ ModelManager::get_synapse_model_id( std::string model_name )
 DictionaryDatum
 ModelManager::get_connector_defaults( synindex syn_id ) const
 {
-  assert_valid_syn_id( syn_id );
+  assert_valid_syn_id( syn_id, kernel().vp_manager.get_thread_id() );
 
   DictionaryDatum dict( new Dictionary() );
 

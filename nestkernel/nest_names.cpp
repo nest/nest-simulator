@@ -624,7 +624,6 @@ const Name V_act_NMDA( "V_act_NMDA" );
 const Name V_clamp( "V_clamp" );
 const Name v_comp( "v_comp" );
 const Name V_epsp( "V_epsp" );
-const Name V_init( "V_init" );
 const Name V_m( "V_m" );
 const Name V_min( "V_min" );
 const Name V_noise( "V_noise" );

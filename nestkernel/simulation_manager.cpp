@@ -69,9 +69,9 @@ nest::SimulationManager::SimulationManager()
 }
 
 void
-nest::SimulationManager::initialize( const bool reset_kernel )
+nest::SimulationManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
-  if ( not reset_kernel )
+  if ( adjust_number_of_threads_or_rng_only )
   {
     return;
   }

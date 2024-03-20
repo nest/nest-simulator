@@ -42,9 +42,9 @@ nest::LoggingManager::LoggingManager()
 }
 
 void
-nest::LoggingManager::initialize( const bool reset_kernel )
+nest::LoggingManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
-  if ( reset_kernel )
+  if ( not adjust_number_of_threads_or_rng_only )
   {
     dict_miss_is_error_ = true;
   }

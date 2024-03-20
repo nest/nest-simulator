@@ -324,22 +324,23 @@ Layer< D >::dump_connections( std::ostream& out,
     const size_t source_node_id = con_id.get_source_node_id();
 
     // Search source_pos for source node only if it is a different node
-    if( source_node_id != previous_source_node_id )
+    if ( source_node_id != previous_source_node_id )
     {
       source_pos = src_vec->begin()->first;
 
       for ( typename std::vector< std::pair< Position< D >, size_t > >::iterator src_iter = src_vec->begin();
-            src_iter != src_vec->end() && source_node_id! = src_iter->second;
-            ++src_iter, source_pos =  src_iter->first );
+            ( src_iter != src_vec->end() ) && ( source_node_id! = src_iter->second );
+            ++src_iter, source_pos = src_iter->first )
+        ;
 
       previous_source_node_id = source_node_id;
     }
 
     DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status( source_node_id,
-        con_id.get_target_node_id(),
-        con_id.get_target_thread(),
-        con_id.get_synapse_model_id(),
-        con_id.get_port() );
+      con_id.get_target_node_id(),
+      con_id.get_target_thread(),
+      con_id.get_synapse_model_id(),
+      con_id.get_port() );
 
     long target_node_id = getValue< long >( result_dict, names::target );
     double weight = getValue< double >( result_dict, names::weight );

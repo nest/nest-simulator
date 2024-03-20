@@ -112,13 +112,18 @@ WeightOptimizer::optimized_weight( const WeightOptimizerCommonProperties& cp,
 {
   sum_gradients_ += gradient;
 
+  if ( optimization_step_ == 0 )
+  {
+    optimization_step_ = idx_current_update;
+  }
+
   const size_t current_optimization_step = 1 + idx_current_update / cp.batch_size_;
-  // if ( optimization_step_ < current_optimization_step )
-  // {
-  sum_gradients_ /= cp.batch_size_;
-  weight = std::max( cp.Wmin_, std::min( optimize_( cp, weight, current_optimization_step ), cp.Wmax_ ) );
-  optimization_step_ = current_optimization_step;
-  // }
+  if ( optimization_step_ < current_optimization_step )
+  {
+    sum_gradients_ /= cp.batch_size_;
+    weight = std::max( cp.Wmin_, std::min( optimize_( cp, weight, current_optimization_step ), cp.Wmax_ ) );
+    optimization_step_ = current_optimization_step;
+  }
   return weight;
 }
 

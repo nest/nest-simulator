@@ -60,14 +60,22 @@ EpropArchivingNodeRecurrent::write_surrogate_gradient_to_history( const long tim
 }
 
 void
-EpropArchivingNodeRecurrent::write_learning_signal_to_history( const long time_step, const double learning_signal )
+EpropArchivingNodeRecurrent::write_learning_signal_to_history( const long time_step,
+  const double learning_signal,
+  const bool has_norm_step )
 {
   if ( eprop_indegree_ == 0 )
   {
     return;
   }
 
-  const long shift = delay_rec_out_ + delay_out_norm_ + delay_out_rec_;
+  long shift = delay_rec_out_ + delay_out_rec_;
+
+  if ( has_norm_step )
+  {
+    shift += delay_out_norm_;
+  }
+
 
   auto it_hist = get_eprop_history( time_step - shift );
   const auto it_hist_end = get_eprop_history( time_step - shift + delay_out_rec_ );
@@ -134,9 +142,14 @@ EpropArchivingNodeRecurrent::write_firing_rate_reg_to_history( const long t,
 }
 
 double
-EpropArchivingNodeRecurrent::get_learning_signal_from_history( const long time_step )
+EpropArchivingNodeRecurrent::get_learning_signal_from_history( const long time_step, const bool has_norm_step )
 {
-  const long shift = delay_rec_out_ + delay_out_rec_;
+  long shift = delay_rec_out_ + delay_out_rec_;
+
+  if ( has_norm_step )
+  {
+    shift += delay_out_norm_;
+  }
 
   const auto it = get_eprop_history( time_step - shift );
   if ( it == eprop_history_.end() )
@@ -178,14 +191,16 @@ EpropArchivingNodeReadout::EpropArchivingNodeReadout( const EpropArchivingNodeRe
 }
 
 void
-EpropArchivingNodeReadout::write_error_signal_to_history( const long time_step, const double error_signal )
+EpropArchivingNodeReadout::write_error_signal_to_history( const long time_step,
+  const double error_signal,
+  const bool has_norm_step )
 {
   if ( eprop_indegree_ == 0 )
   {
     return;
   }
 
-  const long shift = delay_out_norm_;
+  const long shift = has_norm_step ? delay_out_norm_ : 0;
 
   eprop_history_.emplace_back( time_step - shift, error_signal );
 }

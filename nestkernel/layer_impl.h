@@ -329,7 +329,7 @@ Layer< D >::dump_connections( std::ostream& out,
       source_pos = src_vec->begin()->first;
 
       for ( typename std::vector< std::pair< Position< D >, size_t > >::iterator src_iter = src_vec->begin();
-            ( src_iter != src_vec->end() ) && ( source_node_id! = src_iter->second );
+            ( src_iter != src_vec->end() ) && ( source_node_id != src_iter->second );
             ++src_iter, source_pos = src_iter->first )
         ;
 
@@ -356,7 +356,6 @@ Layer< D >::dump_connections( std::ostream& out,
     assert( tnode_lid >= 0 );
     tgt_layer->compute_displacement( source_pos, tnode_lid ).print( out );
     out << '\n';
-
 }
 
 template < int D >

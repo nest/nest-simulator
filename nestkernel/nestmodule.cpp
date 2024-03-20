@@ -30,9 +30,7 @@
 
 // Includes from nestkernel:
 #include "conn_builder.h"
-#include "conn_builder_conngen.h"
 #include "connection_creator_impl.h"
-#include "connection_manager_impl.h"
 #include "free_layer.h"
 #include "genericmodel.h"
 #include "grid_layer.h"
@@ -48,7 +46,6 @@
 #include "nest_types.h"
 #include "node.h"
 #include "parameter.h"
-#include "sp_manager_impl.h"
 #include "spatial.h"
 
 // Includes from sli:
@@ -2210,27 +2207,6 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "DumpLayerConnections_os_g_g_l", &dumplayerconnections_os_g_g_lfunction );
   i->createcommand( "cvdict_M", &cvdict_Mfunction );
   i->createcommand( "SelectNodesByMask_g_a_M", &selectnodesbymask_g_a_Mfunction );
-
-
-  // Add connection rules
-  kernel().connection_manager.register_conn_builder< OneToOneBuilder >( "one_to_one" );
-  kernel().connection_manager.register_conn_builder< AllToAllBuilder >( "all_to_all" );
-  kernel().connection_manager.register_conn_builder< FixedInDegreeBuilder >( "fixed_indegree" );
-  kernel().connection_manager.register_conn_builder< FixedOutDegreeBuilder >( "fixed_outdegree" );
-  kernel().connection_manager.register_conn_builder< BernoulliBuilder >( "pairwise_bernoulli" );
-  kernel().connection_manager.register_conn_builder< PoissonBuilder >( "pairwise_poisson" );
-  kernel().connection_manager.register_conn_builder< TripartiteBernoulliWithPoolBuilder >(
-    "tripartite_bernoulli_with_pool" );
-  kernel().connection_manager.register_conn_builder< SymmetricBernoulliBuilder >( "symmetric_pairwise_bernoulli" );
-  kernel().connection_manager.register_conn_builder< FixedTotalNumberBuilder >( "fixed_total_number" );
-#ifdef HAVE_LIBNEUROSIM
-  kernel().connection_manager.register_conn_builder< ConnectionGeneratorBuilder >( "conngen" );
-#endif
-
-  // Add MSP growth curves
-  kernel().sp_manager.register_growth_curve< GrowthCurveSigmoid >( "sigmoid" );
-  kernel().sp_manager.register_growth_curve< GrowthCurveGaussian >( "gaussian" );
-  kernel().sp_manager.register_growth_curve< GrowthCurveLinear >( "linear" );
 
   Token statusd = i->baselookup( Name( "statusdict" ) );
   DictionaryDatum dd = getValue< DictionaryDatum >( statusd );

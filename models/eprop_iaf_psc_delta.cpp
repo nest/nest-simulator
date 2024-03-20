@@ -554,7 +554,7 @@ eprop_iaf_psc_delta::compute_gradient( const long t_spike,
 
   if ( power > 0 )
   {
-    z_bar *= std::pow( V_.P_v_m_, power );
+    z_bar *= std::pow( V_.P33_, power );
     avg_e *= std::pow( P_.beta_fr_ema_, power );
     e_bar *= std::pow( kappa, power );
   }

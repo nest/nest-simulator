@@ -150,34 +150,38 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-=========================== ==== ======================= ================ ======================================
+=========================== ======= ======================= ================ ===================================
 **Neuron parameters**
 ----------------------------------------------------------------------------------------------------------------
-Parameter                   Unit Math equivalent         Default          Description
-=========================== ==== ======================= ================ ======================================
-adapt_beta                       :math:`\beta`                        1.0 Prefactor of the threshold adaptation
-adapt_tau                   ms   :math:`\tau_\text{a}`               10.0 Time constant of the threshold
-                                                                          adaptation
-C_m                         pF   :math:`C_\text{m}`                 250.0 Capacitance of the membrane
-c_reg                            :math:`c_\text{reg}`                 0.0 Prefactor of firing rate
-                                                                          regularization
-E_L                         mV   :math:`E_\text{L}`                 -70.0 Leak membrane potential
-f_target                    Hz   :math:`f^\text{target}`             10.0 Target firing rate of rate
-                                                                          regularization
-gamma                            :math:`\gamma`                       0.3 Scaling of surrogate gradient /
-                                                                          pseudo-derivative of membrane voltage
-I_e                         pA   :math:`I_\text{e}`                   0.0 Constant external input current
-psc_scale_factor                                         alpha_complement Scale factor for presynaptic current
-                                                                          ["alpha_complement": :math:`1 -
-                                                                          \alpha`, "unity": :math:`1`]
-surrogate_gradient_function      :math:`\psi`            piecewise_linear Surrogate gradient / pseudo-derivative
-                                                                          function ["piecewise_linear"]
-t_ref                       ms   :math:`t_\text{ref}`                 2.0 Duration of the refractory period
-tau_m                       ms   :math:`\tau_\text{m}`               10.0 Time constant of the membrane
-V_min                       mV   :math:`v_\text{min}`          -1.79e+308 Absolute lower bound of the membrane
-                                                                          voltage
-V_th                        mV   :math:`v_\text{th}`                -55.0 Spike threshold voltage
-=========================== ==== ======================= ================ ======================================
+Parameter                   Unit    Math equivalent         Default          Description
+=========================== ======= ======================= ================ ===================================
+adapt_beta                          :math:`\beta`                        1.0 Prefactor of the threshold
+                                                                             adaptation
+adapt_tau                   ms      :math:`\tau_\text{a}`               10.0 Time constant of the threshold
+                                                                             adaptation
+C_m                         pF      :math:`C_\text{m}`                 250.0 Capacitance of the membrane
+c_reg                               :math:`c_\text{reg}`                 0.0 Prefactor of firing rate
+                                                                             regularization
+E_L                         mV      :math:`E_\text{L}`                 -70.0 Leak membrane potential
+f_target                    Hz      :math:`f^\text{target}`             10.0 Target firing rate of rate
+                                                                             regularization
+gamma                               :math:`\gamma`                       0.3 Scaling of surrogate gradient /
+                                                                             pseudo-derivative of membrane
+                                                                             voltage
+I_e                         pA      :math:`I_\text{e}`                   0.0 Constant external input current
+regular_spike_arrival       Boolean                                     True If True, the input spikes arrive at
+                                                                                the end of the time step, if
+                                                                                False at the beginning
+                                                                                (determines PSC scale)
+surrogate_gradient_function         :math:`\psi`            piecewise_linear Surrogate gradient /
+                                                                             pseudo-derivative
+                                                                             function ["piecewise_linear"]
+t_ref                       ms      :math:`t_\text{ref}`                 2.0 Duration of the refractory period
+tau_m                       ms      :math:`\tau_\text{m}`               10.0 Time constant of the membrane
+V_min                       mV      :math:`v_\text{min}`          -1.79e+308 Absolute lower bound of the
+                                                                             membrane voltage
+V_th                        mV      :math:`v_\text{th}`                -55.0 Spike threshold voltage
+=========================== ======= ======================= ================ ===================================
 
 The following state variables evolve during simulation.
 
@@ -341,8 +345,8 @@ private:
     //! Constant external input current (pA).
     double I_e_;
 
-    //! Scale factor for presynaptic current ["unity", "alpha_complement"]
-    std::string psc_scale_factor_;
+    //! If True, the input spikes arrive at the beginning of the time step, if False at the end (determines PSC scale).
+    bool regular_spike_arrival_;
 
     //! Surrogate gradient / pseudo-derivative function ["piecewise_linear"].
     std::string surrogate_gradient_function_;

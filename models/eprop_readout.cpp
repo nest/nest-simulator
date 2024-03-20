@@ -74,6 +74,7 @@ eprop_readout::Parameters_::Parameters_()
   , E_L_( 0.0 )
   , I_e_( 0.0 )
   , loss_( "mean_squared_error" )
+  , regular_spike_arrival_( true )
   , tau_m_( 10.0 )
   , V_min_( -std::numeric_limits< double >::max() )
   , eprop_isi_trace_cutoff_( std::numeric_limits< long >::max() )
@@ -113,6 +114,7 @@ eprop_readout::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::E_L, E_L_ );
   def< double >( d, names::I_e, I_e_ );
   def< std::string >( d, names::loss, loss_ );
+  def< bool >( d, names::regular_spike_arrival, regular_spike_arrival_ );
   def< double >( d, names::tau_m, tau_m_ );
   def< double >( d, names::V_min, V_min_ + E_L_ );
   def< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
@@ -132,6 +134,7 @@ eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::C_m, C_m_, node );
   updateValueParam< double >( d, names::I_e, I_e_, node );
   updateValueParam< std::string >( d, names::loss, loss_, node );
+  updateValueParam< bool >( d, names::regular_spike_arrival, regular_spike_arrival_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
   updateValueParam< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
   updateValueParam< double >( d, names::eta, eta_, node );
@@ -236,7 +239,7 @@ eprop_readout::pre_run_hook()
 
   V_.P_v_m_ = kappa;
   V_.P_i_in_ = P_.tau_m_ / P_.C_m_ * ( 1.0 - kappa );
-  V_.P_z_in_ = 1.0 - kappa;
+  V_.P_z_in_ = P_.regular_spike_arrival_ ? 1.0 : 1.0 - V_.P_v_m_;
 }
 
 bool

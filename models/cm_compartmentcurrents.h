@@ -47,16 +47,16 @@ namespace nest
 class Na
 {
 private:
-  //!< state variables sodium channel
-  double m_Na_ = 0.0;
-  double h_Na_ = 0.0;
+  //! state variables sodium channel
+  double m_Na_;
+  double h_Na_;
 
-  //!< user-defined parameters sodium channel (maximal conductance, reversal potential)
-  double gbar_Na_ = 0.0;
-  double e_Na_ = 0.0;
+  //! user-defined parameters sodium channel (maximal conductance, reversal potential)
+  double gbar_Na_; // uS
+  double e_Na_;    // mV
 
-  //!< temperature factor for reaction rates
-  double q10_ = 1. / 3.21;
+  //! temperature factor for reaction rates
+  double q10_;
 
 public:
   Na();
@@ -66,14 +66,14 @@ public:
   void init_statevars( double v_init );
   void pre_run_hook() {};
 
-  //!< make the state variables of this channel accessible
+  //! make the state variables of this channel accessible
   void append_recordables( std::map< Name, double* >* recordables, const long compartment_idx );
 
-  //!< compute state variable time scale and asymptotic values
-  void compute_statevar_m( double v_comp, double& tau_m_Na, double& m_inf_Na );
-  void compute_statevar_h( double v_comp, double& tau_h_Na, double& h_inf_Na );
+  //! compute state variable time scale and asymptotic values
+  std::pair< double, double > compute_statevar_m( double v_comp );
+  std::pair< double, double > compute_statevar_h( double v_comp );
 
-  //!< advance channel by one numerical integration step
+  //! advance channel by one numerical integration step
   std::pair< double, double > f_numstep( const double v_comp );
 };
 
@@ -91,15 +91,15 @@ public:
 class K
 {
 private:
-  //!< state variables potassium channel
+  //! state variables potassium channel
   double n_K_ = 0.0;
 
-  //!< user-defined parameters potassium channel (maximal conductance, reversal potential)
-  double gbar_K_ = 0.0;
-  double e_K_ = -85.;
+  //! user-defined parameters potassium channel (maximal conductance, reversal potential)
+  double gbar_K_; // uS
+  double e_K_;    // mV
 
-  //!< temperature factor for reaction rates
-  double q10_ = 1. / 3.21;
+  //! temperature factor for reaction rates
+  double q10_;
 
 public:
   K();
@@ -109,13 +109,13 @@ public:
   void init_statevars( double v_init );
   void pre_run_hook() {};
 
-  //!< make the state variables of this channel accessible
+  //! make the state variables of this channel accessible
   void append_recordables( std::map< Name, double* >* recordables, const long compartment_idx );
 
-  //!< compute state variable time scale and asymptotic values
-  void compute_statevar_n( double v_comp, double& tau_n_Na, double& n_inf_Na );
+  //! compute state variable time scale and asymptotic values
+  std::pair< double, double > compute_statevar_n( double v_comp );
 
-  //!< advance channel by one numerical integration step
+  //! advance channel by one numerical integration step
   std::pair< double, double > f_numstep( const double v_comp );
 };
 
@@ -123,23 +123,26 @@ public:
 class AMPA
 {
 private:
-  //!<  global synapse index
+  //!  global synapse index
   long syn_idx = 0;
 
-  //!<  state variables
-  double g_r_AMPA_ = 0., g_d_AMPA_ = 0.;
+  //!  state variables
+  double g_r_AMPA_;
+  double g_d_AMPA_;
 
-  //!<  user defined parameters
-  double e_rev_ = 0.0;              // mV
-  double tau_r_ = 0.2, tau_d_ = 3.; // ms
+  //!  user defined parameters
+  double e_rev_; // mV
+  double tau_r_; // ms
+  double tau_d_; // ms
 
-  //!<  assigned variables
+  //!  assigned variables
   double g_norm_ = 1.0;
 
-  //!<  propagators
-  double prop_r_ = 0., prop_d_ = 0.;
+  //!  propagators
+  double prop_r_ = 0.;
+  double prop_d_ = 0.;
 
-  //!<  spike buffer
+  //!  spike buffer
   RingBuffer* b_spikes_;
 
 public:
@@ -153,7 +156,7 @@ public:
     return syn_idx;
   };
 
-  //!< initialization of the state variables
+  //! initialization of the state variables
   void
   pre_run_hook()
   {
@@ -165,17 +168,17 @@ public:
     b_spikes_->clear();
   };
 
-  //!< make the state variables of this receptor accessible
+  //! make the state variables of this receptor accessible
   void append_recordables( std::map< Name, double* >* recordables );
 
-  //!< associate the receptor with a spike buffer
+  //! associate the receptor with a spike buffer
   void
   set_buffer_ptr( std::vector< RingBuffer >& syn_buffers )
   {
     b_spikes_ = &syn_buffers[ syn_idx ];
   };
 
-  //!< advance receptor by one numerical integration step
+  //! advance receptor by one numerical integration step
   std::pair< double, double > f_numstep( const double v_comp, const long lag );
 };
 
@@ -183,23 +186,26 @@ public:
 class GABA
 {
 private:
-  //!< global synapse index
+  //! global synapse index
   long syn_idx = 0;
 
-  //!< state variables
-  double g_r_GABA_ = 0., g_d_GABA_ = 0.;
+  //! state variables
+  double g_r_GABA_;
+  double g_d_GABA_;
 
-  //!< user defined parameters
-  double e_rev_ = -80.;              // mV
-  double tau_r_ = 0.2, tau_d_ = 10.; // ms
+  //! user defined parameters
+  double e_rev_; // mV
+  double tau_r_; // ms
+  double tau_d_; // ms
 
-  //!< assigned variables
+  //! assigned variables
   double g_norm_ = 1.0;
 
-  //!< propagators
-  double prop_r_ = 0., prop_d_ = 0.;
+  //! propagators
+  double prop_r_ = 0.;
+  double prop_d_ = 0.;
 
-  //!< spike buffer
+  //! spike buffer
   RingBuffer* b_spikes_;
 
 public:
@@ -213,7 +219,7 @@ public:
     return syn_idx;
   };
 
-  //!< initialization of the state variables
+  //! initialization of the state variables
   void
   pre_run_hook()
   {
@@ -225,17 +231,17 @@ public:
     b_spikes_->clear();
   };
 
-  //!< make the state variables of this receptor accessible
+  //! make the state variables of this receptor accessible
   void append_recordables( std::map< Name, double* >* recordables );
 
-  //!< associate the receptor with a spike buffer
+  //! associate the receptor with a spike buffer
   void
   set_buffer_ptr( std::vector< RingBuffer >& syn_buffers )
   {
     b_spikes_ = &syn_buffers[ syn_idx ];
   };
 
-  //!< advance receptor by one numerical integration step
+  //! advance receptor by one numerical integration step
   std::pair< double, double > f_numstep( const double v_comp, const long lag );
 };
 
@@ -243,23 +249,26 @@ public:
 class NMDA
 {
 private:
-  //!< global synapse index
+  //! global synapse index
   long syn_idx = 0;
 
-  //!< state variables
-  double g_r_NMDA_ = 0., g_d_NMDA_ = 0.;
+  //! state variables
+  double g_r_NMDA_;
+  double g_d_NMDA_;
 
-  //!< user defined parameters
-  double e_rev_ = 0.0;               // mV
-  double tau_r_ = 0.2, tau_d_ = 43.; // ms
+  //! user defined parameters
+  double e_rev_; // mV
+  double tau_r_; // ms
+  double tau_d_; // ms
 
-  //!< assigned variables
+  //! assigned variables
   double g_norm_ = 1.0;
 
-  //!< propagators
-  double prop_r_ = 0., prop_d_ = 0.;
+  //! propagators
+  double prop_r_ = 0.;
+  double prop_d_ = 0.;
 
-  //!< spike buffer
+  //! spike buffer
   RingBuffer* b_spikes_;
 
 public:
@@ -273,7 +282,7 @@ public:
     return syn_idx;
   };
 
-  //!< initialization of the state variables
+  //! initialization of the state variables
   void
   pre_run_hook()
   {
@@ -285,20 +294,20 @@ public:
     b_spikes_->clear();
   };
 
-  //!< make the state variables of this receptor accessible
+  //! make the state variables of this receptor accessible
   void append_recordables( std::map< Name, double* >* recordables );
 
-  //!< associate the receptor with a spike buffer
+  //! associate the receptor with a spike buffer
   void
   set_buffer_ptr( std::vector< RingBuffer >& syn_buffers )
   {
     b_spikes_ = &syn_buffers[ syn_idx ];
   };
 
-  //!< advance receptor by one numerical integration step
+  //! advance receptor by one numerical integration step
   std::pair< double, double > f_numstep( const double v_comp, const long lag );
 
-  //!< synapse specific function (NMDA nonlinearity)
+  //! synapse specific function (NMDA nonlinearity)
   inline std::pair< double, double >
   NMDA_sigmoid__and__d_NMDAsigmoid_dv( double v_comp )
   {
@@ -313,28 +322,34 @@ public:
 class AMPA_NMDA
 {
 private:
-  //!< global synapse index
+  //! global synapse index
   long syn_idx = 0;
 
-  //!< state variables
-  double g_r_AN_AMPA_ = 0., g_d_AN_AMPA_ = 0.;
-  double g_r_AN_NMDA_ = 0., g_d_AN_NMDA_ = 0.;
+  //! state variables
+  double g_r_AN_AMPA_;
+  double g_d_AN_AMPA_;
+  double g_r_AN_NMDA_;
+  double g_d_AN_NMDA_;
 
-  //!< user defined parameters
-  double e_rev_ = 0.0;                         // mV
-  double tau_r_AMPA_ = 0.2, tau_d_AMPA_ = 43.; // ms
-  double tau_r_NMDA_ = 0.2, tau_d_NMDA_ = 43.; // ms
+  //! user defined parameters
+  double e_rev_;      // mV
+  double tau_r_AMPA_; // ms
+  double tau_d_AMPA_; // ms
+  double tau_r_NMDA_; // ms
+  double tau_d_NMDA_; // ms
   double NMDA_ratio_ = 2.0;
 
-  //!< assigned variables
+  //! assigned variables
   double g_norm_AMPA_ = 1.0;
   double g_norm_NMDA_ = 1.0;
 
-  //!< propagators
-  double prop_r_AMPA_ = 0., prop_d_AMPA_ = 0.;
-  double prop_r_NMDA_ = 0., prop_d_NMDA_ = 0.;
+  //! propagators
+  double prop_r_AMPA_ = 0.;
+  double prop_d_AMPA_ = 0.;
+  double prop_r_NMDA_ = 0.;
+  double prop_d_NMDA_ = 0.;
 
-  //!< spike buffer
+  //! spike buffer
   RingBuffer* b_spikes_;
 
 public:
@@ -349,7 +364,7 @@ public:
     return syn_idx;
   };
 
-  //!< initialization of the state variables
+  //! initialization of the state variables
   void
   pre_run_hook()
   {
@@ -362,20 +377,20 @@ public:
     b_spikes_->clear();
   };
 
-  //!< make the state variables of this receptor accessible
+  //! make the state variables of this receptor accessible
   void append_recordables( std::map< Name, double* >* recordables );
 
-  //!< associate the receptor with a spike buffer
+  //! associate the receptor with a spike buffer
   void
   set_buffer_ptr( std::vector< RingBuffer >& syn_buffers )
   {
     b_spikes_ = &syn_buffers[ syn_idx ];
   };
 
-  //!< advance receptor by one numerical integration step
+  //! advance receptor by one numerical integration step
   std::pair< double, double > f_numstep( const double v_comp, const long lag );
 
-  //!< synapse specific function (NMDA nonlinearity)
+  //! synapse specific function (NMDA nonlinearity)
   inline std::pair< double, double >
   NMDA_sigmoid__and__d_NMDAsigmoid_dv( double v_comp )
   {

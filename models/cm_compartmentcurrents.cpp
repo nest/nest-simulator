@@ -27,8 +27,9 @@ nest::Na::Na()
   : m_Na_( 0.0 )
   , h_Na_( 0.0 )
   // parameters
-  , gbar_Na_( 0.0 )
-  , e_Na_( 50. )
+  , gbar_Na_( 0.0 ) // uS
+  , e_Na_( 50. )    // mV
+  , q10_( 1. / 3.21 )
 {
   // some default initialization
   init_statevars( -75. );
@@ -38,8 +39,9 @@ nest::Na::Na( const DictionaryDatum& channel_params )
   : m_Na_( 0.0 )
   , h_Na_( 0.0 )
   // parameters
-  , gbar_Na_( 0.0 )
-  , e_Na_( 50. )
+  , gbar_Na_( 0.0 ) // uS
+  , e_Na_( 50. )    // mV
+  , q10_( 1. / 3.21 )
 {
   // update sodium channel parameters
   if ( channel_params->known( "gbar_Na" ) )
@@ -63,9 +65,12 @@ nest::Na::Na( const DictionaryDatum& channel_params )
 void
 nest::Na::init_statevars( double v_init )
 {
-  double tau_dummy; // not required for initialization
-  compute_statevar_m( v_init, tau_dummy, m_Na_ );
-  compute_statevar_h( v_init, tau_dummy, h_Na_ );
+  std::pair< double, double > sv( 0., 0. );
+
+  sv = compute_statevar_m( v_init );
+  m_Na_ = sv.first;
+  sv = compute_statevar_h( v_init );
+  h_Na_ = sv.first;
 }
 
 void
@@ -75,8 +80,8 @@ nest::Na::append_recordables( std::map< Name, double* >* recordables, const long
   ( *recordables )[ Name( "h_Na_" + std::to_string( compartment_idx ) ) ] = &h_Na_;
 }
 
-void
-nest::Na::compute_statevar_m( const double v_comp, double& tau_m_Na, double& m_inf_Na )
+std::pair< double, double >
+nest::Na::compute_statevar_m( const double v_comp )
 {
   /**
    * Channel rate equations from the following .mod file:
@@ -104,12 +109,14 @@ nest::Na::compute_statevar_m( const double v_comp, double& tau_m_Na, double& m_i
   }
 
   // activation and timescale for state variable 'm'
-  tau_m_Na = q10_ * frac_alpha_plus_beta_m;
-  m_inf_Na = alpha_m * frac_alpha_plus_beta_m;
+  double tau_m_Na = q10_ * frac_alpha_plus_beta_m;
+  double m_inf_Na = alpha_m * frac_alpha_plus_beta_m;
+
+  return std::make_pair( m_inf_Na, tau_m_Na );
 }
 
-void
-nest::Na::compute_statevar_h( const double v_comp, double& tau_h_Na, double& h_inf_Na )
+std::pair< double, double >
+nest::Na::compute_statevar_h( const double v_comp )
 {
   /**
    * Channel rate equations from the following .mod file:
@@ -139,8 +146,10 @@ nest::Na::compute_statevar_h( const double v_comp, double& tau_h_Na, double& h_i
   }
 
   // activation and timescale for state variable 'h'
-  tau_h_Na = q10_ / ( alpha_h + beta_h );
-  h_inf_Na = 1. / ( 1. + std::exp( ( v_comp + 65. ) / 6.2 ) );
+  double tau_h_Na = q10_ / ( alpha_h + beta_h );
+  double h_inf_Na = 1. / ( 1. + std::exp( ( v_comp + 65. ) / 6.2 ) );
+
+  return std::make_pair( h_inf_Na, tau_h_Na );
 }
 
 std::pair< double, double >
@@ -151,11 +160,15 @@ nest::Na::f_numstep( const double v_comp )
 
   if ( gbar_Na_ > 1e-9 )
   {
-    double tau_m_Na, m_inf_Na;
-    compute_statevar_m( v_comp, tau_m_Na, m_inf_Na );
+    std::pair< double, double > sv( 0., 0. );
 
-    double tau_h_Na, h_inf_Na;
-    compute_statevar_h( v_comp, tau_h_Na, h_inf_Na );
+    sv = compute_statevar_m( v_comp );
+    double m_inf_Na = sv.first;
+    double tau_m_Na = sv.second;
+
+    sv = compute_statevar_h( v_comp );
+    double h_inf_Na = sv.first;
+    double tau_h_Na = sv.second;
 
     // advance state variable 'm' one timestep
     double p_m_Na = std::exp( -dt / tau_m_Na );
@@ -183,16 +196,18 @@ nest::K::K()
   // state variables
   : n_K_( 0.0 )
   // parameters
-  , gbar_K_( 0.0 )
-  , e_K_( -85. )
+  , gbar_K_( 0.0 ) // uS
+  , e_K_( -85. )   // mV
+  , q10_( 1. / 3.21 )
 {
 }
 nest::K::K( const DictionaryDatum& channel_params )
   // state variables
   : n_K_( 0.0 )
   // parameters
-  , gbar_K_( 0.0 )
-  , e_K_( -85. )
+  , gbar_K_( 0.0 ) // uS
+  , e_K_( -85. )   // mV
+  , q10_( 1. / 3.21 )
 {
   // update potassium channel parameters
   if ( channel_params->known( "gbar_K" ) )
@@ -216,8 +231,9 @@ nest::K::K( const DictionaryDatum& channel_params )
 void
 nest::K::init_statevars( double v_init )
 {
-  double tau_dummy;
-  compute_statevar_n( v_init, tau_dummy, n_K_ );
+  std::pair< double, double > sv( 0., 0. );
+  sv = compute_statevar_n( v_init );
+  n_K_ = sv.first;
 }
 
 void
@@ -226,8 +242,9 @@ nest::K::append_recordables( std::map< Name, double* >* recordables, const long 
   ( *recordables )[ Name( "n_K_" + std::to_string( compartment_idx ) ) ] = &n_K_;
 }
 
-void
-nest::K::compute_statevar_n( const double v_comp, double& tau_n_K, double& n_inf_K )
+std::pair< double, double >
+// nest::K::compute_statevar_n( const double v_comp, double& tau_n_K, double& n_inf_K )
+nest::K::compute_statevar_n( const double v_comp )
 {
   /**
    * Channel rate equations from the following .mod file:
@@ -256,8 +273,10 @@ nest::K::compute_statevar_n( const double v_comp, double& tau_n_K, double& n_inf
   }
 
   // activation and timescale of state variable 'n'
-  tau_n_K = q10_ * frac_alpha_plus_beta_n;
-  n_inf_K = alpha_n * frac_alpha_plus_beta_n;
+  double tau_n_K = q10_ * frac_alpha_plus_beta_n;
+  double n_inf_K = alpha_n * frac_alpha_plus_beta_n;
+
+  return std::make_pair( n_inf_K, tau_n_K );
 }
 
 std::pair< double, double >
@@ -268,8 +287,10 @@ nest::K::f_numstep( const double v_comp )
 
   if ( gbar_K_ > 1e-9 )
   {
-    double tau_n_K, n_inf_K;
-    compute_statevar_n( v_comp, tau_n_K, n_inf_K );
+    std::pair< double, double > sv( 0., 0. );
+    sv = compute_statevar_n( v_comp );
+    double n_inf_K = sv.first;
+    double tau_n_K = sv.second;
 
     // advance state variable 'm' one timestep
     double p_n_K = std::exp( -dt / tau_n_K );
@@ -293,9 +314,9 @@ nest::AMPA::AMPA( const long syn_index )
   : g_r_AMPA_( 0.0 )
   , g_d_AMPA_( 0.0 )
   // initialization parameters
-  , e_rev_( 0.0 )
-  , tau_r_( 0.2 )
-  , tau_d_( 3.0 )
+  , e_rev_( 0.0 ) // mV
+  , tau_r_( 0.2 ) // ms
+  , tau_d_( 3.0 ) // ms
 {
   syn_idx = syn_index;
 
@@ -307,9 +328,9 @@ nest::AMPA::AMPA( const long syn_index, const DictionaryDatum& receptor_params )
   : g_r_AMPA_( 0.0 )
   , g_d_AMPA_( 0.0 )
   // initialization parameters
-  , e_rev_( 0.0 )
-  , tau_r_( 0.2 )
-  , tau_d_( 3.0 )
+  , e_rev_( 0.0 ) // mV
+  , tau_r_( 0.2 ) // ms
+  , tau_d_( 3.0 ) // ms
 {
   syn_idx = syn_index;
 
@@ -371,9 +392,9 @@ nest::GABA::GABA( const long syn_index )
   : g_r_GABA_( 0.0 )
   , g_d_GABA_( 0.0 )
   // initialization parameters
-  , e_rev_( -80. )
-  , tau_r_( 0.2 )
-  , tau_d_( 10.0 )
+  , e_rev_( -80. ) // mV
+  , tau_r_( 0.2 )  // ms
+  , tau_d_( 10.0 ) // ms
 {
   syn_idx = syn_index;
 
@@ -385,9 +406,9 @@ nest::GABA::GABA( const long syn_index, const DictionaryDatum& receptor_params )
   : g_r_GABA_( 0.0 )
   , g_d_GABA_( 0.0 )
   // initialization parameters
-  , e_rev_( -80. )
-  , tau_r_( 0.2 )
-  , tau_d_( 10.0 )
+  , e_rev_( -80. ) // mV
+  , tau_r_( 0.2 )  // ms
+  , tau_d_( 10.0 ) // ms
 {
   syn_idx = syn_index;
 
@@ -449,9 +470,9 @@ nest::NMDA::NMDA( const long syn_index )
   : g_r_NMDA_( 0.0 )
   , g_d_NMDA_( 0.0 )
   // initialization parameters
-  , e_rev_( 0. )
-  , tau_r_( 0.2 )
-  , tau_d_( 43.0 )
+  , e_rev_( 0. )   // mV
+  , tau_r_( 0.2 )  // ms
+  , tau_d_( 43.0 ) // ms
 {
   syn_idx = syn_index;
 
@@ -532,11 +553,11 @@ nest::AMPA_NMDA::AMPA_NMDA( const long syn_index )
   , g_r_AN_NMDA_( 0.0 )
   , g_d_AN_NMDA_( 0.0 )
   // initialization parameters
-  , e_rev_( 0. )
-  , tau_r_AMPA_( 0.2 )
-  , tau_d_AMPA_( 3.0 )
-  , tau_r_NMDA_( 0.2 )
-  , tau_d_NMDA_( 43.0 )
+  , e_rev_( 0. )        // mV
+  , tau_r_AMPA_( 0.2 )  // ms
+  , tau_d_AMPA_( 3.0 )  // ms
+  , tau_r_NMDA_( 0.2 )  // ms
+  , tau_d_NMDA_( 43.0 ) // ms
   , NMDA_ratio_( 2.0 )
 {
   syn_idx = syn_index;
@@ -555,11 +576,11 @@ nest::AMPA_NMDA::AMPA_NMDA( const long syn_index, const DictionaryDatum& recepto
   , g_r_AN_NMDA_( 0.0 )
   , g_d_AN_NMDA_( 0.0 )
   // initialization parameters
-  , e_rev_( 0. )
-  , tau_r_AMPA_( 0.2 )
-  , tau_d_AMPA_( 3.0 )
-  , tau_r_NMDA_( 0.2 )
-  , tau_d_NMDA_( 43.0 )
+  , e_rev_( 0. )        // mV
+  , tau_r_AMPA_( 0.2 )  // ms
+  , tau_d_AMPA_( 3.0 )  // ms
+  , tau_r_NMDA_( 0.2 )  // ms
+  , tau_d_NMDA_( 43.0 ) // ms
   , NMDA_ratio_( 2.0 )
 {
   syn_idx = syn_index;

@@ -235,7 +235,6 @@ nest::K::append_recordables( std::map< Name, double* >* recordables, const long 
 }
 
 std::pair< double, double >
-// nest::K::compute_statevar_n( const double v_comp, double& tau_n_K, double& n_inf_K )
 nest::K::compute_statevar_n( const double v_comp )
 {
   /**
@@ -309,6 +308,10 @@ nest::AMPA::AMPA( const long syn_index )
   , e_rev_( 0.0 ) // mV
   , tau_r_( 0.2 ) // ms
   , tau_d_( 3.0 ) // ms
+  // will be recomputed based on parameters
+  , g_norm_( 1.0 )
+  , prop_r_( 0.0 )
+  , prop_d_( 0.0 )
 {
   syn_idx = syn_index;
 
@@ -324,6 +327,10 @@ nest::AMPA::AMPA( const long syn_index, const DictionaryDatum& receptor_params )
   , e_rev_( 0.0 ) // mV
   , tau_r_( 0.2 ) // ms
   , tau_d_( 3.0 ) // ms
+  // will be recomputed based on parameters
+  , g_norm_( 1.0 )
+  , prop_r_( 0.0 )
+  , prop_d_( 0.0 )
 {
   syn_idx = syn_index;
 
@@ -388,6 +395,10 @@ nest::GABA::GABA( const long syn_index )
   , e_rev_( -80. ) // mV
   , tau_r_( 0.2 )  // ms
   , tau_d_( 10.0 ) // ms
+  // will be recomputed based on parameters
+  , g_norm_( 1.0 )
+  , prop_r_( 0.0 )
+  , prop_d_( 0.0 )
 {
   syn_idx = syn_index;
 
@@ -403,6 +414,10 @@ nest::GABA::GABA( const long syn_index, const DictionaryDatum& receptor_params )
   , e_rev_( -80. ) // mV
   , tau_r_( 0.2 )  // ms
   , tau_d_( 10.0 ) // ms
+  // will be recomputed based on parameters
+  , g_norm_( 1.0 )
+  , prop_r_( 0.0 )
+  , prop_d_( 0.0 )
 {
   syn_idx = syn_index;
 
@@ -467,6 +482,10 @@ nest::NMDA::NMDA( const long syn_index )
   , e_rev_( 0. )   // mV
   , tau_r_( 0.2 )  // ms
   , tau_d_( 43.0 ) // ms
+  // will be recomputed based on parameters
+  , g_norm_( 1.0 )
+  , prop_r_( 0.0 )
+  , prop_d_( 0.0 )
 {
   syn_idx = syn_index;
 
@@ -482,6 +501,10 @@ nest::NMDA::NMDA( const long syn_index, const DictionaryDatum& receptor_params )
   , e_rev_( 0. )
   , tau_r_( 0.2 )
   , tau_d_( 43.0 )
+  // will be recomputed based on parameters
+  , g_norm_( 1.0 )
+  , prop_r_( 0.0 )
+  , prop_d_( 0.0 )
 {
   syn_idx = syn_index;
 
@@ -554,6 +577,13 @@ nest::AMPA_NMDA::AMPA_NMDA( const long syn_index )
   , tau_r_NMDA_( 0.2 )  // ms
   , tau_d_NMDA_( 43.0 ) // ms
   , NMDA_ratio_( 2.0 )
+  // will be recomputed based on parameters
+  , g_norm_AMPA_( 1.0 )
+  , g_norm_NMDA_( 1.0 )
+  , prop_r_AMPA_( 0.0 )
+  , prop_d_AMPA_( 0.0 )
+  , prop_r_NMDA_( 0.0 )
+  , prop_d_NMDA_( 0.0 )
 {
   syn_idx = syn_index;
 
@@ -578,6 +608,13 @@ nest::AMPA_NMDA::AMPA_NMDA( const long syn_index, const DictionaryDatum& recepto
   , tau_r_NMDA_( 0.2 )  // ms
   , tau_d_NMDA_( 43.0 ) // ms
   , NMDA_ratio_( 2.0 )
+  // will be recomputed based on parameters
+  , g_norm_AMPA_( 1.0 )
+  , g_norm_NMDA_( 1.0 )
+  , prop_r_AMPA_( 0.0 )
+  , prop_d_AMPA_( 0.0 )
+  , prop_r_NMDA_( 0.0 )
+  , prop_d_NMDA_( 0.0 )
 {
   syn_idx = syn_index;
 

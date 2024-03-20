@@ -136,11 +136,11 @@ private:
   double tau_d_; // ms
 
   //!  assigned variables
-  double g_norm_ = 1.0;
+  double g_norm_;
 
   //!  propagators
-  double prop_r_ = 0.;
-  double prop_d_ = 0.;
+  double prop_r_;
+  double prop_d_;
 
   //!  spike buffer
   RingBuffer* b_spikes_;
@@ -199,11 +199,11 @@ private:
   double tau_d_; // ms
 
   //! assigned variables
-  double g_norm_ = 1.0;
+  double g_norm_;
 
   //! propagators
-  double prop_r_ = 0.;
-  double prop_d_ = 0.;
+  double prop_r_;
+  double prop_d_;
 
   //! spike buffer
   RingBuffer* b_spikes_;
@@ -262,11 +262,11 @@ private:
   double tau_d_; // ms
 
   //! assigned variables
-  double g_norm_ = 1.0;
+  double g_norm_;
 
   //! propagators
-  double prop_r_ = 0.;
-  double prop_d_ = 0.;
+  double prop_r_;
+  double prop_d_;
 
   //! spike buffer
   RingBuffer* b_spikes_;
@@ -337,17 +337,17 @@ private:
   double tau_d_AMPA_; // ms
   double tau_r_NMDA_; // ms
   double tau_d_NMDA_; // ms
-  double NMDA_ratio_ = 2.0;
+  double NMDA_ratio_;
 
   //! assigned variables
-  double g_norm_AMPA_ = 1.0;
-  double g_norm_NMDA_ = 1.0;
+  double g_norm_AMPA_;
+  double g_norm_NMDA_;
 
   //! propagators
-  double prop_r_AMPA_ = 0.;
-  double prop_d_AMPA_ = 0.;
-  double prop_r_NMDA_ = 0.;
-  double prop_d_NMDA_ = 0.;
+  double prop_r_AMPA_;
+  double prop_d_AMPA_;
+  double prop_r_NMDA_;
+  double prop_d_NMDA_;
 
   //! spike buffer
   RingBuffer* b_spikes_;

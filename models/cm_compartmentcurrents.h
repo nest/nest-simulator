@@ -59,8 +59,8 @@ private:
   double q10_;
 
 public:
-  Na();
-  explicit Na( const DictionaryDatum& channel_params );
+  Na( double v_comp );
+  explicit Na( double v_comp, const DictionaryDatum& channel_params );
   ~Na() {};
 
   void init_statevars( double v_init );
@@ -102,8 +102,8 @@ private:
   double q10_;
 
 public:
-  K();
-  explicit K( const DictionaryDatum& channel_params );
+  K( double v_comp );
+  explicit K( double v_comp, const DictionaryDatum& channel_params );
   ~K() {};
 
   void init_statevars( double v_init );
@@ -415,12 +415,8 @@ private:
   std::vector< AMPA_NMDA > AMPA_NMDA_syns_;
 
 public:
-  CompartmentCurrents()
-    : Na_chan_()
-    , K_chan_() {};
-  explicit CompartmentCurrents( const DictionaryDatum& channel_params )
-    : Na_chan_( channel_params )
-    , K_chan_( channel_params ) {};
+  CompartmentCurrents( double v_comp );
+  CompartmentCurrents( double v_comp, const DictionaryDatum& channel_params );
   ~CompartmentCurrents() {};
 
   void

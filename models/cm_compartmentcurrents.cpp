@@ -22,7 +22,7 @@
 #include "cm_compartmentcurrents.h"
 
 
-nest::Na::Na()
+nest::Na::Na( double v_comp )
   // state variables
   : m_Na_( 0.0 )
   , h_Na_( 0.0 )
@@ -32,9 +32,10 @@ nest::Na::Na()
   , q10_( 1. / 3.21 )
 {
   // some default initialization
-  init_statevars( -75. );
+  init_statevars( v_comp );
 }
-nest::Na::Na( const DictionaryDatum& channel_params )
+
+nest::Na::Na( double v_comp, const DictionaryDatum& channel_params )
   // state variables
   : m_Na_( 0.0 )
   , h_Na_( 0.0 )
@@ -53,13 +54,7 @@ nest::Na::Na( const DictionaryDatum& channel_params )
     e_Na_ = getValue< double >( channel_params, "e_Na" );
   }
 
-  // set the initialization of the channel
-  double v_init = -75.;
-  if ( channel_params->known( "v_comp" ) )
-  {
-    v_init = getValue< double >( channel_params, "v_comp" );
-  }
-  init_statevars( v_init );
+  init_statevars( v_comp );
 }
 
 void
@@ -192,7 +187,7 @@ nest::Na::f_numstep( const double v_comp )
 }
 
 
-nest::K::K()
+nest::K::K( double v_comp )
   // state variables
   : n_K_( 0.0 )
   // parameters
@@ -200,8 +195,10 @@ nest::K::K()
   , e_K_( -85. )   // mV
   , q10_( 1. / 3.21 )
 {
+  init_statevars( v_comp );
 }
-nest::K::K( const DictionaryDatum& channel_params )
+
+nest::K::K( double v_comp, const DictionaryDatum& channel_params )
   // state variables
   : n_K_( 0.0 )
   // parameters
@@ -220,12 +217,7 @@ nest::K::K( const DictionaryDatum& channel_params )
   }
 
   // initialize the state variables
-  double v_init = -75.;
-  if ( channel_params->known( "v_comp" ) )
-  {
-    v_init = getValue< double >( channel_params, "v_comp" );
-  }
-  init_statevars( v_init );
+  init_statevars( v_comp );
 }
 
 void
@@ -323,6 +315,7 @@ nest::AMPA::AMPA( const long syn_index )
   double tp = ( tau_r_ * tau_d_ ) / ( tau_d_ - tau_r_ ) * std::log( tau_d_ / tau_r_ );
   g_norm_ = 1. / ( -std::exp( -tp / tau_r_ ) + std::exp( -tp / tau_d_ ) );
 }
+
 nest::AMPA::AMPA( const long syn_index, const DictionaryDatum& receptor_params )
   // initialization state variables
   : g_r_AMPA_( 0.0 )
@@ -401,6 +394,7 @@ nest::GABA::GABA( const long syn_index )
   double tp = ( tau_r_ * tau_d_ ) / ( tau_d_ - tau_r_ ) * std::log( tau_d_ / tau_r_ );
   g_norm_ = 1. / ( -std::exp( -tp / tau_r_ ) + std::exp( -tp / tau_d_ ) );
 }
+
 nest::GABA::GABA( const long syn_index, const DictionaryDatum& receptor_params )
   // initialization state variables
   : g_r_GABA_( 0.0 )
@@ -479,6 +473,7 @@ nest::NMDA::NMDA( const long syn_index )
   double tp = ( tau_r_ * tau_d_ ) / ( tau_d_ - tau_r_ ) * std::log( tau_d_ / tau_r_ );
   g_norm_ = 1. / ( -std::exp( -tp / tau_r_ ) + std::exp( -tp / tau_d_ ) );
 }
+
 nest::NMDA::NMDA( const long syn_index, const DictionaryDatum& receptor_params )
   // initialization state variables
   : g_r_NMDA_( 0.0 )
@@ -569,6 +564,7 @@ nest::AMPA_NMDA::AMPA_NMDA( const long syn_index )
   tp = ( tau_r_NMDA_ * tau_d_NMDA_ ) / ( tau_d_NMDA_ - tau_r_NMDA_ ) * std::log( tau_d_NMDA_ / tau_r_NMDA_ );
   g_norm_NMDA_ = 1. / ( -std::exp( -tp / tau_r_NMDA_ ) + std::exp( -tp / tau_d_NMDA_ ) );
 }
+
 nest::AMPA_NMDA::AMPA_NMDA( const long syn_index, const DictionaryDatum& receptor_params )
   // initialization state variables
   : g_r_AN_AMPA_( 0.0 )
@@ -664,4 +660,17 @@ nest::AMPA_NMDA::f_numstep( const double v_comp, const long lag )
   double i_val = i_tot + g_val * v_comp;
 
   return std::make_pair( g_val, i_val );
+}
+
+
+nest::CompartmentCurrents::CompartmentCurrents( double v_comp )
+  : Na_chan_( v_comp )
+  , K_chan_( v_comp )
+{
+}
+
+nest::CompartmentCurrents::CompartmentCurrents( double v_comp, const DictionaryDatum& channel_params )
+  : Na_chan_( v_comp, channel_params )
+  , K_chan_( v_comp, channel_params )
+{
 }

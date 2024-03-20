@@ -100,7 +100,7 @@ EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous
     update_history_.insert( it_hist_curr, HistEntryEpropUpdate( t_current_update + shift, 1 ) );
     if ( erase )
     {
-      erase_unneeded_eprop_history( eprop_isi_trace_cutoff );
+      erase_used_eprop_history( eprop_isi_trace_cutoff );
     }
   }
 
@@ -114,7 +114,7 @@ EpropArchivingNode< HistEntryT >::write_update_to_history( const long t_previous
 
   if ( erase )
   {
-    erase_unneeded_update_history();
+    erase_used_update_history();
   }
 }
 

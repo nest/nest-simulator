@@ -212,6 +212,8 @@ WeightOptimizerAdam::WeightOptimizerAdam()
   : WeightOptimizer()
   , m_( 0.0 )
   , v_( 0.0 )
+  , beta_1_power_( 1.0 )
+  , beta_2_power_( 1.0 )
 {
 }
 
@@ -241,10 +243,10 @@ WeightOptimizerAdam::optimize_( const WeightOptimizerCommonProperties& cp,
 
   for ( ; optimization_step_ < current_optimization_step; ++optimization_step_ )
   {
-    const double beta_1_factor = 1.0 - std::pow( acp.beta_1_, optimization_step_ );
-    const double beta_2_factor = 1.0 - std::pow( acp.beta_2_, optimization_step_ );
+    beta_1_power_ *= acp.beta_1_;
+    beta_2_power_ *= acp.beta_2_;
 
-    const double alpha = cp.eta_ * std::sqrt( beta_2_factor ) / beta_1_factor;
+    const double alpha = cp.eta_ * std::sqrt( 1.0 - beta_2_power_ ) / ( 1.0 - beta_1_power_ );
 
     m_ = acp.beta_1_ * m_ + ( 1.0 - acp.beta_1_ ) * sum_gradients_;
     v_ = acp.beta_2_ * v_ + ( 1.0 - acp.beta_2_ ) * sum_gradients_ * sum_gradients_;

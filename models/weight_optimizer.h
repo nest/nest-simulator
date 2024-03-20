@@ -314,6 +314,12 @@ private:
 
   //! Second moment estimate variable.
   double v_;
+
+  //! Power of beta_1 factor.
+  double beta_1_power_;
+
+  //! Power of beta_2 factor.
+  double beta_2_power_;
 };
 
 /**

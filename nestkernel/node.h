@@ -510,15 +510,8 @@ public:
    */
   virtual void write_update_to_history( const long t_previous_update,
     const long t_current_update,
-    const long eprop_isi_trace_cutoff,
-    const bool clean );
-
-  /**
-   * Register current update in the update history and deregister previous update.
-   *
-   * @throws IllegalConnection
-   */
-  virtual void write_update_to_history( const long t_previous_update, const long t_current_update );
+    const long eprop_isi_trace_cutoff = 0,
+    const bool clean = false );
 
   /**
    * Get maximum number of time steps integrated between two consecutive spikes.

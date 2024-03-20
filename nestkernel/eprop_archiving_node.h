@@ -64,9 +64,6 @@ public:
     const long eprop_isi_trace_cutoff = 0,
     const bool erase = false ) override;
 
-  //! Get the number of time steps by which the eprop history is shifted to synchronize its factors.
-  long get_shift() const;
-
   //! Get an iterator pointing to the update history entry of the given time step.
   std::vector< HistEntryEpropUpdate >::iterator get_update_history( const long time_step );
 

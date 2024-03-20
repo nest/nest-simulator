@@ -49,13 +49,6 @@ EpropArchivingNode< HistEntryT >::EpropArchivingNode( const EpropArchivingNode& 
 }
 
 template < typename HistEntryT >
-long
-EpropArchivingNode< HistEntryT >::get_shift() const
-{
-  return offset_gen_ + delay_in_rec_;
-}
-
-template < typename HistEntryT >
 void
 EpropArchivingNode< HistEntryT >::register_eprop_connection()
 {

@@ -296,6 +296,7 @@ public:
     WeightOptimizer* optimizer ) override;
 
   void pre_run_hook() override;
+  long get_shift() const override;
   bool is_eprop_recurrent_node() const override;
   void update( Time const&, const long, const long ) override;
 

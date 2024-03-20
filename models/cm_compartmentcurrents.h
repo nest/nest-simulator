@@ -64,7 +64,7 @@ public:
   ~Na() {};
 
   void init_statevars( double v_init );
-  void pre_run_hook();
+  void pre_run_hook() {};
 
   //!< make the state variables of this channel accessible
   void append_recordables( std::map< Name, double* >* recordables, const long compartment_idx );
@@ -107,7 +107,7 @@ public:
   ~K() {};
 
   void init_statevars( double v_init );
-  void pre_run_hook();
+  void pre_run_hook() {};
 
   //!< make the state variables of this channel accessible
   void append_recordables( std::map< Name, double* >* recordables, const long compartment_idx );

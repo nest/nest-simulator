@@ -58,7 +58,6 @@ nest::Na::Na( const DictionaryDatum& channel_params )
     v_init = getValue< double >( channel_params, "v_comp" );
   }
   init_statevars( v_init );
-
 }
 
 void
@@ -67,11 +66,6 @@ nest::Na::init_statevars( double v_init )
   double tau_dummy; // not required for initialization
   compute_statevar_m( v_init, tau_dummy, m_Na_ );
   compute_statevar_h( v_init, tau_dummy, h_Na_ );
-}
-
-void
-nest::Na::pre_run_hook()
-{
 }
 
 void
@@ -224,11 +218,6 @@ nest::K::init_statevars( double v_init )
 {
   double tau_dummy;
   compute_statevar_n( v_init, tau_dummy, n_K_ );
-}
-
-void
-nest::K::pre_run_hook()
-{
 }
 
 void

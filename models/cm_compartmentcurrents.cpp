@@ -29,8 +29,9 @@ nest::Na::Na()
   // parameters
   , gbar_Na_( 0.0 )
   , e_Na_( 50. )
-  , v_init_( -70. )
 {
+  // some default initialization
+  init_statevars( -75. );
 }
 nest::Na::Na( const DictionaryDatum& channel_params )
   // state variables
@@ -39,7 +40,6 @@ nest::Na::Na( const DictionaryDatum& channel_params )
   // parameters
   , gbar_Na_( 0.0 )
   , e_Na_( 50. )
-  , v_init_( -70. )
 {
   // update sodium channel parameters
   if ( channel_params->known( "gbar_Na" ) )
@@ -50,18 +50,28 @@ nest::Na::Na( const DictionaryDatum& channel_params )
   {
     e_Na_ = getValue< double >( channel_params, "e_Na" );
   }
-  if ( channel_params->known( "V_init" ) )
+
+  // set the initialization of the channel
+  double v_init = -75.;
+  if ( channel_params->known( "v_comp" ) )
   {
-    v_init_ = getValue< double >( channel_params, "V_init" );
+    v_init = getValue< double >( channel_params, "v_comp" );
   }
+  init_statevars( v_init );
+
+}
+
+void
+nest::Na::init_statevars( double v_init )
+{
+  double tau_dummy; // not required for initialization
+  compute_statevar_m( v_init, tau_dummy, m_Na_ );
+  compute_statevar_h( v_init, tau_dummy, h_Na_ );
 }
 
 void
 nest::Na::pre_run_hook()
 {
-  double tau_dummy; // not required for initialization
-  compute_statevar_m( v_init_, tau_dummy, m_Na_ );
-  compute_statevar_h( v_init_, tau_dummy, h_Na_ );
 }
 
 void
@@ -181,7 +191,6 @@ nest::K::K()
   // parameters
   , gbar_K_( 0.0 )
   , e_K_( -85. )
-  , v_init_( -70. )
 {
 }
 nest::K::K( const DictionaryDatum& channel_params )
@@ -190,7 +199,6 @@ nest::K::K( const DictionaryDatum& channel_params )
   // parameters
   , gbar_K_( 0.0 )
   , e_K_( -85. )
-  , v_init_( -70. )
 {
   // update potassium channel parameters
   if ( channel_params->known( "gbar_K" ) )
@@ -201,17 +209,26 @@ nest::K::K( const DictionaryDatum& channel_params )
   {
     e_K_ = getValue< double >( channel_params, "e_K" );
   }
-  if ( channel_params->known( "V_init" ) )
+
+  // initialize the state variables
+  double v_init = -75.;
+  if ( channel_params->known( "v_comp" ) )
   {
-    v_init_ = getValue< double >( channel_params, "V_init" );
+    v_init = getValue< double >( channel_params, "v_comp" );
   }
+  init_statevars( v_init );
+}
+
+void
+nest::K::init_statevars( double v_init )
+{
+  double tau_dummy;
+  compute_statevar_n( v_init, tau_dummy, n_K_ );
 }
 
 void
 nest::K::pre_run_hook()
 {
-  double tau_dummy;
-  compute_statevar_n( v_init_, tau_dummy, n_K_ );
 }
 
 void

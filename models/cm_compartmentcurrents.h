@@ -58,15 +58,12 @@ private:
   //!< temperature factor for reaction rates
   double q10_ = 1. / 3.21;
 
-  //!< initialization parameter
-  double v_init_ = -75.;
-
 public:
   Na();
   explicit Na( const DictionaryDatum& channel_params );
   ~Na() {};
 
-  //!< initialization of the state variables to `v_init_`
+  void init_statevars( double v_init );
   void pre_run_hook();
 
   //!< make the state variables of this channel accessible
@@ -104,15 +101,12 @@ private:
   //!< temperature factor for reaction rates
   double q10_ = 1. / 3.21;
 
-  //!< initialization parameter
-  double v_init_ = -75.;
-
 public:
   K();
   explicit K( const DictionaryDatum& channel_params );
   ~K() {};
 
-  //!< initialization of the state variables to `v_init_`
+  void init_statevars( double v_init );
   void pre_run_hook();
 
   //!< make the state variables of this channel accessible

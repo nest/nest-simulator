@@ -78,7 +78,7 @@ nest::Compartment::Compartment( const long compartment_index,
   updateValue< double >( compartment_params, names::g_C, gc );
   updateValue< double >( compartment_params, names::g_L, gl );
   updateValue< double >( compartment_params, names::e_L, el );
-  updateValue< double >( compartment_params, names::V_init, v_init );
+  updateValue< double >( compartment_params, names::v_comp, v_comp );
 
   compartment_currents = CompartmentCurrents( compartment_params );
 
@@ -89,9 +89,6 @@ void
 nest::Compartment::pre_run_hook()
 {
   compartment_currents.pre_run_hook();
-
-  // initialize voltage
-  v_comp = v_init;
 
   const double dt = Time::get_resolution().get_ms();
   ca__div__dt = ca / dt;

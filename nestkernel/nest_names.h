@@ -616,6 +616,7 @@ extern const Name use_wfr;
 
 extern const Name V_act_NMDA;
 extern const Name V_clamp;
+extern const Name v_comp;
 extern const Name V_epsp;
 extern const Name V_init;
 extern const Name V_m;

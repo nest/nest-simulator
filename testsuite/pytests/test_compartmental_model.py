@@ -28,17 +28,17 @@ import unittest
 import nest
 import numpy as np
 
-SP = {"C_m": 1.00, "g_C": 0.00, "g_L": 0.100, "e_L": -70.0, "V_init": -70.0}
+SP = {"C_m": 1.00, "g_C": 0.00, "g_L": 0.100, "e_L": -70.0, "v_comp": -70.0}
 DP = [
-    {"C_m": 0.10, "g_C": 0.10, "g_L": 0.010, "e_L": -70.0, "V_init": -70.0},
-    {"C_m": 0.08, "g_C": 0.11, "g_L": 0.007, "e_L": -70.0, "V_init": -70.0},
-    {"C_m": 0.09, "g_C": 0.07, "g_L": 0.011, "e_L": -70.0, "V_init": -70.0},
-    {"C_m": 0.15, "g_C": 0.12, "g_L": 0.014, "e_L": -70.0, "V_init": -70.0},
-    {"C_m": 0.20, "g_C": 0.32, "g_L": 0.022, "e_L": -55.0, "V_init": -55.0},
-    {"C_m": 0.12, "g_C": 0.12, "g_L": 0.010, "e_L": -23.0, "V_init": -23.0},
-    {"C_m": 0.32, "g_C": 0.09, "g_L": 0.032, "e_L": -32.0, "V_init": -32.0},
-    {"C_m": 0.01, "g_C": 0.05, "g_L": 0.001, "e_L": -88.0, "V_init": -88.0},
-    {"C_m": 0.02, "g_C": 0.03, "g_L": 0.002, "e_L": -90.0, "V_init": -90.0},
+    {"C_m": 0.10, "g_C": 0.10, "g_L": 0.010, "e_L": -70.0, "v_comp": -70.0},
+    {"C_m": 0.08, "g_C": 0.11, "g_L": 0.007, "e_L": -70.0, "v_comp": -70.0},
+    {"C_m": 0.09, "g_C": 0.07, "g_L": 0.011, "e_L": -70.0, "v_comp": -70.0},
+    {"C_m": 0.15, "g_C": 0.12, "g_L": 0.014, "e_L": -70.0, "v_comp": -70.0},
+    {"C_m": 0.20, "g_C": 0.32, "g_L": 0.022, "e_L": -55.0, "v_comp": -55.0},
+    {"C_m": 0.12, "g_C": 0.12, "g_L": 0.010, "e_L": -23.0, "v_comp": -23.0},
+    {"C_m": 0.32, "g_C": 0.09, "g_L": 0.032, "e_L": -32.0, "v_comp": -32.0},
+    {"C_m": 0.01, "g_C": 0.05, "g_L": 0.001, "e_L": -88.0, "v_comp": -88.0},
+    {"C_m": 0.02, "g_C": 0.03, "g_L": 0.002, "e_L": -90.0, "v_comp": -90.0},
 ]
 
 
@@ -1023,14 +1023,14 @@ class CompartmentsTestCase(unittest.TestCase):
         self.assertEqual(len(list(cm2.receptors)), 3)
 
     def test_custom_v_init(self):
-        sp0 = {"C_m": 1.00, "g_C": 0.00, "g_L": 0.100, "e_L": -60.0, "V_init": -60.0}
-        dp0 = {"C_m": 0.10, "g_C": 0.10, "g_L": 0.010, "e_L": -60.0, "V_init": -60.0}
+        sp0 = {"C_m": 1.00, "g_C": 0.00, "g_L": 0.100, "e_L": -60.0, "v_comp": -60.0}
+        dp0 = {"C_m": 0.10, "g_C": 0.10, "g_L": 0.010, "e_L": -60.0, "v_comp": -60.0}
 
-        sp1 = {"C_m": 1.00, "g_C": 0.00, "g_L": 0.100, "e_L": -75.0, "V_init": -60.0}
-        dp1 = {"C_m": 0.10, "g_C": 0.10, "g_L": 0.010, "e_L": -80.0, "V_init": -60.0}
+        sp1 = {"C_m": 1.00, "g_C": 0.00, "g_L": 0.100, "e_L": -75.0, "v_comp": -60.0}
+        dp1 = {"C_m": 0.10, "g_C": 0.10, "g_L": 0.010, "e_L": -80.0, "v_comp": -60.0}
 
-        sp2 = {"C_m": 1.00, "g_C": 0.00, "g_L": 0.100, "e_L": -70.0, "V_init": -70.0}
-        dp2 = {"C_m": 0.10, "g_C": 0.10, "g_L": 0.010, "e_L": -70.0, "V_init": -70.0}
+        sp2 = {"C_m": 1.00, "g_C": 0.00, "g_L": 0.100, "e_L": -70.0, "v_comp": -70.0}
+        dp2 = {"C_m": 0.10, "g_C": 0.10, "g_L": 0.010, "e_L": -70.0, "v_comp": -70.0}
 
         # test initialization equal to leak
         cm = nest.Create("cm_default")
@@ -1044,7 +1044,7 @@ class CompartmentsTestCase(unittest.TestCase):
 
         nest.Simulate(10.0)
 
-        self.assertTrue(np.allclose(mm.events["v_comp0"], sp0["V_init"]))
+        self.assertTrue(np.allclose(mm.events["v_comp0"], sp0["v_comp"]))
         self.assertTrue(np.allclose(mm.events["v_comp1"], -60.0))
 
         # test initialization different from leak

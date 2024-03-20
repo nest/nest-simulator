@@ -590,6 +590,7 @@ const Name use_wfr( "use_wfr" );
 
 const Name V_act_NMDA( "V_act_NMDA" );
 const Name V_clamp( "V_clamp" );
+const Name v_comp( "v_comp" );
 const Name V_epsp( "V_epsp" );
 const Name V_init( "V_init" );
 const Name V_m( "V_m" );

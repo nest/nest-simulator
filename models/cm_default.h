@@ -159,7 +159,7 @@ The following parameters can be used when adding compartments using ``SetStatus(
  g_C        uS      Coupling conductance with parent compartment (default: 0.01 uS)
  g_L        uS      Leak conductance of the compartment (default: 0.1 uS)
  e_L        mV      Leak reversal of the compartment (default: -70. mV)
- V_init     mV      Initialization voltage of the compartment (default: -70. mV)
+ v_comp     mV      Initialization voltage of the compartment (default: -75. mV)
 =========== ======= ===============================================================
 
 Ion channels and receptor types for the default model are hardcoded.

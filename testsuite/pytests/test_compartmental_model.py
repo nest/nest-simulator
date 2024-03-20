@@ -960,10 +960,8 @@ class CompartmentsTestCase(unittest.TestCase):
         nest.Connect(m_neat, n_neat)
 
         # test the case where we continue a run without resetting the neural state
-        nest.Prepare()
-        nest.Run(12.0)
-        nest.Run(88.0)
-        nest.Cleanup()
+        nest.Simulate(12.0)
+        nest.Simulate(88.0)
 
         events_neat_1 = nest.GetStatus(m_neat, "events")[0]
 

@@ -277,12 +277,9 @@ eprop_readout::update( Time const& origin, const long from, const long to )
 
     ( this->*compute_error_signal )( lag );
 
-    if ( not S_.learning_window_flag_ )
-    {
-      S_.target_signal_ = 0.0;
-      S_.readout_signal_ = 0.0;
-      S_.error_signal_ = 0.0;
-    }
+    S_.target_signal_ *= S_.learning_window_signal_;
+    S_.readout_signal_ *= S_.learning_window_signal_;
+    S_.error_signal_ *= S_.learning_window_signal_;
 
     B_.normalization_rate_ = 0.0;
 
@@ -360,11 +357,7 @@ eprop_readout::handle( DelayedRateConnectionEvent& e )
   }
   else if ( rport == LEARNING_WINDOW_SIG )
   {
-    S_.learning_window_flag_ = true;
-    if ( std::abs( signal ) < 1.0 )
-    {
-      S_.learning_window_flag_ = false;
-    }
+    S_.learning_window_signal_ = signal;
   }
 
   assert( it == e.end() );

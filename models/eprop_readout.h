@@ -324,8 +324,8 @@ private:
     //! Target / teacher signal that the network is supposed to learn.
     double target_signal_;
 
-    //! Flag indicating whether the readout neurons are in a learning phase.
-    bool learning_window_flag_;
+    //! Signal indicating whether the readout neurons are in a learning phase.
+    double learning_window_signal_;
 
     //! Input current (pA).
     double i_in_;

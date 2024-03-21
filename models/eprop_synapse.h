@@ -94,7 +94,6 @@ The following parameters can be set in the status dictionary.
 ----------------------------------------------------------------------------------------------------
 Parameter        Unit Math equivalent Default Description
 ================ ==== =============== ======= ======================================================
-average_gradient                        False If True, average the gradient over the learning window
 optimizer                                  {} Dictionary of optimizer parameters
 ================ ==== =============== ======= ======================================================
 
@@ -182,9 +181,6 @@ public:
 
   //! Update values in parameter dictionary.
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
-
-  //! If True, average the gradient over the learning window.
-  bool average_gradient_;
 
   /**
    * Pointer to common properties object for weight optimizer.

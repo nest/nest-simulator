@@ -36,14 +36,12 @@ register_eprop_synapse( const std::string& name )
 
 EpropSynapseCommonProperties::EpropSynapseCommonProperties()
   : CommonSynapseProperties()
-  , average_gradient_( false )
   , optimizer_cp_( new WeightOptimizerCommonPropertiesGradientDescent() )
 {
 }
 
 EpropSynapseCommonProperties::EpropSynapseCommonProperties( const EpropSynapseCommonProperties& cp )
   : CommonSynapseProperties( cp )
-  , average_gradient_( cp.average_gradient_ )
   , optimizer_cp_( cp.optimizer_cp_->clone() )
 {
 }
@@ -57,7 +55,6 @@ void
 EpropSynapseCommonProperties::get_status( DictionaryDatum& d ) const
 {
   CommonSynapseProperties::get_status( d );
-  def< bool >( d, names::average_gradient, average_gradient_ );
   def< std::string >( d, names::optimizer, optimizer_cp_->get_name() );
   DictionaryDatum optimizer_dict = new Dictionary;
   optimizer_cp_->get_status( optimizer_dict );
@@ -68,7 +65,6 @@ void
 EpropSynapseCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   CommonSynapseProperties::set_status( d, cm );
-  updateValue< bool >( d, names::average_gradient, average_gradient_ );
 
   if ( d->known( names::optimizer ) )
   {

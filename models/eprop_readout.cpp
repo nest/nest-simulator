@@ -407,9 +407,6 @@ eprop_readout::compute_gradient( const long t_spike,
 
   const EpropSynapseCommonProperties& ecp = static_cast< const EpropSynapseCommonProperties& >( cp );
 
-  const long learning_window =
-    ecp.average_gradient_ ? kernel().simulation_manager.get_eprop_learning_window().get_steps() : 1;
-
   auto eprop_hist_it = get_eprop_history( t_previous_spike - 1 );
 
   bool pre = true;
@@ -439,7 +436,6 @@ eprop_readout::compute_gradient( const long t_spike,
 
     z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
     grad = L * z_bar;
-    grad /= learning_window;
 
     weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t, grad, weight );
 

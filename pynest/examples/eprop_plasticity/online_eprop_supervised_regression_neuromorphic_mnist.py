@@ -318,7 +318,6 @@ params_common_syn_eprop = {
         "Wmin": -100.0,  # pA, minimal limit of the synaptic weights
         "Wmax": 100.0,  # pA, maximal limit of the synaptic weights
     },
-    "average_gradient": False,  # if True, average the gradient over the learning window
 }
 
 params_syn_base = {

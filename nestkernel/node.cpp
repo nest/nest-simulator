@@ -553,7 +553,6 @@ nest::Node::get_tau_syn_in( int )
 void
 nest::Node::compute_gradient( const long t_spike,
   const long t_previous_spike,
-  long& t,
   double& previous_z_buffer,
   double& z_bar,
   double& e_bar,

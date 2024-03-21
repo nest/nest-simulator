@@ -458,7 +458,6 @@ eprop_iaf_adapt::handle( DataLoggingRequest& e )
 void
 eprop_iaf_adapt::compute_gradient( const long t_spike,
   const long t_previous_spike,
-  long& t,
   double& previous_z_buffer,
   double& z_bar,
   double& e_bar,
@@ -469,6 +468,7 @@ eprop_iaf_adapt::compute_gradient( const long t_spike,
   const CommonSynapseProperties& cp,
   WeightOptimizer* optimizer )
 {
+  long t = t_previous_spike;    // inter-spike time step
   double e = 0.0;               // eligibility trace
   double z = 0.0;               // spiking variable
   double psi = 0.0;             // surrogate gradient

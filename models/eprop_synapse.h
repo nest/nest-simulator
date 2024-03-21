@@ -340,7 +340,6 @@ private:
   double epsilon_ = 0.0;
   double avg_e_ = 0.0;
 
-  long t_ = 0;
   double previous_z_buffer_ = 0.0;
   bool is_first_spike_ = true;
 };
@@ -495,7 +494,6 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
   {
     target->compute_gradient( t_spike,
       t_previous_spike_,
-      t_,
       previous_z_buffer_,
       z_bar_,
       e_bar_,
@@ -512,7 +510,6 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
   target->write_update_to_history( t_begin, t_spike, eprop_isi_trace_cutoff, true );
 
   t_previous_spike_ = t_spike;
-  t_ = t_spike;
 
   e.set_receiver( *target );
   e.set_weight( weight_ );

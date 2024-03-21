@@ -397,7 +397,6 @@ eprop_readout::handle( DataLoggingRequest& e )
 void
 eprop_readout::compute_gradient( const long t_spike,
   const long t_previous_spike,
-  long& t,
   double& previous_z_buffer,
   double& z_bar,
   double& e_bar,
@@ -408,9 +407,10 @@ eprop_readout::compute_gradient( const long t_spike,
   const CommonSynapseProperties& cp,
   WeightOptimizer* optimizer )
 {
-  double z = 0.0;    // spiking variable
-  double L = 0.0;    // error signal
-  double grad = 0.0; // gradient
+  long t = t_previous_spike; // inter-spike time step
+  double z = 0.0;            // spiking variable
+  double L = 0.0;            // error signal
+  double grad = 0.0;         // gradient
 
   const EpropSynapseCommonProperties& ecp = static_cast< const EpropSynapseCommonProperties& >( cp );
 

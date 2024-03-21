@@ -20,6 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
+import itertools
+
 import nest
 import pytest
 
@@ -31,6 +33,48 @@ They should be run with 1, 3 and 4 MPI processes to ensure all passes under vari
 The spatial tests test that NodeCollection::rank_local_begin() works.
 The connect tests test that NodeCollection::thread_local_begin() works.
 """
+
+
+# Parametrization over the number of nodes here only so show hat it works
+@pytest.mark.parametrize(
+    "transform",
+    [
+        lambda nc: nc[::3],
+        lambda nc: nc[1:],
+        lambda nc: nc[:5] + nc[8:],
+        lambda nc: (nc[:5] + nc[8:])[::2],
+        lambda nc: (nc[:5] + nc[8:])[::3],
+        lambda nc: (nc[:5] + nc[9:])[::2],
+        lambda nc: (nc[:5] + nc[9:])[::3],
+        lambda nc: (nc[:5] + nc[8:])[7:],
+        lambda nc: (nc[:5] + nc[8:])[7::3],
+    ],
+)
+def test_slice_node_collections(transform):
+    nest.ResetKernel()
+    nest.total_num_virtual_procs = 12
+    n_orig = nest.Create("parrot_neuron", 31)
+    n_orig_gids = n_orig._to_array()["All"]
+
+    n_sliced = transform(n_orig)
+    n_pyslice_gids = transform(n_orig_gids)
+
+    n_pyslice_gids_on_rank = set(
+        (n.global_id for n in nest.NodeCollection(n_pyslice_gids) if n.vp % nest.NumProcesses() == nest.Rank())
+    )
+
+    assert n_sliced._to_array()["All"] == n_pyslice_gids
+
+    n_sliced_gids_by_rank = n_sliced._to_array("rank")
+    assert len(n_sliced_gids_by_rank) == 1
+    assert set(next(iter(n_sliced_gids_by_rank.values()))) == n_pyslice_gids_on_rank
+
+    n_sliced_gids_by_thread = n_sliced._to_array("thread")
+    assert set(itertools.chain(*n_sliced_gids_by_thread.values())) == n_pyslice_gids_on_rank
+
+    for thread, tgids in n_sliced_gids_by_thread.items():
+        for node in nest.NodeCollection(tgids):
+            assert node.thread == thread
 
 
 @pytest.mark.parametrize("start, step", ([[0, 1], [0, 3]] + [[2, n] for n in range(1, 9)]))

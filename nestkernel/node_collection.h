@@ -191,6 +191,7 @@ public:
   void print_me( std::ostream& ) const;
 };
 
+
 /**
  * Superclass for NodeCollections.
  *
@@ -345,11 +346,13 @@ public:
   virtual const_iterator end( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const = 0;
 
   /**
-   * Method that creates an ArrayDatum filled with node IDs from the NodeCollection.
+   * Method that creates an ArrayDatum filled with node IDs from the NodeCollection; for debugging
    *
-   * @return an ArrayDatum containing node IDs
+   * @param selection is "all", "rank" or "thread"
+   *
+   * @return an ArrayDatum containing node IDs ; if thread, separate thread sections by "0 thread# 0"
    */
-  virtual ArrayDatum to_array() const = 0;
+  ArrayDatum to_array( const std::string& selection ) const;
 
   /**
    * Get the size of the NodeCollection.
@@ -537,9 +540,6 @@ public:
   const_iterator rank_local_begin( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const override;
   const_iterator end( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const override;
 
-  //! Returns an ArrayDatum filled with node IDs from the primitive.
-  ArrayDatum to_array() const override;
-
   //! Returns total number of node IDs in the primitive.
   size_t size() const override;
 
@@ -628,9 +628,30 @@ private:
    */
   void merge_parts_( std::vector< NodeCollectionPrimitive >& parts ) const;
 
+  //! Type for lambda-helper function used by {rank, thread, specific}_local_begin
+  typedef size_t ( *gid_to_phase_fcn_ )( size_t );
+
+  /**
+   * Abstraction of {rank, thread}_local_begin.
+   *
+   * @param period  number of ranks or virtual processes
+   * @param phase calling rank or virtual process
+   * @param period_first_node lambda function converting gid to rank or thread
+   * @returns iterator
+   */
+  NodeCollectionComposite::const_iterator
+  specific_local_begin_( NodeCollectionPTR cp, size_t period, size_t phase, gid_to_phase_fcn_ period_first_node ) const;
+
 public:
   /**
    * Create a composite from a primitive, with boundaries and step length.
+   *
+   * Let the slicing be given by b:e:s for brevity. Then the elements of the sliced composite will be given by
+   *
+   * b, b + s, ..., b + j s < e  <=>   b, b + s, ..., b + j s ≤ e - 1  <=>  j ≤ floor( ( e - 1 - b ) / s )
+   *
+   * Since j = 0 is included in the sequence above, the sliced node collection has 1 + floor( ( e - 1 - b ) / s )
+   * elements. Flooring is implemented via integer division.
    *
    * @param primitive Primitive to be converted
    * @param start Offset in the primitive to begin at.
@@ -640,15 +661,12 @@ public:
   NodeCollectionComposite( const NodeCollectionPrimitive&, size_t, size_t, size_t );
 
   /**
-   * Composite copy constructor.
-   *
-   * @param comp Composite to be copied.
-   */
-  NodeCollectionComposite( const NodeCollectionComposite& ) = default;
-
-  /**
    * Creates a new composite from another, with boundaries and step length.
    * This constructor is used only when slicing.
+   *
+   * Since we do not allow slicing of sliced node collections with step > 1, the underlying node collections all
+   * have step one and we can calculate the size of the sliced node collection as described in the constructor
+   * taking a NodeCollectionPrimitive as argument.
    *
    * @param composite Composite to slice.
    * @param start Index in the composite to begin at.
@@ -660,9 +678,19 @@ public:
   /**
    * Create a composite from a vector of primitives.
    *
+   * Since primitives by definition contain contiguous elements, the size of the composite collection is the
+   * sum of the size of its parts.
+   *
    * @param parts Vector of primitives.
    */
   explicit NodeCollectionComposite( const std::vector< NodeCollectionPrimitive >& );
+
+  /**
+   * Composite copy constructor.
+   *
+   * @param comp Composite to be copied.
+   */
+  NodeCollectionComposite( const NodeCollectionComposite& ) = default;
 
   void print_me( std::ostream& ) const override;
 
@@ -686,9 +714,6 @@ public:
   const_iterator thread_local_begin( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const override;
   const_iterator rank_local_begin( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const override;
   const_iterator end( NodeCollectionPTR = NodeCollectionPTR( nullptr ) ) const override;
-
-  //! Returns an ArrayDatum filled with node IDs from the composite.
-  ArrayDatum to_array() const override;
 
   //! Returns total number of node IDs in the composite.
   size_t size() const override;

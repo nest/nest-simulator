@@ -488,9 +488,10 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% add conversion from NodeCollection
-/cva [/nodecollectiontype]
-  /cva_g load
+/cva trie
+  [/connectiontype] /cva_C load addtotrie
+  [/nodecollectiontype] { /all cva_g_l } addtotrie
+  [/nodecollectiontype /literaltype] /cva_g_l load addtotrie
 def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1425,8 +1426,6 @@ def
 /TimeCommunicationAlltoallv trie
 [/integertype /integertype] /TimeCommunicationAlltoallv_i_i load addtotrie
 def
-
-/cva [/connectiontype] /cva_C load def
 
 /abort
 {

@@ -838,10 +838,10 @@ public:
     void execute( SLIInterpreter* ) const override;
   } cvnodecollection_ivfunction;
 
-  class Cva_gFunction : public SLIFunction
+  class Cva_g_lFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const override;
-  } cva_gfunction;
+  } cva_g_lfunction;
 
   class Size_gFunction : public SLIFunction
   {

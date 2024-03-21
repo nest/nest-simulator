@@ -62,6 +62,8 @@ nc_const_iterator::nc_const_iterator( NodeCollectionPTR collection_ptr,
   , primitive_collection_( &collection )
   , composite_collection_( nullptr )
 {
+  // std::cerr << "PrimCtr Rank " << kernel().mpi_manager.get_rank() << ", elix " << element_idx_
+  //<< std::endl;
   assert( not collection_ptr.get() or collection_ptr.get() == &collection );
 
   if ( offset > collection.size() ) // allow == size() for end iterator
@@ -107,6 +109,7 @@ nc_const_iterator::composite_update_indices_()
       primitive_size = composite_collection_->parts_[ part_idx_ ].size();
     }
   }
+
   // If we went past the end of the composite, we need to adjust the
   // position of the iterator.
   if ( composite_collection_->is_sliced_ )
@@ -155,6 +158,13 @@ nc_const_iterator::operator*() const
            or ( part_idx_ == composite_collection_->end_part_
              and element_idx_ < composite_collection_->end_offset_ ) ) )
     {
+      if ( kernel().mpi_manager.get_rank() == 1 )
+      {
+        std::cerr << "Rk: " << kernel().mpi_manager.get_rank() << ", part_idx_ " << part_idx_ << ", end_part_ "
+                  << composite_collection_->end_part_ << ", element_idx_ " << element_idx_ << ", end_offset_ "
+                  << composite_collection_->end_offset_ << std::endl;
+      }
+
       throw KernelException( "Invalid NodeCollection iterator (composite element beyond specified end element)" );
     }
 
@@ -184,17 +194,18 @@ nc_const_iterator&
 nc_const_iterator::operator++()
 {
   element_idx_ += step_;
-  if ( primitive_collection_ )
-  {
-    if ( element_idx_ >= primitive_collection_->size() )
-    {
-      element_idx_ = primitive_collection_->size();
-    }
-  }
-  else
+
+  if ( not primitive_collection_ )
   {
     composite_update_indices_();
   }
+  else
+  {
+    // element_idx_ == size() defines the end() iterator
+    // For size() == 0, element_idx_ could be > size() here so we need to limit
+    element_idx_ = std::min( element_idx_, primitive_collection_->size() );
+  }
+
   return *this;
 }
 
@@ -420,14 +431,54 @@ NodeCollectionPrimitive::NodeCollectionPrimitive()
 }
 
 ArrayDatum
-NodeCollectionPrimitive::to_array() const
+NodeCollection::to_array( const std::string& selection ) const
 {
   ArrayDatum node_ids;
-  node_ids.reserve( size() );
-  for ( auto it = begin(); it < end(); ++it )
+
+  if ( selection == "thread" )
   {
-    node_ids.push_back( ( *it ).node_id );
+    // We must do the folloing on the corresponding threads, but one at
+    // a time to fill properly. Thread beginnings are marked by 0 thread 0
+#pragma omp parallel
+    {
+#pragma omp critical
+      {
+        // Casts to size_t essential, otherwise SLI does strange things
+        node_ids.push_back( static_cast< size_t >( 0 ) );
+        node_ids.push_back( kernel().vp_manager.get_thread_id() );
+        node_ids.push_back( static_cast< size_t >( 0 ) );
+        for ( auto it = thread_local_begin(); it < end(); ++it )
+        {
+          node_ids.push_back( ( *it ).node_id );
+        }
+      } // end critical
+    }   // end parallel
   }
+  else
+  {
+    // Slightly repetitive code but NodeCollection::const_iterator does not have
+    // no-argument constructor nor copy constructor and this is a debug function only.
+    if ( selection == "all" )
+    {
+      for ( auto it = begin(); it < end(); ++it )
+      {
+        node_ids.push_back( ( *it ).node_id );
+      }
+    }
+    else if ( selection == "rank" )
+    {
+      for ( auto it = rank_local_begin(); it < end(); ++it )
+      {
+        node_ids.push_back( ( *it ).node_id );
+      }
+    }
+    else
+    {
+      throw BadParameter(
+        String::compose( "to_array() accepts only 'all', 'rank', 'thread', but got '%1'.", selection ) );
+    }
+  }
+
   return node_ids;
 }
 
@@ -636,7 +687,7 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionPrimitive&
   size_t end,
   size_t step )
   : parts_()
-  , size_( ( end - start - 1 ) / step + 1 )
+  , size_( 1 + ( end - start - 1 ) / step ) // see comment on constructor
   , step_( step )
   , start_part_( 0 )
   , start_offset_( start )
@@ -646,6 +697,12 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionPrimitive&
   , end_offset_( end == primitive.size() ? 0 : end )
   , is_sliced_( start != 0 or end != primitive.size() or step > 1 )
 {
+  if ( kernel().mpi_manager.get_rank() == 1 )
+  {
+    std::cerr << "NCC(prim) start " << start << ", end " << end << ", step " << step << ", size " << size_ << ", this "
+              << this << std::endl;
+  }
+
   parts_.push_back( primitive );
 }
 
@@ -682,7 +739,7 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite&
   size_t end,
   size_t step )
   : parts_( composite.parts_ )
-  , size_( ( end - start - 1 ) / step + 1 )
+  , size_( 1 + ( end - start - 1 ) / step ) // see comment on constructor
   , step_( step )
   , start_part_( 0 )
   , start_offset_( 0 )
@@ -885,78 +942,96 @@ NodeCollectionComposite::operator==( NodeCollectionPTR rhs ) const
   return true;
 }
 
-NodeCollectionComposite::const_iterator
-NodeCollectionComposite::thread_local_begin( NodeCollectionPTR cp ) const
-{
-  // Same algorithm as for rank_local_begin() but based on VP number here
-  const size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
-  const size_t current_vp = kernel().vp_manager.thread_to_vp( kernel().vp_manager.get_thread_id() );
 
+NodeCollectionComposite::const_iterator
+NodeCollectionComposite::specific_local_begin_( NodeCollectionPTR cp,
+  size_t period,
+  size_t phase,
+  gid_to_phase_fcn_ gid_to_phase ) const
+{
   // See note on const_iterator class for end_part_/offset_ logic
+
+  size_t idx_first_in_part = start_offset_;
   for ( size_t pix = start_part_; pix < end_part_ + ( end_offset_ == 0 ? 0 : 1 ); ++pix )
   {
     // start_offset_ only applies to start_part_, in all following parts start from beginning
-    const size_t vp_first_node =
-      kernel().vp_manager.node_id_to_vp( parts_[ pix ][ pix == start_part_ ? start_offset_ : 0 ] );
-    size_t offset = first_index( num_vps, vp_first_node, step_, current_vp );
-    if ( offset == invalid_index )
+    const size_t phase_first_node = gid_to_phase( parts_[ pix ][ idx_first_in_part ] );
+
+    size_t offset = first_index( period, phase_first_node, step_, phase );
+    /* offset can now be
+     * - offset < part.size() : we have a solution
+     * - invalid_index : equation not solvable in existing part (eg even thread and nc has only odd gids)
+     * - offset >= part.size() : there would be a solution if the part had been larger with same structure
+     *
+     * If we do not have a solution, we need to look in the next part. The first node to look at is given by
+     * the smallest j so that
+     *
+     *   idx_first_in_part + j step ≥ part.size()  <=>  j ≥ ( part.size() - idx_first_in_part ) / step
+     *
+     * The one to look at is
+     *
+     *   idx_fist_in_next_part <- idx_first_in_part + j step - part.size()
+     *
+     * This applies independent of whether we fail because of invalid_index or excessive size.
+     */
+
+    // Add starting point only if valid offset, otherwise we would invalidate invalid_index marker
+    if ( offset != invalid_index )
     {
-      continue; // no solution in this part
+      offset += idx_first_in_part;
     }
 
-    offset += ( pix == start_part_ ? start_offset_ : 0 );
+    std::cerr << "TLB Rank : " << kernel().mpi_manager.get_rank() << " Thread: " << kernel().vp_manager.get_thread_id()
+              << ", idx_first_in_part " << idx_first_in_part << ", phase_first " << phase_first_node << ", offset "
+              << offset << ", start_part_ " << start_part_ << ", start_offset_ " << start_offset_ << ", pix " << pix
+              << ", end_part_ " << end_part_ << ", end_offset_ " << end_offset_ << ", size: " << parts_[ pix ].size()
+              << ", num parts " << parts_.size() << ", this " << this << std::endl;
+
     if ( offset != invalid_index and offset < parts_[ pix ].size() )
     {
-      assert( kernel().vp_manager.node_id_to_vp( parts_[ pix ][ offset ] ) == current_vp );
-      return nc_const_iterator( cp, *this, pix, offset, std::lcm( step_, num_vps ) );
+      assert( gid_to_phase( parts_[ pix ][ offset ] ) == phase );
+      return nc_const_iterator( cp, *this, pix, offset, std::lcm( step_, period ) );
+    }
+    else
+    {
+      size_t j = ( parts_[ pix ].size() - idx_first_in_part ) / step_;
+      if ( idx_first_in_part + j * step_ < parts_[ pix ].size() )
+      {
+        j += 1;
+      }
+      assert( idx_first_in_part + j * step_ >= parts_[ pix ].size() );
+      idx_first_in_part = idx_first_in_part + j * step_ - parts_[ pix ].size();
     }
   }
 
   return end( cp );
 }
+
+
+NodeCollectionComposite::const_iterator
+NodeCollectionComposite::thread_local_begin( NodeCollectionPTR cp ) const
+{
+  const size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
+  const size_t current_vp = kernel().vp_manager.thread_to_vp( kernel().vp_manager.get_thread_id() );
+
+  return specific_local_begin_(
+    cp, num_vps, current_vp, []( size_t gid ) { return kernel().vp_manager.node_id_to_vp( gid ); } );
+}
+
 
 NodeCollectionComposite::const_iterator
 NodeCollectionComposite::rank_local_begin( NodeCollectionPTR cp ) const
 {
-  // Same algorithm as for thread_local_begin() but based on rank here
-  const size_t num_processes = kernel().mpi_manager.get_num_processes();
+  const size_t num_ranks = kernel().mpi_manager.get_num_processes();
   const size_t current_rank = kernel().mpi_manager.get_rank();
 
-  // See note on const_iterator class for end_part_/offset_ logic
-  for ( size_t pix = start_part_; pix < end_part_ + ( end_offset_ == 0 ? 0 : 1 ); ++pix )
-  {
-    // start_offset_ only applies to start_part_, in all following parts start from beginning
-    const size_t rank_first_node = kernel().mpi_manager.get_process_id_of_vp(
-      kernel().vp_manager.node_id_to_vp( parts_[ pix ][ pix == start_part_ ? start_offset_ : 0 ] ) );
-    size_t offset = first_index( num_processes, rank_first_node, step_, current_rank );
-    if ( offset == invalid_index )
-    {
-      continue; // no solution in this part
-    }
-
-    offset += ( pix == start_part_ ? start_offset_ : 0 );
-    if ( offset < parts_[ pix ].size() )
-    {
-      assert( kernel().mpi_manager.get_process_id_of_vp( parts_[ pix ][ offset ] ) == current_rank );
-      return nc_const_iterator( cp, *this, pix, offset, std::lcm( step_, num_processes ) );
-    }
-  }
-
-  return end( cp );
+  return specific_local_begin_( cp,
+    num_ranks,
+    current_rank,
+    []( size_t gid )
+    { return kernel().mpi_manager.get_process_id_of_vp( kernel().vp_manager.node_id_to_vp( gid ) ); } );
 }
 
-
-ArrayDatum
-NodeCollectionComposite::to_array() const
-{
-  ArrayDatum node_ids;
-  node_ids.reserve( size() );
-  for ( auto it = begin(); it < end(); ++it )
-  {
-    node_ids.push_back( ( *it ).node_id );
-  }
-  return node_ids;
-}
 
 NodeCollectionPTR
 NodeCollectionComposite::slice( size_t start, size_t end, size_t step ) const

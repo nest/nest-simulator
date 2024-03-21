@@ -101,3 +101,13 @@ The ``pairwise_poisson`` method is adapted from the ``pairwise bernouilli`` meth
 See more information:
 
 * :ref:`connection_management`
+
+New parameter for compartmental model
+-------------------------------------
+
+In the compartmental model ``cm_default``, the voltage initialisation of each compartment
+can now be specified by the user, by adding a `v_comp` entry to the compartment parameter dictionary.
+
+See the model documentation:
+
+* :doc:`/models/cm_default`

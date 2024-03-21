@@ -73,7 +73,7 @@ References
        networks is limited by one-to-one mapping between effective connectivity
        and correlations. PLoS computational biology, 11(9), e1004490.
        <https://doi.org/10.1371/journal.pcbi.1004490>
-       
+
 .. [2] Brunel N (2000). Dynamics of networks of randomly connected excitatory
        and inhibitory spiking neurons. Journal of Physiology-Paris
        94(5-6):445-463. <https://doi.org/10.1023/A:1008925309027>
@@ -104,7 +104,7 @@ References
        plasticity in balanced random networks. Neural Computation
        19(6):1437-1467. <https://doi.org/10.1162/neco.2007.19.6.1437
 
-       
+
 .. seealso::
 
     * :doc:`Snakefile </auto_examples/ignore_and_fire/workflow>`: simulation workflow
@@ -114,21 +114,9 @@ References
     * :doc:`code/parameter_dicts.py <parameter_dicts>`: parameter setting
     * :doc:`ignore_and_fire model documentation </models/ignore_and_fire>`
 
-      
+
 .. toctree::
   :hidden:
   :glob:
 
-  ModelDescription_TwoPopulationNetworkPlastic
-  *
-  simulation_details
-
-
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+  doc/*

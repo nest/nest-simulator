@@ -6,13 +6,13 @@ rule all:
         'figures/TwoPopulationNetworkPlastic_iaf_psc_alpha_spikes.png',
         'figures/TwoPopulationNetworkPlastic_iaf_psc_alpha_weight_distributions.png',
         'figures/TwoPopulationNetworkPlastic_iaf_psc_alpha_connectivity_presim.png',
-        'figures/TwoPopulationNetworkPlastic_iaf_psc_alpha_connectivity_postsim.png',        
+        'figures/TwoPopulationNetworkPlastic_iaf_psc_alpha_connectivity_postsim.png',
         'figures/TwoPopulationNetworkPlastic_ignore_and_fire_spikes.png',
         'figures/TwoPopulationNetworkPlastic_ignore_and_fire_weight_distributions.png',
         'figures/TwoPopulationNetworkPlastic_ignore_and_fire_connectivity_presim.png',
-        'figures/TwoPopulationNetworkPlastic_ignore_and_fire_connectivity_postsim.png', 
+        'figures/TwoPopulationNetworkPlastic_ignore_and_fire_connectivity_postsim.png',
         'figures/scaling.png'
-        
+
 rule generate_reference_data_LIF:
     """
     Simulates network with LIF neurons, and stores spikes and synaptic weights.
@@ -20,7 +20,7 @@ rule generate_reference_data_LIF:
     input:
         'code/model.py',
         'code/parameter_dicts.py',
-        'code/generate_reference_data.py'        
+        'code/generate_reference_data.py'
     output:
         temp('.LIF_simulation_done')
     run:
@@ -33,15 +33,15 @@ rule generate_reference_data_IgAF:
     input:
         'code/model.py',
         'code/parameter_dicts.py',
-        'code/generate_reference_data.py'        
+        'code/generate_reference_data.py'
     output:
         temp('.IgAF_simulation_done')
     run:
         shell('cd code; python generate_reference_data.py ignore_and_fire; cd .. ; touch {output}')
-        
+
 rule generate_reference_figures_LIF:
     """
-    Creates figures showing spiking activity, weight matrices and weight distributions 
+    Creates figures showing spiking activity, weight matrices and weight distributions
     before and after simulations from data obtained by simulating the model
     with LIF neurons.
     """
@@ -49,37 +49,37 @@ rule generate_reference_figures_LIF:
         'code/model.py',
         'code/parameter_dicts.py',
         'code/generate_reference_figures.py',
-        '.LIF_simulation_done'        
+        '.LIF_simulation_done'
     output:
         'figures/TwoPopulationNetworkPlastic_iaf_psc_alpha_spikes.png',
         'figures/TwoPopulationNetworkPlastic_iaf_psc_alpha_weight_distributions.png',
         'figures/TwoPopulationNetworkPlastic_iaf_psc_alpha_connectivity_presim.png',
-        'figures/TwoPopulationNetworkPlastic_iaf_psc_alpha_connectivity_postsim.png',        
+        'figures/TwoPopulationNetworkPlastic_iaf_psc_alpha_connectivity_postsim.png',
     run:
         shell('cd code; python generate_reference_figures.py iaf_psc_alpha')
 
 rule generate_reference_figures_IgAF:
     """
-    Creates figures showing spiking activity, weight matrices and weight distributions 
-    before and after simulations from data obtained by simulating the model 
+    Creates figures showing spiking activity, weight matrices and weight distributions
+    before and after simulations from data obtained by simulating the model
     with ignore_and_fire neurons.
     """
     input:
         'code/model.py',
         'code/parameter_dicts.py',
         'code/generate_reference_figures.py',
-        '.IgAF_simulation_done'        
+        '.IgAF_simulation_done'
     output:
         'figures/TwoPopulationNetworkPlastic_ignore_and_fire_spikes.png',
         'figures/TwoPopulationNetworkPlastic_ignore_and_fire_weight_distributions.png',
         'figures/TwoPopulationNetworkPlastic_ignore_and_fire_connectivity_presim.png',
-        'figures/TwoPopulationNetworkPlastic_ignore_and_fire_connectivity_postsim.png',        
+        'figures/TwoPopulationNetworkPlastic_ignore_and_fire_connectivity_postsim.png',
     run:
         shell('cd code; python generate_reference_figures.py ignore_and_fire')
 
 rule scaling_experiment:
     """
-    Performs scaling experiments with LIF and ignore-and-fire neurons, 
+    Performs scaling experiments with LIF and ignore-and-fire neurons,
     and creates figure showing the simulation times, average firing rates,
     and synaptic weights for a range of network sizes.
     """
@@ -90,9 +90,8 @@ rule scaling_experiment:
     output:
         'figures/scaling.png'
     run:
-        shell('cd code; python scaling.py')        
+        shell('cd code; python scaling.py')
 rule clean:
     run:
         shell("rm figures/*")
-        shell("rm -rf code/data/*")        
-    
+        shell("rm -rf code/data/*")

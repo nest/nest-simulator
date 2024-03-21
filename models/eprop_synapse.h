@@ -331,9 +331,6 @@ private:
    */
   WeightOptimizer* optimizer_;
 
-  double gradient_change_;
-
-  long idx_current_update; // TODO: no _?
   double grad_ = 0.0;
   double z_bar_ = 0.0;
   double e_bar_ = 0.0;

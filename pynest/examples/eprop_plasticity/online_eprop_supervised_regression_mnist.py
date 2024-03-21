@@ -569,13 +569,20 @@ for target_rate in target_rates:
         }
     )
 
-learning_window = np.zeros((n_iter_train + n_iter_test, n_batch, steps["sequence"]))
-learning_window[:, :, -steps["learning_window"] :] = 1.0
-learning_window = learning_window.reshape(-1)
+amplitude_times = np.hstack(
+    [
+        np.array([0.0, duration["sequence"] - duration["learning_window"]])
+        + duration["total_offset"]
+        + i * duration["sequence"]
+        for i in range(n_batch * (n_iter_train + n_iter_test))
+    ]
+)
+
+amplitude_values = np.array([0.0, 1.0] * n_batch * (n_iter_train + n_iter_test))
 
 params_gen_learning_window = {
-    "amplitude_times": np.arange(duration["total_offset"], duration["total_offset"] + duration["task"]),
-    "amplitude_values": learning_window,
+    "amplitude_times": amplitude_times,
+    "amplitude_values": amplitude_values,
 }
 
 nest.SetStatus(gen_spk_in, params_gen_spk_in)

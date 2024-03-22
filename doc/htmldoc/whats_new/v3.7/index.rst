@@ -13,35 +13,6 @@ If you transition from an earlier version, please see our extensive
 :ref:`transition guide from NEST 2.x to 3.0 <refguide_2_3>` and the
 :ref:`list of updates for previous releases in the 3.x series <whats_new>`.
 
-
-NEST requires C++17
--------------------
-
-From NEST 3.7 on, we use some C++17 features in NEST code. Therefore,
-NEST needs to be built with a compiler that supports C++17. Most
-recent C++ compilers should do so.
-
-Tripartite connectivity in NEST
--------------------------------
-
-NEST now supports creation of connections involving three populations
-of neurons: a pre-synaptic, a post-synaptic and a third-factor
-population. At present, as single tripartite connection rule is
-available, ``tripartite_bernoulli_with_pool``. Tripartite connections
-are created with the new :py:func:`.TripartiteConnect` function. The first
-use case for tripartite connections are networks containing astrocyte
-populations.
-
-See examples using astrocyte models:
-
-* :doc:`../../../auto_examples/astrocytes/astrocyte_small_network`
-* :doc:`../../../auto_examples/astrocytes/astrocyte_brunel`
-
-See connectivity documentation:
-
-* :ref:`tripartite_connectivity`
-
-
 E-prop plasticity in NEST
 -------------------------
 
@@ -62,6 +33,27 @@ For further information, see:
        Maass W (2020). A solution to the learning dilemma for recurrent
        networks of spiking neurons. Nature Communications, 11:3625.
        https://doi.org/10.1038/s41467-020-17236-y
+
+
+Tripartite connectivity in NEST
+-------------------------------
+
+NEST now supports creation of connections involving three populations
+of neurons: a pre-synaptic, a post-synaptic and a third-factor
+population. At present, as single tripartite connection rule is
+available, ``tripartite_bernoulli_with_pool``. Tripartite connections
+are created with the new :py:func:`.TripartiteConnect` function. The first
+use case for tripartite connections are networks containing astrocyte
+populations.
+
+See examples using astrocyte models:
+
+* :doc:`../../../auto_examples/astrocytes/astrocyte_small_network`
+* :doc:`../../../auto_examples/astrocytes/astrocyte_brunel`
+
+See connectivity documentation:
+
+* :ref:`tripartite_connectivity`
 
 
 Ignore-and-fire neuron model
@@ -117,9 +109,8 @@ New interface for NEST Extension Modules
 
 The interface for NEST Extension Modules has been thoroughly revised. Key changes are
 
-* All extention modules must be derived from class ``nest::NESTExtensionInterface``
- provided in ``nest_extension_interface.h``.
- 
+* All extention modules must be derived from class ``nest::NESTExtensionInterface`` provided in ``nest_extension_interface.h``.
+
     * In your class, you must override the ``initialize()`` method with one that registers all components provided by your module.
     * The ``nest_extension_interface.h`` header provides a large set of NEST includes, so once including it you should no longer need to include other NEST headers in most cases.
 
@@ -129,3 +120,10 @@ The interface for NEST Extension Modules has been thoroughly revised. Key change
 For more information, see the extension module documentation:
 
 * :doc:`NEST Extension Module Documentation <extmod:index>`
+
+NEST requires C++17
+-------------------
+
+From NEST 3.7 on, we use some C++17 features in NEST code. Therefore,
+NEST needs to be built with a compiler that supports C++17. Most
+recent C++ compilers should do so.

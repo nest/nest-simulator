@@ -680,11 +680,19 @@ jobs:
               -Dwith-libneurosim=${{ contains(matrix.use, 'libneurosim') && '$HOME/.cache/libneurosim.install' || 'OFF' }} \
               ..
 
+      - name: "Add GCC problem matcher"
+        run: |
+          echo "::add-matcher::gcc_problem_matcher.json"
+
       - name: "Build NEST"
         run: |
           cd "$NEST_VPATH"
           env
           make VERBOSE=1
+
+      - name: "Remove GCC problem matcher"
+        run: |
+          echo "::remove-matcher owner=gcc-problem-matcher::"
 
       - name: "Install NEST"
         run: |
@@ -800,11 +808,19 @@ jobs:
               -Dwith-libneurosim=${{ contains(matrix.use, 'libneurosim') && '$HOME/.cache/libneurosim.install' || 'OFF' }} \
               ..
 
+      - name: "Add GCC problem matcher"
+        run: |
+          echo "::add-matcher::gcc_problem_matcher.json"
+
       - name: "Build NEST"
         run: |
           cd "$NEST_VPATH"
           env
           make VERBOSE=1
+
+      - name: "Remove GCC problem matcher"
+        run: |
+          echo "::remove-matcher owner=gcc-problem-matcher::"
 
       - name: "Install NEST"
         run: |

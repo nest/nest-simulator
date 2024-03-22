@@ -204,11 +204,8 @@ protected:
   void init_buffers_() override;
 
 private:
-  //! Compute the piecewise linear surrogate gradient.
-  double compute_piecewise_linear_derivative();
-
   //! Compute the surrogate gradient.
-  double ( eprop_iaf_psc_delta::*compute_surrogate_gradient )();
+  double ( eprop_iaf_psc_delta::*compute_surrogate_gradient )( double, double, double, double, double, double );
 
   //! Map for storing a static set of recordables.
   friend class RecordablesMap< eprop_iaf_psc_delta >;
@@ -259,8 +256,12 @@ private:
     //! Target firing rate of rate regularization (spikes/s).
     double f_target_;
 
-    //! Scaling of surrogate-gradient / pseudo-derivative of membrane voltage.
+    //! Width scaling of surrogate-gradient / pseudo-derivative of membrane voltage.
+    double beta_;
+
+    //! Height scaling of surrogate-gradient / pseudo-derivative of membrane voltage.
     double gamma_;
+
     //! Surrogate gradient / pseudo-derivative function ["piecewise_linear"].
     std::string surrogate_gradient_function_;
 

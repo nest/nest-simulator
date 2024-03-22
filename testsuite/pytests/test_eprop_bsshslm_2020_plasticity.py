@@ -136,6 +136,7 @@ def test_eprop_regression():
     n_out = 1
 
     params_nrn_rec = {
+        "beta": 1.0,
         "C_m": 1.0,
         "c_reg": 300.0,
         "gamma": 0.3,
@@ -446,6 +447,7 @@ def test_eprop_classification():
     n_out = 2
 
     params_nrn_reg = {
+        "beta": 1.0,
         "C_m": 1.0,
         "c_reg": 300.0,
         "E_L": 0.0,
@@ -461,6 +463,7 @@ def test_eprop_classification():
     }
 
     params_nrn_ad = {
+        "beta": 1.0,
         "adapt_tau": 2000.0,
         "adaptation": 0.0,
         "C_m": 1.0,

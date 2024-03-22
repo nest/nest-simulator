@@ -185,13 +185,14 @@ n_out = 10
 model_nrn_rec = "eprop_iaf"
 
 params_nrn_rec = {
+    "beta": 1.0,  # widht scaling of the pseudo derivative
     "beta_fr_ema": 0.999,  # Smoothing factor of firing rate exponential moving average
     "C_m": 1.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
     "c_reg": 2.0 / duration["sequence"],  # firing rate regularization scaling
     "E_L": 0.0,  # mV, leak reversal potential
     "eprop_isi_trace_cutoff": 10,  # cutoff of integration of eprop trace between spikes
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
-    "gamma": 0.3,  # scaling of the pseudo derivative
+    "gamma": 0.3,  # height scaling of the pseudo derivative
     "I_e": 0.0,  # pA, external current input
     "surrogate_gradient_function": "piecewise_linear",  # surrogate gradient / pseudo-derivative function
     "t_ref": 0.0,  # ms, duration of refractory period

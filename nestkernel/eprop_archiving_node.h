@@ -124,6 +124,60 @@ public:
   //! Copy constructor.
   EpropArchivingNodeRecurrent( const EpropArchivingNodeRecurrent& );
 
+  double ( EpropArchivingNodeRecurrent::*select_surrogate_gradient(
+    std::string surrogate_gradient_function ) )( double, double, double, double, double, double )
+  {
+    if ( surrogate_gradient_function == "piecewise_linear" )
+    {
+      return &EpropArchivingNodeRecurrent::compute_piecewise_linear_surrogate_gradient;
+    }
+    else if ( surrogate_gradient_function == "exponential" )
+    {
+      return &EpropArchivingNodeRecurrent::compute_exponential_surrogate_gradient;
+    }
+    else if ( surrogate_gradient_function == "fast_sigmoid_derivative" )
+    {
+      return &EpropArchivingNodeRecurrent::compute_fast_sigmoid_derivative_surrogate_gradient;
+    }
+    else if ( surrogate_gradient_function == "arctan" )
+    {
+      return &EpropArchivingNodeRecurrent::compute_arctan_surrogate_gradient;
+    }
+    else
+    {
+      throw NotImplemented(
+        "The requested " + surrogate_gradient_function + " surrogate gradient is not implemented." );
+    }
+  }
+
+  double compute_piecewise_linear_surrogate_gradient( const double r,
+    const double v_m,
+    const double v_th_adapt,
+    const double V_th,
+    const double beta,
+    const double gamma );
+
+  double compute_exponential_surrogate_gradient( const double r,
+    const double v_m,
+    const double v_th_adapt,
+    const double V_th,
+    const double beta,
+    const double gamma );
+
+  double compute_fast_sigmoid_derivative_surrogate_gradient( const double r,
+    const double v_m,
+    const double v_th_adapt,
+    const double V_th,
+    const double beta,
+    const double gamma );
+
+  double compute_arctan_surrogate_gradient( const double r,
+    const double v_m,
+    const double v_th_adapt,
+    const double V_th,
+    const double beta,
+    const double gamma );
+
   //! Create an entry in the eprop history for the given time step and surrogate gradient.
   void write_surrogate_gradient_to_history( const long time_step, const double surrogate_gradient );
 

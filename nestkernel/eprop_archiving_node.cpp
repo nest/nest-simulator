@@ -47,6 +47,70 @@ EpropArchivingNodeRecurrent::EpropArchivingNodeRecurrent( const EpropArchivingNo
 {
 }
 
+double
+EpropArchivingNodeRecurrent::compute_piecewise_linear_surrogate_gradient( const double r,
+  const double v_m,
+  const double v_th_adapt,
+  const double V_th,
+  const double beta,
+  const double gamma )
+{
+  if ( r > 0 )
+  {
+    return 0.0;
+  }
+
+  return gamma * std::max( 0.0, 1.0 - beta * std::fabs( ( v_m - v_th_adapt ) / V_th ) ) / V_th;
+}
+
+double
+EpropArchivingNodeRecurrent::compute_exponential_surrogate_gradient( const double r,
+  const double v_m,
+  const double v_th_adapt,
+  const double V_th,
+  const double beta,
+  const double gamma )
+{
+  if ( r > 0 )
+  {
+    return 0.0;
+  }
+
+  return gamma * std::exp( -beta * std::fabs( v_m - v_th_adapt ) );
+}
+
+double
+EpropArchivingNodeRecurrent::compute_fast_sigmoid_derivative_surrogate_gradient( const double r,
+  const double v_m,
+  const double v_th_adapt,
+  const double V_th,
+  const double beta,
+  const double gamma )
+{
+  if ( r > 0 )
+  {
+    return 0.0;
+  }
+
+  return gamma * std::pow( 1.0 + beta * std::fabs( v_m - v_th_adapt ), -2 );
+}
+
+double
+EpropArchivingNodeRecurrent::compute_arctan_surrogate_gradient( const double r,
+  const double v_m,
+  const double v_th_adapt,
+  const double V_th,
+  const double beta,
+  const double gamma )
+{
+  if ( r > 0 )
+  {
+    return 0.0;
+  }
+
+  return gamma / M_PI * ( 1.0 / ( 1.0 + std::pow( beta * M_PI * ( v_m - v_th_adapt ), 2 ) ) );
+}
+
 void
 EpropArchivingNodeRecurrent::write_surrogate_gradient_to_history( const long time_step,
   const double surrogate_gradient )

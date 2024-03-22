@@ -177,12 +177,13 @@ n_out = 2  # number of readout neurons
 tau_m_mean = 30.0  # ms, mean of membrane time constant distribution
 
 params_nrn_rec = {
+    "beta": 1.0,  # width scaling of the pseudo derivative
     "adapt_tau": 2000.0,  # ms, time constant of adaptive threshold
     "C_m": 250.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
     "c_reg": 150.0,  # firing rate regularization scaling
     "E_L": 0.0,  # mV, leak / resting membrane potential
     "f_target": 20.0,  # spikes/s, target firing rate for firing rate regularization
-    "gamma": 0.3,  # scaling of the pseudo derivative
+    "gamma": 0.3,  # height scaling of the pseudo derivative
     "I_e": 0.0,  # pA, external current input
     "regular_spike_arrival": False,  # If True, input spikes arrive at end of time step, if False at beginning
     "surrogate_gradient_function": "piecewise_linear",  # surrogate gradient / pseudo-derivative function

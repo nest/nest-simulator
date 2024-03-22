@@ -83,6 +83,7 @@ nest::eprop_iaf_psc_delta::Parameters_::Parameters_()
   , with_refr_input_( false )
   , c_reg_( 0.0 )
   , f_target_( 0.01 )
+  , beta_( 1.0 )
   , gamma_( 0.3 )
   , surrogate_gradient_function_( "piecewise_linear" )
   , beta_fr_ema_( 0.0 )
@@ -120,6 +121,7 @@ nest::eprop_iaf_psc_delta::Parameters_::get( DictionaryDatum& d ) const
   def< bool >( d, names::refractory_input, with_refr_input_ );
   def< double >( d, names::c_reg, c_reg_ );
   def< double >( d, names::f_target, f_target_ );
+  def< double >( d, names::beta, beta_ );
   def< double >( d, names::gamma, gamma_ );
   def< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_ );
   def< double >( d, names::beta_fr_ema, beta_fr_ema_ );
@@ -172,6 +174,8 @@ nest::eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* nod
   {
     f_target_ /= 1000.0; // convert from spikes/s to spikes/ms
   }
+
+  updateValueParam< double >( d, names::beta, beta_, node );
   updateValueParam< double >( d, names::gamma, gamma_, node );
   updateValueParam< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_, node );
   updateValueParam< double >( d, names::beta_fr_ema, beta_fr_ema_, node );
@@ -206,16 +210,21 @@ nest::eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* nod
     throw BadProperty( "Firing rate regularization target rate f_target ≥ 0 required." );
   }
 
-  if ( gamma_ < 0.0 or 1.0 <= gamma_ )
-  {
-    throw BadProperty( "Surrogate gradient / pseudo-derivative scaling gamma from interval [0,1) required." );
-  }
+  std::set< std::string > surrogate_functions_set = {
+    "piecewise_linear", "exponential", "fast_sigmoid_derivative", "arctan"
+  };
 
-  if ( surrogate_gradient_function_ != "piecewise_linear" )
+  if ( surrogate_functions_set.find( surrogate_gradient_function_ ) == surrogate_functions_set.end() )
   {
-    throw BadProperty(
-      "Surrogate gradient / pseudo derivate function surrogate_gradient_function from [\"piecewise_linear\"] "
-      "required." );
+    std::string error_message = "Surrogate gradient / pseudo derivate function surrogate_gradient_function from [";
+    for ( auto name : surrogate_functions_set )
+    {
+      error_message += " \"" + name + "\",";
+    }
+    error_message.pop_back();
+    error_message += " ] required.";
+
+    throw BadProperty( error_message );
   }
 
   if ( beta_fr_ema_ < 0 or 1 <= beta_fr_ema_ )
@@ -306,11 +315,7 @@ nest::eprop_iaf_psc_delta::pre_run_hook()
 {
   B_.logger_.init();
 
-  if ( P_.surrogate_gradient_function_ == "piecewise_linear" )
-  {
-    compute_surrogate_gradient = &eprop_iaf_psc_delta::compute_piecewise_linear_derivative;
-  }
-
+  compute_surrogate_gradient = select_surrogate_gradient( P_.surrogate_gradient_function_ );
 
   const double h = Time::get_resolution().get_ms();
 
@@ -399,7 +404,8 @@ nest::eprop_iaf_psc_delta::update( Time const& origin, const long from, const lo
       --S_.r_;
     }
 
-    S_.surrogate_gradient_ = ( this->*compute_surrogate_gradient )();
+    S_.surrogate_gradient_ =
+      ( this->*compute_surrogate_gradient )( S_.r_, S_.y3_, P_.V_th_, P_.V_th_, P_.beta_, P_.gamma_ );
 
     write_surrogate_gradient_to_history( t, S_.surrogate_gradient_ );
 
@@ -430,17 +436,6 @@ nest::eprop_iaf_psc_delta::update( Time const& origin, const long from, const lo
     // voltage logging
     B_.logger_.record_data( origin.get_steps() + lag );
   }
-}
-
-double
-eprop_iaf_psc_delta::compute_piecewise_linear_derivative()
-{
-  if ( S_.r_ > 0 )
-  {
-    return 0.0;
-  }
-
-  return P_.gamma_ * std::max( 0.0, 1.0 - std::fabs( ( S_.y3_ - P_.V_th_ ) / P_.V_th_ ) ) / P_.V_th_;
 }
 
 void

@@ -176,8 +176,11 @@ c_reg                               :math:`c_\text{reg}`                 0.0 Pre
 E_L                         mV      :math:`E_\text{L}`                 -70.0 Leak / resting membrane potential
 f_target                    Hz      :math:`f^\text{target}`             10.0 Target firing rate of rate
                                                                              regularization
-gamma                               :math:`\gamma`                       0.3 Scaling of surrogate gradient /
-                                                                             pseudo-derivative of
+beta                                :math:`\beta`                        1.0 Width scaling of surrogate gradient
+                                                                             / pseudo-derivative of membrane
+                                                                             voltage
+gamma                               :math:`\gamma`                       0.3 Height scaling of surrogate
+                                                                             gradient / pseudo-derivative of
                                                                              membrane voltage
 I_e                         pA      :math:`I_\text{e}`                   0.0 Constant external input current
 regular_spike_arrival       Boolean                                     True If True, the input spikes arrive at
@@ -308,11 +311,9 @@ protected:
   void init_buffers_() override;
 
 private:
-  //! Compute the piecewise linear surrogate gradient.
-  double compute_piecewise_linear_derivative();
-
   //! Compute the surrogate gradient.
-  double ( eprop_iaf_adapt_bsshslm_2020::*compute_surrogate_gradient )();
+  double (
+    eprop_iaf_adapt_bsshslm_2020::*compute_surrogate_gradient )( double, double, double, double, double, double );
 
   //! Map for storing a static set of recordables.
   friend class RecordablesMap< eprop_iaf_adapt_bsshslm_2020 >;
@@ -341,7 +342,10 @@ private:
     //! Target firing rate of rate regularization (spikes/s).
     double f_target_;
 
-    //! Scaling of surrogate-gradient / pseudo-derivative of membrane voltage.
+    //! Width scaling of surrogate-gradient / pseudo-derivative of membrane voltage.
+    double beta_;
+
+    //! Height scaling of surrogate-gradient / pseudo-derivative of membrane voltage.
     double gamma_;
 
     //! Constant external input current (pA).

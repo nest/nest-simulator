@@ -1,5 +1,5 @@
 /*
- *  eprop_eprop_iaf_psc_delta.cpp
+ *  eprop_iaf_psc_delta.cpp
  *
  *  This file is part of NEST.
  *

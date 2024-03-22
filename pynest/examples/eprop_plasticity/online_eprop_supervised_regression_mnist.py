@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# eprop_supervised_classification_evidence-accumulation.py
+# online_eprop_supervised_regression_mnist.py
 #
 # This file is part of NEST.
 #

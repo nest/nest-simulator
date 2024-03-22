@@ -111,3 +111,21 @@ can now be specified by the user, by adding a `v_comp` entry to the compartment 
 See the model documentation:
 
 * :doc:`/models/cm_default`
+
+New interface for NEST Extension Modules
+----------------------------------------
+
+The interface for NEST Extension Modules has been thoroughly revised. Key changes are
+
+* All extention modules must be derived from class ``nest::NESTExtensionInterface``
+ provided in ``nest_extension_interface.h``.
+ 
+    * In your class, you must override the ``initialize()`` method with one that registers all components provided by your module.
+    * The ``nest_extension_interface.h`` header provides a large set of NEST includes, so once including it you should no longer need to include other NEST headers in most cases.
+
+* Modules are now unloaded upon ``ResetKernel()`` and new versions of modules can be loaded after ``ResetKernel()``.
+* Modules can now also register connection builders and growth curves with the kernel.
+
+For more information, see the extension module documentation:
+
+* :doc:`NEST Extension Module Documentation <extmod:index>`

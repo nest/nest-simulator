@@ -122,17 +122,16 @@ regular_spike_arrival Boolean                                     True If True, 
 
 The following state variables evolve during simulation.
 
-===================== ==== =============== ============= ==========================
+===================== ==== =============== ============= ================
 **Neuron state variables and recordables**
------------------------------------------------------------------------------------
+-------------------------------------------------------------------------
 State variable        Unit Math equivalent Initial value Description
-===================== ==== =============== ============= ==========================
+===================== ==== =============== ============= ================
 error_signal          mV   :math:`L_j`               0.0 Error signal
 readout_signal        mV   :math:`y_j`               0.0 Readout signal
-readout_signal_unnorm mV                             0.0 Unnormalized readout signal
 target_signal         mV   :math:`y^*_j`             0.0 Target signal
 V_m                   mV   :math:`v_j`               0.0 Membrane voltage
-===================== ==== =============== ============= ==========================
+===================== ==== =============== ============= ================
 
 Recordables
 +++++++++++
@@ -141,7 +140,6 @@ The following variables can be recorded:
 
   - error signal ``error_signal``
   - readout signal ``readout_signal``
-  - readout signal ``readout_signal_unnorm``
   - target signal ``target_signal``
   - membrane potential ``V_m``
 
@@ -256,9 +254,6 @@ private:
   //! Compute the error signal based on the mean-squared error loss.
   void compute_error_signal_mean_squared_error( const long lag );
 
-  //! Compute the error signal based on the cross-entropy loss.
-  void compute_error_signal_cross_entropy( const long lag );
-
   //! Compute the error signal based on a loss function.
   void ( eprop_readout::*compute_error_signal )( const long lag );
 
@@ -318,9 +313,6 @@ private:
     //! Readout signal. Leaky integrated spikes emitted by the recurrent network.
     double readout_signal_;
 
-    //! Unnormalized readout signal. Readout signal not yet divided by the readout signals of other readout neurons.
-    double readout_signal_unnorm_;
-
     //! Target / teacher signal that the network is supposed to learn.
     double target_signal_;
 
@@ -355,9 +347,6 @@ private:
     //! Copy constructor.
     Buffers_( const Buffers_&, eprop_readout& );
 
-    //! Normalization rate of the readout signal. Sum of the readout signals of all readout neurons.
-    double normalization_rate_;
-
     //! Buffer for incoming spikes.
     RingBuffer spikes_;
 
@@ -379,9 +368,6 @@ private:
 
     //! Propagator matrix entry for evolving the incoming currents.
     double P_i_in_;
-
-    //! If the loss requires communication between the readout neurons and thus a buffer for the exchanged signals.
-    bool signal_to_other_readouts_;
   };
 
   //! Minimal spike receptor type. Start with 1 to forbid port 0 and avoid accidental creation of connections with no
@@ -391,9 +377,8 @@ private:
   //! Enumeration of spike receptor types.
   enum RateSynapseTypes
   {
-    READOUT_SIG = MIN_RATE_RECEPTOR,
+    LEARNING_WINDOW_SIG = MIN_RATE_RECEPTOR,
     TARGET_SIG,
-    LEARNING_WINDOW_SIG,
     SUP_RATE_RECEPTOR
   };
 
@@ -409,13 +394,6 @@ private:
   get_readout_signal_() const
   {
     return S_.readout_signal_;
-  }
-
-  //! Get the current value of the unnormalized readout signal.
-  double
-  get_readout_signal_unnorm_() const
-  {
-    return S_.readout_signal_unnorm_;
   }
 
   //! Get the current value of the target signal.
@@ -518,7 +496,7 @@ eprop_readout::get_status( DictionaryDatum& d ) const
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 
   DictionaryDatum receptor_dict_ = new Dictionary();
-  ( *receptor_dict_ )[ names::readout_signal ] = READOUT_SIG;
+  ( *receptor_dict_ )[ names::eprop_learning_window ] = LEARNING_WINDOW_SIG;
   ( *receptor_dict_ )[ names::target_signal ] = TARGET_SIG;
 
   ( *d )[ names::receptor_types ] = receptor_dict_;

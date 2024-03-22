@@ -117,8 +117,8 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # The original number of iterations requires distributed computing.
 
 n_batch = 32  # batch size, 64 in reference [2], 32 in the README to reference [2]
-n_iter_train = 4
-n_iter_test = 1
+n_iter_train = 50
+n_iter_test = 4
 
 steps = {}
 
@@ -190,7 +190,7 @@ params_nrn_rec = {
     "C_m": 1.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
     "c_reg": 2.0 / duration["sequence"],  # firing rate regularization scaling
     "E_L": 0.0,  # mV, leak reversal potential
-    "eprop_isi_trace_cutoff": 10,  # cutoff of integration of eprop trace between spikes
+    "eprop_isi_trace_cutoff": 10**2,  # cutoff of integration of eprop trace between spikes
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
     "gamma": 0.3,  # height scaling of the pseudo derivative
     "I_e": 0.0,  # pA, external current input
@@ -204,14 +204,14 @@ params_nrn_rec = {
 
 if model_nrn_rec == "eprop_iaf":
     del params_nrn_rec["V_reset"]
-    params_nrn_rec["c_reg"] = 300.0 / duration["sequence"]  # firing rate regularization scaling
+    params_nrn_rec["c_reg"] = 2.0 / duration["sequence"]  # firing rate regularization scaling
     params_nrn_rec["regular_spike_arrival"] = True  # postsynaptic current scale factor
     params_nrn_rec["V_th"] = 0.6  # mV, spike threshold membrane voltage
 
 params_nrn_out = {
     "C_m": 1.0,
     "E_L": 0.0,
-    "eprop_isi_trace_cutoff": 10,  # cutoff of integration of eprop trace between spikes
+    "eprop_isi_trace_cutoff": 10**2,  # cutoff of integration of eprop trace between spikes
     "I_e": 0.0,
     "loss": "mean_squared_error",  # loss function
     "regular_spike_arrival": False,
@@ -257,7 +257,7 @@ gen_learning_window = nest.Create("step_rate_generator")
 
 params_mm_out = {
     "interval": duration["step"],
-    "record_from": ["V_m", "readout_signal", "readout_signal_unnorm", "target_signal", "error_signal"],
+    "record_from": ["V_m", "readout_signal", "target_signal", "error_signal"],
     "start": duration["total_offset"] - 1,  # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<,,,
     "stop": duration["total_offset"] + duration["task"] - 1,
 }
@@ -340,23 +340,16 @@ params_syn_feedback = {
     "weight": weights_out_rec,
 }
 
-params_syn_out_out = {
+params_syn_learning_window = {
     "synapse_model": "rate_connection_delayed",
     "delay": duration["step"],
-    "receptor_type": 1,  # receptor type of readout neuron to receive other readout neuron's signals for softmax
-    "weight": 1.0,  # pA, weight 1.0 required for correct softmax computation for" technical reasons
+    "receptor_type": 1,  # receptor type over which readout neuron receives learning window signal
 }
 
 params_syn_rate_target = {
     "synapse_model": "rate_connection_delayed",
     "delay": duration["step"],
     "receptor_type": 2,  # receptor type over which readout neuron receives target signal
-}
-
-params_syn_learning_window = {
-    "synapse_model": "rate_connection_delayed",
-    "delay": duration["step"],
-    "receptor_type": 3,  # receptor type over which readout neuron receives learning window signal
 }
 
 params_syn_static = {
@@ -394,7 +387,6 @@ for j in range(n_out):
 nest.Connect(nrns_out, nrns_rec, params_conn_all_to_all, params_syn_feedback)  # connection 5
 nest.Connect(gen_rate_target, nrns_out, params_conn_one_to_one, params_syn_rate_target)  # connection 6
 nest.Connect(gen_learning_window, nrns_out, params_conn_all_to_all, params_syn_learning_window)  # connection
-nest.Connect(nrns_out, nrns_out, params_conn_all_to_all, params_syn_out_out)  # connection 7
 nest.Connect(mm_out, nrns_out, params_conn_all_to_all, params_syn_static)
 
 # After creating the connections, we can individually initialize the optimizer's

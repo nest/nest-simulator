@@ -259,7 +259,7 @@ gen_learning_window = nest.Create("step_rate_generator")
 
 params_mm_out = {
     "interval": duration["step"],
-    "record_from": ["V_m", "readout_signal", "readout_signal_unnorm", "target_signal", "error_signal"],
+    "record_from": ["V_m", "readout_signal", "target_signal", "error_signal"],
     "start": duration["total_offset"] - 1,  # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     "stop": duration["total_offset"] + duration["task"] - 1,
 }
@@ -338,23 +338,16 @@ params_syn_feedback = {
     "weight": weights_out_rec,
 }
 
-params_syn_out_out = {
+params_syn_learning_window = {
     "synapse_model": "rate_connection_delayed",
     "delay": duration["step"],
-    "receptor_type": 1,  # receptor type of readout neuron to receive other readout neuron's signals for softmax
-    "weight": 1.0,  # pA, weight 1.0 required for correct softmax computation for technical reasons
+    "receptor_type": 1,  # receptor type over which readout neuron receives learning window signal
 }
 
 params_syn_rate_target = {
     "synapse_model": "rate_connection_delayed",
     "delay": duration["step"],
     "receptor_type": 2,  # receptor type over which readout neuron receives target signal
-}
-
-params_syn_learning_window = {
-    "synapse_model": "rate_connection_delayed",
-    "delay": duration["step"],
-    "receptor_type": 3,  # receptor type over which readout neuron receives learning window signal
 }
 
 params_syn_static = {
@@ -380,7 +373,6 @@ nest.Connect(nrns_rec, nrns_out, params_conn_all_to_all, params_syn_out)  # conn
 nest.Connect(nrns_out, nrns_rec, params_conn_all_to_all, params_syn_feedback)  # connection 5
 nest.Connect(gen_rate_target, nrns_out, params_conn_one_to_one, params_syn_rate_target)  # connection 6
 nest.Connect(gen_learning_window, nrns_out, params_conn_all_to_all, params_syn_learning_window)  # connection
-nest.Connect(nrns_out, nrns_out, params_conn_all_to_all, params_syn_out_out)  # connection 7
 nest.Connect(mm_out, nrns_out, params_conn_all_to_all, params_syn_static)
 
 # After creating the connections, we can individually initialize the optimizer's

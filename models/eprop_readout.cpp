@@ -60,7 +60,6 @@ RecordablesMap< eprop_readout >::create()
 {
   insert_( names::error_signal, &eprop_readout::get_error_signal_ );
   insert_( names::readout_signal, &eprop_readout::get_readout_signal_ );
-  insert_( names::readout_signal_unnorm, &eprop_readout::get_readout_signal_unnorm_ );
   insert_( names::target_signal, &eprop_readout::get_target_signal_ );
   insert_( names::V_m, &eprop_readout::get_v_m_ );
 }
@@ -85,7 +84,6 @@ eprop_readout::Parameters_::Parameters_()
 eprop_readout::State_::State_()
   : error_signal_( 0.0 )
   , readout_signal_( 0.0 )
-  , readout_signal_unnorm_( 0.0 )
   , target_signal_( 0.0 )
   , i_in_( 0.0 )
   , v_m_( 0.0 )
@@ -173,7 +171,6 @@ eprop_readout::State_::get( DictionaryDatum& d, const Parameters_& p ) const
   def< double >( d, names::V_m, v_m_ + p.E_L_ );
   def< double >( d, names::error_signal, error_signal_ );
   def< double >( d, names::readout_signal, readout_signal_ );
-  def< double >( d, names::readout_signal_unnorm, readout_signal_unnorm_ );
   def< double >( d, names::target_signal, target_signal_ );
 }
 
@@ -211,7 +208,6 @@ eprop_readout::eprop_readout( const eprop_readout& n )
 void
 eprop_readout::init_buffers_()
 {
-  B_.normalization_rate_ = 0;
   B_.spikes_.clear();   // includes resize
   B_.currents_.clear(); // includes resize
   B_.logger_.reset();   // includes resize
@@ -222,19 +218,9 @@ eprop_readout::pre_run_hook()
 {
   B_.logger_.init(); // ensures initialization in case multimeter connected after Simulate
 
-  if ( P_.loss_ == "mean_squared_error" )
-  {
-    compute_error_signal = &eprop_readout::compute_error_signal_mean_squared_error;
-    V_.signal_to_other_readouts_ = false;
-  }
-  else if ( P_.loss_ == "cross_entropy" )
-  {
-    compute_error_signal = &eprop_readout::compute_error_signal_cross_entropy;
-    V_.signal_to_other_readouts_ = true;
-  }
+  compute_error_signal = &eprop_readout::compute_error_signal_mean_squared_error;
 
   const double dt = Time::get_resolution().get_ms();
-
   const double kappa = std::exp( -dt / P_.tau_m_ );
 
   V_.P_v_m_ = kappa;
@@ -264,7 +250,6 @@ eprop_readout::update( Time const& origin, const long from, const long to )
   const size_t buffer_size = kernel().connection_manager.get_min_delay();
 
   std::vector< double > error_signal_buffer( buffer_size, 0.0 );
-  std::vector< double > readout_signal_unnorm_buffer( buffer_size, 0.0 );
 
   for ( long lag = from; lag < to; ++lag )
   {
@@ -281,13 +266,6 @@ eprop_readout::update( Time const& origin, const long from, const long to )
     S_.readout_signal_ *= S_.learning_window_signal_;
     S_.error_signal_ *= S_.learning_window_signal_;
 
-    B_.normalization_rate_ = 0.0;
-
-    if ( V_.signal_to_other_readouts_ )
-    {
-      readout_signal_unnorm_buffer[ lag ] = S_.readout_signal_unnorm_;
-    }
-
     error_signal_buffer[ lag ] = S_.error_signal_;
 
     write_error_signal_to_history( t, S_.error_signal_, false );
@@ -301,15 +279,6 @@ eprop_readout::update( Time const& origin, const long from, const long to )
   error_signal_event.set_coeffarray( error_signal_buffer );
   kernel().event_delivery_manager.send_secondary( *this, error_signal_event );
 
-  if ( V_.signal_to_other_readouts_ )
-  {
-    // time is one time step longer than the final interval_step to enable sending the
-    // unnormalized readout signal one time step in advance so that it is available
-    // in the next times step for computing the normalized readout signal
-    DelayedRateConnectionEvent readout_signal_unnorm_event;
-    readout_signal_unnorm_event.set_coeffarray( readout_signal_unnorm_buffer );
-    kernel().event_delivery_manager.send_secondary( *this, readout_signal_unnorm_event );
-  }
   return;
 }
 
@@ -321,15 +290,6 @@ void
 eprop_readout::compute_error_signal_mean_squared_error( const long lag )
 {
   S_.readout_signal_ = S_.v_m_ + P_.E_L_;
-  S_.error_signal_ = S_.readout_signal_ - S_.target_signal_;
-}
-
-void
-eprop_readout::compute_error_signal_cross_entropy( const long lag )
-{
-  const double norm_rate = B_.normalization_rate_ + S_.readout_signal_unnorm_;
-  S_.readout_signal_ = S_.readout_signal_unnorm_ / norm_rate;
-  S_.readout_signal_unnorm_ = std::exp( S_.v_m_ + P_.E_L_ );
   S_.error_signal_ = S_.readout_signal_ - S_.target_signal_;
 }
 
@@ -347,17 +307,13 @@ eprop_readout::handle( DelayedRateConnectionEvent& e )
   assert( it != e.end() );
 
   const double signal = e.get_weight() * e.get_coeffvalue( it );
-  if ( rport == READOUT_SIG )
+  if ( rport == LEARNING_WINDOW_SIG )
   {
-    B_.normalization_rate_ += signal;
+    S_.learning_window_signal_ = signal;
   }
   else if ( rport == TARGET_SIG )
   {
     S_.target_signal_ = signal;
-  }
-  else if ( rport == LEARNING_WINDOW_SIG )
-  {
-    S_.learning_window_signal_ = signal;
   }
 
   assert( it == e.end() );

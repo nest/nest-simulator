@@ -376,9 +376,6 @@ private:
     //!< eprop_isi_trace_cutoff_ and the inter-spike distance.
     long eprop_isi_trace_cutoff_;
 
-    //! Learning rate.
-    double eta_;
-
     //! Default constructor.
     Parameters_();
 

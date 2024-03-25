@@ -87,7 +87,6 @@ eprop_iaf_adapt::Parameters_::Parameters_()
   , V_th_( -55.0 - E_L_ )
   , beta_fr_ema_( 0.0 )
   , eprop_isi_trace_cutoff_( std::numeric_limits< long >::max() )
-  , eta_( 0.0 )
 {
 }
 
@@ -138,7 +137,6 @@ eprop_iaf_adapt::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::V_th, V_th_ + E_L_ );
   def< double >( d, names::beta_fr_ema, beta_fr_ema_ );
   def< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
-  def< double >( d, names::eta, eta_ );
 }
 
 double
@@ -171,7 +169,6 @@ eprop_iaf_adapt::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
   updateValueParam< double >( d, names::beta_fr_ema, beta_fr_ema_, node );
   updateValueParam< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
-  updateValueParam< double >( d, names::eta, eta_, node );
 
   if ( adapt_beta_ < 0 )
   {
@@ -222,11 +219,6 @@ eprop_iaf_adapt::Parameters_::set( const DictionaryDatum& d, Node* node )
   if ( eprop_isi_trace_cutoff_ < 0 )
   {
     throw BadProperty( "Cutoff of integration of eprop trace between spikes eprop_isi_trace_cutoff ≥ 0 required." );
-  }
-
-  if ( eta_ < 0 )
-  {
-    throw BadProperty( "Learning rate eta ≥ 0 required." );
   }
 
   return delta_EL;

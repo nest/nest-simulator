@@ -273,9 +273,6 @@ private:
     //!< eprop_isi_trace_cutoff_ and the inter-spike distance.
     long eprop_isi_trace_cutoff_;
 
-    //! Learning rate.
-    double eta_;
-
     Parameters_(); //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary

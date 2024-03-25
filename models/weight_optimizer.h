@@ -60,9 +60,13 @@ In the Adam scheme [2]_ the weights are optimized via:
   m_0 &= 0, v_0 = 0, t = 1 \,, \\
   m_t &= \beta_1 \, m_{t-1} + \left(1-\beta_1\right) \, g_t \,, \\
   v_t &= \beta_2 \, v_{t-1} + \left(1-\beta_2\right) \, g_t^2 \,, \\
-  \hat{m}_t &= \frac{m_t}{1-\beta_1^t} \,, \\
-  \hat{v}_t &= \frac{v_t}{1-\beta_2^t} \,, \\
-  W_t &= W_{t-1} - \eta\frac{\hat{m_t}}{\sqrt{\hat{v}_t} + \epsilon} \,.
+  \alpha_t &= \eta\,\frac{\sqrt{1-\beta_2^t}}{1-\beta_1^t} \,, \\
+  W_t &= W_{t-1} - \alpha_t\frac{m_t}{\sqrt{v_t} + \hat{\epsilon}} \,.
+
+Note that the implementation follows the implementation in TensorFlow [3]_ for comparability.
+The TensorFlow implementation deviates from [1]_ in that it assumes
+:math:`\hat{\epsilon}=\epsilon\,\sqrt{1-\beta_2^t}` to be constant, whereas [1]_
+assumes :math:`\epsilon=\hat{\epsilon}\,\sqrt{1-\beta_2^t}` to be constant.
 
 Parameters
 ++++++++++
@@ -96,7 +100,7 @@ Parameter Unit Math equivalent  Default Description
 type                               adam Optimizer type
 beta_1         :math:`\beta_1`      0.9 Exponential decay rate for first moment estimate
 beta_2         :math:`\beta_2`    0.999 Exponential decay rate for second moment estimate
-epsilon        :math:`\epsilon`    1e-8 Small constant for numerical stability
+epsilon        :math:`\epsilon`    1e-7 Small constant for numerical stability
 ========= ==== ================ ======= =================================================
 
 The following state variables evolve during simulation.
@@ -118,6 +122,7 @@ References
 .. [2] Kingma DP, Ba JL (2015). Adam: A method for stochastic optimization.
        Proceedings of International Conference on Learning Representations (ICLR).
        https://doi.org/10.48550/arXiv.1412.6980
+.. [3] https://github.com/keras-team/keras/blob/v2.15.0/keras/optimizers/adam.py#L26-L220
 
 See also
 ++++++++

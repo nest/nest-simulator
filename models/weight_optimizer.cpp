@@ -156,7 +156,7 @@ WeightOptimizerCommonPropertiesAdam::WeightOptimizerCommonPropertiesAdam()
   : WeightOptimizerCommonProperties()
   , beta_1_( 0.9 )
   , beta_2_( 0.999 )
-  , epsilon_( 1e-8 )
+  , epsilon_( 1e-7 )
 {
 }
 

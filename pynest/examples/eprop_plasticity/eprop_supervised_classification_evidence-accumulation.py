@@ -191,12 +191,12 @@ n_out = 2  # number of readout neurons
 
 
 params_nrn_reg = {
-    "beta": 1.0,  # width scaling of the pseudo derivative
+    "beta": 1.0,  # width scaling of the pseudo-derivative
     "C_m": 1.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
     "c_reg": 300.0,  # firing rate regularization scaling - 2*learning_window*(TF c_reg) for technical reasons
     "E_L": 0.0,  # mV, leak / resting membrane potential
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
-    "gamma": 0.3,  # height scaling of the pseudo derivative
+    "gamma": 0.3,  # height scaling of the pseudo-derivative
     "I_e": 0.0,  # pA, external current input
     "regular_spike_arrival": True,  # If True, input spikes arrive at end of time step, if False at beginning
     "surrogate_gradient_function": "piecewise_linear",  # surrogate gradient / pseudo-derivative function

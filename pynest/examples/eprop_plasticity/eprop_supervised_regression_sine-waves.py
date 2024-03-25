@@ -170,12 +170,12 @@ n_rec = 100  # number of recurrent neurons
 n_out = 1  # number of readout neurons
 
 params_nrn_rec = {
-    "beta": 1.0,  # width scaling of the pseudo derivative
+    "beta": 1.0,  # width scaling of the pseudo-derivative
     "C_m": 1.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
     "c_reg": 300.0,  # firing rate regularization scaling
     "E_L": 0.0,  # mV, leak / resting membrane potential
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
-    "gamma": 0.3,  # height scaling of the pseudo derivative
+    "gamma": 0.3,  # height scaling of the pseudo-derivative
     "I_e": 0.0,  # pA, external current input
     "regular_spike_arrival": False,  # If True, input spikes arrive at end of time step, if False at beginning
     "surrogate_gradient_function": "piecewise_linear",  # surrogate gradient / pseudo-derivative function

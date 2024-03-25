@@ -90,7 +90,7 @@ able to spike for an absolute refractory period :math:`t_\text{ref}`.
 An additional state variable and the corresponding differential equation
 represents a piecewise constant external current.
 
-Furthermore, the pseudo derivative of the membrane voltage needed for e-prop
+Furthermore, the pseudo-derivative of the membrane voltage needed for e-prop
 plasticity is calculated:
 
 .. math::

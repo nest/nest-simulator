@@ -262,7 +262,8 @@ private:
     //! Height scaling of surrogate gradient / pseudo-derivative of membrane voltage.
     double gamma_;
 
-    //! Surrogate gradient / pseudo-derivative function ["piecewise_linear"].
+    //! Surrogate gradient / pseudo-derivative function of the membrane voltage ["piecewise_linear", "exponential",
+    //! "fast_sigmoid_derivative", "arctan"]
     std::string surrogate_gradient_function_;
 
     //! Smoothing factor of firing rate exponential moving average.

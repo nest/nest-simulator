@@ -176,7 +176,9 @@ regular_spike_arrival       Boolean                                     True If 
                                                                              PSC scale)
 surrogate_gradient_function         :math:`\psi`            piecewise_linear Surrogate gradient /
                                                                              pseudo-derivative function
-                                                                             ["piecewise_linear"]
+                                                                             ["piecewise_linear", "exponential",
+                                                                             "fast_sigmoid_derivative",
+                                                                             "arctan"]
 t_ref                       ms      :math:`t_\text{ref}`                 2.0 Duration of the refractory period
 tau_m                       ms      :math:`\tau_\text{m}`               10.0 Time constant of the membrane
 V_min                       mV      :math:`v_\text{min}`          -1.79e+308 Absolute lower bound of the
@@ -330,7 +332,8 @@ private:
     //! If True, the input spikes arrive at the beginning of the time step, if False at the end (determines PSC scale).
     bool regular_spike_arrival_;
 
-    //! Surrogate gradient / pseudo-derivative function ["piecewise_linear"].
+    //! Surrogate gradient / pseudo-derivative function of the membrane voltage ["piecewise_linear", "exponential",
+    //! "fast_sigmoid_derivative", "arctan"]
     std::string surrogate_gradient_function_;
 
     //! Duration of the refractory period (ms).

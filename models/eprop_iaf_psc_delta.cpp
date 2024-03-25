@@ -210,21 +210,10 @@ nest::eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* nod
     throw BadProperty( "Firing rate regularization target rate f_target ≥ 0 required." );
   }
 
-  std::set< std::string > surrogate_functions_set = {
-    "piecewise_linear", "exponential", "fast_sigmoid_derivative", "arctan"
-  };
-
-  if ( surrogate_functions_set.find( surrogate_gradient_function_ ) == surrogate_functions_set.end() )
+  if ( surrogate_gradient_function_ == "piecewise_linear" and fabs( V_th_ ) < 1e-6 )
   {
-    std::string error_message = "Surrogate gradient / pseudo derivate function surrogate_gradient_function from [";
-    for ( auto name : surrogate_functions_set )
-    {
-      error_message += " \"" + name + "\",";
-    }
-    error_message.pop_back();
-    error_message += " ] required.";
-
-    throw BadProperty( error_message );
+    throw BadProperty(
+      "Relative threshold voltage V_th-E_L ≠ 0 required if surrogate_gradient_function is \"piecewise_linear\"." );
   }
 
   if ( beta_fr_ema_ < 0 or 1 <= beta_fr_ema_ )

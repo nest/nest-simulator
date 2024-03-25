@@ -127,26 +127,30 @@ public:
   double ( EpropArchivingNodeRecurrent::*select_surrogate_gradient(
     std::string surrogate_gradient_function ) )( double, double, double, double, double, double )
   {
-    if ( surrogate_gradient_function == "piecewise_linear" )
+    const std::map< std::string,
+      double ( EpropArchivingNodeRecurrent::* )( double, double, double, double, double, double ) >
+      surrogate_gradient_funcs = { { "piecewise_linear",
+                                     &EpropArchivingNodeRecurrent::compute_piecewise_linear_surrogate_gradient },
+        { "exponential", &EpropArchivingNodeRecurrent::compute_exponential_surrogate_gradient },
+        { "fast_sigmoid_derivative", &EpropArchivingNodeRecurrent::compute_fast_sigmoid_derivative_surrogate_gradient },
+        { "arctan", &EpropArchivingNodeRecurrent::compute_arctan_surrogate_gradient } };
+
+    auto found_entry_it = surrogate_gradient_funcs.find( surrogate_gradient_function );
+    if ( found_entry_it == surrogate_gradient_funcs.end() )
     {
-      return &EpropArchivingNodeRecurrent::compute_piecewise_linear_surrogate_gradient;
-    }
-    else if ( surrogate_gradient_function == "exponential" )
-    {
-      return &EpropArchivingNodeRecurrent::compute_exponential_surrogate_gradient;
-    }
-    else if ( surrogate_gradient_function == "fast_sigmoid_derivative" )
-    {
-      return &EpropArchivingNodeRecurrent::compute_fast_sigmoid_derivative_surrogate_gradient;
-    }
-    else if ( surrogate_gradient_function == "arctan" )
-    {
-      return &EpropArchivingNodeRecurrent::compute_arctan_surrogate_gradient;
+      std::string error_message = "Surrogate gradient / pseudo-derivate function surrogate_gradient_function from [";
+      for ( const auto& surrogate_gradient_func : surrogate_gradient_funcs )
+      {
+        error_message += " \"" + surrogate_gradient_func.first + "\",";
+      }
+      error_message.pop_back();
+      error_message += " ] required.";
+
+      throw BadProperty( error_message );
     }
     else
     {
-      throw NotImplemented(
-        "The requested " + surrogate_gradient_function + " surrogate gradient is not implemented." );
+      return found_entry_it->second;
     }
   }
 

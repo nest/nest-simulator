@@ -189,23 +189,6 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::set( const DictionaryDatum& d, Node* 
     throw BadProperty( "Firing rate regularization target rate f_target ≥ 0 required." );
   }
 
-  std::set< std::string > surrogate_functions_set = {
-    "piecewise_linear", "exponential", "fast_sigmoid_derivative", "arctan"
-  };
-
-  if ( surrogate_functions_set.find( surrogate_gradient_function_ ) == surrogate_functions_set.end() )
-  {
-    std::string error_message = "Surrogate gradient / pseudo derivate function surrogate_gradient_function from [";
-    for ( auto name : surrogate_functions_set )
-    {
-      error_message += " \"" + name + "\",";
-    }
-    error_message.pop_back();
-    error_message += " ] required.";
-
-    throw BadProperty( error_message );
-  }
-
   if ( surrogate_gradient_function_ == "piecewise_linear" and fabs( V_th_ ) < 1e-6 )
   {
     throw BadProperty(

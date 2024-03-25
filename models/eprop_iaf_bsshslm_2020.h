@@ -102,7 +102,7 @@ The change of the synaptic weight is calculated from the gradient :math:`g` of
 the loss :math:`E` with respect to the synaptic weight :math:`W_{ji}`:
 :math:`\frac{\mathrm{d}{E}}{\mathrm{d}{W_{ij}}}=g`
 which depends on the presynaptic
-spikes :math:`z_i^{t-1}`, the surrogate-gradient / pseudo-derivative of the postsynaptic membrane
+spikes :math:`z_i^{t-1}`, the surrogate gradient / pseudo-derivative of the postsynaptic membrane
 voltage :math:`\psi_j^t` (which together form the eligibility trace
 :math:`e_{ji}^t`), and the learning signal :math:`L_j^t` emitted by the readout
 neurons.
@@ -318,10 +318,10 @@ private:
     //! Target firing rate of rate regularization (spikes/s).
     double f_target_;
 
-    //! Width scaling of surrogate-gradient / pseudo-derivative of membrane voltage.
+    //! Width scaling of surrogate gradient / pseudo-derivative of membrane voltage.
     double beta_;
 
-    //! Height scaling of surrogate-gradient / pseudo-derivative of membrane voltage.
+    //! Height scaling of surrogate gradient / pseudo-derivative of membrane voltage.
     double gamma_;
 
     //! Constant external input current (pA).

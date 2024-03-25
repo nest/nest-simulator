@@ -256,10 +256,10 @@ private:
     //! Target firing rate of rate regularization (spikes/s).
     double f_target_;
 
-    //! Width scaling of surrogate-gradient / pseudo-derivative of membrane voltage.
+    //! Width scaling of surrogate gradient / pseudo-derivative of membrane voltage.
     double beta_;
 
-    //! Height scaling of surrogate-gradient / pseudo-derivative of membrane voltage.
+    //! Height scaling of surrogate gradient / pseudo-derivative of membrane voltage.
     double gamma_;
 
     //! Surrogate gradient / pseudo-derivative function ["piecewise_linear"].

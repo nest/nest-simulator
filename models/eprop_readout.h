@@ -466,7 +466,7 @@ eprop_readout::handles_test_event( DelayedRateConnectionEvent& e, size_t recepto
   {
     throw IllegalConnection(
       "eprop_readout neurons expect a connection with a step_rate_generator node through receptor_type "
-      "2 or 3." );
+      "1 or 2." );
   }
 
   if ( receptor_type < MIN_RATE_RECEPTOR or receptor_type >= SUP_RATE_RECEPTOR )

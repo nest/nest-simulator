@@ -310,16 +310,16 @@ params_syn_feedback = {
     "weight": weights_out_rec,
 }
 
+params_syn_learning_window = {
+    "synapse_model": "rate_connection_delayed",
+    "delay": duration["step"],
+    "receptor_type": 1,  # receptor type over which readout neuron receives learning window signal
+}
+
 params_syn_rate_target = {
     "synapse_model": "rate_connection_delayed",
     "delay": duration["step"],
     "receptor_type": 2,  # receptor type over which readout neuron receives target signal
-}
-
-params_syn_learning_window = {
-    "synapse_model": "rate_connection_delayed",
-    "delay": duration["step"],
-    "receptor_type": 3,  # receptor type over which readout neuron receives learning window signal
 }
 
 params_syn_static = {

@@ -39,6 +39,7 @@ from .hl_api_helper import (
     is_literal,
     restructure_data,
 )
+from .hl_api_parallel_computing import Rank
 from .hl_api_simulation import GetKernelStatus
 
 try:
@@ -513,6 +514,40 @@ class NodeCollection:
             return []
 
         return list(self.get("global_id")) if len(self) > 1 else [self.get("global_id")]
+
+    def _to_array(self, selection="all"):
+        """
+        Debugging helper to extract GIDs from node collections.
+
+        `selection` can be `"all"`, `"rank"` or `"thread"` and extracts either all
+        nodes or those on the rank or thread on which it is executed. For `"thread"`,
+        separate lists are returned for all local threads independently.
+        """
+
+        res = sli_func("cva_g_l", self, selection)
+
+        if selection == "all":
+            return {"All": res}
+        elif selection == "rank":
+            return {f"Rank {Rank()}": res}
+        elif selection == "thread":
+            t_res = {}
+            thr = None
+            ix = 0
+            while ix < len(res):
+                while ix < len(res) and res[ix] != 0:
+                    t_res[thr].append(res[ix])
+                    ix += 1
+                assert ix == len(res) or ix + 3 <= len(res)
+                if ix < len(res):
+                    assert res[ix] == 0 and res[ix + 2] == 0
+                    thr = res[ix + 1]
+                    assert thr not in t_res
+                    t_res[thr] = []
+                    ix += 3
+            return t_res
+        else:
+            return res
 
     def index(self, node_id):
         """

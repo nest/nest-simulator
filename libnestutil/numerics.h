@@ -131,4 +131,52 @@ double dtruncate( double );
  */
 bool is_integer( double );
 
+/**
+ * Returns inverse of integer a modulo m
+ *
+ * For integer a > 0, m ≥ 2, find x so that ( a * x ) mod m = 1.
+ */
+long mod_inverse( long a, long m );
+
+/**
+ * Return first matching index for entry in container with double periodicity.
+ *
+ * Consider
+ * - a container of arbitrary length containing elements (e.g. GIDs) which map to certain values,
+ *     e.g., VP(GID), with a given *period*, e.g., the number of virtual processes
+ * - that the phase (e.g., the VP number) of the first entry in the container is *phase0*
+ * - that we slice the container with a given *step*, causing a double periodicity
+ * - that we want to know the index of the first element in the container with a given *phase*,
+ *     e.g., the first element on a given VP
+ *
+ * If such an index x exists, it is given by
+ *
+ * x = phase0 + k' mod lcm(period, step)
+ * k' = min_k ( phase0 + k step = phase mod period )
+ *
+ * As an example, consider
+ *
+ * idx 0 1 2 3 4 5 6 7 8 9  10 11 | 12 13 14 15 16 17 18
+ * gid 1 2 3 4 5 6 7 8 9 10 11 12 | 13 14 15 16 17 18 19
+ * vp  1 2 3 0 1 2 3 0 1 2  3  0  | 1  2  3  0  1  2  3
+ *    *     *     *     *        | *        *        *
+ *    1     0     3     2        |
+ *
+ * Here, idx is a linear index into the container, gid neuron ids which map to the given vp numbers.
+ * The container is sliced with step=3, i.e., starting with the first element we take every third, as
+ * marked by the asterisks. The question is then at which index we find the first entry belonging to
+ * vp 0, 1, 2, or 3. The numbers in the bottom row show for clarity on which VP we find the respective
+ * asterisks. The | symbol marks where the pattern repeats itself.
+ *
+ * phase0 in this example is 1, i.e., the VP of the first element in the container.
+ *
+ * @note This function returns that index. It is the responsibility of the caller to check if the returned index
+ * is within the bounds of the actual container—the algorithm assumes an infinite container.
+ *
+ * @note The function returns *invalid_index* if no solution exists.
+ *
+ * See comments in the function definition for implementation details.
+ */
+size_t first_index( long period, long phase0, long step, long phase );
+
 #endif

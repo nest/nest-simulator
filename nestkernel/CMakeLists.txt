@@ -44,7 +44,6 @@ set ( nestkernel_sources
       histentry.h histentry.cpp
       model.h model.cpp
       model_manager.h model_manager_impl.h model_manager.cpp
-      nest_types.h
       nest_datums.h nest_datums.cpp
       nest_names.cpp nest_names.h
       nestmodule.h nestmodule.cpp

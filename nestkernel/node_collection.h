@@ -106,17 +106,84 @@ public:
  * for all actual work, the iterator also holds a NodeCollectionPTR to the NC it iterates over. This is solely
  * so that anonymous node collections at the SLI/Python level are not auto-destroyed when they go out
  * of scope while the iterator lives on.
+ *
+ * @note We decided not to implement iterators for primitive and composite node collections or for
+ * stepping through rank- og thread-local elements using subclasses to avoid vtable lookups. Whether
+ * this indeed gives best performance should be checked at some point.
+ *
+ * In the following discussion, we use the following terms:
+ *
+ * - **stride** is the user-given stride through a node collection as in ``nc[::stride]``
+ * - **period** is the number of either ranks or threads, depending on whether we want rank- or thread-local iteration
+ * - **phase** is the rank or VP to which a node belongs
+ * - **step** is the number of elements of the underlying primitive node collection to advance by to move to the next
+ * element
+ *
+ * For ``NodeCollectionPrimitive``, creating a rank/thread-local ``begin()`` iterator and stepping is easy:
+ *
+ * 1. Find the `phase` of the first element of the NC
+ * 2. Use modular arithmetic to find the first element in the NC belonging to the current rank/thread
+ * 3. Set the step to the period.
+ *
+ * For ``NodeCollectionComposite``, one needs to take multiple aspects into account
+ *
+ * - The search for the begin-element for a given rank/thread must begin at ``start_part_/start_offset_``
+ *   - This is done using the ``first_index()`` procedure from ``numerics.h``
+ *   - If we do not find a solution in ``start_part_``, we need to look through subsequent parts, which may have a
+ * different phase relation. See the stepping discussion below for how to proceed.
+ * - Within each part, we have ``step = lcm(period, stride)``.
+ * - Whenever we step out of a given part, we need to find a new starting point as follows:
+ *     1. Find the last element compatible with the current stride on any rank/threak.
+ *     2. Move forward by a single stride.
+ *     3. Find the part in and offset at which the resulting element is located. This may require advancing by multiple
+ * parts, since parts may contain as little as a single element.
+ *     4. From the part/offset we have found, use the ``first_index()`` function to find the first location for the
+ * current rank/thread. Note that this in itself may require moving to further part(s).
+ *  - The precise method to find the part and offset in step 3 above is as follows.
+ *    - Let ``p`` be the part we have just stepped out of, and let ``p_b`` be the first index in ``p`` belonging to the
+ * slice.
+ *    - Let ``p_e == p.size()`` be the one-past-last index of ``p``.
+ *    - Then the number of elements in the slice is given by ``n_p = 1 + (p_e - 1 - p_b) // stride``, where ``//``
+ *      marks integer division, i.e., flooring.
+ *    - The element of the composite node collection that we are looking for then has index ``ix = p_b + n_p * stride``.
+ *      This index ``ix`` is to be interpreted by counting from the beginning of ``p`` over *all* elements of the
+ * underlying primitive node collection
+ *      ``p`` and all subsequent parts until we have gotten to ``ix``.
+ *    - This yields the following algorithm:
+ *      1. Compute ``ix = p_b + n_p * stride``
+ *      2. While ``ix > p.size()`` and at least one more part in node collection
+ *        a. ``ix -= p.size()``
+ *        b. ``p <- next(p)``
+ *      3. If ``p == parts.end()``
+ *          there is no more element in the node collection on this rank/thread
+ *        else
+ *          ``assert ix < p.size()``
+ *          ``return index(p), ix``
  */
 class nc_const_iterator
 {
   friend class NodeCollectionPrimitive;
   friend class NodeCollectionComposite;
 
+public:
+  //! Markers for kind of iterator, required by `composite_update_indices_()`.
+  enum class NCIteratorKind
+  {
+    GLOBAL,       //!< iterate over all elements of node collection
+    RANK_LOCAL,   //!< iterate only over elements on owning rank
+    THREAD_LOCAL, //!< iterate only over elements on owning thread
+    END           //!< end iterator, never increase
+  };
+
 private:
   NodeCollectionPTR coll_ptr_; //!< pointer to keep node collection alive, see note
   size_t element_idx_;         //!< index into (current) primitive node collection
   size_t part_idx_;            //!< index into parts vector of composite collection
-  size_t step_;                //!< step for skipping due to e.g. slicing
+  size_t stride_;              //!< user-specified stride for slicing node collection
+  size_t step_;                //!< internal step also accounting for stepping over rank/thread
+  size_t begin_in_part_idx_;   //!< index of first element in NC in current part
+  const NCIteratorKind kind_;  //!< whether to iterate over all elements or rank/thread specific
+  const size_t rank_or_vp_;    //!< rank or vp iterator is bound to
 
   //! Pointer to primitive collection to iterate over.  Zero if iterator is for composite collection.
   NodeCollectionPrimitive const* const primitive_collection_;
@@ -130,12 +197,13 @@ private:
    * @param collection_ptr smart pointer to collection to keep collection alive
    * @param collection  Collection to iterate over
    * @param offset  Index of collection element iterator points to
-   * @param step    Step for skipping due to e.g. slicing
+   * @param stride    Step for skipping due to e.g. slicing; does NOT include stepping over rank/thread
    */
   explicit nc_const_iterator( NodeCollectionPTR collection_ptr,
     const NodeCollectionPrimitive& collection,
     size_t offset,
-    size_t step = 1 );
+    size_t stride,
+    NCIteratorKind kind = NCIteratorKind::GLOBAL );
 
   /**
    * Create safe iterator for NodeCollectionComposite.
@@ -144,13 +212,14 @@ private:
    * @param collection  Collection to iterate over
    * @param part    Index of part of collection iterator points to
    * @param offset  Index of element in NC part that iterator points to
-   * @param step    Step for skipping due to e.g. slicing
+   * @param stride    Step for skipping due to e.g. slicing; does NOT include stepping over rank/thread
    */
   explicit nc_const_iterator( NodeCollectionPTR collection_ptr,
     const NodeCollectionComposite& collection,
     size_t part,
     size_t offset,
-    size_t step = 1 );
+    size_t stride,
+    NCIteratorKind kind = NCIteratorKind::GLOBAL );
 
   /**
    * Conditionally update element_idx and part_idx for composite NodeCollections
@@ -202,6 +271,35 @@ public:
  * The superclass also contains handling of the fingerprint, a unique identity
  * the NodeCollection gets from the kernel on creation, which ensures that the
  * NodeCollection is not used after the kernel is reset.
+ *
+ * There are two types of NodeCollections
+ *
+ *  - **Primitive NCs** contain a contiguous range of GIDs of the same neuron model and always have stride 1.
+ *
+ *    - Slicing a primitive node collection in the form ``nc[j:k]`` returns a new primitive node collection,
+ *      *except* when ``nc`` has (spatial) metadata, in which case a composite node collection is returned.
+ *      The reason for this is that we otherwise would have to create a copy of the position information.
+ *
+ *  - **Composite NCs** can contain
+ *
+ *    - A single primitive node collection with metadata created by ``nc[j:k]`` slicing; the composite NC
+ *      then represents a view on the primitive node collection with window ``j:k``.
+ *    - Any sequence of primitive node collections with the same or different neuron types; if the node collections
+ *      contain metadata, all must contain the same metadata and all parts of the composite are separate views
+ *    - A striding slice over a NC in the form ``nc[j:k:s]``, where ``j`` and ``k`` are optional. Here,
+ *      ``nc`` must have stride 1. If ``nc`` has metadata, it must be a primitive node collection.
+ *
+ *  For any node collection, three types of iterators can be obtained by different ``begin()`` methods:
+ *
+ *   - ``begin()`` returns an iterator iterating over all elements of the node collection
+ *   - ``rank_local_begin()`` returns an iterator iterating over the elements of the node collection which are local to
+ * the rank on which it is called
+ *   - ``thread_local_begin()`` returns an iterator iterating over the elements of the node collection which are local
+ * to the thread (ie VP) on which it is called
+ *
+ *  There is only a single type of end iterator returned by ``end()``.
+ *
+ *  For more information on composite node collections, see the documentation for the derived class.
  */
 class NodeCollection
 {
@@ -364,9 +462,9 @@ public:
   /**
    * Get the step of the NodeCollection.
    *
-   * @return step between node IDs in the NodeCollection
+   * @return Stride between node IDs in the NodeCollection
    */
-  virtual size_t step() const = 0;
+  virtual size_t stride() const = 0;
 
   /**
    * Check if the NodeCollection contains a specified node ID
@@ -384,10 +482,10 @@ public:
    *
    * @param start Index of the NodeCollection to start at
    * @param end One past the index of the NodeCollection to stop at
-   * @param step Number of places between node IDs to skip. Defaults to 1
+   * @param stride Number of places between node IDs to skip. Defaults to 1
    * @return a NodeCollection pointer to the new, sliced NodeCollection.
    */
-  virtual NodeCollectionPTR slice( size_t start, size_t end, size_t step ) const = 0;
+  virtual NodeCollectionPTR slice( size_t start, size_t end, size_t stride ) const = 0;
 
   /**
    * Sets the metadata of the NodeCollection.
@@ -543,11 +641,11 @@ public:
   //! Returns total number of node IDs in the primitive.
   size_t size() const override;
 
-  //! Returns the step between node IDs in the primitive.
-  size_t step() const override;
+  //! Returns the stride between node IDs in the primitive (always 1).
+  size_t stride() const override;
 
   bool contains( const size_t node_id ) const override;
-  NodeCollectionPTR slice( size_t start, size_t end, size_t step = 1 ) const override;
+  NodeCollectionPTR slice( size_t start, size_t end, size_t stride = 1 ) const override;
 
   void set_metadata( NodeCollectionMetadataPTR ) override;
 
@@ -591,21 +689,32 @@ NodeCollectionPTR operator+( NodeCollectionPTR lhs, NodeCollectionPTR rhs );
  * the step. The endpoint is one past the last valid node.
  *
  * @note To avoid creating copies of Primitives (not sure that saves much), Composite keeps
- * primitives as they are and then sets markers to the first node belonging to the slice
- * (tuple start_part, start_offset_) and one past the last node belongig to the slice ( tuple end_part_, end_offset_).
- * For the latter, the following logic applies to make comparison operators simpler
- * - Assume that the last element final of the composite collection (after all slicing effects are taken into account),
- * is in part i.
- * - Let idx_in_i be the index of final in part[i], i.e., part[i][index_in_i] == final.
- * - If final is the last element of part[i], i.e., idx_in_i == part[i].size()-1, then end_part_ == i+1 and end_offset_
- * == 0
- * - Otherwise, end_part_ == i and end_offset_ == idx_in_i
+ * primitives as they are. These are called parts. It then sets markers
+ *
+ * - ``start_part_``, ``start_offset_`` to the first node belonging to the slice
+ * - ``end_part_``, ``end_offset_`` to one past the last node belongig to the slice
+ *
+ * Any part after ``start_part_`` but before ``end_part_`` will always be in the NC in its entirety.
+ *
+ * For marking the end of the NC, the following logic applies to make comparison operators simpler
+ *
+ * - Assume that the last element ``final`` of the composite collection (after all slicing effects are taken into
+ * account), is in part ``i``.
+ * - Let ``idx_in_i`` be the index of ``final`` in ``part[i]``, i.e., ``part[i][index_in_i] == final``.
+ * - If ``final`` is the last element of ``part[i]``, i.e., ``idx_in_i == part[i].size()-1``, then ``end_part_ == i+1``
+ * and ``end_offset_
+ * == 0``
+ * - Otherwise, ``end_part_ == i`` and ``end_offset_ == idx_in_i``
  * Thus,
- * - end_offset_ always observes "one-past-the-end" logic, while end_part_ does so only if end_offset_ == 0
+ * - ``end_offset_`` always observes "one-past-the-end" logic, while ``end_part_`` does so only if ``end_offset_ == 0``
  * - to iterate over all parts containing elements of the NC, we need to do
+ *
+ *   .. code-block:: c++
+ *
  *     for ( auto pix = start_part_ ; pix < end_part_ + ( end_offset_ == 0 ? 0 : 1 ) ; ++pix )
- * - the logic here is that if end_offset_ == 0, end_part_ already follows "one past" logic, but otherwise we need to
- * add 1
+ *
+ * - the logic here is that if ``end_offset_ == 0``, then ``end_part_`` already follows "one past" logic, but otherwise
+ * we need to add 1
  */
 class NodeCollectionComposite : public NodeCollection
 {
@@ -614,7 +723,7 @@ class NodeCollectionComposite : public NodeCollection
 private:
   std::vector< NodeCollectionPrimitive > parts_; //!< Vector of primitives
   size_t size_;                                  //!< Total number of node IDs
-  size_t step_;                                  //!< Step length, set when slicing.
+  size_t stride_;                                //!< Step length, set when slicing.
   size_t start_part_;                            //!< Primitive to start at, set when slicing
   size_t start_offset_;                          //!< Element to start at, set when slicing
   size_t end_part_;   //!< Primitive or one past the primitive to end at, set when slicing (see note above)
@@ -636,11 +745,32 @@ private:
    *
    * @param period  number of ranks or virtual processes
    * @param phase calling rank or virtual process
-   * @param period_first_node lambda function converting gid to rank or thread
-   * @returns iterator
+   * @param start_part begin seach in this part of the collection
+   * @param start_offset begin search from this offset in start_part
+   * @param period_first_node  function converting gid to rank or thread
+   * @returns { part_index, part_offset }  — values are `invalid_index` if no solution found
    */
-  NodeCollectionComposite::const_iterator
-  specific_local_begin_( NodeCollectionPTR cp, size_t period, size_t phase, gid_to_phase_fcn_ period_first_node ) const;
+  std::pair< size_t, size_t > specific_local_begin_( size_t period,
+    size_t phase,
+    size_t start_part,
+    size_t start_offset,
+    gid_to_phase_fcn_ period_first_node ) const;
+
+  /**
+   * Find next part and offset in it after moving beyond previous part, based on stride.
+   *
+   * @param part_idx  Part we are about to leave
+   * @param begin_in_part_idx Index to first element within slice in part we are about to leave
+   *
+   * @return New part-offset tuple pointing into new part, or invalid_index tuple.
+   */
+  std::pair< size_t, size_t > find_next_part_( size_t part_idx, size_t begin_in_part_idx ) const;
+
+  //! helper for thread_local_begin/compsite_update_indices
+  static size_t gid_to_vp_( size_t gid );
+
+  //! helper for rank_local_begin/compsite_update_indices
+  static size_t gid_to_rank_( size_t gid );
 
 public:
   /**
@@ -718,8 +848,8 @@ public:
   //! Returns total number of node IDs in the composite.
   size_t size() const override;
 
-  //! Returns the step between node IDs in the composite.
-  size_t step() const override;
+  //! Returns the stride between node IDs in the composite.
+  size_t stride() const override;
 
   bool contains( const size_t node_id ) const override;
   NodeCollectionPTR slice( size_t start, size_t end, size_t step = 1 ) const override;
@@ -766,10 +896,17 @@ inline nc_const_iterator&
 nc_const_iterator::operator+=( const size_t n )
 {
   element_idx_ += n * step_;
-  if ( composite_collection_ )
+
+  if ( primitive_collection_ )
+  {
+    // guard against passing end
+    element_idx_ = std::min( element_idx_, primitive_collection_->size() );
+  }
+  else
   {
     composite_update_indices_();
   }
+
   return *this;
 }
 
@@ -861,13 +998,13 @@ NodeCollectionPrimitive::operator==( const NodeCollectionPrimitive& rhs ) const
 inline NodeCollectionPrimitive::const_iterator
 NodeCollectionPrimitive::begin( NodeCollectionPTR cp ) const
 {
-  return const_iterator( cp, *this, 0 );
+  return const_iterator( cp, *this, 0, 1 );
 }
 
 inline NodeCollectionPrimitive::const_iterator
 NodeCollectionPrimitive::end( NodeCollectionPTR cp ) const
 {
-  return const_iterator( cp, *this, size() );
+  return const_iterator( cp, *this, size(), 1, nc_const_iterator::NCIteratorKind::END );
 }
 
 inline size_t
@@ -878,7 +1015,7 @@ NodeCollectionPrimitive::size() const
 }
 
 inline size_t
-NodeCollectionPrimitive::step() const
+NodeCollectionPrimitive::stride() const
 {
   return 1;
 }
@@ -935,7 +1072,7 @@ NodeCollectionPrimitive::has_proxies() const
 inline NodeCollectionComposite::const_iterator
 NodeCollectionComposite::begin( NodeCollectionPTR cp ) const
 {
-  return const_iterator( cp, *this, start_part_, start_offset_, step_ );
+  return const_iterator( cp, *this, start_part_, start_offset_, stride_ );
 }
 
 inline NodeCollectionComposite::const_iterator
@@ -943,11 +1080,11 @@ NodeCollectionComposite::end( NodeCollectionPTR cp ) const
 {
   if ( is_sliced_ )
   {
-    return const_iterator( cp, *this, end_part_, end_offset_, step_ );
+    return const_iterator( cp, *this, end_part_, end_offset_, stride_, nc_const_iterator::NCIteratorKind::END );
   }
   else
   {
-    return const_iterator( cp, *this, parts_.size(), 0 );
+    return const_iterator( cp, *this, parts_.size(), 0, 1, nc_const_iterator::NCIteratorKind::END );
   }
 }
 
@@ -958,9 +1095,9 @@ NodeCollectionComposite::size() const
 }
 
 inline size_t
-NodeCollectionComposite::step() const
+NodeCollectionComposite::stride() const
 {
-  return step_;
+  return stride_;
 }
 
 inline void

@@ -356,6 +356,7 @@ Layer< D >::dump_connections( std::ostream& out,
     assert( tnode_lid >= 0 );
     tgt_layer->compute_displacement( source_pos, tnode_lid ).print( out );
     out << '\n';
+  }
 }
 
 template < int D >

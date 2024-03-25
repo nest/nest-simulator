@@ -210,12 +210,6 @@ nest::eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* nod
     throw BadProperty( "Firing rate regularization target rate f_target ≥ 0 required." );
   }
 
-  if ( surrogate_gradient_function_ == "piecewise_linear" and fabs( V_th_ ) < 1e-6 )
-  {
-    throw BadProperty(
-      "Relative threshold voltage V_th-E_L ≠ 0 required if surrogate_gradient_function is \"piecewise_linear\"." );
-  }
-
   if ( beta_fr_ema_ < 0 or 1 <= beta_fr_ema_ )
   {
     throw BadProperty(

@@ -76,6 +76,12 @@ EpropArchivingNodeRecurrent::compute_exponential_surrogate_gradient( const doubl
     return 0.0;
   }
 
+  if ( fabs( V_th ) < 1e-6 )
+  {
+    throw BadProperty(
+      "Relative threshold voltage V_th-E_L ≠ 0 required if surrogate_gradient_function is \"piecewise_linear\"." );
+  }
+
   return gamma * std::exp( -beta * std::fabs( v_m - v_th_adapt ) );
 }
 

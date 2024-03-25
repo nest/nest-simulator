@@ -189,12 +189,6 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::set( const DictionaryDatum& d, Node* 
     throw BadProperty( "Firing rate regularization target rate f_target ≥ 0 required." );
   }
 
-  if ( surrogate_gradient_function_ == "piecewise_linear" and fabs( V_th_ ) < 1e-6 )
-  {
-    throw BadProperty(
-      "Relative threshold voltage V_th-E_L ≠ 0 required if surrogate_gradient_function is \"piecewise_linear\"." );
-  }
-
   if ( tau_m_ <= 0 )
   {
     throw BadProperty( "Membrane time constant tau_m > 0 required." );

@@ -199,7 +199,7 @@ public:
     const long interval_step,
     const double z,
     const double f_target,
-    const double beta_fr_ema,
+    const double kappa,
     const double c_reg );
 
   //! Get an iterator pointing to the firing rate regularization history of the given time step.

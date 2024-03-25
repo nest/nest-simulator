@@ -76,7 +76,7 @@ nest::eprop_iaf_psc_delta::Parameters_::Parameters_()
   , c_m_( 250.0 )                                   // pF
   , t_ref_( 2.0 )                                   // ms
   , E_L_( -70.0 )                                   // mV
-  , I_e_( 0.0 )                                     // pA
+  , I_e_( 0.0 )                                     // pA  
   , V_th_( -55.0 - E_L_ )                           // mV, rel to E_L_
   , V_min_( -std::numeric_limits< double >::max() ) // relative E_L_-55.0-E_L_
   , V_reset_( -70.0 - E_L_ )                        // mV, rel to E_L_
@@ -86,8 +86,8 @@ nest::eprop_iaf_psc_delta::Parameters_::Parameters_()
   , beta_( 1.0 )
   , gamma_( 0.3 )
   , surrogate_gradient_function_( "piecewise_linear" )
-  , beta_fr_ema_( 0.0 )
   , eprop_isi_trace_cutoff_( std::numeric_limits< long >::max() )
+  , kappa_( std::exp( -Time::get_resolution().get_ms() / 10.0 ) )    
 {
 }
 
@@ -123,7 +123,7 @@ nest::eprop_iaf_psc_delta::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::beta, beta_ );
   def< double >( d, names::gamma, gamma_ );
   def< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_ );
-  def< double >( d, names::beta_fr_ema, beta_fr_ema_ );
+  def< double >( d, names::kappa, kappa_ );      
   def< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
 }
 
@@ -176,8 +176,8 @@ nest::eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* nod
   updateValueParam< double >( d, names::beta, beta_, node );
   updateValueParam< double >( d, names::gamma, gamma_, node );
   updateValueParam< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_, node );
-  updateValueParam< double >( d, names::beta_fr_ema, beta_fr_ema_, node );
-  updateValueParam< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
+  updateValueParam< double >( d, names::kappa, kappa_, node );   
+  updateValueParam< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );   
 
   if ( V_reset_ >= V_th_ )
   {
@@ -207,10 +207,9 @@ nest::eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* nod
     throw BadProperty( "Firing rate regularization target rate f_target ≥ 0 required." );
   }
 
-  if ( beta_fr_ema_ < 0 or 1 <= beta_fr_ema_ )
+  if ( kappa_ <= 0.0 or kappa_ > 1.0 )
   {
-    throw BadProperty(
-      "Smoothing factor of firing rate exponential moving average beta_fr_ema_ from interval [0,1) required." );
+    throw BadProperty( "kappa must be in the range (0, 1)" );
   }
 
   if ( eprop_isi_trace_cutoff_ < 0 )
@@ -400,7 +399,7 @@ nest::eprop_iaf_psc_delta::update( Time const& origin, const long from, const lo
       S_.z_ = 1.0;
     }
 
-    write_firing_rate_reg_to_history( t, t, S_.z_, P_.f_target_, P_.beta_fr_ema_, P_.c_reg_ );
+    write_firing_rate_reg_to_history( t, t, S_.z_, P_.f_target_, P_.kappa_, P_.c_reg_ );
 
     S_.learning_signal_ = get_learning_signal_from_history( t, false );
 
@@ -467,7 +466,6 @@ eprop_iaf_psc_delta::compute_gradient( const long t_spike,
   double& epsilon,
   double& avg_e,
   double& weight,
-  const double kappa,
   const CommonSynapseProperties& cp,
   WeightOptimizer* optimizer )
 {
@@ -512,9 +510,8 @@ eprop_iaf_psc_delta::compute_gradient( const long t_spike,
 
     z_bar = V_.P33_ * z_bar + V_.P_z_in_ * z;
     e = psi * z_bar;
-    avg_e = P_.beta_fr_ema_ * avg_e + ( 1.0 - P_.beta_fr_ema_ ) * e;
-    e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
-    grad = L * e_bar + firing_rate_reg * avg_e;
+    e_bar = P_.kappa_ * e_bar + ( 1.0 - P_.kappa_ ) * e;
+    grad = (L + firing_rate_reg) * e_bar;
 
     weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t, grad, weight );
 
@@ -527,8 +524,7 @@ eprop_iaf_psc_delta::compute_gradient( const long t_spike,
   if ( power > 0 )
   {
     z_bar *= std::pow( V_.P33_, power );
-    avg_e *= std::pow( P_.beta_fr_ema_, power );
-    e_bar *= std::pow( kappa, power );
+    e_bar *= std::pow( P_.kappa_, power );
   }
 }
 

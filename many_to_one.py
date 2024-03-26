@@ -274,4 +274,4 @@ def plot_benchmark_stdp():
 # jensen_shannon_divergence()
 
 plot_benchmark_static()
-# plot_benchmark_stdp()
+plot_benchmark_stdp()

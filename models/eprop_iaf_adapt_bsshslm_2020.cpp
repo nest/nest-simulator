@@ -199,7 +199,6 @@ eprop_iaf_adapt_bsshslm_2020::Parameters_::set( const DictionaryDatum& d, Node* 
     throw BadProperty( "Refractory time t_ref ≥ 0 required." );
   }
 
-
   if ( V_th_ < V_min_ )
   {
     throw BadProperty( "Spike threshold voltage V_th ≥ minimal voltage V_min required." );

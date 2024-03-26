@@ -124,7 +124,7 @@ steps.update(
         "delay_in_rec": 1,  # connection delay between input and recurrent neurons
         "delay_rec_out": 0,  # connection delay between recurrent and output neurons
         "delay_out_norm": 0,  # connection delay between output neurons for normalization
-        "extension_sim": 1 + 2,  # extra time step to close right-open simulation time interval in Simulate()
+        "extension_sim": 3,  # extra time step to close right-open simulation time interval in Simulate()
     }
 )
 
@@ -132,7 +132,7 @@ steps["delays"] = steps["delay_in_rec"] + steps["delay_rec_out"] + steps["delay_
 
 steps["total_offset"] = steps["offset_gen"] + steps["delays"]  # time steps of total offset
 
-steps["sim"] = steps["task"] + steps["total_offset"] + steps["extension_sim"]  # time steps of sim
+steps["sim"] = steps["task"] + steps["total_offset"] + steps["extension_sim"]  # time steps of simulation
 
 duration = {"step": 1.0}  # ms, temporal resolution of the simulation
 
@@ -175,7 +175,7 @@ params_nrn_rec = {
     "beta_fr_ema": 0.999,  # Smoothing factor of firing rate exponential moving average
     "C_m": 1.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
     "c_reg": 2.0 / duration["sequence"],  # firing rate regularization scaling
-    "E_L": 0.0,  # mV, leak reversal potential
+    "E_L": 0.0,  # mV, leak / resting membrane potential
     "eprop_isi_trace_cutoff": 10,  # cutoff of integration of eprop trace between spikes
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
     "gamma": 0.3,  # height scaling of the pseudo-derivative
@@ -228,12 +228,15 @@ gen_learning_window = nest.Create("step_rate_generator")
 # experiment, and the recording interval can be increased (see the documentation on the specific recorders). By
 # default, recordings are stored in memory but can also be written to file.
 
-n_record = 1  # number of neurons to record recordables from
-n_record_w = 3  # number of senders and targets to record weights from
+n_record = 1  # number of neurons to record dynamic variables from - this script requires n_record >= 1
+n_record_w = 3  # number of senders and targets to record weights from - this script requires n_record_w >=1
+
+if n_record == 0 or n_record_w == 0:
+    raise ValueError("n_record and n_record_w >= 1 required")
 
 params_mm_rec = {
     "interval": duration["step"],  # interval between two recorded time points
-    "record_from": ["V_m", "surrogate_gradient", "learning_signal"],  # recordables
+    "record_from": ["V_m", "surrogate_gradient", "learning_signal"],  # dynamic variables to record
     "start": duration["offset_gen"] + duration["delay_in_rec"],  # start time of recording
     "stop": duration["offset_gen"] + duration["delay_in_rec"] + duration["task"],  # stop time of recording
 }
@@ -262,7 +265,7 @@ nrns_rec_record = nrns_rec[:n_record]
 # %% ###########################################################################################################
 # Create connections
 # ~~~~~~~~~~~~~~~~~~
-# Now, we define the connectivities and set up the synaptic parameters, with the synaptic weights drawn from
+# Now, we define the connectivity and set up the synaptic parameters, with the synaptic weights drawn from
 # normal distributions. After these preparations, we establish the enumerated connections of the core network,
 # as well as additional connections to the recorders.
 
@@ -355,7 +358,6 @@ input_spike_prob = 0.05  # spike probability of frozen input noise
 dtype_in_spks = np.float32  # data type of input spikes - for reproducing TF results set to np.float32
 
 input_spike_bools = (np.random.rand(steps["sequence"], n_in) < input_spike_prob).swapaxes(0, 1)
-# input_spike_bools[:, 0] = 0  # remove spikes in 0th time step of every sequence for technical reasons
 
 sequence_starts = np.arange(0.0, duration["task"], duration["sequence"]) + duration["offset_gen"]
 params_gen_spk_in = []
@@ -488,14 +490,12 @@ target_signal = events_mm_out["target_signal"]
 error = (readout_signal - target_signal) ** 2
 loss = 0.5 * np.add.reduceat(error, np.arange(0, steps["task"], steps["sequence"]))
 
-print(loss)
-
 # %% ###########################################################################################################
 # Plot results
 # ~~~~~~~~~~~~
 # Then, we plot a series of plots.
 
-do_plotting = False  # if True, plot the results
+do_plotting = True  # if True, plot the results
 
 if not do_plotting:
     exit()
@@ -531,8 +531,8 @@ ax.xaxis.get_major_locator().set_params(integer=True)
 fig.tight_layout()
 
 # %% ###########################################################################################################
-# Plot recordables
-# ................
+# Plot spikes and dynamic variables
+# .................................
 # This plotting routine shows how to plot all of the recorded dynamic variables and spikes across time. We take
 # one snapshot in the first iteration and one snapshot at the end.
 
@@ -585,7 +585,7 @@ for xlims in [(0, steps["sequence"]), (steps["task"] - steps["sequence"], steps[
 # Similarly, we can plot the weight histories. Note that the weight recorder, attached to the synapses, works
 # differently than the other recorders. Since synapses only get activated when they transmit a spike, the weight
 # recorder only records the weight in those moments. That is why the first weight registrations do not start in
-# the first time step and we add the inital weights manually.
+# the first time step and we add the initial weights manually.
 
 
 def plot_weight_time_course(ax, events, nrns_senders, nrns_targets, label, ylabel):
@@ -606,9 +606,11 @@ def plot_weight_time_course(ax, events, nrns_senders, nrns_targets, label, ylabe
 
 fig, axs = plt.subplots(3, 1, sharex=True, figsize=(3, 4))
 
-plot_weight_time_course(axs[0], events_wr, nrns_in, nrns_rec, "in_rec", r"$W_\mathrm{in}$" + "\n(pA)")
-plot_weight_time_course(axs[1], events_wr, nrns_rec, nrns_rec, "rec_rec", r"$W_\mathrm{rec}$" + "\n(pA)")
-plot_weight_time_course(axs[2], events_wr, nrns_rec, nrns_out, "rec_out", r"$W_\mathrm{out}$" + "\n(pA)")
+plot_weight_time_course(axs[0], events_wr, nrns_in[:n_record_w], nrns_rec[:n_record_w], "in_rec", r"$W_\text{in}$ (pA)")
+plot_weight_time_course(
+    axs[1], events_wr, nrns_rec[:n_record_w], nrns_rec[:n_record_w], "rec_rec", r"$W_\text{rec}$ (pA)"
+)
+plot_weight_time_course(axs[2], events_wr, nrns_rec[:n_record_w], nrns_out, "rec_out", r"$W_\text{out}$ (pA)")
 
 axs[-1].set_xlabel(r"$t$ (ms)")
 axs[-1].set_xlim(0, steps["task"])

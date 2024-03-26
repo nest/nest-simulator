@@ -53,22 +53,24 @@ propagation (e-prop) plasticity.
 
 E-prop plasticity was originally introduced and implemented in TensorFlow in [1]_.
 
-The suffix ```` follows the NEST convention to indicate in the
-model name the paper that introduced it by the first letter of the authors' last
-names and the publication year.
-
 .. note::
   The neuron dynamics of the ``eprop_iaf`` model (excluding e-prop
   plasticity) are similar to the neuron dynamics of the ``iaf_psc_delta`` model,
   with minor differences, such as the propagator of the post-synaptic current
   and the voltage reset upon a spike.
 
-The membrane voltage time course is given by:
+The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given by:
 
 .. math::
     v_j^t &= \alpha v_j^{t-1}+\sum_{i \neq j}W_{ji}^\mathrm{rec}z_i^{t-1}
              + \sum_i W_{ji}^\mathrm{in}x_i^t-z_j^{t-1}v_\mathrm{th} \,, \\
-    \alpha &= e^{-\frac{\delta t}{\tau_\mathrm{m}}} \,.
+    \alpha &= e^{-\frac{\Delta t}{\tau_\mathrm{m}}} \,,
+
+whereby :math:`W_{ji}^\mathrm{rec}` and :math:`W_{ji}^\mathrm{in}` are the recurrent and
+input synaptic weights, and :math:`z_i^{t-1}` and :math:`x_i^t` are the
+recurrent and input presynaptic spike state variables, respectively.
+
+Descriptions of further parameters and variables can be found in the table below.
 
 The spike state variable is expressed by a Heaviside function:
 
@@ -93,12 +95,13 @@ plasticity is calculated:
 See the documentation on the ``iaf_psc_delta`` neuron model for more information
 on the integration of the subthreshold dynamics.
 
-The change of the synaptic weight is calculated from the gradient
+The change of the synaptic weight is calculated from the gradient :math:`g` of
+the loss :math:`E` with respect to the synaptic weight :math:`W_{ji}`:
 :math:`\frac{\mathrm{d}{E}}{\mathrm{d}{W_{ij}}}=g`
 which depends on the presynaptic
 spikes :math:`z_i^{t-1}`, the surrogate gradient / pseudo-derivative of the postsynaptic membrane
 voltage :math:`\psi_j^t` (which together form the eligibility trace
-:math:`e_{ji}`), and the learning signal :math:`L_j^t` emitted by the readout
+:math:`e_{ji}^t`), and the learning signal :math:`L_j^t` emitted by the readout
 neurons.
 
 .. math::
@@ -109,13 +112,18 @@ The eligibility trace and the presynaptic spike trains are low-pass filtered
 with some exponential kernels:
 
 .. math::
-  \bar{e}_{ji}=\mathcal{F}_\kappa(e_{ji}) \;\text{with}\, \kappa=\exp\left(\frac{-\delta t}{
-    \tau_\text{m,out}}\right)\,,\\ \bar{z}_i=\mathcal{F}_\alpha(z_i) \;\text{with}\,
-    \alpha=\exp\left(\frac{-\delta t}{\tau_\text{m}}\right)\,.
+  \bar{e}_{ji}^t &= \mathcal{F}_\kappa(e_{ji}^t) \;\text{with}\, \kappa=e^{-\frac{\Delta t}{
+    \tau_\text{m,out}}}\,,\\
+    \bar{z}_i^t&=\mathcal{F}_\alpha(z_i^t)\,,\\
+    \mathcal{F}_\alpha(z_i^t) &= \alpha\, \mathcal{F}_\alpha(z_i^{t-1}) + z_i^t
+    \;\text{with}\, \mathcal{F}_\alpha(z_i^0)=z_i^0\,,
+
+whereby :math:`\tau_\text{m,out}` is the membrane time constant of the readout neuron.
 
 Furthermore, a firing rate regularization mechanism keeps the average firing
 rate :math:`f^\text{av}_j` of the postsynaptic neuron close to a target firing rate
-:math:`f^\text{target}`:
+:math:`f^\text{target}`. The gradient :math:`g^\text{reg}` of the regularization loss :math:`E^\text{reg}`
+with respect to the synaptic weight :math:`W_{ji}` is given by:
 
 .. math::
   \frac{\mathrm{d}E^\text{reg}}{\mathrm{d}W_{ji}} = g^\text{reg} = c_\text{reg}
@@ -149,7 +157,7 @@ Parameter                   Unit    Math equivalent         Default          Des
 C_m                         pF      :math:`C_\text{m}`                 250.0 Capacitance of the membrane
 c_reg                               :math:`c_\text{reg}`                 0.0 Prefactor of firing rate
                                                                              regularization
-E_L                         mV      :math:`E_\text{L}`                 -70.0 Leak membrane potential
+E_L                         mV      :math:`E_\text{L}`                 -70.0 Leak / resting membrane potential
 f_target                    Hz      :math:`f^\text{target}`             10.0 Target firing rate of rate
                                                                              regularization
 beta                                :math:`\beta`                        1.0 Width scaling of surrogate gradient
@@ -160,9 +168,9 @@ gamma                               :math:`\gamma`                       0.3 Hei
                                                                              membrane voltage
 I_e                         pA      :math:`I_\text{e}`                   0.0 Constant external input current
 regular_spike_arrival       Boolean                                     True If True, the input spikes arrive at
-                                                                                the end of the time step, if
-                                                                                False at the beginning
-                                                                                (determines PSC scale)
+                                                                             the end of the time step, if
+                                                                             False at the beginning (determines
+                                                                             PSC scale)
 surrogate_gradient_function         :math:`\psi`            piecewise_linear Surrogate gradient /
                                                                              pseudo-derivative function
                                                                              ["piecewise_linear", "exponential",
@@ -312,7 +320,7 @@ private:
     //! Prefactor of firing rate regularization.
     double c_reg_;
 
-    //! Leak membrane potential (mV).
+    //! Leak / resting membrane potential (mV).
     double E_L_;
 
     //! Target firing rate of rate regularization (spikes/s).
@@ -349,8 +357,8 @@ private:
     //! Smoothing factor of firing rate exponential moving average.
     double beta_fr_ema_;
 
-    //!< Number of time steps integrated between two consecutive spikes is equal to the minimum between
-    //!< eprop_isi_trace_cutoff_ and the inter-spike distance.
+    //! Number of time steps integrated between two consecutive spikes is equal to the minimum between
+    //! eprop_isi_trace_cutoff_ and the inter-spike distance.
     long eprop_isi_trace_cutoff_;
 
     //! Default constructor.

@@ -48,27 +48,22 @@ neurons :math:`j` and presynaptic neurons and :math:`i` for eligibility propagat
 
 E-prop plasticity was originally introduced and implemented in TensorFlow in [1]_.
 
-The suffix ```` follows the NEST convention to indicate in the
-model name the paper that introduced it by the first letter of the authors' last
-names and the publication year.
-
-
 The e-prop synapse collects the presynaptic spikes needed for calculating the
 weight update. When it is time to update, it triggers the calculation of the
 gradient which is specific to the post-synaptic neuron and is thus defined there.
 
-Evntually, it optimizes the weight with the specified optimizer.
+Eventually, it optimizes the weight with the specified optimizer.
 
 E-prop synapses require archiving of continuous quantities. Therefore e-prop
-synapses can only be connected to neuron models that are capable of doing this
+synapses can only be connected to neuron models that are capable of
 archiving. So far, compatible models are ``eprop_iaf``,
 ``eprop_iaf_adapt``, and ``eprop_readout``.
 
 For more information on e-prop plasticity, see the documentation on the other e-prop models:
 
  * :doc:`eprop_iaf<../models/eprop_iaf/>`
+ * :doc:`eprop_iaf_adapt<../models/eprop_iaf_adapt/>`
  * :doc:`eprop_readout<../models/eprop_readout/>`
- * :doc:`eprop_synapse<../models/eprop_synapse/>`
  * :doc:`eprop_learning_signal_connection<../models/eprop_learning_signal_connection/>`
 
 For more information on the optimizers, see the documentation of the weight optimizer:
@@ -201,12 +196,12 @@ void register_eprop_synapse( const std::string& name );
  * @note Each synapse has a optimizer_ object managed through a `WeightOptimizer*`, pointing to an object of
  * a specific weight optimizer type. This optimizer, drawing also on parameters in the `WeightOptimizerCommonProperties`
  * accessible via the synapse models `CommonProperties::optimizer_cp_` pointer, computes the weight update for the
- * neuron. The actual optimizer type can be selected at runtime (before creating any synapses) by exchaning the
+ * neuron. The actual optimizer type can be selected at runtime (before creating any synapses) by exchanging the
  * `optimizer_cp_` pointer. Individual optimizer objects are created by `check_connection()` when a synapse is actually
  * created. It is important that the constructors of `eprop_synapse` **do not** create optimizer objects
  * and that the destructor **does not** delete optimizer objects; this currently leads to bugs when using Boosts's
  * `spreadsort()` due to use of the copy constructor where it should suffice to use the move constructor. Therefore,
- * `check_connection()`creates the optimizer object when it is needed and specializations of `Connector::~Connctor()`
+ * `check_connection()`creates the optimizer object when it is needed and specializations of `Connector::~Connector()`
  * and `Connector::disable_connection()` delete it by calling `delete_optimizer()`. A disadvantage of this approach is
  * that the `default_connection` in the connector model does not have an optimizer object, whence it is not possible to
  * set default (initial) values for the per-synapse optimizer.
@@ -383,7 +378,7 @@ eprop_synapse< targetidentifierT >::eprop_synapse( const eprop_synapse& es )
 {
 }
 
-// This assignement operator is used to write a connection into the connection array.
+// This assignment operator is used to write a connection into the connection array.
 template < typename targetidentifierT >
 eprop_synapse< targetidentifierT >&
 eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
@@ -416,7 +411,7 @@ eprop_synapse< targetidentifierT >::eprop_synapse( eprop_synapse&& es )
   es.optimizer_ = nullptr;
 }
 
-// This assignement operator is used to write a connection into the connection array.
+// This assignment operator is used to write a connection into the connection array.
 template < typename targetidentifierT >
 eprop_synapse< targetidentifierT >&
 eprop_synapse< targetidentifierT >::operator=( eprop_synapse&& es )

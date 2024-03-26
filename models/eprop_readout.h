@@ -52,17 +52,17 @@ with delta-shaped postsynaptic currents used as readout neuron for eligibility p
 
 E-prop plasticity was originally introduced and implemented in TensorFlow in [1]_.
 
-The suffix ```` follows the NEST convention to indicate in the
-model name the paper that introduced it by the first letter of the authors' last
-names and the publication year.
-
-
-The membrane voltage time course is given by:
+The membrane voltage time course :math:`v_j^t` of the neuron :math:`j` is given by:
 
 .. math::
-    v_j^t &= \alpha v_j^{t-1}+\sum_{i \neq j}W_{ji}^\mathrm{out}z_i^{t-1}
+    v_j^t &= \kappa v_j^{t-1}+\sum_{i \neq j}W_{ji}^\mathrm{out}z_i^{t-1}
              -z_j^{t-1}v_\mathrm{th} \,, \\
-    \alpha &= e^{-\frac{\delta t}{\tau_\mathrm{m}}} \,.
+    \kappa &= e^{-\frac{\Delta t}{\tau_\mathrm{m}}} \,,
+
+whereby :math:`W_{ji}^\mathrm{out}` are the output synaptic weights and
+:math:`z_i^{t-1}` are the recurrent presynaptic spike state variables.
+
+Descriptions of further parameters and variables can be found in the table below.
 
 An additional state variable and the corresponding differential
 equation represents a piecewise constant external current.
@@ -70,6 +70,8 @@ equation represents a piecewise constant external current.
 See the documentation on the ``iaf_psc_delta`` neuron model for more information
 on the integration of the subthreshold dynamics.
 
+The change of the synaptic weight is calculated from the gradient :math:`g` of
+the loss :math:`E` with respect to the synaptic weight :math:`W_{ji}`:
 The change of the synaptic weight is calculated from the gradient
 :math:`\frac{\mathrm{d}{E}}{\mathrm{d}{W_{ij}}}=g`
 which depends on the presynaptic
@@ -82,7 +84,9 @@ neurons.
 The presynaptic spike trains are low-pass filtered with an exponential kernel:
 
 .. math::
-  \bar{z}_i=\mathcal{F}_\kappa(z_i) \;\text{with}\, \kappa=\exp\left(\frac{-\delta t}{\tau_\text{m}}\right)\,.
+  \bar{z}_i^t &=\mathcal{F}_\kappa(z_i^t)\,, \\
+  \mathcal{F}_\kappa(z_i^t) &= \kappa\, \mathcal{F}_\kappa(z_i^{t-1}) + z_i^t
+  \;\text{with}\, \mathcal{F}_\kappa(z_i^0)=z_i^0\,\,.
 
 Since readout neurons are leaky integrators without a spiking mechanism, the
 formula for computing the gradient lacks the surrogate gradient /
@@ -102,21 +106,21 @@ Parameters
 
 The following parameters can be set in the status dictionary.
 
-===================== ======= ===================== ================== =========================================
+==================== ======= ===================== ================== ==========================================
 **Neuron parameters**
 ----------------------------------------------------------------------------------------------------------------
 Parameter             Unit    Math equivalent       Default            Description
 ===================== ======= ===================== ================== =========================================
- C_m                  pF      :math:`C_\text{m}`                 250.0 Capacitance of the membrane
- E_L                  mV      :math:`E_\text{L}`                   0.0 Leak membrane potential
- I_e                  pA      :math:`I_\text{e}`                   0.0 Constant external input current
- loss                         :math:`E`             mean_squared_error Loss function
+C_m                   pF      :math:`C_\text{m}`                 250.0 Capacitance of the membrane
+E_L                   mV      :math:`E_\text{L}`                   0.0 Leak / resting membrane potential
+I_e                   pA      :math:`I_\text{e}`                   0.0 Constant external input current
+loss                          :math:`E`             mean_squared_error Loss function
                                                                        ["mean_squared_error", "cross_entropy"]
 regular_spike_arrival Boolean                                     True If True, the input spikes arrive at the
                                                                        end of the time step, if False at the
                                                                        beginning (determines PSC scale)
- tau_m                ms      :math:`\tau_\text{m}`               10.0 Time constant of the membrane
- V_min                mV      :math:`v_\text{min}`          -1.79e+308 Absolute lower bound of the membrane
+tau_m                 ms      :math:`\tau_\text{m}`               10.0 Time constant of the membrane
+V_min                 mV      :math:`v_\text{min}`          -1.79e+308 Absolute lower bound of the membrane
                                                                        voltage
 ===================== ======= ===================== ================== =========================================
 
@@ -269,7 +273,7 @@ private:
     //! Capacitance of the membrane (pF).
     double C_m_;
 
-    //! Leak membrane potential (mV).
+    //! Leak / resting membrane potential (mV).
     double E_L_;
 
     //! Constant external input current (pA).
@@ -287,8 +291,8 @@ private:
     //! Absolute lower bound of the membrane voltage relative to the leak membrane potential (mV).
     double V_min_;
 
-    //!< Number of time steps integrated between two consecutive spikes is equal to the minimum between
-    //!< eprop_isi_trace_cutoff_ and the inter-spike distance.
+    //! Number of time steps integrated between two consecutive spikes is equal to the minimum between
+    //! eprop_isi_trace_cutoff_ and the inter-spike distance.
     long eprop_isi_trace_cutoff_;
 
     //! Default constructor.

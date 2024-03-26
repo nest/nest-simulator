@@ -243,7 +243,6 @@ eprop_iaf_bsshslm_2020::pre_run_hook()
 
   compute_surrogate_gradient = select_surrogate_gradient( P_.surrogate_gradient_function_ );
 
-
   // calculate the entries of the propagator matrix for the evolution of the state vector
 
   const double dt = Time::get_resolution().get_ms();

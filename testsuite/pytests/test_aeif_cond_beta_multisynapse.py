@@ -20,10 +20,11 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import math
-import nest
+
 import numpy as np
-import os
 import pytest
+
+import nest
 
 
 @pytest.mark.skipif_missing_gsl
@@ -82,7 +83,7 @@ class TestAeifCondBetaMultisynapse:
     Modeling Methods for Neuroscientists, MIT Press 2013, Chapter 6, pp. 139-159
     """
 
-    def test_aeif_cond_beta_multisynapse(self, have_plotting):
+    def test_aeif_cond_beta_multisynapse(self, have_plotting, report_dir):
         r"""Test postsynaptic response and membrane potential dynamics against
         analytic solutions. Deflections in membrane potential are assumed to
         be small, so its dynamics can be appoximated as linear."""
@@ -182,9 +183,7 @@ class TestAeifCondBetaMultisynapse:
             ax[0].plot(ts, V_m_summed, label="summed")
 
             ax[-1].semilogy(ts, np.abs(Vms - V_m_summed), label="error")
-            fname = "test_aeif_cond_beta_multisynapse.png"
-            fname = os.path.join(os.environ.get("REPORTDIR", ""), fname)
-            fig.savefig(fname)
+            fig.savefig(report_dir / "test_aeif_cond_beta_multisynapse.png")
 
         # large testing tolerance due to approximation (see documentation of the test)
         np.testing.assert_allclose(Vms, V_m_summed, atol=0.0, rtol=1e-5)
@@ -323,7 +322,7 @@ class TestAeifCondBetaMultisynapse:
         nrn.set({"E_rev": E_rev3, "tau_rise": tau_rise3, "tau_decay": tau_decay3})
         assert len(nrn.recordables) == 6
 
-    def test_g_beta_dynamics(self, have_plotting):
+    def test_g_beta_dynamics(self, have_plotting, report_dir):
         r"""
         Test that g has beta function dynamics when tau_rise and tau_decay are
         different, and has alpha function dynamics when they are the same.
@@ -411,8 +410,6 @@ class TestAeifCondBetaMultisynapse:
                 for _ax in ax:
                     _ax.legend()
 
-                fname = "test_aeif_cond_beta_multisynapse_psc_shape_ " + str(i) + ".png"
-                fname = os.path.join(os.environ.get("REPORTDIR", ""), fname)
-                fig.savefig(fname)
+                fig.savefig(report_dir / f"test_aeif_cond_beta_multisynapse_psc_shape_{i}.png")
 
             np.testing.assert_allclose(sim_g, theo_g)

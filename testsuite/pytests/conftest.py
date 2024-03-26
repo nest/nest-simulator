@@ -32,11 +32,13 @@ Fixtures available to the entire testsuite directory.
 """
 
 import dataclasses
+import os
 import pathlib
 import sys
 
-import nest
 import pytest
+
+import nest
 
 # Make all modules in the `utilities` folder available to import in any test
 sys.path.append(str(pathlib.Path(__file__).parent / "utilities"))
@@ -65,6 +67,11 @@ def safety_reset():
 @pytest.fixture(scope="session")
 def have_threads():
     return nest.ll_api.sli_func("is_threaded")
+
+
+@pytest.fixture(scope="session")
+def report_dir() -> pathlib.Path:
+    return pathlib.Path(os.environ.get("REPORTDIR", ""))
 
 
 @pytest.fixture(autouse=True)

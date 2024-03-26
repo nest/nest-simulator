@@ -19,10 +19,10 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import nest
 import numpy as np
-import os
 import pytest
+
+import nest
 
 
 @pytest.mark.skipif_missing_gsl
@@ -38,7 +38,7 @@ class TestAeifCondAlphaMultisynapse:
     synapse current.
     """
 
-    def test_single_multi_synapse_equivalence(self, have_plotting):
+    def test_single_multi_synapse_equivalence(self, have_plotting, report_dir):
         simulation_t = 2500.0  # total simulation time [ms]
 
         dt = 0.1  # time step [ms]
@@ -148,7 +148,8 @@ class TestAeifCondAlphaMultisynapse:
                 _ax.legend()
 
             ax[-1].semilogy(multisynapse_neuron_vm.get("events")["times"], error, label="errror")
-            fig.savefig(os.path.join(os.environ.get("REPORTDIR", ""), "test_aeif_cond_alpha_multisynapse.png"))
+
+            fig.savefig(report_dir / "test_aeif_cond_alpha_multisynapse.png")
 
         # compare with a large tolerance because previous PSPs affect subsequent PSPs in the multisynapse neuron
         np.testing.assert_allclose(error, 0, atol=1e-6)
@@ -187,7 +188,7 @@ class TestAeifCondAlphaMultisynapse:
         nrn.set({"E_rev": E_rev3, "tau_syn": tau_syn3})
         assert len(nrn.recordables) == 6
 
-    def test_g_alpha_dynamics(self, have_plotting):
+    def test_g_alpha_dynamics(self, have_plotting, report_dir):
         r"""Test that g has alpha function dynamics"""
 
         dt = 0.1  # time step
@@ -260,8 +261,6 @@ class TestAeifCondAlphaMultisynapse:
                 for _ax in ax:
                     _ax.legend()
 
-                fname = "test_aeif_cond_alpha_multisynapse_psc_shape_ " + str(i) + ".png"
-                fname = os.path.join(os.environ.get("REPORTDIR", ""), fname)
-                fig.savefig(fname)
+                fig.savefig(report_dir / f"test_aeif_cond_alpha_multisynapse_psc_shape_{i}.png")
 
             np.testing.assert_allclose(sim_g, theo_g)

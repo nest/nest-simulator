@@ -210,9 +210,9 @@ eprop_iaf_adapt::Parameters_::set( const DictionaryDatum& d, Node* node )
     throw BadProperty( "Spike threshold voltage V_th ≥ minimal voltage V_min required." );
   }
 
-  if ( kappa_ < 0.0 or kappa_ >= 1.0 )
+  if ( kappa_ < 0.0 or kappa_ > 1.0 )
   {
-    throw BadProperty( "Eligibility trace low-pass filter from range [0, 1) required." );
+    throw BadProperty( "Eligibility trace low-pass filter from range [0, 1] required." );
   }
 
   if ( eprop_isi_trace_cutoff_ < 0 )

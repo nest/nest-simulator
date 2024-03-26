@@ -21,10 +21,9 @@
 
 import math
 
+import nest
 import numpy as np
 import pytest
-
-import nest
 
 
 @pytest.mark.skipif_missing_gsl

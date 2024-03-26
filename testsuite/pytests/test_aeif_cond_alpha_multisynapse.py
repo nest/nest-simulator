@@ -19,10 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+import nest
 import numpy as np
 import pytest
-
-import nest
 
 
 @pytest.mark.skipif_missing_gsl

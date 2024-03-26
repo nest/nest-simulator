@@ -85,7 +85,7 @@ eprop_iaf_adapt::Parameters_::Parameters_()
   , tau_m_( 10.0 )
   , V_min_( -std::numeric_limits< double >::max() )
   , V_th_( -55.0 - E_L_ )
-  , kappa_( std::exp( -Time::get_resolution().get_ms() / 10.0 ) )    
+  , kappa_( std::exp( -Time::get_resolution().get_ms() / 10.0 ) )
   , eprop_isi_trace_cutoff_( std::numeric_limits< long >::max() )
 {
 }
@@ -128,14 +128,14 @@ eprop_iaf_adapt::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::f_target, f_target_ );
   def< double >( d, names::beta, beta_ );
   def< double >( d, names::gamma, gamma_ );
-  def< double >( d, names::I_e, I_e_ );  
+  def< double >( d, names::I_e, I_e_ );
   def< bool >( d, names::regular_spike_arrival, regular_spike_arrival_ );
   def< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_ );
   def< double >( d, names::t_ref, t_ref_ );
   def< double >( d, names::tau_m, tau_m_ );
   def< double >( d, names::V_min, V_min_ + E_L_ );
   def< double >( d, names::V_th, V_th_ + E_L_ );
-  def< double >( d, names::kappa, kappa_ );    
+  def< double >( d, names::kappa, kappa_ );
   def< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
 }
 
@@ -167,7 +167,7 @@ eprop_iaf_adapt::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_, node );
   updateValueParam< double >( d, names::t_ref, t_ref_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
-  updateValueParam< double >( d, names::kappa, kappa_, node );    
+  updateValueParam< double >( d, names::kappa, kappa_, node );
   updateValueParam< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
 
   if ( adapt_beta_ < 0 )
@@ -467,7 +467,7 @@ eprop_iaf_adapt::compute_gradient( const long t_spike,
     e = psi * ( z_bar - P_.adapt_beta_ * epsilon );
     epsilon = psi * z_bar + ( V_.P_adapt_ - psi * P_.adapt_beta_ ) * epsilon;
     e_bar = P_.kappa_ * e_bar + ( 1.0 - P_.kappa_ ) * e;
-    grad = (L + firing_rate_reg) * e_bar;
+    grad = ( L + firing_rate_reg ) * e_bar;
 
     weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t, grad, weight );
 

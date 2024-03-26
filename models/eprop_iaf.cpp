@@ -81,7 +81,7 @@ eprop_iaf::Parameters_::Parameters_()
   , tau_m_( 10.0 )
   , V_min_( -std::numeric_limits< double >::max() )
   , V_th_( -55.0 - E_L_ )
-  , kappa_( std::exp( -Time::get_resolution().get_ms() / 10.0 ) )    
+  , kappa_( std::exp( -Time::get_resolution().get_ms() / 10.0 ) )
   , eprop_isi_trace_cutoff_( std::numeric_limits< long >::max() )
 {
 }
@@ -127,7 +127,7 @@ eprop_iaf::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_m, tau_m_ );
   def< double >( d, names::V_min, V_min_ + E_L_ );
   def< double >( d, names::V_th, V_th_ + E_L_ );
-  def< double >( d, names::kappa, kappa_ );    
+  def< double >( d, names::kappa, kappa_ );
   def< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
 }
 
@@ -157,7 +157,7 @@ eprop_iaf::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_, node );
   updateValueParam< double >( d, names::t_ref, t_ref_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
-  updateValueParam< double >( d, names::kappa, kappa_, node );    
+  updateValueParam< double >( d, names::kappa, kappa_, node );
   updateValueParam< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
 
   if ( C_m_ <= 0 )
@@ -428,7 +428,7 @@ eprop_iaf::compute_gradient( const long t_spike,
     z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
     e = psi * z_bar;
     e_bar = P_.kappa_ * e_bar + ( 1.0 - P_.kappa_ ) * e;
-    grad = (L + firing_rate_reg)  * e_bar;
+    grad = ( L + firing_rate_reg ) * e_bar;
 
     weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t, grad, weight );
 

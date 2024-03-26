@@ -266,7 +266,7 @@ private:
     std::string surrogate_gradient_function_;
 
     //! Low-pass filter of the eligibility trace.
-    double kappa_;    
+    double kappa_;
 
     //!< Number of time steps integrated between two consecutive spikes is equal to the minimum between
     //!< eprop_isi_trace_cutoff_ and the inter-spike distance.

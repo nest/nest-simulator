@@ -76,7 +76,7 @@ nest::eprop_iaf_psc_delta::Parameters_::Parameters_()
   , c_m_( 250.0 )                                   // pF
   , t_ref_( 2.0 )                                   // ms
   , E_L_( -70.0 )                                   // mV
-  , I_e_( 0.0 )                                     // pA  
+  , I_e_( 0.0 )                                     // pA
   , V_th_( -55.0 - E_L_ )                           // mV, rel to E_L_
   , V_min_( -std::numeric_limits< double >::max() ) // relative E_L_-55.0-E_L_
   , V_reset_( -70.0 - E_L_ )                        // mV, rel to E_L_
@@ -87,7 +87,7 @@ nest::eprop_iaf_psc_delta::Parameters_::Parameters_()
   , gamma_( 0.3 )
   , surrogate_gradient_function_( "piecewise_linear" )
   , eprop_isi_trace_cutoff_( std::numeric_limits< long >::max() )
-  , kappa_( std::exp( -Time::get_resolution().get_ms() / 10.0 ) )    
+  , kappa_( std::exp( -Time::get_resolution().get_ms() / 10.0 ) )
 {
 }
 
@@ -123,7 +123,7 @@ nest::eprop_iaf_psc_delta::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::beta, beta_ );
   def< double >( d, names::gamma, gamma_ );
   def< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_ );
-  def< double >( d, names::kappa, kappa_ );      
+  def< double >( d, names::kappa, kappa_ );
   def< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
 }
 
@@ -176,8 +176,8 @@ nest::eprop_iaf_psc_delta::Parameters_::set( const DictionaryDatum& d, Node* nod
   updateValueParam< double >( d, names::beta, beta_, node );
   updateValueParam< double >( d, names::gamma, gamma_, node );
   updateValueParam< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_, node );
-  updateValueParam< double >( d, names::kappa, kappa_, node );   
-  updateValueParam< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );   
+  updateValueParam< double >( d, names::kappa, kappa_, node );
+  updateValueParam< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
 
   if ( V_reset_ >= V_th_ )
   {
@@ -511,7 +511,7 @@ eprop_iaf_psc_delta::compute_gradient( const long t_spike,
     z_bar = V_.P33_ * z_bar + V_.P_z_in_ * z;
     e = psi * z_bar;
     e_bar = P_.kappa_ * e_bar + ( 1.0 - P_.kappa_ ) * e;
-    grad = (L + firing_rate_reg) * e_bar;
+    grad = ( L + firing_rate_reg ) * e_bar;
 
     weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t, grad, weight );
 

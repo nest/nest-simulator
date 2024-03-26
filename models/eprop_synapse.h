@@ -472,16 +472,8 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
   }
   else
   {
-    target->compute_gradient( t_spike,
-      t_previous_spike_,
-      previous_z_buffer_,
-      z_bar_,
-      e_bar_,
-      epsilon_,
-      avg_e_,
-      weight_,
-      cp,
-      optimizer_ );
+    target->compute_gradient(
+      t_spike, t_previous_spike_, previous_z_buffer_, z_bar_, e_bar_, epsilon_, avg_e_, weight_, cp, optimizer_ );
     t_begin = t_previous_spike_;
   }
 

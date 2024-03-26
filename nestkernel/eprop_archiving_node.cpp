@@ -126,7 +126,7 @@ EpropArchivingNodeRecurrent::write_surrogate_gradient_to_history( const long tim
     return;
   }
 
-  eprop_history_.emplace_back( time_step, surrogate_gradient, 0.0, 0.0 );
+  eprop_history_.emplace_back( time_step, surrogate_gradient, 0.0 );
 }
 
 void
@@ -208,7 +208,7 @@ EpropArchivingNodeRecurrent::write_firing_rate_reg_to_history( const long t,
   firing_rate_reg_ = c_reg * ( f_av_ - f_target_ );
 
   auto it_hist = get_eprop_history( t );
-  it_hist->firing_rate_reg_ = firing_rate_reg_;
+  it_hist->learning_signal_ += firing_rate_reg_;
 }
 
 double

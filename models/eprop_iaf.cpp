@@ -386,13 +386,12 @@ eprop_iaf::compute_gradient( const long t_spike,
   const CommonSynapseProperties& cp,
   WeightOptimizer* optimizer )
 {
-  long t = t_previous_spike;    // inter-spike time step
-  double e = 0.0;               // eligibility trace
-  double z = 0.0;               // spiking variable
-  double psi = 0.0;             // surrogate gradient
-  double L = 0.0;               // learning signal
-  double firing_rate_reg = 0.0; // firing rate regularization
-  double grad = 0.0;            // gradient
+  long t = t_previous_spike; // inter-spike time step
+  double e = 0.0;            // eligibility trace
+  double z = 0.0;            // spiking variable
+  double psi = 0.0;          // surrogate gradient
+  double L = 0.0;            // learning signal
+  double grad = 0.0;         // gradient
 
   const EpropSynapseCommonProperties& ecp = static_cast< const EpropSynapseCommonProperties& >( cp );
 
@@ -423,12 +422,11 @@ eprop_iaf::compute_gradient( const long t_spike,
 
     psi = eprop_hist_it->surrogate_gradient_;
     L = eprop_hist_it->learning_signal_;
-    firing_rate_reg = eprop_hist_it->firing_rate_reg_;
 
     z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
     e = psi * z_bar;
     e_bar = P_.kappa_ * e_bar + ( 1.0 - P_.kappa_ ) * e;
-    grad = ( L + firing_rate_reg ) * e_bar;
+    grad = L * e_bar;
 
     weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t, grad, weight );
 

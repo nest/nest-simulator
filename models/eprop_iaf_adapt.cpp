@@ -212,7 +212,7 @@ eprop_iaf_adapt::Parameters_::set( const DictionaryDatum& d, Node* node )
 
   if ( kappa_ <= 0.0 or kappa_ > 1.0 )
   {
-    throw BadProperty( "kappa must be in the range (0, 1)" );
+    throw BadProperty( "Eligibility trace low-pass filter from range [0, 1) required." );
   }
 
   if ( eprop_isi_trace_cutoff_ < 0 )

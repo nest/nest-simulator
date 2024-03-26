@@ -48,14 +48,13 @@ Generate sequence of Gaussian pulse packets
 Description
 +++++++++++
 
-The pulsepacket_generator produces a spike train contains Gaussian pulse
-packets centered about given  times.  A Gaussian pulse packet is
-a given number of spikes with normal distributed random displacements
-from the center time of the pulse.
-It resembles the output of synfire groups of neurons.
+The ``pulsepacket_generator`` produces a spike train contains Gaussian pulse
+packets centered about given  times.  A Gaussian pulse packet is a given
+number of spikes with normal distributed random displacements from the center
+time of the pulse. It resembles the output of synfire groups of neurons.
 
 - All targets receive identical spike trains.
-- New pulse packets are generated when activity or sdev are changed.
+- New pulse packets are generated when activity or ``sdev`` are changed.
 - Gaussian pulse are independently generated for each given
   pulse-center time.
 - Both standard deviation and number of spikes may be set at any time.
@@ -64,13 +63,13 @@ It resembles the output of synfire groups of neurons.
 .. include:: ../models/stimulation_device.rst
 
 pulse_times
-    Times of the centers of pulses (ms)
+    List of times of the centers of pulses in ms.
 
 activity
-    Number of spikes per pulse
+    Number of spikes per pulse. Default: ``0``.
 
 sdev
-    Standard deviation of spike times in each pulse (ms)
+    Standard deviation of spike times in each pulse in ms. Default: ``0.0``.
 
 Setting parameters from a stimulation backend
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -94,7 +93,14 @@ See also
 
 spike_generator
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: pulsepacket_generator
+
 EndUserDocs */
+
+void register_pulsepacket_generator( const std::string& name );
 
 class pulsepacket_generator : public StimulationDevice
 {

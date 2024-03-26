@@ -987,7 +987,7 @@ SLIInterpreter::stack_backtrace( int n )
 {
   for ( int p = n - 1; p >= 0; --p )
   {
-    if ( ( size_t ) p > EStack.load() )
+    if ( static_cast< size_t >( p ) > EStack.load() )
     {
       continue;
     }

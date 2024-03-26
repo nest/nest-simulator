@@ -14,7 +14,7 @@ on their own.
 
 .. seealso::
 
-    Before you make a pull request :ref:`see how to check your code <check_code>`  to ensure its compliant with our guidelines.
+    Before you make a pull request :ref:`see which developer tools are required <required_dev_tools>`  to ensure its compliant with our guidelines.
 
 C++ language features
 ---------------------
@@ -83,7 +83,7 @@ Coding style
 
 In the following the coding style guidelines are explained by example and some
 parts are adopted from `Google C++ Style
-Guide <https://google-styleguide.googlecode.com/svn/trunk/cppguide.html>`_.
+Guide <https://google.github.io/styleguide/cppguide.html>`_.
 
 The #define guard
 ~~~~~~~~~~~~~~~~~
@@ -180,8 +180,9 @@ and is only left for compatibility.
 All files in NEST start with a preamble, which contains the filename and the
 NEST copyright text (see example below).
 
-Lines should not exceed 120 characters (clang-format). Files should not be too
-long (max. 2000 lines) (vera++:L006). No trailing whitespace (clang-format).
+* Lines should not exceed 120 character
+* Files should not be too long (max. 2000 lines)
+* No trailing whitespace
 
 Folders
 *******
@@ -192,7 +193,7 @@ Variables and class members
 ***************************
 
 In general, use meaningful, non-abbreviated names or follow naming conventions
-from the neuroscience field, e.g. the membrane potential is :hxt_ref:`V_m`. Use the
+from the neuroscience field, for example, the membrane potential is :hxt_ref:`V_m`. Use the
 ``lower_case_under_lined`` notation. Private member variables should end with an
 underscore (``name_``). If applicable, the general rule is use is to use the
 same notation for biophysical quantities as is used in `Dayan&Abbot, 2001
@@ -227,8 +228,8 @@ from the neuroscience field, e.g. the membrane potential is :hxt_ref:`V_m`. Use 
 ``lower_case_under_lined`` notation.
 
 There should be a line-break after the method's return type (implementation
-only) (clang-format). Parameters of methods should either fit into one line or
-each parameter is on a separate line (clang-format).
+only). Parameters of methods should either fit into one line or
+each parameter is on a separate line.
 
 .. code::
 
@@ -244,9 +245,9 @@ Namespaces
 **********
 
 Use ``lower_case_under_lined`` notation for namespaces. Do not use ``using namespace``
-statements in header files (vera++:T018). The closing brace of a namespace should be
+statements in header files. The closing brace of a namespace should be
 followed by a comment containing the namespace statement.
-Do not indent the body of namespaces (clang-format).
+Do not indent the body of namespaces.
 
 .. code::
 
@@ -266,7 +267,7 @@ Use a ``struct`` only for passive objects that carry data; everything else is a
 underscore (``State_``).
 
 The access modifier (``public``, ``protected``, ``private``) in class definitions are
-not indented (clang-format).
+not indented.
 
 Do not implement methods inside the class definition, but implement small
 ``inline`` methods after the class definition and other methods in the
@@ -276,7 +277,7 @@ Template class declarations follow the same style as normal class declarations.
 This applies in particular to inline declarations. The keyword template
 followed by the list of template parameters appear on a separate line. The <
 and > in template expressions have one space after and before the sign,
-respectively, e.g. ``std::vector< int >`` (clang-format).
+respectively, e.g., ``std::vector< int >``.
 
 .. code::
 
@@ -295,16 +296,15 @@ Further indentation and formatting
 Avoid committing indentation and formatting changes together with changes in
 logic. Always commit these changes separately._
 
-As a general rule of thumb, always indent with two spaces (clang-format). Do
-not use TAB character in any source file (vera++:L002). Always use braces
-around blocks of code (vera++:T019). The braces of code blocks have their own
-line (clang-format).
+As a general rule of thumb, always indent with two spaces. Do
+not use TAB character in any source file. Always use braces
+around blocks of code. The braces of code blocks have their own
+line.
 
 Control structures (``if``, ``while``, ``for``, ...) have a single space after the
-keyword (clang-format / vera++:T003, T008). The parenthesis around the tests
-have a space after the opening and before the closing parenthesis
-(clang-format). The case labels in ``switch`` statements are not indented
-(clang-format).
+keyword. The parenthesis around the tests
+have a space after the opening and before the closing parenthesis.
+The case labels in ``switch`` statements are not indented.
 
 .. code::
 
@@ -326,49 +326,18 @@ have a space after the opening and before the closing parenthesis
    }
 
 Binary operators (`+`, `-`, `*`, `||`, `&`, ...) are surrounded by one space, e.g.
-``a + b`` (clang-format).
+``a + b``.
 
-Unary operators have no space between operator and operand, e.g. ``-a``
-(clang-format). Do not use the negation operator `!` since it can easily be
-overseen. Instead use ``not``, e.g. ``not vec.empty()`` (vera++:T012).
+Unary operators have no space between operator and operand, e.g. ``-a``.
+Do not use the negation operator `!` since it can easily be
+overseen. Instead use ``not``, e.g. ``not vec.empty()``.
 
-There is no space between a statement and its corresponding semicolon
-(clang-format):
+There is no space between a statement and its corresponding semicolon:
 
 .. code::
 
    return a + 3 ; // bad
    return a + 3;  // good
-
-Further checks performed by vera++
-**********************************
-
-* **F001** Source files should not use the '\r' (CR) character
-* **F002** File names should be well-formed
-* **L001** No trailing whitespace (clang-format)
-* **L003** no leading / ending empty lines
-* **L005** not to many (> 2) consecutive empty lines
-* **T001** One-line comments should not have forced continuation ( ``// ... \``)
-* **T002** Reserved names should not be used for preprocessor macros
-* **T004** Some keywords should be immediately followed by a colon (clang-format)
-* **T005** Keywords break and continue should be immediately followed by a semicolon (clang-format)
-* **T006** Keywords return and throw should be immediately followed by a semicolon or a single space (clang-format)
-* **T007** Semicolons should not be isolated by spaces or comments from the rest of the code (~ clang-format)
-* **T010** Identifiers should not be composed of 'l' and 'O' characters only
-* **T017** Unnamed namespaces are not allowed in header files
-
-Further transformations performed by clang-format
-*************************************************
-
-* Align trailing comments
-* Always break before multi-line strings
-* Always break template declarations
-* Break constructor initializers before comma
-* Pointer alignment: Left
-* Space before assignment operators
-* Spaces before trailing comments: 1
-* Spaces in parentheses
-* Spaces in square brackets
 
 Stopwatch example
 ~~~~~~~~~~~~~~~~~
@@ -704,5 +673,3 @@ And the corresponding ``stopwatch.cpp``:
       return os;
     }
     }
-
-

@@ -84,6 +84,9 @@ it is considered a spike.
 
 See also [1]_, [2]_, [3]_, [4]_, [5]_, [6]_.
 
+For details on asynchronicity in spike and firing events with Hodgkin Huxley models
+see :ref:`here <hh_details>`.
+
 Parameters
 ++++++++++
 
@@ -103,6 +106,7 @@ u_bar_bar   mV      Low-pass filtered u_bar_minus
 -------------------------------------------------------------------------------
 E_L         mV      Leak reversal potential
 C_m         pF      Capacity of the membrane
+t_ref       ms      Duration of refractory period
 g_L         nS      Leak conductance
 tau_ex      ms      Rise time of the excitatory synaptic alpha function
 tau_in      ms      Rise time of the inhibitory synaptic alpha function
@@ -159,9 +163,7 @@ References
        DOI: https://doi.org/10.3389/fnsyn.2010.00025
 .. [6] Voltage-based STDP synapse (Clopath et al. 2010) connected to a
        Hodgkin-Huxley neuron on ModelDB:
-       https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566&file
-       =%2fmodeldb_package%2fstdp_cc.mod
-
+       https://modeldb.science/144566?tab=1
 
 Sends
 +++++
@@ -178,7 +180,14 @@ See also
 
 hh_psc_alpha, clopath_synapse, aeif_psc_delta_clopath
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: hh_psc_alpha_clopath
+
 EndUserDocs */
+
+void register_hh_psc_alpha_clopath( const std::string& name );
 
 class hh_psc_alpha_clopath : public ClopathArchivingNode
 {

@@ -23,8 +23,14 @@
 Classes defining the different PyNEST types
 """
 
-from ..ll_api import sli_func, sps, sr, spp, take_array_index
+import json
+import numbers
+from math import floor, log
+
+import numpy
+
 from .. import pynestkernel as kernel
+from ..ll_api import sli_func, spp, sps, sr, take_array_index
 from .hl_api_helper import (
     broadcast,
     get_parameters,
@@ -34,10 +40,6 @@ from .hl_api_helper import (
     restructure_data,
 )
 from .hl_api_simulation import GetKernelStatus
-
-import numpy
-import json
-from math import floor, log
 
 try:
     import pandas
@@ -54,7 +56,7 @@ __all__ = [
     "NodeCollection",
     "Parameter",
     "Receptors",
-    "serializable",
+    "serialize_data",
     "SynapseCollection",
     "to_json",
 ]
@@ -82,7 +84,8 @@ def CreateParameter(parametertype, specs):
 
     Notes
     -----
-    - Instead of using `CreateParameter` you can also use the various parametrizations embedded in NEST. See for
+
+    Instead of using `CreateParameter` you can also use the various parametrizations embedded in NEST. See for
     instance :py:func:`.uniform`.
 
     **Parameter types**
@@ -91,11 +94,14 @@ def CreateParameter(parametertype, specs):
     acceptable keys for their corresponding specification dictionaries:
 
     * Constant
+
         ::
 
             'constant' :
                 {'value' : float} # constant value
+
     * Randomization
+
         ::
 
             # random parameter with uniform distribution in [min,max)
@@ -112,6 +118,7 @@ def CreateParameter(parametertype, specs):
             'lognormal' :
                 {'mean' : float, # mean value of logarithm, default: 0.0
                  'std'  : float} # standard deviation of log, default: 1.0
+
     """
     return sli_func("CreateParameter", {parametertype: specs})
 
@@ -211,9 +218,15 @@ class NodeCollection:
 
     def __add__(self, other):
         if not isinstance(other, NodeCollection):
-            raise NotImplementedError()
+            if isinstance(other, numbers.Number) and other == 0:
+                other = NodeCollection()
+            else:
+                raise TypeError(f"Cannot add object of type '{type(other).__name__}' to 'NodeCollection'")
 
         return sli_func("join", self._datum, other._datum)
+
+    def __radd__(self, other):
+        return self + other
 
     def __getitem__(self, key):
         if isinstance(key, slice):
@@ -247,7 +260,7 @@ class NodeCollection:
                     raise IndexError("Bool index array must be the same length as NodeCollection")
                 np_key = numpy.array(key, dtype=bool)
             # Checking that elements are not instances of bool too, because bool inherits from int
-            elif all(isinstance(x, int) and not isinstance(x, bool) for x in key):
+            elif all(isinstance(x, (int, numpy.integer)) and not isinstance(x, bool) for x in key):
                 np_key = numpy.array(key, dtype=numpy.uint64)
                 if len(numpy.unique(np_key)) != len(np_key):
                     raise ValueError("All node IDs in a NodeCollection have to be unique")
@@ -312,7 +325,7 @@ class NodeCollection:
               This is for hierarchical addressing.
         output : str, ['pandas','json'], optional
              If the returned data should be in a Pandas DataFrame or in a
-             JSON serializable format.
+             JSON string format.
 
         Returns
         -------
@@ -533,6 +546,13 @@ class NodeCollection:
     def __getattr__(self, attr):
         if not self:
             raise AttributeError("Cannot get attribute of empty NodeCollection")
+
+        # IPython looks up this method when doing pretty printing
+        # As long as we do not provide special methods to support IPython prettyprinting,
+        # HTML-rendering, etc, we stop IPython from time-consuming checks by raising an
+        # exception here. The exception must *not* be AttributeError.
+        if attr == "_ipython_canary_method_should_not_exist_":
+            raise NotImplementedError("_ipython_canary_method_should_not_exist_")
 
         if attr == "spatial":
             metadata = sli_func("GetMetadata", self._datum)
@@ -763,7 +783,7 @@ class SynapseCollection:
             belonging to the given `keys`.
         output : str, ['pandas','json'], optional
             If the returned data should be in a Pandas DataFrame or in a
-            JSON serializable format.
+            JSON string format.
 
         Returns
         -------
@@ -803,13 +823,16 @@ class SynapseCollection:
                {'source': [1, 1, 1, 2, 2, 2, 3, 3, 3],
                 'weight': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]}
         """
+
         pandas_output = output == "pandas"
         if pandas_output and not HAVE_PANDAS:
             raise ImportError("Pandas could not be imported")
 
-        # Return empty dictionary if we have no connections or if we have done a nest.ResetKernel()
-        num_conns = GetKernelStatus("num_connections")  # Has to be called first because it involves MPI communication.
-        if self.__len__() == 0 or num_conns == 0:
+        # Return empty dictionary if we have no connections
+        # We also return if the network is empty after a ResetKernel.
+        # This avoids problems with invalid SynapseCollections.
+        # See also #3100.
+        if self.__len__() == 0 or GetKernelStatus("network_size") == 0:
             # Return empty tuple if get is called with an argument
             return {} if keys is None else ()
 
@@ -872,7 +895,9 @@ class SynapseCollection:
 
         # This was added to ensure that the function is a nop (instead of,
         # for instance, raising an exception) when applied to an empty
-        # SynapseCollection, or after having done a nest.ResetKernel().
+        # SynapseCollection. We also return if the network is empty after a
+        # reset kernel. This avoids problems with invalid SynapseCollections.
+        # See also #3100.
         if self.__len__() == 0 or GetKernelStatus("network_size") == 0:
             return
 
@@ -929,6 +954,7 @@ class CollocatedSynapses:
     -------
 
     ::
+
         nodes = nest.Create('iaf_psc_alpha', 3)
         syn_spec = nest.CollocatedSynapses({'weight': 4., 'delay': 1.5},
                                        {'synapse_model': 'stdp_synapse'},
@@ -939,6 +965,7 @@ class CollocatedSynapses:
 
         print(conns.alpha)
         print(len(syn_spec))
+
     """
 
     def __init__(self, *args):
@@ -1057,8 +1084,7 @@ class Parameter:
         return self._binop("div", rhs)
 
     def __rtruediv__(self, lhs):
-        rhs_inv = CreateParameter("constant", {"value": 1 / float(self.GetValue())})
-        return rhs_inv._binop("mul", lhs)
+        return self**-1 * lhs
 
     def __pow__(self, exponent):
         try:
@@ -1205,8 +1231,8 @@ class Receptors(CmBase):
     pass
 
 
-def serializable(data):
-    """Make data serializable for JSON.
+def serialize_data(data):
+    """Serialize data for JSON.
 
     Parameters
     ----------
@@ -1220,21 +1246,21 @@ def serializable(data):
 
     if isinstance(data, (numpy.ndarray, NodeCollection)):
         return data.tolist()
-    if isinstance(data, SynapseCollection):
+    elif isinstance(data, SynapseCollection):
         # Get full information from SynapseCollection
-        return serializable(data.get())
-    if isinstance(data, kernel.SLILiteral):
+        return serialize_data(data.get())
+    elif isinstance(data, kernel.SLILiteral):
         # Get name of SLILiteral.
         return data.name
-    if isinstance(data, (list, tuple)):
-        return [serializable(d) for d in data]
-    if isinstance(data, dict):
-        return dict([(key, serializable(value)) for key, value in data.items()])
+    elif isinstance(data, (list, tuple)):
+        return [serialize_data(d) for d in data]
+    elif isinstance(data, dict):
+        return dict([(key, serialize_data(value)) for key, value in data.items()])
     return data
 
 
 def to_json(data, **kwargs):
-    """Serialize data to JSON.
+    """Convert the object to a JSON string.
 
     Parameters
     ----------
@@ -1245,9 +1271,9 @@ def to_json(data, **kwargs):
     Returns
     -------
     data_json : str
-        JSON format of the data
+        JSON string format of the data
     """
 
-    data_serialized = serializable(data)
+    data_serialized = serialize_data(data)
     data_json = json.dumps(data_serialized, **kwargs)
     return data_json

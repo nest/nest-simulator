@@ -137,7 +137,7 @@ NodePosParameter::get_node_pos_( Node* node ) const
   {
     throw KernelException( "NodePosParameter: not node" );
   }
-  NodeCollectionPTR nc = node->get_nc();
+  NodeCollectionPTR nc = kernel().node_manager.node_id_to_node_collection( node );
   if ( not nc.get() )
   {
     throw KernelException( "NodePosParameter: not nc" );
@@ -351,6 +351,50 @@ Gaussian2DParameter::value( RngPtr rng,
 }
 
 
+GaborParameter::GaborParameter( const DictionaryDatum& d )
+  : Parameter( true )
+  , px_( getValue< ParameterDatum >( d, "x" ) )
+  , py_( getValue< ParameterDatum >( d, "y" ) )
+  , cos_( std::cos( getValue< double >( d, "theta" ) * numerics::pi / 180. ) )
+  , sin_( std::sin( getValue< double >( d, "theta" ) * numerics::pi / 180. ) )
+  , gamma_( getValue< double >( d, "gamma" ) )
+  , inv_two_std2_( 1.0 / ( 2 * getValue< double >( d, "std" ) * getValue< double >( d, "std" ) ) )
+  , lambda_( getValue< double >( d, "lam" ) )
+  , psi_( getValue< double >( d, "psi" ) )
+{
+  const auto gamma = getValue< double >( d, "gamma" );
+  const auto std = getValue< double >( d, "std" );
+  if ( std <= 0 )
+  {
+    throw BadProperty( "std > 0 required for gabor function parameter, got std=" + std::to_string( std ) );
+  }
+  if ( gamma <= 0 )
+  {
+    throw BadProperty( "gamma > 0 required for gabor function parameter, got gamma=" + std::to_string( gamma ) );
+  }
+}
+
+double
+GaborParameter::value( RngPtr rng,
+  const std::vector< double >& source_pos,
+  const std::vector< double >& target_pos,
+  const AbstractLayer& layer,
+  Node* node )
+{
+  const auto dx = px_->value( rng, source_pos, target_pos, layer, node );
+  const auto dy = py_->value( rng, source_pos, target_pos, layer, node );
+  const auto dx_prime = dx * cos_ + dy * sin_;
+  const auto dy_prime = -dx * sin_ + dy * cos_;
+  const auto gabor_exp =
+    std::exp( -gamma_ * gamma_ * dx_prime * dx_prime * inv_two_std2_ - dy_prime * dy_prime * inv_two_std2_ );
+  const auto gabor_cos_plus =
+    std::max( std::cos( 2 * numerics::pi * dy_prime / lambda_ + psi_ * numerics::pi / 180. ), 0. );
+  const auto gabor_res = gabor_exp * gabor_cos_plus;
+
+  return gabor_res;
+}
+
+
 GammaParameter::GammaParameter( const DictionaryDatum& d )
   : Parameter( true )
   , p_( getValue< ParameterDatum >( d, "x" ) )
@@ -477,4 +521,4 @@ dimension_parameter( const std::shared_ptr< Parameter > x_parameter,
   return std::shared_ptr< Parameter >( new DimensionParameter( x_parameter, y_parameter, z_parameter ) );
 }
 
-} /* namespace nest */
+} // namespace nest

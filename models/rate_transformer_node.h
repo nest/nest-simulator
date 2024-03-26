@@ -92,6 +92,11 @@ Parameters
 Only the parameter ``linear_summation`` and the parameters from the class ``Nonlinearities`` can be set in the
 status dictionary.
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: rate_transformer_node
+
 EndUserDocs */
 
 template < class TNonlinearities >

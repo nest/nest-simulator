@@ -23,11 +23,10 @@
 This set of tests verify the behavior of the offset attribute of multimeter.
 """
 
+import nest
 import numpy as np
 import numpy.testing as nptest
 import pytest
-
-import nest
 
 
 @pytest.fixture(autouse=True)

@@ -23,10 +23,10 @@
 Functions for simulation control
 """
 
-from contextlib import contextmanager
 import warnings
+from contextlib import contextmanager
 
-from ..ll_api import check_stack, sps, sr, spp
+from ..ll_api import check_stack, spp, sps, sr
 from .hl_api_helper import is_iterable, is_literal
 
 __all__ = [
@@ -189,10 +189,12 @@ def ResetKernel():
     * all network nodes
     * all connections
     * all user-defined neuron and synapse models
+
     are deleted, and
 
     * time
     * random generators
+
     are reset. The only exception is that dynamically loaded modules are not
     unloaded. This may change in a future version of NEST.
 
@@ -205,7 +207,7 @@ def ResetKernel():
 def SetKernelStatus(params):
     """Set parameters for the simulation kernel.
 
-    See the documentation of :ref:`sec:kernel_attributes` for a valid
+    See the documentation of :ref:`sec_kernel_attributes` for a valid
     list of params.
 
     Parameters

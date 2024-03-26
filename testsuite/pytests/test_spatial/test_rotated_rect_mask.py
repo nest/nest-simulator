@@ -24,6 +24,7 @@ Tests rotated rectangular and box masks.
 """
 
 import unittest
+
 import nest
 
 

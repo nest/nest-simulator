@@ -49,31 +49,29 @@ class SimulationManager : public ManagerInterface
 public:
   SimulationManager();
 
-  void initialize() override;
-  void finalize() override;
+  void initialize( const bool ) override;
+  void finalize( const bool ) override;
   void set_status( const DictionaryDatum& ) override;
   void get_status( DictionaryDatum& ) override;
 
   /**
-      check for errors in time before run
-      @throws KernelException if illegal time passed
-  */
+   *  Check for errors in time before run
+   *
+   *   @throws KernelException if illegal time passed
+   */
   void assert_valid_simtime( Time const& );
-
-  /*
-     Simulate can be broken up into .. prepare... run.. run.. cleanup..
-     instead of calling simulate multiple times, and thus reduplicating
-     effort in prepare, cleanup many times.
-  */
 
   /**
    * Initialize simulation for a set of run calls.
+   *
    * Must be called before a sequence of runs, and again after cleanup.
    */
   void prepare() override;
 
   /**
-   * Run a simulation for another `Time`. Can be repeated ad infinitum with
+   * Run a simulation for another `Time`.
+   *
+   * Can be repeated ad infinitum with
    * calls to get_status(), but any changes to the network are undefined,
    * leading serious risk of incorrect results.
    */
@@ -81,6 +79,7 @@ public:
 
   /**
    * Closes a set of runs, doing finalizations such as file closures.
+   *
    * After cleanup() is called, no more run()s can be called before another
    * prepare() call.
    */
@@ -118,6 +117,7 @@ public:
 
   /**
    * Precise time of simulation.
+   *
    * @note The precise time of the simulation is defined only
    *       while the simulation is not in progress.
    */
@@ -125,7 +125,9 @@ public:
 
   /**
    * Return true, if the SimulationManager has already been simulated for some
-   * time. This does NOT indicate that simulate has been called (i.e. if
+   * time.
+   *
+   * This does NOT indicate that simulate has been called (i.e. if
    * Simulate is called with 0 as argument, the flag is still set to false.)
    */
   bool has_been_simulated() const;
@@ -183,6 +185,10 @@ public:
    */
   virtual void reset_timers_for_dynamics();
 
+  Time get_eprop_update_interval() const;
+  Time get_eprop_learning_window() const;
+  bool get_eprop_reset_neurons_on_update() const;
+
 private:
   void call_update_(); //!< actually run simulation, aka wrap update_
   void update_();      //! actually perform simulation
@@ -227,9 +233,16 @@ private:
 #ifdef TIMER_DETAILED
   // intended for internal core developers, not for use in the public API
   Stopwatch sw_gather_spike_data_;
+  Stopwatch sw_gather_secondary_data_;
   Stopwatch sw_update_;
   Stopwatch sw_gather_target_data_;
+  Stopwatch sw_deliver_spike_data_;
+  Stopwatch sw_deliver_secondary_data_;
 #endif
+
+  double eprop_update_interval_;
+  double eprop_learning_window_;
+  bool eprop_reset_neurons_on_update_;
 };
 
 inline Time const&
@@ -324,7 +337,26 @@ SimulationManager::get_wfr_interpolation_order() const
 {
   return wfr_interpolation_order_;
 }
+
+inline Time
+SimulationManager::get_eprop_update_interval() const
+{
+  return Time::ms( eprop_update_interval_ );
+}
+
+inline Time
+SimulationManager::get_eprop_learning_window() const
+{
+  return Time::ms( eprop_learning_window_ );
+}
+
+inline bool
+SimulationManager::get_eprop_reset_neurons_on_update() const
+{
+  return eprop_reset_neurons_on_update_;
+}
+
 }
 
 
-#endif /* SIMULATION_MANAGER_H */
+#endif /* #ifndef SIMULATION_MANAGER_H */

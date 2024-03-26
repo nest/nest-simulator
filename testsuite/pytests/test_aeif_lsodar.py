@@ -21,13 +21,11 @@
 
 import os
 import unittest
-
-import numpy as np
-from scipy.interpolate import interp1d
-
 from collections import defaultdict
 
 import nest
+import numpy as np
+from scipy.interpolate import interp1d
 
 """
 Comparing the new implementations the aeif models to the reference solution

@@ -23,10 +23,11 @@
 Tests distance between sources and targets of SynapseCollection
 """
 
-import pytest
 import math
-import numpy as np
+
 import nest
+import numpy as np
+import pytest
 
 
 @pytest.fixture(autouse=True)

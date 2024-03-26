@@ -11,7 +11,7 @@ Installation
    known issue in some :hxt_ref:`MPI` implementations. A solution is to add
    --with-debug="-DMPICH\_IGNORE\_CXX\_SEEK" to the configure command
    line. More details about this problem can be found
-   `here <http://www-unix.mcs.anl.gov/mpi/mpich/faq.htm#cxxseek>`__
+   `here <https://www.mpich.org/#cxxseek>`__
 
 2. **Configure warns that Makefile.in seems to ignore the --datarootdir
    setting and the installation fails because of permission errors**
@@ -85,5 +85,7 @@ Connections
        n = nest.Create('iaf_cond_alpha_mc', 100)
        nest.Connect(n, n[:1], sync_spec={'model'='exc_dist_syn'})
        nest.Simulate(10)
+
+.. _faqs_precise_neurons:
 
 .. include:: qa-precise-spike-times.rst

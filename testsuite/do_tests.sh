@@ -145,6 +145,7 @@ ls -la "${TEST_BASEDIR}"
 
 NEST="nest_serial"
 HAVE_MPI="$(sli -c 'statusdict/have_mpi :: =only')"
+HAVE_OPENMP="$(sli -c 'is_threaded =only')"
 
 if test "${HAVE_MPI}" = "true"; then
     MPI_LAUNCHER="$(sli -c 'statusdict/mpiexec :: =only')"
@@ -333,9 +334,12 @@ if test "${PYTHON}"; then
   tests_collect="$tests_collect py"
 fi
 for test_ext in ${tests_collect} ; do
-      for test_name in $(ls "${TEST_BASEDIR}/unittests/" | grep ".*\.${test_ext}\$") ; do
-          run_test "unittests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
-      done
+    for test_name in $(ls "${TEST_BASEDIR}/unittests/" | grep ".*\.${test_ext}\$") ; do
+        run_test "unittests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
+    done
+    for test_name in $(ls "${TEST_BASEDIR}/unittests/sli2py_ignore/" | grep ".*\.${test_ext}\$") ; do
+        run_test "unittests/sli2py_ignore/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
+    done
 done
 
 junit_close
@@ -349,6 +353,9 @@ junit_open '04_regressiontests'
 for test_ext in ${tests_collect} ; do
     for test_name in $(ls "${TEST_BASEDIR}/regressiontests/" | grep ".*\.${test_ext}$") ; do
         run_test "regressiontests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
+    done
+    for test_name in $(ls "${TEST_BASEDIR}/regressiontests/sli2py_ignore/" | grep ".*\.${test_ext}$") ; do
+        run_test "regressiontests/sli2py_ignore/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
     done
 done
 
@@ -497,17 +504,28 @@ if test "${PYTHON}"; then
     PYNEST_TEST_DIR="${TEST_BASEDIR}/pytests"
     XUNIT_NAME="07_pynesttests"
 
-    # Run all tests except those in the mpi* subdirectories because they cannot be run concurrently
+    # Run all tests except those in the mpi* and sli2py_mpi subdirectories because they cannot be run concurrently
     XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}.xml"
     env
     set +e
     "${PYTHON}" -m pytest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" --numprocesses=1 \
-          --ignore="${PYNEST_TEST_DIR}/mpi" "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}"
+          --ignore="${PYNEST_TEST_DIR}/mpi" --ignore="${PYNEST_TEST_DIR}/sli2py_mpi" "${PYNEST_TEST_DIR}" 2>&1 | tee -a "${TEST_LOGFILE}"
     set -e
 
-    # Run tests in the mpi* subdirectories, grouped by number of processes
+    # Run tests in the sli2py_mpi subdirectory. The must be run without loading conftest.py.
+    if test "${HAVE_MPI}" = "true" && test "${HAVE_OPENMP}" = "true" ; then
+	XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_sli2py_mpi.xml"
+	env
+	set +e
+	"${PYTHON}" -m pytest --noconftest --verbose --timeout $TIME_LIMIT --junit-xml="${XUNIT_FILE}" --numprocesses=1 \
+		    "${PYNEST_TEST_DIR}/sli2py_mpi" 2>&1 | tee -a "${TEST_LOGFILE}"
+	set -e
+    fi
+
+    # Run tests in the mpi/* subdirectories, with one subdirectory per number of processes to use
     if test "${HAVE_MPI}" = "true"; then
         if test "${MPI_LAUNCHER}"; then
+	    # Loop over subdirectories whose names are the number of mpi procs to use
             for numproc in $(cd ${PYNEST_TEST_DIR}/mpi/; ls -d */ | tr -d '/'); do
                 XUNIT_FILE="${REPORTDIR}/${XUNIT_NAME}_mpi_${numproc}.xml"
                 PYTEST_ARGS="--verbose --timeout $TIME_LIMIT --junit-xml=${XUNIT_FILE} ${PYNEST_TEST_DIR}/mpi/${numproc}"

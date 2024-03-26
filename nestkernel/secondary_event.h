@@ -23,8 +23,10 @@
 #ifndef SECONDARY_EVENT_H
 #define SECONDARY_EVENT_H
 
-// c++ includes
-// C++ includes:
+// Includes from nestkernel
+#include "event.h"
+
+// C++ includes
 #include <set>
 
 namespace nest
@@ -195,12 +197,7 @@ public:
    *
    * See also:
    */
-  void
-  add_syn_id( const synindex synid ) override
-  {
-    VPManager::assert_single_threaded();
-    supported_syn_ids_.insert( synid );
-  }
+  void add_syn_id( const synindex synid ) override;
 
   const std::set< synindex >&
   get_supported_syn_ids() const override
@@ -221,12 +218,7 @@ public:
     supported_syn_ids_.clear();
   }
 
-  static void
-  set_coeff_length( const size_t coeff_length )
-  {
-    VPManager::assert_single_threaded();
-    coeff_length_ = coeff_length;
-  }
+  static void set_coeff_length( const size_t coeff_length );
 
   void
   set_coeffarray( std::vector< DataType >& ca )
@@ -347,6 +339,7 @@ public:
   DelayedRateConnectionEvent* clone() const override;
 };
 
+
 /**
  * Event for diffusion connections (rate model connections for the
  * siegert_neuron). The event transmits the rate to the connected neurons.
@@ -381,6 +374,22 @@ public:
 
   double get_drift_factor() const;
   double get_diffusion_factor() const;
+};
+
+/**
+ * Event for learning signal connections. The event transmits
+ * the learning signal to the connected neurons.
+ */
+class LearningSignalConnectionEvent : public DataSecondaryEvent< double, LearningSignalConnectionEvent >
+{
+
+public:
+  LearningSignalConnectionEvent()
+  {
+  }
+
+  void operator()() override;
+  LearningSignalConnectionEvent* clone() const override;
 };
 
 template < typename DataType, typename Subclass >
@@ -432,6 +441,35 @@ inline double
 DiffusionConnectionEvent::get_diffusion_factor() const
 {
   return diffusion_factor_;
+}
+
+inline LearningSignalConnectionEvent*
+LearningSignalConnectionEvent::clone() const
+{
+  return new LearningSignalConnectionEvent( *this );
+}
+
+/**
+ * Event for slow inward current (SIC) connections between astrocytes and neurons.
+ *
+ * The event transmits the slow inward current to the connected neurons.
+ */
+class SICEvent : public DataSecondaryEvent< double, SICEvent >
+{
+
+public:
+  SICEvent()
+  {
+  }
+
+  void operator()();
+  SICEvent* clone() const;
+};
+
+inline SICEvent*
+SICEvent::clone() const
+{
+  return new SICEvent( *this );
 }
 
 } // namespace nest

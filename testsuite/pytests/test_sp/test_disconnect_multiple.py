@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import nest
 import unittest
+
+import nest
 
 __author__ = "naveau"
 
@@ -48,6 +49,12 @@ class TestDisconnect(unittest.TestCase):
             "urbanczik_synapse",
             "urbanczik_synapse_lbl",
             "urbanczik_synapse_hpc",
+            "eprop_synapse_bsshslm_2020",
+            "eprop_synapse_bsshslm_2020_hpc",
+            "eprop_learning_signal_connection_bsshslm_2020",
+            "eprop_learning_signal_connection_bsshslm_2020_lbl",
+            "eprop_learning_signal_connection_bsshslm_2020_hpc",
+            "sic_connection",
         ]
 
     def test_multiple_synapse_deletion_all_to_all(self):

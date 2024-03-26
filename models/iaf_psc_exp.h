@@ -80,7 +80,7 @@ model with escape noise [4]_.
   ``tau_syn_in``, respectively, to avoid numerical instabilities.
 
   For implementation details see the
-  `IAF_neurons_singularity <../model_details/IAF_neurons_singularity.ipynb>`_ notebook.
+  `IAF Integration Singularity notebook <../model_details/IAF_Integration_Singularity.ipynb>`_.
 
 ``iaf_psc_exp`` can handle current input in two ways:
 
@@ -157,6 +157,11 @@ See also
 
 iaf_cond_exp, iaf_psc_exp_ps
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: iaf_psc_exp
+
 EndUserDocs */
 
 /**
@@ -173,6 +178,8 @@ EndUserDocs */
  * address the problem of efficient usage of appropriate vector and
  * matrix objects.
  */
+
+void register_iaf_psc_exp( const std::string& name );
 
 class iaf_psc_exp : public ArchivingNode
 {
@@ -237,7 +244,7 @@ private:
     /** External current in pA */
     double I_e_;
 
-    /** Threshold, RELATIVE TO RESTING POTENTAIL(!).
+    /** Threshold, RELATIVE TO RESTING POTENTIAL(!).
         I.e. the real threshold is (E_L_+Theta_). */
     double Theta_;
 
@@ -375,7 +382,6 @@ private:
   // ----------------------------------------------------------------
 
   /**
-   * @defgroup iaf_psc_exp_data
    * Instances of private data structures for the different types
    * of data pertaining to the model.
    * @note The order of definitions is important for speed.

@@ -52,13 +52,12 @@ References
 :Authors: J Gille, T Wunderlich, Electronic Vision(s)
 """
 
+import logging
 from abc import ABC, abstractmethod
 from copy import copy
-import logging
-
-import numpy as np
 
 import nest
+import numpy as np
 
 # Simulation time per iteration in milliseconds.
 POLL_TIME = 200
@@ -270,7 +269,7 @@ class PongNetDopa(PongNet):
         nest.SetDefaults(
             "stdp_dopamine_synapse",
             {
-                "vt": self.vt.get("global_id"),
+                "vt": self.vt,
                 "tau_c": 70,
                 "tau_n": 30,
                 "tau_plus": 45,

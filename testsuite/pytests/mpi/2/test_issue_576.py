@@ -20,8 +20,9 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import nest
 import unittest
+
+import nest
 
 HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
 

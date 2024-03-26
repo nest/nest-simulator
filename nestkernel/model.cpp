@@ -69,7 +69,7 @@ Model::set_threads_( size_t t )
 void
 Model::reserve_additional( size_t t, size_t n )
 {
-  assert( ( size_t ) t < memory_.size() );
+  assert( t < memory_.size() );
   memory_[ t ].reserve( n );
 }
 

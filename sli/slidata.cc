@@ -66,7 +66,7 @@ Get_aFunction::execute( SLIInterpreter* i ) const
   assert( obj );
 
 
-  if ( ( idx->get() >= 0 ) and ( ( size_t ) idx->get() < obj->size() ) )
+  if ( ( idx->get() >= 0 ) and ( static_cast< size_t >( idx->get() ) < obj->size() ) )
   {
     i->EStack.pop();
     Token objT( obj->get( idx->get() ) );
@@ -113,16 +113,16 @@ Get_a_aFunction::execute( SLIInterpreter* i ) const
     {
       std::ostringstream sout;
 
-      sout << "Index at position " << ( size_t ) ( t - idx->begin() ) << " ignored." << std::ends;
+      sout << "Index at position " << static_cast< size_t >( ( t - idx->begin() ) ) << " ignored." << std::ends;
       i->message( SLIInterpreter::M_INFO, "get_a_a", sout.str().c_str() );
       i->message( SLIInterpreter::M_INFO, "get_a_a", "Index must be an integer." );
       continue;
     }
 
-    if ( not( ( id->get() >= 0 ) and ( ( size_t ) id->get() < obj->size() ) ) )
+    if ( not( ( id->get() >= 0 ) and ( static_cast< size_t >( id->get() ) < obj->size() ) ) )
     {
       std::ostringstream sout;
-      sout << "At position " << ( size_t ) ( t - idx->begin() ) << "." << std::ends;
+      sout << "At position " << static_cast< size_t >( ( t - idx->begin() ) ) << "." << std::ends;
       i->message( SLIInterpreter::M_ERROR, "get_a_a", sout.str().c_str() );
       i->message( SLIInterpreter::M_ERROR, "get_a_a", "Index out of range." );
       i->raiseerror( i->RangeCheckError );
@@ -158,7 +158,7 @@ Get_pFunction::execute( SLIInterpreter* i ) const
   assert( obj );
 
 
-  if ( ( idx->get() >= 0 ) and ( ( size_t ) idx->get() < obj->size() ) )
+  if ( ( idx->get() >= 0 ) and ( static_cast< size_t >( idx->get() ) < obj->size() ) )
   {
     i->EStack.pop();
     Token objT( obj->get( idx->get() ) );
@@ -182,7 +182,7 @@ Get_lpFunction::execute( SLIInterpreter* i ) const
   LitprocedureDatum* obj = dynamic_cast< LitprocedureDatum* >( i->OStack.pick( 1 ).datum() );
   assert( obj );
 
-  if ( ( idx->get() >= 0 ) and ( ( size_t ) idx->get() < obj->size() ) )
+  if ( ( idx->get() >= 0 ) and ( static_cast< size_t >( idx->get() ) < obj->size() ) )
   {
     i->EStack.pop();
     Token objT( obj->get( idx->get() ) );
@@ -356,7 +356,7 @@ Insert_sFunction::execute( SLIInterpreter* i ) const
 
   assert( s1 and id and s2 );
 
-  if ( ( id->get() >= 0 ) and ( ( size_t ) id->get() < s1->size() ) )
+  if ( ( id->get() >= 0 ) and ( static_cast< size_t >( id->get() ) < s1->size() ) )
   {
     i->EStack.pop();
     s1->insert( id->get(), *s2 );
@@ -392,7 +392,7 @@ InsertElement_sFunction::execute( SLIInterpreter* i ) const
 
   assert( s1 and id and c );
 
-  if ( ( id->get() >= 0 ) and ( ( size_t ) id->get() < s1->size() ) )
+  if ( ( id->get() >= 0 ) and ( static_cast< size_t >( id->get() ) < s1->size() ) )
   {
     i->EStack.pop();
     s1->insert( id->get(), 1, static_cast< char >( c->get() ) );
@@ -448,7 +448,7 @@ Insert_aFunction::execute( SLIInterpreter* i ) const
 
   assert( a1 and id and a2 );
 
-  if ( ( id->get() >= 0 ) and ( ( size_t ) id->get() < a1->size() ) )
+  if ( ( id->get() >= 0 ) and ( static_cast< size_t >( id->get() ) < a1->size() ) )
   {
     i->EStack.pop();
     a1->insert_move( id->get(), *a2 ); // ArrayDatum is a TokenArray.
@@ -471,7 +471,7 @@ InsertElement_aFunction::execute( SLIInterpreter* i ) const
 
   assert( a1 and id );
 
-  if ( ( id->get() >= 0 ) and ( ( size_t ) id->get() < a1->size() ) )
+  if ( ( id->get() >= 0 ) and ( static_cast< size_t >( id->get() ) < a1->size() ) )
   {
     i->EStack.pop();
     a1->insert_move( id->get(), i->OStack.top() );
@@ -545,7 +545,7 @@ Replace_sFunction::execute( SLIInterpreter* i ) const
 
   assert( s1 and id and n and s2 );
 
-  if ( ( id->get() >= 0 ) and ( ( size_t ) id->get() < s1->size() ) )
+  if ( ( id->get() >= 0 ) and ( static_cast< size_t >( id->get() ) < s1->size() ) )
   {
     if ( n->get() >= 0 )
     {
@@ -577,7 +577,7 @@ Replace_aFunction::execute( SLIInterpreter* i ) const
 
   assert( s1 and id and n and s2 );
 
-  if ( ( id->get() >= 0 ) and ( ( size_t ) id->get() < s1->size() ) )
+  if ( ( id->get() >= 0 ) and ( static_cast< size_t >( id->get() ) < s1->size() ) )
   {
     if ( n->get() >= 0 )
     {
@@ -622,7 +622,7 @@ Erase_sFunction::execute( SLIInterpreter* i ) const
 
   assert( s1 and id and n );
 
-  if ( ( id->get() >= 0 ) and ( ( size_t ) id->get() < s1->size() ) )
+  if ( ( id->get() >= 0 ) and ( static_cast< size_t >( id->get() ) < s1->size() ) )
   {
     if ( n->get() >= 0 )
     {
@@ -653,7 +653,7 @@ Erase_aFunction::execute( SLIInterpreter* i ) const
 
   assert( s1 and id and n );
 
-  if ( ( id->get() >= 0 ) and ( ( size_t ) id->get() < s1->size() ) )
+  if ( ( id->get() >= 0 ) and ( static_cast< size_t >( id->get() ) < s1->size() ) )
   {
     if ( n->get() >= 0 )
     {
@@ -684,7 +684,7 @@ Erase_pFunction::execute( SLIInterpreter* i ) const
 
   assert( s1 and id and n );
 
-  if ( ( id->get() >= 0 ) and ( ( size_t ) id->get() < s1->size() ) )
+  if ( ( id->get() >= 0 ) and ( static_cast< size_t >( id->get() ) < s1->size() ) )
   {
     if ( n->get() >= 0 )
     {
@@ -716,7 +716,7 @@ Put_sFunction::execute( SLIInterpreter* i ) const
 
   assert( s1 and id and cd );
 
-  if ( ( id->get() >= 0 ) and ( ( size_t ) id->get() < s1->size() ) )
+  if ( ( id->get() >= 0 ) and ( static_cast< size_t >( id->get() ) < s1->size() ) )
   {
     i->EStack.pop();
     ( *s1 )[ id->get() ] = static_cast< char >( cd->get() );
@@ -740,7 +740,7 @@ Put_aFunction::execute( SLIInterpreter* i ) const
 
   assert( ad and id );
 
-  if ( ( id->get() >= 0 ) and ( ( size_t ) id->get() < ad->size() ) )
+  if ( ( id->get() >= 0 ) and ( static_cast< size_t >( id->get() ) < ad->size() ) )
   {
     i->EStack.pop();
     ad->assign_move( id->get(), i->OStack.top() ); // its safe to empty top() because
@@ -764,7 +764,7 @@ Put_pFunction::execute( SLIInterpreter* i ) const
 
   assert( ad and id );
 
-  if ( ( id->get() >= 0 ) and ( ( size_t ) id->get() < ad->size() ) )
+  if ( ( id->get() >= 0 ) and ( static_cast< size_t >( id->get() ) < ad->size() ) )
   {
     i->EStack.pop();
     ad->assign_move( id->get(), i->OStack.top() ); // its safe to empty top() because
@@ -788,7 +788,7 @@ Put_lpFunction::execute( SLIInterpreter* i ) const
 
   assert( ad and id );
 
-  if ( ( id->get() >= 0 ) and ( ( size_t ) id->get() < ad->size() ) )
+  if ( ( id->get() >= 0 ) and ( static_cast< size_t >( id->get() ) < ad->size() ) )
   {
     i->EStack.pop();
     ad->assign_move( id->get(), i->OStack.top() ); // its safe to empty top() because
@@ -1402,7 +1402,7 @@ Get_sFunction::execute( SLIInterpreter* i ) const
   assert( obj );
 
 
-  if ( ( idx->get() >= 0 ) and ( ( size_t ) idx->get() < obj->size() ) )
+  if ( ( idx->get() >= 0 ) and ( static_cast< size_t >( idx->get() ) < obj->size() ) )
   {
     i->EStack.pop();
     Token objT( new IntegerDatum( ( *obj )[ idx->get() ] ) );

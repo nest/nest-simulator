@@ -44,8 +44,9 @@ Author: Hans Ekkehard Plesser, 2010-10-22
 M_ERROR setverbosity
 
 
-% Gap junctions not relevant for spiking devices as senders
-/excluded_synapses [ /gap_junction ] def
+% Gap junctions and sic_connections not relevant for spiking devices as senders
+/excluded_synapses [ /gap_junction /sic_connection /rate_connection_delayed
+                     /rate_connection_instantaneous ] def
 
 % find all static and plastic synapses
 % we identify as static all synapses that have the same default parameter names

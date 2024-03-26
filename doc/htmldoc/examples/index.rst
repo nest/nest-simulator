@@ -54,6 +54,15 @@ PyNEST examples
            * :doc:`../auto_examples/pong/run_simulations`
            * :doc:`../auto_examples/pong/generate_gif`
 
+    .. grid-item-card:: Astrocytes
+           :img-top: ../static/img/astrocyte_interaction.png
+
+           * :doc:`../auto_examples/astrocytes/astrocyte_single`
+           * :doc:`../auto_examples/astrocytes/astrocyte_interaction`
+           * :doc:`../auto_examples/astrocytes/astrocyte_small_network`
+           * :doc:`../auto_examples/astrocytes/astrocyte_brunel`
+
+
 .. grid:: 1 1 2 3
 
     .. grid-item-card:: Random balanced networks (Brunel)
@@ -67,7 +76,7 @@ PyNEST examples
 
 
     .. grid-item-card:: Cortical microcircuit (Potjans)
-           :img-top: ../static/img/pynest/raster_plot.png
+           :img-top: ../static/img/potjans_2014_raster_plot.png
 
            * :doc:`../auto_examples/Potjans_2014/index`
 
@@ -76,6 +85,7 @@ PyNEST examples
 
            * :doc:`../auto_examples/glif_cond_neuron`
            * :doc:`../auto_examples/glif_psc_neuron`
+           * :doc:`../auto_examples/glif_psc_double_alpha_neuron`
 
 
 
@@ -180,13 +190,23 @@ PyNEST examples
 
 
 
-    .. grid-item-card:: Tsodyks
+    .. grid-item-card:: Short-term plasticity
            :img-top: ../static/img/pynest/tsodyks_dep.png
 
-           * :doc:`../auto_examples/tsodyks_depressing`
-           * :doc:`../auto_examples/tsodyks_facilitating`
+           * :doc:`../auto_examples/iaf_tum_2000_short_term_depression`
+           * :doc:`../auto_examples/iaf_tum_2000_short_term_facilitation`
            * :doc:`../auto_examples/evaluate_tsodyks2_synapse`
 
+
+.. grid:: 1 1 2 3
+
+    .. grid-item-card:: :doc:`../auto_examples/eprop_plasticity/index`
+           :img-top: ../static/img/pynest/eprop_supervised_classification_infrastructure.png
+
+           * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_classification_evidence-accumulation`
+           * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_sine-waves`
+           * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_handwriting`
+           * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_infinite-loop`
 
 
 .. grid:: 1 1 2 3
@@ -237,6 +257,7 @@ PyNEST examples
 .. toctree::
    :hidden:
 
+   running_notebooks
    ../auto_examples/sudoku/index
    ../auto_examples/pong/index
    ../auto_examples/spatial/index
@@ -259,6 +280,7 @@ PyNEST examples
    ../auto_examples/mc_neuron
    ../auto_examples/glif_cond_neuron
    ../auto_examples/glif_psc_neuron
+   ../auto_examples/glif_psc_double_alpha_neuron
    ../auto_examples/precise_spiking
    ../auto_examples/CampbellSiegert
    ../auto_examples/vinit_example
@@ -273,8 +295,8 @@ PyNEST examples
    ../auto_examples/clopath_synapse_spike_pairing
    ../auto_examples/clopath_synapse_small_network
    ../auto_examples/urbanczik_synapse_example
-   ../auto_examples/tsodyks_depressing
-   ../auto_examples/tsodyks_facilitating
+   ../auto_examples/iaf_tum_2000_short_term_depression
+   ../auto_examples/iaf_tum_2000_short_term_facilitation
    ../auto_examples/compartmental_model/receptors_and_current
    ../auto_examples/compartmental_model/two_comps
    ../auto_examples/lin_rate_ipn_network
@@ -284,6 +306,8 @@ PyNEST examples
    ../auto_examples/brunel_siegert_nest
    ../auto_examples/brunel_exp_multisynapse_nest
    ../auto_examples/brunel_alpha_evolution_strategies
+   ../auto_examples/sonata_example/index
+   ../auto_examples/sonata_example/sonata_network
    ../auto_examples/spatial/conncomp
    ../auto_examples/spatial/conncon_sources
    ../auto_examples/spatial/conncon_targets
@@ -313,6 +337,12 @@ PyNEST examples
    ../auto_examples/csa_example
    ../auto_examples/csa_spatial_example
    ../auto_examples/hpc_benchmark
+   ../auto_examples/astrocytes/index
+   ../auto_examples/astrocytes/astrocyte_single
+   ../auto_examples/astrocytes/astrocyte_interaction
+   ../auto_examples/astrocytes/astrocyte_small_network
+   ../auto_examples/astrocytes/astrocyte_brunel
+   ../auto_examples/eprop_plasticity/index
 
 .. toctree::
    :hidden:

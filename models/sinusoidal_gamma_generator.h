@@ -60,42 +60,44 @@ The instantaneous rate of the process is given by
 
 .. math::
 
- f(t) = rate + amplitude \sin ( 2 \pi frequency t + phase \cdot \pi/180 )
+ f(t) = \mathrm{rate} + \mathrm{amplitude} \cdot \sin \left(
+    2 \pi \cdot \mathrm{frequency} \cdot t + \mathrm{phase} \cdot
+    \frac{\pi}{180} \right)
 
 .. note::
 
-   - The gamma generator requires 0 <= amplitude <= rate.
+   - The gamma generator requires
+     :math:`0 \leq \mathrm{amplitude} \leq \mathrm{rate}`.
    - The state of the generator is reset on calibration.
    - The generator does not support precise spike timing.
    - You can use the multimeter to sample the rate of the generator.
    - The generator will create different trains if run at different
      temporal resolutions.
 
-Individual spike trains vs single spike train:
 By default, the generator sends a different spike train to each of its
-targets. If /individual_spike_trains is set to false using either
-SetDefaults or CopyModel before a generator node is created, the generator
-will send the same spike train to all of its targets.
+targets. If ``individual_spike_trains`` is set to ``False`` using either
+:py:func:`.SetDefaults` or :py:func:`.CopyModel` before a generator node
+is created, the generator will send the same spike train to all of its targets.
 
 .. include:: ../models/stimulation_device.rst
 
 rate
-    Mean firing rate, default: 0 spikes/s
+    Mean firing rate in spikes/second. Default: ``0.0``.
 
 amplitude
-    Firing rate modulation amplitude, default: 0 s^-1
+    Firing rate modulation amplitude in spikes/second. Default: ``0.0``.
 
 frequency
-    Modulation frequency, default: 0 Hz
+    Modulation frequency in Hz. Default: ``0.0``.
 
 phase
-    Modulation phase in degree [0-360], default: 0
+    Modulation phase in degree [0-360]. Default: ``0.0``.
 
 order
-    Gamma order (>= 1), default: 1
+    Gamma order (>= 1). Default: ``1``.
 
 individual_spike_trains
-    See note above, default: true
+    See note above. Default: ``True``.
 
 See also [1]_.
 
@@ -136,6 +138,12 @@ See also
 ++++++++
 
 sinusoidal_poisson_generator, gamma_sup_generator
+
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: sinusoidal_gamma_generator
 
 EndUserDocs */
 
@@ -186,6 +194,8 @@ EndUserDocs */
  *    the same synapse type, see #737. Once #681 is fixed, we need to add a
  *    check that his assumption holds.
  */
+void register_sinusoidal_gamma_generator( const std::string& name );
+
 class sinusoidal_gamma_generator : public StimulationDevice
 {
 

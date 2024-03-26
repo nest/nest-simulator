@@ -20,18 +20,12 @@
  *
  */
 
-/**
- *  @file event.cpp
- *  Implementation of Event::operator() for all event types.
- *  @note Must be isolated here, since it requires full access to
- *  classes Node and Scheduler.
- */
-
 #include "event.h"
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
 #include "node.h"
+#include "secondary_event_impl.h"
 
 namespace nest
 {
@@ -153,6 +147,18 @@ DelayedRateConnectionEvent::operator()()
 
 void
 DiffusionConnectionEvent::operator()()
+{
+  receiver_->handle( *this );
+}
+
+void
+LearningSignalConnectionEvent::operator()()
+{
+  receiver_->handle( *this );
+}
+
+void
+SICEvent::operator()()
 {
   receiver_->handle( *this );
 }

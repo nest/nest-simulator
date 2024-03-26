@@ -130,6 +130,11 @@ See also
 
 correlation_detector, spike_recorder
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: correlomatrix_detector
+
 EndUserDocs */
 
 /**
@@ -146,6 +151,8 @@ EndUserDocs */
  *  - update() deletes all entries before now-tau_max, sorts the new
  *    entries, then registers new entries in histogram
  */
+
+void register_correlomatrix_detector( const std::string& name );
 
 class correlomatrix_detector : public Node
 {

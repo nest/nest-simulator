@@ -1,0 +1,9 @@
+# Minimal modelset for spiking neuron simulations with NEST
+
+dc_generator
+iaf_psc_alpha
+multimeter
+spike_generator
+spike_recorder
+static_synapse
+weight_recorder

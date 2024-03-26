@@ -27,8 +27,8 @@ are set as expected. It will report for each test separately, whether it was pas
 
 """
 
-import pytest
 import nest
+import pytest
 
 
 @pytest.fixture(autouse=True)

@@ -103,7 +103,7 @@ References
 .. [3] Hahne J, Helias M, Kunkel S, Igarashi J, Bolten M, Frommer A, Diesmann M
        (2015). A unified framework for spiking and gap-junction interactions
        in distributed neuronal network simulations. Frontiers in
-       Neuroinformatics, 9:22. DOI: https://doi/org/10.3389/fninf.2015.00022
+       Neuroinformatics, 9:22. DOI: https://doi.org/10.3389/fninf.2015.00022
 
 
 Sends
@@ -121,6 +121,12 @@ See also
 ++++++++
 
 rate_connection_instantaneous, rate_connection_delayed
+
+
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: sigmoid_rate_gg_1998
 
 EndUserDocs */
 
@@ -164,7 +170,11 @@ nonlinearities_sigmoid_rate_gg_1998::mult_coupling_in( double )
 }
 
 typedef rate_neuron_ipn< nest::nonlinearities_sigmoid_rate_gg_1998 > sigmoid_rate_gg_1998_ipn;
+void register_sigmoid_rate_gg_1998_ipn( const std::string& name );
+
 typedef rate_transformer_node< nest::nonlinearities_sigmoid_rate_gg_1998 > rate_transformer_sigmoid_gg_1998;
+void register_rate_transformer_sigmoid_gg_1998( const std::string& name );
+
 
 template <>
 void RecordablesMap< sigmoid_rate_gg_1998_ipn >::create();

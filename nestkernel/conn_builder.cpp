@@ -39,6 +39,9 @@
 #include "fdstream.h"
 #include "name.h"
 
+// Includes from C++:
+#include <algorithm>
+
 nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
@@ -50,21 +53,18 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
   , make_symmetric_( false )
   , creates_symmetric_connections_( false )
   , exceptions_raised_( kernel().vp_manager.get_num_threads() )
-  , use_pre_synaptic_element_( false )
-  , use_post_synaptic_element_( false )
+  , use_structural_plasticity_( false )
   , parameters_requiring_skipping_()
   , param_dicts_()
 {
-  // read out rule-related parameters -------------------------
-  //  - /rule has been taken care of above
-  //  - rule-specific params are handled by subclass c'tor
+  // We only read a subset of rule-related parameters here. The property 'rule'
+  // has already been taken care of in ConnectionManager::get_conn_builder() and
+  // rule-specific parameters are handled by the subclass constructors.
   updateValue< bool >( conn_spec, names::allow_autapses, allow_autapses_ );
   updateValue< bool >( conn_spec, names::allow_multapses, allow_multapses_ );
   updateValue< bool >( conn_spec, names::make_symmetric, make_symmetric_ );
 
-  // read out synapse-related parameters ----------------------
-
-  // synapse-specific parameters that should be skipped when we set default synapse parameters
+  // Synapse-specific parameters that should be skipped when we set default synapse parameters
   skip_syn_params_ = {
     names::weight, names::delay, names::min_delay, names::max_delay, names::num_connections, names::synapse_model
   };
@@ -90,8 +90,7 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
     DictionaryDatum syn_defaults = kernel().model_manager.get_connector_defaults( synapse_model_id_[ synapse_indx ] );
 
 #ifdef HAVE_MUSIC
-    // We allow music_channel as alias for receptor_type during
-    // connection setup
+    // We allow music_channel as alias for receptor_type during connection setup
     ( *syn_defaults )[ names::music_channel ] = 0;
 #endif
 
@@ -100,7 +99,7 @@ nest::ConnBuilder::ConnBuilder( NodeCollectionPTR sources,
 
   set_structural_plasticity_parameters( syn_specs );
 
-  // If make_symmetric_ is requested call reset on all parameters in order
+  // If make_symmetric_ is requested, call reset on all parameters in order
   // to check if all parameters support symmetric connections
   if ( make_symmetric_ )
   {
@@ -143,23 +142,11 @@ nest::ConnBuilder::~ConnBuilder()
   }
 }
 
-/**
- * Updates the number of connected synaptic elements in the
- * target and the source.
- * Returns 0 if the target is either on another
- * MPI machine or another thread. Returns 1 otherwise.
- *
- * @param snode_id id of the source
- * @param tnode_id id of the target
- * @param tid thread id
- * @param update amount of connected synaptic elements to update
- * @return
- */
 bool
 nest::ConnBuilder::change_connected_synaptic_elements( size_t snode_id, size_t tnode_id, const size_t tid, int update )
 {
-
   int local = true;
+
   // check whether the source is on this mpi machine
   if ( kernel().node_manager.is_local_node_id( snode_id ) )
   {
@@ -194,12 +181,10 @@ nest::ConnBuilder::change_connected_synaptic_elements( size_t snode_id, size_t t
       target->connect_synaptic_element( post_synaptic_element_name_, update );
     }
   }
+
   return local;
 }
 
-/**
- * Now we can connect with or without structural plasticity
- */
 void
 nest::ConnBuilder::connect()
 {
@@ -207,7 +192,8 @@ nest::ConnBuilder::connect()
   // classes are fully constructed when the test is executed
   for ( auto synapse_model_id : synapse_model_id_ )
   {
-    const ConnectorModel& synapse_model = kernel().model_manager.get_connection_model( synapse_model_id );
+    const ConnectorModel& synapse_model =
+      kernel().model_manager.get_connection_model( synapse_model_id, /* thread */ 0 );
     const bool requires_symmetric = synapse_model.has_property( ConnectionModelProperties::REQUIRES_SYMMETRIC );
 
     if ( requires_symmetric and not( is_symmetric() or make_symmetric_ ) )
@@ -225,7 +211,7 @@ nest::ConnBuilder::connect()
     throw NotImplemented( "This connection rule does not support symmetric connections." );
   }
 
-  if ( use_structural_plasticity_() )
+  if ( use_structural_plasticity_ )
   {
     if ( make_symmetric_ )
     {
@@ -265,13 +251,10 @@ nest::ConnBuilder::connect()
   }
 }
 
-/**
- * Now we can delete synapses with or without structural plasticity
- */
 void
 nest::ConnBuilder::disconnect()
 {
-  if ( use_structural_plasticity_() )
+  if ( use_structural_plasticity_ )
   {
     sp_disconnect_();
   }
@@ -373,27 +356,17 @@ nest::ConnBuilder::single_connect_( size_t snode_id, Node& target, size_t target
 }
 
 void
-nest::ConnBuilder::set_pre_synaptic_element_name( const std::string& name )
+nest::ConnBuilder::set_synaptic_element_names( const std::string& pre_name, const std::string& post_name )
 {
-  if ( name.empty() )
+  if ( pre_name.empty() or post_name.empty() )
   {
-    throw BadProperty( "pre_synaptic_element cannot be empty." );
+    throw BadProperty( "synaptic element names cannot be empty." );
   }
 
-  pre_synaptic_element_name_ = Name( name );
-  use_pre_synaptic_element_ = not name.empty();
-}
+  pre_synaptic_element_name_ = pre_name;
+  post_synaptic_element_name_ = post_name;
 
-void
-nest::ConnBuilder::set_post_synaptic_element_name( const std::string& name )
-{
-  if ( name.empty() )
-  {
-    throw BadProperty( "post_synaptic_element cannot be empty." );
-  }
-
-  post_synaptic_element_name_ = Name( name );
-  use_post_synaptic_element_ = not name.empty();
+  use_structural_plasticity_ = true;
 }
 
 bool
@@ -449,7 +422,7 @@ nest::ConnBuilder::set_synapse_model_( DictionaryDatum syn_params, size_t synaps
   synapse_model_id_[ synapse_indx ] = synapse_model_id;
 
   // We need to make sure that Connect can process all synapse parameters specified.
-  const ConnectorModel& synapse_model = kernel().model_manager.get_connection_model( synapse_model_id );
+  const ConnectorModel& synapse_model = kernel().model_manager.get_connection_model( synapse_model_id, /* thread */ 0 );
   synapse_model.check_synapse_params( syn_params );
 }
 
@@ -531,40 +504,34 @@ nest::ConnBuilder::set_synapse_params( DictionaryDatum syn_defaults, DictionaryD
 void
 nest::ConnBuilder::set_structural_plasticity_parameters( std::vector< DictionaryDatum > syn_specs )
 {
-  // Check if both pre and postsynaptic element are provided. Currently only possible to have
-  // structural plasticity with single element syn_spec.
-  bool have_both_sp_keys = false;
-  bool have_one_sp_key = false;
-  for ( auto syn_params : syn_specs )
+  bool have_structural_plasticity_parameters = false;
+  for ( auto& syn_spec : syn_specs )
   {
-    if ( not have_both_sp_keys
-      and ( syn_params->known( names::pre_synaptic_element ) and syn_params->known( names::post_synaptic_element ) ) )
+    if ( syn_spec->known( names::pre_synaptic_element ) or syn_spec->known( names::post_synaptic_element ) )
     {
-      have_both_sp_keys = true;
-    }
-    if ( not have_one_sp_key
-      and ( syn_params->known( names::pre_synaptic_element ) or syn_params->known( names::post_synaptic_element ) ) )
-    {
-      have_one_sp_key = true;
+      have_structural_plasticity_parameters = true;
     }
   }
 
-  if ( have_both_sp_keys and syn_specs.size() > 1 )
+  if ( not have_structural_plasticity_parameters )
   {
-    throw KernelException( "Structural plasticity is only possible with single syn_spec" );
+    return;
   }
-  else if ( have_both_sp_keys )
-  {
-    pre_synaptic_element_name_ = getValue< std::string >( syn_specs[ 0 ], names::pre_synaptic_element );
-    post_synaptic_element_name_ = getValue< std::string >( syn_specs[ 0 ], names::post_synaptic_element );
 
-    use_pre_synaptic_element_ = true;
-    use_post_synaptic_element_ = true;
-  }
-  else if ( have_one_sp_key )
+  if ( syn_specs.size() > 1 )
   {
-    throw BadProperty( "Structural plasticity requires both a pre and postsynaptic element." );
+    throw KernelException( "Structural plasticity can only be used with a single syn_spec." );
   }
+
+  const DictionaryDatum syn_spec = syn_specs[ 0 ];
+  if ( syn_spec->known( names::pre_synaptic_element ) xor syn_spec->known( names::post_synaptic_element ) )
+  {
+    throw BadProperty( "Structural plasticity requires both a pre- and postsynaptic element." );
+  }
+
+  pre_synaptic_element_name_ = getValue< std::string >( syn_spec, names::pre_synaptic_element );
+  post_synaptic_element_name_ = getValue< std::string >( syn_spec, names::post_synaptic_element );
+  use_structural_plasticity_ = true;
 }
 
 void
@@ -656,14 +623,14 @@ nest::OneToOneBuilder::connect_()
           Node* target = n->get_node();
 
           const size_t tnode_id = n->get_node_id();
-          const int idx = targets_->find( tnode_id );
-          if ( idx < 0 ) // Is local node in target list?
+          const long lid = targets_->get_lid( tnode_id );
+          if ( lid < 0 ) // Is local node in target list?
           {
             continue;
           }
 
           // one-to-one, thus we can use target idx for source as well
-          const size_t snode_id = ( *sources_ )[ idx ];
+          const size_t snode_id = ( *sources_ )[ lid ];
           if ( not allow_autapses_ and snode_id == tnode_id )
           {
             // no skipping required / possible,
@@ -683,11 +650,6 @@ nest::OneToOneBuilder::connect_()
   }
 }
 
-/**
- * Solves the disconnection of two nodes on a OneToOne basis without
- * structural plasticity. This means this method can be manually called
- * by the user to delete existing synapses.
- */
 void
 nest::OneToOneBuilder::disconnect_()
 {
@@ -736,12 +698,6 @@ nest::OneToOneBuilder::disconnect_()
   }
 }
 
-/**
- * Solves the connection of two nodes on a OneToOne basis with
- * structural plasticity. This means this method is used by the
- * structural plasticity manager based on the homostatic rules defined
- * for the synaptic elements on each node.
- */
 void
 nest::OneToOneBuilder::sp_connect_()
 {
@@ -789,12 +745,6 @@ nest::OneToOneBuilder::sp_connect_()
   }
 }
 
-/**
- * Solves the disconnection of two nodes on a OneToOne basis with
- * structural plasticity. This means this method is used by the
- * structural plasticity manager based on the homostatic rules defined
- * for the synaptic elements on each node.
- */
 void
 nest::OneToOneBuilder::sp_disconnect_()
 {
@@ -873,7 +823,7 @@ nest::AllToAllBuilder::connect_()
           const size_t tnode_id = n->get_node_id();
 
           // Is the local node in the targets list?
-          if ( targets_->find( tnode_id ) < 0 )
+          if ( targets_->get_lid( tnode_id ) < 0 )
           {
             continue;
           }
@@ -924,12 +874,6 @@ nest::AllToAllBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, 
   }
 }
 
-/**
- * Solves the connection of two nodes on a AllToAll basis with
- * structural plasticity. This means this method is used by the
- * structural plasticity manager based on the homostatic rules defined
- * for the synaptic elements on each node.
- */
 void
 nest::AllToAllBuilder::sp_connect_()
 {
@@ -976,11 +920,6 @@ nest::AllToAllBuilder::sp_connect_()
   }
 }
 
-/**
- * Solves the disconnection of two nodes on a AllToAll basis without
- * structural plasticity. This means this method can be manually called
- * by the user to delete existing synapses.
- */
 void
 nest::AllToAllBuilder::disconnect_()
 {
@@ -1031,12 +970,6 @@ nest::AllToAllBuilder::disconnect_()
   }
 }
 
-/**
- * Solves the disconnection of two nodes on a AllToAll basis with
- * structural plasticity. This means this method is used by the
- * structural plasticity manager based on the homostatic rules defined
- * for the synaptic elements on each node.
- */
 void
 nest::AllToAllBuilder::sp_disconnect_()
 {
@@ -1173,7 +1106,7 @@ nest::FixedInDegreeBuilder::connect_()
           const size_t tnode_id = n->get_node_id();
 
           // Is the local node in the targets list?
-          if ( targets_->find( tnode_id ) < 0 )
+          if ( targets_->get_lid( tnode_id ) < 0 )
           {
             continue;
           }
@@ -1484,7 +1417,7 @@ nest::FixedTotalNumberBuilder::connect_()
 
     try
     {
-      const int vp_id = kernel().vp_manager.thread_to_vp( tid );
+      const size_t vp_id = kernel().vp_manager.thread_to_vp( tid );
 
       if ( kernel().vp_manager.is_local_vp( vp_id ) )
       {
@@ -1605,7 +1538,7 @@ nest::BernoulliBuilder::connect_()
           const size_t tnode_id = n->get_node_id();
 
           // Is the local node in the targets list?
-          if ( targets_->find( tnode_id ) < 0 )
+          if ( targets_->get_lid( tnode_id ) < 0 )
           {
             continue;
           }
@@ -1652,6 +1585,326 @@ nest::BernoulliBuilder::inner_connect_( const int tid, RngPtr rng, Node* target,
     }
 
     single_connect_( snode_id, *target, target_thread, rng );
+  }
+}
+
+
+nest::PoissonBuilder::PoissonBuilder( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  const DictionaryDatum& conn_spec,
+  const std::vector< DictionaryDatum >& syn_specs )
+  : ConnBuilder( sources, targets, conn_spec, syn_specs )
+{
+  ParameterDatum* pd = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::pairwise_avg_num_conns ].datum() );
+  if ( pd )
+  {
+    pairwise_avg_num_conns_ = *pd;
+  }
+  else
+  {
+    // Assume pairwise_avg_num_conns is a scalar
+    const double value = ( *conn_spec )[ names::pairwise_avg_num_conns ];
+    if ( value < 0 )
+    {
+      throw BadProperty( "Connection parameter 0 ≤ pairwise_avg_num_conns required." );
+    }
+    if ( not allow_multapses_ )
+    {
+      throw BadProperty( "Multapses must be allowed for this connection rule." );
+    }
+    pairwise_avg_num_conns_ = std::shared_ptr< Parameter >( new ConstantParameter( value ) );
+  }
+}
+
+void
+nest::PoissonBuilder::connect_()
+{
+#pragma omp parallel
+  {
+    // get thread id
+    const size_t tid = kernel().vp_manager.get_thread_id();
+
+    try
+    {
+      RngPtr rng = get_vp_specific_rng( tid );
+
+      if ( loop_over_targets_() )
+      {
+        NodeCollection::const_iterator target_it = targets_->begin();
+        for ( ; target_it < targets_->end(); ++target_it )
+        {
+          const size_t tnode_id = ( *target_it ).node_id;
+          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+          if ( target->is_proxy() )
+          {
+            // skip parameters handled in other virtual processes
+            skip_conn_parameter_( tid );
+            continue;
+          }
+
+          inner_connect_( tid, rng, target, tnode_id );
+        }
+      }
+      else
+      {
+        const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
+        SparseNodeArray::const_iterator n;
+        for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
+        {
+          const size_t tnode_id = n->get_node_id();
+
+          // Is the local node in the targets list?
+          if ( targets_->get_lid( tnode_id ) < 0 )
+          {
+            continue;
+          }
+          inner_connect_( tid, rng, n->get_node(), tnode_id );
+        }
+      }
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  } // of omp parallel
+}
+
+void
+nest::PoissonBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, size_t tnode_id )
+{
+  const size_t target_thread = target->get_thread();
+
+  // check whether the target is on our thread
+  if ( static_cast< size_t >( tid ) != target_thread )
+  {
+    return;
+  }
+
+  poisson_distribution poi_dist;
+
+  // It is not possible to disable multapses with the PoissonBuilder, already checked
+  NodeCollection::const_iterator source_it = sources_->begin();
+  for ( ; source_it < sources_->end(); ++source_it )
+  {
+    const size_t snode_id = ( *source_it ).node_id;
+
+    if ( not allow_autapses_ and snode_id == tnode_id )
+    {
+      continue;
+    }
+
+    // Sample to number of connections that are to be established
+    poisson_distribution::param_type param( pairwise_avg_num_conns_->value( rng, target ) );
+    const size_t num_conns = poi_dist( rng, param );
+
+    for ( size_t n = 0; n < num_conns; ++n )
+    {
+      single_connect_( snode_id, *target, target_thread, rng );
+    }
+  }
+}
+
+
+nest::AuxiliaryBuilder::AuxiliaryBuilder( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  const DictionaryDatum& conn_spec,
+  const std::vector< DictionaryDatum >& syn_spec )
+  : ConnBuilder( sources, targets, conn_spec, syn_spec )
+{
+}
+
+void
+nest::AuxiliaryBuilder::single_connect( size_t snode_id, Node& tgt, size_t tid, RngPtr rng )
+{
+  single_connect_( snode_id, tgt, tid, rng );
+}
+
+
+nest::TripartiteBernoulliWithPoolBuilder::TripartiteBernoulliWithPoolBuilder( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  NodeCollectionPTR third,
+  const DictionaryDatum& conn_spec,
+  const std::map< Name, std::vector< DictionaryDatum > >& syn_specs )
+  : ConnBuilder( sources,
+    targets,
+    conn_spec,
+    // const_cast here seems required, clang complains otherwise; try to clean up when Datums disappear
+    const_cast< std::map< Name, std::vector< DictionaryDatum > >& >( syn_specs )[ names::primary ] )
+  , third_( third )
+  , third_in_builder_( sources,
+      third,
+      conn_spec,
+      const_cast< std::map< Name, std::vector< DictionaryDatum > >& >( syn_specs )[ names::third_in ] )
+  , third_out_builder_( third,
+      targets,
+      conn_spec,
+      const_cast< std::map< Name, std::vector< DictionaryDatum > >& >( syn_specs )[ names::third_out ] )
+  , p_primary_( 1.0 )
+  , p_third_if_primary_( 1.0 )
+  , random_pool_( true )
+  , pool_size_( third->size() )
+  , targets_per_third_( targets->size() / third->size() )
+{
+  updateValue< double >( conn_spec, names::p_primary, p_primary_ );
+  updateValue< double >( conn_spec, names::p_third_if_primary, p_third_if_primary_ );
+  updateValue< long >( conn_spec, names::pool_size, pool_size_ );
+  std::string pool_type;
+  if ( updateValue< std::string >( conn_spec, names::pool_type, pool_type ) )
+  {
+    if ( pool_type == "random" )
+    {
+      random_pool_ = true;
+    }
+    else if ( pool_type == "block" )
+    {
+      random_pool_ = false;
+    }
+    else
+    {
+      throw BadProperty( "pool_type must be 'random' or 'block'" );
+    }
+  }
+
+  if ( p_primary_ < 0 or 1 < p_primary_ )
+  {
+    throw BadProperty( "Probability of primary connection 0 ≤ p_primary ≤ 1 required" );
+  }
+
+  if ( p_third_if_primary_ < 0 or 1 < p_third_if_primary_ )
+  {
+    throw BadProperty( "Conditional probability of third-factor connection 0 ≤ p_third_if_primary ≤ 1 required" );
+  }
+
+  if ( pool_size_ < 1 or third->size() < pool_size_ )
+  {
+    throw BadProperty( "Pool size 1 ≤ pool_size ≤ size of third-factor population required" );
+  }
+
+  if ( not( random_pool_ or ( targets->size() * pool_size_ == third->size() )
+         or ( pool_size_ == 1 and targets->size() % third->size() == 0 ) ) )
+  {
+    throw BadProperty(
+      "The sizes of target and third-factor populations and the chosen pool size do not fit."
+      " If pool_size == 1, the target population size must be a multiple of the third-factor"
+      " population size. For pool_size > 1, size(targets) * pool_size == size(third factor)"
+      " is required. For all other cases, use random pools." );
+  }
+}
+
+size_t
+nest::TripartiteBernoulliWithPoolBuilder::get_first_pool_index_( const size_t target_index ) const
+{
+  if ( pool_size_ > 1 )
+  {
+    return target_index * pool_size_;
+  }
+
+  return target_index / targets_per_third_; // intentional integer division
+}
+
+void
+nest::TripartiteBernoulliWithPoolBuilder::connect_()
+{
+#pragma omp parallel
+  {
+    const size_t tid = kernel().vp_manager.get_thread_id();
+
+    try
+    {
+      /* Random number generators:
+       * - Use RNG generating same number sequence on all threads to decide which connections to create
+       * - Use per-thread random number generator to randomize connection properties
+       */
+      RngPtr synced_rng = get_vp_synced_rng( tid );
+      RngPtr rng = get_vp_specific_rng( tid );
+
+      binomial_distribution bino_dist;
+      binomial_distribution::param_type bino_param( sources_->size(), p_primary_ );
+
+      // Iterate through target neurons. For each, three steps are done:
+      // 1. draw indegree 2. select astrocyte pool 3. make connections
+      for ( const auto& target : *targets_ )
+      {
+        const size_t tnode_id = target.node_id;
+        Node* target_node = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+        const bool local_target = not target_node->is_proxy();
+
+        // step 1, draw indegree for this target
+        const auto indegree = bino_dist( synced_rng, bino_param );
+        if ( indegree == 0 )
+        {
+          continue; // no connections for this target
+        }
+
+        // step 2, build pool for target
+        std::vector< NodeIDTriple > pool;
+        pool.reserve( pool_size_ );
+        if ( random_pool_ )
+        {
+          synced_rng->sample( third_->begin(), third_->end(), std::back_inserter( pool ), pool_size_ );
+        }
+        else
+        {
+          std::copy_n( third_->begin() + get_first_pool_index_( target.lid ), pool_size_, std::back_inserter( pool ) );
+        }
+
+        // step 3, iterate through indegree to make connections for this target
+        //   - by construction, we cannot get multapses
+        //   - if the target is also among sources, it can be drawn at most once;
+        //     we ignore it then connecting if no autapses are wanted
+        std::vector< NodeIDTriple > sources_to_connect_;
+        sources_to_connect_.reserve( indegree );
+        synced_rng->sample( sources_->begin(), sources_->end(), std::back_inserter( sources_to_connect_ ), indegree );
+
+        for ( const auto source : sources_to_connect_ )
+        {
+          const auto snode_id = source.node_id;
+          if ( not allow_autapses_ and snode_id == tnode_id )
+          {
+            continue;
+          }
+
+          if ( local_target )
+          {
+            // plain connect now with thread-local rng for randomized parameters
+            single_connect_( snode_id, *target_node, tid, rng );
+          }
+
+          // conditionally connect third factor
+          if ( not( synced_rng->drand() < p_third_if_primary_ ) )
+          {
+            continue;
+          }
+
+          // select third-factor neuron randomly from pool for this target
+          const auto third_index = pool_size_ == 1 ? 0 : synced_rng->ulrand( pool_size_ );
+          const auto third_node_id = pool[ third_index ].node_id;
+          Node* third_node = kernel().node_manager.get_node_or_proxy( third_node_id, tid );
+          const bool local_third_node = not third_node->is_proxy();
+
+          if ( local_third_node )
+          {
+            // route via auxiliary builder who handles parameters
+            third_in_builder_.single_connect( snode_id, *third_node, tid, rng );
+          }
+
+          // connection third-factor node to target if local
+          if ( local_target )
+          {
+            // route via auxiliary builder who handles parameters
+            third_out_builder_.single_connect( third_node_id, *target_node, tid, rng );
+          }
+        }
+      }
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
   }
 }
 
@@ -1783,23 +2036,14 @@ nest::SymmetricBernoulliBuilder::connect_()
 }
 
 
-/**
- * The SPBuilder is in charge of the creation of synapses during the simulation
- * under the control of the structural plasticity manager
- * @param net the network
- * @param sources the source nodes on which synapses can be created/deleted
- * @param targets the target nodes on which synapses can be created/deleted
- * @param conn_spec connectivity specs
- * @param syn_spec synapse specs
- */
 nest::SPBuilder::SPBuilder( NodeCollectionPTR sources,
   NodeCollectionPTR targets,
   const DictionaryDatum& conn_spec,
-  const std::vector< DictionaryDatum >& syn_spec )
-  : ConnBuilder( sources, targets, conn_spec, syn_spec )
+  const std::vector< DictionaryDatum >& syn_specs )
+  : ConnBuilder( sources, targets, conn_spec, syn_specs )
 {
   // Check that both pre and postsynaptic element are provided
-  if ( not use_pre_synaptic_element_ or not use_post_synaptic_element_ )
+  if ( not use_structural_plasticity_ )
   {
     throw BadProperty( "pre_synaptic_element and/or post_synaptic_elements is missing." );
   }

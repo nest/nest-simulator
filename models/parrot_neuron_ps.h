@@ -76,7 +76,14 @@ Sends
 
 SpikeEvent
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: parrot_neuron_ps
+
 EndUserDocs */
+
+void register_parrot_neuron_ps( const std::string& name );
 
 class parrot_neuron_ps : public ArchivingNode
 {

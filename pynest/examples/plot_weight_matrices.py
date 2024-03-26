@@ -35,10 +35,10 @@ four weight matrices are created and plotted.
 # First, we import all necessary modules to extract, handle and plot
 # the connectivity matrices
 
-import numpy as np
+import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
 import nest
-import matplotlib.gridspec as gridspec
+import numpy as np
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 ###############################################################################

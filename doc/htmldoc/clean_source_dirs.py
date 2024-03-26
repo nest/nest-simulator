@@ -19,8 +19,8 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 import os
-import shutil
 import pathlib
+import shutil
 from glob import glob
 
 for dir_ in ("auto_examples", "models"):

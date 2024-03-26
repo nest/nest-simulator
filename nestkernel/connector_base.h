@@ -56,6 +56,10 @@ namespace nest
 /**
  * Base class to allow storing Connectors for different synapse types
  * in vectors. We define the interface here to avoid casting.
+ *
+ * @note If any member functions need to do something special for a given connection type,
+ * declare specializations in the corresponding header file and define them in the corresponding
+ * source file. For an example, see `eprop_synapse_bsshslm_2020`.
  */
 class ConnectorBase
 {
@@ -269,6 +273,12 @@ public:
   }
 
   void
+  push_back( ConnectionT&& c )
+  {
+    C_.push_back( std::move( c ) );
+  }
+
+  void
   get_connection( const size_t source_node_id,
     const size_t target_node_id,
     const size_t tid,
@@ -392,17 +402,20 @@ public:
 
     while ( true )
     {
+      assert( lcid + lcid_offset < C_.size() );
       ConnectionT& conn = C_[ lcid + lcid_offset ];
-      const bool is_disabled = conn.is_disabled();
-      const bool source_has_more_targets = conn.source_has_more_targets();
 
       e.set_port( lcid + lcid_offset );
-      if ( not is_disabled )
+      if ( not conn.is_disabled() )
       {
-        conn.send( e, tid, cp );
-        send_weight_event( tid, lcid + lcid_offset, e, cp );
+        // Some synapses, e.g., bernoulli_synapse, may not send an event after all
+        const bool event_sent = conn.send( e, tid, cp );
+        if ( event_sent )
+        {
+          send_weight_event( tid, lcid + lcid_offset, e, cp );
+        }
       }
-      if ( not source_has_more_targets )
+      if ( not conn.source_has_more_targets() )
       {
         break;
       }

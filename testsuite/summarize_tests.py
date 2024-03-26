@@ -27,11 +27,11 @@
 #
 # <No of tests run> <No of skipped tests> <No of failed tests> <No of errored tests> <List of unsuccessful tests>
 
-import junitparser as jp
 import glob
 import os
 import sys
 
+import junitparser as jp
 
 assert int(jp.version.split(".")[0]) >= 2, "junitparser version must be >= 2"
 
@@ -77,7 +77,11 @@ if __name__ == "__main__":
             totals[k] += v
 
     cols = ["Tests", "Skipped", "Failures", "Errors", "Time"]
-    tline = "-" * (len(cols) * 10 + 20)
+
+    col_w = max(len(c) for c in cols) + 2
+    first_col_w = max(len(k) for k in results.keys())
+
+    tline = "-" * (len(cols) * col_w + first_col_w)
 
     print()
     print()
@@ -85,24 +89,24 @@ if __name__ == "__main__":
     print("NEST Testsuite Results")
 
     print(tline)
-    print("{:<20s}".format("Phase"), end="")
+    print(f"{'Phase':<{first_col_w}s}", end="")
     for c in cols:
-        print("{:>10s}".format(c), end="")
+        print(f"{c:>{col_w}s}", end="")
     print()
 
     print(tline)
     for pn, pr in results.items():
-        print("{:<20s}".format(pn), end="")
+        print(f"{pn:<{first_col_w}s}", end="")
         for c in cols:
-            fstr = "{:10.1f}" if c == "Time" else "{:10d}"
-            print(fstr.format(pr[c]), end="")
+            fmt = ".1f" if c == "Time" else "d"
+            print(f"{pr[c]:{col_w}{fmt}}", end="")
         print()
 
     print(tline)
-    print("{:<20s}".format("Total"), end="")
+    print(f"{'Total':<{first_col_w}s}", end="")
     for c in cols:
-        fstr = "{:10.1f}" if c == "Time" else "{:10d}"
-        print(fstr.format(totals[c]), end="")
+        fmt = ".1f" if c == "Time" else "d"
+        print(f"{totals[c]:{col_w}{fmt}}", end="")
     print()
     print(tline)
     print()

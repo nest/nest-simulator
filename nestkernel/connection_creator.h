@@ -45,8 +45,9 @@ class MaskedLayer;
 
 /**
  * This class is a representation of the dictionary of connection
- * properties given as an argument to the ConnectLayers function. The
- * connect method is responsible for generating the connection according
+ * properties given as an argument to the ConnectLayers function.
+ *
+ * The connect method is responsible for generating the connection according
  * to the given parameters. This method is templated with the dimension
  * of the layers, and is called via the Layer connect call using a
  * visitor pattern. The connect method relays to another method (e.g.,
@@ -67,13 +68,16 @@ public:
   {
     Pairwise_bernoulli_on_source,
     Pairwise_bernoulli_on_target,
+    Pairwise_poisson,
     Fixed_indegree,
     Fixed_outdegree
   };
 
   /**
    * Construct a ConnectionCreator with the properties defined in the
-   * given dictionary. Parameters for a ConnectionCreator are:
+   * given dictionary.
+   *
+   * Parameters for a ConnectionCreator are:
    * - "connection_type": Either "convergent" or "divergent".
    * - "allow_autapses": Boolean, true if autapses are allowed.
    * - "allow_multapses": Boolean, true if multapses are allowed.
@@ -95,6 +99,7 @@ public:
 
   /**
    * Connect two layers.
+   *
    * @param source source layer.
    * @param source NodeCollection of the source.
    * @param target target layer.
@@ -130,10 +135,18 @@ private:
     std::vector< std::pair< Position< D >, size_t > >* positions_;
   };
 
-  void extract_params_( const DictionaryDatum&, std::vector< DictionaryDatum >& );
+  void extract_params_( const DictionaryDatum& dict_datum, std::vector< DictionaryDatum >& params );
 
   template < typename Iterator, int D >
   void connect_to_target_( Iterator from,
+    Iterator to,
+    Node* tgt_ptr,
+    const Position< D >& tgt_pos,
+    size_t tgt_thread,
+    const Layer< D >& source );
+
+  template < typename Iterator, int D >
+  void connect_to_target_poisson_( Iterator from,
     Iterator to,
     Node* tgt_ptr,
     const Position< D >& tgt_pos,
@@ -151,6 +164,10 @@ private:
     NodeCollectionPTR source_nc,
     Layer< D >& target,
     NodeCollectionPTR target_nc );
+
+  template < int D >
+  void
+  pairwise_poisson_( Layer< D >& source, NodeCollectionPTR source_nc, Layer< D >& target, NodeCollectionPTR target_nc );
 
   template < int D >
   void

@@ -56,10 +56,11 @@ For more information visit https://www.nest-simulator.org.
 # instance later on. Use `.copy()` to prevent pollution with other variables
 _original_module_attrs = globals().copy()
 
+import builtins  # noqa
+import importlib  # noqa
 import sys  # noqa
 import types  # noqa
-import importlib  # noqa
-import builtins  # noqa
+
 from .ll_api_kernel_attributes import KernelAttribute  # noqa
 
 try:
@@ -70,17 +71,17 @@ except ImportError:
 
 class NestModule(types.ModuleType):
     """
-    A module class for the `nest` root module to control the dynamic generation
+    A module class for the ``nest`` root module to control the dynamic generation
     of module level attributes such as the KernelAttributes, lazy loading
     some submodules and importing the public APIs of the `lib` submodules.
     """
 
     from . import ll_api  # noqa
-    from . import pynestkernel as kernel  # noqa
-    from . import random  # noqa
-    from . import math  # noqa
-    from . import spatial_distributions  # noqa
     from . import logic  # noqa
+    from . import math  # noqa
+    from . import random  # noqa
+    from . import spatial_distributions  # noqa
+    from . import pynestkernel as kernel  # noqa
     from .ll_api import set_communicator
 
     def __init__(self, name):
@@ -190,11 +191,6 @@ class NestModule(types.ModuleType):
         "Whether to transmit precise spike times in MPI communication",
         readonly=True,
     )
-    adaptive_spike_buffers = KernelAttribute(
-        "bool",
-        "Whether MPI buffers for communication of spikes resize on the fly",
-        default=True,
-    )
     adaptive_target_buffers = KernelAttribute(
         "bool",
         "Whether MPI buffers for communication of connections resize on the fly",
@@ -220,26 +216,52 @@ class NestModule(types.ModuleType):
         "Total size of MPI buffer for communication of connections",
         default=2,
     )
-    growth_factor_buffer_spike_data = KernelAttribute(
-        "float",
-        ("If MPI buffers for communication of spikes resize on the fly, " + "grow them by this factor each round"),
-        default=1.5,
-    )
     growth_factor_buffer_target_data = KernelAttribute(
         "float",
         ("If MPI buffers for communication of connections resize on the " + "fly, grow them by this factor each round"),
         default=1.5,
-    )
-    max_buffer_size_spike_data = KernelAttribute(
-        "int",
-        "Maximal size of MPI buffers for communication of spikes",
-        default=8388608,
     )
     max_buffer_size_target_data = KernelAttribute(
         "int",
         "Maximal size of MPI buffers for communication of connections",
         default=16777216,
     )
+    spike_buffer_grow_extra = KernelAttribute(
+        "float",
+        "When spike exchange buffer is expanded, resize it to "
+        + "`(1 + spike_buffer_grow_extra) * required_buffer_size`",
+        default=0.5,
+    )
+    spike_buffer_shrink_limit = KernelAttribute(
+        "float",
+        (
+            "If the largest number of spikes sent from any rank to any rank is less than "
+            + "`spike_buffer_shrink_limit * buffer_size`, then reduce buffer size. "
+            + "`spike_buffer_shrink_limit == 0` means that buffers never shrink. "
+            + "See ``spike_buffer_shrink_spare`` for how the new buffer size is determined"
+        ),
+        default=0.2,
+    )
+    spike_buffer_shrink_spare = KernelAttribute(
+        "float",
+        (
+            "When the buffer shrinks, set the new size to "
+            + "`(1 + spike_buffer_shrink_spare) * required_buffer_size`. "
+            + "See `spike_buffer_shrink_limit` for when buffers shrink"
+        ),
+        default=0.1,
+    )
+    spike_buffer_resize_log = KernelAttribute(
+        "dict",
+        (
+            "Log of spike buffer resizing as a dictionary. It contains the "
+            + "`times` of the resizings (simulation clock in steps, always multiple of ``min_delay``), "
+            + "``global_max_spikes_sent``, that is, the observed spike number that triggered the resize, "
+            + "and the ``new_buffer_size``. Sizes for the buffer section sent from one rank to another rank"
+        ),
+        readonly=True,
+    )
+
     use_wfr = KernelAttribute("bool", "Whether to use waveform relaxation method", default=True)
     wfr_comm_interval = KernelAttribute(
         "float",
@@ -260,16 +282,6 @@ class NestModule(types.ModuleType):
         "int", "Interpolation order of polynomial used in wfr iterations", default=3
     )
     max_num_syn_models = KernelAttribute("int", "Maximal number of synapse models supported", readonly=True)
-    sort_connections_by_source = KernelAttribute(
-        "bool",
-        (
-            "Whether to sort connections by their source; increases"
-            + " construction time of presynaptic data structures, decreases"
-            + " simulation time if the average number of outgoing connections"
-            + " per neuron is smaller than the total number of threads"
-        ),
-        default=True,
-    )
     structural_plasticity_synapses = KernelAttribute(
         "dict",
         (
@@ -299,8 +311,7 @@ class NestModule(types.ModuleType):
             "Whether to use spike compression; if a neuron has targets on"
             + " multiple threads of a process, this switch makes sure that only"
             + " a single packet is sent to the process instead of one packet"
-            + " per target thread; requires"
-            + " ``nest.sort_connections_by_source = True``"
+            + " per target thread; it implies that connections are sorted by source."
         ),
         default=True,
     )
@@ -387,7 +398,21 @@ class NestModule(types.ModuleType):
         ),
         default=float("+inf"),
     )
-
+    eprop_update_interval = KernelAttribute(
+        "float",
+        ("Task-specific update interval of the e-prop plasticity mechanism [ms]."),
+        default=1000.0,
+    )
+    eprop_learning_window = KernelAttribute(
+        "float",
+        ("Task-specific learning window of the e-prop plasticity mechanism [ms]."),
+        default=1000.0,
+    )
+    eprop_reset_neurons_on_update = KernelAttribute(
+        "bool",
+        ("If True, reset dynamic variables of e-prop neurons upon e-prop update."),
+        default=True,
+    )
     # Kernel attribute indices, used for fast lookup in `ll_api.py`
     _kernel_attr_names = builtins.set(k for k, v in vars().items() if isinstance(v, KernelAttribute))
     _readonly_kernel_attrs = builtins.set(

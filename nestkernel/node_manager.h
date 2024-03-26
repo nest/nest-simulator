@@ -52,20 +52,23 @@ public:
   NodeManager();
   ~NodeManager() override;
 
-  void initialize() override;
-  void finalize() override;
-  void change_number_of_threads() override;
+  void initialize( const bool ) override;
+  void finalize( const bool ) override;
   void set_status( const DictionaryDatum& ) override;
   void get_status( DictionaryDatum& ) override;
 
   /**
-   * Get properties of a node. The specified node must exist.
+   * Get properties of a node.
+   *
+   * The specified node must exist.
    * @throws nest::UnknownNode       Target does not exist in the network.
    */
   DictionaryDatum get_status( size_t );
 
   /**
-   * Set properties of a Node. The specified node must exist.
+   * Set properties of a Node.
+   *
+   * The specified node must exist.
    * @throws nest::UnknownNode Target does not exist in the network.
    * @throws nest::UnaccessedDictionaryEntry  Non-proxy target did not read dict
    *                                          entry.
@@ -75,6 +78,7 @@ public:
 
   /**
    * Add a number of nodes to the network.
+   *
    * This function creates n Node objects of Model m and adds them
    * to the Network at the current position.
    * @param m valid Model ID.
@@ -131,7 +135,9 @@ public:
   bool is_local_node_id( size_t node_id ) const;
 
   /**
-   * Return pointer to the specified Node. The function expects that
+   * Return pointer to the specified Node.
+   *
+   * The function expects that
    * the given node ID and thread are valid. If they are not, an assertion
    * will fail. In case the given Node does not exist on the fiven
    * thread, a proxy is returned instead.
@@ -139,7 +145,6 @@ public:
    * @param node_id index of the Node
    * @param tid local thread index of the Node
    *
-   * @ingroup net_access
    */
   Node* get_node_or_proxy( size_t node_id, size_t tid );
 
@@ -149,7 +154,7 @@ public:
    */
   Node* get_node_or_proxy( size_t );
 
-  /*
+  /**
    * Return pointer of Node on the thread we are on.
    *
    * If the node has proxies, it returns the node on the first thread (used by
@@ -161,16 +166,17 @@ public:
 
   /**
    * Return a vector that contains the thread siblings.
+   *
    * @param i Index of the specified Node.
    *
    * @throws nest::NoThreadSiblingsAvailable Node does not have thread siblings.
    *
-   * @ingroup net_access
    */
   std::vector< Node* > get_thread_siblings( size_t n ) const;
 
   /**
    * Ensure that all nodes in the network have valid thread-local IDs.
+   *
    * Create up-to-date vector of local nodes, nodes_vec_.
    * This method also sets the thread-local ID on all local nodes.
    */
@@ -185,6 +191,7 @@ public:
 
   /**
    * Prepare nodes for simulation and register nodes in node_list.
+   *
    * Calls prepare_node_() for each pertaining Node.
    * @see prepare_node_()
    */
@@ -208,6 +215,9 @@ public:
 
   /**
    * Invoke finalize() on all nodes.
+   *
+   * This function is called only if the thread data structures are properly set
+   * up.
    */
   void finalize_nodes();
 
@@ -229,9 +239,24 @@ public:
   bool have_nodes_changed() const;
   void set_have_nodes_changed( const bool changed );
 
+  /**
+   * @brief Map the node ID to its original primitive NodeCollection object.
+   * @param node_id  The node ID
+   * @return The primitive NodeCollection object containing the node ID that falls in [first, last)
+   */
+  NodeCollectionPTR node_id_to_node_collection( const size_t node_id ) const;
+
+  /**
+   * @brief Map the node to its original primitive NodeCollection object.
+   * @param node  Node instance
+   * @return The primitive NodeCollection object containing the node with node ID  falls in [first, last)
+   */
+  NodeCollectionPTR node_id_to_node_collection( Node* node ) const;
+
 private:
   /**
    * Initialize the network data structures.
+   *
    * init_() is used by the constructor and by reset().
    * @see reset()
    */
@@ -240,6 +265,7 @@ private:
 
   /**
    * Helper function to set properties on single node.
+   *
    * @param node to set properties for
    * @param dictionary containing properties
    * @param if true (default), access flags are called before
@@ -250,6 +276,7 @@ private:
 
   /**
    * Initialized buffers, register in list of nodes to update/finalize.
+   *
    * @see prepare_nodes_()
    */
   void prepare_node_( Node* );
@@ -264,7 +291,7 @@ private:
    * @param min_node_id node ID of first neuron to create.
    * @param max_node_id node ID of last neuron to create (inclusive).
    */
-  void add_neurons_( Model& model, size_t min_node_id, size_t max_node_id, NodeCollectionPTR nc_ptr );
+  void add_neurons_( Model& model, size_t min_node_id, size_t max_node_id );
 
   /**
    * Add device nodes.
@@ -275,7 +302,7 @@ private:
    * @param min_node_id node ID of first neuron to create.
    * @param max_node_id node ID of last neuron to create (inclusive).
    */
-  void add_devices_( Model& model, size_t min_node_id, size_t max_node_id, NodeCollectionPTR nc_ptr );
+  void add_devices_( Model& model, size_t min_node_id, size_t max_node_id );
 
   /**
    * Add MUSIC nodes.
@@ -287,7 +314,15 @@ private:
    * @param min_node_id node ID of first neuron to create.
    * @param max_node_id node ID of last neuron to create (inclusive).
    */
-  void add_music_nodes_( Model& model, size_t min_node_id, size_t max_node_id, NodeCollectionPTR nc_ptr );
+  void add_music_nodes_( Model& model, size_t min_node_id, size_t max_node_id );
+
+  /**
+   * @brief Append the NodeCollection instance into the NodeManager::nodeCollection_container.
+   * @param ncp  The NodeCollection instance.
+   */
+  void append_node_collection_( NodeCollectionPTR ncp );
+
+  void clear_node_collection_container();
 
 private:
   /**
@@ -295,6 +330,14 @@ private:
    * which contains only the thread-local nodes.
    */
   std::vector< SparseNodeArray > local_nodes_;
+
+  std::vector< NodeCollectionPTR > node_collection_container_; //!< a vector of the original/primitive NodeCollection
+
+  std::vector< size_t >
+    node_collection_last_; //!< Store the ID of the last element in each NodeCollection instance.
+                           //!<  Mainly, the node_collection_last_ must be the same size as node_collection_container,
+                           //!< where each  element at position i in the nodeCollection_last_ is the last node ID
+                           //!< stored in the node_collection_container_ at position i.
 
   std::vector< std::vector< Node* > > wfr_nodes_vec_; //!< Nodelists for unfrozen nodes that
                                                       //!< use the waveform relaxation method

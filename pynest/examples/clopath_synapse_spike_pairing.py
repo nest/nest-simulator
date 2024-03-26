@@ -38,9 +38,9 @@ References
        Nature Neuroscience 13:3, 344--352
 """
 
-import numpy as np
 import matplotlib.pyplot as plt
 import nest
+import numpy as np
 
 ##############################################################################
 # First we specify the neuron parameters. To enable voltage dependent

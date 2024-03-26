@@ -21,11 +21,12 @@
 
 # Merges spike files, produces raster plots, calculates and plots firing rates
 
-import numpy as np
 import glob
-import matplotlib.pyplot as plt
 import os
 import re
+
+import matplotlib.pyplot as plt
+import numpy as np
 
 datapath = "."
 

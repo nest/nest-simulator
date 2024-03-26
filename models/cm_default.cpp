@@ -19,11 +19,20 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 #include "cm_default.h"
 
+// Includes from nestkernel:
+#include "nest_impl.h"
 
 namespace nest
 {
+void
+register_cm_default( const std::string& name )
+{
+  register_node_model< cm_default >( name );
+}
+
 
 /*
  * For some reason this code block is needed. However, I have found no
@@ -214,6 +223,8 @@ nest::cm_default::set_status( const DictionaryDatum& statusdict )
 void
 nest::cm_default::add_compartment_( DictionaryDatum& dd )
 {
+  dd->clear_access_flags();
+
   if ( dd->known( names::params ) )
   {
     c_tree_.add_compartment(
@@ -223,10 +234,14 @@ nest::cm_default::add_compartment_( DictionaryDatum& dd )
   {
     c_tree_.add_compartment( getValue< long >( dd, names::parent_idx ) );
   }
+
+  ALL_ENTRIES_ACCESSED( *dd, "cm_default::add_compartment_", "Unread dictionary entries: " );
 }
 void
 nest::cm_default::add_receptor_( DictionaryDatum& dd )
 {
+  dd->clear_access_flags();
+
   const long compartment_idx = getValue< long >( dd, names::comp_idx );
   const std::string receptor_type = getValue< std::string >( dd, names::receptor_type );
 
@@ -248,6 +263,8 @@ nest::cm_default::add_receptor_( DictionaryDatum& dd )
   {
     compartment->compartment_currents.add_synapse( receptor_type, syn_idx );
   }
+
+  ALL_ENTRIES_ACCESSED( *dd, "cm_default::add_receptor_", "Unread dictionary entries: " );
 }
 
 void

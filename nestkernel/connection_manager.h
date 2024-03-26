@@ -39,6 +39,7 @@
 #include "nest_types.h"
 #include "node_collection.h"
 #include "per_thread_bool_indicator.h"
+#include "send_buffer_position.h"
 #include "source_table.h"
 #include "spike_data.h"
 #include "target_table.h"
@@ -64,9 +65,6 @@ class ConnectionManager : public ManagerInterface
 {
   friend class SimulationManager; // update_delay_extrema_
 public:
-  /**
-   * Connection type.
-   */
   enum ConnectionType
   {
     CONNECT,
@@ -78,9 +76,8 @@ public:
   ConnectionManager();
   ~ConnectionManager() override;
 
-  void initialize() override;
-  void finalize() override;
-  void change_number_of_threads() override;
+  void initialize( const bool ) override;
+  void finalize( const bool ) override;
   void set_status( const DictionaryDatum& ) override;
   void get_status( DictionaryDatum& ) override;
 
@@ -89,7 +86,7 @@ public:
   void compute_target_data_buffer_size();
   void compute_compressed_secondary_recv_buffer_positions( const size_t tid );
   void collect_compressed_spike_data( const size_t tid );
-  void clear_compressed_spike_data_map( const size_t tid );
+  void clear_compressed_spike_data_map();
 
   /**
    * Add a connectivity rule, i.e. the respective ConnBuilderFactory.
@@ -97,21 +94,35 @@ public:
   template < typename ConnBuilder >
   void register_conn_builder( const std::string& name );
 
+  //! Obtain builder for bipartite connections
   ConnBuilder* get_conn_builder( const std::string& name,
     NodeCollectionPTR sources,
     NodeCollectionPTR targets,
     const DictionaryDatum& conn_spec,
     const std::vector< DictionaryDatum >& syn_specs );
 
+  //! Obtain builder for tripartite connections
+  ConnBuilder* get_conn_builder( const std::string& name,
+    NodeCollectionPTR sources,
+    NodeCollectionPTR targets,
+    NodeCollectionPTR third,
+    const DictionaryDatum& conn_spec,
+    const std::map< Name, std::vector< DictionaryDatum > >& syn_specs );
+
   /**
    * Create connections.
    */
-  void connect( NodeCollectionPTR, NodeCollectionPTR, const DictionaryDatum&, const std::vector< DictionaryDatum >& );
+  void connect( NodeCollectionPTR sources,
+    NodeCollectionPTR targets,
+    const DictionaryDatum& conn_spec,
+    const std::vector< DictionaryDatum >& syn_specs );
 
-  void connect( TokenArray, TokenArray, const DictionaryDatum& );
+  void connect( TokenArray sources, TokenArray targets, const DictionaryDatum& syn_spec );
 
   /**
-   * Connect two nodes. The source node is defined by its global ID.
+   * Connect two nodes.
+   *
+   * The source node is defined by its global ID.
    * The target node is defined by the node. The connection is
    * established on the thread/process that owns the target node.
    *
@@ -138,7 +149,9 @@ public:
     const double weight = numerics::nan );
 
   /**
-   * Connect two nodes. The source and target nodes are defined by their
+   * Connect two nodes.
+   *
+   * The source and target nodes are defined by their
    * global ID. The connection is established on the thread/process that owns
    * the target node.
    *
@@ -168,6 +181,18 @@ public:
    * @param hyberslab_size Size of the hyperslab to read in one read operation, applies to all HDF5 datasets.
    */
   void connect_sonata( const DictionaryDatum& graph_specs, const long hyberslab_size );
+
+  /**
+   * @brief Create tripartite connections
+   *
+   * @note `synapse_specs` is dictionary `{"primary": <syn_spec>, "third_in": <syn_spec>, "third_out": <syn_spec>}`; all
+   * keys are optional
+   */
+  void connect_tripartite( NodeCollectionPTR sources,
+    NodeCollectionPTR targets,
+    NodeCollectionPTR third,
+    const DictionaryDatum& connectivity,
+    const std::map< Name, std::vector< DictionaryDatum > >& synapse_specs );
 
   size_t find_connection( const size_t tid, const synindex syn_id, const size_t snode_id, const size_t tnode_id );
 
@@ -199,6 +224,7 @@ public:
 
   /**
    * Return connections between pairs of neurons.
+   *
    * The params dictionary can have the following entries:
    * 'source' a token array with node IDs of source neurons.
    * 'target' a token array with node IDs of target neuron.
@@ -245,6 +271,7 @@ public:
   bool get_device_connected( size_t tid, size_t lcid ) const;
   /**
    * Triggered by volume transmitter in update.
+   *
    * Triggeres updates for all connectors of dopamine synapses that
    * are registered with the volume transmitter with node_id vt_node_id.
    */
@@ -289,6 +316,7 @@ public:
 
   /**
    * Resize the structures for the Connector objects if necessary.
+   *
    * This function should be called after number of threads, min_delay,
    * max_delay, and time representation have been changed in the scheduler.
    * The TimeConverter is used to convert times from the old to the new
@@ -297,9 +325,7 @@ public:
    */
   void calibrate( const TimeConverter& );
 
-  /**
-   * Returns the delay checker for the current thread.
-   */
+  //! Returns the delay checker for the current thread.
   DelayChecker& get_delay_checker();
 
   //! Removes processed entries from source table
@@ -326,6 +352,12 @@ public:
     size_t& target_rank,
     TargetData& next_target_data );
 
+  bool fill_target_buffer( const size_t tid,
+    const size_t rank_start,
+    const size_t rank_end,
+    std::vector< TargetData >& send_buffer_target_data,
+    TargetSendBufferPosition& send_buffer_position );
+
   void reject_last_target_data( const size_t tid );
 
   void save_source_table_entry_point( const size_t tid );
@@ -337,12 +369,10 @@ public:
   void add_target( const size_t tid, const size_t target_rank, const TargetData& target_data );
 
   /**
-   * Return sort_connections_by_source_, which indicates whether
-   * connections_ and source_table_ should be sorted according to
-   * source node ID.
+   * Returns whether spikes should be compressed.
+   *
+   * Implies that connections will be sorted by source.
    */
-  bool get_sort_connections_by_source() const;
-
   bool use_compressed_spikes() const;
 
   /**
@@ -376,7 +406,9 @@ public:
 
   /**
    * Deletes TargetTable and resets processed flags of
-   * SourceTable. This function must be called if connections are
+   * SourceTable.
+   *
+   * This function must be called if connections are
    * created after connections have been communicated previously. It
    * basically restores the connection infrastructure to a state where
    * all information only exists on the postsynaptic side.
@@ -424,6 +456,9 @@ public:
 
   const std::vector< SpikeData >& get_compressed_spike_data( const synindex syn_id, const size_t idx );
 
+  //! Set iteration_state_ entries for all threads to beginning of compressed_spike_data_map_.
+  void initialize_iteration_state();
+
 private:
   size_t get_num_target_data( const size_t tid ) const;
 
@@ -446,8 +481,7 @@ private:
   /**
    * Update delay extrema to current values.
    *
-   * Static since it only operates in static variables. This allows it to be
-   * called from const-method get_status() as well.
+   * @note This entails MPI communication.
    */
   void update_delay_extrema_();
 
@@ -572,7 +606,7 @@ private:
   /**
    * A structure to hold "unpacked" spikes on the postsynaptic side if
    * spike compression is enabled. Internally arranged in a 3d
-   * structure: synapses|sources|spike data
+   * structure: synapses|sources|target_threads
    */
   std::vector< std::vector< std::vector< SpikeData > > > compressed_spike_data_;
 
@@ -620,15 +654,14 @@ private:
   //! true if GetConnections has been called.
   bool get_connections_has_been_called_;
 
-  //! Whether to sort connections by source node ID.
-  bool sort_connections_by_source_;
-
-  //! Whether to use spike compression; if a neuron has targets on
-  //! multiple threads of a process, this switch makes sure that only
-  //! a single packet is sent to the process instead of one packet per
-  //! target thread; requires sort_connections_by_source_ = true; for
-  //! more details see the discussion and sketch in
-  //! https://github.com/nest/nest-simulator/pull/1338
+  /**
+   *  Whether to use spike compression; if a neuron has targets on
+   *  multiple threads of a process, this switch makes sure that only
+   *  a single packet is sent to the process instead of one packet per
+   *  target thread; implies sort_connections_by_source_ = true; for
+   *  more details see the discussion and sketch in
+   *  https://github.com/nest/nest-simulator/pull/1338
+   */
   bool use_compressed_spikes_;
 
   //! Whether primary connections (spikes) exist.
@@ -646,6 +679,10 @@ private:
   //! Maximum distance between (double) spike times in STDP that is
   //! still considered 0. See issue #894
   double stdp_eps_;
+
+  //! For each thread, store (syn_id, compressed_spike_data_map_::iterator) pair for next iteration while filling target
+  //! buffers
+  std::vector< std::pair< size_t, std::map< size_t, CSDMapEntry >::const_iterator > > iteration_state_;
 };
 
 inline bool
@@ -813,12 +850,6 @@ ConnectionManager::secondary_connections_exist() const
 }
 
 inline bool
-ConnectionManager::get_sort_connections_by_source() const
-{
-  return sort_connections_by_source_;
-}
-
-inline bool
 ConnectionManager::use_compressed_spikes() const
 {
   return use_compressed_spikes_;
@@ -872,13 +903,13 @@ ConnectionManager::set_source_has_more_targets( const size_t tid,
 inline const std::vector< SpikeData >&
 ConnectionManager::get_compressed_spike_data( const synindex syn_id, const size_t idx )
 {
-  return compressed_spike_data_.at( syn_id ).at( idx );
+  return compressed_spike_data_[ syn_id ][ idx ];
 }
 
 inline void
-ConnectionManager::clear_compressed_spike_data_map( const size_t tid )
+ConnectionManager::clear_compressed_spike_data_map()
 {
-  source_table_.clear_compressed_spike_data_map( tid );
+  source_table_.clear_compressed_spike_data_map();
 }
 
 } // namespace nest

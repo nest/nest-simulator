@@ -24,6 +24,7 @@ Test setting and getting labels on synapses.
 """
 
 import unittest
+
 import nest
 
 HAVE_GSL = nest.ll_api.sli_func("statusdict/have_gsl ::")
@@ -36,11 +37,12 @@ class LabeledSynapsesTestCase(unittest.TestCase):
 
     def default_network(self, syn_model):
         nest.ResetKernel()
+
         # set volume transmitter for stdp_dopamine_synapse_lbl
-        vol = nest.Create("volume_transmitter", 3)
-        nest.SetDefaults("stdp_dopamine_synapse", {"vt": vol.get("global_id")[0]})
-        nest.SetDefaults("stdp_dopamine_synapse_lbl", {"vt": vol.get("global_id")[1]})
-        nest.SetDefaults("stdp_dopamine_synapse_hpc", {"vt": vol.get("global_id")[2]})
+        vt = nest.Create("volume_transmitter", 3)
+        nest.SetDefaults("stdp_dopamine_synapse", {"volume_transmitter": vt[0]})
+        nest.SetDefaults("stdp_dopamine_synapse_lbl", {"volume_transmitter": vt[1]})
+        nest.SetDefaults("stdp_dopamine_synapse_hpc", {"volume_transmitter": vt[2]})
 
         self.rate_model_connections = [
             "rate_connection_instantaneous",
@@ -54,6 +56,13 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         self.clopath_synapses = ["clopath_synapse", "clopath_synapse_lbl", "clopath_synapse_hpc"]
 
         self.urbanczik_synapses = ["urbanczik_synapse", "urbanczik_synapse_lbl", "urbanczik_synapse_hpc"]
+
+        self.eprop_synapses = ["eprop_synapse_bsshslm_2020", "eprop_synapse_bsshslm_2020_hpc"]
+        self.eprop_connections = [
+            "eprop_learning_signal_connection_bsshslm_2020",
+            "eprop_learning_signal_connection_bsshslm_2020_lbl",
+            "eprop_learning_signal_connection_bsshslm_2020_hpc",
+        ]
 
         # create neurons that accept all synapse connections (especially gap
         # junctions)... hh_psc_alpha_gap is only available with GSL, hence the
@@ -78,6 +87,12 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             neurons = nest.Create("pp_cond_exp_mc_urbanczik", 5)
             syns = nest.GetDefaults("pp_cond_exp_mc_urbanczik")["receptor_types"]
             r_type = syns["soma_exc"]
+
+        if syn_model in self.eprop_synapses:
+            neurons = nest.Create("eprop_iaf_bsshslm_2020", 5)
+
+        if syn_model in self.eprop_connections:
+            neurons = nest.Create("eprop_readout_bsshslm_2020", 5) + nest.Create("eprop_iaf_bsshslm_2020", 5)
 
         return neurons, r_type
 
@@ -168,6 +183,10 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         """Try set a label to an 'un-label-able' synapse."""
 
         for syn in [s for s in nest.synapse_models if not s.endswith("_lbl")]:
+            if syn == "sic_connection":
+                # Skip sic_connection since it requires different pre- and post-synaptic neuron models
+                continue
+
             a, r_type = self.default_network(syn)
 
             # see if symmetric connections are required
@@ -177,16 +196,37 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             with self.assertRaises(nest.kernel.NESTError):
                 nest.SetDefaults(syn, {"synapse_label": 123})
 
-            # try set on connect
-            with self.assertRaises(nest.kernel.NESTError):
-                nest.Connect(
-                    a, a, {"rule": "one_to_one", "make_symmetric": symm}, {"synapse_model": syn, "synapse_label": 123}
-                )
-
             # plain connection
-            nest.Connect(
-                a, a, {"rule": "one_to_one", "make_symmetric": symm}, {"synapse_model": syn, "receptor_type": r_type}
-            )
+            if syn in self.eprop_connections or syn in self.eprop_synapses:
+                # try set on connect
+                with self.assertRaises(nest.kernel.NESTError):
+                    nest.Connect(
+                        a[:2],
+                        a[-2:],
+                        {"rule": "one_to_one", "make_symmetric": symm},
+                        {"synapse_model": syn, "synapse_label": 123, "delay": nest.resolution},
+                    )
+                nest.Connect(
+                    a[:2],
+                    a[-2:],
+                    {"rule": "one_to_one", "make_symmetric": symm},
+                    {"synapse_model": syn, "receptor_type": r_type, "delay": nest.resolution},
+                )
+            else:
+                # try set on connect
+                with self.assertRaises(nest.kernel.NESTError):
+                    nest.Connect(
+                        a,
+                        a,
+                        {"rule": "one_to_one", "make_symmetric": symm},
+                        {"synapse_model": syn, "synapse_label": 123},
+                    )
+                nest.Connect(
+                    a,
+                    a,
+                    {"rule": "one_to_one", "make_symmetric": symm},
+                    {"synapse_model": syn, "receptor_type": r_type},
+                )
             # try set on SetStatus
             c = nest.GetConnections(a, a)
 

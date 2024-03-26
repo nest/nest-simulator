@@ -26,8 +26,9 @@ Functions for node handling
 import warnings
 
 import nest
-from ..ll_api import check_stack, sli_func, sps, sr, spp
+
 from .. import pynestkernel as kernel
+from ..ll_api import check_stack, sli_func, spp, sps, sr
 from .hl_api_helper import is_iterable, model_deprecation_warning
 from .hl_api_info import SetStatus
 from .hl_api_types import NodeCollection, Parameter
@@ -68,6 +69,7 @@ def Create(model, n=1, params=None, positions=None):
           The single values will be applied to all nodes, while the lists will be distributed across
           the nodes. Both single values and lists can be given at the same time.
         - A list with n dictionaries, one dictionary for each node.
+
         Values may be :py:class:`.Parameter` objects. If omitted,
         the model's defaults are used.
     positions: :py:class:`.grid` or :py:class:`.free` object, optional

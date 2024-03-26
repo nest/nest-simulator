@@ -122,7 +122,14 @@ See also
 
 iaf_psc_delta, mat2_psc_exp
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: izhikevich
+
 EndUserDocs */
+
+void register_izhikevich( const std::string& name );
 
 class izhikevich : public ArchivingNode
 {

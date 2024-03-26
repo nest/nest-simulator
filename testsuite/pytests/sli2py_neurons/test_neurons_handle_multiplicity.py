@@ -27,12 +27,14 @@ the spikes have arrived must be identical in both cases.
 """
 
 import nest
-import pytest
 import numpy as np
 import numpy.testing as nptest
+import pytest
 
+# The following models will not be tested:
 skip_list = [
     "ginzburg_neuron",  # binary neuron
+    "ignore_and_fire",  # input independent neuron
     "mcculloch_pitts_neuron",  # binary neuron
     "erfc_neuron",  # binary neuron
     "lin_rate_ipn",  # rate neuron
@@ -65,6 +67,7 @@ skip_list = [
     "music_message_out_proxy",  # music device
     "music_rate_in_proxy",  # music device
     "music_rate_out_proxy",  # music device
+    "astrocyte_lr_1994",  # does not have V_m
 ]
 
 extra_params = {
@@ -74,6 +77,10 @@ extra_params = {
     "gif_cond_exp_multisynapse": {"params": {"tau_syn": [1.0]}, "receptor_type": 1},
     "glif_cond": {"params": {"tau_syn": [1.0], "E_rev": [-85.0]}, "receptor_type": 1},
     "glif_psc": {"params": {"tau_syn": [1.0]}, "receptor_type": 1},
+    "glif_psc_double_alpha": {
+        "params": {"tau_syn_fast": [1.0], "tau_syn_slow": [2.0], "amp_slow": [0.5]},
+        "receptor_type": 1,
+    },
     "aeif_cond_alpha_multisynapse": {"params": {"tau_syn": [1.0]}, "receptor_type": 1},
     "aeif_cond_beta_multisynapse": {
         "params": {"E_rev": [0.0], "tau_rise": [1.0], "tau_decay": [1.0]},
@@ -83,11 +90,18 @@ extra_params = {
 }
 
 
-def test_spike_multiplicity_parrot_neuron():
+@pytest.fixture(autouse=True)
+def reset():
     nest.ResetKernel()
+
+
+def test_spike_multiplicity_parrot_neuron():
     multiplicities = [1, 3, 2]
     spikes = [1.0, 2.0, 3.0]
-    sg = nest.Create("spike_generator", {"spike_times": spikes, "spike_multiplicities": multiplicities})
+    sg = nest.Create(
+        "spike_generator",
+        {"spike_times": spikes, "spike_multiplicities": multiplicities},
+    )
     pn = nest.Create("parrot_neuron")
     sr = nest.Create("spike_recorder")
 
@@ -112,9 +126,6 @@ def test_spike_multiplicity_parrot_neuron():
     ],
 )
 def test_spike_multiplicity(model):
-    print("model name:", model)
-    nest.ResetKernel()
-
     n1 = nest.Create(model)
     n2 = nest.Create(model)
 

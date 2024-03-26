@@ -1,0 +1,16 @@
+# Modelset for precise spiking neurons for NEST
+# See https://nest-simulator.readthedocs.io/en/stable/neurons/simulations_with_precise_spike_times.html
+
+ac_generator
+dc_generator
+noise_generator
+step_current_generator
+static_synapse
+iaf_psc_alpha_ps
+iaf_psc_delta_ps
+iaf_psc_exp_ps
+parrot_neuron_ps
+poisson_generator_ps
+spike_generator
+spike_recorder
+multimeter

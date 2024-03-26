@@ -36,6 +36,7 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
+#include "nest_impl.h"
 #include "universal_data_logger_impl.h"
 
 // Includes from sli:
@@ -67,6 +68,12 @@ nest::RecordablesMap< nest::iaf_cond_alpha_mc > nest::iaf_cond_alpha_mc::recorda
 
 namespace nest
 {
+void
+register_iaf_cond_alpha_mc( const std::string& name )
+{
+  register_node_model< iaf_cond_alpha_mc >( name );
+}
+
 // specialization must be place in namespace
 
 template <>

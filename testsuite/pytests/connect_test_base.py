@@ -19,10 +19,11 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+import unittest
+
+import nest
 import numpy as np
 import scipy.stats
-import nest
-import unittest
 
 try:
     from mpi4py import MPI
@@ -213,8 +214,8 @@ class ConnectTestBase(unittest.TestCase):
         # ResetKernel() since parameter setting not thread save for this
         # synapse type
         nest.ResetKernel()
-        vol = nest.Create("volume_transmitter")
-        nest.SetDefaults("stdp_dopamine_synapse", {"vt": vol.get("global_id")})
+        vt = nest.Create("volume_transmitter")
+        nest.SetDefaults("stdp_dopamine_synapse", {"volume_transmitter": vt})
         params = ["c", "n"]
         values = [0.153, 0.365]
         syn_params = {"synapse_model": "stdp_dopamine_synapse"}
@@ -238,8 +239,8 @@ class ConnectTestBase(unittest.TestCase):
 
         for i, syn in enumerate(syns):
             if syn == "stdp_dopamine_synapse":
-                vol = nest.Create("volume_transmitter")
-                nest.SetDefaults("stdp_dopamine_synapse", {"vt": vol.get("global_id")})
+                vt = nest.Create("volume_transmitter")
+                nest.SetDefaults("stdp_dopamine_synapse", {"volume_transmitter": vt})
             syn_params["synapse_model"] = syn
             self.pop1 = nest.Create("iaf_psc_exp_multisynapse", self.N1, {"tau_syn": [0.2, 0.5]})
             self.pop2 = nest.Create("iaf_psc_exp_multisynapse", self.N2, {"tau_syn": [0.2, 0.5]})
@@ -269,8 +270,8 @@ class ConnectTestBase(unittest.TestCase):
 
         for syn in syns:
             if syn == "stdp_dopamine_synapse":
-                vol = nest.Create("volume_transmitter")
-                nest.SetDefaults("stdp_dopamine_synapse", {"vt": vol.get("global_id")})
+                vt = nest.Create("volume_transmitter")
+                nest.SetDefaults("stdp_dopamine_synapse", {"volume_transmitter": vt})
             syn_params["synapse_model"] = syn
             check_synapse(["weight"], [syn_params["weight"]], syn_params, self)
             self.setUp()
@@ -293,8 +294,8 @@ class ConnectTestBase(unittest.TestCase):
 
         for syn in syns:
             if syn == "stdp_dopamine_synapse":
-                vol = nest.Create("volume_transmitter")
-                nest.SetDefaults("stdp_dopamine_synapse", {"vt": vol.get("global_id")})
+                vt = nest.Create("volume_transmitter")
+                nest.SetDefaults("stdp_dopamine_synapse", {"volume_transmitter": vt})
             syn_params["synapse_model"] = syn
             check_synapse(["delay"], [syn_params["delay"]], syn_params, self)
             self.setUp()
@@ -550,6 +551,15 @@ def get_expected_degrees_bernoulli(p, fan, len_source_pop, len_target_pop):
 
 
 # adapted from Masterthesis, Daniel Hjertholm
+
+
+def get_expected_degrees_poisson(pairwise_avg_num_conns, fan, len_source_pop, len_target_pop):
+    expected_indegree = pairwise_avg_num_conns * len_source_pop
+    expected_outdegree = pairwise_avg_num_conns * len_target_pop
+    if fan == "in":
+        return expected_indegree
+    elif fan == "out":
+        return expected_outdegree
 
 
 def reset_seed(seed, nr_threads):

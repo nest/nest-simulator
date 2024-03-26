@@ -96,7 +96,14 @@ See also
 
 ac_generator, dc_generator, noise_generator
 
+Examples using this model
++++++++++++++++++++++++++
+
+.. listexamples:: step_current_generator
+
 EndUserDocs */
+
+void register_step_current_generator( const std::string& name );
 
 class step_current_generator : public StimulationDevice
 {

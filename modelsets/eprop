@@ -1,0 +1,19 @@
+# Minimal modelset for spiking neuron simulations with e-prop plasticity
+
+multimeter
+spike_recorder
+weight_recorder
+
+spike_generator
+step_rate_generator
+poisson_generator
+
+eprop_iaf_bsshslm_2020
+eprop_iaf_adapt_bsshslm_2020
+eprop_readout_bsshslm_2020
+parrot_neuron
+
+eprop_learning_signal_connection_bsshslm_2020
+eprop_synapse_bsshslm_2020
+rate_connection_delayed
+static_synapse

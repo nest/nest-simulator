@@ -25,22 +25,22 @@ Functions for connection handling
 
 import numpy
 
-from ..ll_api import check_stack, connect_arrays, sps, sr, spp
 from .. import pynestkernel as kernel
-
+from ..ll_api import check_stack, connect_arrays, spp, sps, sr
 from .hl_api_connection_helpers import (
-    _process_input_nodes,
     _connect_layers_needed,
     _connect_spatial,
     _process_conn_spec,
+    _process_input_nodes,
     _process_spatial_projections,
     _process_syn_spec,
 )
 from .hl_api_helper import is_string
-from .hl_api_types import NodeCollection, SynapseCollection
+from .hl_api_types import CollocatedSynapses, NodeCollection, SynapseCollection
 
 __all__ = [
     "Connect",
+    "TripartiteConnect",
     "Disconnect",
     "GetConnections",
 ]
@@ -167,6 +167,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
      - 'fixed_total_number', 'N'
      - 'pairwise_bernoulli', 'p'
      - 'symmetric_pairwise_bernoulli', 'p'
+     - 'pairwise_poisson', 'pairwise_avg_num_conns'
 
     See :ref:`conn_rules` for more details, including example usage.
 
@@ -295,6 +296,124 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
 
 
 @check_stack
+def TripartiteConnect(pre, post, third, conn_spec, syn_specs=None):
+    """
+    Connect `pre` nodes to `post` nodes and a `third`-factor nodes.
+
+    Nodes in `pre` and `post` are connected using the specified tripartite connection rule
+    and the given synapse types (all :cpp:class:`static_synapse <nest::static_synapse>` by default).
+    Details depend on the connection rule.
+
+    Lists of synapse models and connection rules are available as
+    ``nest.synapse_models`` and ``nest.connection_rules``, respectively. Note that only tripartite
+    connection rules can be used.
+
+    Parameters
+    ----------
+    pre : NodeCollection
+        Presynaptic nodes
+    post : NodeCollection
+        Postsynaptic nodes
+    third : NodeCollection
+        Third population to include in connection
+    conn_spec : dict
+        Specifies connection rule, which must support tripartite connections, see below
+    syn_spec : dict, optional
+        Specifies synapse models to be used, see below
+
+    Raises
+    ------
+    kernel.NESTError
+
+    Notes
+    -----
+    **Connectivity specification (conn_spec)**
+
+    Available tripartite rules::
+
+     - ``tripartite_bernoulli_with_pool``
+
+    See :ref:`tripartite_connectivity` for more details and :doc:`/auto_examples/astrocytes/astrocyte_small_network`
+    and :doc:`/auto_examples/astrocytes/astrocyte_brunel` for examples.
+
+    **Synapse specifications (syn_specs)**
+
+    Synapse specifications for tripartite connections are given as a dictionary with specifications
+    for each of the three projections to be created::
+
+     {"primary": <syn_spec>,
+     "third_in": <syn_spec>,
+     "third_out": <syn_spec>}
+
+    Here, ``"primary"`` marks the synapse specification for the projections between ``pre`` and ``post`` nodes,
+    ``"third_in"`` for connections between ``pre`` and ``third`` nodes and ``"third_out"`` for connections between
+    ``third`` and ``post`` nodes.
+
+    Each ``<syn_spec>`` entry can be any entry that would be possible as synapse specification
+    in a normal ``Connect()`` call. Any missing entries default to ``static_synapse``. If no ``<syn_spec>`` argument
+    is given at all, all three entries default to ``static_synapse``.
+
+    The synapse model and its properties can be given either as a string
+    identifying a specific synapse model (default: :cpp:class:`static_synapse <nest::static_synapse>`) or
+    as a dictionary specifying the synapse model and its parameters.
+
+    Available keys in the synapse specification dictionary are::
+
+     - 'synapse_model'
+     - 'weight'
+     - 'delay'
+     - 'receptor_type'
+     - any parameters specific to the selected synapse model.
+
+
+    .. admonition:
+
+       Tripartite connectivity is a new feature. Please expect some adjustments to
+       the syntax and semantics for the tripartite connectivity in the next NEST releases.
+
+
+    See Also
+    ---------
+    :ref:`connection_management`
+    """
+
+    # Confirm that we got node collections
+    if not isinstance(pre, NodeCollection):
+        raise TypeError("Presynaptic nodes must be a NodeCollection")
+    if not isinstance(post, NodeCollection):
+        raise TypeError("Postsynaptic nodes must be a NodeCollection")
+    if not isinstance(third, NodeCollection):
+        raise TypeError("Third-factor nodes must be a NodeCollection")
+
+    # Normalize syn_specs: ensure all three entries are in place, are collocated synapses and do not contain lists
+    syn_specs = syn_specs if syn_specs is not None else dict()
+    SYN_KEYS = {"primary", "third_in", "third_out"}
+    for key in SYN_KEYS:
+        if key not in syn_specs:
+            syn_specs[key] = {"synapse_model": "static_synapse"}
+        elif isinstance(syn_specs[key], str):
+            syn_specs[key] = {"synapse_model": syn_specs[key]}
+
+        if not isinstance(syn_specs[key], CollocatedSynapses):
+            syn_specs[key] = CollocatedSynapses(syn_specs[key])
+
+        for synspec in syn_specs[key].syn_specs:
+            for entry, value in synspec.items():
+                if isinstance(value, (list, tuple, numpy.ndarray)):
+                    raise ValueError(
+                        f"Tripartite connections do not accept parameter lists,"
+                        f"but 'syn_specs[{key}][{entry}]' is a list or similar."
+                    )
+
+    sps(pre)
+    sps(post)
+    sps(third)
+    sps(conn_spec)
+    sps(syn_specs)
+    sr("ConnectTripartite_g_g_g_D_D")
+
+
+@check_stack
 def Disconnect(*args, conn_spec=None, syn_spec=None):
     """Disconnect connections in a SynapseCollection, or `pre` neurons from `post` neurons.
 
@@ -305,7 +424,7 @@ def Disconnect(*args, conn_spec=None, syn_spec=None):
     Parameters
     ----------
     args : SynapseCollection or NodeCollections
-        Either a collection of connections to disconnect, or pre- and postsynaptic nodes given as `NodeCollection`s
+        Either a collection of connections to disconnect, or pre- and postsynaptic nodes given as NodeCollections
     conn_spec : str or dict
         Disconnection rule when specifying pre- and postsynaptic nodes, see below
     syn_spec : str or dict

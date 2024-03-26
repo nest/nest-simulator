@@ -15,7 +15,7 @@ environment.
 
 .. note::
 
-  If you want to specify an alternative install location, use  
+  If you want to specify an alternative install location, use
   ``-DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir>``. It needs to be
   writable by the user running the install command.
 
@@ -38,6 +38,54 @@ Options for configuring NEST
 
 NEST allows for several configuration options for custom builds:
 
+.. _modelset_config:
+
+Minimal configuration
+~~~~~~~~~~~~~~~~~~~~~~
+
+
+NEST can be compiled without any external packages; such a configuration may be useful for initial porting to a new supercomputer.
+However, this implies several restrictions:
+
+- Some neuron and synapse models will not be available, as they depend on ODE solvers from the GNU Scientific Library.
+- The Python extension will not be available
+- Multi-threading and parallel computing facilities will be disabled.
+
+To configure NEST for compilation without external packages, use the following  command::
+
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=<nest_install_dir> \
+          -Dwith-python=OFF \
+          -Dwith-gsl=OFF \
+          -Dwith-readline=OFF \
+          -Dwith-ltdl=OFF \
+          -Dwith-openmp=OFF \
+          </path/to/nest/source>
+
+See the :ref:`CMake Options <cmake_options>` to  further adjust settings for your system.
+
+Select built-in models
+~~~~~~~~~~~~~~~~~~~~~~
+
+By default, NEST will compile and register *all* neuron and synapse
+models that are shipped in the source distribution. This is very
+convenient for an explorative development of simulation scripts, but
+leads to quite long compilation times and is often not necessary.
+
+There are two ways to restrict the set of built-in models to tailor
+NEST to your needs:
+
++---------------------------------------+------------------------------------------------------------------------------+
+| ``-Dwith-modelset=<modelset>``        | Specify the modelset to include. Sample configurations are in the            |
+|                                       | `modelsets <https://github.com/nest/nest-simulator/tree/master/modelsets>`_  |
+|                                       | directory in the top-level of the source tree. A modelset is just a file     |
+|                                       | listing one model header files (without the .h filename extension) to scan   |
+|                                       | for models.                                                                  |
+|                                       | This option is mutually exclusive with -Dwith-models. [default=full].        |
++---------------------------------------+------------------------------------------------------------------------------+
+| ``-Dwith-models=[<modellist>|OFF]``   | Specify the models to include as a semicolon-separated list of model header  |
+|                                       | files (without the .h filename extension) that are to be scanned for models. |
+|                                       | This option is mutually exclusive with -Dwith-modelset. [default=OFF].       |
++---------------------------------------+------------------------------------------------------------------------------+
 
 Use Python to build PyNEST
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -51,6 +99,37 @@ Use Python to build PyNEST
 
 For more details, see the :ref:`Python binding <compile_with_python>` section below.
 
+.. _performance_cmake:
+
+Maximize performance, reduce energy consumption
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+The following options help to optimize NEST for maximal performance and thus reduced energy consumption.
+
++------------------------------------------+-----------------------------------------------+
+| ``-Dwith-optimize="-O3 -march=native"``  | Activate most compiler options that do not    |
+|                                          | affect compliance with IEEE754 numerics and   |
+|                                          | optimize for CPU type used                    |
++------------------------------------------+-----------------------------------------------+
+| ``-Dwith-defines=-DNDEBUG``              | Disable all ``assert()`` statements in NEST   |
++------------------------------------------+-----------------------------------------------+
+
+.. note::
+
+   * In our experience, gains from these optimizations are not very large. It can still be sensible to test them,
+     especially if you are going to perform a large number of simulations.
+   * Your particular use case may contain edge cases during NEST execution that our extensive test suite has
+     not covered. Internal consistency tests in NEST in the form of ``assert()`` statements can help to detect such
+     edge cases. Using the optimization options above removes these internal checks and thus increases the
+     risk that NEST will produce incorrect results. Therefore, use these options *only after you have performed
+     multiple simulations of your specific model with default optimization settings* (i.e., ``-O2``), which leaves the assertions
+     in place.
+   * Using ``-march=native`` requires that you build NEST on the same CPU architecture as you will use to run it.
+   * For the technically minded: Even just using ``-O3`` removes some ``assert()`` statements from NEST since we
+     have wrapped some of them in functions, which get eliminated due to interprocedural optimization. 
+
+
+
 Select parallelization scheme
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -63,6 +142,24 @@ Select parallelization scheme
 +---------------------------------------------+----------------------------------------------------------------+
 
 See also the section on :ref:`building with MPI <compile-with-mpi>` below.
+
+
+Build documentation
+~~~~~~~~~~~~~~~~~~~
+
++------------------------------+-------------------------------------------------------------+
+| ``-Dwith-devdoc=[OFF|ON]``   | Build the developer (doxygen) documentation [default=OFF]   |
+|                              |                                                             |
++------------------------------+-------------------------------------------------------------+
+| ``-Dwith-userdoc=[OFF|ON]``  | Build the user (Sphinx) documentation [default=OFF]         |
+|                              |                                                             |
++------------------------------+-------------------------------------------------------------+
+
+If either documentation build is toggled to `ON`, you can then run ``make docs`` if you only want to
+build the docs.
+
+See also the :ref:`documentation workflow <doc_workflow>` for user-facing and technical docs.
+
 
 External libraries
 ~~~~~~~~~~~~~~~~~~
@@ -100,9 +197,6 @@ NEST properties
 +-----------------------------------------------+----------------------------------------------------------------+
 | ``-Dtics_per_step=[number]``                  | Specify resolution [default=100 tics per step].                |
 +-----------------------------------------------+----------------------------------------------------------------+
-| ``-Dexternal-modules=[OFF|<list;of;modules>]``| External NEST modules to be linked in, separated by ';',       |
-|                                               | [default=OFF].                                                 |
-+-----------------------------------------------+----------------------------------------------------------------+
 | ``-Dwith-detailed-timers=[OFF|ON]``           | Build with detailed internal time measurements [default=OFF].  |
 |                                               | Detailed timers can affect the performance.                    |
 +-----------------------------------------------+----------------------------------------------------------------+
@@ -110,6 +204,11 @@ NEST properties
 |                                               | [default='standard']. 'standard' is recommended for most users.|
 |                                               | If running on more than 262144 MPI processes or more than 512  |
 |                                               | threads, change to 'hpc'.                                      |
++-----------------------------------------------+----------------------------------------------------------------+
+| ``-Dwith-full-logging=[OFF|ON]``              | Write debug output to file ``dump_<num_ranks>_<rank>.log``     |
+|                                               | [default=OFF]. Developers should wrap debugging output in      |
+|                                               | macro ``FULL_LOGGING_ONLY()`` and call kernel().write_dump()`  |
+|                                               | from inside it. The macro can contain almost any valid code.   |
 +-----------------------------------------------+----------------------------------------------------------------+
 
 Generic build configuration
@@ -132,7 +231,7 @@ Generic build configuration
 | ``-Dwith-intel-compiler-flags=[OFF|<list;of;flags>]``| User defined flags for the Intel compiler                        |
 |                                                      | [default='-fp-model strict']. Separate multiple flags by ';'.    |
 +------------------------------------------------------+------------------------------------------------------------------+
-| ``-Dwith-cpp-std=[<C++ standard>]``                  | C++ standard to use for compilation [default='c++11'].           |
+| ``-Dwith-cpp-std=[<C++ standard>]``                  | C++ standard to use for compilation [default='c++17'].           |
 +------------------------------------------------------+------------------------------------------------------------------+
 | ``-Dwith-libraries=[OFF|<list;of;libraries>]``       | Link additional libraries [default=OFF]. Give full path. Separate|
 |                                                      | multiple libraries by ';'.                                       |

@@ -40,8 +40,8 @@ errors occurred.
 
 
 import os
-import sys
 import re
+import sys
 
 
 def eprint(*args, **kwargs):
@@ -81,7 +81,6 @@ exclude_file_regex = [re.compile(pattern) for pattern in exclude_file_patterns]
 exclude_files = [
     "doc/copyright_header.cpp",
     "doc/copyright_header.py",
-    "nest/static_modules.h",
     "pynest/pynestkernel.cpp",
     "get-pip.py",
 ]

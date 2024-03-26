@@ -19,11 +19,10 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+import nest
 import numpy as np
 import numpy.testing as nptest
 import pytest
-
-import nest
 
 
 def build_net(num_neurons):
@@ -60,6 +59,16 @@ def simulate_freeze_thaw(num_neurons):
     nest.Simulate(5.0)
 
     return mm
+
+
+def test_multimeter_freeze():
+    """
+    Ensure that frozen parameter can be set to False but not True on multimeter.
+    """
+
+    nest.Create("multimeter", params={"frozen": False})
+    with pytest.raises(Exception):
+        nest.Create("multimeter", params={"frozen": True})
 
 
 def test_freeze_thaw_simulation_against_only_thawed_simulation():

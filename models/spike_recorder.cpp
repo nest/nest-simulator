@@ -29,10 +29,19 @@
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
+#include "model_manager_impl.h"
+#include "nest_impl.h"
 
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
+
+void
+nest::register_spike_recorder( const std::string& name )
+{
+  register_node_model< spike_recorder >( name );
+}
+
 
 nest::spike_recorder::spike_recorder()
   : RecordingDevice()
@@ -98,7 +107,7 @@ nest::spike_recorder::handle( SpikeEvent& e )
   {
     assert( e.get_multiplicity() > 0 );
 
-    for ( int i = 0; i < e.get_multiplicity(); ++i )
+    for ( size_t i = 0; i < e.get_multiplicity(); ++i )
     {
       write( e, RecordingBackend::NO_DOUBLE_VALUES, RecordingBackend::NO_LONG_VALUES );
     }

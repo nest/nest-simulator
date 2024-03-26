@@ -259,7 +259,7 @@ class PongNetDopa(PongNet):
     # Synaptic delay for the direct connection between striatum and
     # dopaminergic neurons
     d_dir = 200
-    # Rate (Hz) for the background poisson generators
+    # Rate (spks/s) for the background poisson generators
     poisson_rate = 15
 
     def __init__(self, apply_noise=True, num_neurons=20):

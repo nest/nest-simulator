@@ -48,8 +48,8 @@ class TestSTDPNNSynapses:
     @pytest.fixture(autouse=True)
     def setUp(self):
         self.resolution = 0.1  # [ms]
-        self.presynaptic_firing_rate = 20.0  # [Hz]
-        self.postsynaptic_firing_rate = 20.0  # [Hz]
+        self.presynaptic_firing_rate = 20.0  # [spks/s]
+        self.postsynaptic_firing_rate = 20.0  # [spks/s]
         self.simulation_duration = 1e4  # [ms]
         self.synapse_parameters = {
             "receptor_type": 1,

@@ -35,7 +35,7 @@ class Tsodyks2SynapseTest(unittest.TestCase):
 
     def setUp(self):
         self.resolution = 0.1  # [ms]
-        self.presynaptic_firing_rate = 20.0  # [Hz]
+        self.presynaptic_firing_rate = 20.0  # [spks/s]
         self.simulation_duration = 1e3  # [ms]
         self.hardcoded_trains_length = 15.0  # [ms]
         self.synapse_parameters = {

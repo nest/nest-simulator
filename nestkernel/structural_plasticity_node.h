@@ -130,7 +130,7 @@ private:
    *
    * Intracellular calcium concentration has a linear factor to mean
    * electrical activity of 10^2, this means, for example, that a [Ca2+] of
-   * 0.2 is equivalent to a mean activity of 20 Hz.
+   * 0.2 is equivalent to a mean activity of 20 spks/s.
    */
   double Ca_minus_;
 

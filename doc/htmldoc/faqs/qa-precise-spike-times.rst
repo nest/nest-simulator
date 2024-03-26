@@ -140,7 +140,7 @@ Questions and answers about precise neurons
 13. Q: **What is the rate at which spikes are missed in a typical
     large-scale neuronal network simulation of integrate-and-fire model
     neurons with linear subthreshold dynamics in the balanced state and
-    a spike rate of around 10 Hz**?
+    a spike rate of around 10 spks/s**?
 
     A: At a typical parameter setting for a simulation with around 10,000
     neurons and 15 million synapses, the total rate at which spikes are

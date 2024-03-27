@@ -29,10 +29,10 @@
 /* BeginUserDocs: NOINDEX
 
 Recording backend `memory` - Store data in main memory
-######################################################
+------------------------------------------------------
 
 Description
-+++++++++++
+~~~~~~~~~~~
 
 When a recording device sends data to the ``memory`` backend, it is
 stored internally in efficient vectors. These vectors are made
@@ -66,7 +66,7 @@ recording device. To delete data from memory, `n_events` can be set to
 0. Other values cannot be set.
 
 Parameter summary
-+++++++++++++++++
+~~~~~~~~~~~~~~~~~
 
 events
     A dictionary containing the recorded data in the form of one numeric

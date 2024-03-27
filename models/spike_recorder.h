@@ -57,12 +57,13 @@ spike creation rather than that of their arrival.
 
 ::
 
-   >>> neurons = nest.Create('iaf_psc_alpha', 5)
-   >>> sr = nest.Create('spike_recorder')
+   >>> neurons = nest.Create("iaf_psc_alpha", 5)
+   >>> sr  = nest.Create("spike_recorder", params={"record_to":"memory", "time_in_steps": False})
    >>> nest.Connect(neurons, sr)
 
-The call to ``Connect`` will fail if the connection direction is
+Note the call to ``Connect`` will fail if the connection direction is
 reversed (i.e., connecting *sr* to *neurons*).
+
 
 .. include:: ../models/recording_device.rst
 

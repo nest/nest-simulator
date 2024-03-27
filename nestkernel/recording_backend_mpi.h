@@ -34,10 +34,10 @@
 /* BeginUserDocs: NOINDEX
 
 Recording backend `mpi` - Send data with MPI
-############################################
+--------------------------------------------
 
 Description
-+++++++++++
+~~~~~~~~~~~
 
 .. admonition:: Availability
 
@@ -65,7 +65,7 @@ its node ID. This path can only be set outside of a `Run` context
 (i.e. after ``Prepare()`` has been called, but ``Cleanup()`` has not).
 
 Communication Protocol
-++++++++++++++++++++++
+~~~~~~~~~~~~~~~~~~~~~~
 
 The following protocol is used to exchange information between both
 MPI processes. The protocol is described using the following format
@@ -80,7 +80,7 @@ for the MPI messages: (value, number, type, source/destination, tag)
 7) ``Cleanup``  : Send at this en of the simulation (true, 1, CXX_BOOL, 0, 2)
 
 Data format
-+++++++++++
+~~~~~~~~~~~
 
 The format of the data sent is an array consisting of (id device, id node, time
 is ms).

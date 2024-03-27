@@ -32,10 +32,10 @@
 /* BeginUserDocs: NOINDEX
 
 Recording backend `sionlib` - Store data to an efficient binary format
-######################################################################
+----------------------------------------------------------------------
 
 Description
-+++++++++++
+~~~~~~~~~~~
 
 .. admonition:: Availability
 
@@ -80,7 +80,7 @@ attribute. An alternative way for avoiding name clashes is to set the
 kernel attributes ``data_path`` or ``data_prefix``, to write to a different file.
 
 Data format
-+++++++++++
+~~~~~~~~~~~
 
 In contrast to other recording backends, the ``sionlib`` backend
 writes the data from all recorders using it to a single container
@@ -108,7 +108,7 @@ following figure.
    NEST SIONlib binary file format.
 
 Reading the data
-++++++++++++++++
+~~~~~~~~~~~~~~~~
 
 As the binary format of the files produced by the ``sionlib`` does not
 conform to any standard, parsing them manually might be a bit
@@ -118,7 +118,7 @@ and further documentation for this module can be found in its own
 `repository <https://github.com/nest/nest-sionlib-reader>`_.
 
 Recorder-specific parameters
-++++++++++++++++++++++++++++
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 label
     A recorder-specific string (default: *""*) that serves as alias
@@ -126,7 +126,7 @@ label
     section of the container files.
 
 Global parameters
-+++++++++++++++++
+~~~~~~~~~~~~~~~~~
 
 These parameters can be set by assigning a nested dictionary to the
 kernel attribute ``recording_backends``. The dictionary has to have

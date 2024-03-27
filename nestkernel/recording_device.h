@@ -62,7 +62,7 @@ All recorded data is handed over to the recording backend, selected
 via the ``record_to`` property::
 
    >>> sr  = nest.Create("spike_recorder", params={"record_to":"ascii", "time_in_steps": False})
-   >>> mm = nest.Create("multimeter", 1, {"record_from": ["V_m", "g_ex"], "record_to": memory})
+   >>> mm = nest.Create("multimeter", 1, {"record_from": ["V_m", "g_ex"], "record_to": "memory"})
 
 
 By default, data recorded from recorders is stored in the `memory` backend.

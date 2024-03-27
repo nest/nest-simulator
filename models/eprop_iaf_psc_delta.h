@@ -188,7 +188,6 @@ public:
     double& epsilon,
     double& avg_e,
     double& weight,
-    const double kappa,
     const CommonSynapseProperties& cp,
     WeightOptimizer* optimizer ) override;
 
@@ -266,8 +265,8 @@ private:
     //! "fast_sigmoid_derivative", "arctan"]
     std::string surrogate_gradient_function_;
 
-    //! Smoothing factor of firing rate exponential moving average.
-    double beta_fr_ema_;
+    //! Low-pass filter of the eligibility trace.
+    double kappa_;
 
     //!< Number of time steps integrated between two consecutive spikes is equal to the minimum between
     //!< eprop_isi_trace_cutoff_ and the inter-spike distance.

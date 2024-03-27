@@ -81,7 +81,7 @@ eprop_iaf::Parameters_::Parameters_()
   , tau_m_( 10.0 )
   , V_min_( -std::numeric_limits< double >::max() )
   , V_th_( -55.0 - E_L_ )
-  , beta_fr_ema_( 0.0 )
+  , kappa_( std::exp( -Time::get_resolution().get_ms() / 10.0 ) )
   , eprop_isi_trace_cutoff_( std::numeric_limits< long >::max() )
 {
 }
@@ -127,7 +127,7 @@ eprop_iaf::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_m, tau_m_ );
   def< double >( d, names::V_min, V_min_ + E_L_ );
   def< double >( d, names::V_th, V_th_ + E_L_ );
-  def< double >( d, names::beta_fr_ema, beta_fr_ema_ );
+  def< double >( d, names::kappa, kappa_ );
   def< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_ );
 }
 
@@ -157,7 +157,7 @@ eprop_iaf::Parameters_::set( const DictionaryDatum& d, Node* node )
   updateValueParam< std::string >( d, names::surrogate_gradient_function, surrogate_gradient_function_, node );
   updateValueParam< double >( d, names::t_ref, t_ref_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
-  updateValueParam< double >( d, names::beta_fr_ema, beta_fr_ema_, node );
+  updateValueParam< double >( d, names::kappa, kappa_, node );
   updateValueParam< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
 
   if ( C_m_ <= 0 )
@@ -190,10 +190,9 @@ eprop_iaf::Parameters_::set( const DictionaryDatum& d, Node* node )
     throw BadProperty( "Spike threshold voltage V_th ≥ minimal voltage V_min required." );
   }
 
-  if ( beta_fr_ema_ < 0 or 1 <= beta_fr_ema_ )
+  if ( kappa_ < 0.0 or kappa_ > 1.0 )
   {
-    throw BadProperty(
-      "Smoothing factor of firing rate exponential moving average beta_fr_ema_ from interval [0,1) required." );
+    throw BadProperty( "Eligibility trace low-pass filter from range [0, 1] required." );
   }
 
   if ( eprop_isi_trace_cutoff_ < 0 )
@@ -318,7 +317,7 @@ eprop_iaf::update( Time const& origin, const long from, const long to )
       }
     }
 
-    write_firing_rate_reg_to_history( t, t, S_.z_, P_.f_target_, P_.beta_fr_ema_, P_.c_reg_ );
+    write_firing_rate_reg_to_history( t, t, S_.z_, P_.f_target_, P_.kappa_, P_.c_reg_ );
 
     S_.learning_signal_ = get_learning_signal_from_history( t, false );
 
@@ -384,17 +383,15 @@ eprop_iaf::compute_gradient( const long t_spike,
   double& epsilon,
   double& avg_e,
   double& weight,
-  const double kappa,
   const CommonSynapseProperties& cp,
   WeightOptimizer* optimizer )
 {
-  long t = t_previous_spike;    // inter-spike time step
-  double e = 0.0;               // eligibility trace
-  double z = 0.0;               // spiking variable
-  double psi = 0.0;             // surrogate gradient
-  double L = 0.0;               // learning signal
-  double firing_rate_reg = 0.0; // firing rate regularization
-  double grad = 0.0;            // gradient
+  long t = t_previous_spike; // inter-spike time step
+  double e = 0.0;            // eligibility trace
+  double z = 0.0;            // spiking variable
+  double psi = 0.0;          // surrogate gradient
+  double L = 0.0;            // learning signal
+  double grad = 0.0;         // gradient
 
   const EpropSynapseCommonProperties& ecp = static_cast< const EpropSynapseCommonProperties& >( cp );
 
@@ -425,13 +422,11 @@ eprop_iaf::compute_gradient( const long t_spike,
 
     psi = eprop_hist_it->surrogate_gradient_;
     L = eprop_hist_it->learning_signal_;
-    firing_rate_reg = eprop_hist_it->firing_rate_reg_;
 
     z_bar = V_.P_v_m_ * z_bar + V_.P_z_in_ * z;
     e = psi * z_bar;
-    avg_e = P_.beta_fr_ema_ * avg_e + ( 1.0 - P_.beta_fr_ema_ ) * e;
-    e_bar = kappa * e_bar + ( 1.0 - kappa ) * e;
-    grad = L * e_bar + firing_rate_reg * avg_e;
+    e_bar = P_.kappa_ * e_bar + ( 1.0 - P_.kappa_ ) * e;
+    grad = L * e_bar;
 
     weight = optimizer->optimized_weight( *ecp.optimizer_cp_, t, grad, weight );
 
@@ -444,8 +439,7 @@ eprop_iaf::compute_gradient( const long t_spike,
   if ( power > 0 )
   {
     z_bar *= std::pow( V_.P_v_m_, power );
-    avg_e *= std::pow( P_.beta_fr_ema_, power );
-    e_bar *= std::pow( kappa, power );
+    e_bar *= std::pow( P_.kappa_, power );
   }
 }
 

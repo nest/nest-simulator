@@ -312,9 +312,6 @@ private:
   //! %Time constant for low-pass filtering the eligibility trace.
   double tau_m_readout_;
 
-  //! Low-pass filter of the eligibility trace.
-  double kappa_;
-
   /**
    *  Optimizer
    *
@@ -355,7 +352,6 @@ eprop_synapse< targetidentifierT >::eprop_synapse()
   , weight_( 1.0 )
   , t_previous_spike_( 0 )
   , t_previous_trigger_spike_( 0 )
-  , kappa_( std::exp( -Time::get_resolution().get_ms() / 10.0 ) )
   , optimizer_( nullptr )
 {
 }
@@ -373,7 +369,6 @@ eprop_synapse< targetidentifierT >::eprop_synapse( const eprop_synapse& es )
   , weight_( es.weight_ )
   , t_previous_spike_( 0 )
   , t_previous_trigger_spike_( 0 )
-  , kappa_( std::exp( -Time::get_resolution().get_ms() / 10.0 ) )
   , optimizer_( es.optimizer_ )
 {
 }
@@ -393,7 +388,6 @@ eprop_synapse< targetidentifierT >::operator=( const eprop_synapse& es )
   weight_ = es.weight_;
   t_previous_spike_ = es.t_previous_spike_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
-  kappa_ = es.kappa_;
   optimizer_ = es.optimizer_;
 
   return *this;
@@ -405,7 +399,6 @@ eprop_synapse< targetidentifierT >::eprop_synapse( eprop_synapse&& es )
   , weight_( es.weight_ )
   , t_previous_spike_( 0 )
   , t_previous_trigger_spike_( 0 )
-  , kappa_( es.kappa_ )
   , optimizer_( es.optimizer_ )
 {
   es.optimizer_ = nullptr;
@@ -426,7 +419,6 @@ eprop_synapse< targetidentifierT >::operator=( eprop_synapse&& es )
   weight_ = es.weight_;
   t_previous_spike_ = es.t_previous_spike_;
   t_previous_trigger_spike_ = es.t_previous_trigger_spike_;
-  kappa_ = es.kappa_;
 
   optimizer_ = es.optimizer_;
   es.optimizer_ = nullptr;
@@ -480,17 +472,8 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
   }
   else
   {
-    target->compute_gradient( t_spike,
-      t_previous_spike_,
-      previous_z_buffer_,
-      z_bar_,
-      e_bar_,
-      epsilon_,
-      avg_e_,
-      weight_,
-      kappa_,
-      cp,
-      optimizer_ );
+    target->compute_gradient(
+      t_spike, t_previous_spike_, previous_z_buffer_, z_bar_, e_bar_, epsilon_, avg_e_, weight_, cp, optimizer_ );
     t_begin = t_previous_spike_;
   }
 
@@ -514,7 +497,6 @@ eprop_synapse< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
-  def< double >( d, names::kappa, kappa_ );
   def< long >( d, names::size_of, sizeof( *this ) );
 
   DictionaryDatum optimizer_dict = new Dictionary();
@@ -543,14 +525,6 @@ eprop_synapse< targetidentifierT >::set_status( const DictionaryDatum& d, Connec
   }
 
   updateValue< double >( d, names::weight, weight_ );
-
-  if ( updateValue< double >( d, names::kappa, kappa_ ) )
-  {
-    if ( kappa_ <= 0.0 or kappa_ > 1.0 )
-    {
-      throw BadProperty( "kappa must be in the range (0, 1)" );
-    }
-  }
 
   const auto& gcm = dynamic_cast< const GenericConnectorModel< eprop_synapse< targetidentifierT > >& >( cm );
   const CommonPropertiesType& epcp = gcm.get_common_properties();

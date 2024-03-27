@@ -184,9 +184,19 @@ n_out = 10
 
 model_nrn_rec = "eprop_iaf"
 
+params_nrn_out = {
+    "C_m": 1.0,
+    "E_L": 0.0,
+    "eprop_isi_trace_cutoff": 10**2,  # cutoff of integration of eprop trace between spikes
+    "I_e": 0.0,
+    "loss": "mean_squared_error",  # loss function
+    "regular_spike_arrival": False,
+    "tau_m": 100.0,
+    "V_m": 0.0,
+}
+
 params_nrn_rec = {
     "beta": 1.0,  # widht scaling of the pseudo-derivative
-    "beta_fr_ema": 0.999,  # Smoothing factor of firing rate exponential moving average
     "C_m": 1.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
     "c_reg": 2.0 / duration["sequence"],  # firing rate regularization scaling
     "E_L": 0.0,  # mV, leak reversal potential
@@ -200,6 +210,10 @@ params_nrn_rec = {
     "V_m": 0.0,  # mV, initial value of the membrane voltage
     "V_th": 0.5,  # mV, spike threshold membrane voltage
     "V_reset": -0.5,
+    "kappa": np.exp(
+        -duration["step"] / params_nrn_out["tau_m"]
+    ),  # ms, for technical reasons pass a filter with the readout neuron membrane time constant
+
 }
 
 if model_nrn_rec == "eprop_iaf":
@@ -207,17 +221,6 @@ if model_nrn_rec == "eprop_iaf":
     params_nrn_rec["c_reg"] = 2.0 / duration["sequence"]  # firing rate regularization scaling
     params_nrn_rec["regular_spike_arrival"] = True  # postsynaptic current scale factor
     params_nrn_rec["V_th"] = 0.6  # mV, spike threshold membrane voltage
-
-params_nrn_out = {
-    "C_m": 1.0,
-    "E_L": 0.0,
-    "eprop_isi_trace_cutoff": 10**2,  # cutoff of integration of eprop trace between spikes
-    "I_e": 0.0,
-    "loss": "mean_squared_error",  # loss function
-    "regular_spike_arrival": False,
-    "tau_m": 100.0,
-    "V_m": 0.0,
-}
 
 ####################
 
@@ -324,9 +327,6 @@ params_common_syn_eprop = {
 params_syn_base = {
     "synapse_model": "eprop_synapse",
     "delay": duration["step"],  # ms, dendritic delay
-    "kappa": np.exp(
-        -duration["step"] / params_nrn_out["tau_m"]
-    ),  # ms, for technical reasons pass a filter with the readout neuron membrane time constant
 }
 
 params_syn_in = params_syn_base.copy()

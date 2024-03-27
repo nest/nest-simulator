@@ -559,7 +559,6 @@ nest::Node::compute_gradient( const long t_spike,
   double& epsilon,
   double& avg_e,
   double& weight,
-  const double kappa,
   const CommonSynapseProperties& cp,
   WeightOptimizer* optimizer )
 {

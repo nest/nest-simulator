@@ -72,9 +72,14 @@ You can access the data recorded by the recorders with the ``events`` property.
 
    mm_events = mm.get("events")
 
+.. note::
 
-The complete list of parameters and other recording backend options
-can be found in the :ref:`guide to recording from simulations <recording_backends>`.
+   The type of recording backend you choose may affect the efficiency of your simulation.
+   Increasingly larger simulations may benefit from the `ascii` or `sionlib` backend, as the `memory`
+   backend might be slower when retrieving large data sets.
+
+   The complete list of parameters and other recording backend options
+   can be found in the :ref:`guide to recording from simulations <recording_backends>`.
 
 Recorder properties
 +++++++++++++++++++

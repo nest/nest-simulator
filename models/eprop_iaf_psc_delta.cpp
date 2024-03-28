@@ -86,8 +86,8 @@ nest::eprop_iaf_psc_delta::Parameters_::Parameters_()
   , beta_( 1.0 )
   , gamma_( 0.3 )
   , surrogate_gradient_function_( "piecewise_linear" )
-  , eprop_isi_trace_cutoff_( std::numeric_limits< long >::max() )
   , kappa_( std::exp( -Time::get_resolution().get_ms() / 10.0 ) )
+  , eprop_isi_trace_cutoff_( std::numeric_limits< long >::max() )
 {
 }
 

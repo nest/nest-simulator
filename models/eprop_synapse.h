@@ -323,7 +323,6 @@ private:
   double z_bar_ = 0.0;
   double e_bar_ = 0.0;
   double epsilon_ = 0.0;
-  double avg_e_ = 0.0;
 
   double previous_z_buffer_ = 0.0;
   bool is_first_spike_ = true;
@@ -473,7 +472,7 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
   else
   {
     target->compute_gradient(
-      t_spike, t_previous_spike_, previous_z_buffer_, z_bar_, e_bar_, epsilon_, avg_e_, weight_, cp, optimizer_ );
+      t_spike, t_previous_spike_, previous_z_buffer_, z_bar_, e_bar_, epsilon_, weight_, cp, optimizer_ );
     t_begin = t_previous_spike_;
   }
 

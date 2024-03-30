@@ -464,7 +464,6 @@ eprop_iaf_psc_delta::compute_gradient( const long t_spike,
   double& z_bar,
   double& e_bar,
   double& epsilon,
-  double& avg_e,
   double& weight,
   const CommonSynapseProperties& cp,
   WeightOptimizer* optimizer )

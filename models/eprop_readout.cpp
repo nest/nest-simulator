@@ -358,24 +358,9 @@ eprop_readout::compute_gradient( const long t_spike,
 
   while ( t < std::min( t_spike, t_previous_spike + P_.eprop_isi_trace_cutoff_ ) )
   {
-    if ( pre )
-    {
-      z = previous_z_buffer;
-      previous_z_buffer = 1.0;
-      pre = false;
-    }
-    else
-    {
-      if ( previous_z_buffer == 1.0 )
-      {
-        z = 1.0;
-        previous_z_buffer = 0.0;
-      }
-      else
-      {
-        z = 0.0;
-      }
-    }
+    z = previous_z_buffer;
+    previous_z_buffer = pre ? 1.0 : 0.0;
+    pre = 0.0;
 
     L = eprop_hist_it->error_signal_;
 

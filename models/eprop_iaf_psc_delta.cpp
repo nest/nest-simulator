@@ -516,7 +516,7 @@ eprop_iaf_psc_delta::compute_gradient( const long t_spike,
     ++t;
   }
 
-  int power = t_spike - ( t_previous_spike + P_.eprop_isi_trace_cutoff_ );
+  const int power = t_spike - ( t_previous_spike + P_.eprop_isi_trace_cutoff_ );
 
   if ( power > 0 )
   {

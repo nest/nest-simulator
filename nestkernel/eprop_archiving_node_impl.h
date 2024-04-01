@@ -150,14 +150,14 @@ EpropArchivingNode< HistEntryT >::erase_used_eprop_history()
     }
     else
     {
-      const auto it_eprop_hist_from = get_eprop_history( t );
-      const auto it_eprop_hist_to = get_eprop_history( t + update_interval );
-      eprop_history_.erase( it_eprop_hist_from, it_eprop_hist_to ); // erase found entries since no longer used
+      const auto it_eprop_hist_from_1 = get_eprop_history( t );
+      const auto it_eprop_hist_to_1 = get_eprop_history( t + update_interval );
+      eprop_history_.erase( it_eprop_hist_from_1, it_eprop_hist_to_1 ); // erase found entries since no longer used
     }
   }
-  const auto it_eprop_hist_from = get_eprop_history( 0 );
-  const auto it_eprop_hist_to = get_eprop_history( update_history_.begin()->t_ );
-  eprop_history_.erase( it_eprop_hist_from, it_eprop_hist_to ); // erase found entries since no longer used
+  const auto it_eprop_hist_from_2 = get_eprop_history( 0 );
+  const auto it_eprop_hist_to_2 = get_eprop_history( update_history_.begin()->t_ );
+  eprop_history_.erase( it_eprop_hist_from_2, it_eprop_hist_to_2 ); // erase found entries since no longer used
 }
 
 template < typename HistEntryT >
@@ -174,14 +174,13 @@ EpropArchivingNode< HistEntryT >::erase_used_eprop_history( const long eprop_isi
   const long t_prev = ( update_history_.end() - 2 )->t_;
   const long t_curr = ( update_history_.end() - 1 )->t_;
 
-  const auto it_eprop_hist_erase_from = get_eprop_history( t_prev + eprop_isi_trace_cutoff );
-  const auto it_eprop_hist_erase_to = get_eprop_history( t_curr );
-  eprop_history_.erase( it_eprop_hist_erase_from, it_eprop_hist_erase_to ); // erase found entries since no longer used
+  const auto it_eprop_hist_from_1 = get_eprop_history( t_prev + eprop_isi_trace_cutoff );
+  const auto it_eprop_hist_to_1 = get_eprop_history( t_curr );
+  eprop_history_.erase( it_eprop_hist_from_1, it_eprop_hist_to_1 ); // erase found entries since no longer used
 
-  const auto it_eprop_hist_from = get_eprop_history( 0 );
-  const auto it_eprop_hist_to = get_eprop_history( update_history_.begin()->t_ - 1 );
-
-  eprop_history_.erase( it_eprop_hist_from, it_eprop_hist_to ); // erase found entries since no longer used
+  const auto it_eprop_hist_from_2 = get_eprop_history( 0 );
+  const auto it_eprop_hist_to_2 = get_eprop_history( update_history_.begin()->t_ - 1 );
+  eprop_history_.erase( it_eprop_hist_from_2, it_eprop_hist_to_2 ); // erase found entries since no longer used
 }
 
 template < typename HistEntryT >

@@ -434,12 +434,12 @@ eprop_iaf_adapt::compute_gradient( const long t_spike,
 
   auto eprop_hist_it = get_eprop_history( t_previous_spike - 1 );
 
-  bool pre = true;
+  double pre = 1.0;
 
   while ( t < std::min( t_spike, t_previous_spike + P_.eprop_isi_trace_cutoff_ ) )
   {
     z = previous_z_buffer;
-    previous_z_buffer = pre ? 1.0 : 0.0;
+    previous_z_buffer = pre;
     pre = 0.0;
 
     psi = eprop_hist_it->surrogate_gradient_;

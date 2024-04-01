@@ -325,7 +325,7 @@ private:
   double epsilon_ = 0.0;
 
   double previous_z_buffer_ = 0.0;
-  bool is_first_spike_ = true;
+  long t_begin_ = 0;
 };
 
 template < typename targetidentifierT >
@@ -462,22 +462,15 @@ eprop_synapse< targetidentifierT >::send( Event& e, size_t thread, const EpropSy
   assert( target );
 
   const long t_spike = e.get_stamp().get_steps();
-  long t_begin;
 
-  if ( is_first_spike_ )
-  {
-    is_first_spike_ = false;
-    t_begin = 0;
-  }
-  else
+  if ( t_previous_spike_ != 0 )
   {
     target->compute_gradient(
       t_spike, t_previous_spike_, previous_z_buffer_, z_bar_, e_bar_, epsilon_, weight_, cp, optimizer_ );
-    t_begin = t_previous_spike_;
   }
 
   const long eprop_isi_trace_cutoff = target->get_eprop_isi_trace_cutoff();
-  target->write_update_to_history( t_begin, t_spike, eprop_isi_trace_cutoff, true );
+  target->write_update_to_history( t_previous_spike_, t_spike, eprop_isi_trace_cutoff, true );
 
   t_previous_spike_ = t_spike;
 

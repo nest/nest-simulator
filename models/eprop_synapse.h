@@ -325,7 +325,6 @@ private:
   double epsilon_ = 0.0;
 
   double previous_z_buffer_ = 0.0;
-  long t_begin_ = 0;
 };
 
 template < typename targetidentifierT >

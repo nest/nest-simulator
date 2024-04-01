@@ -396,28 +396,13 @@ eprop_iaf::compute_gradient( const long t_spike,
 
   auto eprop_hist_it = get_eprop_history( t_previous_spike - 1 );
 
-  bool pre = true;
+  double pre = 1.0;
 
   while ( t < std::min( t_spike, t_previous_spike + P_.eprop_isi_trace_cutoff_ ) )
   {
-    if ( pre )
-    {
-      z = previous_z_buffer;
-      previous_z_buffer = 1.0;
-      pre = false;
-    }
-    else
-    {
-      if ( previous_z_buffer == 1.0 )
-      {
-        z = 1.0;
-        previous_z_buffer = 0.0;
-      }
-      else
-      {
-        z = 0.0;
-      }
-    }
+    z = previous_z_buffer;
+    previous_z_buffer = pre;
+    pre = 0.0;
 
     psi = eprop_hist_it->surrogate_gradient_;
     L = eprop_hist_it->learning_signal_;

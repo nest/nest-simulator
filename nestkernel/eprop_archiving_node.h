@@ -78,12 +78,12 @@ public:
   //! transmitted a spike in a more recent update interval.
   void erase_used_eprop_history();
 
-  //! Erase update intervals from the e-prop history in which each synapse has either not transmitted a spike or has
-  //! transmitted a spike in a more recent update interval.
+  //! Erase entries from the e-prop history between the last trace cutoff and the last update, as well as the ones up to
+  //! the first update.
   void erase_used_eprop_history( const long eprop_isi_trace_cutoff );
 
 protected:
-  //!< Number of incoming eprop synapses
+  //! Number of incoming eprop synapses
   size_t eprop_indegree_;
 
   //! History of updates still needed by at least one synapse.
@@ -124,6 +124,7 @@ public:
   //! Copy constructor.
   EpropArchivingNodeRecurrent( const EpropArchivingNodeRecurrent& );
 
+  //! Select the surrogate gradient function.
   double ( EpropArchivingNodeRecurrent::*select_surrogate_gradient(
     std::string surrogate_gradient_function ) )( double, double, double, double, double, double )
   {
@@ -154,6 +155,8 @@ public:
     }
   }
 
+  //! Compute the surrogate gradient with a piecewise linear function around the spike time (used, e.g., in Bellec et
+  //! al., 2020).
   double compute_piecewise_linear_surrogate_gradient( const double r,
     const double v_m,
     const double v_th_adapt,
@@ -161,6 +164,8 @@ public:
     const double beta,
     const double gamma );
 
+  //! Compute the surrogate gradient with an exponentially decaying function around the spike time (used, e.g., in
+  //! Shrestha and Orchard, 2018).
   double compute_exponential_surrogate_gradient( const double r,
     const double v_m,
     const double v_th_adapt,
@@ -168,6 +173,8 @@ public:
     const double beta,
     const double gamma );
 
+  //! Compute the surrogate gradient with a function corresponding to the derivative of a fast sigmoid around the spike
+  //! (used, e.g., in Zenke and Ganguli, 2018). time.
   double compute_fast_sigmoid_derivative_surrogate_gradient( const double r,
     const double v_m,
     const double v_th_adapt,
@@ -175,6 +182,7 @@ public:
     const double beta,
     const double gamma );
 
+  //! Compute the surrogate gradient with an arctan function around the spike time (used, e.g., in Fang et al., 2021).
   double compute_arctan_surrogate_gradient( const double r,
     const double v_m,
     const double v_th_adapt,
@@ -194,7 +202,7 @@ public:
   //! Create an entry in the firing rate regularization history for the current update.
   void write_firing_rate_reg_to_history( const long t_current_update, const double f_target, const double c_reg );
 
-  //! Create an entry in the firing rate regularization history for the current update.
+  //! Calculate the current firing rate regularization and add the value to the learning signal.
   void write_firing_rate_reg_to_history( const long t,
     const long interval_step,
     const double z,

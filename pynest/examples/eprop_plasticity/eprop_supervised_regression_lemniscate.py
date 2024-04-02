@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# eprop_supervised_regression_infinite-loop.py
+# eprop_supervised_regression_lemniscate.py
 #
 # This file is part of NEST.
 #

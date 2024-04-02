@@ -76,6 +76,7 @@ References
 import os
 import sys
 import zipfile
+import requests
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -116,17 +117,14 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # Using a batch size larger than one aids the network in generalization, facilitating the solution to this task.
 # The original number of iterations requires distributed computing.
 
-n_batch = 32  # batch size, 64 in reference [2], 32 in the README to reference [2]
-n_iter_train = 50
-n_iter_test = 4
+n_batch = 100  # batch size, 64 in reference [2], 32 in the README to reference [2]
+n_iter = 200
 
 steps = {}
 
 steps["sequence"] = 300  # time steps of one full sequence
 steps["learning_window"] = 10  # time steps of window with non-zero learning signals
-steps["training_time"] = n_iter_train * n_batch * steps["sequence"]
-steps["testing_time"] = n_iter_test * n_batch * steps["sequence"]
-steps["task"] = steps["training_time"] + steps["testing_time"]  # time steps of task
+steps["task"] = n_iter * n_batch * steps["sequence"]  # time steps of task
 
 steps.update(
     {
@@ -157,7 +155,7 @@ duration.update({key: value * duration["step"] for key, value in steps.items()})
 params_setup = {
     "eprop_reset_neurons_on_update": True,  # if True, reset dynamic variables at start of each update interval
     "eprop_update_interval": duration["sequence"],  # ms, time interval for updating the synaptic weights
-    "print_time": True,  # if True, print time progress bar during simulation, set False if run as code cell
+    "print_time": False,  # if True, print time progress bar during simulation, set False if run as code cell
     "resolution": duration["step"],
     "total_num_virtual_procs": 1,  # number of virtual processes, set in case of distributed computing
 }
@@ -398,37 +396,42 @@ nest.Connect(mm_out, nrns_out, params_conn_all_to_all, params_syn_static)
 # Create input and output
 # ~~~~~~~~~~~~~~~~~~~~~~~
 
+def download_and_extract_dataset(url, dataset_directory='468j46mzdv-1'):
+    path = os.path.join('.', dataset_directory)
+    
+    expected_contents = ["Test", "Train"]
+    if os.path.exists(path) and all(os.path.exists(os.path.join(path, content)) for content in expected_contents):
+        print(f"\nThe directory '{path}' already exists with expected contents. Skipping download and extraction.")
+        return path
 
-def extract_dataset(zip_path, target_folder):
-    with zipfile.ZipFile(zip_path) as zip_file:
-        for member in zip_file.namelist():
-            if not os.path.exists(os.path.join(target_folder, member)):
-                zip_file.extract(member, target_folder)
+    local_zip_filename = 'dataset.zip'
 
-
-def load_n_mnist(file_path, num_labels=10, shuffle=True, pixels_blacklist=None):
-    assert 0 < num_labels <= 10, "num_labels must be between 1 and 10"
-
-    samples = np.loadtxt(file_path, dtype="int")
-    all_indices, all_labels = samples[:, 0], samples[:, 1]
-
-    if num_labels < 10:
-        wanted_labels = set(range(num_labels))
-        filtered_samples = [(idx, lbl) for idx, lbl in zip(all_indices, all_labels) if lbl in wanted_labels]
-        indices, labels = zip(*filtered_samples)
+    if not os.path.exists(local_zip_filename):
+        print("\nDownloading Neuromorphic-MNIST (N-MNIST) dataset...")
+        response = requests.get(url)
+        with open(local_zip_filename, 'wb') as file:
+            file.write(response.content)
+        print("Download completed.")
     else:
-        indices, labels = all_indices, all_labels
+        print(f"Found {local_zip_filename}, skipping download.")
 
-    indices, labels = np.array(indices), np.array(labels)
+    print("Extracting dataset...")
+    with zipfile.ZipFile(local_zip_filename, 'r') as zip_ref:
+        zip_ref.extractall(".")
+    print("Extraction completed.")
 
-    if shuffle:
-        shuffled_indices = np.random.permutation(len(indices))
-        indices, labels = indices[shuffled_indices], labels[shuffled_indices]
+    for sub_zip in ['Train.zip', 'Test.zip']:
+        sub_zip_path = os.path.join(path, sub_zip)
+        print(f"Extracting {sub_zip}...")
+        with zipfile.ZipFile(sub_zip_path, 'r') as zip_ref:
+            zip_ref.extractall(path)
+        print(f"Extraction of {sub_zip} completed.")
+        os.remove(sub_zip_path)
+    
+    os.remove(local_zip_filename)
+    print(f"Removed the zip file {local_zip_filename}.")
 
-    images = [load_image(f"NMNISTsmall/{idx}.bs2", pixels_blacklist) for idx in indices]
-
-    return images, labels
-
+    return path
 
 def load_image(file_path, pixels_blacklist=None):
     with open(file_path, "rb") as file:
@@ -456,41 +459,58 @@ def load_image(file_path, pixels_blacklist=None):
 
 
 class DataLoader:
-    def __init__(self, images, labels, n_batch):
-        self.images = images
-        self.labels = labels
+    def __init__(self, path, selected_labels, n_batch, pixels_blacklist=None):
+        self.path = path
+        self.selected_labels = selected_labels
         self.n_batch = n_batch
+        self.pixels_blacklist = pixels_blacklist
+
         self.current_index = 0
+        self.all_sample_paths, self.all_labels = self.get_all_sample_paths_with_labels()
+        self.shuffled_indices = np.random.permutation(len(self.all_sample_paths))
+
+    def get_all_sample_paths_with_labels(self):
+        all_sample_paths = []
+        all_labels = []
+        
+        for label in self.selected_labels:
+            label_dir_path = os.path.join(self.path, str(label))
+            all_files = os.listdir(label_dir_path)
+            
+            for sample in all_files:
+                all_sample_paths.append(os.path.join(label_dir_path, sample))
+                all_labels.append(label)
+
+        return all_sample_paths, all_labels
 
     def get_new_batch(self):
         end_index = self.current_index + self.n_batch
 
-        if end_index <= len(self.images):
-            batch_images = self.images[self.current_index : end_index]
-            batch_labels = self.labels[self.current_index : end_index]
+        if end_index <= len(self.all_sample_paths):
+            selected_indices = self.shuffled_indices[self.current_index:end_index]
         else:
-            overflow = end_index - len(self.images)
-            batch_images = self.images[self.current_index :] + self.images[:overflow]
-            batch_labels = np.concatenate((self.labels[self.current_index :], self.labels[:overflow]))
-
-        self.current_index = (end_index) % len(self.images)
+            overflow = end_index - len(self.all_sample_paths)
+            selected_indices = np.concatenate(
+                (self.shuffled_indices[self.current_index:len(self.all_sample_paths)],
+                 self.shuffled_indices[:overflow])
+            )
+        
+        self.current_index = (self.current_index + self.n_batch) % len(self.all_sample_paths)
+        
+        batch_images = [load_image(self.all_sample_paths[i], self.pixels_blacklist) for i in selected_indices]
+        batch_labels = [self.all_labels[i] for i in selected_indices]
 
         return batch_images, batch_labels
+    
+dataset_url = 'https://prod-dcd-datasets-cache-zipfiles.s3.eu-west-1.amazonaws.com/468j46mzdv-1.zip'
+path = download_and_extract_dataset(dataset_url)
+train_path = os.path.join(path, "Train/")
+test_path = os.path.join(path, "Test/")
 
+selected_labels = [l for l in range(n_out)]
 
-extract_dataset("NMNISTsmall.zip", "./")
-file_path_train = "NMNISTsmall/train1K.txt"
-file_path_test = "NMNISTsmall/test100.txt"
-
-train_images, train_labels = load_n_mnist(
-    file_path_train, num_labels=n_out, shuffle=True, pixels_blacklist=pixels_blacklist
-)
-test_images, test_labels = load_n_mnist(
-    file_path_test, num_labels=n_out, shuffle=True, pixels_blacklist=pixels_blacklist
-)
-
-train_loader = DataLoader(train_images, train_labels, n_batch=n_batch)
-test_loader = DataLoader(test_images, test_labels, n_batch=n_batch)
+train_loader = DataLoader(train_path, selected_labels, n_batch, pixels_blacklist)
+test_loader = DataLoader(test_path, selected_labels, n_batch, pixels_blacklist) 
 
 # %% ###########################################################################################################
 # Force final update
@@ -534,109 +554,110 @@ weights_pre_train = {
 # We train the network by simulating for a set simulation time, determined by the number of iterations and the
 # batch size and the length of one sequence.
 
-spike_times = [[] for _ in range(n_in)]
-target_rates = np.zeros((n_out, steps["task"]))
-target_signal_rescale_factor = 1.0
-
-for iteration in np.arange(n_iter_train + n_iter_test):
-    t_start_iteration = iteration * n_batch * steps["sequence"]
-    t_end_iteration = t_start_iteration + n_batch * steps["sequence"]
-
-    if iteration < n_iter_train:
-        loader = train_loader
-    else:
-        loader = test_loader
-
-    img_batch, targets_batch = loader.get_new_batch()
-
-    for batch_elem in range(n_batch):
-        t_start_batch_elem = t_start_iteration + batch_elem * steps["sequence"]
-        t_end_batch_elem = t_start_batch_elem + steps["sequence"]
-
-        target_rates[targets_batch[batch_elem], t_start_batch_elem:t_end_batch_elem] = target_signal_rescale_factor
-
-        for n, relative_times in enumerate(img_batch[batch_elem]):
-            absolute_times = t_start_batch_elem * np.ones_like(relative_times) + relative_times
-            spike_times[n] += absolute_times.tolist()
-
-params_gen_spk_in = []
-for spk_times in spike_times:
-    params_gen_spk_in.append({"spike_times": spk_times})
-
-params_gen_rate_target = []
-for target_rate in target_rates:
-    params_gen_rate_target.append(
-        {
-            "amplitude_times": np.arange(duration["total_offset"], duration["total_offset"] + duration["task"]),
-            "amplitude_values": target_rate,
-        }
-    )
+nest.Simulate(duration["total_offset"])
 
 amplitude_times = np.hstack(
     [
         np.array([0.0, duration["sequence"] - duration["learning_window"]])
         + duration["total_offset"]
         + i * duration["sequence"]
-        for i in range(n_batch * (n_iter_train + n_iter_test))
+        for i in range(n_batch * (n_iter))
     ]
 )
 
-amplitude_values = np.array([0.0, 1.0] * n_batch * (n_iter_train + n_iter_test))
+amplitude_values = np.array([0.0, 1.0] * n_batch * (n_iter))
 
 params_gen_learning_window = {
     "amplitude_times": amplitude_times,
     "amplitude_values": amplitude_values,
 }
-
-nest.SetStatus(gen_spk_in, params_gen_spk_in)
-nest.SetStatus(gen_rate_target, params_gen_rate_target)
 nest.SetStatus(gen_learning_window, params_gen_learning_window)
 
+target_signal_rescale_factor = 1.0
 
-nest.Simulate(duration["total_offset"] + duration["training_time"])
-params_common_syn_eprop["optimizer"]["eta"] = 0.0
-nest.SetDefaults("eprop_synapse", params_common_syn_eprop)
-nest.Simulate(duration["extension_sim"] + duration["testing_time"])
+for iteration in np.arange(n_iter):
+    t_start_iteration = iteration * n_batch * steps["sequence"]
+    t_end_iteration = t_start_iteration + n_batch * steps["sequence"]
+
+    loader = train_loader
+    params_common_syn_eprop["optimizer"]["eta"] = 5e-3    
+    if iteration and iteration % 10 == 0:
+        loader = test_loader
+        params_common_syn_eprop["optimizer"]["eta"] = 0.0
+
+    nest.SetDefaults("eprop_synapse", params_common_syn_eprop)
+
+    img_batch, targets_batch = loader.get_new_batch()
+
+    spike_times = [[] for _ in range(n_in)]
+    target_rates = np.zeros((n_out, n_batch * steps["sequence"]))
+    for batch_elem in range(n_batch):
+        t_start_batch_elem =  batch_elem * steps["sequence"]
+        t_end_batch_elem = t_start_batch_elem + steps["sequence"]
+
+        target_rates[targets_batch[batch_elem], t_start_batch_elem:t_end_batch_elem] = target_signal_rescale_factor
+
+        for n, relative_times in enumerate(img_batch[batch_elem]):
+            absolute_times = (t_start_iteration + t_start_batch_elem) * np.ones_like(relative_times) + relative_times
+            spike_times[n] += absolute_times.tolist()
+
+    params_gen_spk_in = []
+    for spk_times in spike_times:
+        params_gen_spk_in.append({"spike_times": spk_times})
+
+    params_gen_rate_target = []
+    for target_rate in target_rates:
+        params_gen_rate_target.append(
+            {
+                "amplitude_times": np.arange(duration["total_offset"]+t_start_iteration, duration["total_offset"] + t_end_iteration),
+                "amplitude_values": target_rate,
+            }
+        )
+
+    nest.SetStatus(gen_spk_in, params_gen_spk_in)
+    nest.SetStatus(gen_rate_target, params_gen_rate_target)
+    nest.Simulate(n_batch * steps["sequence"])
+
+    """
+    process data of recording devices
+    """
+    events_mm_out = mm_out.get("events")
+
+    senders = events_mm_out["senders"]
+    readout_signal = events_mm_out["V_m"]
+    target_signal = events_mm_out["target_signal"]
+
+    readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])  # nrns_out.tolist()
+    target_signal = np.array([target_signal[senders == i] for i in set(senders)])
+
+    readout_signal = readout_signal.reshape((n_out, iteration+1, n_batch, steps["sequence"]))   
+    readout_signal = readout_signal[:, -1, :, -steps["learning_window"] :]
+
+    target_signal = target_signal.reshape((n_out, iteration+1, n_batch, steps["sequence"]))
+    target_signal = target_signal[:, -1, :, -steps["learning_window"] :]
 
 
-"""
-process data of recording devices
-"""
-events_mm_out = mm_out.get("events")
+    """
+    calculate recall errors
+    """
 
-senders = events_mm_out["senders"]
-readout_signal = events_mm_out["V_m"]
-target_signal = events_mm_out["target_signal"]
+    mse = np.mean((target_signal - readout_signal) ** 2, axis=2)
+    distance_to_target = np.mean((target_signal_rescale_factor - readout_signal) ** 2, axis=2)
 
-readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])  # nrns_out.tolist()
-target_signal = np.array([target_signal[senders == i] for i in set(senders)])
+    losses = np.mean(mse, axis=(0,1))
 
-readout_signal = readout_signal.reshape((n_out, n_iter_train + n_iter_test, n_batch, steps["sequence"]))
-readout_signal = readout_signal[:, :, :, -steps["learning_window"] :]
+    y_prediction = np.argmin(distance_to_target, axis=0)
+    y_target = np.argmax(np.mean(target_signal, axis=2), axis=0)
+    accuracy = np.mean((y_target == y_prediction), axis=0)
 
-target_signal = target_signal.reshape((n_out, n_iter_train + n_iter_test, n_batch, steps["sequence"]))
-target_signal = target_signal[:, :, :, -steps["learning_window"] :]
+    print(f"    iter: {iteration} loss: {losses:0.5f} acc: {accuracy:0.5f}")
+    # print("\nTraining: ")
+    # for i, (loss, acc) in enumerate(zip(losses, accuracy)):
+        # print(f"    iter: {i} loss: {loss:0.5f} acc: {acc:0.5f}")
 
-"""
-calculate recall errors
-"""
-
-mse = np.mean((target_signal - readout_signal) ** 2, axis=3)
-distance_to_target = np.mean((target_signal_rescale_factor - readout_signal) ** 2, axis=3)
-
-losses = np.mean(mse, axis=(0, 2))
-
-y_prediction = np.argmin(distance_to_target, axis=0)
-y_target = np.argmax(np.mean(target_signal, axis=3), axis=0)
-accuracy = np.mean((y_target == y_prediction), axis=1)
-
-print("\nTraining: ")
-for i, (loss, acc) in enumerate(zip(losses[:n_iter_train], accuracy[:n_iter_train])):
-    print(f"    iter: {i} loss: {loss:0.5f} acc: {acc:0.5f}")
-
-print("\nTesting: ")
-for i, (loss, acc) in enumerate(zip(losses[n_iter_train:], accuracy[n_iter_train:])):
-    print(f"    iter: {i} loss: {loss:0.5f} acc: {acc:0.5f}")
+# print("\nTesting: ")
+# for i, (loss, acc) in enumerate(zip(losses[n_iter_train:], accuracy[n_iter_train:])):
+#     print(f"    iter: {i} loss: {loss:0.5f} acc: {acc:0.5f}")
 
 
 exit()

@@ -139,9 +139,9 @@ eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
     throw BadProperty( "Membrane capacitance C_m > 0 required." );
   }
 
-  if ( loss_ != "mean_squared_error" and loss_ != "cross_entropy" )
+  if ( loss_ != "mean_squared_error" )
   {
-    throw BadProperty( "Loss function loss from [\"mean_squared_error\", \"cross_entropy\"] required." );
+    throw BadProperty( "Loss function loss from [\"mean_squared_error\"] required." );
   }
 
   if ( tau_m_ <= 0 )

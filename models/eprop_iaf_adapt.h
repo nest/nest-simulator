@@ -507,16 +507,16 @@ private:
 
   // the order in which the structure instances are defined is important for speed
 
-  //!< Structure of parameters.
+  //! Structure of parameters.
   Parameters_ P_;
 
-  //!< Structure of state variables.
+  //! Structure of state variables.
   State_ S_;
 
-  //!< Structure of general variables.
+  //! Structure of general variables.
   Variables_ V_;
 
-  //!< Structure of buffers.
+  //! Structure of buffers.
   Buffers_ B_;
 
   //! Map storing a static set of recordables.

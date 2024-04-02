@@ -173,38 +173,38 @@ n_in = 100  # number of input neurons
 n_rec = 200  # number of recurrent neurons
 n_out = 2  # number of readout neurons
 
+params_nrn_out = {
+    "C_m": 1.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
+    "E_L": 0.0,  # mV, leak / resting membrane potential
+    "I_e": 0.0,  # pA, external current input
+    "loss": "mean_squared_error",  # loss function
+    "regular_spike_arrival": False,  # If True, input spikes arrive at end of time step, if False at beginning
+    "tau_m": 50.0,  # ms, membrane time constant
+    "V_m": 0.0,  # mV, initial value of the membrane voltage
+}
+
 tau_m_mean = 30.0  # ms, mean of membrane time constant distribution
 
 params_nrn_rec = {
     "beta": 1.0,  # width scaling of the pseudo-derivative
     "adapt_tau": 2000.0,  # ms, time constant of adaptive threshold
-    "C_m": 250.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
+    "C_m": 250.0,
     "c_reg": 150.0,  # firing rate regularization scaling
-    "E_L": 0.0,  # mV, leak / resting membrane potential
+    "E_L": 0.0,
     "f_target": 20.0,  # spikes/s, target firing rate for firing rate regularization
     "gamma": 0.3,  # height scaling of the pseudo-derivative
-    "I_e": 0.0,  # pA, external current input
-    "regular_spike_arrival": False,  # If True, input spikes arrive at end of time step, if False at beginning
+    "I_e": 0.0,
+    "regular_spike_arrival": False,
     "surrogate_gradient_function": "piecewise_linear",  # surrogate gradient / pseudo-derivative function
     "t_ref": 0.0,  # ms, duration of refractory period
-    "tau_m": nest.random.normal(mean=tau_m_mean, std=2.0),  # ms, membrane time constant
-    "V_m": 0.0,  # mV, initial value of the membrane voltage
+    "tau_m": nest.random.normal(mean=tau_m_mean, std=2.0),
+    "V_m": 0.0,
     "V_th": 0.03,  # mV, spike threshold membrane voltage
 }
 
 params_nrn_rec["adapt_beta"] = (
     1.7 * (1.0 - np.exp(-1 / params_nrn_rec["adapt_tau"])) / (1.0 - np.exp(-1.0 / tau_m_mean))
 )  # prefactor of adaptive threshold
-
-params_nrn_out = {
-    "C_m": 1.0,
-    "E_L": 0.0,
-    "I_e": 0.0,
-    "loss": "mean_squared_error",  # loss function
-    "regular_spike_arrival": False,
-    "tau_m": 50.0,
-    "V_m": 0.0,
-}
 
 ####################
 
@@ -573,6 +573,7 @@ ax.set_xlabel("training iteration")
 ax.set_xlim(1, n_iter)
 ax.xaxis.get_major_locator().set_params(integer=True)
 ax.legend(bbox_to_anchor=(1.01, 0.5), loc="center left")
+
 fig.tight_layout()
 
 # %% ###########################################################################################################

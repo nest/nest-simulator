@@ -168,44 +168,44 @@ n_in = 100  # number of input neurons
 n_rec = 100  # number of recurrent neurons
 n_out = 1  # number of readout neurons
 
-model_nrn_rec = "eprop_iaf_psc_delta"
+model_nrn_rec = "eprop_iaf"
 
 params_nrn_out = {
-    "C_m": 1.0,
-    "E_L": 0.0,
-    "eprop_isi_trace_cutoff": 10,
-    "I_e": 0.0,
+    "C_m": 1.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
+    "E_L": 0.0,  # mV, leak / resting membrane potential
+    "eprop_isi_trace_cutoff": 10,  # cutoff of integration of eprop trace between spikes
+    "I_e": 0.0,  # pA, external current input
     "loss": "mean_squared_error",  # loss function
-    "regular_spike_arrival": False,
-    "tau_m": 30.0,
-    "V_m": 0.0,
+    "regular_spike_arrival": False,  # If True, input spikes arrive at end of time step, if False at beginning
+    "tau_m": 30.0,  # ms, membrane time constant
+    "V_m": 0.0,  # mV, initial value of the membrane voltage
 }
 
 params_nrn_rec = {
     "beta": 1.0,  # width scaling of the pseudo-derivative
-    "C_m": 1.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
-    "c_reg": 2.0 / duration["sequence"],  # firing rate regularization scaling
-    "E_L": 0.0,  # mV, leak / resting membrane potential
-    "eprop_isi_trace_cutoff": 10,  # cutoff of integration of eprop trace between spikes
+    "C_m": 1.0,
+    "c_reg": 300.0 / duration["sequence"],  # firing rate regularization scaling
+    "E_L": 0.0,
+    "eprop_isi_trace_cutoff": 10,
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
     "gamma": 0.3,  # height scaling of the pseudo-derivative
-    "I_e": 0.0,  # pA, external current input
+    "I_e": 0.0,
+    "regular_spike_arrival": False,
     "surrogate_gradient_function": "piecewise_linear",  # surrogate gradient / pseudo-derivative function
     "t_ref": 0.0,  # ms, duration of refractory period
-    "tau_m": 30.0,  # ms, membrane time constant
-    "V_m": 0.0,  # mV, initial value of the membrane voltage
-    "V_th": 0.5,  # mV, spike threshold membrane voltage
-    "V_reset": -0.5,
+    "tau_m": 30.0,
+    "V_m": 0.0,
+    "V_th": 0.03,  # mV, spike threshold membrane voltage
     "kappa": np.exp(
         -duration["step"] / params_nrn_out["tau_m"]
     ),  # ms, for technical reasons pass a filter with the readout neuron membrane time constant
 }
 
-if model_nrn_rec == "eprop_iaf":
-    del params_nrn_rec["V_reset"]
-    params_nrn_rec["c_reg"] = 300.0 / duration["sequence"]  # firing rate regularization scaling
-    params_nrn_rec["regular_spike_arrival"] = False  # postsynaptic current scale factor
-    params_nrn_rec["V_th"] = 0.03  # mV, spike threshold membrane voltage
+if model_nrn_rec == "eprop_iaf_psc_delta":
+    del params_nrn_rec["regular_spike_arrival"]
+    params_nrn_rec["V_reset"] = -0.5
+    params_nrn_rec["c_reg"] = 2.0 / duration["sequence"]
+    params_nrn_rec["V_th"] = 0.5
 
 ####################
 

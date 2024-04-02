@@ -189,20 +189,29 @@ n_reg = 50  # number of regular neurons
 n_rec = n_ad + n_reg  # number of recurrent neurons
 n_out = 2  # number of readout neurons
 
+params_nrn_out = {
+    "C_m": 1.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
+    "E_L": 0.0,  # mV, leak / resting membrane potential
+    "I_e": 0.0,  # pA, external current input
+    "loss": "cross_entropy",  # loss function
+    "regular_spike_arrival": False,  # If True, input spikes arrive at end of time step, if False at beginning
+    "tau_m": 20.0,  # ms, membrane time constant
+    "V_m": 0.0,  # mV, initial value of the membrane voltage
+}
 
 params_nrn_reg = {
     "beta": 1.0,  # width scaling of the pseudo-derivative
-    "C_m": 1.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
+    "C_m": 1.0,
     "c_reg": 300.0,  # firing rate regularization scaling - 2*learning_window*(TF c_reg) for technical reasons
-    "E_L": 0.0,  # mV, leak / resting membrane potential
+    "E_L": 0.0,
     "f_target": 10.0,  # spikes/s, target firing rate for firing rate regularization
     "gamma": 0.3,  # height scaling of the pseudo-derivative
-    "I_e": 0.0,  # pA, external current input
-    "regular_spike_arrival": True,  # If True, input spikes arrive at end of time step, if False at beginning
+    "I_e": 0.0,
+    "regular_spike_arrival": True,
     "surrogate_gradient_function": "piecewise_linear",  # surrogate gradient / pseudo-derivative function
     "t_ref": 5.0,  # ms, duration of refractory period
-    "tau_m": 20.0,  # ms, membrane time constant
-    "V_m": 0.0,  # mV, initial value of the membrane voltage
+    "tau_m": 20.0,
+    "V_m": 0.0,
     "V_th": 0.6,  # mV, spike threshold membrane voltage
 }
 
@@ -228,16 +237,6 @@ params_nrn_ad["adapt_beta"] = 1.7 * (
     (1.0 - np.exp(-duration["step"] / params_nrn_ad["adapt_tau"]))
     / (1.0 - np.exp(-duration["step"] / params_nrn_ad["tau_m"]))
 )  # prefactor of adaptive threshold
-
-params_nrn_out = {
-    "C_m": 1.0,
-    "E_L": 0.0,
-    "I_e": 0.0,
-    "loss": "cross_entropy",  # loss function
-    "regular_spike_arrival": False,
-    "tau_m": 20.0,
-    "V_m": 0.0,
-}
 
 ####################
 

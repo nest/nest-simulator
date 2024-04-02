@@ -199,7 +199,6 @@ params_nrn_rec = {
     "kappa": np.exp(
         -duration["step"] / params_nrn_out["tau_m"]
     ),  # ms, for technical reasons pass a filter with the readout neuron membrane time constant
-
 }
 
 if model_nrn_rec == "eprop_iaf":
@@ -285,7 +284,7 @@ params_common_syn_eprop = {
     "optimizer": {
         "type": "gradient_descent",  # algorithm to optimize the weights
         "batch_size": n_batch,
-        "eta": 5e-3,  # learning rate
+        "eta": 1e-4,  # learning rate
         "Wmin": -100.0,  # pA, minimal limit of the synaptic weights
         "Wmax": 100.0,  # pA, maximal limit of the synaptic weights
     },

@@ -20,10 +20,10 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 r"""
-Tutorial on learning to generate an infinite loop with e-prop
+Tutorial on learning to generate an lemniscate with e-prop
 -------------------------------------------------------------
 
-Training a regression model using supervised e-prop plasticity to generate an infinite loop
+Training a regression model using supervised e-prop plasticity to generate an lemniscate
 
 Description
 ~~~~~~~~~~~
@@ -397,7 +397,7 @@ nest.SetStatus(gen_spk_in, params_gen_spk_in)
 # %% ###########################################################################################################
 # Create output
 # ~~~~~~~~~~~~~
-# Then, we load the x and y values of an image of an infinite loop and construct a roughly
+# Then, we load the x and y values of an image of an lemniscate and construct a roughly
 # one-second long target signal from it. This signal, like the input, is repeated for all iterations and fed
 # into the rate generator that was previously created.
 

@@ -38,6 +38,8 @@ Recording devices can fundamentally be subdivided into two groups:
   neuron (not the neuron to the sampler), and that the neuron must
   support the particular type of sampling.
 
+.. _recording_backends:
+
 What values can I record?
 -------------------------
 
@@ -69,7 +71,6 @@ Check out the following examples to see how the recorders are used:
 - :doc:`/auto_examples/urbanczik_synapse_example` uses all 3 recorders.
 
 
-.. _recording_backends:
 
 Where does data end up?
 -----------------------

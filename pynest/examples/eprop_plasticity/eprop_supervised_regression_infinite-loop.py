@@ -34,9 +34,8 @@ is equipped with the eligibility propagation (e-prop) plasticity mechanism by Be
 This type of learning is demonstrated at the proof-of-concept task in [1]_. We based this script on their
 TensorFlow script given in [2]_ and changed the task as well as the parameters slightly.
 
-
 In this task, the network learns to generate an arbitrary N-dimensional temporal pattern. Here, the network
-learns to reproduce with its overall spiking activity a two-dimensional, roughly two-second-long target signal
+learns to reproduce with its overall spiking activity a two-dimensional, roughly one-second-long target signal
 which encode the x and y coordinates of an infinite-loop.
 
 .. image:: ../../../../pynest/examples/eprop_plasticity/eprop_supervised_regression_schematic_infinite-loop.png
@@ -326,7 +325,6 @@ params_syn_rec["weight"] = weights_rec_rec
 params_syn_out = params_syn_base.copy()
 params_syn_out["weight"] = weights_rec_out
 
-
 params_syn_feedback = {
     "synapse_model": "eprop_learning_signal_connection_bsshslm_2020",
     "delay": duration["step"],
@@ -399,7 +397,7 @@ nest.SetStatus(gen_spk_in, params_gen_spk_in)
 # %% ###########################################################################################################
 # Create output
 # ~~~~~~~~~~~~~
-# Then, we load the x and y values of an image of the word "chaos" written by hand and construct a roughly
+# Then, we load the x and y values of an image of an infinite loop and construct a roughly
 # one-second long target signal from it. This signal, like the input, is repeated for all iterations and fed
 # into the rate generator that was previously created.
 

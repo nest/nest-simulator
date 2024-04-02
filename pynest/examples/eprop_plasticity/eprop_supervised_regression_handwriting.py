@@ -34,9 +34,8 @@ is equipped with the eligibility propagation (e-prop) plasticity mechanism by Be
 This type of learning is demonstrated at the proof-of-concept task in [1]_. We based this script on their
 TensorFlow script given in [2]_ and changed the task as well as the parameters slightly.
 
-
 In this task, the network learns to generate an arbitrary N-dimensional temporal pattern. Here, the network
-learns to reproduce with its overall spiking activity a two-dimensional, roughly one-second-long target signal
+learns to reproduce with its overall spiking activity a two-dimensional, roughly two-second-long target signal
 which encode the x and y coordinates of the handwritten word "chaos".
 
 .. image:: ../../../../pynest/examples/eprop_plasticity/eprop_supervised_regression_schematic_handwriting.png

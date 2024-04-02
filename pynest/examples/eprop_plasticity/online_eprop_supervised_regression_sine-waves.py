@@ -199,7 +199,6 @@ params_nrn_rec = {
     "kappa": np.exp(
         -duration["step"] / params_nrn_out["tau_m"]
     ),  # ms, for technical reasons pass a filter with the readout neuron membrane time constant
-
 }
 
 if model_nrn_rec == "eprop_iaf":
@@ -253,13 +252,20 @@ params_mm_out = {
 params_wr = {
     "senders": nrns_in[:n_record_w] + nrns_rec[:n_record_w],  # limit senders to subsample weights to record
     "targets": nrns_rec[:n_record_w] + nrns_out,  # limit targets to subsample weights to record from
+    "start": duration["total_offset"],
+    "stop": duration["total_offset"] + duration["task"],
+}
+
+params_sr = {
+    "start": duration["total_offset"],
+    "stop": duration["total_offset"] + duration["task"],
 }
 
 ####################
 
 mm_rec = nest.Create("multimeter", params_mm_rec)
 mm_out = nest.Create("multimeter", params_mm_out)
-sr = nest.Create("spike_recorder")
+sr = nest.Create("spike_recorder", params_sr)
 wr = nest.Create("weight_recorder", params_wr)
 
 nrns_rec_record = nrns_rec[:n_record]
@@ -409,7 +415,6 @@ params_gen_learning_window = {
 ####################
 
 nest.SetStatus(gen_rate_target, params_gen_rate_target)
-
 nest.SetStatus(gen_learning_window, params_gen_learning_window)
 
 # %% ###########################################################################################################
@@ -421,7 +426,7 @@ nest.SetStatus(gen_learning_window, params_gen_learning_window)
 # the last update interval, by sending a strong spike to all neurons that form the presynaptic side of an eprop
 # synapse. This step is required purely for technical reasons.
 
-gen_spk_final_update = nest.Create("spike_generator", 1, {"spike_times": [duration["task"] + duration["delays"] + 2]})
+gen_spk_final_update = nest.Create("spike_generator", 1, {"spike_times": [duration["task"] + duration["delays"]]})
 
 nest.Connect(gen_spk_final_update, nrns_in + nrns_rec, "all_to_all", {"weight": 1000.0})
 

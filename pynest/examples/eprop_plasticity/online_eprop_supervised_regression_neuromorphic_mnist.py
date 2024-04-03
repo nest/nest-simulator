@@ -76,12 +76,12 @@ References
 import os
 import sys
 import zipfile
-import requests
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import nest
 import numpy as np
+import requests
 from cycler import cycler
 from IPython.display import HTML, Image
 
@@ -393,42 +393,44 @@ nest.Connect(mm_out, nrns_out, params_conn_all_to_all, params_syn_static)
 # Create input and output
 # ~~~~~~~~~~~~~~~~~~~~~~~
 
-def download_and_extract_dataset(url, dataset_directory='468j46mzdv-1'):
-    path = os.path.join('.', dataset_directory)
-    
+
+def download_and_extract_dataset(url, dataset_directory="468j46mzdv-1"):
+    path = os.path.join(".", dataset_directory)
+
     expected_contents = ["Test", "Train"]
     if os.path.exists(path) and all(os.path.exists(os.path.join(path, content)) for content in expected_contents):
         print(f"\nThe directory '{path}' already exists with expected contents. Skipping download and extraction.")
         return path
 
-    local_zip_filename = 'dataset.zip'
+    local_zip_filename = "dataset.zip"
 
     if not os.path.exists(local_zip_filename):
         print("\nDownloading Neuromorphic-MNIST (N-MNIST) dataset...")
         response = requests.get(url)
-        with open(local_zip_filename, 'wb') as file:
+        with open(local_zip_filename, "wb") as file:
             file.write(response.content)
         print("Download completed.")
     else:
         print(f"Found {local_zip_filename}, skipping download.")
 
     print("Extracting dataset...")
-    with zipfile.ZipFile(local_zip_filename, 'r') as zip_ref:
+    with zipfile.ZipFile(local_zip_filename, "r") as zip_ref:
         zip_ref.extractall(".")
     print("Extraction completed.")
 
-    for sub_zip in ['Train.zip', 'Test.zip']:
+    for sub_zip in ["Train.zip", "Test.zip"]:
         sub_zip_path = os.path.join(path, sub_zip)
         print(f"Extracting {sub_zip}...")
-        with zipfile.ZipFile(sub_zip_path, 'r') as zip_ref:
+        with zipfile.ZipFile(sub_zip_path, "r") as zip_ref:
             zip_ref.extractall(path)
         print(f"Extraction of {sub_zip} completed.")
         os.remove(sub_zip_path)
-    
+
     os.remove(local_zip_filename)
     print(f"Removed the zip file {local_zip_filename}.")
 
     return path
+
 
 def load_image(file_path, pixels_blacklist=None):
     with open(file_path, "rb") as file:
@@ -469,11 +471,11 @@ class DataLoader:
     def get_all_sample_paths_with_labels(self):
         all_sample_paths = []
         all_labels = []
-        
+
         for label in self.selected_labels:
             label_dir_path = os.path.join(self.path, str(label))
             all_files = os.listdir(label_dir_path)
-            
+
             for sample in all_files:
                 all_sample_paths.append(os.path.join(label_dir_path, sample))
                 all_labels.append(label)
@@ -484,22 +486,25 @@ class DataLoader:
         end_index = self.current_index + self.n_batch
 
         if end_index <= len(self.all_sample_paths):
-            selected_indices = self.shuffled_indices[self.current_index:end_index]
+            selected_indices = self.shuffled_indices[self.current_index : end_index]
         else:
             overflow = end_index - len(self.all_sample_paths)
             selected_indices = np.concatenate(
-                (self.shuffled_indices[self.current_index:len(self.all_sample_paths)],
-                 self.shuffled_indices[:overflow])
+                (
+                    self.shuffled_indices[self.current_index : len(self.all_sample_paths)],
+                    self.shuffled_indices[:overflow],
+                )
             )
-        
+
         self.current_index = (self.current_index + self.n_batch) % len(self.all_sample_paths)
-        
+
         batch_images = [load_image(self.all_sample_paths[i], self.pixels_blacklist) for i in selected_indices]
         batch_labels = [self.all_labels[i] for i in selected_indices]
 
         return batch_images, batch_labels
-    
-dataset_url = 'https://prod-dcd-datasets-cache-zipfiles.s3.eu-west-1.amazonaws.com/468j46mzdv-1.zip'
+
+
+dataset_url = "https://prod-dcd-datasets-cache-zipfiles.s3.eu-west-1.amazonaws.com/468j46mzdv-1.zip"
 path = download_and_extract_dataset(dataset_url)
 train_path = os.path.join(path, "Train/")
 test_path = os.path.join(path, "Test/")
@@ -507,7 +512,7 @@ test_path = os.path.join(path, "Test/")
 selected_labels = [l for l in range(n_out)]
 
 train_loader = DataLoader(train_path, selected_labels, n_batch, pixels_blacklist)
-test_loader = DataLoader(test_path, selected_labels, n_batch, pixels_blacklist) 
+test_loader = DataLoader(test_path, selected_labels, n_batch, pixels_blacklist)
 
 # %% ###########################################################################################################
 # Force final update
@@ -577,7 +582,7 @@ for iteration in np.arange(n_iter):
     t_end_iteration = t_start_iteration + n_batch * steps["sequence"]
 
     loader = train_loader
-    params_common_syn_eprop["optimizer"]["eta"] = 5e-3    
+    params_common_syn_eprop["optimizer"]["eta"] = 5e-3
     if iteration and iteration % 10 == 0:
         loader = test_loader
         params_common_syn_eprop["optimizer"]["eta"] = 0.0
@@ -589,7 +594,7 @@ for iteration in np.arange(n_iter):
     spike_times = [[] for _ in range(n_in)]
     target_rates = np.zeros((n_out, n_batch * steps["sequence"]))
     for batch_elem in range(n_batch):
-        t_start_batch_elem =  batch_elem * steps["sequence"]
+        t_start_batch_elem = batch_elem * steps["sequence"]
         t_end_batch_elem = t_start_batch_elem + steps["sequence"]
 
         target_rates[targets_batch[batch_elem], t_start_batch_elem:t_end_batch_elem] = target_signal_rescale_factor
@@ -606,7 +611,9 @@ for iteration in np.arange(n_iter):
     for target_rate in target_rates:
         params_gen_rate_target.append(
             {
-                "amplitude_times": np.arange(duration["total_offset"]+t_start_iteration, duration["total_offset"] + t_end_iteration),
+                "amplitude_times": np.arange(
+                    duration["total_offset"] + t_start_iteration, duration["total_offset"] + t_end_iteration
+                ),
                 "amplitude_values": target_rate,
             }
         )
@@ -627,12 +634,11 @@ for iteration in np.arange(n_iter):
     readout_signal = np.array([readout_signal[senders == i] for i in set(senders)])  # nrns_out.tolist()
     target_signal = np.array([target_signal[senders == i] for i in set(senders)])
 
-    readout_signal = readout_signal.reshape((n_out, iteration+1, n_batch, steps["sequence"]))   
+    readout_signal = readout_signal.reshape((n_out, iteration + 1, n_batch, steps["sequence"]))
     readout_signal = readout_signal[:, -1, :, -steps["learning_window"] :]
 
-    target_signal = target_signal.reshape((n_out, iteration+1, n_batch, steps["sequence"]))
+    target_signal = target_signal.reshape((n_out, iteration + 1, n_batch, steps["sequence"]))
     target_signal = target_signal[:, -1, :, -steps["learning_window"] :]
-
 
     """
     calculate recall errors
@@ -641,7 +647,7 @@ for iteration in np.arange(n_iter):
     mse = np.mean((target_signal - readout_signal) ** 2, axis=2)
     distance_to_target = np.mean((target_signal_rescale_factor - readout_signal) ** 2, axis=2)
 
-    losses = np.mean(mse, axis=(0,1))
+    losses = np.mean(mse, axis=(0, 1))
 
     y_prediction = np.argmin(distance_to_target, axis=0)
     y_target = np.argmax(np.mean(target_signal, axis=2), axis=0)
@@ -650,7 +656,7 @@ for iteration in np.arange(n_iter):
     print(f"    iter: {iteration} loss: {losses:0.5f} acc: {accuracy:0.5f}")
     # print("\nTraining: ")
     # for i, (loss, acc) in enumerate(zip(losses, accuracy)):
-        # print(f"    iter: {i} loss: {loss:0.5f} acc: {acc:0.5f}")
+    # print(f"    iter: {i} loss: {loss:0.5f} acc: {acc:0.5f}")
 
 # print("\nTesting: ")
 # for i, (loss, acc) in enumerate(zip(losses[n_iter_train:], accuracy[n_iter_train:])):

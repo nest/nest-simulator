@@ -190,7 +190,10 @@ public:
     const double beta,
     const double gamma );
 
-  //! Create an entry in the eprop history for the given time step and surrogate gradient.
+  //! Create an entry in the eprop history for the given time step.
+  void create_eprop_history_entry( const long time_step );
+
+  //! Write the given surrogate gradient value to the history at the given time step.
   void write_surrogate_gradient_to_history( const long time_step, const double surrogate_gradient );
 
   //! Update the learning signal in the eprop history entry of the given time step by writing the value of the incoming
@@ -264,7 +267,10 @@ public:
   //! Copy constructor.
   EpropArchivingNodeReadout( const EpropArchivingNodeReadout& );
 
-  //! Create an entry in the eprop history for the given time step and error signal.
+  //! Create an entry in the eprop history for the given time step.
+  void create_eprop_history_entry( const long time_step, const bool has_norm_step = true );
+
+  //! Write the given error signal value to history at the given time step.
   void
   write_error_signal_to_history( const long time_step, const double error_signal, const bool has_norm_step = true );
 };

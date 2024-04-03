@@ -191,7 +191,7 @@ params_nrn_out = {
 }
 
 params_nrn_rec = {
-    "beta": 1.0,  # widht scaling of the pseudo-derivative
+    "beta": 1.0,  # width scaling of the pseudo-derivative
     "C_m": 1.0,  # pF, membrane capacitance - takes effect only if neurons get current input (here not the case)
     "c_reg": 2.0 / duration["sequence"],  # firing rate regularization scaling
     "E_L": 0.0,  # mV, leak reversal potential

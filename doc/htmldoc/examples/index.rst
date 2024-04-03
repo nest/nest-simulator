@@ -206,7 +206,7 @@ PyNEST examples
            * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_classification_evidence-accumulation`
            * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_sine-waves`
            * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_handwriting`
-           * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_infinite-loop`
+           * :doc:`/auto_examples/eprop_plasticity/eprop_supervised_regression_lemniscate`
 
 
 .. grid:: 1 1 2 3

@@ -72,7 +72,6 @@ eprop_readout::Parameters_::Parameters_()
   : C_m_( 250.0 )
   , E_L_( 0.0 )
   , I_e_( 0.0 )
-  , loss_( "mean_squared_error" )
   , regular_spike_arrival_( true )
   , tau_m_( 10.0 )
   , V_min_( -std::numeric_limits< double >::max() )
@@ -110,7 +109,6 @@ eprop_readout::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::C_m, C_m_ );
   def< double >( d, names::E_L, E_L_ );
   def< double >( d, names::I_e, I_e_ );
-  def< std::string >( d, names::loss, loss_ );
   def< bool >( d, names::regular_spike_arrival, regular_spike_arrival_ );
   def< double >( d, names::tau_m, tau_m_ );
   def< double >( d, names::V_min, V_min_ + E_L_ );
@@ -129,7 +127,6 @@ eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
 
   updateValueParam< double >( d, names::C_m, C_m_, node );
   updateValueParam< double >( d, names::I_e, I_e_, node );
-  updateValueParam< std::string >( d, names::loss, loss_, node );
   updateValueParam< bool >( d, names::regular_spike_arrival, regular_spike_arrival_, node );
   updateValueParam< double >( d, names::tau_m, tau_m_, node );
   updateValueParam< long >( d, names::eprop_isi_trace_cutoff, eprop_isi_trace_cutoff_, node );
@@ -137,11 +134,6 @@ eprop_readout::Parameters_::set( const DictionaryDatum& d, Node* node )
   if ( C_m_ <= 0 )
   {
     throw BadProperty( "Membrane capacitance C_m > 0 required." );
-  }
-
-  if ( loss_ != "mean_squared_error" )
-  {
-    throw BadProperty( "Loss function loss from [\"mean_squared_error\"] required." );
   }
 
   if ( tau_m_ <= 0 )

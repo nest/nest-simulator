@@ -173,7 +173,6 @@ params_nrn_out = {
     "E_L": 0.0,  # mV, leak / resting membrane potential
     "eprop_isi_trace_cutoff": 10,  # cutoff of integration of eprop trace between spikes
     "I_e": 0.0,  # pA, external current input
-    "loss": "mean_squared_error",  # loss function
     "regular_spike_arrival": False,  # If True, input spikes arrive at end of time step, if False at beginning
     "tau_m": 30.0,  # ms, membrane time constant
     "V_m": 0.0,  # mV, initial value of the membrane voltage

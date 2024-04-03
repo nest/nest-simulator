@@ -185,7 +185,6 @@ params_nrn_out = {
     "E_L": 0.0,
     "eprop_isi_trace_cutoff": 10**2,  # cutoff of integration of eprop trace between spikes
     "I_e": 0.0,
-    "loss": "mean_squared_error",  # loss function
     "regular_spike_arrival": False,
     "tau_m": 100.0,
     "V_m": 0.0,

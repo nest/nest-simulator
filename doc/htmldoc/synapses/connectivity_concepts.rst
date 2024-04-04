@@ -110,7 +110,7 @@ The mathematical details are extracted from the study on connectivity concepts [
 
 	|		Let :math:`\mathcal{S}=\{s_1,\ldots, s_{N_s}\}` be the ordered set of sources of cardinality :math:`N_s` and :math:`\mathcal{T}=\{t_1,\ldots, t_{N_t}\}` the set of targets of cardinality :math:`N_t`. Then the set of all possible directed edges between members of :math:`\mathcal{S}` and :math:`\mathcal{T}` is given by the Cartesian product :math:`\mathcal{E}_{ST}=\mathcal{S \times T}` of cardinality :math:`N_s\cdot N_t`.
 	|
-	|		If the source and target populations are identical (:math:`\mathcal{S= T}`) a source can be its own target. We call such a self-connection an :ref:`autapse <autapse_multapse>`. If autapses are not allowed, the target set for any node :math:`i \in \mathcal{S}` is :math:`\mathcal{T=S} \setminus i`, with cardinality :math:`N_t=N_s-1`. If there is more than one edge between a source and target (or from a node to itself), we call this a :ref:`multapse <autapse_multapse>`.
+	|		If the source and target populations are identical (:math:`\mathcal{S=T}`) a source can be its own target. We call such a self-connection an :ref:`autapse <autapse_multapse>`. If autapses are not allowed, the target set for any node :math:`i \in \mathcal{S}` is :math:`\mathcal{T=S} \setminus i`, with cardinality :math:`N_t=N_s-1`. If there is more than one edge between a source and target (or from a node to itself), we call this a :ref:`multapse <autapse_multapse>`.
 	|
 	|		The `degree distribution` :math:`P(k)` is the distribution across nodes of the number of edges per node. In a directed network, the distribution of the number of edges going out of (into) a node is called the `out-degree (in-degree)` distribution. The distributions given below describe the effect of applying a connection rule once to a given :math:`\mathcal{S}-\mathcal{T}` pair.
 
@@ -238,7 +238,7 @@ Note that multapses cannot be produced with this rule because each possible edge
 .. code-block:: python
 
     n, m, p = 5, 5, 0.5
-    S= nest.Create('iaf_psc_alpha', n)
+    S = nest.Create('iaf_psc_alpha', n)
     T = nest.Create('iaf_psc_alpha', m)
     conn_spec = {'rule': 'pairwise_bernoulli', 'p': p}
     nest.Connect(S, T, conn_spec)

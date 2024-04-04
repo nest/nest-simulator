@@ -328,7 +328,6 @@ EventDeliveryManager::reset_timers_for_dynamics()
 #ifdef TIMER_DETAILED
   sw_collocate_spike_data_.reset();
   sw_communicate_spike_data_.reset();
-  sw_deliver_spike_data_.reset();
 #endif
 }
 

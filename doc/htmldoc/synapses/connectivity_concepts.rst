@@ -54,7 +54,7 @@ This documentation not only describes how to define network connectivity in NEST
 The article "Connectivity concepts in neuronal network modeling" [1]_ serves as a permanent reference for a number of connection rules and we suggest to cite it if rules defined there are used.
 This documentation instead represents a living reference for these rules, and deviations from and extensions to what is described in the article will be highlighted.
 
-The same article also introduces a graphical notation for neuronal network diagrams which will be curated in the documentation of :doc:`NEST Desktop <desktop:user/usage-advanced/network-graph>`.
+The same article also introduces a graphical notation for neuronal network diagrams which is curated in the documentation of :doc:`NEST Desktop <desktop:user/usage-advanced/network-graph>`.
 
 :ref:`spatial_networks` are described on a separate page.
 

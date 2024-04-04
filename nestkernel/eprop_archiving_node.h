@@ -190,7 +190,7 @@ public:
     const double beta,
     const double gamma );
 
-  //! Create an eprop history entry for the given time step and append it to the eprop history.
+  //! Create an entry for the given time step at the end of the eprop history.
   void emplace_new_eprop_history_entry( const long time_step );
 
   //! Write the given surrogate gradient value to the history at the given time step.
@@ -267,7 +267,7 @@ public:
   //! Copy constructor.
   EpropArchivingNodeReadout( const EpropArchivingNodeReadout& );
 
-  //! Create an eprop history entry for the given time step and append it to the eprop history.
+  //! Create an entry for the given time step at the end of the eprop history.
   void emplace_new_eprop_history_entry( const long time_step, const bool has_norm_step = true );
 
   //! Write the given error signal value to history at the given time step.

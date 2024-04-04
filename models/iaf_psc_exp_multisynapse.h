@@ -211,9 +211,7 @@ private:
 
     double I_const_; //!< synaptic dc input current, variable 0
     std::vector< double > i_syn_;
-    double V_m_;     //!< membrane potential, variable 2
-    double current_; //!< This is the current in a time step. This is only
-                     //!< here to allow logging
+    double V_m_; //!< membrane potential, variable 2
 
     //! absolute refractory counter (no membrane potential propagation)
     int refractory_steps_;
@@ -300,7 +298,7 @@ private:
     }
     else if ( elem == State_::I )
     {
-      return S_.current_;
+      return std::accumulate( S_.i_syn_.begin(), S_.i_syn_.end(), 0.0 );
     }
     else
     {

@@ -23,6 +23,7 @@ set ( nestkernel_sources
       archiving_node.h archiving_node.cpp
       clopath_archiving_node.h clopath_archiving_node.cpp
       urbanczik_archiving_node.h urbanczik_archiving_node_impl.h
+      eprop_archiving_node.h eprop_archiving_node_impl.h eprop_archiving_node.cpp
       common_synapse_properties.h common_synapse_properties.cpp
       connection.h
       connection_label.h
@@ -34,7 +35,7 @@ set ( nestkernel_sources
       deprecation_warning.h deprecation_warning.cpp
       device.h device.cpp
       device_node.h
-      dynamicloader.h dynamicloader.cpp
+      module_manager.h module_manager.cpp
       event.h event.cpp
       exceptions.h exceptions.cpp
       genericmodel.h genericmodel_impl.h
@@ -59,7 +60,7 @@ set ( nestkernel_sources
       recording_device.h recording_device.cpp
       pseudo_recording_device.h
       ring_buffer.h ring_buffer_impl.h ring_buffer.cpp
-      secondary_event.h
+      secondary_event.h secondary_event_impl.h
       slice_ring_buffer.cpp slice_ring_buffer.h
       spikecounter.h spikecounter.cpp
       stimulation_device.h stimulation_device.cpp
@@ -115,6 +116,7 @@ set ( nestkernel_sources
       spatial.h spatial.cpp
       stimulation_backend.h
       buffer_resize_log.h buffer_resize_log.cpp
+      nest_extension_interface.h
       )
 
 
@@ -134,7 +136,7 @@ if ( HAVE_MPI )
 endif ()
 
 
-# Prevent problems with Conda path substitution (see #2348) 
+# Prevent problems with Conda path substitution (see #2348)
 set_source_files_properties( dynamicloader.cpp PROPERTIES COMPILE_OPTIONS "-O0" )
 
 
@@ -145,7 +147,7 @@ set_target_properties( nestkernel
     )
 
 target_link_libraries( nestkernel
-    nestutil sli_lib
+    nestutil sli_lib models
     ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES} ${LIBNEUROSIM_LIBRARIES} ${HDF5_LIBRARIES}
     )
 

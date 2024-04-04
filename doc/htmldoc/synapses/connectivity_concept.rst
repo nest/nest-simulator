@@ -1,6 +1,6 @@
-.. _connectivity_concept:
+.. _connectivity_concepts:
 
-Connectivity concept
+Connectivity concepts
 =====================
 
 .. grid:: 2 2 7 7

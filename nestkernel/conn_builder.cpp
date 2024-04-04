@@ -192,7 +192,8 @@ nest::ConnBuilder::connect()
   // classes are fully constructed when the test is executed
   for ( auto synapse_model_id : synapse_model_id_ )
   {
-    const ConnectorModel& synapse_model = kernel().model_manager.get_connection_model( synapse_model_id );
+    const ConnectorModel& synapse_model =
+      kernel().model_manager.get_connection_model( synapse_model_id, /* thread */ 0 );
     const bool requires_symmetric = synapse_model.has_property( ConnectionModelProperties::REQUIRES_SYMMETRIC );
 
     if ( requires_symmetric and not( is_symmetric() or make_symmetric_ ) )
@@ -421,7 +422,7 @@ nest::ConnBuilder::set_synapse_model_( DictionaryDatum syn_params, size_t synaps
   synapse_model_id_[ synapse_indx ] = synapse_model_id;
 
   // We need to make sure that Connect can process all synapse parameters specified.
-  const ConnectorModel& synapse_model = kernel().model_manager.get_connection_model( synapse_model_id );
+  const ConnectorModel& synapse_model = kernel().model_manager.get_connection_model( synapse_model_id, /* thread */ 0 );
   synapse_model.check_synapse_params( syn_params );
 }
 
@@ -1584,6 +1585,124 @@ nest::BernoulliBuilder::inner_connect_( const int tid, RngPtr rng, Node* target,
     }
 
     single_connect_( snode_id, *target, target_thread, rng );
+  }
+}
+
+
+nest::PoissonBuilder::PoissonBuilder( NodeCollectionPTR sources,
+  NodeCollectionPTR targets,
+  const DictionaryDatum& conn_spec,
+  const std::vector< DictionaryDatum >& syn_specs )
+  : ConnBuilder( sources, targets, conn_spec, syn_specs )
+{
+  ParameterDatum* pd = dynamic_cast< ParameterDatum* >( ( *conn_spec )[ names::pairwise_avg_num_conns ].datum() );
+  if ( pd )
+  {
+    pairwise_avg_num_conns_ = *pd;
+  }
+  else
+  {
+    // Assume pairwise_avg_num_conns is a scalar
+    const double value = ( *conn_spec )[ names::pairwise_avg_num_conns ];
+    if ( value < 0 )
+    {
+      throw BadProperty( "Connection parameter 0 ≤ pairwise_avg_num_conns required." );
+    }
+    if ( not allow_multapses_ )
+    {
+      throw BadProperty( "Multapses must be allowed for this connection rule." );
+    }
+    pairwise_avg_num_conns_ = std::shared_ptr< Parameter >( new ConstantParameter( value ) );
+  }
+}
+
+void
+nest::PoissonBuilder::connect_()
+{
+#pragma omp parallel
+  {
+    // get thread id
+    const size_t tid = kernel().vp_manager.get_thread_id();
+
+    try
+    {
+      RngPtr rng = get_vp_specific_rng( tid );
+
+      if ( loop_over_targets_() )
+      {
+        NodeCollection::const_iterator target_it = targets_->begin();
+        for ( ; target_it < targets_->end(); ++target_it )
+        {
+          const size_t tnode_id = ( *target_it ).node_id;
+          Node* const target = kernel().node_manager.get_node_or_proxy( tnode_id, tid );
+          if ( target->is_proxy() )
+          {
+            // skip parameters handled in other virtual processes
+            skip_conn_parameter_( tid );
+            continue;
+          }
+
+          inner_connect_( tid, rng, target, tnode_id );
+        }
+      }
+      else
+      {
+        const SparseNodeArray& local_nodes = kernel().node_manager.get_local_nodes( tid );
+        SparseNodeArray::const_iterator n;
+        for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
+        {
+          const size_t tnode_id = n->get_node_id();
+
+          // Is the local node in the targets list?
+          if ( targets_->get_lid( tnode_id ) < 0 )
+          {
+            continue;
+          }
+          inner_connect_( tid, rng, n->get_node(), tnode_id );
+        }
+      }
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( tid ) = std::shared_ptr< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  } // of omp parallel
+}
+
+void
+nest::PoissonBuilder::inner_connect_( const int tid, RngPtr rng, Node* target, size_t tnode_id )
+{
+  const size_t target_thread = target->get_thread();
+
+  // check whether the target is on our thread
+  if ( static_cast< size_t >( tid ) != target_thread )
+  {
+    return;
+  }
+
+  poisson_distribution poi_dist;
+
+  // It is not possible to disable multapses with the PoissonBuilder, already checked
+  NodeCollection::const_iterator source_it = sources_->begin();
+  for ( ; source_it < sources_->end(); ++source_it )
+  {
+    const size_t snode_id = ( *source_it ).node_id;
+
+    if ( not allow_autapses_ and snode_id == tnode_id )
+    {
+      continue;
+    }
+
+    // Sample to number of connections that are to be established
+    poisson_distribution::param_type param( pairwise_avg_num_conns_->value( rng, target ) );
+    const size_t num_conns = poi_dist( rng, param );
+
+    for ( size_t n = 0; n < num_conns; ++n )
+    {
+      single_connect_( snode_id, *target, target_thread, rng );
+    }
   }
 }
 

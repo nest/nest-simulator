@@ -167,6 +167,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
      - 'fixed_total_number', 'N'
      - 'pairwise_bernoulli', 'p'
      - 'symmetric_pairwise_bernoulli', 'p'
+     - 'pairwise_poisson', 'pairwise_avg_num_conns'
 
     See :ref:`conn_rules` for more details, including example usage.
 
@@ -203,7 +204,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, return_synapsecollection=F
 
     See Also
     ---------
-    :ref:`connectivity_concept`
+    :ref:`connectivity_concepts`
     """
 
     use_connect_arrays, pre, post = _process_input_nodes(pre, post, conn_spec)
@@ -365,9 +366,15 @@ def TripartiteConnect(pre, post, third, conn_spec, syn_specs=None):
      - any parameters specific to the selected synapse model.
 
 
+    .. admonition:
+
+       Tripartite connectivity is a new feature. Please expect some adjustments to
+       the syntax and semantics for the tripartite connectivity in the next NEST releases.
+
+
     See Also
     ---------
-    :ref:`connectivity_concept`
+    :ref:`connectivity_concepts`
     """
 
     # Confirm that we got node collections

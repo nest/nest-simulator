@@ -3,7 +3,7 @@
 Synapse specification
 =====================
 
-This page is about parameterizing synapses. See :ref:`connectivity_concept` for specifying connections, :ref:`connection_generator` for generation of connectivity and :ref:`handling_connections` for inspecting and modifying ``SynapseCollections``.
+This page is about parameterizing synapses. See :ref:`connectivity_concepts` for specifying connections (for using an external library see :ref:`connection_generator`) and :ref:`handling_connections` for inspecting and modifying ``SynapseCollections``.
 
 
 The synapse properties can be given as just the name of the desired

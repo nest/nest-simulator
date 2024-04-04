@@ -124,7 +124,7 @@ variables, use the receptor index ``{state_variable_name}{receptor_index}``:
 
 .. code-block:: Python
 
-    mm = nest.Create('multimeter', 1, {'record_from': ['v_comp0'}, ...})
+    mm = nest.Create('multimeter', 1, {'record_from': ['v_comp0', ...]})
 
 Current generators can be connected to the model. In this case, the receptor
 type is the compartment index:
@@ -132,10 +132,19 @@ type is the compartment index:
 .. code-block:: Python
 
     dc = nest.Create('dc_generator', {...})
-    nest.Connect(dc, cm, syn_spec={..., 'receptor_type': 0}
+    nest.Connect(dc, cm, syn_spec={..., 'receptor_type': 0})
 
 Parameters
 ++++++++++
+
+Note that the compartmental model does not explicitly ensure that units are consistent.
+Therefore, it is on the user to ensure that units are consistent throughout the model.
+The quantities that have fixed units are membrane voltage [mV] and time [ms].
+Other units need to be consistent: if e.g. conductances are in uS, that means
+that the associated currents will be uS*mV = nA. By consequence, the capacitance needs to
+be in nF to ensure that the capacitive current is also in nA. This further means
+that the connection weights to receptors are in uS, and that the amplitudes of current
+injectors are in nA.
 
 The following parameters can be set in the status dictionary.
 
@@ -146,10 +155,11 @@ The following parameters can be set in the status dictionary.
 The following parameters can be used when adding compartments using ``SetStatus()``
 
 =========== ======= ===============================================================
- C_m        uF      Capacitance of compartment (default: 1 uF)
+ C_m        nF      Capacitance of compartment (default: 1 nF)
  g_C        uS      Coupling conductance with parent compartment (default: 0.01 uS)
  g_L        uS      Leak conductance of the compartment (default: 0.1 uS)
  e_L        mV      Leak reversal of the compartment (default: -70. mV)
+ v_comp     mV      Initialization voltage of the compartment (default: -75. mV)
 =========== ======= ===============================================================
 
 Ion channels and receptor types for the default model are hardcoded.

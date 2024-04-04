@@ -32,6 +32,7 @@
 #include "connector_model.h"
 #include "kernel_manager.h"
 #include "nest_names.h"
+#include "sp_manager_impl.h"
 
 namespace nest
 {
@@ -48,24 +49,41 @@ SPManager::SPManager()
 
 SPManager::~SPManager()
 {
-  finalize();
 }
 
 void
-SPManager::initialize()
+SPManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
+  if ( not adjust_number_of_threads_or_rng_only )
+  {
+    // Add MSP growth curves
+    register_growth_curve< GrowthCurveSigmoid >( "sigmoid" );
+    register_growth_curve< GrowthCurveGaussian >( "gaussian" );
+    register_growth_curve< GrowthCurveLinear >( "linear" );
+  }
+
   structural_plasticity_update_interval_ = 10000.;
   structural_plasticity_enabled_ = false;
 }
 
 void
-SPManager::finalize()
+SPManager::finalize( const bool adjust_number_of_threads_or_rng_only )
 {
-  for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin(); i != sp_conn_builders_.end(); i++ )
+  if ( not adjust_number_of_threads_or_rng_only )
   {
-    delete *i;
+    for ( auto spcb : sp_conn_builders_ )
+    {
+      delete spcb;
+    }
+    sp_conn_builders_.clear();
+
+    for ( auto gcf : growthcurve_factories_ )
+    {
+      delete gcf;
+    }
+    growthcurve_factories_.clear();
+    growthcurvedict_->clear();
   }
-  sp_conn_builders_.clear();
 }
 
 void

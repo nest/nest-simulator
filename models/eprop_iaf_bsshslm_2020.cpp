@@ -305,7 +305,7 @@ eprop_iaf_bsshslm_2020::update( Time const& origin, const long from, const long 
     S_.surrogate_gradient_ =
       ( this->*compute_surrogate_gradient )( S_.r_, S_.v_m_, P_.V_th_, P_.V_th_, P_.beta_, P_.gamma_ );
 
-    create_eprop_history_entry( t );
+    emplace_new_eprop_history_entry( t );
 
     write_surrogate_gradient_to_history( t, S_.surrogate_gradient_ );
 

@@ -251,7 +251,7 @@ eprop_readout::update( Time const& origin, const long from, const long to )
 
     error_signal_buffer[ lag ] = S_.error_signal_;
 
-    create_eprop_history_entry( t, false );
+    emplace_new_eprop_history_entry( t, false );
 
     write_error_signal_to_history( t, S_.error_signal_, false );
 

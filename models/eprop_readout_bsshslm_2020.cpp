@@ -293,7 +293,7 @@ eprop_readout_bsshslm_2020::update( Time const& origin, const long from, const l
 
     error_signal_buffer[ lag ] = S_.error_signal_;
 
-    create_eprop_history_entry( t );
+    emplace_new_eprop_history_entry( t );
 
     write_error_signal_to_history( t, S_.error_signal_ );
 

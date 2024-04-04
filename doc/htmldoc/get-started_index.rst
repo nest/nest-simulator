@@ -61,7 +61,6 @@ Next steps: Create your own network model
 
          |random| Connect neurons, synapses, and devices
          ^^^
-         
          * :ref:`connectivity_concepts`: A guide to define network connectivity in NEST
          * :ref:`spatial_networks`: A deep dive into building 2D and 3D networks
          * :ref:`connection_generator`: Using an external library for generating connections

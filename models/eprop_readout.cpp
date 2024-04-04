@@ -251,6 +251,8 @@ eprop_readout::update( Time const& origin, const long from, const long to )
 
     error_signal_buffer[ lag ] = S_.error_signal_;
 
+    emplace_new_eprop_history_entry( t, false );
+
     write_error_signal_to_history( t, S_.error_signal_, false );
 
     S_.i_in_ = B_.currents_.get_value( lag ) + P_.I_e_;

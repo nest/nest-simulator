@@ -118,6 +118,17 @@ EpropArchivingNodeRecurrent::compute_arctan_surrogate_gradient( const double r,
 }
 
 void
+EpropArchivingNodeRecurrent::emplace_new_eprop_history_entry( const long time_step )
+{
+  if ( eprop_indegree_ == 0 )
+  {
+    return;
+  }
+
+  eprop_history_.emplace_back( time_step, 0.0, 0.0 );
+}
+
+void
 EpropArchivingNodeRecurrent::write_surrogate_gradient_to_history( const long time_step,
   const double surrogate_gradient )
 {
@@ -126,7 +137,8 @@ EpropArchivingNodeRecurrent::write_surrogate_gradient_to_history( const long tim
     return;
   }
 
-  eprop_history_.emplace_back( time_step, surrogate_gradient, 0.0 );
+  auto it_hist = get_eprop_history( time_step );
+  it_hist->surrogate_gradient_ = surrogate_gradient;
 }
 
 void
@@ -261,6 +273,19 @@ EpropArchivingNodeReadout::EpropArchivingNodeReadout( const EpropArchivingNodeRe
 }
 
 void
+EpropArchivingNodeReadout::emplace_new_eprop_history_entry( const long time_step, const bool has_norm_step )
+{
+  if ( eprop_indegree_ == 0 )
+  {
+    return;
+  }
+
+  const long shift = has_norm_step ? delay_out_norm_ : 0;
+
+  eprop_history_.emplace_back( time_step - shift, 5.0 );
+}
+
+void
 EpropArchivingNodeReadout::write_error_signal_to_history( const long time_step,
   const double error_signal,
   const bool has_norm_step )
@@ -272,7 +297,8 @@ EpropArchivingNodeReadout::write_error_signal_to_history( const long time_step,
 
   const long shift = has_norm_step ? delay_out_norm_ : 0;
 
-  eprop_history_.emplace_back( time_step - shift, error_signal );
+  auto it_hist = get_eprop_history( time_step - shift );
+  it_hist->error_signal_ = error_signal;
 }
 
 

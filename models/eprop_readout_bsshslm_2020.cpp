@@ -259,7 +259,6 @@ eprop_readout_bsshslm_2020::update( Time const& origin, const long from, const l
     const long interval_step = ( t - shift ) % update_interval;
     const long interval_step_signals = ( t - shift - delay_out_norm_ ) % update_interval;
 
-
     if ( interval_step == 0 )
     {
       erase_used_update_history();
@@ -293,6 +292,8 @@ eprop_readout_bsshslm_2020::update( Time const& origin, const long from, const l
     }
 
     error_signal_buffer[ lag ] = S_.error_signal_;
+
+    emplace_new_eprop_history_entry( t );
 
     write_error_signal_to_history( t, S_.error_signal_ );
 

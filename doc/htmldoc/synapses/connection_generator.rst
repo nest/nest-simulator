@@ -9,22 +9,21 @@ Connection generator interface
    :ref:`support for libneurosim <compile_with_libneurosim>`.
 
 To allow the generation of connectivity by means of an external
-library, NEST supports the Connection Generator Interface [2]_. For
+library, NEST supports the connection generator interface [2]_. For
 more details on this interface, see the git repository of `libneurosim
 <https://github.com/INCF/libneurosim>`_.
 
 In contrast to the other rules for creating connections, this rule
 relies on a Connection Generator object to describe the connectivity
-pattern in a library-specific way. The Connection Generator is handed
+pattern in a library-specific way. The connection generator is handed
 to :py:func:`.Connect` under the key ``cg`` of the connection specification
-dictionary and evaluated internally. If the Connection Generator
+dictionary and evaluated internally. If the connection generator
 provides values for connection weights and delays, their respective
 indices can be specified under the key ``params_map``. Alternatively,
 all synapse parameters can be specified using the synapse
 specification argument to ``Connect()``.
 
-The following listing shows an example for using CSA (`Connection Set Algebra <https://github.com/INCF/csa>`_ [1]_) in NEST via the Connection
-generator interface and randomly connects 10% of the neurons from
+The following listing shows an example for using CSA (`Connection Set Algebra <https://github.com/INCF/csa>`_ [1]_) in NEST via the connection generator interface and randomly connects 10% of the neurons from
 ``A`` to the neurons in ``B``, each connection having a weight of
 10000.0 pA and a delay of 1.0 ms:
 

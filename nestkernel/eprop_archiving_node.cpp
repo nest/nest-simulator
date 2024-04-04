@@ -117,7 +117,6 @@ EpropArchivingNodeRecurrent::compute_arctan_surrogate_gradient( const double r,
   return gamma / M_PI * ( 1.0 / ( 1.0 + std::pow( beta * M_PI * ( v_m - v_th_adapt ), 2 ) ) );
 }
 
-
 void
 EpropArchivingNodeRecurrent::emplace_new_eprop_history_entry( const long time_step )
 {
@@ -128,7 +127,6 @@ EpropArchivingNodeRecurrent::emplace_new_eprop_history_entry( const long time_st
 
   eprop_history_.emplace_back( time_step, 0.0, 0.0 );
 }
-
 
 void
 EpropArchivingNodeRecurrent::write_surrogate_gradient_to_history( const long time_step,

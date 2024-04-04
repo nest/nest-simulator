@@ -50,7 +50,6 @@ Connectivity concepts
 
     Basic connection rules commonly used in the computational neuroscience community. For more details, go to the section :ref:`conn_rules` or just click on one of the illustrations.
 
-
 This documentation not only describes how to define network connectivity in NEST, but also provides details on connectivity concepts.
 The article "Connectivity concepts in neuronal network modeling" [1]_ serves as a permanent reference for a number of connection rules and we suggest to cite it if rules defined there are used.
 This documentation instead represents a living reference for these rules, and deviations from and extensions to what is described in the article will be highlighted.

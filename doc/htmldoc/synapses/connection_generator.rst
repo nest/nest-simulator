@@ -30,11 +30,12 @@ generator interface and randomly connects 10% of the neurons from
 
 .. code-block:: python
 
+   import csa
+
    A = nest.Create('iaf_psc_alpha', 100)
    B = nest.Create('iaf_psc_alpha', 100)
 
    # Create the Connection Generator object
-   import csa
    cg = csa.cset(csa.random(0.1), 10000.0, 1.0)
 
    # Map weight and delay indices to values from cg

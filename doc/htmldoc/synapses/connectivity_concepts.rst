@@ -116,7 +116,7 @@ The mathematical details are extracted from the study on connectivity concepts [
 .. _autapse_multapse:
 
 Autapses and multapses
-----------------------------------------------
+----------------------
 
 .. image:: ../static/img/Autapse_multapse.png
      :width: 450px
@@ -135,7 +135,8 @@ switches were set to ``False`` in each individual call.
 .. _deterministic_rules:
 
 Deterministic connection rules
--------------------------------------------------
+------------------------------
+
 Deterministic connection rules establish precisely defined sets of connections without any variability across network realizations.
 
 .. _one_to_one:
@@ -218,7 +219,8 @@ Connections between explicit lists of source-target pairs can be realized in NES
 .. _probabilistic_rules:
 
 Probabilistic connection rules
-------------------------------------------------
+------------------------------
+
 Probabilistic connection rules establish edges according to a probabilistic rule. Consequently, the exact connectivity varies with realizations. Still, such connectivity leads to specific expectation values of network characteristics, such as degree distributions or correlation structure.
 
 .. _pairwise_bernoulli:
@@ -278,12 +280,32 @@ must be ``True``.
                  'allow_autapses': False, 'make_symmetric': True}
     nest.Connect(S, T, conn_spec)
 
+.. _pairwise_poisson:
+
+Pairwise Poisson
+~~~~~~~~~~~~~~~~
+
+For each possible pair of nodes from ``A`` and ``B``, a number of
+connections is created following a Poisson distribution with mean
+``pairwise_avg_num_conns``. This means that even for a small
+average number of connections between single neurons in ``A`` and
+``B`` multiple connections are possible. Thus, for this rule
+``allow_multapses`` cannot be ``False``.
+The ``pairwise_avg_num_conns`` can be greater than one.
+
+.. code-block:: python
+
+    n, m, p_avg_num_conns = 10, 12, 0.2
+    A = nest.Create('iaf_psc_alpha', n)
+    B = nest.Create('iaf_psc_alpha', m)
+    conn_spec_dict = {'rule': 'pairwise_poisson',
+                      'pairwise_avg_num_conns': p_avg_num_conns}
+    nest.Connect(A, B, conn_spec_dict)
+
 .. _fixed_total_number:
 
-
-
 Random, fixed total number
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. image:: ../static/img/Fixed_total_number.png
      :width: 200px
@@ -441,7 +463,7 @@ As multapses are per default allowed and possible with this rule, you can disall
 .. _fixed_outdegree:
 
 Random, fixed out-degree
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. image:: ../static/img/Fixed_outdegree.png
      :width: 200px
@@ -578,6 +600,7 @@ connected to one node in ``T``.
 
 References
 ----------
+
 .. [1] Senk J, Kriener B, Djurfeldt M, Voges N, Jiang HJ, et al. (2022) Connectivity concepts in neuronal network modeling. PLOS Computational Biology 18(9): e1010086. https://doi.org/10.1371/journal.pcbi.1010086
 .. [2] Djurfeldt M. The Connection-set Algebra—A Novel Formalism for the Representation of Connectivity Structure in Neuronal Network Models. Neuroinformatics. 2012; 10: 287–304. https://doi.org/10.1007/s12021-012-9146-1
 .. [3] Albert R, Barabási AL. Statistical mechanics of complex networks. Rev Mod Phys. 2002; 74: 47–97. https://doi.org/10.1103/RevModPhys.74.47

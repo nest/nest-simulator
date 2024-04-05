@@ -285,22 +285,22 @@ must be ``True``.
 Pairwise Poisson
 ~~~~~~~~~~~~~~~~
 
-For each possible pair of nodes from ``A`` and ``B``, a number of
+For each possible pair of nodes from ``S`` and ``T``, a number of
 connections is created following a Poisson distribution with mean
 ``pairwise_avg_num_conns``. This means that even for a small
-average number of connections between single neurons in ``A`` and
-``B`` multiple connections are possible. Thus, for this rule
+average number of connections between single neurons in ``S`` and
+``T`` multiple connections are possible. Thus, for this rule
 ``allow_multapses`` cannot be ``False``.
 The ``pairwise_avg_num_conns`` can be greater than one.
 
 .. code-block:: python
 
     n, m, p_avg_num_conns = 10, 12, 0.2
-    A = nest.Create('iaf_psc_alpha', n)
-    B = nest.Create('iaf_psc_alpha', m)
-    conn_spec_dict = {'rule': 'pairwise_poisson',
-                      'pairwise_avg_num_conns': p_avg_num_conns}
-    nest.Connect(A, B, conn_spec_dict)
+    S = nest.Create('iaf_psc_alpha', n)
+    T = nest.Create('iaf_psc_alpha', m)
+    conn_spec = {'rule': 'pairwise_poisson',
+                 'pairwise_avg_num_conns': p_avg_num_conns}
+    nest.Connect(S, T, conn_spec)
 
 .. _fixed_total_number:
 

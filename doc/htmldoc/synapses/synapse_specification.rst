@@ -1,429 +1,10 @@
-.. _connection_management:
-
-Connection Management
-=====================
-
-Connections between populations of neurons and between neurons and
-devices for stimulation and recording in NEST are created with the
-:py:func:`.Connect` function. Although each connection is internally
-represented individually, you can use a single call to ``Connect()``
-to create many connections at the same time. In the simplest case, the
-function just takes two NodeCollections containing the source and
-target nodes that will be connected in an all-to-all fashion.
-
-Each call to the function will establish the connectivity between pre-
-and post-synaptic populations according to a certain pattern or
-rule. The desired pattern is specified by simply stating the rule name
-as third argument to ``Connect()``, or by setting the key ``rule`` in
-the connectivity specification dictionary ``conn_spec`` alongside
-additional rule-specific parameters. All available patterns are
-described in the section :ref:`Connection Rules <conn_rules>` below.
-
-To specify the properties for the individual connections, a synapse
-specification ``syn_spec`` can be given to ``Connect()``. This can
-also just be the name of the synapse model to be used, an object
-defining :ref:`collocated synapses <collocated_synapses>`, or a
-dictionary, with optional parameters for the connections.
-
-The ``syn_spec`` is given as the fourth argument to the ``Connect()``
-function. Parameters like the synaptic weight or delay can be either
-set values or drawn and combined flexibly from random distributions.
-More information about synapse models and their parameters can
-be found in the section :ref:`Synapse Specification <synapse_spec>`.
-
-The :py:func:`.Connect` function can be called in any of the following ways:
-
-.. code-block:: python
-
-    Connect(pre, post)
-    Connect(pre, post, conn_spec)
-    Connect(pre, post, conn_spec, syn_spec)
-
-``pre`` and ``post`` are ``NodeCollections``, defining the nodes of
-origin (`sources`) and termination (`targets`) for the connections to
-be established.
-
-If ``conn_spec`` is not specified, the default connection rule
-``all_to_all`` will be used.
-
-The synapse specification ``syn_spec`` defaults to the synapse model
-:hxt_ref:`static_synapse`. By using the keyword variant (``Connect(pre, post,
-syn_spec=syn_spec_dict)``), ``conn_spec`` can be omitted in the call
-to :py:func:`.Connect` and will just take on the default value.
-
-After your connections are established, a quick sanity check is to
-look up the number of connections in the network, which can be easily
-done using the corresponding kernel attribute:
-
-.. code-block:: python
-
-    print(nest.num_connections)
-
-Have a look at the :ref:`inspecting_connections` section further down
-to get more tips on how to examine the connections in greater detail.
-
-Multapses and autapses
-----------------------
-
-In the connection specification dictionary (containing the rule name and rule-
-specific parameters), the additional switch ``allow_autapses`` (default:
-``True``) can be set to allow or disallow self-connections.
-
-Likewise, ``allow_multapses`` (default: ``True``) can be used to specify if
-multiple connections between the same pair of neurons are allowed or not.
-
-These switches are only effective during each single call to
-:py:func:`.Connect`. Calling the function multiple times with the same set of
-neurons might still lead to violations of these constraints, even though the
-switches were set to `False` in each individual call.
-
-.. _conn_rules:
-
-Connection Rules
-----------------
-
-Connection rules are specified using the ``conn_spec`` parameter of
-:py:func:`.Connect`, which can be either just a string naming a connection
-rule, or a dictionary containing a rule specification. Only connection
-rules requiring no parameters can be given as strings, for all other
-rules, a dictionary specifying the rule and its parameters is
-required. Examples for such parameters might be in- and out-degrees,
-or the probability for establishing a connection. A description of
-all connection rules available in NEST is available below.
-
-all-to-all
-~~~~~~~~~~
-
-.. image:: ../static/img/All_to_all.png
-     :width: 200px
-     :align: center
-
-Each node in ``A`` is connected to every node in ``B``. Since
-``all_to_all`` is the default, the rule doesn't actually have to be
-specified.
-
-.. code-block:: python
-
-    n, m = 10, 12
-    A = nest.Create('iaf_psc_alpha', n)
-    B = nest.Create('iaf_psc_alpha', m)
-    nest.Connect(A, B, 'all_to_all')
-    nest.Connect(A, B)  # equivalent
-
-.. _conn_builder_conngen:
-
-conngen
-~~~~~~~
-
-.. admonition:: Availability
-
-   This connection rule is only available if NEST was compiled with
-   :ref:`support for libneurosim <compile_with_libneurosim>`.
-
-To allow the generation of connectivity by means of an external
-library, NEST supports the Connection Generator Interface [1]_. For
-more details on this interface, see the Git repository of `libneurosim
-<https://github.com/INCF/libneurosim>`_.
-
-In contrast to the other rules for creating connections, this rule
-relies on a Connection Generator object to describe the connectivity
-pattern in a library-specific way. The Connection Generator is handed
-to :py:func:`.Connect` under the key ``cg`` of the connection specification
-dictionary and evaluated internally. If the Connection Generator
-provides values for connection weights and delays, their respective
-indices can be specified under the key ``params_map``. Alternatively,
-all synapse parameters can be specified using the synapse
-specification argument to ``Connect()``.
-
-The following listing shows an example for using the `Connection-Set
-Algebra <https://github.com/INCF/csa>`_ in NEST via the Connection
-Generator Interface and randomly connects 10% of the neurons from
-``A`` to the neurons in ``B``, each connection having a weight of
-10000.0 pA and a delay of 1.0 ms:
-
-.. code-block:: python
-
-   A = nest.Create('iaf_psc_alpha', 100)
-   B = nest.Create('iaf_psc_alpha', 100)
-
-   # Create the Connection Generator object
-   import csa
-   cg = csa.cset(csa.random(0.1), 10000.0, 1.0)
-
-   # Map weight and delay indices to values from cg
-   params_map = {'weight': 0, 'delay': 1}
-
-   conn_spec_dict = {'rule': 'conngen', 'cg': cg, 'params_map': params_map}
-   nest.Connect(A, B, conn_spec_dict)
-
-fixed indegree
-~~~~~~~~~~~~~~
-
-.. image:: ../static/img/Fixed_indegree.png
-     :width: 200px
-     :align: center
-
-The nodes in ``A`` are randomly connected with the nodes in ``B`` such
-that each node in ``B`` has a fixed :hxt_ref:`indegree` of ``N``.
-
-.. code-block:: python
-
-    n, m, N = 10, 12, 2
-    A = nest.Create('iaf_psc_alpha', n)
-    B = nest.Create('iaf_psc_alpha', m)
-    conn_spec_dict = {'rule': 'fixed_indegree', 'indegree': N}
-    nest.Connect(A, B, conn_spec_dict)
-
-fixed outdegree
-~~~~~~~~~~~~~~~
-
-.. image:: ../static/img/Fixed_outdegree.png
-     :width: 200px
-     :align: center
-
-The nodes in ``A`` are randomly connected with the nodes in ``B`` such
-that each node in ``A`` has a fixed :hxt_ref:`outdegree` of ``N``.
-
-.. code-block:: python
-
-    n, m, N = 10, 12, 2
-    A = nest.Create('iaf_psc_alpha', n)
-    B = nest.Create('iaf_psc_alpha', m)
-    conn_spec_dict = {'rule': 'fixed_outdegree', 'outdegree': N}
-    nest.Connect(A, B, conn_spec_dict)
-
-fixed total number
-~~~~~~~~~~~~~~~~~~
-
-The nodes in ``A`` are randomly connected with the nodes in ``B``
-such that the total number of connections equals ``N``.
-
-.. code-block:: python
-
-    n, m, N = 10, 12, 30
-    A = nest.Create('iaf_psc_alpha', n)
-    B = nest.Create('iaf_psc_alpha', m)
-    conn_spec_dict = {'rule': 'fixed_total_number', 'N': N}
-    nest.Connect(A, B, conn_spec_dict)
-
-one-to-one
-~~~~~~~~~~
-
-.. image:: ../static/img/One_to_one.png
-     :width: 200px
-     :align: center
-
-The `i`\ th node in ``A`` is connected to the `i`\ th node in ``B``. The
-NodeCollections of ``A`` and ``B`` have to contain the same number of
-nodes.
-
-.. code-block:: python
-
-    n = 10
-    A = nest.Create('iaf_psc_alpha', n)
-    B = nest.Create('spike_recorder', n)
-    nest.Connect(A, B, 'one_to_one')
-
-pairwise bernoulli
-~~~~~~~~~~~~~~~~~~
-
-For each possible pair of nodes from ``A`` and ``B``, a connection is
-created with probability ``p``.
-
-.. code-block:: python
-
-    n, m, p = 10, 12, 0.2
-    A = nest.Create('iaf_psc_alpha', n)
-    B = nest.Create('iaf_psc_alpha', m)
-    conn_spec_dict = {'rule': 'pairwise_bernoulli', 'p': p}
-    nest.Connect(A, B, conn_spec_dict)
-
-symmetric pairwise bernoulli
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-For each possible pair of nodes from ``A`` and ``B``, a connection is
-created with probability ``p`` from ``A`` to ``B``, as well as a
-connection from ``B`` to ``A`` (two connections in total). To use
-this rule, ``allow_autapses`` must be ``False``, and ``make_symmetric``
-must be ``True``.
-
-.. code-block:: python
-
-    n, m, p = 10, 12, 0.2
-    A = nest.Create('iaf_psc_alpha', n)
-    B = nest.Create('iaf_psc_alpha', m)
-    conn_spec_dict = {'rule': 'symmetric_pairwise_bernoulli', 'p': p,
-                      'allow_autapses': False, 'make_symmetric': True}
-    nest.Connect(A, B, conn_spec_dict)
-
-pairwise poisson
-~~~~~~~~~~~~~~~~
-
-For each possible pair of nodes from ``A`` and ``B``, a number of
-connections is created following a Poisson distribution with mean
-``pairwise_avg_num_conns``. This means that even for a small
-average number of connections between single neurons in ``A`` and
-``B`` multiple connections are possible. Thus, for this rule
-``allow_multapses`` cannot be ``False``.
-The ``pairwise_avg_num_conns`` can be greater than one.
-
-.. code-block:: python
-
-    n, m, p_avg_num_conns = 10, 12, 0.2
-    A = nest.Create('iaf_psc_alpha', n)
-    B = nest.Create('iaf_psc_alpha', m)
-    conn_spec_dict = {'rule': 'pairwise_poisson',
-                      'pairwise_avg_num_conns': p_avg_num_conns}
-    nest.Connect(A, B, conn_spec_dict)
-
-.. _tripartite_connectivity:
-
-Tripartite connectivity
------------------------
-
-NEST supports creating connections of three node populations using the
-:py:func:`.TripartiteConnect` function:
-
-.. code-block:: python
-
-    nest.TripartiteConnect(pre, post, third, conn_spec)
-    nest.TripartiteConnect(pre, post, third, conn_spec, syn_specs)
-
-``pre``, ``post``, and ``third`` are ``NodeCollections``, defining the nodes of
-origin (`sources`) and termination (`targets`) as well as the third
-factor population to be included. Connections will be established from ``pre`` to both ``third`` and ``post``, and from ``third`` to ``post``. Details of the connections created depend on
-the connection rule used.
-
-``conn_spec`` must be provided and must specify a tripartite
-connection rule, e.g., :ref:`tripartite Bernoulli with pool <tripartite_bernoulli_with_pool>`.
-
-``syn_specs`` is a dictionary of the form
-
-.. code-block:: python
-
-    {'primary': <syn_spec>,
-     'third_in': <syn_spec>,
-     'third_out': <syn_spec>}
-
-where the individual ``syn_spec`` elements follow the same rules as
-for the :py:func:`.Connect` function. Any of the three elements can be
-left out, in which case the synapse specification defaults to
-``'static_synapse'``. The ``'primary'`` synapse specification applies
-to connections from ``pre`` to ``post`` nodes, the ``'third_in'``
-specification to connections from ``pre`` to ``third`` nodes and
-the ``'third_out'`` specification to connections from ``third`` to
-``post`` nodes.
-
-.. admonition:
-
-   Tripartite connectivity is a new feature. Please expect some adjustments to
-   the syntax and semantics for the tripartite connectivity in the next NEST releases.
-
-
-.. _tripartite_bernoulli_with_pool:
-
-Tripartite Bernoulli with pool
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-For each possible pair of nodes from a source ``NodeCollection`` (e.g., a neuron population ``S``)
-and a target ``NodeCollection`` (e.g., a neuron population ``T``), a connection is
-created with probability ``p_primary``, and these connections are
-called 'primary' connections. For each primary connection, a
-third-party connection pair involving a node from a third ``NodeCollection``
-(e.g., an astrocyte population ``A``) is created with the conditional probability
-``p_third_if_primary``. This connection pair includes a connection
-from the ``S`` node to the ``A`` node, and a connection from the ``A`` node to the
-``T`` node. The ``A`` node to connect to is chosen
-at random from a pool, a subset of the nodes in ``A``. By default,
-this pool is all of ``A``.
-
-Pool formation is controlled by parameters ``pool_type``, which can be ``'random'``
-(default) or ``'block'``, and ``pool_size``, which must be between 1
-and the size of ``A`` (default). For random pools, for each node from
-``T``, ``pool_size`` nodes from ``A`` are chosen randomly without
-replacement.
-
-For block pools, two variants exist. Let ``N_T`` and ``N_A`` be the number of
-nodes in ``T`` and ``A``, respectively. If ``pool_size == 1``, the
-first ``N_T/N_A`` nodes in ``T`` are assigned the first node in
-``A`` as their pool, the second ``N_T/N_A`` nodes in ``T`` the
-second node in ``A`` and so forth. In this case, ``N_T`` must be a
-multiple of ``N_A``. If ``pool_size > 1``, the first ``pool_size``
-elements of ``A`` are the pool for the first node in ``T``, the
-second ``pool_size`` elements of ``A`` are the pool for the second
-node in ``T`` and so forth. In this case, ``N_T * pool_size == N_A``
-is required.
-
-The following code and figure demonstrate three use case examples with
-``pool_type`` being ``'random'`` or ``'block'``:
-
-.. code-block:: python
-
-    N_S, N_T, N_A, p_primary, p_third_if_primary = 6, 6, 3, 0.2, 1.0
-    pool_type, pool_size = 'random', 2
-    S = nest.Create('aeif_cond_alpha_astro', N_S)
-    T = nest.Create('aeif_cond_alpha_astro', N_T)
-    A = nest.Create('astrocyte_lr_1994', N_A)
-    conn_spec = {'rule': 'tripartite_bernoulli_with_pool',
-                      'p_primary': p_primary,
-		      'p_third_if_primary': p_third_if_primary,
-                      'pool_type': pool_type,
-		      'pool_size': pool_size}
-    syn_specs = {'third_out': 'sic_connection'}
-    nest.TripartiteConnect(S, T, A, conn_spec, syn_specs)
-
-
-.. code-block:: python
-
-    N_S, N_T, N_A, p_primary, p_third_if_primary = 6, 6, 3, 0.2, 1.0
-    pool_type, pool_size = 'block', 1
-    S = nest.Create('aeif_cond_alpha_astro', N_S)
-    T = nest.Create('aeif_cond_alpha_astro', N_T)
-    A = nest.Create('astrocyte_lr_1994', N_A)
-    conn_spec = {'rule': 'tripartite_bernoulli_with_pool',
-                      'p_primary': p_primary,
-		      'p_third_if_primary': p_third_if_primary,
-                      'pool_type': pool_type,
-		      'pool_size': pool_size}
-    syn_specs = {'third_out': 'sic_connection'}
-    nest.TripartiteConnect(S, T, A, conn_spec, syn_specs)
-
-
-.. code-block:: python
-
-    N_S, N_T, N_A, p_primary, p_third_if_primary = 6, 3, 6, 0.2, 1.0
-    pool_type, pool_size = 'block', 2
-    S = nest.Create('aeif_cond_alpha_astro', N_S)
-    T = nest.Create('aeif_cond_alpha_astro', N_T)
-    A = nest.Create('astrocyte_lr_1994', N_A)
-    conn_spec = {'rule': 'tripartite_bernoulli_with_pool',
-                      'p_primary': p_primary,
-		      'p_third_if_primary': p_third_if_primary,
-                      'pool_type': pool_type,
-		      'pool_size': pool_size}
-    syn_specs = {'third_out': 'sic_connection'}
-    nest.TripartiteConnect(S, T, A, conn_spec, syn_specs)
-
-
-.. image:: ../static/img/tripartite_pool_type.svg
-    :align: center
-
-(A) In the example of ``'random'`` pool type, each node in ``T`` can be connected with
-up to two randomly selected nodes in ``A`` (given ``pool_size == 2``). (B) In
-the first example of ``'block'`` pool type, let ``N_T/N_A`` = 2,
-then each node in ``T`` can be connected with one node in ``A``
-(``pool_size == 1`` is required because ``N_A < N_T``), and each node in
-``A`` can be connected with up to two nodes in ``T``. (C) In the second example
-of ``'block'`` pool type, let ``N_A/N_T`` = 2, then each node in
-``T`` can be connected with up to two nodes in ``A`` (``pool_size == 2`` is
-required because ``N_A/N_T`` = 2), and each node in ``A`` can be
-connected to one node in ``T``.
-
-
 .. _synapse_spec:
 
-Synapse Specification
----------------------
+Synapse specification
+=====================
+
+This page is about parameterizing synapses. See :ref:`connectivity_concepts` for specifying connections (for using an external library see :ref:`connection_generator`) and :ref:`handling_connections` for inspecting and modifying ``SynapseCollections``.
+
 
 The synapse properties can be given as just the name of the desired
 synapse model as a string, as a dictionary specifying synapse model
@@ -460,7 +41,7 @@ as long as they are supported by the chosen connection rule.
 .. _scalar_params:
 
 Scalar parameters
-~~~~~~~~~~~~~~~~~
+-----------------
 
 Scalar parameters must be given with the correct type. The ``weight``
 for instance must be a float, while the ``receptor_type`` has to be of
@@ -480,18 +61,33 @@ will be applied to all connections created in the current
 .. _array_params:
 
 Array parameters
-~~~~~~~~~~~~~~~~
+----------------
 
-Array parameters can be used with the rules ``all_to_all``,
-``fixed_indegree``, ``fixed_outdegree``, ``fixed_total_number`` and
-``one_to_one``. The arrays can be specified as NumPy arrays or Python
+Array parameters can be used with the rules ``one_to_one``, ``all_to_all``,
+``fixed_total_number``, ``fixed_indegree``, and ``fixed_outdegree``.
+For details on connection rules, see :ref:`connectivity_concept`.
+The arrays can be specified as NumPy arrays or Python
 lists. As with the scalar parameters, all parameters have to be
 specified as arrays of the correct type.
 
-rule: all-to-all
-^^^^^^^^^^^^^^^^
+One-to-one
+~~~~~~~~~~
 
-When connecting with rule ``all_to_all``, the array parameter must
+For rule :ref:`one_to_one` the array must have the same length as there
+are nodes in ``A`` and ``B``.
+
+.. code-block:: python
+
+    A = nest.Create('iaf_psc_alpha', 2)
+    B = nest.Create('spike_recorder', 2)
+    conn_spec_dict = {'rule': 'one_to_one'}
+    syn_spec_dict = {'weight': [1.2, -3.5]}
+    nest.Connect(A, B, conn_spec_dict, syn_spec_dict)
+
+All-to-all
+~~~~~~~~~~
+
+When connecting with rule :ref:`all_to_all`, the array parameter must
 have dimension `len(B) x len(A)`.
 
 .. code-block:: python
@@ -501,10 +97,24 @@ have dimension `len(B) x len(A)`.
     syn_spec_dict = {'weight': [[1.2, -3.5, 2.5], [0.4, -0.2, 0.7]]}
     nest.Connect(A, B, syn_spec=syn_spec_dict)
 
-rule: fixed indegree
-^^^^^^^^^^^^^^^^^^^^
+Random, fixed total number
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For rule ``fixed_indegree`` the array has to be a two-dimensional
+For rule :ref:`fixed_total_number`, the array has to be same the length as the
+number of connections ``N``.
+
+.. code-block:: python
+
+    A = nest.Create('iaf_psc_alpha', 3)
+    B = nest.Create('iaf_psc_alpha', 4)
+    conn_spec_dict = {'rule': 'fixed_total_number', 'N': 4}
+    syn_spec_dict = {'weight': [1.2, -3.5, 0.4, -0.2]}
+    nest.Connect(A, B, conn_spec_dict, syn_spec_dict)
+
+Random, fixed in-degree
+~~~~~~~~~~~~~~~~~~~~~~~
+
+For rule :ref:`fixed_indegree` the array has to be a two-dimensional
 NumPy array or Python list with shape ``(len(B), indegree)``, where
 :hxt_ref:`indegree` is the number of incoming connections per target neuron.
 This means that the rows describe the target, while the columns
@@ -519,10 +129,10 @@ of the identity of the source neurons.
     syn_spec_dict = {'weight': [[1.2, -3.5],[0.4, -0.2],[0.6, 2.2]]}
     nest.Connect(A, B, conn_spec_dict, syn_spec_dict)
 
-rule: fixed outdegree
-^^^^^^^^^^^^^^^^^^^^^
+Random, fixed out-degree
+~~~~~~~~~~~~~~~~~~~~~~~~
 
-For rule ``fixed_outdegree`` the array has to be a two-dimensional
+For rule :ref:`fixed_outdegree` the array has to be a two-dimensional
 NumPy array or Python list with shape ``(len(A), outdegree)``, where
 :hxt_ref:`outdegree` is the number of outgoing connections per source
 neuron. This means that the rows describe the source, while the
@@ -537,38 +147,10 @@ regardless of the identity of the target neuron.
     syn_spec_dict = {'weight': [[1.2, -3.5, 0.4], [-0.2, 0.6, 2.2]]}
     nest.Connect(A, B, conn_spec_dict, syn_spec_dict)
 
-rule: fixed total number
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-For rule ``fixed_total_number``, the array has to be same the length as the
-number of connections ``N``.
-
-.. code-block:: python
-
-    A = nest.Create('iaf_psc_alpha', 3)
-    B = nest.Create('iaf_psc_alpha', 4)
-    conn_spec_dict = {'rule': 'fixed_total_number', 'N': 4}
-    syn_spec_dict = {'weight': [1.2, -3.5, 0.4, -0.2]}
-    nest.Connect(A, B, conn_spec_dict, syn_spec_dict)
-
-rule: one-to-one
-^^^^^^^^^^^^^^^^
-
-For rule ``one_to_one`` the array must have the same length as there
-are nodes in ``A`` and ``B``.
-
-.. code-block:: python
-
-    A = nest.Create('iaf_psc_alpha', 2)
-    B = nest.Create('spike_recorder', 2)
-    conn_spec_dict = {'rule': 'one_to_one'}
-    syn_spec_dict = {'weight': [1.2, -3.5]}
-    nest.Connect(A, B, conn_spec_dict, syn_spec_dict)
-
 .. _dist_params:
 
 Expressions as parameters
-~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------
 
 ``nest.Parameter`` objects support a flexible specification of synapse
 parameters through expressions.  This includes parameters drawn from random
@@ -633,7 +215,7 @@ For further information on the available distributions see
 .. _collocated_synapses:
 
 Collocated synapses
-~~~~~~~~~~~~~~~~~~~
+-------------------
 
 Some modeling applications require multiple connections between the
 same pairs of nodes. An example of this could be a network, where each
@@ -705,7 +287,7 @@ your ``CollocatedSynapses`` object:
     2
 
 Spatially-structured networks
------------------------------
+---------------------------------
 
 Nodes in NEST can be created so that they have a position in two- or
 three-dimensional space. To take full advantage of the arrangement of
@@ -715,7 +297,7 @@ networks <spatial_networks>` for the full information about how to create
 and connect such networks.
 
 Connecting sparse matrices with array indexing
-----------------------------------------------
+--------------------------------------------------
 
 Oftentimes, you will find yourself in a situation, where you want to
 base your connectivity on actual data instead of rules. A common
@@ -778,7 +360,7 @@ columns and :math:`m` rows.
 .. _receptor-types:
 
 Receptor Types
---------------
+-------------------
 
 Conceptually, each connection in NEST terminates at a `receptor` on
 the target node. The exact meaning of such a receptor depends on the
@@ -1134,11 +716,3 @@ using the dot-notation:
 Note that some parameters like ``source`` and ``target`` are read-only and
 cannot be set. The documentation of a specific synapse model will
 point out which parameters can be set and which are read-only.
-
-References
-----------
-
-.. [1] Djurfeldt M, Davison AP and Eppler JM (2014). Efficient generation of
-       connectivity in neuronal networks from simulator-independent
-       descriptions. Front. Neuroinform.
-       https://doi.org/10.3389/fninf.2014.00043

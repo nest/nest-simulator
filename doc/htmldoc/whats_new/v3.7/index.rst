@@ -29,11 +29,10 @@ For further information, see:
 * :doc:`/auto_examples/eprop_plasticity/index`
 * :doc:`/models/index_e-prop plasticity`
 
-.. [1] Bellec G, Scherr F, Subramoney F, Hajek E, Salaj D, Legenstein R,
-       Maass W (2020). A solution to the learning dilemma for recurrent
-       networks of spiking neurons. Nature Communications, 11:3625.
-       https://doi.org/10.1038/s41467-020-17236-y
+Connectivity concepts
+---------------------
 
+The documentation on :ref:`connectivity_concepts` now serves as a living reference for the connection rules defined in the article "Connectivity concepts in neuronal network modeling" [2]_.
 
 Tripartite connectivity in NEST
 -------------------------------
@@ -55,6 +54,17 @@ See connectivity documentation:
 
 * :ref:`tripartite_connectivity`
 
+New connection rule: ``pairwise_poisson``
+------------------------------------------
+
+The number of synapses between pre- and post-synaptic neurons is drawn from a Poisson distribution.
+The ``pairwise_poisson`` method is adapted from the ``pairwise bernouilli`` method.
+
+
+See more information:
+
+* :ref:`pairwise_poisson`
+
 
 Ignore-and-fire neuron model
 ----------------------------
@@ -75,24 +85,9 @@ Neuron model with integrated short-term plasticity
 
 The new ``iaf_tum_2000`` neuron model incoroporates the ``tsodyks_synapse`` directly
 into the neuron model. In particular,
-``iaf_tum_2000`` implements short-term depression and short-term facilitation based on Tsodyks et al. [2]_.
+``iaf_tum_2000`` implements short-term depression and short-term facilitation based on Tsodyks et al. [3]_.
 It is based on the ``iaf_psc_exp`` model.
 
-.. [2] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
-       networks with frequency-dependent synapses. Journal of Neuroscience,
-       20 RC50. URL: http://infoscience.epfl.ch/record/183402
-
-
-New connection rule: ``pairwise_poisson``
-------------------------------------------
-
-The number of synapses between pre- and post-synaptic neurons is drawn from a Poisson distribution.
-The ``pairwise_poisson`` method is adapted from the ``pairwise bernouilli`` method.
-
-
-See more information:
-
-* :ref:`connection_management`
 
 New parameter for compartmental model
 -------------------------------------
@@ -127,3 +122,17 @@ NEST requires C++17
 From NEST 3.7 on, we use some C++17 features in NEST code. Therefore,
 NEST needs to be built with a compiler that supports C++17. Most
 recent C++ compilers should do so.
+
+References
+----------
+
+.. [1] Bellec G, Scherr F, Subramoney F, Hajek E, Salaj D, Legenstein R,
+       Maass W (2020). A solution to the learning dilemma for recurrent
+       networks of spiking neurons. Nature Communications, 11:3625.
+       https://doi.org/10.1038/s41467-020-17236-y
+
+.. [2] Senk J, Kriener B, Djurfeldt M, Voges N, Jiang HJ, et al. (2022) Connectivity concepts in neuronal network modeling. PLOS Computational Biology 18(9): e1010086. https://doi.org/10.1371/journal.pcbi.1010086
+
+.. [3] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
+       networks with frequency-dependent synapses. Journal of Neuroscience,
+       20 RC50. URL: http://infoscience.epfl.ch/record/183402

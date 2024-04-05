@@ -54,6 +54,17 @@ See connectivity documentation:
 
 * :ref:`tripartite_connectivity`
 
+New connection rule: ``pairwise_poisson``
+------------------------------------------
+
+The number of synapses between pre- and post-synaptic neurons is drawn from a Poisson distribution.
+The ``pairwise_poisson`` method is adapted from the ``pairwise bernouilli`` method.
+
+
+See more information:
+
+* :ref:`pairwise_poisson`
+
 
 Ignore-and-fire neuron model
 ----------------------------
@@ -77,17 +88,6 @@ into the neuron model. In particular,
 ``iaf_tum_2000`` implements short-term depression and short-term facilitation based on Tsodyks et al. [3]_.
 It is based on the ``iaf_psc_exp`` model.
 
-
-New connection rule: ``pairwise_poisson``
-------------------------------------------
-
-The number of synapses between pre- and post-synaptic neurons is drawn from a Poisson distribution.
-The ``pairwise_poisson`` method is adapted from the ``pairwise bernouilli`` method.
-
-
-See more information:
-
-* :ref:`connection_management`
 
 New parameter for compartmental model
 -------------------------------------
@@ -125,6 +125,7 @@ recent C++ compilers should do so.
 
 References
 ----------
+
 .. [1] Bellec G, Scherr F, Subramoney F, Hajek E, Salaj D, Legenstein R,
        Maass W (2020). A solution to the learning dilemma for recurrent
        networks of spiking neurons. Nature Communications, 11:3625.
@@ -135,4 +136,3 @@ References
 .. [3] Tsodyks M, Uziel A, Markram H (2000). Synchrony generation in recurrent
        networks with frequency-dependent synapses. Journal of Neuroscience,
        20 RC50. URL: http://infoscience.epfl.ch/record/183402
-

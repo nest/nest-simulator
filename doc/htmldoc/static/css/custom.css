@@ -115,6 +115,14 @@ section#kernel-attributes-nest-nestmodule dd {
 	padding-bottom: 20px !important;
   box-shadow: 3px 3px var(--nest-orange) !important;
 }
+
+
+.center {
+
+  text-align: center;
+  font-style: italic;
+}
+
 /*************************************************************
  * Rules for  mermaid diagrams
  *************************************************************/
@@ -139,12 +147,6 @@ figure.align-default {
 	outline-color: #f0f0f069;
 	outline-width: medium;
 	outline-style: groove;
-}
-
-.center {
-
-  text-align: center;
-  font-style: italic;
 }
 
 /**************************************************************************************
@@ -212,9 +214,10 @@ div[role="main"] .md-source {
 	border-radius: 5px;
 }
 /* Add padding around buttons on index page */
-#welcome-to-the-nest-simulator-documentation [data-md-color-primary="orange"] .md-typeset a {
+#welcome-to-the-nest-simulator-documentation [data-md-color-primary="orange"] .sd-button {
    padding: 6px;
 }
+
 
 .md-typeset details {
    background-color: white;
@@ -347,6 +350,12 @@ nav.md-nav.md-nav--secondary label.md-nav__title:after{
   font-weight: bold;
   display: flex;
   align-items: center;
+
+}
+
+#welcome-to-the-nest-simulator-documentation .sd-row-cols-lg-1 > *{
+width: 65%;
+margin-left: 1.5rem;
 }
 
 #pynest-examples img.sd-card-img-top {

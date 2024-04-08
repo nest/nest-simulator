@@ -173,7 +173,8 @@ class ClusteredNetwork:
             else self._params["V_th_I"] - 20 * nest.random.lognormal(0, 1),
         }
 
-        # iaf_psc_exp allows stochasticity, if not used - ignore
+        # iaf_psc_exp allows stochasticity, if not used - don't supply the parameters and use
+        # iaf_psc_exp as deterministic model
         if (self._params.get("delta") is not None) and (self._params.get("rho") is not None):
             E_neuron_params["delta"] = self._params["delta"]
             I_neuron_params["delta"] = self._params["delta"]
@@ -212,7 +213,7 @@ class ClusteredNetwork:
             raise ValueError("Clustering method %s not implemented" % self._params["clustering"])
 
     def connect_probabilities(self):
-        """Connect the clusters with a probability EI-clustered scheme
+        """Connect the clusters with a probability EI-cluster scheme
 
         Connects the excitatory and inhibitory populations with each other
         in the EI-clustered scheme by increasing the probabilities of the
@@ -220,12 +221,14 @@ class ClusteredNetwork:
         connections between the clusters. The weights are calculated so that
         the total input to a neuron is balanced.
         """
+
         #  self._populations[0] -> Excitatory population
         #  self._populations[1] -> Inhibitory population
-        # connectivity parameters
-        js = self._params["js"]  # connection weights
+
         N = self._params["N_E"] + self._params["N_I"]  # total units
-        if np.isnan(js).any():
+        # if js are not given compute them so that sqrt(K) spikes equal v_thr-E_L and rows are balanced
+        # if any of the js is nan or not given
+        if self._params.get("js") is None or np.isnan(self._params.get("js")).any():
             js = helper.calculate_RBN_weights(self._params)
         js *= self._params["s"]
 
@@ -238,22 +241,30 @@ class ClusteredNetwork:
         p_plus = self._params["pplus"] * self._params["baseline_conn_prob"]
         p_minus = pminus * self._params["baseline_conn_prob"]
 
+        # Connection probabilities within clusters can exceed 1. In this case, we iteratively split
+        # the connections in multiple synapse populations with probabilities < 1.
         iterations = np.ones((2, 2), dtype=int)
         # test if any of the probabilities is larger than 1
         if np.any(p_plus > 1):
-            print("The probability of connection is larger than 1")
-            print("p_plus: ", p_plus)
-            print("p_minus: ", p_minus)
+            print("The probability of some connections is larger than 1.")
+            print("Pre-splitting the connections in multiple synapse populations:")
+            printoptions = np.get_printoptions()
+            np.set_printoptions(precision=2, floatmode="fixed")
+            print("p_plus:\n", p_plus)
+            print("p_minus:\n", p_minus)
             for i in range(2):
                 for j in range(2):
                     if p_plus[i, j] > 1:
                         iterations[i, j] = int(np.ceil(p_plus[i, j]))
                         p_plus[i, j] /= iterations[i, j]
-            print("p_plus: ", p_plus)
-            print(iterations)
+            print("\nPost-splitting the connections in multiple synapse populations:")
+            print("p_plus:\n", p_plus)
+            print("Number of synapse populations:\n", iterations)
+            np.set_printoptions(**printoptions)
 
         # define the synapses and connect the populations
-        # EE
+
+        # Excitatory to excitatory neuron connections
         j_ee = js[0, 0] / np.sqrt(N)
         nest.CopyModel("static_synapse", "EE", {"weight": j_ee, "delay": self._params["delay"]})
 
@@ -297,7 +308,7 @@ class ClusteredNetwork:
                 else:
                     nest.Connect(pre, post, conn_params_EE_minus, "EE")
 
-        # EI
+        # Inhibitory to excitatory neuron connections
         j_ei = js[0, 1] / np.sqrt(N)
         nest.CopyModel("static_synapse", "EI", {"weight": j_ei, "delay": self._params["delay"]})
 
@@ -341,7 +352,7 @@ class ClusteredNetwork:
                 else:
                     nest.Connect(pre, post, conn_params_EI_minus, "EI")
 
-        # IE
+        # Excitatory to inhibitory neuron connections
         j_ie = js[1, 0] / np.sqrt(N)
         nest.CopyModel("static_synapse", "IE", {"weight": j_ie, "delay": self._params["delay"]})
 
@@ -385,7 +396,7 @@ class ClusteredNetwork:
                 else:
                     nest.Connect(pre, post, conn_params_IE_minus, "IE")
 
-        # II
+        # Inhibitory to inhibitory neuron connections
         j_ii = js[1, 1] / np.sqrt(N)
         nest.CopyModel("static_synapse", "II", {"weight": j_ii, "delay": self._params["delay"]})
 
@@ -430,7 +441,7 @@ class ClusteredNetwork:
                     nest.Connect(pre, post, conn_params_II_minus, "II")
 
     def connect_weight(self):
-        """Connect the clusters with a weight EI-clustered scheme
+        """Connect the clusters with a weight EI-cluster scheme
 
         Connects the excitatory and inhibitory populations with
         each other in the EI-clustered scheme by increasing the weights
@@ -438,6 +449,7 @@ class ClusteredNetwork:
         of the connections between the clusters. The weights are calculated
         so that the total input to a neuron is balanced.
         """
+
         #  self._populations[0] -> Excitatory population
         #  self._populations[1] -> Inhibitory population
 
@@ -457,7 +469,8 @@ class ClusteredNetwork:
             jminus = np.ones((2, 2))
 
         # define the synapses and connect the populations
-        # EE
+
+        # Excitatory to excitatory neuron connections
         j_ee = js[0, 0] / np.sqrt(N)
         nest.CopyModel(
             "static_synapse",
@@ -497,7 +510,7 @@ class ClusteredNetwork:
                 else:
                     nest.Connect(pre, post, conn_params_EE, "EE_minus")
 
-        # EI
+        # Inhibitory to excitatory neuron connections
         j_ei = js[0, 1] / np.sqrt(N)
         nest.CopyModel(
             "static_synapse",
@@ -535,7 +548,8 @@ class ClusteredNetwork:
                     nest.Connect(pre, post, conn_params_EI, "EI_plus")
                 else:
                     nest.Connect(pre, post, conn_params_EI, "EI_minus")
-        # IE
+
+        # Excitatory to inhibitory neuron connections
         j_ie = js[1, 0] / np.sqrt(N)
         nest.CopyModel(
             "static_synapse",
@@ -575,7 +589,7 @@ class ClusteredNetwork:
                 else:
                     nest.Connect(pre, post, conn_params_IE, "IE_minus")
 
-        # II
+        # Inhibitory to inhibitory neuron connections
         j_ii = js[1, 1] / np.sqrt(N)
         nest.CopyModel(
             "static_synapse",

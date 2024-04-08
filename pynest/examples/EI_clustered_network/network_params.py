@@ -64,9 +64,9 @@ net_dict = {
     # I_th*[1-delta_I_../2, 1+delta_I_../2]
     "delta_I_xE": 0.0,  # excitatory
     "delta_I_xI": 0.0,  # inhibitory
-    # initial membrane potential: either a float (in mV) to initialize all neurons to a fixed value or "rand" for randomized values
+    # initial membrane potential: either a float (in mV) to initialize all neurons to a fixed value
+    # or "rand" for randomized values: "V_th_{E,I}" - 20 * nest.random.lognormal(0, 1)
     "V_m": "rand",
-
     ############################################
     # network parameters
     ############################################

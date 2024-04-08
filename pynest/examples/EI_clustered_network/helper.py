@@ -29,8 +29,6 @@ random balanced networks and plot raster plot with color groups.
 import matplotlib.pyplot as plt
 import numpy as np
 
-small = 1e-10
-
 
 def postsynaptic_current_to_potential(tau_m, tau_syn, c_m=1.0, e_l=0.0):
     """Maximum post-synaptic potential amplitude
@@ -91,22 +89,22 @@ def calculate_RBN_weights(params):
     E_L = params.get("E_L")
     V_th_E = params.get("V_th_E")  # threshold voltage
     V_th_I = params.get("V_th_I")
-    
+
     tau_E = params.get("tau_E")
     tau_I = params.get("tau_I")
-    
+
     tau_syn_ex = params.get("tau_syn_ex")
     tau_syn_in = params.get("tau_syn_in")
-    
+
     gei = params.get("gei")
     gii = params.get("gii")
     gie = params.get("gie")
-    
+
     amp_EE = postsynaptic_current_to_potential(tau_E, tau_syn_ex)
     amp_EI = postsynaptic_current_to_potential(tau_E, tau_syn_in)
     amp_IE = postsynaptic_current_to_potential(tau_I, tau_syn_ex)
-    amp_II = postsynaptic_current_to_potential(tau_I, tau_syn_in)    
-    
+    amp_II = postsynaptic_current_to_potential(tau_I, tau_syn_in)
+
     baseline_conn_prob = params.get("baseline_conn_prob")  # connection probs
 
     js = np.zeros((2, 2))

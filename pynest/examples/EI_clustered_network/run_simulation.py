@@ -44,7 +44,7 @@ if __name__ == "__main__":
     # the spiketimes and the used parameters
     result = ei_network.get_simulation()
     ax = raster_plot(
-        Result["spiketimes"],
+        result["spiketimes"],
         tlim=(0, sim_dict["simtime"]),
         colorgroups=[
             ("k", 0, net_dict["N_E"]),

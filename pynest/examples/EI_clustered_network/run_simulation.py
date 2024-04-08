@@ -35,14 +35,14 @@ from stimulus_params import stim_dict
 
 if __name__ == "__main__":
     # Creates object which creates the EI clustered network in NEST
-    EI_Network = network.ClusteredNetwork(sim_dict, net_dict, stim_dict)
+    ei_network = network.ClusteredNetwork(sim_dict, net_dict, stim_dict)
 
     # Runs the simulation and returns the spiketimes
     # get simulation initializes the network in NEST
     # and runs the simulation
     # it returns a dict with the average rates,
     # the spiketimes and the used parameters
-    Result = EI_Network.get_simulation()
+    result = ei_network.get_simulation()
     ax = raster_plot(
         Result["spiketimes"],
         tlim=(0, sim_dict["simtime"]),
@@ -52,5 +52,5 @@ if __name__ == "__main__":
         ],
     )
     plt.savefig("clustered_ei_raster.png")
-    print("Firing rate of excitatory neurons: " + str(Result["e_rate"]) + " Spikes/s")
-    print("Firing rate of inhibitory neurons: " + str(Result["i_rate"]) + " Spikes/s")
+    print(f"Firing rate of excitatory neurons: {result['e_rate']:6.2f} spikes/s")
+    print(f"Firing rate of inhibitory neurons: {result['i_rate']:6.2f} spikes/s")

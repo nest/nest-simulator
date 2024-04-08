@@ -83,24 +83,31 @@ def calculate_RBN_weights(params):
     ndarray
         synaptic weights 2x2 matrix [[EE, EI], [IE, II]]
     """
+
     N_E = params.get("N_E")  # excitatory units
     N_I = params.get("N_I")  # inhibitory units
     N = N_E + N_I  # total units
-    baseline_conn_prob = params.get("baseline_conn_prob")  # connection probs
+
+    E_L = params.get("E_L")
+    V_th_E = params.get("V_th_E")  # threshold voltage
+    V_th_I = params.get("V_th_I")
+    
+    tau_E = params.get("tau_E")
+    tau_I = params.get("tau_I")
+    
+    tau_syn_ex = params.get("tau_syn_ex")
+    tau_syn_in = params.get("tau_syn_in")
+    
     gei = params.get("gei")
     gii = params.get("gii")
     gie = params.get("gie")
-    V_th_E = params.get("V_th_E")  # threshold voltage
-    V_th_I = params.get("V_th_I")
-    tau_E = params.get("tau_E")
-    tau_I = params.get("tau_I")
-    E_L = params.get("E_L")
-    tau_syn_ex = params.get("tau_syn_ex")
-    tau_syn_in = params.get("tau_syn_in")
+    
     amp_EE = postsynaptic_current_to_potential(tau_E, tau_syn_ex)
     amp_EI = postsynaptic_current_to_potential(tau_E, tau_syn_in)
     amp_IE = postsynaptic_current_to_potential(tau_I, tau_syn_ex)
-    amp_II = postsynaptic_current_to_potential(tau_I, tau_syn_in)
+    amp_II = postsynaptic_current_to_potential(tau_I, tau_syn_in)    
+    
+    baseline_conn_prob = params.get("baseline_conn_prob")  # connection probs
 
     js = np.zeros((2, 2))
     K_EE = N_E * baseline_conn_prob[0, 0]

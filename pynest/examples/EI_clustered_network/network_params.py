@@ -66,6 +66,7 @@ net_dict = {
     "delta_I_xI": 0.0,  # inhibitory
     # initial membrane potential
     "V_m": "rand",
+
     ############################################
     # network parameters
     ############################################

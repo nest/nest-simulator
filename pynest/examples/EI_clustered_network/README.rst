@@ -17,7 +17,7 @@ File structure
 --------------
 
 * :doc:`run_simulation.py <run_simulation>`: an example script to try out the EI-clustered circuit model
-* :doc:`network.py <network>`: the main Network class with functions to build and simulate the network
+* :doc:`network.py <network>`: the main ``Network`` class with functions to build and simulate the network
 * :doc:`helper.py <helper>`: helper functions for calculation of synaptic weights and currents and plot function for raster plots
 * :doc:`network_params.py <network_params>`: network and neuron parameters
 * :doc:`stimulus_params.py <stimulus_params>`: parameters for optional external stimulation

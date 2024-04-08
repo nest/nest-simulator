@@ -28,17 +28,17 @@ import unittest
 import nest
 import numpy as np
 
-SP = {"C_m": 1.00, "g_C": 0.00, "g_L": 0.100, "e_L": -70.0}
+SP = {"C_m": 1.00, "g_C": 0.00, "g_L": 0.100, "e_L": -70.0, "v_comp": -70.0}
 DP = [
-    {"C_m": 0.10, "g_C": 0.10, "g_L": 0.010, "e_L": -70.0},
-    {"C_m": 0.08, "g_C": 0.11, "g_L": 0.007, "e_L": -70.0},
-    {"C_m": 0.09, "g_C": 0.07, "g_L": 0.011, "e_L": -70.0},
-    {"C_m": 0.15, "g_C": 0.12, "g_L": 0.014, "e_L": -70.0},
-    {"C_m": 0.20, "g_C": 0.32, "g_L": 0.022, "e_L": -55.0},
-    {"C_m": 0.12, "g_C": 0.12, "g_L": 0.010, "e_L": -23.0},
-    {"C_m": 0.32, "g_C": 0.09, "g_L": 0.032, "e_L": -32.0},
-    {"C_m": 0.01, "g_C": 0.05, "g_L": 0.001, "e_L": -88.0},
-    {"C_m": 0.02, "g_C": 0.03, "g_L": 0.002, "e_L": -90.0},
+    {"C_m": 0.10, "g_C": 0.10, "g_L": 0.010, "e_L": -70.0, "v_comp": -70.0},
+    {"C_m": 0.08, "g_C": 0.11, "g_L": 0.007, "e_L": -70.0, "v_comp": -70.0},
+    {"C_m": 0.09, "g_C": 0.07, "g_L": 0.011, "e_L": -70.0, "v_comp": -70.0},
+    {"C_m": 0.15, "g_C": 0.12, "g_L": 0.014, "e_L": -70.0, "v_comp": -70.0},
+    {"C_m": 0.20, "g_C": 0.32, "g_L": 0.022, "e_L": -55.0, "v_comp": -55.0},
+    {"C_m": 0.12, "g_C": 0.12, "g_L": 0.010, "e_L": -23.0, "v_comp": -23.0},
+    {"C_m": 0.32, "g_C": 0.09, "g_L": 0.032, "e_L": -32.0, "v_comp": -32.0},
+    {"C_m": 0.01, "g_C": 0.05, "g_L": 0.001, "e_L": -88.0, "v_comp": -88.0},
+    {"C_m": 0.02, "g_C": 0.03, "g_L": 0.002, "e_L": -90.0, "v_comp": -90.0},
 ]
 
 
@@ -959,8 +959,10 @@ class CompartmentsTestCase(unittest.TestCase):
         m_neat = nest.Create("multimeter", 1, {"record_from": recordables, "interval": 1.0})
         nest.Connect(m_neat, n_neat)
 
+        # test the case where we continue a run without resetting the neural state
         nest.Simulate(12.0)
         nest.Simulate(88.0)
+
         events_neat_1 = nest.GetStatus(m_neat, "events")[0]
 
         for key in recordables:
@@ -1017,6 +1019,132 @@ class CompartmentsTestCase(unittest.TestCase):
         cm2.receptors = {"comp_idx": 0, "receptor_type": "GABA"}
         cm2.receptors += [{"comp_idx": 1, "receptor_type": "AMPA"}, {"comp_idx": 2, "receptor_type": "GABA"}]
         self.assertEqual(len(list(cm2.receptors)), 3)
+
+    def test_custom_v_init(self):
+        sp0 = {"C_m": 1.00, "g_C": 0.00, "g_L": 0.100, "e_L": -60.0, "v_comp": -60.0}
+        dp0 = {"C_m": 0.10, "g_C": 0.10, "g_L": 0.010, "e_L": -60.0, "v_comp": -60.0}
+
+        sp1 = {"C_m": 1.00, "g_C": 0.00, "g_L": 0.100, "e_L": -75.0, "v_comp": -60.0}
+        dp1 = {"C_m": 0.10, "g_C": 0.10, "g_L": 0.010, "e_L": -80.0, "v_comp": -60.0}
+
+        sp2 = {"C_m": 1.00, "g_C": 0.00, "g_L": 0.100, "e_L": -70.0, "v_comp": -70.0}
+        dp2 = {"C_m": 0.10, "g_C": 0.10, "g_L": 0.010, "e_L": -70.0, "v_comp": -70.0}
+
+        # test initialization equal to leak
+        cm = nest.Create("cm_default")
+        cm.compartments = [
+            {"parent_idx": -1, "params": sp0},
+            {"parent_idx": 0, "params": dp0},
+        ]
+
+        mm = nest.Create("multimeter", 1, {"record_from": ["v_comp0", "v_comp1"], "interval": 1.0})
+        nest.Connect(mm, cm)
+
+        nest.Simulate(10.0)
+
+        self.assertTrue(np.allclose(mm.events["v_comp0"], sp0["v_comp"]))
+        self.assertTrue(np.allclose(mm.events["v_comp1"], -60.0))
+
+        # test initialization different from leak
+        cm = nest.Create("cm_default")
+        cm.compartments = [
+            {"parent_idx": -1, "params": sp1},
+            {"parent_idx": 0, "params": dp1},
+        ]
+
+        mm = nest.Create("multimeter", 1, {"record_from": ["v_comp0", "v_comp1"], "interval": 0.1})
+        nest.Connect(mm, cm)
+
+        nest.Simulate(10.0)
+
+        self.assertTrue(np.allclose(mm.events["v_comp0"][0], -60.0, atol=2e-1))
+        self.assertTrue(np.allclose(mm.events["v_comp1"][0], -60.0, atol=2e-1))
+        self.assertFalse(np.allclose(mm.events["v_comp0"][-1], -60.0, atol=2e-1))
+        self.assertFalse(np.allclose(mm.events["v_comp1"][-1], -60.0, atol=2e-1))
+
+        # test channel initialization at -70.
+        cm = nest.Create("cm_default")
+        cm.compartments = [
+            {"parent_idx": -1, "params": sp2},
+            {"parent_idx": 0, "params": dp2},
+        ]
+
+        mm = nest.Create(
+            "multimeter", 1, {"record_from": ["v_comp0", "v_comp1", "m_Na_0", "h_Na_0", "n_K_0"], "interval": 1.0}
+        )
+        nest.Connect(mm, cm)
+        nest.Simulate(10.0)
+
+        def vfun(v_, th, r, q):
+            return r * (v_ - th) / (1.0 - np.exp(-(v_ - th) / q))
+
+        v = -70.0
+        alpha_m = vfun(v, -35.013, 0.182, 9.0)  # 1/ms
+        beta_m = vfun(-v, 35.013, 0.124, 9.0)  # 1/ms
+        # non-standard h activation
+        m_Na_0 = (alpha_m / (alpha_m + beta_m),)
+        h_Na_0 = 1.0 / (1.0 + np.exp((v + 65.0) / 6.2))
+
+        # activation functions
+        alpha_n = 0.02 * (v - 25.0) / (1.0 - np.exp(-(v - 25.0) / 9.0))
+        beta_n = -0.002 * (v - 25.0) / (1.0 - np.exp((v - 25.0) / 9.0))
+        n_K_0 = alpha_n / (alpha_n + beta_n)
+
+        self.assertTrue(np.allclose(mm.events["m_Na_0"][0], m_Na_0))
+        self.assertTrue(np.allclose(mm.events["h_Na_0"][0], h_Na_0))
+        self.assertTrue(np.allclose(mm.events["n_K_0"][0], n_K_0))
+
+    def test_unused_dict_entries(self):
+        sp_real = {"C_m": 1.00, "g_C": 0.00, "g_L": 0.100, "e_L": -60.0}
+        sp_fake = {"bla": 5.0}
+        rp_real = {}
+        rp_fake = {"oops": 10.0}
+
+        # test unused compartment param
+        cm = nest.Create("cm_default")
+
+        with self.assertRaisesRegex(
+            nest.kernel.NESTError, "DictError in SLI function SetStatus_id: Unused dictionary items:  bla"
+        ):
+            cm.compartments = [
+                {"parent_idx": -1, "params": sp_fake},
+            ]
+
+        # test unused compartment param
+        cm = nest.Create("cm_default")
+
+        with self.assertRaisesRegex(
+            nest.kernel.NESTError, "DictError in SLI function SetStatus_id: Unused dictionary items:  params_name"
+        ):
+            cm.compartments = [
+                {"parent_idx": -1, "params_name": sp_fake},
+            ]
+
+        # test unused receptor param
+        cm = nest.Create("cm_default")
+        cm.compartments = [
+            {"parent_idx": -1, "params": sp_real},
+        ]
+
+        with self.assertRaisesRegex(
+            nest.kernel.NESTError, "DictError in SLI function SetStatus_id: Unused dictionary items:  oops"
+        ):
+            cm.receptors = [
+                {"comp_idx": 0, "receptor_type": "AMPA", "params": rp_fake},
+            ]
+
+        # test unused receptor param
+        cm = nest.Create("cm_default")
+        cm.compartments = [
+            {"parent_idx": -1, "params": sp_real},
+        ]
+
+        with self.assertRaisesRegex(
+            nest.kernel.NESTError, "DictError in SLI function SetStatus_id: Unused dictionary items:  params_name"
+        ):
+            cm.receptors = [
+                {"comp_idx": 0, "receptor_type": "AMPA", "params_name": rp_real},
+            ]
 
 
 def suite():

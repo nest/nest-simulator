@@ -35,7 +35,7 @@ set ( nestkernel_sources
       deprecation_warning.h deprecation_warning.cpp
       device.h device.cpp
       device_node.h
-      dynamicloader.h dynamicloader.cpp
+      module_manager.h module_manager.cpp
       event.h event.cpp
       exceptions.h exceptions.cpp
       genericmodel.h genericmodel_impl.h
@@ -116,6 +116,7 @@ set ( nestkernel_sources
       spatial.h spatial.cpp
       stimulation_backend.h
       buffer_resize_log.h buffer_resize_log.cpp
+      nest_extension_interface.h
       )
 
 

@@ -75,74 +75,35 @@ Welcome to the NEST Simulator documentation
 
              Discover all our examples!
 
+.. grid::
 
-Conceptual diagram
-------------------
+    .. grid-item::
+        :columns: 6
+        :child-direction: row
+        :child-align: end
 
-.. mermaid::
+        .. raw:: html
 
-   %%{
-     init:{
-       "theme": "base",
-       "themeVariables": {
-          "lineColor": "#f63",
-          "fontSize" : "18px"
-       }
-     }
-    }%%
-   flowchart LR
+           <object width="85%" height="85%" data="_static/img/excalidraw_nestconcept_dd.svg" type="image/svg+xml"></object>
 
-     classDef nodeStyle color:#fff, stroke:#fff0, fill:#0E6A93;
-     classDef nodeStyle2 color:#000, stroke:#fff0, fill:#072f4200;
-     classDef nodeStyle3 color:#222, stroke:#fff0, fill:#bbb0;
 
-     exp --> nest-simulator
-     models -->nest-simulator
-     nest-simulator --> act
+    .. grid-item::
+        :columns: 6
 
-     subgraph  exp [Experimental protocols]
-      ir:::nodeStyle3
-     end
-     subgraph nest-simulator [nest-simulator]
-       direction TB
-       stimulating_devices:::nodeStyle2 --> simulate
-       simulate:::nodeStyle2 --> recording_devices:::nodeStyle2
-     end
+        **How NEST works - Conceptual approach**
 
-     subgraph models [Built-in or user provided models]
-        direction LR
-        neuron_models:::nodeStyle --> network:::nodeStyle
-        synapse_models:::nodeStyle --> network
+        This diagram provides an overview of the components essential for building and simulating a network model with NEST:
+        The input from stimulation devices, neuron  and synapse models,
+        and connectivity rules.
+        You can choose what data to record with the recording device. After simulation, the
+        output is ready for analysis with external tools.
 
-     end
-     subgraph act [Activity data]
-       smp:::nodeStyle3
-     end
+        NEST offers a comprehensive set of predefined components, including over a :doc:`100 models </models/index>`, a variety of :ref:`connectivity
+        rules <connectivity_concepts>`, :doc:`input devices </models/index_generator>`, and :doc:`recording options </models/index_recorder>`. Plus,
+        NEST is flexible, allowing you to implement your own custom
+        models and extend NEST's functionalities using :doc:`NESTML <nestml:index>` and the :doc:`NEST extension module <extmod:index>`, respectively.
 
-     class act sg
-     class exp sg
-     class models bg_models
-     class nest-simulator bg_devices
-     classDef sg fill:#bbb4, stroke:#4441, color:#111;
-     classDef bg_models fill:#bbb7, stroke:#3330, color:#000, font-weight: bold;
-     classDef bg_devices fill:#bbb7, stroke:#3330, color:#000, font-weight: bold;
 
-   %% Note that the spaces used in the "Simulation" text are the copy pasted unicode space character.
-   %% HTML spaces like %emsp; do not work
-   simulate(<img src="_static/img/nest_logo.png"/>     Simulation     \n)
-   neuron_models(<img src="_static/img/neuron.svg" /> \n  Neuron Models)
-   synapse_models(<img src="_static/img/synapse.svg" /> \n Synapse Models )
-   stimulating_devices(<img src="_static/img/stimulatelight.svg" /> Stimulating Devices)
-   recording_devices(<img src="_static/img/recordinglight.svg" />  Recording Devices )
-   network(<img src="_static/img/networkbrainlight.svg" /> \n  Network  Models )
-   smp(<img src="_static/img/pynest/mc_neuron_sm.png" /> \n spikes, membrane potential, \n synaptic weights, etc.)
-   ir(<img src="_static/img/experiment.png"/> \n Input rates, input currents, \n timed sequences, etc.)
-   click network href "./networks/index.html"
-   click neuron_models href "./models/index_neuron.html"
-   click synapse_models href "./models/index_synapse.html"
-   click stimulating_devices href "./models/index_generator.html"
-   click recording_devices href "./models/index_device.html"
-   click simulate href "./nest_behavior/running_simulations.html"
 
 .. toctree::
    :caption: USAGE

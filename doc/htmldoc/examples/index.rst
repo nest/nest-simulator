@@ -82,7 +82,7 @@ PyNEST examples
 
 
 
-    .. grid-item-card:: EI clustered network (Rostami)
+    .. grid-item-card:: EI clustered network (Rostami et al)
            :img-top: ../static/img/pynest/EI_clustered_network_schematic.png
 
            :doc:`../auto_examples/EI_clustered_network/index`

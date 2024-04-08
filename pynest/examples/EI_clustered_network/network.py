@@ -70,6 +70,7 @@ class ClusteredNetwork:
         stim_dict: dict
             Dictionary with stimulus parameters.
         """
+
         # merge dictionaries of simulation, network and stimulus parameters
         self._params = {**sim_dict, **net_dict, **stim_dict}
         # list of neuron population groups [E_pops, I_pops]
@@ -102,6 +103,7 @@ class ClusteredNetwork:
         Updates randseed of parameters to the actual
         used one if none is supplied.
         """
+
         nest.ResetKernel()
         nest.set_verbosity("M_WARNING")
         nest.local_num_threads = self._params.get("n_vp", 4)
@@ -115,6 +117,7 @@ class ClusteredNetwork:
         n_clusters excitatory and inhibitory neuron populations
         with the parameters of the network are created.
         """
+
         # make sure number of clusters and units are compatible
         if self._params["N_E"] % self._params["n_clusters"] != 0:
             raise ValueError("N_E must be a multiple of Q")
@@ -651,15 +654,15 @@ class ClusteredNetwork:
             all_units += I_pop
         nest.Connect(all_units, self._recording_devices[0], "all_to_all")  # Spikerecorder
 
-    def set_model_build_pipeline(self, Pipeline):
+    def set_model_build_pipeline(self, pipeline):
         """Set _model_build_pipeline
 
         Parameters
         ----------
-        Pipeline: list
+        pipeline: list
             ordered list of functions executed to build the network model
         """
-        self._model_build_pipeline = Pipeline
+        self._model_build_pipeline = pipeline
 
     def setup_network(self):
         """Setup network in NEST

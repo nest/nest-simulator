@@ -384,7 +384,7 @@ for j in range(n_rec):
             params_syn_in["weight"] = w
             nest.Connect(nrns_in[i], nrns_rec[j], params_conn_one_to_one, params_syn_in)
 
-# Sparse Connectivity from Recurrent to Recurrent Neurons
+# Sparse connectivity from recurrent to recurrent neurons
 for j in range(n_rec):
     for i in range(n_rec):
         w = weights_rec_rec[j, i]

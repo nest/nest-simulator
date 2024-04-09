@@ -542,8 +542,8 @@ class DataLoader:
 
 
 dataset_url = "https://prod-dcd-datasets-cache-zipfiles.s3.eu-west-1.amazonaws.com/468j46mzdv-1.zip"
-# path = download_and_extract_dataset(dataset_url)
-path = "/home/jesus/Documents/Work/Projects/Eprop/bio-eprop/N-MNIST/FullDataSet/468j46mzdv-1"
+path = download_and_extract_dataset(dataset_url)
+
 train_path = os.path.join(path, "Train/")
 test_path = os.path.join(path, "Test/")
 

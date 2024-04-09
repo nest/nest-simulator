@@ -112,10 +112,10 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # Define timing of task
 # .....................
 # The task's temporal structure is then defined, once as time steps and once as durations in milliseconds.
-# The variable `evaluation_group_size`` is utilized post-training to aggregate and analyze the performance
+# The variable `evaluation_group_size` is utilized post-training to aggregate and analyze the performance
 # metrics of the neural network. Unlike the online learning phase, where the model updates its weights based on
-# individual data points presented one at a time, the evaluation_group_size specifies the number of instances
-# over which the network's output is collectively assessed to compute mean accuracies and errors.
+# individual data points presented one at a time, the `evaluation_group_size` specifies the number of instances
+# over which the network's output is collectively assessed to compute the mean accuracy and error.
 
 evaluation_group_size = 4  # number of instances used to calculate the mean accuracy and error
 n_iter = 4

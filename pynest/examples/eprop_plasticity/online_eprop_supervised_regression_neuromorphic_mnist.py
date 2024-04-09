@@ -112,7 +112,7 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # .....................
 # The task's temporal structure is then defined, once as time steps and once as durations in milliseconds.
 # The variable `evaluation_group_size`` is utilized post-training to aggregate and analyze the performance
-# metrics of the neural network. Unlike the online learning phase, where the model updates its weights based on 
+# metrics of the neural network. Unlike the online learning phase, where the model updates its weights based on
 # individual data points presented one at a time, the evaluation_group_size specifies the number of instances
 # over which the network's output is collectively assessed to compute mean accuracies and errors.
 
@@ -280,7 +280,7 @@ nrns_rec_record = nrns_rec[:n_record]
 # as well as additional connections to the recorders.
 # For this task, we implement a method characterized by sparse connectivity, designed to enhance resource efficiency
 # during the learning phase. This method involves the creation of binary masks that reflect predetermined levels of
-# sparsity across various network connections, namely from input-to-recurrent, recurrent-to-recurrent, and 
+# sparsity across various network connections, namely from input-to-recurrent, recurrent-to-recurrent, and
 # recurrent-to-output. These binary masks are applied directly to the corresponding weight matrices. Subsequently,
 # we activate only a select number of connections—those that correspond to non-zero weights—to achieve the targeted
 # level of sparsity. For instance, a sparsity level of 0.9 means that most connections are turned off. This approach
@@ -430,6 +430,7 @@ nest.GetConnections(nrns_rec[0], nrns_rec[1:3]).set([params_init_optimizer] * 2)
 # The class also includes functionality for random shuffling and grouping of data, ensuring diverse and
 # representative samples are used throughout the training process.
 
+
 def download_and_extract_dataset(url, dataset_directory="468j46mzdv-1"):
     path = os.path.join(".", dataset_directory)
 
@@ -442,7 +443,7 @@ def download_and_extract_dataset(url, dataset_directory="468j46mzdv-1"):
 
     if not os.path.exists(local_zip_filename):
         print("\nDownloading Neuromorphic-MNIST (N-MNIST) dataset...")
-        response = requests.get(url)
+        response = requests.get(url, timeout=10)
         with open(local_zip_filename, "wb") as file:
             file.write(response.content)
         print("Download completed.")
@@ -749,7 +750,7 @@ print(accuracy)
 # ~~~~~~~~~~~~
 # Then, we plot a series of plots.
 
-do_plotting = True # if True, plot the results
+do_plotting = True  # if True, plot the results
 
 if not do_plotting:
     exit()

@@ -415,7 +415,7 @@ nest.GetConnections(nrns_rec[0], nrns_rec[1:3]).set([params_init_optimizer] * 2)
 # Create input and output
 # ~~~~~~~~~~~~~~~~~~~~~~~
 # This section involves downloading the Neuromorphic-MNIST (N-MNIST) dataset, extracting it, and preparing it for
-# use in neural network training and testing. The dataset consists of two main components: training and test sets.
+# neural network training and testing. The dataset consists of two main components: training and test sets.
 
 # The `download_and_extract_dataset` function handles the retrieval of the dataset from a given URL and its
 # subsequent extraction into a specified directory. It checks for the presence of the dataset to avoid
@@ -424,7 +424,7 @@ nest.GetConnections(nrns_rec[0], nrns_rec[1:3]).set([params_init_optimizer] * 2)
 
 # The `load_image` function reads a single image file from the dataset, converting the event-based neuromorphic
 # data into a format suitable for processing by spiking neural networks. It filters events based on specified pixel
-# blacklists, arranging the remaining events into a structured format representing the image.
+# blocklists, arranging the remaining events into a structured format representing the image.
 
 # The `DataLoader` class facilitates the loading of the dataset for neural network training and testing.
 # It supports selecting specific labels for inclusion, allowing for targeted training on subsets of the dataset.

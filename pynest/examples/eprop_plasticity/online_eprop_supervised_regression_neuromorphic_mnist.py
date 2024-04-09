@@ -282,13 +282,13 @@ nrns_rec_record = nrns_rec[:n_record]
 # Now, we define the connectivities and set up the synaptic parameters, with the synaptic weights drawn from
 # normal distributions. After these preparations, we establish the enumerated connections of the core network,
 # as well as additional connections to the recorders.
-# For this task, we implement a method characterized by sparse connectivity, designed to enhance resource efficiency
+# For this task, we implement a method characterized by sparse connectivity designed to enhance resource efficiency
 # during the learning phase. This method involves the creation of binary masks that reflect predetermined levels of
 # sparsity across various network connections, namely from input-to-recurrent, recurrent-to-recurrent, and
 # recurrent-to-output. These binary masks are applied directly to the corresponding weight matrices. Subsequently,
-# we activate only a select number of connections—those that correspond to non-zero weights—to achieve the targeted
-# level of sparsity. For instance, a sparsity level of 0.9 means that most connections are turned off. This approach
-# is designed to cut down on resource consumption and, ideally, boost the learning process's efficiency.
+# we activate only connections corresponding to non-zero weights to achieve the targeted
+# sparsity level. For instance, a sparsity level of 0.9 means that most connections are turned off. This approach
+# reduces resource consumption and, ideally, boosts the learning process's efficiency.
 
 params_conn_all_to_all = {"rule": "all_to_all", "allow_autapses": False}
 params_conn_one_to_one = {"rule": "one_to_one"}

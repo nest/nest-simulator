@@ -31,11 +31,12 @@ Description
 This script demonstrates supervised learning of a classification task with the eligibility propagation (e-prop)
 plasticity mechanism by Bellec et al. [1]_.
 
-The primary objective of this task is to classify the Neuromorphic MNIST dataset, an adaptation of the
-traditional MNIST dataset of handwritten digits specifically designed for neuromorphic computing. The Neuromorphic MNIST dataset captures changes in pixel intensity through a dynamic vision sensor, converting static images into sequences of binary events which we interpret as spike trains. This conversion closely emulates biological neural processing, making it a fitting challenge an e-prop-equipped SNN.
-
-
-[[TODO: add documentation]]
+The primary objective of this task is to classify the Neuromorphic MNIST dataset [2]_, an adaptation of the
+traditional MNIST dataset of handwritten digits specifically designed for neuromorphic computing.
+The Neuromorphic MNIST dataset captures changes in pixel intensity through a dynamic vision sensor,
+converting static images into sequences of binary events, which we interpret as spike trains.
+This conversion closely emulates biological neural processing, making it a fitting challenge for 
+an e-prop-equipped spiking neural network (SNN).
 
 .. image:: ../../../../pynest/examples/eprop_plasticity/eprop_supervised_classification_schematic_evidence-accumulation.png
    :width: 70 %

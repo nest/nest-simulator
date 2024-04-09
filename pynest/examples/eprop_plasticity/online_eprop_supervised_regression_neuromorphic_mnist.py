@@ -790,7 +790,6 @@ axs[-1].set_xlim(1, n_iter)
 axs[-1].xaxis.get_major_locator().set_params(integer=True)
 
 fig.tight_layout()
-plt.show()
 
 # %% ###########################################################################################################
 # Plot recordables

@@ -35,7 +35,7 @@ The primary objective of this task is to classify the Neuromorphic MNIST dataset
 traditional MNIST dataset of handwritten digits specifically designed for neuromorphic computing.
 The Neuromorphic MNIST dataset captures changes in pixel intensity through a dynamic vision sensor,
 converting static images into sequences of binary events, which we interpret as spike trains.
-This conversion closely emulates biological neural processing, making it a fitting challenge for 
+This conversion closely emulates biological neural processing, making it a fitting challenge for
 an e-prop-equipped spiking neural network (SNN).
 
 .. image:: ../../../../pynest/examples/eprop_plasticity/eprop_supervised_classification_schematic_evidence-accumulation.png
@@ -48,7 +48,7 @@ This plasticity rule requires a specific network architecture depicted in Figure
 consists of a recurrent network that receives input from Poisson generators and projects onto multiple readout neurons - one for each class.
 Each input generator is assigned to a pixel of the input image; when an event is detected in a pixel at time
 `t`, the corresponding input generator (connected to an input neuron) emits a spike at that time. Each readout neuron compares the
-network signal :math:`y_k` with the teacher signal :math:`y_k^*`, which it receives from a rate generator 
+network signal :math:`y_k` with the teacher signal :math:`y_k^*`, which it receives from a rate generator
 representing the respective digit class.
 Unlike conventional neural network classifiers that may employ softmax functions and cross-entropy loss for classification, this  network model utilizes a mean-squared error loss to evaluate the training error
 and perform digit classification.
@@ -61,9 +61,9 @@ References
 .. [1] Bellec G, Scherr F, Subramoney F, Hajek E, Salaj D, Legenstein R, Maass W (2020). A solution to the
        learning dilemma for recurrent networks of spiking neurons. Nature Communications, 11:3625.
        https://doi.org/10.1038/s41467-020-17236-y
-       
+
 .. [2] Orchard, G., Jayawant, A., Cohen, G. K., & Thakor, N. (2015). Converting static image datasets to
-       spiking neuromorphic datasets using saccades. Frontiers in neuroscience, 9, 159859.       
+       spiking neuromorphic datasets using saccades. Frontiers in neuroscience, 9, 159859.      
 
 .. [3] Korcsak-Gorzo A, Stapmanns J, Espinoza Valverde JA, Dahmen D, van Albada SJ, Bolten M, Diesmann M.
        Event-based implementation of eligibility propagation (in preparation)

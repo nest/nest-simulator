@@ -23,7 +23,7 @@ r"""
 Tutorial on learning mnist classification with e-prop
 -------------------------------------------------------
 
-Training a classification model using supervised e-prop plasticity to classify the Neuromorphic MNIST data set.
+Training a classification model using supervised e-prop plasticity to classify the Neuromorphic MNIST (N-MNIST) dataset.
 
 Description
 ~~~~~~~~~~~

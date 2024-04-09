@@ -43,12 +43,12 @@ traditional MNIST dataset of handwritten digits specifically designed for neurom
    :align: center
 
 Learning in the neural network model is achieved by optimizing the connection weights with e-prop plasticity.
-This plasticity rule requires a specific network architecture depicted in Figure 1. The neural network model 
-receives input from Poisson generators that are assigned to each pixel of the input image; when an event is 
-detected in a pixel at time `t`, the corresponding input neuron emits a spike at that time. The network 
-projects onto multiple readout neurons, where each readout neuron's signal :math:`y_k` is compared with a 
-specific target signal :math:`y_k^*`, derived from a rate generator for each digit class. Unlike conventional 
-neural network classifiers that may employ softmax functions and cross-entropy loss for classification, 
+This plasticity rule requires a specific network architecture depicted in Figure 1. The neural network model
+receives input from Poisson generators that are assigned to each pixel of the input image; when an event is
+detected in a pixel at time `t`, the corresponding input neuron emits a spike at that time. The network
+projects onto multiple readout neurons, where each readout neuron's signal :math:`y_k` is compared with a
+specific target signal :math:`y_k^*`, derived from a rate generator for each digit class. Unlike conventional
+neural network classifiers that may employ softmax functions and cross-entropy loss for classification,
 this  network model utilizes a mean-squared error loss to evaluate the training error and perform
 digit classification,  .
 
@@ -116,7 +116,7 @@ np.random.seed(rng_seed)  # fix numpy random seed
 # individual data points presented one at a time, the evaluation_group_size specifies the number of instances
 # over which the network's output is collectively assessed to compute mean accuracies and errors.
 
-evaluation_group_size = 4  #  number of instances used to calculate the mean accuracy and error
+evaluation_group_size = 4  # number of instances used to calculate the mean accuracy and error
 n_iter = 4
 
 steps = {}
@@ -547,7 +547,7 @@ path = "/home/jesus/Documents/Work/Projects/Eprop/bio-eprop/N-MNIST/FullDataSet/
 train_path = os.path.join(path, "Train/")
 test_path = os.path.join(path, "Test/")
 
-selected_labels = [l for l in range(n_out)]
+selected_labels = [label for label in range(n_out)]
 
 train_loader = DataLoader(train_path, selected_labels, evaluation_group_size, pixels_blacklist)
 test_loader = DataLoader(test_path, selected_labels, evaluation_group_size, pixels_blacklist)

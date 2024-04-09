@@ -740,7 +740,7 @@ target_signal = target_signal[:, :, :, -steps["learning_window"] :]
 mse = np.mean((target_signal - readout_signal) ** 2, axis=3)
 distance_to_target = np.mean((target_signal_rescale_factor - readout_signal) ** 2, axis=3)
 
-losses = np.mean(mse, axis=(0, 2))
+loss = np.mean(mse, axis=(0, 2))
 
 y_prediction = np.argmin(distance_to_target, axis=0)
 y_target = np.argmax(np.mean(target_signal, axis=3), axis=0)

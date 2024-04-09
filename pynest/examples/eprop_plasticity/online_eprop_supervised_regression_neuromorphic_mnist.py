@@ -175,9 +175,9 @@ nest.set_verbosity("M_FATAL")
 # pixels. By omitting Poisson generators for pixels on this blocklist, we effectively reduce the total number of
 # input neurons and Poisson generators required, optimizing the network's resource usage.
 
-pixels_blacklist = np.loadtxt("./NMNIST_pixels_blacklist.txt")
+pixels_blocklist = np.loadtxt("./NMNIST_pixels_blocklist.txt")
 
-n_in = 2 * 34 * 34 - len(pixels_blacklist)  # number of input neurons
+n_in = 2 * 34 * 34 - len(pixels_blocklist)  # number of input neurons
 n_rec = 100  # number of recurrent neurons
 n_out = 10
 
@@ -470,7 +470,7 @@ def download_and_extract_dataset(url, dataset_directory="468j46mzdv-1"):
     return path
 
 
-def load_image(file_path, pixels_blacklist=None):
+def load_image(file_path, pixels_blocklist=None):
     with open(file_path, "rb") as file:
         inputByteArray = file.read()
     byte_array = np.asarray([x for x in inputByteArray])
@@ -489,18 +489,18 @@ def load_image(file_path, pixels_blacklist=None):
         image_full[pixel].append(time)
 
     for pixel, times in enumerate(image_full):
-        if pixel not in pixels_blacklist:
+        if pixel not in pixels_blocklist:
             image.append(times)
 
     return image
 
 
 class DataLoader:
-    def __init__(self, path, selected_labels, evaluation_group_size, pixels_blacklist=None):
+    def __init__(self, path, selected_labels, evaluation_group_size, pixels_blocklist=None):
         self.path = path
         self.selected_labels = selected_labels
         self.evaluation_group_size = evaluation_group_size
-        self.pixels_blacklist = pixels_blacklist
+        self.pixels_blocklist = pixels_blocklist
 
         self.current_index = 0
         self.all_sample_paths, self.all_labels = self.get_all_sample_paths_with_labels()
@@ -536,7 +536,7 @@ class DataLoader:
 
         self.current_index = (self.current_index + self.evaluation_group_size) % len(self.all_sample_paths)
 
-        images_group = [load_image(self.all_sample_paths[i], self.pixels_blacklist) for i in selected_indices]
+        images_group = [load_image(self.all_sample_paths[i], self.pixels_blocklist) for i in selected_indices]
         labels_group = [self.all_labels[i] for i in selected_indices]
 
         return images_group, labels_group
@@ -550,8 +550,8 @@ test_path = os.path.join(path, "Test/")
 
 selected_labels = [label for label in range(n_out)]
 
-train_loader = DataLoader(train_path, selected_labels, evaluation_group_size, pixels_blacklist)
-test_loader = DataLoader(test_path, selected_labels, evaluation_group_size, pixels_blacklist)
+train_loader = DataLoader(train_path, selected_labels, evaluation_group_size, pixels_blocklist)
+test_loader = DataLoader(test_path, selected_labels, evaluation_group_size, pixels_blocklist)
 
 # %% ###########################################################################################################
 # Force final update

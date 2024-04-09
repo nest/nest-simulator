@@ -170,9 +170,9 @@ nest.set_verbosity("M_FATAL")
 # We proceed by creating a certain number of input, recurrent, and readout neurons and setting their parameters.
 # Additionally, we already create an input spike generator and an output target rate generator, which we will
 # configure later. Each input sample, featuring two channels, is mapped out to a 34x34 pixel grid. We allocate
-# Poisson generators to each pixel of the input image to simulate spike events. However, due to the observation
-# that some pixels either never record events or do so infrequently, we maintain a blacklist of these inactive
-# pixels. By omitting Poisson generators for pixels on this blacklist, we effectively reduce the total number of
+# Poisson generators to each input image pixel to simulate spike events. However, due to the observation
+# that some pixels either never record events or do so infrequently, we maintain a blocklist of these inactive
+# pixels. By omitting Poisson generators for pixels on this blocklist, we effectively reduce the total number of
 # input neurons and Poisson generators required, optimizing the network's resource usage.
 
 pixels_blacklist = np.loadtxt("./NMNIST_pixels_blacklist.txt")

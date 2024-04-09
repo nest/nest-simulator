@@ -745,7 +745,7 @@ losses = np.mean(mse, axis=(0, 2))
 y_prediction = np.argmin(distance_to_target, axis=0)
 y_target = np.argmax(np.mean(target_signal, axis=3), axis=0)
 accuracy = np.mean((y_target == y_prediction), axis=1)
-
+recall_errors = 1.0 - accuracy
 
 print(accuracy)
 

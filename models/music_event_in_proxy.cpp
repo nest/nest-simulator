@@ -115,7 +115,7 @@ nest::music_event_in_proxy::music_event_in_proxy( const music_event_in_proxy& n 
   , P_( n.P_ )
   , S_( n.S_ )
 {
-  kernel().music_manager.register_music_in_port( P_.port_name_, true );
+  kernel().music_manager.register_music_in_port( P_.port_name_ );
 }
 
 
@@ -156,8 +156,8 @@ nest::music_event_in_proxy::set_status( const DictionaryDatum& d )
   stmp.set( d, P_ ); // throws if BadProperty
 
   // if we get here, temporaries contain consistent set of properties
-  kernel().music_manager.register_music_in_port( ptmp.port_name_ );
   kernel().music_manager.unregister_music_in_port( P_.port_name_ );
+  kernel().music_manager.register_music_in_port( ptmp.port_name_ );
 
   P_ = ptmp;
   S_ = stmp;

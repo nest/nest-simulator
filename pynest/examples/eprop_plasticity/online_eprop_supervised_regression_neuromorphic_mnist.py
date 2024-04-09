@@ -785,7 +785,7 @@ fig, axs = plt.subplots(2, 1, sharex=True)
 axs[0].plot(range(1, n_iter + 1), losses)
 axs[0].set_ylabel(r"$E = \frac{1}{2} \sum_{t,k} \left( y_k^t -y_k^{*,t}\right)^2$")
 
-axs[1].plot(range(1, n_iter + 1), 1.0 - accuracy)
+axs[1].plot(range(1, n_iter + 1), recall_errors)
 axs[1].set_ylabel("recall errors")
 
 axs[-1].set_xlabel("training iteration")

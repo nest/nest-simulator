@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# sim_params.py
+# network_params.py
 #
 # This file is part of NEST.
 #

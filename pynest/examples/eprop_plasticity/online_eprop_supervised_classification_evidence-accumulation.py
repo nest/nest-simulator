@@ -139,13 +139,11 @@ steps.update(
     {
         "offset_gen": 1,  # offset since generator signals start from time step 1
         "delay_in_rec": 1,  # connection delay between input and recurrent neurons
-        "delay_rec_out": 0,  # connection delay between recurrent and output neurons
-        "delay_out_norm": 0,  # connection delay between output neurons for normalization
         "extension_sim": 3,  # extra time step to close right-open simulation time interval in Simulate()
     }
 )
 
-steps["delays"] = steps["delay_in_rec"] + steps["delay_rec_out"] + steps["delay_out_norm"]  # time steps of delays
+steps["delays"] = steps["delay_in_rec"]  # time steps of delays
 
 steps["total_offset"] = steps["offset_gen"] + steps["delays"]  # time steps of total offset
 

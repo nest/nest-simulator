@@ -40,10 +40,17 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
+#include "nest_impl.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
+
+void
+nest::register_music_rate_out_proxy( const std::string& name )
+{
+  register_node_model< music_rate_out_proxy >( name );
+}
 
 nest::music_rate_out_proxy::Parameters_::Parameters_()
   : port_name_( "rate_out" )

@@ -45,13 +45,13 @@ an e-prop-equipped spiking neural network (SNN).
 
 Learning in the neural network model is achieved by optimizing the connection weights with e-prop plasticity.
 This plasticity rule requires a specific network architecture depicted in Figure 1. The neural network model
-receives input from Poisson generators that are assigned to each pixel of the input image; when an event is
-detected in a pixel at time `t`, the corresponding input neuron emits a spike at that time. The network
-projects onto multiple readout neurons, where each readout neuron's signal :math:`y_k` is compared with a
-specific target signal :math:`y_k^*`, derived from a rate generator for each digit class. Unlike conventional
-neural network classifiers that may employ softmax functions and cross-entropy loss for classification,
-this  network model utilizes a mean-squared error loss to evaluate the training error and perform
-digit classification,  .
+consists of a recurrent network that receives input from Poisson generators and projects onto multiple readout neurons - one for each class.
+Each input generator is assigned to a pixel of the input image; when an event is detected in a pixel at time
+`t`, the corresponding input generator (connected to an input neuron) emits a spike at that time. Each readout neuron compares the
+network signal :math:`y_k` with the teacher signal :math:`y_k^*`, which it receives from a rate generator 
+representing the respective digit class.
+Unlike conventional neural network classifiers that may employ softmax functions and cross-entropy loss for classification, this  network model utilizes a mean-squared error loss to evaluate the training error
+and perform digit classification.
 
 Details on the event-based NEST implementation of e-prop can be found in [3]_.
 

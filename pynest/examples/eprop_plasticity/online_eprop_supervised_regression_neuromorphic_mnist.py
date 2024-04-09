@@ -376,7 +376,7 @@ nest.SetDefaults("eprop_synapse", params_common_syn_eprop)
 
 nest.Connect(gen_spk_in, nrns_in, params_conn_one_to_one, params_syn_static)  # connection 1
 
-# Sparse Connectivity from Input to Recurrent Neurons
+# Sparse connectivity from input to recurrent neurons
 for j in range(n_rec):
     for i in range(n_in):
         w = weights_in_rec[j, i]

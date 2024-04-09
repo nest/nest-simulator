@@ -840,7 +840,6 @@ for xlims in [(0, steps["sequence"]), (steps["task"] - steps["sequence"], steps[
     axs[-1].set_xlim(*xlims)
 
     fig.align_ylabels()
-    plt.show()
 
 # %% ###########################################################################################################
 # Plot weight time courses

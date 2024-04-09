@@ -527,7 +527,7 @@ jobs:
           - "boost, optimize, warning"
           - "openmp, python, gsl, ltdl, boost, optimize, warning"
           - "mpi, python, gsl, ltdl, boost, optimize, warning"
-          - "openmp, mpi, python, gsl, ltdl, boost, hdf5, sionlib, libneurosim, optimize, warning"
+          - "openmp, mpi, python, gsl, ltdl, boost, hdf5, sionlib, libneurosim, optimize, warning, music"
 
     steps:
       - name: Harden Runner
@@ -678,6 +678,7 @@ jobs:
               -Dwith-hdf5=${{ contains(matrix.use, 'hdf5') && 'ON' || 'OFF' }} \
               -Dwith-sionlib=${{ contains(matrix.use, 'sionlib') && '$HOME/.cache/sionlib.install' || 'OFF' }} \
               -Dwith-libneurosim=${{ contains(matrix.use, 'libneurosim') && '$HOME/.cache/libneurosim.install' || 'OFF' }} \
+              -Dwith-music=${{ contains(matrix.use, 'music') && '$HOME/.cache/music.install' || 'OFF' }} \
               ..
 
       - name: "Add GCC problem matcher"
@@ -806,6 +807,7 @@ jobs:
               -Dwith-hdf5=${{ contains(matrix.use, 'hdf5') && 'ON' || 'OFF' }} \
               -Dwith-sionlib=${{ contains(matrix.use, 'sionlib') && '$HOME/.cache/sionlib.install' || 'OFF' }} \
               -Dwith-libneurosim=${{ contains(matrix.use, 'libneurosim') && '$HOME/.cache/libneurosim.install' || 'OFF' }} \
+              -Dwith-music=${{ contains(matrix.use, 'music') && '$HOME/.cache/music.install' || 'OFF' }} \
               ..
 
       - name: "Add GCC problem matcher"

@@ -877,7 +877,6 @@ axs[-1].set_xlim(0, steps["task"])
 
 fig.align_ylabels()
 fig.tight_layout()
-plt.show()
 
 # %% ###########################################################################################################
 # Plot weight matrices

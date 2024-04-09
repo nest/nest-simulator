@@ -6,6 +6,7 @@ There are two types of code comments for C++ files: doxygen style and C++ style 
 * Doxygen styled comments are used for describing things like the purpose of the function, which parameters it accepts, and what output it generates.
 * Use Doxygen style comments in the header (``.h``)  files. Avoid using them in ``.cpp`` files.
 * Do not duplicate code in comments.
+
 ..  Include the variable name in functions in header file to match cpp file.
 
 
@@ -14,7 +15,7 @@ Generate HTML from doxygen comments
 
 To generate HTML output of the doxgyen comments,
 
-in the build directory, 
+in the build directory,
 
 run ``cmake`` with developer documentation on::
 

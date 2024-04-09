@@ -34,6 +34,7 @@ import pytest
 # The following models will not be tested:
 skip_list = [
     "ginzburg_neuron",  # binary neuron
+    "ignore_and_fire",  # input independent neuron
     "mcculloch_pitts_neuron",  # binary neuron
     "erfc_neuron",  # binary neuron
     "lin_rate_ipn",  # rate neuron
@@ -89,8 +90,12 @@ extra_params = {
 }
 
 
-def test_spike_multiplicity_parrot_neuron():
+@pytest.fixture(autouse=True)
+def reset():
     nest.ResetKernel()
+
+
+def test_spike_multiplicity_parrot_neuron():
     multiplicities = [1, 3, 2]
     spikes = [1.0, 2.0, 3.0]
     sg = nest.Create(
@@ -121,8 +126,6 @@ def test_spike_multiplicity_parrot_neuron():
     ],
 )
 def test_spike_multiplicity(model):
-    nest.ResetKernel()
-
     n1 = nest.Create(model)
     n2 = nest.Create(model)
 

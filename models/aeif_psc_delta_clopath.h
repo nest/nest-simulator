@@ -188,8 +188,7 @@ References
        in STDP – a unified model. Frontiers in Synaptic Neuroscience. 2:25
        DOI: https://doi.org/10.3389/fnsyn.2010.00025
 .. [3] Voltage-based STDP synapse (Clopath et al. 2010) on ModelDB
-       https://senselab.med.yale.edu/ModelDB/showmodel.cshtml?model=144566&file=%2f
-       modeldb_package%2fVoTriCode%2faEIF.m
+       https://modeldb.science/144566?tab=1
 
 See also
 ++++++++

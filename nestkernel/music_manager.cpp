@@ -48,8 +48,13 @@ MUSICManager::MUSICManager()
 }
 
 void
-MUSICManager::initialize()
+MUSICManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
+  if ( adjust_number_of_threads_or_rng_only )
+  {
+    return;
+  }
+
 #ifdef HAVE_MUSIC
   // Reset music_in_portlist_ to its pristine state.
   // See comment above pristine_music_in_portlist_ in the header.
@@ -58,7 +63,7 @@ MUSICManager::initialize()
 }
 
 void
-MUSICManager::finalize()
+MUSICManager::finalize( const bool )
 {
 }
 

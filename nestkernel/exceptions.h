@@ -47,12 +47,10 @@ class Event;
  * @defgroup KernelExceptions NEST kernel exception classes
  * Exception classes that are thrown by the NEST kernel to indicate
  * an error.
- * @ingroup Exceptions
  */
 
 /**
  * Base class for all Kernel exceptions.
- * @ingroup Exceptions
  * @ingroup KernelExceptions
  */
 class KernelException : public SLIException

@@ -41,11 +41,14 @@
 // Includes from nestkernel:
 #include "clopath_archiving_node.h"
 #include "conn_builder.h"
+#include "conn_builder_conngen.h"
 #include "conn_builder_factory.h"
 #include "connection_label.h"
+#include "connection_manager_impl.h"
 #include "connector_base.h"
 #include "connector_model.h"
 #include "delay_checker.h"
+#include "eprop_archiving_node.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
@@ -90,27 +93,52 @@ nest::ConnectionManager::~ConnectionManager()
 }
 
 void
-nest::ConnectionManager::initialize()
+nest::ConnectionManager::initialize( const bool adjust_number_of_threads_or_rng_only )
 {
+  if ( not adjust_number_of_threads_or_rng_only )
+  {
+    // Add connection rules
+    register_conn_builder< OneToOneBuilder >( "one_to_one" );
+    register_conn_builder< AllToAllBuilder >( "all_to_all" );
+    register_conn_builder< FixedInDegreeBuilder >( "fixed_indegree" );
+    register_conn_builder< FixedOutDegreeBuilder >( "fixed_outdegree" );
+    register_conn_builder< BernoulliBuilder >( "pairwise_bernoulli" );
+    register_conn_builder< PoissonBuilder >( "pairwise_poisson" );
+    register_conn_builder< TripartiteBernoulliWithPoolBuilder >( "tripartite_bernoulli_with_pool" );
+    register_conn_builder< SymmetricBernoulliBuilder >( "symmetric_pairwise_bernoulli" );
+    register_conn_builder< FixedTotalNumberBuilder >( "fixed_total_number" );
+#ifdef HAVE_LIBNEUROSIM
+    register_conn_builder< ConnectionGeneratorBuilder >( "conngen" );
+#endif
+
+    keep_source_table_ = true;
+    connections_have_changed_ = false;
+    get_connections_has_been_called_ = false;
+    use_compressed_spikes_ = true;
+    stdp_eps_ = 1.0e-6;
+    min_delay_ = max_delay_ = 1;
+    sw_construction_connect.reset();
+  }
+
   const size_t num_threads = kernel().vp_manager.get_num_threads();
   connections_.resize( num_threads );
   secondary_recv_buffer_pos_.resize( num_threads );
-  keep_source_table_ = true;
-  connections_have_changed_ = false;
-  get_connections_has_been_called_ = false;
-  use_compressed_spikes_ = true;
   compressed_spike_data_.resize( 0 );
+
   has_primary_connections_ = false;
   check_primary_connections_.initialize( num_threads, false );
   secondary_connections_exist_ = false;
   check_secondary_connections_.initialize( num_threads, false );
-  stdp_eps_ = 1.0e-6;
+
+  // We need to obtain this while in serial context to avoid problems when
+  // increasing the number of threads.
+  const size_t num_conn_models = kernel().model_manager.get_num_connection_models();
 
 #pragma omp parallel
   {
     const size_t tid = kernel().vp_manager.get_thread_id();
-    connections_[ tid ] = std::vector< ConnectorBase* >( kernel().model_manager.get_num_connection_models() );
-    secondary_recv_buffer_pos_[ tid ] = std::vector< std::vector< size_t > >();
+    connections_.at( tid ) = std::vector< ConnectorBase* >( num_conn_models );
+    secondary_recv_buffer_pos_.at( tid ) = std::vector< std::vector< size_t > >();
   } // of omp parallel
 
   source_table_.initialize();
@@ -122,16 +150,10 @@ nest::ConnectionManager::initialize()
 
   std::vector< std::vector< size_t > > tmp2( kernel().vp_manager.get_num_threads(), std::vector< size_t >() );
   num_connections_.swap( tmp2 );
-
-  // The following line is executed by all processes, no need to communicate
-  // this change in delays.
-  min_delay_ = max_delay_ = 1;
-
-  sw_construction_connect.reset();
 }
 
 void
-nest::ConnectionManager::finalize()
+nest::ConnectionManager::finalize( const bool adjust_number_of_threads_or_rng_only )
 {
   source_table_.finalize();
   target_table_.finalize();
@@ -140,13 +162,16 @@ nest::ConnectionManager::finalize()
   std::vector< std::vector< ConnectorBase* > >().swap( connections_ );
   std::vector< std::vector< std::vector< size_t > > >().swap( secondary_recv_buffer_pos_ );
   compressed_spike_data_.clear();
-}
 
-void
-nest::ConnectionManager::change_number_of_threads()
-{
-  finalize();
-  initialize();
+  if ( not adjust_number_of_threads_or_rng_only )
+  {
+    for ( auto cbf : connbuilder_factories_ )
+    {
+      delete cbf;
+    }
+    connbuilder_factories_.clear();
+    connruledict_->clear();
+  }
 }
 
 void
@@ -209,11 +234,12 @@ nest::ConnectionManager::get_synapse_status( const size_t source_node_id,
   const synindex syn_id,
   const size_t lcid ) const
 {
-  kernel().model_manager.assert_valid_syn_id( syn_id );
+  kernel().model_manager.assert_valid_syn_id( syn_id, kernel().vp_manager.get_thread_id() );
 
   DictionaryDatum dict( new Dictionary );
   ( *dict )[ names::source ] = source_node_id;
-  ( *dict )[ names::synapse_model ] = LiteralDatum( kernel().model_manager.get_connection_model( syn_id ).get_name() );
+  ( *dict )[ names::synapse_model ] =
+    LiteralDatum( kernel().model_manager.get_connection_model( syn_id, /* thread */ 0 ).get_name() );
   ( *dict )[ names::target_thread ] = tid;
   ( *dict )[ names::synapse_id ] = syn_id;
   ( *dict )[ names::port ] = lcid;
@@ -254,7 +280,7 @@ nest::ConnectionManager::set_synapse_status( const size_t source_node_id,
   const size_t lcid,
   const DictionaryDatum& dict )
 {
-  kernel().model_manager.assert_valid_syn_id( syn_id );
+  kernel().model_manager.assert_valid_syn_id( syn_id, kernel().vp_manager.get_thread_id() );
 
   const Node* source = kernel().node_manager.get_node_or_proxy( source_node_id, tid );
   const Node* target = kernel().node_manager.get_node_or_proxy( target_node_id, tid );
@@ -465,6 +491,13 @@ nest::ConnectionManager::connect( TokenArray sources, TokenArray targets, const 
 void
 nest::ConnectionManager::update_delay_extrema_()
 {
+  if ( kernel().simulation_manager.has_been_simulated() )
+  {
+    // Once simulation has started, min/max_delay can no longer change,
+    // so there is nothing to update.
+    return;
+  }
+
   min_delay_ = get_min_delay_time_().get_steps();
   max_delay_ = get_max_delay_time_().get_steps();
 
@@ -476,7 +509,13 @@ nest::ConnectionManager::update_delay_extrema_()
     max_delay_ = std::max( max_delay_, kernel().sp_manager.builder_max_delay() );
   }
 
-  if ( kernel().mpi_manager.get_num_processes() > 1 )
+  // If the user explicitly set min/max_delay, this happend on all MPI ranks,
+  // so all ranks are up to date already. Also, once the user has set min/max_delay
+  // explicitly, Connect() cannot induce new extrema. Thuse, we only need to communicate
+  // with other ranks if the user has not set the extrema and connections may have
+  // been created.
+  if ( not kernel().connection_manager.get_user_set_delay_extrema()
+    and kernel().connection_manager.connections_have_changed() and kernel().mpi_manager.get_num_processes() > 1 )
   {
     std::vector< long > min_delays( kernel().mpi_manager.get_num_processes() );
     min_delays[ kernel().mpi_manager.get_rank() ] = min_delay_;
@@ -505,7 +544,7 @@ nest::ConnectionManager::connect( const size_t snode_id,
   const double delay,
   const double weight )
 {
-  kernel().model_manager.assert_valid_syn_id( syn_id );
+  kernel().model_manager.assert_valid_syn_id( syn_id, kernel().vp_manager.get_thread_id() );
 
   Node* source = kernel().node_manager.get_node_or_proxy( snode_id, target_thread );
 
@@ -534,7 +573,7 @@ nest::ConnectionManager::connect( const size_t snode_id,
   const DictionaryDatum& params,
   const synindex syn_id )
 {
-  kernel().model_manager.assert_valid_syn_id( syn_id );
+  kernel().model_manager.assert_valid_syn_id( syn_id, kernel().vp_manager.get_thread_id() );
 
   const size_t tid = kernel().vp_manager.get_thread_id();
 
@@ -843,6 +882,14 @@ nest::ConnectionManager::connect_( Node& source,
     throw NotImplemented( "This synapse model is not supported by the neuron model of at least one  connection." );
   }
 
+  const bool eprop_archiving = conn_model.has_property( ConnectionModelProperties::REQUIRES_EPROP_ARCHIVING );
+  if ( eprop_archiving
+    and not( dynamic_cast< EpropArchivingNodeRecurrent* >( &target )
+      or dynamic_cast< EpropArchivingNodeReadout* >( &target ) ) )
+  {
+    throw NotImplemented( "This synapse model is not supported by the neuron model of at least one connection." );
+  }
+
   const bool is_primary = conn_model.has_property( ConnectionModelProperties::IS_PRIMARY );
   conn_model.add_connection( source, target, connections_[ tid ], syn_id, params, delay, weight );
   source_table_.add_source( tid, syn_id, s_node_id, is_primary );
@@ -855,13 +902,13 @@ nest::ConnectionManager::connect_( Node& source,
   {
 #pragma omp atomic write
     has_primary_connections_ = true;
-    check_primary_connections_[ tid ].set_true();
+    check_primary_connections_.set_true( tid );
   }
   else if ( check_secondary_connections_[ tid ].is_false() and not is_primary )
   {
 #pragma omp atomic write
     secondary_connections_exist_ = true;
-    check_secondary_connections_[ tid ].set_true();
+    check_secondary_connections_.set_true( tid );
   }
 }
 
@@ -1607,7 +1654,7 @@ nest::ConnectionManager::deliver_secondary_events( const size_t tid,
   const synindex syn_id_end = positions_tid.size();
   for ( synindex syn_id = 0; syn_id < syn_id_end; ++syn_id )
   {
-    const ConnectorModel& conn_model = kernel().model_manager.get_connection_model( syn_id );
+    const ConnectorModel& conn_model = kernel().model_manager.get_connection_model( syn_id, tid );
     const bool supports_wfr = conn_model.has_property( ConnectionModelProperties::SUPPORTS_WFR );
     if ( not called_from_wfr_update or supports_wfr )
     {
@@ -1675,17 +1722,11 @@ nest::ConnectionManager::remove_disabled_connections( const size_t tid )
 void
 nest::ConnectionManager::resize_connections()
 {
-  kernel().vp_manager.assert_single_threaded();
+  kernel().vp_manager.assert_thread_parallel();
 
-  // Resize data structures for connections between neurons
-  for ( size_t tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-  {
-    connections_[ tid ].resize( kernel().model_manager.get_num_connection_models() );
-    source_table_.resize_sources( tid );
-  }
+  connections_.at( kernel().vp_manager.get_thread_id() ).resize( kernel().model_manager.get_num_connection_models() );
 
-  // Resize data structures for connections between neurons and
-  // devices
+  source_table_.resize_sources();
   target_table_devices_.resize_to_number_of_synapse_types();
 }
 

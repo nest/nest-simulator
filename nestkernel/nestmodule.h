@@ -133,7 +133,7 @@ public:
   static AbstractMask* create_mask( const Name& name, const DictionaryDatum& d );
 
   /**
-   * @defgroup NestSliInterface SLI Interface functions of the NEST kernel.
+   * SLI Interface functions of the NEST kernel.
    *
    * This group contains the functions that form the SLI interface
    * of the NEST kernel.
@@ -388,6 +388,15 @@ public:
   public:
     void execute( SLIInterpreter* ) const override;
   } copymodel_l_l_Dfunction;
+
+  /** @BeginDocumentation
+   *  Name: Install - install dynamically loaded module
+   */
+  class Install_sFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const override;
+  } install_sfunction;
 
   class GetConnections_DFunction : public SLIFunction
   {

@@ -228,7 +228,7 @@ class NestModule(types.ModuleType):
     )
     spike_buffer_grow_extra = KernelAttribute(
         "float",
-        "When spike exchange buffer needs to be expanded, resize to "
+        "When spike exchange buffer is expanded, resize it to "
         + "`(1 + spike_buffer_grow_extra) * required_buffer_size`",
         default=0.5,
     )
@@ -238,14 +238,14 @@ class NestModule(types.ModuleType):
             "If the largest number of spikes sent from any rank to any rank is less than "
             + "`spike_buffer_shrink_limit * buffer_size`, then reduce buffer size. "
             + "`spike_buffer_shrink_limit == 0` means that buffers never shrink. "
-            + "See ``spike_buffer_shrink_factor`` for how much buffer shrinks"
+            + "See ``spike_buffer_shrink_spare`` for how the new buffer size is determined"
         ),
-        default=0.0,
+        default=0.2,
     )
     spike_buffer_shrink_spare = KernelAttribute(
         "float",
         (
-            "When the buffer needs to shrink, set the new size to "
+            "When the buffer shrinks, set the new size to "
             + "`(1 + spike_buffer_shrink_spare) * required_buffer_size`. "
             + "See `spike_buffer_shrink_limit` for when buffers shrink"
         ),
@@ -254,10 +254,10 @@ class NestModule(types.ModuleType):
     spike_buffer_resize_log = KernelAttribute(
         "dict",
         (
-            "Information on spike buffer resizing as a dictionary. It contains the "
+            "Log of spike buffer resizing as a dictionary. It contains the "
             + "`times` of the resizings (simulation clock in steps, always multiple of ``min_delay``), "
             + "``global_max_spikes_sent``, that is, the observed spike number that triggered the resize, "
-            + "and the ``new_buffer_size``. Sizes are for the section addressing one rank."
+            + "and the ``new_buffer_size``. Sizes for the buffer section sent from one rank to another rank"
         ),
         readonly=True,
     )
@@ -398,7 +398,21 @@ class NestModule(types.ModuleType):
         ),
         default=float("+inf"),
     )
-
+    eprop_update_interval = KernelAttribute(
+        "float",
+        ("Task-specific update interval of the e-prop plasticity mechanism [ms]."),
+        default=1000.0,
+    )
+    eprop_learning_window = KernelAttribute(
+        "float",
+        ("Task-specific learning window of the e-prop plasticity mechanism [ms]."),
+        default=1000.0,
+    )
+    eprop_reset_neurons_on_update = KernelAttribute(
+        "bool",
+        ("If True, reset dynamic variables of e-prop neurons upon e-prop update."),
+        default=True,
+    )
     # Kernel attribute indices, used for fast lookup in `ll_api.py`
     _kernel_attr_names = builtins.set(k for k, v in vars().items() if isinstance(v, KernelAttribute))
     _readonly_kernel_attrs = builtins.set(

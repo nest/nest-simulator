@@ -5,25 +5,33 @@ Welcome to the NEST Simulator documentation
 
 
 .. grid::
+  :gutter: 2
 
   .. grid-item::
 
-    NEST is used in computational neuroscience to model and study behavior of large networks of neurons.
+     .. grid:: 1 1 1 1
+       :gutter: 2
 
-    The models describe single neuron and synapse behavior and their connections.
-    Different mechanisms of plasticity can be used to investigate artificial learning
-    and help to shed light on the fundamental principles of how the brain works.
+       .. grid-item::
 
-    NEST offers convenient and efficient commands to define and connect large networks,
-    ranging from algorithmically determined connections to data-driven connectivity.
-    Create connections between neurons using numerous synapse models from STDP to gap junctions.
+          NEST is used in computational neuroscience to model and study behavior of large networks of neurons.
 
-    .. button-ref:: tutorials_guides
-       :ref-type: ref
-       :shadow:
-       :color: primary
+          The models describe single neuron and synapse behavior and their connections.
+          Different mechanisms of plasticity can be used to investigate artificial learning
+          and help to shed light on the fundamental principles of how the brain works.
 
-       Start exploring NEST
+          NEST offers convenient and efficient commands to define and connect large networks,
+          ranging from algorithmically determined connections to data-driven connectivity.
+          Create connections between neurons using numerous synapse models from STDP to gap junctions.
+
+       .. grid-item::
+
+          .. button-ref:: tutorials_guides
+             :ref-type: ref
+             :shadow:
+             :color: primary
+
+             Start exploring NEST
 
   .. grid-item::
 
@@ -47,7 +55,7 @@ Welcome to the NEST Simulator documentation
                 .. figure:: static/img/astrocyte_interaction.png
 
 
-                  Investigate neuron and astrocyte interactions
+                  Inspect neuron and astrocyte interactions
 
 
                 .. figure:: static/img/hpc_benchmark_connectivity.svg
@@ -58,7 +66,7 @@ Welcome to the NEST Simulator documentation
                 .. figure:: static/img/pong_sim.gif
 
 
-                  Play PONG with NEST
+                  Simulate a game of PONG with NEST
 
                 .. figure:: static/img/gapjunctions.png
 
@@ -84,11 +92,11 @@ Welcome to the NEST Simulator documentation
 
         .. raw:: html
 
-           <object width="85%" height="85%" data="_static/img/excalidraw_nestconcept_dd.svg" type="image/svg+xml"></object>
+           <object width="89%" height="89%" data="_static/img/excalidraw_nestconcept_dd.svg" type="image/svg+xml"></object>
 
 
     .. grid-item::
-        :columns: 6
+        :columns: 5
 
         **How NEST works - Conceptual approach**
 
@@ -98,11 +106,11 @@ Welcome to the NEST Simulator documentation
         You can choose what data to record with the recording device. After simulation, the
         output is ready for analysis with external tools.
 
-        NEST offers a comprehensive set of predefined components, including over a :doc:`100 models </models/index>`, a variety of :ref:`connectivity
-        rules <connectivity_concepts>`, :doc:`input devices </models/index_generator>`, and :doc:`recording options </models/index_recorder>`. Plus,
+        NEST offers a comprehensive set of predefined components, including over a 100 :doc:`neuron models </models/index_neuron>` and :doc:`synapse models </models/index_synapse>`,
+        a variety of :ref:`connection rules <connectivity_concepts>`, :doc:`stimulation devices </models/index_generator>`, and :doc:`recording devices </models/index_recorder>`. Plus,
         NEST is flexible, allowing you to implement your own custom
         models and extend NEST's functionalities using :doc:`NESTML <nestml:index>` and the :doc:`NEST extension module <extmod:index>`, respectively.
-
+        Check out our wide-ranging list of :doc:`network model <examples/index>` examples.
 
 
 .. toctree::

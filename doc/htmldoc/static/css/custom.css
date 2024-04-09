@@ -354,8 +354,7 @@ nav.md-nav.md-nav--secondary label.md-nav__title:after{
 }
 
 #welcome-to-the-nest-simulator-documentation .sd-row-cols-lg-1 > *{
-width: 65%;
-margin-left: 1.5rem;
+width: 85%;
 }
 
 #pynest-examples img.sd-card-img-top {

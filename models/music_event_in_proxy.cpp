@@ -108,6 +108,8 @@ nest::music_event_in_proxy::music_event_in_proxy()
   , P_()
   , S_()
 {
+  // Register port for the model so it is available as default
+  kernel().music_manager.register_music_in_port( P_.port_name_ );
 }
 
 nest::music_event_in_proxy::music_event_in_proxy( const music_event_in_proxy& n )
@@ -115,6 +117,7 @@ nest::music_event_in_proxy::music_event_in_proxy( const music_event_in_proxy& n 
   , P_( n.P_ )
   , S_( n.S_ )
 {
+  // Register port for node instance because MusicManager manages ports via reference count
   kernel().music_manager.register_music_in_port( P_.port_name_ );
 }
 

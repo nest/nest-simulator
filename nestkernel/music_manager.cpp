@@ -170,14 +170,6 @@ MUSICManager::register_music_in_port( std::string portname )
 void
 MUSICManager::unregister_music_in_port( std::string portname )
 {
-  // Unregistering from an empty portlist is a no-op. This avoids the
-  // need to add a dummy entry at startup which is only there to be
-  // deleted on the registration of a proper port.
-  if ( music_in_portlist_.empty() )
-  {
-    return;
-  }
-
   std::map< std::string, MusicPortData >::iterator it;
   it = music_in_portlist_.find( portname );
   if ( it == music_in_portlist_.end() )

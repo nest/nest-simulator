@@ -234,7 +234,7 @@ public:
   using reference = NodeIDTriple&;
 
   nc_const_iterator( const nc_const_iterator& nci ) = default;
-  void get_current_part_offset( size_t&, size_t& ) const;
+  std::pair< size_t, size_t > get_part_offset() const;
 
   NodeIDTriple operator*() const;
   bool operator==( const nc_const_iterator& rhs ) const;
@@ -697,7 +697,7 @@ NodeCollectionPTR operator+( NodeCollectionPTR lhs, NodeCollectionPTR rhs );
  * Any part after ``start_part_`` but before ``end_part_`` will always be in the NC in its entirety.
  *
  * For marking the end of the NC, the following logic applies to make comparison operators simpler
- *
+ * **OUTDATED**
  * - Assume that the last element ``final`` of the composite collection (after all slicing effects are taken into
  * account), is in part ``i``.
  * - Let ``idx_in_i`` be the index of ``final`` in ``part[i]``, i.e., ``part[i][index_in_i] == final``.
@@ -715,6 +715,7 @@ NodeCollectionPTR operator+( NodeCollectionPTR lhs, NodeCollectionPTR rhs );
  *
  * - the logic here is that if ``end_offset_ == 0``, then ``end_part_`` already follows "one past" logic, but otherwise
  * we need to add 1
+ * **END OUTDATED**
  */
 class NodeCollectionComposite : public NodeCollection
 {
@@ -726,8 +727,8 @@ private:
   size_t stride_;                                //!< Step length, set when slicing.
   size_t start_part_;                            //!< Primitive to start at, set when slicing
   size_t start_offset_;                          //!< Element to start at, set when slicing
-  size_t end_part_;   //!< Primitive or one past the primitive to end at, set when slicing (see note above)
-  size_t end_offset_; //!< One past the element to end at, set when slicing (see note above)
+  size_t end_part_;                              //!< Index into parts_ pointing to one past last entry belonging to NC
+  size_t end_offset_; //!< Index into parts_[end_part_] (if it exists) to one past last entry beloging to NC
   bool is_sliced_;    //!< Whether the NodeCollectionComposite is sliced
 
   /**
@@ -887,10 +888,9 @@ NodeCollection::get_first() const
 inline size_t
 NodeCollection::get_last() const
 {
-  size_t offset = size() - 1;
-  return ( *( begin() + offset ) ).node_id;
+  assert( size() > 0 );
+  return ( *( begin() + ( size() - 1 ) ) ).node_id;
 }
-
 
 inline nc_const_iterator&
 nc_const_iterator::operator+=( const size_t n )
@@ -926,7 +926,7 @@ nc_const_iterator::operator==( const nc_const_iterator& rhs ) const
 inline bool
 nc_const_iterator::operator!=( const nc_const_iterator& rhs ) const
 {
-  return not( part_idx_ == rhs.part_idx_ and element_idx_ == rhs.element_idx_ );
+  return not( *this == rhs );
 }
 
 inline bool
@@ -941,11 +941,10 @@ nc_const_iterator::operator<=( const nc_const_iterator& rhs ) const
   return ( part_idx_ < rhs.part_idx_ or ( part_idx_ == rhs.part_idx_ and element_idx_ <= rhs.element_idx_ ) );
 }
 
-inline void
-nc_const_iterator::get_current_part_offset( size_t& part, size_t& offset ) const
+inline std::pair< size_t, size_t >
+nc_const_iterator::get_part_offset() const
 {
-  part = part_idx_;
-  offset = element_idx_;
+  return { part_idx_, element_idx_ };
 }
 
 inline size_t
@@ -976,12 +975,8 @@ NodeCollectionPrimitive::operator==( NodeCollectionPTR rhs ) const
     return false;
   }
 
-  // Not dereferencing rhs_ptr->metadata_ in the equality comparison because we want to avoid overloading
-  // operator==() of *metadata_, and to let it handle typechecking.
-  const bool eq_metadata = ( not metadata_ and not rhs_ptr->metadata_ )
-    or ( metadata_ and rhs_ptr->metadata_ and *metadata_ == rhs_ptr->metadata_ );
-
-  return first_ == rhs_ptr->first_ and last_ == rhs_ptr->last_ and model_id_ == rhs_ptr->model_id_ and eq_metadata;
+  // We know we have a primitive collection, so forward
+  return *this == *rhs_ptr;
 }
 
 inline bool
@@ -1078,14 +1073,7 @@ NodeCollectionComposite::begin( NodeCollectionPTR cp ) const
 inline NodeCollectionComposite::const_iterator
 NodeCollectionComposite::end( NodeCollectionPTR cp ) const
 {
-  if ( is_sliced_ )
-  {
-    return const_iterator( cp, *this, end_part_, end_offset_, stride_, nc_const_iterator::NCIteratorKind::END );
-  }
-  else
-  {
-    return const_iterator( cp, *this, parts_.size(), 0, 1, nc_const_iterator::NCIteratorKind::END );
-  }
+  return const_iterator( cp, *this, end_part_, end_offset_, 1, nc_const_iterator::NCIteratorKind::END );
 }
 
 inline size_t

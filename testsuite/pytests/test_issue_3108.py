@@ -47,6 +47,7 @@ else:
         lambda nc: nc[::3],
         lambda nc: nc[1:],
         lambda nc: nc[:5] + nc[8:],
+        lambda nc: (nc[:5] + nc[8:])[-1],
         lambda nc: (nc[:5] + nc[8:])[::2],
         lambda nc: (nc[:5] + nc[8:])[::3],
         lambda nc: (nc[:5] + nc[9:])[::2],

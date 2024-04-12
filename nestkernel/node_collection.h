@@ -133,7 +133,7 @@ public:
  * different phase relation. See the stepping discussion below for how to proceed.
  * - Within each part, we have ``step = lcm(period, stride)``.
  * - Whenever we step out of a given part, we need to find a new starting point as follows:
- *     1. Find the last element compatible with the current stride on any rank/threak.
+ *     1. Find the last element compatible with the current stride on any rank/thread.
  *     2. Move forward by a single stride.
  *     3. Find the part in and offset at which the resulting element is located. This may require advancing by multiple
  * parts, since parts may contain as little as a single element.
@@ -179,7 +179,6 @@ private:
   NodeCollectionPTR coll_ptr_; //!< pointer to keep node collection alive, see note
   size_t element_idx_;         //!< index into (current) primitive node collection
   size_t part_idx_;            //!< index into parts vector of composite collection
-  size_t stride_;              //!< user-specified stride for slicing node collection
   size_t step_;                //!< internal step also accounting for stepping over rank/thread
   size_t begin_in_part_idx_;   //!< index of first element in NC in current part
   const NCIteratorKind kind_;  //!< whether to iterate over all elements or rank/thread specific
@@ -222,9 +221,9 @@ private:
     NCIteratorKind kind = NCIteratorKind::GLOBAL );
 
   /**
-   * Conditionally update element_idx and part_idx for composite NodeCollections
+   * Advance composite iterator by n elements, taking stride into account.
    */
-  void composite_update_indices_();
+  void advance_composite_iterator( size_t n );
 
 public:
   using iterator_category = std::forward_iterator_tag;
@@ -762,10 +761,11 @@ private:
    *
    * @param part_idx  Part we are about to leave
    * @param begin_in_part_idx Index to first element within slice in part we are about to leave
+   * @param n Number of node collection elements we advance by (ie argument that was passed to to `operator+(n)`)
    *
    * @return New part-offset tuple pointing into new part, or invalid_index tuple.
    */
-  std::pair< size_t, size_t > find_next_part_( size_t part_idx, size_t begin_in_part_idx ) const;
+  std::pair< size_t, size_t > find_next_part_( size_t part_idx, size_t begin_in_part_idx, size_t n = 1 ) const;
 
   //! helper for thread_local_begin/compsite_update_indices
   static size_t gid_to_vp_( size_t gid );
@@ -895,16 +895,18 @@ NodeCollection::get_last() const
 inline nc_const_iterator&
 nc_const_iterator::operator+=( const size_t n )
 {
-  element_idx_ += n * step_;
-
   if ( primitive_collection_ )
   {
     // guard against passing end
-    element_idx_ = std::min( element_idx_, primitive_collection_->size() );
+    element_idx_ = std::min( element_idx_ + n * step_, primitive_collection_->size() );
   }
   else
   {
-    composite_update_indices_();
+    // We unroll to steps of 1 for stabilitiy for now, since n > 1 does not yet work
+    for ( size_t k = 0; k < n; ++k )
+    {
+      advance_composite_iterator( 1 );
+    }
   }
 
   return *this;
@@ -915,6 +917,21 @@ nc_const_iterator::operator+( const size_t n ) const
 {
   nc_const_iterator it = *this;
   return it += n;
+}
+
+inline nc_const_iterator&
+nc_const_iterator::operator++()
+{
+  ( *this ) += 1;
+  return *this;
+}
+
+inline nc_const_iterator
+nc_const_iterator::operator++( int )
+{
+  nc_const_iterator tmp = *this;
+  ++( *this );
+  return tmp;
 }
 
 inline bool
@@ -951,6 +968,12 @@ inline size_t
 nc_const_iterator::get_step_size() const
 {
   return step_;
+}
+
+inline NodeCollectionPTR
+operator+( NodeCollectionPTR lhs, NodeCollectionPTR rhs )
+{
+  return lhs->operator+( rhs );
 }
 
 inline size_t

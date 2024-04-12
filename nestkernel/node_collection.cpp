@@ -63,7 +63,6 @@ nc_const_iterator::nc_const_iterator( NodeCollectionPTR collection_ptr,
   : coll_ptr_( collection_ptr )
   , element_idx_( offset )
   , part_idx_( 0 )
-  , stride_( stride )
   , step_( kind == NCIteratorKind::RANK_LOCAL
         ? std::lcm( stride, kernel().mpi_manager.get_num_processes() )
         : ( kind == NCIteratorKind::THREAD_LOCAL ? std::lcm( stride, kernel().vp_manager.get_num_virtual_processes() )
@@ -89,7 +88,6 @@ nc_const_iterator::nc_const_iterator( NodeCollectionPTR collection_ptr,
   : coll_ptr_( collection_ptr )
   , element_idx_( offset )
   , part_idx_( part )
-  , stride_( stride )
   , step_( kind == NCIteratorKind::RANK_LOCAL
         ? std::lcm( stride, kernel().mpi_manager.get_num_processes() )
         : ( kind == NCIteratorKind::THREAD_LOCAL ? std::lcm( stride, kernel().vp_manager.get_num_virtual_processes() )
@@ -110,7 +108,7 @@ nc_const_iterator::nc_const_iterator( NodeCollectionPTR collection_ptr,
 }
 
 void
-nc_const_iterator::composite_update_indices_()
+nc_const_iterator::advance_composite_iterator( size_t n )
 {
   /* Find the part the stepping has taken us into.
    *
@@ -118,10 +116,14 @@ nc_const_iterator::composite_update_indices_()
    *   (1) we have stepped beyond the current primitive, and
    *   (2) there is at least one more part into which we can step
    */
+
+  const size_t new_element_idx = element_idx_ + n * step_;
   size_t primitive_size = composite_collection_->parts_[ part_idx_ ].size();
-  if ( element_idx_ < primitive_size )
+  if ( new_element_idx < primitive_size )
   {
-    return; // Still in old part, all fine.
+    // Still in old part, all fine
+    element_idx_ = new_element_idx;
+    return;
 
     // Note: If we are in the last part and there is an end_offset_, i.e., not
     // the entire primitive is part of the composite, we need not worry about
@@ -130,10 +132,15 @@ nc_const_iterator::composite_update_indices_()
   }
 
   // Find starting point in new part, step 1: overall first in new part
-  std::tie( part_idx_, element_idx_ ) = composite_collection_->find_next_part_( part_idx_, begin_in_part_idx_ );
+  std::tie( part_idx_, element_idx_ ) = composite_collection_->find_next_part_( part_idx_, begin_in_part_idx_, n );
+
+  FULL_LOGGING_ONLY( kernel().write_to_dump(
+    String::compose( "ACI1 rk %1, pix %2, eix %3", kernel().mpi_manager.get_rank(), part_idx_, element_idx_ ) ); )
 
   if ( part_idx_ != invalid_index )
   {
+    begin_in_part_idx_ = element_idx_;
+
     // Step 2: Find rank/thread specific starting point
     switch ( kind_ )
     {
@@ -145,6 +152,8 @@ nc_const_iterator::composite_update_indices_()
       std::tie( part_idx_, element_idx_ ) = composite_collection_->specific_local_begin_(
         num_ranks, current_rank, part_idx_, element_idx_, NodeCollectionComposite::gid_to_rank_ );
 
+      FULL_LOGGING_ONLY( kernel().write_to_dump(
+        String::compose( "ACIL rk %1, pix %2, eix %3", kernel().mpi_manager.get_rank(), part_idx_, element_idx_ ) ); )
       break;
     }
     case NCIteratorKind::THREAD_LOCAL:
@@ -159,6 +168,8 @@ nc_const_iterator::composite_update_indices_()
     }
     default:
       assert( kind_ == NCIteratorKind::GLOBAL );
+      FULL_LOGGING_ONLY(
+        kernel().write_to_dump( String::compose( "ACI PLAIN rk %1", kernel().mpi_manager.get_rank() ) ); )
       // Nothing to do
       break;
     }
@@ -202,12 +213,13 @@ nc_const_iterator::operator*() const
            or ( part_idx_ == composite_collection_->end_part_
              and element_idx_ < composite_collection_->end_offset_ ) ) )
     {
-      if ( kernel().mpi_manager.get_rank() == 1 )
-      {
-        std::cerr << "Rk: " << kernel().mpi_manager.get_rank() << ", part_idx_ " << part_idx_ << ", end_part_ "
-                  << composite_collection_->end_part_ << ", element_idx_ " << element_idx_ << ", end_offset_ "
-                  << composite_collection_->end_offset_ << std::endl;
-      }
+      FULL_LOGGING_ONLY(
+        kernel().write_to_dump( String::compose( "nci::op* comp err rk %1, pix %2, ep %3, eix %4, eo %5",
+          kernel().mpi_manager.get_rank(),
+          part_idx_,
+          composite_collection_->end_part_,
+          element_idx_,
+          composite_collection_->end_offset_ ) ); )
 
       throw KernelException( "Invalid NodeCollection iterator (composite element beyond specified end element)" );
     }
@@ -224,39 +236,6 @@ nc_const_iterator::operator*() const
   }
 
   return gt;
-}
-
-nc_const_iterator&
-nc_const_iterator::operator++()
-{
-  element_idx_ += step_;
-
-  if ( primitive_collection_ )
-  {
-    // element_idx_ == size() defines the end() iterator
-    // For size() == 0, element_idx_ can be > size() here so we need to limit
-    element_idx_ = std::min( element_idx_, primitive_collection_->size() );
-  }
-  else
-  {
-    composite_update_indices_();
-  }
-
-  return *this;
-}
-
-nc_const_iterator
-nc_const_iterator::operator++( int )
-{
-  nc_const_iterator tmp = *this;
-  ++( *this );
-  return tmp;
-}
-
-NodeCollectionPTR
-operator+( NodeCollectionPTR lhs, NodeCollectionPTR rhs )
-{
-  return lhs->operator+( rhs );
 }
 
 NodeCollection::NodeCollection()
@@ -816,10 +795,14 @@ NodeCollectionComposite::NodeCollectionComposite( const NodeCollectionComposite&
   {
     // The NodeCollection is not sliced
     // Update start and stop positions.
+    FULL_LOGGING_ONLY( kernel().write_to_dump( "Building start it" ); )
     const const_iterator start_it = composite.begin() + start;
+    FULL_LOGGING_ONLY( kernel().write_to_dump( "Building start it --- DONE" ); )
     std::tie( start_part_, start_offset_ ) = start_it.get_part_offset();
 
+    FULL_LOGGING_ONLY( kernel().write_to_dump( "Building end it" ); )
     const const_iterator end_it = composite.begin() + end;
+    FULL_LOGGING_ONLY( kernel().write_to_dump( "Building end it --- DONE" ); )
     std::tie( end_part_, end_offset_ ) = end_it.get_part_offset();
   }
 }
@@ -995,8 +978,6 @@ NodeCollectionComposite::specific_local_begin_( size_t period,
   size_t start_offset,
   gid_to_phase_fcn_ gid_to_phase ) const
 {
-  // See note on const_iterator class for end_part_/offset_ logic
-
   assert( start_offset < parts_[ start_part ].size() );
 
   size_t idx_first_in_part = start_offset;
@@ -1019,14 +1000,22 @@ NodeCollectionComposite::specific_local_begin_( size_t period,
       offset += idx_first_in_part;
     }
 
-    /*
-        std::cerr << "TLB Rank : " << kernel().mpi_manager.get_rank() << " Thread: " <<
-       kernel().vp_manager.get_thread_id()
-                  << ", idx_first_in_part " << idx_first_in_part << ", phase_first " << phase_first_node << ", offset "
-                  << offset << ", start_part " << start_part << ", start_offset " << start_offset << ", pix " << pix
-                  << ", end_part_ " << end_part_ << ", end_offset_ " << end_offset_ << ", size: " << parts_[ pix
-       ].size()
-                  << ", num parts " << parts_.size() << ", this " << this << std::endl;*/
+    FULL_LOGGING_ONLY(
+      kernel().write_to_dump( String::compose( "SPLB rk %1, thr %2, ix_first %3, phase_first %4, offs %5, stp %6, sto "
+                                               "%7, pix %8, ep %9, eo %10, primsz %11, nprts: %12, this: %13",
+        kernel().mpi_manager.get_rank(),
+        kernel().vp_manager.get_thread_id(),
+        idx_first_in_part,
+        phase_first_node,
+        offset,
+        start_part,
+        start_offset,
+        pix,
+        end_part_,
+        end_offset_,
+        parts_[ pix ].size(),
+        parts_.size(),
+        this ) ); )
 
     if ( offset != invalid_index and offset < parts_[ pix ].size() )
     {
@@ -1043,14 +1032,33 @@ NodeCollectionComposite::specific_local_begin_( size_t period,
 }
 
 std::pair< size_t, size_t >
-NodeCollectionComposite::find_next_part_( size_t part_idx, size_t begin_in_part_idx ) const
+NodeCollectionComposite::find_next_part_( size_t part_idx, size_t begin_in_part_idx, size_t n ) const
 {
+  // We currently can only handle stepping forward by a single element
+  assert( n == 1 );
+
   const size_t part_num_elems = 1 + ( parts_[ part_idx ].size() - 1 - begin_in_part_idx ) / stride_;
+
+  FULL_LOGGING_ONLY(
+    kernel().write_to_dump( String::compose( "fnp ini rk %1, thr %2, pix %3, bipi %4, n %5, pne %6, strd %7",
+      kernel().mpi_manager.get_rank(),
+      kernel().vp_manager.get_thread_id(),
+      part_idx,
+      begin_in_part_idx,
+      n,
+      part_num_elems,
+      stride_ ) ); )
 
   // Move to next part by by naive stepping from previous part
   // new_idx will be >= 0, otherwise we would not be here
   size_t new_idx = begin_in_part_idx + part_num_elems * stride_ - parts_[ part_idx ].size();
   ++part_idx;
+
+  FULL_LOGGING_ONLY( kernel().write_to_dump( String::compose( "fnp bw rk %1, thr %2, pix %3, nix %4",
+    kernel().mpi_manager.get_rank(),
+    kernel().vp_manager.get_thread_id(),
+    part_idx,
+    new_idx ) ); )
 
   // Continue while idx not inside a new part; need to check against end_offset_ in last part
   while ( part_idx < end_part_ )
@@ -1063,15 +1071,28 @@ NodeCollectionComposite::find_next_part_( size_t part_idx, size_t begin_in_part_
 
     new_idx -= parts_[ part_idx ].size();
     ++part_idx;
+
+    FULL_LOGGING_ONLY( kernel().write_to_dump( String::compose( "fnp ew rk %1, thr %2, pix %3, nix %4",
+      kernel().mpi_manager.get_rank(),
+      kernel().vp_manager.get_thread_id(),
+      part_idx,
+      new_idx ) ); )
   }
 
   // If we get here with valid index, we found a fitting part
   if ( part_idx < end_part_ )
   {
+    FULL_LOGGING_ONLY( kernel().write_to_dump( String::compose( "fnp res rk %1, thr %2, pix %3, nix %4",
+      kernel().mpi_manager.get_rank(),
+      kernel().vp_manager.get_thread_id(),
+      part_idx,
+      new_idx ) ); )
     return { part_idx, new_idx };
   }
   else
   {
+    FULL_LOGGING_ONLY( kernel().write_to_dump( String::compose(
+      "fnp res rk %1, thr %2 --- invalid", kernel().mpi_manager.get_rank(), kernel().vp_manager.get_thread_id() ) ); )
     return { invalid_index, invalid_index };
   }
 }
@@ -1153,7 +1174,9 @@ NodeCollectionComposite::slice( size_t start, size_t end, size_t stride ) const
       "InvalidNodeCollection: note that ResetKernel invalidates all previously created NodeCollections." );
   }
 
+  FULL_LOGGING_ONLY( kernel().write_to_dump( "Calling NCC from slice()" ); )
   const auto new_composite = NodeCollectionComposite( *this, start, end, stride );
+  FULL_LOGGING_ONLY( kernel().write_to_dump( "Calling NCC from slice() --- DONE" ); )
 
   if ( stride == 1 and new_composite.start_part_ == new_composite.end_part_ )
   {
@@ -1161,6 +1184,16 @@ NodeCollectionComposite::slice( size_t start, size_t end, size_t stride ) const
     return new_composite.parts_[ new_composite.start_part_ ].slice(
       new_composite.start_offset_, new_composite.end_offset_ );
   }
+
+  FULL_LOGGING_ONLY(
+    kernel().write_to_dump( String::compose( "NewComposite: sp %1, so %2, ep %3, eo %4, sz %5, strd %6",
+      new_composite.start_part_,
+      new_composite.start_offset_,
+      new_composite.end_part_,
+      new_composite.end_offset_,
+      new_composite.size_,
+      new_composite.stride_ ) ); )
+
   return std::make_shared< NodeCollectionComposite >( new_composite );
 }
 

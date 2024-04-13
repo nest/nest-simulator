@@ -139,7 +139,7 @@ See also
 ++++++++
 
 Examples using this model
-++++++++++++++++++++++++++
++++++++++++++++++++++++++
 
 .. listexamples:: eprop_synapse
 

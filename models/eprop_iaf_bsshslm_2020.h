@@ -228,7 +228,7 @@ References
        eligibility propagation (in preparation)
 
 Sends
-++++++++
++++++
 
 SpikeEvent
 
@@ -241,7 +241,7 @@ See also
 ++++++++
 
 Examples using this model
-++++++++++++++++++++++++++
++++++++++++++++++++++++++
 
 .. listexamples:: eprop_iaf_bsshslm_2020
 

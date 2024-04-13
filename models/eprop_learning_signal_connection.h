@@ -111,7 +111,7 @@ See also
 ++++++++
 
 Examples using this model
-++++++++++++++++++++++++++
++++++++++++++++++++++++++
 
 .. listexamples:: eprop_learning_signal_connection
 

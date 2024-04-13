@@ -173,7 +173,7 @@ References
        eligibility propagation (in preparation)
 
 Sends
-++++++++
++++++
 
 LearningSignalConnectionEvent, DelayedRateConnectionEvent
 
@@ -186,7 +186,7 @@ See also
 ++++++++
 
 Examples using this model
-++++++++++++++++++++++++++
++++++++++++++++++++++++++
 
 .. listexamples:: eprop_readout_bsshslm_2020
 

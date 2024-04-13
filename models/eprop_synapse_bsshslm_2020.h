@@ -144,7 +144,7 @@ See also
 ++++++++
 
 Examples using this model
-++++++++++++++++++++++++++
++++++++++++++++++++++++++
 
 .. listexamples:: eprop_synapse_bsshslm_2020
 

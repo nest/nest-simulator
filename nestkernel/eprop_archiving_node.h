@@ -174,7 +174,7 @@ public:
     const double gamma );
 
   //! Compute the surrogate gradient with a function corresponding to the derivative of a fast sigmoid around the spike
-  //! (used, e.g., in Zenke and Ganguli, 2018). time.
+  //! (used, e.g., in Zenke and Ganguli, 2018).
   double compute_fast_sigmoid_derivative_surrogate_gradient( const double r,
     const double v_m,
     const double v_th_adapt,

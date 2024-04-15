@@ -75,9 +75,12 @@ You can access the data recorded by the recorders with the ``events`` property.
 .. note::
 
    The type of recording backend you choose may affect the efficiency of your simulation.
-   The  `memory` backend is ideal for interactive work, but can only be used for limited amount of data. Additionally, transferring data to disk later on may be slower than directly writing from the NEST kernel via `ascii` or `sionlib` backends.
+   The  `memory` backend is ideal for interactive work, but can only be used for limited
+   amount of data. Additionally, transferring data to disk later on may be slower than
+   directly writing from the NEST kernel via `ascii` or `sionlib` backends.
 
-   Large simulations with many threads may benefit from the `sionlib` backend, as the `ascii` backend opens many files which can be very time consuming on parallel file systems.
+   Large simulations with many threads may benefit from the `sionlib` backend, as the `ascii`
+   backend opens many files which can be very time consuming on parallel file systems.
 
    The complete list of parameters and other recording backend options
    can be found in the :ref:`guide to recording from simulations <recording_backends>`.

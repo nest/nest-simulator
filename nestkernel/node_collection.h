@@ -223,7 +223,7 @@ private:
   /**
    * Advance composite iterator by n elements, taking stride into account.
    */
-  void advance_composite_iterator( size_t n );
+  void advance_composite_iterator_( size_t n );
 
 public:
   using iterator_category = std::forward_iterator_tag;
@@ -240,6 +240,8 @@ public:
   bool operator!=( const nc_const_iterator& rhs ) const;
   bool operator<( const nc_const_iterator& rhs ) const;
   bool operator<=( const nc_const_iterator& rhs ) const;
+  bool operator>( const nc_const_iterator& rhs ) const;
+  bool operator>=( const nc_const_iterator& rhs ) const;
 
   nc_const_iterator& operator++();
   nc_const_iterator operator++( int ); // postfix
@@ -306,6 +308,7 @@ class NodeCollection
 
 public:
   using const_iterator = nc_const_iterator;
+
 
   /**
    * Initializer gets current fingerprint from the kernel.
@@ -512,6 +515,8 @@ public:
   /**
    * Returns index of node with given node ID in NodeCollection.
    *
+   * Index here is into the sliced node collection, so that nc[ nc.get_nc_index( gid )].node_id == gid.
+   *
    * @return Index of node with given node ID; -1 if node not in NodeCollection.
    */
   virtual long get_nc_index( const size_t ) const = 0;
@@ -572,8 +577,6 @@ private:
   void assert_consistent_model_ids_( const size_t ) const;
 
 public:
-  using const_iterator = nc_const_iterator;
-
   /**
    * Create a primitive from a range of node IDs, with provided model ID and
    * metadata pointer.
@@ -690,20 +693,23 @@ NodeCollectionPTR operator+( NodeCollectionPTR lhs, NodeCollectionPTR rhs );
  * @note To avoid creating copies of Primitives (not sure that saves much), Composite keeps
  * primitives as they are. These are called parts. It then sets markers
  *
- * - ``start_part_``, ``start_offset_`` to the first node belonging to the slice
- * - ``end_part_``, ``end_offset_`` to one past the last node belongig to the slice
+ * - ``first_part_``, ``first_elem_`` to the first node belonging to the slice
+ * - ``last_part_``, ``last_elem_`` to the last node belongig to the slice
  *
- * Any part after ``start_part_`` but before ``end_part_`` will always be in the NC in its entirety.
+ * @note
+ * - Any part after ``first_part_`` but before ``last_part_`` will always be in the NC in its entirety.
+ * - A composite node collection is never empty (in that case it would be replaced with a Primitive. Therefore,
+ *   there is always at least one part with one element.
  *
  * For marking the end of the NC, the following logic applies to make comparison operators simpler
  * **OUTDATED**
  * - Assume that the last element ``final`` of the composite collection (after all slicing effects are taken into
- * account), is in part ``i``.
+ *   account), is in part ``i``.
  * - Let ``idx_in_i`` be the index of ``final`` in ``part[i]``, i.e., ``part[i][index_in_i] == final``.
  * - If ``final`` is the last element of ``part[i]``, i.e., ``idx_in_i == part[i].size()-1``, then ``end_part_ == i+1``
- * and ``end_offset_
- * == 0``
+ *   and ``end_offset_ == 0``
  * - Otherwise, ``end_part_ == i`` and ``end_offset_ == idx_in_i``
+ *
  * Thus,
  * - ``end_offset_`` always observes "one-past-the-end" logic, while ``end_part_`` does so only if ``end_offset_ == 0``
  * - to iterate over all parts containing elements of the NC, we need to do
@@ -724,11 +730,11 @@ private:
   std::vector< NodeCollectionPrimitive > parts_; //!< Vector of primitives
   size_t size_;                                  //!< Total number of node IDs
   size_t stride_;                                //!< Step length, set when slicing.
-  size_t start_part_;                            //!< Primitive to start at, set when slicing
-  size_t start_offset_;                          //!< Element to start at, set when slicing
-  size_t end_part_;                              //!< Index into parts_ pointing to one past last entry belonging to NC
-  size_t end_offset_; //!< Index into parts_[end_part_] (if it exists) to one past last entry beloging to NC
-  bool is_sliced_;    //!< Whether the NodeCollectionComposite is sliced
+  size_t first_part_;                            //!< Primitive to start at, set when slicing
+  size_t first_elem_;                            //!< Element to start at, set when slicing
+  size_t last_part_;                             //!< Last entry of parts_ belonging to sliced NC
+  size_t last_elem_;                             //!< Last entry of parts_[last_part_] belonging to sliced NC
+  bool is_sliced_;                               //!< Whether the NodeCollectionComposite is sliced
 
   /**
    * Goes through the vector of primitives, merging as much as possible.
@@ -897,7 +903,7 @@ nc_const_iterator::operator+=( const size_t n )
 {
   if ( primitive_collection_ )
   {
-    // guard against passing end
+    // guard against passing end and ensure we step to uniquely defined last element at end
     element_idx_ = std::min( element_idx_ + n * step_, primitive_collection_->size() );
   }
   else
@@ -905,7 +911,7 @@ nc_const_iterator::operator+=( const size_t n )
     // We unroll to steps of 1 for stabilitiy for now, since n > 1 does not yet work
     for ( size_t k = 0; k < n; ++k )
     {
-      advance_composite_iterator( 1 );
+      advance_composite_iterator_( 1 );
     }
   }
 
@@ -955,7 +961,19 @@ nc_const_iterator::operator<( const nc_const_iterator& rhs ) const
 inline bool
 nc_const_iterator::operator<=( const nc_const_iterator& rhs ) const
 {
-  return ( part_idx_ < rhs.part_idx_ or ( part_idx_ == rhs.part_idx_ and element_idx_ <= rhs.element_idx_ ) );
+  return ( *this < rhs or *this == rhs );
+}
+
+inline bool
+nc_const_iterator::operator>( const nc_const_iterator& rhs ) const
+{
+  return not( *this <= rhs );
+}
+
+inline bool
+nc_const_iterator::operator>=( const nc_const_iterator& rhs ) const
+{
+  return not( *this < rhs );
 }
 
 inline std::pair< size_t, size_t >
@@ -1013,16 +1031,17 @@ NodeCollectionPrimitive::operator==( const NodeCollectionPrimitive& rhs ) const
   return first_ == rhs.first_ and last_ == rhs.last_ and model_id_ == rhs.model_id_ and eq_metadata;
 }
 
-inline NodeCollectionPrimitive::const_iterator
+inline NodeCollection::const_iterator
 NodeCollectionPrimitive::begin( NodeCollectionPTR cp ) const
 {
-  return const_iterator( cp, *this, 0, 1 );
+  return nc_const_iterator( cp, *this, /* offset */ 0, /* stride */ 1 );
 }
 
-inline NodeCollectionPrimitive::const_iterator
+inline NodeCollection::const_iterator
 NodeCollectionPrimitive::end( NodeCollectionPTR cp ) const
 {
-  return const_iterator( cp, *this, size(), 1, nc_const_iterator::NCIteratorKind::END );
+  // The unique end() element of a primitive NC is given by (part 0, element size()) )
+  return nc_const_iterator( cp, *this, /* offset */ size(), /* stride */ 1, nc_const_iterator::NCIteratorKind::END );
 }
 
 inline size_t
@@ -1071,7 +1090,7 @@ NodeCollectionPrimitive::empty() const
 inline long
 NodeCollectionPrimitive::get_nc_index( const size_t neuron_id ) const
 {
-  if ( neuron_id > last_ )
+  if ( neuron_id < first_ or last_ < neuron_id )
   {
     return -1;
   }
@@ -1087,16 +1106,19 @@ NodeCollectionPrimitive::has_proxies() const
   return not nodes_have_no_proxies_;
 }
 
-inline NodeCollectionComposite::const_iterator
+inline NodeCollection::const_iterator
 NodeCollectionComposite::begin( NodeCollectionPTR cp ) const
 {
-  return const_iterator( cp, *this, start_part_, start_offset_, stride_ );
+  return nc_const_iterator( cp, *this, first_part_, first_elem_, stride_ );
 }
 
-inline NodeCollectionComposite::const_iterator
+inline NodeCollection::const_iterator
 NodeCollectionComposite::end( NodeCollectionPTR cp ) const
 {
-  return const_iterator( cp, *this, end_part_, end_offset_, 1, nc_const_iterator::NCIteratorKind::END );
+  // The unique end() element of a composite NC is given by one past the last element
+  // This is the (potentially non-existing) next element irrespective of stride and step
+  return nc_const_iterator(
+    cp, *this, last_part_, last_elem_ + 1, /* stride */ 1, nc_const_iterator::NCIteratorKind::END );
 }
 
 inline size_t
